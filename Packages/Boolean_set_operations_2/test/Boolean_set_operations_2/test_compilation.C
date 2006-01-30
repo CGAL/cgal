@@ -12,6 +12,8 @@
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Polygon_set_2.h>
 
+#include <CGAL/Arr_non_caching_segment_traits_2.h>
+
 
 //typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
 typedef int Number_type;
@@ -23,6 +25,12 @@ typedef CGAL::Polygon_set_2<Kernel>                   Ps;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Arr_traits;
 typedef CGAL::Gps_traits_2<Arr_traits>                General_traits;
 typedef CGAL::General_polygon_set_2<General_traits>   Gps;
+
+typedef CGAL::Arr_non_caching_segment_traits_2<Kernel> Nc_traits;
+typedef CGAL::Gps_segment_traits_2<Kernel,
+                                   std::vector<Kernel::Point_2>,
+                                   Nc_traits>         Traits_non_caching;
+typedef CGAL::General_polygon_set_2<Traits_non_caching>   Gps_non_caching;
 
 template <class GPS>
 void test()
@@ -224,6 +232,7 @@ void test()
   {
     test<Gps>();
     test<Ps>();
+    test<Gps_non_caching>();
 
     return (0);
   }

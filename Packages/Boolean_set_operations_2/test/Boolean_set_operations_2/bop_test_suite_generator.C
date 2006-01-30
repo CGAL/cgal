@@ -1,6 +1,4 @@
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <CGAL/Simple_cartesian.h>
@@ -13,8 +11,6 @@
 #include <iterator>
 #include <algorithm>
 #include <CGAL/iterator.h>
-
-
 
 
 typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;

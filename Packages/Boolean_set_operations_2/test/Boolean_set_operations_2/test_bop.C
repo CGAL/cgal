@@ -341,10 +341,6 @@ bool test(std::istream& inp,
   }
   ps.clear();
 
-
-
-
-
   return true;
 }
 

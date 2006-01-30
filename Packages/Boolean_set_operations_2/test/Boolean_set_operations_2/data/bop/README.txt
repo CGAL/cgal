@@ -1,5 +1,5 @@
-                 input files for boolean operations test suites
-                 ----------------------------------------------
+                          input files for test_bop (test boolean operations on two polygons)
+                          ------------------------------------------------------------------
 
 strcutre of file:
 ----------------
@@ -36,11 +36,10 @@ DIFF_RES # the same as in intersection
 SYMM_DIFF_RES # the same as in intersection
 
 # ~P1  (complement of p1)
-COMP_RES  # if P1 is Polygon_2, COMP_RES = Polygon_with_holes_2
-          #else COMP_RES is the same as in intersection result
+COMP_RES  # the same as in intersection
 
 # ~P2 (complement of p2)
-COMP_RES # the same as ~P1
+COMP_RES # the same as in intersection
 
 
 example:
@@ -116,6 +115,7 @@ example:
 0
 
 # complement of P1 
+1
 0
 1
 3
