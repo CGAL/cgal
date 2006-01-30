@@ -16,7 +16,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -g \
-           -I../../include \
+           -I$(CGAL_INCL_DIR) \
            $(CGAL_CXXFLAGS) \
            -Iinclude\
            $(LONG_NAME_PROBLEM_CXXFLAGS)
@@ -28,17 +28,13 @@ CXXFLAGS = -g \
 LIBPATH = \
           $(CGAL_LIBPATH)
 
-LDFLAGS =  -lboost_program_options ../../src/libCGAL.a  \
-	  ../../src/CGALQt/libCGALQt.a -lgsl -lgslcblas\
+LDFLAGS =  -lboost_program_options \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) 
 
-QT_LDFLAGS =  -lboost_program_options ../../src/libCGAL.a \
-	  ../../src/CGALQt/libCGALQt.a -lgsl -lgslcblas \
+QT_LDFLAGS =  -lboost_program_options \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS) 
-
-COIN_LDFLAGS = $(LDFLAGS) -lCoin -lSoQt
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -56,19 +52,19 @@ Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS)
 
 Delaunay_triangulation_3$(EXE_EXT): Delaunay_triangulation_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT) $(COIN_LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT)
 
 Delaunay_triangulation_stable_subset_2$(EXE_EXT): Delaunay_triangulation_stable_subset_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
 regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_triangulation_3 regular_triangulation_3$(OBJ_EXT) $(COIN_LDFLAGS) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_triangulation_3 regular_triangulation_3$(OBJ_EXT)
 
 2d_gui$(EXE_EXT): 2d_gui$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)2d_gui 2d_gui$(OBJ_EXT) $(QT_LDFLAGS) 
 
 3d_gui$(EXE_EXT): 3d_gui$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_gui 3d_gui$(OBJ_EXT)  $(COIN_LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_gui 3d_gui$(OBJ_EXT) 
 
 clean: \
                    2d_gui.clean \
