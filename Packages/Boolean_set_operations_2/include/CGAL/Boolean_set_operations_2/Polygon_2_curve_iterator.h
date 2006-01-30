@@ -46,8 +46,10 @@ public:
  
     
     typedef X_monotone_curve_2_                           X_monotone_curve_2;
-    
-    typedef std::random_access_iterator_tag               iterator_category;
+    typedef typename Polygon_::Container                  Container;
+    typedef typename Container::iterator                  Container_iterator;
+    typedef typename std::iterator_traits<Container_iterator>::iterator_category 
+                                                          iterator_category;
     typedef X_monotone_curve_2                            value_type;
     typedef X_monotone_curve_2*                           pointer;
     typedef X_monotone_curve_2&                           reference;
