@@ -63,7 +63,9 @@ public:
   void create_vertex(Vertex_const_handle v1,
                      Halfedge_const_handle h2,
                      Vertex_handle res_v)
-  {}
+  {
+    m_found_boudary_intersection = true;
+  }
 
   void create_vertex(Halfedge_const_handle h1,
                      Vertex_const_handle v2,
