@@ -358,8 +358,7 @@ void General_polygon_set_2<Traits_>::insert(PolygonIter          p_begin,
   bool is_unbounded = false;
   for( ; pwh_begin != pwh_end; ++pwh_begin)
   {
-    if(pwh_begin->is_unbounded())
-      is_unbounded = true;
+    is_unbounded = (is_unbounded || pwh_begin->is_unbounded());
     _construct_curves(*pwh_begin, std::back_inserter(xcurve_list));
   }
   insert_non_intersecting_curves(*m_arr, xcurve_list.begin(), xcurve_list.end());
@@ -400,7 +399,7 @@ void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
   bool is_unbounded = false;
   for( ; p_begin != p_end; ++p_begin)
   {
-    is_unbounded = p_begin->is_unbounded();
+    is_unbounded = (is_unbounded || p_begin->is_unbounded());
     _construct_curves(*p_begin, std::back_inserter(xcurve_list));
 
   }
