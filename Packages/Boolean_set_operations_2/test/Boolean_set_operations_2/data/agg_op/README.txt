@@ -43,9 +43,6 @@ RESULT  # the same as above
 # aggregate intersection on Polygon_2 and  Polygon_with_holes_2 ranges
 RESULT  # the same as above
 
-# aggregate intersection on Polygon_2 range
-RESULT  # the same as above
-
 # aggregate symmetric difference on Polygon_with_holes_2 range
 RESULT  # the same as above
 
