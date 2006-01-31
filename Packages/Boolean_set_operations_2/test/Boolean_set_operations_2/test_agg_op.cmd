@@ -10,3 +10,7 @@
 ./data/agg_op/test10.txt
 ./data/agg_op/test11.txt
 ./data/agg_op/test12.txt
+./data/agg_op/test13.txt
+./data/agg_op/test14.txt
+./data/agg_op/test15.txt
+./data/agg_op/test16.txt
