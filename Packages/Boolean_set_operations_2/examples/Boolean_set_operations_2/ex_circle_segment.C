@@ -80,12 +80,12 @@ int main ()
                             Point_2(5, 6), Point_2(1, 6));
   S.join (rect2);
 
-  rect3 = construct_polygon(Point_2(0, 1), Point_2(0, 5),
-                            Point_2(2, 5), Point_2(2, 1));
+  rect3 = construct_polygon(Point_2(0, 1), Point_2(2, 1), 
+                            Point_2(2, 5), Point_2(0, 5));
   S.join (rect3);
 
-  rect4 = construct_polygon(Point_2(4, 1), Point_2(4, 5),
-                            Point_2(6, 5), Point_2(6, 1));
+  rect4 = construct_polygon(Point_2(4, 1), Point_2(6, 1), 
+                            Point_2(6, 5), Point_2(4, 5));
   S.join (rect4);
 
   // Print the output.
