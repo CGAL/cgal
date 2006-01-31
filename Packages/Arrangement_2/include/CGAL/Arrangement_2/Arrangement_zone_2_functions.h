@@ -99,7 +99,9 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
     // In case we have just discovered an overlap, compute the overlapping
     // xone as well.
     if (! done && found_overlap)
+    {
       done = _zone_in_overlap ();
+    }
   }
 
   // Compute the zone of the curve (or what is remaining of it) in the
@@ -144,13 +146,13 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
         // Compute the overlapping subcurve to the right of curr_v.
         obj = _compute_next_intersection (intersect_he, false);
 
-	overlap_cv = object_cast<X_monotone_curve_2> (obj);
+        overlap_cv = object_cast<X_monotone_curve_2> (obj);
 
 	// Remove the overlap from the map.
 	_remove_next_intersection (intersect_he);
 
 	// Compute the overlap zone and continue to the end of the loop.
-	done = _zone_in_overlap ();
+        done = _zone_in_overlap ();
 	continue;
       }
     }
@@ -173,7 +175,9 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::compute_zone ()
     // In case we have just discovered an overlap, compute the overlapping
     // zone as well.
     if (! done && found_overlap)
+    {
       done = _zone_in_overlap();
+    }
   }
 
   // Clear the intersections map.
@@ -1050,9 +1054,21 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_face
     if (found_overlap && right_v == invalid_v)
     {
       // In case we have split the overlapping intersect_he, it now refers
-      // to the wrong halfedge. However, as inserted_he is directed to the
-      // right, the overlapping halfedge is the next one in the chain.
-      intersect_he = inserted_he->next();
+      // to the wrong halfedge. the overlapping edge is either the successor
+      // of the inserted halfedge or the predecessor of its twin, depending
+      // on which one of these halfedges lies to the right of the split point.
+      if (inserted_he->next()->direction() == SMALLER)
+      {
+        // The successor is directed to the right:
+        intersect_he = inserted_he->next();
+      }
+      else
+      {
+        // The predecessor is directed to the left:
+        CGAL_assertion (inserted_he->twin()->prev()->direction() == LARGER);
+
+        intersect_he = inserted_he->twin()->prev();
+      }
     }
 
     // The visitor has created an edge that corresponds to sub_cv1 and instered
