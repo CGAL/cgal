@@ -202,8 +202,8 @@ public:
     file->insertSeparator();
     file->insertItem("&Open DXF file", this, SLOT(open_file()),CTRL+Key_O);
     file->insertSeparator();
-    file->insertItem("&Save",this ,SLOT(save_file()),CTRL+Key_S);
-    file->insertItem("&Save as",this ,SLOT(save_file_as()));
+    //file->insertItem("&Save",this ,SLOT(save_file()),CTRL+Key_S);
+    //file->insertItem("&Save as",this ,SLOT(save_file_as()));
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
@@ -577,7 +577,7 @@ public slots:
     }
 
 
-    void save_file()
+    /*void save_file()
     {
         if(file_name==QString::null)
             save_file_as();
@@ -586,10 +586,10 @@ public slots:
             if(!write_to_file(file_name))
                 QMessageBox::warning( widget,"Save","Can't write to file");
         }
-    }
+    }*/
 
 
-    void save_file_as()
+    /*void save_file_as()
     {
         QString s = QFileDialog::getSaveFileName(
                     "./",
@@ -605,7 +605,7 @@ public slots:
             return ;
         }
         file_name=s;
-    }
+    }*/
   
         
     
