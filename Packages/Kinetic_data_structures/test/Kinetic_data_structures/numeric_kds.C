@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
 {
   unsigned int num_points=50;
   unsigned int degree =5;
-  if (argc==3) {
+  /*if (argc==3) {
     num_points= std::atoi(argv[1]);
     degree= std::atoi(argv[2]);
-  }
+  }*/
 
   bool error;
 
