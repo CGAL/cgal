@@ -519,8 +519,12 @@ private:
 
   bool is_valid() const
   {
-    if(! is_valid(m_arr))
+    if(!CGAL::is_valid(*m_arr))
       return false;
+
+    Compare_endpoints_xy_2 cmp_endpoints =
+      m_traits->compare_endpoints_xy_2_object();
+    Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
 
     for(Edge_const_iterator eci = m_arr->edges_begin();
         eci != m_arr->edges_end();
@@ -535,6 +539,12 @@ private:
       {
         return false;
       }
+      const X_monotone_curve_2&  cv = he->curve();
+      bool is_cont = he->face()->contained();
+      bool has_same_dir = (cmp_endpoints(cv) == he->direction());
+      if((is_cont && !has_same_dir) ||
+         (!is_cont && has_same_dir))
+        return false;
     }
     return true;
   }
