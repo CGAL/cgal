@@ -108,23 +108,44 @@ public:
 
   bool operator()(const Polygon_2& pgn)
   {
-    if(!is_closed(pgn))
+    bool _is_closed = is_closed(pgn);
+    CGAL_warning_msg(_is_closed, "The polygon's boundary is not closed.");
+    if(!_is_closed)
       return false;
-    if(!is_strictly_simple(pgn))
+
+    bool _had_valid_orientation = had_valid_orientation(pgn);
+    CGAL_warning_msg(_had_valid_orientation,
+                     "The polygon has a wrong orientation.");
+    if(!_had_valid_orientation)
       return false;
-    if(!had_valid_orientation(pgn))
-      return false;
+
+    bool _is_strictly_simple = is_strictly_simple(pgn);
+    CGAL_warning_msg(_is_strictly_simple,
+                     "The polygon is not strictly simple.");  
+    if(!_is_strictly_simple)
+      return false;   
+
     return true;
   }
 
   bool operator()(const Polygon_with_holes_2& pgn)
   {
-    if(!is_closed(pgn))
+    bool _is_closed = is_closed(pgn);
+    CGAL_warning_msg(_is_closed, "The polygon's boundary is not closed.");
+    if(!_is_closed)
       return false;
-    if(!is_simple(pgn))
+
+    bool _had_valid_orientation = had_valid_orientation(pgn);
+    CGAL_warning_msg(_had_valid_orientation,
+                     "The polygon has a wrong orientation.");
+    if(!_had_valid_orientation)
       return false;
-    if(!had_valid_orientation(pgn))
+
+    bool _is_simple = is_simple(pgn);
+    CGAL_warning_msg(_is_simple, "The polygon is not simple.");
+    if(!_is_simple)
       return false;
+   
     return true;
   }
 
