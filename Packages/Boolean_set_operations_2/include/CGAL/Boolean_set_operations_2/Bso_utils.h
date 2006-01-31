@@ -240,6 +240,7 @@ public:
 template < class Traits_>
 void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2& arr)
 {
+  CGAL_precondition(m_traits->is_valid_2_object()(pgn));
   typedef Arr_accessor<Arrangement_2>                  Arr_accessor;
 
   Arr_accessor  accessor(arr);
@@ -352,12 +353,14 @@ void General_polygon_set_2<Traits_>::insert(PolygonIter          p_begin,
   
   for( ; p_begin != p_end; ++p_begin)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*p_begin));
     _construct_curves(*p_begin, std::back_inserter(xcurve_list));
   }
 
   bool is_unbounded = false;
   for( ; pwh_begin != pwh_end; ++pwh_begin)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*pwh_begin));
     is_unbounded = (is_unbounded || pwh_begin->is_unbounded());
     _construct_curves(*pwh_begin, std::back_inserter(xcurve_list));
   }
@@ -381,6 +384,7 @@ void General_polygon_set_2<Traits_>::_insert(PolygonIter      p_begin,
 {  
   for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*pitr));
     this->_insert(*pitr, *m_arr);
   }
 }
@@ -399,6 +403,7 @@ void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
   bool is_unbounded = false;
   for( ; p_begin != p_end; ++p_begin)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*p_begin));
     is_unbounded = (is_unbounded || p_begin->is_unbounded());
     _construct_curves(*p_begin, std::back_inserter(xcurve_list));
 
@@ -422,6 +427,7 @@ void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
 template <class Traits_>
 void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
 {
+  CGAL_precondition(m_traits->is_valid_2_object()(pgn));
   typedef std::list<X_monotone_curve_2>                  XCurveList;
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
   typedef Gps_bfs_scanner<Arrangement_2, My_visitor>     Arr_bfs_scanner;

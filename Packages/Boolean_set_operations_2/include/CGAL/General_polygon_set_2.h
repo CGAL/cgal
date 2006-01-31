@@ -144,6 +144,7 @@ public:
     m_traits_owner(true),
     m_arr(new Arrangement_2(m_traits)) 
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _insert(pgn, *m_arr);
   }
 
@@ -152,6 +153,7 @@ public:
     m_traits_owner(true),
     m_arr(new Arrangement_2(m_traits))
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn_with_holes));
     _insert(pgn_with_holes, *m_arr);
   }
 
@@ -194,12 +196,14 @@ private:
   // insert a simple polygon
   void insert(const Polygon_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _insert(pgn, *m_arr);
   }
 
   // insert a polygon with holes
   void insert(const Polygon_with_holes_2& pgn_with_holes)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn_with_holes));
     _insert(pgn_with_holes, *m_arr);
   }
 
@@ -226,6 +230,7 @@ private:
    // test for intersection with a simple polygon
   bool do_intersect(const Polygon_2 &pgn) const
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     Self other(pgn);
     return (do_intersect(other));
   }
@@ -233,6 +238,7 @@ private:
   // test for intersection with a polygon with holes
   bool do_intersect(const Polygon_with_holes_2& pgn_with_holes) const
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn_with_holes));
     Self other(pgn_with_holes);
     return (do_intersect(other));
   }
@@ -274,12 +280,14 @@ private:
   // intersection with a simple polygon
   void intersection(const Polygon_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _intersection(pgn);
   }
 
   // intersection with a polygon with holes
   void intersection(const Polygon_with_holes_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _intersection(pgn);
   }
 
@@ -299,12 +307,14 @@ private:
   // join with a simple polygon
   void join(const Polygon_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _join(pgn);
   }
 
   // join with a polygon with holes
   void join(const Polygon_with_holes_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _join(pgn);
   }
 
@@ -324,12 +334,14 @@ private:
    // difference with a simple polygon
   void difference (const Polygon_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _difference(pgn);
   }
 
   // difference with a polygon with holes
   void difference (const Polygon_with_holes_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _difference(pgn);
   }
 
@@ -349,12 +361,14 @@ private:
   // symmetric_difference with a simple polygon
   void symmetric_difference(const Polygon_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _symmetric_difference(pgn);
   }
 
   // symmetric_difference with a polygon with holes
   void symmetric_difference(const Polygon_with_holes_2& pgn)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     _symmetric_difference(pgn);
   }
 
@@ -476,12 +490,14 @@ private:
 
   Oriented_side oriented_side(const Polygon_2& pgn) const
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     Self other(pgn);
     return (oriented_side(other));
   }
 
   Oriented_side oriented_side(const Polygon_with_holes_2& pgn) const
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(pgn));
     Self other(pgn);
     return (oriented_side(other));
   }
@@ -672,6 +688,7 @@ inline void intersection(InputIterator begin,
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr, *arr_vec[i]);
   }
@@ -696,6 +713,7 @@ inline void intersection(InputIterator begin,
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr, *arr_vec[i]);
   }
@@ -722,12 +740,14 @@ inline void intersection(InputIterator1 begin1,
  
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr1));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr1, *arr_vec[i]);
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr2));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr2, *arr_vec[i]);
   }
@@ -768,6 +788,7 @@ inline void symmetric_difference(InputIterator begin,
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr, *arr_vec[i]);
   }
@@ -792,6 +813,7 @@ inline void symmetric_difference(InputIterator begin,
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr, *arr_vec[i]);
   }
@@ -818,12 +840,14 @@ inline void symmetric_difference(InputIterator1 begin1,
  
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr1));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr1, *arr_vec[i]);
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
+    CGAL_precondition(m_traits->is_valid_2_object()(*itr2));
     arr_vec[i] = new Arrangement_2(m_traits);
     _insert(*itr2, *arr_vec[i]);
   }
