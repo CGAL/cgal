@@ -44,12 +44,13 @@ CORE_BEGIN_NAMESPACE
 /* this is the same as gmp_allocated_string in gmp-impl.h */
 struct _alloc_cstr {
   char *str;
+
   _alloc_cstr(char *s) {
     str = s;
   }
+
   ~_alloc_cstr() {
-    assert(false);
-    //__gmp_free_func(str, strlen(str)+1);
+    __gmp_free_func(str, strlen(str)+1);
   }
 };
 
