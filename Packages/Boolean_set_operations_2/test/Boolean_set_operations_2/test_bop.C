@@ -263,7 +263,7 @@ bool test(std::istream& inp,
  
   ps.intersection(ps1, ps2);
   ps.polygons_with_holes(oi);
-  if(! are_equal(intersection_res_from_file, temp_result))
+  if(!ps.is_valid() || ! are_equal(intersection_res_from_file, temp_result))
   {
     std::cout<<"intersection failed\n";
     return false;
@@ -272,6 +272,11 @@ bool test(std::istream& inp,
   ps.clear();
   ps.join(ps1, ps2);
   ps.polygons_with_holes(oi);
+  if(!ps.is_valid())
+  {
+    std::cout<<"join failed\n";
+    return false;
+  }
   if(intersect)
   {
     if(ps.number_of_polygons_with_holes() != 1)
@@ -316,7 +321,7 @@ bool test(std::istream& inp,
 
   ps.difference(ps1, ps2);
   ps.polygons_with_holes(oi);
-  if(! are_equal(diff1_res_from_file, temp_result))
+  if(!ps.is_valid() ||! are_equal(diff1_res_from_file, temp_result))
   {
     std::cout<<"diff1 failed\n";
     return false;
@@ -325,7 +330,7 @@ bool test(std::istream& inp,
 
   ps.difference(ps2, ps1);
   ps.polygons_with_holes(oi);
-  if(! are_equal(diff2_res_from_file, temp_result))
+  if(!ps.is_valid() ||! are_equal(diff2_res_from_file, temp_result))
   {
     std::cout<<"diff2 failed\n";
     return false;
@@ -334,7 +339,7 @@ bool test(std::istream& inp,
 
   ps.symmetric_difference(ps1, ps2);
   ps.polygons_with_holes(oi);
-  if(! are_equal(symm_diff_res_from_file, temp_result))
+  if(!ps.is_valid() ||! are_equal(symm_diff_res_from_file, temp_result))
   {
     std::cout<<"symmetric_difference failed\n";
     return false;
