@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
   bool error;
 
   do {
-    std::cout << "Using " << num_points  << " degree " << degree << " points.\n";
+    std::cout << "Using " << num_points  << " degree " << degree << " points."
+	<< std::endl;
     //CGAL_KDS_SET_LOG_LEVEL(CGAL::KDS::LOG_SOME);
     typedef CGAL::KDS::Inexact_simulation_traits_1 Tr;
     Tr tr;
