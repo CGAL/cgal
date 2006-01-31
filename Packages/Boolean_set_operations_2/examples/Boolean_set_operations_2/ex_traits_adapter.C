@@ -61,9 +61,9 @@ int main ()
 
   // Construct a polygon that corresponds to the ellipse: x^2 + 9y^2 - 9 = 0:
   Polygon_2 Q;
-  append_conic_arc (Q, Curve_2 (1, 9, 0, 0, 0, -9));
+  append_conic_arc (Q, Curve_2 (-1, -9, 0, 0, 0, 9));
 
-  // Compute the union of the two polygons.
+  // Compute the intersection of the two polygons.
   std::list<Polygon_with_holes_2> res;
   CGAL::intersection (P, Q, std::back_inserter(res));
 
