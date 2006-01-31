@@ -1,5 +1,6 @@
 #include <CGAL/basic.h>
 
+#ifdef CGAL_USE_QT
 #include <CGAL/KDS/Exact_simulation_traits_2.h>
 #include <CGAL/KDS/Delaunay_triangulation_2.h>
 #include <CGAL/KDS/Delaunay_triangulation_recent_edges_visitor_2.h>
@@ -95,3 +96,8 @@ int main(int argc, char *argv[])
 
     return qtsim->begin_event_loop();
 };
+#else
+int main(int, char *[]){
+  return 0;
+}
+#endif

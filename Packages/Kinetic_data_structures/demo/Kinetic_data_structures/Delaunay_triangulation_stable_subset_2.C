@@ -1,5 +1,5 @@
-#include <CGAL/basic.h>
-
+#include <CGAL/KDS/basic.h>
+#ifdef CGAL_USE_QT
 #include <CGAL/KDS/Delaunay_triangulation_2.h>
 #include <CGAL/KDS/Insert_event.h>
 #include <CGAL/Random.h>
@@ -99,3 +99,8 @@ int main(int argc, char *argv[])
     kdel->set_has_certificates(true);
     return qtsim->begin_event_loop();
 };
+#else
+int main(int, char *[]){
+  return 0;
+}
+#endif
