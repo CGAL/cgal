@@ -19,15 +19,21 @@ int main ()
 {
   // Construct the two input polygons.
   Polygon_2 P;
-  P.push_back (Point_2 (0, 0));       P.push_back (Point_2 (1.5, 1.5));
-  P.push_back (Point_2 (2.5, 0.5));   P.push_back (Point_2 (3.5, 1.5));
+  P.push_back (Point_2 (0, 0));
   P.push_back (Point_2 (5, 0));
+  P.push_back (Point_2 (3.5, 1.5));
+  P.push_back (Point_2 (2.5, 0.5));
+  P.push_back (Point_2 (1.5, 1.5));
+     
   std::cout << "P = "; print_polygon (P);
 
   Polygon_2 Q;
-  Q.push_back (Point_2 (0, 2));       Q.push_back (Point_2 (5, 2));
-  Q.push_back (Point_2 (3.5, 0.5));   Q.push_back (Point_2 (2.5, 1.5));
+  Q.push_back (Point_2 (0, 2));
   Q.push_back (Point_2 (1.5, 0.5));
+  Q.push_back (Point_2 (2.5, 1.5));
+  Q.push_back (Point_2 (3.5, 0.5));
+  Q.push_back (Point_2 (5, 2));
+     
   std::cout << "Q = "; print_polygon (Q);
 
   // Compute the union of P and Q.
