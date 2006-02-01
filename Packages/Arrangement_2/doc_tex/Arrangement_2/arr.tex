@@ -102,7 +102,7 @@ interior. See Figure~\ref{arr_fig:seg_dcel} for an illustration of the
 various \dcel\ features. For more details on the \dcel\ data structure
 see~\cite[Chapter~2]{bkos-cgaa-00}.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/arr_segs}
@@ -549,7 +549,7 @@ Section~\ref{arr_sec:gl_funcs} for more details and
 examples.\footnote{You may skip to Section~\ref{arr_sec:gl_funcs},
 and return to this subsection at a later point in time.}
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \begin{tabular}{ccc}
@@ -664,7 +664,7 @@ that has just been created.
 from $v_1$ to $v_2$.
 \end{itemize}
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_1}
@@ -725,7 +725,7 @@ containing an isolated vertex handle $v$ by calling \ccc{v->face()}.
 The function \ccc{remove_isolated_vertex(v)} receives a handle to
 an isolated vertex and removes it from the arrangement.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_2}
@@ -796,7 +796,7 @@ isolated vertices by supplying additional Boolean flags to
 \ccc{remove_edge()} indicating whether the source and the target vertices
 are to be removed should they become isolated.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \begin{tabular}{ccc}
@@ -924,7 +924,7 @@ correspond to the curve endpoints, and one that accepts a handle
 for one vertex and a predecessor halfedge around the other
 vertex.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_4}
@@ -1152,7 +1152,7 @@ selected point-location strategy.
 \label{arr_sssec:pl_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_5}
@@ -1477,7 +1477,7 @@ insertion operation may involve splitting curves.
 \label{arr_sssec:insert_ex}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_8}
@@ -1489,7 +1489,7 @@ insertion operation may involve splitting curves.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of five intersecting line segments, as
-constructed in \ccc{exincrementa_insertion.C} and
+constructed in \ccc{ex_incremental_insertion.C} and
 \ccc{ex_aggregated_insertion.C}. The segment
 endpoints are marked by black disks and the arrangement vertices
 that correspond to intersection points are marked by circles.
@@ -1585,7 +1585,7 @@ arrangement, where we denote the number of edges in the arrangement by $N$.
 As a rule of thumb, if $m = o(\sqrt{N})$, we insert the curves one by
 one. For larger input sets, we use the aggregated insertion procedures.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_10}
@@ -1811,9 +1811,62 @@ endpoints or from a kernel segment. Moreover, an
 \ccc{Kernel::Segment_2} object. The two types are thus fully
 convertible to one another.
 
+The \ccc{Arr_segment_traits_2<Kernel>} class is very efficient for
+maintaining arrangements of a large number of intersecting line segments,
+especially if it is instantiated with the appropriate geometric kernel.
+Using \ccc{Cartesian<Gmpq>} as the kernel type is generally a good choice;
+the coordinates of the segment endpoints are represented as exact rational
+numbers, and this ensures the robustness and correctness of any computation.
+Exact computations are of course less efficient, compared to machine-precision
+floating-point arithmetic, so constructing an arrangement using the
+\ccc{Cartesian<Gmpq>} kernel is several times slower in comparison to
+a \ccc{Simple_cartesian<Gmpq>} kernel. However, in the latter case the
+correctness of the computation results is not guaranteed.
+In many cases it is possible to use filtered computations and benefit from
+both approaches, namely achieve fast running times with guaranteed results.
+In case we handle a set of line segments that have no degeneracies, namely
+no two segments share a common endpoint, and no three segments intersect at
+a common point --- or alternatively, degeneracies exist but their number is
+relatively small --- then filtered computation incur only a minor overhead
+compared to the floating-point arithmetic, while ensuring the correctness of
+the computation results.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \begin{tabular}{cc}
+    \includegraphics{Arrangement_2/fig/fan_grids} &
+    \includegraphics{Arrangement_2/fig/Europe} \\
+  {\small (a)} & {\small (b)} \\
+  \end{tabular}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+%  <p><center>
+%    <img src="./fig/predef_kernels.gif" border=0 alt="insert">
+%  </center>
+\end{ccHtmlOnly}
+\caption{(a) An arrangement of $104$ line segments from the input file
+\ccc{fan_grids.dat}. (b) An arrangement of more than $3000$ interior
+disjoint line segments, defined in the input file \ccc{Europe.dat}.}
+\label{arr_fig:predef_kernels}
+\end{figure}
+
+In the following example we use the predefined
+\ccc{Exact_predicates_exact_constructions_kernel} for instantiating our
+segment-traits class. This kernel use interval arithmetic to filter the
+exact computations. The program reads a set of line segments with integer
+coordinates from a file and computes their arrangement. By default it
+opens the \ccc{fan_grids.dat} input-file, located in the examples folder,
+which contains $104$ line segments that form four ``fan-like'' grids and
+induce a dense arrangement, as illustrated in
+Figure~\ref{arr_fig:predef_kernels}(a):
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_predefined_kernel.C}
+
 The arrangement package also offers a simpler alternative
 segment-traits class. The traits class
-\ccc{Arr_non_caching_segment_basic_traits<Kernel>} models 
+\ccc{Arr_non_caching_segment_basic_traits_2<Kernel>} models 
 the \ccc{ArrangementBasicTraits_2} concept. It uses
 \ccc{Kernel::Point_2} as its point type and
 \ccc{Kernel::Segment_2} as its $x$-monotone curve type. As this
@@ -1825,13 +1878,28 @@ it performs no caching at all, but using this traits class may be
 preferable as it reduces the memory consumption a bit, since no extra
 data is stored with the line segments.
 
-The class \ccc{Arr_non_caching_segment_traits<Kernel>} inherits
-from \ccc{Arr_non_caching_segment_basic_traits<Kernel>} and
+The class \ccc{Arr_non_caching_segment_traits_2<Kernel>} inherits
+from \ccc{Arr_non_caching_segment_basic_traits_2<Kernel>} and
 extends it to be a model of the \ccc{ArrangementTraits_2} concept.
 It may thus be used to construct arrangement of intersecting line
 segments, but as explained above, for efficiency reasons it is
 recommended to use it only when the arrangement is very sparse and
 contains hardly any intersection points.
+
+In the following example we read an input file containing a set of
+line segments that are pairwise disjoint in their interior. As the
+segments do not intersect, no new points are constructed and we can
+instantiate the \ccc{Arr_non_caching_segment_traits_basic_2<Kernel>}
+class-template with the predefined
+\ccc{Exact_predicates_inexact_constructions_kernel}. Note that we use
+the \ccc{insert_non_intersecting_curves()} function to construct the
+arrangement.
+By default, the example opens the the \ccc{Europe.dat} input-file,
+located in the examples folder, which contains more than $3000$ line segments
+with floating-point coordinates that form the map of Europe, as depicted in
+Figure~\ref{arr_fig:predef_kernels}(b):
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_predefined_kernel_non_intersecting.C}
 
 \subsection{The Polyline-Traits Class}
 \label{arr_ssec:tr_polylines}
@@ -1868,7 +1936,7 @@ from \ccc{Curve_2}. The points in an $x$-monotone curve are
 always stored in lexicographically increasing order of their
 coordinates.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_12}
@@ -1933,7 +2001,7 @@ is {\em not} the same as the \ccc{Kernel::Point_2} type, which is capable of
 representing a point with rational coordinates. The coordinates of a
 point are represented using the nested \ccc{CoordNT} number-type.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_13}
@@ -2106,7 +2174,7 @@ also support basic access functions such as \ccc{source()},
 \subsubsection{Examples for Arrangements of Conics}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_14}
@@ -2198,7 +2266,7 @@ coefficients, specifying the polynomial $P$ alone (and $Q(x) =
 1$), or from two vectors of coefficients, specifying both $P$ and
 $Q$.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_16}
@@ -2303,7 +2371,7 @@ the consolidated set $S_1 \cup S_2$.
 \subsubsection{Examples}
 %~~~~~~~~~~~~~~~~~~~~~~~
 %
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_17}
@@ -2333,7 +2401,7 @@ corresponds to overlaps between red and blue line segments:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_consolidated_curve_data.C}
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_18}
@@ -2460,7 +2528,7 @@ classes, by inheriting from the base observer class and overriding
 the relevant notification functions, as required by their
 applications.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_19}
@@ -2541,7 +2609,7 @@ with another face). In such cases one can use an arrangement observer
 tailored for this task, which receives updates whenever a face is
 modified and sets its data field accordingly.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_20}
@@ -2689,7 +2757,7 @@ concept. The details of this concept are given in the reference manual.
 \label{arr_ssec:simp_ovl}
 %----------------------------------------
 %
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_22}
@@ -2877,7 +2945,7 @@ the details).
 \label{arr_ssec:arr_hist_ex}
 %---------------------------
 %
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_24}
@@ -2905,7 +2973,7 @@ on the resulting arrangement, using the auxiliary function
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_curve_history.C}
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_25}
@@ -3146,7 +3214,7 @@ kept synchronized with the number of vertices in the arrangement, so it
 should not be reused in calls to \bgl\ functions in case the arrangement
 is modified in between these calls.
 
-\begin{figure}[!htp]
+\begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_2/fig/ex_bgl}
