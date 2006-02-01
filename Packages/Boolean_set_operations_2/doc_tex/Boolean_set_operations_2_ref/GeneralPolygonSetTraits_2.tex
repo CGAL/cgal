@@ -81,7 +81,8 @@ $x$-monotone curves. It uses the operator\\
  \ccc{Boolean operator(Polygon_with_holes_2 & pgn_with_holes) ()} \\
  which returns \ccc{true} if the polygon with holes \ccc{pgn_with_holes} 
  is valid, and \ccc{false} otherwise.
- A polygon of type \ccc{Polygon_2} is valid, if it is strictly simple.
+ A polygon of type \ccc{Polygon_2} is valid, if it is strictly simple 
+ and oriented counterclockwise.
  A polygon of type \ccc{Polygon_with_holes_2} is valid, 
  if its outer boundary is simple and oriented counterclockwise, each one of 
  its holes is simple, oriented clockwise, and contained inside the outer 
@@ -97,7 +98,6 @@ $x$-monotone curves. It uses the operator\\
 
 \ccSeeAlso
 % ========
-\ccSeeAlso
   \ccc{ArrangementDirectionalXMonotoneTraits_2}\lcTex{(\ccRefPage{ArrangementDirectionalXMonotoneTraits_2})}
 
 \end{ccRefConcept}
