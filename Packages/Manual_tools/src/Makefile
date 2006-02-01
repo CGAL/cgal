@@ -238,7 +238,9 @@ clean :
 		lexer.C		\
 		syntax.output	\
 		syntax.tab.h	\
-		syntax.C
+		syntax.C	\
+		cc_remove_unwanted_links.C \
+		cc_anchor_filter.C
 
 cleanall : clean
 	-rm -f  $(PROGRAM_FILES)
