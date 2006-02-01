@@ -405,6 +405,7 @@ public:
     }  
   };  
   
+
   /*! Get a Construct_projected_boundary_curves_2 functor object. */
   Construct_projected_boundary_curves_2
   construct_projected_boundary_curves_2_object() const
@@ -590,6 +591,7 @@ public:
 
       #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
         // first try the cache:
+
         typename Surface_point_cache::iterator  cache_iter;
 //        Surface_point_pair  r1(const_cast<Xy_monotone_surface_3>(surf1), p);
 //        Surface_point_pair  pair2(const_cast<Xy_monotone_surface_3>(surf2), p);
@@ -678,6 +680,7 @@ public:
 
         parent->compare_on_cv_timer.start();
       }
+
       // first try the endpoints, if cannot be sure, use the mid point
       Comparison_result res;
       res = parent->compare_distance_to_envelope_3_object()(cv.left(), 
@@ -1027,10 +1030,17 @@ public:
     Plane_3 p2 = s2.plane();
     if  (p1 == p2 || p1 == p2.opposite())
     {
-      inter_overlap_timer.start();
-      Object res = intersection_on_plane_3(p1, s1, s2);
-      inter_overlap_timer.stop();
-      return res;
+      if (s1.is_vertical())
+      {    
+        inter_overlap_timer.start();
+        Object res = intersection_on_plane_3(p1, s1, s2);
+        inter_overlap_timer.stop();
+        return res;
+      }
+      else
+        // we don't care about overlap, because they are not passed to the
+        // algorithm anyway, so we save the costly computation
+        return Object();
     }
 
     // calculate intersection between a triangle and the other triangle's 
@@ -1518,6 +1528,7 @@ public:
     // now find the vertex of inter_seg which is the transformed envelope
     // point
 
+
     #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
       std::cout << "in envelope_point_of_vertical_surface - segment is " 
                 << plane.to_3d(k.construct_min_vertex_2_object()(inter_seg))
@@ -1785,6 +1796,7 @@ public:
                       const Point_3 &p1, const Point_3 &p2,
                       const Point_3 &p3) :
     Handle_for<Rep_type>(Rep_type(pl, p1, p2, p3))
+
   {}
 
   /*!
