@@ -124,12 +124,19 @@ public:
   {
     Polygon_2 pgn_boundary;
     General_polygon_set_2<Gps_traits>::construct_polygon(ccb, pgn_boundary, m_traits);
-    Halfedge_const_iterator he = ccb;
-    if(!he->twin()->face()->visited())
-      all_incident_faces(he->twin()->face());
+
+    Ccb_halfedge_const_circulator ccb_end = ccb;
+    do
+    {
+      Halfedge_const_iterator he = ccb;
+      if(!he->twin()->face()->visited())
+        all_incident_faces(he->twin()->face());
+      ++ccb;
+    }
+    while(ccb != ccb_end);
     Polygon_with_holes_2 pgn(pgn_boundary,
-                              m_pgn_holes.begin(),
-                              m_pgn_holes.end());
+                             m_pgn_holes.begin(),
+                             m_pgn_holes.end());
     *m_oi = pgn;
     ++m_oi;
     m_pgn_holes.clear();
