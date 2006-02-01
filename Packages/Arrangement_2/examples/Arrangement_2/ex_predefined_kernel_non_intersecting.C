@@ -3,7 +3,7 @@
 // predefined kernel with exact predicates.
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Arr_non_caching_segment_traits_2.h>
+#include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Timer.h>
 #include <list>
@@ -11,7 +11,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 typedef Kernel::FT                                            Number_type;
-typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>        Traits_2;
+typedef CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>  Traits_2;
 typedef Traits_2::Point_2                                     Point_2;
 typedef Traits_2::X_monotone_curve_2                          Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                         Arrangement_2;
@@ -19,8 +19,8 @@ typedef CGAL::Arrangement_2<Traits_2>                         Arrangement_2;
 int main (int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
-  // tilt_grid.dat file if no command-line parameters are given.
-  char   *filename = "tilt_grid.dat";
+  // Europe.dat file if no command-line parameters are given.
+  char   *filename = "Europe.dat";
 
   if (argc > 1)
     filename = argv[1];
@@ -35,7 +35,8 @@ int main (int argc, char **argv)
   }
 
   // Read the segments from the file.
-  // The input file format should be (all coordinate values are integers):
+  // The input file format should be (all coordinate values are double
+  // precision floating-point numbers):
   // <n>                                 // number of segments.
   // <sx_1> <sy_1>  <tx_1> <ty_1>        // source and target of segment #1.
   // <sx_2> <sy_2>  <tx_2> <ty_2>        // source and target of segment #2.
@@ -43,7 +44,7 @@ int main (int argc, char **argv)
   // <sx_n> <sy_n>  <tx_n> <ty_n>        // source and target of segment #n.
   int                   n;
   std::list<Segment_2>  segments;
-  int                   sx, sy, tx, ty;
+  double                sx, sy, tx, ty;
   int                   i;
 
   in_file >> n;
