@@ -35,9 +35,8 @@ struct Exist_sls_event_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::FT          FT ;
+  typedef typename Base::Edge        Edge ;
   typedef typename Base::Edge_triple Edge_triple ;
-  typedef typename Base::LineC2      LineC2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<1>    Arity ;
@@ -45,10 +44,10 @@ struct Exist_sls_event_2 : Sls_functor_base_2<K>
   Uncertain<bool> operator() ( Edge_triple const& aET ) const
   {
     CGAL_SSTRAITS_TRACE("Exist Event:" << aET);
-    LineC2 l0,l1,l2;
-    tie(l0,l1,l2) = toLineC2_triple(aET);
+    Edge e0,e1,e2;
+    tie(e0,e1,e2) = aET;
 
-    return exist_offset_lines_isec2(l0,l1,l2) ;
+    return exist_offset_lines_isec2(e0,e1,e2) ;
   }
 };
 
@@ -58,18 +57,17 @@ struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::FT          FT ;
+  typedef typename Base::Edge        Edge ;
   typedef typename Base::Edge_triple Edge_triple ;
-  typedef typename Base::LineC2      LineC2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
   Uncertain<Comparison_result> operator() ( Edge_triple const& aL, Edge_triple const& aR ) const
   {
-    LineC2 l0,l1,l2,r0,r1,r2;
-    tie(l0,l1,l2) = toLineC2_triple(aL);
-    tie(r0,r1,r2) = toLineC2_triple(aR);
+    Edge l0,l1,l2,r0,r1,r2;
+    tie(l0,l1,l2) = aL;
+    tie(r0,r1,r2) = aR;
 
     return compare_offset_lines_isec_timesC2(l0,l1,l2,r0,r1,r2) ;
   }
@@ -81,8 +79,8 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
   typedef Sls_functor_base_2<K> Base ;
 
   typedef typename Base::Point_2     Point_2 ;
+  typedef typename Base::Edge        Edge ;
   typedef typename Base::Edge_triple Edge_triple ;
-  typedef typename Base::LineC2      LineC2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<3>                 Arity ;
@@ -90,13 +88,13 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
   Uncertain<Comparison_result> operator() ( Point_2     const& aP
                                           , Edge_triple const& aL
                                           , Edge_triple const& aR
-                                         ) const
+                                          ) const
   {
-    LineC2 l0,l1,l2,r0,r1,r2;
-    tie(l0,l1,l2) = toLineC2_triple(aL);
-    tie(r0,r1,r2) = toLineC2_triple(aR);
+    Edge l0,l1,l2,r0,r1,r2;
+    tie(l0,l1,l2) = aL;
+    tie(r0,r1,r2) = aR;
 
-    return compare_offset_lines_isec_sdist_to_pointC2(toVertexC2(aP),l0,l1,l2,r0,r1,r2) ;
+    return compare_offset_lines_isec_sdist_to_pointC2(toVertex(aP),l0,l1,l2,r0,r1,r2) ;
   }
 
   Uncertain<Comparison_result> operator() ( Edge_triple const& aS
@@ -104,10 +102,10 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
                                           , Edge_triple const& aR
                                           ) const
   {
-    LineC2 s0,s1,s2,l0,l1,l2,r0,r1,r2;
-    tie(s0,s1,s2) = toLineC2_triple(aS);
-    tie(l0,l1,l2) = toLineC2_triple(aL);
-    tie(r0,r1,r2) = toLineC2_triple(aR);
+    Edge s0,s1,s2,l0,l1,l2,r0,r1,r2;
+    tie(s0,s1,s2) = aS;
+    tie(l0,l1,l2) = aL;
+    tie(r0,r1,r2) = aR;
 
     return compare_offset_lines_isec_sdist_to_pointC2(s0,s1,s2,l0,l1,l2,r0,r1,r2) ;
   }
@@ -119,17 +117,17 @@ struct Is_sls_event_inside_offset_zone_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
+  typedef typename Base::Edge        Edge ;
   typedef typename Base::Edge_triple Edge_triple ;
-  typedef typename Base::LineC2      LineC2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
   Uncertain<bool> operator() ( Edge_triple const& aE, Edge_triple const& aO ) const
   {
-    LineC2 e0,e1,e2,lo,co,ro ;
-    tie(e0,e1,e2) = toLineC2_triple(aE);
-    tie(lo,co,ro) = toLineC2_triple(aO);
+    Edge e0,e1,e2,lo,co,ro ;
+    tie(e0,e1,e2) = aE;
+    tie(lo,co,ro) = aO;
 
     return is_offset_lines_isec_inside_offset_zoneC2(e0,e1,e2,lo,co,ro) ;
    }
@@ -140,17 +138,17 @@ struct Are_sls_events_simultaneous_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
+  typedef typename Base::Edge        Edge ;
   typedef typename Base::Edge_triple Edge_triple ;
-  typedef typename Base::LineC2      LineC2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
   Uncertain<bool> operator() ( Edge_triple const& aE, Edge_triple const& aO ) const
   {
-    LineC2 l0,l1,l2,r0,r1,r2 ;
-    tie(l0,l1,l2) = toLineC2_triple(aE);
-    tie(r0,r1,r2) = toLineC2_triple(aO);
+    Edge l0,l1,l2,r0,r1,r2 ;
+    tie(l0,l1,l2) = aE;
+    tie(r0,r1,r2) = aO;
 
     return are_events_simultaneousC2(l0,l1,l2,r0,r1,r2);
    }
@@ -164,16 +162,16 @@ struct Construct_sls_event_time_and_point_2 : Sls_functor_base_2<K>
 
   typedef typename Base::FT          FT ;
   typedef typename Base::Point_2     Point_2 ;
+  typedef typename Base::Edge        Edge ;
   typedef typename Base::Edge_triple Edge_triple ;
-  typedef typename Base::LineC2      LineC2 ;
 
   typedef tuple<FT,Point_2> result_type ;
   typedef Arity_tag<1>      Arity ;
 
   tuple<FT,Point_2> operator() ( Edge_triple const& aE ) const
   {
-    LineC2 l0,l1,l2;
-    tie(l0,l1,l2) = toLineC2_triple(aE);
+    Edge l0,l1,l2;
+    tie(l0,l1,l2) = aE;
 
     FT tn,td;
     tie(tn,td) = compute_offset_lines_isec_timeC2(l0,l1,l2);
@@ -207,6 +205,7 @@ struct Straight_skeleton_builder_traits_2_base
   typedef typename K::Point_2 Point_2 ;
 
   typedef typename K::Left_turn_2 Left_turn_2 ;
+  typedef typename K::Collinear_2 Collinear_2 ;
 
   template<class F> F get() const { return F(); }
 } ;

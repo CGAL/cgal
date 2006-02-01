@@ -32,10 +32,10 @@ CGAL_BEGIN_NAMESPACE
 // PRECONDITION: There exist a positive distance et for which the offset triple intersect at a single point.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_against_isec_timeC2 ( FT                     t
-                                   , tuple<FT,FT,FT> const& e0
-                                   , tuple<FT,FT,FT> const& e1
-                                   , tuple<FT,FT,FT> const& e2
+compare_offset_against_isec_timeC2 ( FT                        t
+                                   , tuple<FT,FT,FT,FT> const& e0
+                                   , tuple<FT,FT,FT,FT> const& e1
+                                   , tuple<FT,FT,FT,FT> const& e2
                                    )
 {
   FT n, d ;

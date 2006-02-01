@@ -35,12 +35,12 @@ CGAL_BEGIN_NAMESPACE
 // The offsets at the given distance do intersect in a single point.
 
 template<class FT>
-tuple<FT,FT> construct_offset_pointC2 ( FT t, tuple<FT,FT,FT> const& l0, tuple<FT,FT,FT> const& l1)
+tuple<FT,FT> construct_offset_pointC2 ( FT t, tuple<FT,FT,FT,FT> const& l0, tuple<FT,FT,FT,FT> const& l1)
 {
   FT a0,b0,c0,a1,b1,c1 ;
 
-  tie(a0,b0,c0) = l0 ;
-  tie(a1,b1,c1) = l1 ;
+  tie(a0,b0,c0) = compute_normalized_line_ceoffC2(l0) ;
+  tie(a1,b1,c1) = compute_normalized_line_ceoffC2(l1) ;
 
   FT den = a1 * b0 - a0 * b1 ;
 

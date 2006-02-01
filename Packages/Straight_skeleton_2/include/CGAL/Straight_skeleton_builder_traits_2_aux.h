@@ -70,9 +70,37 @@ struct Is_filtering_kernel< Exact_predicates_inexact_constructions_kernel >
   typedef Tag_true type ;
 } ;
 
+
+template<class K>
+struct Sls_functor_base_2
+{
+  typedef typename K::FT      FT ;
+  typedef typename K::Point_2 Point_2 ;
+
+  typedef tuple<FT,FT>       Vertex ;
+  typedef tuple<FT,FT,FT,FT> Edge   ;
+
+  typedef tuple<Edge,Edge,Edge> Edge_triple ;
+
+  static Vertex toVertex( Point_2 const& p ) { return make_tuple(p.x(),p.y()) ; }
+
+  friend std::ostream& operator << ( std::ostream& os, Edge const& aEdge )
+  {
+    FT spx, spy, epx, epy ; tie(spx,spy,epx,epy) = aEdge ;
+    return os << '(' << spx << ',' << spy << ")->(" << epx << ',' << epy << ')';
+  }
+
+  friend std::ostream& operator << ( std::ostream& os, Edge_triple const& aTriple )
+  {
+    Edge e0,e1,e2 ; tie(e0,e1,e2) = aTriple ;
+    return os << "\ne0:" << e0 << "\ne1:" << e1 << "\ne2:" << e2 ;
+  }
+};
+
 template<class Converter>
 struct Edge_triple_converter_2 : Converter
 {
+
   typedef typename Converter::Source_kernel Source_kernel;
   typedef typename Converter::Target_kernel Target_kernel;
 
@@ -82,8 +110,8 @@ struct Edge_triple_converter_2 : Converter
   typedef typename Source_kernel::Point_2 Source_point_2 ;
   typedef typename Target_kernel::Point_2 Target_point_2 ;
 
-  typedef tuple<Source_point_2, Source_point_2> Source_edge ;
-  typedef tuple<Target_point_2, Target_point_2> Target_edge ;
+  typedef tuple<SFT,SFT,SFT,SFT> Source_edge ;
+  typedef tuple<TFT,TFT,TFT,TFT> Target_edge ;
 
   typedef tuple<Source_edge,Source_edge,Source_edge> Source_edge_triple ;
   typedef tuple<Target_edge,Target_edge,Target_edge> Target_edge_triple ;
@@ -96,73 +124,21 @@ struct Edge_triple_converter_2 : Converter
 
   Target_point_2 operator()( Source_point_2 const& p) const { return cvtp(p) ; }
 
-  Target_edge operator()( Source_edge const& e) const
-  {
-    Source_point_2 es, et ;
-    tie(es,et) = e ;
-
-    return make_tuple(cvtp(es), cvtp(et));
-  }
-
   Target_edge_triple  operator()( Source_edge_triple const& s) const
   {
     Source_edge s0,s1,s2;
     tie(s0,s1,s2) = s ;
 
-    Source_point_2 s0s, s0t, s1s, s1t, s2s, s2t ;
-    tie(s0s,s0t) = s0 ;
-    tie(s1s,s1t) = s1 ;
-    tie(s2s,s2t) = s2 ;
+    SFT s0sx, s0tx, s1sx, s1tx, s2sx, s2tx ;
+    SFT s0sy, s0ty, s1sy, s1ty, s2sy, s2ty ;
+    tie(s0sx,s0sy,s0tx,s0ty) = s0 ;
+    tie(s1sx,s1sy,s1tx,s1ty) = s1 ;
+    tie(s2sx,s2sy,s2tx,s2ty) = s2 ;
 
-    return make_tuple( make_tuple(cvtp(s0s), cvtp(s0t))
-                     , make_tuple(cvtp(s1s), cvtp(s1t))
-                     , make_tuple(cvtp(s2s), cvtp(s2t))
+    return make_tuple( make_tuple(cvtn(s0sx), cvtn(s0sy), cvtn(s0tx), cvtn(s0ty) )
+                     , make_tuple(cvtn(s1sx), cvtn(s1sy), cvtn(s1tx), cvtn(s1ty) )
+                     , make_tuple(cvtn(s2sx), cvtn(s2sy), cvtn(s2tx), cvtn(s2ty) )
                      ) ;
-  }
-};
-
-template<class K>
-struct Sls_functor_base_2
-{
-  protected :
-
-  typedef typename K::FT      FT ;
-  typedef typename K::Point_2 Point_2 ;
-
-  typedef tuple<FT,FT>    VertexC2 ;
-  typedef tuple<FT,FT,FT> LineC2   ;
-
-  typedef tuple<Point_2,Point_2> Edge ;
-
-  typedef tuple<Edge,Edge,Edge>       Edge_triple ;
-  typedef tuple<LineC2,LineC2,LineC2> LineC2_triple  ;
-
-  static VertexC2 toVertexC2( Point_2 const& p ) { return make_tuple(p.x(),p.y()) ; }
-
-  static LineC2 toLineC2( Edge const& aE )
-  {
-    Point_2 s,t ;
-    tie(s,t) = aE ;
-    return compute_normalized_line_ceoffC2(toVertexC2(s),toVertexC2(t));
-  }
-
-  static LineC2_triple toLineC2_triple( Edge_triple const& t )
-  {
-    Edge e0,e1,e2 ;
-    tie(e0,e1,e2) = t ;
-    return make_tuple(toLineC2(e0), toLineC2(e1), toLineC2(e2) ) ;
-  }
-
-  friend std::ostream& operator << ( std::ostream& os, Edge const& aEdge )
-  {
-    Point_2 sp, ep ; tie(sp,ep) = aEdge ;
-    return os << '(' << sp.x() << ',' << sp.y() << ")->(" << ep.x() << ',' << ep.y() << ')';
-  }
-
-  friend std::ostream& operator << ( std::ostream& os, Edge_triple const& aTriple )
-  {
-    Edge e0,e1,e2 ; tie(e0,e1,e2) = aTriple ;
-    return os << "\ne0:" << e0 << "\ne1:" << e1 << "\ne2:" << e2 ;
   }
 };
 

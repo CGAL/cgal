@@ -28,38 +28,75 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// Given 3 oriented lines in _normalized_ implicit form: l0, l1 and l2, returns true if there exist some
-// positive offset distance 't' for which the leftward-offsets of the lines intersect at a single point.
 template<class FT>
 Uncertain<bool>
-exist_offset_lines_isec2 ( tuple<FT,FT,FT> const& l0
-                         , tuple<FT,FT,FT> const& l1
-                         , tuple<FT,FT,FT> const& l2
+certified_collinearC2( FT const& px, FT const& py
+                     , FT const& qx, FT const& qy
+                     , FT const& rx, FT const& ry
+                     )
+{
+  return certified_is_equal( ( qx - px ) * ( ry - py )
+                           , ( rx - px ) * ( qy - py )
+                           );
+}
+
+template<class FT>
+Uncertain<bool>
+are_edges_collinear( tuple<FT,FT,FT,FT> const& e0, tuple<FT,FT,FT,FT> const& e1 )
+{
+  FT e0sx, e0sy, e0tx, e0ty ;
+  FT e1sx, e1sy, e1tx, e1ty ;
+  tie(e0sx,e0sy,e0tx,e0ty)=e0;
+  tie(e1sx,e1sy,e1tx,e1ty)=e1;
+  return certified_collinearC2(e0sx,e0sy,e0tx,e0ty,e1tx,e1ty);
+}
+
+// Given 3 oriented straight line segments: l0, l1, l2 [each segment is passed as (sx,sy,tx,ty)]
+// returns true if there exist some positive offset distance 't' for which the
+// leftward-offsets of their supporting lines intersect at a single point.
+// NOTE: This function allows l0 and l1 to be collinear if they are equally oriented.
+// This allows the algorithm to handle degenerate vertices (formed by 3 collinear consecutive points)
+template<class FT>
+Uncertain<bool>
+exist_offset_lines_isec2 ( tuple<FT,FT,FT,FT> const& l0
+                         , tuple<FT,FT,FT,FT> const& l1
+                         , tuple<FT,FT,FT,FT> const& l2
                          )
 {
-  FT n,d;
-  tie(n,d) = compute_offset_lines_isec_timeC2(l0,l1,l2);
+  Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(d) ;
+  Uncertain<bool> degenerate_case = are_edges_collinear(l0,l1);
 
-  if ( is_indeterminate(d_is_zero) )
+  if ( !is_indeterminate(degenerate_case) )
   {
-    CGAL_SSTRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." )
-    return Uncertain<bool>::indeterminate();
-  }
-  else if ( d_is_zero )
-  {
-    CGAL_SSTRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." )
-    return make_uncertain(false);
+    CGAL_SSTRAITS_TRACE( ( (bool)degenerate_case ? " collinear edges" : " non-collinear edges" ) ) ;
+
+    FT n,d;
+
+    tie(n,d) = compute_offset_lines_isec_timeC2(l0,l1,l2,CGAL_NTS inf(degenerate_case)) ;
+
+    Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(d) ;
+    if ( !is_indeterminate(d_is_zero) )
+    {
+      if ( !d_is_zero )
+      {
+        FT t = n/d ;
+        rResult = CGAL_NTS certified_is_finite(t) && CGAL_NTS certified_is_positive(t) ;
+        CGAL_SSTRAITS_TRACE("\nEvent time: " << t << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
+      }
+      else
+      {
+        CGAL_SSTRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." ) ;
+        rResult = make_uncertain(false);
+      }
+    }
+    else
+      CGAL_SSTRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." ) ;
   }
   else
-  {
-    FT t = n/d ;
-    bool rExist = CGAL_NTS certified_is_finite(t) && CGAL_NTS certified_is_positive(t) ;
+    CGAL_SSTRAITS_TRACE("\nEdges uncertainly collinear, event existance is indeterminate." ) ;
 
-    CGAL_SSTRAITS_TRACE("\nEvent time: " << t << ". Event " << ( rExist ? "exist." : "doesn't exist." ) )
-    return rExist ;
-  }
+  return rResult ;
 }
 
 // Given 2 triples of oriented lines in _normalized_ implicit form: (m0,m1,m2) and (n0,n1,n2), such that
@@ -69,27 +106,37 @@ exist_offset_lines_isec2 ( tuple<FT,FT,FT> const& l0
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_timesC2 ( tuple<FT,FT,FT> const& m0
-                                  , tuple<FT,FT,FT> const& m1
-                                  , tuple<FT,FT,FT> const& m2
-                                  , tuple<FT,FT,FT> const& n0
-                                  , tuple<FT,FT,FT> const& n1
-                                  , tuple<FT,FT,FT> const& n2
+compare_offset_lines_isec_timesC2 ( tuple<FT,FT,FT,FT> const& m0
+                                  , tuple<FT,FT,FT,FT> const& m1
+                                  , tuple<FT,FT,FT,FT> const& m2
+                                  , tuple<FT,FT,FT,FT> const& n0
+                                  , tuple<FT,FT,FT,FT> const& n1
+                                  , tuple<FT,FT,FT,FT> const& n2
                                   )
 {
-  FT mn, md, nn, nd ;
+  Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  tie(mn,md) = compute_offset_lines_isec_timeC2(m0,m1,m2);
-  tie(nn,nd) = compute_offset_lines_isec_timeC2(n0,n1,n2);
+  Uncertain<bool> degenerate_case_m = are_edges_collinear(m0,m1);
+  Uncertain<bool> degenerate_case_n = are_edges_collinear(n0,n1);
 
-  typedef Quotient<FT> QFT ;
-  QFT mt(mn,md);
-  QFT nt(nn,nd);
+  if ( !is_indeterminate(degenerate_case_m) && !is_indeterminate(degenerate_case_n) )
+  {
+    FT mn, md, nn, nd ;
 
-  CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;
-  CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;
+    tie(mn,md) = compute_offset_lines_isec_timeC2(m0,m1,m2,CGAL_NTS inf(degenerate_case_m) );
+    tie(nn,nd) = compute_offset_lines_isec_timeC2(n0,n1,n2,CGAL_NTS inf(degenerate_case_n) );
 
-  return CGAL_NTS certified_compare(mt,nt);
+    typedef Quotient<FT> QFT ;
+    QFT mt(mn,md);
+    QFT nt(nn,nd);
+
+    CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;
+    CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;
+
+    rResult = CGAL_NTS certified_compare(mt,nt);
+  }
+
+  return rResult ;
 
 }
 
@@ -100,13 +147,13 @@ compare_offset_lines_isec_timesC2 ( tuple<FT,FT,FT> const& m0
 // PRECONDITION: There exist single points at which the offset line triples 'm' and 'n' at 'mt' and 'nt' intersect.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>    const& p
-                                           , tuple<FT,FT,FT> const& m0
-                                           , tuple<FT,FT,FT> const& m1
-                                           , tuple<FT,FT,FT> const& m2
-                                           , tuple<FT,FT,FT> const& n0
-                                           , tuple<FT,FT,FT> const& n1
-                                           , tuple<FT,FT,FT> const& n2
+compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>       const& p
+                                           , tuple<FT,FT,FT,FT> const& m0
+                                           , tuple<FT,FT,FT,FT> const& m1
+                                           , tuple<FT,FT,FT,FT> const& m2
+                                           , tuple<FT,FT,FT,FT> const& n0
+                                           , tuple<FT,FT,FT,FT> const& n1
+                                           , tuple<FT,FT,FT,FT> const& n2
                                          )
 {
   FT dm = compute_offset_lines_isec_sdist_to_pointC2(p,m0,m1,m2);
@@ -122,15 +169,15 @@ compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>    const& p
 // PRECONDITION: There exist single points at which the offsets at 'st', 'mt' and 'nt' intersect.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT,FT> const& s0
-                                           , tuple<FT,FT,FT> const& s1
-                                           , tuple<FT,FT,FT> const& s2
-                                           , tuple<FT,FT,FT> const& m0
-                                           , tuple<FT,FT,FT> const& m1
-                                           , tuple<FT,FT,FT> const& m2
-                                           , tuple<FT,FT,FT> const& n0
-                                           , tuple<FT,FT,FT> const& n1
-                                           , tuple<FT,FT,FT> const& n2
+compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT,FT,FT> const& s0
+                                           , tuple<FT,FT,FT,FT> const& s1
+                                           , tuple<FT,FT,FT,FT> const& s2
+                                           , tuple<FT,FT,FT,FT> const& m0
+                                           , tuple<FT,FT,FT,FT> const& m1
+                                           , tuple<FT,FT,FT,FT> const& m2
+                                           , tuple<FT,FT,FT,FT> const& n0
+                                           , tuple<FT,FT,FT,FT> const& n1
+                                           , tuple<FT,FT,FT,FT> const& n2
                                            )
 {
   return compare_offset_lines_isec_sdist_to_pointC2(construct_offset_lines_isecC2(s0,s1,s2),m0,m1,m2,n0,n1,n2);
@@ -148,21 +195,21 @@ compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT,FT> const& s0
 //
 template<class FT>
 Uncertain<bool>
-is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT> const& e0
-                                          , tuple<FT,FT,FT> const& e1
-                                          , tuple<FT,FT,FT> const& e2
-                                          , tuple<FT,FT,FT> const& el
-                                          , tuple<FT,FT,FT> const& ec
-                                          , tuple<FT,FT,FT> const& er
+is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT,FT> const& e0
+                                          , tuple<FT,FT,FT,FT> const& e1
+                                          , tuple<FT,FT,FT,FT> const& e2
+                                          , tuple<FT,FT,FT,FT> const& el
+                                          , tuple<FT,FT,FT,FT> const& ec
+                                          , tuple<FT,FT,FT,FT> const& er
                                           )
 {
   Uncertain<bool> r = Uncertain<bool>::indeterminate();
 
   FT x, y, ela, elb, elc, eca, ecb, ecc, era, erb, erc ;
 
-  tie(ela,elb,elc) = el ;
-  tie(eca,ecb,ecc) = ec ;
-  tie(era,erb,erc) = er ;
+  tie(ela,elb,elc) = compute_normalized_line_ceoffC2(el) ;
+  tie(eca,ecb,ecc) = compute_normalized_line_ceoffC2(ec) ;
+  tie(era,erb,erc) = compute_normalized_line_ceoffC2(er) ;
 
   // Construct intersection point (x,y)
   tie(x,y) = construct_offset_lines_isecC2(e0,e1,e2);
@@ -225,12 +272,12 @@ is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT> const& e0
 
 template<class FT>
 Uncertain<bool>
-are_events_simultaneousC2 ( tuple<FT,FT,FT> const& l0
-                          , tuple<FT,FT,FT> const& l1
-                          , tuple<FT,FT,FT> const& l2
-                          , tuple<FT,FT,FT> const& r0
-                          , tuple<FT,FT,FT> const& r1
-                          , tuple<FT,FT,FT> const& r2
+are_events_simultaneousC2 ( tuple<FT,FT,FT,FT> const& l0
+                          , tuple<FT,FT,FT,FT> const& l1
+                          , tuple<FT,FT,FT,FT> const& l2
+                          , tuple<FT,FT,FT,FT> const& r0
+                          , tuple<FT,FT,FT,FT> const& r1
+                          , tuple<FT,FT,FT,FT> const& r2
                           )
 {
   Uncertain<bool> rResult = certified_is_equal(compare_offset_lines_isec_timesC2(l0,l1,l2,r0,r1,r2));

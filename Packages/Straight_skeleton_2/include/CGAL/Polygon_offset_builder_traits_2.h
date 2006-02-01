@@ -36,16 +36,16 @@ struct Compare_offset_against_event_time_2 : Sls_functor_base_2<K>
   typedef Sls_functor_base_2<K> Base ;
 
   typedef typename Base::FT          FT ;
+  typedef typename Base::Edge        Edge ;
   typedef typename Base::Edge_triple Edge_triple ;
-  typedef typename Base::LineC2      LineC2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
   Uncertain<Comparison_result> operator() ( FT aT, Edge_triple const& aE ) const
   {
-    LineC2 l0,l1,l2;
-    tie(l0,l1,l2) = toLineC2_triple(aE);
+    Edge l0,l1,l2;
+    tie(l0,l1,l2) = aE;
 
     return compare_offset_against_isec_timeC2(aT,l0,l1,l2) ;
   }
@@ -60,18 +60,14 @@ struct Construct_offset_point_2 : Sls_functor_base_2<K>
   typedef typename Base::FT        FT ;
   typedef typename Base::Point_2   Point_2 ;
   typedef typename Base::Edge      Edge ;
-  typedef typename Base::LineC2    LineC2 ;
 
   typedef Point_2      result_type ;
   typedef Arity_tag<3> Arity ;
 
   Point_2 operator() ( FT aT, Edge const& aE0, Edge const& aE1 ) const
   {
-    LineC2 l0 = toLineC2(aE0);
-    LineC2 l1 = toLineC2(aE1);
-
     FT x,y ;
-    tie(x,y) = construct_offset_pointC2(aT,l0,l1);
+    tie(x,y) = construct_offset_pointC2(aT,aE0,aE1);
 
     return Point_2(x,y) ;
   }

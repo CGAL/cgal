@@ -85,7 +85,7 @@ private :
 
   typedef tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
 
-  typedef tuple<Point_2,Point_2> Edge ;
+  typedef tuple<FT,FT,FT,FT> Edge ;
 
   typedef tuple<Edge,Edge,Edge> Edge_triple ;
 
@@ -259,41 +259,40 @@ private :
       , mNext(-1)
     {}
 
-    Vertex_handle mVertex ;
-    bool          mIsReflex ;
-    bool          mIsProcessed ;
-    bool          mIsExcluded ;
-    int           mPrev ;
-    int           mNext ;
-  } ;
-
-  struct HalfedgeWrapper
-  {
-    HalfedgeWrapper( Halfedge_handle aHalfedge)
-        : mHalfedge(aHalfedge), mPrevInCCB(-1), mNextInCCB(-1) {}
-
-    Halfedge_handle mHalfedge ;
-    int  mPrevInCCB ;
-    int  mNextInCCB ;
+    Vertex_handle   mVertex ;
+    bool            mIsReflex ;
+    bool            mIsProcessed ;
+    bool            mIsExcluded ;
+    int             mPrev ;
+    int             mNext ;
+    Halfedge_handle mDefiningBorderA ;
+    Halfedge_handle mDefiningBorderB ;
   } ;
 
 private :
 
-  static inline Halfedge_handle GetDefiningBorderA ( Vertex_handle aV )
+  inline Halfedge_handle GetDefiningBorderA ( Vertex_handle aV )
   {
-    return aV->halfedge()->face()->halfedge();
+    return mWrappedVertices[aV->id()].mDefiningBorderA ;
   }
-
-  static inline Halfedge_handle GetDefiningBorderB ( Vertex_handle aV )
+  inline Halfedge_handle GetDefiningBorderB ( Vertex_handle aV )
   {
-    return handle_assigned(aV->halfedge()->opposite()->prev()->face())
-      ? aV->halfedge()->opposite()->prev()->face()->halfedge()
-      : aV->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
+    return mWrappedVertices[aV->id()].mDefiningBorderB ;
+  }
+  inline void SetDefiningBorderA ( Vertex_handle aV, Halfedge_handle aH )
+  {
+    mWrappedVertices[aV->id()].mDefiningBorderA = aH ;
+  }
+  inline void SetDefiningBorderB ( Vertex_handle aV, Halfedge_handle aH )
+  {
+    mWrappedVertices[aV->id()].mDefiningBorderB = aH ;
   }
 
   static inline Edge GetEdge ( Halfedge_const_handle aH )
   {
-    return make_tuple(aH->opposite()->vertex()->point(),aH->vertex()->point());
+    Point_2 s = aH->opposite()->vertex()->point() ;
+    Point_2 t = aH->vertex()->point() ;
+    return make_tuple(s.x(),s.y(),t.x(),t.y());
   }
 
   static inline Edge_triple GetEdgeTriple ( Halfedge_const_handle aE0
@@ -317,6 +316,14 @@ private :
   Vertex_handle GetNextInLAV ( Vertex_handle aV )
   {
     return GetVertex ( mWrappedVertices[aV->id()].mNext ) ;
+  }
+
+  Vertex_handle GetNextInLAV_NonSkeleton ( Vertex_handle aV )
+  {
+    Vertex_handle lNext = GetNextInLAV(aV);
+    while ( lNext->is_skeleton() )
+      lNext = GetNextInLAV(lNext);
+    return lNext;
   }
 
   void SetPrevInLAV ( Vertex_handle aV, Vertex_handle aPrev )
@@ -352,26 +359,6 @@ private :
   bool IsProcessed ( Vertex_handle aVertex )
   {
     return mWrappedVertices[aVertex->id()].mIsProcessed ;
-  }
-
-  void SetPrevInCCB ( Halfedge_handle aBorder, int aIdx )
-  {
-    mWrappedHalfedges[aBorder->id()].mPrevInCCB = aIdx ;
-  }
-
-  void SetNextInCCB ( Halfedge_handle aBorder, int aIdx )
-  {
-    mWrappedHalfedges[aBorder->id()].mNextInCCB = aIdx ;
-  }
-
-  Halfedge_handle GetPrevInCCB ( Halfedge_handle aBorder )
-  {
-    return mBorderHalfedges[ mWrappedHalfedges[aBorder->id()].mPrevInCCB ] ;
-  }
-
-  Halfedge_handle GetNextInCCB ( Halfedge_handle aBorder )
-  {
-    return mBorderHalfedges[ mWrappedHalfedges[aBorder->id()].mNextInCCB ] ;
   }
 
   EventPtr PopEventFromPQ()
@@ -504,10 +491,10 @@ private :
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;
 
   void CollectSplitEvent( Vertex_handle    aNode
-                          ,Halfedge_handle  aReflexLBorder
-                          ,Halfedge_handle  aReflexRBorder
-                          ,Halfedge_handle  aOppositeBorder
-                          ,EventPtr_Vector& aCandidates
+                        , Halfedge_handle  aReflexLBorder
+                        , Halfedge_handle  aReflexRBorder
+                        , Halfedge_handle  aOppositeBorder
+                        , EventPtr_Vector& aCandidates
                         ) ;
 
   EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode ) ;
@@ -529,15 +516,20 @@ private :
   void CreateContourBisectors();
   void InitPhase();
 
+  bool SetupVertexEventNode( Vertex_handle   aNode
+                           , Halfedge_handle aDefiningBorderA
+                           , Halfedge_handle aDefiningBorderB
+                           );
+
   Vertex_handle LookupOnSLAV ( Halfedge_handle aOBorder, Event const& aEvent ) ;
 
   Vertex_handle      ConstructEdgeEventNode   ( EdgeEvent&   aEvent ) ;
   Vertex_handle_pair ConstructSplitEventNodes ( SplitEvent&  aEvent ) ;
   Vertex_handle_pair ConstructVertexEventNodes( VertexEvent& aEvent ) ;
 
-  void HandleEdgeEvent  ( EdgeEvent&   aEvent ) ;
-  void HandleSplitEvent ( SplitEvent&  aEvent ) ;
-  void HandleVertexEvent( VertexEvent& aEvent ) ;
+  void HandleEdgeEvent  ( EventPtr aEvent ) ;
+  void HandleSplitEvent ( EventPtr aEvent ) ;
+  void HandleVertexEvent( EventPtr aEvent ) ;
 
   void Propagate();
 
@@ -569,6 +561,7 @@ private:
   Traits mTraits ;
 
   typename Traits::Left_turn_2 Left_turn ;
+  typename Traits::Collinear_2 Collinear ;
 
 
   //Internal
@@ -577,11 +570,9 @@ private:
 
   typedef typename Halfedge_handle_vector::iterator Halfedge_handle_vector_iterator ;
 
-  std::vector<Vertex_handle>   mReflexVertices ;
   std::vector<VertexWrapper>   mWrappedVertices ;
-  std::vector<HalfedgeWrapper> mWrappedHalfedges ;
-  Halfedge_handle_vector       mBorderHalfedges ;
   Halfedge_handle_vector       mDanglingBisectors ;
+  Halfedge_handle_vector       mContourHalfedges ;
 
   EventPtr_Vector  mSplitEvents ;
   SplitNodesVector mSplitNodes ;

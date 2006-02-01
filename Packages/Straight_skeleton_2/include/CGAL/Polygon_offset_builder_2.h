@@ -58,7 +58,7 @@ private:
 
   typedef std::vector<Halfedge_const_handle> Halfedge_vector ;
 
-  typedef tuple<Point_2,Point_2> Edge ;
+  typedef tuple<FT,FT,FT,FT> Edge ;
 
   typedef tuple<Edge,Edge,Edge> Edge_triple ;
 
@@ -81,7 +81,9 @@ private:
 
   static inline Edge GetEdge ( Halfedge_const_handle aH )
   {
-    return make_tuple(aH->opposite()->vertex()->point(),aH->vertex()->point());
+    Point_2 s = aH->opposite()->vertex()->point() ;
+    Point_2 t = aH->vertex()->point() ;
+    return make_tuple(s.x(),s.y(),t.x(),t.y());
   }
 
   static inline Edge_triple GetEdgeTriple ( Halfedge_const_handle aE0

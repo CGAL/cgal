@@ -44,14 +44,39 @@ public:
       {
         if ( he == null_halfedge )
           break ;
+
         if ( he->is_bisector() )
         {
-          bool lOK =    he->vertex() != null_vertex
-                     && he->opposite() != null_halfedge
-                     && he->opposite()->vertex() != null_vertex ;
+          bool lVertexOK      = he->vertex() != null_vertex ;
+          bool lOppositeOK    = he->opposite() != null_halfedge ;
+          bool lOppVertexOK   = lOppositeOK && he->opposite()->vertex() != null_vertex ;
+          bool lVertexHeOK    = lVertexOK && he->vertex()->halfedge() != null_halfedge ;
+          bool lOppVertexHeOK = lOppVertexOK && he->opposite()->vertex()->halfedge() != null_halfedge ;
 
-          *widget << ( lOK ? (he->is_contour_bisector()? CGAL::GREEN : CGAL::BLUE ) : CGAL::YELLOW ) ;
-          *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
+          if ( lVertexOK && lOppVertexOK && lVertexHeOK && lOppVertexHeOK )
+          {
+            *widget << ( he->is_inner_bisector()? CGAL::BLUE : CGAL::GREEN ) ;
+            *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
+          }
+          else
+          {
+            int id       = he->id();
+            int oppid    = lOppositeOK ? he->opposite()->id() : -1 ;
+            int vid      = lVertexOK ? he->vertex()->id() : -1 ;
+            int oppvid   = lOppVertexOK ? he->opposite()->vertex()->id() : -1 ;
+            int vheid    = lVertexHeOK ? he->vertex()->halfedge()->id() : -1 ;
+            int oppvheid = lOppVertexHeOK ? he->opposite()->vertex()->halfedge()->id() : -1 ;
+
+            std::printf("B%d ill-connected:\n"
+                        "  Opposite: %d\n"
+                        "  Vertex: %d\n"
+                        "  Opposite Vertex: %d\n"
+                        "  Vertex Halfedge: %d\n"
+                        "  Opposite Vertex Halfedge: %d\n"
+                        , id, oppid, vid, oppvid, vheid, oppvheid
+                        ) ;
+          }
+
         }
         he = he->next();
       }

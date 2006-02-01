@@ -352,9 +352,9 @@ private slots:
       double w = lBbox.xmax() - lBbox.xmin();
       double h = lBbox.ymax() - lBbox.ymin();
       double s = std::sqrt(w*w+h*h);
-      double m = s * 0.05 ;
-      offset_val = m ;
-      offset_steps = 2 ;
+      double m = s * 0.01 ;
+      offset_val   = m ;
+      offset_steps = 30 ;
       CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
       if ( poly->orientation() != expected )
         poly->reverse_orientation();
@@ -541,10 +541,10 @@ private slots:
         double w = lBbox.xmax() - lBbox.xmin();
         double h = lBbox.ymax() - lBbox.ymin();
         double s = std::sqrt(w*w+h*h);
-        double m = s * 0.05 ;
+        double m = s * 0.01 ;
         widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
-        offset_val = m ;
-        offset_steps = 2 ;
+        offset_val   = m ;
+        offset_steps = 30 ;
       }
       CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
       if ( poly->orientation() != expected )
