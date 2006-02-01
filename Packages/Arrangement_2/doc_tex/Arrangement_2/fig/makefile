@@ -96,3 +96,9 @@ pdf :
 .SECONDARY: $(TARGET_PDFS:.pdf=.eps)
 
 LDIRT = tmp.pstex_t tmp.dvi tmp.aux tmp.log $(TARGET_PDFS:.pdf=.eps2) $(TARGET_PDFS:.pdf=.ps)
+
+fan_grids.gif: fan_grids.eps
+	convert -resize 137x137% -interlace Line -transparent White $< $@
+
+Europe.gif: Europe.eps
+	convert -resize 140x140% -interlace Line -transparent White $< $@
