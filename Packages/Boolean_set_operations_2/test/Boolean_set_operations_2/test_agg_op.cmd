@@ -14,3 +14,4 @@
 ./data/agg_op/test14.txt
 ./data/agg_op/test15.txt
 ./data/agg_op/test16.txt
+./data/agg_op/test17.txt
