@@ -17,34 +17,31 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BSO_DIFFERENCE_FUNCTOR
-#define BSO_DIFFERENCE_FUNCTOR
+#ifndef GPS_JOIN_FUNCTOR
+#define GPS_JOIN_FUNCTOR
 
-#include <CGAL/Boolean_set_operations_2/Bso_base_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_base_functor.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Arrangement_>
-class Bso_difference_functor : public Bso_base_functor<Arrangement_>
+class Gps_join_functor : public Gps_base_functor<Arrangement_>
 {
 public:
   typedef Arrangement_                                    Arrangement_2;
 
   typedef typename Arrangement_2::Face_const_handle       Face_const_handle;
   typedef typename Arrangement_2::Face_handle             Face_handle;
- 
-
 
   void create_face (Face_const_handle f1,
                     Face_const_handle f2,
                     Face_handle res_f)
   {
-     if(f1->contained() && !f2->contained())
-     {
-       res_f->set_contained(true);
-     }
+    if(f1->contained() || f2->contained())
+    {
+      res_f->set_contained(true);
+    }
   }
-
 };
 
 

@@ -17,15 +17,15 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BSO_INTERSECTION_FUNCTOR
-#define BSO_INTERSECTION_FUNCTOR
+#ifndef GPS_INTERSECTION_FUNCTOR
+#define GPS_INTERSECTION_FUNCTOR
 
-#include <CGAL/Boolean_set_operations_2/Bso_base_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_base_functor.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Arrangement_>
-class Bso_intersection_functor : public Bso_base_functor<Arrangement_>
+class Gps_intersection_functor : public Gps_base_functor<Arrangement_>
 {
 public:
 

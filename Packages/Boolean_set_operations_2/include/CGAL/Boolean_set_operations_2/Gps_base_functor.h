@@ -17,17 +17,18 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BSO_DO_INTERSECT_FUNCTOR
-#define BSO_DO_INTERSECT_FUNCTOR
+#ifndef GPS_BASE_FUNCTOR
+#define GPS_BASE_FUNCTOR
 
 CGAL_BEGIN_NAMESPACE
 
+
 template <class Arrangement_>
-class Bso_do_intersect_functor 
+class Gps_base_functor
 {
 public:
 
-  typedef Arrangement_                                    Arrangement_2;
+  typedef Arrangement_       Arrangement_2;
 
   typedef typename Arrangement_2::Face_const_handle       Face_const_handle;
   typedef typename Arrangement_2::Vertex_const_handle     Vertex_const_handle;
@@ -36,49 +37,33 @@ public:
   typedef typename Arrangement_2::Face_handle        Face_handle;
   typedef typename Arrangement_2::Halfedge_handle    Halfedge_handle;
   typedef typename Arrangement_2::Vertex_handle      Vertex_handle;
+  
 
-  // default constructor
-  Bso_do_intersect_functor() : m_found_reg_intersection(false),
-                               m_found_boudary_intersection(false)
-
-  {}
 
    void create_face (Face_const_handle f1,
                      Face_const_handle f2,
                      Face_handle res_f)
-  {
-    if(f1->contained() && f2->contained())
-      // found intersection
-      m_found_reg_intersection = true;    
-  }
-
-
-  void create_vertex(Vertex_const_handle v1,
-                     Vertex_const_handle v2,
-                     Vertex_handle  res_v)
-  {
-    m_found_boudary_intersection = true;
-  }
-
-  void create_vertex(Vertex_const_handle v1,
-                     Halfedge_const_handle h2,
-                     Vertex_handle res_v)
-  {
-    m_found_boudary_intersection = true;
-  }
-
-  void create_vertex(Halfedge_const_handle h1,
-                     Vertex_const_handle v2,
-                     Vertex_handle res_v)
-  {
-    m_found_boudary_intersection = true;
-  }
+  {}
 
   void create_vertex(Halfedge_const_handle h1,
                      Halfedge_const_handle h2,
                      Vertex_handle res_v)
   {}
 
+  void create_vertex(Vertex_const_handle v1,
+                     Vertex_const_handle v2,
+                     Vertex_handle  res_v)
+  {}
+
+  void create_vertex(Vertex_const_handle v1,
+                     Halfedge_const_handle h2,
+                     Vertex_handle res_v)
+  {}
+
+  void create_vertex(Halfedge_const_handle h1,
+                     Vertex_const_handle v2,
+                     Vertex_handle res_v)
+  {}
 
   void create_vertex(Face_const_handle f1,
                      Vertex_const_handle v2,
@@ -93,9 +78,7 @@ public:
   void create_edge(Halfedge_const_handle h1,
                    Halfedge_const_handle h2,
                    Halfedge_handle res_h)
-  {
-    m_found_boudary_intersection = true;
-  }
+  {}
 
   void create_edge(Halfedge_const_handle h1,
                    Face_const_handle f2,
@@ -107,21 +90,6 @@ public:
                    Halfedge_handle res_h)
   {}
 
-
-  bool found_reg_intersection() const
-  {
-    return m_found_reg_intersection;
-  }
-
-  bool found_boundary_intersection() const
-  {
-    return m_found_boudary_intersection;
-  }
-
-  protected:
-
-    bool m_found_reg_intersection;
-    bool m_found_boudary_intersection;
 };
 
 

@@ -20,12 +20,12 @@
 #ifndef GENERAL_POLYGON_SET_2_H
 #define GENERAL_POLYGON_SET_2_H
 
-#include <CGAL/Boolean_set_operations_2/Bso_dcel.h>
-#include <CGAL/Boolean_set_operations_2/Bso_do_intersect_functor.h>
-#include <CGAL/Boolean_set_operations_2/Bso_intersection_functor.h>
-#include <CGAL/Boolean_set_operations_2/Bso_join_functor.h>
-#include <CGAL/Boolean_set_operations_2/Bso_difference_functor.h>
-#include <CGAL/Boolean_set_operations_2/Bso_sym_diff_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_dcel.h>
+#include <CGAL/Boolean_set_operations_2/Gps_do_intersect_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_intersection_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_join_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_difference_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_sym_diff_functor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_merge.h>
 
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_simplifier.h>
@@ -52,7 +52,7 @@ public:
   typedef Traits_                                         Traits_2;
   typedef typename Traits_2::Polygon_2                    Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2         Polygon_with_holes_2;
-  typedef Arrangement_2<Traits_2, Bso_dcel<Traits_2> >    Arrangement_2;
+  typedef Arrangement_2<Traits_2, Gps_dcel<Traits_2> >    Arrangement_2;
   typedef std::size_t                                     Size;
 
 private:
@@ -254,7 +254,7 @@ private:
     
     Arrangement_2 res_arr;
 
-    Bso_do_intersect_functor<Arrangement_2>  func;
+    Gps_do_intersect_functor<Arrangement_2>  func;
     overlay(*m_arr, *(other.m_arr), res_arr, func);
     return func.found_reg_intersection();
   }
@@ -512,7 +512,7 @@ private:
     
     Arrangement_2 res_arr;
 
-    Bso_do_intersect_functor<Arrangement_2>  func;
+    Gps_do_intersect_functor<Arrangement_2>  func;
     overlay(*m_arr, *(other.m_arr), res_arr, func);
     if (func.found_reg_intersection())
       return ON_POSITIVE_SIDE;
@@ -986,7 +986,7 @@ bool _is_plane(const Polygon_with_holes_2& pgn) const
 void _intersection(const Arrangement_2& arr)
 {
    Arrangement_2* res_arr = new Arrangement_2(m_traits);
-   Bso_intersection_functor<Arrangement_2> func;
+   Gps_intersection_functor<Arrangement_2> func;
    overlay(*m_arr, arr, *res_arr, func);
    delete m_arr; // delete the previous arrangement
     
@@ -998,7 +998,7 @@ void _intersection(const Arrangement_2& arr1,
                    const Arrangement_2& arr2,
                    Arrangement_2& res) 
 {
-   Bso_intersection_functor<Arrangement_2> func;
+   Gps_intersection_functor<Arrangement_2> func;
    overlay(arr1, arr2, res, func);
    _remove_redundant_edges(&res);
 
@@ -1054,7 +1054,7 @@ void _intersection(const Polygon_& pgn)
  void _join(const Arrangement_2& arr)
 {
    Arrangement_2* res_arr = new Arrangement_2(m_traits);
-   Bso_join_functor<Arrangement_2> func;
+   Gps_join_functor<Arrangement_2> func;
    overlay(*m_arr, arr, *res_arr, func);
    delete m_arr; // delete the previous arrangement
     
@@ -1066,7 +1066,7 @@ void _join(const Arrangement_2& arr1,
            const Arrangement_2& arr2,
            Arrangement_2& res) 
 {
-   Bso_join_functor<Arrangement_2> func;
+   Gps_join_functor<Arrangement_2> func;
    overlay(arr1, arr2, res, func);
    _remove_redundant_edges(&res);
 
@@ -1125,7 +1125,7 @@ void _join(const Self& other)
 void _difference(const Arrangement_2& arr)
 {
    Arrangement_2* res_arr = new Arrangement_2(m_traits);
-   Bso_difference_functor<Arrangement_2> func;
+   Gps_difference_functor<Arrangement_2> func;
    overlay(*m_arr, arr, *res_arr, func);
    delete m_arr; // delete the previous arrangement
     
@@ -1138,7 +1138,7 @@ void _difference(const Arrangement_2& arr1,
                  const Arrangement_2& arr2,
                  Arrangement_2& res) 
 {
-   Bso_difference_functor<Arrangement_2> func;
+   Gps_difference_functor<Arrangement_2> func;
    overlay(arr1, arr2, res, func);
    _remove_redundant_edges(&res);
    _fix_curves_direction(res);
@@ -1201,7 +1201,7 @@ void _difference(const Self& other)
 void _symmetric_difference(const Arrangement_2& arr)
 {
    Arrangement_2* res_arr = new Arrangement_2(m_traits);
-   Bso_sym_diff_functor<Arrangement_2> func;
+   Gps_sym_diff_functor<Arrangement_2> func;
    overlay(*m_arr, arr, *res_arr, func);
    delete m_arr; // delete the previous arrangement
     
@@ -1214,7 +1214,7 @@ void _symmetric_difference(const Arrangement_2& arr1,
                            const Arrangement_2& arr2,
                            Arrangement_2& res) 
 {
-   Bso_sym_diff_functor<Arrangement_2> func;
+   Gps_sym_diff_functor<Arrangement_2> func;
    overlay(arr1, arr2, res, func);
    _remove_redundant_edges(&res);
    _fix_curves_direction(res);
@@ -1284,7 +1284,7 @@ void _symmetric_difference(const Self& other)
 
 };
 
-#include <CGAL/Boolean_set_operations_2/Bso_utils.h>
+#include <CGAL/Boolean_set_operations_2/Gps_utils.h>
 
 CGAL_END_NAMESPACE
 

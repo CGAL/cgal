@@ -17,15 +17,15 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BSO_SYM_DIFF_FUNCTOR
-#define BSO_SYM_DIFF_FUNCTOR
+#ifndef GPS_SYM_DIFF_FUNCTOR
+#define GPS_SYM_DIFF_FUNCTOR
 
-#include <CGAL/Boolean_set_operations_2/Bso_base_functor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_base_functor.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Arrangement_>
-class Bso_sym_diff_functor : public Bso_base_functor<Arrangement_>
+class Gps_sym_diff_functor : public Gps_base_functor<Arrangement_>
 {
 public:
   typedef Arrangement_                                    Arrangement_2;

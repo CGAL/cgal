@@ -17,15 +17,15 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef BOPS_DCEL
-#define BOPS_DCEL
+#ifndef GPS_DCEL_H
+#define GPS_DCEL_H
 
 #include <CGAL/Arr_default_dcel.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
-class Bso_face : public Arr_face_base
+class Gps_face : public Arr_face_base
 {
   protected:
   mutable char m_info;
@@ -41,7 +41,7 @@ public:
 
   
   //Constructor
-  Bso_face() : Arr_face_base(),
+  Gps_face() : Arr_face_base(),
                m_info(0)
   {}
 
@@ -50,7 +50,7 @@ public:
   {
     Arr_face_base::assign (f);
 
-    const Bso_face&  ex_f = static_cast<const Bso_face&>(f);
+    const Gps_face&  ex_f = static_cast<const Gps_face&>(f);
     m_info = ex_f.m_info;
   }
   
@@ -84,15 +84,15 @@ public:
 
 
 template <class Traits_>
-class Bso_dcel :
+class Gps_dcel :
   public Arr_dcel_base<Arr_vertex_base<typename Traits_::Point_2>,
                        Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
-                       Bso_face>
+                       Gps_face>
 {
 public:
 
   /*! Default constructor. */
-  Bso_dcel()
+  Gps_dcel()
   {}
 };
 
