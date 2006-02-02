@@ -7,81 +7,54 @@
 
 #include <CGAL/copy_n.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/point_generators_2.h>
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  K;
-typedef K::Point_2           Point_2;
-typedef K::Triangle_2        Triangle_2;
-typedef K::Line_2            Line_2;
-typedef K::Point_3           Point_3;
+typedef CGAL::Cartesian<double> Kernel;
+typedef Kernel::FT FT;
 
-#include "pca_utils.h"
+// 2D types
+typedef Kernel::Line_2 Line_2;
+typedef Kernel::Point_2 Point_2;
+typedef Kernel::Triangle_2 Triangle_2;
 
+// 3D types
+typedef Kernel::Line_3 Line_3;
+typedef Kernel::Point_3 Point_3;
+typedef Kernel::Triangle_3 Triangle_3;
 
-void test_2_point_set(const unsigned int nb_points,
-                      const FT epsilon)
+void test_2_point_set(const unsigned int nb_points)
 {
   std::cout << "2D: fit a line to a point set" << std::endl;
 
-  // create random points nearby a segment
+  // create random points on a horizontal segment
   std::vector<Point_2> points;
-  Point_2 p = random_point_2();
-  Point_2 q = random_point_2();
+  Point_2 p = Point(0.0,0.0);
+  Point_2 q = Point(1.0,0.0);
   std::cout << "  generate " << nb_points << 
-       " 2D random points on a segment...";
+       " 2D random points on a unit horizontal segment...";
   points_on_segment_2(p,q,nb_points,std::back_inserter(points));
-  perturb_points_2(points.begin(),points.end(),epsilon);
   std::cout << "done" << std::endl;
 
   // fit a line
   std::cout << "  fit a 2D line...";
   Line_2 line;
-  Point_2 centroid;
-  FT quality =
-    linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid);
+  FT quality = linear_least_squares_fitting_2(points.begin(),points.end(),line);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
-  // dump to ps
-  std::cout << "  dump to ps...";
-  dump_ps("test_2d_points.ps",points,line);
-  std::cout << "done" << std::endl;
-
-  std::vector<Triangle_2> triangles;
+  // TODO: check fitting line is ~horizontal
+  if(!horizontal)
+    exit(1); // failure
 }
 
-void test_2_triangle_set(const unsigned int nb_triangles,
-                         const FT epsilon)
-{
-  std::cout << "2D: fit a line to a triangle set" << std::endl;
-
-  // create 2D triangles
-  std::vector<Triangle_2> triangles;
-
-  std::cout << "  generate 2D triangles...";
-  Point_2 a(0.2,0.2);
-  Point_2 b(0.8,0.2);
-  Point_2 c(0.8,0.4);
-  Point_2 d(0.2,0.4);
-  triangles.push_back(Triangle_2(a,b,c));
-  triangles.push_back(Triangle_2(a,c,d));
-  std::cout << "done" << std::endl;
-
-  // fit a line
-  std::cout << "  fit a 2D line...";
-  Line_2 line;
-  FT quality = linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line);
-  std::cout << "done (quality: " << quality << ")" << std::endl;
-
-  // dump to ps
-  std::cout << "  dump to ps...";
-  dump_ps("test_2d_triangles.ps",triangles,line);
-  std::cout << "done" << std::endl;
-}
 
 int main()
 {
-  test_2_point_set(500,0.05);
-  test_2_triangle_set(100,0.01);
-  return 0;
+  std::cout << "Test linear_least_squares_fitting"  << std::endl;
+
+  test_2D_point_set(100);
+  test_3D_point_set(100);
+  // test_3D_triangle_set(100);
+
+  return 0; // success
 }

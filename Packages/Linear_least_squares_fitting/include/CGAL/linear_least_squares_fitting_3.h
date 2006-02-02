@@ -353,9 +353,8 @@ linear_least_squares_fitting_3(InputIterator first,
   return CGAL::linear_least_squares_fitting_3(first,beyond,plane,K());
 }
 
-// fit line
-
 /*
+// fit line
 
 template < typename InputIterator, 
            typename K >
@@ -418,7 +417,6 @@ linear_least_squares_fitting_3(InputIterator first,
   return CGAL::linear_least_squares_fitting_3(first,beyond,line,K());
 }
 */
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_3_H

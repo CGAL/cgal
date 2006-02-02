@@ -239,7 +239,7 @@ void CMeshDoc::OnFitLine()
                                  m_points.end(),
                                  m_fitting_line,
                                  m_centroid);
-                                 */
+    */                             
   UpdateAllViews(NULL);
 }
 

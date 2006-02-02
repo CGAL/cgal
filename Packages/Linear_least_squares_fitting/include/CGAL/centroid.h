@@ -121,6 +121,39 @@ centroid(InputIterator begin,
   return ORIGIN + v / sum_areas;
 } // end centroid of a 2D triangle set
 
+// computes the centroid of a 3D triangle set
+// takes an iterator range over K::Triangle_2
+template < typename InputIterator, 
+           typename K >
+typename K::Point_3
+centroid(InputIterator begin, 
+         InputIterator end, 
+         const K& k,
+         const typename K::Triangle_3*)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Triangle_3 Triangle;
+
+  CGAL_precondition(begin != end);
+
+  Vector v = NULL_VECTOR;
+  FT sum_areas = 0;
+  for(InputIterator it = begin;
+      it != end;
+      it++)
+  {
+    const Triangle& triangle = *it;
+    FT unsigned_area = std::sqrt(triangle.squared_area());
+    Point c = K().construct_centroid_3_object()(triangle[0],triangle[1],triangle[2]);
+    v = v + unsigned_area * (c - ORIGIN);
+    sum_areas += unsigned_area;
+  }
+  CGAL_assertion(sum_areas != 0.0);
+  return ORIGIN + v / sum_areas;
+} // end centroid of a 3D triangle set
+
 } // namespace CGALi
 
 // computes the centroid of a set of kernel objects
