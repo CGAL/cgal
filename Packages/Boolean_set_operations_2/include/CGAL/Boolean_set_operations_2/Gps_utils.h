@@ -187,24 +187,36 @@ public:
       while(ccb_circ != ccb_end);
     }
 
-    Hole_const_iterator hit;
-    for(hit = f->holes_begin(); hit != f->holes_end(); ++hit)
+    if(f->contained())
     {
-      Ccb_halfedge_const_circulator ccb_of_hole = *hit;
-      Halfedge_const_iterator he = ccb_of_hole;
-      if(is_single_face(ccb_of_hole))
+      Hole_const_iterator hit;
+      for(hit = f->holes_begin(); hit != f->holes_end(); ++hit)
       {
-        if(!he->twin()->face()->contained())
+        Ccb_halfedge_const_circulator ccb_of_hole = *hit;
+        Halfedge_const_iterator he = ccb_of_hole;
+        if(is_single_face(ccb_of_hole))
         {
+          CGAL_assertion(!he->twin()->face()->contained());
+         
           m_pgn_holes.push_back(Polygon_2());
           General_polygon_set_2<Gps_traits>::construct_polygon
             (he->twin()->face()->outer_ccb(), m_pgn_holes.back(), m_traits);
           m_holes_q.push(he->twin()->face());
+         
+        }
+        else
+        {
+          Ccb_halfedge_const_circulator ccb_end = ccb_of_hole;
+          do
+          {
+            Halfedge_const_iterator he = ccb_of_hole;
+            if(!he->twin()->face()->visited())
+              all_incident_faces(he->twin()->face());
+            ++ccb_of_hole;
+          }
+          while(ccb_of_hole != ccb_end);
         }
       }
-      else
-        if(!he->twin()->face()->visited())
-          all_incident_faces(he->twin()->face());
     }
   }
 
