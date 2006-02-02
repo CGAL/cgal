@@ -40,19 +40,6 @@
 
 CORE_BEGIN_NAMESPACE
 
-/**************** Auxiliary classes ****************/
-/* this is the same as gmp_allocated_string in gmp-impl.h */
-struct _alloc_cstr {
-  char *str;
-
-  _alloc_cstr(char *s) {
-    str = s;
-  }
-
-  ~_alloc_cstr() {
-    __gmp_free_func(str, strlen(str)+1);
-  }
-};
 
 class BigIntRep : public RCRepImpl<BigIntRep> {
 public:
@@ -286,8 +273,12 @@ public:
   }
   /// convert to <tt>std::string</tt>
   std::string get_str(int base = 10) const {
-    _alloc_cstr t(mpz_get_str(0, base, get_mp()));
-    return std::string(t.str);
+    int n = mpz_sizeinbase (get_mp(), base) + 2;
+    char *buffer = new char[n];
+    mpz_get_str(buffer, base, get_mp());
+    std::string result(buffer);
+    delete [] buffer;
+    return result;
   }
   //@}
 
