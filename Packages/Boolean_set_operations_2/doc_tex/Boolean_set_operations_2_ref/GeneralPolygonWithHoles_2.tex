@@ -41,24 +41,24 @@ the holes.
 \ccConstructor{template <class InputIterator>
 GeneralPolygonWithHoles_2(General_polygon_2 & outer,
                           InputIterator begin, InputIterator end);}
-{constructs a general polygon with holes using a given general polygon
-as the outer boundary and a given range of holes. The holes must be
-contained inside the outer boundary, and the outer boundary and the outer 
-boundary of the holes must be pairwise disjoint, except perhaps at the 
-vertices.}
+{constructs a general polygon with holes using a given general polygon \ccc{outer}
+as the outer boundary and a given range of holes. If \ccc{outer} is an empty
+general polygon, then an unbounded polygon with holes will be created. The holes must be
+contained inside the outer boundary, and the polygons representing the holes 
+must be strictly simple and pairwise disjoint, except perhaps at the vertices.}
 
 \ccPredicates
 % ===========
 \ccMethod{bool is_unbounded();}
-{returns \ccc{true} if the outer boundary exists, and \ccc{false}
+{returns \ccc{true} if the outer boundary is empty, and \ccc{false}
 otherwise.}
 
 \ccAccessFunctions
 % ================
 
 \ccMethod{const General_polygon_2 & outer_boundary() const;}
-{returns the general polygon that represents the outer boundary.
-\ccPrecond{The polygon must not be unbounded.}}
+{returns the general polygon that represents the outer boundary. }
+
 
 \ccMethod{Hole_const_iterator holes_begin() const;}
 {returns the begin iterator of the holes.}
