@@ -108,7 +108,7 @@ void eigen_symmetric(const FT *mat,
           
           FT x;
           if(delta == 0.0)
-            x = - PI/4 ; 
+            x = - CGAL_PI/4 ; 
           else 
             x = - atan( (a_lm+a_lm) / delta ) / 2.0;
 
