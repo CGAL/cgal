@@ -102,11 +102,11 @@ their endpoints are representable as \ccc{Point_2} objects.
 
 \ccNestedType{Equal_2}
 {provides the operators~: \\
- \ccc{Comparison_result operator() (Point_2 p1, Point_2 p2)} \\
+ \ccc{bool operator() (Point_2 p1, Point_2 p2)} \\
  which determines whether \ccc{p1} and \ccc{p2} are geometrically
  equivalent; and~: \\
- \ccc{Comparison_result operator() (X_monotone_curve_2 c1,
-                                    X_monotone_curve_2 c2)} \\
+ \ccc{bool operator() (X_monotone_curve_2 c1,
+                       X_monotone_curve_2 c2)} \\
  which determines whether \ccc{c1} and \ccc{c2} are geometrically equivalent
  (have the same graph).}
 
