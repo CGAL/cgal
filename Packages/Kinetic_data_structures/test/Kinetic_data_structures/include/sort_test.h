@@ -3,7 +3,7 @@
 #include <CGAL/KDS/Sort.h>
 
 template <class Traits>
-bool sort_test(Traits &tr)
+bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infinity())
 {
   std::string etag="WARNING: ";
   bool eret=false;
@@ -21,6 +21,10 @@ bool sort_test(Traits &tr)
   while (tr.simulator_pointer()->next_event_time() != tr.simulator_pointer()->end_time()) {
     //std::cout << *tr.simulator_pointer() << std::endl;
     tr.simulator_pointer()->set_current_event_number(tr.simulator_pointer()->current_event_number()+1);
+    if (tr.simulator_pointer()->current_event_number() > max_events){
+      std::cerr << "ERROR too many events" << std::endl;
+      std::cerr << *tr.active_objects_table_pointer() << std::endl;
+    }
   }
 
   //#ifdef _MSC_VER

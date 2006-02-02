@@ -8,6 +8,7 @@ bool cgal_check_exact_defined_externally;
 #include <CGAL/KDS/Insert_event.h>
 #include <CGAL/KDS/Inexact_simulation_traits_1.h>
 #include <cstdlib>
+#include <sstream>
 #include "include/sort_test.h"
 
 int main(int argc, char *argv[])
@@ -38,12 +39,18 @@ int main(int argc, char *argv[])
 	coefs.push_back(static_cast<double>(std::rand())
 			/static_cast<double>(RAND_MAX));
       }
+      // make sure output is exact
+      MP mp(Tr::Function_kernel::Function(coefs.begin(),coefs.end()));
+      std::ostringstream oss;
+      oss << mp;
+      std::istringstream iss;
+      iss >> mp;
       tr.simulator_pointer()->new_event(Time(i/100.0), 
-					MOI(MP(Tr::Function_kernel::Function(coefs.begin(),coefs.end())),
+					MOI(mp,
 					    tr.active_objects_table_pointer()));
     }
 
-    error= sort_test<Tr>(tr);
+    error= sort_test<Tr>(tr, 3000);
   } while (false);
 
 
