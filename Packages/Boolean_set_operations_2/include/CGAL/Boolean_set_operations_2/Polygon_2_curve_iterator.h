@@ -137,9 +137,9 @@ public:
       return Self(m_pgn, m_curr_edge - n);
     }
 
-    difference_type operator-(const Self& a) 
+    difference_type operator-(const Self& a) const
     {
-      return m_curr_edge - a.m_curr_edge;
+      return (const_cast<Edge_const_iterator&>(m_curr_edge) - a.m_curr_edge);
     }
 
     X_monotone_curve_2 operator[](int n) 
