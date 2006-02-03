@@ -308,7 +308,7 @@ public:
     return mpq_set_str(get_mp(), s, base);
   }
   /// convert to <tt>std::string</tt>
-  std::string get_str(int base Bi= 10) const {
+  std::string get_str(int base = 10) const {
     int n = mpz_sizeinbase(mpq_numref(get_mp()), base) + mpz_sizeinbase(mpq_denref(get_mp()), base)+ 3;
     char *buffer = new char[n];
     mpq_get_str(buffer, base, get_mp());
