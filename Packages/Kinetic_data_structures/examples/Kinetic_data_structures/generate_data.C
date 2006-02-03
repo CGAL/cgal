@@ -39,11 +39,12 @@ int main(int argc, char *argv[])
     int n=10;
     int d=2;
     bool threed=false;
-    bool print_help=false;
     bool inexact=true;
     bool weighted=false;
 
 #if 0
+    bool print_help=false;
+
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
         ("help", boost::program_options::bool_switch(&print_help), "produce help message")

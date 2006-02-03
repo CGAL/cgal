@@ -8,6 +8,7 @@ public:
 
   struct Listener_interface
   {
+  public:
     typedef enum Notification_type {DATA_CHANGED}
       Notification_type;
     typedef Notifier::Pointer Notifier_pointer;
