@@ -125,9 +125,7 @@ namespace CGAL {
                                            Root_for_circles_2_2;
 
 	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
-
-            return Root_for_circles_2_2(a1, make_root_of_2(FT(1), FT(0),
-                                   -square(c.b()), c.b()<0));
+            return Root_for_circles_2_2(a1, c.b());
   }
 
   template <class AK, class OutputIterator>
@@ -142,10 +140,8 @@ namespace CGAL {
 	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
 	    Root_of_2 a2= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
 
-            *res++ =  Root_for_circles_2_2(a1, make_root_of_2(FT(1), FT(0),
-							      -square(c.b()), c.b()<0));
-	    *res++ =  Root_for_circles_2_2(a2, make_root_of_2(FT(1), FT(0),
-							      -square(c.b()), c.b()<0));
+            *res++ =  Root_for_circles_2_2(a1, c.b());
+	    *res++ =  Root_for_circles_2_2(a2, c.b());
 	    return res;
   }
 
@@ -162,8 +158,7 @@ namespace CGAL {
 
             Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
 
-            return Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
-                                   -square(c.a()),c.a()<0),b1);
+            return Root_for_circles_2_2(c.a(),b1);
   }
   
   template <class AK, class OutputIterator>
@@ -178,10 +173,8 @@ namespace CGAL {
       Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
       Root_of_2 b2= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
       
-      *res++ = Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
-						   -square(c.a()),c.a()<0),b1);
-      *res++ = Root_for_circles_2_2(make_root_of_2(FT(1),FT(0),
-						   -square(c.a()),c.a()<0),b2);
+      *res++ = Root_for_circles_2_2(c.a(), b1);
+      *res++ = Root_for_circles_2_2(c.a(), b2);
       return res;
   }
 
