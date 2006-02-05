@@ -445,10 +445,11 @@ public:
     if (n >= i)
 	    return isolateRoot(i, x, m);
     // Now (n < i) but we have to be careful if m is a root
-    if (sign(seq[0].eval(m)) != 0)   // usual case
-      return isolateRoot(i-n, m, y);
-    else
+    if (sign(seq[0].eval(m)) == 0)   
       return isolateRoot(i-n+1, m, y);
+
+    // The usual case:
+    return isolateRoot(i-n, m, y);
   }
 
   // same as isolateRoot(i).
