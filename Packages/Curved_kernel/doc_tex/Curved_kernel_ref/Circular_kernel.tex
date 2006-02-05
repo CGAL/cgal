@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Circular_kernel<LinearKernel,AlgebraicKernel>}
+\begin{ccRefClass}{Circular_kernel<LinearKernel,AlgebraicKernelForCircles>}
 
 \ccDefinition
 
@@ -15,10 +15,9 @@ The circular kernel is parameterized by a \ccc{LinearKernel} parameter
 basic linear objects provided by one of the CGAL kernels. It also
 allows other implementations of these basic functionalities.
 
-The second parameter, \ccc{AlgebraicKernel}, is meant to provide the
+The second parameter, \ccc{AlgebraicKernelForCircles}, is meant to provide the
 circular kernel with all the algebraic functionalities required for the
 manipulation of algebraic curves. 
-It must be a model of concept \ccc{AlgebraicKernel_2_2}. 
 
 \ccInheritsFrom
 
@@ -30,11 +29,11 @@ It must be a model of concept \ccc{AlgebraicKernel_2_2}.
 \ccThreeToTwo
 
 The circular kernel uses basic number types of the algebraic kernel:
-\ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type.}
-\ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type.}
-In fact, the two number types \ccc{AlgebraicKernel::RT} and
+\ccTypedef{typedef AlgebraicKernelForCircles::RT RT;}{Ring number type.}
+\ccTypedef{typedef AlgebraicKernelForCircles::FT FT;}{Field number type.}
+In fact, the two number types \ccc{AlgebraicKernelForCircles::RT} and
 \ccc{LinearKernel::RT} must coincide, as well as
-\ccc{AlgebraicKernel::FT} and \ccc{LinearKernel::FT}.
+\ccc{AlgebraicKernelForCircles::FT} and \ccc{LinearKernel::FT}.
 
 The following types are available, as well as all the functionality on
 them described in the \ccc{CircularKernel} concept. 
@@ -48,6 +47,6 @@ them described in the \ccc{CircularKernel} concept.
 \ccSeeAlso
 
 \ccRefIdfierPage{LinearKernel}\\
-\ccRefIdfierPage{AlgebraicKernel_2_2}
+\ccRefIdfierPage{AlgebraicKernelForCircles}
 
 \end{ccRefClass}

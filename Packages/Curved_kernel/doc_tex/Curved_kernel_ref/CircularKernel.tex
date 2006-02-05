@@ -4,7 +4,7 @@
 \ccc{Kernel}
 
 \ccHasModels
-\ccc{CGAL::Circular_kernel<LinearKernel,AlgebraicKernel_2_2>}\\
+\ccc{CGAL::Circular_kernel<LinearKernel,AlgebraicKernelForCircles>}\\
 \ccc{CGAL::Lazy_curved_kernel<CircularKernel>}\\
 \ccc{CGAL::Filtered_hexagon_curved_kernel<CircularKernel>}\\
 \ccc{CGAL::Filtered_bbox_curved_kernel<CircularKernel>}
@@ -15,19 +15,19 @@ A model of \ccc{CircularKernel} is supposed to provide some basic types
 
 \ccNestedType{Linear_kernel}{Model of \ccc{LinearKernel}.}
 \ccGlue
-\ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernel_2_2}.}
+\ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernelForCircles}.}
 
 \ccNestedType{RT}{Model of \ccc{RingNumberType}.}
 \ccGlue
 \ccNestedType{FT}{Model of \ccc{FieldNumberType}.}
 
-\ccNestedType{Root_of_2}{Model of \ccc{AlgebraicKernel_2_2::RootOf_2}.}
+\ccNestedType{Root_of_2}{Model of \ccc{AlgebraicKernelForCircles::RootOf_2}.}
 \ccGlue
-\ccNestedType{Root_for_circles_2_2}{Model of \ccc{AlgebraicKernel_2_2::RootForCircles_2_2}.}
+\ccNestedType{Root_for_circles_2_2}{Model of \ccc{AlgebraicKernelForCircles::RootForCircles_2_2}.}
 \ccGlue
-\ccNestedType{Polynomial_1_2}{Model of \ccc{AlgebraicKernel_2_2::Polynomial_1_2}.}
+\ccNestedType{Polynomial_1_2}{Model of \ccc{AlgebraicKernelForCircles::Polynomial_1_2}.}
 \ccGlue
-\ccNestedType{Polynomial_for_circles_2_2}{Model of \ccc{AlgebraicKernel_2_2::PolynomialForCircles_2_2}.}
+\ccNestedType{Polynomial_for_circles_2_2}{Model of \ccc{AlgebraicKernelForCircles::PolynomialForCircles_2_2}.}
 
 and to define the following geometric objects
 

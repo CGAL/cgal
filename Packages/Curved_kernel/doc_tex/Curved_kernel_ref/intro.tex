@@ -2,23 +2,12 @@
 
 \textbf{Submission - Monique - with Sylvain's help...}
 
-%\begin{ccAdvanced}
-%I use the ``Advanced'' environment in this document to distinguish
-%between my current submission to the CGAL editorial board and plans
-%for the future, related to ACS. The ``Advanced'' parts will disappear
-%if/when this is released. 
-%\end{ccAdvanced}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Concepts}
+\section*{Geometric concepts}
 
 \ccRefConceptPage{CircularKernel}
 
-\ccRefConceptPage{LinearKernel}\\
-\ccRefConceptPage{AlgebraicKernel}
-%\begin{ccAdvanced}
-%\ccRefConceptPage{ConicKernel_2}
-%\end{ccAdvanced}
+\ccRefConceptPage{LinearKernel}
 
 	\subsubsection*{Functors} 
 
@@ -82,38 +71,64 @@ this, but I don't know any technique for this.}
 %\end{ccAdvanced}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Algebraic concepts}
+
+\ccRefConceptPage{AlgebraicKernelForCircles}
+
+\ccRefConceptPage{AlgebraicKernelForCircles}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::Polynomial_1_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::PolynomialForCircles_2_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::RootOf_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::RootForCircles_2_2}
+
+\footnote{General remark about the suffix ${}_d{}_v$: $_d$ stands
+for the degree of the polynomials and the algebraic numbers, and
+$_v$ stands for the number of variables, which is analogous to the
+dimension for CGAL geometric objects.}
+
+	\subsubsection*{} 
+\ccRefConceptPage{AlgebraicKernelForCircles::ConstructPolynomial_1_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::Solve}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::SignAt}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::XCriticalPoints}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::YCriticalPoints}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareX}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareY}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareXY}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Classes}
 
 	\subsubsection*{Kernels}
 
-\ccRefIdfierPage{CGAL::Circular_kernel<LinearKernel,AlgebraicKernel>}
+\ccRefIdfierPage{CGAL::Circular_kernel<LinearKernel,AlgebraicKernelForCircles>}
 \\
 \ccRefIdfierPage{CGAL::Lazy_curved_kernel<??>}\\
 \ccRefIdfierPage{CGAL::Filtered_hexagon_curved_kernel<CircularKernel>}\\
 \ccRefIdfierPage{CGAL::Filtered_bbox_curved_kernel<CircularKernel>}
 
-%	\subsubsection*{Curves and Surfaces}
-%\ccRefIdfierPage{CGAL::Circle_2<CircularKernel>}\\
-
-%\begin{ccAdvanced}
-%\ccRefIdfierPage{CGAL::Conic_2<ConicKernel>}\\
-%\ccRefIdfierPage{CGAL::Ellipse_2<ConicKernel>}\footnote{useful for ETH? and for visibility package?}\\
-%\ccRefIdfierPage{CGAL::Sphere_3<SphericalKernel>}\\
-%\ccRefIdfierPage{CGAL::Quadric_3<QuadricKernel>}
-%\end{ccAdvanced}
+\ccRefIdfierPage{CGAL::Algebraic_kernel_for_circles_2_2<RT>}
 
 	\subsubsection*{Arcs}
 \ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}\\
 \ccRefIdfierPage{CGAL::Line_arc_2<CircularKernel>}
 
-%\begin{ccAdvanced}
-%\ccRefIdfierPage{CGAL::Conic_arc_2<ConicKernel>}\\
-%\ccRefIdfierPage{CGAL::Sphere_patch_3<SphericalKernel>}\\
-%\ccRefIdfierPage{CGAL::Quadric_patch_3<SphericalKernel>}
-%\end{ccAdvanced}
-
 	\subsubsection*{Points}
 \ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}
+
+	\subsubsection*{Algebraic objects} 
+\ccRefIdfierPage{CGAL::Polynomial_1_2<RT>}\\
+\ccRefIdfierPage{CGAL::Polynomial_for_circles_2_2<FT>}
+
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_for_circles_2_2<FT>}
+
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}
 
 %\begin{ccAdvanced}
 %\ccRefIdfierPage{CGAL::Conic_arc_point_2<ConicKernel>}
@@ -130,11 +145,20 @@ this, but I don't know any technique for this.}
 \ccRefIdfierPage{CGAL::compare_y_at_x}\\
 \ccRefIdfierPage{CGAL::compare_y_to_right}
 
+\ccRefIdfierPage{CGAL::sign_at}
+
 	\subsubsection*{Constructions}
 \ccRefIdfierPage{CGAL::make_x_monotone}\\
 \ccRefIdfierPage{CGAL::intersect}
 
-	\subsubsection*{others?} 
+\ccRefIdfierPage{CGAL::make_root_of_2}
+
+\ccRefIdfierPage{CGAL::solve}
+
+\ccRefIdfierPage{CGAL::x_critical_points}\\
+\ccRefIdfierPage{CGAL::y_critical_points}
+
+	\subsubsection*{Accessors} 
 \ccRefIdfierPage{CGAL::get_equation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
