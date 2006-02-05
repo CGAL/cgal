@@ -12,10 +12,10 @@ we only have to calculate the \ccHtmlNoLinksFrom{intersection} points
 between two curves when they become contiguous. For more details on the
 \emph{sweep-line algorithm} see, for example,~\cite[Chapter~2]{bkos-cgaa-00}.
 
-This chapter describes two functions implemented using the sweep-line
-algorithm: computing all \ccHtmlNoLinksFrom{intersection} points among a
-given collection of curves, and computing the set of subcurves that are
-pairwise interior-disjoint induced by such an input set of curves.
+This chapter describes three functions implemented using the sweep-line
+algorithm: given a collection of input curves, compute all \ccHtmlNoLinksFrom{intersection} points,
+compute the set of subcurves that are pairwise interior-disjoint induced by them,
+and cheking whether there is at least one pair of curves among them that intersect in their interior.
 
 The implementation is robust. It supports general
 curves and handles all degenerate cases, including overlapping curves,
