@@ -1,14 +1,16 @@
+assurer consistance entre manual et code
+- nom : alg kernel *for circles*
+- interface intersect
+
+tracker les vestiges de l'ancienne representation des points (pointeurs
+vers cercles)
+
+utiliser partout ou c'est possible le constructeur de arc_point(Point_2)
+
 enlever messages de debug
 regarder traits-tracer (seg fault)
-
-(highest priority is to be able to run at least *something* with 
-the new Arrangement_2...)
 
 construct intersection for *arcs* should use solve or solve in range
 
 add "using..." in all functors that derive from another
 
-naming
-circular_arc_endpoint -> _point
-introduce Root_for_circles = roots (x,y) of system of polynomial_for_circles 
-general Root_of_2_2 for case of conic
