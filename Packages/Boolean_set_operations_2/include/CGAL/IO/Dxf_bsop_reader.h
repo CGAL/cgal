@@ -16,22 +16,19 @@ CGAL_BEGIN_NAMESPACE
 template <class Kernel_>
 class Dxf_bsop_reader
 {
-  typedef CGAL::Simple_cartesian<double>            K;
-  typedef std::list<std::pair<K::Point_2, double> > Dxf_polygon;
+  typedef Kernel_                                   K;
+  typedef typename K::FT                            FT;
+  typedef typename K::Point_2                       Point_2;
+  typedef typename K::Circle_2                      Circle_2;
+
+  typedef std::list<std::pair<Point_2, double> >    Dxf_polygon;
   typedef std::list<Dxf_polygon>                    Dxf_polygons_list;
 
-  typedef std::pair<K::Point_2, K::FT>              Dxf_circle;                      
+  typedef std::pair<Point_2, FT>                    Dxf_circle;                      
   typedef std::list<Dxf_circle>                     Dxf_circles_list;
   typedef CGAL::Dxf_reader<K>                       Dxf_reader;        
 
-  typedef Kernel_                                       Kernel;
-  typedef typename Kernel::FT    FT;
-
-  typedef typename Kernel::Point_2                       Point_2;
-  typedef typename Kernel::Circle_2                      Circle_2;
-
-
-  typedef CGAL::Gps_circle_segment_traits_2<Kernel>     Traits_2;
+  typedef CGAL::Gps_circle_segment_traits_2<K>          Traits_2;
   typedef typename Traits_2::Point_2                    Arc_point_2;
   typedef typename Traits_2::Curve_2                    Curve_2;
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
@@ -42,20 +39,6 @@ class Dxf_bsop_reader
   typedef std::vector<Circ_polygon_with_holes>          Circ_pgn_with_holes_vec;
 
   typedef CGAL::General_polygon_set_2<Traits_2>         Gps;
-
-  FT convert_double(const double& x)
-  {
-    int   denom = 1000000;
-    int   numer = static_cast<int> (x * denom + CGAL  ::sign(x)*0.5);
-
-    while (numer != 0 && numer % 10 == 0)
-    {
-      numer /= 10;
-      denom /= 10;
-    }
-
-    return (CGAL::Gmpq (numer, denom));
-  }
 
 public:
   template <class Out1, class Out2>
@@ -74,17 +57,12 @@ public:
 
     reader(input, polygons, circles);
 
-    for(Dxf_circles_list::iterator circ_iterator = circles.begin();
+    for(typename Dxf_circles_list::iterator circ_iterator = circles.begin();
         circ_iterator != circles.end();
         ++circ_iterator)
     {
-      const Dxf_circle& dxf_circle = *circ_iterator;
-      
-      FT center_x = convert_double(dxf_circle.first.x());
-      FT center_y = convert_double(dxf_circle.first.y());
-      FT rad = convert_double(dxf_circle.second);
-
-      Curve_2 circ(Point_2(center_x, center_y), rad);
+      const Dxf_circle& dxf_circ = *circ_iterator;
+      Curve_2 circ(dxf_circ.first, dxf_circ.second);
       std::vector<CGAL::Object> obj_vec;
       
       obj_vec.reserve(2);
@@ -102,31 +80,29 @@ public:
 
     circles.clear();
 
-    for(Dxf_polygons_list::iterator it = polygons.begin(); it != polygons.end(); ++it)
+    for(typename Dxf_polygons_list::iterator it = polygons.begin();
+        it != polygons.end();
+        ++it)
     {
       Circ_polygon curr_pgn;
-      for(Dxf_polygon::iterator pit = it->begin(); pit != it->end(); ++pit)
+      for(typename Dxf_polygon::iterator pit = it->begin();
+          pit != it->end();
+          ++pit)
       {
-        Dxf_polygon::iterator next = pit;
+        typename Dxf_polygon::iterator next = pit;
         ++next;
 
-        Point_2 ps((convert_double(pit->first.x())),
-                  (convert_double(pit->first.y())));
+        Point_2 ps(pit->first);
         Point_2 pt;
+
         if(next == it->end())
-        {
-          pt = Point_2(convert_double(it->begin()->first.x()),
-                      convert_double(it->begin()->first.y()));
-        }
+          pt = Point_2(it->begin()->first);
         else
-        {
-          pt = Point_2(convert_double(next->first.x()),
-                      convert_double(next->first.y()));
-        }
+          pt = Point_2(next->first);
         
         if(pit->second) 
         {
-          const FT bulge = convert_double(pit->second);
+          const FT bulge = pit->second;
           const FT common = (1 - CGAL::square(bulge)) / (4*bulge);
           const FT x_coord = ((ps.x() + pt.x())/2) + common*(ps.y() - pt.y());
           const FT y_coord = ((ps.y() + pt.y())/2) + common*(pt.x() - ps.x());
@@ -167,8 +143,7 @@ public:
 
       if(!simplify)
       {
-        Circ_polygon_with_holes pgn_with_holes(curr_pgn);
-        *pgns_with_holes++ = pgn_with_holes;
+        *pgns++ = curr_pgn;
       }
       else
       {
