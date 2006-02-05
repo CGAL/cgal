@@ -33,12 +33,10 @@ directly on objects of type \ccc{Traits::Polygon_2} or
 \ccc{Traits::Polygon_with_holes_2}. An object of type 
 \ccc{Traits::Polygon_2} is a valid operand, only if it is strictly simple 
 and its boundary is oriented counterclockwise. An object of type
-\ccc{Traits::Polygon_with_holes_2} is valid, only if its outer boundary
-and each one of its holes represnt a simple polygon, its holes are contained 
-inside the outer boundary, its outer boundary and the outer boundary of its 
-holes are pairwise disjoint, except perhaps at the vertices, its outer boundary
-is oriented counterclockwise, and the outer boundary of its holes are 
-oriented clockwise.
+\ccc{Traits::Polygon_with_holes_2} is valid, only if 
+ its outer boundary is simple and oriented counterclockwise, and each one of 
+ its holes is a strictly simple polygon that oriented clockwise, contained inside its outer 
+ boundary, and they are all together pairwise disjoint, except perhaps at the vertices.
 
 \ccTypes
 %=======
@@ -277,7 +275,7 @@ void symmetric_difference(InputIterator1 pgn_begin, InputIterator1 pgn_end,
 
 \ccHeading{Bivariate Operations}
 % ===============================
-The following bibariate function replace this with the result.
+The following bibariate function replace \ccc{gps} with the result.
 
 \ccMethod{void intersection(const General_polygon_set_2 & gps1,
                             const General_polygon_set_2 & gps2);}
@@ -322,7 +320,7 @@ void do_intersect(InputIterator begin, InputIterator end);}
    distinguish between the two options.)}
 \ccGlue
 \ccMethod{template <class InputIterator1, class InputIterator2>
-void intersection(InputIterator1 pgn_begin, InputIterator1 pgn_end,
+void do_intersect(InputIterator1 pgn_begin, InputIterator1 pgn_end,
                   InputIterator2 pgn_with_holes_begin,
 	          InputIterator2 pgn_with_holes_end);}
   {returns \ccc{true} if the interior of the point sets in a collection 
