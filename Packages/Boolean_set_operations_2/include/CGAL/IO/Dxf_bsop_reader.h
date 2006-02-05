@@ -2,14 +2,12 @@
 #ifndef DXF_BSOP_READER_H
 #define DXF_BSOP_READER_H
 
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Dxf_reader.h>
 #include <iostream>
 
 #include <list>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
-#include <CGAL/Gmpq.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -142,9 +140,7 @@ public:
         curr_pgn.reverse_orientation();
 
       if(!simplify)
-      {
         *pgns++ = curr_pgn;
-      }
       else
       {
         Circ_polygon_with_holes pgn_with_holes;
@@ -157,4 +153,5 @@ public:
 };
 
 CGAL_END_NAMESPACE
+
 #endif
