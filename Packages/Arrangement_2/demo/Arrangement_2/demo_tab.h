@@ -1213,7 +1213,8 @@ public:
       setColor(Qt::red);
       Coord_point p(x_real(e->x()) * m_tab_traits.COORD_SCALE ,
                     y_real(e->y()) * m_tab_traits.COORD_SCALE);
-      Coord_type min_dist = std::numeric_limits<Coord_type>::max();
+      bool       first = true;
+      Coord_type min_dist = 0;
 
       if (first_time_merge)
       {
@@ -1231,13 +1232,15 @@ public:
           X_monotone_curve_2 & xcurve = hei->curve();
           Coord_type dist =
             m_tab_traits.xcurve_point_distance(p, xcurve, this);
-          if (dist < min_dist)
+          
+          if (first || dist < min_dist)
           {
             min_dist = dist;
             closest_curve = hei;
+            first = false;
           }    
         }
-        if (min_dist == std::numeric_limits<Coord_type>::max()) // we didn't find any "good" curve
+        if (first)       // we didn't find any "good" curve
         {
           first_time_merge = true;
           return;
@@ -1387,7 +1390,8 @@ public:
                         Coord_point &p,
                         bool move_event)
   {
-    Coord_type min_dist = std::numeric_limits<Coord_type>::max();   
+    bool       first = true;
+    Coord_type min_dist;   
 
     for (Halfedge_iterator hei = m_curves_arr->halfedges_begin();
          hei != m_curves_arr->halfedges_end();
@@ -1397,14 +1401,15 @@ public:
       {
         X_monotone_curve_2 & xcurve = hei->curve();
         Coord_type dist = m_tab_traits.xcurve_point_distance(p, xcurve , this);
-        if ( dist < min_dist)
+        if (first || dist < min_dist)
         {
           min_dist = dist;
           second_curve = hei;
+          first = false;
         }    
       }
     }
-    if (min_dist == std::numeric_limits<Coord_type>::max()) // didn't find any "good" curve
+    if (first)     // didn't find any "good" curve
       return;
 
     if (!move_event)
@@ -1598,7 +1603,9 @@ public:
   void middle_point(Coord_point p , 
                     Qt_widget_demo_tab<Segment_tab_traits> * w)
   {
-    if(m_p1.x() != p.x() || m_p1.y() != p.y()) 
+    Coord_kernel      ker;
+
+    if (! ker.equal_2_object() (m_p1, p))
     {
       get_segment( Coord_segment( m_p1 , p ) , w );
       w->active = false;
@@ -1686,7 +1693,7 @@ public:
       x1 = CGAL::to_double(p.x());
       y1 = CGAL::to_double(p.y());
       dt = w->dist(x1 , y1 , x , y);
-      if ( dt < min_dist || first)
+      if (first || dt < min_dist)
       {
         min_dist = dt;
         closest = Coord_point(x1 , y1);
@@ -1953,12 +1960,15 @@ public:
     Curve_const_iterator pt = ps; pt++;
     bool first = true;
     Coord_type min_dist = 0;
-    while (pt != c.end()) {
+
+    while (pt != c.end())
+    {
       const Point_2 & source = *ps;
       const Point_2 & target = *pt;
       Coord_segment coord_seg = convert(source , target);
       Coord_type dist = CGAL::squared_distance( p, coord_seg);
-      if( dist < min_dist || first)
+
+      if(first || dist < min_dist)
       {
         first = false;
         min_dist = dist;
@@ -2004,7 +2014,7 @@ public:
         x1 = CGAL::to_double(p.x());
         y1 = CGAL::to_double(p.y());
         dt = w->dist(x1 , y1 , x , y);
-        if ( dt < min_dist || first)
+        if (first || dt < min_dist)
         {
           min_dist = dt;
           closest = Coord_point(x1 , y1);
@@ -2019,7 +2029,7 @@ public:
       x1 = CGAL::to_double(p.x());
       y1 = CGAL::to_double(p.y());
       dt = w->dist(x1 , y1 , x , y);
-      if ( dt < min_dist || first)
+      if (first || dt < min_dist)
       {
         min_dist = dt;
         closest = Coord_point(x1 , y1);
@@ -2591,7 +2601,7 @@ public:
       x1 = CGAL::to_double(p.x()) / COORD_SCALE;
       y1 = CGAL::to_double(p.y()) / COORD_SCALE;
       dt = w->dist(x1 , y1 , x , y);
-      if ( dt < min_dist || first)
+      if (first || dt < min_dist)
       {
         min_dist = dt;
         closest = Coord_point(x1 , y1);
@@ -2638,8 +2648,8 @@ public:
         
         Arr_conic_point_2 px;
         
-        bool first = true;
-        Coord_type min_dist = 100000000;
+        bool         first = true;
+        Coord_type   min_dist = 100000000;
         Alg_kernel   ker;
         
         
@@ -2657,7 +2667,7 @@ public:
           Coord_segment coord_seg( Coord_point(prev_x, prev_y) ,
                                    Coord_point(curr_x, curr_y) );
           Coord_type dist = CGAL::squared_distance( p, coord_seg);
-          if( dist < min_dist || first)
+          if (first || dist < min_dist)
           {
             first = false;
             min_dist = dist;
