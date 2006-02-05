@@ -46,8 +46,7 @@ $x$-monotone curves. It uses the operator\\
 {a functor that returns a pair that consists of the begin and
  past-the-end iterators of the $x$ monotone curves of the boundary of
  a given general polygon. It uses the operator\\
- \ccc{std:pair<Curve_const_iterator,\\
-               Curve_const_iterator>
+ \ccc{std:pair<Curve_const_iterator, Curve_const_iterator>
   operator() (const Polygon_2 & pgn)}.}
   
   
@@ -55,18 +54,18 @@ $x$-monotone curves. It uses the operator\\
 {provides the operators~: \\
  \ccc{bool operator() (Polygon_2 & pgn)} \\
  which returns \ccc{true} if the \ccc{pgn} is valid, and \ccc{false}
- otherwise; and~: \\
+ otherwise; \\ and~: \\
  \ccc{bool operator() (Polygon_with_holes_2 & pgn_with_holes)} \\
- which returns \ccc{true} if the polygon with holes \ccc{pgn_with_holes} 
+ which returns \ccc{true} if \ccc{pgn_with_holes} 
  is valid, and \ccc{false} otherwise.
  A polygon of type \ccc{Polygon_2} is valid, if it is strictly simple 
  and oriented counterclockwise.
  A polygon of type \ccc{Polygon_with_holes_2} is valid, 
- if its outer boundary is simple and oriented counterclockwise, each one of 
- its holes is simple, oriented clockwise, and contained inside the outer 
- boundary, and the outer boundary and the outer boundary of the holes are 
- pairwise disjoint, except perhaps at the vertices. This functionality is 
- used to verify precondition of some of the operations.}
+ if its outer boundary is simple and oriented counterclockwise, and each one of 
+ its holes is a strictly simple polygon that oriented clockwise, contained inside its outer 
+ boundary, and they are all together pairwise disjoint,
+ except perhaps at the vertices.\\
+ This functionality is used to verify precondition of some of the operations.}
 
 \ccCreation
 \ccCreationVariable{traits}
