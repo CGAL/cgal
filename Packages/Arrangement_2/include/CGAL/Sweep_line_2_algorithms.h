@@ -145,7 +145,7 @@ OutputIterator get_subcurves (CurveInputIterator curves_begin,
                               CurveInputIterator curves_end,
                               OutputIterator subcurves,
                               bool mult_overlaps = false,
-            Traits &tr)
+                              Traits &tr)
 {
   // Define the sweep-line types:
   typedef Sweep_line_subcurves_visitor<Traits, OutputIterator>  Visitor;
