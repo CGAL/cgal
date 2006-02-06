@@ -35,6 +35,7 @@
 #include <CGAL/Nef_2/PM_overlayer.h>
 //#include <CGAL/Nef_2/PM_transformer.h>
 #include <CGAL/Nef_2/PM_point_locator.h>
+#include <CGAL/Nef_2/Bounding_box_2.h>
 #include <vector>
 #include <list>
 
@@ -43,7 +44,6 @@
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 template <typename T, typename I, typename M> class Nef_polyhedron_2;
 template <typename T, typename I, typename M> class Nef_polyhedron_2_rep;
@@ -210,6 +210,9 @@ protected:
   typedef typename Const_decorator::Face_const_iterator     
                                                     Face_const_iterator;
 
+  typedef Bounding_box_2<typename Is_extended_kernel<Extended_kernel>::value_type, 
+                         Extended_kernel> Box_2;
+
   struct Except_frame_box_edges {
     Decorator D_; 
     Face_handle f_;
@@ -292,8 +295,6 @@ protected:
 
     void supporting_segment(Halfedge_handle e, IT it) 
     { 
-      //      std::cerr << e->opposite()->vertex()->point() 
-      //		<< "->" << e->vertex()->point() << std::endl;
       halfedge2iterator[e->opposite()] = 
 	halfedge2iterator[e] = it; e->mark() = true;}      
 
@@ -439,7 +440,7 @@ public:
 
     CGAL_assertion(op==JOIN);
 
-    typedef typename std::iterator_traits<Forward_iterator>::value_type 
+    typedef typename std::iterator_traits<Forward_iterator>::value_type
       iterator_pair;
     typedef typename iterator_pair::first_type point_iterator;
     point_iterator it, itl, end;
@@ -883,6 +884,7 @@ public:
   |\Mvar.contains(h)| is true. The location mode flag |m| allows one to choose
   between different point location strategies.}*/
   { 
+    if(!check_tag(typename Is_extended_kernel<Extended_kernel>::value_type()))
     if (m == DEFAULT || m == LMWT) {
       init_locator();
       Extended_point ep = EK.construct_point(p);
@@ -918,16 +920,23 @@ public:
   flag |m| allows one to choose between different point location
   strategies.}*/
   { 
+    Extended_point ep, eq;
+    if(!check_tag(typename Is_extended_kernel<Extended_kernel>::value_type())) {
+      Const_decorator D(pm());
+      Box_2 b(D.vertices_begin(), D.vertices_end());
+      ep = EK.construct_point(p);
+      eq = b.intersection_ray_bbox(p,d);
+    } else {
+      ep = EK.construct_point(p);
+      eq = EK.construct_point(p,d);      
+    }
+      
     if (m == DEFAULT || m == LMWT) {
       init_locator();
-      Extended_point ep = EK.construct_point(p), 
-                     eq = EK.construct_point(p,d);
       return locator().ray_shoot(EK.construct_segment(ep,eq),
                                  INSET(locator())); 
     } else if (m == NAIVE) {
       Slocator PL(pm(),EK);
-      Extended_point ep = EK.construct_point(p), 
-                     eq = EK.construct_point(p,d);
       return PL.ray_shoot(EK.construct_segment(ep,eq),INSET(PL));
     }
     CGAL_assertion_msg(0,"location mode not implemented.");
@@ -951,16 +960,24 @@ public:
   location mode flag |m| allows one to choose between different point
   location strategies.}*/
   { 
+    Extended_point ep, eq;
+    if(!check_tag(typename Is_extended_kernel<Extended_kernel>::value_type())) {
+      Const_decorator D(pm());
+      Box_2 b(D.vertices_begin(), D.vertices_end());
+      ep = EK.construct_point(p);
+      eq = b.intersection_ray_bbox(p,d);
+    } else {
+      ep = EK.construct_point(p);
+      eq = EK.construct_point(p,d);      
+    }
+      
     if (m == DEFAULT || m == LMWT) {
       init_locator();
-      Extended_point ep = EK.construct_point(p), 
-                     eq = EK.construct_point(p,d);
-      return locator().ray_shoot(EK.construct_segment(ep,eq),INSKEL()); 
+      return locator().ray_shoot(EK.construct_segment(ep,eq),
+                                 INSKEL()); 
     } else if (m == NAIVE) {
       Slocator PL(pm(),EK);
-      Extended_point ep = EK.construct_point(p), 
-                     eq = EK.construct_point(p,d);
-      return PL.ray_shoot(EK.construct_segment(ep,eq),INSKEL()); 
+      return PL.ray_shoot(EK.construct_segment(ep,eq),INSKEL());
     }
     CGAL_assertion_msg(0,"location mode not implemented.");
     return Object_handle();

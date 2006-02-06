@@ -31,10 +31,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 template <class T> class Bounded_kernel;
 
+template<class Kernel>
+struct Is_extended_kernel;
+
+template<class T>
+struct Is_extended_kernel<Bounded_kernel<T> > {
+       typedef Tag_false value_type;
+};
 
 /*{\Xanpage {Bounded_kernel}{}{An extended geometric kernel model}{K}}*/
 
@@ -117,7 +122,7 @@ public:
   Point_2 
   construct_point(const Standard_line_2& , Point_type& ) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(..) should not be called");
+    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Line,Point_type) should not be called");
     return Point_2();
   }
 
@@ -126,14 +131,14 @@ public:
 		  const Standard_point_2& , 
 		  Point_type& t) const
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(..) should not be called");
+    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Point,Point) should not be called");
     return Point_2();
   }
 
   Point_2 
   construct_point(const Standard_line_2& ) const
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(..) should not be called");
+    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Line) should not be called");
     return Point_2();
   }
 
@@ -141,14 +146,14 @@ public:
   construct_point(const Standard_point_2& , 
 		  const Standard_point_2& ) const
   {
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(..) should not be called");
+    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Point,Point) should not be called");
     return Point_2();
    }
 
   Point_2 construct_point(const Standard_point_2& , 
 			  const Standard_direction_2& ) const
   { 
-    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(..) should not be called");
+    CGAL_assertion_msg(false, "Bounded_kernel::construct_point(Point,Direction) should not be called");
     return Point_2();
   }
 
