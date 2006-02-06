@@ -74,13 +74,31 @@ run_test()
   COMMAND="./$name"
   echo "Executing $name $datafile ... "
   echo
-  if [ "${OSTYPE}" != "cygwin" ]; then
-    ulimit -t 1200
-  fi
   if eval $COMMAND $datafile > $OUTPUTFILE 2>&1 ; then
     echo "   succesful execution of $name $datafile" >> $ERRORFILE
   else
     echo "   ERROR:    execution of $name $datafile" >> $ERRORFILE
+  fi
+}
+
+run_trapped_test()
+{
+  local name=$1;
+  local datafile=$2;
+
+  if [ "${OSTYPE}" != "cygwin" ]; then
+    ulimit -t 1200
+    run_test $1 $2
+  else
+    run_test $1 $2 &
+    WPID=$!
+    trap "kill -9 $WPID" INT
+    (sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
+    SPID=$!
+    wait $WPID > /dev/null 2>&1
+#    RES=$?
+    kill -9 $SPID > /dev/null 2>&1
+#    return $RES
   fi
 }
 
@@ -116,7 +134,6 @@ compile_and_run()
     fi
     echo "Executing $name ... "
     echo
-    ulimit -t 1200
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
       echo "   succesful execution   of $name" >> $ERRORFILE
     else
@@ -126,6 +143,26 @@ compile_and_run()
     echo   "   ERROR:    not executed   $name" >> $ERRORFILE
   fi
   clean_tests
+}
+
+compile_and_run_trapped_test()
+{
+  local name=$1;
+
+  if [ "${OSTYPE}" != "cygwin" ]; then
+    ulimit -t 1200
+    compile_and_run $1
+  else
+    compile_and_run $1 &
+    WPID=$!
+    trap "kill -9 $WPID" INT
+    (sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
+    SPID=$!
+    wait $WPID > /dev/null 2>&1
+#    RES=$?
+    kill -9 $SPID > /dev/null 2>&1
+#    return $RES
+  fi
 }
 
 #---------------------------------------------------------------------#
@@ -138,14 +175,14 @@ test_segment_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_test test_traits data/compare
-    run_test test_traits data/segments/vertex
-    run_test test_traits data/segments/is_vertical
-    run_test test_traits data/segments/compare_y_at_x
-    run_test test_traits data/segments/make_x_monotone
-    run_test test_traits data/segments/intersect
-    run_test test_traits data/segments/split
-    run_test test_traits data/segments/merge
+    run_trapped_test test_traits data/compare
+    run_trapped_test test_traits data/segments/vertex
+    run_trapped_test test_traits data/segments/is_vertical
+    run_trapped_test test_traits data/segments/compare_y_at_x
+    run_trapped_test test_traits data/segments/make_x_monotone
+    run_trapped_test test_traits data/segments/intersect
+    run_trapped_test test_traits data/segments/split
+    run_trapped_test test_traits data/segments/merge
   fi
   clean_tests
 }
@@ -160,14 +197,14 @@ test_non_caching_segment_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_test test_traits data/compare
-    run_test test_traits data/segments/vertex
-    run_test test_traits data/segments/is_vertical
-    run_test test_traits data/segments/compare_y_at_x
-    run_test test_traits data/segments/make_x_monotone
-    run_test test_traits data/segments/intersect
-    run_test test_traits data/segments/split
-    run_test test_traits data/segments/merge
+    run_trapped_test test_traits data/compare
+    run_trapped_test test_traits data/segments/vertex
+    run_trapped_test test_traits data/segments/is_vertical
+    run_trapped_test test_traits data/segments/compare_y_at_x
+    run_trapped_test test_traits data/segments/make_x_monotone
+    run_trapped_test test_traits data/segments/intersect
+    run_trapped_test test_traits data/segments/split
+    run_trapped_test test_traits data/segments/merge
   fi
   clean_tests
 }
@@ -182,14 +219,14 @@ test_polyline_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_test test_traits data/compare
-    run_test test_traits data/polylines/vertex
-    run_test test_traits data/polylines/is_vertical
-    run_test test_traits data/polylines/compare_y_at_x
-    run_test test_traits data/polylines/make_x_monotone
-    run_test test_traits data/polylines/intersect
-    run_test test_traits data/polylines/split
-    run_test test_traits data/polylines/merge
+    run_trapped_test test_traits data/compare
+    run_trapped_test test_traits data/polylines/vertex
+    run_trapped_test test_traits data/polylines/is_vertical
+    run_trapped_test test_traits data/polylines/compare_y_at_x
+    run_trapped_test test_traits data/polylines/make_x_monotone
+    run_trapped_test test_traits data/polylines/intersect
+    run_trapped_test test_traits data/polylines/split
+    run_trapped_test test_traits data/polylines/merge
   fi
   clean_tests
 }
@@ -204,14 +241,14 @@ test_non_caching_polyline_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_test test_traits data/compare
-    run_test test_traits data/polylines/vertex
-    run_test test_traits data/polylines/is_vertical
-    run_test test_traits data/polylines/compare_y_at_x
-    run_test test_traits data/polylines/make_x_monotone
-    run_test test_traits data/polylines/intersect
-    run_test test_traits data/polylines/split
-    run_test test_traits data/polylines/merge
+    run_trapped_test test_traits data/compare
+    run_trapped_test test_traits data/polylines/vertex
+    run_trapped_test test_traits data/polylines/is_vertical
+    run_trapped_test test_traits data/polylines/compare_y_at_x
+    run_trapped_test test_traits data/polylines/make_x_monotone
+    run_trapped_test test_traits data/polylines/intersect
+    run_trapped_test test_traits data/polylines/split
+    run_trapped_test test_traits data/polylines/merge
   fi
   clean_tests
 }
@@ -226,14 +263,14 @@ test_conic_traits()
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
   else
-    run_test test_traits data/conics/compare
-    run_test test_traits data/conics/vertex
-    run_test test_traits data/conics/is_vertical
-    run_test test_traits data/conics/compare_y_at_x
-    run_test test_traits data/conics/make_x_monotone
-    run_test test_traits data/conics/intersect
-    run_test test_traits data/conics/split
-    run_test test_traits data/conics/merge
+    run_trapped_test test_traits data/conics/compare
+    run_trapped_test test_traits data/conics/vertex
+    run_trapped_test test_traits data/conics/is_vertical
+    run_trapped_test test_traits data/conics/compare_y_at_x
+    run_trapped_test test_traits data/conics/make_x_monotone
+    run_trapped_test test_traits data/conics/intersect
+    run_trapped_test test_traits data/conics/split
+    run_trapped_test test_traits data/conics/merge
   fi
   clean_tests
 }
