@@ -330,12 +330,12 @@ public:
 	QLabel * ycursorposition;
 	
 	MyWidget(QGLWidget *parent = 0);
-public slots :
 	~MyWidget(){
 		delete menu;
 		delete file;
 		delete save;
 		delete placement;}
+public slots :
 	QString openedfile(){
 	p.clear();
 	QString s = QFileDialog::getOpenFileName( "",
