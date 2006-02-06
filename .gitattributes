@@ -997,7 +997,6 @@ Packages/Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Packages/Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Packages/Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/demo_pointlocation.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.bmp -text svneol=unset#unset
@@ -1028,8 +1027,6 @@ Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.xpm -text
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.bmp -text svneol=unset#unset
 Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/remove.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/removecircle.xpm -text
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.eps -text
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#unset
 Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#unset
