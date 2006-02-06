@@ -27,19 +27,24 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class SweepLineTraits_2>
-class Point_less_functor 
+template <class SweepLineTraits_2, class Event>
+class Event_less_functor 
 {
 public:
   typedef SweepLineTraits_2           Traits;
   typedef typename Traits::Point_2    Point_2;
   
-  Point_less_functor(Traits * t) : m_traits(t)
+  Event_less_functor(Traits * t) : m_traits(t)
   {}
   
-  bool operator()(const Point_2& p1,const Point_2& p2) const  
-  { 
-    return (m_traits->compare_xy_2_object()(p1,p2) == SMALLER);
+  Comparison_result operator()(const Event* e1, const Event* e2) const
+  {
+    return (m_traits->compare_xy_2_object()(e1->get_point(), e2->get_point()));
+  }
+
+  Comparison_result operator()(const Point_2& pt, const Event* e) const
+  {
+    return (m_traits->compare_xy_2_object()(pt, e->get_point()));
   }
 
 private:

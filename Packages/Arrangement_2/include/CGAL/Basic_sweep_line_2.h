@@ -21,7 +21,6 @@
 #ifndef CGAL_BASIC_SWEEP_LINE_2_H
 #define CGAL_BASIC_SWEEP_LINE_2_H
 
-#include <map>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -108,10 +107,9 @@ public:
   typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
 
   typedef SweepEvent                                     Event;
-  typedef Point_less_functor<Traits>                     PointLess;
-  typedef std::map<Point_2 , Event*, PointLess>          EventQueue; 
+  typedef Event_less_functor<Traits, Event>              EventLess;
+  typedef Multiset<Event*, EventLess, Allocator>         EventQueue; 
   typedef typename EventQueue::iterator                  EventQueueIter;
-  typedef typename EventQueue::value_type                EventQueueValueType;
 
   typedef typename Event::SubCurveIter                   EventCurveIter;
 
@@ -144,7 +142,8 @@ public:
       m_traits(new Traits()),
       m_traitsOwner(true),
       m_statusLineCurveLess(m_traits, &m_currentEvent),
-      m_queue(new EventQueue(PointLess(m_traits))),
+      m_queueEventLess(m_traits),
+      m_queue(new EventQueue(m_queueEventLess)),
       m_statusLine(m_statusLineCurveLess),
       m_status_line_insert_hint(m_statusLine.begin()),
       m_num_of_subCurves(0),
@@ -163,7 +162,8 @@ public:
       m_traits(traits),
       m_traitsOwner(false),
       m_statusLineCurveLess(m_traits, &m_currentEvent),
-      m_queue(new EventQueue(PointLess(m_traits))),
+      m_queueEventLess(m_traits),
+      m_queue(new EventQueue(m_queueEventLess)),
       m_statusLine(m_statusLineCurveLess),
       m_status_line_insert_hint(m_statusLine.begin()),
       m_num_of_subCurves(0),
@@ -295,14 +295,21 @@ public:
         qiter != this ->m_queue->end();
         ++qiter)
     {
-      this ->deallocate_event(qiter->second);
+      this ->deallocate_event(*qiter);
     }
     this -> m_statusLine.clear();
     m_status_line_insert_hint = this -> m_statusLine.begin();
   
     CGAL_assertion(!m_queue->empty());
     EventQueueIter second = m_queue->begin(); ++second;
-    m_queue->erase(second, m_queue->end());
+    while(second != m_queue->end())
+    {
+      EventQueueIter next = second;
+      ++next;
+      m_queue->erase(second);
+      second = next;
+    }
+    
   }
 
 
@@ -340,7 +347,7 @@ public:
     while (eventIter != m_queue->end())
     {
       // Get the next event from the queue.
-      m_currentEvent = eventIter->second;
+      m_currentEvent = *eventIter;
 
       PRINT("------------- " 
             << m_currentEvent->get_point() 
@@ -701,6 +708,7 @@ protected:
   /*! Y-str comprasion functor */
   StatusLineCurveLess m_statusLineCurveLess;
 
+  EventLess   m_queueEventLess;
   /*! the queue of events (intersection points) to handle */
   EventQueue *m_queue;
 
@@ -753,24 +761,25 @@ protected:
   std::pair<Event*, bool> push_event(const Point_2& pt, Attribute type)
   {
     Event*    e;  
-    const std::pair<EventQueueIter, bool>& insertion_res =
-      m_queue->insert(EventQueueValueType(pt,0));
-    bool inserted = insertion_res.second;
+    
+    const std::pair<EventQueueIter, bool>& pair_res =
+      m_queue->find_lower(pt, m_queueEventLess);
+    bool exist = pair_res.second;
 
-    if (inserted == true)
+    if (! exist)
     {
       // We have a new event
       e = allocate_event(pt, type);
-      (insertion_res.first)->second = e;
+      m_queue->insert_before(pair_res.first, e);
     }
     else
     {
       // The event already exsits
-      e = (insertion_res.first)->second;
+      e = *(pair_res.first);
       e->set_attribute(type);
     }
     PRINT_NEW_EVENT(pt, e);
-    return (std::make_pair(e, inserted));
+    return (std::make_pair(e, !exist));
   }
 
 };
