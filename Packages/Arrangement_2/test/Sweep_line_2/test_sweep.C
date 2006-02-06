@@ -142,8 +142,7 @@ int main(int argc, char * argv[])
   CurveList curves_no_overlap_list_out;
   CGAL::get_subcurves(curves.begin(),
                       curves.end(),
-                      std::back_inserter(curves_no_overlap_list_out),
-                      tr);
+                      std::back_inserter(curves_no_overlap_list_out));
 
 
   // get subcurves w/ overlapping
@@ -151,7 +150,6 @@ int main(int argc, char * argv[])
   CGAL::get_subcurves(curves.begin(),
                       curves.end(),
                       std::back_inserter(curves_with_overlap_list_out),
-                      tr,
                       true);
 
   /*std::copy(curves_no_overlap_list_out.begin(),
@@ -172,7 +170,6 @@ int main(int argc, char * argv[])
   CGAL::get_intersection_points(curves.begin(),
                                 curves.end(), 
 			                          std::back_inserter(points_with_ends_list_out),
-                                tr,
                                 true);
 
 
@@ -181,13 +178,12 @@ int main(int argc, char * argv[])
   CGAL::get_intersection_points(curves.begin(),
                                 curves.end(), 
 			                          std::back_inserter(points_without_ends_list_out),
-                                tr,
                                 false);
   std::cout << points_without_ends_list_out.size() << " points_without_ends_list_out(size)\n";
 
   // check the do_curves_intersecting method
   bool do_intersect_out = 
-    CGAL::do_curves_intersect(curves.begin(), curves.end(), tr);
+    CGAL::do_curves_intersect(curves.begin(), curves.end());
 
 
   // read curves and points from file

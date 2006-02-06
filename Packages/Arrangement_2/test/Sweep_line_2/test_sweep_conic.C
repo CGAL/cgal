@@ -206,15 +206,14 @@ int main (int argc, char** argv)
 
   // run the sweep
   std::list<X_monotone_curve_2> mylist;
-  Traits_2 tr;
 
   CGAL::get_subcurves(curves.begin(), curves.end(), 
-                   std::back_inserter(mylist), tr, false);
+                   std::back_inserter(mylist), false);
   
   
   PointList point_list_with_ends;
   CGAL::get_intersection_points(curves.begin(), curves.end(), 
-                              std::back_inserter(point_list_with_ends), tr, true);
+                              std::back_inserter(point_list_with_ends), true);
   int point_count_with_ends_calculated = point_list_with_ends.size();
   
   // generate the string for the output
