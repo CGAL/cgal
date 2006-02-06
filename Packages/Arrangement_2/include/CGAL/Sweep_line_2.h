@@ -201,13 +201,13 @@ public:
       */
       PRINT(" - handling special case " << std::endl;);
              
-      this->m_statusLineCurveLess.set_is_equal(false);
-      this->m_status_line_insert_hint =
-        this->m_statusLine.lower_bound (this->m_currentEvent->get_point(), 
+       const std::pair<StatusLineIter, bool>& pair_res = 
+         this->m_statusLine.find_lower (this->m_currentEvent->get_point(), 
                                         this->m_statusLineCurveLess);
-      StatusLineIter temp = this->m_status_line_insert_hint;
+       this->m_status_line_insert_hint = pair_res.first;
+       this->m_is_event_on_above = pair_res.second;
 
-      this->m_is_event_on_above = this->m_statusLineCurveLess.is_equal();
+      StatusLineIter temp = this->m_status_line_insert_hint;
 
       if(this->m_is_event_on_above)
       {

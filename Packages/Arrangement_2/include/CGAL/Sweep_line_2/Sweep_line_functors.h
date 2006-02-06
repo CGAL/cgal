@@ -66,11 +66,10 @@ public:
 
   template <class Sweep_event>
   Status_line_curve_less_functor(Traits *t, Sweep_event** e_ptr) : m_traits(t),
-                                                            m_curr_event(reinterpret_cast<Event**>(e_ptr)),
-                                                            m_is_equal(false)
-
+                                                            m_curr_event(reinterpret_cast<Event**>(e_ptr))
   {}
 
+  // this comprator should never be called in release mode (only debug mode)
   Comparison_result operator()(const Subcurve * c1, const Subcurve * c2) const
   {
     if(std::find((*m_curr_event)->right_curves_begin(), 
@@ -90,32 +89,13 @@ public:
 
   Comparison_result operator()(const Point_2& pt, const Subcurve * c2) const
   {
-    Comparison_result temp =
-      m_traits->compare_y_at_x_2_object()(pt,c2->get_last_curve());
-    if(temp == EQUAL)
-      m_is_equal = true;
-    return (temp);
-  }
-
-  bool is_equal() const
-  {
-    return m_is_equal;
-  }
-
-  void set_is_equal(bool b)
-  {
-    m_is_equal = b;
+    return (m_traits->compare_y_at_x_2_object()(pt,c2->get_last_curve()));
   }
 
   /*! a pointer to a traits object */
   Traits *  m_traits;
 
-  Event**   m_curr_event;
-  
-
-  mutable bool m_is_equal;
-
-  
+  Event**   m_curr_event;  
 };
 
 

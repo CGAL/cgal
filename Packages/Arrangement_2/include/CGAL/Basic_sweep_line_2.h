@@ -513,12 +513,12 @@ public:
 
     if(! m_currentEvent->has_left_curves())
     { 
-      m_statusLineCurveLess.set_is_equal(false);
-      m_status_line_insert_hint =
-        m_statusLine.lower_bound (m_currentEvent->get_point(), 
+      const std::pair<StatusLineIter, bool>& pair_res =
+        m_statusLine.find_lower (m_currentEvent->get_point(), 
 				                          m_statusLineCurveLess);
 
-      m_is_event_on_above = m_statusLineCurveLess.is_equal();
+      m_status_line_insert_hint = pair_res.first;
+      m_is_event_on_above = pair_res.second;
 
       if(m_is_event_on_above)
       {
@@ -527,7 +527,7 @@ public:
         CGAL_assertion(!m_currentEvent -> has_right_curves() &&
                         m_currentEvent -> is_query());
 
-         m_is_event_on_above = true;
+         //m_is_event_on_above = true;
          m_visitor->before_handle_event(m_currentEvent);
       }
       else
