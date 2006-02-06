@@ -276,8 +276,25 @@ void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2
   Curve_const_iterator curr = itr_pair.first;
   Curve_const_iterator end  = itr_pair.second;
 
+  Face_iterator f;
+  if(arr.is_empty())
+  {
+    f = arr.unbounded_face();
+  }
+  else
+  {
+    Walk_pl pl(arr);
+
+    Object obj = pl.locate(m_traits->construct_min_vertex_2_object()(*curr));
+
+    Face_const_iterator const_f;
+    // pgn must be completely disjoint from the arrangement
+    CGAL_assertion(CGAL::assign(const_f, obj) && !const_f->contained());
+    CGAL::assign(const_f, obj);
+    f = arr.non_const_handle(const_f);
+  }
   Halfedge_handle first_he = 
-    arr.insert_in_face_interior(*curr, arr.unbounded_face());
+    arr.insert_in_face_interior(*curr, f);
   //first_he is directed from left to right (see insert_in_face_interior)
   
   Halfedge_handle curr_he;
