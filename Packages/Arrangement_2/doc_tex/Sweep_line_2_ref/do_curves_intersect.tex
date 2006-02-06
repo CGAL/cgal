@@ -7,7 +7,7 @@
 \ccFunction{template <class Traits, class InputIterator>
 bool do_curves_intersect (InputIterator curves_begin,
                           InputIterator curves_end,
-                          Traits& traits);}
+                          Traits traits = Default_traits());}
 {given a range of curves, check whether there is at least one pair of curves
  that intersect in their interior. The function returns \ccc{true} if such
  a pair is found, and \ccc{false} if all curves are pairwise disjoint in
