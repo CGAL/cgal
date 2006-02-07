@@ -25,7 +25,7 @@ An object \ccVar\ of this type must provide in addition:
 
 \ccHasModels
 
-\ccc{Circular_kernel::Compare_x_2;}
+\ccc{Circular_kernel_2::Compare_x_2;}
 
 \ccSeeAlso
 
@@ -59,7 +59,7 @@ An object \ccVar\ of this type must provide in addition:
 
 \ccHasModels
 
-\ccc{Circular_kernel::Compare_y_2;}
+\ccc{Circular_kernel_2::Compare_y_2;}
 
 \ccSeeAlso
 
@@ -93,7 +93,7 @@ An object \ccVar\ of this type must provide in addition:
 
 \ccHasModels
 
-\ccc{Circular_kernel::Compare_xy_2;}
+\ccc{Circular_kernel_2::Compare_xy_2;}
 
 \ccSeeAlso
 
@@ -120,7 +120,7 @@ a point $p$ and an arc $a$ on the vertical line passing through $p$.
 
 \ccHasModels
 
-\ccc{Circular_kernel::Compare_y_at_x_2;}
+\ccc{Circular_kernel_2::Compare_y_at_x_2;}
 
 \ccSeeAlso
 
@@ -136,32 +136,32 @@ An object \ccVar\ of this type must provide operators that compare vertically
 two arcs on the right side of a common point $p$:
 
 \ccMemberFunction{Comparison_result operator()
-	(const Circular_kernel::Circular_arc_2 &a1,
-               const Circular_kernel::Circular_arc_2 &a2,
-               const Circular_kernel::Circular_arc_point_2 &p);}
+	(const Circular_kernel_2::Circular_arc_2 &a1,
+               const Circular_kernel_2::Circular_arc_2 &a2,
+               const Circular_kernel_2::Circular_arc_point_2 &p);}
 {For two circular arcs.}
 
 \ccMemberFunction{Comparison_result operator()
-	(const Circular_kernel::Line_arc_2 &a1,
-               const Circular_kernel::Line_arc_2 &a2,
-               const Circular_kernel::Circular_arc_point_2 &p);}
+	(const Circular_kernel_2::Line_arc_2 &a1,
+               const Circular_kernel_2::Line_arc_2 &a2,
+               const Circular_kernel_2::Circular_arc_point_2 &p);}
 {For two segments.}
 
 \ccMemberFunction{Comparison_result operator()
-	(const Circular_kernel::Line_arc_2 &a1,
-               const Circular_kernel::Circular_arc_2 &a2,
-               const Circular_kernel::Circular_arc_point_2 &p);}
+	(const Circular_kernel_2::Line_arc_2 &a1,
+               const Circular_kernel_2::Circular_arc_2 &a2,
+               const Circular_kernel_2::Circular_arc_point_2 &p);}
 {For a segment and an arc.}
 
 \ccMemberFunction{Comparison_result operator()
-	(const Circular_kernel::Circular_arc_2 &a1,
-               const Circular_kernel::Line_arc_2 &a2,
-               const Circular_kernel::Circular_arc_point_2 &p);}
+	(const Circular_kernel_2::Circular_arc_2 &a1,
+               const Circular_kernel_2::Line_arc_2 &a2,
+               const Circular_kernel_2::Circular_arc_point_2 &p);}
 {Same as previous.}
 
 \ccHasModels
 
-\ccc{Circular_kernel::Compare_y_to_right_2;}
+\ccc{Circular_kernel_2::Compare_y_to_right_2;}
 
 \ccSeeAlso
 

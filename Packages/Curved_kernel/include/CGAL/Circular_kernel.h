@@ -52,21 +52,21 @@ struct Circular_kernel_base: public LinearKernelBase
 } // namespace CGALi
 
 template < class LinearKernel, class AlgebraicKernel >
-struct Circular_kernel
+struct Circular_kernel_2
   : public Curved_kernel_type_equality_wrapper
   <
   CGALi::Circular_kernel_base
-  < Circular_kernel<LinearKernel,AlgebraicKernel>,
+  < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
     typename LinearKernel::template 
-    Base<Circular_kernel<LinearKernel,AlgebraicKernel> >::Type 
+    Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type 
   >,
-  Circular_kernel<LinearKernel,AlgebraicKernel> 
+  Circular_kernel_2<LinearKernel,AlgebraicKernel> 
   >
 {
-  typedef Circular_kernel<LinearKernel,AlgebraicKernel>      Self;
+  typedef Circular_kernel_2<LinearKernel,AlgebraicKernel>      Self;
 
   typedef typename LinearKernel::template 
-  Base<Circular_kernel<LinearKernel,AlgebraicKernel> >::Type Linear_kernel;
+  Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type Linear_kernel;
   typedef AlgebraicKernel                                  Algebraic_kernel;
 
   // for Lazy hexagons/bbox kernels

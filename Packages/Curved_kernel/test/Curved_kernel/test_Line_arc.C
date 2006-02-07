@@ -1066,7 +1066,7 @@ int main()
   typedef CGAL::Gmpq                                           NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
-  typedef CGAL::Circular_kernel<Linear_k1,Algebraic_k1>        CK1;
+  typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
   CK1 ck1;
   _test_Line_arc(ck1);
   _test_intersection_Line_arc_Circle(ck1);

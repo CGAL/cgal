@@ -1,6 +1,5 @@
 assurer consistance entre manual et code
-- nom : alg kernel *for circles*
-- interface intersect
+(ex: interface intersect)
 
 tracker les vestiges de l'ancienne representation des points (pointeurs
 vers cercles)

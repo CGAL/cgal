@@ -1064,15 +1064,15 @@ void _test_has_on(CK ck)
 
 int main()
 {
-  typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
-  typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
-  typedef CGAL::Circular_kernel<Linear_k1,Algebraic_k1>        CK1;
+  typedef CGAL::Quotient<CGAL::MP_Float>                     NT1;
+  typedef CGAL::Cartesian<NT1>                               Linear_k1;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>        Algebraic_k1;
+  typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>    CK1;
   
-  typedef CGAL::Interval_nt_advanced                           NT2;
-  typedef CGAL::Cartesian<NT2>                                 Linear_k2;
-  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
-  typedef CGAL::Circular_kernel<Linear_k2,Algebraic_k2>        CK2;
+  typedef CGAL::Interval_nt_advanced                         NT2;
+  typedef CGAL::Cartesian<NT2>                               Linear_k2;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>        Algebraic_k2;
+  typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>    CK2;
   typedef CGAL::Lazy_curved_kernel<CK1,CK2>                  Circular_kernel;
   Circular_kernel ck;
 

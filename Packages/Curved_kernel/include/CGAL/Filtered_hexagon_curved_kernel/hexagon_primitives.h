@@ -490,7 +490,7 @@ template < class CK, class Hexagon>
   typedef typename CK::Circular_arc_2  Circular_arc_2;
   typedef typename CK::Line_arc_2  Line_arc_2;
   typedef CGAL::Simple_cartesian<CGAL::Interval_nt<> >                   FK;
-  typedef CGAL::Circular_kernel< FK,CGAL::Algebraic_kernel_for_circles_2_2<FK::RT> >   CK2;
+  typedef CGAL::Circular_kernel_2< FK,CGAL::Algebraic_kernel_for_circles_2_2<FK::RT> >   CK2;
   typedef CGAL::Circular_kernel_converter<CK,CK2>                          Conv;
 
   public:
