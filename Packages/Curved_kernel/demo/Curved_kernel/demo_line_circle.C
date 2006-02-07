@@ -89,12 +89,12 @@ typedef CGAL::Gmpq                                          NT;
 
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
-typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>           Circular_k;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
+typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 
-typedef Circular_k::Line_arc_2                                Line_arc_2;
-typedef Circular_k::Segment_2                                 Segment;
-typedef Circular_k::Circular_arc_2                            Circular_arc_2;
+typedef Circular_k::Line_arc_2                              Line_arc_2;
+typedef Circular_k::Segment_2                               Segment;
+typedef Circular_k::Circular_arc_2                          Circular_arc_2;
 typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 

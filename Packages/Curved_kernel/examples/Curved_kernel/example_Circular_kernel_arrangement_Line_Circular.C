@@ -27,8 +27,8 @@
 typedef CGAL::Gmpq                                          NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
-typedef CGAL::Algebraic_kernel_2_2<NT>                      Algebraic_k;
-typedef CGAL::Circular_kernel<Linear_k,Algebraic_k>           Circular_k;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
+typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 
 typedef Circular_k::Point_2                           Point_2;
 typedef Circular_k::Circle_2                          Circle_2;

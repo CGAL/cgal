@@ -107,20 +107,20 @@ struct Binary_operator_result <Root_of_2<T1>, Root_of_2<T2> >;
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/IO/Dxf_variant_reader.h>
 
-typedef CGAL::Gmpq                                          NT1; 
+typedef CGAL::Gmpq                                           NT1; 
 //typedef CGAL::Quotient<CGAL::MP_Float> NT;
 //typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>  NT;
 
 typedef CGAL::Cartesian<NT1>                                 Linear_k1;
 
-typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
-typedef CGAL::Circular_kernel<Linear_k1,Algebraic_k1>           CK1_;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
+typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1_;
 
 typedef CGAL::Interval_nt_advanced                           NT2;
 //typedef CGAL::Interval_nt<>                                  NT2;
 typedef CGAL::Cartesian<NT2>                                 Linear_k2;
-typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
-typedef CGAL::Circular_kernel<Linear_k2,Algebraic_k2>          CK2_;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
+typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2_;
 typedef CGAL::Lazy_curved_kernel<CK1_,CK2_>                  Circular_k;
 
 
