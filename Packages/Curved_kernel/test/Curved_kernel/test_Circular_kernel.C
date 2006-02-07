@@ -14,7 +14,7 @@ int main()
 {
   typedef CGAL::Gmpq                                           NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   typedef CGAL::Circular_kernel<Linear_k1,Algebraic_k1>          CK1;
   CK1 ck1;
   _test_circle_predicat(ck1);
@@ -25,8 +25,8 @@ int main()
 
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
-  typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
-  typedef CGAL::Circular_kernel<Linear_k2, Algebraic_k2>         CK2;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
+  typedef CGAL::Circular_kernel<Linear_k2, Algebraic_k2>       CK2;
   
   CK2 ck2;
   _test_circle_predicat(ck2);

@@ -42,7 +42,7 @@ class Circular_arc_with_hexagon_2 : public CGALi::Debug_id<> {
     typedef typename CK::Root_of_2                             Root_of_2;
     typedef CK R;
     typedef CGAL::Simple_cartesian<CGAL::Interval_nt<> >                   FK;
-    typedef CGAL::Circular_kernel< FK,CGAL::Algebraic_kernel_2_2<FK::RT> >   CK2;
+    typedef CGAL::Circular_kernel< FK,CGAL::Algebraic_kernel_for_circles_2_2<FK::RT> >   CK2;
     typedef CGAL::Circular_kernel_converter<CK,CK2>                          Conv;
 
 

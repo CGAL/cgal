@@ -11,7 +11,7 @@
 int main()
 {
   typedef CGAL::Gmpq                                           NT1;
-  typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   Algebraic_k1 ak1;
   _test_solve(ak1);
   _test_sign_at(ak1);
@@ -20,7 +20,7 @@ int main()
   _test_constuctor(ak1);
   
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
-  typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
   Algebraic_k2 ak2;
   _test_solve(ak2);
   _test_sign_at(ak2);

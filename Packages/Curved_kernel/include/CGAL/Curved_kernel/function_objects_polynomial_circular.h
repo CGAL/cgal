@@ -648,6 +648,12 @@ template < class CK >
 	       const Circular_arc_point_2 &p2) const
     { return Rep(support,p1,p2); }
 
+    result_type
+    operator()(const Line_2 &support,
+	       const Point_2 &p1,
+	       const Point_2 &p2) const
+    { return Rep(support,p1,p2); }
+
 
     result_type
     operator()(const Segment_2 &s) const

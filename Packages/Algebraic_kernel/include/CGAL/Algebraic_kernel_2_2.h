@@ -10,8 +10,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_ALGEBRAIC_KERNEL_2_2_H
-#define CGAL_ALGEBRAIC_KERNEL_2_2_H
+#ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_2_2_H
+#define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_2_2_H
 
 #include <CGAL/Root_of_2.h>
 #include <CGAL/Polynomials_2_2.h>
@@ -26,31 +26,32 @@
 CGAL_BEGIN_NAMESPACE
 
   template< class RT_ >
-  struct Algebraic_kernel_2_2
+  struct Algebraic_kernel_for_circles_2_2
   {
-    typedef Algebraic_kernel_2_2<RT_>        Self;
+    typedef Algebraic_kernel_for_circles_2_2<RT_>      Self;
 
-    typedef RT_                                                             RT;
-    typedef typename Root_of_traits< RT >::RootOf_1  FT;
+    typedef RT_                                        RT;
+    typedef typename Root_of_traits< RT >::RootOf_1    FT;
 
-    typedef Polynomial_1_2<RT>                                  Polynomial_1_2; 
-    typedef Polynomial_for_circles_2_2<RT>               Polynomial_for_circles_2_2; 
+    typedef Polynomial_1_2<RT>                     Polynomial_1_2; 
+    typedef Polynomial_for_circles_2_2<RT>         Polynomial_for_circles_2_2; 
     // problem RT / FT ?
 
     typedef typename Root_of_traits< RT >::RootOf_2  Root_of_2;
-    typedef Root_for_circles_2_2< RT >                       Root_for_circles_2_2;
+    typedef Root_for_circles_2_2< RT >               Root_for_circles_2_2;
 
     typedef AlgebraicFunctors::Construct_polynomial_1_2<Self>
-                                                                                    Construct_polynomial_1_2;
+                                         Construct_polynomial_1_2;
     typedef AlgebraicFunctors::Construct_polynomial_for_circles_2_2<Self>
-                                                                       Construct_polynomial_for_circles_2_2;
-    typedef AlgebraicFunctors::Solve<Self>                  Solve;
-    typedef AlgebraicFunctors::Sign_at<Self>               Sign_at;
+                                         Construct_polynomial_for_circles_2_2;
+
+    typedef AlgebraicFunctors::Solve<Self>             Solve;
+    typedef AlgebraicFunctors::Sign_at<Self>           Sign_at;
     typedef AlgebraicFunctors::X_critical_points<Self> X_critical_points;
     typedef AlgebraicFunctors::Y_critical_points<Self> Y_critical_points;
-    typedef AlgebraicFunctors::Compare_x<RT>          Compare_x;
-    typedef AlgebraicFunctors::Compare_y<RT>          Compare_y;
-    typedef AlgebraicFunctors::Compare_xy<RT>        Compare_xy;
+    typedef AlgebraicFunctors::Compare_x<RT>           Compare_x;
+    typedef AlgebraicFunctors::Compare_y<RT>           Compare_y;
+    typedef AlgebraicFunctors::Compare_xy<RT>          Compare_xy;
 
     Construct_polynomial_1_2
                  construct_polynomial_1_2_object() const
@@ -85,4 +86,4 @@ CGAL_BEGIN_NAMESPACE
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ALGEBRAIC_KERNEL_2_2_H
+#endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_2_2_H
