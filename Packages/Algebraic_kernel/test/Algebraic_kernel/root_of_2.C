@@ -16,7 +16,7 @@
 
 #include <CGAL/Random.h>
 
-//#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 //#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
@@ -460,9 +460,9 @@ int main(int argc, char **argv) {
   result = result &&
            test_root_of<Root_of_2<CGAL::Quotient<CGAL::MP_Float> > >();
 
-//  std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
-//  result = result &&
-//           test_root_of<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >::RootOf_2 >();
+ std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
+ result = result &&
+          test_root_of<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >::RootOf_2 >();
 
 #ifdef CGAL_USE_GMP
   std::cout << "Testing Root_of_2<Gmpz>" << std::endl;
