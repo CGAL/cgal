@@ -85,7 +85,6 @@ struct Default_arr_traits<CGAL::_Circle_segment_2<Kernel_, Filter_> >
  *                       induced by the input curves.
  * \param report_endpoints If (true), the end points of the curves are also
  *                         reported as intersection points.
- *                         Defaults value is (false).
  * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
  *      value-type of OutputIterator is Traits::Point_2.
  */
@@ -93,7 +92,7 @@ template <class CurveInputIterator, class OutputIterator, class Traits>
 OutputIterator get_intersection_points (CurveInputIterator curves_begin,
                                         CurveInputIterator curves_end,
                                         OutputIterator points,
-                                        bool report_endpoints = false,
+                                        bool report_endpoints,
                                         Traits &tr)
 {
   // Define the sweep-line types:
@@ -136,7 +135,6 @@ OutputIterator get_intersection_points (CurveInputIterator curves_begin,
  * \param points Output: An output iterator for the subcurve. 
  * \param mult_overlaps If (true), the overlapping subcurve will be reported
  *                      multiple times.
- *                      Defaults value is (false).
  * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
  *      value-type of OutputIterator is Traits::X_monotone_curve_2.
  */
@@ -144,7 +142,7 @@ template <class CurveInputIterator, class OutputIterator, class Traits>
 OutputIterator get_subcurves (CurveInputIterator curves_begin,
                               CurveInputIterator curves_end,
                               OutputIterator subcurves,
-                              bool mult_overlaps = false,
+                              bool mult_overlaps,
                               Traits &tr)
 {
   // Define the sweep-line types:
