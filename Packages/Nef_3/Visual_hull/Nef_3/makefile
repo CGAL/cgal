@@ -13,11 +13,11 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+CGALSRC = /home/kettner/topics/cgal/src
+
 CXXFLAGS = \
-           -DNDEBUG \
-           -I/home/hachenb/CGAL/Nef_S2/include \
-	   -I/home/hachenb/CGAL/Nef_3/include \
-	   -I/home/hachenb/CGAL/Nef_2/include \
+           -I$(CGALSRC)/Nef_S2/include \
+           -I$(CGALSRC)/Nef_3/include \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -40,13 +40,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                vishull2off(OBJ_EXT)
+                vishull2off(OBJ_EXT)	\
+                subdiv(OBJ_EXT)
 
 vishull2off$(EXE_EXT): vishull2off$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)vishull2off vishull2off$(OBJ_EXT) $(LDFLAGS)
 
+subdiv$(EXE_EXT): subdiv$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)subdiv subdiv$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   vishull2off.clean
+                   vishull2off.clean	\
+                   subdiv.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
