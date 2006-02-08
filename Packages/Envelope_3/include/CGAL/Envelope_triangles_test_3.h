@@ -276,70 +276,9 @@ public:
                                   bool faces_only = true)
   {
     Minimization_diagram_2 overlay_map;
-    // overlay the 2 maps
+    // overlay the 2 maps, the overlay test functor does all the comparisons
     overlay(test_env, env, overlay_map);
-
-//    // foreach face in the result map, compare the surfaces over it
-//    Face_iterator fi = overlay_map.faces_begin();
-    bool eq, result = true;
-//    for (; fi != overlay_map.faces_end(); ++fi)
-//   {
-//      Face_handle fh = fi;
-//      if (!fh->is_unbounded())
-//      {
-//        CGAL_assertion(fh->get_aux_is_set(0));
-//        CGAL_assertion(fh->get_aux_is_set(1));
-//        eq = fh->is_equal_aux_data(0, fh->begin_aux_data(1), fh->end_aux_data(1));
-//        CGAL_assertion_msg(eq, "data different over face");
-//        result &= eq;
-//      }
-//    }
-
-//    if (!faces_only)
-//    {
-//      // foreach edge in the result map, compare the surfaces over it
-//      Halfedge_iterator hi = overlay_map.halfedges_begin();
-//      for (; hi != overlay_map.halfedges_end(); ++hi)
-//      {
-//        Halfedge_handle hh = hi;
-//        CGAL_assertion(hh->get_aux_is_set(0));
-//        CGAL_assertion(hh->get_aux_is_set(1));
-//        eq = hh->is_equal_aux_data(0, hh->begin_aux_data(1), hh->end_aux_data(1));
-//        CGAL_assertion_msg(eq, "data different over edge");
-//        result &= eq;
-//
-//        // check the opposite halfedge
-//        CGAL_assertion(hh->twin()->get_aux_is_set(0));
-//        CGAL_assertion(hh->twin()->get_aux_is_set(1));
-//        eq = hh->is_equal_aux_data(0, hh->twin()->begin_aux_data(1),
-//                                      hh->twin()->end_aux_data(1));
-//        CGAL_assertion_msg(eq, "data different over twin halfedges");
-//        result &= eq;
-//        
-//      }
-//
-//      // foreach vertex in the result map, compare the surfaces over it
-//      Vertex_iterator vi = overlay_map.vertices_begin();
-//      for (; vi != overlay_map.vertices_end(); ++vi)
-//      {
-//        Vertex_handle vh = vi;
-//        #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
-//          std::cout << "check vertex: " << vh->point() << std::endl;
-//        #endif
-//        
-//        CGAL_assertion(vh->get_aux_is_set(0));
-//        CGAL_assertion(vh->get_aux_is_set(1));
-//        eq = vh->is_equal_aux_data(0, vh->begin_aux_data(1), vh->end_aux_data(1));
-//        CGAL_assertion_code(
-//          if (!eq)
-//            std::cout << vh->point() << std::endl;
-//        );
-//        CGAL_assertion_msg(eq, "data different over vertex");
-//        result &= eq;
-//      }
-//    }
-    
-    return result;
+    return true;
   }
 
 protected:
