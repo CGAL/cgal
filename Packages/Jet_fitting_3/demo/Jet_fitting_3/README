@@ -1,0 +1,11 @@
+Program visu.exe 
+----------------
+
+takes as input
+1. a file.off,
+2. the corresponding file file.off.4ogl.txt computed with the example program 
+	blind.exe from file.off.
+
+it displays an OpenGL view of both the mesh and the ppal directions
+
+./visu.exe ../../data

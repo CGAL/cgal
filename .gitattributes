@@ -1169,6 +1169,15 @@ Packages/Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#un
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#unset
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.xml -text
+Packages/Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text
+Packages/Jet_fitting_3/demo/Jet_fitting_3/data/venus.off -text
+Packages/Jet_fitting_3/doc_ps/Jet_fitting_3.ps.gz -text svneol=unset#unset
+Packages/Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.eps -text
+Packages/Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#unset
+Packages/Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
+Packages/Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
+Packages/Jet_fitting_3/examples/Jet_fitting_3/gmon.out svneol=native#unset
+Packages/Jet_fitting_3/examples/Jet_fitting_3/test.off -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.pdf -text svneol=unset#unset

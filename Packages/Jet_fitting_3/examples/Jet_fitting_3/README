@@ -1,0 +1,44 @@
+Program blind_1pt.exe 
+--------------------- 
+takes as input a <inputPoints.txt> which is a xyz text file 
+it compute the fitting for this single entry and 
+it outputs results in the <output.txt> file and on the standard std::cout
+
+Usage is : main <inputPoints.txt> <output.txt> <d_fitting>, <d_monge>" 
+
+./blind_1pt.exe data/in_points_file.txt output.txt 2 2
+
+
+
+Program blind.exe
+-----------------
+takes an filename.off file as input,
+it computes a fitting for each vertex
+
+it outputs the results in :
+1. filename.off.4ogl.txt  which can be visualized with 
+	the demo program visu.exe
+2. if option -v, filename.off.verb.txt contains human readable results
+
+Usage is : blind  with options    
+    "f:fName <string>",	 // filename.off
+    "d:deg <int>",	 // degree of the jet
+    "m:mdegree <int>",	 // degree of the Monge rep
+    "a:nrings <int>",	 // # rings 
+			0 means collect enough rings to make appro possible
+			k>=1 fixes the nb of rings to be collected
+    "p:npoints <int>",   //# points
+			0 means this option is not considered, this is the default
+			n>=1 fixes the nb of points to be used
+    "v|",                // verbose?
+ 
+Note : if the nb of collected points is less than the required min number of 
+   points to make the approxiamtion possible (which is constrained by the deg)
+   then the vertex is skipped.
+
+ ./blind.exe -f data/ellipe0.003.off -d2 -m2 -a2 
+ ./blind.exe -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
+
+visu with:
+
+./visu.exe ../../examples/Jet_fitting_3/data/poly2x\^2+y\^2-0.062500-off ../../examples/Jet_fitting_3/data_poly2x\^2+y\^2-0.062500-off.4ogl.txt

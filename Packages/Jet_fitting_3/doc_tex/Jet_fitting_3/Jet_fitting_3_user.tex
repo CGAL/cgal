@@ -1,0 +1,605 @@
+%\usepackage{amsmath}
+\newcommand{\hot}[0]{h.o.t}
+
+This chapter describes the \cgal's package for the estimation of local 
+differential quantities on sampled surfaces. 
+
+give the outline
+ 
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Overview}
+%%%%%%%%%%%%%%%%%%%%%%
+
+Consider a sampled smooth surface, and assume we are given a
+collection of points $P$ about a given sample $p$. We aim at
+estimating the order-$d$ differential properties of the surface at
+point $p$ from the point set $P^+ = P\cup \{ p\}$ --we note $N=\mid
+P^+\mid$. More precisely, first order properties correspond to the
+normal or the tangent plane; second order properties provide the
+principal curvatures and directions, third order properties provide
+the directional derivatives of the principal curvatures along the
+curvature lines, etc.  Most of the time, estimating first and second
+order differential quantities is sufficient.  However, some
+applications involving shape analysis require estimating third and
+fourth order differential quantities.
+%%
+Many different estimators have been proposed in the vast literature of
+applied geometry \cite{sp-smrqtm-01}. They all need to define a
+neighborhood around the point at which the estimation is computed and
+use at different level the geometry of the mesh. On one hand, methods
+relying on {\em discrete differential geometry} only use the
+information provided by the mesh
+\cite{pinkall93a,desbrun00a,dcs-jmm-rdtnc-03}. On the other hand,
+fitting methods rely on smooth differential geometry and
+approximation, and hence are able to process point clouds directly.
+
+By now, there are two methods to extract local differential properties
+coming with theoretical analysis of their convergence rates. On one
+hand, the normal cycle theory is used in
+\cite{dcs-jmm-rdtnc-03} to provide an estimate of the integral of the
+Weingarten map of surface discretized by a mesh.  On the other hand,
+\cite{fc-mp-edqpfoj-05} uses polynomial fitting to extract the
+coefficients of the local representation of the surface as a height
+function. This method has three advantages~: first, differential
+properties of any order can be retrieved; second, the coefficients
+estimated feature the best error bounds known so far; third, it
+process point samples (and does not need a mesh).
+
+
+\subsection{Jets, Monge form and polynomial fitting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{Smooth surfaces, $d$-jets and the Monge form.}
+%
+To present the method, we shall need the following notions. Consider a
+smooth surface.  About one of its points, consider a coordinate system
+whose $z$-axis is not aligned with the normal of the surface. In such
+a frame, the surface can locally be written as the graph of a
+bivariate function. Denoting h $\hot$ standing for {\em
+higher order terms}, one has~:
+%
+%Assume the surface is given, locally and in a suitable , as a height
+%function ---with $\hot$ standing for {\em higher order terms}~:
+\begin{equation}
+z(x,y)=J_{B,d}(x,y) + \hot \quad \text{ with }
+J_{B,d}(x,y)=\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
+\frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
+\end{equation}
+The degree $d$ polynomial $J_{B,d}$ is the Taylor expansion of the
+function $z$, we call it its $d$-jet. Notice that a $d$-jet contains
+$N_d=(d+1)(d+2)/2$ coefficients.
+
+At any point of the surface which is not an umbilic, principal
+directions $d_1, d_2$ are well defined, and these (non oriented)
+directions together with the normal vector $n$ define two direct
+orthonormal frames. If $v_1$ is a unit vector of direction $d_1$ then
+there exists a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is
+direct; and the other possible frame is $(-v_1,-v_2,n)$. In one of
+these Monge coordinate systems, the surface is said to be given in the
+Monge form and its jet has the following canonical form~:
+
+\begin{eqnarray}
+\label{eq:monge}
+z(x,y) =  & \frac{1}{2}(k_1x^2 + k_2y^2)+
+	\frac{1}{6}(b_0x^3+3b_1x^2y+3b_2xy^2+b_3y^3) \\
+  &  +\frac{1}{24}(c_0x^4+4c_1x^3y+6c_2x^2y^2+4c_3xy^3+c_4y^4) + \hot
+\end{eqnarray}
+
+Recall that coefficients $k_1, k_2$ are the principal curvatures,
+$b_0,b_3$ are the directional derivatives of $k_1,k_2$ along their
+respective curvature lines, while $b_1,b_2$ are the directional
+derivatives of $k_1,k_2$ along the other curvature lines.
+
+The Monge coordinate system can be computed from any $d$-jet ($d\geq
+2$), and so are the Monge coefficients. These data, characterizing the
+geometry of the surface in a canonical way, will naturally be the
+output of the algorithm.
+
+\paragraph{Interpolating or approximating the $d$-jet.}
+%
+The idea is to fit the $d$-jet, in a well chosen coordinate system,
+using bivariate polynomial interpolation or approximation on the point
+set $P^+$.
+%
+More precisely, the fitting consists of finding the coefficients
+$A_{i,j}$ of the degree $d$ polynomial $J_{A,d}=
+\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
+\frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!})$.
+
+
+Denote $p_i=(x_i,y_i,z_i), \ i=1,\ldots , N$ the coordinates of the
+sample points of $P^+$.
+%%
+For interpolation the linear equations to solve are $A(x_i,y_i)=z_i \
+i=1,\ldots,N$, and for approximation one has to minimize $\sum_{i=1}^N
+(A(x_i,y_i)-z_i)^2$. The linear algebra formulation of the problem is
+given by
+%
+\begin{eqnarray*}
+ A =  & (A_{0,0}, A_{1,0},A_{0,1}, \ldots , A_{0,d})^T \\ 
+ Z=  &(z_1, z_2,\ldots , z_N)^T \\ 
+ M=  &(1,x_i,\ y_i,\ \frac{x_i^2}{2},\ldots ,
+\ \frac{x_iy_i^{d-1}}{(d-1)!},\ \frac{y_i^d}{d!})_{i=1,...,N}\\
+\end{eqnarray*}
+%
+The equations for interpolation become $MA=Z$ and for approximation
+$\min ||MA-Z||_2$.
+
+
+The following theorem precisely states the order of convergence of the
+polynomial fitting method.  Given a parameter $h$ measuring the
+sampling step, the following theorem, provising the best asymptotic
+estimates known to date, is proved in \cite{fc-mp-edqpfoj-05}~:
+\begin{theorem}
+A polynomial fitting of degree $d$ estimates any $k^{th}$-order
+differential quantity to accuracy $O(h^{d-k+1})$~:
+\begin{equation}
+A_{i,k-i} = B_{i,k-i} +O(h^{d-k+1}).
+\end{equation}
+%
+In particular:
+%%
+\begin{itemize}
+\item 
+the coefficients of the unit normal vector are estimated with accuracy
+$O(h^d)$.
+\item 
+the coefficients of the second fundamental form and the shape 
+operator are approximated with accuracy $O(h^{d-1})$, and so are the
+principal curvatures and directions (as long as they are well defined,
+i.e. away from umbilics).
+\end{itemize}
+\end{theorem}
+
+\paragraph{Algorithm.}
+%
+Based on the above concepts, the algorithm consists of 4 steps.
+%
+\begin{enumerate}
+\item
+We perform a PCA on $P^+$. This analysis outputs three orthonormal
+eigenvectors and the associated eigenevalues.  If the
+surface is well sampled, we expect the PCA to provide one small and
+two large eigenvalues, the eigenvector associated to the small one
+approximating the normal vector.
+\item
+We perform a change of coordinates to move the samples into the
+coordinate system defined by the PCA eigenvectors. We then resort to
+polynomial fitting, so as to either interpolate or approximate the
+$d$-jet $J_{B,d}$ of the surface. This fitting reduces to linear
+algebra operations.
+\item
+From the $d$-jet $J_{A,d}$, we compute the Monge basis $(d_1,d_2,n)$.
+\item
+Finally, we compute the Monge coefficients.
+
+\end{enumerate}
+
+
+For the fitting, we do not assume the z-axis of the fitting to
+be the normal of the surface. Hence we keep the first order
+coefficients of the polynomial $J_{A,d}$. It is prooved that such a choice
+improves the estimations \cite{fc-mp-edqpfoj-05}.
+
+Note that we do not aim at identifying exactly special points such as
+umbilics where both principal curvatures are equal. This would only be
+possible if the original surface and the fitted surface coincide. This
+implying that the original surface is a graph of a bivariate
+polynomial of a lower degree than the fitted polynomial and that the
+coordinate system used for the fitting has the same height direction.
+
+%For the sake of clarity and wlog, we assume the study point is at the
+%origin.
+
+\subsection{Degenerate cases}
+\label{sec:deg-cases}
+%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{itemize}
+\item
+number of points provided is not sufficient, that is $N < N_d$.
+
+\item
+the PCA used to determine a rough normal vector does not yield an
+eigenvalue significantly smaller then the two remaining ones.
+
+\item
+when solving the linear system, the condition number is too large .
+\end{itemize}
+
+%Note. focusing on the second order properties: is the point studied
+%close from being an umbilic? the user can use the eigen-values to
+%decide.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Mathematical and algorithmic details}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+In this section, we detail the mathematics involved, in order to
+justify the design choices made.
+
+Note that there are 3 relevant direct orthonormal basis: world-basis
+$(w_x,w_y,w_z)$, fitting-basis $(f_x,f_y,f_z)$, monge-basis
+$(d_1,d_2,n)$.
+
+\begin{figure}
+\centerline{
+\includegraphics[width=.5\linewidth]{jet_fitting_basis}}
+\label{fig:jet_fitting_basis}
+\caption{The three basis envolved in the estimation.}
+\end{figure}
+\subsection{Compute a basis for the fitting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+{\bf input : samples\\
+output : fitting-basis}
+
+Perform a Principal Component Analysis, this means we need a linear
+algebra method to perform an eigen analysis of a symmetric matrix :
+{\tt eigen\_symm\_algo}. This analysis gives an orthonormal basis
+whose $z$-axis is provided by the eigenvector associated to the smallest
+eigenvalue \footnote{Another possibility is to choose as z-axis the
+axis of the world-basis with the least angle with the axis determined
+with the PCA. Then the change of basis reduces to a permutation of
+axis.}. Note one may have to swap the sense of a vector to get a
+direct basis.
+
+Let's note $P_{W\rightarrow F}$ the matrix to change coordinates from the
+world-basis $(w_x,w_y,w_z)$ to the fitting-basis $(f_x,f_y,f_z)$. The
+rows of $P_{W\rightarrow F}$ are the coordinates of the vectors
+$(f_x,f_y,f_z)$ in the world-basis. This matrix represents a
+orthogonal transformation hence its inverse is its tranpose. To obtain
+the coordinates of a point in the fitting-basis from the coordinates
+in the world-basis, one has to multiply by $ P_{W\rightarrow F}$.
+
+Possible feedback is the eigenvalues, a good sampling is characterized 
+by a small eigenvalue and two similar bigger ones.
+
+
+\begin{verbatim}
+void eigen_symm_algo(const LAMatrix& M, LAVector& eigen_vals, LAMatrix& eigen_vecs)
+\end{verbatim} 
+This function computes the eigenvalues and eigenvectors of the real
+symmetric matrix M. The eigenvalues are stored in the vector
+eigen\_vals and are in decreasing order. The corresponding eigenvectors are
+stored in the columns of the matrix eigen\_vecs. For example, the
+eigenvector in the first column corresponds to the first (and largest)
+eigenvalue. The eigenvectors are guaranteed to be mutually orthogonal
+and normalised to unit magnitude.
+
+\subsection{Solving the interpolation / approximation problem}
+\label{sec:solving}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+{\bf input : samples, fitting-basis \\ output : coeff $A_{i,j}$ of the
+bivariate fitted polynomial in the fitting-basis }
+
+Computations are done in the fitting-basis and the origin is the point
+$p$. First, one has to transform coordinates of sample points with a
+translation ($-p$) and multiplication by $ P_{W\rightarrow F}$.
+
+
+We solve the system $MA=Z$, in the least square sense for
+approximation, with a function {\tt solve\_ls\_svd}. There is a
+preconditionning of the matrix $M$ so as to improve the condition
+number. Assuming the $\{x_i\}$, $\{y_i\}$ are of order $h$, the
+pre-conditioning consists of performing a column scaling by dividing
+each monomial $x_i^ky_i^l$ by $h^{k+l}$. The parameter $h$ is chosen
+as the mean value of the $\{x_i\}$ and $\{y_i\}$. In other words, the
+new system is $M'Y=(MD^{-1}(DA)=Z$ with $D$ the diagonal matrix
+$D=(1,h,h,h^2,\ldots,h^d,h^d)$, so that the solution $A$ of the
+original system is $A=D^{-1}Y$.  
+
+There is always a single solution since for under constrained systems
+we also minimize $||A||_2$.  The method uses a singular value
+decomposition of the $N\times N_d$ matrix $M= U S V^T$, where $U$ is a
+$N \times N$ orthogonal matrix, $V$ is a $N_d \times N_d$ orthogonal
+matrix and $S$ is a $N\times N_d$ matrix with the singular values on
+its diagonal. Denote $r$ the rank of $M$, we can decompose 
+%
+$S= \begin{pmatrix}
+D_r & 0_{r,\ N_d-r}\\
+0_{N-r,\ r} & 0_{N-r,\ N_d-r}
+\end{pmatrix}.
+$
+%
+The number $r$, which is the number of non zero singular values, is
+strictly lower than $N_d$ if the system is under constrained. In any
+case, the unique solution which minimize $||A||_2$ is given by~:
+\begin{equation}
+A= V\begin{pmatrix}
+D_r^{-1} & 0_{N_d-r,\ r}\\
+0_{r,\ N-r} & 0_{N_d-r,\ N-r}
+\end{pmatrix} U^TZ.
+\end{equation}
+
+One can provide the condition number
+of the matrix $M$ (after preconditionning) which is the ratio of the
+maximal and the minimal singular values. It is infinite if the system
+is under constrained, that is the smallest singular value is
+zero. Then we should provide an exception.
+
+\begin{verbatim}
+void solve_ls_svd_algo(const LAMatrix& M, const LAVector& B, Vector& X, double& cond_nb)
+\end{verbatim} 
+ 
+This function first factorizes the m-by-n matrix M into the singular
+value decomposition $M = U S V^T$ for $m \geq n$.  Then it solves the
+system $MX = B$ in the least square sense using the singular value
+decomposition (U, S, V) of M. The condition number of the matrix M
+which is the ratio of the largest and the smallest singular values is
+stored in $cond_{nb}$.
+
+\medskip
+Remark: as an alternative, other methods can be used to solve the
+system. A $QR$ decomposition can be substituted to the $SVD$. One can
+also use the normal equation $M^TMA=MTZ$ and apply methods for square
+systems such as $LU$, $QR$ or Cholesky since $M^TM$ is symmetric
+definite positive when $M$ has full rank. 
+%LU suitable for any square M
+%QR for rectangular
+%Choleski for symm def + =LL^t
+The advantages of the $SVD$
+is that it works directly on the rectangular system and gives the
+condition number of the system. For more on these alternatives, see
+\cite{gl-mc-83}.
+
+\subsection{Principal  curvature / directions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+{\bf input : coeff of the fit $A_{i,j}$, 
+fitting-basis \\
+output : monge-basis wrt fitting-basis and world-basis
+}
+
+Computations are done in the fitting-basis.  The partial derivatives,
+evaluated at $(x,y)=(0,0)$, of the fitted polynomial $J_{A,d}(x,y)$ are
+$A_{i,j}=\frac{\partial^{i+j}J_{A,d}}{\partial^ix
+\partial^jy}$, hence
+\begin{eqnarray}
+J_{A,d}(x,y)&=
+A_{0,0}+A_{1,0}x+A_{0,1}y+\frac{1}{2}(A_{2,0}x^2+2A_{1,1}xy+A_{0,2}y^2) 
++ \frac{1}{6}(A_{3,0}x^3+3A_{2,1}x^2y+\ldots )+ \ldots 
+\end{eqnarray}
+
+
+The origin, that is the point of the fitted surface where the
+estimation is performed, is $(0,0,A_{0,0})$. \\ The normal is
+$n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}$. The Weingarten
+operator $W=-I^{-1}II$ is first computed in the basis of the tangent
+plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute an orthonormal basis of the
+tangent plane using the Gram-Schimdt algorithm, and then we compute
+Weingarten in this basis (apply a change of basis matrix
+$W'=P^{-1}WP$). It is then symmetric, we can apply the eigensystem
+function for a symmetric matrix:
+\verb+eigen_symm_algo+.
+One finally gets the principal curvatures which are the eigenvalues of
+$W$ and the principal directions. Sort the values and give an
+orthonormal direct basis $(d_1,d_2,n)$. Let's note $P_{F
+\rightarrow M}$ the matrix to change coordinates from the
+fitting-basis to the monge-basis. Its rows are the coordinates of the
+vectors $(d_1,d_2,n)$ in the fitting-basis. It is an orthogonal matrix
+$P_{F \rightarrow M}^{-1}=P_{F \rightarrow M}^T$. The monge-basis
+expressed in the world-basis is obtained by multipling the coordinates
+of $(d_1,d_2,n)$ in the fitting-basis by $P_{W\rightarrow F}^{-1}$,
+(the same holds for the origin point which has in addition to be
+translated by $p$, i.e. the coordinates of the origin point are
+$P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p$.
+
+\subsection{Computation of higher order Monge coeff}
+
+{\bf input : coeff of the fit, monge-basis wrt fitting-basis ($P_{F
+\rightarrow M}$)\\ 
+output : third and fourth order coeff of Monge}
+
+We use explicite formula. The implicit equation of the fitted
+polynomial surface in the fitting-basis with origin the point
+$(0,0,A_{0,0})$ is $Q=0$ with
+\begin{equation}
+Q=-w-A_{0,0}  +\sum_{i,j}\frac{A_{i,j}u^iv^j}{i!j!}.
+\end{equation}
+
+The equation in the monge-basis is obtained by substituting $(u,v,w)$
+by $P^T_{F\rightarrow M}(x,y,z)$, let's denote $f(x,y,z)$ this implicit
+equation. By definition of the monge-basis, we have locally (at
+$(0,0,0)$)
+\begin{equation}
+f(x,y,z)=0 \Leftrightarrow z=g(x,y)
+\end{equation}
+and the taylor expansion of $g$ at $(0,0)$ are the Monge coefficients
+sought.
+%
+Let's denote the partial derivatives evaluated at the origin of $f$
+and $g$ by $f_{i,j,k}=\frac{\partial^{i+j+k}f}{\partial^ix
+\partial^jy \partial^kz}$ and $g_{i,j}=\frac{\partial^{i+j}g}{\partial^ix
+\partial^jy}$. One has $f_{1,0,0}=f_{0,1,0}=f_{1,1,0}=0$,
+$g_{0,0}=g_{1,0}=g_{0,1}=g_{1,1}=0$ and $g_{2,0}=k_1$,
+$g_{0,2}=k_2$. The partial derivative of order $n$ of $f$ depends on
+the matrix $P_{F\rightarrow M}$ and the partial derivatives of order
+at most $n$ of $J_{A,d}$. The third and fourth order coefficients of are
+computed with the implicit function theorem~:
+\begin{eqnarray*}
+&b_0=g_{3,0}=-(f_{3,0,0}-3f_{1,0,1}f_{2,0,0}/f_{0,0,1})/f_{0,0,1}\\
+&b_3=g_{0,3}=-(f_{0,3,0}-3f_{0,1,1}f_{0,2,0}/f_{0,0,1})/f_{0,0,1}\\
+&c_0=g_{4,0}=-(f_{4,0,0}+3f_{2,0,1}g_{2,0}+f_{0,0,2}g_{2,0}^2
++4f_{1,0,1}g_{30})/f_{0,0,1}\\
+&c_4=g_{0,4}=-(f_{0,4,0}+3f_{0,2,1}g_{0,2}+f_{0,0,2}g_{0,2}^2
++4f_{0,1,1}g_{0,3})/f_{0,0,1}
+\end{eqnarray*} 
+
+\section{Software Design}
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Options and interface specifications}
+%%%%%%%%%%%%%%%%%%%%%
+
+Using the fitting strategy requires specifying two degrees: the degree
+$d$ of the fitted polynomial ($d \geq 1$), and the degree $d'$ of the
+monge coeff one wants to compute, with $d' \leq d $.  In the sequel,
+we also assume users are satisfied with Monge coefficients of order
+four, that is, we assume $d' \leq 4$.
+\medskip
+
+Regarding interpolation versus approximation, we provide a single
+function {\tt Monge\_via\_jet\_fitting} with parameters $d,d'$ and a
+range iterator. If $size()==N_d$ then interpolation is performed, else
+$size() > N_d$ and approximation is used. If $size()< N_d$ we provide
+an exception.
+
+\subsection{Template parameters}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The package developed in fully generic in the C++ sense, and is
+templated by three classes. In addition, we assume implicit cast
+between Data, Local and Linalg are well defined.
+
+\subsubsection{\tt Data\_Kernel} 
+%%%%%%%%%%%
+Class providing the types for the input sample points in addition with 
+3d vectors and a field type. This is the class used as template for
+the Monge\_rep. 
+Typically, one can use {\tt CGAL::Cartesian<double>}.
+
+\noindent \underline{Requirements}: Types FT, Point\_3 Vector\_3
+
+\subsubsection{\tt Local\_Kernel}
+%%%%%%%%%%%
+The kernel defining the Vector and number types used for local
+computations and to store the Monge\_info class members. Input points
+of type Data\_Kernel::Point\_3 are converted to
+Local\_Kernel::Point\_3. For output of the Monge\_rep class, these
+types are converted back to Data\_Kernel ones.  Typically, one can use
+{\tt CGAL::Cartesian<double>}.
+
+\noindent \underline{Requirements}:  We assume the Point and Vector
+types support the dotprodut, wedge prod, sum,
+scalarmult,... operations.
+
+\subsubsection{\tt Linalg\_traits.} 
+%%%%%%%%%%%
+The class providing the matrix algebra operation required by the
+method.
+
+\noindent \underline{Requirements} 
+
+\begin{itemize}
+\item 
+class Vector, Matrix.  Provide constructors with dimension
+information, elements are of type double (may be a template??),
+provide the standard bracket operator.
+\item 
+{\tt eigen\_symm\_algo(Matrix\& M, Vector\& eval, Matrix\& evec)} computes
+the eigen analysis of a symetric matrix and stores the eigenvalues and 
+vectors, should work for the dimensions 2 and 3.
+\item
+{\tt solve\_ls\_svd\_algo(Matrix\& M, Vector\& X, Vector\& B, double\&
+cond\_nb)} computes the SVD decomposition of the matrix M and solves
+the least square problem $\min ||MX-B||_2$ or the linear problem
+$MX=B$.
+\end{itemize}
+
+
+
+\subsubsection{Compatibility requirements}
+
+An important requirement is the following. To solve the fitting
+problem, the coordinates of the samples undergo two types of
+operations: first, an eigen analysis is performed in the world-basis
+(with doubles or the linalg ft); second, points are expressed into
+fitting-basis; third, matrices used for the linear algebra operations
+are filled from powers of the coordinates of the samples in
+fitting-basis. Linear algebra operations being used for these three
+stages, we assume the linear algebra traits class provides functions
+compatible with the number type defining the coordinates of the
+samples. In particular, for number types supporting multi-precision,
+this requires converting the samples into points with more standard
+types ---unless the user has a package supporting linear algebra
+operation on such number types.
+
+
+
+\subsection{Output}
+%%%%%%%%%%%%%%%%%%%%
+
+As explained in section \ref{sec:intro}, the output consists of a
+coordinate system, the Monge basis, together with the Monge
+coefficients. The Monge basis is expressed in the world\_basis. These
+informations desere the following comments.
+
+\paragraph{Origin.} This is the point on the fitted polynomial surface
+where the differential quantities have been computed. In the
+approximation case, it differs from the input point $p$, it is the
+point with coordinates $(0,0,A_{0,0})$ in the fitting-basis.
+
+\paragraph{Monge basis.} The monge-basis $(d_1,d_2,n)$ is orthonormal
+direct, and the maximal, minimal curvatures are defined wrt this
+basis. If the user has a predefined normal $n_0$ (e.g. the sample
+points come from an oriented mesh) then if $n_0 . n >0$ then max-min is
+correct, if $n_0 . n <0$ then the user should prefer the orthonormal
+direct basis $(d_1',d_2',n')=(d_2,d_1,-n)$ with the maximal curvature
+$k_1'=-k_2$ and the minimal curvature $k_2'=-k_1$. If $n_0 . n =0$ or
+is small then this means that the orientation of the surface is not so
+clear!
+
+\paragraph{Monge coefficients.}
+The vector of coefficient of the Monge form is $(k_1, k_2 (\leq k_1),
+b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, c_4)$ for $d\geq 4$.
+
+Moreover, there are degenerate cases ---section
+\ref{sec:deg-cases}. To return both the Monge infos and important
+informations related to their computations, we return instances of two
+classes, {\tt Monge\_rep} and {\tt Monge\_info}, presented on
+Fig. \ref{fig:outputs}.
+
+\begin{figure}[H] 
+\begin{center}
+\begin{boxedminipage}[t]{14cm}
+\begin{verbatim}
+template<class Data_Kernel>
+class Monge_rep { 
+typename Data_Kernel::Point_3 Origin; 
+typename Data_Kernel::Vector_3 d1; 
+typename Data_Kernel::Vector_3 d2;
+typename Data_Kernel::Vector_3 n; 
+std::vector<typename Data_Kernel::NT> coefficients;}
+\end{verbatim}
+
+\begin{verbatim}
+template<class Local_Kernel>
+class Monge_info { 
+typename Local_Kernel::FT pca_eigen_vals[3];
+typename Local_Kernel::Vector_3 pca_eigen_vecs[3];
+typename Local_Kernel::FT cond_nb; //of the fitting system  
+\end{verbatim}
+\end{boxedminipage}
+\end{center}
+
+\caption{Informations returned} 
+\label{fig:outputs} 
+\end{figure} 
+
+
+\subsection{Exceptions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+preconditions:
+\begin{itemize}
+\item
+at least one element in the container.
+\item
+$N \geq N_d$
+\item
+$1 \leq d$, $d' \leq d$, $1 \leq d' \leq 4$ 
+\end{itemize}	
+ 
+
+\section{Example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

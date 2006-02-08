@@ -1,0 +1,546 @@
+This is TeX, Version 3.14159 (Web2C 7.3.1) (format=latex 2004.7.7)  8 FEB 2006 17:39
+**Jet_fitting_3
+(Jet_fitting_3.tex
+LaTeX2e <2003/12/01>
+Babel <v3.8c> and hyphenation patterns for english, UKenglish, french, german, 
+ngerman, italian, spanish, dumylang, nohyphenation, loaded.
+(/usr/local/lib/texmf/tex/latex/base/book.cls
+Document Class: book 2004/02/16 v1.4f Standard LaTeX document class
+(/usr/local/lib/texmf/tex/latex/base/bk10.clo
+File: bk10.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (../../Manual/doc_tex/Manual/cgal_manual.sty (/proj/geometrica/home/latex/cc_
+manual.sty
+\ccwOriginalParskip=\dimen103
+\ccwOriginalParindent=\dimen104
+\ccwIndent=\dimen105
+\ccwRightMargin=\dimen106
+\ccwFirst=\dimen107
+\ccwFirstLong=\dimen108
+\ccwSecond=\dimen109
+\ccwSecondLong=\dimen110
+\ccwComment=\dimen111
+\ccwBetween=\dimen112
+\ccwParam=\dimen113
+\ccwParamIndent=\dimen114
+\ccwFunctionFirst=\dimen115
+\ccwFunctionSecond=\dimen116
+\ccwConstructorFirst=\dimen117
+\ccwConstructorSecond=\dimen118
+\ccwParskipTmp=\dimen119
+\ccwTmp=\dimen120
+\ccwFunctionFirstSave=\dimen121
+\ccwFunctionSecondSave=\dimen122
+\ccwConstructorSecondSave=\dimen123
+\@unused=\write3
+cc_manual.sty: Revision: 3.18. Date: 2004/07/12.
+\ccRefTabLift=\skip43
+\ccBool=\count88
+\ccFalse=\count89
+\ccTrue=\count90
+\ccAuto=\count91
+\functioncallbox=\box26
+\returntypebox=\box27
+\functionnamebox=\box28
+\callnamebox=\box29
+\trailingconstbox=\box30
+\ccInternalCommentBox=\box31
+\templatedeclbox=\box32
+\operatorerror=\count92
+\NParameters=\count93
+\parameterX=\box33
+\parameterXX=\box34
+\parameterXXX=\box35
+\nestinglevel=\count94
+(/proj/geometrica/home/latex/cc_manual_index.sty (/usr/local/lib/texmf/tex/late
+x/base/makeidx.sty
+Package: makeidx 2000/03/29 v1.0m Standard LaTeX package
+)
+\@unused=\write4
+cc_manual_index.sty: Revision: 3.13. Date: 2002/11/19.
+\ccIndex=\count95
+\ccAutoIndex=\count96
+\ccIndexCrossRef=\count97
+\ccIndexModifierCrossRef=\count98
+\ccOperatorCat=\count99
+\ccNotAnIndexOperator=\count100
+\ccSingleVerticalBar=\count101
+\ccDoubleVerticalBar=\count102
+\ccSingleExclamation=\count103
+\ccDoubleExclamation=\count104
+\ccSingleAmpersand=\count105
+\ccDoubleAmpersand=\count106
+\ccAmpersandEqual=\count107
+\ccExclamationEqual=\count108
+\ccVerticalBarEqual=\count109
+\ccSingleAt=\count110
+\ccInsertionOperator=\count111
+\ccExtractionOperator=\count112
+\ccModOperator=\count113
+\ccModEqualOperator=\count114
+\ccPowerOperator=\count115
+\ccPowerEqualOperator=\count116
+\ccTildeOperator=\count117
+\ccCurrentIndexCat=\count118
+\ccIndexEnumCat=\count119
+\ccIndexStructCat=\count120
+\ccIndexTypedefCat=\count121
+\ccIndexVariableCat=\count122
+\ccIndexConstantCat=\count123
+\ccIndexConceptCat=\count124
+\ccIndexFunctionCat=\count125
+\ccIndexFunctionObjectConceptCat=\count126
+\ccIndexFunctionObjectClassCat=\count127
+\ccIndexClassCat=\count128
+\ccIndexMacroCat=\count129
+) (/usr/local/lib/texmf/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+) (/usr/local/lib/texmf/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+(/usr/local/lib/texmf/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+) (/usr/local/lib/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 2001/07/07 v1.0n Standard LaTeX Graphics (DPC,SPQR)
+(/usr/local/lib/texmf/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+) (/usr/local/lib/texmf/tex/latex/texlive/graphics.cfg)
+Package graphics Info: Driver file: dvips.def on input line 80.
+(/usr/local/lib/texmf/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+\Gin@req@height=\dimen124
+\Gin@req@width=\dimen125
+)) (/proj/geometrica/home/latex/latex_to_html.sty
+\@unused=\write5
+latex_to_html.sty: Revision: 3.1. Date: 2004/03/05.
+) (/usr/local/lib/texmf/tex/latex/ltxmisc/path.sty
+This is path.sty, Version 3.03 <03-Dec-1991>
+\ATcode=\count130
+\c@tcode=\count131
+\c@unter=\count132
+) (/proj/geometrica/home/latex/cprog.sty
+\cprogbaselineskip=\dimen126
+\cprogindent=\dimen127
+\beforecprogskip=\skip44
+\aftercprogskip=\skip45
+) (/usr/local/lib/texmf/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+) (/usr/local/lib/texmf/tex/latex/oberdiek/ifpdf.sty
+Package: ifpdf 2001/06/14 v1.0 Providing \ifpdf (HO)
+Package ifpdf Info: pdfTeX in pdf mode not detected on input line 140.
+) (/usr/local/lib/texmf/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 1996/11/03 v2.2b
+(/usr/local/lib/texmf/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 1997/09/17 v2.2e
+\@emptytoks=\toks15
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 133.
+)) (/usr/local/lib/texmf/tex/latex/graphics/epsfig.sty
+Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
+\epsfxsize=\dimen128
+\epsfysize=\dimen129
+) (../../Manual/doc_tex/ipe.sty
+Package: ipe 1995/03/16 v5.0 LaTeX2e package for inclusion of Ipe figures
+Package: `ipe' v5.0 for inclusion of Ipe figures
+\IPEwidth=\dimen130
+) (/usr/local/lib/texmf/tex/latex/pslatex/pslatex.sty
+Package: pslatex 1996/07/24 v1.2 pslatex emulation (DPC)
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 65.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/ptmcm/m/n on input line 65.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ptmcm/m/n on input line 65.
+LaTeX Font Info:    Redeclaring symbol font `letters' on input line 66.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/ptmcm/m/it on input line 66.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/ptmcm/m/it on input line 66.
+LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 67.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/pzccm/m/n on input line 67.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/pzccm/m/n on input line 67.
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 68.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/psycm/m/n on input line 68.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/psycm/m/n on input line 68.
+\symbold=\mathgroup6
+\symitalic=\mathgroup7
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 74.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 74.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 74.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 75.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/ptm/m/it on input line 75.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 75.
+) (/usr/local/lib/texmf/tex/latex/psfrag/psfrag.sty
+Package: psfrag 1998/04/11 v3.04 PSfrag (MCG)
+\pfg@pcount=\count133
+\pfg@scount=\count134
+\pfg@temp=\write6
+) (/usr/local/lib/texmf/tex/latex/rotating/rotating.sty
+Package: rotating 1997/09/26, v2.13 Rotation package
+\c@r@tfl@t=\count135
+\rot@float@box=\box36
+) (/usr/local/lib/texmf/tex/latex/tools/longtable.sty
+Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip46
+\LTright=\skip47
+\LTpre=\skip48
+\LTpost=\skip49
+\LTchunksize=\count136
+\LTcapwidth=\dimen131
+\LT@head=\box37
+\LT@firsthead=\box38
+\LT@foot=\box39
+\LT@lastfoot=\box40
+\LT@cols=\count137
+\LT@rows=\count138
+\c@LT@tables=\count139
+\c@LT@chunks=\count140
+\LT@p@ftn=\toks16
+)
+No file version.tex.
+(/usr/local/lib/texmf/tex/latex/minitoc/minitoc.sty
+Package: minitoc 2005/02/15 v41 Package minitoc
+Package minitoc Info: *** minitoc package, version 41 ***.
+Package minitoc Info: *** compatible with hyperref ***.
+\mtcindent=\skip50
+\mtcskipamount=\skip51
+Package minitoc Info: *** part level macros available ***.
+Package minitoc Info: *** chapter level macros available ***.
+chapter
+\tf@mtc=\write7
+Package minitoc Info: *** Autoconfiguration of extensions ***.
+\openout7 = `Jet_fitting_3.mtc1'.
+
+\openout7 = `Jet_fitting_3.mtc'.
+
+(Jet_fitting_3.mtc1)
+\openout7 = `Jet_fitting_3.mtc'.
+
+\openout7 = `Jet_fitting_3.mtc1'.
+
+Package minitoc Info: *** Long extensions (Unix-like) will be used ***.
+Package minitoc Info: ==> this version is configured for UNIX-like 
+(minitoc)                 (long extensions) file names.
+\mtc@toks=\toks17
+\mtc@strutbox=\box41
+\c@mtc=\count141
+\c@minitocdepth=\count142
+\c@ptc=\count143
+\c@parttocdepth=\count144
+\ptcindent=\skip52
+(/usr/local/lib/texmf/tex/latex/minitoc/english.mld
+File: english.mld 1999/03/16
+))
+No file cgal_include_only.tex.
+)
+\@indexfile=\write8
+\openout8 = `Jet_fitting_3.idx'.
+
+Writing index file Jet_fitting_3.idx
+(Jet_fitting_3.aux (Jet_fitting_3/main.aux))
+\openout1 = `Jet_fitting_3.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OMS/pzccm/m/n on input line 13.
+LaTeX Font Info:    Try loading font information for OMS+pzccm on input line 13
+.
+(/usr/local/lib/texmf/tex/latex/psnfss/omspzccm.fd
+File: omspzccm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/pzccm.
+)
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+File: Manual/fig/c-simp.eps Graphic file (type eps)
+<Manual/fig/c-simp.eps>
+File: Manual/fig/g-simp.eps Graphic file (type eps)
+<Manual/fig/g-simp.eps>
+File: Manual/fig/a-simp.eps Graphic file (type eps)
+<Manual/fig/a-simp.eps>
+File: Manual/fig/l-simp.eps Graphic file (type eps)
+<Manual/fig/l-simp.eps>
+Overfull \hbox (1.90002pt too wide) in paragraph at lines 15--15
+[][] []
+ []
+
+[1
+
+
+] [2
+
+]
+Package minitoc Info: PREPARING MINITOCS FROM Jet_fitting_3.toc on input line 2
+1.
+Package minitoc Info: Writing Jet_fitting_3.mtc1.
+\openout7 = `Jet_fitting_3.mtc1'.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24.88> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 21.
+(Jet_fitting_3.toc
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
+LaTeX Font Info:    Try loading font information for OT1+ptmcm on input line 2.
+
+(/usr/local/lib/texmf/tex/latex/psnfss/ot1ptmcm.fd
+File: ot1ptmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ptmcm.
+)
+LaTeX Font Info:    Try loading font information for OML+ptmcm on input line 2.
+
+(/usr/local/lib/texmf/tex/latex/psnfss/omlptmcm.fd
+File: omlptmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ptmcm.
+)
+LaTeX Font Info:    Try loading font information for OMX+psycm on input line 2.
+
+(/usr/local/lib/texmf/tex/latex/psnfss/omxpsycm.fd
+File: omxpsycm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/psycm.
+)
+LaTeX Font Info:    Try loading font information for U+msa on input line 2.
+(/usr/local/lib/texmf/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 1995/01/05 v2.2e AMS font definitions
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 2.
+(/usr/local/lib/texmf/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 1995/01/05 v2.2e AMS font definitions
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
+)
+\tf@toc=\write9
+\openout9 = `Jet_fitting_3.toc'.
+
+[1
+
+
+] [2
+
+]
+\openout2 = `Jet_fitting_3/main.aux'.
+
+(Jet_fitting_3/main.tex
+Chapter 1.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20.74> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 2.
+\openout7 = `Jet_fitting_3.bmt'.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 7.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 7.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 7.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 7.
+(Jet_fitting_3.mtc1) (Jet_fitting_3/Jet_fitting_3_user.tex
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 10.
+
+LaTeX Warning: Citation `sp-smrqtm-01' on page 1 undefined on input line 31.
+
+
+LaTeX Warning: Citation `pinkall93a' on page 1 undefined on input line 36.
+
+
+LaTeX Warning: Citation `desbrun00a' on page 1 undefined on input line 36.
+
+
+LaTeX Warning: Citation `dcs-jmm-rdtnc-03' on page 1 undefined on input line 36
+.
+
+[1
+
+
+]
+
+LaTeX Warning: Citation `dcs-jmm-rdtnc-03' on page 2 undefined on input line 43
+.
+
+
+LaTeX Warning: Citation `fc-mp-edqpfoj-05' on page 2 undefined on input line 45
+.
+
+! Undefined control sequence.
+l.68 z(x,y)=J_{B,d}(x,y) + \hot \quad \text
+                                           { with }
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+[2]
+
+LaTeX Warning: Citation `fc-mp-edqpfoj-05' on page 3 undefined on input line 13
+6.
+
+
+! LaTeX Error: Environment theorem undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.137 \begin{theorem}
+                     
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
+(Font)              Font shape `OMS/pzccm/m/n' tried instead on input line 148.
+
+
+! LaTeX Error: \begin{document} ended by \end{theorem}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.156 \end{theorem}
+                   
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+LaTeX Warning: Citation `fc-mp-edqpfoj-05' on page 3 undefined on input line 18
+6.
+
+[3]
+
+! LaTeX Error: File `jet_fitting_basis' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.237 ...s[width=.5\linewidth]{jet_fitting_basis}}
+                                                  
+I could not locate the file with any of these extensions:
+.eps,.ps,.eps.gz,.ps.gz,.eps.Z
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 254.
+[4]
+! Misplaced alignment tab character &.
+l.311 D_r &
+            0_{r,\ N_d-r}\\
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+! Misplaced alignment tab character &.
+l.312 0_{N-r,\ r} &
+                    0_{N-r,\ N_d-r}
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+! Misplaced alignment tab character &.
+l.321 D_r^{-1} &
+                 0_{N_d-r,\ r}\\
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+! Misplaced alignment tab character &.
+l.322 0_{r,\ N-r} &
+                    0_{N_d-r,\ N-r}
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+
+Overfull \hbox (4.9347pt too wide) in paragraph at lines 334--334
+[]\OT1/pcr/m/n/10 void solve_ls_svd_algo(const LAMatrix& M, const LAVector& B, 
+Vector& X, double& cond_nb)[] 
+ []
+
+[5] [6] [7]
+
+! LaTeX Error: Environment boxedminipage undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.565 \begin{boxedminipage}
+                           [t]{14cm}
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! LaTeX Error: \begin{center} on input line 564 ended by \end{boxedminipage}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.583 \end{boxedminipage}
+                         
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+)) [8] [9] (Jet_fitting_3.bbl [10
+
+
+]) (Jet_fitting_3.ind) [11] (Jet_fitting_3.aux (Jet_fitting_3/main.aux))
+
+LaTeX Warning: There were undefined references.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 3194 strings out of 10813
+ 40128 string characters out of 171231
+ 111254 words of memory out of 263001
+ 6133 multiletter control sequences out of 10000+20000
+ 32367 words of font info for 83 fonts, out of 400000 for 1000
+ 24 hyphenation exceptions out of 1000
+ 39i,11n,27p,257b,521s stack positions out of 300i,100n,500p,50000b,4000s
+
+Output written on Jet_fitting_3.dvi (15 pages, 42084 bytes).

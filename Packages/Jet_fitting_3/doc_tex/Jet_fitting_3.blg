@@ -1,0 +1,53 @@
+This is BibTeX, Version 0.99c (Web2C 7.3.1)
+The top-level auxiliary file: Jet_fitting_3.aux
+A level-1 auxiliary file: Jet_fitting_3/main.aux
+The style file: alpha.bst
+Database file #1: Manual/cgal_manual.bib
+Database file #2: Manual/geom.bib
+Warning--I didn't find a database entry for "sp-smrqtm-01"
+Warning--I didn't find a database entry for "pinkall93a"
+Warning--I didn't find a database entry for "desbrun00a"
+Warning--I didn't find a database entry for "dcs-jmm-rdtnc-03"
+Warning--I didn't find a database entry for "fc-mp-edqpfoj-05"
+You've used 1 entry,
+            2543 wiz_defined-function locations,
+            571 strings with 4653 characters,
+and the built_in function-call counts, 356 in all, are:
+= -- 30
+> -- 19
+< -- 0
++ -- 6
+- -- 6
+* -- 22
+:= -- 70
+add.period$ -- 3
+call.type$ -- 1
+change.case$ -- 5
+chr.to.int$ -- 1
+cite$ -- 1
+duplicate$ -- 15
+empty$ -- 26
+format.name$ -- 7
+if$ -- 69
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 2
+newline$ -- 8
+num.names$ -- 3
+pop$ -- 8
+preamble$ -- 1
+purify$ -- 7
+quote$ -- 0
+skip$ -- 13
+stack$ -- 0
+substring$ -- 7
+swap$ -- 1
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 4
+warning$ -- 0
+while$ -- 3
+width$ -- 2
+write$ -- 15
+(There were 5 warnings)
