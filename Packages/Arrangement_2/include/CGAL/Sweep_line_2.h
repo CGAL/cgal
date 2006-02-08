@@ -243,9 +243,9 @@ public:
         
         if(is_overlap)
         {
-          this->m_statusLine.erase (temp);
           this->m_visitor->before_handle_event (this->m_currentEvent);
           this->m_visitor->add_subcurve (sub_cv1, sc);
+          this->m_statusLine.erase (temp);
           return;
         }
       }
