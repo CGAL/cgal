@@ -166,9 +166,9 @@ public:
       if (sc->get_orig_subcurve1())
       {
         this->m_arr->modify_edge
-	  (this->current_event()->get_halfedge_handle()->
-	   next()->twin(),
-	   cv.base());
+          (this->current_event()->get_halfedge_handle()->
+           next()->twin(),
+           cv.base());
       }
 
       Halfedge_handle next_ccw_he = 
@@ -190,17 +190,17 @@ public:
     Halfedge_handle he_above = ray_shoot_up(sc);
     if(he_above == Halfedge_handle(NULL))
       return (this->m_arr->insert_in_face_interior
-	      (cv.base(), this->m_arr->unbounded_face()));
+              (cv.base(), this->m_arr->unbounded_face()));
 
     return (this->m_arr->insert_in_face_interior 
-	    (cv.base(), he_above->face()));
+            (cv.base(), he_above->face()));
   }
 
   Halfedge_handle insert_at_vertices (const X_monotone_curve_2& cv,
-				      Halfedge_handle hhandle,
-				      Halfedge_handle prev,
-				      Subcurve* sc,
-				      bool &new_face_created)
+                                      Halfedge_handle hhandle,
+                                      Halfedge_handle prev,
+                                      Subcurve* sc,
+                                      bool &new_face_created)
   {
     return (this->m_arr->insert_at_vertices (cv.base(), hhandle, prev));
   }
@@ -226,16 +226,23 @@ public:
     //the isolated vertex is already at the arrangement
     if(pt.get_vertex_handle() != Vertex_handle(NULL))
       return res;
-    
-    Halfedge_handle he = ray_shoot_up(*iter);
-    if (he == Halfedge_handle(NULL))
+    if(iter == this->status_line_end())
     {
       res = this->m_arr->insert_in_face_interior
-	(pt.base(), this->m_arr->unbounded_face());
+        (pt.base(), this->m_arr->unbounded_face());
     }
     else
     {
-      res = this->m_arr->insert_in_face_interior (pt.base(), he->face());
+      Halfedge_handle he = ray_shoot_up(*iter);
+      if (he == Halfedge_handle(NULL))
+      {
+        res = this->m_arr->insert_in_face_interior
+          (pt.base(), this->m_arr->unbounded_face());
+      }
+      else
+      {
+        res = this->m_arr->insert_in_face_interior (pt.base(), he->face());
+      }
     }
 
     return (res);
@@ -291,7 +298,7 @@ public:
 
   virtual Halfedge_handle
     insert_in_face_interior(const X_monotone_curve_2& cv,
-			    Subcurve* sc)
+                            Subcurve* sc)
   {
     Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
     Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
@@ -304,7 +311,7 @@ public:
     if(last_v == null_v && curr_v != null_v)
     {
       Halfedge_handle he = this->m_arr->insert_from_right_vertex (cv.base(),
-								  curr_v);
+                                                                  curr_v);
       return (he->twin());
     }
     if(last_v != null_v && curr_v == null_v)
@@ -318,8 +325,8 @@ public:
 
   virtual Halfedge_handle
     insert_from_right_vertex (const X_monotone_curve_2& cv,
-			      Halfedge_handle he,
-			      Subcurve* sc)
+                              Halfedge_handle he,
+                              Subcurve* sc)
   {
     Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
     Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
@@ -332,8 +339,8 @@ public:
 
   virtual Halfedge_handle
     insert_from_left_vertex (const X_monotone_curve_2& cv,
-			     Halfedge_handle he,
-			     Subcurve* sc)
+                             Halfedge_handle he,
+                             Subcurve* sc)
   {
     Vertex_handle curr_v =
       this->current_event()->get_point().get_vertex_handle();
