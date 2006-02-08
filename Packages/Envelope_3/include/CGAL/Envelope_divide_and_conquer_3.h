@@ -20,6 +20,7 @@
 #ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H
 #define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H
 
+#define CGAL_ENVELOPE_SAVE_COMPARISONS
 #define CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 
 #include "CGAL/Envelope_base.h"
@@ -112,6 +113,7 @@
 
 
 
+
 //#define CGAL_DEBUG_ENVELOPE_DEQ_3
 //#define CGAL_BENCH_ENVELOPE_DAC
 
@@ -156,6 +158,7 @@ public:
 
   typedef Envelope_divide_and_conquer_3<Traits, Minimization_diagram_2,
                                         Vertical_decomposition_2,
+
                                         EnvelopeResolver_3,
                                         Overlay_2>                  Self;
 
@@ -185,6 +188,7 @@ public:
   Envelope_divide_and_conquer_3()
   {    
     // Allocate the traits.
+
     traits = new Traits;
     own_traits = true;
 
@@ -206,6 +210,7 @@ public:
   virtual ~Envelope_divide_and_conquer_3()
   {
     // Free the traits object, if necessary.
+
     if (own_traits)
       delete traits;
 
@@ -339,6 +344,7 @@ protected:
     // recursively calculate the LU_envelope of the 2 groups
     Minimization_diagram_2 result1(traits), result2(traits);
     construct_lu_envelope_xy_monotones(group1.begin(), group1.end(), result1, dividor);
+
     construct_lu_envelope_xy_monotones(group2.begin(), group2.end(), result2, dividor);
         
     // merge the results:
@@ -565,30 +571,28 @@ public:
       CGAL_assertion(!aux_has_no_data(hh, 1) || !aux_has_no_data(hh, 0));
       if (aux_has_no_data(hh, 0) && !aux_has_no_data(hh, 1))
       {
-//        hh->set_data(hh->begin_aux_data(1), hh->end_aux_data(1));
-//        hh->twin()->set_data(hh->begin_data(), hh->end_data());
     		hh->set_decision(SECOND);
     		hh->twin()->set_decision(SECOND);
         continue;
       }
       else if (!aux_has_no_data(hh, 0) && aux_has_no_data(hh, 1))
       {
-//        hh->set_data(hh->begin_aux_data(0), hh->end_aux_data(0));
-//        hh->twin()->set_data(hh->begin_data(), hh->end_data());
     		hh->set_decision(FIRST);
     		hh->twin()->set_decision(FIRST);
         continue;
       }
 
       bool should_resolve = true;
-      if (hh->get_has_equal_aux_data_in_face(0) &&
-          hh->get_has_equal_aux_data_in_face(1))
-        should_resolve = false;
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+        if (hh->get_has_equal_aux_data_in_face(0) &&
+            hh->get_has_equal_aux_data_in_face(1))
+          should_resolve = false;
 
-      if (hh->twin()->get_has_equal_aux_data_in_face(0) &&
-          hh->twin()->get_has_equal_aux_data_in_face(1))
-        should_resolve = false;
-        
+        if (hh->twin()->get_has_equal_aux_data_in_face(0) &&
+            hh->twin()->get_has_equal_aux_data_in_face(1))
+          should_resolve = false;
+      #endif
+              
       // we collect the edges in a list to deal afterwards, because the resolve
       // can split edges, and destroy the iterator
       if (should_resolve)
@@ -602,13 +606,6 @@ public:
       resolver->resolve(*li, result);
       resolve_edge_timer.stop();
     }
-
-//    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-//      std::cout << "before decomposition, writing result" << std::endl;
-//      Pm_my_file_writer<Minimization_diagram_2>   writer(std::cout, result);
-//      write_pm(result,  writer, std::cout);
-//    #endif
-
 
     // decompose the result, to have faces without holes
     decompose(result);
@@ -701,14 +698,12 @@ public:
       CGAL_assertion(!aux_has_no_data(vh, 1) || !aux_has_no_data(vh, 0));
       if (aux_has_no_data(vh, 0) && !aux_has_no_data(vh, 1))
       {
-//        vh->set_data(vh->begin_aux_data(1), vh->end_aux_data(1));
         vh->set_decision(SECOND);
         continue;
       }
 
       else if (!aux_has_no_data(vh, 0) && aux_has_no_data(vh, 1))
       {
-//        vh->set_data(vh->begin_aux_data(0), vh->end_aux_data(0));
         vh->set_decision(FIRST);
         continue;
       }
@@ -805,6 +800,7 @@ protected:
                      const InputIterator & end1,
                      const InputIterator & begin2,
                      const InputIterator & end2)
+
   {
 //    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
 //      std::cout << "in is_equal_data: " << std::endl;
@@ -1290,6 +1286,7 @@ protected:
     // all the vertices that don't have their data set, are those vertices
     // on vertical edges, created in the decomposition process,
     // and are not neccessary
+
 
 
     // also those vertices with degree 2, that can merge their 2 edges and 
@@ -2044,6 +2041,7 @@ protected:
   {
     Envelope_data_iterator begin, end;
 	  bool all_ok = true;
+
     Halfedge_iterator hi = result.halfedges_begin();
 	  for(; hi != result.halfedges_end(); ++hi)
   	{
@@ -2548,6 +2546,7 @@ protected:
         fh->set_decision(SECOND);
       else if (base->aux_has_no_data(fh, 0) && base->aux_has_no_data(fh, 1))
       {
+
         fh->set_decision(EQUAL);
         fh->set_no_data();
       }

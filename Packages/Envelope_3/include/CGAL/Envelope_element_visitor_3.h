@@ -215,7 +215,9 @@ public:
       Comparison_result cur_res = resolve_minimal_face(face);
       copy_data_by_comparison_result(face, face, cur_res);
       // check face boundary for "data from face" features
-      copy_data_to_face_boundary(face);
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+        copy_data_to_face_boundary(face);
+      #endif
       minimal_face_timer.stop();
       return;
     }
@@ -374,28 +376,20 @@ public:
         // (if we have fake edges, we don't have holes)
         Ccb_halfedge_circulator hec = new_f->outer_ccb();
         Ccb_halfedge_circulator hec_begin = hec;
-        bool can_finish = false;
         do {
           Halfedge_handle hh = hec;
           if (hh->get_is_fake() &&
               hh->twin()->face()->is_decision_set())
           {
             Face_handle twin_f = hh->twin()->face();
-//            CGAL_assertion(twin_f->is_equal_aux_data(0, new_f->begin_aux_data(0),
-//                                                     new_f->end_aux_data(0)));
-//            CGAL_assertion(twin_f->is_equal_aux_data(1, new_f->begin_aux_data(1),
-//                                                     new_f->end_aux_data(1)));
-//            new_f->set_data(twin_f->begin_data(), twin_f->end_data());
             new_f->set_decision(twin_f->get_decision());
 	    
-	    hh->set_decision(twin_f->get_decision());
-	    hh->twin()->set_decision(hh->get_decision());
+      	    hh->set_decision(twin_f->get_decision());
+      	    hh->twin()->set_decision(hh->get_decision());
           }
           ++hec;
-        } while (hec != hec_begin && !can_finish);
-
+        } while (hec != hec_begin);
       }
-
     }
     
     // in order to use resolve_minimal_face with intersection halfedge, we go over
@@ -438,32 +432,40 @@ public:
       // the former result and the intersection type (if exists)
       if (!f2->is_decision_set())
       {
-        if (itype != UNKNOWN)
-        {
-          res = convert_decision_to_comparison_result(f1->get_decision());
-          res = resolve_by_intersection_type(res, itype);
-          CGAL_expensive_assertion_code(
-            Comparison_result tmp_res = resolve_minimal_face(f2, &new_he_twin);
-          );
-          CGAL_expensive_assertion(tmp_res == res);
-        }
-        else
-          res = resolve_minimal_face(f2, &new_he_twin);      
+        #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+          if (itype != UNKNOWN)
+          {
+            res = convert_decision_to_comparison_result(f1->get_decision());
+            res = resolve_by_intersection_type(res, itype);
+            CGAL_expensive_assertion_code(
+              Comparison_result tmp_res = resolve_minimal_face(f2, &new_he_twin);
+            );
+            CGAL_expensive_assertion(tmp_res == res);
+          }
+          else
+            res = resolve_minimal_face(f2, &new_he_twin);
+        #else
+          res = resolve_minimal_face(f2, &new_he_twin);
+        #endif
         copy_data_by_comparison_result(face, f2, res);
       }
       if (!f1->is_decision_set())
       {
-        if (itype != UNKNOWN)
-        {
-          res = convert_decision_to_comparison_result(f2->get_decision());
-          res = resolve_by_intersection_type(res, itype);
-          CGAL_expensive_assertion_code(
-            Comparison_result tmp_res = resolve_minimal_face(f1, &new_he);
-          );
-          CGAL_expensive_assertion(tmp_res == res);
-        }
-        else
+        #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+          if (itype != UNKNOWN)
+          {
+            res = convert_decision_to_comparison_result(f2->get_decision());
+            res = resolve_by_intersection_type(res, itype);
+            CGAL_expensive_assertion_code(
+              Comparison_result tmp_res = resolve_minimal_face(f1, &new_he);
+            );
+            CGAL_expensive_assertion(tmp_res == res);
+          }
+          else
+            res = resolve_minimal_face(f1, &new_he);
+        #else
           res = resolve_minimal_face(f1, &new_he);
+        #endif
         copy_data_by_comparison_result(face, f1, res);
       }
 
@@ -501,13 +503,13 @@ public:
           special_he->set_aux_source(1, face->get_aux_source(1));
           special_he->twin()->set_aux_source(0, face->get_aux_source(0));
           special_he->twin()->set_aux_source(1, face->get_aux_source(1));
-	}
-	if (special_he->get_is_fake())
-	{
-	  // this edge is not fake anymore, as it coincides with a projected 
-	  // intersection
-	  special_he->set_is_fake(false);
-	  special_he->twin()->set_is_fake(false);
+	      }
+      	if (special_he->get_is_fake())
+      	{
+      	  // this edge is not fake anymore, as it coincides with a projected
+      	  // intersection
+      	  special_he->set_is_fake(false);
+      	  special_he->twin()->set_is_fake(false);
         }
         special_he->set_decision(EQUAL);
         special_he->twin()->set_decision(EQUAL);
@@ -556,7 +558,9 @@ public:
       }
 
       // check face boundary for "data from face" features
-      copy_data_to_face_boundary(new_face);
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+        copy_data_to_face_boundary(new_face);
+      #endif
     }
 
     minimal_face_timer.stop();
@@ -590,7 +594,9 @@ public:
 
     {
       resolve_minimal_edge(edge, edge);
-      copy_data_to_edge_endpoints(edge);
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+        copy_data_to_edge_endpoints(edge);
+      #endif
       return;
     }
 
@@ -724,7 +730,9 @@ public:
     if (split_points.size() == 0)
     {
       resolve_minimal_edge(edge, edge);
-      copy_data_to_edge_endpoints(edge);
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+        copy_data_to_edge_endpoints(edge);
+      #endif
       return;
     }
 
@@ -835,6 +843,8 @@ public:
     }
 
     // set envelope data on the last part (cur_part)
+
+
     // if the last part is a special edge, and no verticals are involved
 
 
@@ -866,9 +876,10 @@ public:
     {
       if (source_is_special)
         set_data_by_comparison_result(original_src, EQUAL);
-      else
-
-        set_data_by_comparison_result(original_src, first_part_res);
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+        else
+          set_data_by_comparison_result(original_src, first_part_res);
+      #endif
     }
     // the incident edge part to target should be cur_part (the last part)
     CGAL_assertion(original_trg == cur_part->target());
@@ -879,8 +890,10 @@ public:
     {
       if (target_is_special)
         set_data_by_comparison_result(original_trg, EQUAL);
-      else
-        set_data_by_comparison_result(original_trg, cur_part_res);
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+        else
+          set_data_by_comparison_result(original_trg, cur_part_res);
+      #endif
     }
     edge_split_timer.stop();    
   }
@@ -963,6 +976,7 @@ public:
 
 
 
+
     #ifdef CGAL_BENCH_ENVELOPE_DAC
 
       std::cout << "resolve face times: " << std::endl;
@@ -1017,7 +1031,11 @@ protected:
     CGAL_assertion(!face->is_unbounded());
     Comparison_result res;
 
-    bool success = can_copy_decision_from_boundary_edge(face, res);
+    bool success = false;
+    #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+      success = can_copy_decision_from_boundary_edge(face, res);
+    #endif
+    
     if (success)
       return res;
       
@@ -1112,6 +1130,7 @@ protected:
       CGAL_assertion(itype == TANGENT);
       return res;
     }
+
   }
   
   // find intersections between 2 xy-monotone surfaces
@@ -1241,6 +1260,7 @@ protected:
   bool can_copy_decision_from_edge_to_vertex(Halfedge_handle h)
   {
     // can copy decision from face to its incident edge if the aux
+
     // envelopes are continous over the face and edge
     return (h->get_has_equal_aux_data_in_target(0) &&
             h->get_has_equal_aux_data_in_target(1));
@@ -1492,6 +1512,7 @@ protected:
   }
 
   template <class FeatureHandle1, class FeatureHandle2>
+
   bool has_equal_aux_data(FeatureHandle1 fh1, FeatureHandle2 fh2)
   {
 	  return (has_equal_aux_data(0, fh1, fh2) &&
@@ -1593,6 +1614,7 @@ protected:
                  !hh->get_has_equal_aux_data_in_face(1))
         {
           res = convert_decision_to_comparison_result(FIRST);
+
           result = true;
         }
         // if the second map is continous, but the first isn't, then if the
@@ -2124,6 +2146,7 @@ protected:
     // we should check if the point is in the x range of the curve,
     // and if so, if it lies on it
     if ((traits->compare_x_2_object()(p, left) != SMALLER) &&
+
         (traits->compare_x_2_object()(p, right) != LARGER) &&
         (traits->compare_y_at_x_2_object()(p, cv) == EQUAL))
       return true;
@@ -2459,6 +2482,7 @@ protected:
           is_in_relocate = true;
         }
 
+
         // make sure the face is correctly mapped
         CGAL_assertion(map_faces.is_defined(he->face()) &&
                        map_faces[he->face()] == new_he->face());
@@ -2774,6 +2798,7 @@ protected:
         
         // take care for special vertices. the split vertices are always special,
         // and this is taken care of in the after_split event.
+
         // here we should update the original vertices that consolidate with the
         // new subcurve
         if (copied_arr_orig_vertices.is_defined(new_he->source()))
@@ -3113,6 +3138,7 @@ protected:
         Halfedge_handle h = hi;
         CGAL_assertion(map_halfedges.is_defined(h) &&
                        map_halfedges.is_defined(h->twin()));
+
 
         // we need only one of the twin halfedges to represent the new edge
         if (copied_arr_new_edges.is_defined(h))
