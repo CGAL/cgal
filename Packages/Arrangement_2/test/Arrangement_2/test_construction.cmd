@@ -28,3 +28,8 @@
 ./data/test_construction/test28.txt
 ./data/test_construction/test29.txt
 ./data/test_construction/test30.txt
+./data/test_construction/test31.txt
+./data/test_construction/test32.txt
+./data/test_construction/test33.txt
+./data/test_construction/test34.txt
+./data/test_construction/test35.txt
