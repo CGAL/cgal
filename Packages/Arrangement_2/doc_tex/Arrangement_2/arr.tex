@@ -1681,7 +1681,7 @@ vertical line segments:
 \section{Traits Classes}
 \label{arr_sec:traits}
 %=======================
-%
+
 As mentioned in the introduction of this chapter, the traits class
 encapsulates the definitions of the geometric entities and
 implements the geometric predicates and constructions needed by
@@ -1755,7 +1755,7 @@ traits class.
 \end{itemize}
 Using a model of the \ccc{ArrangementXMonotoneTraits_2}, it is
 possible to construct arrangements of sets of $x$-monotone curves
-(and points) in that may intersect one another.
+(and points) that may intersect one another.
 
 The concept \ccc{ArrangementTraits_2} refines the
 \ccc{ArrangementXMonotoneTraits_2} concept by adding the notion
@@ -1788,11 +1788,11 @@ data with the geometric objects.
 \subsection{Traits Classes for Line Segments}
 \label{arr_ssec:tr_segs}
 %--------------------------------------------
-%
+
 The \ccc{Arr_segment_traits_2<Kernel>} class used so far
 in all example programs in this chapter is parameterized by a
 geometric kernel and uses the \ccc{Kernel::Point_2} type as it
-point type. However, nor the \ccc{Curve_2} neither the
+point type. However, neither the \ccc{Curve_2} nor the
 \ccc{X_monotone_curve_2} types are identical to the
 \ccc{Kernel::Segment_2} type. A kernel segment is typically
 represented by its two endpoints, and these may have a large bit-size
@@ -1973,7 +1973,7 @@ polylines:
 \subsection{A Traits Class for Circular Arcs and Line Segments}
 \label{arr_ssec:tr_circ_seg}
 %--------------------------------------------------------------
-%
+
 Circles and circular arcs are the simplest form of non-linear curves.
 We handle circles whose centers have rational coordinates and whose
 squared radii is also rational. If we denote the circle center by $(x_0,y_0)$
@@ -1990,8 +1990,8 @@ where $\alpha$, $\beta$ and $\gamma$ are all rational numbers.
 Arrangement of circular arcs and of line segment are very useful, as they
 occur in many applications. For example, when dilating a polygon by some
 radius we obtain a shape whose boundary is comprised of line segments,
-which correspond to dilated polygon edges, and circular arc, which are
-originated by dilated polygon vertices. Using the arrangement of the
+which correspond to dilated polygon edges, and circular arcs, which
+result from dilated polygon vertices. Using the arrangement of the
 boundary curves it is possible, for example, to compute the union of a set
 of dilated polygons.
 
@@ -2001,7 +2001,7 @@ It is parameterized by a geometric kernel, and can handle arrangements of
 segments of \ccc{Kernel::Circle_2} objects (full circles are also supported)
 or of \ccc{Kernel::Line_2} objects --- namely circular arcs and line segments.
 It is important to observe that the nested \ccc{Point_2} type defined by the
-traits class, whose coordiates are typically algerbraic numbers of degree 2,
+traits class, whose coordinates are typically algebraic numbers of degree 2,
 is {\em not} the same as the \ccc{Kernel::Point_2} type, which is capable of
 representing a point with rational coordinates. The coordinates of a
 point are represented using the nested \ccc{CoordNT} number-type.
@@ -2067,7 +2067,7 @@ $x$-monotone circular arcs or line segments, using similar constructors.
 Construction from a full circle is obviously not supported. See the reference
 manual for more details.
 
-\subsection{A Traits Class for Conic arcs}
+\subsection{A Traits Class for Conic Arcs}
 \label{arr_ssec:tr_conic}
 %-----------------------------------------
 %
@@ -3009,7 +3009,7 @@ operating on an arrangement-with-history instance:
 \section{Input/Output Functions}
 \label{arr_sec:io}
 %===============================
-%
+
 In some cases, we would like to reuse an arrangement instance constructed
 by our application in the future --- for example, our arrangement may
 represent a very complicated geographical map and we have various
@@ -3029,7 +3029,7 @@ well as all geometric entities associated with vertices and edges.
 
 To use the input/output operators, we require that the \ccc{Point_2} type
 and the \ccc{X_monotone_curve_2} type defined by the traits class both
-support the \ccc{<<} and\ccc{>>} operators. The \ccc{Arr_conic_traits_2}
+support the \ccc{<<} and \ccc{>>} operators. The \ccc{Arr_conic_traits_2}
 class (see Section~\ref{arr_ssec:tr_conic}) and the 
 \ccc{Arr_rational_arc_traits_2} class (see Section~\ref{arr_ssec:tr_ratfunc})
 currently do not provide these operator for the geometric types
