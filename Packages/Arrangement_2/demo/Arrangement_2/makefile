@@ -30,10 +30,10 @@ endif
 
 CXXFLAGS = \
        -I../../include \
+       -DNDEBUG \
        $(COREROOT_INC) \
        $(CGAL_CXXFLAGS) \
-       $(LONG_NAME_PROBLEM_CXXFLAGS) \
-       -g
+       $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags

@@ -645,12 +645,12 @@ public:
         // is cv2) first. If we start from the bottom, we encounter cv1 first.
 	return (from_top ? LARGER : SMALLER);
       }
-      else
-      {
-        // If we start from the top, we encounter the right curve (which
-        // is cv1) first. If we start from the bottom, we encounter cv2 first.
-	return (from_top ? SMALLER : LARGER);
-      }
+
+      CGAL_assertion (!cv1_left && cv2_left);
+
+      // If we start from the top, we encounter the right curve (which
+      // is cv1) first. If we start from the bottom, we encounter cv2 first.
+      return (from_top ? SMALLER : LARGER);
     }
   };
 
