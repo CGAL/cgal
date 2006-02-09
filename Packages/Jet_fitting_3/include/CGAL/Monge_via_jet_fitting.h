@@ -8,6 +8,8 @@
 
 #include <math.h>
 
+CGAL_BEGIN_NAMESPACE
+
 int fact(int n)
 {
   if (n == 0)
@@ -627,6 +629,7 @@ switch_to_direct_orientation(LVector& v1, const LVector& v2,
   if (orientation == CGAL::NEGATIVE) v1 = -v1;
 }
 
+CGAL_END_NAMESPACE
 
 #endif //_MONGE_VIA_JET_FITTING_H_
 
