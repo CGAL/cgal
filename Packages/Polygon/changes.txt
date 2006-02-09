@@ -1,3 +1,6 @@
+9 February 2006 Andreas Fabri
+- The edge iterator now has the iterator category of the underlying container
+ 
 10 September 2005 Sylvain Pion
 - Add missing this-> for g++ 4.1.
 
