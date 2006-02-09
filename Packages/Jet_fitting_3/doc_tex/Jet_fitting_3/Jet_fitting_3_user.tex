@@ -1,5 +1,6 @@
- %\usepackage{amsmath}
-\newcommand{\hot}[0]{h.o.t}
+\input{macro_perso.sty}
+%WARNING: amsmath not available
+
 
 This chapter describes the \cgal's package for the estimation of local 
 differential quantities on sampled surfaces. 
@@ -65,7 +66,7 @@ higher order terms}, one has~:
 %Assume the surface is given, locally and in a suitable , as a height
 %function ---with $\hot$ standing for {\em higher order terms}~:
 \begin{equation}
-z(x,y)=J_{B,d}(x,y) + \hot \quad \text{ with }
+z(x,y)=J_{B,d}(x,y) + \hot \ ; \quad 
 J_{B,d}(x,y)=\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
 \frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
 \end{equation}
@@ -217,10 +218,6 @@ when solving the linear system, the condition number is too large .
 %close from being an umbilic? the user can use the eigen-values to
 %decide.
 
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Mathematical and algorithmic details}
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -232,27 +229,36 @@ Note that there are 3 relevant direct orthonormal basis: world-basis
 $(w_x,w_y,w_z)$, fitting-basis $(f_x,f_y,f_z)$, monge-basis
 $(d_1,d_2,n)$.
 
-\begin{figure}
+\begin{figure}[h!]
+\begin{ccTexOnly}
 \centerline{
-\includegraphics[width=.5\linewidth]{jet_fitting_basis}}
+\includegraphics[width=.5\linewidth]{Jet_fitting_3/jet_fitting_basis}}
+\end{ccTexOnly}
+
 \label{fig:jet_fitting_basis}
 \caption{The three basis envolved in the estimation.}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./jet_fitting_basis.jpg" width=400>
+</CENTER>
+\end{ccHtmlOnly}
 \end{figure}
+
 \subsection{Compute a basis for the fitting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-{\bf input : samples\\
-output : fitting-basis}
+{\bf input : samples\\ output : fitting-basis}
 
 Perform a Principal Component Analysis, this means we need a linear
 algebra method to perform an eigen analysis of a symmetric matrix :
 {\tt eigen\_symm\_algo}. This analysis gives an orthonormal basis
-whose $z$-axis is provided by the eigenvector associated to the smallest
-eigenvalue \footnote{Another possibility is to choose as z-axis the
-axis of the world-basis with the least angle with the axis determined
-with the PCA. Then the change of basis reduces to a permutation of
-axis.}. Note one may have to swap the sense of a vector to get a
-direct basis.
+whose $z$-axis is provided by the eigenvector associated to the
+smallest eigenvalue \footnote{Another possibility is to choose as
+z-axis the axis of the world-basis with the least angle with the axis
+determined with the PCA. Then the change of basis reduces to a
+permutation of axis.}. Note one may have to swap the sense of a vector
+to get a direct basis.
 
 Let's note $P_{W\rightarrow F}$ the matrix to change coordinates from the
 world-basis $(w_x,w_y,w_z)$ to the fitting-basis $(f_x,f_y,f_z)$. The
@@ -305,22 +311,26 @@ we also minimize $||A||_2$.  The method uses a singular value
 decomposition of the $N\times N_d$ matrix $M= U S V^T$, where $U$ is a
 $N \times N$ orthogonal matrix, $V$ is a $N_d \times N_d$ orthogonal
 matrix and $S$ is a $N\times N_d$ matrix with the singular values on
-its diagonal. Denote $r$ the rank of $M$, we can decompose 
+its diagonal. Denote $r$ the rank of $M$, we can decompose
 %
-$S= \begin{pmatrix}
+$S= \left( \begin{array}{cc}
 D_r & 0_{r,\ N_d-r}\\
 0_{N-r,\ r} & 0_{N-r,\ N_d-r}
-\end{pmatrix}.
+\end{array} 
+\right).
 $
 %
 The number $r$, which is the number of non zero singular values, is
 strictly lower than $N_d$ if the system is under constrained. In any
 case, the unique solution which minimize $||A||_2$ is given by~:
 \begin{equation}
-A= V\begin{pmatrix}
+A= V
+\left( \begin{array}{cc}
 D_r^{-1} & 0_{N_d-r,\ r}\\
 0_{r,\ N-r} & 0_{N_d-r,\ N-r}
-\end{pmatrix} U^TZ.
+\end{array} 
+\right)
+ U^TZ.
 \end{equation}
 
 One can provide the condition number
@@ -562,7 +572,7 @@ Fig. \ref{fig:outputs}.
 
 \begin{figure}[H] 
 \begin{center}
-\begin{boxedminipage}[t]{14cm}
+%\begin{boxedminipage}[t]{14cm}
 \begin{verbatim}
 template<class Data_Kernel>
 class Monge_rep { 
@@ -580,7 +590,7 @@ typename Local_Kernel::FT pca_eigen_vals[3];
 typename Local_Kernel::Vector_3 pca_eigen_vecs[3];
 typename Local_Kernel::FT cond_nb; //of the fitting system  
 \end{verbatim}
-\end{boxedminipage}
+%\end{boxedminipage}
 \end{center}
 
 \caption{Informations returned} 
@@ -588,9 +598,9 @@ typename Local_Kernel::FT cond_nb; //of the fitting system
 \end{figure} 
 
 
-\subsection{Exceptions}
+\subsection{Preconditions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-preconditions:
+
 \begin{itemize}
 \item
 at least one element in the container.
@@ -601,5 +611,18 @@ $1 \leq d$, $d' \leq d$, $1 \leq d' \leq 4$
 \end{itemize}	
  
 
-\section{Example}
+\section{Examples} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The first example illustrates the computation of the local
+differential quantities from a set of points given in a text file as
+input. The first point of the list is the one at which the computation
+is performed. The user has to specify a file for the input points, a
+file to output the results, the degrees $d$ and $d'$.
+\ccIncludeExampleCode{Jet_fitting_3/blind_1pt.C}
+
+The second example illustrates the computation of local differential
+quantities for all vertices of a given mesh. Results are output as a
+human readable text file and another text file which may be visualised 
+with the demo program.
+\ccIncludeExampleCode{Jet_fitting_3/blind.C}
