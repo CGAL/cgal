@@ -1433,6 +1433,9 @@ public:
 
       Vertex_const_handle v;
       CGAL_assertion(CGAL::assign(v, obj));
+      CGAL::assign(v, obj);
+      if(v->is_isolated())
+        return v->face();
       Halfedge_around_vertex_const_circulator eit = v->incident_halfedges();
       return  (eit->face());
     }
