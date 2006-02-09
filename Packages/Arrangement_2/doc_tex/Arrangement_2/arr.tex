@@ -1084,7 +1084,7 @@ class \ccc{Arr_landmarks_vertices_generator} is used and the
 arrangement vertices are the selected landmarks, but other
 landmark generators, such as sampling random points or
 choosing points on a grid, are also available; see the
-reference manual for more details.
+Reference Manual for more details.
 %
 \item \ccc{Arr_trapezoid_ric_point_location<Arrangement>} implements
 Mulmuley's point-location algorithm~\cite{m-fppa-90} (see
@@ -2064,8 +2064,8 @@ number whose value is $\alpha + \beta\sqrt{\gamma}$.
 
 It is also possible to construct $x$-monotone curve objects, which represent
 $x$-monotone circular arcs or line segments, using similar constructors.
-Construction from a full circle is obviously not supported. See the reference
-manual for more details.
+Construction from a full circle is obviously not supported. See the Reference
+Manual for more details.
 
 \subsection{A Traits Class for Conic Arcs}
 \label{arr_ssec:tr_conic}
@@ -2203,7 +2203,7 @@ constructor that allows specifying approximate endpoints, where the
 exact endpoints are given explicitly as intersections of
 the supporting conic with two other conic curves. Also note that as the
 preconditions required by some of these constructors are rather
-complicated (see the reference manual for the details), a
+complicated (see the Reference Manual for the details), a
 precondition violation does not cause the program to terminate ---
 instead, an {\em invalid} arc is created. We can verify the validity
 of an arc by using the \ccc{is_valid()} method. Needless to say, inserting
@@ -2502,7 +2502,7 @@ Instead, they are called by the free functions themselves. It is implied
 that no point-location queries (or any other queries for that matter)
 are issued between the calls to the notification functions above.
 \end{enumerate}
-See the reference manual for a detailed specification of the
+See the Reference Manual for a detailed specification of the
 \ccc{Arr_observer} class along with the exact prototypes of all
 notification functions.
 
@@ -2679,6 +2679,16 @@ is copied to another arrangement instance:
  
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_dcel_extension.C}
 
+\begin{ccAdvanced}
+The various \dcel\ classes presented in this section are perfectly
+sufficient for most applications based on the arrangement package.
+However, users may also use their own implementation of a \dcel\ class
+to instantiate the \ccc{Arrangement_2} class-template, in case they need
+special functionality from their \dcel. Such a class must be a model of the
+concept \ccc{ArrangementDcel}, whose exact specification is listed in the
+Reference Manual.
+\end{ccAdvanced}
+
 \section{Overlaying Arrangements}
 \label{arr_sec:overlay}
 %================================
@@ -2756,7 +2766,7 @@ In the following subsections we give some examples for the simple and the
 face-overlay operations and demonstrate how to use the auxiliary overlay
 traits-classes. For the full overlay operations users need to implement
 their specialized overlay traits-class, which models the \ccc{OverlayTraits}
-concept. The details of this concept are given in the reference manual.
+concept. The details of this concept are given in the Reference Manual.
 
 \subsection{Example for a Simple Overlay}
 \label{arr_ssec:simp_ovl}
@@ -3095,7 +3105,7 @@ demonstrates how to re-read the arrangement from a file:
 
 External users may write their own formatter classes by implementing
 models to the \ccc{ArrangementInputFormatter} and the
-\ccc{ArrangementOutputFormatter}, as defined in the reference manual.
+\ccc{ArrangementOutputFormatter}, as defined in the Reference Manual.
 Doing so, they can define other I/O formats, such as an XML-based
 format or a binary format.
 \end{ccAdvanced}
