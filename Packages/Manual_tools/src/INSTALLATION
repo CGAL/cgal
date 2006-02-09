@@ -1,7 +1,8 @@
 INSTALLATION for the Specification and Manual Writing Tools
              for C++ Reference Manuals
 ===========================================================
-24.08.1999   Zurich   Lutz Kettner
+24.08.1999   Zurich       Lutz Kettner
+ 1. 9.2005   Saarbruecken Andreas Meyer
 
 
 Installation of the Supporting Tools:
@@ -17,21 +18,7 @@ Installation of the Supporting Tools:
      *  perl 5
      *  Unix environment with tools like grep, sed, ...
 
-     NOTE: If you use the tools on something large, such as a whole
-     CGAL Manual, you might run into limitations of the flex parser
-     tables. If so, apply the patch 
-
-         patch_for_flex_2.5.4_to_increase_NFA_states_limit
-
-     and recompile your flex parser from sources.
-
-
-(2)  The script cc_remove_unwanted_links is a Perl scripts. The first line
-     in this script might need adaption to where the Perl interpreter is 
-     located. This change needs to be done before installing this script.
-
-
-(3)  Configuring the installation and the use of the tools:
+(2)  Configuring the installation and the use of the tools:
 
      The installation can be configured in two ways: (A) either by setting
      appropriate environment variables, or (B) by setting these variables
@@ -120,7 +107,7 @@ Installation of the Supporting Tools:
           - cc_check
 
 
-(4)  Compilation:
+(3)  Compilation:
 
      Type 'gmake' to compile all programs. In principle, no warnings
      should show up besides possible warnings about unreachable 
@@ -129,7 +116,7 @@ Installation of the Supporting Tools:
      conflicts in extract_syntax.y can be ignored.
 
 
-(5)  Installation:
+(4)  Installation:
 
      Type 'gmake install' to copy the programs and the shell scripts
      to $LATEX_CONV_BIN and to copy all the configuration files
@@ -139,7 +126,7 @@ Installation of the Supporting Tools:
      process removes all old files therein.
 
 
-(6)  Cleanup:
+(5)  Cleanup:
 
      Type 'gmake clean' to remove all temporary files (e.g. necessary
      before compiling for another platform). Type 'gmake cleanall' to
@@ -147,7 +134,7 @@ Installation of the Supporting Tools:
      of the C++ compiler.
 
 
-(7)  Test Suite:
+(6)  Test Suite:
 
      A small test suite is provided. It assumes the new LaTeX style files
      to be installed, see ../INSTALLATION for details. Move in the `test/'
@@ -157,7 +144,7 @@ Installation of the Supporting Tools:
      reference files ;-).
 
 
-(8)  Demo Example for the -extended Option of the Converter:
+(7)  Demo Example for the -extended Option of the Converter:
 
      Another test is provided for the new latex_to_html capabilities
      to convert a manual using multiple directories. This is the example
