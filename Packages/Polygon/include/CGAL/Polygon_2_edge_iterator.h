@@ -52,7 +52,7 @@ private:
 template <class Traits_, class Container_>
 class Polygon_2_edge_iterator {
   public:
-    typedef std::random_access_iterator_tag iterator_category;
+    typedef typename std::iterator_traits<typename Container_::iterator>::iterator_category iterator_category;
     typedef typename Traits_::Segment_2 Segment_2;
     typedef typename Traits_::Segment_2 value_type;
     typedef Container_ Container;
