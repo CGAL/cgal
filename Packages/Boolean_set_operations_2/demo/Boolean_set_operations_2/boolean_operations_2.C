@@ -512,7 +512,8 @@ public slots:
 
 
 
-      CGAL::Bbox_2 box;
+      CGAL::Bbox_2 box = CGAL::Bbox_2 (widget->x_min(), widget->y_min(),
+                                       widget->x_max(), widget->y_max());
       QCursor old = widget->cursor();
       widget->setCursor(Qt::WaitCursor);
       widget->lock();
@@ -541,11 +542,11 @@ public slots:
                       circ_polygons_with_holes.end());
       }
 
-      if(!circ_polygons.empty())
+      if (!circ_polygons.empty())
       {
-         box = circ_polygons.front().bbox();
+        box = circ_polygons.front().bbox();
       }
-      else if(!circ_polygons_with_holes.empty())
+      else if (!circ_polygons_with_holes.empty())
       {
         box = circ_polygons_with_holes.front().outer_boundary().bbox();
       }
@@ -560,16 +561,18 @@ public slots:
 
 
       std::vector<Polygon_with_holes>::iterator itr2;
-       for(itr2 = circ_polygons_with_holes.begin();
+      
+      for (itr2 = circ_polygons_with_holes.begin();
            itr2 != circ_polygons_with_holes.end();
            ++itr2)
       {
         box = box + itr2->outer_boundary().bbox();
       }
-       widget->set_window(box.xmin(),
-                          box.xmax(),
-                          box.ymin(),
-                          box.ymax());
+       
+      widget->set_window(box.xmin(),
+                         box.xmax(),
+                         box.ymin(),
+                         box.ymax());
       widget->unlock();
       newtoolbar->reset();
       something_changed();
