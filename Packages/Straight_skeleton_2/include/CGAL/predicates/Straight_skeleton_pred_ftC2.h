@@ -28,28 +28,75 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class FT>
-Uncertain<bool>
-certified_collinearC2( FT const& px, FT const& py
-                     , FT const& qx, FT const& qy
-                     , FT const& rx, FT const& ry
-                     )
+namespace CGAL_SLS_i
 {
-  return certified_is_equal( ( qx - px ) * ( ry - py )
-                           , ( rx - px ) * ( qy - py )
+
+template<class FT>
+Uncertain<bool> certified_collinearC2( Vertex<FT> const& p, Vertex<FT> const& q, Vertex<FT> const& r )
+{
+  return certified_is_equal( ( q.x() - p.x() ) * ( r.y() - p.y() )
+                           , ( r.x() - p.x() ) * ( q.y() - p.y() )
                            );
 }
 
 template<class FT>
-Uncertain<bool>
-are_edges_collinear( tuple<FT,FT,FT,FT> const& e0, tuple<FT,FT,FT,FT> const& e1 )
+Uncertain<bool> are_edges_collinear( Edge<FT> const& e0, Edge<FT> const& e1 )
 {
-  FT e0sx, e0sy, e0tx, e0ty ;
-  FT e1sx, e1sy, e1tx, e1ty ;
-  tie(e0sx,e0sy,e0tx,e0ty)=e0;
-  tie(e1sx,e1sy,e1tx,e1ty)=e1;
-  return certified_collinearC2(e0sx,e0sy,e0tx,e0ty,e1tx,e1ty);
+  return    certified_collinearC2(e0.s(),e0.t(),e1.s())
+         && certified_collinearC2(e0.s(),e0.t(),e1.t());
 }
+
+template<class FT>
+SortedTriedge<FT> collinear_sort ( Triedge<FT> const& triedge )
+{
+  bool valid = false, degenerate = false ;
+  int  idx0, idx1, idx2 ;
+
+  Uncertain<bool> is_01 = are_edges_collinear(triedge.e0(),triedge.e1());
+  if ( !CGAL_NTS is_indeterminate(is_01) )
+  {
+    Uncertain<bool> is_02 = are_edges_collinear(triedge.e0(),triedge.e2());
+    if ( !CGAL_NTS is_indeterminate(is_01) )
+    {
+      Uncertain<bool> is_12 = are_edges_collinear(triedge.e1(),triedge.e2());
+      if ( !CGAL_NTS is_indeterminate(is_01) )
+      {
+        valid = true ;
+        if ( is_01 && !is_02 && !is_12 )
+        {
+          idx0 = 0 ;
+          idx1 = 1 ;
+          idx2 = 2 ;
+          degenerate = true ;
+        }
+        else if ( is_02 && !is_01 && !is_12 )
+        {
+          idx0 = 0 ;
+          idx1 = 2 ;
+          idx2 = 1 ;
+          degenerate = true ;
+        }
+        else if ( is_12 && !is_01 && !is_02 )
+        {
+          idx0 = 1 ;
+          idx1 = 2 ;
+          idx2 = 0 ;
+          degenerate = true ;
+        }
+        else
+        {
+          idx0 = 0 ;
+          idx1 = 1 ;
+          idx2 = 2 ;
+          degenerate = false ;
+        }
+      }
+    }
+  }
+
+  return SortedTriedge<FT>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),valid,degenerate);
+}
+
 
 // Given 3 oriented straight line segments: l0, l1, l2 [each segment is passed as (sx,sy,tx,ty)]
 // returns true if there exist some positive offset distance 't' for which the
@@ -57,32 +104,25 @@ are_edges_collinear( tuple<FT,FT,FT,FT> const& e0, tuple<FT,FT,FT,FT> const& e1 
 // NOTE: This function allows l0 and l1 to be collinear if they are equally oriented.
 // This allows the algorithm to handle degenerate vertices (formed by 3 collinear consecutive points)
 template<class FT>
-Uncertain<bool>
-exist_offset_lines_isec2 ( tuple<FT,FT,FT,FT> const& l0
-                         , tuple<FT,FT,FT,FT> const& l1
-                         , tuple<FT,FT,FT,FT> const& l2
-                         )
+Uncertain<bool> exist_offset_lines_isec2 ( Triedge<FT> const& triedge )
 {
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  Uncertain<bool> degenerate_case = are_edges_collinear(l0,l1);
+  SortedTriedge<FT> sorted = collinear_sort(triedge);
 
-  if ( !is_indeterminate(degenerate_case) )
+  if ( sorted.is_valid() )
   {
-    CGAL_SSTRAITS_TRACE( ( (bool)degenerate_case ? " collinear edges" : " non-collinear edges" ) ) ;
+    CGAL_SSTRAITS_TRACE( sorted.is_degenerate() ? " collinear edges" : " non-collinear edges" ) ;
 
-    FT n,d;
+    Rational<FT> t = compute_offset_lines_isec_timeC2(sorted) ;
 
-    tie(n,d) = compute_offset_lines_isec_timeC2(l0,l1,l2,CGAL_NTS inf(degenerate_case)) ;
-
-    Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(d) ;
-    if ( !is_indeterminate(d_is_zero) )
+    Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t.d()) ;
+    if ( ! CGAL_NTS is_indeterminate(d_is_zero) )
     {
       if ( !d_is_zero )
       {
-        FT t = n/d ;
-        rResult = CGAL_NTS certified_is_finite(t) && CGAL_NTS certified_is_positive(t) ;
-        CGAL_SSTRAITS_TRACE("\nEvent time: " << t << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
+        rResult = CGAL_NTS certified_is_positive(t.n()) == CGAL_NTS certified_is_positive(t.d()) ;
+        CGAL_SSTRAITS_TRACE("\nEvent time: " << (t.n()/t.d()) << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
       }
       else
       {
@@ -105,30 +145,17 @@ exist_offset_lines_isec2 ( tuple<FT,FT,FT,FT> const& l0
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
 template<class FT>
-Uncertain<Comparison_result>
-compare_offset_lines_isec_timesC2 ( tuple<FT,FT,FT,FT> const& m0
-                                  , tuple<FT,FT,FT,FT> const& m1
-                                  , tuple<FT,FT,FT,FT> const& m2
-                                  , tuple<FT,FT,FT,FT> const& n0
-                                  , tuple<FT,FT,FT,FT> const& n1
-                                  , tuple<FT,FT,FT,FT> const& n2
-                                  )
+Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Triedge<FT> const& m, Triedge<FT> const& n )
 {
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  Uncertain<bool> degenerate_case_m = are_edges_collinear(m0,m1);
-  Uncertain<bool> degenerate_case_n = are_edges_collinear(n0,n1);
+  SortedTriedge<FT> m_sorted = collinear_sort(m);
+  SortedTriedge<FT> n_sorted = collinear_sort(n);
 
-  if ( !is_indeterminate(degenerate_case_m) && !is_indeterminate(degenerate_case_n) )
+  if ( m_sorted.is_valid() && n_sorted.is_valid() )
   {
-    FT mn, md, nn, nd ;
-
-    tie(mn,md) = compute_offset_lines_isec_timeC2(m0,m1,m2,CGAL_NTS inf(degenerate_case_m) );
-    tie(nn,nd) = compute_offset_lines_isec_timeC2(n0,n1,n2,CGAL_NTS inf(degenerate_case_n) );
-
-    typedef Quotient<FT> QFT ;
-    QFT mt(mn,md);
-    QFT nt(nn,nd);
+    Quotient<FT> mt = compute_offset_lines_isec_timeC2(m_sorted).to_quotient();
+    Quotient<FT> nt = compute_offset_lines_isec_timeC2(n_sorted).to_quotient();
 
     CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;
     CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;
@@ -147,19 +174,22 @@ compare_offset_lines_isec_timesC2 ( tuple<FT,FT,FT,FT> const& m0
 // PRECONDITION: There exist single points at which the offset line triples 'm' and 'n' at 'mt' and 'nt' intersect.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>       const& p
-                                           , tuple<FT,FT,FT,FT> const& m0
-                                           , tuple<FT,FT,FT,FT> const& m1
-                                           , tuple<FT,FT,FT,FT> const& m2
-                                           , tuple<FT,FT,FT,FT> const& n0
-                                           , tuple<FT,FT,FT,FT> const& n1
-                                           , tuple<FT,FT,FT,FT> const& n2
-                                         )
+compare_offset_lines_isec_sdist_to_pointC2 ( Vertex<FT> const& p, Triedge<FT> const& m, Triedge<FT> const& n )
 {
-  FT dm = compute_offset_lines_isec_sdist_to_pointC2(p,m0,m1,m2);
-  FT dn = compute_offset_lines_isec_sdist_to_pointC2(p,n0,n1,n2);
+  Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  return CGAL_NTS certified_compare(dm,dn);
+  SortedTriedge<FT> m_sorted = collinear_sort(m);
+  SortedTriedge<FT> n_sorted = collinear_sort(n);
+
+  if ( m_sorted.is_valid() && n_sorted.is_valid() )
+  {
+    FT dm = compute_offset_lines_isec_sdist_to_pointC2(p,m_sorted);
+    FT dn = compute_offset_lines_isec_sdist_to_pointC2(p,n_sorted);
+
+    rResult = CGAL_NTS certified_compare(dm,dn);
+  }
+
+  return rResult ;
 }
 
 // Given 3 triples of oriented lines in _normalized_ implicit form: (s0,s1,s2), (m0,m1,m2) and (n0,n1,n2),
@@ -169,18 +199,19 @@ compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>       const& p
 // PRECONDITION: There exist single points at which the offsets at 'st', 'mt' and 'nt' intersect.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT,FT,FT> const& s0
-                                           , tuple<FT,FT,FT,FT> const& s1
-                                           , tuple<FT,FT,FT,FT> const& s2
-                                           , tuple<FT,FT,FT,FT> const& m0
-                                           , tuple<FT,FT,FT,FT> const& m1
-                                           , tuple<FT,FT,FT,FT> const& m2
-                                           , tuple<FT,FT,FT,FT> const& n0
-                                           , tuple<FT,FT,FT,FT> const& n1
-                                           , tuple<FT,FT,FT,FT> const& n2
+compare_offset_lines_isec_sdist_to_pointC2 ( Triedge<FT> const& s
+                                           , Triedge<FT> const& m
+                                           , Triedge<FT> const& n
                                            )
 {
-  return compare_offset_lines_isec_sdist_to_pointC2(construct_offset_lines_isecC2(s0,s1,s2),m0,m1,m2,n0,n1,n2);
+  Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
+
+  SortedTriedge<FT> s_sorted = collinear_sort(s);
+
+  if ( s_sorted.is_valid() )
+    return compare_offset_lines_isec_sdist_to_pointC2(construct_offset_lines_isecC2(s_sorted),m,n);
+
+  return rResult ;
 }
 
 // Given a triple of oriented lines in _normalized_ implicit form: (e0,e1,e2) such that their offsets
@@ -195,74 +226,75 @@ compare_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT,FT,FT> const& s0
 //
 template<class FT>
 Uncertain<bool>
-is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT,FT> const& e0
-                                          , tuple<FT,FT,FT,FT> const& e1
-                                          , tuple<FT,FT,FT,FT> const& e2
-                                          , tuple<FT,FT,FT,FT> const& el
-                                          , tuple<FT,FT,FT,FT> const& ec
-                                          , tuple<FT,FT,FT,FT> const& er
-                                          )
+is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& triedge, Triedge<FT> const& zone )
 {
   Uncertain<bool> r = Uncertain<bool>::indeterminate();
 
-  FT x, y, ela, elb, elc, eca, ecb, ecc, era, erb, erc ;
-
-  tie(ela,elb,elc) = compute_normalized_line_ceoffC2(el) ;
-  tie(eca,ecb,ecc) = compute_normalized_line_ceoffC2(ec) ;
-  tie(era,erb,erc) = compute_normalized_line_ceoffC2(er) ;
-
-  // Construct intersection point (x,y)
-  tie(x,y) = construct_offset_lines_isecC2(e0,e1,e2);
-
-  // Calculate scaled (signed) distance from (x,y) to 'ec'
-  FT sdc = eca * x + ecb * y + ecc ;
-
-  CGAL_SSTRAITS_TRACE("\nsdc=" << sdc ) ;
-
-  // NOTE:
-  //   if (x,y) is not on the positive side of 'ec' it isn't on it's offset zone.
-  //   Also, if (x,y) is over 'ec' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
-  //   zone either.
-  Uncertain<bool> cok = CGAL_NTS certified_is_positive(sdc);
-  if ( !is_indeterminate(cok) && !!cok )
+  SortedTriedge<FT> sorted = collinear_sort(triedge);
+  if ( sorted.is_valid() )
   {
-    CGAL_SSTRAITS_TRACE("\nright side of ec." ) ;
+    Line<FT> zl = compute_normalized_line_ceoffC2(zone.e0()) ;
+    Line<FT> zc = compute_normalized_line_ceoffC2(zone.e1()) ;
+    Line<FT> zr = compute_normalized_line_ceoffC2(zone.e2()) ;
 
-    // Calculate scaled (signed) distances from (x,y) to 'el' and 'er'
-    FT sdl = ela * x + elb * y + elc ;
-    FT sdr = era * x + erb * y + erc ;
+    // Construct intersection point (x,y)
+    Vertex<FT> i = construct_offset_lines_isecC2(sorted);
 
-    CGAL_SSTRAITS_TRACE("\nsdl=" << sdl ) ;
-    CGAL_SSTRAITS_TRACE("\nsdr=" << sdr ) ;
+    // Calculate scaled (signed) distance from (x,y) to 'ec'
+    FT sdc = zc.a() * i.x() + zc.b() * i.y() + zc.c() ;
 
-    // Determine if the vertices (el,ec) and (ec,er) are reflex.
-    Uncertain<bool> lcx = CGAL_NTS certified_is_smaller(ela*ecb,eca*elb);
-    Uncertain<bool> crx = CGAL_NTS certified_is_smaller(eca*erb,era*ecb);
-    if ( !is_indeterminate(lcx) && !is_indeterminate(crx) )
+    CGAL_SSTRAITS_TRACE("\nsdc=" << sdc ) ;
+
+    // NOTE:
+    //   if (x,y) is not on the positive side of 'ec' it isn't on it's offset zone.
+    //   Also, if (x,y) is over 'ec' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
+    //   zone either.
+    Uncertain<bool> cok = CGAL_NTS certified_is_positive(sdc);
+    if ( ! CGAL_NTS is_indeterminate(cok) && !!cok )
     {
-      CGAL_SSTRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
-      CGAL_SSTRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
+      CGAL_SSTRAITS_TRACE("\nright side of ec." ) ;
 
-      // Is (x,y) to the right|left of the bisectors (el,ec) and (ec,er)?
-      //  It depends on whether the vertex ((el,ec) and (ec,er)) is relfex or not.
-      //  If it is reflex, then (x,y) is to the right|left of the bisector if sdl|sdr <= sdc; otherwise, if sdc <= sdl|srd
+      // Calculate scaled (signed) distances from (x,y) to 'el' and 'er'
+      FT sdl = zl.a() * i.x() + zl.b() * i.y() + zl.c() ;
+      FT sdr = zr.a() * i.x() + zr.b() * i.y() + zr.c() ;
 
-      Uncertain<bool> lok = lcx ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
-                                : CGAL_NTS certified_is_smaller_or_equal(sdc,sdl) ;
+      CGAL_SSTRAITS_TRACE("\nsdl=" << sdl ) ;
+      CGAL_SSTRAITS_TRACE("\nsdr=" << sdr ) ;
 
-      Uncertain<bool> rok = crx ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
-                                : CGAL_NTS certified_is_smaller_or_equal(sdc,sdr) ;
+      // Determine if the vertices (el,ec) and (ec,er) are reflex.
+      Uncertain<bool> lcx = CGAL_NTS certified_is_smaller(zl.a()*zc.b(),zc.a()*zl.b());
+      Uncertain<bool> crx = CGAL_NTS certified_is_smaller(zc.a()*zr.b(),zr.a()*zc.b());
 
-      CGAL_SSTRAITS_TRACE("\nlok:" << lok) ;
-      CGAL_SSTRAITS_TRACE("\nrok:" << rok) ;
+      if ( ! CGAL_NTS is_indeterminate(lcx) && ! CGAL_NTS is_indeterminate(crx) )
+      {
+        CGAL_SSTRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
+        CGAL_SSTRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
 
-      r = lok && rok ;
+        // Is (x,y) to the right|left of the bisectors (el,ec) and (ec,er)?
+        //  It depends on whether the vertex ((el,ec) and (ec,er)) is relfex or not.
+        //  If it is reflex, then (x,y) is to the right|left of the bisector if sdl|sdr <= sdc; otherwise, if sdc <= sdl|srd
+
+        Uncertain<bool> lok = lcx ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
+                                  : CGAL_NTS certified_is_smaller_or_equal(sdc,sdl) ;
+
+        Uncertain<bool> rok = crx ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
+                                  : CGAL_NTS certified_is_smaller_or_equal(sdc,sdr) ;
+
+        CGAL_SSTRAITS_TRACE("\nlok:" << lok) ;
+        CGAL_SSTRAITS_TRACE("\nrok:" << rok) ;
+
+        r = lok && rok ;
+      }
+
     }
-
+    else
+    {
+      CGAL_SSTRAITS_TRACE("\nWRONG side of ec." ) ;
+    }
   }
   else
   {
-    CGAL_SSTRAITS_TRACE("\nWRONG side of ec." ) ;
+    CGAL_SSTRAITS_TRACE("\nUnable to determine collinearity of event triedge." ) ;
   }
 
 
@@ -271,28 +303,40 @@ is_offset_lines_isec_inside_offset_zoneC2 ( tuple<FT,FT,FT,FT> const& e0
 }
 
 template<class FT>
-Uncertain<bool>
-are_events_simultaneousC2 ( tuple<FT,FT,FT,FT> const& l0
-                          , tuple<FT,FT,FT,FT> const& l1
-                          , tuple<FT,FT,FT,FT> const& l2
-                          , tuple<FT,FT,FT,FT> const& r0
-                          , tuple<FT,FT,FT,FT> const& r1
-                          , tuple<FT,FT,FT,FT> const& r2
-                          )
+Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> const& r )
 {
-  Uncertain<bool> rResult = certified_is_equal(compare_offset_lines_isec_timesC2(l0,l1,l2,r0,r1,r2));
+  Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  if ( !is_indeterminate(rResult) && rResult == true )
+  SortedTriedge<FT> l_sorted = collinear_sort(l);
+  SortedTriedge<FT> r_sorted = collinear_sort(r);
+
+  if ( l_sorted.is_valid() && r_sorted.is_valid() )
   {
-    FT lx, ly, rx, ry ;
-    tie(lx,ly) = construct_offset_lines_isecC2(l0,l1,l2);
-    tie(rx,ry) = construct_offset_lines_isecC2(r0,r1,r2);
+    Quotient<FT> lt = compute_offset_lines_isec_timeC2(l_sorted).to_quotient();
+    Quotient<FT> rt = compute_offset_lines_isec_timeC2(r_sorted).to_quotient();
 
-    rResult = CGAL_NTS certified_is_equal(lx,rx) && CGAL_NTS certified_is_equal(ly,ry) ;
+    CGAL_assertion ( CGAL_NTS certified_is_positive(lt) ) ;
+    CGAL_assertion ( CGAL_NTS certified_is_positive(rt) ) ;
+
+    Uncertain<Comparison_result> equal_times = CGAL_NTS certified_compare(lt,rt);
+
+    if ( ! CGAL_NTS is_indeterminate(equal_times) )
+    {
+      if ( equal_times == true )
+      {
+        Vertex<FT> li = construct_offset_lines_isecC2(l_sorted);
+        Vertex<FT> ri = construct_offset_lines_isecC2(r_sorted);
+
+        rResult = CGAL_NTS certified_is_equal(li.x(),ri.x()) && CGAL_NTS certified_is_equal(li.y(),ri.y()) ;
+      }
+      else rResult = make_uncertain(false);
+    }
   }
 
   return rResult;
 }
+
+} // namespace CGAL_SLS_i
 
 CGAL_END_NAMESPACE
 

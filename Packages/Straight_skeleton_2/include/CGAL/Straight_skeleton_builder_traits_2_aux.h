@@ -33,11 +33,6 @@
 
 #include <boost/tuple/tuple.hpp>
 
-// These are ubiquotous and will be part of the std so we use them unqualified
-using boost::tuple ;
-using boost::tie ;
-using boost::make_tuple ;
-
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
 #  include<string>
 #  include<iostream>
@@ -56,7 +51,7 @@ using boost::make_tuple ;
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace CGAL_SLS_i {
 
 template<class K>
 struct Is_filtering_kernel
@@ -70,6 +65,118 @@ struct Is_filtering_kernel< Exact_predicates_inexact_constructions_kernel >
   typedef Tag_true type ;
 } ;
 
+template<class FT>
+class Rational // Permits zero denominator, unlike Quotient<>
+{
+  public:
+
+    Rational( FT aN, FT aD ) : mN(aN), mD(aD) {}
+
+    FT n() const { return mN ; }
+    FT d() const { return mD ; }
+
+    Quotient<FT> to_quotient() const { return Quotient<FT>(mN,mD) ; }
+
+  private:
+
+    FT mN, mD ;
+} ;
+
+template<class FT>
+class Vertex
+{
+  public:
+
+    Vertex( FT aX, FT aY ) : mX(aX), mY(aY) {}
+
+    FT x() const { return mX ; }
+    FT y() const { return mY ; }
+
+  private:
+
+    FT mX, mY ;
+} ;
+
+template<class FT>
+class Edge
+{
+  public:
+
+    typedef Vertex<FT> Vertex ;
+
+    Edge( Vertex const& aS, Vertex const& aT ) : mS(aS), mT(aT) {}
+
+    Vertex const& s() const { return mS ; }
+    Vertex const& t() const { return mT ; }
+
+  private:
+
+    Vertex mS, mT ;
+} ;
+
+template<class FT>
+class Triedge
+{
+  public:
+
+    typedef Edge<FT> Edge ;
+
+    Triedge( Edge const& aE0, Edge const& aE1, Edge const& aE2 ) : mE0(aE0), mE1(aE1), mE2(aE2) {}
+
+    Edge const& e0() const { return mE0 ; }
+    Edge const& e1() const { return mE1 ; }
+    Edge const& e2() const { return mE2 ; }
+
+    Edge const& e( int idx ) const { return idx == 0 ? mE0 : idx == 1 ? mE1 : mE2 ; }
+
+  private:
+
+    Edge mE0, mE1, mE2 ;
+} ;
+
+template<class FT>
+class SortedTriedge : public Triedge<FT>
+{
+  public:
+
+    typedef Triedge<FT> Base ;
+
+    typedef typename Base::Edge Edge ;
+
+    SortedTriedge( Edge const& aE0
+                 , Edge const& aE1
+                 , Edge const& aE2
+                 , bool        aIsValid
+                 , bool        aIsDegenerate
+                 )
+     : Base(aE0,aE1,aE2)
+     , mIsValid(aIsValid)
+     , mIsDegenerate(aIsDegenerate)
+     {}
+
+    bool is_valid     () const { return mIsValid ; }
+    bool is_degenerate() const { return mIsDegenerate ; }
+
+  private:
+
+    bool mIsValid, mIsDegenerate ;
+} ;
+
+template<class FT>
+class Line
+{
+  public:
+
+    Line( FT aA, FT aB, FT aC ) : mA(aA), mB(aB), mC(aC) {}
+
+    FT a() const { return mA ; }
+    FT b() const { return mB ; }
+    FT c() const { return mC ; }
+
+  private:
+
+    FT mA,mB,mC ;
+} ;
 
 template<class K>
 struct Sls_functor_base_2
@@ -77,28 +184,26 @@ struct Sls_functor_base_2
   typedef typename K::FT      FT ;
   typedef typename K::Point_2 Point_2 ;
 
-  typedef tuple<FT,FT>       Vertex ;
-  typedef tuple<FT,FT,FT,FT> Edge   ;
+  typedef Vertex       <FT> Vertex ;
+  typedef Edge         <FT> Edge   ;
+  typedef Triedge      <FT> Triedge ;
+  typedef SortedTriedge<FT> SortedTriedge ;
 
-  typedef tuple<Edge,Edge,Edge> Edge_triple ;
-
-  static Vertex toVertex( Point_2 const& p ) { return make_tuple(p.x(),p.y()) ; }
+  static Vertex toVertex( Point_2 const& p ) { return Vertex(p.x(),p.y()) ; }
 
   friend std::ostream& operator << ( std::ostream& os, Edge const& aEdge )
   {
-    FT spx, spy, epx, epy ; tie(spx,spy,epx,epy) = aEdge ;
-    return os << '(' << spx << ',' << spy << ")->(" << epx << ',' << epy << ')';
+    return os << '(' << aEdge.s().x() << ',' << aEdge.s().y() << ")->(" << aEdge.t().x() << ',' << aEdge.t().y() << ')';
   }
 
-  friend std::ostream& operator << ( std::ostream& os, Edge_triple const& aTriple )
+  friend std::ostream& operator << ( std::ostream& os, Triedge const& aTriedge )
   {
-    Edge e0,e1,e2 ; tie(e0,e1,e2) = aTriple ;
-    return os << "\ne0:" << e0 << "\ne1:" << e1 << "\ne2:" << e2 ;
+    return os << "\ne0:" << aTriedge.e0() << "\ne1:" << aTriedge.e1() << "\ne2:" << aTriedge.e2() ;
   }
 };
 
 template<class Converter>
-struct Edge_triple_converter_2 : Converter
+struct Triedge_converter : Converter
 {
 
   typedef typename Converter::Source_kernel Source_kernel;
@@ -110,13 +215,18 @@ struct Edge_triple_converter_2 : Converter
   typedef typename Source_kernel::Point_2 Source_point_2 ;
   typedef typename Target_kernel::Point_2 Target_point_2 ;
 
-  typedef tuple<SFT,SFT,SFT,SFT> Source_edge ;
-  typedef tuple<TFT,TFT,TFT,TFT> Target_edge ;
+  typedef Vertex<SFT> Source_vertex ;
+  typedef Vertex<TFT> Target_vertex ;
 
-  typedef tuple<Source_edge,Source_edge,Source_edge> Source_edge_triple ;
-  typedef tuple<Target_edge,Target_edge,Target_edge> Target_edge_triple ;
+  typedef Edge<SFT> Source_edge ;
+  typedef Edge<TFT> Target_edge ;
+
+  typedef Triedge<SFT> Source_triedge ;
+  typedef Triedge<TFT> Target_triedge ;
 
   TFT cvtn(SFT n) const  { return Converter::operator()(n); }
+
+  Target_vertex cvtv(Source_vertex const& v) const  { return Target_vertex( cvtn(v.x()), cvtn(v.y()) ); }
 
   Target_point_2 cvtp(Source_point_2 const& p) const  { return Converter::operator()(p); }
 
@@ -124,25 +234,16 @@ struct Edge_triple_converter_2 : Converter
 
   Target_point_2 operator()( Source_point_2 const& p) const { return cvtp(p) ; }
 
-  Target_edge_triple  operator()( Source_edge_triple const& s) const
+  Target_triedge  operator()( Source_triedge const& s) const
   {
-    Source_edge s0,s1,s2;
-    tie(s0,s1,s2) = s ;
-
-    SFT s0sx, s0tx, s1sx, s1tx, s2sx, s2tx ;
-    SFT s0sy, s0ty, s1sy, s1ty, s2sy, s2ty ;
-    tie(s0sx,s0sy,s0tx,s0ty) = s0 ;
-    tie(s1sx,s1sy,s1tx,s1ty) = s1 ;
-    tie(s2sx,s2sy,s2tx,s2ty) = s2 ;
-
-    return make_tuple( make_tuple(cvtn(s0sx), cvtn(s0sy), cvtn(s0tx), cvtn(s0ty) )
-                     , make_tuple(cvtn(s1sx), cvtn(s1sy), cvtn(s1tx), cvtn(s1ty) )
-                     , make_tuple(cvtn(s2sx), cvtn(s2sy), cvtn(s2tx), cvtn(s2ty) )
-                     ) ;
+    return Target_triedge( Target_edge(cvtv(s.e0().s()), cvtv(s.e0().t()) )
+                         , Target_edge(cvtv(s.e1().s()), cvtv(s.e1().t()) )
+                         , Target_edge(cvtv(s.e2().s()), cvtv(s.e2().t()) )
+                         ) ;
   }
 };
 
-} // namespace CGALi
+} // namespace CGAL_SLS_i
 
 
 //

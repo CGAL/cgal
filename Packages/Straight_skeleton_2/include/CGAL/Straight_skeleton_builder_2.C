@@ -75,7 +75,7 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
   EventPtr rResult ;
 
   Halfedge_handle lBorderA, lBorderB, lBorderC ;
-  tie(lBorderA,lBorderB,lBorderC) = GetDefiningBorders(aLNode,aRNode);
+  boost::tie(lBorderA,lBorderB,lBorderC) = GetDefiningBorders(aLNode,aRNode);
 
   if ( lBorderA != lBorderB && lBorderB != lBorderC )
   {
@@ -431,7 +431,7 @@ void Straight_skeleton_builder_2<Gt,SS>::FindVertexEvents()
 
           Halfedge_handle lDistinct1, lDistinct2, lEqual1, lEqual2 ;
 
-          tie(lDistinct1, lDistinct2, lEqual1, lEqual2) = SortTwoDistinctAndTwoEqual(lBorderX,lBorderY);
+          boost::tie(lDistinct1, lDistinct2, lEqual1, lEqual2) = SortTwoDistinctAndTwoEqual(lBorderX,lBorderY);
 
           CGAL_SSBUILDER_TRACE ( "Distinct1 E" << lDistinct1->id() << " Distinct2 E" << lDistinct2->id()
                                << " Equal1 E" << lEqual1->id() << " Equal2 E" << lEqual2->id()
@@ -1057,7 +1057,7 @@ template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aSplitNodes )
 {
   Vertex_handle lLNode, lRNode ;
-  tie(lLNode,lRNode)=aSplitNodes;
+  boost::tie(lLNode,lRNode)=aSplitNodes;
   Halfedge_handle lIBisector = lRNode->primary_bisector()->opposite();
 
   Exclude(lRNode);
@@ -1103,124 +1103,6 @@ typename Straight_skeleton_builder_2<Gt,SS>::Ssds Straight_skeleton_builder_2<Gt
   Run();
   return mSS ;
 }
-/*
-template<class Gt, class SS>
-template<class InputPointIterator>
-Straight_skeleton_builder_2<Gt,SS>&
-Straight_skeleton_builder_2<Gt,SS>::enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd  )
-{
-  CGAL_SSBUILDER_TRACE("Inserting Connected Component of the Boundary....");
-
-  if ( std::distance(aBegin,aEnd) >= 3 )
-  {
-    Halfedge_handle lFirstCCWBorder ;
-    Halfedge_handle lPrevCCWBorder ;
-    Halfedge_handle lNextCWBorder ;
-    Vertex_handle   lFirstVertex ;
-    Vertex_handle   lPrevVertex ;
-
-    InputPointIterator lCurr = aBegin ;
-    while ( lCurr != aEnd )
-    {
-      Halfedge_handle lCCWBorder = mSS.SBase::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
-      Halfedge_handle lCWBorder = lCCWBorder->opposite();
-      mEdgeID += 2 ;
-
-      mContourHalfedges.push_back(lCCWBorder);
-
-      Vertex_handle lVertex = mSS.SBase::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
-      CGAL_SSBUILDER_TRACE("Vertex: V" << lVertex->id() << " at " << lVertex->point() );
-      mWrappedVertices.push_back( VertexWrapper(lVertex) ) ;
-
-      Face_handle lFace = mSS.SBase::faces_push_back( Face() ) ;
-
-      lCCWBorder->HBase::set_face    (lFace);
-      lFace     ->FBase::set_halfedge(lCCWBorder);
-
-      lVertex   ->VBase::set_halfedge(lCCWBorder);
-      lCCWBorder->HBase::set_vertex  (lVertex);
-
-      if ( lCurr == aBegin )
-      {
-        lFirstVertex    = lVertex ;
-        lFirstCCWBorder = lCCWBorder ;
-      }
-      else
-      {
-        SetPrevInLAV(lVertex    ,lPrevVertex);
-        SetNextInLAV(lPrevVertex,lVertex    );
-
-        SetDefiningBorderA(lVertex    ,lCCWBorder);
-        SetDefiningBorderB(lPrevVertex,lCCWBorder);
-
-        lCWBorder->HBase::set_vertex(lPrevVertex);
-
-        lCCWBorder    ->HBase::set_prev(lPrevCCWBorder);
-        lPrevCCWBorder->HBase::set_next(lCCWBorder);
-
-        lNextCWBorder->HBase::set_prev(lCWBorder);
-        lCWBorder    ->HBase::set_next(lNextCWBorder);
-
-        CGAL_SSBUILDER_TRACE("CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
-        CGAL_SSBUILDER_TRACE("CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
-
-        CGAL_SSBUILDER_SHOW_AUX
-        (
-          SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lVertex->point(), CGAL::RED, "Border" ) ;
-          draw_.Release();
-        )
-      }
-
-      ++ lCurr ;
-
-      lPrevVertex    = lVertex ;
-      lPrevCCWBorder = lCCWBorder ;
-      lNextCWBorder  = lCWBorder ;
-    }
-
-    SetPrevInLAV(lFirstVertex,lPrevVertex );
-    SetNextInLAV(lPrevVertex ,lFirstVertex);
-
-    SetDefiningBorderA(lFirstVertex,lFirstCCWBorder);
-    SetDefiningBorderB(lPrevVertex ,lFirstCCWBorder);
-
-    lFirstCCWBorder->opposite()->HBase::set_vertex(lPrevVertex);
-
-    CGAL_SSBUILDER_SHOW_AUX
-    (
-      SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
-      draw_.Release();
-    )
-
-    lFirstCCWBorder->HBase::set_prev(lPrevCCWBorder);
-    lPrevCCWBorder ->HBase::set_next(lFirstCCWBorder);
-
-    lPrevCCWBorder ->opposite()->HBase::set_prev(lFirstCCWBorder->opposite());
-    lFirstCCWBorder->opposite()->HBase::set_next(lPrevCCWBorder ->opposite());
-
-    CGAL_SSBUILDER_TRACE("CCW Border: E" << lFirstCCWBorder->id()
-                        << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
-                        << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
-                        << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
-                        );
-  }
-
-  for ( Vertex_iterator v = mSS.SBase::vertices_begin(); v != mSS.SBase::vertices_end(); ++ v )
-  {
-    Vertex_handle lPrev = GetPrevInLAV(v) ;
-    Vertex_handle lNext = GetNextInLAV(v) ;
-
-    bool lCollinear = Collinear( lPrev->point(),v->point(),lNext->point() ) ;
-    if ( lCollinear || !Left_turn( lPrev->point(),v->point(),lNext->point() ) )
-    {
-      SetIsReflex(v);
-      CGAL_SSBUILDER_TRACE((lCollinear ? "Reflex " : "COLLINEAR ") << "vertex: N" << v->id() );
-    }
-  }
-
-  return *this ;
-}
-*/
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_C //

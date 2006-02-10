@@ -28,26 +28,23 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace CGAL_SLS_i {
 
 template<class K>
 struct Compare_offset_against_event_time_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::FT          FT ;
-  typedef typename Base::Edge        Edge ;
-  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::FT      FT ;
+  typedef typename Base::Edge    Edge ;
+  typedef typename Base::Triedge Triedge ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( FT aT, Edge_triple const& aE ) const
+  Uncertain<Comparison_result> operator() ( FT aT, Triedge const& aE ) const
   {
-    Edge l0,l1,l2;
-    tie(l0,l1,l2) = aE;
-
-    return compare_offset_against_isec_timeC2(aT,l0,l1,l2) ;
+    return compare_offset_against_isec_timeC2(aT,aE) ;
   }
 };
 
@@ -57,30 +54,30 @@ struct Construct_offset_point_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::FT        FT ;
-  typedef typename Base::Point_2   Point_2 ;
-  typedef typename Base::Edge      Edge ;
+  typedef typename Base::FT      FT ;
+  typedef typename Base::Point_2 Point_2 ;
+  typedef typename Base::Vertex  Vertex ;
+  typedef typename Base::Edge    Edge ;
 
   typedef Point_2      result_type ;
   typedef Arity_tag<3> Arity ;
 
   Point_2 operator() ( FT aT, Edge const& aE0, Edge const& aE1 ) const
   {
-    FT x,y ;
-    tie(x,y) = construct_offset_pointC2(aT,aE0,aE1);
+    Vertex i = construct_offset_pointC2(aT,aE0,aE1);
 
-    return Point_2(x,y) ;
+    return Point_2(i.x(),i.y()) ;
   }
 };
 
 
-} // namespace CGALi
+} // namespace CGAL_SLS_i
 
 template<class K>
 struct Polygon_offset_builder_traits_2_functors
 {
-  typedef CGALi::Compare_offset_against_event_time_2<K> Compare_offset_against_event_time_2 ;
-  typedef CGALi::Construct_offset_point_2           <K> Construct_offset_point_2 ;
+  typedef CGAL_SLS_i::Compare_offset_against_event_time_2<K> Compare_offset_against_event_time_2 ;
+  typedef CGAL_SLS_i::Construct_offset_point_2           <K> Construct_offset_point_2 ;
 } ;
 
 template<class K>
@@ -118,8 +115,8 @@ class Polygon_offset_builder_traits_2_impl<Tag_true,K> : public Polygon_offset_b
   typedef typename K::C2E BaseC2E ;
   typedef typename K::C2F BaseC2F ;
 
-  typedef CGALi::Edge_triple_converter_2<BaseC2E> C2E ;
-  typedef CGALi::Edge_triple_converter_2<BaseC2F> C2F ;
+  typedef CGAL_SLS_i::Triedge_converter<BaseC2E> C2E ;
+  typedef CGAL_SLS_i::Triedge_converter<BaseC2F> C2F ;
 
 public:
 
@@ -137,7 +134,7 @@ public:
 
 template<class K>
 class Polygon_offset_builder_traits_2
-  : public Polygon_offset_builder_traits_2_impl<typename CGALi::Is_filtering_kernel<K>::type, K >
+  : public Polygon_offset_builder_traits_2_impl<typename CGAL_SLS_i::Is_filtering_kernel<K>::type, K >
 {
 } ;
 

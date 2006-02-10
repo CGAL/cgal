@@ -45,33 +45,33 @@ void report( int idx, bool ok, std::string const& info = std::string("") )
   }
 }
 
-template<class Traits, class Triedge>
-bool exist_event( Traits const&  aTraits, Triedge const& aTriedge )
+template<class Traits, class triedge>
+bool exist_event( Traits const&  aTraits, triedge const& aTriedge )
 {
   return CGAL::Exist_sls_event_2<Traits>(aTraits)()(aTriedge.triple());
 }
 
-template<class Traits, class Triedge>
+template<class Traits, class triedge>
 void test_exist_event( int            i
                      , Traits const&  aTraits
-                     , Triedge const& aTriedge
+                     , triedge const& aTriedge
                      , bool           aExpected
                      )
 {
   report(i,aExpected==exist_event(aTraits,aTriedge), boost::str(boost::format("%s") % aTriedge) );
 }
 
-template<class Traits, class Triedge>
-CGAL::Comparison_result compare_events(Traits const& aTraits, Triedge const& aTriedgeA, Triedge const& aTriedgeB )
+template<class Traits, class triedge>
+CGAL::Comparison_result compare_events(Traits const& aTraits, triedge const& aTriedgeA, triedge const& aTriedgeB )
 {
   return CGAL::Compare_sls_event_times_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple());
 }
 
-template<class Traits, class Triedge>
+template<class Traits, class triedge>
 void test_compare_events( int                     i
                         , Traits const&           aTraits
-                        , Triedge const&          aTriedgeA
-                        , Triedge const&          aTriedgeB
+                        , triedge const&          aTriedgeA
+                        , triedge const&          aTriedgeB
                         , CGAL::Comparison_result aExpected
                         )
 {
@@ -83,32 +83,32 @@ void test_compare_events( int                     i
     report(i,aExpected==compare_events(aTraits,aTriedgeA,aTriedgeB), boost::str(boost::format("%s,%s") % aTriedgeA % aTriedgeB) );
 }
 
-template<class Traits, class Point, class Triedge>
+template<class Traits, class Point, class triedge>
 CGAL::Comparison_result compare_sdist_to_seed(Traits  const& aTraits
                                              ,Point   const& aP
-                                             ,Triedge const& aTriedgeA
-                                             ,Triedge const& aTriedgeB
+                                             ,triedge const& aTriedgeA
+                                             ,triedge const& aTriedgeB
                                              )
 {
   return CGAL::Compare_sls_event_distance_to_seed_2<Traits>(aTraits)()(aP,aTriedgeA.triple(),aTriedgeB.triple());
 }
 
-template<class Traits, class Triedge>
+template<class Traits, class triedge>
 CGAL::Comparison_result compare_sdist_to_seed(Traits  const& aTraits
-                                             ,Triedge const& aTriedgeA
-                                             ,Triedge const& aTriedgeB
-                                             ,Triedge const& aTriedgeC
+                                             ,triedge const& aTriedgeA
+                                             ,triedge const& aTriedgeB
+                                             ,triedge const& aTriedgeC
                                              )
 {
   return CGAL::Compare_sls_event_distance_to_seed_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple(),aTriedgeC.triple());
 }
 
-template<class Traits, class Point, class Triedge>
+template<class Traits, class Point, class triedge>
 void test_compare_sdist_to_seed( int                     i
                                , Traits const&           aTraits
                                , Point  const&           aP
-                               , Triedge const&          aTriedgeA
-                               , Triedge const&          aTriedgeB
+                               , triedge const&          aTriedgeA
+                               , triedge const&          aTriedgeB
                                , CGAL::Comparison_result aExpected
                                )
 {
@@ -123,12 +123,12 @@ void test_compare_sdist_to_seed( int                     i
           );
 }
 
-template<class Traits, class Triedge>
+template<class Traits, class triedge>
 void test_compare_sdist_to_seed( int                     i
                                , Traits const&           aTraits
-                               , Triedge const&          aTriedgeA
-                               , Triedge const&          aTriedgeB
-                               , Triedge const&          aTriedgeC
+                               , triedge const&          aTriedgeA
+                               , triedge const&          aTriedgeB
+                               , triedge const&          aTriedgeC
                                , CGAL::Comparison_result aExpected
                                )
 {
@@ -145,17 +145,17 @@ void test_compare_sdist_to_seed( int                     i
           );
 }
 
-template<class Traits, class Triedge>
-bool is_inside_offset_zone( Traits const&  aTraits, Triedge const& aTriedgeA, Triedge const& aTriedgeB )
+template<class Traits, class triedge>
+bool is_inside_offset_zone( Traits const&  aTraits, triedge const& aTriedgeA, triedge const& aTriedgeB )
 {
   return CGAL::Is_sls_event_inside_offset_zone_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple());
 }
 
-template<class Traits, class Triedge>
+template<class Traits, class triedge>
 void test_is_inside_offset_zone( int            i
                                , Traits const&  aTraits
-                               , Triedge const& aTriedgeA
-                               , Triedge const& aTriedgeB
+                               , triedge const& aTriedgeA
+                               , triedge const& aTriedgeB
                                , bool           aExpected
                                )
 {

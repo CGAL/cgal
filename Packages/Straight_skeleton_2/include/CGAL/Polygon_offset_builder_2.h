@@ -58,9 +58,9 @@ private:
 
   typedef std::vector<Halfedge_const_handle> Halfedge_vector ;
 
-  typedef tuple<FT,FT,FT,FT> Edge ;
-
-  typedef tuple<Edge,Edge,Edge> Edge_triple ;
+  typedef CGAL_SLS_i::Vertex <FT> iVertex ;
+  typedef CGAL_SLS_i::Edge   <FT> iEdge ;
+  typedef CGAL_SLS_i::Triedge<FT> iTriedge ;
 
   bool handled_assigned( Halfedge_const_handle aH ) const
   {
@@ -79,19 +79,19 @@ private:
 
   void Visit( Halfedge_const_handle aBisector ) { mVisitedBisectors[aBisector->id()] = 1 ; }
 
-  static inline Edge GetEdge ( Halfedge_const_handle aH )
+  static inline iEdge CreateEdge ( Halfedge_const_handle aH )
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
     Point_2 t = aH->vertex()->point() ;
-    return make_tuple(s.x(),s.y(),t.x(),t.y());
+    return iEdge( iVertex(s.x(),s.y()), iVertex(t.x(),t.y()) );
   }
 
-  static inline Edge_triple GetEdgeTriple ( Halfedge_const_handle aE0
-                                          , Halfedge_const_handle aE1
-                                          , Halfedge_const_handle aE2
-                                          )
+  static inline iTriedge CreateTriedge ( Halfedge_const_handle aE0
+                                       , Halfedge_const_handle aE1
+                                       , Halfedge_const_handle aE2
+                                       )
   {
-    return make_tuple(GetEdge(aE0),GetEdge(aE1),GetEdge(aE2));
+    return iTriedge(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
 
   Comparison_result Compare_offset_against_event_time( FT aT, Halfedge_const_handle aBisector, Halfedge_const_handle aNextBisector ) const
@@ -107,7 +107,7 @@ private:
     Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
     Halfedge_const_handle lBorderC = aNextBisector->opposite()->defining_contour_edge();
 
-    return Compare_offset_against_event_time_2<Traits>(mTraits)()(aT,GetEdgeTriple(lBorderA,lBorderB,lBorderC));
+    return Compare_offset_against_event_time_2<Traits>(mTraits)()(aT,CreateTriedge(lBorderA,lBorderB,lBorderC));
   }
 
   Point_2 Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
@@ -119,7 +119,7 @@ private:
     Halfedge_const_handle lBorderA = aBisector->defining_contour_edge();
     Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
 
-    return Construct_offset_point_2<Traits>(mTraits)()(aT,GetEdge(lBorderA),GetEdge(lBorderB));
+    return Construct_offset_point_2<Traits>(mTraits)()(aT,CreateEdge(lBorderA),CreateEdge(lBorderB));
   }
 
   void ResetVisitedBisectorsMap();

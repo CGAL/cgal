@@ -26,6 +26,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGAL_SLS_i
+{
 
 // Givenan offset distance 't' and 2 oriented lines l0:(a0,b0,c0), l1:(a1,b1,c1) returns the coordinates (x,y)
 // of the intersection of their offsets at the given distance.
@@ -35,25 +37,36 @@ CGAL_BEGIN_NAMESPACE
 // The offsets at the given distance do intersect in a single point.
 
 template<class FT>
-tuple<FT,FT> construct_offset_pointC2 ( FT t, tuple<FT,FT,FT,FT> const& l0, tuple<FT,FT,FT,FT> const& l1)
+Vertex<FT> construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge<FT> const& e1 )
 {
-  FT a0,b0,c0,a1,b1,c1 ;
+  FT x,y ;
 
-  tie(a0,b0,c0) = compute_normalized_line_ceoffC2(l0) ;
-  tie(a1,b1,c1) = compute_normalized_line_ceoffC2(l1) ;
+  Line<FT> l0 = compute_normalized_line_ceoffC2(e0) ;
+  Line<FT> l1 = compute_normalized_line_ceoffC2(e1) ;
 
-  FT den = a1 * b0 - a0 * b1 ;
+  FT den = l1.a() * l0.b() - l0.a() * l1.b() ;
 
-  CGAL_assertion(! CGAL_NTS certified_is_zero(den) ) ;
+  if ( ! CGAL_NTS is_zero(den) )
+  {
+    FT numX = t * l1.b() - t * l0.b() + l0.b() * l1.c() - l1.b() * l0.c() ;
+    FT numY = t * l1.a() - t * l0.a() + l0.a() * l1.c() - l1.a() * l0.c() ;
 
-  FT numX = t * b1 - t * b0 + b0 * c1 - b1 * c0 ;
-  FT numY = t * a1 - t * a0 + a0 * c1 - a1 * c0 ;
+    x = -numX / den ;
+    y =  numY / den ;
+  }
+  else
+  {
+    FT qx = ( e0.t().x() + e1.s().x() ) / static_cast<FT>(2.0);
+    FT qy = ( e0.t().y() + e1.s().y() ) / static_cast<FT>(2.0);
 
-  FT x = -numX / den ;
-  FT y =  numY / den ;
+    x = qx + l0.a() * t  ;
+    y = qy + l0.b() * t  ;
+  }
 
-  return make_tuple(x,y) ;
+  return Vertex<FT>(x,y) ;
 }
+
+} // namespace CGAL_SLS_i
 
 CGAL_END_NAMESPACE
 

@@ -3,7 +3,7 @@
 // Copyright (c) 1997-2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
+// of the Computational Geometry Algorithms Library (CGAL). It is notr
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
@@ -25,28 +25,27 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGAL_SLS_i
+{
+
 // Given an oriented 2D stright line edge (px,py)->(qx,qy), computes the normalized coefficients (a,b,c) of the
 // supporting line.
 // POSTCONDITION: [a,b] is the leftward normal _unit_ (a²+b²=1) vector.
 //
 template<class FT>
-tuple<FT,FT,FT>
-compute_normalized_line_ceoffC2( tuple<FT,FT,FT,FT> const& edge )
+Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
 {
-  FT px,py,qx,qy ;
   FT a,b,c ;
 
-  tie(px,py,qx,qy) = edge ;
-
-  if(py == qy)
+  if(e.s().y() == e.t().y())
   {
     a = 0 ;
-    if(qx > px)
+    if(e.t().x() > e.s().x())
     {
       b = 1;
-      c = -py;
+      c = -e.s().y();
     }
-    else if(qx == px)
+    else if(e.t().x() == e.s().x())
     {
       b = 0;
       c = 0;
@@ -54,22 +53,23 @@ compute_normalized_line_ceoffC2( tuple<FT,FT,FT,FT> const& edge )
     else
     {
       b = -1;
-      c = py;
+      c = e.s().y();
     }
 
-    CGAL_SSTRAITS_TRACE("Line coefficients for HORIZONTAL line:\npx=" << px << "\npy=" << py << "\nqx=" << qx << "\nqy=" << qy
+    CGAL_SSTRAITS_TRACE("Line coefficients for HORIZONTAL line:\npx=" << e.s().x() << "\npy=" << e.s().y()
+                        << "\nqx=" << e.t().x() << "\nqy=" << e.t().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c
                        ) ;
   }
-  else if(qx == px)
+  else if(e.t().x() == e.s().x())
   {
     b = 0;
-    if(qy > py)
+    if(e.t().y() > e.s().y())
     {
       a = -1;
-      c = px;
+      c = e.s().x();
     }
-    else if (qy == py)
+    else if (e.t().y() == e.s().y())
     {
       a = 0;
       c = 0;
@@ -77,32 +77,33 @@ compute_normalized_line_ceoffC2( tuple<FT,FT,FT,FT> const& edge )
     else
     {
       a = 1;
-      c = -px;
+      c = -e.s().x();
     }
 
-    CGAL_SSTRAITS_TRACE("Line coefficients for VERTICAL line:\npx=" << px << "\npy=" << py << "\nqx=" << qx << "\nqy=" << qy
+    CGAL_SSTRAITS_TRACE("Line coefficients for VERTICAL line:\npx=" << e.s().x() << "\npy=" << e.s().y()
+                        << "\nqx=" << e.t().x() << "\nqy=" << e.t().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c
                        ) ;
 
   }
   else
   {
-    FT sa = py - qy;
-    FT sb = qx - px;
+    FT sa = e.s().y() - e.t().y();
+    FT sb = e.t().x() - e.s().x();
     FT l  = CGAL_NTS sqrt( (sa*sa) + (sb*sb) );
 
     a = sa / l ;
     b = sb / l ;
 
-    c = -px*a - py*b;
+    c = -e.s().x()*a - e.s().y()*b;
 
-    CGAL_SSTRAITS_TRACE("Line coefficients for line:\npx=" << px << "\npy=" << py << "\nqx=" << qx << "\nqy=" << qy
+    CGAL_SSTRAITS_TRACE("Line coefficients for line:\npx=" << e.s().x() << "\npy=" << e.s().y() << "\nqx="
+                        << e.t().x() << "\nqy=" << e.t().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl:" << l
                        ) ;
   }
 
-
-  return make_tuple(a,b,c);
+  return Line<FT>(a,b,c);
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2 [each segment is passed as (sx,sy,tx,ty)]
@@ -115,10 +116,7 @@ compute_normalized_line_ceoffC2( tuple<FT,FT,FT,FT> const& edge )
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
 template<class FT>
-tuple<FT,FT> compute_normal_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> const& e0
-                                                     , tuple<FT,FT,FT,FT> const& e1
-                                                     , tuple<FT,FT,FT,FT> const& e2
-                                                     )
+Rational<FT> compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
 {
   // DETAILS:
   //
@@ -131,20 +129,29 @@ tuple<FT,FT> compute_normal_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> const&
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
   // The following rational expression the solution.
 
-  FT a0,b0,c0,a1,b1,c1,a2,b2,c2 ;
+  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  tie(a0,b0,c0) = compute_normalized_line_ceoffC2(e0) ;
-  tie(a1,b1,c1) = compute_normalized_line_ceoffC2(e1) ;
-  tie(a2,b2,c2) = compute_normalized_line_ceoffC2(e2) ;
+  FT num = (l2.a()*l0.b()*l1.c())
+          -(l2.a()*l1.b()*l0.c())
+          -(l2.b()*l0.a()*l1.c())
+          +(l2.b()*l1.a()*l0.c())
+          +(l1.b()*l0.a()*l2.c())
+          -(l0.b()*l1.a()*l2.c());
 
-
-  FT num = (a2*b0*c1)-(a2*b1*c0)-(b2*a0*c1)+(b2*a1*c0)+(b1*a0*c2)-(b0*a1*c2);
-  FT den = (-a2*b1)+(a2*b0)+(b2*a1)-(b2*a0)+(b1*a0)-(b0*a1);
+  FT den = (-l2.a()*l1.b())
+           +(l2.a()*l0.b())
+           +(l2.b()*l1.a())
+           -(l2.b()*l0.a())
+           +(l1.b()*l0.a())
+           -(l0.b()*l1.a());
 
   CGAL_SSTRAITS_TRACE("Normal Event:\nn=" << num << "\nd=" << den  )
 
-  return make_tuple(num,den) ;
+  return Rational<FT>(num,den) ;
 }
+
 
 // Given 3 oriented straight line segments: e0, e1, e2 [each segment is passed as (sx,sy,tx,ty)]
 // such that e0 and e1 are collinear, not neccesarily consecutive but with the same orientaton, and e2 is NOT
@@ -157,10 +164,7 @@ tuple<FT,FT> compute_normal_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> const&
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
 template<class FT>
-tuple<FT,FT> compute_degenerate_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> const& e0
-                                                         , tuple<FT,FT,FT,FT> const& e1
-                                                         , tuple<FT,FT,FT,FT> const& e2
-                                                         )
+Rational<FT> compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
 {
   // DETAILS:
   //
@@ -169,19 +173,19 @@ tuple<FT,FT> compute_degenerate_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> co
   //   which passes through the midpoint of e0.target and e1.source (called q)
   //   This "degenerate" bisecting line is given by:
   //
-  //     B0(t) = q + t*[a0,b0]
+  //     B0(t) = q + t*[l0.a,l0.b]
   //
-  //   where a0 and b0 are the _normalized_ line coefficients for e0.
+  //   where l0.a and l0.b are the _normalized_ line coefficients for e0.
   //   Since [a,b] is a _unit_ vector pointing perpendicularly to the left of e0 (and e1);
   //   any point B0(k) is at a distance k from the line supporting e0 and e1.
   //
   //   (2)
   //   The bisecting line of e0 and e2 (which are required to be oblique) is given by the following SEL
   //
-  //    a0*x(t) + b0*y(t) + c0 + t = 0
-  //    a2*x(t) + b2*y(t) + c2 + t = 0
+  //    l0.a*x(t) + l0.b*y(t) + l0.c + t = 0
+  //    l2.a*x(t) + l2.b*y(t) + l2.c + t = 0
   //
-  //   where (a0,b0,c0) and (a2,b2,c0) are the normalized line coefficientes of e0 and e2 resp.
+  //   where (l0.a,l0.b,l0.c) and (l2.a,l2.b,l0.c) are the normalized line coefficientes of e0 and e2 resp.
   //
   //     B1(t)=[x(t),y(t)]
   //
@@ -190,40 +194,34 @@ tuple<FT,FT> compute_degenerate_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> co
   //   to the lines supporting the 3 edges is exactly 't' (since those expressions are precisely parametrized in a distance)
   //   Solving the following vectorial equation:
   //
-  //     [x(y),y(t)] = q + t*[a0,b0]
+  //     [x(y),y(t)] = q + t*[l0.a,l0.b]
   //
   //   for t gives the result we want.
   //
   //
-  FT a0,b0,c0,a2,b2,c2 ;
 
-  tie(a0,b0,c0) = compute_normalized_line_ceoffC2(e0) ;
-  tie(a2,b2,c2) = compute_normalized_line_ceoffC2(e2) ;
 
-  FT e0tx = boost::get<2>(e0);
-  FT e1sx = boost::get<0>(e1);
-  FT qx   = ( e0tx + e1sx ) / static_cast<FT>(2.0);
+  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  FT num = (a2 * b0 - a0 * b2 ) * qx + b0 * c2 - b2 * c0 ;
-  FT den = (a0 * a0 - 1) * b2 + ( 1 - a2 * a0 ) * b0 ;
+  FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
+
+  FT num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
+  FT den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
 
   CGAL_SSTRAITS_TRACE("Degenerate Event:\nn=" << num << "\nd=" << den  )
 
-  return make_tuple(num,den) ;
+  return Rational<FT>(num,den) ;
 }
 
 template<class FT>
-tuple<FT,FT> compute_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> const& l0
-                                              , tuple<FT,FT,FT,FT> const& l1
-                                              , tuple<FT,FT,FT,FT> const& l2
-                                              , bool                      is_degenerate
-                                              )
+Rational<FT> compute_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
 {
-  return is_degenerate ? compute_degenerate_offset_lines_isec_timeC2(l0,l1,l2)
-                       : compute_normal_offset_lines_isec_timeC2    (l0,l1,l2) ;
+  return triedge.is_degenerate() ? compute_degenerate_offset_lines_isec_timeC2(triedge)
+                                 : compute_normal_offset_lines_isec_timeC2    (triedge) ;
 }
 
-// Given 3 oriented lines l0:(a0,b0,c0), l1:(a1,b1,c1) and l2:(a2,b2,c2)
+// Given 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c)
 // such that their offsets at a certian distance intersect in a single point, returns the coordinates (x,y) of such a point.
 //
 // PRECONDITIONS:
@@ -231,36 +229,68 @@ tuple<FT,FT> compute_offset_lines_isec_timeC2 ( tuple<FT,FT,FT,FT> const& l0
 // The offsets at a certain distance do intersect in a single point.
 //
 template<class FT>
-tuple<FT,FT> construct_offset_lines_isecC2 ( tuple<FT,FT,FT,FT> const& l0
-                                           , tuple<FT,FT,FT,FT> const& l1
-                                           , tuple<FT,FT,FT,FT> const& l2
-                                           )
+Vertex<FT> construct_normal_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
 {
-  FT a0,b0,c0,a1,b1,c1,a2,b2,c2 ;
+  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  tie(a0,b0,c0) = compute_normalized_line_ceoffC2(l0) ;
-  tie(a1,b1,c1) = compute_normalized_line_ceoffC2(l1) ;
-  tie(a2,b2,c2) = compute_normalized_line_ceoffC2(l2) ;
-
-  FT den = a0*b2 - a0*b1 - a1*b2 + a2*b1 + b0*a1 - b0*a2;
+  FT den = l0.a()*l2.b() - l0.a()*l1.b() - l1.a()*l2.b() + l2.a()*l1.b() + l0.b()*l1.a() - l0.b()*l2.a();
 
   CGAL_SSTRAITS_TRACE("Event Point:\n  d=" << den  )
 
-  CGAL_assertion(! CGAL_NTS certified_is_zero(den) ) ;
+  CGAL_assertion ( ! CGAL_NTS certified_is_zero(den) ) ;
 
-  FT numX = b0*c2 - b0*c1 - b1*c2 + b2*c1 + b1*c0 - b2*c0;
-  FT numY = a0*c2 - a0*c1 - a1*c2 + a2*c1 + a1*c0 - a2*c0;
+  FT numX = l0.b()*l2.c() - l0.b()*l1.c() - l1.b()*l2.c() + l2.b()*l1.c() + l1.b()*l0.c() - l2.b()*l0.c();
+  FT numY = l0.a()*l2.c() - l0.a()*l1.c() - l1.a()*l2.c() + l2.a()*l1.c() + l1.a()*l0.c() - l2.a()*l0.c();
 
   FT x =  numX / den ;
   FT y = -numY / den ;
 
   CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
 
-  return make_tuple(x,y) ;
+  return Vertex<FT>(x,y) ;
+}
+
+// Given 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c)
+// such that their offsets at a certian distance intersect in a single point, returns the coordinates (x,y) of such a point.
+//
+// PRECONDITIONS:
+// The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
+// The offsets at a certain distance do intersect in a single point.
+//
+template<class FT>
+Vertex<FT> construct_degenerate_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+{
+  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+
+  FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
+  FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
+
+  FT num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
+  FT den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+
+  CGAL_precondition( den != static_cast<FT>(0.0) ) ;
+
+  FT x = qx + l0.a() * num / den  ;
+  FT y = qy + l0.b() * num / den  ;
+
+  CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
+
+  return Vertex<FT>(x,y) ;
 }
 
 
-// Give a point (px,py) and 3 oriented lines l0:(a0,b0,c0), l1:(a1,b1,c1) and l2:(a2,b2,c2),
+template<class FT>
+Vertex<FT> construct_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+{
+  return triedge.is_degenerate() ? construct_degenerate_offset_lines_isecC2(triedge)
+                                 : construct_normal_offset_lines_isecC2    (triedge) ;
+}
+
+// Give a point (px,py) and 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c),
 // such that their offsets at a certian distance intersect in a single point (ix,iy),
 // returns the squared distance between (px,py) and (ix,iy)
 //
@@ -269,19 +299,13 @@ tuple<FT,FT> construct_offset_lines_isecC2 ( tuple<FT,FT,FT,FT> const& l0
 // The offsets at a certain distance do intersect in a single point.
 //
 template<class FT>
-FT compute_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>       const& p
-                                              , tuple<FT,FT,FT,FT> const& l0
-                                              , tuple<FT,FT,FT,FT> const& l1
-                                              , tuple<FT,FT,FT,FT> const& l2
-                                              )
+FT compute_offset_lines_isec_sdist_to_pointC2 ( Vertex<FT> const& p, SortedTriedge<FT> const& triedge )
 {
-  FT px,py,ix,iy ;
 
-  tie(px,py) = p ;
-  tie(ix,iy) = construct_offset_lines_isecC2(l0,l1,l2);
+  Vertex<FT> i = construct_offset_lines_isecC2(triedge);
 
-  FT dx  = ix - px ;
-  FT dy  = iy - py ;
+  FT dx  = i.x() - p.x() ;
+  FT dy  = i.y() - p.y() ;
   FT dx2 = dx * dx ;
   FT dy2 = dy * dy ;
 
@@ -289,6 +313,8 @@ FT compute_offset_lines_isec_sdist_to_pointC2 ( tuple<FT,FT>       const& p
 
   return sdist;
 }
+
+} // namnepsace CGAIL_SLS_i
 
 CGAL_END_NAMESPACE
 

@@ -2,7 +2,7 @@
 <kdevelop>
   <general>
     <author>Fernando Cacciola</author>
-    <email>fernando_cacciola@gmail.com</email>
+    <email>fernando.cacciola@gmail.com</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -33,7 +33,7 @@
       <dontact>false</dontact>
       <makebin/>
       <defaulttarget/>
-      <makeoptions/>
+      <makeoptions>CGAL_MAKEFILE=/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6.8-2-386_g++-3.3.5</makeoptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
@@ -167,4 +167,8 @@
       <usermanualurl/>
     </projectdoc>
   </kdevdocumentation>
+  <ctagspart>
+    <customArguments/>
+    <customTagfilePath/>
+  </ctagspart>
 </kdevelop>

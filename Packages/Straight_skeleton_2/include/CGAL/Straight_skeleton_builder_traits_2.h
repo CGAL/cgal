@@ -28,26 +28,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace CGAL_SLS_i {
 
 template<class K>
 struct Exist_sls_event_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::Edge        Edge ;
-  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::Triedge Triedge ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<1>    Arity ;
 
-  Uncertain<bool> operator() ( Edge_triple const& aET ) const
+  Uncertain<bool> operator() ( Triedge const& aTriedge ) const
   {
-    CGAL_SSTRAITS_TRACE("Exist Event:" << aET);
-    Edge e0,e1,e2;
-    tie(e0,e1,e2) = aET;
-
-    return exist_offset_lines_isec2(e0,e1,e2) ;
+    CGAL_SSTRAITS_TRACE("Exist Event:" << aTriedge);
+    return exist_offset_lines_isec2(aTriedge) ;
   }
 };
 
@@ -57,19 +53,14 @@ struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::Edge        Edge ;
-  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::Triedge Triedge ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( Edge_triple const& aL, Edge_triple const& aR ) const
+  Uncertain<Comparison_result> operator() ( Triedge const& aL, Triedge const& aR ) const
   {
-    Edge l0,l1,l2,r0,r1,r2;
-    tie(l0,l1,l2) = aL;
-    tie(r0,r1,r2) = aR;
-
-    return compare_offset_lines_isec_timesC2(l0,l1,l2,r0,r1,r2) ;
+    return compare_offset_lines_isec_timesC2(aL,aR) ;
   }
 };
 
@@ -78,36 +69,26 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::Point_2     Point_2 ;
-  typedef typename Base::Edge        Edge ;
-  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::Point_2 Point_2 ;
+  typedef typename Base::Triedge Triedge ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<3>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( Point_2     const& aP
-                                          , Edge_triple const& aL
-                                          , Edge_triple const& aR
+  Uncertain<Comparison_result> operator() ( Point_2 const& aP
+                                          , Triedge const& aL
+                                          , Triedge const& aR
                                           ) const
   {
-    Edge l0,l1,l2,r0,r1,r2;
-    tie(l0,l1,l2) = aL;
-    tie(r0,r1,r2) = aR;
-
-    return compare_offset_lines_isec_sdist_to_pointC2(toVertex(aP),l0,l1,l2,r0,r1,r2) ;
+    return compare_offset_lines_isec_sdist_to_pointC2(toVertex(aP),aL,aR) ;
   }
 
-  Uncertain<Comparison_result> operator() ( Edge_triple const& aS
-                                          , Edge_triple const& aL
-                                          , Edge_triple const& aR
+  Uncertain<Comparison_result> operator() ( Triedge const& aS
+                                          , Triedge const& aL
+                                          , Triedge const& aR
                                           ) const
   {
-    Edge s0,s1,s2,l0,l1,l2,r0,r1,r2;
-    tie(s0,s1,s2) = aS;
-    tie(l0,l1,l2) = aL;
-    tie(r0,r1,r2) = aR;
-
-    return compare_offset_lines_isec_sdist_to_pointC2(s0,s1,s2,l0,l1,l2,r0,r1,r2) ;
+    return compare_offset_lines_isec_sdist_to_pointC2(aS,aL,aR) ;
   }
 
 };
@@ -117,19 +98,14 @@ struct Is_sls_event_inside_offset_zone_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::Edge        Edge ;
-  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::Triedge Triedge ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
-  Uncertain<bool> operator() ( Edge_triple const& aE, Edge_triple const& aO ) const
+  Uncertain<bool> operator() ( Triedge const& aE, Triedge const& aZ ) const
   {
-    Edge e0,e1,e2,lo,co,ro ;
-    tie(e0,e1,e2) = aE;
-    tie(lo,co,ro) = aO;
-
-    return is_offset_lines_isec_inside_offset_zoneC2(e0,e1,e2,lo,co,ro) ;
+    return is_offset_lines_isec_inside_offset_zoneC2(aE,aZ) ;
    }
 };
 
@@ -138,19 +114,14 @@ struct Are_sls_events_simultaneous_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::Edge        Edge ;
-  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::Triedge Triedge ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
-  Uncertain<bool> operator() ( Edge_triple const& aE, Edge_triple const& aO ) const
+  Uncertain<bool> operator() ( Triedge const& aA, Triedge const& aB ) const
   {
-    Edge l0,l1,l2,r0,r1,r2 ;
-    tie(l0,l1,l2) = aE;
-    tie(r0,r1,r2) = aO;
-
-    return are_events_simultaneousC2(l0,l1,l2,r0,r1,r2);
+    return are_events_simultaneousC2(aA,aB);
    }
 };
 
@@ -160,42 +131,43 @@ struct Construct_sls_event_time_and_point_2 : Sls_functor_base_2<K>
 {
   typedef Sls_functor_base_2<K> Base ;
 
-  typedef typename Base::FT          FT ;
-  typedef typename Base::Point_2     Point_2 ;
-  typedef typename Base::Edge        Edge ;
-  typedef typename Base::Edge_triple Edge_triple ;
+  typedef typename Base::FT            FT ;
+  typedef typename Base::Point_2       Point_2 ;
+  typedef typename Base::Vertex        Vertex ;
+  typedef typename Base::Edge          Edge ;
+  typedef typename Base::Triedge       Triedge ;
+  typedef typename Base::SortedTriedge SortedTriedge ;
 
-  typedef tuple<FT,Point_2> result_type ;
-  typedef Arity_tag<1>      Arity ;
+  typedef boost::tuple<FT,Point_2> result_type ;
+  typedef Arity_tag<1>             Arity ;
 
-  tuple<FT,Point_2> operator() ( Edge_triple const& aE ) const
+  boost::tuple<FT,Point_2> operator() ( Triedge const& triedge ) const
   {
-    Edge l0,l1,l2;
-    tie(l0,l1,l2) = aE;
+    SortedTriedge sorted = collinear_sort(triedge);
 
-    FT tn,td;
-    tie(tn,td) = compute_offset_lines_isec_timeC2(l0,l1,l2);
+    CGAL_assertion(sorted.is_valid()) ;
 
-    FT t = tn / td ;
+    Rational<FT> qt = compute_offset_lines_isec_timeC2(sorted);
 
-    FT x,y ;
-    tie(x,y) = construct_offset_lines_isecC2(l0,l1,l2);
+    FT t = qt.n() / qt.d() ;
 
-    return make_tuple(t,Point_2(x,y)) ;
+    Vertex i = construct_offset_lines_isecC2(sorted);
+
+    return boost::make_tuple(t,Point_2(i.x(),i.y())) ;
   }
 };
 
-} // namespace CGALi
+} // namespace CGAL_SLS_i
 
 template<class K>
 struct Straight_skeleton_builder_traits_2_functors
 {
-  typedef CGALi::Exist_sls_event_2                   <K> Exist_sls_event_2 ;
-  typedef CGALi::Compare_sls_event_times_2           <K> Compare_sls_event_times_2 ;
-  typedef CGALi::Compare_sls_event_distance_to_seed_2<K> Compare_sls_event_distance_to_seed_2 ;
-  typedef CGALi::Is_sls_event_inside_offset_zone_2   <K> Is_sls_event_inside_offset_zone_2 ;
-  typedef CGALi::Are_sls_events_simultaneous_2       <K> Are_sls_events_simultaneous_2 ;
-  typedef CGALi::Construct_sls_event_time_and_point_2<K> Construct_sls_event_time_and_point_2 ;
+  typedef CGAL_SLS_i::Exist_sls_event_2                   <K> Exist_sls_event_2 ;
+  typedef CGAL_SLS_i::Compare_sls_event_times_2           <K> Compare_sls_event_times_2 ;
+  typedef CGAL_SLS_i::Compare_sls_event_distance_to_seed_2<K> Compare_sls_event_distance_to_seed_2 ;
+  typedef CGAL_SLS_i::Is_sls_event_inside_offset_zone_2   <K> Is_sls_event_inside_offset_zone_2 ;
+  typedef CGAL_SLS_i::Are_sls_events_simultaneous_2       <K> Are_sls_events_simultaneous_2 ;
+  typedef CGAL_SLS_i::Construct_sls_event_time_and_point_2<K> Construct_sls_event_time_and_point_2 ;
 } ;
 
 template<class K>
@@ -249,8 +221,8 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
   typedef typename K::C2E BaseC2E ;
   typedef typename K::C2F BaseC2F ;
 
-  typedef CGALi::Edge_triple_converter_2<BaseC2E> C2E ;
-  typedef CGALi::Edge_triple_converter_2<BaseC2F> C2F ;
+  typedef CGAL_SLS_i::Triedge_converter<BaseC2E> C2E ;
+  typedef CGAL_SLS_i::Triedge_converter<BaseC2F> C2F ;
 
 public:
 
@@ -298,7 +270,7 @@ public:
 
 template<class K>
 class Straight_skeleton_builder_traits_2
-  : public Straight_skeleton_builder_traits_2_impl<typename CGALi::Is_filtering_kernel<K>::type, K >
+  : public Straight_skeleton_builder_traits_2_impl<typename CGAL_SLS_i::Is_filtering_kernel<K>::type, K >
 {
 } ;
 

@@ -26,30 +26,35 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGAL_SLS_i
+{
+
 // Given a triple of oriented lines in _normalized_ implicit form: (e0,e1,e2) such that
 // there exists a distance 'et' for which the offsets lines at 'et' (e0',e1',e2') intersect in a single point;
 // returns the relative order of t w.r.t et.
 // PRECONDITION: There exist a positive distance et for which the offset triple intersect at a single point.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_against_isec_timeC2 ( FT                        t
-                                   , tuple<FT,FT,FT,FT> const& e0
-                                   , tuple<FT,FT,FT,FT> const& e1
-                                   , tuple<FT,FT,FT,FT> const& e2
-                                   )
+compare_offset_against_isec_timeC2 ( FT t, Triedge<FT> const& triedge )
 {
-  FT n, d ;
+  Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  tie(n,d) = compute_offset_lines_isec_timeC2(e0,e1,e2);
+  SortedTriedge<FT> sorted = collinear_sort(triedge);
 
-  typedef Quotient<FT> QFT ;
-  QFT et(n,d);
+  if ( sorted.is_valid() )
+  {
+    Quotient<FT> et = compute_offset_lines_isec_timeC2(sorted).to_quotient();
 
-  CGAL_assertion ( CGAL_NTS certified_is_positive(et) ) ;
+    CGAL_assertion ( CGAL_NTS certified_is_positive(et) ) ;
 
-  return CGAL_NTS certified_compare(et,t);
+    rResult = CGAL_NTS certified_compare(et,t);
+  }
+
+  return rResult ;
 
 }
+
+} // namespace CGAL_SLS_i
 
 CGAL_END_NAMESPACE
 
