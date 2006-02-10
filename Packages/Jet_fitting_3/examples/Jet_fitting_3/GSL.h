@@ -53,6 +53,7 @@ public:
 ////////////////////////class GSL/////////////////////
 class GSL{
 public:
+  typedef double FT;
   typedef gsl_Vector Vector;
   typedef gsl_Matrix Matrix;
   // solve for eigenvalues and eigenvectors.

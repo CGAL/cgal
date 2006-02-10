@@ -131,8 +131,9 @@ protected:
   int nb_d_jet_coeff;
   int nb_input_pts;
   LFT preconditionning;
- 
- //translate_p0 changes the origin of the world to p0 the first point 
+  CGAL::Sqrt<LFT> Lsqrt;
+
+  //translate_p0 changes the origin of the world to p0 the first point 
   //  of the input data points
   //change_world2fitting (coord of a vector in world) = coord of this 
   //  vector in fitting. The matrix tranform has as lines the coord of
@@ -373,7 +374,7 @@ compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
     LPoint orig_monge(0., 0., A[0]);
     LVector  normal(-A[1], -A[2], 1.);
     LFT norm2 = normal * normal;
-    normal = normal / std::sqrt(norm2);
+    normal = normal / Lsqrt(norm2);
     monge_rep.origin_pt() = 
       (this->translate_p0.inverse() * 
        this->change_world2fitting.inverse()) (orig_monge );
@@ -386,7 +387,7 @@ compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
   //normal = Xu crossprod Xv
   LVector Xu(1.,0.,A[1]), Xv(0.,1.,A[2]), normal(-A[1], -A[2], 1.);
   LFT norm2 = normal * normal;
-  normal = normal / std::sqrt(norm2);
+  normal = normal / Lsqrt(norm2);
 
   //Surface in fitting_basis : X(u,v)=(u,v,J_A(u,v))
   //in the basis Xu=(1,0,A[1]), Xv=(0,1,A[2]), Weingarten=-I^{-1}II
@@ -401,20 +402,20 @@ compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
   LFT e = 1+A[1]*A[1], f = A[1]*A[2], g = 1+A[2]*A[2],
     l = A[3], m = A[4], n = A[5];
   Matrix  weingarten(2,2,0.);
-  weingarten(0,0) = (g*l-f*m)/ std::pow(norm2,3/2);
-  weingarten(0,1) = (g*m-f*n)/ std::pow(norm2,3/2);
-  weingarten(1,0) = (e*m-f*l)/ std::pow(norm2,3/2);
-  weingarten(1,1) = (e*n-f*m)/ std::pow(norm2,3/2);
+  weingarten(0,0) = (g*l-f*m)/ (Lsqrt(norm2)*norm2);
+  weingarten(0,1) = (g*m-f*n)/ (Lsqrt(norm2)*norm2);
+  weingarten(1,0) = (e*m-f*l)/ (Lsqrt(norm2)*norm2);
+  weingarten(1,1) = (e*n-f*m)/ (Lsqrt(norm2)*norm2);
   // Y, Z are normalized GramSchmidt of Xu, Xv
   // Xu->Y=Xu/||Xu||;
   // Xv->Z=Xv-(Xu.Xv)Xu/||Xu||^2;
   // Z-> Z/||Z||
   LVector Y, Z;
-  LFT normXu = std::sqrt( Xu*Xu );
+  LFT normXu = Lsqrt( Xu*Xu );
   Y = Xu / normXu;
   LFT XudotXv = Xu * Xv;
   Z = Xv - XudotXv * Xu / (normXu*normXu);
-  LFT normZ = std::sqrt( Z*Z );
+  LFT normZ = Lsqrt( Z*Z );
   Z = Z / normZ;
   Matrix change_XuXv2YZ(2,2,0.);
   change_XuXv2YZ(0,0) = 1 / normXu;

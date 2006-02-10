@@ -17,50 +17,70 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
-  
-The concept \ccRefName\ does this and that.
+% +------------------------------------------------------------------
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any class used to instantiate the third template
+parameter of the class
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,LinAlgTraits>}.
 
-\ccGeneralizes
+It describes the linear algebra types and algorithms needed by the
+class \ccc{Monge_via_jet_fitting}. 
 
-ThisConcept \\
-ThatConcept
+\ccRequirements
+% +------------------------------------------------------------------
+The scalar type, \ccc{LinAlgTraits::FT}, must be the same than that of
+the \ccc{LocalKernel} concept~: \ccc{LocalKernel::FT}.
 
 \ccTypes
+% +------------------------------------------------------------------
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Vector}{The Vector type.}
+\ccGlue
+\ccNestedType{Matrix }{The Matrix type.}
 
-\ccNestedType{TYPE}{some nested types}
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
 
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
-
-\ccConstructor{LinAlgTraits();}{default constructor.}
+%\ccConstructor{LinAlgTraits();}{default constructor.}
 
 \ccOperations
 
-\ccMethod{void foo();}{some member functions}
+Usual brackets operator for Vector and Matrix types.
+
+\ccMethod{void eigen_symm_algo(Matrix& S, Vector& eval, Matrix&
+evec);} {Performs an eigenanalysis of a real symmetric matrix.  Eigen
+values are sorted in descending order, eigen vectors are sorted in
+accordance. }
+\ccMethod{void solve_ls_svd_algo(Matrix& M, Vector& X, const Vector&
+B, double &cond_nb);}{ Solves the system MX=B (in the least square
+sense if M is not square) using a Singular Value Decomposition and
+gives the condition number of M.}
 
 \ccHasModels
+% +------------------------------------------------------------------
+\ccc{GSL}. See the implementation in the exemple directory
+\ccInclude{exemples/Jet_fitting_3/GSL.h} 
 
-\ccc{Some_class},
-\ccc{Some_other_class}.
+
 
 \ccSeeAlso
+% +------------------------------------------------------------------
+\ccc{LocalKernel}
 
-Some\_other\_concept,
-\ccc{some_other_function}.
+%\ccExample
 
-\ccExample
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Jet_fitting_3/LinAlgTraits.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Jet_fitting_3/LinAlgTraits.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Jet_fitting_3/LinAlgTraits.C}
 

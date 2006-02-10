@@ -40,7 +40,8 @@ same for the classes \ccc{Monge_rep} and
 \ccVariable{  DPoint m_origin_pt;}{Point on the fitted surface where
 differential quantities are computed} 
 
-The basis $(m_d1, m_d2, m_n)$ is direct orthonormal.
+The basis \ccc{(m_d1, m_d2, m_n)} is direct orthonormal.
+
 \ccVariable{DVector m_d1;}{maximal ppal dir} 
 \ccVariable{DVector m_d2;}{minimal ppal dir} 
 \ccVariable{DVector m_n;}{normal direction} 
@@ -57,24 +58,24 @@ The basis $(m_d1, m_d2, m_n)$ is direct orthonormal.
 
 \ccAccessFunctions
 % +--------------------------------------------------------------
-\ccMemberFunction{const DPoint origin_pt()}{}
-\ccMemberFunction{DPoint& origin_pt()}{}
+\ccMemberFunction{const DPoint origin_pt();}{}
+\ccMemberFunction{DPoint& origin_pt();}{}
 \ccGlue
-\ccMemberFunction{const DVector d1()}{}
-\ccMemberFunction{DVector& d1() }{}
+\ccMemberFunction{const DVector d1();}{}
+\ccMemberFunction{DVector& d1(); }{}
 \ccGlue
-\ccMemberFunction{const DVector d2()}{}
-\ccMemberFunction{DVector& d2()}{}
+\ccMemberFunction{const DVector d2();}{}
+\ccMemberFunction{DVector& d2();}{}
 \ccGlue
-\ccMemberFunction{const DVector n()}{}
-\ccMemberFunction{DVector& n()}{}
+\ccMemberFunction{const DVector n();}{}
+\ccMemberFunction{DVector& n();}{}
 \ccGlue
-\ccMemberFunction{const std::vector<DFT> coefficients()}{}
-\ccMemberFunction{std::vector<DFT>& coefficients()}{}
+\ccMemberFunction{const std::vector<DFT> coefficients();}{}
+\ccMemberFunction{std::vector<DFT>& coefficients();}{}
 
 \ccOperations
 % +--------------------------------------------------------------
-\ccMemberFunction{set_up(int degree)}{Set the number of coefficients according 
+\ccMemberFunction{void set_up(int degree);}{Set the number of coefficients according 
 to the degree of the Monge representation given. The
 $(degree+1)(degree+2)/2-4$ coefficients are set to 0.}
 

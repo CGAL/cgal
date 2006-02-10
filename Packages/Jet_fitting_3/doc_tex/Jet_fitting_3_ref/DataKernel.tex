@@ -18,49 +18,67 @@
 
 \ccDefinition
   
-The concept \ccRefName\ does this and that.
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any class used to instantiate the template
+parameter of the class
+\ccc{Monge_rep<DataKernel>} and the first template parameter of the
+class
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,LinAlgTraits>}.
 
-\ccGeneralizes
+ 
 
-ThisConcept \\
-ThatConcept
+\ccRequirements
+% +------------------------------------------------------------------
+Casts must be available between types of this concept \ccRefName\ and
+the concept \ccc{LocalKernel} which are used together in the class 
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,LinAlgTraits>}.
+ 
+%\ccGeneralizes
+
+%ThisConcept \\
+%ThatConcept
 
 \ccTypes
+% +------------------------------------------------------------------
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Point_3}{The  point type.}
+\ccGlue
+\ccNestedType{Vector_3}{The vector  type.}
 
-\ccNestedType{TYPE}{some nested types}
 
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
 
-\ccConstructor{DataKernel();}{default constructor.}
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{DataKernel();}{default constructor.}
 
 \ccOperations
-
-\ccMethod{void foo();}{some member functions}
+% +------------------------------------------------------------------
+Only constructors and classical access to coordinates x(), y(), z()
+are needed. 
 
 \ccHasModels
-
-\ccc{Some_class},
-\ccc{Some_other_class}.
+% +------------------------------------------------------------------
+\ccc{CGAL::Cartesian<FieldNumberType>}
 
 \ccSeeAlso
+% +------------------------------------------------------------------
+The \ccc{LocalKernel} concept.
 
-Some\_other\_concept,
-\ccc{some_other_function}.
+%\ccExample
 
-\ccExample
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Jet_fitting_3/DataKernel.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Jet_fitting_3/DataKernel.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Jet_fitting_3/DataKernel.C}
 
