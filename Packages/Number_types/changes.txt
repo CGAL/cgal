@@ -1,4 +1,9 @@
 10 February 2006 Sylvain Pion
+- MP_Float : Add approximate_sqrt() and approximate_division() functions,
+  and disallow operator/() and sqrt() by default.
+  They can be enabled back using -DCGAL_MP_FLOAT_ALLOW_INEXACT.
+
+10 February 2006 Sylvain Pion
 - Move Root_of_2 from Algebraic_kernel to here.
 
 21 December 2005 Sylvain Pion

@@ -62,7 +62,9 @@ class MP_Float;
 MP_Float operator+(const MP_Float &a, const MP_Float &b);
 MP_Float operator-(const MP_Float &a, const MP_Float &b);
 MP_Float operator*(const MP_Float &a, const MP_Float &b);
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
 MP_Float operator/(const MP_Float &a, const MP_Float &b);
+#endif
 
 Comparison_result
 compare (const MP_Float & a, const MP_Float & b);
@@ -71,16 +73,21 @@ class MP_Float
 {
 public:
   typedef Tag_false  Has_gcd;
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
   typedef Tag_true   Has_division;
   typedef Tag_true   Has_sqrt;
+#else
+  typedef Tag_false  Has_division;
+  typedef Tag_false  Has_sqrt;
+#endif
 
   typedef Tag_true   Has_exact_ring_operations;
   typedef Tag_false  Has_exact_division;
   typedef Tag_false  Has_exact_sqrt;
 
-  typedef short limb;
-  typedef int   limb2;
-  typedef double exponent_type;
+  typedef short      limb;
+  typedef int        limb2;
+  typedef double     exponent_type;
 
   typedef std::vector<limb>  V;
   typedef V::const_iterator  const_iterator;
@@ -184,7 +191,9 @@ public:
   MP_Float& operator+=(const MP_Float &a) { return *this = *this + a; }
   MP_Float& operator-=(const MP_Float &a) { return *this = *this - a; }
   MP_Float& operator*=(const MP_Float &a) { return *this = *this * a; }
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
   MP_Float& operator/=(const MP_Float &a) { return *this = *this / a; }
+#endif
 
   exponent_type max_exp() const
   {
@@ -290,7 +299,26 @@ MP_Float
 square(const MP_Float&);
 
 MP_Float
-sqrt(const MP_Float &d);
+approximate_sqrt(const MP_Float &d);
+
+MP_Float
+approximate_division(const MP_Float &n, const MP_Float &d);
+
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
+inline
+MP_Float
+operator/(const MP_Float &a, const MP_Float &b)
+{
+  return approximate_division(a, b);
+}
+
+inline
+MP_Float
+sqrt(const MP_Float &d)
+{
+  return approximate_sqrt(d);
+}
+#endif
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MP_Float(double d)) == d.

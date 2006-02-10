@@ -312,14 +312,14 @@ Integer reciprocal(const Integer A, Integer k) {
 */
 
 MP_Float
-operator/(const MP_Float &a, const MP_Float &b)
+approximate_division(const MP_Float &a, const MP_Float &b)
 {
   CGAL_assertion_msg(! b.is_zero(), " Division by zero");
   return MP_Float(CGAL::to_double(a)/CGAL::to_double(b));
 }
 
 MP_Float
-sqrt(const MP_Float &d)
+approximate_sqrt(const MP_Float &d)
 {
   return MP_Float(CGAL_NTS sqrt(CGAL::to_double(d)));
 }

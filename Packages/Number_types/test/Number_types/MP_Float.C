@@ -86,7 +86,7 @@ void test_overflow_to_double()
   std::cout << "Tests if to_double(Quotient<MPF>) overflows or not."
             << std::endl;
 
-  QMPF val = MPF(1)/2;
+  QMPF val = QMPF(1)/2;
   for (int i=0; i<3000; ++i) {
     // std::cout << CGAL::to_double(val) << std::endl;
     // std::cout << val.numerator() << " , " << val.denominator() << std::endl;
@@ -101,7 +101,7 @@ void test_overflow_to_interval()
   std::cout << "Tests if to_interval(Quotient<MPF>) overflows or not."
             << std::endl;
 
-  QMPF val = MPF(1)/2;
+  QMPF val = QMPF(1)/2;
   for (int i=0; i<3000; ++i) {
     // std::cout << CGAL::to_double(val) << std::endl;
     // std::cout << val.numerator() << " , " << val.denominator() << std::endl;

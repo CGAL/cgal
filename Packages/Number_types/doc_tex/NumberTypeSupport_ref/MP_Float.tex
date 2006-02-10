@@ -12,8 +12,11 @@ value with arbitrary precision.  This number type has the property that
 additions, subtractions and multiplications are computed exactly, as well as
 the construction from \ccc{float}, \ccc{double} and \ccc{long double}.
 
-Division and square root are computed approximately, so we suggest that you use
+Division and square root are not enabled by default since \cgal\ release 3.2,
+since they are computed approximately.  We suggest that you use
 rationals like \ccc{Quotient<MP_Float>} when you need exact divisions.
+To enable division and square root, you have to define the preprocessor
+macro \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT}.
 
 Note on the implementation : although the mantissa length is basically only
 limited by the available memory, the exponent is currently represented by a
@@ -23,7 +26,8 @@ plan to also have a multiprecision exponent to fix this issue.
 \ccInclude{CGAL/MP_Float.h}
 
 \ccIsModel
-SqrtFieldNumberType
+\ccc{RingNumberType}
+or \ccc{SqrtFieldNumberType} if \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT} is set.
 
 \ccCreation
 \ccCreationVariable{m}
@@ -53,6 +57,17 @@ SqrtFieldNumberType
 
 \ccFunction{std::istream& operator>>(std::istream& in, MP_Float& m);}
 {reads a \ccc{double} from \ccc{in}, then converts it to an \ccc{MP_Float}.}
+
+\ccFunction{MP_Float approximate_division(const MP_Float &a, const MP_Float &b);}
+{computes an approximation of the division by converting the operands to
+\ccc{double}, performing the division on \ccc{double}, and converting back to
+\ccc{MP_Float}.}
+
+\ccFunction{MP_Float approximate_sqrt(const MP_Float &a);}
+{computes an approximation of the square root by converting the operand to
+\ccc{double}, performing the square root on \ccc{double}, and converting back
+to \ccc{MP_Float}.}
+
 
 \ccImplementation 
 The implementation of \ccc{MP_Float} is simple but provides a quadratic

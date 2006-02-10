@@ -35,7 +35,7 @@ class MP_Float;
 Comparison_result compare(const MP_Float&, const MP_Float&);
 Sign sign(const MP_Float &);
 MP_Float square(const MP_Float&);
-MP_Float sqrt(const MP_Float&);
+MP_Float approximate_sqrt(const MP_Float&);
 double to_double(const MP_Float&);
 std::pair<double,double> to_interval(const MP_Float &);
 bool is_finite(const MP_Float &);
