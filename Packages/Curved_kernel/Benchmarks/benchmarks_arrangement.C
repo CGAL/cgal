@@ -1,4 +1,12 @@
 #define CGAL_CAST_INT
+#define CIRCULAR_KERNEL_2
+#define LAZY_CURVED_KERNEL_2
+//#define CIRCULAR_KERNEL_2_FILTERED_HEXAGON   
+//#define LAZY_CURVED_KERNEL_2_FILTERED_HEXAGON 
+// #define CIRCULAR_KERNEL_2_FILTERED_BBOX
+//#define LAZY_CURVED_KERNEL_2_FILTERED_BBOX
+
+
 #include <CGAL/Algebraic_kernel/basic.h>
 //#include <CGAL/basic.h>
 #include<CGAL/Handle_for.h>
@@ -36,8 +44,8 @@
 #include "benchmark.h"
 
 int main(int argc, char* argv[])
-{
-    char* Dxffilename[]={"cad_l1.dxf"}; //Dxffilename[]={"myFirst.dxf","minimask0.dxf","minimask1.dxf","mask0.dxf","mask1.dxf","smallpainttrack.dxf","mask0_25.dxf","mask0_5.dxf","cad_l2.dxf","cad_l1.dxf","CIOnZDraw.dxf","che_mod1.dxf","elekonta.dxf","painttrack.dxf","netlist_signal_1.dxf","51.dxf"}; 
+{	char* Dxffilename[]={"myFirst.dxf","cad_l1.dxf"};
+    //char* Dxffilename[]={"myFirst.dxf","minimask0.dxf","minimask1.dxf","mask0.dxf","mask1.dxf","smallpainttrack.dxf","mask0_25.dxf","mask0_5.dxf","cad_l2.dxf","cad_l1.dxf","CIOnZDraw.dxf","che_mod1.dxf","elekonta.dxf","painttrack.dxf","netlist_signal_1.dxf","51.dxf"}; 
     char* Htmlfilename;
     char* Texfilename;
     char exten[4];
@@ -110,8 +118,8 @@ if (argv[1] != NULL)
  } 
 else
  {		
-		//Dxffilename[i]="myFirst.dxf";
- 		Dxffilename[i]="cad_l1.dxf";
+		Dxffilename[i]="myFirst.dxf";
+ 		//Dxffilename[i]="cad_l1.dxf";
 		Htmlfilename="benchmarks.html";
 		Texfilename="benchmarks.tex";
 		std::cout<< "Default *.dxf file is  :" << Dxffilename[i]<< std::endl;
@@ -122,34 +130,34 @@ else
 
 
 
-// Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);            // If you want to do benchmarks only with dxf files, you supose to use this defenition
+ //Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);            // If you want to do benchmarks only with dxf files, you supose to use this defenition
 
 Bench bench(Htmlfilename,Texfilename,Dxffilename[i]);			//If you want create table with all datasets you supose to use this.
 
- 
 
 
-for(i=0;i<15;i++){
- 
- std::ifstream fin;
- fin.open (Dxffilename[i]);
- if (!fin.is_open())
-  {
-    std::cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
-    fin.close();
-    return 0;
-
-  } 
- fin.close();
+// for(i=0;i<2;i++){
+//  
+//  std::ifstream fin;
+//  fin.open (Dxffilename[i]);
+//  if (!fin.is_open())
+//   {
+//     std::cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
+//     fin.close();
+//     return 0;
+// 
+//   } 
+//  fin.close();
 /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!Circular_Kernel!!!!!!!!!!!!!!!!!!
 						
   -------------------------------------------------------------------------------------------------------------------------*/
+  #ifdef CIRCULAR_KERNEL_2
 
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
-  typedef CGAL::Circular_kernel<Linear_k1, Algebraic_k1>         CircularKernel;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>                      Algebraic_k1;
+  typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1>         CircularKernel;
 
   #ifndef CGAL_CURVED_KERNEL_DEBUG
    typedef CGAL::Circular_arc_traits<CircularKernel>                   CircularK_CA_Traits;
@@ -160,7 +168,7 @@ for(i=0;i<15;i++){
   
   typedef CircularKernel::Circular_arc_2                                          CircularKArc;
   typedef std::vector<CircularKArc>                                      CircularKArcContainer;
-  bench.kernel("Circular kernel  Circular arc traits");
+  bench.kernel("CkCircArc");
   
   bench.Compute_no_dxf<CircularKernel,CircularK_CA_Traits,CircularKArcContainer>();
   
@@ -172,28 +180,31 @@ for(i=0;i<15;i++){
   typedef boost::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
   typedef std::vector<CircularKVarArc>                        CircularKVarArcContainer; 
   
-  bench.kernel("Circular kernel  Variant traits");
+  bench.kernel("CKVar");
   
-  bench.Compute<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(Dxffilename[i]);
+  //bench.Compute<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(Dxffilename[i]);
   
 //bench.Compute_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(Dxffilename[i]);
+bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcContainer>(); 
 
+ #endif
 /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!Lazy_curved_Kernel!!!!!!!!!!!!!!!!!!
 						
   -------------------------------------------------------------------------------------------------------------------------*/
-  
+  #ifdef LAZY_CURVED_KERNEL_2
+
 //  typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
   typedef CGAL::Gmpq                       NT2;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
-  typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
-  typedef CGAL::Circular_kernel <Linear_k2, Algebraic_k2>         CK2_;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>                      Algebraic_k2;
+  typedef CGAL::Circular_kernel_2 <Linear_k2, Algebraic_k2>         CK2_;
   
 
   typedef CGAL::Interval_nt_advanced                          NT3;
   typedef CGAL::Cartesian<NT3>                                 Linear_k3;
-  typedef CGAL::Algebraic_kernel_2_2<NT3>                      Algebraic_k3;
-  typedef CGAL::Circular_kernel <Linear_k3,Algebraic_k3>          CK3_;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT3>                      Algebraic_k3;
+  typedef CGAL::Circular_kernel_2 <Linear_k3,Algebraic_k3>          CK3_;
   
 
   typedef CGAL::Lazy_curved_kernel<CK2_,CK3_>                  LazyCurvedK;
@@ -208,7 +219,7 @@ for(i=0;i<15;i++){
   typedef LazyCurvedK::Circular_arc_2                              LazyArc;
   typedef std::vector<LazyArc>                                  LazyArcContainer;
   
-  bench.kernel("Lazy curved kernel  Circular arc traits") ;
+  bench.kernel("LazyCircArc") ;
   
   bench.Compute_no_dxf<LazyCurvedK,LazyCurvedK_CA_Traits,LazyArcContainer>();
 
@@ -219,15 +230,19 @@ for(i=0;i<15;i++){
   typedef std::vector<LazyVarArc>                                  LazyVarContainer;
   typedef CGAL::Variant_traits<LazyCurvedK,Line_arc_3,Circular_arc_3> LazyCurvedK_Variant_Traits;
   
-  bench.kernel("Lazy curved kernel  Variant traits");
+  bench.kernel("LazyKVar");
   
-   bench.Compute<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
+   //bench.Compute<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
    //bench.Compute_dxf<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>(Dxffilename[i]);
+   bench.Compute_no_dxf<LazyCurvedK,LazyCurvedK_Variant_Traits,LazyVarContainer>();
+
+ #endif
   /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!Filtered_hexagone_Circular_kernel!!!!!!!!!!!!!!!!!!
 						
   -------------------------------------------------------------------------------------------------------------------------*/
-  /*
+  #ifdef CIRCULAR_KERNEL_2_FILTERED_HEXAGON  
+
   typedef CGAL::Filtered_hexagon_curved_kernel<CircularKernel>        CircularKernelHexagon;
  
   #ifndef CGAL_CURVED_KERNEL_DEBUG
@@ -239,7 +254,7 @@ for(i=0;i<15;i++){
   
   typedef CircularKernelHexagon::Circular_arc_2                              CircularKernHexArc;
   typedef std::vector<CircularKernHexArc>                                CircularKernHexArcContainer;
-  bench.kernel("Circular kernel filtered hexagon Circular arc traits");
+  bench.kernel("CK Hex CircArcTraits");
   
   bench.Compute_no_dxf<CircularKernelHexagon,CircularKernHex_CA_Traits,CircularKernHexArcContainer>();
  
@@ -250,18 +265,20 @@ for(i=0;i<15;i++){
   typedef std::vector<CircularKernHexVarArc>                                     CircularKernHexVarArcContainer; 
   typedef CGAL::Variant_traits<CircularKernelHexagon,Circular_arc_4,Line_arc_4>  CircularKernHex_Variant_Traits;
   
-  bench.kernel("Circular kernel filtered hexagon Variants traits");
+  bench.kernel("CK Hex VarTraits");
  
-  bench.Compute<CircularKernelHexagon,CircularKernHex_Variant_Traits,CircularKernHexVarArcContainer>(Dxffilename[i]);
-  // bench.Compute_no_dxf<CircularKernelHexagon,CircularKernHex_Variant_Traits,CircularKernHexVarArcContainer>();
+ // bench.Compute<CircularKernelHexagon,CircularKernHex_Variant_Traits,CircularKernHexVarArcContainer>(Dxffilename[i]);
+   bench.Compute_no_dxf<CircularKernelHexagon,CircularKernHex_Variant_Traits,CircularKernHexVarArcContainer>();
 
-  
-  */
+ 
+ #endif
   /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!Filtered_hexagone_Lazy_Circular_kernel!!!!!!!!!!!!!!!!!!
 						
   -------------------------------------------------------------------------------------------------------------------------*/
- /*
+ #ifdef LAZY_CURVED_KERNEL_2_FILTERED_HEXAGON 
+
+
   typedef CGAL::Filtered_hexagon_curved_kernel<LazyCurvedK>  LazyKernelHexagon;	
    
   #ifndef CGAL_CURVED_KERNEL_DEBUG
@@ -272,7 +289,7 @@ for(i=0;i<15;i++){
   #endif  
   typedef LazyKernelHexagon::Circular_arc_2                              LazyKernelHexagonArc;
   typedef std::vector<LazyKernelHexagonArc>                                  LazyKernelHexagonArcContainer;
-  bench.kernel("Lazy curved kernel filtered hexagon Circular arc traits");
+  bench.kernel("LazyK Hex CircArcTraits");
  
   bench.Compute_no_dxf<LazyKernelHexagon,LazyKernelHexagon_CA_Traits, LazyKernelHexagonArcContainer>();
   
@@ -282,17 +299,19 @@ for(i=0;i<15;i++){
   typedef std::vector<HxLazyVarArc>                                   HxLazyVarContainer;
   typedef CGAL::Variant_traits<LazyKernelHexagon,Line_arc_5,Circular_arc_5>  HxLazyVariantTraits; 
   
-  bench.kernel("Lazy curved kernel filtered hexagon  Variants traits") ;
+  bench.kernel("LazyK Hex  VarTraits") ;
 
-  bench.Compute<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>(Dxffilename[i]);
-//bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>();
-*/
+  //bench.Compute<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>(Dxffilename[i]);
+bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>();
+
+ #endif
  /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!bbox_filtered_Circular_kernel!!!!!!!!!!!!!!!!!!
 						
   -------------------------------------------------------------------------------------------------------------------------*/  
-       /*
-       typedef CGAL::Filtered_bbox_curved_kernel<CircularKernel>           BBCircularKernel ;
+ #ifdef CIRCULAR_KERNEL_2_FILTERED_BBOX   
+
+  typedef CGAL::Filtered_bbox_curved_kernel<CircularKernel>           BBCircularKernel ;
  
    #ifndef CGAL_CURVED_KERNEL_DEBUG
   typedef CGAL::Circular_arc_traits<BBCircularKernel>                  BBCircularKernel_CA_Traits;
@@ -302,7 +321,7 @@ for(i=0;i<15;i++){
   #endif  
   typedef BBCircularKernel::Circular_arc_2                              BBCircularKernelArc;
   typedef std::vector<BBCircularKernelArc>                                 BBCircularKernelArcContainer;
-  bench.kernel("Circular kernel filtered bbox Circular arc traits");
+  bench.kernel("CK BBox CircArcTraits");
  
   bench.Compute_no_dxf<BBCircularKernel,BBCircularKernel_CA_Traits, BBCircularKernelArcContainer>();
  
@@ -312,16 +331,18 @@ for(i=0;i<15;i++){
   typedef std::vector<BBCircVarArc>                                   BBCircVarContainer;
   typedef CGAL::Variant_traits<BBCircularKernel,Line_arc_6,Circular_arc_6>  BBCircVariantTraits; 
   
-  bench.kernel("Circular kernel filtered bbox  Variants traits") ;
+  bench.kernel("CK BBox VarTraits") ;
   
-   bench.Compute<BBCircularKernel,BBCircVariantTraits,BBCircVarContainer>(Dxffilename[i]);
-  //  bench.Compute_no_dxf<BBCircularKernel,BBCircVariantTraits,BBCircVarContainer>();
-  */
+  // bench.Compute<BBCircularKernel,BBCircVariantTraits,BBCircVarContainer>(Dxffilename[i]);
+  bench.Compute_no_dxf<BBCircularKernel,BBCircVariantTraits,BBCircVarContainer>();
+
+ #endif
  /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!bbox_hexagone_Lazy_Circular_kernel!!!!!!!!!!!!!!!!!!
 						
  -------------------------------------------------------------------------------------------------------------------------*/
-  /*
+ #ifdef LAZY_CURVED_KERNEL_2_FILTERED_BBOX  
+
    typedef CGAL::Filtered_bbox_curved_kernel<LazyCurvedK>              BBLazyCurvedK; 
   
    #ifndef CGAL_CURVED_KERNEL_DEBUG
@@ -332,7 +353,7 @@ for(i=0;i<15;i++){
   #endif  
   typedef BBLazyCurvedK::Circular_arc_2                              BBLazyCurvedKArc;
   typedef std::vector<BBLazyCurvedKArc>                                 BBLazyCurvedKArcContainer;
-  bench.kernel("Lazy curved kernel filtered bbox Circular arc traits");
+  bench.kernel("LLazyK BBox CircArcTraits");
  
   bench.Compute_no_dxf<BBLazyCurvedK,BBLazyCurvedK_CA_Traits,BBLazyCurvedKArcContainer>();
  
@@ -343,11 +364,12 @@ for(i=0;i<15;i++){
   typedef std::vector< BBLazyVarArc>                                    BBLazyVarContainer;
   typedef CGAL::Variant_traits<BBLazyCurvedK,Line_arc_7,Circular_arc_7>   BBLazyVariantTraits; 
   
-  bench.kernel("Lazy curved kernel filtered bbox  Variants traits") ;
+  bench.kernel("LLazyK BBox VarTraits") ;
   
-  bench.Compute<BBLazyCurvedK, BBLazyVariantTraits, BBLazyVarContainer>(Dxffilename[i]);
-   //bench.Compute_no_dxf<BBLazyCurvedK, BBLazyVariantTraits, BBLazyVarContainer>();
-    */
+  //bench.Compute<BBLazyCurvedK, BBLazyVariantTraits, BBLazyVarContainer>(Dxffilename[i]);
+   bench.Compute_no_dxf<BBLazyCurvedK, BBLazyVariantTraits, BBLazyVarContainer>();
+    
+ #endif
     /*-------------------------------------------------------------------------------------------------------------------------
   						!!!!!!!!!!!bbox_filtered_Filtered_hexagone_Circular_kernel!!!!!!!!!!!!!!!!!!
 						
@@ -363,7 +385,7 @@ for(i=0;i<15;i++){
   #endif  
   typedef BBCircKHexagon::Circular_arc_2                              BBCircKHexagonArc;
   typedef std::vector<BBCircKHexagon>                                 BBCircKHexagonArcCont;
-  bench.kernel("BBox Circular kernel filtered bbox Circular arc traits");
+  bench.kernel("BBox Circular kernel filtered Hexagon CircArcTraits");
 
   bench.Compute_no_dxf<BBCircKHexagon,BBCircKHexagonCATraits, BBCircKHexagonArcCont>();
 
@@ -373,40 +395,46 @@ for(i=0;i<15;i++){
   typedef std::vector<BBCircularKernelHexagonVarArc>                                   BBCircularKernelHexagonVarContainer;
   typedef CGAL::Variant_traits<BBCircularKernelHexagon,Line_arc_8,Circular_arc_8>  BBCircularKernelHexagonVariantTraits; 
   
-  bench.kernel("BBox Circular kernel filtered bbox  Variants traits") ;
+  bench.kernel("BBox Circular kernel filtered Hexagon  VarTraits") ;
   
    //bench.Compute<BBCircularKernel,BBCircVariantTraits,BBCircVarContainer>(Dxffilename[i]);
     bench.Compute_no_dxf<BBCircularKernelHexagon,BBCircularKernelHexagonVariantTraits,BBCircularKernelHexagonVarContainer>();*/
     /*--------------------------------------------------------------------------------------------------------------------------
-    -----------------------------------------------------------------------------------------------------------------------------*/
-  if (i+1<15)
-  {
- if (strcmp(Dxffilename[i+1],""))
- 	{
-	fin.open (Dxffilename[i]);
- 	if (!fin.is_open())
-  		{
-    		std::cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
-		std::cout << "that's all" << std::endl;
-    		fin.close();
-    		break;
-  		} 
-	else
-		{
- 		bench.newDxfFilename(Dxffilename[i+1]);
- 		}
-	fin.close();
-	}
- else
- 	{
-	std::cout << "that's all" << std::endl;
-	break;
- 	}
- }
- }
-   
-bench.infotable(); 
-    
+  -----------------------------------------------------------------------------------------------------------------------------*/  
+// if (i+1<2)
+//   {
+// try{
+//  if (strcmp(Dxffilename[i+1],""))
+// 	{
+// 	try{	
+// 	fin.open (Dxffilename[i]);
+// 	}
+// 	catch(...){
+// 	std::cout<<"error"<<std::endl;
+// 	}
+//  	if (!fin.is_open())
+//   		{
+//     		std::cout<<"file "<< Dxffilename[i] << " is not found"<<std::endl;
+// 		std::cout << "that's all" << std::endl;
+//     		fin.close();
+//     		break;
+//   		} 
+// 	else
+// 		{
+//  		bench.newDxfFilename(Dxffilename[i+1]);
+//  		}
+// 	fin.close();
+// 	}
+//  else
+//  	{
+// 	std::cout << "that's all" << std::endl;
+// 	break;
+//  	}
+//  }
+// catch(...){std::cout << "error" << std::endl;}
+//  }
+//  }
+
   return 0;
 }
 

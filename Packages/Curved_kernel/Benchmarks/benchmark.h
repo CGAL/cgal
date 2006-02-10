@@ -26,10 +26,11 @@ private:
   bool firsttime;
   int vert[4],hedg[4];
   int i;
+typedef std::size_t size_type;
   CGAL::Memory_sizer mem_sizer;
   char* Dxffile;
   bool ONLY_DXF;
-  
+  double MemBefore,MemAfter;
   
 public:
   
@@ -48,32 +49,70 @@ public:
     	htmlout<<"<table border = \"3\">"<<std::endl;
     
     	if(!ONLY_DXF){
-    		htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>grid I(400 Circle_2)</td><td>grid II(800 Circle_2)</td><td>random double (100 Circle)</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td><td> rotation (125 Circle_2) </td></tr>" 
+    		htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>grid I(400 Circle_2)</td><td>grid II(800 Circle_2)</td><td>random double (100 Circle)</td><td> rotation (125 Circle_2) </td></tr>" 
     		<<std::endl;
     
     		texout << "\\documentclass[12pt]{article}"<<std::endl
     		<<"\\usepackage{amsmath}"<<std::endl
+		<<"\\usepackage{rotating}"<<std::endl
     		<<"\\begin{document}"<<std::endl
-    		<<"\\begin{tabular}{|c|c|c|c|c|c|}  \\hline $Kernel$ & grid I&grid II &random double & Dxf input. Dxf file is : "<< Dxffile <<" & rotation \\\\ \\hline"<<std::endl;
+		<<"\\newsavebox{\\foo}"<<std::endl
+		<<"\\savebox{\\foo}"<<std::endl
+		<<"{\\parbox{5cm}{"<<std::endl
+    		<<"\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}  \\hline Kernel &\\multicolumn{4}{c|}{ grid I}&\\multicolumn{4}{c|}{grid II }&\\multicolumn{4}{c|}{random double} &\\multicolumn{4}{c|}{ rotation }\\\\ \\hline"<<std::endl;
     		}
     	
 	else	{
-		htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td></tr>" 
+		htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>Dxf input is: "<< Dxffile <<"</td></tr>" 
     		<<std::endl;
     
     		texout << "\\documentclass[12pt]{article}"<<std::endl
     		<<"\\usepackage{amsmath}"<<std::endl
     		<<"\\begin{document}"<<std::endl
-    		<<"\\begin{tabular}{|c|c|c|c|c|c|}  \\hline $Kernel$ & & Dxf input. Dxf file is : "<< Dxffile <<" \\\\ \\hline"<<std::endl;
+    		<<"\\begin{tabular}{|c|c|c|}  \\hline $Kernel$ & & \\multicolumn{4}{c|}{Dxf input is:"<< Dxffile <<"} \\\\ \\hline"<<std::endl;
     		}
     	firsttime = true;
   
   }
 
+ void infotable(){
+
+    	if(!ONLY_DXF){
+  		texout<< "\\hline\\hline  & \\multicolumn{4}{c|}{ grid I}&\\multicolumn{4}{c|}{grid II }&\\multicolumn{4}{c|}{random double} &\\multicolumn{4}{c|}{ rotation }\\\\ \\hline" << std::endl
+  		<< "vertices" ;
+  		for (int k=1; k < 6 ;k++) { 
+     			texout << " &\\multicolumn{4}{c|}{"<< vert[k]<<"}";
+  		}
+		texout<<"\\\\ \\hline"<<std::endl;
+   		texout<<"halfedges";
+
+     		for (int l=1; l < 6 ;l++){ 
+     			texout << " &\\multicolumn{4}{c|}{"<< hedg[l]<<"}";
+  		}
+  		texout<<"\\\\ \\hline"<<std::endl;
+    		}
+    	
+	else	{
+		 texout<< "\\hline\\hline    &\\multicolumn{4}{c|}{Dxf input is:"<< Dxffile <<"} \\\\ \\hline" << std::endl
+  		<< "vertices" ; 
+     		texout <<  " &\\multicolumn{4}{c|}{"<< vert[4]<<"}";
+		texout<<"\\\\ \\hline"<<std::endl;
+   		texout<<"halfedges";
+     		texout <<" &\\multicolumn{4}{c|}{"<< hedg[4]<<"}";
+  		texout<<"\\\\ \\hline"<<std::endl;
+    		}
+ }
+
   ~Bench(){
+	std::cout<<"destructor"<<std::endl;
     	htmlout <<"</table>"<<std::endl;
+	infotable();
+
     	texout << "\\end{tabular}" << std::endl
-           <<"\\end{document}"<<std::endl;
+	<<"}"<< std::endl
+	<<"}"<< std::endl
+	<<"\\begin{turn}{-90}\\usebox{\\foo}\\end{turn}"<< std::endl
+        <<"\\end{document}"<<std::endl;
   }
 private:
   void open_cell(){	
@@ -98,14 +137,16 @@ private:
 
  void empty_cell(){
    	this->open_cell();
-    	htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" << std::endl
+    	htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td><td>MemBefore</td><td>MemAfter</td>" << std::endl
     	<< "<tr><td>"
     	<<"-"<<"</td><td>"
     	<<"-"<< "</td><td>"
     	<<"-"<< "</td><td>" 
+    	<<"-"<< "</td><td>"
+    	<<"-"<< "</td><td>" 
     	<<"-"<< "</td></tr>"
     	<< "</table></td>" ; 
-    	texout<<"& -";
+    	texout<<"& -& -&-& -";
      	this->close_cell();
  } 
 
@@ -126,19 +167,21 @@ private:
 	timersub(&(after.ru_utime),&(before.ru_utime),&utime);
    	timersub(&(after.ru_stime),&(before.ru_stime),&stime);
    	
-	htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" << std::endl
+	htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td><td>MemBefore</td><td>MemAfter</td>" << std::endl
    	<< "<tr><td>"
    	<<utime.tv_sec<<"."<< std::setw(6) << std::setfill('0')<< utime.tv_usec <<"</td><td>"
    	<< numof_f_fails << "</td><td>"
    	<< vertices << "</td><td>" 
-   	<< hedges<< "</td></tr>"
+   	<< hedges<<"</td><td>"
+  	<< MemBefore << "</td><td>" 
+   	<< MemAfter<< "</td></tr>"
    	<< "</table></td>";
     	
 	texout << " & " <<utime.tv_sec<<"."<< std::setw(6) << std::setfill('0')
 	     			  << utime.tv_usec;
-    
-    	//It's necessery to make output of number of filter fails here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+    	texout << "&"<< numof_f_fails;
+	texout << "&"<< MemBefore;
+	texout << "&"<<MemAfter;
     	std::cout << "  vertices  : " << vertices     << std::endl
 	      << "  halfedges : " << hedges       << std::endl
 	      << "  Time (sec): " << utime.tv_sec << std::endl
@@ -148,17 +191,20 @@ private:
   }
   
   void fail(void){
-    	htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td>" <<std::endl
+    	htmlout <<  "<table border=\"1\"><tr><td>User time</td><td>Num. of fails</td><td>vertices</td><td>halfedges</td><td>MemBefore</td><td>MemAfter</td>"<<std::endl
     	<< "<tr><td>"
     	<<"fail"<<"</td><td>"
     	<<"fail"<< "</td><td>"
     	<<"fail"<< "</td><td>" 
+    	<<"fail"<< "</td><td>"
+    	<<"fail"<< "</td><td>" 
     	<<"fail"<< "</td></tr>"
     	<< "</table></td>" ;
-    	texout << "&" <<"fail";
+    	texout << "& fail & fail & fail & fail";
     	std::cout << " :: Abort:: "<< std::endl;
   }
   
+
  template <class Traits,class ArcContainer> 
  void arrangement(const ArcContainer & ac){
  	bool fail=false;
@@ -167,7 +213,7 @@ private:
   	
 	std::cout << "memory size before construction" << mem_sizer.virtual_size() << std::endl;
   	std::cout << "memory resident size before insert_curves()" << mem_sizer.resident_size () << std::endl;
-  	
+  	MemBefore = mem_sizer.virtual_size ()/1000000;
 	Pmwx _pm;
   	Point_location _pl(_pm);
   	
@@ -185,10 +231,11 @@ private:
 
    	if (!fail){this->summarize(_pm.number_of_vertices(),_pm.number_of_halfedges());}
    
-    	_pm.clear();
     	
+        MemAfter = mem_sizer.virtual_size ()/1000000;
 	std::cout << "memory size after insert_curves()" << mem_sizer.virtual_size () << std::endl; 
     	std::cout << "memory resident size after insert_curves()" << mem_sizer.resident_size () << std::endl;
+        _pm.clear();
  }
  
 
@@ -266,27 +313,29 @@ template <class CK,class Traits,class ArcContainer>
  }
 public:
  template <class CK,class Traits,class ArcContainer>
- void Compute(char* dxffile)
- {
+ void Compute(char* dxffile){
+     	if(!ONLY_DXF){
 	this->grid<CK,Traits,ArcContainer>();
    	this->grid2<CK,Traits,ArcContainer>();
    	this->random<CK,Traits,ArcContainer>();
  	this->dfx<CK,Traits,ArcContainer>(dxffile);
 	this->rotation<CK,Traits,ArcContainer>();
+    	}
+    	else{   
+   	this->dfx<CK,Traits,ArcContainer>(dxffile);
+   	this->close_row();
+    	}
  }
  
   template <class CK,class Traits,class ArcContainer>
- void Compute_no_dxf()
- {
+ void Compute_no_dxf(){
+     	if(!ONLY_DXF){
   	this->grid<CK,Traits,ArcContainer>();
-
   	this->grid2<CK,Traits,ArcContainer>();
-
   	this->random<CK,Traits,ArcContainer>();
-   	
-	this->empty_cell();
- 	
+	//this->empty_cell();
 	this->rotation<CK,Traits,ArcContainer>();
+    	}
  }
  
  void empty_row(){ 
@@ -312,34 +361,23 @@ template <class CK,class Traits,class ArcContainer>
      	this->close_cell();
  }
 
- void infotable(){
-  	texout<< "\\hline\\hline   & grid I&grid II &random double & Dxf input. Dxf file is : "<< Dxffile <<" & rotation \\\\ \\hline" << std::endl
-  	<< "vertices" ;
-
-  	for (int k=1; k < 6 ;k++) { 
-     		texout << " & "<< vert[k];
-  	}
-   	
-	texout<<"\\\\ \\hline"<<std::endl;
-   	texout<<"halfedges";
-
-     	for (int l=1; l < 6 ;l++){ 
-     		texout <<" & "<< hedg[l];
-  	}
-  	texout<<"\\\\ \\hline"<<std::endl;
- }
  
  void newDxfFilename(char* Dxffilename=""){
-	Dxffile=Dxffilename;
+	char* newDxf = Dxffilename;
+	
      	if(!ONLY_DXF){
-    		htmlout<< "<tr  bgcolor=\"gray\"><td>Kernel</td><td>grid I</td><td>grid II</td><td>random double</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td><td> rotation </td></tr>" 
-    		<<std::endl;
+    		htmlout<< "<tr  bgcolor=\"gray\"><td>Kernel</td><td>grid I</td><td>grid II</td><td>random double</td><td>Dxf input is: "<< newDxf <<"</td><td> rotation </td></tr>" 
+    		<<std::endl; 
+		infotable();
+    		texout <<"\\end{tabular}"<<std::endl<<"\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}  \\hline Kernel &\\multicolumn{4}{c|}{ grid I}&\\multicolumn{4}{c|}{grid II }&\\multicolumn{4}{c|}{random double} & \\multicolumn{4}{c|}{Dxf input is:"<< newDxf<<" }&\\multicolumn{4}{c|}{ rotation }\\\\ \\hline"<<std::endl;
     	}
     	else{   
-    		htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>Dxf input. Dxf file is : "<< Dxffile <<"</td> </tr>"
+		infotable();
+    		htmlout<< "<tr bgcolor=\"gray\"><td>Kernel</td><td>Dxf input is: "<< newDxf <<"</td> </tr>"
     		<<std::endl;
-    		texout <<"\\begin{tabular}{|c|c|c|c|c|c|}  \\hline $Kernel$  & Dxf input. Dxf file is : "<< Dxffile <<" \\\\ \\hline"<<std::endl;
+    		texout <<"\\end{tabular}"<<std::endl<<"\\begin{tabular}{|c|c|c|c|c|}  \\hline $Kernel$ &\\multicolumn{4}{c|}{Dxf input is:"<< newDxf <<"} \\\\ \\hline"<<std::endl; 
     	}
+	Dxffile=Dxffilename;
  }
 };
 
