@@ -53,14 +53,16 @@ in order to deal with a `bad' order of the input points.
 \ccIncludeVerbatim{Optimisation/Min_circle_2_simple_demo.C}
 
 Other classes for which we provide solutions are ellipses
-(\ccc{CGAL::Min_ellipse_2<Traits>}), rectangles (\ccc{CGAL::min_rectangle_2}),
-parallelograms (\ccc{CGAL::min_parallelogram_2}) and strips
-(\ccc{CGAL::min_strip_2}) in the plane, with appropriate optimality
-criteria. In addition to spheres for points 
-(\ccc{CGAL::Min_sphere_d<Traits>}) and spheres for spheres 
-(\ccc{CGAL::Min_sphere_of_spheres_d<Traits>}), there
-is another class of objects which allows for solutions in arbitrary
-dimension, namely annuli (\ccc{CGAL::Min_annulus_d<Traits>}).
+(\ccc{CGAL::Min_ellipse_2<Traits>}), rectangles
+(\ccc{CGAL::min_rectangle_2}), parallelograms
+(\ccc{CGAL::min_parallelogram_2}) and strips (\ccc{CGAL::min_strip_2})
+in the plane, with appropriate optimality criteria. For arbitrary
+dimensions we provide smallest enclosing spheres for points
+(\ccc{CGAL::Min_sphere_d<Traits>}) and spheres for spheres
+(\ccc{CGAL::Min_sphere_of_spheres_d<Traits>}), smallest enclosing
+annuli (\ccc{CGAL::Min_annulus_d<Traits>}), and approximate
+minimum-volume enclosing ellipsoid with user-specified
+approximation ratio (\ccc{CGAL::Approximate_min_ellipsoid_d<Traits>}).
 
 \begin{ccHtmlOnly}
 <center>
@@ -171,12 +173,12 @@ three boxes; the center points are shown in red.
 \end{center}
 \end{ccTexOnly}
 
-To avoid later disappointment: one very nice class of bounding
-volumes, namely ellipsoids in three- and higherdimensional space, is
-currently not supported by \cgal. The reason is that the algebraic
-complexity of this problem is still beyond the level which would allow
-us to come up with a solution that satisfies the \cgal\ standards. We
-are working on a solution for 3-space, though.
+%To avoid later disappointment: one very nice class of bounding
+%volumes, namely ellipsoids in three- and higherdimensional space, is
+%currently not supported by \cgal. The reason is that the algebraic
+%complexity of this problem is still beyond the level which would allow
+%us to come up with a solution that satisfies the \cgal\ standards. We
+%are working on a solution for 3-space, though.
 
 \section{Optimal Distances}
 
