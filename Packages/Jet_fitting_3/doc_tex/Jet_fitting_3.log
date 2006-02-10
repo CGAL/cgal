@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.3.1) (format=latex 2004.7.7)  8 FEB 2006 17:39
+This is TeX, Version 3.14159 (Web2C 7.3.1) (format=latex 2004.7.7)  9 FEB 2006 14:59
 **Jet_fitting_3
 (Jet_fitting_3.tex
 LaTeX2e <2003/12/01>
@@ -360,20 +360,33 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 7.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 7.
-(Jet_fitting_3.mtc1) (Jet_fitting_3/Jet_fitting_3_user.tex
+(Jet_fitting_3.mtc1) (Jet_fitting_3/Jet_fitting_3_user.tex (macro_perso.sty
+\c@definition=\count145
+\c@theorem=\count146
+\c@lemma=\count147
+\c@example=\count148
+\c@exercise=\count149
+\c@problem=\count150
+\c@observation=\count151
+\c@corollary=\count152
+\c@proposition=\count153
+\c@condition=\count154
+\c@model=\count155
+\c@hypothesis=\count156
+)
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 10.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 11.
 
-LaTeX Warning: Citation `sp-smrqtm-01' on page 1 undefined on input line 31.
-
-
-LaTeX Warning: Citation `pinkall93a' on page 1 undefined on input line 36.
+LaTeX Warning: Citation `sp-smrqtm-01' on page 1 undefined on input line 32.
 
 
-LaTeX Warning: Citation `desbrun00a' on page 1 undefined on input line 36.
+LaTeX Warning: Citation `pinkall93a' on page 1 undefined on input line 37.
 
 
-LaTeX Warning: Citation `dcs-jmm-rdtnc-03' on page 1 undefined on input line 36
+LaTeX Warning: Citation `desbrun00a' on page 1 undefined on input line 37.
+
+
+LaTeX Warning: Citation `dcs-jmm-rdtnc-03' on page 1 undefined on input line 37
 .
 
 [1
@@ -381,166 +394,75 @@ LaTeX Warning: Citation `dcs-jmm-rdtnc-03' on page 1 undefined on input line 36
 
 ]
 
-LaTeX Warning: Citation `dcs-jmm-rdtnc-03' on page 2 undefined on input line 43
+LaTeX Warning: Citation `dcs-jmm-rdtnc-03' on page 2 undefined on input line 44
 .
 
 
-LaTeX Warning: Citation `fc-mp-edqpfoj-05' on page 2 undefined on input line 45
+LaTeX Warning: Citation `fc-mp-edqpfoj-05' on page 2 undefined on input line 46
 .
-
-! Undefined control sequence.
-l.68 z(x,y)=J_{B,d}(x,y) + \hot \quad \text
-                                           { with }
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
 
 [2]
 
 LaTeX Warning: Citation `fc-mp-edqpfoj-05' on page 3 undefined on input line 13
-6.
+7.
 
-
-! LaTeX Error: Environment theorem undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.137 \begin{theorem}
-                     
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
-(Font)              Font shape `OMS/pzccm/m/n' tried instead on input line 148.
-
-
-! LaTeX Error: \begin{document} ended by \end{theorem}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.156 \end{theorem}
-                   
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
+LaTeX Font Info:    Font shape `OMS/ptm/m/it' in size <10> not available
+(Font)              Font shape `OMS/pzccm/m/n' tried instead on input line 149.
 
 
 LaTeX Warning: Citation `fc-mp-edqpfoj-05' on page 3 undefined on input line 18
-6.
+7.
+
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
+(Font)              Font shape `OMS/pzccm/m/n' tried instead on input line 207.
 
 [3]
-
-! LaTeX Error: File `jet_fitting_basis' not found.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.237 ...s[width=.5\linewidth]{jet_fitting_basis}}
-                                                  
-I could not locate the file with any of these extensions:
-.eps,.ps,.eps.gz,.ps.gz,.eps.Z
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
+File: Jet_fitting_3/jet_fitting_basis.eps Graphic file (type eps)
+<Jet_fitting_3/jet_fitting_basis.eps>
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 254.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 260.
 [4]
-! Misplaced alignment tab character &.
-l.311 D_r &
-            0_{r,\ N_d-r}\\
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-! Misplaced alignment tab character &.
-l.312 0_{N-r,\ r} &
-                    0_{N-r,\ N_d-r}
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-! Misplaced alignment tab character &.
-l.321 D_r^{-1} &
-                 0_{N_d-r,\ r}\\
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-! Misplaced alignment tab character &.
-l.322 0_{r,\ N-r} &
-                    0_{N_d-r,\ N-r}
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-Overfull \hbox (4.9347pt too wide) in paragraph at lines 334--334
+Overfull \hbox (4.9347pt too wide) in paragraph at lines 344--344
 []\OT1/pcr/m/n/10 void solve_ls_svd_algo(const LAMatrix& M, const LAVector& B, 
 Vector& X, double& cond_nb)[] 
  []
 
-[5] [6] [7]
+[5] [6] [7] [8] (../examples/Jet_fitting_3/blind_1pt.C
+Overfull \hbox (25.3346pt too wide) in paragraph at lines 29--29
+[]      \OT1/pcr/m/n/10 std::cout << "Usage : blind_1pt <inputPoints.txt> <outp
+ut.txt> <d_fitting>, <d_monge>"[] 
+ []
 
-! LaTeX Error: Environment boxedminipage undefined.
+[9]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.565 \begin{boxedminipage}
-                           [t]{14cm}
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
+[10]) (../examples/Jet_fitting_3/blind.C [11]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
+[12]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-! LaTeX Error: \begin{center} on input line 564 ended by \end{boxedminipage}.
+[13]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.583 \end{boxedminipage}
-                         
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
+[14]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-)) [8] [9] (Jet_fitting_3.bbl [10
+[15]))) [16] [17] (Jet_fitting_3.bbl [18
 
 
-]) (Jet_fitting_3.ind) [11] (Jet_fitting_3.aux (Jet_fitting_3/main.aux))
+]) (Jet_fitting_3.ind) [19] (Jet_fitting_3.aux (Jet_fitting_3/main.aux))
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 3194 strings out of 10813
- 40128 string characters out of 171231
+ 3308 strings out of 10813
+ 41145 string characters out of 171231
  111254 words of memory out of 263001
- 6133 multiletter control sequences out of 10000+20000
+ 6244 multiletter control sequences out of 10000+20000
  32367 words of font info for 83 fonts, out of 400000 for 1000
  24 hyphenation exceptions out of 1000
- 39i,11n,27p,257b,521s stack positions out of 300i,100n,500p,50000b,4000s
+ 39i,9n,27p,257b,521s stack positions out of 300i,100n,500p,50000b,4000s
 
-Output written on Jet_fitting_3.dvi (15 pages, 42084 bytes).
+Output written on Jet_fitting_3.dvi (23 pages, 59044 bytes).

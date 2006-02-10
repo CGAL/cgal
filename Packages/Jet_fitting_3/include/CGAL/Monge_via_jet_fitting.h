@@ -19,11 +19,10 @@ int fact(int n)
 ////////////////////// CLASS Monge_rep ////////////////////////
 template <class DataKernel>
 class Monge_rep {
-public:
-  typedef DataKernel                      Data_Kernel;
-  typedef typename Data_Kernel::FT        DFT;
-  typedef typename Data_Kernel::Point_3   DPoint;
-  typedef typename Data_Kernel::Vector_3  DVector;
+public: 
+  typedef typename DataKernel::FT        DFT;
+  typedef typename DataKernel::Point_3   DPoint;
+  typedef typename DataKernel::Vector_3  DVector;
 protected:
   //point on the fitted surface where diff quantities are computed
   DPoint m_origin_pt;
@@ -40,10 +39,10 @@ protected:
 public:
   //constructor
   Monge_rep() {
-    m_origin_pt  = DPoint(CGAL::ORIGIN); 
-    m_d1 = DVector(CGAL::NULL_VECTOR);
-    m_d2 = DVector(CGAL::NULL_VECTOR);
-    m_n = DVector(CGAL::NULL_VECTOR);
+    m_origin_pt  = DPoint(0.,0.,0.); 
+    m_d1 = DVector(0.,0.,0.);
+    m_d2 = DVector(0.,0.,0.);
+    m_n = DVector(0.,0.,0.);
     m_coefficients = std::vector<DFT>();
   }
   ~Monge_rep() {}
@@ -75,9 +74,8 @@ set_up(int degree) {
 template <class LocalKernel>
 class Monge_info {  
 public:
-  typedef LocalKernel                      Local_Kernel;
-  typedef typename Local_Kernel::FT        LFT;
-  typedef typename Local_Kernel::Vector_3  LVector;
+  typedef typename LocalKernel::FT        LFT;
+  typedef typename LocalKernel::Vector_3  LVector;
 protected:  
   LFT m_pca_eigen_vals[3];
   LVector m_pca_eigen_vecs[3];
@@ -106,8 +104,16 @@ class Monge_via_jet_fitting {
 public:
   typedef DataKernel   Data_Kernel;
   typedef LocalKernel  Local_Kernel;
-  typedef LinAlgTraits Lin_Alg_Traits;
+  typedef typename std::vector<typename Data_Kernel::Point_3>::iterator Range_Iterator;
+  typedef Monge_rep<Data_Kernel>   Monge_rep;
+  typedef Monge_info<Local_Kernel> Monge_info;
 
+public:
+  Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
+			int d, int dprime, 
+			Monge_rep &monge_rep, Monge_info &monge_info);
+
+protected:
   typedef typename Local_Kernel::FT       LFT;
   typedef typename Local_Kernel::Point_3  LPoint;
   typedef typename Local_Kernel::Vector_3 LVector;
@@ -116,18 +122,9 @@ public:
   typedef typename Data_Kernel::FT       DFT;
   typedef typename Data_Kernel::Point_3  DPoint;
 
-  typedef typename std::vector<DPoint>::iterator Range_Iterator;
+  typedef typename LinAlgTraits::Vector LAVector;
+  typedef typename LinAlgTraits::Matrix LAMatrix;
 
-  typedef typename Lin_Alg_Traits::Vector LAVector;
-  typedef typename Lin_Alg_Traits::Matrix LAMatrix;
-
-  typedef Monge_info<Local_Kernel> Monge_info;
-  typedef Monge_rep<Data_Kernel>   Monge_rep;
-
-public:
-  Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
-			int d, int dprime, 
-			Monge_rep &monge_rep, Monge_info &monge_info);
 protected:
   int deg;
   int deg_monge;
@@ -187,8 +184,6 @@ Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end,
 		      Monge_rep<Data_Kernel> &monge_rep,  
 		      Monge_info<Local_Kernel> &monge_info)
 {
-  // precondition: at least one element in the container.
-  CGAL_precondition(begin != end);
   // precondition: on the degrees, jet and monge
   CGAL_precondition( (d >=1) && (dprime >= 1) 
 		             && (dprime <= 4) && (dprime <= d) );
@@ -262,7 +257,7 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  Lin_Alg_Traits::eigen_symm_algo(Cov, eval, evec);
+  LinAlgTraits::eigen_symm_algo(Cov, eval, evec);
  
   //store in monge_info
   for (int i=0; i<3; i++)
@@ -322,7 +317,7 @@ fill_matrix(Range_Iterator begin, Range_Iterator end,
   LPoint point0 = *begin;
   //transform coordinates of sample points with a
   //translation ($-p$) and multiplication by $ P_{W\rightarrow F}$.
-  LPoint orig(CGAL::ORIGIN);
+  LPoint orig(0.,0.,0.);
   LVector v_point0_orig(orig - point0);
   Aff_transformation transl(CGAL::TRANSLATION, v_point0_orig);
   this->translate_p0 = transl;
@@ -364,7 +359,7 @@ void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
 solve_linear_system(LAMatrix &M, LAVector &A, const LAVector &Z,
 		    Monge_info& monge_info)
 {
- Lin_Alg_Traits::solve_ls_svd_algo(M, A, Z, monge_info.cond_nb()); 
+ LinAlgTraits::solve_ls_svd_algo(M, A, Z, monge_info.cond_nb()); 
   for (int k=0; k <= this->deg; k++) for (int i=0; i<=k; i++)
     A[k*(k+1)/2+i] /= std::pow(this->preconditionning,k);
 }
@@ -438,7 +433,7 @@ compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
   LAVector eval(2);
   LAMatrix evec(2,2);
 
-  Lin_Alg_Traits::eigen_symm_algo(W, eval, evec);
+  LinAlgTraits::eigen_symm_algo(W, eval, evec);
   LVector d_max = evec[0][0]*Y + evec[1][0]*Z,
     d_min = evec[0][1]*Y + evec[1][1]*Z;
 

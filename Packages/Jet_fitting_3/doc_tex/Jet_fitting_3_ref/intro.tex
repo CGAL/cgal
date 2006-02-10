@@ -19,6 +19,15 @@ surfaces via polynomial fitting}
 \subsection*{Introduction}
 
 
+\ccRequirements
+The three classes  \ccc{Monge_rep}, \ccc{Monge_info} and
+\ccc{Monge_via_jet_fitting} are designed to be used
+simultaneously. The \ccc{DataKernel} template parameter must be the
+same for the classes \ccc{Monge_rep} and
+\ccc{Monge_via_jet_fitting}. The \ccc{LocalKernel} template parameter
+must be the same for the classes \ccc{Monge_info} and
+\ccc{Monge_via_jet_fitting}. 
+
 \subsection*{Concepts}
 \ccRefConceptPage{DataKernel} \\
 \ccRefConceptPage{LocalKernel} \\

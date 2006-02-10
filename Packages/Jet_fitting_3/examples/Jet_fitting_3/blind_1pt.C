@@ -13,12 +13,12 @@
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
-typedef Monge_rep<Data_Kernel>   My_Monge_rep;
+typedef CGAL::Monge_rep<Data_Kernel>   My_Monge_rep;
 
 typedef double                   LFT;
 typedef CGAL::Cartesian<LFT>     Local_Kernel;
-typedef Monge_info<Local_Kernel> My_Monge_info;
-typedef Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
+typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
 
          
 int main(int argc, char *argv[])
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   while (inFile >> ch) {
     x = atof(ch);
     inFile >> ch;
-    y = atof(ch);
+    y = atof(ch); 
     inFile >> ch;
     z = atof(ch);
     DPoint p(x,y,z);

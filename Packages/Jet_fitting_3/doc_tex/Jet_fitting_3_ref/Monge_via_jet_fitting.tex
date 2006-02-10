@@ -19,45 +19,72 @@
 
 \ccDefinition
   
-The class \ccRefName\ does this and that.
-
+The class \ccRefName\ is designed to perform the estimation of the
+local differential quantities at a single point. This point is the
+first point amongst the input points given by two iterators on
+points. According to the specified degrees for the polynomial fitting
+and for the Monge representation, it outputs the results through two
+classes \ccc{Monge_rep} and \ccc{Monge_info}.
+ 
 \ccInclude{Monge_via_jet_fitting.h}
 
-\ccIsModel
-
-Concept
+\ccParameters
+The class \ccRefName\ has three template parameters. The first parameter
+\ccc{DataKernel} shall provide basic geometry for input points and
+some \ccc{Monge_rep} members. The second parameter \ccc{LocalKernel}
+shall provide basic geometry for local computation. The third
+parameter \ccc{LinAlgTraits} provides the linear algebra computation
+tools. 
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+%\ccNestedType{TYPE}{some nested types}
+\ccTypedef{  typedef DataKernel   Data_Kernel;}{}
+\ccGlue
+\ccTypedef{  typedef LocalKernel  Local_Kernel;}{}
+\ccGlue
+\ccTypedef{   typedef typename std::vector<typename
+Data_Kernel::Point_3>::iterator Range_Iterator; }{} 
+\ccGlue
+\ccTypedef{  typedef Monge_rep<Data_Kernel>   Monge_rep;}{}
+\ccGlue
+\ccTypedef{  typedef Monge_info<Local_Kernel> Monge_info;}{}
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{monge_fitting}  %% choose variable name, given by \ccVar
 
-\ccConstructor{Monge_via_jet_fitting();}{default constructor.}
+\ccConstructor{Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
+int d, int dprime, Monge_rep &monge_rep, Monge_info &monge_info);}
+{This constructor performs all the computations. The $N$ input points
+are given by the \ccc{Range_Iterators}, \ccc{d} is the degree of the
+fitted polynomial, \ccc{dprime} is the degree of the expected Monge
+coefficients, outputs are stored in \ccc{monge_rep} and
+\ccc{monge_info}.
+\ccPrecond $N \geq N_d=(d+1)(d+2)/2$, $1 \leq d$, $dprime \leq d$, $1
+\leq dprime \leq 4$ } 
 
-\ccOperations
+%\ccOperations
 
-\ccMethod{void foo();}{some member functions}
+%\ccMethod{void foo();}{some member functions}
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccc{Monge_rep},
+\ccc{Monge_info}.
 
-\ccExample
+%\ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Jet_fitting_3/Monge_via_jet_fitting.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Jet_fitting_3/Monge_via_jet_fitting.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
 
 %% \ccIncludeExampleCode{Jet_fitting_3/Monge_via_jet_fitting.C}
 

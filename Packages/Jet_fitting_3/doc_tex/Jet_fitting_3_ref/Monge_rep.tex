@@ -11,54 +11,93 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Monge_rep}  %% add template arg's if necessary
+\begin{ccRefClass}{Monge_rep<DataKernel>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ does this and that.
+The class \ccRefName\ stores the Monge representation. The
+\ccc{DataKernel} template parameter must be the 
+same for the classes \ccc{Monge_rep} and
+\ccc{Monge_via_jet_fitting}.
 
-\ccInclude{Monge_rep.h}
-
-\ccIsModel
-
-Concept
+\ccInclude{Monge_via_jet_fitting.h}
 
 \ccTypes
+% +--------------------------------------------------------------
+%\ccNestedType{TYPE}{some nested types}
+\ccTypedef{  typedef typename DataKernel::FT        DFT; }{}
+\ccGlue
+\ccTypedef{  typedef typename DataKernel::Point_3   DPoint; }{}
+\ccGlue
+\ccTypedef{   typedef typename DataKernel::Vector_3  DVector;}{}
+\ccGlue
 
-\ccNestedType{TYPE}{some nested types}
+\ccHeading{Data members}
+% +--------------------------------------------------------------
+\ccVariable{  DPoint m_origin_pt;}{Point on the fitted surface where
+differential quantities are computed} 
+
+The basis $(m_d1, m_d2, m_n)$ is direct orthonormal.
+\ccVariable{DVector m_d1;}{maximal ppal dir} 
+\ccVariable{DVector m_d2;}{minimal ppal dir} 
+\ccVariable{DVector m_n;}{normal direction} 
+\ccVariable{std::vector<DFT> m_coefficients;}{coeff = (k1, k2 (ppal curv),
+          b0, b1, b2, b3 (third order), c0, c1, c2, c3, c4 (fourth
+          order)). If the degree of the Monge representation is 1 there
+          is no coefficient}
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+% +--------------------------------------------------------------
+\ccCreationVariable{monge_rep}  %% choose variable name
 
 \ccConstructor{Monge_rep();}{default constructor.}
 
-\ccOperations
+\ccAccessFunctions
+% +--------------------------------------------------------------
+\ccMemberFunction{const DPoint origin_pt()}{}
+\ccMemberFunction{DPoint& origin_pt()}{}
+\ccGlue
+\ccMemberFunction{const DVector d1()}{}
+\ccMemberFunction{DVector& d1() }{}
+\ccGlue
+\ccMemberFunction{const DVector d2()}{}
+\ccMemberFunction{DVector& d2()}{}
+\ccGlue
+\ccMemberFunction{const DVector n()}{}
+\ccMemberFunction{DVector& n()}{}
+\ccGlue
+\ccMemberFunction{const std::vector<DFT> coefficients()}{}
+\ccMemberFunction{std::vector<DFT>& coefficients()}{}
 
-\ccMethod{void foo();}{some member functions}
+\ccOperations
+% +--------------------------------------------------------------
+\ccMemberFunction{set_up(int degree)}{Set the number of coefficients according 
+to the degree of the Monge representation given. The
+$(degree+1)(degree+2)/2-4$ coefficients are set to 0.}
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccc{Monge_via_jet_fitting},
+%\ccc{some_other_function}.
 
-\ccExample
+%\ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Jet_fitting_3/Monge_rep.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Jet_fitting_3/Monge_rep.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
 
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
 
-%% \ccIncludeExampleCode{Jet_fitting_3/Monge_rep.C}
+%%% \ccIncludeExampleCode{Jet_fitting_3/Monge_rep.C}
 
 \end{ccRefClass}
 
