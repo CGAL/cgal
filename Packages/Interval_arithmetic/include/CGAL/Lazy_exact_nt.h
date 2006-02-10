@@ -521,12 +521,6 @@ class Lazy_exact_nt
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_construct_rep<Interval_nt<false>, ET, To_interval<ET> > Self_rep;
 
-  // We have a static variable for optimizing zero.
-  static const Self zero_;
-  struct zero_tag {};
-  Lazy_exact_nt(zero_tag)
-  { PTR = new Lazy_exact_Int_Cst<ET>(0); }
-
 public :
 
   typedef typename Number_type_traits<ET>::Has_gcd      Has_gcd;
@@ -543,7 +537,7 @@ public :
   { PTR = r; }
 
   Lazy_exact_nt ()
-    : Handle(zero_) {}
+    : Handle(zero()) {}
 
   Lazy_exact_nt (const CGAL_int(ET) & i)
   { PTR = new Lazy_exact_Int_Cst<ET>(i); }
@@ -658,7 +652,12 @@ public :
   bool identical(const T&) const
   { return false; }
 
-  static const Self & zero() { return zero_; }
+  // We have a static variable for optimizing zero and default constructor.
+  static const Self & zero()
+  {
+    static const Self z = new Lazy_exact_Int_Cst<ET>(0);
+    return z;
+  }
 
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
@@ -669,10 +668,6 @@ private:
 
 template <typename ET>
 double Lazy_exact_nt<ET>::relative_precision_of_to_double = 0.00001;
-
-template <typename ET>
-const Lazy_exact_nt<ET>
-Lazy_exact_nt<ET>::zero_ = Lazy_exact_nt<ET>(zero_tag());
 
 
 template <typename ET1, typename ET2>
