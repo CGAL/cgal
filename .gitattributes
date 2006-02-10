@@ -1178,7 +1178,6 @@ Packages/Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=
 Packages/Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
 Packages/Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
 Packages/Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
-Packages/Jet_fitting_3/examples/Jet_fitting_3/gmon.out svneol=native#unset
 Packages/Jet_fitting_3/examples/Jet_fitting_3/test.off -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#unset

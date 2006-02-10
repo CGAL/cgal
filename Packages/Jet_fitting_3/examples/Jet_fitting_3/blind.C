@@ -25,9 +25,9 @@ typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 //Kernel for local computations
 typedef double                LFT;
 typedef CGAL::Cartesian<LFT>  Local_Kernel;
-typedef Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
-typedef Monge_rep<Data_Kernel> My_Monge_rep;
-typedef Monge_info<Local_Kernel> My_Monge_info;
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
+typedef CGAL::Monge_rep<Data_Kernel> My_Monge_rep;
+typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
          
 //Syntax requirred by Options
 static const char *const optv[] = {
