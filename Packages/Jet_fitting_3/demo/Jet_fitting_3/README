@@ -4,8 +4,8 @@ Program visu.exe
 takes as input
 1. a file.off,
 2. the corresponding file file.off.4ogl.txt computed with the example program 
-	blind.exe from file.off.
+	blind.exe from file.off 
 
 it displays an OpenGL view of both the mesh and the ppal directions
 
-./visu.exe ../../data
+./visu.exe ../../examples/Jet_fitting_3/data/poly2x\^2+y\^2-0.062500-off ../../examples/Jet_fitting_3/data_poly2x\^2+y\^2-0.062500-off.4ogl.txt
