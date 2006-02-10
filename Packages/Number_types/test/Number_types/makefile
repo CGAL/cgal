@@ -15,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-           -I../../../Interval_arithmetic/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -49,6 +48,7 @@ all:            \
                 NT_checker$(EXE_EXT) \
                 Quotient$(EXE_EXT) \
                 quotient_io$(EXE_EXT) \
+                root_of_2$(EXE_EXT) \
                 simplest_rational$(EXE_EXT) \
                 _test_valid_finite_double$(EXE_EXT) \
                 _test_valid_finite_float$(EXE_EXT) \
@@ -81,6 +81,9 @@ Quotient$(EXE_EXT): Quotient$(OBJ_EXT)
 quotient_io$(EXE_EXT): quotient_io$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quotient_io quotient_io$(OBJ_EXT) $(LDFLAGS)
 
+root_of_2$(EXE_EXT): root_of_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)root_of_2 root_of_2$(OBJ_EXT) $(LDFLAGS)
+
 simplest_rational$(EXE_EXT): simplest_rational$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simplest_rational simplest_rational$(OBJ_EXT) $(LDFLAGS)
 
@@ -103,6 +106,7 @@ clean: \
                    NT_checker.clean \
                    Quotient.clean \
                    quotient_io.clean \
+                   root_of_2.clean \
                    simplest_rational.clean \
                    _test_valid_finite_double.clean \
                    _test_valid_finite_float.clean \

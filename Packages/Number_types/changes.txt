@@ -1,3 +1,6 @@
+10 February 2006 Sylvain Pion
+- Move Root_of_2 from Algebraic_kernel to here.
+
 21 December 2005 Sylvain Pion
 - Add #include <CGAL/config.h> early in <CGAL/number_type_basic.h>
   to avoid the need to #include <CGAL/basic.h> in Algebraic_kernel/basic.h.

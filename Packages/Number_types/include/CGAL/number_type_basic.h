@@ -68,6 +68,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/gmpxx_fwd.h>
 #include <CGAL/CORE_Expr_fwd.h>
 #include <CGAL/Quotient_fwd.h>
+#include <CGAL/Root_of_2_fwd.h>
 
 // We must also include the following two, because of the overloadings
 // for Quotient<MP_Float> and Quotient<Gmpz>, which triggers their
