@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Stanford University (USA).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -28,6 +29,7 @@
 #include <set>
 #include <map>
 #include <vector>
+#include <sstream>
 
 CGAL_KDS_BEGIN_NAMESPACE;
 
@@ -261,6 +263,32 @@ public:
     return out;
   }
   
+  std::istream &read(std::istream &in) {
+    if (!storage_.empty()) {
+      set_is_editing(true);
+      for (Keys_iterator kit= keys_begin(); kit != keys_end(); ++kit){
+	erase(*kit);
+      }
+      set_is_editing(false);
+      storage_.clear();
+    }
+    set_is_editing(true);
+    do {
+      char buf[10000];
+      in.getline(buf, 10000);
+      if (!in) break;
+      std::istringstream iss(buf);
+      Data d; 
+      iss >> d;
+      if (!iss) {
+	std::cerr << "Error reading object from line " << buf << std::endl;
+      } else {
+	insert(d);
+      }
+    } while (true);
+    set_is_editing(false);
+    return in;
+  }
 
 private:
   friend class Multi_listener<Listener_core>;
@@ -313,6 +341,12 @@ protected:
 template <class V >
 std::ostream &operator<<(std::ostream &out, const Active_objects_vector<V> &v) {
   return v.write(out);
+}
+
+
+template <class V >
+std::istream &operator>>(std::istream &in, Active_objects_vector<V> &v) {
+  return v.read(in);
 }
 
 CGAL_KDS_END_NAMESPACE;
