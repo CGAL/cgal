@@ -1,3 +1,6 @@
+11 February 2006 Sylvain Pion
+- Fix license of Uncertain.h (was QPL instead LGPL).
+
 10 February 2006 Sylvain Pion
 - Lazy_exact_nt::ZERO : make the static variable a function-static variable
   to avoid global ordering problems (additional cost expected negligible).
