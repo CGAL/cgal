@@ -1,382 +1,201 @@
 #include <CGAL/KDS/basic.h>
 #include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
-#include <algorithm>
-#include <map>
-#include <list>
-#include <iterator>
-#include <iostream>
-#include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Insert_event.h>
-#include <CGAL/KDS/Erase_event.h>
-#include <CGAL/KDS/Exact_simulation_traits_1.h>
-#include <CGAL/KDS/Simulator_kds_listener.h>
 #include <CGAL/KDS/Active_objects_listener_helper.h>
+#include <CGAL/KDS/Erase_event.h>
+#include <CGAL/KDS/Inexact_simulation_traits_1.h>
+#include <CGAL/KDS/Insert_event.h>
+#include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/KDS/Simulator_kds_listener.h>
+#include <CGAL/KDS/Sort.h>
+#include <CGAL/KDS/Sort_visitor_base.h>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <list>
+#include <map>
 
-template <class Sort, class Id, class Solver>
-class Swap_event;
-
-//! A simple KDS which maintains objects sorted by their x coordinate
-/*!  This does not use Simple_kds_base for now irrelevant
-  reasons. Ditto for the lack of protection of any of the fields. The
-  code is designed to be read, so read it if you want to figure out
-  what is going on.
-*/
-template <class TraitsT> class Planar_arrangement:
-// for ref counted pointers
-public CGAL::KDS::Ref_counted<Planar_arrangement<TraitsT> >
+template <class Arrangement>
+struct Sort_arrangement_visitor: public CGAL::KDS::Sort_visitor_base
 {
-    typedef TraitsT Traits;
-    typedef Planar_arrangement<TraitsT> This;
+  Sort_arrangement_visitor(Arrangement *a):p_(a){}
 
-    typedef std::pair<typename Traits::Active_objects_table::Key, int> Cut_pair;
+  template <class Vertex_handle>
+  void remove_vertex(Vertex_handle a) {
+    p_->erase(a);
+  }
 
-// this is used to identify pairs of objects in the list
-    typedef typename std::list<Cut_pair>::iterator iterator;
+  template <class Vertex_handle>
+  void create_vertex(Vertex_handle a) {
+    p_->insert(a);
+  }
 
-    typedef Swap_event<This,iterator,
-        typename Traits::Simulator::Root_stack> Event;
+  template <class Vertex_handle>
+  void after_swap(Vertex_handle a, Vertex_handle b) {
+    p_->swap(a, b);
+  }
 
-    typedef std::pair<int,int> Edge;
-
-    struct Compare_first
-    {
-        Compare_first(typename Traits::Instantaneous_kernel::Less_x_1 l): less_(l){}
-        typename Traits::Instantaneous_kernel::Less_x_1 less_;
-        bool operator()(const Cut_pair &a, const Cut_pair &b) const
-        {
-            return less_(a.first, b.first);
-        }
-    };
-
-    typedef typename CGAL::KDS::
-        Simulator_kds_listener<typename Traits::Simulator::Listener,
-        This> Sim_listener;
-// Redirects the MovingObjectTable notifications to function calls
-    typedef typename CGAL::KDS::
-        Active_objects_listener_helper<typename Traits::Active_objects_table::Listener,
-        This> MOT_listener;
-
-    public:
-        typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_2 Approximate_point;
-
-// Register this KDS with the MovingObjectTable and the Simulator
-        Planar_arrangement(Traits tr):tr_(tr),
-            ik_(tr.instantaneous_kernel_object()),
-            less_(ik_.less_x_1_object()),
-            siml_(tr.simulator_pointer(), this),
-            motl_(tr.active_objects_table_pointer(), this){}
-
-        Approximate_point vertex(int i) const
-        {
-            return approx_coords_[i];
-        }
-
-        size_t vertices_size() const
-        {
-            return approx_coords_.size();
-        }
-
-        typedef std::vector<Edge >::const_iterator Edges_iterator;
-        Edges_iterator edges_begin() const
-        {
-            return edges_.begin();
-        }
-        Edges_iterator edges_end() const
-        {
-            return edges_.end();
-        }
-
-        void write(std::ostream &out) const
-        {
-            if (tr_.simulator_pointer()->has_rational_current_time()) {
-                ik_.set_time(tr_.simulator_pointer()->rational_current_time());
-            }
-            for (typename std::list<Cut_pair>::const_iterator it
-            = sorted_.begin(); it != sorted_.end(); ++it) {
-                out << it->first;
-                if (tr_.simulator_pointer()->has_rational_current_time()) {
-                    out << "=(" << ik_.static_object(it->first) << ") ";
-                }
-                else {
-                    out << " ";
-                }
-            }
-            out << std::endl;
-        }
-
-/* Insert k and update the affected certificates. std::upper_bound
-   returns the first place where an item can be inserted in a sorted
-   list. Called by the MOT_listener. This adds an vertex for the
-   start of the curve.*/
-        void insert(typename Traits::Active_objects_table::Key k) {
-//std::cout << "Inserting " << k <<std::endl;
-            ik_.set_time(tr_.simulator_pointer()->rational_current_time());
-            Cut_pair cp(k, new_point(k));
-            iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
-                cp,less_);
-
-            std::cout << "Curve " << k << " starts at "
-                << tr_.simulator_pointer()->rational_current_time();
-            if (it != sorted_.end()) {
-                std::cout << " below curve " << next(it)->first;
-            }
-            std::cout << std::endl;
-
-            sorted_.insert(it, cp);
-            rebuild_certificate(--it); rebuild_certificate(--it);
-
-            write(std::cout);
-            std::cout << std::endl;
-        }
-
-/* Rebuild the certificate for the pair of points *it and *(++it).
-   If there is a previous certificate there, deschedule it.*/
-        void rebuild_certificate(const iterator it) {
-            typename Traits::Simulator::Pointer sp= tr_.simulator_pointer();
-            typename Traits::Active_objects_table::Pointer mp= tr_.active_objects_table_pointer();
-
-            if (it == sorted_.end()) return;
-            if (events_.find(it->first) != events_.end()) {
-                tr_.simulator_pointer()->delete_event(events_[it->first]); events_.erase(it->first);
-            }
-            assert(find(it->first) == it);
-            iterator n= next(it);
-            if (n== sorted_.end()) return;
-            typename Traits::Kinetic_kernel::Less_x_1 less= tr_.kinetic_kernel_object().less_x_1_object();
-            typename Traits::Simulator::Root_stack s
-                = sp->root_stack_object(less(mp->at(it->first),
-                mp->at(n->first)));
-// the Simulator will detect if the failure time is at infinity
-            if (!s.empty()) {
-                typename Traits::Simulator::Time t= s.top();
-                s.pop();
-                Event e(it, this,s);
-                events_[it->first]= sp->new_event(t, e);
-            } else events_[it->first]= sp->null_event();
-        }
-
-/* Swap the pair of objects with *it as the first element.  The old
-   solver is used to compute the next root between the two points
-   being swapped. This method is called by an Event object. This
-   addes a new vertex and two new edges.*/
-        void swap(const typename Traits::Simulator::Time &t, iterator it,
-        typename Traits::Simulator::Root_stack &s) {
-            std::cout << "Curves " << it->first << " and " << next(it)->first
-                << " intersect at " << t << std::endl;
-            typename Traits::Simulator::Pointer sp= tr_.simulator_pointer();
-            assert(find(it->first) == it);
-            events_.erase(it->first);
-            iterator n= next(it);
-            if (*n!= sorted_.back()) sp->delete_event(events_[n->first]);
-            events_.erase(next(it)->first);
-
-            int swap_point= new_point(it->first);
-            edges_.push_back(Edge(swap_point, it->second));
-            edges_.push_back(Edge(swap_point, next(it)->second));
-            it->second= swap_point;
-            next(it)->second=swap_point;
-
-            std::swap(*it, *next(it));
-            rebuild_certificate(next(it));
-            if (!s.empty()) {
-                typename Traits::Simulator::Time t= s.top(); s.pop();
-                events_[it->first]= sp->new_event(t, Event(it, this,s));
-            } else events_[it->first]= sp->null_event();
-            if (it != sorted_.begin()) rebuild_certificate(--it);
-        }
-
-/* Verify the structure by checking that the current coordinates are
-   properly sorted for time t. This function is called by the Sim_listener.*/
-        void audit() const
-        {
-            if (sorted_.size() <2) return;
-            typename Traits::Simulator::Const_pointer sp= tr_.simulator_pointer();
-            ik_.set_time(sp->rational_current_time());
-//typename Instantaneous_kernel::Less_x_2 less= kernel_i_.less_x_2_object();
-            for (typename std::list<Cut_pair>::const_iterator it
-            = sorted_.begin(); it->first != sorted_.back().first; ++it) {
-                if (!less_(*next(it), *it)) {
-                    write(std::cerr);
-                }
-            }
-        }
-
-/* Update the certificates adjacent to object k. This method is called by
-   the MOT_listener. std::equal_range finds all items equal
-   to a key in a sorted list (there can only be one).*/
-        void set(typename Traits::Active_objects_table::Key k) {
-            iterator it =  find(k);
-            rebuild_certificate(it); rebuild_certificate(--it);
-        }
-
-/* Remove object k and destroy 2 certificates and create one new one.
-   This function is called by the MOT_listener. One new vertex and one new edge are added.*/
-        void erase(typename Traits::Active_objects_table::Key k) {
-            std::cout << "Curve " << k << " ends at "
-                << tr_.simulator_pointer()->rational_current_time() << std::endl;
-            iterator it =  find(k);
-            int lastp= it->second;
-            iterator p= it; --p;
-            tr_.simulator_pointer()->delete_event(events_[k]);
-            sorted_.erase(it);
-            rebuild_certificate(p);
-            events_.erase(k);
-
-            edges_.push_back(Edge(lastp, new_point(k)));
-        }
-
-        template <class It> static It next(It it){ return ++it;}
-
-        iterator find(typename Traits::Active_objects_table::Key k) {
-            iterator it = sorted_.begin();
-            while (it != sorted_.end()) {
-                if (it->first ==k) return it;
-                ++it;
-            }
-            assert(0);
-            return it;
-        }
-
-        int new_point(typename Traits::Active_objects_table::Key k) {
-            double tv= CGAL::to_double(tr_.simulator_pointer()->current_time());
-            double dv= CGAL::to_double(tr_.active_objects_table_pointer()->at(k).x()(tv));
-            approx_coords_.push_back(Approximate_point(tv, dv));
-            return approx_coords_.size()-1;
-        }
-
-        typedef typename std::list<typename Traits::Active_objects_table::Key>::const_iterator Key_iterator;
-        Key_iterator begin() const
-        {
-            return sorted_.begin();
-        }
-        Key_iterator end() const
-        {
-            return sorted_.end();
-        }
-        ~Planar_arrangement() {
-            for (typename std::map<typename Traits::Active_objects_table::Key,
-                typename Traits::Simulator::Event_key >::iterator it= events_.begin();
-            it != events_.end(); ++it) {
-                tr_.simulator_pointer()->delete_event(it->second);
-            }
-        }
-
-        Traits tr_;
-// The points in sorted order
-        std::list<Cut_pair > sorted_;
-// events_[k] is the certificates between k and the object after it
-        std::map<typename Traits::Active_objects_table::Key,
-            typename Traits::Simulator::Event_key > events_;
-        std::vector<Edge > edges_;
-        std::vector<Approximate_point > approx_coords_;
-        typename Traits::Instantaneous_kernel ik_;
-        Compare_first less_;
-        Sim_listener siml_;
-        MOT_listener motl_;
+  Arrangement *p_;
 };
 
-/* It needs to implement the time() and process() functions and
-   operator<< */
-template <class Planar_arrangement, class Id, class Solver>
-class Swap_event
-{
-    public:
-        Swap_event(Id o, Planar_arrangement* sorter,
-            const Solver &s): left_object_(o), sorter_(sorter), s_(s){}
-        void process(const typename Solver::Root &t) {
-            sorter_->swap(t, left_object_, s_);
-        }
-        Id left_object_; Planar_arrangement* sorter_; Solver s_;
+
+
+template <class TraitsT> 
+class Planar_arrangement: public CGAL::KDS::Sort<TraitsT, 
+						 Sort_arrangement_visitor<Planar_arrangement<TraitsT> > > {
+  typedef TraitsT Traits;
+  typedef Planar_arrangement<TraitsT> This;
+  typedef typename CGAL::KDS::Sort<TraitsT, Sort_arrangement_visitor<Planar_arrangement<TraitsT> > > Sort;
+  typedef Sort_arrangement_visitor<This> Visitor;
+  typedef typename Traits::Active_objects_table::Key Key;
+
+public:
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_2 Approximate_point;
+  typedef std::pair<int,int> Edge;
+  typedef typename Sort::Vertex_handle Vertex_handle; 
+
+  // Register this KDS with the MovingObjectTable and the Simulator
+  Planar_arrangement(Traits tr): Sort(tr, Visitor(this)) {}
+
+  Approximate_point vertex(int i) const
+  {
+    return approx_coords_[i];
+  }
+
+  size_t vertices_size() const
+  {
+    return approx_coords_.size();
+  }
+
+  typedef std::vector<Edge >::const_iterator Edges_iterator;
+  Edges_iterator edges_begin() const
+  {
+    return edges_.begin();
+  }
+  Edges_iterator edges_end() const
+  {
+    return edges_.end();
+  }
+
+  void insert(Vertex_handle k) {
+    last_points_[*k]=new_point(*k);
+  }
+
+  void swap(Vertex_handle a, Vertex_handle b) {
+    int swap_point= new_point(*a);
+    edges_.push_back(Edge(swap_point, last_points_[*a]));
+    edges_.push_back(Edge(swap_point, last_points_[*b]));
+    last_points_[*a]= swap_point;
+    last_points_[*b]= swap_point;
+  }
+
+  void erase(Vertex_handle a) {
+    edges_.push_back(Edge(last_points_[*a], new_point(*a)));
+  }
+
+  int new_point(typename Traits::Active_objects_table::Key k) {
+    double tv= CGAL::to_double(Sort::traits().simulator_pointer()->current_time());
+    double dv= CGAL::to_double(Sort::traits().active_objects_table_pointer()->at(k).x()(tv));
+    approx_coords_.push_back(Approximate_point(tv, dv));
+    return approx_coords_.size()-1;
+  }
+
+  std::vector<Approximate_point > approx_coords_;
+  std::map<Key, int> last_points_;
+  std::vector<Edge> edges_;
+
 };
-template <class S, class I, class SS>
-std::ostream &operator<<(std::ostream &out,
-const Swap_event<S,I,SS> &ev)
-{
-    return out << "swap " << ev.left_object_->first ;
-}
 
-
-double snap(double v)
-{
-    double ival= static_cast<int>((v*1000))/1000.0;
-    if (ival > 10) return 20;
-    else if (ival <-10) return 0;
-    else return ival+10;
+template <class NT>
+double snap(NT v) {
+  double ival= std::floor(CGAL::to_double(v)*1024.0)/1024.0;
+  if (ival > 10) return 20.0;
+  else if (ival <-10) return 0.0;
+  else return ival+10;
 }
 
 
 int main(int, char *[])
 {
-    typedef CGAL::KDS::Exact_simulation_traits_1 Traits;
-    typedef Traits::Kinetic_kernel::Point_1 Moving_point;
-    typedef Traits::Simulator::Time Time;
-    typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> Insert_event;
-    typedef CGAL::KDS::Erase_event<Traits::Active_objects_table> Erase_event;
-    typedef Planar_arrangement<Traits> Sort;
+  typedef CGAL::KDS::Inexact_simulation_traits_1 Traits;
+  typedef Traits::Kinetic_kernel::Point_1 Point;
+  typedef Traits::Simulator::Time Time;
+  typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> Insert_event;
+  typedef CGAL::KDS::Erase_event<Traits::Active_objects_table> Erase_event;
+  typedef Planar_arrangement<Traits> Arrangement;
 
-    Traits tr;
-    Sort sort(tr);
+  Traits tr;
+  Arrangement sort(tr);
 
-    typedef Traits::NT NT;
-    typedef std::pair<NT, NT> Ival;
-    typedef std::pair<Ival,  Traits::Function_kernel::Function> Cv;
-    typedef Traits::Function_kernel::Construct_function CF;
-    std::vector<Cv> curves;
-    CF fc= tr.function_kernel_object().construct_function_object();
+  typedef Traits::NT NT;
 
-    curves.push_back(Cv(Ival(NT(0), NT(9.9)), fc(NT(0), NT(.9), NT(-.05))));
-    curves.push_back(Cv(Ival(NT(.1), NT(8)), fc(NT(3),NT(0), NT(.05))));
-    curves.push_back(Cv(Ival(NT(.2), NT(7)), fc(NT(2),NT(.8),NT(-.06))));
-    curves.push_back(Cv(Ival(NT(.5), NT(8)), fc(NT(6),NT(.2),NT(-.03))));
-    curves.push_back(Cv(Ival(NT(1), NT(9.9)), fc(NT(2.3),NT(-.03))));
-    curves.push_back(Cv(Ival(NT(3), NT(5)), fc(NT(1),NT(.7),NT( -.04))));
-    curves.push_back(Cv(Ival(NT(6), NT(9)), fc(NT(-9),NT(.5),NT(-.013), NT(.0012), NT(-.00040))));
+  Traits::Simulator::Pointer sp= tr.simulator_pointer();
 
-    Traits::Simulator::Pointer sp= tr.simulator_pointer();
+  std::ifstream in("data/sweepline.input");
 
-    for (unsigned int i=0; i< curves.size(); ++i) {
-        tr.simulator_pointer()->new_event(Time(curves[i].first.first),
-            Insert_event(Moving_point(curves[i].second),
-            tr.active_objects_table_pointer()));
-        tr.simulator_pointer()->new_event(Time(curves[i].first.second),
-            Erase_event(Traits::Active_objects_table::Key(i),
-            tr.active_objects_table_pointer()));
+  int num=0; 
+  std::vector<std::pair<NT, NT> > extents;
+  std::vector<Point> points;
+  do {
+    char buf[1000];
+    in.getline(buf, 1000);
+    if (!in) break;
+    std::istringstream iss(buf);
+    NT begin, end;
+    Point pt;
+    iss >> begin;
+    iss >> end;
+    iss >> pt;
+    CGAL_assertion(begin < end);
+    extents.push_back(std::make_pair(begin, end));
+    points.push_back(pt);
+    tr.simulator_pointer()->new_event(Time(begin),
+				      Insert_event(pt, tr.active_objects_table_pointer()));
+    tr.simulator_pointer()->new_event(Time(end),
+				      Erase_event(Traits::Active_objects_table::Key(num),
+						  tr.active_objects_table_pointer()));
+    ++num;
+  } while (true);
+
+  std::cout << *sp << std::endl;
+
+  while (sp->next_event_time() < sp->end_time()) {
+    sp->set_current_event_number(sp->current_event_number()+1);
+    //std::cout << *sp << std::endl;
+    //std::cout << sort << std::endl;
+  }
+
+  // output to metapost
+  std::ofstream mpostfile("sweepline.mp");
+
+  mpostfile << "beginfig(0)\n";
+  mpostfile << "u:=20.0pt;\n";
+  mpostfile << "pickup pencircle scaled 0.05u;\n";
+  mpostfile << "%" << std::ios::fixed<< std::endl;
+
+  for (Arrangement::Edges_iterator it = sort.edges_begin(); it != sort.edges_end(); ++it) {
+    mpostfile << "draw(" << snap(sort.vertex(it->first).x()) << "u, "
+	      << snap(sort.vertex(it->first).y()) << "u)";
+    mpostfile << "--(" << snap(sort.vertex(it->second).x()) << "u, "
+	      << snap(sort.vertex(it->second).y()) << "u) withcolor black;\n";
+  }
+
+  for (unsigned int i=0; i< points.size(); ++i) {
+    mpostfile << "draw(";
+    std::cout << extents[i].first << " " << extents[i].second << std::endl;
+    for (NT t= extents[i].first; t < extents[i].second; t += .01) {
+      NT ntv= points[i].x()(t);
+      double val= snap(ntv);
+
+      mpostfile << snap(t) << "u, " << val << "u)\n--(";
+
     }
+    mpostfile << snap(extents[i].second) << "u, "
+	      << snap(points[i].x()(extents[i].second))
+	      << "u) withcolor red;\n";
+  }
 
-    while (sp->next_event_time() < sp->end_time()) {
-        sp->set_current_event_number(sp->current_event_number()+1);
-    }
+  //for (double t =0; t<
 
-// output to metapost
-    std::ofstream mpostfile("arrangement.mp");
-
-    mpostfile << "beginfig(0)\n";
-    mpostfile << "u:=20.0pt;\n";
-    mpostfile << "pickup pencircle scaled 0.05u;\n";
-    mpostfile << "%" << std::ios::fixed<< std::endl;
-
-    for (Sort::Edges_iterator it = sort.edges_begin(); it != sort.edges_end(); ++it) {
-        mpostfile << "draw(" << snap(sort.vertex(it->first).x()) << "u, "
-            << snap(sort.vertex(it->first).y()) << "u)";
-        mpostfile << "--(" << snap(sort.vertex(it->second).x()) << "u, "
-            << snap(sort.vertex(it->second).y()) << "u) withcolor black;\n";
-    }
-
-    for (unsigned int i=0; i< curves.size(); ++i) {
-        mpostfile << "draw(";
-        for (double t= CGAL::to_double(curves[i].first.first); t < CGAL::to_double(curves[i].first.second); t += .01) {
-            double val= snap(CGAL::to_double(curves[i].second(t)));
-
-            mpostfile << snap(t) << "u, " << val << "u)\n--(";
-
-        }
-        mpostfile << snap(CGAL::to_double(curves[i].first.second)) << "u, "
-            << snap(CGAL::to_double(curves[i].second(curves[i].first.second)))
-            << "u) withcolor red;\n";
-    }
-
-//for (double t =0; t<
-
-    mpostfile << "endfig\n";
-    return EXIT_SUCCESS;
+  mpostfile << "endfig\n";
+  return EXIT_SUCCESS;
 }
