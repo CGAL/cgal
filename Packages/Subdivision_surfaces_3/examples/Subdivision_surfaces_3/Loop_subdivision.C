@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   Polyhedron P;
   in >> P; // read the .off
 
-  Subdivision_surfaces_3<Polyhedron>::Loop_subdivision(P,d);
+  Subdivision_method_3<Polyhedron>::Loop_subdivision(P,d);
 
   cout << P; // write the .off
   

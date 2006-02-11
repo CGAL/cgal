@@ -15,7 +15,7 @@ typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 using namespace std;
 using namespace CGAL;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc != 3) { 
     cout << "Usage: CatmullClark_subdivision filename d" << endl; 
     cout << "       filename: the input mash (.off)" << endl; 
@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   Polyhedron P;
   in >> P; // read the .off
 
-  Subdivision_surfaces_3<Polyhedron>::CatmullClark_subdivision(P,d);
+  Subdivision_method_3<Polyhedron>::CatmullClark_subdivision(P,d);
 
   cout << P; // write the .off
   

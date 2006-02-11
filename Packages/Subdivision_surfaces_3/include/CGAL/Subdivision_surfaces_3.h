@@ -38,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
 // ======================================================================
 //
 template <class Poly>
-class Subdivision_surfaces_3 : public Polyhedron_decorator_3<Poly> {
+class Subdivision_method_3 : public Polyhedron_decorator_3<Poly> {
   typedef Poly                                        Polyhedron;
 
   typedef typename Polyhedron::Halfedge_data_structure HDS;
@@ -137,7 +137,7 @@ protected:
 // ======================================================================
 //
 template <class Poly> template <template <typename> class Stencil>
-void Subdivision_surfaces_3<Poly>::PQQ_1step(Poly& p, Stencil<Poly> rule) {
+void Subdivision_method_3<Poly>::PQQ_1step(Poly& p, Stencil<Poly> rule) {
   p.normalize_border();
 
   // Build a new vertices buffer has the following structure
@@ -238,7 +238,7 @@ void Subdivision_surfaces_3<Poly>::PQQ_1step(Poly& p, Stencil<Poly> rule) {
 // ======================================================================
 //
 template <class Poly> template <template <typename> class Stencil>
-void Subdivision_surfaces_3<Poly>::PTQ_1step(Poly& p, Stencil<Poly> rule) {
+void Subdivision_method_3<Poly>::PTQ_1step(Poly& p, Stencil<Poly> rule) {
   p.normalize_border();
 
   // Build a new vertices buffer has the following structure
@@ -323,7 +323,7 @@ void Subdivision_surfaces_3<Poly>::PTQ_1step(Poly& p, Stencil<Poly> rule) {
 //#define _EULER_DQQ_SPLITTING
 #define _EULER_DQQ_TILTING   // Tilting is faster
 template <class Poly> template <template <typename> class Stencil>
-void Subdivision_surfaces_3<Poly>::DQQ_1step(Poly& p, Stencil<Poly> rule) {
+void Subdivision_method_3<Poly>::DQQ_1step(Poly& p, Stencil<Poly> rule) {
   p.normalize_border();
 
   size_t num_v = p.size_of_vertices();
@@ -509,7 +509,7 @@ void Subdivision_surfaces_3<Poly>::DQQ_1step(Poly& p, Stencil<Poly> rule) {
 // ======================================================================
 //
 template <class Poly> template <template <typename> class Stencil>
-void Subdivision_surfaces_3<Poly>::Sqrt3_1step(Poly& p, Stencil<Poly> rule) {
+void Subdivision_method_3<Poly>::Sqrt3_1step(Poly& p, Stencil<Poly> rule) {
   //
   p.normalize_border();
 
