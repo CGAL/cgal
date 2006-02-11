@@ -36,24 +36,24 @@ CGAL_KDS_BEGIN_NAMESPACE
 template <class Simulator_listener, class KDS>
 class Simulator_kds_listener: public Simulator_listener
 {
-    typedef Simulator_listener P;
-    public:
-//! The only constructor
-        Simulator_kds_listener(typename P::Notifier_pointer sim,
-        KDS *kds): P(sim), t_(kds) {
-            CGAL_precondition(kds != NULL);
-        }
-        Simulator_kds_listener(){}
-//! Pass HAS_AUDIT_TIME notifications via a call to the audit() function
-        void new_notification(typename P::Notification_type t) {
-            if (t== P::HAS_AUDIT_TIME) {
-                if (P::notifier()->has_audit_time()) {
-                    t_->audit();
-                }
-            }
-        }
-    protected:
-        KDS *t_;
+  typedef Simulator_listener P;
+public:
+  //! The only constructor
+  Simulator_kds_listener(typename P::Notifier_pointer sim,
+			 KDS *kds): P(sim), t_(kds) {
+    CGAL_precondition(kds != NULL);
+  }
+  Simulator_kds_listener(){}
+  //! Pass HAS_AUDIT_TIME notifications via a call to the audit() function
+  void new_notification(typename P::Notification_type t) {
+    if (t== P::HAS_AUDIT_TIME) {
+      if (P::notifier()->has_audit_time()) {
+	t_->audit();
+      }
+    }
+  }
+protected:
+  KDS *t_;
 };
 
 CGAL_KDS_END_NAMESPACE
