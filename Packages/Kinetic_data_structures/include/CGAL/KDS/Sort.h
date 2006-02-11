@@ -20,16 +20,17 @@
 #ifndef CGAL_KDS_TESTING_SORT_H
 #define CGAL_KDS_TESTING_SORT_H
 #include <CGAL/KDS/basic.h>
+#include <CGAL/KDS/Active_objects_listener_helper.h>
 #include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
+#include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/KDS/Simulator_kds_listener.h>
+#include <CGAL/KDS/Sort_visitor_base.h>
 #include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <list>
 #include <map>
 #include <set>
-#include <list>
-#include <iterator>
-#include <iostream>
-#include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Active_objects_listener_helper.h>
-#include <CGAL/KDS/Simulator_kds_listener.h>
 
 CGAL_KDS_BEGIN_NAMESPACE
 
@@ -42,11 +43,11 @@ class Swap_event;
   code is designed to be read, so read it if you want to figure out
   what is going on.
 */
-template <class Traits> class Sort:
+template <class Traits, class Visitor=Sort_visitor_base> class Sort:
 // for ref counted pointers
-  public Ref_counted<Sort< Traits> >
+  public Ref_counted<Sort< Traits, Visitor> >
 {
-  typedef Sort<Traits> This;
+  typedef Sort<Traits, Visitor> This;
   // The way the Simulator represents time.
   typedef typename Traits::Simulator::Time Time;
   // A label for a moving primitive in the MovingObjectTable
@@ -68,12 +69,29 @@ template <class Traits> class Sort:
 				 This> MOT_listener;
 public:
   // Register this KDS with the MovingObjectTable and the Simulator
-  Sort(Traits tr): kk_(tr.kinetic_kernel_object()),
-		   ik_(tr.instantaneous_kernel_object()){
+  Sort(Traits tr, Visitor v=Visitor()): kk_(tr.kinetic_kernel_object()),
+					ik_(tr.instantaneous_kernel_object()), v_(v),
+					tr_(tr){
     sim_listener_= Sim_listener(tr.simulator_pointer(), this);
-    mot_listener_=MOT_listener(tr.active_objects_table_pointer(), this);
-    wrote_objects_=false;
+    mot_listener_= MOT_listener(tr.active_objects_table_pointer(), this);
+    wrote_objects_= false;
   }
+
+  const Visitor& visitor() const {
+    return v_;
+  }
+  Visitor& visitor() {
+    return v_;
+  }
+
+  Traits &traits() {
+    return tr_;
+  }
+  const Traits &traits() const {
+    return tr_;
+  }
+
+  typedef iterator Vertex_handle;
 
   /* Insert k and update the affected certificates. std::upper_bound
      returns the first place where an item can be inserted in a sorted
@@ -83,15 +101,25 @@ public:
     ik_.set_time(simulator()->rational_current_time());
     iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
 				   k, ik_.less_x_1_object());
+    /*if (it != sorted_.end()) {
+      v_.remove_edge(prior(it), it);
+      }*/
     sorted_.insert(it, k);
-    rebuild_certificate(--it); rebuild_certificate(--it);
+    v_.create_vertex(prior(it));
+    
+    rebuild_certificate(prior(it)); 
+    //v_.create_edge(prior(it), it);
+    if (prior(it) != sorted_.begin()) {
+      rebuild_certificate(prior(prior(it)));
+      //v_.create_edge(prior(prior(it)), prior(it));
+    }
     //write(std::cout);
   }
 
   /* Rebuild the certificate for the pair of points *it and *(++it).
      If there is a previous certificate there, deschedule it.*/
   void rebuild_certificate(const iterator it) {
-    if (it == sorted_.end()) return;
+    CGAL_precondition(it != sorted_.end());
     if (events_.find(*it) != events_.end()) {
       simulator()->delete_event(events_[*it]); events_.erase(*it);
     }
@@ -109,21 +137,33 @@ public:
     } else events_[*it]= simulator()->null_event();
   }
 
+
+
   /* Swap the pair of objects with *it as the first element.  The old
      solver is used to compute the next root between the two points
      being swapped. This method is called by an Event object.*/
   void swap(iterator it, typename Traits::Simulator::Root_stack &s) {
+    v_.before_swap(it, next(it));
     events_.erase(*it);
     iterator n= next(it);
     if (*n!= sorted_.back()) simulator()->delete_event(events_[*n]);
     events_.erase(*next(it));
+
     std::swap(*it, *next(it));
-    rebuild_certificate(next(it));
+    if (next(it) != sorted_.end()) {
+      rebuild_certificate(next(it));
+      //v_.create_edge(next(it)), next(next(it));
+    }
     if (!s.empty()) {
       Time t= s.top(); s.pop();
       events_[*it]= simulator()->new_event(t, Event(it, this,s));
     } else events_[*it]= simulator()->null_event();
-    if (it != sorted_.begin()) rebuild_certificate(--it);
+    v_.after_swap(it, next(it));
+    if (it != sorted_.begin()) {
+      rebuild_certificate(--it);
+      //v_.create_edge(it, next(it));
+    }
+    
     //write(std::cout);
     //std::cout << "At time " << simulator()->current_time() << std::endl;
   }
@@ -182,20 +222,31 @@ public:
      to a key in a sorted list (there can only be one).*/
   void set(Object_key k) {
     iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
+    v_.modify_vertex(it);
     rebuild_certificate(it); rebuild_certificate(--it);
   }
 
   /* Remove object k and destroy 2 certificates and create one new one.
      This function is called by the MOT_listener.*/
   void erase(Object_key k) {
-    iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
+    iterator it;
+    for (it = sorted_.begin(); it != sorted_.end(); ++it){
+      if (*it==k) break;
+    }
+    //iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
+    CGAL_precondition(it != sorted_.end());
+    CGAL_precondition(*it == k);
     iterator p= it; --p;
+    v_.remove_vertex(it);
     sorted_.erase(it);
-    rebuild_certificate(p);
+    if (p != sorted_.end()) {
+      rebuild_certificate(p);
+    }
     simulator()->delete_event(events_[k]);
     events_.erase(k);
   }
   template <class It> static It next(It it){ return ++it;}
+  template <class It> static It prior(It it){ return --it;}
   typename Traits::Active_objects_table::Data object(Object_key k) const
   {
     return mot_listener_.notifier()->at(k);
@@ -233,8 +284,16 @@ public:
   //#ifndef NDEBUG
   mutable bool wrote_objects_;
   mutable std::map<Object_key, std::set<Object_key> > warned_;
+  Visitor v_;
+  Traits tr_;
   //#endif
 };
+
+template <class Traits, class Visitor>
+std::ostream &operator<<(std::ostream &out, const Sort<Traits, Visitor> &s) {
+  s.write(out);
+  return out;
+}
 
 /* It needs to implement the time() and process() functions and
    operator<< */

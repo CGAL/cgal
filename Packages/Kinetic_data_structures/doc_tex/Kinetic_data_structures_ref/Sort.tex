@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{KDS::Sort<Traits>}  %% add template arg's if necessary
+\begin{ccRefClass}{KDS::Sort<Traits, SortVisitor>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -23,8 +23,7 @@ simplest kinetic data structure provided and is a good place to start
 when looking at the basics of implementing a kinetic data
 structure. 
 
-Note that it does not expose any programming interface, as it is meant
-mostly as an example.
+The \ccc{SortVisitor} can be used to monitor what is happening.
 
 \ccInclude{CGAL/KDS/Sort.h}
 
@@ -32,6 +31,20 @@ mostly as an example.
 \ccCreationVariable{s}  %% choose variable name
 
 \ccConstructor{Sort(Traits tr);}{The basic constructor.}
+
+\ccTypes
+
+\ccNestedType{Visitor}{The type of the visitor.}
+
+\ccNestedType{Traits}{The traits type.}
+
+\ccNestedType{Vertex_handle}{The handle used to refer to vertex in the sorted list. Derefernecing this returns a \ccc{Key} into the \ccc{ActiveObjectsTable}.}
+
+\ccOperations
+
+\ccMethod{Visitor& visitor();}{Access the visitor.}
+
+\ccMethod{Traits& traits();}{Access the traits.}
 
 \ccSeeAlso
 

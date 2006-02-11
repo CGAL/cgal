@@ -1,0 +1,39 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSDelaunayTriangulationVisitorRev}{$Revision$}
+\RCSdefDate{\RCSDelaunayTriangulationVisitorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{SortVisitor}
+
+\ccDefinition
+
+This concept is for proxy objects which get notified when a kinetic sorting changes.
+
+\ccCreationVariable{v}
+
+\ccOperations
+
+\ccMethod{void remove_vertex(Vertex_handle);}{The vertex is about to be deleted.}
+
+\ccMethod{void create_vertex(Vertex_handle);}{The vertex was just created.}
+
+\ccMethod{void modify_vertex(Vertex_handle);}{Something changed at the vertex.}
+
+\ccMethod{void before_swap(Vertex_handle, Vertex_handle);}{The pair of vertices is about to be exchanged.}
+
+\ccMethod{void after_swap(Vertex_handle, Vertex_handle);}{The pair of vertices was just swapped.}
+
+
+\ccHasModels 
+
+\ccc{CGAL::KDS::Sort_visitor_base}, \ccc{CGAL::KDS::Sort_event_log_visitor}
+
+\end{ccRefConcept}
+
+
