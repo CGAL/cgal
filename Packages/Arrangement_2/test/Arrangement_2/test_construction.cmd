@@ -33,3 +33,10 @@
 ./data/test_construction/test33.txt
 ./data/test_construction/test34.txt
 ./data/test_construction/test35.txt
+./data/test_construction/test36.txt
+./data/test_construction/test37.txt
+./data/test_construction/test38.txt
+./data/test_construction/test39.txt
+./data/test_construction/test40.txt
+./data/test_construction/test41.txt
+./data/test_construction/test42.txt
