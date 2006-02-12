@@ -53,7 +53,7 @@ public:
     if(! sc->get_orig_subcurve1())
     {
       return (reinterpret_cast<Event*>(sc->get_left_event())!= 
-	      this->current_event());
+              this->current_event());
     }
     return
       (this->is_split_event(reinterpret_cast<Subcurve*>(sc->get_orig_subcurve1()),
@@ -62,7 +62,9 @@ public:
                       event));
   }
 
-  virtual Halfedge_handle split_edge(Halfedge_handle he , const Point_2& pt)
+  virtual Halfedge_handle split_edge(Halfedge_handle he,
+                                     Subcurve* sc,
+                                     const Point_2& pt)
   {
     // make sure that the halfedge associated with 'sc' is the directed from
     // right to left , since we always 'look' above , and the incident face 
@@ -70,8 +72,13 @@ public:
     CGAL_assertion (he->direction() == LARGER);
     
     this->traits()->split_2_object()(he->curve(), pt, this->sub_cv2, this->sub_cv1);
-    return (this->m_arr_access.split_edge_ex (he, pt.base(),
-					      this->sub_cv1.base(), this->sub_cv2.base()));
+    Halfedge_handle new_he =  
+      this->m_arr_access.split_edge_ex (he,
+                                        pt.base(),
+                                        this->sub_cv1.base(),
+                                        this->sub_cv2.base());
+    reinterpret_cast<Event*>(sc->get_left_event())->set_halfedge_handle(new_he->next());
+    return (new_he);
   }
      
 

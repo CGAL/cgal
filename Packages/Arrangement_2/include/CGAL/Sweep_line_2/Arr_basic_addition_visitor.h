@@ -119,6 +119,7 @@ public:
         else
         {
           he = split_edge((*iter)->get_last_curve().get_halfedge_handle(),
+                          (*iter),
                            event->get_point());
           
           // 'he' has the same source as the splitted halfedge
@@ -205,7 +206,9 @@ public:
     return (this->m_arr->insert_at_vertices (cv.base(), hhandle, prev));
   }
 
-  virtual Halfedge_handle split_edge(Halfedge_handle /*he*/ , const Point_2& /*pt*/)
+  virtual Halfedge_handle split_edge(Halfedge_handle /*he*/,
+                                     Subcurve* /*sc*/,
+                                     const Point_2& /*pt*/)
   {
     return Halfedge_handle();
   }
