@@ -77,7 +77,10 @@ public:
                                         pt.base(),
                                         this->sub_cv1.base(),
                                         this->sub_cv2.base());
-    reinterpret_cast<Event*>(sc->get_left_event())->set_halfedge_handle(new_he->next());
+
+    Event* last_event_on_sc = reinterpret_cast<Event*>(sc->get_last_event());
+    if(last_event_on_sc->get_halfedge_handle() == he)
+      last_event_on_sc->set_halfedge_handle(new_he->next());
     return (new_he);
   }
      
