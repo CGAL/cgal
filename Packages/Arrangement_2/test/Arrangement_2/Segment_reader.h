@@ -43,8 +43,6 @@ public:
       Point_2 p1(x1, y1);
       Point_2 p2(x2, y2);
 
-      CGAL_assertion (p1 != p2);
-
       Curve_2 curve(p1, p2);
       ++curves_out = curve;
 
