@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2005 by Le-Jeng Shiue.  All Rights Reserved.
+// Copyright (c) 2005-2006 by Le-Jeng Shiue.  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -16,8 +16,9 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s): Le-Jeng Shiue <sle-jeng@cise.ufl.edu>
-//                          <SurfLab, CISE, University of Florida>
+// Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
+//                          <1998-2005 SurfLab, CISE, University of Florida>
+//                          <2005-     RapidMind Inc.>
 //
 // ======================================================================
 
@@ -152,12 +153,12 @@ namespace Subdivision_method_3 {
     for (size_t i = 0; i < num_vertex; i++, ++vitr)
       if (!v_onborder[i]) mask.vertex_node(vitr, vertex_point_buffer[i]);
 
-    // Build the connectifty using insert_vertex() and insert_edge()
+    // Build the connectivity using insert_vertex() and insert_edge()
     // 1. insert_vertex() to all edges and set them to new positions
     // 2. insert_edge() between 2 randomly selected neighboring new inserted 
     //    vertices
     // 3. insert_vertex() to the new inserted edge and set them to new positions
-    // 4. insert_edge() between all other new inserted vetices of step 1 and
+    // 4. insert_edge() between all other new inserted vertices of step 1 and
     //    the new inserted vertex of step 3
     // Step 1.
     eitr = p.edges_begin();
@@ -271,12 +272,12 @@ namespace Subdivision_method_3 {
     for (size_t i = 0; i < num_vertex; i++, ++vitr)
       if (!v_onborder[i]) mask.vertex_node(vitr, vertex_point_buffer[i]);
 
-    // Build the connectifty using insert_vertex() and insert_edge()
+    // Build the connectivity using insert_vertex() and insert_edge()
     // 1. insert_vertex() to all edges and set them to new positions
     // 2. insert_edge() between 2 randomly selected neighboring new inserted 
     //    vertices
     // 3. insert_vertex() to the new inserted edge and set them to new positions
-    // 4. insert_edge() between all other new inserted vetices of step 1 and
+    // 4. insert_edge() between all other new inserted vertices of step 1 and
     //    the new inserted vertex of step 3
     // Step 1.
     eitr = p.edges_begin();
@@ -375,8 +376,8 @@ namespace Subdivision_method_3 {
     // the CGAL_assertion. This function for polyhedron using list is VOID.
     p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
-    // Build the connectifty using insert_vertex() and insert_edge()
-    // 1. create barycetric centers of each facet
+    // Build the connectivity using insert_vertex() and insert_edge()
+    // 1. create barycentric centers of each facet
     fitr = p.facets_begin();
     pi = 0;
     for (size_t i = 0; i < num_f; i++) {
@@ -447,7 +448,7 @@ namespace Subdivision_method_3 {
     // the CGAL_assertion. This function for polyhedron using list is VOID.
     p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
-    // Build the connectifity using insert_vertex() and insert_edge()
+    // Build the connectivity using insert_vertex() and insert_edge()
     vitr = p.vertices_begin();
     pi = 0;
     for (size_t i = 0; i < num_v; ++i) {

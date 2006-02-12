@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2005 by Le-Jeng Shiue.  All Rights Reserved.
+// Copyright (c) 2005-2006 by Le-Jeng Shiue.  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -16,8 +16,9 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s): Le-Jeng Shiue <sle-jeng@cise.ufl.edu>
-//                          <SurfLab, CISE, University of Florida>
+// Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
+//                          <1998-2005 SurfLab, CISE, University of Florida>
+//                          <2005-     RapidMind Inc.>
 //
 // ======================================================================
 
@@ -106,7 +107,7 @@ public:
 							  Vertex_handle a, 
 							  Vertex_handle b);
 
-  /** Insert a new edge (two halfwdges) between the two vertices
+  /** Insert a new edge (two halfedges) between the two vertices
       
       Precondition:
       vertex a and b are in the SAME facet and do NOT connect to each other 
@@ -114,7 +115,7 @@ public:
       Postcondition:
              H
       a <----------> b
-      H is the return helfedge connecting vertex a to b.      
+      H is the return halfedge connecting vertex a to b.      
   */
   static Halfedge* insert_edge(Polyhedron& p, Vertex* a, Vertex* b) {
     return insert_edge(Vertex_handle(a), Vertex_handle(b)).ptr();

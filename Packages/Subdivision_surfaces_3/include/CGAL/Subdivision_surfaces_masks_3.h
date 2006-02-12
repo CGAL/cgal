@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2005 by Le-Jeng Shiue.  All Rights Reserved.
+// Copyright (c) 2005-2006 by Le-Jeng Shiue.  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -16,8 +16,9 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s): Le-Jeng Shiue <sle-jeng@cise.ufl.edu>
-//                          <SurfLab, CISE, University of Florida>
+// Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
+//                          <1998-2005 SurfLab, CISE, University of Florida>
+//                          <2005-     RapidMind Inc.>
 //
 // ======================================================================
 
@@ -32,7 +33,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // ======================================================================
-/// The setncil of the Primal-Quadrilateral-Quadrisection 
+/// The stencil of the Primal-Quadrilateral-Quadrisection 
 template <class Poly>
 class PQQ_stencil_3 {
 public:
