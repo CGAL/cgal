@@ -86,13 +86,13 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         CGAL_KDS_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
     }
 
-    typedef std::vector<std::string>::const_iterator iterator;
-    iterator begin()  const
+    typedef std::vector<std::string>::const_iterator Event_iterator;
+    Event_iterator events_begin()  const
     {
         return log_.begin();
     }
 
-    iterator end()  const
+    Event_iterator events_end()  const
     {
         return log_.end();
     }
