@@ -27,8 +27,33 @@ concepts and models are grouped into these three classes.
 
 \ccRefIdfierPage{CGAL::KDS::Enclosing_box_3<Traits>}
 
+\ccHeading{Visitors}
+
+These allow users to observe the run-time behavior of kinetic data structures.
+
+\ccRefConceptPage{SortVisitor}
+
+\ccRefIdfierPage{CGAL::KDS::Sort_visitor_base}
+
+\ccRefIdfierPage{CGAL::KDS::Sort_event_log_visitor}
+
+\ccRefConceptPage{DelaunayTriangulationVisitor_2}
+
+\ccRefConceptPage{CGAL::KDS::Delaunay_triangulation_visitor_base_2}
+
+\ccRefIdfierPage{CGAL::KDS::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>}
+
+\ccRefIdfierPage{CGAL::KDS::Delaunay_event_log_visitor_2}
+
+\ccRefConceptPage{DelaunayTriangulationVisitor_3}
+
+\ccRefConceptPage{CGAL::KDS::Delaunay_triangulation_visitor_base_3}
+
+\ccRefIdfierPage{CGAL::KDS::Delaunay_event_log_visitor_3}
 
 \ccHeading{Basic Concepts}
+
+These are useful for users who want to begin implementing their own kinetic data structures.
 
 \ccRefConceptPage{Event}
 
@@ -47,13 +72,6 @@ concepts and models are grouped into these three classes.
 \ccRefConceptPage{SimulationTraits}
 
 
-\ccHeading{Advanced Concepts}
-
-\ccRefConceptPage{EventQueue}
-
-\ccRefConceptPage{FunctionKernel}
-
-
 \ccHeading{Basic Classes}
 
 \ccRefIdfierPage{CGAL::KDS::Simulator<FunctionKernel, EventQueue>}
@@ -65,6 +83,7 @@ concepts and models are grouped into these three classes.
 \ccRefIdfierPage{CGAL::KDS::Cartesian_kinetic_kernel<FunctionKernel>}
 
 \ccRefIdfierPage{CGAL::KDS::Insert_event<ActiveObjectsTable>}
+
 
 \ccHeading{Advanced Classes}
 
@@ -88,28 +107,23 @@ concepts and models are grouped into these three classes.
 
 \ccRefIdfierPage{CGAL::KDS::Qt_widget_2<Simulator>}
 
-\ccRefIdfierPage{CGAL::KDS::Qt_widget_3<Simulator>}
-
 \ccRefIdfierPage{CGAL::KDS::Qt_moving_points_2<Traits, QtWidget2>}
-
-\ccRefIdfierPage{CGAL::KDS::Qt_moving_points_3<Traits, QtGui>}
-
-\ccRefIdfierPage{CGAL::KDS::Qt_moving_weighted_points_3<Traits, QtWidget3>}
 
 \ccRefIdfierPage{CGAL::KDS::Qt_triangulation_2<KineticDelaunay_2, QtWidget_2, Qt_moving_points_2>}
 
-\ccRefIdfierPage{CGAL::KDS::Qt_triangulation_3<KineticDelaunay_3, QtWidget_3, Qt_moving_points_3>}
 
-%\ccRefIdfierPage{CGAL::KDS::Coin_kinetic_triangulation_3}
+\ccHeading{Advanced Concepts}
 
+\ccRefConceptPage{EventQueue}
 
+\ccRefConceptPage{FunctionKernel}
 
 
 
 
 \lcHtml{\ccHeading{Links to the Reference Sections}}
 
-It complains if I don't have any references so here one is \cite{cgal:ansi-is14882-98}.
+%It complains if I don't have any references so here one is \cite{cgal:ansi-is14882-98}.
 
 
 
