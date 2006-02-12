@@ -435,7 +435,8 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
     
   result = intersection(seg, *top_seg);
 
-  if (assign(p,result)) {
+  if (assign(p,result)) 
+  {
     Compare_x_2 compare_x = m_gt.compare_x_2_object();
     Compare_y_2 compare_y = m_gt.compare_y_2_object();
     Construct_vertex_2 construct_vertex = m_gt.construct_vertex_2_object();
@@ -453,8 +454,8 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
               seg_dir == SEG_DOWN_RIGHT) && c3 != EQUAL ||
              (seg_dir == SEG_UP || seg_dir == SEG_UP_LEFT ||
               seg_dir == SEG_UP_RIGHT) && c4 != EQUAL);
-  } else
-    return(false);
+  } 
+  return(false);
 }
 
 /*! */
