@@ -25,15 +25,8 @@
 
 #include <list>
 #include <CGAL/Arr_observer.h>
-#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-
-//#define LM_ANN
-
-#ifdef LM_ANN
-#include <CGAL/Arr_point_location/Arr_lm_ann.h>
-#else
+#include <CGAL/Arrangement_2/Arr_traits_wrapper_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
-#endif
 
 //#define CGAL_LM_VERTICES_DEBUG
 #ifdef CGAL_LM_VERTICES_DEBUG
@@ -53,11 +46,7 @@ CGAL_BEGIN_NAMESPACE
 */
 template <class Arrangement_, 
 	  class Nearest_neighbor_ 
-#ifdef LM_ANN
-	  = Arr_landmarks_ann <typename Arrangement_::Traits_2> >
-#else
     = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
-#endif
 class Arr_landmarks_vertices_generator 
   : public Arr_observer <Arrangement_>
 {
@@ -87,10 +76,10 @@ public:
   
 protected:
 
-  typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
+  typedef Arr_traits_basic_wrapper_2<Traits_2>  Traits_wrapper_2;
 
   // Data members:
-  const Traits_adaptor_2  *traits;  // Its associated traits object.
+  const Traits_wrapper_2  *traits;  // Its associated traits object.
   Nearest_neighbor	   nn;      // The associated nearest neighbor object.
   bool                     ignore_notifications;	
   bool                     updated;
@@ -116,7 +105,7 @@ public:
     num_landmarks(0)
   {
     PRINT_V_DEBUG("Arr_landmarks_vertices_generator constructor"); 
-    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
     build_landmarks_set();
   }
   
@@ -204,7 +193,7 @@ public:
   virtual void before_attach (const Arrangement_2& arr)
   {
     clear_landmarks_set();
-    traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
+    traits = static_cast<const Traits_wrapper_2*> (arr.get_traits());
     ignore_notifications = false;
   }
   
