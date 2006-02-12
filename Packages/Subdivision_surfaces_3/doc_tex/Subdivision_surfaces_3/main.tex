@@ -22,7 +22,7 @@
 
 \ccParDims
 
-\chapter{Subdivision Surfaces}
+\chapter{Subdivision Methods}
 \label{chapterSubdivision}
 \ccChapterRelease{\subdivisionRev. \ \subdivisionDate}
 \ccChapterAuthor{Le-Jeng Andy Shiue}
@@ -41,15 +41,15 @@
 % +------------------------------------------------------------------------+
 \section{Introduction} \label{sectionSubIntro}
 % +------------------------------------------------------------------------+
-The subdivision algorithm is a simple yet powerful way to 
+The subdivision method is a simple yet powerful way to 
 generate smooth surfaces from arbitrary polyhedral meshes. 
 Unlike spline-based surfaces (e.g NURBS) or other numeric-based 
 modeling techniques, users of subdivision
 surfaces do not need in-depth mathematics 
-knowledge on subdivision algorithms. An artist only need 
+knowledge on subdivision methods. Users only need
 natural geometric intuitions to control the subdivision 
-surfaces. It is hence especially popular for character 
-modeling in video games and character animations.
+surface; hence subdivision methods are popular choices for
+character modeling in video games and character animations.
 
 %Subdivision algorithms (see e.g.~\cite{cgal:ww-smgd-02})
 %recursively refine coarse meshes and generate ever closer 
@@ -64,13 +64,14 @@ modeling in video games and character animations.
 %Each subdivision algorithm is a refinement function parametrized
 %by a set of rountines of geometric averageing.
 
-While many subdivision schemes have been developed and new schemes 
-are still being researched, \ccc{Subdivision_surfaces_3} 
-supports the families of the four most used schemes: 
-Loop, Catmull-Clark, Doo-Sabin and $\sqrt{3}$ subdivisions. 
-\ccc{Subdivision_surfaces_3}, working on the concept of 
-the \ccc{CGAL::Polyhedron_3} (see Chapter~\ref{chapterPolyhedron}), 
-aims to be simple to use and powerful to extend.
+\ccc{Subdivision_surfaces_3} aims to be simple to use and extend.
+It supports four most used subdivision methods, including Loop, 
+Catmull-Clark, Doo-Sabin and $\sqrt{3}$ subdivisions. Variations 
+of these methods can be easily implemented by plugging 
+in the user-defined computation rules. \ccc{Subdivision_surfaces_3}
+is designed to work on \ccc{CGAL::Polyhedron_3} 
+(see Chapter~\ref{chapterPolyhedron}), 
+
 
 \begin{ccHtmlOnly}
      <CENTER>
@@ -83,30 +84,44 @@ aims to be simple to use and powerful to extend.
 \label{secSubAlgo}
 % +------------------------------------------------------------------------+
 In this chapter, we explain some fundamentals of 
-subdivision surfaces. We only focus on the topics helping you 
+subdivision methods. We only focus on the topics helping you 
 to understand the design of the package; interested readers can
 still refer to \cite{cgal:ww-smgd-02} for an in-depth introduction.
 Some terminologies introduced in this section will be used again
-in later sections. For users just want to use Loop (or 
-Catmull-Clark ...etc) subdivision, Section \ref{secFirstSub} 
-gives a quick tutorial on using these subdivisions.
+in later sections. If you are only interested in using a 
+specific subdivision method, Section \ref{secFirstSub} 
+gives a quick tutorial on Catmull-Clark subdivision.
 
-Subdivision algorithms recursively refine coarse meshes and generate 
-ever closer approximations to a smooth surface.
+A subdivision method recursively refines a coarse mesh and 
+generates an ever closer approximation to a smooth surface.
+The coarse mesh can have arbitrary shapes, but it has to 
+be a 2-manifold. In a 2-manifold, every interior point has 
+a neighborhood homomorphic to a 2D disk. Subdivision methods
+on non-manifolds have be developed, but are not considered
+in this work. 
 %Subdivision algorithms (see e.g.~\cite{cgal:ww-smgd-02}) 
 %define surfaces as the limit
 %of recursive refinement of a polyhedral mesh, called
 %\emph{control mesh}. 
 %The refinements generate mesh points 
 %to be smoothed to approximate the limit surface.   
-The chapter teaser shows a sequence of a subdivision on 
-a chess model. 
+The chapter teaser shows the process of a subdivision method on 
+a chess model. The coarse chess is repeatly refined by a pattern, 
+and more and more points are generated to approximate the 
+smooth chess.
 
 Many refinement patterns are used in practice. 
 \ccc{Subdivision_surfaces_3} supports the four most popular 
-patterns, and each of them is used by Loop, 
-Catmull-Clark\cite{cgal:cc-rgbss-78}, Doo-Sabin 
-and $\sqrt{3}$ subdivision.  
+patterns, and each of them is used by 
+Catmull-Clark\cite{cgal:cc-rgbss-78}, Loop, Doo-Sabin 
+and $\sqrt{3}$ subdivision (left to right in the 
+figure). Note we name these patterns by their topological
+characteristics, not the associated subdivision methods. 
+PQQ indicates the \emph{P}rimal \emph{Q}uadtrateral \emph{Q}uadrisection. 
+PTQ indicates the \emph{P}rimal \emph{T}riangle \emph{Q}uadrisection. 
+DQQ indicates the \emph{D}ual \emph{Q}uadtrateral \emph{Q}uadrisection.
+$\sqrt{3}$ has a long story of its naming; simply put, it 
+indicates the speed of the topological converging.
 
 \begin{ccTexOnly}
   \begin{center}
@@ -122,12 +137,14 @@ and $\sqrt{3}$ subdivision.
   </CENTER>
 \end{ccHtmlOnly}
 
-Four refinement patterns are demonstrated on a valence-n mesh.
-The refined mesh is shown below the input 
-mesh (called \emph{control mesh}).
+The figure demonstrates these four refinement patterns on 
+the 1-disk of a valence-5 vertex/facet.
+Refined meshes are shown below the source meshes. 
+%We call a source mesh \emph{control mesh} if it is
+%the origin of a squence of refinements.
 Points on the refined mesh are generated by averaging
-neighbor points on the input mesh. A graph, called \emph{stencil}, 
-determines the input submesh whose points contribute to the 
+neighbor points on the source mesh. A graph, called \emph{stencil}, 
+determines the source neighthood whose points contribute to the 
 position of a refined point. A refinement pattern usually has 
 several specific sets of stencils.
 %Stencils are defined at the time the refinement pattern is chosen.  
@@ -137,7 +154,10 @@ For example, the PQQ
 refinement used by Catmull-Clark subdivision has a vertex-node stencil, 
 which defines the 1-ring of an input vertex; an edge-node stencil, 
 which defines the 1-ring of an input edge; and a facet-node stencil, 
-which defines an input facet.
+which defines an input facet. The stecils of the PQQ refinement are
+shown in the following figure. The blue neighborhoods in the 
+top row indicate the corresponding stencils of the refined nodes 
+in red. 
 
 \begin{ccTexOnly}
   \begin{center}
@@ -154,14 +174,16 @@ which defines an input facet.
 \end{ccHtmlOnly}
 
 
-The blue neighborhoods in the top row indicate the corresponding
-stencils of the refined nodes in red. 
-
 %while the DQQ scheme has only a corner-node stencil, which 
 %relates the facet of a corner to a target node.
 Stencils with weights are called \emph{geometry masks}.
 %One practical set of geometry masks of the PQQ scheme is
-The geometric masks of Catmull-Clark subdivision are shown below.
+A subdivision method defines the masks for the stencils, and 
+generates new points by summarizing source points weighted by the mask. 
+Geometry masks are usually carefully choosed to meet requirements of 
+certain surface smoothness and shape quality.
+The geometry masks of Catmull-Clark subdivision are shown
+below (masks for extraordinary vertices are not shown).  
 
 \begin{ccTexOnly}
   \begin{center}
@@ -178,19 +200,17 @@ The geometric masks of Catmull-Clark subdivision are shown below.
 \end{ccHtmlOnly}
 
 The weights shown here are unnormalized, and $n$ is the valence 
-of the vertex. The subdivided point, in red, is computed by a summation
-of the weighted points on its stencil (i.e.~an input submesh).
-For example, a Catmull-Clark facet-node is computed by the summation
-of $1/4$ of each stencil node.
+of the vertex. The generated point, in red, is computed by a summation
+of the weighted points. For example, a Catmull-Clark facet-node is 
+computed by the summation of $1/4$ of each points on its stencil.
 
 A stencil may have several specific sets of geometry masks. In other 
 words, a facet-node of Catmull-Clark refinement may be computed by 
 the summation of $1/5$ of each stencil node instead of $1/4$. 
 Although it is legal in \ccc{Subdivision_surfaces_3} to have 
 any kind of geometry mask, the result surfaces may be odd, 
-not smooth, or not even exist.
-To learn how to design a good mask, both mathematically and esthetically, 
-readers can refer to \cite{cgal:ww-smgd-02}.
+not smooth, or not even exist. \cite{cgal:ww-smgd-02} explains the 
+details on designing masks of quality subdivision surfaces.
 
 %The averaging process can typically be factored into 
 %simpler steps \cite{Oswald-2003-CSS}.
@@ -224,15 +244,14 @@ readers can refer to \cite{cgal:ww-smgd-02}.
 % +-------------------------------------------------------------+
 \section{Your First CGAL::Subdivision}
 \label{secFirstSub}
-Assuming that you already have a \emph{normal} CGAL polyhedral mesh,
-say the default one, you can use the \ccc{Subdivision_surfaces_3}
-without much effort.
+With a default CGAL polyhedral mesh, you can 
+use the \ccc{Subdivision_surfaces_3} without much effort.
 
 \ccIncludeExampleCode{Subdivision_surfaces_3/CatmullClark_subdivision.C}
 
 This example demonstrates the use of Catmull-Clark subdivision
-on a read-in CGAL polyhedral mesh. There is only one line worth some
-time to explain:
+on a read-in CGAL polyhedral mesh. There is only one line deserving
+explanation:
 \begin{ccExampleCode}
 Subdivision_surfaces_3<Polyhedron>::CatmullClark_subdivision(P,d);
 \end{ccExampleCode}
@@ -253,8 +272,8 @@ This example shows how to apply the subdivision algorithm
 on a simple \ccc{CGAL::Polyhedron_3}. When specializing the polyhedron,
 there are two more things required to be kept in mind.  
 First, the internal storage of your 
-polyhedron has to be sequential ordered, such as the vector 
-or the linked-list. A sequential ordered container always inserts new 
+polyhedron has to be sequentially ordered, such as the vector 
+or the linked-list. A sequentially ordered container always inserts new 
 entries at the end. Secondly, typename \ccc{Point_3} is 
 required to be defined within your polyhedron, otherwise our
 subdivisions will not know how to compute and where to store the
