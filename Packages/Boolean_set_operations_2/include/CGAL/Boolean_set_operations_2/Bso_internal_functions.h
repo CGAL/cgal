@@ -117,11 +117,11 @@ inline bool _join(const Pgn1& pgn1,
   return (false);
 }
 
-template <class Pgn1, class Pgn2>
+template <class Pgn1, class Pgn2, class Pwh>
 inline bool
 _join(const Pgn1& pgn1,
       const Pgn2& pgn2,
-      typename Gps_default_traits<Pgn1>::Traits::Polygon_with_holes_2& res)
+      Pwh& res)
 {
   typename Gps_default_traits<Pgn1>::Traits  tr;
   return (_join(pgn1, pgn2, res, tr));
@@ -194,10 +194,8 @@ void _complement(const Pgn& pgn,
 
 }
 
-template <class Pgn>
-void _complement(const Pgn& pgn,
-                 typename Gps_default_traits<Pgn>::Traits::
-                 Polygon_with_holes_2& res)
+template <class Pgn, class Pwh>
+void _complement(const Pgn& pgn, Pwh& res)
 {
   typename Gps_default_traits<Pgn>::Traits    tr;
   _complement(pgn, res, tr);
