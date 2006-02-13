@@ -244,41 +244,51 @@ details on designing masks of quality subdivision surfaces.
 % +-------------------------------------------------------------+
 \section{Your First CGAL::Subdivision}
 \label{secFirstSub}
-With a default CGAL polyhedral mesh, you can 
-use the \ccc{Subdivision_surfaces_3} without much effort.
+Assuming your familiarity of \ccc{CGAL::Polyhedron_3},
+you can intergrate \ccc{Subdivision_surfaces_3} into your program 
+without much effort.
 
 \ccIncludeExampleCode{Subdivision_surfaces_3/CatmullClark_subdivision.C}
 
 This example demonstrates the use of Catmull-Clark subdivision
-on a read-in CGAL polyhedral mesh. There is only one line deserving
-explanation:
+on a CGAL polyhedron. The polyhedron is restricted within the Cartesian
+space, where most subdivision applications are designed to work.
+There is only one line deserving a detailed explanation:
 \begin{ccExampleCode}
-Subdivision_surfaces_3<Polyhedron>::CatmullClark_subdivision(P,d);
+Subdivision_surfaces_3::CatmullClark_subdivision(P,d);
 \end{ccExampleCode}
-\ccc{Subdivision_surfaces_3<Polyhedron>} defines a set of subdivision 
-functions on the typename \ccc{Polyhedron}, and 
-\ccc{CatmullClark_subdivision(P,d)} computes the 
-Catmull-Clark subdivision surfaces of \ccc{d} steps from the 
-\ccc{Polyhedron P}.
+\ccc{Subdivision_surfaces_3} specifies the namespace of our
+subdivision functions. \ccc{CatmullClark_subdivision(P,d)} computes the 
+Catmull-Clark subdivision surfaces of the polyhedron \ccc{P} after
+\ccc{d} iterations of the refinements. The polyhedron \ccc{P} is 
+passed by the reference and is modified (i.e.~subdivided) by the 
+subdivision function.
 
-If you want to use Doo-Sabin subdivision instead, simply replace the 
-\ccc{CatmullClark_subdivision(P,d)} to the \ccc{DooSabin_subdivision(P,d)}, 
-and you are done. Note since Loop and $\sqrt{3}$ subdivision only work on 
-triangle meshes, simply replacing the subdivision function may or 
-may not work in this example as there is no assertion that a triangle 
-mesh is read-in.
+Other subdivision methods (such as Doo-Sabin subdivision) can be
+used with the same level of the ease.
 
-This example shows how to apply the subdivision algorithm 
-on a simple \ccc{CGAL::Polyhedron_3}. When specializing the polyhedron,
-there are two more things required to be kept in mind.  
-First, the internal storage of your 
-polyhedron has to be sequentially ordered, such as the vector 
-or the linked-list. A sequentially ordered container always inserts new 
-entries at the end. Secondly, typename \ccc{Point_3} is 
-required to be defined within your polyhedron, otherwise our
-subdivisions will not know how to compute and where to store the
-new points. More details on these two requirements are explained
-in Section~\ref{secRefHost}.
+This example shows how to subdivide a simple \ccc{CGAL::Polyhedron_3}
+with \ccc{Subdivision_surfaces_3}.
+An application-defined polyhedron might use a specialized kernel and/or
+a specialized internal container. There are two major restrictions on the 
+your application-defined polyhedron to be able to work with 
+\ccc{Subdivision_surfaces_3}.
+\begin{itemize}
+\item
+\ccc{Point_3} is type-defined within the kernel. Without \ccc{Point_3} 
+and associated operations being defined, \ccc{Subdivision_surfaces_3} 
+can not know how to compute and where to store the new vertex points.
+\item
+The primitives (such as vertices, halfedges and facets) 
+in the internal container are sequentially ordered. 
+In other words, the iterators traverse the primitives in 
+the order of their creation. Examples include \ccc{std::vector} and 
+\ccc{std::list}.
+
+\end{itemize}
+
+Section~\ref{secRefHost} gives detailed explanations on these 
+two restrictions.
 
 % +-------------------------------------------------------------+
 \section{Catmull-Clark Subdivision in Depth}
