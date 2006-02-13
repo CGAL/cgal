@@ -242,7 +242,7 @@ details on designing masks of quality subdivision surfaces.
 %averaging rules of the geometry stencils.
 
 % +-------------------------------------------------------------+
-\section{Your First CGAL::Subdivision}
+\section{Create Your First Subdivision Surafce}
 \label{secFirstSub}
 Assuming your familiarity of \ccc{CGAL::Polyhedron_3},
 you can intergrate \ccc{Subdivision_surfaces_3} into your program 
@@ -293,73 +293,104 @@ two restrictions.
 % +-------------------------------------------------------------+
 \section{Catmull-Clark Subdivision in Depth}
 \label{secCC}
-In some situations, Loop, Catmull-Clark, Doo-Sabin and $\sqrt{3}$ 
-subdivisions are just not the surfaces you would like to have. You 
-may be a graduate student believing in a perfect subdivision scheme, or
-you just want a unique surface which looks simply bad. In either case,
-\ccc{Subdivision_surfaces_3} allows you to try your beloved algorithms
-with a small amount of efforts. The best way to learn how to create
-a your-name subdivision is by digging into one of the four subdivisions
-\ccc{Subdivision_surfaces_3} supported. In this section, we will guide 
-you through the creation of Catmull-Clark subdivision.
+%Loop, Catmull-Clark, Doo-Sabin and $\sqrt{3}$ subdivision methods
+%are popular in practice. Yet from time to time you may want to
+%create your own method. You may be a graduate student believing 
+%in a perfect subdivision scheme, or
+%you just want a unique surface which looks simply bad. In either case,
+%\ccc{Subdivision_surfaces_3} allows you to try your beloved algorithms
+%with a small amount of efforts. The best way to learn how to create
+%a your-name subdivision is by digging into one of the four subdivisions
+%\ccc{Subdivision_surfaces_3} supported. 
+%In this section, we will guide you through the implementation of 
+%Catmull-Clark subdivision.
 %This section explain how do we implement the
 %Catmull-Clark subdivision based on the framework of 
 %\ccc{Subdivision_surfaces_3}.
+\ccc{Subdivision_surfaces_3} gives you easy-to-use functions on 
+Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivision methods.
+But \ccc{Subdivision_surfaces_3} is more like a framework that let 
+you extend the methods with ease. This section explains the process
+of \emph{implementing} the Catmull-Clark subdivision within
+\ccc{Subdivision_surfaces_3}. Following this procedure, you can 
+easily implement a new subdivision method based on the refinement 
+patterns in \ccc{Subdivision_surfaces_3}
 
-When a subdivision scheme is developed, a refinement scheme (i.e.~a 
-parametrization) is chosen, and then a set of rules (i.e.~geometry 
-masks) are developed to generate the new points (to meet certain 
-mathematics conditions). E. Catmull and J. Clark picked the \emph{P}rimal 
-\emph{Q}uadtrateral \emph{Q}uadrisection (PQQ) to be the refinement scheme,
-and developed a set of geometry masks to generate (more precisely, to 
-approximate) the B-spline surface from the input polyhedral mesh (i.e.~the 
-control mesh). To implement Catmull-Clark subdivision, we need to 
-implement the mesh data structure, the refinement on the mesh data 
-structure, and the geometry masks. Luckily enough, we can use 
-\ccc{CGAL::Polyhedron_3} as the mesh data structure, and use the 
-PQQ function in \ccc{Subdivision_surfaces_3} to provide the refinement. 
-\ccc{Subdivision_surfaces_3} also supports three other refinements that 
-you can choose to use for your subdivision. These refinements are
-PT(riangle)Q for Loop subdivision, D(ual)QQ for Doo-Sabin subdivision, 
-and $\sqrt{3}$ triangulation for $\sqrt{3}$ 
-subdivision. Here is the function declaration of the PQQ refinement.
+When a subdivision method is developed, a refinement pattern is 
+chosen, and then a set of geometry masks are developed to 
+\emph{position} the new points.
+E. Catmull and J. Clark picked the \emph{P}rimal \emph{Q}uadtrateral 
+\emph{Q}uadrisection (PQQ) to be the refinement pattern,
+and developed a set of geometry masks to generate (or more precisely, 
+to approximate) the B-spline surface from the control polyhedral 
+mesh. 
+
+There are three key components of implementing
+Catmull-Clark subdivision: 
+\begin{itemize}
+\item
+a mesh data structure that can represent arbitrary 2-manifolds, 
+\item
+a process that refines the mesh data structure, 
+\item
+and the geometry masks that compute and assign the new points.
+\end{itemize}
+
+%We have the mesh data structure in \ccc{CGAL::Polyhedron_3}, and 
+%we have the PQQ refinement in \ccc{Subdivision_surfaces_3} that 
+%works on \ccc{CGAL::Polyhedron_3}. But we still need the 
+%geometry masks to finish the job.
+%\ccc{Subdivision_surfaces_3} also supports three other refinements that 
+%you can choose to use for your subdivision. These refinements are
+%PT(riangle)Q for Loop subdivision, D(ual)QQ for Doo-Sabin subdivision, 
+%and $\sqrt{3}$ triangulation for $\sqrt{3}$ 
+%subdivision. Here is the function declaration of the PQQ refinement.
+\ccc{Subdivision_surfaces_3} defines a function that covers all 
+three components for Catmull-Clark subdivision.
 
 \begin{ccExampleCode}
-template <class Polyhedron>
-class Subdivision_surfaces_3 {
-  template <template <typename> class S>
-  static void PQQ(Polyhedron& p, S<Polyhedron> rule, int step)
-};
+template <class Polyhedron, template <typename> class Mask>
+void PQQ(Polyhedron& p, Mask<Polyhedron> mask, int depth)
 \end{ccExampleCode}
 
-\ccc{Polyhedron} is a model of the \ccc{CGAL::Polyhedron_3}, and
-\ccc{S} is a template class realizing geometry masks on the typename 
-\ccc{Polyhedron}. \ccc{S} is called the
-\emph{geometry policy} and \ccc{PQQ(...)} and other refinement 
-functions are called the \emph{refinement hosts}. 
-\ccc{step} specifies how many steps of the 
-refinement are to be applied on the polyhedron \ccc{p}. To make the call to
-\ccc{PQQ} a Catmull-Clark subdivision, the only thing left is to
-implement a geometry policy realizing the Catmull-Clark geometry masks.
+\ccc{Polyhedron} is a model of \ccc{CGAL::Polyhedron_3}, which
+is a mesh data structure that can represent arbitrary 
+2-manifolds. \ccc{PQQ(...)} provides the process refining 
+the control polyhedron \ccc{p}. During the refinement, 
+\ccc{PQQ(...)}, the \emph{refinement host}, computes and assigns the 
+new points by communicating with the \ccc{mask}. 
+To implement Catmull-Clark subdivision,
+\ccc{Mask}, the \emph{geometry policy}, has to realize the geometry 
+masks of Catmull-Clark subdivision. 
+\ccc{depth} specifies how many steps of the refinement 
+to be applied on the polyhedron. 
+%To make the call to
+%\ccc{PQQ} a Catmull-Clark subdivision, the only thing left is to
+%implement a geometry policy realizing the Catmull-Clark geometry masks.
 
-Before we can implement the Catmull-Clark geometry masks, we 
-need to know the interfaces of these masks cooperated with
-the refinement host. As we have already known, PQQ refinement has three
-stencils. \ccc{Subdivision_surfaces_3} defines them as followings,
+To implement the geometry masks, we need to know how  
+a mask communicates with the refinement host. The PQQ refinement 
+defines three stencils, and therefor three geometry masks
+are required for Catmull-Clark subdivision.
+The interfaces of the stencils are specified like 
+the policy class \ccc{PQQ_stencil_3}.
+
 \begin{ccExampleCode}
 template <class Polyhedron>
 class PQQ_stencil_3 {
-  void facet_node(Facet_handle facet, Point& pt) {}
-  void edge_node(Halfedge_handle edge, Point& pt) {}
-  void vertex_node(Vertex_handle vertex, Point& pt) {}
+  void facet_node(Facet_handle facet, Point& pt);
+  void edge_node(Halfedge_handle edge, Point& pt);
+  void vertex_node(Vertex_handle vertex, Point& pt);
 };
 \end{ccExampleCode}
 
-\ccc{PQQ_stencil_3} is a pure template interface and does nothing 
-on generating points. It is our (or your) job to fill in the 
-stencil functions with proper geometry masks. Lets compute the 
-new points based on the Catmull-Clark geometry masks, and 
-rename the policy to indicate geometry masks are in place.
+Now we can compute the new points using the primitive handle
+passed into the policy functions, and assign the result to
+\ccc{Point& pt}. Since our goal is to implement Catmull-Clark 
+subdivision, we need to implement the policy functions by its 
+geometry masks. 
+%For clarity, we rename the policy class 
+%to indicate geometry masks are in place.
 
 \begin{ccExampleCode}
 template <class Polyhedron>
@@ -413,24 +444,34 @@ class CatmullClark_mask_3 {
 };
 \end{ccExampleCode}
 
-Now, we are ready to make our first call of Catmull-Clark 
-subdivision.
+Note types used in this example (such as \ccc{Point} and
+\ccc{Facet_handle}) are assumed to be type-defined within the
+\ccc{Polyhedron}. This \ccc{CatmullClark_mask_3} is designed
+to work on a \ccc{CGAL::Polyhedron_3} with the default CGAL 
+kernel geometry. You may need to rewrite the geometry computation
+in the code to match the kernel geometry of your application.
+
+To excute the subdivision, you can 
+simply call the \ccc{PQQ(...)} with the Catmull-Clark mask
+we just designed.
 
 \begin{ccExampleCode}
-template <class Polyhedron>
-class Subdivision_surfaces_3 {
-  void CatmullClark_subdivision(Polyhedron& p, int step) {
-    PQQ(p, CatmullClark_mask_3<Polyhedron>(), step);
-  }
-}
+PQQ(p, CatmullClark_mask_3<Polyhedron>(), depth);
 \end{ccExampleCode}
 
-Loop, Doo-Sabin and $\sqrt{3}$ subdivisions are all created in the
-same way, but with different combinations of the 
-refinement host and the geometry policy. For you to be able to 
-develop your own subdivision, you need to know how to choose the 
-right combination and how to combine them within the framework
-of \ccc{Subdivision_surfaces_3}. This is explained in the next section.
+%\begin{ccExampleCode}
+%template <class Polyhedron>
+%void CatmullClark_subdivision(Polyhedron& p, int depth) {
+%    PQQ(p, CatmullClark_mask_3<Polyhedron>(), depth);
+%}
+%\end{ccExampleCode}
+
+Loop, Doo-Sabin and $\sqrt{3}$ subdivisions are implemented 
+with a similar process: pick a refinement host and implement 
+the geometry policy. To develop your own subdivision with 
+\ccc{Subdivision_surfaces_3}, the key is 
+to find the right combination of the host and the policy, 
+which are explained in the following sections.
 
 % +-------------------------------------------------------------+
 \section{Refinement Host}
