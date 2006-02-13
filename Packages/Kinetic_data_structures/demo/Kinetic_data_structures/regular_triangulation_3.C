@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     typedef Traits::Simulator::Time Time;
     typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> MOI;
 
-    Traits::Function_kernel::Construct_function cf= tr.function_kernel_object().construct_function_object();
+    Traits::Kinetic_kernel::Function_kernel::Construct_function cf= tr.kinetic_kernel_object().function_kernel_object().construct_function_object();
 
     tr.simulator_pointer()->new_event(Time(0.000000), MOI(MP(MPP(cf(10, 1),
 								 cf(0, .1),

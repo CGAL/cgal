@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         Traits::Simulator::Pointer sim= tr.simulator_pointer();
         Traits::Active_objects_table::Pointer mpt= tr.active_objects_table_pointer();
 
-        typedef Traits::Function_kernel::Function Fn;
+        typedef Traits::Kinetic_kernel::Motion_function Fn;
 
         if (file.empty()) {
             CGAL::Random rand;
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
         Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
         Qt_mpt::Pointer qtmpt= new Qt_mpt(tr, qtsim);
 
-        typedef Traits::Function_kernel::Function Fn;
+        typedef Traits::Kinetic_kernel::Motion_function Fn;
         Traits::Simulator::Pointer sim= tr.simulator_pointer();
         Traits::Active_objects_table::Pointer mpt= tr.active_objects_table_pointer();
         CGAL::KDS::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);

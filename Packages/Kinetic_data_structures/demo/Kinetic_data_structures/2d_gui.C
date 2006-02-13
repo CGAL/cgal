@@ -31,7 +31,7 @@ int main(int argc, char*argv[])
     Qt_moving_points::Pointer qtmptp= new Qt_moving_points(qtsim, tr);
     Box::Pointer box= new Box(tr);
 
-    Traits::Function_kernel::Construct_function cf= tr.function_kernel_object().construct_function_object();
+    Traits::Kinetic_kernel::Function_kernel::Construct_function cf= tr.kinetic_kernel_object().function_kernel_object().construct_function_object();
 
     tr.simulator_pointer()->new_event(Traits::Simulator::Time(0), Insert_event( Moving_point(cf(0,2,4),
         cf(2,-3,4)), tr.active_objects_table_pointer()));
