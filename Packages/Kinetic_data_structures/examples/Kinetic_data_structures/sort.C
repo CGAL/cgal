@@ -18,9 +18,6 @@ int main(int, char *[])
     Sort sort(tr);
     Traits::Simulator::Pointer sp= tr.simulator_pointer();
 
-    Traits::Function_kernel::Construct_function fc= tr.function_kernel_object().construct_function_object();
-
-    
     std::ifstream in("data/points_1");
     in  >> *tr.active_objects_table_pointer();
    

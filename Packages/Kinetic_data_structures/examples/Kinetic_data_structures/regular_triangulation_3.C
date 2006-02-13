@@ -12,10 +12,6 @@ int main(int, char *[])
     KDel kdel(tr);
 
     Traits::Simulator::Pointer sp= tr.simulator_pointer();
-
-    Traits::Function_kernel::Construct_function cf
-        = tr.function_kernel_object().construct_function_object();
-   
   
     std::ifstream in("data/weighted_points_3");
     in >> *tr.active_objects_table_pointer();
