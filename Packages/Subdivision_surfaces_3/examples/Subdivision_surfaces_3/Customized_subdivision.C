@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   Polyhedron P;
   in >> P; // read the .off
 
-  Subdivision_method_3<Polyhedron>::PTQ(P, WLoop_stencil_3<Polyhedron>(), d);
+  Subdivision_method_3::PTQ(P, WLoop_stencil_3<Polyhedron>(), d);
 
   cout << P; // write the .off
  

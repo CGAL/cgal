@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
   Polyhedron P;
   in >> P; // read the .off
 
-  Subdivision_method_3<Polyhedron>::CatmullClark_subdivision(P,d);
+  Subdivision_method_3::CatmullClark_subdivision(P,d);
 
   cout << P; // write the .off
   

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 2005 Le-Jeng Shiue
+// Copyright (c) 2005-2006 Le-Jeng Shiue
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -18,7 +18,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Le-Jeng Shiue <sle-jeng@cise.ufl.edu>
+// author(s)     : Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
 // Test subdivision surfaces
 // ============================================================================
@@ -57,7 +57,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_surfaces_3<Polyhedron>::CatmullClark_subdivision(P,TEST_DEPTH);
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
     CGAL_assertion(P.is_valid());
   }
 
@@ -68,7 +68,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_surfaces_3<Polyhedron>::CatmullClark_subdivision(P,TEST_DEPTH);
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
     CGAL_assertion(P.is_valid());
   }
 
@@ -80,7 +80,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_surfaces_3<Polyhedron>::Loop_subdivision(P,TEST_DEPTH);
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
     CGAL_assertion(P.is_valid());
   }
 
@@ -91,7 +91,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_surfaces_3<Polyhedron>::Loop_subdivision(P,TEST_DEPTH);
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
     CGAL_assertion(P.is_valid());
   }
 
@@ -102,7 +102,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_surfaces_3<Polyhedron>::DooSabin_subdivision(P,TEST_DEPTH);
+    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
     CGAL_assertion(P.is_valid());
   }
 
@@ -113,7 +113,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_surfaces_3<Polyhedron>::Sqrt3_subdivision(P,TEST_DEPTH);
+    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
     CGAL_assertion(P.is_valid());
   }
 }
