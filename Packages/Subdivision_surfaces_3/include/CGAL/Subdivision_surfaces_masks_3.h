@@ -151,7 +151,7 @@ public:
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     int n = circulator_size(vcir);    
 
-    float Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
+    FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
     Point& S = vertex->point();
     
     Point q;
@@ -229,7 +229,7 @@ public:
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     size_t n = circulator_size(vcir);    
 
-    float R[] = {0.0, 0.0, 0.0};
+    FT R[] = {0.0, 0.0, 0.0};
     Point& S = vertex->point();
     
     for (size_t i = 0; i < n; i++, ++vcir) {
@@ -318,7 +318,7 @@ public:
 		} else {
 			FT a;
 			for (size_t k = 0; k < n; ++k, he = he->next()) {
-				if (k == 0) a = (FT) (((double)5/n) + 1);
+				if (k == 0) a = (FT) ((5.0/n) + 1);
 				else a = (FT) (3+2*std::cos(2*k*3.141593/n))/n;
 				cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
 			}
