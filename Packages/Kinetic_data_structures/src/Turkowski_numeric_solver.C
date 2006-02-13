@@ -141,6 +141,8 @@ FindPolynomialRoots(
 		    long            fig                               /* The number of decimal figures to be computed */
 		    )
 {
+  int number_of_ITERATE=0;
+  int number_of_INIT=0;
   CGAL_precondition(static_cast<unsigned int>(fig) < MAXN);
   int i;
   register int j;
@@ -171,6 +173,12 @@ FindPolynomialRoots(
   }
 
  INIT:
+  ++number_of_INIT;
+  if (number_of_INIT > 1000) {
+    std::cerr << "Too many INITs" << std::flush;
+    return;
+  }
+
   if (n == 0)
     return;
 
@@ -218,6 +226,11 @@ FindPolynomialRoots(
     r = 0.0;
   }
  ITERATE:
+  ++number_of_ITERATE;
+  if (number_of_ITERATE > 1000) {
+    std::cerr << "Too many ITERATEs" << std::flush;
+    return;
+  }
   for (i = maxiter; i > 0; i--) {
 
     for (j = 0; j <= n; j++) {                /* BAIRSTOW */
