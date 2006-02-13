@@ -19,26 +19,11 @@
 \ccDefinition
   
 The concept \ccRefName\ provides a model of
-\ccc{DelaunayTriangulationVisitor_3} which logs edge and facet flip events.
+\ccc{DelaunayTriangulationVisitor_3} and \ccc{EventLogVisitor} which logs edge and facet flip events.
 
 \ccIsModel
 
-\ccc{DelaunayTriangulationVisitor_3}
-
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
-
-\ccConstructor{Delaunay_triangulation_edge_log_visitor_3();}{default constructor.}
-
-\ccTypes
-
-\ccNestedType{iterator}{An iterator through \ccc{std::string}s for each event.}
-
-\ccOperations
-
-\ccMethod{iterator begin() const;}{Begin iterating through the list of events.}
-
-\ccMethod{iterator end() const;}{End iterating through the list of events.}
+\ccc{DelaunayTriangulationVisitor_3}, \ccc{EventLogVisitor}
 
 \ccSeeAlso
 

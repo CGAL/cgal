@@ -19,26 +19,11 @@
 \ccDefinition
   
 The concept \ccRefName\ provides a model of
-\ccc{SortVisitor} which logs changes to the structure.
+\ccc{SortVisitor} and \ccc{EventLogVisitor} which logs changes to the structure.
 
 \ccIsModel
 
-\ccc{SortVisitor}
-
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
-
-\ccConstructor{Sort_visitor();}{default constructor.}
-
-\ccTypes
-
-\ccNestedType{iterator}{An iterator through \ccc{std::string}s for each event.}
-
-\ccOperations
-
-\ccMethod{iterator begin() const;}{Begin iterating through the list of events.}
-
-\ccMethod{iterator end() const;}{End iterating through the list of events.}
+\ccc{SortVisitor}, \ccc{EventLogVisitor}
 
 \ccSeeAlso
 

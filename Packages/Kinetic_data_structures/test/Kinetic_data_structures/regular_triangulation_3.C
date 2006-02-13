@@ -55,8 +55,8 @@ int main(int, char *[])
   }
 
   int error_count=0;
-  for (CGAL::KDS::Delaunay_triangulation_event_log_visitor_3::iterator it = kdel.visitor().begin();
-       it != kdel.visitor().end(); ++it) {
+  for (CGAL::KDS::Delaunay_triangulation_event_log_visitor_3::Event_iterator it = kdel.visitor().events_begin();
+       it != kdel.visitor().events_end(); ++it) {
     char buf[1000];
     out.getline(buf, 1000);
     if (*it != buf) {

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Gmpq.h>
-#if 0
+#if CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
 #endif
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     bool inexact=true;
     bool weighted=false;
 
-#if 0
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
     bool print_help=false;
 
     boost::program_options::options_description desc("Allowed options");
@@ -66,10 +66,10 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-#endif
+#else
 
     bool boost_program_options_disabled;
-
+#endif
 
     int num_coords=2;
     if (weighted) ++num_coords;

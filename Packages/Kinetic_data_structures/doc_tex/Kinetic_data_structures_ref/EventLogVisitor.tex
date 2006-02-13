@@ -1,0 +1,40 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSDelaunayTriangulationVisitorRev}{$Revision$}
+\RCSdefDate{\RCSDelaunayTriangulationVisitorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{EventLogVisitor}
+
+\ccDefinition
+
+This concept is for visitors which maintain a text log of events.
+
+\ccCreationVariable{v}
+
+\ccTypes
+
+\ccNestedType{Event_iterator}{An iterator through strings defining the events that occurred.}
+
+
+\ccOperations
+
+\ccMethod{Event_iterator events_begin();}{Begin iterating through the events.}
+
+\ccMethod{Event_iterator events_end();}{}
+
+
+
+
+\ccHasModels 
+
+\ccc{CGAL::KDS::Delaunay_triangulation_event_log_visitor_3}, \ccc{CGAL::KDS::Delaunay_triangulation_event_log_visitor_2}, \ccc{CGAL::KDS::Regular_trianglation_event_log_visitor_3}
+
+\end{ccRefConcept}
+
+

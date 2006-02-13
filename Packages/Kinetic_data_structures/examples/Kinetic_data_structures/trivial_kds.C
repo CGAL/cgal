@@ -95,19 +95,14 @@ struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> >
       if (has_certificates_) {
 	bool ev= event_;
 	CGAL_assertion(!ev);
-	std::cout << "Time to rebuild all certificates from scratch." << std::endl;
 	Time t= CGAL::to_interval(sp->current_time()).second+1;
 	event_= sp->new_event(t, Event(objects_.begin(),
 				       objects_.end(),
 				       *tr_.active_objects_table_pointer(),
 				       this));
 	std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
-	assert((! static_cast<bool>(event_))
-	       || (sp->template event<Event>(event_).objects_.size() == objects_.size()));
-      }
-      else {
+      } else {
 	if (event_) {
-	  std::cout << "Time to delete all certificates." << std::endl;
 	  std::cout << "Deleting event " << event_ << std::endl;
 	  sp->delete_event(event_);
 	  event_=Event_key();
