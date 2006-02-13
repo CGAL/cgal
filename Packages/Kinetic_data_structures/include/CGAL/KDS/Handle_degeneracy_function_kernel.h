@@ -94,7 +94,7 @@ struct Handle_degeneracy_function_kernel: public Traits_t
 
     Root_stack root_stack_object(const typename Traits_t::Function &f,
         const typename Traits_t::Root &lb,
-    const typename Traits_t::Root &ub) {
+    const typename Traits_t::Root &ub) const {
         return Root_stack(f, lb, ub, *this);
     }
 };

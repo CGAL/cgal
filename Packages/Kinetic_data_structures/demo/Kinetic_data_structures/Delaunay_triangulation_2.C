@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
                 coefsx.push_back((rand.get_double()*10-5)/(j+1));
                 coefsy.push_back((rand.get_double()*10-5)/(j+1));
             }
-            Traits::Kinetic_kernel::Point_2 mp(Traits::Function_kernel::Function(coefsx.begin(), coefsx.end()),
-                Traits::Function_kernel::Function(coefsy.begin(), coefsy.end()));
+            Traits::Kinetic_kernel::Point_2 mp(Traits::Kinetic_kernel::Motion_function(coefsx.begin(), coefsx.end()),
+					       Traits::Kinetic_kernel::Motion_function(coefsy.begin(), coefsy.end()));
             tr.active_objects_table_pointer()->insert(mp);
 //std::cout << mp << std::endl;
         }

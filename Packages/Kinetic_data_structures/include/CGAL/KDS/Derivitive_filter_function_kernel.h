@@ -56,15 +56,14 @@ struct Derivitive_filter_function_kernel: private Traits
   Derivitive_filter_function_kernel(Traits tr): Traits(tr){}
   Derivitive_filter_function_kernel(){}
 
-  /*Root_stack root_stack_object(const typename Traits::Function &f,
+  Root_stack root_stack_object(const typename Traits::Function &f,
 			       const Root &lb,
-			       const Root &ub) {
-    dsgfadsfasd;
-    std::cout << "Solving " << f << " from " << lb << " to " << ub;
+			       const Root &ub) const {
+    //std::cout << "Solving " << f << " from " << lb << " to " << ub;
     Root_stack rs= Root_stack(f, lb, ub, *this);
-    std::cout << " got " << rs.top() << std::endl;
+    //if (! rs.empty()) std::cout << " got " << rs.top() << std::endl;
     return rs;
-    }*/
+  }
 
   using Traits::Rational_between_roots;
   using Traits::rational_between_roots_object;

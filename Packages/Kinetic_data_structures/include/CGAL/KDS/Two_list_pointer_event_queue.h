@@ -135,7 +135,7 @@ class Two_list_event_queue_item_rep: public internal::Two_list_event_queue_item<
 
         virtual void write(std::ostream &out) const
         {
-            out << event_ << " at " << P::time();
+	  out << event_ << " at " << P::time();
         }
         virtual void process(const Priority &t) {
             event_.process(t);

@@ -59,7 +59,9 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
   typedef typename Traits::Instantaneous_kernel Instantaneous_kernel;
   // this is used to identify pairs of objects in the list
   typedef typename std::list<Object_key>::iterator iterator;
-  typedef Swap_event<This,iterator,typename Traits::Simulator::Root_stack> Event;
+  // The certificate generator
+  typedef typename Traits::Kinetic_kernel::Is_less_x_1 Less;
+  typedef Swap_event<This,iterator,typename Less::result_type> Event;
   // Redirects the Simulator notifications to function calls
   typedef typename CGAL::KDS::
   Simulator_kds_listener<typename Traits::Simulator::Listener,
@@ -70,7 +72,7 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
 				 This> MOT_listener;
 public:
   // Register this KDS with the MovingObjectTable and the Simulator
-  Sort(Traits tr, Visitor v=Visitor()): kk_(tr.kinetic_kernel_object()),
+  Sort(Traits tr, Visitor v=Visitor()): less_(tr.kinetic_kernel_object().is_less_x_1_object()),
 					ik_(tr.instantaneous_kernel_object()), v_(v),
 					tr_(tr){
     sim_listener_= Sim_listener(tr.simulator_pointer(), this);
@@ -125,17 +127,16 @@ public:
       simulator()->delete_event(events_[*it]); events_.erase(*it);
     }
     if (next(it)== sorted_.end()) return;
-    typename Traits::Kinetic_kernel::Less_x_1 less=kk_.less_x_1_object();
-    typename Traits::Simulator::Root_stack s
-      = simulator()->root_stack_object(less(object(*(it)),
-					    object(*next(it))));
+    //Less less=kk_.less_x_1_object();
+    typename Less::result_type s
+      = less_(object(*(it)), object(*next(it)), simulator()->current_time(),
+	     simulator()->end_time());
     // the Simulator will detect if the failure time is at infinity
-    if (!s.empty()) {
-      Time t= s.top();
-      s.pop();
-      Event e(it, this,s);
-      events_[*it]= simulator()->new_event(t, e);
-    } else events_[*it]= simulator()->null_event();
+    Time t= s.failure_time();
+    s.pop_failure_time();
+    Event e(it, this,s);
+    events_[*it]= simulator()->new_event(t, e);
+    //} else events_[*it]= simulator()->null_event();
   }
 
 
@@ -143,7 +144,7 @@ public:
   /* Swap the pair of objects with *it as the first element.  The old
      solver is used to compute the next root between the two points
      being swapped. This method is called by an Event object.*/
-  void swap(iterator it, typename Traits::Simulator::Root_stack &s) {
+  void swap(iterator it, typename Less::result_type &s) {
     v_.before_swap(it, next(it));
     events_.erase(*it);
     iterator n= next(it);
@@ -155,10 +156,9 @@ public:
       rebuild_certificate(next(it));
       //v_.create_edge(next(it)), next(next(it));
     }
-    if (!s.empty()) {
-      Time t= s.top(); s.pop();
-      events_[*it]= simulator()->new_event(t, Event(it, this,s));
-    } else events_[*it]= simulator()->null_event();
+    Time t= s.failure_time(); s.pop_failure_time();
+    events_[*it]= simulator()->new_event(t, Event(it, this,s));
+    
     v_.after_swap(it, next(it));
     if (it != sorted_.begin()) {
       rebuild_certificate(--it);
@@ -280,7 +280,7 @@ public:
   std::list<Object_key> sorted_;
   // events_[k] is the certificates between k and the object after it
   std::map<Object_key, Event_key > events_;
-  typename Traits::Kinetic_kernel kk_;
+  Less less_;
   Instantaneous_kernel ik_;
   //#ifndef NDEBUG
   mutable bool wrote_objects_;
@@ -304,7 +304,7 @@ class Swap_event
 public:
   Swap_event(Id o, Sort* sorter,
 	     const Solver &s): left_object_(o), sorter_(sorter), s_(s){}
-  void process(const typename Solver::Root &) {
+  void process(const typename Solver::Time &) {
     sorter_->swap(left_object_, s_);
   }
   Id left_object_; Sort* sorter_; Solver s_;

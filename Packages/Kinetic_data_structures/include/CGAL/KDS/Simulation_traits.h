@@ -58,9 +58,9 @@ struct Simulation_traits
 
         typedef SimulatorC Simulator;
 
-        typedef typename Simulator::Function_kernel Function_kernel;
+  //typedef typename Simulator::Function_kernel Function_kernel;
 
-        typedef typename Function_kernel::Root Time;
+  typedef typename KineticKernel::Function_kernel::Root Time;
 
         typedef InstantaneousKernel Instantaneous_kernel;
 
@@ -76,11 +76,11 @@ struct Simulation_traits
         const Active_objects_table* active_objects_table_pointer() const { return ao_.get();}
         Static_kernel& static_kernel_object(){return k_;}
         Kinetic_kernel& kinetic_kernel_object(){return kk_;}
-        Function_kernel function_kernel_object(){return sp_->function_kernel_object();}
+  //Function_kernel function_kernel_object(){return sp_->function_kernel_object();}
 
         const Static_kernel& static_kernel_object() const {return k_;}
         const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
-        const Function_kernel function_kernel_object() const {return sp_->function_kernel_object();}
+  //const Function_kernel function_kernel_object() const {return sp_->function_kernel_object();}
         Instantaneous_kernel instantaneous_kernel_object() const
         {
             return Instantaneous_kernel(ao_, static_kernel_object());
@@ -102,8 +102,8 @@ struct Sest_types
     typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
     typedef CGAL::POLYNOMIAL::Upper_bound_root_stack<Root_stack_traits> Root_stack;
     typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
-    typedef CGAL::KDS::Handle_degeneracy_function_kernel<Function_kernel> Simulator_function_kernel;
-    typedef CGAL::KDS::Cartesian_kinetic_kernel<Function_kernel> Kinetic_kernel;
+  struct Simulator_function_kernel: public CGAL::KDS::Handle_degeneracy_function_kernel<Function_kernel> {};
+    typedef CGAL::KDS::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
     typedef  Simulator_function_kernel::Root Time;
     typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
 
@@ -143,8 +143,8 @@ struct Sist_types
     typedef CGAL::POLYNOMIAL::Numeric_root_stack<Root_stack_traits> Root_stack;
     typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
     typedef CGAL::KDS::Derivitive_filter_function_kernel<Function_kernel> Simulator_function_kernel;
-    typedef CGAL::KDS::Cartesian_kinetic_kernel<Function_kernel> Kinetic_kernel;
-    typedef  Simulator_function_kernel::Root Time;
+    typedef CGAL::KDS::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
+    typedef Simulator_function_kernel::Root Time;
     typedef CGAL::KDS::Heap_pointer_event_queue<Time> Queue_base;
 
     struct Event_queue: public Queue_base

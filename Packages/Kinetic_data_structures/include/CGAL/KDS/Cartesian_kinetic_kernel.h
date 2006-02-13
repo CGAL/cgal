@@ -30,15 +30,15 @@ CGAL_KDS_BEGIN_NAMESPACE
   PolynomialKernel is used to define the Motion_function and the
   Certificate_function.
 */
-template <class Polynomial_k>
+template <class Function_kernel_k>
 class Cartesian_kinetic_kernel:
-public internal::Cartesian_kinetic_kernel_base<Polynomial_k,
-Cartesian_kinetic_kernel<Polynomial_k> >
+public internal::Cartesian_kinetic_kernel_base<Function_kernel_k,
+Cartesian_kinetic_kernel<Function_kernel_k> >
 {
-    typedef internal::Cartesian_kinetic_kernel_base<Polynomial_k,
-        Cartesian_kinetic_kernel<Polynomial_k> > P;
+    typedef internal::Cartesian_kinetic_kernel_base<Function_kernel_k,
+        Cartesian_kinetic_kernel<Function_kernel_k> > P;
     public:
-        Cartesian_kinetic_kernel(Polynomial_k pk): P(pk){}
+        Cartesian_kinetic_kernel(Function_kernel_k pk): P(pk){}
         Cartesian_kinetic_kernel(){}
 };
 

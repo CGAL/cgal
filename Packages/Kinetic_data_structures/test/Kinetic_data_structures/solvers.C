@@ -20,7 +20,7 @@ struct Sest_types
     typedef CGAL::POLYNOMIAL::Upper_bound_root_stack<Root_stack_traits> Root_stack;
     typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
     typedef CGAL::KDS::Handle_degeneracy_function_kernel<Function_kernel> Simulator_function_kernel;
-    typedef CGAL::KDS::Cartesian_kinetic_kernel<Function_kernel> Kinetic_kernel;
+    typedef CGAL::KDS::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
     typedef typename Simulator_function_kernel::Root Time;
     typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
 
@@ -49,8 +49,8 @@ typename Sest_types<Skip>::Active_objects_table >
 template <class Traits, class Fn, class Rt>
 void check_one(const Traits &tr, const Fn &fn, const Rt &lb, const Rt* rt)
 {
-    typename Traits::Simulator::Root_stack rs(fn, lb, std::numeric_limits<Rt>::infinity(),
-        tr.simulator_pointer()->function_kernel_object());
+  typename Traits::Kinetic_kernel::Function_kernel::Root_stack rs(fn, lb, std::numeric_limits<Rt>::infinity(),
+								  tr.kinetic_kernel_object().function_kernel_object());
 
     while (*rt != std::numeric_limits<Rt>::infinity()) {
         if (rs.top() != *rt) {
@@ -105,10 +105,10 @@ check_one(tr,f , zero, rts);
     {
         typedef Exact_simulation_traits<false> Traits;
         Traits tr;
-        typedef Traits::Simulator::Root_stack::Root Root;
+        typedef Traits::Simulator::Time Root;
         Root inf= std::numeric_limits<Root>::infinity();
-        Traits::Simulator::Function_kernel::Construct_function
-            cf= tr.function_kernel_object().construct_function_object();
+        Traits::Kinetic_kernel::Function_kernel::Construct_function
+	  cf= tr.kinetic_kernel_object().function_kernel_object().construct_function_object();
         Root zero(0);
         {
             Root rts[3]={Root(1), Root(1), inf};

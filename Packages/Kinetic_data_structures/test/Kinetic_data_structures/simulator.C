@@ -85,15 +85,17 @@ struct Test
     void add_events(unsigned int num) {
         std::cout << "Adding events..."<< std::flush;
         typename FK::Construct_function cf= fk.construct_function_object();
-
+	FK fk;
         for (unsigned int i=0; i<num; ++i) {
             typename FK::Function f= cf(abs(coef()), coef(), coef(), coef(), coef());
-            if (sim->function_kernel_object().sign_at_object(f)(sim->current_time()) == CGAL::NEGATIVE) {
+            if (fk.sign_at_object(f)(sim->current_time()) == CGAL::NEGATIVE) {
                 f=-f;
-                assert(sim->function_kernel_object().sign_at_object(f)(sim->current_time()) != CGAL::NEGATIVE);
+                assert(fk.sign_at_object(f)(sim->current_time()) != CGAL::NEGATIVE);
             }
 
-            typename Sim::Root_stack s= sim->root_stack_object(f);
+            typename FK::Root_stack s= fk.root_stack_object(f, 
+							     sim->current_time(),
+							     sim->end_time());
 
             while ( !s.empty() ) {
 
@@ -204,8 +206,8 @@ int main(int, char *[])
     {
         timer.reset();
 
-        typedef CGAL::KDS::Exact_simulation_traits_2::Function_kernel FK;
-        typedef CGAL::KDS::Simulator<CGAL::KDS::Exact_simulation_traits_2::Simulator::Function_kernel,
+        typedef CGAL::KDS::Exact_simulation_traits_2::Kinetic_kernel::Function_kernel FK;
+        typedef CGAL::KDS::Simulator<FK,
             CGAL::KDS::Two_list_pointer_event_queue<FK::Root, FK::NT> > Sim2;
 
         timer.start();

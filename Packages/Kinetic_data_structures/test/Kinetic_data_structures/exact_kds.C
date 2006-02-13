@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
         for (unsigned int j=0; j<= degree; ++j) {
             coefs.push_back(static_cast<double>(std::rand())/static_cast<double>(RAND_MAX));
         }
-        tr.simulator_pointer()->new_event(Time(i/100.0), MOI(MP(Tr::Function_kernel::Function(coefs.begin(), coefs.end()),
-            Tr::Function_kernel::Function(0)), tr.active_objects_table_pointer()));
+        tr.simulator_pointer()->new_event(Time(i/100.0), MOI(MP(Tr::Kinetic_kernel::Motion_function(coefs.begin(), coefs.end()),
+            Tr::Kinetic_kernel::Motion_function(0)), tr.active_objects_table_pointer()));
     }
 
     bool error= sort_test<Tr>(tr);

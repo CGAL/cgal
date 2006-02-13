@@ -253,7 +253,7 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
         typedef typename Traits::Simulator::Event_key Event_key;
         typedef typename Traits::Simulator::Time Time;
 
-        typedef typename Traits::Simulator::Root_stack Root_stack;
+  typedef typename Traits::Kinetic_kernel::Certificate Root_stack;
         typedef TriangulationT Delaunay;
     public:
         typedef internal::Delaunay_3_edge_flip_event<This, Root_stack,
@@ -300,17 +300,17 @@ public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
             typedef TriangulationT Triangulation;
             typedef typename This::Edge_flip Edge_flip;
             typedef typename This::Facet_flip Facet_flip;
-            typedef typename TraitsT::Kinetic_kernel::Power_test_3 Side_of_oriented_sphere_3;
-            typedef typename TraitsT::Kinetic_kernel::Weighted_orientation_3 Orientation_3;
+	  typedef typename TraitsT::Kinetic_kernel::Positive_power_test_3 Positive_side_of_oriented_sphere_3;
+            typedef typename TraitsT::Kinetic_kernel::Weighted_positive_orientation_3 Positive_orientation_3;
 
-            Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
+	  Positive_side_of_oriented_sphere_3 positive_side_of_oriented_sphere_3_object() const
             {
-                return TraitsT::kinetic_kernel_object().power_test_3_object();
+	      return TraitsT::kinetic_kernel_object().positive_power_test_3_object();
             }
 
-            Orientation_3 orientation_3_object() const
+            Positive_orientation_3 positive_orientation_3_object() const
             {
-                return TraitsT::kinetic_kernel_object().weighted_orientation_3_object();
+                return TraitsT::kinetic_kernel_object().weighted_positive_orientation_3_object();
             }
 
             Base_traits(This *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
@@ -858,12 +858,13 @@ create_non_vertex_event(*it, cells[1], f[1], s[1]);
             if (!must_handle) {
                 for (i=0; i< 4; ++i) {
                     typename Triangulation::Facet f(h, i);
-                    typename Base_traits::Simulator::Function_kernel::Function cf= kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
-													      point(internal::vertex_of_facet(f,1)->point()),
-													      point(internal::vertex_of_facet(f,2)->point()),
-													      point(k));
-                    typename Base_traits::Simulator::Function_kernel::Sign_at sar
-                        = kdel_.simulator()->function_kernel_object().sign_at_object(cf);
+                    typename Base_traits::Kinetic_kernel::Certificate_function cf= kdel_.simulation_traits_object().kinetic_kernel_object().weighted_orientation_3_object()(point(internal::vertex_of_facet(f,0)->point()),
+																				   point(internal::vertex_of_facet(f,1)->point()),
+																				   point(internal::vertex_of_facet(f,2)->point()),
+																				   point(k));
+
+                    typename Base_traits::Kinetic_kernel::Function_kernel::Sign_at sar
+		      = kdel_.simulation_traits_object().kinetic_kernel_object().function_kernel_object().sign_at_object(cf);
                     CGAL::Sign sn = CGAL::sign(sar(kdel_.simulator()->current_time()));
 
 #ifndef NDEBUG
@@ -875,13 +876,13 @@ create_non_vertex_event(*it, cells[1], f[1], s[1]);
                             std::cerr <<"Polynomial " << cf << std::endl;
                         }
 
-                        typename Base_traits::Simulator::Function_kernel::Sign_at csar
-                            = kdel_.simulator()->function_kernel_object().sign_at_object(kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
-                            point(internal::vertex_of_facet(f,1)->point()),
-                            point(internal::vertex_of_facet(f,2)->point()),
-                            point(f.first->vertex(f.second)->point())));
+                        /*typename Base_traits::Kinetic_kernel::Function_kernel::Sign_at csar
+			  = kdel_.kinetic_kernel()->function_kernel_object().sign_at_object(kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
+														       point(internal::vertex_of_facet(f,1)->point()),
+														       point(internal::vertex_of_facet(f,2)->point()),
+														       point(f.first->vertex(f.second)->point())));
                         CGAL::Sign csn = CGAL::sign(csar(kdel_.simulator()->current_time()));
-                        CGAL_assertion(csn==CGAL::POSITIVE);
+                        CGAL_assertion(csn==CGAL::POSITIVE);*/
                     }
 #endif
 
@@ -1019,64 +1020,71 @@ create_non_vertex_event(*it, cells[1], f[1], s[1]);
   }*/
 
 //! The order is switched to invert the predicate since we want it to fail when it goes outside
-            typename Simulator::Root_stack s
-                = kdel_.simulator()->root_stack_object(kdel_.power_test_object()(point(n[1]->point()),
-                point(n[0]->point()),
-                point(n[2]->point()),
-                point(n[3]->point()),
-                point(vh->point())));
-            if (!s.empty()) {
-                Time t= s.top();
-                s.pop();
+            Root_stack s
+	      = kdel_.power_test_object()(point(n[1]->point()),
+					  point(n[0]->point()),
+					  point(n[2]->point()),
+					  point(n[3]->point()),
+					  point(vh->point()),
+					  kdel_.simulator()->current_time(),
+					  kdel_.simulator()->end_time());
+            //if (!s.empty()) {
+	    Time t= s.failure_time();
+                s.pop_failure_time();
                 return kdel_.simulator()->new_event(t, Pop_event(s, vh, this));
-            }
+		/*}
             else {
                 return kdel_.simulator()->null_event();
-            }
-            CGAL_postcondition(0);
-            return kdel_.simulator()->null_event();
+		}*/
+		/*CGAL_postcondition(0);
+		  return kdel_.simulator()->null_event();*/
         }
 
         Event_key make_certificate(Point_key k, typename Triangulation::Cell_handle h) {
-            typename Simulator::Root_stack ps
-                = kdel_.simulator()->root_stack_object(kdel_.power_test_object()(point(h->vertex(0)->point()),
-                point(h->vertex(1)->point()),
-                point(h->vertex(2)->point()),
-                point(h->vertex(3)->point()),
-                point(k)));
+	  Root_stack ps
+                = kdel_.power_test_object()(point(h->vertex(0)->point()),
+					    point(h->vertex(1)->point()),
+					    point(h->vertex(2)->point()),
+					    point(h->vertex(3)->point()),
+					    point(k),
+					    kdel_.simulator()->current_time(),
+					    kdel_.simulator()->end_time());
             Time pst;
-            if (!ps.empty()) pst = ps.top();
-            else pst= std::numeric_limits<Time>::infinity();
+            /*if (!ps.empty()) pst = ps.top();
+	      else pst= std::numeric_limits<Time>::infinity();*/
+	    pst=ps.failure_time();
 
             int first=0;
             for (unsigned int i=0; i< 4; ++i) {
                 typename Triangulation::Facet f(h, i);
 // order matters
-                typename Simulator::Root_stack cs
-                    = kdel_.simulator()->root_stack_object(kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
-                    point(internal::vertex_of_facet(f,1)->point()),
-                    point(internal::vertex_of_facet(f,2)->point()),
-                    point(k)));
-                if (!cs.empty() && cs.top() < pst) {
-                    pst= cs.top();
+                Root_stack cs
+		  = kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
+					       point(internal::vertex_of_facet(f,1)->point()),
+					       point(internal::vertex_of_facet(f,2)->point()),
+					       point(k),
+					       kdel_.simulator()->current_time(),
+					       kdel_.simulator()->end_time());
+                if (cs.failure_time() < pst) {
+                    pst= cs.failure_time();
                     ps=cs;
                     first= i+1;
                 }
             }
             if (pst != std::numeric_limits<Time>::infinity()) {
-                if (first==0 ) {
-                    CGAL_KDS_LOG(LOG_LOTS, "Making push certificate for " << k << std::endl);
-                    ps.pop();
-                    return kdel_.simulator()->new_event(pst, Push_event(ps, k, h, this));
-                }
-                else {
-                    CGAL_KDS_LOG(LOG_LOTS, "Making move certificate for " << k << std::endl);
-                    ps.pop();
-                    return kdel_.simulator()->new_event(pst, Move_event(ps, k, h, first-1, this));
-                }
+	      if (first==0 ) {
+		CGAL_KDS_LOG(LOG_LOTS, "Making push certificate for " << k << std::endl);
+		ps.pop_failure_time();
+		return kdel_.simulator()->new_event(pst, Push_event(ps, k, h, this));
+	      }
+	      else {
+		CGAL_KDS_LOG(LOG_LOTS, "Making move certificate for " << k << std::endl);
+		ps.pop_failure_time();
+		return kdel_.simulator()->new_event(pst, Move_event(ps, k, h, first-1, this));
+	      }
             }
             else {
-                return kdel_.simulator()->null_event();
+	      return kdel_.simulator()->null_event();
             }
             CGAL_postcondition(0);
             return kdel_.simulator()->null_event();

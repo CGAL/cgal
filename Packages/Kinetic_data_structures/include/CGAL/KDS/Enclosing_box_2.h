@@ -68,6 +68,7 @@ class  Enclosing_box_2: public Ref_counted<Enclosing_box_2<Traits> >
 
     typedef Enclosing_box_2<Traits> This;
     typedef typename Traits::Simulator Simulator;
+    typedef typename Traits::Kinetic_kernel Kinetic_kernel;
     typedef typename Traits::Active_objects_table Active_objects_table;
 
     typedef typename CGAL::KDS::Simulator_kds_listener<typename Simulator::Listener, This> Simulator_listener;
@@ -185,8 +186,10 @@ class  Enclosing_box_2: public Ref_counted<Enclosing_box_2<Traits> >
                 nf=-nf;
             }
 
-            typename Simulator::Root_stack re
-                = traits_.simulator_pointer()->root_stack_object(nf);
+            typename Kinetic_kernel::Function_kernel::Root_stack re
+	      = traits_.kinetic_kernel_object().function_kernel_object().root_stack_object(nf,
+											   traits_.simulator_pointer()->current_time(),
+											   traits_.simulator_pointer()->end_time());
 
             double dv = std::numeric_limits<double>::infinity();
             if (!re.empty()) {

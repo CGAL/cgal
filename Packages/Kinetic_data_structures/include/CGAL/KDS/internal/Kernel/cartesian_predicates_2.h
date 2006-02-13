@@ -29,7 +29,7 @@ template <class KK>
 struct Cartesian_orientation_2
 {
     Cartesian_orientation_2(){}
-    typedef typename KK::Certificate_function result_type;
+  typedef typename KK::Certificate_function result_type;
     typedef typename KK::Point_2 first_argument_type;
     typedef typename KK::Point_2 second_argument_type;
     typedef typename KK::Point_2 third_argument_type;
@@ -59,7 +59,7 @@ template <class KK>
 struct Cartesian_side_of_oriented_circle_2
 {
     Cartesian_side_of_oriented_circle_2(){}
-    typedef typename KK::Certificate_function result_type;
+  typedef typename KK::Certificate_function result_type;
     typedef typename KK::Point_2 first_argument_type;
     typedef typename KK::Point_2 second_argument_type;
     typedef typename KK::Point_2 third_argument_type;

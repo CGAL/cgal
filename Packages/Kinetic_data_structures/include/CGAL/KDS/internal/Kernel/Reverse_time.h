@@ -28,7 +28,7 @@ template <class K>
 class Reverse_time
 {
     public:
-        Reverse_time(const typename K::Polynomial_kernel::Negate_variable &nv): nv_(nv){}
+  Reverse_time(const typename K::Function_kernel::Negate_variable &nv): nv_(nv){}
 
         typedef typename K::Point_3 argument_type;
         typedef typename K::Point_3 result_type;
@@ -40,7 +40,7 @@ class Reverse_time
         }
 
     protected:
-        typename K::Polynomial_kernel::Negate_variable nv_;
+        typename K::Function_kernel::Negate_variable nv_;
 };
 
 CGAL_KDS_END_INTERNAL_NAMESPACE

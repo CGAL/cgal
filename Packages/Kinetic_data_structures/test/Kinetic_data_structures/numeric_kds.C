@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 			/static_cast<double>(RAND_MAX));
       }
       // make sure output is exact
-      MP mp(Tr::Function_kernel::Function(coefs.begin(),coefs.end()));
+      MP mp(Tr::Kinetic_kernel::Motion_function(coefs.begin(),coefs.end()));
       std::ostringstream oss;
       oss << mp;
       std::istringstream iss;
