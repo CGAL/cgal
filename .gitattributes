@@ -1109,24 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/filenew.xpm -text
-Packages/Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/fileopen.xpm -text
-Packages/Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/fileprint.xpm -text
-Packages/Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/filesave.xpm -text
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.eps -text
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.fig -text
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.gif -text svneol=unset#unset
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.pdf -text svneol=unset#unset
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-strongly-bw.eps -text
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-strongly-bw.gif -text svneol=unset#unset
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-strongly-bw.pdf -text svneol=unset#unset
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-weakly-bw.eps -text
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-weakly-bw.gif -text svneol=unset#unset
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-weakly-bw.pdf -text svneol=unset#unset
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.eps -text
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.fig -text
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.gif -text svneol=unset#unset
-Packages/Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.pdf -text svneol=unset#unset
 Packages/Snap_rounding_2/demo/Snap_rounding_2/grid.xpm -text
 Packages/Snap_rounding_2/demo/Snap_rounding_2/snap_rounding_2.vcproj -text
 Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#unset
@@ -1997,3 +1979,21 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.eps -text
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#unset
+Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/filenew.xpm -text
+Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/fileopen.xpm -text
+Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/fileprint.xpm -text
+Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/filesave.xpm -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.eps -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.fig -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.gif -text svneol=unset#unset
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.pdf -text svneol=unset#unset
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-strongly-bw.eps -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-strongly-bw.gif -text svneol=unset#unset
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-strongly-bw.pdf -text svneol=unset#unset
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-weakly-bw.eps -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-weakly-bw.gif -text svneol=unset#unset
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/svd-weakly-bw.pdf -text svneol=unset#unset
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.eps -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.fig -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.gif -text svneol=unset#unset
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.pdf -text svneol=unset#unset
