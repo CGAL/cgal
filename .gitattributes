@@ -1023,57 +1023,57 @@ Nef_2/doc_tex/Nef_2/halfplane.ps -text
 Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text
 Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#unset
 Nef_2/doc_tex/Nef_2_ref/extsegs.pdf -text svneol=unset#unset
-Packages/Nef_3/Visual_hull/Nef_3/corner.off -text
-Packages/Nef_3/Visual_hull/Nef_3/hole.off -text
-Packages/Nef_3/Visual_hull/Nef_3/mpi.off -text
-Packages/Nef_3/Visual_hull/Nef_3/mpi_triang.off -text
-Packages/Nef_3/Visual_hull/Nef_3/octahedron.off -text
-Packages/Nef_3/demo/Nef_3/cube.off -text
-Packages/Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.eps -text
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.ps -text
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.eps -text
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/shells.eps -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/shells.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/shells.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/snc.eps -text
-Packages/Nef_3/doc_tex/Nef_3/fig/snc.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/snc.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/sphere_map.eps -text
-Packages/Nef_3/doc_tex/Nef_3/fig/sphere_map.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/sphere_map.png -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.eps -text
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.eps -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.pdf -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.eps -text
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#unset
-Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#unset
-Packages/Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text
-Packages/Nef_3/test/Nef_3/data/2_cycles_on_halfsphere2.off -text
-Packages/Nef_3/test/Nef_3/data/centered_cube.off -text
-Packages/Nef_3/test/Nef_3/data/cube+v.off -text
-Packages/Nef_3/test/Nef_3/data/cube+vONe.off -text
-Packages/Nef_3/test/Nef_3/data/cube+vee.off -text
-Packages/Nef_3/test/Nef_3/data/cube+veeee.off -text
-Packages/Nef_3/test/Nef_3/data/cube+vertex.off -text
-Packages/Nef_3/test/Nef_3/data/cube.off -text
-Packages/Nef_3/test/Nef_3/data/octa.off -text
-Packages/Nef_3/test/Nef_3/data/star.off -text
+Nef_3/Visual_hull/Nef_3/corner.off -text
+Nef_3/Visual_hull/Nef_3/hole.off -text
+Nef_3/Visual_hull/Nef_3/mpi.off -text
+Nef_3/Visual_hull/Nef_3/mpi_triang.off -text
+Nef_3/Visual_hull/Nef_3/octahedron.off -text
+Nef_3/demo/Nef_3/cube.off -text
+Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/nef_example.eps -text
+Nef_3/doc_tex/Nef_3/fig/nef_example.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/nef_example.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.ps -text
+Nef_3/doc_tex/Nef_3/fig/nef_pyramids.eps -text
+Nef_3/doc_tex/Nef_3/fig/nef_pyramids.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/nef_pyramids.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/shells.eps -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/shells.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/shells.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/snc.eps -text
+Nef_3/doc_tex/Nef_3/fig/snc.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/snc.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/sphere_map.eps -text
+Nef_3/doc_tex/Nef_3/fig/sphere_map.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/sphere_map.png -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/visualization_SNC.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text
+Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.eps -text
+Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.eps -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.pdf -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3_ref/fig/snc.eps -text
+Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#unset
+Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#unset
+Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text
+Nef_3/test/Nef_3/data/2_cycles_on_halfsphere2.off -text
+Nef_3/test/Nef_3/data/centered_cube.off -text
+Nef_3/test/Nef_3/data/cube+v.off -text
+Nef_3/test/Nef_3/data/cube+vONe.off -text
+Nef_3/test/Nef_3/data/cube+vee.off -text
+Nef_3/test/Nef_3/data/cube+veeee.off -text
+Nef_3/test/Nef_3/data/cube+vertex.off -text
+Nef_3/test/Nef_3/data/cube.off -text
+Nef_3/test/Nef_3/data/octa.off -text
+Nef_3/test/Nef_3/data/star.off -text
 Packages/Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/fig/complex.ps -text
