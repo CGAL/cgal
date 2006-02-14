@@ -1109,18 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
-Packages/wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
-Packages/wininst/include/CGAL/config/msvc7/gmp.h -text
-Packages/wininst/include/CGAL/config/msvc7/mpf2mpfr.h -text
-Packages/wininst/include/CGAL/config/msvc7/mpfr.h -text
-Packages/wininst/lib/msvc7/Core.lib -text svneol=unset#unset
-Packages/wininst/lib/msvc7/gcc.lib -text svneol=unset#unset
-Packages/wininst/lib/msvc7/gmp.lib -text svneol=unset#unset
-Packages/wininst/lib/msvc7/gmp_p4.dll -text svneol=unset#unset
-Packages/wininst/lib/msvc7/mpfr.dll -text svneol=unset#unset
-Packages/wininst/lib/msvc7/mpfr.lib -text svneol=unset#unset
-Packages/wininst/src/cgallib.vcproj -text
 Parameterization/doc/specification/param.pdf -text svneol=unset#unset
 Parameterization/doc_tex/Parameterization/LSCM.eps -text
 Parameterization/doc_tex/Parameterization/LSCM.png -text svneol=unset#unset
@@ -1997,3 +1985,15 @@ cgal_window/include/CGAL/LEDA/pixmaps/win_small_icon1.xpm -text
 cgal_window/src/CGALWin/mswin/leda1.ico -text svneol=unset#unset
 cgal_window/src/CGALWin/mswin/leda1_sm.ico -text svneol=unset#unset
 cgal_window/src/CGALWin/mswin/leda2.ico -text svneol=unset#unset
+wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
+wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
+wininst/include/CGAL/config/msvc7/gmp.h -text
+wininst/include/CGAL/config/msvc7/mpf2mpfr.h -text
+wininst/include/CGAL/config/msvc7/mpfr.h -text
+wininst/lib/msvc7/Core.lib -text svneol=unset#unset
+wininst/lib/msvc7/gcc.lib -text svneol=unset#unset
+wininst/lib/msvc7/gmp.lib -text svneol=unset#unset
+wininst/lib/msvc7/gmp_p4.dll -text svneol=unset#unset
+wininst/lib/msvc7/mpfr.dll -text svneol=unset#unset
+wininst/lib/msvc7/mpfr.lib -text svneol=unset#unset
+wininst/src/cgallib.vcproj -text
