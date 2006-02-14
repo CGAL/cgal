@@ -389,36 +389,36 @@ Curved_kernel/demo/Curved_kernel/lines_icon.xpm -text
 Curved_kernel/demo/Curved_kernel/planar_map_icon.xpm -text
 Curved_kernel/demo/Curved_kernel/sweeper.xpm -text
 Curved_kernel/demo/Curved_kernel/trash.xpm -text
+Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text
+Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/Object.pdf -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/background.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/cgal.eps -text
+Developers_manual/doc_tex/Developers_manual/fig/cgal.pdf -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/cgal_small.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.eps -text
+Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.pdf -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.eps -text
+Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.pdf -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/handle_rep.eps -text
+Developers_manual/doc_tex/Developers_manual/fig/handle_rep.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/handle_rep.pdf -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/homogeneous_ipoint.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/homogeneous_orientation.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/reference_counting.eps -text
+Developers_manual/doc_tex/Developers_manual/fig/reference_counting.fig -text
+Developers_manual/doc_tex/Developers_manual/fig/reference_counting.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text
+Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#unset
+Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/cgal-bg2.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/cgal_small.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/vanilla.ps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/Object.pdf -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/background.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/cgal.eps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/cgal.pdf -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/cgal_small.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.eps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/generic_cgal.pdf -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.eps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_allocate.pdf -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_rep.eps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_rep.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/handle_rep.pdf -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/homogeneous_ipoint.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/homogeneous_orientation.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.eps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.fig -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text
-Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#unset
-Packages/Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#unset
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.eps -text
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.fig -text
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.gif -text svneol=unset#unset
