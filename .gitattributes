@@ -4,12 +4,12 @@ Alpha_shapes_2/demo/Alpha_shapes_2/alpha_shapes_2.vcproj -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.gif -text svneol=unset#unset
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#unset
+Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text
+Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#unset
+Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.pdf -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/cgal-bg2.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/cgal_small.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/vanilla.ps -text
-Packages/Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text
-Packages/Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#unset
-Packages/Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.pdf -text svneol=unset#unset
 Packages/Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2.vcproj -text
 Packages/Apollonius_graph_2/demo/Apollonius_graph_2/filenew.xpm -text
 Packages/Apollonius_graph_2/demo/Apollonius_graph_2/fileopen.xpm -text
