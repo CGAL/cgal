@@ -871,7 +871,7 @@ init_solution()
   x_B_O .insert(x_B_O .end(), l, et0);
   x_B_S .insert(x_B_S .end(), slack_A.size(), et0);
 
-  #if 0 // todo kf: I guess the following code can be removed...
+  #if 0 // todo kf: I guess the following can be removed...
   //TESTING the updates of r_C, r_S_B, r_B_O, w
   //    ratio_test_bound_index = LOWER;
   //direction = 1;
@@ -905,7 +905,7 @@ void
 QP_solver<Rep_>::
 init_additional_data_members()
 {
-  // todo kf: do we really have to insert et0 or would it suffice to just
+  // todo kf: do we really have to insert et0, or would it suffice to just
   // resize() in the following statements?
 
   if (!A_Cj.empty()) A_Cj.clear();

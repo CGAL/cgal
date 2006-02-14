@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 //
 // Precondition: Is_in_standard_form is Tag_false.
 //
-// Notee: This routine is probably never called (but it is referenced
+// Note: This routine is probably never called (but it is referenced
 // sometimes in comments for explanation.)
 template < class Rep_ >
 typename QP_solver<Rep_>::ET

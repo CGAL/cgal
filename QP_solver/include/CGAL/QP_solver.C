@@ -234,6 +234,9 @@ pivot_step( )
                 vout << "problem is UNBOUNDED" << std::endl;
 		//nu should be zero in this case
 		// note: (-1)/hat{\nu} is stored instead of \hat{\nu}
+		// todo kf: as this is just used for an assertion check,
+		// all the following lines should only be executed if
+		// assertions are enabled...
 		nu = inv_M_B.inner_product(     A_Cj.begin(), two_D_Bj.begin(),
 		    q_lambda.begin(),    q_x_O.begin());
 	        if (is_QP) {
@@ -365,6 +368,23 @@ pricing( )
             }
         }
     }
+
+    #if 0 // kf: debugging -- may be removed
+    vout << std::endl
+	 << "debug: checking whether file 'ask-for-entering-variable' exists\n"
+	 << "(if it starts with '1', you will be asked for a new entering\n"
+	 << "variable index) ...\n";
+    std::ifstream f("ask-for-entering-variable");
+    if (f) {
+      char flag = 0;
+      f >> flag;
+      if (flag == '1') {
+	std::cout << "  new entering variable (j=)? ";
+	std::cin >> j;
+      }
+      f.close();
+    }
+    #endif
 }
 
 // initialization of ratio-test
@@ -509,7 +529,8 @@ ratio_test_1( )
 
     // computation of t_{min}^{j}
     ratio_test_1__t_min_j(Is_in_standard_form());
-    CGAL_qpe_debug {
+    CGAL_qpe_debug { // todo kf: at first sight, this debug message should
+                     // only be output for problems in nonstandard form...
         if (vout2.verbose()) {
             vout2.out() << "t_min_j: " << x_i << '/' << q_i << std::endl;
             vout2.out() << std::endl;
@@ -1096,14 +1117,26 @@ update_1( )
     
     // check feasibility 
     CGAL_qpe_debug {
-        if (is_phaseI) {
-            CGAL_expensive_assertion(
-                is_solution_feasible_for_auxiliary_problem());
-        } else {
-            CGAL_expensive_assertion(is_solution_feasible());
-        }
-	CGAL_expensive_assertion(check_tag(Is_in_standard_form()) ||
-				 r_C.size() == C.size());
+      if (j < 0 || !is_RTS_transition) // todo kf: is this too conservative?
+                 // Note: the above condition is necessary because of the
+                 // following.  In theory, it is true that the current
+                 // solution is at this point in the solver always
+                 // feasible. However, the solution has its x_j-entry equal to
+                 // the current t from the pricing, and is not zero (in the
+                 // standard-form case) or the current lower/upper bound
+                 // of the variable (in the non-standard-form case), resp., as
+                 // the routines is_solution_feasible() and
+                 // is_solution_feasible_for_auxiliary_problem() assume.
+	if (is_phaseI) {
+	  CGAL_expensive_assertion(
+            is_solution_feasible_for_auxiliary_problem());
+	} else {
+	  CGAL_expensive_assertion(is_solution_feasible());
+	}
+      else
+	vout2 << "(feasibility not checked in intermediate step)" << std::endl;
+      CGAL_expensive_assertion(check_tag(Is_in_standard_form()) ||
+			       r_C.size() == C.size());
     }
 	 
 }

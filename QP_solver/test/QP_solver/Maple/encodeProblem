@@ -48,8 +48,8 @@ end:
 # Note: fpath should simply be the filename (e.g. "PD_Dual_Eq_QPE_solver"
 # for "PD_Dual_Eq_QPE_solver.mema"); if fpath contains a path (e.g.
 # "../data/PD_Dual_Eq_QPE_solver") then this path will be ignored.
-encodeProblemToMPS:= proc(A::Matrix, rel::Matrix, b::Matrix, c::Matrix, D,
-  fl, l, fu, u,
+simpleEncodeProblemToMPS:= proc(A::Matrix, rel::Matrix, b::Matrix, c::Matrix, D,
+  fl, l, fu, u, # must be row Matrix's
   desc::string, gen_desc::string, fpath::string)
 local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment;
   # get problem dimensions:
@@ -165,6 +165,50 @@ local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment;
 
   # close output file:
   fclose(fd);
+end:
+
+encodeProblemToMPS:= proc(A::Matrix, rel::Matrix, b::Matrix, c::Matrix, D,
+  fl, l, fu, u, # must be row Matrix's
+  desc::string, gen_desc::string, fpath::string)
+local dim, m, n, i, bn, cn, ln, un, t, tm, fln, fun;
+
+  # export the original problem as an MPS file:
+  simpleEncodeProblemToMPS(A,rel,b,c,D,fl,l,fu,u,
+    desc,gen_desc,fpath);
+
+  # create another problem by translating x to x+constant
+  # and output this problem in MPS format, too:
+  dim := LinearAlgebra[Dimensions];
+  m := dim(A)[1]; 
+  n := dim(A)[2];
+  
+  # create the translation vector:
+  t:= Vector([seq(i,i=1..n)]);
+  tm:= Matrix([[seq(i,i=1..n)]]);
+
+  # bounds:  
+  if not type(fl,boolean) then
+    ln:= l+tm;
+    un:= u+tm;
+    fln:= fl;
+    fun:= fu;
+  else
+    ln:= tm;
+    un:= false;
+    fln:= Matrix([[seq(1,i=1..n)]]); 
+    fun:= Matrix([[seq(0,i=1..n)]]); 
+  fi;
+  
+  # other quantities:
+  bn:= b + (A.Transpose(tm));
+  if not type(D,boolean) then
+    cn:= c - 2*tm.D;
+  else
+    cn:= c;
+  fi;
+
+  simpleEncodeProblemToMPS(A,rel,bn,cn,D,fln,ln,fun,un,
+    cat(desc, " (shifted)"),gen_desc,cat(fpath,"_shifted"));
 end:
 
 # for compatiblity with Frans' original output format:

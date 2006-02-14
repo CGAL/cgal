@@ -227,8 +227,6 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
 template < class Rep_ >
 bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 {
-  CGAL_expensive_precondition(is_solution_feasible_for_auxiliary_problem());
-
   // Let us first see what exactly we need to check. Observe that the (normal)
   // artificial variables are merely introduced to have an initial feasible
   // solution: for each infeasible equality, we introduce an artificial so
@@ -259,7 +257,7 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   //
   // where aux_A = [ A A_art a_spec A_s], is optimal.  Here, the column a_spec
   // is only present in aux_A if the special artificial is (existent and)
-  // nonzero; similarly, A_s only contains the columns of the (ordinary)
+  // nonzero; similarly, A_art only contains the columns of the (ordinary)
   // artificials that are nonzero.  Three cases may occur:
   //
   // - If the current solution does not optimally solve (C13), the test fails
@@ -279,15 +277,16 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   //   zero, we have found a feasible point of the initial problem input by
   //   user. So we can continue with phase II.
   //
-  // Note: if we checked optimality of (C13) with ALL artificial included,
-  // this does not always work. The example Ub_LP_Chvatal_8_1_d_QPE_solver.mps
-  // in the testsuite will then cause problems: during some pricing step in
-  // phase I, the solver sees that no non-artificial variable can be taken
-  // into the basis, and so it concludes that the current solution optimally
-  // solves auxiliary problem. As the objective function is nonzero, the
-  // original problem is recognized as infeasible (which is correct), but the
-  // validiaty check fails because in this instance, the entry in \tau from
-  // (C2) below for some artificial is negative.
+  // Note: if we checked optimality of (C13) with ALL artificial included (not
+  // only the nonzero ones), this does not always work. The example
+  // Ub_LP_Chvatal_8_1_d_QPE_solver.mps in the testsuite will then cause
+  // problems: during some pricing step in phase I, the solver sees that no
+  // non-artificial variable can be taken into the basis, and so it concludes
+  // that the current solution optimally solves auxiliary problem. As the
+  // objective function is nonzero, the original problem is recognized as
+  // infeasible (which is correct), but the validiaty check fails because in
+  // this instance, the entry in \tau from (C2) below for some artificial is
+  // negative.
   //
   // Implementation of this check: using the KKT conditions, we obtain that a
   // feasible point x is optimal iff there exists a m-vector \lambda and a
@@ -313,6 +312,8 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   // the basis (and thus art_s_i == -2) then number_of_working_variables()
   // does not count it.
   const int no_of_wo_vars = this->number_of_working_variables();
+  vout5 << "number_of_working_variables: " << no_of_wo_vars << std::endl
+	<< "art_s_i: " << art_s_i << std::endl;
   
   // collect solution vector of auxiliary problem:
   Values x_aux(no_of_wo_vars, et0);
@@ -330,7 +331,7 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 	x_aux[i] = nonbasic_original_variable_value(i) * d;
   
   // Note: lambda[i] <= 0 for qp_r[i] == "GREATER_EQUAL"
-  // todo: (ask frans) what does the above note mean?
+  // todo: (ask frans) what does the above note mean here?
   Values lambda_aux(qp_m, et0);
   v_it = lambda.begin();
   for (Index_const_iterator i_it = C.begin();
@@ -365,15 +366,17 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
       int k = col - qp_n;
       if (k < static_cast<int>(slack_A.size()))
                                      // slack variable
-	tau_aux[col] = (slack_A[k].second? -et1 :  et1)
+	tau_aux[col] += (slack_A[k].second? -et1 :  et1)
 	  * lambda_aux[slack_A[k].first];
       else {                         // artificial variable
 	k -= slack_A.size();
-	if ((art_s_i == -1) || (col < no_of_wo_vars - 1))
-	                             // normal artificial variable
+	if (art_s_i == -1 ||         // no spec. art. ever => all art. normal
+	    art_s_i == -2 ||         // spec. art. out now => all art. normal
+	    col < no_of_wo_vars-1)   // spec. art still here => check
+	                             // case of normal artificial variable
 	  tau_aux[col] += (art_A[ k].second? -et1 : et1)
 	    * lambda_aux[art_A[k].first];
-	else                         // special artificial variable
+	else                         // case of special artificial variable
 	  for (int i=0; i<qp_m; ++i)
 	    tau_aux[col] += lambda_aux[i] * art_s[i];
       }
@@ -386,7 +389,7 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   // check last two lines of (C2):
   for (int col = 0; col < no_of_wo_vars; ++col)
     if (!is_artificial(col) || x_aux[col] != et0) // is it a slack or original
-						  // vairable, or a nonzero
+						  // variable, or a nonzero
 						  // aritificial?
       if (tau_aux[col] < et0 || 
 	  tau_aux[col] * x_aux[col] != et0)
@@ -429,8 +432,6 @@ template < class Rep_ >
 bool QP_solver<Rep_>::
 is_solution_optimal()
 {
-  CGAL_expensive_precondition(is_solution_feasible());
-
   // As described in documentation/UpperBounding.tex, the optimality
   // conditions for a QP that is not (necessarily) in standard form
   // read as follows. A feasible solution x is optimal if and only if

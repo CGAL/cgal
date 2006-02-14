@@ -18,7 +18,7 @@
 // revision_date : 2000/08/21
 //
 // author(s)     : Kaspar Fischer (fischerk@inf.ethz.ch)
-// coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
+// coordinator   : ETH Zuerich (Bernd Gaertner <gaertner@inf.ethz.ch>)
 //
 // implementation: example QP solver for QP's in MPS format
 // ============================================================================
@@ -55,7 +55,7 @@ int main(const int argNr,const char **args) {
   // check for format errors in MPS file:
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
-	 << "Error: " << qp.error() << endl;
+         << "Error: " << qp.error() << endl;
     exit(2);
   }
 
@@ -64,7 +64,7 @@ int main(const int argNr,const char **args) {
   }
 
   typedef Tag_false Is_linear; // is the instance known in advance to be an LP?
-  typedef Tag_true Is_symmetric; // is the D matrix known to be symmetric?
+  typedef Tag_false Is_symmetric; // is the D matrix known to be symmetric?
   typedef Tag_false Has_equalities_only_and_full_rank; // (see manual)
   typedef Tag_false Is_in_standard_form; // (see manual)?
 
@@ -85,13 +85,13 @@ int main(const int argNr,const char **args) {
 
   typedef CGAL::QP_solver<Traits> Solver;
   Solver solver(qp.number_of_variables(),
-				 qp.number_of_constraints(),
-				 qp.A(),qp.b(),qp.c(),
-				 qp.D(),
-				 qp.row_types(),
-				 qp.fl(),qp.l(),qp.fu(),qp.u(),
+                                 qp.number_of_constraints(),
+                                 qp.A(),qp.b(),qp.c(),
+                                 qp.D(),
+                                 qp.row_types(),
+                                 qp.fl(),qp.l(),qp.fu(),qp.u(),
                                  strategy,
-				 verbosity);
+                                 verbosity);
 
   if (solver.is_valid()) {
     cout << "Solution is valid." << endl;
@@ -104,6 +104,7 @@ int main(const int argNr,const char **args) {
   if (solver.status() != Solver::INFEASIBLE) {
     cout << "Solution:" << endl;
     std::vector<ET> x(qp.number_of_variables(),0);  // solution vector
+    // Note: following should be fixed to also output values for nonbasics...
     Solver::Basic_variable_numerator_iterator
       x_it =  solver.basic_original_variables_numerator_begin(),
       x_end = solver.basic_original_variables_numerator_end();
@@ -120,7 +121,7 @@ int main(const int argNr,const char **args) {
     cout << "Solution (as doubles):" << endl;
   for (unsigned int i=0; i<qp.number_of_variables(); ++i)
     cout << "x[" << i << "] ~= "
-	 << CGAL::to_double(x[i])/CGAL::to_double(denom)
-	 << endl;
+         << CGAL::to_double(x[i])/CGAL::to_double(denom)
+         << endl;
   }
 }
