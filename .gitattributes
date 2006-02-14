@@ -471,15 +471,15 @@ Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.xml -text
-Packages/Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text
-Packages/Jet_fitting_3/demo/Jet_fitting_3/data/venus.off -text
-Packages/Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.eps -text
-Packages/Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.jpg -text svneol=unset#unset
-Packages/Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#unset
-Packages/Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
-Packages/Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
-Packages/Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
-Packages/Jet_fitting_3/examples/Jet_fitting_3/test.off -text
+Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text
+Jet_fitting_3/demo/Jet_fitting_3/data/venus.off -text
+Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.eps -text
+Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.jpg -text svneol=unset#unset
+Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#unset
+Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
+Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
+Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
+Jet_fitting_3/examples/Jet_fitting_3/test.off -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.pdf -text svneol=unset#unset
