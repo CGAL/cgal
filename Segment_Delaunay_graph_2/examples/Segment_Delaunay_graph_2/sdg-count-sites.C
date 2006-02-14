@@ -6,23 +6,26 @@
 #include <fstream>
 #include <cassert>
 
-// define the number type
+// define the exact number type
 #  include <CGAL/Quotient.h>
 #  include <CGAL/MP_Float.h>
-typedef CGAL::Quotient<CGAL::MP_Float>  EFT;
+typedef CGAL::Quotient<CGAL::MP_Float>  ENT;
 
-// define the kernel
+// define the kernels
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_exact.h>
 
-typedef CGAL::Filtered_exact<double,EFT>  FT;
-typedef CGAL::Simple_cartesian<FT>        Kernel;
+typedef CGAL::Simple_cartesian<double>     CK;
+typedef CGAL::Simple_cartesian<ENT>        EK;
 
 // typedefs for the traits and the algorithm
-#include <CGAL/Segment_Delaunay_graph_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_2.h>
 
-typedef CGAL::Segment_Delaunay_graph_traits_2<Kernel>  Gt;
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,
+/* The construction kernel allows for / and sqrt */    CGAL::Sqrt_field_tag,
+						       EK,
+/* The exact kernel supports field ops exactly */      CGAL::Field_tag>  Gt;
+
 typedef CGAL::Segment_Delaunay_graph_2<Gt>             SDG2;
 
 using namespace std;
