@@ -1109,12 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Polygon/demo/Polygon/polygon_2.vcproj -text
-Packages/Polygon/doc_tex/Polygon/pgn_algos.eps -text
-Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
-Packages/Polygon/doc_tex/Polygon/pgn_algos.ipe -text
-Packages/Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#unset
-Packages/Polygon/doc_tex/Polygon/pgn_algos.xml -text
 Packages/Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig1.pdf -text svneol=unset#unset
 Packages/Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig2.pdf -text svneol=unset#unset
 Packages/Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig3.pdf -text svneol=unset#unset
@@ -1997,3 +1991,9 @@ Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#unset
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#unset
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text
+Polygon/demo/Polygon/polygon_2.vcproj -text
+Polygon/doc_tex/Polygon/pgn_algos.eps -text
+Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
+Polygon/doc_tex/Polygon/pgn_algos.ipe -text
+Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#unset
+Polygon/doc_tex/Polygon/pgn_algos.xml -text
