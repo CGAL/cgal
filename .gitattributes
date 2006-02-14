@@ -1107,8 +1107,8 @@ Optimisation_doc/doc_tex/Optimisation/pcenter.pdf -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.eps -text
 Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
-Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
-Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
+PS_Stream/doc_tex/PS_Stream/exemple.ps -text
+PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/Parameterization/doc/specification/param.pdf -text svneol=unset#unset
 Packages/Parameterization/doc_tex/Parameterization/LSCM.eps -text
 Packages/Parameterization/doc_tex/Parameterization/LSCM.png -text svneol=unset#unset
