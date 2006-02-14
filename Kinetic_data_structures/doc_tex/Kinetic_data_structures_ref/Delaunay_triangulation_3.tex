@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{KDS::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -27,7 +27,7 @@ a large number of changes to the underlying points to be made at one
 time without recomputing the certificates each time a single point
 changes.
 
-The class \ccc{KDS::Qt_Delaunay_triangulation_3} displays a kinetic
+The class \ccc{Kinetic::Qt_Delaunay_triangulation_3} displays a kinetic
 Delaunay triangulation in three dimensions using the Coin library.
 
 The optional \ccc{Visitor} template argument is a model of
@@ -36,10 +36,10 @@ changes in the kinetic data structure.
 
 The optional \ccc{Triangulation} template argument must be a model of
 a static Delaunay triangulation and have
-\ccc{CGAL::KDS::Delaunay_triangulation_cell_base_3<Traits>} a the cell
+\ccc{Kinetic::Delaunay_triangulation_cell_base_3<Traits>} a the cell
 type.
 
-\ccInclude{CGAL/KDS/Delaunay_triangulation_3.h}
+\ccInclude{CGAL/Kinetic/Delaunay_triangulation_3.h}
 
 
 \ccTypes
@@ -63,10 +63,10 @@ type.
 
 \ccSeeAlso
 
-\ccc{KDS::Regular_triangulation_3},
-\ccc{KDS::Delaunay_triangulation_2}, 
+\ccc{Kinetic::Regular_triangulation_3},
+\ccc{Kinetic::Delaunay_triangulation_2}, 
 \ccc{Listener}, 
-\ccc{KDS::Qt_Delaunay_triangulation_3}.
+\ccc{Kinetic::Qt_Delaunay_triangulation_3}.
 
 \ccExample
 

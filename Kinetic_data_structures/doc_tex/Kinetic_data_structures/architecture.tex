@@ -105,7 +105,7 @@ primitives, kinetic predicates acting on them and constructions from
 them. The short example in Section~\ref{sec:architecture_overview}
 uses the \ccc{KineticKernel} to compute the \ccc{in\_circle}
 certificate functions. We currently provide one model, namely
-\ccc{CGAL::KDS::Cartesian_kinetic_kernel<FunctionKernel>}, which
+\ccc{Kinetic::Cartesian_kinetic_kernel<FunctionKernel>}, which
 defines two and three dimensional moving weighted and unweighted
 points and the predicates necessary for Delaunay triangulations and
 regular triangulations. The kernel provides the type \ccc{Function}
@@ -139,9 +139,9 @@ existing triangulation. In addition, the \ccc{InstantaneousKernel} can
 be used to audit the kinetic data structure by comparing it to the
 static data structure computed for that instant in time. We provide
 two models, the
-\ccc{CGAL::KDS::Cartesian_instantaneous_kernel<ActiveObjectsTable,
+\ccc{Kinetic::Cartesian_instantaneous_kernel<ActiveObjectsTable,
 Kernel>} and
-\ccc{CGAL::KDS::Regular_triangulation_instantaneous_traits<ActiveObjectsTable,
+\ccc{Kinetic::Regular_triangulation_instantaneous_traits<ActiveObjectsTable,
 Kernel>}.
 
 We are able to use this technique due to a couple of important
@@ -182,13 +182,13 @@ structure requests that the \ccc{Simulator} determine when
 \ccc{Event} with the \ccc{Simulator}. When the certificate fails, the
 \ccc{Simulator} calls the \ccc{Event::process(Time)} method on the
 \ccc{Event}. The framework provides one model of the \ccc{Simulator},
-\ccc{CGAL::KDS::Simulator<FunctionKernel, EventQueue>}.
+\ccc{Kinetic::Simulator<FunctionKernel, EventQueue>}.
 
-Note that the \ccc{CGAL::KDS::Simulator<FunctionKernel, EventQueue>}
+Note that the \ccc{Kinetic::Simulator<FunctionKernel, EventQueue>}
 is a object which is accessed by many other objects at run time (for
 example, any running kinetic data structures, the graphical
 interface). As a result, all access to it is through a reference
-counted pointer, \ccc{CGAL::KDS::Simulator<FunctionKernel,
+counted pointer, \ccc{Kinetic::Simulator<FunctionKernel,
 EventQueue>::Pointer}. This pointer can be safely stored. The
 \ccc{Simulator} is created by the \ccc{SimulationTraits} and accessed
 through the traits.
@@ -261,7 +261,7 @@ the geometric primitives never change and their representations are
 often stored internally to the data structure. As a result, primitives
 are stored in a centralized table and the data structures stores
 \ccc{Key}s instead of the actual primitive. We provide one model of
-such a table, \ccc{CGAL::KDS::Active_objects_vector<Object>}.
+such a table, \ccc{Kinetic::Active_objects_vector<Object>}.
 
 In the simple example presented in
 Section~\ref{sec:architecture_overview}, the kinetic Delaunay
@@ -343,8 +343,8 @@ following sections.
 We provide a number of different classes to facilitate graphical
 display and manipulation of kinetic data structures. There are two and
 three dimensional user interfaces based on the Qt
-(\ccc{CGAL::KDS::Qt_widget_2<Simulator>}) and Coin (\texttt{http://www.coin3d.org})
-(\ccc{CGAL::KDS::QT_widget_3<Simulator>}) libraries,
+(\ccc{Kinetic::Qt_widget_2<Simulator>}) and Coin (\texttt{http://www.coin3d.org})
+(\ccc{Kinetic::QT_widget_3<Simulator>}) libraries,
 respectively.  The graphical interfaces allows the simulations to be
 start and stopped, events can be stepped through and time reversed.
 

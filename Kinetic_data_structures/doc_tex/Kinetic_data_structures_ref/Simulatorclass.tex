@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{KDS::Simulator<FunctionKernel, EventQueue>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kinetic::Simulator<FunctionKernel, EventQueue>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,12 +32,12 @@ correctness by checking that all the certificate predicates have the
 correct value. When exactness checks are enabled, whenever the last
 event processed and the next event to be processed have different
 times, a
-\ccc{KDS::Simulator::Listener::HAS_AUDIT_TIME} notification is made. Kinetic
+\ccc{Kinetic::Simulator::Listener::HAS_AUDIT_TIME} notification is made. Kinetic
 data structures can listen for that event, and when it is made, they
-can call \ccc{KDS::Simulator::audit_time()} to get the time value and
+can call \ccc{Kinetic::Simulator::audit_time()} to get the time value and
 then verify that their structure is correct.
 
-\ccInclude{CGAL/KDS/Simulator.h}
+\ccInclude{CGAL/Kinetic/Simulator.h}
 
 \ccIsModel
 

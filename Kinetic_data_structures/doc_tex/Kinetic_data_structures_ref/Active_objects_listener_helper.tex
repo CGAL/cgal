@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{KDS::Active_objects_listener_helper<ActiveObjectsTable, KDS>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -21,15 +21,15 @@
 The class \ccRefName\ acts as an intermediate between a moving object
 table and a KDS. It translates the
 \ccc{ActiveObjectsTable::Listener::IS_EDITING} notification events into
-appropriate calls to \ccc{KDS::insert}, \ccc{KDS::set},
-\ccc{KDS::erase}.
+appropriate calls to \ccc{Kinetic::insert}, \ccc{Kinetic::set},
+\ccc{Kinetic::erase}.
 
-\ccInclude{CGAL/KDS/Active_objects_listener_helper.h}
+\ccInclude{CGAL/Kinetic/Active_objects_listener_helper.h}
 
 
 \ccSeeAlso
 
-\ccc{CGAL::KDS::Active_objects_vector},
+\ccc{Kinetic::Active_objects_vector},
 \ccc{ActiveObjectsTable}.
 
 

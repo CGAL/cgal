@@ -10,7 +10,7 @@ We will now explain how to implement the kinetic data structure used in the prev
 
 
 Figure~\ref{fig:example_program}, depicts a complete kinetic data
-structure, \ccc{CGAL::KDS::Sort<Traits>}, implemented using our
+structure, \ccc{Kinetic::Sort<Traits>}, implemented using our
 framework. The data structure being maintained is very simple: a list
 of the geometric objects in the simulation sorted by their $x$
 coordinate. However, it touches upon the most important parts of the
@@ -64,7 +64,7 @@ notification from the \ccc{Simulator}.
 \label{sec:sorted_impl_example}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-On initialization the \ccc{CGAL::KDS::Sort<Traits>} registers for
+On initialization the \ccc{Kinetic::Sort<Traits>} registers for
 notifications with a \ccc{ActiveObjectsTable} and a \ccc{Simulator}. It
 receives notifications through two proxy objects,
 \ccc{mot_listener_} and \ccc{sim_listener_}, which implement the
@@ -96,7 +96,7 @@ The first thing that will occur is the addition of a point to the
 \ccc{ActiveObjectsTable} which results in the \ccc{insert} method being
 called. This method is passed a \ccc{Key} which uniquely identifies a
 point in the \ccc{ActiveObjectsTable}. The
-\ccc{CGAL::KDS::Sort<Traits>} makes use of the \ccc{InstantaneousKernel} to properly
+\ccc{Kinetic::Sort<Traits>} makes use of the \ccc{InstantaneousKernel} to properly
 handle the insertion by using a \ccc{InstantenousKernel}-provided
 functor which compares the $x$ coordinates of two objects at the
 current instant of time. This functor is then passed to the
@@ -135,7 +135,7 @@ detects this and will not schedule the associated event, but will
 instead return a placeholder \ccc{Event_key}.
 
 The \ccc{Event} is in charge of alerting the
-\ccc{CGAL::KDS::Sort<Traits>} that it needs to be updated when a
+\ccc{Kinetic::Sort<Traits>} that it needs to be updated when a
 particular certificate failure occurs. Typically event classes are
 very simple, effectively just storing a pointer to the kinetic data
 structure and an identifier for the combinatorial piece which needs to
@@ -192,4 +192,4 @@ and motion types to be used without modifications.
 \subsubsection{Code}
 \label{fig:example_program}
 An example kinetic data structure using the framework.  
-\ccRefIdfierPage{CGAL::KDS::Sort<Traits>}
+\ccRefIdfierPage{Kinetic::Sort<Traits>}
