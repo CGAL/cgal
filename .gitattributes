@@ -1109,20 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/closer_edge_event_0.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/closer_edge_event_1.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/double_split.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/masked_double_split.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/rectangle.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_0.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_1.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_2.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_3.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/region_4.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/single_split.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/square.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/triangle.poly -text
-Packages/Straight_skeleton_2/demo/Straight_skeleton_2/data/vertex_event_0.poly -text
 Packages/Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text
 Packages/Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#unset
 Packages/Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#unset
@@ -1997,3 +1983,17 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
 Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset
 Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/closer_edge_event_0.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/closer_edge_event_1.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/double_split.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/masked_double_split.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/rectangle.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/region_0.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/region_1.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/region_2.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/region_3.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/region_4.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/single_split.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/square.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/triangle.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/vertex_event_0.poly -text
