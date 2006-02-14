@@ -1,5 +1,7 @@
 #include <CGAL/basic.h>
 
+#define DONT_USE_FILTERED_EXACT
+
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -352,6 +354,7 @@ int main(int argc, char* argv[])
   test_traits<Gmpq_Field_Gt>("Gmpq Field");
 #endif
 
+#ifndef DONT_USE_FILTERED_EXACT
   std::cout << std::endl;
   std::cout << "************************************"
 	    << "************************************" << std::endl;
@@ -391,6 +394,8 @@ int main(int argc, char* argv[])
   test_traits<FE_Gmpq_Ring_Gtwi>("FE Gmpq Ring WI");
   test_traits<FE_Gmpq_Field_Gt>("FE Gmpq Field");
 #endif
+
+#endif // DONT_USE_FILTERED_EXACT
 
   return 0;
 }
