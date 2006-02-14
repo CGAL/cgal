@@ -1,7 +1,7 @@
-#include <CGAL/KDS/Listener.h>
-#include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/Kinetic/Listener.h>
+#include <CGAL/Kinetic/Ref_counted.h>
 
-struct Notifier: public CGAL::KDS::Ref_counted<Notifier>
+struct Notifier: public CGAL::Kinetic::Ref_counted<Notifier>
 {
 public:
   Notifier(): data_(0), listener_(NULL){}
@@ -14,8 +14,8 @@ public:
     typedef Notifier::Pointer Notifier_pointer;
   };
 
-  typedef CGAL::KDS::Listener<Listener_interface> Listener;
-  friend class CGAL::KDS::Listener<Listener_interface>;
+  typedef CGAL::Kinetic::Listener<Listener_interface> Listener;
+  friend class CGAL::Kinetic::Listener<Listener_interface>;
 
   int data() const {return data_;}
   void set_data(int d) {
@@ -35,7 +35,7 @@ protected:
   Listener *listener_;
 };
 
-struct My_listener: public Notifier::Listener, public CGAL::KDS::Ref_counted<My_listener>
+struct My_listener: public Notifier::Listener, public CGAL::Kinetic::Ref_counted<My_listener>
 {
   typedef Notifier::Listener P;
   typedef P::Notifier_pointer PP;

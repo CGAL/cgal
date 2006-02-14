@@ -18,21 +18,21 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KDS_IO_QT_SIMULATOR_3_H_
-#define CGAL_KDS_IO_QT_SIMULATOR_3_H_
-#include <CGAL/KDS/basic.h>
+#ifndef CGAL_KINETIC_IO_QT_SIMULATOR_3_H_
+#define CGAL_KINETIC_IO_QT_SIMULATOR_3_H_
+#include <CGAL/Kinetic/basic.h>
 #include "SoQt_pointer.h"
-#include <CGAL/KDS/IO/internal/KDS_GUI_base.h>
+#include <CGAL/Kinetic/IO/internal/KDS_GUI_base.h>
 #include "SoQt_examiner_viewer.h"
-#include <CGAL/KDS/IO/internal/KDS_Qt_timer.h>
-#include <CGAL/KDS/Listener.h>
-#include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/Kinetic/IO/internal/KDS_Qt_timer.h>
+#include <CGAL/Kinetic/Listener.h>
+#include <CGAL/Kinetic/Ref_counted.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
 
 class SoSeparator;
 
-CGAL_KDS_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE;
 
 //! This provides a GUI in 3D using Coin.
 /*!  If you want to draw something, extend
@@ -160,5 +160,5 @@ protected:
   SoQt_examiner_viewer* viewer_;
 };
 
-CGAL_KDS_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE;
 #endif                                            // qt

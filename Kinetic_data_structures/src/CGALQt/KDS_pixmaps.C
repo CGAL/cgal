@@ -19,7 +19,7 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 
-#include <CGAL/KDS/IO/internal/KDS_pixmaps.h>
+#include <CGAL/Kinetic/IO/internal/KDS_pixmaps.h>
 
 namespace CGAL
 {

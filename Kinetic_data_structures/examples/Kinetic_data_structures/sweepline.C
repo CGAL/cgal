@@ -1,13 +1,13 @@
-#include <CGAL/KDS/basic.h>
-#include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
-#include <CGAL/KDS/Active_objects_listener_helper.h>
-#include <CGAL/KDS/Erase_event.h>
-#include <CGAL/KDS/Inexact_simulation_traits_1.h>
-#include <CGAL/KDS/Insert_event.h>
-#include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Simulator_kds_listener.h>
-#include <CGAL/KDS/Sort.h>
-#include <CGAL/KDS/Sort_visitor_base.h>
+#include <CGAL/Kinetic/basic.h>
+#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
+#include <CGAL/Kinetic/Active_objects_listener_helper.h>
+#include <CGAL/Kinetic/Erase_event.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Insert_event.h>
+#include <CGAL/Kinetic/Ref_counted.h>
+#include <CGAL/Kinetic/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/Sort.h>
+#include <CGAL/Kinetic/Sort_visitor_base.h>
 #include <algorithm>
 #include <iostream>
 #include <iterator>
@@ -15,7 +15,7 @@
 #include <map>
 
 template <class Arrangement>
-struct Sort_arrangement_visitor: public CGAL::KDS::Sort_visitor_base
+struct Sort_arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
 {
   Sort_arrangement_visitor(Arrangement *a):p_(a){}
 
@@ -40,11 +40,11 @@ struct Sort_arrangement_visitor: public CGAL::KDS::Sort_visitor_base
 
 
 template <class TraitsT> 
-class Planar_arrangement: public CGAL::KDS::Sort<TraitsT, 
+class Planar_arrangement: public CGAL::Kinetic::Sort<TraitsT, 
 						 Sort_arrangement_visitor<Planar_arrangement<TraitsT> > > {
   typedef TraitsT Traits;
   typedef Planar_arrangement<TraitsT> This;
-  typedef typename CGAL::KDS::Sort<TraitsT, Sort_arrangement_visitor<Planar_arrangement<TraitsT> > > Sort;
+  typedef typename CGAL::Kinetic::Sort<TraitsT, Sort_arrangement_visitor<Planar_arrangement<TraitsT> > > Sort;
   typedef Sort_arrangement_visitor<This> Visitor;
   typedef typename Traits::Active_objects_table::Key Key;
 
@@ -116,11 +116,11 @@ double snap(NT v) {
 
 int main(int, char *[])
 {
-  typedef CGAL::KDS::Inexact_simulation_traits_1 Traits;
+  typedef CGAL::Kinetic::Inexact_simulation_traits_1 Traits;
   typedef Traits::Kinetic_kernel::Point_1 Point;
   typedef Traits::Simulator::Time Time;
-  typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> Insert_event;
-  typedef CGAL::KDS::Erase_event<Traits::Active_objects_table> Erase_event;
+  typedef CGAL::Kinetic::Insert_event<Traits::Active_objects_table> Insert_event;
+  typedef CGAL::Kinetic::Erase_event<Traits::Active_objects_table> Erase_event;
   typedef Planar_arrangement<Traits> Arrangement;
 
   Traits tr;

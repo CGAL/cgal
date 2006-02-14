@@ -1,9 +1,9 @@
 #define CGAL_CHECK_EXACTNESS
 #define CGAL_CHECK_EXPENSIVE
 
-#include <CGAL/KDS/Exact_simulation_traits_2.h>
-#include <CGAL/KDS/Inexact_simulation_traits_2.h>
-#include <CGAL/KDS/Two_list_pointer_event_queue.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
 #include <CGAL/Timer.h>
 #include <algorithm>
 #include <map>
@@ -198,7 +198,7 @@ int main(int, char *[])
 
     {
         timer.start();
-        Test<CGAL::KDS::Exact_simulation_traits_2::Simulator> ts;
+        Test<CGAL::Kinetic::Exact_simulation_traits_2::Simulator> ts;
 //ts.run();
         timer.stop();
 //std::cout << "Bin heap time " << timer.time() << std::endl;
@@ -206,9 +206,9 @@ int main(int, char *[])
     {
         timer.reset();
 
-        typedef CGAL::KDS::Exact_simulation_traits_2::Kinetic_kernel::Function_kernel FK;
-        typedef CGAL::KDS::Simulator<FK,
-            CGAL::KDS::Two_list_pointer_event_queue<FK::Root, FK::NT> > Sim2;
+        typedef CGAL::Kinetic::Exact_simulation_traits_2::Kinetic_kernel::Function_kernel FK;
+        typedef CGAL::Kinetic::Simulator<FK,
+            CGAL::Kinetic::Two_list_pointer_event_queue<FK::Root, FK::NT> > Sim2;
 
         timer.start();
         Test<Sim2> t2;

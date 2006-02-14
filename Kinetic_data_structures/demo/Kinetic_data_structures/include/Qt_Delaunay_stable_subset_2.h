@@ -2,11 +2,11 @@
 #define QT_KINETIC_DELAUNAY_SS_2_H
 
 #include <CGAL/IO/Qt_widget.h>
-//#include <CGAL/KDS/IO/Qt_widget_2.h>
-#include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/internal/tds_2_helpers.h>
+//#include <CGAL/Kinetic/IO/Qt_widget_2.h>
+#include <CGAL/Kinetic/Ref_counted.h>
+#include <CGAL/Kinetic/internal/tds_2_helpers.h>
 
-CGAL_KDS_BEGIN_NAMESPACE
+CGAL_KINETIC_BEGIN_NAMESPACE
 
 //! This class draws a Kinetic_Delaunay_2 triangulation to a Qt_gui_2.
 /*!  The most recently created edges are colored green and the other
@@ -124,5 +124,5 @@ protected:
   double threshold_;
 };
 
-CGAL_KDS_END_NAMESPACE
+CGAL_KINETIC_END_NAMESPACE
 #endif

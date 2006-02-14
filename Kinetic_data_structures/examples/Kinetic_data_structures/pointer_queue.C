@@ -1,5 +1,5 @@
-#include <CGAL/KDS/basic.h>
-#include <CGAL/KDS/Heap_pointer_event_queue.h>
+#include <CGAL/Kinetic/basic.h>
+#include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 #include <cstdlib>
 
 typedef double Time;
@@ -38,7 +38,7 @@ std::ostream &operator<<(std::ostream &out, Event e)
 
 int main(int, char *[])
 {
-    typedef CGAL::KDS::Heap_pointer_event_queue<Time> Q;
+    typedef CGAL::Kinetic::Heap_pointer_event_queue<Time> Q;
     Q pq(0, 10000);
     typedef Q::Key Key;
     std::vector<Key>  items;

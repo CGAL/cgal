@@ -21,7 +21,7 @@ CXXFLAGS = $(CGAL_LIB_CXXFLAGS) -I../../include
 # Object files
 #---------------------------------------------------------------------#
 -include kds.makefile
--include fake.makefile
+-include kds_deps.makefile
 
 CGAL_OBJECTS = $(CGAL_KDS_OBJECTS) dummy$(OBJ_EXT)
 
@@ -30,7 +30,7 @@ CGAL_OBJECTS = $(CGAL_KDS_OBJECTS) dummy$(OBJ_EXT)
 #                    target entries
 #---------------------------------------------------------------------#
 
-lib: lib_no_install
+lib: lib_no_install $(KDS_MOC_FILES)
 	#mv $(CGAL_QT_LIB) $(CGAL_LIB_DESTINATION)
 
 lib_no_install: $(CGAL_OBJECTS) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)

@@ -1,4 +1,6 @@
 /* XPM */
+
+/* a c comment*/
 static const char * play_to_xpm[] = {
 "27 27 11 1",
 " 	c None",

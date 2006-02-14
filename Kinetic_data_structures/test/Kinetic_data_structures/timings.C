@@ -5,12 +5,12 @@
 #include <CGAL/Polynomial/internal/Isolating_interval.h>
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 //#include <CGAL/Polynomial/Lazy_upper_bound_root_stack.h>
-#include <CGAL/KDS/Inexact_simulation_traits_1.h>
-#include <CGAL/KDS/Inexact_simulation_traits_3.h>
-#include <CGAL/KDS/Exact_simulation_traits_1.h>
-#include <CGAL/KDS/Exact_simulation_traits_3.h>
-#include <CGAL/KDS/Delaunay_triangulation_3.h>
-#include <CGAL/KDS/Sort.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_3.h>
+#include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
@@ -25,12 +25,12 @@
   typedef CGAL::POLYNOMIAL::Lazy_upper_bound_root_stack < Root_stack_traits >
         Root_stack;
     typedef CGAL::POLYNOMIAL::Kernel < Function, Root_stack > Function_kernel;
-    typedef CGAL::KDS::Handle_degeneracy_function_kernel < Function_kernel >
+    typedef CGAL::Kinetic::Handle_degeneracy_function_kernel < Function_kernel >
         Simulator_function_kernel;
-    typedef CGAL::KDS::Cartesian_kinetic_kernel < Function_kernel >
+    typedef CGAL::Kinetic::Cartesian_kinetic_kernel < Function_kernel >
         Kinetic_kernel;
     typedef Simulator_function_kernel::Root Time;
-    typedef CGAL::KDS::Two_list_pointer_event_queue < Time, double >Queue_base;
+    typedef CGAL::Kinetic::Two_list_pointer_event_queue < Time, double >Queue_base;
 
     struct Event_queue:public Queue_base
     {
@@ -38,46 +38,46 @@
         }
     };
 
-    typedef CGAL::KDS::Simulator < Simulator_function_kernel,
+    typedef CGAL::Kinetic::Simulator < Simulator_function_kernel,
         Event_queue > Simulator;
 
 
 };*/
 
- /*struct Lazy_exact_traits_1:public CGAL::KDS::Simulation_traits <
+ /*struct Lazy_exact_traits_1:public CGAL::Kinetic::Simulation_traits <
 Slest_types::Static_kernel,
-CGAL::KDS::Cartesian_instantaneous_kernel <
-CGAL::KDS::Active_objects_vector < Slest_types::Kinetic_kernel::Point_1 >,
+CGAL::Kinetic::Cartesian_instantaneous_kernel <
+CGAL::Kinetic::Active_objects_vector < Slest_types::Kinetic_kernel::Point_1 >,
 Slest_types::Static_kernel >, Slest_types::Kinetic_kernel,
 Slest_types::Simulator,
-CGAL::KDS::Active_objects_vector < Slest_types::Kinetic_kernel::Point_1 >
+CGAL::Kinetic::Active_objects_vector < Slest_types::Kinetic_kernel::Point_1 >
 >
 {
-    typedef CGAL::KDS::Simulation_traits < Slest_types::Static_kernel,
-        CGAL::KDS::Cartesian_instantaneous_kernel <
-        CGAL::KDS::Active_objects_vector <
+    typedef CGAL::Kinetic::Simulation_traits < Slest_types::Static_kernel,
+        CGAL::Kinetic::Cartesian_instantaneous_kernel <
+        CGAL::Kinetic::Active_objects_vector <
         Slest_types::Kinetic_kernel::Point_1 >, Slest_types::Static_kernel >,
         Slest_types::Kinetic_kernel, Slest_types::Simulator,
-        CGAL::KDS::Active_objects_vector <
+        CGAL::Kinetic::Active_objects_vector <
         Slest_types::Kinetic_kernel::Point_1 > >P;
     Lazy_exact_traits_1(const P::NT & lb, const P::NT & ub):P(lb, ub) {
     }
 };
-struct Lazy_exact_traits_3:public CGAL::KDS::Simulation_traits <
+struct Lazy_exact_traits_3:public CGAL::Kinetic::Simulation_traits <
 Slest_types::Static_kernel,
-CGAL::KDS::Cartesian_instantaneous_kernel <
-CGAL::KDS::Active_objects_vector < Slest_types::Kinetic_kernel::Point_3 >,
+CGAL::Kinetic::Cartesian_instantaneous_kernel <
+CGAL::Kinetic::Active_objects_vector < Slest_types::Kinetic_kernel::Point_3 >,
 Slest_types::Static_kernel >, Slest_types::Kinetic_kernel,
 Slest_types::Simulator,
-CGAL::KDS::Active_objects_vector < Slest_types::Kinetic_kernel::Point_3 >
+CGAL::Kinetic::Active_objects_vector < Slest_types::Kinetic_kernel::Point_3 >
 >
 {
-    typedef CGAL::KDS::Simulation_traits < Slest_types::Static_kernel,
-        CGAL::KDS::Cartesian_instantaneous_kernel <
-        CGAL::KDS::Active_objects_vector <
+    typedef CGAL::Kinetic::Simulation_traits < Slest_types::Static_kernel,
+        CGAL::Kinetic::Cartesian_instantaneous_kernel <
+        CGAL::Kinetic::Active_objects_vector <
         Slest_types::Kinetic_kernel::Point_3 >, Slest_types::Static_kernel >,
         Slest_types::Kinetic_kernel, Slest_types::Simulator,
-        CGAL::KDS::Active_objects_vector <
+        CGAL::Kinetic::Active_objects_vector <
         Slest_types::Kinetic_kernel::Point_3 > >P;
     Lazy_exact_traits_3(const P::NT & lb, const P::NT & ub):P(lb, ub) {
     }
@@ -85,7 +85,7 @@ CGAL::KDS::Active_objects_vector < Slest_types::Kinetic_kernel::Point_3 >
 
 template < class Traits > double test_sort(unsigned int degree, unsigned int n)
 {
-    typedef CGAL::KDS::Sort < Traits > Sort;
+    typedef CGAL::Kinetic::Sort < Traits > Sort;
     Traits tr(0, 10000);
     Sort sort(tr);
     CGAL::Random r;
@@ -133,7 +133,7 @@ template < class Traits > void test_sort(const char *nm)
 
 template < class Traits > double test_del(unsigned int degree, unsigned int n)
 {
-    typedef CGAL::KDS::Delaunay_triangulation_3 < Traits > Del;
+    typedef CGAL::Kinetic::Delaunay_triangulation_3 < Traits > Del;
     Traits tr;
     Del del(tr);
     CGAL::Random r;
@@ -187,12 +187,12 @@ template < class Traits > void test_del(const char *nm)
 int main(int argc, char *argv[])
 {
   //std::cout << "Delaunay\n";
-    //test_del < CGAL::KDS::Inexact_simulation_traits_3 > ("Numeric");
+    //test_del < CGAL::Kinetic::Inexact_simulation_traits_3 > ("Numeric");
     std::cout << "Sort\n";
-    test_sort < CGAL::KDS::Exact_simulation_traits_1 > ("Upper bound");
+    test_sort < CGAL::Kinetic::Exact_simulation_traits_1 > ("Upper bound");
    
-    //test_sort < CGAL::KDS::Exact_simulation_traits_1 > ("Upper bound");
-    //test_sort < CGAL::KDS::Inexact_simulation_traits_1 > ("Numeric");
+    //test_sort < CGAL::Kinetic::Exact_simulation_traits_1 > ("Upper bound");
+    //test_sort < CGAL::Kinetic::Inexact_simulation_traits_1 > ("Numeric");
     //test_sort<Lazy_exact_traits_1>("Lazy upper bound");
     /*std::cout << CGAL::POLYNOMIAL::internal::lazy_stats.created_ << " "
         << CGAL::POLYNOMIAL::internal::lazy_stats.isolated_ << " "

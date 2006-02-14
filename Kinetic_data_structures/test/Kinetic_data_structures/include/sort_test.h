@@ -1,6 +1,6 @@
 #ifndef SORT_TEST_H
 #define SORT_TEST_H
-#include <CGAL/KDS/Sort.h>
+#include <CGAL/Kinetic/Sort.h>
 
 template <class Traits>
 bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infinity())
@@ -11,7 +11,7 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
   //CGAL_exactness_assertion_code(bool test_compiled_with_exact_checks;);
   CGAL_exactness_assertion_code(eret=true);
   
-  typedef CGAL::KDS::Sort<Traits> Sort;
+  typedef CGAL::Kinetic::Sort<Traits> Sort;
   Sort sort(tr);
 
   //#ifdef _MSC_VER

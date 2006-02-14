@@ -1,6 +1,6 @@
 #include <iostream>
-#include <CGAL/KDS/Ref_counted.h>
-struct Foo: CGAL::KDS::Ref_counted<Foo>
+#include <CGAL/Kinetic/Ref_counted.h>
+struct Foo: CGAL::Kinetic::Ref_counted<Foo>
 {
 
     ~Foo() {
@@ -8,7 +8,7 @@ struct Foo: CGAL::KDS::Ref_counted<Foo>
     }
 };
 
-struct Bar: CGAL::KDS::Ref_counted<Bar>
+struct Bar: CGAL::Kinetic::Ref_counted<Bar>
 {
 
     Bar(Foo::Pointer fp): fp_(fp){}

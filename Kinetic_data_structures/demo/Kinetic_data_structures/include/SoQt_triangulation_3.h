@@ -21,7 +21,7 @@
 #ifndef CGAL_COIN_KINETIC_TRIANGULATION_3_H
 #define CGAL_COIN_KINETIC_TRIANGULATION_3_H
 
-#include <CGAL/KDS/basic.h>
+#include <CGAL/Kinetic/basic.h>
 
 // Inventor parts
 #include <Inventor/nodes/SoSeparator.h>
@@ -43,10 +43,10 @@
 
 #include "SoQt_pointer.h"
 
-#include <CGAL/KDS/internal/triangulation_helpers_3.h>
-#include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/Kinetic/internal/triangulation_helpers_3.h>
+#include <CGAL/Kinetic/Ref_counted.h>
 
-CGAL_KDS_BEGIN_NAMESPACE
+CGAL_KINETIC_BEGIN_NAMESPACE
 
 //! A class to display a 3D triangulation.
 /*!
@@ -433,5 +433,5 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
     wa.apply(parent_.get());
 };
 
-CGAL_KDS_END_NAMESPACE
+CGAL_KINETIC_END_NAMESPACE
 #endif

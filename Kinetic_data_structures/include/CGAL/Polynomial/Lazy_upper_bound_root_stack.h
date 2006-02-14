@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYNOMIAL_LAZY_UPPER_BOUND_ROOT_STACK_H
 #define CGAL_POLYNOMIAL_LAZY_UPPER_BOUND_ROOT_STACK_H
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
-#include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
@@ -275,10 +275,10 @@ class Lazy_upper_bound_root_stack
     protected:
         typedef Upper_bound_root_stack<Traits_t> Solver;
         struct Solver_rep;
-        struct Root_rep: public CGAL::KDS::Ref_counted<Root_rep>
+        struct Root_rep: public CGAL::Kinetic::Ref_counted<Root_rep>
 	{
 	  typedef TRoot Root;
-	  typedef CGAL::KDS::Ref_counted<Root_rep> RC;
+	  typedef CGAL::Kinetic::Ref_counted<Root_rep> RC;
 	  Root_rep(): has_root_(false) {
 	    CGAL_Polynomial_postcondition(!has_root());
 	  }
@@ -381,10 +381,10 @@ class Lazy_upper_bound_root_stack
 };
 
 template <class Traits_t>
-struct Lazy_upper_bound_root_stack<Traits_t>::Solver_rep: public CGAL::KDS::Ref_counted<Solver_rep>
+struct Lazy_upper_bound_root_stack<Traits_t>::Solver_rep: public CGAL::Kinetic::Ref_counted<Solver_rep>
 {
     typedef Solver_rep This;
-    typedef CGAL::KDS::Ref_counted<Solver_rep> RC;
+    typedef CGAL::Kinetic::Ref_counted<Solver_rep> RC;
     Solver_rep(const Function &f,
         const Root &lb,
         const Root &ub,
@@ -511,10 +511,10 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Solver_rep: public CGAL::KDS::Ref_
         typename Root_rep::Pointer cur_;
 };
 /*template <class Traits_t>
-struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::KDS::Ref_counted<Root_rep>
+struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::Kinetic::Ref_counted<Root_rep>
 {
     typedef TRoot Root;
-    typedef CGAL::KDS::Ref_counted<Root_rep> RC;
+    typedef CGAL::Kinetic::Ref_counted<Root_rep> RC;
     Root_rep(): has_root_(false) {
         CGAL_Polynomial_postcondition(!has_root());
     }

@@ -1,10 +1,10 @@
 #define CGAL_CHECK_EXACTNESS
 #define CGAL_CHECK_EXPENSIVE
 
-#include <CGAL/KDS/basic.h>
+#include <CGAL/Kinetic/basic.h>
 #include <limits>
 #include <CGAL/Gmpq.h>
-#include <CGAL/KDS/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
 
 template <class NT>
 void check_nt(NT v) {
@@ -29,7 +29,7 @@ int main(int, char *[])
  check_nt(0.0);
  check_nt(CGAL::Gmpq(1));
   
- typedef CGAL::KDS::Exact_simulation_traits_1 Tr;
+ typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
  Tr tr;
  Tr::Simulator::Function_kernel::Function fn= tr.simulator_pointer()->function_kernel_object().construct_function_object()(1,0,-2);
  check_nt(Tr::Simulator::Time(-1));

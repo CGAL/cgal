@@ -1,7 +1,7 @@
-#include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Exact_simulation_traits_1.h>
-#include <CGAL/KDS/Active_objects_listener_helper.h>
-#include <CGAL/KDS/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/Ref_counted.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Active_objects_listener_helper.h>
+#include <CGAL/Kinetic/Simulator_kds_listener.h>
 #include <iostream>
 #include <set>
 #include <vector>
@@ -49,16 +49,16 @@ std::ostream &operator<<(std::ostream &out,
   objects in the moving object table.
 */
 template <class Traits>
-struct Trivial_kds: CGAL::KDS::Ref_counted<Trivial_kds<Traits> >
+struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
 {
   typedef Trivial_kds<Traits> This;
   typedef typename Traits::Active_objects_table::Data Point;
   typedef typename Traits::Simulator::Time Time;
   typedef typename Traits::Active_objects_table::Key Point_key;
   typedef typename Traits::Simulator::Event_key Event_key;
-  typedef CGAL::KDS::Active_objects_listener_helper<
+  typedef CGAL::Kinetic::Active_objects_listener_helper<
     typename Traits::Active_objects_table::Listener, This> Active_objects_helper;
-  typedef CGAL::KDS::Simulator_kds_listener<
+  typedef CGAL::Kinetic::Simulator_kds_listener<
     typename Traits::Simulator::Listener, This> Simulator_helper;
 
   typedef Trivial_event<Point, Time, This> Event;
@@ -163,7 +163,7 @@ protected:
 
 int main(int, char *[])
 {
-  typedef CGAL::KDS::Exact_simulation_traits_1 Traits;
+  typedef CGAL::Kinetic::Exact_simulation_traits_1 Traits;
   typedef Trivial_kds<Traits> TKDS;
 
   Traits tr;

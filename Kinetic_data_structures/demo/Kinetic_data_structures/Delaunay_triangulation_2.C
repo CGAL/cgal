@@ -1,14 +1,14 @@
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
-#include <CGAL/KDS/Exact_simulation_traits_2.h>
-#include <CGAL/KDS/Delaunay_triangulation_2.h>
-#include <CGAL/KDS/Delaunay_triangulation_recent_edges_visitor_2.h>
-#include <CGAL/KDS/Enclosing_box_2.h>
-#include <CGAL/KDS/IO/Qt_moving_points_2.h>
-#include <CGAL/KDS/IO/Qt_triangulation_2.h>
-#include <CGAL/KDS/IO/Qt_widget_2.h>
-#include <CGAL/KDS/Insert_event.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_recent_edges_visitor_2.h>
+#include <CGAL/Kinetic/Enclosing_box_2.h>
+#include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
+#include <CGAL/Kinetic/IO/Qt_triangulation_2.h>
+#include <CGAL/Kinetic/IO/Qt_widget_2.h>
+#include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Random.h>
 #include <CGAL/Random.h>
 #include <algorithm>
@@ -37,19 +37,19 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    typedef CGAL::KDS::Exact_simulation_traits_2 Traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits_2 Traits;
     typedef CGAL::Triangulation_data_structure_2<
         CGAL::Triangulation_vertex_base_2<Traits::Instantaneous_kernel>,
-        CGAL::KDS::Delaunay_triangulation_face_base_2<Traits> > TDS;
+        CGAL::Kinetic::Delaunay_triangulation_face_base_2<Traits> > TDS;
     typedef CGAL::Delaunay_triangulation_2<Traits::Instantaneous_kernel, TDS > Del;
-    typedef CGAL::KDS::Delaunay_triangulation_recent_edges_visitor_2<TDS> Visitor;
-    typedef CGAL::KDS::Delaunay_triangulation_2<Traits, Visitor, Del> KDel;
-    typedef CGAL::KDS::Qt_widget_2<Traits::Simulator> Qt_gui;
-    typedef CGAL::KDS::Qt_moving_points_2<Traits, Qt_gui> Qt_mps;
-    typedef CGAL::KDS::Qt_triangulation_2<KDel, Qt_gui, Qt_mps> Qt_triangulation;
-    typedef CGAL::KDS::Enclosing_box_2<Traits> Box;
+    typedef CGAL::Kinetic::Delaunay_triangulation_recent_edges_visitor_2<TDS> Visitor;
+    typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits, Visitor, Del> KDel;
+    typedef CGAL::Kinetic::Qt_widget_2<Traits::Simulator> Qt_gui;
+    typedef CGAL::Kinetic::Qt_moving_points_2<Traits, Qt_gui> Qt_mps;
+    typedef CGAL::Kinetic::Qt_triangulation_2<KDel, Qt_gui, Qt_mps> Qt_triangulation;
+    typedef CGAL::Kinetic::Enclosing_box_2<Traits> Box;
 
-//CGAL_KDS_SET_LOG_LEVEL(CGAL::KDS::LOG_LOTS);
+//CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
 
     Traits tr;
     Box::Pointer box= new Box(tr);

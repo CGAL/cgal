@@ -1,13 +1,13 @@
-#include <CGAL/KDS/Delaunay_triangulation_2.h>
-#include <CGAL/KDS/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
 
 int main(int, char *[])
 {
 
-    typedef CGAL::KDS::Exact_simulation_traits_2 Simulation_traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits_2 Simulation_traits;
     typedef Simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
 
-    typedef CGAL::KDS::Delaunay_triangulation_2<Simulation_traits> KDel;
+    typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits> KDel;
 
     Simulation_traits tr;
     Simulation_traits::Simulator::Pointer sp= tr.simulator_pointer();

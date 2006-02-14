@@ -19,17 +19,17 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 
-#include <CGAL/KDS/IO/internal/KDS_Qt_widget_2_core.h>
+#include <CGAL/Kinetic/IO/internal/KDS_Qt_widget_2_core.h>
 
 #include "KDS_Qt_widget_2_core.moc"
 
 namespace CGAL
 {
-    namespace KDS
+    namespace Kinetic
     {
         namespace internal
         {
-            void Qt_widget_2_core::redraw() {
+	  void Qt_widget_2_core::redraw() {
                 lock();
                 clear();
 //std::cout << "size of drawables = " << drawable_s.size() << std::endl;

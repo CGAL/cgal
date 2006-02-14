@@ -18,12 +18,12 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KDS_QT_MOVING_WEIGHTED_POINT_TABLE_3_H
-#define CGAL_KDS_QT_MOVING_WEIGHTED_POINT_TABLE_3_H
-#include <CGAL/KDS/basic.h>
-#include <CGAL/KDS/Regular_triangulation_instantaneous_traits_3.h>
-#include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Simulator_objects_listener.h>
+#ifndef CGAL_KINETIC_QT_MOVING_WEIGHTED_POINT_TABLE_3_H
+#define CGAL_KINETIC_QT_MOVING_WEIGHTED_POINT_TABLE_3_H
+#include <CGAL/Kinetic/basic.h>
+#include <CGAL/Kinetic/Regular_triangulation_instantaneous_traits_3.h>
+#include <CGAL/Kinetic/Ref_counted.h>
+#include <CGAL/Kinetic/Simulator_objects_listener.h>
 #include "SoQt_pointer.h"
 
 #include <Inventor/nodes/SoSeparator.h>
@@ -37,7 +37,7 @@
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoText2.h>
 #include <Inventor/nodekits/SoAppearanceKit.h>
-//#include <CGAL/KDS/IO/Qt_gui_3.h>
+//#include <CGAL/Kinetic/IO/Qt_gui_3.h>
 
 #include <Inventor/events/SoEvent.h>
 #include <Inventor/events/SoButtonEvent.h>
@@ -45,7 +45,7 @@
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/sensors/SoOneShotSensor.h>
 
-CGAL_KDS_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE;
 
 //! A graphical moving point set in 3D
 /*!
@@ -67,8 +67,8 @@ class SoQt_moving_weighted_points_3: public Ref_counted< SoQt_moving_weighted_po
         typedef typename Traits::Simulator Simulator;
         typedef typename GUI::Listener Gui_listener;
         typedef typename Simulator::Listener Simulator_listener;
-        typedef CGAL::KDS::Simulator_objects_listener<Simulator_listener, This> Siml;
-        friend class CGAL::KDS::Simulator_objects_listener<Simulator_listener, This>;
+        typedef CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This> Siml;
+        friend class CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This>;
         class Guil;
 
         typedef typename MPT::Data::Coordinate::NT NT;
@@ -475,5 +475,5 @@ void SoQt_moving_weighted_points_3<T,G>::write(std::ostream &out) const
 }
 
 
-CGAL_KDS_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE;
 #endif                                            // guard

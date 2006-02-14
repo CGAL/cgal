@@ -1,7 +1,7 @@
-#include <CGAL/KDS/Exact_simulation_traits_3.h>
-#include <CGAL/KDS/Regular_triangulation_exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits_3.h>
 #include <boost/program_options.hpp>
-#include <CGAL/KDS/Enclosing_box_3.h>
+#include <CGAL/Kinetic/Enclosing_box_3.h>
 #include <CGAL/Random.h>
 #include <vector>
 
@@ -11,7 +11,7 @@
 #include "include/SoQt_moving_weighted_points_3.h"
 #endif
 
-#include <CGAL/KDS/Insert_event.h>
+#include <CGAL/Kinetic/Insert_event.h>
 
 /*!
   \file coin_check.cc A simple example using the coin GUI.
@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
     }
 
     if (weighted) {
-        typedef CGAL::KDS::Regular_triangulation_exact_simulation_traits_3 Traits;
-        typedef CGAL::KDS::SoQt_widget_3<Traits::Simulator> Qt_gui;
-        typedef CGAL::KDS::SoQt_moving_weighted_points_3<Traits, Qt_gui> Qt_mpt;
+        typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits_3 Traits;
+        typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
+        typedef CGAL::Kinetic::SoQt_moving_weighted_points_3<Traits, Qt_gui> Qt_mpt;
 
         Traits tr;
         Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
         return qtsim->begin_event_loop();
     }
     else {
-        typedef CGAL::KDS::Exact_simulation_traits_3 Traits;
-        typedef CGAL::KDS::SoQt_widget_3<Traits::Simulator> Qt_gui;
-        typedef CGAL::KDS::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
+        typedef CGAL::Kinetic::Exact_simulation_traits_3 Traits;
+        typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
+        typedef CGAL::Kinetic::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
 
         Traits tr;
         Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
         typedef Traits::Kinetic_kernel::Motion_function Fn;
         Traits::Simulator::Pointer sim= tr.simulator_pointer();
         Traits::Active_objects_table::Pointer mpt= tr.active_objects_table_pointer();
-        CGAL::KDS::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);
+        CGAL::Kinetic::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);
 
         if (file.empty()) {
             CGAL::Random rand;

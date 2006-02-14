@@ -19,10 +19,10 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 
-#include <CGAL/KDS/internal/Log.h>
+#include <CGAL/Kinetic/internal/Log.h>
 
-CGAL_KDS_BEGIN_INTERNAL_NAMESPACE
+CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 Logs kds_logs;
 
-CGAL_KDS_END_INTERNAL_NAMESPACE
+CGAL_KINETIC_END_INTERNAL_NAMESPACE

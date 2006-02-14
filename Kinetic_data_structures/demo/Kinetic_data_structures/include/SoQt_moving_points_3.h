@@ -18,12 +18,12 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KDS_QT_MOVING_POINT_TABLE_3_H
-#define CGAL_KDS_QT_MOVING_POINT_TABLE_3_H
-#include <CGAL/KDS/basic.h>
-#include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
-#include <CGAL/KDS/Ref_counted.h>
-#include <CGAL/KDS/Simulator_objects_listener.h>
+#ifndef CGAL_KINETIC_QT_MOVING_POINT_TABLE_3_H
+#define CGAL_KINETIC_QT_MOVING_POINT_TABLE_3_H
+#include <CGAL/Kinetic/basic.h>
+#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
+#include <CGAL/Kinetic/Ref_counted.h>
+#include <CGAL/Kinetic/Simulator_objects_listener.h>
 #include "SoQt_pointer.h"
 
 #include <Inventor/events/SoButtonEvent.h>
@@ -43,7 +43,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/sensors/SoOneShotSensor.h>
 
-CGAL_KDS_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE;
 
 //! A graphical moving point set in 3D
 /*!
@@ -64,8 +64,8 @@ class SoQt_moving_points_3: public Ref_counted< SoQt_moving_points_3<SimTraits, 
         typedef typename GUI::Listener Gui_listener;
         typedef typename SimTraits::Instantaneous_kernel IK;
         typedef typename Simulator::Listener Simulator_listener;
-        typedef CGAL::KDS::Simulator_objects_listener<Simulator_listener, This> Siml;
-        friend class CGAL::KDS::Simulator_objects_listener<Simulator_listener, This> ;
+        typedef CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This> Siml;
+        friend class CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This> ;
         class Guil;
         typedef typename MPT::Data::Coordinate::NT NT;
 
@@ -466,5 +466,5 @@ void SoQt_moving_points_3<Tr, G>::write(std::ostream &out) const
 }
 
 
-CGAL_KDS_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE;
 #endif                                            // guard

@@ -1,12 +1,12 @@
 #define NDEBUG
-#include <CGAL/KDS/basic.h>
+#include <CGAL/Kinetic/basic.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/KDS/Cartesian_instantaneous_kernel.h>
-#include <CGAL/KDS/Cartesian_kinetic_kernel.h>
-#include <CGAL/KDS/Active_objects_vector.h>
-#include <CGAL/KDS/Simulation_traits.h>
-#include <CGAL/KDS/Simulator.h>
-#include <CGAL/KDS/Heap_pointer_event_queue.h>
+#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
+#include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
+#include <CGAL/Kinetic/Active_objects_vector.h>
+#include <CGAL/Kinetic/Simulation_traits.h>
+#include <CGAL/Kinetic/Simulator.h>
+#include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -19,26 +19,26 @@ struct Sest_types
     typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
     typedef CGAL::POLYNOMIAL::Upper_bound_root_stack<Root_stack_traits> Root_stack;
     typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
-    typedef CGAL::KDS::Handle_degeneracy_function_kernel<Function_kernel> Simulator_function_kernel;
-    typedef CGAL::KDS::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
+    typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> Simulator_function_kernel;
+    typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
     typedef typename Simulator_function_kernel::Root Time;
-    typedef CGAL::KDS::Two_list_pointer_event_queue<Time, double> Queue_base;
+    typedef CGAL::Kinetic::Two_list_pointer_event_queue<Time, double> Queue_base;
 
     struct Event_queue: public Queue_base
     {
         Event_queue(const Time &start, const Time &end): Queue_base(start, end){}
     };
 
-    typedef CGAL::KDS::Simulator<Simulator_function_kernel, Event_queue > Simulator;
-    typedef CGAL::KDS::Active_objects_vector<typename Kinetic_kernel::Point_1> Active_objects_table;
-    typedef CGAL::KDS::Cartesian_instantaneous_kernel<Active_objects_table,
+    typedef CGAL::Kinetic::Simulator<Simulator_function_kernel, Event_queue > Simulator;
+    typedef CGAL::Kinetic::Active_objects_vector<typename Kinetic_kernel::Point_1> Active_objects_table;
+    typedef CGAL::Kinetic::Cartesian_instantaneous_kernel<Active_objects_table,
         Static_kernel> Instantaneous_kernel;
 
 };
 
 template <bool Skip>
 struct Exact_simulation_traits:
-public CGAL::KDS::Simulation_traits<typename Sest_types<Skip>::Static_kernel,
+public CGAL::Kinetic::Simulation_traits<typename Sest_types<Skip>::Static_kernel,
 typename Sest_types<Skip>::Instantaneous_kernel,
 typename Sest_types<Skip>::Kinetic_kernel,
 typename Sest_types<Skip>::Simulator,

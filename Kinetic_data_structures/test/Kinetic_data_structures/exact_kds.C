@@ -1,9 +1,9 @@
 #define CGAL_CHECK_EXACTNESS
 #define CGAL_CHECK_EXPENSIVE
 
-#include <CGAL/KDS/Sort.h>
-#include <CGAL/KDS/Insert_event.h>
-#include <CGAL/KDS/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Sort.h>
+#include <CGAL/Kinetic/Insert_event.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
 #include <cstdlib>
 #include "include/sort_test.h"
 
@@ -16,12 +16,12 @@ int main(int argc, char *argv[])
         degree= std::atoi(argv[2]);
     }
     std::cout << "Using " << num_points  << " degree " << degree << " points.\n";
-//CGAL_KDS_SET_LOG_LEVEL(CGAL::KDS::LOG_SOME);
-    typedef CGAL::KDS::Exact_simulation_traits_1 Tr;
+//CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_SOME);
+    typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
     Tr tr;
     typedef Tr::Simulator::Time Time;
 
-    typedef CGAL::KDS::Insert_event<Tr::Active_objects_table> MOI;
+    typedef CGAL::Kinetic::Insert_event<Tr::Active_objects_table> MOI;
     typedef Tr::Kinetic_kernel::Point_2 MP;
 
     for (unsigned int i=0; i< num_points; ++i) {

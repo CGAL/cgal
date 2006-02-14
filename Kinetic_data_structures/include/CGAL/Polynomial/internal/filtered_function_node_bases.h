@@ -22,7 +22,7 @@
 #define CGAL_POLYNOMIAL_INTERNAL_VIRTUAL_FUNCTION_BASES_H
 
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/KDS/Ref_counted.h>
+#include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 #include <iostream>
 
@@ -34,7 +34,7 @@ int function_handles_exact=0;
 
 template <class Traits_t>
 class Filtered_function_node:
-public CGAL::KDS::Ref_counted<Filtered_function_node<Traits_t > >
+public CGAL::Kinetic::Ref_counted<Filtered_function_node<Traits_t > >
 {
     typedef Filtered_function_node<Traits_t> This;
     public:

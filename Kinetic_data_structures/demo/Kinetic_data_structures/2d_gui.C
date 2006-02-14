@@ -1,12 +1,12 @@
-#include <CGAL/KDS/Exact_simulation_traits_2.h>
-#include <CGAL/KDS/Enclosing_box_2.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Enclosing_box_2.h>
 
 #ifdef CGAL_USE_QT
-#include <CGAL/KDS/IO/Qt_widget_2.h>
-#include <CGAL/KDS/IO/Qt_moving_points_2.h>
+#include <CGAL/Kinetic/IO/Qt_widget_2.h>
+#include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
 #endif
 
-#include <CGAL/KDS/Insert_event.h>
+#include <CGAL/Kinetic/Insert_event.h>
 
 /*!
   \file coin_check.cc A simple example using the qt GUI.
@@ -16,15 +16,15 @@ int main(int argc, char*argv[])
 {
 
 #ifdef CGAL_USE_QT
-    CGAL_KDS_SET_LOG_LEVEL(CGAL::KDS::LOG_LOTS);
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
 
-    typedef CGAL::KDS::Exact_simulation_traits_2 Traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits_2 Traits;
 
-    typedef CGAL::KDS::Qt_widget_2<Traits::Simulator> Gui;
-    typedef CGAL::KDS::Qt_moving_points_2<Traits, Gui> Qt_moving_points;
-    typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> Insert_event;
+    typedef CGAL::Kinetic::Qt_widget_2<Traits::Simulator> Gui;
+    typedef CGAL::Kinetic::Qt_moving_points_2<Traits, Gui> Qt_moving_points;
+    typedef CGAL::Kinetic::Insert_event<Traits::Active_objects_table> Insert_event;
     typedef Traits::Kinetic_kernel::Point_2 Moving_point;
-    typedef CGAL::KDS::Enclosing_box_2<Traits> Box;
+    typedef CGAL::Kinetic::Enclosing_box_2<Traits> Box;
     Traits tr;
 
     Gui::Pointer qtsim=new Gui(argc, argv, tr.simulator_pointer());

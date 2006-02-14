@@ -18,10 +18,10 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KDS_IO_INTERNAL_COIN_SIMULATOR_GUI_H
-#define CGAL_KDS_IO_INTERNAL_COIN_SIMULATOR_GUI_H
+#ifndef CGAL_KINETIC_IO_INTERNAL_COIN_SIMULATOR_GUI_H
+#define CGAL_KINETIC_IO_INTERNAL_COIN_SIMULATOR_GUI_H
 
-#include <CGAL/KDS/basic.h>
+#include <CGAL/Kinetic/basic.h>
 
 //#ifdef HAVE_INVENTOR_QT_SOQT_H
 //#include <Inventor/Qt/SoQt.h>
@@ -36,7 +36,7 @@
 //#endif
 //#endif
 
-#include <CGAL/KDS/IO/internal/KDS_Qt_core.h>
+#include <CGAL/Kinetic/IO/internal/KDS_Qt_core.h>
 #include <qapplication.h>
 //#include <qmainwindow.h>
 #include <map>
@@ -47,7 +47,7 @@ class SoSeparator;
 // I think I need these here explicitly for MOC to work
 namespace CGAL
 {
-  namespace KDS
+  namespace Kinetic
   {
     /*  Usage main_window_= SoQt::init(argc, argv, argv[0]);
 	viewer_= new Coin_simulator_viewer(main_window_);

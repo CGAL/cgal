@@ -1,17 +1,17 @@
-#include <CGAL/KDS/basic.h>
+#include <CGAL/Kinetic/basic.h>
 
-#include <CGAL/KDS/Exact_simulation_traits_1.h>
-#include <CGAL/KDS/Insert_event.h>
-#include <CGAL/KDS/Sort.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Insert_event.h>
+#include <CGAL/Kinetic/Sort.h>
 
 int main(int, char *[])
 {
 
-    typedef CGAL::KDS::Exact_simulation_traits_1 Traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits_1 Traits;
 
-    typedef CGAL::KDS::Insert_event<Traits::Active_objects_table> Insert_event;
+    typedef CGAL::Kinetic::Insert_event<Traits::Active_objects_table> Insert_event;
     typedef Traits::Active_objects_table::Data Moving_point;
-    typedef CGAL::KDS::Sort<Traits> Sort;
+    typedef CGAL::Kinetic::Sort<Traits> Sort;
     typedef Traits::Simulator::Time Time;
 
     Traits tr;

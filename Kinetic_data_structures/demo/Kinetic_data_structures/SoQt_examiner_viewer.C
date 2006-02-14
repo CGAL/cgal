@@ -24,7 +24,7 @@
 #include "include/SoQt_examiner_viewer.h"
 #include <qpushbutton.h>
 #include <Inventor/nodes/SoSeparator.h>
-#include <CGAL/KDS/IO/internal/KDS_pixmaps.h>
+#include <CGAL/Kinetic/IO/internal/KDS_pixmaps.h>
 
 #include "SoQt_examiner_viewer.moc"
 

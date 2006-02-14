@@ -18,8 +18,8 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KDS_IO_COIN_POINTER_H
-#define CGAL_KDS_IO_COIN_POINTER_H
+#ifndef CGAL_KINETIC_IO_COIN_POINTER_H
+#define CGAL_KINETIC_IO_COIN_POINTER_H
 #include <CGAL/basic.h>
 #include <boost/intrusive_ptr.hpp>
 #include <Inventor/nodes/SoNode.h>
