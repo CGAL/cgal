@@ -76,6 +76,8 @@ struct Derivitive_filter_function_kernel: private Traits
   using Traits::NT;
   using Traits::differentiate_object;
   using Traits::Differentiate;
+  using Traits::Negate_variable;
+  using Traits::negate_variable_object;
 };
 
 CGAL_KDS_END_NAMESPACE
