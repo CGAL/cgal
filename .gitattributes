@@ -568,7 +568,7 @@ Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/id
 Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb6.bmp -text svneol=unset#unset
 Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb7.bmp -text svneol=unset#unset
 Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb8.bmp -text svneol=unset#unset
-Packages/MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
+MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Packages/Manual/doc_tex/Manual/fig/a-simp.eps -text
 Packages/Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
 Packages/Manual/doc_tex/Manual/fig/c-simp.eps -text
