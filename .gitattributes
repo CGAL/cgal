@@ -1109,53 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
-Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
-Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
-Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#unset
-Packages/Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
-Packages/Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
-Packages/Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#unset
-Packages/Qt_widget/include/CGAL/IO/pixmaps/alpha_shape.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/back.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/constrained.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/demoicon.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/focus.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/focus1.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/focus1_mask.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/focus2.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/focus2_mask.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/focus3.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/focus3_mask.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/forward.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/handtool.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/holddown.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/iso_rectangle.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/line.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/min_parallelogram.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/min_rectangle.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/mouse_coord.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/movepoint.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/nearest_vertex.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/notool.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/optimal_convex.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/point.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/points.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/polygon.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/rotation.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/show_polygon.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/triangulation.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/voronoi.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/ymonotone.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_in_rect.xpm -text
-Packages/Qt_widget/include/CGAL/IO/pixmaps/zoom_out.xpm -text
-Packages/Qt_widget/src/CGALQt/CGALQt.sln -text
-Packages/Qt_widget/src/CGALQt/CGALQt.vcproj -text
 Packages/Robustness/demo/Robustness/robustness.vcproj -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
@@ -1997,3 +1950,50 @@ Polyhedron/examples/Polyhedron/corner.off -text
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Polyhedron/examples/Polyhedron/cross.off -text
+Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
+Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
+Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
+Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#unset
+Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
+Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
+Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#unset
+Qt_widget/include/CGAL/IO/pixmaps/alpha_shape.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/back.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/constrained.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/demoicon.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/focus.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/focus1.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/focus1_mask.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/focus2.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/focus2_mask.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/focus3.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/focus3_mask.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/forward.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/handtool.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/holddown.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/iso_rectangle.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/line.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/min_parallelogram.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/min_rectangle.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/mouse_coord.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/movepoint.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/nearest_vertex.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/notool.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/optimal_convex.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/point.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/points.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/polygon.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/rotation.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/show_polygon.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/triangulation.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/voronoi.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/ymonotone.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/zoom_in.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/zoom_in_rect.xpm -text
+Qt_widget/include/CGAL/IO/pixmaps/zoom_out.xpm -text
+Qt_widget/src/CGALQt/CGALQt.sln -text
+Qt_widget/src/CGALQt/CGALQt.vcproj -text
