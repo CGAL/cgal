@@ -569,17 +569,17 @@ Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/id
 Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb7.bmp -text svneol=unset#unset
 Linear_least_squares_fitting/demo/Linear_least_squares_fitting/windows/3d/res/idb8.bmp -text svneol=unset#unset
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
-Packages/Manual/doc_tex/Manual/fig/a-simp.eps -text
-Packages/Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
-Packages/Manual/doc_tex/Manual/fig/c-simp.eps -text
-Packages/Manual/doc_tex/Manual/fig/c-simp.pdf -text svneol=unset#unset
-Packages/Manual/doc_tex/Manual/fig/cgal_small_FAF8E8.gif -text svneol=unset#unset
-Packages/Manual/doc_tex/Manual/fig/g-simp.eps -text
-Packages/Manual/doc_tex/Manual/fig/g-simp.pdf -text svneol=unset#unset
-Packages/Manual/doc_tex/Manual/fig/l-simp.eps -text
-Packages/Manual/doc_tex/Manual/fig/l-simp.pdf -text svneol=unset#unset
-Packages/Manual/doc_tex/Miscellany/modifier.gif -text svneol=unset#unset
-Packages/Manual/doc_tex/Miscellany/modifier_small.gif -text svneol=unset#unset
+Manual/doc_tex/Manual/fig/a-simp.eps -text
+Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
+Manual/doc_tex/Manual/fig/c-simp.eps -text
+Manual/doc_tex/Manual/fig/c-simp.pdf -text svneol=unset#unset
+Manual/doc_tex/Manual/fig/cgal_small_FAF8E8.gif -text svneol=unset#unset
+Manual/doc_tex/Manual/fig/g-simp.eps -text
+Manual/doc_tex/Manual/fig/g-simp.pdf -text svneol=unset#unset
+Manual/doc_tex/Manual/fig/l-simp.eps -text
+Manual/doc_tex/Manual/fig/l-simp.pdf -text svneol=unset#unset
+Manual/doc_tex/Miscellany/modifier.gif -text svneol=unset#unset
+Manual/doc_tex/Miscellany/modifier_small.gif -text svneol=unset#unset
 Packages/Manual_tools/doc_tex/Manual_tools/horizontal_struct.eps -text
 Packages/Manual_tools/doc_tex/Manual_tools/horizontal_struct.gif -text svneol=unset#unset
 Packages/Manual_tools/doc_tex/Manual_tools/tools_index.eps -text
