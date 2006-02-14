@@ -28,24 +28,25 @@ Exactly one of the options -h or -r must be present.
    The version number is stored in include/CGAL/version.h.
    The RELEASEDIR is the place where the new release will be created.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
-       from the CVS. Could be a taged version (<<current_submission>>) or some
+       from the SVN. Could be a taged version (<<current_submission>>) or some
        other version.
    The SCRIPTSDIR is the place where you have the create_makefile script.
-       This script you can take it from CVS/Scripts/scripts/create_makefile.
+       This script you can take it from SVN/Scripts/scripts/create_makefile.
        You need this script to create the default makefiles for examples and
        tests.
    The LOCKFILE is some file used by lockfile command as a mutex.
    The PACKAGESFILE is the file that contains a list of the packages you want
        to include in this release. In fact it is a filter for packages you have
        in ALLPACKAGESDIR. There is one file that is used to create the CGAL
-       internal release in CVS/Maintenance/release_building/include_in_release.
+       internal release in SVN/Maintenance/release_building/include_in_release.
        You can take that one too.
 
 Example of how to use the script:
->cvs -q co -P -r current_submission All
+>svn co svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk
+>ln -s trunk All
 >./create_internal_release -r CGAL-3.3-I-1
 or
->./create_internal_release -r CGAL-3.3-I-7 -d \$HOME -a \$HOME/CGALCVS/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
+>./create_internal_release -r CGAL-3.3-I-7 -d \$HOME -a \$HOME/CGALSVN/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
 
 
 EOF
@@ -202,9 +203,9 @@ sub install_packages() {
     $exclude_command="--exclude-from=$dont_submit";
     chdir "$ALLPACKAGESDIR" or die;
     if(-f $dont_submit){
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=CVS', "$exclude_command", '--exclude=TODO', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=wrapper.tex', '--exclude=changes.txt', '--exclude=version', '--exclude=.cvsignore', "$package_name");
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', "$exclude_command", '--exclude=TODO', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=changes.txt', "$package_name");
     } else {
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=CVS', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=changes.txt', '--exclude=TODO', '--exclude=wrapper.tex', '--exclude=version', '--exclude=.cvsignore',"$package_name");
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=changes.txt', '--exclude=TODO', "$package_name");
     }
     system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
     
@@ -245,8 +246,10 @@ sub create_version_file()
         $newver = $VERSION;
     }
 
+# TODO : add `svnversion` Revision.
+
     print TEMPFILE << 'EOF';
-// Copyright (c) 2005  Utrecht University (The Netherlands),
+// Copyright (c) 2006  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),

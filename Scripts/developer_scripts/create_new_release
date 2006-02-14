@@ -7,9 +7,6 @@
 # TODO :
 # - The public release case should pass the info to create_internal_release.
 # - Merge [some parts] into ./create_internal_release ?
-# - What is still missing is to do a checkout of the whole thing
-#   so that the Name: CVS keyword is updated in each file.
-#   But I'm more and more wondering if we really want that...
 # - There should be command line options to set public/internal,
 #   and the major/minor/bugfix/version_file release numbers.
 
@@ -29,6 +26,9 @@ HTML_DIR="/u/bombyx/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 
+# SVN repository
+SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
+
 LOGFILEBASE="create_release.log"
 #TMPDIR="/tmp"
 TMPDIR="${HOME}/CGAL/internal_release_making"
@@ -37,9 +37,6 @@ PATH=$PATH:/usr/local/bin
 TAR=/usr/bin/gnu/tar
 GZIP=/usr/bin/gnu/gzip
 DIFF=/usr/bin/diff
-
-CVS_TAG=""
-#CVS_TAG="-A"
 
 cd ${TMPDIR} || return
 
@@ -72,7 +69,7 @@ release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
 echo "${release_number}" >> ${LOGFILE} 2>&1
 
 cd All
-cvs -q update -P ${CVS_TAG} >> ${LOGFILE} 2>&1
+svn update >> ${LOGFILE} 2>&1
 
 cd ..
 ./create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
@@ -98,13 +95,7 @@ EOF
 cd All
 NEW_TAG=`echo $release_name | sed -e "s/[-.]/_/g"`
 echo "Tagging All with $NEW_TAG" >> ${LOGFILE} 2>&1
-# One directory at a time otherwise the repository
-# gets locked for an hour...
-# cvs -q tag $NEW_TAG >> ${LOGFILE} 2>&1
-for dir in *
-do
-  [ "$dir" != "CVS" ] && cvs -q tag $NEW_TAG $dir >> ${LOGFILE} 2>&1
-done
+svn cp -m "Internal release tag for $NEW_TAG" $SVNCGAL/trunk $SVNCGAL/tags/internal-releases/$NEW_TAG >> ${LOGFILE} 2>&1
 
 ################################
 
