@@ -1109,154 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filenew.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileopen.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileprint.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filesave.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.vcproj -text
-Packages/Tutorial/tutorial/Polyhedron/data/aircraft.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/aircraft_open.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/bevel_cube.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/cross_all_quads.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/cube_quad.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/cube_tri.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/cut_mushroom.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/hedra.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/hedra_open.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/hexagon.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/mannequin.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/nefertiti.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/ngon10Q.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/ngon10T.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/oct.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/pipes_all_quads.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/pipes_tri_quads.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/star.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/tetra.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/torus_quad.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/torus_tri.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/twtriCube.off -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/CCRefinement.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/CCRefinement.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/CCRefinementStep23.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/CCRefinementStep23.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefMap.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefMap.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefSchemes.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefSchemes.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_CC.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_CC.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_DS.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_DS.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/gargoyle_raster.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/gargoyle_vec.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/halfedge.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/models.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/quad-triangle.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/sqrt3.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/sqrt3_basic.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/stl_concepts.ai -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/stl_concepts.eps -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/stock.ppt -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/subdivision.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc0.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC1.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC2.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC3.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC4.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS1.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS2.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS3.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS4.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/figs/teaser.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/Circulators.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/Circulators.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefMap.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefMap.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.eps -text
-Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.fig -text
-Packages/Tutorial/tutorial/Polyhedron/doc/save/tutorial02.tgz -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/doc/save/tutorial03.tgz -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.sln -text
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.vcproj -text
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.manifest -text
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.rc2 -text
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/MeshDoc.ico -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Toolbar.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb0.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb1.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb2.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb3.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb4.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb5.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb6.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb7.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb8.bmp -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/examples/tetra.off -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/CCRefinement.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/CCRefinement.fig -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/Circulators.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/Circulators.fig -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefMap.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefMap.fig -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefSchemes.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefSchemes.fig -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/anisotropic.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/halfedge.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/isotropic.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/models.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/plane0.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC1-head.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC1.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC2.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC3.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS1-head.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS1.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS2.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS3.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/quad-triangle.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/sqrt3.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/sqrt3_basic.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stl_concepts.ai -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stl_concepts.eps -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stock.ppt -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/subdivision.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/teaser.eps -text
-Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/trimming.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Packages/Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip.xpm -text
@@ -1997,3 +1849,151 @@ Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.pdf -text
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filenew.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileopen.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileprint.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filesave.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.xpm -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text
+Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.vcproj -text
+Tutorial/tutorial/Polyhedron/data/aircraft.off -text
+Tutorial/tutorial/Polyhedron/data/aircraft_open.off -text
+Tutorial/tutorial/Polyhedron/data/bevel_cube.off -text
+Tutorial/tutorial/Polyhedron/data/cross_all_quads.off -text
+Tutorial/tutorial/Polyhedron/data/cube_quad.off -text
+Tutorial/tutorial/Polyhedron/data/cube_tri.off -text
+Tutorial/tutorial/Polyhedron/data/cut_mushroom.off -text
+Tutorial/tutorial/Polyhedron/data/hedra.off -text
+Tutorial/tutorial/Polyhedron/data/hedra_open.off -text
+Tutorial/tutorial/Polyhedron/data/hexagon.off -text
+Tutorial/tutorial/Polyhedron/data/mannequin.off -text
+Tutorial/tutorial/Polyhedron/data/nefertiti.off -text
+Tutorial/tutorial/Polyhedron/data/ngon10Q.off -text
+Tutorial/tutorial/Polyhedron/data/ngon10T.off -text
+Tutorial/tutorial/Polyhedron/data/oct.off -text
+Tutorial/tutorial/Polyhedron/data/pipes_all_quads.off -text
+Tutorial/tutorial/Polyhedron/data/pipes_tri_quads.off -text
+Tutorial/tutorial/Polyhedron/data/star.off -text
+Tutorial/tutorial/Polyhedron/data/tetra.off -text
+Tutorial/tutorial/Polyhedron/data/torus_quad.off -text
+Tutorial/tutorial/Polyhedron/data/torus_tri.off -text
+Tutorial/tutorial/Polyhedron/data/twtriCube.off -text
+Tutorial/tutorial/Polyhedron/doc/figs/CCRefinement.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/CCRefinement.fig -text
+Tutorial/tutorial/Polyhedron/doc/figs/CCRefinementStep23.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/CCRefinementStep23.fig -text
+Tutorial/tutorial/Polyhedron/doc/figs/RefMap.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/RefMap.fig -text
+Tutorial/tutorial/Polyhedron/doc/figs/RefSchemes.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/RefSchemes.fig -text
+Tutorial/tutorial/Polyhedron/doc/figs/TriCube_CC.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/TriCube_CC.fig -text
+Tutorial/tutorial/Polyhedron/doc/figs/TriCube_DS.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/TriCube_DS.fig -text
+Tutorial/tutorial/Polyhedron/doc/figs/gargoyle_raster.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/gargoyle_vec.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/halfedge.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/models.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/quad-triangle.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/sqrt3.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/sqrt3_basic.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/stl_concepts.ai -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/doc/figs/stl_concepts.eps -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/doc/figs/stock.ppt -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/doc/figs/subdivision.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc0.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_CC.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_CC1.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_CC2.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_CC3.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_CC4.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_DS.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_DS1.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_DS2.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_DS3.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/tc_DS4.eps -text
+Tutorial/tutorial/Polyhedron/doc/figs/teaser.eps -text
+Tutorial/tutorial/Polyhedron/doc/pfigs/Circulators.eps -text
+Tutorial/tutorial/Polyhedron/doc/pfigs/Circulators.fig -text
+Tutorial/tutorial/Polyhedron/doc/pfigs/RefMap.eps -text
+Tutorial/tutorial/Polyhedron/doc/pfigs/RefMap.fig -text
+Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.eps -text
+Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.fig -text
+Tutorial/tutorial/Polyhedron/doc/save/tutorial02.tgz -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/doc/save/tutorial03.tgz -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.sln -text
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.vcproj -text
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.manifest -text
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.rc2 -text
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/MeshDoc.ico -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Toolbar.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb0.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb1.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb2.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb3.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb4.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb5.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb6.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb7.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb8.bmp -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/sgp2004/examples/tetra.off -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/CCRefinement.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/CCRefinement.fig -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/Circulators.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/Circulators.fig -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefMap.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefMap.fig -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefSchemes.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefSchemes.fig -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/anisotropic.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/halfedge.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/isotropic.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/models.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/plane0.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC1-head.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC1.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC2.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeCC3.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS1-head.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS1.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS2.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/planeDS3.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/quad-triangle.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/sqrt3.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/sqrt3_basic.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stl_concepts.ai -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stl_concepts.eps -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stock.ppt -text svneol=unset#unset
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/subdivision.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/teaser.eps -text
+Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/trimming.eps -text
