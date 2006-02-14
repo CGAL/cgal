@@ -1109,13 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Partition_2/demo/Partition_2/partition_2.vcproj -text
-Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#unset
-Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#unset
-Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text
-Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#unset
-Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#unset
-Packages/Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text
 Packages/Polygon/demo/Polygon/polygon_2.vcproj -text
 Packages/Polygon/doc_tex/Polygon/pgn_algos.eps -text
 Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
@@ -1997,3 +1990,10 @@ Parameterization/test/Parameterization/data/aircraft.off -text
 Parameterization/test/Parameterization/data/cube.off -text
 Parameterization/test/Parameterization/data/knot2.off -text
 Parameterization/test/Parameterization/data/torus_tri.off -text
+Partition_2/demo/Partition_2/partition_2.vcproj -text
+Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#unset
+Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#unset
+Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text
+Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#unset
+Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#unset
+Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text
