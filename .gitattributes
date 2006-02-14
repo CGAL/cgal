@@ -1109,24 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/1.pdf -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/2.eps -text
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/2.gif -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/2.jpeg -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/2.pdf -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/3.eps -text
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/3.gif -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/3.jpeg -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/3.pdf -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.eps -text
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.gif -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.pdf -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.eps -text
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.gif -text svneol=unset#unset
-Packages/Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.pdf -text svneol=unset#unset
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.eps -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.fig -text
 Packages/Subdivision_surfaces_3/doc_tex/Subdivision_surfaces_3/FIG/PQQStencil.gif -text svneol=unset#unset
@@ -1997,3 +1979,21 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/single_split.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/square.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/triangle.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/vertex_event_0.poly -text
+Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text
+Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/1.pdf -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/2.eps -text
+Stream_lines_2/doc_tex/Stream_lines_2/2.gif -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/2.jpeg -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/2.pdf -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/3.eps -text
+Stream_lines_2/doc_tex/Stream_lines_2/3.gif -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/3.jpeg -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/3.pdf -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.eps -text
+Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.gif -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.pdf -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.eps -text
+Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.gif -text svneol=unset#unset
+Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.pdf -text svneol=unset#unset
