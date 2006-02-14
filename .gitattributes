@@ -1074,21 +1074,21 @@ Nef_3/test/Nef_3/data/cube+vertex.off -text
 Nef_3/test/Nef_3/data/cube.off -text
 Nef_3/test/Nef_3/data/octa.off -text
 Nef_3/test/Nef_3/data/star.off -text
-Packages/Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/fig/complex.ps -text
-Packages/Nef_S2/doc_tex/Nef_S2/fig/halfspace.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/fig/halfspace.pdf -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/fig/halfspace.ps -text
-Packages/Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.eps -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.pdf -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.eps -text
-Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2/fig/complex.ps -text
+Nef_S2/doc_tex/Nef_S2/fig/halfspace.gif -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2/fig/halfspace.pdf -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2/fig/halfspace.ps -text
+Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.eps -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.gif -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.pdf -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.eps -text
+Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.gif -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#unset
+Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#unset
