@@ -1109,60 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_loop.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/halfedge.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/halfedge.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/halfedge.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/halfedge_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/make_cube.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/make_cube.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/make_cube.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/poly_optional.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/shark.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/shark.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/shark.ps -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.ppm -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.ps -text
-Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/add_facet.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/euler.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/euler_loop.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/halfedge.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/halfedge_methods.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/poly_optional.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/polyhedron.ips -text
-Packages/Polyhedron/doc_tex/Polyhedron/idraw/shark.ps -text
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional.eps -text
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional.pdf -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional_small.gif -text svneol=unset#unset
-Packages/Polyhedron/examples/Polyhedron/corner.off -text
-Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
-Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
-Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
@@ -1997,3 +1943,57 @@ Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig6.pdf -text svneo
 Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig7.pdf -text svneol=unset#unset
 Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig8-2.pdf -text svneol=unset#unset
 Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig8.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text
+Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text
+Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text
+Polyhedron/doc_tex/Polyhedron/fig/euler_loop.ips -text
+Polyhedron/doc_tex/Polyhedron/fig/halfedge.eps -text
+Polyhedron/doc_tex/Polyhedron/fig/halfedge.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/halfedge.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/halfedge_small.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/make_cube.eps -text
+Polyhedron/doc_tex/Polyhedron/fig/make_cube.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/make_cube.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/poly_optional.ips -text
+Polyhedron/doc_tex/Polyhedron/fig/shark.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/shark.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/shark.ps -text
+Polyhedron/doc_tex/Polyhedron/fig/subdiv.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/subdiv.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/fig/subdiv.ppm -text
+Polyhedron/doc_tex/Polyhedron/fig/subdiv.ps -text
+Polyhedron/doc_tex/Polyhedron/fig/subdiv_small.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron/idraw/add_facet.ips -text
+Polyhedron/doc_tex/Polyhedron/idraw/euler.ips -text
+Polyhedron/doc_tex/Polyhedron/idraw/euler_loop.ips -text
+Polyhedron/doc_tex/Polyhedron/idraw/halfedge.ips -text
+Polyhedron/doc_tex/Polyhedron/idraw/halfedge_methods.ips -text
+Polyhedron/doc_tex/Polyhedron/idraw/poly_optional.ips -text
+Polyhedron/doc_tex/Polyhedron/idraw/polyhedron.ips -text
+Polyhedron/doc_tex/Polyhedron/idraw/shark.ps -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.eps -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler.eps -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.eps -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.eps -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.eps -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge_small.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional.eps -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional.gif -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional.pdf -text svneol=unset#unset
+Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional_small.gif -text svneol=unset#unset
+Polyhedron/examples/Polyhedron/corner.off -text
+Polyhedron/examples/Polyhedron/corner_with_hole.off -text
+Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
+Polyhedron/examples/Polyhedron/cross.off -text
