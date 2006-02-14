@@ -4,18 +4,26 @@
 #include <fstream>
 #include <cassert>
 
+#define DONT_USE_FILTERED_EXACT
+
 // choose number type
 #include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
+#ifndef DONT_USE_FILTERED_EXACT
+#  include <CGAL/Filtered_exact.h>
+#endif
 
 typedef double         inexact_type;
 typedef CGAL::MP_Float exact_type;
 
+#ifndef DONT_USE_FILTERED_EXACT
 typedef CGAL::Filtered_exact<inexact_type,exact_type>  number_t;
+#endif
 
 #include <CGAL/Simple_cartesian.h>
 
+#ifndef DONT_USE_FILTERED_EXACT
 struct Kernel : public CGAL::Simple_cartesian<number_t> {};
+#endif
 
 #include <CGAL/Number_type_traits.h>
 
@@ -24,12 +32,13 @@ typedef CGAL::Ring_tag Method_tag;
 #include "./include/test.h"
 
 
-struct CK : public CGAL::Simple_cartesian<double> {};
-struct EK : public CGAL::Simple_cartesian<CGAL::MP_Float> {};
+struct CK : public CGAL::Simple_cartesian<inexact_type> {};
+struct EK : public CGAL::Simple_cartesian<exact_type> {};
 
 
 int main(int argc, char* argv[])
 {
+#ifndef DONT_USE_FILTERED_EXACT
   {
     std::ifstream ifs_algo("./data/algo.dat");
 
@@ -46,7 +55,7 @@ int main(int argc, char* argv[])
 
     std::cout << std::endl;
   }
-
+#endif
   //------------------------------------------------------------------------
 
   {
