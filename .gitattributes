@@ -1109,58 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip.xpm -text
-Packages/Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip_parallele.xpm -text
-Packages/Visibility_complex/demo/Visibility_complex/pixmaps/flip.xpm -text
-Packages/Visibility_complex/demo/Visibility_complex/pixmaps/flip_parallele.xpm -text
-Packages/Visibility_complex/demo/Visibility_complex/pixmaps/gmin.xpm -text
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/bitangent.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/configuration.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/constraint-edge.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/design.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/edge-face.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/edge-vertex.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/halfedge.ips -text
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/hds_design.ips -text
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/loop.ips -text
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/order.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/perturbation.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/points.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/fig/vis-complex.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/halfedge.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/halfedge_small.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/hds_design_col.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/Visibility_complex/loop.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/bitangent.eps -text
-Packages/Visibility_complex/doc_tex/fig/bitangent.fig -text
-Packages/Visibility_complex/doc_tex/fig/bitangent.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/configuration.eps -text
-Packages/Visibility_complex/doc_tex/fig/configuration.fig -text
-Packages/Visibility_complex/doc_tex/fig/configuration.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/constraint-edge.eps -text
-Packages/Visibility_complex/doc_tex/fig/constraint-edge.fig -text
-Packages/Visibility_complex/doc_tex/fig/constraint-edge.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/design.eps -text
-Packages/Visibility_complex/doc_tex/fig/design.fig -text
-Packages/Visibility_complex/doc_tex/fig/design.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/edge-face.eps -text
-Packages/Visibility_complex/doc_tex/fig/edge-face.fig -text
-Packages/Visibility_complex/doc_tex/fig/edge-face.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/edge-vertex.eps -text
-Packages/Visibility_complex/doc_tex/fig/edge-vertex.fig -text
-Packages/Visibility_complex/doc_tex/fig/edge-vertex.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/order.eps -text
-Packages/Visibility_complex/doc_tex/fig/order.fig -text
-Packages/Visibility_complex/doc_tex/fig/order.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/perturbation.eps -text
-Packages/Visibility_complex/doc_tex/fig/perturbation.fig -text
-Packages/Visibility_complex/doc_tex/fig/perturbation.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/points.eps -text
-Packages/Visibility_complex/doc_tex/fig/points.fig -text
-Packages/Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#unset
-Packages/Visibility_complex/doc_tex/fig/vis-complex.eps -text
-Packages/Visibility_complex/doc_tex/fig/vis-complex.fig -text
-Packages/Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#unset
 Packages/Voronoi_diagram_2/demo/Voronoi_diagram_2/filenew.xpm -text
 Packages/Voronoi_diagram_2/demo/Voronoi_diagram_2/fileopen.xpm -text
 Packages/Voronoi_diagram_2/demo/Voronoi_diagram_2/fileprint.xpm -text
@@ -1997,3 +1945,55 @@ Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/teaser.eps -text
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/trimming.eps -text
 Viewer_3/doc_tex/Viewer_3/viewer.eps -text
 Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
+Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip.xpm -text
+Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip_parallele.xpm -text
+Visibility_complex/demo/Visibility_complex/pixmaps/flip.xpm -text
+Visibility_complex/demo/Visibility_complex/pixmaps/flip_parallele.xpm -text
+Visibility_complex/demo/Visibility_complex/pixmaps/gmin.xpm -text
+Visibility_complex/doc_tex/Visibility_complex/fig/bitangent.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/configuration.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/constraint-edge.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/design.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/edge-face.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/edge-vertex.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/halfedge.ips -text
+Visibility_complex/doc_tex/Visibility_complex/fig/hds_design.ips -text
+Visibility_complex/doc_tex/Visibility_complex/fig/loop.ips -text
+Visibility_complex/doc_tex/Visibility_complex/fig/order.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/perturbation.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/points.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/fig/vis-complex.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/halfedge.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/halfedge_small.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/hds_design_col.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/Visibility_complex/loop.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/bitangent.eps -text
+Visibility_complex/doc_tex/fig/bitangent.fig -text
+Visibility_complex/doc_tex/fig/bitangent.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/configuration.eps -text
+Visibility_complex/doc_tex/fig/configuration.fig -text
+Visibility_complex/doc_tex/fig/configuration.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/constraint-edge.eps -text
+Visibility_complex/doc_tex/fig/constraint-edge.fig -text
+Visibility_complex/doc_tex/fig/constraint-edge.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/design.eps -text
+Visibility_complex/doc_tex/fig/design.fig -text
+Visibility_complex/doc_tex/fig/design.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/edge-face.eps -text
+Visibility_complex/doc_tex/fig/edge-face.fig -text
+Visibility_complex/doc_tex/fig/edge-face.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/edge-vertex.eps -text
+Visibility_complex/doc_tex/fig/edge-vertex.fig -text
+Visibility_complex/doc_tex/fig/edge-vertex.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/order.eps -text
+Visibility_complex/doc_tex/fig/order.fig -text
+Visibility_complex/doc_tex/fig/order.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/perturbation.eps -text
+Visibility_complex/doc_tex/fig/perturbation.fig -text
+Visibility_complex/doc_tex/fig/perturbation.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/points.eps -text
+Visibility_complex/doc_tex/fig/points.fig -text
+Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#unset
+Visibility_complex/doc_tex/fig/vis-complex.eps -text
+Visibility_complex/doc_tex/fig/vis-complex.fig -text
+Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#unset
