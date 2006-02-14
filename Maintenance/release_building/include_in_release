@@ -44,7 +44,6 @@ MacOSX
 Manual
 Matrix_search
 Mesh_2
-Mesh_3
 Min_annulus_d
 Min_circle_2
 Min_ellipse_2
@@ -62,7 +61,6 @@ Optimisation_basic
 Optimisation_doc
 Parameterization
 Partition_2
-Persistent_homology_d
 Point_set_2
 Polygon
 Polygonal_approximation_d
