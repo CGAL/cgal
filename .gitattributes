@@ -425,23 +425,23 @@ ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructur
 ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.eps -text
 ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.fig -text
 ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
-Packages/Generator/demo/Generator/generator.vcproj -text
-Packages/Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
-Packages/Generator/doc_tex/Generator/Segment_generator_prog1_small.gif -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/Segment_generator_prog2.gif -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/Segment_generator_prog2.pdf -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/Segment_generator_prog2.ps -text
-Packages/Generator/doc_tex/Generator/Segment_generator_prog2_small.gif -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/generators_prog1.gif -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/generators_prog1.pdf -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/generators_prog1.ps -text
-Packages/Generator/doc_tex/Generator/generators_prog1_small.gif -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#unset
-Packages/Generator/doc_tex/Generator/generators_prog2.ps -text
-Packages/Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#unset
+Generator/demo/Generator/generator.vcproj -text
+Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
+Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#unset
+Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
+Generator/doc_tex/Generator/Segment_generator_prog1_small.gif -text svneol=unset#unset
+Generator/doc_tex/Generator/Segment_generator_prog2.gif -text svneol=unset#unset
+Generator/doc_tex/Generator/Segment_generator_prog2.pdf -text svneol=unset#unset
+Generator/doc_tex/Generator/Segment_generator_prog2.ps -text
+Generator/doc_tex/Generator/Segment_generator_prog2_small.gif -text svneol=unset#unset
+Generator/doc_tex/Generator/generators_prog1.gif -text svneol=unset#unset
+Generator/doc_tex/Generator/generators_prog1.pdf -text svneol=unset#unset
+Generator/doc_tex/Generator/generators_prog1.ps -text
+Generator/doc_tex/Generator/generators_prog1_small.gif -text svneol=unset#unset
+Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#unset
+Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#unset
+Generator/doc_tex/Generator/generators_prog2.ps -text
+Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.eps -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#unset
