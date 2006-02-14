@@ -1109,8 +1109,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
-Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Packages/Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip.xpm -text
 Packages/Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip_parallele.xpm -text
 Packages/Visibility_complex/demo/Visibility_complex/pixmaps/flip.xpm -text
@@ -1997,3 +1995,5 @@ Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stock.ppt -text svneol=unset#uns
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/subdivision.eps -text
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/teaser.eps -text
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/trimming.eps -text
+Viewer_3/doc_tex/Viewer_3/viewer.eps -text
+Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
