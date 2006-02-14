@@ -365,16 +365,16 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.pdf -text svneol=uns
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#unset
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#unset
+Coin/demo/Coin/Polyhedron_3/data/venus.off -text
+Coin/demo/Coin/Polyhedron_3/polyhedron_3.sln -text
+Coin/demo/Coin/Polyhedron_3/polyhedron_3.vcproj -text
+Coin/demo/Coin/Terrain/terrain.sln -text
+Coin/demo/Coin/Terrain/terrain.vcproj -text
+Coin/demo/Coin/Triangulation_3/triangulation_3.sln -text
+Coin/demo/Coin/Triangulation_3/triangulation_3.vcproj -text
 Extension_Packages/Vanilla/doc/cgal-bg2.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/cgal_small.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/vanilla.ps -text
-Packages/Coin/demo/Coin/Polyhedron_3/data/venus.off -text
-Packages/Coin/demo/Coin/Polyhedron_3/polyhedron_3.sln -text
-Packages/Coin/demo/Coin/Polyhedron_3/polyhedron_3.vcproj -text
-Packages/Coin/demo/Coin/Terrain/terrain.sln -text
-Packages/Coin/demo/Coin/Terrain/terrain.vcproj -text
-Packages/Coin/demo/Coin/Triangulation_3/triangulation_3.sln -text
-Packages/Coin/demo/Coin/Triangulation_3/triangulation_3.vcproj -text
 Packages/Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
