@@ -292,76 +292,76 @@ Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_Q.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_Q.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.bmp -text svneol=unset#unset
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.xpm -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.fig -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.pdf -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.eps -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#unset
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/cgal-bg2.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/cgal_small.gif -text svneol=unset#unset
 Extension_Packages/Vanilla/doc/vanilla.ps -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_Q.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_Q.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.xpm -text
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.bmp -text svneol=unset#unset
-Packages/Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.xpm -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.fig -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.pdf -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.eps -text
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#unset
-Packages/Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#unset
 Packages/Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.eps -text
 Packages/Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.gif -text svneol=unset#unset
 Packages/Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#unset
