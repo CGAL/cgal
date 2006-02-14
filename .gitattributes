@@ -379,7 +379,7 @@ Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#unset
 Curved_kernel/Benchmarks/parser/Report.pdf -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.doc -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.pdf -text
-Curved_kernel/Benchmarks/readme.sxw svneol=native#unset
+Curved_kernel/Benchmarks/readme.sxw -text svneol=unset#unset
 Curved_kernel/demo/Curved_kernel/get_arc.xpm -text
 Curved_kernel/demo/Curved_kernel/help/get_arc.jpeg -text svneol=unset#unset
 Curved_kernel/demo/Curved_kernel/help/planar_map_icon.jpeg -text svneol=unset#unset
@@ -626,7 +626,7 @@ Manual_tools/gif_makers/old_gifs/cc_Macro.gif -text svneol=unset#unset
 Manual_tools/gif_makers/old_gifs/cc_Variable.gif -text svneol=unset#unset
 Manual_tools/gif_makers/old_gifs/cc_advanced_begin.gif -text svneol=unset#unset
 Manual_tools/gif_makers/old_gifs/cc_advanced_end.gif -text svneol=unset#unset
-Manual_tools/src/cc_remove_unwanted_links svneol=native#unset
+Manual_tools/src/cc_remove_unwanted_links -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_Box.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_Class.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_Concept.gif -text svneol=unset#unset
