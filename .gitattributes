@@ -1261,7 +1261,6 @@ Qt_widget/include/CGAL/IO/pixmaps/zoom_out.xpm -text
 Qt_widget/src/CGALQt/CGALQt.sln -text
 Qt_widget/src/CGALQt/CGALQt.vcproj -text
 Robustness/demo/Robustness/robustness.vcproj -text
-Scripts/developer_scripts/check_licenses -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#unset
