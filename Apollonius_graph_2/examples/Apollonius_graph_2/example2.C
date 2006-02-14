@@ -14,21 +14,14 @@
 #  include <CGAL/CORE_Expr.h>
 #endif
 
-#if defined CGAL_USE_LEDA || defined CGAL_USE_CORE
-#  include <CGAL/Filtered_exact.h>
-#endif
-
 
 #if defined CGAL_USE_LEDA
-// If LEDA is present use leda_real as the exact number type for
-// Filtered_exact
-typedef CGAL::Filtered_exact<double,leda_real> NT;
+// If LEDA is present use leda_real as the exact number type
+typedef leda_real NT;
 
 #elif defined CGAL_USE_CORE
-// Othwrwise if CORE is present use CORE's Expr as the exact number
-// type for Filtered_exact
-
-typedef CGAL::Filtered_exact<double,CORE::Expr> NT;
+// Otherwise if CORE is present use CORE's Expr as the exact number type
+typedef CORE::Expr NT;
 
 #else
 

@@ -9,12 +9,11 @@
 
 // the number type
 #include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
 
 
-// example that uses the Filtered_exact number type
+// example that uses an exact number type
 
-typedef CGAL::Filtered_exact<double,CGAL::MP_Float> NT;
+typedef CGAL::MP_Float NT;
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
