@@ -1,5 +1,0 @@
-The package Halfedge_DS has been replaced with the new design
-in package HalfedgeDS. The old files are still available for 
-backwards compatibility and to support MSVC++6.0, however their
-use is depricated and the manual pages are not converted anymore
-into the new manual format.

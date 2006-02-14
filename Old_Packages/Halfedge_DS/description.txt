@@ -1,1 +1,0 @@
-Halfedge data structures, old design.

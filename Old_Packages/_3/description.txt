@@ -1,1 +1,0 @@
-abstract 3d kernel parameterized by rep class R

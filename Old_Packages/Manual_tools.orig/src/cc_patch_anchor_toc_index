@@ -1,6 +1,0 @@
-#!/usr/local/bin/perl -pi
-
-# Patch the links from the main pages (like contents) to the local pages.
-s/(<A HREF=[\"])([^\/\"]*[\"]>)/$1$ENV{CC__LOC_F}$2/g;
-s/(SRC=[\"])(cc[_][^\/\"]*[.]gif[\"])/$1gif\/$2/g;
-

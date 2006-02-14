@@ -1,3 +1,0 @@
-Cartesian kernel without reference counting - 2d
-Files are located in include/CGAL/SimpleCartesian
-Naming scheme is ...S2&lt;FT&gt;
