@@ -15,7 +15,7 @@
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 // package       : $CGAL_Package: STL_Extension $
 // source        : stl_extension.fw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>

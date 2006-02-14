@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRAN// Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>TY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision$
-// $Name$
+// $URL$
+// $Id$
+// 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 

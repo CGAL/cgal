@@ -12,8 +12,8 @@
 // release_date  :
 // 
 // file          : test/Triangulation/test_constrained_triangulation.C
-// source        : $RCSfile$
-// revision      : $Revision$
+// source        : $URL$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
 //

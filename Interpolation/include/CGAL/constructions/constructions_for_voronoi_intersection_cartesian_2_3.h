@@ -12,8 +12,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source: /CVSROOT/CGAL/Packages/Interpolation/include/CGAL/constructions_for_voronoi_intersection_cartesian_2_3.h
-// $Revision$ $Date$
-// $Name$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Julia Floetotto
 

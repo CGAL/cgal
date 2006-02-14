@@ -14,9 +14,9 @@
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Source$
-# $Revision$
-# $Name$
+# $URL$
+# $Id$
+# 
 #
 # Author(s): Laurent Saboret, Pierre Alliez
 # Purpose: Search for the first file/folder existing in a list

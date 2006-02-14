@@ -12,8 +12,8 @@
 // release_date  :
 // 
 // file          : test/Triangulation/include/CGAL/_test_cls_tds_2.C
-// source        : $RCSfile$
-// revision      : $Revision$
+// source        : $URL$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 //

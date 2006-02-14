@@ -16,7 +16,7 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_sphere_d.aw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Bernd Gärtner, Sven Schönherr <sven@inf.ethz.ch>

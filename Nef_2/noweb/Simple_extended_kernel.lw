@@ -1694,7 +1694,7 @@ int main() {
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/Simple_extended_kernel.lw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -1723,7 +1723,7 @@ int main() {
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/Simple_extended_kernel.lw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -1751,7 +1751,7 @@ int main() {
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/Simple_extended_kernel.lw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>

@@ -9,8 +9,8 @@
 // 
 // package       : Triangulation/test/Triangulation
 // file          : include/CGAL/_test_cls_triangulation_2.
-// source        : $RCSfile$
-// revision      : $Revision$
+// source        : $URL$
+// revision      : $Id$
 // revision_date : $Date$
 
 // author(s)     : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)

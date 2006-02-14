@@ -16,7 +16,7 @@
 // chapter       : Random Numbers Generator
 //
 // source        : web/Random.aw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>

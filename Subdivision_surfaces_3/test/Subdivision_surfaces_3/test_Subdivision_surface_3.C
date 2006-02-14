@@ -15,7 +15,7 @@
 // package       : Subdivision_surface_3
 // chapter       : Subdivision Surfaces
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Le-Jeng Shiue <Andy.Shiue@gmail.com>

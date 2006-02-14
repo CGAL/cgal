@@ -5,7 +5,7 @@
 % Computer Science at the ETH Zurich.  Many thanks to my advisor Bernd
 % Gaertner.
 %
-% $Revision$ ($Date$)
+% $Id$ ($Date$)
 %
 % Contact: Kaspar Fischer <fischerk@@inf.ethz.ch>
 %
@@ -3556,7 +3556,7 @@ So every single of the above eight tests is run in $2\cdot 2\cdot
 // chapter       : $CGAL_Chapter: Optimisation $
 // file          : @1
 // package       : Min_sphere_of_spheres_d (1.10)
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Kaspar Fischer

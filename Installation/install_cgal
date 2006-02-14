@@ -19,9 +19,9 @@
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Source$
-# $Revision$ $Date$
-# $Name$
+# $URL$
+# $Id$ $Date$
+# 
 #
 # Author(s): Michael Hoffmann, Sylvain Pion
 
@@ -38,7 +38,7 @@ CGAL_VERSION="version_to_be_determined"
 # ---------------------------------------------
 CGAL_INSTALL_CGAL="`basename ${0}`"
 # ---------------------------------------------
-CGAL_INSTALL_VERSION='$Revision$'
+CGAL_INSTALL_VERSION='$Id$'
 # ---------------------------------------------
 CGAL_DIR="`pwd`"
 # ---------------------------------------------

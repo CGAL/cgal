@@ -15,9 +15,9 @@
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Source$
-# $Revision$ $Date$
-# $Name$
+# $URL$
+# $Id$ $Date$
+# 
 #
 # Author(s)     : Geert-Jan Giezeman, Sven Schönherr
 
@@ -42,9 +42,9 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
         > "${nameLC}assertions.h"
 // Replace this remark by a proper copyright notice.
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// $URL$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Geert-Jan Giezeman, Sven Schönherr
 

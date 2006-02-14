@@ -13,8 +13,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $source: /CVSROOT/CGAL/Packages/Kinetic_data_structures/include/CGAL/Polynomial/internal/Simple_interval_root.h,v $
-// $Revision$ $Date$
-// $Name$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 

@@ -15,7 +15,7 @@
 // package       : HalfedgeDS 3.3 (27 Sep 2000)
 // chapter       : Halfedge Data Structures
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>

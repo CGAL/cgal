@@ -14,7 +14,7 @@
 // file          : include/CGAL/multirep.h
 // package       : 
 // maintainer    : 
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : 
 // coordinator   : 

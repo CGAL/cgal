@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // file          : test/WindowStream/test_window_stream_xy_3.C
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner
 //                 Stefan Schirra

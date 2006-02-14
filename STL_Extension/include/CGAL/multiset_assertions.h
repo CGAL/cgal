@@ -1,8 +1,8 @@
 // Replace this remark by a proper copyright notice.
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// $URL$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Geert-Jan Giezeman, Sven Schönherr
 

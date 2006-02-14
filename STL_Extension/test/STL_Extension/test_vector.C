@@ -15,7 +15,7 @@
 // package       : $CGAL_Package: STL_Extension $
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>

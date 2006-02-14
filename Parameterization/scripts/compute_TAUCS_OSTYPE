@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 # ============================================================================
-# $Source$
-# $Revision$
-# $Name$
+# $URL$
+# $Id$
+# 
 #
 # Author(s): Laurent Saboret and Pierre Alliez, from $TAUCSROOT/configure
 # Purpose: Figure out TAUCS OSTYPE and print it

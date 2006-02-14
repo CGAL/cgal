@@ -16,7 +16,7 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Polytope_distance_d.aw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>

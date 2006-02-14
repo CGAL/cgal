@@ -10,7 +10,7 @@
 #
 #  Author    : (c) 1997 Lutz Kettner
 #              as of version 3.3 (Sept. 1999) maintained by Susan Hert
-#  Revision  : $Revision$
+#  Revision  : $Id$
 #  Date      : $Date$
 # 
 # **************************************************************************
@@ -34,7 +34,7 @@ error:
 echo "Error: First argument must be an existing include directory."
 
 usage:
-echo "$0 "'$Revision$'" (c) Lutz Kettner"
+echo "$0 "'$Id$'" (c) Lutz Kettner"
 echo "Usage: $0 <HTML-files...>"
 exit 1
 

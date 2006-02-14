@@ -644,7 +644,7 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 // file          : include/CGAL/Kernel_d/function_objectsHd.h
 // package       : Kernel_d
 // maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Michael Seel
 // coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)

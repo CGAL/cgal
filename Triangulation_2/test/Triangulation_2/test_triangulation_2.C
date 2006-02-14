@@ -13,8 +13,8 @@
 // 
 // file          : /test/Triangulation/test_triangulation_2.C
 // package       : Triangulation
-// source        : $RCSfile$
-// revision      : $Revision$
+// source        : $URL$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann, Mariette Yvinec
 //

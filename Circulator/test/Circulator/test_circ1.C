@@ -15,7 +15,7 @@
 // chapter       : $CGAL_Chapter: Circulators $
 // package       : $CGAL_Package: Circulator 3.4 (02 Sep 1999) $
 // source        : circulator.fw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //

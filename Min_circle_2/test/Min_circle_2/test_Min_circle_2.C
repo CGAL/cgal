@@ -16,7 +16,7 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner

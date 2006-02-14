@@ -13,7 +13,7 @@
 // release_date  :
 // 
 // file          : include/CGAL/test/WindowStream/manual_example_ps.C
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //

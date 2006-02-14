@@ -15,7 +15,7 @@
 #
 #  Author    : (c) 1997 Lutz Kettner
 #              as of version 3.3 (Sept. 1999) maintained by Susan Hert
-#  Revision  : $Revision$
+#  Revision  : $Id$
 #  Date      : $Date$
 # 
 # **************************************************************************
@@ -85,7 +85,7 @@ endif
 exit $returnvalue
 
 usage:
-echo "$0 "'$Revision$'" (c) Lutz Kettner"
+echo "$0 "'$Id$'" (c) Lutz Kettner"
 echo "Usage: $0 <spec-files...> [-against [<options>] <impl-files...>]"
 echo "   or: $0 -against [<options>] <impl-files...>"
 echo "           -a          short form for -against"

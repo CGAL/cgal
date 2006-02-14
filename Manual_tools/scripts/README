@@ -37,7 +37,7 @@ The <category> can be one of:
 
     Class Concept Enum Function Macro Variable
 
-cc_ref_wizard $Revision$ (c) Lutz Kettner
+cc_ref_wizard $Id$ (c) Lutz Kettner
 Usage: cc_ref_wizard [<options>] <category> <item-name> [<sub-dir>]
        -s <scope>       scope the item is in (suppresses prefix).
        -p <package>     name of the package the item belongs to.

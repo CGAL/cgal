@@ -15,7 +15,7 @@
 // chapter       : $CGAL_Chapter: Geometric Object Generators $
 // package       : $CGAL_Package: Generator 2.12 (28 Jul 1999) $
 // source        : generators.fw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //

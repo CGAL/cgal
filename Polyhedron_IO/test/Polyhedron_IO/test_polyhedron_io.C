@@ -15,7 +15,7 @@
 // chapter       : $CGAL_Chapter: Support Library ... $
 // package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
 // source        : polyhedron_io.fw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //

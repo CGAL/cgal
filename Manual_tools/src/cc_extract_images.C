@@ -9,7 +9,7 @@
               Implemented as a finite state automaton.
   System    : C++ (g++)
   Author    : (c) 1998,2004 Lutz Kettner
-  Revision  : $Revision$
+  Revision  : $Id$
   Date      : $Date$
  
 **************************************************************************/

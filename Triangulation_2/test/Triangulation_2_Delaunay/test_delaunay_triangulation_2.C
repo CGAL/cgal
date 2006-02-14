@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 // 
-// source        : $RCSfile$
+// source        : $URL$
 // file          : test_delaunay_triangulation.C
 // revision      : 
 // revision_date : 

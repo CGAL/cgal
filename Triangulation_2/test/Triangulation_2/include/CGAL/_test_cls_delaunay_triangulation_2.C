@@ -11,9 +11,9 @@
 // release       :
 // release_date  :
 // 
-// source        : $RCSfile$
+// source        : $URL$
 // file          : include/CGAL/_test_cls_delaunay_triangulation_2.C
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann,Mariette Yvinec
 //

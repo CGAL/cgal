@@ -11,7 +11,7 @@
               only in the flex source file 'html_lex.yy'.
   System    : bison, flex, C++ (g++)
   Author    : (c) 2004 Lutz Kettner
-  Revision  : $Revision$
+  Revision  : $Id$
   Date      : $Date$
  
 **************************************************************************/

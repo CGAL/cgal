@@ -15,9 +15,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// $URL$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Francois Rebufat <Francois.Rebufat@sophia.inria.fr>
 // #include <config.h> // fltk's config

@@ -31,8 +31,8 @@
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
- * $Source$
- * $Revision$ $Date$
+ * $URL$
+ * $Id$ $Date$
  ***************************************************************************/
 #ifndef _CORE_REAL_H_
 #define _CORE_REAL_H_

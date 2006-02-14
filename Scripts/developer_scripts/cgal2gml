@@ -2,7 +2,7 @@
 #
 # file:     cgal2gml
 # author:   Michael Hoffmann
-# version:  $Revision$  $Date$
+# version:  $Id$  $Date$
 # purpose:  convert package dependencies (output of cgal_depend)
 #           into gml graph format
 #

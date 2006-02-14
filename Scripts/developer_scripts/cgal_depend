@@ -2,13 +2,13 @@
 #
 # file:     cgal_depend 
 # author:   Michael Hoffmann
-# version:  $Revision$  $Date$
+# version:  $Id$  $Date$
 # purpose:  Scan CGAL directories for package dependencies
 #
 
 $0 =~ /.*\/(.*)/;
 $thisprog = "$1";
-'$Revision$' =~ /\s(\S*)\s/;
+'$Id$' =~ /\s(\S*)\s/;
 $thisprog_version = "$1";
 
 # where to put the perl data structure containing the dependency graph

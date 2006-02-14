@@ -14,7 +14,7 @@
 // file          : include/CGAL/event.h
 // package       : 
 // maintainer    : 
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : 
 // coordinator   : 

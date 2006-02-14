@@ -13,7 +13,7 @@
 //
 // file          : test_support.C
 // package       : Stream_support
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //

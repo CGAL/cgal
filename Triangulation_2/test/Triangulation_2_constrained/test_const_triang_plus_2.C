@@ -12,8 +12,8 @@
 // release_date  :
 // 
 // file          : test/Triangulation_2_constrained/test_const_triang_plus_2.h
-// source        : $RCSfile$
-// revision      : $Revision$
+// source        : $URL$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 // coordinator   : INRIA Sophia-Antipolis

@@ -13,8 +13,8 @@
 //
 // file          : include/CGAL/IO/Null_output_stream.h
 // package       : IO
-// source        : $RCSfile$
-// revision      : $Revision$
+// source        : $URL$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 //

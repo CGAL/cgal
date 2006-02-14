@@ -14,7 +14,7 @@
 // file          : include/CGAL/kernel_event_support.h
 // package       : 
 // maintainer    : 
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : 
 // coordinator   : 

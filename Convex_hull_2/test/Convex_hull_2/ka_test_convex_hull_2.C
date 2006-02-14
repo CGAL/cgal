@@ -11,7 +11,7 @@
 // release_date  :
 //
 // file          : ka_test_convex_hull_2.C
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Matthias Baesken
 //

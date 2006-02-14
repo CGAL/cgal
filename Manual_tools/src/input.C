@@ -6,7 +6,7 @@
   Function  : Input file management and auxiliary functions.
   System    : bison, flex, C++ (g++)
   Author    : (c) 2004 Lutz Kettner
-  Revision  : $Revision$
+  Revision  : $Id$
   Date      : $Date$
  
 **************************************************************************/

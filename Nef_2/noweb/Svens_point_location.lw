@@ -1,6 +1,6 @@
 % ----------------------------------------------------------------------------
 % sweep.lw: Punkt-Lokalisierung in der Ebene
-% $Revision$
+% $Id$
 % ----------------------------------------------------------------------------
 
 % Seitenumbruch bei PointLocator member functions !!!
@@ -2513,7 +2513,7 @@ inline std::ostream& operator<<(std::ostream& o, const std::list<Node>& n)
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/Svens_point_location.lw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>

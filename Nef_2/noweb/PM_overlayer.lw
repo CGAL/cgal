@@ -2071,7 +2071,7 @@ int main(int argc, char* argv[])
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/PM_overlayer.lw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>

@@ -1,6 +1,6 @@
 // Synopsis: Testsuite of package Approximate_min_ellipsoid_d
 //
-// Revision: $Revision$
+// Revision: $Id$
 // $Date$
 //
 // Author: Kaspar Fischer <fischerk@inf.ethz.ch> (ETH Zurich)

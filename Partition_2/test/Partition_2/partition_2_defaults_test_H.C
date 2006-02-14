@@ -15,7 +15,7 @@
 // package       : $CGAL_Package: Partition_2 1.0 (27 Jul 2000) $
 // chapter       : Planar Polygon Partitioning
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Susan Hert <hert@mpi-sb.mpg.de>

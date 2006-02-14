@@ -11,10 +11,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source$
+// $URL$
 
-// $Revision$ $Date$
-// $Name$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 

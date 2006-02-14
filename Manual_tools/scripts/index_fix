@@ -4,7 +4,7 @@
 #
 # Index postprocessing script -- index_fix
 #
-# $Revision$
+# $Id$
 # $Date$
 #
 # script for post-processing of a CGAL reference manual .ind file to 

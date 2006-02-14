@@ -17,9 +17,9 @@ This implementation of the point location and ray shooting for the SNC structure
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// $URL$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 

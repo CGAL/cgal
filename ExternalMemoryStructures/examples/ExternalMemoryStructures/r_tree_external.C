@@ -15,7 +15,7 @@
 // chapter       : $CGAL_Chapter: Basic / External Data Structures $
 // package       : $CGAL_Package: External Data Structures$
 // source        : 
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Gabriele Neyer<neyer@inf.ethz.ch>
 //

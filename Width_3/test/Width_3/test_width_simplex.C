@@ -15,7 +15,7 @@
 // package       : Width_3 (1.6)
 // chapter       : Geometric Optimisation
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Thomas Herrmann, Lutz Kettner

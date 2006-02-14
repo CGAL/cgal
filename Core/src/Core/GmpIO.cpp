@@ -8,8 +8,8 @@
  *
  * Zilin Du, 2003
  *
- * $Source$
- * $Revision$ $Date$
+ * $URL$
+ * $Id$ $Date$
  ***************************************************************************/
 
 /* Auxiliary functions for C++-style input of GMP types. 

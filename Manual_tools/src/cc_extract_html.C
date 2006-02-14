@@ -7,7 +7,7 @@
   System    : bison, flex, C++ (g++)
   Author    : (c) 1995 Lutz Kettner
               as of version 3.3 (Sept. 1999) maintained by Susan Hert
-  Revision  : $Revision$
+  Revision  : $Id$
   Date      : $Date$
  
 **************************************************************************/
@@ -36,7 +36,7 @@ using namespace std;
 /* Program name and release          */
 /* ================================= */
 const string prog_name    = "cc_extract_html";
-const string prog_release = "$Revision$";
+const string prog_release = "$Id$";
 
 
 /* Constant string used for referencing. */

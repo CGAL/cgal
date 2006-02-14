@@ -14,7 +14,7 @@
 // file          : include/CGAL/Kernel_checker.h
 // package       : 
 // maintainer    : 
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : 
 // coordinator   : 

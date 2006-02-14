@@ -1664,7 +1664,7 @@ CheckDirection convert(const Direction_2& d) const
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/Filtered_extended_points.lw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>

@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 // 
-// source        : $RCSfile$
+// source        : $URL$
 // file          : test/Triangulation/test_regular_hierarchy_2.C
 // revision      : $revision$
 // revision_date : $Date$

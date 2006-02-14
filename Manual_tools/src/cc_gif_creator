@@ -7,7 +7,7 @@
 #
 #  Author    : (c) 1998 Lutz Kettner
 #              as of version 3.3 (Sept. 1999) maintained by Susan Hert
-#  Revision  : $Revision$
+#  Revision  : $Id$
 #  Date      : $Date$
 # 
 # **************************************************************************
@@ -75,7 +75,7 @@ if ( ! $?verbose) rm -r $dir
 exit (0)
 
 usage:
-echo "$0 "'$Revision$'" (c) Lutz Kettner"
+echo "$0 "'$Id$'" (c) Lutz Kettner"
 echo "Usage: $0 [<options>] <tex-macro>"
 echo "           -m         process macro in math-mode."
 echo "           -f         process macro within a figure environment."

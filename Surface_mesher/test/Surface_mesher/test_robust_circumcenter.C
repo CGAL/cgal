@@ -1,6 +1,6 @@
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// $URL$
+// $Id$ $Date$
+// 
 //
 // Author(s)     : Mariette Yvinec
 

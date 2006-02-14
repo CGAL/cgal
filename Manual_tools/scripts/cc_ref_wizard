@@ -6,7 +6,7 @@
 #  Wizard to create a reference page skeleton.
 #
 #  Author    : (c) 1997 Lutz Kettner
-#  Revision  : $Revision$
+#  Revision  : $Id$
 #  Date      : $Date$
 # 
 # **************************************************************************
@@ -89,7 +89,7 @@ while ($#argv > 0)
     if ( "$1" == "-help") goto help
 
     if ( "$1" == "-V") then
-        echo "$prog_name "'$Revision$'" (c) Lutz Kettner"
+        echo "$prog_name "'$Id$'" (c) Lutz Kettner"
         exit(0)
     endif
 
@@ -207,7 +207,7 @@ goto usage
 error:
 echo "Error in command line:"
 usage:
-echo "$prog_name "'$Revision$'" (c) Lutz Kettner"
+echo "$prog_name "'$Id$'" (c) Lutz Kettner"
 echo "Usage: $prog_name [<options>] <category> <item-name> [<sub-dir>]"
 echo "       -s <scope>       scope the item is in (suppresses prefix).";
 echo "       -p <package>     name of the package the item belongs to.";

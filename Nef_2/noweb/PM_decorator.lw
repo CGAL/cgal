@@ -828,7 +828,7 @@ HDS_items::Halfedge_wrapper<R,T>::Halfedge::nil_;
 // chapter       : Nef Polyhedra
 //
 // source        : nef_2d/PM_decorator.lw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>

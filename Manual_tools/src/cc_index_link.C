@@ -7,7 +7,7 @@
   Function  : adds links in HTML-index (combines manual.ind with HREF)
   System    : C++ (g++)
   Author    : 2003 Renata Krysta
-  Revision  : $Revision$
+  Revision  : $Id$
   Date      : $Date$
  
 **************************************************************************/

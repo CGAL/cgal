@@ -11,7 +11,7 @@
 // release_date  :
 //
 // file          : _test_fct_ch_I_2.h
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //

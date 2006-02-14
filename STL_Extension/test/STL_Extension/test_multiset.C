@@ -15,7 +15,7 @@
 // package       : $CGAL_Package: STL_Extension $
 // chapter       : $CGAL_Chapter: STL Extensions for CGAL $
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Ron Wein <wein@post.tau.ac.il>

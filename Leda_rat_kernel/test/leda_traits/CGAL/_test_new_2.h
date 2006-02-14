@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // file          : test/Kernel/include/CGAL/_test_new_2.h
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Michael Seel
 //                 Stefan Schirra

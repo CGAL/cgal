@@ -11,7 +11,7 @@
 // release_date  :
 //
 // file          : ch_test_CH.C
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //

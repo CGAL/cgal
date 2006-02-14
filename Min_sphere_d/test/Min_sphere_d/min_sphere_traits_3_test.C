@@ -15,7 +15,7 @@
 // package       : $CGAL_Package: MinSphere $
 // file          : min_sphere_traits_3_test.C
 // source        : web/Optimisation/Min_sphere_d.aw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
 //                 Bernd Gärtner

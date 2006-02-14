@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // file          : test/Convex_hull_3/degeneracy_test.C
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //

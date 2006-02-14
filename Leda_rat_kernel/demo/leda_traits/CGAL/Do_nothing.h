@@ -14,7 +14,7 @@
 // file          : include/CGAL/Do_nothing.h
 // package       : 
 // maintainer    : 
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : 
 // coordinator   : 

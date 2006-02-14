@@ -15,7 +15,7 @@
 // package       : Nef_3
 // chapter       : 3D-Nef Polyhedra
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>

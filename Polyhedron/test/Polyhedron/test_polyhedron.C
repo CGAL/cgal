@@ -15,7 +15,7 @@
 // package       : Polyhedron 2.9 (13 Sep 2000)
 // chapter       : 3D-Polyhedral Surfaces
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)

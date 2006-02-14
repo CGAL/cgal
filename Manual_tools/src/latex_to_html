@@ -23,7 +23,7 @@
 #              as of version 3.3  (Sept. 1999) maintained by Susan Hert
 #              as of version 3.11 (Aug. 2001) maintained by
 #              Peter Hachenberger and Lutz Kettner
-#  Revision  : $Revision$
+#  Revision  : $Id$
 #  Date      : $Date$
 # 
 # **************************************************************************
@@ -93,7 +93,7 @@ GlobalExitCode=0
 #---------------------------------------------------------------------#
 
 version_no() {
-    echo '$Revision$' | sed 's/[$]Revision: //' | sed 's/ [$]//g'
+    echo '$Id$' | sed 's/[$]Revision: //' | sed 's/ [$]//g'
 }
 
 version_date() {

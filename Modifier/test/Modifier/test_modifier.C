@@ -15,7 +15,7 @@
 // chapter       : $CGAL_Chapter: Protected access to the internal repr.$
 // package       : $CGAL_Package: Modifier 1.2 (07 Apr 1999) $
 // source        : modifier.fw
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //

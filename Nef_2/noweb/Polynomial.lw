@@ -1743,7 +1743,7 @@ int main(int argc, char* argv[])
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// revision      : $Revision$
+// revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
