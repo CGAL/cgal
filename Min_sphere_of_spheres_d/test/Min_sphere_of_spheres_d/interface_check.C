@@ -10,6 +10,8 @@
 #include <iostream>
 #include <vector>
 
+#include <cstdlib>
+
 // The program will work with numbers of type FieldType.
 // You can change FieldType to leda_real, for instance.
 typedef CGAL::Gmpq FieldType;
@@ -83,7 +85,7 @@ void checkCondition(bool c,const char *msg) {
   if (!c) {
     std::cout << msg << std::endl;
     std::cout.flush();
-    exit(-1);
+    std::exit(-1);
   }
 }
 
