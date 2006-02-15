@@ -1,24 +1,20 @@
-// ============================================================================
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// $URL$
+// $Id$
+// 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// file          : include/CGAL/predicates/Straight_skeleton_ftC2.h
-// package       : Straight_skeleton_2 (1.1.0)
-//
-// author(s)     : Fernando Cacciola
-// maintainer    : Fernando Cacciola <fernando_cacciola@hotmail>
-// coordinator   : Fernando Cacciola <fernando_cacciola@hotmail>
-//
-// ============================================================================
 #ifndef CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H
 #define CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 1
 
@@ -250,46 +246,57 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& triedge, Triedge<
     //   Also, if (x,y) is over 'ec' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
     //   zone either.
     Uncertain<bool> cok = CGAL_NTS certified_is_positive(sdc);
-    if ( ! CGAL_NTS is_indeterminate(cok) && !!cok )
+    if ( ! CGAL_NTS is_indeterminate(cok) )
     {
-      CGAL_SSTRAITS_TRACE("\nright side of ec." ) ;
-
-      // Calculate scaled (signed) distances from (x,y) to 'el' and 'er'
-      FT sdl = zl.a() * i.x() + zl.b() * i.y() + zl.c() ;
-      FT sdr = zr.a() * i.x() + zr.b() * i.y() + zr.c() ;
-
-      CGAL_SSTRAITS_TRACE("\nsdl=" << sdl ) ;
-      CGAL_SSTRAITS_TRACE("\nsdr=" << sdr ) ;
-
-      // Determine if the vertices (el,ec) and (ec,er) are reflex.
-      Uncertain<bool> lcx = CGAL_NTS certified_is_smaller(zl.a()*zc.b(),zc.a()*zl.b());
-      Uncertain<bool> crx = CGAL_NTS certified_is_smaller(zc.a()*zr.b(),zr.a()*zc.b());
-
-      if ( ! CGAL_NTS is_indeterminate(lcx) && ! CGAL_NTS is_indeterminate(crx) )
+      if ( cok == true )
       {
-        CGAL_SSTRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
-        CGAL_SSTRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
+        CGAL_SSTRAITS_TRACE("\nright side of ec." ) ;
 
-        // Is (x,y) to the right|left of the bisectors (el,ec) and (ec,er)?
-        //  It depends on whether the vertex ((el,ec) and (ec,er)) is relfex or not.
-        //  If it is reflex, then (x,y) is to the right|left of the bisector if sdl|sdr <= sdc; otherwise, if sdc <= sdl|srd
+        // Calculate scaled (signed) distances from (x,y) to 'el' and 'er'
+        FT sdl = zl.a() * i.x() + zl.b() * i.y() + zl.c() ;
+        FT sdr = zr.a() * i.x() + zr.b() * i.y() + zr.c() ;
 
-        Uncertain<bool> lok = lcx ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
-                                  : CGAL_NTS certified_is_smaller_or_equal(sdc,sdl) ;
+        CGAL_SSTRAITS_TRACE("\nsdl=" << sdl ) ;
+        CGAL_SSTRAITS_TRACE("\nsdr=" << sdr ) ;
 
-        Uncertain<bool> rok = crx ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
-                                  : CGAL_NTS certified_is_smaller_or_equal(sdc,sdr) ;
+        // Determine if the vertices (el,ec) and (ec,er) are reflex.
+        Uncertain<bool> lcx = CGAL_NTS certified_is_smaller(zl.a()*zc.b(),zc.a()*zl.b());
+        Uncertain<bool> crx = CGAL_NTS certified_is_smaller(zc.a()*zr.b(),zr.a()*zc.b());
 
-        CGAL_SSTRAITS_TRACE("\nlok:" << lok) ;
-        CGAL_SSTRAITS_TRACE("\nrok:" << rok) ;
+        if ( ! CGAL_NTS is_indeterminate(lcx) && ! CGAL_NTS is_indeterminate(crx) )
+        {
+          CGAL_SSTRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
+          CGAL_SSTRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
 
-        r = lok && rok ;
+          // Is (x,y) to the right|left of the bisectors (el,ec) and (ec,er)?
+          //  It depends on whether the vertex ((el,ec) and (ec,er)) is relfex or not.
+          //  If it is reflex, then (x,y) is to the right|left of the bisector if sdl|sdr <= sdc; otherwise, if sdc <= sdl|srd
+
+          Uncertain<bool> lok = lcx ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
+                                    : CGAL_NTS certified_is_smaller_or_equal(sdc,sdl) ;
+
+          Uncertain<bool> rok = crx ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
+                                    : CGAL_NTS certified_is_smaller_or_equal(sdc,sdr) ;
+
+          CGAL_SSTRAITS_TRACE("\nlok:" << lok) ;
+          CGAL_SSTRAITS_TRACE("\nrok:" << rok) ;
+
+          r = lok && rok ;
+        }
+        else
+        {
+          CGAL_SSTRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
+        }
       }
-
+      else
+      {
+        CGAL_SSTRAITS_TRACE("\nWRONG side of ec." ) ;
+        r = make_uncertain(false);
+      }
     }
     else
     {
-      CGAL_SSTRAITS_TRACE("\nWRONG side of ec." ) ;
+      CGAL_SSTRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
     }
   }
   else
@@ -318,8 +325,7 @@ Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> co
     CGAL_assertion ( CGAL_NTS certified_is_positive(lt) ) ;
     CGAL_assertion ( CGAL_NTS certified_is_positive(rt) ) ;
 
-    Uncertain<Comparison_result> equal_times = CGAL_NTS certified_compare(lt,rt);
-
+    Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
     if ( ! CGAL_NTS is_indeterminate(equal_times) )
     {
       if ( equal_times == true )

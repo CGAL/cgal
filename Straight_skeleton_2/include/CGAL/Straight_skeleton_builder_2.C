@@ -1,24 +1,20 @@
-// ============================================================================
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// $URL$
+// $Id$
+// 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// file          : include/CGAL/Straight_skeleton_builder_2.c
-// package       : Straight_skeleton_2 (1.1.0)
-//
-// author(s)     : Fernando Cacciola
-// maintainer    : Fernando Cacciola <fernando_cacciola@hotmail>
-// coordinator   : Fernando Cacciola <fernando_cacciola@hotmail>
-//
-// ============================================================================
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_2_C
 #define CGAL_STRAIGHT_SKELETON_BUILDER_2_C 1
 
@@ -81,10 +77,39 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
   {
     if ( ExistEvent(lBorderA,lBorderB,lBorderC) )
     {
-      rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, aLNode, aRNode ) ) ;
+      bool lAccepted = true ;
+
+      if ( aLNode->is_skeleton() )
+      {
+        if ( CompareEvents( CreateTriedge(lBorderA,lBorderB,lBorderC)
+                          , CreateTriedge(GetSkeletonVertexDefiningBorders(aLNode))
+                          ) == SMALLER
+           )
+        {
+          CGAL_SSBUILDER_TRACE("New event for Left seed N" << aLNode->id() << " is in the past. discarded." ) ;
+          lAccepted = false ;
+        }
+      }
+
+      if ( aRNode->is_skeleton() )
+      {
+        if ( CompareEvents( CreateTriedge(lBorderA,lBorderB,lBorderC)
+                          , CreateTriedge(GetSkeletonVertexDefiningBorders(aRNode))
+                          ) == SMALLER
+           )
+        {
+          CGAL_SSBUILDER_TRACE("New event for Right seed N" << aRNode->id() << " is in the past. discarded." ) ;
+          lAccepted = false ;
+        }
+      }
+
+      if ( lAccepted )
+      {
+        rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, aLNode, aRNode ) ) ;
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-      SetEventTimeAndPoint(*rResult);
+        SetEventTimeAndPoint(*rResult);
 #endif
+      }
     }
   }
   return rResult ;
@@ -112,11 +137,28 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle    aNo
 
     if ( IsEventInsideOffsetZone(aReflexLBorder, aReflexRBorder, aOppositeBorder, lPrevOppBorder, lNextOppBorder) )
     {
-       EventPtr lEvent( new SplitEvent( aReflexLBorder,aReflexRBorder,aOppositeBorder,aNode,aOppositeBorder) ) ;
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-       SetEventTimeAndPoint(*lEvent);
-#endif
-       aCandidates.push_back(lEvent) ;
+      bool lAccepted = true ;
+
+      if ( aNode->is_skeleton() )
+      {
+        if ( CompareEvents( CreateTriedge(aReflexLBorder,aReflexRBorder,aOppositeBorder)
+                          , CreateTriedge(GetSkeletonVertexDefiningBorders(aNode))
+                          ) != SMALLER
+           )
+        {
+          CGAL_SSBUILDER_TRACE("New event for Split seed N" << aNode->id() << " is in the past. discarded." ) ;
+          lAccepted = false ;
+        }
+      }
+
+      if ( lAccepted )
+      {
+        EventPtr lEvent( new SplitEvent( aReflexLBorder,aReflexRBorder,aOppositeBorder,aNode,aOppositeBorder) ) ;
+  #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+        SetEventTimeAndPoint(*lEvent);
+  #endif
+        aCandidates.push_back(lEvent) ;
+      }
      }
   }
 }

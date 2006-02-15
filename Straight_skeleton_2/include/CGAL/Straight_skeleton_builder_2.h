@@ -1,24 +1,20 @@
-// ============================================================================
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// $URL$
+// $Id$
+// 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// file          : include/CGAL/Straight_skeleton_builder_2.h
-// package       : Straight_skeleton_2 (1.1.0)
-//
-// author(s)     : Fernando Cacciola
-// maintainer    : Fernando Cacciola <fernando_cacciola@hotmail>
-// coordinator   : Fernando Cacciola <fernando_cacciola@hotmail>
-//
-// ============================================================================
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_2_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_2_H 1
 
@@ -189,6 +185,11 @@ private :
     return iTriedge(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
 
+  static inline iTriedge CreateTriedge ( BorderTriple const& aTriple )
+  {
+    return iTriedge(CreateEdge(aTriple.get<0>()),CreateEdge(aTriple.get<1>()),CreateEdge(aTriple.get<2>()));
+  }
+
   Vertex_handle GetVertex ( int aIdx )
   {
     return mWrappedVertices[aIdx].mVertex ;
@@ -220,6 +221,17 @@ private :
   void SetNextInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
     mWrappedVertices[aV->id()].mNext = aPrev->id();
+  }
+
+  BorderTriple GetSkeletonVertexDefiningBorders( Vertex_handle aVertex ) const
+  {
+    CGAL_precondition(aVertex->is_skeleton() ) ;
+
+    Halfedge_handle lBorder0 = aVertex->halfedge()->face()->halfedge();
+    Halfedge_handle lBorder1 = aVertex->halfedge()->opposite()->prev()->face()->halfedge();
+    Halfedge_handle lBorder2 = aVertex->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
+
+    return boost::make_tuple(lBorder0,lBorder1,lBorder2);
   }
 
   void Exclude ( Vertex_handle aVertex )
@@ -272,11 +284,16 @@ private :
                                                                ) ;
   }
 
+  Comparison_result CompareEvents ( iTriedge const& aA, iTriedge const& aB ) const
+  {
+    return Compare_sls_event_times_2<Traits>(mTraits)()(aA,aB) ;
+  }
+
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    return Compare_sls_event_times_2<Traits>(mTraits)()( CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                       , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                       ) ;
+    return CompareEvents( CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                        , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                        ) ;
   }
 
   Comparison_result CompareEventsDistanceToSeed ( Vertex_handle   aSeed
@@ -286,15 +303,15 @@ private :
   {
     if ( aSeed->is_skeleton() )
     {
-      Halfedge_handle lBorder0 = aSeed->halfedge()->face()->halfedge();
-      Halfedge_handle lBorder1 = aSeed->halfedge()->opposite()->prev()->face()->halfedge();
-      Halfedge_handle lBorder2 = aSeed->halfedge()->opposite()->prev()->opposite()->face()->halfedge();
+      BorderTriple lTriple = GetSkeletonVertexDefiningBorders(aSeed);
 
       CGAL_SSBUILDER_TRACE("Seed N" << aSeed->id() << " is a skeleton node,"
-                          << " defined by: E" << lBorder0->id() << ", E" << lBorder1->id() << ", E" << lBorder2->id()
+                          << " defined by: E" << lTriple.get<0>()->id()
+                                     << ", E" << lTriple.get<1>()->id()
+                                     << ", E" << lTriple.get<2>()->id()
                           );
 
-      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( CreateTriedge(lBorder0,lBorder1,lBorder2)
+      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( CreateTriedge(lTriple)
                                                                     , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
                                                                     , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
                                                                     ) ;

@@ -1,29 +1,30 @@
-// ============================================================================
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is notr
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// $URL$
+// $Id$
+// 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// file          : include/CGAL/constructions/Straight_skeleton_cons_ftC2.h
-// package       : Straight_skeleton_2 (1.1.0)
-//
-// author(s)     : Fernando Cacciola
-// maintainer    : Fernando Cacciola <fernando_cacciola@hotmail>
-// coordinator   : Fernando Cacciola <fernando_cacciola@hotmail>
-//
-// ============================================================================
 #ifndef CGAL_STRAIGHT_SKELETON_CONS_FTC2_H
 #define CGAL_STRAIGHT_SKELETON_CONS_FTC2_H 1
 
 
 CGAL_BEGIN_NAMESPACE
+
+inline MP_Float sqrt( MP_Float const& n )
+{
+  return CGAL_NTS approximate_sqrt(n);
+}
 
 namespace CGAL_SLS_i
 {

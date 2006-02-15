@@ -16,11 +16,10 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
+// $Id$
 // 
+// Author(s)     : Sylvain Pion, Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// Author(s)     : Sylvain Pion, Fernando Cacciola
-
 #ifndef CGAL_UNFILTERED_PREDICATE_ADAPTOR_H
 #define CGAL_UNFILTERED_PREDICATE_ADAPTOR_H
 

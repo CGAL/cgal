@@ -1,24 +1,19 @@
-// ============================================================================
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
-//
-// file          : include/CGAL/Polygon_offset_traits_2.h
-// package       : Polygon_offset_2 (1.1.0)
-//
-// author(s)     : Fernando Cacciola
-// maintainer    : Fernando Cacciola <fernando_cacciola@hotmail>
-// coordinator   : Fernando Cacciola <fernando_cacciola@hotmail>
-//
-// ============================================================================
+// $URL$
+// $Id$
+// 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 #ifndef CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H
 #define CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H 1
 

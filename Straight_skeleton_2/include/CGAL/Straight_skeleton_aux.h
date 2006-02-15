@@ -1,24 +1,20 @@
-// ============================================================================
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// $URL$
+// $Id$
+// 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// file          : include/CGAL/straight_skeleton_aux.h
-// package       : Straight_skeleton_2 (1.1.0)
-//
-// author(s)     : Fernando Cacciola
-// maintainer    : Fernando Cacciola <fernando_cacciola@hotmail>
-// coordinator   : Fernando Cacciola <fernando_cacciola@hotmail>
-//
-// ============================================================================
 #ifndef CGAL_STRAIGHT_SKELETON_AUX_H
 #define CGAL_STRAIGHT_SKELETON_AUX_H 1
 
@@ -57,27 +53,27 @@ namespace SS_IO_AUX
   class ScopedDrawing
   {
     public :
-    
-      virtual ~ScopedDrawing() 
+
+      virtual ~ScopedDrawing()
       {
-        if ( mID != -1 ) 
-          Straight_skeleton_external_undraw_object(mID) ; 
+        if ( mID != -1 )
+          Straight_skeleton_external_undraw_object(mID) ;
       }
-      
+
       void Release() { mID = -1 ; }
     protected :
-    
+
       ScopedDrawing ( int aID ) : mID(aID) {}
-            
+
     private :
-    
+
       int mID ;
   } ;
-  
+
   class ScopedPointDrawing : public ScopedDrawing
   {
     public :
-    
+
     template<class Point_2>
     ScopedPointDrawing( Point_2 const& aP, CGAL::Color aColor, char const* aLayer )
       :
@@ -88,14 +84,14 @@ namespace SS_IO_AUX
                                                ,aColor
                                                ,aLayer
                                              )
-      )                                         
+      )
     {}
   } ;
-  
+
   class ScopedSegmentDrawing : public ScopedDrawing
   {
     public :
-    
+
     template<class Point_2>
     ScopedSegmentDrawing( Point_2 const& aS, Point_2 const& aT, CGAL::Color aColor, char const* aLayer )
       :
@@ -108,10 +104,10 @@ namespace SS_IO_AUX
                                                  ,aColor
                                                  ,aLayer
                                                )
-      )                                         
+      )
     {}
   } ;
-     
+
 }
 #endif
 class Ref_counted_base
@@ -140,4 +136,4 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 
 #endif // CGAL_STRAIGHT_SKELETON_AUX_H //
 // EOF //
- 
+
