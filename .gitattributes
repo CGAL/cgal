@@ -1343,6 +1343,14 @@ Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop -t
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop.filelist -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop.pcs -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevses -text
+Straight_skeleton_2/test/Straight_skeleton_2/Test_traits.kdevelop -text
+Straight_skeleton_2/test/Straight_skeleton_2/Test_traits.kdevelop.filelist -text
+Straight_skeleton_2/test/Straight_skeleton_2/Test_traits.kdevelop.pcs -text
+Straight_skeleton_2/test/Straight_skeleton_2/Test_traits.kdevses -text
+Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/_test_traits.C -text
+Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/_test_types.h -text
+Straight_skeleton_2/test/Straight_skeleton_2/makefile -text
+Straight_skeleton_2/test/Straight_skeleton_2/test_sls_traits.C -text
 Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#unset
 Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#unset
