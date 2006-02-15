@@ -1,7 +1,5 @@
 [See also the file TODO_static_filters]
 
-- mv test/include/*.C *.def ; Or use template functions ?
-
 Concerning the main code:
 -------------------------
 - Policy for overlapping comparisons : another good (faster) solution
