@@ -23,9 +23,9 @@
 #include <CGAL/point_generators_2.h>
 
 
-typedef Exact_predicates_inexact_constructions_kernel K:
-typedef K::FT                                         NT;
-typedef CGAL::Partition_traits_2<K>                   Traits;
-typedef Traits::Point_2                               Point_2;
-typedef Traits::Polygon_2                             Cgal_Polygon;
-typedef CGAL::Random_points_in_square_2<Point_2>      Point_generator;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K:
+typedef K::FT                                               NT;
+typedef CGAL::Partition_traits_2<K>                         Traits;
+typedef Traits::Point_2                                     Point_2;
+typedef Traits::Polygon_2                                   Cgal_Polygon;
+typedef CGAL::Random_points_in_square_2<Point_2>            Point_generator;
