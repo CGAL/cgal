@@ -16,6 +16,7 @@ public:
 
   typedef CGAL::Kinetic::Listener<Listener_interface> Listener;
   friend class CGAL::Kinetic::Listener<Listener_interface>;
+  friend class Listener_interface;
 
   int data() const {return data_;}
   void set_data(int d) {
