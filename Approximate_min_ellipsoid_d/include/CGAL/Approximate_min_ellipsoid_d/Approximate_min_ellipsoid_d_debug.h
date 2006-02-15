@@ -563,8 +563,8 @@ namespace CGAL {
 	// output label:
 	if (lm != None) {
 	  const double dist = 5.0;
-	  const double lx = x + (r+dist/zoom)*cos(next_angle);
-	  const double ly = y + (r+dist/zoom)*sin(next_angle);
+	  const double lx = x + (r+dist/zoom)*std::cos(next_angle);
+	  const double ly = y + (r+dist/zoom)*std::sin(next_angle);
 	  adjust_bounding_box(lx,ly);
 	  body << x << ' ' << y << ' ' << r << " (" << next_label << ") "
 	       << dist << ' ' << next_angle << " drawl" << std::endl;
