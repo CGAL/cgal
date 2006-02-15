@@ -19,12 +19,39 @@ FIXED:
    In the PS/PDF, they are : italic font for classes/functions,
    and normal font for concepts. The HTML manual should be consistent.
 
+-- HTML: During the HTML conversion, a subdirectory in /usr/tmp is used to
+   hold all temporary files. However, latex_to_html.css seems to show up
+   occasionally in /usr/tmp directly, which it shouldn't.
+
+-- DOC: The current manual for the tools didn't actually convert to HTML
+   nicely itself. Has that already been changed?
+   
+   ==> looks acceptable now. however, not perfect (see \begin{advanced})
+
 ADDED:
 -- HTML: Proper IMG tags in XHTML need quotes around the filename, i.e.
    <IMG SRC="...">, and not <IM SRC=...>. When copying GIF images, the
    HTML converter detects only IMG tags with proper quoted filenames,
    but since HTML allows the filename without quotes, we should either
    allow those as well, or issue an error message.
+
+-- PDF: page numbering known to acroread does not match the page numbers of 
+   the document. Reason is that the table of contents gets its own numbering
+   before the rest, which shifts the page numbers.
+
+-- HTML: Label/ref pairs are encoded with [ref: prefixes until the 
+   cc_anchor.... pass creates the hyperlinks. A leftover [ref:...] tag 
+   thus indicates a missing \label statement, which could be detected in a
+   postprocessing step (maybe in the cc_anchor_footer.stage_3 rules?)
+   and issue a proper warning.
+
+-- HTML: Cross links from \label \ref pairs currently use in the HTML
+   converter a GIF image of an arrow for the reference. Since we have
+   now all necessary counters, we could switch to the proper number
+   definitions as in LaTeX (i.e. Section 5, Equation 3, etc.). Looks
+   better. Needs probably a glance at how the \label is implemented in
+   LaTeX, i.e., which counter it picks.
+
 
 Seems to work:
 
@@ -76,10 +103,6 @@ OPEN:
 
 
 
--- HTML: During the HTML conversion, a subdirectory in /usr/tmp is used to
-   hold all temporary files. However, latex_to_html.css seems to show up
-   occasionally in /usr/tmp directly, which it shouldn't.
-
 -- HTML: some problem with stepcounter 
    [I don't know what that is about anymore, so, I suggest to write a 
     test for \stepcounter ]
@@ -87,38 +110,17 @@ OPEN:
 -- TeX: get rid of the underfull \hbox messages for the eps_tabs images
    (annoys finding the real problems in the log.
 
+-- flex problem with version > 2.5.4 (yytext_ptr)
 
 Feature Requests
 ============================================================================
 
--- License: decide upon the license (I suggest QPL to be in line with
-   CGAL, but not to make it arbitrarily free), apply the license
-   on all source and style files. Think also about the documentation,
-   how to license it.
-
 -- DOC: Provide manuals online (done once Manual_tools is in the internal 
    release).
-
--- PDF: page numbering known to acroread does not match the page numbers of 
-   the document. Reason is that the table of contents gets its own numbering
-   before the rest, which shifts the page numbers.
 
 -- TeX, HTML: indexing nested types: \ccNestedType{} not indexed?
    For example : Triangulation_2::Line_face_circulator.
    It seems that \ccTypedef names are already indexed???
-
--- HTML: Label/ref pairs are encoded with [ref: prefixes until the 
-   cc_anchor.... pass creates the hyperlinks. A leftover [ref:...] tag 
-   thus indicates a missing \label statement, which could be detected in a
-   postprocessing step (maybe in the cc_anchor_footer.stage_3 rules?)
-   and issue a proper warning.
-
--- HTML: Cross links from \label \ref pairs currently use in the HTML
-   converter a GIF image of an arrow for the reference. Since we have
-   now all necessary counters, we could switch to the proper number
-   definitions as in LaTeX (i.e. Section 5, Equation 3, etc.). Looks
-   better. Needs probably a glance at how the \label is implemented in
-   LaTeX, i.e., which counter it picks.
 
 -- HTML: Implement a macro to analyse length values such as 1pt, 2in, etc.,
    and store the result in \lciLength. Implement \hspace and \vspace
@@ -144,9 +146,6 @@ Feature Requests
    could be added to turn off those links created for the \ccRefClass, 
    etc., entries.
 
--- DOC: The current manual for the tools didn't actually convert to HTML
-   nicely itself. Has that already been changed?
-
 -- HTML: Now that we have counters we can implement numbered equations,
    with the number properly placed at the right margin.
 
@@ -164,10 +163,16 @@ Feature Requests
    the header and footer navigation bars can become empty.
 
 -- TEST: Check what happens if the main latex input file is in a subdir.
-
+   ==> bad: cc_anchor_rules.stage_1 does not show up in subdir, but in main
+       dir. copying images and CSS fails
 -- CHECK: What does cc_remove_unwanted_links? (strips all links in an area
    delimited by keyword lines in the HTML files). Is it used anywhere
    or documented? Could it be replaced by the new \lcNoLinkBegin/End?
+
+   ==> used in Kernel_23, Kernel_d and Point_set_2. each HtmlLinksOff is followed 
+    by HtmlLinksOn, so just mapping those macros to lcNoLinkBegin might be 
+    safe. also, regarding the low number of packages: instruct authors to
+    change to new macro (simple find-and-replace action)
 
 -- HTML: The navigation bar contains a "Next" link. It's creation can be
    moved to the style file, such as latex_to_html_style_modern.sty, to be
@@ -188,15 +193,6 @@ Feature Requests
 Projects
 ============================================================================
 
--- HTML: cross-linking of local types: Class and concept reference pages 
-   can become quite long. It would be useful of types that are local to 
-   the class or concept are also cross linked, such that their names in 
-   member function parameter lists are linked to their (local) definition
-   on the same page (like the names of global types are linked to their
-   respective reference page). The difficulty is that their cross-linking
-   rule must be limited to be only applied to this one reference page and 
-   nowhere else.
-
 -- SRC: move cc_check and cc_extract from src directory to a separate 
    directory, which implies
     - moving them from the src directory
@@ -214,11 +210,6 @@ Projects
 -- HTML: Once \includonly works, we might think about a script to gray out 
    unused TOC entries (using a different CSS class for the link)
 
--- SRC: Look into doxygon how they create the nice (clickable) inheritance
-   diagrams (using an external graph drawing packe). Assuming this
-   package was installed, can we also create such diagrams? Also for
-   concept refinement hierarchies?
-
 -- Doc: revise the existing documentation to reflect the state
    of the converter.
 
@@ -234,8 +225,6 @@ Projects
    ...Rootname, ...FilePath, ...Uppath
 
 -- Control uses of current filename and main filename to clean those names up
-
--- Test suite: the old test suite is outdated and broken. Revive it.
 
 -- Embedd latex2gif scripts into converter, apply it to figures (check
    if a *.gif or *.png is provided before converting automatically)
