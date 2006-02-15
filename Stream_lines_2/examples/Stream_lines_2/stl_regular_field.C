@@ -51,7 +51,7 @@ int main()
   std::cout << "placement generated\n";
 
   /*writing streamlines to streamlines_on_regular_grid.stl */
-  std::cout << "streamlines_on_regular_grid.stl\n";
+  std::cout << "open streamlines_on_regular_grid.stl\n";
   std::ofstream fw("streamlines_on_regular_grid.stl",std::ios::out);
 
   fw << Stream_lines.number_of_lines() << "\n";
