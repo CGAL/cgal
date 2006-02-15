@@ -543,14 +543,6 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8.crop.gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8.crop.png -text svneol=unset#unset
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.pdf -text svneol=unset#unset
-Kinetic_data_structures/src/CGALQt/KDS_faster.xpm -text
-Kinetic_data_structures/src/CGALQt/KDS_pause.xpm -text
-Kinetic_data_structures/src/CGALQt/KDS_play.xpm -text
-Kinetic_data_structures/src/CGALQt/KDS_play_through.xpm -text
-Kinetic_data_structures/src/CGALQt/KDS_play_to.xpm -text
-Kinetic_data_structures/src/CGALQt/KDS_reverse.xpm -text
-Kinetic_data_structures/src/CGALQt/KDS_slower.xpm -text
-Kinetic_data_structures/src/CGALQt/KDS_stop.xpm -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Manual/doc_tex/Manual/fig/a-simp.eps -text
