@@ -171,8 +171,8 @@ Double( double d)
 	e = 0;
     else {
 	int exp;
-	double x = frexp( d, &exp);
-	m = Mantissa( ldexp( x, 53));
+	double x = std::frexp( d, &exp);
+	m = Mantissa( std::ldexp( x, 53));
 	e = exp-53;
 	normalize();
     }
@@ -466,7 +466,7 @@ double
 Double::
 to_double( ) const
 {
-    return ldexp( m.to_double(), e);
+    return std::ldexp( m.to_double(), e);
 }
 
 // Also add global function in this namespace for Koenig lookup.

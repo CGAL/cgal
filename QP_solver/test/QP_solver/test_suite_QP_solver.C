@@ -223,7 +223,7 @@ int main( int argc, char** argv) {
   if (readFromStdIn)
     std::cout << "reading from standard in..." << std::endl;
   else {
-    verbose = atoi(argv[1]);
+    verbose = std::atoi(argv[1]);
     pricing_strategy_index = map_pricing_strategy_abrev(argv[2]);
     if (pricing_strategy_index == pricing_strat_abrev_table.size()) {
       std::cout << "unidentified pricing strategy" << std::endl;
