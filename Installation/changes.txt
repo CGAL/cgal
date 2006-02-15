@@ -1,3 +1,20 @@
+21 December 2005 Michael Hoffmann
+- Reset test variables for rebuild-all.
+- Homogenized parameters of test_... functions.
+- Share more code between interactive and non-interactive mode.
+- Put CGAL_USE_... and VERSION macros for 3rd party stuff in compiler_config.h.
+- Remove custom_ prefix from some options.
+- Remove leading underscore in custom ostag (converts _LEDA suffix to
+  LEDA ostag instead of _LEDA).
+- Use tr instead of sed for removing special characters.
+- Replaced LEDA suffix by a custom ostype flag.
+- Create installation menu.
+- Removed support for GMP installation within CGAL dirs.
+- Fixed GMPXX_SUPPORT reset when compiler is changed (reported by Menelaos).
+- Added custom os-compiler flag option.
+- Revised (shortened) os-description.
+- Added --prefix option for separate installation step.
+
 7 October 2005 Sylvain Pion
 - Fix mentions of examples/example.C in the installation guide since it is not
   here anymore.
