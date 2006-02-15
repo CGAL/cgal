@@ -1198,20 +1198,20 @@ Polyhedron/examples/Polyhedron/corner.off -text
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Polyhedron/examples/Polyhedron/cross.off -text
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/2d/res/pca.ico -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/2d/res/pca.rc2 -text
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/Mesh.ico -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/MeshDoc.ico -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/Toolbar.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb0.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb1.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb2.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb3.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb4.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb5.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb6.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb7.bmp -text svneol=unset#unset
-Principal_component_analysis/demo/Linear_least_squares_fitting/windows/3d/res/idb8.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.ico -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.rc2 -text
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Mesh.ico -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/MeshDoc.ico -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Toolbar.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb0.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb1.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb2.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb3.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb4.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb5.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb6.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb7.bmp -text svneol=unset#unset
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
