@@ -1,5 +1,4 @@
-// Copyright (c) 2002  Max Planck Institut fuer Informatik (Germany).
-// All rights reserved.
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -12,22 +11,31 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
+// $Id$
 // 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// Author(s)     : Radu Ursu
 #ifndef CGAL_TYPES
 #define CGAL_TYPES
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
+
+#ifdef SLS_DEMO_EXACT
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#else
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#endif
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
+#ifdef SLS_DEMO_EXACT
+typedef CGAL::Exact_predicates_exact_constructions_kernel KK;
+#else
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+#endif
 
 typedef K::Point_2                 Point;
 typedef CGAL::Polygon_2<K>         Polygon;

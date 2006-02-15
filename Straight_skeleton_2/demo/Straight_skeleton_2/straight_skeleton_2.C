@@ -1,5 +1,4 @@
-// Copyright (c) 2002  Max Planck Institut fuer Informatik (Germany).
-// All rights reserved.
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -12,10 +11,10 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
-// 
+// $Id$
 //
-// Author(s)     : Radu Ursu
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
+//
 
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
@@ -205,9 +204,9 @@ private:
 };
 
 
-#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
 void Straight_skeleton_external_trace ( std::string s )

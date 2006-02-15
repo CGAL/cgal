@@ -12,20 +12,20 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -I../../include/ \
-           $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+	$(CGAL_CXXFLAGS) \
+	$(LONG_NAME_PROBLEM_CXXFLAGS) \
+	$(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(CGAL_LIBPATH)
+	$(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS)
+	$(LONG_NAME_PROBLEM_LDFLAGS) \
+	$(CGAL_QT_LDFLAGS)
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
@@ -58,8 +58,8 @@ straight_skeleton_2$(EXE_EXT): straight_skeleton_2$(OBJ_EXT)
 		straight_skeleton_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 clean: straight_skeleton_2.clean \
-       straight_skeleton_2_toolbar_layers.clean \
-       straight_skeleton_2_toolbar.clean
+	straight_skeleton_2_toolbar_layers.clean \
+	straight_skeleton_2_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
