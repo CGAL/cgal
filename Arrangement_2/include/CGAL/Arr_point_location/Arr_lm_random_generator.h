@@ -75,7 +75,7 @@ public:
       PRINT_DEBUG("Arr_random_landmarks_generator constructor. "
         <<"number_of_landmarks = "<< number_of_landmarks); 
 
-      build_landmarks_set();
+      this->build_landmarks_set();
     }
 
  /*! Destructor. */

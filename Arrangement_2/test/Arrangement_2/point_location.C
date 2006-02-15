@@ -1,7 +1,6 @@
 
 //#define CONICS
 #define SEGMENTS
-#define DRAW_QT
 //#define SEGMENTS_IN_DOUBLE
 
 #include <CGAL/Cartesian.h>
@@ -35,13 +34,6 @@
 #ifdef SEGMENTS
 #include <CGAL/Arr_triangulation_point_location.h>
 #include <CGAL/Arr_point_location/Arr_lm_middle_edges_generator.h>
-#endif
-
-//for Qt windows drawing
-#ifdef DRAW_QT
-#include <CGAL/IO/Qt_widget.h>
-#include <qapplication.h>
-typedef CGAL::Qt_widget                                 Window_stream;
 #endif
 
 #ifdef SEGMENTS
@@ -438,77 +430,6 @@ int read_points(const char * points_filename, Points_list &plist)
   return 0;
 }
 
-#ifdef DRAW_QT
-/*! */
-inline Window_stream & operator<<(Window_stream & os, Arrangement_2 & arr)
-{
-	Edge_const_iterator ei;
-	os << CGAL::BLUE;
-	for (ei = arr.edges_begin(); ei != arr.edges_end(); ++ei)
-		os << (*ei).curve();
-	Vertex_const_iterator vi;
-	os << CGAL::RED;
-	for (vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi)
-		os << (*vi).point();
-	return os;
-}
-
-/*! */
-void  draw (Arrangement_2 & arr, Points_list &plist, 
-            bool draw_points, CGAL::Bbox_2  bbox,
-            int argc, char * argv[])
-{
-  //draw pm
-  QApplication app(argc, argv);
-  Window_stream m_window;
-  app.setMainWidget(&m_window);
-  double x_min=bbox.xmin(), x_max=bbox.xmax(), 
-         y_min=bbox.ymin(), y_max=bbox.ymax();
-  double x,y;
-  std::cout << "Arrangement bounding box = (" << x_min 
-            << ","<< y_min << ") - (" << x_max << "," 
-            << y_max <<")"<< std::endl;
-
-  //update the bouding box to fit the points
-  if (draw_points)
-  {
-    Point_iterator  piter;
-    for (piter = plist.begin(); piter != plist.end(); piter++ )
-    {
-      x = CGAL::to_double(piter->x());
-      y = CGAL::to_double(piter->y());
-      if (x < x_min) x_min = x;
-      if (x > x_max) x_max = x;
-      if (y < y_min) y_min = y;
-      if (y > y_max) y_max = y;
-    }
-  }
-
-  m_window.resize(400,400);
-  // logical window size 
-  m_window.set_window(x_min-10, x_max+10, y_min-10, y_max+10);   
-  m_window.show();
-
-  m_window.lock();
-  m_window << CGAL::BackgroundColor(CGAL::WHITE) << CGAL::RED;
-  m_window << arr;
-
-  //Print the points in green 
-  if (draw_points)
-  {
-    m_window << CGAL::GREEN;
-    Point_iterator  piter;
-    for (piter = plist.begin(); piter != plist.end(); piter++ )
-    {
-      m_window << (*piter);
-    }
-  }
-
-  m_window.unlock();
-  app.exec();    
-}
-#endif
-
 int main (int argc, char * argv[])
 {
    //get arguments
@@ -521,19 +442,6 @@ int main (int argc, char * argv[])
 
   const char * curves_filename = argv[1];
   const char * points_filename = argv[2];
-  bool draw_arr = false;
-  bool draw_points = false;
-
-  if ( (argc >= 4) &&
-    (strcmp (argv[3], "draw") == 0))
-  {
-    draw_arr = true;
-    if ( (argc >= 5) &&
-      (strcmp (argv[4], "draw") == 0))
-    {
-      draw_points = true;
-    }
-  }
 
   //read curves and insert them into the arrangement 
 #ifdef SEGMENTS
@@ -577,14 +485,5 @@ int main (int argc, char * argv[])
     exit(-1);
   }
   
-  //std::cout << "Point-location test was finished O.K."<<std::endl<<std::endl;
-
-  if (draw_arr)
-  {
-#ifdef DRAW_QT
-    draw (arr, plist, draw_points, bbox , argc, argv);
-#endif
-  }
-
   return (0);
 }
