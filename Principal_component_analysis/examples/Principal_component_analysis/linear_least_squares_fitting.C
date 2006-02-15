@@ -1,7 +1,7 @@
 // Example program for the linear_least_square_fitting function
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/linear_least_squares_fitting.h>
+#include <CGAL/linear_least_squares_fitting_2.h>
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
@@ -16,8 +16,8 @@ int main()
   points.push_back(Point_2(3.0,0.0));
 
   Line_2 line;
-  FT quality = linear_least_squares_fitting(points.begin(),
-                                            points.end(),
-                                            line);
+  FT quality = linear_least_squares_fitting_2(points.begin(),
+                                              points.end(),
+                                              line);
   return 0;
 }
