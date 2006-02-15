@@ -33,7 +33,7 @@
       <dontact>false</dontact>
       <makebin/>
       <defaulttarget/>
-      <makeoptions>CGAL_MAKEFILE=/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6.8-2-386_g++-3.3.5</makeoptions>
+      <makeoptions>CGAL_MAKEFILE=/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6_g++-3.3.5</makeoptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>

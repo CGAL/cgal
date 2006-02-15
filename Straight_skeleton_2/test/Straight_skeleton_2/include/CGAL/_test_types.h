@@ -1,24 +1,20 @@
-// ============================================================================
+// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// Copyright (c) 1998 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
 // 
-// release       :
-// release_date  :
-// 
-// source        :
-// file          : include/CGAL/_test_types.h
-// revision      : 
-// revision_date : 
-// author(s)     : Fernando Cacciola (fernando.cacciola@gmail.com)
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-// coordinator   : INRIA Sophia-Antipolis
-// ============================================================================
 #ifndef CGAL_TEST_TYPES_H
 #define CGAL_TEST_TYPES_H
 
