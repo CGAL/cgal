@@ -5,7 +5,6 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-CGAL_MAKEFILE=/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6.8-2-386_g++-3.3.5 
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -37,13 +36,13 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                Straight_skeleton_2$(EXE_EXT) 
+	Straight_skeleton_2$(EXE_EXT)
 
 Straight_skeleton_2$(EXE_EXT): Straight_skeleton_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Straight_skeleton_2$(EXE_EXT) Straight_skeleton_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   Straight_skeleton_2.clean 
+	Straight_skeleton_2.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

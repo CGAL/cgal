@@ -16,8 +16,6 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-//typedef CGAL_HALFEDGEDS_DEFAULT<Kernel,CGAL::Straight_skeleton_items_2>  Ssds;
-
 typedef CGAL::Straight_skeleton_2<Kernel> Ssds;
 typedef Kernel::Point_2 Point_2;
 
@@ -26,6 +24,7 @@ typedef boost::shared_ptr<Contour> ContourPtr;
 typedef std::vector<ContourPtr>  ContourSequence ;
 
 typedef Ssds::Halfedge_iterator Halfedge_iterator;
+typedef Ssds::Halfedge_handle   Halfedge_handle;
 typedef Ssds::Vertex_handle     Vertex_handle;
 
 typedef CGAL::Straight_skeleton_builder_traits_2<Kernel>      SsBuilderTraits;
@@ -43,9 +42,9 @@ int main()
                     , Point_2(0,10)
                     } ;
 
-  Point_2 hole[] = { Point_2(20,70)
-                   , Point_2(50,90)
-                   , Point_2(70,50)
+  Point_2 hole[] = { Point_2(5,5)
+                   , Point_2(10,7)
+                   , Point_2(15,5)
                    } ;
 
   // Instantiate the skeleton builder
@@ -59,6 +58,9 @@ int main()
 
   // Construct the skeleton
   Ssds ss = ssb.construct_skeleton();
+
+  Halfedge_handle null_halfedge ;
+  Vertex_handle   null_vertex ;
 
   // Dump the edges of the skeleton
   for ( Halfedge_iterator i = ss.halfedges_begin()
