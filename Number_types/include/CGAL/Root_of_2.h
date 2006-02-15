@@ -28,13 +28,14 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
-#include <CGAL/NT_extensions_Root_of/Root_of_utils.h>
-//#include <CGAL/Root_of/Root_of_1.h>
 #include <CGAL/Number_types/internal_functions_comparison_root_of_2.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Binary_operator_result.h>
+
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
 
 namespace CGAL {
 
@@ -421,14 +422,14 @@ compare(const RT &a, const Root_of_2<RT> &b)
 
 template < typename RT >  inline
 Comparison_result
-compare(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
+compare(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
    return CGAL_NTS compare(a, RT(b));
 }
 
 template < typename RT >  inline
 Comparison_result
-compare(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
+compare(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
    return opposite(CGAL_NTS compare(b, RT(a)));
 }
@@ -479,7 +480,7 @@ operator<(const Root_of_2<RT> &a, const RT &b)
 template < typename RT >
 inline
 bool
-operator<(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
+operator<(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
@@ -487,7 +488,7 @@ operator<(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 template < typename RT >
 inline
 bool
-operator<(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
+operator<(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return CGAL_NTS compare(a, b) < 0;
 }
@@ -538,7 +539,7 @@ operator>(const Root_of_2<RT> &a, const RT &b)
 template < typename RT >
 inline
 bool
-operator>(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
+operator>(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return b < a;
 }
@@ -546,7 +547,7 @@ operator>(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 template < typename RT >
 inline
 bool
-operator>(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
+operator>(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return b < a;
 }
@@ -597,7 +598,7 @@ operator>=(const Root_of_2<RT> &a, const RT &b)
 template < typename RT >
 inline
 bool
-operator>=(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
+operator>=(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return !(a < b);
 }
@@ -605,7 +606,7 @@ operator>=(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 template < typename RT >
 inline
 bool
-operator>=(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
+operator>=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return !(a < b);
 }
@@ -656,7 +657,7 @@ operator<=(const Root_of_2<RT> &a, const RT &b)
 template < typename RT >
 inline
 bool
-operator<=(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
+operator<=(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return !(a > b);
 }
@@ -664,7 +665,7 @@ operator<=(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 template < typename RT >
 inline
 bool
-operator<=(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
+operator<=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return !(a > b);
 }
@@ -715,7 +716,7 @@ operator==(const Root_of_2<RT> &a, const RT &b)
 template < typename RT >
 inline
 bool
-operator==(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
+operator==(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
@@ -723,7 +724,7 @@ operator==(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 template < typename RT >
 inline
 bool
-operator==(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
+operator==(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return CGAL_NTS compare(a, b) == 0;
 }
@@ -774,7 +775,7 @@ operator!=(const Root_of_2<RT> &a, const RT &b)
 template < typename RT >
 inline
 bool
-operator!=(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
+operator!=(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
 {
   return !(a == b);
 }
@@ -782,7 +783,7 @@ operator!=(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 template < typename RT >
 inline
 bool
-operator!=(const Root_of_2<RT> &a, const CGAL_CK_int(RT) &b)
+operator!=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 {
   return !(a == b);
 }
@@ -1117,5 +1118,8 @@ io_tag(const Root_of_2<RT>&)
 
 
 } // namespace CGAL
+
+#undef CGAL_int
+#undef CGAL_double
 
 #endif // CGAL_ROOT_OF_2_H

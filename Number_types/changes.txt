@@ -1,3 +1,6 @@
+15 February 2006 Sylvain Pion
+- Root_of_2 fixes.
+
 10 February 2006 Sylvain Pion
 - MP_Float : Add approximate_sqrt() and approximate_division() functions,
   and disallow operator/() and sqrt() by default.
