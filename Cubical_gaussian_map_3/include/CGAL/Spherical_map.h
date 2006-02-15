@@ -3,9 +3,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$ $Date$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Cubical_gaussian_map_3/include/CGAL/Spherical_map.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 //
 // Author(s)     : Kapelushnik Lior <liorkape@post.tau.ac.il>
@@ -53,7 +53,7 @@ public:
    typedef typename SphericalMapDcel::Face_iterator  Face_iterator;
    typedef typename SphericalMapDcel::Face_handle   Face_handle;
    typedef typename SphericalMapDcel::Face    Face;
-   typedef typename SphericalMapDcel::Holes_iterator  Holes_iterator;
+   typedef typename SphericalMapDcel::Hole_iterator     Hole_iterator;
    typedef typename SphericalMapDcel::FaceList::size_type Size;
    typedef typename SphericalMapDcel::CGM    CGM;
    typedef typename Sphere_traits::Point_3    Point_3;
@@ -490,7 +490,7 @@ public:
       // write holes
       os << "# number of holes" << std::endl;
       os << fit->m_holes.size() << std::endl;
-      Holes_iterator holeIt;
+      Hole_iterator holeIt;
       for (holeIt = fit->holes_begin(); holeIt != fit->holes_end(); ++holeIt) {
         // for each hole
         os << "# inner ccb" << std::endl;

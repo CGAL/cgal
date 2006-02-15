@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Cubical_gaussian_map_3/include/CGAL/Cubical_gaussian_map_3.h,v $
+// $Revision$
+// $Name:  $
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -279,7 +279,7 @@ public:
     Arr_ccb_halfedge_circulator;
   typedef typename Arr::Ccb_halfedge_const_circulator
     Arr_ccb_halfedge_const_circulator;
-  typedef typename Arr::Holes_iterator                  Arr_holes_iterator;
+  typedef typename Arr::Hole_iterator                   Arr_hole_iterator;
   
   typedef typename Arr::Vertex_handle                   Arr_vertex_handle;
   typedef typename Arr::Vertex_const_handle             Arr_vertex_const_handle;
@@ -1212,12 +1212,28 @@ protected:
      */
     bool flag = false;
     bool is_set = false;
+
+#if 0
+    std::cout << "k: " << k
+              << ", j: " << j
+              << ", m: " << m
+              << ", n: " << n
+              << std::endl;
+    std::cout << "plane: " << plane << std::endl;
+#endif
     
     if (plane[k] != 0) {
       id = j + 3 * m;
       faces_mask = get_mask(id1) | get_mask(id);
       num_faces = 2;
 
+#if 0
+      std::cout << "id: " << id << std::hex
+                << ", faces_mask1: " << faces_mask1
+                << ", faces_mask: " << faces_mask
+                << std::endl;
+#endif
+      
       // Verify that the new point is different than point1:
       if ((faces_mask1 & faces_mask) != faces_mask) {
         Point_2 p_2(vec[i], vec[j]);
@@ -1233,6 +1249,12 @@ protected:
                  leftturn(p_2, origin, p1_2) && leftturn(p2_2, origin, p_2)));
         point = plane.to_3d(p_2, k);
 
+#if 0
+        std::cout << "flag: " << flag
+                  << ", point[" << k << "]: " << point[k]
+                  << std::endl;
+#endif
+        
         // Check whether the new point is not outside the cube:
         if (flag && (((n == 0) && (point[k] >= get_extreme_coordinate(0))) ||
                      ((n == 1) && (point[k] <= get_extreme_coordinate(1)))))
@@ -1258,6 +1280,13 @@ protected:
       faces_mask = get_mask(id1) | get_mask(id);
       num_faces = 2;
 
+#if 0
+      std::cout << "id: " << id << std::hex
+                << ", faces_mask1: " << faces_mask1
+                << ", faces_mask: " << faces_mask
+                << std::endl;
+#endif
+      
       // Verify that the new point is different than point1:
       if ((faces_mask1 & faces_mask) != faces_mask) {
         Point_2 p_2(vec[k], vec[i]);
@@ -1271,6 +1300,12 @@ protected:
           num_faces++;
         }
 
+#if 0
+        std::cout << "flag: " << flag
+                  << ", point[" << j << "]: " << point[j]
+                  << std::endl;
+#endif
+        
         // Check whether the new point is not outside the cube:
         if (((m == 0) && (point[j] >= get_extreme_coordinate(0))) ||
             ((m == 1) && (point[j] <= get_extreme_coordinate(1))))
@@ -1441,7 +1476,7 @@ protected:
     update_adjacent_faces(face, point, id);
 
     // Traverse the holes:
-    Arr_holes_iterator hi;
+    Arr_hole_iterator hi;
     for (hi = face->holes_begin(); hi != face->holes_end(); ++hi) {
       Arr_ccb_halfedge_circulator hec = (*hi);
       update_face(hec->face(), point, id);
@@ -1727,7 +1762,7 @@ public:
     unsigned int faces_mask1 = proj_normal1.get_faces_mask();
     unsigned int faces_mask2 = proj_normal2.get_faces_mask();
 
-    /* If the normal vectors project onto the same unot-cube face f,
+    /* If the normal vectors project onto the same unit-cube face f,
      * generate a curve between the prjection points, and insert it into the
      * arrangement that corresponds to the box f
      */

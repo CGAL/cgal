@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Cubical_gaussian_map_3/include/CGAL/Polyhedral_cgm.h,v $
+// $Revision$
+// $Name:  $
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -106,7 +106,7 @@ public:
     Arr_ccb_halfedge_circulator;
   typedef typename Base::Arr_ccb_halfedge_const_circulator
     Arr_ccb_halfedge_const_circulator;
-  typedef typename Base::Arr_holes_iterator             Arr_holes_iterator;
+  typedef typename Base::Arr_hole_iterator              Arr_hole_iterator;
   typedef typename Base::Arr_halfedge_around_vertex_const_circulator
     Arr_halfedge_around_vertex_const_circulator;
   typedef typename Base::Arr_vertex                     Arr_vertex;

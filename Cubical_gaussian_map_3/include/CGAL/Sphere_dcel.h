@@ -3,9 +3,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$ $Date$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Cubical_gaussian_map_3/include/CGAL/Sphere_dcel.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 //
 // Author(s)     : Kapelushnik Lior <liorkape@post.tau.ac.il>
@@ -72,7 +72,7 @@ public:
   typedef Face_const_iterator               Face_const_handle;
 
   typedef std::list<Ccb_halfedge_circulator>         HolesList;
-  typedef typename HolesList::iterator          Holes_iterator;
+  typedef typename HolesList::iterator          Hole_iterator;
      
   /*
    represents a circulator around vertex that allows for circulating
@@ -673,7 +673,7 @@ public:
     // public definitions
     typedef typename CGM::Arr_face_handle           Int_face_handle;
     typedef typename CGM::Arr_halfedge_handle         Int_halfedge_handle;
-    typedef typename CGM::Arrangement::Holes_iterator  Int_holes_iterator;
+    typedef typename CGM::Arrangement::Hole_iterator  Int_hole_iterator;
 
     /*
      constructor from a cubical face
@@ -700,7 +700,7 @@ public:
 
      return value - an iterator to the first hole of the face
     */
-    Holes_iterator holes_begin() {
+    Hole_iterator holes_begin() {
       update();
       return m_holes.begin();
     }
@@ -710,7 +710,7 @@ public:
 
      return value - an iterator to the past the end hole of the face
     */
-    Holes_iterator holes_end() {
+    Hole_iterator holes_end() {
       update();
       return m_holes.end();
     }
@@ -840,7 +840,7 @@ public:
         }
   
         // process holes of internal face    
-        Int_holes_iterator holesIt;
+        Int_hole_iterator holesIt;
         for (holesIt=(*lit)->holes_begin(); 
           holesIt!= (*lit)->holes_end(); 
           holesIt++) {
