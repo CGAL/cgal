@@ -1,13 +1,9 @@
-// Copyright (c) 1999,2003,2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997-2001  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -16,10 +12,13 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
+// $Id$
 // 
 //
-// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
+// Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
+//                 Bernd Gaertner <gaertner@inf.ethz.ch>
+//                 Franz Wessendorp <fransw@inf.ethz.ch>
+//                 Kaspar Fischer <fischerk@inf.ethz.ch>
 
 #ifndef GMP_DOUBLE_H
 #define GMP_DOUBLE_H

@@ -1,28 +1,24 @@
-// ============================================================================
+// Copyright (c) 1997-2001  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1997-2001 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// $URL$
+// $Id$
+// 
 //
-// file          : test/_QP_solver/test_QP_solver.C
-// package       : $CGAL_Package: _QP_solver $
-//
-// revision      : 0.2
-// revision_date : 2000/08/21
-//
-// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
-//                 Frans Wessendorp <fransw@inf.ethz.ch>
-// coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
-//
-// implementation: test program for the QP solver
-// ============================================================================
+// Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
+//                 Bernd Gaertner <gaertner@inf.ethz.ch>
+//                 Franz Wessendorp <fransw@inf.ethz.ch>
+//                 Kaspar Fischer <fischerk@inf.ethz.ch>
 
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
