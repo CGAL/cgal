@@ -20,7 +20,7 @@ typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
 
-         
+       
 int main(int argc, char *argv[])
 {
   //check command line  
