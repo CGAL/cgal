@@ -52,7 +52,7 @@ void check(bool expr, const std::string& msg)
 {
   if (!expr) {
     std::cerr << "\n" << msg << ": failed\n";
-    exit(-1);
+    std::exit(-1);
   }
 }
 
