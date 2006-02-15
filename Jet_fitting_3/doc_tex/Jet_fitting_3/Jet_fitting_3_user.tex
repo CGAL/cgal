@@ -29,21 +29,21 @@ applications involving shape analysis require estimating third and
 fourth order differential quantities.
 %%
 Many different estimators have been proposed in the vast literature of
-applied geometry \cite{sp-smrqtm-01}. They all need to define a
+applied geometry \cite{cgal:p-smrqt-01}. They all need to define a
 neighborhood around the point at which the estimation is computed and
 use at different level the geometry of the mesh. On one hand, methods
 relying on {\em discrete differential geometry} only use the
 information provided by the mesh
-\cite{pinkall93a,desbrun00a,dcs-jmm-rdtnc-03}. On the other hand,
+\cite{cgal:pp-cdmsc-93,cgal:mdsb-ddgot-02,cgal:csm-rdtnc-03}. On the other hand,
 fitting methods rely on smooth differential geometry and
 approximation, and hence are able to process point clouds directly.
 
 By now, there are two methods to extract local differential properties
 coming with theoretical analysis of their convergence rates. On one
 hand, the normal cycle theory is used in
-\cite{dcs-jmm-rdtnc-03} to provide an estimate of the integral of the
+\cite{cgal:csm-rdtnc-03} to provide an estimate of the integral of the
 Weingarten map of surface discretized by a mesh.  On the other hand,
-\cite{fc-mp-edqpfoj-05} uses polynomial fitting to extract the
+\cite{cgal:cp-edqpf-05} uses polynomial fitting to extract the
 coefficients of the local representation of the surface as a height
 function. This method has three advantages~: first, differential
 properties of any order can be retrieved; second, the coefficients
@@ -134,7 +134,7 @@ $\min ||MA-Z||_2$.
 The following theorem precisely states the order of convergence of the
 polynomial fitting method.  Given a parameter $h$ measuring the
 sampling step, the following theorem, provising the best asymptotic
-estimates known to date, is proved in \cite{fc-mp-edqpfoj-05}~:
+estimates known to date, is proved in \cite{cgal:cp-edqpf-05}~:
 \begin{theorem}
 A polynomial fitting of degree $d$ estimates any $k^{th}$-order
 differential quantity to accuracy $O(h^{d-k+1})$~:
@@ -184,7 +184,7 @@ Finally, we compute the Monge coefficients.
 For the fitting, we do not assume the z-axis of the fitting to
 be the normal of the surface. Hence we keep the first order
 coefficients of the polynomial $J_{A,d}$. It is prooved that such a choice
-improves the estimations \cite{fc-mp-edqpfoj-05}.
+improves the estimations \cite{cgal:cp-edqpf-05}.
 
 Note that we do not aim at identifying exactly special points such as
 umbilics where both principal curvatures are equal. This would only be
@@ -200,23 +200,17 @@ coordinate system used for the fitting has the same height direction.
 \label{sec:deg-cases}
 %%%%%%%%%%%%%%%%%%%%%
 
-
-
 \begin{itemize}
 \item
-number of points provided is not sufficient, that is $N < N_d$.
-
-\item
-the PCA used to determine a rough normal vector does not yield an
+The PCA used to determine a rough normal vector does not yield an
 eigenvalue significantly smaller then the two remaining ones.
-
 \item
-when solving the linear system, the condition number is too large .
+When solving the linear system, the condition number is too large.
 \end{itemize}
 
-%Note. focusing on the second order properties: is the point studied
-%close from being an umbilic? the user can use the eigen-values to
-%decide.
+In these cases, the estimation may not be relevant. To inform the user 
+of these issues, we provide the PCA results and the condition number
+of the fitting in the class \ccc{Monge_info}.
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Mathematical and algorithmic details}
@@ -351,7 +345,7 @@ which is the ratio of the largest and the smallest singular values is
 stored in $cond_{nb}$.
 
 \medskip
-Remark: as an alternative, other methods can be used to solve the
+Remark: as an alternative, other methods may be used to solve the
 system. A $QR$ decomposition can be substituted to the $SVD$. One can
 also use the normal equation $M^TMA=MTZ$ and apply methods for square
 systems such as $LU$, $QR$ or Cholesky since $M^TM$ is symmetric
@@ -567,43 +561,13 @@ b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, c_4)$ for $d\geq 4$.
 Moreover, there are degenerate cases ---section
 \ref{sec:deg-cases}. To return both the Monge infos and important
 informations related to their computations, we return instances of two
-classes, {\tt Monge\_rep} and {\tt Monge\_info}, presented on
-Fig. \ref{fig:outputs}.
-
-\begin{figure}[H] 
-\begin{center}
-%\begin{boxedminipage}[t]{14cm}
-\begin{verbatim}
-template<class Data_Kernel>
-class Monge_rep { 
-typename Data_Kernel::Point_3 Origin; 
-typename Data_Kernel::Vector_3 d1; 
-typename Data_Kernel::Vector_3 d2;
-typename Data_Kernel::Vector_3 n; 
-std::vector<typename Data_Kernel::NT> coefficients;}
-\end{verbatim}
-
-\begin{verbatim}
-template<class Local_Kernel>
-class Monge_info { 
-typename Local_Kernel::FT pca_eigen_vals[3];
-typename Local_Kernel::Vector_3 pca_eigen_vecs[3];
-typename Local_Kernel::FT cond_nb; //of the fitting system  
-\end{verbatim}
-%\end{boxedminipage}
-\end{center}
-
-\caption{Informations returned} 
-\label{fig:outputs} 
-\end{figure} 
+classes, \ccc{Monge_rep} and \ccc{Monge_info}.
 
 
 \subsection{Preconditions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{itemize}
-\item
-at least one element in the container.
 \item
 $N \geq N_d$
 \item
