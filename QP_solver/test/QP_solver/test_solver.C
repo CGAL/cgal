@@ -23,6 +23,8 @@
 #include <string>
 #include <locale>
 
+#include <cstdlib>
+
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_full_exact_pricing.h>
@@ -123,13 +125,13 @@ std::string replace1(const std::string& msg,const std::string& replacement)
 void bailout(const char *msg)
 {
   std::cout << "Error: " << msg << '.' << std::endl;
-  exit(1);
+  std::exit(1);
 }
 
 void bailout1(const char *msg,const std::string& param)
 {
   std::cout << "Error: " << replace1(msg,param) << '.' << std::endl;
-  exit(1);
+  std::exit(1);
 }
 
 void usage()
@@ -162,7 +164,7 @@ void usage()
        << "for symmetric and the non-dedicated solver on the instance).\n"
        << "You can also negate the options 'l', 's', 'r', or 'f' by\n"
        << "replacing the '-' by a '+'.\n";
-  exit(1);
+  std::exit(1);
 }
 
 namespace Token { // A simple token reader with put-back facility.

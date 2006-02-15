@@ -1213,8 +1213,8 @@ expel_artificial_variables_from_basis( )
 	}
     }
     if ((art_basic != 0) && no_ineq) {
-        std::cerr << "Constraint matrix has not full row rank" << std::endl;
-        exit(1);
+      CGAL_qpe_assertion_msg(false,
+        "Constraint matrix has not full row rank");
     }
     
     // remove the remaining ones with their corresponding equality constraints

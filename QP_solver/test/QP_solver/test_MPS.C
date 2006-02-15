@@ -19,6 +19,8 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
+
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_full_exact_pricing.h>
@@ -50,7 +52,7 @@ int main(const int argNr,const char **args) {
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
          << "Error: " << qp.error() << endl;
-    exit(2);
+    std::exit(2);
   }
 
   if (verbosity > 0) {

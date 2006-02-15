@@ -29,7 +29,10 @@
 #include <CGAL/QP_solver/Double.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
+
 #include <cassert>
+#include <cstdlib>
+
 #include <functional>
 #include <iostream>
 #include <fstream>
@@ -786,7 +789,7 @@ bool map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	  break;
 	default : 
 	  error("impossible tag value");
-	  exit(-1);
+	  std::exit(-1);
 	}
       } else if (i==4) {  // is_in_standard_form
 	if (p->second == '1')
@@ -799,12 +802,12 @@ bool map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	  break;
 	default :
 	  error("impossible tag value");
-	  exit(-1);
+	  std::exit(-1);
 	}
       }
     } else {
       error("unspecified tags");
-      exit(-1);
+      std::exit(-1);
     }
   }
 
