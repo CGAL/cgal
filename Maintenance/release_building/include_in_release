@@ -39,7 +39,6 @@ Kernel_d
 Kinetic_data_structures
 Largest_empty_rect_2
 LEDA
-Linear_least_squares_fitting
 MacOSX
 Manual
 Matrix_search
@@ -68,6 +67,7 @@ Polyhedron
 Polyhedron_IO
 Polynomial
 Polytope_distance_d
+Principal_component_analysis
 QP_solver
 Qt_widget
 Random_numbers
