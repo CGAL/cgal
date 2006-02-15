@@ -209,6 +209,10 @@ public:
     return v;
   }
 
+  Vertex_handle insert(const Vertex_handle& v0, const Vertex_handle& v1) {
+    return hierarchy[0]->insert(v0, v1);
+  }
+
   Vertex_handle insert(const Point_2& p, Vertex_handle) {
     return insert(p);
   }

@@ -517,6 +517,23 @@ public:
     return v;
   }
 
+  // inserting a segment whose endpoints have already been inserted
+  // update input site container
+  inline Vertex_handle insert(const Vertex_handle& v0,
+			      const Vertex_handle& v1) {
+    CGAL_precondition( v0->storage_site().is_point() &&
+		       v1->storage_site().is_point() );
+
+    Storage_site_2 ss = Storage_site_2::construct_storage_site_2
+      (v0->storage_site().point(), v1->storage_site().point());
+
+    if ( number_of_vertices() == 2 ) {
+      return insert_third(ss, v0, v1);
+    }
+
+    return insert_segment_interior(ss.site(), ss, v0);
+  }
+
   inline Vertex_handle insert(const Point_2& p0, const Point_2& p1, 
 			      Vertex_handle vnear) {
     // update input site container
