@@ -51,8 +51,8 @@ public:
   }
   HDS_point intersection(Cell_handle const ch, int i, int j) const {
     // Precondition: ch is not an infinite cell: their surface is not set
-    HDS_point p1 = converter(ch->vertex(i)->point());
-    HDS_point p2 = converter(ch->vertex(j)->point());
+    HDS_point p1 = converter(static_cast<Triang_point>(ch->vertex(i)->point()));
+    HDS_point p2 = converter(static_cast<Triang_point>(ch->vertex(j)->point()));
     return ch->surf->to_surface(p1, p2);
   }
 
