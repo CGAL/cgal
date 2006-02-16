@@ -128,6 +128,7 @@ pricing(int& direction )
 	// don't price artificial variables
 	if (this->solver().is_artificial( *it) ||
 	    this->solver().is_basic( *it))  // added by kf
+	  continue;
 
 	// compute mu_j
 	mu = mu_j_NT( *it);
