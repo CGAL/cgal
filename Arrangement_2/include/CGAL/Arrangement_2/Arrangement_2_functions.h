@@ -1353,123 +1353,80 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
                                                const DVertex* v,
                                                const DHalfedge *he) const
 {
+  CGAL_assertion (! he->is_on_hole());
+
   // Keep a counter of the number of x-monotone curves that intersect an upward
   // vertical emanating from p (except for some degenerate cases that are
   // explained below).
   unsigned int              n_ray_intersections = 0;
 
-  // Find the first halfedge whose associated curve is non-vertical along the
-  // boundary of the given connected component.
-  typename Traits_adaptor_2::Is_vertical_2    is_vertical =
-                                            traits->is_vertical_2_object();
-  typename Traits_adaptor_2::Equal_2          equal =
-                                            traits->equal_2_object();
-  typename Traits_adaptor_2::Compare_x_2      compare_x =
-                                            traits->compare_x_2_object();
+  typename Traits_adaptor_2::Compare_xy_2     compare_xy =
+                                            traits->compare_xy_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
                                             traits->compare_y_at_x_2_object();
 
-  const DHalfedge    *curr = he;
-  Comparison_result   res_source;
-  Comparison_result   res_target;
-
-  do
-  {
-    curr = curr->next();
-  } while (curr != he && is_vertical (curr->curve()));
-
-  if (curr == he && is_vertical (he->curve()))
-  {
-    // In this case the entire component is comprised of vertical segments,
-    // so it has any empty interior and p cannot lie inside it.
-    return (false);
-  }
-
   // Go over all curves of the boundary, starting from the non-vertical curve
-  // we have located, and count those which are above p.
-  const DHalfedge   *first = curr;
+  // we have located, and count those which are above p. We begin by comparing
+  // p to the source vertex of the first halfedge. Note that if p coincides
+  // with this vertex. p is obviously not in the interior of the component.
+  const DHalfedge   *curr = he;
+  Comparison_result  res_source;
+  Comparison_result  res_target;
+  Comparison_result  res_y_at_x;
+
+  if (curr->opposite()->vertex() == v)
+    return (false);
+
+  res_source = compare_xy (curr->opposite()->vertex()->point(), p);
 
   do
   {
+    // Compare p to the target vertex of the current halfedge.
     // If the vertex v associated with p (if v is given and is not NULL)
     // on the boundary of the component, p is obviously not in the interior
     // the component.
     if (curr->vertex() == v)
       return (false);
 
-    // Compare the x-coordinates of the current halfedge's endpoint with the
-    // query point.
-    res_source = compare_x (curr->opposite()->vertex()->point(), p);
-    res_target = compare_x (curr->vertex()->point(), p);
+    res_target = compare_xy (curr->vertex()->point(), p);
 
-    // If the query point coincides with a boundary vertex, it is obviously
-    // not in the interior the component.
-    if (res_target == EQUAL && equal (curr->vertex()->point(), p))
-      return (false);
-
-    // Check the query point is in the x-range (source, target] of this
-    // the current curve and lies below it. Note that this condition rules
-    // out vertical segment (where the x-coordinates of the source and target
-    // are equal - and indeed, we do not have count intersections (actually
-    // these are overlaps) of the vertical ray we shoot with vertical
-    // segments along the boundary.
-    if (res_source != res_target && res_source != EQUAL &&
-        (compare_y_at_x (p, curr->curve()) == SMALLER))
+    // In case the current halfedge belongs to an "antenna", namely its
+    // incident face is the same as its twin's, we can simply skip it
+    // (in order not to count it twice).
+    if (! curr->opposite()->is_on_hole() &&
+        curr->face() == curr->opposite()->face())
     {
-      // In the degenerate case where p lies below the target vertex of
-      // the current halfedge, we have to be a bit careful:
-      if (res_target == EQUAL)
+      curr = curr->next();
+      res_source = res_target;
+      continue;
+    }
+
+    // Check that if we shoot a "tilted" vertical ray from p upward
+    // (by "tilted" we mean the angle it forms with the x-axis is
+    //  PI/2 + epsilon, where epsilon is arbitrarily small), then we hit
+    // the x-monotone curve associated with curr once.
+    if (res_source != res_target)
+    {
+      res_y_at_x = compare_y_at_x (p, curr->curve());
+
+      if (res_y_at_x == SMALLER)
       {
-        // Locate the next halfedge along the boundary that does not
-        // contain a vertical segment.
-        const DHalfedge   *next_non_vert = curr;
-
-        do
-        {
-          next_non_vert = next_non_vert->next();
-
-          CGAL_assertion_msg (next_non_vert != curr,
-                              "Infinite loop in _point_is_in().");
-
-
-        } while (is_vertical (next_non_vert->curve()));
-
-        // In case the source of the current curve and the target of
-        // the next non-vertical curve lie on opposite sides of the
-        // ray we shoot from p (case (a)), we have to count an
-        // intersection. Otherwise, we have a "tangency" with the ray
-        // (case (b)) and it is not necessary to count it.
-        //
-        //            +--------+              +                 .
-        //            |   next                 \ next           .
-        //            |                         \               .
-        //            +                          +              .
-        //           /                          /               .
-        //     curr /                     curr /                .
-        //         /                          /                 .
-        //        +  (.)p                    +  (.)p            .
-        //
-        //          (a)                        (b)
-        //
-        res_target = compare_x (next_non_vert->vertex()->point(), p);
-
-        CGAL_assertion (res_source != EQUAL && res_target != EQUAL);
-
-        if (res_source != res_target)
-          n_ray_intersections++;
-      }
-      else
-      {
-        // In this case p lies under the interior of the current x-montone
-        // curve, so the vertical ray we shoot intersects it exactly once.
         n_ray_intersections++;
+      }        
+      else if (res_y_at_x == EQUAL)
+      {
+        // In this case p lies on the current edge, so it is obviously not
+        // contained in the interior of the component.
+        return (false);
       }
     }
 
     // Proceed to the next halfedge along the component boundary.
+    // Note that the source vertex of this halfedge is the current target.
     curr = curr->next();
+    res_source = res_target;
 
-  } while (curr != first);
+  } while (curr != he);
 
   // The query point lies inside the connected components if and only if the
   // ray we shoot from it intersects the boundary an odd number of time.

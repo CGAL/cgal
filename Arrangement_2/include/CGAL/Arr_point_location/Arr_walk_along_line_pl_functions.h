@@ -546,15 +546,16 @@ _is_in_connected_component (const Point_2& p,
   bool                closest_in_ccb = (closest_he != invalid_he &&
                                         closest_he->face() == circ->face());
 
+  source_res = compare_x (curr->source()->point(), p);
   do
   {
     // Ignore the current edge if p is not in the x-range of its curve.
-    source_res = compare_x (curr->source()->point(), p);
     target_res = compare_x (curr->target()->point(), p);
 
     if (source_res == target_res && source_res != EQUAL)
     {
       ++curr;
+      source_res = target_res;
       continue;
     }
 
@@ -590,6 +591,7 @@ _is_in_connected_component (const Point_2& p,
     if (res != point_above_under)
     {
       ++curr;
+      source_res = target_res;
       continue;
     }
 
@@ -747,6 +749,7 @@ _is_in_connected_component (const Point_2& p,
 
     // Proceed to the next halfedge along the component boundary.
     ++curr;
+    source_res = target_res;
 
   } while (curr != first);
 
