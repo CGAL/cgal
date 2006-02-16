@@ -207,8 +207,11 @@ private:
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
+//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
+//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
+//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+#if defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE)
 void Straight_skeleton_external_trace ( std::string s )
 {
   static std::ofstream lout("ss_builder_log");
@@ -217,7 +220,7 @@ void Straight_skeleton_external_trace ( std::string s )
 }
 #endif
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
+#if defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW) || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW)
 
 ActiveCanvasClient sAC_Client ;
 
@@ -524,31 +527,49 @@ private slots:
                  QString::null, "Polygonal PolygonalRegion Files (*.poly)", this ) );
     if ( s.isEmpty() )
       return;
-    std::ifstream in(s);
-    CGAL::set_ascii_mode(in);
-    input_region.clear();
-    int ccb_count ;
-    in >> ccb_count ;
 
-    for ( int i = 0 ; i < ccb_count ; ++ i )
+    bool auto_offset_table = true ;
+
+    std::ifstream offset_table(s + QString(".oft") );
+    if ( offset_table )
     {
-      PolygonPtr poly( new Polygon() );
-      in >> *poly;
-      if ( i == 0 )
+      CGAL::set_ascii_mode(offset_table);
+      offset_table >> offset_val;
+      offset_table >> offset_steps ;
+      auto_offset_table = false ;
+    }
+
+    std::ifstream in(s);
+    if ( in )
+    {
+      CGAL::set_ascii_mode(in);
+      input_region.clear();
+      int ccb_count ;
+      in >> ccb_count ;
+
+      for ( int i = 0 ; i < ccb_count ; ++ i )
       {
-        CGAL::Bbox_2 lBbox = poly->bbox();
-        double w = lBbox.xmax() - lBbox.xmin();
-        double h = lBbox.ymax() - lBbox.ymin();
-        double s = std::sqrt(w*w+h*h);
-        double m = s * 0.01 ;
-        widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
-        offset_val   = m ;
-        offset_steps = 30 ;
+        PolygonPtr poly( new Polygon() );
+        in >> *poly;
+        if ( i == 0 )
+        {
+          CGAL::Bbox_2 lBbox = poly->bbox();
+          double w = lBbox.xmax() - lBbox.xmin();
+          double h = lBbox.ymax() - lBbox.ymin();
+          double s = std::sqrt(w*w+h*h);
+          double m = s * 0.01 ;
+          widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
+          if ( auto_offset_table )
+          {
+            offset_val   = m ;
+            offset_steps = 30 ;
+          }
+        }
+        CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+        if ( poly->orientation() != expected )
+          poly->reverse_orientation();
+        input_region.push_back(poly);
       }
-      CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-      if ( poly->orientation() != expected )
-        poly->reverse_orientation();
-      input_region.push_back(poly);
     }
 
     offset_region.clear();

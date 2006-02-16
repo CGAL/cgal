@@ -1,1 +1,1 @@
-Straight line skeleton computation
+Straight line skeleton computation and SLS-Based Polygon Offseting.

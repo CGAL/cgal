@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_2_H
@@ -381,14 +381,15 @@ private :
     else return false ;
   }
 
+  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( iTriedge const& aTri )
+  {
+    return Construct_sls_event_time_and_point_2<Traits>(mTraits)()(aTri);
+  }
+
   void SetEventTimeAndPoint( Event& aE )
   {
     FT lTime ; Point_2 lP ;
-    boost::tie(lTime,lP) = Construct_sls_event_time_and_point_2<Traits>(mTraits)()( CreateTriedge(aE.border_a()
-                                                                                                 ,aE.border_b()
-                                                                                                 ,aE.border_c()
-                                                                                                 )
-                                                                                  );
+    boost::tie(lTime,lP) = ConstructEventTimeAndPoint( CreateTriedge(aE.border_a(),aE.border_b(),aE.border_c()) );
     aE.SetTimeAndPoint(lTime,lP);
   }
 

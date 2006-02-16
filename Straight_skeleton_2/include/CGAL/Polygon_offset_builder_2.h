@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_POLYGON_OFFSET_BUILDER_2_H
@@ -63,7 +63,9 @@ private:
     return aH != cNull ;
   }
 
-  Halfedge_const_handle LocateHook( FT aTime, Halfedge_const_handle aBisector, bool aAbove ) ;
+  Halfedge_const_handle LocateHook( FT aTime, Halfedge_const_handle aBisector ) ;
+
+  void AddOffsetVertex( FT aTime, Halfedge_const_handle aHook, ContainerPtr aPoly ) ;
 
   template<class OutputIterator>
   OutputIterator TraceOffsetPolygon( FT aTime, Halfedge_const_handle aHook, OutputIterator aOut ) ;
@@ -118,6 +120,44 @@ private:
   }
 
   void ResetVisitedBisectorsMap();
+
+#ifdef CGAL_POLYGON_OFFSET_ENABLE_SHOW
+  template<class Halfedge>
+  void DrawBorder ( Halfedge aHalfedge )
+  {
+    SS_IO_AUX::ScopedSegmentDrawing draw_( aHalfedge->opposite()->vertex()->point()
+                                         , aHalfedge->vertex()->point()
+                                         , CGAL::RED
+                                         , "Border"
+                                         ) ;
+    draw_.Release();
+  }
+  template<class Halfedge>
+  void DrawBisector ( Halfedge aHalfedge )
+  {
+    SS_IO_AUX::ScopedSegmentDrawing draw_( aHalfedge->opposite()->vertex()->point()
+                                         , aHalfedge->vertex()->point()
+                                         , aHalfedge->is_inner_bisector() ? CGAL::BLUE  : CGAL::GREEN
+                                         , aHalfedge->is_inner_bisector() ? "IBisector" : "CBisector"
+                                         ) ;
+    draw_.Release();
+  }
+
+  void DrawOffset ( ContainerPtr const& aPoly, Point_2 const& aP )
+  {
+    if ( aPoly->size() > 0 )
+    {
+      SS_IO_AUX::ScopedSegmentDrawing draw_( (*aPoly)[aPoly->size()-1], aP, CGAL::BLACK, "Offset" ) ;
+      draw_.Release();
+    }
+    else
+    {
+      SS_IO_AUX::ScopedPointDrawing draw_( aP, CGAL::BLACK, "Seed" ) ;
+      draw_.Release();
+    }
+  }
+
+#endif
 
   Traits const&    mTraits ;
   std::vector<int> mVisitedBisectors;

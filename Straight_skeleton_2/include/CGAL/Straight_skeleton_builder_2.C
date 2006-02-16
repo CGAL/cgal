@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_2_C
@@ -86,7 +86,7 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
                           ) == SMALLER
            )
         {
-          CGAL_SSBUILDER_TRACE("New event for Left seed N" << aLNode->id() << " is in the past. discarded." ) ;
+          CGAL_SSBUILDER_TRACE("New edge event for Left seed N" << aLNode->id() << " is in the past. discarded." ) ;
           lAccepted = false ;
         }
       }
@@ -98,7 +98,7 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
                           ) == SMALLER
            )
         {
-          CGAL_SSBUILDER_TRACE("New event for Right seed N" << aRNode->id() << " is in the past. discarded." ) ;
+          CGAL_SSBUILDER_TRACE("New edge event for Right seed N" << aRNode->id() << " is in the past. discarded." ) ;
           lAccepted = false ;
         }
       }
@@ -143,10 +143,10 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle    aNo
       {
         if ( CompareEvents( CreateTriedge(aReflexLBorder,aReflexRBorder,aOppositeBorder)
                           , CreateTriedge(GetSkeletonVertexDefiningBorders(aNode))
-                          ) != SMALLER
+                          ) == SMALLER
            )
         {
-          CGAL_SSBUILDER_TRACE("New event for Split seed N" << aNode->id() << " is in the past. discarded." ) ;
+          CGAL_SSBUILDER_TRACE("New split event for Seed N" << aNode->id() << " is in the past. discarded." ) ;
           lAccepted = false ;
         }
       }

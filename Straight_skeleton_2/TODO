@@ -1,6 +1,5 @@
-1 February 2006
+16 February 2006
 
-  * Finish the handling of degenerate vertices (collinear consecutive edges)
   * Create and add pictures to the docs
   * Fix compilation and doc errors as shown in the testsuites
    
