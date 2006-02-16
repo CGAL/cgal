@@ -21,6 +21,7 @@
 #ifndef CGAL_KINETIC_IO_INTERNAL_QT_WIDGET_2_CORE_H
 #define CGAL_KINETIC_IO_INTERNAL_QT_WIDGET_2_CORE_H
 
+#include <CGAL/Kinetic/basic.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <qmainwindow.h>
 

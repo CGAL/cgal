@@ -13,7 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$
+// $Id$ $Date$
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -21,7 +21,7 @@
 #ifndef CGAL_KINETIC_IO_INTERNAL_QT_SIMULATOR_CORE_H
 #define CGAL_KINETIC_IO_INTERNAL_QT_SIMULATOR_CORE_H
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/IO/internal/KDS_GUI_base.h>
+#include <CGAL/Kinetic/IO/internal/Kinetic_GUI_base.h>
 #include <qobject.h>
 
 namespace CGAL

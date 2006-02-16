@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_IO_PIXMAPS_PIXMAPS_H
 namespace CGAL
 {
-    namespace KDS
+    namespace Kinetic
     {
         namespace internal
         {
