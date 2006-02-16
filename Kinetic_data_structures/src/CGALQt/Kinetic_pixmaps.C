@@ -19,18 +19,18 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/IO/internal/KDS_pixmaps.h>
+#include <CGAL/Kinetic/IO/internal/Kinetic_pixmaps.h>
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 namespace pixmaps {
-#include "KDS_play.xpm"
-#include "KDS_pause.xpm"
-#include "KDS_stop.xpm"
-#include "KDS_play_to.xpm"
-#include "KDS_play_through.xpm"
-#include "KDS_reverse.xpm"
-#include "KDS_faster.xpm"
-#include "KDS_slower.xpm"
+#include "Kinetic_play.xpm"
+#include "Kinetic_pause.xpm"
+#include "Kinetic_stop.xpm"
+#include "Kinetic_play_to.xpm"
+#include "Kinetic_play_through.xpm"
+#include "Kinetic_reverse.xpm"
+#include "Kinetic_faster.xpm"
+#include "Kinetic_slower.xpm"
             }
             const char ** play_xpm= pixmaps::play_xpm;
             const char ** faster_xpm= pixmaps::faster_xpm;

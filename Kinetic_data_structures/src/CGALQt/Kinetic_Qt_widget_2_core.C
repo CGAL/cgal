@@ -18,26 +18,25 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/IO/internal/KDS_Qt_timer.h>
 
-#include "KDS_Qt_timer.moc"
+#include <CGAL/Kinetic/IO/internal/Kinetic_Qt_widget_2_core.h>
+
+#include "Kinetic_Qt_widget_2_core.moc"
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
-
-Qt_timer::Qt_timer(): tick_(0), id_(-1) {
-  connect( &timer_, SIGNAL(timeout()),
-	   this, SLOT(timerDone()) );
-
+void Qt_widget_2_core::redraw() {
+  lock();
+  clear();
+  //std::cout << "size of drawables = " << drawable_s.size() << std::endl;
+  is_drawn_=false;
+  if (drawable_!= NULL) drawable_->new_notification(Listener::PICTURE_IS_CURRENT);
+  is_drawn_=true;
+  unlock();
+  //::CGAL::Qt_widget::redraw();
 }
 
-void Qt_timer::run(double time_in_seconds) {
-  id_=timer_.start(static_cast<int>(time_in_seconds*1000), true);
-  //CGAL_postcondition(id_ != -1);
-}
-
-void Qt_timer::timerDone() {
-  ++tick_;
-  cb_->new_notification(Listener::TICKS);
+Qt_widget_2_core::Qt_widget_2_core(QMainWindow *parent): ::CGAL::Qt_widget(parent) {
+  drawable_=NULL;
+  is_drawn_=false;
 }
 CGAL_KINETIC_END_INTERNAL_NAMESPACE

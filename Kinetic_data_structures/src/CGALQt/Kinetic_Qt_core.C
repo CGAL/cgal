@@ -19,9 +19,9 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 
-#include <CGAL/Kinetic/IO/internal/KDS_Qt_core.h>
+#include <CGAL/Kinetic/IO/internal/Kinetic_Qt_core.h>
 
-#include "KDS_Qt_core.moc"
+#include "Kinetic_Qt_core.moc"
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
