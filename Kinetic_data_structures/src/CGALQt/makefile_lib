@@ -20,8 +20,8 @@ CXXFLAGS = $(CGAL_LIB_CXXFLAGS) -I../../include
 #---------------------------------------------------------------------#
 # Object files
 #---------------------------------------------------------------------#
--include kds.makefile
--include kds_deps.makefile
+include kds.makefile
+
 
 CGAL_OBJECTS = $(CGAL_KDS_OBJECTS) dummy$(OBJ_EXT)
 
@@ -43,6 +43,9 @@ lib_no_install: $(CGAL_OBJECTS) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 
 clean:
 	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS) $(MOC_FILES)
+
+
+include kds_deps.makefile
 
 #---------------------------------------------------------------------#
 #                    suffix rules

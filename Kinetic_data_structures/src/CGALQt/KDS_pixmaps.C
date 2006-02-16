@@ -18,17 +18,11 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-
+#include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/IO/internal/KDS_pixmaps.h>
 
-namespace CGAL
-{
-    namespace KDS
-    {
-        namespace internal
-        {
-            namespace pixmaps
-            {
+CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace pixmaps {
 #include "KDS_play.xpm"
 #include "KDS_pause.xpm"
 #include "KDS_stop.xpm"
@@ -47,6 +41,4 @@ namespace CGAL
             const char ** reverse_xpm= pixmaps::reverse_xpm;
             const char ** stop_xpm= pixmaps::stop_xpm;
 
-        }
-    }
-}
+CGAL_KINETIC_END_INTERNAL_NAMESPACE
