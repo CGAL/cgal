@@ -28,7 +28,7 @@
  * Email: exact@cs.nyu.edu
  *
  * $URL$
- * $Id$ $Date$
+ * $Id$
  ***************************************************************************/
 
 #ifndef _CORE_BIGFLOATREP_H_

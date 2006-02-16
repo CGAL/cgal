@@ -32,7 +32,7 @@
  * Email: exact@cs.nyu.edu
  *
  * $URL$
- * $Id$ $Date$
+ * $Id$
  ***************************************************************************/
 #ifndef _CORE_REAL_H_
 #define _CORE_REAL_H_

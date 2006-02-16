@@ -28,7 +28,7 @@
  * Email: exact@cs.nyu.edu
  *
  * $URL$
- * $Id$ $Date$
+ * $Id$
  ***************************************************************************/
 #ifndef _CORE_MEMORYPOOL_H_
 #define _CORE_MEMORYPOOL_H_

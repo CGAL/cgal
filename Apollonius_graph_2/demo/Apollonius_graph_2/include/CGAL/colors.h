@@ -13,7 +13,7 @@
 //
 // $Source: /CVSROOT/CGAL/Packages/Apollonius_graph_2/include/CGAL/Apollonius_gr
 aph_2.h,v $
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>

@@ -2,7 +2,7 @@
 #
 # file:     cgal_depend 
 # author:   Michael Hoffmann
-# version:  $Id$  $Date$
+# version:  $Id$
 # purpose:  Scan CGAL directories for package dependencies
 #
 

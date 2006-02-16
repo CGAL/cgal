@@ -16,7 +16,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion

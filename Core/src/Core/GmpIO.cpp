@@ -9,7 +9,7 @@
  * Zilin Du, 2003
  *
  * $URL$
- * $Id$ $Date$
+ * $Id$
  ***************************************************************************/
 
 /* Auxiliary functions for C++-style input of GMP types. 

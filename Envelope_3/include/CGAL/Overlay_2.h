@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>

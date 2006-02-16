@@ -13,7 +13,7 @@
 //
 // $URL$
 
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>

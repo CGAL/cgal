@@ -1,5 +1,5 @@
 // $URL$
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Mariette Yvinec

@@ -25,7 +25,7 @@
  * Email: exact@cs.nyu.edu
  *
  * $URL$
- * $Id$ $Date$
+ * $Id$
  ***************************************************************************/
 
 #include <CORE/BigFloatRep.h>

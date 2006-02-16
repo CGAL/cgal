@@ -16,7 +16,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # $URL$
-# $Id$ $Date$
+# $Id$
 # 
 #
 # Author(s)     : Geert-Jan Giezeman, Sven Schönherr
@@ -43,7 +43,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 // Replace this remark by a proper copyright notice.
 //
 // $URL$
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Geert-Jan Giezeman, Sven Schönherr

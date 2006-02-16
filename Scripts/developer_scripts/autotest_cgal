@@ -3,7 +3,7 @@
 # ----------------------------------------------------
 # autotest_cgal: a script to automagically install and
 #   test internal CGAL releases
-# $Id$ $Date$
+# $Id$
 # ----------------------------------------------------
 # You will need 
 #  * GNU wget and ftp

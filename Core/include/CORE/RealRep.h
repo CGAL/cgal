@@ -30,7 +30,7 @@
  * Email: exact@cs.nyu.edu
  *
  * $URL$
- * $Id$ $Date$
+ * $Id$
  ***************************************************************************/
 #ifndef _CORE_REALREP_H_
 #define _CORE_REALREP_H_

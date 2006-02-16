@@ -5,7 +5,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source: 
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Steve OUDOT

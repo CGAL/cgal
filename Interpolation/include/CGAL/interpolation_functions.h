@@ -13,7 +13,7 @@
 //
 // $Source:
 // /CVSROOT/CGAL/Packages/Interpolation/include/CGAL/interpolation_functions.h,v $
-// $Id$ $Date$
+// $Id$
 // 
 //
 // Author(s)     : Julia Floetotto

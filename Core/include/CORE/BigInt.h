@@ -28,7 +28,7 @@
  * Email: exact@cs.nyu.edu
  *
  * $URL$
- * $Id$ $Date$
+ * $Id$
  ***************************************************************************/
 #ifndef _CORE_BIGINT_H_
 #define _CORE_BIGINT_H_
