@@ -156,7 +156,8 @@ mu_j( int j) const
   CGAL_qpe_assertion(!solver().is_basic(j));
 
   if (!check_tag(Is_in_standard_form()) &&
-      !check_tag(Is_linear()) && !solver().phaseI()) {
+      !check_tag(Is_linear()) &&
+      !solver().phaseI() && this->solver().is_original(j)) {
     return solver().mu_j( j,
 			  solver().lambda_numerator_begin(),
 			  solver().basic_original_variables_numerator_begin(),

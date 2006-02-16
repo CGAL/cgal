@@ -93,7 +93,9 @@ pricing(int& direction )
     for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
 
         // don't price artificial variables
-	if (this->solver().is_artificial( *it)) continue;
+	if (this->solver().is_artificial( *it) ||
+	    this->solver().is_basic( *it))  // added by kf
+	  continue;
 
 	// compute mu_j
 	mu = mu_j( *it);
