@@ -19,7 +19,7 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/IO/internal/Kinetic_Qt_timer.h>
+#include <CGAL/Kinetic/IO/internal/Qt_timer.h>
 
 #include "Kinetic_Qt_timer.moc"
 

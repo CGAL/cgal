@@ -19,7 +19,7 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/IO/internal/Kinetic_pixmaps.h>
+#include <CGAL/Kinetic/IO/internal/pixmaps.h>
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 namespace pixmaps {

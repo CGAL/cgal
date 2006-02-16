@@ -18,8 +18,8 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#include <CGAL/Kinetic/IO/internal/Kinetic_Qt_window_2.h>
-#include <CGAL/Kinetic/IO/internal/Kinetic_pixmaps.h>
+#include <CGAL/Kinetic/IO/internal/Qt_window_2.h>
+#include <CGAL/Kinetic/IO/internal/pixmaps.h>
 #include "Kinetic_Qt_window_2.moc"
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE

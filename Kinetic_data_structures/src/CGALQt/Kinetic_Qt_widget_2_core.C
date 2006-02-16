@@ -19,7 +19,7 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 
-#include <CGAL/Kinetic/IO/internal/Kinetic_Qt_widget_2_core.h>
+#include <CGAL/Kinetic/IO/internal/Qt_widget_2_core.h>
 
 #include "Kinetic_Qt_widget_2_core.moc"
 
