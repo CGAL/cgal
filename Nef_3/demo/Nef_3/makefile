@@ -13,10 +13,15 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = -DCGAL_NEF3_OLD_VISUALIZATION \
+	   -I/home/hachenb/CGAL/Nef_3/include \
+	   -I/home/hachenb/CGAL/Nef_2/include \
+	   -I/home/hachenb/CGAL/Nef_S2/include \
+           -I/home/hachenb/CGAL/Polynomial/include \
+	   -I/home/hachenb/CGAL/Box_intersection_d/include \
 	   $(CGAL_CXXFLAGS) \
-           -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           -Iinclude\
+	   $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
@@ -29,7 +34,7 @@ LIBPATH = \
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS)  \
-	  $(OPENGL_LIBS)
+	  $(OPENGL_LIBS) -lglut
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -38,7 +43,8 @@ LDFLAGS = \
 all:            \
                 nef_3$(EXE_EXT) \
                 visualization_SNC$(EXE_EXT) \
-                visualization_SM$(EXE_EXT)
+                visualization_SM$(EXE_EXT) \
+		visualize_sphere_n$(EXE_EXT)
 
 nef_3.clean:
 	rm -f nef_3 nef_3$(OBJ_EXT)
@@ -58,10 +64,17 @@ visualization_SM.clean:
 visualization_SM$(EXE_EXT): visualization_SM$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visualization_SM visualization_SM$(OBJ_EXT) $(LDFLAGS)
 
+visualize_sphere_n.clean:
+	rm -f visualize_sphere_n visualize_sphere_n$(OBJ_EXT)
+
+visualize_sphere_n$(EXE_EXT): visualize_sphere_n$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visualize_sphere_n visualize_sphere_n$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    nef_3.clean \
                    visualization_SNC.clean \
-                   visualization_SM.clean
+                   visualization_SM.clean \
+                   visualize_sphere_n.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

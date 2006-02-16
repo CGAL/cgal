@@ -16,8 +16,8 @@
 // 
 //
 // Author(s)     : Lutz Kettner
-
-
+//                 Peter Hachenberger
+//
 // Demo program maintaining a stack of Nef polyhedra in the space and
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
@@ -32,7 +32,9 @@
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 
-#ifdef CGAL_USE_QT
+#ifdef CGAL_NEF3_OLD_VISUALIZATION
+
+#elif defined CGAL_USE_QT
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
 #endif
@@ -52,21 +54,31 @@ using std::exit;
 
 #define CGAL_USE_EXTENDED_KERNEL
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer NT;
+//#ifdef CGAL_USE_LEDA
+//#include <CGAL/leda_integer.h>
+//typedef leda_integer LNT;
+//#else
+//#include <CGAL/Gmpz.h>
+//typedef CGAL::Gmpz LNT;
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpq LNT;
+//#endif
+
+#ifdef CGAL_USE_LAZY_EXACT_NT
+  #include <CGAL/Filtered_exact.h>
+  #include <CGAL/Nef_3/Filtered_gcd.h>
+  #include <CGAL/Lazy_exact_nt.h>
+  #include <CGAL/Gmpz.h>
+  typedef CGAL::Lazy_exact_nt<CGAL::Gmpz>  NT;
 #else
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz NT;
+  typedef LNT  NT;
 #endif
 
 #ifdef CGAL_USE_EXTENDED_KERNEL
-typedef CGAL::Extended_homogeneous<NT>   Kernel;
-//typedef CGAL::Extended_cartesian<NT>   Kernel;
+//typedef CGAL::Extended_homogeneous<LNT>   Kernel;
+typedef CGAL::Extended_cartesian<LNT>   Kernel;
 const char *kernelversion = "Extended homogeneous 3d kernel.";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
-// typedef CGAL::Lazy_exact_nt<NT>  LNT;
-// typedef CGAL::Simple_homogeneous<LNT>  Kernel;
 typedef CGAL::Homogeneous<NT> Kernel;
 const char *kernelversion = "Simple homogeneous kernel.";
 #endif
@@ -253,7 +265,7 @@ int eval( int argc, char* argv[]) {
             if ( assert_argc( argv[i], 1, argc - i - 1)) {
 	      std::ifstream in(argv[i+1]);
 	      if ( ! in) {
-		cerr << "Error: loadoff cannot open file '" << argv[i+1]
+		cerr << "Error: loadnef3 cannot open file '" << argv[i+1]
 		     << "'." << endl;
 		error = 5;
 	      } else {	     
@@ -343,14 +355,23 @@ int eval( int argc, char* argv[]) {
             }
             nef.back().dump(true, std::cout);
 	    */
+	} else if ( strcmp( argv[i], "stats") == 0) {
+            if ( nef.size() == 0) {
+                cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
+                error = 2;
+                continue;
+            }	  
+	    std::cout << "Number of Vertices " << nef.back().number_of_vertices() << std::endl;
+	    std::cout << "Number of Facets " << nef.back().number_of_facets() << std::endl;
         } else if ( strcmp( argv[i], "vis") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
                 error = 2;
                 continue;
             }
-
-#ifdef CGAL_USE_QT
+#ifdef CGAL_NEF3_OLD_VISUALIZATION
+	    nef.back().visualize();
+#elif defined (CGAL_USE_QT)
 	    QApplication a(argc, argv);
 	    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
 	      new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
