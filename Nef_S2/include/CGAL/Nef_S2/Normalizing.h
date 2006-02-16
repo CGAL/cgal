@@ -231,6 +231,10 @@ class Normalizing<Cartesian_tag> {
     return c;
   }
 
+#ifdef CGAL_USE_LEDA
+  static CGAL::Plane_3<leda_rational> normalized(CGAL::Plane<leda_rational>& h);
+#endif
+
   template <typename R> static
   CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h) { 
    CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
