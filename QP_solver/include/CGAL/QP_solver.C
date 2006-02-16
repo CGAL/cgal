@@ -1113,7 +1113,7 @@ update_1( )
     
     // check feasibility 
     CGAL_qpe_debug {
-      if (j < 0 || !is_RTS_transition) // todo kf: is this too conservative?
+      if (j < 0 && !is_RTS_transition) // todo kf: is this too conservative?
                  // Note: the above condition is necessary because of the
                  // following.  In theory, it is true that the current
                  // solution is at this point in the solver always

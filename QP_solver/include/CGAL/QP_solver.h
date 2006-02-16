@@ -1156,7 +1156,7 @@ public:
 	    mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
 	    mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
 
-	    // ... + 2 D_Bj^T * x_B
+	    // ... + 2 D_Bj^T * x_B + 2 D_Nj x_N
 	    mu_j__quadratic_part( mu_j, j, x_it, w_j, dd, Is_linear());
 
 	} else {                                        // slack or artificial
@@ -1215,7 +1215,7 @@ public:
                 // 2 D_Bj^T * x_B
                 mu_j += inv_M_B.inner_product_x( x_it,
                     D_by_index_iterator( B_O.begin(),
-				    D_by_index_accessor( qp_D[ j]))) * NT( 2);
+		    D_by_index_accessor( qp_D[ j]))) * NT( 2);
             } else {                                   // D non-symmetric
                 // ( D_Bj^T + D_jB) * x_B
                 mu_j += inv_M_B.inner_product_x( x_it,
