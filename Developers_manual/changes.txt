@@ -1,3 +1,6 @@
+16 February 2006 Joachim Reichel
+- check_licenses script documented
+
 17 October 2005 Sylvain Pion
 - tools.tex [autotest_cgal] : add support for curl instead of wget+ftp.
 
