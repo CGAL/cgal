@@ -169,7 +169,7 @@ if [ "x$2" != "x" ]; then
 fi
 
 warnUser=0
-createTestsuite "data" "test_suite_QP_solver.cin" ".data_*" $1 "true"
+createTestsuite "data" "test_suite_QP_solver.cin" ".data_[fir]" $1 "true"
 createTestsuite "testsuite-data" "test_solver.cin" ".mps" $1 "false"
 
 # finish:
