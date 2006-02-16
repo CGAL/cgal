@@ -1,3 +1,6 @@
+16 February 2006 Sylvain Pion
+- test-suite : MP_Float is not a FieldType anymore, use Quotient<MP_Float> instead.
+
 21 December 2005 Sylvain Pion
 - Add "using Base::orientation" in Regular_2, needed for g++ 4.1
   (spotted by Interpolation test-suite)

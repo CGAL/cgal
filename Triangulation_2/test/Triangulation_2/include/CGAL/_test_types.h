@@ -3,9 +3,7 @@
 
 #include <CGAL/_test_short_names_2.h>
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
 #include <iostream>
 #include <cassert>
 
@@ -32,8 +30,8 @@ typedef CGAL::MP_Float Rtype;
 //#endif // CGAL_USE_GMP
 //#endif // CGAL_USE_CLN
 
-//#include <CGAL/Quotient.h>
-typedef CGAL::MP_Float  Ftype;
+#include <CGAL/Quotient.h>
+typedef CGAL::Quotient<CGAL::MP_Float>  Ftype;
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
