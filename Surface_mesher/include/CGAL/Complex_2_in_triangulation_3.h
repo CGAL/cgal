@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
@@ -49,12 +49,12 @@ class Complex_2_in_triangulation_3 {
   typedef std::list<Cell_handle> Cells;
 
   typedef typename Facets::iterator Facets_iterator;
-      
+
   typedef typename Cells::iterator Cells_iterator;
 
   typedef Const_circulator_from_container<Facets> Facet_circulator;
 
-  typedef std::map <std::pair <Vertex_handle, Vertex_handle>, 
+  typedef std::map <std::pair <Vertex_handle, Vertex_handle>,
 		    std::pair<int, std::list<Facet> > >
                                                   Edge_facet_counter;
 
@@ -62,19 +62,19 @@ class Complex_2_in_triangulation_3 {
 
 
   struct Not_in_complex {
-    
+
     bool operator()(const Facet& f) const
-    { 
+    {
       assert(f.first < f.first->neighbor(f.second));
       return ! f.first->is_facet_on_surface(f.second) ;
     }
 
-    
+
     bool operator()(Vertex_handle v) const
-    { 
+    {
       return ! v->is_visited();
     }
-    
+
   };
 
 
@@ -95,7 +95,7 @@ protected:
       return std::make_pair(vh2, vh1);
     }
   }
-  
+
   Facet canonical_facet(Cell_handle c, int i) const {
     Cell_handle c2 = c->neighbor(i);
     return (c2 < c) ? std::make_pair(c2,c2->index(c)) : std::make_pair(c,i);
@@ -128,7 +128,7 @@ protected:
   }
 
   Face_type face_type (const Edge& e) {
-    typename Edge_facet_counter::iterator it = 
+    typename Edge_facet_counter::iterator it =
       edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
 						e.first->vertex(e.third)));
     if (it == edge_facet_counter.end()) return NOT_IN_COMPLEX;
@@ -162,8 +162,8 @@ protected:
       // At the end we are only interested in the number of umbrellas
       Union_find<Facet> facets;
       triangulation().incident_facets(v, filter_output_iterator(std::back_inserter(facets), Not_in_complex()));
-      
-      typedef std::map<Vertex_handle, typename Union_find<Facet>::handle>  Vertex_Set_map; 
+
+      typedef std::map<Vertex_handle, typename Union_find<Facet>::handle>  Vertex_Set_map;
       typedef typename Vertex_Set_map::iterator Vertex_Set_map_iterator;
 
       Vertex_Set_map vsmap;
@@ -201,9 +201,9 @@ protected:
 
   Facet_circulator incident_facets (const Edge& e) {
     // position the circulator on the first element of the facets list
-    Facets& lof = 
+    Facets& lof =
       (edge_facet_counter[make_ordered_pair(e.first->
-					    vertex(e.second), 
+					    vertex(e.second),
 					    e.first->
 					    vertex(e.third))]).second;
   Facet_circulator fcirc(&lof);
@@ -212,10 +212,10 @@ protected:
 
 
   // MY TODO : turn this function into an internal function and rename it
-  // because it is not conform to what the doc says. 
+  // because it is not conform to what the doc says.
   // The doc says that incident_facets should return a circulator
   template <typename OutputIterator>
-  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const 
+  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const
   {
     // We assume that for the generated facets the Cell_handle is smaller than the opposite one
     triangulation().incident_facets(v, filter_output_iterator(it, Not_in_complex()));
@@ -230,7 +230,7 @@ protected:
     int i = f.second;
     int iv = c->index(v);
     Edge e[2];
-    
+
     // search for the two other vertices than v in f
     int k = 0;
     for (int j = 0; j < 4; j++) {
@@ -238,38 +238,38 @@ protected:
 	e[k] = make_triple(c, iv, j);
 	k++;
       }
-    }    
+    }
 
     Facets& lof1 =
       (edge_facet_counter[make_ordered_pair(e[0].first->
-					    vertex(e[0].second), 
+					    vertex(e[0].second),
 					    e[0].first->
 					    vertex(e[0].third))]).second;
 
     Facets& lof2 =
       (edge_facet_counter[make_ordered_pair(e[1].first->
-					    vertex(e[1].second), 
+					    vertex(e[1].second),
 					    e[1].first->
 					    vertex(e[1].third))]).second;
-    
+
     Facets lof = typename Facets::list();
-    
-    for (Facets_iterator it = lof1.begin(); 
-	 it != lof1.end(); 
+
+    for (Facets_iterator it = lof1.begin();
+	 it != lof1.end();
 	 it++) {
       lof.push_back(*it);
     }
 
-    for (Facets_iterator it = lof2.begin(); 
-	 it != lof2.end(); 
+    for (Facets_iterator it = lof2.begin();
+	 it != lof2.end();
 	 it++) {
       lof.push_back(*it);
     }
 
     assert(!lof.empty());
-    
+
     lof.remove(f);
-    
+
     return lof;
   }
 
@@ -301,8 +301,8 @@ protected:
 	for (int j = 0; j < 4; j++) {
 	  for (int k = j + 1; k < 4; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle> 
-		e = make_ordered_pair(c->vertex(j), 
+	      std::pair<Vertex_handle, Vertex_handle>
+		e = make_ordered_pair(c->vertex(j),
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first++;
 
@@ -330,8 +330,8 @@ protected:
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle> 
-		e = make_ordered_pair(c->vertex(j), 
+	      std::pair<Vertex_handle, Vertex_handle>
+		e = make_ordered_pair(c->vertex(j),
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first++;
 
@@ -348,7 +348,7 @@ protected:
             // when it was singular before it is also singular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was regular
 	    if((v->regular_is_cached) && (v->regular)){
-	      v->regular_is_cached = false; 
+	      v->regular_is_cached = false;
 	    }
 	  }
 	}
@@ -358,7 +358,7 @@ protected:
 
   void remove_from_complex (const Vertex_handle v) {
     v->set_visited(false);
-    v->regular_is_cached = false; 
+    v->regular_is_cached = false;
   }
 
   void remove_from_complex (const Facet& f) {
@@ -381,8 +381,8 @@ protected:
 	for (int j = 0; j < 4; j++) {
 	  for (int k = j + 1; k < 4; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle> 
-		e = make_ordered_pair(c->vertex(j), 
+	      std::pair<Vertex_handle, Vertex_handle>
+		e = make_ordered_pair(c->vertex(j),
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first--;
 
@@ -399,7 +399,7 @@ protected:
 	    // when it was regular before it is also regular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was singular
 	    if((v->regular_is_cached) && (! v->regular)){
-	      v->regular_is_cached = false; 
+	      v->regular_is_cached = false;
 	    }
 	  }
 	}
@@ -407,15 +407,15 @@ protected:
     }
     else if (tri3.dimension() == 2){
       // if in the complex
-      if ( face_type (c, i) != NOT_IN_COMPLEX ) {	
+      if ( face_type (c, i) != NOT_IN_COMPLEX ) {
 
 	c->set_facet_on_surface(i,false);
 
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle> 
-		e = make_ordered_pair(c->vertex(j), 
+	      std::pair<Vertex_handle, Vertex_handle>
+		e = make_ordered_pair(c->vertex(j),
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first--;
 
@@ -436,7 +436,7 @@ protected:
 	    // when it was regular before it is also regular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was singular
 	    if((v->regular_is_cached) && (! v->regular)){
-	      v->regular_is_cached = false; 
+	      v->regular_is_cached = false;
 	    }
 	  }
 	}

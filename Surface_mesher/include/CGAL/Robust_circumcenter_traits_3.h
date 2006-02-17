@@ -11,13 +11,13 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     :  Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
-// This traits override Construct_circumcenter_3 
+// This traits override Construct_circumcenter_3
 // to get a robust ones when called on slivers
 
 #ifndef CGAL_ROBUST_CIRCUMCENTER_TRAITS_3_H
@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-CGAL_BEGIN_NAMESPACE 
+CGAL_BEGIN_NAMESPACE
 
 
 template < class K >
@@ -45,11 +45,11 @@ class Robust_construct_circumcenter_3
 		      const Point_3 & r,
 		      const Point_3 & s) const
     {
-   
+
       Cartesian_converter<K,EK> to_exact;
       Cartesian_converter<EK,K, To_double<EK::FT> > back_from_exact;
       //Cartesian_converter<EK,K > back_from_exact;
-      EK::Construct_circumcenter_3 
+      EK::Construct_circumcenter_3
 	exact_circumcenter = EK().construct_circumcenter_3_object();
 
       return back_from_exact(exact_circumcenter( to_exact(p),
@@ -64,8 +64,8 @@ class Robust_construct_circumcenter_3
 		      const Point_3 & r) const
     {
       Cartesian_converter<K,EK> to_exact;
-      Cartesian_converter<EK,K, To_double<EK::FT> > back_from_exact; 
-      EK::Construct_circumcenter_3 
+      Cartesian_converter<EK,K, To_double<EK::FT> > back_from_exact;
+      EK::Construct_circumcenter_3
 	exact_circumcenter = EK().construct_circumcenter_3_object();
 
       return back_from_exact(exact_circumcenter( to_exact(p),
@@ -84,10 +84,10 @@ class Robust_circumcenter_traits_3
  public:
   typedef CGAL::Robust_construct_circumcenter_3<K> Construct_circumcenter_3;
 
-  Construct_circumcenter_3 
+  Construct_circumcenter_3
   construct_circumcenter_3_object() const
   { return Construct_circumcenter_3(); }
-  
+
 };
 
 

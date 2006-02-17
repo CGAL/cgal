@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve OUDOT
 
@@ -57,7 +57,7 @@ private:
 
 private: // private types
   typedef typename Tr::Cell_handle Cell_handle;
-  
+
 
 public:
 
@@ -85,7 +85,7 @@ public:
     return tr.finite_vertices_begin();
   }
 
-  
+
   Finite_vertices_iterator finite_vertices_end()
   {
     return tr.finite_vertices_end();
@@ -96,7 +96,7 @@ public:
   Points random_points (int n) {
     Points res;
 
-    for (Finite_vertices_iterator vit = finite_vertices_begin(); 
+    for (Finite_vertices_iterator vit = finite_vertices_begin();
 	 vit != finite_vertices_end() && n > 0;
 	 ++vit, --n)
       res.push_back (vit->point());
@@ -111,7 +111,7 @@ public:
   }
 
 
-  // Basic intersection function for segments/rays/lines with the polyhedron 
+  // Basic intersection function for segments/rays/lines with the polyhedron
   template <class Elt>
   CGAL::Object intersect_with_surface (Elt e) {
     typedef CGAL::Data_structure_using_octree_3<Geom_traits> Octree;
@@ -120,13 +120,13 @@ public:
       if (cit->second->does_intersect (e))
 	return cit->second->intersection (e);
     }
-    
+
     return CGAL::Object();
   }
 
   CGAL::Object intersect_segment_surface(Segment s)
-    {      
-      // debug: test if segment is degenerate 
+    {
+      // debug: test if segment is degenerate
       // (can happen, because of rounding in circumcenter computations)
       if (s.vertex(0)==s.vertex(1)) {
 	std::cerr << "Warning: degenerate segment (" << s << ")\n";
@@ -144,7 +144,7 @@ public:
 
 //       if ((assign(p, oun) && !assign(p,odeux)) ||
 // 	  !assign(p, oun) && assign(p,odeux))
-// 	std::cout << "s " << s 
+// 	std::cout << "s " << s
 // 		  << " " << (assign(p, odeux))
 // 		  << std::endl;
 
@@ -175,8 +175,8 @@ public:
 
 //       if ((assign(p, oun) && !assign(p,odeux)) ||
 // 	  !assign(p, oun) && assign(p,odeux))
-// 	std::cout << "r " << r 
-// 		  << " " << (assign(p, odeux)) 
+// 	std::cout << "r " << r
+// 		  << " " << (assign(p, odeux))
 // 		  << std::endl;
 
 //       return odeux;
@@ -191,7 +191,7 @@ public:
       }
       else
         return Object();
-    
+
 
 //       return intersect_with_surface (r);  // basic intersection function
 //       return data_struct.intersect (r);   // Marie's code
@@ -199,7 +199,7 @@ public:
 
 
   CGAL::Object intersect_line_surface(Line &)
-    {      
+    {
       CGAL_assertion(false);
       return CGAL::Object();
     }

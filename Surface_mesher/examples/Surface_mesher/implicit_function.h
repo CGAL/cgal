@@ -4,9 +4,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve OUDOT
 
@@ -19,15 +19,15 @@ int implicit_function (double, double, double);
 
 
 template <class FT> class Function {
-public:  
+public:
 
   enum SURFACE_LOCATION {IN = -1, ON = 0, OUT = 1};
-  
-  SURFACE_LOCATION operator()(FT x, FT y, FT z) const { 
-    int res = implicit_function (CGAL::to_double (x), 
-				 CGAL::to_double (y), 
+
+  SURFACE_LOCATION operator()(FT x, FT y, FT z) const {
+    int res = implicit_function (CGAL::to_double (x),
+				 CGAL::to_double (y),
 				 CGAL::to_double (z));
-    
+
     switch (res) {
     case -1: return IN;
     case 0: return ON;
@@ -37,6 +37,6 @@ public:
     return OUT;  // never used
   }
 };
-  
+
 
 #endif

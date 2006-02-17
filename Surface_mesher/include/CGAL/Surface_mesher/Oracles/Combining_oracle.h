@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -39,7 +39,7 @@ namespace CGAL {
   {
   public:
     // Public types
-    
+
     typedef typename Oracle_a::Point Point;
     typedef typename Oracle_a::Segment Segment;
     typedef typename Oracle_a::Ray Ray;
@@ -61,27 +61,27 @@ namespace CGAL {
       return( oracle_a.is_in_volume(p) || oracle_b.is_in_volume(p) );
     }
 
-    Object intersect_segment_surface(Segment s) {      
+    Object intersect_segment_surface(Segment s) {
       Object obj = oracle_a.intersect_segment_surface(s);
       if( obj.is_empty() )
 	obj = oracle_b.intersect_segment_surface(s);
       return obj;
     }
 
-    Object intersect_ray_surface(Ray r) {      
+    Object intersect_ray_surface(Ray r) {
       Object obj = oracle_a.intersect_ray_surface(r);
       if( obj.is_empty() )
 	obj = oracle_b.intersect_ray_surface(r);
       return obj;
     }
-    
-    Object intersect_line_surface(Line l) {      
+
+    Object intersect_line_surface(Line l) {
       Object obj = oracle_a.intersect_line_surface(l);
       if( obj.is_empty() )
 	obj = oracle_b.intersect_line_surface(l);
       return obj;
     }
-    
+
     // Random points
     Points random_points (int n) {
       CGAL_precondition (n > 0);

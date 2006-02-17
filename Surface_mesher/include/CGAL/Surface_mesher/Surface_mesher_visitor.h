@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -52,7 +52,7 @@ namespace CGAL {
       template <class E>
       void before_insertion(E,
                             const Point& p,
-                            Zone& zone) 
+                            Zone& zone)
       {
 	surface->before_insertion_impl(typename Tr::Facet (), p, zone);
       }
@@ -69,11 +69,11 @@ namespace CGAL {
       {
         return *previous;
       }
-      
+
     }; // end class Visitor
 
   }  // end namespace Surface_mesher
 
 }  // end namespace CGAL
-  
+
 #endif // CGAL_SURFACE_MESHER_VISITOR_H

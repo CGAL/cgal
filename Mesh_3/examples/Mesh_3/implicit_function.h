@@ -4,9 +4,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve OUDOT
 
@@ -35,24 +35,24 @@ extern Implicit_function_map functions;
 template <class FT>
 class Function {
   Implicit_function implicit_function;
-public:  
+public:
   Function(Implicit_function func = &sphere_function)
     : implicit_function(func)
   {
   }
-  
+
   enum SURFACE_LOCATION {IN = -1, ON = 0, OUT = 1};
-  
+
   void set_function(Implicit_function func)
   {
     implicit_function = func;
   }
 
-  SURFACE_LOCATION operator()(FT x, FT y, FT z) const { 
-    int res = (*implicit_function) (CGAL::to_double (x), 
-                                    CGAL::to_double (y), 
+  SURFACE_LOCATION operator()(FT x, FT y, FT z) const {
+    int res = (*implicit_function) (CGAL::to_double (x),
+                                    CGAL::to_double (y),
                                     CGAL::to_double (z));
-    
+
     switch (res) {
     case -1: return IN;
     case 0: return ON;

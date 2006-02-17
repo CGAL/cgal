@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
@@ -29,13 +29,13 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
-  template < typename Tr, 
+  template < typename Tr,
     typename Surface,
     typename Criteria,
     typename SMB = Surface_mesher_base <Tr, Surface, Criteria> >
   class Surface_mesher_regular_edges_base
     : public SMB {
-      
+
     public:
       typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
       typedef typename Tr::Point Point;
@@ -64,7 +64,7 @@ namespace CGAL {
       }
 
       // computes and return an ordered pair of Vertex
-      EdgeVV make_edgevv(const Vertex_handle vh1, 
+      EdgeVV make_edgevv(const Vertex_handle vh1,
 			 const Vertex_handle vh2) const {
 	if (vh1 < vh2) {
 	  return std::make_pair(vh1, vh2);
@@ -89,7 +89,7 @@ namespace CGAL {
 
       // computes and returns the EdgeVV type object from the Edge object
       EdgeVV edge_to_edgevv(const Edge& arete) const {
-	return make_edgevv(arete.first->vertex(arete.second), 
+	return make_edgevv(arete.first->vertex(arete.second),
 			   arete.first->vertex(arete.third) );
       }
 
@@ -101,7 +101,7 @@ namespace CGAL {
 	Edges loe;
 	Cell_handle c = cote.first;
 	int i = cote.second;
-	
+
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 4; k++) {
 	    if ( (i != j) && (i != k) ){
@@ -113,27 +113,27 @@ namespace CGAL {
       }
 
       Facet biggest_incident_facet_in_complex(const Edge& arete) const {
-	// Find the first facet in the incident facets 
-        // of the edge which is in the Complex 
+	// Find the first facet in the incident facets
+        // of the edge which is in the Complex
 	// use the list of incident facets in the complex
 	Facet_circulator fcirc = SMB::c2t3.incident_facets(arete);
 	Facet first_facet = *fcirc;
 	Facet biggest_facet = first_facet;
-	
-	for (++fcirc; 
-	     (*fcirc != first_facet) && 
-	       (*fcirc != SMB::mirror_facet(first_facet)); 
+
+	for (++fcirc;
+	     (*fcirc != first_facet) &&
+	       (*fcirc != SMB::mirror_facet(first_facet));
 	     ++fcirc) {
 	  Vertex_handle fev = edge_to_edgevv(arete).first;
 	  // is the current facet bigger than the current biggest one
-	  if ( SMB::c2t3.compute_distance_to_facet_center(*fcirc, fev) > 
+	  if ( SMB::c2t3.compute_distance_to_facet_center(*fcirc, fev) >
 	       SMB::c2t3.compute_distance_to_facet_center(biggest_facet, fev) ) {
 	    biggest_facet = *fcirc;
 	  }
 	  else {
 	    Facet autre_cote = SMB::mirror_facet(*fcirc);
 	    // is the current facet bigger than the current biggest one
-	    if ( SMB::c2t3.compute_distance_to_facet_center(autre_cote, fev) > 
+	    if ( SMB::c2t3.compute_distance_to_facet_center(autre_cote, fev) >
 		 SMB::c2t3.compute_distance_to_facet_center(biggest_facet, fev) ) {
 	      biggest_facet = autre_cote;
 	    }
@@ -144,25 +144,25 @@ namespace CGAL {
 
       ///////////////////////
       // For before_insertion
-    
+
       // Actions to perform on a facet inside the conflict zone
       void handle_facet_inside_conflict_zone (const Facet& f) {
 	Facet cote = f;
 	Facet autre_cote = SMB::mirror_facet(cote);
-	
-	if ( SMB::c2t3.face_type(cote) != 
+
+	if ( SMB::c2t3.face_type(cote) !=
 	     C2t3::NOT_IN_COMPLEX ) {
-	  
+
 	  Edges loe = edges_in_facet(cote);
 	  // foreach edge of cote
 	  for ( typename Edges::iterator eit = loe.begin();
-		eit != loe.end(); 
+		eit != loe.end();
 		++eit) {
 	    bad_edges.erase( edge_to_edgevv(*eit) );
 	  }
 	}
       }
-    
+
       // Action to perform on a facet on the boundary of the conflict zone
       void handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
 	// perform the same operations as for an internal facet
@@ -181,12 +181,12 @@ namespace CGAL {
     void scan_triangulation_impl(const bool withBoundary) {
       SMB::scan_triangulation_impl();
       std::cout << "scanning edges..." << std::endl;
-      for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit != 
+      for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit !=
 	     SMB::tr.finite_edges_end(); ++eit) {
-	if ( (SMB::c2t3.face_type(*eit) 
-	      == C2t3::SINGULAR) || 
-	     ( (!withBoundary) && 
-	       (SMB::c2t3.face_type(*eit) 
+	if ( (SMB::c2t3.face_type(*eit)
+	      == C2t3::SINGULAR) ||
+	     ( (!withBoundary) &&
+	       (SMB::c2t3.face_type(*eit)
 		== C2t3::BOUNDARY) ) ) {
 	  bad_edges.insert( edge_to_edgevv(*eit) );
 	}
@@ -212,21 +212,21 @@ namespace CGAL {
 
     void before_insertion_impl(const Facet&, const Point& s,
 			       Zone& zone) {
-      for (typename Zone::Facets_iterator fit = 
-	     zone.internal_facets.begin(); 
+      for (typename Zone::Facets_iterator fit =
+	     zone.internal_facets.begin();
 	   fit != zone.internal_facets.end();
 	   ++fit)
 	handle_facet_inside_conflict_zone (*fit);
-      
+
       for (typename Zone::Facets_iterator fit =
 	     zone.boundary_facets.begin(); fit !=
 	     zone.boundary_facets.end(); ++fit)
 	handle_facet_on_boundary_of_conflict_zone (*fit);
-      
+
       SMB::before_insertion_impl(Facet(), s, zone);
     }
 
-    void after_insertion_impl(const Vertex_handle v, 
+    void after_insertion_impl(const Vertex_handle v,
 			      const bool withBoundary) {
       SMB::after_insertion_impl(v);
 
@@ -235,9 +235,9 @@ namespace CGAL {
       SMB::tr.incident_facets (v, std::back_inserter(facets));
 
       // foreach f in star(v)
-      for (typename Facets::iterator fit = facets.begin(); 
-	   fit != facets.end(); 
-	   ++fit) { 
+      for (typename Facets::iterator fit = facets.begin();
+	   fit != facets.end();
+	   ++fit) {
 	Facet cote = *fit;
 	Edges loe = edges_in_facet(cote);
 
@@ -246,19 +246,19 @@ namespace CGAL {
 	      eit != loe.end();
 	      ++eit ) {
 	  // test if edge is in Complex
-	  if ( SMB::c2t3.face_type(*eit) 
+	  if ( SMB::c2t3.face_type(*eit)
 	       != C2t3::NOT_IN_COMPLEX ) {
 	    // test if edge is not regular to store it as a "bad_edge"
-	    // e.g. more than or equal to 3 incident facets (SINGULAR) 
-	    // or less than or equal to 1 
+	    // e.g. more than or equal to 3 incident facets (SINGULAR)
+	    // or less than or equal to 1
 	    // (BOUNDARY only, because ISOLATED is NA)
 	    // This test is not efficient because
 	    // edges are tried to be inserted several times
 	    // TODO one day: test if the edge is still singular
-	    if ( (SMB::c2t3.face_type(*eit) 
-		  == C2t3::SINGULAR) || 
-		 ( (!withBoundary) && 
-		   (SMB::c2t3.face_type(*eit) 
+	    if ( (SMB::c2t3.face_type(*eit)
+		  == C2t3::SINGULAR) ||
+		 ( (!withBoundary) &&
+		   (SMB::c2t3.face_type(*eit)
 		    == C2t3::BOUNDARY) ) ) {
 	      bad_edges.insert( edge_to_edgevv(*eit) );
 	    }
@@ -269,7 +269,7 @@ namespace CGAL {
 	}
       }
     }
-    
+
     void after_insertion_impl(const Vertex_handle v) {
       after_insertion_impl(v, true);
     }
@@ -279,8 +279,8 @@ namespace CGAL {
     typename Surface,
     typename Criteria,
     typename Base = Surface_mesher_regular_edges_base<Tr, Surface, Criteria> >
-  class Surface_mesher_regular_edges : 
-      public Base, 
+  class Surface_mesher_regular_edges :
+      public Base,
       public Mesher_level <
     Tr,
     Surface_mesher_regular_edges<Tr, Surface, Criteria, Base>,
@@ -298,7 +298,7 @@ namespace CGAL {
       Null_mesher_level,
       Triangulation_mesher_level_traits_3<Tr>
     > Mesher;
-    
+
     typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
     using Mesher::scan_triangulation;
@@ -306,21 +306,21 @@ namespace CGAL {
     using Mesher::is_algorithm_done;
     using Mesher::one_step;
     using Base::check_restricted_delaunay;
-    
+
 
   protected:
     Null_mesher_level null_mesher_level;
     Null_mesh_visitor null_visitor;
     bool initialized;
-    
+
   public:
-    Surface_mesher_regular_edges(Tr& t, C2t3& co, Surface& s, Criteria& c): 
-      Base(t, co, s, c), 
+    Surface_mesher_regular_edges(Tr& t, C2t3& co, Surface& s, Criteria& c):
+      Base(t, co, s, c),
       Mesher(null_mesher_level),
       initialized(false)
       {}
-    
-    
+
+
     // Initialization
     void init(bool debug = false)
       {
@@ -329,43 +329,43 @@ namespace CGAL {
 	if (debug)
 	  check_restricted_delaunay();
       }
-    
+
     void refine_mesh (bool verbose = false, bool debug = false) {
       if(!initialized)
 	init (debug);
-      
-      
+
+
       if (!verbose)
 	refine (null_visitor);
-      else {  
+      else {
 	std::cerr << "Refining...\n";
 	int nbsteps = 0;
-	std::cerr << "(" << nbsteps << "," 
+	std::cerr << "(" << nbsteps << ","
 		  << this->facets_to_refine.size() << ")";
 	while (!is_algorithm_done()) {
 	  one_step (null_visitor);
 	  std::cerr << "\r             \r"
-		    << "(" << ++nbsteps << "," 
-		    << this->facets_to_refine.size() 
-		    << "," 
-		    << this->bad_edges.size() 
+		    << "(" << ++nbsteps << ","
+		    << this->facets_to_refine.size()
+		    << ","
+		    << this->bad_edges.size()
 		    << ")";
 	}
 	std::cerr << "\ndone.\n";
       }
-      
+
       if (debug)
 	check_restricted_delaunay();
-      
+
       initialized = false;
     }
-    
+
   };  // end Surface_mesher_regular_edges
-      
+
   }  // end namespace Surface_mesher
-  
+
 }  // end namespace CGAL
 
-  
+
 #endif // CGAL_SURFACE_MESHER_REGULAR_EDGES_H
-  
+

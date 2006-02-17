@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
@@ -27,18 +27,18 @@
 
 namespace CGAL {
 
-  template < class GT, class Vb = Triangulation_vertex_base_3 <GT> > 
-    class Complex_2_in_triangulation_vertex_base_3 : public Vb {    
-    
+  template < class GT, class Vb = Triangulation_vertex_base_3 <GT> >
+    class Complex_2_in_triangulation_vertex_base_3 : public Vb {
+
   public:
     typedef Complex_2_in_triangulation_vertex_base_3 <GT, Vb> Self;
-    
+
     template < class TDS3 >
     struct Rebind_TDS {
       typedef typename Vb::template Rebind_TDS<TDS3>::Other  Vb3;
       typedef Complex_2_in_triangulation_vertex_base_3 <GT, Vb3> Other;
     };
-    
+
     typedef typename Vb::Triangulation_data_structure Tds;
     typedef typename Tds::Vertex_handle Vertex_handle;
     typedef typename Tds::Cell_handle Cell_handle;
@@ -52,7 +52,7 @@ namespace CGAL {
       bool regular_is_cached;
       bool regular;
 
-  public:  
+  public:
     // Constructors
 
     Complex_2_in_triangulation_vertex_base_3()
@@ -63,7 +63,7 @@ namespace CGAL {
     bool is_visited() const {
       return visited;
     }
-    
+
     void set_visited(const bool b) {
       visited = b;
     }

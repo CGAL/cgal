@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
@@ -26,47 +26,47 @@
 
 namespace CGAL {
 
-  
-  template < class GT, class Cb = Triangulation_ds_cell_base_3 <> > 
-  class Complex_2_in_triangulation_cell_base_3 : public Cb {    
-    
+
+  template < class GT, class Cb = Triangulation_ds_cell_base_3 <> >
+  class Complex_2_in_triangulation_cell_base_3 : public Cb {
+
   public:
     typedef Complex_2_in_triangulation_cell_base_3 <GT, Cb> Self;
-    
+
     template < class TDS3 >
     struct Rebind_TDS {
       typedef typename Cb::template Rebind_TDS<TDS3>::Other  Cb3;
       typedef Complex_2_in_triangulation_cell_base_3 <GT, Cb3> Other;
     };
-    
-    
+
+
     typedef typename Cb::Triangulation_data_structure Tds;
     typedef typename Tds::Vertex_handle Vertex_handle;
     typedef typename Tds::Cell_handle Cell_handle;
-    
-    
+
+
   private:
-    
+
     // Champs ajoutes a la classe
-    
+
     // Facets
     char c_surface_facets;
-    
+
   public:
-    
+
     // Constructors
 
-    Complex_2_in_triangulation_cell_base_3() 
-      : Cb(), c_surface_facets(0) 
+    Complex_2_in_triangulation_cell_base_3()
+      : Cb(), c_surface_facets(0)
     {}
-    
+
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
-					    Vertex_handle v3) 
-      : Cb (v0, v1, v2, v3), c_surface_facets(0) 
+					    Vertex_handle v3)
+      : Cb (v0, v1, v2, v3), c_surface_facets(0)
     {}
-    
+
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
@@ -74,22 +74,22 @@ namespace CGAL {
 					    Cell_handle n0,
 					    Cell_handle n1,
 					    Cell_handle n2,
-					    Cell_handle n3) 
-      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), c_surface_facets(0) 
+					    Cell_handle n3)
+      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), c_surface_facets(0)
     {}
-    
-    
-    
+
+
+
     // Access functions
-    
+
     // Facets
   bool is_facet_on_surface(const int facet) const {
     CGAL_assertion (facet>=0 && facet <4);
     return c_surface_facets & (1 << facet);
   }
-  
+
   // Setting functions
-  
+
   // Facets
   void set_facet_on_surface(const int facet, const bool f) {
     CGAL_assertion (facet>=0 && facet <4);

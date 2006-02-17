@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $source: /CVSROOT/CGAL/Packages/Kinetic_data_structures/include/CGAL/Polynomial/internal/Simple_interval_root.h,v $
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
@@ -59,7 +59,7 @@ class Simple_interval_root
   //typedef internal::Isolating_interval_tools<Polynomial, NT, Interval> IIT;
 public:
   Simple_interval_root(){
-    set_type(INF|EVEN); 
+    set_type(INF|EVEN);
     CGAL_Polynomial_assertion(is_null());
   }
   /*template <class RNT>

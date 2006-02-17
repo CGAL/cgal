@@ -4,9 +4,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve OUDOT
 
@@ -303,7 +303,7 @@ int knot1_function (double x, double y, double z) {  // radius = 4
 
   double f1 = c1*(c1*c1-c2*c2)-2*c1*c2*c2-c3*c3+c4*c4;
   double f2 = c2*(c1*c1-c2*c2)+2*c1*c1*c2-2*c3*c4;
-  
+
   f1 = f1*f1;
   f2 = f2*f2;
   e=e*e/(den-1);
@@ -326,7 +326,7 @@ int knot1_surf1_function (double x, double y, double z) {  // radius = 4
   c4=(1-x*x-y*y-z*z)/den;
 
   double f1 = c1*(c1*c1-c2*c2)-2*c1*c2*c2-c3*c3+c4*c4;
-  
+
   if (f1 < 0)
     return -1;
   else if (f1 > 0)
@@ -345,7 +345,7 @@ int knot1_surf2_function (double x, double y, double z) {  // radius = 4
   c4=(1-x*x-y*y-z*z)/den;
 
   double f2 = c2*(c1*c1-c2*c2)+2*c1*c1*c2-2*c3*c4;
-  
+
   if (f2 < 0)
     return -1;
   else if (f2 > 0)
@@ -435,7 +435,7 @@ int peanut_function (double x, double y, double z) {
   double sphun = (x+1.5)*(x+1.5) + y*y + z*z - 1;
   double sphdeux = (x-1.5)*(x-1.5) + y*y + z*z - 1;
 
-  double eq = 
+  double eq =
     1 - std::exp (-bending_coef*sphun) - std::exp (-bending_coef*sphdeux);
 
   if (eq < 0)

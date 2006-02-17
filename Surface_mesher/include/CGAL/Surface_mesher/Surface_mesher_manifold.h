@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
@@ -30,14 +30,14 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
-  template < typename Tr, 
+  template < typename Tr,
     typename Surface,
     typename Criteria,
-    typename SMREB = Surface_mesher_regular_edges_base 
+    typename SMREB = Surface_mesher_regular_edges_base
     <Tr, Surface, Criteria> >
     class Surface_mesher_manifold_base
     : public SMREB {
-      
+
     public:
       typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
       typedef typename Tr::Point Point;
@@ -67,7 +67,7 @@ namespace CGAL {
 	Cell_handle c2 = c->neighbor(f.second);
 	return (c2 < c) ? std::make_pair(c2,c2->index(c)) : f;
       }
-    
+
       // Action to perform on a facet on the boundary of the conflict zone
       void handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
 	Facet f1 = canonical_facet(f);
@@ -78,7 +78,7 @@ namespace CGAL {
 	for (int j = 0; j < 4; j++) {
 	  if (i != j) {
 	    Vertex_handle v = c->vertex(j);
-	    
+
 	    if(bad_vertices_initialized){
 	      if ( SMREB::c2t3.is_in_complex(v) ) {
 		bad_vertices.erase(v);
@@ -88,20 +88,20 @@ namespace CGAL {
 	}
       }
       /*
-      Facet biggest_incident_facet_in_complex(const Vertex_handle sommet) 
+      Facet biggest_incident_facet_in_complex(const Vertex_handle sommet)
       const {
 	Graph& g = sommet->get_umbrellas_dual();
 	Nodes_map& nodes = g.get_nodes();
 	Nodes_map_iterator nit = nodes.begin();
 	Facet first_facet = (*nit).first;
 	Facet biggest_facet = first_facet;
-	
+
 	for (++nit;
 	     nit != nodes.end();
 	     ++nit) {
 	  Facet current_facet = (*nit).first;
-	  // is the current facet bigger than the current biggest one	  
-	  if ( SMREB::c2t3.compute_distance_to_facet_center(current_facet, sommet) > 
+	  // is the current facet bigger than the current biggest one
+	  if ( SMREB::c2t3.compute_distance_to_facet_center(current_facet, sommet) >
 	       SMREB::c2t3.compute_distance_to_facet_center(biggest_facet, sommet) ) {
 	    biggest_facet = current_facet;
 	  }
@@ -118,13 +118,13 @@ namespace CGAL {
 	typename std::list<Facet>::iterator it = facets.begin();
 	Facet first_facet = *it;
 	Facet biggest_facet = first_facet;
-	
+
 	for (++it;
 	     it != facets.end();
 	     ++it) {
 	  Facet current_facet = *it;
-	  // is the current facet bigger than the current biggest one	  
-	  if ( SMREB::c2t3.compute_distance_to_facet_center(current_facet, sommet) > 
+	  // is the current facet bigger than the current biggest one
+	  if ( SMREB::c2t3.compute_distance_to_facet_center(current_facet, sommet) >
 	       SMREB::c2t3.compute_distance_to_facet_center(biggest_facet, sommet) ) {
 	    biggest_facet = current_facet;
 	  }
@@ -132,9 +132,9 @@ namespace CGAL {
 	return biggest_facet;
       }
     public:
-      Surface_mesher_manifold_base (Tr& t, 
-						     C2t3& co, 
-						     Surface& s, 
+      Surface_mesher_manifold_base (Tr& t,
+						     C2t3& co,
+						     Surface& s,
 						     Criteria& c)
 	: SMREB(t, co, s, c), bad_vertices_initialized(false)
       {}
@@ -149,15 +149,15 @@ namespace CGAL {
 	    initialize_bad_vertices();
 	  }
 	  return bad_vertices.empty();
-	} 
-	return false;       
+	}
+	return false;
       }
 
       void initialize_bad_vertices() const
       {
 	std::cout << "scanning vertices" << std::endl;
 	int n = 0;
-	for (Finite_vertices_iterator vit = SMREB::tr.finite_vertices_begin(); 
+	for (Finite_vertices_iterator vit = SMREB::tr.finite_vertices_begin();
 	     vit != SMREB::tr.finite_vertices_end();
 	     ++vit) {
 	  if ( (SMREB::c2t3.face_type(vit)
@@ -194,7 +194,7 @@ namespace CGAL {
 	       zone.boundary_facets.begin(); fit !=
 	       zone.boundary_facets.end(); ++fit)
 	  handle_facet_on_boundary_of_conflict_zone (*fit);
-	
+
 	SMREB::before_insertion_impl(Facet(), s, zone);
       }
 
@@ -205,18 +205,18 @@ namespace CGAL {
 	  // foreach v' in star of v
 	  Vertices vertices;
 	  SMREB::c2t3.incident_vertices(v, std::back_inserter(vertices));
-	  
+
 	  for (Vertices_iterator vit = vertices.begin();
 	       vit != vertices.end();
 	       ++vit) {
-	    if ( SMREB::c2t3.face_type(*vit) == 
+	    if ( SMREB::c2t3.face_type(*vit) ==
 		 SMREB::C2t3::SINGULAR ) {
 	      bad_vertices.insert(*vit);
 	    }
 	  }
-	  
+
 	  if ( SMREB::c2t3.is_in_complex(v) ) {
-	    if ( SMREB::c2t3.face_type(v) == 
+	    if ( SMREB::c2t3.face_type(v) ==
 		 SMREB::C2t3::SINGULAR ) {
 	      bad_vertices.insert(v);
 	    }
@@ -229,11 +229,11 @@ namespace CGAL {
     typename Surface,
     typename Criteria,
     typename Base = Surface_mesher_manifold_base<
-      Tr, 
-      Surface, 
+      Tr,
+      Surface,
       Criteria> >
-  class Surface_mesher_manifold : 
-      public Base, 
+  class Surface_mesher_manifold :
+      public Base,
       public Mesher_level <
     Tr,
     Surface_mesher_manifold<Tr, Surface, Criteria, Base>,
@@ -244,9 +244,9 @@ namespace CGAL {
   {
   public:
     typedef Surface_mesher_manifold<
-      Tr, 
-      Surface, 
-      Criteria, 
+      Tr,
+      Surface,
+      Criteria,
       Base
     > Self;
     typedef Mesher_level <
@@ -256,7 +256,7 @@ namespace CGAL {
       Null_mesher_level,
        Triangulation_mesher_level_traits_3<Tr>
     > Mesher;
-    
+
     typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
     using Mesher::scan_triangulation;
@@ -264,24 +264,24 @@ namespace CGAL {
     using Mesher::is_algorithm_done;
     using Mesher::one_step;
     using Base::check_restricted_delaunay;
-    
+
 
   protected:
     Null_mesher_level null_mesher_level;
     Null_mesh_visitor null_visitor;
     bool initialized;
-    
+
   public:
-    Surface_mesher_manifold(Tr& t, 
-					     C2t3& co, 
-					     Surface& s, 
-					     Criteria& c): 
-      Base(t, co, s, c), 
+    Surface_mesher_manifold(Tr& t,
+					     C2t3& co,
+					     Surface& s,
+					     Criteria& c):
+      Base(t, co, s, c),
       Mesher(null_mesher_level),
       initialized(false)
       {}
-    
-    
+
+
     // Initialization
     void init(bool debug = false)
       {
@@ -290,45 +290,45 @@ namespace CGAL {
 	if (debug)
 	  check_restricted_delaunay();
       }
-    
+
     void refine_mesh (bool verbose = false, bool debug = false) {
       if(!initialized)
 	init (debug);
-      
-      
+
+
       if (!verbose)
 	refine (null_visitor);
-      else {  
+      else {
 	std::cerr << "Refining...\n";
 	int nbsteps = 0;
-	std::cerr << "(" << nbsteps << "," 
+	std::cerr << "(" << nbsteps << ","
 		  << this->facets_to_refine.size() << ")";
 	while (!is_algorithm_done()) {
 	  one_step (null_visitor);
 	  std::cerr << "\r             \r"
-		    << "(" << ++nbsteps << "," 
-		    << this->facets_to_refine.size() 
-		    << "," 
-		    << this->bad_edges.size() 
-		    << "," 
-		    << this->bad_vertices.size() 
+		    << "(" << ++nbsteps << ","
+		    << this->facets_to_refine.size()
+		    << ","
+		    << this->bad_edges.size()
+		    << ","
+		    << this->bad_vertices.size()
 		    << ")";
 	}
 	std::cerr << "\ndone.\n";
       }
-      
+
       if (debug)
 	check_restricted_delaunay();
-      
+
       initialized = false;
     }
-    
+
   };  // end Surface_mesher_manifold
-      
+
   }  // end namespace Surface_mesher
-  
+
 }  // end namespace CGAL
 
-  
+
 #endif // CGAL_SURFACE_MESHER_MANIFOLD_H
-  
+

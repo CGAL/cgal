@@ -4,9 +4,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve OUDOT
 
@@ -36,7 +36,7 @@
 
 
 
-/////////////// Types /////////////// 
+/////////////// Types ///////////////
 
 struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 #ifdef SURFACE_MESHER_POLYHEDRAL
@@ -68,8 +68,8 @@ typedef CGAL::Surface_mesher::Surface_mesher_regular_edges<Del, Oracle, Criteria
 typedef CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary<Del, Oracle, Criteria> SMREWB;
 typedef CGAL::Surface_mesher::Surface_mesher_manifold<Del, Oracle, Criteria> SMM;
 typedef CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary_base<Del, Oracle, Criteria> SMREWBB;
-typedef CGAL::Surface_mesher::Surface_mesher_manifold<Del, Oracle, Criteria, 
-CGAL::Surface_mesher::Surface_mesher_manifold_base <Del, Oracle, Criteria, SMREWBB> 
+typedef CGAL::Surface_mesher::Surface_mesher_manifold<Del, Oracle, Criteria,
+CGAL::Surface_mesher::Surface_mesher_manifold_base <Del, Oracle, Criteria, SMREWBB>
 > SMMWB;
 
 
@@ -81,7 +81,7 @@ typedef SMMWB Surface;  // manifold without boundary
 //typedef SMREWB Surface;  // only regular edges, without boundary
 
 
-/////////////// Main function /////////////// 
+/////////////// Main function ///////////////
 
 int main(int argc, char **argv) {
 
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
   }
 #endif
 
-  // Oracle 
+  // Oracle
 #ifndef SURFACE_MESHER_POLYHEDRAL
   Func F;
   Oracle O (F, K::Point_3 (0,0,0), 6, 1e-6, true);  // parity oracle
@@ -112,16 +112,16 @@ int main(int argc, char **argv) {
 
   typedef Del::Point Point;
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
-  
+
   // Meshing criteria
-  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (10000); 
+  CGAL::Surface_mesher::Curvature_size_criterion<Del> c_s_crit (10000);
                                          // bound on Hausdorff distance
                                          // does not play any role if
                                          // bigger than the square of
                                          // the Uniform_size_criterion
-  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (0.1); 
+  CGAL::Surface_mesher::Uniform_size_criterion<Del> u_s_crit (0.1);
                            // bound on radii of surface Delaunay balls
-  CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30); 
+  CGAL::Surface_mesher::Aspect_ratio_criterion<Del> a_r_crit (30);
                           // lower bound on minimum angle in degrees
   std::vector<Criterion*> crit_vect;
   crit_vect.push_back (&a_r_crit);
@@ -130,16 +130,16 @@ int main(int argc, char **argv) {
 
   Criteria C (crit_vect);
 
-  std::cout << "Initial number of points: " << T.number_of_vertices() 
+  std::cout << "Initial number of points: " << T.number_of_vertices()
             << std::endl;
-  
+
   // 2D-complex in 3D-Delaunay triangulation
   C2t3 Co2 (T);
   // Surface meshing
   Surface mesher (T, Co2, O, C);
 //   Surface mesher (T, O, a_r_crit);
   mesher.refine_mesh(true);
-  std::cout << "Final number of points: " << T.number_of_vertices() 
+  std::cout << "Final number of points: " << T.number_of_vertices()
             << std::endl;
 
   // Output

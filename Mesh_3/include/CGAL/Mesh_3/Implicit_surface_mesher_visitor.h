@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -42,7 +42,7 @@ namespace CGAL {
       template <typename E, typename P>
       void before_conflicts(E, P) const {}
 
-      
+
       template <typename E, typename P, typename Z>
       void before_insertion(E, P, Z) const {}
 
@@ -59,11 +59,11 @@ namespace CGAL {
       {
         return *previous;
       }
-      
+
     }; // end class Visitor_for_surface
 
  }  // end namespace Mesh_3
 
 }  // end namespace CGAL
-  
+
 #endif // CGAL_MESH_3_IMPLICIT_SURFACE_MESHER_VISITOR_H

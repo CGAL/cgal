@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Steve OUDOT
 
@@ -29,7 +29,7 @@ namespace Surface_mesher_io {
 template < class Tr>
 int number_of_facets_on_surface(const Tr& T) {
   int result=0;
-  for (typename Tr::Finite_facets_iterator fit = T.finite_facets_begin(); 
+  for (typename Tr::Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end(); ++fit)
     if (fit->first->is_facet_on_surface (fit->second))
       ++result;
@@ -50,11 +50,11 @@ output_surface_facets_to_off (std::ostream& os, const Tr & T) {
 
   os << "OFF \n"
      << T.number_of_vertices() << " " <<
-    number_of_facets_on_surface (T) << 
+    number_of_facets_on_surface (T) <<
     " " << 0 << "\n";
 
   os << std::setprecision(20);
- 
+
   // Finite vertices coordinates.
   std::map<Vertex_handle, int> V;
   int inum = 0;
@@ -64,9 +64,9 @@ output_surface_facets_to_off (std::ostream& os, const Tr & T) {
     Point p = static_cast<Point>(vit->point());
     os << p.x() << " " << p.y() << " " << p.z() << "\n";
   }
-  
+
   // Finite facets indices.
-  for( Finite_facets_iterator fit = T.finite_facets_begin(); 
+  for( Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end(); ++fit)
     if ((*fit).first->is_facet_on_surface((*fit).second)==true)
       {
@@ -74,7 +74,7 @@ output_surface_facets_to_off (std::ostream& os, const Tr & T) {
 	for (int i=0; i<4; i++)
           if (i != (*fit).second)
 	    os << V[(*fit).first->vertex(i)] << " ";
-	
+
 	os << "\n"; // without color.
       }
 }
@@ -93,11 +93,11 @@ output_oriented_surface_facets_to_off (std::ostream& os, const Tr & T) {
 
   os << "OFF \n"
      << T.number_of_vertices() << " " <<
-    number_of_facets_on_surface (T) << 
+    number_of_facets_on_surface (T) <<
     " " << 0 << "\n";
 
   os << std::setprecision(20);
- 
+
   // Finite vertices coordinates.
   std::map<Vertex_handle, int> V;
   int inum = 0;
@@ -107,9 +107,9 @@ output_oriented_surface_facets_to_off (std::ostream& os, const Tr & T) {
     Point p = static_cast<Point>(vit->point());
     os << p.x() << " " << p.y() << " " << p.z() << "\n";
   }
-  
+
   // Finite facets indices.
-  for( Finite_facets_iterator fit = T.finite_facets_begin(); 
+  for( Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end(); ++fit)
     if ((*fit).first->is_facet_on_surface((*fit).second)==true)
       {
@@ -122,7 +122,7 @@ output_oriented_surface_facets_to_off (std::ostream& os, const Tr & T) {
 	os << "3 "
 	   << V[f.first->vertex(T.vertex_triple_index(f.second,0))] << " "
 	   << V[f.first->vertex(T.vertex_triple_index(f.second,1))] << " "
-	   << V[f.first->vertex(T.vertex_triple_index(f.second,2))] << " "	
+	   << V[f.first->vertex(T.vertex_triple_index(f.second,2))] << " "
 	   << "\n"; // without color.
       }
 }
@@ -145,7 +145,7 @@ output_surface_facets_to_ghs   (std::ostream& os_points,
   os_points << T.number_of_vertices() << "\n";
 
   os_points << std::setprecision(20);
- 
+
   // Finite vertices coordinates.
   std::map<Vertex_handle, int> V;
   int inum = 1;
@@ -155,17 +155,17 @@ output_surface_facets_to_ghs   (std::ostream& os_points,
     Point p = static_cast<Point>(vit->point());
     os_points << p.x() << " " << p.y() << " " << p.z() << " 0\n";
   }
-  
+
   os_faces << number_of_facets_on_surface(T) << "\n";
   // Finite facets indices.
-  for( Finite_facets_iterator fit = T.finite_facets_begin(); 
+  for( Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end(); ++fit)
     if ((*fit).first->is_facet_on_surface((*fit).second)==true)
       {
 	Facet f = *fit;
 	if(!f.first->is_in_domain())
 	  f = T.mirror_facet(f);
-	os_faces 
+	os_faces
 	  << "3 "
 	  << V[f.first->vertex(T.vertex_triple_index(f.second,0))] << " "
 	  << V[f.first->vertex(T.vertex_triple_index(f.second,1))] << " "
@@ -177,7 +177,7 @@ output_surface_facets_to_ghs   (std::ostream& os_points,
 template < class Tr>
 int number_of_facets_in_domain(const Tr& T) {
   int result=0;
-  for (typename Tr::Finite_facets_iterator fit = T.finite_facets_begin(); 
+  for (typename Tr::Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end(); ++fit) {
     typename Tr::Cell_handle neighb = fit->first->neighbor (fit->second);
     if ((fit->first->is_in_domain () || neighb->is_in_domain()) &&
@@ -199,11 +199,11 @@ output_interior_facets_to_off (std::ostream& os, const Tr & T) {
 
   os << "OFF \n"
      << T.number_of_vertices() << " " <<
-    number_of_facets_in_domain (T) << 
+    number_of_facets_in_domain (T) <<
     " " << 0 << "\n";
 
   os << std::setprecision(20);
- 
+
   // Finite vertices coordinates.
   std::map<Vertex_handle, int> V;
   int inum = 0;
@@ -212,9 +212,9 @@ output_interior_facets_to_off (std::ostream& os, const Tr & T) {
     V[vit] = inum++;
     os << vit->point() << "\n";
   }
-  
+
   // Finite facets indices.
-  for( Finite_facets_iterator fit = T.finite_facets_begin(); 
+  for( Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end(); ++fit){
     typename Tr::Cell_handle neighb = fit->first->neighbor (fit->second);
     if ((fit->first->is_in_domain () || neighb->is_in_domain()) &&
@@ -224,7 +224,7 @@ output_interior_facets_to_off (std::ostream& os, const Tr & T) {
 	for (int i=0; i<4; i++)
           if (i != (*fit).second)
 	    os << V[(*fit).first->vertex(i)] << " ";
-	
+
 	os << "\n"; // without color.
       }
   }

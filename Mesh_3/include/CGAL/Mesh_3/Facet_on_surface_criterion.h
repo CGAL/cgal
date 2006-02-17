@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -27,7 +27,7 @@ namespace CGAL {
   namespace Mesh_3 {
 
   template <class Tr>
-  class Facet_on_surface_criterion : 
+  class Facet_on_surface_criterion :
       public Surface_mesher::Refine_criterion <Tr> {
   public:
     typedef typename Surface_mesher::Refine_criterion <Tr> Criterion;
@@ -52,7 +52,7 @@ namespace CGAL {
 	  return false;
 	}
     }
-    
+
     Quality quality (const Facet& f) const {
       const Cell_handle& ch = f.first;
       const int i = f.second;
@@ -69,5 +69,5 @@ namespace CGAL {
  }  // end namespace Mesh_3
 
 }  // end namespace CGAL
-  
+
 #endif // CGAL_FACET_ON_SURFACE_CRITERION_H

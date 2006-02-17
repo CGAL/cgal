@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -25,38 +25,38 @@
 
 namespace CGAL {
   namespace Mesh_3 {
-  
-  template < class GT, class Cb = Triangulation_ds_cell_base_3 <> > 
-  class Complex_2_in_triangulation_cell_base_3 : public Cb {    
-    
+
+  template < class GT, class Cb = Triangulation_ds_cell_base_3 <> >
+  class Complex_2_in_triangulation_cell_base_3 : public Cb {
+
   public:
     typedef Complex_2_in_triangulation_cell_base_3 <GT, Cb> Self;
-    
+
     template < class TDS3 >
     struct Rebind_TDS {
       typedef typename Cb::template Rebind_TDS<TDS3>::Other  Cb3;
       typedef Complex_2_in_triangulation_cell_base_3 <GT, Cb3> Other;
     };
-    
-    
+
+
     typedef typename GT::Point_3 Point;
-    
+
     typedef typename Cb::Triangulation_data_structure Tds;
     typedef typename Tds::Vertex_handle Vertex_handle;
     typedef typename Tds::Cell_handle Cell_handle;
-    
-    
+
+
   private:
     bool domain;
-    
+
   public:
-    
+
     // Constructors
 
     Complex_2_in_triangulation_cell_base_3() : Cb(), domain(false)
     {
     }
-    
+
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
@@ -64,7 +64,7 @@ namespace CGAL {
       :  Cb (v0, v1, v2, v3), domain(false)
     {
     }
-    
+
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
@@ -73,10 +73,10 @@ namespace CGAL {
 					    Cell_handle n1,
 					    Cell_handle n2,
 					    Cell_handle n3)
-      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), domain(false) 
+      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), domain(false)
     {
     }
-    
+
     bool is_in_domain() const
     {
       return domain;

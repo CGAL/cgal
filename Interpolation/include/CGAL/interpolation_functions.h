@@ -11,10 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source:
-// /CVSROOT/CGAL/Packages/Interpolation/include/CGAL/interpolation_functions.h,v $
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Julia Floetotto
 
@@ -294,16 +293,16 @@ farin_c1_interpolation(RandomAccessIterator first,
     for(int j =0; j<n; ++j){
       if(i!=j){
 	it2 = first+j;
-	
+
 	grad = function_gradient(it->first);
 	if(!grad.second)
 	  //the gradient is not known
 	  return std::make_pair(Value_type(0), false);
-	
+
 	//ordinates[i][j] = (p_j - p_i) * g_i
 	ordinates[i][j] = grad.first *
 	  traits.construct_vector_d_object()(it->first,it2->first);
-	
+
 	// a point in the tangent plane:
 	// 3( f(p_i) + (1/3)(p_j - p_i) * g_i)
 	// => 3*f(p_i) + (p_j - p_i) * g_i

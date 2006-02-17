@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -27,12 +27,12 @@ namespace CGAL {
 
   /** \interface OracleVisitor
       \brief Concept of a visitor of oracles.
-      
+
       \fn void new_point(Point& p)
       Called before a new Point is returned by the oracle.
       \param p The point that has just been computed and will be returned.
   */
-      
+
   /** Trivial model of the OracleVisitor concept. */
   struct Null_oracle_visitor
   {
