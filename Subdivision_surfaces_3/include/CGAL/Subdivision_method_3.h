@@ -31,8 +31,8 @@
 
 #include <CGAL/circulator.h>
 
-#include <CGAL/Subdivision_surfaces_impl_3.h>
-#include <CGAL/Subdivision_surfaces_masks_3.h>
+#include <CGAL/Subdivision_method_impl_3.h>
+#include <CGAL/Subdivision_mask_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
