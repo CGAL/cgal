@@ -1,4 +1,4 @@
-Parameterization Package: Release changes:
+Parameterization Package: Release changes
 -----------------------------------------
 
 0.6 (12/06/2005)
