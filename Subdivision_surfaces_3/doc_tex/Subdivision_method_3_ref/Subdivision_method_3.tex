@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Subdivision_surfaces_3.tex
+% | Reference manual page: Subdivision_method_3.tex
 % +------------------------------------------------------------------------+
 % | 03/01/2005   Le-Jeng Andy Shiue
 % | Package: Subdivision_surface_3
@@ -14,7 +14,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Subdivision_surfaces_3<Poly>}
+\begin{ccRefClass}{Subdivision_method_3<Poly>}
 
 \ccDefinition
 
@@ -56,7 +56,7 @@ Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivision, respectively.
 %%     </CENTER>
 %% \end{ccHtmlOnly}
 
-\ccInclude{CGAL/Subdivision_surfaces_3.h}
+\ccInclude{CGAL/Subdivision_method_3.h}
 
 \ccParameters
 
@@ -64,7 +64,7 @@ The full template declaration of \ccClassTemplateName\ states one
 template parameters:
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Subdivision_surfaces_3;}
+\ccc{template <} \=\ccc{class Polyhedron_3>} \ccc{class Subdivision_method_3;}
 \end{tabbing}
    
 The parameter \ccc{Polyhedron_3} requires a model of 
@@ -220,7 +220,7 @@ The mesh \ccc{p} can only consist of triangle facets.
 This example program applies the Catmull-Clark subdivision on a
 read-in polyhedral mesh.
 
-\ccIncludeExampleCode{Subdivision_surfaces_3/CatmullClark_subdivision.C}
+\ccIncludeExampleCode{Subdivision_method_3/CatmullClark_subdivision.C}
 
 \ccSeeAlso
 
