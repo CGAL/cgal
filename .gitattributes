@@ -545,6 +545,17 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.pdf -text svneol=unset#unset
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
+Maintenance/svn_client/config -text
+Maintenance/svn_server/hooks/post-commit -text
+Maintenance/svn_server/hooks/post-commit.tmpl -text
+Maintenance/svn_server/hooks/post-lock.tmpl -text
+Maintenance/svn_server/hooks/post-revprop-change.tmpl -text
+Maintenance/svn_server/hooks/post-unlock.tmpl -text
+Maintenance/svn_server/hooks/pre-commit.tmpl -text
+Maintenance/svn_server/hooks/pre-lock.tmpl -text
+Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
+Maintenance/svn_server/hooks/pre-unlock.tmpl -text
+Maintenance/svn_server/hooks/start-commit.tmpl -text
 Manual/doc_tex/Manual/fig/a-simp.eps -text
 Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
 Manual/doc_tex/Manual/fig/c-simp.eps -text
