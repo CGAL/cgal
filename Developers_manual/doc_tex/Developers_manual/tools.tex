@@ -402,4 +402,18 @@ best way to do it.
   
 
 
+\section{{\tt check\_licenses}}
+\label{sec:check_licenses}
+\index{check_licenses script@{\tt check\_licenses} script|(}
+
+This script can be used to check all files in an internal or external release
+for proper license notices. It reports all files without a proper notice.
+Observe that the check is fairly simple, we just grep through the files
+looking for a fixed string. Additionally, there might be provisions in the
+top-level LICENSE file that are not taken into account by this script.
+
+Note that there might be license errors that are not detected by this script.
+For example, we do not check that files under LGPL and QPL are not mixed in
+one library.
+
 \ccIndexMainItemEnd{tools}
