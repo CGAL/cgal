@@ -1,0 +1,62 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Name:  $
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{PolygonOffsetBuilderTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the geometric traits class required by the algorithm class \ccc{Polygon_offset_builder_2<Ssds,Gt,Polygon_2>}.
+
+\ccTypes
+  \ccNestedType{FT}{A model of the \ccc{SqrtFieldNumberType} used for scalar and Euclidean distance computations}{}
+  \ccGlue
+  \ccNestedType{Point_2}{A 2D point type}{}
+  \ccGlue
+  \ccTypedef{boost::tuple<Point_2,Point_2> Edge;}{A pair of points representing an edge}
+  \ccGlue
+  \ccTypedef{boost::tuple<Edge,Edge,Edge> EdgeTriple;}{A triple of edges representing an event}
+
+\ccTwo{PolygonOffsetBuilderTraits_2}{}  
+  
+\ccNestedType{Compare_offset_against_event_time_2}
+{A predicate object type.\\
+Must provide \ccc{Uncertain<Comparison_result> operator()( FT d, EdgeTriple const& et) const}, which compares the Euclidean distance \ccc{d} with the event time for \ccc{et}. Such event time is the Euclidean distance at which the \textit{offset lines} intersect in a single point. The source of such offset lines is given by the 3 \textit{oriented} lines defined by the edge-triple \ccc{et}
+\ccPrecond{\ccc{et} must be an edge-triple corresponding to an event that actually exist (that is, there must exist an offset distance \ccc{t} $>0$ at which the offset lines do intersect at a single point.}}
+
+\ccNestedType{Construct_offset_point_2}
+{A construction object type.\\
+Must provide \ccc{Point_2 operator()( FT t, Edge const& x, Edge const& y) const}, which constructs the point of intersection of the lines obtained by offsetting the oriented lines given by \ccc{x} and \ccc{y} an Euclidean distance \ccc{t}.
+\ccPrecond{\ccc{x} and \ccc{y} must define non-parallel lines}}
+
+\ccHasModels
+
+\ccc{CGAL::Polygon_offset_builder_traits_2<K>}.
+
+\ccSeeAlso
+
+\ccc{CGAL::Polygon_offset_builder_2<Ssds,Gt,Polygon_2>}\\
+\ccc{CGAL::Polygon_offset_builder_traits_2<K>}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

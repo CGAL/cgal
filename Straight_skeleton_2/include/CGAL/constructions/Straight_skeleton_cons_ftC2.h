@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_CONS_FTC2_H
@@ -21,13 +21,27 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline MP_Float sqrt( MP_Float const& n )
+namespace CGAL_SLS_i
+{
+
+template<class NT>
+inline NT inexact_sqrt( NT const& n )
+{
+  return CGAL_NTS sqrt(n);
+}
+
+inline MP_Float inexact_sqrt( MP_Float const& n )
 {
   return CGAL_NTS approximate_sqrt(n);
 }
 
-namespace CGAL_SLS_i
+inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
 {
+  CGAL_precondition(q > 0);
+  return Quotient<MP_Float>(CGAL_NTS approximate_sqrt(q.numerator()*q.denominator())
+                           ,q.denominator()
+                           );
+}
 
 // Given an oriented 2D stright line edge (px,py)->(qx,qy), computes the normalized coefficients (a,b,c) of the
 // supporting line.
@@ -91,7 +105,7 @@ Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
   {
     FT sa = e.s().y() - e.t().y();
     FT sb = e.t().x() - e.s().x();
-    FT l  = CGAL_NTS sqrt( (sa*sa) + (sb*sb) );
+    FT l  = CGAL_SLS_i :: inexact_sqrt( (sa*sa) + (sb*sb) );
 
     a = sa / l ;
     b = sb / l ;
@@ -128,7 +142,11 @@ Rational<FT> compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& 
   // were 't>0' being to the left of the line.
   // If 3 such offset lines intersect at the same offset distance, the intersection 't',
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
-  // The following rational expression the solution.
+  //
+  //  t = a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 - b1*a0*c2 - b0*a1*c2
+  //      ---------------------------------------------------------------
+  //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
+
 
   Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
   Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
