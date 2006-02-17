@@ -7,7 +7,7 @@
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Optimisation_basic WIP $
-@! $Revision$
+@! $Id$
 @! $Date$
 @! ============================================================================
  
@@ -60,7 +60,7 @@
 
 \thispagestyle{empty}
 
-\RCSdef{\rcsRevision}{$Revision$}
+\RCSdef{\rcsRevision}{$Id$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
@@ -537,7 +537,7 @@ web file.
         "Optimisation_basic",
         "Geometric Optimisation",
         "Optimisation_d_traits",
-        "$Revision$","$Date$",
+        "$Id$","$Date$",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")

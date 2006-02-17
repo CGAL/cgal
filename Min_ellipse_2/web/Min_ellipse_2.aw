@@ -7,7 +7,7 @@
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Min_ellipse_2 WIP $
-@! $Revision$
+@! $Id$
 @! $Date$
 @! ============================================================================
  
@@ -49,7 +49,7 @@
 @! Title
 @! ============================================================================
 
-\RCSdef{\rcsRevision}{$Revision$}
+\RCSdef{\rcsRevision}{$Id$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
@@ -3447,7 +3447,7 @@ web file.
         "Min_ellipse_2",
         "Geometric Optimisation",
         "Min_ellipse_2",
-        "$Revision$","$Date$",
+        "$Id$","$Date$",
         "Sven Schönherr <sven@@inf.ethz.ch>, Bernd Gärtner",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")

@@ -7,7 +7,7 @@
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Polytope_distance_d WIP $
-@! $Revision$
+@! $Id$
 @! $Date$
 @! ============================================================================
  
@@ -58,7 +58,7 @@
 
 \thispagestyle{empty}
 
-\RCSdef{\rcsRevision}{$Revision$}
+\RCSdef{\rcsRevision}{$Id$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
@@ -2010,7 +2010,7 @@ web file.
         "Polytope_distance_d",
         "Geometric Optimisation",
         "Polytope_distance_d",
-        "$Revision$","$Date$",
+        "$Id$","$Date$",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")

@@ -7,7 +7,7 @@
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Random Numbers Generator $
 @! $CGAL_Package: Random_numbers WIP $
-@! $Revision$
+@! $Id$
 @! $Date$
 @! ============================================================================
 
@@ -51,7 +51,7 @@
 
 \thispagestyle{empty}
 
-\RCSdef{\rcsRevision}{$Revision$}
+\RCSdef{\rcsRevision}{$Id$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
@@ -568,7 +568,7 @@ numbers.
         "Random_numbers",
         "Random Numbers Generator",
         "Random",
-        "$Revision$","$Date$",
+        "$Id$","$Date$",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "INRIA Sophia-Antipolis",
         "@2")

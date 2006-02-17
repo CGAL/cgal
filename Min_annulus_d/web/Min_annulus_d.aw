@@ -7,7 +7,7 @@
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Min_annulus_d WIP $
-@! $Revision$
+@! $Id$
 @! $Date$
 @! ============================================================================
  
@@ -61,7 +61,7 @@
 
 \thispagestyle{empty}
 
-\RCSdef{\rcsRevision}{$Revision$}
+\RCSdef{\rcsRevision}{$Id$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
@@ -1929,7 +1929,7 @@ web file.
         "Min_annulus_d",
         "Geometric Optimisation",
         "Min_annulus_d",
-        "$Revision$","$Date$",
+        "$Id$","$Date$",
         "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")

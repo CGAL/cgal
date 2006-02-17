@@ -5,7 +5,7 @@
 @! file  : web/Optimisation/Min_sphere_d.aw
 @! author: Bernd Gärtner (gaertner@inf.fu-berlin.de)
 @! ----------------------------------------------------------------------------
-@! $Revision$
+@! $Id$
 @! $Date$
 @! ============================================================================
  
@@ -64,7 +64,7 @@
 @! ============================================================================
 @! Title
 @! ============================================================================
-\RCSdef{\rcsrevision}{$Revision$}
+\RCSdef{\rcsrevision}{$Id$}
 \RCSdefDate{\rcsdate}{$Date$}
 
 @t vskip 5 mm
@@ -2720,7 +2720,7 @@ Here we basically aim at code coverage for the traits class -- the
 % file  : doc_tex/basic/Optimisation/Optimisation_ref/main_Min_sphere_d.tex
 % author: Bernd Gärtner (gaertner@@inf.ethz.ch)
 % -----------------------------------------------------------------------------
-% $Revision$
+% $Id$
 % $Date$
 % $CGAL_Package: Min_sphere_d WIP $
 % =============================================================================
@@ -2748,7 +2748,7 @@ Here we basically aim at code coverage for the traits class -- the
 % file  : doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d.tex
 % author: Bernd Gärtner (gaertner@@inf.ethz.ch)
 % -----------------------------------------------------------------------------
-% $Revision$
+% $Id$
 % $Date$
 % $CGAL_Package: Min_sphere_d WIP $
 % =============================================================================
@@ -3412,7 +3412,7 @@ name, the source file name, the author name, and the RCS variables
                    "Sven Schönherr <sven@@inf.fu-berlin.de>",
                    "Bernd Gärtner",
                    "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-                   "$Revision$","$Date$")
+                   "$Id$","$Date$")
 @end
 
 

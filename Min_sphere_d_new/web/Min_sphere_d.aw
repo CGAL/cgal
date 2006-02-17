@@ -7,7 +7,7 @@
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Min_sphere_d_new WIP $
-@! $Revision$
+@! $Id$
 @! $Date$
 @! ============================================================================
  
@@ -61,7 +61,7 @@
 
 \thispagestyle{empty}
 
-\RCSdef{\rcsRevision}{$Revision$}
+\RCSdef{\rcsRevision}{$Id$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
@@ -1945,7 +1945,7 @@ web file.
         "Min_sphere_d_new",
         "Geometric Optimisation",
         "Min_sphere_d",
-        "$Revision$","$Date$",
+        "$Id$","$Date$",
         "Bernd Gärtner, Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
