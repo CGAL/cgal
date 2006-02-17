@@ -22,10 +22,56 @@
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Simple_homogeneous.h>
-#include <CGAL/Extended_homogeneous.h>
-#include <CGAL/Extended_cartesian.h>
+
+#ifdef CGAL_USE_LEDA
+  #ifdef CGAL_NEF3_CARTESIAN
+  #include <CGAL/leda_rational.h>
+  typedef leda_rational LNT;
+  #else
+  #include <CGAL/leda_integer.h>
+  typedef leda_integer LNT;
+  #endif
+#else
+  #ifdef CGAL_NEF3_CARTESIAN
+  #include <CGAL/Gmpq.h>
+  typedef CGAL::Gmpq LNT;
+  #else
+  #include <CGAL/Gmpz.h>
+  typedef CGAL::Gmpz LNT;
+  #endif
+#endif
+
+#ifdef CGAL_USE_LAZY_EXACT_NT
+  #include <CGAL/Filtered_exact.h>
+  #include <CGAL/Nef_3/Filtered_gcd.h>
+  #include <CGAL/Lazy_exact_nt.h>
+  typedef CGAL::Lazy_exact_nt<LNT>  NT;
+#else
+  typedef LNT  NT;
+#endif
+
+#ifdef CGAL_USE_EXTENDED_KERNEL
+  #ifdef CGAL_NEF3_CARTESIAN
+  #include <CGAL/Extended_cartesian.h>
+  typedef CGAL::Extended_cartesian<LNT>   Kernel;
+  const char *kernelversion = "Extended cartesian kernel.";
+  #else
+  #include <CGAL/Extended_homogeneous.h>
+  typedef CGAL::Extended_homogeneous<LNT>   Kernel;
+  const char *kernelversion = "Extended homogeneous kernel.";
+  #endif
+#else
+  #ifdef CGAL_NEF3_CARTESIAN
+  #include <CGAL/Cartesian.h>
+  typedef CGAL::Cartesian<NT> Kernel;
+  const char *kernelversion = "Cartesian kernel.";
+  #else
+  #include <CGAL/Homogeneous.h>
+  typedef CGAL::Homogeneous<NT> Kernel;
+  const char *kernelversion = "Homogeneous kernel.";
+  #endif
+#endif
+
 #include <CGAL/rational_rotation.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -46,49 +92,16 @@
 #include <cmath>
 #include <cstddef>
 
+typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
+typedef std::vector< Nef_polyhedron>       Nef_vector;
+typedef Nef_vector::iterator               Iterator;
+
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::strcmp;
 using std::exit;
-
-#define CGAL_USE_EXTENDED_KERNEL
-
-//#ifdef CGAL_USE_LEDA
-//#include <CGAL/leda_integer.h>
-//typedef leda_integer LNT;
-//#else
-//#include <CGAL/Gmpz.h>
-//typedef CGAL::Gmpz LNT;
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq LNT;
-//#endif
-
-#ifdef CGAL_USE_LAZY_EXACT_NT
-  #include <CGAL/Filtered_exact.h>
-  #include <CGAL/Nef_3/Filtered_gcd.h>
-  #include <CGAL/Lazy_exact_nt.h>
-  #include <CGAL/Gmpz.h>
-  typedef CGAL::Lazy_exact_nt<CGAL::Gmpz>  NT;
-#else
-  typedef LNT  NT;
-#endif
-
-#ifdef CGAL_USE_EXTENDED_KERNEL
-//typedef CGAL::Extended_homogeneous<LNT>   Kernel;
-typedef CGAL::Extended_cartesian<LNT>   Kernel;
-const char *kernelversion = "Extended homogeneous 3d kernel.";
-#else // #elif CGAL_USE_SIMPLE_KERNEL
-typedef CGAL::Homogeneous<NT> Kernel;
-const char *kernelversion = "Simple homogeneous kernel.";
-#endif
-
-typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
-//typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_items,CGAL::Decomposition_mark>     Nef_polyhedron;
-// typedef Nef_polyhedron::Explorer           Explorer;
-typedef std::vector< Nef_polyhedron>       Nef_vector;
-typedef Nef_vector::iterator               Iterator;
 
 // Global data
 Nef_vector nef;  // contains stack of Nef_polyhedron
@@ -634,7 +647,6 @@ int main(  int argc, char* argv[]) {
         exit(1);
     }
     CGAL::set_pretty_mode(std::cerr);
-    //std::cin>>debugthread;
     //    std::cout<<kernelversion<<std::endl;
     return eval( argc-1, argv+1);
 }
