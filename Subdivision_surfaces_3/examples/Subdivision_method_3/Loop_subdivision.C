@@ -1,6 +1,6 @@
-// file: examples/Subdivision_surfaces_3/Loop_subdivision.C
+// file: examples/Subdivision_method_3/Loop_subdivision.C
 
-#include <CGAL/Subdivision_surfaces_3.h>
+#include <CGAL/Subdivision_method_3.h>
 
 #include <iostream>
 #include <fstream>

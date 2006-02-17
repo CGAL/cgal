@@ -11,19 +11,19 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : test/Subdivision_surface_3/test_Subdivision_surface_3.C
-// package       : Subdivision_surface_3
-// chapter       : Subdivision Surfaces
+// file          : test/Subdivision_method_3/test_Subdivision_method_3.C
+// package       : Subdivision_method_3
+// chapter       : Subdivision Method
 //
 // revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
-// Test subdivision surfaces
+// Test subdivision methods
 // ============================================================================
 
-#include <CGAL/Subdivision_surfaces_3.h>
+#include <CGAL/Subdivision_method_3.h>
 
 #include <iostream>
 #include <fstream>
