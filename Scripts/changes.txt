@@ -1,3 +1,6 @@
+18 February 2006 Joachim Reichel
+- LGPL copyright notices added
+
 15 December 2005 Menelaos Karavelas
 - moved the make_macosx_app script to the MacOSX package
 
