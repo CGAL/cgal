@@ -15,7 +15,6 @@
 // $Id$
 // 
 //
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef DEMO_TAB_H
@@ -418,68 +417,71 @@ public:
       Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE , 
                           pl_point.y() / m_tab_traits.COORD_SCALE);
       CGAL::Object    obj = ray_shoot_up (temp_p);
-      Face_const_handle ubf;
-      if(CGAL::assign(ubf, obj))
+      if(!obj.is_empty())
       {
-        CGAL_assertion(ubf->is_unbounded());
-        up = Coord_point(pl_draw.x() , y_max());
-        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
-      }
-      // we shoot something
-      else 
-      {
-        Halfedge_const_handle he;
-        if(CGAL::assign(he, obj))
+        Face_const_handle ubf;
+        if(CGAL::assign(ubf, obj))
         {
-          Point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
-          Point_2 p2c1(pl_point.x() , pl_point.y());
-          const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
-          const X_monotone_curve_2 c2 = he->curve();
-           
-          CGAL::Object             res;
-          CGAL::Oneset_iterator<CGAL::Object> oi(res);
-
-          m_traits.intersect_2_object()(c1, c2, oi);
-          std::pair<Point_2, unsigned int> p1;
-          if (CGAL::assign(p1, res))
+          CGAL_assertion(ubf->is_unbounded());
+          up = Coord_point(pl_draw.x() , y_max());
+          static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
+        }
+        // we shoot something
+        else 
+        {
+          Halfedge_const_handle he;
+          if(CGAL::assign(he, obj))
           {
-            Coord_type y1 =
-              CGAL::to_double(p1.first.y())/ m_tab_traits.COORD_SCALE;
-            up = Coord_point(pl_draw.x(), y1);
+            Point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
+            Point_2 p2c1(pl_point.x() , pl_point.y());
+            const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+            const X_monotone_curve_2 c2 = he->curve();
+             
+            CGAL::Object             res;
+            CGAL::Oneset_iterator<CGAL::Object> oi(res);
+
+            m_traits.intersect_2_object()(c1, c2, oi);
+            std::pair<Point_2, unsigned int> p1;
+            if (CGAL::assign(p1, res))
+            {
+              Coord_type y1 =
+                CGAL::to_double(p1.first.y())/ m_tab_traits.COORD_SCALE;
+              up = Coord_point(pl_draw.x(), y1);
+            }
+            else
+            {
+              up = pl_draw;
+            }
+          
+            setColor(Qt::red);
+            m_tab_traits.draw_xcurve(this , he->curve() );
           }
           else
           {
-            up = pl_draw;
+            Vertex_const_handle v;
+            CGAL_assertion(CGAL::assign(v, obj));
+            CGAL::assign(v, obj);
+            up = Coord_point(CGAL::to_double(v->point().x()) /
+                        m_tab_traits.COORD_SCALE, 
+                            CGAL::to_double(v->point().y()) /
+                        m_tab_traits.COORD_SCALE); 
+            setColor(Qt::red);
+            static_cast<CGAL::Qt_widget&>(*this) << up;
           }
+        }
+    
+        setColor(Qt::yellow);
+        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
+        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
         
-          setColor(Qt::red);
-          m_tab_traits.draw_xcurve(this , he->curve() );
-        }
-        else
-        {
-          Vertex_const_handle v;
-          CGAL_assertion(CGAL::assign(v, obj));
-          CGAL::assign(v, obj);
-          up = Coord_point(CGAL::to_double(v->point().x()) /
-                       m_tab_traits.COORD_SCALE, 
-                          CGAL::to_double(v->point().y()) /
-                       m_tab_traits.COORD_SCALE); 
-          setColor(Qt::red);
-          static_cast<CGAL::Qt_widget&>(*this) << up;
-        }
-      }
-  
-      setColor(Qt::yellow);
-      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
-      static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
-      
-      // draw an arrow that points to 'up' point
-      int x = this->x_pixel(CGAL::to_double(up.x()));
-      int y = this->y_pixel(CGAL::to_double(up.y()));
+        // draw an arrow that points to 'up' point
+        int x = this->x_pixel(CGAL::to_double(up.x()));
+        int y = this->y_pixel(CGAL::to_double(up.y()));
 
-      this->get_painter().drawLine(x-7 , y+7 , x , y);
-      this->get_painter().drawLine(x+7 , y+7 , x , y);
-      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
+        this->get_painter().drawLine(x-7 , y+7 , x , y);
+        this->get_painter().drawLine(x+7 , y+7 , x , y);
+        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
+      }
     }
     if (mode == RAY_SHOOTING_DOWN)
     {
@@ -489,66 +491,69 @@ public:
                           pl_point.y() / m_tab_traits.COORD_SCALE);
 
       CGAL::Object    obj = ray_shoot_down (temp_p);
-      Coord_point down;
-      Face_const_handle ubf;
-      if(CGAL::assign(ubf, obj))
+      if(!obj.is_empty())
       {
-        down = Coord_point(pl_draw.x() , y_min());
-        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, down);
-      }
-      // we shoot something
-      else 
-      {
-        Halfedge_const_handle he;
-        if(CGAL::assign(he, obj))
+        Coord_point down;
+        Face_const_handle ubf;
+        if(CGAL::assign(ubf, obj))
         {
-          Point_2 p1c1(pl_point.x() , y_min() * m_tab_traits.COORD_SCALE);
-          Point_2 p2c1(pl_point.x() , pl_point.y());
-          const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
-          const X_monotone_curve_2 c2 = he->curve();
-          
-          CGAL::Object             res;
-          CGAL::Oneset_iterator<CGAL::Object> oi(res);
-
-          m_traits.intersect_2_object()(c1, c2, oi);
-          std::pair<Point_2,unsigned int> p1;
-          if (CGAL::assign(p1, res))
+          down = Coord_point(pl_draw.x() , y_min());
+          static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, down);
+        }
+        // we shoot something
+        else 
+        {
+          Halfedge_const_handle he;
+          if(CGAL::assign(he, obj))
           {
-            Coord_type y1 =
-              CGAL::to_double(p1.first.y()) / m_tab_traits.COORD_SCALE;
-            down = Coord_point(pl_draw.x(),y1);
+            Point_2 p1c1(pl_point.x() , y_min() * m_tab_traits.COORD_SCALE);
+            Point_2 p2c1(pl_point.x() , pl_point.y());
+            const X_monotone_curve_2 c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+            const X_monotone_curve_2 c2 = he->curve();
+            
+            CGAL::Object             res;
+            CGAL::Oneset_iterator<CGAL::Object> oi(res);
+
+            m_traits.intersect_2_object()(c1, c2, oi);
+            std::pair<Point_2,unsigned int> p1;
+            if (CGAL::assign(p1, res))
+            {
+              Coord_type y1 =
+                CGAL::to_double(p1.first.y()) / m_tab_traits.COORD_SCALE;
+              down = Coord_point(pl_draw.x(),y1);
+            }
+            else
+            {
+              down = pl_draw;
+            }
+            setColor(Qt::red);
+            m_tab_traits.draw_xcurve(this , he->curve() );
           }
           else
           {
-            down = pl_draw;
+            Vertex_const_handle v;
+            CGAL_assertion(CGAL::assign(v, obj));
+            CGAL::assign(v, obj);
+            down = Coord_point(CGAL::to_double(v->point().x()) /
+                          m_tab_traits.COORD_SCALE, 
+                          CGAL::to_double(v->point().y()) /
+                          m_tab_traits.COORD_SCALE); 
+            setColor(Qt::red);
+            static_cast<CGAL::Qt_widget&>(*this) << down;
           }
-          setColor(Qt::red);
-          m_tab_traits.draw_xcurve(this , he->curve() );
         }
-        else
-        {
-          Vertex_const_handle v;
-          CGAL_assertion(CGAL::assign(v, obj));
-          CGAL::assign(v, obj);
-          down = Coord_point(CGAL::to_double(v->point().x()) /
-                        m_tab_traits.COORD_SCALE, 
-                        CGAL::to_double(v->point().y()) /
-                        m_tab_traits.COORD_SCALE); 
-          setColor(Qt::red);
-          static_cast<CGAL::Qt_widget&>(*this) << down;
-        }
-      }
-      
-      setColor(Qt::yellow);
-      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
-      static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,down);
-      // draw an arrow that points to 'down' point
-      int x = this->x_pixel(CGAL::to_double(down.x()));
-      int y = this->y_pixel(CGAL::to_double(down.y()));
+        
+        setColor(Qt::yellow);
+        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
+        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,down);
+        // draw an arrow that points to 'down' point
+        int x = this->x_pixel(CGAL::to_double(down.x()));
+        int y = this->y_pixel(CGAL::to_double(down.y()));
 
-      this->get_painter().drawLine(x-7 , y-7 , x , y);
-      this->get_painter().drawLine(x+7 , y-7 , x , y);
-      static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
+        this->get_painter().drawLine(x-7 , y-7 , x , y);
+        this->get_painter().drawLine(x+7 , y-7 , x , y);
+        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
+      }
     }
     setCursor(old);
   }
@@ -689,11 +694,11 @@ public:
       }
       if(remove_org_curve)
       {
-        Originating_curve_iterator  ocit, temp;
+        Originating_curve_iterator  ocit, temp,
+          ocit_end = m_curves_arr->originating_curves_end (removable_halfedge);
         Curve_handle                ch;
         ocit  = m_curves_arr->originating_curves_begin (removable_halfedge);
-        while (ocit != 
-               m_curves_arr->originating_curves_end (removable_halfedge))
+        while (ocit != ocit_end)
         {
           temp = ocit;
           ++temp;
@@ -1271,10 +1276,12 @@ public:
     if(CGAL::assign(trap_pl, m_point_location))
       return trap_pl->locate(pt);
 
-    /*Lanmarks_point_location* lm_pl;
+    Lanmarks_point_location* lm_pl;
     if(CGAL::assign(lm_pl, m_point_location))
-      return lm_pl->locate(pt);*/
+      return lm_pl->locate(pt);
 
+    // doesnt suppose to reach there
+    CGAL_assertion(false);
     return CGAL::Object();
   }
 
@@ -1292,10 +1299,15 @@ public:
     if(CGAL::assign(trap_pl, m_point_location))
       return trap_pl->ray_shoot_up(pt);
 
-    /*Lanmarks_point_location* lm_pl;
+    Lanmarks_point_location* lm_pl;
     if(CGAL::assign(lm_pl, m_point_location))
-      return lm_pl->ray_shoot_up(pt);*/
+    {
+      //QMessageBox::information( this, "Ray shoot down", "Land Marks doesn't support ray shooting");
+      return CGAL::Object();
+    }
 
+    // doesnt suppose to reach there
+    CGAL_assertion(false);
     return CGAL::Object();
   }
 
@@ -1313,10 +1325,15 @@ public:
     if(CGAL::assign(trap_pl, m_point_location))
       return trap_pl->ray_shoot_down(pt);
 
-   /* Lanmarks_point_location* lm_pl;
+    Lanmarks_point_location* lm_pl;
     if(CGAL::assign(lm_pl, m_point_location))
-      return lm_pl->ray_shoot_down(pt);*/
+    {
+      //QMessageBox::information( this, "Ray shoot up", "Land Marks doesn't support ray shooting");
+      return CGAL::Object();
+    }
 
+    // doesnt suppose to reach there
+    CGAL_assertion(false);
     return CGAL::Object();
   }
 
@@ -1339,7 +1356,7 @@ public:
         {
           Lanmarks_point_location* lm_pl;
           if(CGAL::assign(lm_pl, m_point_location));
-            //delete lm_pl;
+            delete lm_pl;
         }
       }
     }
@@ -1367,13 +1384,11 @@ public:
     }
     if(s == LANDMARKS)
     {
-     /*
      QCursor old = cursor();
       setCursor(Qt::WaitCursor);
       m_point_location =
         CGAL::make_object(new Lanmarks_point_location(*m_curves_arr));
         setCursor(old);
-        */
       return;
     }
   }
@@ -1391,7 +1406,7 @@ public:
                         bool move_event)
   {
     bool       first = true;
-    Coord_type min_dist = 0;   
+    Coord_type min_dist;   
 
     for (Halfedge_iterator hei = m_curves_arr->halfedges_begin();
          hei != m_curves_arr->halfedges_end();
