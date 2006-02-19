@@ -118,14 +118,34 @@ test_basic_operators(const NT&)
   return true;
 }
 
+
 template < class NT >
 bool
-test_mixed_operators(const NT&)
+test_exact_division(const NT&, CGAL::Tag_true)
+{
+  NT zero = 0;
+  NT one  = 1;
+
+  if (zero / 1 != 0 ) return false;
+  if (1 / one  != 1 ) return false;
+
+  return true;
+}
+
+template < class NT >
+bool
+test_exact_division(const NT&, CGAL::Tag_false)
+{
+  return true;
+}
+
+template < class NT >
+bool
+test_mixed_operators(const NT& x)
 {
   std::cout << "  mixed operators" << std::endl;
 
   NT zero = 0;
-  NT one  = 1;
 
   // Comparison operators.
   if (   zero != 0  ) return false;
@@ -166,17 +186,20 @@ test_mixed_operators(const NT&)
   if (CGAL_NTS compare(zero + zero, 1) != CGAL::SMALLER) return false;
   if (CGAL_NTS compare(1, zero + zero) != CGAL::LARGER)  return false;
 
-  // The other operators +, -, *, /.
+  // The other operators +, -, *.
   if (zero + 1 != 1 ) return false;
   if (1 + zero != 1 ) return false;
   if (zero - 1 !=-1 ) return false;
   if (1 - zero != 1 ) return false;
   if (zero * 1 != 0 ) return false;
   if (1 * zero != 0 ) return false;
-  if (zero / 1 != 0 ) return false;
-  if (1 / one  != 1 ) return false;
 
-  return true;
+  // Test division (only if supported).
+  typedef typename CGAL::Number_type_traits<NT>::Has_exact_division 
+                                                    Has_exact_division;
+
+  Has_exact_division has_ex_div = Has_exact_division();
+  return test_exact_division (x, has_ex_div);
 }
 
 template < class NT >
