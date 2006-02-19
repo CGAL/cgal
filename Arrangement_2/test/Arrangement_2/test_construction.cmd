@@ -42,3 +42,5 @@
 ./data/test_construction/test42.txt
 ./data/test_construction/test43.txt
 ./data/test_construction/test44.txt
+./data/test_construction/test45.txt
+./data/test_construction/test46.txt
