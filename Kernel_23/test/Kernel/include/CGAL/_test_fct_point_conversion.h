@@ -17,6 +17,7 @@
 // 
 //
 // Author(s)     : Stefan Schirra
+//                 Ron Wein        <wein@post.tau.ac.il>
  
 
 #ifndef CGAL__TEST_FCT_POINT_CONVERSION_H
@@ -26,9 +27,10 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/cartesian_homogeneous_conversion.h>
 
+// Test for number-types that support division.
 template <class NT>
 bool
-_test_fct_point_conversion(const NT& )
+_test_fct_point_conversion(const NT&, CGAL::Tag_true)
 {
   std::cout << "Testing Point Conversion Functions" ;
 
@@ -78,4 +80,58 @@ _test_fct_point_conversion(const NT& )
   std::cout << "done" << std::endl;
   return true;
 }
+
+// Test for number-types that do not support division.
+template <class NT>
+bool
+_test_fct_point_conversion(const NT&, CGAL::Tag_false)
+{
+  std::cout << "Testing Point Conversion Functions" ;
+
+  typedef CGAL::Homogeneous<NT>               H;
+  typedef CGAL::Cartesian<CGAL::Quotient<NT> > QC;
+
+  typedef CGAL::Point_2< H >                  PtH2;
+  typedef CGAL::Point_2< QC>                  PtQC2;
+  typedef CGAL::Point_3< H >                  PtH3;
+  typedef CGAL::Point_3< QC>                  PtQC3;
+
+  NT n3  = NT(3);
+  NT n5  = NT(5);
+  NT n10 = NT(10);
+  NT n15 = NT(15);
+  NT n25 = NT(25);
+  NT n50 = NT(50);
+  CGAL::Quotient<NT> q3(n3);
+  CGAL::Quotient<NT> q5(n5);
+  CGAL::Quotient<NT> q10(n10);
+
+  PtH2  ph2(n25, n15, n5);
+  PtQC2 pq2(q5, q3);
+  PtH3  ph3(n50, n25, n15, n5);
+  PtQC3 pq3(q10, q5, q3);
+
+  std::cout << '.';
+
+  assert( CGAL::homogeneous_to_quotient_cartesian(ph2) == pq2);
+  assert( CGAL::quotient_cartesian_to_homogeneous(pq2) == ph2);
+  std::cout << '.';
+
+  assert( CGAL::homogeneous_to_quotient_cartesian(ph3) == pq3);
+  assert( CGAL::quotient_cartesian_to_homogeneous(pq3) == ph3);
+
+  std::cout << "done" << std::endl;
+  return true;
+}
+
+template <class NT>
+bool
+_test_fct_point_conversion (const NT& x)
+{
+  typedef typename CGAL::Number_type_traits<NT>::Has_division   Has_division;
+
+  Has_division has_div = Has_division();
+  return _test_fct_point_conversion (x, has_div);
+};
+
 #endif // CGAL__TEST_FCT_POINT_CONVERSION_H
