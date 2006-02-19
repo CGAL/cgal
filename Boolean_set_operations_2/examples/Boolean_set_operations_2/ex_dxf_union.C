@@ -1,80 +1,104 @@
+//! \file examples/Boolean_set_operations_2/ex_dxf_union.C
+// Computing the union of a set of circular polygons read from a DXF file.
 
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/General_polygon_set_2.h>
+#include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/IO/Dxf_bsop_reader.h>
+#include <CGAL/Timer.h>
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <list>
 #include <vector>
-#include <CGAL/Quotient.h>
-#include <CGAL/MP_Float.h>
 
-#include <CGAL/Lazy_exact_nt.h>
-#include <CGAL/Gps_circle_segment_traits_2.h>
-#include <CGAL/General_polygon_set_2.h>
-#include <CGAL/Gmpq.h>
+typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>              NT;
+typedef CGAL::Cartesian<NT>                          Kernel;
+typedef CGAL::Gps_circle_segment_traits_2<Kernel>    Traits_2;
+typedef Traits_2::Polygon_2                          Circ_polygon_2;
+typedef Traits_2::Polygon_with_holes_2               Circ_polygon_with_holes_2;
+typedef std::vector<Circ_polygon_2>                  Polygons_vec;
+typedef std::vector<Circ_polygon_with_holes_2>       Polygons_with_holes_vec;
+typedef CGAL::General_polygon_set_2<Traits_2>        General_polygon_set_2;
 
-typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>             NT;
-typedef CGAL::Simple_cartesian<NT>                  Kernel;
- 
-typedef CGAL::Gps_circle_segment_traits_2<Kernel>     Traits_2;
-typedef Traits_2::Polygon_2                           Circ_polygon;
-typedef Traits_2::Polygon_with_holes_2                Circ_polygon_with_holes;
-typedef std::vector<Circ_polygon>                     Circ_pgn_vec;
-typedef std::vector<Circ_polygon_with_holes>          Circ_pgn_with_holes_vec;
+static const int DEFAULT_GROUP_SIZE = 5;
 
-typedef CGAL::General_polygon_set_2<Traits_2>         Gps;
-
-int main(int argc, char **argv)
+// The command line should be: 
+//   ex_dxf_union [DXF file] [simplify] [group size]
+int main (int argc, char **argv)
 {
-  if(argc < 2)
+  // Open the input DXF file.
+  char   *filename = "test.dxf";
+
+  if (argc >= 2)
+    filename = argv[1];
+
+  std::ifstream input_file (filename);
+
+  if (! input_file.is_open())
   {
-    std::cout<<"Missing DXF file"<<std::endl;
-    return 0;
+    std::cerr << "Failed to open the " << filename <<std::endl;
+    return (1);
   }
 
-  std::ifstream input_file (argv[1]);
-  if(!input_file.is_open())
+  // Read the extra flags.
+  bool    simplify = true;
+  int     group_size = DEFAULT_GROUP_SIZE;
+
+  if (argc >= 3)
   {
-    std::cout<<"Failed to open the file"<<std::endl;
-    return 0;
+    simplify = (atoi (argv[2]) == 0);
+
+    if (argc >= 4)
+      group_size = atoi (argv[3]);
+
+    if (group_size <= 0)
+    {
+      std::cerr << "Illegal group size: " << group_size << "." << std::endl;
+      return (1);
+    }
   }
 
-  bool simplify = true;
-  if(argc >= 3)
-  {
-    int i = atoi(argv[2]);
-    if(i == 0)
-      simplify = false;
-  }
-
-  Gps gps;
-
-  Circ_pgn_vec pgns;
-  Circ_pgn_with_holes_vec pgns_with_holes;
+  // Read the circular polygons from the DXF file.
+  General_polygon_set_2          gps;
+  Polygons_vec                   pgns;
+  Polygons_with_holes_vec        pgns_with_holes;
   CGAL::Dxf_bsop_reader<Kernel>  reader;
-  reader(input_file,
-         std::back_inserter(pgns),
-         std::back_inserter(pgns_with_holes),
-         simplify);
+  CGAL::Timer                    t_read;
 
-  CGAL::Timer t;
-  
-  std::cout<<"Performing union\n";
-  
-  t.start();
-  gps.join(pgns.begin(), pgns.end(),
-           pgns_with_holes.begin(), pgns_with_holes.end());
-  t.stop();
-  
-  std::cout<<"Union time : "<< t.time()<<" seconds\n";
+  std::cout << "Reading <" << filename << "> ... " << std::flush;
+  t_read.start();
 
-  std::cout<<"|V| = " << gps.arrangement().number_of_vertices()<<"\n";
-  std::cout<<"|E| = " << gps.arrangement().number_of_edges()<<"\n";
-  std::cout<<"|F| = " << gps.arrangement().number_of_faces()<<"\n";
+  reader (input_file,
+          std::back_inserter(pgns),
+          std::back_inserter(pgns_with_holes),
+          simplify);
+
+  t_read.stop();
+  std::cout << "Done! (" << t_read.time() << " seconds)." << std::endl;
+  std::cout << std::distance (pgns.begin(), pgns.end()) << " polygons, "
+            << std::distance (pgns_with_holes.begin(), pgns_with_holes.end())
+            << " polygons with holes." << std::endl;
 
   input_file.close();  
-  return 0;
+
+  // Compute their union.
+  CGAL::Timer                    t_union;
+  
+  std::cout << "Computing the union ... " << std::flush;
+  t_union.start();
+
+  gps.join (pgns.begin(), pgns.end(),
+            pgns_with_holes.begin(), pgns_with_holes.end(),
+            group_size);
+  
+  t_union.stop();
+  std::cout << "Done! (" << t_union.time() << " seconds)." << std::endl;
+
+  std::cout << "The result:" 
+            << "  |V| = " << gps.arrangement().number_of_vertices()
+            << "  |E| = " << gps.arrangement().number_of_edges()
+            << "  |F| = " << gps.arrangement().number_of_faces() << std::endl;
+
+  return (0);
 }
