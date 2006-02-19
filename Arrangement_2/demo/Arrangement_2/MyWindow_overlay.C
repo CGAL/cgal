@@ -40,25 +40,26 @@ void MyWindow::overlay_pm()
     if (form->listBox2->count() < i)
     {
       QMessageBox::information( this, "Overlay",
-          "You need more than one planar map to make an overlay...");
+          "You need more than one arrangement to perform overlay...");
       return;
     }
     i = 12;
     if (form->listBox2->count() > i)
     {
-      QMessageBox::information( this, "Overlay",
-                              "Max number of Planar Maps to overlay is 12!!!");
+      QMessageBox::information 
+        (this, "Overlay",
+         "Maximal number of arrangements to overlay is 12 !");
       return;
     }
     CheckForm *check_form = new CheckForm( form , this );
     if ( ! check_form->exec() )
       return;
     
-    std::list<int> indexes;
-    std::list<int> paint_flags;
-    TraitsType t;
+    std::list<int>      indexes;
+    std::list<int>      paint_flags;
+    TraitsType          t;
     Qt_widget_base_tab *w_demo_p;
-    int index,real_index;
+    int                 index,real_index = 0;
     
     for (unsigned int i = 0; i < form->listBox2->count(); i++)
     {

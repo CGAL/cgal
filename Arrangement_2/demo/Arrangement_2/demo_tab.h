@@ -1391,7 +1391,7 @@ public:
                         bool move_event)
   {
     bool       first = true;
-    Coord_type min_dist;   
+    Coord_type min_dist = 0;   
 
     for (Halfedge_iterator hei = m_curves_arr->halfedges_begin();
          hei != m_curves_arr->halfedges_end();
