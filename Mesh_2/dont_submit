@@ -1,5 +1,4 @@
 examples/Mesh_2/makefile
-.cvsignore
 GNUmakefile
 TODO
 my_tags.j2h
