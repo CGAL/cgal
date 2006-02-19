@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Arrangement_2/include/CGAL/Arr_point_location/Arr_lm_halton_generator.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 #ifndef CGAL_ARR_LM_HALTON_GENERATOR_H
@@ -97,6 +97,14 @@ protected:
     double x,y;
     Vertex_const_iterator vit;
     Arrangement_2 *arr = this->arrangement();
+    if(arr->number_of_vertices() == 1)
+    {
+      vit = arr->vertices_begin();
+      x = CGAL::to_double(vit->point().x());
+      y = CGAL::to_double(vit->point().y());
+      points.push_back(Point_2(x,y)); 
+      return;
+    }
 
     for (vit=arr->vertices_begin(); vit != arr->vertices_end(); vit++)
     {

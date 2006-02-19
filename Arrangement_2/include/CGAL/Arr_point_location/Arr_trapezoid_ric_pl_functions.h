@@ -56,7 +56,20 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   {
     TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
-    return (CGAL::make_object (this->arrangement()->unbounded_face()));
+    //check isolated vertices
+    Face_const_handle ubf = this->arrangement()->unbounded_face();
+      Isolated_vertex_const_iterator   iso_verts_it;
+      for (iso_verts_it = ubf->isolated_vertices_begin();
+           iso_verts_it != ubf->isolated_vertices_end();
+           ++iso_verts_it)
+      {
+        if (traits->equal_2_object()(p, iso_verts_it->point()))
+        {
+          Vertex_const_handle  vh = iso_verts_it;
+          return (CGAL::make_object (vh));
+        }
+      }
+    return (CGAL::make_object (ubf));
   }
 
   Halfedge_const_handle h = cv.get_parent();

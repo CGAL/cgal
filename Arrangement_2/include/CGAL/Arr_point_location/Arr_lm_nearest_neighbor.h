@@ -156,10 +156,16 @@ public:
 			  return;
 		  }
 
-		  if (begin != beyond) {
+		  if (begin != beyond) 
+      {
 			  tree = new Tree(begin, beyond);
 			  b_valid_tree = true;
-		  }
+      }
+      else
+      {
+        tree = new Tree();
+        b_valid_tree = true;
+      }
 	  }
 
 	  /*! clean - deletes the tree in order to create a new one later

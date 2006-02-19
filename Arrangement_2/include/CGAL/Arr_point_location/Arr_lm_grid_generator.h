@@ -52,30 +52,32 @@ public:
   typedef Arr_grid_landmarks_generator<Arrangement_2>   Self;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
 
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Vertex_handle		Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle	Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle	        Face_handle;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator 
-			                              Ccb_halfedge_circulator;
+	typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+	typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+	typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+	typedef typename Arrangement_2::Vertex_handle		      Vertex_handle;
+	typedef typename Arrangement_2::Halfedge_handle		    Halfedge_handle;
+	typedef typename Arrangement_2::Face_handle			      Face_handle;
+	typedef typename Arrangement_2::Vertex_const_iterator 
+													Vertex_const_iterator;
+    typedef typename Arrangement_2::Ccb_halfedge_circulator 
+													Ccb_halfedge_circulator;
 
-  typedef typename Traits_2::Approximate_number_type	ANT;
+  typedef typename Traits_2::Approximate_number_type	  ANT;
 
 #ifdef SEGMENTS
   typedef typename Traits_2::Kernel::FT                 FT;
 #elif defined (CONICS)
-  typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-  typedef Nt_traits::Algebraic                          FT;
+  typedef CGAL::CORE_algebraic_number_traits        Nt_traits;
+  typedef Nt_traits::Algebraic                             FT;
 #endif
 
   typedef typename Traits_2::Point_2                    Point_2;
 
   typedef std::vector<Point_2>                          Points_set;
-  typedef std::pair<Point_2,CGAL::Object>		PL_pair;
-  typedef std::vector<PL_pair>				Pairs_set;
-  typedef typename std::vector<PL_pair>::iterator       Pairs_iterator;
+	typedef std::pair<Point_2,CGAL::Object>				    PL_pair;
+	typedef std::vector<PL_pair>						          Pairs_set;
+	typedef typename std::vector<PL_pair>::iterator		Pairs_iterator;
 
 protected:
 
@@ -227,6 +229,18 @@ protected:
     
     //init min/max
     Arrangement_2 *arr = this->arrangement();
+    if(arr->is_empty())
+      return;
+    if(arr->number_of_vertices() == 1)
+    {
+      //there is only one isolated vertex at the arrangement
+      Vertex_const_iterator vit = arr->vertices_begin();
+      x_min = x_max = traits->approximate_2_object()(vit->point(), 0);
+      y_min = y_max = traits->approximate_2_object()(vit->point(), 1);
+      sqrt_n = 1;
+      points.push_back(Point_2(x_min, y_min)); 
+      return;
+    }
     Vertex_const_iterator vit = arr->vertices_begin();
     x_min = x_max = traits->approximate_2_object()(vit->point(), 0);
     y_min = y_max = traits->approximate_2_object()(vit->point(), 1);
@@ -259,7 +273,7 @@ protected:
       n= arr->number_of_vertices();
 
     //calculate the step size
-    sqrt_n = static_cast<int> (::sqrt(static_cast<double> (n)) + 0.99999);
+    sqrt_n =  static_cast<int> (::sqrt(n) + 0.99999);
     FT delta_x = right.x() - left.x();
     FT delta_y = top.y() - bottom.y();
     step_x = delta_x / (sqrt_n-1);

@@ -82,7 +82,7 @@ public:
   {
     PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
     
-    this->build_landmarks_set();
+    build_landmarks_set();
   }
   
   //Observer functions that should be empty, because they
@@ -113,6 +113,17 @@ protected:
     Halfedge_const_handle  hh;
     Arrangement_2 *arr = this->arrangement();
 
+    if(arr->number_of_vertices() == 1)
+    {
+      //special treatment for arrangement with one isolated verrtex
+      Vertex_const_iterator vit = arr->vertices_begin();
+      CGAL::Object obj = CGAL::make_object(vit);
+      Point_2 p (vit->point());
+      NN_Point_2 np(p, obj);
+      nn_points.push_back(np);
+
+      return;
+    }
     for (eit=arr->edges_begin(); eit != arr->edges_end(); eit++)
     {
       //get 2 endpoints of edge
