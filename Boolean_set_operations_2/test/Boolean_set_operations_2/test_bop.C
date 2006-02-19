@@ -381,18 +381,31 @@ bool test_one_file(std::ifstream& inp)
     inp >> pwh2;
   }
 
-  bool success;
-  if(type1 == 0 && type2 ==0)
+  bool success = false;
+
+  if(type1 == 0 && type2 == 0)
+  {
     success = test(inp, p1 ,p2);
+  }
   else
-    if(type1 == 0 && type2 ==1)
+  {
+    if(type1 == 0 && type2 == 1)
+    {
       success = test(inp, p1 ,pwh2);
+    }
     else
-      if(type1 == 1 && type2 ==0)
+    {
+      if(type1 == 1 && type2 == 0)
+      {
         success = test(inp, pwh1, p2);
+      }
       else
-        if(type1 == 1 && type2 ==1)
+      {
+        if(type1 == 1 && type2 == 1)
           success = test(inp, pwh1, pwh2);
+      }
+    }
+  }
 
   return (success);
 }
