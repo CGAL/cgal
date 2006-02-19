@@ -606,9 +606,9 @@ public:
       r += p.getTrueDegree() * val.uMSB();
     r += core_max(extLong(0), -oldMSB);
   
-    bool validFlag;
-  
+    bool     validFlag = false;
     BigFloat rVal = p.evalFilter(val, validFlag, r);
+
     if (validFlag)
       return rVal;
     else {
