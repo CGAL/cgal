@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$
+// $Id$ $Date$
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -91,6 +91,8 @@ private:
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
                                             Halfedge_around_vertex_const_circulator;
 
+  typedef std::pair<Arrangement_2 *, 
+                    std::vector<Vertex_handle> *>            Arr_entry;
   typedef Arr_walk_along_line_point_location<Arrangement_2>  Walk_pl;
 
 protected:
@@ -587,21 +589,23 @@ inline void join(InputIterator begin,
                  Polygon_2& pgn,
                  unsigned int k=5)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
+  std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
  
-  arr_vec[0] = this->m_arr;
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr, *(arr_vec[i].first));
   }
 
   Join_merge<Arrangement_2> join_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
   
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
 }
 
 
@@ -612,21 +616,23 @@ inline void join(InputIterator begin,
                  Polygon_with_holes_2& pgn,
                  unsigned int k=5)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
-  arr_vec[0] = this->m_arr;
+  std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0].first = this->m_arr;
  
   unsigned int i = 1;
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr, *(arr_vec[i].first));
   }
 
   Join_merge<Arrangement_2> join_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
 }
 
 template <class InputIterator1, class InputIterator2>
@@ -636,29 +642,31 @@ inline void join(InputIterator1 begin1,
                  InputIterator2 end2,
                  unsigned int k=5)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin1, end1)+
-                                       std::distance(begin2, end2)+1);
+  std::vector<Arr_entry> arr_vec (std::distance(begin1, end1)+
+                                  std::distance(begin2, end2)+1);
  
-  arr_vec[0] = this->m_arr;
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
 
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr1, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr1, *(arr_vec[i].first));
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr2, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr2, *(arr_vec[i].first));
   }
 
   Join_merge<Arrangement_2> join_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
   this->remove_redundant_edges();
   this->_reset_faces();
 }
@@ -682,22 +690,24 @@ inline void intersection(InputIterator begin,
                          Polygon_2& pgn,
                          unsigned int k)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
-  arr_vec[0] = this->m_arr;
+  std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr, *(arr_vec[i].first));
   }
 
   Intersection_merge<Arrangement_2> intersection_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
 }
 
 //intersect range of polygons with holes
@@ -707,22 +717,24 @@ inline void intersection(InputIterator begin,
                          Polygon_with_holes_2& pgn,
                          unsigned int k)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
-  arr_vec[0] = this->m_arr;
+  std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr, *(arr_vec[i].first));
   }
 
   Intersection_merge<Arrangement_2> intersection_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
 }
 
 
@@ -733,30 +745,32 @@ inline void intersection(InputIterator1 begin1,
                          InputIterator2 end2,
                          unsigned int k=5)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin1, end1)+
-                                       std::distance(begin2, end2)+1);
-  arr_vec[0] = this->m_arr;
+  std::vector<Arr_entry> arr_vec (std::distance(begin1, end1)+
+                                  std::distance(begin2, end2)+1);
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
  
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr1));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr1, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr1, *(arr_vec[i].first));
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr2));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr2, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr2, *(arr_vec[i].first));
   }
 
   Intersection_merge<Arrangement_2> intersection_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
   this->remove_redundant_edges();
   this->_reset_faces();
 }
@@ -782,22 +796,24 @@ inline void symmetric_difference(InputIterator begin,
                                  Polygon_2& pgn,
                                  unsigned int k=5)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
-  arr_vec[0] = this->m_arr;
+  std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr, *(arr_vec[i].first));
   }
 
   Xor_merge<Arrangement_2> xor_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
 }
 
 //intersect range of polygons with holes
@@ -807,22 +823,24 @@ inline void symmetric_difference(InputIterator begin,
                                  Polygon_with_holes_2& pgn,
                                  unsigned int k=5)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin, end) + 1);
-  arr_vec[0] = this->m_arr;
+  std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
  
   for(InputIterator itr = begin; itr!=end; ++itr, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr, *(arr_vec[i].first));
   }
 
   Xor_merge<Arrangement_2> xor_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
 }
 
 
@@ -833,30 +851,32 @@ inline void symmetric_difference(InputIterator1 begin1,
                                  InputIterator2 end2,
                                  unsigned int k=5)
 {
-  std::vector<Arrangement_2*> arr_vec (std::distance(begin1, end1)+
-                                       std::distance(begin2, end2)+1);
-  arr_vec[0] = this->m_arr;
+  std::vector<Arr_entry> arr_vec (std::distance(begin1, end1)+
+                                  std::distance(begin2, end2)+1);
+  arr_vec[0].first = this->m_arr;
   unsigned int i = 1;
  
   for(InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr1));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr1, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr1, *(arr_vec[i].first));
   }
 
   for(InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i)
   {
     CGAL_precondition(m_traits->is_valid_2_object()(*itr2));
-    arr_vec[i] = new Arrangement_2(m_traits);
-    _insert(*itr2, *arr_vec[i]);
+    arr_vec[i].first = new Arrangement_2(m_traits);
+    _insert(*itr2, *(arr_vec[i].first));
   }
 
   Xor_merge<Arrangement_2> xor_merge;
-  divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
+  _build_sorted_vertices_vectors (arr_vec);
+  _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
 
   //the result arrangement is at index 0
-  this->m_arr = arr_vec[0];
+  this->m_arr = arr_vec[0].first;
+  delete arr_vec[0].second;
   this->remove_redundant_edges();
   this->_reset_faces();
 }
@@ -895,13 +915,60 @@ void _remove_redundant_edges(Arrangement_2* arr)
       ++itr;
   }
 }
+  
+class Less_vertex_handle
+{
+  typename Traits_2::Compare_xy_2     comp_xy;
+
+public:
+
+  Less_vertex_handle (const typename Traits_2::Compare_xy_2& cmp) :
+    comp_xy (cmp)
+  {}
+
+  bool operator() (Vertex_handle v1, Vertex_handle v2) const
+  {
+    return (comp_xy (v1->point(), v2->point()) == SMALLER);
+  }
+};
+  
+void _build_sorted_vertices_vectors (std::vector<Arr_entry>& arr_vec)
+{
+  Less_vertex_handle    comp (m_traits->compare_xy_2_object());
+  Arrangement_2        *p_arr;
+  Vertex_iterator       vit;
+  const unsigned int    n = arr_vec.size();
+  unsigned int          i, j;
+
+  for (i = 0; i < n; i++)
+  {
+    // Allocate a vector of handles to all vertices in the current
+    // arrangement.
+    p_arr = arr_vec[i].first;
+    arr_vec[i].second = new std::vector<Vertex_handle>;
+    arr_vec[i].second->resize (p_arr->number_of_vertices());
+
+    for (j = 0, vit = p_arr->vertices_begin();
+         vit != p_arr->vertices_end();
+         j++, ++vit)
+    {
+      (*(arr_vec[i].second))[j] = vit;
+    }
+
+    // Sort the vector.
+    std::sort (arr_vec[i].second->begin(), arr_vec[i].second->end(),
+               comp);
+  }
+
+  return;
+}
 
 template <class Merge>
-void divide_and_conquer(unsigned int lower,
-                        unsigned int upper,
-                        std::vector<Arrangement_2*>& arr_vec,
-                        unsigned int k,
-                        Merge merge_func)
+void _divide_and_conquer (unsigned int lower,
+                          unsigned int upper,
+                          std::vector<Arr_entry>& arr_vec,
+                          unsigned int k,
+                          Merge merge_func)
 {
   if((upper - lower) < k)
   {
@@ -916,14 +983,14 @@ void divide_and_conquer(unsigned int lower,
 
   for(; i<k-1; ++i, curr_lower += sub_size )
   {
-    divide_and_conquer(curr_lower,
-                       curr_lower + sub_size-1,
-                       arr_vec,
-                       k,
-                       merge_func);
+    _divide_and_conquer (curr_lower,
+                         curr_lower + sub_size-1,
+                         arr_vec,
+                         k,
+                         merge_func);
   }
-  divide_and_conquer(curr_lower, upper,arr_vec, k, merge_func);
-  merge_func(lower, curr_lower, sub_size ,arr_vec);
+  _divide_and_conquer (curr_lower, upper,arr_vec, k, merge_func);
+  merge_func (lower, curr_lower, sub_size ,arr_vec);
 
   return;
 }

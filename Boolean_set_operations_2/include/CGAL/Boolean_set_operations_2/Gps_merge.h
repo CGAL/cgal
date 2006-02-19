@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$
+// $Id$ $Date$
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -29,86 +29,113 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Arrangement>
+template <class Arrangement_>
 class Join_merge
 {
+  typedef Arrangement_                                Arrangement_2;
+  typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
+  typedef std::pair<Arrangement_2 *,
+                    std::vector<Vertex_handle> *>     Arr_entry;
+
 public:
    void operator()(unsigned int i,
                    unsigned int j,
                    unsigned int jump,
-                   std::vector<Arrangement*>& arr_vec)                     
+                   std::vector<Arr_entry>& arr_vec)                     
   {
     if(i==j)
       return;
 
-    typename Arrangement::Traits_2*  tr = arr_vec[i]->get_traits();
-    Arrangement* res = new Arrangement(tr);
-    Gps_agg_op<Arrangement, Gps_bfs_join_visitor<Arrangement> >
-      agg_op(*res, *tr);
+    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->get_traits();
+    Arrangement_2              *res = new Arrangement_2(tr);
+    std::vector<Vertex_handle> *verts = new std::vector<Vertex_handle>;
+
+    Gps_agg_op<Arrangement_2, Gps_bfs_join_visitor<Arrangement_2> >
+      agg_op(*res, *verts, *tr);
     agg_op.sweep_arrangements(i, j, jump, arr_vec);
 
     for(unsigned int count=i; count<=j; count+=jump)
     {
-      delete arr_vec[count];
+      delete (arr_vec[count].first);
+      delete (arr_vec[count].second);
     }
     
-    arr_vec[i] = res;
+    arr_vec[i].first = res;
+    arr_vec[i].second = verts;
   }
 
 };
 
 
-template <class Arrangement>
+template <class Arrangement_>
 class Intersection_merge
 {
+  typedef Arrangement_                                Arrangement_2;
+  typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
+  typedef std::pair<Arrangement_2 *,
+                    std::vector<Vertex_handle> *>     Arr_entry;
+
 public:
    void operator()(unsigned int i,
                    unsigned int j,
                    unsigned int jump,
-                   std::vector<Arrangement*>& arr_vec)                     
+                   std::vector<Arr_entry>& arr_vec)                     
   {
     if(i==j)
       return;
 
-    typename Arrangement::Traits_2*  tr = arr_vec[i]->get_traits();
-    Arrangement* res = new Arrangement(tr);
-    Gps_agg_op<Arrangement, Gps_bfs_intersection_visitor<Arrangement> >
-      agg_op(*res, *tr);
+    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->get_traits();
+    Arrangement_2              *res = new Arrangement_2 (tr);
+    std::vector<Vertex_handle> *verts = new std::vector<Vertex_handle>;
+
+    Gps_agg_op<Arrangement_2, Gps_bfs_intersection_visitor<Arrangement_2> >
+      agg_op(*res, *verts, *tr);
     agg_op.sweep_arrangements(i, j, jump, arr_vec);
 
     for(unsigned int count=i; count<=j; count+=jump)
     {
-      delete arr_vec[count];
+      delete (arr_vec[count].first);
+      delete (arr_vec[count].second);
     }
     
-    arr_vec[i] = res;
+    arr_vec[i].first = res;
+    arr_vec[i].second = verts;
   }
 };
 
-template <class Arrangement>
+template <class Arrangement_>
 class Xor_merge
 {
+  typedef Arrangement_                                Arrangement_2;
+  typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
+  typedef std::pair<Arrangement_2 *,
+                    std::vector<Vertex_handle> *>     Arr_entry;
+
 public:
    void operator()(unsigned int i,
                    unsigned int j,
                    unsigned int jump,
-                   std::vector<Arrangement*>& arr_vec)                     
+                   std::vector<Arr_entry>& arr_vec)                     
   {
     if(i==j)
       return;
 
-    typename Arrangement::Traits_2*  tr = arr_vec[i]->get_traits();
-    Arrangement* res = new Arrangement(tr);
-    Gps_agg_op<Arrangement, Gps_bfs_xor_visitor<Arrangement> >
-      agg_op(*res, *tr);
+    typename Arrangement_2::Traits_2*  tr = arr_vec[i].first->get_traits();
+    Arrangement_2              *res = new Arrangement_2(tr);
+    std::vector<Vertex_handle> *verts = new std::vector<Vertex_handle>;
+
+    Gps_agg_op<Arrangement_2, Gps_bfs_xor_visitor<Arrangement_2> >
+      agg_op(*res, *verts, *tr);
     agg_op.sweep_arrangements(i, j, jump, arr_vec);
 
     for(unsigned int count=i; count<=j; count+=jump)
     {
-      delete arr_vec[count];
+      delete (arr_vec[count].first);
+      delete (arr_vec[count].second);
     }
     
-    arr_vec[i] = res;
+    arr_vec[i].first = res;
+    arr_vec[i].second = verts;
   }
 };
 

@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$
+// $Id$ $Date$
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -21,7 +21,7 @@
 #define GSP_AGG_OP_H
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_meta_traits.h>
-#include <CGAL/Sweep_line_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_agg_op_sweep.h>
 #include <CGAL/Sweep_line_2/Arr_construction_curve.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
 
@@ -52,20 +52,28 @@ class Gps_agg_op
                                                       Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
                                                       Ccb_halfedge_circulator;
+
+  typedef std::pair<Arrangement_2 *,
+                    std::vector<Vertex_handle> *>     Arr_entry;
+
   typedef Arr_construction_curve<Meta_traits>         Subcurve; 
   typedef Arr_construction_event<Meta_traits,
                                  Subcurve,
-                                 Halfedge_handle>     Event;
+                                 Halfedge_handle>     Base_event;
+
+  typedef Indexed_event<Base_event>                   Event;
 
   typedef Gps_agg_op_visitor<Meta_traits,
                              Arrangement_2,
                              Event,
                              Subcurve>                Visitor;
 
-  typedef Sweep_line_2<Meta_traits,
-		                   Visitor,
-                       Subcurve,
-                       Event>                         Sweep_line_2;
+  typedef Gps_agg_op_sweep_line_2<Arrangement_2,
+                                  Meta_traits,
+                                  Visitor,
+                                  Subcurve,
+                                  Event>              Sweep_line_2;
+
   typedef Unique_hash_map<Halfedge_handle, 
                           unsigned int>               Edges_hash;
 
@@ -85,19 +93,18 @@ protected:
 public:
 
   /*! Constructor. */
-  Gps_agg_op (Arrangement_2& arr, Traits_2& tr) :
+  Gps_agg_op (Arrangement_2& arr, std::vector<Vertex_handle>& vert_vec,
+              Traits_2& tr) :
     m_arr (&arr),
     m_traits(new Meta_traits(tr)),
-    m_visitor (&arr, &m_edges_hash),
+    m_visitor (&arr, &m_edges_hash, &vert_vec),
     m_sweep_line (m_traits, &m_visitor)
   {}
-
- 
 
   void sweep_arrangements(unsigned int lower,
                           unsigned int upper,
                           unsigned int jump,
-                          std::vector<Arrangement_2*>&  arr_vec)
+                          std::vector<Arr_entry>&  arr_vec)
   {
     std::list<Meta_X_monotone_curve_2> curves_list;
 
@@ -106,14 +113,16 @@ public:
 
     unsigned int n_inf_pgn = 0; // number of infinte polygons (arrangement 
                                 // with a contained unbounded face
-    unsigned int n_pgn = 0; // number of polygons (arrangements)
-    for(unsigned int i=lower; i<=upper; i+=jump, ++n_pgn)
+    unsigned int n_pgn = 0;     // number of polygons (arrangements)
+    unsigned int i;
+
+    for (i = lower; i <= upper; i += jump, ++n_pgn)
     {
-      Arrangement_2* arr = arr_vec[i];
-      if(arr->unbounded_face()->contained())
+      Arrangement_2* arr = (arr_vec[i]).first;
+      if (arr->unbounded_face()->contained())
         ++n_inf_pgn;
 
-      Edge_iterator itr = arr->edges_begin();
+      Edge_iterator  itr = arr->edges_begin();
       for(; itr != arr->edges_end(); ++itr)
       {
         // take only relevant edges (which seperate between contained and 
@@ -129,7 +138,10 @@ public:
         curves_list.push_back(Meta_X_monotone_curve_2(he->curve(), cv_data));
       }
     }
-    m_sweep_line.sweep(curves_list.begin(), curves_list.end());
+
+    m_sweep_line.sweep (curves_list.begin(), curves_list.end(),
+                        lower, upper, jump,
+                        arr_vec);
 
     m_faces_hash[m_arr->unbounded_face()] = n_inf_pgn; 
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
@@ -139,48 +151,6 @@ public:
     visitor.after_scan(*m_arr);
   }
 
-  //Arrangement_2* create_clean_arr()
-  //{
-  //  typedef Gps_insertion_meta_traits<Arrangement_2>  Insert_meta_traits;
-  //  typedef typename Insert_meta_traits::Curve_data            Curve_data;
-  //  typedef Arr_construction_curve<Insert_meta_traits>         Subcurve; 
-  //  typedef Arr_construction_event<Insert_meta_traits,
-  //                                 Subcurve,
-  //                                 Halfedge_handle>            Event;
-  //  typedef typename Insert_meta_traits::X_monotone_curve_2    Ex_X_monotone_curve_2;
-  //  typedef Arr_construction_visitor<Insert_meta_traits,
-  //                                   Arrangement_2,
-  //                                   Event,
-  //                                   Subcurve>                 Insertion_visitor;
-  //  typedef Basic_sweep_line_2<Insert_meta_traits,
-		//                           Insertion_visitor,
-  //                             Subcurve,
-  //                             Event>                          Basic_sweep_line_2;
-
-  // 
-  //                                   
-  //  Arrangement_2* new_arr = new Arrangement_2();
-  //  std::vector<Ex_X_monotone_curve_2> xcurves_vec;
-  //  for(Edge_iterator itr = m_arr->edges_begin();
-  //      itr != m_arr->edges_end();
-  //      ++itr)
-  //  {
-  //    Halfedge_handle he = itr;
-  //    if(he->face()->contained() == he->twin()->face()->contained())
-  //      continue;  //redundent edge, continue.
-
-  //    if(he->direction() == LARGER)
-  //      he = he->twin();
-
-  //    xcurves_vec.push_back(Ex_X_monotone_curve_2(he->curve(), Curve_data(he)));
-  //  }
-
-  //  std::cout<<"number of edges in clear arr: " << xcurves_vec.size()<<"\n";
-  //  Insertion_visitor visitor(new_arr);
-  //  Basic_sweep_line_2  sl (&visitor);
-  //  sl.sweep(xcurves_vec.begin(), xcurves_vec.end());
-  //}
-       
   ~Gps_agg_op()
   {
     delete m_traits;

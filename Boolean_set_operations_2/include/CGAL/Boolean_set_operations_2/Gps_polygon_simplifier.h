@@ -62,15 +62,16 @@ class Gps_polygon_simplifier
                                  Subcurve,
                                  Halfedge_handle>     Event;
 
-  typedef Gps_agg_op_visitor<Meta_traits,
-                             Arrangement_2,
-                             Event,
-                             Subcurve>                Visitor;
+  typedef Gps_agg_op_base_visitor<Meta_traits,
+                                  Arrangement_2,
+                                  Event,
+                                  Subcurve>           Visitor;
 
   typedef Sweep_line_2<Meta_traits,
-		                   Visitor,
+                       Visitor,
                        Subcurve,
                        Event>                         Sweep_line_2;
+
   typedef Unique_hash_map<Halfedge_handle, 
                           unsigned int>               Edges_hash;
 
