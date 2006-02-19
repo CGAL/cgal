@@ -48,11 +48,8 @@
 // #include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
 
 // TODO :
-// - aim at obsoleting Filtered_exact, so that
-//   Exact_predicates_inexact_constructions_kernel becomes Filtered_kernel.
-// - Is Fixed_precision_nt now obsolete ?  If yes, deprecate it.
 // - add more predicates :
-//   - lexicographical comparisons
+//   - all lexicographical comparisons
 //   - left_turn (via generic adapter to orientation)
 //   - power_tests
 //   - others ?
@@ -73,24 +70,72 @@ class Static_filters : public K_base
 
 public:
 
-  typedef CommonKernelFunctors::Left_turn_2<Self>   Left_turn_2;
-  typedef CartesianKernelFunctors::Less_xy_2<Self>  Less_xy_2;
-  typedef CartesianKernelFunctors::Less_yx_2<Self>  Less_yx_2;
-
-  typedef CartesianKernelFunctors::Less_x_2<Self>   Less_x_2;
-  typedef CartesianKernelFunctors::Less_y_2<Self>   Less_y_2;
-
   typedef SF_Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
-
   typedef SF_Orientation_2<K_base>                  Orientation_2;
   typedef SF_Orientation_3<K_base>                  Orientation_3;
   typedef SF_Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef SF_Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
 
+  // The following do not require filtering as they only do
+  // comparisons.  We must be careful that *all* their function
+  // operators must not do any comparisons.
+  // In case we would like to avoid filtering only some of
+  // the function operators, we need to make a new functors.
+  typedef CommonKernelFunctors::Left_turn_2<Self>   Left_turn_2;
+
+  typedef CartesianKernelFunctors::Less_x_2<Self>   Less_x_2;
+  typedef CartesianKernelFunctors::Less_y_2<Self>   Less_y_2;
+  typedef CartesianKernelFunctors::Less_xy_2<Self>  Less_xy_2;
+  typedef CartesianKernelFunctors::Less_yx_2<Self>  Less_yx_2;
+
+  typedef CartesianKernelFunctors::Less_x_3<Self>   Less_x_3;
+  typedef CartesianKernelFunctors::Less_y_3<Self>   Less_y_3;
+  typedef CartesianKernelFunctors::Less_z_3<Self>   Less_z_3;
+  typedef CartesianKernelFunctors::Less_xy_3<Self>  Less_xy_3;
+  typedef CartesianKernelFunctors::Less_xyz_3<Self> Less_xyz_3;
+
+  typedef CartesianKernelFunctors::Compare_xy_2<Self>  Compare_xy_2;
+  typedef CartesianKernelFunctors::Compare_x_3<Self>   Compare_x_3;
+  typedef CartesianKernelFunctors::Compare_y_3<Self>   Compare_y_3;
+  typedef CartesianKernelFunctors::Compare_z_3<Self>   Compare_z_3;
+  typedef CartesianKernelFunctors::Compare_xy_3<Self>  Compare_xy_3;
+  typedef CartesianKernelFunctors::Compare_xyz_3<Self> Compare_xyz_3;
+
+  Compare_xy_2
+  compare_xy_2_object() const
+  { return Compare_xy_2(); }
+
+  Compare_x_3
+  compare_x_3_object() const
+  { return Compare_x_3(); }
+
+  Compare_y_3
+  compare_y_3_object() const
+  { return Compare_y_3(); }
+
+  Compare_z_3
+  compare_z_3_object() const
+  { return Compare_z_3(); }
+
+  Compare_xy_3
+  compare_xy_3_object() const
+  { return Compare_xy_3(); }
+
+  Compare_xyz_3
+  compare_xyz_3_object() const
+  { return Compare_xyz_3(); }
 
   Left_turn_2
   left_turn_2_object() const
   { return Left_turn_2(); }
+
+  Less_x_2
+  less_x_2_object() const
+  { return Less_x_2(); }
+
+  Less_y_2
+  less_y_2_object() const
+  { return Less_y_2(); }
 
   Less_xy_2
   less_xy_2_object() const
@@ -100,13 +145,25 @@ public:
   less_yx_2_object() const
   { return Less_yx_2(); }
 
-  Less_x_2
-  less_x_2_object() const
-  { return Less_x_2(); }
+  Less_x_3
+  less_x_3_object() const
+  { return Less_x_3(); }
 
-  Less_y_2
-  less_y_2_object() const
-  { return Less_y_2(); }
+  Less_y_3
+  less_y_3_object() const
+  { return Less_y_3(); }
+
+  Less_z_3
+  less_z_3_object() const
+  { return Less_z_3(); }
+
+  Less_xy_3
+  less_xy_3_object() const
+  { return Less_xy_3(); }
+
+  Less_xyz_3
+  less_xyz_3_object() const
+  { return Less_xyz_3(); }
 
   Compare_y_at_x_2
   compare_y_at_x_2_object() const
