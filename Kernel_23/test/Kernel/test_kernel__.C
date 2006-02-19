@@ -67,6 +67,6 @@ main()
   _test_fct_point_conversion( leda_integer(1) );
 #endif
   _test_cls_quotient( CGAL::MP_Float(1) );
-  _test_fct_point_conversion( CGAL::MP_Float(1) );
+  //_test_fct_point_conversion( CGAL::MP_Float(1) );
   return 0;
 }
