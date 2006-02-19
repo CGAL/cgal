@@ -121,7 +121,7 @@ test_basic_operators(const NT&)
 
 template < class NT >
 bool
-test_exact_division(const NT&, CGAL::Tag_true)
+test_division(const NT&, CGAL::Tag_true)
 {
   NT zero = 0;
   NT one  = 1;
@@ -134,7 +134,7 @@ test_exact_division(const NT&, CGAL::Tag_true)
 
 template < class NT >
 bool
-test_exact_division(const NT&, CGAL::Tag_false)
+test_division(const NT&, CGAL::Tag_false)
 {
   return true;
 }
@@ -195,11 +195,10 @@ test_mixed_operators(const NT& x)
   if (1 * zero != 0 ) return false;
 
   // Test division (only if supported).
-  typedef typename CGAL::Number_type_traits<NT>::Has_exact_division 
-                                                    Has_exact_division;
+  typedef typename CGAL::Number_type_traits<NT>::Has_division   Has_division;
 
-  Has_exact_division has_ex_div = Has_exact_division();
-  return test_exact_division (x, has_ex_div);
+  Has_division has_div = Has_division();
+  return test_division (x, has_div);
 }
 
 template < class NT >
