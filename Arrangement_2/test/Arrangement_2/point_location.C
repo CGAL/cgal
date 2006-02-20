@@ -430,20 +430,9 @@ int read_points(const char * points_filename, Points_list &plist)
   return 0;
 }
 
-int main (int argc, char * argv[])
+bool test(const char* curves_filename, const char* points_filename)
 {
-   //get arguments
-  if (argc < 3) {
-    std::cout << "Usage: " << argv[0] <<" curve_file pnt_file" << std::endl;
-    std::cout << "curve_file  - the input curves file" << std::endl;
-    std::cout << "pnt_file    - the input query points" << std::endl;
-    exit(-1);
-  }  
-
-  const char * curves_filename = argv[1];
-  const char * points_filename = argv[2];
-
-  //read curves and insert them into the arrangement 
+    //read curves and insert them into the arrangement 
 #ifdef SEGMENTS
   Segment_reader<Traits_2> reader;
 #elif defined (CONICS)
@@ -474,16 +463,40 @@ int main (int argc, char * argv[])
   //read points from file into list
   if (read_points(points_filename, plist))
   {
-    std::cerr << "ERROR in read_points."<<std::endl<<std::endl;
-    exit(-1);
+    std::cout << "ERROR in read_points."<<std::endl<<std::endl;
+    return (false);
   }
 
   //check point location of points
   if (check_point_location(arr, plist))
   {
-    std::cerr << "ERROR in check_point_location."<<std::endl<<std::endl;
+    std::cout << "ERROR in check_point_location."<<std::endl<<std::endl;
+    return (false);
+  }
+  return (true);
+}
+
+int main (int argc, char * argv[])
+{
+   //get arguments
+  if (argc < 3) {
+    std::cout << "Usage: " << argv[0] <<" curve_file pnt_file" << std::endl;
+    std::cout << "curve_file  - the input curves file" << std::endl;
+    std::cout << "pnt_file    - the input query points" << std::endl;
     exit(-1);
   }
-  
-  return (0);
+  int success = 0;
+  for(int i=1; i<argc; i+=2)
+  {
+    const char * curves_filename = argv[i];
+    const char * points_filename = argv[i+1];
+
+    if(!test(curves_filename, points_filename))
+    {
+      std::cout<<"ERROR : "<<argv[0]<<" "<<argv[i]<<" "<<argv[i+1]<<std::endl;
+      success = -1;
+    }
+  }
+
+  return (success);
 }
