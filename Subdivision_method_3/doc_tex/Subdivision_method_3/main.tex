@@ -354,11 +354,11 @@ void PQQ(Polyhedron& p, Mask<Polyhedron> mask, int depth)
 \end{ccExampleCode}
 
 \ccc{Polyhedron} is a model of \ccc{CGAL::Polyhedron_3}, which
-is a mesh data structure that can represent arbitrary 
-2-manifolds. \ccc{PQQ(...)} provides the process refining 
+is a generic mesh data structure of arbitrary 
+2-manifolds. \ccc{PQQ()} provides the process refining 
 the control polyhedron \ccc{p}. During the refinement, 
-\ccc{PQQ(...)}, the \emph{refinement host}, computes and assigns the 
-new points by communicating with the \ccc{mask}. 
+\ccc{PQQ()}, the \emph{refinement host}, computes and assigns the 
+new points by coorperating with the \ccc{mask}. 
 To implement Catmull-Clark subdivision,
 \ccc{Mask}, the \emph{geometry policy}, has to realize the geometry 
 masks of Catmull-Clark subdivision. 
@@ -372,7 +372,7 @@ To implement the geometry masks, we need to know how
 a mask communicates with the refinement host. The PQQ refinement 
 defines three stencils, and therefor three geometry masks
 are required for Catmull-Clark subdivision.
-The interfaces of the stencils are specified like 
+The interfaces of the stencils are specified as
 the policy class \ccc{PQQ_stencil_3}.
 
 \begin{ccExampleCode}
@@ -384,11 +384,11 @@ class PQQ_stencil_3 {
 };
 \end{ccExampleCode}
 
-Now we can compute the new points using the primitive handle
-passed into the policy functions, and assign the result to
+A mask computes the new point with the primitive handle
+passed into the policy function, and assigns the new point to
 \ccc{Point& pt}. Since our goal is to implement Catmull-Clark 
-subdivision, we need to implement the policy functions by its 
-geometry masks. 
+subdivision, we need to implement the policy functions realizing
+its geometry masks. 
 %For clarity, we rename the policy class 
 %to indicate geometry masks are in place.
 
@@ -444,16 +444,19 @@ class CatmullClark_mask_3 {
 };
 \end{ccExampleCode}
 
-Note types used in this example (such as \ccc{Point} and
-\ccc{Facet_handle}) are assumed to be type-defined within the
-\ccc{Polyhedron}. This \ccc{CatmullClark_mask_3} is designed
+The listed codes show the default implementation of Catmull-Clark 
+masks (and hence the Catmull-Clark subdivision function) 
+in \ccc{Subdivision_method_3}.
+This default implementation assumes the \emph{types} 
+(such as \ccc{Point} and \ccc{Facet_handle}) are defined 
+within the \ccc{Polyhedron}. It is designed
 to work on a \ccc{CGAL::Polyhedron_3} with the default CGAL 
 kernel geometry. You may need to rewrite the geometry computation
-in the code to match the kernel geometry of your application.
+to match the kernel geometry of your application.
 
-To excute the subdivision, you can 
+To invoke the subdivision method, you can 
 simply call the \ccc{PQQ(...)} with the Catmull-Clark mask
-we just designed.
+we just defined.
 
 \begin{ccExampleCode}
 PQQ(p, CatmullClark_mask_3<Polyhedron>(), depth);
@@ -467,21 +470,24 @@ PQQ(p, CatmullClark_mask_3<Polyhedron>(), depth);
 %\end{ccExampleCode}
 
 Loop, Doo-Sabin and $\sqrt{3}$ subdivisions are implemented 
-with a similar process: pick a refinement host and implement 
-the geometry policy. To develop your own subdivision with 
-\ccc{Subdivision_method_3}, the key is 
-to find the right combination of the host and the policy, 
-which are explained in the following sections.
+in a similar process: pick a refinement host and implement 
+the geometry policy. The key of developing your own 
+subdivision method is implementing the right combination of 
+the refinement host and the geometry policy. It is 
+explained in the next two sections.
 
 % +-------------------------------------------------------------+
 \section{Refinement Host}
 \label{secRefHost}
-\ccc{Subdivision_method_3} provides four refinement hosts of primal 
-quadrilateral quadrisection (PQQ), primal triangle 
-quadrisection (PTQ), dual quadrilateral 
-quadrisection (DQQ) and $\sqrt{3}$ triangulation, which 
-are used by Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ subdivision, 
-respectively. 
+A refinement host is a function with template parameters of 
+a polyhedron class and a geometry mask class. It refines
+the input polyhedron, and assigns new points by the geometry masks.
+\ccc{Subdivision_method_3} supports four refinement hosts:
+primal quadrilateral quadrisection (PQQ), 
+primal triangle quadrisection (PTQ), dual quadrilateral 
+quadrisection (DQQ) and $\sqrt{3}$ triangulation.
+They are respectively used by Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ 
+subdivision. 
 
 \begin{ccTexOnly}
   \begin{center}
@@ -502,20 +508,18 @@ respectively.
 
 
 \begin{ccExampleCode}
-template <class Polyhedron>
-class Subdivision_method_3 {
-  // S is the geometry policy realizing the geometry masks
-  template <template <typename> class S>
-  static void PQQ(Polyhedron& p, S<Polyhedron> rule, int step);
+namespace Subdivision_method_3 {
+  template <class Polyhedron, template <typename> class Mask>
+  void PQQ(Polyhedron& p, Mask<Polyhedron> mask, int step);
 
-  template <template <typename> class S>
-  static void PTQ(Polyhedron& p, S<Polyhedron> rule, int step);
+  template <class Polyhedron, template <typename> class Mask>
+  void PTQ(Polyhedron& p, Mask<Polyhedron> mask, int step);
 
-  template <template <typename> class S>
-  static void DQQ(Polyhedron& p, S<Polyhedron> rule, int step);
+  template <class Polyhedron, template <typename> class Mask>
+  void DQQ(Polyhedron& p, Mask<Polyhedron> mask, int step)
 
-  template <template <typename> class S>
-  static void Sqrt3(Polyhedron& p, S<Polyhedron> rule, int step);
+  template <class Polyhedron, template <typename> class Mask>
+  void Sqrt3(Polyhedron& p, Mask<Polyhedron> mask, int step)
 }
 \end{ccExampleCode}
 
@@ -528,59 +532,59 @@ class Subdivision_method_3 {
 %% order is implicitly used to determine the stencil of
 %% the visited node.
 
-Each refinement host is a template function of
-a polyhedron type and a policy type. The polyhedron type is
-a model of the \ccc{CGAL::Polyhedron_3} concept, and the
-policy type is a class with functions realizing the 
-geometry masks of a specific subdivision scheme.
+The polyhedron class is a specialization of the 
+\ccc{CGAL::Polyhedron_3}, and the mask is a policy 
+class realizing the geometry masks of the subdivision 
+method.
 
-Refinement hosts refine the polyhedron, maintain the stencils 
-(i.e.~the mapping between the control mesh and the refined mesh), 
-and call policy functions to compute and assign the new points. 
-In our implementation, refinements are done by applying a 
-sequence of connectivity operations (mostly Euler operations).
-The stencils are maintained by ordering nodes on the refined 
-polyhedron to match the sequence of the connectivity operations. 
-By matching the order, no flag to classify the stencils 
-is required to maintain and access the stencils.
-But to make the ordering trick work, the polyhedron type need 
-to use an internal storage with sequential ordering, such as
-a vector or a linked-list. A sequential ordered container inserts
-new entries at the end, and its iterator visits the entries in the 
-order of their insertion. Non-sequential structures such as 
+A refinement host refines the input polyhedron, maintains 
+the stencils (i.e.~the mapping between the control mesh 
+and the refined mesh), and calls the geometry mask 
+to compute the new points. 
+In \ccc{Subdivision_method_3}, refinements are implemented
+as a sequence of connectivity operations (mostly Euler operations).
+The order of the connectivity operations plays the key of the mapping 
+of the stencils. By matching the order, no flag in the primitives 
+is required to register the stencils, and it avoids the data 
+dependency of the refinement host on the polyhedron class. 
+To make the ordering trick work, the polyhedron class must 
+have a sequential container, such as a vector or a linked-list, as
+the internal storage. 
+%The polyhedron class always inserts
+%new primitives at the end, and 
+A sequential container guarantees that the iterators of the 
+polyhedron always traverse the primitives in the order of their 
+insertions. Non-sequential structures such as 
 tree or map do not provide the required ordering, and hence
 can not be used with \ccc{Subdivision_method_3}.
  
-Although \ccc{Subdivision_method_3} does not require flags or 
-tags to support the refinements and the stencil accesses, it
-still need to know how to compute and where to store the geometry
-data (in most cases, the points). \ccc{Subdivision_method_3} 
+Although \ccc{Subdivision_method_3} does not require flags
+to support the refinements and the stencils, it
+still needs to know how to compute and where to store the geometry
+data (i.e.~the points). \ccc{Subdivision_method_3} 
 expects that the typename \ccc{Point_3} is 
-defined in the scope of \ccc{Polyhedron} and \ccc{Polyhedron::Vertex}. 
-The refinement hosts use
-this point type as the geometry holder and delegate the geometry
-computation to the geometry policies. The geometry policy is 
-explained in next section. 
+defined in the geometry kernel of the polyhedron
+(i.e.~the \ccc{Polyhedron::Traits::Kernel}). 
+A point of the type \ccc{Point_3} is returned by the geometry 
+policy and is then assgined to the new vertex.  
+The geometry policy is explained in next section. 
 
-For details of the refinement algorithm and implementation, 
-interested users can refer to \cite{cgal:sp-mrbee-05}.
+For details of the refinement implementation, 
+interested users should refer to \cite{cgal:sp-mrbee-05}.
 
 % +-------------------------------------------------------------+
 \section{Geometry Policy}
 A geometry policy defines a set of geometry masks. 
-Each geometry mask is realized as a member function (i.e.~the 
-policy function) computing and assigning new points according 
-to a particular subdivision scheme. 
+Each geometry mask is realized as a member function
+computing the new point of the subdivision surface. 
 %The policy interface is defined with the refinement host. 
 
-Each policy function receives a primitive handle 
+Each geometry mask receives a primitive handle 
 (e.g.~\ccc{Halfedge_handle}) of the control polyhedron, 
-and the reference of the \ccc{Point} to the refined vertex. 
-In general, the implementation of the policy function 
-collects the neighbors of the primitive handle (i.e.~nodes 
-on the stencil), and (ideally) computes the new point 
-by a linear combination of the stencil 
-nodes and the mask (i.e.~the stencil weights).
+and returns a \ccc{Point_3} to the subdivided vertex. 
+The function collects the neighbors of the primitive handle 
+(i.e.~nodes on the stencil), and computes the new point 
+based on the neighbors and the mask (i.e.~the stencil weights).
 
 \begin{ccTexOnly}
   \begin{center}
@@ -595,20 +599,18 @@ nodes and the mask (i.e.~the stencil weights).
   </CENTER>
 \end{ccHtmlOnly}
 
-This picture shows the stencils and the geometry masks for
+This figure shows the geometry masks for
 Catmull-Clark subdivision. The weights shown here are unnormalized, 
 and $n$ is the valence of the vertex. The new points are 
 computed by the summation of the weighted points on their stencils.
-Following codes show an implementation of the geometry policy of 
-the facet-node. \ccc{Point} is a typedef to the \ccc{Point_3}
-in \ccc{Polyhedron}. Note when \ccc{n} is $4$, this policy computes 
-the facet-node shown in the above picture. The complete listing
-of the Catmull-Clark policy class is in the Section~\ref{secCC}.
+Following codes show an implementation of the geometry mask of 
+the facet-node. The complete listing
+of the Catmull-Clark geometry policy is in the Section~\ref{secCC}.
 
 \begin{ccExampleCode}
 template <class Polyhedron>
 class CatmullClark_mask_3 {
-  void facet_node(Facet_handle facet, Point& pt) {
+  void facet_node(Facet_handle facet, Point_3& pt) {
     Halfedge_around_facet_circulator hcir = facet->facet_begin();
     int n = 0;
     FT p[] = {0,0,0};
@@ -622,22 +624,27 @@ class CatmullClark_mask_3 {
 }
 \end{ccExampleCode}
 
-In this example, \ccc{Point} is assumed to be a \ccc{CGAL::Point_3}.
-But you are allowed to use any point \emph{type} as long as it is type
-defined as \ccc{Point_3} in your polyhedron class and vertex class.
+In this example, the computation is based on the assumption that
+the \ccc{Point_3} is the \ccc{CGAL::Point_3}. It is an assumption, 
+but not a restriction.
+You are allowed to use any point class as long as it is
+defined as the \ccc{Point_3} in your polyhedron.
 You may need to modify the geometry policy to support the computation
-and assignment of your specialized point. This extension is not unusual 
+and assignment of the specialized point. This extension is not unusual 
 in graphics applications. For example, you might want to subdivide the
-texture coordinates when you subdivide the polyhedron. The typename 
-\ccc{Point_3} is actually the attribute holder, including the 
-point of course, for the vertices.
+texture coordinates when you subdivide the polyhedron. 
+%The typename 
+%\ccc{Point_3} is actually the attribute holder, including the 
+%point of course, for the vertices.
 
-The PQQ refinement host requires three policy functions for 
+The PQQ refinement host requires three geometry masks for 
 polyhedrons without open boundaries: a vertex-node 
-stencil, an edge-node stencil, and a facet-node stencil. 
-To support polyhedrons with boundaries, a policy function
-for border vertices is also required. The border policy for
-Catmull-Clark is given below.
+mask, an edge-node mask, and a facet-node mask. 
+To support polyhedrons with boundaries, a border-node mask is 
+also required. The border-node mask for Catmull-Clark subdivision
+is listed below, where \ccc{ept} returns the new point splitting the
+edge and \ccc{vpt} returns the new point on the vertex pointed by
+the edge.  
 
 %% \begin{ccTexOnly}
 %%   \begin{center}
@@ -648,72 +655,81 @@ Catmull-Clark is given below.
 %% \end{ccTexOnly}
 
 \begin{ccExampleCode}
-  void border_node(Halfedge_handle edge, Point& ept, Point& vpt) {
-    Point& ep1 = edge->vertex()->point();
-    Point& ep2 = edge->opposite()->vertex()->point();
-    ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
+  void border_node(Halfedge_handle edge, Point_3& ept, Point_3& vpt) {
+    Point_3& ep1 = edge->vertex()->point();
+    Point_3& ep2 = edge->opposite()->vertex()->point();
+    ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
     Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
-    Point& vp1  = vcir->opposite()->vertex()->point();
-    Point& vp0  = vcir->vertex()->point();
-    Point& vp_1 = (--vcir)->opposite()->vertex()->point();
-    vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
+    Point_3& vp1  = vcir->opposite()->vertex()->point();
+    Point_3& vp0  = vcir->vertex()->point();
+    Point_3& vp_1 = (--vcir)->opposite()->vertex()->point();
+    vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
   }
 \end{ccExampleCode}
 
 
-The interfaces of a geometry policy need to match the stencils of 
-the refinement host. We have already seen the geometry masks for
-a PQQ-base subdivision, Catmull-Clark subdivision, which gives
-four stencil interfaces. The stencil interface the other three 
-refinement host, PTQ, DQQ and $\sqrt{3}$, are defined below 
-(PQQ as well).
+The mask interfaces of all four refinement hosts are listed below.
+Please note that \ccc{DQQ_stencil_3} and \ccc{Sqrt3_stencil_3} 
+do not have the border-node stencil because the refinement hosts of
+DQQ and $\sqrt{3}$ refinements do not support global boundaries in the 
+current release of \ccc{Subdivision_method_3}. Though this might be 
+changed in the future releases.
+
+%The interface of a geometry policy need to match the stencils of 
+%the refinement host. We have already seen the geometry masks for
+%a PQQ-base subdivision, Catmull-Clark subdivision. 
+%The mask interface the other three refinement hosts, PTQ, DQQ and 
+%$\sqrt{3}$, are defined below 
+%(PQQ as well).
 
 
 \begin{ccExampleCode}
 template <class Poly>
 class PQQ_stencil_3 {
-  void facet_node(Facet_handle, Point&) {};
-  void edge_node(Halfedge_handle, Point&) {};
-  void vertex_node(Vertex_handle, Point&) {};
+  void facet_node(Facet_handle, Point_3&);
+  void edge_node(Halfedge_handle, Point_3&);
+  void vertex_node(Vertex_handle, Point_3&);
 
-  void border_node(Halfedge_handle, Point&, Point&) {};
+  void border_node(Halfedge_handle, Point&, Point_3&);
 };
 
 template <class Poly>
 class PTQ_stencil_3 {
-  void edge_node(Halfedge_handle, Point&) {};
-  void vertex_node(Vertex_handle, Point&) {};
+  void edge_node(Halfedge_handle, Point_3&);
+  void vertex_node(Vertex_handle, Point_3&);
 
-  void border_node(Halfedge_handle, Point&, Point&) {};
+  void border_node(Halfedge_handle, Point&, Point_&);
 };
 
 template <class Poly>
 class DQQ_stencil_3 {
 public:
-  void corner_node(Halfedge_handle edge, Point& pt) {};
+  void corner_node(Halfedge_handle edge, Point_3& pt);
 };
 
 template <class Poly>
 class Sqrt3_stencil_3 {
 public:
-  void vertex_node(Vertex_handle vertex, Point& pt) {}
+  void vertex_node(Vertex_handle vertex, Point_3& pt);
 };
 \end{ccExampleCode}
 
-Note, only the \ccc{PQQ_stencil_3} and the \ccc{DQQ_stencil_3}
-are provided in \ccc{Subdivision_method_3}.
-The \ccc{PTQ_stencil_3} and the \ccc{Sqrt3_stencil_3} are given
-here for reference only. Both stencils are a subset of the
-\ccc{PQQ_stencil_3}, and you can just use the 
-\ccc{PQQ_stencil_3} to develop masks for PTQ or $\sqrt{3}$ 
-schemes. Our DQQ and $\sqrt{3}$ refinement hosts do
-not support global boundaries yet, hence the
-\ccc{DQQ_stencil_3} and the \ccc{Sqrt3_stencil_3} do not
-have the border-node policy (this might be changed in the 
-future release). 
+The source codes of \ccc{CatmullClark_mask_3}, \ccc{Loop_mask_3},
+\ccc{DooSabin_mask_3}, and \ccc{Sqrt3_mask_3} are
+the best source of learning the these stencil 
+interfaces. 
+
+
+%Note, only the \ccc{PQQ_stencil_3} and the \ccc{DQQ_stencil_3}
+%are provided in \ccc{Subdivision_method_3}.
+%The \ccc{PTQ_stencil_3} and the \ccc{Sqrt3_stencil_3} are given
+%here for reference only. Both stencils are a subset of the
+%\ccc{PQQ_stencil_3}, and you can just use the 
+%\ccc{PQQ_stencil_3} to develop masks for PTQ or $\sqrt{3}$ 
+%schemes. 
 
 
 %% \begin{ccExampleCode}
@@ -751,34 +767,42 @@ future release).
 
 
 % +------------------------------------------------------------------------+
-\section{Built-in subdivision schemes}
+\section{Subdivision methods}
 % +------------------------------------------------------------------------+
-Considering their popularity in graphics modeling, 
-Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ subdivisions are directly
-supported in \ccc{Subdivision_method_3}. 
-%Each of these subdivision schemes is realized by parameterizing 
-%the corresponding geometry policy to the .
+\ccc{Subdivision_method_3} directly supports 
+Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ subdivisions by specializing
+their respective refinemnt hosts.
 
 \begin{ccExampleCode}
-  static void CatmullClark_subdivision(Polyhedron& p, int step) {
-    PQQ(p, CatmullClark_stencil_3<Polyhedron>(), step);
+namespace Subdivision_method_3 {
+  template <class Polyhedron>
+  void CatmullClark_subdivision(Polyhedron& p, int step = 1) {
+    PQQ(p, CatmullClark_mask_3<Polyhedron>(), step);
   }
-  static void Loop_subdivision(Polyhedron& p, int step) {
-    PTQ(p, Loop_stencil_3<Polyhedron>() , step);
+
+  template <class Polyhedron>
+  void Loop_subdivision(Polyhedron& p, int step = 1) {
+    PTQ(p, Loop_mask_3<Polyhedron>() , step);
   }
-  static void DooSabin_subdivision(Polyhedron& p, int step) {
-    DQQ(p, DooSabin_stencil_3<Polyhedron>(), step);
+
+  template <class Polyhedron>
+  void DooSabin_subdivision(Polyhedron& p, int step = 1) {
+    DQQ(p, DooSabin_mask_3<Polyhedron>(), step);
   }
-  static void Sqrt3_subdivision(Polyhedron& p, int step) {
-    Sqrt3(p, Sqrt3_stencil_3<Polyhedron>(), step);
+
+  template <class Polyhedron>
+  void Sqrt3_subdivision(Polyhedron& p, int step = 1) {
+    Sqrt3(p, Sqrt3_mask_3<Polyhedron>(), step);
   }
+}
 \end{ccExampleCode}
 
-The following shows an example of \DS\ subdivision on a polyhedral mesh.
+The following example demonstrates the use of the \DS\ subdivision 
+on a polyhedral mesh.
 \ccIncludeExampleCode{Subdivision_method_3/DooSabin_subdivision.C}
 
 % +------------------------------------------------------------------------+
-\section{Customize subdivision schemes}
+\section{Subdivision customization}
 % +------------------------------------------------------------------------+
 One of the goals of \ccc{Subdivision_method_3} is 
 to provide a flexible platform
