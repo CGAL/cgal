@@ -301,6 +301,14 @@ Arrangement_2/test/Arrangement_2/data/point_location/curves/test06.txt -text
 Arrangement_2/test/Arrangement_2/data/point_location/curves/test07.txt -text
 Arrangement_2/test/Arrangement_2/data/point_location/curves/test08.txt -text
 Arrangement_2/test/Arrangement_2/data/point_location/curves/test09.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test02.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test03.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test04.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test05.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test06.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test07.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test08.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/queries/test09.txt -text
 Arrangement_2/test/Arrangement_2/data/test_construction/test45.txt -text
 Arrangement_2/test/Arrangement_2/data/test_construction/test46.txt -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
