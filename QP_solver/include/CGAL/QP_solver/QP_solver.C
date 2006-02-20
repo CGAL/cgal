@@ -958,61 +958,60 @@ ratio_test_2( Tag_false)
 	}
     }
     
-    // Idea here: At this point, the goal is to increase \mu_j until
-    // either we become optimal (\mu_j=0), or one of the variables in
-    // x^*_\hat{B} drops down to zero.
+    // Idea here: At this point, the goal is to increase \mu_j until either we
+    // become optimal (\mu_j=0), or one of the variables in x^*_\hat{B} drops
+    // down to zero.
     //
-    // Technically, we do this as follows here.  Eq. (2.11) in Sven's
-    // thesis holds, and by multlying it by $M_\hat{B}^{-1}$ we obtain
-    // an equation for \lambda and x^*_\hat{B}.  The interesting
-    // equation (the one for x^*_\hat{B}) looks more or less as
-    // follows:
+    // Technically, we do this as follows here.  Eq. (2.11) in Sven's thesis
+    // holds, and by multlying it by $M_\hat{B}^{-1}$ we obtain an equation
+    // for \lambda and x^*_\hat{B}.  The interesting equation (the one for
+    // x^*_\hat{B}) looks more or less as follows:
     //
     //    x(mu_j)      = x(0) + mu_j      q_it                          (1)
     //
     // where q_it is the vector from (2.12).  In paritcular, for
-    // mu_j=mu_j(t_1) (i.e., if we plug the value of mu_j at the
-    // beginning of this ratio step 2 into (1)) we have
+    // mu_j=mu_j(t_1) (i.e., if we plug the value of mu_j at the beginning of
+    // this ratio step 2 into (1)) we have
     //
     //    x(mu_j(t_1)) = x(0) + mu_j(t_1) q_it                          (2)
     //
-    // where x(mu_j(t_1)) is the current solution of the solver at
-    // this point (i.e., at the beginning of ratio step 2).
+    // where x(mu_j(t_1)) is the current solution of the solver at this point
+    // (i.e., at the beginning of ratio step 2).
     //
-    // By subtracting (2) from (1) we can thus eliminate the "unkown"
-    // x(0) (which is cheaper than computing it!):
+    // By subtracting (2) from (1) we can thus eliminate the "unkown" x(0)
+    // (which is cheaper than computing it):
     //
     //    x(mu_j) = x(mu_j(t_1)) + (mu_j-mu_j(t_1)) q_it
     //                             ----------------
     //                                  := delta
     //
-    // In order to compute for each variable x_k in \hat{B} the value
-    // of mu_j for which x_k(mu_j) = 0, we thus evaluate
+    // In order to compute for each variable x_k in \hat{B} the value of mu_j
+    // for which x_k(mu_j) = 0, we thus evaluate
     //
-    //                x(mu_j(t_1))
-    //    delta_k:= - ------------
-    //                    q_it
+    //                x(mu_j(t_1))_k
+    //    delta_k:= - --------------
+    //                    q_it_k
     //
-    // The first variable in \hat{B} that hits zero "in the future" is
-    // then the one whose delta_k equals
+    // The first variable in \hat{B} that hits zero "in the future" is then
+    // the one whose delta_k equals
     //
     //    delta_min:= min {delta_k | k in \hat{B} and (q_it)_k < 0 }
     //    
     // Below we are thus going to compute this minimum.  Once we have
-    // delta_min, we need to check whether we get optimal BEFORE a
-    // variable drwops to zero.  As delta = mu_j - mu_j(t_1), the
-    // latter is precisely the case if delta_min >= -mu_j(t_1).
+    // delta_min, we need to check whether we get optimal BEFORE a variable
+    // drops to zero.  As delta = mu_j - mu_j(t_1), the latter is precisely
+    // the case if delta_min >= -mu_j(t_1).
     //
-    // (Note: please forget the crap identitiy between (2.11) and
-    // (2.12); the notation is misleading.)
+    // (Note: please forget the crap identitiy between (2.11) and (2.12); the
+    // notation is misleading.)
     
-    // By definition delta_min >= 0, such that initializing
+    // fw: By definition delta_min >= 0, such that initializing
     // delta_min with -mu_j(t_1) has the desired effect that a basic variable
     // is leaving only if 0 <= delta_min < -mu_j(t_1).
-    
+    //
     // The only initialization of delta_min as fraction x_i/q_i that works is
-    // x_i=mu_j(t_1); q_i=-1; (see below). 
-    
+    // x_i=mu_j(t_1); q_i=-1; (see below).
+    //
     // Since mu_j(t_1) has been computed in ratio test step 1 we can
     // reuse it.
       
