@@ -31,7 +31,7 @@
     \setlength{\unitlength}{1mm}
     \begin{picture}(0,0)(0.0,0.0)
       \put (78,25){% textwidth = 156mm
-          \includegraphics[width=0.45\textwidth]{\FIGDIR/QTSub}
+          \includegraphics[width=0.5\textwidth]{\FIGDIR/teaser}
       }
     \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
 \end{ccTexOnly}
@@ -75,7 +75,7 @@ is designed to work on \ccc{CGAL::Polyhedron_3}
 
 \begin{ccHtmlOnly}
      <CENTER>
-         <img src="./FIG/QTSub.jpg" alt="QT subdivision on a rook model"><P>
+         <img src="./FIG/teaser.jpg" alt="Catmul-Clark subdivision"><P>
      </CENTER>
 \end{ccHtmlOnly}
 
@@ -105,10 +105,10 @@ in this work.
 %\emph{control mesh}. 
 %The refinements generate mesh points 
 %to be smoothed to approximate the limit surface.   
-The chapter teaser shows the process of a subdivision method on 
-a chess model. The coarse chess is repeatly refined by a pattern, 
-and more and more points are generated to approximate the 
-smooth chess.
+The chapter teaser shows the process of Catlmull-Clark 
+subdivision on a CAD model. The coarse mesh is repeatly refined 
+by a quadrisection pattern, and new points are generated 
+to approximate the smooth surface.
 
 Many refinement patterns are used in practice. 
 \ccc{Subdivision_method_3} supports the four most popular 

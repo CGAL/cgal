@@ -1341,14 +1341,11 @@ Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.pdf -text svneol=unset#un
 Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.eps -text
 Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.gif -text svneol=unset#unset
 Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.pdf -text svneol=unset#unset
+Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/CCSubdivision.png -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.eps -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.fig -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.gif -text svneol=unset#unset
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.pdf -text svneol=unset#unset
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/QTSub.eps -text
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/QTSub.fig -text
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/QTSub.jpg -text svneol=unset#unset
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/QTSub.pdf -text svneol=unset#unset
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/RefSchemes.eps -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/RefSchemes.fig -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/RefSchemes.gif -text svneol=unset#unset
@@ -1357,6 +1354,10 @@ Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.eps -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.fig -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.gif -text svneol=unset#unset
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.pdf -text svneol=unset#unset
+Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.eps -text
+Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.fig -text
+Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.jpg -text
+Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.pdf -text
 Subdivision_method_3/examples/Subdivision_method_3/data/corner.off -text
 Subdivision_method_3/examples/Subdivision_method_3/data/corner_tris_with_hole.off -text
 Subdivision_method_3/examples/Subdivision_method_3/data/corner_with_hole.off -text
