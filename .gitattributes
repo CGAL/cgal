@@ -995,6 +995,7 @@ Modifier/doc_tex/Modifier/idraw/modifier.eps -text
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#unset
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
 Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#unset
+Nef_2/debug.txt -text
 Nef_2/demo/Nef_2/nef_2.vcproj -text
 Nef_2/demo/Nef_2/xpms/basic.gif -text svneol=unset#unset
 Nef_2/demo/Nef_2/xpms/basic.pcx -text svneol=unset#unset
