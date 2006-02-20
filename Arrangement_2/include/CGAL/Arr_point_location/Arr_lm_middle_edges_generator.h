@@ -82,7 +82,7 @@ public:
   {
     PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
     
-    build_landmarks_set();
+    this->build_landmarks_set();
   }
   
   //Observer functions that should be empty, because they

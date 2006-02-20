@@ -32,7 +32,7 @@
 #include <CGAL/Arr_point_location/Arr_lm_halton_generator.h>
 
 #ifdef SEGMENTS
-#include <CGAL/Arr_triangulation_point_location.h>
+//#include <CGAL/Arr_triangulation_point_location.h>
 #include <CGAL/Arr_point_location/Arr_lm_middle_edges_generator.h>
 #endif
 
@@ -89,8 +89,8 @@ typedef CGAL::Arr_middle_edges_landmarks_generator<Arrangement_2>
                                                     Mide_lm_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Mide_lm_generator> 
                                                     Lm_mide_point_location;
-typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
-                                                    Trg_point_location;
+//typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
+//                                                    Trg_point_location;
 #endif
 // ===> Add new point location type here <===
 
@@ -103,7 +103,7 @@ typedef Objects_vector::iterator                          Object_iterator;
 // ===> Change the number of point-location startegies
 //      when a new point location is added. <===
 #ifdef SEGMENTS
-#define NUM_OF_POINT_LOCATION_STRATEGIES 9
+#define NUM_OF_POINT_LOCATION_STRATEGIES 8
 #else
 #define NUM_OF_POINT_LOCATION_STRATEGIES 7
 #endif
@@ -125,34 +125,34 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   //std::cout << "Walk construction took " << timer.time() <<std::endl;
 
   timer.reset(); timer.start();
-  Ric_point_location              ric_pl(arr);                    // 3
+  Ric_point_location              ric_pl(arr);                    // 2
   timer.stop(); 
   std::cout << "Ric construction took " << timer.time() <<std::endl;
   //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
-  Lm_point_location               lm_pl (arr);                    // 4
+  Lm_point_location               lm_pl (arr);                    // 3
   timer.stop(); 
   std::cout << "Lm (vert) construction took " << timer.time() <<std::endl;
   //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
   Random_lm_generator             random_g(arr);    
-  Lm_random_point_location        randon_lm_pl (arr, &random_g);  // 5
+  Lm_random_point_location        randon_lm_pl (arr, &random_g);  // 4
   timer.stop(); 
   std::cout << "Random lm construction took " << timer.time() <<std::endl;
   //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
   Grid_lm_generator               grid_g(arr);      
-  Lm_grid_point_location          grid_lm_pl (arr, &grid_g);      // 6
+  Lm_grid_point_location          grid_lm_pl (arr, &grid_g);      // 5
   timer.stop(); 
   std::cout << "Grid lm construction took " << timer.time() <<std::endl;
   //std::cout << ' ' << timer.time() ;
 
    timer.reset(); timer.start();
   Halton_lm_generator             halton_g(arr);
-  Lm_halton_point_location        halton_lm_pl (arr, &halton_g);  // 7
+  Lm_halton_point_location        halton_lm_pl (arr, &halton_g);  // 6
   timer.stop(); 
   std::cout << "Halton lm construction took " << timer.time() <<std::endl;
   //std::cout << ' ' << timer.time() ;
@@ -160,14 +160,14 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
 #ifdef SEGMENTS
   timer.reset(); timer.start();
   Mide_lm_generator               mide_g(arr);
-  Lm_mide_point_location          mide_lm_pl (arr, &mide_g);      // 8
+  Lm_mide_point_location          mide_lm_pl (arr, &mide_g);      // 7
   timer.stop(); 
   std::cout << "Mide lm construction took " << timer.time() <<std::endl;
 
-  timer.reset(); timer.start();
-  Trg_point_location              trg_pl(arr);                    // 2
-  timer.stop(); 
-  std::cout << "Trg construction took " << timer.time() <<std::endl;
+  //timer.reset(); timer.start();
+  //Trg_point_location              trg_pl(arr);                    // 8
+  //timer.stop(); 
+  //std::cout << "Trg construction took " << timer.time() <<std::endl;
 #endif
   std::cout<< std::endl;
 
@@ -285,17 +285,17 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); ///END
   std::cout << " location took " << timer.time() <<std::endl;
 
-  std::cout << "Triangulation" ;
-  timer.reset(); 
-  timer.start(); //START
-  for (piter = plist.begin(); piter != plist.end(); piter++ )
-  {
-    q = (*piter);
-    obj = trg_pl.locate (q);
-    objs[8].push_back(obj);
-  }
-  timer.stop(); ///END
-  std::cout << " location took " << timer.time() <<std::endl;
+  //std::cout << "Triangulation" ;
+  //timer.reset(); 
+  //timer.start(); //START
+  //for (piter = plist.begin(); piter != plist.end(); piter++ )
+  //{
+  //  q = (*piter);
+  //  obj = trg_pl.locate (q);
+  //  objs[8].push_back(obj);
+  //}
+  //timer.stop(); ///END
+  //std::cout << " location took " << timer.time() <<std::endl;
 #endif
   std::cout << std::endl;
 
