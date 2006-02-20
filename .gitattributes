@@ -1304,6 +1304,14 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
 Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset
 Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
+Spatial_sorting/description.txt -text
+Spatial_sorting/include/CGAL/BRIO_sort.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_2.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_3.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_base.h -text
+Spatial_sorting/maintainer -text
+Spatial_sorting/test/Spatial_sorting/test_brio.C -text
+Spatial_sorting/test/Spatial_sorting/test_hilbert.C -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_0.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_1.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_2.poly -text
