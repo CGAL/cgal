@@ -293,6 +293,14 @@ Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test02.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test03.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test04.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test05.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test06.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test07.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test08.txt -text
+Arrangement_2/test/Arrangement_2/data/point_location/curves/test09.txt -text
 Arrangement_2/test/Arrangement_2/data/test_construction/test45.txt -text
 Arrangement_2/test/Arrangement_2/data/test_construction/test46.txt -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
