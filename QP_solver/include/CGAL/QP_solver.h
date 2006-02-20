@@ -1874,7 +1874,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/QP_solver/Bounds.C>
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/QP_solver.C>
+#  include <CGAL/QP_solver/QP_solver.C>
 #endif
 
 #endif // CGAL_QP_SOLVER_H
