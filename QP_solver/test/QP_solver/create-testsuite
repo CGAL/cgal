@@ -86,6 +86,7 @@ function createTestsuite()
 	bailout "Internal error."
     fi
     LIST=""
+    MISSINGFILES=""
     for file in $TESTFILES
       do
       tmp=`basename "$file"`
@@ -102,6 +103,12 @@ function createTestsuite()
 	    LIST="${LIST} $level fe $f"
 	fi
 	tmp=`basename "$f"`
+	#echo "grep -q \"\\\"$tmp\\\"\" \"$dataDir/.svn/entries\""
+	if grep -q "name=\\\"$tmp\\\"" "$dataDir/.svn/entries"; then 
+	    echo -n ""; 
+	else 
+	    MISSINGFILES="$f $MISSINGFILES" 
+	fi
       done
     done
     if [ $oldFormat == "false" ]; then
@@ -129,7 +136,24 @@ function createTestsuite()
 	fi
     fi
     echo $LIST > ${dataFile}
-}
+
+    # check that all $dataDir/*.data_* files that are part of the CGAL 
+    # testsuite indeed exist in the SVN repository: 
+    if [ "x$MISSINGFILES" != "x" ]; then 
+	if [ "x$cgalOrNot" == "xCGAL" ]; then 
+	    echo "" 
+	    echo "WARNING: Some files in $dataDir/ that are part of the CGAL" 
+	    echo "testsuite do not exist in the repository. This means that if"
+	    echo "you commit test_suite_QP_solver.cin or test_solver.cin, the"
+            echo "testsuite will not succeed because files will be missing."
+	    echo "Please check them in. Here is the list of these files:" 
+	    echo "" 
+	    echo $MISSINGFILES 
+	    echo "" 
+	    warnUser=1 
+	    fi 
+	fi 
+ }
 
 # check arguments
 if [ "x$1" == "xCGAL" ]; then
