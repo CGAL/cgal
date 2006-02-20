@@ -118,60 +118,61 @@ compare_22_12( const FT& A1, const FT& B1, const FT& C1,
 compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
 	       const FT& A2p, const FT& B2p, const FT& C2p )
 {
-    // Compares the smaller root of (A1 X^2 + B1 X + C1)
-    //       to the smaller root of (A2 X^2 + B2 X + C2)
-    // It boils down to the code from the DFMT paper
-    // by multiplying A* and C* by 2, and B* by -1.
+  // Compares the smaller root of (A1 X^2 + B1 X + C1)
+  //       to the smaller root of (A2 X^2 + B2 X + C2)
+  // It boils down to the code from the DFMT paper
+  // by multiplying A* and C* by 2, and B* by -1.
+  
+  assert(A1p > 0 && A2p > 0);
 
-    assert(A1p > 0 && A2p > 0);
-
-    FT A1 = 2 * A1p;
-    FT C1 = 2 * C1p;
-    FT B1 = -B1p;
-
-    FT A2 = 2 * A2p;
-    FT C2 = 2 * C2p;
-    FT B2 = -B2p;
-
-    // Compares the smaller root of (A1 X^2 -2B1 X + C1)
-    //       to the smaller root of (A2 X^2 -2B2 X + C2)
-    FT J = calcJ(A1,B1,A2,B2);
-    FT K = calcK(A1,B1,C1,A2,B2,C2);
+  FT A1 = 2 * A1p;
+  FT C1 = 2 * C1p;
+  FT B1 = -B1p;
+  
+  FT A2 = 2 * A2p;
+  FT C2 = 2 * C2p;
+  FT B2 = -B2p;
     
-    if (J > 0){
-	if (K > 0) return SMALLER;  // l1 < l2
+  // Compares the smaller root of (A1 X^2 -2B1 X + C1)
+  //       to the smaller root of (A2 X^2 -2B2 X + C2)
+  FT J = calcJ(A1,B1,A2,B2);
+  FT K = calcK(A1,B1,C1,A2,B2,C2);
+  
+  if (J > 0)
+  {
+    if (K > 0) return SMALLER;  // l1 < l2
+    
+    FT I1= calcI(A1,B1,C1);
+    FT I2= calcI(A2,B2,C2);
+    FT D = calcD(A1,I1,A2,I2);
+    
+    if (D > 0) return SMALLER;  // l1 < l2
+    
+    FT Jp = calcJp(B1,C1,B2,C2);
+    
+    if (Jp < 0) return LARGER;   // l1 > l2
+    
+    FT P4 = calcP4(I1,I2,K);
 	
-	FT I1= calcI(A1,B1,C1);
-	FT I2= calcI(A2,B2,C2);
-	FT D = calcD(A1,I1,A2,I2);
+    return enum_cast<Comparison_result>(CGAL_NTS sign(P4));
+  } 
+  
+  // J <= 0
+  if (K > 0) return LARGER;   // l1 > l2
+  
+  FT I1= calcI(A1,B1,C1);
+  FT I2= calcI(A2,B2,C2);
+  FT D = calcD(A1,I1,A2,I2);
+  
+  if (D < 0) return LARGER;   // l1 > l2
+  
+  FT Jp = calcJp(B1,C1,B2,C2);
 
-	if (D > 0) return SMALLER;  // l1 < l2
-
-	FT Jp = calcJp(B1,C1,B2,C2);
-
-	if (Jp < 0) return LARGER;   // l1 > l2
-
-	FT P4 = calcP4(I1,I2,K);
+  if (Jp > 0) return SMALLER;  // l1 < l2
+  
+  FT P4 = calcP4(I1,I2,K);
 	
-        return enum_cast<Comparison_result>(CGAL_NTS sign(P4));
-    } 
-    else{ // J<0
-	if (K > 0) return LARGER;   // l1 > l2
-	
-	FT I1= calcI(A1,B1,C1);
-	FT I2= calcI(A2,B2,C2);
-	FT D = calcD(A1,I1,A2,I2);
-
-	if (D < 0) return LARGER;   // l1 > l2
-
-	FT Jp = calcJp(B1,C1,B2,C2);
-
-	if (Jp > 0) return SMALLER;  // l1 < l2
-
-	FT P4 = calcP4(I1,I2,K);
-	
-        return enum_cast<Comparison_result>(- CGAL_NTS sign(P4));
-    }
+  return enum_cast<Comparison_result>(- CGAL_NTS sign(P4));
 }
 
 /*2 2*/template <class FT> inline
