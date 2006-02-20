@@ -23,52 +23,6 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Rep_ >
-bool QP_solver<Rep_>::has_finite_lower_bound(int i) const
-  // Given an index of an original or slack variable, returns whether
-  // or not the variable has a finite lower bound.
-{
-  CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
-  return i>=qp_n || check_tag(Is_in_standard_form()) || *(qp_fl+i);
-}
-
-template < class Rep_ >
-bool QP_solver<Rep_>::has_finite_upper_bound(int i) const
-  // Given an index of an original or slack variable, returns whether
-  // or not the variable has a finite upper bound.
-{
-  CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
-  return i<qp_n && !check_tag(Is_in_standard_form()) && *(qp_fu+i);
-}
-
-template < class Rep_ >
-typename QP_solver<Rep_>::ET QP_solver<Rep_>::lower_bound(int i) const
-  // Given an index of an original or slack variable, returns its
-  // lower bound.
-{
-  CGAL_qpe_assertion(i < qp_n + static_cast<int>(slack_A.size()));
-  if (i < qp_n)                     // original variable?
-    if (check_tag(Is_in_standard_form()))
-      return et0;
-    else {
-      CGAL_qpe_assertion(has_finite_lower_bound(i));
-      return *(qp_l+i);
-    }
-  else                              // slack variable?
-    return et0;
-}
-
-template < class Rep_ >
-typename QP_solver<Rep_>::ET QP_solver<Rep_>::upper_bound(int i) const
-  // Given an index of an original or slack variable, returns its
-  // upper bound.
-{
-  CGAL_qpe_assertion(i < qp_n); // Note: slack variables cannot have
-				// finite upper bounds.
-  CGAL_qpe_assertion(has_finite_upper_bound(i));
-  return *(qp_u+i);
-}
-
-template < class Rep_ >
 bool QP_solver<Rep_>::is_valid()
 {
   CGAL_qpe_debug {
@@ -151,7 +105,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
        ++i_it, ++v_it)
     if (*i_it < qp_n) {                 // original variable?
       if (has_finite_lower_bound(*i_it) && (*v_it < lower_bound(*i_it) * d) ||
-	    has_finite_upper_bound(*i_it) && (*v_it > upper_bound(*i_it) * d))
+	  has_finite_upper_bound(*i_it) && (*v_it > upper_bound(*i_it) * d))
         return false;
     } else                              // artificial variable?
       if (*v_it < et0)
@@ -223,20 +177,22 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
 template < class Rep_ >
 bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 {
-  // Let us first see what exactly we need to check. Observe that the (normal)
-  // artificial variables are merely introduced to have an initial feasible
-  // solution: for each infeasible equality, we introduce an artificial so
-  // that the equality gets feasible. (Also, we need at least one artificial
-  // to have an initial basis, see comment in set_up_auxiliary_problem().)  So
-  // once an artificial drops to zero during phase I, we can argue as follows
-  // to prove that we can FIX THIS ARTIFICIAL TO ZERO FOREVER (and, as a
-  // consequence, do not need to price it in the sequel): since the artificial
-  // has dropped to zero, we now have a point that fulfills the artificial's
-  // equality with equality in the original problem, and so we can
-  // conceptually set up a NEW auxiliary problem, in which no artificial is
-  // needed for the equality in question.  This shows that there is no need to
-  // ever change an artificial again once it has come down to zero (and that
-  // is why we do not price artificials, see the pricing strategies).
+  // First, a note about artificials and how they need to be handled in this
+  // optimality check. Observe that the (normal) artificial variables are
+  // merely introduced to have an initial feasible solution: for each
+  // infeasible equality, we introduce an artificial so that the equality gets
+  // feasible. (Also, we need at least one artificial to have an initial
+  // basis, see comment in set_up_auxiliary_problem().)  So once an artificial
+  // drops to zero during phase I, we can argue as follows to prove that we
+  // can FIX THIS ARTIFICIAL TO ZERO FOREVER (and, as a consequence, do not
+  // need to price it in the sequel): since the artificial has dropped to
+  // zero, we now have a point that fulfills the artificial's equality with
+  // equality in the original problem, and so we can conceptually set up a NEW
+  // auxiliary problem, in which no artificial is needed for the equality in
+  // question.  This shows that there is no need to ever change an artificial
+  // again once it has come down to zero (and that is why we do not price
+  // artificials, see the pricing strategies, and why we do not need to
+  // consider it for the optimality check).
   //
   // Note that the same observation also applies to the special artificial
   // variable.  Once the latter drops to zero, we have found a point that
@@ -249,10 +205,10 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   //
   //                   minimize     aux_c^T x                    (C13)
   //                   subject to   aux_A x =  b,
-  //                                      x >= 0,
+  //                                l <= x <= u,
   //
   // where aux_A = [ A A_art a_spec A_s], is optimal.  Here, the column a_spec
-  // is only present in aux_A if the special artificial is (existent and)
+  // is only present in aux_A if the special artificial is existent and
   // nonzero; similarly, A_art only contains the columns of the (ordinary)
   // artificials that are nonzero.  Three cases may occur:
   //
@@ -289,8 +245,13 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   // |x|-vector \tau such that
   //
   //              \tau^T = c^T + \lambda^T aux_A,                (C2)
-  //              \tau^T x =  0,
-  //              \tau     >= 0.
+  //
+  //                      / >= 0   if x_j = l_j and l_j < u_j,
+  //              \tau_j  |  = 0   if l_j < x_j < u_j,           (C2')
+  //                      \ <= 0   if x_j = u_j and l_j < u_j,
+  //
+  // for all j. (This is Lemma 2 from documentation/UpperBounding.tex for the
+  // special case where D=0.)
   //
   // These are the conditions we are going to check below. (Notice here that x
   // is the vector containing the original variables, the nonzero artificial
@@ -309,9 +270,10 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   // does not count it.
   const int no_of_wo_vars = this->number_of_working_variables();
   vout5 << "number_of_working_variables: " << no_of_wo_vars << std::endl
-	<< "art_s_i: " << art_s_i << std::endl;
+	<< "art_s_i: " << art_s_i << std::endl << std::endl;
   
   // collect solution vector of auxiliary problem:
+  // todo: this calls for a nicer method to query the solution ...
   Values x_aux(no_of_wo_vars, et0);
   Value_const_iterator v_it = x_B_O.begin();
   for (Index_const_iterator i_it = B_O.begin();
@@ -382,16 +344,20 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
     }
   }
 
-  // check last two lines of (C2):
+  // check (C2'):
   for (int col = 0; col < no_of_wo_vars; ++col)
-    if (!is_artificial(col) || x_aux[col] != et0) // is it a slack or original
-						  // variable, or a nonzero
-						  // aritificial?
-      if (tau_aux[col] < et0 || 
-	  tau_aux[col] * x_aux[col] != et0)
+    if (!is_artificial(col) || x_aux[col] != et0) { // is it a slack or
+						    // original variable, or a
+						    // nonzero aritificial?
+      const Bnd l_bnd = lower_bnd(col) * d;
+      const Bnd u_bnd = upper_bnd(col) * d;
+      if (l_bnd == x_aux[col] && l_bnd < u_bnd && tau_aux[col] < et0 ||
+	  l_bnd  < x_aux[col] && u_bnd > x_aux[col] && tau_aux[col] != et0 ||
+	  u_bnd == x_aux[col] && l_bnd < u_bnd && tau_aux[col] > et0)
 	return false;
+    }
 
-  return true;     
+  return true;
 }
 
 template < class Rep_ >

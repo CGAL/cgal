@@ -1088,13 +1088,61 @@ public:
     
  private:
 
-private:
-  // (inefficient) access to bounds of variables:
+private:  // (inefficient) access to bounds of variables:
+  // Given an index of an original or slack variable, returns whether
+  // or not the variable has a finite lower bound.
   bool has_finite_lower_bound(int i) const;
+
+  // Given an index of an original or slack variable, returns whether
+  // or not the variable has a finite upper bound.
   bool has_finite_upper_bound(int i) const;
+
+  // Given an index of an original or slack variable, returns its
+  // lower bound.
   ET lower_bound(int i) const;
+
+  // Given an index of an original variable, returns its upper bound.
   ET upper_bound(int i) const;
 
+  struct Bnd { // (inefficient) utility class representing a possibly
+               // infinite bound
+    enum Kind { MINUS_INF=-1, FINITE=0, PLUS_INF=1 };
+    const Kind kind;      // whether the bound is finite or not
+    const ET value;       // bound's value in case it is finite
+
+    Bnd(bool is_upper, bool is_finite, const ET& value) 
+      : kind(is_upper? (is_finite? FINITE : PLUS_INF) :
+	               (is_finite? FINITE : MINUS_INF)),
+	value(value) {}
+    Bnd(Kind kind, const ET& value) : kind(kind), value(value) {}
+    
+    bool operator==(const ET& v) const { return kind == FINITE && value == v; }
+    bool operator==(const Bnd& b) const {
+      return kind == b.kind && (kind != FINITE || value == b.value);
+    }
+    bool operator!=(const Bnd& b) const { return !(*this == b); }
+    bool operator<(const ET& v) const { return kind == FINITE && value < v; }
+    bool operator<(const Bnd& b) const {
+      return kind < b.kind ||
+	(kind == b.kind && kind == FINITE && value < b.value);
+    }
+    bool operator<=(const Bnd& b) const { return *this < b || *this == b; }
+    bool operator>(const ET& v) const { return kind == FINITE && value > v; }
+    bool operator>(const Bnd& b)  const { return !(*this <= b); }
+    bool operator>=(const Bnd& b) const { return !(*this < b); }
+    
+    Bnd operator*(const ET& f) const { return Bnd(kind, value*f); }
+  };
+
+  // Given an index of an original, slack, or artificial variable,
+  // return its lower bound.
+  Bnd lower_bnd(int i) const;
+
+  // Given an index of an original, slack, or artificial variable,
+  // return its upper bound.
+  Bnd upper_bnd(int i) const;
+
+private:
   // validity checks:
   bool is_solution_feasible_for_auxiliary_problem();
   bool is_solution_optimal_for_auxiliary_problem();
@@ -1823,6 +1871,7 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/QP_solver/Unbounded_direction.h>
 #include <CGAL/QP_solver/NonstandardForm.C>
+#include <CGAL/QP_solver/Bounds.C>
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #  include <CGAL/QP_solver.C>
