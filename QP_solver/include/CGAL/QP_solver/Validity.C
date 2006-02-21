@@ -577,28 +577,22 @@ bool QP_solver<Rep_>::is_solution_unbounded()
 	has_finite_upper_bound(i) && w[i] < et0)
       return false;
 
-  // check unboundedness w^TDw=0 (C11):
-  Values Dw(qp_n, et0);     // Note: will be reused for (C12) below.
-  if (!check_tag(Is_linear())) {
-    for (int i=0; i<qp_n; ++i)
+  // check unboundedness 2 Dw=0 (C11):
+  if (!check_tag(Is_linear()))
+    for (int i=0; i<qp_n; ++i) {
+      ET sum = et0;
+      D_pairwise_accessor twoD(qp_D,i);
       for (int j=0; j<qp_n; ++j)
-	Dw[j] += w[i] * qp_D[j][i];
-    ET sum = et0;           // will hold w^T * Dw...
-    for (int i=0; i<qp_n; ++i)
-      sum += w[i] * Dw[i];
-    if (sum != et0)
-      return false;
-  }
-
-  // check unboundedness (c^T+2x^TD)w > 0 (C12):
-  ET m1 = et0, m2 = et0;
-  Value_const_iterator x_it = x_B_O.begin();
+	sum += w[j] * twoD(j);
+      if (sum != et0)
+	return false;
+    }
+  
+  // check unboundedness c^Tw > 0 (C12):
+  ET m = et0;
   for (int i=0; i<qp_n; ++i)
-    m1 += x[i] * Dw[i];
-  m1 *= et2;                  // Note: m1 contains 2x^TDw*d (and not 2x^TDw).
-  for (int i=0; i<qp_n; ++i)
-    m2 += w[i] * qp_c[i];
-  if (m2*d + m1 <= et0)
+    m += w[i] * qp_c[i];
+  if (m <= et0)
     return false;
 
   return true;

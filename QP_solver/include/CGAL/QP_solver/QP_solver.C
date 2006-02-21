@@ -2034,8 +2034,7 @@ z_replace_variable_original_by_original_upd_w_r(Tag_false )
     update_r_C_r_S_B__j_i(x_j, x_i);
     
     // replace r_beta_O(i) with w_j    
-    if (!check_tag(Is_linear())) // (kf.)
-      r_B_O[in_B[i]] = w[j];
+    r_B_O[in_B[i]] = w[j];
     
     // update x_O_v_i
     x_O_v_i[j] = BASIC;
@@ -2542,7 +2541,7 @@ check_r_C(Tag_false) const
 {
     Values                  t_r_C;
     // compute t_r_C from scratch
-    t_r_C.insert(t_r_C.end(), C.size(), et0);
+    t_r_C.resize(C.size(), et0);
     multiply__A_CxN_O(t_r_C.begin());
     
     // compare r_C and the from scratch computed t_r_C
@@ -2573,7 +2572,7 @@ check_r_S_B(Tag_false) const
 {
     Values                  t_r_S_B;
     // compute t_r_S_B from scratch
-    t_r_S_B.insert(t_r_S_B.end(), S_B.size(), et0);
+    t_r_S_B.resize(S_B.size(), et0);
     multiply__A_S_BxN_O(t_r_S_B.begin());
     
     // compare r_S_B and the from scratch computed t_r_S_B
@@ -2633,7 +2632,7 @@ check_r_B_O(Tag_false) const
 {
     Values                  t_r_B_O;
     // compute t_r_B_O from scratch
-    t_r_B_O.insert(t_r_B_O.end(), B_O.size(), et0);
+    t_r_B_O.resize(B_O.size(), et0);
     multiply__2D_B_OxN_O(t_r_B_O.begin());
     
     // compare r_B_O and the from scratch computed t_r_B_O
@@ -2664,7 +2663,7 @@ check_w(Tag_false) const
 {
     Values              t_w;
     // compute t_w from scratch
-    t_w.insert(t_w.end(), qp_n, et0);
+    t_w.resize( qp_n, et0);
     multiply__2D_OxN_O(t_w.begin());
     
     // compare w and the from scratch computed t_w
