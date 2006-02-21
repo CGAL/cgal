@@ -47,7 +47,7 @@ int main (int argc, char **argv)
 
   if (argc >= 3)
   {
-    simplify = (atoi (argv[2]) == 0);
+    simplify = (atoi (argv[2]) != 0);
 
     if (argc >= 4)
       group_size = atoi (argv[3]);
@@ -95,7 +95,7 @@ int main (int argc, char **argv)
   t_union.stop();
   std::cout << "Done! (" << t_union.time() << " seconds)." << std::endl;
 
-  std::cout << "The result:" 
+  std::cout << "The result:"
             << "  |V| = " << gps.arrangement().number_of_vertices()
             << "  |E| = " << gps.arrangement().number_of_edges()
             << "  |F| = " << gps.arrangement().number_of_faces() << std::endl;
