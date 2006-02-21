@@ -565,7 +565,10 @@ public :
   { return *this = new Lazy_exact_Mul<ET>(*this, b); }
 
   Self & operator/=(const Self& b)
-  { return *this = new Lazy_exact_Div<ET>(*this, b); }
+  {
+    CGAL_precondition(b != 0);
+    return *this = new Lazy_exact_Div<ET>(*this, b);
+  }
 
   // Mixed operators. (could be optimized ?)
   Self & operator+=(CGAL_int(ET) b)
@@ -578,7 +581,10 @@ public :
   { return *this = new Lazy_exact_Mul<ET>(*this, b); }
 
   Self & operator/=(CGAL_int(ET) b)
-  { return *this = new Lazy_exact_Div<ET>(*this, b); }
+  {
+    CGAL_precondition(b != 0);
+    return *this = new Lazy_exact_Div<ET>(*this, b);
+  }
 
   Self & operator+=(CGAL_double(ET) b)
   { return *this = new Lazy_exact_Add<ET>(*this, b); }
@@ -590,11 +596,15 @@ public :
   { return *this = new Lazy_exact_Mul<ET>(*this, b); }
 
   Self & operator/=(CGAL_double(ET) b)
-  { return *this = new Lazy_exact_Div<ET>(*this, b); }
+  {
+    CGAL_precondition(b != 0);
+    return *this = new Lazy_exact_Div<ET>(*this, b);
+  }
 
   // % kills filtering
   Self & operator%=(const Self& b)
   {
+    CGAL_precondition(b != 0);
     ET res = exact();
     res %= b.exact();
     return *this = Lazy_exact_nt<ET>(res);
@@ -602,6 +612,7 @@ public :
 
   Self & operator%=(int b)
   {
+    CGAL_precondition(b != 0);
     ET res = exact();
     res %= b;
     return *this = Lazy_exact_nt<ET>(res);
@@ -723,7 +734,10 @@ template <typename ET>
 inline
 Lazy_exact_nt<ET>
 operator%(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{ return Lazy_exact_nt<ET>(a) %= b; }
+{
+  CGAL_precondition(b != 0);
+  return Lazy_exact_nt<ET>(a) %= b;
+}
 
 
 
@@ -794,6 +808,7 @@ template <typename ET1, typename ET2>
 Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
 operator/(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
+  CGAL_precondition(b != 0);
   return new Lazy_exact_Div<typename Binary_operator_result<ET1, ET2>::type,
                             ET1, ET2>(a, b);
 }
@@ -867,7 +882,10 @@ template <typename ET>
 inline
 Lazy_exact_nt<ET>
 sqrt(const Lazy_exact_nt<ET> & a)
-{ return new Lazy_exact_Sqrt<ET>(a); }
+{
+  CGAL_precondition(a >= 0);
+  return new Lazy_exact_Sqrt<ET>(a);
+}
 
 template <typename ET>
 inline
