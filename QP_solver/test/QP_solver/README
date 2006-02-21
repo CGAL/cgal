@@ -8,8 +8,8 @@ THE CGAL TESTSUITE PROCESS
 
 The CGAL testsuite calls the QP_solver testsuite via
 
-  ./test_suite_QPE_solver < test_suite_QPE_solver.cin
-  ./test_solver < test_solver.cin
+  ./test_suite_QPE_solver < test_suite_QPE_solver.cin # runs .data_* files
+  ./test_solver < test_solver.cin          # runs MPS files, conservatively
 
 The latter files contain the filenames of individual test cases to be solved
 (so test_suite_QPE_solver.cin and test_solver.cin do NOT contain the test data
@@ -35,12 +35,14 @@ this is also true, but the directories
   testsuite-data/additional-not-for-cgal 
 
 contain additional .mps files that are NOT generated from mema's.)  If you
-open one of these mema-files, you can see that this is a simple ASCII file
+open a mema-file, you can see that this is a simple ASCII file
 consisting of Maple commands.  Executing a mema-file via
 
   maple mema-file-name
 
-creates the corresponding .data_* and .mps files in the data/ directory.
+creates the corresponding .data_* and .mps files in the data/ and
+testsuite-data/directories, respectively.
+
 Notice that every .data_* file has a corresponding mema-file and that some
 mema-files produce multiple .data_* files.  (The same holds for all .mps files
 except the ones in the above "additional-..." directories.)
