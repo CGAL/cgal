@@ -40,6 +40,8 @@ int main ()
 
         std::cout << "done." << std::endl;
 
+        std::vector<Point_2> v2 (v);
+
         std::cout << "            Sorting points...    " << std::flush;
 
         CGAL::brio_sort_2 (v.begin(), v.end());
@@ -48,7 +50,6 @@ int main ()
 
         std::cout << "            Checking...          " << std::flush;
 
-        std::vector<Point_2> v2 (v);
         std::sort (v.begin(),  v.end(),  K().less_xy_2_object());
         std::sort (v2.begin(), v2.end(), K().less_xy_2_object());
         assert (v == v2);
@@ -69,6 +70,8 @@ int main ()
 
         std::cout << "done." << std::endl;
 
+        std::vector<Point_3> v2 (v);
+
         std::cout << "            Sorting points...    " << std::flush;
 
         CGAL::brio_sort_3 (v.begin(), v.end());
@@ -77,7 +80,6 @@ int main ()
 
         std::cout << "            Checking...          " << std::flush;
 
-        std::vector<Point_3> v2 (v);
         std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
         std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
         assert (v == v2);
