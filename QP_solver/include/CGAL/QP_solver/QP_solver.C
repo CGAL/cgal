@@ -1126,7 +1126,7 @@ update_1( )
 	  CGAL_expensive_assertion(
             is_solution_feasible_for_auxiliary_problem());
 	} else {
-	  //CGAL_expensive_assertion(is_solution_feasible());
+	  CGAL_expensive_assertion(is_solution_feasible());
 	}
       else
 	vout2 << "(feasibility not checked in intermediate step)" << std::endl;
