@@ -35,7 +35,7 @@ class Filtered_function_node_constant: public Filtered_function_node<Traits>
         Filtered_function_node_constant(const typename P::Exact_function::NT& val,
         const typename P::Interval_function_converter &ifc): P(ifc) {
             P::set_interval_function(typename P::Interval_function(ifc.nt_converter()(val)));
-            P::set_exact_function(typename P::Exact_function(this->num_));
+            P::set_exact_function(typename P::Exact_function(val/*this->num_*/));
         }
 
         virtual ~Filtered_function_node_constant(){}

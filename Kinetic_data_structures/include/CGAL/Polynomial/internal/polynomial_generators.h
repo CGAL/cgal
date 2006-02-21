@@ -117,10 +117,10 @@ class Wilkinson_generator
         result_type operator()(unsigned int n) const
         {
             if ( n == 0 ) {
-                return result_type(0);
+	      return result_type(typename result_type::NT(0));
             }
 
-            result_type w(1);
+            result_type w(typename result_type::NT(1));
             typename  T::Construct_function cf = k_.construct_function_object();
 
             for (unsigned int i = 1; i <= n; i++) {

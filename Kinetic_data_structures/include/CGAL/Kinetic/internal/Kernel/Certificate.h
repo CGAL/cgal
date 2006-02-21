@@ -31,6 +31,8 @@ public:
   typedef typename Function_kernel_t::Function Function;
   typedef typename Function_kernel_t::Root Time;
   Certificate(const Function &f, const Function_kernel_t& fk, const Time &b, const Time &e): rs_(fk.root_stack_object(f, b, e)) {
+     typename Function_kernel_t::Lower_bound_root lbr= fk.lower_bound_root_object();
+     estimate_= lbr(f, b);
   }
   Certificate(){}
 
@@ -42,8 +44,16 @@ public:
   void pop_failure_time() {
     if (!rs_.empty()) rs_.pop();
   }
+
+  const typename Function_kernel_t::Root_stack& root_stack() const {
+    return rs_;
+  }
+  double lower_bound() const {
+    return estimate_;
+  }
 private:
   typename Function_kernel_t::Root_stack rs_;
+  double estimate_;
 };
 
 template <class KK_t, class Generator>

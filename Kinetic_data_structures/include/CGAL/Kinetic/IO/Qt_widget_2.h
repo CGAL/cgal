@@ -21,10 +21,10 @@
 #ifndef CGAL_KINETIC_QT_SIMULATOR_2_H_
 #define CGAL_KINETIC_QT_SIMULATOR_2_H_
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/IO/internal/KDS_GUI_base.h>
-#include <CGAL/Kinetic/IO/internal/KDS_Qt_window_2.h>
-#include <CGAL/Kinetic/IO/internal/KDS_Qt_widget_2_core.h>
-#include <CGAL/Kinetic/IO/internal/KDS_Qt_timer.h>
+#include <CGAL/Kinetic/IO/internal/GUI_base.h>
+#include <CGAL/Kinetic/IO/internal/Qt_window_2.h>
+#include <CGAL/Kinetic/IO/internal/Qt_widget_2_core.h>
+#include <CGAL/Kinetic/IO/internal/Qt_timer.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Multi_listener.h>
 #include <set>

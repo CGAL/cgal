@@ -182,7 +182,6 @@ public:
     for (typename std::list<Object_key>::const_iterator it
 	   = sorted_.begin(); *it != sorted_.back(); ++it) {
 #ifdef CGAL_KINETIC_CHECK_EXACTNESS
-      wrote_objects_=true;
       if (!less(*it, *next(it))) {
 	std::cerr << "ERROR: objects " << *it << " and "
 		  << *next(it) << " are out of order.\n";
@@ -191,6 +190,15 @@ public:
 	std::cerr << "ERROR: order is ";
 	write(std::cerr);
 	std::cerr << std::endl;
+
+	if (!wrote_objects_) {
+	  wrote_objects_=true;
+	  std::cerr << "Objects are: ";
+	  for (typename Traits::Active_objects_table::Keys_iterator kit= mot_listener_.notifier()->keys_begin();
+	       kit != mot_listener_.notifier()->keys_end(); ++kit){
+	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
+	  }
+	}
       }
 #else
       if (!less(*it, *next(it))) {

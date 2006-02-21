@@ -37,185 +37,192 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class NT >
 class Explicit_root
 {
-    typedef Explicit_root<NT> This;
-    public:
+  typedef Explicit_root<NT> This;
+public:
 
-//! Set it to an invalid value
-        Explicit_root(): value_(0), is_inf_(true) {
+  //! Set it to an invalid value
+  Explicit_root(): value_(0), is_inf_(true), mult_(0){
 #ifndef NDEBUG
-            approximation_=compute_double();
+    approximation_=compute_double();
 #endif
-        }
+  }
 
-        template <class CNT>
-        Explicit_root(const CNT &v): is_inf_(false) {
-// Protect CORE::Expr from initialization with doubles (that is what this whole class is about anyway).
-            if (std::numeric_limits<CNT>::has_infinity && CGAL::abs(v) == std::numeric_limits<CNT>::infinity()) {
-                is_inf_=true;
-                if (v > 0) value_=1;
-                else value_=1;
-            }
-            else {
-                value_= NT(v);
-            }
+  template <class CNT>
+  Explicit_root(const CNT &v, int mult=1): is_inf_(false), mult_(mult) {
+    // Protect CORE::Expr from initialization with doubles (that is what this whole class is about anyway).
+    if (std::numeric_limits<CNT>::has_infinity && CGAL::abs(v) == std::numeric_limits<CNT>::infinity()) {
+      is_inf_=true;
+      if (v > 0) value_=1;
+      else value_=1;
+    }
+    else {
+      value_= NT(v);
+    }
 #ifndef NDEBUG
-            approximation_=compute_double();
+    approximation_=compute_double();
 #endif
-        }
+  }
 
-//! Should be protected
-        double compute_double() const
-        {
-            if (is_inf_) {
-                if (CGAL::sign(value_)==CGAL::POSITIVE) {
-                    return infinity<double>();
-                }
-                else {
-                    return -infinity<double>();
-                }
-            }
-            return CGAL_POLYNOMIAL_TO_DOUBLE(value_);
-        }
+  //! Should be protected
+  double compute_double() const
+  {
+    if (is_inf_) {
+      if (CGAL::sign(value_)==CGAL::POSITIVE) {
+	return infinity<double>();
+      }
+      else {
+	return -infinity<double>();
+      }
+    }
+    return CGAL_POLYNOMIAL_TO_DOUBLE(value_);
+  }
 
-        bool is_even_multiplicity() const
-        {
-            return false;
-        }
+  bool is_even_multiplicity() const
+  {
+    return mult_%2==0;
+  }
 
-//! Do not use, should be protected
-        std::pair<double, double> compute_interval() const
-        {
-            if (is_inf_) {
-                return std::pair<double, double>(compute_double(), compute_double());
-            }
-            return CGAL_POLYNOMIAL_TO_INTERVAL(value_);
-        }
+  //! Do not use, should be protected
+  std::pair<double, double> compute_interval() const
+  {
+    if (is_inf_) {
+      return std::pair<double, double>(compute_double(), compute_double());
+    }
+    return CGAL_POLYNOMIAL_TO_INTERVAL(value_);
+  }
 
-        typedef NT Representation;
-        const Representation &representation() const
-        {
-            return value_;
-        }
+  typedef NT Representation;
+  const Representation &representation() const
+  {
+    return value_;
+  }
 
-        template <class OS>
-            void write(OS &out) const
-        {
-            if (is_inf_) {
-                if (CGAL::sign(value_)==CGAL::POSITIVE) out << "inf";
-                else out << "-inf";
-            }
-            else {
-                out << value_;
-            }
-        }
+  const Representation &to_rational() const
+  {
+    return value_;
+  }
 
-        std::pair<NT, NT> isolating_interval() const
-        {
-            return std::pair<NT, NT>(value_, value_);
-        }
+  template <class OS>
+  void write(OS &out) const
+  {
+    if (is_inf_) {
+      if (CGAL::sign(value_)==CGAL::POSITIVE) out << "inf";
+      else out << "-inf";
+    }
+    else {
+      out << value_;
+    }
+  }
 
-        bool operator<(const This &o) const
-        {
-            return compare(*this, o)==-1;
-        }
-        bool operator>(const This &o) const
-        {
-            return compare(*this, o) ==1;
-        }
-        bool operator<=(const This &o) const
-        {
-            return compare(*this, o)!= 1;
-        }
-        bool operator>=(const This &o) const
-        {
-            return compare(*this, o) != -1;
-        }
-        bool operator==(const This &o) const
-        {
-            return compare(*this, o) ==0;
-        }
-        bool operator!=(const This &o) const
-        {
-            return compare(*this, o) !=0;
-        }
-        This operator-() const
-        {
-            return This(-value_, is_inf_);
-        }
+  std::pair<NT, NT> isolating_interval() const
+  {
+    return std::pair<NT, NT>(value_, value_);
+  }
 
-        int multiplicity() const
-        {
-            if (is_inf_) return -1;
-            else return 1;
-        }
+  bool operator<(const This &o) const
+  {
+    return compare(*this, o)==-1;
+  }
+  bool operator>(const This &o) const
+  {
+    return compare(*this, o) ==1;
+  }
+  bool operator<=(const This &o) const
+  {
+    return compare(*this, o)!= 1;
+  }
+  bool operator>=(const This &o) const
+  {
+    return compare(*this, o) != -1;
+  }
+  bool operator==(const This &o) const
+  {
+    return compare(*this, o) ==0;
+  }
+  bool operator!=(const This &o) const
+  {
+    return compare(*this, o) !=0;
+  }
+  This operator-() const
+  {
+    return This(-value_, is_inf_);
+  }
 
-/*void write_type() const {
-  std::cout << "general" << std::endl;
-  }*/
+  int multiplicity() const
+  {
+    return mult_;
+  }
 
-        NT to_rational() const
-        {
-            return value_;
-        }
-        bool is_rational() const
-        {
-// not really true
-            return true;
-        }
-        static This infinity_rep() {
-            return This(1, true);
-        }
-    protected:
+  /*void write_type() const {
+    std::cout << "general" << std::endl;
+    }*/
 
-        static int compare(const This &a, const This &b) {
-            if (a.is_inf_ && b.is_inf_) {
-                if (CGAL::sign(a.value_)== CGAL::sign(b.value_)) return 0;
-                else if (CGAL::sign(a.value_) == CGAL::POSITIVE ) return 1;
-                else return -1;
-            } else if (b.is_inf_) return -compare(b, a);
-            else if (a.is_inf_) {
-                CGAL_assertion(!b.is_inf_);
-                if (CGAL::sign(a.value_)== CGAL::NEGATIVE) return -1;
-                else return 1;
-            }
-            else {
-                if (a.value_ > b.value_) return 1;
-                else if (b.value_ == a.value_) return 0;
-                else return -1;
-            }
-        }
+ 
+  bool is_rational() const
+  {
+    // not really true
+    return true;
+  }
+  static This infinity_rep() {
+    return This(NT(1), true);
+  }
+protected:
 
-        Explicit_root(const NT &nt, bool isinf): value_(nt), is_inf_(isinf) {
+  static int compare(const This &a, const This &b) {
+    int ret=0;
+    if (a.is_inf_ && b.is_inf_) {
+      if (CGAL::sign(a.value_)== CGAL::sign(b.value_)) ret= 0;
+      else if (CGAL::sign(a.value_) == CGAL::POSITIVE ) ret= 1;
+      else ret= -1;
+    } else if (b.is_inf_) {
+      CGAL_assertion(!a.is_inf_);
+      if (CGAL::sign(b.value_)== CGAL::NEGATIVE) ret= 1;
+      else ret= -1;
+    } else if (a.is_inf_) {
+      CGAL_assertion(!b.is_inf_);
+      if (CGAL::sign(a.value_)== CGAL::NEGATIVE) ret= -1;
+      else ret= 1;
+    }
+    else {
+      if (a.value_ > b.value_) ret= 1;
+      else if (b.value_ == a.value_) ret= 0;
+      else ret= -1;
+    }
+    return ret;
+  }
+
+  Explicit_root(const NT &nt, bool isinf): value_(nt), is_inf_(isinf), mult_(1) {
 #ifndef NDEBUG
-            approximation_=compute_double();
+    approximation_=compute_double();
 #endif
-        }
+  }
 
-        NT value_;
-        bool is_inf_;
+  NT value_;
+  bool is_inf_;
+  int mult_;
 #ifndef NDEBUG
-        double approximation_;
+  double approximation_;
 #endif
 };
 
 template <class NT>
 std::ostream &operator<<(std::ostream &out, const Explicit_root<NT> &r)
 {
-    r.write(out);
-    return out;
+  r.write(out);
+  return out;
 }
 
 
 /*
-template <class NT>
-double to_double(const Explicit_root<NT> &r){
+  template <class NT>
+  double to_double(const Explicit_root<NT> &r){
   return r.to_double();
-}
+  }
 
-template <class NT>
-std::pair<double, double>  to_interval(const Explicit_root<NT> &r){
+  template <class NT>
+  std::pair<double, double>  to_interval(const Explicit_root<NT> &r){
   return r.to_interval();
-}
+  }
 */
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
@@ -225,14 +232,14 @@ CGAL_BEGIN_NAMESPACE
 template <class NT>
 double to_double(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<NT> &r)
 {
-    return r.compute_double();
+  return r.compute_double();
 }
 
 
 template <class NT>
 std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<NT> &r)
 {
-    return r.compute_interval();
+  return r.compute_interval();
 }
 
 
@@ -240,16 +247,16 @@ CGAL_END_NAMESPACE
 
 namespace std
 {
-    template <class Tr>
-        struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> >: public numeric_limits<Tr>
-    {
-        typedef numeric_limits<Tr> P;
-        typedef CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> T;
-        static const bool is_specialized = true;
-        static T min() throw() {return T(P::min());}
-        static T max() throw() {return T(P::max());}
-        static const bool has_infinity=true;
-        static T infinity() throw() {return T::infinity_rep();}
-    };
+  template <class Tr>
+  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> >: public numeric_limits<Tr>
+  {
+    typedef numeric_limits<Tr> P;
+    typedef CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> T;
+    static const bool is_specialized = true;
+    static T min() throw() {return T(P::min());}
+    static T max() throw() {return T(P::max());}
+    static const bool has_infinity=true;
+    static T infinity() throw() {return T::infinity_rep();}
+  };
 };
 #endif

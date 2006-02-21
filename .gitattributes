@@ -562,6 +562,8 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8.crop.gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8.crop.png -text svneol=unset#unset
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.pdf -text svneol=unset#unset
+Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Isolating_interval.h -text
+Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Lower_bound_root.h -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Maintenance/svn_client/config -text

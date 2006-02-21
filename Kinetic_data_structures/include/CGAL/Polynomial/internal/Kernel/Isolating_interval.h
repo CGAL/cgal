@@ -12,18 +12,19 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/To_rational.h $
+// $Id: To_rational.h 28489 2006-02-14 10:08:15Z lsaboret $ $Date: 2006-02-14 02:08:15 -0800 (Tue, 14 Feb 2006) $
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_POLYNOMIAL_INTERNAL_TO_RATIONAL_H
-#define CGAL_POLYNOMIAL_INTERNAL_TO_RATIONAL_H
+#ifndef CGAL_POLYNOMIAL_INTERNAL_TO_ISOLATING_INTERVAL_H
+#define CGAL_POLYNOMIAL_INTERNAL_TO_ISOLATING_INTERVAL_H
 
 #include <CGAL/Polynomial/basic.h>
 
 #ifdef CGAL_POLYNOMIAL_USE_CORE
+#include <CGAL/Polynomial/internal/Explicit_root.h>
 #include <CORE/BigRat.h>
 #include <CORE/Expr.h>
 #endif
@@ -35,27 +36,30 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
   This has specializations for Explicit_roots.
 */
 template <class K>
-class To_rational
+class To_isolating_interval
 {
 public:
-  To_rational(){  }
+  To_isolating_interval(){  }
 
-  typedef typename K::NT result_type;
+  typedef typename std::pair<typename K::NT, typename K::NT> result_type;
   typedef typename K::Root argument_type;
 
   template <class T>
-  result_type operator()(const T &v) const
+  const result_type& operator()(const T &v) const
   {
-    return v.to_rational();
+    return v.isolating_interval();
   }
+
 #ifdef CGAL_POLYNOMIAL_USE_CORE
-  CORE::BigRat operator()(const Explicit_root<CORE::Expr> &r) const {
-    return r.representation().BigRatValue();
+  result_type operator()(const Explicit_root<CORE::Expr> &r) const {
+    double a,b;
+    r.representation().doubleInterval(a,b); // do something
+    return std::make_pair(typename K::NT(a), typename K::NT(b));
   }
 #endif
   double operator()(double v) const
   {
-    return v;
+    return std::make_pair(v,v);
   }
 };
 

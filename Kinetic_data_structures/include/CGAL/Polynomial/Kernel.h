@@ -25,6 +25,7 @@
 #include <CGAL/Polynomial/internal/Kernel/Multiplicity.h>
 #include <CGAL/Polynomial/internal/Kernel/Rational_between_roots.h>
 #include <CGAL/Polynomial/internal/Kernel/Root_container.h>
+#include <CGAL/Polynomial/internal/Kernel/Isolating_interval.h>
 #include <CGAL/Polynomial/internal/Kernel/Sign_above.h>
 #include <CGAL/Polynomial/internal/Kernel/Sign_at.h>
 #include <CGAL/Polynomial/internal/Kernel/Sign_below.h>
@@ -33,6 +34,7 @@
 #include <CGAL/Polynomial/internal/Kernel/Is_rational.h>
 #include <CGAL/Polynomial/internal/Kernel/To_rational.h>
 #include <CGAL/Polynomial/internal/Rational/Rational_traits_base.h>
+#include <CGAL/Polynomial/internal/Kernel/Lower_bound_root.h>
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
@@ -143,11 +145,21 @@ public:
     return Is_rational();
   }
 
+  typedef internal::Lower_bound_root<This> Lower_bound_root;
+  Lower_bound_root lower_bound_root_object() const {
+    return Lower_bound_root();
+  }
+
   //! Return the rational value of the root, assuming it is rational
   typedef internal::To_rational<This> To_rational;
   To_rational to_rational_object() const
   {
     return To_rational();
+  }
+
+  typedef internal::To_isolating_interval<This> To_isolating_interval;
+  To_isolating_interval to_isolating_interval_object() const {
+    return To_isolating_interval();
   }
 
   //! Return a container for roots in an interval

@@ -52,7 +52,9 @@ result_type operator()(It b,
         const argument_type &a3=0) const
     {
         argument_type v[] = {a0, a1, a2, a3};
-        return result_type(v, v+4);
+	int size=4;
+	while (v[size-1]==argument_type(0)) --size;
+        return result_type(v, v+size);
     }
 
 //! construct high degree polynomials
@@ -66,7 +68,9 @@ result_type operator()(It b,
         const argument_type &a7=0) const
     {
         argument_type v[] = {a0, a1, a2, a3, a4, a5, a6, a7};
-        return result_type(v, v+8);
+	int size=8;
+	while (v[size-1]==argument_type(0)) --size;
+        return result_type(v, v+size);
     }
 
 //! construct high degree polynomials
@@ -95,7 +99,9 @@ result_type operator()(It b,
             a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
             a11, a12, a13, a14, a15, a16, a17, a18, a19
         };
-        return result_type(v, v+20);
+	int size=20;
+	while (v[size-1]==argument_type(0)) --size;
+        return result_type(v, v+size);
     }
 };
 

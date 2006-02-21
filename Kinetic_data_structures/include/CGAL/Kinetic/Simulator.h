@@ -29,6 +29,12 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
+#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+#define CGAL_KINETIC_SIMULATOR_AUDITING
+//#warning auditing kds
+#endif
+
+
 //! The simulator
 /*!  The simulator is responsible for maintaining the event queue and
   processing events in the proper order. It takes a PolynomialKernel
@@ -135,7 +141,7 @@ public:
 
   //! Create a simulator passing the start time and the end time.
   Simulator(const Time &start_time=Time(0.0),
-            const Time &end_time= internal::infinity_or_max(Time())):queue_(start_time, end_time),
+            const Time &end_time= internal::infinity_or_max(Time())):queue_(start_time, end_time, kernel_, 100),
 								     cur_time_(start_time),
 								     end_time_(end_time),
 								     last_event_time_(-internal::infinity_or_max(Time())),
@@ -143,10 +149,11 @@ public:
 								     ir_(kernel_.is_rational_object()),
 								     tr_(kernel_.to_rational_object()) {
     number_of_events_=0;
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+#ifdef CGAL_KINETIC_SIMULATOR_AUDITING
     // make it less than the current time.
-    std::pair<double, double> ival= to_interval(cur_time_);
-    audit_time_=NT(ival.first-10.0);
+    //std::pair<double, double> ival= to_interval(cur_time_);
+    //audit_time_=NT(ival.first-10.0);
+    audit_time_= -internal::infinity_or_max(NT());
 #endif
   };
 
@@ -196,20 +203,19 @@ public:
   */
   void set_current_time(const Time &t) {
     CGAL_precondition(t >=cur_time_);
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+    /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
     if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();
     }
-    cur_time_=audit_time_;
-#endif
+    #endif*/
     while (next_event_time() < t && !queue_.empty()) {
       process_next_event();
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+      /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
       if (current_time() < audit_time_ && t >= audit_time_) {
 	audit_all_kdss();
       }
       cur_time_=audit_time_;
-#endif
+      #endif*/
     }
     cur_time_=std::min(t, end_time());
   }
@@ -264,9 +270,10 @@ public:
   const NT& audit_time() const
   {
     CGAL_precondition(has_audit_time());
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+#ifdef CGAL_KINETIC_SIMULATOR_AUDITING
     return audit_time_;
 #else
+    CGAL_precondition(0);
     static NT z(0);
     return z;
 #endif
@@ -411,6 +418,8 @@ public:
   template <class Event_type>
   const Event_type& event(const Event_key &k) const
   {
+    CGAL_precondition(k);
+    CGAL_precondition(k != null_event());
     CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
     return queue_.template get<Event_type>(k);
   }
@@ -424,7 +433,7 @@ public:
   //! Access the time of an event
   const Time &event_time(const Event_key &k) const
   {
-    return queue_.time(k);
+    return queue_.priority(k);
   }
 
   //! Change an event to have a new object
@@ -463,11 +472,11 @@ public:
   */
   void set_current_event_number(unsigned int i) {
     while (!queue_.empty() && number_of_events_ < i) {
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+      /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
       if (current_time() < audit_time_ && next_event_time() >= audit_time_) {
 	audit_all_kdss();
       }
-#endif
+      #endif*/
       process_next_event();
     }
   }
@@ -512,13 +521,15 @@ protected:
       }*/
 
     ++number_of_events_;
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+#ifdef CGAL_KINETIC_SIMULATOR_AUDITING
     if (cur_time_ != next_event_time()) {
       typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
       audit_time_= bet(cur_time_, next_event_time());
       CGAL_KINETIC_LOG(LOG_SOME, "Next audit is at time " << audit_time_ << std::endl);
-    }
-    else {
+      //if (current_time() < audit_time_ && t >= audit_time_) {
+	audit_all_kdss();
+	//}
+    } else {
       CGAL_KINETIC_LOG(LOG_SOME, "Can't audit between events.\n");
     }
 #endif
@@ -566,7 +577,7 @@ protected:
   typename Function_kernel::Rational_between_roots mp_;
   typename Function_kernel::Is_rational ir_;
   typename Function_kernel::To_rational tr_;
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+#ifdef CGAL_KINETIC_SIMULATOR_AUDITING
   NT audit_time_;
 #endif
 };

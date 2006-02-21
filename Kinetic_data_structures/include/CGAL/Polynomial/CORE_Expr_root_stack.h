@@ -23,161 +23,188 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Polynomial/internal/Explicit_root.h>
-#include <CGAL/NT_converter.h>
-#include <CORE/BigInt.h>
+#include <CGAL/Polynomial/internal/CORE_polynomial.h>
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+/*CGAL_BEGIN_NAMESPACE
 double to_double(const CORE::BigInt &bi)
 {
-    return bi.doubleValue();
-}
+  return bi.doubleValue();
+  }
 
 
-CGAL_END_NAMESPACE
+  CGAL_END_NAMESPACE*/
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
-template <class Solver_traits>
+
 class CORE_Expr_root_stack
 {
-    protected:
-        typedef typename Solver_traits::NT Coef;
-        typedef typename CORE::Polynomial<Coef> CORE_polynomial;
-        typedef typename CORE::Sturm<Coef> CORE_Sturm;
-        typedef CORE_Expr_root_stack<Solver_traits> This;
-    public:
-        typedef Solver_traits Traits;
-        typedef internal::Explicit_root<CORE::Expr> Root;
+protected:
+  typedef CORE_Expr_root_stack This;
+public:
 
-//! NOTE: The function must be square free!!!!!!!!!!!
-        CORE_Expr_root_stack(const typename Solver_traits::Function &f,
-            const Root &lb,
-            const Root &ub,
-        const Traits &): ub_(ub) {
-            initialize(f, lb);
-        }
+  typedef internal::CORE_polynomial Function;
+  typedef Function::NT Coef;
+  typedef CORE::Sturm<Coef> CORE_Sturm;
+  
 
-        CORE_Expr_root_stack(): counter_(1), num_roots_(0){}
+  struct Traits: public internal::Root_stack_traits_base<Function> {
+    
+  };
 
-        const Root& top() const
-        {
-            return cur_;
-        }
-        void pop() {
-            CGAL_Polynomial_precondition(counter_<=num_roots_);
-            if (counter_ == num_roots_) {
-                no_roots();
-            }
-            else {
-                ++counter_;
-                make_cur_root(make_expr());
-                enforce_upper_bound();
-            }
-        }
+  typedef internal::Explicit_root<CORE::Expr> Root;
 
-        bool empty() const
-        {
-            return counter_>num_roots_;
-        }
+  //! NOTE: The function must be square free!!!!!!!!!!!
+  CORE_Expr_root_stack(const Function &f,
+		       const Root &lb,
+		       const Root &ub,
+		       const Traits &tr): f_(f), ub_(ub), cur_(Root::infinity_rep()), tr_(tr){
+    initialize(lb);
+  }
 
-    protected:
-        CORE_polynomial poly_;
-        Root  ub_;
-        Root cur_;
-        int counter_;
-        int num_roots_;
+  CORE_Expr_root_stack():  num_roots_(0){}
 
-        void initialize(const typename Solver_traits::Function &fn, const Root& lb) {
-            if (fn.degree()<0) {
-                no_roots();
-                return;
-            }
-            else {
-                poly_= CORE_polynomial(fn.degree());
-                for (int i=0; i<= fn.degree(); ++i) {
-                    poly_.setCoeff(i, fn[i]);
-                }
-                initialize_counters(lb);
+  const Root& top() const
+  {
+    return cur_;
+  }
+  void pop() {
+    --num_roots_;//-=cur_.multiplicity();
+    CGAL_precondition(num_roots_>=0);
+    if (num_roots_==0) {
+      no_roots();
+    }
+    else {
+      make_root();
+      enforce_upper_bound();
+    }
+  }
 
-                CORE::Expr testr;
-                do {
-                    ++counter_;
-                    if (counter_> num_roots_) {
-                        no_roots();
-                        return;
-                    }
-                    testr= make_expr();
+  bool empty() const
+  {
+    return num_roots_==0;
+  }
 
-                } while (lb != -infinity<Root>() && testr <= lb.representation());
-                make_cur_root(testr);
+protected:
+  Function f_;
+  CORE_Sturm sturm_;
+  Root  ub_;
+  Root cur_;
+  int num_roots_;
+  CORE::BigFloat bflb_, bfub_;
+  Traits tr_;
 
-            }
-//std::cout << "There are " << _num_roots << " roots.\n";
-//std::cout << "Counter is set to " << _counter << "\n";
-            enforce_upper_bound();
-        }
+  void initialize(const Root& lb) {
+    if (f_.degree()<0) {
+      no_roots();
+      return;
+    } else {
+      //std::cout << f_.core_polynomial() << std::endl;
+      sturm_= CORE_Sturm(f_.core_polynomial(), false);
+      
 
-        void enforce_upper_bound() {
-            if (cur_ < ub_) return;
-            else no_roots();
-        }
+      CORE::BigFloat bflb, bfub;
+      
+      if (lb == -std::numeric_limits<Root>::infinity()){
+	bflb_= -f_.CauchyUpperBound();
+      } else {
+	bflb_= bf_lower_bound(lb.representation());
+      }
 
-        CORE::Expr make_expr() {
-            return CORE::Expr(CORE::rootOf(poly_, counter_));
-        }
-        void make_cur_root(const CORE::Expr &r) {
-            cur_= Root(r);
-        }
+      if (ub_ == std::numeric_limits<Root>::infinity()){
+	bfub_= f_.CauchyUpperBound();
+      } else {
+	bfub_= bf_upper_bound(ub_.representation());
+      }
 
-        void no_roots() {
-            ub_= CORE::Expr(0);
-            cur_= infinity<Root>();
-            num_roots_=0;
-            counter_=1;
-        }
+      num_roots_= sturm_.numberOfRoots(bflb_, bfub_);
+      std::cout << "nr= " << num_roots_ << std::endl;
+      //CORE::Expr testr;
+      ++num_roots_;
+      do {
+	--num_roots_;
+	if ( num_roots_ == 0) {
+	  no_roots();
+	  return;
+	}
+	make_root();
+	
+      } while (cur_ <= lb);
+      //make_cur_root(testr);
+    }
+    //std::cout << "There are " << _num_roots << " roots.\n";
+    //std::cout << "Counter is set to " << _counter << "\n";
+    enforce_upper_bound();
+  }
 
-        void initialize_counters(const Root &lb) {
-            std::cout << "Computing strum of " << poly_ << "..." << std::flush;
-            CORE_Sturm sturm(poly_);
-            std::cout << "done." << std::endl;
-            num_roots_=0;
-            CGAL_assertion(-ub_ != infinity<Root>());
-            if (lb== -infinity<Root>() && ub_== infinity<Root>()) {
-                num_roots_= sturm.numberOfRoots();
-                counter_=0;
-            }
-            else if (ub_ == infinity<Root>()) {
-                num_roots_= sturm.numberOfRootsAbove(bf_lower_bound(lb.representation()));
-                counter_ = sturm.numberOfRootsBelow(bf_lower_bound(lb.representation()));
-            }
-            else if (lb == infinity<Root>()) {
-                num_roots_= sturm.numberOfRootsBelow(bf_upper_bound(ub_.representation()));
-                counter_ = 0;
-            }
-            else {
-                counter_= sturm.numberOfRootsBelow(bf_lower_bound(lb.representation()));
-                num_roots_= sturm.numberOfRoots(bf_lower_bound(lb.representation()),
-                    bf_upper_bound(ub_.representation()));
-            }
-        };
+  void enforce_upper_bound() {
+    if (cur_ < ub_) return;
+    else {
+      //std::cout << "Rejected " << cur_ << std::endl;
+      no_roots();
+    }
+  }
 
-//! There are probably better ways of doing this
-        Coef bf_lower_bound(const CORE::Expr &rt) const
-        {
-            machine_double lb, ub;
-            rt.doubleInterval(lb, ub);
-            return Coef(lb);
-        }
+  void make_root() {
+    CGAL_precondition(num_roots_!=0);
+    std::cout << bflb_ << " " << bfub_ << std::endl;
+    CORE::BFInterval bfi= sturm_.isolateRoot(1, bflb_, bfub_);
+    //int nr= sturm_.numberOfRoots(bfi.first, bfi.second);
+    int nr=1;
+    if (CGAL::sign(f_.eval(bfi.first)) == CGAL::sign(f_.eval(bfi.second))) ++nr;
+    std::cout << nr << " " << bfi.first << " " << bfi.second <<  std::endl;
+    bflb_= bfi.second;
+    cur_ =Root(CORE::Expr(f_, bfi), nr);
+  }
 
-//! There are probably better ways of doing this
-        Coef bf_upper_bound(const CORE::Expr &rt) const
-        {
-            machine_double lb, ub;
-            rt.doubleInterval(lb, ub);
-            return Coef(ub);
-        }
+  void no_roots() {
+    ub_= CORE::Expr(0);
+    cur_= infinity<Root>();
+    num_roots_=0;
+  }
+
+  /*void initialize_counters(const Root &lb) {
+    std::cout << "Computing strum of " << poly_ << "..." << std::flush;
+    CORE_Sturm sturm(poly_);
+    std::cout << "done." << std::endl;
+    num_roots_=0;
+    CGAL_assertion(-ub_ != infinity<Root>());
+    num_roots_= sturm.numberOfRoots();
+    if (lb== -infinity<Root>() && ub_== infinity<Root>()) {
+      counter_=0;
+    }
+    else if (ub_ == infinity<Root>()) {
+      std::cout << bf_lower_bound(lb.representation()) << std::endl;
+      //num_roots_= sturm.numberOfRootsAbove(bf_lower_bound(lb.representation()));
+      counter_ = sturm.numberOfRootsBelow(bf_lower_bound(lb.representation()));
+    }
+    else if (lb == infinity<Root>()) {
+      //num_roots_= sturm.numberOfRootsBelow(bf_upper_bound(ub_.representation()));
+      counter_ = 0;
+    }
+    else {
+      counter_= sturm.numberOfRootsBelow(bf_lower_bound(lb.representation()));
+      
+    }
+    }*/
+
+  //! There are probably better ways of doing this
+  Coef bf_lower_bound(const CORE::Expr &rt) const
+  {
+    machine_double lb, ub;
+    rt.doubleInterval(lb, ub);
+    return Coef(lb);
+  }
+
+  //! There are probably better ways of doing this
+  Coef bf_upper_bound(const CORE::Expr &rt) const
+  {
+    machine_double lb, ub;
+    rt.doubleInterval(lb, ub);
+    return Coef(ub);
+  }
 };
 
 CGAL_POLYNOMIAL_END_NAMESPACE;
