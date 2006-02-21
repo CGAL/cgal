@@ -202,7 +202,7 @@ local dim, m, n, i, bn, cn, ln, un, t, tm, fln, fun;
   # other quantities:
   bn:= b + (A.Transpose(tm));
   if not type(D,boolean) then
-    cn:= c - 2*tm.D;
+    cn:= c - 2*tm.Transpose(D);
   else
     cn:= c;
   fi;

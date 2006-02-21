@@ -1238,6 +1238,7 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb7.bmp -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
 QP_solver/include/CGAL/QP_solver/Bounds.C -text
+QP_solver/test/QP_solver/testsuite-data/additional-for-cgal/Unbounded_asymmetric.mps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
