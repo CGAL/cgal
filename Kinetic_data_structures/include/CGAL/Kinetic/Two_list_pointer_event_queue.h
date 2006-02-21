@@ -192,17 +192,17 @@ CGAL_KINETIC_END_INTERNAL_NAMESPACE
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
-//template <class PriorityT, class NT>
-//class Two_list_pointer_event_queue;
+template <class FK>
+class Two_list_pointer_event_queue;
 
-template <class Item, class PriorityT, class NT>
+template <class Item, class FK>
 struct Two_list_pointer_event_queue_key: private Item::Pointer
 {
-  typedef Two_list_pointer_event_queue_key<Item, PriorityT, NT> This;
+  typedef Two_list_pointer_event_queue_key<Item, FK> This;
   typedef typename Item::Pointer P;
   Two_list_pointer_event_queue_key(){};
   Two_list_pointer_event_queue_key(Item  *p): Item::Pointer(p){};
-  //friend class Two_list_pointer_event_queue<PriorityT, NT>;
+  friend class Two_list_pointer_event_queue<FK>;
   void write(std::ostream &out) {
     if (Item::Pointer::get()) {
       out << *Item::Pointer::get();
@@ -243,8 +243,8 @@ struct Two_list_pointer_event_queue_key: private Item::Pointer
   //using P::operator>;
 };
 
-template  <class I, class PT, class NT>
-std::ostream &operator<<(std::ostream &out, Two_list_pointer_event_queue_key<I, PT, NT> k)
+template  <class I, class FK>
+std::ostream &operator<<(std::ostream &out, Two_list_pointer_event_queue_key<I, FK> k)
 {
   k.write(out);
   return out;
@@ -289,7 +289,7 @@ class Two_list_pointer_event_queue
 public:
   typedef PriorityT Priority;
 
-  typedef Two_list_pointer_event_queue_key<Item, PriorityT, NT> Key;
+  typedef Two_list_pointer_event_queue_key<Item, FK> Key;
 
   /*  struct Key: public Item::Pointer {
       Key(){};
@@ -304,8 +304,15 @@ public:
   Two_list_pointer_event_queue(Priority start_time, Priority end_time, FK fk, int =0): tii_(fk.to_isolating_interval_object()),
 										       ub_(tii_(start_time).first),
 										       step_(1) {
+    //std::cout << "UB is " << ub_ << std::endl;
     null_event_= new internal::Two_list_event_queue_dummy_item<Priority>();
-    set_end_priority(end_time);
+    if (end_time != std::numeric_limits<Priority>::infinity()){
+      set_end_priority(end_time);
+    } else {
+      NT end=std::numeric_limits<int>::max();
+      std::cerr << "WARNING Infinity is being rounded down to " << end << std::endl;
+      set_end_priority(end);
+    }
   }
 
   //! insert value_type into the queue and return a reference to it
@@ -315,6 +322,7 @@ public:
   template <class E>
   Key insert(const Priority &t, const E & e) {
     CGAL_expensive_precondition(audit());
+    CGAL_precondition(t != std::numeric_limits<Priority>::infinity());
     //CGAL_precondition(t != internal::infinity_or_max<Priority>());
 
     Item *ni = make_event(t, e);
@@ -533,6 +541,7 @@ public:
   }
 
   void set_end_priority(const Priority &o) {
+    //CGAL_precondition(o!= std::numeric_limits<Priority>::infinity());
     end_time_=o;
     end_split_= tii_(o).second;
   }
@@ -691,7 +700,7 @@ protected:
 	  }
 	}
 	if (mp < end_split()) {
-	  ub_= tii_(mp).second;
+	  ub_= to_interval(mp).second;
 	  step_=.001;
 	  grow_front(cand, recursive_count+1);
 	}
@@ -762,7 +771,7 @@ protected:
       ++it;
     }
 
-    NT split= NT(tii_(it->time()).second);
+    NT split= NT(to_interval(it->time()).second);
     if (split > end_split() ) {
       CGAL_assertion(back_.empty());
       it= front_.begin();
@@ -787,7 +796,7 @@ protected:
       }
 
       it= front_.end(); --it;
-      split= tii_(it->time()).second;
+      split= to_interval(it->time()).second;
       //std::cout << "Special cased " << inf_.size() << " events.\n";
     }
     while (it->time() < split && it != front_.end()) ++it;
@@ -823,7 +832,8 @@ protected:
 
   unsigned int max_front_size() const
   {
-    return std::max(10U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
+    return 4U;
+    //return std::max(4U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
   }
 
   typename FK::To_isolating_interval tii_;

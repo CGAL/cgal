@@ -120,7 +120,7 @@ public:
   typedef internal::Rational_between_roots<This> Rational_between_roots;
   Rational_between_roots rational_between_roots_object() const
   {
-    return Rational_between_roots();
+    return Rational_between_roots(*this);
   }
 
   //! Compute the sign between two roots

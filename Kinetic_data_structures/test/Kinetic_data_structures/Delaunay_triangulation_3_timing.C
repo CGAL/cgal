@@ -1,11 +1,10 @@
-#define CGAL_CHECK_EXACTNESS
-#define CGAL_CHECK_EXPENSIVE
+//#define CGAL_CHECK_EXPENSIVE
+//#define CGAL_CHECK_EXACTNESS
 
 #include <CGAL/Kinetic/basic.h>
 
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
 #include <CGAL/Kinetic/Exact_simulation_traits_3.h>
-#include <CGAL/Kinetic/Delaunay_triangulation_event_log_visitor_3.h>
 #include <algorithm>
 #include <iterator>
 
@@ -13,15 +12,14 @@ int main(int, char *[])
 {
 
   typedef CGAL::Kinetic::Exact_simulation_traits_3 Simulation_traits;
-  typedef CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3 Visitor;
-  typedef CGAL::Kinetic::Delaunay_triangulation_3<Simulation_traits, Visitor> KDel;
+  typedef CGAL::Kinetic::Delaunay_triangulation_3<Simulation_traits> KDel;
 
   Simulation_traits simtr;
   Simulation_traits::Simulator::Pointer sp= simtr.simulator_pointer();
 
   KDel kdel(simtr);
 
-  std::ifstream in("data/Delaunay_triangulation_3.input");
+  std::ifstream in("data/points_3.n=100,d=1");
   if (!in) {
     std::cerr << "Error opening input file: " << "data/Delaunay_triangulation_3.input" << std::endl;
     return EXIT_FAILURE;
@@ -47,37 +45,6 @@ int main(int, char *[])
 
   /*std::copy(kdel.visitor().begin(), kdel.visitor().end(),
     std::ostream_iterator<std::string>(std::cout, "\n"));*/
-
-  std::ifstream out("data/Delaunay_triangulation_3.output");
-  if (!out) {
-    std::cerr << "Error opening input file: " << "data/Delaunay_triangulation_3.output" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  int error_count=0;
-  for (CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3::Event_iterator it = kdel.visitor().events_begin();
-       it != kdel.visitor().events_end(); ++it) {
-    char buf[1000];
-    out.getline(buf, 1000);
-    if (*it != buf) {
-      std::cerr << "ERROR Got event: " << *it << std::endl;
-      std::cerr << "ERROR Expected event: " << buf << std::endl;
-      ++error_count;
-    }
-  }
-
-  while (out) {
-    char buf[1000];
-    out.getline(buf, 1000);
-    if (out) {
-      std::cerr << "ERROR Missing event: " << buf << std::endl;
-      ++error_count;
-    }
-  }
-
-  if (error_count != 0) {
-    std::cerr << "ERROR " << error_count << " errors in " << kdel.visitor().size() << " events.\n";
-  }
 
   std::cout << "Too late on " << too_late__ << " and filtered " << filtered__ << std::endl;
 

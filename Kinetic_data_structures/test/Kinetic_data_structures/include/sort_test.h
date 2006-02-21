@@ -40,16 +40,17 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
   bool error =false;
 
   typename Traits::NT ratt;
-  if (tr.simulator_pointer()->has_audit_time()) {
-    ratt=tr.simulator_pointer()->audit_time();
-  }
-  else {
+  if (tr.simulator_pointer()->has_rational_current_time()) {
+    ratt=tr.simulator_pointer()->rational_current_time();
+  } else {
     std::cerr << etag << "Out of events, but the time is not rational." << std::endl;
     std::cerr << "Current time is " << tr.simulator_pointer()->current_time()
 	      << " the end time is " << tr.simulator_pointer()->end_time() << std::endl;
     ratt= CGAL::to_interval(tr.simulator_pointer()->end_time()).second;
     error=eret;
   }
+
+  std::cout << "End time is " << tr.simulator_pointer()->end_time() << std::endl;
 
   while (c != sort.end()) {
     typename Traits::Simulator::Function_kernel::Function f= tr.active_objects_table_pointer()->at(*c).x() - tr.active_objects_table_pointer()->at(*b).x();

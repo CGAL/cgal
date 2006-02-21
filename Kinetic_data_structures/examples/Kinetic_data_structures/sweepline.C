@@ -15,37 +15,35 @@
 #include <map>
 
 template <class Arrangement>
-struct Sort_arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
+struct Arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
 {
   Sort_arrangement_visitor(Arrangement *a):p_(a){}
-
   template <class Vertex_handle>
   void remove_vertex(Vertex_handle a) {
     p_->erase(a);
   }
-
   template <class Vertex_handle>
   void create_vertex(Vertex_handle a) {
     p_->insert(a);
   }
-
   template <class Vertex_handle>
   void after_swap(Vertex_handle a, Vertex_handle b) {
     p_->swap(a, b);
   }
-
   Arrangement *p_;
 };
 
 
 
 template <class TraitsT> 
-class Planar_arrangement: public CGAL::Kinetic::Sort<TraitsT, 
-						 Sort_arrangement_visitor<Planar_arrangement<TraitsT> > > {
+class Planar_arrangement: 
+  public CGAL::Kinetic::Sort<TraitsT, 
+			     Arrangement_visitor<Planar_arrangement<TraitsT> > > {
   typedef TraitsT Traits;
   typedef Planar_arrangement<TraitsT> This;
-  typedef typename CGAL::Kinetic::Sort<TraitsT, Sort_arrangement_visitor<Planar_arrangement<TraitsT> > > Sort;
-  typedef Sort_arrangement_visitor<This> Visitor;
+  typedef typename CGAL::Kinetic::Sort<TraitsT,
+				       Arrangement_visitor<This> > Sort;
+  typedef Arrangement_visitor<This> Visitor;
   typedef typename Traits::Active_objects_table::Key Key;
 
 public:

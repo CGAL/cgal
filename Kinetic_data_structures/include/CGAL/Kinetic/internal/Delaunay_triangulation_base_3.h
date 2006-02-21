@@ -13,7 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$
+// $Id$ $Date$
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -1219,9 +1219,7 @@ private:
     typename Simulator::Time t= s.failure_time();
     s.pop_failure_time();
     CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
-
     typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(s, e, tr_.wrapper_pointer()));
-    
     triangulation_.set_label(e, k);
     /*  }
   else {
@@ -1417,24 +1415,21 @@ private:
     return true;
   }
 
-
-
   void delete_event(typename Simulator::Event_key k) {
     if (k && k != simulator()->null_event()) {
       //CGAL_precondition(estimates_.find(k) != estimates_.end());
       double bound= extract_root_stack(k).lower_bound(); 
       //HERE
       if ( simulator()->current_time() > bound) {
-	/*std::cout << "Too late by " << to_interval(simulator()->current_time()).first -bound 
-		  << " on " 
-		  << to_interval(simulator()->event_time(k)).first - to_interval(simulator()->current_time()).first
-		  << std::endl;*/
-	++too_late__;
+        /*std::cout << "Too late by " << to_interval(simulator()->current_time()).first -bound 
+                  << " on " 
+                  << to_interval(simulator()->event_time(k)).first - to_interval(simulator()->current_time()).first
+                  << std::endl;*/
+        ++too_late__;
       } else {
-	//std::cout << "Filtered" << std::endl;
-	++filtered__;
+        //std::cout << "Filtered" << std::endl;
+        ++filtered__;
       }
-      //estimates_.erase(k);
     }
     simulator()->delete_event(k);
   }

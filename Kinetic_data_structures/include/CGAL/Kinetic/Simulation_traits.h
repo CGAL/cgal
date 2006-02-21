@@ -114,8 +114,8 @@ struct Sest_types
   struct Simulator_function_kernel: public CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> {};
   typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
   typedef  Simulator_function_kernel::Root Time;
-  //typedef CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> Queue_base;
-  typedef CGAL::Kinetic::Heap_pointer_event_queue<Function_kernel> Queue_base;
+  typedef CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> Queue_base;
+  //typedef CGAL::Kinetic::Heap_pointer_event_queue<Function_kernel> Queue_base;
 
   struct Event_queue: public Queue_base
   {

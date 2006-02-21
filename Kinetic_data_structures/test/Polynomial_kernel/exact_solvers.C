@@ -1,5 +1,5 @@
-#define CGAL_CHECK_EXACTNESS
-#define CGAL_CHECK_EXPENSIVE
+//#define CGAL_CHECK_EXACTNESS
+//#define CGAL_CHECK_EXPENSIVE
 
 #include <iostream>
 #include <cstdlib>
@@ -23,9 +23,10 @@
 #include <CGAL/Gmpq.h>
 
 #ifdef CGAL_USE_CORE
+#include <CGAL/Polynomial/CORE_kernel.h>
 #include <CGAL/Polynomial/CORE_Expr_root_stack.h>
 
-typedef CGAL_POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
+
 #endif
 
 #include "Check_solver.h"
@@ -45,6 +46,76 @@ int main(int argc, char* argv[])
     }
 
 #if 0
+    //#ifdef CGAL_USE_CORE
+    {
+      /*CORE::Polynomial<CORE::BigFloat> p("-2+20t-50t^2+1t^50", 't');
+      CORE::Sturm<CORE::BigFloat> s(p, true);
+      std::cout << p << std::endl;
+      std::cout << s.numberOfRoots() << std::endl;*/
+
+      CORE::BigFloat cs[9];
+      cs[0]=CORE::BigFloat(-2295485086.0);
+      cs[1]=CORE::BigFloat(2072822157.0);
+      cs[2]=CORE::BigFloat(116461914.2);
+      cs[3]=CORE::BigFloat(-116175036.500);
+      cs[4]=CORE::BigFloat(-10063149.8700);
+      cs[5]=CORE::BigFloat(-196007.034400);
+      cs[6]=CORE::BigFloat(3460.88600000);
+      cs[7]=CORE::BigFloat(136.910039600);
+      cs[8]=CORE::BigFloat(1.0);
+
+      CORE::Polynomial<CORE::BigFloat> p(8, cs);
+      //std::cout << p << std::endl;
+      Polynomial<CORE::BigFloat> temp(p);
+      //std::cout << temp << std::endl;
+      Polynomial<CORE::BigFloat> pp=p;
+      pp.differentiate(); 
+      //std::cout << pp << std::endl;
+      Polynomial<CORE::BigFloat> pg = gcd(p, temp.differentiate());
+
+      CORE::BigFloat c;
+      Polynomial<CORE::BigFloat> prem=p;
+      Polynomial<CORE::BigFloat> pquo= prem.pseudoRemainder(pp, c);
+      std::cout << "quo: " << pquo << std::endl;
+
+      //std::cout << R << std::endl;
+      CGAL::POLYNOMIAL::internal::CORE_polynomial cp(p);
+      CGAL::POLYNOMIAL::internal::CORE_polynomial cpp(pp);
+      CGAL::POLYNOMIAL::internal::CORE_polynomial cpg(pg);
+      CGAL::POLYNOMIAL::internal::CORE_polynomial cprem(prem);
+      CGAL::POLYNOMIAL::internal::CORE_polynomial cpquo(pquo);
+      std::cout << "P: " << cp << std::endl;
+      std::cout << "P': " << cpp<< std::endl;
+      std::cout << "gcd: " << cpg<< std::endl;
+      std::cout << "Rem: " << cprem << std::endl;
+      std::cout << "Quo: " << cpquo << std::endl;
+      std::cout << "C: " << c << std::endl;
+    
+      
+        if (verbose) std::cout << "CORE_______________________________________\n";
+        else std::cout << "CORE & ";
+        typedef CGAL_POLYNOMIAL_NS::CORE_kernel K;
+        K k;
+        Check_solver<K > cc(k,verbose);
+	//cc.all();
+	cc.square_free();
+	
+	//cc.mignotte();
+	cc.small_intervals();
+	cc.non_simple();
+
+	//cc.wilkinson();
+ 
+//cc.wilkinson();
+//cc.mignotte();
+        //cc.small_intervals();
+//cc.exact();
+        if (!verbose) std::cout << " -- &";
+        std::cout << std::endl;
+    }
+#endif
+
+#if 0
     {
         if (verbose) std::cout <<"Descartes_lazy______________________________\n";
         else std::cout << "DL&\t";
@@ -60,6 +131,9 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
 #endif
+
+
+    
     {
         if (verbose) std::cout <<"Descartes_exact_____________________________\n";
         else std::cout << "Descartes&\t";
@@ -68,10 +142,10 @@ int main(int argc, char* argv[])
         typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
 
         K k;
-        Check_solver<K> cc(k,verbose);
+        Check_solver<K, True> cc(k,verbose);
         cc.all();
         cc.exact();
-        if (!verbose) std::cout << " -- &";
+        //if (!verbose) std::cout << " -- &";
         std::cout << std::endl;
     }
     {
@@ -87,7 +161,7 @@ int main(int argc, char* argv[])
         cg.exact();
         std::cout << std::endl;
     }
-    {
+    /*{
         if (verbose) std::cout <<"Sturm_filtered__________________________\n";
         else std::cout << "Sturm filtered&\t";
         typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
@@ -99,7 +173,7 @@ int main(int argc, char* argv[])
         cg.all();
         cg.exact();
         std::cout << std::endl;
-    }
+	}*/
 
     {
         if (verbose) std::cout <<"Sturm_exact_________________________________\n";
@@ -113,49 +187,9 @@ int main(int argc, char* argv[])
         cg.exact();
         std::cout << std::endl;
     }
+    
 
-/*{
-  if (verbose) std::cout << "Filtered_Sturm( Field, Gmpq )______________________\n";
-  else std::cout << "F S Gmpq & ";
-  typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_gmpq> RET;
-  typedef CGAL_POLYNOMIAL_NS::Sturm_lazy_solver<RET> RE;
-  typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
-  Check_solver<Filtered_Sturm_solver_f_gmpq > cs;
-  cs.all();
-  //cs.square_free();
-  //cs.wilkinson();
-  //cs.mignotte();
-//cs.small_intervals();
-//cs.non_simple();
-std::cout << std::endl;
-}*/
 
-/*{
-   if (verbose) std::cout <<"Filtered Descartes__________________________\n";
-   else std::cout << "Descartes filtered&\t";
-   Check_solver<Filtered_Descartes_filtered_kernel > cg;
-   cg.all();
-   std::cout << std::endl;
-   }*/
-
-#ifdef CGAL_USE_CORE
-    {
-        if (verbose) std::cout << "CORE_______________________________________\n";
-        else std::cout << "CORE & ";
-        typedef CGAL_POLYNOMIAL_NS::Root_stack_default_traits<Polynomial_bigint> BIT;
-        typedef CGAL_POLYNOMIAL_NS::CORE_Expr_root_stack<BIT> CRE;
-        typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_bigint, CRE> K;
-        K k;
-        Check_solver<K > cc(k,verbose);
-        cc.square_free();
-//cc.wilkinson();
-//cc.mignotte();
-        cc.small_intervals();
-//cc.exact();
-        if (!verbose) std::cout << " -- &";
-        std::cout << std::endl;
-    }
-#endif
 
 #if 0
     {
@@ -166,51 +200,6 @@ std::cout << std::endl;
         std::cout << std::endl;
     }
 #endif
-
-/*{
-  if (verbose) std::cout <<"Descartes_filtered___________________________\n";
-  else std::cout << "Descartes filtered&\t";
-  Check_solver<Descartes_filtered > cg;
-  cg.all();
-  std::cout << std::endl;
-  }*/
-
-/*{
-  if (verbose) std::cout <<"Descartes_exact_fi___________________________\n";
-  else std::cout << "Descates exact filtered_interval&\t";
-  Check_solver<Descartes_exact_filtered_interval > cg;
-  cg.all();
-  std::cout << std::endl;
-  }*/
-
-/*{
-  if (verbose) std::cout <<"Filtered_descartes_filtered___________________\n";
-  else std::cout << "Filtered Descartes filtered&\t";
-  Check_solver<Filtered_Descartes_filtered > cg;
-  cg.all();
-  std::cout << std::endl;
-  }*/
-
-/*{
-  if (verbose) std::cout <<"Filtered_Descartes_exact_____________________\n";
-  else std::cout << "Filtered Descartes exact&\t";
-  Check_solver<Filtered_Descartes_exact > cg;
-  cg.all();
-  std::cout << std::endl;
-  }*/
-
-/*{
-  if (verbose) std::cout <<"Bezier_exact_________________________________\n";
-  else std::cout << "Bezier exact&\t";
-  Check_solver<Bezier_exact > cg;
-  cg.all();
-  std::cout << std::endl;
-  }*/
-
-// too slow
-/*std::cout << "Sturm( Ring )_____________________________\n";
-  Check_solver<Sturm_solver_ring_i > csr;
-  csr.all();*/
 
     return EXIT_SUCCESS;
 }

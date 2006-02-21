@@ -23,8 +23,8 @@ int main(int , char *[])
     
     std::cout << "Processed " << sp->current_event_number() << " events.\n";
 
-    std::copy(kdel.visitor().events_begin(), kdel.visitor().events_end(),
-        std::ostream_iterator<std::string>(std::cout, "\n"));
+    /*std::copy(kdel.visitor().events_begin(), kdel.visitor().events_end(),
+      std::ostream_iterator<std::string>(std::cout, "\n"));*/
 
     return EXIT_SUCCESS;
 };
