@@ -17,9 +17,9 @@ using namespace std;
 using namespace CGAL;
 
 // ======================================================================
-template <class _Poly>
-class WLoop_stencil_3 : public PQQ_stencil_3<_Poly> {
-  typedef _Poly                                        Polyhedron;
+template <class Poly>
+class WLoop_stencil_3 {
+  typedef Poly                                         Polyhedron;
 
   typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
   typedef typename Polyhedron::Halfedge_iterator       Halfedge_iterator;
@@ -70,7 +70,6 @@ public:
       pt = Point((A*S[0]+B*R[0]), (A*S[1]+B*R[1]), (A*S[2]+B*R[2]));
     }
   }
-  void facet_node(Facet_iterator fitr, Point& pt) {};
   void border_node(Halfedge_iterator eitr, Point& ept, Point& vpt) {
     Point& ep1 = eitr->vertex()->point();
     Point& ep2 = eitr->opposite()->vertex()->point();
