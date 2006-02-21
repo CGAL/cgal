@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Ron Wein        <wein@post.tau.ac.il>
 
 #ifndef DXF_BSOP_READER_H
 #define DXF_BSOP_READER_H
@@ -32,142 +33,211 @@ CGAL_BEGIN_NAMESPACE
 template <class Kernel_>
 class Dxf_bsop_reader
 {
-  typedef Kernel_                                   K;
-  typedef typename K::FT                            FT;
-  typedef typename K::Point_2                       Point_2;
-  typedef typename K::Circle_2                      Circle_2;
+private:
 
-  typedef std::list<std::pair<Point_2, double> >    Dxf_polygon;
-  typedef std::list<Dxf_polygon>                    Dxf_polygons_list;
+  typedef Kernel_                                   Kernel;
+  typedef typename Kernel::FT                       FT;
+  typedef typename Kernel::Point_2                  Point_2;
+  typedef typename Kernel::Circle_2                 Circle_2;
 
-  typedef std::pair<Point_2, FT>                    Dxf_circle;                      
-  typedef std::list<Dxf_circle>                     Dxf_circles_list;
-  typedef CGAL::Dxf_reader<K>                       Dxf_reader;        
+  typedef std::list<std::pair<Point_2, double> >    Dxf_polygon_2;
+  typedef std::list<Dxf_polygon_2>                  Dxf_polygons_list;
 
-  typedef CGAL::Gps_circle_segment_traits_2<K>          Traits_2;
-  typedef typename Traits_2::Point_2                    Arc_point_2;
-  typedef typename Traits_2::Curve_2                    Curve_2;
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef typename Traits_2::Polygon_2                  Circ_polygon;
-  typedef typename Traits_2::Polygon_with_holes_2       Circ_polygon_with_holes;
+  typedef std::pair<Point_2, FT>                    Dxf_circle_2;
+  typedef std::list<Dxf_circle_2>                   Dxf_circles_list;
+  typedef CGAL::Dxf_reader<Kernel>                  Dxf_reader;
 
-  typedef std::vector<Circ_polygon>                     Circ_pgn_vec;
-  typedef std::vector<Circ_polygon_with_holes>          Circ_pgn_with_holes_vec;
-
-  typedef CGAL::General_polygon_set_2<Traits_2>         Gps;
+  typedef CGAL::Gps_circle_segment_traits_2<Kernel> Traits_2;
+  typedef typename Traits_2::Point_2                Arc_point_2;
+  typedef typename Traits_2::Curve_2                Curve_2;
+  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
 
 public:
-  template <class Out1, class Out2>
-  void operator() (std::ifstream& input,
-                   Out1 pgns,
-                   Out2 pgns_with_holes,
-                   bool simplify = true)
+
+  typedef typename Traits_2::Polygon_2              Circ_polygon_2;
+  typedef typename Traits_2::Polygon_with_holes_2   Circ_polygon_with_holes_2;
+
+private:
+
+  typedef std::vector<Circ_polygon_2>               Circ_pgn_vec;
+  typedef std::vector<Circ_polygon_with_holes_2>    Circ_pgn_with_holes_vec;
+
+  typedef CGAL::General_polygon_set_2<Traits_2>     Circ_pgn_set_2;
+
+public:
+
+  /*!
+   * Read a set of circular polygons from a DXF file.
+   * \param in_file A file stream in DXF format.
+   * \param pgns An output iterator of Circ_polygon_2 objects.
+   * \param pgns_with_holes An output iterator of Circ_polygon_with_holes_2
+   *                        objects.
+   * \param simplify Should we simplify the polygons (in case the file
+   *                 contains polygons that are not simple).
+   * \return A pair of past-the-end iterators for both ranges.
+   */ 
+  template <class PolygonOutputIterator,
+            class PolygonWithHolesOutputIterator>
+  std::pair<PolygonOutputIterator, PolygonWithHolesOutputIterator>
+  operator() (std::ifstream& in_file,
+              PolygonOutputIterator pgns,
+              PolygonWithHolesOutputIterator pgns_with_holes,
+              bool simplify = true)
   {
-  
-    Gps gps;
-    Traits_2 tr;
+    // Read polygons and circles from the DXF file.
+    Circ_pgn_set_2    gps;
 
     Dxf_polygons_list polygons;
     Dxf_circles_list  circles;
     Dxf_reader        reader;
 
-    reader(input, polygons, circles);
+    reader (in_file, polygons, circles);
 
-    for(typename Dxf_circles_list::iterator circ_iterator = circles.begin();
-        circ_iterator != circles.end();
-        ++circ_iterator)
+    // Convert the circles, such that each circle becomes a simple polygon
+    // with two edges (the upper and the lower half-circles).
+    Traits_2                             traits;
+    typename Traits_2::Make_x_monotone_2 make_x_monotone = 
+                                             traits.make_x_monotone_2_object();
+    typename Dxf_circles_list::iterator  circ_it;
+    CGAL::Object                         obj_vec[3];
+    CGAL::Object                        *obj_begin = (obj_vec + 0);
+    CGAL::Object                        *obj_end;
+    X_monotone_curve_2                   cv1, cv2;
+
+    for (circ_it = circles.begin(); circ_it != circles.end(); ++circ_it)
     {
-      const Dxf_circle& dxf_circ = *circ_iterator;
-      Curve_2 circ(dxf_circ.first, dxf_circ.second);
-      std::vector<CGAL::Object> obj_vec;
-      
-      obj_vec.reserve(2);
-      tr.make_x_monotone_2_object()(circ, std::back_inserter(obj_vec));
-      
-      CGAL_assertion(obj_vec.size() == 2);
-      X_monotone_curve_2 cv1, cv2;
+      // Break the circle into two x-monotone circular arcs.
+      const Dxf_circle_2&  dxf_circ = *circ_it;
+      Curve_2              circ (dxf_circ.first, dxf_circ.second);
+
+      obj_end = make_x_monotone (circ, obj_begin);
+      CGAL_assertion(obj_end - obj_begin == 2);
+
       CGAL::assign(cv1, obj_vec[0]);
       CGAL::assign(cv2, obj_vec[1]);
-      Circ_polygon pgn;
-      pgn.push_back(cv1);
-      pgn.push_back(cv2);
-      *pgns++ = pgn;
+
+      // Generate the corresponding polygon.
+      Circ_polygon_2       pgn;
+      pgn.push_back (cv1);
+      pgn.push_back (cv2);
+      *pgns = pgn;
+      ++pgns;
     }
 
     circles.clear();
 
-    for(typename Dxf_polygons_list::iterator it = polygons.begin();
-        it != polygons.end();
-        ++it)
+    // Convert the DXF polygons into circular polygons.
+    Kernel                                ker;
+    typename Kernel::Equal_2              equal = ker.equal_2_object();
+    typename Dxf_polygons_list::iterator  pgn_it;
+    typename Dxf_polygon_2::iterator      curr, next;
+    Point_2                               ps, pt;
+    Circle_2                              supp_circ;
+    int                                   n_subarcs;
+    int                                   i;
+
+    for (pgn_it = polygons.begin(); pgn_it != polygons.end(); ++pgn_it)
     {
-      Circ_polygon curr_pgn;
-      for(typename Dxf_polygon::iterator pit = it->begin();
-          pit != it->end();
-          ++pit)
+      Circ_polygon_2        pgn;
+
+      for (curr = pgn_it->begin(); curr != pgn_it->end(); ++curr)
       {
-        typename Dxf_polygon::iterator next = pit;
+        // Get the current vertex ps and the next vertex pt (in a circular
+        // sense).
+        next = curr;
         ++next;
 
-        Point_2 ps(pit->first);
-        Point_2 pt;
+        ps = curr->first;
 
-        if(next == it->end())
-          pt = Point_2(it->begin()->first);
+        if (next != pgn_it->end())
+          pt = next->first;
         else
-          pt = Point_2(next->first);
-        
-        if(pit->second) 
+          pt = pgn_it->begin()->first;
+
+        // Check whether a "bulge" is defined between the two vertices.
+        if (curr->second) 
         {
-          const FT bulge = pit->second;
+          // A non-zero bulge: ps and pt are connected by a circular arc.
+          // We compute the center and the squared radius of its supporting
+          // circle.
+          CGAL_assertion (! equal (ps, pt));
+
+          const FT bulge = curr->second;
           const FT common = (1 - CGAL::square(bulge)) / (4*bulge);
           const FT x_coord = ((ps.x() + pt.x())/2) + common*(ps.y() - pt.y());
           const FT y_coord = ((ps.y() + pt.y())/2) + common*(pt.x() - ps.x());
           const FT sqr_bulge = CGAL::square(bulge);
-          const FT sqr_rad = CGAL::squared_distance(ps, pt) * (1/sqr_bulge + 2 + sqr_bulge) / 16; 
+          const FT sqr_rad = CGAL::squared_distance(ps, pt) * 
+                             (1/sqr_bulge + 2 + sqr_bulge) / 16; 
 
-          CGAL_assertion(ps != pt);
-         
-          Circle_2 supp_circ;
-          if(pit->second > 0)
-            supp_circ = Circle_2(Point_2(x_coord, y_coord), sqr_rad);
+          // Construct the arc: A positive bulge means the arc is
+          // counterclockwise oriented and a negative bulge means that the arc
+          // is clockwise oriented.
+          if(bulge > 0)
+            supp_circ = Circle_2 (Point_2 (x_coord, y_coord), sqr_rad,
+                                  CGAL::COUNTERCLOCKWISE);
           else
-            supp_circ = Circle_2(Point_2(x_coord, y_coord), sqr_rad, CGAL::CLOCKWISE);
+            supp_circ = Circle_2 (Point_2 (x_coord, y_coord), sqr_rad,
+                                  CGAL::CLOCKWISE);
 
-          Curve_2 circ_arc(supp_circ, 
-                          Arc_point_2(ps.x(), ps.y()),
-                          Arc_point_2(pt.x(), pt.y()));
-          std::vector<CGAL::Object> obj_vec;
-          tr.make_x_monotone_2_object()(circ_arc, std::back_inserter(obj_vec));
-          for(unsigned int i=0; i<obj_vec.size(); ++i)
+          Curve_2 circ_arc (supp_circ, 
+                            Arc_point_2 (ps.x(), ps.y()),
+                            Arc_point_2 (pt.x(), pt.y()));
+
+          // Break the arc into x-monotone subarcs (there can be at most
+          // three subarcs) and add them to the polygon.
+          obj_end = make_x_monotone (circ_arc, obj_begin);
+          n_subarcs = (obj_end - obj_begin);
+          CGAL_assertion (n_subarcs <= 3);
+
+          for (i = 0; i < n_subarcs; i++)
           {
-            X_monotone_curve_2 cv;
-            if(CGAL::assign(cv, obj_vec[i]))
-              curr_pgn.push_back(cv);
+            if (CGAL::assign (cv1, obj_vec[i]))
+              pgn.push_back (cv1);
           }
         }
         else
         {
-          if( ps == pt)
-            continue;
-
-          curr_pgn.push_back(X_monotone_curve_2(ps, pt));
+          // A zero bulge: ps and pt are connected by a straight line segment.
+          if (! equal (ps, pt))
+            pgn.push_back (X_monotone_curve_2 (ps, pt));
         }
       }
 
-      if(curr_pgn.orientation() == CGAL::CLOCKWISE)
-        curr_pgn.reverse_orientation();
+      // Make sure that the polygon is counterclockwise oriented.
+      if (pgn.orientation() == CGAL::CLOCKWISE)
+        pgn.reverse_orientation();
 
-      if(!simplify)
-        *pgns++ = curr_pgn;
+      // Perform polygon simplification if necessary.
+      if (!simplify)
+      {
+        *pgns = pgn;
+        ++pgns;
+      }
       else
       {
-        Circ_polygon_with_holes pgn_with_holes;
-        gps.simplify(curr_pgn, pgn_with_holes);
-        *pgns_with_holes++ = pgn_with_holes;
+        Circ_polygon_with_holes_2  pgn_with_holes;
+        gps.simplify (pgn, pgn_with_holes);
+
+        if (pgn_with_holes.number_of_holes() == 0)
+        {
+          // A simple polygon after all ...
+          *pgns = pgn_with_holes.outer_boundary();
+          ++pgns;
+        }
+        else
+        {
+          *pgns_with_holes = pgn_with_holes;
+          ++pgns_with_holes;
+        }
       }
     }
+
     polygons.clear();
-    }
+
+    // Return a pair of past-the-end iterators.
+    return (std::make_pair (pgns, pgns_with_holes));
+  }
 };
 
 CGAL_END_NAMESPACE
