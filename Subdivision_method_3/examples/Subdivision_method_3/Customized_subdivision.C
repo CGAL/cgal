@@ -17,7 +17,6 @@ using namespace std;
 using namespace CGAL;
 
 // ======================================================================
-///
 template <class _Poly>
 class WLoop_stencil_3 : public PQQ_stencil_3<_Poly> {
   typedef _Poly                                        Polyhedron;
@@ -39,7 +38,6 @@ class WLoop_stencil_3 : public PQQ_stencil_3<_Poly> {
   typedef typename Kernel::Vector_3                    Vector;
 
 public:
-  //
   void edge_node(Halfedge_iterator eitr, Point& pt) {
     Point& p1 = eitr->vertex()->point();
     Point& p2 = eitr->opposite()->vertex()->point();
@@ -50,7 +48,6 @@ public:
 	       (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
 	       (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
   }
-  //
   void vertex_node(Vertex_iterator vitr, Point& pt) {
     float R[] = {0.0, 0.0, 0.0};
     Point& S = vitr->point();
@@ -73,9 +70,7 @@ public:
       pt = Point((A*S[0]+B*R[0]), (A*S[1]+B*R[1]), (A*S[2]+B*R[2]));
     }
   }
-  //
   void facet_node(Facet_iterator fitr, Point& pt) {};
-  //
   void border_node(Halfedge_iterator eitr, Point& ept, Point& vpt) {
     Point& ep1 = eitr->vertex()->point();
     Point& ep2 = eitr->opposite()->vertex()->point();
@@ -86,14 +81,11 @@ public:
     Point& vp0  = vcir->vertex()->point();
     Point& vp_1 = (--vcir)->opposite()->vertex()->point();
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
-		(vp_1[1] + 6*vp0[1] + vp1[1])/8,
-		(vp_1[2] + 6*vp0[2] + vp1[2])/8 );
+                (vp_1[1] + 6*vp0[1] + vp1[1])/8,
+                (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
   }
 };
 
-
-// ======================================================================
-///
 int main(int argc, char **argv) {
   if (argc != 3) { 
     cout << "Usage: Customized_subdivision filename d" << endl; 
