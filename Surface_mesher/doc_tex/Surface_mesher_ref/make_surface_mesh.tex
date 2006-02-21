@@ -11,8 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{make_surface_mesh<C2T3, SurfaceOracle,
-Criteria, Tag>}  %% add template arg's if necessary
+\begin{ccRefFunction}{make_surface_mesh<C2T3, Surface, Criteria, Tag>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
@@ -43,7 +42,15 @@ to be  models  of the concepts
 \ccc{SurfaceMeshCellBase_3} respectively.
 
 
-The second template parameter  has to be a model
+The second template parameter describes the required knowledge
+on the surface to be meshed. The plugged in class has to be 
+either a model of the concept \ccc{SurfaceMeshTraits_3}
+or a class for which a specialization of the
+template class \ccc{Surface_mesher_traits_3<Surface> exists.
+Such partial specialization are currently provided
+for implicit surfaces (\ccc{Implicit_surface_3<Traits, Func> ) and 
+grey level images (\ccc{Grey_level_image_3<Traits, Func> )
+has to be a model
 of the concept
 \ccc{SurfaceOracle} which describes the required knowledge
 on the surface to be meshed. 
@@ -70,11 +77,11 @@ guarantees nothing else.
 \ccInclude{CGAL/make_surface_mesh.h}
 
 \ccGlobalFunction{template <class C2T3,
-                            class SurfaceOracle,
+                            class Surface,
                             class Criteria,
                             class Tag >
 void make_surface_mesh(C2T3& c2t3,
-                       SurfaceOracle surfor,
+                       Surface surface,
                        Criteria criteria,
                        Tag = Non_manifold_tag());}
 
@@ -84,8 +91,8 @@ process is started with an initial set of points which is the union
 of two sets: the
 set of vertices in the initial  triangulation pointed to by the
 \ccc{c2t3} argument   and a set of
-points output by the \ccc{surfor.initial_points()} method 
-of the surface oracle.
+points output by the \ccc{Construct_initial_points()} 
+of the surface.
 This initial set of points is required to include at least one point
 on each connected components of the surface to be meshed.
 
