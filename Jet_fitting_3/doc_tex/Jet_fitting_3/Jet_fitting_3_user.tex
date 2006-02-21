@@ -1,11 +1,9 @@
-\input{macro_perso.sty}
+\input{Jet_fitting_3/macro_perso.sty}
 %WARNING: amsmath not available
 
 
 This chapter describes the \cgal's package for the estimation of local 
 differential quantities on sampled surfaces. 
-
-give the outline
  
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -34,8 +32,8 @@ neighborhood around the point at which the estimation is computed and
 use at different level the geometry of the mesh. On one hand, methods
 relying on {\em discrete differential geometry} only use the
 information provided by the mesh
-\cite{cgal:pp-cdmsc-93,cgal:mdsb-ddgot-02,cgal:csm-rdtnc-03}. On the other hand,
-fitting methods rely on smooth differential geometry and
+\cite{cgal:pp-cdmsc-93,cgal:mdsb-ddgot-02,cgal:csm-rdtnc-03}. On the
+other hand, fitting methods rely on smooth differential geometry and
 approximation, and hence are able to process point clouds directly.
 
 By now, there are two methods to extract local differential properties
@@ -433,12 +431,30 @@ the matrix $P_{F\rightarrow M}$ and the partial derivatives of order
 at most $n$ of $J_{A,d}$. The third and fourth order coefficients of are
 computed with the implicit function theorem~:
 \begin{eqnarray*}
-&b_0=g_{3,0}=-(f_{3,0,0}-3f_{1,0,1}f_{2,0,0}/f_{0,0,1})/f_{0,0,1}\\
-&b_3=g_{0,3}=-(f_{0,3,0}-3f_{0,1,1}f_{0,2,0}/f_{0,0,1})/f_{0,0,1}\\
-&c_0=g_{4,0}=-(f_{4,0,0}+3f_{2,0,1}g_{2,0}+f_{0,0,2}g_{2,0}^2
-+4f_{1,0,1}g_{30})/f_{0,0,1}\\
-&c_4=g_{0,4}=-(f_{0,4,0}+3f_{0,2,1}g_{0,2}+f_{0,0,2}g_{0,2}^2
-+4f_{0,1,1}g_{0,3})/f_{0,0,1}
+%&b_0=g_{3,0}=-(f_{3,0,0}-3f_{1,0,1}f_{2,0,0}/f_{0,0,1})/f_{0,0,1}\\
+%&b_3=g_{0,3}=-(f_{0,3,0}-3f_{0,1,1}f_{0,2,0}/f_{0,0,1})/f_{0,0,1}\\
+%&c_0=g_{4,0}=-(f_{4,0,0}+3f_{2,0,1}g_{2,0}+f_{0,0,2}g_{2,0}^2
+%+4f_{1,0,1}g_{30})/f_{0,0,1}\\
+%&c_4=g_{0,4}=-(f_{0,4,0}+3f_{0,2,1}g_{0,2}+f_{0,0,2}g_{0,2}^2
+%+4f_{0,1,1}g_{0,3})/f_{0,0,1}\\
+&b_0=g_{3,0}=-{\frac { f_{3,0,0} f_{0,0,1} -3\, f_{1,0,1} f_{2,0,0} }{
+f_{0,0,1} ^{2}}}
+\\
+&b_1=g_{2,1}=-{\frac {-  f_{0,1,1}      f_{2,0,0}    +  f_{2,1,0}    f_{0,0,1}  }{  f_{0,0,1}    ^{2}}}
+\\
+&b_2=g_{1,2}=-{\frac {  f_{1,2,0}    f_{0,0,1}  -  f_{1,0,1}      f_{0,2,0}    }{  f_{0,0,1}    ^{2}}}
+\\
+&b_3=g_{0,3}=-{\frac {  f_{0,3,0}    f_{0,0,1}  -3\,  f_{0,1,1}      f_{0,2,0}    }{  f_{0,0,1}    ^{2}}}
+\\
+&c_0=g_{4,0}={\frac {-3\,  f_{0,0,2}        f_{2,0,0}      ^{2}-  f_{4,0,0}      f_{0,0,1}    ^{2}+6\,  f_{2,0,1}    f_{0,0,1}    f_{2,0,0}    +4\,  f_{1,0,1}    f_{0,0,1}    f_{3,0,0}    -12\,    f_{1,0,1}      ^{2}  f_{2,0,0}    }{  f_{0,0,1}    ^{3}}}
+\\
+&c_1=g_{3,1}={\frac {-6\,  f_{1,0,1}      f_{0,1,1}      f_{2,0,0}    +3\,f_{0,0,1}    f_{1,1,1}      f_{2,0,0}    +3\,  f_{1,0,1}    f_{0,0,1}    f_{2,1,0}    +  f_{0,1,1}    f_{0,0,1}    f_{3,0,0}    -  f_{3,1,0}      f_{0,0,1}    ^{2}}{  f_{0,0,1}    ^{3}}}
+\\
+&c_2=g_{2,2}=-{\frac {  f_{2,2,0}      f_{0,0,1}    ^{2}-  f_{2,0,1}   f_{0,0,1}    f_{0,2,0}    -2\,  f_{1,0,1}    f_{0,0,1}    f_{1,2,0}    +2\,    f_{1,0,1}      ^{2}  f_{0,2,0}    -  f_{0,2,1}    f_{0,0,1}    f_{2,0,0}    +2\,    f_{0,1,1}      ^{2}  f_{2,0,0}    -2\,  f_{0,1,1}    f_{0,0,1}    f_{2,1,0}    +  f_{0,0,2}      f_{0,2,0}      f_{2,0,0}    }{  f_{0,0,1}    ^{3}}}
+\\
+&c_3=g_{1,3}=-{\frac {  f_{1,3,0}      f_{0,0,1}    ^{2}+6\,  f_{1,0,1}      f_{0,1,1}      f_{0,2,0}    -3\,  f_{0,1,1}    f_{0,0,1}    f_{1,2,0}    -3\,  f_{1,1,1}    f_{0,0,1}    f_{0,2,0}    -  f_{1,0,1}    f_{0,0,1}    f_{0,3,0}    }{  f_{0,0,1}    ^{3}}}
+\\
+&c_4=g_{0,4}=-{\frac {  f_{0,4,0}     f_{0,0,1}    ^{2}+3\,  f_{0,0,2}        f_{0,2,0}      ^{2}-6\,  f_{0,2,1}    f_{0,0,1}    f_{0,2,0}    -4\,  f_{0,1,1}    f_{0,0,1}    f_{0,3,0}    +12\,    f_{0,1,1}      ^{2}  f_{0,2,0}    }{  f_{0,0,1}    ^{3}}}
 \end{eqnarray*} 
 
 \section{Software Design}

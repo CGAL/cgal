@@ -7,20 +7,21 @@ using namespace std;
 //we store hedges. exple: 1ring neighbours of 
 //v=hedges anchored at v
 //--------------------------------------------------
-// when storing hedges to a ith ring: do we store hedges to the ring or
-// opposite hedges?
+// when storing hedges to a ith ring: do we store hedges pointing to
+// the ring or opposite hedges?
 enum HTO_HOPPOSITE_ONERING { HTO_ONERING, HOPPOSITE_ONERING };
 
 template < class TPoly > class T_PolyhedralSurf_rings
 {
 public:
-  typedef typename TPoly::Point_3 Point_3;
+  //  typedef typename TPoly::Point_3 Point_3;
   typedef typename TPoly::Vertex Vertex;
+  //  typedef typename TPoly::Vertex_handle Vertex_handle;
   typedef typename TPoly::Halfedge Halfedge;
   typedef typename TPoly::Facet Facet;
   typedef typename TPoly::Halfedge_around_vertex_circulator
   Halfedge_around_vertex_circulator;
-
+  typedef typename TPoly::Vertex_iterator Vertex_iterator;
   //debug
   static void check_vertex_indices(Vertex* v); 
   static void check_ring_indices(TPoly& poly);
@@ -45,7 +46,7 @@ public:
 
 
   static void reset_ring_indices(std::vector < Vertex * >&vces);
-  static void reset_ring_indices(std::vector< Vertex_handle >&vces);
+  //  static void reset_ring_indices(std::vector< Vertex_handle >&vces);
   //Neighbours collected in ccw order on each ring
   static int collect_ith_ring_ccw(int ith,
 				  vector<int>& sizes,
@@ -98,14 +99,18 @@ public:
   static void reset_ring_indices(std::vector < Facet * >&facets);
 
   // to report 1st crossing edge with a sphere
-  static Point_3 orig_point;
-  static void set_orig_point(Point_3 & p);
-  static void
-  getFarthestNeighbourOfV_ofOrigPoint(Vertex * v,
-				      Halfedge * &h_farthest);
+  // static Point_3 orig_point;
+  //  static void set_orig_point(Point_3 & p);
+  //  static void
+  //  getFarthestNeighbourOfV_ofOrigPoint(Vertex * v,
+  //				      Halfedge * &h_farthest);
 
 };
 
+
+//////////////////////////////////////////////
+//////////IMLPEMENTATION///////////////////////
+//////////////////////////////////////////////
 //--------------------------------------------------
 //-- collecting ith ring neighbours
 //--------------------------------------------------
@@ -212,16 +217,16 @@ reset_ring_indices(std::vector < Vertex * >&vces)
     (*itb)->resetRingIndex();
 }
 
-//surcharge pour les handles
-template < class TPoly >
-void T_PolyhedralSurf_rings < TPoly >::
-reset_ring_indices(std::vector < Vertex_handle >&vces)
-{
-  typename std::vector < Vertex_handle >::iterator itb = vces.begin(), ite =
-    vces.end();
-  for (; itb != ite; itb++)
-    (&(*(*itb)))->resetRingIndex();
-}
+// //surcharge pour les handles
+// template < class TPoly >
+// void T_PolyhedralSurf_rings < TPoly >::
+// reset_ring_indices(std::vector < Vertex_handle >&vces)
+// {
+//   typename std::vector < Vertex_handle >::iterator itb = vces.begin(), ite =
+//     vces.end();
+//   for (; itb != ite; itb++)
+//     (&(*(*itb)))->resetRingIndex();
+// }
 
 //see also the other method below--------------
 //Neighbours collected in ccw order on each ring
@@ -584,47 +589,47 @@ reset_ring_indices(std::vector < Facet * >&facets)
     (*itb)->resetRingIndex();
 }
 
-// to report 1st crossing edge with a sphere
-template < class TPoly >
-typename TPoly::Point_3 T_PolyhedralSurf_rings < TPoly >::orig_point;
+// // to report 1st crossing edge with a sphere
+// template < class TPoly >
+// typename TPoly::Point_3 T_PolyhedralSurf_rings < TPoly >::orig_point;
 
-template < class TPoly >
-void T_PolyhedralSurf_rings < TPoly >::set_orig_point(Point_3 & p)
-{
-  T_PolyhedralSurf_rings < TPoly >::orig_point = p;
-}
+// template < class TPoly >
+// void T_PolyhedralSurf_rings < TPoly >::set_orig_point(Point_3 & p)
+// {
+//   T_PolyhedralSurf_rings < TPoly >::orig_point = p;
+// }
 
-template < class TPoly >
-void T_PolyhedralSurf_rings < TPoly >::
-getFarthestNeighbourOfV_ofOrigPoint(Vertex * v, Halfedge * &h_farthest)
-{
-  double d, dref;
-  Halfedge *h;
-  Halfedge_around_vertex_circulator
-    hedgeb = v->vertex_begin(), hedgee = hedgeb;
+// template < class TPoly >
+// void T_PolyhedralSurf_rings < TPoly >::
+// getFarthestNeighbourOfV_ofOrigPoint(Vertex * v, Halfedge * &h_farthest)
+// {
+//   double d, dref;
+//   Halfedge *h;
+//   Halfedge_around_vertex_circulator
+//     hedgeb = v->vertex_begin(), hedgee = hedgeb;
 
-  //init
-  h = h_farthest = &(*hedgeb);
-  hedgeb++;
-  dref = squared_distance(h->opposite()->vertex()->point(),
-			  T_PolyhedralSurf_rings < TPoly >::orig_point);
-  //Visit neighbours  
-  do
-    {
-      h = &(*hedgeb);
-      hedgeb++;
+//   //init
+//   h = h_farthest = &(*hedgeb);
+//   hedgeb++;
+//   dref = squared_distance(h->opposite()->vertex()->point(),
+// 			  T_PolyhedralSurf_rings < TPoly >::orig_point);
+//   //Visit neighbours  
+//   do
+//     {
+//       h = &(*hedgeb);
+//       hedgeb++;
 
-      assert(v == (&(*h->vertex())));
+//       assert(v == (&(*h->vertex())));
 
-      d = squared_distance(h->opposite()->vertex()->point(),
-			   T_PolyhedralSurf_rings < TPoly >::orig_point);
-      if (d > dref)
-	{
-	  dref = d;
-	  h_farthest = h;
-	}
-    }
-  while (hedgeb != hedgee);
-}
+//       d = squared_distance(h->opposite()->vertex()->point(),
+// 			   T_PolyhedralSurf_rings < TPoly >::orig_point);
+//       if (d > dref)
+// 	{
+// 	  dref = d;
+// 	  h_farthest = h;
+// 	}
+//     }
+//   while (hedgeb != hedgee);
+// }
 
 #endif

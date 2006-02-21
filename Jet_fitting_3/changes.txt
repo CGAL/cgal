@@ -1,0 +1,2 @@
+02 2006 Marc Pouget, Frederic Cazals
+- Initial version.

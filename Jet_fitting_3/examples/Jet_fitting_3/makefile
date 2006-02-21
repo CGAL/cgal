@@ -6,10 +6,13 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.4_g++-3.3.3
+#perso bug in current CGAL-I!
+CGAL_MAKEFILE = /proj/geometrica/home/CGAL/CGAL-3.2-I-370/make/makefile_i686_Linux-2.4_g++-3.3.3
+
+#CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.4_g++-3.3.3
 include $(CGAL_MAKEFILE)
 
-PROFOPT= -g -pg
+PROFOPT= -g 
 CFLAGS=${PROFOPT} 
 #---------------------------------------------------------------------#
 #                    compiler flags
@@ -47,11 +50,11 @@ all:            \
 BLIND_OBJS=options.o PolyhedralSurf.o blind.o
 blind: $(BLIND_OBJS)
 	$(CGAL_CXX) $(LIBPATH) -o blind.exe $(BLIND_OBJS) \
-	$(LDFLAGS) -pg
+	$(LDFLAGS) 
 
 blind_1pt: blind_1pt.o
 	$(CGAL_CXX) $(LIBPATH) -o blind_1pt.exe blind_1pt.o \
-	$(LDFLAGS) -pg 
+	$(LDFLAGS) 
 
 rmexe:
 	rm *.exe
@@ -98,6 +101,7 @@ blind.o: /usr/include/_G_config.h /usr/include/wchar.h
 blind.o: /usr/include/bits/wchar.h /usr/include/gconv.h
 blind.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
 blind.o: /usr/include/stdlib.h ../../include/CGAL/Monge_via_jet_fitting.h
+blind.o: ../../include/CGAL/monge_via_jet_fitting.h_assertions.h
 blind.o: /usr/include/math.h /usr/include/bits/huge_val.h
 blind.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h GSL.h
 blind.o: PolyhedralSurf.h PolyhedralSurf_operations.h PolyhedralSurf_rings.h
@@ -110,6 +114,7 @@ blind_1pt.o: /usr/include/_G_config.h /usr/include/wchar.h
 blind_1pt.o: /usr/include/bits/wchar.h /usr/include/gconv.h
 blind_1pt.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
 blind_1pt.o: /usr/include/stdlib.h ../../include/CGAL/Monge_via_jet_fitting.h
+blind_1pt.o: ../../include/CGAL/monge_via_jet_fitting.h_assertions.h
 blind_1pt.o: /usr/include/math.h /usr/include/bits/huge_val.h
 blind_1pt.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h GSL.h
 options.o: /usr/include/ctype.h /usr/include/features.h

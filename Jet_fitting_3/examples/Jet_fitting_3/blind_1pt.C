@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
     in_points.push_back(p);
   }
   inFile.close();
-  //  std::cout << "ok!" << std::endl;
 
   // fct parameters
   int d_fitting = std::atoi(argv[3]);
@@ -79,29 +78,29 @@ int main(int argc, char *argv[])
       exit(-1);
     }
 
- //OUTPUT on outFile
-   CGAL::set_pretty_mode(outFile);
-   outFile   << "vertex : " << in_points[0] << std::endl
-	     << "number of points used : " << in_points.size() << std::endl
-	     << "origin : " << monge_rep.origin_pt() << std::endl
-	     << "d1 : " << monge_rep.d1() << std::endl 
-	     << "d2 : " << monge_rep.d2() << std::endl
-	     << "n : " << monge_rep.n() << std::endl
-	     << "cond_nb : " << monge_info.cond_nb() << std::endl 
-	     << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
-	     << " " << monge_info.pca_eigen_vals()[2] 
-	     << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
-	     << "pca_eigen_vecs : " << std::endl 
-	     << monge_info.pca_eigen_vecs()[0] << std::endl 
-	     << monge_info.pca_eigen_vecs()[1] << std::endl 
-	     << monge_info.pca_eigen_vecs()[2] << std::endl
-	     << std::endl ;
-   if ( d_monge >= 2) 
-     outFile   << "k1 : " << monge_rep.coefficients()[0] << std::endl 
-	       << "k2 : " << monge_rep.coefficients()[1] << std::endl;
-
-  //OUTPUT on std::cout
-   CGAL::set_pretty_mode(std::cout);
+  //OUTPUT on outFile
+  CGAL::set_pretty_mode(outFile);
+  outFile   << "vertex : " << in_points[0] << std::endl
+	    << "number of points used : " << in_points.size() << std::endl
+	    << "origin : " << monge_rep.origin_pt() << std::endl
+	    << "d1 : " << monge_rep.d1() << std::endl 
+	    << "d2 : " << monge_rep.d2() << std::endl
+	    << "n : " << monge_rep.n() << std::endl
+	    << "cond_nb : " << monge_info.cond_nb() << std::endl 
+	    << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
+	    << " " << monge_info.pca_eigen_vals()[2] 
+	    << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
+	    << "pca_eigen_vecs : " << std::endl 
+	    << monge_info.pca_eigen_vecs()[0] << std::endl 
+	    << monge_info.pca_eigen_vecs()[1] << std::endl 
+	    << monge_info.pca_eigen_vecs()[2] << std::endl
+	    << std::endl ;
+  if ( d_monge >= 2) 
+    outFile   << "k1 : " << monge_rep.coefficients()[0] << std::endl 
+	      << "k2 : " << monge_rep.coefficients()[1] << std::endl;
+   
+   //OUTPUT on std::cout
+  CGAL::set_pretty_mode(std::cout);
   std::cout << "vertex : " << in_points[0] << std::endl
 	    << "number of points used : " << in_points.size() << std::endl
 	    << "origin : " << monge_rep.origin_pt() << std::endl
@@ -120,6 +119,16 @@ int main(int argc, char *argv[])
   if ( d_monge >= 2) 
     std::cout << "k1 : " << monge_rep.coefficients()[0] << std::endl 
 	      << "k2 : " << monge_rep.coefficients()[1] << std::endl;
-
+  if ( d_monge >= 3) 
+    std::cout << "b0 : " << monge_rep.coefficients()[2] << std::endl 
+	      << "b1 : " << monge_rep.coefficients()[3] << std::endl
+	      << "b2 : " << monge_rep.coefficients()[4] << std::endl 
+	      << "b3 : " << monge_rep.coefficients()[5] << std::endl; 
+  if ( d_monge >= 4) 
+    std::cout << "c0 : " << monge_rep.coefficients()[6] << std::endl 
+	      << "c1 : " << monge_rep.coefficients()[7] << std::endl
+	      << "c2 : " << monge_rep.coefficients()[8] << std::endl 
+	      << "c3 : " << monge_rep.coefficients()[9] << std::endl 
+	      << "c4 : " << monge_rep.coefficients()[10] << std::endl; 
   return 1;
 }

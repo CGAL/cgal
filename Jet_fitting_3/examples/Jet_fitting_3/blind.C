@@ -32,7 +32,7 @@ typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
 //Syntax requirred by Options
 static const char *const optv[] = {
   "?|?",
-  "f:fName <string>",		//<name>???
+  "f:fName <string>",	//name of the input off file
   "d:deg <int>",	//degree of the jet
   "m:mdegree <int>",	//degree of the Monge rep
   "a:nrings <int>",	//# rings
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
       while( gathered.size() < nb_points_to_use ) {
 	ith++;
     	//using tags
-	nbp += T_PolyhedralSurf_rings<PolyhedralSurf>::
+	nbp += Poly_rings::
 	  collect_ith_ring_neighbours(ith, *p_current_ring,
 				      *p_next_ring, gathered);
 	//next round must be launched from p_nextRing...

@@ -4,6 +4,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Linear_algebraCd.h>
+#include "jet_fitting_3_assertions.h"
+
 //#include <CGAL/eigen.h> //for ALTERNATIVE  with CGAL eigen code
 
 #include <math.h>
@@ -475,7 +477,7 @@ compute_Monge_coefficients(const LAVector &A, int dprime,
   //              g(x,y)=sum (gij x^i y^j/ i!j!) with 
   //              g00=g10=g01=g11=0, g20=kmax, g02=kmin
   //
-  //g(x,y)= 1/2*(k1x^2 +k2y^2)  ou 1/2*(a0x^2 +2a1xy +a2y^2)
+  //g(x,y)= 1/2*(k1x^2 +k2y^2) 
   //       +1/6*(b0x^3 +3b1x^2y +3b2xy^2 +b3y^3) 
   //       +1/24*(c0x^4 +4c1x^3y +6c2x^2y^2 +4c3xy^3 +c4y^4)
   //       +...
@@ -490,22 +492,23 @@ compute_Monge_coefficients(const LAVector &A, int dprime,
   p[0][2] = this->change_fitting2monge.m(2,0);
   p[1][2] = this->change_fitting2monge.m(2,1);
   p[2][2] = this->change_fitting2monge.m(2,2);
-  //debug
-    LFT f1 = A[1] * p[0][0] + A[2] * p[1][0] - p[2][0];//=0
-    LFT f2 = A[2] * p[1][1] + A[1] * p[0][1] - p[2][1];//=0
-    std::cout << "f1 = " << f1 << std::endl <<  "f2 = " << f2 << std::endl;
+
+  //     note f1 = f2 = f12 = 0 
+  //     LFT f1 = A[1] * p[0][0] + A[2] * p[1][0] - p[2][0];
+  //     LFT f2 = A[2] * p[1][1] + A[1] * p[0][1] - p[2][1];
+  //     LFT f12 = 
+  //     2 * A[3] * p[0][0] * p[0][1]
+  //     + 2 * A[5] * p[1][0] * p[1][1]
+  //     + A[4] * p[0][1] * p[1][0] 
+  //     + A[4] * p[0][0] * p[1][1];
+  //         -f11 / f3 = kmax
+  //         -f22 / f3 = kmin 
+ 
   LFT f3 = A[1] * p[0][2] + A[2] * p[1][2] - p[2][2];
   LFT f11 =
     2 * A[4] * p[0][0] * p[1][0]
     + 2 * A[5] * p[1][0] * p[1][0]
     + 2 * A[3] * p[0][0] * p[0][0];
-  //debug
-  LFT f12 = //=0
-    2 * A[3] * p[0][0] * p[0][1]
-    + 2 * A[5] * p[1][0] * p[1][1]
-    + A[4] * p[0][1] * p[1][0] 
-    + A[4] * p[0][0] * p[1][1];
-    std::cout << "f12 = " << f12 << std::endl;
   LFT f13 =
     A[4] * p[0][0] * p[1][2]
     + A[4] * p[0][2] * p[1][0]
@@ -562,21 +565,21 @@ compute_Monge_coefficients(const LAVector &A, int dprime,
     +2*A[7]*p[0][1]*p[0][1]*p[1][2]
     +4*A[7]*p[0][1]*p[0][2]*p[1][1]
     +4*A[8]*p[0][1]*p[1][1]*p[1][2];
-  LFT kmax = monge_rep.coefficients()[0],
-    kmin = monge_rep.coefficients()[1];
-   //debug
-    LFT a0 = -f11 / f3;	//=kmax
-    LFT a2 = -f22 / f3;	//=kmin 
-    std::cout << "a0 =  " << a0 << " =??? kmax = " <<2* kmax << std::endl;
-  std::cout << "a2 =  " << a2 << " =??? kmin = " << 2*kmin << std::endl;
+  LFT f123 = 
+    2*A[8]*p[0][2]*p[1][0]*p[1][1]
+    +2*A[7]*p[0][0]*p[0][1]*p[1][2]
+    +2*A[7]*p[0][0]*p[0][2]*p[1][1]
+    +6*A[9]*p[1][0]*p[1][1]*p[1][2]
+    +2*A[7]*p[0][1]*p[0][2]*p[1][0]
+    +6*A[6]*p[0][0]*p[0][1]*p[0][2]
+    +2*A[8]*p[0][0]*p[1][1]*p[1][2]
+    +2*A[8]*p[0][1]*p[1][0]*p[1][2];
 
-
-
-   
-  LFT b0 = -(f111 - 3 * f13 * f11 / f3) / f3;	//extrema of curv
-  LFT b1 = -(f112 + f23 * kmax) / f3;// + 2 * f13 * a1
-  LFT b2 = -(f122 + f13 * kmin) / f3;//+ 2 * f23 * a1
-  LFT b3 = -(f222 - 3 * f23 * f22 / f3) / f3;	//extrema of curv
+  LFT b0 = 1/(f3*f3)*(-f111*f3+3*f13*11);
+  LFT b1 = 1/(f3*f3)*(-f112*f3+f23*f11);
+  LFT b2 = 1/(f3*f3)*(-f122*f3+f13*f22);
+  LFT b3 = -1/(f3*f3)*(f222*f3-3*f23*f22);
+  
   monge_rep.coefficients()[2] = b0;
   monge_rep.coefficients()[3] = b1;
   monge_rep.coefficients()[4] = b2;
@@ -590,20 +593,52 @@ compute_Monge_coefficients(const LAVector &A, int dprime,
 	+24*A[11]*p[0][0]*p[0][0]*p[0][0]*p[1][0]
 	+24*A[14]*p[1][0]*p[1][0]*p[1][0]*p[1][0]
 	+24*A[10]*p[0][0]*p[0][0]*p[0][0]*p[0][0];
+      LFT f1112 = 
+	6*A[13]*p[0][1]*p[1][0]*p[1][0]*p[1][0]
+	+18*A[13]*p[0][0]*p[1][0]*p[1][0]*p[1][1]
+	+24*A[10]*p[0][0]*p[0][0]*p[0][0]*p[0][1]
+	+12*A[12]*p[0][0]*p[0][1]*p[1][0]*p[1][0]
+	+18*A[11]*p[0][0]*p[0][0]*p[0][1]*p[1][0]
+	+24*A[14]*p[1][0]*p[1][0]*p[1][0]*p[1][1]
+	+6*A[11]*p[0][0]*p[0][0]*p[0][0]*p[1][1]
+	+12*A[12]*p[0][0]*p[0][0]*p[1][0]*p[1][1];
+      LFT f1122 = 
+	12*A[11]*p[0][0]*p[0][0]*p[0][1]*p[1][1]
+	+12*A[13]*p[0][0]*p[1][0]*p[1][1]*p[1][1]
+	+12*A[13]*p[0][1]*p[1][0]*p[1][0]*p[1][1]
+	+16*A[12]*p[0][0]*p[0][1]*p[1][0]*p[1][1]
+	+12*A[11]*p[0][0]*p[0][1]*p[0][1]*p[1][0]
+	+24*A[10]*p[0][0]*p[0][0]*p[0][1]*p[0][1]
+	+4*A[12]*p[0][1]*p[0][1]*p[1][0]*p[1][0]
+	+4*A[12]*p[0][0]*p[0][0]*p[1][1]*p[1][1]
+	+24*A[14]*p[1][0]*p[1][0]*p[1][1]*p[1][1];
+      LFT f1222 = 
+	6*A[13]*p[0][0]*p[1][1]*p[1][1]*p[1][1]
+	+24*A[10]*p[0][0]*p[0][1]*p[0][1]*p[0][1]
+	+24*A[14]*p[1][0]*p[1][1]*p[1][1]*p[1][1]
+	+6*A[11]*p[0][1]*p[0][1]*p[0][1]*p[1][0]
+	+18*A[11]*p[0][0]*p[0][1]*p[0][1]*p[1][1]
+	+12*A[12]*p[0][0]*p[0][1]*p[1][1]*p[1][1]
+	+12*A[12]*p[0][1]*p[0][1]*p[1][0]*p[1][1]
+	+18*A[13]*p[0][1]*p[1][0]*p[1][1]*p[1][1];
       LFT f2222 =
 	24*A[13]*p[0][1]*p[1][1]*p[1][1]*p[1][1]
 	+24*A[11]*p[0][1]*p[0][1]*p[0][1]*p[1][1]
 	+24*A[12]*p[0][1]*p[0][1]*p[1][1]*p[1][1]
 	+24*A[10]*p[0][1]*p[0][1]*p[0][1]*p[0][1]
 	+24*A[14]*p[1][1]*p[1][1]*p[1][1]*p[1][1];
-      LFT c0 = -(f1111+3*f113*kmax+f33*kmax*kmax+4*f13*b0)/f3;
-      LFT c1 = 0;//todo!
-      LFT c2 = 0;
-      LFT c3 = 0;
-      LFT c4 = -(f2222+3*f223*kmin+f33*kmin*kmin+4*f23*b3)/f3;
-      // for ridge type
-      //     LFT P1 = 3*b1*b1+(kmax-kmin)*(c0-3*kmax*kmax*kmax);
-      //     LFT P2 = 3*b2*b2+(kmin-kmax)*(c4-3*kmin*kmin*kmin);
+
+      LFT c0 =
+	-1/(f3*f3*f3)*(f1111*(f3*f3)-4*f13*f3*f111+12*f13*f13*f11-6*f113*f3*f11+3*f33*f11*f11);
+      LFT c1 =
+	1/(f3*f3*f3)*(f23*f3*f111+3*f3*f123*f11+3*f13*f3*f112-f1112*(f3*f3)-6*f13*f23*f11); 
+      LFT c2 =
+	1/(f3*f3*f3)*(-f33*f22*f11+f113*f3*f22+2*f13*f3*f122-2*f13*f13*f22+f223*f3*f11+2*f23*f3*f112-2*f23*f23*f11-f1122*(f3*f3)); 
+      LFT c3 =
+	1/(f3*f3*f3)*(-f1222*(f3*f3)-6*f13*f23*f22+3*f123*f3*f22+f13*f3*f222+3*f23*f3*f122); 
+      LFT c4 =
+	-1/(f3*f3*f3)*(f2222*(f3*f3)+3*f33*f22*f22-6*f223*f3*f22-4*f23*f3*f222+12*f23*f23*f22) ; 
+      
       monge_rep.coefficients()[6] = c0;
       monge_rep.coefficients()[7] = c1;
       monge_rep.coefficients()[8] = c2;
@@ -611,8 +646,6 @@ compute_Monge_coefficients(const LAVector &A, int dprime,
       monge_rep.coefficients()[10] = c4;
     }
 }
-
-
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::

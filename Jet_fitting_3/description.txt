@@ -1,0 +1,1 @@
+Computation of local differential quantities of a surface from a point sample.
