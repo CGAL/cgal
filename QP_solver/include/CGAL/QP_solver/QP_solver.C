@@ -516,9 +516,6 @@ ratio_test_1( )
 	}
     }
 
-// TESTING: 
-//  direction = 1;
-    
     // check `t_i's
     x_i = et1;                                          // trick: initialize
     q_i = et0;                                          // minimum with +oo
@@ -599,7 +596,7 @@ ratio_test_1__t_min_j(Tag_true is_in_standard_form)
 }
 
 // By the pricing step we have the following precondition
-//  direction == 1 => x_O_v_i[j] == (LOWER v ZERO)
+// direction == +1 => x_O_v_i[j] == (LOWER v ZERO)
 // direction == -1 => x_O_v_i[j] == (UPPER v ZERO) 
 template < class Rep_ >                         // Upper bounded
 void  QP_solver<Rep_>::
@@ -962,10 +959,11 @@ ratio_test_2( Tag_false)
     // become optimal (\mu_j=0), or one of the variables in x^*_\hat{B} drops
     // down to zero.
     //
-    // Technically, we do this as follows here.  Eq. (2.11) in Sven's thesis
-    // holds, and by multlying it by $M_\hat{B}^{-1}$ we obtain an equation
-    // for \lambda and x^*_\hat{B}.  The interesting equation (the one for
-    // x^*_\hat{B}) looks more or less as follows:
+    // Let us see first how this is done in the standard-form case (where
+    // Sven's thesis applies).  Eq. (2.11) in Sven's thesis holds, and by
+    // multlying it by $M_\hat{B}^{-1}$ we obtain an equation for \lambda and
+    // x^*_\hat{B}.  The interesting equation (the one for x^*_\hat{B}) looks
+    // more or less as follows:
     //
     //    x(mu_j)      = x(0) + mu_j      q_it                          (1)
     //
@@ -997,13 +995,15 @@ ratio_test_2( Tag_false)
     //
     //    delta_min:= min {delta_k | k in \hat{B} and (q_it)_k < 0 }
     //    
-    // Below we are thus going to compute this minimum.  Once we have
-    // delta_min, we need to check whether we get optimal BEFORE a variable
-    // drops to zero.  As delta = mu_j - mu_j(t_1), the latter is precisely
-    // the case if delta_min >= -mu_j(t_1).
+    // So in order to handle the standard-form case, we would compute this
+    // minimum.  Once we have delta_min, we need to check whether we get
+    // optimal BEFORE a variable drops to zero.  As delta = mu_j - mu_j(t_1),
+    // the latter is precisely the case if delta_min >= -mu_j(t_1).
     //
     // (Note: please forget the crap identitiy between (2.11) and (2.12); the
     // notation is misleading.)
+    //
+    // Now to the nonstandard-form case.
     
     // fw: By definition delta_min >= 0, such that initializing
     // delta_min with -mu_j(t_1) has the desired effect that a basic variable
@@ -1126,7 +1126,7 @@ update_1( )
 	  CGAL_expensive_assertion(
             is_solution_feasible_for_auxiliary_problem());
 	} else {
-	  CGAL_expensive_assertion(is_solution_feasible());
+	  //CGAL_expensive_assertion(is_solution_feasible());
 	}
       else
 	vout2 << "(feasibility not checked in intermediate step)" << std::endl;
@@ -3134,7 +3134,7 @@ print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
             << std::endl;
         } else {                                    // q_k == 0
             vout2.out() << "t_O_" << k << ": "
-            << "??" << '/' << q_k
+            << "inf"
             << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
             << std::endl;
         }
@@ -3179,7 +3179,7 @@ print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
             }
         } else {                                    // q_k == 0
             vout2.out() << "t_O_" << k << ": "
-            <<  "??" << '/' << q_k
+            <<  "inf"
             << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
             << std::endl;
         }
@@ -3215,7 +3215,7 @@ print_ratio_1_slack(int k, const ET& x_k, const ET& q_k)
             << std::endl;
         } else {                                    // q_k == 0
             vout2.out() << "t_S_" << k << ": "
-            << "??" << '/' << q_k
+            << "inf"
             << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
             << std::endl;
         }

@@ -1160,64 +1160,90 @@ public:
 // class implementation (template)
 // ===============================
 
-  public:
+public:
 
-    // pricing
-    // -------
-    // computation of mu_j with standard form
-    template < class RndAccIt1, class RndAccIt2, class NT >  
-    NT
-    mu_j( int j, RndAccIt1 lambda_it, RndAccIt2 x_it, const NT& dd) const
-    {
-	NT  mu_j;
+  // pricing
+  // -------
+  // The solver provides three methods to compute mu_j; the first
+  // two below take additional information (which the pricing
+  // strategy either provides in exact- or NT-form), and the third
+  // simply does the exact computation. (Note: internally, we use
+  // the third version, too, see ratio_test_1__t_j().)
 
-	if ( j < qp_n) {                                // original variable
+  // computation of mu_j with standard form
+  template < class RndAccIt1, class RndAccIt2, class NT >  
+  NT
+  mu_j( int j, RndAccIt1 lambda_it, RndAccIt2 x_it, const NT& dd) const
+  {
+    NT  mu_j;
 
-	    // [c_j +] A_Cj^T * lambda_C
-	    mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
-	    mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
+    if ( j < qp_n) {                                // original variable
 
-	    // ... + 2 D_Bj^T * x_B
-	    mu_j__quadratic_part( mu_j, j, x_it, Is_linear());
+      // [c_j +] A_Cj^T * lambda_C
+      mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
+      mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
 
-	} else {                                        // slack or artificial
+      // ... + 2 D_Bj^T * x_B
+      mu_j__quadratic_part( mu_j, j, x_it, Is_linear());
 
-	    mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
-				       Has_equalities_only_and_full_rank());
+    } else {                                        // slack or artificial
 
-	}
+      mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
+				 Has_equalities_only_and_full_rank());
 
-	return mu_j;
     }
+
+    return mu_j;
+  }
     
-    // computation of mu_j with upper bounding
-    template < class RndAccIt1, class RndAccIt2, class NT >  
-    NT
-    mu_j( int j, RndAccIt1 lambda_it, RndAccIt2 x_it, const NT& w_j,
-            const NT& dd) const
-    {
-	NT  mu_j;
+  // computation of mu_j with upper bounding
+  template < class RndAccIt1, class RndAccIt2, class NT >  
+  NT
+  mu_j( int j, RndAccIt1 lambda_it, RndAccIt2 x_it, const NT& w_j,
+	const NT& dd) const
+  {
+    NT  mu_j;
 
-	if ( j < qp_n) {                                // original variable
+    if ( j < qp_n) {                                // original variable
 
-	    // [c_j +] A_Cj^T * lambda_C
-	    mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
-	    mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
+      // [c_j +] A_Cj^T * lambda_C
+      mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
+      mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
 
-	    // ... + 2 D_Bj^T * x_B + 2 D_Nj x_N
-	    mu_j__quadratic_part( mu_j, j, x_it, w_j, dd, Is_linear());
+      // ... + 2 D_Bj^T * x_B + 2 D_Nj x_N
+      mu_j__quadratic_part( mu_j, j, x_it, w_j, dd, Is_linear());
 
-	} else {                                        // slack or artificial
+    } else {                                        // slack or artificial
 
-	    mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
-				       Has_equalities_only_and_full_rank());
+      mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
+				 Has_equalities_only_and_full_rank());
 
-	}
-
-	return mu_j;
     }
+
+    return mu_j;
+  }
+
+  // computation of mu_j (exact, both for upper bounding and standard form)
+  ET
+  mu_j( int j) const
+  {
+    CGAL_qpe_assertion(!is_basic(j));
     
-        
+    if (!check_tag(Is_in_standard_form()) &&
+	!check_tag(Is_linear()) &&
+	!is_phaseI && is_original(j)) {
+      return mu_j(j,
+		  lambda_numerator_begin(),
+		  basic_original_variables_numerator_begin(),
+		  w_j_numerator(j),
+		  variables_common_denominator());
+    } else {
+      return mu_j(j,
+		  lambda_numerator_begin(),
+		  basic_original_variables_numerator_begin(),
+		  variables_common_denominator());
+    }
+  }
 
   private:
 
@@ -1536,12 +1562,10 @@ ratio_test_1__t_j( Tag_false)
     if ( is_phaseII) {
 
 	// compute `nu' and `mu_j' 
-	mu = inv_M_B.inner_product(     A_Cj.begin(), two_D_Bj.begin(),
-				      lambda.begin(),    x_B_O.begin());
+        mu = mu_j(j);
 	nu = inv_M_B.inner_product(     A_Cj.begin(), two_D_Bj.begin(),
 				    q_lambda.begin(),    q_x_O.begin());
 	if ( j < qp_n) {                                // original variable
-	    mu +=     d*ET( qp_c[ j]);
 	    nu -= et2*d*ET( qp_D[ j][ j]);
 	}
 	CGAL_qpe_assertion_msg(nu <= et0,
