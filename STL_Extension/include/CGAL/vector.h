@@ -154,7 +154,7 @@ public:
                                                      const_iterator;
     typedef vector< T, Alloc>                        Self;
 
-#if defined(__sun) && defined(__SUNPRO_CC)
+#if defined(__SUNPRO_CC) && defined(_RWSTD_NO_CLASS_PARTIAL_SPEC)
     typedef std::reverse_iterator< iterator,
                                    typename iterator::iterator_category,
                                    typename iterator::value_type,
@@ -172,7 +172,7 @@ public:
 #else
     typedef std::reverse_iterator< iterator >       reverse_iterator;
     typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
-#endif // defined(__sun) && defined(__SUNPRO_CC)
+#endif // defined(__SUNPRO_CC) && defined(_RWSTD_NO_CLASS_PARTIAL_SPEC)
 
 protected:
 #ifndef _MSC_VER
