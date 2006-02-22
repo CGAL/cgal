@@ -13,11 +13,11 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include/ \
+CXXFLAGS = \
+           -I../../include/ \
+           -DNDEBUG -O3 \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           -DNDEBUG -O2 \
-           
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -51,13 +51,10 @@ boolean_operations_2$(OBJ_EXT): boolean_operations_2.C boolean_operations_2.moc
 
 boolean_operations_2$(EXE_EXT): boolean_operations_2$(OBJ_EXT) \
 	boolean_operations_2_toolbar$(OBJ_EXT)
-
 	$(CGAL_CXX) $(EXE_OPT)boolean_operations_2  boolean_operations_2$(OBJ_EXT) \
 	 boolean_operations_2_toolbar$(OBJ_EXT)     $(LDFLAGS)
 
-clean: boolean_operations_2.clean boolean_operations_2_toolbar.clean \
-	              
-                    
+clean: boolean_operations_2.clean boolean_operations_2_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
