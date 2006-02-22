@@ -23,6 +23,8 @@ typedef Data_Kernel::Point_3  DPoint;
 typedef Data_Kernel::Vector_3 DVector;
 typedef PolyhedralSurf::Vertex Vertex;
 typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
+typedef PolyhedralSurf::Vertex Vertex;
+
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 //Kernel for local computations
 typedef double                LFT;
@@ -265,44 +267,6 @@ int main(int argc, char *argv[])
 	+(-v->k1()+v->k2())
 	*(monge_rep.coefficients()[10]-3*v->k2()*v->k2()*v->k2()) ; 
     }
-
-    //OpenGL output
-    //scaling for ppal dir,
-    // may be optimized with a global mean edges length computed only once
-    // on all edges of P
-  //   DFT scale_ppal_dir = P.compute_mean_edges_length_around_vertex(v)/2;
-//     (*out_4ogl) << v->point()  << " "
-// 		<< monge_rep.origin_pt()  << " "
-// 		<< monge_rep.d1() * scale_ppal_dir << " "
-// 		<< monge_rep.d2() * scale_ppal_dir << " "
-// 		<< monge_rep.coefficients()[0] << " "
-// 		<< monge_rep.coefficients()[1] << " "
-// 		<< std::endl;
-
-//     //verbose txt output 
-//     if (verbose){     
-//       (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
-// 		     <<	" : " << v->point() << std::endl
-// 		     << "number of points used : " << in_points.size() << std::endl
-// 		     << "number of rings used : " << ith << std::endl
-// 		     << "origin : " << monge_rep.origin_pt() << std::endl
-// 		     << "d1 : " << monge_rep.d1() << std::endl 
-// 		     << "d2 : " << monge_rep.d2() << std::endl
-// 		     << "n : " << monge_rep.n() << std::endl
-// 		     << "cond_nb : " << monge_info.cond_nb() << std::endl 
-// 		     << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
-// 		     << " " << monge_info.pca_eigen_vals()[2] 
-// 		     << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
-// 		     << "pca_eigen_vecs : " << std::endl 
-// 		     << monge_info.pca_eigen_vecs()[0] << std::endl 
-// 		     << monge_info.pca_eigen_vecs()[1] << std::endl 
-// 		     << monge_info.pca_eigen_vecs()[2] << std::endl;
-//       if ( d_monge >= 2) 
-// 	(*out_verbose) << "k1 : " << monge_rep.coefficients()[0] << std::endl 
-// 		       << "k2 : " << monge_rep.coefficients()[1] << std::endl
-// 		       << std::endl ;
-//    } //END IF 
-
   } //END FOR LOOP
 
   ///////////////////////////////////////////
@@ -315,10 +279,51 @@ int main(int argc, char *argv[])
   iter_end = ridge_approximation.compute_all_ridges(P, iter_lines,
 						    Ridge_approximation::Tag_3); 
   
+  iter_lines = ridge_lines.begin();
+  for (;iter_lines!=iter_end;iter_lines++)
+    {
+      //OpenGL output
+      (*out_4ogl) << iter_lines->line_type()  << " "
+		  << iter_lines->strength()  << " "
+		  << iter_lines->sharpness()  << " ";
+      std::list<Ridge_line::ridge_he >::iterator
+	iter = iter_lines->line()->begin(), 
+	ite =  iter_lines->line()->end();
+      for (;iter!=ite;){
+	//he: p->q
+	DPoint p = iter->first->opposite()->vertex()->point(),
+	  q = iter->first->vertex()->point();
+	DVector r = (p-CGAL::ORIGIN)*iter->second +
+	  (q-CGAL::ORIGIN)*(1-iter->second); 
 
-
-
-
+	(*out_4ogl) << r << " ";	
+      }
+      (*out_4ogl) <<     std::endl;
+      
+   //  //verbose txt output 
+//       if (verbose){     
+// 	(*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
+// 		       <<	" : " << v->point() << std::endl
+// 		       << "number of points used : " << in_points.size() << std::endl
+// 		       << "number of rings used : " << ith << std::endl
+// 		       << "origin : " << monge_rep.origin_pt() << std::endl
+// 		       << "d1 : " << monge_rep.d1() << std::endl 
+// 		       << "d2 : " << monge_rep.d2() << std::endl
+// 		       << "n : " << monge_rep.n() << std::endl
+// 		       << "cond_nb : " << monge_info.cond_nb() << std::endl 
+// 		       << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
+// 		       << " " << monge_info.pca_eigen_vals()[2] 
+// 		       << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
+// 		       << "pca_eigen_vecs : " << std::endl 
+// 		       << monge_info.pca_eigen_vecs()[0] << std::endl 
+// 		       << monge_info.pca_eigen_vecs()[1] << std::endl 
+// 		       << monge_info.pca_eigen_vecs()[2] << std::endl;
+// 	if ( d_monge >= 2) 
+// 	  (*out_verbose) << "k1 : " << monge_rep.coefficients()[0] << std::endl 
+// 			 << "k2 : " << monge_rep.coefficients()[1] << std::endl
+// 			 << std::endl ;
+//       } //END IF 
+    }
 
   //  std::cout << "ok 1 " << std::endl;
   //cleanup filenames
