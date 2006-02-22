@@ -1,19 +1,8 @@
-Program blind_1pt.exe 
---------------------- 
-takes as input a <inputPoints.txt> which is a xyz text file 
-it compute the fitting for this single entry and 
-it outputs results in the <output.txt> file and on the standard std::cout
-
-Usage is : main <inputPoints.txt> <output.txt> <d_fitting>, <d_monge>" 
-
-./blind_1pt.exe data/in_points_file.txt output.txt 2 2
-
-
-
 Program blind.exe
 -----------------
 takes an filename.off file as input,
-it computes a fitting for each vertex
+it computes a jet fitting to set the monge data at each vertex 
+computes the ridge lines
 
 it outputs the results in :
 1. filename.off.4ogl.txt  which can be visualized with 
@@ -22,8 +11,8 @@ it outputs the results in :
 
 Usage is : blind  with options    
     "f:fName <string>",	 // filename.off
-    "d:deg <int>",	 // degree of the jet
-    "m:mdegree <int>",	 // degree of the Monge rep
+    "d:deg <int>",	 // degree of the jet fitting must be >=3, default is 4
+    "m:mdegree <int>",	 // degree of the Monge rep must be >=3, default is 4
     "a:nrings <int>",	 // # rings 
 			0 means collect enough rings to make appro possible
 			k>=1 fixes the nb of rings to be collected
@@ -35,6 +24,10 @@ Usage is : blind  with options
 Note : if the nb of collected points is less than the required min number of 
    points to make the approxiamtion possible (which is constrained by the deg)
    then the vertex is skipped.
+
+
+
+
 
  ./blind.exe -f data/ellipe0.003.off -d2 -m2 -a2 
  ./blind.exe -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
