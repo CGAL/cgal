@@ -87,20 +87,20 @@ int main(int argc, char *argv[])
 
   //prepare output file names
   assert(if_name != NULL);
-  w_if_name = new char[strlen(if_name)];
+  w_if_name = new char[strlen(if_name)+1];
   strcpy(w_if_name, if_name);
   for(unsigned int i=0; i<strlen(w_if_name); i++) 
     if (w_if_name[i] == '/') w_if_name[i]='_';
   cerr << if_name << '\n';  
   cerr << w_if_name << '\n';  
 
-  res4openGL_fname = new char[strlen(w_if_name) + 9];// append .4ogl.txt
+  res4openGL_fname = new char[strlen(w_if_name) + 10];// append .4ogl.txt
   sprintf(res4openGL_fname, "%s.4ogl.txt", w_if_name);
   out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out);
   assert(out_4ogl!=NULL);
   //if verbose only...
   if(verbose){
-    verbose_fname  = new char[strlen(w_if_name) + 9];// append .verb.txt
+    verbose_fname  = new char[strlen(w_if_name) + 10];// append .verb.txt
     sprintf(verbose_fname, "%s.verb.txt", w_if_name);
     out_verbose = new std::ofstream( verbose_fname, std::ios::out);
     assert(out_verbose != NULL);
