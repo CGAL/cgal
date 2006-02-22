@@ -1,4 +1,15 @@
 #include <CGAL/basic.h>
+
+#if (TEST_TRAITS == CORE_CONIC_TRAITS) && !defined(CGAL_USE_CORE)
+
+#include <iostream>
+int main ()
+{
+  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  return (0);
+}
+#else
+
 #include <CGAL/Arrangement_2.h>
 
 #include <vector>
@@ -449,5 +460,7 @@ read_curve(stream & is,
 	    << std::endl;
   return (false);
 }
+
+#endif
 
 #endif
