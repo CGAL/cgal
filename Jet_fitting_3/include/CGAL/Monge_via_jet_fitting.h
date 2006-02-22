@@ -184,8 +184,8 @@ template < class DataKernel, class LocalKernel, class LinAlgTraits>
 Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
 Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
 		      int d, int  dprime, 
-		      Monge_rep<Data_Kernel> &monge_rep,  
-		      Monge_info<Local_Kernel> &monge_info)
+		      Monge_rep& monge_rep,  
+		      Monge_info& monge_info)
 {
   // precondition: on the degrees, jet and monge
   CGAL_precondition( (d >=1) && (dprime >= 1) 
