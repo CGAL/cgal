@@ -101,11 +101,10 @@ blind.o: /usr/include/_G_config.h /usr/include/wchar.h
 blind.o: /usr/include/bits/wchar.h /usr/include/gconv.h
 blind.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
 blind.o: /usr/include/stdlib.h ../../include/CGAL/Monge_via_jet_fitting.h
-blind.o: ../../include/CGAL/monge_via_jet_fitting.h_assertions.h
-blind.o: /usr/include/math.h /usr/include/bits/huge_val.h
-blind.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h GSL.h
-blind.o: PolyhedralSurf.h PolyhedralSurf_operations.h PolyhedralSurf_rings.h
-blind.o: options.h
+blind.o: ../../include/CGAL/jet_fitting_3_assertions.h /usr/include/math.h
+blind.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
+blind.o: /usr/include/bits/mathcalls.h GSL.h PolyhedralSurf.h
+blind.o: PolyhedralSurf_operations.h PolyhedralSurf_rings.h options.h
 blind_1pt.o: /usr/include/stdio.h /usr/include/features.h
 blind_1pt.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 blind_1pt.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
@@ -114,7 +113,7 @@ blind_1pt.o: /usr/include/_G_config.h /usr/include/wchar.h
 blind_1pt.o: /usr/include/bits/wchar.h /usr/include/gconv.h
 blind_1pt.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
 blind_1pt.o: /usr/include/stdlib.h ../../include/CGAL/Monge_via_jet_fitting.h
-blind_1pt.o: ../../include/CGAL/monge_via_jet_fitting.h_assertions.h
+blind_1pt.o: ../../include/CGAL/jet_fitting_3_assertions.h
 blind_1pt.o: /usr/include/math.h /usr/include/bits/huge_val.h
 blind_1pt.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h GSL.h
 options.o: /usr/include/ctype.h /usr/include/features.h

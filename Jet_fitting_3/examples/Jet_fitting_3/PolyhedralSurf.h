@@ -27,13 +27,7 @@ template < class Refs, class Tag, class Pt, class FGeomTraits >
 class My_vertex:public CGAL::HalfedgeDS_vertex_base < Refs, Tag, Pt >
 {
 protected:
-  // typedef typename Refs::Vertex Vertex;
-  //  typedef typename Refs::Halfedge Halfedge;
-  //  typedef typename Refs::Face Facet;
-
   typedef typename FGeomTraits::Point_3 Point_3;
-  //  typedef typename FGeomTraits::Vector_3 Vector_3;
-
   int ring_index;
 public:
   void setRingIndex(int i) { ring_index = i; }
@@ -54,13 +48,7 @@ template < class Refs, class Tag, class FGeomTraits >
 class My_facet:public CGAL::HalfedgeDS_face_base < Refs, Tag >
 {
 public:
-  //  typedef typename Refs::Vertex Vertex;
-  //  typedef typename Refs::Vertex_handle Vertex_handle;
-  //  typedef typename Refs::Halfedge Halfedge;
-  //  typedef typename Refs::Halfedge_handle Halfedge_handle;
-
-  typedef typename FGeomTraits::Vector_3 Vector_3;
-  //  typedef typename FGeomTraits::Point_3 Point_3;
+ typedef typename FGeomTraits::Vector_3 Vector_3;
 
 protected:
   Vector_3 normal;
@@ -80,13 +68,9 @@ public:
 //----------------------------------------------------------------
 // Halfedge
 //----------------------------------------------------------------
-template < class Refs, class Tprev, class Tvertex, class Tface, class FGeomTraits > 
+template < class Refs, class Tprev, class Tvertex, class Tface>
 class My_halfedge:public CGAL::HalfedgeDS_halfedge_base < Refs, Tprev, Tvertex, Tface >
 {
-  //protected:
-  //  typedef typename FGeomTraits::Point_3 Point_3;
-  //  typedef typename FGeomTraits::Vector_3 Vector_3;
-
 protected:
   int ring_index;
   double len;
@@ -108,8 +92,6 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
     typedef struct {
     public:
       typedef typename Traits::Point_3 Point_3;
-      typedef typename Traits::Vector_3 Vector_3;
-      typedef typename Traits::Plane_3 Plane_3;
     } FGeomTraits;
     typedef typename Traits::Point_3 Point_3;
     typedef My_vertex < Refs, CGAL::Tag_true, Point_3, FGeomTraits > Vertex;
@@ -122,9 +104,7 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
     //all types needed by the facet...
     typedef struct {
     public:
-      typedef typename Traits::Point_3 Point_3;
       typedef typename Traits::Vector_3 Vector_3;
-      typedef typename Traits::Plane_3 Plane_3;
     } FGeomTraits;
     //custom type instantiated...
     typedef My_facet < Refs, CGAL::Tag_true, FGeomTraits > Face;
@@ -132,15 +112,9 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
 
   // wrap halfedge
   template < class Refs, class Traits > struct Halfedge_wrapper {
-    typedef struct {
-    public:
-      typedef typename Traits::Point_3 Point_3;
-      typedef typename Traits::Vector_3 Vector_3;
-      typedef typename Traits::Plane_3 Plane_3;
-    } FGeomTraits;
-    typedef My_halfedge < Refs,
+   typedef My_halfedge < Refs,
       CGAL::Tag_true,
-      CGAL::Tag_true, CGAL::Tag_true, FGeomTraits > Halfedge;
+      CGAL::Tag_true, CGAL::Tag_true>  Halfedge;
   };
 };
 

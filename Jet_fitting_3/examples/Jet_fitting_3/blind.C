@@ -219,17 +219,25 @@ int main(int argc, char *argv[])
 				   monge_rep, monge_info);
  
     //switch min-max ppal curv/dir wrt the mesh orientation
+    // if z=g(x,y) in the basis (d1,d2,n) then in the basis (d2,d1,-n)
+    // z=h(x,y)=-g(y,x)
     DVector normal_mesh = P.computeFacetsAverageUnitNormal(v);
     DVector normal_monge = monge_rep.n();
     if ( normal_mesh*normal_monge < 0 )
       {
 	monge_rep.n() = -monge_rep.n();
-	DVector temp = monge_rep.d1();
-	monge_rep.d1() = monge_rep.d2();
-	monge_rep.d2() = temp;
-	DFT temp_curv = monge_rep.coefficients()[0];
-	monge_rep.coefficients()[0] = -monge_rep.coefficients()[1];
-	monge_rep.coefficients()[1] = -temp_curv;
+	std::swap(monge_rep.d1(), monge_rep.d2());
+	if ( d_monge >= 2) 
+	std::swap(monge_rep.coefficients()[0],monge_rep.coefficients()[1]);
+	if ( d_monge >= 3) {
+	std::swap(monge_rep.coefficients()[2],monge_rep.coefficients()[5]);
+	std::swap(monge_rep.coefficients()[3],monge_rep.coefficients()[4]);}
+	if ( d_monge >= 4) {
+	std::swap(monge_rep.coefficients()[6],monge_rep.coefficients()[10]);
+	std::swap(monge_rep.coefficients()[7],monge_rep.coefficients()[9]);}
+	std::vector<DFT>::iterator itb = monge_rep.coefficients().begin(),
+	   ite = monge_rep.coefficients().end();
+	for (;itb!=ite;itb++) { *itb = -(*itb); }
       }
       
     //OpenGL output
