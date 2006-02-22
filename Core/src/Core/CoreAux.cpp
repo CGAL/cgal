@@ -159,7 +159,7 @@ gmp_randstate_t* getRandstate() {
 // 3. A more general program should take a 3rd argument (the radix of
 //      output number).  We assume radix 10.
 char * core_itoa(int n, char* buffer) {
-	sprintf(buffer, "%d", n);
+	std::sprintf(buffer, "%d", n);
 	return buffer;
 }
 
@@ -167,14 +167,14 @@ char * core_itoa(int n, char* buffer) {
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
 double IntMantissa(double d) {
 	int e;
-	return ldexp(frexp(d, &e), 53);
+	return std::ldexp(std::frexp(d, &e), 53);
 }
 
 /// implements the "integer exponent" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
 int IntExponent(double d) {
 	int e;
-	frexp(d, &e);
+	std::frexp(d, &e);
 	return e-53;
 }
 
@@ -191,7 +191,7 @@ void core_error(std::string msg, std::string file, int lineno, bool err) {
   if (!outFile) {
      // perror("CORE ERROR: cannot open Core Diagnostics file");
      std::cerr << "CORE ERROR: can't open Core Diagnostics file"<<std::endl;
-     exit(1); //Note: do not call abort()
+     std::exit(1); //Note: do not call abort()
   }
   outFile << "CORE " << (err? "ERROR" : "WARNING")
      << " (at " << file << ": " << lineno << "): "
@@ -203,7 +203,7 @@ void core_error(std::string msg, std::string file, int lineno, bool err) {
      //        + core_itoa(lineno,buf) +"):" + msg + "\n").c_str());
      std::cerr << (std::string("CORE ERROR") + " (file " + file + ", line "
              + core_itoa(lineno,buf) +"):" + msg + "\n").c_str();
-     exit(1); //Note: do not call abort()
+     std::exit(1); //Note: do not call abort()
   }
 }
 

@@ -22,7 +22,7 @@ void test_polygon(const R&, const Point&, const char* FileName)
   std::ifstream from(FileName);
   if (!from) {
     std::cerr << "could not open file " << FileName << "!" << endl;
-    exit(1);
+    std::exit(1);
   }
   CGAL::set_ascii_mode(from);
 

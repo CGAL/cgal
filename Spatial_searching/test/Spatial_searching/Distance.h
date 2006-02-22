@@ -47,6 +47,6 @@ struct Distance {
   
   double transformed_distance(double d) const { return d*d; }
   
-  double inverse_of_transformed_distance(double d) { return sqrt(d); }
+  double inverse_of_transformed_distance(double d) { return std::sqrt(d); }
   
 }; // end of struct Distance

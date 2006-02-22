@@ -19,7 +19,7 @@ struct Util {
     typedef std::pair< Box, Box >   Box_pair;
     typedef std::vector< Box_pair > Result_container;
 
-    static void readBoxesFromFile( FILE *infile, Box_container& boxes ) {
+    static void readBoxesFromFile( std::FILE *infile, Box_container& boxes ) {
       int numBoxes, numDim;
       int boxNum, dim;
     

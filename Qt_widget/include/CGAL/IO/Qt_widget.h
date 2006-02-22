@@ -41,6 +41,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <cmath>
 
 #include <qwidget.h>
 #include <qpainter.h>
@@ -608,7 +609,7 @@ Qt_widget& operator<<(Qt_widget& w, const Line_2<R>& l)
 
   if (dx==0 && dy==0) return w;
 
-  if (fabs(dx)>fabs(dy))
+  if (std::fabs(dx)>std::fabs(dy))
     {
       y1=p1d.y()+(x1-p1d.x())*dy/dx;
       y2=p1d.y()+(x2-p1d.x())*dy/dx;

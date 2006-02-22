@@ -18,6 +18,7 @@
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
 #include <iostream>
+#include <cstdlib>
 
 #ifndef CGAL_USE_QT
 int main(int, char*)
@@ -256,7 +257,7 @@ public slots:
 
     if(number_of_segments < 1) {
       std::cerr << "Bad input file(number of segments)" << std::endl;
-      exit(1);
+      std::exit(1);
     }
     QProgressDialog progress("Loading segments", "Abort loading",
                              number_of_segments, this, "progress", true);

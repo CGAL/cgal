@@ -232,7 +232,7 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
               Predicate_traits traits, int dim, T& mi )
 {
     // magic formula
-    int levels = (int)(.91*log(((double)std::distance(begin,end))/137.0)+1);
+    int levels = (int)(.91*std::log(((double)std::distance(begin,end))/137.0)+1);
     levels = (levels <= 0) ? 1 : levels;
     RandomAccessIter it = iterative_radon( begin, end, traits, dim, levels );
     mi = Predicate_traits::min_coord( *it, dim );

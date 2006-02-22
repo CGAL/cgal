@@ -157,10 +157,10 @@ public:
     if (fpVal < 0.0)
       core_error("possible negative sqrt!", __FILE__, __LINE__, false);
     if (fpVal > 0.0) {
-      double val = ::sqrt(fpVal);
+      double val = std::sqrt(fpVal);
       return filteredFp(val,  ( maxAbs / fpVal ) * val, 1 + ind);
     } else
-      return filteredFp(0.0, ::sqrt(maxAbs) * POWTWO_26, 1 + ind);
+      return filteredFp(0.0, std::sqrt(maxAbs) * POWTWO_26, 1 + ind);
   }
 
   /// dump function

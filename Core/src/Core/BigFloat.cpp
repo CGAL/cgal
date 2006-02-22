@@ -610,7 +610,7 @@ void BigFloatRep::sqrt(const BigFloatRep& x, const extLong& a, const BigFloat& A
       if (!x.err)
         err = 0;
       else {                  //  x.err > 0
-        err = (long)(:: sqrt((double)x.err));
+        err = (long)(std::sqrt((double)x.err));
         err++;
         err <<= 1;
         if (delta)
@@ -807,7 +807,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
 
   long L10 = 0;
   if (M != 0) {
-    L10 = (long)::floor((lm + e2) / lgTenM);
+    L10 = (long)std::floor((lm + e2) / lgTenM);
     L10 = adjustE(L10, m, e2);     // L10: floor[log10(M 2^(e2))], M != 0
   } else {
     L10 = 0;
@@ -839,7 +839,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
   // except that the last digit which might be subject to +/- 1.
 
   if (err != 0) {     // valid = number of significant digits
-    unsigned long valid = floorlg10(m) - (long)::floor(log10(float(err)));
+    unsigned long valid = floorlg10(m) - (long)std::floor(std::log10(float(err)));
     if (decRep.length() > valid) {
       decRep.erase(valid);
     }

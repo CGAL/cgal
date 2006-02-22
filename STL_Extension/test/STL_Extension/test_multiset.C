@@ -38,6 +38,7 @@ int main() {
 #include <vector>
 #include <list>
 #include <iostream>
+#include <cstdlib>
 
 void test_massive_insert_and_erase();
 void test_iterators();
@@ -102,7 +103,7 @@ void test_massive_insert_and_erase ()
   std::cout << "Inserting " << n << " numbers into the set... " << std::flush;
   for (k = 0; k < n; k++)
   {
-    val = static_cast<int> (n * static_cast<double>(rand()) / RAND_MAX);
+    val = static_cast<int> (n * static_cast<double>(std::rand()) / RAND_MAX);
     set.insert (val);
     CGAL_assertion (set.is_valid());
   }
@@ -120,7 +121,7 @@ void test_massive_insert_and_erase ()
   std::cout << "Deleting numbers from the set... " << std::flush;
   for (k = 0; k < 3*n; k++)
   {
-    val = static_cast<int> (n * static_cast<double>(rand()) / RAND_MAX);
+    val = static_cast<int> (n * static_cast<double>(std::rand()) / RAND_MAX);
     n_del += set.erase (val);
     CGAL_assertion (set.is_valid());
   }
@@ -217,7 +218,7 @@ struct Word_index_compare
   CGAL::Comparison_result operator() (const Word_index& w1,
                                       const Word_index& w2) const
   {
-    int    res = strcmp (w1.word.c_str(), w2.word.c_str());
+    int    res = std::strcmp (w1.word.c_str(), w2.word.c_str());
 
     if (res == 0)
       return (CGAL::EQUAL);
@@ -234,7 +235,7 @@ struct String_word_index_compare
   CGAL::Comparison_result operator() (const std::string& str,
                                       const Word_index& w2) const
   {
-    int    res = strcmp (str.c_str(), w2.word.c_str());
+    int    res = std::strcmp (str.c_str(), w2.word.c_str());
 
     if (res == 0)
       return (CGAL::EQUAL);
@@ -438,7 +439,7 @@ void test_catenate ()
 
   for (k = 0; k < n1; k++)
   {
-    val = static_cast<int> (1000 * static_cast<double>(rand()) /
+    val = static_cast<int> (1000 * static_cast<double>(std::rand()) /
                                    static_cast<double>(RAND_MAX));
     set1.insert (val);
   }
@@ -451,7 +452,7 @@ void test_catenate ()
 
   for (k = 0; k < n2; k++)
   {
-    val = static_cast<int> (2000 + 1000 * static_cast<double>(rand()) /
+    val = static_cast<int> (2000 + 1000 * static_cast<double>(std::rand()) /
                                           static_cast<double>(RAND_MAX));
     set2.insert (val);
   }
@@ -568,7 +569,7 @@ void test_swap_and_replace ()
   std::cout << "Inserting " << n << " numbers into the set... " << std::flush;
   for (k = 0; k < n; k++)
   {
-    val = M * (static_cast<double>(rand()) / RAND_MAX);
+    val = M * (static_cast<double>(std::rand()) / RAND_MAX);
     handles[static_cast<int>(val)].push_back (set.insert (val));
   }
   CGAL_assertion (set.is_valid());

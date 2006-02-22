@@ -20,6 +20,7 @@
 #ifndef CGAL_INTERVAL_SKIP_LIST_INTERVAL_H
 #define CGAL_INTERVAL_SKIP_LIST_INTERVAL_H
 
+#include <cstdlib>
 #include <iostream>
 
 
@@ -90,7 +91,7 @@ namespace CGAL {
     if ( inf_ > sup_ )
       {
 	std::cerr << "Error: " << *this << std::endl;
-	exit(1);
+	std::exit(1);
       }
   }
 

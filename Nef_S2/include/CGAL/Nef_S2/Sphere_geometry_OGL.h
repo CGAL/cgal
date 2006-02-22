@@ -562,7 +562,7 @@ void construct_axes() const
   glEnd();
   glBegin(GL_LINE_LOOP);
   for(i=0;i<100;i++)
-    glVertex3d(f*cos(2.0*CGAL_PI*i/100.0),f*sin(2.0*CGAL_PI*i/100.0),0.0);
+    glVertex3d(f*std::cos(2.0*CGAL_PI*i/100.0),f*std::sin(2.0*CGAL_PI*i/100.0),0.0);
   glEnd();
   // green y-axis and equator
   glColor3f(0.0,1.0,0.0);
@@ -572,7 +572,7 @@ void construct_axes() const
   glEnd();
   glBegin(GL_LINE_LOOP);
   for(i=0;i<100;i++)
-    glVertex3d(0.0,f*cos(2.0*CGAL_PI*i/100.0),f*sin(2.0*CGAL_PI*i/100.0));
+    glVertex3d(0.0,f*std::cos(2.0*CGAL_PI*i/100.0),f*std::sin(2.0*CGAL_PI*i/100.0));
   glEnd();
   // blue z-axis and equator
   glColor3f(0.0,0.0,1.0);
@@ -582,7 +582,7 @@ void construct_axes() const
   glEnd();
   glBegin(GL_LINE_LOOP);
   for(i=0;i<100;i++)
-    glVertex3d(f*cos(2.0*CGAL_PI*i/100.0),0.0,f*sin(2.0*CGAL_PI*i/100.0));
+    glVertex3d(f*std::cos(2.0*CGAL_PI*i/100.0),0.0,f*std::sin(2.0*CGAL_PI*i/100.0));
   glEnd();
   // six coordinate points in pink:
   glPointSize(10);

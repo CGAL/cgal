@@ -21,6 +21,8 @@
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/sorted_matrix_search.h>
 #include <vector>
+#include <cstdlib>
+
 template < class Matrix_iterator, class Value >
 Value
 compute_upper_bound( Matrix_iterator f,
@@ -52,6 +54,8 @@ using std::greater_equal;
 using std::max;
 using std::cerr;
 using std::endl;
+using std::atoi;
+using std::exit;
 using CGAL::Cartesian_matrix;
 using CGAL::bind_2;
 using CGAL::Random;

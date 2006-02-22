@@ -21,6 +21,8 @@
 #ifndef  CGAL_KDTREE_D_H
 #define  CGAL_KDTREE_D_H
 
+#include <cstdlib>
+#include <cassert>
 #include <cstring>
 #include <list>
 using std::list; // to avoid compiler crash on MSVC++
@@ -183,7 +185,7 @@ public:
             assert( _dim > 0 );
             dim = _dim;
 
-            p_arr = (coordinate_type *)malloc( sizeof( coordinate_type ) 
+            p_arr = (coordinate_type *)std::malloc( sizeof( coordinate_type ) 
                                                * dim );
             //printf( "p_arr(new): %p\n", (void *)p_arr );
             assert( p_arr != NULL );
@@ -252,7 +254,7 @@ public:
         {
             if  ( p_arr != NULL ) {
                 //printf( "a: %p\n", p_arr );
-                free( p_arr );
+                std::free( p_arr );
                 //printf( "_a\n" );
                 p_arr = NULL;
             }

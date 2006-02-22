@@ -37,6 +37,8 @@
 
 using std::vector;
 using std::back_inserter;
+using std::atoi;
+using std::exit;
 using CGAL::Cartesian;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;

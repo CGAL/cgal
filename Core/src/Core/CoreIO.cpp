@@ -37,7 +37,7 @@ void core_io_error_handler(const char *f, const char *m) {
   std::cout << "\n error_handler";
   std::cout << "::" << f << "::" << m << "\n";
   std::cout.flush();
-  abort();
+  std::abort();
 }
 
 void core_io_memory_handler(char *t, const char *f, const char *m) {
@@ -46,7 +46,7 @@ void core_io_memory_handler(char *t, const char *f, const char *m) {
     std::cout << "::" << f << "::" << m;
     std::cout << "memory exhausted\n";
     std::cout.flush();
-    abort();
+    std::abort();
   }
 }
 
@@ -171,7 +171,7 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
     }
   } else {
     base = 10;
-    size = (maxBits == 0) ? length : (int)::ceil(maxBits*log(2.0)/log(10.0));
+    size = (maxBits == 0) ? length : (int)std::ceil(maxBits*std::log(2.0)/std::log(10.0));
     size = (size > length) ? length : size;
     offset = length - size;
     in.putback(c);
@@ -238,14 +238,14 @@ void readFromFile(BigInt& z, std::istream& in, long maxLength) {
   // check type name whether it is Integer or not.
   buffer = new char[8];
   read_string(in, buffer, sizeof(buffer));
-  if ( strcmp(buffer, "Integer") != 0)
+  if ( std::strcmp(buffer, "Integer") != 0)
     core_io_error_handler("BigInt::read_from_file()","type name expected.");
   delete[] buffer;
 
   // read the bit length field.
   buffer = new char[100];
   read_string(in, buffer, sizeof(buffer));
-  length = atol(buffer);
+  length = std::atol(buffer);
   delete[] buffer;
 
   // read bigint
@@ -258,7 +258,7 @@ void writeToFile(const BigInt& z, std::ostream& out, int base, int charsPerLine)
   // get the absoulte value string
   char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
   mpz_get_str(buffer, base, c.get_mp());
-  int length = strlen(buffer);
+  int length = std::strlen(buffer);
 
   // write type name of big number and length
   //out << "# This is an experimental big number format.\n";
@@ -282,27 +282,27 @@ void readFromFile(BigFloat& bf, std::istream& in, long maxLength) {
   // check type name whether it is Float
   buffer = new char[6];
   read_string(in, buffer, sizeof(buffer));
-  if (strcmp(buffer, "Float") != 0)
+  if (std::strcmp(buffer, "Float") != 0)
     core_io_error_handler("BigFloat::read_from_file()", "type name expected");
   delete[] buffer;
 
   // read base (default is 16384)
   buffer = new char[8];
   read_string(in, buffer, sizeof(buffer));
-  if (strcmp(buffer, "(16384)") != 0)
+  if (std::strcmp(buffer, "(16384)") != 0)
     core_io_error_handler("BigFloat::read_from_file()", "base expected");
   delete[] buffer;
 
   // read the bit length field.
   buffer = new char[100];
   read_string(in, buffer, sizeof(buffer));
-  length = atol(buffer);
+  length = std::atol(buffer);
   delete[] buffer;
 
   // read exponent
   buffer = new char[100];
   read_string(in, buffer, sizeof(buffer));
-  exponent = atol(buffer);
+  exponent = std::atol(buffer);
   delete[] buffer;
 
   // read mantissa
@@ -318,7 +318,7 @@ void writeToFile(const BigFloat& bf, std::ostream& out, int base, int charsPerLi
   // get the absoulte value string
   char* buffer = new char[mpz_sizeinbase(c.get_mp(), base) + 2];
   mpz_get_str(buffer, base, c.get_mp());
-  int length = strlen(buffer);
+  int length = std::strlen(buffer);
 
 
   // write type name, base, length

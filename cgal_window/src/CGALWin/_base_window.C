@@ -1114,7 +1114,7 @@ void BASE_WINDOW::timer_handler(int)
   else timer_win->timer_action(timer_win);
   
   timer_win->set_mode(save_mode);
-  signal(SIGALRM,(leda_sig_pf)timer_handler);
+  std::signal(SIGALRM,(leda_sig_pf)timer_handler);
  }
 #endif
 
@@ -1124,7 +1124,7 @@ void BASE_WINDOW::start_timer(int msec, win_redraw_func1 F)
   x_start_timer(draw_win,msec); 
 #if defined(__unix__)
   timer_win = this;
-  signal(SIGALRM,(leda_sig_pf)timer_handler);
+  std::signal(SIGALRM,(leda_sig_pf)timer_handler);
 
   static itimerval it;
   float fsec  = msec/1000.0;
@@ -1142,7 +1142,7 @@ void BASE_WINDOW::start_timer(int msec, const window_handler& obj)
   x_start_timer(draw_win,msec); 
 #if defined(__unix__)
   timer_win = this;
-  signal(SIGALRM,(leda_sig_pf)timer_handler);
+  std::signal(SIGALRM,(leda_sig_pf)timer_handler);
 
   static itimerval it;
   float fsec  = msec/1000.0;

@@ -355,7 +355,7 @@ inline double BigFloatRep::lg10(BigInt x) {
     d += ulongValue(t%10);
     t /= 10;
   }
-  return log10(d) + l;
+  return std::log10(d) + l;
 }
 
 // this is a simpler form of lg10()

@@ -46,6 +46,7 @@ typedef double RT;
 #endif
 
 #include <vector>
+#include <cstdlib>
 
 // NOTE: the choice of double here for a number type may cause problems 
 //       for degenerate point sets
@@ -99,15 +100,15 @@ int main(int argc, char* argv[])
   if (argc != 2)
   {
       std::cerr << "Usage: " << argv[0] << " #points " << std::endl;
-      exit(0);
+      std::exit(0);
   }
 
-  int num = atoi(argv[1]);
+  int num = std::atoi(argv[1]);
   if (num < 0) 
   {
      std::cerr << "Usage: " << argv[0] << " #points " << std::endl;
      std::cerr << " #points must be >= 0" << std::endl;
-     exit(0);
+     std::exit(0);
   }
 
   std::vector<Point_3> points;

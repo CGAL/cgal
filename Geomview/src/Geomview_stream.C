@@ -29,6 +29,7 @@
 #include <csignal>
 #include <cerrno>
 #include <cstring>
+#include <cstdlib>
 #include <unistd.h>
 
 #include <sys/types.h> // kill() on SunPro requires these 2 #includes.
@@ -68,18 +69,18 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
     std::cout << "Starting Geomview..." << std::flush;
     if (pipe(pipe_out) < 0) {
         std::cerr << "out pipe failed" << std::endl;
-        exit(-1);
+        std::exit(-1);
     }
 
     if (pipe(pipe_in) < 0) {
         std::cerr << "in pipe failed" << std::endl;
-        exit(-1);
+        std::exit(-1);
     }
 
     switch (pid = fork()){
     case -1:
         std::cerr << "fork failed" << std::endl;
-        exit(-1);
+        std::exit(-1);
     case 0:               // The child process
         close(pipe_out[1]); // does not write to the out pipe,
         close(pipe_in[0]);  // does not read from the in pipe.
@@ -117,7 +118,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
             std::cerr << "error number " << errno << " (check `man execlp')" 
 		      << std::endl;
         };
-        exit(-1);
+        std::exit(-1);
     default:              // The parent process
         close(pipe_out[0]); // does not read from the out pipe,
         close(pipe_in[1]);  // does not write to the in pipe.
@@ -218,7 +219,7 @@ Geomview_stream::operator<<(const std::string & s)
     if ((int)s.length() != ::write(out, s.data(), s.length())) {
         std::cerr << "write problem in the pipe while sending data to geomview"
              << std::endl;
-        exit(-1);
+        std::exit(-1);
     }
     trace(s);
 

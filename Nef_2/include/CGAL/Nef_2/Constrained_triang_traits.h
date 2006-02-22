@@ -23,6 +23,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/PM_checker.h>
+#include <cstdlib>
 #include <string>
 #include <map>
 #include <set>
@@ -34,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 
 inline void CGAL_error_handler(int n, const char* s)
 { std::cerr << s << std::endl;
-  exit(n);
+  std::exit(n);
 }
 
 struct Do_nothing {

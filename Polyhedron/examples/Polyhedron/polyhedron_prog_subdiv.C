@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 
 typedef CGAL::Cartesian<double>                              Kernel;
 typedef Kernel::Vector_3                                     Vector;
@@ -38,7 +39,7 @@ struct Smooth_old_vertex {
     Point operator()( const Vertex& v) const {
         CGAL_precondition((CGAL::circulator_size( v.vertex_begin()) & 1) == 0);
         std::size_t degree = CGAL::circulator_size( v.vertex_begin()) / 2;
-        double alpha = ( 4.0 - 2.0 * cos( 2.0 * CGAL_PI / degree)) / 9.0;
+        double alpha = ( 4.0 - 2.0 * std::cos( 2.0 * CGAL_PI / degree)) / 9.0;
         Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0 - alpha);
         HV_circulator h = v.vertex_begin();
         do {
