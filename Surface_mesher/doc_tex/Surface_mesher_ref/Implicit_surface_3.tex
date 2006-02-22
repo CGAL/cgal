@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Implicit_surface_oracle.tex
+% | Reference manual page: Implicit_surface_3.tex
 % +------------------------------------------------------------------------+
 % | 09.12.2005   Author
 % | Package: Package
@@ -11,22 +11,23 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Implicit_surface_oracle<Traits, Func>}  %% add template arg's if necessary
+\begin{ccRefClass}{Implicit_surface_3<Traits, Func>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\  is a model of the concept
-\ccc{SurfaceOracle}. 
-This class implements the surface oracle
-required by the surface mesher 
-\ccc{make_surface_mesh<C2T3, SurfaceOracle,
-Criteria, Tag>}
-in the case
-where the surface to be meshed is described as the zero level
+The class \ccRefName\  implements a surface described 
+as the zero level
 set  of a function $f : \R^3 \longrightarrow \R$.
+
+
+The library provides a partial specialization
+of the  surface mesher traits generator~:
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,Func > >}
+that provides a surface mesh traits for this type of surfaces.
+
 
 The parameter \ccc{Traits} is a traits class providing 
 a type \ccc{Point_3} and a numerical type \ccc{FT}.
@@ -43,11 +44,11 @@ The numerical type \ccc{Func::FT} has to match
 the type \ccc{Traits::FT}.
 
 
-\ccInclude{CGAL/Implicit_surface_oracle.h}
+\ccInclude{CGAL/Implicit_surface_3.h}
 
-\ccIsModel
+%\ccIsModel
 
-\ccc{SurfaceOracle}
+%\ccc{SurfaceOracle}
 
 %\ccTypes
 
@@ -64,10 +65,12 @@ the type \ccc{Traits::FT}.
 
 
 \ccSeeAlso
+\ccc{make_surface_mesh},\\
+\ccc{Surface_mesh_traits_generator_3<Surface>},\\
+\ccc{ImplicitSurfaceTraits}, \\
+\ccc{ImplicitFunction}.\\
 
-\ccc{ImplicitFunction}, \\
-\ccc{ImplicitSurfaceTraits},\\
-\ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}
+
 
 
 

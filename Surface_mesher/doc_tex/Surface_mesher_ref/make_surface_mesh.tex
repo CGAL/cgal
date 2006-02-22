@@ -11,10 +11,12 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{make_surface_mesh<C2T3, Surface, Criteria, Tag>}  %% add template arg's if necessary
+\begin{ccRefFunction}{make_surface_mesh}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccInclude{CGAL/make_surface_mesh.h}
 
 \ccDefinition
   
@@ -22,7 +24,35 @@ The function \ccRefName\ is a surface mesher,
 that is a function to build a two dimensional mesh 
 approximating  a surface.
 
-The first template parameter  \ccc{C2T3}
+The library provides two overloaded version 
+of this function~:
+
+
+
+\ccGlobalFunction{template <class C2T3,
+                            class Surface,
+                            class Criteria,
+                            class Tag >
+void make_surface_mesh(C2T3& c2t3,
+                       Surface surface,
+                       Criteria criteria,
+                       Tag ) ;}
+
+
+\ccGlobalFunction{template <class C2T3,
+                            class SurfaceMeshTraits,
+                            class Criteria,
+                            class Tag >
+void make_surface_mesh(C2T3& c2t3,
+                       SurfaceMeshTraits::Surface_3  surface,
+		       SurfaceMeshTraits traits,
+                       Criteria criteria,
+                       Tag );}
+
+
+
+\ccParameters
+The template parameter  \ccc{C2T3}
 is required to be a model of the concept
 \ccc{SurfaceMeshComplex_2InTriangulation_3},
 a data structure able to represent a two dimensional
@@ -42,48 +72,54 @@ to be  models  of the concepts
 \ccc{SurfaceMeshCellBase_3} respectively.
 
 
-The second template parameter describes the required knowledge
-on the surface to be meshed. The plugged in class has to be 
-either a model of the concept \ccc{SurfaceMeshTraits_3}
-or a class for which a specialization of the
-template class \ccc{Surface_mesher_traits_3<Surface> exists.
-Such partial specialization are currently provided
-for implicit surfaces (\ccc{Implicit_surface_3<Traits, Func> ) and 
-grey level images (\ccc{Grey_level_image_3<Traits, Func> )
-has to be a model
-of the concept
-\ccc{SurfaceOracle} which describes the required knowledge
-on the surface to be meshed. 
+The required knowledge on the surface is encapsulated in
+a surface mesher traits class  which is the only way the mesher
+ accesses to the surface. This traits class is required to be a model
+of the concept \ccc{SurfaceMeshTraits_3}. \\
+In the first  version
+of  \ccRefName\, the surface type is a template paramater \ccc{Surface}
+and the surface mesher traits type 
+is  automatically generated form the surface type  through
+the class 
+\ccc{Surface_mesh_traits_generator_3<Surface>}.
+(This mecanism is similar to the 
+\ccc{Kernel_traits}  mecanism.) \\
+In the second version, the surface mesher traits type is provided
+as a template parameter 
+and the surface type is deduced from this traits type.
+Both the surface and the traits 
+are passed to the mesher as parameters. \\
+The simpler first version can be used,
+whenever the surface type either provides  a nested type
+\ccc{Surface::Surface_mesher_traits_3} 
+that is  a model of \ccc{SurfaceMeshTraits_3}
+or is a surface type for which a specialization
+of the traits generator \ccc{Surface_mesh_traits_generator_3<Surface>}
+is provided.
+Currently, the library provides partial specializations
+of  \ccc{Surface_mesher_traits_generator_3<Surface>}
+for implicit surfaces (\ccc{Implicit_surface_3<Traits, Func> }) and 
+grey level images (\ccc{Gray_level_image_3<Traits> }).
+ 
 
 
-The third template parameter \ccc{Criteria} has to be a model
+The template parameter \ccc{Criteria} has to be a model
 of the concept \ccc{SurfaceMeshCriteria}.
 The argument of type  \ccc{Criteria} passed to the surface
 mesher specifies the size and shape  requirements
 on the output surface mesh.
 
-The fourth template parameter is a tag whose type affects the behaviour of the
+The template parameter \ccc{Tag} 
+is a tag whose type affects the behaviour of the
 meshing algorithm. The function \ccRefName\  has specialized versions
-for the following  tag types~: \\
+for the following  tag types: \\
 - \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
 surface without boundary.\\
-- \ccc{Manifold_with_boundary_tag}~:the output mesh is guaranteed to be
+- \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be
 manifold but may have boundaries.\\
-- \ccc{Non_manifold_tag} : the algorithm relies on the given criteria and
+- \ccc{Non_manifold_tag}: the algorithm relies on the given criteria and
 guarantees nothing else.
 
-
-
-\ccInclude{CGAL/make_surface_mesh.h}
-
-\ccGlobalFunction{template <class C2T3,
-                            class Surface,
-                            class Criteria,
-                            class Tag >
-void make_surface_mesh(C2T3& c2t3,
-                       Surface surface,
-                       Criteria criteria,
-                       Tag = Non_manifold_tag());}
 
 
 The Delaunay refinement
@@ -109,7 +145,7 @@ on each connected components of the surface to be meshed.
 \ccc{SurfaceMeshComplex_2InTriangulation_3} \\
 \ccc{SurfaceMeshCellBase_3} \\
 \ccc{SurfaceMeshVertexBase_3} \\
-\ccc{SurfaceOracle} \\
+\ccc{Surface_3} \\
 \ccc{SurfaceMeshCriteria} \\
 
 

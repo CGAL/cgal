@@ -1,11 +1,11 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: SurfaceMeshTraits_3.tex
+% | Reference manual page: Surface_3.tex
 % +------------------------------------------------------------------------+
 % | 02.12.2005   Author
 % | Package: Package
 % | 
-\RCSdef{\RCSSurfaceOracleRev}{$Id$}
-\RCSdefDate{\RCSSurfaceOracleDate}{$Date$}
+\RCSdef{\RCSSurface_3Rev}{$Id$}
+\RCSdefDate{\RCSSurface_3Date}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
@@ -20,7 +20,7 @@
   
 The concept \ccRefName\ describes the knowledge that is required on the
 surface to be meshed. A model of this concept
-implements an oracle that is able to tell wether a segment
+implements an oracle that is able to tell whether a segment
 (or a ray,  or a line) intersects the surface or not
 and to compute some intersection
 points if any. The concept \ccRefName\ also includes a constructor able  to provide
@@ -33,10 +33,7 @@ a small set of initial points on the surface.
 \ccTypes
 
 \ccNestedType{Point_3}{The type of points. 
-When a model of this concept is plugged as \ccc{Surface} parameter
-in the surface mesher,
-\ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>},
-the  type \ccc{Surface::Point_3} is required to match
+This type  is required to match
 the point type of the 
 three dimensional embedding triangulation 
 \ccc{C2T3::Triangulation_3}.}
@@ -46,39 +43,41 @@ three dimensional embedding triangulation
 \ccNestedType{Ray_3}{The type of rays.}
 \ccGlue
 \ccNestedType{Line_3}{The type of lines.}
+\ccGlue
+\ccNestedType{Surface_3}{ The surface type.}
 
 
 \ccNestedType{Intersect_3}
 {A model of this type provides the operator \\
-\ccc{CGAL::object operator()(Type1 type1, Surface_3 surface)}
+\ccc{CGAL::object operator()(Type1 type1, Surface_3 surface)}\\
 to compute the intersection of the surface  
-with an object of type \ccc{Type1} which may be  any of 
-\ccc{Segment_3, Ray_3. Line_3} .}
+with an object of type \ccc{Type1} which may  be 
+\ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3} .}
 
 
 \ccNestedType{Construct_initial_points}
 {A model of this type provides the following operators
 to construct initial points on the surface \\
-\ccc{template <class OutputIteratorPoints>
-OutputIteratorPoints ()(OutputIteratorPoints pts);}
-which {outputs a set of points on the surface.}
-\ccGlue
-\ccc{template <class OutputIteratorPoints>
-OutputIteratorPoints () (OutputIteratorPoints pts, int n);}
-which {outputs a set of \ccc{n} points on the surface.}
+\ccc{template <class OutputIteratorPoints> \\
+OutputIteratorPoints ()(OutputIteratorPoints pts);}\\
+which outputs a set of points on the surface.
+\\
+\ccc{template <class OutputIteratorPoints>\\
+OutputIteratorPoints () (OutputIteratorPoints pts, int n);} \\
+which outputs a set of \ccc{n} points on the surface.}
 
 
 %\ccCreation
-%\ccCreationVariable{surfor}  %% choose variable name
+\ccCreationVariable{traits}  %% choose variable name
 
 
 
 \ccOperations
 The following functions give access to the construction objects:
 
-\ccMethod{Intersect_3 intersect_3_object();}
+\ccMethod{Intersect_3 intersect_3_object();}{}
 \ccGlue
-\ccMethod{Construct_initial_points construct_initial_points_object()}
+\ccMethod{Construct_initial_points construct_initial_points_object();}{}
 
 
 \ccHasModels
@@ -87,7 +86,7 @@ The following functions give access to the construction objects:
 
 
 \ccSeeAlso
-\ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}\\
+\ccc{make_surface_mesh}\\
 %\ccc{ImplicitFunction}\\
 %\ccc{ImplicitSurfaceOracleTraits_3}
 

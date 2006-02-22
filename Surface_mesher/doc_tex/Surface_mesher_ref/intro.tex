@@ -6,10 +6,11 @@ and Mariette Yvinec}
 The surface mesher package offers a global function
 to build a triangular mesh approximating a surface.
 
-The surface is described through a traits  that mainly can tell wether a
-given segment, ray or line  intersects the surface or not, and that can compute the
+The surface is described through an oracle  that mainly can tell whether a
+given segment, ray or line  intersects the surface or not, 
+and that can compute the
 intersections point if any. Several implementations of
-the \ccc{SurfaceMeshTrait_3} concept are provided. They allow to mesh
+the oracle are provided. They allow to mesh
 implicit surfaces as well as  surfaces described as a gray level in a three
 dimensional image.
 
@@ -35,13 +36,12 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 \subsection*{Concepts}
 
 \ccRefConceptPage{SurfaceMeshComplex_2InTriangulation_3}\\
-\ccRefConceptPage{SurfaceMeshTriangulation_3} \\
-\ccRefConceptPage{SurfaceMeshCriteria} \\
 \ccRefConceptPage{SurfaceMeshTraits_3} \\
+\ccRefConceptPage{SurfaceMeshCriteria} \\
 \ccRefConceptPage{SurfaceMeshCellBase_3} \\
 \ccRefConceptPage{SurfaceMeshVertexBase_3} \\
 \ccRefConceptPage{ImplicitFunction} \\
-%\ccRefConceptPage{ImplicitSurfaceOracleTraits_3}	
+\ccRefConceptPage{ImplicitSurfaceTraits_3}	
 
 
 \subsection*{Classes}
@@ -49,8 +49,9 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 \ccRefIdfierPage{CGAL::Surface_mesh_vertex_base_3<Gt,Vb>} \\
 \ccRefIdfierPage{CGAL::Surface_mesh_cell_base_3<Gt,Cb>} \\
 \ccRefIdfierPage{CGAL::Surface_mesh_default_criteria<FT>} \\
+\ccRefIdfierPage{CGAL::Surface_mesh_traits_generator_3<Surface>} \\
 \ccRefIdfierPage{CGAL::Implicit_surface_3<Traits,Func>} \\
-\ccRefIdfierPage{CGAL::Grey_level_image_3<Traits,Func>}
+\ccRefIdfierPage{CGAL::Gray_level_image_3<Traits>}
 
 \subsection*{Tag classes}
 \ccRefIdfierPage{CGAL::Manifold_tag} \\
@@ -59,7 +60,7 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 
 
 \subsection*{Global Functions}
-\ccRefIdfierPage{CGAL::make_surface_mesh<C2T3,Surface,Criteria,Tag>}
+\ccRefIdfierPage{CGAL::make_surface_mesh}
 
 
 %\subsection*{Enums}
