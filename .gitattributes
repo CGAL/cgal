@@ -495,6 +495,7 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.jpg -text svneol=unset#uns
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#unset
 Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
+Jet_fitting_3/examples/Jet_fitting_3/data/in_points_d4.txt~ -text
 Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
 Jet_fitting_3/examples/Jet_fitting_3/test.off -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
