@@ -13,7 +13,6 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-
 ifdef COREROOT
 COREROOT_INC=-I$(COREROOT)/inc
 COREROOT_LIB=-L$(COREROOT)/lib
@@ -29,11 +28,11 @@ endif
 endif
 
 CXXFLAGS = \
-       -I../../include \
-       -DNDEBUG \
-       $(COREROOT_INC) \
-       $(CGAL_CXXFLAGS) \
-       $(LONG_NAME_PROBLEM_CXXFLAGS)
+           -I../../include \
+           -DNDEBUG \
+           $(COREROOT_INC) \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
