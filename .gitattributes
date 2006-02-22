@@ -1257,6 +1257,7 @@ Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.pdf -text
 Ridges_3/examples/Ridges_3/PolyhedralSurf.C -text
 Ridges_3/examples/Ridges_3/README -text
 Ridges_3/examples/Ridges_3/blind.C -text
+Ridges_3/examples/Ridges_3/makefile -text
 Ridges_3/examples/Ridges_3/options.C -text
 Robustness/demo/Robustness/robustness.vcproj -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text

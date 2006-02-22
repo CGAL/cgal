@@ -57,9 +57,9 @@ class My_vertex:public CGAL::HalfedgeDS_vertex_base < Refs, Tag, Pt >
   const FT b3() const { return m_b3; }
   FT& b3() { return m_b3; }
   const FT P1() const { return m_P1; }
-  FT& P1() { return m_P1; }
+  FT& P1() { return m_P1; }//= 3*b1^2+(k1-k2)(c0-3k1^3)
   const FT P2() const { return m_P2; }
-  FT& P2() { return m_P2; }
+  FT& P2() { return m_P2; }//= 3*b2^2+(k2-k1)(c4-3k2^3)
 
   //this is for collecting i-th ring neighbours
   void setRingIndex(int i) { ring_index = i; }

@@ -52,8 +52,8 @@ static const char *const optv[] = {
 int main(int argc, char *argv[])
 {
   // fct parameters
-  unsigned int d_fitting = 2;
-  unsigned int d_monge = 2;
+  unsigned int d_fitting = 4;
+  unsigned int d_monge = 4;
   unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
   unsigned int nb_points_to_use = 0;//
   bool verbose = false;
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
   Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
-    Vertex* v = &(*vitb);//handle to *
+    Vertex* v = &(*vitb);//Vertex_iterator to *
     unsigned int nbp = 0, //current nb of collected points
       ith = 0;	//i-th ring index
     current_ring.clear();
@@ -225,6 +225,9 @@ int main(int argc, char *argv[])
 				   d_fitting, d_monge, 
 				   monge_rep, monge_info);
  
+    //For Ridges we need at least 3rd order info
+    assert( d_monge >= 3);
+    
     //switch min-max ppal curv/dir wrt the mesh orientation
     DVector normal_mesh = P.computeFacetsAverageUnitNormal(v);
     DVector normal_monge = monge_rep.n();
@@ -232,11 +235,9 @@ int main(int argc, char *argv[])
       {
 	monge_rep.n() = -monge_rep.n();
 	std::swap(monge_rep.d1(), monge_rep.d2());
-	if ( d_monge >= 2) 
-	  std::swap(monge_rep.coefficients()[0],monge_rep.coefficients()[1]);
-	if ( d_monge >= 3) {
-	  std::swap(monge_rep.coefficients()[2],monge_rep.coefficients()[5]);
-	  std::swap(monge_rep.coefficients()[3],monge_rep.coefficients()[4]);}
+	std::swap(monge_rep.coefficients()[0],monge_rep.coefficients()[1]);
+	std::swap(monge_rep.coefficients()[2],monge_rep.coefficients()[5]);
+	std::swap(monge_rep.coefficients()[3],monge_rep.coefficients()[4]);
 	if ( d_monge >= 4) {
 	  std::swap(monge_rep.coefficients()[6],monge_rep.coefficients()[10]);
 	  std::swap(monge_rep.coefficients()[7],monge_rep.coefficients()[9]);}
@@ -245,42 +246,63 @@ int main(int argc, char *argv[])
 	for (;itb!=ite;itb++) { *itb = -(*itb); }
       }
        
+    //    Store monge data needed for ridge computations in v
+    v->d1() = monge_rep.d1();
+    v->d2() = monge_rep.d2();
+    v->k1() = monge_rep.coefficients()[0];
+    v->k2() = monge_rep.coefficients()[1];
+    v->b0() = monge_rep.coefficients()[2];
+    v->b3() = monge_rep.coefficients()[5];
+    if ( d_monge >= 4) {
+      //= 3*b1^2+(k1-k2)(c0-3k1^3)
+      v->P1() =
+	3*monge_rep.coefficients()[3]*monge_rep.coefficients()[3]
+	+(v->k1()-v->k2())
+	*(monge_rep.coefficients()[6]-3*v->k1()*v->k1()*v->k1()) ; 
+      //= 3*b2^2+(k2-k1)(c4-3k2^3)
+      v->P2() = 
+	3*monge_rep.coefficients()[4]*monge_rep.coefficients()[4]
+	+(-v->k1()+v->k2())
+	*(monge_rep.coefficients()[10]-3*v->k2()*v->k2()*v->k2()) ; 
+    }
+
     //OpenGL output
     //scaling for ppal dir,
     // may be optimized with a global mean edges length computed only once
     // on all edges of P
-    DFT scale_ppal_dir = P.compute_mean_edges_length_around_vertex(v)/2;
-    (*out_4ogl) << v->point()  << " "
-		<< monge_rep.origin_pt()  << " "
-		<< monge_rep.d1() * scale_ppal_dir << " "
-		<< monge_rep.d2() * scale_ppal_dir << " "
-		<< monge_rep.coefficients()[0] << " "
-		<< monge_rep.coefficients()[1] << " "
-		<< std::endl;
+  //   DFT scale_ppal_dir = P.compute_mean_edges_length_around_vertex(v)/2;
+//     (*out_4ogl) << v->point()  << " "
+// 		<< monge_rep.origin_pt()  << " "
+// 		<< monge_rep.d1() * scale_ppal_dir << " "
+// 		<< monge_rep.d2() * scale_ppal_dir << " "
+// 		<< monge_rep.coefficients()[0] << " "
+// 		<< monge_rep.coefficients()[1] << " "
+// 		<< std::endl;
 
-    //verbose txt output 
-    if (verbose){     
-      (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
-		     <<	" : " << v->point() << std::endl
-		     << "number of points used : " << in_points.size() << std::endl
-		     << "number of rings used : " << ith << std::endl
-		     << "origin : " << monge_rep.origin_pt() << std::endl
-		     << "d1 : " << monge_rep.d1() << std::endl 
-		     << "d2 : " << monge_rep.d2() << std::endl
-		     << "n : " << monge_rep.n() << std::endl
-		     << "cond_nb : " << monge_info.cond_nb() << std::endl 
-		     << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
-		     << " " << monge_info.pca_eigen_vals()[2] 
-		     << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
-		     << "pca_eigen_vecs : " << std::endl 
-		     << monge_info.pca_eigen_vecs()[0] << std::endl 
-		     << monge_info.pca_eigen_vecs()[1] << std::endl 
-		     << monge_info.pca_eigen_vecs()[2] << std::endl;
-      if ( d_monge >= 2) 
-	(*out_verbose) << "k1 : " << monge_rep.coefficients()[0] << std::endl 
-		       << "k2 : " << monge_rep.coefficients()[1] << std::endl
-		       << std::endl ;
-    } //END IF 
+//     //verbose txt output 
+//     if (verbose){     
+//       (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
+// 		     <<	" : " << v->point() << std::endl
+// 		     << "number of points used : " << in_points.size() << std::endl
+// 		     << "number of rings used : " << ith << std::endl
+// 		     << "origin : " << monge_rep.origin_pt() << std::endl
+// 		     << "d1 : " << monge_rep.d1() << std::endl 
+// 		     << "d2 : " << monge_rep.d2() << std::endl
+// 		     << "n : " << monge_rep.n() << std::endl
+// 		     << "cond_nb : " << monge_info.cond_nb() << std::endl 
+// 		     << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
+// 		     << " " << monge_info.pca_eigen_vals()[2] 
+// 		     << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
+// 		     << "pca_eigen_vecs : " << std::endl 
+// 		     << monge_info.pca_eigen_vecs()[0] << std::endl 
+// 		     << monge_info.pca_eigen_vecs()[1] << std::endl 
+// 		     << monge_info.pca_eigen_vecs()[2] << std::endl;
+//       if ( d_monge >= 2) 
+// 	(*out_verbose) << "k1 : " << monge_rep.coefficients()[0] << std::endl 
+// 		       << "k2 : " << monge_rep.coefficients()[1] << std::endl
+// 		       << std::endl ;
+//    } //END IF 
+
   } //END FOR LOOP
 
   ///////////////////////////////////////////
@@ -288,10 +310,11 @@ int main(int argc, char *argv[])
   ///////////////////////////////////////////
   Ridge_approximation ridge_approximation;
   std::list<Ridge_line> ridge_lines;
-  //  std::back_insert_iterator<std::list<Ridge_line> > iter_lines(ridge_lines), iter_end;
   std::list<Ridge_line>::iterator iter_lines = ridge_lines.begin(), iter_end;
-  iter_end = ridge_approximation.do_it(P, iter_lines);
-
+  
+  iter_end = ridge_approximation.compute_all_ridges(P, iter_lines,
+						    Ridge_approximation::Tag_3); 
+  
 
 
 
