@@ -31,90 +31,94 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class Root, class K>
 class Sign_at
 {
-    typedef typename K::Function Poly;
-    public:
-        Sign_at(const Poly &p, K k=K()): p_(p), k_(k) {
-        }
-        Sign_at(){}
-        typedef typename K::Root argument_type;
-        typedef CGAL_POLYNOMIAL_NS::Sign result_type;
+  typedef typename K::Function Poly;
+public:
+  Sign_at(const Poly &p, K k=K()): p_(p), k_(k) {
+  }
+  Sign_at(){}
+  typedef typename K::Root argument_type;
+  typedef CGAL_POLYNOMIAL_NS::Sign result_type;
 
-        template <class T>
-            result_type operator()(const T &v) const
-        {
-            return eval(v);
-        }
-/*result_type operator()(const typename K::NT &nt) const {
-  return eval(nt);
-  }*/
+  template <class T>
+  result_type operator()(const T &v) const
+  {
+    return eval(v);
+  }
+  /*result_type operator()(const typename K::NT &nt) const {
+    return eval(nt);
+    }*/
 
-    protected:
+protected:
 
-        template <class R>
-            CGAL_POLYNOMIAL_NS::Sign eval(const R &r) const
-        {
-            std::pair<double, double> i= to_interval(r);
-            if (i.first==i.second) {
-                double d= i.second;
-                return eval(typename Poly::NT(d));
-            }
-            else {
-                typename K::Root_stack s= k_.root_stack_object(p_,
-                    typename K::Root(i.first),
-                    typename K::Root(i.second));
-                if (s.empty()) {
-// there are no roots
-                    typename Poly::NT mid= (typename Poly::NT(i.first)
-                        + typename Poly::NT(i.second))*typename Poly::NT(.5);
-                    return eval(mid);
-                }
-                else {
-                    while (!s.empty() && s.top() < r) {
-                        s.pop();
-                    }
-                    if (!s.empty()) {
-                        if (s.top()==r) {
-                            return CGAL_POLYNOMIAL_NS::ZERO;
-                        }
-// now we know it is not a root
+  template <class R>
+  CGAL_POLYNOMIAL_NS::Sign eval(const R &r) const
+  {
+    typename K::Is_rational ir= k_.is_rational_object();
 
-                        typename K::Sign_between_roots sbr= k_.sign_between_roots_object(r, s.top());
+    //std::pair<double, double> i= to_interval(r);
+    if (ir(r)) {
+      typename K::To_rational tr= k_.to_rational_object();
+      typename Poly::NT nt= tr(r);
+      return eval(nt);
+    }
+    else {
+      typename K::To_isolating_interval tii= k_.to_isolating_interval_object();
+      std::pair<typename Poly::NT, typename Poly::NT> ii= tii(r);
+      typename K::Root_stack s= k_.root_stack_object(p_,
+						     typename K::Root(ii.first),
+						     typename K::Root(ii.second));
+      if (s.empty()) {
+	// there are no roots
+	typename Poly::NT mid= (ii.first + ii.second)*typename Poly::NT(.5);
+	return eval(mid);
+      }
+      else {
+	while (!s.empty() && s.top() < r) {
+	  s.pop();
+	}
+	if (!s.empty()) {
+	  if (s.top()==r) {
+	    return CGAL_POLYNOMIAL_NS::ZERO;
+	  }
+	  // now we know it is not a root
 
-                        return sbr(p_);
+	  typename K::Sign_between_roots sbr= k_.sign_between_roots_object(r, s.top());
 
-                    }
-                    else {
-// There were roots below r.
-                        typename K::Sign_between_roots sbr= k_.sign_between_roots_object(r, R(i.second));
-                        return sbr(p_);
+	  return sbr(p_);
 
-                    }
-                }
-//}
-//return sb;
-            }
-            CGAL_postcondition(false);
-            return CGAL_POLYNOMIAL_NS::ZERO;
-        }
+	}
+	else {
+	  // There were roots below r.
+	  typename K::Sign_between_roots sbr= k_.sign_between_roots_object(r, R(ii.second));
+	  return sbr(p_);
 
-        template <class RT>
-        CGAL_POLYNOMIAL_NS::Sign eval(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<RT> &r) {
-            typedef  internal::Explicit_root<RT> R;
-            typename R::Representation rep= r.representation();
-            typedef  typename CGAL_POLYNOMIAL_NS::Polynomial<typename R::Representation> Rep_poly;
-            typename CGAL_POLYNOMIAL_NS::Polynomial_converter<typename K::Polynomial, Rep_poly> pc;
-            return CGAL_POLYNOMIAL_NS::sign(pc(p_)(rep));
-        }
+	}
+      }
+      //}
+      //return sb;
+    }
+    CGAL_postcondition(false);
+    return CGAL_POLYNOMIAL_NS::ZERO;
+  }
 
-        CGAL_POLYNOMIAL_NS::Sign eval(const typename Poly::NT &nt) const
-        {
-            typedef typename K::Root_stack_traits::Sign_at SA;
-            SA sa= k_.root_stack_traits_object().sign_at_object(p_);
-            return sa(nt);
-        }
+  template <class RT>
+  CGAL_POLYNOMIAL_NS::Sign eval(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<RT> &r) {
+    typedef  internal::Explicit_root<RT> R;
+    typename R::Representation rep= r.representation();
+    typedef  typename CGAL_POLYNOMIAL_NS::Polynomial<typename R::Representation> Rep_poly;
+    typename CGAL_POLYNOMIAL_NS::Polynomial_converter<typename K::Polynomial, Rep_poly> pc;
+    return CGAL_POLYNOMIAL_NS::sign(pc(p_)(rep));
+  }
 
-        Poly p_;
-        K k_;
+  CGAL_POLYNOMIAL_NS::Sign eval(const typename Poly::NT &nt) const
+  {
+    typedef typename K::Root_stack_traits::Sign_at SA;
+    SA sa= k_.root_stack_traits_object().sign_at_object(p_);
+    return sa(nt);
+  }
+
+  Poly p_;
+  K k_;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

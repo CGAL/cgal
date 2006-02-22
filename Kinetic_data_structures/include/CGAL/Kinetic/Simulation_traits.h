@@ -159,7 +159,7 @@ struct Sist_types
 
   struct Event_queue: public Queue_base
   {
-    Event_queue(const Time &start, const Time &finish, Function_kernel fk): Queue_base(start, finish, fk){}
+    Event_queue(const Time &start, const Time &finish, Function_kernel fk, int num): Queue_base(start, finish, fk, num){}
   };
   typedef CGAL::Kinetic::Simulator<Simulator_function_kernel, Event_queue > Simulator;
 };

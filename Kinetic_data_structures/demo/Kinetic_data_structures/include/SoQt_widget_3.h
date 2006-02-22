@@ -22,9 +22,9 @@
 #define CGAL_KINETIC_IO_QT_SIMULATOR_3_H_
 #include <CGAL/Kinetic/basic.h>
 #include "SoQt_pointer.h"
-#include <CGAL/Kinetic/IO/internal/KDS_GUI_base.h>
+#include <CGAL/Kinetic/IO/internal/GUI_base.h>
 #include "SoQt_examiner_viewer.h"
-#include <CGAL/Kinetic/IO/internal/KDS_Qt_timer.h>
+#include <CGAL/Kinetic/IO/internal/Qt_timer.h>
 #include <CGAL/Kinetic/Listener.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <Inventor/Qt/SoQt.h>

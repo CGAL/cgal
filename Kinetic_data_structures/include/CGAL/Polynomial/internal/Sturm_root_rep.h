@@ -28,6 +28,9 @@
 
 //#include <CGAL/Polynomial/internal/Bisection.h>
 
+int sturm_created__=0;
+int sturm_refined__=0;
+
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 //==================
@@ -252,31 +255,10 @@ public:
   }
 #endif
 
-  //===========================================
-  // HELPER METHODS FOR COMPARISON OPERATORS
-  //===========================================
-  template<class This>
-  Comparison_result compare(const This& r) const
-  {
-    // check against positive and negative infinity
-    if (idx == -2) {
-      if ( r.idx == -2 ) { return CGAL::EQUAL; }
-      return CGAL::SMALLER;
-    }
-    if (idx == -1) {
-      if ( r.idx == -1 ) { return CGAL::EQUAL; }
-      return CGAL::LARGER;
-    }
-    if (r.idx == -2) {
-      // I have already checked if both are negative infinity
-      return CGAL::LARGER;
-    }
-    if (r.idx == -1) {
-      // I have already checked if both are positive infinity
-      return CGAL::SMALLER;
-    }
-
-    // consider the cases that the root is known exactly;
+  template <class This>
+  Comparison_result
+  compare_finite(const This &r, bool subdiv=true) const {
+      // consider the cases that the root is known exactly;
     // this is equivalent to saying that the two endpoints for the
     // interval containing the root are the same;
     // moreover if the two interval endpoints are not the same we
@@ -358,10 +340,20 @@ public:
       else if ( lower_bound() >= r.upper_bound() ) {
 	//	  std::cout << "this.lower bound >= other.upper bound" << std::endl;
 	return CGAL::LARGER;
-      } else if ( upper_bound() > r.lower_bound() &&
+      } else {
+	if (subdiv) {
+	  int count=0;
+	  while ( upper_bound() > r.lower_bound() &&
 		  lower_bound() < r.upper_bound() ) {
-	//	  std::cout << "intersecting intervals" << std::endl;
-	return compare_intersecting(r);
+	    subdivide();
+	    ++count;
+	    if (count==4) break;
+	    //	  std::cout << "intersecting intervals" << std::endl;
+	  }
+	  return compare_finite(r, false);
+	} else {
+	  return compare_intersecting(r);
+	}
       }
     }
 
@@ -370,7 +362,37 @@ public:
     if (0) this_line_should_not_have_been_reached= false;
     return CGAL::EQUAL;
   }
+  
+
+  //===========================================
+  // HELPER METHODS FOR COMPARISON OPERATORS
+  //===========================================
+  template<class This>
+  Comparison_result compare(const This& r) const
+  {
+    // check against positive and negative infinity
+    if (idx == -2) {
+      if ( r.idx == -2 ) { return CGAL::EQUAL; }
+      return CGAL::SMALLER;
+    }
+    if (idx == -1) {
+      if ( r.idx == -1 ) { return CGAL::EQUAL; }
+      return CGAL::LARGER;
+    }
+    if (r.idx == -2) {
+      // I have already checked if both are negative infinity
+      return CGAL::LARGER;
+    }
+    if (r.idx == -1) {
+      // I have already checked if both are positive infinity
+      return CGAL::SMALLER;
+    }
+    return compare_finite(r);
+  }
+
+  
   //--------------------------------------------------------------
+
 
   template<class This>
   Comparison_result
@@ -555,6 +577,12 @@ public:
   //--------------------------------------------------------------
   void subdivide() const
   {
+    if (!refined_) {
+      ++sturm_refined__;
+      refined_=true;
+      //std::cout << "Refining " << *this << " " << std::endl;
+    }
+
 #if 1
     Interval_pair ivl_pair = ivl.split();
     Interval first_half  = ivl_pair.first;
@@ -694,17 +722,17 @@ public:
 protected:
   Sturm_root_rep(int i, int, const Traits& tr)
     : idx(i), ivl(), p_(), sseq(), s_lower(CGAL::ZERO),
-      s_upper(CGAL::ZERO), multiplicity_(0), tr_(tr) {}
+      s_upper(CGAL::ZERO), multiplicity_(0), tr_(tr), refined_(false)  {}
 
 public:
   Sturm_root_rep(const Traits& tr = Traits())
     : idx(-1), ivl(), p_(), sseq(), s_lower(CGAL::ZERO),
-      s_upper(CGAL::ZERO), multiplicity_(0), tr_(tr) {}
+      s_upper(CGAL::ZERO), multiplicity_(0), tr_(tr), refined_(false)  {}
   //-------
   template<class T>
   Sturm_root_rep(const T& a, const Traits& tr = Traits())
     : idx(1), ivl(a), p_(), sseq(), s_lower(CGAL::ZERO),
-      s_upper(CGAL::ZERO), multiplicity_(0), tr_(tr) {}
+      s_upper(CGAL::ZERO), multiplicity_(0), tr_(tr), refined_(false)  {}
   //-------
   Sturm_root_rep(const Interval& ivl,
 		 const Polynomial& p,
@@ -712,7 +740,8 @@ public:
 		 const Traits& tr)
     : idx(idx), ivl(ivl), p_(p), sseq(sseq),
       s_lower(CGAL::ZERO), s_upper(CGAL::ZERO), multiplicity_(0),
-      tr_(tr) {
+      tr_(tr), refined_(false) {
+    ++sturm_created__;
     Sign_at_functor sign_at_p(this);
     s_lower = apply(sign_at_p, ivl.lower_bound());
     s_upper = apply(sign_at_p, ivl.upper_bound());
@@ -724,7 +753,7 @@ public:
   Sturm_root_rep(const Self& other)
     : idx(other.idx), ivl(), p_(other.p_), sseq(other.sseq),
       s_lower(other.s_lower),   s_upper(other.s_upper),
-      multiplicity_(other.multiplicity_), tr_(other.tr_) {
+      multiplicity_(other.multiplicity_), tr_(other.tr_), refined_(other.refined_){
     if ( other.idx >= 1 ) {
       ivl = other.ivl;
     }
@@ -890,6 +919,11 @@ public:
 #else
     while ( ivl.approximate_width() > acc ) {
       subdivide();
+      /*if (!refined_) {
+	++sturm_refined__;
+	refined_=true;
+	std::cout << "Refining " << *this << " to compute double " << std::endl;
+	}*/
       if ( is_exact() ) { break; }
     }
 #endif
@@ -954,6 +988,7 @@ protected:
   mutable Sign           s_lower, s_upper;
   mutable unsigned int   multiplicity_;
   Traits                 tr_;
+  mutable bool refined_;
 };
 
 template<class Stream, class S, class I>

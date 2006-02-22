@@ -57,7 +57,7 @@ public:
     return std::make_pair(typename K::NT(a), typename K::NT(b));
   }
 #endif
-  double operator()(double v) const
+  std::pair<double, double> operator()(double v) const
   {
     return std::make_pair(v,v);
   }

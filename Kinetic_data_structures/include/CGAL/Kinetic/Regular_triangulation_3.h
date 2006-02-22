@@ -869,13 +869,13 @@ create_non_vertex_event(*it, cells[1], f[1], s[1]);
 
 #ifndef NDEBUG
                     {
-                        if ( sn != CGAL::sign(sar(to_double(kdel_.simulator()->current_time())))) {
-                            std::cerr <<"Difference of opinion on sign at" << std::endl;
-                            std::cerr <<"Real root " <<kdel_.simulator()->current_time() << std::endl;
-                            std::cerr <<"Approximation " << to_double(kdel_.simulator()->current_time()) << std::endl;
-                            std::cerr <<"Polynomial " << cf << std::endl;
-                        }
-
+		      /* if ( sn != CGAL::sign(sar(to_double(kdel_.simulator()->current_time())))) {
+			std::cerr <<"Difference of opinion on sign at" << std::endl;
+			std::cerr <<"Real root " <<kdel_.simulator()->current_time() << std::endl;
+			std::cerr <<"Approximation " << to_double(kdel_.simulator()->current_time()) << std::endl;
+			std::cerr <<"Polynomial " << cf << std::endl;
+			}*/
+		      
                         /*typename Base_traits::Kinetic_kernel::Function_kernel::Sign_at csar
 			  = kdel_.kinetic_kernel()->function_kernel_object().sign_at_object(kdel_.orientation_object()(point(internal::vertex_of_facet(f,0)->point()),
 														       point(internal::vertex_of_facet(f,1)->point()),

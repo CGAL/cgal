@@ -24,13 +24,13 @@
 #include "include/SoQt_examiner_viewer.h"
 #include <qpushbutton.h>
 #include <Inventor/nodes/SoSeparator.h>
-#include <CGAL/Kinetic/IO/internal/KDS_pixmaps.h>
+#include <CGAL/Kinetic/IO/internal/pixmaps.h>
 
 #include "SoQt_examiner_viewer.moc"
 
 namespace CGAL
 {
-  namespace KDS
+  namespace Kinetic
   {
     SoQt_examiner_viewer::SoQt_examiner_viewer(QWidget * parent):
       SoQtExaminerViewer(parent, NULL, TRUE,

@@ -36,7 +36,7 @@
 //#endif
 //#endif
 
-#include <CGAL/Kinetic/IO/internal/KDS_Qt_core.h>
+#include <CGAL/Kinetic/IO/internal/Qt_core.h>
 #include <qapplication.h>
 //#include <qmainwindow.h>
 #include <map>

@@ -34,6 +34,11 @@
 
 //int two_list_remaining=0;
 
+int growth__=0;
+int shrink__=0;
+int queue_insertions__=0;
+int queue_front_insertions__=0;
+
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 // The interface for an item stored in the ::Pointer_event_queue
@@ -329,6 +334,9 @@ public:
 
     //CGAL_exactness_assertion(t >= lbs_);
     //lb_=std::min(t, lb_);
+    
+    ++queue_insertions__;
+
 
     if (t <= ub_) {
       ni->set_in_list(Item::FRONT);
@@ -341,13 +349,14 @@ public:
       if (front_.size() > 2*max_front_size()) {
 	shrink_front();
       }
-
+      ++queue_front_insertions__;
     }
     else if (front_.empty()) {
       CGAL_assertion(back_.empty());
       if (t < end_time()) {
+	++queue_front_insertions__;
 	front_.push_back(*ni);
-	ub_= tii_(t).second;
+	ub_= NT(to_interval(tii_(t).second).second);
 	/*if (almost_inf(ub_)){
 	//CGAL_assertion(std::numeric_limits<NT>::has_infinity);
 	ub_= end_split();
@@ -676,7 +685,8 @@ protected:
     CGAL_assertion(front_.empty());
     CGAL_assertion(!cand.empty());
     CGAL_assertion(step_ != 0);
-    if (dprint) std::cout << "Growing front from " << ub_ << " with step " << step_ << "(" << recursive_count << ") ";
+    if (dprint) std::cout << "Growing front from " << ub_ << " with step " 
+			  << step_ << "(" << recursive_count << ") ";
 
     //CGAL_assertion(ub_<end_split());
     ub_+= step_;
@@ -693,6 +703,7 @@ protected:
     else if (front_.empty()) {
       if (recursive_count > 10) {
 	// do something
+	std::cout << "Too many recursions " << std::endl;
 	Priority mp(end_split());
 	for (typename Queue::iterator it = cand.begin(); it != cand.end(); ++it) {
 	  if (it->time() < mp) {
@@ -700,7 +711,7 @@ protected:
 	  }
 	}
 	if (mp < end_split()) {
-	  ub_= to_interval(mp).second;
+	  ub_= NT(to_interval(tii_(mp).second).second);
 	  step_=.001;
 	  grow_front(cand, recursive_count+1);
 	}
@@ -726,7 +737,7 @@ protected:
 	  return;
 	}
 	else {
-	  NT nstep= step_*NT(.6+.4*max_front_size()/static_cast<double>(num));
+	  NT nstep= step_*NT(.75+.25*max_front_size()/static_cast<double>(num));
 	  //else nstep = step_*.6;
 	  CGAL_assertion(nstep >0);
 	  cand.swap(front_);
@@ -747,7 +758,8 @@ protected:
   }
 
   void grow_front() {
-    //std::cout << "Growing front from " << ub_ << " with lb " << lb_ << std::endl;
+    ++growth__;
+    //std::cout << "Growing front from " << ub_ << std::endl;
     //assert(is_valid());
     CGAL_precondition(!back_.empty());
     CGAL_precondition(front_.empty());
@@ -760,18 +772,19 @@ protected:
 
     CGAL_assertion(sz==front_.size()+back_.size() + inf_.size());
     CGAL_assertion(audit());
-    //std::cout << "to " << ub_ << " with lb " << lb_ << std::endl;
+    //std::cout << "to " << ub_ << std::endl;
   }
 
   void shrink_front() {
-
+    ++shrink__;
+    //std::cout << "Shrinking front from " << ub_ << std::endl;
     typename Queue::iterator it=front_.begin();
     unsigned int mf= max_front_size();
     for (unsigned int i=0; i < mf; ++i) {
       ++it;
     }
 
-    NT split= NT(to_interval(it->time()).second);
+    NT split= NT(to_interval(tii_(it->time()).second).second);
     if (split > end_split() ) {
       CGAL_assertion(back_.empty());
       it= front_.begin();
@@ -796,7 +809,7 @@ protected:
       }
 
       it= front_.end(); --it;
-      split= to_interval(it->time()).second;
+      split= NT(to_interval(tii_(it->time()).second).second);
       //std::cout << "Special cased " << inf_.size() << " events.\n";
     }
     while (it->time() < split && it != front_.end()) ++it;
@@ -832,7 +845,7 @@ protected:
 
   unsigned int max_front_size() const
   {
-    return 4U;
+    return 8U;
     //return std::max(4U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
   }
 

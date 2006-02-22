@@ -27,7 +27,7 @@
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class Traits>
-struct Derivitive_filter_function_kernel: private Traits
+struct Derivitive_filter_function_kernel: public Traits
 {
   typedef typename Traits::Function Function;
   
