@@ -47,13 +47,6 @@ using std::time_t;
 #endif
 
 
-#if defined(__SUNPRO_CC)
-extern "C" {
-void (*signal (int sig, void (*disp)(int)))(int);
-}
-#endif
-
-
 const char* event_name[] = { 
  "key_press_event", 
  "key_release_event", 
