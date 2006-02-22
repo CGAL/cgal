@@ -2,8 +2,9 @@
 %WARNING: amsmath not available
 
 
-This chapter describes the \cgal's package for the estimation of local 
-differential quantities on sampled surfaces. 
+This chapter describes the \cgal's package geared towards the
+estimation of local differential quantities on sampled surfaces, known
+either as a mesh or a point cloud.
  
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -15,38 +16,68 @@ differential quantities on sampled surfaces.
 
 Consider a sampled smooth surface, and assume we are given a
 collection of points $P$ about a given sample $p$. We aim at
-estimating the differential properties up to order $d'$ of the surface
-at point $p$ from the point set $P^+ = P\cup \{ p\}$ --we note $N=\mid
-P^+\mid$. More precisely, first order properties correspond to the
-normal or the tangent plane; second order properties provide the
-principal curvatures and directions, third order properties provide
-the directional derivatives of the principal curvatures along the
-curvature lines, etc.  Most of the time, estimating first and second
-order differential quantities is sufficient.  However, some
-applications involving shape analysis require estimating third and
-fourth order differential quantities.
+estimating the differential properties up to any fixed order of the
+surface at point $p$ from the point set $P^+ = P\cup \{ p\}$ ---we
+denote $N=\mid P^+\mid$. More precisely, first order properties
+correspond to the normal or the tangent plane; second order properties
+provide the principal curvatures and directions, third order
+properties provide the directional derivatives of the principal
+curvatures along the curvature lines, etc.  Most of the time,
+estimating first and second order differential quantities is
+sufficient.  However, some applications involving shape analysis
+require estimating third and fourth order differential quantities.
 %%
 Many different estimators have been proposed in the vast literature of
-applied geometry \cite{cgal:p-smrqt-01}. They all need to define a
-neighborhood around the point at which the estimation is computed and
-use at different level the geometry of the mesh. On one hand, methods
-relying on {\em discrete differential geometry} only use the
-information provided by the mesh
-\cite{cgal:pp-cdmsc-93,cgal:mdsb-ddgot-02,cgal:csm-rdtnc-03}. On the
-other hand, fitting methods rely on smooth differential geometry and
-approximation, and hence are able to process point clouds directly.
+applied geometry \cite{cgal:p-smrqt-01}, and all of them need to
+define a neighborhood around the point at which the estimation is
+computed. These methods may be classified into two groups. The first
+one features methods geared towards meshes
+\cite{cgal:pp-cdmsc-93,cgal:mdsb-ddgot-02,cgal:csm-rdtnc-03}.
+Such methods exploit the geometry and the topology of the mesh, and
+are sometimes referred to as methods from {\em discrete differential
+geometry}.
+%%
+The second one comprises methods relying on smooth differential
+geometry calculations, carried out on smooth objects {\em fitted} from
+the sample points provided. Such naturally accommodate meshes, but also
+point clouds.
 
-By now, there are two methods to extract local differential properties
-coming with theoretical analysis of their convergence rates. On one
-hand, the normal cycle theory is used in
-\cite{cgal:csm-rdtnc-03} to provide an estimate of the integral of the
-Weingarten map of surface discretized by a mesh.  On the other hand,
+%On the other hand, fitting methods rely on smooth differential
+%geometry and approximation, and hence are able to process point clouds
+%directly.
+
+%and use at different level the geometry of the mesh. On one hand,
+%methods relying on {\em discrete differential geometry} only use the
+%information provided by the mesh
+
+%By now, there are two methods to extract local differential properties
+%coming with theoretical analysis of their convergence rates. 
+
+
+Estimating differential quantities naturally subsumes (i)\ a smooth
+surface exists (ii)\ one wishes to recover its differential
+properties. This two observations call for the convergence analysis of
+the methods developed, and by now, two estimation methods come with
+approximation guarantees measuring the convergence rate of the
+discrepancy between the estimates and the true (unknown) values.
+
+On one hand, the normal cycle theory is used in
+\cite{cgal:csm-rdtnc-03} to provide an estimate of the  integral of the
+$3D$ embedding \footnote{Recall that the Weingarten map is a bilinear
+form of the tangent space, so that integrating it requires embedding
+it in $3D$ since the tangent plane rotates.} of the Weingarten map of
+surface discretized by a mesh.  On the other hand,
 \cite{cgal:cp-edqpf-05} uses polynomial fitting to extract the
 coefficients of the local representation of the surface as a height
-function. This method has three advantages~: first, differential
-properties of any order can be retrieved; second, the coefficients
-estimated feature the best error bounds known so far; third, it
-process point samples (and does not need a mesh).
+function. The former method provides spatial averages, and is
+particularly well suited to meshes. Yet, it is limited to second order
+differential properties.
+%%
+The later one carries three advantages~: first, differential
+properties of any order can be retrieved; second, the convergence
+rates provided are the best ones known so far ---they are actually
+optimal; third, point clouds can be directly handled ---no topological
+information is required.
 
 
 \subsection{Jets, Monge form and polynomial fitting}
@@ -56,10 +87,10 @@ process point samples (and does not need a mesh).
 %
 To present the method, we shall need the following notions. Consider a
 smooth surface.  About one of its points, consider a coordinate system
-whose $z$-axis is not aligned with the normal of the surface. In such
-a frame, the surface can locally be written as the graph of a
-bivariate function. Denoting h $\hot$ standing for {\em
-higher order terms}, one has~:
+whose $z$-axis does not belong to the tangent space. In such a frame,
+the surface can locally be written as the graph of a bivariate
+function. Denoting h $\hot$ standing for {\em higher order terms}, one
+has~:
 %
 %Assume the surface is given, locally and in a suitable , as a height
 %function ---with $\hot$ standing for {\em higher order terms}~:
@@ -69,17 +100,19 @@ J_{B,d}(x,y)=\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
 \frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
 \end{equation}
 The degree $d$ polynomial $J_{B,d}$ is the Taylor expansion of the
-function $z$, we call it its $d$-jet. Notice that a $d$-jet contains
+function $z$, an is called its $d$-jet. Notice that a $d$-jet contains
 $N_d=(d+1)(d+2)/2$ coefficients.
 
-At any point of the surface which is not an umbilic, principal
-directions $d_1, d_2$ are well defined, and these (non oriented)
-directions together with the normal vector $n$ define two direct
-orthonormal frames. If $v_1$ is a unit vector of direction $d_1$ then
-there exists a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is
-direct; and the other possible frame is $(-v_1,-v_2,n)$. In one of
-these Monge coordinate systems, the surface is said to be given in the
-Monge form and its jet has the following canonical form~:
+Recall that an umbilical point of a surface ---or umbilic for short,
+is a point where both principal curvatures are identical.  At any
+point of the surface which is not an umbilic, principal directions
+$d_1, d_2$ are well defined, and these (non oriented) directions
+together with the normal vector $n$ define two direct orthonormal
+frames. If $v_1$ is a unit vector of direction $d_1$ then there exists
+a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is direct; and the
+other possible frame is $(-v_1,-v_2,n)$. In one of these Monge
+coordinate systems, the surface is said to be given in the Monge form
+and its jet has the following canonical form~:
 
 \begin{eqnarray}
 \label{eq:monge}
@@ -94,20 +127,23 @@ respective curvature lines, while $b_1,b_2$ are the directional
 derivatives of $k_1,k_2$ along the other curvature lines.
 
 The Monge coordinate system can be computed from any $d$-jet ($d\geq
-2$), and so are the Monge coefficients. These data, characterizing the
-geometry of the surface in a canonical way, will naturally be the
-output of the algorithm.
+2$), and so are the Monge coefficients. These informations
+characterize the local geometry of the surface in a canonical way, and
+are the quantities returned by our algorithm.
 
 \paragraph{Interpolating or approximating the $d$-jet.}
 %
-The idea is to fit the $d$-jet, in a well chosen coordinate system,
-using bivariate polynomial interpolation or approximation on the point
-set $P^+$.
+In a well chosen coordinate system, the idea is to fit the $d$-jet of
+the surface using bivariate polynomial interpolation or approximation
+on the point set $P^+$.
 %
 More precisely, the fitting consists of finding the coefficients
-$A_{i,j}$ of the degree $d$ polynomial $J_{A,d}=
-\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
-\frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!})$.
+$A_{i,j}$ of the degree $d$ polynomial 
+\begin{equation}
+\label{eq-answer}
+J_{A,d}= \sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
+\frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
+\end{equation}
 
 
 Denote $p_i=(x_i,y_i,z_i), \ i=1,\ldots , N$ the coordinates of the
@@ -118,21 +154,24 @@ i=1,\ldots,N$, and for approximation one has to minimize $\sum_{i=1}^N
 (A(x_i,y_i)-z_i)^2$. The linear algebra formulation of the problem is
 given by
 %
-\begin{eqnarray*}
+\begin{eqnarray}
+\label{eq:fit-linalg}
  A =  & (A_{0,0}, A_{1,0},A_{0,1}, \ldots , A_{0,d})^T \\ 
  Z=  &(z_1, z_2,\ldots , z_N)^T \\ 
  M=  &(1,x_i,\ y_i,\ \frac{x_i^2}{2},\ldots ,
 \ \frac{x_iy_i^{d-1}}{(d-1)!},\ \frac{y_i^d}{d!})_{i=1,...,N}\\
-\end{eqnarray*}
+\end{eqnarray}
 %
-The equations for interpolation become $MA=Z$ and for approximation
-$\min ||MA-Z||_2$.
+The equations for interpolation become $MA=Z$. For approximation, one
+seeks the matrix $A$ such that $A = \arg \min_A  ||MA-Z||_2$.
 
-
-The following theorem precisely states the order of convergence of the
-polynomial fitting method.  Given a parameter $h$ measuring the
-sampling step, the following theorem, provising the best asymptotic
-estimates known to date, is proved in \cite{cgal:cp-edqpf-05}~:
+To assess the convergence guarantees, assume the sampling step is
+given by a parameter $h$, which means all samples are at distance
+$O(h)$ of the point where the calculation is carried out.
+%%
+The following theorem, proved in \cite{cgal:cp-edqpf-05}, provides the
+asymptotic error estimates ---which are the best known to date:
+%%
 \begin{theorem}
 A polynomial fitting of degree $d$ estimates any $k^{th}$-order
 differential quantity to accuracy $O(h^{d-k+1})$~:
@@ -160,11 +199,11 @@ Based on the above concepts, the algorithm consists of 4 steps.
 %
 \begin{enumerate}
 \item
-We perform a PCA on $P^+$. This analysis outputs three orthonormal
-eigenvectors and the associated eigenevalues.  If the
-surface is well sampled, we expect the PCA to provide one small and
-two large eigenvalues, the eigenvector associated to the small one
-approximating the normal vector.
+We perform a Principal Component Analysis (PCA) on $P^+$. This
+analysis outputs three orthonormal eigenvectors and the associated
+eigenvalues.  If the surface is well sampled, we expect the PCA to
+provide one small and two large eigenvalues, the eigenvector
+associated to the small one approximating the normal vector.
 \item
 We perform a change of coordinates to move the samples into the
 coordinate system defined by the PCA eigenvectors. We then resort to
@@ -179,17 +218,22 @@ Finally, we compute the Monge coefficients.
 \end{enumerate}
 
 
-For the fitting, we do not assume the z-axis of the fitting to
-be the normal of the surface. Hence we keep the first order
-coefficients of the polynomial $J_{A,d}$. It is prooved that such a choice
-improves the estimations \cite{cgal:cp-edqpf-05}.
+For the fitting, we do not assume the $z$-axis of the fitting to be
+the normal of the surface. 
+As proved in \cite{cgal:cp-edqpf-05}, two stages methods estimating
+the tangent plane first incur of higher order quantities the error
+made on first order quantities.
+%%
+Thus, we keep the first order coefficients of the polynomial
+$J_{A,d}$, which provide the estimate for the tangent plane.
 
-Note that we do not aim at identifying exactly special points such as
-umbilics where both principal curvatures are equal. This would only be
-possible if the original surface and the fitted surface coincide. This
-implying that the original surface is a graph of a bivariate
-polynomial of a lower degree than the fitted polynomial and that the
-coordinate system used for the fitting has the same height direction.
+Finally, notice that we do not aim at identifying exactly special
+points such as umbilics where both principal curvatures are
+equal. This would only be possible if the original surface and the
+fitted surface coincide. This implying that the original surface is a
+graph of a bivariate polynomial of a lower degree than the fitted
+polynomial and that the coordinate system used for the fitting has the
+same height direction.
 
 %For the sake of clarity and wlog, we assume the study point is at the
 %origin.
@@ -198,15 +242,23 @@ coordinate system used for the fitting has the same height direction.
 \label{sec:deg-cases}
 %%%%%%%%%%%%%%%%%%%%%
 
+As usual, the  fitting procedure may run into (almost) degenerate
+cases:
+%%
 \begin{itemize}
 \item
-The PCA used to determine a rough normal vector does not yield an
-eigenvalue significantly smaller then the two remaining ones.
-\item
-When solving the linear system, the condition number is too large.
-\end{itemize}
+Due to poor sampling, the PCA used to determine a rough normal vector
+may not yield an eigenvalue significantly smaller than the two
+remaining ones.
 
-In these cases, the estimation may not be relevant. To inform the user 
+\item
+As observed in \cite{cgal:cp-edqpf-05}, the interpolating problem is
+not {\em poised} if the points used project, into the fitting frame,
+onto an algebraic curve of degree $d$. More generally, the problem is
+ill poised if the condition number is too large.
+\end{itemize}
+%%
+In these cases, the estimation may not be relevant. To inform the user
 of these issues, we provide the PCA results and the condition number
 of the fitting in the class \ccc{Monge_info}.
 
@@ -216,10 +268,10 @@ of the fitting in the class \ccc{Monge_info}.
 
 In this section, we detail the mathematics involved, in order to
 justify the design choices made.
-
-Note that there are 3 relevant direct orthonormal basis: world-basis
-$(w_x,w_y,w_z)$, fitting-basis $(f_x,f_y,f_z)$, monge-basis
-$(d_1,d_2,n)$.
+%%
+To do so, observe that there are three relevant direct orthonormal
+basis: the world-basis $(w_x,w_y,w_z)$, the fitting-basis
+$(f_x,f_y,f_z)$, the monge-basis $(d_1,d_2,n)$.
 
 \begin{figure}[h!]
 \begin{ccTexOnly}
@@ -228,7 +280,7 @@ $(d_1,d_2,n)$.
 \end{ccTexOnly}
 
 \label{fig:jet_fitting_basis}
-\caption{The three basis envolved in the estimation.}
+\caption{The three basis involved in the estimation.}
 
 \begin{ccHtmlOnly}
 <CENTER>
@@ -237,49 +289,61 @@ $(d_1,d_2,n)$.
 \end{ccHtmlOnly}
 \end{figure}
 
-\subsection{Compute a basis for the fitting}
+\subsection{Computing a basis for the fitting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-{\bf input : samples\\ output : fitting-basis}
+{\bf Input : samples\\ Output : fitting-basis}
 
-Perform a Principal Component Analysis, this means we need a linear
-algebra method to perform an eigen analysis of a symmetric matrix :
-{\tt eigen\_symm\_algo}. This analysis gives an orthonormal basis
-whose $z$-axis is provided by the eigenvector associated to the
-smallest eigenvalue \footnote{Another possibility is to choose as
-z-axis the axis of the world-basis with the least angle with the axis
-determined with the PCA. Then the change of basis reduces to a
-permutation of axis.}. Note one may have to swap the sense of a vector
-to get a direct basis.
+
+%, and we
+%shall assume a function {\tt eigen\_symm\_algo} doing so is available.
+%
+%a Principal Component Analysis, this means we need a linear
+%algebra method to perform an eigen analysis of a symmetric matrix :
+%{\tt eigen\_symm\_algo}. 
+%
+Performing a PCA requires diagonalizing a symmetric matrix.  This
+analysis gives an orthonormal basis whose $z$-axis is provided by the
+eigenvector associated to the smallest eigenvalue
+\footnote{Another possibility is to choose as z-axis the axis of the
+world-basis with the least angle with the axis determined with the
+PCA. Then the change of basis reduces to a permutation of axis.}. Note
+one may have to swap the orientation of a vector to get a direct
+basis.
 
 Let's note $P_{W\rightarrow F}$ the matrix to change coordinates from the
 world-basis $(w_x,w_y,w_z)$ to the fitting-basis $(f_x,f_y,f_z)$. The
 rows of $P_{W\rightarrow F}$ are the coordinates of the vectors
 $(f_x,f_y,f_z)$ in the world-basis. This matrix represents a
-orthogonal transformation hence its inverse is its tranpose. To obtain
+orthogonal transformation hence its inverse is its transpose. To obtain
 the coordinates of a point in the fitting-basis from the coordinates
 in the world-basis, one has to multiply by $ P_{W\rightarrow F}$.
 
-Possible feedback is the eigenvalues, a good sampling is characterized 
-by a small eigenvalue and two similar bigger ones.
+As mentioned above, the eigenvalues are returned, from which the
+sampling quality can be assessed by checking one eigenvalue is
+significantly smaller.
 
 
+\paragraph{Implementation details.}
+Given a symmetric matrix $M$, we assume the following function:
+%%
 \begin{verbatim}
 void eigen_symm_algo(const LAMatrix& M, LAVector& eigen_vals, LAMatrix& eigen_vecs)
 \end{verbatim} 
-This function computes the eigenvalues and eigenvectors of the real
-symmetric matrix M. The eigenvalues are stored in the vector
-eigen\_vals and are in decreasing order. The corresponding eigenvectors are
-stored in the columns of the matrix eigen\_vecs. For example, the
-eigenvector in the first column corresponds to the first (and largest)
-eigenvalue. The eigenvectors are guaranteed to be mutually orthogonal
-and normalised to unit magnitude.
+%%
+This function computes the eigenvalues and eigenvectors of matrix $M$.
+The eigenvalues are stored in the vector eigen\_vals and are in
+decreasing order. The corresponding eigenvectors are stored in the
+columns of the matrix eigen\_vecs. For example, the eigenvector in the
+first column corresponds to the first (and largest) eigenvalue. The
+eigenvectors are guaranteed to be mutually orthogonal and normalised
+to unit magnitude.
 
 \subsection{Solving the interpolation / approximation problem}
 \label{sec:solving}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-{\bf input : samples, fitting-basis \\ output : coeff $A_{i,j}$ of the
+{\bf Input : samples, fitting-basis \\ Output : coefficients $A_{i,j}$ of the
 bivariate fitted polynomial in the fitting-basis }
 
 Computations are done in the fitting-basis and the origin is the point
@@ -289,14 +353,15 @@ translation ($-p$) and multiplication by $ P_{W\rightarrow F}$.
 
 We solve the system $MA=Z$, in the least square sense for
 approximation, with a function {\tt solve\_ls\_svd}. There is a
-preconditionning of the matrix $M$ so as to improve the condition
+preconditioning of the matrix $M$ so as to improve the condition
 number. Assuming the $\{x_i\}$, $\{y_i\}$ are of order $h$, the
 pre-conditioning consists of performing a column scaling by dividing
-each monomial $x_i^ky_i^l$ by $h^{k+l}$. The parameter $h$ is chosen
-as the mean value of the $\{x_i\}$ and $\{y_i\}$. In other words, the
-new system is $M'Y=(MD^{-1}(DA)=Z$ with $D$ the diagonal matrix
+each monomial $x_i^ky_i^l$ by $h^{k+l}$ ---refer to
+Eq. (\ref{eq:fit-linalg}). Practically, the parameter $h$ is chosen as
+the mean value of the $\{x_i\}$ and $\{y_i\}$. In other words, the new
+system is $M'Y=(MD^{-1}(DA)=Z$ with $D$ the diagonal matrix
 $D=(1,h,h,h^2,\ldots,h^d,h^d)$, so that the solution $A$ of the
-original system is $A=D^{-1}Y$.  
+original system is $A=D^{-1}Y$.
 
 There is always a single solution since for under constrained systems
 we also minimize $||A||_2$.  The method uses a singular value
@@ -324,17 +389,19 @@ D_r^{-1} & 0_{N_d-r,\ r}\\
 \right)
  U^TZ.
 \end{equation}
+%%
+One can provide the condition number of the matrix $M$ (after
+preconditioning) which is the ratio of the maximal and the minimal
+singular values. It is infinite if the system is under constrained,
+that is the smallest singular value is zero. Then, an exception is
+raised.
 
-One can provide the condition number
-of the matrix $M$ (after preconditionning) which is the ratio of the
-maximal and the minimal singular values. It is infinite if the system
-is under constrained, that is the smallest singular value is
-zero. Then we should provide an exception.
-
+\paragraph{Implementation details.}
+We assume function:
 \begin{verbatim}
 void solve_ls_svd_algo(const LAMatrix& M, const LAVector& B, Vector& X, double& cond_nb)
 \end{verbatim} 
- 
+ %%
 This function first factorizes the m-by-n matrix M into the singular
 value decomposition $M = U S V^T$ for $m \geq n$.  Then it solves the
 system $MX = B$ in the least square sense using the singular value
@@ -359,11 +426,13 @@ condition number of the system. For more on these alternatives, see
 \subsection{Principal  curvature / directions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-{\bf input : coeff of the fit $A_{i,j}$, 
+{\bf Input : coefficients of the fit $A_{i,j}$, 
 fitting-basis \\
-output : monge-basis wrt fitting-basis and world-basis
+Output : monge-basis wrt fitting-basis and world-basis
 }
 
+In the fitting basis, we have determined a height function expressed
+by Eq. (\refs{eq-answer}). 
 Computations are done in the fitting-basis.  The partial derivatives,
 evaluated at $(x,y)=(0,0)$, of the fitted polynomial $J_{A,d}(x,y)$ are
 $A_{i,j}=\frac{\partial^{i+j}J_{A,d}}{\partial^ix
@@ -375,13 +444,18 @@ A_{0,0}+A_{1,0}x+A_{0,1}y+\frac{1}{2}(A_{2,0}x^2+2A_{1,1}xy+A_{0,2}y^2)
 \end{eqnarray}
 
 
-The origin, that is the point of the fitted surface where the
-estimation is performed, is $(0,0,A_{0,0})$. \\ The normal is
-$n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}$. The Weingarten
+---The origin, that is the point of the fitted surface where the
+estimation is performed, is $(0,0,A_{0,0})$. \\
+%%
+---The normal is
+$n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}$.\\
+%%
+---Curvature related properties are retrieved resorting to standard
+differential calculus \cite{co-carmo}. More precisely, the Weingarten
 operator $W=-I^{-1}II$ is first computed in the basis of the tangent
-plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute an orthonormal basis of the
-tangent plane using the Gram-Schimdt algorithm, and then we compute
-Weingarten in this basis (apply a change of basis matrix
+plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute an orthonormal
+basis of the tangent plane using the Gram-Schimdt algorithm, and then
+we compute Weingarten in this basis (apply a change of basis matrix
 $W'=P^{-1}WP$). It is then symmetric, we can apply the eigensystem
 function for a symmetric matrix:
 \verb+eigen_symm_algo+.
@@ -392,33 +466,33 @@ orthonormal direct basis $(d_1,d_2,n)$. Let's note $P_{F
 fitting-basis to the monge-basis. Its rows are the coordinates of the
 vectors $(d_1,d_2,n)$ in the fitting-basis. It is an orthogonal matrix
 $P_{F \rightarrow M}^{-1}=P_{F \rightarrow M}^T$. The monge-basis
-expressed in the world-basis is obtained by multipling the coordinates
+expressed in the world-basis is obtained by multiplying the coordinates
 of $(d_1,d_2,n)$ in the fitting-basis by $P_{W\rightarrow F}^{-1}$,
 (the same holds for the origin point which has in addition to be
 translated by $p$, i.e. the coordinates of the origin point are
 $P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p$.
 
-\subsection{Computation of higher order Monge coeff}
+\subsection{Computing  higher order Monge coefficients}
 
-{\bf input : coeff of the fit, monge-basis wrt fitting-basis ($P_{F
+{\bf Input : coefficients of the fit, monge-basis wrt fitting-basis ($P_{F
 \rightarrow M}$)\\ 
-output : third and fourth order coeff of Monge}
+Output : third and fourth order coefficients of Monge}
 
-We use explicite formula. The implicit equation of the fitted
+We use explicit formula. The implicit equation of the fitted
 polynomial surface in the fitting-basis with origin the point
 $(0,0,A_{0,0})$ is $Q=0$ with
 \begin{equation}
 Q=-w-A_{0,0}  +\sum_{i,j}\frac{A_{i,j}u^iv^j}{i!j!}.
 \end{equation}
-
+%%
 The equation in the monge-basis is obtained by substituting $(u,v,w)$
-by $P^T_{F\rightarrow M}(x,y,z)$, let's denote $f(x,y,z)$ this implicit
+by $P^T_{F\rightarrow M}(x,y,z)$. Denote $f(x,y,z)=0$ this implicit
 equation. By definition of the monge-basis, we have locally (at
 $(0,0,0)$)
 \begin{equation}
 f(x,y,z)=0 \Leftrightarrow z=g(x,y)
 \end{equation}
-and the taylor expansion of $g$ at $(0,0)$ are the Monge coefficients
+and the Taylor expansion of $g$ at $(0,0)$ are the Monge coefficients
 sought.
 %
 Let's denote the partial derivatives evaluated at the origin of $f$
@@ -459,27 +533,31 @@ f_{0,0,1} ^{2}}}
 
 \section{Software Design}
 %%%%%%%%%%%%%%%%%%%%%%%
+
+following \cgal's best practices in geometric software development,
+the package developed in fully generic in the C++ sense ---and is
+templated by three classes.
+
 \subsection{Options and interface specifications}
 %%%%%%%%%%%%%%%%%%%%%
 
 Using the fitting strategy requires specifying two degrees: the degree
 $d$ of the fitted polynomial ($d \geq 1$), and the degree $d'$ of the
-monge coeff one wants to compute, with $d' \leq d $.  In the sequel,
+monge coefficients one wants to compute, with $d' \leq d $.  In the sequel,
 we also assume users are satisfied with Monge coefficients of order
 four, that is, we assume $d' \leq 4$.
 \medskip
 
 Regarding interpolation versus approximation, we provide a single
 function {\tt Monge\_via\_jet\_fitting} with parameters $d,d'$ and a
-range iterator. If $size()==N_d$ then interpolation is performed, else
-$size() > N_d$ and approximation is used. If $size()< N_d$ we provide
+range iterator. If $N==N_d$ then interpolation is performed, else
+$N > N_d$ and approximation is used. If $N < N_d$ we provide
 an exception.
 
 \subsection{Template parameters}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The package developed in fully generic in the C++ sense, and is
-templated by three classes. In addition, we assume implicit cast
+ In addition, we assume implicit cast
 between Data, Local and Linalg are well defined.
 
 \subsubsection{\tt Data\_Kernel} 
