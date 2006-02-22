@@ -1,5 +1,13 @@
 //! \file examples/Boolean_set_operations_2/ex_traits_adaptor.C
 // Using the traits adaptor to generate a traits of conics.
+#ifndef CGAL_USE_CORE
+#include <iostream>
+int main ()
+{
+  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  return (0);
+}
+#else
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -73,3 +81,5 @@ int main ()
   
   return (0);
 }
+
+#endif
