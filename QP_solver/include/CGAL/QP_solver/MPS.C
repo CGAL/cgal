@@ -37,7 +37,7 @@ QP_MPS_instance(std::istream& in,bool use_CPLEX_convention,
 		int verbosity)
   : verbosity_(verbosity), from(in),
     is_format_okay_(false),
-    is_linear_(false),
+    is_linear_(true),
     use_CPLEX_convention(use_CPLEX_convention),
     is_symmetric_cached(false),
     has_equalities_only_and_full_rank_cached(false),
@@ -555,7 +555,6 @@ bool QP_MPS_instance<IT_,ET_,
   if (t!="QMATRIX" && t!="DMATRIX" && t!="QUADOBJ") { // (Note: *MATRIX
 						      // section is optional.)
     put_token_back(t);
-    is_linear_ = true;
     return true;
   }
 
@@ -592,6 +591,10 @@ bool QP_MPS_instance<IT_,ET_,
     // divide by two if approriate:
     if (divide_by_two)
       val /= 2;
+
+    // mark problem as nonlinear if value is nonzero:
+    if (!CGAL::is_zero(val))
+      is_linear_ = false;
 
     // set entry in D:
     set_entry_in_D(var1_index,var2_index,val,
