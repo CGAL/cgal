@@ -36,7 +36,7 @@
 template <class A>
 class B {
 public:
-  typedef A Res;
+  typedef typename A::D Res;
 
   template<class C>
   Res fct(C *i);
