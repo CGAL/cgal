@@ -673,85 +673,99 @@ namespace CGALi {
     typedef std::bidirectional_iterator_tag           iterator_category;
 
     // the initialization with NULL is required by our Handle concept.
-    CC_iterator() : p(NULL) {}
+    CC_iterator()
+    {
+      m_ptr.p = NULL;
+    }
 
     // Either a harmless copy-ctor,
     // or a conversion from iterator to const_iterator.
-    CC_iterator(const iterator &it)
-    : p(&*it) {}
+    CC_iterator (const iterator &it)
+    {
+      m_ptr.p = &(*it);
+    }
 
     // Same for assignment operator (otherwise MipsPro warns)
-    CC_iterator & operator=(const iterator &it)
+    CC_iterator & operator= (const iterator &it)
     {
-      p = it.p;
+      m_ptr.p = &(*it);
       return *this;
     }
 
     // Construction from NULL
-    CC_iterator(CGAL_NULL_TYPE CGAL_assertion_code(n))
-    : p(NULL)
+    CC_iterator (CGAL_NULL_TYPE CGAL_assertion_code(n))
     {
-      CGAL_assertion( n == NULL);
+      CGAL_assertion (n == NULL);
+      m_ptr.p = NULL;
     }
 
   private:
 
-    pointer p;
+    union {
+      pointer      p;
+      void        *vp;
+    } m_ptr;
 
     // Only Compact_container should access these constructors.
     friend class Compact_container<value_type, typename DSC::Al>;
 
     // For begin()
     CC_iterator(pointer ptr, int, int)
-    : p(ptr)
     {
-      if (p == NULL) // empty container.
+      m_ptr.p = ptr;
+      if (m_ptr.p == NULL) // empty container.
         return;
-      ++p; // if not empty, p = start
-      if (DSC::type(p) == DSC::FREE)
+
+      ++(m_ptr.p); // if not empty, p = start
+      if (DSC::type(m_ptr.p) == DSC::FREE)
         increment();
     }
+
     // Construction from raw pointer and for end().
     CC_iterator(pointer ptr, int)
-    : p(ptr) {}
+    {
+      m_ptr.p = ptr;
+    }
 
     // NB : in case empty container, begin == end == NULL.
     void increment()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(p != NULL,
+      CGAL_assertion_msg(m_ptr.p != NULL,
                          "Doing ++ on empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(p) != DSC::START_END,
+      CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
                          "Doing ++ on end() ?");
+
       // If it's not end(), then it's valid, we can do ++.
       do {
-        ++p;
-        if (DSC::type(p) == DSC::USED ||
-            DSC::type(p) == DSC::START_END)
+        ++(m_ptr.p);
+        if (DSC::type(m_ptr.p) == DSC::USED ||
+            DSC::type(m_ptr.p) == DSC::START_END)
           return;
-        if (DSC::type(p) == DSC::BLOCK_BOUNDARY)
-          p = DSC::clean_pointee(p);
-      }
-      while (true);
+
+        if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
+          m_ptr.p = DSC::clean_pointee(m_ptr.p);
+      } while (true);
     }
 
     void decrement()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(p != NULL,
+      CGAL_assertion_msg(m_ptr.p != NULL,
                          "Doing -- on empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(p-1) != DSC::START_END,
+      CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
                          "Doing -- on begin() ?");
+
       // If it's not begin(), then it's valid, we can do --.
       do {
-        --p;
-        if (DSC::type(p) == DSC::USED ||
-            DSC::type(p) == DSC::START_END)
+        --m_ptr.p;
+        if (DSC::type(m_ptr.p) == DSC::USED ||
+            DSC::type(m_ptr.p) == DSC::START_END)
           return;
-        if (DSC::type(p) == DSC::BLOCK_BOUNDARY)
-          p = DSC::clean_pointee(p);
-      }
-      while (true);
+
+        if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
+          m_ptr.p = DSC::clean_pointee(m_ptr.p);
+      } while (true);
     }
 
   public:
@@ -762,18 +776,19 @@ namespace CGALi {
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    reference operator*() const { return *p; }
-    pointer   operator->() const { return p; }
+    reference operator*() const { return *(m_ptr.p); }
+
+    pointer   operator->() const { return (m_ptr.p); }
 
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
-      return p < other.p;
+      return (m_ptr.p < other.m_ptr.p);
     }
 
     // Can itself be used for bit-squatting.
-    void *   for_compact_container() const { return (void *) p; }
-    void * & for_compact_container()       { return (void * &) p; }
+    void *   for_compact_container() const { return (m_ptr.vp); }
+    void * & for_compact_container()       { return (m_ptr.vp); }
   };
 
   template < class DSC, bool Const1, bool Const2 >
