@@ -392,6 +392,7 @@ Coin/demo/Coin/Terrain/terrain.sln -text
 Coin/demo/Coin/Terrain/terrain.vcproj -text
 Coin/demo/Coin/Triangulation_3/triangulation_3.sln -text
 Coin/demo/Coin/Triangulation_3/triangulation_3.vcproj -text
+Configuration/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C -text
 Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
