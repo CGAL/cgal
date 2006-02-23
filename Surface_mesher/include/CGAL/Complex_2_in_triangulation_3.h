@@ -24,6 +24,7 @@
 #include <CGAL/Union_find.h>
 #include <set>
 #include <map>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -83,6 +84,7 @@ class Complex_2_in_triangulation_3 {
 protected:
   Triangulation_3& tri3;
   Edge_facet_counter  edge_facet_counter;
+  size_t m_number_of_facets;
 
  private:
   // computes and return an ordered pair of Vertex
@@ -104,7 +106,9 @@ protected:
 
   // Constructors
 
-  Complex_2_in_triangulation_3 (Triangulation_3& t3):tri3(t3) {
+  Complex_2_in_triangulation_3 (Triangulation_3& t3) 
+    : tri3(t3), m_number_of_facets(0)
+  {
   }
 
   // Access functions
@@ -192,12 +196,17 @@ protected:
 
   }
 
-  // af : added this function as calling face_type triggers update of cache
-  bool is_in_complex(Vertex_handle v) const
-  {
-    return v->is_visited();
-  }
+//   // af : added this function as calling face_type triggers update of cache
+//   bool is_in_complex(Vertex_handle v) const
+//   {
+//     std::cerr << "Hello guys!\n";
+//     return v->is_visited();
+//   }
 
+  const size_t number_of_facets() const
+  {
+    return m_number_of_facets;
+  }
 
   Facet_circulator incident_facets (const Edge& e) {
     // position the circulator on the first element of the facets list
@@ -286,6 +295,7 @@ protected:
   }
 
   void set_in_complex (const Cell_handle c, const int i) {
+    ++m_number_of_facets;
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
     Facet f = canonical_facet(c, i);
@@ -366,6 +376,7 @@ protected:
   }
 
   void remove_from_complex (const Cell_handle c, const int i) {
+    --m_number_of_facets;
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
     Facet f = canonical_facet(c, i);
