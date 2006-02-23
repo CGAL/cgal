@@ -1,13 +1,9 @@
-// Copyright (c) 2000-2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -17,16 +13,16 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Herve Bronnimann, Sylvain Pion, Susan Hert
+// Author(s)     : Monique Teillaud, Sylvain Pion
+
 
 // This file is intentionally not protected against re-inclusion.
 // It's aimed at being included from within a kernel traits class, this
 // way we share more code.
 
 // It is the responsability of the including file to correctly set the 2
-// macros CGAL_Kernel_pred and CGAL_Kernel_cons.
+// macros CGAL_Curved_Kernel_pred and CGAL_Curved_Kernel_cons.
 // And they are #undefed at the end of this file.
 
   CGAL_Curved_Kernel_cons(Get_equation,
