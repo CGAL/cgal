@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef TRIANGULATED_MIXED_COMPLEX_CELL_3_H
-#define TRIANGULATED_MIXED_COMPLEX_CELL_3_H
+#ifndef CGAL_TRIANGULATED_MIXED_COMPLEX_CELL_3_H
+#define CGAL_TRIANGULATED_MIXED_COMPLEX_CELL_3_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_3.h>
@@ -63,4 +63,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // TRIANGULATED_MIXED_COMPLEX_CELL_3_H
+#endif // CGAL_TRIANGULATED_MIXED_COMPLEX_CELL_3_H

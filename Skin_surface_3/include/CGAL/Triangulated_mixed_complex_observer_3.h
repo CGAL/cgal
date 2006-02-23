@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef TRIANGULATED_MIXED_COMPLEX_OBSERVER_3
-#define TRIANGULATED_MIXED_COMPLEX_OBSERVER_3
+#ifndef CGAL_TRIANGULATED_MIXED_COMPLEX_OBSERVER_3
+#define CGAL_TRIANGULATED_MIXED_COMPLEX_OBSERVER_3
 
 #include <CGAL/Triangulation_simplex_3.h>
 #include <CGAL/Skin_surface_quadratic_surface_3.h>
@@ -159,4 +159,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // TRIANGULATED_MIXED_COMPLEX_OBSERVER_3
+#endif // CGAL_TRIANGULATED_MIXED_COMPLEX_OBSERVER_3

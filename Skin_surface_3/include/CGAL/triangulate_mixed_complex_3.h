@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef TRIANGULATE_MIXED_COMPLEX_3
-#define TRIANGULATE_MIXED_COMPLEX_3
+#ifndef CGAL_TRIANGULATE_MIXED_COMPLEX_3
+#define CGAL_TRIANGULATE_MIXED_COMPLEX_3
 
 // #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
@@ -945,4 +945,4 @@ void triangulate_mixed_complex_3(
 
 CGAL_END_NAMESPACE
 
-#endif // TRIANGULATE_MIXED_COMPLEX_H
+#endif // CGAL_TRIANGULATE_MIXED_COMPLEX_H

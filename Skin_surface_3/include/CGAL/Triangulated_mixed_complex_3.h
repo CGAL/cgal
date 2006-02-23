@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef TRIANGULATED_MIXED_COMPLEX_3
-#define TRIANGULATED_MIXED_COMPLEX_3
+#ifndef CGAL_TRIANGULATED_MIXED_COMPLEX_3
+#define CGAL_TRIANGULATED_MIXED_COMPLEX_3
 
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -39,4 +39,4 @@ class Triangulated_mixed_complex_3 : public Triangulation_3<GT, Tds> {
 
 CGAL_END_NAMESPACE
 
-#endif // TRIANGULATED_MIXED_COMPLEX_3
+#endif // CGAL_TRIANGULATED_MIXED_COMPLEX_3

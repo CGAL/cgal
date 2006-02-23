@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef TDS_INCREMENTAL_BUILDER_3_H
-#define TDS_INCREMENTAL_BUILDER_3_H 1
+#ifndef CGAL_TDS_INCREMENTAL_BUILDER_3_H
+#define CGAL_TDS_INCREMENTAL_BUILDER_3_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -235,4 +235,4 @@ Triangulation_incremental_builder_3< TDS_ >::construct_infinite_cells() {
 
 CGAL_END_NAMESPACE
 
-#endif // TDS_INCREMENTAL_BUILDER_3_H //
+#endif // CGAL_TDS_INCREMENTAL_BUILDER_3_H //

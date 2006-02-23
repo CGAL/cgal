@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef CGAL_SKIN_SURFACE_TRAITS_3_H
-#define CGAL_SKIN_SURFACE_TRAITS_3_H
+#ifndef CGAL_CGAL_SKIN_SURFACE_TRAITS_3_H
+#define CGAL_CGAL_SKIN_SURFACE_TRAITS_3_H
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -142,4 +142,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SKIN_SURFACE_TRAITS_3_H
+#endif // CGAL_CGAL_SKIN_SURFACE_TRAITS_3_H

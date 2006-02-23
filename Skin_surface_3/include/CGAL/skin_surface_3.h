@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef SKIN_SURFACE_H
-#define SKIN_SURFACE_H
+#ifndef CGAL_SKIN_SURFACE_H
+#define CGAL_SKIN_SURFACE_H
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Regular_triangulation_3.h>
@@ -136,4 +136,4 @@ void skin_surface_3(InputIterator first, InputIterator last,
 
 CGAL_END_NAMESPACE
 
-#endif // SKIN_SURFACE_H
+#endif // CGAL_SKIN_SURFACE_H

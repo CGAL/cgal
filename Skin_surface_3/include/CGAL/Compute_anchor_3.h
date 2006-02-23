@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef COMPUTE_ANCHOR_3_H
-#define COMPUTE_ANCHOR_3_H
+#ifndef CGAL_COMPUTE_ANCHOR_3_H
+#define CGAL_COMPUTE_ANCHOR_3_H
 
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
@@ -588,4 +588,4 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
 
 CGAL_END_NAMESPACE
 
-#endif // COMPUTE_ANCHOR_3_H
+#endif // CGAL_COMPUTE_ANCHOR_3_H

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef VORONOI_TRIANGULATOR_3_H
-#define VORONOI_TRIANGULATOR_3_H
+#ifndef CGAL_VORONOI_TRIANGULATOR_3_H
+#define CGAL_VORONOI_TRIANGULATOR_3_H
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
@@ -542,4 +542,4 @@ Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_anchor(R
 
 CGAL_END_NAMESPACE
 
-#endif // VORONOI_TRIANGULATOR_3_H
+#endif // CGAL_VORONOI_TRIANGULATOR_3_H

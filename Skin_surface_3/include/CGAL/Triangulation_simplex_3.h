@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef TRIANGULATION_SIMPLEX_3_H
-#define TRIANGULATION_SIMPLEX_3_H
+#ifndef CGAL_TRIANGULATION_SIMPLEX_3_H
+#define CGAL_TRIANGULATION_SIMPLEX_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -241,4 +241,4 @@ operator<< (std::ostream& os, const Triangulation_simplex_3<Triangulation> &s)
 
 CGAL_END_NAMESPACE
 
-#endif // TRIANGULATION_SIMPLEX_3_H
+#endif // CGAL_TRIANGULATION_SIMPLEX_3_H

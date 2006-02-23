@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef SKIN_SURFACE_SQRT3_3_H
-#define SKIN_SURFACE_SQRT3_3_H
+#ifndef CGAL_SKIN_SURFACE_SQRT3_3_H
+#define CGAL_SKIN_SURFACE_SQRT3_3_H
 
 #include <CGAL/Skin_surface_refinement_traits_3.h>
 
@@ -155,4 +155,4 @@ void skin_surface_sqrt3(
 
 CGAL_END_NAMESPACE
 
-#endif // SKIN_SURFACE_SQRT3_3_H
+#endif // CGAL_SKIN_SURFACE_SQRT3_3_H

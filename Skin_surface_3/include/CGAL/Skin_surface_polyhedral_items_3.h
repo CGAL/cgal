@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
-#define SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
+#ifndef CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
+#define CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
 
 #include <CGAL/HalfedgeDS_face_base.h>
 #include <CGAL/Polyhedron_items_3.h>
@@ -43,4 +43,4 @@ struct Skin_surface_polyhedral_items_3 : public Polyhedron_items_3 {
 
 CGAL_END_NAMESPACE
 
-#endif // SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
+#endif // CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H
