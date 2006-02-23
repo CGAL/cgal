@@ -41,15 +41,106 @@ static const char *const optv[] = {
   NULL
 };
  
+// default fct parameter values and global variables
+unsigned int d_fitting = 2;
+unsigned int d_monge = 2;
+unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
+unsigned int nb_points_to_use = 0;//
+bool verbose = false;
+unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
+
+//gather points around the vertex v using rings on the polyhedralsurf
+void gather_fitting_points( Vertex* v, 
+			    std::vector<DPoint> &in_points)
+{
+  //container to collect vertices of v on the PolyhedralSurf
+  std::vector<Vertex*> current_ring, next_ring, gathered; 
+  std::vector<Vertex*> *p_current_ring, *p_next_ring;
+
+  //initialize
+  unsigned int nbp = 0, //current nb of collected points
+    ith = 0;	//i-th ring index
+  current_ring.clear();
+  next_ring.clear();
+  p_current_ring = &current_ring;
+  p_next_ring = &next_ring;
+  gathered.clear();
+  in_points.clear();  
+  
+  //DO NOT FORGET TO UNTAG AT THE END!
+  v->setRingIndex(ith);
+  //collect 0th ring : the vertex v!
+  gathered.push_back(v);
+  nbp = 1;
+  //collect 1-ring
+  ith = 1;
+  nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered);
+  //collect more neighbors depending on options...
+ 
+    //OPTION -p nb, with nb != 0
+    //for approximation/interpolation with a fixed nb of points, collect
+    // enough rings and discard some points of the last collected ring 
+    // to get the exact "nb_points_to_use"
+  if ( nb_points_to_use != 0 ) {
+    while( gathered.size() < nb_points_to_use ) {
+      ith++;
+      //using tags
+      nbp += Poly_rings::
+	collect_ith_ring_neighbours(ith, *p_current_ring,
+				    *p_next_ring, gathered);
+      //next round must be launched from p_nextRing...
+      p_current_ring->clear();
+      std::swap(p_current_ring, p_next_ring);
+    }
+    //clean up
+    Poly_rings::reset_ring_indices(gathered);
+    //discard non-required collected points of the last ring
+    gathered.resize(nb_points_to_use, NULL);
+    assert(gathered.size() == nb_points_to_use );
+  }
+  else{
+    //OPTION -a nb, with nb = 0
+    //  select the mini nb of rings needed to make approx possible
+    if (nb_rings == 0) {
+      while ( gathered.size() < min_nb_points ) {
+	ith++;
+	nbp += Poly_rings::
+	  collect_ith_ring_neighbours(ith, *p_current_ring,
+				      *p_next_ring, gathered);
+	//next round must be launched from p_nextRing...
+	p_current_ring->clear();
+	std::swap(p_current_ring, p_next_ring);
+      }
+    }
+    //OPTION -a nb, with nb = 1, nothing to do! we have already
+    //      collected the 1 ring
+    //OPTION -a nb, with nb > 1
+    //for approximation with a fixed nb of rings, collect
+    //      neighbors up to the "nb_rings"th ring
+    if (nb_rings > 1)
+      while (ith < nb_rings) {
+	ith++;
+	nbp += Poly_rings::
+	  collect_ith_ring_neighbours(ith, *p_current_ring,
+				      *p_next_ring, gathered);
+	//next round must be launched from p_nextRing...
+	p_current_ring->clear();
+	std::swap(p_current_ring, p_next_ring);
+      }
+   
+    //clean up
+    Poly_rings::reset_ring_indices(gathered);
+  } //END ELSE
+
+  //store the gathered points
+  std::vector<Vertex*>::iterator itb = gathered.begin(),
+    ite = gathered.end();
+  CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
+  
+}
 
 int main(int argc, char *argv[])
 {
-  // fct parameters
-  unsigned int d_fitting = 2;
-  unsigned int d_monge = 2;
-  unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
-  unsigned int nb_points_to_use = 0;//
-  bool verbose = false;
   
   char *if_name = NULL, //input file name
     *w_if_name = NULL;  //as above, but / replaced by _
@@ -78,20 +169,20 @@ int main(int argc, char *argv[])
 
   //prepare output file names
   assert(if_name != NULL);
-  w_if_name = new char[strlen(if_name)];
+  w_if_name = new char[strlen(if_name)+1];
   strcpy(w_if_name, if_name);
   for(unsigned int i=0; i<strlen(w_if_name); i++) 
     if (w_if_name[i] == '/') w_if_name[i]='_';
   cerr << if_name << '\n';  
   cerr << w_if_name << '\n';  
 
-  res4openGL_fname = new char[strlen(w_if_name) + 9];// append .4ogl.txt
+  res4openGL_fname = new char[strlen(w_if_name) + 10];// append .4ogl.txt
   sprintf(res4openGL_fname, "%s.4ogl.txt", w_if_name);
   out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out);
   assert(out_4ogl!=NULL);
   //if verbose only...
   if(verbose){
-    verbose_fname  = new char[strlen(w_if_name) + 9];// append .verb.txt
+    verbose_fname  = new char[strlen(w_if_name) + 10];// append .verb.txt
     sprintf(verbose_fname, "%s.verb.txt", w_if_name);
     out_verbose = new std::ofstream( verbose_fname, std::ios::out);
     assert(out_verbose != NULL);
@@ -112,7 +203,6 @@ int main(int argc, char *argv[])
 		   << " facets. " << std::endl;
   
   //exit if not enough points in the model
-  unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
   if (min_nb_points > P.size_of_vertices())    exit(0);
   //initialize Polyhedral data : length of edges, normal of facets
   P.compute_edges_length();
@@ -120,164 +210,47 @@ int main(int argc, char *argv[])
   
   //container for approximation points
   std::vector<DPoint> in_points;
-  //container to collect vertices of the PolyhedralSurf
-  std::vector<Vertex*> current_ring, next_ring, gathered; 
-  std::vector<Vertex*> *p_current_ring, *p_next_ring;
 
-  //MAIN LOOP
+  //MAIN LOOP////////////////////////////////////////////////////////////
   Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
     Vertex* v = &(*vitb);
-    unsigned int nbp = 0, //current nb of collected points
-      ith = 0;	//i-th ring index
-    current_ring.clear();
-    next_ring.clear();
-    p_current_ring = &current_ring;
-    p_next_ring = &next_ring;
-    gathered.clear();
     in_points.clear();  
     My_Monge_rep monge_rep;
     My_Monge_info monge_info;
       
-    //DO NOT FORGET TO UNTAG AT THE END!
-    v->setRingIndex(ith);
-    //collect 0th ring : the vertex v!
-    gathered.push_back(v);
-    nbp = 1;
-    //collect 1-ring
-    ith = 1;
-    nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered);
-    //collect more neighbors depending on options...
- 
-    //OPTION -p nb, with nb != 0
-    //for approximation/interpolation with a fixed nb of points, collect
-    // enough rings and discard some points of the last collected ring 
-    // to get the exact "nb_points_to_use"
-    if ( nb_points_to_use != 0 ) {
-      while( gathered.size() < nb_points_to_use ) {
-	ith++;
-    	//using tags
-	nbp += Poly_rings::
-	  collect_ith_ring_neighbours(ith, *p_current_ring,
-				      *p_next_ring, gathered);
-	//next round must be launched from p_nextRing...
-	p_current_ring->clear();
-	std::swap(p_current_ring, p_next_ring);
-      }
-      //clean up
-      Poly_rings::reset_ring_indices(gathered);
-      //discard non-required collected points of the last ring
-      gathered.resize(nb_points_to_use, NULL);
-      assert(gathered.size() == nb_points_to_use );
-    }
-    else{
-      //OPTION -a nb, with nb = 0
-      //  select the mini nb of rings needed to make approx possible
-      if (nb_rings == 0) {
-	while ( gathered.size() < min_nb_points ) {
-	  ith++;
-	  nbp += Poly_rings::
-	    collect_ith_ring_neighbours(ith, *p_current_ring,
-					*p_next_ring, gathered);
-	  //next round must be launched from p_nextRing...
-	  p_current_ring->clear();
-	  std::swap(p_current_ring, p_next_ring);
-	}
-      }
-      //OPTION -a nb, with nb = 1, nothing to do! we have already
-      //      collected the 1 ring
-      //OPTION -a nb, with nb > 1
-      //for approximation with a fixed nb of rings, collect
-      //      neighbors up to the "nb_rings"th ring
-      if (nb_rings > 1)
-	while (ith < nb_rings) {
-	  ith++;
-	  nbp += Poly_rings::
-	    collect_ith_ring_neighbours(ith, *p_current_ring,
-					*p_next_ring, gathered);
-	  //next round must be launched from p_nextRing...
-	  p_current_ring->clear();
-	  std::swap(p_current_ring, p_next_ring);
-	}
-   
-      //clean up
-      Poly_rings::reset_ring_indices(gathered);
-    } //END ELSE
+    //gather points arourd the vertex using rings
+    gather_fitting_points( v, in_points);
 
-    //skip if the nb of gathered points is to small 
-    if ( gathered.size() < min_nb_points ) continue;
+    //skip if the nb of points is to small 
+    if ( in_points.size() < min_nb_points ) continue;
 
-    //store the gathered points
-    std::vector<Vertex*>::iterator itb = gathered.begin(),
-      ite = gathered.end();
-    CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
- 
     // run the main fct : perform the fitting
     My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
 				   d_fitting, d_monge, 
 				   monge_rep, monge_info);
  
     //switch min-max ppal curv/dir wrt the mesh orientation
-    // if z=g(x,y) in the basis (d1,d2,n) then in the basis (d2,d1,-n)
-    // z=h(x,y)=-g(y,x)
-    DVector normal_mesh = P.computeFacetsAverageUnitNormal(v);
-    DVector normal_monge = monge_rep.n();
-    if ( normal_mesh*normal_monge < 0 )
-      {
-	monge_rep.n() = -monge_rep.n();
-	std::swap(monge_rep.d1(), monge_rep.d2());
-	if ( d_monge >= 2) 
-	std::swap(monge_rep.coefficients()[0],monge_rep.coefficients()[1]);
-	if ( d_monge >= 3) {
-	std::swap(monge_rep.coefficients()[2],monge_rep.coefficients()[5]);
-	std::swap(monge_rep.coefficients()[3],monge_rep.coefficients()[4]);}
-	if ( d_monge >= 4) {
-	std::swap(monge_rep.coefficients()[6],monge_rep.coefficients()[10]);
-	std::swap(monge_rep.coefficients()[7],monge_rep.coefficients()[9]);}
-	std::vector<DFT>::iterator itb = monge_rep.coefficients().begin(),
-	   ite = monge_rep.coefficients().end();
-	for (;itb!=ite;itb++) { *itb = -(*itb); }
-      }
-      
-    //OpenGL output
-    //scaling for ppal dir,
-    // may be optimized with a global mean edges length computed only once
-    // on all edges of P
-    DFT scale_ppal_dir = P.compute_mean_edges_length_around_vertex(v)/2;
-    (*out_4ogl) << v->point()  << " "
-		<< monge_rep.origin_pt()  << " "
-		<< monge_rep.d1() * scale_ppal_dir << " "
-		<< monge_rep.d2() * scale_ppal_dir << " "
-		<< monge_rep.coefficients()[0] << " "
-		<< monge_rep.coefficients()[1] << " "
-		<< std::endl;
+    const DVector normal_mesh = P.computeFacetsAverageUnitNormal(v);
+    monge_rep.comply_wrt_given_normal(normal_mesh);
+ 
+    //OpenGL output. Scaling for ppal dir, may be optimized with a
+    //global mean edges length computed only once on all edges of P
+    const DFT scale_ppal_dir = P.compute_mean_edges_length_around_vertex(v)/2;
+    (*out_4ogl) << v->point()  << " ";
+    monge_rep.dump_4ogl(*out_4ogl, scale_ppal_dir);
 
     //verbose txt output 
     if (verbose){     
       (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
 		     <<	" : " << v->point() << std::endl
-		     << "number of points used : " << in_points.size() << std::endl
-		     << "number of rings used : " << ith << std::endl
-		     << "origin : " << monge_rep.origin_pt() << std::endl
-		     << "d1 : " << monge_rep.d1() << std::endl 
-		     << "d2 : " << monge_rep.d2() << std::endl
-		     << "n : " << monge_rep.n() << std::endl
-		     << "cond_nb : " << monge_info.cond_nb() << std::endl 
-		     << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
-		     << " " << monge_info.pca_eigen_vals()[2] 
-		     << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
-		     << "pca_eigen_vecs : " << std::endl 
-		     << monge_info.pca_eigen_vecs()[0] << std::endl 
-		     << monge_info.pca_eigen_vecs()[1] << std::endl 
-		     << monge_info.pca_eigen_vecs()[2] << std::endl;
-      if ( d_monge >= 2) 
-	(*out_verbose) << "k1 : " << monge_rep.coefficients()[0] << std::endl 
-		       << "k2 : " << monge_rep.coefficients()[1] << std::endl
-		       << std::endl ;
-    } //END IF 
-  } //END FOR LOOP
-  //  std::cout << "ok 1 " << std::endl;
+		     << "number of points used : " << in_points.size() << std::endl;
+      monge_rep.dump_verbose(*out_verbose);
+      monge_info.dump_verbose(*out_verbose);
+    }
+  } //END FOR LOOP//////////////////////////////////////////////////////////////
+
   //cleanup filenames
   delete res4openGL_fname; 
   out_4ogl->close(); 
@@ -287,7 +260,6 @@ int main(int argc, char *argv[])
     out_verbose->close(); 
     delete out_verbose;
   }
-  //  std::cout << "ok 2 " << std::endl ;
   return 1;
 }
  

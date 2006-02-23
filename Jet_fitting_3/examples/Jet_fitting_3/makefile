@@ -7,12 +7,12 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 #perso bug in current CGAL-I!
-CGAL_MAKEFILE = /proj/geometrica/home/CGAL/CGAL-3.2-I-370/make/makefile_i686_Linux-2.4_g++-3.3.3
+#CGAL_MAKEFILE = /proj/geometrica/home/CGAL/CGAL-3.2-I-370/make/makefile_i686_Linux-2.4_g++-3.3.3
 
 #FC, fedora
-CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.11-1.35-FC3_g++-3.4.4
+#CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.11-1.35-FC3_g++-3.4.4
+CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.4_g++-3.3.3
 
-#CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.4_g++-3.3.3
 include $(CGAL_MAKEFILE)
 
 PROFOPT= -g 
@@ -52,7 +52,7 @@ all:            \
 
 BLIND_OBJS=options.o PolyhedralSurf.o blind.o
 blind: $(BLIND_OBJS)
-	$(CGAL_CXX) $(LIBPATH) -o blind.exe $(BLIND_OBJS) \
+	$(CGAL_CXX) $(LIBPATH) -g -o blind.exe $(BLIND_OBJS) \
 	$(LDFLAGS) 
 
 blind_1pt: blind_1pt.o

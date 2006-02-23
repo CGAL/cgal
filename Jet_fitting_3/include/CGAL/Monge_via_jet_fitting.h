@@ -60,16 +60,82 @@ public:
   const std::vector<DFT> coefficients() const { return m_coefficients; }
   std::vector<DFT>& coefficients() { return m_coefficients; }
 
+  //if d>=1, number of coeffs = (d+1)(d+2)/2 -4. 
+  //we remove cst, linear and the xy coeff which vanish
   void set_up(int degree);
+  //switch min-max ppal curv/dir wrt a given normal orientation.
+  // if given_normal.monge_normal < 0 then change the orientation
+  // if z=g(x,y) in the basis (d1,d2,n) then in the basis (d2,d1,-n)
+  // z=h(x,y)=-g(y,x)
+  void comply_wrt_given_normal(const DVector given_normal);
+  void dump_verbose(std::ofstream& out_stream);
+  void dump_4ogl(std::ofstream& out_stream, const DFT scale);
 };
 
-//if d>=1, number of coeffs = (d+1)(d+2)/2 -4. 
-//we remove cst, linear and the xy coeff which vanish
 template <class DataKernel>
 void Monge_rep<DataKernel>::
 set_up(int degree) {
   if ( degree >= 1 ) std::fill_n(back_inserter(m_coefficients),
 				 (degree+1)*(degree+2)/2-4, 0.);
+}
+
+template <class DataKernel>
+void Monge_rep<DataKernel>::
+comply_wrt_given_normal(const DVector given_normal)
+{
+  if ( given_normal*this->n() < 0 )
+    {
+      n() = -n();
+      std::swap(d1(), d2());
+      if ( coefficients().size() >= 2) 
+	std::swap(coefficients()[0],coefficients()[1]);
+      if ( coefficients().size() >= 6) {
+	std::swap(coefficients()[2],coefficients()[5]);
+	std::swap(coefficients()[3],coefficients()[4]);}
+      if ( coefficients().size() >= 11) {
+	std::swap(coefficients()[6],coefficients()[10]);
+	std::swap(coefficients()[7],coefficients()[9]);}
+      typename std::vector<DFT>::iterator itb = coefficients().begin(),
+	ite = coefficients().end();
+      for (;itb!=ite;itb++) { *itb = -(*itb); }
+    }
+}
+
+template <class DataKernel>
+void Monge_rep<DataKernel>::
+dump_verbose(std::ofstream& out_stream)
+{
+  out_stream << "origin : " << origin_pt() << std::endl
+	     << "n : " << n() << std::endl;
+  if ( coefficients().size() >= 2) 
+    out_stream << "d1 : " << d1() << std::endl 
+	       << "d2 : " << d2() << std::endl
+	       << "k1 : " << coefficients()[0] << std::endl 
+	       << "k2 : " << coefficients()[1] << std::endl;	      
+  if ( coefficients().size() >= 6) 
+    out_stream << "b0 : " << coefficients()[2] << std::endl 
+	       << "b1 : " << coefficients()[3] << std::endl
+ 	       << "b2 : " << coefficients()[4] << std::endl
+ 	       << "b3 : " << coefficients()[5] << std::endl;
+  if ( coefficients().size() >= 11) 
+    out_stream << "c0 : " << coefficients()[6] << std::endl 
+	       << "c1 : " << coefficients()[7] << std::endl
+ 	       << "c2 : " << coefficients()[8] << std::endl
+ 	       << "c3 : " << coefficients()[9] << std::endl 
+ 	       << "c4 : " << coefficients()[10] << std::endl; 
+}
+
+template <class DataKernel>
+void Monge_rep<DataKernel>::
+dump_4ogl(std::ofstream& out_stream, const DFT scale)
+{
+  CGAL_precondition( coefficients().size() >= 2 );
+  out_stream << origin_pt()  << " "
+	     << d1() * scale << " "
+	     << d2() * scale << " "
+	     << coefficients()[0] << " "
+	     << coefficients()[1] << " "
+	     << std::endl;
 }
 
 ////////////////////// CLASS Monge_info ////////////////////////
@@ -97,7 +163,25 @@ public:
   LVector* pca_eigen_vecs() { return m_pca_eigen_vecs; }
   const LFT cond_nb() const { return m_cond_nb; }
   LFT& cond_nb() { return m_cond_nb; }
+
+  void dump_verbose(std::ofstream& out_stream);
 };
+
+
+template <class LocalKernel>
+void Monge_info<LocalKernel>:: 
+dump_verbose(std::ofstream& out_stream)
+{
+  out_stream << "cond_nb : " << cond_nb() << std::endl 
+	     << "pca_eigen_vals " << pca_eigen_vals()[0] 
+	     << " " << pca_eigen_vals()[2] 
+	     << " " << pca_eigen_vals()[3]  << std::endl 
+	     << "pca_eigen_vecs : " << std::endl 
+	     << pca_eigen_vecs()[0] << std::endl 
+	     << pca_eigen_vecs()[1] << std::endl 
+	     << pca_eigen_vecs()[2] << std::endl;
+}
+
 
 
 ////////////////////// CLASS Monge_via_jet_fitting ////////////////////////
