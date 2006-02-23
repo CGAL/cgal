@@ -1185,13 +1185,13 @@ public:
 
   typedef OutIt  iterator_type;
 
-  Transform_output_iterator(OutIt *o, const & F f = F()) : _o(o), _f(f) {}
+  Transform_output_iterator(OutIt *o, const F & f = F()) : _o(o), _f(f) {}
 
   template <typename T>
   Transform_output_iterator&
   operator=(const T& t)
   {
-    *(*o)++ = _f(t);
+    *(*_o)++ = _f(t);
     return *this;
   }
 
