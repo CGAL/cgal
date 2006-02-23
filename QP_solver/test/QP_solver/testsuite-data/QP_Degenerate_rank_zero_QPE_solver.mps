@@ -8,30 +8,30 @@ ROWS
  E c2
  E c3
 COLUMNS
-  x1  obj  -1
-  x2  obj  -3
-  x3  obj  4
   x1  c1  0
-  x2  c1  0
-  x3  c1  0
   x1  c2  0
-  x2  c2  0
-  x3  c2  0
   x1  c3  0
+  x1  obj  -1
+  x2  c1  0
+  x2  c2  0
   x2  c3  0
+  x2  obj  -3
+  x3  c1  0
+  x3  c2  0
   x3  c3  0
+  x3  obj  4
 RHS
   rhs  c1  0
   rhs  c2  0
   rhs  c3  0
-DMATRIX
-  x1  x1  1
-  x1  x2  15
+QMATRIX
+  x1  x1  2
+  x1  x2  30
   x1  x3  0
-  x2  x1  -15
-  x2  x2  1
+  x2  x1  -30
+  x2  x2  2
   x2  x3  0
   x3  x1  0
   x3  x2  0
-  x3  x3  1
+  x3  x3  2
 ENDATA

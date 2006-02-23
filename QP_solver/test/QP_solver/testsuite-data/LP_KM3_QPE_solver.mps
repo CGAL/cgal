@@ -8,18 +8,18 @@ ROWS
  L c2
  L c3
 COLUMNS
-  x1  obj  -100
-  x2  obj  -10
-  x3  obj  -1
   x1  c1  1
-  x2  c1  0
-  x3  c1  0
   x1  c2  20
-  x2  c2  1
-  x3  c2  0
   x1  c3  200
+  x1  obj  -100
+  x2  c1  0
+  x2  c2  1
   x2  c3  20
+  x2  obj  -10
+  x3  c1  0
+  x3  c2  0
   x3  c3  1
+  x3  obj  -1
 RHS
   rhs  c1  1
   rhs  c2  100

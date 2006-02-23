@@ -7,30 +7,30 @@ ROWS
  E c1
  E c2
 COLUMNS
-  x1  obj  3
-  x2  obj  1
-  x3  obj  1
-  x4  obj  -2
-  x5  obj  1
-  x6  obj  -1
-  x7  obj  -1
-  x8  obj  4
   x1  c1  1
-  x2  c1  0
-  x3  c1  3
-  x4  c1  1
-  x5  c1  -5
-  x6  c1  -2
-  x7  c1  4
-  x8  c1  -6
   x1  c2  0
+  x1  obj  3
+  x2  c1  0
   x2  c2  1
+  x2  obj  1
+  x3  c1  3
   x3  c2  -2
+  x3  obj  1
+  x4  c1  1
   x4  c2  -1
+  x4  obj  -2
+  x5  c1  -5
   x5  c2  4
+  x5  obj  1
+  x6  c1  -2
   x6  c2  1
+  x6  obj  -1
+  x7  c1  4
   x7  c2  -3
+  x7  obj  -1
+  x8  c1  -6
   x8  c2  5
+  x8  obj  4
 RHS
   rhs  c1  7
   rhs  c2  -3

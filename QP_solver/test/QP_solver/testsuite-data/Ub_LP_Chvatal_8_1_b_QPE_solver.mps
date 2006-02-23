@@ -9,26 +9,26 @@ ROWS
  L c3
  L c4
 COLUMNS
-  x1  obj  -3
-  x2  obj  -1
-  x3  obj  -4
-  x4  obj  -2
   x1  c1  1
-  x2  c1  4
-  x3  c1  3
-  x4  c1  3
   x1  c2  1
-  x2  c2  3
-  x3  c2  -1
-  x4  c2  1
   x1  c3  1
-  x2  c3  2
-  x3  c3  3
-  x4  c3  2
   x1  c4  1
+  x1  obj  -3
+  x2  c1  4
+  x2  c2  3
+  x2  c3  2
   x2  c4  3
+  x2  obj  -1
+  x3  c1  3
+  x3  c2  -1
+  x3  c3  3
   x3  c4  -2
+  x3  obj  -4
+  x4  c1  3
+  x4  c2  1
+  x4  c3  2
   x4  c4  1
+  x4  obj  -2
 RHS
   rhs  c1  2
   rhs  c2  -2

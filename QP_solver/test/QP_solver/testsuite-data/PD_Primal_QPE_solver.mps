@@ -7,62 +7,62 @@ ROWS
  E c1
  E c2
 COLUMNS
-  x1  obj  0
-  x2  obj  0
-  x3  obj  0
-  x4  obj  0
-  x5  obj  0
-  x6  obj  0
   x1  c1  1
-  x2  c1  1
-  x3  c1  1
-  x4  c1  0
-  x5  c1  0
-  x6  c1  0
   x1  c2  0
+  x1  obj  0
+  x2  c1  1
   x2  c2  0
+  x2  obj  0
+  x3  c1  1
   x3  c2  0
+  x3  obj  0
+  x4  c1  0
   x4  c2  1
+  x4  obj  0
+  x5  c1  0
   x5  c2  1
+  x5  obj  0
+  x6  c1  0
   x6  c2  1
+  x6  obj  0
 RHS
   rhs  c1  1
   rhs  c2  1
-DMATRIX
-  x1  x1  8
-  x1  x2  14
-  x1  x3  20
-  x1  x4  -22
-  x1  x5  -32
-  x1  x6  -26
-  x2  x1  14
-  x2  x2  37
-  x2  x3  35
-  x2  x4  -46
-  x2  x5  -61
-  x2  x6  -43
-  x3  x1  20
-  x3  x2  35
-  x3  x3  50
-  x3  x4  -55
-  x3  x5  -80
-  x3  x6  -65
-  x4  x1  -22
-  x4  x2  -46
-  x4  x3  -55
-  x4  x4  65
-  x4  x5  91
-  x4  x6  70
-  x5  x1  -32
-  x5  x2  -61
-  x5  x3  -80
-  x5  x4  91
-  x5  x5  130
-  x5  x6  103
-  x6  x1  -26
-  x6  x2  -43
-  x6  x3  -65
-  x6  x4  70
-  x6  x5  103
-  x6  x6  85
+QMATRIX
+  x1  x1  16
+  x1  x2  28
+  x1  x3  40
+  x1  x4  -44
+  x1  x5  -64
+  x1  x6  -52
+  x2  x1  28
+  x2  x2  74
+  x2  x3  70
+  x2  x4  -92
+  x2  x5  -122
+  x2  x6  -86
+  x3  x1  40
+  x3  x2  70
+  x3  x3  100
+  x3  x4  -110
+  x3  x5  -160
+  x3  x6  -130
+  x4  x1  -44
+  x4  x2  -92
+  x4  x3  -110
+  x4  x4  130
+  x4  x5  182
+  x4  x6  140
+  x5  x1  -64
+  x5  x2  -122
+  x5  x3  -160
+  x5  x4  182
+  x5  x5  260
+  x5  x6  206
+  x6  x1  -52
+  x6  x2  -86
+  x6  x3  -130
+  x6  x4  140
+  x6  x5  206
+  x6  x6  170
 ENDATA

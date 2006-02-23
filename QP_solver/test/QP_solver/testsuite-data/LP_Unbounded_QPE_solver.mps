@@ -8,34 +8,34 @@ ROWS
  G c2
  G c3
 COLUMNS
-  x1  obj  1
-  x2  obj  1
-  x3  obj  1
-  x4  obj  1
-  x5  obj  1
-  x6  obj  1
-  x7  obj  -1
   x1  c1  1
-  x2  c1  1
-  x3  c1  1
-  x4  c1  1
-  x5  c1  1
-  x6  c1  1
-  x7  c1  1
   x1  c2  1
-  x2  c2  2
-  x3  c2  4
-  x4  c2  8
-  x5  c2  16
-  x6  c2  32
-  x7  c2  64
   x1  c3  1
+  x1  obj  1
+  x2  c1  1
+  x2  c2  2
   x2  c3  3
+  x2  obj  1
+  x3  c1  1
+  x3  c2  4
   x3  c3  9
+  x3  obj  1
+  x4  c1  1
+  x4  c2  8
   x4  c3  27
+  x4  obj  1
+  x5  c1  1
+  x5  c2  16
   x5  c3  81
+  x5  obj  1
+  x6  c1  1
+  x6  c2  32
   x6  c3  243
+  x6  obj  1
+  x7  c1  1
+  x7  c2  64
   x7  c3  729
+  x7  obj  -1
 RHS
   rhs  c1  0
   rhs  c2  0

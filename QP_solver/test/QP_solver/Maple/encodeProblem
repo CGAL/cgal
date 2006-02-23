@@ -51,7 +51,7 @@ end:
 simpleEncodeProblemToMPS:= proc(A::Matrix, rel::Matrix, b::Matrix, c::Matrix, D,
   fl, l, fu, u, # must be row Matrix's
   desc::string, gen_desc::string, fpath::string)
-local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment;
+local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment, cl;
   # get problem dimensions:
   dim := LinearAlgebra[Dimensions];
   m := dim(A)[1]; 
@@ -110,14 +110,21 @@ local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment;
   # write COLUMNS section:
   # (a) ouput objective function:
   fprintf(fd,"COLUMNS\n");
+  cl:= [];
   for i from 1 to n do
-    fprintf(fd,"  x%d  obj  %s\n",i,encodeNumber(numberType,c[1,i]));
+    cl:= [op(cl),
+          sprintf("  x%d  obj  %s\n",i,encodeNumber(numberType,c[1,i]))];
   od:
   # (b) ouput A matrix function:
   for i from 1 to m do
     for j from 1 to n do
-      fprintf(fd,"  x%d  c%d  %s\n",j,i,encodeNumber(numberType,A[i,j]));
+	cl:= [op(cl),
+      	 sprintf("  x%d  c%d  %s\n",j,i,encodeNumber(numberType,A[i,j]))];
     od
+  od;
+  cl:= sort(cl);
+  for i from 1 to nops(cl) do
+    fprintf(fd,"%s",cl[i]);
   od;
 
   # write RHS section:
@@ -152,10 +159,10 @@ local i, j, dim, m, n, fd, rowType, numberType, dummy, filename, comment;
   # Note: CPLEX only understands QMATRIX sections and not
   # our proprietary DMATRIX section.
   if not type(D,boolean) then
-    fprintf(fd,"DMATRIX\n");
+    fprintf(fd,"QMATRIX\n");
     for i from 1 to n do
       for j from 1 to n do
-        fprintf(fd,"  x%d  x%d  %s\n",i,j,encodeNumber(numberType,D[i,j]));
+        fprintf(fd,"  x%d  x%d  %s\n",i,j,encodeNumber(numberType,2*D[i,j]));
       od
     od;
   fi;

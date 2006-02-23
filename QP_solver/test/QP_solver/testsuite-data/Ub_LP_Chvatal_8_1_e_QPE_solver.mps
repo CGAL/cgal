@@ -9,41 +9,41 @@ ROWS
  E c3
  E c4
 COLUMNS
-  x1  obj  -1
-  x2  obj  0
-  x3  obj  0
-  x4  obj  0
-  x5  obj  0
-  x6  obj  0
-  x7  obj  0
   x1  c1  3
-  x2  c1  5
-  x3  c1  3
-  x4  c1  2
-  x5  c1  1
-  x6  c1  2
-  x7  c1  1
   x1  c2  4
-  x2  c2  6
-  x3  c2  5
-  x4  c2  3
-  x5  c2  5
-  x6  c2  5
-  x7  c2  6
   x1  c3  2
-  x2  c3  4
-  x3  c3  1
-  x4  c3  1
-  x5  c3  -3
-  x6  c3  -1
-  x7  c3  -4
   x1  c4  1
+  x1  obj  -1
+  x2  c1  5
+  x2  c2  6
+  x2  c3  4
   x2  c4  1
+  x2  obj  0
+  x3  c1  3
+  x3  c2  5
+  x3  c3  1
   x3  c4  2
+  x3  obj  0
+  x4  c1  2
+  x4  c2  3
+  x4  c3  1
   x4  c4  1
+  x4  obj  0
+  x5  c1  1
+  x5  c2  5
+  x5  c3  -3
   x5  c4  4
+  x5  obj  0
+  x6  c1  2
+  x6  c2  5
+  x6  c3  -1
   x6  c4  3
+  x6  obj  0
+  x7  c1  1
+  x7  c2  6
+  x7  c3  -4
   x7  c4  5
+  x7  obj  0
 RHS
   rhs  c1  6
   rhs  c2  11

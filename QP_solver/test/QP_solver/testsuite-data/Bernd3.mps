@@ -11,20 +11,20 @@ ROWS
  G c5
  L c6
 COLUMNS
-  x1  obj  -4
-  x2  obj  -4
   x1  c1  1
-  x2  c1  1
   x1  c2  1
-  x2  c2  1
   x1  c3  1
-  x2  c3  1
   x1  c4  1
-  x2  c4  1
   x1  c5  -1
-  x2  c5  1
   x1  c6  -1
+  x1  obj  -4
+  x2  c1  1
+  x2  c2  1
+  x2  c3  1
+  x2  c4  1
+  x2  c5  1
   x2  c6  1
+  x2  obj  -4
 RHS
   rhs  c1  1
   rhs  c2  3
@@ -32,9 +32,9 @@ RHS
   rhs  c4  3
   rhs  c5  -1
   rhs  c6  1
-DMATRIX
-  x1  x1  1
+QMATRIX
+  x1  x1  2
   x1  x2  0
   x2  x1  0
-  x2  x2  1
+  x2  x2  2
 ENDATA
