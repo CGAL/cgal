@@ -1,6 +1,6 @@
 // Synopsis: converts a .data-file to a MPS-file
 //
-// Usage: ./data2mps < data-file
+// Usage: ./data2mps description < data-file
 //
 // Author: Kaspar Fischer <fischerk@inf.ethz.ch>
 //
@@ -10,8 +10,13 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <iomanip>
 
 #include <boost/any.hpp>
+
+namespace CGAL {
+  bool is_zero(const boost::any& a);
+}
 
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
@@ -133,6 +138,70 @@ public:
   {
     CGAL_qpe_assertion(!good());
     return error_message_;    
+  }
+
+  int number_of_variables()
+  {
+    CGAL_qpe_assertion(good());
+    return n;
+  }
+
+  int number_of_constraints()
+  {
+    CGAL_qpe_assertion(good());
+    return m;    
+  }
+
+public: // access:
+
+  A_iterator A()
+  {
+    CGAL_qpe_assertion(good());
+    return Vector_iterator(A_.begin(),Beginner());
+  }
+
+  B_iterator b()
+  {
+    CGAL_qpe_assertion(good());
+    return b_.begin();
+  }
+
+  C_iterator c()
+  {
+    CGAL_qpe_assertion(good());
+    return c_.begin();
+  }
+
+  D_iterator D()
+  {
+    CGAL_qpe_assertion(good());
+    return Vector_iterator(D_.begin(),Beginner());
+  }
+
+  Row_type_iterator row_types()
+  {
+    CGAL_qpe_assertion(good());
+    return row_type_.begin();
+  }
+
+  FL_iterator fl() {
+    CGAL_qpe_assertion(good());
+    return fl_.begin();
+  }
+
+  FU_iterator fu() {
+    CGAL_qpe_assertion(good());
+    return fu_.begin();
+  }
+
+  U_iterator u() {
+    CGAL_qpe_assertion(good());
+    return u_.begin();
+  }
+
+  L_iterator l() {
+    CGAL_qpe_assertion(good());
+    return l_.begin();
   }
 
 private: // error handling helpers:
@@ -418,6 +487,7 @@ private: // parsing routines:
 	  if (!read_number(val))
 	    return err1("Expected number in C-VECTOR-AND-BOUNDS section for "
 			"finite lower bound of variable %", tostr(i));
+	  fl_[i] = true;
 	  l_[i] = val;
 	  whitespace();
 	  if (in.get() != ',')
@@ -432,6 +502,7 @@ private: // parsing routines:
 	  if (!read_number(val))
 	    return err1("Expected number in C-VECTOR-AND-BOUNDS section for "
 			"finite upper bound of variable %", tostr(i));
+	  fu_[i] = true;
 	  u_[i] = val;
 	  whitespace();
 	  if (in.get() != ')')
@@ -445,13 +516,61 @@ private: // parsing routines:
   }
 };
 
+namespace boost {
+  std::ostream& operator<<(std::ostream& o,const any& a)
+  {
+    if (a.type() == typeid(double))
+      o << std::setprecision(17)  // 17 is enough, see D. Goldberg's
+	                          // "What Every Computer Scientist
+				  // Should Know About
+				  // Floating-Point Arithmetic", p. 237
+	<< any_cast<double>(a);
+    else if (a.type() == typeid(::Data_reader::Rational))
+      o << any_cast< ::Data_reader::Rational >(a);
+    else if (a.type() == typeid(int))
+      o << any_cast<int>(a);
+    else
+      CGAL_qpe_assertion(false);
+    return o;
+  }
+
+  any operator*(const int f,const any& a)
+  {
+    if (a.type() == typeid(double))
+      return 2.0 * any_cast<double>(a);
+    else if (a.type() == typeid(::Data_reader::Rational))
+      return 2 * any_cast< ::Data_reader::Rational >(a);
+    else if (a.type() == typeid(int))
+      return 2 * any_cast<int>(a);
+    else
+      CGAL_qpe_assertion(false);
+    return any();
+  }
+}
+
+namespace CGAL {
+  bool is_zero(const boost::any& a) {
+    if (a.type() == typeid(double))
+      return is_zero(boost::any_cast<double>(a));
+    else if (a.type() == typeid(::Data_reader::Rational))
+      return is_zero(boost::any_cast< ::Data_reader::Rational >(a));
+    else if (a.type() == typeid(int))
+      return is_zero(boost::any_cast<int>(a));
+    else
+      CGAL_qpe_assertion(false);
+    return false;
+  }
+}
+
 int main(int argnr, char **argv)
 {
   // output usage information:
-  if (argnr > 1) {
-    std::cerr << "Usage: " << argv[0] << " < datafile.data\n\n"
+  if (argnr > 3 || argnr <= 2) {
+    std::cerr << "Usage: " << argv[0] << " \"description\" \"problem-name\" "
+                 "< datafile.data\n\n"
 	      << "The resulting MPS-file is written to standard-out, errors "
-	      << "go to standard-error.\n\n"
+	      << "go to standard-error.\n\"problem-name\" should not contain "
+	      << "white-space.\n\n"
 	      << "See data2mps.cin for an example 'datafile.data' file.\n";
     return 1;
   }
@@ -464,6 +583,22 @@ int main(int argnr, char **argv)
     return 2;
   }
 
+  // determine number-type (test_solver needs this in order to know
+  // what the numbers look like):
+  Data_reader::ANT tmp = *data.c(); // any number
+  const char *number_type;
+  if (tmp.type() == typeid(double))
+    number_type = "floating-point";
+  else if (tmp.type() == typeid(::Data_reader::Rational))
+    number_type = "rational";
+  else if (tmp.type() == typeid(int))
+    number_type = "integer";
+  
   // write MPS-file to standard out:
+  CGAL::write_MPS(std::cout, number_type, argv[1], "data2mps", argv[2],
+		  data.number_of_variables(), data.number_of_constraints(),
+		  data.A(), data.b(), data.c(), data.D(), data.fu(),
+		  data.fl(), data.u(), data.l(), data.row_types());
 
+  return 0;
 }

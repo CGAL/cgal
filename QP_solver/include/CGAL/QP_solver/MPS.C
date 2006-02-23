@@ -21,6 +21,8 @@
 //                 Kaspar Fischer <fischerk@inf.ethz.ch>
 
 #include <iomanip>
+#include <fstream>
+
 #include <CGAL/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_partial_exact_pricing.h>
 
@@ -745,5 +747,130 @@ const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
   Has_equalities_only_and_full_rank_,
   Is_in_standard_form_,IT_,ET_,D_iterator_>::GREATER_EQUAL;
 
+// Routines to output to MPS format:
+
+namespace QP_MPS_detail {
+
+  template<typename T>
+  struct Write_MPS_type_name {
+    static const char *name() { return 0; }
+  };
+  
+  template<>
+  struct Write_MPS_type_name<double> {
+    static const char *name() { return "floating-point"; }
+  };
+  
+  template<>
+  struct Write_MPS_type_name<int> {
+    static const char *name() { return "integer"; }
+  };
+  
+  template<>
+  struct Write_MPS_type_name<Gmpq> {
+    static const char *name() { return "rational"; }
+  };
+
+} // QP_MPS_detail
+
+template<typename A_iterator,
+	 typename B_iterator,
+	 typename C_iterator,
+	 typename D_iterator,
+	 typename FU_iterator,
+	 typename FL_iterator,
+	 typename U_iterator,
+	 typename L_iterator,
+	 typename Row_type_iterator>
+void write_MPS(std::ostream& out,
+	       const std::string& number_type, // pass "" to deduce
+					       // the number-type from 
+                                               // U_iterator::value_type
+	       const std::string& description,
+	       const std::string& generator_name,
+	       const std::string& problem_name,
+	       const int n,
+	       const int m,
+	       A_iterator A,
+	       B_iterator b,
+	       C_iterator c,
+	       D_iterator D,
+	       FU_iterator fu,
+	       FL_iterator fl,
+	       U_iterator u,
+	       L_iterator l,
+	       Row_type_iterator rt)
+{
+  typedef typename Row_type_iterator::value_type Row_type;
+
+  // output header:
+  if (number_type.length() == 0) {
+    const char *tn = QP_MPS_detail::Write_MPS_type_name<typename U_iterator::
+      value_type>::name();
+    if (tn != 0)
+      out << "* Number-type: " << tn << "\n";
+  } else
+      out << "* Number-type: " << number_type << "\n";
+  out << "* Description: " << description << "\n"
+      << "* Generated-by: " << generator_name << "\n"
+      << "NAME " << problem_name << "\n";
+
+  // write ROWS section:
+  out << "ROWS\n"
+      << "  N obj\n";                       // a row for the objective function
+  for (int i=0; i<m; ++i) {
+    if (rt[i] == static_cast<Row_type>(-1))
+      out << "  L";
+    else if (rt[i] == static_cast<Row_type>(0))
+      out << "  E";
+    else if (rt[i] == static_cast<Row_type>(1))
+      out << "  G";
+    else
+      CGAL_qpe_assertion_msg(false, "incorrect row-type");
+    out << " c" << i << "\n";
+  }
+
+  // output COLUMNS section:
+  for (int i=0; i<n; ++i) {
+    out << "  x" << i << "  obj  " << c[i] << "\n";
+    for (int j=0; j<m; ++j) {
+      out << "  x" << i << "  c" << j << "  " << A[i][j] << "\n";
+    }
+  }
+
+  // output RHS section:
+  out << "RHS\n";
+  for (int i=0; i<m; ++i) 
+    out << "  rhs c" << i << "  " << b[i] << "\n";
+
+  // output BOUNDS section:
+  out << "BOUNDS\n";
+  for (int i=0; i<n; ++i) {
+    #if 0 // debugging
+    std::cout << "fl" << i << ": " <<  *(fl+i) << " ";
+    if (*(fl+i))
+      std::cout << "l=" << l[i] << " ";
+    std::cout << "fu" << i << ": " <<  *(fu+i) << " ";
+    if (*(fu+i))
+      std::cout << "l=" << u[i] << " ";
+    #endif
+    if (!*(fl+i) || !CGAL::is_zero(l[i])) 
+      if (*(fl+i))
+	out << "  LO  BND  x" << i << "  " << l[i] << "\n";
+      else
+	out << "  MI  BND  x" << i << "\n";
+    if (*(fu+i))
+      out << "  UP  BND  x" << i << "  " << u[i] << "\n";
+  }
+  
+  // output QMATRIX section:
+  out << "QMATRIX\n";
+  for (int i=0; i<n; ++i)
+    for (int j=0; j<n; ++j)
+      out << "  x" << i << "  x" << j << "  " << 2*D[i][j] << "\n";
+
+  // output end:
+  out << "ENDATA\n";
+}
 
 CGAL_END_NAMESPACE

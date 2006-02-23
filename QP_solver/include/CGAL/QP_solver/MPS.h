@@ -602,6 +602,38 @@ public:
   typedef Is_in_standard_form_               Is_in_standard_form;
 };
 
+// helper routine to write an MPS from given A, b, c, D, fl, fu, l, u
+// and row-types; notice that the value type of Row_type_iterator is
+// assumed (todo: remove this hard-coding) to be int and -1
+// corresponds to "<=", 0 to "=", and 1 to ">=".
+template<typename A_iterator,
+	 typename B_iterator,
+	 typename C_iterator,
+	 typename D_iterator,
+	 typename FU_iterator,
+	 typename FL_iterator,
+	 typename U_iterator,
+	 typename L_iterator,
+	 typename Row_type_iterator>
+void write_MPS(std::ostream& out,
+	       const std::string& number_type, // pass "" to deduce
+					       // the number-type from 
+                                               // U_iterator::value_type
+	       const std::string& description,
+	       const std::string& generator_name,
+	       const std::string& problem_name,
+	       const int n,
+	       const int m,
+	       A_iterator A,
+	       B_iterator b,
+	       C_iterator c,
+	       D_iterator D,
+	       FU_iterator fu,
+	       FL_iterator fl,
+	       U_iterator u,
+	       L_iterator l,
+	       Row_type_iterator rt);
+
 CGAL_END_NAMESPACE
 
 #include <CGAL/QP_solver/MPS.C>
