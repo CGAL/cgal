@@ -65,8 +65,8 @@ int main(const int argNr,const char **args) {
   typedef Tag_false Is_in_standard_form; // (see manual)?
 
   // in case of an LP, zero the D matrix:
-  // (Note: if you known in advance that the problem is an LP
-  // you should not do this, see below.)
+  // (Note: if you know in advance that the problem is an LP
+  // you should not do this, but set Is_linear to Tag_true.)
   if (qp.is_linear() && !check_tag(Is_linear()))
     qp.make_zero_D();
 
@@ -77,7 +77,7 @@ int main(const int argNr,const char **args) {
     Is_in_standard_form>         Traits;
 
   CGAL::QP_pricing_strategy<Traits> *strategy = 0;
-  //    new CGAL::QP_full_filtered_pricing<Traits,IT>;
+  //    new CGAL::QP_partial_filtered_pricing<Traits,IT>;
 
   typedef CGAL::QP_solver<Traits> Solver;
   Solver solver(qp.number_of_variables(),
