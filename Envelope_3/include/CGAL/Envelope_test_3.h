@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_test_3.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -48,7 +48,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class EnvelopeTraits_3, class MinimizationDiagram_2>
-class Envelope_test_3 : public Envelope_base_3<EnvelopeTraits_3>
+class Envelope_test_3
 {
 public:
   typedef EnvelopeTraits_3                                           Traits;
