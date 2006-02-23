@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_triangles_traits_3.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -406,6 +406,9 @@ public:
   };  
   
 
+
+
+
   /*! Get a Construct_projected_boundary_curves_2 functor object. */
   Construct_projected_boundary_curves_2
   construct_projected_boundary_curves_2_object() const
@@ -780,6 +783,7 @@ public:
       // now we must have 2 different non-vertical planes:
  	    // plane1: a1*x + b1*y + c1*z + d1 = 0  , c1 != 0
  	    // plane2: a2*x + b2*y + c2*z + d2 = 0  , c2 != 0
+
       const Plane_3& plane1 = surf1.plane();
       const Plane_3& plane2 = surf2.plane();
 
@@ -894,11 +898,7 @@ public:
   {
   public:
 
-    bool operator()
-        (const Xy_monotone_surface_3& s)
-    const
-
-    
+    bool operator()(const Xy_monotone_surface_3& s) const
     {
       return s.is_vertical();
     }
@@ -921,6 +921,7 @@ public:
     // checks if point is in the xy-range of surf
     bool operator()(const Point_2& point, 
 		    const Xy_monotone_surface_3& surf) const
+
     {
       Kernel k;
       Self parent;
@@ -981,6 +982,7 @@ public:
                     end3 = triangle_3.vertex(2);
     Point_2 projected_end1(end1.x(), end1.y()),
             projected_end2(end2.x(), end2.y()),
+
             projected_end3(end3.x(), end3.y());
     return Triangle_2(projected_end1, projected_end2, projected_end3);
   }
@@ -1031,7 +1033,7 @@ public:
     if  (p1 == p2 || p1 == p2.opposite())
     {
       if (s1.is_vertical())
-      {    
+      {
         inter_overlap_timer.start();
         Object res = intersection_on_plane_3(p1, s1, s2);
         inter_overlap_timer.stop();
@@ -1331,7 +1333,7 @@ public:
   // the result object can be empty, a point, a segment or the original
   // triangle
   Object intersection(const Plane_3& pl, 
-		      const Xy_monotone_surface_3& tri) const
+		                  const Xy_monotone_surface_3& tri) const
   {
     Kernel k;
     CGAL_precondition( !tri.is_degenerate() );
@@ -1579,6 +1581,7 @@ public:
     X_monotone_curve_2 operator()(const Point_2& p1, const Point_2& p2) const
     {
       return X_monotone_curve_2(p1, p2);
+
     }
   };
 
@@ -1634,6 +1637,8 @@ public:
               << " number of calls to traits interface functions" << std::endl;
     std::cout << "total time: " << total_timer.time() << " seconds"
               << std::endl << std::endl;
+
+
 
     std::cout << "projected boundary        #: "
               << pboundary_timer.intervals()
