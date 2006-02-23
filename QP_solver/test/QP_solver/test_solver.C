@@ -350,17 +350,16 @@ bool process(const std::string& filename,
   // check for the number-type:
   Input_type type;
   std::string number_type;
-  if (comment.find("Number-type: floating-point") < comment.size()) {
-    type = Double_type;
-    number_type = "double";
-  } else if (comment.find("Number-type: integer") < comment.size()) {
+  if (comment.find("Number-type: integer") < comment.size()) {
     type = Int_type;
     number_type = "Gmpz";
   } else if (comment.find("Number-type: rational") < comment.size()) {
     type = Rational_type;
     number_type = "Gmpq";
-  } else
-    bailout("file does not specify a number-type");
+  } else { // "Number-type: floating-point" or none specifier:
+    type = Double_type;
+    number_type = "double";
+  }
   if (type==Double_type && (is_int(IT()) || is_rational(IT())) ||
       type==Int_type && is_rational(IT()) ||
       type==Rational_type && (is_double(IT()) || is_int(IT())))
