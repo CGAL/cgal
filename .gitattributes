@@ -2007,7 +2007,4 @@ cgal_window/src/CGALWin/mswin/leda1_sm.ico -text svneol=unset#unset
 cgal_window/src/CGALWin/mswin/leda2.ico -text svneol=unset#unset
 wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
 wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
-wininst/include/CGAL/config/msvc7/gmp.h -text
-wininst/include/CGAL/config/msvc7/mpf2mpfr.h -text
-wininst/include/CGAL/config/msvc7/mpfr.h -text
 wininst/src/cgallib.vcproj -text
