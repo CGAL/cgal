@@ -42,12 +42,12 @@ differential quantities are computed}
 
 The basis \ccc{(m_d1, m_d2, m_n)} is direct orthonormal.
 
-\ccVariable{DVector m_d1;}{maximal ppal dir} 
-\ccVariable{DVector m_d2;}{minimal ppal dir} 
+\ccVariable{DVector m_d1;}{maximal principal direction} 
+\ccVariable{DVector m_d2;}{minimal principal direction} 
 \ccVariable{DVector m_n;}{normal direction} 
-\ccVariable{std::vector<DFT> m_coefficients;}{coeff = (k1, k2 (ppal curv),
-          b0, b1, b2, b3 (third order), c0, c1, c2, c3, c4 (fourth
-          order)). If the degree of the Monge representation is 1 there
+\ccVariable{std::vector<DFT> m_coefficients;}{coeff = k1, k2 (principal curvatures);
+          b0, b1, b2, b3 (third order coefficients); c0, c1, c2, c3, c4 (fourth
+          order coefficients). If the degree of the Monge representation is 1 there
           is no coefficient}
 
 \ccCreation

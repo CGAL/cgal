@@ -20,21 +20,34 @@
 \ccDefinition
   
 The class \ccRefName\ is designed to perform the estimation of the
-local differential quantities at a single point. This point is the
-first point amongst the input points given by two iterators on
-points. According to the specified degrees for the polynomial fitting
-and for the Monge representation, it outputs the results through two
-classes \ccc{Monge_rep} and \ccc{Monge_info}.
- 
+local differential quantities at a given point. Since points are given
+through an iterator ---and its past the end, it is assumed the point
+where the calculation is carried out is the first point provided by
+the iterator.
+%%
+The results are stored in instances of the classes \ccc{Monge_rep} and
+\ccc{Monge_info}, the particular informations returned depending on
+the degrees specified for the polynomial fitting and for the Monge
+representation.
+
+%This point is the first point amongst the input points given by two
+%iterators on points.
+%%
+%According to the specified degrees for the polynomial fitting and for
+%the Monge representation, it outputs the results through two classes
+%\ccc{Monge_rep} and \ccc{Monge_info}.
+
+
 \ccInclude{Monge_via_jet_fitting.h}
 
 \ccParameters
-The class \ccRefName\ has three template parameters. The first parameter
-\ccc{DataKernel} shall provide basic geometry for input points and
-some \ccc{Monge_rep} members. The second parameter \ccc{LocalKernel}
-shall provide basic geometry for local computation. The third
-parameter \ccc{LinAlgTraits} provides the linear algebra computation
-tools. 
+The class \ccRefName\ has three template parameters. Parameter
+\ccc{DataKernel} provides  the geometric classes and tools
+corresponding to the input points, and also selected members of the
+\ccc{Monge_rep} class. Parameter  \ccc{LocalKernel} provides
+the geometric classes and tools required by local
+computations. Pparameter \ccc{LinAlgTraits} features the linear
+algebra algorithms required by the fitting method.
 
 \ccTypes
 
@@ -55,7 +68,7 @@ Data_Kernel::Point_3>::iterator Range_Iterator; }{}
 
 \ccConstructor{Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
 int d, int dprime, Monge_rep &monge_rep, Monge_info &monge_info);}
-{This constructor performs all the computations. The $N$ input points
+{The constructor performs all the computations. The $N$ input points
 are given by the \ccc{Range_Iterators}, \ccc{d} is the degree of the
 fitted polynomial, \ccc{dprime} is the degree of the expected Monge
 coefficients, outputs are stored in \ccc{monge_rep} and
