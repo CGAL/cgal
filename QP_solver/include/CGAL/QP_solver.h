@@ -1060,9 +1060,12 @@ public:
     bool  check_w(Tag_false is_in_standard_form) const;
     
     // utility routines for QP's in nonstandard form:
-    ET  original_variable_value(int i) const;                        
+    ET  original_variable_value(int i) const;
+
+ public: // should probably be replaced with iterator access:
     ET  nonbasic_original_variable_value(int i) const;
 
+ private:
     // check basis inverse
     bool  check_basis_inverse( );
     bool  check_basis_inverse( Tag_true  is_linear);

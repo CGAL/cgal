@@ -109,14 +109,21 @@ int main(const int argNr,const char **args) {
     const ET denom = solver.variables_common_denominator();
     for (; x_it != x_end; ++x_it, ++x_ind)
       x[*x_ind] = *x_it;
+
+    // hack to find values nonbasic variables (should be replaced
+    // with iterator access):
+    for (unsigned int i=0; i<qp.number_of_variables(); ++i)
+      if (!solver.is_basic(i))
+	x[i] = solver.nonbasic_original_variable_value(i);
     
     // output solution:
     cout << "Exact solution:" << endl;
     for (unsigned int i=0; i<qp.number_of_variables(); ++i)
-      cout << "x[" << i << "] = " << x[i] << "/" << denom << endl;
+      cout << "x[" << i << "] (" << qp.name_of_variable(i) << ") = "
+	   << x[i] << "/" << denom << endl;
     cout << "Solution (as doubles):" << endl;
   for (unsigned int i=0; i<qp.number_of_variables(); ++i)
-    cout << "x[" << i << "] ~= "
+    cout << "x[" << i << "] (" << qp.name_of_variable(i) << ") ~= "
          << CGAL::to_double(x[i])/CGAL::to_double(denom)
          << endl;
   }

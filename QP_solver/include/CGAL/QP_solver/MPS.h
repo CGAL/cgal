@@ -353,6 +353,23 @@ public: // methods:
     return row_names.size();
   }
 
+  // Returns the name (as present in the MPS-file) of the i-th variable.
+  // Note: this routine has linear complexity.
+  const std::string& name_of_variable(unsigned int i)
+  {
+    CGAL_qpe_assertion(0<=i && i<number_of_variables());
+    for (Index_map::const_iterator it = var_names.begin();
+	 it != var_names.end();
+	 ++it)
+      if ((*it).second == i)
+        return (*it).first;
+
+    CGAL_qpe_assertion(false); // should never get here; following
+			       // only to fix compiler warnings
+    static std::string dummy;
+    return dummy;
+  }
+
   // Returns the section name of the MPS stream in which the D matrix
   // (if any present) was read.
   //
