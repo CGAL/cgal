@@ -17,8 +17,8 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
-#ifndef CGAL_APPROXIMATE_MIN_ELLIPSOID_D_H
-#define CGAL_APPROXIMATE_MIN_ELLIPSOID_D_H
+#ifndef CGAL_CGAL_APPROX_MIN_ELL_D_H
+#define CGAL_CGAL_APPROX_MIN_ELL_D_H
 
 #include <cstdlib>
 #include <cmath>
@@ -453,4 +453,4 @@ namespace CGAL {
 
 #include <CGAL/Approximate_min_ellipsoid_d/Approximate_min_ellipsoid_d.C>
 
-#endif // CGAL_APPROXIMATE_MIN_ELLIPSOID_D_H
+#endif // CGAL_CGAL_APPROX_MIN_ELL_D_H

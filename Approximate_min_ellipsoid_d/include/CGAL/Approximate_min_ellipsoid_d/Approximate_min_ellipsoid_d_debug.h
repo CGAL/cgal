@@ -17,8 +17,8 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
-#ifndef APPROXIMATE_MIN_ELLIPSOID_D_DEBUG_H
-#define APPROXIMATE_MIN_ELLIPSOID_D_DEBUG_H
+#ifndef CGAL_APPROX_MIN_ELL_D_DEBUG_H
+#define CGAL_APPROX_MIN_ELL_D_DEBUG_H
 
 #include <cmath>
 #include <map>
@@ -725,4 +725,4 @@ namespace CGAL {
   
 } // namespace CGAL
 
-#endif // APPROXIMATE_MIN_ELLIPSOID_D_DEBUG_H
+#endif // CGAL_APPROX_MIN_ELL_D_DEBUG_H

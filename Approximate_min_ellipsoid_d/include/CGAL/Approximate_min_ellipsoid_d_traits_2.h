@@ -17,8 +17,8 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
-#ifndef APPROXIMATE_MIN_ELLIPSOID_D_TRAITS_2_H
-#define APPROXIMATE_MIN_ELLIPSOID_D_TRAITS_2_H
+#ifndef CGAL_APPROX_MIN_ELL_D_TRAITS_2_H
+#define CGAL_APPROX_MIN_ELL_D_TRAITS_2_H
 
 namespace CGAL {
 
@@ -46,4 +46,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif // APPROXIMATE_MIN_ELLIPSOID_D_TRAITS_2_H
+#endif // CGAL_APPROX_MIN_ELL_D_TRAITS_2_H

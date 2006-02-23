@@ -17,8 +17,8 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
-#ifndef APPROXIMATE_MIN_ELLIPSOID_CONFIGURE_H
-#define APPROXIMATE_MIN_ELLIPSOID_CONFIGURE_H
+#ifndef CGAL_APPROX_MIN_ELL_CONFIGURE_H
+#define CGAL_APPROX_MIN_ELL_CONFIGURE_H
 
 #include <cassert>
 #include <iostream>
@@ -163,4 +163,4 @@
 
 #include <CGAL/Approximate_min_ellipsoid_d/Approximate_min_ellipsoid_d_debug.h>
 
-#endif // APPROXIMATE_MIN_ELLIPSOID_CONFIGURE_H
+#endif // CGAL_APPROX_MIN_ELL_CONFIGURE_H
