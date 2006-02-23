@@ -1,4 +1,4 @@
-// Copyright (c) 2005 RuG (Netherlands)
+// Copyright (c) 2005 Rijksuniversiteit Groningen (Netherlands)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
