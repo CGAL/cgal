@@ -76,7 +76,9 @@ the  embedding triangulation facets.}
 \ccGlue
 \ccTypedef{typedef Triangulation_3::Edge Edge;} {The  type of
 the  embedding triangulation edges.}
-
+\ccGlue
+\ccTypedef{typedef Triangulation_3::size_type size_type;}{Size type (an
+  unsigned integral type)}
 
 \ccEnum{enum Face_status {NOT_IN_COMPLEX, BOUNDARY, REGULAR,
 SINGULAR};}
@@ -153,6 +155,10 @@ a function object with an operator to select facets:
 
 \ccHeading{Queries}
 Queries on the status  of individual face with respect to the 2D complex.
+
+\ccMethod{size_type number_of_facets() const;}
+{Returns the number of facets that belong to the 2D complex.}
+
 \ccMethod{Face_status   face_status(Facet f);}
 {Returns the status of the facet \ccc{f}  with respect to  the 2D complex.}
 \ccGlue
