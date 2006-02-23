@@ -1,3 +1,6 @@
+- Remove old file of Data_structure_using_octree
+  -- Laurent Rineau 2006/02/23
+
 - Verify that FT can be from an exact kernel...
 - Make depends for applications/makefile
   -- Laurent Rineau, 2005/11/14
