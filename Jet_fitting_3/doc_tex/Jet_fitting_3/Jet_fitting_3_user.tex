@@ -432,11 +432,13 @@ Output : monge-basis wrt fitting-basis and world-basis
 }
 
 In the fitting basis, we have determined a height function expressed
-by Eq. (\refs{eq-answer}). 
-Computations are done in the fitting-basis.  The partial derivatives,
-evaluated at $(x,y)=(0,0)$, of the fitted polynomial $J_{A,d}(x,y)$ are
-$A_{i,j}=\frac{\partial^{i+j}J_{A,d}}{\partial^ix
-\partial^jy}$, hence
+by Eq. (\refs{eq-answer}). Computations are done in the fitting-basis.
+The partial derivatives, evaluated at $(x,y)=(0,0)$, of the fitted
+polynomial $J_{A,d}(x,y)$ are
+$A_{i,j}=\frac{\partial^{i+j}J_{A,d}}{\partial^ix \partial^jy}$
+%%
+Expanding Eq. (\ref{eq-answer}) yields:
+%%
 \begin{eqnarray}
 J_{A,d}(x,y)&=
 A_{0,0}+A_{1,0}x+A_{0,1}y+\frac{1}{2}(A_{2,0}x^2+2A_{1,1}xy+A_{0,2}y^2) 
@@ -550,42 +552,52 @@ four, that is, we assume $d' \leq 4$.
 
 Regarding interpolation versus approximation, we provide a single
 function {\tt Monge\_via\_jet\_fitting} with parameters $d,d'$ and a
-range iterator. If $N==N_d$ then interpolation is performed, else
+range iterator. If $N=N_d$ then interpolation is performed, else
 $N > N_d$ and approximation is used. If $N < N_d$ we provide
 an exception.
 
 \subsection{Template parameters}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- In addition, we assume implicit cast
-between Data, Local and Linalg are well defined.
+FC: dependence fig here????????????
 
-\subsubsection{\tt Data\_Kernel} 
+FC: rapid description of main classes
+
+Monge\_rep Monge\_info
+
+In addition, we assume implicit cast between Data, Local and Linalg
+are well defined.
+
+\subsubsection{Template class {\tt Data\_Kernel}}
 %%%%%%%%%%%
-Class providing the types for the input sample points in addition with 
-3d vectors and a field type. This is the class used as template for
-the Monge\_rep. 
-Typically, one can use {\tt CGAL::Cartesian<double>}.
+
+This class provides the types for the input sample points, together
+with $3d$ vectors and a number type. It is used as template for the
+Monge\_rep. Typically, one can use {\tt CGAL::Cartesian<double>}.
 
 \noindent \underline{Requirements}: Types FT, Point\_3 Vector\_3
 
-\subsubsection{\tt Local\_Kernel}
+\subsubsection{Template class {\tt Local\_Kernel}}
 %%%%%%%%%%%
-The kernel defining the Vector and number types used for local
-computations and to store the Monge\_info class members. Input points
-of type Data\_Kernel::Point\_3 are converted to
+
+This class defines the vector and number types used (i)\ for local
+computations (ii)\ to store the Monge\_info class members. Input
+points of type Data\_Kernel::Point\_3 are converted to
 Local\_Kernel::Point\_3. For output of the Monge\_rep class, these
 types are converted back to Data\_Kernel ones.  Typically, one can use
 {\tt CGAL::Cartesian<double>}.
 
 \noindent \underline{Requirements}:  We assume the Point and Vector
-types support the dotprodut, wedge prod, sum,
-scalarmult,... operations.
+types support the dotprodut, wedge prod, sum, scalar
+multiplication,... operations.
 
-\subsubsection{\tt Linalg\_traits.} 
+\dots=???????????
+
+\subsubsection{Template class {\tt Linalg\_traits.}}
 %%%%%%%%%%%
-The class providing the matrix algebra operation required by the
-method.
+
+This class provides the matrix algebra operations required by the
+fitting method.
 
 \noindent \underline{Requirements} 
 
@@ -672,6 +684,7 @@ $1 \leq d$, $d' \leq d$, $1 \leq d' \leq 4$
 \section{Examples} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\paragraph{Abouta point.}
 The first example illustrates the computation of the local
 differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
@@ -679,8 +692,15 @@ is performed. The user has to specify a file for the input points, a
 file to output the results, the degrees $d$ and $d'$.
 \ccIncludeExampleCode{Jet_fitting_3/blind_1pt.C}
 
+\paragraph{On a mesh.}
 The second example illustrates the computation of local differential
-quantities for all vertices of a given mesh. Results are output as a
-human readable text file and another text file which may be visualised 
-with the demo program.
+quantities for all vertices of a given mesh. Results are twofold:
+\begin{itemize}
+\item
+a human readable text file featuring ??????????
+
+\item
+another text file which may be visualised  with the demo program. ?????????????
+\end{itemize}
+
 \ccIncludeExampleCode{Jet_fitting_3/blind.C}
