@@ -47,18 +47,23 @@ circular arcs (used in particular for endpoints of arcs and
 intersection points between arcs) and line segments whose endpoints
 are points of this new type.  
 
-In fact, the circular kernel is documented as a concept, and several
-models are provided: \ccc{Circular_kernel} is the basic kernel, and
-several filtered kernels are built on top of this basic kernel to
-increase effciency:\\
-\ccc{Lazy_curved_kernel<??>}, \\
-\ccc{Filtered_hexagon_curved_kernel<CircularKernel>}, and\\
-\ccc{Filtered_bbox_curved_kernel<CircularKernel>}. \\
-Kernels are enumerated here from finest to coarsest filtering
-technique. As in the 2D CGAL kernel, the idea is that cascading
-filters should give the most efficient result \footnote{In practice,
-benchmarking should still be done and further optimizations will be
-provided for future releases.}
+In fact, the circular kernel is documented as a concept, and two
+models are provided: \ccc{Circular_kernel}, the basic kernel, and
+a predefined filtered kernel \ccc{Exact_circular_kernel}, 
+that is based on similar techniques as 
+\ccc{Exact_predicates_exact_constructions_kernel}. 
+More work is in progress to increase the efficiency of this filtered kernel
+and provide other filtering techniques. 
+%several filtered kernels are built on top of this basic kernel to
+%increase effciency:\\
+%\ccc{Lazy_curved_kernel<??>}, \\
+%\ccc{Filtered_hexagon_curved_kernel<CircularKernel>}, and\\
+%\ccc{Filtered_bbox_curved_kernel<CircularKernel>}. \\
+%Kernels are enumerated here from finest to coarsest filtering
+%technique. As in the 2D CGAL kernel, the idea is that cascading
+%filters should give the most efficient result \footnote{In practice,
+%benchmarking should still be done and further optimizations will be
+%provided for future releases.}
 
 \section{Examples}
 
