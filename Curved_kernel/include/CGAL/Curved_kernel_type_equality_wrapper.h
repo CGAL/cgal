@@ -28,7 +28,7 @@
 #include <CGAL/user_classes.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Circular_arc_2.h>
-#include <CGAL/Circular_arc_endpoint_2.h>
+#include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
 #include <CGAL/Root_of_2.h>
 

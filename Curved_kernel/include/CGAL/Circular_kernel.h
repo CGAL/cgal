@@ -25,11 +25,11 @@
 #ifndef CGAL_CIRCULAR_KERNEL_H
 #define CGAL_CIRCULAR_KERNEL_H
 
-#include <CGAL/Curved_kernel/Circular_arc_endpoint_2.h>
+#include <CGAL/Curved_kernel/Circular_arc_point_2.h>
 #include <CGAL/Curved_kernel/Circular_arc_2.h>
 #include <CGAL/Curved_kernel/Line_arc_2.h>
 #include <CGAL/Circular_arc_2.h>
-#include <CGAL/Circular_arc_endpoint_2.h>
+#include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
 
 #include <CGAL/Curved_kernel/function_objects_on_circle_2.h>
