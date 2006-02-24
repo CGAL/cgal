@@ -565,7 +565,7 @@ namespace CGAL {
 int main(int argnr, char **argv)
 {
   // output usage information:
-  if (argnr > 3 || argnr <= 2) {
+  if (argnr > 3) {
     std::cerr << "Usage: " << argv[0] << " \"description\" \"problem-name\" "
                  "< datafile.data\n\n"
 	      << "The resulting MPS-file is written to standard-out, errors "
@@ -574,6 +574,8 @@ int main(int argnr, char **argv)
 	      << "See data2mps.cin for an example 'datafile.data' file.\n";
     return 1;
   }
+  const char *desc = (argnr > 1? argv[1] : "Test");
+  const char *name = (argnr > 2? argv[2] : desc);
 
   // read data-file from standard in:
   Data_reader data(std::cin);
@@ -595,7 +597,7 @@ int main(int argnr, char **argv)
     number_type = "integer";
   
   // write MPS-file to standard out:
-  CGAL::write_MPS(std::cout, number_type, argv[1], "data2mps", argv[2],
+  CGAL::write_MPS(std::cout, number_type, desc, "data2mps", name,
 		  data.number_of_variables(), data.number_of_constraints(),
 		  data.A(), data.b(), data.c(), data.D(), data.fu(),
 		  data.fl(), data.u(), data.l(), data.row_types());
