@@ -1,9 +1,6 @@
 #ifndef _POLY_OP_H_
 #define _POLY_OP_H_
 
-//?????????mysterious , used in Poly.C with mysterious
-//std::for_all??????? why arent they member fct of polysurf?
-
 struct Edge_length {
   template < class HalfEdge > 
   void operator() (HalfEdge & h) 

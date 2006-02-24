@@ -22,6 +22,7 @@ template < class Poly > class Ridge_line
 public:
   typedef typename Poly::Traits::FT FT;
   typedef typename Poly::Traits::Vector_3 Vector_3;
+  typedef typename Poly::Traits::Point_3 Point_3;
   typedef typename Poly::Vertex_handle Vertex_handle;
   typedef typename Poly::Halfedge_handle Halfedge_handle;
   typedef std::pair< Halfedge_handle, FT> ridge_he;
@@ -55,7 +56,8 @@ public:
   //weigths are updated 
   void addback( Halfedge_handle he);
   void addfront( Halfedge_handle he);
-
+  
+  void dump_4ogl(std::ostream& out_stream);
 };
 
 // IMPLEMENTATION OF Ridge_line members
@@ -134,6 +136,27 @@ bary_coord( Halfedge_handle he)
   return CGAL::abs(b_q) / ( CGAL::abs(b_q) + CGAL::abs(b_p) );
 }
 
+template < class Poly >
+void Ridge_line<Poly>::
+dump_4ogl(std::ostream& out_stream)
+{
+  out_stream << line_type() << " "
+	     << strength() << " "
+	     << sharpness() << " ";
+
+  typename std::list<ridge_he >::iterator
+    iter = line()->begin(), 
+    ite =  line()->end();
+  for (;iter!=ite;iter++){
+    //he: p->q, r is the crossing point
+    Point_3 p = iter->first->opposite()->vertex()->point(),
+      q = iter->first->vertex()->point();
+    Vector_3 r = (p-CGAL::ORIGIN)*iter->second +
+      (q-CGAL::ORIGIN)*(1-iter->second); 
+    out_stream << r << " ";	
+  }
+  out_stream << "End_of_ridge_line" << std::endl;  
+}
 
 //---------------------------------------------------------------------------
 //Ridge_approximation
@@ -158,7 +181,7 @@ public:
 public:
   Ridge_approximation(){};
 
-  OutputIt compute_all_ridges(Poly &P, OutputIt& it, Tag_order ord = Tag_3);
+  OutputIt compute_all_ridges(Poly &P, OutputIt it, Tag_order ord = Tag_3);
   
   //Find BLUE_RIDGE, RED_RIDGE or CREST ridges 
   //iterate on P facets, find a non-visited, regular, 2BXing triangle,
@@ -168,7 +191,7 @@ public:
   // + length(edge)*|k|
   void compute_ridges(Poly &P, 
 		      Ridge_type r_type, 
-		      OutputIt &ridge_lines_it,
+		      OutputIt ridge_lines_it,
 		      Tag_order ord = Tag_3);
   void compute_umbilics(Poly &P	);//container for umbilics?
 
@@ -196,8 +219,6 @@ protected:
 			       Vertex_handle v3,
 			       Vector_3 r1, Vector_3 r2, 
 			       Ridge_type color);
-
-
 };
 
 
@@ -205,7 +226,7 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 template < class Poly, class OutputIt >
 OutputIt Ridge_approximation<Poly, OutputIt>::
-compute_all_ridges(Poly &P, OutputIt &it, Tag_order ord)// = Tag_3)
+compute_all_ridges(Poly &P, OutputIt it, Tag_order ord)
 {
   compute_ridges(P, BLUE_RIDGE, it, ord);
   compute_ridges(P, RED_RIDGE, it, ord);
@@ -216,7 +237,7 @@ compute_all_ridges(Poly &P, OutputIt &it, Tag_order ord)// = Tag_3)
 template < class Poly, class OutputIt >
 void Ridge_approximation<Poly, OutputIt>::
 compute_ridges(Poly &P, Ridge_type r_type,
-	       OutputIt &ridge_lines_it, Tag_order ord)// = Tag_3)
+	       OutputIt ridge_lines_it, Tag_order ord)
 {
   //set all facets non visited
   Facet_iterator itb = P.facets_begin(), ite = P.facets_end();
@@ -236,10 +257,13 @@ compute_ridges(Poly &P, Ridge_type r_type,
       Ridge_type cur_ridge_type = facet_ridge_type(f,h1,h2,r_type, ord);
       if ( cur_ridge_type == NONE ) continue;
       
-      //When a he is inserted in a Ridge_line, a pair <he,bary_coord>
-      //is created and the weight(s) are updated
-      Ridge_line cur_ridge_line(h1,h2,cur_ridge_type); 
+      //a ridge_line is begining and stored
+      //     Ridge_line cur_ridge_line(h1,h2,cur_ridge_type); 
+      Ridge_line* cur_ridge_line = new Ridge_line(h1,h2,cur_ridge_type); 
       *ridge_lines_it++ = cur_ridge_line;
+      //debug
+      //  cur_ridge_line->dump_4ogl(std::cout);
+      // std::cout << "??????????????????????????" << endl;
 
       //next triangle adjacent to h1 (push_front)
       if ( !(h1->is_border_edge()) ) 
@@ -254,7 +278,7 @@ compute_ridges(Poly &P, Ridge_type r_type,
 	      f->set_visited(true);
 	      if (curhe->opposite() == curhe1) curhe = curhe2;
 	      else curhe = curhe1;
-	      cur_ridge_line.addfront(curhe);
+	      cur_ridge_line->addfront(curhe);
 	      if ( !(curhe->is_border_edge()) ) f =
 						  curhe->opposite()->facet();
 	      else break;
@@ -278,7 +302,7 @@ compute_ridges(Poly &P, Ridge_type r_type,
 	      f->set_visited(true);
 	      if (curhe->opposite() == curhe1) curhe = curhe2;
 	      else curhe = curhe1;
-	      cur_ridge_line.addback(curhe);
+	      cur_ridge_line->addback(curhe);
 	      if ( !(curhe->is_border_edge()) ) f =
 						  curhe->opposite()->facet();
 	      else break;
@@ -336,11 +360,9 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
       xing_on_edge(h3, h3_is_crossed, RED_RIDGE);
     }
 
-  //test of 2Xing
-  if ( !(h1_is_crossed && h2_is_crossed && !h3_is_crossed) &&
-       !(h1_is_crossed && !h2_is_crossed && h3_is_crossed) &&
-       (!h1_is_crossed && h2_is_crossed && h3_is_crossed) ) 
-    return NONE;
+  //there are either 0 or 2 crossed edges
+  if ( !h1_is_crossed && !h2_is_crossed && !h3_is_crossed ) 
+    return NONE; 
   if (h1_is_crossed && h2_is_crossed && !h3_is_crossed)
     {
       he1 = h1; 

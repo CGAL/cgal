@@ -6,7 +6,6 @@ Vector_3 PolyhedralSurf::getHalfedge_vector(Halfedge * h)
   return v;
 }
 
-///???????myterious behavior????????
 void PolyhedralSurf::compute_facets_normals()
 {
   std::for_each(this->facets_begin(), this->facets_end(),
