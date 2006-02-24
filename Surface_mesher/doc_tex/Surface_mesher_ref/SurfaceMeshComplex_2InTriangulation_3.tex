@@ -331,6 +331,32 @@ vertices of the 2D complex that are  boundary vertices.}
 {Returns the past the end iterator for the above iterator.}
 
 
+\ccHeading{Traversal of incident facets}
+The data structure also provides  member functions to retrieve
+the facets of the complex incident to a given face (vertex or edge).
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator 
+          incident_facets(Vertex_handle v, OutputIterator facets);}
+ {To retrieve the facets of the complex incident to \ccc{v}.}
+\ccGlue
+\ccMethod{template <class OutputIterator>
+          OutputIterator 
+          incident_facets(Vertex_handle va, Vertex_handle vb);}
+ {To  retrieve the facets of the complex incident to edge \ccc{v_i, v_j}.}
+\ccGlue
+\ccMethod{template <class OutputIterator>
+          OutputIterator 
+          incident_facets(Cell_handle c, int i, int j);}
+ {To retrieve the facets of the complex incident to edge \ccc{
+(c,i,i)}.}
+\ccGlue
+\ccMethod{template <class OutputIterator>
+          OutputIterator 
+          incident_facets(Edge e);}
+ {To retrieve the facets of the complex incident to edge \ccc{e}.}
+
+
 %\ccMethod{Facets_circulator
 %incident_facets(Vertex_handle v);}
 %{Returns a circulator to visit the facets of the complex around
