@@ -382,6 +382,11 @@
   \ccc{Predicate} is true. The iterator category is the same as for
   \ccc{Iterator}.
 
+  Note: Boost also provides the same functionality via the
+  \ccc{boost::filter_iterator} class.  Unfortunately, the semantics
+  chosen for accepting or rejecting elements based on the predicate's
+  result are opposite as the semantic chosen here.
+
   \ccInclude{CGAL/iterator.h}
   
   \ccRequirements
