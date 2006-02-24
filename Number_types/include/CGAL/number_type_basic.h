@@ -64,9 +64,15 @@ CGAL_END_NAMESPACE
 #include <CGAL/Filtered_exact_fwd.h>
 #include <CGAL/MP_Float_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
-#include <CGAL/Gmpzq_fwd.h>
-#include <CGAL/gmpxx_fwd.h>
-#include <CGAL/CORE_Expr_fwd.h>
+#ifdef CGAL_USE_GMP
+#  include <CGAL/Gmpzq_fwd.h>
+#endif
+#ifdef CGAL_USE_GMPXX
+#  include <CGAL/gmpxx_fwd.h>
+#endif
+#ifdef CGAL_USE_CORE
+#  include <CGAL/CORE_Expr_fwd.h>
+#endif
 #include <CGAL/Quotient_fwd.h>
 #include <CGAL/Root_of_2_fwd.h>
 
@@ -75,7 +81,9 @@ CGAL_END_NAMESPACE
 // instantiation, even if only to_double(double) is called, at least
 // when Quotient is defined...
 #include <CGAL/MP_Float.h>
-#include <CGAL/Gmpz.h>
+#ifdef CGAL_USE_GMP
+#  include <CGAL/Gmpz.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
