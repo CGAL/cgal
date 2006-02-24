@@ -31,7 +31,7 @@ namespace CGAL {
       typename Previous_level
       >
     class Visitor {
-      Surface_mesher* surface;
+      Surface_mesher* surface_mesher;
       Previous_level* previous;
 
     public:
@@ -42,9 +42,9 @@ namespace CGAL {
 
       typedef Previous_level Previous_visitor;
 
-      Visitor(Surface_mesher* surface_,
+      Visitor(Surface_mesher* surface_mesher_,
 	      Previous_visitor* p)
-        : surface(surface_), previous(p) {}
+        : surface_mesher(surface_mesher_), previous(p) {}
 
       template <typename E, typename P>
       void before_conflicts(E, P) const {}
@@ -54,12 +54,12 @@ namespace CGAL {
                             const Point& p,
                             Zone& zone)
       {
-	surface->before_insertion_impl(typename Tr::Facet (), p, zone);
+	surface_mesher->before_insertion_impl(typename Tr::Facet (), p, zone);
       }
 
       void after_insertion(const Vertex_handle& v)
       {
-	surface->restore_restricted_Delaunay(v);
+	surface_mesher->restore_restricted_Delaunay(v);
       }
 
       template <typename E, typename P, typename Z>
