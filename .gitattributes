@@ -1242,9 +1242,9 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb7.bmp -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
 QP_solver/include/CGAL/QP_solver/Bounds.C -text
-QP_solver/test/QP_solver/data2mps-double.C -text
-QP_solver/test/QP_solver/data2mps-rational.C -text
+QP_solver/test/QP_solver/data_to_mps-double.C -text
 QP_solver/test/QP_solver/data_to_mps-double.cin -text
+QP_solver/test/QP_solver/data_to_mps-rational.C -text
 QP_solver/test/QP_solver/data_to_mps-rational.cin -text
 QP_solver/test/QP_solver/data_to_mps.C -text
 QP_solver/test/QP_solver/data_to_mps.cin -text
