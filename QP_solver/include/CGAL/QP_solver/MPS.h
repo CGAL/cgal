@@ -353,6 +353,15 @@ public: // methods:
     return row_names.size();
   }
 
+  // Returns the problem's name (as specified in the MPS-file).
+  //
+  // Precondition: is_valid()
+  const std::string& problem_name()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return name;
+  }
+
   // Returns the name (as present in the MPS-file) of the i-th variable.
   // Note: this routine has linear complexity.
   const std::string& name_of_variable(unsigned int i)

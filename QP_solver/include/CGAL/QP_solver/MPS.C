@@ -752,23 +752,42 @@ const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
 namespace QP_MPS_detail {
 
   template<typename T>
-  struct Write_MPS_type_name {
+  struct MPS_type_name {
     static const char *name() { return 0; }
   };
   
   template<>
-  struct Write_MPS_type_name<double> {
+  struct MPS_type_name<double> {
     static const char *name() { return "floating-point"; }
   };
   
   template<>
-  struct Write_MPS_type_name<int> {
+  struct MPS_type_name<int> {
     static const char *name() { return "integer"; }
   };
   
   template<>
-  struct Write_MPS_type_name<Gmpq> {
+  struct MPS_type_name<Gmpq> {
     static const char *name() { return "rational"; }
+  };
+
+  template<typename IT>
+  struct IT_to_ET {
+  };
+  
+  template<>
+  struct IT_to_ET<double> {
+    typedef Double ET;
+  };
+  
+  template<>
+  struct IT_to_ET<int> {
+    typedef Gmpz ET;
+  };
+  
+  template<>
+  struct IT_to_ET<Gmpq> {
+    typedef Gmpq ET;
   };
 
 } // QP_MPS_detail
@@ -805,7 +824,7 @@ void write_MPS(std::ostream& out,
 
   // output header:
   if (number_type.length() == 0) {
-    const char *tn = QP_MPS_detail::Write_MPS_type_name<typename U_iterator::
+    const char *tn = QP_MPS_detail::MPS_type_name<typename U_iterator::
       value_type>::name();
     if (tn != 0)
       out << "* Number-type: " << tn << "\n";
@@ -863,12 +882,21 @@ void write_MPS(std::ostream& out,
     if (*(fu+i))
       out << "  UP  BND  x" << i << "  " << u[i] << "\n";
   }
-  
-  // output QMATRIX section:
-  out << "QMATRIX\n";
+
+  // check whether QMATRIX section is needed:
+  bool is_linear = true;
   for (int i=0; i<n; ++i)
     for (int j=0; j<n; ++j)
-      out << "  x" << i << "  x" << j << "  " << 2*D[i][j] << "\n";
+      if (!CGAL::is_zero(D[i][j]))
+	is_linear = false;
+  
+  // output QMATRIX section:
+  if (!is_linear) {
+    out << "QMATRIX\n";
+    for (int i=0; i<n; ++i)
+      for (int j=0; j<n; ++j)
+	out << "  x" << i << "  x" << j << "  " << 2*D[i][j] << "\n";
+  }    
 
   // output end:
   out << "ENDATA\n";
