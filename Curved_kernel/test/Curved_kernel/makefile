@@ -7,7 +7,8 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
+CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++33-3.3.4
+#makefile_i686_Linux-2.6_g++-3.4.4
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -47,6 +48,7 @@ all:            \
                 test_Line_arc$(EXE_EXT) \
 		test_Filtered_hexagon_kernel$(EXE_EXT) \
 		test_Lazy_curved_kernel$(EXE_EXT) \
+		test_Exact_curved_kernel$(EXE_EXT)\
 		test_Lazy_Line_arc$(EXE_EXT)
 
 test_Circular_kernel$(EXE_EXT): test_Circular_kernel$(OBJ_EXT)
@@ -57,6 +59,9 @@ test_Filtered_hexagon_kernel$(EXE_EXT): test_Filtered_hexagon_kernel$(OBJ_EXT)
 
 test_Lazy_curved_kernel$(EXE_EXT): test_Lazy_curved_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_curved_kernel test_Lazy_curved_kernel$(OBJ_EXT) $(LDFLAGS)
+
+test_Exact_curved_kernel$(EXE_EXT): test_Exact_curved_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Exact_curved_kernel test_Exact_curved_kernel$(OBJ_EXT) $(LDFLAGS)
 
 test_Line_arc$(EXE_EXT): test_Line_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Line_arc test_Line_arc$(OBJ_EXT) $(LDFLAGS)
@@ -69,6 +74,7 @@ clean: \
 		   test_Filtered_hexagon_kernel.clean \
                    test_Line_arc.clean \
 		   test_Lazy_curved_kernel.clean \
+		   test_Exact_curved_kernel.clean \
 		   test_Lazy_Line_arc.clean
 
 #---------------------------------------------------------------------#
