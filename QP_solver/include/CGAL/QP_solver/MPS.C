@@ -831,6 +831,7 @@ void write_MPS(std::ostream& out,
   }
 
   // output COLUMNS section:
+  out << "COLUMNS\n";
   for (int i=0; i<n; ++i) {
     out << "  x" << i << "  obj  " << c[i] << "\n";
     for (int j=0; j<m; ++j) {
