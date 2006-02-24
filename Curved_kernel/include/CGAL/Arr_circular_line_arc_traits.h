@@ -435,9 +435,9 @@ namespace CGAL {
   /// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
 
     template < typename CircularKernel, typename Arc1, typename Arc2>
-    class Variant_traits {
+    class Arr_circular_line_arc_traits {
 
-    typedef Variant_traits< CircularKernel, Arc1, Arc2 >   Self;
+    typedef Arr_circular_line_arc_traits< CircularKernel, Arc1, Arc2 >   Self;
 
   public:
   
@@ -457,7 +457,7 @@ namespace CGAL {
     CircularKernel ck;
   public:
   
-    Variant_traits(const CircularKernel &k = CircularKernel())
+    Arr_circular_line_arc_traits(const CircularKernel &k = CircularKernel())
       : ck(k) {}
 
     typedef typename CircularKernel::Compare_x_2           Compare_x_2;

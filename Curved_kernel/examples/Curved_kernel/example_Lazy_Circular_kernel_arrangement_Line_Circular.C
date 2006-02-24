@@ -25,7 +25,7 @@ std::pair<double,double> to_interval(const Root_of_2<T>&);
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Lazy_curved_kernel.h>
-#include <CGAL/Variant_traits.h>
+#include <CGAL/Arr_circular_line_arc_traits.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include "boost/variant.hpp"
@@ -69,20 +69,20 @@ typedef std::vector< Arc> ArcContainer;
 typedef std::vector< Arc2> ArcContainer2;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Variant_traits<Circular_k,Circular_k::Line_arc_2, 
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k,Circular_k::Line_arc_2, 
                                       Circular_k::Circular_arc_2>  Traits;
 
-typedef CGAL::Variant_traits<CK1_,CK1_::Line_arc_2,
+typedef CGAL::Arr_circular_line_arc_traits<CK1_,CK1_::Line_arc_2,
                                   CK1_::Circular_arc_2>          Traits2;
 #else
-typedef CGAL::Variant_traits<Circular_k,Circular_k::Line_arc_2,
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k,Circular_k::Line_arc_2,
                                       Circular_k::Circular_arc_2>  Traits0;
 
-typedef CGAL::Variant_traits_tracer<Traits0>            Traits;
+typedef CGAL::Arr_circular_line_arc_traits_tracer<Traits0>            Traits;
 
-typedef CGAL::Variant_traits<CK1_,CK1_::Line_arc_2,
+typedef CGAL::Arr_circular_line_arc_traits<CK1_,CK1_::Line_arc_2,
                                   CK1_::Circular_arc_2>          Traits02;
-typedef CGAL::Variant_traits_tracer<Traits02>           Traits2;
+typedef CGAL::Arr_circular_line_arc_traits_tracer<Traits02>           Traits2;
 
 #endif
 

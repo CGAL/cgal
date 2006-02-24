@@ -99,7 +99,7 @@ struct Binary_operator_result <Root_of_2<T1>, Root_of_2<T2> >;
 
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Lazy_curved_kernel.h>
-#include <CGAL/Variant_traits.h>
+#include <CGAL/Arr_circular_line_arc_traits.h>
 #include <CGAL/Circular_arc_traits_tracer.h>
 
 
@@ -131,9 +131,9 @@ typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits;
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits;
 #else
-typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits0;
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 

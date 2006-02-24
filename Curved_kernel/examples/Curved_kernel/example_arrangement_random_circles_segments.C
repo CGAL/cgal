@@ -12,7 +12,7 @@
 
 #include <CGAL/Circular_kernel.h>
 
-#include <CGAL/Variant_traits.h>
+#include <CGAL/Arr_circular_line_arc_traits.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -31,7 +31,8 @@ typedef Circular_k::Line_arc_2                          Line_arc_2;
 typedef boost::variant< Circular_arc_2, Line_arc_2>       Arc;
 typedef std::vector< Arc> ArcContainer;
 
-typedef CGAL::Variant_traits<Circular_k, Circular_arc_2, Line_arc_2>  Traits;
+typedef CGAL::Arr_circular_line_arc_traits
+<Circular_k, Circular_arc_2, Line_arc_2>  Traits;
 
 typedef CGAL::Arrangement_2<Traits>                            Arr;
 typedef CGAL::Arr_naive_point_location<Arr>                 Point_location;

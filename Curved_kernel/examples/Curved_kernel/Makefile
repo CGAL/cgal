@@ -80,7 +80,7 @@ example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Lazy_C
 clean: \
 	   example_arrangement_random_circles.clean \
                    example_arrangement_random_circles_segments.clean \
-	example_predefined_kernel_arrangement_random_circles_segments \
+	example_predefined_kernel_arrangement_random_circles_segments.clean \
 	   example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
                    example_Circular_kernel_arrangement.clean \
                    example_Circular_kernel_arrangement_Line_arc.clean \

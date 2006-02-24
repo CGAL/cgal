@@ -6,6 +6,8 @@ This class is a traits class for CGAL arrangements, built on top of a model of
 concept \ccc{CircularKernel}.
 It provides curves of type \ccc{CGAL::Circular_arc_2<CircularKernel>}.
 
+\ccinclude{CGAL/Circular_arc_traits.h}
+
 \ccIsModel
 \ccc{ArrangementTraits_2}
 
@@ -18,11 +20,13 @@ This class is a traits class for CGAL arrangements, built on top of  a model of
 concept \ccc{CircularKernel}. 
 It provides curves of type \ccc{CGAL::Line_arc_2<CircularKernel>}. 
 
+\ccinclude{CGAL/Line_arc_traits.h}
+
 \ccIsModel
 \ccc{ArrangementTraits_2}
 
 \end{ccRefClass}
-\begin{ccRefClass}{Variant_traits<CircularKernel>}
+\begin{ccRefClass}{Arr_circular_line_arc_traits<CircularKernel>}
 
 \ccDefinition
 
@@ -33,6 +37,8 @@ It provides curves that can be of both types
 \ccc{CGAL::Circular_arc_2<CircularKernel>}.
 
 It uses the \ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant}. 
+
+\ccinclude{CGAL/Arr_circular_line_arc_traits.h}
 
 \ccIsModel
 \ccc{ArrangementTraits_2}
