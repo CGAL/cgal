@@ -42,7 +42,7 @@ surface meshes obtained as the restriction to a surface of
 a  three dimensional Delaunay triangulation.
 A model of this concept is a type to be plugged as first template
 parameter in the global
-function \ccc{make_surface_mesh<C2T3,SurfaceOracle,Criteria,Tag>}.
+function \ccc{make_surface_mesh}.
 
 
 The concept \ccRefName\   is a simplification of more general concepts called
@@ -174,60 +174,70 @@ i, int j);}
 \ccGlue
 \ccMethod{Face_status  face_status(Vertex_handle v);}
 {Returns the status of vertex \ccc{v} in the 2D complex.}
-\ccGlue
-\ccMethod{bool is_in_complex(Facet f);}
-{Returns \ccc{true}, if the facet \ccc{f} belongs to the 2D complex.}
-\ccGlue
-\ccMethod{bool is_in_complex(Cell_handle c, int i);}
-{Returns \ccc{true}, if the facet \ccc{(c,i)} belongs to the 2D complex.}
-\ccGlue
-\ccMethod{bool is_in_complex(Edge e);}
-{Returns \ccc{true}, if the edge  \ccc{e} belongs to the 2D complex.}
-\ccGlue
-\ccMethod{bool is_in_complex(Cell_handle c, int i, int j);}
-{Returns \ccc{true}, if the edge \ccc{(c,i,j)} belongs to the 2D complex.}
-\ccGlue
-\ccMethod{bool is_in_complex(Vertex_handle v);}
-{Returns \ccc{true}, if the vertex \ccc{v} belongs to the 2D complex.}
-\ccGlue
-\ccMethod{bool is_regular(Facet f);}
-{Returns \ccc{true}, if the facet \ccc{f} belongs to the 2D complex.}
-\ccGlue
-\ccMethod{bool is_regular(Edge e);}
-{Returns \ccc{true}, if the edge  \ccc{e} is regular.
-\ccPrecond{\ccc{e} is an edge of the complex.} }
-\ccGlue
-\ccMethod{bool is_regular(Cell_handle c, int i, int j);}
-{Returns \ccc{true}, if the edge \ccc{(c,i,j)} is regular.
-\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
-\ccGlue
-\ccMethod{bool is_regular(Vertex_handle v);}
-{returns \ccc{true}, if the vertex \ccc{v} is regular.
-\ccPrecond{\ccc{v} is a vertex of the complex.} }
-\ccGlue
-\ccMethod{bool is_on_boundary(Edge e);}
-{returns \ccc{true}, if the edge  \ccc{e} is on the boundary.
-\ccPrecond{\ccc{e} is an edge of the complex.} }
-\ccGlue
-\ccMethod{bool is_on_boundary(Cell_handle c, int i, int j);}
-{returns \ccc{true}, if the edge \ccc{(c,i,j)} is on the boundary.
-\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
-\ccGlue
-\ccMethod{bool is_on_boundary(Vertex_handle v);}
-{returns \ccc{true}, if the vertex \ccc{v} is on the boundary.
-\ccPrecond{\ccc{v} is a vertex of the complex.} }
-\ccGlue
-\ccMethod{bool is_singular(Edge e);}
-{returns \ccc{true}, if the edge  \ccc{e} is regular.
-\ccPrecond{\ccc{e} is an edge of the complex.} }
-\ccGlue
-\ccMethod{bool is_singular(Cell_handle c, int i, int j);}
-{returns \ccc{true}, if the edge \ccc{(c,i,j)} is regular.
-\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
-\ccGlue
-\ccMethod{bool is_singular(Vertex_handle v);}
-{returns \ccc{true}, if the vertex \ccc{v} is regular.
-\ccPrecond{\ccc{v} is a vertex of the complex.} }
+
+\ccMethod{bool is_regular_or_boundary_for_vertices (Vertex_handle v);}
+{Returns true if the status of vertex \ccc{v} is \ccc{REGULAR} or \ccc{BOUNDARY}.
+\ccPrecond{All the edges of the complex incident to \ccc{v} are \ccc{REGULAR} or \ccc{BOUNDARY}.}}
+ 
+
+
+%\ccGlue
+%\ccMethod{bool is_in_complex(Facet f);}
+%{Returns \ccc{true}, if the facet \ccc{f} belongs to the 2D complex.}
+%\ccGlue
+%\ccMethod{bool is_in_complex(Cell_handle c, int i);}
+%{Returns \ccc{true}, if the facet \ccc{(c,i)} belongs to the 2D complex.}
+%\ccGlue
+%\ccMethod{bool is_in_complex(Edge e);}
+%{Returns \ccc{true}, if the edge  \ccc{e} belongs to the 2D complex.}
+%\ccGlue
+%\ccMethod{bool is_in_complex(Cell_handle c, int i, int j);}
+%{Returns \ccc{true}, if the edge \ccc{(c,i,j)} belongs to the 2D complex.}
+%\ccGlue
+%\ccMethod{bool is_in_complex(Vertex_handle v);}
+%{Returns \ccc{true}, if the vertex \ccc{v} belongs to the 2D complex.}
+%\ccGlue
+%\ccMethod{bool is_regular(Facet f);}
+%{Returns \ccc{true}, if the facet \ccc{f} belongs to the 2D complex.}
+%\ccGlue
+%\ccMethod{bool is_regular(Cell_handle c, int i);}
+%{Returns \ccc{true}, if the facet \ccc{(c,i)} belongs to the 2D complex.}
+%\ccGlue
+%\ccMethod{bool is_regular(Edge e);}
+%{Returns \ccc{true}, if the edge  \ccc{e} is regular.
+%\ccPrecond{\ccc{e} is an edge of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_regular(Cell_handle c, int i, int j);}
+%{Returns \ccc{true}, if the edge \ccc{(c,i,j)} is regular.
+%\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_regular(Vertex_handle v);}
+%{returns \ccc{true}, if the vertex \ccc{v} is regular.
+%\ccPrecond{\ccc{v} is a vertex of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_on_boundary(Edge e);}
+%{returns \ccc{true}, if the edge  \ccc{e} is on the boundary.
+%\ccPrecond{\ccc{e} is an edge of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_on_boundary(Cell_handle c, int i, int j);}
+%{returns \ccc{true}, if the edge \ccc{(c,i,j)} is on the boundary.
+%\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_on_boundary(Vertex_handle v);}
+%{returns \ccc{true}, if the vertex \ccc{v} is on the boundary.
+%\ccPrecond{\ccc{v} is a vertex of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_singular(Edge e);}
+%{returns \ccc{true}, if the edge  \ccc{e} is regular.
+%\ccPrecond{\ccc{e} is an edge of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_singular(Cell_handle c, int i, int j);}
+%{returns \ccc{true}, if the edge \ccc{(c,i,j)} is regular.
+%\ccPrecond{\ccc{(c,i,j)} is an edge of the complex.} }
+%\ccGlue
+%\ccMethod{bool is_singular(Vertex_handle v);}
+%{returns \ccc{true}, if the vertex \ccc{v} is regular.
+%\ccPrecond{\ccc{v} is a vertex of the complex.} }
 
 
 
