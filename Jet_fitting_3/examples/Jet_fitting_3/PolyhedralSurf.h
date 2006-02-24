@@ -1,6 +1,9 @@
 #ifndef _POLYHEDRALSURF_H_
 #define _POLYHEDRALSURF_H_
 
+#include <boost/property_map.hpp>
+#include <boost/graph/properties.hpp>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -12,9 +15,27 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "PolyhedralSurf_operations.h" 
 
-//???????????dont anderstand when and why typedef typename ??
+
+//----------------------------------------------------------------
+// some functors 
+//----------------------------------------------------------------
+
+//the facet stores the normal
+struct Facet_unit_normal {
+  template < class Facet > 
+  void operator() (Facet & f) 
+    {
+      typename Facet::Halfedge_handle h = f.halfedge();
+      typename Facet::Vector_3 normal =
+	CGAL::cross_product(h->vertex()->point() - 
+			    h->opposite()->vertex()->point(),
+			    h->next()->vertex()->point() -
+			    h->opposite()->vertex()->point());
+      f.setNormal( normal / CGAL::sqrt(normal * normal));
+    }
+};
+
 
 //----------------------------------------------------------------
 // A redefined items class for the Polyhedron_3 with a refined vertex
@@ -26,18 +47,13 @@
 template < class Refs, class Tag, class Pt, class FGeomTraits > 
 class My_vertex:public CGAL::HalfedgeDS_vertex_base < Refs, Tag, Pt >
 {
-protected:
-  typedef typename FGeomTraits::Point_3 Point_3;
-  int ring_index;
-public:
-  void setRingIndex(int i) { ring_index = i; }
-  int getRingIndex() { return ring_index; }
-  void resetRingIndex() { ring_index = -1; }
+typedef typename FGeomTraits::Point_3 Point_3;
 
-  My_vertex(const Point_3 & pt):
-    CGAL::HalfedgeDS_vertex_base < Refs, Tag, Point_3 > (pt),
-    ring_index(-1)    {}
+public:
+ My_vertex(const Point_3 & pt):
+   CGAL::HalfedgeDS_vertex_base < Refs, Tag, Point_3 > (pt){}
   My_vertex()    {}
+
 };
 
 //----------------------------------------------------------------
@@ -68,19 +84,22 @@ public:
 //----------------------------------------------------------------
 // Halfedge
 //----------------------------------------------------------------
+ //  int ring_index;
+//   My_halfedge(): ring_index(-1) {}
+//   void setRingIndex(int i) {	ring_index = i;    }
+//   int getRingIndex() {return ring_index;    }
+//   void resetRingIndex() {ring_index = -1;    }
+
 template < class Refs, class Tprev, class Tvertex, class Tface>
 class My_halfedge:public CGAL::HalfedgeDS_halfedge_base < Refs, Tprev, Tvertex, Tface >
 {
-protected:
-  int ring_index;
+public:
   double len;
 public:
-  My_halfedge(): ring_index(-1) {}
-  void setRingIndex(int i) {	ring_index = i;    }
-  int getRingIndex() {return ring_index;    }
-  void resetRingIndex() {ring_index = -1;    }
-  void setLength(double l) { len = l; }
-  double getLength() { return len; }
+  My_halfedge(): len(-1) {}
+  void set_length(double l) { len = l; }
+  double get_length() const { return len; }
+  double& get_length_ref()  { return len; }
 };
 
 //------------------------------------------------
@@ -121,6 +140,31 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
 //------------------------------------------------
 //PolyhedralSurf
 //------------------------------------------------
+template <class TPoly>
+class THEdge_PM : 
+  public boost::put_get_helper<double, THEdge_PM<TPoly> > //read_write
+  //  public boost::put_get_helper<double&, THEdge_PM<TPoly> > //lvalue
+{
+public: 
+  typedef boost::read_write_property_map_tag category;//read_write
+  //typedef boost::lvalue_property_map_tag category;//lvalue
+
+  typedef typename TPoly::Halfedge key_type;
+  typedef typename TPoly::Traits::FT value_type;
+  typedef typename TPoly::Traits::FT reference;//read_write
+  //typedef typename TPoly::Traits::FT& reference;//lvalue
+  
+  THEdge_PM() {}
+  reference operator[](key_type h) const {return h.len;}//get_length();}//read_write
+  //reference operator[](key_type h)  {return h.len;}//lvalue
+};
+
+
+//use the std edge_weight_t tag...
+template <class TPoly> 
+THEdge_PM<TPoly> get(boost::edge_weight_t, TPoly& P) {return THEdge_PM<TPoly>();}
+
+
 typedef double                DFT;
 typedef CGAL::Cartesian<DFT>  Data_Kernel;
 typedef CGAL::Polyhedron_3 < Data_Kernel, Wrappers_VFH > Polyhedron;
@@ -131,8 +175,10 @@ public:
   PolyhedralSurf() {}
   
   static Vector_3 getHalfedge_vector(Halfedge * h);
-  void compute_edges_length();
-  double compute_mean_edges_length_around_vertex(Vertex * v);
+  
+//   void compute_edges_length();
+//   double compute_mean_edges_length_around_vertex(Vertex * v);
+  
   void compute_facets_normals();
   Vector_3 computeFacetsAverageUnitNormal(Vertex * v);
 };

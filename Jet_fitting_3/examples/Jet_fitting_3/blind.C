@@ -7,10 +7,13 @@
 #include <stdlib.h>
 #include <vector>
 
+#include <boost/property_map.hpp>
+
 #include "../../include/CGAL/Monge_via_jet_fitting.h" 
 #include "GSL.h" 
  
 #include "PolyhedralSurf.h"
+#include "PolyhedralSurf_operations.h"
 #include "PolyhedralSurf_rings.h"
 #include "options.h"//parsing command line
 
@@ -19,9 +22,26 @@ typedef double                DFT;
 typedef CGAL::Cartesian<DFT>  Data_Kernel;
 typedef Data_Kernel::Point_3  DPoint;
 typedef Data_Kernel::Vector_3 DVector;
+
+//HDS
 typedef PolyhedralSurf::Vertex Vertex;
+typedef PolyhedralSurf::Halfedge Halfedge;
 typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
-typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
+
+//Vertex property map
+typedef std::map<Vertex*, int> Vertex_VP_map_type;
+typedef boost::associative_property_map< Vertex_VP_map_type > Vertex_VPM_type;
+typedef T_PolyhedralSurf_rings<PolyhedralSurf, Vertex_VPM_type > Poly_rings;
+
+//Hedge property map, with std::map
+// typedef std::map<Halfedge, double> HEdge_PM_map_type;
+// typedef boost::associative_property_map< HEdge_PM_map_type > HEdge_HEPM_type;
+// typedef T_PolyhedralSurf_ops<PolyhedralSurf, HEdge_HEPM_type> Poly_ops;
+
+//Hedge property map, with enricged Halfedge
+typedef THEdge_PM<PolyhedralSurf> HEdge_HEPM_type;
+typedef T_PolyhedralSurf_ops<PolyhedralSurf, HEdge_HEPM_type> Poly_ops;
+
 //Kernel for local computations
 typedef double                LFT;
 typedef CGAL::Cartesian<LFT>  Local_Kernel;
@@ -49,9 +69,16 @@ unsigned int nb_points_to_use = 0;//
 bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
+
+
+
+//XFC document this function: explain what the cases are...
+//XFC possibly of interest, once cut into pieces, for polyhedral_surf
+
 //gather points around the vertex v using rings on the polyhedralsurf
-void gather_fitting_points( Vertex* v, 
-			    std::vector<DPoint> &in_points)
+void gather_fitting_points(Vertex* v, 
+			   std::vector<DPoint> &in_points,
+			   Vertex_VPM_type& vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
   std::vector<Vertex*> current_ring, next_ring, gathered; 
@@ -66,15 +93,16 @@ void gather_fitting_points( Vertex* v,
   p_next_ring = &next_ring;
   gathered.clear();
   in_points.clear();  
-  
-  //DO NOT FORGET TO UNTAG AT THE END!
-  v->setRingIndex(ith);
+
+  //initial vertex tagged as 0th ring
+  put(vpm, v, 0);
+
   //collect 0th ring : the vertex v!
   gathered.push_back(v);
   nbp = 1;
   //collect 1-ring
   ith = 1;
-  nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered);
+  nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered, vpm);
   //collect more neighbors depending on options...
  
     //OPTION -p nb, with nb != 0
@@ -85,15 +113,15 @@ void gather_fitting_points( Vertex* v,
     while( gathered.size() < nb_points_to_use ) {
       ith++;
       //using tags
-      nbp += Poly_rings::
-	collect_ith_ring_neighbours(ith, *p_current_ring,
-				    *p_next_ring, gathered);
+      nbp += Poly_rings::collect_ith_ring_neighbours(ith, *p_current_ring,
+						     *p_next_ring, gathered,
+						     vpm);
       //next round must be launched from p_nextRing...
       p_current_ring->clear();
       std::swap(p_current_ring, p_next_ring);
     }
     //clean up
-    Poly_rings::reset_ring_indices(gathered);
+    Poly_rings::reset_ring_indices(gathered, vpm);
     //discard non-required collected points of the last ring
     gathered.resize(nb_points_to_use, NULL);
     assert(gathered.size() == nb_points_to_use );
@@ -106,7 +134,7 @@ void gather_fitting_points( Vertex* v,
 	ith++;
 	nbp += Poly_rings::
 	  collect_ith_ring_neighbours(ith, *p_current_ring,
-				      *p_next_ring, gathered);
+				      *p_next_ring, gathered, vpm);
 	//next round must be launched from p_nextRing...
 	p_current_ring->clear();
 	std::swap(p_current_ring, p_next_ring);
@@ -120,23 +148,22 @@ void gather_fitting_points( Vertex* v,
     if (nb_rings > 1)
       while (ith < nb_rings) {
 	ith++;
-	nbp += Poly_rings::
-	  collect_ith_ring_neighbours(ith, *p_current_ring,
-				      *p_next_ring, gathered);
+	nbp += Poly_rings::collect_ith_ring_neighbours(ith, *p_current_ring,
+						       *p_next_ring, gathered,
+						       vpm);
 	//next round must be launched from p_nextRing...
 	p_current_ring->clear();
 	std::swap(p_current_ring, p_next_ring);
       }
    
     //clean up
-    Poly_rings::reset_ring_indices(gathered);
+    Poly_rings::reset_ring_indices(gathered, vpm);
   } //END ELSE
-
-  //store the gathered points
-  std::vector<Vertex*>::iterator itb = gathered.begin(),
-    ite = gathered.end();
-  CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
   
+  //store the gathered points
+  std::vector<Vertex*>::iterator 
+    itb = gathered.begin(), ite = gathered.end();
+  CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
 
 int main(int argc, char *argv[])
@@ -192,6 +219,7 @@ int main(int argc, char *argv[])
   //  output
 
   //load the model from <mesh.off>
+  //------------------------------
   PolyhedralSurf P;
   std::ifstream stream(if_name);
   stream >> P;
@@ -201,18 +229,36 @@ int main(int argc, char *argv[])
     (*out_verbose) << "Polysurf with " << P.size_of_vertices()
 		   << " vertices and " << P.size_of_facets()
 		   << " facets. " << std::endl;
-  
   //exit if not enough points in the model
   if (min_nb_points > P.size_of_vertices())    exit(0);
-  //initialize Polyhedral data : length of edges, normal of facets
-  P.compute_edges_length();
-  P.compute_facets_normals();
-  
-  //container for approximation points
-  std::vector<DPoint> in_points;
 
-  //MAIN LOOP////////////////////////////////////////////////////////////
-  Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
+
+  //create maps and property maps
+  //-----------------------------
+  Vertex_VP_map_type vertex2props;
+  Vertex_VPM_type vpm(vertex2props);
+  
+  //hedge, with std::map
+  //HEdge_PM_map_type hedge2props;
+  //HEdge_HEPM_type hepm(hedge2props);
+  
+  //hedge, with enriched hedge
+  HEdge_HEPM_type hepm = get(boost::edge_weight_t(), P);
+
+  //initialize Polyhedral data : length of edges, normal of facets
+  Poly_ops::compute_edges_length(P, hepm);
+  P.compute_facets_normals();
+
+  //MAIN LOOP: perform calculation for each vertex
+  //----------------------------------------------
+  std::vector<DPoint> in_points;  //container for data points
+  Vertex_iterator vitb, vite;
+
+  //initialize the tag of all vertices to -1
+  vitb = P.vertices_begin(); vite = P.vertices_end();
+  CGAL_For_all(vitb,vite) put(vpm, &(*vitb), -1);
+
+  vitb = P.vertices_begin(); vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
     Vertex* v = &(*vitb);
@@ -221,7 +267,7 @@ int main(int argc, char *argv[])
     My_Monge_info monge_info;
       
     //gather points arourd the vertex using rings
-    gather_fitting_points( v, in_points);
+    gather_fitting_points(v, in_points, vpm);
 
     //skip if the nb of points is to small 
     if ( in_points.size() < min_nb_points ) continue;
@@ -237,7 +283,7 @@ int main(int argc, char *argv[])
  
     //OpenGL output. Scaling for ppal dir, may be optimized with a
     //global mean edges length computed only once on all edges of P
-    const DFT scale_ppal_dir = P.compute_mean_edges_length_around_vertex(v)/2;
+    DFT scale_ppal_dir = Poly_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
     (*out_4ogl) << v->point()  << " ";
     monge_rep.dump_4ogl(*out_4ogl, scale_ppal_dir);
 
@@ -252,6 +298,7 @@ int main(int argc, char *argv[])
   } //END FOR LOOP//////////////////////////////////////////////////////////////
 
   //cleanup filenames
+  //------------------
   delete res4openGL_fname; 
   out_4ogl->close(); 
   delete out_4ogl;
