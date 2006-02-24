@@ -5,10 +5,6 @@
 
 \section{Introduction}
 
-The CGAL kernel provides the user mainly with \textit{linear} objects
-(points, line segments, lines...) and predicates on them. It also
-defines circles but does not offer a lot of functionalities on them. 
-
 The goal of the circular kernel is to offer to the user a large set of
 functionalities on circles and circular arcs in the plane. All the
 choices (interface, robustness, representation, and so on) made here
@@ -23,35 +19,42 @@ package.
 \section{Software design}
 
 The design is done in such a way that the algebraic concepts and the
-geometric concepts are clearly separated. The \ccc{Circular_kernel}
+geometric concepts are clearly separated. \ccc{Circular_kernel_2}
 has therefore two template parameters: 
 \begin{itemize}
 \item {} the \ccc{LinearKernel}, from which the circular kernel derives,
 provides all elementary geometric objects like points, lines, circles, and
-elementary functionality on them. In fact it is meant to be
-instantiated by a CGAL kernel,  but the user may plug his own kernel
-instead, as long as it follows the CGAL kernel concept. 
-\item {} the \ccc{AlgebraicKernel} is responsible for computations on
-polynomials and algebraic numbers. It has to be a model of concept 
-\ccc{AlgebraicKernel_2_2} described in a separate chapter. The
+elementary functionality on them. It must be a model of the CGAL two 
+dimensional \ccc{Kernel} concept.
+%The CGAL 2D Kernel can be used as parameter,
+%but the user may plug his own kernel 
+%instead, as long as it follows the CGAL kernel concept. 
+\item {} the second parameter is the algebraic kernel, which is 
+responsible for computations on polynomials and algebraic numbers. It 
+has to be a model of concept \ccc{AlgebraicKernelForCircles}. The
 robustness of the package relies on the fact that the algebraic kernel
 provides exact computations on algebraic objects.
 \end{itemize}
 
 The circular kernel uses the extensibility scheme presented in the 2D
-kernel manual. The types of \ccc{LinearKernel} are inherited
+kernel manual (see Section~\ref{section-extensible-kernel}). 
+The types of \ccc{LinearKernel} are inherited
 by the circular kernel and some types are taken from the
-\ccc{AlgebraicKernel} parameter. Three new main geometric objects are
-introduced by the \ccc{Circular_kernel}: circular arcs, points of
+\ccc{AlgebraicKernelForCircles} parameter. Three new main geometric objects are
+introduced by \ccc{Circular_kernel_2}: circular arcs, points of
 circular arcs (used in particular for endpoints of arcs and
 intersection points between arcs) and line segments whose endpoints
 are points of this new type.  
 
-In fact, the circular kernel is documented as a concept, and two
-models are provided: \ccc{Circular_kernel}, the basic kernel, and
+In fact, the circular kernel is documented as a concept, \ccc{CircularKernel}, 
+and two models are provided: 
+\begin{itemize}
+\item {} \ccc{Circular_kernel_2<LinearKernel,AlgebraicKernelForCircles>}, the basic kernel, 
+\item {} and
 a predefined filtered kernel \ccc{Exact_circular_kernel}, 
 that is based on similar techniques as 
 \ccc{Exact_predicates_exact_constructions_kernel}. 
+\end{itemize}
 More work is in progress to increase the efficiency of this filtered kernel
 and provide other filtering techniques. 
 %several filtered kernels are built on top of this basic kernel to
