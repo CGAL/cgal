@@ -205,7 +205,7 @@ int main(const int argnr, const char **argv) {
 	      << "extension) of the\nargument 'path-to-master.mps'.\n\n"
 	      << "Usually, you do not have to call this program directly; "
 	      << "./create_testsuite does\nit for you automagically.\n";
-    return 1;
+    return 0; // Note: 0 because otherwise the testsuite will fail...
   }
 
   // extract arguments:
