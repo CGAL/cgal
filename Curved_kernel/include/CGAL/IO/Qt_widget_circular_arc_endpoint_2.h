@@ -26,7 +26,7 @@
 #define CGAL_IO_QT_WIDGET_CIRCULAR_ARC_ENDPOINT_2_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/Circular_arc_endpoint_2.h>
+#include <CGAL/Circular_arc_point_2.h>
 
 namespace CGAL {
 
