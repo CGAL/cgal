@@ -7,6 +7,8 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++33-3.3.4
+#makefile_i686_Linux-2.6_g++-3.4.4
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -36,16 +38,16 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-	example_arrangement_random_circles \
-	example_arrangement_random_circles_segments \
-	example_predefined_kernel_arrangement_random_circles_segments$(EXE_EXT) \
-                example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
-                example_Circular_kernel_arrangement$(EXE_EXT) \
-                example_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
-                example_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
-                example_Lazy_Circular_kernel_arrangement$(EXE_EXT) \
-                example_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
-                example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) 
+	example_arrangement_random_circles$(EXE_EXT) \
+	example_arrangement_random_circles_segments$(EXE_EXT) \
+	example_Exact_circular_kernel$(EXE_EXT) \
+        example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+        example_Circular_kernel_arrangement$(EXE_EXT) \
+        example_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
+        example_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+        example_Lazy_Circular_kernel_arrangement$(EXE_EXT) \
+        example_Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
+        example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) 
 
 example_arrangement_random_circles$(EXE_EXT): example_arrangement_random_circles$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_arrangement_random_circles example_arrangement_random_circles$(OBJ_EXT) $(LDFLAGS)
@@ -53,8 +55,8 @@ example_arrangement_random_circles$(EXE_EXT): example_arrangement_random_circles
 example_arrangement_random_circles_segments$(EXE_EXT): example_arrangement_random_circles_segments$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_arrangement_random_circles_segments example_arrangement_random_circles_segments$(OBJ_EXT) $(LDFLAGS)
 
-example_predefined_kernel_arrangement_random_circles_segments$(EXE_EXT): example_predefined_kernel_arrangement_random_circles_segments$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_predefined_kernel_arrangement_random_circles_segments example_predefined_kernel_arrangement_random_circles_segments$(OBJ_EXT) $(LDFLAGS)
+example_Exact_circular_kernel$(EXE_EXT): example_Exact_circular_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Exact_circular_kernel example_Exact_circular_kernel$(OBJ_EXT) $(LDFLAGS)
 
 example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
@@ -78,16 +80,16 @@ example_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Lazy_C
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Lazy_Circular_kernel_arrangement_Line_Circular example_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-	   example_arrangement_random_circles.clean \
-                   example_arrangement_random_circles_segments.clean \
-	example_predefined_kernel_arrangement_random_circles_segments.clean \
-	   example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
-                   example_Circular_kernel_arrangement.clean \
-                   example_Circular_kernel_arrangement_Line_arc.clean \
-                   example_Circular_kernel_arrangement_Line_Circular.clean \
-                   example_Lazy_Circular_kernel_arrangement.clean \
-                   example_Lazy_Circular_kernel_arrangement_Line_arc.clean \
-                   example_Lazy_Circular_kernel_arrangement_Line_Circular.clean 
+	example_arrangement_random_circles.clean \
+        example_arrangement_random_circles_segments.clean \
+	example_Exact_circular_kernel.clean \
+	example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
+        example_Circular_kernel_arrangement.clean \
+        example_Circular_kernel_arrangement_Line_arc.clean \
+        example_Circular_kernel_arrangement_Line_Circular.clean \
+        example_Lazy_Circular_kernel_arrangement.clean \
+        example_Lazy_Circular_kernel_arrangement_Line_arc.clean \
+        example_Lazy_Circular_kernel_arrangement_Line_Circular.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

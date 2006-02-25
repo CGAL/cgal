@@ -411,6 +411,7 @@ Curved_kernel/demo/Curved_kernel/makefile -text
 Curved_kernel/demo/Curved_kernel/planar_map_icon.xpm -text
 Curved_kernel/demo/Curved_kernel/sweeper.xpm -text
 Curved_kernel/demo/Curved_kernel/trash.xpm -text
+Curved_kernel/examples/Curved_kernel/example_Exact_circular_kernel.C -text
 Curved_kernel/test/Curved_kernel/test_Exact_curved_kernel.C -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#unset
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#unset
