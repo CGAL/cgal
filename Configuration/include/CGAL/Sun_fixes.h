@@ -24,6 +24,8 @@
 #ifndef CGAL_SUN_FIXES_H
 #define CGAL_SUN_FIXES_H 1
 
+#ifdef CGAL_CFG_SUNPRO_RWSTD
+
 //----------------------------------------------------------------------//
 //             if member templates for stdlib are not enabled           //
 //----------------------------------------------------------------------//
@@ -31,7 +33,7 @@
 /*
 
 For reasons of binary backward compatibility, Sun CC does not enable 
-member templates of the STL classes.
+member templates of the STL classes in the Rogue Wave STL.
 
 An #undef creates runtime errors for some packages, so it is not a 
 viable solution. Instead, we have to offer workarounds in CGAL
@@ -129,5 +131,7 @@ namespace CGAL {
   { return std::random_access_iterator_tag(); }
 
 } // namespace CGAL
+
+#endif // CGAL_CFG_SUNPRO_RWSTD
 
 #endif // CGAL_SUN_FIXES_H
