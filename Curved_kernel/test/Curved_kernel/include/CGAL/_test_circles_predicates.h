@@ -1,17 +1,3 @@
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Circular_kernel.h>
-#include <CGAL/Circular_arc_traits.h>
-#include <CGAL/Algebraic_kernel_2_2.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Gmpq.h>
-#include <CGAL/Curved_kernel/function_objects_polynomial_circular.h>
-#include <CGAL/Curved_kernel/Circular_arc_2.h>
-
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-
 #include <CGAL/Random.h>
 
 template <class CK>
