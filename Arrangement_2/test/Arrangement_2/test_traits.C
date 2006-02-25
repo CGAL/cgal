@@ -1,4 +1,5 @@
 #include <CGAL/basic.h>
+#include "test_configuration.h"
 
 #if (TEST_TRAITS == CORE_CONIC_TRAITS) && !defined(CGAL_USE_CORE)
 
@@ -14,7 +15,6 @@ int main ()
 
 #include <vector>
 
-#include "test_configuration.h"
 #include "test_traits.h"
 #include "Traits_test.h"
 
