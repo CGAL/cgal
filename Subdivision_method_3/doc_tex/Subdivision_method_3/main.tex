@@ -9,17 +9,6 @@
 \RCSdefDate{\subdivisionDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\newcommand\DS{Doo-Sabin}
-
-% ------------------------------------------------------------------------
-\newcommand\FIGDIR{Subdivision_method_3/FIG}
-\newcommand\IL{{\itshape left}}
-\newcommand\IR{{\itshape right}}
-\newcommand\IM{{\itshape middle}}
-\newcommand\IT{{\itshape top}}
-\newcommand\IB{{\itshape bottom}}
-% ------------------------------------------------------------------------
-
 \ccParDims
 
 \chapter{Subdivision Methods}
@@ -31,7 +20,7 @@
     \setlength{\unitlength}{1mm}
     \begin{picture}(0,0)(0.0,0.0)
       \put (78,25){% textwidth = 156mm
-          \includegraphics[width=0.5\textwidth]{\FIGDIR/teaser}
+          \includegraphics[width=0.5\textwidth]{Subdivision_method_3/FIG/teaser}
       }
     \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
 \end{ccTexOnly}
@@ -41,15 +30,14 @@
 % +------------------------------------------------------------------------+
 \section{Introduction} \label{sectionSubIntro}
 % +------------------------------------------------------------------------+
-The subdivision method is a simple yet powerful way to 
+Subdivision methods are simple yet powerful ways to 
 generate smooth surfaces from arbitrary polyhedral meshes. 
 Unlike spline-based surfaces (e.g NURBS) or other numeric-based 
 modeling techniques, users of subdivision
-surfaces do not need in-depth mathematics 
-knowledge on subdivision methods. Users only need
-natural geometric intuitions to control the subdivision 
-surface; hence subdivision methods are popular choices for
-character modeling in video games and character animations.
+methods do not need the mathematics knowledge of 
+the subdivision methods. 
+The natural intuition of the geometry suffices to control the 
+subdivision surface. 
 
 %Subdivision algorithms (see e.g.~\cite{cgal:ww-smgd-02})
 %recursively refine coarse meshes and generate ever closer 
@@ -64,18 +52,19 @@ character modeling in video games and character animations.
 %Each subdivision algorithm is a refinement function parametrized
 %by a set of rountines of geometric averageing.
 
-\ccc{Subdivision_method_3} aims to be simple to use and extend.
-It supports four most used subdivision methods, including Loop, 
-Catmull-Clark, Doo-Sabin and $\sqrt{3}$ subdivisions. Variations 
-of these methods can be easily implemented by plugging 
-in the user-defined computation rules. \ccc{Subdivision_method_3}
-is designed to work on \ccc{CGAL::Polyhedron_3} 
-(see Chapter~\ref{chapterPolyhedron}), 
-
+\ccc{Subdivision_method_3}, designed to work on the class 
+\ccc{CGAL::Polyhedron_3}, aims to be easy to use and to extend.
+%(see Chapter~\ref{chapterPolyhedron})
+\ccc{Subdivision_method_3} is not a class, but a namespace 
+which contains four popular subdivision methods and their refinemnt
+hosts. These four include Catmull-Clark, Loop, Doo-Sabin and 
+$\sqrt{3}$ subdivisions. Variations of these methods can be easily 
+extended by substituting the geometry computation of the refinement
+host.
 
 \begin{ccHtmlOnly}
      <CENTER>
-         <img src="./FIG/teaser.jpg" alt="Catmul-Clark subdivision"><P>
+         <img src="FIG/teaser.jpg" alt="Catmul-Clark subdivision"><P>
      </CENTER>
 \end{ccHtmlOnly}
 
@@ -126,14 +115,14 @@ indicates the speed of the topological converging.
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.6\textwidth}{%
-      \includegraphics[width=0.6\textwidth]{\FIGDIR/RefSchemes}%
+      \includegraphics[width=0.6\textwidth]{Subdivision_method_3/FIG/RefSchemes}%
     }\\ \vspace{0.5cm}
   \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
   <CENTER>
-     <img src="./FIG/RefSchemes.gif" alt="Refinement Hosts"><P>
+     <img src="FIG/RefSchemes.gif" alt="Refinement Hosts"><P>
   </CENTER>
 \end{ccHtmlOnly}
 
@@ -162,14 +151,14 @@ in red.
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.5\textwidth}{%
-      \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil}%
+      \includegraphics[width=0.5\textwidth]{Subdivision_method_3/FIG/PQQStencil}%
     }\\ \vspace{0.5cm}
   \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
   <CENTER>
-     <img src="./FIG/PQQStencil.gif" alt="Stencils of PQQ scheme "><P>
+     <img src="FIG/PQQStencil.gif" alt="Stencils of PQQ scheme "><P>
   </CENTER>
 \end{ccHtmlOnly}
 
@@ -188,14 +177,14 @@ below (masks for extraordinary vertices are not shown).
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.4\textwidth}{%
-      \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask}%
+      \includegraphics[width=0.4\textwidth]{Subdivision_method_3/FIG/cc_mask}%
     } \\ \vspace{0.5cm}
   \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
   <CENTER>
-     <img src="./FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"><P>
+     <img src="FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"><P>
   </CENTER>
 \end{ccHtmlOnly}
 
@@ -486,13 +475,13 @@ the input polyhedron, and assigns new points by the geometry masks.
 primal quadrilateral quadrisection (PQQ), 
 primal triangle quadrisection (PTQ), dual quadrilateral 
 quadrisection (DQQ) and $\sqrt{3}$ triangulation.
-They are respectively used by Catmull-Clark, Loop, \DS\ and $\sqrt{3}$ 
+They are respectively used by Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ 
 subdivision. 
 
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.6\textwidth}{%
-      \includegraphics[width=0.6\textwidth]{\FIGDIR/RefSchemes}%
+      \includegraphics[width=0.6\textwidth]{Subdivision_method_3/FIG/RefSchemes}%
     }\\ \vspace{0.5cm}
 %    \ccc{Subdivision_method_3} supports hosts of these four refinement 
 %    schemes that are demonstrated on a valence-n submesh.
@@ -502,7 +491,7 @@ subdivision.
 
 \begin{ccHtmlOnly}
   <CENTER>
-     <img src="./FIG/RefSchemes.gif" alt="Refinement Hosts"><P>
+     <img src="FIG/RefSchemes.gif" alt="Refinement Hosts"><P>
   </CENTER>
 \end{ccHtmlOnly}
 
@@ -589,13 +578,13 @@ based on the neighbors and the mask (i.e.~the stencil weights).
 \begin{ccTexOnly}
   \begin{center}
     \parbox{0.4\textwidth}{%
-      \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask}%
+      \includegraphics[width=0.4\textwidth]{Subdivision_method_3/FIG/cc_mask}%
     } \\ \vspace{0.5cm}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <CENTER>
-     <img src="./FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"><P>
+     <img src="FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"><P>
   </CENTER>
 \end{ccHtmlOnly}
 
@@ -649,7 +638,7 @@ the edge.
 %% \begin{ccTexOnly}
 %%   \begin{center}
 %%     \parbox{0.5\textwidth}{%
-%%       \includegraphics[width=0.5\textwidth]{\FIGDIR/PQQStencil}%
+%%       \includegraphics[width=0.5\textwidth]{Subdivision_method_3/FIG/PQQStencil}%
 %%     }
 %%   \end{center}
 %% \end{ccTexOnly}
@@ -753,15 +742,15 @@ interfaces.
 %\begin{ccTexOnly}
 %  \begin{center}
 %    \parbox{0.4\textwidth}{%
-%      \includegraphics[width=0.4\textwidth]{\FIGDIR/cc_mask}%
+%      \includegraphics[width=0.4\textwidth]{Subdivision_method_3/FIG/cc_mask}%
 %    }
 %  \end{center}
 %\end{ccTexOnly}
 
 %\begin{ccHtmlOnly}
 %  <CENTER>
-%  <A HREF="./FIG/cc_mask.gif">
-%     <img src="./FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"></A><P>
+%  <A HREF="FIG/cc_mask.gif">
+%     <img src="FIG/cc_mask.gif" alt="Catmull-Clark geometry stencil"></A><P>
 %  </CENTER>
 %\end{ccHtmlOnly}
 
@@ -802,7 +791,7 @@ namespace Subdivision_method_3 {
 }
 \end{ccExampleCode}
 
-The following example demonstrates the use of the \DS\ subdivision 
+The following example demonstrates the use of Doo-Sabin subdivision 
 on a polyhedral mesh.
 \ccIncludeExampleCode{Subdivision_method_3/DooSabin_subdivision.C}
 
