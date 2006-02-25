@@ -38,8 +38,6 @@ all:            \
 		demo_line$(EXE_EXT) \
 		demo_line_circle$(EXE_EXT)\
 		demo_Lazy_line_circle$(EXE_EXT)
-#                demo_conic$(EXE_EXT) 
-#                demo_elias$(EXE_EXT)
 
 demo.moc: demo.C
 	${QT_MOC} -o demo.moc $<
@@ -83,6 +81,7 @@ Qt_widget_get_arc$(OBJ_EXT): Qt_widget_get_arc.C Qt_widget_get_arc.moc
 
 Qt_widget_get_segment$(OBJ_EXT): Qt_widget_get_segment.C Qt_widget_get_segment.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_get_segment.C
+
 
 clean: \
                 demo.clean \
