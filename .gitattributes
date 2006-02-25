@@ -407,6 +407,7 @@ Curved_kernel/demo/Curved_kernel/help/planar_map_icon.jpeg -text svneol=unset#un
 Curved_kernel/demo/Curved_kernel/help/sweeper.jpeg -text svneol=unset#unset
 Curved_kernel/demo/Curved_kernel/help/trash.jpeg -text svneol=unset#unset
 Curved_kernel/demo/Curved_kernel/lines_icon.xpm -text
+Curved_kernel/demo/Curved_kernel/makefile -text
 Curved_kernel/demo/Curved_kernel/planar_map_icon.xpm -text
 Curved_kernel/demo/Curved_kernel/sweeper.xpm -text
 Curved_kernel/demo/Curved_kernel/trash.xpm -text
