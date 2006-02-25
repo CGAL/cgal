@@ -4,6 +4,7 @@
 #include <CGAL/basic.h>
 #include <iostream>
 #include <cassert>
+#include <cstdlib>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Random.h>
 #include <CGAL/Quotient.h>
@@ -153,7 +154,7 @@ int main(int argc, char **argv)
     // std::cout << CGAL::to_double(MPF(d)) << std::endl;
     if (CGAL::to_double(MPF(d)) != (double) d) {
       std::cerr << "CONVERSION ERROR with float : " << d << std::endl;
-      abort();
+      std::abort();
     }
   }
 
@@ -167,7 +168,7 @@ int main(int argc, char **argv)
     // std::cout << CGAL::to_double(MPF(d)) << std::endl;
     if (CGAL::to_double(MPF(d)) != d) {
       std::cerr << "CONVERSION ERROR with double : " << d << std::endl;
-      abort();
+      std::abort();
     }
   }
 
@@ -186,7 +187,7 @@ int main(int argc, char **argv)
     std::pair<double, double> ia = CGAL::to_interval(res);
     if ( MPF(ia.first) > res || MPF(ia.second) < res) {
       std::cerr << "CONVERSION ERROR with long double : " << d << std::endl;
-      abort();
+      std::abort();
     }
   }
 

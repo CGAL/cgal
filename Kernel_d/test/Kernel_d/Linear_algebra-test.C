@@ -4,6 +4,7 @@
 #include <CGAL/random_selection.h>
 #include <CGAL/test_macros.h>
 #include <CGAL/double.h>
+#include <cstdlib>
 #define VEC_DIM 10
 #define MAT_DIM 10
 
@@ -46,7 +47,7 @@ int main(int argc, char* argv[])
     bool IOTEST = true;
     { 
       int vec_dim;
-      if (argc == 2) vec_dim = atoi(argv[1]);
+      if (argc == 2) vec_dim = std::atoi(argv[1]);
       else           vec_dim = VEC_DIM;
 
       /* some construction and access ops */
@@ -85,7 +86,7 @@ int main(int argc, char* argv[])
 
     { 
       int mat_dim;
-      if (argc == 2) mat_dim = atoi(argv[1]);
+      if (argc == 2) mat_dim = std::atoi(argv[1]);
       else           mat_dim = MAT_DIM;
 
       /* some construction and access ops */
@@ -241,7 +242,7 @@ int main(int argc, char* argv[])
     bool IOTEST = false;
     { 
       int vec_dim;
-      if (argc == 2) vec_dim = atoi(argv[1]);
+      if (argc == 2) vec_dim = std::atoi(argv[1]);
       else           vec_dim = VEC_DIM;
 
       /* some construction and access ops */
@@ -282,7 +283,7 @@ int main(int argc, char* argv[])
 
     { 
       int mat_dim;
-      if (argc == 2) mat_dim = atoi(argv[1]);
+      if (argc == 2) mat_dim = std::atoi(argv[1]);
       else           mat_dim = MAT_DIM;
 
       /* some construction and access ops */

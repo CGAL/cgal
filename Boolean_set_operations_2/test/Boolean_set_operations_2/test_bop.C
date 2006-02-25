@@ -4,6 +4,7 @@
 #include <CGAL/Gps_segment_traits_2.h>
 #include <vector>
 #include <iostream>
+#include <cstdlib>
 
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Gps_traits_2.h>
@@ -416,7 +417,7 @@ int main(int argc, char **argv)
   if(argc < 2)
   {
     std::cerr<<"Missing input file\n";
-    exit (-1);
+    std::exit (-1);
   }
 
   int success = 0;

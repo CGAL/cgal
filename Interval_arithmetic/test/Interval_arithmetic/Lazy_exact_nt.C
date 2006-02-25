@@ -3,6 +3,7 @@
 #include <CGAL/Cartesian.h>
 #include <iostream>
 #include <cassert>
+#include <cstdlib>
 
 #include <CGAL/Random.h>
 #include <CGAL/Lazy_exact_nt.h>
@@ -22,7 +23,7 @@ typedef CGAL::Quotient<CGAL::MP_Float> Exact_NT; // doesn't do exact sqrt()
 namespace CGAL {
 Exact_NT sqrt(const Exact_NT &)
 {
-  abort();
+  std::abort();
   return Exact_NT();
 }
 }

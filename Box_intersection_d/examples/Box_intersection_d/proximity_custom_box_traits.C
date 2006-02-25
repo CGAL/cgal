@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <cmath>
 
 typedef CGAL::Simple_cartesian<float>             Kernel;
 typedef Kernel::Point_3                           Point_3;
@@ -36,7 +37,7 @@ struct Traits {
 
 // callback function reports pairs in close proximity
 void report( const Point_3* a, const Point_3* b) {
-    float dist = sqrt( CGAL::squared_distance( *a, *b));
+    float dist = std::sqrt( CGAL::squared_distance( *a, *b));
     if ( dist < 2*eps) {
         std::cout << "Point " << (a - &(points.front())) << " and Point "
                   << (b - &(points.front())) << " have distance " << dist

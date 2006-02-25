@@ -35,7 +35,7 @@ struct Util {
     }
     
     static void fill_boxes( unsigned int n, Box_container& boxes ) {
-        NT maxEdgeLength = (NT) pow(n, (DIM-1.0)/DIM);
+        NT maxEdgeLength = (NT) std::pow(n, (DIM-1.0)/DIM);
     
         for( unsigned int i = 0; i < n; ++i ) {
             NT lo[DIM], max[DIM];

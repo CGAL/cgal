@@ -30,6 +30,7 @@ Matthias
 #include <CGAL/Interval_nt.h>
 
 #include <iostream>
+#include <cstdlib>
 
 typedef CGAL::Interval_nt_advanced NT;
 typedef CGAL::Simple_cartesian<NT> K;
@@ -49,7 +50,7 @@ int main()
 
   if (bs != CGAL::ON_BOUNDARY) {
     std::cout << "BUG !  " << (int) bs << std::endl;
-    abort();
+    std::abort();
   }
 
   std::cout << p0 << std::endl;

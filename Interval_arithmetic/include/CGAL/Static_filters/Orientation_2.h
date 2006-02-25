@@ -27,6 +27,8 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Static_filter_error.h>
 
+#include <cmath>
+
 CGAL_BEGIN_NAMESPACE
 
 template < typename K_base >
@@ -81,10 +83,10 @@ public:
                                          prx, pry);
 
           // Then semi-static filter.
-          double maxx = fabs(pqx);
-          if (maxx < fabs(prx)) maxx = fabs(prx);
-          double maxy = fabs(pqy);
-          if (maxy < fabs(pry)) maxy = fabs(pry);
+          double maxx = std::fabs(pqx);
+          if (maxx < std::fabs(prx)) maxx = std::fabs(prx);
+          double maxy = std::fabs(pqy);
+          if (maxy < std::fabs(pry)) maxy = std::fabs(pry);
           double eps = 8.8872057372592798e-16 * maxx * maxy;
 
           // Sort them

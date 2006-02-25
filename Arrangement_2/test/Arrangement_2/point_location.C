@@ -6,6 +6,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Timer.h>
+#include <cstdlib>
 
 #ifdef SEGMENTS
 #include <CGAL/Gmpq.h>
@@ -483,7 +484,7 @@ int main (int argc, char * argv[])
     std::cout << "Usage: " << argv[0] <<" curve_file pnt_file" << std::endl;
     std::cout << "curve_file  - the input curves file" << std::endl;
     std::cout << "pnt_file    - the input query points" << std::endl;
-    exit(-1);
+    std::exit(-1);
   }
   int success = 0;
   for(int i=1; i<argc; i+=2)

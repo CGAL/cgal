@@ -147,10 +147,10 @@ main(int argc, char* argv[])
   int random_seed;
 
   // handle command line arguments:
-  if (argc < 2 || (number_of_points = atoi(argv[1])) <= 0) {
+  if (argc < 2 || (number_of_points = std::atoi(argv[1])) <= 0) {
     cerr << "usage: " << argv[0]
          << " num [random_seed]" << endl;
-    exit(1);
+    std::exit(1);
   }
   if (argc < 3) {
 
@@ -162,7 +162,7 @@ main(int argc, char* argv[])
     random_seed = default_random.get_int(0, (1 << 30));
   }
   else
-    random_seed = atoi(argv[2]);
+    random_seed = std::atoi(argv[2]);
 
   // define random source:
   Random rnd(random_seed);

@@ -26,6 +26,7 @@
 #include <iostream>
 #include <iterator>
 #include <fstream>
+#include <cstdlib>
 
 #include "util.h"
 
@@ -114,7 +115,7 @@ test_n( unsigned int n, std::ostream& outfile )
         if( stream_counter != scan_counter ) {
             std::cout << "!! different number of intersections! got "
                       << stream_counter << "intersections!" << std::endl;
-            exit(-1);
+            std::exit(-1);
         }
         std::cout << "cutoff = " << cutoff << " -> t = " << time << std::endl;
         if( last_time < time || time < 1e-4) {

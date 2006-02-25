@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cstdlib>
 
 typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>              NT;
 typedef CGAL::Cartesian<NT>                          Kernel;
@@ -47,10 +48,10 @@ int main (int argc, char **argv)
 
   if (argc >= 3)
   {
-    simplify = (atoi (argv[2]) != 0);
+    simplify = (std::atoi (argv[2]) != 0);
 
     if (argc >= 4)
-      group_size = atoi (argv[3]);
+      group_size = std::atoi (argv[3]);
 
     if (group_size <= 0)
     {

@@ -26,6 +26,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -177,12 +178,12 @@ int main(int argc, char* argv[])
     std::cout << "       which=4 LEDA integer homogeneous\n" ;
     std::cout << "       which=8 GNU mpz homogeneous\n" ;
     std::cout << "       which=16 LEDA real cartesian\n" ;
-    exit(1);
+    std::exit(1);
   }
-  if (argc > 1) which = atoi(argv[1]);
-  if (argc > 2) d = atoi(argv[2]);
-  if (argc > 3) n = atoi(argv[3]);
-  if (argc > 4) range = atoi(argv[4]);
+  if (argc > 1) which = std::atoi(argv[1]);
+  if (argc > 2) d = std::atoi(argv[2]);
+  if (argc > 3) n = std::atoi(argv[3]);
+  if (argc > 4) range = std::atoi(argv[4]);
   p_table_file = new std::ofstream(
     (std::string(argv[0])+".rts").c_str(), std::ios::app);
 
@@ -191,7 +192,7 @@ int main(int argc, char* argv[])
     create(V,n,d);
     random_d_tuples_in_range(V,n,d,-range,range);
     print_to_file(V,n,d,std::string(argv[0])+".ch");
-    exit(0);
+    std::exit(0);
   } else {
     read_from_file(V,n,d,std::string(argv[0])+".ch");
   }

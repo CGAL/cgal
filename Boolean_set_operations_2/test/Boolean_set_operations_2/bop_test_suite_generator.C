@@ -11,6 +11,7 @@
 #include <iterator>
 #include <algorithm>
 #include <CGAL/iterator.h>
+#include <cstdlib>
 
 
 typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
@@ -142,7 +143,7 @@ int main(int argc, char **argv)
   if(!inp1.is_open() || !inp2.is_open())
   {
     std::cerr<<"Failed to open file"<<std::endl;
-    exit(-1);
+    std::exit(-1);
   }
 
   std::ifstream test (argv[3]);
@@ -158,7 +159,7 @@ int main(int argc, char **argv)
   if(!out.is_open())
   {
     std::cerr<<"Failed to create output file"<<std::endl;
-    exit(-1);
+    std::exit(-1);
   }
 
   Traits_2 tr;

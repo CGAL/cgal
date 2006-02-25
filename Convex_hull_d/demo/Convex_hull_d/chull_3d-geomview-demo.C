@@ -29,6 +29,7 @@
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 #if !defined(__BORLANDC__) && !defined(_MSC_VER)
 
@@ -60,9 +61,9 @@ int main(int argc, char* argv[]) {
   int n = 100; 
   if (argc > 1 && std::string(argv[1])=="-h") {
     std::cout << "usage: ch5-demo [#points]\n";
-    exit(1);
+    std::exit(1);
   }
-  if (argc > 1) n = atoi(argv[1]);
+  if (argc > 1) n = std::atoi(argv[1]);
  
   int r = 2*n;
   CGAL::Geomview_stream gv(CGAL::Bbox_3(-r, -r, -r, r, r, r));

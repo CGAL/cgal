@@ -26,6 +26,8 @@
 
 #include <CGAL/Number_type_traits.h>
 
+#include <cmath>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Rational>
@@ -45,7 +47,7 @@ to_rational(double x)
       const int maxiter = 20;      // ought not be necessary, but just in
                                    // case, max 300 bits of precision
       int expt;
-      double mantissa = frexp(x, &expt);
+      double mantissa = std::frexp(x, &expt);
       long exponent = expt;
       double intpart;
       int k = 0;
