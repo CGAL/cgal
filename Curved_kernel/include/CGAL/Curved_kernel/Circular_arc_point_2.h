@@ -49,32 +49,39 @@ namespace CGALi {
     typedef typename CK::FT                      FT;
     typedef typename CK::Root_of_2               Root_of_2;
     typedef typename CK::Point_2                 Point_2;
-
+    
   public: // fixme ?
-
     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
     
-    Circular_arc_point_2() {}
-
+    Circular_arc_point_2() 
+    {}
+    
     Circular_arc_point_2(const Root_for_circles_2_2 & np)
-      :  _p(np){}
+      :  _p(np)
+    {}
 
     Circular_arc_point_2(const Point_2 & p)
-      :  _p(p.x(),p.y()){}
+      :  _p(p.x(),p.y())
+    {}
 
-    const Root_of_2 & x() const { return _p.x(); }
-    const Root_of_2 & y() const { return _p.y(); }
-
+    const Root_of_2 & x() const 
+    { return _p.x(); }
+    
+    const Root_of_2 & y() const 
+    { return _p.y(); }
+    
     CGAL::Bbox_2 bbox() const
     {
-       std::pair<double,double> ix=to_interval(x()),
-                                iy=to_interval(y());
+      std::pair<double,double> 
+	ix=to_interval(x()),
+	iy=to_interval(y());
 
-        return CGAL::Bbox_2(ix.first,iy.first,
-                      ix.second,iy.second);
+      return CGAL::Bbox_2(ix.first,iy.first,
+			  ix.second,iy.second);
     }
 
-    const Root_for_circles_2_2 & coordinates() const { return _p; }
+    const Root_for_circles_2_2 & coordinates() const 
+    { return _p; }
 
   private:
     Root_for_circles_2_2 _p;
@@ -97,11 +104,11 @@ namespace CGALi {
 /*     return is; */
 /*   } */
 
- template < typename CK >
+  template < typename CK >
   std::ostream &
   print(std::ostream & os, const Circular_arc_point_2<CK> &p)
   {
-   return os << "CirclArcEndPoint_2(" << p.id() << std::endl
+    return os << "CirclArcEndPoint_2(" << p.id() << std::endl
 	      << p.x() << ", " << p.y() << ')';
   }
 

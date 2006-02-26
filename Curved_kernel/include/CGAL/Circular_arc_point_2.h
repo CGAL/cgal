@@ -32,20 +32,20 @@ class Circular_arc_point_2
   : public CircularKernel::Kernel_base::Circular_arc_point_2
 {
   typedef typename CircularKernel::Kernel_base::Circular_arc_point_2 
-                                           RCircular_arc_point_2;
-  typedef typename CircularKernel::Point_2                  Point_2;
-  typedef typename CircularKernel::Circle_2                  Circle_2;
+                                               RCircular_arc_point_2;
+  typedef typename CircularKernel::Point_2     Point_2;
+  typedef typename CircularKernel::Circle_2    Circle_2;
 
-  typedef typename CircularKernel::Root_of_2               Root_of_2;
+  typedef typename CircularKernel::Root_of_2   Root_of_2;
 
 public:
   typedef typename CircularKernel::Root_for_circles_2_2 
-    Root_for_circles_2_2;
-  typedef CircularKernel   R; 
-  typedef RCircular_arc_point_2 Rep;
+                                               Root_for_circles_2_2;
+  typedef CircularKernel                       R; 
+  typedef RCircular_arc_point_2                Rep;
   
 
- const Rep& rep() const
+  const Rep& rep() const
   {
     return *this;
   }
@@ -56,68 +56,70 @@ public:
   }
 
   Circular_arc_point_2()
-    : RCircular_arc_point_2(
-      typename R::Construct_circular_arc_point_2()())
-      {}
+    : RCircular_arc_point_2(typename R::Construct_circular_arc_point_2()())
+  {}
 
 
   Circular_arc_point_2(const Root_for_circles_2_2 & np)
-    : RCircular_arc_point_2(
-      typename R::Construct_circular_arc_point_2()(np))
-      {}
+    : RCircular_arc_point_2(typename R::Construct_circular_arc_point_2()(np))
+  {}
 
   Circular_arc_point_2(const RCircular_arc_point_2 & p)
     : RCircular_arc_point_2(p)
-      {}
+  {}
       
   Circular_arc_point_2(const Point_2 & p)
-    : RCircular_arc_point_2(
-      typename R::Construct_circular_arc_point_2()(p))
-      {}
+    : RCircular_arc_point_2(typename R::Construct_circular_arc_point_2()(p))
+  {}
       
   typename Qualified_result_of
   <typename R::Compute_Circular_x_2,Circular_arc_point_2>::type
   //const Root_of_2 &
   x() const
-    { return typename R::Compute_Circular_x_2()(*this);}
+  { 
+    return typename R::Compute_Circular_x_2()(*this); 
+  }
 
   typename Qualified_result_of
   <typename R::Compute_Circular_y_2,Circular_arc_point_2>::type
   //const Root_of_2 &
   y() const
-    { return typename R::Compute_Circular_y_2()(*this);}
+  { 
+    return typename R::Compute_Circular_y_2()(*this); 
+  }
 
   Bbox_2  bbox() const
-    { return typename R::Construct_bbox_2()(*this);}
-
+  { 
+    return typename R::Construct_bbox_2()(*this); 
+  }
 
 };
 
-template < typename CircularKernel >
-inline
-bool
-operator==(const Circular_arc_point_2<CircularKernel> &p,
-           const Circular_arc_point_2<CircularKernel> &q)
-{
-  return CircularKernel().equal_2_object()(p, q);
-}
-
-template < typename CircularKernel >
-inline
-bool
-operator!=(const Circular_arc_point_2<CircularKernel> &p,
-           const Circular_arc_point_2<CircularKernel> &q)
-{
-  return ! (p == q);
-}
-
+  template < typename CircularKernel >
+  inline
+  bool
+  operator==(const Circular_arc_point_2<CircularKernel> &p,
+	     const Circular_arc_point_2<CircularKernel> &q)
+  {
+    return CircularKernel().equal_2_object()(p, q);
+  }
+  
+  template < typename CircularKernel >
+  inline
+  bool
+  operator!=(const Circular_arc_point_2<CircularKernel> &p,
+	     const Circular_arc_point_2<CircularKernel> &q)
+  {
+    return ! (p == q);
+  }
+  
   template < typename CK >
   std::istream &
   operator>>(std::istream & is, Circular_arc_point_2<CK> &p)
   {
     typedef typename CK::Root_of_2               Root_of_2;
     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
-
+    
     Root_for_circles_2_2 r;
     is >> r;
     if(is)
@@ -125,14 +127,13 @@ operator!=(const Circular_arc_point_2<CircularKernel> &p,
     return is;
   }
 
-template < class CK >
-std::ostream&
-operator<<(std::ostream &os, const Circular_arc_point_2<CK> &p)
-{
-  //I can make it because I know the output format of Root_for_circle
+  template < class CK >
+  std::ostream&
+  operator<<(std::ostream &os, const Circular_arc_point_2<CK> &p)
+  {
     return os << p.x() << " " << p.y() << " ";
-}
-
+  }
+  
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_ARC_POINT_2_H
