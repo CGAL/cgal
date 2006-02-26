@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_divide_and_conquer_3.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -23,13 +23,13 @@
 #define CGAL_ENVELOPE_SAVE_COMPARISONS
 #define CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 
-#include "CGAL/Envelope_base.h"
+#include <CGAL/Envelope_base.h>
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Overlay_2.h>
-#include "CGAL/Envelope_element_visitor_3.h"
-#include "CGAL/No_vertical_decomposition_2.h"
+#include <CGAL/Envelope_element_visitor_3.h>
+#include <CGAL/No_vertical_decomposition_2.h>
 #include <CGAL/Timer.h>
 #include <CGAL/set_dividors.h>
 
@@ -56,11 +56,11 @@
 //   of all surfaces
 // - foreach edge, do the same, using the Resolver class. an edge can split to
 //   a constant number of parts, each with its own envelope data.
-// - do a decomposition (vertical / partial or other) to make faces with no
-//   holes
+// - possibly do a decomposition (vertical / partial or other) to make faces
+//   with no holes
 // - foreach face, do the same as for edges, using the Resolver class.
-//   a face can split to a constant number of sub-faces, each with its own
-//   envelope data.
+//   a face can split to a number of sub-faces that are linear with the face's
+//   size, each with its own envelope data.
 // - remove edges between faces with the same envelope data, which do not
 //   contribute to the shape of the envelope (i.e. have the same envelope data
 //   as their adjacent faces)
@@ -70,77 +70,39 @@
 //   b. isolated vertices which have the same envelope data as their incident
 //      face
 
-// Algorithm complexity:
-// T(n) = 2*T(n/2) + M(n), M(n) is the complexity of the merge step
-// T(1) = O(1) since we assume the projected boundary is composed of constant
-//             number of curves, and we get a const diagram.
-// M(n) = overlay + resolve + remove
-// overlay: O(n^(2+e))
-// remove: the pass is linear in diagram size (after overlay & resolve),
-//         i.e. O(n^(2+e)), but the check of equality can be linear with the
-//         ammount of surfaces (?)
-// resolve: vertex is constant
-// edge:    is constant since we have only const number of intersections
-//          between surfaces and curves
-// face:    copy step - linear in face size
-//          zone step - sub linear in the face's size? (do the holes destroy?)
-//          compare step - we have const number of sub-faces, and we conclude
-//                         for boundary so we get linear comlexity (by size of
-//                         face)
-
-
-// TODO: maybe it is better not do a decomposition at all, but the Resolver 
-//       will support holes inside the face?
-//       does it spoil the complexity of the algorithm?
-//       should be careful with holes inside holes inside holes etc. 
-
 // the algorithm deals with some degenerate input including:
 // 1. more than one surface on faces, edges, vertices
-
-
 //    (the minimization diagram should also support this)
 // 2. all degenerate cases in 2d (the minimization diagram model is
 //    responsible for)
-
-// the algorithm doesn't deal with:
-// 1. vertical edges in the envelope (the naive vertical decomposition doesn't
-//    support this)
 
 // some degenerate cases in the responsibility of the geometric traits
 // 1. overlapping surfaces
 // 2. a vertical surface that contributes only edge (or edges) to the envelope
 
-
-
-
-
 //#define CGAL_DEBUG_ENVELOPE_DEQ_3
 //#define CGAL_BENCH_ENVELOPE_DAC
 
-
 CGAL_BEGIN_NAMESPACE
 
-// The algorithm has 4 template parameters:
+// The algorithm has 5 template parameters:
 // 1. EnvelopeTraits_3        - the geometric traits class
-// 2. MinimizationDiagram_2   - the type of the output, which is a planar map
+// 2. MinimizationDiagram_2   - the type of the output, which is an arrangement
 //                              with additional information (list of surfaces)
 //                              in vertices, edges & faces
 // 3. VerticalDecomposition_2 - a vertical decomposition for 2D
 //                              MinimizationDiagram_2 so that we can switch
 //                              from partial/full/other/none decomposition.
 // 4. EnvelopeResolver_3      - part of the algorithm that solves the shape of
-//                              the envelope between 2 surfaces over an edge or
-//                              a face we might use the default Envelope_general_resolver
-//                              (which works for general surfaces)
-//                              or create specific resolver for specific geometry if it can be
-//                              more efficient
-// 5. Overlay_2               - overlay 2 MinimizationDiagram_2 (to be removed)
+//                              the envelope between 2 surfaces over a feature
+//                              of the arrangement
+// 5. Overlay_2               - overlay of 2 MinimizationDiagram_2
 template <class EnvelopeTraits_3, class MinimizationDiagram_2,
           class VerticalDecomposition_2 = No_vertical_decomposition_2<MinimizationDiagram_2>,
           class EnvelopeResolver_3 =
                 Envelope_element_visitor_3<EnvelopeTraits_3, MinimizationDiagram_2>,
           class Overlay_2 = Envelope_overlay_2<MinimizationDiagram_2> >
-class Envelope_divide_and_conquer_3 : public Envelope_base_3<EnvelopeTraits_3>
+class Envelope_divide_and_conquer_3
 {
 public:
   typedef EnvelopeTraits_3                                          Traits;
@@ -158,7 +120,6 @@ public:
 
   typedef Envelope_divide_and_conquer_3<Traits, Minimization_diagram_2,
                                         Vertical_decomposition_2,
-
                                         EnvelopeResolver_3,
                                         Overlay_2>                  Self;
 
@@ -171,7 +132,7 @@ protected:
   typedef typename Minimization_diagram_2::Face_iterator            Face_iterator;
   typedef typename Minimization_diagram_2::Vertex_handle            Vertex_handle;
   typedef typename Minimization_diagram_2::Vertex_iterator          Vertex_iterator;
-  typedef typename Minimization_diagram_2::Hole_iterator           Hole_iterator;
+  typedef typename Minimization_diagram_2::Hole_iterator            Hole_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
 	typedef typename Minimization_diagram_2::Halfedge_around_vertex_circulator
                                                                     Halfedge_around_vertex_circulator;
@@ -188,7 +149,6 @@ public:
   Envelope_divide_and_conquer_3()
   {    
     // Allocate the traits.
-
     traits = new Traits;
     own_traits = true;
 
@@ -210,7 +170,6 @@ public:
   virtual ~Envelope_divide_and_conquer_3()
   {
     // Free the traits object, if necessary.
-
     if (own_traits)
       delete traits;
 
@@ -227,6 +186,7 @@ public:
     construct_lu_envelope(begin, end, result, dividor);
   }
     
+
   // compute the envelope of surfaces in 3D using the given set dividor
   template <class SurfaceIterator, class SetDividor>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end, 
@@ -245,6 +205,7 @@ public:
     init_stats();
 
     envelope_timer.start();
+
     // make the general surfaces xy-monotone
     std::list<Xy_monotone_surface_3> xy_monotones;
     for(; begin != end; ++begin)
@@ -279,8 +240,6 @@ public:
 
   void reset()
   {
-    // reset caches
-
     resolver->reset();
     // reset statistical measures
     init_stats();
@@ -293,16 +252,15 @@ public:
               << '\t';
     if (decompose_timer.time() > 0)
       std::cout << decompose_timer.time() << '\t';
-    resolver->print_bench();
   }
 
   void print_bench_header() const
   {
     std::cout << "extra features"
               << '\t';
+
     if (decompose_timer.time() > 0)
       std::cout << "decomposition time" << '\t';
-    resolver->print_bench_header();
   }
   
 protected:
@@ -320,6 +278,7 @@ protected:
     }
 
     SurfaceIterator first = begin++;
+
     if (begin == end)
     {
       // only one surface is in the collection. insert it the result
@@ -355,7 +314,6 @@ protected:
     sum_num_edges += result.number_of_edges();
     sum_num_faces += result.number_of_faces();
 
-    resolver->reset_cache();    
     result1.clear();
     result2.clear();
     
@@ -382,7 +340,6 @@ protected:
     // todo: should we do incremental/aggregate insert?
     //  insert(result, boundary_curves.begin(), boundary_curves.end());
     
-
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "inserted one surface to result" << std::endl;
       std::cout << "number of faces in result: " << result.number_of_faces() << std::endl;
@@ -402,6 +359,7 @@ protected:
       // unbounded face has no data
       ccb_he->set_is_equal_data_in_face(false);
       ccb_he->set_has_equal_data_in_face(false);
+      ccb_he->set_has_equal_data_in_target_and_face(false);
       
       Face_handle face = ccb_he->twin()->face();
       if (face->is_unbounded())
@@ -409,11 +367,13 @@ protected:
       face->set_data(surf);
       // update the is/has equal_data_in_face in all the halfedges of the face's
       // boundary to true
+  	  // and also target-face has_equal flag to true
       Ccb_halfedge_circulator face_hec = face->outer_ccb();
       Ccb_halfedge_circulator face_hec_begin = face_hec;
       do {
         face_hec->set_is_equal_data_in_face(true);
         face_hec->set_has_equal_data_in_face(true);
+        face_hec->set_has_equal_data_in_target_and_face(true);
 
         ++face_hec;
       } while(face_hec != face_hec_begin);
@@ -425,10 +385,10 @@ protected:
         do {
           face_hec->set_is_equal_data_in_face(true);
           face_hec->set_has_equal_data_in_face(true);
+          face_hec->set_has_equal_data_in_target_and_face(true);
           ++face_hec;
         } while(face_hec != face_hec_begin);
       }
-      
     }
     
     // update other faces to indicate that no surface is over them
@@ -449,6 +409,7 @@ protected:
           do {
             face_hec->set_is_equal_data_in_face(false);
             face_hec->set_has_equal_data_in_face(false);
+            face_hec->set_has_equal_data_in_target_and_face(false);
             ++face_hec;
           } while(face_hec != face_hec_begin);
         }
@@ -459,16 +420,13 @@ protected:
           do {
             face_hec->set_is_equal_data_in_face(false);
             face_hec->set_has_equal_data_in_face(false);
+            face_hec->set_has_equal_data_in_target_and_face(false);
             ++face_hec;
           } while(face_hec != face_hec_begin);
         }
       }
     }
     uface->set_no_data();
-
-//    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-//      std::cout << "after updating face data" << std::endl;
-//    #endif
 
     // update information in all the edges & vertices to indicate that
     // this surface is the envelope
@@ -500,14 +458,12 @@ protected:
 
 	  CGAL_assertion(verify_flags(result));
 
-
     // some statistics
     sum_num_vertices += result.number_of_vertices();
     sum_num_edges += result.number_of_edges();
     sum_num_faces += result.number_of_faces();
 
     one_surface_timer.stop();
-
   }
 
 public:
@@ -526,8 +482,6 @@ public:
 
     CGAL_assertion_msg(is_valid(result), "after overlay result is not valid");
 
-    
-
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "after overlay, print faces: " << std::endl;
       overlay.print_faces(result);
@@ -537,7 +491,6 @@ public:
                 << result.number_of_edges() << std::endl;
       std::cout << "after overlay, number of faces: "
                 << result.number_of_faces() << std::endl;
-      
     #endif
        
     // make sure the aux flags are correctly set by the overlay
@@ -546,12 +499,10 @@ public:
     // for each face, edge and vertex in the result, should calculate
     // which surfaces are on the envelope
     // a face can be cut, or faces can be merged.
-
    
     // now the minimization diagram might change - we need to keep data in the
     // edges, when they're split
     Keep_edge_data_observer edge_observer(result, this);
-    
 
     // compute the surface on the envelope for each edge
     // edge can be split as surfaces can intersect (or touch) over it
@@ -614,11 +565,10 @@ public:
 
     // compute the surface on the envelope for each face,
     // splitting faces if needed
-    
+
     std::list<Face_handle> faces_to_split;
 
     #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
-
       // we traverse the faces of result in BFS order to maximize the
       // efficiency gain by the conclusion mechanism of
       // compare_distance_to_envelope results
@@ -638,10 +588,7 @@ public:
                                    boost::vertex_index_map(index_map).
                                    visitor (bfs_visitor));
       index_map.detach();
-
-
     #else
-
       // traverse the faces in arbitrary order  
       Face_iterator fi = result.faces_begin();
       for (; fi != result.faces_end(); ++fi)
@@ -657,6 +604,7 @@ public:
         {
           fh->set_decision(EQUAL);
           fh->set_no_data();
+
           continue;
         }
         else if (!aux_has_no_data(fh, 0) && aux_has_no_data(fh, 1))
@@ -701,7 +649,6 @@ public:
         vh->set_decision(SECOND);
         continue;
       }
-
       else if (!aux_has_no_data(vh, 0) && aux_has_no_data(vh, 1))
       {
         vh->set_decision(FIRST);
@@ -726,13 +673,11 @@ public:
     // make sure the aux flags are correctly after all resolvings
 	  CGAL_assertion(verify_aux_flags(result));
 
-
     remove_unneccessary_elements_timer.start();
     // finally, remove unneccessary edges, between faces  with the same surface
     // (and which are not degenerate)
     remove_unneccessary_edges(result);
     CGAL_assertion_msg(result.is_valid(), 
-
                        "after remove edges result is not valid");
 
     // also remove unneccessary vertices (that were created in the process of
@@ -754,9 +699,9 @@ public:
     
 	  // make sure that all the flags are correctly set on the envelope result
 	  CGAL_assertion(verify_flags(result));
-
     CGAL_assertion_msg(is_valid(result), "after merge result is not valid");
   }
+
 
 protected:
 
@@ -795,32 +740,18 @@ protected:
   }
 
   template <class InputIterator>
-
   bool is_equal_data(const InputIterator & begin1,
                      const InputIterator & end1,
                      const InputIterator & begin2,
                      const InputIterator & end2)
-
   {
-//    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-//      std::cout << "in is_equal_data: " << std::endl;
-//      std::cout << "first group: ";
-//      InputIterator it = begin1;
-//      for(; it != end1; ++it)
-//        std::cout << *it << " , ";
-//      it = begin2;
-//	  std::cout << "second group: ";
-//      for(; it != end2; ++it)
-//        std::cout << *it << " , ";
-//	  std::cout << std::endl;
-//    #endif
-      
     // insert the input data objects into a set
     std::set<Xy_monotone_surface_3> first(begin1, end1);
     std::set<Xy_monotone_surface_3> second(begin2, end2);
 
     if (first.size() != second.size())
       return false;
+
     return (first == second);
   }
 
@@ -888,6 +819,7 @@ protected:
     {
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
         std::cout << "remove_edge" << (*ci)->curve() << std::endl;
+
       #endif
       // if the endpoints become isolated after the removal we need to remove
       // them if they have the same data as the edge
@@ -904,6 +836,11 @@ protected:
                              h->get_is_equal_aux_data_in_target(0));
       bool trg_is_equal_1 = (h->get_is_equal_aux_data_in_face(1) &&
                              h->get_is_equal_aux_data_in_target(1));
+      bool src_has_equal_0 = h->twin()->get_has_equal_aux_data_in_target_and_face(0);
+      bool src_has_equal_1 = h->twin()->get_has_equal_aux_data_in_target_and_face(1);
+      bool trg_has_equal_0 = h->get_has_equal_aux_data_in_target_and_face(0);
+      bool trg_has_equal_1 = h->get_has_equal_aux_data_in_target_and_face(1);
+
       result.remove_edge(*ci, remove_src, remove_trg);
       // otherwise, we should make sure, they will not be removed
       // the first check is needed since if the vertex was removed, then the
@@ -917,11 +854,13 @@ protected:
 		    // to be precise we copy from the halfedge-face and halfedge-target relations
         src->set_is_equal_aux_data_in_face(0, src_is_equal_0);
         src->set_is_equal_aux_data_in_face(1, src_is_equal_1);
-        // todo: the has_equal flags should be updated also - how can we do it?
-        // todo: this is temporary:
+        // todo: the has_equal flags should be updated also
         // make sure h_face is also src face
-        src->set_has_equal_aux_data_in_face(0, has_equal_aux_data(0, src, h_face));
-        src->set_has_equal_aux_data_in_face(1, has_equal_aux_data(1, src, h_face));
+		    CGAL_assertion(h_face == src->face());
+//        CGAL_assertion(src_has_equal_0 == has_equal_aux_data(0, src, h_face));
+//        CGAL_assertion(src_has_equal_1 == has_equal_aux_data(1, src, h_face));
+		    src->set_has_equal_aux_data_in_face(0, src_has_equal_0);
+		    src->set_has_equal_aux_data_in_face(1, src_has_equal_1);
       }
       if (!remove_trg && trg->is_isolated())
       {
@@ -931,10 +870,16 @@ protected:
         #endif
         trg->set_is_equal_aux_data_in_face(0, trg_is_equal_0);
         trg->set_is_equal_aux_data_in_face(1, trg_is_equal_1);
-        // todo: this is temporary:
         // make sure h_face is also trg face
-        trg->set_has_equal_aux_data_in_face(0, has_equal_aux_data(0, trg, h_face));
-        trg->set_has_equal_aux_data_in_face(1, has_equal_aux_data(1, trg, h_face));
+        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
+          std::cout << "real value for map 1: " << has_equal_aux_data(1, trg, h_face)
+                    << "flag value: " << trg_has_equal_1 << std::endl;
+        #endif
+		    CGAL_assertion(h_face == trg->face());
+//        CGAL_assertion(trg_has_equal_0 == has_equal_aux_data(0, trg, h_face));
+//        CGAL_assertion(trg_has_equal_1 == has_equal_aux_data(1, trg, h_face));
+		    trg->set_has_equal_aux_data_in_face(0, trg_has_equal_0);
+		    trg->set_has_equal_aux_data_in_face(1, trg_has_equal_1);
       }
     }
 
@@ -961,6 +906,7 @@ protected:
     // aux source of a face must be a face!
     // aux source of a halfedge can be face or halfedge
     // aux source of a vertex can be face, halfedge or vertex
+
     // this is why we start with a check for a face, then halfedge
     // and last vertex
 
@@ -1043,6 +989,7 @@ protected:
       bool b4 = is_equal_data(begin1, end1, begin2, end2);
     );
     // after removes, the aux_source might be wrong for source that 
+
 	  // has no connection to the decision, so cannot use assertions here
     // todo (after return) - is it correct to put it in comment
     // CGAL_assertion(equal_first == (b1 && b2));
@@ -1114,7 +1061,7 @@ protected:
       bool b2 = is_equal_data(begin1, end1, begin2, end2);
     );
     
-    // we don't assert here becausethe flags may only be true for
+    // we don't assert here because the flags may only be true for
     // aux data that is related to the decision.
     //CGAL_assertion(equal_first == b1);
     //CGAL_assertion(equal_second == b2);
@@ -1134,7 +1081,6 @@ protected:
       CGAL_assertion(equal_first == b1);
       CGAL_assertion(equal_second == b2);
       return (equal_first && equal_second);
-
     }
   }
   
@@ -1152,9 +1098,9 @@ protected:
 
     // now, check the equality of the surfaces list according to the decision
     CGAL::Dac_decision decision = vh->get_decision();
+
     bool equal_first = (vh->get_is_equal_aux_data_in_face(0));
     bool equal_second = (vh->get_is_equal_aux_data_in_face(1));
-
 
     // we assert that the flags' values are correct using comparison of data
     // as in the old way (using set operations)
@@ -1203,7 +1149,6 @@ protected:
     Halfedge_handle he1 = hec1, he2 = hec2;
     CGAL_assertion(he1 != he2);
     CGAL_assertion(he1->is_decision_set() && he2->is_decision_set());
-
     
     if (vh->get_is_fake())
     {
@@ -1216,8 +1161,6 @@ protected:
     // the envelope differs too.
     CGAL_assertion(vh == he1->target() && vh == he2->target());
     if (vh->get_decision() != he1->get_decision() ||
-
-
         vh->get_decision() != he2->get_decision())
       return false;
 
@@ -1287,8 +1230,6 @@ protected:
     // on vertical edges, created in the decomposition process,
     // and are not neccessary
 
-
-
     // also those vertices with degree 2, that can merge their 2 edges and 
     // with same data as both these edges, can be removed
     
@@ -1315,7 +1256,6 @@ protected:
       std::cout << "and " << isolated_to_remove.size()
                 << " isolated vertices to remove" << std::endl;
     #endif
-
 
     typename Traits::Merge_2 curves_merge = traits->merge_2_object();
     typename Traits::Are_mergeable_2 curves_can_merge = 
@@ -1344,6 +1284,7 @@ protected:
       Halfedge_around_vertex_circulator hec2 = hec1++;
       Halfedge_handle he1 = hec1, he2 = hec2;
       
+
       const X_monotone_curve_2& a = he1->curve(), b = he2->curve();
       CGAL_assertion(vh->is_decision_set() || curves_can_merge(a,b));
       if (vh->is_decision_set() && !curves_can_merge(a,b))
@@ -1376,12 +1317,19 @@ protected:
       he1->set_is_equal_aux_data_in_target(1, he2->twin()->get_is_equal_aux_data_in_target(1));
       he1->set_has_equal_aux_data_in_target(0, he2->twin()->get_has_equal_aux_data_in_target(0));
       he1->set_has_equal_aux_data_in_target(1, he2->twin()->get_has_equal_aux_data_in_target(1));
+      he1->set_has_equal_aux_data_in_target_and_face
+		       (0, he2->twin()->get_has_equal_aux_data_in_target_and_face(0));
+      he1->set_has_equal_aux_data_in_target_and_face
+		       (1, he2->twin()->get_has_equal_aux_data_in_target_and_face(1));
 
       he2->set_is_equal_aux_data_in_target(0, he1->twin()->get_is_equal_aux_data_in_target(0));
       he2->set_is_equal_aux_data_in_target(1, he1->twin()->get_is_equal_aux_data_in_target(1));
       he2->set_has_equal_aux_data_in_target(0, he1->twin()->get_has_equal_aux_data_in_target(0));
       he2->set_has_equal_aux_data_in_target(1, he1->twin()->get_has_equal_aux_data_in_target(1));
-
+      he2->set_has_equal_aux_data_in_target_and_face
+		       (0, he1->twin()->get_has_equal_aux_data_in_target_and_face(0));
+      he2->set_has_equal_aux_data_in_target_and_face
+		       (1, he1->twin()->get_has_equal_aux_data_in_target_and_face(1));
 
       // order of halfedges for merge doesn't matter
       Halfedge_handle new_edge = result.merge_edge(he1, he2 ,c);
@@ -1468,8 +1416,6 @@ protected:
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
         std::cout << hi->curve() << std::endl;
       #endif
-
-
       update_envelope_surfaces_by_decision(hi);
     }
     
@@ -1514,6 +1460,7 @@ protected:
 	  {
       is_equal &= (is_equal_first & is_equal_second);
       // we check if the halfedge has a different decision, and if so,
+
 	    // we update the flag according to the halfedge decision
 	    decision = h->get_decision();	
       if (decision == FIRST)
@@ -1530,6 +1477,7 @@ protected:
   void update_edge_target_flags(Halfedge_handle h)
   {
     bool is_equal, has_equal;
+
 	  is_equal = (h->get_decision() == h->target()->get_decision());
     // has equal can be true even if the decision is not the same,
 	  // but has same surfaces, i.e. one of the features got BOTH
@@ -1570,6 +1518,38 @@ protected:
 	  }
 	  h->set_is_equal_data_in_target(is_equal);
 	  h->set_has_equal_data_in_target(has_equal);
+  }
+  void update_target_face_flags(Halfedge_handle h)
+  {
+    bool has_equal;
+    // has equal can be true even if the decision is not the same,
+	  // but has same surfaces, i.e. one of the features got BOTH
+	  // decision, and the other didn't
+	  has_equal = (h->face()->get_decision() == h->target()->get_decision() ||
+		           h->face()->get_decision() == BOTH ||
+				   h->target()->get_decision() == BOTH);
+
+    CGAL::Dac_decision decision = h->face()->get_decision();
+    bool has_equal_first = (h->get_has_equal_aux_data_in_target_and_face(0));
+    bool has_equal_second = (h->get_has_equal_aux_data_in_target_and_face(1));
+    if (decision == FIRST)
+	    has_equal &= has_equal_first;
+    else if (decision == SECOND)
+	    has_equal &= has_equal_second;
+    else
+	  {
+      // we check if the vertex has a different decision, and if so,
+	    // we update the flag according to the vertex decision
+	    decision = h->target()->get_decision();	
+      if (decision == FIRST)
+	      has_equal &= has_equal_first;
+      else if (decision == SECOND)
+        has_equal &= has_equal_second;
+
+      else      
+	      has_equal &= (has_equal_first & has_equal_second);
+	  }
+	  h->set_has_equal_data_in_target_and_face(has_equal);
   }
 
   void update_vertex_face_flags(Vertex_handle v, Face_handle f)
@@ -1626,9 +1606,9 @@ protected:
     Halfedge_iterator hi = result.halfedges_begin();
     for(; hi != result.halfedges_end(); ++hi)
     {
-
       update_edge_face_flags(hi);
 	    update_edge_target_flags(hi);
+		update_target_face_flags(hi);
 	  }
 
     // vertices
@@ -1757,6 +1737,7 @@ public:
                 << " seconds" << std::endl;
                           
       std::cout << std::endl;
+
       resolver->print_times();
       
 //      std::cout << std::endl;
@@ -1774,6 +1755,7 @@ public:
       std::cout << "the number of extra features: "
                 << (sum_num_vertices+sum_num_faces+sum_num_edges)-
                    (result_num_vertices+result_num_edges+result_num_faces)
+
                 << std::endl;
       std::cout << std::endl;
       traits->print_times();
@@ -1826,14 +1808,12 @@ protected:
     if (assign(v, o))
       return v->is_equal_data(begin, end);
   	else if (assign(h, o))
-
       return h->is_equal_data(begin, end);
     else
    	{
    	  CGAL_assertion(assign(f, o));
       assign(f, o);
       return f->is_equal_data(begin, end);
-
    	}
   }
   bool has_equal_data(Object o,
@@ -1848,7 +1828,6 @@ protected:
     if (assign(v, o))
       return v->has_equal_data(begin, end);
   	else if (assign(h, o))
-
       return h->has_equal_data(begin, end);
     else
    	{
@@ -1877,6 +1856,7 @@ protected:
         #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
           std::cout << "halfedge: " << face_hec->source()->point() 
                     << " --> " << face_hec->target()->point() << " decision: "
+
                     << face_hec->get_decision() << std::endl;
           std::cout << "vertex: " << face_hec->target()->point() 
                     << " decision: " << face_hec->target()->get_decision() 
@@ -1891,7 +1871,6 @@ protected:
       {
         #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
           std::cout << "inner ccb: " << std::endl;
-
         #endif
         face_hec = face_hec_begin = (*inner_iter);
         do {
@@ -1921,16 +1900,16 @@ protected:
     {
       Halfedge_handle h = hi;
       if (h->get_is_fake())
-	continue;
+	      continue;
 
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      //         std::cout << "verify_aux_flags on edge " << h->source()->point()
-      //	           << " --> " << h->target()->point() << std::endl;
+        std::cout << "verify_aux_flags on edge " << h->source()->point()
+                  << " --> " << h->target()->point() << std::endl;
       #endif
       Object h_src1 = h->get_aux_source(0);
       Object h_src2 = h->get_aux_source(1);
 
-      // check face flags
+      // check halfedge-face flags
       Face_handle f = h->face();
       Object f_src1 = f->get_aux_source(0);
       Object f_src2 = f->get_aux_source(1);
@@ -1941,7 +1920,7 @@ protected:
       if (!all_ok)
       {
         std::cout << "real is_equal = " << is_equal_data(f_src1, begin, end) << std::endl;
-  	std::cout << "flags is_equal = " << h->get_is_equal_aux_data_in_face(0) << std::endl;
+  	    std::cout << "flags is_equal = " << h->get_is_equal_aux_data_in_face(0) << std::endl;
       }
       CGAL_assertion(all_ok);
 
@@ -1963,12 +1942,13 @@ protected:
   	              h->get_has_equal_aux_data_in_face(1));
       CGAL_assertion(all_ok);
 
-      // check target flags
+      // check halfedge-target flags
       Vertex_handle v = h->target();
       Object v_src1 = v->get_aux_source(0);
       Object v_src2 = v->get_aux_source(1);
 
       get_data_iterators(h_src1, begin, end);
+
       all_ok = (is_equal_data(v_src1, begin, end) ==
   	              h->get_is_equal_aux_data_in_target(0));
       CGAL_assertion(all_ok);
@@ -1984,6 +1964,17 @@ protected:
 
       all_ok = (has_equal_data(v_src2, begin, end) ==
   	              h->get_has_equal_aux_data_in_target(1));
+      CGAL_assertion(all_ok);
+
+      // check target-face flags
+      get_data_iterators(v_src1, begin, end);
+      all_ok = (has_equal_data(f_src1, begin, end) ==
+  	            h->get_has_equal_aux_data_in_target_and_face(0));
+      CGAL_assertion(all_ok);
+
+      get_data_iterators(v_src2, begin, end);
+      all_ok = (has_equal_data(f_src2, begin, end) ==
+  	            h->get_has_equal_aux_data_in_target_and_face(1));
       CGAL_assertion(all_ok);
     }
 
@@ -2014,7 +2005,6 @@ protected:
                     << is_equal_data(f_src1, begin, end) << std::endl;
       	  std::cout << "flags is equal = "
                     << v->get_has_equal_aux_data_in_face(0) << std::endl;
-
       	}
       	CGAL_assertion(all_ok);
 
@@ -2030,7 +2020,6 @@ protected:
         all_ok = (has_equal_data(f_src2, begin, end) ==
   	                v->get_has_equal_aux_data_in_face(1));
         CGAL_assertion(all_ok);
-
     }
 
     return all_ok;
@@ -2058,6 +2047,7 @@ protected:
 
 	    all_ok = (h->has_equal_data(f->begin_data(), f->end_data()) ==
 		            h->get_has_equal_data_in_face());
+
 	    CGAL_assertion(all_ok);
 
 	    // check halfedge-target flags
@@ -2065,7 +2055,6 @@ protected:
 
 	    all_ok = (h->is_equal_data(v->begin_data(), v->end_data()) ==
 		            h->get_is_equal_data_in_target());
-
 	    if (!all_ok)
 		    std::cout << "flag value: " << h->get_is_equal_data_in_target()
 		              << " real value " << h->is_equal_data(v->begin_data(), v->end_data())
@@ -2079,6 +2068,16 @@ protected:
 		              << " real value " << h->has_equal_data(v->begin_data(), v->end_data())
 					        << std::endl;
 	    CGAL_assertion(all_ok);
+
+		// check target-face flags
+	    all_ok = (h->face()->has_equal_data(v->begin_data(), v->end_data()) ==
+		          h->get_has_equal_data_in_target_and_face());
+	    if (!all_ok)
+		    std::cout << "flag value: " << h->get_has_equal_data_in_target_and_face()
+		              << " real value " << h->face()->has_equal_data(v->begin_data(), v->end_data())
+					        << std::endl;
+	    CGAL_assertion(all_ok);
+
 	  }
 
     Vertex_iterator vi = result.vertices_begin();
@@ -2131,6 +2130,7 @@ protected:
       CGAL_assertion_msg(all_ok, "aux source (1) not set over vertex");
       all_ok &= (vh->is_decision_set());
       CGAL_assertion_msg(all_ok, "decision was not set over vertex");
+
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
         std::cout << "decision on vertex: " << vh->get_decision() << std::endl;
       #endif
@@ -2140,7 +2140,7 @@ protected:
     {
       Halfedge_handle hh = hi;
       if (hh->get_is_fake())
-	continue;
+      	continue;
       
       all_ok &= (hh->get_aux_is_set(0));
       CGAL_assertion_msg(all_ok, "aux source (0) not set over edge");
@@ -2156,6 +2156,7 @@ protected:
     for(; fi != result.faces_end(); ++fi)
     {
       Face_handle fh = fi;
+
       all_ok &= (fh->get_aux_is_set(0));
       CGAL_assertion_msg(all_ok, "aux source (0) not set over face");
       all_ok &= (fh->get_aux_is_set(1));
@@ -2282,17 +2283,17 @@ protected:
       if (base->aux_has_no_data(e, 0) && !base->aux_has_no_data(e, 1))
       {
         e->set_decision(SECOND);
-    	  e->twin()->set_decision(SECOND);
+        e->twin()->set_decision(SECOND);
       }
       else if (!base->aux_has_no_data(e, 0) && base->aux_has_no_data(e, 1))
       {
   	    e->set_decision(FIRST);
-    	  e->twin()->set_decision(FIRST);
+        e->twin()->set_decision(FIRST);
       }
       else if(base->aux_has_no_data(e, 0) && base->aux_has_no_data(e, 1))
       {
   	    e->set_decision(EQUAL);
-    	  e->twin()->set_decision(EQUAL);
+        e->twin()->set_decision(EQUAL);
       } 
 
       // set halfedge-face flags
@@ -2309,41 +2310,83 @@ protected:
       // we need to set halfedge-target is_equal flags
       // we need the other halfedge that points to the face and to the vertex 
       // if exists (this is the twin's prev halfedge), or the isolated vertex info
+	  // we also set has equal flags
       if (e->twin()->prev() != e)
       {
       	CGAL_assertion(e->twin()->face() == e->twin()->prev()->face());
-	      Halfedge_handle prev = e->twin()->prev();
+        Halfedge_handle prev = e->twin()->prev();
         e->set_is_equal_aux_data_in_target(0, prev->get_is_equal_aux_data_in_face(0) &&
-        				      prev->get_is_equal_aux_data_in_target(0));
+                         				      prev->get_is_equal_aux_data_in_target(0));
         e->set_is_equal_aux_data_in_target(1, prev->get_is_equal_aux_data_in_face(1) &&
+                                              prev->get_is_equal_aux_data_in_target(1));
 
-        				      prev->get_is_equal_aux_data_in_target(1));
-  	
+		e->set_has_equal_aux_data_in_target(0, 
+			    prev->get_has_equal_aux_data_in_target_and_face(0));
+		e->set_has_equal_aux_data_in_target(1, 
+			    prev->get_has_equal_aux_data_in_target_and_face(1));
+
+		e->set_has_equal_aux_data_in_target_and_face(0, 
+			    prev->get_has_equal_aux_data_in_target_and_face(0));
+		e->set_has_equal_aux_data_in_target_and_face(1, 
+			    prev->get_has_equal_aux_data_in_target_and_face(1));
+
       }
       else
       {
        	// the target of e was isolated, before we added e
-       	e->set_is_equal_aux_data_in_target(0, e->target()->get_is_equal_aux_data_in_face(0));
-       	e->set_is_equal_aux_data_in_target(1, e->target()->get_is_equal_aux_data_in_face(1));
+       	e->set_is_equal_aux_data_in_target(0, 
+			e->target()->get_is_equal_aux_data_in_face(0));
+       	e->set_is_equal_aux_data_in_target(1, 
+			e->target()->get_is_equal_aux_data_in_face(1));
+
+       	e->set_has_equal_aux_data_in_target(0, 
+			e->target()->get_has_equal_aux_data_in_face(0));
+       	e->set_has_equal_aux_data_in_target(1, 
+			e->target()->get_has_equal_aux_data_in_face(1));
+
+       	e->set_has_equal_aux_data_in_target_and_face(0, 
+			e->target()->get_has_equal_aux_data_in_face(0));
+       	e->set_has_equal_aux_data_in_target_and_face(1, 
+			e->target()->get_has_equal_aux_data_in_face(1));
       }	
 
       if (e->prev() != e->twin())
       {
        	CGAL_assertion(e->face() == e->prev()->face());
+
        	Halfedge_handle prev = e->prev();
        	e->twin()->set_is_equal_aux_data_in_target(0, prev->get_is_equal_aux_data_in_face(0) &&
 			 		      prev->get_is_equal_aux_data_in_target(0));
       	e->twin()->set_is_equal_aux_data_in_target(1, prev->get_is_equal_aux_data_in_face(1) &&
 					      prev->get_is_equal_aux_data_in_target(1));
 	
+		e->twin()->set_has_equal_aux_data_in_target(0, 
+			    prev->get_has_equal_aux_data_in_target_and_face(0));
+		e->twin()->set_has_equal_aux_data_in_target(1, 
+			    prev->get_has_equal_aux_data_in_target_and_face(1));
+
+		e->twin()->set_has_equal_aux_data_in_target_and_face(0, 
+			    prev->get_has_equal_aux_data_in_target_and_face(0));
+		e->twin()->set_has_equal_aux_data_in_target_and_face(1, 
+			    prev->get_has_equal_aux_data_in_target_and_face(1));
       }
       else
       {
       	// the source of e was isolated, before we added e
       	e->twin()->set_is_equal_aux_data_in_target(0,
-                                       e->source()->get_is_equal_aux_data_in_face(0));
+                               e->source()->get_is_equal_aux_data_in_face(0));
       	e->twin()->set_is_equal_aux_data_in_target(1,
-                                       e->source()->get_is_equal_aux_data_in_face(1));
+                               e->source()->get_is_equal_aux_data_in_face(1));
+
+       	e->twin()->set_has_equal_aux_data_in_target(0, 
+			                   e->source()->get_has_equal_aux_data_in_face(0));
+       	e->twin()->set_has_equal_aux_data_in_target(1, 
+			                   e->source()->get_has_equal_aux_data_in_face(1));
+
+       	e->twin()->set_has_equal_aux_data_in_target_and_face(0, 
+			                   e->source()->get_has_equal_aux_data_in_face(0));
+       	e->twin()->set_has_equal_aux_data_in_target_and_face(1, 
+			                   e->source()->get_has_equal_aux_data_in_face(1));
       }	
 
       // we don't set the halfedge-target has_equal flags, because the setting will not 
@@ -2352,10 +2395,8 @@ protected:
       // TODO: if we set correctly all has_equal falgs, maybe we can get rid
       // of "fake" flags
       // TODO: if a fake edge overlaps a projected intersection, and thus
-
       // becomes not fake (and we will not want to remove it at the end) -
       // what happens in the code? check and fix!
-
     }
   protected:
     Self *base;
@@ -2384,7 +2425,6 @@ protected:
     }
 
     virtual void before_split_edge (Halfedge_handle e,
-
                                     Vertex_handle v,
                                     const X_monotone_curve_2& c1,
                                     const X_monotone_curve_2& c2)
@@ -2404,7 +2444,7 @@ protected:
       Vertex_handle new_vertex;
 //      if (he2->source() == he1->target() ||
 //          he2->source() == he1->source())
-        new_vertex = he2->source();
+      new_vertex = he2->source();
 //      else
 //        new_vertex = he2->target();
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
@@ -2426,7 +2466,6 @@ protected:
         new_vertex->set_decision(org_he->get_decision());
       }        
       if (org_he->get_aux_is_set(0))
-
       {
         new_vertex->set_aux_source(0, org_he->get_aux_source(0));
         new_he->set_aux_source(0, org_he->get_aux_source(0));
@@ -2442,7 +2481,6 @@ protected:
       new_he->set_is_fake(org_he->get_is_fake());
       new_he->twin()->set_is_fake(org_he->get_is_fake());
       new_vertex->set_is_fake(org_he->get_is_fake());
-
 
       // update all new bools
       new_he->set_is_equal_aux_data_in_face(0, org_he->get_is_equal_aux_data_in_face(0));
@@ -2464,12 +2502,25 @@ protected:
       new_he->set_has_equal_aux_data_in_target(1, org_he->get_has_equal_aux_data_in_target(1));
       org_he->set_has_equal_aux_data_in_target(0, !base->aux_has_no_data(org_he, 0));
       org_he->set_has_equal_aux_data_in_target(1, !base->aux_has_no_data(org_he, 1));
+      new_he->set_has_equal_aux_data_in_target_and_face
+		          (0, org_he->get_has_equal_aux_data_in_target_and_face(0));
+      new_he->set_has_equal_aux_data_in_target_and_face
+		          (1, org_he->get_has_equal_aux_data_in_target_and_face(1));
+      org_he->set_has_equal_aux_data_in_target_and_face
+		          (0, org_he->get_has_equal_aux_data_in_face(0));
+      org_he->set_has_equal_aux_data_in_target_and_face
+		          (1, org_he->get_has_equal_aux_data_in_face(1));
 
       // new_he->source is the new vertex, and org_he->source is the original vertex
       new_he->twin()->set_is_equal_aux_data_in_target(0, true);
       new_he->twin()->set_is_equal_aux_data_in_target(1, true);
       new_he->twin()->set_has_equal_aux_data_in_target(0,!base->aux_has_no_data(org_he, 0));
       new_he->twin()->set_has_equal_aux_data_in_target(1,!base->aux_has_no_data(org_he, 1));
+
+      new_he->twin()->set_has_equal_aux_data_in_target_and_face
+		          (0, org_he->twin()->get_has_equal_aux_data_in_face(0));
+      new_he->twin()->set_has_equal_aux_data_in_target_and_face
+		          (1, org_he->twin()->get_has_equal_aux_data_in_face(1));
     }
   protected:
     Self *base;
@@ -2535,10 +2586,12 @@ protected:
 
     // Write the discover time for a given vertex.
     template <typename Vertex, typename Graph>
+
     void discover_vertex (Vertex fh, const Graph& g)
     {
       #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
         std::cout << "in BFS - found a face" << std::endl;
+
       #endif
       // first we check if we can set the decision immediately
       // if a surface of one map doesn't exist, then we set the second surface
