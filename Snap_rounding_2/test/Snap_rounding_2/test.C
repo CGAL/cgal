@@ -3,6 +3,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Snap_rounding_traits_2.h>
 #include <CGAL/Snap_rounding_2.h>
+#include <cstdlib>
 
 typedef CGAL::Quotient<CGAL::MP_Float>           Number_Type;
 typedef CGAL::Cartesian<Number_Type>             Rep;
@@ -18,14 +19,14 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
 
   if(argc != 2) {
     std::cerr << "syntex: test <input file name>\n";
-    exit(1);
+    std::exit(1);
   }
 
   std::ifstream is(argv[1]);
 
   if(is.bad()) {
     std::cerr << "Bad input file : " << argv[1] << std::endl;
-    exit(1);
+    std::exit(1);
   }
 
   is >> number_of_segments;
@@ -34,7 +35,7 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
 
   if(number_of_segments < 1) {
     std::cerr << "Bad input file(number of segments)" << argv[1] << std::endl;
-    exit(1);
+    std::exit(1);
   }
 
   for(i = 0;i < number_of_segments;++i) {

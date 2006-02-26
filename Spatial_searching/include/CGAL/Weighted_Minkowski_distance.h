@@ -102,13 +102,13 @@ namespace CGAL {
 	             pit = construct_it(p);
       if (power == FT(0)) {
 	for (unsigned int i = 0; qit != qe; ++qit, ++i)
-	  if (the_weights[i] * fabs((*qit) - (*pit)) > distance)
-	    distance = the_weights[i] * fabs((*qit)-(*pit));
+	  if (the_weights[i] * std::fabs((*qit) - (*pit)) > distance)
+	    distance = the_weights[i] * std::fabs((*qit)-(*pit));
       }
       else
 	for (unsigned int i = 0; qit != qe; ++qit, ++i)
 	  distance += 
-	    the_weights[i] * pow(fabs((*qit)-(*pit)),power);
+	    the_weights[i] * std::pow(std::fabs((*qit)-(*pit)),power);
       return distance;
     }
     
@@ -139,10 +139,10 @@ namespace CGAL {
 	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
 	    if ((*qit) < r.min_coord(i))
 	      distance += the_weights[i] * 
-		pow(r.min_coord(i)-(*qit),power);
+		std::pow(r.min_coord(i)-(*qit),power);
 	    if ((*qit) > r.max_coord(i))
 	      distance += the_weights[i] * 
-		pow((*qit)-r.max_coord(i),power);
+		std::pow((*qit)-r.max_coord(i),power);
 	  }
 	};
       return distance;
@@ -175,9 +175,9 @@ namespace CGAL {
 	{
 	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
 	    if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
-	      distance += the_weights[i] * pow(r.max_coord(i)-(*qit),power);
+	      distance += the_weights[i] * std::pow(r.max_coord(i)-(*qit),power);
 	    else
-	      distance += the_weights[i] * pow((*qit)-r.min_coord(i),power);
+	      distance += the_weights[i] * std::pow((*qit)-r.min_coord(i),power);
 	  }
 	};
       return distance;
@@ -191,16 +191,16 @@ namespace CGAL {
       FT new_dist;
       if (power == FT(0))
 	{
-	  if (the_weights[cutting_dimension]*fabs(new_off) 
+	  if (the_weights[cutting_dimension]*std::fabs(new_off) 
 	      > dist) 
 	    new_dist= 
-	      the_weights[cutting_dimension]*fabs(new_off);
+	      the_weights[cutting_dimension]*std::fabs(new_off);
 	  else new_dist=dist;
 	}
       else
 	{
 	  new_dist = dist + the_weights[cutting_dimension] * 
-	    (pow(fabs(new_off),power)-pow(fabs(old_off),power));
+	    (std::pow(std::fabs(new_off),power)-std::pow(std::fabs(old_off),power));
 	}
       return new_dist;
     }
@@ -210,7 +210,7 @@ namespace CGAL {
     transformed_distance(FT d) const 
     {
       if (power <= FT(0)) return d;
-      else return pow(d,power);
+      else return std::pow(d,power);
       
     }
     
@@ -219,7 +219,7 @@ namespace CGAL {
     inverse_of_transformed_distance(FT d) const 
     {
       if (power <= FT(0)) return d;
-      else return pow(d,1/power);
+      else return std::pow(d,1/power);
       
     }
 

@@ -20,6 +20,7 @@
 #include <iterator>
 #include <ctime>
 #include <cassert>
+#include <cstdlib>
 #include <list>
 
 #include <CGAL/kdtree_d.h>
@@ -90,7 +91,7 @@ typedef std::list<point>  points_list;
 
 inline double dblRand( void )
 {
-    return  (double)rand() / (double)RAND_MAX;
+    return  (double)std::rand() / (double)RAND_MAX;
 }
 
 void random_points( int  num, points_list &l, int DIM)
@@ -113,7 +114,7 @@ int main()
 {
   CGAL::Kdtree_d<kd_interface>  tree(3);
   
-  srand( (unsigned)time(NULL) );
+  std::srand( (unsigned)time(NULL) );
   
   std::cout << "Choosing randomly 30 points in the cube (0,0,0)-(10,10,10)\n" ;
   

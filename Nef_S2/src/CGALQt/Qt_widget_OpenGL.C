@@ -25,6 +25,7 @@
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget_OpenGL.h>
+#include <cmath>
 
 namespace CGAL {
 
@@ -88,7 +89,7 @@ void Qt_widget_OpenGL::mouseMoveEvent(QMouseEvent* event) {
   int y = event->y();
   switch ( interaction) {
   case SCALE:
-    s *= exp( (x - mouse_x + mouse_y -y) * factor_s );
+    s *= std::exp( (x - mouse_x + mouse_y -y) * factor_s );
     break;
   case ROTATE: {
     double old_x =   1.2 * (mouse_x -  window_width/2) / window_radius;

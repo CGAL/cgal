@@ -118,7 +118,7 @@ extLong& extLong::operator*= (const extLong& y) {
   } else { // flag == 0 and y.flag == 0
     double d = double(val) * double(y.val);
     long   p = val * y.val;
-    if (fabs(d - p) <= fabs(d) * relEps) {
+    if (std::fabs(d - p) <= std::fabs(d) * relEps) {
       val = p;
       flag = 0;
     } else if (d > EXTLONG_MAX) {

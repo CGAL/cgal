@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 {
   //assert(std::numeric_limits<double>::has_infinity());
     if ( argc > 1 ) {
-        int is_verbose = atoi(argv[1]);
+        int is_verbose = std::atoi(argv[1]);
         if ( is_verbose == 0 ) {
             verbose = false;
         } else verbose = true;

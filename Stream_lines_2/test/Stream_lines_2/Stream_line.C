@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdio>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -25,9 +26,9 @@ int main()
 	if (i!=11 && i!=12 && i!=17 && i!=18 && i!=20 && i!=21)
 	{
 		char name[80];
-		sprintf(name, "data/%d.vec.cin", i);
+		std::sprintf(name, "data/%d.vec.cin", i);
 		char namer[80];
-		sprintf(namer, "data/%d.stl", i);
+		std::sprintf(namer, "data/%d.stl", i);
 		std::ifstream infile(name, std::ios::in);
 		double iXSize, iYSize;
 		unsigned int x_samples, y_samples;

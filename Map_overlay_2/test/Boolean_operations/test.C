@@ -27,6 +27,7 @@
 #include <list>
 #include <string>
 #include <fstream>
+#include <cstdlib>
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
@@ -949,7 +950,7 @@ int main(int argc, char* argv[])
   
   if (argc < 1 || argc > 2) {
     std::cout << "usage: test data_file" << std::endl;
-    exit(1);
+    std::exit(1);
   }
 
   test.start(argv[1]);

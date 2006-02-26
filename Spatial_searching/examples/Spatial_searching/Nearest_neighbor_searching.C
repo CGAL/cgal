@@ -5,6 +5,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_2.h>
 #include <list>
+#include <cmath>
 
 
 typedef CGAL::Simple_cartesian<double> K;
@@ -30,7 +31,7 @@ int main() {
    // report the N nearest neighbors and their distance
   // This should sort all N points by increasing distance from origin
   for(Neighbor_search::iterator it = search.begin(); it != search.end(); ++it){
-    std::cout << it->first << " "<< sqrt(it->second) << std::endl;
+    std::cout << it->first << " "<< std::sqrt(it->second) << std::endl;
   }
   
   

@@ -35,6 +35,7 @@
  ***************************************************************************/
 
 #include <ctype.h>
+#include <cstring>
 #if defined (__BORLANDC__)
   #include <mem.h>
 #endif
@@ -119,19 +120,19 @@ void Real::constructFromString(const char *str, const extLong& prec )
   //		Moreover, the value of prec is ignored (basically
   //		assumed to be infinity).
 
-  if (strchr(str, '/') != NULL) {	// this is a rational number
+  if (std::strchr(str, '/') != NULL) {	// this is a rational number
     rep = new RealBigRat(BigRat(str));
     return;
   }
 
-  const char *e = strchr(str, 'e');
+  const char *e = std::strchr(str, 'e');
   int dot = 0;
   long e10 = 0;
   if (e != NULL)
-    e10 = atol(e+1);	// e10 is decimal precision of the input string
+    e10 = std::atol(e+1);	// e10 is decimal precision of the input string
   // i.e., input is A/10^{e10}.
   else {
-    e = str + strlen(str);
+    e = str + std::strlen(str);
 #ifdef CORE_DEBUG
     assert(*e == '\0');
 #endif
@@ -225,7 +226,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
     if (p - str == size) {
       char *t = str;
       str = new char[size*2];
-      memcpy(str, t, size);
+      std::memcpy(str, t, size);
       delete [] t;
       p = str + size;
       size *= 2;
@@ -251,7 +252,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
     int len = p - str;
     char *t = str;
     str = new char[len + 1];
-    memcpy(str, t, len);
+    std::memcpy(str, t, len);
     delete [] t;
     p = str + len;
   }

@@ -19,6 +19,7 @@
 #include <iterator>
 #include <ctime>
 #include <cassert>
+#include <cstdlib>
 #include <list>
 
 #include <CGAL/kdtree_d.h>
@@ -35,7 +36,7 @@ int main()
     CGAL::Kdtree_d<kd_interface> tree(2);
     points_list l, res;
 
-    srand( (unsigned)time(NULL) );
+    std::srand( (unsigned)time(NULL) );
 
     std::cout << "Insering evenly 81 points  in the square (0,0)-(10,10) ...\n\n";
     for (int i=1; i<10; i++)
