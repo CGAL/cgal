@@ -46,47 +46,48 @@ namespace CGALi {
     typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
 
-public:
+  public:
 
     Circular_arc_2() {}
 
     Circular_arc_2(const Circle_2 &c)
       : _support(c), Cache_minmax('s')
     {
-       // Define a circle intersecting c in the 2 vertical tangent
-       // points.
-       Circle_2 c1 (Point_2(c.center().x(), c.center().y()-1),
-                    c.squared_radius()+1);
-
-       _begin = _end = CGAL::circle_intersect<CK>(c, c1, true);
+      // Define a circle intersecting c in the 2 vertical tangent
+      // points.
+      Circle_2 c1 (Point_2(c.center().x(), c.center().y()-1),
+		   c.squared_radius()+1);
+      
+      _begin = _end = CGAL::circle_intersect<CK>(c, c1, true);
     }
 
     Circular_arc_2(const Circle_2 &support,
                    const Line_2 &l1, bool b1,
-                   const Line_2 &l2, bool b2) : Cache_minmax('n')
+                   const Line_2 &l2, bool b2) 
+      : Cache_minmax('n')
     {
       Point_2 center1 (support.center().x() + l1.a()/2,
                        support.center().y() + l1.b()/2);
 
       FT sqr1 = support.squared_radius() + l1.c()
-                - CGAL::square(support.center().x())
-                - CGAL::square(support.center().y())
-                + CGAL::square(center1.x())
-                + CGAL::square(center1.y());
+	        - CGAL::square(support.center().x())
+	        - CGAL::square(support.center().y())
+	        + CGAL::square(center1.x())
+	        + CGAL::square(center1.y());
 
       Circle_2 c1 (center1, sqr1);
-
+      
       Point_2 center2 (support.center().x() + l2.a()/2,
                        support.center().y() + l2.b()/2);
 
       FT sqr2 = support.squared_radius() + l2.c()
-                - CGAL::square(support.center().x())
-                - CGAL::square(support.center().y())
-                + CGAL::square(center2.x())
-                + CGAL::square(center2.y());
+	        - CGAL::square(support.center().x())
+	        - CGAL::square(support.center().y())
+	        + CGAL::square(center2.x())
+	        + CGAL::square(center2.y());
 
       Circle_2 c2 (center2, sqr2);
-
+      
       *this = Circular_arc_2(support, c1, b1, c2, b2);
 
       CGAL_kernel_assertion(do_intersect(support, c1));
@@ -97,46 +98,46 @@ public:
     Circular_arc_2(const Circle_2 &c,
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _support(c) , Cache_minmax('n'){
-	  if (c1 != c2){
-	    _begin = CGAL::circle_intersect<CK>(c, c1, b_1);
-	    _end = CGAL::circle_intersect<CK>(c, c2, b_2);
-	  }
-	  else{
-	    typedef std::vector<CGAL::Object > solutions_container;
+      : _support(c) , Cache_minmax('n')
+    {
+      if (c1 != c2) {
+	_begin = CGAL::circle_intersect<CK>(c, c1, b_1);
+	_end = CGAL::circle_intersect<CK>(c, c2, b_2);
+      }
+      else{
+	typedef std::vector<CGAL::Object > solutions_container;
+	
+	solutions_container solutions;
+	CGAL::intersect_2<CK>( c, c1, std::back_inserter(solutions) );
+	typename solutions_container::iterator it = solutions.begin();
 
-	    solutions_container solutions;
-	    CGAL::intersect_2<CK>
-	      ( c, c1, std::back_inserter(solutions) );
-	    typename solutions_container::iterator it = solutions.begin();
-
-	    CGAL_kernel_precondition( it != solutions.end() );
-	    // the circles intersect
-
-	    const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
+	CGAL_kernel_precondition( it != solutions.end() );
+	// the circles intersect
+	
+	const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
+	result = CGAL::object_cast<
+	  std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+	if ( result->second == 2 ){ // double solution
+	  _begin =  result->first;
+	  _end = result->first;
+	}
+	else{
+	  if (b_1)
+	    _begin = result->first;
+	  if (b_2)
+	    _end = result->first;
+	  if (!(b_1 & b_2)) {
+	    ++it;
 	    result = CGAL::object_cast<
 	      std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
-	    if ( result->second == 2 ){ // double solution
-	      _begin =  result->first;
+	    if (!b_1)
+	      _begin = result->first;
+	    if (!b_2)
 	      _end = result->first;
-	    }
-	    else{
-	      if (b_1)
-		_begin = result->first;
-	      if (b_2)
-		_end = result->first;
-	      if (!(b_1 & b_2)){
-		++it;
-		result = CGAL::object_cast<
-		  std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
-		if (!b_1)
-		  _begin = result->first;
-		if (!b_2)
-		  _end = result->first;
-	      }
-	    }
 	  }
 	}
+      }
+    }
 
     // IS THIS CONSTRUCTOR USED ?
     // constructs a circular arc that is the arc included in A
@@ -147,40 +148,42 @@ public:
 		   const Circle_2 &ccut, const bool b_cut)
       : _support(A.supporting_circle()), Cache_minmax('n')
     {
-        CGAL_kernel_precondition(A.is_x_monotone());
-        CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
+      CGAL_kernel_precondition(A.is_x_monotone());
+      CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
+      
+      Circular_arc_point_2 new_p =
+	CGAL::circle_intersect<CK>(A.supporting_circle(), ccut, b_cut);
+      
+      // CGAL_kernel_assertion(point_in_range(A, new_p));
+      CGAL_kernel_assertion
+	(A.on_upper_part() == (CGAL::compare(new_p.y(), A.center().y()) >= 0));
 
-        Circular_arc_point_2 new_p =
-             CGAL::circle_intersect<CK>(A.supporting_circle(), ccut, b_cut);
-
-        // CGAL_kernel_assertion(point_in_range(A, new_p));
-        CGAL_kernel_assertion(A.on_upper_part() ==
-              (CGAL::compare(new_p.y(), A.center().y()) >= 0));
-
-        if (b) {
-          _begin  = A._begin;
-          _end    = new_p;
-        }
-        else {
-          _begin  = new_p;
-          _end    = A._end;
-        }
+      if (b) {
+	_begin  = A._begin;
+	_end    = new_p;
       }
+      else {
+	_begin  = new_p;
+	_end    = A._end;
+      }
+    }
 
     // Constructs an arc supported by Circle_2(begin, middle, end),
     // with _begin == begin, _end == end.
     // (middle is not necessarily on the arc)
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &middle,
-                   const Point_2 &end): Cache_minmax('n')
+                   const Point_2 &end)
+      : Cache_minmax('n')
     {
       CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
-
+      
       Circle_2 c  (begin, middle, end);
       Line_2   l1 (begin, middle);
       Line_2   l2 (middle, end);
-      *this = Circular_arc_2(c, l1, compare_xy(begin, middle) < 0,
-                                l2, compare_xy(end,   middle) < 0);
+      *this = Circular_arc_2(c, 
+			     l1, compare_xy(begin, middle) < 0,
+			     l2, compare_xy(end,   middle) < 0);
     }
 
     Circular_arc_2(const Circle_2 &support,
@@ -188,7 +191,8 @@ public:
 		   const Circular_arc_point_2 &target)
       : _begin(source), _end(target), _support(support), Cache_minmax('n')
     {
-      // We cannot enable these for now, since the Lazy_curved_kernel
+      // We cannot enable these preconditions for now, since the 
+      // Lazy_curved_kernel
       // calls it on the Interval kernel without try/catch protection
       // through the Curved_kernel_converter.
       // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, source));
@@ -197,39 +201,41 @@ public:
     
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &end,
-		   const FT &bulge): 
-		     _begin(begin), _end(end), Cache_minmax('n')
+		   const FT &bulge)
+      : _begin(begin), _end(end), Cache_minmax('n')
     {
       const FT sqr_bulge = CGAL::square(bulge);
       const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
-      const FT x_coord = ((begin.x() + end.x())/FT(2)) + common*(begin.y() - end.y());
-      const FT y_coord = ((begin.y() + end.y())/FT(2)) + common*(end.x() - begin.x());
+      const FT x_coord = (begin.x() + end.x())/FT(2)
+	                 + common*(begin.y() - end.y());
+      const FT y_coord = (begin.y() + end.y())/FT(2)
+                          + common*(end.x() - begin.x());
       
-      const FT sqr_rad = squared_distance(begin, end) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
+      const FT sqr_rad = squared_distance(begin, end) 
+	                 * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
 
       _support = Circle_2(Point_2(x_coord, y_coord), sqr_rad);
     }
+    
   private:
-
     // The arc goes from _begin to _end in the positive order
     // If _begin == _end, then it's the full circle
     Circular_arc_point_2  _begin, _end;
     Circle_2 _support;
 
-
-
   public:
- mutable char Cache_minmax;
+    mutable char Cache_minmax;
+    
     const Circular_arc_point_2 & left() const
     {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-	     : compare_xy(_begin,_end)<0);
-      if(Cache_minmax == 's')
+			       : compare_xy(_begin,_end)<0);
+      if (Cache_minmax == 's')
 	return _end;
-      if(Cache_minmax == 't')
+      if (Cache_minmax == 't')
 	return _begin;
-      if(on_upper_part()){
+      if (on_upper_part()) {
 	Cache_minmax = 's';
 	return _end;
       }
@@ -241,12 +247,12 @@ public:
     {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-	     : compare_xy(_begin,_end)<0);
-      if(Cache_minmax == 's')
+			       : compare_xy(_begin,_end)<0);
+      if (Cache_minmax == 's')
 	return _begin;
-      if(Cache_minmax == 't')
+      if (Cache_minmax == 't')
 	return _end;
-       if(on_upper_part()){
+      if (on_upper_part()) {
 	Cache_minmax = 's';
 	return _begin;
       }
@@ -258,7 +264,7 @@ public:
     {
       return _begin;
     }
-
+    
     const Circular_arc_point_2 & target() const
     {
       return _end;
@@ -275,7 +281,7 @@ public:
         return false;
 
       int cmp_x = compare_x(_begin, _end);
-
+      
       // Is the arc on the upper part ?
       if (cmp_begin > 0 || cmp_end > 0)
         return cmp_x > 0;
@@ -286,7 +292,7 @@ public:
 
       // There remains the case :
       CGAL_kernel_assertion(cmp_begin == 0 && cmp_end == 0);
-
+      
       return cmp_x != 0; // full circle or half circle.
     }
     
@@ -294,14 +300,14 @@ public:
     {
       int cmp_begin = CGAL::compare(_begin.x(), center().x());
       int cmp_end   = CGAL::compare(_end.x(),   center().x());
-
+      
       // XXX : be careful, this may be surprising if the return value
       // is not -1/1 but some random int...
       if (cmp_begin == opposite(cmp_end) && cmp_begin != 0)
         return false;
-
+      
       int cmp_y = compare_y(_begin, _end);
-
+      
       // Is the arc on the right part ?
       if (cmp_begin > 0 || cmp_end > 0)
         return cmp_y < 0;
@@ -309,7 +315,7 @@ public:
       // Is the arc on the left part ?
       if (cmp_begin < 0 || cmp_end < 0)
         return cmp_y > 0;
-
+      
       // There remains the case :
       assert(cmp_begin == 0 && cmp_end == 0);
 
@@ -317,12 +323,14 @@ public:
     }
 
     bool on_upper_part() const
-      // check whether the endpoints are above or below the center
+    // check whether the endpoints are above or below the center
     { 
       CGAL_kernel_precondition(is_x_monotone());
-
-      int begin_y = CGAL::compare(_begin.y(), supporting_circle().center().y());
-      int end_y   = CGAL::compare(_end.y(),   supporting_circle().center().y());
+      
+      int begin_y = 
+	CGAL::compare(_begin.y(), supporting_circle().center().y());
+      int end_y   = 
+	CGAL::compare(_end.y(),   supporting_circle().center().y());
 
       if (begin_y == 0 && end_y == 0)
         return compare_x(_begin, _end) > 0;
