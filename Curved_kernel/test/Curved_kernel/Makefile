@@ -18,13 +18,12 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
            -I../../../Algebraic_kernel/include \
+           -Iinclude \
 	   -g \
 	   $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
-           # -I../../../synaps \
 
 #---------------------------------------------------------------------#
 #                    linker flags
