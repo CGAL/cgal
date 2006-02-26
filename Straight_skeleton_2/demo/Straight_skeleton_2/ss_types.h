@@ -12,12 +12,16 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
+#include <CGAL/HalfedgeDS_const_decorator.h>
+
+namespace demo
+{
 
 typedef CGAL::Straight_skeleton_2<K>                            Sls;
 typedef CGAL::Straight_skeleton_builder_traits_2<K>             SlsBuilderTraits;
@@ -32,3 +36,6 @@ typedef Sls::Face_const_iterator   Face_const_iterator;
 typedef Sls::Halfedge_const_handle Halfedge_const_handle ;
 typedef Sls::Vertex_const_handle   Vertex_const_handle ;
 
+typedef CGAL::HalfedgeDS_const_decorator<Sls> Sls_const_decorator ;
+
+}

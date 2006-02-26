@@ -12,17 +12,20 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H 1
 
+#include <CGAL/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
+
+
 
 namespace CGAL_SLS_i {
 
@@ -38,8 +41,11 @@ struct Exist_sls_event_2 : Sls_functor_base_2<K>
 
   Uncertain<bool> operator() ( Triedge const& aTriedge ) const
   {
-    CGAL_SSTRAITS_TRACE("Exist Event:" << aTriedge);
-    return exist_offset_lines_isec2(aTriedge) ;
+    Uncertain<bool> rResult = exist_offset_lines_isec2(aTriedge) ;
+
+    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTriedge);
+
+    return rResult ;
   }
 };
 
@@ -56,7 +62,11 @@ struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
 
   Uncertain<Comparison_result> operator() ( Triedge const& aL, Triedge const& aR ) const
   {
-    return compare_offset_lines_isec_timesC2(aL,aR) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR) ;
+
+    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_times","L: " << aL << "\nR:" << aR );
+
+    return rResult ;
   }
 };
 
@@ -76,7 +86,11 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
                                           , Triedge const& aR
                                           ) const
   {
-    return compare_offset_lines_isec_sdist_to_pointC2(toVertex(aP),aL,aR) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_sdist_to_pointC2(toVertex(aP),aL,aR) ;
+
+    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compapre_dist_to_point:","P=" << aP << "\nL=" << aL << "\nR=" << aR);
+
+    return rResult ;
   }
 
   Uncertain<Comparison_result> operator() ( Triedge const& aS
@@ -84,7 +98,11 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
                                           , Triedge const& aR
                                           ) const
   {
-    return compare_offset_lines_isec_sdist_to_pointC2(aS,aL,aR) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_sdist_to_pointC2(aS,aL,aR) ;
+
+    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compapre_dist_to_point:","S=" << aS << "\nL=" << aL << "\nR=" << aR);
+
+    return rResult ;
   }
 
 };
@@ -101,8 +119,12 @@ struct Is_sls_event_inside_offset_zone_2 : Sls_functor_base_2<K>
 
   Uncertain<bool> operator() ( Triedge const& aE, Triedge const& aZ ) const
   {
-    return is_offset_lines_isec_inside_offset_zoneC2(aE,aZ) ;
-   }
+    Uncertain<bool> rResult = is_offset_lines_isec_inside_offset_zoneC2(aE,aZ) ;
+
+    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Is_event_inside_offset_zone","E=" << aE << "\nZ=" << aZ);
+
+    return rResult ;
+  }
 };
 
 template<class K>
@@ -117,8 +139,12 @@ struct Are_sls_events_simultaneous_2 : Sls_functor_base_2<K>
 
   Uncertain<bool> operator() ( Triedge const& aA, Triedge const& aB ) const
   {
-    return are_events_simultaneousC2(aA,aB);
-   }
+    Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB);
+
+    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Are_events_simultaneous","A=" << aA << "\nB=" << aB);
+
+    return rResult ;
+  }
 };
 
 

@@ -12,11 +12,11 @@
 //
 // $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/_test_types.h $
 // $Id: _test_types.h 28555 2006-02-15 18:54:04Z fcacciola $
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_TEST_TYPES_H
-#define CGAL_TEST_TYPES_H
+#ifndef CGAL_TEST_SLS_TRAITS_TYPES_H
+#define CGAL_TEST_SLS_TRAITS_TYPES_H
 
 #include <CGAL/basic.h>
 #include <iostream>
@@ -26,4 +26,4 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #endif
- 
+

@@ -1,5 +1,7 @@
-16 February 2006
+25 February 2006
 
-  * Create and add pictures to the docs
-  * Fix compilation and doc errors as shown in the testsuites
-   
+  * Add a few more pictures to the docs
+  * Update de docs according to latest review
+  * Test with additional real-world cases
+  * Get rid of the sqrt() in the predicates to improve robustness with Exact_predicates_inexact_constructions_kernel
+

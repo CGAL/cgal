@@ -267,6 +267,65 @@ private :
     return rR ;
   }
 
+  // Returns 1 aE is in the set (aA,aB,aC), 0 otherwise
+  int CountInCommon( Halfedge_handle aE, Halfedge_handle aA, Halfedge_handle aB, Halfedge_handle aC ) const
+  {
+    return aE == aA || aE == aB || aE == aC ? 1 : 0 ;
+  }
+
+  // Returns the number of common halfedges in the sets (aXA,aXB,aXC) and (aYA,aYB,aYC)
+  int CountInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
+                   , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
+                   ) const
+  {
+    return   CountInCommon(aXA,aYA,aYB,aYC)
+           + CountInCommon(aXB,aYA,aYB,aYC)
+           + CountInCommon(aXC,aYA,aYB,aYC) ;
+  }
+
+  // Returns true if the intersection of the sets (aXA,aXB,aXC) and (aYA,aYB,aYC) has size exactly 2
+  // (that is, both sets have 2 elements in common)
+  bool HaveTwoInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
+                      , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
+                      ) const
+  {
+    return CountInCommon(aXA,aXB,aXC,aYA,aYB,aYC) == 2 ;
+  }
+
+  // Returns true if the sets of halfedges (aXA,aXB,aXC) and (aYA,aYB,aYC) are equivalent
+  // (one is a permutation of the other)
+  bool AreTheSameTriple( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
+                       , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
+                       ) const
+  {
+    return CountInCommon(aXA,aXB,aXC,aYA,aYB,aYC) == 3 ;
+  }
+
+  // Returns the 0-base index of the one element from (aX[3]) NOT IN (aY[3])
+  // NOTE: This function shall be called only when it is known that such an element exists
+  // as 2 is returned by default without proper testing. That is, this function is for vertex-event analysis only.
+  int GetUnique( Halfedge_handle aX[], Halfedge_handle aY[] ) const
+  {
+    return CountInCommon(aX[0],aY[0],aY[1],aY[2]) == 0 ? 0
+             : CountInCommon(aX[1],aY[0],aY[1],aY[2]) == 0 ? 1
+               : 2 ;
+  }
+
+  // Sorts the elements in the sets aX[2] and aY[3] returing (D0,D1,E0,E1)
+  // where D0,D1 are unique elements in aX and aY respectively and E0,E1 are elements in common.
+  // NOTE: This function shall only be called when it is known that thet sets aX and aY can indeed be sorted this way.
+  // That is, this function is for vertex-event analysis only.
+  boost::tuple<Halfedge_handle,Halfedge_handle,Halfedge_handle,Halfedge_handle>
+    SortTwoDistinctAndTwoEqual( Halfedge_handle aX[], Halfedge_handle aY[] ) const
+  {
+     int lUniqueX = GetUnique(aX,aY) ;
+     int lUniqueY = GetUnique(aY,aX) ;
+     int lCommon1 = ( lUniqueX + 1 ) % 3 ;
+     int lCommon2 = ( lUniqueX + 2 ) % 3 ;
+     return boost::make_tuple(aX[lUniqueX],aY[lUniqueY],aX[lCommon1],aX[lCommon2]);
+  }
+
+
   bool ExistEvent ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 ) const
   {
     return Exist_sls_event_2<Traits>(mTraits)()(CreateTriedge(aE0, aE1, aE2));
@@ -291,9 +350,17 @@ private :
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    return CompareEvents( CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                        , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                        ) ;
+    if ( !AreTheSameTriple( aA->border_a(), aA->border_b(), aA->border_c()
+                          , aB->border_a(), aB->border_b(), aB->border_c()
+                          )
+        )
+    {
+      return CompareEvents( CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                          , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                          ) ;
+    }
+    else return EQUAL ;
+
   }
 
   Comparison_result CompareEventsDistanceToSeed ( Vertex_handle   aSeed
@@ -301,71 +368,37 @@ private :
                                                 , EventPtr const& aB
                                                 ) const
   {
-    if ( aSeed->is_skeleton() )
+    if ( !AreTheSameTriple( aA->border_a(), aA->border_b(), aA->border_c()
+                          , aB->border_a(), aB->border_b(), aB->border_c()
+                          )
+        )
     {
-      BorderTriple lTriple = GetSkeletonVertexDefiningBorders(aSeed);
+      if ( aSeed->is_skeleton() )
+      {
+        BorderTriple lTriple = GetSkeletonVertexDefiningBorders(aSeed);
 
-      CGAL_SSBUILDER_TRACE("Seed N" << aSeed->id() << " is a skeleton node,"
-                          << " defined by: E" << lTriple.get<0>()->id()
-                                     << ", E" << lTriple.get<1>()->id()
-                                     << ", E" << lTriple.get<2>()->id()
-                          );
+        CGAL_SSBUILDER_TRACE("Seed N" << aSeed->id() << " is a skeleton node,"
+                            << " defined by: E" << lTriple.get<0>()->id()
+                                       << ", E" << lTriple.get<1>()->id()
+                                       << ", E" << lTriple.get<2>()->id()
+                            );
 
-      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( CreateTriedge(lTriple)
-                                                                    , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                                    , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                                    ) ;
+        return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( CreateTriedge(lTriple)
+                                                                      , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                                                                      , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                                                                      ) ;
+      }
+      else
+      {
+        return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( aSeed->point()
+                                                                      , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                                                                      , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                                                                      ) ;
+      }
     }
-    else
-    {
-      return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( aSeed->point()
-                                                                    , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                                    , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                                    ) ;
-    }
+    else return EQUAL ;
   }
 
-  // Returns true if aE is in the set (aA,aB,aC)
-  bool IsBorderInTriple( Halfedge_handle aE, Halfedge_handle aA, Halfedge_handle aB, Halfedge_handle aC ) const
-  {
-    return aE == aA || aE == aB || aE == aC ;
-  }
-
-  // Returns true if the intersection of the sets (aXA,aXB,aXC) and (aYA,aYB,aYC) has size exactly 2
-  // (that is, both sets have 2 elements in common)
-  bool HaveTwoInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
-                      , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
-                      ) const
-  {
-    int lC = IsBorderInTriple(aXA,aYA,aYB,aYC) ? 1 :0 ;
-    lC    += IsBorderInTriple(aXB,aYA,aYB,aYC) ? 1 :0 ;
-    lC    += IsBorderInTriple(aXC,aYA,aYB,aYC) ? 1 :0 ;
-    return lC == 2 ;
-  }
-
-  // Returns the 0-base index of the one element from (aX[3]) NOT IN (aY[3])
-  // NOTE: This function shall be called only when it is known that such an element exists
-  // as 2 is returned by default without proper testing. That is, this function is for vertex-event analysis only.
-  int GetUnique( Halfedge_handle aX[], Halfedge_handle aY[] ) const
-  {
-    return !IsBorderInTriple(aX[0],aY[0],aY[1],aY[2]) ? 0
-             : !IsBorderInTriple(aX[1],aY[0],aY[1],aY[2]) ? 1
-               : 2 ;
-  }
-
-  // Sorts the elements in the sets aX[2] and aY[3] returing (D0,D1,E0,E1)
-  // where D0,D1 are unique elements in aX and aY respectively and E0,E1 are elements in common.
-  // NOTE: This function shall only be called when it is known that thet sets aX and aY can indeed be sorted this way.
-  // That is, this function is for vertex-event analysis only.
-  boost::tuple<Halfedge_handle,Halfedge_handle,Halfedge_handle,Halfedge_handle>
-    SortTwoDistinctAndTwoEqual( Halfedge_handle aX[], Halfedge_handle aY[] ) const
-  {
-     int lUniqueX = GetUnique(aX,aY) ;
-     int lUniqueY = GetUnique(aY,aX) ;
-     int lCommon1 = ( lUniqueX + 1 ) % 3 ;
-     int lCommon2 = ( lUniqueX + 2 ) % 3 ;
-     return boost::make_tuple(aX[lUniqueX],aY[lUniqueY],aX[lCommon1],aX[lCommon2]);
-  }
 
   bool AreEventsSimultaneous( EventPtr const& aX, EventPtr const& aY ) const
   {
@@ -379,6 +412,30 @@ private :
     if ( HaveTwoInCommon(xa,xb,xc,ya,yb,yc) )
          return Are_sls_events_simultaneous_2<Traits>(mTraits)()( CreateTriedge(xa,xb,xc), CreateTriedge(ya,yb,yc)) ;
     else return false ;
+  }
+
+  bool IsNewEventInThePast( Halfedge_handle aBorderA
+                          , Halfedge_handle aBorderB
+                          , Halfedge_handle aBorderC
+                          , Vertex_handle   aSeedNode
+                          )
+  {
+    bool rResult = false ;
+
+    Halfedge_handle lSeedBorderA, lSeedBorderB, lSeedBorderC ;
+
+    boost::tie(lSeedBorderA,lSeedBorderB,lSeedBorderC) = GetSkeletonVertexDefiningBorders(aSeedNode) ;
+
+    if ( !AreTheSameTriple(aBorderA,aBorderB,aBorderC,lSeedBorderA,lSeedBorderB,lSeedBorderC) )
+    {
+      if ( CompareEvents( CreateTriedge(aBorderA,aBorderB,aBorderC)
+                        , CreateTriedge(lSeedBorderA,lSeedBorderB,lSeedBorderC)
+                        ) == SMALLER
+         )
+        rResult = true ;
+    }
+
+    return rResult ;
   }
 
   boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( iTriedge const& aTri )

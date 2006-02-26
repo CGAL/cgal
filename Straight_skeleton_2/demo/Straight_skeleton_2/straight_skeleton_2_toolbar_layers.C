@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
@@ -28,23 +28,23 @@
 
 #include <qiconset.h>
 
-Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
-                              ,QMainWindow *mw
-                              ,PolygonalRegion const& pr
-                              ,Sls const& sls
-                              ,PolygonalRegion const& off
+Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*     w
+                              ,QMainWindow*         mw
+                              ,demo::Regions const& in
+                              ,demo::Sls     const& sls
+                              ,demo::Regions const& out
                               ) : QToolBar(mw, "LT"),
      nr_of_buttons(0)
   {
-    showP   = new Qt_layer_show_polygon<PolygonalRegion>(pr,CGAL::RED);
-    showSLS = new Qt_layer_show_skeleton<Sls>(sls);
-    showO   = new Qt_layer_show_polygon<PolygonalRegion>(off,CGAL::BLACK);
+    showI   = new Qt_layer_show_regions <demo::Regions>(in,CGAL::RED);
+    showSLS = new Qt_layer_show_skeleton<demo::Sls>    (sls);
+    showO   = new Qt_layer_show_regions <demo::Regions>(out,CGAL::BLACK);
 
     //set the widget
     widget = w;
     window = mw;
 
-    widget->attach(showP);
+    widget->attach(showI);
     widget->attach(showSLS);
     widget->attach(showO);
 
@@ -76,7 +76,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
     }
     //but[1]->toggle();
     connect(but[0], SIGNAL(stateChanged(int)),
-        showP, SLOT(stateChanged(int)));
+        showI, SLOT(stateChanged(int)));
     connect(but[1], SIGNAL(stateChanged(int)),
         showSLS, SLOT(stateChanged(int)));
     connect(but[2], SIGNAL(stateChanged(int)),
@@ -85,7 +85,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
 
   Layers_toolbar::~Layers_toolbar()
   {
-    delete showP;
+    delete showI;
     delete showSLS;
     delete showO;
     delete button_group;

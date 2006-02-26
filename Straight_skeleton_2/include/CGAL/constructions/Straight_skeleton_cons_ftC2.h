@@ -105,7 +105,9 @@ Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
   {
     FT sa = e.s().y() - e.t().y();
     FT sb = e.t().x() - e.s().x();
-    FT l  = CGAL_SLS_i :: inexact_sqrt( (sa*sa) + (sb*sb) );
+    FT l2 = (sa*sa) + (sb*sb) ;
+
+    FT l = CGAL_SLS_i :: inexact_sqrt(l2);
 
     a = sa / l ;
     b = sb / l ;
@@ -143,7 +145,7 @@ Rational<FT> compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& 
   // If 3 such offset lines intersect at the same offset distance, the intersection 't',
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
   //
-  //  t = a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 - b1*a0*c2 - b0*a1*c2
+  //  t = a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 + b1*a0*c2 - b0*a1*c2
   //      ---------------------------------------------------------------
   //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
 

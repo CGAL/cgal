@@ -36,9 +36,7 @@
 #  include<sstream>
 #  define CGAL_SLS_TRACE(m) \
      { \
-       std::ostringstream ss ; \
-       ss << m << std::ends ; \
-       std::string s = ss.str(); \
+       std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
 #endif
@@ -163,6 +161,44 @@ public:
           delete this;
       }
 };
+
+#ifdef CGAL_SLS_PROFILING_ENABLED // Reserved use. DO NOT define this macro switch
+#  include<string>
+#  include<iostream>
+#  include<sstream>
+
+namespace CGAL_SLS_i_profiling
+{
+
+template<class NT> char const* kernel_type() { return typeid(NT).name() ; }
+
+template<> char const* kernel_type<double>              () { return "double" ;   }
+template<> char const* kernel_type<Interval_nt_advanced>() { return "Interval" ; }
+template<> char const* kernel_type< Quotient<MP_Float> >() { return "MP_Float" ; }
+template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;     }
+
+}
+
+//
+// Undefined identifier: register_predicate_failure ??
+// Then you mistakenly defined the macro switch CGAL_SLS_PROFILING_ENABLED, turn it off.
+//
+#define CGAL_SLS_ASSERT_PREDICATE_RESULT(expr,K,pred,error) \
+        { \
+          std::ostringstream predss ; \
+          predss << CGAL_SLS_i_profiling::kernel_type< typename K::FT >() << " . " << pred ; \
+          std::string preds = predss.str(); \
+          if ( is_indeterminate((expr)) ) \
+          { \
+            std::ostringstream errss  ; errss << error ; std::string errs = errss.str(); \
+            register_predicate_failure(preds,errs); \
+          } \
+          else register_predicate_success(preds); \
+        }
+#else
+#define CGAL_SLS_ASSERT_PREDICATE_RESULT(expr,K,pred,error)
+#endif
+
 CGAL_END_NAMESPACE
 
 namespace boost
@@ -170,6 +206,7 @@ namespace boost
 inline void intrusive_ptr_add_ref( CGAL::Ref_counted_base const* p ) { p->AddRef(); }
 inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Release(); }
 } // namespace boost
+
 
 #undef CGAL_SLS_ENABLE_TRACE
 #undef CGAL_SLS_ENABLE_SHOW

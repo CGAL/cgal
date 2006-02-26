@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
@@ -37,14 +37,14 @@ class Tools_toolbar : public QToolBar
   Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
-	
+
 private:
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QButtonGroup    *button_group;
   int             nr_of_buttons;
-	
-  CGAL::Qt_widget_get_simple_polygon<Polygon> getsimplebut;
+
+  CGAL::Qt_widget_get_simple_polygon<demo::Polygon> getsimplebut;
 };//end class
 
 #endif

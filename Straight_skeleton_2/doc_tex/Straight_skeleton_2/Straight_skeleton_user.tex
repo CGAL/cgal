@@ -33,7 +33,32 @@ An offset polygon can have less, equal or more sides as its source polygon.\\
 If the source polygon has no holes, no offset polygon has holes. If the source polygon has holes, any of the offset polygons can have holes itself, but it might as well have no holes at all (if the distance is sufficiently large).\\
 Since any offset polygon is a simple polygon, its outer contour is oriented counter-clockwise while its holes (if any) are oriented clockwise.
 
-%% Figure of valid and invalid simple polygons
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{fig0} % omit suffix .eps to supprt PS and PDF
+\includegraphics{fig1} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\end{ccTexOnly}
+\caption{Polygon with no holes and 2 inward offsets at distances 1 and 2 (Left) and polygon with holes and many inward offsets at various distances (Right)
+\label{Simplepoly-offsets}}
+\begin{ccHtmlOnly}
+<TABLE CELLSPACING=40>
+<TR>
+<TD>
+<CENTER>
+<IMG BORDER=0 SRC="./fig0.png" ALIGN=center ALT="Polygon with no holes and 2 inward offsets">
+</CENTER>
+</TD>
+<TD>
+<CENTER>
+<IMG BORDER=0 SRC="./fig1.png" ALIGN=center ALT="polygon with holes and many inward offsets at various distances">
+</CENTER>
+</TD>
+</TR>
+</TABLE>
+\end{ccHtmlOnly}
+\end{figure}
 
 \subsection{Straight Skeleton of a 2D Simple Polygon}
  
@@ -41,9 +66,44 @@ The 2D \textbf{Straight Skeleton} of a simple polygon is a special partitioning 
 These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is a non-convex simple polygon itself.\\
 It was first introduced in:\\
 
-  "A Novel Type of Skeleton for Polygons"\\
-  O. AICHHOLZER, F. AURENHAMMER, D. ALBERTS, BERND GÄRTNER
+@Article{,
+author = {O. AICHHOLZER, F. AURENHAMMER, D. ALBERTS, BERND GARTNER},
+title = {A Novel Type of Skeleton for Polygons}
+}
 
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{fig2} % omit suffix .eps to supprt PS and PDF
+\includegraphics{fig3} % omit suffix .eps to supprt PS and PDF
+\includegraphics{fig4} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\end{ccTexOnly}
+\caption{Example straight skeletons
+\label{SampleSLS}}
+\begin{ccHtmlOnly}
+<TABLE CELLSPACING=40>
+<TR>
+<TD>
+<CENTER>
+<IMG BORDER=0 SRC="./fig2.png" ALIGN=center ALT="Sample Skeleton 0">
+</CENTER>
+</TD>
+<TD>
+<CENTER>
+<IMG BORDER=0 SRC="./fig3.png" ALIGN=center ALT="Sample Skeleton 1">
+</CENTER>
+</TD>
+<TD>
+<CENTER>
+<IMG BORDER=0 SRC="./fig4.png" ALIGN=center ALT="Sample Skeleton 2">
+</CENTER>
+</TD>
+</TR>
+</TABLE>
+\end{ccHtmlOnly}
+\end{figure}
+  
 \subsubsection{Angular Bisecting Lines and Offset Bisectors}  
 
 Two non-parallel lines, intersecting at a point, are bisected by two other lines passing through that intersection point.\\
@@ -101,7 +161,26 @@ Contour vertices have exactly two defining contour edges, which are the contour 
 
 The Euclidean distance from any vertex to the \textit{lines} supporting its defining contour edges is the same for all such lines (this is the distinctive characteristic of a straight skeleton). This distance is called the \textbf{time} of the vertex. Note that different vertices can have the same time. Contour vertices have time zero.
 
-% Figures of a Ssds
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{fig5} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\end{ccTexOnly}
+\caption{Straight Skeleton Data Structure
+\label{Simplepoly-offsets}}
+\begin{ccHtmlOnly}
+<TABLE CELLSPACING=40>
+<TR>
+<TD>
+<CENTER>
+<IMG BORDER=0 SRC="./fig5.png" ALIGN=center ALT="Straight skeleton DS">
+</CENTER>
+</TD>
+</TR>
+</TABLE>
+\end{ccHtmlOnly}
+\end{figure}
 
 \section{API}
 

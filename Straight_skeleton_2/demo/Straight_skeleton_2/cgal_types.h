@@ -12,36 +12,48 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_TYPES
 #define CGAL_TYPES
 
+#include "definitions.h"
+
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
 #ifdef SLS_DEMO_EXACT
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#else
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#elif !defined(SLS_DEMO_FAST)
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #endif
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
-#ifdef SLS_DEMO_EXACT
-typedef CGAL::Exact_predicates_exact_constructions_kernel KK;
+namespace demo
+{
+
+#if defined(SLS_DEMO_EXACT)
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
+#elif defined(SLS_DEMO_FAST)
+typedef CGAL::Simple_cartesian<double> K ;
 #else
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 #endif
 
-typedef K::Point_2                 Point;
-typedef CGAL::Polygon_2<K>         Polygon;
-typedef boost::shared_ptr<Polygon> PolygonPtr;
-typedef CGAL::Segment_2<K>         Segment;
-typedef std::vector<PolygonPtr>    PolygonalRegion ;
+typedef K::Point_2                    Point;
+typedef CGAL::Aff_transformation_2<K> Transformation;
+typedef CGAL::Polygon_2<K>            Polygon;
+typedef boost::shared_ptr<Polygon>    PolygonPtr;
+typedef CGAL::Segment_2<K>            Segment;
+typedef std::vector<PolygonPtr>       Region ;
+typedef boost::shared_ptr<Region>     RegionPtr ;
+typedef std::vector<RegionPtr>        Regions ;
+typedef std::vector<double>           Doubles ;
 
+}
 #endif
 

@@ -11,21 +11,28 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+ifeq ($(DEBUGGING), yes)
+ADDITIONAL_CXXFLAGS = -g
+else
+ADDITIONAL_CXXFLAGS = -O2
+endif
+
 CXXFLAGS = -I../../include/ \
-	$(CGAL_CXXFLAGS) \
+        $(CGAL_CXXFLAGS) \
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
-	$(DEBUG_OPT)
+	$(ADDITIONAL_CXXFLAGS) 
+
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-	$(CGAL_LIBPATH)
+        $(CGAL_LIBPATH)
 
 LDFLAGS = \
-	$(LONG_NAME_PROBLEM_LDFLAGS) \
-	$(CGAL_QT_LDFLAGS)
+        $(LONG_NAME_PROBLEM_LDFLAGS) \
+        $(CGAL_QT_LDFLAGS)
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
@@ -39,14 +46,14 @@ straight_skeleton_2_toolbar.moc: straight_skeleton_2_toolbar.h
 	$(QT_MOC) -o straight_skeleton_2_toolbar.moc straight_skeleton_2_toolbar.h
 
 straight_skeleton_2_toolbar_layers$(OBJ_EXT): straight_skeleton_2_toolbar_layers.C \
-		straight_skeleton_2_toolbar_layers.moc
+	straight_skeleton_2_toolbar_layers.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2_toolbar_layers.C
 
 straight_skeleton_2_toolbar_layers.moc: straight_skeleton_2_toolbar_layers.h
 	$(QT_MOC) -o straight_skeleton_2_toolbar_layers.moc straight_skeleton_2_toolbar_layers.h
 
 straight_skeleton_2.moc: straight_skeleton_2.C straight_skeleton_2_toolbar$(OBJ_EXT) \
-		 straight_skeleton_2_toolbar_layers$(OBJ_EXT)
+                 straight_skeleton_2_toolbar_layers$(OBJ_EXT)
 	${QT_MOC} -o straight_skeleton_2.moc straight_skeleton_2.C
 
 straight_skeleton_2$(OBJ_EXT): straight_skeleton_2.C straight_skeleton_2.moc
@@ -54,12 +61,12 @@ straight_skeleton_2$(OBJ_EXT): straight_skeleton_2.C straight_skeleton_2.moc
 
 straight_skeleton_2$(EXE_EXT): straight_skeleton_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)straight_skeleton_2 straight_skeleton_2$(OBJ_EXT) \
-		straight_skeleton_2_toolbar$(OBJ_EXT) \
-		straight_skeleton_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
+	straight_skeleton_2_toolbar$(OBJ_EXT) \
+	straight_skeleton_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
 clean: straight_skeleton_2.clean \
-	straight_skeleton_2_toolbar_layers.clean \
-	straight_skeleton_2_toolbar.clean
+        straight_skeleton_2_toolbar_layers.clean \
+        straight_skeleton_2_toolbar.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

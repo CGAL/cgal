@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
@@ -21,6 +21,10 @@
 template <class Sls>
 class Qt_layer_show_skeleton : public CGAL::Qt_widget_layer
 {
+  typedef typename Sls::Halfedge_const_handle Halfedge_const_handle ;
+  typedef typename Sls::Vertex_const_handle   Vertex_const_handle ;
+  typedef typename Sls::Face_const_iterator   Face_const_iterator ;
+
 public:
 
   Qt_layer_show_skeleton(Sls const& aSls) : mSls(aSls)
@@ -57,6 +61,7 @@ public:
             *widget << ( he->is_inner_bisector()? CGAL::BLUE : CGAL::GREEN ) ;
             *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
           }
+          /*
           else
           {
             int id       = he->id();
@@ -75,7 +80,7 @@ public:
                         , id, oppid, vid, oppvid, vheid, oppvheid
                         ) ;
           }
-
+          */
         }
         he = he->next();
       }
@@ -94,14 +99,20 @@ private:
 ;//end class
 
 
-template <class PolygonalRegion>
-class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
+template <class RegionList>
+class Qt_layer_show_regions : public CGAL::Qt_widget_layer
 {
-  typedef typename PolygonalRegion::value_type BoundaryPtr ;
+  typedef typename RegionList::value_type RegionPtr ;
+
+  typedef typename RegionPtr::element_type Region ;
+
+  typedef typename Region::value_type BoundaryPtr ;
 
   typedef typename BoundaryPtr::element_type Boundary ;
 
-  typedef typename PolygonalRegion::const_iterator const_boundary_iterator ;
+  typedef typename RegionList::const_iterator const_region_iterator ;
+
+  typedef typename Region::const_iterator const_boundary_iterator ;
 
   typedef typename Boundary::const_iterator const_vertex_iterator ;
 
@@ -109,7 +120,7 @@ class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
 
 public:
 
-  Qt_layer_show_polygon(PolygonalRegion const& aRegion, CGAL::Color aColor ) : mRegion(aRegion),  mColor(aColor) {};
+  Qt_layer_show_regions(RegionList const& aRegions, CGAL::Color aColor ) : mRegions(aRegions),  mColor(aColor) {};
 
   void draw()
   {
@@ -117,15 +128,18 @@ public:
 
     *widget << mColor;
 
-    for ( const_boundary_iterator bit = mRegion.begin(), ebit = mRegion.end(); bit != ebit; ++ bit )
+    for ( const_region_iterator rit = mRegions.begin(), erit = mRegions.end(); rit != erit; ++ rit )
     {
-      const_vertex_iterator first = (*bit)->vertices_begin();
-      const_vertex_iterator end   = (*bit)->vertices_end  ();
-      const_vertex_iterator last  = end - 1 ;
-      for ( const_vertex_iterator it = first ; it != end ; ++ it )
+      for ( const_boundary_iterator bit = (*rit)->begin(), ebit = (*rit)->end(); bit != ebit; ++ bit )
       {
-        const_vertex_iterator nx = ( it != last ? it + 1 : first ) ;
-        *widget << construct_segment(*it,*nx) ;
+        const_vertex_iterator first = (*bit)->vertices_begin();
+        const_vertex_iterator end   = (*bit)->vertices_end  ();
+        const_vertex_iterator last  = end - 1 ;
+        for ( const_vertex_iterator it = first ; it != end ; ++ it )
+        {
+          const_vertex_iterator nx = ( it != last ? it + 1 : first ) ;
+          *widget << construct_segment(*it,*nx) ;
+        }
       }
     }
 
@@ -135,7 +149,7 @@ public:
 
 private:
 
-  PolygonalRegion const& mRegion;
+  RegionList const& mRegions;
   CGAL::Color mColor ;
 }
 ;//end class

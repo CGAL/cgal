@@ -18,7 +18,7 @@ CXXFLAGS = -I../../include \
            -Iinclude \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           -O2
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -37,15 +37,19 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_sls_traits
-
-test_sls_traits$(OBJ_EXT): test_sls_traits.C
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) test_sls_traits.C
+all: \
+  test_sls_traits$(EXE_EXT) \
+  test_sls_builder$(EXE_EXT)
 
 test_sls_traits$(EXE_EXT): test_sls_traits$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) test_sls_traits test_sls_traits$(OBJ_EXT) $(LDFLAGS)
 
-clean: test_sls_traits.clean
+test_sls_builder$(EXE_EXT): test_sls_builder$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) test_sls_builder test_sls_builder$(OBJ_EXT) $(LDFLAGS)
+
+clean: \
+        test_sls_traits.clean \
+        test_sls_builder.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

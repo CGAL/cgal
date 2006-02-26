@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H
@@ -24,29 +24,31 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
 namespace CGAL_SLS_i
 {
 
 template<class FT>
 Uncertain<bool> certified_collinearC2( Vertex<FT> const& p, Vertex<FT> const& q, Vertex<FT> const& r )
 {
-  return certified_is_equal( ( q.x() - p.x() ) * ( r.y() - p.y() )
-                           , ( r.x() - p.x() ) * ( q.y() - p.y() )
-                           );
+  return CGAL_NTS certified_is_equal( ( q.x() - p.x() ) * ( r.y() - p.y() )
+                                    , ( r.x() - p.x() ) * ( q.y() - p.y() )
+                                    );
 }
 
 template<class FT>
 Uncertain<bool> are_edges_collinear( Edge<FT> const& e0, Edge<FT> const& e1 )
 {
-  return    certified_collinearC2(e0.s(),e0.t(),e1.s())
-         && certified_collinearC2(e0.s(),e0.t(),e1.t());
+  return CGAL_NTS logical_and(  certified_collinearC2(e0.s(),e0.t(),e1.s())
+                             ,  certified_collinearC2(e0.s(),e0.t(),e1.t())
+                             ) ;
 }
 
 template<class FT>
 SortedTriedge<FT> collinear_sort ( Triedge<FT> const& triedge )
 {
   bool valid = false, degenerate = false ;
-  int  idx0, idx1, idx2 ;
+  int  idx0=0, idx1=1, idx2=2 ;
 
   Uncertain<bool> is_01 = are_edges_collinear(triedge.e0(),triedge.e1());
   if ( !CGAL_NTS is_indeterminate(is_01) )
@@ -58,21 +60,21 @@ SortedTriedge<FT> collinear_sort ( Triedge<FT> const& triedge )
       if ( !CGAL_NTS is_indeterminate(is_01) )
       {
         valid = true ;
-        if ( is_01 && !is_02 && !is_12 )
+        if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
         {
           idx0 = 0 ;
           idx1 = 1 ;
           idx2 = 2 ;
           degenerate = true ;
         }
-        else if ( is_02 && !is_01 && !is_12 )
+        else if ( CGAL_NTS logical_and(is_02 , !is_01 , !is_12 ) )
         {
           idx0 = 0 ;
           idx1 = 2 ;
           idx2 = 1 ;
           degenerate = true ;
         }
-        else if ( is_12 && !is_01 && !is_02 )
+        else if ( CGAL_NTS logical_and(is_12 , !is_01 , !is_02 ) )
         {
           idx0 = 1 ;
           idx1 = 2 ;
@@ -281,7 +283,7 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& triedge, Triedge<
           CGAL_SSTRAITS_TRACE("\nlok:" << lok) ;
           CGAL_SSTRAITS_TRACE("\nrok:" << rok) ;
 
-          r = lok && rok ;
+          r = CGAL_NTS logical_and(lok , rok) ;
         }
         else
         {
@@ -333,7 +335,9 @@ Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> co
         Vertex<FT> li = construct_offset_lines_isecC2(l_sorted);
         Vertex<FT> ri = construct_offset_lines_isecC2(r_sorted);
 
-        rResult = CGAL_NTS certified_is_equal(li.x(),ri.x()) && CGAL_NTS certified_is_equal(li.y(),ri.y()) ;
+        rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li.x(),ri.x())
+                                      , CGAL_NTS certified_is_equal(li.y(),ri.y())
+                                      ) ;
       }
       else rResult = make_uncertain(false);
     }

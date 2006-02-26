@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_HALFEDGE_BASE_2_H
@@ -49,7 +49,7 @@ public:
 
   bool is_bisector() const
   {
-    return !is_border() && !opposite()->is_border() ;
+    return !HBase::is_border() && !HBase::opposite()->is_border() ;
   }
 
   bool is_inner_bisector() const
@@ -57,8 +57,8 @@ public:
     return !vertex()->is_contour() && !opposite()->vertex()->is_contour();
   }
 
-  Halfedge_const_handle defining_contour_edge() const { return face()->halfedge() ; }
-  Halfedge_handle       defining_contour_edge()       { return face()->halfedge() ; }
+  Halfedge_const_handle defining_contour_edge() const { return HBase::face()->halfedge() ; }
+  Halfedge_handle       defining_contour_edge()       { return HBase::face()->halfedge() ; }
 
   void  set_opposite( Halfedge_handle h)  { HBase::set_opposite(h);}
 

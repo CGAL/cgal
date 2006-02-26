@@ -79,28 +79,16 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
     {
       bool lAccepted = true ;
 
-      if ( aLNode->is_skeleton() )
+      if ( aLNode->is_skeleton() && IsNewEventInThePast(lBorderA,lBorderB,lBorderC,aLNode) )
       {
-        if ( CompareEvents( CreateTriedge(lBorderA,lBorderB,lBorderC)
-                          , CreateTriedge(GetSkeletonVertexDefiningBorders(aLNode))
-                          ) == SMALLER
-           )
-        {
-          CGAL_SSBUILDER_TRACE("New edge event for Left seed N" << aLNode->id() << " is in the past. discarded." ) ;
-          lAccepted = false ;
-        }
+        CGAL_SSBUILDER_TRACE("New edge event for Left seed N" << aLNode->id() << " is in the past. discarded." ) ;
+        lAccepted = false ;
       }
 
-      if ( aRNode->is_skeleton() )
+      if ( aRNode->is_skeleton() && IsNewEventInThePast(lBorderA,lBorderB,lBorderC,aRNode) )
       {
-        if ( CompareEvents( CreateTriedge(lBorderA,lBorderB,lBorderC)
-                          , CreateTriedge(GetSkeletonVertexDefiningBorders(aRNode))
-                          ) == SMALLER
-           )
-        {
-          CGAL_SSBUILDER_TRACE("New edge event for Right seed N" << aRNode->id() << " is in the past. discarded." ) ;
-          lAccepted = false ;
-        }
+        CGAL_SSBUILDER_TRACE("New edge event for Right seed N" << aRNode->id() << " is in the past. discarded." ) ;
+        lAccepted = false ;
       }
 
       if ( lAccepted )
@@ -139,16 +127,10 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle    aNo
     {
       bool lAccepted = true ;
 
-      if ( aNode->is_skeleton() )
+      if ( aNode->is_skeleton() && IsNewEventInThePast(aReflexLBorder,aReflexRBorder,aOppositeBorder,aNode) )
       {
-        if ( CompareEvents( CreateTriedge(aReflexLBorder,aReflexRBorder,aOppositeBorder)
-                          , CreateTriedge(GetSkeletonVertexDefiningBorders(aNode))
-                          ) == SMALLER
-           )
-        {
-          CGAL_SSBUILDER_TRACE("New split event for Seed N" << aNode->id() << " is in the past. discarded." ) ;
-          lAccepted = false ;
-        }
+        CGAL_SSBUILDER_TRACE("New split event for Seed N" << aNode->id() << " is in the past. discarded." ) ;
+        lAccepted = false ;
       }
 
       if ( lAccepted )
@@ -1100,15 +1082,32 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aS
 {
   Vertex_handle lLNode, lRNode ;
   boost::tie(lLNode,lRNode)=aSplitNodes;
-  Halfedge_handle lIBisector = lRNode->primary_bisector()->opposite();
+
+  Halfedge_handle lIBisectorL1 = lLNode->primary_bisector()->opposite();
+  Halfedge_handle lIBisectorR1 = lRNode->primary_bisector()->opposite();
+  Halfedge_handle lIBisectorL2 = lIBisectorL1->next()->opposite();
+  Halfedge_handle lIBisectorR2 = lIBisectorR1->next()->opposite();
 
   Exclude(lRNode);
 
-  lIBisector->HBase::set_vertex(lLNode);
+  if ( lIBisectorL1->vertex() == lRNode )
+    lIBisectorL1->HBase::set_vertex(lLNode);
+
+  if ( lIBisectorR1->vertex() == lRNode )
+    lIBisectorR1->HBase::set_vertex(lLNode);
+
+  if ( lIBisectorL2->vertex() == lRNode )
+    lIBisectorL2->HBase::set_vertex(lLNode);
+
+  if ( lIBisectorR2->vertex() == lRNode )
+    lIBisectorR2->HBase::set_vertex(lLNode);
 
   CGAL_SSBUILDER_TRACE("SplitNodes: N" << lLNode->id() << " and N" << lRNode->id() << " merged.\n"
-                       << 'B' << lIBisector->id() << " now linked to N" << lLNode->id()
-                       << ". N" << lRNode->id() << " excluded."
+                       << ". N" << lRNode->id() << " excluded.\n"
+                       << 'B' << lIBisectorL1->id() << " now linked to N" << lIBisectorL1->vertex()->id() << '\n'
+                       << 'B' << lIBisectorR1->id() << " now linked to N" << lIBisectorR1->vertex()->id() << '\n'
+                       << 'B' << lIBisectorL2->id() << " now linked to N" << lIBisectorL2->vertex()->id() << '\n'
+                       << 'B' << lIBisectorR2->id() << " now linked to N" << lIBisectorR2->vertex()->id()
                        );
 
   mSS.SBase::vertices_erase(lRNode);
@@ -1117,12 +1116,10 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aS
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::FinishUp()
 {
-  /*
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
                 ,boost::bind(&Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes,this,_1)
                ) ;
-*/
 
   std::for_each( mDanglingBisectors.begin()
                 ,mDanglingBisectors.end  ()

@@ -60,6 +60,8 @@ int main(int, char*)
 
 #include "cgal_types.h"
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Real_timer.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -210,6 +212,59 @@ private:
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
+#define STATS
+//#define CGAL_SLS_PROFILING_ENABLED
+
+#if defined(STATS)
+#define LOGSTATS(m) std::cout << m << std::endl ;
+#else
+#define LOGSTATS(m)
+#endif
+
+#ifdef CGAL_SLS_PROFILING_ENABLED
+struct profiling_data
+{
+  profiling_data() : good(0) {}
+  int good ;
+  std::vector<std::string> failed ;
+} ;
+
+typedef std::map<std::string,profiling_data> profiling_map ;
+profiling_map sProfilingMap ;
+
+void register_predicate_success( std::string pred )
+{
+  ++ sProfilingMap[pred].good ;
+}
+void register_predicate_failure( std::string pred, std::string error )
+{
+  sProfilingMap[pred].failed.push_back(error) ;
+}
+
+void LogProfilingResults()
+{
+  std::cout << "Profiling results" << std::endl ;
+  for ( profiling_map::const_iterator it = sProfilingMap.begin() ; it != sProfilingMap.end() ; ++ it )
+  {
+    profiling_data const& data = it->second ;
+    std::cout << it->first << ":\n"
+              << "  " << data.good << " good cases\n"
+              << "  " << data.failed.size() << " failed cases\n" ;
+
+  }
+  for ( profiling_map::const_iterator it = sProfilingMap.begin() ; it != sProfilingMap.end() ; ++ it )
+  {
+    profiling_data const& data = it->second ;
+    if ( data.failed.size() > 0 )
+    {
+      std::cout << "\n*****************\nDetailed failure data for\n" << it->first << ":\n" ;
+      for ( std::vector<std::string>::const_iterator ci = data.failed.begin() ; ci != data.failed.end() ; ++ ci )
+        std::cout << *ci << "\n--------------------\n" ;
+    }
+  }
+}
+#endif
+
 
 #if defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE)
 void Straight_skeleton_external_trace ( std::string s )
@@ -250,14 +305,76 @@ int Straight_skeleton_external_draw_segment ( double sx
 #include "straight_skeleton_2_toolbar.h"
 #include "straight_skeleton_2_toolbar_layers.h"
 
+namespace demo
+{
+
 const QString my_title_string("Straight_skeleton_2 Demo");
 
 int current_state;
-Sls sls;
-PolygonalRegion input_region ;
-PolygonalRegion offset_region ;
-double offset_val  = 7 ;
-int  offset_steps = 4 ;
+
+Sls     sls;
+bool    sls_valid ;
+Regions input ;
+Regions output ;
+Doubles offsets ;
+
+#ifdef STATS
+void log_regions_stats( Regions r, const char* which )
+{
+  LOGSTATS( which << " region list has " << r.size() << " regions." ) ;
+
+
+  int ridx = 0 ;
+  for ( Regions::const_iterator ri = r.begin(), eri = r.end() ; ri != eri ; ++ri, ++ridx )
+  {
+    int vtot = 0 ;
+    int xtot = 0 ;
+
+    Region const& lRegion = **ri ;
+
+    LOGSTATS( which << " region " << ridx << " has " << lRegion.size() << " contours." ) ;
+
+    int cidx = 0 ;
+    for ( Region::const_iterator ci = lRegion.begin(), eci = lRegion.end() ; ci != eci ; ++ci, ++cidx )
+    {
+      Polygon lContour = **ci ;
+      if ( cidx == 0 )
+      {
+        CGAL::Bbox_2 lBbox = lContour.bbox();
+        LOGSTATS( "Outer Contour BBox:\n"
+                 << "xmin=" << lBbox.xmin() << " ymin=" << lBbox.ymin() << " xmax=" << lBbox.xmax() << " ymax=" << lBbox.ymax()
+                 << "\nwidth=" << (lBbox.xmax() - lBbox.xmin() ) << " height=" << (lBbox.ymax() - lBbox.ymin() )
+                ) ;
+
+      }
+
+      int xc = 0 ;
+
+      Polygon::const_iterator vbeg = lContour.vertices_begin() ;
+      Polygon::const_iterator vend = lContour.vertices_end  () ;
+      Polygon::const_iterator vlst = CGAL::predecessor(vend) ;
+      for ( Polygon::const_iterator vi = vbeg ; vi != vend ; ++ vi )
+      {
+        Polygon::const_iterator vprev = ( vi == vbeg ? vlst : CGAL::predecessor(vi) ) ;
+        Polygon::const_iterator vnext = ( vi == vlst ? vbeg : CGAL::successor  (vi) ) ;
+
+        if ( !(K().left_turn_2_object()(*vprev,*vi,*vnext)) )
+          ++ xc ;
+      }
+
+      LOGSTATS( "Contour " << cidx << " has " << lContour.size() << " vertices (" << xc << " reflex)." ) ;
+
+      vtot += lContour.size();
+      xtot += xc ;
+    }
+
+    LOGSTATS( "Regions " << ridx << " has a total of  " << vtot << " vertices (" << xtot << " reflex)." ) ;
+  }
+
+}
+#else
+void log_regions_stats( Regions r, const char* which ) {}
+#endif
 
 class MyWindow : public QMainWindow
 {
@@ -295,7 +412,6 @@ public:
     draw->insertItem("Generate Skeleton", this, SLOT(create_sls()), CTRL+Key_G );
     draw->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_O );
     draw->insertItem("Set Offset Distance", this, SLOT(set_offset()));
-    draw->insertItem("Set Offset Steps", this, SLOT(set_steps()));
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -311,7 +427,7 @@ public:
     newtoolbar = new Tools_toolbar(widget, this);
 
     //the new scenes toolbar
-    vtoolbar = new Layers_toolbar(widget, this, input_region, sls, offset_region);
+    vtoolbar = new Layers_toolbar(widget, this, input, sls, output);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -334,9 +450,10 @@ public slots:
   {
     widget->lock();
     widget->clear();
+    input.clear();
     sls.clear();
-    offset_region.clear();
-    input_region.clear();
+    offsets.clear();
+    output.clear();
     // set the Visible Area to the Interval
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
@@ -347,20 +464,34 @@ private slots:
 
   void get_new_object(CGAL::Object obj)
   {
-    PolygonPtr poly(new Polygon());
-    if (CGAL::assign(*poly, obj))
+    PolygonPtr lPoly(new Polygon());
+    if (CGAL::assign(*lPoly, obj))
     {
-      CGAL::Bbox_2 lBbox = poly->bbox();
+      CGAL::Bbox_2 lBbox = lPoly->bbox();
       double w = lBbox.xmax() - lBbox.xmin();
       double h = lBbox.ymax() - lBbox.ymin();
       double s = std::sqrt(w*w+h*h);
       double m = s * 0.01 ;
-      offset_val   = m ;
-      offset_steps = 30 ;
-      CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-      if ( poly->orientation() != expected )
-        poly->reverse_orientation();
-      input_region.push_back(poly);
+      offsets.clear();
+      offsets.push_back(m) ;
+
+      RegionPtr lRegion;
+
+      if ( input.size() == 0 )
+      {
+        lRegion = RegionPtr( new Region() ) ;
+        input.push_back(lRegion);
+      }
+
+      CGAL::Orientation lExpected = ( lRegion->size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+      if ( lPoly->orientation() != lExpected )
+        lPoly->reverse_orientation();
+
+      lRegion->push_back(lPoly);
+
+      input.push_back(lRegion);
+
+      log_regions_stats(input,"Input");
     }
     widget->redraw();
   };
@@ -368,39 +499,68 @@ private slots:
 
   void create_sls()
   {
-    SlsBuilder builder ;
-
-    for( PolygonalRegion::const_iterator bit = input_region.begin(), ebit = input_region.end() ; bit != ebit ; ++ bit )
+    if ( input.size() > 0 )
     {
-      builder.enter_contour((*bit)->vertices_begin(),(*bit)->vertices_end());
-    }
-    sls = builder.construct_skeleton() ;
-    widget->redraw();
-    something_changed();
-  }
+      Region const& lRegion = *input.front();
 
-  void create_offset()
-  {
-    if ( sls.size_of_halfedges() > 0 )
-    {
-      offset_region.clear();
-      for ( int i = 1 ; i <= offset_steps ; ++ i )
+      LOGSTATS("Creating Straight Skeleton...");
+      CGAL::Real_timer t ;
+      t.start();
+      SlsBuilder builder ;
+      for( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
       {
-        OffsetBuilder lOffsetBuilder(sls);
-        lOffsetBuilder.construct_offset_polygons(i*offset_val, std::back_inserter(offset_region) );
+        builder.enter_contour((*bit)->vertices_begin(),(*bit)->vertices_end());
       }
+      sls = builder.construct_skeleton() ;
+      t.stop();
+      sls_valid = Sls_const_decorator(sls).is_valid(false,3);
+      LOGSTATS( (sls_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << t.time() << " seconds.");
+#ifdef CGAL_SLS_PROFILING_ENABLED
+      LogProfilingResults();
+#endif
       widget->redraw();
       something_changed();
     }
   }
 
+  void create_offset()
+  {
+    if ( sls_valid )
+    {
+      LOGSTATS("Creating Offsets...");
+      output.clear();
+
+      if ( offsets.size() == 0 )
+        offsets.push_back(1);
+
+      for ( Doubles::const_iterator i = offsets.begin() ; i != offsets.end() ; ++ i )
+      {
+        double offset = *i ;
+        LOGSTATS("Creating offsets at " << offset );
+        RegionPtr lRegion( new Region ) ;
+        OffsetBuilder lOffsetBuilder(sls);
+        lOffsetBuilder.construct_offset_polygons(offset, std::back_inserter(*lRegion) );
+        LOGSTATS("Done.");
+        if ( lRegion->size() > 0 )
+          output.push_back(lRegion);
+      }
+      LOGSTATS("ALL Done.");
+      log_regions_stats(output,"Output");
+      widget->redraw();
+      something_changed();
+    }
+    else std::cerr << "The Straight Skeleton is invalid. Cannot create offsets." << std::endl ;
+  }
+
   void set_offset()
   {
+    double lOld = offsets.size() > 0 ? offsets.front() : 0.0 ;
+
     bool ok = FALSE;
     QString text = QInputDialog::getText( "Straight Skeleton and Offseting demo"
                                         , "Enter offset distance"
                                         , QLineEdit::Normal
-                                        , QString::number(offset_val)
+                                        , QString::number(lOld)
                                         , &ok
                                         , this
                                         );
@@ -408,25 +568,10 @@ private slots:
     {
       double tmp = text.toDouble(&ok);
       if ( ok )
-        offset_val = tmp ;
-    }
-  }
-
-  void set_steps()
-  {
-    bool ok = FALSE;
-    QString text = QInputDialog::getText( "Straight Skeleton and Offseting demo"
-                                        , "Enter offset steps"
-                                        , QLineEdit::Normal
-                                        , QString::number(offset_steps)
-                                        , &ok
-                                        , this
-                                        );
-    if ( ok && !text.isEmpty() )
-    {
-      int tmp = text.toInt(&ok);
-      if ( ok )
-        offset_steps = tmp ;
+      {
+        offsets.clear() ;
+        offsets.push_back(tmp) ;
+      }
     }
   }
 
@@ -475,104 +620,135 @@ private slots:
 
   void save_polygon()
   {
-    QString fileName = QFileDialog::getSaveFileName(
-                         "sample.poly", "Polygonal PolygonalRegion files (*.poly)", this );
-    if ( !fileName.isNull() && input_region.size() > 0 )
+    if ( input.size() > 0 )
     {
-      std::ofstream out(fileName);
+      Region const& lRegion = *input.front();
 
-      CGAL::set_ascii_mode(out);
+      if ( lRegion.size() > 0 )
+      {
+        QString fileName = QFileDialog::getSaveFileName("sample.poly", "Region files (*.poly)", this );
 
-      out << input_region.size() << std::endl ;
+        if ( !fileName.isNull() )
+        {
+          std::ofstream out(fileName);
 
-      for ( PolygonalRegion::const_iterator bit = input_region.begin(), ebit = input_region.end() ; bit != ebit ; ++ bit )
-        out << **bit ;
+          CGAL::set_ascii_mode(out);
 
+          out << lRegion.size() << std::endl ;
+
+          for ( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
+            out << **bit ;
+        }
+      }
     }
   }
 
   void save_edges()
   {
-    QString fileName = QFileDialog::getSaveFileName(
-                         "sample.edg", "CDT edges file (*.edg)", this );
-    if ( !fileName.isNull() && input_region.size() > 0 )
+    if ( input.size() > 0 )
     {
-      std::ofstream out(fileName);
+      Region const& lRegion = *input.front();
 
-      CGAL::set_ascii_mode(out);
-
-      std::vector<Segment> lEdges ;
-
-      for ( PolygonalRegion::const_iterator bit = input_region.begin(), ebit = input_region.end() ; bit != ebit ; ++ bit )
+      if ( lRegion.size() > 0 )
       {
-        Polygon::const_iterator first = (*bit)->vertices_begin();
-        Polygon::const_iterator end   = (*bit)->vertices_end  ();
-        Polygon::const_iterator last  = end - 1 ;
-        for ( Polygon::const_iterator it = first ; it != end ; ++ it )
+        QString fileName = QFileDialog::getSaveFileName("sample.edg", "CDT edges file (*.edg)", this );
+
+        if ( !fileName.isNull() )
         {
-          Polygon::const_iterator nx = ( it != last ? it + 1 : first ) ;
-          lEdges.push_back( Segment(*it,*nx) ) ;
+          std::ofstream out(fileName);
+
+          CGAL::set_ascii_mode(out);
+
+          std::vector<Segment> lEdges ;
+
+          for ( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
+          {
+            Polygon::const_iterator first = (*bit)->vertices_begin();
+            Polygon::const_iterator end   = (*bit)->vertices_end  ();
+            Polygon::const_iterator last  = end - 1 ;
+            for ( Polygon::const_iterator it = first ; it != end ; ++ it )
+            {
+              Polygon::const_iterator nx = ( it != last ? it + 1 : first ) ;
+              lEdges.push_back( Segment(*it,*nx) ) ;
+            }
+          }
+
+          out << lEdges.size() << '\n' ;
+          for ( std::vector<Segment>::const_iterator sit = lEdges.begin(), esit = lEdges.end() ; sit != esit ; ++ sit )
+            out << sit->source() << ' ' << sit->target() << '\n' ;
         }
       }
-
-      out << lEdges.size() << '\n' ;
-      for ( std::vector<Segment>::const_iterator sit = lEdges.begin(), esit = lEdges.end() ; sit != esit ; ++ sit )
-        out << sit->source() << ' ' << sit->target() << '\n' ;
     }
   }
 
   void load_polygon()
   {
-    QString s( QFileDialog::getOpenFileName(
-                 QString::null, "Polygonal PolygonalRegion Files (*.poly)", this ) );
+    QString s( QFileDialog::getOpenFileName(QString::null, "Polygonal PolygonalRegion Files (*.poly)", this ) );
     if ( s.isEmpty() )
       return;
 
-    bool auto_offset_table = true ;
+    bool auto_create_offsets = true ;
+    offsets.clear() ;
 
-    std::ifstream offset_table(s + QString(".oft") );
-    if ( offset_table )
+    std::ifstream offsets_file(s + QString(".oft") );
+    if ( offsets_file )
     {
-      CGAL::set_ascii_mode(offset_table);
-      offset_table >> offset_val;
-      offset_table >> offset_steps ;
-      auto_offset_table = false ;
+      CGAL::set_ascii_mode(offsets_file);
+
+      while ( offsets_file )
+      {
+        double v ;
+        offsets_file >> v;
+        offsets.push_back(v);
+      }
+      auto_create_offsets = false ;
     }
 
     std::ifstream in(s);
     if ( in )
     {
       CGAL::set_ascii_mode(in);
-      input_region.clear();
+
+      input.clear();
+
+      RegionPtr lRegion( new Region() ) ;
+
       int ccb_count ;
       in >> ccb_count ;
 
       for ( int i = 0 ; i < ccb_count ; ++ i )
       {
-        PolygonPtr poly( new Polygon() );
-        in >> *poly;
-        if ( i == 0 )
+        PolygonPtr lPoly( new Polygon() );
+        in >> *lPoly;
+        if ( lPoly->is_simple() )
         {
-          CGAL::Bbox_2 lBbox = poly->bbox();
-          double w = lBbox.xmax() - lBbox.xmin();
-          double h = lBbox.ymax() - lBbox.ymin();
-          double s = std::sqrt(w*w+h*h);
-          double m = s * 0.01 ;
-          widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
-          if ( auto_offset_table )
+          if ( i == 0 )
           {
-            offset_val   = m ;
-            offset_steps = 30 ;
+            CGAL::Bbox_2 lBbox = lPoly->bbox();
+            double w = lBbox.xmax() - lBbox.xmin();
+            double h = lBbox.ymax() - lBbox.ymin();
+            double s = std::sqrt(w*w+h*h);
+            double m = s * 0.01 ;
+            widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
+            if ( auto_create_offsets )
+            {
+              for ( int c = 1 ; c < 30 ; ++ c )
+                offsets.push_back(c*m);
+            }
           }
+          CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+          if ( lPoly->orientation() != expected )
+            lPoly->reverse_orientation();
+          lRegion->push_back(lPoly);
         }
-        CGAL::Orientation expected = ( input_region.size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-        if ( poly->orientation() != expected )
-          poly->reverse_orientation();
-        input_region.push_back(poly);
+//        else std::cerr << "INPUT ERROR: Non-simple contour found in " << s << std::endl ;
       }
+
+      input.push_back(lRegion);
+      log_regions_stats(input,"Input");
     }
 
-    offset_region.clear();
+    output.clear();
     sls.clear();
     widget->redraw();
     something_changed();
@@ -586,17 +762,19 @@ private:
   int                    old_state;
 };
 
+} // namespace demo
+
 #include "straight_skeleton_2.moc"
 
 int
 main(int argc, char **argv)
 {
   QApplication app( argc, argv );
-  current_state = -1;
+  demo::current_state = -1;
 
-  MyWindow widget(500,500); // physical window size
+  demo::MyWindow widget(500,500); // physical window size
   app.setMainWidget(&widget);
-  widget.setCaption(my_title_string);
+  widget.setCaption(demo::my_title_string);
   widget.setMouseTracking(TRUE);
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   widget.setIcon(cgal_icon);

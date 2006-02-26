@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
@@ -31,18 +31,18 @@
 #include <qbuttongroup.h>
 
 
-template <class T> class Qt_layer_show_polygon;
+template <class T> class Qt_layer_show_regions;
 template <class T> class Qt_layer_show_skeleton;
 
 class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar(CGAL::Qt_widget *w
-                , QMainWindow *mw
-                , PolygonalRegion const& pr
-                , Sls const& sls
-                , PolygonalRegion const& off
+  Layers_toolbar( CGAL::Qt_widget*     w
+                , QMainWindow*         mw
+                , demo::Regions const& in
+                , demo::Sls     const& sls
+                , demo::Regions const& out
                 );
   ~Layers_toolbar();
 private:
@@ -52,9 +52,9 @@ private:
   QButtonGroup        *button_group;
   int                 nr_of_buttons;
 
-  Qt_layer_show_polygon <PolygonalRegion> *showP;
-  Qt_layer_show_skeleton<Sls>            *showSLS;
-  Qt_layer_show_polygon <PolygonalRegion> *showO;
+  Qt_layer_show_regions <demo::Regions> *showI;
+  Qt_layer_show_skeleton<demo::Sls>     *showSLS;
+  Qt_layer_show_regions <demo::Regions> *showO;
 
 };//end class
 

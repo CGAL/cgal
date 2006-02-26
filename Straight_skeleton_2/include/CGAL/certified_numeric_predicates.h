@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_CERTIFIED_NUMERIC_PREDICATES_H
@@ -25,100 +25,106 @@
 
 CGAL_BEGIN_NAMESPACE
 
+inline Uncertain<bool> logical_or ( Uncertain<bool> a, Uncertain<bool> b ) { return a | b ; }
+inline Uncertain<bool> logical_and( Uncertain<bool> a, Uncertain<bool> b ) { return a & b ; }
+
+inline Uncertain<bool> logical_or ( Uncertain<bool> a, Uncertain<bool> b, Uncertain<bool> c ) { return a | b | c ; }
+inline Uncertain<bool> logical_and( Uncertain<bool> a, Uncertain<bool> b, Uncertain<bool> c ) { return a & b & c ; }
+
 template <class NT>
 inline Uncertain<bool> certified_is_finite(const NT& x)
-{ 
-  return make_uncertain(CGAL_NTS is_finite(x) ) ; 
+{
+  return make_uncertain(CGAL_NTS is_finite(x) ) ;
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_zero(const NT& x)
-{ 
-  return make_uncertain(CGAL_NTS is_zero(x) ) ; 
+{
+  return make_uncertain(CGAL_NTS is_zero(x) ) ;
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_one(const NT& x)
 {
-  return make_uncertain(CGAL_NTS is_one(x) ) ; 
+  return make_uncertain(CGAL_NTS is_one(x) ) ;
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_negative(const NT& x)
-{ 
-  return make_uncertain(CGAL_NTS is_negative(x) ) ; 
+{
+  return make_uncertain(CGAL_NTS is_negative(x) ) ;
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_positive(const NT& x)
-{ 
-  return make_uncertain(CGAL_NTS is_positive(x) ) ; 
+{
+  return make_uncertain(CGAL_NTS is_positive(x) ) ;
 }
 
 template <class NT>
 inline Uncertain<Sign> certified_sign(const NT& x)
 {
-  return make_uncertain(CGAL_NTS sign(x)); 
+  return make_uncertain(CGAL_NTS sign(x));
 }
 
 template <class NT1, class NT2>
 inline Uncertain<Comparison_result> certified_compare(const NT1& n1, const NT2& n2)
-{ 
-  return make_uncertain(CGAL_NTS compare(n1,n2)); 
+{
+  return make_uncertain(CGAL_NTS compare(n1,n2));
 }
 
 inline Uncertain<bool> certified_is_smaller( Uncertain<Comparison_result> c )
-{ 
-  return c == make_uncertain(SMALLER); 
+{
+  return c == make_uncertain(SMALLER);
 }
 
 inline Uncertain<bool> certified_is_equal( Uncertain<Comparison_result> c )
-{ 
-  return c == make_uncertain(EQUAL); 
+{
+  return c == make_uncertain(EQUAL);
 }
 
 inline Uncertain<bool> certified_is_larger( Uncertain<Comparison_result> c )
-{ 
-  return c == make_uncertain(LARGER); 
+{
+  return c == make_uncertain(LARGER);
 }
 
 inline Uncertain<bool> certified_is_smaller_or_equal( Uncertain<Comparison_result> c )
-{ 
-  return c == make_uncertain(SMALLER) || c == make_uncertain(EQUAL) ;
+{
+  return logical_or( c == make_uncertain(SMALLER) , c == make_uncertain(EQUAL) ) ;
 }
 
 inline Uncertain<bool> certified_is_larger_or_equal( Uncertain<Comparison_result> c )
-{ 
-  return c == make_uncertain(LARGER) || c == make_uncertain(EQUAL) ;
+{
+  return logical_or( c == make_uncertain(LARGER) , c == make_uncertain(EQUAL) ) ;
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_smaller(const NT1& n1, const NT2& n2)
-{ 
-  return certified_is_smaller(certified_compare(n1,n2)); 
+{
+  return certified_is_smaller(certified_compare(n1,n2));
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_equal(const NT1& n1, const NT2& n2)
-{ 
-  return certified_is_equal(certified_compare(n1,n2)); 
+{
+  return certified_is_equal(certified_compare(n1,n2));
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_larger(const NT1& n1, const NT2& n2)
-{ 
-  return certified_is_larger(certified_compare(n1,n2)); 
+{
+  return certified_is_larger(certified_compare(n1,n2));
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_smaller_or_equal(const NT1& n1, const NT2& n2)
-{ 
+{
   return certified_is_smaller_or_equal(certified_compare(n1,n2)) ;
 }
 
 template <class NT1, class NT2>
 inline Uncertain<bool> certified_is_larger_or_equal(const NT1& n1, const NT2& n2)
-{ 
+{
   return certified_is_larger_or_equal(certified_compare(n1,n2)) ;
 }
 
@@ -126,4 +132,4 @@ inline Uncertain<bool> certified_is_larger_or_equal(const NT1& n1, const NT2& n2
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CERTIFIED_NUMERIC_PREDICATES_H
- 
+

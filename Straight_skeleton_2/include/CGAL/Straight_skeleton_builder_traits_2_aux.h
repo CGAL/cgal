@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H
@@ -88,6 +88,11 @@ class Vertex
     FT x() const { return mX ; }
     FT y() const { return mY ; }
 
+   friend std::ostream& operator << ( std::ostream& os, Vertex<FT> const& aV )
+   {
+     return os << "Vertex(" << to_double(aV.x()) << ',' << to_double(aV.y()) << ')';
+   }
+
   private:
 
     FT mX, mY ;
@@ -104,6 +109,11 @@ class Edge
 
     Vertex const& s() const { return mS ; }
     Vertex const& t() const { return mT ; }
+
+   friend std::ostream& operator << ( std::ostream& os, Edge<FT> const& aE )
+   {
+     return os << "Edge(" << aE.s() << ',' << aE.t() << ')' ;
+   }
 
   private:
 
@@ -124,6 +134,11 @@ class Triedge
     Edge const& e2() const { return mE2 ; }
 
     Edge const& e( int idx ) const { return idx == 0 ? mE0 : idx == 1 ? mE1 : mE2 ; }
+
+    friend std::ostream& operator << ( std::ostream& os, Triedge<FT> const& aTriedge )
+    {
+      return os << "Triedge(" << aTriedge.e0() << "\n," << aTriedge.e1() << "\n," << aTriedge.e2() << ')' ;
+    }
 
   private:
 
@@ -187,15 +202,6 @@ struct Sls_functor_base_2
 
   static Vertex toVertex( Point_2 const& p ) { return Vertex(p.x(),p.y()) ; }
 
-  friend std::ostream& operator << ( std::ostream& os, Edge const& aEdge )
-  {
-    return os << '(' << aEdge.s().x() << ',' << aEdge.s().y() << ")->(" << aEdge.t().x() << ',' << aEdge.t().y() << ')';
-  }
-
-  friend std::ostream& operator << ( std::ostream& os, Triedge const& aTriedge )
-  {
-    return os << "\ne0:" << aTriedge.e0() << "\ne1:" << aTriedge.e1() << "\ne2:" << aTriedge.e2() ;
-  }
 };
 
 template<class Converter>

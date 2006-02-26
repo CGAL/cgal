@@ -12,11 +12,11 @@
 //
 // $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Straight_skeleton_2/test/Straight_skeleton_2/test_sls_traits.C $
 // $Id: test_sls_traits.C 28555 2006-02-15 18:54:04Z fcacciola $
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#include <CGAL/_test_types.h>
-#include <CGAL/Kernel_traits.h>
+#include <CGAL/test_sls_traits_types.h>
+//#include <CGAL/Kernel_traits.h>
 
 //#define EXACT_KERNEL
 //#define JUST_SINGLE_CASE
@@ -35,7 +35,7 @@ void Straight_skeleton_traits_external_trace( std::string s )
 
 std::string sPrefix ;
 
-#include <CGAL/_test_traits.C>
+#include <CGAL/test_sls_traits_aux.C>
 
 #ifdef EXACT_KERNEL
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K ;
