@@ -51,7 +51,7 @@ namespace CGALi {
     Circular_arc_2() {}
 
     Circular_arc_2(const Circle_2 &c)
-      : _support(c), Cache_minmax('s')
+      : _support(c), Cache_minmax('s'), Cache_full('y')
     {
       // Define a circle intersecting c in the 2 vertical tangent
       // points.
@@ -64,7 +64,7 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &support,
                    const Line_2 &l1, bool b1,
                    const Line_2 &l2, bool b2) 
-      : Cache_minmax('n')
+      : Cache_minmax('n'), Cache_full('n')
     {
       Point_2 center1 (support.center().x() + l1.a()/2,
                        support.center().y() + l1.b()/2);
@@ -98,7 +98,7 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &c,
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _support(c) , Cache_minmax('n')
+      : _support(c) , Cache_minmax('n'), Cache_full('n')
     {
       if (c1 != c2) {
 	_begin = CGAL::circle_intersect<CK>(c, c1, b_1);
@@ -146,7 +146,7 @@ namespace CGALi {
     // by b_cut
     Circular_arc_2(const Circular_arc_2 &A, const bool b,
 		   const Circle_2 &ccut, const bool b_cut)
-      : _support(A.supporting_circle()), Cache_minmax('n')
+      : _support(A.supporting_circle()), Cache_minmax('n'), Cache_full('n')
     {
       CGAL_kernel_precondition(A.is_x_monotone());
       CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
@@ -174,7 +174,7 @@ namespace CGALi {
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &middle,
                    const Point_2 &end)
-      : Cache_minmax('n')
+      : Cache_minmax('n'), Cache_full('n')
     {
       CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
       
@@ -189,7 +189,8 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &support,
 		   const Circular_arc_point_2 &source,
 		   const Circular_arc_point_2 &target)
-      : _begin(source), _end(target), _support(support), Cache_minmax('n')
+      : _begin(source), _end(target), _support(support), 
+	Cache_minmax('n'), Cache_full('n')
     {
       // We cannot enable these preconditions for now, since the 
       // Lazy_curved_kernel
@@ -202,7 +203,7 @@ namespace CGALi {
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &end,
 		   const FT &bulge)
-      : _begin(begin), _end(end), Cache_minmax('n')
+      : _begin(begin), _end(end), Cache_minmax('n'), Cache_full('n')
     {
       const FT sqr_bulge = CGAL::square(bulge);
       const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
@@ -225,6 +226,8 @@ namespace CGALi {
 
   public:
     mutable char Cache_minmax;
+    mutable char Cache_full; 
+    // to remember if the arc was constructed from a full circle
     
     const Circular_arc_point_2 & left() const
     {
@@ -275,8 +278,12 @@ namespace CGALi {
       int cmp_begin = CGAL::compare(_begin.y(), center().y());
       int cmp_end   = CGAL::compare(_end.y(),   center().y());
 
+      if (Cache_full == 'y' )
+	return false;
+
       // XXX : be careful, this may be surprising if the return value
       // is not -1/1 but some random int...
+
       if (cmp_begin == opposite(cmp_end) && cmp_begin != 0)
         return false;
 
@@ -292,7 +299,7 @@ namespace CGALi {
 
       // There remains the case :
       CGAL_kernel_assertion(cmp_begin == 0 && cmp_end == 0);
-      
+
       return cmp_x != 0; // full circle or half circle.
     }
     
