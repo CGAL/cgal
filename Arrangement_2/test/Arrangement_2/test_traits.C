@@ -1,12 +1,16 @@
 #include <CGAL/basic.h>
 #include "test_configuration.h"
+#include <iostream>
 
 #if (TEST_TRAITS == CORE_CONIC_TRAITS) && !defined(CGAL_USE_CORE)
 
-#include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_ISTALLED;
+  std::cout << std::endl
+            << "WARNING: Core is not installed, "
+            << "skipping the test of the conic traits ..."
+            << std::endl; 
   return (0);
 }
 #else

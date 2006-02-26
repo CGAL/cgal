@@ -1339,22 +1339,28 @@ public:
 
   virtual void change_strategy(Strategy s)
   {
-    Walk_point_location* walk_pl;
+    Walk_point_location* walk_pl = NULL;
     if(CGAL::assign(walk_pl, m_point_location))
+    {
       delete walk_pl;
+    }
     else
     {
-      Naive_point_location* naive_pl;
+      Naive_point_location* naive_pl = NULL;
       if(CGAL::assign(naive_pl, m_point_location))
+      {
         delete naive_pl;
+      }
       else
       {
-        Trap_point_location* trap_pl;
+        Trap_point_location* trap_pl = NULL;
         if(CGAL::assign(trap_pl, m_point_location))
+        {
           delete trap_pl;
+        }
         else
         {
-          Lanmarks_point_location* lm_pl;
+          Lanmarks_point_location* lm_pl = NULL;
           if(CGAL::assign(lm_pl, m_point_location));
             delete lm_pl;
         }
@@ -1406,7 +1412,7 @@ public:
                         bool move_event)
   {
     bool       first = true;
-    Coord_type min_dist;   
+    Coord_type min_dist = 0;   
 
     for (Halfedge_iterator hei = m_curves_arr->halfedges_begin();
          hei != m_curves_arr->halfedges_end();
