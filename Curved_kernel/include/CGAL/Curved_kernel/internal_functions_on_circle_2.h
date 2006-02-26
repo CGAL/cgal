@@ -29,8 +29,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 // temporary function : where to put it, if we want to keep it ?
 template< class CK>
 typename CK::Circular_arc_point_2
@@ -39,8 +37,8 @@ circle_intersect( const typename CK::Circle_2 & c1,
 		  bool b )
 {
   typedef std::vector<CGAL::Object > solutions_container;
-  
   solutions_container solutions;
+  
   CGAL::intersect_2<CK>( c1, c2, std::back_inserter(solutions) );
   
   typename solutions_container::iterator it = solutions.begin();
@@ -50,7 +48,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
   
   const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
   result = CGAL::object_cast< 
-    std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+    std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
   
   if ( result->second == 2 ) // double solution
     return result->first;
@@ -61,11 +59,12 @@ circle_intersect( const typename CK::Circle_2 & c1,
   ++it;
   result = CGAL::object_cast< 
     std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+  
   return result->first;
 }
 
 namespace CircularFunctors {
-
+  
   template < class CK >
   typename CK::Polynomial_for_circles_2_2
   get_equation( const typename CK::Circle_2 & c )
@@ -73,7 +72,7 @@ namespace CircularFunctors {
     typedef typename CK::RT RT;
  
     typedef typename CK::Algebraic_kernel   AK;
-
+    
     return AK().construct_polynomial_for_circles_2_2_object()
       ( c.center().x(), c.center().y(), c.squared_radius() );
   }
@@ -82,7 +81,8 @@ namespace CircularFunctors {
   typename CK::Circle_2  
   construct_circle_2( const typename CK::Polynomial_for_circles_2_2 &eq )
   {
-    return typename CK::Circle_2( typename CK::Point_2(eq.a(), eq.b()), eq.r_sq() ); 
+    return typename 
+      CK::Circle_2( typename CK::Point_2(eq.a(), eq.b()), eq.r_sq() ); 
   }
 
   template < class CK >
@@ -94,11 +94,8 @@ namespace CircularFunctors {
     typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
     Polynomial_for_circles_2_2 equation = get_equation<CK>(a);
     
-    if(CGAL::sign_at<typename CK::Algebraic_kernel>
-       (equation,p.coordinates())!= ZERO)
-      return false;
-    
-    return true;
+    return (CGAL::sign_at<typename CK::Algebraic_kernel>
+	    (equation,p.coordinates()) == ZERO);
   }
 
   template< class CK, class OutputIterator>
@@ -121,8 +118,9 @@ namespace CircularFunctors {
     typedef std::vector< std::pair < Root_for_circles_2_2, unsigned > > 
       solutions_container;
     solutions_container solutions;
-
-    AK().solve_object()(e1, e2, std::back_inserter(solutions)); // to be optimized
+    
+    AK().solve_object()(e1, e2, std::back_inserter(solutions)); 
+    // to be optimized
 
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     
@@ -130,7 +128,7 @@ namespace CircularFunctors {
 	  it != solutions.end(); ++it )
       {
         *res++ = make_object(std::make_pair(Circular_arc_point_2(it->first),
-			                      it->second ));
+					    it->second ));
       }
 
     return res;
@@ -168,7 +166,6 @@ namespace CircularFunctors {
     typedef typename CK::Algebraic_kernel   AK;
     return AK().y_critical_points_object()(typename CK::Get_equation()(c),res);
   }
-
 
 } // namespace CircularFunctors
 

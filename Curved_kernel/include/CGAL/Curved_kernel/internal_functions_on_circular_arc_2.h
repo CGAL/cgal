@@ -122,6 +122,7 @@ namespace CircularFunctors {
 //     return compare_y<CK>(p0, p1);
 //   }
 
+
   template < class CK >
   bool
   point_in_range(const typename CK::Circular_arc_2 &A,
@@ -181,7 +182,7 @@ namespace CircularFunctors {
     const typename CK::Circle_2 & C1 = A1.supporting_circle();
     const typename CK::Circle_2 & C2 = A2.supporting_circle();
     
-    if (C1 == C2) {
+    if ((C1 == C2) || (C1 == C2.opposite())) {
       // The point is either a left vertical tangent point of both,
       // or a normal point (-> EQUAL).
       bool b1 = A1.on_upper_part();
@@ -282,15 +283,28 @@ namespace CircularFunctors {
   equal(const typename CK::Circular_arc_2 &A1,
         const typename CK::Circular_arc_2 &A2)
   {
-    CGAL_kernel_precondition (A1.is_x_monotone());
-    CGAL_kernel_precondition (A2.is_x_monotone());
-
-    if ( A1.supporting_circle() != A2.supporting_circle() )
+    if ((A1.supporting_circle() != A2.supporting_circle()) && 
+	(A1.supporting_circle() != A2.supporting_circle().opposite()))
       return false;
-
-    return equal<CK>( A1.source(), A2.source() ) 
-        && equal<CK>( A1.target(), A2.target() );
+    
+    return (equal<CK>(A1.source(), A2.source()) &&
+	    equal<CK>(A1.target(), A2.target()));
   }
+
+//   template < class CK >
+//   bool
+//   equal(const typename CK::Circular_arc_2 &A1,
+//         const typename CK::Circular_arc_2 &A2)
+//   {
+//     CGAL_kernel_precondition (A1.is_x_monotone());
+//     CGAL_kernel_precondition (A2.is_x_monotone());
+
+//     if ( A1.supporting_circle() != A2.supporting_circle() )
+//       return false;
+
+//     return equal<CK>( A1.source(), A2.source() ) 
+//         && equal<CK>( A1.target(), A2.target() );
+//   }
 
   template < class CK >
   bool
@@ -300,7 +314,10 @@ namespace CircularFunctors {
     CGAL_kernel_precondition (A1.is_x_monotone());
     CGAL_kernel_precondition (A2.is_x_monotone());
 
-    if ( A1.supporting_circle() != A2.supporting_circle() ) return false;
+    if ( (A1.supporting_circle() != A2.supporting_circle()) &&
+	 (A1.supporting_circle() != A2.supporting_circle().opposite()) )
+      return false;
+
     if ( A1.on_upper_part() != A2.on_upper_part() ) return false;
 
     return compare_x<CK>(A1.right(), A2.left()) > 0
@@ -373,7 +390,7 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
-    typedef typename CK::Circular_arc_2           Circular_arc_2;
+    typedef typename CK::Circular_arc_2        Circular_arc_2;
 
     if (a1.is_x_monotone() && a2.is_x_monotone()) {
       // Overlapping curves.

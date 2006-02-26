@@ -49,10 +49,10 @@ namespace CircularFunctors {
 	(A1.supporting_line() != A2.supporting_line().opposite()))
       return false;
 
-    return ((equal<CK>(A1.source(), A2.source()) &&
-	     equal<CK>(A1.target(), A2.target())) ||
-	    (equal<CK>(A1.target(), A2.source()) &&
-	     equal<CK>(A1.source(), A2.target())));
+    return ( (equal<CK>(A1.source(), A2.source()) &&
+	      equal<CK>(A1.target(), A2.target())) ||
+	     (equal<CK>(A1.target(), A2.source()) &&
+	      equal<CK>(A1.source(), A2.target())) );
   }
 
   template < class CK >
@@ -65,7 +65,7 @@ namespace CircularFunctors {
       return false;
 
     return compare_xy<CK>(A1.right(), A2.left()) > 0
-      && compare_xy<CK>(A1.left(), A2.right()) < 0;
+        && compare_xy<CK>(A1.left(), A2.right()) < 0;
   }
 
 
@@ -74,23 +74,14 @@ namespace CircularFunctors {
   has_on(const typename CK::Line_arc_2 &a,
 	 const typename CK::Circular_arc_point_2 &p)
   {
-//     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
-//     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(a.supporting_line());
-//     if(CGAL::sign_at<typename CK::Algebraic_kernel>
-//        (equation,p.coordinates())!= ZERO)
-//       return false;
-
     if ( ! CGAL::LinearFunctors::has_on<CK>(a.supporting_line(),p) )
       return false;
     
-//     return (compare_xy<CK>(p, a.source()) !=
-// 	    compare_xy<CK>(p, a.target()));
-
     return point_in_range<CK>(a,p);
   }
 
 
- template < class CK >
+  template < class CK >
   Comparison_result
   compare_y_at_x(const typename CK::Circular_arc_point_2 &p,
                  const typename CK::Line_arc_2 &A1)
@@ -98,8 +89,8 @@ namespace CircularFunctors {
     CGAL_kernel_precondition (point_in_range<CK>(A1, p));
     //vertical case
     if (is_vertical<CK>(A1)) {
-      if (p.y() <= A1.right().y()){
-	if(A1.left().y() <= p.y()){
+      if (p.y() <= A1.right().y()) {
+	if(A1.left().y() <= p.y()) {
 	  return CGAL::EQUAL;
 	}
 	return CGAL::SMALLER;
@@ -107,13 +98,14 @@ namespace CircularFunctors {
       return CGAL::LARGER;
     }
     //general case
-    typedef typename CK::Polynomial_1_2 Polynomial_1_2;
-    typedef typename CK::Root_of_2                Root_of_2;
-    Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(A1.supporting_line());
+    typedef typename CK::Polynomial_1_2    Polynomial_1_2;
+    typedef typename CK::Root_of_2         Root_of_2;
+    Polynomial_1_2 equation = 
+      CGAL::LinearFunctors::get_equation<CK>(A1.supporting_line());
     Root_of_2 y((-p.x()*equation.a() - equation.c())/equation.b());
-    if(y == p.y())
+    if (y == p.y())
       return CGAL::EQUAL;
-    else if(y < p.y())
+    else if (y < p.y())
       return CGAL::LARGER;
     else return CGAL::SMALLER;
   }
@@ -133,8 +125,9 @@ namespace CircularFunctors {
       return CGAL::SMALLER;
     
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-    typedef typename CK::Polynomial_1_2          Polynomial_1_2;
-    typedef typename CK::Root_of_2               Root_of_2;
+    typedef typename CK::Polynomial_1_2       Polynomial_1_2;
+    typedef typename CK::Root_of_2            Root_of_2;
+
     Polynomial_1_2 equation;
     if(A1.right().x() < A2.right().x()){
       equation = CGAL::LinearFunctors::get_equation<CK>(A2.supporting_line());
@@ -159,7 +152,7 @@ namespace CircularFunctors {
       
   }
 
-   template < class CK >
+  template < class CK >
   Comparison_result 
   compare_y_to_right(const typename CK::Line_arc_2 &A1,
 		     const typename CK::Circular_arc_2 &A2, 
@@ -168,8 +161,10 @@ namespace CircularFunctors {
     CGAL_kernel_precondition (A2.is_x_monotone());
     if(A1.supporting_line().is_vertical())
       return CGAL::LARGER;
+
     typedef typename CK::Polynomial_1_2          Polynomial_1_2;
-    typedef typename CK::Root_of_2   Root_of_2;
+    typedef typename CK::Root_of_2               Root_of_2;
+
     const typename CK::Circle_2 & C2 = A2.supporting_circle();
 
     Root_of_2 b2_y = C2.center().y() - p.y();
@@ -194,7 +189,8 @@ namespace CircularFunctors {
       tangent_2_y = -b2_x;
     }
 
-    Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(A1.supporting_line());
+    Polynomial_1_2 equation = 
+      CGAL::LinearFunctors::get_equation<CK>(A1.supporting_line());
     typedef typename CK::FT FT;
     FT tangent_1_x;
     FT tangent_1_y;
@@ -209,7 +205,8 @@ namespace CircularFunctors {
       
 
 
-    if (((tangent_1_x < 0) && (tangent_2_x > 0)) || ((tangent_1_x > 0) && (tangent_2_x < 0))){
+    if (((tangent_1_x < 0) && (tangent_2_x > 0)) || 
+	((tangent_1_x > 0) && (tangent_2_x < 0))){
       Root_of_2 prod_left = tangent_1_y * tangent_2_x;
       Root_of_2 prod_right = tangent_2_y * tangent_1_x;
       if (prod_left < prod_right)
@@ -229,7 +226,7 @@ namespace CircularFunctors {
     }
   }
    
-     template < class CK >
+  template < class CK >
   Comparison_result 
   compare_y_to_right(const typename CK::Circular_arc_2 &A1,
 		     const typename CK::Line_arc_2 &A2, 
@@ -241,8 +238,8 @@ namespace CircularFunctors {
   }
 
    
- template < class CK >
-   void
+  template < class CK >
+  void
   split(const typename CK::Line_arc_2 &A,
 	const typename CK::Circular_arc_point_2 &p,
 	typename CK::Line_arc_2 &ca1,
@@ -263,11 +260,11 @@ namespace CircularFunctors {
     return;
   }
 
- template< class CK, class OutputIterator>
-   OutputIterator
-   intersect_2( const typename CK::Line_arc_2 &a1,
-			      const typename CK::Line_arc_2 &a2,
-			      OutputIterator res )
+  template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Line_arc_2 &a1,
+	       const typename CK::Line_arc_2 &a2,
+	       OutputIterator res )
   {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Line_arc_2               Line_arc_2;
@@ -275,23 +272,17 @@ namespace CircularFunctors {
     typedef typename CK::Root_of_2                Root_of_2;
     typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
     if ((a1.supporting_line() == a2.supporting_line())
-	|| (a1.supporting_line() == a2.supporting_line().opposite())){
+	|| (a1.supporting_line() == a2.supporting_line().opposite())) {
       if(compare_xy(a1.left(),a2.left()) < 0){
 	int comparison = compare_xy(a2.left(),a1.right());
 	if(comparison < 0){
 	  if(compare_xy(a1.right(),a2.right()) <= 0){
 	    *res++ = make_object
-	      (Line_arc_2(a1.supporting_line(),
-			  a2.left(),
-			  a1.right()
-			  ));
+	      (Line_arc_2(a1.supporting_line(), a2.left(), a1.right() ));
 	  }
 	  else{
 	    *res++ = make_object
-	      (Line_arc_2(a1.supporting_line(),
-			  a2.left(),
-			  a2.right()
-			  ));
+	      (Line_arc_2(a1.supporting_line(), a2.left(), a2.right() ));
 	  }
 	}
 	else if (comparison == 0){
@@ -305,17 +296,11 @@ namespace CircularFunctors {
 	if(comparison < 0){
 	  if(compare_xy(a1.right(),a2.right()) <= 0){
 	    *res++ = make_object
-	      (Line_arc_2(a1.supporting_line(),
-			  a1.left(),
-			  a1.right()
-			  ));
+	      (Line_arc_2(a1.supporting_line(), a1.left(), a1.right() ));
 	  }
 	  else{
 	    *res++ = make_object
-	      (Line_arc_2(a1.supporting_line(),
-			  a1.left(),
-			  a2.right()
-			  ));
+	      (Line_arc_2(a1.supporting_line(), a1.left(), a2.right() ));
 	  }
 	}
 	else if (comparison == 0){
@@ -329,41 +314,35 @@ namespace CircularFunctors {
     Object obj = intersection(a1.supporting_line(), a2.supporting_line());
     const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
     if(pt == NULL) return res;
-    Circular_arc_point_2 intersect_point = Circular_arc_point_2(
-					       Root_for_circles_2_2(
-							       Root_of_2(pt->x()),
-							       Root_of_2(pt->y())
-							       )
-					       );
+    Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
+    //      (Root_for_circles_2_2(Root_of_2(pt->x()),Root_of_2(pt->y())));
     
     if ((compare_xy<CK>(intersect_point, a1.source()) !=
-          compare_xy<CK>(intersect_point, a1.target())) &&
-         (compare_xy<CK>(intersect_point, a2.source()) !=
-          compare_xy<CK>(intersect_point, a2.target())))
+	 compare_xy<CK>(intersect_point, a1.target())) &&
+	(compare_xy<CK>(intersect_point, a2.source()) !=
+	 compare_xy<CK>(intersect_point, a2.target())))
       *res++ = make_object(std::make_pair(intersect_point, 1u));
 
     return res;
   }
 
-
-
- template< class CK, class OutputIterator>
-   OutputIterator
-   intersect_2( const typename CK::Line_arc_2 &l,
-			      const typename CK::Circle_2 &c,
-			      OutputIterator res )
+  template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Line_arc_2 &l,
+	       const typename CK::Circle_2 &c,
+	       OutputIterator res )
   { 
-    typedef std::vector<CGAL::Object >
-      solutions_container;
-    
+    typedef std::vector<CGAL::Object> solutions_container;
     solutions_container solutions;
+
     CGAL::LinearFunctors::intersect_2<CK>
       ( l.supporting_line(), c, std::back_inserter(solutions) );
     
-    for (typename solutions_container::iterator it = solutions.begin(); it != solutions.end(); ++it){
+    for (typename solutions_container::iterator it = solutions.begin(); 
+	 it != solutions.end(); ++it) {
       const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
-      result = CGAL::object_cast< 
-	std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+      result = CGAL::object_cast
+	<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
       if ( has_on<CK>(l,result->first ))
 	*res++ = *it;
     }
@@ -371,28 +350,27 @@ namespace CircularFunctors {
   }
 
   template< class CK, class OutputIterator>
-   OutputIterator
-   intersect_2( const typename CK::Circle_2 &c,
-			      const typename CK::Line_arc_2 &l,
-			      OutputIterator res )
+  OutputIterator
+  intersect_2( const typename CK::Circle_2 &c,
+	       const typename CK::Line_arc_2 &l,
+	       OutputIterator res )
   { 
     return intersect_2<CK>(l,c,res);
   }
 
-
- template< class CK, class OutputIterator>
-   OutputIterator
-   intersect_2( const typename CK::Line_arc_2 &l,
-			      const typename CK::Circular_arc_2 &c,
-			      OutputIterator res )
+  template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Line_arc_2 &l,
+	       const typename CK::Circular_arc_2 &c,
+	       OutputIterator res )
   {
     typedef typename CK::Circular_arc_2 Circular_arc_2;
-    typedef std::vector<CGAL::Object >
-      solutions_container;
+    typedef std::vector<CGAL::Object > solutions_container;
     
     solutions_container solutions;
     CGAL::LinearFunctors::intersect_2<CK>
-      ( l.supporting_line(), c.supporting_circle(), std::back_inserter(solutions) );
+      ( l.supporting_line(), c.supporting_circle(), 
+	std::back_inserter(solutions) );
     
     solutions_container objects_monotone;
     std::vector<const Circular_arc_2*> arcs_x_monotone; 
@@ -402,13 +380,15 @@ namespace CircularFunctors {
       arcs_x_monotone.push_back(CGAL::object_cast<Circular_arc_2>(&(*it2)));
     }
       
-    for (typename solutions_container::iterator it = solutions.begin(); it != solutions.end(); ++it){
+    for (typename solutions_container::iterator it = solutions.begin(); 
+	 it != solutions.end(); ++it){
       const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
-      result = CGAL::object_cast< 
-	std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
-      if ( has_on<CK>(l,result->first)){
+      result = CGAL::object_cast
+	<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+      if ( has_on<CK>(l,result->first)) {
 	bool is_on_arc = false;
-	for(typename std::vector<const Circular_arc_2*>::iterator it2 = arcs_x_monotone.begin();
+	for(typename std::vector<const Circular_arc_2*>::iterator 
+	      it2 = arcs_x_monotone.begin();
 	    it2 != arcs_x_monotone.end(); ++it2){
 	  if(has_on<CK>(**it2, result->first)){
 	    is_on_arc = true;
@@ -421,24 +401,24 @@ namespace CircularFunctors {
     }
     return res;
   }
-
+  
   template< class CK, class OutputIterator>
-   OutputIterator
-   intersect_2( const typename CK::Circular_arc_2 &c,
-			      const typename CK::Line_arc_2 &l,
-			      OutputIterator res )
+  OutputIterator
+  intersect_2( const typename CK::Circular_arc_2 &c,
+	       const typename CK::Line_arc_2 &l,
+	       OutputIterator res )
   {
     return intersect_2<CK>(l,c,res);
   }
    
   template< class CK>
-    bool
-    is_vertical(const typename CK::Line_arc_2 &l)
+  bool
+  is_vertical(const typename CK::Line_arc_2 &l)
   {
     return l.supporting_line().is_vertical();
   }
 
-   template < class CK, class OutputIterator >
+  template < class CK, class OutputIterator >
   OutputIterator
   make_x_monotone( const typename CK::Line_arc_2 &A,
 		   OutputIterator res )
@@ -446,8 +426,8 @@ namespace CircularFunctors {
     *res++ = make_object(A);
     return res;
   }
-
- } // namespace CircularFunctors 
+  
+} // namespace CircularFunctors 
 } // namespace CGAL
 
 #endif // CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H

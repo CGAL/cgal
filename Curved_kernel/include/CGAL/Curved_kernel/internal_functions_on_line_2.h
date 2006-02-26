@@ -46,39 +46,38 @@ namespace LinearFunctors {
     return typename CK::Line_2(eq[2],eq[1],eq[0]); 
   }
   
- template < class CK >
+  template < class CK >
   bool
- has_on(const typename CK::Line_2 & l,
-	const typename CK::Circular_arc_point_2 &p)
- {
+  has_on(const typename CK::Line_2 & l,
+	 const typename CK::Circular_arc_point_2 &p)
+  {
     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(l);
+    
     return(CGAL::sign_at<typename CK::Algebraic_kernel>
 	   (equation,p.coordinates())== ZERO);
- }
+  }
 
   template< class CK, class OutputIterator>
-    OutputIterator
-    intersect_2( const typename CK::Line_2 & l,
-			       const typename CK::Circle_2 & c,
-			       OutputIterator res )
+  OutputIterator
+  intersect_2( const typename CK::Line_2 & l,
+	       const typename CK::Circle_2 & c,
+	       OutputIterator res )
   {
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_1_2              Equation_line;
     typedef typename CK::Polynomial_for_circles_2_2  Equation_circle; 
     typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
-
+    
     Equation_line e1 = get_equation<CK>(l);
     Equation_circle e2 = CGAL::get_equation<CK>(c);
     
-    typedef std::vector
-      < std::pair 
-      < Root_for_circles_2_2, 
-      unsigned > > 
+    typedef std::vector< std::pair < Root_for_circles_2_2, unsigned > > 
       solutions_container;
     solutions_container solutions;
 
-    AK().solve_object()(e1, e2, std::back_inserter(solutions)); // to be optimized
+    AK().solve_object()(e1, e2, std::back_inserter(solutions)); 
+    // to be optimized
 
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
 
@@ -86,13 +85,11 @@ namespace LinearFunctors {
 	  it != solutions.end(); ++it )
       {
 	*res++ = make_object
-	  (std::make_pair
-	   (Circular_arc_point_2(it->first), it->second ));
+	  (std::make_pair(Circular_arc_point_2(it->first), it->second ));
       }
 
     return res;
   }
-
 
 } // namespace LinearFunctors
 } // namespace CGAL
