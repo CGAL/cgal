@@ -29,6 +29,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
+
 // temporary function : where to put it, if we want to keep it ?
 template< class CK>
 typename CK::Circular_arc_point_2
@@ -81,6 +83,22 @@ namespace CircularFunctors {
   construct_circle_2( const typename CK::Polynomial_for_circles_2_2 &eq )
   {
     return typename CK::Circle_2( typename CK::Point_2(eq.a(), eq.b()), eq.r_sq() ); 
+  }
+
+  template < class CK >
+  bool
+  has_on(const typename CK::Circle_2 &a,
+	 const typename CK::Circular_arc_point_2 &p)
+  {
+
+    typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
+    Polynomial_for_circles_2_2 equation = get_equation<CK>(a);
+    
+    if(CGAL::sign_at<typename CK::Algebraic_kernel>
+       (equation,p.coordinates())!= ZERO)
+      return false;
+    
+    return true;
   }
 
   template< class CK, class OutputIterator>

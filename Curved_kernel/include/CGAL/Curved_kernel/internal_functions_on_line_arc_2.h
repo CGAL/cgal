@@ -25,24 +25,22 @@
 #ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
+#include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
 #include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 namespace CGAL {
 namespace CircularFunctors {
 
-template < class CK >
+  template < class CK >
   bool
   point_in_range(const typename CK::Line_arc_2 &A,
-                 const typename CK::Circular_arc_point_2 &p) 
+		 const typename CK::Circular_arc_point_2 &p) 
   {
     // range includes endpoints here
-    return ((compare_x<CK>(p, A.source()) !=
-	     compare_x<CK>(p, A.target())) 
-	    || (compare_x(p, A.source()) == 
-		CGAL::EQUAL));
+    return ( (compare_x<CK>(p, A.source()) != compare_x<CK>(p, A.target())) 
+	     || (compare_x(p, A.source()) == CGAL::EQUAL) );
   }
-
-
- template < class CK >
+  
+  template < class CK >
   bool
   equal(const typename CK::Line_arc_2 &A1,
         const typename CK::Line_arc_2 &A2)
@@ -51,10 +49,10 @@ template < class CK >
 	(A1.supporting_line() != A2.supporting_line().opposite()))
       return false;
 
-      return ((equal<CK>(A1.source(), A2.source()) &&
-	       equal<CK>(A1.target(), A2.target())) ||
-	      (equal<CK>(A1.target(), A2.source()) &&
-	       equal<CK>(A1.source(), A2.target())));
+    return ((equal<CK>(A1.source(), A2.source()) &&
+	     equal<CK>(A1.target(), A2.target())) ||
+	    (equal<CK>(A1.target(), A2.source()) &&
+	     equal<CK>(A1.source(), A2.target())));
   }
 
   template < class CK >
@@ -63,27 +61,34 @@ template < class CK >
 	     const typename CK::Line_arc_2 &A2)
   {
     if ( (A1.supporting_line() != A2.supporting_line()) &&
-	 (A1.supporting_line() != A2.supporting_line().opposite())) return false;
+	 (A1.supporting_line() != A2.supporting_line().opposite())) 
+      return false;
 
     return compare_xy<CK>(A1.right(), A2.left()) > 0
       && compare_xy<CK>(A1.left(), A2.right()) < 0;
   }
 
 
- template < class CK >
+  template < class CK >
   bool
   has_on(const typename CK::Line_arc_2 &a,
-	    const typename CK::Circular_arc_point_2 &p)
+	 const typename CK::Circular_arc_point_2 &p)
   {
-    typedef typename CK::Polynomial_1_2 Polynomial_1_2;
-    Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(a.supporting_line());
-    if(CGAL::sign_at<typename CK::Algebraic_kernel>
-       (equation,p.coordinates())!= ZERO)
+//     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
+//     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(a.supporting_line());
+//     if(CGAL::sign_at<typename CK::Algebraic_kernel>
+//        (equation,p.coordinates())!= ZERO)
+//       return false;
+
+    if ( ! CGAL::LinearFunctors::has_on<CK>(a.supporting_line(),p) )
       return false;
     
-    return (compare_xy<CK>(p, a.source()) !=
-	    compare_xy<CK>(p, a.target()));
+//     return (compare_xy<CK>(p, a.source()) !=
+// 	    compare_xy<CK>(p, a.target()));
+
+    return point_in_range<CK>(a,p);
   }
+
 
  template < class CK >
   Comparison_result
@@ -92,7 +97,7 @@ template < class CK >
   {
     CGAL_kernel_precondition (point_in_range<CK>(A1, p));
     //vertical case
-    if(A1.source().x() == A1.target().x()){
+    if (is_vertical<CK>(A1)) {
       if (p.y() <= A1.right().y()){
 	if(A1.left().y() <= p.y()){
 	  return CGAL::EQUAL;

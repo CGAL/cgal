@@ -54,7 +54,7 @@ namespace LinearFunctors {
     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(l);
     return(CGAL::sign_at<typename CK::Algebraic_kernel>
-	   (equation,p.coordinates())= ZERO);
+	   (equation,p.coordinates())== ZERO);
  }
 
   template< class CK, class OutputIterator>
