@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_base.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -44,16 +44,16 @@ enum Dac_decision
   NOT_SET
 };
 
-template <class _Traits>
-class Envelope_base_3
-{
-public:
-  typedef _Traits     Traits;
-
-  // virtual destructor.
-  virtual ~Envelope_base_3(){}
-
-};
+//template <class _Traits>
+//class Envelope_base_3
+//{
+//public:
+//  typedef _Traits     Traits;
+//
+//  // virtual destructor.
+//  virtual ~Envelope_base_3(){}
+//
+//};
 
 CGAL_END_NAMESPACE
 
