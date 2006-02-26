@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_overlay_functor.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -193,66 +193,17 @@ public:
     res_h->twin()->set_has_equal_aux_data_in_face(1, h2->twin()->get_has_equal_data_in_face());
 
     // update is_equal/has_equal data in target
-    Vertex_handle vh1;
-    Halfedge_handle hh1;
-    // update aux_data(0)
-    Object trg_src1 = res_h->target()->get_aux_source(0);
-    if (assign(vh1, trg_src1))
-      // v is the target of h1, and we can copy the halfedge-target information
-      // from h1
-      copy_halfedge_target_info(h1, res_h, 0);
-    else if (assign(hh1, trg_src1))
-      // h is the "HEMSHECH" of h1, so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h, 0, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+    update_halfedge_flags_on_edge(res_h, m_1.non_const_handle(h1), 0);
 
     // update aux_data(1)
-    Vertex_handle vh2;
-    Halfedge_handle hh2;
-    Object trg_src2 = res_h->target()->get_aux_source(1);
-    if (assign(vh2, trg_src2))
-      // v is the target of h2, and we can copy the halfedge-target information
-      // from h1
-      copy_halfedge_target_info(h2, res_h, 1);
-    else if (assign(hh2, trg_src2))
-      // h is the "HEMSHECH" of h2, so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h, 1, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+    update_halfedge_flags_on_edge(res_h, m_2.non_const_handle(h2), 1);
 
     // update is_equal/has_equal data in source
     // update aux_data(0)
-    Object src_src1 = res_h->source()->get_aux_source(0);
-    if (assign(vh1, src_src1))
-      // v is the target of h1->twin(), and we can copy the halfedge-target
-      // information from h1->twin()
-      copy_halfedge_target_info(h1->twin(), res_h->twin(), 0);
-    else if (assign(hh1, src_src1))
-      // h is the "HEMSHECH" of h1->twin(), so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h->twin(), 0, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+  	update_halfedge_flags_on_edge(res_h->twin(), m_1.non_const_handle(h1->twin()), 0);
 
     // update aux_data(1)
-    Object src_src2 = res_h->source()->get_aux_source(1);
-    if (assign(vh2, src_src2))
-      // v is the target of h2->twin(), and we can copy the halfedge-target
-      // information from h2->twin()
-      copy_halfedge_target_info(h2->twin(), res_h->twin(), 1);
-    else if (assign(hh2, src_src2))
-      // h is the "HEMSHECH" of h2->twin(), so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h->twin(), 1, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+  	update_halfedge_flags_on_edge(res_h->twin(), m_2.non_const_handle(h2->twin()), 1);
 
   }
 
@@ -266,6 +217,7 @@ public:
     res_h->twin()->set_aux_source(0, m_1.non_const_handle(h1->twin()));
     res_h->twin()->set_aux_source(1, m_2.non_const_handle(f2));       
 
+    // update is_equal/has_equal data in face
     res_h->set_is_equal_aux_data_in_face(0, h1->get_is_equal_data_in_face());
     res_h->set_is_equal_aux_data_in_face(1, true);
     res_h->set_has_equal_aux_data_in_face(0, h1->get_has_equal_data_in_face());
@@ -276,36 +228,11 @@ public:
     res_h->twin()->set_has_equal_aux_data_in_face(0, h1->twin()->get_has_equal_data_in_face());
     res_h->twin()->set_has_equal_aux_data_in_face(1, !f2->has_no_data());
 
-    // update is_equal/has_equal data in target for the fisrt source map 
-    Vertex_handle v;
-    Halfedge_handle h;
-    // update target
-    Object trg_src1 = res_h->target()->get_aux_source(0);
-    if (assign(v, trg_src1))
-      // v is the target of h1, and we can copy the halfedge-target information
-      // from h1
-      copy_halfedge_target_info(h1, res_h, 0);
-    else if (assign(h, trg_src1))
-      // h is the "HEMSHECH" of h1, so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h, 0, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+    // update is_equal/has_equal data in target for the first source map 
+  	update_halfedge_flags_on_edge(res_h, m_1.non_const_handle(h1), 0);
 
     // update source
-    Object src_src1 = res_h->source()->get_aux_source(0);
-    if (assign(v, src_src1))
-      // v is the target of h1->twin(), and we can copy the halfedge-target
-      // information from h1->twin()
-      copy_halfedge_target_info(h1->twin(), res_h->twin(), 0);
-    else if (assign(h, src_src1))
-      // h is the "HEMSHECH" of h1->twin(), so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h->twin(), 0, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+  	update_halfedge_flags_on_edge(res_h->twin(), m_1.non_const_handle(h1->twin()), 0);
 
     // update is_equal/has_equal data in target for the second source map
     update_halfedge_flags_in_face(res_h, m_2.non_const_handle(f2), 1);
@@ -337,35 +264,10 @@ public:
     res_h->twin()->set_has_equal_aux_data_in_face(1, h2->twin()->get_has_equal_data_in_face());
 
     // update is_equal/has_equal data in target for the second source map
-    Vertex_handle v;
-    Halfedge_handle h;
-    // update target
-    Object trg_src2 = res_h->target()->get_aux_source(1);
-    if (assign(v, trg_src2))
-      // v is the target of h2, and we can copy the halfedge-target information
-      // from h1
-      copy_halfedge_target_info(h2, res_h, 1);
-    else if (assign(h, trg_src2))
-      // h is the "HEMSHECH" of h2, so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h, 1, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+  	update_halfedge_flags_on_edge(res_h, m_2.non_const_handle(h2), 1);
 
     // update source
-    Object src_src2 = res_h->source()->get_aux_source(1);
-    if (assign(v, src_src2))
-      // v is the target of h2->twin(), and we can copy the halfedge-target
-      // information from h2->twin()
-      copy_halfedge_target_info(h2->twin(), res_h->twin(), 1);
-    else if (assign(h, src_src2))
-      // h is the "HEMSHECH" of h2->twin(), so we need to set halfedge_target
-      // information to true
-      set_halfedge_target_info(res_h->twin(), 1, true);
-    else
-      // this cannot happen, since we need to touch an edge
-      CGAL_assertion(false);
+  	update_halfedge_flags_on_edge(res_h->twin(), m_2.non_const_handle(h2->twin()), 1);
 
     // update is_equal/has_equal data in target for the first source map
     update_halfedge_flags_in_face(res_h, m_1.non_const_handle(f1), 0);
@@ -394,6 +296,7 @@ protected:
   {
     to->set_is_equal_aux_data_in_target(id, from->get_is_equal_data_in_face());
     to->set_has_equal_aux_data_in_target(id, from->get_has_equal_data_in_face());
+    to->set_has_equal_aux_data_in_target_and_face(id, from->get_has_equal_data_in_face());
   }
   template <class Vertex_handle_t>
   void copy_halfedge_target_info_from_vertex_face_info(Vertex_handle_t from,
@@ -441,22 +344,57 @@ protected:
     return result;
   }
 
+  // update halfedge-target flags of new_h that is created on edge on_edge
+  // and target-face flags
+  // id is the source diagram where on_edge comes from
+  // (i.e. the id of the aux information to update)
+  void update_halfedge_flags_on_edge(Halfedge_handle new_h, Halfedge_handle on_edge, unsigned int id)
+  {
+    Vertex_handle vh;
+    Halfedge_handle hh;
+    Object trg_src = new_h->target()->get_aux_source(id);
+    if (assign(vh, trg_src))
+    {
+	  // vh is the target of on_edge, and we can copy the halfedge-target information
+      // from on_edge
+      copy_halfedge_target_info(on_edge, new_h, id);
+  	  new_h->set_has_equal_aux_data_in_target_and_face
+		         (id, on_edge->get_has_equal_data_in_target_and_face());
+    }
+    else if (assign(hh, trg_src))
+    {
+      // hh is the "HEMSHECH" of on_edge, so we need to set halfedge_target
+      // information to true
+      set_halfedge_target_info(new_h, id, true);
+  	  // and target-face information using the original halfedge-face information
+  	  new_h->set_has_equal_aux_data_in_target_and_face
+		         (id, on_edge->get_has_equal_data_in_face());    
+    }
+    else
+      // this cannot happen, since we need to touch an edge
+      CGAL_assertion(false);
+  }
+
   // update halfedge-target flags of new_h that is created inside face in_face
+  // and target-face information
   // id is the source diagram where in_face comes from
   // (i.e. the id of the aux information to update)
   void update_halfedge_flags_in_face(Halfedge_handle new_h, Face_handle in_face, unsigned int id)
   {
-      // update is_equal/has_equal data in target for the first source map
     Vertex_handle vh;
     Halfedge_handle hh;
     Face_handle fh;
     // update target
     Object trg_src = new_h->target()->get_aux_source(id);
     if (assign(vh, trg_src))
-      // todo
     {
       if (vh->is_isolated())
+      {
         copy_halfedge_target_info_from_vertex_face_info(vh, new_h, id);
+		    // the target-face information is taken from vertex-face information too
+        new_h->set_has_equal_aux_data_in_target_and_face
+			             (id, vh->get_has_equal_data_in_face());
+      }
       else
       {
         // we have a vertex vh on the boundary of the face in_face
@@ -476,7 +414,7 @@ protected:
 
         // has_equal relationship is problematic in one case:
         bool has_equal;
-        if (h_of_vh_and_in_face->get_has_equal_data_in_face() == true)
+/*        if (h_of_vh_and_in_face->get_has_equal_data_in_face() == true)
           has_equal = h_of_vh_and_in_face->get_has_equal_data_in_target();
         else
           if (h_of_vh_and_in_face->get_has_equal_data_in_target() == false)
@@ -487,11 +425,17 @@ protected:
           {
             CGAL_assertion_code(std::cout << "happen" << std::endl;)
             has_equal = calc_has_equal;
-          }
+          }*/
+    		has_equal = h_of_vh_and_in_face->get_has_equal_data_in_target_and_face();
         CGAL_assertion(has_equal == calc_has_equal);
+    		if(has_equal != calc_has_equal)
+    			std::cout << "BUG!!!!" <<std::endl;
 
+    		// update halfedge-target flags
         new_h->set_is_equal_aux_data_in_target(id, is_equal);
-        new_h->set_has_equal_aux_data_in_target(id, calc_has_equal);
+        new_h->set_has_equal_aux_data_in_target(id, has_equal);
+		    // update target-face flag
+        new_h->set_has_equal_aux_data_in_target_and_face(id, has_equal);
       }
     }
     else if (assign(hh, trg_src))
@@ -515,6 +459,7 @@ protected:
       CGAL_assertion(fh == in_face);
       new_h->set_is_equal_aux_data_in_target(id, true);
       new_h->set_has_equal_aux_data_in_target(id, !fh->has_no_data());
+      new_h->set_has_equal_aux_data_in_target_and_face(id, !fh->has_no_data());
     }
   }
   
