@@ -317,17 +317,20 @@ namespace CircularFunctors {
   {
     CGAL_kernel_precondition(a.is_x_monotone());
     
-    typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
-    Polynomial_for_circles_2_2 
-      equation = get_equation<CK>(a.supporting_circle());
+//     typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
+//     Polynomial_for_circles_2_2 
+//       equation = get_equation<CK>(a.supporting_circle());
     
-    if(CGAL::sign_at<typename CK::Algebraic_kernel>
-       (equation,p.coordinates())!= ZERO)
+//     if(CGAL::sign_at<typename CK::Algebraic_kernel>
+//        (equation,p.coordinates())!= ZERO)
+//       return false;
+    
+    if ( ! has_on(a.supporting_circle(),p) ) 
       return false;
     
     if (! point_in_range<CK>(a, p) )
       return false;
- 
+    
     int cmp = CGAL::compare(p.y(), a.supporting_circle().center().y());
 
     return  cmp == 0 || (cmp > 0 &&  a.on_upper_part())
