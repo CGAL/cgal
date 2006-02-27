@@ -77,6 +77,7 @@ namespace CircularFunctors {
   public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>             Arity;
+
     using CK::Linear_kernel::Compare_y_2::operator();
 
     result_type
@@ -106,6 +107,7 @@ namespace CircularFunctors {
   public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>             Arity;
+
     using CK::Linear_kernel::Compare_xy_2::operator();
 
     result_type
@@ -147,14 +149,14 @@ namespace CircularFunctors {
   };
 
   
-   template < class CK >
+  template < class CK >
   class Has_on_2
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_point_2    Circular_arc_point_2;
     typedef typename CK::Line_arc_2              Line_arc_2;
     typedef typename CK::Circle_2                Circle_2;
-    typedef typename CK::Line_2                Line_2;
+    typedef typename CK::Line_2                  Line_2;
 
   public:
     typedef bool result_type;
@@ -175,7 +177,6 @@ namespace CircularFunctors {
     result_type
     operator()(const Line_arc_2 &a, const Circular_arc_point_2 &p) const
     { return has_on<CK>(a, p); }
-
     
   };
   
@@ -228,10 +229,11 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Line_arc_2              Line_arc_2;
+
   public:
     typedef bool result_type;
     typedef Arity_tag<2>             Arity;
-    
+
     using CK::Linear_kernel::Equal_2::operator();
     
     result_type
@@ -449,7 +451,6 @@ template < class CK >
     
     public:
 
-    
     typedef void result_type;        //!!! Linear_kernel version is Object !!!
     typedef Arity_tag<2>             Arity;
     
@@ -946,6 +947,7 @@ template < class CK >
     typedef Arity_tag<1>             Arity;    
 
     using CK::Linear_kernel::Construct_bbox_2::operator();
+
     result_type operator() (const Circular_arc_point_2 & a) const
     {
       return a.rep().bbox();
