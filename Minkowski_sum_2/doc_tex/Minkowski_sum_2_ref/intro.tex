@@ -1,0 +1,33 @@
+% ===============================================================
+\section*{Introduction}
+\label{mink_ref_sec:intro}
+% =======================
+
+This package consist of functions for computing the Minkowksi sum
+of two polygons in the plane. Namely, given two polygons $P,Q \in
+\reals^2$ it computes $P \oplus Q = \left\{ p + q ~\vert~ p \in P,
+q \in Q \right\}$.
+
+In addition, the package also includes functions for offsetting a
+polygon, namely computing its Minkowski sum with a disc of a given
+radius. It is possible to compute the exact representation of the
+offset, or to approximate it with guaranteed error bounds, in order
+to speed up the computations time.
+
+\subsection*{Functions}
+
+\ccRefIdfierPage{CGAL::minkowski_sum_2}\\
+\ccRefIdfierPage{CGAL::approximated_offset_2}\\
+\ccRefIdfierPage{CGAL::offset_polygon_2}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{PolygonConvexDecomposition}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Small_side_angle_bisector_decomposition<Kernel,Container>}\\
+\ccRefIdfierPage{CGAL::Optimal_convex_decomposition<Kernel,Container>}\\
+\ccRefIdfierPage{CGAL::Hertel_Mehlhorn_convex_decomposition<Kernel,Container>}\\
+\ccRefIdfierPage{CGAL::Greene_convex_decomposition<Kernel,Container>}\\
+

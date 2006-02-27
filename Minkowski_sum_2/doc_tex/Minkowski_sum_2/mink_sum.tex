@@ -1,0 +1,51 @@
+\lcTex{%
+  \newlength{\widthExtra}\setlength{\widthExtra}{1.1cm}
+  \newlength{\widthLineReal}\setlength{\widthLineReal}{\linewidth}
+  \addtolength{\widthLineReal}{-\widthExtra}
+  \newlength{\minipageSpace}\setlength{\minipageSpace}{0.2cm}
+
+  \newlength{\widthLeft}
+  \newlength{\widthRight}
+}
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\calC}{{\cal C}}
+\newcommand{\calA}{{\cal A}}
+\newcommand{\eps}{{\varepsilon}}
+\newcommand{\dcel}{{\sc Dcel}}
+\newcommand{\naive}{na\"{\i}ve}
+\newcommand{\kdtree}{{\sc Kd}-tree}
+\newcommand{\Cpp}{{C}{\tt ++}}
+
+% ====================
+\section{Introduction}
+\label{mink_sec:intro}
+% ====================
+
+Given two sets $A,B \in \reals^d$, their \emph{Minkowski sum},
+denoted by $A \oplus B$, is the set $\left\{ a + b ~\vert~ a \in
+A, b \in B \right\}$. Minkowski sum are used in many applications,
+such as motion planning and computer-aided design and
+manufacturing. This package contains functions for computing
+Minkowski sums of two polygons (namely $A$ and $B$ are two closed
+polygons in $\reals^2$), and for a polygon and a disc (an operation
+also known as \emph{offsetting}).
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \input{Minkowski_sum_2/fig/sum_triangles.pstex_t}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/sum_triangles.gif" border=0 alt="Minkowski sum of two triangles">
+  </center>
+\end{ccHtmlOnly}
+\caption{Computing the Minkowski sum of two triangles, as done
+in the example program \ccc{ex_sum_triangles.C}.}
+\label{mink_fig:sum_tri}
+\end{figure}
+
+
+\ccIncludeExampleCode{../examples/Minkowski_sum_2/ex_sum_triangles.C}
