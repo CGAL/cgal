@@ -651,7 +651,7 @@ Qt_widget& operator<<(Qt_widget& w, const Ray_2<R>& r)
 
   double x,y;
 
-  if (fabs(dx)>fabs(dy))
+  if (std::fabs(dx)>std::fabs(dy))
     {
       if (p1d.x()<p2d.x())
 	x = w.x_max();
