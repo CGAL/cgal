@@ -1,3 +1,8 @@
+26 Febraury 2006 Laurent Rineau
+- Move the internal header
+include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h to Mesh_2.
+
+
 16 November 2005 Laurent Rineau
 - added copy constructor and operator= in CGAL::Double_map
 - check them in test/Mesh_2/test_double_map.C

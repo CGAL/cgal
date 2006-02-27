@@ -1,4 +1,4 @@
-// Copyright (c) 2004, 2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -12,21 +12,21 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$
+// $Id$ $Date$
 // 
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_MESH_3_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
-#define CGAL_MESH_3_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
+#ifndef CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
+#define CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
 
-#include <list>
+#include <vector>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 
 namespace CGAL {
 
-  namespace Mesh_3 {
+  namespace Mesh_2 {
     namespace details {
 
       template <typename Tag, typename Tr>
@@ -41,8 +41,8 @@ namespace CGAL {
         typedef typename Tr::Weighted_point Point;
       };
 
-    } // end namespace Mesh_3::details
-  } // end namespace Mesh_3
+    } // end namespace Mesh_2::details
+  } // end namespace Mesh_2
 
 template <typename Tr>
 struct Triangulation_mesher_level_traits_3 :
@@ -50,7 +50,7 @@ struct Triangulation_mesher_level_traits_3 :
 {
   typedef Tr Triangulation;
 
-  typedef typename  Mesh_3::details::Type_of_points<typename Tr::Weighted_tag,
+  typedef typename  Mesh_2::details::Type_of_points<typename Tr::Weighted_tag,
                                                     Tr>::Point Point;
 
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -65,8 +65,8 @@ struct Triangulation_mesher_level_traits_3 :
   }
 
   class Zone {
-    typedef std::list<Cell_handle> Cells;
-    typedef std::list<Facet> Facets;
+    typedef std::vector<Cell_handle> Cells;
+    typedef std::vector<Facet> Facets;
   public:
     typedef typename Cells::iterator Cells_iterator;
     typedef typename Facets::iterator Facets_iterator;
@@ -74,6 +74,12 @@ struct Triangulation_mesher_level_traits_3 :
     typedef typename Facets::const_iterator Facets_const_iterator;
 
     typedef typename Tr::Locate_type Locate_type;
+
+    Zone() {
+      cells.reserve(64);
+      boundary_facets.reserve(32);
+      internal_facets.reserve(64);
+    }
 
     Locate_type locate_type;
     Cell_handle cell;
@@ -100,4 +106,4 @@ struct Triangulation_mesher_level_traits_3 :
 
 }; // end namespace CGAL
 
-#endif // CGAL_MESH_3_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
+#endif // CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
