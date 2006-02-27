@@ -16,33 +16,64 @@ typedef CGAL::Cartesian<coord_type> CK;
 typedef CGAL::Filtered_kernel<CK> K;
 typedef CGAL::Regular_grid_2<K> Field;
 typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
-typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
-typedef Stl::Stream_line_iterator_2 Stl_iterator;
+typedef CGAL::Euler_integrator_2<Field> Euler_integrator;
+typedef CGAL::Stream_lines_2<Field, Euler_integrator> Stl_euler;
+typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl_rungk;
+typedef Stl_euler::Stream_line_iterator_2 Stl_iterator;
+typedef Stl_euler::Point_iterator_2 Point_iterator;
+typedef Stl_euler::Point_2 Point_2;
+typedef Stl_euler::Vector_2 Vector_2;
+typedef Stl_rungk::Stream_line_iterator_2 Stl_iterator;
+typedef Stl_rungk::Point_iterator_2 Point_iterator;
+typedef Stl_rungk::Point_2 Point_2;
+typedef Stl_rungk::Vector_2 Vector_2;
 
 int main()
 {
-	Runge_kutta_integrator runge_kutta_integrator;
-	for (int i=1;i<=23;i++)
-	if (i!=11 && i!=12 && i!=17 && i!=18 && i!=20 && i!=21)
-	{
-		char name[80];
-		std::sprintf(name, "data/%d.vec.cin", i);
-		char namer[80];
-		std::sprintf(namer, "data/%d.stl", i);
-		std::ifstream infile(name, std::ios::in);
-		double iXSize, iYSize;
-		unsigned int x_samples, y_samples;
-		iXSize = iYSize = 512;
-		infile >> x_samples;
-		infile >> y_samples;
-		Field regular_grid_2(x_samples, y_samples, iXSize, iYSize);
-		infile.close();
-		/* the placement of streamlines */
-		double dSep = 3.5;
-		double dRat = 1.6;
-		std::cout << "processing... (" << name << ")\n";
-		Stl Stream_lines(regular_grid_2, runge_kutta_integrator,dSep,dRat,1);
-		std::cout << "placement generated\n";
-	}
-	std::cout << "success\n";
+  for (int i=1;i<=23;i++)
+    {
+      char file_name[80];
+      std::sprintf(file_name, "data/%d.vec.cin", i);
+      std::ifstream infile(file_name, std::ios::in);
+      double iXSize, iYSize;
+      unsigned int x_samples, y_samples;
+      iXSize = iYSize = 512;
+      infile >> x_samples;
+      infile >> y_samples;
+      Field regular_grid_2(x_samples, y_samples, iXSize, iYSize);
+      /*fill the grid with the appropriate values*/
+      for (unsigned int i=0;i<x_samples;i++)
+	for (unsigned int j=0;j<y_samples;j++)
+	  {
+	    double xval, yval;
+	    infile >> xval;
+	    infile >> yval;
+	    regular_grid_2.set_field(i, j, Vector_2(xval, yval));
+	  }
+      infile.close();
+      std::cout << "processing... (" << file_name << ")\n";
+      /* the placement of streamlines using Runge-Kutta integrator */
+      std::cout << "using Runge-Kutta integrator\n";
+      Runge_kutta_integrator runge_kutta_integrator;
+      double dSep = 3.5;
+      double dRat = 1.6;
+      Stl_rungk Stream_lines_rungk(regular_grid_2, runge_kutta_integrator,dSep,dRat,1);
+      std::cout << "placement generated\n";
+      std::cout << "updating parameters...\n";
+      Stream_lines_rungk.set_separating_distance(12.0);
+      Stream_lines_rungk.set_saturation_ratio(1.7);
+      Stream_lines_rungk.update();
+      std::cout << "placement generated\n";
+      std::ofstream fw("result.stl",std::ios::out);
+      Stream_lines_rungk.print_stream_lines(fw);
+      fw.close();
+      /* the placement of streamlines using Euler integrator */
+      std::cout << "using Runge-Kutta integrator\n";
+      Euler_integrator euler_integrator;
+      dSep = 3.5;
+      dRat = 1.6;
+      Stl_euler Stream_lines(regular_grid_2, euler_integrator,dSep,dRat,1);
+      std::cout << "placement generated\n";
+    }
+  std::cout << "success\n";
 }
