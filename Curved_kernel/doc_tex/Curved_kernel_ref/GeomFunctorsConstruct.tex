@@ -1,4 +1,32 @@
 
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructLine_2}
+\ccCreationVariable{fo}
+
+\ccRefines
+
+\ccc{Kernel::ConstructLine_2}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Line_2 operator()
+	(AlgebraicKernelForCircles::Polynomial_1_2);}
+{Constructs a line from an equation.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircle_2}
+\ccCreationVariable{fo}
+
+\ccRefines
+
+\ccc{Kernel::ConstructCircle_2}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circle_2 operator()
+	(AlgebraicKernelForCircles::Polynomial_for_circles_2_2);}
+{Constructs a circle from an equation.}
+
+\end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularArcPoint_2}
 \ccCreationVariable{fo}
 
