@@ -96,7 +96,43 @@ protected:
   FT                                                             separating_distance;
   FT                                                             saturation_ratio;
   Point_2                                                        seed_point;
-  unsigned int                                                   _number_of_lines;
+  int                                                            samp_step;
+  unsigned int _number_of_lines;
+  Vector_field_2 * vf_2;
+  Integrator_2 * int_2;
+public:
+  void set_separating_distance(FT new_value){separating_distance = new_value;}
+  void set_saturation_ratio(FT new_value){ saturation_ratio = new_value;}
+  void update()
+    {
+      ir = il = 0; // initialization
+      fSepStl_seed = separating_distance*saturation_ratio;
+      m_DT.clear();
+      Point_2 pPoint;
+      pPoint = Point_2(min_x-separating_distance,min_y-separating_distance);
+      m_DT.insert(pPoint);
+      pPoint = Point_2(min_x-separating_distance,max_y+separating_distance);
+      m_DT.insert(pPoint);
+      pPoint = Point_2(max_x+separating_distance,min_y-separating_distance);
+      m_DT.insert(pPoint);
+      pPoint = Point_2(max_x+separating_distance,max_y+separating_distance);
+      m_DT.insert(pPoint);
+      for (int i=(int) (min_x-separating_distance);i<max_x+(int)
+	     separating_distance;i=i+(int) (fSepStl_seed))
+	{
+	  pPoint = Point_2((FT)i,(FT)max_y+separating_distance);
+	  m_DT.insert(pPoint);
+	  pPoint = Point_2((FT)max_x+separating_distance,(FT)i);
+	  m_DT.insert(pPoint);
+	  pPoint = Point_2((FT)i,min_y-separating_distance);
+	  m_DT.insert(pPoint);
+	  pPoint = Point_2(min_x-separating_distance,(FT)i);
+	  m_DT.insert(pPoint);
+	}
+      _number_of_lines = 0;
+      place_stream_lines(*vf_2, *int_2,
+			 samp_step);     
+    }
 protected:
   void place_stream_lines(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator,
 			  const int & sampling_step, const bool & step_by_step = false);
@@ -196,6 +232,10 @@ vector_field_2, const Integrator_2 & m_integrator, const FT & m_separating_dista
       m_DT.insert(pPoint);
     }
   _number_of_lines = 0;
+  vf_2 = new Vector_field_2(vector_field_2);
+  int_2 = new Integrator_2(m_integrator);
+  samp_step = sampling_step;
+  stl_container.clear();
   place_stream_lines(vector_field_2, m_integrator,
 		     sampling_step, step_by_step);
 }
@@ -761,7 +801,8 @@ Stream_lines_2<VectorField_2, Integrator_2>::end()
 template <class VectorField_2, class Integrator_2>
 inline
 void Stream_lines_2<VectorField_2, Integrator_2>::make_iterator()
-{ 
+{
+  iterator_container.clear();
   for(typename Stream_line_container_2::iterator
 	begin=stl_container.begin();
       begin!=stl_container.end();begin++)
