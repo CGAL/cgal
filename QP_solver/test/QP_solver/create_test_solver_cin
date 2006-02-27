@@ -86,9 +86,9 @@ warnUser=0
 # collect master MPS files:
 echo "Collecting master MPS files..."
 if [ "x$1" == "xCGAL" ]; then
- MASTERS=$(find test_solver_data/masters/cgal -name *mps)
+ MASTERS=$(find test_solver_data/masters/cgal -name '*mps')
 else
- MASTERS=$(find test_solver_data/masters -name *mps)
+ MASTERS=$(find test_solver_data/masters -name '*mps')
 fi
 
 # generate derivates:
@@ -98,7 +98,7 @@ for file in $MASTERS
   name=`basename "$file" .mps`
 
   # for each master, find all its derivatives:
-  DERS=$(find test_solver_data/derivatives -name ${name}*.mps)
+  DERS=$(find test_solver_data/derivatives -name "${name}*.mps")
 
   # check if one of the derivatives is older:
   older=0
@@ -118,9 +118,9 @@ done
 
 # finally, collect all files for the testsuite:
 if [ "x$1" == "xCGAL" ]; then
- FILES=$(find test_solver_data/masters/cgal test_solver_data/derivatives/cgal -name *mps)
+ FILES=$(find test_solver_data/masters/cgal test_solver_data/derivatives/cgal -name '*mps')
 else
- FILES=$(find test_solver_data/masters test_solver_data/derivatives -name *mps)
+ FILES=$(find test_solver_data/masters test_solver_data/derivatives -name '*mps')
 fi
 echo "Generating 'test_solver.cin'..."
 LIST=""
