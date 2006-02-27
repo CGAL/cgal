@@ -1253,7 +1253,7 @@ QP_solver/test/QP_solver/data_to_mps-rational.cin -text
 QP_solver/test/QP_solver/data_to_mps.C -text
 QP_solver/test/QP_solver/data_to_mps.cin -text
 QP_solver/test/QP_solver/master_mps_to_derivatives.C -text
-QP_solver/test/QP_solver/testsuite-data/additional-for-cgal/Unbounded_asymmetric.mps -text
+QP_solver/test/QP_solver/test_solver_data/additional-for-cgal/Unbounded_asymmetric.mps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
