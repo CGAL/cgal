@@ -1,0 +1,15 @@
+# Core Number Type Library (http://www.cs.nyu.edu/exact/core/)
+
+DESCRIPTION = 
+PROVIDES = CORE
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = core++
+REQUIRES = GMP
+INCOMPATIBLE = 
+STDINCLDIRS = 
+INCLTHING = 
+STDLIBDIRS = 
+LIBTHING = 
+
+# EOF

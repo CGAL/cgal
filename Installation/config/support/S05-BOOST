@@ -1,0 +1,15 @@
+# The Boost library (http://www.boost.org/) extends the C++ std library
+
+DESCRIPTION = 
+PROVIDES = BOOST
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = 
+REQUIRES = 
+INCOMPATIBLE = 
+STDINCLDIRS = /usr/include/\*
+INCLTHING = boost
+STDLIBDIRS = 
+LIBTHING = 
+
+# EOF

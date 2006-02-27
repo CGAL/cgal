@@ -1,0 +1,15 @@
+# GNU Multiple Precision Arithmetic Library C++ Interface (http://www.swox.com/gmp/)
+
+DESCRIPTION = 
+PROVIDES = GMPXX
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = gmpxx
+REQUIRES = GMP
+INCOMPATIBLE = 
+STDINCLDIRS = 
+INCLTHING = 
+STDLIBDIRS = 
+LIBTHING = 
+
+# EOF

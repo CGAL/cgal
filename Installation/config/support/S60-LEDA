@@ -1,0 +1,15 @@
+# Algorithmic Solution's LEDA Library (http://www.algorithmic-solutions.com/)
+
+DESCRIPTION = Unix
+PROVIDES = LEDA
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = P G L
+REQUIRES = 
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS = 
+INCLTHING = 
+STDLIBDIRS = 
+LIBTHING = 
+
+# EOF

@@ -1,0 +1,15 @@
+# GNU Multiple Precision Arithmetic Library (http://www.swox.com/gmp/)
+
+DESCRIPTION = 
+PROVIDES = GMP
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = mpfr gmp
+REQUIRES =
+INCOMPATIBLE = 
+STDINCLDIRS = 
+INCLTHING = 
+STDLIBDIRS = 
+LIBTHING = 
+
+# EOF
