@@ -1,0 +1,165 @@
+#!/bin/bash
+
+function bailout()
+{
+    echo "$1"
+    exit 1;
+}
+
+function create_derivatives()
+{
+    # extract arguments:
+    file=$1
+    name=$2
+
+    # check that master_mps_to_derivatives binary is available
+    if [ ! -e master_mps_to_derivatives ]; then
+	echo -n "Binary 'master_mps_to_derivatives' is not available... "
+	echo "Trying to build it..."
+	make master_mps_to_derivatives
+	if [ ! -e master_mps_to_derivatives ]; then
+	    echo "Building failed, bailing out."
+	    echo -n "ERROR: 'master_mps_to_derivatives' not available in the "
+	    echo "current working"
+	    echo "directory; try"
+	    echo ""
+	    echo "  make master_mps_to_derivatives"
+	    echo ""
+	    exit -2;
+	fi
+    fi
+
+    # call master_mps_to_derivatives:
+    is_CGAL_test_case=$(expr "$file" : ".*/cgal/.*$")
+    if [ $is_CGAL_test_case == 0 ]; then
+	./master_mps_to_derivatives "$file" "$name" test_solver_data/derivatives/additional
+    else
+	./master_mps_to_derivatives "$file" "$name" test_solver_data/derivatives/cgal
+    fi
+}
+
+# echo usuage:
+if [ "x$1" == "xCGAL" ]; then
+ echo "Generating CGAL testsuite."
+elif [ "x$1" == "xall" ]; then
+ echo "Generating all of the internal testsuite."
+else
+ echo "Usage: $0 CGAL|all [verbosity]"
+ echo ""
+ echo "Creates the file test_solver.cin which is used when the CGAL testsuite"
+ echo "executes the command"
+ echo ""
+ echo "  ./test_solver < test_solver.cin"
+ echo ""
+ echo "The file test_solver.cin contains the names (together with a verbosity"
+ echo "number and a pricing strategy specifier) of MPS-files to be run."
+ echo ""
+ echo "A call to ./create_test_solver_cin causes your current test_solver_data"
+ echo "directory to be searched for MPS-files: in case you pass 'CGAL' as the"
+ echo "first parameter only the files in masters/cgal are considered otherwise"
+ echo "also the files in masters/additional are taken into account.  For each"
+ echo "of these files, the script calls the utility master_mps_to_derivatives"
+ echo "(compiling it first, if need be) to generate from the file some more,"
+ echo "derived MPS-files that are then stored in derivatives/cgal/ and deriva-"
+ echo "tives/additional/, respectively. (The derivates are only generated when"
+ echo "they do not exist or are outdated.)"
+ echo ""
+ echo "Sometimes you do not want (all) derivates of some master-MPS to be in-"
+ echo "cluded in the (CGAL- or all-) testsuite; in this case, you first call"
+ echo "this script (which generates the derivates) and afterwards you replace"
+ echo "the derivative(s) you do not want with some very simple MPS-files (that"
+ echo "are handled very fast by the solver). (See fit1d.mps, for example.)"
+ exit 1
+fi
+
+# set verbosity:
+level=0
+if [ "x$2" != "x" ]; then
+    level=$2
+fi
+echo "Setting verbosity to $level."
+
+# if warnings occur, we set the following variable to 1 in order to inform
+# the user in the end:
+warnUser=0
+
+# collect master MPS files:
+echo "Collecting master MPS files..."
+if [ "x$1" == "xCGAL" ]; then
+ MASTERS=$(find test_solver_data/masters/cgal -name *mps)
+else
+ MASTERS=$(find test_solver_data/masters -name *mps)
+fi
+
+# generate derivates:
+echo "Generating derivates..."
+for file in $MASTERS
+  do
+  name=`basename "$file" .mps`
+
+  # for each master, find all its derivatives:
+  DERS=$(find test_solver_data/derivatives -name ${name}*.mps)
+
+  # check if one of the derivatives is older:
+  older=0
+  for der in $DERS
+    do
+    if [ $der -ot $file ]; then
+	older=1
+    fi
+  done
+  if [ $older == 1 ] || [ "x$DERS" == "x" ]; then
+      echo "  File '${name}.mps' is not up-to-date."
+      create_derivatives $file $name
+  else
+      echo "  File '${name}.mps' is up-to-date."
+  fi
+done
+
+# finally, collect all files for the testsuite:
+if [ "x$1" == "xCGAL" ]; then
+ FILES=$(find test_solver_data/masters/cgal test_solver_data/derivatives/cgal -name *mps)
+else
+ FILES=$(find test_solver_data/masters test_solver_data/derivatives -name *mps)
+fi
+echo "Generating 'test_solver.cin'..."
+LIST=""
+MISSINGFILES=""
+for f in $FILES
+  do
+  # add file to list:
+  LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+
+  # check whether the file exists in the SVN repository:
+  tmpf=`basename "$f"`
+  tmpd=`dirname "$f"`
+  if grep -q "name=\\\"$tmpf\\\"" "$tmpd/.svn/entries"; then 
+      echo -n ""; 
+  else 
+      MISSINGFILES="$MISSINGFILES  $f\n" 
+  fi
+done
+
+# warn if some files are not committed yet:
+if [ "x$MISSINGFILES" != "x" ] && [ "x$cgalOrNot" == "xCGAL" ]; then 
+ echo "" 
+ echo "WARNING: Some files in test_solver_data that are part of the CGAL" 
+ echo "testsuite do not exist in the repository. This means that if you commit"
+ echo "test_solver.cin, the testsuite will not succeed because files will be"
+ echo "missing. Please check them in. Here is the list of these files:" 
+ echo "" 
+ echo $MISSINGFILES 
+ echo "" 
+ warnUser=1 
+fi 
+
+# save file:
+echo $LIST > "test_solver.cin"
+
+# finish:
+echo "Done."
+if [ $warnUser == 1 ]; then
+    echo "There were warnings. Please check them carefully before going on."
+    exit 1
+fi
+exit 0

@@ -152,14 +152,14 @@ bool create_derivatives(const char *path,
   using CGAL::Tag_false;
 
   // diagnostics:
-  cerr << "Trying to load input MPS using "
+  cerr << "  Trying to load input MPS using "
        << CGAL::QP_MPS_detail::MPS_type_name<IT>::name()
        << " number-type...\n";
 
   // open input file:
   std::ifstream f(path);
   if (!f) {
-    cerr << "  Could not open file '" << path << "'.\n";
+    cerr << "    Could not open file '" << path << "'.\n";
     return false;
   }
 
@@ -174,7 +174,7 @@ bool create_derivatives(const char *path,
     msg = "Input is not a valid MPS file: " + qp.error();
     return false;
   }
-  cerr << "  MPS-file successfully input.\n";
+  cerr << "    MPS-file successfully input.\n";
 
   // add D matrix if it is not yet there:
   if (qp.is_linear())   // Note: the output MPS file will not contain
