@@ -20,28 +20,36 @@
 This concept defines the requirements for traits classes of
 \ccGlobalScope\ccc{Approximate_min_ellipsoid_d<Traits>}.
 
+\ccRequirements
+
+This concept refines the concepts \ccc{DefaultConstructible},
+\ccc{CopyConstructible}, and \ccc{Assignable}. (This means that a
+model of concept \ccc{ApproximateMinEllipsoid_d_Traits_d} must also be
+a model of the latter three concepts.)
+
 % -----------------------------------------------------------------------------
 \ccTypes
 
-\ccNestedType{FT}{
-        Must be a typedef to \ccc{double}.}
+\ccNestedType{FT}{\ccc{typedef double FT}}
 
-\ccNestedType{ET}{Typedef to some model of concept
-        \ccc{RingNumberType} that provides exact arithmetic, meaning
-        that
+\ccNestedType{ET}{Some model of concept \ccc{RingNumberType} that
+        provides exact arithmetic, meaning that
         \ccc{CGAL::Number_type_traits<ET>::Has_exact_ring_operations}
         must be \ccc{CGAL::Tag_true}.  In addition, \ccc{ET} must be
         able to exactly represent any finite \ccc{double} value.  (An
         example for such a type is \ccc{CGAL::MP_Float}.). \\ The type
-        \ccc{ET} is used by the package for internal, exact
-        computations.}
+        \ccc{ET} is to be used by the
+        \ccc{Approximate_min_ellipsoid_d<Traits>} class for internal,
+        exact computations.}
 
-\ccNestedType{Point}{Typedef to the type of the input
-        points. \ccc{Point} must provide the default and copy
-        constructor.}
+\ccNestedType{Point}{Type of the input points. \ccc{Point} must
+        provide the default and copy constructor, and must be a model
+        of \ccc{DefaultConstructible}, \ccc{CopyConstructible}, and
+        \ccc{Assignable}.}
 
-\ccNestedType{Cartesian_const_iterator}{Typedef to an STL input
-iterator type.  This type is used to iterate over the Cartesian
+\ccNestedType{Cartesian_const_iterator}{Model for the STL concept
+\ccc{RandomAccessIterator} whose value type must be convertible to
+\ccc{double}.  This type is used to iterate over the Cartesian
 coordinates of an instance of type \ccc{Point}, see
 \ccc{cartesian_begin()} below.}
 
@@ -60,7 +68,9 @@ of the point $p$.  The range of the iterator must have size
 % -----------------------------------------------------------------------------
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_d<K>}
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_2<K, ET>}
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_3<K, ET>}
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_d<K, ET>}%
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso

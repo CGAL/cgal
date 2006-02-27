@@ -107,7 +107,7 @@ namespace CGAL {
 
       // fetch ambient dimension:
       d = tco.dimension(P[0]);
-      CGAL_APPEL_ASSERT(d >= 2);
+      CGAL_APPEL_ASSERT(d >= 2 || eps >= 0.0);
 
 
       // The ellipsoid E produced by Khachiyan's algorithm has the
@@ -308,6 +308,12 @@ namespace CGAL {
     Traits traits() const
     {
       return tco;
+    }
+
+
+    int dimension() const
+    {
+      return d;
     }
 
   public: // miscellaneous:

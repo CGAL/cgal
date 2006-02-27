@@ -49,11 +49,11 @@ int main()
     AME::Axes_lengths_iterator axes = ame.axes_lengths_begin();
     for (int i = 0; i < d; ++i) {
       std::cout << "Semiaxis " << i << " has length " << *axes++  << "\n"
-		<< "and Cartesian coordinates ";
+                << "and Cartesian coordinates ";
       for (AME::Axes_direction_coordinate_iterator
-	     d_it = ame.axis_direction_cartesian_begin(i);
-	   d_it != ame.axis_direction_cartesian_end(i); ++d_it)
-	std::cout << *d_it << ' ';
+             d_it = ame.axis_direction_cartesian_begin(i);
+           d_it != ame.axis_direction_cartesian_end(i); ++d_it)
+        std::cout << *d_it << ' ';
       std::cout << ".\n";
     }
   }
