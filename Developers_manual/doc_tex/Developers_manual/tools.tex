@@ -15,16 +15,18 @@
 \ccChapterRelease{Chapter Version: 1.0}
 \ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl})}
 
-There are a number of tools that automate some of the tedious and 
+There are a number of tools that automate some of the tedious and
 error-prone tasks that are unavoidable when developing for \cgal.
 Most of these scripts can be in at least two places.
 \begin{itemize}
-   \item in every internal release (directory {\tt developer\_scripts} or 
+   \item in every internal release (directory {\tt developer\_scripts} or
          {\tt scripts})
-   \item in the package \ccAnchor{http://cgal.inria.fr/cgi-bin/viewcvs.cgi/CGAL/Packages/Scripts/}{Scripts} on the CVS server%
-         \index{CVS server!Scripts package@\texttt{Scripts} package}%
+   \item in the package
+         \ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/?root=cgal}
+         {Scripts} on the SVN server%
+         \index{SVN server!Scripts package@\texttt{Scripts} package}%
          \begin{ccTexOnly}
-        (\path|http://cgal.inria.fr/cgi-bin/viewcvs.cgi/CGAL/Packages/Scripts/|) 
+        (\path|https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/?root=cgal|)
          \end{ccTexOnly}.
 \end{itemize}
 
@@ -33,7 +35,9 @@ Most of these scripts can be in at least two places.
 \index{create_assertions.sh script@{\tt create\_assertions.sh} script|(}
 \ccIndexMainItem{assertions}
 
-The shell script \ccAnchor{http://cgal.inria.fr/cgi-bin/viewcvs.cgi/CGAL/Packages/Scripts/developer_scripts/create_assertions.sh}{{\tt create\_assertions.sh}} generates assertion header files.
+The shell script
+\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/developer_scripts/create_assertions.sh?root=cgal&view=markup}
+{{\tt create\_assertions.sh}} generates assertion header files.
 The command
 \begin{verse}
 {\tt create\_assertions.sh minkowski}
@@ -44,7 +48,7 @@ files that implement the minkowski package.
 The file contains several macros for adding checks (preconditions,
 postconditions, {\em etc.}) that can be switched on or off with compile
 flags.
-You can read more about the use of these package-level checks in 
+You can read more about the use of these package-level checks in
 Section~\ref{sec:checks_controlling}.
 \index{create_assertions.sh script@{\tt create\_assertions.sh} script|)}
 
@@ -56,7 +60,9 @@ Section~\ref{sec:checks_controlling}.
 
 \cgal\ source files should not contain line directives, even if they are made
 with the help of a literate programming tool like funnelweb.
-The script \ccAnchor{http://cgal.inria.fr/cgi-bin/viewcvs.cgi/CGAL/Packages/Scripts/developer_scripts/remove_line_directives}{{\tt remove\_line\_directives}} can be used to remove
+The script
+\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/developer_scripts/remove_line_directives?root=cgal&view=markup}
+{{\tt remove\_line\_directives}} can be used to remove
 lines starting with {\tt \#line}.
 
 \section{{\tt rename\_clib\_calls}}
@@ -74,17 +80,19 @@ That's why \cgal\ has a macro, CGAL\_CLIB\_STD,%
 that is set to {\ccFont std} (for
 a conforming compiler) or to the empty string (for a non-conforming
 compiler). This macro should be prepended to all calls of functions from
-the C library. So, you should call \ccc{CGAL_CLIB_STD::sin(x)}, not 
+the C library. So, you should call \ccc{CGAL_CLIB_STD::sin(x)}, not
 \ccc{std::sin(x)} or \ccc{sin(x)}.
 
-The perl script \ccAnchor{http://cgal.inria.fr/cgi-bin/viewcvs.cgi/CGAL/Packages/Scripts/developer_scripts/rename_clib_calls}{{\tt rename\_clib\_calls}}
+The perl script
+\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/developer_scripts/rename_clib_calls?root=cgal&view=markup}
+{{\tt rename\_clib\_calls}}
 does this prepending.
 The script is idempotent, so applying it twice in a row does no harm.
 The script is not perfect, though. Especially, it recognizes complete
 words, but it does not discriminate between a function call and a variable
 or a word in a comment.
 You should check the differences of the modified file with the original
-file (which will be saved, with a {\tt .bak} extension), for example with 
+file (which will be saved, with a {\tt .bak} extension), for example with
 {\tt diff} or {\tt xdiff}.
 
 Before using this script, you should edit the first line. This line
@@ -98,10 +106,12 @@ can help you to find out what to put there.
 \index{create_makefile script@{\tt create\_makefile} script|(}
 \ccIndexSubitemBegin{\tt makefile}{creating}
 
-The shell script \ccAnchor{http://cgal.inria.fr/cgi-bin/viewcvs.cgi/CGAL/Packages/Scripts/scripts/create_makefile}{{\tt create\_makefile}} creates a \cgal\ makefile
+The shell script
+\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/scripts/create_makefile?root=cgal&view=markup}
+{{\tt create\_makefile}} creates a \cgal\ makefile
 in the current working directory.
-The makefile will have rules to make an executable from every {\tt .C} 
-file in the directory.  The following options are available 
+The makefile will have rules to make an executable from every {\tt .C}
+file in the directory.  The following options are available
 to indicate the kind of makefile to create:
 \begin{description}
 \item[-d]   create a default CGAL makefile
@@ -112,10 +122,10 @@ to indicate the kind of makefile to create:
 \end{description}
 
 You should use this script to create makefiles for testing before submitting
-your packages, but you should {\bf avoid} customizing the makefile for your 
-package and then submitting the makefiles for your test suite and example 
+your packages, but you should {\bf avoid} customizing the makefile for your
+package and then submitting the makefiles for your test suite and example
 programs.\ccIndexSubitem{\tt makefile}{submitting}
-Makefiles get created automatically when a release is made. This ensures 
+Makefiles get created automatically when a release is made. This ensures
 that the most up-to-date makefiles are created. Experience has shown
 that makefiles need to be updated from time to time, especially if new
 compilers are supported. When makefiles are submitted as part of a package,
@@ -123,19 +133,19 @@ they tend to get outdated.
 Moreover, creating a makefile that works for a diverse range of compilers
 is difficult.
 
-The makefiles created by this script have two hooks for customization. 
+The makefiles created by this script have two hooks for customization.
 If the directory
 where the makefile is created contains a directory named {\tt include},%
 \index{include directory@{\tt include} directory!local}
 that
 directory will be on the header search path before any other files. This
 provides a means to override header files%
-\ccIndexSubitem{header files}{overriding}. 
+\ccIndexSubitem{header files}{overriding}.
 Furthermore, the makefiles in the
-test suite (created with the {\tt -t} option), contain the variable 
+test suite (created with the {\tt -t} option), contain the variable
 {\tt EXTRA\_FLAGS}.\ccIndexSubitem{\tt makefile}{test suite}%
 \index{extra_flags variable@{\tt EXTRA\_FLAGS} variable}
-This variable can be set, {\em e.g.}, as an environment variable in 
+This variable can be set, {\em e.g.}, as an environment variable in
 {\tt cgal\_test}, to add {\tt -I} or {\tt -D} options.
 \ccIndexSubitemEnd{\tt makefile}{creating}
 \index{create_makefile script@{\tt create\_makefile} script|)}
@@ -149,13 +159,15 @@ This variable can be set, {\em e.g.}, as an environment variable in
 In every subdirectory of {\tt test} there must be a shell script called
 {\tt cgal\_test}. This script is called from the {\tt run\_testsuite}%
 \index{run_testsuite script@{\tt run\_testsuite} script}
-script when the test suite is run. The script \ccAnchor{http://cgal.inria.fr/cgi-bin/viewcvs.cgi/CGAL/Packages/Scripts/developer_scripts/create_cgal_test}{{\tt create\_cgal\_test}}
+script when the test suite is run. The script
+\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/developer_scripts/create_cgal_test?root=cgal&view=markup}
+{{\tt create\_cgal\_test}}
 will create the shell script {\tt cgal\_test} in the current directory.
 
 As is the case with makefiles, this file will be generated automatically for
 each subdirectory of {\tt test} if
 it is not supplied by the package. This is also the preferred way.
-So you should use {\tt create\_cgal\_test} to test your package before 
+So you should use {\tt create\_cgal\_test} to test your package before
 submitting but generally should avoid submitting the file {\tt cgal\_test}.
 But sometimes you may want to do something extra in this script ({\em e.g.}, set
 the {\tt EXTRA\_FLAGS}\index{extra_flags variable@{\tt EXTRA\_FLAGS} variable}
@@ -163,11 +175,11 @@ environment variable that is used in the makefile).
 In this case, you can run {\tt create\_cgal\_test} yourself and edit the result.
 The generated file contains a header that lists the requirements a
 {\tt cgal\_test} program should fulfill. These are also listed in
-Section~\ref{sec:test_subdirectory} with the description of the 
+Section~\ref{sec:test_subdirectory} with the description of the
 {\tt cgal\_test} script.
 
 %\begin{itemize}
-%\item For every target two one-line messages are written to the file 
+%\item For every target two one-line messages are written to the file
 %      {\tt error.txt}\in
 %      The first one indicates if the compilation was successful,
 %the second one indicates if the execution was successful.
@@ -206,10 +218,10 @@ everything is done, it puts the results on some ftp server.
 
 \paragraph{How to set up your local testing} ~
 
-The first step is to create a directory where you will store the releases. 
+The first step is to create a directory where you will store the releases.
 This directory is known in the script as {\tt \$CGAL\_ROOT}. By default
 {\tt \$CGAL\_ROOT} is the directory where you put the script {\tt
-autotest\_cgal}, but you may change it in {\tt .autocgalrc}. 
+autotest\_cgal}, but you may change it in {\tt .autocgalrc}.
 
 The next step is to download an internal release of your choice, say {\tt
 CGAL-3.1-I-xx}, and install it on the various platforms you want it to be
@@ -255,11 +267,12 @@ COMPILERS_localhost="i686_Linux-2.4.17_g++-3.4.0"
 PROCESSORS_papillon="3"
 \end{verbatim}}
 You should take those names from the configuration files mentioned earlier.
-The {\tt PROCESSORS\_hostname} must be set if you have more than one 
-processor on that host and of course if you want to give all of them to the 
-testsuite. If you want to run the testsuite locally and not remotely, name the 
+The {\tt PROCESSORS\_hostname} must be set if you have more than one
+processor on that host and of course if you want to give all of them to the
+testsuite. If you want to run the testsuite locally and not remotely, name the
 host as {\tt localhost} and the script will run the testsuite locally for that
-host. If you do not want to run the testsuite, but only to install a new release of CGAL, you may not define {\tt COMPILERS\_localhost} and put only localhost in the {\tt BUILD\_HOSTS} variable.
+host. If you do not want to run the testsuite, but only to install a new release of CGAL,
+you may not define {\tt COMPILERS\_localhost} and put only localhost in the {\tt BUILD\_HOSTS} variable.
 
 \paragraph{List of configurable variables} ~
 
@@ -296,13 +309,13 @@ variable.
 
 {\tt MAIL\_ADDRESS} has no value by default. In case you want to
 set it in {\tt .autocgalrc}, the script will send an additional email to
-everyone mentioned in this variable.    
+everyone mentioned in this variable.
 
 {\tt LOGS\_DIR} has the default value {\tt \$CGAL\_ROOT/AUTOTEST\_LOGS}.  This
 is used to keep local log files.
 
 {\tt CONSOLE\_OUTPUT} has the default value ``y''. If you want that the script
- also shows messages to the console, the value is ``y'' otherwise the value 
+ also shows messages to the console, the value is ``y'' otherwise the value
 should be ``''.
 
 {\tt TEST\_DIR\_ROOT} specifies where the test-suite will be copied before
@@ -327,31 +340,31 @@ all CPU time for itself.  The default value is {\tt ''-19''}.
 \ccIndexSubitem{test suite}{internal release}
 
 The perl script {\tt create\_internal\_module} is used to generate independent
- modules from CGAL packages. This script was adapted from the script {\tt 
+ modules from CGAL packages. This script was adapted from the script {\tt
 create\_internal\_release} that is used to build CGAL internal releases.
-It generates modules from CGAL CVS packages.
+It generates modules from CGAL SVN packages.
 
-To see a short list of possible parameters you may want to set, just run the 
-script with no arguments.   
+To see a short list of possible parameters you may want to set, just run the
+script with no arguments.
 
-You must have the packages you want to include in the module in one directory. 
-You must create one file {\tt modules} that contains the packages list that 
+You must have the packages you want to include in the module in one directory.
+You must create one file {\tt modules} that contains the packages list that
 will go into the module itself.
 
 Here is an example of using the script:
 \begin{verbatim}
-$ ./create_internal_module -a /cygdrive/d/CGALCVS -p modules 
--m Triangulation_module -s /cygdrive/d/CGALCVS/Scripts/scripts/
--r CGAL-3.1-I-76 -n 1003001076 
+$ ./create_internal_module -a /cygdrive/d/CGALSVN -p modules
+-m Triangulation_module -s /cygdrive/d/CGALSVN/Scripts/scripts/
+-r CGAL-3.1-I-76 -n 1003001076
 \end{verbatim}
 
 
-The {\tt -a} parameter is used to specify the directory that contains the packages. 
-The {\tt -p} parameter is used to specify the file containing the packages list. 
-The {\tt -m} parameter is used to specify the name of the module. If there is no m parameter, the default module name is NEW\_MODULE.   
-The parameter {\tt -r} is used to specify the module version. 
-The parameter {\tt -n} is used to specify the module version number. If you don't use the {\tt -n parameter}, the version number will be taken from the module version. The module version and version number will be used in the files version.h and version.tex. 
-The {\tt -s} parameter is used to specify the directory containing the scripts create\_makefile, and all the other scripts that CGAL made public for users. This is not the package Scripts, but the scripts directory in the Scripts package.  
+The {\tt -a} parameter is used to specify the directory that contains the packages.
+The {\tt -p} parameter is used to specify the file containing the packages list.
+The {\tt -m} parameter is used to specify the name of the module. If there is no m parameter, the default module name is NEW\_MODULE.
+The parameter {\tt -r} is used to specify the module version.
+The parameter {\tt -n} is used to specify the module version number. If you don't use the {\tt -n parameter}, the version number will be taken from the module version. The module version and version number will be used in the files version.h and version.tex.
+The {\tt -s} parameter is used to specify the directory containing the scripts create\_makefile, and all the other scripts that CGAL made public for users. This is not the package Scripts, but the scripts directory in the Scripts package.
 
 You must have {\tt wininst} package in the same directory with {\tt
   Scripts} package because the script is looking for C2vcproj script
@@ -368,10 +381,10 @@ file that is the makefile to build the CGAL library (only for the C
 files in the src dir).
 
   - when there is no src directory it simply does nothing.
-  
+
   For the moment the script does not produce the tar.gz version of the
   module, this will be done in the future if it will be required.
-  
+
 
 
 \section{{\tt create\_modules}}
@@ -389,8 +402,8 @@ module to be created, the name of the file becoming the name of the
 module. Each file contains a list of packages, one package per line.
 
 For each file in Modules directory, for each package enumerated in the
-file, it checks out or updates the package in the {\tt \$CVSDIR}. {\tt
-  \$CVSDIR} represents the directory where you store the packages. It
+file, it checks out or updates the package in the {\tt \$SVNDIR}. {\tt
+  \$SVNDIR} represents the directory where you store the packages. It
 is the same as the ``All packages dir'' from the previous script.
 
 Once the update process is done, it calls {\tt
@@ -399,7 +412,7 @@ Once the update process is done, it calls {\tt
 The version and version number are preset and the way to determine
 those will be changed in the near future. I am just looking for the
 best way to do it.
-  
+
 
 
 \section{{\tt check\_licenses}}

@@ -1,3 +1,6 @@
+27 February 2006 Laurent Saboret
+- Update documentation for SVN and GForge
+
 16 February 2006 Joachim Reichel
 - check_licenses script documented
 
@@ -26,7 +29,7 @@
 31 August 2004 Lutz Kettner
 - Moved all sources to doc_tex/Developers_manual/* such that the manual
   can be tested and build with the automatic manual test suite. All
-  figures in *.eps, *.pdf, and *.gif format are now in  
+  figures in *.eps, *.pdf, and *.gif format are now in
   doc_tex/Developers_manual/fig/* . There is no separate html and examples
   directory anymore.
 

@@ -10,27 +10,27 @@
 % =============================================================================
 
 
-\chapter{Coding Conventions} 
+\chapter{Coding Conventions}
 \label{chap:code_format}
 
 \ccChapterRelease{Chapter Version: 1.1}
 \ccChapterAuthor{Sven Sch{\"o}nherr ({\tt sven@inf.ethz.ch})}
 
 We do not want to impose very strict coding rules on the developers.
-What is most important is to follow the \cgal\ naming scheme 
+What is most important is to follow the \cgal\ naming scheme
 described in the next section. However, there are some programming conventions
-(Section~\ref{sec:programming_conventions}) that should be adhered to, 
+(Section~\ref{sec:programming_conventions}) that should be adhered to,
 rules for the code format
 (Section~\ref{sec:code_format}), and a mandatory heading for each
 source file (Section~\ref{sec:file_header})
 
 
 % -----------------------------------------------------------------------------
-\section{Naming scheme} 
+\section{Naming scheme}
 \label{sec:naming_scheme}
 \ccIndexMainItemBegin{naming scheme}
 
-The \cgal\ naming scheme is intended to help the user 
+The \cgal\ naming scheme is intended to help the user
 use the library and the developer develop the
 library. The rules are simple and easy to remember. Where appropriate,
 they aim for similarity with the names used in the \stl. Deviations from the
@@ -40,8 +40,8 @@ there are \emph{convincing} reasons.
 \subsection*{General rules}
 
 \begin{itemize}
-\item Words in the names of everything except concepts should be separated by 
-      underscores. For example, one would use \ccc{function_name} and 
+\item Words in the names of everything except concepts should be separated by
+      underscores. For example, one would use \ccc{function_name} and
        \ccc{Class_name} instead of \ccc{functionName} or \ccc{Classname}.
       \ccIndexSubitem{naming scheme}{word separators}
       \ccIndexSubitem{naming scheme}{underscores}
@@ -55,18 +55,18 @@ there are \emph{convincing} reasons.
       in contrast to \ccc{Convex_hull_traits_2} for the name of the class that
       is a model of this concept.  This different naming scheme for concepts
       and classes was adopted mainly for two reasons (a) it is consistent with
-      the \stl\ (cf. InputIterator) and (b) it avoids name clashes between 
-      concepts and classes that would require one or the other to have a 
+      the \stl\ (cf. InputIterator) and (b) it avoids name clashes between
+      concepts and classes that would require one or the other to have a
       rather contrived name.
 
 \item Abbreviations of words are to be avoided%
       \ccIndexSubitem{naming scheme}{abbreviations}
-      ({\em e.g.}, use 
+      ({\em e.g.}, use
       \ccc{Triangulation} instead of \ccc{Tri}).  The only exceptions
       might be standard geometric abbreviations (such as ``CH'' for ``convex
       hull'') and standard data structure abbreviations (such as ``DS'' for
       ``data structure'').  Unfortunately, the long names that result from
-      the absence of abbreviations are known to cause problems with some 
+      the absence of abbreviations are known to cause problems with some
       compilers.\ccIndexMainItem{long-name problem}
 %      See Section~\ref{sec:long_name_problem}
 %      for further information about the so-called ``long-name problem.''
@@ -85,7 +85,7 @@ there are \emph{convincing} reasons.
       \ccIndexSubitem{functions}{naming}
 \ccIndexSubitemEnd{naming scheme}{capitalization}
 \item Boolean function names should begin with a verb.  For example, use
-      \ccc{is_empty} instead of simply \ccc{empty} and 
+      \ccc{is_empty} instead of simply \ccc{empty} and
       \ccc{has_on_bounded_side} instead of \ccc{on_bounded_side}.%
       \ccIndexSubitem{functions}{naming}%
       \ccIndexSubitem{naming scheme}{boolean functions}%
@@ -102,10 +102,10 @@ there are \emph{convincing} reasons.
 \begin{itemize}
 \item All geometric objects have the dimension as a suffix (\eg, \ccc{Vector_2}
       and \ccc{Plane_3}).
-     \textbf{Exception:} For $d$-dimensional objects there may be a dynamic 
-     and a static version. The former has the suffix \ccc{_d} 
-     (\eg, \ccc{Point_d}), while the latter has the dimension as the first 
-     template parameter (\eg, \ccc{Point<d>}).  
+     \textbf{Exception:} For $d$-dimensional objects there may be a dynamic
+     and a static version. The former has the suffix \ccc{_d}
+     (\eg, \ccc{Point_d}), while the latter has the dimension as the first
+     template parameter (\eg, \ccc{Point<d>}).
 \end{itemize}
 \ccIndexSubitemEnd{geometric objects}{naming}
 \ccIndexSubitemEnd{naming scheme}{dimension number}
@@ -121,16 +121,16 @@ there are \emph{convincing} reasons.
       triangulations in the plane is named \ccc{Triangulation_2}, and a
       convex hull algorithm in 3-space is named \ccc{convex_hull_3}.
 \item Member functions realizing predicates should start with \ccc{is_} or
-      \ccc{has_}, \eg~the data structure \ccc{Min_ellipse_2} has member 
+      \ccc{has_}, \eg~the data structure \ccc{Min_ellipse_2} has member
       functions \ccc{is_empty} and \ccc{has_on_bounded_side}.
       \ccIndexSubitem{naming scheme}{predicates}
 \item Access to data structures is given via iterators and
-      circulators (Chapter~\ref{chap:iterators_and_circulators}).  
-      For iterators and functions 
+      circulators (Chapter~\ref{chap:iterators_and_circulators}).
+      For iterators and functions
       returning them we extend
       the \stl\ names with a prefix describing the items to be accessed.
       For example, the functions \ccc{vertices_begin} and \ccc{vertices_end}
-      return a \ccc{Vertex_iterator}. (Note that we use the name of the items 
+      return a \ccc{Vertex_iterator}. (Note that we use the name of the items
       in singular for the iterator type name and in plural for the functions
       returning the iterator.) Names related to circulators are handled
       similarly, using the suffix \ccc{_circulator}. For example, the
@@ -208,12 +208,12 @@ Here are the naming rules:
     \item Functors in category 3 above can be further subdivided into
       two classes:
       \begin{itemize}
-         \item constructive procedures that construct objects whose types are 
+         \item constructive procedures that construct objects whose types are
                known {\em a priori}
-         \item procedures that construct objects whose types are not known 
+         \item procedures that construct objects whose types are not known
                {\em a priori}
       \end{itemize}
-      
+
       The names of functors in the first class also start with
       \ccc{Construct_} whenever a geometric object is constructed,
       otherwise they start with \ccc{Compute_}.  Here, real numbers
@@ -225,11 +225,11 @@ Here are the naming rules:
       while on the other hand there are \ccc{Compute_area_2} and
       \ccc{Compute_squared_length_3}.
 
-      For the second class, the names of the objects describe the (generic) 
+      For the second class, the names of the objects describe the (generic)
       action, \eg~\ccc{Intersect_2}.
-\item The equality operator (\ccc{operator==()}) is replaced by function 
-      objects with names of the form \ccc{Equal_{\tt k}}, where {\tt k} is 
-      the dimension number (\ie, 2, 3, or \ccc{d}). 
+\item The equality operator (\ccc{operator==()}) is replaced by function
+      objects with names of the form \ccc{Equal_{\tt k}}, where {\tt k} is
+      the dimension number (\ie, 2, 3, or \ccc{d}).
       For replacing arithmetic operators, we might also provide \ccc{Add_2},
       \ccc{Subtract_2}, \ccc{Multiply_2}, and \ccc{Divide_2}. (As mentioned
       above, the action determines the name, not the result.) We think
@@ -245,7 +245,7 @@ In addition, for each functor the kernel traits class has a member
 function that returns an instance of this functor.  The name of this
 function should be the (uncapitalized) name of the
 functor followed by the suffix \ccc{_object}.%
-%\index{object functions@{\ccFont \_object} functions} 
+%\index{object functions@{\ccFont \_object} functions}
 For example, the function that retuns an instance of the
 \ccc{Less_xy_2} functor is called \ccc{less_xy_2_object}.
 \ccIndexSubitemEnd{naming scheme}{kernel traits}
@@ -258,15 +258,15 @@ For example, the function that retuns an instance of the
 \item File names should be chosen in the ``spirit'' of the naming rules given
       above.
 \item If a single geometric object, data structure, or algorithm is provided
-      in a single file, its name (and its capitalization) should be used for 
+      in a single file, its name (and its capitalization) should be used for
       the file name. For
-      example, the file \ccc{Triangulation_2.h} contains the data structure 
+      example, the file \ccc{Triangulation_2.h} contains the data structure
       \ccc{Triangulation\_2}.
 \item If a file does not contain a single class, its name should not begin
       with a capital letter.
 \item No two files should have the same names even when capitalization is
       ignored.  This is to prevent overwriting of files on operating systems
-      where file names are not case sensitive.  A package that contains 
+      where file names are not case sensitive.  A package that contains
       file names that are the same as files already in the release will be
       rejected by the submission script.
 
@@ -280,7 +280,7 @@ For example, the function that retuns an instance of the
 
 
 % -----------------------------------------------------------------------------
-\section{Programming conventions} 
+\section{Programming conventions}
 \label{sec:programming_conventions}
 \ccIndexMainItemBegin{programming conventions}
 
@@ -288,7 +288,7 @@ The first list of items are meant as rules, \ie,~you should follow them.
 
 \begin{itemize}
 \item Give typedefs for all template arguments of a class that may be
-      accessed later from outside the class. 
+      accessed later from outside the class.
 
      The template parameter is a concept and should follow the concept naming
      scheme outlines in the previous section.  As a general rule, the typedef
@@ -301,7 +301,7 @@ The first list of items are meant as rules, \ie,~you should follow them.
          typedef GeometricTraits_2 Geometric_traits_2;
      };
      \end{verbatim}
-     For one-word template arguments, the template parameter name should be 
+     For one-word template arguments, the template parameter name should be
      followed by an underscore.  (Note that using a preceding
      underscore is not allowed according to the \CC\ standard; all such names
      are reserved.)\index{C++ standard@\CC\ standard!underscores}%
@@ -323,11 +323,11 @@ The first list of items are meant as rules, \ie,~you should follow them.
       \eg,~\ccStyle{class A \{ int f( void) const; \};}. This should also be
       done when it is only conceptually \ccc{const}%
       \index{conceptual const-ness@conceptual {\ccFont const}-ness|textbf}.
-      This means that the member function \ccc{f()} is {\ccFont const} as seen from 
-      the outside, but internally it may modify some data members 
-      that are declared {\ccFont mutable}\ccIndexMainItem{\ccFont mutable}. An example 
-      is the caching of results from expensive computations.  For more 
-      information about conceptually {\ccFont const} functions and mutable data 
+      This means that the member function \ccc{f()} is {\ccFont const} as seen from
+      the outside, but internally it may modify some data members
+      that are declared {\ccFont mutable}\ccIndexMainItem{\ccFont mutable}. An example
+      is the caching of results from expensive computations.  For more
+      information about conceptually {\ccFont const} functions and mutable data
       members see \cite{cgal:m-ec-97}.
 \item Prefer \CC-style to C-style casts,%
       \index{casts!C++-style vs. C-style@\CC- style vs. C-style}
@@ -343,7 +343,7 @@ The first list of items are meant as rules, \ie,~you should follow them.
      \end{verbatim}
 \end{itemize}
 
-The following items can be seen as recommendations 
+The following items can be seen as recommendations
 in contrast to the rules of previous paragraph.
 
 \begin{itemize}
@@ -358,12 +358,12 @@ in contrast to the rules of previous paragraph.
 
 
 % -----------------------------------------------------------------------------
-\section{Code format} 
+\section{Code format}
 \label{sec:code_format}
 \ccIndexMainItemBegin{code format}
 
 \begin{itemize}
-\item Lines should not exceed 80 characters (the CVS server warns about that
+\item Lines should not exceed 80 characters (the SVN server warns about that
       when committing)%
       \ccIndexSubitem{code format}{line length}
 \item Use indentation with at least two spaces extra per level.%
@@ -371,14 +371,14 @@ in contrast to the rules of previous paragraph.
 \item Write only one statement per line.
 \item Use \CC-style comments, \eg,~{\ccFont // some comment}.%
       \ccIndexSubitem{code format}{comments}
-\item Remove line pragmas, \ie,~\verb|#line...|.% 
+\item Remove line pragmas, \ie,~\verb|#line...|.%
       \InternalOnly{(See Section~\ref{sec:remove_line_directives}.)}
 \end{itemize}
 \ccIndexMainItemEnd{code format}
 
 
 % -----------------------------------------------------------------------------
-\section{File header} 
+\section{File header}
 \label{sec:file_header}
 \ccIndexSubitemBegin{source files}{headings for}
 
@@ -392,17 +392,14 @@ employing the authors) of this work,
 are allowed in \cgal), and a pointer to the file containing its text in the
 \cgal\ distribution,
 \item a disclaimer notice,
-\item then, there are 4 keywords, which are automatically expanded by CVS
-(there are options to CVS to suppress these expansions if you need):
+\item then, there are 2 keywords, which are automatically expanded by SVN
+(there are options in SVN to suppress these expansions if you need):
 \begin{itemize}
 % Note : the {} are there to prevent the expansion of the keywords here.
-\item \${}Source: \$ : the name of the source file in the repository, it also
+\item \${}URL: \$ : the name of the source file in the repository, it also
 helps figuring out which package the file comes from,
-\item \${}Revision: \$ : the CVS revision of the file,
-\item \${}Date: \$ : the date of this revision,
-\item \${}Name: \$ : empty in general, otherwise contains the tag which has been
-used to checkout this file.  It is used to identify the corresponding release
-of \cgal\ (internal or public).
+\item \${}Id: \$ : the SVN revision number of the file, the date of this revision,
+and the author of the last commit.
 \end{itemize}
 \item Then the authors of (non-negligible parts of) this file are listed, with
 optional affiliation or e-mail address.
@@ -413,8 +410,8 @@ optional affiliation or e-mail address.
 For example and demo programs, the inclusion of the copyright notice is not
 necessary as this will get in the way if the program is included in the
 documentation.  However, these files should always contain the name of
-the file realtive to the \texttt{CGAL\_HOME} directory 
-(\eg, \nonlinkedpath|examples/Convex_hull_3/convex_hull_3.C|) 
+the file realtive to the \texttt{CGAL\_HOME} directory
+(\eg, \nonlinkedpath|examples/Convex_hull_3/convex_hull_3.C|)
 so the file can be located when seen out of context (\eg, in the documentation
 or from the demos web page).
 
