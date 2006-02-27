@@ -77,7 +77,7 @@ namespace CircularFunctors {
     if ( ! CGAL::LinearFunctors::has_on<CK>(a.supporting_line(),p) )
       return false;
     
-    return point_in_range<CK>(a,p);
+    return (compare_xy<CK>(p, a.source()) != compare_xy<CK>(p, a.target()));
   }
 
 
