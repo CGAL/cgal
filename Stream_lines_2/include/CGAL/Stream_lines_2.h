@@ -37,9 +37,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-const int forward  =  1;
-const int backward = -1;
-  
 template <class VectorField_2, class Integrator_2>
 class Stream_lines_2
 {
@@ -65,7 +62,7 @@ protected:
   Pq_element                                                                              Biggest_circle;
   FT distance(const Point_2 & p, const Point_2 & q)
     {
-      return squared_distance(p, q);
+      return sqrt(squared_distance(p, q));
     }
   int          ir;
   int          il;
