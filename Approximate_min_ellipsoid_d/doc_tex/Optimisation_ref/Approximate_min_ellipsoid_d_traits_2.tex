@@ -40,7 +40,7 @@ The template parameter \ccc{K} must be a model for concept
 \ccc{CGAL::Number_type_traits<ET>::Has_exact_ring_operations} must be
 \ccc{CGAL::Tag_true}. In addition, \ccc{ET} must be able to exactly
 represent any finite \ccc{double} value.  (Examples of such a
-number-type are \ccc{CGAL::MP_Float} and \ccc{CGAL::Gmpq}.)
+number-type are \ccc{CGAL::MP_Float}, \ccc{CORE::Expr}, and \ccc{CGAL::Gmpq}.)
 
 % -----------------------------------------------------------------------------
 \ccIsModel
@@ -51,7 +51,7 @@ number-type are \ccc{CGAL::MP_Float} and \ccc{CGAL::Gmpq}.)
 \ccTypes
 
 \ccSaveThreeColumns
-%\ccSetTwoColumns{Min_ellipse_2_traits_2<K>:: Ellipse}{}
+\ccSetTwoColumns{Approximate_min_ellipsoid_d_traits_3<K,ET>::Point}{}
 
 \ccNestedType{FT}{\ccc{typedef double FT}. The kernel's number type
 \ccc{K::RT} must be convertible to \ccc{double}.}
