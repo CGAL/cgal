@@ -50,9 +50,8 @@ int main()
   Stl Stream_lines(regular_grid_2, runge_kutta_integrator,dSep,dRat);
   std::cout << "placement generated\n";
 
-  /*writing streamlines to streamlines_on_regular_grid.stl */
-  std::cout << "open streamlines_on_regular_grid.stl\n";
-  std::ofstream fw("streamlines_on_regular_grid.stl",std::ios::out);
+  /*writing streamlines to streamlines_on_regular_grid_1.stl */
+  std::ofstream fw("streamlines_on_regular_grid_1.stl",std::ios::out);
 
   fw << Stream_lines.number_of_lines() << "\n";
   for(Stl_iterator sit = Stream_lines.begin(); sit != Stream_lines.end(); sit++){
@@ -60,6 +59,6 @@ int main()
     for(Point_iterator pit = sit->first; pit != sit->second; pit++){
       Point_2 p = *pit;
       fw << p.x() << " " << p.y() << "\n";}}
-  fw.close();
 
+  fw.close();
 }
