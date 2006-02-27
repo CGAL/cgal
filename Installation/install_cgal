@@ -812,7 +812,7 @@ set_compiler_flags()
     GMPXX_LIBNAME="libgmpxx.a"
     MPFR_LIBNAME="libmpfr.a"
     MATH_LIB="m"
-    OPENGL_LIBS="-lGL -lGLU"
+    OPENGL_LIBS="-lGL -lGLU -lGLUT"
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
@@ -847,7 +847,7 @@ set_compiler_flags()
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=""
-	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
+	    OPENGL_LIBS="Opengl32.lib glut32.lib Glu32.lib"
 	    SEPARATE_LIBPATH="y"
 	    ;;
 	*ICL.*|*icl.*)
@@ -881,7 +881,7 @@ set_compiler_flags()
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=
-	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
+	    OPENGL_LIBS="Opengl32.lib glut32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*CL.*|*cl.*)
@@ -915,7 +915,7 @@ set_compiler_flags()
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=
-	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
+	    OPENGL_LIBS="Opengl32.lib glut32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*IRIX*5.*CC*)

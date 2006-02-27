@@ -1,3 +1,6 @@
+27 February 2006 Andreas Fabri
+- Added glut to the OPENGL_LIBS
+
 21 December 2005 Michael Hoffmann
 - Reset test variables for rebuild-all.
 - Homogenized parameters of test_... functions.
