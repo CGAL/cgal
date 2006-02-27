@@ -309,8 +309,9 @@
 
 \ccDefinition
 
-The stencil of a refined vertex defines the footprint of the 
-control submesh, and the geometry mask of a stencil specifies
+A stencil determines a source neighborhood 
+whose points contribute to the position of a refined point.
+The geometry mask of a stencil specifies
 the computation on the nodes of the stencil.
 \ccClassTemplateName\ implements the geometry masks of 
 Catmull-Clark subdivision on a \ccc{Polyhedron_3<Cartesian>}.
@@ -387,8 +388,9 @@ Catmull-Clark vertex-point \ccc{vpt} of the border edge \ccc{e}.
 
 \ccDefinition
 
-The stencil of a refined vertex defines the footprint of the 
-control submesh, and the geometry mask of a stencil specifies
+A stencil determines a source neighborhood 
+whose points contribute to the position of a refined point.
+The geometry mask of a stencil specifies
 the computation on the nodes of the stencil.
 \ccClassTemplateName\ implements the geometry masks of 
 Loop subdivision on a triangulated \ccc{Polyhedron_3<Cartesian>}.
@@ -422,13 +424,13 @@ kernel, which defines the \ccc{Point_3} for the vertices.
 \ccMethod{
 void edge_node(Edge_handle e, Point_3& pt);
 }{
-computes the Catmull-Clark edge-point \ccc{pt} of the edge \ccc{e}.
+computes the Loop edge-point \ccc{pt} of the edge \ccc{e}.
 }
 
 \ccMethod{
 void vertex_node(Vertex_handle v, Point_3& pt);
 }{
-computes the Catmull-Clark vertex-point \ccc{pt} of the vertex \ccc{v}.
+computes the Loop vertex-point \ccc{pt} of the vertex \ccc{v}.
 }
 
 \ccMethod{
@@ -437,7 +439,6 @@ void border_node(Halfedge_handle e, Point_3& ept, Point_3& vpt);
 computes the Loop edge-point \ccc{ept} and the 
 Loop vertex-point \ccc{vpt} of the border edge \ccc{e}.
 }
-
 
 \ccSeeAlso
 
@@ -459,8 +460,9 @@ Loop vertex-point \ccc{vpt} of the border edge \ccc{e}.
 
 \ccDefinition
 
-The stencil of a refined vertex defines the footprint of the 
-control submesh, and the geometry mask of a stencil specifies
+A stencil determines a source neighborhood 
+whose points contribute to the position of a refined point.
+The geometry mask of a stencil specifies
 the computation on the nodes of the stencil.
 \ccClassTemplateName\ implements the geometry masks of 
 Doo-Sabin subdivision on a \ccc{Polyhedron_3<Cartesian>}.
@@ -518,8 +520,9 @@ by the halfedge \ccc{e}.
 
 \ccDefinition
 
-The stencil of a refined vertex defines the footprint of the 
-control submesh, and the geometry mask of a stencil specifies
+A stencil determines a source neighborhood 
+whose points contribute to the position of a refined point.
+The geometry mask of a stencil specifies
 the computation on the nodes of the stencil.
 \ccClassTemplateName\ implements the geometry masks of 
 $\sqrt{3}$ subdivision on a triangulated 

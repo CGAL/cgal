@@ -21,20 +21,20 @@
 A subdivision method recursively refines a coarse mesh and 
 generates an ever closer approximation to a smooth surface.
 \ccClassTemplateName\ consists of four subdivision methods
-and their refinement hosts. Each refinement host is a function 
-with template parameters of a polyhedron class and a 
+and their refinement hosts. Each refinement host is a template 
+function of a polyhedron class and a 
 geometry policy class. It refines the connectivity of the
 control mesh and computes the geometry of the refined mesh.
 The geometry computation is dedicated to the user-customizable
-geometry policy. The geometry policy consists of a set of functions 
-computing the new points based on a specific subdivision stencil.
+geometry policy. A geometry policy consists of functions 
+that compute the new points based on a subdivision stencil.
 A stencil defines the footprint (a submesh of the control mesh)
-of the new point.
+of a new point.
 
-The four supported refinbement hosts are the 
-Primal-Quadrilateral-Quadrisection (PQQ),
-the Primal-Triangle-Quadrisection (PTQ), 
-the Dual-Quadrilateral-Quadrisection (DQQ), 
+The four supported refinement hosts are the 
+primal quadrilateral quadrisection (PQQ),
+the primal triangle quadrisection (PTQ), 
+the dual quadrilateral quadrisection (DQQ), 
 and the $\sqrt{3}$ triangulation.
 Each of these refinements are respectively used in 
 Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivision, which
@@ -44,13 +44,12 @@ are also supported by \ccClassTemplateName .
 
 % +-----------------------------------+
 \ccHeading{Refinement Host}
-A refinement host is a function with template parameters of 
+A refinement host is a template function of 
 a polyhedron class and a geometry mask class. It refines
-the input polyhedron, and assigns new points by the geometry masks.
+the input polyhedron, and computes new points through 
+the geometry masks.
 \ccc{Subdivision_method_3} supports four refinement hosts:
-primal quadrilateral quadrisection (PQQ), 
-primal triangle quadrisection (PTQ), dual quadrilateral 
-quadrisection (DQQ) and $\sqrt{3}$ triangulation.
+\ccc{PQQ}, \ccc{PTQ}, \ccc{DQQ} and \ccc{Sqrt3}.
 
 \begin{ccTexOnly}
   \begin{center}
@@ -75,37 +74,37 @@ quadrisection (DQQ) and $\sqrt{3}$ triangulation.
 
 
 \ccFunction{
-template <class Polyhedron, template <typename> class Mask>
-void PQQ(Polyhedron& p, Mask<Polyhedron> mask, int step = 1);
+template <class Polyhedron_3, template <typename> class Mask>
+void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
-apply the PQQ refinement on the control mesh \ccc{p} \ccc{step} times.
+applies the PQQ refinement on the control mesh \ccc{p} \ccc{step} times.
 The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
 
 \ccFunction{
-template <class Polyhedron, template <typename> class Mask>
-void PTQ(Polyhedron& p, Mask<Polyhedron> mask, int step = 1);
+template <class Polyhedron_3, template <typename> class Mask>
+void PTQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
-apply the PTQ refinement on the control mesh \ccc{p} \ccc{step} times.
+applies the PTQ refinement on the control mesh \ccc{p} \ccc{step} times.
 The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
 
 \ccFunction{
-template <class Polyhedron, template <typename> class Mask>
-void DQQ(Polyhedron& p, Mask<Polyhedron> mask, int step = 1);
+template <class Polyhedron_3, template <typename> class Mask>
+void DQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
-apply the DQQ refinement on the control mesh \ccc{p} \ccc{step} times.
+applies the DQQ refinement on the control mesh \ccc{p} \ccc{step} times.
 The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
 
 \ccFunction{
-template <class Polyhedron, template <typename> class Mask>
-void Sqrt3(Polyhedron& p, Mask<Polyhedron> mask, int step = 1);
+template <class Polyhedron_3, template <typename> class Mask>
+void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
-apply the $\sqrt{3}$ triangulation on the control mesh \ccc{p} \ccc{step} times.
+applies the $\sqrt{3}$ triangulation on the control mesh \ccc{p} \ccc{step} times.
 The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
@@ -118,45 +117,45 @@ This function overwrites the control mesh \ccc{p} with the refined mesh.
 \ccThreeToTwo
 
 \ccFunction{
-template <class Polyhedron>
-void CatmullClark_subdivision(Polyhedron& p, int step = 1);
+template <class Polyhedron_3>
+void CatmullClark_subdivision(Polyhedron_3& p, int step = 1);
 }{
-apply Catmull-Clark subdivision \ccc{step} times on the control mesh \ccc{p}.
-The control mesh \ccc{p} is overwritten with the subdivided mesh.
+applies Catmull-Clark subdivision \ccc{step} times on the control mesh \ccc{p}.
+This function overwrites the control mesh \ccc{p} with the subdivided mesh.
 }
 
 \ccFunction{
-template <class Polyhedron>
-void Loop_subdivision(Polyhedron& p, int step = 1); 
+template <class Polyhedron_3>
+void Loop_subdivision(Polyhedron_3& p, int step = 1); 
 }{
-apply Loop subdivision \ccc{step} times on the control mesh \ccc{p}.
-The control mesh \ccc{p} is overwritten with the subdivided mesh.
+applies Loop subdivision \ccc{step} times on the control mesh \ccc{p}.
+This function overwrites the control mesh \ccc{p} with the subdivided mesh.
 }
 
 \ccFunction{
-template <class Polyhedron>
-void DooSabin_subdivision(Polyhedron& p, int step = 1);
+template <class Polyhedron_3>
+void DooSabin_subdivision(Polyhedron_3& p, int step = 1);
 }{
-apply Doo-Sabin subdivision \ccc{step} times on the control mesh \ccc{p}.
-The control mesh \ccc{p} is overwritten with the subdivided mesh.
+applies Doo-Sabin subdivision \ccc{step} times on the control mesh \ccc{p}.
+This function overwrites the control mesh \ccc{p} with the subdivided mesh.
 }
 
 \ccFunction{
-template <class Polyhedron>
-void Sqrt3_subdivision(Polyhedron& p, int step = 1);
+template <class Polyhedron_3>
+void Sqrt3_subdivision(Polyhedron_3& p, int step = 1);
 }{
-apply $\sqrt{3}$ subdivision \ccc{step} times on the control mesh \ccc{p}.
-The control mesh \ccc{p} is overwritten with the subdivided mesh.
+applies $\sqrt{3}$ subdivision \ccc{step} times on the control mesh \ccc{p}.
+This function overwrites the control mesh \ccc{p} with the subdivided mesh.
 }
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::PQQ_stencil_3<Polyhedron>}\\
-\ccRefIdfierPage{CGAL::DQQ_stencil_3<Polyhedron>}\\
-\ccRefIdfierPage{CGAL::Linear_mask_3<Polyhedron>}\\
-\ccRefIdfierPage{CGAL::CatmullClark_mask_3<Polyhedron>}\\
-\ccRefIdfierPage{CGAL::Loop_mask_3<Polyhedron>}\\
-\ccRefIdfierPage{CGAL::Sqrt3_mask_3<Polyhedron>}\\
+%\ccRefIdfierPage{CGAL::PQQ_stencil_3<Polyhedron_3>}\\
+%\ccRefIdfierPage{CGAL::DQQ_stencil_3<Polyhedron_3>}\\
+%\ccRefIdfierPage{CGAL::Linear_mask_3<Polyhedron_3>}\\
+\ccRefIdfierPage{CGAL::CatmullClark_mask_3<Polyhedron_3>}\\
+\ccRefIdfierPage{CGAL::Loop_mask_3<Polyhedron_3>}\\
+\ccRefIdfierPage{CGAL::Sqrt3_mask_3<Polyhedron_3>}\\
 
 \ccExample
 
