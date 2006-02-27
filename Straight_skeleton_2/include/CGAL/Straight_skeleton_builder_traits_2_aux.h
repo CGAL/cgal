@@ -35,6 +35,7 @@
 #  include<sstream>
 #  include<iomanip>
 #  define CGAL_SSTRAITS_TRACE(m) \
+     if ( l <= CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE ) \
      { \
        std::ostringstream ss ; \
        ss << std::setprecision(19) << m << std::ends ; \

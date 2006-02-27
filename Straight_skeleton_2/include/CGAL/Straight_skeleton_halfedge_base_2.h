@@ -54,7 +54,7 @@ public:
 
   bool is_inner_bisector() const
   {
-    return !vertex()->is_contour() && !opposite()->vertex()->is_contour();
+    return !HBase::vertex()->is_contour() && !HBase::opposite()->HBase::vertex()->is_contour();
   }
 
   Halfedge_const_handle defining_contour_edge() const { return HBase::face()->halfedge() ; }

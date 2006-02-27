@@ -225,10 +225,22 @@ Rational<FT> compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> con
   Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
   Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
+  FT num, den ;
 
-  FT num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
-  FT den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+  if ( ! CGAL_NTS is_zero(l0.b()) ) // Non-vertical
+  {
+    FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
+
+    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
+    den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+  }
+  else
+  {
+    FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
+
+    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy + l0.a() * l2.c() - l2.a() * l0.c() ;
+    den = l0.a() * l0.b() * l2.b() - l0.b() * l0.b() * l2.a() + l2.a() - l0.a() ;
+  }
 
   CGAL_SSTRAITS_TRACE("Degenerate Event:\nn=" << num << "\nd=" << den  )
 
@@ -290,8 +302,18 @@ Vertex<FT> construct_degenerate_offset_lines_isecC2 ( SortedTriedge<FT> const& t
   FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
   FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
 
-  FT num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
-  FT den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+  FT num, den ;
+
+  if ( ! CGAL_NTS is_zero(l0.b()) ) // Non-vertical
+  {
+    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
+    den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+  }
+  else
+  {
+    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy + l0.a() * l2.c() - l2.a() * l0.c() ;
+    den = l0.a() * l0.b() * l2.b() - l0.b() * l0.b() * l2.a() + l2.a() - l0.a() ;
+  }
 
   CGAL_precondition( den != static_cast<FT>(0.0) ) ;
 

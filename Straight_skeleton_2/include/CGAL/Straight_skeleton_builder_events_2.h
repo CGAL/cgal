@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_EVENTS_2_H
@@ -37,6 +37,7 @@ public:
   typedef typename Rep::FT      FT ;
 
   typedef typename R::Halfedge_handle Halfedge_handle ;
+  typedef typename R::Vertex_handle   Vertex_handle ;
 
   enum Type { cEdgeEvent, cSplitEvent, cVertexEvent } ;
 
@@ -50,17 +51,24 @@ public:
      mBorderA(aBorderA)
     ,mBorderB(aBorderB)
     ,mBorderC(aBorderC)
+    ,mExcluded(false)
   {}
 
   virtual ~ Straight_skeleton_builder_event_2() {}
 
   virtual Type type() const = 0 ;
 
+  virtual Vertex_handle seed0() const = 0 ;
+  virtual Vertex_handle seed1() const = 0 ;
+
   Halfedge_handle border_a() const { return mBorderA ; }
   Halfedge_handle border_b() const { return mBorderB ; }
   Halfedge_handle border_c() const { return mBorderC ; }
   Point_2         point   () const { return mP ; }
   FT              time    () const { return mTime ; }
+
+  bool is_excluded() const { return mExcluded ; }
+  void Exclude    ()       { mExcluded = true ; }
 
   void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
 
@@ -88,6 +96,7 @@ private :
   Halfedge_handle mBorderC ;
   Point_2         mP ;
   FT              mTime ;
+  bool            mExcluded ;
 } ;
 
 template<class R>
@@ -120,10 +129,10 @@ public:
     , mRSeed(aRSeed)
   {}
 
-  virtual Type type() const { return cEdgeEvent ; }
+  virtual Type type() const { return Base::cEdgeEvent ; }
 
-  Vertex_handle left_seed () const { return mLSeed ; }
-  Vertex_handle right_seed() const { return mRSeed ; }
+  virtual Vertex_handle seed0() const { return mLSeed ; }
+  virtual Vertex_handle seed1() const { return mRSeed ; }
 
 private :
 
@@ -167,9 +176,10 @@ public:
     , mOppositeBorder(aOppositeBorder)
   {}
 
-  virtual Type type() const { return cSplitEvent ; }
+  virtual Type type() const { return Base::cSplitEvent ; }
 
-  Vertex_handle seed() const { return mSeed ; }
+  virtual Vertex_handle seed0() const { return mSeed ; }
+  virtual Vertex_handle seed1() const { return mSeed ; }
 
   Halfedge_handle opposite_border() const { return mOppositeBorder ; }
 
@@ -220,12 +230,12 @@ public:
     , mRSeed(aRSeed)
   {}
 
-  virtual Type type() const { return cVertexEvent ; }
+  virtual Type type() const { return Base::cVertexEvent ; }
 
   Halfedge_handle border_d() const { return mBorderD ; }
 
-  Vertex_handle left_seed () const { return mLSeed ; }
-  Vertex_handle right_seed() const { return mRSeed ; }
+  virtual Vertex_handle seed0() const { return mLSeed ; }
+  virtual Vertex_handle seed1() const { return mRSeed ; }
 
 private :
 

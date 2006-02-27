@@ -110,7 +110,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( Triedge<FT> const& triedge )
 
   if ( sorted.is_valid() )
   {
-    CGAL_SSTRAITS_TRACE( sorted.is_degenerate() ? " collinear edges" : " non-collinear edges" ) ;
+    CGAL_SSTRAITS_TRACE( ( sorted.is_degenerate() ? " collinear edges" : " non-collinear edges" ) ) ;
 
     Rational<FT> t = compute_offset_lines_isec_timeC2(sorted) ;
 
@@ -212,6 +212,7 @@ compare_offset_lines_isec_sdist_to_pointC2 ( Triedge<FT> const& s
   return rResult ;
 }
 
+
 // Given a triple of oriented lines in _normalized_ implicit form: (e0,e1,e2) such that their offsets
 // at a distance 't intersects in a point (x,y); and another triple of oriented lines in _normalized_ implicit form:
 // (el,ec,er); returns true if the intersection point (x,y) is inside the offset zone of 'ec' w.r.t 'el' and 'er';
@@ -238,7 +239,7 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& triedge, Triedge<
     // Construct intersection point (x,y)
     Vertex<FT> i = construct_offset_lines_isecC2(sorted);
 
-    // Calculate scaled (signed) distance from (x,y) to 'ec'
+    // Calculate scaled (signed) distance from (x,y) to 'zc'
     FT sdc = zc.a() * i.x() + zc.b() * i.y() + zc.c() ;
 
     CGAL_SSTRAITS_TRACE("\nsdc=" << sdc ) ;

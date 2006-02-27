@@ -14,9 +14,6 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\chapter{2D Straight Skeleton}
-\label{chapter-straightskeleton2}
-
 \section{Definitions}
 
 \subsection{Simple Polygon}
@@ -36,8 +33,8 @@ Since any offset polygon is a simple polygon, its outer contour is oriented coun
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{fig0} % omit suffix .eps to supprt PS and PDF
-\includegraphics{fig1} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/fig0} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/fig1} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \end{ccTexOnly}
 \caption{Polygon with no holes and 2 inward offsets at distances 1 and 2 (Left) and polygon with holes and many inward offsets at various distances (Right)
@@ -66,17 +63,18 @@ The 2D \textbf{Straight Skeleton} of a simple polygon is a special partitioning 
 These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is a non-convex simple polygon itself.\\
 It was first introduced in:\\
 
-@Article{,
-author = {O. AICHHOLZER, F. AURENHAMMER, D. ALBERTS, BERND GARTNER},
-title = {A Novel Type of Skeleton for Polygons}
-}
+"A Novel Type of Skeleton for Polygons"
+  O. AICHHOLZER, F. AURENHAMMER, D. ALBERTS, BERND GARTNER
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{fig2} % omit suffix .eps to supprt PS and PDF
-\includegraphics{fig3} % omit suffix .eps to supprt PS and PDF
-\includegraphics{fig4} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/fig2} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/fig3} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\begin{center}
+\includegraphics{Straight_skeleton_2/fig4} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/fig5} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \end{ccTexOnly}
 \caption{Example straight skeletons
@@ -94,9 +92,16 @@ title = {A Novel Type of Skeleton for Polygons}
 <IMG BORDER=0 SRC="./fig3.png" ALIGN=center ALT="Sample Skeleton 1">
 </CENTER>
 </TD>
+</TR>
+<TR>
 <TD>
 <CENTER>
-<IMG BORDER=0 SRC="./fig4.png" ALIGN=center ALT="Sample Skeleton 2">
+<IMG BORDER=0 SRC="./fig4.png" ALIGN=center ALT="Sample Skeleton 0">
+</CENTER>
+</TD>
+<TD>
+<CENTER>
+<IMG BORDER=0 SRC="./fig5.png" ALIGN=center ALT="Sample Skeleton 1">
 </CENTER>
 </TD>
 </TR>
@@ -164,7 +169,7 @@ The Euclidean distance from any vertex to the \textit{lines} supporting its defi
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{fig5} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/fig6} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \end{ccTexOnly}
 \caption{Straight Skeleton Data Structure
@@ -174,7 +179,7 @@ The Euclidean distance from any vertex to the \textit{lines} supporting its defi
 <TR>
 <TD>
 <CENTER>
-<IMG BORDER=0 SRC="./fig5.png" ALIGN=center ALT="Straight skeleton DS">
+<IMG BORDER=0 SRC="./fig6.png" ALIGN=center ALT="Straight skeleton DS">
 </CENTER>
 </TD>
 </TR>

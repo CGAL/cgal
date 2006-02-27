@@ -206,7 +206,7 @@ private:
 };
 
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 2
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
@@ -269,7 +269,7 @@ void LogProfilingResults()
 #if defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE)
 void Straight_skeleton_external_trace ( std::string s )
 {
-  static std::ofstream lout("ss_builder_log");
+  static std::ofstream lout("sls_builder_log");
   lout << s << std::flush << std::endl ;
   std::printf("%s\n",s.c_str());
 }
@@ -304,6 +304,17 @@ int Straight_skeleton_external_draw_segment ( double sx
 #include "ss_types.h"
 #include "straight_skeleton_2_toolbar.h"
 #include "straight_skeleton_2_toolbar_layers.h"
+
+// This is here only to allow a breakpoint to be placed so I can trace back the problem.
+void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
+{
+  std::cerr << "CGAL error: " << what << " violation!" << std::endl
+       << "Expr: " << expr << std::endl
+       << "File: " << file << std::endl
+       << "Line: " << line << std::endl;
+  if ( msg != 0)
+      std::cerr << "Explanation:" << msg << std::endl;
+}
 
 namespace demo
 {
@@ -482,6 +493,8 @@ private slots:
         lRegion = RegionPtr( new Region() ) ;
         input.push_back(lRegion);
       }
+      else
+        lRegion = input.front();
 
       CGAL::Orientation lExpected = ( lRegion->size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
       if ( lPoly->orientation() != lExpected )
@@ -770,7 +783,10 @@ int
 main(int argc, char **argv)
 {
   QApplication app( argc, argv );
+
   demo::current_state = -1;
+  CGAL::set_error_handler  (error_handler);
+  CGAL::set_warning_handler(error_handler);
 
   demo::MyWindow widget(500,500); // physical window size
   app.setMainWidget(&widget);

@@ -35,14 +35,14 @@ Polygon_offset_builder_2<Sls,Gt,Cont>::Polygon_offset_builder_2( Sls const& aSls
 
     if ( !lHE->is_bisector() && handle_assigned(lHE->face()) )
     {
-      CGAL_POLYOFFSET_SHOW ( DrawBorder(lHE) ) ;
+      CGAL_POLYOFFSET_SHOW (1, DrawBorder(lHE) ) ;
       mBorders.push_back(lHE);
     }
   }
 
-  CGAL_POLYOFFSET_TRACE("Border count: " << mBorders.size() ) ;
+  CGAL_POLYOFFSET_TRACE(3, "Border count: " << mBorders.size() ) ;
 
-  CGAL_POLYOFFSET_TRACE("Highest Bisector ID: " << lMaxID ) ;
+  CGAL_POLYOFFSET_TRACE(3, "Highest Bisector ID: " << lMaxID ) ;
 
   mVisitedBisectors.resize(lMaxID+1);
 
@@ -53,13 +53,13 @@ template<class Sls, class Gt, class Cont>
 typename Polygon_offset_builder_2<Sls,Gt,Cont>::Halfedge_const_handle
 Polygon_offset_builder_2<Sls,Gt,Cont>::LocateHook( FT aTime, Halfedge_const_handle aBisector )
 {
-  CGAL_POLYOFFSET_TRACE("Searching for hook at " << aTime ) ;
+  CGAL_POLYOFFSET_TRACE(2,"Searching for hook at " << aTime ) ;
 
   Halfedge_const_handle rHook ;
 
   while ( aBisector->is_bisector() )
   {
-    CGAL_POLYOFFSET_TRACE("Testing hook on B" << aBisector->id() ) ;
+    CGAL_POLYOFFSET_TRACE(3,"Testing hook on B" << aBisector->id() ) ;
 
     Halfedge_const_handle lPrev = aBisector->prev();
     Halfedge_const_handle lNext = aBisector->next();
@@ -72,11 +72,11 @@ Polygon_offset_builder_2<Sls,Gt,Cont>::LocateHook( FT aTime, Halfedge_const_hand
       Comparison_result lCPrev = lPrev->is_bisector() ? Compare_offset_against_event_time(aTime,lPrev,aBisector)
                                                       : SMALLER ;
 
-      CGAL_POLYOFFSET_TRACE("CPrev: " << lCPrev << " CNext: " << lCNext ) ;
+      CGAL_POLYOFFSET_TRACE(3,"CPrev: " << lCPrev << " CNext: " << lCNext ) ;
 
       if ( lCNext != lCPrev )
       {
-        CGAL_POLYOFFSET_TRACE( "Hook found on B" << aBisector->id() ) ;
+        CGAL_POLYOFFSET_TRACE(2, "Hook found on B" << aBisector->id() ) ;
         rHook = aBisector ;
         break ;
       }
@@ -98,10 +98,10 @@ Polygon_offset_builder_2<Sls,Gt,Cont>::LocateSeed( FT aTime )
        ; ++ f
       )
   {
-    CGAL_POLYOFFSET_TRACE("Locating hook for face E" << (*f)->id() ) ;
+    CGAL_POLYOFFSET_TRACE(3,"Locating hook for face E" << (*f)->id() ) ;
     rSeed = LocateHook(aTime,(*f)->next());
   }
-  CGAL_POLYOFFSET_TRACE("Seed found on B" << ( handle_assigned(rSeed) ? rSeed->id() : -1 ) ) ;
+  CGAL_POLYOFFSET_TRACE(3,"Seed found on B" << ( handle_assigned(rSeed) ? rSeed->id() : -1 ) ) ;
   return rSeed;
 }
 
@@ -112,9 +112,9 @@ void Polygon_offset_builder_2<Sls,Gt,Cont>::AddOffsetVertex( FT aTime, Halfedge_
 
   Point_2 lP = Construct_offset_point(aTime,aHook);
 
-  CGAL_POLYOFFSET_SHOW ( DrawBisector(aHook) ) ;
-  CGAL_POLYOFFSET_SHOW ( DrawOffset(aPoly,lP) ) ;
-  CGAL_POLYOFFSET_TRACE("Constructing offset point along B" << aHook->id() ) ;
+  CGAL_POLYOFFSET_SHOW (1, DrawBisector(aHook) ) ;
+  CGAL_POLYOFFSET_SHOW (1, DrawOffset(aPoly,lP) ) ;
+  CGAL_POLYOFFSET_TRACE(3,"Constructing offset point along B" << aHook->id() ) ;
 
   aPoly->push_back(lP);
 }
@@ -123,7 +123,7 @@ template<class Sls, class Gt, class Cont>
 template<class OutputIterator>
 OutputIterator Polygon_offset_builder_2<Sls,Gt,Cont>::TraceOffsetPolygon( FT aTime, Halfedge_const_handle aSeed, OutputIterator aOut )
 {
-  CGAL_POLYOFFSET_TRACE("Tracing new offset polygon" ) ;
+  CGAL_POLYOFFSET_TRACE(1,"Tracing new offset polygon" ) ;
 
   ContainerPtr lPoly( new Container() ) ;
 
@@ -150,11 +150,11 @@ OutputIterator Polygon_offset_builder_2<Sls,Gt,Cont>::TraceOffsetPolygon( FT aTi
     break ;
   }
 
-  CGAL_POLYOFFSET_SHOW ( DrawOffset(lPoly,(*lPoly)[0]) ) ;
+  CGAL_POLYOFFSET_SHOW (1, DrawOffset(lPoly,(*lPoly)[0]) ) ;
 
   if ( lPoly->size() >= 3 )
   {
-    CGAL_POLYOFFSET_TRACE("Offset polygon of " << lPoly->size() << " vertices traced." ) ;
+    CGAL_POLYOFFSET_TRACE(1,"Offset polygon of " << lPoly->size() << " vertices traced." ) ;
     *aOut++ = lPoly ;
   }
 
@@ -177,7 +177,7 @@ OutputIterator Polygon_offset_builder_2<Sls,Gt,Cont>::construct_offset_polygons(
 
   ResetVisitedBisectorsMap();
 
-  CGAL_POLYOFFSET_TRACE("Constructing offset polygons for offset: " << aTime ) ;
+  CGAL_POLYOFFSET_TRACE(1,"Constructing offset polygons for offset: " << aTime ) ;
   for ( Halfedge_const_handle lSeed = LocateSeed(aTime); handle_assigned(lSeed); lSeed = LocateSeed(aTime) )
     aOut = TraceOffsetPolygon(aTime,lSeed,aOut);
 

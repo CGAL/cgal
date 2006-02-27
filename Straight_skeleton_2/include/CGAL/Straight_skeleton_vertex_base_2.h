@@ -12,7 +12,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H
@@ -159,31 +159,31 @@ public:
 
   FT time() const { return mTime ; }
 
-  Halfedge_const_handle primary_bisector() const { return halfedge()->next(); }
+  Halfedge_const_handle primary_bisector() const { return Base::halfedge()->next(); }
 
-  Halfedge_handle primary_bisector() { return halfedge()->next(); }
+  Halfedge_handle primary_bisector() { return Base::halfedge()->next(); }
 
   Halfedge_around_vertex_const_circulator incident_edges_begin() const
   {
-    return Halfedge_around_vertex_const_circulator(halfedge());
+    return Halfedge_around_vertex_const_circulator(Base::halfedge());
   }
 
   Halfedge_around_vertex_circulator incident_edges_begin()
   {
-    return Halfedge_around_vertex_circulator(halfedge());
+    return Halfedge_around_vertex_circulator(Base::halfedge());
   }
   Halfedge_across_incident_faces_const_circulator defining_contour_edges_begin() const
   {
-    return Halfedge_across_incident_faces_const_circulator(halfedge());
+    return Halfedge_across_incident_faces_const_circulator(Base::halfedge());
   }
 
   Halfedge_across_incident_faces_circulator defining_contour_edges_begin()
   {
-    return Halfedge_across_incident_faces_circulator(halfedge());
+    return Halfedge_across_incident_faces_circulator(Base::halfedge());
   }
 
-  bool is_skeleton() const { return  halfedge()->is_bisector() ; }
-  bool is_contour () const { return !halfedge()->is_bisector() ; }
+  bool is_skeleton() const { return  Base::halfedge()->is_bisector() ; }
+  bool is_contour () const { return !Base::halfedge()->is_bisector() ; }
 
 private:
 
