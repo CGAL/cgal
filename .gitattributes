@@ -585,6 +585,7 @@ Maintenance/svn_server/hooks/pre-lock.tmpl -text
 Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/pre-unlock.tmpl -text
 Maintenance/svn_server/hooks/start-commit.tmpl -text
+Maintenance/svn_server/hooks/warn_line_too_long.C -text
 Manual/doc_tex/Manual/fig/a-simp.eps -text
 Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
 Manual/doc_tex/Manual/fig/c-simp.eps -text
