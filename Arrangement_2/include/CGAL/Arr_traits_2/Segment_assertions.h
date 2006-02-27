@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef SEGMENT_ASSERTIONS_H
-#define SEGMENT_ASSERTIONS_H
+#ifndef CGAL_SEGMENT_ASSERTIONS_H
+#define CGAL_SEGMENT_ASSERTIONS_H
 
 CGAL_BEGIN_NAMESPACE
 
