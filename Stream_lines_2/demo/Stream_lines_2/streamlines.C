@@ -31,7 +31,6 @@ int main(int, char*)
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
-//#include <CGAL/Triangular_field_2.h>
 
 #include <CGAL/Timer.h>
 
@@ -78,81 +77,71 @@ int save_id;
 
 class Placement : public QObject
 {
-   Q_OBJECT
-public:
-   bool completed;
-   double density_;
-   double ratio_;
-   double integrating_;
-   int sampling_;
-   int number_of_lines_;
-  Placement() : Stream_lines(NULL), runge_kutta_integrator(NULL), regular_grid(NULL), begin_iterator(), end_iterator()
-      {
-         density_ = 3.84;
-         ratio_ = 1.6;
-         integrating_ = 1.0;
-         sampling_ = 1;
-         number_of_lines_ = 0;
-         completed = false;
-      }
-   Stl * Stream_lines;
-   Runge_kutta_integrator * runge_kutta_integrator;
-   Field * regular_grid;
-   Stl_iterator begin_iterator;
-   Stl_iterator end_iterator;
-   Stl_iterator begin()
-   {
-     if (begin_iterator != Stl_iterator())
-       return begin_iterator;
-     return NULL;
-   }
-   Stl_iterator end()
-   {
-     if (begin_iterator != Stl_iterator())
-       return begin_iterator;
-     return NULL;
-   
-   }
-   ~Placement(){
+  Q_OBJECT
+  public:
+    bool completed;
+    double density_;
+    double ratio_;
+    double integrating_;
+    int sampling_;
+    int number_of_lines_;
+    Stl * Stream_lines;
+    Runge_kutta_integrator * runge_kutta_integrator;
+    Field * regular_grid;
+    Stl_iterator begin_iterator;
+    Stl_iterator end_iterator;
+    Placement() : 
+        completed(false), density_(3.84), ratio_(1.6), integrating_(1.0), sampling_(1), number_of_lines_(0),
+    Stream_lines(NULL), runge_kutta_integrator(NULL), regular_grid(NULL), begin_iterator(){}
+    Stl_iterator begin() const
+    {
+      return begin_iterator;
+    }
+    Stl_iterator end() const
+    {
+      return end_iterator;   
+    }
+    bool is_empty() const 
+    {
+      return Stream_lines == NULL;
+    }
+    ~Placement(){
       delete Stream_lines;
-     delete runge_kutta_integrator;
+      delete runge_kutta_integrator;
       delete regular_grid;}
-public slots :
-   void clear()
-   {
+  public slots :
+    void clear()
+    {
       if (Stream_lines != NULL)
       {
-         delete Stream_lines;
-         delete runge_kutta_integrator;
-         delete regular_grid;
-// 			begin_iterator = NULL;
-// 			end_iterator = NULL;
-         d_stl = true;
-         d_pq = false;
-         d_tr = false;
-         d_bc = false;
+        delete Stream_lines;
+        delete runge_kutta_integrator;
+        delete regular_grid;
+        d_stl = true;
+        d_pq = false;
+        d_tr = false;
+        d_bc = false;
       }
-   }
-   void load( const QString & s )
-   {
-// 		std::cout << s << " laoded\n";
-     runge_kutta_integrator = new Runge_kutta_integrator(integrating_);
-     std::ifstream infile(s, std::ios::in);
-     double iXSize, iYSize;
+    }
+    void load( const QString & s )
+    {
+      runge_kutta_integrator = new Runge_kutta_integrator(integrating_);
+      std::ifstream infile(s, std::ios::in);
+      double iXSize, iYSize;
       iXSize = iYSize = 512;
       unsigned int x_samples, y_samples;
       infile >> x_samples;
       infile >> y_samples;
       regular_grid = new Field(x_samples, y_samples, iXSize, iYSize);
-   /*fill the grid with the appropreate values*/
+      /*fill the grid with the appropreate values*/
       for (unsigned int i=0;i<x_samples;i++)
-         for (unsigned int j=0;j<y_samples;j++)
-            {
-               double xval, yval;
-               infile >> xval;
-               infile >> yval;
-               regular_grid->set_field(i, j, Vector(xval, yval));
-            }
+        for (unsigned int j=0;j<y_samples;j++)
+      {
+        double xval, yval;
+        infile >> xval;
+        infile >> yval;
+        regular_grid->set_field(i, j, Vector(xval, yval));
+      }
       infile.close();
       completed = false;
       number_of_lines_ = 0;
@@ -164,9 +153,9 @@ public slots :
       placement->setItemEnabled(generate_id, true);
       placement->setItemEnabled(generatefirst_id, true);
       menu->setItemEnabled(view_id, true);
-   }
-   void generate()
-   {
+    }
+    void generate()
+    {
       std::cout << "processing...\n";
       Stream_lines = new Stl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_);
       number_of_lines_ = Stream_lines->number_of_lines();
@@ -181,11 +170,11 @@ public slots :
       placement->setItemEnabled(generatefirst_id, false);
       placement->setItemEnabled(clear_id, true);
       draw();
-   }
-   void generateFirst()
-   {
+    }
+    void generateFirst()
+    {
       if (!completed)
-         Stream_lines = new Stl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_, true);
+        Stream_lines = new Stl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_, true);
       number_of_lines_ = Stream_lines->number_of_lines();
       d_stl = true;
       d_pq = false;
@@ -198,43 +187,41 @@ public slots :
       placement->setItemEnabled(generateten_id,  !completed);
       placement->setItemEnabled(generateresume_id,  !completed);
       placement->setItemEnabled(clear_id,  !completed);
-   }
-   void generateNext(bool b = true)
-   {
+    }
+    void generateNext(bool b = true)
+    {
       if (!completed){ 
-         completed = ! Stream_lines->continue_next(*regular_grid, *runge_kutta_integrator, sampling_);
-         if (completed)
-            std::cerr << "placement completed!\n";}
-      d_stl = true;
-      d_pq = false;
-      d_tr = false;
-      d_bc = false;
-      if (b)
-         draw();
-      placement->setItemEnabled(generatenext_id, !completed);
-      placement->setItemEnabled(generateten_id, !completed);
-      placement->setItemEnabled(generateresume_id, !completed);
-      placement->setItemEnabled(clear_id,  !completed);
-   }
-   void generateTen()
-   {
+        completed = ! Stream_lines->continue_next(*regular_grid, *runge_kutta_integrator, sampling_);
+        if (completed)
+          std::cerr << "placement completed!\n";}
+        d_stl = true;
+        d_pq = false;
+        d_tr = false;
+        d_bc = false;
+        if (b)
+          draw();
+        placement->setItemEnabled(generatenext_id, !completed);
+        placement->setItemEnabled(generateten_id, !completed);
+        placement->setItemEnabled(generateresume_id, !completed);
+        placement->setItemEnabled(clear_id,  !completed);
+    }
+    void generateTen()
+    {
       for (int i=0;i<10;i++)
-         generateNext(false);
+        generateNext(false);
       draw();
-   }
-   void generateAll()
-   {
+    }
+    void generateAll()
+    {
       while (!completed)
-         generateNext(false);
+        generateNext(false);
       draw();
-   }
-   void purge()
-   {
+    }
+    void purge()
+    {
       if (Stream_lines != NULL)
-         delete Stream_lines;
+        delete Stream_lines;
       Stream_lines = NULL;
-// 		begin_iterator = NULL;
-// 		end_iterator = NULL;
 	
 		// desable all generator menu items
       placement->setItemEnabled(generate_id, true);
@@ -246,9 +233,9 @@ public slots :
       file->setItemEnabled(save_id, false);
 
       draw();
-   }
-   void draw()
-   {
+    }
+    void draw()
+    {
       if (Stream_lines!=NULL)
       {
         begin_iterator = Stream_lines->begin();
@@ -256,128 +243,126 @@ public slots :
       }/*
       else
       {
-        begin_iterator = NULL;
-        end_iterator = NULL;
-      }*/
-   }
-   void draw_stl()
-   {
+      begin_iterator = NULL;
+      end_iterator = NULL;
+    }*/
+    }
+    void draw_stl()
+    {
       d_stl = !d_stl;
-   }
-   void draw_pq()
-   {
+    }
+    void draw_pq()
+    {
       d_pq = !d_pq;
       _list = Stream_lines->get_pq();
-   }
-   void draw_tr()
-   {
+    }
+    void draw_tr()
+    {
       d_tr = !d_tr;
       _tr_list = Stream_lines->get_tr();
-   }
-   void draw_bc()
-   {
+    }
+    void draw_bc()
+    {
       d_bc = !d_bc;
       bc = Stream_lines->get_biggest_circle();
       _bc_list.clear();
       for (double f=0.0;f<=6.29;f=f+0.05)
       {
-         Point p1 ( bc.first.x() + ((bc.second) * cos(f)) , bc.first.y() + ((bc.second) * sin(f)) );
-         _bc_list.push_front(p1);
+        Point p1 ( bc.first.x() + ((bc.second) * cos(f)) , bc.first.y() + ((bc.second) * sin(f)) );
+        _bc_list.push_front(p1);
       }
-   }
-   void image( const QString & s )
-   {
+    }
+    void image( const QString & s )
+    {
       QImage bckgnd( s );
       std::cout << bckgnd.width() << " " << bckgnd.height() << "\n";
-   }
-   void density()
-   {
+    }
+    void density()
+    {
       density_ =  QInputDialog::getDouble("Get density" , "Density", density_, 1.0, 12.0, 2);
       emit(optionschanged());
-   }
-   void ratio()
-   {
+    }
+    void ratio()
+    {
       ratio_ =  QInputDialog::getDouble("Get saturation ratio" , "Saturation ratio", ratio_, 1.0, 5.0, 1);
       emit(optionschanged());
-   }
-   void integrating()
-   {
+    }
+    void integrating()
+    {
       integrating_ =  QInputDialog::getDouble("Get integrating step" , "integrating step", integrating_, 1.0, 10.0,1);
       emit(optionschanged());
-   }
-   void sampling()
-   {
+    }
+    void sampling()
+    {
       sampling_ =  QInputDialog::getInteger("Get sampling step" , "Sampling step", sampling_, 0, 10);
       emit(optionschanged());
-   }
-signals:
-   void optionschanged();
+    }
+  signals:
+    void optionschanged();
 };
 
 
 class MyWidget : public QGLWidget
 {
-Q_OBJECT
-public:
-   Placement p;
+  Q_OBJECT
+  public:
+    Placement p;
 	
-   QStatusBar * statusbar;
-   QLabel * densitylabel;
-   QLabel * densitytextlabel;
-   QLabel * densityspacelabel;
-   QLabel * ratiolabel;
-   QLabel * ratiotextlabel;
-   QLabel * ratiospacelabel;
-   QLabel * samplinglabel;
-   QLabel * samplingtextlabel;
-   QLabel * samplingspacelabel;
-   QLabel * numberlabel;
-   QLabel * numbertextlabel;
-   QLabel * numberspacelabel;
-   QLabel * xcursorposition;
-   QLabel * ycursorposition;
+    QStatusBar * statusbar;
+    QLabel * densitylabel;
+    QLabel * densitytextlabel;
+    QLabel * densityspacelabel;
+    QLabel * ratiolabel;
+    QLabel * ratiotextlabel;
+    QLabel * ratiospacelabel;
+    QLabel * samplinglabel;
+    QLabel * samplingtextlabel;
+    QLabel * samplingspacelabel;
+    QLabel * numberlabel;
+    QLabel * numbertextlabel;
+    QLabel * numberspacelabel;
+    QLabel * xcursorposition;
+    QLabel * ycursorposition;
 	
-   MyWidget(QGLWidget *parent = 0);
-   ~MyWidget(){
+    MyWidget(QGLWidget *parent = 0);
+    ~MyWidget(){
       delete menu;
       delete file;
       delete save;
       delete placement;}
-public slots :
-   QString openedfile(){
-   p.clear();
-   QString s = QFileDialog::getOpenFileName( "",
-      "Vector fields (*.vec.cin)", this, "open file dialog", "Choose a file to load" );
-   if (!s.isEmpty())
-   emit(fileloaded(s));
-   return s;
-   }
-   QString openedimage(){
-   p.clear();
-   QString s = QFileDialog::getOpenFileName( "",
-      "Image (*.*)", this, "open file dialog", "Choose a file to load" );
-   emit(imageloaded(s));
-   return s;
-   }
-   QString savedepsfile(){
-   QString s = QFileDialog::getSaveFileName( ".",
-         "Encapsulated PostScript files (*.eps)", this, "save file dialog", "Save file to" );
-// 		std::cout << s << "\n";
+  public slots :
+    QString openedfile(){
+      p.clear();
+      QString s = QFileDialog::getOpenFileName( "",
+          "Vector fields (*.vec.cin)", this, "open file dialog", "Choose a file to load" );
+      if (!s.isEmpty())
+        emit(fileloaded(s));
+      return s;
+    }
+    QString openedimage(){
+      p.clear();
+      QString s = QFileDialog::getOpenFileName( "",
+          "Image (*.*)", this, "open file dialog", "Choose a file to load" );
+      emit(imageloaded(s));
+      return s;
+    }
+    QString savedepsfile(){
+      QString s = QFileDialog::getSaveFileName( ".",
+          "Encapsulated PostScript files (*.eps)", this, "save file dialog", "Save file to" );
       std::ofstream fw(s,std::ios::out);
       p.Stream_lines->print_stream_lines_eps(fw);
       return s;
-   }
-   QString savedstlfile(){
-   QString s = QFileDialog::getSaveFileName( ".",
-         "STreamLine files (*.stl)", this, "save file dialog", "Save file to" );
-// 		std::cout << s << "\n";
+    }
+    QString savedstlfile(){
+      QString s = QFileDialog::getSaveFileName( ".",
+          "STreamLine files (*.stl)", this, "save file dialog", "Save file to" );
       std::ofstream fw(s,std::ios::out);
       p.Stream_lines->print_stream_lines(fw);
       return s;
-   }
+    }
 	
-   void drawing()
-   {
+    void drawing()
+    {
       glClearColor(1.0, 1.0, 1.0, 0.0);
       glClear(GL_COLOR_BUFFER_BIT);
 
@@ -394,11 +379,11 @@ public slots :
       int YSize = height();
       int Diff = div(XSize - YSize, 2).quot;
       if (Diff > 0)
-         glViewport ( 10+Diff, 40, YSize - 80, height() - 80);
+        glViewport ( 10+Diff, 40, YSize - 80, height() - 80);
       else
       {
-         Diff = -Diff;
-         glViewport ( 10, 40+Diff, width() - 20, XSize - 20);
+        Diff = -Diff;
+        glViewport ( 10, 40+Diff, width() - 20, XSize - 20);
       }
 		
       glMatrixMode ( GL_PROJECTION );
@@ -415,65 +400,65 @@ public slots :
 		
       if (d_pq)
       {
-         glColor3f(1.0, 0.0, 0.0);
-         glLineWidth(0.5f);
-         glBegin(GL_POINTS);
-         for (std::list<Point>::iterator pit = _list.begin(); pit != _list.end(); pit++)
-         {
-            glVertex2f((*pit).x() / 512, (*pit).y() / 512);
-         }
-         glEnd();
+        glColor3f(1.0, 0.0, 0.0);
+        glLineWidth(0.5f);
+        glBegin(GL_POINTS);
+        for (std::list<Point>::iterator pit = _list.begin(); pit != _list.end(); pit++)
+        {
+          glVertex2f((*pit).x() / 512, (*pit).y() / 512);
+        }
+        glEnd();
       }
       if (d_tr)
       {
-         glColor3f(0.0, 0.0, 1.0);
-         glLineWidth(0.25f);
-         for (std::list< std::pair<Point, Point> >::iterator pit = _tr_list.begin(); pit != _tr_list.end(); pit++)
-         {
-            glBegin(GL_LINES);
-               glVertex2f((*pit).first.x() / 512, (*pit).first.y() / 512);
-               glVertex2f((*pit).second.x() / 512, (*pit).second.y() / 512);
-            glEnd();
-         }
+        glColor3f(0.0, 0.0, 1.0);
+        glLineWidth(0.25f);
+        for (std::list< std::pair<Point, Point> >::iterator pit = _tr_list.begin(); pit != _tr_list.end(); pit++)
+        {
+          glBegin(GL_LINES);
+          glVertex2f((*pit).first.x() / 512, (*pit).first.y() / 512);
+          glVertex2f((*pit).second.x() / 512, (*pit).second.y() / 512);
+          glEnd();
+        }
       }
       if (d_bc)
       {
-         glColor3f(0.0, 1.0, 0.0);
-         glLineWidth(0.5f);
-         glBegin(GL_LINE_STRIP);
-         for (std::list<Point>::iterator pit = _bc_list.begin(); pit != _bc_list.end(); pit++)
-         {
-            glVertex2f((*pit).x() / 512, (*pit).y() / 512);
-         }
-         glEnd();
+        glColor3f(0.0, 1.0, 0.0);
+        glLineWidth(0.5f);
+        glBegin(GL_LINE_STRIP);
+        for (std::list<Point>::iterator pit = _bc_list.begin(); pit != _bc_list.end(); pit++)
+        {
+          glVertex2f((*pit).x() / 512, (*pit).y() / 512);
+        }
+        glEnd();
       }
 		
       if (d_stl)
       {
-         glColor3f(0.0, 0.0, 0.0);
-         glLineWidth(1.5f);
-         for (Stl_iterator sit = p.begin(); sit != p.end(); sit++)
-         {
-            glBegin(GL_LINE_STRIP);
-            for (Pt_iterator pit = (*sit).first; pit != (*sit).second; pit++)
-            {
-// 					std::cout << (*pit).x() << "  " << (*pit).y() << "\n"; 
-                  glVertex2f((*pit).x() / 512, (*pit).y() / 512);
-            }
-            glEnd();
-         }
+        glColor3f(0.0, 0.0, 0.0);
+        glLineWidth(1.5f);
+        if (!p.is_empty())
+          for (Stl_iterator sit = p.begin(); sit != p.end(); sit++)
+        {
+          glBegin(GL_LINE_STRIP);
+          for (Pt_iterator pit = (*sit).first; pit != (*sit).second; pit++)
+          {
+            glVertex2f((*pit).x() / 512, (*pit).y() / 512);
+          }
+          glEnd();
+        }
       }
       update();
-   }
+    }
 	
-void paintGL()
-{
-   updatestatus();
-   drawing();
-}
+    void paintGL()
+    {
+      updatestatus();
+      drawing();
+    }
 
-   void updatestatus()
-   {
+    void updatestatus()
+    {
       char str[20];
       gcvt(p.density_, 4, str);
       densitylabel->setText(str);
@@ -483,10 +468,10 @@ void paintGL()
       samplinglabel->setText(str);
       gcvt(p.number_of_lines_, 4, str);
       numberlabel->setText(str);
-   }
+    }
 	
-   void setstatus()
-   {
+    void setstatus()
+    {
       statusbar = new QStatusBar(this, "Status bar");
 		
       densitytextlabel = new QLabel(this);
@@ -538,88 +523,76 @@ void paintGL()
 
       statusbar->move(0, height() - 30);
       statusbar->resize(width(), 30);
-   }
+    }
 	
-   void resizeEvent ( QResizeEvent * )
-   {
+    void resizeEvent ( QResizeEvent * )
+    {
       statusbar->move(0, height() - 30);
       statusbar->resize(width(), 30);
-   }
-	
-// void mouseMoveEvent ( QMouseEvent * e )
-// {
-// 		char * str;
-// 		sprintf(str,"%d",e->x());
-// 		xcursorposition->setText(str);
-// 		sprintf(str,"%d",e->y());
-// 		ycursorposition->setText(str);
-// 		update();
-// }
-   signals:
-   void fileloaded(const QString & s);
-   void imageloaded(const QString & s);
+    }
+  signals:
+    void fileloaded(const QString & s);
+    void imageloaded(const QString & s);
 };
 
 MyWidget::MyWidget(QGLWidget *parent)
-: QGLWidget(QGLFormat(), parent)
+  : QGLWidget(QGLFormat(), parent)
 {
 
-   setMouseTracking(true);
+  setMouseTracking(true);
 
-   setPaletteBackgroundColor(QColor(255,255,255));
-
-// 	setFixedSize(800, 600);
+  setPaletteBackgroundColor(QColor(255,255,255));
 	
-   setstatus();
+  setstatus();
 
-   menu = new QMenuBar(this, "Menu bar");
-   file = new QPopupMenu( this , "file");
-   save = new QPopupMenu( this , "save");
-   placement = new QPopupMenu( this , "placement");
-   options = new QPopupMenu( this , "options");
-   view = new QPopupMenu( this , "viewing");
-   save->insertItem( "Save &eps file", this, SLOT(savedepsfile()), CTRL+Key_E );
-   save->insertItem( "Save &stl file", this, SLOT(savedstlfile()), CTRL+Key_S );
-   file->insertItem( "&Load", this, SLOT(openedfile()), CTRL+Key_L );
-   generate_id = placement->insertItem( "&Generate", &p, SLOT(generate()), CTRL+Key_G );
-   generatefirst_id = placement->insertItem( "Generate &First", &p, SLOT(generateFirst()), CTRL+Key_F );
-   generatenext_id = placement->insertItem( "Generate &Next", &p, SLOT(generateNext()), CTRL+Key_N );
-   generateten_id = placement->insertItem( "Next &ten streamlines", &p, SLOT(generateTen()), CTRL+Key_T );
-   generateresume_id = placement->insertItem( "&Resume the placement", &p, SLOT(generateAll()), CTRL+Key_C );
-   clear_id = placement->insertItem( "&Clear", &p, SLOT(purge()), CTRL+Key_M );
-   drawstl_id = view->insertItem( "&Draw streamlines", &p, SLOT(draw_stl()), CTRL+Key_D );
-   drawpq_id = view->insertItem( "Draw &queue elements", &p, SLOT(draw_pq()), CTRL+Key_Q );
-   drawtr_id = view->insertItem( "Draw t&riangulation", &p, SLOT(draw_tr()), CTRL+Key_R );
-   drawbc_id = view->insertItem( "Draw &biggest circle", &p, SLOT(draw_bc()), CTRL+Key_B );
-   addimage_id = placement->insertItem( "&Image", this, SLOT(openedimage()), CTRL+Key_I );
-   options->insertItem( "Density...", &p, SLOT(density()));
-   options->insertItem( "Saturation ration...", &p, SLOT(ratio()));
-   options->insertItem( "Sampling step...", &p, SLOT(sampling()));
-   options->insertItem( "Integrating step...", &p, SLOT(integrating()));
-   placement->insertItem( "&Options ", options );
-   save_id = file->insertItem( "&Save", save );
-   menu->insertItem( "&File", file );
-   menu->insertItem( "&Placement", placement );
-   view_id = menu->insertItem( "&View ", view );
-   file->insertItem( "&Quit", qApp, SLOT(quit()), ALT+Key_F4 );
+  menu = new QMenuBar(this, "Menu bar");
+  file = new QPopupMenu( this , "file");
+  save = new QPopupMenu( this , "save");
+  placement = new QPopupMenu( this , "placement");
+  options = new QPopupMenu( this , "options");
+  view = new QPopupMenu( this , "viewing");
+  save->insertItem( "Save &eps file", this, SLOT(savedepsfile()), CTRL+Key_E );
+  save->insertItem( "Save &stl file", this, SLOT(savedstlfile()), CTRL+Key_S );
+  file->insertItem( "&Load", this, SLOT(openedfile()), CTRL+Key_L );
+  generate_id = placement->insertItem( "&Generate", &p, SLOT(generate()), CTRL+Key_G );
+  generatefirst_id = placement->insertItem( "Generate &First", &p, SLOT(generateFirst()), CTRL+Key_F );
+  generatenext_id = placement->insertItem( "Generate &Next", &p, SLOT(generateNext()), CTRL+Key_N );
+  generateten_id = placement->insertItem( "Next &ten streamlines", &p, SLOT(generateTen()), CTRL+Key_T );
+  generateresume_id = placement->insertItem( "&Resume the placement", &p, SLOT(generateAll()), CTRL+Key_C );
+  clear_id = placement->insertItem( "&Clear", &p, SLOT(purge()), CTRL+Key_M );
+  drawstl_id = view->insertItem( "&Draw streamlines", &p, SLOT(draw_stl()), CTRL+Key_D );
+  drawpq_id = view->insertItem( "Draw &queue elements", &p, SLOT(draw_pq()), CTRL+Key_Q );
+  drawtr_id = view->insertItem( "Draw t&riangulation", &p, SLOT(draw_tr()), CTRL+Key_R );
+  drawbc_id = view->insertItem( "Draw &biggest circle", &p, SLOT(draw_bc()), CTRL+Key_B );
+  addimage_id = placement->insertItem( "&Image", this, SLOT(openedimage()), CTRL+Key_I );
+  options->insertItem( "Density...", &p, SLOT(density()));
+  options->insertItem( "Saturation ration...", &p, SLOT(ratio()));
+  options->insertItem( "Sampling step...", &p, SLOT(sampling()));
+  options->insertItem( "Integrating step...", &p, SLOT(integrating()));
+  placement->insertItem( "&Options ", options );
+  save_id = file->insertItem( "&Save", save );
+  menu->insertItem( "&File", file );
+  menu->insertItem( "&Placement", placement );
+  view_id = menu->insertItem( "&View ", view );
+  file->insertItem( "&Quit", qApp, SLOT(quit()), ALT+Key_F4 );
 	
 	// desable all generator menu items
-   placement->setItemEnabled(generate_id, false);
-   placement->setItemEnabled(generatefirst_id, false);
-   placement->setItemEnabled(generatenext_id, false);
-   placement->setItemEnabled(generateten_id, false);
-   placement->setItemEnabled(generateresume_id, false);
-   placement->setItemEnabled(clear_id, false);
+  placement->setItemEnabled(generate_id, false);
+  placement->setItemEnabled(generatefirst_id, false);
+  placement->setItemEnabled(generatenext_id, false);
+  placement->setItemEnabled(generateten_id, false);
+  placement->setItemEnabled(generateresume_id, false);
+  placement->setItemEnabled(clear_id, false);
 	
-   menu->setItemEnabled(view_id, false);
+  menu->setItemEnabled(view_id, false);
 	
-   placement->setItemEnabled(addimage_id, false);
-   file->setItemEnabled(save_id, false);
+  placement->setItemEnabled(addimage_id, false);
+  file->setItemEnabled(save_id, false);
 
 	
-   connect(this, SIGNAL(fileloaded(const QString &)), &p, SLOT(load(const QString &)));
-   connect(this, SIGNAL(imageloaded(const QString &)), &p, SLOT(image(const QString &)));
-   connect(&p, SIGNAL(optionschanged()), this, SLOT(updatestatus()));
+  connect(this, SIGNAL(fileloaded(const QString &)), &p, SLOT(load(const QString &)));
+  connect(this, SIGNAL(imageloaded(const QString &)), &p, SLOT(image(const QString &)));
+  connect(&p, SIGNAL(optionschanged()), this, SLOT(updatestatus()));
 
 }
 
@@ -627,12 +600,12 @@ MyWidget::MyWidget(QGLWidget *parent)
 
 int main(int argc, char *argv[])
 {
-   QApplication app(argc, argv);
-   MyWidget widget;
-   app.setMainWidget(&widget);
-   widget.show();
-   qWarning("this is an OpenGL application for drawing streamline placements");
-   return app.exec();
+  QApplication app(argc, argv);
+  MyWidget widget;
+  app.setMainWidget(&widget);
+  widget.show();
+  qWarning("this is an OpenGL application for drawing streamline placements");
+  return app.exec();
 }
 
 #endif
