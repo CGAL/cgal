@@ -18,8 +18,8 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 
-#ifndef SWEEP_LINE_2_EMPTY_VISITOR_H
-#define SWEEP_LINE_2_EMPTY_VISITOR_H
+#ifndef CGAL_SWEEP_LINE_2_EMPTY_VISITOR_H
+#define CGAL_SWEEP_LINE_2_EMPTY_VISITOR_H
 
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>

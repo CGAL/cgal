@@ -17,8 +17,8 @@
 //
 // Author(s)     : Ron Wein <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_DEFAULT_OVERLAY_TRAITS_H
-#define ARR_DEFAULT_OVERLAY_TRAITS_H
+#ifndef CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
+#define CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
 
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_extended_dcel.h>

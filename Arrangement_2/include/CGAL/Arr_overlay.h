@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_OVERLAY_H
-#define ARR_OVERLAY_H
+#ifndef CGAL_ARR_OVERLAY_H
+#define CGAL_ARR_OVERLAY_H
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Sweep_line_2.h>
