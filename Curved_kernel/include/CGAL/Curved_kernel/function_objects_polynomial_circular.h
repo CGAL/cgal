@@ -78,6 +78,7 @@ namespace CircularFunctors {
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>             Arity;
     using CK::Linear_kernel::Compare_y_2::operator();
+
     result_type
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
@@ -102,11 +103,11 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Point_2 Point_2;
     
-    
   public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>             Arity;
     using CK::Linear_kernel::Compare_xy_2::operator();
+
     result_type
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
