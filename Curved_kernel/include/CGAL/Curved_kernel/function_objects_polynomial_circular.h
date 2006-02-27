@@ -54,15 +54,15 @@ namespace CircularFunctors {
                 const Circular_arc_point_2 &p1) const
     { return compare_x<CK>(p0, p1);}
 
-    result_type
-    operator() (const Circular_arc_point_2 &p0,
-                const Point_2 &p1) const
-    { return compare_x<CK>(p0, p1);}
+//     result_type
+//     operator() (const Circular_arc_point_2 &p0,
+//                 const Point_2 &p1) const
+//     { return compare_x<CK>(p0, p1);}
 
-    result_type
-    operator() (const Point_2 &p0,
-                const Circular_arc_point_2 &p1) const
-    { return compare_x<CK>(p0, p1);}
+//     result_type
+//     operator() (const Point_2 &p0,
+//                 const Circular_arc_point_2 &p1) const
+//     { return compare_x<CK>(p0, p1);}
 
   };
 
@@ -83,15 +83,15 @@ namespace CircularFunctors {
                 const Circular_arc_point_2 &p1) const
     {return compare_y<CK>(p0, p1);}
 
-    result_type
-    operator() (const Point_2 &p0,
-                const Circular_arc_point_2 &p1) const
-    { return compare_y<CK>(p0, p1);}
+//     result_type
+//     operator() (const Point_2 &p0,
+//                 const Circular_arc_point_2 &p1) const
+//     { return compare_y<CK>(p0, p1);}
 
-    result_type
-    operator() (const Circular_arc_point_2 &p0,
-                const Point_2 &p1) const
-    { return compare_y<CK>(p0, p1);}
+//     result_type
+//     operator() (const Circular_arc_point_2 &p0,
+//                 const Point_2 &p1) const
+//     { return compare_y<CK>(p0, p1);}
 
   };
 
@@ -112,15 +112,15 @@ namespace CircularFunctors {
                 const Circular_arc_point_2 &p1) const
     { return compare_xy<CK>(p0, p1);}
 
-    result_type
-    operator() (const Point_2 &p0,
-                const Circular_arc_point_2 &p1) const
-    { return compare_xy<CK>(p0, p1);}
+//     result_type
+//     operator() (const Point_2 &p0,
+//                 const Circular_arc_point_2 &p1) const
+//     { return compare_xy<CK>(p0, p1);}
 
-    result_type
-    operator() (const Circular_arc_point_2 &p0,
-                const Point_2 &p1) const
-    { return compare_xy<CK>(p0, p1);}
+//     result_type
+//     operator() (const Circular_arc_point_2 &p0,
+//                 const Point_2 &p1) const
+//     { return compare_xy<CK>(p0, p1);}
 
   };
 
@@ -495,7 +495,6 @@ template < class CK >
 	       OutputIterator res) const
     { return intersect_2<CK> (c2,c1,res); }
 
-    
   };
 
 
@@ -548,9 +547,7 @@ template < class CK >
     operator()(const Line_arc_2 &A) const
     { return is_vertical<CK>(A); }
 
-
   };
-
 
   template < class CK >
   class Construct_circular_arc_2
@@ -617,8 +614,6 @@ template < class CK >
 
   };
 
-
-
   template < class CK >
   class Construct_line_arc_2
   {
@@ -626,7 +621,7 @@ template < class CK >
     typedef typename CK::Point_2                   Point_2;
     typedef typename CK::Line_2                    Line_2;
     typedef typename CK::Circle_2                  Circle_2;
-    typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
     typedef typename CK::Segment_2                 Segment_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
     typedef typename CK::Kernel_base::Line_arc_2   RLine_arc_2;
@@ -658,41 +653,37 @@ template < class CK >
 	       const Circular_arc_point_2 &p2) const
     { return Rep(support,p1,p2); }
 
-    result_type
-    operator()(const Line_2 &support,
-	       const Point_2 &p1,
-	       const Point_2 &p2) const
-    { return Rep(support,p1,p2); }
-
+//     result_type
+//     operator()(const Line_2 &support,
+// 	       const Point_2 &p1,
+// 	       const Point_2 &p2) const
+//     { return Rep(support,p1,p2); }
 
     result_type
     operator()(const Segment_2 &s) const
     { return Rep(s); }
-
 
     result_type
     operator()(const Point_2 &p1,
 	       const Point_2 &p2) const
     { return Rep(p1,p2); }
 
-
-   };
-
-
+  };
 
   template < class CK >
   class Construct_circular_arc_point_2
   {
     typedef typename CK::Point_2               Point_2;
-    typedef typename CK::Circular_arc_point_2               Circular_arc_point_2;
-    typedef typename CK::Kernel_base::Circular_arc_point_2  RCircular_arc_point_2;
-    typedef typename Circular_arc_point_2::Rep              Rep;
-    typedef typename Circular_arc_point_2::Root_for_circles_2_2  Root_for_circles_2_2;
+    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
+    typedef typename CK::Kernel_base::Circular_arc_point_2  
+                                               RCircular_arc_point_2;
+    typedef typename Circular_arc_point_2::Rep Rep;
+    typedef typename Circular_arc_point_2::Root_for_circles_2_2  
+                                               Root_for_circles_2_2;
 
   public:
     typedef  Circular_arc_point_2 result_type;
     typedef Arity_tag<1>             Arity;
-
 
     result_type
     operator()(void) 
