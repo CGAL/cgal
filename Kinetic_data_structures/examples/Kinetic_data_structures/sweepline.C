@@ -17,7 +17,7 @@
 template <class Arrangement>
 struct Arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
 {
-  Sort_arrangement_visitor(Arrangement *a):p_(a){}
+  Arrangement_visitor(Arrangement *a):p_(a){}
   template <class Vertex_handle>
   void remove_vertex(Vertex_handle a) {
     p_->erase(a);

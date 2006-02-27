@@ -568,6 +568,7 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8.crop.gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8.crop.png -text svneol=unset#unset
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_shot_8_crop_pct.pdf -text svneol=unset#unset
+Kinetic_data_structures/examples/Kinetic_data_structures/adding_a_certificate.C -text
 Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Isolating_interval.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Lower_bound_root.h -text
 Kinetic_data_structures/test/Kinetic_data_structures/Delaunay_triangulation_3_timing.C -text
