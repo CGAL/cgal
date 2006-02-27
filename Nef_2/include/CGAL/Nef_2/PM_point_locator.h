@@ -431,6 +431,7 @@ public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::K;
   using Base::number_of_vertices;
+  using Base::faces_begin;
 #endif
 
   /*{\Mtypes 2}*/

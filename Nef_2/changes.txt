@@ -1,3 +1,6 @@
+27 February 2006 Andreas Fabri
+- Added a Base::using in PM_point_locator.h
+
 20 January 2006 Andreas Fabri
 - Added rule for examples/polylines.C
 
