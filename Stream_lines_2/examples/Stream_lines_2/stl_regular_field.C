@@ -52,13 +52,16 @@ int main()
 
   /*writing streamlines to streamlines_on_regular_grid_1.stl */
   std::ofstream fw("streamlines_on_regular_grid_1.stl",std::ios::out);
-
   fw << Stream_lines.number_of_lines() << "\n";
-  for(Stl_iterator sit = Stream_lines.begin(); sit != Stream_lines.end(); sit++){
-    fw << "\n";
-    for(Point_iterator pit = sit->first; pit != sit->second; pit++){
-      Point_2 p = *pit;
-      fw << p.x() << " " << p.y() << "\n";}}
-
+  for(Stl_iterator sit = Stream_lines.begin(); sit != Stream_lines.end(); sit++)
+    {
+      fw << "\n";
+      for(Point_iterator pit = sit->first; pit != sit->second; pit++){
+	Point_2 p = *pit;
+	fw << p.x() << " " << p.y() << "\n";
+      }
+    }
+  
   fw.close();
+
 }
