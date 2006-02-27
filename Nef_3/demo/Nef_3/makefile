@@ -34,7 +34,7 @@ LIBPATH = \
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS)  \
-	  $(OPENGL_LIBS) -lglut
+	  $(OPENGL_LIBS)
 
 #---------------------------------------------------------------------#
 #                    target entries
