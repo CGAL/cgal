@@ -18,6 +18,9 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
+#ifndef CGAL_QT_LAYER_H
+#define CGAL_QT_LAYER_H
+
 /*! class Qt_layer is the main layer in the program.
  *  all the tab widget are attached to it.
  */

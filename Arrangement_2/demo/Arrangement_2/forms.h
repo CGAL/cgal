@@ -18,8 +18,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef FORMS_H
-#define FORMS_H
+#ifndef CGAL_FORMS_H
+#define CGAL_FORMS_H
 
 /*! the forms.h and forms.C files contains all the program 
  *  dialog forms and drag-drop class.

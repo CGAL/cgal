@@ -1,5 +1,6 @@
-#ifndef CONIC_READER_H
-#define CONIC_READER_H
+
+#ifndef CGAL_CONIC_READER_H
+#define CGAL_CONIC_READER_H
 
 #include <iostream>
 #include <fstream>

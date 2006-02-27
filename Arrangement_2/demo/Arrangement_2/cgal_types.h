@@ -18,8 +18,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_TYPES_HEADER
-#define CGAL_TYPES_HEADER
+#ifndef CGAL_TYPES_HEADER_H
+#define CGAL_TYPES_HEADER_H
 
 #include <CGAL/basic.h>
 
