@@ -1,5 +1,5 @@
-#ifndef _PRINT_UTILS_H_
-#define _PRINT_UTILS_H_
+#ifndef CGAL_PRINT_UTILS_H
+#define CGAL_PRINT_UTILS_H
 
 #include <CGAL/Polygon_with_holes_2.h>
 #include <iostream>
