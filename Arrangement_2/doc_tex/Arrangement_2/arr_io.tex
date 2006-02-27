@@ -1,0 +1,131 @@
+\section{Input/Output Functions}
+\label{arr_sec:io}
+%===============================
+
+In some cases, we would like to reuse an arrangement instance constructed
+by our application in the future --- for example, our arrangement may
+represent a very complicated geographical map and we have various
+applications that need to answer point-location queries on this map.
+Naturally, we can store the set of curves that induces the arrangement,
+but this implies that we need to construct the arrangement from
+scratch each time we need to reuse it. A more efficient solution would
+be to save the arrangement to a file, so that other application can
+reread it from there.
+
+We provide an {\em inserter} (the \ccc{<<} operator) and an {\em extractor}
+(the \ccc{>>} operator) for the \ccc{Arrangement_2<Traits,Dcel>} class,
+such that an arrangement instance can be inserted into an output stream
+or read from an input stream. The arrangement is written using a simple
+predefined textual format that encodes the arrangement topology, as
+well as all geometric entities associated with vertices and edges.
+
+To use the input/output operators, we require that the \ccc{Point_2} type
+and the \ccc{X_monotone_curve_2} type defined by the traits class both
+support the \ccc{<<} and \ccc{>>} operators. The \ccc{Arr_conic_traits_2}
+class (see Section~\ref{arr_ssec:tr_conic}) and the 
+\ccc{Arr_rational_arc_traits_2} class (see Section~\ref{arr_ssec:tr_ratfunc})
+currently do not provide these operator for the geometric types
+they define, so only arrangements of line segments or of polylines can
+be written or read.
+
+The following example constructs the arrangement depicted in 
+Figure~\ref{arr_fig:ex_5} and writes it to an output file. It also
+demonstrates how to re-read the arrangement from a file:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_io.C}
+
+\begin{ccAdvanced}
+\subsection{Arrangements with Auxiliary Data}
+\label{arr_ssec:arr_io_aux_data}
+%--------------------------------------------
+
+The inserter and extractor both ignore any auxiliary data stored with
+the arrangement features, thus they are ideal for arrangements
+instantiated using the \ccc{Arr_default_dcel} class.
+However, as explained in Section~\ref{arr_sec:ex_dcel}, one can easily
+extend the arrangement faces by using the \ccc{Arr_face_extended_dcel}
+template, or extend all \dcel\ records by using the \ccc{Arr_extended_dcel}
+template. In such cases, it may be crucial that the auxiliary data fields
+are written to the file or read from there.
+
+The arrangement package includes the free functions
+\ccc{write(arr, os, formatter)}, which writes the arrangement \ccc{arr}
+to an output stream \ccc{os}, and \ccc{read(arr, os, formatter)}, which
+reads the arrangement \ccc{arr} from an input stream \ccc{is}. Both
+operations are performed using a \ccc{formatter} object, which defines
+the I/O format. The package contains three formatter classes:
+\begin{itemize}
+\item \ccc{Arr_text_formatter<Arrangement>} defines a simple textual
+I/O format for the arrangement topology and geometry, disregarding any
+auxiliary data that may be associated with the arrangement features.
+This is the default formatter used by the arrangement inserter and the
+arrangement extractor, as defined above.
+%
+\item \ccc{Arr_face_extended_text_formatter<Arrangement>} operates on
+arrangements whose \dcel\ representation is based on the
+\ccc{Arr_face_extended_dcel<Traits,FaceData>} class (see
+Section~\ref{arr_ssec:ex_dcel_face}). It supports reading and writing
+the auxiliary data objects stored with the arrangement faces provided
+that the \ccc{FaceData} class supports an inserter and an extractor.
+%
+\item \ccc{Arr_extended_dcel_text_formatter<Arrangement>} operates on
+arrangements whose \dcel\ representation is based on the
+\ccc{Arr_extended_dcel<Traits,VertexData,HalfedgeData,FaceData>} class
+(see Section~\ref{arr_ssec:ex_dcel_all}). It supports reading and writing
+the auxiliary data objects stored with the arrangement vertices, edges
+and faces, provided that the \ccc{VertexData}, \ccc{HalfedgeData} and
+\ccc{FaceData} classed all have inserters and extractors.
+\end{itemize}
+
+The following example constructs the same arrangement as the
+example \ccc{ex_dcel_extension} does
+(see Section~\ref{arr_ssec:ex_dcel_all}) which is depicted in
+Figure~\ref{arr_fig:ex_20}, and writes it to an output file. It also
+demonstrates how to re-read the arrangement from a file:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_dcel_extension_io.C}
+
+External users may write their own formatter classes by implementing
+models to the \ccc{ArrangementInputFormatter} and the
+\ccc{ArrangementOutputFormatter}, as defined in the Reference Manual.
+Doing so, they can define other I/O formats, such as an XML-based
+format or a binary format.
+\end{ccAdvanced}
+
+\subsection{Arrangements with Curve History}
+\label{arr_ssec:arr_io_hist}
+%-------------------------------------------
+
+In Section~\ref{arr_sec:arr_with_hist} we introduced the
+\ccc{Arrangement_with_history_2<Traits,Dcel>} class that stores the
+set of curves inducing the arrangement and maintains the relations between
+these curves and the edges they induce. Naturally, when reading or writing an
+arrangement-with-history instance we would like this information to be
+written to the output stream or retrieved from the input stream alongside
+with the basic arrangement structure.
+
+The arrangement package supplies an inserter and an extractor for the
+\ccc{Arrangement_with_history_2<Traits,Dcel>} class. The arrangement is
+represented using a simple predefined textual format, where we require that
+the \ccc{Curve_2} type defined by the traits class --- as well as the
+\ccc{Point_2} type and the \ccc{X_monotone_curve_2} types --- support
+the \ccc{<<} and\ccc{>>} operators.
+
+The following example constructs the same arrangement as example
+\ccc{ex_curve_history} does
+(see Section~\ref{arr_ssec:arr_hist_ex}) which is depicted in
+Figure~\ref{arr_fig:ex_24}, and writes it to an output file. It also
+demonstrates how to re-read the arrangement-with-history from a file:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_io_curve_history.C}
+
+\begin{ccAdvanced}
+The arrangement package also includes the free functions
+\ccc{write(arr, os, formatter)} and \ccc{read(arr, os, formatter)} that
+operate on a given arrangement-with-history instance \ccc{arr}.
+Both functions are parameterized by a \ccc{formatter} object, which define
+the I/O format. The package contains a template called,
+\ccc{Arr_with_hist_text_formatter<ArranagmentFormatter>}, which extends
+an arrangement formatter class (see Section~\ref{arr_ssec:arr_io_aux_data})
+and defines a simple textual input/output format.
+\end{ccAdvanced}
