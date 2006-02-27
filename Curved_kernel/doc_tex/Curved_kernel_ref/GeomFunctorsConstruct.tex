@@ -104,32 +104,31 @@ A model \ccVar\ of this type must provide:
 counterclockwise, whose source is \ccc{p1} and whose target is \ccc{p2}.
 \ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}.}}
 
-\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
-	(const CircularKernel::Circle_2 &c,
-		const CircularKernel::Point_2 &p1,
-		const CircularKernel::Point_2 &p2);}
-{Same.}
+%\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+%	(const CircularKernel::Circle_2 &c,
+%	const CircularKernel::Point_2 &p1,
+%	const CircularKernel::Point_2 &p2);}
+%{Same.}
 
 \ccMemberFunction{CircularKernel::Circular_arc_2 operator()
 	(const CircularKernel::Circle_2 &c, 
-		   const CircularKernel::Circle_2 &c1, int i1,
-		   const CircularKernel::Circle_2 &c2, int i2);}
+	const CircularKernel::Circle_2 &c1, bool b1,
+	const CircularKernel::Circle_2 &c2, bool b2);}
 {Constructs the unique circular arc that is oriented counterclockwise,
 whose supporting circle is \ccc{c}, and whose source endpoint is the
-intersection of \ccc{c} and \ccc{c1} with index $i_1$, and whose target
-is the intersection of \ccc{c} and \ccc{c2} of index $i_2$, where
+intersection of \ccc{c} and \ccc{c1} with index $b_1$, and whose target
+is the intersection of \ccc{c} and \ccc{c2} of index $b_2$, where
 intersections are ordered lexicographically.
 \ccPrecond{\ccc{c} intersects both \ccc{c1} and \ccc{c2}, and the arc
 defined by the intersections has non-zero length.}}
 
 \ccMemberFunction{CircularKernel::Circular_arc_2 operator()
 	(const CircularKernel::Circle_2 &c,
-	const CircularKernel::Line_2 &l1, int i1,
- 	const CircularKernel::Line_2 &l2, int i2);}
+	const CircularKernel::Line_2 &l1, bool b1,
+ 	const CircularKernel::Line_2 &l2, bool b2);}
 {Same, for intersections defined by lines instead of circles.}
 
 \end{ccRefFunctionObjectConcept}
-
 \begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularMinVertex_2} 
 
 \ccCreationVariable{fo}

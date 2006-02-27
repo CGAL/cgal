@@ -561,7 +561,7 @@ template < class CK >
     typedef typename CK::Circular_arc_2               Circular_arc_2;
     typedef typename CK::Kernel_base::Circular_arc_2  RCircular_arc_2;
     typedef typename Circular_arc_2::Rep              Rep;
-    typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2         Circular_arc_point_2;
 
   public:
     typedef  Circular_arc_2 result_type;
@@ -571,10 +571,15 @@ template < class CK >
     operator()(void) 
     { return Rep(); }
 
-
     result_type
     operator()(const Circle_2 &c) const
     { return Rep(c); }
+
+    result_type
+    operator()(const Circle_2 &support,
+               const Circular_arc_point_2 &source, 
+               const Circular_arc_point_2 &target) const
+    { return Rep(support,source,target); }
 
     result_type
     operator()(const Circle_2 &support,
@@ -605,12 +610,6 @@ template < class CK >
                const Point_2 &end,
 	       const FT& bulge) const
     { return Rep(begin,end,bulge); }
-
-    result_type
-    operator()(const Circle_2 &support,
-               const Circular_arc_point_2 &source, 
-               const Circular_arc_point_2 &target) const
-    { return Rep(support,source,target); }
 
   };
 
