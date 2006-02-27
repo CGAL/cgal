@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_POLYGON_VALIDATION_VISITOR
-#define GPS_POLYGON_VALIDATION_VISITOR
+#ifndef CGAL_GPS_POLYGON_VALIDATION_VISITOR_H
+#define CGAL_GPS_POLYGON_VALIDATION_VISITOR_H
 
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>

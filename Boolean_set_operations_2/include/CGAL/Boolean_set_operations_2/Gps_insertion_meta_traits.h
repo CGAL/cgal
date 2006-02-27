@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_INSERTION_META_TRAITS_H
-#define GPS_INSERTION_META_TRAITS_H
+#ifndef CGAL_GPS_INSERTION_META_TRAITS_H
+#define CGAL_GPS_INSERTION_META_TRAITS_H
 
 #include <CGAL/Boolean_set_operations_2/Gps_traits_decorator.h>
 #include <CGAL/Boolean_set_operations_2/Curve_with_halfedge.h>

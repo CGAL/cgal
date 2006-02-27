@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_SYM_DIFF_FUNCTOR
-#define GPS_SYM_DIFF_FUNCTOR
+#ifndef CGAL_GPS_SYM_DIFF_FUNCTOR_H
+#define CGAL_GPS_SYM_DIFF_FUNCTOR_H
 
 #include <CGAL/Boolean_set_operations_2/Gps_base_functor.h>
 

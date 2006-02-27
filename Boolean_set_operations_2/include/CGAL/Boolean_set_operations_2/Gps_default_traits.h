@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_DEFAULT_TRAITS_H
-#define GPS_DEFAULT_TRAITS_H
+#ifndef CGAL_GPS_DEFAULT_TRAITS_H
+#define CGAL_GPS_DEFAULT_TRAITS_H
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CURVE_WITH_HALFEDGE_H
-#define CURVE_WITH_HALFEDGE_H
+#ifndef CGAL_CURVE_WITH_HALFEDGE_H
+#define CGAL_CURVE_WITH_HALFEDGE_H
 
 CGAL_BEGIN_NAMESPACE
 

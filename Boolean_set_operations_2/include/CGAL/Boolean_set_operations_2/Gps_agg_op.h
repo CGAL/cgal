@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GSP_AGG_OP_H
-#define GSP_AGG_OP_H
+#ifndef CGAL_GPS_AGG_OP_H
+#define CGAL_GPS_AGG_OP_H
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_meta_traits.h>
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_sweep.h>

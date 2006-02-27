@@ -18,8 +18,8 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 
-#ifndef GSP_AGG_OP_VISITOR
-#define GSP_AGG_OP_VISITOR
+#ifndef CGAL_GSP_AGG_OP_VISITOR_H
+#define CGAL_GSP_AGG_OP_VISITOR_H
 
 #include <CGAL/Unique_hash_map.h> 
 #include <CGAL/Sweep_line_2/Arr_construction_visitor.h>

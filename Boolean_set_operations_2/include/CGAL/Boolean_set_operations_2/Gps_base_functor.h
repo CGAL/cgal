@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_BASE_FUNCTOR
-#define GPS_BASE_FUNCTOR
+#ifndef CGAL_GPS_BASE_FUNCTOR_H
+#define CGAL_GPS_BASE_FUNCTOR_H
 
 CGAL_BEGIN_NAMESPACE
 

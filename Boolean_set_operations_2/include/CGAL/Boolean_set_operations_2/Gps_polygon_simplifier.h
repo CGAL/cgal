@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_POLYGON_SIMPILFIER_H
-#define GPS_POLYGON_SIMPILFIER_H
+#ifndef CGAL_GPS_POLYGON_SIMPILFIER_H
+#define CGAL_GPS_POLYGON_SIMPILFIER_H
 
 #include <CGAL/Boolean_set_operations_2/Gps_simplifier_traits.h>
 #include <CGAL/Sweep_line_2.h>

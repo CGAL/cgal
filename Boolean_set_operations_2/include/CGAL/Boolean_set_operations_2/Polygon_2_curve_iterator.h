@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_POLYGON_2_CURVE_ITERATOR_H
-#define CGAL_POLYGON_2_CURVE_ITERATOR_H
+#ifndef CGAL_CGAL_POLYGON_2_CURVE_ITERATOR_H
+#define CGAL_CGAL_POLYGON_2_CURVE_ITERATOR_H
 
 #include <iterator>
 

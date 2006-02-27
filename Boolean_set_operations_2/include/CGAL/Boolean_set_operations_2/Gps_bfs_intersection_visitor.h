@@ -17,8 +17,8 @@
 //
 
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-#ifndef GPS_BFS_INTERSECTION_VISITOR_H
-#define GPS_BFS_INTERSECTION_VISITOR_H
+#ifndef CGAL_GPS_BFS_INTERSECTION_VISITOR_H
+#define CGAL_GPS_BFS_INTERSECTION_VISITOR_H
 
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_base_visitor.h>
 

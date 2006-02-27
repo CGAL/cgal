@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_UTILS
-#define GPS_UTILS
+#ifndef CGAL_GPS_UTILS_H
+#define CGAL_GPS_UTILS_H
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/iterator.h>

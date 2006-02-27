@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_BPS_BASE_VISITOR_H
-#define GPS_BPS_BASE_VISITOR_H
+#ifndef CGAL_GPS_BPS_BASE_VISITOR_H
+#define CGAL_GPS_BPS_BASE_VISITOR_H
 
 #include <CGAL/Unique_hash_map.h> 
 

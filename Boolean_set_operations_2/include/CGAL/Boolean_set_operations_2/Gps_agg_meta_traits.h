@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_AGG_META_TRAITS_H
-#define GPS_AGG_META_TRAITS_H
+#ifndef CGAL_GPS_AGG_META_TRAITS_H
+#define CGAL_GPS_AGG_META_TRAITS_H
 
 #include <vector>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_decorator.h>

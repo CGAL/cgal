@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_DCEL_H
-#define GPS_DCEL_H
+#ifndef CGAL_GPS_DCEL_H
+#define CGAL_GPS_DCEL_H
 
 #include <CGAL/Arr_default_dcel.h>
 

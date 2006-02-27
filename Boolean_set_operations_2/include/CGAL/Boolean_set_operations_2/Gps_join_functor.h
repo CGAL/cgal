@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_JOIN_FUNCTOR
-#define GPS_JOIN_FUNCTOR
+#ifndef CGAL_GPS_JOIN_FUNCTOR_H
+#define CGAL_GPS_JOIN_FUNCTOR_H
 
 #include <CGAL/Boolean_set_operations_2/Gps_base_functor.h>
 

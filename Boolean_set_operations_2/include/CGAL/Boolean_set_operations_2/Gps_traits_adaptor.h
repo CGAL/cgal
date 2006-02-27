@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_TRAITS_ADAPTOR_H
-#define GPS_TRAITS_ADAPTOR_H
+#ifndef CGAL_GPS_TRAITS_ADAPTOR_H
+#define CGAL_GPS_TRAITS_ADAPTOR_H
 
 CGAL_BEGIN_NAMESPACE
 

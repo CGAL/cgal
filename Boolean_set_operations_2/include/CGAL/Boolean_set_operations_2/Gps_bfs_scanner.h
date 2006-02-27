@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_BFS_SCANNER_H
-#define GPS_BFS_SCANNER_H
+#ifndef CGAL_GPS_BFS_SCANNER_H
+#define CGAL_GPS_BFS_SCANNER_H
 
 #include <queue>
 #include <stack>

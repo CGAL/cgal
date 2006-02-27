@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef POINT_WITH_VERTEX_H
-#define POINT_WITH_VERTEX_H
+#ifndef CGAL_POINT_WITH_VERTEX_H
+#define CGAL_POINT_WITH_VERTEX_H
 
 CGAL_BEGIN_NAMESPACE
 

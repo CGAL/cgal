@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_DO_INTERSECT_FUNCTOR
-#define GPS_DO_INTERSECT_FUNCTOR
+#ifndef CGAL_GPS_DO_INTERSECT_FUNCTOR_H
+#define CGAL_GPS_DO_INTERSECT_FUNCTOR_H
 
 CGAL_BEGIN_NAMESPACE
 

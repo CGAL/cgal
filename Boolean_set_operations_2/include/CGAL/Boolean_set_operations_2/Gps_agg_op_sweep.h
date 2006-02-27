@@ -18,8 +18,8 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 
-#ifndef GSP_AGG_OP_SWEEP_H
-#define GSP_AGG_OP_SWEEP_H
+#ifndef CGAL_GSP_AGG_OP_SWEEP_H
+#define CGAL_GSP_AGG_OP_SWEEP_H
 
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Unique_hash_map.h>
