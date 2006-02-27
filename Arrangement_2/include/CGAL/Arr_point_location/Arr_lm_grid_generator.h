@@ -270,7 +270,7 @@ protected:
       n= arr->number_of_vertices();
 
     //calculate the step size
-    sqrt_n =  static_cast<int> (::sqrt(n) + 0.99999);
+    sqrt_n = static_cast<int> (CGAL::sqrt(static_cast<double> (n)) + 0.99999);
     FT delta_x = right.x() - left.x();
     FT delta_y = top.y() - bottom.y();
     step_x = delta_x / (sqrt_n-1);
