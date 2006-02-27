@@ -81,6 +81,13 @@ namespace CircularFunctors {
   }
 
 
+  template< class CK>
+  bool
+  is_vertical(const typename CK::Line_arc_2 &l)
+  {
+    return l.supporting_line().is_vertical();
+  }
+
   template < class CK >
   Comparison_result
   compare_y_at_x(const typename CK::Circular_arc_point_2 &p,
@@ -411,13 +418,6 @@ namespace CircularFunctors {
     return intersect_2<CK>(l,c,res);
   }
    
-  template< class CK>
-  bool
-  is_vertical(const typename CK::Line_arc_2 &l)
-  {
-    return l.supporting_line().is_vertical();
-  }
-
   template < class CK, class OutputIterator >
   OutputIterator
   make_x_monotone( const typename CK::Line_arc_2 &A,
