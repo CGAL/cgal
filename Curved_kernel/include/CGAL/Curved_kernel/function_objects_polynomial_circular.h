@@ -744,7 +744,7 @@ template < class CK >
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
-    typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
 
   public:
 
@@ -752,13 +752,12 @@ template < class CK >
     typedef const result_type &     qualified_result_type;
     typedef Arity_tag<1>            Arity;
 
-
     qualified_result_type operator() (const Circular_arc_2 & a) const
     {
-      if (a.rep().Cache_minmax == 't')
-	return (a.rep().source());
-      if (a.rep().Cache_minmax == 's')
-	return (a.rep().target());
+//       if (a.rep().Cache_minmax == 't')
+// 	return (a.rep().source());
+//       if (a.rep().Cache_minmax == 's')
+// 	return (a.rep().target());
       return (a.rep().left());
     }
 
@@ -766,7 +765,6 @@ template < class CK >
     {
       return (a.rep().left());
     }
-
 
   };
 
@@ -786,10 +784,10 @@ template < class CK >
     
     qualified_result_type operator() (const Circular_arc_2 & a) const
     {
-      if (a.rep().Cache_minmax == 's')
-	return (a.rep().source());
-      if (a.rep().Cache_minmax == 't')
-	return (a.rep().target());
+//       if (a.rep().Cache_minmax == 's')
+// 	return (a.rep().source());
+//       if (a.rep().Cache_minmax == 't')
+// 	return (a.rep().target());
       return (a.rep().right());
     }
 
