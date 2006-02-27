@@ -93,7 +93,7 @@ void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
   const int m = qp.number_of_constraints();
 
   // offset vector:
-  std::vector<IT> v(m);
+  std::vector<IT> v(n);
   for (int i=0; i<n; ++i)
     v[i] = i+1;
 
