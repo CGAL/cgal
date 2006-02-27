@@ -3,3 +3,6 @@
 - check triangulate_mixed_complex: converter not from traits
 - polyhedron traits does not define Vector
 - Chew's algorithm
+
+Documentation:
+- Add references from doc_tex/Skin_surface_3 to classes.
