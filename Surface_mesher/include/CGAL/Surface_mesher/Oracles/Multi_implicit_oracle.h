@@ -248,14 +248,15 @@ namespace CGAL {
 
 
     // Random points
-    Points random_points (int n) {
+    template <class OutputPointIterator>
+    OutputPointIterator initial_points (OutputPointIterator out, int n)
+    {
       CGAL_precondition (n > 0);
 
       // the exhaustive oracle is used
       bool save_parity = parity_oracle;
 //       parity_oracle = false;
 
-      Points result;
       while (n>0) {
 	Bare_point_3 p1(2*radius*rand()/INT_MAX-radius+center.x(),
                         2*radius*rand()/INT_MAX-radius+center.y(),
@@ -267,7 +268,7 @@ namespace CGAL {
 	Object o = intersect_line_surface (Line (p1,p2));
 	Point p;
 	if (assign(p,o)) {
-	  result.push_back(p);
+	  *out++=p;
 	  --n;
 	}
       }
@@ -275,7 +276,7 @@ namespace CGAL {
       // We restore the user-defined oracle
       parity_oracle = save_parity;
 
-      return result;
+      return out;
     }
 
 

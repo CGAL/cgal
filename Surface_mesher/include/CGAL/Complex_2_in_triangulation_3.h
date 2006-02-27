@@ -47,6 +47,8 @@ class Complex_2_in_triangulation_3 {
 
   typedef std::list<Facet> Facets;
 
+  typedef std::size_t size_type;
+
   typedef std::list<Cell_handle> Cells;
 
   typedef typename Facets::iterator Facets_iterator;
@@ -84,7 +86,7 @@ class Complex_2_in_triangulation_3 {
 protected:
   Triangulation_3& tri3;
   Edge_facet_counter  edge_facet_counter;
-  size_t m_number_of_facets;
+  size_type m_number_of_facets;
 
  private:
   // computes and return an ordered pair of Vertex
@@ -155,7 +157,7 @@ protected:
 
 
   bool is_regular(const Vertex_handle v) const {
-    if(v->regular_is_cached){
+    if(v->regular_is_cached){ // @TODO: tribool, change this!
       return v->regular;
     } else {
       // We have to find out if there is more than one umbrella with apex v.
@@ -203,7 +205,7 @@ protected:
 //     return v->is_visited();
 //   }
 
-  const size_t number_of_facets() const
+  size_type number_of_facets() const
   {
     return m_number_of_facets;
   }
@@ -287,7 +289,6 @@ protected:
   void set_in_complex (const Vertex_handle v) {
     v->set_visited(true);
   }
-
 
 
   void set_in_complex (const Facet& f) {

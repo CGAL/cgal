@@ -32,7 +32,8 @@ namespace CGAL {
   template < typename Tr,
     typename Surface,
     typename Criteria,
-    typename SMB = Surface_mesher_base <Tr, Surface, Criteria> >
+    typename SMB = Surface_mesher_base <Tr, Surface, Criteria>
+  >
   class Surface_mesher_regular_edges_base
     : public SMB {
 
@@ -111,6 +112,16 @@ namespace CGAL {
 	}
 	return loe;
       }
+    
+    FT compute_distance_to_facet_center(const Facet& f,
+					const Vertex_handle v) const {
+      const Point& fcenter = f.first->get_facet_surface_center(f.second);
+      const Point& vpoint = v->point();
+
+      return tr.geom_traits().compute_squared_distance_3_object()(fcenter,
+								  vpoint );
+    }
+
 
       Facet biggest_incident_facet_in_complex(const Edge& arete) const {
 	// Find the first facet in the incident facets
@@ -127,10 +138,12 @@ namespace CGAL {
 	  Vertex_handle fev = edge_to_edgevv(arete).first;
 	  // is the current facet bigger than the current biggest one
 	  if ( SMB::c2t3.compute_distance_to_facet_center(*fcirc, fev) >
-	       SMB::c2t3.compute_distance_to_facet_center(biggest_facet, fev) ) {
+	       SMB::c2t3.compute_distance_to_facet_center(biggest_facet,
+							  fev) ) {
 	    biggest_facet = *fcirc;
 	  }
-	  else {
+	  else { // @TODO: il ne faut pas aller voir des deux cotes: c'est
+		 // le meme centre de facet!!!
 	    Facet autre_cote = SMB::mirror_facet(*fcirc);
 	    // is the current facet bigger than the current biggest one
 	    if ( SMB::c2t3.compute_distance_to_facet_center(autre_cote, fev) >
@@ -263,7 +276,7 @@ namespace CGAL {
 	      bad_edges.insert( edge_to_edgevv(*eit) );
 	    }
 	    else {
-	      bad_edges.erase( edge_to_edgevv(*eit) );
+	      bad_edges.erase( edge_to_edgevv(*eit) ); // @TODO: pourquoi?!
 	    }
 	  }
 	}

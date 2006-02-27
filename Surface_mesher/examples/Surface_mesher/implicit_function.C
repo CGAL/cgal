@@ -31,7 +31,7 @@ int knot3_function (double, double, double);  // (c=(0,0,0), r=4)
 
 ///////////////// Definition of the current surface /////////////////
 int implicit_function (double x, double y, double z) {
-  return torus_function(x,y,z);
+  return tanglecube_function(x,y,z);
 }
 
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -36,7 +36,7 @@ namespace CGAL {
              class Point_creator =
                Creator_uniform_3<typename GT::RT,
                                  typename GT::Point_3> >
-  class Implicit_oracle
+  class Implicit_surface_oracle
   {
   public:
     // Public types
@@ -46,11 +46,7 @@ namespace CGAL {
     typedef typename GT::Segment_3 Segment;
     typedef typename GT::Ray_3 Ray;
     typedef typename GT::Line_3 Line;
-    typedef typename GT::Triangle_3 Triangle;
     typedef typename GT::FT FT;
-
-    typedef typename std::list<Point> Points;
-
 
   private:
     // Private members
@@ -59,7 +55,7 @@ namespace CGAL {
     Point center;  // center of bounding ball
     FT radius;  // radius of bounding ball
     FT min_squared_length;  // minimal length of a segment for
-    // detecting intersections with surface
+                            // detecting intersections with surface
     bool parity_oracle;  // flag that tells whether the surface has no boundary
     bool debug;  // flag for debug mode
     Visitor visitor;
@@ -67,10 +63,13 @@ namespace CGAL {
   public:
 
     // Constructors
-    Implicit_oracle (Function& f, Point emb_center, FT emb_radius,
-		     FT precision,
-		     bool parity = false, bool dbg = false,
-                     Visitor visitor_ = Visitor() ) :
+    Implicit_surface_oracle (Function& f,
+			     Point emb_center,
+			     FT emb_radius,
+			     FT precision, 
+			     bool parity = false,
+			     bool dbg = false,
+			     Visitor visitor_ = Visitor() ) :
       func (f),
       center (emb_center),
       radius (emb_radius),
@@ -105,7 +104,9 @@ namespace CGAL {
       return surf_equation(p)<0.;
     }
 
-    Object intersect_segment_surface(Segment s) {
+    Object intersect_segment_surface(Segment s)
+    // s is passed by value, because it is used in a CGAL::assign below.
+    {
       GT ker;
 
       // First rescale segment if necessary
@@ -178,7 +179,6 @@ namespace CGAL {
       Point p1=l.point(0);
       Point p2=l.point(1);
 
-
       // The other points are calculated with the radius of the bounding ball
 
       Point p3=p1+
@@ -211,16 +211,18 @@ namespace CGAL {
 
 
     // Random points
-    Points random_points (int n) {
-      typename CGAL::Random_points_in_sphere_3<Point,
-        Point_creator> random_point_in_sphere(radius);
-
-      typename GT::Construct_line_3 line_3 = GT().construct_line_3_object();
+    template <typename OutputIteratorPoints>
+    OutputIteratorPoints initial_points (OutputIteratorPoints out, 
+					 int n = 20) // WARNING: why 20?
+    {
       CGAL_precondition (n > 0);
 
+      typename CGAL::Random_points_in_sphere_3<Point,
+        Point_creator> random_point_in_sphere(radius);
+      typename GT::Construct_line_3 line_3 = 
+	GT().construct_line_3_object();
       typename GT::Construct_vector_3 vector_3 =
         GT().construct_vector_3_object();
-
       typename GT::Construct_translated_point_3 translate =
         GT().construct_translated_point_3_object();
 
@@ -228,7 +230,6 @@ namespace CGAL {
       bool save_parity = parity_oracle;
       //      parity_oracle = false; // !! WHY??
 
-      Points result;
       while (n>0) {
         Point p1 = translate(*random_point_in_sphere++,
                              vector_3(CGAL::ORIGIN, center));
@@ -238,7 +239,7 @@ namespace CGAL {
 	Object o = intersect_line_surface (line_3 (p1,p2));
 	Point p;
 	if (assign(p,o)) {
-	  result.push_back(p);
+	  *out++= p;
 	  --n;
 	}
       }
@@ -246,7 +247,7 @@ namespace CGAL {
       // We restore the user-defined oracle
       parity_oracle = save_parity;
 
-      return result;
+      return out;
     }
 
 
@@ -280,8 +281,7 @@ namespace CGAL {
   private:
     double surf_equation (const Point& p) {
       return func(p.x(), p.y(), p.z());
-    }
-
+    } // @WARNING: we use x(), y() and z()
 
   private:
     // Rescale segment according to bounding sphere
@@ -404,7 +404,7 @@ namespace CGAL {
     FT approximate_sqrt(const FT x) {
       return FT (CGAL_NTS sqrt(CGAL_NTS to_double(x)));
     }
-  };  // end Implicit_oracle
+  };  // end Implicit_surface_oracle
 
 
   }  // namespace Surface_mesher

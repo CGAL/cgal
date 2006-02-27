@@ -11,7 +11,7 @@
 #include <CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
+#include <CGAL/Implicit_surface_oracle.h>
 #include <CGAL/Surface_mesher/Oracles/Polyhedral.h>
 #include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Surface_mesher/Oracles/Combining_oracle.h>
@@ -41,7 +41,7 @@ typedef CGAL::Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
 typedef K::FT FT;
 
-using CGAL::Surface_mesher::Implicit_oracle;
+using CGAL::Implicit_surface_oracle;
 using CGAL::Surface_mesher::Polyhedral;
 using CGAL::Surface_mesher::Combining_oracle;
 using CGAL::Surface_mesher::Refine_criterion;
@@ -70,13 +70,15 @@ typedef CGAL::Creator_uniform_3<
   FT,
   K::Point_3> Point_creator_for_implicit_oracle;
 
-typedef Implicit_oracle<My_traits,
-                        Sphere,
-                        Set_indices, // visitor that sets indices of points
-                        Point_creator_for_implicit_oracle // to create
-                                                          // points from
-                                                          // three FT
-                        > Implicite_sphere;
+typedef Implicit_surface_oracle<
+  My_traits,
+  Sphere,
+  Set_indices, // visitor that sets indices of points
+  Point_creator_for_implicit_oracle // to create
+  // points from
+  // three FT
+  > Implicite_sphere;
+
 typedef Polyhedral<Tr, Set_indices> Polyhedron;
 typedef Combining_oracle<Implicite_sphere, Polyhedron> Union_oracle;
 
@@ -113,15 +115,8 @@ int main(int, char**)
 
   Union_oracle union_oracle(implicite_sphere, polyhedron);
 
-  Union_oracle::Points vector_of_initial_points =
-    union_oracle.random_points(number_of_initial_points);
+  union_oracle.initial_points(CGAL::inserter(tr), number_of_initial_points);
 
-  for(Union_oracle::Points::iterator pit = vector_of_initial_points.begin();
-      pit != vector_of_initial_points.end();
-      ++pit)
-  {
-    tr.insert(*pit);
-  }
   std::cerr << "Number of initial points, before refinement: "
             << tr.number_of_vertices() << std::endl;
 

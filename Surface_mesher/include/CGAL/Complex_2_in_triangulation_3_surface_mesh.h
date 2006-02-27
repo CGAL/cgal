@@ -20,6 +20,8 @@
 #ifndef _COMPLEX_2_IN_TRIANGULATION_3_SURFACE_MESH_H
 #define _COMPLEX_2_IN_TRIANGULATION_3_SURFACE_MESH_H
 
+#error No longer used header!
+
 #include <CGAL/Complex_2_in_triangulation_3.h>
 
 CGAL_BEGIN_NAMESPACE

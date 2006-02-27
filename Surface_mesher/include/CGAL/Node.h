@@ -1,6 +1,8 @@
 #ifndef _NODE_H
 #define _NODE_H
 
+#error This header is no longer used!
+
 #include <list>
 #include <map>
 

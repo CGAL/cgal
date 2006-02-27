@@ -44,7 +44,6 @@ namespace CGAL {
     typedef typename Oracle_a::Segment Segment;
     typedef typename Oracle_a::Ray Ray;
     typedef typename Oracle_a::Line Line;
-    typedef typename Oracle_a::Triangle Triangle;
 
     typedef typename std::list<Point> Points;
   private:
@@ -83,19 +82,12 @@ namespace CGAL {
     }
 
     // Random points
-    Points random_points (int n) {
+    template <typename OutputPointIterator>
+    OutputPointIterator initial_points (OutputPointIterator out, int n) {
       CGAL_precondition (n > 0);
 
-      typename Oracle_a::Points points_a = oracle_a.random_points(n);
-      typename Oracle_b::Points points_b = oracle_b.random_points(n);
-      Points points;
-      std::copy(points_a.begin(),
-                points_a.end(),
-                std::back_inserter(points));
-       std::copy(points_b.begin(),
-                 points_b.end(),
-                 std::back_inserter(points));
-      return points;
+      out = oracle_a.initial_points(out, n);
+      return oracle_b.initial_points(out, n);
     }
 
   };  // end Combining_oracle

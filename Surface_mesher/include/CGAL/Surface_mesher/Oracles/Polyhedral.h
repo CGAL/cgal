@@ -46,8 +46,6 @@ public:
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
-  typedef std::list<Point> Points;
-
   // Private members
 
 private:

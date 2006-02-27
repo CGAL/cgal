@@ -27,9 +27,9 @@
 
 namespace CGAL {
 
-  template < class GT, class Vb = Triangulation_vertex_base_3 <GT> >
-    class Complex_2_in_triangulation_vertex_base_3 : public Vb {
-
+  template < class GT, class Vb = Triangulation_vertex_base_3 <GT> > 
+  class Complex_2_in_triangulation_vertex_base_3 : public Vb {    
+    
   public:
     typedef Complex_2_in_triangulation_vertex_base_3 <GT, Vb> Self;
 
@@ -44,21 +44,19 @@ namespace CGAL {
     typedef typename Tds::Cell_handle Cell_handle;
     typedef typename Tds::Facet Facet;
 
-
   private:
     bool visited;
-
-    public: // AF: todo: make private and wrap in functions
-      bool regular_is_cached;
-      bool regular;
+      
+  public: // AF: todo: make private and wrap in functions
+    bool regular_is_cached;
+    bool regular;
 
   public:
     // Constructors
 
     Complex_2_in_triangulation_vertex_base_3()
       : Vb(), visited(false), regular_is_cached(false), regular(false)
-      {}
-
+    {}
 
     bool is_visited() const {
       return visited;
@@ -67,7 +65,22 @@ namespace CGAL {
     void set_visited(const bool b) {
       visited = b;
     }
+      
+    bool is_regular() const {
+      return regular;
+    }
 
+    void set_regular(const bool b) {
+      regular = b;
+    }
+
+    bool is_regular_cached() const {
+      return regular_is_cached;
+    }
+
+    void set_regular_cached(const bool b) {
+      regular_is_cached = b;
+    }
   };  // end Complex_2_in_triangulation_vertex_base_3
 
 

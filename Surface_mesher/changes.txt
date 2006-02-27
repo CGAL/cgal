@@ -1,3 +1,12 @@
+27 february 2006 Laurent Rineau
+(WARNING: no longer compiles, temporary commit)
+- Added number_of_facets() to C2T3 (code and documentation)
+- Remove Complex_2_in_triangulation_3_surface_meshe.h (not finished)
+- Created classes Surface_mesh_cell_base_3 and Surface_mesher_vertex_base_3.
+- Beginning to changes code to bo sync with the documentation.
+- Remove old headers Nodes.h and Graph.h
+
+
 20 janvier 2006 Mariette
 - changed the reference page manual according to Efi comments + various discussions.
   still missing : the concept SurfaceMeshTriangulation_3

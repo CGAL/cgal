@@ -44,8 +44,7 @@ SURFACE_MESHER_POLYHEDRAL_OPT = -DSURFACE_MESHER_POLYHEDRAL
 #---------------------------------------------------------------------#
 
 all:            \
-                implicit_surface_mesher$(EXE_EXT) \
-		polyhedral_surface_mesher$(EXE_EXT) 
+                implicit_surface_mesher$(EXE_EXT)
 
 #                surfaces_union$(EXE_EXT)
 #		test$(EXE_EXT)	

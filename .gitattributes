@@ -1560,6 +1560,10 @@ Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text
 Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text
+Surface_mesher/include/CGAL/Surface_mesh_cell_base_3.h -text
+Surface_mesher/include/CGAL/Surface_mesh_vertex_base_3.h -text
+Surface_mesher/include/CGAL/make_surface_mesh.h -text
+Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test.C -text
 Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2.vcproj -text
 Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2.vcproj -text
 Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset

@@ -1,3 +1,15 @@
+Laurent Rineau 2006/0227:
+(BEFORE THE CGAL-3.2 code freeze)
+- Remove Complex_2_in_triangulation_3_surface_meshe.h (not finished)
+- Make mesher levels concret classes (Surface_mesher,
+  Surface_mesher_manifold, etc.)
+- Make mesher levels concret classes (Surface_mesher,
+  Surface_mesher_manifold, etc.) be templated by C2T3 instead of
+  Triangulation. (not finished)
+- Changes oracles to be models of "SurfaceMeshTraits".
+- Create *the* SurfaceMeshCriteria model
+
+
 Laurent Rineau, 2005/10/02:
       - fix include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h as
         regards Kernel_point stuff

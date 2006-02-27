@@ -24,7 +24,7 @@
 #include <CGAL/Complex_2_in_triangulation_3_surface_mesh.h>
 #include <CGAL/Surface_mesher/Surface_mesher_regular_edges.h>
 #include <CGAL/Node.h>
-#include <CGAL/Graph.h>
+// #include <CGAL/Graph.h>
 
 namespace CGAL {
 
@@ -50,15 +50,16 @@ namespace CGAL {
       typedef std::list<Vertex_handle> Vertices;
       typedef typename Facets::iterator Facets_iterator;
       typedef typename Vertices::iterator Vertices_iterator;
-      typedef CGAL::Node<Facet> Node;
-      typedef CGAL::Graph<Facet> Graph;
-      typedef std::map<Facet, Node*> Nodes_map;
-      typedef typename Nodes_map::iterator Nodes_map_iterator;
+//       typedef CGAL::Node<Facet> Node;
+//       typedef CGAL::Graph<Facet> Graph;
+//       typedef std::map<Facet, Node*> Nodes_map;
+//       typedef typename Nodes_map::iterator Nodes_map_iterator;
       typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
     protected:
-      mutable std::set<Vertex_handle> bad_vertices;
-      mutable bool bad_vertices_initialized;
+      mutable std::set<Vertex_handle> bad_vertices; // @TODO, BEURK: mais
+      mutable bool bad_vertices_initialized;        // pourquoi mutable???!!!
+
     private:
 
 
@@ -160,7 +161,7 @@ namespace CGAL {
 	for (Finite_vertices_iterator vit = SMREB::tr.finite_vertices_begin();
 	     vit != SMREB::tr.finite_vertices_end();
 	     ++vit) {
-	  if ( (SMREB::c2t3.face_type(vit)
+	  if ( (SMREB::c2t3.face_type(vit)  // @TODO: appeler is_regular
 		== C2t3::SINGULAR) ) {
 	    bad_vertices.insert( vit );
 	    ++n;

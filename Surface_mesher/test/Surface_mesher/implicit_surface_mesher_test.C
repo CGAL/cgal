@@ -1,20 +1,6 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-//
-// Author(s)     : Steve OUDOT
-
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
-#include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 // #include <CGAL/Surface_mesher/Surface_mesher_regular_edges.h>
@@ -32,20 +18,18 @@
 
 #include <fstream>
 
-/////////////// Types ///////////////
+// triangulation type generator: Kernel -> Tr
+templace <class Kernel>
+class Surface_mesh_Delaunay_triangulation_generator {
+  typedef CGAL::Surface_mesh_vertex_base_3<K> Vb;
+  typedef CGAL::Surface_mesh_cell_base_3<K> Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
+public:
+  typedef CGAL::Delaunay_triangulation_3<K, Tds> Type;
+  typedef Type type;
+};
 
-struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-#ifdef SURFACE_MESHER_POLYHEDRAL
-typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
-#else
-typedef K2 K;
-#endif
-typedef CGAL::Surface_mesh_vertex_base_3<K> Vb;
-typedef CGAL::Surface_mesh_cell_base_3<K> Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 
-typedef CGAL::Delaunay_triangulation_3<K, Tds> Tr;
-typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
 
 // Oracle
 #ifndef SURFACE_MESHER_POLYHEDRAL
@@ -58,7 +42,7 @@ typedef CGAL::Surface_mesher::Polyhedral <Tr> Oracle;
 typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
 
-typedef CGAL::Surface_mesher::Surface_mesher<C2t3, Oracle, Criteria> SM;
+typedef CGAL::Surface_mesher::Surface_mesher<Tr, Oracle, Criteria> SM;
 // typedef CGAL::Surface_mesher::Surface_mesher_regular_edges<Tr, Oracle, Criteria> SMRE;
 // typedef CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary<Tr, Oracle, Criteria> SMREWB;
 // typedef CGAL::Surface_mesher::Surface_mesher_manifold<Tr, Oracle, Criteria> SMM;
@@ -80,24 +64,9 @@ typedef SM Surface;  // basic mesher
 
 int main(int argc, char **argv) {
 
-#ifdef SURFACE_MESHER_POLYHEDRAL
-  if (argc < 2) {
-    std::cout << "Usage : " << argv[0] << " <off_file>" << std::endl;
-    exit(0);
-  }
-#endif
-
-  // Oracle
-#ifndef SURFACE_MESHER_POLYHEDRAL
   Func F;
   Oracle O (F, K::Point_3 (0,0,0), 6, 1e-6, true);  // parity oracle
                                                     // toggled
-#else
-  std::ifstream is (argv[1]);
-  Oracle O (is);
-  is.close ();
-#endif
-
   // 3D-Delaunay triangulation
   Tr tr;
 

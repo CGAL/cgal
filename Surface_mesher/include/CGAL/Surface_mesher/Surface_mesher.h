@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,15 +19,13 @@
 
 
 
-#ifndef CGAL_SURFACE_MESHER_H
-#define CGAL_SURFACE_MESHER_H
+#ifndef CGAL_SURFACE_MESHER_SURFACE_MESHER_H
+#define CGAL_SURFACE_MESHER_SURFACE_MESHER_H
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
-#include <CGAL/Complex_2_in_triangulation_3_surface_mesh.h>
-
 
 namespace CGAL {
 
@@ -36,18 +34,23 @@ namespace CGAL {
   // NB: by convention, the priority queue is sorted with respect to the
   // first element of the list of criteria
 
-  template <class Tr, class Surface, class Criteria>
+  template <
+    class C2T3,
+    class Surface,
+    class Criteria
+    >
   class Surface_mesher_base
-    : public Triangulation_mesher_level_traits_3<Tr>
+    : public Triangulation_mesher_level_traits_3<typename C2T3::Triangulation>
   {
   public:
+    typedef typename C2T3::Triangulation Tr;
     typedef typename Tr::Point Point;
     typedef typename Tr::Edge Edge;
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
 
     typedef typename Tr::Geom_traits GT;
-//     typedef typename GT::FT FT;
+
     typedef Triangulation_mesher_level_traits_3<Tr> Triangulation_traits;
     typedef typename Triangulation_traits::Zone Zone;
 
@@ -59,25 +62,22 @@ namespace CGAL {
 
     typedef Double_map<Facet, Quality> Bad_facets;
 
-    typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
-
     // Constructor
-    Surface_mesher_base (Tr& t, C2t3& co, Surface& s, Criteria& c) :
-      Triangulation_mesher_level_traits_3<Tr>(t),
-      tr(t),
+    Surface_mesher_base (C2T3& co, Surface& s, Criteria& c) :
+      Triangulation_mesher_level_traits_3<Tr>(co.triangulation()),
       c2t3(co),
+      tr(co.triangulation()),
       surf(s),
       criteria(c)
-      {}
+    {
+    }
 
   protected:
-
-    Tr& tr;  // Triangulation
-    C2t3& c2t3; //associated complex_2_in_triangulation_3_surface_mesh to tr
+    C2T3& c2t3;
+    Tr& tr;     // Associated triangulation reference
     Surface& surf;  // Surface
     Bad_facets facets_to_refine;  // Set of facets to refine
     Criteria& criteria;  // Meshing criteria
-
 
   public:
 
@@ -85,6 +85,31 @@ namespace CGAL {
     Facet mirror_facet(const Facet& f) const
     {
       return c2t3.triangulation().mirror_facet(f);
+    }
+
+    static void set_facet_visited(Facet f)
+    {
+      f.first->set_facet_visited(f.second);
+    }
+
+    static void set_facet_surface_center(Facet f, const Point& p)
+    {
+      f.first->set_facet_surface_center(f.second, p);
+    }
+
+    static const Point& get_facet_surface_center(const Facet& f)
+    {
+      return f.first->get_facet_surface_center(f.second);
+    }
+
+    static void reset_visited(Facet f)
+    {
+      f.first->reset_visited(f.second);
+    }
+
+    static bool is_facet_visited(const Facet& f)
+    {
+      return f.first->is_facet_visited(f.second);
     }
 
     // Remains unchanged
@@ -110,15 +135,15 @@ namespace CGAL {
 	if (tr.dimension() == 3) {
 	  Facet other_side = mirror_facet(*fit);
 
-	  c2t3.set_facet_visited(*fit);
-	  c2t3.set_facet_visited(other_side);
+	  set_facet_visited(*fit);
+	  set_facet_visited(other_side);
 	  //(*fit).first->set_facet_visited((*fit).second);
 	  //c->set_facet_visited(other_side.second);
 
 	  if (is_facet_on_surface(*fit, center)) {
 	    c2t3.set_in_complex(*fit);
-	    c2t3.set_facet_surface_center((*fit), center);
-	    c2t3.set_facet_surface_center(other_side, center);
+	    set_facet_surface_center((*fit), center);
+	    set_facet_surface_center(other_side, center);
 	    //(*fit).first->set_facet_on_surface((*fit).second,true);
 	    //(*fit).first->set_surface_center_facet((*fit).second,center);
 
@@ -143,7 +168,7 @@ namespace CGAL {
 	  if (is_facet_on_surface(*fit, center)) {
 	    //Cell_handle c;
 	    c2t3.set_in_complex(*fit);
-	    c2t3.set_facet_surface_center((*fit),center);
+	    set_facet_surface_center((*fit),center);
 	    //c=(*fit).first;
 	    //c->set_facet_on_surface((*fit).second,true);
 	    //c->set_facet_surface_center((*fit).second,center);
@@ -178,9 +203,9 @@ namespace CGAL {
     // From the element to refine, gets the point to insert
     Point refinement_point_impl(const Facet& f) const
       {
-	CGAL_assertion (c2t3.face_type(f) == C2t3::REGULAR);
+	CGAL_assertion (c2t3.face_type(f) == C2T3::REGULAR);
 	//CGAL_assertion (f.first->is_facet_on_surface (f.second));
-	return c2t3.get_facet_surface_center (f);
+	return get_facet_surface_center (f);
 	//return f.first->get_facet_surface_center (f.second);
       }
 
@@ -238,7 +263,7 @@ namespace CGAL {
       if( tr.is_infinite(f.first) )
 	return false;
 
-      if (c2t3.face_type(f) == C2t3::REGULAR)
+      if (c2t3.face_type(f) == C2T3::REGULAR)
 	{
 	  const Cell_handle& c = f.first;
 	  const int index = f.second;
@@ -248,7 +273,7 @@ namespace CGAL {
 
 // 	  std::cerr << "testing conflict... \n";
 	  // test Delaunay surfacique
-	  Point center = c2t3.get_facet_surface_center(f);
+	  Point center = get_facet_surface_center(f);
 	  if( distance(center, p) <
 	      distance(center, c->vertex((index+1)&3)->point()) )
 	    {
@@ -391,8 +416,8 @@ namespace CGAL {
       facets_to_refine.erase(other_side);
 
       // Le compteur des visites est remis a zero
-       c2t3.reset_visited(f);
-       c2t3.reset_visited (other_side);
+       reset_visited(f);
+       reset_visited(other_side);
 
       // On retire la facette du complexe (car on doit etre
       // independant de l'implementation du complexe)
@@ -415,7 +440,7 @@ namespace CGAL {
 
       // If the facet is infinite or has been already visited,
       // then there is nothing to do as for it or its edges
-      if (tr.is_infinite(f) || c2t3.is_facet_visited(f))
+      if (tr.is_infinite(f) || is_facet_visited(f))
 	return;
 
       Facet other_side = mirror_facet(f);
@@ -423,8 +448,8 @@ namespace CGAL {
       // NB: set_facet_visited() is implementation dependant
       // and each side of the real facet has to be considered
       // separately
-      c2t3.set_facet_visited(f);
-      c2t3.set_facet_visited(other_side);
+      set_facet_visited(f);
+      set_facet_visited(other_side);
 
       // On regarde d'abord si la facette est dans le Delaunay
       // restreint
@@ -438,8 +463,8 @@ namespace CGAL {
 	// NB: set_facet_surface_center() is implementation dependant
 	// and each side of the real facet has to be considered
 	// separately
-	c2t3.set_facet_surface_center(f, center);
-	c2t3.set_facet_surface_center(other_side, center);
+	set_facet_surface_center(f, center);
+	set_facet_surface_center(other_side, center);
 
 	// On regarde alors si la facette est bonne
 	if (criteria.is_bad (f)) {
@@ -469,17 +494,20 @@ namespace CGAL {
 
     // Tests whether a given facet is restricted or not
     bool is_facet_on_surface(const Facet& f, Point& center,
-			     const bool check_visits = true) {
+			     const bool check_visits = false) {
       typename GT::Segment_3 s;
       typename GT::Ray_3 r;
       typename GT::Line_3 l;
 
       if (check_visits) {
-	CGAL_assertion (! c2t3.visited(f));
-	c2t3.set_visited(f);
+	const Cell_handle& c = f.first;
+	const int& i = f.second;
+	CGAL_assertion (! c->is_facet_visited(i));
+	c->set_facet_visited(i);
 	Facet other_side = mirror_facet(f);
-	CGAL_assertion (! c2t3.visited(other_side));
-	c2t3.set_visited(other_side);
+	CGAL_assertion 
+	  (! other_side.first->is_facet_visited(other_side.second));
+	other_side.first->set_facet_visited(other_side.second);
       }
 
 
@@ -537,18 +565,18 @@ namespace CGAL {
 	restr_bis = is_facet_on_surface(other_side, center, false);
 	CGAL_assertion (restr == restr_bis);
 	CGAL_assertion ((c2t3.face_type(*fit)
-			 == C2t3::REGULAR) == restr);
+			 == C2T3::REGULAR) == restr);
 	CGAL_assertion ((c2t3.face_type(other_side)
-			 == C2t3::REGULAR) == restr_bis);
+			 == C2T3::REGULAR) == restr_bis);
 	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==
 	//		restr);
 	//CGAL_assertion (other_side.first->is_facet_on_surface
 	//		(other_side.second) == restr_bis);
 
-	if ( (c2t3.face_type(*fit) == C2t3::REGULAR) !=
+	if ( (c2t3.face_type(*fit) == C2T3::REGULAR) !=
 	    is_facet_on_surface(*fit, center, false)) {
 	  std::cerr << "Error in restricted Delaunay triangulation: ("
-		    << (c2t3.face_type(*fit) == C2t3::REGULAR)
+		    << (c2t3.face_type(*fit) == C2T3::REGULAR)
 		    << "/"
 		    << is_facet_on_surface(*fit, center, false)
 		    << ")"
@@ -565,38 +593,40 @@ namespace CGAL {
 
 
 
-  template <typename Tr,
+  template <
+    typename C2T3,
     typename Surface,
     typename Criteria,
-    typename Base = Surface_mesher_base<Tr, Surface, Criteria> >
-  struct Surface_mesher :
-      public Base,
+    typename Base = Surface_mesher_base<C2T3, Surface, Criteria>
+    >
+  struct Surface_mesher
+    : public Base,
       public Mesher_level <
-    Tr,
-    Surface_mesher<Tr, Surface, Criteria, Base>,
-    typename Tr::Facet,
-    Null_mesher_level,
-    Triangulation_mesher_level_traits_3<Tr>
-  >
+        C2T3::Triangulation,
+        Surface_mesher<C2T3::Triangulation, Surface, Criteria, Base>,
+        typename C2T3::Triangulation::Facet,
+        Null_mesher_level,
+        Triangulation_mesher_level_traits_3<C2T3::Triangulation>
+	>
   {
   public:
-    typedef Surface_mesher<Tr, Surface, Criteria, Base> Self;
+    typedef typename C2T3::Triangulation Tr;
+    typedef Surface_mesher<C2T3, Surface, Criteria, Base> Self;
     typedef Mesher_level <
       Tr,
       Self,
       typename Tr::Facet,
       Null_mesher_level,
       Triangulation_mesher_level_traits_3<Tr>
-    > Mesher;
+    > Mesher_lvl;
 
-    typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
-
-    using Mesher::scan_triangulation;
-    using Mesher::refine;
-    using Mesher::is_algorithm_done;
-    using Mesher::one_step;
+    using Mesher_lvl::scan_triangulation;
+    using Mesher_lvl::refine;
+    using Mesher_lvl::is_algorithm_done;
+    using Mesher_lvl::one_step;
     using Base::check_restricted_delaunay;
 
+    typedef C2T3 Complex_2_in_triangulation_3;
 
   private:
     Null_mesher_level null_mesher_level;
@@ -604,12 +634,11 @@ namespace CGAL {
     bool initialized;
 
   public:
-    Surface_mesher(Tr& t, C2t3& co, Surface& s, Criteria& c):
-      Base(t, co, s, c),
-      Mesher(null_mesher_level),
+    Surface_mesher(C2T3& co, Surface& s, Criteria& c): 
+      Base(co, s, c), 
+      Mesher_lvl(null_mesher_level),
       initialized(false)
-      {}
-
+    {}
 
     // Initialization
     void init(bool debug = false)
@@ -656,5 +685,5 @@ namespace CGAL {
 }  // end namespace CGAL
 
 
-#endif // CGAL_SURFACE_MESHER_H
+#endif // CGAL_SURFACE_MESHER_SURFACE_MESHER_H
 
