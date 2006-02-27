@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef OVERLAY_META_TRAITS_H
-#define OVERLAY_META_TRAITS_H
+#ifndef CGAL_OVERLAY_META_TRAITS_H
+#define CGAL_OVERLAY_META_TRAITS_H
 
 
 #include <CGAL/Object.h>

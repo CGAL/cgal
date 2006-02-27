@@ -16,8 +16,8 @@
 // 
 //
 // Author(s): Baruch Zukerman         <baruchzu@post.tau.ac.il>
-#ifndef EDGE_ITERATOR_ADAPTOR
-#define EDGE_ITERATOR_ADAPTOR
+#ifndef CGAL_EDGE_ITERATOR_ADAPTOR
+#define CGAL_EDGE_ITERATOR_ADAPTOR
 
 #include <iterator>
 

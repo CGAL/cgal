@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef OVERLAY_VISITOR_H
-#define OVERLAY_VISITOR_H
+#ifndef CGAL_OVERLAY_VISITOR_H
+#define CGAL_OVERLAY_VISITOR_H
 
 #include <CGAL/Sweep_line_2/Arr_construction_visitor.h>
 #include <CGAL/Arr_accessor.h>

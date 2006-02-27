@@ -17,8 +17,8 @@
 //
 // Author(s)     : Ron Wein <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_OVERLAY_TRAITS_H
-#define ARR_OVERLAY_TRAITS_H
+#ifndef CGAL_ARR_OVERLAY_TRAITS_H
+#define CGAL_ARR_OVERLAY_TRAITS_H
 
 CGAL_BEGIN_NAMESPACE
 

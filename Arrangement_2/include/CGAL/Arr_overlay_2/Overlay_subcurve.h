@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef OVERLAY_SUBCURVE_H
-#define OVERLAY_SUBCURVE_H
+#ifndef CGAL_OVERLAY_SUBCURVE_H
+#define CGAL_OVERLAY_SUBCURVE_H
 
 #include <CGAL/Sweep_line_2/Arr_construction_curve.h>
 
