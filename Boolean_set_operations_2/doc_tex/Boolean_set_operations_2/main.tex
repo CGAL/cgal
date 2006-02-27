@@ -8,4 +8,25 @@
 % \ccChapterRelease{\BooleanSetOperationRefRev. \ \BooleanSetOperationRefDate}
 \ccChapterAuthor{Efi Fogel, Ron Wein, Baruch Zukerman, and Dan Halperin}
 
-\input{Boolean_set_operations_2/bops}
+\lcTex{%
+  \newlength{\widthExtra}\setlength{\widthExtra}{1.1cm}
+  \newlength{\widthLineReal}\setlength{\widthLineReal}{\linewidth}
+  \addtolength{\widthLineReal}{-\widthExtra}
+  \newlength{\minipageSpace}\setlength{\minipageSpace}{0.2cm}
+
+  \newlength{\widthLeft}
+  \newlength{\widthRight}
+}
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\calC}{{\cal C}}
+\newcommand{\calA}{{\cal A}}
+\newcommand{\eps}{{\varepsilon}}
+\newcommand{\dcel}{{\sc Dcel}}
+\newcommand{\naive}{na\"{\i}ve}
+\newcommand{\kdtree}{{\sc Kd}-tree}
+\newcommand{\Cpp}{{C}{\tt ++}}
+
+\input{Boolean_set_operations_2/bso_intro.tex}
+\input{Boolean_set_operations_2/bso_linear.tex}
+\input{Boolean_set_operations_2/bso_general.tex}
