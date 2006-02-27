@@ -1,3 +1,8 @@
+26 Febraury 2006 Laurent Rineau
+- Move the internal header
+include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h to Mesh_2.
+
+
 4 november 2005 Laurent Rineau
 - modified Special_tets_criteria in test/Mesh_3/combined_spheres.C
   This criteria class has five size bounds, one for each sphere.
