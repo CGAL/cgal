@@ -935,7 +935,7 @@ template < class CK >
     : public CK::Linear_kernel::Construct_bbox_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
-    typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
+    typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
     typedef typename CK::Circle_2                  Circle_2;
 
@@ -959,7 +959,6 @@ template < class CK >
     {
       return a.rep().bbox();
     }
-
 
   };
 
