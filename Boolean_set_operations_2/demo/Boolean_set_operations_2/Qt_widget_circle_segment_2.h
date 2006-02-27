@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef QT_WIDGET_CIRCLE_SEGMENT_2_H
-#define QT_WIDGET_CIRCLE_SEGMENT_2_H
+#ifndef CGAL_QT_WIDGET_CIRCLE_SEGMENT_2_H
+#define CGAL_QT_WIDGET_CIRCLE_SEGMENT_2_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Arr_traits_2/Circle_segment_2.h>

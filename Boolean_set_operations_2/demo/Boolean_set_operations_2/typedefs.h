@@ -16,8 +16,8 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-#ifndef TYPEDEFS_H
-#define TYPEDEFS_H
+#ifndef CGAL_TYPEDEFS_H
+#define CGAL_TYPEDEFS_H
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
