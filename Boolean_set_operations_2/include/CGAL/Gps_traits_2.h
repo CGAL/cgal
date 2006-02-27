@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_TRAITS_2_H
-#define GPS_TRAITS_2_H
+#ifndef CGAL_GPS_TRAITS_2_H
+#define CGAL_GPS_TRAITS_2_H
 
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>

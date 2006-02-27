@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GPS_SEGMENT_TRAITS_2_H
-#define GPS_SEGMENT_TRAITS_2_H
+#ifndef CGAL_GPS_SEGMENT_TRAITS_2_H
+#define CGAL_GPS_SEGMENT_TRAITS_2_H
 
 
 #include <CGAL/Arr_segment_traits_2.h>

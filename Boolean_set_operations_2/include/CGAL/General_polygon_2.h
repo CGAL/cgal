@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef GENERAL_POLYGON_2_H
-#define GENERAL_POLYGON_2_H
+#ifndef CGAL_GENERAL_POLYGON_2_H
+#define CGAL_GENERAL_POLYGON_2_H
 
 #include <list>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>

@@ -18,8 +18,8 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 
-#ifndef BOOLEAN_SET_OPERATIONS_H
-#define BOOLEAN_SET_OPERATIONS_H
+#ifndef CGAL_BOOLEAN_SET_OPERATIONS_H
+#define CGAL_BOOLEAN_SET_OPERATIONS_H
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
