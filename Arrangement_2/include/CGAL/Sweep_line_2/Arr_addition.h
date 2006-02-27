@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_ADDITION_H
-#define ARR_ADDITION_H
+#ifndef CGAL_ARR_ADDITION_H
+#define CGAL_ARR_ADDITION_H
 
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>

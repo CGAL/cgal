@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef SWEEP_LINE_2_DEBUG_H
-#define SWEEP_LINE_2_DEBUG_H
+#ifndef CGAL_SWEEP_LINE_2_DEBUG_H
+#define CGAL_SWEEP_LINE_2_DEBUG_H
 
 
 #include <CGAL/Basic_sweep_line_2.h>

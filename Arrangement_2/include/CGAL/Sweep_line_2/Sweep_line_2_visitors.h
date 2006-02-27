@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef SWEEP_LINE_2_VISITORS_H
-#define SWEEP_LINE_2_VISITORS_H
+#ifndef CGAL_SWEEP_LINE_2_VISITORS_H
+#define CGAL_SWEEP_LINE_2_VISITORS_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>

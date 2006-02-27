@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_CONSTRUCTION_VISITOR_H
-#define ARR_CONSTRUCTION_VISITOR_H
+#ifndef CGAL_ARR_CONSTRUCTION_VISITOR_H
+#define CGAL_ARR_CONSTRUCTION_VISITOR_H
 
 
 #include <CGAL/Arr_accessor.h>

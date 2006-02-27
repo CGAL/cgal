@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_BASIC_ADDITION_VISITOR_H
-#define ARR_BASIC_ADDITION_VISITOR_H
+#ifndef CGAL_ARR_BASIC_ADDITION_VISITOR_H
+#define CGAL_ARR_BASIC_ADDITION_VISITOR_H
 
 CGAL_BEGIN_NAMESPACE
 

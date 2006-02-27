@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef ARR_BASIC_ADDITION_TRAITS_H
-#define ARR_BASIC_ADDITION_TRAITS_H
+#ifndef CGAL_ARR_BASIC_ADDITION_TRAITS_H
+#define CGAL_ARR_BASIC_ADDITION_TRAITS_H
 
 #include <CGAL/Object.h> 
 #include <list>

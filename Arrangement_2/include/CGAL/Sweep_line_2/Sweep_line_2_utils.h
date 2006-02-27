@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef SWEEP_LINE_2_UTILS
-#define SWEEP_LINE_2_UTILS
+#ifndef CGAL_SWEEP_LINE_2_UTILS
+#define CGAL_SWEEP_LINE_2_UTILS
 
 CGAL_BEGIN_NAMESPACE
 

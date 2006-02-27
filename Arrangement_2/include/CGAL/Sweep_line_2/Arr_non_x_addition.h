@@ -21,8 +21,8 @@
  * Definition of the Arr_non_x_addition<Arrangement> class.
  */
 
-#ifndef ARR_NON_X_ADDITION_H
-#define ARR_NON_X_ADDITION_H
+#ifndef CGAL_ARR_NON_X_ADDITION_H
+#define CGAL_ARR_NON_X_ADDITION_H
 
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
