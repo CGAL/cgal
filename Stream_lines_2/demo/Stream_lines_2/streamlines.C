@@ -240,12 +240,7 @@ class Placement : public QObject
       {
         begin_iterator = Stream_lines->begin();
         end_iterator = Stream_lines->end();
-      }/*
-      else
-      {
-      begin_iterator = NULL;
-      end_iterator = NULL;
-    }*/
+      }
     }
     void draw_stl()
     {
