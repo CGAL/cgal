@@ -31,13 +31,15 @@
 #include <fstream>
 #include <iostream>
 
-#include "streamlines_assertions.h"
+#include <CGAL/squared_distance_2.h>
 
-#define forward 1;
-#define backward -1;
+#include <CGAL/streamlines_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
+const int forward  =  1;
+const int backward = -1;
+  
 template <class VectorField_2, class Integrator_2>
 class Stream_lines_2
 {
@@ -61,11 +63,9 @@ protected:
   typedef
   CGAL::Quadruple<Vertex_handle,Vertex_handle,Vertex_handle,Circle>                       Pq_element;
   Pq_element                                                                              Biggest_circle;
-  FT distance(Point_2 p, Point_2 q)
+  FT distance(const Point_2 & p, const Point_2 & q)
     {
-      return sqrt(((p.x() - q.x())*(p.x() - q.x()))+((p.y()
-						      -
-						      q.y())*(p.y() - q.y())));
+      return squared_distance(p, q);
     }
   int          ir;
   int          il;
