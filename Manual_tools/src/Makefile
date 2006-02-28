@@ -63,7 +63,7 @@ PROGRAM_FILES =		cc_extract_html			\
 	        	cc_extract_images		\
 			cc_anchor_filter                \
                         cc_remove_unwanted_links
-			
+
 
 # Files that will be copied into LATEX_CONV_BIN upon installation:
 SCRIPT_FILES  = 	latex_to_html			\
@@ -240,7 +240,8 @@ clean :
 		syntax.tab.h	\
 		syntax.C	\
 		cc_remove_unwanted_links.C \
-		cc_anchor_filter.C
+		cc_anchor_filter.C \
+		cc_extract_images_lexer.C
 
 cleanall : clean
 	-rm -f  $(PROGRAM_FILES)
