@@ -28,7 +28,7 @@ public:
   typedef std::pair< Halfedge_handle, FT> ridge_he;
 
 protected:
-  Ridge_type m_line_type;
+  Ridge_type m_line_type;//one of BE, BH, BC, RE, RH or RC
   std::list<ridge_he> m_line;
   FT m_strength;
   FT m_sharpness;
@@ -78,21 +78,21 @@ void Ridge_line<Poly>::
 addback( Halfedge_handle he) 
 {
   Halfedge_handle he_cur = ( --(m_line.end()) )->first;
+  FT coord_cur = ( --(m_line.end()) )->second;//bary_coord(he_cur);
   FT coord = bary_coord(he);
-  FT coord_cur = bary_coord(he_cur);
   Vertex_handle v_p = he->opposite()->vertex(), v_q = he->vertex(),
     v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he->vertex(); // he: p->q
-  FT k;
+  FT k;//ppal curvature
   if ( (m_line_type == BE) || (m_line_type == BH) || (m_line_type == BC) ) {
-    k =( CGAL::abs(v_p->k1()) * coord + CGAL::abs(v_q->k1()) * (1-coord) )/2;   
+    k = CGAL::abs(v_p->k1()) * coord + CGAL::abs(v_q->k1()) * (1-coord) ;   
   }
   if ( (m_line_type == RE) || (m_line_type == RH) || (m_line_type == RC) ) {
-    k =( CGAL::abs(v_p->k2()) * coord + CGAL::abs(v_q->k2()) * (1-coord) )/2;   
+    k = CGAL::abs(v_p->k2()) * coord + CGAL::abs(v_q->k2()) * (1-coord) ;   
   }
   Vector_3 segment = (v_p->point()-ORIGIN)*coord + (v_q->point()-ORIGIN)*(1-coord) - 
     ((v_p_cur->point()-ORIGIN)*coord_cur + (v_q_cur->point()-ORIGIN)*(1-coord_cur));
   m_strength += k * CGAL::sqrt(segment * segment); 
-    
+  //TODO update sharpness
   m_line.push_back( ridge_he(he, coord));
 }
 
@@ -101,21 +101,21 @@ void Ridge_line<Poly>::
 addfront( Halfedge_handle he) 
 {
   Halfedge_handle he_cur = ( m_line.begin() )->first;
+  FT coord_cur = ( m_line.begin() )->second;
   FT coord = bary_coord(he);
-  FT coord_cur = bary_coord(he_cur);
   Vertex_handle v_p = he->opposite()->vertex(), v_q = he->vertex(),
     v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he->vertex(); // he: p->q
   FT k;
   if ( (m_line_type == BE) || (m_line_type == BH) || (m_line_type == BC) ) {
-    k =( CGAL::abs(v_p->k1()) * coord + CGAL::abs(v_q->k1()) * (1-coord) )/2;   
+    k = CGAL::abs(v_p->k1()) * coord + CGAL::abs(v_q->k1()) * (1-coord) ;   
   }
   if ( (m_line_type == RE) || (m_line_type == RH) || (m_line_type == RC) ) {
-    k =( CGAL::abs(v_p->k2()) * coord + CGAL::abs(v_q->k2()) * (1-coord) )/2;   
+    k = CGAL::abs(v_p->k2()) * coord + CGAL::abs(v_q->k2()) * (1-coord) ;   
   }
   Vector_3 segment = (v_p->point()-ORIGIN)*coord + (v_q->point()-ORIGIN)*(1-coord) - 
     ((v_p_cur->point()-ORIGIN)*coord_cur + (v_q_cur->point()-ORIGIN)*(1-coord_cur));
   m_strength += k * CGAL::sqrt(segment * segment); 
-    
+  //TODO update sharpness
   m_line.push_front( ridge_he(he, coord));
 }
 
@@ -153,9 +153,9 @@ dump_4ogl(std::ostream& out_stream)
       q = iter->first->vertex()->point();
     Vector_3 r = (p-CGAL::ORIGIN)*iter->second +
       (q-CGAL::ORIGIN)*(1-iter->second); 
-    out_stream << r << " ";	
+    out_stream << " " << r ;	
   }
-  out_stream << "End_of_ridge_line" << std::endl;  
+  out_stream  << std::endl;  
 }
 
 //---------------------------------------------------------------------------
@@ -173,10 +173,10 @@ public:
   typedef typename Poly::Facet_handle Facet_handle;
   typedef typename Poly::Facet_iterator Facet_iterator;
   typedef Ridge_line<Poly> Ridge_line;
-  //  typedef T_PolyhedralSurf_rings<Poly> Poly_rings;
+  //  typedef T_PolyhedralSurf_rings<Poly> Poly_rings;//for umbilics??
   //are ridges tagged as elliptic or hyperbolic using 3rd or 4th order
   //differential quantitities?
-  enum Tag_order {Tag_3, Tag_4};
+  enum Tag_order {Tag_3 = 3, Tag_4 = 4};
 
 public:
   Ridge_approximation(){};
@@ -184,16 +184,16 @@ public:
   OutputIt compute_all_ridges(Poly &P, OutputIt it, Tag_order ord = Tag_3);
   
   //Find BLUE_RIDGE, RED_RIDGE or CREST ridges 
-  //iterate on P facets, find a non-visited, regular, 2BXing triangle,
-  //follow non-visited, regular, 2BXing triangles in both sens to create
+  //iterate on P facets, find a non-visited, regular, 2Xing triangle,
+  //follow non-visited, regular, 2Xing triangles in both sens to create
   //a Ridge line.
   //Each time an edge is added the strength of the current line is updated
-  // + length(edge)*|k|
+  // + length(ridge segment in the facet)*|k|
   void compute_ridges(Poly &P, 
 		      Ridge_type r_type, 
 		      OutputIt ridge_lines_it,
 		      Tag_order ord = Tag_3);
-  void compute_umbilics(Poly &P	);//container for umbilics?
+  void compute_umbilics(Poly &P	);//container, class for umbilics?
 
 protected:
   //is a facet crossed by a BLUE, RED or CREST ridge? if so, return
@@ -205,15 +205,19 @@ protected:
 			      Ridge_type r_type,
 			      Tag_order ord = Tag_3);
   
-  //is an edge crossed by a BLUE/RED ridge?
+  //is an edge crossed by a BLUE/RED ridge? (color is BLUE_RIDGE or RED_RIDGE)
   void xing_on_edge(Halfedge_handle he, 
 		    bool& is_crossed, 
 		    Ridge_type color);
  
-  //for a ridge segment in a triangle [r1,r2], let r = r2 - r1 and
-  //normalize, the projection of a point p on the line (r1,r2) is
-  //pp=r1+tr, with t=(p-r1)*r then the vector v starting at p is
-  //pointing to the ridge line (r1,r2) if (pp-p)*v >0
+  //for a ridge segment [r1,r2] in a triangle (v1,v2,v3), let r = r2 -
+  //r1 and normalize, the projection of a point p on the line (r1,r2)
+  //is pp=r1+tr, with t=(p-r1)*r then the vector v starting at p is
+  //pointing to the ridge line (r1,r2) if (pp-p)*v >0. Return the sign
+  //of b, for a ppal direction pointing to the ridge segment,
+  //appearing at least at two vertices of the facet.
+  // for color = BLUE_RIDGE, sign = 1 if BE, -1 if BH
+  // for color = RED_RIDGE, sign = -1 if RE, 1 if RH
   int b_sign_pointing_to_ridge(Vertex_handle v1, 
 			       Vertex_handle v2,
 			       Vertex_handle v3,
@@ -277,14 +281,14 @@ compute_ridges(Poly &P, Ridge_type r_type,
 	      if (f->is_visited()) break;
 	      f->set_visited(true);
 	      if (curhe->opposite() == curhe1) curhe = curhe2;
-	      else curhe = curhe1;
+	      else curhe = curhe1;//curhe stays at the ridge extremity
 	      cur_ridge_line->addfront(curhe);
 	      if ( !(curhe->is_border_edge()) ) f =
 						  curhe->opposite()->facet();
 	      else break;
 	    }
 	  //exit from the while if
-	  //1. border or
+	  //1. border or already visited (this is a ridge loop)
 	  //2. not same type, then do not set visisted cause a BE
 	  //	  follows a BH
 	}
@@ -314,7 +318,7 @@ compute_ridges(Poly &P, Ridge_type r_type,
 template < class Poly, class OutputIt >
 Ridge_type Ridge_approximation<Poly, OutputIt>::
 facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
-		 he2, Ridge_type r_type, Tag_order ord)// = Tag_3 )
+		 he2, Ridge_type r_type, Tag_order ord)
 {
   //polyhedral data
   //we have v1--h1-->v2--h2-->v3--h3-->v1
@@ -327,12 +331,12 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
   v1 = h3->vertex();
 
   //check for regular facet
-  //i.e. if there is a coherent orientation of the facet vertices
+  //i.e. if there is a coherent orientation of ppal dir at the facet vertices
   if ( v1->d1()*v2->d1() * v1->d1()*v3->d1() * v2->d1()*v3->d1() < 0 ) 
     return NONE;
    
   //determine potential crest color
-  //BC if |sum(k1)|>|sum(k2)| sum over facet vertices ki
+  //BC if |sum(k1)|>|sum(k2)| sum over facet vertices vi
   //RC if |sum(k1)|<|sum(k2)|
   Ridge_type crest_color = NONE;
   if (r_type == CREST) 
@@ -406,7 +410,7 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
       else return BH;
     }
   }
-
+ 
   if ( r_type == RED_RIDGE || crest_color == RC ) {
     FT coord1 = CGAL::abs(v_q1->b0()) / ( CGAL::abs(v_p1->b0()) +
 					  CGAL::abs(v_q1->b0()) ), 

@@ -29,9 +29,30 @@ Note : if the nb of collected points is less than the required min number of
 
 
 
- ./blind.exe -f data/ellipe0.003.off -d3 -m3 -a2 
+ ./blind.exe -f data/ellipe0.003.off -d3 -m3 -a3
  ./blind.exe -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
 
 visu with:
 
 ./visu.exe ../../examples/Jet_fitting_3/data/poly2x\^2+y\^2-0.062500-off ../../examples/Jet_fitting_3/data_poly2x\^2+y\^2-0.062500-off.4ogl.txt
+
+
+sur ellipsoid plus precise:
+./blind.exe -f data/ellipsoid_u_0.02 -d4 -m4 -a3 -t4
+./visu.exe ../../examples/Ridges_3/data/ellipsoid_u_0.02 ../../examples/Ridges_3/data_ellipsoid_u_0.02.4ogl.txt
+
+
+
+----------------------------Surface de mailleur2 de Steve
+-------------------------------------
+Ellipsoid
+
+ ./txt/umbilics_ridges_4.ex -f off/mailleur2/ellipsoid_u_0.05  -s -A0 -P -D1 -n -u1 -d4
+
+ ./txt/umbilics_ridges_4.ex -f off/mailleur2/ellipsoid_u_0.02  -s -A3 -P -D1 -n -d4 -u2 
+avec -u 1, 2, 3 le nombre de faux umbilics duminiue jusqu'a 0;
+avec -A0: ridges assez irregulier
+     -A3: plus reg, un ridge isole, reduit le nb de faux umbilics 
+
+./txt/umbilics_ridges_4.ex -f off/mailleur2/ellipsoid_u_0.01 -s -A5 -P -D1 -n -d4 
+ok, moins de A5 introduit bp de bruit

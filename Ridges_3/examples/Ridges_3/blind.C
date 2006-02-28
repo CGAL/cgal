@@ -35,9 +35,10 @@ typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
       
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
-// typedef CGAL::Ridge_approximation<PolyhedralSurf,
-//  std::vector<Ridge_line*>::iterator > Ridge_approximation;
-  
+typedef CGAL::Ridge_approximation < PolyhedralSurf,
+  back_insert_iterator< std::vector<Ridge_line*> > > Ridge_approximation;
+extern CGAL::Ridge_type  BLUE_RIDGE, RED_RIDGE, CREST, BE, BH, BC, RE, RH, RC;
+
 //Syntax requirred by Options
 static const char *const optv[] = {
   "?|?",
@@ -46,15 +47,18 @@ static const char *const optv[] = {
   "m:mdegree <int>",	//degree of the Monge rep
   "a:nrings <int>",	//# rings
   "p:npoints <int>",	//# points
+  "t:tagorder <int>",   //order of diff quant to compute ridge type :
+                        //  = 3 or 4
   "v|",//verbose?
   NULL
-};
- 
+}; 
+  
 // default fct parameter values and global variables
 unsigned int d_fitting = 3;
 unsigned int d_monge = 3;
 unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
 unsigned int nb_points_to_use = 0;//
+Ridge_approximation::Tag_order tag_order = Ridge_approximation::Tag_3;
 bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
@@ -146,7 +150,6 @@ void gather_fitting_points( Vertex* v,
   std::vector<Vertex*>::iterator itb = gathered.begin(),
     ite = gathered.end();
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
-  
 }
 
 
@@ -168,7 +171,8 @@ void compute_differential_quantities(PolyhedralSurf& P)
     gather_fitting_points( v, in_points);
 
     //exit if the nb of points is to small 
-    if ( in_points.size() < min_nb_points ) exit(0);
+    if ( in_points.size() < min_nb_points )
+      {std::cerr << "nb of points is to small" << std::endl; exit(0);}
 
     //For Ridges we need at least 3rd order info
     assert( d_monge >= 3);
@@ -216,7 +220,8 @@ int main(int argc, char *argv[])
   char *optarg;
   Options opts(*argv, optv);
   OptArgvIter iter(--argc, ++argv);
- 
+  int int_tag;
+  
   while ((optchar = opts(iter, (const char *&) optarg))){
     switch (optchar){
     case 'f': if_name = optarg; break;
@@ -224,7 +229,14 @@ int main(int argc, char *argv[])
     case 'm': d_monge = atoi(optarg); break;
     case 'a': nb_rings = atoi(optarg); break;
     case 'p': nb_points_to_use = atoi(optarg); break;
-    case 'v': verbose=true; break;
+    case 't': 
+      int_tag = atoi(optarg);
+      if ( int_tag == 3 ) tag_order = Ridge_approximation::Tag_3;
+      if ( int_tag == 4 ) tag_order = Ridge_approximation::Tag_4;
+      if ( int_tag != 3 && int_tag != 4 ) 
+	{cerr << "tag_order must be 3 or 4";exit(0);}
+      break;
+    case 'v': verbose = true; break;
     default:
       cerr << "Unknown command line option " << optarg;
       exit(0);
@@ -267,7 +279,8 @@ int main(int argc, char *argv[])
 		   << " facets. " << std::endl;
   
   //exit if not enough points in the model
-  if (min_nb_points > P.size_of_vertices())    exit(0);
+  if (min_nb_points > P.size_of_vertices())  
+    {std::cerr << "not enough points in the model" << std::endl;   exit(0);}
   //initialize Polyhedral data : length of edges, normal of facets and
   //monge data
   P.compute_edges_length();
@@ -278,8 +291,8 @@ int main(int argc, char *argv[])
   //RIDGES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ///////////////////////////////////////////
   //recall:
-  typedef CGAL::Ridge_approximation < PolyhedralSurf,
-   back_insert_iterator< std::vector<Ridge_line*> > > Ridge_approximation;
+//   typedef CGAL::Ridge_approximation < PolyhedralSurf,
+//    back_insert_iterator< std::vector<Ridge_line*> > > Ridge_approximation;
 
   Ridge_approximation ridge_approximation;
   std::vector<Ridge_line*> ridge_lines;
@@ -290,7 +303,6 @@ int main(int argc, char *argv[])
 //   it1 = ridge_approximation.compute_all_ridges(P, 
 // 					      std::back_inserter(ridge_lines),
 // 					      Ridge_approximation::Tag_3);  
-
   //2, plante
 //   std::vector<Ridge_line*>::iterator iterb = ridge_lines.begin(), it2;
 //    it2 = ridge_approximation.compute_all_ridges(P,
@@ -300,9 +312,12 @@ int main(int argc, char *argv[])
 
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
-  ridge_approximation.compute_all_ridges(P,
-					 ii,
-					 Ridge_approximation::Tag_3);  
+  //   ridge_approximation.compute_all_ridges(P, ii, tag_order);  
+
+  //Find BLUE_RIDGE, RED_RIDGE or CREST ridges 
+    ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
+  //ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
+  //  ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
  
 
      
