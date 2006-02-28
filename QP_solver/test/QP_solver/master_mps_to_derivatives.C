@@ -22,7 +22,6 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
-#include <libgen.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
