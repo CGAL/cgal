@@ -21,6 +21,8 @@
 #ifndef CGAL_EIGEN_H
 #define CGAL_EIGEN_H
 
+#include <cmath>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -110,10 +112,10 @@ void eigen_symmetric(const FT *mat,
           if(delta == 0.0)
             x = (FT) - CGAL_PI / 4; 
           else 
-            x = (FT)(- atan( (a_lm+a_lm) / delta ) / 2.0);
+            x = (FT)(- std::atan( (a_lm+a_lm) / delta ) / 2.0);
 
-          FT sinx    = sin(x);
-          FT cosx    = cos(x);
+          FT sinx    = std::sin(x);
+          FT cosx    = std::cos(x);
           FT sinx_2  = sinx * sinx;
           FT cosx_2  = cosx * cosx;
           FT sincos  = sinx * cosx;
@@ -164,7 +166,7 @@ void eigen_symmetric(const FT *mat,
           a[mm] =  a_ll * sinx_2 + a_mm * cosx_2 + x;
           a[lm] =  0.0;
           
-          thr = fabs(thr - a_lm_2);
+          thr = std::fabs(thr - a_lm_2);
         }
       }
     }         
