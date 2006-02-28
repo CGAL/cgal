@@ -1,4 +1,4 @@
-Makefile
+GNUmakefile
 demo_elias.C
 bench
 Benchmarks
