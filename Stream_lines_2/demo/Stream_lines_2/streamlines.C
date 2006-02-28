@@ -91,7 +91,7 @@ class Placement : public QObject
     Stl_iterator begin_iterator;
     Stl_iterator end_iterator;
     Placement() : 
-        completed(false), density_(3.84), ratio_(1.6), integrating_(1.0), sampling_(1), number_of_lines_(0),
+        completed(false), density_(12.0), ratio_(1.6), integrating_(1.0), sampling_(1), number_of_lines_(0),
     Stream_lines(NULL), runge_kutta_integrator(NULL), regular_grid(NULL), begin_iterator(){}
     Stl_iterator begin() const
     {
@@ -113,15 +113,18 @@ class Placement : public QObject
     void clear()
     {
       if (Stream_lines != NULL)
-      {
-        delete Stream_lines;
-        delete runge_kutta_integrator;
-        delete regular_grid;
-        d_stl = true;
-        d_pq = false;
-        d_tr = false;
-        d_bc = false;
-      }
+	{
+	  delete Stream_lines;
+	  Stream_lines = NULL;
+	  delete runge_kutta_integrator;
+	  runge_kutta_integrator = NULL;
+	  delete regular_grid;
+	  regular_grid = NULL;
+	  d_stl = true;
+	  d_pq = false;
+	  d_tr = false;
+	  d_bc = false;
+	}
     }
     void load( const QString & s )
     {
