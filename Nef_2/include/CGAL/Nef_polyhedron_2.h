@@ -599,10 +599,17 @@ public:
   /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
   { Const_decorator D(pm());
     Face_const_iterator f = D.faces_begin();
-    return (D.number_of_vertices()==4 &&
-            D.number_of_edges()==4 &&
-            D.number_of_faces()==2 &&
-            D.mark(++f) == false);
+    if(check_tag(typename Is_extended_kernel<Extended_kernel>::
+		 value_type()))
+      return (D.number_of_vertices()==4 &&
+	      D.number_of_edges()==4 &&
+	      D.number_of_faces()==2 &&
+	      D.mark(++f) == false);
+    else
+      return (D.number_of_vertices()==0 &&
+	      D.number_of_edges()==0 &&
+	      D.number_of_faces()==1 &&
+		D.mark(f) == false);    
   }
 
   bool is_plane() const
@@ -875,8 +882,6 @@ public:
     return  ( CGAL::assign(v,h) || CGAL::assign(e,h) );
   }
 
-
-
   Object_handle locate(const Point& p, Location_mode m = DEFAULT) const
   /*{\Mop  returns a generic handle |h| to an object (face, halfedge, vertex) 
   of the underlying plane map that contains the point |p| in its relative 
@@ -884,7 +889,6 @@ public:
   |\Mvar.contains(h)| is true. The location mode flag |m| allows one to choose
   between different point location strategies.}*/
   { 
-    if(!check_tag(typename Is_extended_kernel<Extended_kernel>::value_type()))
     if (m == DEFAULT || m == LMWT) {
       init_locator();
       Extended_point ep = EK.construct_point(p);
@@ -892,7 +896,7 @@ public:
     } else if (m == NAIVE) {
       Slocator PL(pm(),EK);
       Extended_segment s(EK.construct_point(p),
-                         PL.point(PL.vertices_begin()));
+			 PL.point(PL.vertices_begin()));
       return PL.locate(s); 
     }
     CGAL_assertion_msg(0,"location mode not implemented.");
