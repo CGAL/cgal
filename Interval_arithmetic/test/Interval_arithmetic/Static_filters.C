@@ -257,9 +257,9 @@ int main(int argc, char **argv)
 {
   // CGAL::force_ieee_double_precision();
 
-  int loops = (argc < 2) ? 2000 : atoi(argv[1]);
+  int loops = (argc < 2) ? 2000 : std::atoi(argv[1]);
   int seed  = (argc < 3) ? CGAL::default_random.get_int(0, 1<<30)
-                         : atoi(argv[2]);
+                         : std::atoi(argv[2]);
 
   std::cout << "Initializing random generator with seed = " << seed
             << std::endl

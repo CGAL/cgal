@@ -44,6 +44,8 @@ public:
   {
       CGAL_PROFILER("In_sphere_3 calls");
 
+      using std::fabs;
+
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
 
       if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
