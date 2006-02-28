@@ -509,17 +509,22 @@ public:
           CGAL_assertion (n_vtan_ps == 2);
 
           // Identify the first point we encounter when going from cv's source
-          // to its target, and the second point we encounter.
+          // to its target, and the second point we encounter. Note that the
+          // two endpoints must both be below the line connecting the two
+          // tangnecy points (or both lies above it).
           int                   ind_first = 0;
           int                   ind_second = 1;
-          Comparison_result     start_pos = CGAL::compare (cv.source().y(),
-                                                           vtan_ps[0].y());
-          Comparison_result     order_vpts =  CGAL::compare (vtan_ps[0].x(),
-                                                             vtan_ps[1].x());
+          Alg_kernel_           ker;
+          typename Alg_kernel_::Line_2  line =
+            ker.construct_line_2_object() (vtan_ps[0], vtan_ps[1]);
+          const Comparison_result       start_pos =
+            ker.compare_y_at_x_2_object() (cv.source(), line);
+          const Comparison_result       order_vpts =
+            ker.compare_x_2_object() (vtan_ps[0], vtan_ps[1]);
 
-          CGAL_assertion (start_pos != EQUAL && 
-                          CGAL::compare (cv.target().y(),
-                                         vtan_ps[0].y()) == start_pos);
+          CGAL_assertion (start_pos != EQUAL &&
+                          ker.compare_y_at_x_2_object() (cv.target(),
+                                                         line) == start_pos);
           CGAL_assertion (order_vpts != EQUAL);
 
           if ((cv.orientation() == COUNTERCLOCKWISE &&
