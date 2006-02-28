@@ -1254,7 +1254,7 @@ sub_module_should_be_built() {
 make_module() {
   cmdlog "rm -f cgal_include_only.tex"
   local name=${1%.tex}
-  local submodules=`find . -name "${name}__*.only.tex" -maxdepth 1`;
+  local submodules=`find . -maxdepth 1 -name "${name}__*.only.tex"`;
 
   # only store aux-files, if we are interested in it, later
   if [ "$submodules" == "" ]; then
@@ -1354,7 +1354,7 @@ make_manual_prime() {
         MakePackage=1
         WrapperName=$1.tex
         create_wrapper $@ > ${WrapperName}
-        cmdlog -noexec "cgal_manual -wrapper ${WrapperName}"
+        cmdlog -noexec "cgal_manual -wrapper $1"
     else
         echo "" 1>&2
         echo "${ErrorColor}ERROR${ResetColor}: '$1' is neither a CGAL Package nor Module." 1>&2
