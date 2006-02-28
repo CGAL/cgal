@@ -333,8 +333,10 @@ namespace CircularFunctors {
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_2 &A, OutputIterator res) const
-    { *res++ = make_object(A);
-      return res;
+    { 
+//       *res++ = make_object(A);
+//       return res;
+      return make_x_monotone<CK>(A,res);
     }
 
   };
