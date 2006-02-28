@@ -1,7 +1,7 @@
 This is what you need to do to create a release:
 ------------------------------------------------
 
-CVS Release Branch:
+SVN Release Branch:
 -------------------
 
 Before releasing proper, you need to create a branch, and run the internal
@@ -12,9 +12,10 @@ trunc.  So it seems best to branch as late as possible, in order to avoid the
 
 For branching, you need to :
   - have write access to all packages
-  - cvs co All
-  - cvs tag CGAL_M_m_branch_tag
-  - cvs tag -b CGAL_M_m_branch
+  - export svncgal=svn+ssh://scm.gforge.inria.fr/svn/cgal
+  - svn co $svncgal/trunk
+  - svn cp $svncgal/trunk $svncgal/tags/CGAL_M_m_branch_tag
+  - svn cp $svncgal/trunk $svncgal/branches/CGAL_M_m_branch
 
 Releasing:
 ----------
@@ -38,13 +39,13 @@ Let <release_dir> be the directory in which you plan to build the release.
 
 For the manuals:
 
-      1.  Check out the package Manual from the CVS server and follow the
+      1.  Check out the package Manual from the SVN server and follow the
           instructions in the INSTALL file
       2.  cd Manual
       3.  install_manual_files ?.?-I-??  (number of latest internal release)
       4.  follow the directions in Manual/README to create the
           manuals (but don't install them yet)
-      5.  in the CGAL-M.m directory, create doc_ps, doc_pdf and 
+      5.  in the CGAL-M.m directory, create doc_ps, doc_pdf and
           doc_html/installation directories to hold the installation
           doc. Copy the appropriate files from directory
           Manual/CGAL-M.m_doc_tex/installation to these directories.
@@ -57,7 +58,7 @@ For the manuals:
 Package the code:
       1.  In directory <release_dir> do
              find CGAL-M.m -exec touch 01221530 {} \;
-           in order to touch all files (Here the date/time  Jan 22, 15:30 was 
+           in order to touch all files (Here the date/time  Jan 22, 15:30 was
            used as an example)
       2.  Make CGAL-M.m.tar.gz with tar and gzip and CGAL-M.m.zip with zip.
            gtar zcf CGAL-M.m.gtar.gz CGAL-M.m
@@ -69,16 +70,16 @@ Package the code:
 
 For the web pages:
       1.  edit the following web pages (at least)
-             Web_pages/news.html            
-             Web_pages/in_progress.html            
-             Web_pages/download/download.html            
-             Web_pages/download/license.html            
-             Web_pages/home.html            
-             Web_pages/releases.html            
+             Web_pages/news.html
+             Web_pages/in_progress.html
+             Web_pages/download/download.html
+             Web_pages/download/license.html
+             Web_pages/home.html
+             Web_pages/releases.html
              Web_pages/platforms.html
            change release number in:
            (edit and use Manual/script/rename_version)
-             Manual/web_pages/doc_html/frameset/panel*.html 
+             Manual/web_pages/doc_html/frameset/panel*.html
              Manual/web_pages/doc_html/html_tar.html
              Manual/web_pages/doc_ps/index.html
              Manual/web_pages/doc_pdf/index.html
@@ -88,17 +89,17 @@ For the web pages:
           of the library for new platforms. [obsolete since CGAL 3.0, Lutz]
 
 Install everything:
-      1.  install the manual (and include files) in 
+      1.  install the manual (and include files) in
           /www/pub/www.cgal.org/Manual using "make install"
       2.  copy the .tar.gz and .zip files for the library and
           the documentation to /ftp/pub/outgoing/CGAL/
             (can be done with "make pack" for the documentation)
       3.  zip the individual .ps files for the documentation using
           make dest_zip_ps
-      4.  install the new web pages, i.e., make a cvs commit in Web_pages/,
-          and a 'cvs up' in /www/pub/www.cgal.org/
+      4.  install the new web pages, i.e., make a svn commit in Web_pages/,
+          and a 'svn up' in /www/pub/www.cgal.org/
       5.  cp cgi-bin/cgal_download.pl /www/pub/cgi-bin/www.cgal.org/
-      6.  tag CVS : cvs tag CGAL_M_m_release
+      6.  tag SVN : svn tag CGAL_M_m_release
 
 Then finally ...
       7.  announce the release (see announcement directory)

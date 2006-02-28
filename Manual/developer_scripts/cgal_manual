@@ -2,7 +2,7 @@
 
 
 # ============================================================================
-# Copyright (c) 2004  Max-Planck-Institute Saarbruecken (Germany), 
+# Copyright (c) 2004  Max-Planck-Institute Saarbruecken (Germany),
 # All rights reserved.
 #
 # This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -18,89 +18,89 @@
 #
 # $URL$
 # $Id$
-# 
+#
 #
 # Author(s)     : Lutz Kettner
 #
 # ============================================================================
-# 
+#
 # Specification: cgal_manual
 # --------------------------
-# 
+#
 # It is called in a ./doc_tex/ directory of a CGAL Package or internal release.
-# 
+#
 # This script is the driver program for creating CGAL manuals. It makes
 # use of LaTeX, PDFLaTeX, BiBTeX, makeindex, latex_to_html, and other
-# tools to create the PostScript, PDF, and HTML manuals for individual 
-# CVS Packages as well as custom Modules. It encodes the conventions of
+# tools to create the PostScript, PDF, and HTML manuals for individual
+# SVN Packages as well as custom Modules. It encodes the conventions of
 # how CGAL manuals are organized and how the general purpose tools need
 # to be called to create the manuals. We specify these conventions here
 # briefly. See the developers manual for more details.
 # Both documentations need to be kept synchronized!
 #
-# - CVS Package: 
-# 
-#     Development unit in CGAL hosted on our CVS server. A package has a 
-#     fixed directory directory structure. Let's assume the package is 
+# - SVN Package:
+#
+#     Development unit in CGAL hosted on our SVN server. A package has a
+#     fixed directory directory structure. Let's assume the package is
 #     called 'Geom', then the documentation must reside in a directory
-#     ./doc_tex/ withing the package Geom. Here, individual subdirectories, 
-#     typically ./Geom/ and ./Geom_ref/, contain the user and the reference 
-#     manual respectively. The individual subdirectories contain a main.tex 
-#     that contains the manual chapter, possibly several and possibly using 
+#     ./doc_tex/ withing the package Geom. Here, individual subdirectories,
+#     typically ./Geom/ and ./Geom_ref/, contain the user and the reference
+#     manual respectively. The individual subdirectories contain a main.tex
+#     that contains the manual chapter, possibly several and possibly using
 #     several other input files, but all included with relative paths
 #     from the ./doc_tex/ directory, where the tools and this script will
 #     run.
 #        In general, all individual subdirectories that contain a main.tex
 #     are processed. ./doc_tex/*/main.tex and ./doc_tex/*_ref/main.tex are
-#     assumed to form corresponding user and reference manual entries in the 
+#     assumed to form corresponding user and reference manual entries in the
 #     table of contents.
 #        The main.tex files are not stand-alone LaTeX files. They are
-#     chapters, i.e., do not contain \begin{document} etc. This script 
+#     chapters, i.e., do not contain \begin{document} etc. This script
 #     provides the necessary LaTeX wrapper file.
 #
 # - Modules:
-# 
+#
 #     Presentation unit of modularity towards the user, assembled from
-#     CVS packages. For a module of name 'Algo' it is assumed that in the
+#     SVN packages. For a module of name 'Algo' it is assumed that in the
 #     ./doc_tex/ directory exists the necessary LaTeX driver file Algo.tex .
-#     This driver is a complete LaTeX file incl. \begin{document} and 
-#     such. It can in itself then include the various chapters from 
+#     This driver is a complete LaTeX file incl. \begin{document} and
+#     such. It can in itself then include the various chapters from
 #     packages.
-# 
+#
 # This script can create individual package documentation given the name of
-# the individual subdirectories in ./doc_tex/. It creates module 
+# the individual subdirectories in ./doc_tex/. It creates module
 # documentations given the name of the module LaTeX driver file.
-# 
+#
 # The default is to create package manuals for all ./*/main.tex files,
-# where ./*/main.tex and corresponding ./*_ref/main.tex are kept in 
+# where ./*/main.tex and corresponding ./*_ref/main.tex are kept in
 # one manual., and for all *_[Mm]anual.tex files for modules.
-# 
+#
 # This script can be used in three different environments of CGAL sources.
 # It decides automatically in which situation it is and adapts the necessary
 # search paths for style files and bibliographies.
-# 
+#
 # - 1. CGAL Internal Release
-# 
-#     The style and bibliography files are in ./Manual/. Nothing needs to 
-#     be done, since style files and bibliography files are prefixed 
+#
+#     The style and bibliography files are in ./Manual/. Nothing needs to
+#     be done, since style files and bibliography files are prefixed
 #     with the relative ./Manual/ path.
-# 
+#
 # - 2. Individual CGAL Packages + CGAL Package 'Manual'
-# 
+#
 #     The style and bibliography files are in ../../Manual/doc_tex/Manual/.
 #     The search paths get the ../../Manual/doc_tex/ path prepended.
-# 
+#
 # - 3. All other environments
-# 
+#
 #     The style and bibliography files need to be installed properly
-#     from the CVS package Manual, such that the tools can find them, for
-#     example through the search paths defined in the environment variables 
+#     from the SVN package Manual, such that the tools can find them, for
+#     example through the search paths defined in the environment variables
 #     TEXINPUTS, BIBINPUTS, and LATEX_CONV_INPUTS. Recall that the style
 #     and bibliography files are prefixed with './Manual/', so the
 #     Manual subdirectory needs to be found in the search paths.
 #
-# This script properly adds entries in TEXINPUTS, BIBINPUTS, and 
-# LATEX_CONV_INPUTS so that bib and style files are found. It also 
+# This script properly adds entries in TEXINPUTS, BIBINPUTS, and
+# LATEX_CONV_INPUTS so that bib and style files are found. It also
 # adds ../examples:../demo to access the example source codes.
 #
 #
@@ -113,8 +113,8 @@
 # the manuals are kept. Older test suites will have their manuals deleted
 # to save space. In total only $TestSuiteHistory many test suites are kept.
 #    The history of test suites is managed in a shift-register like fashion
-# using files in $TestSuiteResultPath of defined names History.<i> that 
-# contain the name of the i-th test suite subdirectory. The 1st is the 
+# using files in $TestSuiteResultPath of defined names History.<i> that
+# contain the name of the i-th test suite subdirectory. The 1st is the
 # most recent test suite and corresponds to the 'last' directory.
 #    If the test suite is repeated for the same internal release number,
 # the new results will overwrite the old results.
@@ -171,14 +171,14 @@ TestSuiteTableHeightMax=12
 # Counter counting the lines written the the testsuite result tables
 TestSuiteTableHeight=0
 
-# The corresponding address in the file space for copying the 
+# The corresponding address in the file space for copying the
 # test-suite result pages. Needs to be in the file system, because
-# not only are pages copied, but the script manages also a clever 
+# not only are pages copied, but the script manages also a clever
 # history of up to $TestSuiteHistory many test-suite results and
 # deletes older ones.
 TestSuiteResultPath="/www/pub/www.cgal.org/Members/Manual_test"
 
-# Number of older test-suite results kept. Test-suite results beyond this 
+# Number of older test-suite results kept. Test-suite results beyond this
 # number are deleted.
 TestSuiteHistory=8
 
@@ -186,7 +186,7 @@ TestSuiteHistory=8
 # test suites will have their manuals removed to save space.
 TestSuiteFullHistory=3
 
-# Email address to send the end-of-testsuite announcement to. If this 
+# Email address to send the end-of-testsuite announcement to. If this
 # variable is empty, no email will be send.
 TestSuiteResultEmail="cgal-develop-l@postino.mpi-sb.mpg.de"
 
@@ -300,11 +300,11 @@ usage() {
     cat  1>&2 <<EOF
 ${BoldColor}Usage: ${ProgName} [<options>] [<module-files...>] [<package-dirs...>]${ResetColor}
     Creates CGAL manuals from CGAL packages or modules. It should be called in
-    the ./doc_tex/ directory of a CGAL internal release or CVS checkout.
+    the ./doc_tex/ directory of a CGAL internal release or SVN checkout.
        ${BoldColor}CGAL packages${ResetColor} are given as a subdirectory that contains a main.tex file;
-    a wrapper file that includes main.tex is automatically generated and 
+    a wrapper file that includes main.tex is automatically generated and
     deleted at the end. Use -wrapper to create a wrapper file permanently.
-       ${BoldColor}CGAL modules${ResetColor} are given as an explict LaTeX file, e.g., generated with 
+       ${BoldColor}CGAL modules${ResetColor} are given as an explict LaTeX file, e.g., generated with
     -wrappe.r
        The results are the specified manuals in the corresponding ../doc_ps,
     ../doc_pdf, and ../doc_html directories. A logfile .cgallog is created
@@ -318,7 +318,7 @@ ${BoldColor}Options:${ResetColor}
     ${BoldColor}-html${ResetColor}            HTML manuals (incl. a LaTeX run).
     ${BoldColor}-wrapper${ResetColor}         creates the LaTeX wrapper files only.
     ${BoldColor}-testsuite${ResetColor}       runs testsuite, installs results and sends email. Use
-                     only after reading the config section of this script. 
+                     only after reading the config section of this script.
                      Implies -sub-modules=all
     ${BoldColor}-h${ResetColor}               help (this text).
     ${BoldColor}-V${ResetColor}               version.
@@ -327,18 +327,18 @@ ${BoldColor}Options:${ResetColor}
     ${BoldColor}-n${ResetColor}               no logfile: delete logfiles always.
     ${BoldColor}-s${ResetColor}               create a summary logfile .sum .
     ${BoldColor}-quiet${ResetColor}           no progress messages.
-    ${BoldColor}-realquiet${ResetColor}       suppresses also error messages.    
-    ${BoldColor}-cmdlog${ResetColor}          create a logfile "cmd_log" containing all commands 
+    ${BoldColor}-realquiet${ResetColor}       suppresses also error messages.
+    ${BoldColor}-cmdlog${ResetColor}          create a logfile "cmd_log" containing all commands
                      that were issued during execution
-                     
+
     ${BoldColor}-sub-modules=mod1,mod2...${ResetColor}
                      build specified sub-modules, given as a comma-
-                     separated list. A special one is ${BoldColor}all${ResetColor}, which matches 
+                     separated list. A special one is ${BoldColor}all${ResetColor}, which matches
                      all sub-modules present in the current directory.
-                     
-                     
-                     For example, if there is a module "mod" with its 
-                     sub-module file "mod__submodule.only.tex", only the 
+
+
+                     For example, if there is a module "mod" with its
+                     sub-module file "mod__submodule.only.tex", only the
                      "submodule" part has to be specified.
 EOF
 }
@@ -350,7 +350,7 @@ EOF
 #     - if <string> is '-n' then the line break is suppressed.
 #     - if $Quiet is set the output to stdout gets suppressed
 #     - We keep an (accumulated) copy of all output done with -n.
-#       We use that in the error() function if the -q (quiet) switch 
+#       We use that in the error() function if the -q (quiet) switch
 #       was used to actually print what was not printed so far.
 #---------------------------------------------------------------------#
 
@@ -396,7 +396,7 @@ summary() {
 #     - writes '<strings> ...' in a single line to stdout and the $LogFile
 #     - if <string> is '-n' then the line break is suppressed
 #     - if $RealQuiet is set the output to stdout gets suppressed
-#     - works together with summary to not loose stuff from NBuffer 
+#     - works together with summary to not loose stuff from NBuffer
 #       where output used the -n flag.
 #---------------------------------------------------------------------#
 
@@ -589,11 +589,11 @@ EOF
 cleanup_latex() {
     rm -f $1.toc $1.bmt $1.mtc* $1.idx $1.ind $1.dvi $1.inc $1.out $1.ref
     rm -f $1.ind.unfixed
-    if [ $MakeHTML -eq 0 ]; then 
+    if [ $MakeHTML -eq 0 ]; then
         rm -f $1.aux $1.bbl
     fi
     # in case the log was not asked for, delete it
-    if [[ $NoLog -eq 1 || ( $KeepLog -eq 0 && 
+    if [[ $NoLog -eq 1 || ( $KeepLog -eq 0 &&
                    ( $RetCode -eq 0 ||  $RetCode -eq 5 )) ]] ; then
         rm -f $1.log $1.blg $1.ilg
     fi
@@ -714,9 +714,9 @@ report_latex() {
         echo "warnings about undefined references or missing header files."
     fi
     egrep -i '((error)|(^[!]))' $1.log | grep -v "operatorerror"
-    grep -i warn $1.log 
+    grep -i warn $1.log
     if [ $MakeTestSuiteResult -eq 1 ]; then mv $1.log testsuite/$1.log.txt ; fi
-    if [ -r $1.blg ]; then 
+    if [ -r $1.blg ]; then
         echo ""
         echo "Summary BibTeX"
         echo "--------------"
@@ -724,16 +724,16 @@ report_latex() {
         grep -i error $1.blg
         grep 'I found no \\citation commands' $1.blg
         grep -i warn $1.blg | grep -v 'warning[$]'
-        if [ $MakeTestSuiteResult -eq 1 ]; then 
+        if [ $MakeTestSuiteResult -eq 1 ]; then
             mv $1.blg testsuite/$1.blg.txt
         fi
     fi
-    if [ -r $1.ilg ]; then 
+    if [ -r $1.ilg ]; then
         echo ""
         echo "Summary makeindex"
         echo "-----------------"
         echo "For the full logfile see $1.ilg"
-        egrep -i '((error)|(reject))' $1.ilg 
+        egrep -i '((error)|(reject))' $1.ilg
         grep -i warn $1.ilg
         if [ $MakeTestSuiteResult -eq 1 ]; then
             mv $1.ilg testsuite/$1.ilg.txt
@@ -745,7 +745,7 @@ report_latex() {
 
 
 #---------------------------------------------------------------------#
-# run_latex <wrapper-rootname> 
+# run_latex <wrapper-rootname>
 #     - Runs LaTeX, either brief for HTML, or full for stable PS
 #     - Includes BiBTeX and makeindex if needed.
 #     - Returns in $RetCode: 1 = error, 2 = warning, 5 = expected warning
@@ -760,13 +760,13 @@ run_latex() {
     IndexExit=4
     RetCode=0 # total return code
     # first run
-    
+
     if ! cmdlog "$Latex --interaction batchmode $1" ; then LatexExit=1 ; fi
     sort_ref_pages $1
     # see if we need BiBTeX and run it
     if grep '[\\]bibdata'  $1.aux > /dev/null ; then
         if cmdlog "$Bibtex $1" ; then BibtexExit=0 ; else BibtexExit=1 ; fi
-        # Check for documents that have a bibliography entry, 
+        # Check for documents that have a bibliography entry,
         # but no citations. Don't create an empty bibliograpy then.
         if check_bibtex_empty $1 ; then
             cmdlog "rm -f $1.bbl"
@@ -782,7 +782,7 @@ run_latex() {
         # Make sure that there is at least one rerun if makeindex is requested
         if [ -r $1.idx ]; then
             IndexExit=1
-            if cmdlog "${MakeIndex} $1.idx"; then 
+            if cmdlog "${MakeIndex} $1.idx"; then
                 if cmdlog "${IndexFix} $1.ind"; then IndexExit=0; fi
             fi
             if ! cmdlog "$Latex --interaction batchmode $1"; then LatexExit=1 ; fi
@@ -791,12 +791,12 @@ run_latex() {
         # Run LaTeX until their is no rerun necessary anymore + one more
         LastRerun=1
         while [ $LastRerun -eq 1 ]; do
-            if grep "Rerun to get cross-references right" $1.log > /dev/null; 
+            if grep "Rerun to get cross-references right" $1.log > /dev/null;
                 then LastRerun=1; else LastRerun=0; fi
             # Run makeindex as well if requested
             if [ -r $1.idx ]; then
                 IndexExit=1
-                if cmdlog "${MakeIndex} $1.idx"; then 
+                if cmdlog "${MakeIndex} $1.idx"; then
                     if cmdlog "${IndexFix} $1.ind"; then IndexExit=0; fi
                 fi
             fi
@@ -809,7 +809,7 @@ run_latex() {
         if [ -r $1.ps ]; then
             if ! cmdlog "${Gzip} $1.ps" ; then RetCode=1; fi
         fi
-        if [ $MakeTestSuiteResult -eq 1 ]; then 
+        if [ $MakeTestSuiteResult -eq 1 ]; then
             mv $1.ps.gz testsuite
         else
             if [ ! -d ../doc_ps ]; then mkdir ../doc_ps; fi
@@ -822,7 +822,7 @@ run_latex() {
         fi
     fi
     # check for include files that don't exist
-    if [ -r $1.inc ]; then 
+    if [ -r $1.inc ]; then
         for f in `cat $1.inc | sort | uniq` ; do
           if [ ! -r ../include/$f ]; then
             echo "WARNING: Include file '$f' does not exist!" >> $1.log
@@ -839,7 +839,7 @@ run_latex() {
     if [ $BibtexExit -eq 0 ]; then
         if check_bibtex_warn $1 ; then BibtexExit=2; fi
     fi
-    if [ $MakeTestSuiteResult -eq 1 ]; then 
+    if [ $MakeTestSuiteResult -eq 1 ]; then
         testsuite_entry $LatexExit  $1.log.txt >  testsuite/index_row
         testsuite_entry $BibtexExit $1.blg.txt >> testsuite/index_row
         testsuite_entry $IndexExit  $1.ilg.txt >> testsuite/index_row
@@ -858,16 +858,16 @@ run_latex() {
           RetCode=2
       fi
     fi
-    # Special handling if LaTeX is only needed as preparation for the 
+    # Special handling if LaTeX is only needed as preparation for the
     # HTML manual, since we see 'undefined...' messages that we can ignore.
     if [[ ${MakePS} -eq 0 && $LatexExit -eq 2 ]]; then
         LatexExit=5
         if [ $RetCode -eq 2 ] ; then
             RetCode=5
-        fi 
+        fi
     fi
     report_latex $1
-    if [ ${MakePDF} -eq 0 ] ; then 
+    if [ ${MakePDF} -eq 0 ] ; then
         cleanup_latex $1
     else
         rm -f $1.aux $1.toc $1.bmt $1.mtc*
@@ -891,9 +891,9 @@ report_pdflatex() {
         echo "warnings about undefined references."
     fi
     egrep -i '((error)|(^[!]))' $1.log | grep -v "operatorerror"
-    grep -i warn $1.log 
+    grep -i warn $1.log
     if [ $MakeTestSuiteResult -eq 1 ]; then mv $1.log testsuite/$1.pdflg.txt ; fi
-    if [[ ${MakePS} -eq 0 && -r $1.blg ]]; then 
+    if [[ ${MakePS} -eq 0 && -r $1.blg ]]; then
         echo ""
         echo "Summary BibTeX"
         echo "--------------"
@@ -901,24 +901,24 @@ report_pdflatex() {
         grep -i error $1.blg
         grep 'I found no \\citation commands' $1.blg
         grep -i warn $1.blg | grep -v 'warning[$]'
-        if [ $MakeTestSuiteResult -eq 1 ]; then 
+        if [ $MakeTestSuiteResult -eq 1 ]; then
             mv $1.blg testsuite/$1.blg.txt
         fi
     fi
-    if [ -r $1.ilg ]; then 
+    if [ -r $1.ilg ]; then
         echo ""
         echo "Summary makeindex"
         echo "-----------------"
-        if [ ${MakePS} -eq 0 ]; then 
+        if [ ${MakePS} -eq 0 ]; then
             echo "For the full logfile see $1.ilg"
-            egrep -i '((error)|(reject))' $1.ilg 
+            egrep -i '((error)|(reject))' $1.ilg
             grep -i warn $1.ilg
             if [ $MakeTestSuiteResult -eq 1 ]; then
                 mv $1.ilg testsuite/$1.ilg.txt
             fi
         else
             echo "For the full logfile see $1.ilg from the regular LaTeX run"
-            egrep -i '((error)|(reject))' $1.ilg 
+            egrep -i '((error)|(reject))' $1.ilg
             grep -i warn $1.ilg
         fi
     fi
@@ -945,14 +945,14 @@ run_pdflatex() {
     IndexExit=4
     RetCode=0 # total return code
     # first run
-    
+
     if ! cmdlog "$PdfLatex --interaction batchmode $1"; then LatexExit=1 ; fi
     sort_ref_pages $1
     # see if we need BiBTeX and run it
     if [ ${MakePS} -eq 0 ] ; then
         if grep '[\\]bibdata'  $1.aux > /dev/null ; then
             if cmdlog "$Bibtex $1" ; then BibtexExit=0 ; else BibtexExit=1 ; fi
-            # Check for documents that have a bibliography entry, 
+            # Check for documents that have a bibliography entry,
             # but no citations. Don't create an empty bibliography then.
             if check_bibtex_empty $1 ; then
                 rm -f $1.bbl
@@ -968,7 +968,7 @@ run_pdflatex() {
     # Make sure that there is at least one rerun if makeindex is requested
     if [ -r $1.idx ]; then
         IndexExit=1
-        if cmdlog "${MakeIndex} $1.idx" ; then 
+        if cmdlog "${MakeIndex} $1.idx" ; then
             if cmdlog "${IndexFix} $1.ind" ; then IndexExit=0; fi
         fi
         cmdlog "$PdfLatex --interaction batchmode $1"
@@ -978,12 +978,12 @@ run_pdflatex() {
     # Run LaTeX until their is no rerun necessary anymore + one more
     LastRerun=1
     while [ $LastRerun -eq 1 ]; do
-        if grep "Rerun to get cross-references right" $1.log > /dev/null; 
+        if grep "Rerun to get cross-references right" $1.log > /dev/null;
             then LastRerun=1; else LastRerun=0; fi
         # Run makeindex as well if requested
         if [ -r $1.idx ]; then
             IndexExit=1
-            if cmdlog "${MakeIndex} $1.idx" ; then 
+            if cmdlog "${MakeIndex} $1.idx" ; then
                 if cmdlog "${IndexFix} $1.ind" ; then IndexExit=0; fi
             fi
         fi
@@ -991,7 +991,7 @@ run_pdflatex() {
         if [ $? -ne 0 ]; then LatexExit=1 ; fi
         sort_ref_pages $1
     done
-    if [ $MakeTestSuiteResult -eq 1 ]; then 
+    if [ $MakeTestSuiteResult -eq 1 ]; then
         mv $1.pdf testsuite
     else
         if [ ! -d ../doc_pdf ]; then mkdir ../doc_pdf; fi
@@ -1011,7 +1011,7 @@ run_pdflatex() {
     if [ $IndexExit  -eq 0 ]; then
         if check_index_warn  $1 ; then IndexExit=2;  fi
     fi
-    if [ $MakeTestSuiteResult -eq 1 ]; then 
+    if [ $MakeTestSuiteResult -eq 1 ]; then
         # Report bibtex and index errors here only if regular LaTeX was not run
         if [ ${MakePS} -eq 0 ] ; then
             # one empty entry for LaTeX run
@@ -1022,7 +1022,7 @@ run_pdflatex() {
         testsuite_entry $LatexExit  $1.pdflg.txt >> testsuite/index_row
     fi
     if [ ${MakePS} -eq 1 ] ; then
-        # do error and warn reporting restricted to PdfLaTeX    
+        # do error and warn reporting restricted to PdfLaTeX
         if [ $RetCode -eq 0 ] ; then
           if [[ $LatexExit -eq 1 ]]; then
               RetCode=1
@@ -1061,9 +1061,9 @@ report_html() {
     echo "Summary LaTeX_to_HTML"
     echo "---------------------"
     echo "For the full logfile see $1.hlg"
-    grep -i error $1.hlg 
-    grep -i rejected $1.hlg 
-    grep -i warn $1.hlg 
+    grep -i error $1.hlg
+    grep -i rejected $1.hlg
+    grep -i warn $1.hlg
     echo ""
     return
 }
@@ -1093,9 +1093,9 @@ run_html() {
     RetCode=0
     ${LatexToHtml} -nocolor -V # lists only the version number for the summary
     # first run
-    if [ $MakeTestSuiteResult -eq 1 ]; then 
+    if [ $MakeTestSuiteResult -eq 1 ]; then
         cmdlog -noexec "${LatexToHtml} -quiet -date \"${CgalVersionDate}\" -release \"${CgalVersionHtml}\" -author \"$HtmlManualAuthor\" -o testsuite/$1 -header \"$TestSuiteCppHeader\" $1"
-        ${LatexToHtml} -quiet -date "${CgalVersionDate}" -release "${CgalVersionHtml}" -author "$HtmlManualAuthor" -o testsuite/$1 -header "$TestSuiteCppHeader" $1 
+        ${LatexToHtml} -quiet -date "${CgalVersionDate}" -release "${CgalVersionHtml}" -author "$HtmlManualAuthor" -o testsuite/$1 -header "$TestSuiteCppHeader" $1
         if [ $? -ne 0 ]; then RetCode=1; fi
         cd testsuite
         ${GnuTar} czf $1.tgz $1
@@ -1103,7 +1103,7 @@ run_html() {
     else
         cmdlog -noexec "${LatexToHtml} -quiet -date \"${CgalVersionDate}\" -release \"${CgalVersionHtml}\" -author \"$HtmlManualAuthor\" -o ../doc_html/$1 $1"
         ${LatexToHtml} -stacktrace -date "${CgalVersionDate}" -release "${CgalVersionHtml}" -author "$HtmlManualAuthor" -o ../doc_html/$1 $1
-        if [ $? -ne 0 ]; then RetCode=1; fi 
+        if [ $? -ne 0 ]; then RetCode=1; fi
     fi
     if [ $RetCode -ne 0 ]; then
         report_html $1
@@ -1137,7 +1137,7 @@ try_command() {
   log_divider "start $Text"
   rm -f $TmpLogFile.2
   if [ $Verbose -eq 1 ] ; then
-    { 
+    {
       # I need to pass the exitcode through the pipe and set $ExitCode.
       # That does not work easily with a pipe and I just use a file instead.
       eval "$@" 2>&1
@@ -1241,7 +1241,7 @@ sub_module_should_be_built() {
     return 0;
   fi
   for v in $SubModules; do
-    if [ "$1" == "$v" ]; then 
+    if [ "$1" == "$v" ]; then
       return 0
     fi
   done
@@ -1251,11 +1251,11 @@ sub_module_should_be_built() {
 #---------------------------------------------------------------------#
 # make_module <module_name>
 #---------------------------------------------------------------------#
-make_module() {    
+make_module() {
   cmdlog "rm -f cgal_include_only.tex"
   local name=${1%.tex}
   local submodules=`find . -name "${name}__*.only.tex" -maxdepth 1`;
-  
+
   # only store aux-files, if we are interested in it, later
   if [ "$submodules" == "" ]; then
     make_manual ${name}
@@ -1265,9 +1265,9 @@ make_module() {
       before_pdf_whole_manual \
       before_html_whole_manual ${name}
   fi
-    
+
   # afterwards, the sub-modules are made.
-  # find all *.only.tex files in the current directory that 
+  # find all *.only.tex files in the current directory that
   # start with $1 and have a trailing __*.only.tex
   for submodule in $submodules; do
     local v=${submodule%.only.tex}
@@ -1276,7 +1276,7 @@ make_module() {
       cmdlog "cp $submodule cgal_include_only.tex"
       submodule=${submodule%.only.tex}
       cmdlog "cp ${name}.tex $submodule.tex"
-    
+
       make_manual_prime \
         before_latex_sub_manual \
         before_pdf_sub_manual \
@@ -1288,12 +1288,12 @@ make_module() {
   done
   cleanup_latex ${name}
   rm -f `find . -name "*.aux"`
-  rm -f ${name}-latexauxfiles.tgz ${name}-pdfauxfiles.tgz 
+  rm -f ${name}-latexauxfiles.tgz ${name}-pdfauxfiles.tgz
 }
 
 
 #---------------------------------------------------------------------#
-# make_manual_prime <before_latex> <before_pdf> <before_html> 
+# make_manual_prime <before_latex> <before_pdf> <before_html>
 #                   <package or module name> [<package_ref name>]
 #     - Manages the logfiles
 #     - Creates all selected output formats
@@ -1306,11 +1306,11 @@ make_manual_prime() {
     local BeforeLatex=$1; shift
     local BeforePDF=$1; shift
     local BeforeHTML=$1; shift
-    
-    if [ $MakeWrapperOnly -eq 1 ]; then 
+
+    if [ $MakeWrapperOnly -eq 1 ]; then
         if [ -r $1.tex ]; then
             echo "${ErrorColor}ERROR${ResetColor}: Wrapper file '$1.tex' exists already." 1>&2
-            LastFailedWrapper=$1 
+            LastFailedWrapper=$1
             GlobalReturnStatus=1
             return 1
         fi
@@ -1328,9 +1328,9 @@ make_manual_prime() {
             GlobalReturnStatus=1
             return 1
         fi
-        return 0; 
+        return 0;
     fi
-    
+
 
     #---------------------------------------------------------------------#
     # decide between Module and Package
@@ -1343,7 +1343,7 @@ make_manual_prime() {
         MakeName="Mod"
         MakeModule=1
         MakePackage=0
-        if [ -r $1.tex ]; then 
+        if [ -r $1.tex ]; then
             WrapperName=$1.tex
         else
             WrapperName=$1
@@ -1376,12 +1376,12 @@ make_manual_prime() {
     local WrapperRootName=${WrapperName%.*}
     local TestsuiteRootNameAlignment="left"
     if [ ${WrapperRootName} == ${WrapperRootName//__/} ]; then
-        TestsuiteRootName=${WrapperRootName}    
+        TestsuiteRootName=${WrapperRootName}
     else
         TestsuiteRootName=__${WrapperRootName#*__}
         TestsuiteRootNameAlignment="right"
     fi
-    
+
     local LogFile=${WrapperRootName}.cgallog
     local TmpLogFile=$LogFile.tmp
     local TmpOutFile=$LogFile.cout
@@ -1390,7 +1390,7 @@ make_manual_prime() {
     touch $LogFile
 
     #---------------------------------------------------------------------#
-    # run LaTeX, either brief or full, 
+    # run LaTeX, either brief or full,
     # skip only if no PS output but PDF output is selected
     $BeforeLatex ${WrapperRootName%__*}
     if [[ ${MakePS} -eq 1 ||  ${MakePDF} -eq 0 ]]; then
@@ -1402,21 +1402,21 @@ make_manual_prime() {
     # run PDFLaTeX
     $BeforePDF ${WrapperRootName%__*}
     if [ ${MakePDF} -eq 1 ]; then
-      if [[ -r ${WrapperRootName}.log ]] ; then 
+      if [[ -r ${WrapperRootName}.log ]] ; then
         mv ${WrapperRootName}.log ${WrapperRootName}.texlg
       fi
       try_command "${MakeName} ${WrapperRootName} PDF  " run_pdflatex ${WrapperRootName}
-      if [[ -r ${WrapperRootName}.log ]] ; then 
+      if [[ -r ${WrapperRootName}.log ]] ; then
         mv ${WrapperRootName}.log ${WrapperRootName}.pdflg
       fi
-      if [[ -r ${WrapperRootName}.texlg ]] ; then 
+      if [[ -r ${WrapperRootName}.texlg ]] ; then
         mv ${WrapperRootName}.texlg ${WrapperRootName}.log
       fi
       if [[ $ExitCode -ne 0 && ${ReturnStatus} -ne 1 ]]; then
-          ReturnStatus=$ExitCode ; 
+          ReturnStatus=$ExitCode ;
       fi
     fi
-    
+
     #---------------------------------------------------------------------#
     # run LaTeX_to_HTML
     $BeforeHTML ${WrapperRootName%__*}
@@ -1425,13 +1425,13 @@ make_manual_prime() {
       try_command "${MakeName} ${WrapperRootName} HTML " run_html ${WrapperRootName}
       HtmlExit=$ExitCode
       if [[ $ExitCode -ne 0 && ${ReturnStatus} -ne 1 ]]; then
-          ReturnStatus=$ExitCode ; 
+          ReturnStatus=$ExitCode ;
       fi
-      if [ $MakeTestSuiteResult -eq 1 ]; then 
+      if [ $MakeTestSuiteResult -eq 1 ]; then
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
       fi
     fi
-    if [ $MakeTestSuiteResult -eq 1 ]; then 
+    if [ $MakeTestSuiteResult -eq 1 ]; then
         testsuite_entry $HtmlExit ${WrapperRootName}.hlg.txt >> testsuite/index_row
     fi
 
@@ -1451,7 +1451,7 @@ make_manual_prime() {
     # collect logfile
 
     echo "" >> $LogFile
-    if [ -r $TmpLogFile ] ; then 
+    if [ -r $TmpLogFile ] ; then
         cat $TmpLogFile >> $LogFile
     fi
     rm -f $TmpLogFile
@@ -1471,7 +1471,7 @@ make_manual_prime() {
 
     #---------------------------------------------------------------------#
     # report testsuite results
-    if [ $MakeTestSuiteResult -eq 1 ]; then 
+    if [ $MakeTestSuiteResult -eq 1 ]; then
         mv $LogFile testsuite/${LogFile}.txt
         testsuite_middle_header
         echo "<tr>" >> testsuite/index.html
@@ -1492,7 +1492,7 @@ make_manual_prime() {
         echo "</tr>" >> testsuite/index.html
     fi
 
-    #---------------------------------------------------------------------#    
+    #---------------------------------------------------------------------#
     # in case the log was not asked for, delete it
     if [ $NoLog -eq 1 ] ; then rm -f $LogFile ; fi
 
@@ -1502,7 +1502,7 @@ make_manual_prime() {
     if [[ $KeepLog -eq 0 && $ReturnStatus -eq 5 ]] ; then rm -f $LogFile ; fi
 
     if [[ $ReturnStatus -ne 0 && ${GlobalReturnStatus} -ne 1 ]]; then
-        GlobalReturnStatus=$ReturnStatus; 
+        GlobalReturnStatus=$ReturnStatus;
     fi
 
     return $ReturnStatus
@@ -1584,7 +1584,7 @@ EOF
         if [ -r ${TestSuiteResultPath}/History.${count} ]; then
           subdir=`cat ${TestSuiteResultPath}/History.${count}`
           echo "    [<a href=\"../${subdir}/index.html\">${subdir#CGAL-}</a>]"\
-                >> testsuite/index.html 
+                >> testsuite/index.html
         fi
         count=$count+1
     done
@@ -1597,23 +1597,23 @@ problems with LaTeX, BibTeX, makeindex, PdfLaTeX, and latex_to_html
 conversions. The success of the conversions and the logfiles are
 accessible in the tables below. A 'y' means no blatant errors
 occurred, which may be loosely interpreted as 'success', a 'w' means
-there was a warning, a 'n' means 'failure', and a '-' means that this part 
+there was a warning, a 'n' means 'failure', and a '-' means that this part
 was not applicable to this manual. A click on the letter
-gives the corresponding logfiles. The first column contains a 
+gives the corresponding logfiles. The first column contains a
 <b>summary logfile</b> for a quick overview. </p>
 
 <p><b>The tools are currently under development, please report all
 problems to Lutz Kettner and Andreas Meyer.</b></p>
 
 <ul>
-   <li> Due to the separate testing of each package, some references in the 
-        LaTeX manual may remain unresolved by the individual package 
-        tests. Thus undefined references are not reported as 'w' for packages. 
+   <li> Due to the separate testing of each package, some references in the
+        LaTeX manual may remain unresolved by the individual package
+        tests. Thus undefined references are not reported as 'w' for packages.
         Please check the log files, for example, the summary log file, for
-        undefined references in packages yourself. For Modules, undefined 
+        undefined references in packages yourself. For Modules, undefined
         references are reported as 'w'.</b><p>
    </li><li> <b>The detection of errors is not (yet) exact.  Please check the
-        log files even when a 'y' appears and suggests that everything is 
+        log files even when a 'y' appears and suggests that everything is
         OK.</b><p>
    </li><li> Suggestions for improving the summary are also welcome.<p>
 </li></ul>
@@ -1681,7 +1681,7 @@ EOF
 # testsuite_middle_header
 #     - Writes an intermediate table header if enough packages/modules
 #       have been tested
-#       
+#
 #---------------------------------------------------------------------#
 
 testsuite_middle_header () {
@@ -1724,7 +1724,7 @@ testsuite_end () {
 
 <div class="contact">
 Last modified on <!--#echo var="LAST_MODIFIED" -->.
-See <a href="http://www.cgal.org/">http://www.cgal.org/</a> and 
+See <a href="http://www.cgal.org/">http://www.cgal.org/</a> and
 <a HREF="mailto:infoATcgal.org" subject="Mail from cgal.org web page">info at cgal dot org</a>
 </div>
 </body></html>
@@ -1739,18 +1739,18 @@ EOF
         # $TestSuiteResultPath/CGAL-$CgalVersion/ and creates an HTML
         # summary page index.html in that subdirectory. The latest
         # results is also always accessible at
-        # $TestSuiteResultPath/last/index.html .  
+        # $TestSuiteResultPath/last/index.html .
         #    Futhermore, the script will cleanup old results. For the
         # most recent number $TestSuiteFullHistory of test suites the
         # full results including the manuals are kept. Older test
         # suites will have their manuals deleted to save space. Int
-        # total only $TestSuiteHistory many test suites are kept.  
+        # total only $TestSuiteHistory many test suites are kept.
         #    The history of test suites is managed in a shift register
         # like fashion using files in $TestSuiteResultPath of defined
         # names History.<i> that contain the name of the i-th test
         # suite subdirectory. The 1st is the most recent test suite
         # and corresponds to the 'last' directory.
-        #    If the test suite is repeated for the same internal 
+        #    If the test suite is repeated for the same internal
         # release number, the new results will overwrite the old results.
         pushd ${TestSuiteResultPath} > /dev/null
         Target=CGAL-${CgalVersion}
@@ -1768,10 +1768,10 @@ EOF
                 if [ -r History.${count} ]; then
                     subdir=`cat History.${count}`
                     if [[ ${oldcount} -gt ${TestSuiteFullHistory} && \
-                            -d $subdir ]]; then 
-                        \rm -f $subdir/*.ps.gz ; 
+                            -d $subdir ]]; then
+                        \rm -f $subdir/*.ps.gz ;
                         for f in ${subdir}/* ; do
-                            if [ -d $f ]; then \rm -fr $f ; fi 
+                            if [ -d $f ]; then \rm -fr $f ; fi
                         done
                         # also eliminate dead links in index.html to doc.
                         \mv ${subdir}/index.html ${subdir}/bak
@@ -1798,7 +1798,7 @@ EOF
             # Use this line on Sun Solaris systems
             # printf "Subject: [automatic] New manual test results ${Target}\n\n\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} ${TestSuiteResultEmail}
             # use this line on Linux systems
-            printf "\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} -s "[automatic] New manual test results ${Target}" ${TestSuiteResultEmail}            
+            printf "\n${TestSuiteResultUrl}/${Target}\n" | ${Sendmail} -s "[automatic] New manual test results ${Target}" ${TestSuiteResultEmail}
         fi
     fi
 }
@@ -1822,7 +1822,7 @@ SubModules=""
 
 while [ $# -gt 0 ] ; do
   case "$1" in
-    -h | --help) 
+    -h | --help)
         usage
         exit 0
         ;;
@@ -1947,7 +1947,7 @@ if [[ "$Parameters" == "" ]]; then
             if [[ -d ${m}_ref && -r ${m}_ref/main.tex ]]; then
                 ManRefList="$ManRefList ${m}_ref"
                 make_manual $m ${m}_ref
-            elif ! is_in_list $m $ManRefList ; then 
+            elif ! is_in_list $m $ManRefList ; then
                 # check that we did not handle it already as ${m}_ref
                 make_manual $m
             fi
@@ -1968,7 +1968,7 @@ else
     for m in ${Parameters} ; do
         if ! is_module $m ; then
             # make sure that Manual and Manual_ref are matched up
-            if is_in_list ${m}_ref ${Parameters} ; then 
+            if is_in_list ${m}_ref ${Parameters} ; then
                 ManRefList="$ManRefList ${m}_ref"
                 make_manual $m ${m}_ref
             elif ! is_in_list $m $ManRefList ; then
