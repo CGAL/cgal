@@ -66,7 +66,10 @@ struct Circular_kernel_2
   <
   CGALi::Circular_kernel_base
   < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
-    typename LinearKernel::template 
+    typename LinearKernel::
+#ifndef CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG
+                           template 
+#endif
     Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type 
   >,
   Circular_kernel_2<LinearKernel,AlgebraicKernel> 
