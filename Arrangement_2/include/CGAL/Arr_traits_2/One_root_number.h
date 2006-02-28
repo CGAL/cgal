@@ -301,7 +301,7 @@ double to_double (const _One_root_number<NT, FL>& x)
     return (CGAL::to_double(x.alpha()));
 
   return (CGAL::to_double(x.alpha()) +
-          CGAL::to_double(x.beta()) * ::sqrt(CGAL::to_double(x.gamma()))); 
+          CGAL::to_double(x.beta()) * std::sqrt(CGAL::to_double(x.gamma()))); 
 }
 
 /*!

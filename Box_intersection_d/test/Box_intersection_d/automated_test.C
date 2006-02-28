@@ -42,7 +42,7 @@ operator()( const char* filename1, const char* filename2 )
 {
     typename Uti1::Box_container boxes1, boxes2;
     typename Uti1::Result_container result_all_pairs, result_tree;
-    FILE *infile1, *infile2;
+    std::FILE *infile1, *infile2;
     infile1 = std::fopen( filename1, "r");
     infile2 = std::fopen( filename2, "r");
 

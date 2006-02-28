@@ -5,6 +5,7 @@
 #include <algorithm> // for pair
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 
 #include <CGAL/Random.h>
 
@@ -54,7 +55,7 @@ struct Util {
             if( Traits::does_intersect( a, b, dim ) == false ) {
                 std::cout << "does not intersect!" << std::endl;
                 //cout << a << endl << b << endl;
-                exit(-1);
+                std::exit(-1);
             }
         }
     }
