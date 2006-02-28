@@ -39,3 +39,5 @@ public:
 private:
 	QTabWidget *myBar;
 }; 
+
+#endif
