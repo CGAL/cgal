@@ -108,7 +108,11 @@ template <class CK>
 struct Filtered_kernel
   : public Filtered_kernel_adaptor<
                Type_equality_wrapper<
-                   typename CK::template Base< Filtered_kernel<CK> >::Type,
+                   typename CK::
+#ifndef CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG
+                                template
+#endif
+                                         Base< Filtered_kernel<CK> >::Type,
                    Filtered_kernel<CK> > >
 {};
 
