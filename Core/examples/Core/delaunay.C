@@ -17,7 +17,7 @@ int main() {
 
   DT dt;
   double two = 2;
-  Point_2 p(0,0), q(sqrt(two),1), r(0,1);
+  Point_2 p(0,0), q(std::sqrt(two),1), r(0,1);
   
   dt.insert(p);
   dt.insert(q);
