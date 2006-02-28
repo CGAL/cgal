@@ -1066,6 +1066,7 @@ Nef_2/doc_tex/Nef_2/halfplane.ps -text
 Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text
 Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#unset
 Nef_2/doc_tex/Nef_2_ref/extsegs.pdf -text svneol=unset#unset
+Nef_2/test/Nef_2/point_location.C -text
 Nef_3/Visual_hull/Nef_3/corner.off -text
 Nef_3/Visual_hull/Nef_3/hole.off -text
 Nef_3/Visual_hull/Nef_3/mpi.off -text

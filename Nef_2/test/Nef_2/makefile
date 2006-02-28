@@ -6,8 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = c:/cgal/CGAL-3.1/make/makefile_i686_CYGWINNT-5.1-1.5.17_g++-3.4.4
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -16,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-           -I../../../Polynomial/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude \
@@ -42,7 +40,8 @@ LDFLAGS = \
 
 all:            \
                 EPoint-test \
-                Nef_polyhedron_2-test 
+                Nef_polyhedron_2-test \
+		point_location
 
 EPoint-test$(EXE_EXT): EPoint-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)EPoint-test EPoint-test$(OBJ_EXT) $(LDFLAGS)
@@ -50,9 +49,13 @@ EPoint-test$(EXE_EXT): EPoint-test$(OBJ_EXT)
 Nef_polyhedron_2-test$(EXE_EXT): Nef_polyhedron_2-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_2-test Nef_polyhedron_2-test$(OBJ_EXT) $(LDFLAGS)
 
+point_location$(EXE_EXT): point_location$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location point_location$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                 EPoint-test.clean \
-                Nef_polyhedron_2-test.clean 
+                Nef_polyhedron_2-test.clean \
+                point_location.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
