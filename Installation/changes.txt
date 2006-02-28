@@ -1,3 +1,6 @@
+28 February 2006 Andreas Fabri
+- Removed glut from the OPENGL_LIBS
+
 27 February 2006 Andreas Fabri
 - Added glut to the OPENGL_LIBS
 
