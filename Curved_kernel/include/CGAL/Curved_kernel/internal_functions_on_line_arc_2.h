@@ -88,6 +88,20 @@ namespace CircularFunctors {
     return l.supporting_line().is_vertical();
   }
 
+  template< class CK>
+  bool
+  is_x_monotone(const typename CK::Line_arc_2 &l)
+  {
+    return true;
+  }
+
+  template< class CK>
+  bool
+  is_y_monotone(const typename CK::Line_arc_2 &l)
+  {
+    return true;
+  }
+
   template < class CK >
   Comparison_result
   compare_y_at_x(const typename CK::Circular_arc_point_2 &p,

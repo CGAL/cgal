@@ -153,7 +153,6 @@ An object \ccVar\ of this type must provide:
 \ccRefIdfierPage{CGAL::is_vertical}
 
 \end{ccRefFunctionObjectConcept}
-
 \begin{ccRefFunctionObjectConcept}{CircularKernel::IsXMonotone_2}
 
 \ccCreationVariable{fo}
@@ -177,7 +176,6 @@ An object \ccVar\ of this type must provide:
 \ccRefIdfierPage{CGAL::is_x_monotone}
 
 \end{ccRefFunctionObjectConcept}
-
 \begin{ccRefFunctionObjectConcept}{CircularKernel::IsYMonotone_2}
 
 \ccCreationVariable{fo}
@@ -187,6 +185,10 @@ An object \ccVar\ of this type must provide:
 \ccMemberFunction{bool operator()
 	(const CircularKernel::Circular_arc_2 & c);}
 {Tests whether the arc is $y$-monotone.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{For a line arc, always returns \ccc{true}.}
 
 \ccHasModels
 

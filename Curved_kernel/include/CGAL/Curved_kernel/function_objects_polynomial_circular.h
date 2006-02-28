@@ -849,6 +849,7 @@ template < class CK >
   class Is_x_monotone_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
+    typedef typename CK::Line_arc_2                Line_arc_2;
 
   public:
 
@@ -859,12 +860,19 @@ template < class CK >
     {
       return (a.rep().is_x_monotone());
     }
+
+    result_type operator() (const Line_arc_2 & a) const
+    {
+      return (a.rep().is_x_monotone());
+    }
+
   };
 
   template <class CK>
   class Is_y_monotone_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
+    typedef typename CK::Line_arc_2                Line_arc_2;
 
   public:
 
@@ -875,6 +883,12 @@ template < class CK >
     {
       return (a.rep().is_y_monotone());
     }
+
+    result_type operator() (const Line_arc_2 & a) const
+    {
+      return (a.rep().is_y_monotone());
+    }
+
   };
 
 
