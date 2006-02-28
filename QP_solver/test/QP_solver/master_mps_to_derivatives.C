@@ -182,7 +182,7 @@ bool create_derivatives(const char *path,
 
   // derivates:
   create_shifted_instance<IT, ET>(qp, path, file, dir);
-  // Note: insert added derivate routines here! Your routine may use
+  // Note: insert additional derivative routines here! Your routine may use
   // create_output_file() to create the output file.
   
   // cleanup:
