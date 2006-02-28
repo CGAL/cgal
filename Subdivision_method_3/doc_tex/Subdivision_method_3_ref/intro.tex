@@ -8,7 +8,7 @@
 \RCSdefDate{\polyhedronRefDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\chapter{Subdivision Surfaces}
+\chapter{Subdivision Methods}
 \label{chapterSubdivisionRef}
 \ccChapterRelease{\subdivisionRefRev. \ \subdivisionRefDate}
 \ccChapterAuthor{Le-Jeng Andy Shiue}
@@ -26,12 +26,12 @@ the limit surface.
 %control mesh, maintains the stencils, and
 %computes the geometry of the refined mesh. The computation
 %of the geometry is done through the geometry policy.
-\ccc{Subdivision_method_3}, designed to work on the class 
-\ccc{Polyhedron_3}, aims to be easy to use and to extend.
+Designed to work on the class \ccc{Polyhedron_3},
+\ccc{Subdivision_method_3} aims to be easy to use and to extend.
 %(see Chapter~\ref{chapterPolyhedron})
 \ccc{Subdivision_method_3} is not a class, but a namespace 
-which contains four popular subdivision methods and their refinement
-hosts. These four include Catmull-Clark, Loop, Doo-Sabin and 
+which consists of four popular subdivision methods and their refinement
+hosts. The subdivision methods include Catmull-Clark, Loop, Doo-Sabin and 
 $\sqrt{3}$ subdivisions. Variations of these methods can be easily 
 extended by substituting the geometry computation of the refinement
 host.
