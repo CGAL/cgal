@@ -26,11 +26,8 @@ BOUNDS
 QMATRIX
   x0  x0  128
   x0  x1  -32
-  x0  x2  0
   x1  x0  -32
   x1  x1  8
   x1  x2  4
-  x2  x0  0
   x2  x1  -4
-  x2  x2  0
 ENDATA
