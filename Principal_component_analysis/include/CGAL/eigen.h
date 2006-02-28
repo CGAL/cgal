@@ -32,7 +32,7 @@ void eigen_symmetric(const FT *mat,
                      FT *eigen_values,
                      const int MAX_ITER = 100) 
 {
-  static const FT EPSILON = 0.00001;
+  static const FT EPSILON = (FT)0.00001;
       
   // number of entries in mat
   int nn = (n*(n+1))/2;
@@ -108,9 +108,9 @@ void eigen_symmetric(const FT *mat,
           
           FT x;
           if(delta == 0.0)
-            x = - CGAL_PI/4 ; 
+            x = (FT) - CGAL_PI / 4; 
           else 
-            x = - atan( (a_lm+a_lm) / delta ) / 2.0;
+            x = (FT)(- atan( (a_lm+a_lm) / delta ) / 2.0);
 
           FT sinx    = sin(x);
           FT cosx    = cos(x);

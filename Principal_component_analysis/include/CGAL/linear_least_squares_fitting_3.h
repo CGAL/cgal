@@ -230,15 +230,15 @@ linear_least_squares_fitting_3(InputIterator first,
     Vector e1 = Vector(triangle[0],triangle[1]);
     Vector e2 = Vector(triangle[0],triangle[2]);
 
-    FT c1 = 2.0 * area * 10.0 / 72.0;
-    FT c2 = 2.0 * area *  7.0 / 72.0;
+    FT c1 = (FT)(2.0 * area * 10.0 / 72.0);
+    FT c2 = (FT)(2.0 * area *  7.0 / 72.0);
         
-    covariance[0] += c1*(e1[0]*e1[0] + e2[0]*e2[0]) + 2.0*c2*e1[0]*e2[0];
+    covariance[0] += c1*(e1[0]*e1[0] + e2[0]*e2[0]) + (FT)2.0*c2*e1[0]*e2[0];
     covariance[1] += c1*(e1[1]*e1[0] + e2[1]*e2[0]) + c2*(e1[1]*e2[0] + e1[0]*e2[1]);
-    covariance[2] += c1*(e1[1]*e1[1] + e2[1]*e2[1]) + 2.0*c2*e1[1]*e2[1];
+    covariance[2] += c1*(e1[1]*e1[1] + e2[1]*e2[1]) + (FT)2.0*c2*e1[1]*e2[1];
     covariance[3] += c1*(e1[2]*e1[0] + e2[2]*e2[0]) + c2*(e1[2]*e2[0] + e1[0]*e2[2]);
     covariance[4] += c1*(e1[2]*e1[1] + e2[2]*e2[1]) + c2*(e1[2]*e2[1] + e1[1]*e2[2]);
-    covariance[5] += c1*(e1[2]*e1[2] + e2[2]*e2[2]) + 2.0*c2*e1[2]*e2[2];
+    covariance[5] += c1*(e1[2]*e1[2] + e2[2]*e2[2]) + (FT)2.0*c2*e1[2]*e2[2];
     
     // add area(t) c(t) * transpose(c(t))
     covariance[0] += area * c_t.x() * c_t.x();
@@ -290,7 +290,6 @@ linear_least_squares_fitting_3(InputIterator first,
 } // end namespace CGALi
 
 
-// fit plane
 
 template < typename InputIterator, 
            typename K >
@@ -313,41 +312,6 @@ inline
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
-                               typename K::Plane_3& plane,
-                               const K& k)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  typename K::Point_3 centroid;
-  return CGALi::linear_least_squares_fitting_3(first, beyond, plane,
-                                               centroid, k,(Value_type*) NULL);
-}
-
-
-// deduces the kernel from the points in container.
-template < typename InputIterator, 
-           typename Plane,
-           typename Point>
-inline
-typename Kernel_traits<Plane>::Kernel::FT
-linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
-                               Plane& plane,
-                               Point& centroid)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_3(first,beyond,plane,centroid,K());
-}
-
-/*
-// fit line
-
-template < typename InputIterator, 
-           typename K >
-inline
-typename K::FT
-linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
                                typename K::Line_3& line,
                                typename K::Point_3& centroid,
                                const K& k)
@@ -363,6 +327,21 @@ inline
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
+                               typename K::Plane_3& plane,
+                               const K& k)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  typename K::Point_3 centroid;
+  return CGALi::linear_least_squares_fitting_3(first, beyond, plane,
+                                               centroid, k,(Value_type*) NULL);
+}
+
+template < typename InputIterator, 
+           typename K >
+inline
+typename K::FT
+linear_least_squares_fitting_3(InputIterator first,
+                               InputIterator beyond, 
                                typename K::Line_3& line,
                                const K& k)
 {
@@ -375,20 +354,19 @@ linear_least_squares_fitting_3(InputIterator first,
 
 // deduces the kernel from the points in container.
 template < typename InputIterator, 
-           typename Line,
+           typename Object,
            typename Point>
 inline
-typename Kernel_traits<Line>::Kernel::FT
+typename Kernel_traits<Object>::Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
-                               Line& line,
+                               Object& object,
                                Point& centroid)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_3(first,beyond,line,centroid,K());
+  return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,K());
 }
-*/
 
 // does not return the centroid and deduces the kernel as well.
 template < typename InputIterator, 
@@ -397,11 +375,11 @@ inline
 typename Kernel_traits<Object>::Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
-                               Object& o)
+                               Object& object)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel K;
-  return CGAL::linear_least_squares_fitting_3(first,beyond,o,K());
+  return CGAL::linear_least_squares_fitting_3(first,beyond,object,K());
 }
 
 
