@@ -32,8 +32,8 @@ namespace CircularFunctors {
 
   template < class CK >
   bool
-  point_in_range(const typename CK::Line_arc_2 &A,
-		 const typename CK::Circular_arc_point_2 &p) 
+  point_in_x_range(const typename CK::Line_arc_2 &A,
+		   const typename CK::Circular_arc_point_2 &p) 
   {
     // range includes endpoints here
     return ( (compare_x<CK>(p, A.source()) != compare_x<CK>(p, A.target())) 
@@ -93,7 +93,7 @@ namespace CircularFunctors {
   compare_y_at_x(const typename CK::Circular_arc_point_2 &p,
                  const typename CK::Line_arc_2 &A1)
   {
-    CGAL_kernel_precondition (point_in_range<CK>(A1, p));
+    CGAL_kernel_precondition (point_in_x_range<CK>(A1, p));
     //vertical case
     if (is_vertical<CK>(A1)) {
       if (p.y() <= A1.right().y()) {

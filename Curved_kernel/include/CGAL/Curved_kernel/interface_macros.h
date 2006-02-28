@@ -43,8 +43,8 @@
   do_overlap_2_object)  
   CGAL_Curved_Kernel_pred(Equal_2,
   equal_2_object)
-  CGAL_Curved_Kernel_pred(In_range_2,
-  in_range_2_object)
+  CGAL_Curved_Kernel_pred(In_x_range_2,
+  in_x_range_2_object)
   CGAL_Curved_Kernel_cons(Make_x_monotone_2,
   make_x_monotone_2_object)
   CGAL_Curved_Kernel_cons(Make_xy_monotone_2,

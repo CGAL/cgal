@@ -15,7 +15,7 @@ void _test_circle_predicat(CK ck)
   typedef typename CK::Compare_y_to_right_2    Compare_y_to_right_2;
   typedef typename CK::Compare_y_at_x_2        Compare_y_at_x_2;
   typedef typename CK::Equal_2                 Equal_2;
-  typedef typename CK::In_range_2              In_range_2;
+  typedef typename CK::In_x_range_2            In_x_range_2;
   typedef typename CK::Do_overlap_2            Do_overlap_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -255,13 +255,13 @@ void _test_circle_predicat(CK ck)
   //Point on top
   Circular_arc_point_2 circ1_left_arc_end_p1 =
          CGAL::circle_intersect<CK>(circ1_left, circ1_very_left, false);
-  std::cout << "In range" << std::endl;
-  In_range_2 theIn_range_2 = ck.in_range_2_object();
-  assert(theIn_range_2(circ1_arc_low, circ1_arc_end_p7));
-  assert(theIn_range_2(circ1_arc_high, circ1_arc_end_p7));
-  assert(theIn_range_2(circ1_arc_high, circ2_arc_end_p1));
-  assert(theIn_range_2(circ1_arc_low, circ2_arc_end_p1));
-  assert(!theIn_range_2(circ1_arc_low, circ1_left_arc_end_p1));
+  std::cout << "In x range" << std::endl;
+  In_x_range_2 theIn_x_range_2 = ck.in_x_range_2_object();
+  assert(theIn_x_range_2(circ1_arc_low, circ1_arc_end_p7));
+  assert(theIn_x_range_2(circ1_arc_high, circ1_arc_end_p7));
+  assert(theIn_x_range_2(circ1_arc_high, circ2_arc_end_p1));
+  assert(theIn_x_range_2(circ1_arc_low, circ2_arc_end_p1));
+  assert(!theIn_x_range_2(circ1_arc_low, circ1_left_arc_end_p1));
   std::cout << std::endl;
 
   

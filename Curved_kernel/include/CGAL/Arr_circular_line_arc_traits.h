@@ -57,7 +57,7 @@ namespace CGAL {
 
 
     template <class CircularKernel, class Arc1, class Arc2>
-    class In_range_2
+    class In_x_range_2
     {
     public:
       typedef typename CircularKernel::Circular_arc_point_2      Circular_arc_point_2;
@@ -68,11 +68,11 @@ namespace CGAL {
 		   const Circular_arc_point_2 &p) const
       { 
 	if ( const Arc1* arc1 = boost::get<Arc1>( &a ) ){
-	  return CircularKernel().in_range_2_object()(*arc1, p);
+	  return CircularKernel().in_x_range_2_object()(*arc1, p);
 	}
 	else {
 	  const Arc2* arc2 = boost::get<Arc2>( &a );
-	  return CircularKernel().in_range_2_object()(*arc2, p);
+	  return CircularKernel().in_x_range_2_object()(*arc2, p);
 	}
       }
     };

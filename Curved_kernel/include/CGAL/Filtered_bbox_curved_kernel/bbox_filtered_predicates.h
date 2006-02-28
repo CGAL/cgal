@@ -121,7 +121,7 @@ class Compare_xy_2
 
 
 template <class BK>
-class In_range_2
+class In_x_range_2
   {
     typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
@@ -136,14 +136,14 @@ class In_range_2
 
     template <class Arc_2>
     result_type
-    _in_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
+    _in_x_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
     {
        Bbox_2 bb1=a.bbox(),bb2=p.bbox();
   
        if(bb1.xmin()>bb2.xmax() || bb1.xmax()<bb2.xmin())
          return false;
 
-       typename CK::In_range_2 Range;
+       typename CK::In_x_range_2 Range;
 
        return Range(a.arc(),p.point());
 
@@ -155,12 +155,12 @@ class In_range_2
     operator()( const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
     { 
       CGAL_precondition( a.arc().is_x_monotone());
-      return _in_range_2(a,p);
+      return _in_x_range_2(a,p);
    }
 
     result_type
     operator()( const Line_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return _in_range_2(a,p);}
+    { return _in_x_range_2(a,p);}
     
 
   };
@@ -280,7 +280,7 @@ class Compare_y_at_x_2
     result_type
     _compare_y_at_x_2(const Circular_arc_point_2 &p,const Arc_2 &a) const
     {
-      CGAL_precondition_code(bool tmp=In_range_2<BK>()(a,p));
+      CGAL_precondition_code(bool tmp=In_x_range_2<BK>()(a,p));
       CGAL_precondition(tmp );
 
       Bbox_2 bb1=a.bbox(),bb2=p.bbox();

@@ -73,7 +73,7 @@ template <class CK>
     typedef Hexagon_functors::Compare_y_to_right_2<Self>     Compare_y_to_right_2;
     typedef Hexagon_functors::Do_overlap_2<Self>             Do_overlap_2;
     typedef Hexagon_functors::Equal_2<Self>		     Equal_2;
-    typedef Hexagon_functors::In_range_2<Self>		     In_range_2;
+    typedef Hexagon_functors::In_x_range_2<Self>	     In_x_range_2;
     typedef Hexagon_functors::Make_x_monotone_2<Self>	     Make_x_monotone_2;
     typedef Hexagon_functors::Intersect_2<Self>              Intersect_2;
     typedef Hexagon_functors::Split_2<Self>		     Split_2;
@@ -141,9 +141,9 @@ template <class CK>
   	equal_2_object() const
   	{ return Equal_2(); }
 
-  	In_range_2
-  	in_range_2_object() const
-  	{ return In_range_2(); }
+  	In_x_range_2
+  	in_x_range_2_object() const
+  	{ return In_x_range_2(); }
 
   	Make_x_monotone_2
   	make_x_monotone_2_object() const

@@ -128,7 +128,7 @@ namespace CircularFunctors {
   };
 
   template < class CK >
-  class In_range_2
+  class In_x_range_2
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
@@ -140,11 +140,11 @@ namespace CircularFunctors {
     
     result_type
     operator()(const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return point_in_range<CK>(a, p); }
+    { return point_in_x_range<CK>(a, p); }
 
     result_type
     operator()(const Line_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return point_in_range<CK>(a, p); }
+    { return point_in_x_range<CK>(a, p); }
     
   };
 

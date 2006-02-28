@@ -83,9 +83,9 @@ compare_y_to_right(const Line_arc_2<CK> &A1,
 template < class CK >
 inline
 bool
-point_in_range(const Line_arc_2<CK> &A, const Circular_arc_point_2<CK> &p) 
+point_in_x_range(const Line_arc_2<CK> &A, const Circular_arc_point_2<CK> &p) 
 {
-  return CK().in_range_2_object()(A, p);
+  return CK().in_x_range_2_object()(A, p);
 }
 
 template < class CK >

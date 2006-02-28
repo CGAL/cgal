@@ -125,8 +125,8 @@ namespace CircularFunctors {
 
   template < class CK >
   bool
-  point_in_range(const typename CK::Circular_arc_2 &A,
-                 const typename CK::Circular_arc_point_2 &p) 
+  point_in_x_range(const typename CK::Circular_arc_2 &A,
+		   const typename CK::Circular_arc_point_2 &p) 
   {
     CGAL_kernel_precondition (A.is_x_monotone());
     // range includes endpoints here
@@ -139,7 +139,7 @@ namespace CircularFunctors {
                  const typename CK::Circular_arc_2 &A1)
   {
     CGAL_kernel_precondition (A1.is_x_monotone());
-    CGAL_kernel_precondition (point_in_range<CK>(A1, p)); 
+    CGAL_kernel_precondition (point_in_x_range<CK>(A1, p)); 
     
     // Compare the ordinate of p with the ordinate of the center.
     Comparison_result sgn =
@@ -345,7 +345,7 @@ namespace CircularFunctors {
     if ( ! has_on<CK>(a.supporting_circle(),p) ) 
       return false;
     
-    if (! point_in_range<CK>(a, p) )
+    if (! point_in_x_range<CK>(a, p) )
       return false;
     
     int cmp = CGAL::compare(p.y(), a.supporting_circle().center().y());
@@ -363,7 +363,7 @@ namespace CircularFunctors {
 	typename CK::Circular_arc_2 &ca2)
   {
     CGAL_kernel_precondition( A.is_x_monotone() );
-    CGAL_kernel_precondition( point_in_range<CK>( A, p ) );
+    CGAL_kernel_precondition( point_in_x_range<CK>( A, p ) );
     CGAL_kernel_precondition( A.on_upper_part() == (p.y() >
 			      A.supporting_circle().center().y()) );
     CGAL_kernel_precondition( has_on<CK>(A, p) );

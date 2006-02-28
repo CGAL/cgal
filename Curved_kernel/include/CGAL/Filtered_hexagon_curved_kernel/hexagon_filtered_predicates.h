@@ -40,7 +40,7 @@ namespace Hexagon_functors {
 
 
 template <class HK>
-class In_range_2
+class In_x_range_2
   {
     typedef typename HK::Circular_kernel                           CK;
     typedef typename HK::Circular_arc_point_2                    Circular_arc_point_2;
@@ -55,7 +55,7 @@ class In_range_2
 
     template <class Arc_2>
     result_type
-    _in_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
+    _in_x_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
     {
       std::pair<double,double> pr;
         
@@ -74,7 +74,7 @@ class In_range_2
                pr.second <= (*(*hips).right_vertex()).x() ) ||
 	      (pr.first >= (*(*hips).left_vertex()).x() &&
                pr.first <= (*(*hips).right_vertex()).x() )  )	
-                return CK().in_range_2_object()( a.arc() ,p);
+                return CK().in_x_range_2_object()( a.arc() ,p);
 
 	  hips++;			
 	}
@@ -88,12 +88,12 @@ class In_range_2
     operator()( const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
     { 
       CGAL_precondition( a.arc().is_x_monotone());
-      return _in_range_2(a,p);
+      return _in_x_range_2(a,p);
    }
 
     result_type
     operator()( const Line_arc_2 &a, const Circular_arc_point_2 &p) const
-    {return _in_range_2(a,p);}
+    {return _in_x_range_2(a,p);}
     
 
   };
@@ -253,7 +253,7 @@ class Compare_y_at_x_2
     result_type
     _compare_y_at_x_2(const Circular_arc_point_2 &p,const Arc_2 &a) const
     {
-      CGAL_precondition_code(bool tmp=In_range_2<HK>()(a,p));
+      CGAL_precondition_code(bool tmp=In_x_range_2<HK>()(a,p));
       CGAL_precondition(tmp );
 
       if(a.has_no_hexagons())
