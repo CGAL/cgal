@@ -45,6 +45,7 @@
 #include "short_names.h"                    // must be included first
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Timer.h>
 #include <CGAL/parameterize.h>
 #include <CGAL/Parameterization_mesh_patch_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
@@ -80,14 +81,12 @@
 // Private types
 // ----------------------------------------------------------------------------
 
-// Mesh true type and parameterization adaptors
 typedef Polyhedron_ex                                       Polyhedron;
+
+// Mesh adaptors
 typedef Parameterization_polyhedron_adaptor_ex              Parameterization_polyhedron_adaptor;
 typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
                                                             Mesh_patch_polyhedron;
-
-// Defines the error codes
-typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
 
 // Type describing a border or seam as a vertex list
 typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>   
@@ -153,21 +152,6 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
         // The Mesh_cutter class is quite buggy
         // => we check that seamingBackbone is valid
-        //
-#ifdef DEBUG_TRACE
-        // Dump seam (for debug purpose)
-        mesh->precompute_halfedge_indices();
-        mesh->precompute_vertex_indices();
-        fprintf(stderr,"  HE seam is is: ");
-        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
-        {
-          fprintf(stderr, "H%d=%d->%d ",
-                          (int)(*he)->index(),
-                          (int)(*he)->opposite()->vertex()->index(),
-                          (int)(*he)->vertex()->index());
-        }
-        fprintf(stderr,"ok\n");
-#endif
         //
         // 1) Check that seamingBackbone is not empty
         if (seamingBackbone.begin() == seamingBackbone.end())
@@ -312,7 +296,7 @@ parameterize(ParameterizationMesh_3* mesh,   // Mesh parameterization adaptor
     }
     else
     {
-        fprintf(stderr, "\nFATAL ERROR: invalid parameters combination %s + %s\n", type, border);
+        std::cerr << "FATAL ERROR: invalid parameters combination " << type << " + " << border << std::endl;
         err = CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::ERROR_WRONG_PARAMETER;
     }
 
@@ -371,6 +355,9 @@ where type is:   floater (default), conformal, natural, barycentric, authalic or
 
 int main(int argc,char * argv[])
 {
+    CGAL::Timer total_timer;
+    total_timer.start();
+
     std::cerr << "PARAMETERIZATION" << std::endl;
 
     // options
@@ -457,25 +444,30 @@ int main(int argc,char * argv[])
     const char* output_filename = (CGAL_CLIB_STD::strlen(output) > 0) ? argv[first_file_arg+1]
                                                                       : NULL;
 
+    std::cerr << std::endl;
+
     //***************************************
     // Read the mesh
     //***************************************
 
-    fprintf(stderr, "\n  read file...%s...", input_filename);
+    CGAL::Timer task_timer;
+    task_timer.start();
+
+    // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) {
-        fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
+    if(!stream) 
+    {
+        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
-
-    // read the mesh
     Polyhedron mesh;
-    fprintf(stderr, "ok\n  fill mesh...");
     stream >> mesh;
 
-    // print mesh info
-    fprintf(stderr, "(%d facets, ", (int)mesh.size_of_facets());
-    fprintf(stderr, "%d vertices)\n", (int)mesh.size_of_vertices());
+    std::cerr << "Read file " << input_filename << ": " 
+              << task_timer.time() << " seconds "
+              << "(" << mesh.size_of_facets() << " facets, "
+              << mesh.size_of_vertices() << " vertices)" << std::endl;
+    task_timer.reset();
 
     //***************************************
     // Create mesh adaptor
@@ -492,7 +484,7 @@ int main(int argc,char * argv[])
     Seam seam = cut_mesh(&mesh_adaptor);
     if (seam.empty())
     {
-        fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
+        std::cerr << "FATAL ERROR: an unexpected error occurred while cutting the shape" << std::endl;
         return EXIT_FAILURE;
     }
     //
@@ -501,17 +493,25 @@ int main(int argc,char * argv[])
                                        seam.begin(),
                                        seam.end());
 
+    std::cerr << "Mesh cutting: " << task_timer.time() << " seconds." << std::endl;
+    task_timer.reset();
+
     //***************************************
     // switch parameterization
     //***************************************
 
+    std::cerr << "Parameterization..." << std::endl;
+
+    // Defines the error codes
+    typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
     Parameterizer::Error_code err;
+
     if (CGAL_CLIB_STD::strcmp(solver,"opennl") == 0)
     {
         err = parameterize<Mesh_patch_polyhedron,
                            OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, border);
         if (err != Parameterizer::OK)
-            fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
+            std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
     }
     else if (CGAL_CLIB_STD::strcmp(solver,"taucs") == 0)
     {
@@ -519,45 +519,55 @@ int main(int argc,char * argv[])
         err = parameterize<Mesh_patch_polyhedron,
                            CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, border);
         if (err != Parameterizer::OK)
-            fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
+            std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 #else
-        fprintf(stderr, "\nFATAL ERROR: TAUCS is not installed\n");
+        std::cerr << "FATAL ERROR: TAUCS is not installed" << std::endl;
         err = Parameterizer::ERROR_WRONG_PARAMETER;
 #endif
     }
     else
     {
-        fprintf(stderr, "\nFATAL ERROR: invalid solver parameter %s\n", solver);
+        std::cerr << "FATAL ERROR: invalid solver parameter " << solver << std::endl;
         err = Parameterizer::ERROR_WRONG_PARAMETER;
     }
+
+    std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
+    task_timer.reset();
 
     //***************************************
     // Output
     //***************************************
 
     // Save mesh
-    if (err == Parameterizer::OK)
+    if (err == Parameterizer::OK && CGAL_CLIB_STD::strcmp(output,"") != 0)
     {
-        if(CGAL_CLIB_STD::strcmp(output,"") == 0)
+        if(CGAL_CLIB_STD::strcmp(output,"eps") == 0)
         {
-            // no output file
-        }
-        else if(CGAL_CLIB_STD::strcmp(output,"eps") == 0)
-        {
-            mesh.write_file_eps(output_filename);   // write Postscript file
+            // write Postscript file
+            if ( ! mesh.write_file_eps(output_filename) ) 
+            {
+                std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
+                return EXIT_FAILURE;
+            }   
         }
         else if(CGAL_CLIB_STD::strcmp(output,"obj") == 0)
         {
-            mesh.write_file_obj(output_filename);   // write Wavefront obj file
+            // write Wavefront obj file
+            if ( ! mesh.write_file_obj(output_filename) ) 
+            {
+                std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
+                return EXIT_FAILURE;
+            }   
         }
         else
         {
-            fprintf(stderr, "\nFATAL ERROR: cannot write to file %s\n", output);
+            std::cerr << "FATAL ERROR: cannot write format " << output << std::endl;
             err = Parameterizer::ERROR_WRONG_PARAMETER;
         }
-    }
 
-    fprintf(stderr, "\n");
+        std::cerr << "Write file " << output_filename << ": " 
+                  << task_timer.time() << " seconds " << std::endl;
+    }
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
