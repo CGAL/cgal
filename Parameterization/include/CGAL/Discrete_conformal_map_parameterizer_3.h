@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
 #ifndef CGAL_DISCRETE_CONFORMAL_MAP_PARAMETERIZER_3_H

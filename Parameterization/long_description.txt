@@ -1,7 +1,7 @@
 Planar Parameterization of Triangulated Surface Meshes
 Specification for a CGAL package
 
-Pierre Alliez, Laurent Saboret
+Laurent Saboret, Pierre Alliez, Bruno Levy
 
 Keywords: parameterization, bijective mapping, triangulated meshes, convex embedding, conformal, harmonic maps, free border methods.
 

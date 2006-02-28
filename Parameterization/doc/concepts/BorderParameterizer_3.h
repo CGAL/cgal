@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
 /// BorderParameterizer_3 is a concept of class that parameterizes a given type of mesh,

@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
 /// The concept SparseLinearAlgebraTraits_d

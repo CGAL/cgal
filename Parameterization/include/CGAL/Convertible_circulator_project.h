@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
 #ifndef CGAL_CONVERTIBLE_CIRCULATOR_PROJECT_H

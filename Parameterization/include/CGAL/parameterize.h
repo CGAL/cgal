@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 //  We need a doxygen comment about CGAL in order for doxygen to
 //  extract the global functions, variables or constants of the namespace
