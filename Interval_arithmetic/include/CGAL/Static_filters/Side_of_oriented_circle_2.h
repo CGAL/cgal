@@ -26,6 +26,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Static_filter_error.h>
+#include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,6 +43,8 @@ public:
 	                   const Point_2 &r, const Point_2 &t) const
   {
       CGAL_PROFILER("In_circle_2 calls");
+
+      using std::fabs;
 
       double px, py, qx, qy, rx, ry, tx, ty;
 

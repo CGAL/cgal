@@ -26,6 +26,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Static_filter_error.h>
+#include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -55,6 +56,8 @@ public:
 	     const Point_3 &r, const Point_3 &s) const
   {
       CGAL_PROFILER("Orientation_3 calls");
+
+      using std::fabs;
 
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz;
 
