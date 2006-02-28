@@ -78,7 +78,7 @@ public:
   typedef ET_ ET;
   enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
 
-private:
+public: // undocumented types, should be considered private:
   typedef std::vector<IT>                 Vector;
   typedef std::vector<Vector>             Matrix;
   typedef QP_MPS_detail::Begin<Vector>    Beginner;
@@ -140,6 +140,13 @@ private:
   // variables used in token() (see below):
   bool use_put_back_token;
   std::string put_back_token;
+
+public: // unofficial helper routines used in master_mps_to_derivatives.C;
+        // these should be considered private for CGAL end-users:
+
+  const Matrix& A_matrix() { return A_; }
+  const Vector& b_vector() { return b_; }
+  const Row_type_vector& row_types_vector() { return row_types_; }
 
 private: // helpers to deal with sparse/dense representation:
 
