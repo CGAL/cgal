@@ -16,6 +16,7 @@
 #include "short_names.h"                    // must be included first
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Timer.h>
 #include <CGAL/parameterize.h>
 #include <CGAL/Parameterization_mesh_patch_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
@@ -137,21 +138,6 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
         // The Mesh_cutter class is quite buggy
         // => we check that seamingBackbone is valid
         //
-#ifdef DEBUG_TRACE
-        // Dump seam (for debug purpose)
-        mesh->precompute_halfedge_indices();
-        mesh->precompute_vertex_indices();
-        fprintf(stderr,"  HE seam is is: ");
-        for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
-        {
-          fprintf(stderr, "H%d=%d->%d ",
-                          (int)(*he)->index(),
-                          (int)(*he)->opposite()->vertex()->index(),
-                          (int)(*he)->vertex()->index());
-        }
-        fprintf(stderr,"ok\n");
-#endif
-        //
         // 1) Check that seamingBackbone is not empty
         if (seamingBackbone.begin() == seamingBackbone.end())
             return seam;                    // return empty list
@@ -214,34 +200,39 @@ int main(int argc,char * argv[])
     }
 
     // Accumulated errors
-    int accumulated_err = EXIT_SUCCESS;
+    int accumulated_fatal_err = EXIT_SUCCESS;
 
     // Parameterize each input file and accumulate errors
     for (int arg_index = 1; arg_index <= argc-1; arg_index++)
     {
+        std::cerr << std::endl;
+        std::cerr << std::endl;
+
         // File name is:
         const char* input_filename  = argv[arg_index];
 
         //***************************************
-        // read the mesh
+        // Read the mesh
         //***************************************
 
-        fprintf(stderr, "\nRead file...%s...", input_filename);
+        CGAL::Timer task_timer;
+        task_timer.start();
+
+        // Read the mesh
         std::ifstream stream(input_filename);
-        if(!stream) {
-            fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
-            accumulated_err = EXIT_FAILURE;
+        if(!stream) 
+        {
+            std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
             continue;
         }
-
-        // read the mesh
         Polyhedron mesh;
-        fprintf(stderr, "ok\n  fill mesh...");
         stream >> mesh;
-
-        // print mesh info
-        fprintf(stderr, "(%d facets, ", (int)mesh.size_of_facets());
-        fprintf(stderr, "%d vertices)\n", (int)mesh.size_of_vertices());
+        std::cerr << "Read file " << input_filename << ": " 
+                  << task_timer.time() << " seconds "
+                  << "(" << mesh.size_of_facets() << " facets, "
+                  << mesh.size_of_vertices() << " vertices)" << std::endl;
+        task_timer.reset();
 
         //***************************************
         // Create mesh adaptor
@@ -258,16 +249,16 @@ int main(int argc,char * argv[])
         Seam seam = cut_mesh(&mesh_adaptor);
         if (seam.empty())
         {
-            fprintf(stderr, "\nMINOR ERROR: an unexpected error occurred while cutting the shape!\n\n");
+            std::cerr << "Minor Error: an unexpected error occurred while cutting the shape" << std::endl;
             continue;
         }
         //
         // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
-        Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
-                                        seam.begin(),
-                                        seam.end());
+        Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor, seam.begin(), seam.end());
 
+        std::cerr << "Mesh cutting: " << task_timer.time() << " seconds." << std::endl;
         std::cerr << std::endl;
+        task_timer.reset();
 
         //***************************************
         // Tutte Barycentric Mapping parameterization
@@ -288,11 +279,12 @@ int main(int argc,char * argv[])
                 CGAL::Square_border_uniform_parameterizer_3<Mesh_patch_polyhedron>,
                 Solver1
             >());
+        if (err != Parameterizer::OK)
+            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
 
-        if (err == Parameterizer::OK)
-            fprintf(stderr, "  Parameterization success\n\n");
-        else
-            fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
+        std::cerr << std::endl;
+        task_timer.reset();
 
         //***************************************
         // Floater Mean Value Coordinates parameterization
@@ -311,11 +303,12 @@ int main(int argc,char * argv[])
                 CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
                 Solver2
             >());
+        if (err != Parameterizer::OK)
+            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
 
-        if (err == Parameterizer::OK)
-            fprintf(stderr, "  Parameterization success\n\n");
-        else
-            fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
+        std::cerr << std::endl;
+        task_timer.reset();
 
         //***************************************
         // Discrete Conformal Map parameterization
@@ -334,11 +327,12 @@ int main(int argc,char * argv[])
                 CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
                 Solver2
             >());
+        if (err != Parameterizer::OK)
+            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
 
-        if (err == Parameterizer::OK)
-            fprintf(stderr, "  Parameterization success\n\n");
-        else
-            fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
+        std::cerr << std::endl;
+        task_timer.reset();
 
         //***************************************
         // Discrete Authalic Parameterization
@@ -357,11 +351,12 @@ int main(int argc,char * argv[])
                 CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
                 Solver2
             >());
+        if (err != Parameterizer::OK)
+            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
 
-        if (err == Parameterizer::OK)
-            fprintf(stderr, "  Parameterization success\n\n");
-        else
-            fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
+        std::cerr << std::endl;
+        task_timer.reset();
 
         //***************************************
         // Least Squares Conformal Maps parameterization
@@ -378,17 +373,18 @@ int main(int argc,char * argv[])
                 CGAL::Two_vertices_parameterizer_3<Mesh_patch_polyhedron>,
                 Solver2
             >());
+        if (err != Parameterizer::OK)
+            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
 
-        if (err == Parameterizer::OK)
-            fprintf(stderr, "  Parameterization success\n\n");
-        else
-            fprintf(stderr, "\nMINOR ERROR: parameterization error # %d\n\n", (int)err);
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
+        std::cerr << std::endl;
+        task_timer.reset();
 
     } // for each input file
 
     // Return accumulated fatal error
-    fprintf(stderr, "\nTool returns %d\n\n", (int)accumulated_err);
-    return accumulated_err;
+    std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
+    return accumulated_fatal_err;
 }
 
 
