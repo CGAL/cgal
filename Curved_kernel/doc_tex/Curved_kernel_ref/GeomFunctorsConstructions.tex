@@ -14,6 +14,10 @@ A model \ccVar\ of this type must provide:
 {Splits the arc \ccc{ca} into monotone arcs that are returned through the 
 output iterator.}
 
+For the sake of completeness, the \ccc{operator()} must also be defined for a 
+\ccc{Line_arc_2}. In this case, the input line arc itself is the only
+arc returned through the \ccc{OutputIterator}. 
+
 \ccHasModels
 
 \ccc{Circular_kernel_2::Make_x_monotone_2;}
