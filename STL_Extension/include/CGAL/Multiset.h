@@ -1433,7 +1433,21 @@ protected:
    * \return A pointer to the newly created node.
    */
   Node* _allocate_node (const Type& object,
-                        typename Node::Node_color color);
+                        typename Node::Node_color color)
+#ifdef CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG
+  {
+      CGAL_multiset_assertion (color != Node::DUMMY_BEGIN && 
+	      color != Node::DUMMY_END);
+
+      Node* new_node = node_alloc.allocate(1);
+
+      node_alloc.construct(new_node, beginNode);
+      new_node->init(object, color);
+      return (new_node);
+  }
+#else
+  ;
+#endif
 
   /*!
    * De-allocate a tree node.
@@ -3864,6 +3878,7 @@ void Multiset<Type, Compare, Allocator>::_remove_fixup (Node* nodeP,
 //---------------------------------------------------------
 // Allocate and initialize new tree node.
 //
+#ifndef CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG
 template <class Type, class Compare, typename Allocator>
 typename Multiset<Type, Compare, Allocator>::Node*
 Multiset<Type, Compare, Allocator>::_allocate_node
@@ -3879,6 +3894,7 @@ Multiset<Type, Compare, Allocator>::_allocate_node
   new_node->init(object, color);
   return (new_node);
 }
+#endif
 
 //---------------------------------------------------------
 // De-allocate a tree node.
