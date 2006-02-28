@@ -1,3 +1,11 @@
+*******************************************************************************
+IMPORTANT NOTE: Currently, test_solver.C does not run the nonstandard-form
+with all pricing strategies. Once these pricing strategies are implemented for
+nonstandard-form problems, you should fix test_solver.C (see the line
+beginning with the comment "// temporary (todo): exit if pricing strategy is
+different from FE") and remove this note.
+*******************************************************************************
+
 This file describes the testsuite of package QP_solver.
 
 THE CGAL TESTSUITE
