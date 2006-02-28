@@ -130,7 +130,7 @@ for file in $MASTERS
   for der in $DERS
     do
     # add file:
-    LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+    LIST="${LIST} $level fe $der $level pe $der $level ff $der $level pf $der"
   
     # check whether the file exists in the SVN repository:
     tmpf=`basename "$der"`
