@@ -38,7 +38,7 @@ public:
     const double     diff_x = x2 - x1;
     const double     diff_y = y2 - y1;
 
-    return (::sqrt (diff_x*diff_x + diff_y*diff_y));
+    return (std::sqrt (diff_x*diff_x + diff_y*diff_y));
   }
 };
 
