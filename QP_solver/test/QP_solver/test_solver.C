@@ -285,7 +285,7 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   cout << left << setw(Width) << "Processing:" << filename << endl;
   for (Key_const_iterator it = options.begin();
        it != options.end(); ++it) {
-    cout << it->first << left << setw(Width - it->first.size()) <<  ":";
+    cout << " " << it->first << left << setw(Width-it->first.size()-1) <<  ":";
     if (it-> first == "Strategy")
       cout << st << endl;
     else
