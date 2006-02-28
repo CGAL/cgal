@@ -1,6 +1,6 @@
 * Number-type: integer
 * Description: Shifted instance of original file
-* Generated-by: master_mps_to_derivatives
+* Generated-by: master_mps_to_derivatives-create_shifted_instance
 NAME QPE_solver_example_bug
 ROWS
   N obj

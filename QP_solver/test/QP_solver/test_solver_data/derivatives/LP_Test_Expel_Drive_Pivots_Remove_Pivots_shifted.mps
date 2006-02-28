@@ -1,6 +1,6 @@
 * Number-type: integer
 * Description: Shifted instance of original file
-* Generated-by: master_mps_to_derivatives
+* Generated-by: master_mps_to_derivatives-create_shifted_instance
 NAME LP_Test_Expel_Drive_Pivots_Remove_Pivots
 ROWS
   N obj

@@ -118,7 +118,7 @@ void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
   CGAL::write_MPS(*out,
 		  "", // deduce number-type
 		  "Shifted instance of original file",
-		  "master_mps_to_derivatives",
+		  "master_mps_to_derivatives-create_shifted_instance",
 		  qp.problem_name(),
 		  n, m,
 		  qp.A(),
@@ -139,6 +139,91 @@ void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
   out->close();
 }
 
+template<typename IT,   // input number type
+	 typename ET>   // exact number type compatible with IT (ET is used,
+                        // for instance, by QP in the query methods
+                        // has_equalities_only_and_full_rank())
+void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
+			  const char *path,
+			  const char *file,   // Note: "Bernd3" and
+			                      // not "Bernd3.mps".
+			  const char *dir)
+{
+  // This routine converts the given instance into an equivalent
+  // problem where all bounds are modelled by additional rows of A and
+  // where all variables are free.
+  //
+  // That is, the quantities c and D do not change, but A, b, and
+  // row_types are augmented by at most 2n additional rows/entries
+  // (and fl and fu are adjusted as well).
+
+  // extract data from qp:
+  const int n = qp.number_of_variables();
+  const int m = qp.number_of_constraints();
+
+  // allocate storage (admittedly, I don't care about efficiency and
+  // elegance here...):
+  typedef CGAL::QP_MPS_instance<IT, ET>    QP_MPS;
+  typedef typename QP_MPS::Vector          Vector;
+  typedef typename QP_MPS::Vector_iterator Vector_iterator;
+  typedef typename QP_MPS::Matrix          Matrix;
+  typedef typename QP_MPS::Beginner        Beginner;
+  typedef typename QP_MPS::Row_type        Row_type;
+  typedef typename QP_MPS::Row_type_vector Row_type_vector;
+  Matrix A                  = qp.A_matrix();
+  Vector b                  = qp.b_vector();
+  Row_type_vector row_types = qp.row_types_vector();
+
+  // add rows to A and corresponding entries to b:
+  int nr_of_rows_added = 0;
+  for (int i=0; i<n; ++i) {
+    if (*(qp.fl()+i)) {                        // x >= l
+      // add a row to A:
+      for (int j=0; j<n; ++j)
+	A[j].push_back(i==j? 1 : 0);
+
+      // add corresponding entry to b:
+      b.push_back(qp.l()[i]);
+
+      // add corresponding row type:
+      row_types.push_back(QP_MPS::GREATER_EQUAL);
+
+      ++nr_of_rows_added;
+    }
+    if (*(qp.fu()+i)) {                        // x <= u
+      // add a row to A:
+      for (int j=0; j<n; ++j)
+	A[j].push_back(i==j? 1 : 0);
+
+      // add corresponding entry to b:
+      b.push_back(qp.u()[i]);
+
+      // add corresponding row type:
+      row_types.push_back(QP_MPS::LESS_EQUAL);
+
+      ++nr_of_rows_added;
+    }
+  }
+
+  // output:
+  std::auto_ptr<std::ofstream> out = create_output_file(file, dir, "free");
+  CGAL::write_MPS(*out,
+		  "", // deduce number-type
+		  "Freed instance of original file",
+		  "master_mps_to_derivatives-create_free_instance",
+		  qp.problem_name(),
+		  n, m+nr_of_rows_added,
+		  Vector_iterator(A.begin(),Beginner()),
+		  b.begin(),
+		  qp.c(),
+		  qp.D(),
+		  CGAL::Const_oneset_iterator<bool>(false), // fu
+		  CGAL::Const_oneset_iterator<bool>(false), // fl
+		  qp.u(),  // dummy
+		  qp.l(),  // dummy
+		  row_types.begin());
+  out->close();
+}
 
 template<typename IT>
 bool create_derivatives(const char *path,
@@ -182,6 +267,7 @@ bool create_derivatives(const char *path,
 
   // derivates:
   create_shifted_instance<IT, ET>(qp, path, file, dir);
+  create_free_instance<IT, ET>(qp, path, file, dir);
   // Note: insert additional derivative routines here! Your routine may use
   // create_output_file() to create the output file.
   
