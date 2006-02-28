@@ -895,7 +895,8 @@ void write_MPS(std::ostream& out,
     out << "QMATRIX\n";
     for (int i=0; i<n; ++i)
       for (int j=0; j<n; ++j)
-	out << "  x" << i << "  x" << j << "  " << 2*D[i][j] << "\n";
+	if (!CGAL::is_zero(D[i][j]))
+	  out << "  x" << i << "  x" << j << "  " << 2*D[i][j] << "\n";
   }    
 
   // output end:
