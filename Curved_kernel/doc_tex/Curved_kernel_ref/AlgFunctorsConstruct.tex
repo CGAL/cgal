@@ -7,13 +7,12 @@
 A model \ccVar\ of this type must provide:
 
 \ccMethod{AlgebraicKernelForCircles::Polynomial_1_2
-	operator()(const AlgebraicKernelForCircles::RT a,
-		const AlgebraicKernelForCircles::RT b,
-		const AlgebraicKernelForCircles::RT c);}
+	operator()(const AlgebraicKernelForCircles::RT &a,
+		const AlgebraicKernelForCircles::RT &b,
+		const AlgebraicKernelForCircles::RT &c);}
 {Constructs polynomial \ccc{ax+by+c}.}
 
 \end{ccRefConcept}
-
 \begin{ccRefConcept}{AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2}
 
 \ccCreationVariable{fo}
