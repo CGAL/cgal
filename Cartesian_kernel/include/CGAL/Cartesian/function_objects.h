@@ -888,12 +888,14 @@ namespace CartesianKernelFunctors {
 
 } //namespace CartesianKernelFunctors
 
+#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
 template < typename K>
 struct Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>,
                            typename K::Circle_2>
 {
   typedef typename K::FT const &   type;
 };
+#endif
 
 // For the non specialized template will do the right thing,
 // namely return a copy of an FT
@@ -2316,6 +2318,7 @@ namespace CartesianKernelFunctors {
 
 } //namespace CartesianKernelFunctors
 
+#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
 template < typename K>
 struct Qualified_result_of<CartesianKernelFunctors::Construct_vertex_2<K>, typename K::Segment_2, int >
 {
@@ -2327,6 +2330,7 @@ struct Qualified_result_of<CartesianKernelFunctors::Construct_vertex_2<K>, typen
 {
   typedef typename K::Point_2 const &   type;
 };
+#endif
 
 // For Iso_rectangle the non specialized template will do the right thing, namely return a copy of a point
 

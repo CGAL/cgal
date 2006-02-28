@@ -2795,6 +2795,7 @@ namespace HomogeneousKernelFunctors {
 } //namespace HomogeneousKernelFunctors
 
 
+#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
 template < typename K>
 struct Qualified_result_of<HomogeneousKernelFunctors::Construct_vertex_2<K>, typename K::Segment_2, int >
 {
@@ -2806,6 +2807,7 @@ struct Qualified_result_of<HomogeneousKernelFunctors::Construct_vertex_2<K>, typ
 {
   typedef typename K::Point_2 const &   type;
 };
+#endif
 
 // For Iso_rectangle the non specialized template will do the right thing, namely return a copy of a point
 
