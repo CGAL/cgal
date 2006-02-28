@@ -114,80 +114,82 @@ namespace CGAL {
    return res;
   }
 
-   template < class AK >
+    template < class AK >
     inline 
     Sign sign_at( const typename AK::Polynomial_for_circles_2_2 & equation,
-		  const typename AK::Root_for_circles_2_2 r){
-    typedef typename AK::Root_of_2 Root_of_2;
-    Root_of_2 part_left = square(r.x() - equation.a());
-    Root_of_2 part_right = equation.r_sq() - square(r.y() - equation.b());
-    if (part_left == part_right)
-      return ZERO;
-    return (part_left < part_right) ? NEGATIVE : POSITIVE; 
-  }
+		  const typename AK::Root_for_circles_2_2 & r)
+    {
+      typedef typename AK::Root_of_2 Root_of_2;
+      Root_of_2 part_left = square(r.x() - equation.a());
+      Root_of_2 part_right = equation.r_sq() - square(r.y() - equation.b());
+      if (part_left == part_right)
+	return ZERO;
+      return (part_left < part_right) ? NEGATIVE : POSITIVE; 
+    }
 
 
   template <class AK>
   typename AK::Root_for_circles_2_2
-  x_critical_point(const typename AK::Polynomial_for_circles_2_2 & c, bool i)
+  x_critical_point(const typename AK::Polynomial_for_circles_2_2 & c, 
+		   bool i)
   {
-            typedef typename AK::Root_of_2 Root_of_2;
-            typedef typename AK::FT        FT;
-            typedef typename AK::Root_for_circles_2_2
-                                           Root_for_circles_2_2;
+    typedef typename AK::Root_of_2            Root_of_2;
+    typedef typename AK::FT                   FT;
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
-            return Root_for_circles_2_2(a1, c.b());
+    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
+    
+    return Root_for_circles_2_2(a1, c.b());
   }
 
   template <class AK, class OutputIterator>
   OutputIterator
-  x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
+  x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, 
+		    OutputIterator res)
   {
-            typedef typename AK::Root_of_2 Root_of_2;
-            typedef typename AK::FT        FT;
-            typedef typename AK::Root_for_circles_2_2
-                                           Root_for_circles_2_2;
+    typedef typename AK::Root_of_2            Root_of_2;
+    typedef typename AK::FT                   FT;
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-	    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
-	    Root_of_2 a2= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
-
-            *res++ =  Root_for_circles_2_2(a1, c.b());
-	    *res++ =  Root_for_circles_2_2(a2, c.b());
-	    return res;
+    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
+    Root_of_2 a2= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
+    
+    *res++ =  Root_for_circles_2_2(a1, c.b());
+    *res++ =  Root_for_circles_2_2(a2, c.b());
+    
+    return res;
   }
-
-
 
   template <class AK>
   typename AK::Root_for_circles_2_2
-  y_critical_point(const typename AK::Polynomial_for_circles_2_2 &c, bool i)
+  y_critical_point(const typename AK::Polynomial_for_circles_2_2 &c, 
+		   bool i)
   {
-            typedef typename AK::Root_of_2 Root_of_2;
-            typedef typename AK::FT        FT;
-            typedef typename AK::Root_for_circles_2_2
-                                           Root_for_circles_2_2;
+    typedef typename AK::Root_of_2            Root_of_2;
+    typedef typename AK::FT                   FT;
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-            Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
+    Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
 
-            return Root_for_circles_2_2(c.a(),b1);
+    return Root_for_circles_2_2(c.a(),b1);
   }
   
   template <class AK, class OutputIterator>
-    OutputIterator
-    y_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, OutputIterator res)
-    {
-      typedef typename AK::Root_of_2 Root_of_2;
-      typedef typename AK::FT        FT;
-      typedef typename AK::Root_for_circles_2_2
-	Root_for_circles_2_2;
+  OutputIterator
+  y_critical_points(const typename AK::Polynomial_for_circles_2_2 & c, 
+		    OutputIterator res)
+  {
+    typedef typename AK::Root_of_2 Root_of_2;
+    typedef typename AK::FT        FT;
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
       
-      Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
-      Root_of_2 b2= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
-      
-      *res++ = Root_for_circles_2_2(c.a(), b1);
-      *res++ = Root_for_circles_2_2(c.a(), b2);
-      return res;
+    Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
+    Root_of_2 b2= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
+    
+    *res++ = Root_for_circles_2_2(c.a(), b1);
+    *res++ = Root_for_circles_2_2(c.a(), b2);
+
+    return res;
   }
 
 

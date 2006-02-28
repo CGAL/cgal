@@ -171,17 +171,18 @@ namespace CGAL {
     return res;
   }
 
-  template < class AK >
+    template < class AK >
     inline 
     Sign sign_at( const typename AK::Polynomial_1_2 & equation,
-		  const typename AK::Root_for_circles_2_2 r){
-    typedef typename AK::Root_of_2 Root_of_2;
-    Root_of_2 part_left = r.x()*equation.a();
-    Root_of_2 part_right =  -equation.c() - r.y()*equation.b();
-    if (part_left == part_right)
-      return ZERO;
-    return (part_left < part_right) ? NEGATIVE : POSITIVE; 
-  }
+		  const typename AK::Root_for_circles_2_2 & r)
+    {
+      typedef typename AK::Root_of_2 Root_of_2;
+      Root_of_2 part_left = r.x()*equation.a();
+      Root_of_2 part_right =  -equation.c() - r.y()*equation.b();
+      if (part_left == part_right)
+	return ZERO;
+      return (part_left < part_right) ? NEGATIVE : POSITIVE; 
+    }
 
 
   
