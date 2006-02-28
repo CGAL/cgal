@@ -505,10 +505,6 @@ Installation/config/support/test_GMP.C -text
 Installation/config/support/test_GMPXX.C -text
 Installation/config/support/test_LEDA.C -text
 Installation/config/support/test_QT.C -text
-Installation/config/support/test_QT3.C -text
-Installation/config/support/test_QT3MS.C -text
-Installation/config/support/test_QT3MT.C -text
-Installation/config/support/tmp_test.C -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
