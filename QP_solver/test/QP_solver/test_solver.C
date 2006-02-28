@@ -300,7 +300,7 @@ CGAL::QP_pricing_strategy<Traits> *
   create_strategy(const std::map<std::string,int>& options)
 {
   Key_const_iterator it = options.find("Strategy");
-  CGAL::QP_pricing_strategy<Traits> *strat;
+  CGAL::QP_pricing_strategy<Traits> *strat = 0;
   typedef typename NT_selector<typename Traits::ET>::NT NT;
   switch (it->second) {
   case FE:
