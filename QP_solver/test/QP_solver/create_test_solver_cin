@@ -20,8 +20,7 @@ function create_derivatives()
 	if [ ! -e master_mps_to_derivatives ]; then
 	    echo "Building failed, bailing out."
 	    echo -n "ERROR: 'master_mps_to_derivatives' not available in the "
-	    echo "current working"
-	    echo "directory; try"
+	    echo "current working directory; try"
 	    echo ""
 	    echo "  make master_mps_to_derivatives"
 	    echo ""
@@ -30,12 +29,7 @@ function create_derivatives()
     fi
 
     # call master_mps_to_derivatives:
-    is_CGAL_test_case=$(expr "$file" : ".*/cgal/.*$")
-    if [ $is_CGAL_test_case == 0 ]; then
-	./master_mps_to_derivatives "$file" "$name" test_solver_data/derivatives/additional
-    else
-	./master_mps_to_derivatives "$file" "$name" test_solver_data/derivatives/cgal
-    fi
+    ./master_mps_to_derivatives "$file" "$name" test_solver_data/derivatives
 }
 
 # echo usuage:
@@ -91,11 +85,26 @@ else
  MASTERS=$(find test_solver_data/masters -name '*mps')
 fi
 
-# generate derivates:
+# generate derivates and, in parallel, add them to the list of files that
+# will finally consitute test_solver.cin:
+LIST=""
+MISSINGFILES=""
 echo "Generating derivates..."
 for file in $MASTERS
   do
   name=`basename "$file" .mps`
+
+  # check that no file appears in both the cgal and the additional directories:
+  if [ -e test_solver_data/masters/cgal/${name}.mps ] && \
+      [ -e test_solver_data/masters/additional/${name}.mps ]; then
+    warnUser=1
+    echo "ERROR: The MPS-file"
+    echo ""
+    echo "  $file"
+    echo ""
+    echo "exists in masters/cgal and masters/additional. Please fix this."
+    exit 1
+  fi
 
   # for each master, find all its derivatives:
   DERS=$(find test_solver_data/derivatives -name "${name}*.mps")
@@ -111,33 +120,27 @@ for file in $MASTERS
   if [ $older == 1 ] || [ "x$DERS" == "x" ]; then
       echo "  File '${name}.mps' is not up-to-date."
       create_derivatives $file $name
+      DERS=$(find test_solver_data/derivatives -name "${name}*.mps")
   else
       echo "  File '${name}.mps' is up-to-date."
   fi
-done
 
-# finally, collect all files for the testsuite:
-if [ "x$1" == "xCGAL" ]; then
- FILES=$(find test_solver_data/masters/cgal test_solver_data/derivatives/cgal -name '*mps')
-else
- FILES=$(find test_solver_data/masters test_solver_data/derivatives -name '*mps')
-fi
-echo "Generating 'test_solver.cin'..."
-LIST=""
-MISSINGFILES=""
-for f in $FILES
-  do
-  # add file to list:
-  LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
-
-  # check whether the file exists in the SVN repository:
-  tmpf=`basename "$f"`
-  tmpd=`dirname "$f"`
-  if grep -q "name=\\\"$tmpf\\\"" "$tmpd/.svn/entries"; then 
-      echo -n ""; 
-  else 
-      MISSINGFILES="$MISSINGFILES  $f\n" 
-  fi
+  # add derivates and original to file list:
+  DERS="$DERS $file"
+  for der in $DERS
+    do
+    # add file:
+    LIST="${LIST} $level fe $f $level pe $f $level ff $f $level pf $f"
+  
+    # check whether the file exists in the SVN repository:
+    tmpf=`basename "$file"`
+    tmpd=`dirname "$file"`
+    if grep -q "name=\\\"$tmpf\\\"" "$tmpd/.svn/entries"; then 
+	echo -n ""; 
+    else 
+	MISSINGFILES="$MISSINGFILES  $file\n" 
+    fi
+  done
 done
 
 # warn if some files are not committed yet:
