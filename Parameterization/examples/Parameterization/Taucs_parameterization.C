@@ -24,26 +24,12 @@
 // Private types
 // ----------------------------------------------------------------------------
 
-// CGAL kernel
 typedef CGAL::Cartesian<double>                         Kernel;
-
-// Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
+
+// Mesh adaptor
 typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                                         Parameterization_polyhedron_adaptor;
-
-// Circular border parameterizer (the default)
-typedef CGAL::Circular_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
-                                                        Border_parameterizer;
-// TAUCS solver
-typedef CGAL::Taucs_solver_traits<double>               Solver;
-
-// Floater Mean Value Coordinates parameterizer (circular border)
-// with TAUCS solver
-typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
-                                                     Border_parameterizer,
-                                                     Solver>
-                                                        Parameterizer;
 
 
 // ----------------------------------------------------------------------------
@@ -59,13 +45,10 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
     assert(mesh != NULL);
     assert(pFilename != NULL);
 
-    std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
-    FILE *pFile = fopen(pFilename,"wt");
-    if(pFile == NULL)
-    {
-        std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
+    std::ofstream out(pFilename);
+    if(!out) 
         return false;
-    }
+    CGAL::set_ascii_mode(out);
 
     // compute bounding box
     double xmin,xmax,ymin,ymax;
@@ -89,23 +72,31 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
         ymin = std::min(ymin,y2);
     }
 
-    fprintf(pFile,"%%!PS-Adobe-2.0 EPSF-2.0\n");
-    fprintf(pFile,"%%%%BoundingBox: %d %d %d %d\n", int(xmin+0.5), int(ymin+0.5), int(xmax+0.5), int(ymax+0.5));
-    fprintf(pFile,"%%%%HiResBoundingBox: %g %g %g %g\n",xmin,ymin,xmax,ymax);
-    fprintf(pFile,"%%%%EndComments\n");
-    fprintf(pFile,"gsave\n");
-    fprintf(pFile,"0.1 setlinewidth\n");
+    out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;
+    out << "%%BoundingBox: " << int(xmin+0.5) << " " 
+                                << int(ymin+0.5) << " " 
+                                << int(xmax+0.5) << " " 
+                                << int(ymax+0.5) << std::endl;
+    out << "%%HiResBoundingBox: " << xmin << " " 
+                                    << ymin << " " 
+                                    << xmax << " " 
+                                    << ymax << std::endl;
+    out << "%%EndComments" << std::endl;
+    out << "gsave" << std::endl;
+    out << "0.1 setlinewidth" << std::endl;
 
     // color macros
-    fprintf(pFile,"\n%% RGB color command - r g b C\n");
-    fprintf(pFile,"/C { setrgbcolor } bind def\n");
-    fprintf(pFile,"/white { 1 1 1 C } bind def\n");
-    fprintf(pFile,"/black { 0 0 0 C } bind def\n");
+    out << std::endl;
+    out << "% RGB color command - r g b C" << std::endl;
+    out << "/C { setrgbcolor } bind def" << std::endl;
+    out << "/white { 1 1 1 C } bind def" << std::endl;
+    out << "/black { 0 0 0 C } bind def" << std::endl;
 
     // edge macro -> E
-    fprintf(pFile,"\n%% Black stroke - x1 y1 x2 y2 E\n");
-    fprintf(pFile,"/E {moveto lineto stroke} bind def\n");
-    fprintf(pFile,"black\n\n");
+    out << std::endl;
+    out << "% Black stroke - x1 y1 x2 y2 E" << std::endl;
+    out << "/E {moveto lineto stroke} bind def" << std::endl;
+    out << "black" << std::endl << std::endl;
 
     // for each halfedge
     for (pHalfedge = mesh->halfedges_begin();
@@ -116,14 +107,14 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
         double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
         double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
         double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
-        fprintf(pFile,"%g %g %g %g E\n",x1,y1,x2,y2);
+        out << x1 << " " << y1 << " " << x2 << " " << y2 << " E" << std::endl;
     }
 
     /* Emit EPS trailer. */
-    fputs("grestore\n\n",pFile);
-    fputs("showpage\n",pFile);
+    out << "grestore" << std::endl;
+    out << std::endl;
+    out << "showpage" << std::endl;
 
-    fclose(pFile);
     return true;
 }
 
@@ -136,10 +127,9 @@ int main(int argc,char * argv[])
 {
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
-    std::cerr << "  circle border" << std::endl;
+    std::cerr << "  Circle border" << std::endl;
     std::cerr << "  TAUCS solver" << std::endl;
-    std::cerr << "  output: EPS" << std::endl;
-
+    std::cerr << "  Output: EPS" << std::endl;
 
     //***************************************
     // decode parameters
@@ -155,23 +145,19 @@ int main(int argc,char * argv[])
     const char* input_filename  = argv[1];
     const char* output_filename = argv[2];
 
-
     //***************************************
     // Read the mesh
     //***************************************
 
-    fprintf(stderr, "\n  read file...%s...", input_filename);
+    // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) {
-        fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
+    if(!stream) 
+    {
+        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
-
-    // read the mesh
     Polyhedron mesh;
-    fprintf(stderr, "ok\n  fill mesh\n");
     stream >> mesh;
-
 
     //***************************************
     // Create mesh adaptor
@@ -182,16 +168,27 @@ int main(int argc,char * argv[])
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
     Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
-
     //***************************************
     // Floater Mean Value Coordinates parameterizer (circular border)
     // with TAUCS solver
     //***************************************
 
+    // Circular border parameterizer (the default)
+    typedef CGAL::Circular_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
+                                                        Border_parameterizer;
+    // TAUCS solver
+    typedef CGAL::Taucs_solver_traits<double>           Solver;
+
+    // Floater Mean Value Coordinates parameterizer (circular border)
+    // with TAUCS solver
+    typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
+                                                         Border_parameterizer,
+                                                         Solver>
+                                                        Parameterizer;
+
     Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
     if (err != Parameterizer::OK)
-        fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
-
+        std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 
     //***************************************
     // Output
@@ -199,9 +196,13 @@ int main(int argc,char * argv[])
 
     // Write Postscript file
     if (err == Parameterizer::OK)
-        write_file_eps(mesh_adaptor, output_filename);
-
-    fprintf(stderr, "\n");
+    {
+        if ( ! write_file_eps(mesh_adaptor, output_filename) )
+        {
+            std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
+            return EXIT_FAILURE;
+        }   
+    }
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -219,7 +220,7 @@ int main(int argc,char * argv[])
 
 int main(int argc,char * argv[])
 {
-    fprintf(stderr, "\nSkip test as TAUCS is not installed\n\n");
+    std::cerr << "Skip test as TAUCS is not installed" << std::endl;
     return EXIT_SUCCESS;
 }
 

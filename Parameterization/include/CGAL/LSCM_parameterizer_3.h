@@ -22,11 +22,14 @@
 #define CGAL_LSCM_PARAMETERIZER_3_H
 
 #include <CGAL/circulator.h>
+#include <CGAL/Timer.h>
 #include <OpenNL/linear_solver.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/parameterization_assertions.h>
+
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -155,8 +158,8 @@ public:
     /// - 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize(Adaptor* mesh);
 
-// Private operations
-private:
+// Protected operations
+protected:
     /// Check parameterize() preconditions:
     /// - 'mesh' must be a surface with 1 connected component.
     /// - 'mesh' must be a triangular mesh.
@@ -201,6 +204,14 @@ private:
     bool  is_one_to_one_mapping(const Adaptor& mesh,
                                  const LeastSquaresSolver& solver);
 
+// Protected accessors
+protected:
+    /// Get the object that maps the surface's border onto a 2D space.
+    Border_param&   get_border_parameterizer()    { return m_borderParameterizer; }
+
+    /// Get the sparse linear algebra (traits object to access the linear system).
+    Sparse_LA&      get_linear_algebra_traits() { return m_linearAlgebra; }
+
 // Fields
 private:
     /// Object that maps (at least 2) border vertices onto a 2D space
@@ -239,8 +250,18 @@ parameterize(Adaptor* mesh)
 {
     CGAL_parameterization_assertion(mesh != NULL);
 
+#ifdef DEBUG_TRACE
+    // Create timer for traces
+    CGAL::Timer timer;
+    timer.start();
+#endif
+
     // Check preconditions
     Error_code status = check_parameterize_preconditions(mesh);
+#ifdef DEBUG_TRACE
+    std::cerr << "  parameterization preconditions: " << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
     if (status != Base::OK)
         return status;
 
@@ -250,13 +271,9 @@ parameterize(Adaptor* mesh)
     // Index vertices from 0 to nbVertices-1
     mesh->index_mesh_vertices();
 
-    // Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices
-    // (in fact, we need only 2 lines per triangle x 1 column per vertex)
-    LeastSquaresSolver solver(2*nbVertices);
-    solver.set_least_squares(true) ;
-
     // Mark all vertices as NOT "parameterized"
-    for (Vertex_iterator vertexIt = mesh->mesh_vertices_begin();
+    Vertex_iterator vertexIt;
+    for (vertexIt = mesh->mesh_vertices_begin();
         vertexIt != mesh->mesh_vertices_end();
         vertexIt++)
     {
@@ -265,18 +282,24 @@ parameterize(Adaptor* mesh)
 
     // Compute (u,v) for (at least 2) border vertices
     // and mark them as "parameterized"
-    status = m_borderParameterizer.parameterize_border(mesh);
+    status = get_border_parameterizer().parameterize_border(mesh);
+#ifdef DEBUG_TRACE
+    std::cerr << "  border vertices parameterization: " << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
     if (status != Base::OK)
         return status;
+
+    // Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices
+    // (in fact, we need only 2 lines per triangle x 1 column per vertex)
+    LeastSquaresSolver solver(2*nbVertices);
+    solver.set_least_squares(true) ;
 
     // Initialize the "A*X = B" linear system after
     // (at least 2) border vertices parameterization
     initialize_system_from_mesh_border(&solver, *mesh);
 
     // Fill the matrix for the other vertices
-    fprintf(stderr,"  matrix filling (%d x %d)...\n",
-                      int(2*mesh->count_mesh_facets()),
-                      nbVertices);
     solver.begin_system() ;
     for (Facet_iterator facetIt = mesh->mesh_facets_begin();
          facetIt != mesh->mesh_facets_end();
@@ -288,22 +311,36 @@ parameterize(Adaptor* mesh)
             return status;
     }
     solver.end_system() ;
-    fprintf(stderr,"    matrix filling ok\n");
+#ifdef DEBUG_TRACE
+    std::cerr << "  matrix filling (" << 2*mesh->count_mesh_facets() << " x " << nbVertices << "): " 
+              << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
 
     // Solve the "A*X = B" linear system in the least squares sense
-    std::cerr << "  solver..." << std::endl;
     if ( ! solver.solve() )
-    {
-        std::cerr << "  error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
-        return Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
-    }
-    std::cerr << "    solver ok" << std::endl;
+        status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
+#ifdef DEBUG_TRACE
+    std::cerr << "  solving linear system: "
+              << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
+    if (status != Base::OK)
+        return status;
 
     // Copy X coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system(mesh, solver);
+#ifdef DEBUG_TRACE
+    std::cerr << "  copy computed UVs to mesh :" 
+              << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
 
     // Check postconditions
     status = check_parameterize_postconditions(*mesh, solver);
+#ifdef DEBUG_TRACE
+    std::cerr << "  parameterization postconditions: " << timer.time() << " seconds." << std::endl;
+#endif
     if (status != Base::OK)
         return status;
 
@@ -330,20 +367,16 @@ check_parameterize_preconditions(Adaptor* mesh)
     // Allways check that mesh is not empty
     if (mesh->mesh_vertices_begin() == mesh->mesh_vertices_end())
         status = Base::ERROR_EMPTY_MESH;
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_EMPTY_MESH!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     // The whole surface parameterization package is restricted to triangular meshes
     CGAL_parameterization_expensive_precondition_code(                         \
         status = mesh->is_mesh_triangular() ? Base::OK                         \
                                             : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     // The whole package is restricted to surfaces: genus = 0,
     // 1 connected component and at least 1 border
@@ -355,10 +388,8 @@ check_parameterize_preconditions(Adaptor* mesh)
                ? Base::OK                                                   \
                : Base::ERROR_NO_SURFACE_MESH;                               \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     return status;
 }
@@ -478,19 +509,12 @@ setup_triangle_relations(LeastSquaresSolver* solver,
         vertexIndex++;
     }
     if (vertexIndex != 3)
-    {
-        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return Base::ERROR_NON_TRIANGULAR_MESH;
-    }
 
     // Get the vertices index
     int id0 = mesh.get_vertex_index(v0) ;
     int id1 = mesh.get_vertex_index(v1) ;
     int id2 = mesh.get_vertex_index(v2) ;
-
-#ifdef DEBUG_TRACE
-    fprintf(stderr,"    Fill line for triangle (#%d, #%d, #%d): \n", id0, id1, id2);
-#endif
 
     // Get the vertices position
     const Point_3& p0 = mesh.get_vertex_position(v0) ;
@@ -508,10 +532,6 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     NT c = z02.x() ;
     NT d = z02.y() ;
     CGAL_parameterization_assertion(b == 0.0) ;
-
-#ifdef DEBUG_TRACE
-    fprintf(stderr,"      a=%f b=%f c=%f d=%f\n", (float)a, (float)b, (float)c, (float)d);
-#endif
 
     // Create 2 lines in the linear system per triangle (1 for u, 1 for v)
     // LSCM equation is:
@@ -548,10 +568,6 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     solver->add_coefficient(v2_id,    a) ;
     solver->end_row() ;
 
-#ifdef DEBUG_TRACE
-    fprintf(stderr,"      ok\n");
-#endif
-
     return Base::OK;
 }
 
@@ -562,7 +578,6 @@ void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 set_mesh_uv_from_system(Adaptor* mesh,
                         const LeastSquaresSolver& solver)
 {
-    fprintf(stderr,"  copy computed UVs to mesh\n");
     Vertex_iterator vertexIt;
     for (vertexIt = mesh->mesh_vertices_begin();
          vertexIt != mesh->mesh_vertices_end();
@@ -579,13 +594,12 @@ set_mesh_uv_from_system(Adaptor* mesh,
         mesh->set_vertex_uv(vertexIt, Point_2(u,v));
         mesh->set_vertex_parameterized(vertexIt, true);
     }
-    fprintf(stderr,"    ok\n");
 }
 
 /// Check parameterize() postconditions:
 /// - "A*X = B" system is solvable (in the least squares sense)
-///   with a good conditioning
-/// - 3D -> 2D mapping is 1 to 1
+///   with a good conditioning.
+/// - 3D -> 2D mapping is 1 to 1.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
@@ -605,19 +619,15 @@ check_parameterize_postconditions(const Adaptor& mesh,
                ? Base::OK                                       \
                : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+    if (status != Base::OK)
         return status;
-    }
     CGAL_parameterization_expensive_postcondition_code(         \
         status = get_linear_algebra_traits().is_solvable(A, Bv) \
                ? Base::OK                                       \
                : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
      */
 
     // Check if 3D -> 2D mapping is 1 to 1
@@ -626,16 +636,13 @@ check_parameterize_postconditions(const Adaptor& mesh,
                ? Base::OK                               \
                : Base::ERROR_NO_1_TO_1_MAPPING;         \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NO_1_TO_1_MAPPING!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     return status;
 }
 
-/// Check if 3D -> 2D mapping is 1 to 1
-/// The default implementation checks each normal
+/// Check if 3D -> 2D mapping is 1 to 1.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::

@@ -25,7 +25,7 @@ email                : pierre.alliez@sophia.inria.fr
 #include <algorithm>
 #include <vector>
 #include <list>
-#include <stdio.h>
+#include <fstream>
 
 
 // CGAL kernel
@@ -140,16 +140,7 @@ public:
     // texture coordinates
     double u() const { return m_u; }
     double v() const { return m_v; }
-    void uv(double u, double v)
-    {
-#ifdef DEBUG_TRACE
-        std::cerr << "      H" << index()
-                  << "(" << opposite()->vertex()->index() << "->" << vertex()->index() << ")"
-                  << "<- (u=" << u << ",v=" << v << ")\n";
-#endif
-        m_u = u;
-        m_v = v;
-    }
+    void uv(double u, double v) { m_u = u; m_v = v; }
 
     // param.
     bool is_parameterized() const { return m_is_parameterized; }
@@ -257,9 +248,7 @@ public:
     // facet centers
     void compute_facet_centers()
     {
-        fprintf(stderr,"  compute facet centers...");
         std::for_each(facets_begin(),facets_end(),Facet_center());
-        fprintf(stderr,"ok\n");
     }
 
     // tag all facets
@@ -406,13 +395,12 @@ public:
     bool write_file_eps(const char *pFilename,
                         double scale = 500.0)
     {
-        std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
-        FILE *pFile = fopen(pFilename,"wt");
-        if(pFile == NULL)
-        {
-            std::cerr << "  unable to open file " << pFilename <<  " for writing" << std::endl;
+        assert(pFilename != NULL);
+
+        std::ofstream out(pFilename);
+        if(!out) 
             return false;
-        }
+        CGAL::set_ascii_mode(out);
 
         // compute bounding box
         double xmin,xmax,ymin,ymax;
@@ -436,23 +424,31 @@ public:
             ymin = std::min(ymin,y2);
         }
 
-        fprintf(pFile,"%%!PS-Adobe-2.0 EPSF-2.0\n");
-        fprintf(pFile,"%%%%BoundingBox: %d %d %d %d\n", int(xmin+0.5), int(ymin+0.5), int(xmax+0.5), int(ymax+0.5));
-        fprintf(pFile,"%%%%HiResBoundingBox: %g %g %g %g\n",xmin,ymin,xmax,ymax);
-        fprintf(pFile,"%%%%EndComments\n");
-        fprintf(pFile,"gsave\n");
-        fprintf(pFile,"0.1 setlinewidth\n");
+        out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;
+        out << "%%BoundingBox: " << int(xmin+0.5) << " " 
+                                   << int(ymin+0.5) << " " 
+                                   << int(xmax+0.5) << " " 
+                                   << int(ymax+0.5) << std::endl;
+        out << "%%HiResBoundingBox: " << xmin << " " 
+                                        << ymin << " " 
+                                        << xmax << " " 
+                                        << ymax << std::endl;
+        out << "%%EndComments" << std::endl;
+        out << "gsave" << std::endl;
+        out << "0.1 setlinewidth" << std::endl;
 
         // color macros
-        fprintf(pFile,"\n%% RGB color command - r g b C\n");
-        fprintf(pFile,"/C { setrgbcolor } bind def\n");
-        fprintf(pFile,"/white { 1 1 1 C } bind def\n");
-        fprintf(pFile,"/black { 0 0 0 C } bind def\n");
+        out << std::endl;
+        out << "% RGB color command - r g b C" << std::endl;
+        out << "/C { setrgbcolor } bind def" << std::endl;
+        out << "/white { 1 1 1 C } bind def" << std::endl;
+        out << "/black { 0 0 0 C } bind def" << std::endl;
 
         // edge macro -> E
-        fprintf(pFile,"\n%% Black stroke - x1 y1 x2 y2 E\n");
-        fprintf(pFile,"/E {moveto lineto stroke} bind def\n");
-        fprintf(pFile,"black\n\n");
+        out << std::endl;
+        out << "% Black stroke - x1 y1 x2 y2 E" << std::endl;
+        out << "/E {moveto lineto stroke} bind def" << std::endl;
+        out << "black" << std::endl << std::endl;
 
         // for each halfedge
         for(pHalfedge = halfedges_begin();
@@ -463,14 +459,14 @@ public:
             double y1 = scale * pHalfedge->prev()->v();
             double x2 = scale * pHalfedge->u();
             double y2 = scale * pHalfedge->v();
-            fprintf(pFile,"%g %g %g %g E\n",x1,y1,x2,y2);
+            out << x1 << " " << y1 << " " << x2 << " " << y2 << " E" << std::endl;
         }
 
         /* Emit EPS trailer. */
-        fputs("grestore\n\n",pFile);
-        fputs("showpage\n",pFile);
+        out << "grestore" << std::endl;
+        out << std::endl;
+        out << "showpage" << std::endl;
 
-        fclose(pFile);
         return true;
     }
 
@@ -481,13 +477,12 @@ public:
     // Implementation note: the UV is meaningless for a NON parameterized halfedge
     bool write_file_obj(const char *pFilename)
     {
-        std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
-        FILE *pFile = fopen(pFilename,"wt");
-        if(pFile == NULL)
-        {
-            std::cerr << "  unable to open file " << pFilename <<  " for writing\n";
+        assert(pFilename != NULL);
+
+        std::ofstream out(pFilename);
+        if(!out) 
             return false;
-        }
+        CGAL::set_ascii_mode(out);
 
         // Index all mesh vertices following the order of vertices_begin() iterator
         precompute_vertex_indices();
@@ -495,45 +490,44 @@ public:
         precompute_halfedge_indices();
 
         // write the name of material file
-        fprintf(pFile, "mtllib parameterization.mtl\n") ;
+        out <<  "mtllib parameterization.mtl" << std::endl ;
 
         // output coordinates
-        fprintf(pFile, "# vertices\n") ;
+        out <<  "# vertices" << std::endl ;
         Vertex_iterator pVertex;
         for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
-            fprintf(pFile,"v %g %g %g\n",
-                    (double)pVertex->point().x(),
-                    (double)pVertex->point().y(),
-                    (double)pVertex->point().z());
+            out << "v " << pVertex->point().x() << " " 
+                        << pVertex->point().y() << " " 
+                        << pVertex->point().z() << std::endl;
 
         // Write UVs (1 UV / halfedge)
-        fprintf(pFile, "# uv coordinates\n") ;
+        out <<  "# uv coordinates" << std::endl ;
         Halfedge_iterator pHalfedge;
         for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
         {
             if (pHalfedge->is_parameterized())
-                fprintf(pFile, "vt %f %f\n", pHalfedge->u(), pHalfedge->v());
+                out << "vt " << pHalfedge->u() << " " << pHalfedge->v() << std::endl;
             else
-                fprintf(pFile, "vt %f %f\n", 0.0, 0.0);
+                out << "vt " << 0.0 << " " << 0.0 << std::endl;
         }
 
         // Write facets using the unique material # 1
-        fprintf(pFile, "# facets\nusemtl Mat_1\n");
-        Facet_iterator pFacet;
+        out << "# facets" << std::endl;
+        out << "usemtl Mat_1" << std::endl;
+        Facet_const_iterator pFacet;
         for(pFacet = facets_begin(); pFacet != facets_end(); pFacet++)
         {
-            Halfedge_around_facet_circulator h = pFacet->facet_begin();
-            fprintf(pFile,"f");
+            Halfedge_around_facet_const_circulator h = pFacet->facet_begin();
+            out << "f";
             do {
-                fprintf(pFile, " %d", (int)h->vertex()->index()+1);
+                out << " " << h->vertex()->index()+1;
                 if (h->is_parameterized())
-                    fprintf(pFile, "/%d", (int)h->index()+1);
+                    out <<  "/" << h->index()+1;
             }
             while(++h != pFacet->facet_begin());
-            fprintf(pFile,"\n");
+            out << std::endl;
         }
 
-        fclose(pFile);
         return true;
     }
 

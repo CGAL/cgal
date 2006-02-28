@@ -20,13 +20,12 @@
 
 
 //***************************************************
-// simple cut
+// simple cut for genus 0 mesh
 //***************************************************
 void Mesh_cutter::cut(Backbone *pBackbone)
 {
     m_pBackbone = pBackbone;
     CGAL_assertion(pBackbone != NULL);
-    std::cerr << "  simple cut..." << std::endl;
 
     // special init -> tag all vertices, but two
     m_pPolyhedron->tag_vertices(FREE);
@@ -37,9 +36,7 @@ void Mesh_cutter::cut(Backbone *pBackbone)
     init();
 
     // cutting
-    std::cerr << "    cutting...";
     while(extend()) {}
-    std::cerr << "done" << std::endl;
 }
 
 /////////////////////////////////////////////////////
@@ -47,7 +44,7 @@ void Mesh_cutter::cut(Backbone *pBackbone)
 /////////////////////////////////////////////////////
 
 //***************************************************
-// cut genus
+// cut for genus>0 mesh
 //***************************************************
 void Mesh_cutter::cut_genus(Backbone *pBackbone)
 {
@@ -55,14 +52,11 @@ void Mesh_cutter::cut_genus(Backbone *pBackbone)
     CGAL_assertion(pBackbone != NULL);
 
     // init
-    std::cerr << "  cut genus>0 mesh..." << std::endl;
     m_pPolyhedron->tag_vertices(FREE); // all free
     init();
 
     // cutting
-    std::cerr << "    cutting...";
     while(extend()) {}
-    std::cerr << "done" << std::endl;
 }
 
 //***************************************************
@@ -70,8 +64,6 @@ void Mesh_cutter::cut_genus(Backbone *pBackbone)
 //***************************************************
 bool Mesh_cutter::init()
 {
-    std::cerr << "    init..." << std::endl;
-
     // tag facets
     m_pPolyhedron->tag_facets(FREE);
 

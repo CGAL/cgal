@@ -123,12 +123,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 
     // Nothing to do if no border
     if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
-    {
-        std::cerr << "  error ERROR_INVALID_BORDER!" << std::endl;
         return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
-    }
-
-    std::cerr << "  map 2 vertices..." << std::endl;
 
     // Get mesh's bounding box
     double xmin =  1e30 ;
@@ -259,10 +254,12 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     }
     mesh->set_vertex_parameterized(vxmin, true) ;
     mesh->set_vertex_parameterized(vxmax, true) ;
+
+#ifdef DEBUG_TRACE
+    std::cerr << "  map 2 vertices..." << std::endl;
     std::cerr << "    #" << mesh->get_vertex_index(vxmin) << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
     std::cerr << "    #" << mesh->get_vertex_index(vxmax) << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
-
-    std::cerr << "    done" << std::endl;
+#endif
 
     return Parameterizer_traits_3<Adaptor>::OK;
 }

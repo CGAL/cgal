@@ -22,12 +22,15 @@
 #define CGAL_FIXED_BORDER_PARAMETERIZER_3_H
 
 #include <CGAL/circulator.h>
+#include <CGAL/Timer.h>
 #include <OpenNL/linear_solver.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <CGAL/parameterization_assertions.h>
+
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -87,9 +90,9 @@ public:
     typedef ParameterizationMesh_3          Adaptor;
     /// @endcond
 
-    /// Export BorderParameterizer_3 template parameter
+    /// Export BorderParameterizer_3 template parameter.
     typedef BorderParameterizer_3           Border_param;
-    /// Export SparseLinearAlgebraTraits_d template parameter
+    /// Export SparseLinearAlgebraTraits_d template parameter.
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
 
 // Private types
@@ -226,7 +229,7 @@ private:
     /// Object that maps the surface's border onto a 2D space.
     Border_param    m_borderParameterizer;
 
-    /// Traits object to access the linear system.
+    /// Traits object to solve a sparse linear system
     Sparse_LA       m_linearAlgebra;
 };
 
@@ -252,8 +255,18 @@ parameterize(Adaptor* mesh)
 {
     CGAL_parameterization_assertion(mesh != NULL);
 
+#ifdef DEBUG_TRACE
+    // Create timer for traces
+    CGAL::Timer timer;
+    timer.start();
+#endif
+
     // Check preconditions
     Error_code status = check_parameterize_preconditions(mesh);
+#ifdef DEBUG_TRACE
+    std::cerr << "  parameterization preconditions: " << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
     if (status != Base::OK)
         return status;
 
@@ -262,10 +275,6 @@ parameterize(Adaptor* mesh)
 
     // Index vertices from 0 to nbVertices-1
     mesh->index_mesh_vertices();
-
-    // Create 2 sparse linear systems "A*Xu = Bu" and "A*Xv = Bv" (1 line/column per vertex)
-    Matrix A(nbVertices, nbVertices);
-    Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
 
     // Mark all vertices as NOT "parameterized"
     Vertex_iterator vertexIt;
@@ -276,10 +285,19 @@ parameterize(Adaptor* mesh)
         mesh->set_vertex_parameterized(vertexIt, false);
     }
 
-    // compute (u,v) for border vertices and mark them as "parameterized"
+    // Compute (u,v) for border vertices
+    // and mark them as "parameterized"
     status = get_border_parameterizer().parameterize_border(mesh);
+#ifdef DEBUG_TRACE
+    std::cerr << "  border vertices parameterization: " << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
     if (status != Base::OK)
         return status;
+
+    // Create 2 sparse linear systems "A*Xu = Bu" and "A*Xv = Bv" (1 line/column per vertex)
+    Matrix A(nbVertices, nbVertices);
+    Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
 
     // Initialize A, Xu, Xv, Bu and Bv after border parameterization
     // Fill the border vertices' lines in both linear systems:
@@ -291,7 +309,6 @@ parameterize(Adaptor* mesh)
 
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
-    fprintf(stderr,"  matrix filling (%d x %d)...\n",nbVertices,nbVertices);
     for (vertexIt = mesh->mesh_vertices_begin();
          vertexIt != mesh->mesh_vertices_end();
          vertexIt++)
@@ -310,28 +327,46 @@ parameterize(Adaptor* mesh)
                 return status;
         }
     }
-    fprintf(stderr,"    matrix filling ok\n");
+#ifdef DEBUG_TRACE
+    std::cerr << "  matrix filling (" << nbVertices << " x " << nbVertices << "): " 
+              << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
 
     // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-    std::cerr << "  solver..." << std::endl;
     NT Du, Dv;
     if ( !get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
          !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv) )
     {
-        std::cerr << "    error ERROR_CANNOT_SOLVE_LINEAR_SYSTEM!" << std::endl;
-        return Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
+        status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
+#ifdef DEBUG_TRACE
+    std::cerr << "  solving 2 linear systems: "
+              << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
+    if (status != Base::OK)
+        return status;
+
     // WARNING: this package does not support homogeneous coordinates!
     CGAL_parameterization_assertion(Du == 1.0);
     CGAL_parameterization_assertion(Dv == 1.0);
-    std::cerr << "    solver ok" << std::endl;
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system (mesh, Xu, Xv);
+#ifdef DEBUG_TRACE
+    std::cerr << "  copy computed UVs to mesh :" 
+              << timer.time() << " seconds." << std::endl;
+    timer.reset();
+#endif
+
 
     // Check postconditions
     status = check_parameterize_postconditions(*mesh, A, Bu, Bv);
+#ifdef DEBUG_TRACE
+    std::cerr << "  parameterization postconditions: " << timer.time() << " seconds." << std::endl;
+#endif
     if (status != Base::OK)
         return status;
 
@@ -359,20 +394,16 @@ check_parameterize_preconditions(Adaptor* mesh)
     // Allways check that mesh is not empty
     if (mesh->mesh_vertices_begin() == mesh->mesh_vertices_end())
         status = Base::ERROR_EMPTY_MESH;
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_EMPTY_MESH!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     // The whole surface parameterization package is restricted to triangular meshes
     CGAL_parameterization_expensive_precondition_code(                         \
         status = mesh->is_mesh_triangular() ? Base::OK                         \
                                             : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     // The whole package is restricted to surfaces: genus = 0,
     // 1 connected component and at least 1 border
@@ -384,10 +415,8 @@ check_parameterize_preconditions(Adaptor* mesh)
                ? Base::OK                                                   \
                : Base::ERROR_NO_SURFACE_MESH;                               \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NO_SURFACE_MESH!" << std::endl;
+    if (status != Base::OK)
         return status;
-    }
 
     // 1 to 1 mapping is guaranteed if all w_ij coefficients are > 0 (for j vertex neighbor of i)
     // and if the surface border is mapped onto a 2D convex polygon
@@ -396,10 +425,8 @@ check_parameterize_preconditions(Adaptor* mesh)
                ? Base::OK                                       \
                : Base::ERROR_INVALID_BORDER;                    \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_INVALID_BORDER!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     return status;
 }
@@ -463,10 +490,6 @@ setup_inner_vertex_relations(Matrix* A,
 
     int i = mesh.get_vertex_index(vertex);
 
-#ifdef DEBUG_TRACE
-    fprintf(stderr,"    Fill line #%d: \n", i);
-#endif
-
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
     NT w_ii = 0;
     int vertexIndex = 0;
@@ -486,21 +509,10 @@ setup_inner_vertex_relations(Matrix* A,
         // Set w_ij in matrix
         A->set_coef(i,j, w_ij);
 
-#ifdef DEBUG_TRACE
-        fprintf(stderr,"      neighbor #%d -> w_ij = %5.2f\n", j, (float)w_ij);
-#endif
-
         vertexIndex++;
     }
     if (vertexIndex < 2)
-    {
-        std::cerr << "  error ERROR_NON_TRIANGULAR_MESH!" << std::endl;
         return Base::ERROR_NON_TRIANGULAR_MESH;
-    }
-
-#ifdef DEBUG_TRACE
-    fprintf(stderr,"      ok\n");
-#endif
 
     // Set w_ii in matrix
     A->set_coef(i,i, w_ii);
@@ -515,7 +527,6 @@ void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 set_mesh_uv_from_system(Adaptor* mesh,
                         const Vector& Xu, const Vector& Xv)
 {
-    fprintf(stderr,"  copy computed UVs to mesh\n");
     Vertex_iterator vertexIt;
     for (vertexIt = mesh->mesh_vertices_begin();
         vertexIt != mesh->mesh_vertices_end();
@@ -530,7 +541,6 @@ set_mesh_uv_from_system(Adaptor* mesh,
         mesh->set_vertex_uv(vertexIt, Point_2(u,v));
         mesh->set_vertex_parameterized(vertexIt, true);
     }
-    fprintf(stderr,"    ok\n");
 }
 
 /// Check parameterize() postconditions:
@@ -554,19 +564,15 @@ check_parameterize_postconditions(const Adaptor& mesh,
                ? Base::OK                                       \
                : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
     CGAL_parameterization_expensive_postcondition_code(         \
         status = get_linear_algebra_traits().is_solvable(A, Bv) \
                ? Base::OK                                       \
                : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_BAD_MATRIX_CONDITIONING!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     // Check if 3D -> 2D mapping is 1 to 1
     CGAL_parameterization_postcondition_code( 		\
@@ -574,10 +580,8 @@ check_parameterize_postconditions(const Adaptor& mesh,
                ? Base::OK                               \
                : Base::ERROR_NO_1_TO_1_MAPPING;         \
     );
-    if (status != Base::OK) {
-        std::cerr << "  error ERROR_NO_1_TO_1_MAPPING!" << std::endl;
+    if (status != Base::OK) 
         return status;
-    }
 
     return status;
 }

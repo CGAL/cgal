@@ -51,15 +51,15 @@ public:
     /// List of errors detected by this package
     enum Error_code {
     OK,                             ///< Success
-    ERROR_EMPTY_MESH,               ///< Error: input mesh is empty
-    ERROR_NON_TRIANGULAR_MESH,      ///< Error: input mesh is not triangular
-    ERROR_NO_SURFACE_MESH,          ///< Error: input mesh is not a surface
-    ERROR_INVALID_BORDER,           ///< Error: parameterization requires a convex border
-    ERROR_BAD_MATRIX_CONDITIONING,  ///< Error: result is mathematically unstable
-    ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Error: cannot solve linear system
-    ERROR_NO_1_TO_1_MAPPING,        ///< Error: parameterization does not ensure 1 to 1 mapping
-    ERROR_NOT_ENOUGH_MEMORY,        ///< Error: not enough memory
-    ERROR_WRONG_PARAMETER           ///< Error: a method received an unexpected parameter
+    ERROR_EMPTY_MESH,               ///< input mesh is empty
+    ERROR_NON_TRIANGULAR_MESH,      ///< input mesh is not triangular
+    ERROR_NO_SURFACE_MESH,          ///< input mesh is not a surface
+    ERROR_INVALID_BORDER,           ///< parameterization requires a convex border
+    ERROR_BAD_MATRIX_CONDITIONING,  ///< result is mathematically unstable
+    ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< cannot solve linear system
+    ERROR_NO_1_TO_1_MAPPING,        ///< parameterization does not ensure 1 to 1 mapping
+    ERROR_NOT_ENOUGH_MEMORY,        ///< not enough memory
+    ERROR_WRONG_PARAMETER           ///< a method received an unexpected parameter
     };
 
     /// Export ParameterizationMesh_3 template parameter
@@ -116,6 +116,31 @@ public:
     /// - 'mesh' must be a surface with 1 connected component.
     /// - 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize (Adaptor* mesh) = 0;
+
+    /// Get message (in english) corresponding to an error code
+    /// \param error_code The code returned by parameterize()
+    /// \return           The string describing the error code
+    static const char* get_error_message(int error_code)
+    {
+        // Messages corresponding to Error_code list above. Must be kept in sync!
+        static const char* error_message[10] = {
+        "Success",
+        "Input mesh is empty",
+        "Input mesh is not triangular",
+        "Input mesh is not a surface",
+        "Parameterization requires a convex border",
+        "Result is mathematically unstable",
+        "Cannot solve linear system",
+        "Parameterization does not ensure 1 to 1 mapping",
+        "Not enough memory",
+        "A method received an unexpected parameter"
+        };
+
+        if(error_code > 10 || error_code < 0)
+	    return "Unknown error";
+        else
+	    return error_message[error_code];
+    };
 
 // Protected operations
 /// @cond SKIP_IN_MANUAL

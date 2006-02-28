@@ -177,14 +177,6 @@ public:
         CGAL_parameterization_assertion(mesh != NULL);
         m_mesh_adaptor = mesh;
 
-#ifdef DEBUG_TRACE
-        // Dump input border (for debug purpose)
-        fprintf(stderr,"  input border is: ");
-        for (InputIterator it = first_seam_vertex; it != end_seam_vertex; it++)
-            fprintf(stderr, "%s ", get_vertex_index_as_string(*it).c_str());
-        fprintf(stderr,"ok\n");
-#endif
-
         // Set seaming flag of all vertices and edges to INNER, BORDER or OUTER
         // wrt the first_seam_vertex -> end_seam_vertex border
         set_mesh_seaming(first_seam_vertex, end_seam_vertex);
@@ -241,18 +233,6 @@ public:
 #ifndef NDEBUG
         // Index vertices right away to ease debugging
         index_mesh_vertices();
-
-    #ifdef DEBUG_TRACE
-        // Dump seam (for debug purpose)
-        fprintf(stderr,"  seam is: ");
-        for (Border_vertex_iterator border_it = mesh_main_border_vertices_begin();
-             border_it != mesh_main_border_vertices_end();
-             border_it++)
-        {
-            fprintf(stderr, "#%d ", get_vertex_index(border_it));
-        }
-        fprintf(stderr,"ok\n");
-    #endif
 #endif
     }
 
@@ -296,20 +276,18 @@ public:
     /// Index vertices of the mesh from 0 to count_mesh_vertices()-1.
     void  index_mesh_vertices ()
     {
-        fprintf(stderr,"  index Parameterization_mesh_patch_3 vertices:\n");
+        //fprintf(stderr,"  index Parameterization_mesh_patch_3 vertices:\n");
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
-#ifdef DEBUG_TRACE
-            fprintf(stderr, "    #%d = {%s,%s,%s}\n",
-                            index,
-                            get_vertex_index_as_string(it->vertex()).c_str(),
-                            get_vertex_index_as_string(it->last_cw_neighbor()).c_str(),
-                            get_vertex_index_as_string(it->first_cw_neighbor()).c_str());
-#endif
+            //fprintf(stderr, "    #%d = {%s,%s,%s}\n",
+            //                index,
+            //                get_vertex_index_as_string(it->vertex()).c_str(),
+            //                get_vertex_index_as_string(it->last_cw_neighbor()).c_str(),
+            //                get_vertex_index_as_string(it->first_cw_neighbor()).c_str());
             set_vertex_index(it, index++);
         }
-        fprintf(stderr,"    ok\n");
+        //fprintf(stderr,"    ok\n");
     }
 
     /// Get iterator over first vertex of mesh's main border (aka "seam").
@@ -456,9 +434,6 @@ public:
     }
     void  set_vertex_uv(Vertex_handle vertex, const Point_2& uv)
     {
-#ifdef DEBUG_TRACE
-        std::cerr << "    #" << get_vertex_index(vertex) << " <- (" << uv.x() << "," << uv.y() << ")\n";
-#endif
         CGAL_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->set_corners_uv(vertex->vertex(),
                                               vertex->last_cw_neighbor(),
@@ -608,8 +583,6 @@ private:
     void set_mesh_seaming(InputIterator first_seam_vertex,
                           InputIterator end_seam_vertex)
     {
-        fprintf(stderr, "  tag topological disc...");
-
         // Initialize the seaming flag of all vertices to OUTER
         for (typename Adaptor::Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
              it != m_mesh_adaptor->mesh_vertices_end();
@@ -682,8 +655,6 @@ private:
             if (m_mesh_adaptor->get_vertex_seaming(cir) != BORDER)
                 set_inner_region_seaming(cir);
         }
-
-        fprintf(stderr,"ok\n");
     }
 
     /// Set the seaming flag of inner vertices and edges to INNER

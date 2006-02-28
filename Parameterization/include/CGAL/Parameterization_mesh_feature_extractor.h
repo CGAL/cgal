@@ -184,8 +184,6 @@ private:
             m_skeleton[0] = m_skeleton[index];
             m_skeleton[index] = tmp;
         }
-
-        std::cerr << "  " << m_nb_borders << " border(s) found" << std::endl;
     }
 
     /// Add closed border.
@@ -367,8 +365,6 @@ private:
         int f = m_mesh_adaptor->count_mesh_facets();
 
         m_genus = (2*c+e-b-f-v)/2;
-        std::cerr << "  " << v << " vertices, " << f << " facets, ";
-        std::cerr << e << " edges, " << b << " border(s), genus " << m_genus << std::endl;
     }
 
 // Fields

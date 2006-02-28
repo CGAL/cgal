@@ -22,7 +22,7 @@
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories=".\include;..\..\examples\Parameterization;..\..\examples\Parameterization\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
-				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP"
+				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;DEBUG_TRACE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="4"
@@ -173,10 +173,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\examples\Parameterization\include\Parameterization_polyhedron_adaptor_ex.h">
+				RelativePath="..\..\examples\Parameterization\include\Mesh_cutter.h">
 			</File>
 			<File
-				RelativePath="..\..\examples\Parameterization\include\Mesh_cutter.h">
+				RelativePath="..\..\examples\Parameterization\include\Parameterization_polyhedron_adaptor_ex.h">
 			</File>
 			<File
 				RelativePath="..\..\examples\Parameterization\include\Polyhedron_ex.h">
@@ -219,12 +219,6 @@
 				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
-			</File>
-			<File
 				RelativePath="..\..\include\Cgal\Param_mesh_patch_circulators.h">
 			</File>
 			<File
@@ -234,10 +228,16 @@
 				RelativePath="..\..\include\Cgal\Param_mesh_patch_vertex.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterize.h">
+				RelativePath="..\..\include\Cgal\parameterization_assertions.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterization_assertions.h">
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">

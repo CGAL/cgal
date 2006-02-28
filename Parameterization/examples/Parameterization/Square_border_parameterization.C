@@ -20,22 +20,9 @@
 // Private types
 // ----------------------------------------------------------------------------
 
-// CGAL kernel
 typedef CGAL::Cartesian<double>                         Kernel;
-
-// Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
-                                                        Parameterization_polyhedron_adaptor;
 
-// Square border parameterizer
-typedef CGAL::Square_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
-                                                       Border_parameterizer;
-
-// Floater Mean Value Coordinates parameterizer with square border
-typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
-                                                     Border_parameterizer>
-                                                        Parameterizer;
 
 
 // ----------------------------------------------------------------------------
@@ -48,7 +35,6 @@ int main(int argc,char * argv[])
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  square border" << std::endl;
     std::cerr << "  OpenNL solver" << std::endl;
-
 
     //***************************************
     // decode parameters
@@ -63,23 +49,19 @@ int main(int argc,char * argv[])
     // File name is:
     const char* input_filename  = argv[1];
 
-
     //***************************************
     // Read the mesh
     //***************************************
 
-    fprintf(stderr, "\n  read file...%s...", input_filename);
+    // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) {
-        fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
+    if(!stream) 
+    {
+        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
-
-    // read the mesh
     Polyhedron mesh;
-    fprintf(stderr, "ok\n  fill mesh\n");
     stream >> mesh;
-
 
     //***************************************
     // Create mesh adaptor
@@ -88,6 +70,8 @@ int main(int argc,char * argv[])
     //***************************************
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
+    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
+                                                        Parameterization_polyhedron_adaptor;
     Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
 
 
@@ -96,10 +80,18 @@ int main(int argc,char * argv[])
     // with square border
     //***************************************
 
+    // Square border parameterizer
+    typedef CGAL::Square_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
+                                                           Border_parameterizer;
+
+    // Floater Mean Value Coordinates parameterizer with square border
+    typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
+                                                         Border_parameterizer>
+                                                        Parameterizer;
+
     Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
     if (err != Parameterizer::OK)
-        fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
-
+        std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 
     //***************************************
     // Output
@@ -116,11 +108,9 @@ int main(int argc,char * argv[])
             // (u,v) pair is stored in any halfedge
             double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
             double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
-            printf("(u,v) = (%lf,%lf)\n", u, v);
+            std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
         }
     }
-
-    fprintf(stderr, "\n");
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

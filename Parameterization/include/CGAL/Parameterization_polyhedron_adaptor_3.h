@@ -357,12 +357,6 @@ public:
             if (cir->opposite()->vertex() == source)
                 return cir;
 
-#ifdef DEBUG_TRACE
-        fprintf(stderr,
-                "      get_halfedge(%d->%d): error\n",
-                info(source)->index(),
-                info(target)->index());
-#endif
         assert(false);              // error if we reach this point
         return NULL;
     }
@@ -438,21 +432,19 @@ public:
     /// Index vertices of the mesh from 0 to count_mesh_vertices()-1.
     void  index_mesh_vertices ()
     {
-        fprintf(stderr,"  index Parameterization_polyhedron_adaptor vertices:\n");
+        //fprintf(stderr,"  index Parameterization_polyhedron_adaptor vertices:\n");
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
             Point_3 position = get_vertex_position(it);
-#ifdef DEBUG_TRACE
-            fprintf(stderr, "    %d=(%f,%f,%f)\n",
-                            index,
-                            (float)position.x(),
-                            (float)position.y(),
-                            (float)position.z());
-#endif
+            //fprintf(stderr, "    %d=(%f,%f,%f)\n",
+            //                index,
+            //                (float)position.x(),
+            //                (float)position.y(),
+            //                (float)position.z());
             set_vertex_index(it, index++);
         }
-        fprintf(stderr,"    ok\n");
+        //fprintf(stderr,"    ok\n");
     }
 
     /// Get iterator over first vertex of mesh's "main border".
@@ -499,8 +491,6 @@ public:
         if (seed_halfedge == NULL)
             return border;                  // return empty list
 
-        std::cerr << "  find one closed border...";
-
         // Add seed vertex
         border.push_back(seed_vertex);
 
@@ -522,8 +512,6 @@ public:
             size++;
         }
         while(1);
-
-        std::cerr << size << " vertices" << std::endl;
 
         return border;
     }
@@ -748,14 +736,8 @@ public:
             // Loop over all incident halfedges
             Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
                                               cir_end = cir;
-            CGAL_For_all(cir, cir_end) {
-#ifdef DEBUG_TRACE
-                std::cerr << "      H" << info(cir)->index()
-                          << "(" << info(cir->opposite()->vertex())->index() << "->" << info(cir->vertex())->index() << ")"
-                          << "<- (u=" << uv.x() << ",v=" << uv.y() << ")\n";
-#endif
+            CGAL_For_all(cir, cir_end)
                 info(cir)->uv(uv);
-            }
         }
         else // if seam vertex
         {
@@ -772,14 +754,8 @@ public:
 
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
-            CGAL_For_all(cir, cir_end) {
-#ifdef DEBUG_TRACE
-                std::cerr << "      H" << info(cir)->index()
-                          << "(" << info(cir->opposite()->vertex())->index() << "->" << info(cir->vertex())->index() << ")"
-                          << "<- (u=" << uv.x() << ",v=" << uv.y() << ")\n";
-#endif
+            CGAL_For_all(cir, cir_end)
                 info(cir)->uv(uv);
-            }
         }
     }
 
@@ -1013,8 +989,6 @@ private:
 
             nb++;
         }
-
-        std::cerr << "  " << nb << " border(s) found" << std::endl;
 
         return longest_border;
     }

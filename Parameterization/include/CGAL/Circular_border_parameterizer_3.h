@@ -153,25 +153,21 @@ inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
 Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
+#ifdef DEBUG_TRACE
+    std::cerr << "  map on a circle" << std::endl;
+#endif
+
     CGAL_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no border
     if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
-    {
-        std::cerr << "  error ERROR_INVALID_BORDER!" << std::endl;
         return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
-    }
 
     // Compute the total border length
     double total_len = compute_border_length(*mesh);
-    std::cerr << "  total border len: " << total_len << std::endl;
     if (total_len == 0)
-    {
-        std::cerr << "  error ERROR_INVALID_BORDER!" << std::endl;
         return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
-    }
 
-    std::cerr << "  map on a circle..." << std::endl;
     const double PI = 3.14159265359;
     const double tmp = 2*PI/total_len;
     double len = 0.0;           // current position on circle in [0, total_len]
@@ -200,8 +196,6 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         // Add 'length' of it -> next vector to 'len'
         len += compute_edge_length(*mesh, it, next);
     }
-
-    std::cerr << "    done" << std::endl;
 
     return Parameterizer_traits_3<Adaptor>::OK;
 }

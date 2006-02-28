@@ -27,26 +27,14 @@
 // Private types
 // ----------------------------------------------------------------------------
 
-// CGAL kernel
 typedef CGAL::Cartesian<double>                         Kernel;
-
-// Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
+
+// Mesh adaptors
 typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
                                                         Parameterization_polyhedron_adaptor;
 typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
                                                         Mesh_patch_polyhedron;
-
-// Border parameterizer
-typedef CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>
-                                                        Border_parameterizer;
-// TAUCS solver
-typedef CGAL::Taucs_solver_traits<double>               Solver;
-
-// Discrete Authalic Parameterization with square border
-typedef CGAL::Discrete_authalic_parameterizer_3<Mesh_patch_polyhedron,
-                                                Border_parameterizer,
-                                                Solver> Parameterizer;
 
 // Type describing a border or seam as a vertex list
 typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle> 
@@ -59,7 +47,11 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 
 // If the mesh is a topological disk, extract its longest border,
 // else compute a very simple cut to make it homeomorphic to a disk.
-// Return the border/seam (empty on error)
+// Return the border of this region (empty on error)
+//
+// CAUTION:
+// This method is provided "as is". It is very buggy and simply part of this example.
+// Developers using this package should implement a more robust cut algorithm!
 static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 {
     // Helper class to compute genus or extract borders
@@ -115,74 +107,73 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 // Dump parameterized mesh to a Wavefront OBJ file
 // v x y z
 // f 1 2 3 4 (1-based)
+//
+// Implementation note: the UV is meaningless for a NON parameterized halfedge
 static bool write_file_obj(Parameterization_polyhedron_adaptor* mesh_adaptor,
                            const char *pFilename)
 {
+    assert(mesh_adaptor != NULL);
     Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
     assert(mesh != NULL);
     assert(pFilename != NULL);
 
-    std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
-    FILE *pFile = fopen(pFilename,"wt");
-    if(pFile == NULL)
-    {
-        std::cerr << "  unable to open file " << pFilename <<  " for writing\n";
+    std::ofstream out(pFilename);
+    if(!out) 
         return false;
-    }
+    CGAL::set_ascii_mode(out);
 
-    // Index all mesh vertices
+    // Index all mesh vertices following the order of vertices_begin() iterator
     Polyhedron::Vertex_const_iterator pVertex;
     unsigned int i = 0;
     for(pVertex = mesh->vertices_begin(); pVertex != mesh->vertices_end(); pVertex++)
         mesh_adaptor->info(pVertex)->index(i++);
 
-    // Index all mesh halfedges
+    // Index all mesh half edges following the order of halfedges_begin() iterator
     Polyhedron::Halfedge_const_iterator pHalfedge;
     i = 0;
     for(pHalfedge = mesh->halfedges_begin(); pHalfedge != mesh->halfedges_end(); pHalfedge++)
         mesh_adaptor->info(pHalfedge)->index(i++);
 
     // write the name of material file
-    fprintf(pFile, "mtllib parameterization.mtl\n") ;
+    out <<  "mtllib parameterization.mtl" << std::endl ;
 
     // output coordinates
-    fprintf(pFile, "# vertices\n") ;
+    out <<  "# vertices" << std::endl ;
     for(pVertex = mesh->vertices_begin(); pVertex != mesh->vertices_end(); pVertex++)
-        fprintf(pFile,"v %g %g %g\n",
-                (double)pVertex->point().x(),
-                (double)pVertex->point().y(),
-                (double)pVertex->point().z());
+        out << "v " << pVertex->point().x() << " " 
+                    << pVertex->point().y() << " " 
+                    << pVertex->point().z() << std::endl;
 
     // Write UVs (1 UV / halfedge)
-    fprintf(pFile, "# uv coordinates\n") ;
+    out <<  "# uv coordinates" << std::endl ;
     for(pHalfedge = mesh->halfedges_begin(); pHalfedge != mesh->halfedges_end(); pHalfedge++)
     {
         Parameterization_polyhedron_adaptor::Halfedge_info* he_info = mesh_adaptor->info(pHalfedge);
         if (he_info->is_parameterized())
-            fprintf(pFile, "vt %f %f\n", he_info->uv().x(), he_info->uv().y());
+            out << "vt " << he_info->uv().x() << " " << he_info->uv().y() << std::endl;
         else
-            fprintf(pFile, "vt %f %f\n", 0.0, 0.0);
+            out << "vt " << 0.0 << " " << 0.0 << std::endl;
     }
 
     // Write facets using the unique material # 1
-    fprintf(pFile, "# facets\nusemtl Mat_1\n");
+    out << "# facets" << std::endl;
+    out << "usemtl Mat_1" << std::endl;
     Polyhedron::Facet_const_iterator pFacet;
     for(pFacet = mesh->facets_begin(); pFacet != mesh->facets_end(); pFacet++)
     {
         Polyhedron::Halfedge_around_facet_const_circulator h = pFacet->facet_begin();
-        fprintf(pFile,"f");
+        out << "f";
         do {
             Parameterization_polyhedron_adaptor::Halfedge_info* he_info  = mesh_adaptor->info(h);
             Parameterization_polyhedron_adaptor::Vertex_info*   vtx_info = mesh_adaptor->info(h->vertex());
-            fprintf(pFile, " %d", (int)vtx_info->index()+1);
+            out << " " << vtx_info->index()+1;
             if (he_info->is_parameterized())
-                fprintf(pFile, "/%d", (int)he_info->index()+1);
+                out <<  "/" << he_info->index()+1;
         }
         while(++h != pFacet->facet_begin());
-        fprintf(pFile,"\n");
+        out << std::endl;
     }
 
-    fclose(pFile);
     return true;
 }
 
@@ -195,11 +186,10 @@ int main(int argc,char * argv[])
 {
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Discrete Authalic Parameterization" << std::endl;
-    std::cerr << "  square border" << std::endl;
+    std::cerr << "  Square border" << std::endl;
     std::cerr << "  TAUCS solver" << std::endl;
     std::cerr << "  Very simple cut if model is not a topological disk" << std::endl;
-    std::cerr << "  output: OBJ" << std::endl;
-
+    std::cerr << "  Output: OBJ" << std::endl;
 
     //***************************************
     // decode parameters
@@ -215,26 +205,22 @@ int main(int argc,char * argv[])
     const char* input_filename  = argv[1];
     const char* output_filename = argv[2];
 
-
     //***************************************
     // Read the mesh
     //***************************************
 
-    fprintf(stderr, "\n  read file...%s...", input_filename);
+    // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) {
-        fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
+    if(!stream) 
+    {
+        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
-
-    // read the mesh
     Polyhedron mesh;
-    fprintf(stderr, "ok\n  fill mesh\n");
     stream >> mesh;
 
-
     //***************************************
-    // Create mesh adaptor
+    // Create mesh adaptors
     //***************************************
 
     // The parameterization package needs an adaptor to handle Polyhedron_3 meshes
@@ -251,21 +237,28 @@ int main(int argc,char * argv[])
     }
 
     // Create adaptor that virtually "cuts" the mesh following the 'seam' path
-    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
-                                       seam.begin(),
-                                       seam.end());
-
+    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor, seam.begin(), seam.end());
 
     //***************************************
-    // Discrete Authalic Parameterization
-    // with square border.
-    // TAUCS solver.
+    // Discrete Authalic Parameterization (square border)
+    // with TAUCS solver
     //***************************************
+
+    // Border parameterizer
+    typedef CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>
+                                                            Border_parameterizer;
+    // TAUCS solver
+    typedef CGAL::Taucs_solver_traits<double>               Solver;
+
+    // Discrete Authalic Parameterization (square border)
+    // with TAUCS solver
+    typedef CGAL::Discrete_authalic_parameterizer_3<Mesh_patch_polyhedron,
+                                                    Border_parameterizer,
+                                                    Solver> Parameterizer;
 
     Parameterizer::Error_code err = CGAL::parameterize(&mesh_patch, Parameterizer());
     if (err != Parameterizer::OK)
-        fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
-
+        std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 
     //***************************************
     // Output
@@ -273,9 +266,13 @@ int main(int argc,char * argv[])
 
     // Write Wavefront OBJ file
     if (err == Parameterizer::OK)
-        write_file_obj(&mesh_adaptor, output_filename);
-
-    fprintf(stderr, "\n");
+    {
+        if ( ! write_file_obj(&mesh_adaptor, output_filename) )
+        {
+            std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
+            return EXIT_FAILURE;
+        }   
+    }
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -293,7 +290,7 @@ int main(int argc,char * argv[])
 
 int main(int argc,char * argv[])
 {
-    fprintf(stderr, "\nSkip test as TAUCS is not installed\n\n");
+    std::cerr << "Skip test as TAUCS is not installed" << std::endl;
     return EXIT_SUCCESS;
 }
 

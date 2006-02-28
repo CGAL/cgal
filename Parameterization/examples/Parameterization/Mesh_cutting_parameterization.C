@@ -20,22 +20,18 @@
 // Private types
 // ----------------------------------------------------------------------------
 
-// CGAL kernel
-typedef CGAL::Cartesian<double>                             Kernel;
+typedef CGAL::Cartesian<double>             Kernel;
+typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 
-// Mesh true type and parameterization adaptors
-typedef CGAL::Polyhedron_3<Kernel>                          Polyhedron;
+// Mesh adaptors
 typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>         
-                                                            Parameterization_polyhedron_adaptor;
+                                            Parameterization_polyhedron_adaptor;
 typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
-                                                            Mesh_patch_polyhedron;
-
-// Defines the error codes
-typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
+                                            Mesh_patch_polyhedron;
 
 // Type describing a border or seam as a vertex list
 typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>   
-                                                            Seam;
+                                            Seam;
 
 
 // ----------------------------------------------------------------------------
@@ -44,7 +40,11 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 
 // If the mesh is a topological disk, extract its longest border,
 // else compute a very simple cut to make it homeomorphic to a disk.
-// Return the border/seam (empty on error)
+// Return the border of this region (empty on error)
+//
+// CAUTION:
+// This method is provided "as is". It is very buggy and simply part of this example.
+// Developers using this package should implement a more robust cut algorithm!
 static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 {
     // Helper class to compute genus or extract borders
@@ -106,10 +106,9 @@ int main(int argc,char * argv[])
 {
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
-    std::cerr << "  circle border" << std::endl;
+    std::cerr << "  Circle border" << std::endl;
     std::cerr << "  OpenNL solver" << std::endl;
     std::cerr << "  Very simple cut if model is not a topological disk" << std::endl;
-
 
     //***************************************
     // decode parameters
@@ -124,23 +123,19 @@ int main(int argc,char * argv[])
     // File name is:
     const char* input_filename  = argv[1];
 
-
     //***************************************
     // Read the mesh
     //***************************************
 
-    fprintf(stderr, "\n  read file...%s...", input_filename);
+    // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) {
-        fprintf(stderr, "\nFATAL ERROR: cannot open file!\n\n");
+    if(!stream) 
+    {
+        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
-
-    // read the mesh
     Polyhedron mesh;
-    fprintf(stderr, "ok\n  fill mesh\n");
     stream >> mesh;
-
 
     //***************************************
     // Create mesh adaptor
@@ -160,21 +155,38 @@ int main(int argc,char * argv[])
     }
 
     // Create adaptor that virtually "cuts" the mesh following the 'seam' path
-    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
-                                       seam.begin(),
-                                       seam.end());
+    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor, seam.begin(), seam.end());
 
     //***************************************
     // Floater Mean Value Coordinates parameterization
     //***************************************
 
+    // Type that defines the error codes
+    typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron>
+                                            Parameterizer;
+
     Parameterizer::Error_code err = CGAL::parameterize(&mesh_patch);
     if (err != Parameterizer::OK)
-        fprintf(stderr, "\nFATAL ERROR: parameterization error # %d\n", (int)err);
+        std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 
+    //***************************************
+    // Output
+    //***************************************
 
-
-    fprintf(stderr, "\n");
+    if (err == Parameterizer::OK)
+    {
+        // Raw output: dump (u,v) pairs
+        Polyhedron::Vertex_const_iterator pVertex;
+        for (pVertex = mesh.vertices_begin();
+            pVertex != mesh.vertices_end();
+            pVertex++)
+        {
+            // (u,v) pair is stored in any halfedge
+            double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
+            double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
+            std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
+        }
+    }
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
