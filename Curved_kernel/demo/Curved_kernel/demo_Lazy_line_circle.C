@@ -100,7 +100,7 @@ struct Binary_operator_result <Root_of_2<T1>, Root_of_2<T2> >;
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Lazy_curved_kernel.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
-#include <CGAL/Circular_arc_traits_tracer.h>
+#include <CGAL/Arr_circular_arc_traits_tracer.h>
 
 
 #include <CGAL/Arrangement_2.h>
@@ -117,23 +117,24 @@ typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
 typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1_;
 
 typedef CGAL::Interval_nt_advanced                           NT2;
-//typedef CGAL::Interval_nt<>                                  NT2;
 typedef CGAL::Cartesian<NT2>                                 Linear_k2;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
 typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2_;
 typedef CGAL::Lazy_curved_kernel<CK1_,CK2_>                  Circular_k;
 
 
-typedef Circular_k::Line_arc_2                                Line_arc_2;
-typedef Circular_k::Segment_2                                 Segment;
-typedef Circular_k::Circular_arc_2                            Circular_arc_2;
-typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
-typedef std::vector<Arc>                                    ArcContainer;
+typedef Circular_k::Line_arc_2                               Line_arc_2;
+typedef Circular_k::Segment_2                                Segment;
+typedef Circular_k::Circular_arc_2                           Circular_arc_2;
+typedef boost::variant< Circular_arc_2, Line_arc_2 >         Arc;
+typedef std::vector<Arc>                                     ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits;
+typedef CGAL::Arr_circular_line_arc_traits
+<Circular_k, Circular_arc_2, Line_arc_2>                     Traits;
 #else
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits0;
+typedef CGAL::Arr_circular_line_arc_traits
+<Circular_k, Circular_arc_2, Line_arc_2>                     Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -142,7 +143,7 @@ typedef Traits::Curve_2                             Conic_arc_2;
 typedef CGAL::Arrangement_2<Traits>                 Pmwx;
 typedef CGAL::Arr_naive_point_location<Pmwx>        Point_location;
 
-typedef Traits::X_monotone_curve_2                          X_monotone_curve_2;
+typedef Traits::X_monotone_curve_2                  X_monotone_curve_2;
 
 
 

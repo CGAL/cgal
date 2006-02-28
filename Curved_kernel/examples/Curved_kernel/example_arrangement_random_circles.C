@@ -12,7 +12,7 @@
 
 #include <CGAL/Circular_kernel.h>
 
-#include <CGAL/Circular_arc_traits.h>
+#include <CGAL/Arr_circular_arc_traits.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -29,10 +29,10 @@ typedef Circular_k::Circle_2                            Circle_2;
 typedef Circular_k::Circular_arc_2                      Circular_arc_2;
 typedef std::vector<Circular_arc_2>                     ArcContainer;
 
-typedef CGAL::Circular_arc_traits<Circular_k>                  Traits;
+typedef CGAL::Arr_circular_arc_traits<Circular_k>       Traits;
 
-typedef CGAL::Arrangement_2<Traits>                             Arr;
-typedef CGAL::Arr_naive_point_location<Arr>                  Point_location;
+typedef CGAL::Arrangement_2<Traits>                     Arr;
+typedef CGAL::Arr_naive_point_location<Arr>             Point_location;
 
 int main(){
   

@@ -39,8 +39,8 @@ std::pair<double,double> to_interval(const Root_of_2<T>&);
 
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Circular_arc_traits.h>
-#include <CGAL/Circular_arc_traits_tracer.h>
+#include <CGAL/Arr_circular_arc_traits.h>
+#include <CGAL/Arr_circular_arc_traits_tracer.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -71,13 +71,13 @@ typedef CK1_::Circular_arc_2                            Arc2;
 typedef std::vector<Arc2>                                    ArcContainer2;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Circular_arc_traits<Circular_k>                  Traits;
-typedef CGAL::Circular_arc_traits<CK1_>                      Traits2;
+typedef CGAL::Arr_circular_arc_traits<Circular_k>                  Traits;
+typedef CGAL::Arr_circular_arc_traits<CK1_>                      Traits2;
 #else
-typedef CGAL::Circular_arc_traits<Circular_k>                  Traits0;
+typedef CGAL::Arr_circular_arc_traits<Circular_k>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 
-typedef CGAL::Circular_arc_traits<CK1_>                      Traits02;
+typedef CGAL::Arr_circular_arc_traits<CK1_>                      Traits02;
 typedef CGAL::Circular_arc_traits_tracer<Traits02>           Traits2;
 #endif
 

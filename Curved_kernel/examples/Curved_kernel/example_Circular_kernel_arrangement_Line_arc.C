@@ -15,8 +15,7 @@
 #include <CGAL/intersections.h>
 
 #include <CGAL/Circular_kernel.h>
-//#include <CGAL/Circular_arc_traits.h>
-#include <CGAL/Line_arc_traits.h>
+#include <CGAL/Arr_line_arc_traits.h>
 
 
 #include <CGAL/Arrangement_2.h>
@@ -38,9 +37,9 @@ typedef Circular_k::Line_arc_2                                Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Line_arc_traits<Circular_k>                  Traits;
+typedef CGAL::Arr_line_arc_traits<Circular_k>                  Traits;
 #else
-typedef CGAL::Line_arc_traits<Circular_k>                  Traits0;
+typedef CGAL::Arr_line_arc_traits<Circular_k>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 

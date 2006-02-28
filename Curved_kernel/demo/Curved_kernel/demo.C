@@ -70,34 +70,26 @@ int main() {
 #include <CGAL/intersections.h>
 
 #include <CGAL/Circular_kernel.h>
-#include <CGAL/Circular_arc_traits.h>
-#include <CGAL/Circular_arc_traits_tracer.h>
-
-// #include <CGAL/Pm_default_dcel.h>
-// #include <CGAL/Planar_map_2.h>
-// #include <CGAL/Pm_with_intersections.h>
+#include <CGAL/Arr_circular_arc_traits.h>
+#include <CGAL/Arr_circular_arc_traits_tracer.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
 // typedef CGAL::MP_Float                                          NT;
 typedef CGAL::Gmpq                                          NT;
-// typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                     NT;
-// typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >    NT;
-// typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::Gmpz> >    NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
 typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
-// typedef CGAL::Circular_kernel<Linear_k>                        Circular_k;
 
 typedef Circular_k::Circular_arc_2                            Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Circular_arc_traits<Circular_k>                  Traits;
+typedef CGAL::Arr_circular_arc_traits<Circular_k>                  Traits;
 #else
-typedef CGAL::Circular_arc_traits<Circular_k>                  Traits0;
+typedef CGAL::Arr_circular_arc_traits<Circular_k>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
@@ -107,11 +99,6 @@ typedef CGAL::Arrangement_2<Traits>                 Pmwx;
 typedef CGAL::Arr_naive_point_location<Pmwx>        Point_location;
 
 typedef Traits::X_monotone_curve_2                          X_monotone_curve_2;
-
-// typedef CGAL::Pm_default_dcel<Traits>                       Dcel;
-// typedef CGAL::Planar_map_2<Dcel,Traits>                     Planar_map_2;
-// typedef CGAL::Planar_map_with_intersections_2<Planar_map_2> Pmwx;
-
 
 const QString my_title_string("CGAL :: "
                               "Planar Map of Intersecting Circular Arcs");

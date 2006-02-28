@@ -71,8 +71,7 @@ int main() {
 
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Line_arc_traits.h>
-//#include <CGAL/Circular_arc_traits.h>
-#include <CGAL/Circular_arc_traits_tracer.h>
+#include <CGAL/Arr_circular_arc_traits_tracer.h>
 
 
 #include <CGAL/Arrangement_2.h>

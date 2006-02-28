@@ -37,7 +37,7 @@ namespace CGAL {
 /// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
 
 template < typename CircularKernel >
-class Line_arc_traits {
+class Arr_line_arc_traits {
 
   CircularKernel ck;
 
@@ -53,7 +53,7 @@ public:
   typedef CGAL::Tag_false                        Has_left_category;
   typedef CGAL::Tag_false 			 Has_merge_category;
 
-  Line_arc_traits(const CircularKernel &k = CircularKernel())
+  Arr_line_arc_traits(const CircularKernel &k = CircularKernel())
     : ck(k) {}
 
   typedef typename CircularKernel::Compare_x_2           Compare_x_2;
