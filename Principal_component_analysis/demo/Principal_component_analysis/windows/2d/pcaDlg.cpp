@@ -407,9 +407,13 @@ void CpcaDlg::OnFitLine()
 {
   FT quality = 
     linear_least_squares_fitting_2(m_points.begin(),
-                                  m_points.end(),
-                                  m_fitting_line,
-                                  m_centroid);
+                                   m_points.end(),
+                                   m_fitting_line,
+                                   m_centroid);
+  quality = 
+    linear_least_squares_fitting_2(m_points.begin(),
+                                   m_points.end(),
+                                   m_fitting_line);
   CString str;
   str.Format("Fitting quality: %6.3f",quality);
   SetWindowText(str);
