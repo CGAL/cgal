@@ -25,8 +25,13 @@
 #ifndef CGAL_CURVED_KERNEL_GLOBAL_INTERSECT_2
 #define CGAL_CURVED_KERNEL_GLOBAL_INTERSECT_2
 
+#include <CGAL/Curved_kernel/function_objects_on_line_2.h>
+#include <CGAL/Curved_kernel/function_objects_on_circle_2.h>
+#include <CGAL/Curved_kernel/function_objects_polynomial_circular.h>
 
-// missing Line_2 with {Circle_2,Circular_arc_2}
+CGAL_BEGIN_NAMESPACE
+
+// missing: intersection of Line_2 with {Circle_2,Circular_arc_2}
 
 template< class CK, class OutputIterator>
 inline
@@ -97,5 +102,6 @@ intersect( const typename CK::Circular_arc_2 & c1,
   return CK::Intersect_2()(c1,c2,res);
 }
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CURVED_KERNEL_GLOBAL_INTERSECT_2
