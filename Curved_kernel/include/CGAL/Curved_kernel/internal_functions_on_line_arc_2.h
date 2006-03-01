@@ -26,7 +26,7 @@
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
 #include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
-
+#include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 namespace CGAL {
 namespace CircularFunctors {
 

@@ -25,6 +25,8 @@
 #ifndef CGAL_CURVED_KERNEL_CIRCULAR_ARC_POINT_2_H
 #define CGAL_CURVED_KERNEL_CIRCULAR_ARC_POINT_2_H
 
+#include <CGAL/Simple_cartesian.h>
+//#include <CGAL/Cartesian.h>
 #include <iostream>
 #include <cassert>
 #include <CGAL/Curved_kernel/Debug_id.h>
@@ -33,6 +35,9 @@
 #include <CGAL/Interval_arithmetic.h>
 
 #include <CGAL/global_functions_on_circle_2.h>
+//#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h> 
+// fixme, devrait
+// appeler fonction de global_functions_on_circular_arcs
 
 namespace CGAL {
 namespace CGALi {

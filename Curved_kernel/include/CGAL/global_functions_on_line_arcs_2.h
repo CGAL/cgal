@@ -25,7 +25,50 @@
 #ifndef CGAL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
 #define CGAL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
 
+// global functions
+
+#include <CGAL/Circular_arc_2.h>
+#include <CGAL/Circular_arc_point_2.h>
+#include <CGAL/Line_arc_2.h>
+
 namespace CGAL {
+
+// TODO : Add the other ones...
+
+//Circles
+
+//template< class CK >
+//inline
+//CGAL::Comparison_result 
+//compare_x(const Line_arc_2<CK> &A1, const bool b1, 
+//	  const Line_arc_2<CK> &A2, const bool b2)
+//{
+//  return CK().compare_x_2_object()(A1, b1, A2, b2);
+//}
+
+//template< class CK >
+//inline
+//CGAL::Comparison_result 
+//compare_x(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
+//{
+//  return CK().compare_x_2_object()(p, q);
+//}
+//
+//template< class CK >
+//inline
+//CGAL::Comparison_result 
+//compare_y(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
+//{
+//  return CK().compare_y_2_object()(p, q);
+//}
+//
+//template< class CK >
+//inline
+//CGAL::Comparison_result 
+//compare_xy(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
+//{
+//  return CK().compare_xy_2_object()(p, q);
+//}
 
 template< class CK >
 inline
