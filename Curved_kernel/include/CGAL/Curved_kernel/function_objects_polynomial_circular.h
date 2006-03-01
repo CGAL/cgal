@@ -25,7 +25,7 @@
 #ifndef CGAL_CURVED_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 #define CGAL_CURVED_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 
-#include <CGAL/kernel_basic.h>
+//#include <CGAL/kernel_basic.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
 
@@ -302,8 +302,6 @@ namespace CircularFunctors {
     OutputIterator
     operator()(const Line_arc_2 &A, OutputIterator res) const
     { 
-//       *res++ = make_object(A);
-//       return res;
       return make_x_monotone<CK>(A,res);
     }
 
