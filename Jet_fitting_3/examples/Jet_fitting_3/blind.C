@@ -175,11 +175,12 @@ int main(int argc, char *argv[])
   char* verbose_fname;
   std::ofstream *out_4ogl = NULL, *out_verbose = NULL;
 
+  //parse command lie options
+  //--------------------------
   int optchar;
   char *optarg;
   Options opts(*argv, optv);
   OptArgvIter iter(--argc, ++argv);
- 
   while ((optchar = opts(iter, (const char *&) optarg))){
     switch (optchar){
     case 'f': if_name = optarg; break;
@@ -195,6 +196,7 @@ int main(int argc, char *argv[])
   }
 
   //prepare output file names
+  //--------------------------
   assert(if_name != NULL);
   w_if_name = new char[strlen(if_name)+1];
   strcpy(w_if_name, if_name);
@@ -216,7 +218,6 @@ int main(int argc, char *argv[])
     CGAL::set_pretty_mode(*out_verbose);
   }
   unsigned int nb_vertices_considered = 0;//count vertices for verbose 
-  //  output
 
   //load the model from <mesh.off>
   //------------------------------
@@ -232,8 +233,7 @@ int main(int argc, char *argv[])
   //exit if not enough points in the model
   if (min_nb_points > P.size_of_vertices())    exit(0);
 
-
-  //create maps and property maps
+  //create property maps
   //-----------------------------
   Vertex_VP_map_type vertex2props;
   Vertex_VPM_type vpm(vertex2props);
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
       monge_rep.dump_verbose(*out_verbose);
       monge_info.dump_verbose(*out_verbose);
     }
-  } //END FOR LOOP//////////////////////////////////////////////////////////////
+  } //all vertices processed
 
   //cleanup filenames
   //------------------
