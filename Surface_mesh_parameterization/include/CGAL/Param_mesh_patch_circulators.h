@@ -29,7 +29,7 @@
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Param_mesh_patch_vertex.h>
 
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -94,10 +94,10 @@ public:
         m_mesh_patch(mesh),
         m_center(vertex)
     {
-        CGAL_parameterization_assertion(m_mesh_patch != NULL);
-        CGAL_parameterization_assertion(m_mesh_patch->m_mesh_adaptor != NULL);
-        CGAL_parameterization_assertion(m_mesh_patch->is_valid(vertex));
-        CGAL_parameterization_assertion(m_mesh_patch->is_valid(start_position));
+        CGAL_surface_mesh_parameterization_assertion(m_mesh_patch != NULL);
+        CGAL_surface_mesh_parameterization_assertion(m_mesh_patch->m_mesh_adaptor != NULL);
+        CGAL_surface_mesh_parameterization_assertion(m_mesh_patch->is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(m_mesh_patch->is_valid(start_position));
 
 //#ifdef DEBUG_TRACE
 //        std::cerr << "    Mesh_patch_vertex_around_vertex_cir(";
@@ -507,8 +507,8 @@ public:
         : m_mesh_patch(mesh),
           m_adaptor_circulator(adaptor_circulator)
     {
-        CGAL_parameterization_assertion(m_mesh_patch != NULL);
-        CGAL_parameterization_assertion(adaptor_circulator != NULL);
+        CGAL_surface_mesh_parameterization_assertion(m_mesh_patch != NULL);
+        CGAL_surface_mesh_parameterization_assertion(adaptor_circulator != NULL);
 
         // Update the inherited vertex handle
         update_inherited_handle();

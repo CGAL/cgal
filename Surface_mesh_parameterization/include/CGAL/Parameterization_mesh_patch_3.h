@@ -18,8 +18,8 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
-#ifndef CGAL_PARAMETERIZATION_MESH_PATCH_3_H
-#define CGAL_PARAMETERIZATION_MESH_PATCH_3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_PATCH_3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_PATCH_3_H
 
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
@@ -30,7 +30,7 @@
 #include <CGAL/Param_mesh_patch_iterators.h>
 #include <CGAL/Param_mesh_patch_circulators.h>
 
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -174,7 +174,7 @@ public:
                                   InputIterator first_seam_vertex,
                                   InputIterator end_seam_vertex)
     {
-        CGAL_parameterization_assertion(mesh != NULL);
+        CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
         m_mesh_adaptor = mesh;
 
         // Set seaming flag of all vertices and edges to INNER, BORDER or OUTER
@@ -398,17 +398,17 @@ public:
 
     /// Get circulator over facet's vertices.
     Vertex_around_facet_circulator  facet_vertices_begin(Facet_handle facet) {
-        CGAL_parameterization_assertion(is_valid(facet));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(facet));
         return Vertex_around_facet_circulator(this, m_mesh_adaptor->facet_vertices_begin(facet));
     }
     Vertex_around_facet_const_circulator  facet_vertices_begin(Facet_const_handle facet) const {
-        CGAL_parameterization_assertion(is_valid(facet));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(facet));
         return Vertex_around_facet_const_circulator(this, m_mesh_adaptor->facet_vertices_begin(facet));
     }
 
     /// Count the number of vertices of a facet.
     int  count_facet_vertices(Facet_const_handle facet) const {
-        CGAL_parameterization_assertion(is_valid(facet));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(facet));
         int index = 0;
         Vertex_around_facet_const_circulator cir     = facet_vertices_begin(facet),
                                              cir_end = cir;
@@ -421,20 +421,20 @@ public:
 
     /// Get the 3D position of a vertex.
     Point_3 get_vertex_position(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->get_vertex_position(vertex->vertex());
     }
 
     /// Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
     Point_2  get_vertex_uv(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->get_corners_uv(vertex->vertex(),
                                               vertex->last_cw_neighbor(),
                                               vertex->first_cw_neighbor());
     }
     void  set_vertex_uv(Vertex_handle vertex, const Point_2& uv)
     {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->set_corners_uv(vertex->vertex(),
                                               vertex->last_cw_neighbor(),
                                               vertex->first_cw_neighbor(),
@@ -443,14 +443,14 @@ public:
 
     /// Get/set "is parameterized" field of vertex. Default value is undefined.
     bool  is_vertex_parameterized(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->are_corners_parameterized(vertex->vertex(),
                                                          vertex->last_cw_neighbor(),
                                                          vertex->first_cw_neighbor());
     }
     void  set_vertex_parameterized(Vertex_handle vertex, bool parameterized)
     {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->set_corners_parameterized(vertex->vertex(),
                                                          vertex->last_cw_neighbor(),
                                                          vertex->first_cw_neighbor(),
@@ -459,13 +459,13 @@ public:
 
     /// Get/set vertex index. Default value is undefined.
     int  get_vertex_index(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->get_corners_index(vertex->vertex(),
                                                  vertex->last_cw_neighbor(),
                                                  vertex->first_cw_neighbor());
     }
     void  set_vertex_index(Vertex_handle vertex, int index)  {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->set_corners_index(vertex->vertex(),
                                                  vertex->last_cw_neighbor(),
                                                  vertex->first_cw_neighbor(),
@@ -474,7 +474,7 @@ public:
 
     /// Get/set vertex' all purpose tag. Default value is undefined.
     int  get_vertex_tag(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return m_mesh_adaptor->get_corners_tag(vertex->vertex(),
                                                vertex->last_cw_neighbor(),
                                                vertex->first_cw_neighbor());
@@ -488,7 +488,7 @@ public:
 
     /// Return true if a vertex belongs to ANY mesh's border.
     bool  is_vertex_on_border(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return is_vertex_on_main_border(vertex) ||
                m_mesh_adaptor->is_vertex_on_border(vertex->vertex());
     }
@@ -496,7 +496,7 @@ public:
     /// Return true if a vertex belongs to the UNIQUE mesh's main border
     /// set by the constructor.
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return get_vertex_seaming(vertex) == BORDER;
     }
 
@@ -506,8 +506,8 @@ public:
                             Vertex_handle vertex,
                             Vertex_handle start_position = Vertex_handle())
     {
-        CGAL_parameterization_assertion(is_valid(vertex));
-        CGAL_parameterization_assertion(start_position == NULL ||
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(start_position == NULL ||
                                         is_valid(start_position));
 
         // If no start position provided, pick one
@@ -535,8 +535,8 @@ public:
                                 Vertex_const_handle vertex,
                                 Vertex_const_handle start_position = Vertex_const_handle()) const
     {
-        CGAL_parameterization_assertion(is_valid(vertex));
-        CGAL_parameterization_assertion(start_position == NULL ||
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(start_position == NULL ||
                                         is_valid(start_position));
 
         // If no start position provided, pick one
@@ -685,7 +685,7 @@ private:
         {
             typename Adaptor::Vertex_handle pVertex = vertices.front();
             vertices.pop_front();
-            CGAL_parameterization_assertion(pVertex != NULL);
+            CGAL_surface_mesh_parameterization_assertion(pVertex != NULL);
 
             // Flag this vertex as INNER
             if (m_mesh_adaptor->get_vertex_seaming(pVertex) == OUTER)
@@ -714,11 +714,11 @@ private:
     Seaming_status get_facet_seaming(typename Adaptor::Facet_const_handle facet) const
     {
         // do not call is_valid() to avoid an infinite loop
-        CGAL_parameterization_assertion(facet != NULL);
+        CGAL_surface_mesh_parameterization_assertion(facet != NULL);
 
         typename Adaptor::Vertex_around_facet_const_circulator
                             cir = m_mesh_adaptor->facet_vertices_begin(facet);
-        CGAL_parameterization_assertion(cir != NULL);
+        CGAL_surface_mesh_parameterization_assertion(cir != NULL);
         return (m_mesh_adaptor->get_vertex_seaming(cir) == OUTER) ?
                OUTER :
                INNER;
@@ -727,7 +727,7 @@ private:
     /// Get/set vertex seaming flag,
     /// ie position of the vertex wrt to the UNIQUE main border.
     Seaming_status  get_vertex_seaming(Vertex_const_handle vertex) const {
-        CGAL_parameterization_assertion(is_valid(vertex));
+        CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return (Seaming_status) m_mesh_adaptor->get_vertex_seaming(
                                                     vertex->vertex());
     }
@@ -966,5 +966,5 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif //CGAL_PARAMETERIZATION_MESH_PATCH_3_H
+#endif //CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_PATCH_3_H
 

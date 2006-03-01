@@ -21,7 +21,7 @@
 #ifndef CGAL_SQUAREBORDERPARAMETERIZER_3_H
 #define CGAL_SQUAREBORDERPARAMETERIZER_3_H
 
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 
 #include <cfloat>
@@ -144,7 +144,7 @@ double Square_border_parameterizer_3<Adaptor>::compute_border_length(
         it != mesh.mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh.is_vertex_on_main_border(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(it));
 
         // Get next iterator (looping)
         Border_vertex_const_iterator next = it;
@@ -169,7 +169,7 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     std::cerr << "  map on a square" << std::endl;
 #endif
 
-    CGAL_parameterization_assertion(mesh != NULL);
+    CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no border
     if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
@@ -189,7 +189,7 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         it != mesh->mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh->is_vertex_on_main_border(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh->is_vertex_on_main_border(it));
 
         offset[mesh->get_vertex_index(it)] = 4.0f*len/total_len;
                                 // current position on square in [0,4[

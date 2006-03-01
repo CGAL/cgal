@@ -22,7 +22,7 @@
 #define CGAL_BARYCENTRIC_MAPPING_PARAMETERIZER_3_H
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 

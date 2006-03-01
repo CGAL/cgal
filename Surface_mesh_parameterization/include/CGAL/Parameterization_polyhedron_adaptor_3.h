@@ -18,14 +18,14 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
-#ifndef CGAL_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
-#define CGAL_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
 
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Convertible_iterator_project.h>
 #include <CGAL/Convertible_circulator_project.h>
 
@@ -372,13 +372,13 @@ public:
     const Halfedge_info* info(Halfedge_const_handle halfedge) const
     {
         typename Halfedge_info_map::const_iterator it = m_halfedge_info.find(halfedge);
-        CGAL_parameterization_assertion(it != m_halfedge_info.end());
+        CGAL_surface_mesh_parameterization_assertion(it != m_halfedge_info.end());
         return &it->second;
     }
     Halfedge_info* info(Halfedge_const_handle halfedge)
     {
         typename Halfedge_info_map::iterator it = m_halfedge_info.find(halfedge);
-        CGAL_parameterization_assertion(it != m_halfedge_info.end());
+        CGAL_surface_mesh_parameterization_assertion(it != m_halfedge_info.end());
         return &it->second;
     }
 
@@ -386,13 +386,13 @@ public:
     const Vertex_info* info(Vertex_const_handle vertex) const
     {
         typename Vertex_info_map::const_iterator it = m_vertex_info.find(vertex);
-        CGAL_parameterization_assertion(it != m_vertex_info.end());
+        CGAL_surface_mesh_parameterization_assertion(it != m_vertex_info.end());
         return &it->second;
     }
     Vertex_info* info(Vertex_const_handle vertex)
     {
         typename Vertex_info_map::iterator it = m_vertex_info.find(vertex);
-        CGAL_parameterization_assertion(it != m_vertex_info.end());
+        CGAL_surface_mesh_parameterization_assertion(it != m_vertex_info.end());
         return &it->second;
     }
 
@@ -1115,5 +1115,5 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif //CGAL_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
+#endif //CGAL_SURFACE_MESH_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
 

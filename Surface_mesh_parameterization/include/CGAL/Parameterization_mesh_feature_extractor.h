@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-#ifndef CGAL_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
-#define CGAL_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
 
 #include <CGAL/basic.h>
 
@@ -93,7 +93,7 @@ public:
     Parameterization_mesh_feature_extractor(Adaptor *mesh)
     {
         m_mesh_adaptor = mesh;
-        CGAL_parameterization_assertion(m_mesh_adaptor != NULL);
+        CGAL_surface_mesh_parameterization_assertion(m_mesh_adaptor != NULL);
 
         // m_mesh_adaptor features are not yet computed
         m_nb_connex_components = -1;
@@ -384,4 +384,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H

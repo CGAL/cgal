@@ -21,7 +21,7 @@
 #ifndef CGAL_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
 #define CGAL_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
 
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 
 #include <cfloat>
@@ -119,7 +119,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
 {
     Vertex_iterator it;
 
-    CGAL_parameterization_assertion(mesh != NULL);
+    CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no border
     if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
@@ -197,7 +197,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         V1_max = zmax;
         break;
     default:
-        CGAL_parameterization_assertion(false);
+        CGAL_surface_mesh_parameterization_assertion(false);
     }
     switch (second_longest_axis)
     {
@@ -217,7 +217,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         V2_max = zmax;
         break;
     default:
-        CGAL_parameterization_assertion(false);
+        CGAL_surface_mesh_parameterization_assertion(false);
     }
 
     // Project onto longest bounding box axes,
@@ -236,8 +236,8 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         double v = position_as_vector * V2 ;
 
         // convert to unit square coordinates
-        CGAL_parameterization_assertion(V1_max > V1_min);
-        CGAL_parameterization_assertion(V2_max > V2_min);
+        CGAL_surface_mesh_parameterization_assertion(V1_max > V1_min);
+        CGAL_surface_mesh_parameterization_assertion(V2_max > V2_min);
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 

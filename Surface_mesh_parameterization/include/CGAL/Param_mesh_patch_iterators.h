@@ -22,7 +22,7 @@
 #define CGAL_PARAM_MESH_PATCH_ITERATORS_H
 
 #include <CGAL/Param_mesh_patch_vertex.h>
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 #include <list>
 
@@ -88,7 +88,7 @@ public:
 
     /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const {
-        CGAL_parameterization_assertion(ptr == NULL);
+        CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
         return Base::operator==( Base() );
     }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
@@ -147,7 +147,7 @@ public:
 
     /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const {
-        CGAL_parameterization_assertion(ptr == NULL);
+        CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
         return Base::operator==( Base() );
     }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }

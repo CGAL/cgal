@@ -398,7 +398,7 @@ public:
         assert(pFilename != NULL);
 
         std::ofstream out(pFilename);
-        if(!out) 
+        if(!out)
             return false;
         CGAL::set_ascii_mode(out);
 
@@ -425,13 +425,13 @@ public:
         }
 
         out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;
-        out << "%%BoundingBox: " << int(xmin+0.5) << " " 
-                                   << int(ymin+0.5) << " " 
-                                   << int(xmax+0.5) << " " 
+        out << "%%BoundingBox: " << int(xmin+0.5) << " "
+                                   << int(ymin+0.5) << " "
+                                   << int(xmax+0.5) << " "
                                    << int(ymax+0.5) << std::endl;
-        out << "%%HiResBoundingBox: " << xmin << " " 
-                                        << ymin << " " 
-                                        << xmax << " " 
+        out << "%%HiResBoundingBox: " << xmin << " "
+                                        << ymin << " "
+                                        << xmax << " "
                                         << ymax << std::endl;
         out << "%%EndComments" << std::endl;
         out << "gsave" << std::endl;
@@ -480,7 +480,7 @@ public:
         assert(pFilename != NULL);
 
         std::ofstream out(pFilename);
-        if(!out) 
+        if(!out)
             return false;
         CGAL::set_ascii_mode(out);
 
@@ -490,14 +490,14 @@ public:
         precompute_halfedge_indices();
 
         // write the name of material file
-        out <<  "mtllib Surface_mesh_parameterization.mtl" << std::endl ;
+        out <<  "mtllib parameterization.mtl" << std::endl ;
 
         // output coordinates
         out <<  "# vertices" << std::endl ;
         Vertex_iterator pVertex;
         for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
-            out << "v " << pVertex->point().x() << " " 
-                        << pVertex->point().y() << " " 
+            out << "v " << pVertex->point().x() << " "
+                        << pVertex->point().y() << " "
                         << pVertex->point().z() << std::endl;
 
         // Write UVs (1 UV / halfedge)

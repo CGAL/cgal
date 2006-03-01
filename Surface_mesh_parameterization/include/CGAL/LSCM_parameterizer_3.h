@@ -27,7 +27,7 @@
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 #include <iostream>
 
@@ -248,7 +248,7 @@ typename Parameterizer_traits_3<Adaptor>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 parameterize(Adaptor* mesh)
 {
-    CGAL_parameterization_assertion(mesh != NULL);
+    CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
 
 #ifdef DEBUG_TRACE
     // Create timer for traces
@@ -371,7 +371,7 @@ check_parameterize_preconditions(Adaptor* mesh)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    CGAL_parameterization_expensive_precondition_code(                         \
+    CGAL_surface_mesh_parameterization_expensive_precondition_code(             \
         status = mesh->is_mesh_triangular() ? Base::OK                         \
                                             : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
@@ -380,7 +380,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 
     // The whole package is restricted to surfaces: genus = 0,
     // 1 connected component and at least 1 border
-    CGAL_parameterization_expensive_precondition_code(                      \
+    CGAL_surface_mesh_parameterization_expensive_precondition_code(         \
         int genus = feature_extractor.get_genus();                          \
         int nb_borders = feature_extractor.get_nb_borders();                \
         int nb_components = feature_extractor.get_nb_connex_components();   \
@@ -407,8 +407,8 @@ void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border(LeastSquaresSolver* solver,
                                    const Adaptor& mesh)
 {
-    CGAL_parameterization_assertion(solver != NULL);
-    CGAL_parameterization_assertion(solver != NULL);
+    CGAL_surface_mesh_parameterization_assertion(solver != NULL);
+    CGAL_surface_mesh_parameterization_assertion(solver != NULL);
 
     for (Vertex_const_iterator it = mesh.mesh_vertices_begin();
         it != mesh.mesh_vertices_end();
@@ -490,7 +490,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
                          const Adaptor& mesh,
                          Facet_const_handle facet)
 {
-    CGAL_parameterization_assertion(solver != NULL);
+    CGAL_surface_mesh_parameterization_assertion(solver != NULL);
 
     // Get the 3 vertices of the triangle
     Vertex_const_handle v0, v1, v2;
@@ -531,7 +531,7 @@ setup_triangle_relations(LeastSquaresSolver* solver,
     NT b = z01.y() ;
     NT c = z02.x() ;
     NT d = z02.y() ;
-    CGAL_parameterization_assertion(b == 0.0) ;
+    CGAL_surface_mesh_parameterization_assertion(b == 0.0) ;
 
     // Create 2 lines in the linear system per triangle (1 for u, 1 for v)
     // LSCM equation is:
@@ -614,27 +614,27 @@ check_parameterize_postconditions(const Adaptor& mesh,
      *
     // Check if "A*Xu = Bu" and "A*Xv = Bv" systems
     // are solvable with a good conditioning
-    CGAL_parameterization_expensive_postcondition_code(         \
-        status = get_linear_algebra_traits().is_solvable(A, Bu) \
-               ? Base::OK                                       \
-               : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
+    CGAL_surface_mesh_parameterization_expensive_postcondition_code(\
+        status = get_linear_algebra_traits().is_solvable(A, Bu)     \
+               ? Base::OK                                           \
+               : Base::ERROR_BAD_MATRIX_CONDITIONING;               \
     );
     if (status != Base::OK)
         return status;
-    CGAL_parameterization_expensive_postcondition_code(         \
-        status = get_linear_algebra_traits().is_solvable(A, Bv) \
-               ? Base::OK                                       \
-               : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
+    CGAL_surface_mesh_parameterization_expensive_postcondition_code(\
+        status = get_linear_algebra_traits().is_solvable(A, Bv)     \
+               ? Base::OK                                           \
+               : Base::ERROR_BAD_MATRIX_CONDITIONING;               \
     );
     if (status != Base::OK) 
         return status;
      */
 
     // Check if 3D -> 2D mapping is 1 to 1
-    CGAL_parameterization_postcondition_code( 		\
-        status = is_one_to_one_mapping(mesh, solver) 	\
-               ? Base::OK                               \
-               : Base::ERROR_NO_1_TO_1_MAPPING;         \
+    CGAL_surface_mesh_parameterization_postcondition_code(  \
+        status = is_one_to_one_mapping(mesh, solver) 	    \
+               ? Base::OK                                   \
+               : Base::ERROR_NO_1_TO_1_MAPPING;             \
     );
     if (status != Base::OK) 
         return status;
@@ -671,7 +671,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
 
             vertexIndex++;
         }
-        CGAL_parameterization_assertion(vertexIndex >= 3);
+        CGAL_surface_mesh_parameterization_assertion(vertexIndex >= 3);
 
         // Get the 3 vertices position IN 2D
         Point_2 p0 = mesh.get_vertex_uv(v0) ;

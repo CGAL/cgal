@@ -21,7 +21,7 @@
 #ifndef CGAL_PARAM_MESH_PATCH_VERTEX_H
 #define CGAL_PARAM_MESH_PATCH_VERTEX_H
 
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 #include <list>
 
@@ -75,8 +75,8 @@ public:
         typename Adaptor::Vertex_handle last_cw_neighbor  = typename Adaptor::Vertex_handle(),
         typename Adaptor::Vertex_handle first_cw_neighbor = typename Adaptor::Vertex_handle())
     {
-        CGAL_parameterization_assertion(adaptor_vertex != NULL);
-        CGAL_parameterization_assertion( (last_cw_neighbor == NULL) ==
+        CGAL_surface_mesh_parameterization_assertion(adaptor_vertex != NULL);
+        CGAL_surface_mesh_parameterization_assertion( (last_cw_neighbor == NULL) ==
                                          (first_cw_neighbor == NULL) );
 
         m_vertex            = adaptor_vertex;
@@ -213,7 +213,7 @@ public:
         typename Adaptor::Vertex_handle last_cw_neighbor  = typename Adaptor::Vertex_handle(),
         typename Adaptor::Vertex_handle first_cw_neighbor = typename Adaptor::Vertex_handle())
     {
-        CGAL_parameterization_assertion(adaptor_vertex != NULL);
+        CGAL_surface_mesh_parameterization_assertion(adaptor_vertex != NULL);
         m_vertex = Vertex(adaptor_vertex, last_cw_neighbor, first_cw_neighbor);
         m_ptr = &m_vertex;
     }
@@ -267,7 +267,7 @@ public:
 
     /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const {
-        CGAL_parameterization_assertion(ptr == NULL);
+        CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
         return m_ptr == NULL;
     }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
@@ -357,7 +357,7 @@ public:
         typename Adaptor::Vertex_const_handle last_cw_neighbor =typename Adaptor::Vertex_const_handle(),
         typename Adaptor::Vertex_const_handle first_cw_neighbor=typename Adaptor::Vertex_const_handle())
     {
-        CGAL_parameterization_assertion(adaptor_vertex != NULL);
+        CGAL_surface_mesh_parameterization_assertion(adaptor_vertex != NULL);
         m_vertex = Vertex((typename Adaptor::Vertex*)&*adaptor_vertex,
                           (typename Adaptor::Vertex*)&*last_cw_neighbor,
                           (typename Adaptor::Vertex*)&*first_cw_neighbor);
@@ -413,7 +413,7 @@ public:
 
     /// Comparison to NULL pointer
     bool operator==(CGAL_NULL_TYPE ptr) const {
-        CGAL_parameterization_assertion(ptr == NULL);
+        CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
         return m_ptr == NULL;
     }
     bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }

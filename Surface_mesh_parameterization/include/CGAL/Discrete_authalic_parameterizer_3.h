@@ -22,7 +22,7 @@
 #define CGAL_DISCRETE_AUTHALIC_PARAMETERIZER_3_H
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -167,7 +167,7 @@ protected:
         double cotg_theta_ij = cotangent(position_v_i, position_v_j, position_v_l);
 
         double weight = 0.0;
-        CGAL_parameterization_assertion(square_len != 0.0);    // 2 points are identical!
+        CGAL_surface_mesh_parameterization_assertion(square_len != 0.0);    // 2 points are identical!
         if(square_len != 0.0)
             weight = (cotg_psi_ij+cotg_theta_ij)/square_len;
 

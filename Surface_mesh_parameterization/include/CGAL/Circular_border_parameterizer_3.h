@@ -21,7 +21,7 @@
 #ifndef CGAL_CIRCULARBORDERPARAMETERIZER_3_H
 #define CGAL_CIRCULARBORDERPARAMETERIZER_3_H
 
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -132,7 +132,7 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
         it != mesh.mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh.is_vertex_on_main_border(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(it));
 
         // Get next iterator (looping)
         Border_vertex_const_iterator next = it;
@@ -157,7 +157,7 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     std::cerr << "  map on a circle" << std::endl;
 #endif
 
-    CGAL_parameterization_assertion(mesh != NULL);
+    CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
 
     // Nothing to do if no border
     if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
@@ -175,7 +175,7 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         it != mesh->mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_parameterization_assertion(mesh->is_vertex_on_main_border(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh->is_vertex_on_main_border(it));
 
         double angle = len*tmp; // current position on the circle in radians
 

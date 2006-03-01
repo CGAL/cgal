@@ -22,7 +22,7 @@
 #define CGAL_MEAN_VALUE_COORDINATES_PARAMETERIZER_3_H
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -167,10 +167,10 @@ protected:
         double delta_ij = compute_angle_rad(position_v_l, position_v_i, position_v_j);
 
         double weight = 0.0;
-        CGAL_parameterization_assertion(len != 0.0);    // 2 points are identical!
+        CGAL_surface_mesh_parameterization_assertion(len != 0.0);    // 2 points are identical!
         if(len != 0.0)
             weight = (std::tan(0.5*gamma_ij) + std::tan(0.5*delta_ij)) / len;
-        CGAL_parameterization_assertion(weight > 0);
+        CGAL_surface_mesh_parameterization_assertion(weight > 0);
 
         return weight;
     }

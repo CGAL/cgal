@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="extensive_parameterization_test"
+	Name="Mesh_cutting_parameterization"
 	ProjectGUID="{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -18,14 +18,13 @@
 			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="$(TESTSUITE_CXXFLAGS)"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\examples\Surface_mesh_parameterization;..\..\examples\Surface_mesh_parameterization\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
-				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;DEBUG_TRACE"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="4"
+				RuntimeLibrary="5"
 				BufferSecurityCheck="FALSE"
 				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="FALSE"
@@ -40,8 +39,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib /NODEFAULTLIB:LIBCMT $(TESTSUITE_LDFLAGS)"
-				OutputFile="$(OutDir)/extensive_parameterization_test.exe"
+				AdditionalOptions="CGAL_debug.lib gmp.lib"
+				OutputFile="$(OutDir)/Mesh_cutting_parameterization.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
 				GenerateDebugInformation="TRUE"
@@ -77,7 +76,7 @@
 			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Og- $(TESTSUITE_CXXFLAGS)"
+				AdditionalOptions="/Og-"
 				Optimization="2"
 				GlobalOptimizations="TRUE"
 				EnableIntrinsicFunctions="TRUE"
@@ -85,8 +84,8 @@
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\examples\Surface_mesh_parameterization;..\..\examples\Surface_mesh_parameterization\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
-				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
+				PreprocessorDefinitions="WIN32;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP"
 				RuntimeLibrary="4"
 				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
@@ -99,8 +98,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib /NODEFAULTLIB:LIBCMT $(TESTSUITE_LDFLAGS)"
-				OutputFile="$(OutDir)/extensive_parameterization_test.exe"
+				AdditionalOptions="CGAL.lib gmp.lib"
+				OutputFile="$(OutDir)/Mesh_cutting_parameterization.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
 				GenerateDebugInformation="FALSE"
@@ -138,22 +137,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\extensive_parameterization_test.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\examples\Surface_mesh_parameterization\Mesh_cutter.C">
+				RelativePath=".\Mesh_cutting_parameterization.C">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -173,15 +157,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\examples\Surface_mesh_parameterization\include\Mesh_cutter.h">
-			</File>
-			<File
-				RelativePath="..\..\examples\Surface_mesh_parameterization\include\Parameterization_polyhedron_adaptor_ex.h">
-			</File>
-			<File
-				RelativePath="..\..\examples\Surface_mesh_parameterization\include\Polyhedron_ex.h">
-			</File>
-			<File
 				RelativePath=".\include\short_names.h">
 			</File>
 		</Filter>
@@ -189,34 +164,19 @@
 			Name="Surface_mesh_parameterization package"
 			Filter="">
 			<File
-				RelativePath="..\..\include\Cgal\Barycentric_mapping_parameterizer_3.h">
-			</File>
-			<File
 				RelativePath="..\..\include\Cgal\Circular_Border_parameterizer_3.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Convertible_circulator_project.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Convertible_filter_iterator.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Convertible_iterator_project.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Discrete_authalic_parameterizer_3.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Discrete_conformal_map_parameterizer_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Fixed_border_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\LSCM_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Param_mesh_patch_circulators.h">
@@ -228,34 +188,16 @@
 				RelativePath="..\..\include\Cgal\Param_mesh_patch_vertex.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\parameterization_assertions.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
+				RelativePath="..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
+				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
+			</File>
+			<File
 				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Square_border_parameterizer_3.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Taucs_matrix.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Taucs_solver_traits.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Taucs_vector.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Two_vertices_parameterizer_3.h">
 			</File>
 		</Filter>
 		<Filter
@@ -278,16 +220,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\OpenNL\include\OpenNL\sparse_matrix.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="TAUCS"
-			Filter="">
-			<File
-				RelativePath="..\..\..\Taucs\auxiliary\Taucs\src\taucs.h">
-			</File>
-			<File
-				RelativePath="..\..\..\Taucs\auxiliary\Taucs\src\taucs_private.h">
 			</File>
 		</Filter>
 	</Files>

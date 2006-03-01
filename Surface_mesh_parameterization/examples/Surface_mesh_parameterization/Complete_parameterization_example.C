@@ -31,13 +31,13 @@ typedef CGAL::Cartesian<double>                         Kernel;
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
 
 // Mesh adaptors
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                                         Parameterization_polyhedron_adaptor;
-typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
+typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
                                                         Mesh_patch_polyhedron;
 
 // Type describing a border or seam as a vertex list
-typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle> 
+typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
                                                         Seam;
 
 
@@ -118,7 +118,7 @@ static bool write_file_obj(Parameterization_polyhedron_adaptor* mesh_adaptor,
     assert(pFilename != NULL);
 
     std::ofstream out(pFilename);
-    if(!out) 
+    if(!out)
         return false;
     CGAL::set_ascii_mode(out);
 
@@ -135,13 +135,13 @@ static bool write_file_obj(Parameterization_polyhedron_adaptor* mesh_adaptor,
         mesh_adaptor->info(pHalfedge)->index(i++);
 
     // write the name of material file
-    out <<  "mtllib Surface_mesh_parameterization.mtl" << std::endl ;
+    out <<  "mtllib parameterization.mtl" << std::endl ;
 
     // output coordinates
     out <<  "# vertices" << std::endl ;
     for(pVertex = mesh->vertices_begin(); pVertex != mesh->vertices_end(); pVertex++)
-        out << "v " << pVertex->point().x() << " " 
-                    << pVertex->point().y() << " " 
+        out << "v " << pVertex->point().x() << " "
+                    << pVertex->point().y() << " "
                     << pVertex->point().z() << std::endl;
 
     // Write UVs (1 UV / halfedge)
@@ -211,7 +211,7 @@ int main(int argc,char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) 
+    if(!stream)
     {
         std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -271,7 +271,7 @@ int main(int argc,char * argv[])
         {
             std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
             return EXIT_FAILURE;
-        }   
+        }
     }
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;

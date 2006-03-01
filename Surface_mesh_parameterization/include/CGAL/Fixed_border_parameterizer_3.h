@@ -28,7 +28,7 @@
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
-#include <CGAL/parameterization_assertions.h>
+#include <CGAL/surface_mesh_parameterization_assertions.h>
 
 #include <iostream>
 
@@ -253,7 +253,7 @@ typename Parameterizer_traits_3<Adaptor>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 parameterize(Adaptor* mesh)
 {
-    CGAL_parameterization_assertion(mesh != NULL);
+    CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
 
 #ifdef DEBUG_TRACE
     // Create timer for traces
@@ -313,7 +313,7 @@ parameterize(Adaptor* mesh)
          vertexIt != mesh->mesh_vertices_end();
          vertexIt++)
     {
-        CGAL_parameterization_assertion(mesh->is_vertex_on_main_border(vertexIt)
+        CGAL_surface_mesh_parameterization_assertion(mesh->is_vertex_on_main_border(vertexIt)
                                      == mesh->is_vertex_parameterized(vertexIt));
 
         // inner vertices only
@@ -350,8 +350,8 @@ parameterize(Adaptor* mesh)
         return status;
 
     // WARNING: this package does not support homogeneous coordinates!
-    CGAL_parameterization_assertion(Du == 1.0);
-    CGAL_parameterization_assertion(Dv == 1.0);
+    CGAL_surface_mesh_parameterization_assertion(Du == 1.0);
+    CGAL_surface_mesh_parameterization_assertion(Dv == 1.0);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system (mesh, Xu, Xv);
@@ -398,7 +398,7 @@ check_parameterize_preconditions(Adaptor* mesh)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    CGAL_parameterization_expensive_precondition_code(                         \
+    CGAL_surface_mesh_parameterization_expensive_precondition_code(            \
         status = mesh->is_mesh_triangular() ? Base::OK                         \
                                             : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
@@ -407,7 +407,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 
     // The whole package is restricted to surfaces: genus = 0,
     // 1 connected component and at least 1 border
-    CGAL_parameterization_expensive_precondition_code(                      \
+    CGAL_surface_mesh_parameterization_expensive_precondition_code(         \
         int genus = feature_extractor.get_genus();                          \
         int nb_borders = feature_extractor.get_nb_borders();                \
         int nb_components = feature_extractor.get_nb_connex_components();   \
@@ -420,7 +420,7 @@ check_parameterize_preconditions(Adaptor* mesh)
 
     // 1 to 1 mapping is guaranteed if all w_ij coefficients are > 0 (for j vertex neighbor of i)
     // and if the surface border is mapped onto a 2D convex polygon
-    CGAL_parameterization_precondition_code(                    \
+    CGAL_surface_mesh_parameterization_precondition_code(       \
         status = get_border_parameterizer().is_border_convex()  \
                ? Base::OK                                       \
                : Base::ERROR_INVALID_BORDER;                    \
@@ -444,15 +444,15 @@ void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
                                     const Adaptor& mesh)
 {
-    CGAL_parameterization_assertion(A != NULL);
-    CGAL_parameterization_assertion(Bu != NULL);
-    CGAL_parameterization_assertion(Bv != NULL);
+    CGAL_surface_mesh_parameterization_assertion(A != NULL);
+    CGAL_surface_mesh_parameterization_assertion(Bu != NULL);
+    CGAL_surface_mesh_parameterization_assertion(Bv != NULL);
 
     for (Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
          it != mesh.mesh_main_border_vertices_end();
          it++)
     {
-        CGAL_parameterization_assertion(mesh.is_vertex_parameterized(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(it));
 
         // Get vertex index in sparse linear system
         int index = mesh.get_vertex_index(it);
@@ -485,8 +485,8 @@ setup_inner_vertex_relations(Matrix* A,
                              const Adaptor& mesh,
                              Vertex_const_handle vertex)
 {
-    CGAL_parameterization_assertion( ! mesh.is_vertex_on_main_border(vertex) );
-    CGAL_parameterization_assertion( ! mesh.is_vertex_parameterized(vertex) );
+    CGAL_surface_mesh_parameterization_assertion( ! mesh.is_vertex_on_main_border(vertex) );
+    CGAL_surface_mesh_parameterization_assertion( ! mesh.is_vertex_parameterized(vertex) );
 
     int i = mesh.get_vertex_index(vertex);
 
@@ -559,26 +559,26 @@ check_parameterize_postconditions(const Adaptor& mesh,
 
     // Check if "A*Xu = Bu" and "A*Xv = Bv" systems
     // are solvable with a good conditioning
-    CGAL_parameterization_expensive_postcondition_code(         \
-        status = get_linear_algebra_traits().is_solvable(A, Bu) \
-               ? Base::OK                                       \
-               : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
+    CGAL_surface_mesh_parameterization_expensive_postcondition_code(\
+        status = get_linear_algebra_traits().is_solvable(A, Bu)     \
+               ? Base::OK                                           \
+               : Base::ERROR_BAD_MATRIX_CONDITIONING;               \
     );
     if (status != Base::OK) 
         return status;
-    CGAL_parameterization_expensive_postcondition_code(         \
-        status = get_linear_algebra_traits().is_solvable(A, Bv) \
-               ? Base::OK                                       \
-               : Base::ERROR_BAD_MATRIX_CONDITIONING;           \
+    CGAL_surface_mesh_parameterization_expensive_postcondition_code(\
+        status = get_linear_algebra_traits().is_solvable(A, Bv)     \
+               ? Base::OK                                           \
+               : Base::ERROR_BAD_MATRIX_CONDITIONING;               \
     );
     if (status != Base::OK) 
         return status;
 
     // Check if 3D -> 2D mapping is 1 to 1
-    CGAL_parameterization_postcondition_code( 		\
-        status = is_one_to_one_mapping(mesh, A, Bu, Bv) \
-               ? Base::OK                               \
-               : Base::ERROR_NO_1_TO_1_MAPPING;         \
+    CGAL_surface_mesh_parameterization_postcondition_code(  \
+        status = is_one_to_one_mapping(mesh, A, Bu, Bv)     \
+               ? Base::OK                                   \
+               : Base::ERROR_NO_1_TO_1_MAPPING;             \
     );
     if (status != Base::OK) 
         return status;
@@ -618,7 +618,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
 
             vertexIndex++;
         }
-        CGAL_parameterization_assertion(vertexIndex >= 3);
+        CGAL_surface_mesh_parameterization_assertion(vertexIndex >= 3);
 
         // Get the 3 vertices position IN 2D
         Point_2 p0 = mesh.get_vertex_uv(v0) ;
