@@ -1259,6 +1259,7 @@ Polyhedron/examples/Polyhedron/corner.off -text
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Polyhedron/examples/Polyhedron/cross.off -text
+Principal_component_analysis/demo/Principal_component_analysis/command-line/makefile -text
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.ico -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.rc2 -text
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Mesh.ico -text svneol=unset#unset
