@@ -40,7 +40,7 @@ LDFLAGS = \
 all:            \
                 barycenter$(EXE_EXT) \
                 bounding_box$(EXE_EXT) \
-                pca$(EXE_EXT) 
+                fitting$(EXE_EXT) 
 
 barycenter$(EXE_EXT): barycenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)barycenter barycenter$(OBJ_EXT) $(LDFLAGS)
@@ -48,13 +48,13 @@ barycenter$(EXE_EXT): barycenter$(OBJ_EXT)
 bounding_box$(EXE_EXT): bounding_box$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bounding_box bounding_box$(OBJ_EXT) $(LDFLAGS)
 
-pca$(EXE_EXT): pca$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)pca pca$(OBJ_EXT) $(LDFLAGS)
+fitting$(EXE_EXT): fitting$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)fitting fitting$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    barycenter.clean \
                    bounding_box.clean \
-                   pca.clean 
+                   fitting.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
