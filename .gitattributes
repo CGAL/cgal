@@ -616,6 +616,9 @@ Manual/doc_tex/Manual/fig/l-simp.eps -text
 Manual/doc_tex/Manual/fig/l-simp.pdf -text svneol=unset#unset
 Manual/doc_tex/Miscellany/modifier.gif -text svneol=unset#unset
 Manual/doc_tex/Miscellany/modifier_small.gif -text svneol=unset#unset
+Manual_tools/doc_ps/cc_manual.ps.gz -text
+Manual_tools/doc_ps/cc_manual_index.ps.gz -text
+Manual_tools/doc_ps/latex_to_html.ps.gz -text
 Manual_tools/doc_tex/Manual_tools/horizontal_struct.eps -text
 Manual_tools/doc_tex/Manual_tools/horizontal_struct.gif -text svneol=unset#unset
 Manual_tools/doc_tex/Manual_tools/tools_index.eps -text
