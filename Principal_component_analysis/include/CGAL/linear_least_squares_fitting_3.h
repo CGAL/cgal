@@ -29,53 +29,21 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-// fits a plane to a 3D point set
-// returns a fitting quality (1 - lambda_min/lambda_max):
-//  1 is best (zero variance orthogonally to the fitting line)
-//  0 is worst (isotropic case, returns a plane with default direction)
-template < typename InputIterator, 
-           typename K >
-           typename K::FT
-linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
-                               typename K::Plane_3& plane, // best fit plane
-                               typename K::Point_3& c,     // centroid
-                               const K& k,                 // kernel
-                               const typename K::Point_3*)
+// compute the eigen values and vectors of the covariance 
+// matrix and deduces the best linear fitting plane
+// (this is an internal function)
+// returns fitting quality
+template < typename K >
+typename K::FT
+fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
+                const typename K::Point_3& c, // centroid
+                typename K::Plane_3& plane,   // best fit plane
+                const K& k)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
   typedef typename K::Plane_3  Plane;
   typedef typename K::Vector_3 Vector;
-
-  // precondition: at least one element in the container.
-  CGAL_precondition(first != beyond);
-
-  // compute centroid
-  c = centroid(first,beyond,K());
-
-  // assemble covariance matrix as a
-  // semi-definite matrix. 
-  // Matrix numbering:
-  // 0
-  // 1 2
-  // 3 4 5
-  FT covariance[6] = {0.0, 
-                      0.0, 0.0, 
-                      0.0, 0.0, 0.0};
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Point& p = *it;
-    Vector d = p - c;
-    covariance[0] += d.x() * d.x();
-    covariance[1] += d.x() * d.y();
-    covariance[2] += d.y() * d.y();
-    covariance[3] += d.x() * d.z();
-    covariance[4] += d.y() * d.z();
-    covariance[5] += d.z() * d.z();
-  }
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
@@ -106,55 +74,23 @@ linear_least_squares_fitting_3(InputIterator first,
     plane = Plane(c,Vector(0.0,0.0,1.0));
     return (FT)0.0;
   } 
-} // end fit plane to point set
+}
 
-// fits a line to a 3D point set
-// returns a fitting quality (1 - lambda_min/lambda_max):
-//  1 is best (zero variance orthogonally to the fitting line)
-//  0 is worst (isotropic case, returns a line along x axis)
-template < typename InputIterator, 
-           typename K >
-           typename K::FT
-linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
-                               typename K::Line_3& line,  // best fit line
-                               typename K::Point_3& c,    // centroid
-                               const K& k,                // kernel
-                               const typename K::Point_3*)
+// compute the eigen values and vectors of the covariance 
+// matrix and deduces the best linear fitting line
+// (this is an internal function)
+// returns fitting quality
+template < typename K >
+typename K::FT
+fitting_line_3(const typename K::FT covariance[6], // covariance matrix
+               const typename K::Point_3& c, // centroid
+               typename K::Line_3& line,   // best fit line
+               const K& k)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
   typedef typename K::Line_3   Line;
   typedef typename K::Vector_3 Vector;
-
-  // precondition: at least one element in the container.
-  CGAL_precondition(first != beyond);
-
-  // compute centroid
-  c = centroid(first,beyond,K());
-
-  // assemble covariance matrix as a
-  // semi-definite matrix. 
-  // Matrix numbering:
-  // 0
-  // 1 2
-  // 3 4 5
-  FT covariance[6] = {0.0, 
-                      0.0, 0.0, 
-                      0.0, 0.0, 0.0};
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Point& p = *it;
-    Vector d = p - c;
-    covariance[0] += d.x() * d.x();
-    covariance[1] += d.x() * d.y();
-    covariance[2] += d.y() * d.y();
-    covariance[3] += d.x() * d.z();
-    covariance[4] += d.y() * d.z();
-    covariance[5] += d.z() * d.z();
-  }
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
@@ -182,40 +118,65 @@ linear_least_squares_fitting_3(InputIterator first,
     line = Line(c,Vector(1.0,0.0,0.0));
     return (FT)0.0;
   } 
-} // end fit line to point set
+}
 
-// fits a plane to a 3D triangle set
-template < typename InputIterator, 
+// assemble covariance matrix from a point set 
+// (internal function)
+template < typename InputIterator,
            typename K >
-typename K::FT
-linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
-                               typename K::Plane_3& plane, // best fit plane
-                               typename K::Point_3& c,     // centroid
-                               const K& k,                 // kernel
-                               const typename K::Triangle_3*)
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+                             typename K::FT covariance[6], // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,
+                             const typename K::Point_3*)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point;
-  typedef typename K::Vector_3    Vector;
-  typedef typename K::Triangle_3  Triangle;
+  typedef typename K::FT       FT;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Vector_3 Vector;
 
-  // precondition: at least one element in the container.
-  CGAL_precondition(first != beyond);
-
-  // compute centroid
-  c = centroid(first,beyond,K());
-
-  // assemble covariance matrix as a
-  // semi-definite matrix. 
   // Matrix numbering:
   // 0          
   // 1 2
   // 3 4 5          
-  FT covariance[6] = {0.0, 
-                      0.0, 0.0, 
-                      0.0, 0.0, 0.0};
-  
+  for(InputIterator it = first;
+      it != beyond;
+      it++)
+  {
+    const Point& p = *it;
+    Vector d = p - c;
+    covariance[0] += d.x() * d.x();
+    covariance[1] += d.x() * d.y();
+    covariance[2] += d.y() * d.y();
+    covariance[3] += d.x() * d.z();
+    covariance[4] += d.y() * d.z();
+    covariance[5] += d.z() * d.z();
+  }
+}
+
+// assemble covariance matrix from a triangle set 
+// (internal function)
+template < typename InputIterator,
+           typename K >
+void
+assemble_covariance_matrix_3(InputIterator first,
+                             InputIterator beyond, 
+                             typename K::FT covariance[6], // covariance matrix
+                             const typename K::Point_3& c, // centroid
+                             const K& k,
+                             const typename K::Triangle_3*)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Triangle_3 Triangle;
+
+  // Matrix numbering:
+  // 0          
+  // 1 2
+  // 3 4 5          
+ 
   FT sum_areas = 0.0;
   for(InputIterator it = first;
       it != beyond;
@@ -256,40 +217,137 @@ linear_least_squares_fitting_3(InputIterator first,
   covariance[3] -= sum_areas * c.z() * c.x();
   covariance[4] -= sum_areas * c.z() * c.y();
   covariance[5] -= sum_areas * c.z() * c.z();
-  
-  // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
-  // eigen vectors are sorted in accordance.
-  FT eigen_values[3];
-  FT eigen_vectors[9];
-  eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
-  CGAL_assertion(eigen_values[0] >= 0.0 && 
-                 eigen_values[1] >= 0.0 &&
-                 eigen_values[2] >= 0.0);
+}
 
-  // check unicity and build fitting plane accordingly
-  if(eigen_values[0] != eigen_values[2])
-  {
-    // regular case
-    Vector normal(eigen_vectors[6],
-                  eigen_vectors[7],
-                  eigen_vectors[8]);
-    plane = Plane(c,normal);
-    return (FT)1.0 - eigen_values[2] / eigen_values[0];
-  } // end regular case
-  else
-  {
-    // isotropic case (infinite number of directions)
-    // by default: assemble a horizontal plane that goes
-    // through the centroid.
-    plane = Plane(c,Vector(0.0,0.0,1.0));
-    return (FT)0.0;
-  } // end isotropic case
+
+// fits a plane to a 3D point set
+// returns a fitting quality (1 - lambda_min/lambda_max):
+//  1 is best (zero variance orthogonally to the fitting line)
+//  0 is worst (isotropic case, returns a plane with default direction)
+template < typename InputIterator, 
+           typename K >
+typename K::FT
+linear_least_squares_fitting_3(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Plane_3& plane, // best fit plane
+                               typename K::Point_3& c,     // centroid
+                               const K& k,                 // kernel
+                               const typename K::Point_3*)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Plane_3  Plane;
+  typedef typename K::Vector_3 Vector;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+
+  // compute centroid
+  c = centroid(first,beyond,K());
+
+  // assemble covariance matrix
+  FT covariance[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Point*) NULL);
+
+  // compute fitting plane
+  return fitting_plane_3(covariance,c,plane,k);
+} // end fit plane to point set
+
+// fits a line to a 3D point set
+// returns a fitting quality (1 - lambda_min/lambda_max):
+//  1 is best (zero variance orthogonally to the fitting line)
+//  0 is worst (isotropic case, returns a line along x axis)
+template < typename InputIterator, 
+           typename K >
+typename K::FT
+linear_least_squares_fitting_3(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Line_3& line,  // best fit line
+                               typename K::Point_3& c,    // centroid
+                               const K& k,                // kernel
+                               const typename K::Point_3*)
+{
+  typedef typename K::FT       FT;
+  typedef typename K::Point_3  Point;
+  typedef typename K::Line_3   Line;
+  typedef typename K::Vector_3 Vector;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+
+  // compute centroid
+  c = centroid(first,beyond,K());
+
+  // assemble covariance matrix
+  FT covariance[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Point*) NULL);
+
+  // compute fitting line
+  return fitting_line_3(covariance,c,line,k);
+} // end fit line to point set
+
+// fits a plane to a 3D triangle set
+template < typename InputIterator, 
+           typename K >
+typename K::FT
+linear_least_squares_fitting_3(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Plane_3& plane, // best fit plane
+                               typename K::Point_3& c,     // centroid
+                               const K& k,                 // kernel
+                               const typename K::Triangle_3*)
+{
+  typedef typename K::FT          FT;
+  typedef typename K::Point_3     Point;
+  typedef typename K::Vector_3    Vector;
+  typedef typename K::Triangle_3  Triangle;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+
+  // compute centroid
+  c = centroid(first,beyond,K());
+
+  // assemble covariance matrix
+  FT covariance[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Triangle*) NULL);
+
+  // compute fitting plane
+  return fitting_plane_3(covariance,c,plane,k);
+} // end linear_least_squares_fitting_3
+
+// fits a line to a 3D triangle set
+template < typename InputIterator, 
+           typename K >
+typename K::FT
+linear_least_squares_fitting_3(InputIterator first,
+                               InputIterator beyond, 
+                               typename K::Line_3& line, // best fit line
+                               typename K::Point_3& c,   // centroid
+                               const K& k,               // kernel
+                               const typename K::Triangle_3*)
+{
+  typedef typename K::FT          FT;
+  typedef typename K::Point_3     Point;
+  typedef typename K::Vector_3    Vector;
+  typedef typename K::Triangle_3  Triangle;
+  typedef typename K::Line_3      Line;
+
+  // precondition: at least one element in the container.
+  CGAL_precondition(first != beyond);
+
+  // compute centroid
+  c = centroid(first,beyond,K());
+
+  // assemble covariance matrix
+  FT covariance[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Triangle*) NULL);
+
+  // compute fitting plane
+  return fitting_line_3(covariance,c,line,k);
 } // end linear_least_squares_fitting_3
 
 } // end namespace CGALi
-
-
 
 template < typename InputIterator, 
            typename K >
