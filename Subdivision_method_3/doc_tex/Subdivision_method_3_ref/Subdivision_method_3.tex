@@ -25,7 +25,7 @@ and their refinement hosts. Each refinement host is a template
 function of a polyhedron class and a 
 geometry policy class. It refines the connectivity of the
 control mesh and computes the geometry of the refined mesh.
-The geometry computation is dedicated to the user-customizable
+The geometry computation is dedicated to the custom
 geometry policy. A geometry policy consists of functions 
 that compute the new points based on a subdivision stencil.
 A stencil defines the footprint (a submesh of the control mesh)
@@ -38,7 +38,7 @@ the dual quadrilateral quadrisection (DQQ),
 and the $\sqrt{3}$ triangulation.
 Each of these refinements are respectively used in 
 Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivision, which
-are also supported by \ccClassTemplateName .
+are also supported as template functions in \ccClassTemplateName .
 
 \ccInclude{CGAL/Subdivision_method_3.h}
 
@@ -65,9 +65,9 @@ the geometry masks.
   </CENTER>
 \end{ccHtmlOnly}
 
-%\ccThree{void}{S::PQQ(Poly& p, Stencil<Poly> rule, int s);}{}
-%\ccThreeToTwo
-\ccTwo{template <template <typename> class Stencil> void PQQ(Poly& p, Stencil<Poly> rule, int s);}{}
+\ccThree{void}{S::PQQ(Poly& p, Stencil<Poly> rule, int s);}{}
+\ccThreeToTwo
+%\ccTwo{template <template <typename> class Stencil> void PQQ(Poly& p, Stencil<Poly> rule, int s);}{}
 
 \ccThree{template <template <typename> class Stencil> void}{sub}{}
 \ccThreeToTwo
