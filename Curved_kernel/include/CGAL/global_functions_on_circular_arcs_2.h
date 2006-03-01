@@ -129,6 +129,15 @@ compare_y_to_right(const Circular_arc_2<CK> &A1,
   return CK().compare_y_to_right_2_object()(A1, A2, b);
 }
 
+template< class CK >
+inline
+bool
+has_on_2(const typename CK::Circle_2 &c, 
+	 const typename CK::Circular_arc_point_2 &p)
+{
+  return CK().has_on_2_object()(c, p);
+}
+
 template < class CK >
 inline
 bool
