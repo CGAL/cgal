@@ -1,0 +1,1982 @@
+% ======================================================================== 
+%  CGAL reference manual indexing style file    
+%
+%  $Id$
+% ========================================================================
+
+%
+% Make sure the cc_manual style file is included since some of the commands
+% used in this file are defined there
+%
+\usepackage{cc_manual}
+\usepackage{makeidx}
+
+\RCSdef{\ccRevision}{$Id$}
+\RCSdefDate{\ccDate}{$Date$}
+
+% Print a release note.
+\catcode`\@=11\relax
+\newwrite\@unused
+\def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
+\typeout{cc_manual_index.sty: \ccRevision. \ccDate.}
+\catcode`\@=12\relax
+
+% ========================================================================
+% Definitions of fonts for the different categories of non-C++ items 
+% ========================================================================
+\def\ccUnderscoreFont{}
+\def\ccIndexAbbreviationFont{}
+%\def\ccIndexConceptFont{\ccUnderscoreFont}
+\def\ccIndexConceptFont{}
+\def\ccIndexFunctionalityFont{}
+\def\ccIndexDSFont{}
+\def\ccIndexHintFont{}
+\def\ccIndexLibraryFont{}
+\def\ccIndexPackageFont{}
+\def\ccIndexTermFont{}
+
+
+\newcount\ccIndex \ccIndex=\ccTrue%
+\newcount\ccAutoIndex \ccAutoIndex=\ccTrue%
+\newcount\ccIndexCrossRef \ccIndexCrossRef=\ccTrue%
+\newcount\ccIndexModifierCrossRef \ccIndexModifierCrossRef=\ccTrue%
+
+% ========================================================================
+% Text that is between a pair of ccIndexingOff and ccIndexingOn commands 
+% will not produce any entries in the index, automatically or otherwise
+% ========================================================================
+\newcommand{\ccIndexingOff}{\ccIndex=\ccFalse}%
+\newcommand{\ccIndexingOn}{\ccIndex=\ccTrue}%
+
+% ========================================================================
+% Text that is between a pair of ccAutoIndexingOff and ccAutoIndexingOn
+% commands will not produce any entries in the index automatically. 
+% You can do indexing manually, though, using any of the commands. 
+% ========================================================================
+\newcommand{\ccAutoIndexingOff}{\ccAutoIndex=\ccFalse}%
+\newcommand{\ccAutoIndexingOn}{\ccAutoIndex=\ccTrue}%
+
+% ========================================================================
+% Text that is between a pair of ccModifierCrossRefOff and 
+% ccModifierCrossRefOn commands will not produce cross referencing entries 
+% automatically for main item text that contains a comma. 
+% ========================================================================
+\newcommand{\ccModifierCrossRefOff}{\ccIndexModifierCrossRef=\ccFalse}%
+\newcommand{\ccModifierCrossRefOn}{\ccIndexModifierCrossRef=\ccTrue}%
+
+% ========================================================================
+% Text that is between a pair of ccNonmodifierCrossRefOff and
+% ccNonmodifierCrossRefOn commands will produce cross referencing entries 
+% automatically only for main item text that contains a comma. 
+% ========================================================================
+\newcommand{\ccNonmodifierCrossRefOff}{\ccIndexCrossRef=\ccFalse}%
+\newcommand{\ccNonmodifierCrossRefOn}{\ccIndexCrossRef=\ccTrue}%
+
+% ========================================================================
+% Text that is between a pair of ccCrossRefOff and ccCrossRefOn commands
+% will not produce ANY cross referencing entries automatically. 
+% ========================================================================
+\newcommand{\ccCrossRefOff}{\ccIndexModifierCrossRef=\ccFalse%
+                            \ccIndexCrossRef=\ccFalse}%
+\newcommand{\ccCrossRefOn}{\ccIndexModifierCrossRef=\ccTrue%
+                            \ccIndexCrossRef=\ccTrue}%
+
+% ------------------------------------------------------------------------
+%  Commands needed for including indexing characters in the index
+% ------------------------------------------------------------------------
+\def\doubleVerticalBar{||}
+\def\singleVerticalBar{|}
+\def\verticalBarEqual{|=}
+\def\doubleExclamation{!!}
+\def\singleExclamation{!}
+\def\doubleAmpersand{\&\&}
+\def\singleAmpersand{\&}
+\def\ampersandEqual{\&=}
+\def\exclamationEqual{!=}
+\def\singleAt{@}
+
+% ========================================================================
+%  Generic indexing macros
+%
+% The following 14 commands are generic commands for producing main items,
+% subitems, and subsubitems in the index.  For each of these three types of 
+% entries, there are four kinds of commands:
+%
+% 1. produce a single page number entry
+% 2. begin an entry with a range of pages associated with it
+% 3. end an entry with a range of pages associated with it
+% 4. produce a definition entry (single page number in bold face type)
+%
+% There are also 2 commands, one for subitems and one for subsubitems,
+%  for producing "see also <text>" entries 
+%
+% Each of these commands requires some number of arguments which supply
+% the text to be used in indexing.  Main item commands require 1 argument; 
+% subitem commands require 2 arguments (main item and subitem text); 
+% subsubitem commands require 3 arguments (main item, subitem, and subsubitem
+% text).  
+%
+% All 14 commands have an optional argument, which is the category of
+% the main item being indexed.  The valid values for this category argument 
+% are:
+%      C -- for class or other C++ name 
+%      c -- for concept 
+%      d -- for data structure
+%      f -- for functionality
+%      h -- for hint
+%      l -- for library
+%      p -- for package
+%      t -- for term
+% The default value of this argument is empty, indicating an entry that
+% does not fall into any of the established categories for the index.
+% Depending on the category specified, the appropriate font will be used
+% to format the main item text.  Fonts can also be supplied in the
+% text arguments and these fonts override any font indicated by the
+% category argument.
+% ========================================================================
+
+
+% ------------------------------------------------------------------------
+%  Main item generic indexing macros
+% ------------------------------------------------------------------------
+
+%
+% Usage:  \ccIndexMainItem[category]{item}
+%
+\newcommand{\ccIndexMainItem}[2][]{%
+   \ifnum\ccIndex=\ccTrue%
+   \mainTextParse{{#1}}{#2}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText}%
+   \else%
+      \index{\mainText}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+%
+% Usage:  \ccIndexMainItemBegin[category]{item with range}
+%         ... <item description> ...
+%         \ccIndexMainItemEnd[cateogry]{item with range}
+%
+\newcommand{\ccIndexMainItemBegin}[2][]{%
+   \ifnum\ccIndex=\ccTrue%
+   \mainTextParse{{#1}}{#2}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText|(}%
+   \else%
+      \index{\mainText|(}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+\newcommand{\ccIndexMainItemEnd}[2][]{%
+   \ifnum\ccIndex=\ccTrue%
+   \mainTextParse{{#1}}{#2}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText|)}%
+   \else%
+      \index{\mainText|)}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+%
+% Usage:  \ccIndexMainItemDef[category]{item}
+%
+\newcommand{\ccIndexMainItemDef}[2][]{%
+   \ifnum\ccIndex=\ccTrue%
+   \mainTextParse{{#1}}{#2}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText|textbf}%
+   \else%
+      \index{\mainText|textbf}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+
+% ------------------------------------------------------------------------
+%  Subitem generic indexing macros
+% ------------------------------------------------------------------------
+
+%
+% Usage:  \ccIndexSubitem[category]{item}{subitem}
+%
+\newcommand{\ccIndexSubitem}[3][]{%
+   \ifnum\ccIndex=\ccTrue%
+   \mainTextParse{{#1}}{#2}%
+   \subitemTextParse{#3}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText}%
+   \else%
+      \index{\mainText!\subitemText}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+
+%
+% Usage:  \ccIndexOperatorSubitem{item}{subitem}
+%
+\newcommand{\ccIndexOperatorSubitem}[2]{%
+   \ifnum\ccIndex=\ccTrue%
+   \subitemTextParse{#2}%
+   \ifnum\ccOperatorCat=\ccDoubleVerticalBar%
+      \index{#1@$\protect\doubleVerticalBar$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccSingleVerticalBar%
+      \index{#1@$\protect\singleVerticalBar$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccVerticalBarEqual%
+      \index{#1@$\protect\verticalBarEqual$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccDoubleExclamation%
+      \index{#1@$\protect\doubleExclamation$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccSingleExclamation%
+      \index{#1@$\protect\singleExclamation$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccSingleAmpersand%
+      \index{#1@$\protect\singleAmpersand$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccDoubleAmpersand%
+      \index{#1@$\protect\doubleAmpersand$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccAmpersandEqual%
+      \index{#1@$\protect\ampersandEqual$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccExclamationEqual%
+      \index{#1@$\protect\exclamationEqual$!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccSingleAt%
+      \index{#1@$\protect\singleAt$!\subitemText}%
+%
+%  the ~, % and ^ operators need a change in catcode in order to work properly
+%  so they are used with ccc.  ccc cannot be used for the other operands since
+%  the actual characters must not be put in the index (they have special
+%  meaning in the index) and ccc will expand its arguments.
+%
+   \else\ifnum\ccOperatorCat=\ccTildeOperator%  
+      \index{#1@\protect\ccc{#1}!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccModOperator%
+      \index{#1@\protect\ccc{#1}!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccModEqualOperator%
+      \index{#1@\protect\ccc{#1}!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccPowerOperator%
+      \index{#1@\protect\ccc{#1}!\subitemText}%
+   \else\ifnum\ccOperatorCat=\ccPowerEqualOperator%
+      \index{#1@\protect\ccc{#1}!\subitemText}%
+   \else
+      \index{#1@$#1$!\subitemText}%
+   \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+   \fi%
+}
+
+%
+% Usage:  \ccIndexSubitemBegin[category]{item}{subitem}
+%         ... <subitem description> ...
+%         \ccIndexSubitemEnd[category]{item}{subitem}
+%
+\newcommand{\ccIndexSubitemBegin}[3][]{%
+   \ifnum\ccIndex=\ccTrue%
+    \mainTextParse{{#1}}{#2}%
+    \subitemTextParse{#3}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText|(}%
+   \else%
+      \index{\mainText!\subitemText|(}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+\newcommand{\ccIndexSubitemEnd}[3][]{%
+   \ifnum\ccIndex=\ccTrue%
+    \mainTextParse{{#1}}{#2}%
+    \subitemTextParse{#3}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText|)}%
+   \else%
+      \index{\mainText!\subitemText|)}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+%
+% Usage:  \ccIndexSubitemDef[category]{item}{subitem}
+%
+\newcommand{\ccIndexSubitemDef}[3][]{%
+   \ifnum\ccIndex=\ccTrue%
+    \mainTextParse{{#1}}{#2}%
+    \subitemTextParse{#3}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText|textbf}%
+   \else%
+      \index{\mainText!\subitemText|textbf}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+%
+% Usage:  \ccIndexSubitemSeeAlso[category]{item}{subitem}
+%
+\newcommand{\ccIndexSubitemSeeAlso}[3][]{%
+   \ifnum\ccIndex=\ccTrue%
+   \mainTextParse{{#1}}{#2}%
+   \subitemSeeAlsoTextParse{#3}%
+   \ifx\empty\mainSeeText%
+       \index{\mainText!\subitemSeeAlsoText|none}%
+   \else%
+       \index{\mainText!\subitemSeeAlsoText|none}%
+       \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+% ------------------------------------------------------------------------
+%  Subsubitem generic indexing macros
+% ------------------------------------------------------------------------
+
+
+%
+% Usage:  \ccIndexSubsubitem[category]{item}{subitem}{subsubitem}
+%
+\newcommand{\ccIndexSubsubitem}[4][]{%
+   \ifnum\ccIndex=\ccTrue%
+    \mainTextParse{{#1}}{#2}%
+    \subitemTextParse{#3}%
+    \subsubitemTextParse{#4}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText!\subsubitemText}%
+   \else%
+      \index{\mainText!\subitemText!\subsubitemText}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+%
+% Usage:  \ccIndexSubsubitemBegin[category]{item}{subitem}{subsubitem}
+%          ... <subsubitem description> ...
+%         \ccIndexSubsubitemEnd[category]{item}{subitem}{subsubitem}
+%
+\newcommand{\ccIndexSubsubitemBegin}[4][]{%
+   \ifnum\ccIndex=\ccTrue%
+    \mainTextParse{{#1}}{#2}%
+    \subitemTextParse{#3}%
+    \subsubitemTextParse{#4}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText!\subsubitemText|(}%
+   \else%
+      \index{\mainText!\subitemText!\subsubitemText|(}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+\newcommand{\ccIndexSubsubitemEnd}[4][]{%
+   \ifnum\ccIndex=\ccTrue%
+    \mainTextParse{{#1}}{#2}%
+    \subitemTextParse{#3}%
+    \subsubitemTextParse{#4}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText!\subsubitemText|)}%
+   \else%
+      \index{\mainText!\subitemText!\subsubitemText|)}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+%
+% Usage:  \ccIndexSubsubitemDef[category]{item}{subitem}{subsubitem}
+%
+\newcommand{\ccIndexSubsubitemDef}[4][]{%
+   \ifnum\ccIndex=\ccTrue%
+    \mainTextParse{{#1}}{#2}%
+    \subitemTextParse{#3}%
+    \subsubitemTextParse{#4}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText!\subsubitemText|textbf}%
+   \else%
+      \index{\mainText!\subitemText!\subsubitemText|textbf}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+%
+% Usage:  \ccIndexSubsubitemSeeAlso[category]{item}{subitem}{subsubitem}
+%
+\newcommand{\ccIndexSubsubitemSeeAlso}[4][]{%
+   \ifnum\ccIndex=\ccTrue%
+   \mainTextParse{{#1}}{#2}%
+   \subitemTextParse{#3}%
+   \subsubitemSeeAlsoTextParse{#4}%
+   \ifx\empty\mainSeeText%
+      \index{\mainText!\subitemText!\subsubitemSeeAlsoText|none}%
+   \else%
+      \index{\mainText!\subitemText!\subsubitemSeeAlsoText|none}%
+      \index{\mainSeeText}%
+   \fi%
+   \fi%
+}
+
+% ========================================================================
+%  Assertion flag macros
+% ========================================================================
+
+% 
+%  Usage: \ccIndexAssertionFlagsUse
+% 
+\newcommand{\ccIndexAssertionFlagsUse}{%
+    \ifnum\ccIndex=\ccTrue%
+    \ccIndexMainItem{assertion flags}%
+    \fi%
+}
+
+%
+% Usage: \ccIndexAssertionFlagName{flag_name}
+%
+\newcommand{\ccIndexAssertionFlagName}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+      \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+
+% ========================================================================
+%  Enums, enum tags, global structs, global variables, global constants
+%  global functions, typedefs
+% ========================================================================
+
+% 
+% Usage: \ccIndexEnum{enum}
+% 
+\newcommand{\ccIndexEnum}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+
+%
+% Usage: \ccIndexEnum{enum_tag}
+%
+\newcommand{\ccIndexEnumTag}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+%
+% Usage: \ccIndexGlobalStruct{struct}
+%
+\newcommand{\ccIndexGlobalStruct}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+%
+% Usage: \ccIndexGlobalVariable{variable}
+%
+\newcommand{\ccIndexGlobalVariable}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+%
+% Usage: \ccIndexGlobalConstant{constant}
+%
+\newcommand{\ccIndexGlobalConstant}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+%
+% Usage: \ccIndexMacro{macro_name}
+%
+\newcommand{\ccIndexMacro}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+
+%
+% Usage: \ccIndexGlobalFunction{function}
+%
+\newcommand{\ccIndexGlobalFunction}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+% Usage: \ccIndexGlobalFunctionBegin{function}
+%        <function description>
+%        \ccIndexGlobalFunctionEnd{function}
+%
+\newcommand{\ccIndexGlobalFunctionBegin}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItemBegin[C]{#1}%
+    \fi%
+}
+
+\newcommand{\ccIndexGlobalFunctionEnd}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItemEnd[C]{#1}%
+    \fi%
+}
+
+%
+% Usage: \ccIndexGlobalOperator{operator}{class name}
+%
+% Note: operator must not contain one of the "special" index charcters.
+%       In other words, it should have already passed through 
+%       \escapeIndexOperatorSymbols
+\newcommand{\ccIndexGlobalOperator}[2]{%
+    \ifnum\ccIndex=\ccTrue%
+       \ccIndexOperatorSubitem{#1}{\ccFont #2}%
+    \fi%
+}
+
+%
+% Usage: \ccIndexTypedef{typedef}
+%
+\newcommand{\ccIndexTypedef}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexMainItem[C]{#1}%
+    \fi%
+}
+
+% ========================================================================
+%  Member functions
+% ========================================================================
+%  
+%  Usage: \ccIndexMemberFunction{function_name}
+%  
+\newcommand{\ccIndexMemberFunction}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+    \ifnum\inConcept=\ccTrue%
+      \ccIndexSubitem[C]{#1}{\ccIndexConceptFont \ccIndexClassName}%
+    \else
+      \ccIndexSubitem[C]{#1}{\ccFont \ccIndexClassName}%
+    \fi\fi%
+}
+
+%
+%  Usage: \ccIndexMemberFunctionBegin{function_name}
+%         <member function description>
+%         \ccIndexMemberFunctionEnd{function_name}
+%  
+\newcommand{\ccIndexMemberFunctionBegin}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+    \ifnum\inConcept=\ccTrue
+      \ccIndexSubitemBegin[C]{#1}{\ccIndexConceptFont \ccIndexClassName}%
+    \else
+      \ccIndexSubitemBegin[C]{#1}{\ccFont \ccIndexClassName}%
+    \fi\fi%
+}
+
+\newcommand{\ccIndexMemberFunctionEnd}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+    \ifnum\inConcept=\ccTrue
+     \ccIndexSubitemEnd[C]{#1}{\ccIndexConceptFont \ccIndexClassName}%
+    \else
+     \ccIndexSubitemEnd[C]{#1}{\ccFont \ccIndexClassName}%
+    \fi\fi%
+}
+
+% ========================================================================
+%  Abbreviations
+% ========================================================================
+%
+%  Usage: \ccIndexAbbreviation{abbr}{unabbreviated term}
+%
+\newcommand{\ccIndexAbbreviation}[2]{%
+    \ifnum\ccIndex=\ccTrue%
+       \mainTextParse{a}{#1}%
+       \index{\mainText|see{{#2}}} 
+       \ifnum\ccIndexCrossRef=\ccTrue%
+          \ccIndexMainItem{#2}%
+       \fi%
+    \fi
+}
+
+% ========================================================================
+%  Hints as subitems and subsubitems
+% ========================================================================
+
+%
+%  Usage: \ccIndexHintAsSubitem[category]{item}{hint}
+%    where category is an optional argument with the following possible
+%    values
+%      C -- for class or other C++ name
+%      c -- for concept
+%      d -- for data structure
+%      f -- for functionality
+%      h -- for hint
+%      l -- for library
+%      p -- for package
+%      t -- for term
+% 
+\newcommand{\ccIndexHintAsSubitem}[3][]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexSubitem[#1]{#2}{\ccIndexHintFont #3}%
+    \fi%
+}
+
+% 
+%  Usage: \ccIndexHintAsSubitem[category]{item}{subitem}{hint}
+% 
+\newcommand{\ccIndexHintAsSubsubitem}[4][]{%
+    \ifnum\ccIndex=\ccTrue%
+     \ccIndexSubsubitem[#1]{#2}{#3}{\ccIndexHintFont #4}%
+    \fi%
+}
+
+
+% ========================================================================
+%  Classes
+% ========================================================================
+\newcommand{\ccIndexClassName}{}%
+
+% ------------------------------------------------------------------------
+%  Environment to be used for indexing classes if the automatic indexing
+%  doesn't do the right thing.
+%
+%
+%  Usage: \begin{ccIndexClass}{class name}
+%         ...<class description>...
+%         \end{ccIndexClass}
+%
+% ------------------------------------------------------------------------
+\newenvironment{ccIndexClass}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+    \isEmpty{#1}\ifnum\ccBool=\ccTrue%
+      \errmessage{The class name for indexing cannot be empty}
+    \else
+      \def\ccIndexClassName{#1}%
+      \ccIndexMainItemBegin[C]{\ccIndexClassName}%
+    \fi
+    \fi%
+}
+{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccFalse%
+        \ccIndexMainItemEnd[C]{\ccIndexClassName}%
+     \fi%
+    \fi%
+}
+
+% ========================================================================
+%    These macros MUST be used inside either a ccClass, ccTemplateClass or
+%    ccIndexClass environment since they employ the ccIndexClassName 
+%    variable defined in these environments.
+% ========================================================================
+%
+%  Usage: \ccIndexClassCreation
+% 
+\newcommand{\ccIndexClassCreation}{%
+    \ifnum\ccIndex=\ccTrue%
+       \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+       \ifnum\ccBool=\ccTrue%
+          \errmessage{This command must be used inside a ccIndexClass, ccClass,
+                      or ccTemplateClass environment.  I'm going to ignore it}%
+       \else
+          \ccIndexSubitem[C]{\ccIndexClassName}{creation}%
+       \fi
+    \fi%
+}
+
+%
+%  Usage: \ccIndexClassDefault
+%
+\newcommand{\ccIndexClassDefault}{%
+    \ifnum\ccIndex=\ccTrue%
+       \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+       \ifnum\ccBool=\ccTrue%
+          \errmessage{This command must be used inside a ccIndexClass, ccClass,
+                      or ccTemplateClass environment.  I'm going to ignore it}%
+       \else
+          \ccIndexSubitem[C]{\ccIndexClassName}{default}%
+    \fi \fi%
+}
+
+%
+%  Usage: \begin{ccIndexMemberFunctions}
+%         ...<member function descriptions>
+%         \end{IndexMemberFunctions}
+%
+\newenvironment{ccIndexMemberFunctions}{%
+    \ifnum\ccIndex=\ccTrue%
+       \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+       \ifnum\ccBool=\ccTrue%
+          \errmessage{This command must be used inside a ccIndexClass, ccClass,
+                      or ccTemplateClass environment.  I'm going to ignore it}%
+       \else
+          \ccIndexSubitemBegin[C]{\ccIndexClassName}{member functions}%
+    \fi \fi%
+}
+{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+     \ifnum\ccBool=\ccFalse
+        \ccIndexSubitemEnd[C]{\ccIndexClassName}{member functions}%
+    \fi \fi%
+}
+
+%
+%  Usage: \ccIndexMemberFunctionGroup{group}
+%
+\newcommand{\ccIndexMemberFunctionGroup}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+       \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+       \ifnum\ccBool=\ccTrue
+          \errmessage{This command must be used inside a ccIndexClass, ccClass,
+                      or ccTemplateClass environment.  I'm going to ignore it}%
+       \else
+          \ccIndexSubsubitem[C]{\ccIndexClassName}{member functions}{#1}%
+          \ifnum\ccIndexCrossRef=\ccTrue%
+             \ccIndexSubitem{#1}{\ccFont \ccIndexClassName}%
+          \fi%
+       \fi
+    \fi%
+}
+
+%
+%  Usage: \ccIndexNestedClasses
+%
+\newcommand{\ccIndexNestedClasses}{%
+    \ifnum\ccIndex=\ccTrue%
+       \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+       \ifnum\ccBool=\ccTrue
+          \errmessage{This command must be used inside a ccIndexClass, ccClass,
+                      or ccTemplateClass environment.  I'm going to ignore it}%
+       \else
+           \ccIndexSubitem[C]{\ccIndexClassName}{nested classes}%
+       \fi
+    \fi%
+}
+
+%
+%  Usage: \ccIndexClassTypes
+%
+\newcommand{\ccIndexClassTypes}{%
+    \ifnum\ccIndex=\ccTrue%
+       \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+       \ifnum\ccBool=\ccTrue
+          \errmessage{This command must be used inside a ccIndexClass, ccClass,
+                      or ccTemplateClass environment.  I'm going to ignore it}%
+       \else
+          \ccIndexSubitem[C]{\ccIndexClassName}{types}%
+       \fi
+    \fi%
+}
+
+% ========================================================================
+%  Packages
+% ========================================================================
+\newcommand{\ccIndexPackageName}{}%
+
+\newenvironment{ccPackage}[1]{%
+   \isEmpty{#1}\ifnum\ccBool=\ccTrue
+      \errmessage{Package name cannot be empty}
+   \else
+      \def\ccIndexPackageName{#1}%
+      \ccIndexMainItemBegin[p]{\ccIndexPackageName}%
+   \fi
+}
+{%
+    \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+    \ifnum\ccBool=\ccFalse
+       \ccIndexMainItemEnd[p]{\ccIndexPackageName}%
+       \def\ccIndexPackageName{}%
+    \fi
+}%
+
+
+% ========================================================================
+%  Classes or Packages
+%     These macros MUST be used inside either a ccClass, ccTemplateClass,
+%     ccTraitsClass, ccTraitsClassTemplate, ccIndexClass, or ccPackage 
+%     environment.  They check first for inclusion in a class environment 
+%     and then for inclusion in a package environment and if you are in 
+%     both, only the class entry will be generated.
+% ========================================================================
+%
+%
+%  Usage: \ccIndexAssertionFlag[package name]
+%
+\newcommand{\ccIndexAssertionFlag}[1][]{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+     \ifnum\ccBool=\ccTrue %
+        \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+        \ifnum\ccBool=\ccTrue 
+          \errmessage{You must be inside a package or a class  
+                      environment to use this command.  Go
+                      on and I'll ignore this command}
+        \else
+           \ccIndexSubitem[p]{\ccIndexPackageName}{assertion flags}%
+           \ifnum\ccIndexCrossRef=\ccTrue
+              \ccIndexSubitem{assertion flags}{\ccIndexPackageName}%
+           \fi
+        \fi
+     \else
+        \isEmpty{#1}\ifnum\ccBool=\ccTrue
+           \errmessage{You must supply a package name for class \ccIndexClassName. I'm
+                       going to ignore this command}
+        \else
+           \ccIndexSubitem[C]{\ccIndexClassName}{assertion flags}%
+           \ifnum\ccIndexCrossRef=\ccTrue
+              \ccIndexSubitem{assertion flags}{#1}%
+           \fi
+        \fi
+     \fi%
+    \fi%
+}
+
+%
+%  Usage: \ccIndexDesign
+%
+\newcommand{\ccIndexDesign}{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+     \ifnum\ccBool=\ccTrue%
+        \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+        \ifnum\ccBool=\ccTrue 
+          \errmessage{You must be inside a package or class
+                      environment to use this command.  Go
+                      on and I'll ignore this command}
+        \else
+           \ccIndexSubitem[p]{\ccIndexPackageName}{design}%
+        \fi
+     \else
+        \ccIndexSubitem[C]{\ccIndexClassName}{design}%
+     \fi%
+    \fi%
+}
+
+%
+%  Usage: \begin{ccIndexGlobalFunctions}
+%         ... <global function descriptions> ...
+%         \end{ccIndexGlobalFunctions}
+%
+\newenvironment{ccIndexGlobalFunctions}{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+     \ifnum\ccBool=\ccTrue 
+        \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+        \ifnum\ccBool=\ccTrue 
+          \errmessage{You must be inside a package or class  
+                      environment to use this command.  Go
+                      on and I'll ignore this command}
+        \else
+           \ccIndexSubitemBegin[p]{\ccIndexPackageName}{global functions}%
+        \fi
+     \else
+        \ccIndexSubitemBegin[C]{\ccIndexClassName}{global functions}%
+     \fi%
+    \fi%
+}
+{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+     \ifnum\ccBool=\ccTrue 
+        \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+        \ifnum\ccBool=\ccTrue 
+          \errmessage{You must be inside a package or class  
+                      environment to use this command.  Go
+                      on and I'll ignore this command}
+        \else
+           \ccIndexSubitemEnd[p]{\ccIndexPackageName}{global functions}%
+        \fi
+     \else
+        \ccIndexSubitemEnd[C]{\ccIndexClassName}{global functions}%
+     \fi 
+    \fi%
+}
+
+%
+%  Usage: \ccIndexGlobalFunctionGroup{group}
+%
+\newcommand{\ccIndexGlobalFunctionGroup}[1]{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+     \ifnum\ccBool=\ccTrue%
+        \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+        \ifnum\ccBool=\ccTrue%
+          \errmessage{You must be inside a package or class 
+                      environment to use this command.  Go
+                      on and I'll ignore this command}
+        \else
+           \ccIndexSubsubitem[p]{\ccIndexPackageName}{global functions}{#1}%
+           \ifnum\ccIndexCrossRef=\ccTrue
+              \ccIndexSubitem{#1}{\ccIndexPackageFont \ccIndexPackageName}%
+           \fi
+        \fi
+     \else
+        \ccIndexSubsubitem[C]{\ccIndexClassName}{global functions}{#1}%
+        \ifnum\ccIndexCrossRef=\ccTrue
+           \ccIndexSubitem{#1}{\ccFont \ccIndexClassName}%
+        \fi 
+     \fi 
+    \fi%
+}
+
+%
+%  Usage: \ccIndexImplementation
+%
+\newcommand{\ccIndexImplementation}{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+     \ifnum\ccBool=\ccTrue%
+        \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+        \ifnum\ccBool=\ccTrue% 
+          \errmessage{You must be inside a package or class  
+                      environment to use this command.  Go
+                      on and I'll ignore this command}
+        \else
+           \ccIndexSubitem[p]{\ccIndexPackageName}{implementation}%
+        \fi
+     \else
+        \ccIndexSubitem[C]{\ccIndexClassName}{implementation}%
+     \fi%
+    \fi%
+}
+
+%
+%  Usage: \ccIndexRequirements
+%
+\newcommand{\ccIndexRequirements}{%
+    \ifnum\ccIndex=\ccTrue%
+     \expandafter\expandafter\isEmpty{\ccIndexClassName}%
+      \ifnum\ccBool=\ccTrue%
+        \expandafter\expandafter\isEmpty{\ccIndexPackageName}%
+        \ifnum\ccBool=\ccTrue% 
+          \errmessage{You must be inside a package or class  
+                      environment to use this command.  Go
+                      on and I'll ignore this command}
+        \else
+           \ccIndexSubitem[p]{\ccIndexPackageName}{requirements}%
+        \fi
+     \else
+        \ccIndexSubitem[C]{\ccIndexClassName}{requirements}%
+     \fi 
+    \fi%
+}
+
+% ------------------------------------------------------------------------
+%  Traits classes associated with a class or package
+% ------------------------------------------------------------------------
+
+% #1 name of traits class
+% #2 semicolon-separated list of associated classes
+% #3 semicolon-separated list of associated packages
+\newcommand\ccIndexTraitsClassBegin[3]{
+    \ifnum\ccIndex=\ccTrue%
+       \def\ccIndexClassName{#1}%
+       \ccIndexMainItemBegin[C]{\ccIndexClassName}%
+       \ifnum\ccIndexCrossRef=\ccTrue
+          \isEmpty{#2}\ifnum\ccBool=\ccFalse
+             \ccIndexTraitsClassForClasses{#2}
+          \fi
+          \isEmpty{#3}\ifnum\ccBool=\ccFalse
+              \ccIndexTraitsClassForPackages{#3}
+          \fi
+       \fi
+     \fi%
+}
+\newcommand\ccIndexTraitsClassEnd{
+    \ifnum\ccIndex=\ccTrue%
+       \ccIndexMainItemEnd[C]{\ccIndexClassName}%
+    \fi
+    \def\ccIndexClassName{}
+}
+
+\newcommand\ccIndexTraitsClassForClasses[1]{
+    \ccIndexTraitsClassForClassesX#1;/ccEnd%
+}
+\def\ccIndexTraitsClassForClassesX#1;#2/ccEnd{
+    \ccIndexSubsubitemSeeAlso[C]{#1}{traits class}{\ccFont \ccIndexClassName}%
+    \isEmpty{#2}\ifnum\ccBool=\ccFalse
+      \ccIndexTraitsClassForClassesX #2/ccEnd%
+    \fi
+}
+
+\newcommand\ccIndexTraitsClassForPackages[1]{
+    \ccIndexTraitsClassForPackagesX#1;/ccEnd%
+}
+\def\ccIndexTraitsClassForPackagesX#1;#2/ccEnd{
+    \ccIndexSubsubitemSeeAlso[p]{#1}{traits class}{\ccFont \ccIndexClassName}%
+    \isEmpty{#2}\ifnum\ccBool=\ccFalse
+      \ccIndexTraitsClassForPackagesX #2/ccEnd%
+    \fi
+}
+
+%
+%  Usage: 
+%  \ccIndexTraitsClassDefault[p_or_C]{associated package or class}
+%
+\newcommand{\ccIndexTraitsClassDefault}[2][C]{%
+    \ifnum\ccIndex=\ccTrue%
+        \isEmpty{#2}\ifnum\ccBool=\ccTrue
+           \errmessage{Associated package or class name empty.  
+                       I'm going to ignore this command}
+        \else
+           \ccIndexSubsubitem[#1]{#2}{traits class}{default}%
+    \fi \fi
+}
+
+%
+%  Usage: 
+%  \ccIndexTraitsClassRequirements[p_or_C]{associated package or class}
+%
+\newcommand{\ccIndexTraitsClassRequirements}[2][C]{%
+    \ifnum\ccIndex=\ccTrue%
+        \isEmpty{#2}\ifnum\ccBool=\ccTrue
+           \errmessage{Associated package or class name empty.  
+                       I'm going to ignore this command}
+        \else
+           \ccIndexSubsubitem[#1]{#2}{traits class}{requirements}%
+    \fi \fi
+}
+
+
+% ========================================================================
+%  Internal commands  
+% ========================================================================
+
+\def\noFont{}
+\newif\ifdimmodifier
+\newcommand{\ccIndexSeeAlso}[1]{\emph{see also} #1}
+%\newcommand{\ccIndexSeeAlso}[1]{$\rightarrow$ #1}
+\newcommand{\none}[1]{}
+
+% variables to hold the various pieces of text 
+\newcommand{\mainFont}{}
+\newcommand{\mainModifier}{}
+\newcommand{\mainUnmodifiedText}{}
+\newcommand{\mainText}{}
+\newcommand{\mainSeeText}{}
+\newcommand{\subitemFont}{}
+\newcommand{\subitemModifier}{}
+\newcommand{\subitemUnmodifiedText}{}
+\newcommand{\subitemText}{}
+\newcommand{\subitemSeeAlsoText}{}
+\newcommand{\subsubitemFont}{}
+\newcommand{\subsubitemModifier}{}
+\newcommand{\subsubitemUnmodifiedText}{}
+\newcommand{\subsubitemText}{}
+\newcommand{\subsubitemSeeAlsoText}{}
+
+% variables that say something about what kind of font is supplied
+% with the text
+\newcommand{\emptyIndexingFont}{\ccTrue}%
+\newcommand{\indexingFontIsCC}{\ccFalse}%
+\newcommand{\allowUnderscores}{\ccTrue}%
+\newcommand{\inConcept}{\ccFalse}%
+
+% variable to hold the first type name for a global operator
+\newcommand{\typeName}{}% 
+
+% #1 - first character of category
+% #2 - rest of category name (possibly empty)
+% #3 - text of the form [\font] text[, modifier]
+% #4 - place to put the font
+% #5 - place to put the modifier
+% #6 - place to put the unmodified text
+\def\parseTextWithCategory#1#2\ccEnd#3#4#5#6{%
+%    \xdef\allowUnderscores{\ccFalse}%
+    \isEmpty{#1}\ifnum\ccBool=\ccTrue% unclassified item
+       \indexTextParse{\noFont}{#3}{#4}{#5}{#6}%
+    \else \if#1a%  abbreviation
+       \indexTextParse{\ccIndexAbbreviationFont}{#3}{#4}{#5}{#6}%
+    \else \if#1C%  class or other C++ name
+       \indexTextParse{\ccFont}{#3}{#4}{#5}{#6}%
+    \else \if#1c% concept
+       \indexTextParse{\ccIndexConceptFont}{#3}{#4}{#5}{#6}%
+%       \xdef\allowUnderscores{\ccTrue}%
+    \else \if#1d% data structure 
+       \indexTextParse{\ccIndexDSFont}{#3}{#4}{#5}{#6}%
+    \else \if#1f% functionality
+       \indexTextParse{\ccIndexFunctionalityFont}{#3}{#4}{#5}{#6}%
+    \else \if#1h% hint
+       \indexTextParse{\ccIndexHintFont}{#3}{#4}{#5}{#6}%
+    \else \if#1l% library
+       \indexTextParse{\ccIndexLibraryFont}{#3}{#4}{#5}{#6}%
+    \else \if#1p% package
+       \indexTextParse{\ccIndexPackageFont}{#3}{#4}{#5}{#6}%
+    \else \if#1t% term
+       \indexTextParse{\ccIndexTermFont}{#3}{#4}{#5}{#6}%
+    \else%
+        \errmessage{Unknown indexing category: --#1--.  
+                    The indexing command will be ignored}%
+    \fi \fi \fi \fi \fi \fi \fi \fi \fi \fi%
+}
+
+
+% #1 - category
+% #2 - text in the form [\font] text[, modifier]
+\newcommand{\mainTextParse}[2]{%
+   \parseTextWithCategory #1\ccEnd{#2}{\mainFont}{\mainModifier}%
+        {\mainUnmodifiedText}%
+   \makeIndexText{\mainFont}{\mainModifier}{\mainUnmodifiedText}%
+        {\mainText}{\mainSeeText}%
+}
+
+
+% #1 - subitem text in the form [\font] subitem[, modifier]
+\newcommand{\subitemTextParse}[1]{%
+    \parseTextWithCategory{}\ccEnd{#1}%
+            {\subitemFont}{\subitemModifier}{\subitemUnmodifiedText}%
+    \makeIndexText{\subitemFont}{\subitemModifier}{\subitemUnmodifiedText}%
+            {\subitemText}{\subitemSeeText}%
+}
+
+
+% #1 - subitem text in the form [\font] subitem[, modifier]
+\newcommand{\subitemSeeAlsoTextParse}[1]{%
+    \parseTextWithCategory{}\ccEnd{#1}%
+            {\subitemFont}{\subitemModifier}{\subitemUnmodifiedText}%
+    \makeIndexSeeAlsoText{\subitemFont}{\subitemModifier}%
+            {\subitemUnmodifiedText}{\subitemSeeAlsoText}%
+}
+
+
+% #1 - subsubitem text in the form [\font] text[, modifier]
+\newcommand{\subsubitemTextParse}[1]{%
+    \parseTextWithCategory{}\ccEnd{#1}%
+           {\subsubitemFont}{\subsubitemModifier}{\subsubitemUnmodifiedText}%
+    \makeIndexText{\subsubitemFont}{\subsubitemModifier}%
+           {\subsubitemUnmodifiedText}{\subsubitemText}{\subsubitemSeeText}%
+}
+
+% #1 - subsubitem text in the form [\font] text[, modifier]
+\newcommand{\subsubitemSeeAlsoTextParse}[1]{%
+    \parseTextWithCategory{}\ccEnd{#1}%
+           {\subsubitemFont}{\subsubitemModifier}{\subsubitemUnmodifiedText}%
+    \makeIndexSeeAlsoText{\subsubitemFont}{\subsubitemModifier}%
+           {\subsubitemUnmodifiedText}{\subsubitemSeeAlsoText}%
+}
+
+
+% #1 is first character of a command (the \).  Captured in the variable
+% \commandChar so it can be used to compare against the first in the 
+% string of characters produced from the first token of a indexing text
+% argument
+%
+% #2 is the rest of the command, which must be swallowed here or it 
+%   will appear in the document 
+\def\captureCommandChar#1#2\ccEnd{%
+   \def\commandChar{#1}%
+}
+
+% #1 - first in the string of characters representing a token (either a
+%      single character or a command)
+% #2 - the rest of the string of characters
+\def\isCommand#1#2\end{%
+   \expandafter\isCommandX\string#1\ccEnd%
+}
+
+\def\isCommandX#1#2\ccEnd{%
+  \expandafter\captureCommandChar\string\bf\ccEnd%
+  \if#1\commandChar\ccBool=\ccTrue%
+  \else \ccBool=\ccFalse%
+  \fi%
+}
+
+
+% #1 - 0 if arg #2 should not be expanded, 1 if it should
+% #2 - text argument for an indexing command
+%
+% Result:
+%   \indexingFont contains the leading command if there is one
+%
+%   if there is a leading command and this command corresponds to an
+%   empty command, \emptyIndexingFont is set to true
+%
+%   if there is a leading command and this command is \ccFont,
+%   \indexingFontIsCC is set to true
+%
+%   \indexText contains the entire text
+%
+\def\findText#1#2{%
+  \ifx#2\leda   % have to do this nasty special case testing because I can't
+                % find a way to get inside the braces to pick out the 
+                % font and text here.  #2 = {\sc Leda}.  I need to remove the
+                % { and } to make it work with the rest of the macros.  The
+                % \string command seems the best bet, but it doesn't produce 
+                % the braces.
+     \ccBool=\ccTrue
+     \findTextX\sc Leda\end%
+  \else\ifx#2\stl
+     \ccBool=\ccTrue
+     \findTextX\sc STL\end%
+  \else\ifx#2\cgal
+     \ccBool=\ccTrue
+     \findTextX\sc Cgal\end%
+  \else
+     \ifx#11% text should be expanded
+        \edef\expandedText{#2}%
+        \expandafter\isCommand\expandedText\end%
+        \findTextX#2\end%
+     \else%
+        \ccBool=\ccFalse% must assume there is no command
+        \findTextX#2\end%
+     \fi%
+  \fi \fi \fi %
+}
+
+% #1 - command or first character of text
+% #2 - (remainder of) text
+%
+\def\findTextX#1#2\end{%
+   \ifnum\ccBool=\ccTrue  % this is from the test for isCommand
+      \gdef\indexingFont{#1}%
+      \ifx#1\empty%
+        \xdef\emptyIndexingFont{\ccTrue}%
+      \fi%
+      \ifx#1\ccFont%
+        \xdef\indexingFontIsCC{\ccTrue}%
+      \fi%
+      \ifx#1\ccUnderscoreFont%
+        \xdef\allowUnderscores{\ccTrue}%
+      \fi%
+      \gdef\indexText{#2}%
+   \else%
+      \gdef\indexText{#1#2}%
+   \fi%
+}
+
+\def\findFont#1{\findFontX#1\end}
+
+\def\findFontX#1{%
+    \ifx#1\end\let\next=\relax%
+    \else \if#1\sc\gdef\indexingFont{#1}%
+    \fi%
+    \let\next=\findFontX\fi\next%
+}
+
+% 
+% Usage: \separateFontFromText{text_with_font}
+%   where text_with_font is of the form: [\font] text
+%
+% results in the definition of two macros:
+%     \indexingFont (possibly empty) and \indexText (without font)
+% and two Boolean variables are set
+%     \emptyIndexingFont and \indexingFontIsCC
+\def\separateFontFromText#1#2{%
+    \gdef\indexingFont{}%
+    \xdef\emptyIndexingFont{\ccFalse}%
+    \xdef\indexingFontIsCC{\ccFalse}%
+    \gdef\indexText{}%
+    {\findText{#1}{#2}}% braces are necessary to limit the scope of the font
+                       % if there is one
+}
+
+% Usage: \seaparteModifier{text_with_modifier}
+%   where text_with_modifier is of the form: text[, modifier]
+%
+% result: \modifier == modifier (possibly empty) and \unmodifiedText==text
+\def\separateModifier#1#2{%
+   \ifx#11%
+      \edef\argument{#2}% needed in case the argument is a macro
+      \expandafter\separateModifierX\argument,\ccEnd%
+   \else%
+       \def\unmodifiedText{#2}%
+       \def\modifier{}%
+   \fi%
+}
+\def\separateModifierX #1,#2\ccEnd{%
+    \def\texParseLocalVar{#2}\ifx\texParseLocalVar\empty% 
+       \def\unmodifiedText{#1}%
+       \def\modifier{}%
+    \else%
+        \def\unmodifiedText{#1}%
+        \texParseStripTrailingComma #2\ccEnd%
+    \fi%
+}
+
+\def\texParseStripTrailingComma #1,\ccEnd{%
+    \isDimModifier{#1}%  % determines if the modifier is a dimension modifier
+    \hasLeadingSpace{#1}\ifnum\ccBool=\ccTrue%
+       \def\modifier{#1}%
+    \else
+       \def\modifier{ #1}%  make sure all modifiers are preceded by a space
+                         %  so duplicate entries are not produced
+    \fi
+}
+
+% determines if the supplied argument is of the form
+%  2D, 3D, or dD
+% and sets the proper value for \isdimmodifier.
+%
+% ???
+%   could perhaps be written more generally to look for any undesired
+%   modifier if I could figure out how to get TeX to walk through two
+%   strings of tokens at the same time
+% ???
+\def\isDimModifier #1{%
+    \def\dparams{#1}\ifx\dparams\empty\dimmodifierfalse%
+        \else\isDimModifierX#1\ccEnd\fi%
+}%
+
+\def\isDimModifierX #1#2\ccEnd{%
+   \dimmodifierfalse%
+   \ifx#2D%
+      \ifx#12\dimmodifiertrue\else%
+      \ifx#13\dimmodifiertrue\else%
+      \ifx#1d\dimmodifiertrue%
+  \fi \fi \fi \fi%
+}%
+
+%
+% #1 - 1 if second argument should be expanded
+%    - 0 if second argument should not be expanded
+% #2 - text of the form   [\font] text[, modifier]
+%
+% results in three definitions
+%   \modifier       == modifier
+%   \unmodifiedText == text
+%   \indexingFont   == \font
+%
+\def\parseText#1#2{%
+   \separateFontFromText{#1}{#2}%
+   \separateModifier{#1}{\indexText}%
+}
+
+
+% #1 = font
+% #2 = modifier 
+% #3 = unmodified text
+% #4 = place to put the regular entry text
+% #5 = place to put the cross referencing entry text 
+\newcommand\makeIndexText[5]{%
+   \ifx#2\empty%                                 no modifier
+      \ifnum\emptyIndexingFont=\ccTrue%          no font
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3@\protect\ccConceptStyle{#3}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3}%
+        \fi
+      \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
+        \gdef#4{#3@\protect\ccc{#3}}%
+      \else%                                     other font 
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3@{#1 \protect\ccConceptStyle{#3}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3@{#1 #3}}%
+        \fi
+      \fi \fi%
+      \gdef#5{}%
+   \else\ifdimmodifier%                          dimension modifier
+      \ifnum\emptyIndexingFont=\ccTrue%          no font
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@\protect\ccConceptStyle{#3, #2}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2}%
+        \fi
+      \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
+        \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
+      \else%                                     other font 
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@{#1 \protect\ccConceptStyle{#3, #2}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2@{#1 #3, #2}}%
+        \fi
+      \fi \fi%
+      \gdef#5{}%
+   \else\ifnum\ccIndexModifierCrossRef=\ccFalse% no cross referencing wanted
+      \ifnum\emptyIndexingFont=\ccTrue%          no font
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@\protect\ccConceptStyle{#3, #2}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2}%
+        \fi
+      \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
+        \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
+      \else%                                     other font
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@{#1 \protect\ccConceptStyle{#3, #2}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2@{#1 #3, #2}}%
+        \fi
+      \fi \fi%
+      \gdef#5{}%
+   \else%                                        non-dimensional modifier
+      \ifnum\emptyIndexingFont=\ccTrue%          no font
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@\protect\ccConceptStyle{#3, #2}}%
+           \gdef#5{#2\ #3@\protect\ccConceptStyle{#2\ #3}|see{\protect\ccConceptStyle{#3, #2}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2}%
+           \gdef#5{#2\ #3|see{#3, #2}}%
+        \fi
+      \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
+        \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
+        \gdef#5{#2\ #3@\protect\ccc{#2\ #3}|see{\protect\ccc{#3, #2}}}%
+      \else%                                     other font; no _s possible
+        \gdef#4{#3, #2@{#1 #3, #2}}%
+        \gdef#5{#2\ #3@{#1 #2\ #3}|see{{#1 #3, #2}}}%
+      \fi \fi%
+      \ifnum\ccIndexModifierCrossRef=\ccFalse%
+        \gdef#5{}%
+      \fi%
+   \fi \fi \fi%
+}
+
+% #1 = font
+% #2 = modifier 
+% #3 = unmodified text
+% #4 = place to put the text that will come after "see also"
+\newcommand\makeIndexSeeAlsoText[4]{%
+   \ifx#2\empty%                                 no modifier
+      \ifnum\emptyIndexingFont=\ccTrue%          no font
+        \gdef#4{ZZZ#3@\ccIndexSeeAlso{#3}}%
+      \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
+        \gdef#4{ZZZ#3@\ccIndexSeeAlso{\protect\ccc{#3}}}%
+      \else%                                     other font
+        \gdef#4{ZZZ#1 #3@\ccIndexSeeAlso{{#1 #3}}}%
+      \fi \fi%
+   \else%                                         modifier
+      \ifnum\emptyIndexingFont=\ccTrue%           no font
+        \gdef#4{ZZZ#3, #2@\ccIndexSeeAlso{#3, #2}}%
+      \else\ifnum\indexingFontIsCC=\ccTrue%       ccFont
+        \gdef#4{ZZZ#3, #2@\ccIndexSeeAlso{{\protect\ccc{#3, #2}}}}%
+      \else%                                      other font
+        \gdef#4{ZZZ#3, #2@\ccIndexSeeAlso{{#1 #3, #2}}}%
+      \fi \fi%
+   \fi%
+}
+
+\def\containsInteriorCommandX#1 #2\ccEnd{%
+   \isEmpty{#2}\ifnum\ccBool=\ccFalse%
+      \expandafter\isCommand#2\end%
+      \ifnum\ccBool=\ccFalse%
+         \containsInteriorCommandX#2 \ccEnd%
+      \fi%
+   \else%
+      \ccInvert%
+   \fi%
+}
+
+\def\containsInteriorCommand#1{%
+   \expandafter\captureCommandChar\string\bf\ccEnd%
+   \edef\expandedText{#1 }%
+   \expandafter\containsInteriorCommandX\expandedText \ccEnd%
+}
+
+
+% #1 font for main item if one not supplied in #2
+%    if no font is to be used, supply \noFont as the first argument
+%    if this is left blank (as in \indexTextParse{}...) the test 
+%    \ifx#1\empty% will be false.  If this option is desired, you will
+%    have to add 
+%      \isEmpty{#1}\ifnum\ccBool=\ccTrue%
+%        \xdef\emptyIndexingFont{\ccTrue}
+%      \fi%
+%    AS WELL AS the test \ifx#1\empty
+% #2 main text in the form: [\font] text[, modifier]
+% #3 the place to put the font
+% #4 the place to put the modifier
+% #5 the place to put the unmodified text 
+\newcommand\indexTextParse[5]{%
+   \isEmpty{#2}\ifnum\ccBool=\ccTrue% empty text argument
+       \errmessage{Empty text argument in indexing command; makeindex won't
+                   like this}%
+       \edef#3{}%
+       \xdef\emptyIndexingFont{\ccTrue}%
+       \xdef\fontIsCC{\ccFalse}%
+       \edef#4{}%
+       \edef#5{}%
+   \else\containsInteriorCommand{#2}\ifnum\ccBool=\ccTrue%
+      \typeout{}%
+      \typeout{***Index Warning***}%
+      \typeout{   Your indexing text contains formatting commands in
+                  the interior.  I'll do what I can with this, but
+                  you may be in trouble.}%
+      \typeout{}%
+      \parseText{0}{#2}%
+      \def#5{\unmodifiedText}%
+      \ifx\modifier\empty%
+         \def#4{}%
+      \else%
+         \def#4{\modifier}%
+      \fi%
+      \ifx\indexingFont\empty%
+         \ifx#1\empty%
+           \xdef\emptyIndexingFont{\ccTrue}%
+         \fi%
+         \ifx#1\ccFont%
+           \xdef\indexingFontIsCC{\ccTrue}%
+         \fi%
+         \ifx#1\ccUnderscoreFont%
+           \xdef\allowUnderscores{\ccTrue}%
+         \fi%
+         \let#3=#1%
+      \else%
+         \let#3=\indexingFont%
+      \fi%
+   \else%
+      \parseText{1}{#2}%
+      \removeTrailingSpaces{\unmodifiedText}%
+      \edef#5{\accumulator}%
+      \isEmpty{\modifier}\ifnum\ccBool=\ccFalse%
+         \removeTrailingSpaces{\modifier}%
+         \edef#4{\accumulator}%
+      \else%
+         \edef#4{\modifier}%
+      \fi%
+      \ifx\indexingFont\empty%
+         \ifx#1\empty%
+           \xdef\emptyIndexingFont{\ccTrue}%
+         \fi%
+         \ifx#1\ccFont%
+           \xdef\indexingFontIsCC{\ccTrue}%
+         \fi%
+         \ifx#1\ccUnderscoreFont%
+           \xdef\allowUnderscores{\ccTrue}%
+         \fi%
+         \let#3=#1%
+      \else%
+         \let#3=\indexingFont%
+      \fi%
+   \fi \fi%
+}%
+
+
+%
+% #1 - first word
+% #2 - rest of the words, if any
+% #3 - 0 if operator, 1 for anything else
+% #4 - place to put the last word
+%
+\def\findLastWord#1 #2\ccEnd#3#4{%
+  \isEmpty{#2}\ifnum\ccBool=\ccTrue%
+     \ifnum#3=1%
+        \isLetter{#1}\ifnum\ccBool=\ccTrue%
+           \gdef#4{#1}%
+        \else
+           \removeNonLetterFromLastWord#1\ccEnd#4%
+        \fi
+     \else
+        \gdef#4{#1}%
+     \fi
+  \else
+     \findLastWord#2 \ccEnd#3#4%
+     \ifx#4\empty
+        \removeScopePrefixFromLastWord#1::\ccEnd\lastWord%
+     \fi
+  \fi
+}
+
+% #1 -- everything up to the first <, which could include a const
+%       and will include the type name 
+% #2 -- first template parameter, which is of no interest (maybe empty)
+%
+\def\findFirstTypeName #1<#2\ccEnd{%
+   \isEmpty{#2}\ifnum\ccBool=\ccFalse%
+      \findLastWord #1 \ccEnd0\typeName%
+   \else % no templated parameters, so #1 contains entire list of parameters
+     \ifnum\ccOperatorCat=\ccExtractionOperator% first type name is stream
+        \findSecondTypeName #1,\ccEnd%
+     \else\ifnum\ccOperatorCat=\ccInsertionOperator% first type name is stream
+        \findSecondTypeName #1,\ccEnd%
+     \else%
+        \findFirstTypeNameX #1,\ccEnd%
+     \fi\fi%
+   \fi%
+}
+\def\findFirstTypeNameX #1 #2,#3\ccEnd{%
+   \isEmpty{#1}\ifnum\ccBool=\ccTrue  % gets rid of leading spaces in type name
+      \findFirstTypeNameX #2,#3\ccEnd%
+   \else
+      \def\typeName{#1}%
+   \fi
+}
+
+% #1 -- everything up to the first comma (i.e., the first parameter) 
+% #2 -- everything after the first comma 
+%
+\def\findSecondTypeName #1,#2\ccEnd{%
+   \isEmpty{#2}\ifnum\ccBool=\ccTrue%
+      \findLastWord #1 \ccEnd0\typeName%  no second parameter so first parameter
+                                       %  is used.  This shouldn't happen.
+   \else % there is a second parameter but it has no template argument
+     \findSecondTypeNameX #2&\ccEnd%
+   \fi%
+}
+% #1 -- everything up to the first &
+% #2 -- name of parameter (perhaps empty if paramenter not passed by reference)
+\def\findSecondTypeNameX #1&#2\ccEnd{%
+   \isEmpty{#2}\ifnum\ccBool=\ccFalse% type name should be just before the &
+      \findLastWord #1 \ccEnd0\typeName%
+   \else % parameter not passed by reference, so find the type name as the
+         % next-to-last word in #1
+      \findSecondTypeNameXX #1 \ccEnd%
+   \fi
+}
+
+% #1 -- typename, possibly including a const
+% #2 -- parameter name 
+\def\findSecondTypeNameXX #1 #2\ccEnd{%
+   \isEmpty{#1}\ifnum\ccBool=\ccTrue  % get rid of leading spaces
+      \findSecondTypeNameXX #2\ccEnd%
+   \else
+      \findLastWord #1 \ccEnd0\typeName%
+   \fi
+}
+
+% #1 stuff before first ::
+% #2 stuff after first ::
+% #3 place to put the stripped name
+\def\removeScopePrefixFromLastWord#1::#2\ccEnd#3{%
+   \def\localVar{#2}\ifx\localVar\empty%
+      \def#3{#1}%
+   \else%
+      \stripTrailingScope#2\ccEnd#3%
+   \fi%
+}
+
+
+% #1 stuff before first ::
+% #2 stuff after first ::
+% #3 place to put the stripped name
+\def\stripTrailingScope#1::#2\ccEnd#3{%
+   \xdef#3{#1}%
+}
+
+\def\removeNonLetterFromLastWord#1#2\ccEnd#3{%
+   \isEmpty{#2}\ifnum\ccBool=\ccTrue%
+      \def#3{}%
+   \else \isLetter{#2}\ifnum\ccBool=\ccTrue%
+       \def#3{#2}%
+   \else%
+       \removeNonLetterFromLastWord#2\ccEnd#3%
+   \fi \fi%
+}
+
+% #1 - 0 for member function, 1 for global function
+% #2 - possibly part of the return type plus the function name 
+\newcommand\ccIndexFunction[2]{%
+   \ifnum\ccIndex=\ccTrue%
+      \findLastWord #2 \ccEnd1\lastWord%
+      \ifnum#1=0%
+         \ccIndexMemberFunction{\lastWord}%
+      \else%
+         \ccIndexGlobalFunction{\lastWord}%
+      \fi%
+   \fi%
+}
+
+\newcommand\ccIndexFunctionBegin[2]{%
+   \ifnum\ccIndex=\ccTrue%
+      \expandafter\findLastWord #2 \ccEnd1\lastWord%
+      \ifnum#1=0%
+         \ccIndexMemberFunctionBegin{\lastWord}%
+      \else%
+         \ccIndexGlobalFunctionBegin{\lastWord}%
+      \fi%
+   \fi%
+}
+\newcommand\ccIndexFunctionEnd[2]{%
+   \ifnum\ccIndex=\ccTrue%
+      \expandafter\findLastWord #2 \ccEnd1\lastWord%
+      \ifnum#1=0%
+         \ccIndexMemberFunctionEnd{\lastWord}%
+      \else%
+         \ccIndexGlobalFunctionEnd{\lastWord}%
+      \fi%
+   \fi%
+}
+
+% if the operator begins with !, @ or |, then it must be quoted in the
+% indexing entry since these characters have special meaning otherwise.
+% These two macros look for these three characters at the beginning of
+% the operator.  It is assumed that such characters will not appear
+% in the interior.
+\def\isAnIndexOperator#1{%
+   \isAnIndexOperatorX#1\ccEnd%
+}%
+\def\isAnIndexOperatorX#1#2\ccEnd{%
+   \ccBool=\ccFalse%
+   \if#1!\ccBool=\ccTrue%
+   \else\if#1@\ccBool=\ccTrue%
+   \else\if#1|\ccBool=\ccTrue\fi\fi\fi%
+}
+
+% #1 -- the operator 
+\def\escapeIndexOperatorSymbols#1{%
+   \gdef\escapedLastWord{}%
+   \expandafter\escapeIndexOperatorSymbolsX#1\ccEnd%
+}
+
+% #1 -- first operator character
+% #2 -- rest of operator
+\def\escapeIndexOperatorSymbolsX#1#2\ccEnd{
+   \isEmpty{#2}\ifnum\ccBool=\ccFalse%  
+      \escapeIndexOperatorSymbolsX#2\ccEnd%
+      \isAnIndexOperator{#1}\ifnum\ccBool=\ccTrue%
+         \edef\escapedLastWord{"#1\escapedLastWord}%
+      \else%
+         \edef\escapedLastWord{#1\escapedLastWord}%
+      \fi%
+   \else%
+      \isAnIndexOperator{#1}\ifnum\ccBool=\ccTrue%
+         \edef\escapedLastWord{"#1\escapedLastWord}%
+      \else%
+         \edef\escapedLastWord{#1\escapedLastWord}%
+      \fi%
+   \fi%
+}
+
+\newcount\ccOperatorCat
+\newcount\ccNotAnIndexOperator \ccNotAnIndexOperator=0
+\newcount\ccSingleVerticalBar  \ccSingleVerticalBar=1
+\newcount\ccDoubleVerticalBar  \ccDoubleVerticalBar=2
+\newcount\ccSingleExclamation  \ccSingleExclamation=3
+\newcount\ccDoubleExclamation  \ccDoubleExclamation=4
+\newcount\ccSingleAmpersand    \ccSingleAmpersand=5
+\newcount\ccDoubleAmpersand    \ccDoubleAmpersand=6
+\newcount\ccAmpersandEqual     \ccAmpersandEqual=7
+\newcount\ccExclamationEqual   \ccExclamationEqual=8
+\newcount\ccVerticalBarEqual   \ccVerticalBarEqual=9
+\newcount\ccSingleAt           \ccSingleAt=10
+\newcount\ccInsertionOperator  \ccInsertionOperator=11
+\newcount\ccExtractionOperator \ccExtractionOperator=12
+\newcount\ccModOperator        \ccModOperator=13
+\newcount\ccModEqualOperator   \ccModEqualOperator=14
+\newcount\ccPowerOperator      \ccPowerOperator=15
+\newcount\ccPowerEqualOperator \ccPowerEqualOperator=16
+\newcount\ccTildeOperator      \ccTildeOperator=17
+
+\def\whichOperator#1{
+   \ccOperatorCat=\ccNotAnIndexOperator%
+   \expandafter\whichOperatorX #1\ccEnd%
+}
+
+%% change catcodes here in order to detect the %, %=, ^ and ^= operators
+%% properly
+\begingroup
+\ccCatcode \catcode`\#=6 \catcode`\@=14
+\gdef\whichOperatorX #1#2\ccEnd{
+   \isEmpty{#2}\ifnum\ccBool=\ccTrue@
+      \ifx#1%\ccOperatorCat=\ccModOperator@
+      \else\if#1^\ccOperatorCat=\ccPowerOperator@
+      \else\if#1~\ccOperatorCat=\ccTildeOperator@
+      \else\if#1!\ccOperatorCat=\ccSingleExclamation@
+      \else\if#1|\ccOperatorCat=\ccSingleVerticalBar@
+      \else\if#1@\ccOperatorCat=\ccSingleAt@
+      \else\if#1&\ccOperatorCat=\ccSingleAmpersand\fi\fi\fi\fi\fi\fi\fi@
+   \else@ two-character operators
+      \if#1!\if#2!\ccOperatorCat=\ccDoubleExclamation\fi\fi@
+      \if#1!\if#2=\ccOperatorCat=\ccExclamationEqual\fi\fi@
+      \if#1|\if#2|\ccOperatorCat=\ccDoubleVerticalBar\fi\fi@
+      \if#1|\if#2=\ccOperatorCat=\ccVerticalBarEqual\fi\fi@
+      \if#1&\if#2&\ccOperatorCat=\ccDoubleAmpersand\fi\fi@
+      \if#1&\if#2=\ccOperatorCat=\ccAmpersandEqual\fi\fi@
+      \if#1>\if#2>\ccOperatorCat=\ccInsertionOperator\fi\fi@
+      \if#1<\if#2<\ccOperatorCat=\ccExtractionOperator\fi\fi@
+      \if#1%\if#2=\ccOperatorCat=\ccModEqualOperator\fi\fi@
+      \if#1^\if#2=\ccOperatorCat=\ccPowerEqualOperator\fi\fi@
+   \fi@
+}
+\endgroup
+
+% #1 -- 0 if a member function; 1 if a global function
+% #2 -- (part of) the return type of the operator
+% #3 -- the operator, possibly with leading or trailing spaces
+% #4 -- parameter list, which is needed for global operators
+\def\ccIndexOperator#1#2operator#3,#4,\ccEnd{%
+   \ifnum\ccIndex=\ccTrue%
+      \findLastWord #3 \ccEnd0\lastWord%   % gets rid of leading spaces
+      \whichOperator\lastWord%
+      \ifnum#1=0%
+         \escapeIndexOperatorSymbols\lastWord%
+         \ifnum\inConcept=\ccTrue
+            \ccIndexOperatorSubitem{\escapedLastWord}{\ccIndexConceptFont \ccIndexClassName}%
+         \else
+            \ccIndexOperatorSubitem{\escapedLastWord}{\ccFont \ccIndexClassName}%
+         \fi
+      \else%
+         \escapeIndexOperatorSymbols\lastWord%
+         \findFirstTypeName #4<\ccEnd%
+         \ccIndexGlobalOperator{\escapedLastWord}{\typeName}%
+      \fi%
+   \fi%
+}
+
+%
+% variables to indicate what kind of formatting command has last been
+% used
+%
+\newcount\ccCurrentIndexCat
+\newcount\ccIndexEnumCat                  \ccIndexEnumCat=0
+\newcount\ccIndexStructCat                \ccIndexStructCat=1
+\newcount\ccIndexTypedefCat               \ccIndexTypedefCat=2
+\newcount\ccIndexVariableCat              \ccIndexVariableCat=3
+\newcount\ccIndexConstantCat              \ccIndexConstantCat=4
+\newcount\ccIndexConceptCat               \ccIndexConceptCat=5
+\newcount\ccIndexFunctionCat              \ccIndexFunctionCat=6
+\newcount\ccIndexFunctionObjectConceptCat \ccIndexFunctionObjectConceptCat=7
+\newcount\ccIndexFunctionObjectClassCat   \ccIndexFunctionObjectClassCat=8
+\newcount\ccIndexClassCat                 \ccIndexClassCat=9
+\newcount\ccIndexMacroCat                 \ccIndexMacroCat=10
+
+% #1 - enum tag
+% #2 - value assigned (possibly empty)
+\def\removeAssignmentAndIndex#1=#2\ccEnd{%
+    \ccIndexEnumTag{#1}%
+}
+
+% #1 - comma-separated list of enum tags, possibly with value assignments
+\def\findEnumTags#1{%
+  \findEnumTagsX#1,\ccEnd%
+}
+
+% #1 - enum tag of the form TAG[ = value]
+% #2 - rest of the list of tags (possibly empty)
+\def\findEnumTagsX#1,#2\ccEnd{%
+    \def\localVar{#2}\ifx\localVar\empty%
+       \removeAssignmentAndIndex#1=\ccEnd%
+    \else%
+       \removeAssignmentAndIndex#1=\ccEnd%
+       \findEnumTagsX#2\ccEnd%
+    \fi%
+}
+
+% #1 - enum or struct name together with C++ key words "enum" or "struct"
+% #2 - list of enum tags or struct fields 
+\def\ccIndexEnumOrStruct#1\{#2\}\ccEnd{%
+   \ifnum\ccIndex=\ccTrue%
+      \findLastWord #1 \ccEnd1\lastWord%
+      \ifnum\ccCurrentIndexCat=\ccIndexEnumCat%
+         \ccIndexEnum{\lastWord}%
+         \findEnumTags{#2}%
+      \else
+         \ccIndexGlobalStruct{\lastWord}%
+      \fi%
+   \fi%
+}
+
+% #1 - typedef or variable name possibly with preceding key words
+\def\ccIndexTypedefOrVariable#1{%
+   \ifnum\ccIndex=\ccTrue%
+      \findLastWord #1 \ccEnd1\lastWord%
+      \ifnum\ccCurrentIndexCat=\ccIndexTypedefCat%
+         \ccIndexTypedef{\lastWord}%
+      \else
+         \ccIndexGlobalVariable{\lastWord}%
+      \fi
+   \fi%
+}
+
+%
+% #1 - a single text argument for indexing, possibly with trailing spaces
+%
+% result:  \accumulator will contain the same text with any trailing spaces
+%          removed
+\def\removeTrailingSpaces#1{%
+  \gdef\accumulator{}%
+  \edef\argument{#1 }% needed in case the argument is a macro
+  \expandafter\removeTrailingSpacesX\argument \ccEnd%
+}
+
+
+\def\removeTrailingSpacesX#1 #2\ccEnd{%
+   \isEmpty{#2}\ifnum\ccBool=\ccTrue%
+      \ifx\accumulator\empty%
+         \gdef\accumulator{#1}%
+      \else%
+         \edef\previous{\accumulator\ }%
+         \gdef\accumulator{\previous  #1}%
+      \fi%
+   \else%
+      \ifx\accumulator\empty%
+         \gdef\accumulator{#1}%
+      \else%
+         \edef\previous{\accumulator\ }%
+         \gdef\accumulator{\previous  #1}%
+      \fi%
+      \removeTrailingSpacesX#2 \ccEnd%
+   \fi%
+}
+
+% #1 - everything up to the first "<"
+% #2 - everything after the first "<"
+% #3 - the place to put the stripped class name
+\gdef\ccStripTemplates #1<#2\ccEnd#3{%
+   \gdef#3{#1}
+}
+
+%
+% in \ccRefDeclarationX, the argument to a \begin{ccRef...}{<arg>}
+% is stored in \ccPureClassTemplateName (even when <arg> is not
+% "Class"), so this is the name to use for indexing.  If an optional
+% argument was given as in \begin[scope::]{ccRef...}, it has been
+% stored in \ccIndexClassName without the trailing "::", if any.
+%
+\def\ccIndexRefDeclarationBegin{%
+%
+% replaces the value of ccIndexClassName by the name stored in 
+% ccPureClassTemplateName since the names of nested classes are not indexed 
+% under the nesting class.
+%
+   \ifnum\ccCurrentIndexCat=\ccIndexClassCat%
+      \expandafter\ccStripTemplates\ccPureClassTemplateName<\ccEnd\ccIndexClassName%
+      \ccIndexMainItemBegin[C]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectClassCat%
+      \expandafter\ccStripTemplates\ccPureClassTemplateName<\ccEnd\ccIndexClassName%
+      \ccIndexMainItemBegin[C]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionCat%
+      \expandafter\expandafter\isEmpty\ccIndexClassName\ifnum\ccBool=\ccTrue%
+         \ccIndexFunctionBegin1\ccPureClassTemplateName%
+      \else
+         \ccIndexFunctionBegin0\ccPureClassTemplateName%
+      \fi
+% concepts can act like classes in the sense that they have things that look
+% like member functions  and all that, so ccIndexClassName needs to be defined
+   \else\ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+      \xdef\inConcept{\ccTrue}
+      \expandafter\ccStripTemplates\ccPureClassTemplateName<\ccEnd\ccIndexClassName%
+      \ccIndexMainItemBegin[c]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+      \xdef\inConcept{\ccTrue}
+      \expandafter\ccStripTemplates\ccPureClassTemplateName<\ccEnd\ccIndexClassName%
+      \ccIndexMainItemBegin[c]{\ccIndexClassName}%
+   \else% all other things are C++ names
+      \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
+         \ccIndexMainItemBegin[C]{\ccPureClassTemplateName}%
+      \else
+         \ccIndexSubitemBegin[C]{\ccIndexClassName}{\ccFont \ccPureClassTemplateName}%
+      \fi
+   \fi\fi\fi\fi\fi%
+}
+
+\def\ccIndexRefDeclarationEnd{%
+   \ifnum\ccCurrentIndexCat=\ccIndexClassCat%
+      \ccIndexMainItemEnd[C]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectClassCat%
+      \ccIndexMainItemEnd[C]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionCat%
+      \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
+         \ccIndexFunctionEnd1\ccPureClassTemplateName%
+      \else
+         \ccIndexFunctionEnd0\ccPureClassTemplateName%
+      \fi
+   \else\ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+      \xdef\inConcept{\ccFalse}
+      \ccIndexMainItemEnd[c]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+      \ccIndexMainItemEnd[c]{\ccIndexClassName}%
+      \xdef\inConcept{\ccFalse}
+   \else% all other things are C++ names
+      \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
+         \ccIndexMainItemEnd[C]{\ccPureClassTemplateName}%
+      \else
+         \ccIndexSubitemEnd[C]{\ccIndexClassName}{\ccFont \ccPureClassTemplateName}%
+      \fi
+   \fi\fi\fi\fi\fi%
+   \gdef\ccIndexClassName{}%
+}

@@ -1,0 +1,1825 @@
+% ----------------------------------------------------------------------
+% Test document for the CGAL manual LaTeX style:
+%
+% 17.09.1999   Susan Hert 
+%
+% ----------------------------------------------------------------------
+\documentclass{article}
+
+\usepackage{cprog}
+\usepackage{cc_manual}
+\usepackage{makeidx}
+
+\ccDefGlobalScope{CGAL::}
+
+% page dimensions
+% ---------------
+\textwidth 15.6cm
+\textheight 23cm
+\topmargin -14mm
+\evensidemargin 3mm
+\oddsidemargin 3mm
+
+
+\makeindex
+
+\sloppy
+
+% ----------------------------------------------------------------------
+\title{Test suite for the cc\_manual\_index.sty}
+\author{Susan Hert}
+\date{\ccRevision. \ccDate}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This document is a test suite for the \LaTeX\ style file 
+{\tt cc\_manual\_index.sty}.  There is minimal text in the document save
+for the index itself.  Document text is used simply to make sure the
+indexing commands introduce no extra spaces or other characters.
+Please send bug-reports to {\tt hert@mpi-sb.mpg.de}.
+
+% ----------------------------------------------------------------------
+\section{Operators}
+
+This is a test of ccIndexGlobalOperator\ccIndexGlobalOperator{==}{class_name}.
+
+\subsection{Global operators for classes without template parameters}
+
+\ccFunction{ ostream& operator << ( ostream& os, const PT& p);}{ }
+\ccFunction{ istream& operator >> ( istream& is, PT& p);}{ }
+
+  \ccFunction{Ptr_Class
+        operator->(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator[](ClassA p, int i);}{}
+
+  \ccFunction{ClassA
+        operator()(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j, int k);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p,
+                   const A& a, B& b, C c, const D& d, ClassA
+                   e);}{all number and types of parameters are possible.}
+
+  \ccFunction{ClassA
+        operator++(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator++(ClassA p, int);}{The postfix incr.\ operator
+        has a hidden {\tt int} parameter that the formatting does not show.}
+
+  \ccFunction{ClassA
+        operator--(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator--(ClassA p, int);}{}
+
+  \ccFunction{ClassA
+        operator~(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator!(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator&(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator*(ClassA p);}{}
+  \ccFunction{Member_Ptr
+        operator->*(ClassA p);}{}
+
+  \ccFunction{ClassA
+        operator*(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator/(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator%(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<<(ClassA p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>>(ClassA p, int i);}{}
+
+  \ccFunction{ClassA
+        operator<(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator==(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator!=(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator&(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator^(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator|(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator&&(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator||(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator*=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator/=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator%=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<<=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>>=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator&=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator|=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator^=(ClassA p, ClassA q);}{}
+
+        
+\subsection{Global operators for classes with template parameters.}
+
+\ccFunction{ ostream& operator << ( ostream& os,
+                                    const Min_circle_2<Traits>& min_circle);}{}
+
+\ccFunction{ istream& operator >> ( istream& is,
+                                    Min_circle_2<Traits>& min_circle);}{}
+\ccFunction{ Window_stream&
+             operator << ( Window_stream& ws,
+                           const Min_circle_2<Traits>& min_circle);}{}
+
+  \ccFunction{Ptr_Class
+        operator->(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator[](ClassA<T> p, int i);}{}
+
+  \ccFunction{ClassA<T>
+        operator()(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator()(ClassA<T> p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator()(ClassA<T> p, int i, int j);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator()(ClassA<T> p, int i, int j, int k);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator()(ClassA<T> p,
+                   const A& a, B& b, C c, const D& d, ClassA<T>
+                   e);}{all number and types of parameters are possible.}
+
+  \ccFunction{ClassA<T>
+        operator++(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator++(ClassA<T> p, int);}{The postfix incr.\ operator
+        has a hidden {\tt int} parameter that the formatting does not show.}
+
+  \ccFunction{ClassA<T>
+        operator--(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator--(ClassA<T> p, int);}{}
+
+  \ccFunction{ClassA<T>
+        operator~(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator!(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator-(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator+(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator&(ClassA<T> p);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator*(ClassA<T> p);}{}
+  \ccFunction{Member_Ptr
+        operator->*(ClassA<T> p);}{}
+
+  \ccFunction{ClassA<T>
+        operator*(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator/(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator%(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator+(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator-(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator<<(ClassA<T> p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator>>(ClassA<T> p, int i);}{}
+
+  \ccFunction{ClassA<T>
+        operator<(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator<=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator>(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator>=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator==(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator!=(ClassA<T> p, ClassA<T> q);}{}
+
+  \ccFunction{ClassA<T>
+        operator&(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator^(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator|(ClassA<T> p, ClassA<T> q);}{}
+
+  \ccFunction{ClassA<T>
+        operator&&(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator||(ClassA<T> p, ClassA<T> q);}{}
+
+  \ccFunction{ClassA<T>
+        operator=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator*=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator/=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator%=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator+=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator-=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator<<=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator>>=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator&=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator|=(ClassA<T> p, ClassA<T> q);}{}
+  \ccGlue
+  \ccFunction{ClassA<T>
+        operator^=(ClassA<T> p, ClassA<T> q);}{}
+
+\subsection{Operator member functions for nontemplated class}
+
+\ccCreationVariable{c}
+\begin{ccClass}{ClassC}
+  \ccMethod{Ptr_Class operator->();}{}
+  \ccGlue
+  \ccMethod{ClassB operator[](int i);}{}
+
+  \ccMethod{ClassB operator()();}{}
+  \ccGlue
+  \ccMethod{ClassB operator()(int i);}{}
+  \ccGlue
+  \ccMethod{ClassB
+        operator()(int i, int j);}{}
+  \ccGlue
+  \ccMethod{ClassB
+        operator()(int i, int j, int k);}{}
+  \ccGlue
+  \ccMethod{ClassB
+        operator()(const A& a, B& b, C c, const D& d, ClassA
+                   e);}{all number and types of parameters are possible.}
+
+  \ccMethod{ClassC operator++();}{}
+  \ccGlue
+  \ccMethod{ClassC operator++(int);}{The postfix incr.\ operator
+        has a hidden {\tt int} parameter that the formatting does not show.}
+
+  \ccMethod{ClassC
+        operator--();}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator--(int);}{}
+
+  \ccMethod{void operator~();}{}
+  \ccGlue
+  \ccMethod{ClassC operator!();}{}
+  \ccGlue
+  \ccMethod{ClassC operator-();}{}
+  \ccGlue
+  \ccMethod{ClassC operator+();}{}
+  \ccGlue
+  \ccMethod{ClassC operator&();}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator*();}{}
+  \ccMethod{Member_Ptr operator->*();}{}
+
+  \ccMethod{ClassC operator*(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC operator/(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator%(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator+(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC operator-(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator<<(int i);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator>>(int i);}{}
+
+  \ccMethod{ClassC
+        operator<(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator<=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator>(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator>=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator==(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator!=(ClassC q);}{}
+
+  \ccMethod{ClassC
+        operator&(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator^(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator|(ClassC q);}{}
+
+  \ccMethod{ClassC
+        operator&&(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator||(ClassC q);}{}
+
+  \ccMethod{ClassC
+        operator=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator*=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator/=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator%=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator+=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator-=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator<<=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator>>=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator&=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator|=(ClassC q);}{}
+  \ccGlue
+  \ccMethod{ClassC
+        operator^=(ClassC q);}{}
+\end{ccClass}
+
+\subsection{Operator member functions for templated class}
+
+\ccCreationVariable{ct}
+\begin{ccClass}{ClassC<T>}
+  \ccMethod{Ptr_Class operator->();}{}
+  \ccGlue
+  \ccMethod{ClassB operator[](int i);}{}
+
+  \ccMethod{ClassB operator()();}{}
+  \ccGlue
+  \ccMethod{ClassB operator()(int i);}{}
+  \ccGlue
+  \ccMethod{ClassB
+        operator()(int i, int j);}{}
+  \ccGlue
+  \ccMethod{ClassB
+        operator()(int i, int j, int k);}{}
+  \ccGlue
+  \ccMethod{ClassB
+        operator()(const A& a, B& b, C c, const D& d, ClassA
+                   e);}{all number and types of parameters are possible.}
+
+  \ccMethod{ClassC<T> operator++();}{}
+  \ccGlue
+  \ccMethod{ClassC<T> operator++(int);}{The postfix incr.\ operator
+        has a hidden {\tt int} parameter that the formatting does not show.}
+
+  \ccMethod{ClassC<T>
+        operator--();}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator--(int);}{}
+
+  \ccMethod{void operator~();}{}
+  \ccGlue
+  \ccMethod{ClassC<T> operator!();}{}
+  \ccGlue
+  \ccMethod{ClassC<T> operator-();}{}
+  \ccGlue
+  \ccMethod{ClassC<T> operator+();}{}
+  \ccGlue
+  \ccMethod{ClassC<T> operator&();}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator*();}{}
+  \ccMethod{Member_Ptr operator->*();}{}
+
+  \ccMethod{ClassC<T> operator*(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T> operator/(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator%(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator+(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T> operator-(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator<<(int i);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator>>(int i);}{}
+
+  \ccMethod{ClassC<T>
+        operator<(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator<=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator>(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator>=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator==(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator!=(ClassC<T> q);}{}
+
+  \ccMethod{ClassC<T>
+        operator&(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator^(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator|(ClassC<T> q);}{}
+
+  \ccMethod{ClassC<T>
+        operator&&(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator||(ClassC<T> q);}{}
+
+  \ccMethod{ClassC<T>
+        operator=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator*=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator/=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator%=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator+=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator-=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator<<=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator>>=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator&=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator|=(ClassC<T> q);}{}
+  \ccGlue
+  \ccMethod{ClassC<T>
+        operator^=(ClassC<T> q);}{}
+\end{ccClass}
+
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\section{Classes, templated and otherwise}
+
+%------------------------------------------------------------------------------
+\subsection{A nontemplated class}
+\begin{ccClass}{class_name}
+This is a test of ccIndexMemberFunction\ccIndexMemberFunction{member_function1}
+
+This is a test of ccIndexMemberFunction\ccIndexMemberFunction{member_function2}
+
+This is a test of ccIndexMemberFunction\ccIndexMemberFunction{member_function1}
+
+This is a test of ccIndexClassCreation\ccIndexClassCreation.
+This is a test of ccIndexClassDefault\ccIndexClassDefault.
+\begin{ccIndexMemberFunctions}
+\ccMethod{class_name  operator()() const;}
+       {}
+
+group1\ccIndexMemberFunctionGroup{group1}.
+group2\ccIndexMemberFunctionGroup{group2}.
+\end{ccIndexMemberFunctions}
+This is a test of ccIndexNestedClasses\ccIndexNestedClasses.
+This is a test of ccIndexClassTypes\ccIndexClassTypes.
+This is a test of ccIndexAssertionFlag\ccIndexAssertionFlag[class package].
+impelmentation\ccIndexImplementation.where is this
+requirements\ccIndexRequirements.where is this
+
+\begin{ccIndexGlobalFunctions}
+\pagebreak
+group1\ccIndexGlobalFunctionGroup{group1}.where is this
+
+\end{ccIndexGlobalFunctions}
+
+
+\end{ccClass}
+
+%------------------------------------------------------------------------------
+\subsection{A templated class}
+
+\begin{ccClassTemplate}{class_name<T>}
+This is a test of ccIndexMemberFunction\ccIndexMemberFunction{member_function1}
+
+This is a test of ccIndexMemberFunction\ccIndexMemberFunction{member_function2}
+
+This is a test of ccIndexMemberFunction\ccIndexMemberFunction{member_function1}
+
+This is a test of ccIndexClassCreation\ccIndexClassCreation.
+This is a test of ccIndexClassDefault\ccIndexClassDefault.
+\begin{ccIndexMemberFunctions}
+\ccMethod{class_name<T>  operator()() const;}
+       {}
+
+group1\ccIndexMemberFunctionGroup{group1}.
+group2\ccIndexMemberFunctionGroup{group2}.
+\end{ccIndexMemberFunctions}
+This is a test of ccIndexNestedClasses\ccIndexNestedClasses.
+This is a test of ccIndexClassTypes\ccIndexClassTypes.
+This is a test of ccIndexAssertionFlag\ccIndexAssertionFlag[templated class package].
+\begin{ccIndexGlobalFunctions}
+\pagebreak
+group1\ccIndexGlobalFunctionGroup{group1}.where is this
+
+\end{ccIndexGlobalFunctions}
+
+impelmentation\ccIndexImplementation.where is this
+
+requirements\ccIndexRequirements.where is this
+\begin{ccIndexGlobalFunctions}
+\pagebreak
+group1\ccIndexGlobalFunctionGroup{group1}.where is this
+
+\end{ccIndexGlobalFunctions}
+
+\end{ccClassTemplate}
+
+\begin{ccClassTemplate}{R<>}
+\ccSection{Representation Class}
+\pagebreak
+
+\ccStyle{template <class Traits, class Container1, class Container2>}
+  \ccFunction{
+     bool operator!=(const CGAL_Polygon_2<Traits,Container1>& p1,
+                     const CGAL_Polygon_2<Traits,Container2>& p2);}
+     { Test for inequality. }
+
+    \ccMethod{Traits::X_curve &curve();}{return the curve
+       that this edge represents.}
+\ccMethod{bool operator==(const CGAL_Point_2<R> &q) const;}
+       {Test for equality. Two points are equal, iff their $x$ and $y$
+        coordinates are equal. The point can be compared with
+                \ccc{CGAL_ORIGIN}.}
+
+\ccMemberFunction{ bool has_on_boundary( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary
+        of \ccVar.}
+
+
+\ccMemberFunction{ bool operator== (const CGAL_Point_d<R>& p) const;}
+        {Equality test. Two points are equal if they have the same
+         dimension and agree in all coordinates.}
+
+\ccMemberFunction{ bool operator != (const CGAL_Point_d<R>& p) const;}
+        {Test for inequality.}
+
+
+\ccMemberFunction{ R::RT homogeneous( int i) const;}
+        {returns the i'th homogeneous coordinate of \ccVar, starting
+         with 0. \ccPrecond $0\leq i\leq \ccc{d}$.}
+\end{ccClassTemplate}
+
+
+\begin{ccClassTemplate}{CGAL_Cartesian<FT>}
+\ccSubsection{Cartesian Representation}
+\pagebreak
+\end{ccClassTemplate}
+
+%------------------------------------------------------------------------------
+\subsection{A package}
+
+\begin{ccPackage}{package}
+This is a test of ccIndexAssertionFlag\ccIndexAssertionFlag.where is this
+
+This is a test of ccIndexDesign\ccIndexDesign.where is this
+
+\begin{ccIndexGlobalFunctions}
+\pagebreak
+
+group1\ccIndexGlobalFunctionGroup{group1}.where is this
+
+\end{ccIndexGlobalFunctions}
+impelmentation\ccIndexImplementation.where is this
+requirements\ccIndexRequirements.where is this
+\end{ccPackage}
+
+%------------------------------------------------------------------------------
+\subsection{Traits class default and requirements}
+
+testing ccIndexTraitsClassDefault\ccIndexTraitsClassDefault{class_name}.where is this
+testing ccIndexTraitsClassDefault\ccIndexTraitsClassDefault{class_name<T>}.where is this
+testing ccIndexTraitsClassDefault[p]\ccIndexTraitsClassDefault[p]{package}.where is this
+testing ccIndexTraitsClassRequirements\ccIndexTraitsClassRequirements{class_name}.where is this
+testing ccIndexTraitsClassRequirements\ccIndexTraitsClassRequirements{class_name<T>}.where is this
+testing ccIndexTraitsClassRequirements[p]\ccIndexTraitsClassRequirements[p]{package}.where is this
+
+\begin{ccTraitsClassTemplate}{traits_class2<t1, t2>}{class_name}{package}
+\end{ccTraitsClassTemplate}
+
+\begin{ccTraitsClass}{traits_class2}{class_name}{package}
+\end{ccTraitsClass}
+
+%------------------------------------------------------------------------------
+\section{Enum auto indexing}
+
+\ccEnum{CGAL_IO::Mode = {ASCII = 0, BINARY, PRETTY};}{}
+\ccEnum{myEnum = {ONE = 0, TWO, THREE};}{}
+
+\ccGlobalEnum{enum CGAL_Oriented_side { CGAL_ON_NEGATIVE_SIDE = -1,
+                                        CGAL_ON_ORIENTED_BOUNDARY,
+                                        CGAL_POSITIVE_SIDE };
+}
+This is a test of ccIndexEnum\ccIndexEnum{CGAL_Enum}.
+This is a test of ccIndexEnumTag\ccIndexEnumTag{CGAL_Enum_tag}.
+
+%------------------------------------------------------------------------------
+\section{Typedefs}
+
+\ccTypedef{typedef leda_point Point_2; }{}
+
+This is a test of ccIndexTypedef\ccIndexTypedef{CGAL_typedef}.
+This is a test of ccIndexTypedef\ccIndexTypedef{CGAL_typedef }.
+This is a test of ccIndexTypedef\ccIndexTypedef{  CGAL_typedef }.
+
+%------------------------------------------------------------------------------
+\section{Global variables}
+
+\ccGlobalVariable{const CGAL_Orientation CGAL_LEFTTURN  = CGAL_POSITIVE;}
+\ccGlue
+\ccGlobalVariable{const CGAL_Orientation CGAL_RIGHTTURN = CGAL_NEGATIVE;}
+
+This is a test of ccIndexGlobalVariable\ccIndexGlobalVariable{CGAL_global_variable}.
+
+%------------------------------------------------------------------------------
+\section{Global Constants}
+This is a test of ccIndexGlobalConstant\ccIndexGlobalConstant{CGAL_global_constant}.
+
+%------------------------------------------------------------------------------
+\section{Macros}
+This is a test of ccIndexMacro\ccIndexMacro{MACRO}.
+
+%------------------------------------------------------------------------------
+\section{Global Function}
+This is a test of ccIndexGlobalFunction\ccIndexGlobalFunction{CGAL_global_function}.
+
+%------------------------------------------------------------------------------
+\section{Global structs}
+
+This is a test of ccIndexGlobalStruct\ccIndexGlobalStruct{CGAL_global_struct}.
+
+\ccStruct{template <class R> class Polyhedron_facet_base_3 {};}{}
+
+%------------------------------------------------------------------------------
+\section{AssertionFlags}
+
+This is a test of ccIndexAssertionFlagsUse\ccIndexAssertionFlagsUse.
+
+This is a test of ccIndexAssertionFlagName\ccIndexAssertionFlagName{CGAL_NAME_CHECK_EXPENSIVE}.
+
+ 
+%------------------------------------------------------------------------------
+\section{Abbreviations}
+
+This is a test of ccIndexAbbreviation\ccIndexAbbreviation{ABBR}{abbreviation}.
+testing\ccIndexMainItem[t]{convex hull}
+abbreviation\ccIndexAbbreviation{CH}{\bf convex hull}
+abbreviation\ccIndexAbbreviation{CH2}{convex hull}
+abbreviation\ccIndexAbbreviation{\it CH3}{\bf convex hull}
+\ccIndexAbbreviation{NF}{normal font}
+
+%------------------------------------------------------------------------------
+\section{The raw indexing commands}
+
+%------------------------------------------------------------------------------
+\subsection{Data structures}
+
+%------------------------------------------------------------------------------
+\subsubsection{with regular modifier}
+
+%%% DATA STRUCTURES, MODIFIED (2D)
+This is a test of ccIndexMainItemDef[d]\ccIndexMainItemDef[d]{data structure, 2D}.
+This is a test of ccIndexMainItemDef[d]\ccIndexMainItemDef[d]{\sc data structure, 2D}.
+This is a test of ccIndexMainItemDef[d]\ccIndexMainItemDef[d]{\sc fourth data structure, 2D}.
+This is a test of ccIndexSubitemDef[d]\ccIndexSubitemDef[d]{data structure, 2D}{data structure subitem}.
+This is a test of ccIndexSubitemDef[d] with subitem font\ccIndexSubitemDef[d]{data structure, 2D}{\sc data structure subitem in sc}.
+This is a test of ccIndexSubsubitemDef[d]\ccIndexSubsubitem[d]{data structure, 2D}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[d]\ccIndexSubsubitemDef[d]{data structure, 2D}{data structure subitem}{\sc data structure subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[d]\ccIndexSubsubitemDef[d]{data structure, 2D}{\sc data structure subitem in sc}{\sc data structure subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItemBegin[d]\ccIndexMainItemBegin[d]{\sc data structure, 2D}.
+This is a test of ccIndexMainItemBegin[d]\ccIndexMainItemBegin[d]{\sc third data structure, 2D}.
+This is a test of ccIndexMainItemEnd[d]\ccIndexMainItemEnd[d]{\sc data structure, 2D}.
+This is a test of ccIndexMainItemEnd[d]\ccIndexMainItemEnd[d]{\sc third data structure, 2D}.
+
+This is a test of ccIndexSubitem[d]\ccIndexSubitem[d]{data structure, 2D}{data structure subitem}.
+This is a test of ccIndexSubitemBegin[d]\ccIndexSubitemBegin[d]{data structure, 2D}{data structure subitem}.
+This is a test of ccIndexSubitem[d] with subitem font\ccIndexSubitem[d]{data structure, 2D}{\ccFont data structure subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[d] with subitem font\ccIndexSubitemBegin[d]{data structure, 2D}{\bf data structure subitem in bf}.
+
+This is a test of ccIndexSubsubitem[d]\ccIndexSubsubitem[d]{data structure, 2D}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin[d]\ccIndexSubsubitemBegin[d]{data structure, 2D}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[d]\ccIndexSubsubitem[d]{data structure, 2D}{\ccFont data structure subitem in ccFont}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[d]\ccIndexSubsubitemBegin[d]{data structure, 2D}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[d]\ccIndexSubsubitem[d]{data structure, 2D}{data structure subitem}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[d]\ccIndexSubsubitemBegin[d]{data structure, 2D}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[d]\ccIndexSubsubitem[d]{data structure, 2D}{\ccFont data structure subitem in ccFont}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[d]\ccIndexSubsubitemBegin[d]{data structure, 2D}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[d] with subitem font\ccIndexSubitemEnd[d]{data structure, 2D}{\bf data structure subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[d]\ccIndexSubsubitemEnd[d]{data structure, 2D}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[d]\ccIndexSubsubitemEnd[d]{data structure, 2D}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[d]\ccIndexSubsubitemEnd[d]{data structure, 2D}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[d]\ccIndexSubitemEnd[d]{data structure, 2D}{data structure subitem}.
+This is a test of ccIndexSubsubitemEnd[d]\ccIndexSubsubitemEnd[d]{data structure, 2D}{data structure subitem}{data structure subsubitem}.
+
+
+
+%------------------------------------------------------------------------------
+\subsubsection{with non-special modifier}
+
+\pagebreak
+%%% DATA STRUCTURES, MODIFIED
+This is a test of ccIndexMainItemDef[d]\ccIndexMainItemDef[d]{data structure, modified}.
+This is a test of ccIndexSubitemDef[d]\ccIndexSubitemDef[d]{data structure, modified}{data structure subitem}.
+This is a test of ccIndexSubitemDef[d] with subitem font\ccIndexSubitemDef[d]{data structure, modified}{\sc data structure subitem in sc}.
+This is a test of ccIndexSubsubitemDef[d]\ccIndexSubsubitemDef[d]{data structure, modified}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[d]\ccIndexSubsubitemDef[d]{data structure, modified}{\sc data structure subitem in sc}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[d]\ccIndexSubsubitemDef[d]{data structure, modified}{data structure subitem}{\sc data structure subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[d]\ccIndexSubsubitemDef[d]{data structure, modified}{\sc data structure subitem in sc}{\sc data structure subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[d]\ccIndexMainItem[d]{data structure,        modified}.
+This is a test of ccIndexMainItem[d]\ccIndexMainItem[d]{data structure, modified}.
+This is a test of ccIndexMainItem[d]\ccIndexMainItem[d]{data structure, otherwise modified}.
+This is a test of ccIndexMainItem[d]\ccIndexMainItem[d]{second data structure, otherwise modified}.
+This is a test of ccIndexMainItemBegin[d]\ccIndexMainItemBegin[d]{data structure, modified}.
+This is a test of ccIndexMainItemBegin[d]\ccIndexMainItemBegin[d]{third data structure, modified}.
+
+This is a test of ccIndexSubitem[d]\ccIndexSubitem[d]{data structure, modified}{data structure subitem}.
+This is a test of ccIndexSubitemBegin[d]\ccIndexSubitemBegin[d]{data structure, modified}{data structure subitem}.
+This is a test of ccIndexSubitem[d] with subitem font\ccIndexSubitem[d]{data structure, modified}{\ccFont data structure subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[d] with subitem font\ccIndexSubitemBegin[d]{data structure, modified}{\bf data structure subitem in bf}.
+
+This is a test of ccIndexSubsubitem[d]\ccIndexSubsubitem[d]{data structure, modified}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin[d]\ccIndexSubsubitemBegin[d]{data structure, modified}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[d]\ccIndexSubsubitem[d]{data structure, modified}{\ccFont data structure subitem in ccFont}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[d]\ccIndexSubsubitemBegin[d]{data structure, modified}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[d]\ccIndexSubsubitem[d]{data structure, modified}{data structure subitem}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[d]\ccIndexSubsubitemBegin[d]{data structure, modified}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[d]\ccIndexSubsubitem[d]{data structure, modified}{\ccFont data structure subitem in ccFont}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[d]\ccIndexSubsubitemBegin[d]{data structure, modified}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[d] with subitem font\ccIndexSubitemEnd[d]{data structure, modified}{\bf data structure subitem in bf}.
+This is a test of ccIndexMainItemEnd[d]\ccIndexMainItemEnd[d]{third data structure, modified}.
+This is a test of ccIndexSubsubitemEnd with subitem font[d]\ccIndexSubsubitemEnd[d]{data structure, modified}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[d]\ccIndexSubsubitemEnd[d]{data structure, modified}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[d]\ccIndexSubsubitemEnd[d]{data structure, modified}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[d]\ccIndexSubitemEnd[d]{data structure, modified}{data structure subitem}.
+This is a test of ccIndexSubsubitemEnd[d]\ccIndexSubsubitemEnd[d]{data structure, modified}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexMainItemEnd[d]\ccIndexMainItemEnd[d]{data structure, modified}.
+
+%------------------------------------------------------------------------------
+\subsubsection{without modifier}
+%%% DATA STRUCTURES
+This is a test of ccIndexMainItemDef[d]\ccIndexMainItemDef[d]{data structure}.
+This is a test of ccIndexSubitemDef[d]\ccIndexSubitemDef[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubitemDef[d] with subitem font\ccIndexSubitemDef[d]{data structure}{\sc data structure subitem in sc}.
+This is a test of ccIndexSubsubitemDef[d]\ccIndexSubsubitemDef[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[d]\ccIndexSubsubitemDef[d]{data structure}{\sc data structure subitem in sc}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[d]\ccIndexSubsubitemDef[d]{data structure}{data structure subitem}{\sc data structure subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[d]\ccIndexSubsubitemDef[d]{data structure}{\sc data structure subitem in sc}{\sc data structure subsubitem in sc}.
+\pagebreak
+This is a test of ccIndexMainItem[d]\ccIndexMainItem[d]{data structure}.
+This is a test of ccIndexMainItemBegin[d]\ccIndexMainItemBegin[d]{data structure}.
+
+This is a test of ccIndexSubitem[d]\ccIndexSubitem[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubitemBegin[d]\ccIndexSubitemBegin[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubitem[d] with subitem font\ccIndexSubitem[d]{data structure}{\ccFont data structure subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[d] with subitem font\ccIndexSubitemBegin[d]{data structure}{\bf data structure subitem in bf}.
+
+This is a test of ccIndexSubsubitem[d]\ccIndexSubsubitem[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin[d]\ccIndexSubsubitemBegin[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[d]\ccIndexSubsubitem[d]{data structure}{\ccFont data structure subitem in ccFont}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[d]\ccIndexSubsubitemBegin[d]{data structure}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[d]\ccIndexSubsubitem[d]{data structure}{data structure subitem}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[d]\ccIndexSubsubitemBegin[d]{data structure}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[d]\ccIndexSubsubitem[d]{data structure}{\ccFont data structure subitem in ccFont}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[d]\ccIndexSubsubitemBegin[d]{data structure}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[d] with subitem font\ccIndexSubitemEnd[d]{data structure}{\bf data structure subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[d]\ccIndexSubsubitemEnd[d]{data structure}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[d]\ccIndexSubsubitemEnd[d]{data structure}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[d]\ccIndexSubsubitemEnd[d]{data structure}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[d]\ccIndexSubitemEnd[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubsubitemEnd[d]\ccIndexSubsubitemEnd[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexMainItemEnd[d]\ccIndexMainItemEnd[d]{data structure}.
+
+
+Texting index with empty font\ccIndexMainItem{\ccIndexDSFont empty ds font}
+Testing index with non-empty font\ccIndexMainItem{\ccFont ccFont entry}
+Testing index with non-empty font\ccIndexMainItem{\bf bf entry}
+
+
+
+%------------------------------------------------------------------------------
+\subsection{MainItem, Subitem, Subsubitem entries}
+
+\pagebreak
+This is a test of ccIndexMainItemDef\ccIndexMainItemDef{item definition}.
+This is a test of ccIndexMainItemDef with font\ccIndexMainItemDef[C]{item definition in ccFont}.
+This is a test of ccIndexSubitemDef\ccIndexSubitemDef{item}{subitem defintion}.
+This is a test of ccIndexSubitemDef with font\ccIndexSubitemDef[C]{item}{\ccFont subitem definition in ccFont}.
+This is a test of ccIndexSubsubitemDef\ccIndexSubsubitemDef{item}{subitem}{subsubitem definition in ccFont}.
+This is a test of ccIndexSubsubitemDef with font\ccIndexSubsubitemDef{item}{subitem}{\ccFont subsubitem definition in ccFont}.
+This is a test of ccIndexSubsubitemDef with font\ccIndexSubsubitemDef{item}{subitem}{\ccFont subsubitem definition in ccFont}.
+This is a test of ccIndexSubsubitemDef with main item font\ccIndexSubsubitemDef[C]{item}{subitem}{subsubitem}.
+This is a test of ccIndexSubsubitemDef with main item and subitem font\ccIndexSubsubitemDef{\bf item in bf}{\ccFont subitem in ccFont}{subsubitem}.
+This is a test of ccIndexSubsubitemDef with main item, subitem, and subsubitem font\ccIndexSubsubitemDef{\bf item in bf}{\ccFont subitem in ccFont}{\bf subsubitem in bf}.
+\pagebreak
+Testing main item\ccIndexMainItem{main}.
+Testing first subitem\ccIndexSubitem{main}{first subitem}.
+Testing second subitem\ccIndexSubitem{main}{second subitem}.
+Testing third subitem\ccIndexSubitem{main}{thrid subitem}.
+Testing subitemSeeAlso\ccIndexSubitemSeeAlso{main}{\bf subitem}.
+Testing subitemSeeAlso\ccIndexSubitemSeeAlso{main}{\bf subitem, modified}.
+Testing subsubitemSeeAlso\ccIndexSubsubitemSeeAlso{main}{\bf subitem}{subsubitem}.
+Testing subsubitemSeeAlso\ccIndexSubsubitemSeeAlso{main}{\bf subitem}{subsubitem, modifed}.
+Testing subsubitemSeeAlso\ccIndexSubsubitemSeeAlso{main}{\bf subitem}{\ccFont subsubitem, modifed}.
+
+test with font\ccIndexMainItem{\bf bf font}.
+Test with no font at all\ccIndexMainItem{no font}.
+
+Testing index with empty font\ccIndexMainItem{\ccIndexDSFont empty ds font}
+This is a test of IndexSubsubitem\ccIndexSubsubitem{\ccFont item}{\ccFont CGAL_class1}{\ccFont class1_traits_class}.
+
+testing with ccFont\ccIndexMainItem{\ccFont with ccFont}What font?
+
+testing main item\ccIndexMainItem{no category}.
+testing subitem item\ccIndexSubitem{no category}{subitem}.
+
+
+testing subitem without font\ccIndexSubitem{main}{subitem}where is this?
+
+testing subitem with font\ccIndexSubitem{main}{\it subitem it font}where is this?
+testing subitem with main font\ccIndexSubitem{\bf main with bf font}{subitem}where is this?
+testing subitem with two fonts\ccIndexSubitem{\sc main sc font}{\it subitm it font}where is this?
+
+
+testing with font\ccIndexMainItem{\bf test with font}where is this?
+testing without font\ccIndexMainItem{test without font}where is this?
+
+
+testing CC with font\ccIndexMainItem[C]{\bf test CC with font}where is this?
+testing CC without font\ccIndexMainItem[C]{test CC without font}where is this?
+
+This is a test of ccIndexMainItem\ccIndexMainItem{item}.
+This is a test of ccIndexMainItem with font\ccIndexMainItem[C]{item in ccFont}
+This is a test of ccIndexMainItem with font\ccIndexMainItem{\bf item in bf}
+
+
+This is a test of ccIndexMainItemBegin\ccIndexMainItemBegin{item begin}.
+This is a test of ccIndexMainItemBegin with font\ccIndexMainItemBegin[C]{item begin in ccFont}
+
+\pagebreak
+
+This is a test of ccIndexMainItemEnd\ccIndexMainItemEnd{item begin}.
+This is a test of ccIndexMainItemEnd with font\ccIndexMainItemEnd[C]{item begin in ccFont}
+
+
+This is a test of ccIndexSubitem\ccIndexSubitem{item}{subitem}.
+This is a test of ccIndexSubitem with font\ccIndexSubitem[C]{item}{\ccFont subitem in ccFont}.
+
+
+This is a test of ccIndexSubitem with main item font\ccIndexSubitem{\ccFont item in ccFont}{subitem}.
+This is a test of ccIndexSubitem with main item font\ccIndexSubitem{\bf item in bf}{subitem}.
+This is a test of ccIndexSubitem with main item and subitem font\ccIndexSubitem[C]{item in ccFont}{\ccFont subitem in ccFont}.
+
+This is a test of ccIndexSubitemBegin\ccIndexSubitemBegin{item}{subitem begin}.
+This is a test of ccIndexSubitemBegin with font\ccIndexSubitemBegin[C]{item}{subitem begin in ccFont}.
+
+\pagebreak
+
+This is a test of ccIndexSubitemEnd\ccIndexSubitemEnd{item}{subitem begin}.
+This is a test of ccIndexSubitemEnd with font\ccIndexSubitemEnd[C]{item}{subitem begin in ccFont}.
+
+This is a test of ccIndexSubsubitem\ccIndexSubsubitem{item}{subitem}{subsubitem}.
+This is a test of ccIndexSubsubitem with font\ccIndexSubsubitem[C]{item}{subitem}{\ccFont subsubitem in ccFont}.
+
+This is a test of ccIndexSubsubitemBegin\ccIndexSubsubitemBegin{item}{subitem}{subsubitem begin}.
+This is a test of ccIndexSubsubitemBegin with font\ccIndexSubsubitemBegin[C]{item}{subitem}{subsubitem begin}.
+
+\pagebreak
+This is a test of ccIndexSubsubitemEnd\ccIndexSubsubitemEnd{item}{subitem}{subsubitem begin}.
+This is a test of ccIndexSubsubitemEnd with font\ccIndexSubsubitemEnd[C]{item}{subitem}{subsubitem begin}.
+
+
+
+\pagebreak
+
+
+%------------------------------------------------------------------------------
+\subsection{Concepts}
+
+%------------------------------------------------------------------------------
+\subsubsection{with modifier}
+
+%%% CONCEPTS, modified
+This is a test of ccIndexMainItemDef[c]\ccIndexMainItemDef[c]{concept, modified}.
+This is a test of ccIndexSubitemDef[c]\ccIndexSubitemDef[c]{concept, modified}{concept subitem}.
+This is a test of ccIndexSubitemDef[c] with subitem font\ccIndexSubitemDef[c]{concept, modified}{\sc concept subitem in sc}.
+This is a test of ccIndexSubsubitemDef[c]\ccIndexSubsubitemDef[c]{concept, modified}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[c]\ccIndexSubsubitemDef[c]{concept, modified}{\sc concept subitem in sc}{concept subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[c]\ccIndexSubsubitemDef[c]{concept, modified}{concept subitem}{\sc concept subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[c]\ccIndexSubsubitemDef[c]{concept, modified}{\sc concept subitem in sc}{\sc concept subsubitem in sc}.
+\pagebreak
+This is a test of ccIndexMainItem[c]\ccIndexMainItem[c]{concept, modified}.
+This is a test of ccIndexMainItemBegin[c]\ccIndexMainItemBegin[c]{concept, modified}.
+
+This is a test of ccIndexSubitem[c]\ccIndexSubitem[c]{concept, modified}{concept subitem}.
+This is a test of ccIndexSubitemBegin[c]\ccIndexSubitemBegin[c]{concept, modified}{concept subitem}.
+This is a test of ccIndexSubitem[c] with subitem font\ccIndexSubitem[c]{concept, modified}{\ccFont concept subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[c] with subitem font\ccIndexSubitemBegin[c]{concept, modified}{\bf concept subitem in bf}.
+
+This is a test of ccIndexSubsubitem[c]\ccIndexSubsubitem[c]{concept, modified}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexSubsubitemBegin[c]\ccIndexSubsubitemBegin[c]{concept, modified}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[c]\ccIndexSubsubitem[c]{concept, modified}{\ccFont concept subitem in ccFont}{concept subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[c]\ccIndexSubsubitemBegin[c]{concept, modified}{\bf concept subitem in bf}{concept subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[c]\ccIndexSubsubitem[c]{concept, modified}{concept subitem}{\ccFont concept subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[c]\ccIndexSubsubitemBegin[c]{concept, modified}{concept subitem}{\bf concept subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[c]\ccIndexSubsubitem[c]{concept, modified}{\ccFont concept subitem in ccFont}{\ccFont concept subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[c]\ccIndexSubsubitemBegin[c]{concept, modified}{\bf concept subitem in bf}{\bf concept subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[c] with subitem font\ccIndexSubitemEnd[c]{concept, modified}{\bf concept subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[c]\ccIndexSubsubitemEnd[c]{concept, modified}{\bf concept subitem in bf}{concept subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[c]\ccIndexSubsubitemEnd[c]{concept, modified}{concept subitem}{\bf concept subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[c]\ccIndexSubsubitemEnd[c]{concept, modified}{\bf concept subitem in bf}{\bf concept subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[c]\ccIndexSubitemEnd[c]{concept, modified}{concept subitem}.
+This is a test of ccIndexSubsubitemEnd[c]\ccIndexSubsubitemEnd[c]{concept, modified}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexMainItemEnd[c]\ccIndexMainItemEnd[c]{concept, modified}.
+
+%------------------------------------------------------------------------------
+\subsubsection{without modifier}
+
+%%% CONCEPTS
+This is a test of ccIndexMainItemDef[c]\ccIndexMainItemDef[c]{concept}.
+This is a test of ccIndexSubitemDef[c]\ccIndexSubitemDef[c]{concept}{concept subitem}.
+This is a test of ccIndexSubitemDef[c] with subitem font\ccIndexSubitemDef[c]{concept}{\sc concept subitem in sc}.
+This is a test of ccIndexSubsubitemDef[c]\ccIndexSubsubitemDef[c]{concept}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[c]\ccIndexSubsubitemDef[c]{concept}{\sc concept subitem in sc}{concept subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[c]\ccIndexSubsubitemDef[c]{concept}{concept subitem}{\sc concept subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[c]\ccIndexSubsubitemDef[c]{concept}{\sc concept subitem in sc}{\sc concept subsubitem in sc}.
+\pagebreak
+This is a test of ccIndexMainItem[c]\ccIndexMainItem[c]{concept}.
+This is a test of ccIndexMainItemBegin[c]\ccIndexMainItemBegin[c]{concept}.
+
+This is a test of ccIndexSubitem[c]\ccIndexSubitem[c]{concept}{concept subitem}.
+This is a test of ccIndexSubitemBegin[c]\ccIndexSubitemBegin[c]{concept}{concept subitem}.
+This is a test of ccIndexSubitem[c] with subitem font\ccIndexSubitem[c]{concept}{\ccFont concept subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[c] with subitem font\ccIndexSubitemBegin[c]{concept}{\bf concept subitem in bf}.
+
+This is a test of ccIndexSubsubitem[c]\ccIndexSubsubitem[c]{concept}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexSubsubitemBegin[c]\ccIndexSubsubitemBegin[c]{concept}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[c]\ccIndexSubsubitem[c]{concept}{\ccFont concept subitem in ccFont}{concept subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[c]\ccIndexSubsubitemBegin[c]{concept}{\bf concept subitem in bf}{concept subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[c]\ccIndexSubsubitem[c]{concept}{concept subitem}{\ccFont concept subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[c]\ccIndexSubsubitemBegin[c]{concept}{concept subitem}{\bf concept subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[c]\ccIndexSubsubitem[c]{concept}{\ccFont concept subitem in ccFont}{\ccFont concept subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[c]\ccIndexSubsubitemBegin[c]{concept}{\bf concept subitem in bf}{\bf concept subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[c]\ccIndexSubitemEnd[c]{concept}{concept subitem}.
+This is a test of ccIndexSubitemEnd[c] with subitem font\ccIndexSubitemEnd[c]{concept}{\bf concept subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[c]\ccIndexSubsubitemEnd[c]{concept}{\bf concept subitem in bf}{concept subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[c]\ccIndexSubsubitemEnd[c]{concept}{concept subitem}{\bf concept subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[c]\ccIndexSubsubitemEnd[c]{concept}{\bf concept subitem in bf}{\bf concept subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd[c]\ccIndexSubsubitemEnd[c]{concept}{concept subitem}{concept subsubitem}.
+This is a test of ccIndexMainItemEnd[c]\ccIndexMainItemEnd[c]{concept}.
+
+%%% DATA STRUCTURES
+This is a test of ccIndexMainItemDef[d]\ccIndexMainItemDef[d]{data structure}.
+This is a test of ccIndexSubitemDef[d]\ccIndexSubitemDef[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubitemDef[d] with subitem font\ccIndexSubitemDef[d]{data structure}{\sc data structure subitem in sc}.
+This is a test of ccIndexSubsubitemDef[d]\ccIndexSubsubitemDef[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[d]\ccIndexSubsubitemDef[d]{data structure}{\sc data structure subitem in sc}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[d]\ccIndexSubsubitemDef[d]{data structure}{data structure subitem}{\sc data structure subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[d]\ccIndexSubsubitemDef[d]{data structure}{\sc data structure subitem in sc}{\sc data structure subsubitem in sc}.
+\pagebreak
+This is a test of ccIndexMainItem[d]\ccIndexMainItem[d]{data structure}.
+This is a test of ccIndexMainItemBegin[d]\ccIndexMainItemBegin[d]{data structure}.
+
+This is a test of ccIndexSubitem[d]\ccIndexSubitem[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubitemBegin[d]\ccIndexSubitemBegin[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubitem[d] with subitem font\ccIndexSubitem[d]{data structure}{\ccFont data structure subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[d] with subitem font\ccIndexSubitemBegin[d]{data structure}{\bf data structure subitem in bf}.
+
+This is a test of ccIndexSubsubitem[d]\ccIndexSubsubitem[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin[d]\ccIndexSubsubitemBegin[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[d]\ccIndexSubsubitem[d]{data structure}{\ccFont data structure subitem in ccFont}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[d]\ccIndexSubsubitemBegin[d]{data structure}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[d]\ccIndexSubsubitem[d]{data structure}{data structure subitem}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[d]\ccIndexSubsubitemBegin[d]{data structure}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[d]\ccIndexSubsubitem[d]{data structure}{\ccFont data structure subitem in ccFont}{\ccFont data structure subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[d]\ccIndexSubsubitemBegin[d]{data structure}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[d] with subitem font\ccIndexSubitemEnd[d]{data structure}{\bf data structure subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[d]\ccIndexSubsubitemEnd[d]{data structure}{\bf data structure subitem in bf}{data structure subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[d]\ccIndexSubsubitemEnd[d]{data structure}{data structure subitem}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[d]\ccIndexSubsubitemEnd[d]{data structure}{\bf data structure subitem in bf}{\bf data structure subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[d]\ccIndexSubitemEnd[d]{data structure}{data structure subitem}.
+This is a test of ccIndexSubsubitemEnd[d]\ccIndexSubsubitemEnd[d]{data structure}{data structure subitem}{data structure subsubitem}.
+This is a test of ccIndexMainItemEnd[d]\ccIndexMainItemEnd[d]{data structure}.
+
+%------------------------------------------------------------------------------
+\subsection{Functionalities }
+%%% FUNCTIONALITIES, modified
+
+\subsubsection{modified}
+This is a test of ccIndexMainItemDef[f]\ccIndexMainItemDef[f]{functionality, modified}.
+This is a test of ccIndexSubitemDef[f]\ccIndexSubitemDef[f]{functionality, modified}{functionality subitem}.
+This is a test of ccIndexSubitemDef[f] with subitem font\ccIndexSubitemDef[f]{functionality, modified}{\sc functionality subitem in sc}.
+This is a test of ccIndexSubsubitemDef[f]\ccIndexSubsubitemDef[f]{functionality, modified}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[f]\ccIndexSubsubitemDef[f]{functionality, modified}{\sc functionality subitem in sc}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[f]\ccIndexSubsubitemDef[f]{functionality, modified}{functionality subitem}{\sc functionality subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[f]\ccIndexSubsubitemDef[f]{functionality, modified}{\sc functionality subitem in sc}{\sc functionality subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[f]\ccIndexMainItem[f]{functionality, modified}.
+This is a test of ccIndexMainItemBegin[f]\ccIndexMainItemBegin[f]{functionality, modified}.
+
+This is a test of ccIndexSubitem[f]\ccIndexSubitem[f]{functionality, modified}{functionality subitem}.
+This is a test of ccIndexSubitemBegin[f]\ccIndexSubitemBegin[f]{functionality, modified}{functionality subitem}.
+This is a test of ccIndexSubitem[f] with subitem font\ccIndexSubitem[f]{functionality, modified}{\ccFont functionality subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[f] with subitem font\ccIndexSubitemBegin[f]{functionality, modified}{\bf functionality subitem in bf}.
+
+This is a test of ccIndexSubsubitem[f]\ccIndexSubsubitem[f]{functionality, modified}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemBegin[f]\ccIndexSubsubitemBegin[f]{functionality, modified}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[f]\ccIndexSubsubitem[f]{functionality, modified}{\ccFont functionality subitem in ccFont}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[f]\ccIndexSubsubitemBegin[f]{functionality, modified}{\bf functionality subitem in bf}{functionality subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[f]\ccIndexSubsubitem[f]{functionality, modified}{functionality subitem}{\ccFont functionality subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[f]\ccIndexSubsubitemBegin[f]{functionality, modified}{functionality subitem}{\bf functionality subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[f]\ccIndexSubsubitem[f]{functionality, modified}{\ccFont functionality subitem in ccFont}{\ccFont functionality subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[f]\ccIndexSubsubitemBegin[f]{functionality, modified}{\bf functionality subitem in bf}{\bf functionality subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[f] with subitem font\ccIndexSubitemEnd[f]{functionality, modified}{\bf functionality subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[f]\ccIndexSubsubitemEnd[f]{functionality, modified}{\bf functionality subitem in bf}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[f]\ccIndexSubsubitemEnd[f]{functionality, modified}{functionality subitem}{\bf functionality subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[f]\ccIndexSubsubitemEnd[f]{functionality, modified}{\bf functionality subitem in bf}{\bf functionality subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[f]\ccIndexSubitemEnd[f]{functionality, modified}{functionality subitem}.
+This is a test of ccIndexSubsubitemEnd[f]\ccIndexSubsubitemEnd[f]{functionality, modified}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexMainItemEnd[f]\ccIndexMainItemEnd[f]{functionality, modified}.
+
+
+\subsubsection{not modified}
+%%% FUNCTIONALITIES
+This is a test of ccIndexMainItemDef[f]\ccIndexMainItemDef[f]{functionality}.
+This is a test of ccIndexSubitemDef[f]\ccIndexSubitemDef[f]{functionality}{functionality subitem}.
+This is a test of ccIndexSubitemDef[f] with subitem font\ccIndexSubitemDef[f]{functionality}{\sc functionality subitem in sc}.
+This is a test of ccIndexSubsubitemDef[f]\ccIndexSubsubitemDef[f]{functionality}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[f]\ccIndexSubsubitemDef[f]{functionality}{\sc functionality subitem in sc}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[f]\ccIndexSubsubitemDef[f]{functionality}{functionality subitem}{\sc functionality subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[f]\ccIndexSubsubitemDef[f]{functionality}{\sc functionality subitem in sc}{\sc functionality subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[f]\ccIndexMainItem[f]{functionality}.
+This is a test of ccIndexMainItemBegin[f]\ccIndexMainItemBegin[f]{functionality}.
+
+This is a test of ccIndexSubitem[f]\ccIndexSubitem[f]{functionality}{functionality subitem}.
+This is a test of ccIndexSubitemBegin[f]\ccIndexSubitemBegin[f]{functionality}{functionality subitem}.
+This is a test of ccIndexSubitem[f] with subitem font\ccIndexSubitem[f]{functionality}{\ccFont functionality subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[f] with subitem font\ccIndexSubitemBegin[f]{functionality}{\bf functionality subitem in bf}.
+
+This is a test of ccIndexSubsubitem[f]\ccIndexSubsubitem[f]{functionality}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemBegin[f]\ccIndexSubsubitemBegin[f]{functionality}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[f]\ccIndexSubsubitem[f]{functionality}{\ccFont functionality subitem in ccFont}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[f]\ccIndexSubsubitemBegin[f]{functionality}{\bf functionality subitem in bf}{functionality subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[f]\ccIndexSubsubitem[f]{functionality}{functionality subitem}{\ccFont functionality subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[f]\ccIndexSubsubitemBegin[f]{functionality}{functionality subitem}{\bf functionality subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[f]\ccIndexSubsubitem[f]{functionality}{\ccFont functionality subitem in ccFont}{\ccFont  functionality subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[f]\ccIndexSubsubitemBegin[f]{functionality}{\bf functionality subitem in bf}{\bf functionality subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[f] with subitem font\ccIndexSubitemEnd[f]{functionality}{\bf functionality subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[f]\ccIndexSubsubitemEnd[f]{functionality}{\bf functionality subitem in bf}{functionality subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[f]\ccIndexSubsubitemEnd[f]{functionality}{functionality subitem}{\bf functionality subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[f]\ccIndexSubsubitemEnd[f]{functionality}{\bf functionality subitem in bf}{\bf functionality subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[f]\ccIndexSubitemEnd[f]{functionality}{functionality subitem}.
+This is a test of ccIndexSubsubitemEnd[f]\ccIndexSubsubitemEnd[f]{functionality}{functionality subitem}{functionality subsubitem}.
+This is a test of ccIndexMainItemEnd[f]\ccIndexMainItemEnd[f]{functionality}.
+
+%------------------------------------------------------------------------------
+\subsection{Hints}
+
+%------------------------------------------------------------------------------
+\subsubsection{modified}
+%%% HINTS, modified
+This is a test of ccIndexMainItemDef[h]\ccIndexMainItemDef[h]{hint, modified}.
+This is a test of ccIndexSubitemDef[h]\ccIndexSubitemDef[h]{hint, modified}{hint subitem}.
+This is a test of ccIndexSubitemDef[h] with subitem font\ccIndexSubitemDef[h]{hint, modified}{\sc hint subitem in sc}.
+This is a test of ccIndexSubsubitemDef[h]\ccIndexSubsubitemDef[h]{hint, modified}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[h]\ccIndexSubsubitemDef[h]{hint, modified}{\sc hint subitem in sc}{hint subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[h]\ccIndexSubsubitemDef[h]{hint, modified}{hint subitem}{\sc hint subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[h]\ccIndexSubsubitemDef[h]{hint, modified}{\sc hint subitem in sc}{\sc hint subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[h]\ccIndexMainItem[h]{hint, modified}.
+This is a test of ccIndexMainItemBegin[h]\ccIndexMainItemBegin[h]{hint, modified}.
+
+This is a test of ccIndexSubitem[h]\ccIndexSubitem[h]{hint, modified}{hint subitem}.
+This is a test of ccIndexSubitemBegin[h]\ccIndexSubitemBegin[h]{hint, modified}{hint subitem}.
+This is a test of ccIndexSubitem[h] with subitem font\ccIndexSubitem[h]{hint, modified}{\ccFont hint subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[h] with subitem font\ccIndexSubitemBegin[h]{hint, modified}{\bf hint subitem in bf}.
+
+This is a test of ccIndexSubsubitem[h]\ccIndexSubsubitem[h]{hint, modified}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexSubsubitemBegin[h]\ccIndexSubsubitemBegin[h]{hint, modified}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[h]\ccIndexSubsubitem[h]{hint, modified}{\ccFont hint subitem in ccFont}{hint subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[h]\ccIndexSubsubitemBegin[h]{hint, modified}{\bf hint subitem in bf}{hint subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[h]\ccIndexSubsubitem[h]{hint, modified}{hint subitem}{\ccFont hint subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[h]\ccIndexSubsubitemBegin[h]{hint, modified}{hint subitem}{\bf hint subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[h]\ccIndexSubsubitem[h]{hint, modified}{\ccFont hint subitem in ccFont}{\ccFont hint subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[h]\ccIndexSubsubitemBegin[h]{hint, modified}{\bf hint subitem in bf}{\bf hint subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[h] with subitem font\ccIndexSubitemEnd[h]{hint, modified}{\bf hint subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[h]\ccIndexSubsubitemEnd[h]{hint, modified}{\bf hint subitem in bf}{hint subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[h]\ccIndexSubsubitemEnd[h]{hint, modified}{hint subitem}{\bf hint subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[h]\ccIndexSubsubitemEnd[h]{hint, modified}{\bf hint subitem in bf}{\bf hint subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[h]\ccIndexSubitemEnd[h]{hint, modified}{hint subitem}.
+This is a test of ccIndexSubsubitemEnd[h]\ccIndexSubsubitemEnd[h]{hint, modified}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexMainItemEnd[h]\ccIndexMainItemEnd[h]{hint, modified}.
+
+%------------------------------------------------------------------------------
+\subsubsection{not modified}
+
+%%% HINTS
+This is a test of ccIndexMainItemDef[h]\ccIndexMainItemDef[h]{hint}.
+This is a test of ccIndexSubitemDef[h]\ccIndexSubitemDef[h]{hint}{hint subitem}.
+This is a test of ccIndexSubitemDef[h] with subitem font\ccIndexSubitemDef[h]{hint}{\sc hint subitem in sc}.
+This is a test of ccIndexSubsubitemDef[h]\ccIndexSubsubitemDef[h]{hint}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[h]\ccIndexSubsubitemDef[h]{hint}{\sc hint subitem in sc}{hint subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[h]\ccIndexSubsubitemDef[h]{hint}{hint subitem}{\sc hint subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[h]\ccIndexSubsubitemDef[h]{hint}{\sc hint subitem in sc}{\sc hint subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[h]\ccIndexMainItem[h]{hint}.
+This is a test of ccIndexMainItemBegin[h]\ccIndexMainItemBegin[h]{hint}.
+
+This is a test of ccIndexSubitem[h]\ccIndexSubitem[h]{hint}{hint subitem}.
+This is a test of ccIndexSubitemBegin[h]\ccIndexSubitemBegin[h]{hint}{hint subitem}.
+This is a test of ccIndexSubitem[h] with subitem font\ccIndexSubitem[h]{hint}{\ccFont hint subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[h] with subitem font\ccIndexSubitemBegin[h]{hint}{\bf hint subitem in bf}.
+
+This is a test of ccIndexSubsubitem[h]\ccIndexSubsubitem[h]{hint}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexSubsubitemBegin[h]\ccIndexSubsubitemBegin[h]{hint}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[h]\ccIndexSubsubitem[h]{hint}{\ccFont hint subitem in ccFont}{hint subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[h]\ccIndexSubsubitemBegin[h]{hint}{\bf hint subitem in bf}{hint subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[h]\ccIndexSubsubitem[h]{hint}{hint subitem}{\ccFont hint subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[h]\ccIndexSubsubitemBegin[h]{hint}{hint subitem}{\bf hint subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[h]\ccIndexSubsubitem[h]{hint}{\ccFont hint subitem in ccFont}{\ccFont hint subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[h]\ccIndexSubsubitemBegin[h]{hint}{\bf hint subitem in bf}{\bf hint subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[h] with subitem font\ccIndexSubitemEnd[h]{hint}{\bf hint subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[h]\ccIndexSubsubitemEnd[h]{hint}{\bf hint subitem in bf}{hint subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[h]\ccIndexSubsubitemEnd[h]{hint}{hint subitem}{\bf hint subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[h]\ccIndexSubsubitemEnd[h]{hint}{\bf hint subitem in bf}{\bf hint subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[h]\ccIndexSubitemEnd[h]{hint}{hint subitem}.
+This is a test of ccIndexSubsubitemEnd[h]\ccIndexSubsubitemEnd[h]{hint}{hint subitem}{hint subsubitem}.
+This is a test of ccIndexMainItemEnd[h]\ccIndexMainItemEnd[h]{hint}.
+
+This is a test of ccIndexHintAsSubitem\ccIndexHintAsSubitem{default}{hint}.
+This is a test of ccIndexHintAsSubitem[C]\ccIndexHintAsSubitem[C]{class}{hint}.
+This is a test of ccIndexHintAsSubitem[d]\ccIndexHintAsSubitem[d]{data structure}{hint}.
+This is a test of ccIndexHintAsSubitem[f]\ccIndexHintAsSubitem[f]{functionality}{hint}.
+This is a test of ccIndexHintAsSubitem[h]\ccIndexHintAsSubitem[h]{hint}{hint}.
+This is a test of ccIndexHintAsSubitem[l]\ccIndexHintAsSubitem[l]{library}{hint}.
+This is a test of ccIndexHintAsSubitem[c]\ccIndexHintAsSubitem[c]{concept}{hint}.
+This is a test of ccIndexHintAsSubitem[p]\ccIndexHintAsSubitem[p]{package}{hint}.
+
+This is a test of ccIndexHintAsSubsubitem\ccIndexHintAsSubsubitem{default}{hint}{hint subitem}.
+This is a test of ccIndexHintAsSubsubitem[C]\ccIndexHintAsSubsubitem[C]{class}{\ccIndexHintFont  hint}{hint subitem}.
+This is a test of ccIndexHintAsSubsubitem[d]\ccIndexHintAsSubsubitem[d]{data structure}{\ccIndexHintFont hint}{hint subitem}.
+This is a test of ccIndexHintAsSubsubitem[f]\ccIndexHintAsSubsubitem[f]{functionality}{\ccIndexHintFont hint}{hint subitem}.
+This is a test of ccIndexHintAsSubsubitem[h]\ccIndexHintAsSubsubitem[h]{hint}{\ccIndexHintFont hint}{hint subitem}.
+This is a test of ccIndexHintAsSubsubitem[l]\ccIndexHintAsSubsubitem[l]{library}{\ccIndexHintFont hint}{hint subitem}.
+This is a test of ccIndexHintAsSubsubitem[c]\ccIndexHintAsSubsubitem[c]{concept}{\ccIndexHintFont hint}{hint subitem}.
+This is a test of ccIndexHintAsSubsubitem[p]\ccIndexHintAsSubsubitem[p]{package}{\ccIndexHintFont hint}{hint subitem}.
+
+%------------------------------------------------------------------------------
+\subsection{libraries}
+
+%%% LIBRARIES
+This is a test of ccIndexMainItemDef[l]\ccIndexMainItemDef[l]{library}.
+This is a test of ccIndexSubitemDef[l]\ccIndexSubitemDef[l]{library}{library subitem}.
+This is a test of ccIndexSubitemDef[l] with subitem font\ccIndexSubitemDef[l]{library}{\sc library subitem in sc}.
+This is a test of ccIndexSubsubitemDef[l]\ccIndexSubsubitemDef[l]{library}{library subitem}{library subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[l]\ccIndexSubsubitemDef[l]{library}{\sc library subitem in sc}{library subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[l]\ccIndexSubsubitemDef[l]{library}{library subitem}{\sc library subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[l]\ccIndexSubsubitemDef[l]{library}{\sc library subitem in sc}{\sc library subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[l]\ccIndexMainItem[l]{library}.
+This is a test of ccIndexMainItemBegin[l]\ccIndexMainItemBegin[l]{library}.
+
+This is a test of ccIndexSubitem[l]\ccIndexSubitem[l]{library}{library subitem}.
+This is a test of ccIndexSubitemBegin[l]\ccIndexSubitemBegin[l]{library}{library subitem}.
+This is a test of ccIndexSubitem[l] with subitem font\ccIndexSubitem[l]{library}{\ccFont library subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[l] with subitem font\ccIndexSubitemBegin[l]{library}{\bf library subitem in bf}.
+
+This is a test of ccIndexSubsubitem[l]\ccIndexSubsubitem[l]{library}{library subitem}{library subsubitem}.
+This is a test of ccIndexSubsubitemBegin[l]\ccIndexSubsubitemBegin[l]{library}{library subitem}{library subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[l]\ccIndexSubsubitem[l]{library}{\ccFont library subitem in ccFont}{library subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[l]\ccIndexSubsubitemBegin[l]{library}{\bf library subitem in bf}{library subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[l]\ccIndexSubsubitem[l]{library}{library subitem}{\ccFont library subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[l]\ccIndexSubsubitemBegin[l]{library}{library subitem}{\bf library subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[l]\ccIndexSubsubitem[l]{library}{\ccFont library subitem in ccFont}{\ccFont library subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[l]\ccIndexSubsubitemBegin[l]{library}{\bf library subitem in bf}{\bf library subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[l] with subitem font\ccIndexSubitemEnd[l]{library}{\bf library subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[l]\ccIndexSubsubitemEnd[l]{library}{\bf library subitem in bf}{library subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[l]\ccIndexSubsubitemEnd[l]{library}{library subitem}{\bf library subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[l]\ccIndexSubsubitemEnd[l]{library}{\bf library subitem in bf}{\bf library subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[l]\ccIndexSubitemEnd[l]{library}{library subitem}.
+This is a test of ccIndexSubsubitemEnd[l]\ccIndexSubsubitemEnd[l]{library}{library subitem}{library subsubitem}.
+This is a test of ccIndexMainItemEnd[l]\ccIndexMainItemEnd[l]{library}.
+
+testing library with font\ccIndexMainItem[l]{\sc test library with font}where is this?
+testing library without font\ccIndexMainItem[l]{test library without font}where is this?
+testing main item with modifier\ccIndexMainItem{library, modified}.
+testing main library item\ccIndexMainItem[l]{library without font}.
+testing main library item with font\ccIndexMainItem[l]{\sc library with font}.
+
+%------------------------------------------------------------------------------
+\subsection{classes}
+%%% CLASS
+This is a test of ccIndexMainItemDef[C]\ccIndexMainItemDef[C]{class}.
+This is a test of ccIndexSubitemDef[C]\ccIndexSubitemDef[C]{class}{class subitem}.
+This is a test of ccIndexSubitemDef[C] with subitem font\ccIndexSubitemDef[C]{class}{\sc class subitem in sc}.
+This is a test of ccIndexSubsubitemDef[C]\ccIndexSubsubitem[C]{class}{class subitem}{class subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[C]\ccIndexSubsubitemDef[C]{class}{\sc class subitem in sc}{class subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[C]\ccIndexSubsubitemDef[C]{class}{class subitem}{\sc class subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[C]\ccIndexSubsubitemDef[C]{class}{\sc class subitem in sc}{\sc class subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[C]\ccIndexMainItem[C]{class}.
+This is a test of ccIndexMainItemBegin[C]\ccIndexMainItemBegin[C]{class}.
+
+This is a test of ccIndexSubitem[C]\ccIndexSubitem[C]{class}{class subitem}.
+This is a test of ccIndexSubitemBegin[C]\ccIndexSubitemBegin[C]{class}{class subitem}.
+This is a test of ccIndexSubitem[C] with subitem font\ccIndexSubitem[C]{class}{\ccFont class subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[C] with subitem font\ccIndexSubitemBegin[C]{class}{\bf class subitem in bf}.
+
+This is a test of ccIndexSubsubitem[C]\ccIndexSubsubitem[C]{class}{class subitem}{class subsubitem}.
+This is a test of ccIndexSubsubitemBegin[C]\ccIndexSubsubitemBegin[C]{class}{class subitem}{class subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[C]\ccIndexSubsubitem[C]{class}{\ccFont class subitem in ccFont}{class subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[C]\ccIndexSubsubitemBegin[C]{class}{\bf class subitem in bf}{class subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[C]\ccIndexSubsubitem[C]{class}{class subitem}{\ccFont class subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[C]\ccIndexSubsubitemBegin[C]{class}{class subitem}{\bf class subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[C]\ccIndexSubsubitem[C]{class}{\ccFont class subitem in ccFont}{\ccFont class subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[C]\ccIndexSubsubitemBegin[C]{class}{\bf class subitem in bf}{\bf class subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[C] with subitem font\ccIndexSubitemEnd[C]{class}{\bf class subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[C]\ccIndexSubsubitemEnd[C]{class}{\bf class subitem in bf}{class subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[C]\ccIndexSubsubitemEnd[C]{class}{class subitem}{\bf class subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[C]\ccIndexSubsubitemEnd[C]{class}{\bf class subitem in bf}{\bf class subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[C]\ccIndexSubitemEnd[C]{class}{class subitem}.
+This is a test of ccIndexSubsubitemEnd[C]\ccIndexSubsubitemEnd[C]{class}{class subitem}{class subsubitem}.
+This is a test of ccIndexMainItemEnd[C]\ccIndexMainItemEnd[C]{class}.
+
+%------------------------------------------------------------------------------
+\subsection{packages}
+%%% PACKAGE
+This is a test of ccIndexMainItemDef[p]\ccIndexMainItemDef[p]{package}.
+This is a test of ccIndexSubitemDef[p]\ccIndexSubitemDef[p]{package}{package subitem}.
+This is a test of ccIndexSubitemDef[p] with subitem font\ccIndexSubitemDef[p]{package}{\sc package subitem in sc}.
+This is a test of ccIndexSubsubitemDef[p]\ccIndexSubsubitemDef[p]{package}{package subitem}{package subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[p]\ccIndexSubsubitemDef[p]{package}{\sc package subitem in sc}{package subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[p]\ccIndexSubsubitemDef[p]{package}{package subitem}{\sc package subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[p]\ccIndexSubsubitemDef[p]{package}{\sc package subitem in sc}{\sc package subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[p]\ccIndexMainItem[p]{package}.
+This is a test of ccIndexMainItemBegin[p]\ccIndexMainItemBegin[p]{package}.
+
+This is a test of ccIndexSubitem[p]\ccIndexSubitem[p]{package}{package subitem}.
+This is a test of ccIndexSubitemBegin[p]\ccIndexSubitemBegin[p]{package}{package subitem}.
+This is a test of ccIndexSubitem[p] with subitem font\ccIndexSubitem[p]{package}{\ccFont package subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[p] with subitem font\ccIndexSubitemBegin[p]{package}{\bf package subitem in bf}.
+
+This is a test of ccIndexSubsubitem[p]\ccIndexSubsubitem[p]{package}{package subitem}{package subsubitem}.
+This is a test of ccIndexSubsubitemBegin[p]\ccIndexSubsubitemBegin[p]{package}{package subitem}{package subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[p]\ccIndexSubsubitem[p]{package}{\ccFont package subitem in ccFont}{package subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[p]\ccIndexSubsubitemBegin[p]{package}{\bf package subitem in bf}{package subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[p]\ccIndexSubsubitem[p]{package}{package subitem}{\ccFont package subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[p]\ccIndexSubsubitemBegin[p]{package}{package subitem}{\bf package subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[p]\ccIndexSubsubitem[p]{package}{\ccFont package subitem in ccFont}{\ccFont package subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[p]\ccIndexSubsubitemBegin[p]{package}{\bf package subitem in bf}{\bf package subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[p] with subitem font\ccIndexSubitemEnd[p]{package}{\bf package subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[p]\ccIndexSubsubitemEnd[p]{package}{\bf package subitem in bf}{package subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[p]\ccIndexSubsubitemEnd[p]{package}{package subitem}{\bf package subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[p]\ccIndexSubsubitemEnd[p]{package}{\bf package subitem in bf}{\bf package subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[p]\ccIndexSubitemEnd[p]{package}{package subitem}.
+This is a test of ccIndexSubsubitemEnd[p]\ccIndexSubsubitemEnd[p]{package}{package subitem}{package subsubitem}.
+This is a test of ccIndexMainItemEnd[p]\ccIndexMainItemEnd[p]{package}.
+
+%------------------------------------------------------------------------------
+\subsection{terms}
+\subsubsection{modified}
+%%% TERM, modified
+This is a test of ccIndexMainItemDef[t]\ccIndexMainItemDef[t]{term, modified}.
+This is a test of ccIndexSubitemDef[t]\ccIndexSubitemDef[t]{term, modified}{term subitem}.
+This is a test of ccIndexSubitemDef[t] with subitem font\ccIndexSubitemDef[t]{term, modified}{\sc term subitem in sc}.
+This is a test of ccIndexSubsubitemDef[t]\ccIndexSubsubitemDef[t]{term, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[t]\ccIndexSubsubitemDef[t]{term, modified}{\sc term subitem in sc}{term subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[t]\ccIndexSubsubitemDef[t]{term, modified}{term subitem}{\sc term subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[t]\ccIndexSubsubitemDef[t]{term, modified}{\sc term subitem in sc}{\sc term subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[t]\ccIndexMainItem[t]{term, modified}.
+This is a test of ccIndexMainItemBegin[t]\ccIndexMainItemBegin[t]{term, modified}.
+
+This is a test of ccIndexSubitem[t]\ccIndexSubitem[t]{term, modified}{term subitem}.
+This is a test of ccIndexSubitemBegin[t]\ccIndexSubitemBegin[t]{term, modified}{term subitem}.
+This is a test of ccIndexSubitem[t] with subitem font\ccIndexSubitem[t]{term, modified}{\ccFont term subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[t] with subitem font\ccIndexSubitemBegin[t]{term, modified}{\bf term subitem in bf}.
+
+This is a test of ccIndexSubsubitem[t]\ccIndexSubsubitem[t]{term, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitemBegin[t]\ccIndexSubsubitemBegin[t]{term, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[t]\ccIndexSubsubitem[t]{term, modified}{\ccFont term subitem in ccFont}{term subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[t]\ccIndexSubsubitemBegin[t]{term, modified}{\bf term subitem in bf}{term subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[t]\ccIndexSubsubitem[t]{term, modified}{term subitem}{\ccFont term subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[t]\ccIndexSubsubitemBegin[t]{term, modified}{term subitem}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[t]\ccIndexSubsubitem[t]{term, modified}{\ccFont term subitem in ccFont}{\ccFont term subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[t]\ccIndexSubsubitemBegin[t]{term, modified}{\bf term subitem in bf}{\bf term subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[t] with subitem font\ccIndexSubitemEnd[t]{term, modified}{\bf term subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[t]\ccIndexSubsubitemEnd[t]{term, modified}{\bf term subitem in bf}{term subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[t]\ccIndexSubsubitemEnd[t]{term, modified}{term subitem}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[t]\ccIndexSubsubitemEnd[t]{term, modified}{\bf term subitem in bf}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[t]\ccIndexSubitemEnd[t]{term, modified}{term subitem}.
+This is a test of ccIndexSubsubitemEnd[t]\ccIndexSubsubitemEnd[t]{term, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexMainItemEnd[t]\ccIndexMainItemEnd[t]{term, modified}.
+
+%%% TERM
+%------------------------------------------------------------------------------
+\subsubsection{not modified}
+This is a test of ccIndexMainItemDef[t]\ccIndexMainItemDef[t]{term}.
+This is a test of ccIndexSubitemDef[t]\ccIndexSubitemDef[t]{term}{term subitem}.
+This is a test of ccIndexSubitemDef[t] with subitem font\ccIndexSubitemDef[t]{term}{\sc term subitem in sc}.
+This is a test of ccIndexSubsubitemDef[t]\ccIndexSubsubitemDef[t]{term}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font[t]\ccIndexSubsubitemDef[t]{term}{\sc term subitem in sc}{term subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font[t]\ccIndexSubsubitemDef[t]{term}{term subitem}{\sc term subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts[t]\ccIndexSubsubitemDef[t]{term}{\sc term subitem in sc}{\sc term subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem[t]\ccIndexMainItem[t]{term}.
+This is a test of ccIndexMainItemBegin[t]\ccIndexMainItemBegin[t]{term}.
+
+This is a test of ccIndexSubitem[t]\ccIndexSubitem[t]{term}{term subitem}.
+This is a test of ccIndexSubitemBegin[t]\ccIndexSubitemBegin[t]{term}{term subitem}.
+This is a test of ccIndexSubitem[t] with subitem font\ccIndexSubitem[t]{term}{\ccFont term subitem in ccFont}.
+This is a test of ccIndexSubitemBegin[t] with subitem font\ccIndexSubitemBegin[t]{term}{\bf term subitem in bf}.
+
+This is a test of ccIndexSubsubitem[t]\ccIndexSubsubitem[t]{term}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitemBegin[t]\ccIndexSubsubitemBegin[t]{term}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font[t]\ccIndexSubsubitem[t]{term}{\ccFont term subitem in ccFont}{term subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font[t]\ccIndexSubsubitemBegin[t]{term}{\bf term subitem in bf}{term subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font[t]\ccIndexSubsubitem[t]{term}{term subitem}{\ccFont term subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font[t]\ccIndexSubsubitemBegin[t]{term}{term subitem}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts[t]\ccIndexSubsubitem[t]{term}{\ccFont term subitem in ccFont}{\ccFont term subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts[t]\ccIndexSubsubitemBegin[t]{term}{\bf term subitem in bf}{\bf term subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd[t] with subitem font\ccIndexSubitemEnd[t]{term}{\bf term subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font[t]\ccIndexSubsubitemEnd[t]{term}{\bf term subitem in bf}{term subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font[t]\ccIndexSubsubitemEnd[t]{term}{term subitem}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts[t]\ccIndexSubsubitemEnd[t]{term}{\bf term subitem in bf}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubitemEnd[t]\ccIndexSubitemEnd[t]{term}{term subitem}.
+This is a test of ccIndexSubsubitemEnd[t]\ccIndexSubsubitemEnd[t]{term}{term subitem}{term subsubitem}.
+This is a test of ccIndexMainItemEnd[t]\ccIndexMainItemEnd[t]{term}.
+
+%------------------------------------------------------------------------------
+\subsection{unclassified }
+\subsubsection{modified}
+%%% UNCLASSIFIED, modified
+This is a test of ccIndexMainItemDef\ccIndexMainItemDef{item, modified}.
+This is a test of ccIndexSubitemDef\ccIndexSubitemDef{item, modified}{term subitem}.
+This is a test of ccIndexSubitemDef with subitem font\ccIndexSubitemDef{item, modified}{\sc term subitem in sc}.
+This is a test of ccIndexSubsubitemDef\ccIndexSubsubitemDef{item, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitemDef with subitem font\ccIndexSubsubitemDef{item, modified}{\sc term subitem in sc}{term subsubitem}.
+This is a test of ccIndexSubsubitemDef with subsubitem font\ccIndexSubsubitemDef{item, modified}{term subitem}{\sc term subsubitem in sc}.
+This is a test of ccIndexSubsubitemDef with subitem and subsubitem fonts\ccIndexSubsubitemDef{item, modified}{\sc term subitem in sc}{\sc term subsubitem in sc}.
+
+\pagebreak
+
+This is a test of ccIndexMainItem\ccIndexMainItem{item, modified}.
+This is a test of ccIndexMainItemBegin\ccIndexMainItemBegin{item, modified}.
+
+This is a test of ccIndexSubitem\ccIndexSubitem{item, modified}{term subitem}.
+This is a test of ccIndexSubitemBegin\ccIndexSubitemBegin{item, modified}{term subitem}.
+This is a test of ccIndexSubitem with subitem font\ccIndexSubitem{item, modified}{\ccFont term subitem in ccFont}.
+This is a test of ccIndexSubitemBegin with subitem font\ccIndexSubitemBegin{item, modified}{\bf term subitem in bf}.
+
+This is a test of ccIndexSubsubitem\ccIndexSubsubitem{item, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitemBegin\ccIndexSubsubitemBegin{item, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexSubsubitem with subitem font\ccIndexSubsubitem{item, modified}{\ccFont term subitem in ccFont}{term subsubitem}.
+This is a test of ccIndexSubsubitemBegin with subitem font\ccIndexSubsubitemBegin{item, modified}{\bf term subitem in bf}{term subsubitem}.
+This is a test of ccIndexSubsubitem with subsubitem font\ccIndexSubsubitem{item, modified}{term subitem}{\ccFont term subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subsubitem font\ccIndexSubsubitemBegin{item, modified}{term subitem}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubsubitem with subitem and subsubitem fonts\ccIndexSubsubitem{item, modified}{\ccFont term subitem in ccFont}{\ccFont term subsubitem in ccFont}.
+This is a test of ccIndexSubsubitemBegin with subitem and subsubitem fonts\ccIndexSubsubitemBegin{item, modified}{\bf term subitem in bf}{\bf term subsubitem in bf}.
+\pagebreak
+This is a test of ccIndexSubitemEnd with subitem font\ccIndexSubitemEnd{item, modified}{\bf term subitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem font\ccIndexSubsubitemEnd{item, modified}{\bf term subitem in bf}{term subsubitem}.
+This is a test of ccIndexSubsubitemENd with subsubitem font\ccIndexSubsubitemEnd{item, modified}{term subitem}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubsubitemEnd with subitem and subsubitem fonts\ccIndexSubsubitemEnd{item, modified}{\bf term subitem in bf}{\bf term subsubitem in bf}.
+This is a test of ccIndexSubitemEnd\ccIndexSubitemEnd{item, modified}{term subitem}.
+This is a test of ccIndexSubsubitemEnd\ccIndexSubsubitemEnd{item, modified}{term subitem}{term subsubitem}.
+This is a test of ccIndexMainItemEnd\ccIndexMainItemEnd{item, modified}.
+
+\section{ccIndexClass}
+
+\begin{ccIndexClass}{CGAL_class_name}
+This is a test of ccIndexClassCreation\ccIndexClassCreation.
+This is a test of ccIndexClassDefault\ccIndexClassDefault.
+This is a test of ccIndexMemberFunctionsBegin
+\begin{ccIndexMemberFunctions}
+This is a test of ccIndexMemberFunctionGroup\ccIndexMemberFunctionGroup{group2}.
+This is a test of ccIndexMemberFunctionsEnd
+\end{ccIndexMemberFunctions}
+This is a test of ccIndexNestedClasses\ccIndexNestedClasses.
+This is a test of ccIndexRequirements\ccIndexRequirements.
+
+This is a test of ccIndexAssertionFlag\ccIndexAssertionFlag[class package name].
+
+This is a test of ccIndexDesign\ccIndexDesign.
+
+This is a test of ccIndexGlobalFunctionsBegin
+\begin{ccIndexGlobalFunctions}
+
+This is a test of ccIndexGlobalFunctionGroup\ccIndexGlobalFunctionGroup{group1}.
+
+\pagebreak
+
+This is a test of ccIndexGlobalFunctionsEnd
+\end{ccIndexGlobalFunctions}.
+
+This is a test of ccIndexImplmentation\ccIndexImplementation.
+\end{ccIndexClass}
+
+\section{Traits class}
+\ccIndexTraitsClassBegin{CGAL_class_name}{Class1, Class2}{package1}
+This is a test of ccIndexTraitsClassBegin
+
+This is a test of ccIndexTraitsClassDefault\ccIndexTraitsClassDefault.
+
+This is a test of ccIndexTraitsClassEnd
+\ccIndexTraitsClassEnd
+
+\section{ccPackage}
+
+\begin{ccPackage}{my package}
+This is a test of ccIndexDesign\ccIndexDesign%
+
+\begin{ccIndexGlobalFunctions}
+This is a test of ccIndexGlobalFunctionsBegin
+
+This is a test of ccIndexGlobalFunctionGroup\ccIndexGlobalFunctionGroup{group1}.
+
+This is a test of ccIndexGlobalFunctionsEnd[p]
+\end{ccIndexGlobalFunctions}
+
+This is a test of ccIndexRequirements\ccIndexRequirements.
+
+This is a test of ccIndexGlobalFunctionGroup\ccIndexGlobalFunctionGroup{group3}.
+
+This is a test of ccIndexImplementation\ccIndexImplementation.
+
+This is a test of ccIndexAssertionFlag\ccIndexAssertionFlag.
+
+\end{ccPackage}
+
+\section{package traits class}
+\ccIndexTraitsClassBegin{package_traits_class}{}{package}
+
+This is a test of ccIndexTraitsClassDefault\ccIndexTraitsClassDefault{ccClass}.
+
+\pagebreak
+
+\ccIndexTraitsClassEnd
+
+\section{testing for getting rid of leading and trailing spaces}
+
+test with leading space\ccIndexMainItem{ test}
+test with leading space\ccIndexSubitem{test}{ subitem}
+test without\ccIndexSubitem{test}{subitem, modifier}
+test without\ccIndexSubitem{test}{subitem,    modifier}
+\pagebreak[4]
+test with leading spaces\ccIndexMainItem{  test}
+test with leading spaces\ccIndexSubitem{test}{  subitem}
+\pagebreak[4]
+test with trailing space\ccIndexMainItem{test }
+test with trailing space\ccIndexSubitem{test}{subitem }
+\pagebreak[4]
+test with trailing spaces\ccIndexMainItem{test }
+test with trailing spaces\ccIndexSubitem{test}{subitem  }
+\pagebreak[4]
+test with leading and trailing space\ccIndexMainItem{ test }
+test with leading and trailing space\ccIndexSubitem{test}{ subitem }
+\pagebreak[4]
+test with leading and trailing spaces\ccIndexMainItem{  test  }
+test with leading and trailing spaces\ccIndexSubitem{test}{  subitem  }
+
+
+%testing testing\removeTrailingSpaces{without}
+%\def\word{word with  lots of spaces  in the middle too    }
+%testing testing\removeTrailingSpaces{with }
+%testing testing\removeTrailingSpaces{\word}
+%\def\wordwithout{nospaceshere}
+%testing testing\removeTrailingSpaces{\wordwithout}
+
+\ccIndexingOff
+%------------------------------------------------------------------------------
+\section{Text with commands}
+
+testing, testing\ccIndexMainItem{\leda}%
+testing, testing\ccIndexMainItem{\stl}%
+testing, testing\ccIndexMainItem{\cgal}%
+
+testing, testing\ccIndexMainItem{no font}%
+testing, testing\ccIndexMainItem{\bf yes font}%
+testing, testing\ccIndexMainItem{==}%
+
+\newcommand{\myText}{this command {\bf has} an interior command}%
+\newcommand{\myOtherText}{\bf this command has NO interior command}%
+\newcommand{\myNoCommandText}{NO interior command}%
+
+try this\ccIndexSubitem{main}{my \leda subitem}where is this
+testing1\ccIndexMainItem{nothing \leda\ special, modified}where is this
+testing2\ccIndexMainItem{\bf special}where is this
+testing3\ccIndexMainItem{special {\bf font}}where is this
+testing4\ccIndexMainItem{\it special {\bf font}}where is this
+testing5\ccIndexMainItem{\myText}where is this
+testing6\ccIndexMainItem{\myOtherText}where is this
+testing7\ccIndexMainItem{\bf this command has NO interior command}where is this
+testing8\ccIndexMainItem{\myNoCommandText}where is this
+
+\ccIndexingOn
+% ----------------------------------------------------------------------
+\section{The ccRef... macros}
+
+\begin{ccRefClass}[RefClass::]{Circulator_from_container<C>}
+\end{ccRefClass}
+
+\begin{ccRefClass}{Circulator_from_container_no_ref<C>}
+
+This is a ref class and should produce an index entry without the template
+parameter...
+
+\ccCreationVariable{c}
+creation\ccIndexClassCreation
+default\ccIndexClassDefault
+member functions\begin{ccIndexMemberFunctions}
+
+\ccMethod{X_curve &curve();}{return the curve
+          that this edge represents.}
+\ccIndexMemberFunctionGroup{output}
+\end{ccIndexMemberFunctions}
+
+nested classes\ccIndexNestedClasses
+types\ccIndexClassTypes
+\pagebreak
+\end{ccRefClass}
+
+\begin{ccRefConcept}{Concept}
+A reference concept is talked about here...
+
+The class name should not appear as an argument in this constructor
+
+\ccCreationVariable{x}
+\ccCreation
+\ccConstructor{Concept(Concept& c);}{copy constructor}
+
+\ccOperations
+
+\ccMethod{C operator=(C c);}{Concept name should appear in the concept font
+                          in the index}
+
+\ccMethod{void foo(C c);}{Concept name should appear in the concept font
+                     in the index}
+\pagebreak
+\end{ccRefConcept}
+
+\begin{ccRefConcept}[RefClass::]{ConceptWithRef}
+A reference concept is talked about here...
+\pagebreak
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{Concept_name}
+A reference concept with an underscore in the name is talked about here...
+\pagebreak
+\end{ccRefConcept}
+
+\begin{ccRefConcept}[RefClass::]{Concept_name_with_ref}
+A reference concept with an underscore in the name is talked about here...
+\pagebreak
+\end{ccRefConcept}
+
+\begin{ccRefEnum}[RefClass::]{Enum_with_ref}
+A reference enumeration is talked about here...
+\pagebreak
+\end{ccRefEnum}
+
+\begin{ccRefEnum}{Enum}
+A reference enumeration is talked about here...
+\pagebreak
+\end{ccRefEnum}
+
+\begin{ccRefFunction}[RefClass::]{Function_with_ref}
+A reference function is talked about here...
+\pagebreak
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{Function}
+A reference function is talked about here...
+\pagebreak
+\end{ccRefFunction}
+
+\begin{ccRefVariable}[RefClass::]{Variable_with_ref}
+A reference variable is talked about here...
+\pagebreak
+\end{ccRefVariable}
+
+\begin{ccRefVariable}{Variable}
+A reference variable is talked about here...
+\pagebreak
+\end{ccRefVariable}
+
+\begin{ccRefMacro}[RefClass::]{Macro_with_ref}
+A reference macro is talked about here...
+\pagebreak
+\end{ccRefMacro}
+
+\begin{ccRefMacro}{Macro}
+A reference macro is talked about here...
+\pagebreak
+\end{ccRefMacro}
+
+
+% ----------------------------------------------------------------------
+
+\printindex
+\end{document}
