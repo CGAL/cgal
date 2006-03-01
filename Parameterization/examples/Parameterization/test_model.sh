@@ -14,6 +14,8 @@ echo "                                -"
 echo "                                -"
 ./test.sh authalic square taucs obj "$1"
 echo "                                -"
+./test.sh lscm 2pts opennl obj "$1"
+echo "                                -"
 ./test.sh lscm 2pts taucs eps "$1"
 
 echo "                    ************************"
