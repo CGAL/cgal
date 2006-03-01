@@ -627,33 +627,6 @@ Manual_tools/doc_tex/Manual_tools/tools_overview.eps -text
 Manual_tools/doc_tex/Manual_tools/tools_overview.gif -text svneol=unset#unset
 Manual_tools/doc_tex/Manual_tools/vertical_struct.eps -text
 Manual_tools/doc_tex/Manual_tools/vertical_struct.gif -text svneol=unset#unset
-Manual_tools/format/eps_tabs/cc_Class.eps -text
-Manual_tools/format/eps_tabs/cc_Class.pdf -text svneol=unset#unset
-Manual_tools/format/eps_tabs/cc_Concept.eps -text
-Manual_tools/format/eps_tabs/cc_Concept.pdf -text
-Manual_tools/format/eps_tabs/cc_Constant.eps -text
-Manual_tools/format/eps_tabs/cc_Constant.pdf -text
-Manual_tools/format/eps_tabs/cc_Enum.eps -text
-Manual_tools/format/eps_tabs/cc_Enum.pdf -text svneol=unset#unset
-Manual_tools/format/eps_tabs/cc_Function.eps -text
-Manual_tools/format/eps_tabs/cc_Function.pdf -text
-Manual_tools/format/eps_tabs/cc_FunctionObjectClass.eps -text
-Manual_tools/format/eps_tabs/cc_FunctionObjectClass.pdf -text
-Manual_tools/format/eps_tabs/cc_FunctionObjectConcept.eps -text
-Manual_tools/format/eps_tabs/cc_FunctionObjectConcept.pdf -text
-Manual_tools/format/eps_tabs/cc_Macro.eps -text
-Manual_tools/format/eps_tabs/cc_Macro.pdf -text
-Manual_tools/format/eps_tabs/cc_Variable.eps -text
-Manual_tools/format/eps_tabs/cc_Variable.pdf -text
-Manual_tools/format/eps_tabs_grey/cc_Class.eps -text
-Manual_tools/format/eps_tabs_grey/cc_Concept.eps -text
-Manual_tools/format/eps_tabs_grey/cc_Constant.eps -text
-Manual_tools/format/eps_tabs_grey/cc_Enum.eps -text
-Manual_tools/format/eps_tabs_grey/cc_Function.eps -text
-Manual_tools/format/eps_tabs_grey/cc_FunctionObjectClass.eps -text
-Manual_tools/format/eps_tabs_grey/cc_FunctionObjectConcept.eps -text
-Manual_tools/format/eps_tabs_grey/cc_Macro.eps -text
-Manual_tools/format/eps_tabs_grey/cc_Variable.eps -text
 Manual_tools/gif_makers/cc_LaTeX.gif -text svneol=unset#unset
 Manual_tools/gif_makers/cc_LaTeXe.gif -text svneol=unset#unset
 Manual_tools/gif_makers/cc_TeX.gif -text svneol=unset#unset
@@ -668,6 +641,7 @@ Manual_tools/gif_makers/old_gifs/cc_Macro.gif -text svneol=unset#unset
 Manual_tools/gif_makers/old_gifs/cc_Variable.gif -text svneol=unset#unset
 Manual_tools/gif_makers/old_gifs/cc_advanced_begin.gif -text svneol=unset#unset
 Manual_tools/gif_makers/old_gifs/cc_advanced_end.gif -text svneol=unset#unset
+Manual_tools/install.config -text
 Manual_tools/src/latex_converter_config/gif/cc_Box.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_Class.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_Concept.gif -text svneol=unset#unset

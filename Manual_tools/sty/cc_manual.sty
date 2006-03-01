@@ -627,8 +627,9 @@
 %   #2  the RCS entry
 \def\RCSdef{\begingroup\catcode`\$=12 \RCSdefSet}
 { \catcode`\$=12
-    \gdef\RCSdefSetSpace #1$Id${\gdef#1{Revision: #3}}%
-    \gdef\RCSdefSetNonSpace #1$Id: #2 #3 #4${\gdef#1{Revision: #3}}%
+    % #1=macro name #2=Id #3=filename #4=revision nr. #5 rest
+    \gdef\RCSdefSetSpace #1$#2: #3 #4 #5 ${\gdef#1{Revision: #4}}%
+    \gdef\RCSdefSetNonSpace #1$#2: #3 #4 #5${\gdef#1{Revision: #4}}%
     \gdef\RCSdefSetTest #1#2$Id: #3 #4 #5 #6 #7$#8\ccEnd{%
         \def\xRCSparams{#8}\ifx\xRCSparams\empty
             \RCSdefSetNonSpace{#1}#2%
@@ -644,8 +645,8 @@
 \def\RCSdefDate{\begingroup\catcode`\$=12 \RCSdefSetDate}
 { \catcode`\$=12
     % Define the date if it is set.
-    % #1 = macro name, #2 = year, #3 = month, #4 = day, #5 = rest
-    \gdef\RCSdefSetDateSet #1$Date${\gdef#1{Date: #2/#3/#4}}%
+    % #1 = macro name, #2=Date #3 = year, #4 = month, #5 = day, #6 = rest
+    \gdef\RCSdefSetDateSet #1$#2: #3-#4-#5 #6 ${\gdef#1{Date: #3/#4/#5}}%
     % Define the date if it is not set.
     % #1 = macro name, #2 = string without $'s
     \gdef\RCSdefSetDateNonSet #1$#2${\gdef#1{#2 -\,-/-\,-/-\,-}}%

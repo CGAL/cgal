@@ -1,6 +1,7 @@
 README for the Specification and Manual Writing Tools
        for C++ Reference Manuals
 =========================================================
+01.09.2005   Saarbruecken Andreas Meyer ameyer@mpi-inf.mpg.de
 24.08.1999   Zurich       Lutz Kettner  kettner@acm.org
 29.09.1999   Saarbruecken Susan Hert    hert@mpi-sb.mpg.de
 
@@ -12,12 +13,12 @@ The directory structure is:
     CHANGES       revision history
     INSTALLATION  how to install the style and the tools.
 
-    doc/          the reference manual.
+    doc_tex/      the reference manual.
+    doc_ps/       precompiled version of the reference manuals.
     example/      an example of the (new) C++ reference pages.
-    format/       the LaTeX style files and a test document.
+    sty/          the LaTeX style files and a test document.
 
-    scripts/      scripts around manual writing and to update old
-                  specifications before release 2.1.
+    scripts/      scripts around manual writing 
     src/          src for the extraction and checking tools.
 
 

@@ -16,6 +16,7 @@
 #define ERROR_H 1
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 

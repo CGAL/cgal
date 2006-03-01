@@ -1,10 +1,3 @@
-README for the Specification and Manual Writing Tools
-       for C++ Reference Manuals
-=====================================================
-01.09.2005   Saarbruecken   Andreas Meyer
-24.08.1999   Zurich         Lutz Kettner
-13.02.2000   Saarbruecken   Susan Hert
-
 This is the directory containing the cc_manual.sty, cc_manual_index.sty,
 cprog.sty, nonlinkedpath.sty and test documents. The directory structure is:
 

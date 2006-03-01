@@ -1022,6 +1022,32 @@ handle_to_be_included( const string& s, string param[], size_t n, size_t opt) {
       return string("\\lcFalse");
 }
 
+// another hack: 
+string 
+RCSdef( string input, bool date ) {
+  input = input.substr( 1, input.length() -2 );
+  string::size_type pos, pos2;
+  pos = input.find_first_of( " " );
+  pos = input.find_first_of( " ", pos +1 );
+  if( date )  // date entry is next to revision entry
+    pos = input.find_first_of( " ", pos +1 );
+  pos2 = input.find_first_of( " ", pos +1 );
+  return input.substr( pos + 1, pos2 - pos - 1);
+}
+
+string
+handle_RCSdef( const string& s, string param[], size_t n, size_t opt ) {
+  NParamCheck( 1, 0 ); 
+  return RCSdef( param[0], false );
+}
+
+string
+handle_RCSdefDate( const string& s, string param[], size_t n, size_t opt ) {
+  NParamCheck( 1, 0 ); 
+  return RCSdef( param[0], true );
+}
+
+
 // Chapter File Handling
 // ======================================================================
 
@@ -1040,7 +1066,7 @@ handle_chapter( const string&, string param[], size_t n, size_t opt) {
         new_main_filename =  macroX( "\\lciChapterPrefix")
                            + macroX( "\\lciInputRootname")
 	                   + macroX( "\\lciHtmlSuffix");
-        new_main_filepath.clear();
+        new_main_filepath = string();
     } else {
         new_main_filename = new_main_filepath
                           + macroX( "\\lciChapterPrefix")
@@ -1243,6 +1269,8 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\newcommand@mom", newcommand_opt);
     insertInternalGlobalMacro( "\\def", newcommand, 2);
     insertInternalGlobalMacro( "\\gdef", global_newcommand, 2);
+    insertInternalGlobalMacro( "\\lciRCSdef", handle_RCSdef, 1);
+    insertInternalGlobalMacro( "\\lciRCSdefDate", handle_RCSdefDate, 1);
     insertInternalGlobalMacro( "\\lciUndef", undef, 1);
     insertInternalGlobalMacro( "\\lciBeginScope", begin_scope, 0);
     insertInternalGlobalMacro( "\\lciEndScope", end_scope, 0);

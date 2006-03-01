@@ -26,8 +26,8 @@
 # LATEX_CONV_BIN = ${PUBLIC}/${SYSTEM}/bin
 
 
-# C++ Compiler: tested compilers are: Gnu g++ 2.8.1, SGI CC 7.2.
-# CXX = g++
+# C++ Compiler: tested compilers are: Gnu g++ 3.3 and 3.4
+# CXX = g++-3.4
 
 # C++ Compiler Options:
 # CXXFLAGS = -v
@@ -81,7 +81,7 @@ REF_CONFIG_FILES  =	latex_converter_config/ref_pages/*.tex
 ALL =   ${PROGRAM_FILES}
 
 # default rule
-all: $(ALL)
+all: $(ALL) 
 
 
 # =====================================================================

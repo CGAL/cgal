@@ -420,70 +420,18 @@
 % ###########################################################################
 
 \newcommand{\RCSdef}[2]{%
-    \newcommand{\lciRCSdefName}{#1}%
-    \lciParseUntilDelimiter{\lciRCSdefX}$#2$$}
-\newcommand{\lciRCSdefX}[1]{\lciParseUntilDelimiter{\lciRCSdefXX}$#1}
-\newcommand{\lciRCSdefXX}[1]{%
-    \lciIfEmpty{#1}{%
-        \lciError{Empty RCS entry}%
-        \lciRCSnewcommand{\lciRCSdefName}{<unknown RCS entry>}%
-    }{%
-        \lciRCSnewcommand{\lciRCSdefName}{#C1}%
-        \lciSkipTwoParameter%% skip the two remaining $'s
-    }}
-\newcommand{\lciRCSnewcommand}[2]{\newcommand{#X1}{#2}}
-
-
-
+  \newcommand{#X1}{Revision: \lciRCSdef{#2}}%
+}
 \newcommand{\RCSdefDate}[2]{%
-    \newcommand{\lciRCSdefdateName}{#1}%
-    \lciParseUntilDelimiter{\lciRCSdefdateX}$#2 $$}
-\newcommand{\lciRCSdefdateX}[1]{\lciParseUntilDelimiter{\lciRCSdefdateXX}$#1}
-\newcommand{\lciRCSdefdateXX}[1]{%
-    \lciIfEmpty{#1}{%
-        \lciError{Empty RCS Date entry}%
-        \lciRCSnewcommand{\lciRCSdefdateName}{<unknown RCS date entry>}%
-    }{%
-        \lciParseUntilDelimiter{\lciRCSdefdateY} #1  }}
-\newcommand{\lciRCSdefdateY}[1]{\lciParseUntilDelimiter{\lciRCSdefdateYY} #1}
-\newcommand{\lciRCSdefdateYY}[1]{%
-    \lciIfEmpty{#1}{%
-        \lciRCSnewcommand{\lciRCSdefdateName}{\lcRawHtml{Date: --/--/--}}%
-    }{%
-        \lciRCSnewcommand{\lciRCSdefdateName}{Date: #1}%
-        \lciParseUntilDelimiter{\lciRCSdefdateZ} }}
-\newcommand{\lciRCSdefdateZ}[1]{%
-        \lciSkipTwoParameter%% skip spaces and the two remaining $'s
+  \newcommand{#X1}{Date: \lciRCSdefDate{#2}}%
 }
 
-
-\newcommand{\RCSdefArg}[2]{%
-    \lciUndef{#C1}%
-    \newcommand{\lciRCSdefArgName}{#C1}%
-    \lciParseUntilDelimiter{\lciRCSdefArgX} #X2 $}
-\newcommand{\lciRCSdefArgX}[1]{\lciParseUntilDelimiter{\lciRCSdefArgXX}$}
-\newcommand{\lciRCSdefArgXX}[1]{%
-    \lciIfEmpty{#1}{%
-        \lciMessage{\nWARNING: Empty RCS argument\n}%
-        \lciRCSnewcommand{\lciRCSdefArgName}{}%
-    }{%
-        \lciRCSnewcommand{\lciRCSdefArgName}{#C1}}}
-
-
-
-%\RCSdef{\lcRevision}{$Id$}
-%\RCSdefDate{\lcDate}{$Date$}
-\RCSdef{\lcRevision}{$dummy-id 123$}
-\RCSdefDate{\lcDate}{$dummy-date 123 $}
+\RCSdef{\lcRevision}{$Id$}
+\RCSdefDate{\lcDate}{$Id$} 
 
 
 \newcommand{\ccRevision}{\lcRevision}
 \newcommand{\ccDate}{\lcDate}
-\RCSdefArg{\lcRevisionArg}{\lcRevision}
-\RCSdefArg{\lcDateArg}{\lcDate}
-
-\newcommand{\lciPrintVersion}[2]{\lciMessage{ R#X1 #X2}}
-\lciPrintVersion{\lcRevisionArg}{\lcDateArg}
 
 
 % ___________________________________________________________________________

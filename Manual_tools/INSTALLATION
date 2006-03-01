@@ -1,39 +1,33 @@
-INSTALLATION for the Specification and Manual Writing Tools
-             for C++ Reference Manuals
-===========================================================
-24.08.1999   Zurich         Lutz Kettner
-29.09.1999   Saarbruecken   Susan Hert
-
-
 Installation
 ============
 
-(1)  The LaTeX style files 'cc_manual.sty', 'cc_manual_index.sty',
-     'latex_to_html.sty', 'cprog.sty', 'nonlinkedpath.sty', and the 
-     subdirectory 'eps_tabs/' in the `format/' directory have to be made 
-     accessable for TeX, e.g. copy them into a directory that is included 
-     in $TEXINPUTS. (The subdirectory `eps_tabs' must be copied as a directory 
-     and not simply its contents.)
+There is an install script called `install.sh' that installs the 
+Manual_tools in a default location, specified in `install.config'. 
+If you dislike the default paths, feel free to change them. Some 
+interactive work is still required:
 
-(2)  The directory `scripts/' contains two csh-scripts that help with
-     the new manual style for C++ reference pages: cc_ref_wizard
-     and cc_make_ref_pages. They assume csh to be located at `/bin/csh'.
-     They should be made accessible in the standard execution path. An
-     example file `cc_ref_wizard_rc' is provided for user configurations
+(1)  The default location for TeX style files is 
+     ${HOME}/local/Manual_tools/sty. You have to ensure that TeX has 
+     access to this path, by setting the $TEXINPUTS environment 
+     variable:
+
+     $ export TEXINPUTS=".:`pwd`/format:$TEXINPUTS"          
+     
+       
+(2)  The directory `scripts/' contains scripts that assume csh and perl
+     to be located at /bin/csh and /usr/bin/perl. These scripts may need 
+     to be edited (before installing them, of course) to reflect the proper 
+     locations.
+
+     An example file `cc_ref_wizard_rc' is provided for user configurations
      in `$HOME/.cc_ref_wizard_rc'.
 
-(3)  The directory `scripts/' contains two Perl scripts that help in the 
-     creation of the index for the PostScript version of the manual: 
-     add_part_num and index_fix.  These scripts may need to be edited to 
-     reflect the proper locations of the Perl intepreter.
+(3)  If you use the Manual_tools in the CGAL context, make sure that the 
+     cgal_manual script (found in Manual/developer_scripts/cgal_manual) 
+     is in the PATH, either by copying it to ~/local/bin or by other means.
 
-(4)  The manuals exist already formatted in the `doc/' directory as
-     PostScript files. If reformatting is necessary, use `bibtex <manual>'
-     and `makeindex <manual>' besides LaTeX to complete the manuals.
-
-(5)  The directory `src/' contains the supporting tools. Continue with
-     src/INSTALLATION to finish the installation.
-
+(4)  The directory `src/' contains the supporting tools. See src/INSTALLATION
+     for further details (not required for basic setup).
+     
+ 
 EOF
-
-

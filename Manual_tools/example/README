@@ -1,9 +1,3 @@
-README for the Specification and Manual Writing Tools
-       for C++ Reference Manuals
-=====================================================
-03.09.1999   Zurich        Lutz Kettner   kettner@acm.org
-27.09.1999   Saarbruecken  Susan Hert     hert@mpi-sb.mpg.de
-
 This directory contains several examples of how to create manuals using
 the tools in this distribution.
 

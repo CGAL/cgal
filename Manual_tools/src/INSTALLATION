@@ -1,10 +1,3 @@
-INSTALLATION for the Specification and Manual Writing Tools
-             for C++ Reference Manuals
-===========================================================
-24.08.1999   Zurich       Lutz Kettner
- 1. 9.2005   Saarbruecken Andreas Meyer
-
-
 Installation of the Supporting Tools:
 =====================================
 (see ../INSTALLATION for the manual and TeX style files)
@@ -12,11 +5,11 @@ Installation of the Supporting Tools:
 
 (1)  System Requirements:
 
-     *  C++ Compiler (Gnu g++ 2.8.1, 2.95.1, Gnu egcs 1.1.2)
-     *  C Compiler (Gnu gcc 2.6.3 or the usual system cc compiler)
-     *  flex and bison
+     *  C/C++ Compiler (tested: Gnu g++ 3.3 and 3.4)
+     *  flex and bison (NOTE: flex versions >  2.5.4 are NOT yet supported)
      *  perl 5
-     *  Unix environment with tools like grep, sed, ...
+     *  Unix environment with tools like grep, sed, awk, ...
+     *  GNU make
 
 (2)  Configuring the installation and the use of the tools:
 
@@ -59,7 +52,7 @@ Installation of the Supporting Tools:
               default setting is empty and include files are not linked.
 
           - CC
-              The C compiler. E.g. Gnu gcc 2.6.3 or the usual system cc.
+              The C compiler. 
 
 	  - LATEX_CONV_DATE
 	  - LATEX_CONV_AUTHOR
@@ -104,16 +97,15 @@ Installation of the Supporting Tools:
 
           - Makefile
           - latex_to_html
-          - cc_check
+          - ../install.config
 
 
 (3)  Compilation:
 
-     Type 'gmake' to compile all programs. In principle, no warnings
+     Type 'make' (or 'gmake') to compile all programs. In principle, no warnings
      should show up besides possible warnings about unreachable 
      statements from flex sources. However, other compilers or STL's
-     might produce more warnings. In addition, the 16 shift/reduce 
-     conflicts in extract_syntax.y can be ignored.
+     might produce more warnings. 
 
 
 (4)  Installation:
@@ -132,27 +124,5 @@ Installation of the Supporting Tools:
      before compiling for another platform). Type 'gmake cleanall' to
      remove also the compiled programs and possible template databases
      of the C++ compiler.
-
-
-(6)  Test Suite:
-
-     A small test suite is provided. It assumes the new LaTeX style files
-     to be installed, see ../INSTALLATION for details. Move in the `test/'
-     directory and type `./test_suite'. This test should finish silently, 
-     otherwise something is wrong (commands not properly installed, 
-     configuration files not accessable, ..., or I forgot to update the
-     reference files ;-).
-
-
-(7)  Demo Example for the -extended Option of the Converter:
-
-     Another test is provided for the new latex_to_html capabilities
-     to convert a manual using multiple directories. This is the example
-     mentioned at the end of the manual. It is located in the subdirectory
-     `test_html/' and started with the script `./convert', which is located
-     in this subdirctory. This test should finish silently with the 
-     exception of several warnings that a `rule cannot be matched'. The
-     result could be viewed with a Web-browser starting with the file
-     `test_html/html/contents.html'.
 
 EOF
