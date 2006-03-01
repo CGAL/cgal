@@ -1636,6 +1636,36 @@ Subdivision_method_3/test/Subdivision_method_3/data/corner_with_hole.off -text
 Subdivision_method_3/test/Subdivision_method_3/data/corner_with_sharp_edge.off -text
 Subdivision_method_3/test/Subdivision_method_3/data/cross.off -text
 Subdivision_method_3/test/Subdivision_method_3/data/quint_tris.off -text
+Surface_mesh_parameterization/doc/specification/param.pdf -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/LSCM.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/LSCM.png -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/authalic.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/authalic.png -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/conformal.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/conformal.png -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/floater.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/floater.png -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/introduction.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/introduction.png -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/parameterizer_class_diagram.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/parameterizer_class_diagram.png -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/parameterizers_class_hierarchy.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/parameterizers_class_hierarchy.png -text svneol=unset#unset
+Surface_mesh_parameterization/doc_tex/Parameterization/uniform.eps -text
+Surface_mesh_parameterization/doc_tex/Parameterization/uniform.png -text svneol=unset#unset
+Surface_mesh_parameterization/examples/Parameterization/data/grid512.bmp -text svneol=unset#unset
+Surface_mesh_parameterization/examples/Parameterization/data/holes.off -text
+Surface_mesh_parameterization/examples/Parameterization/data/mannequin-devil.off -text
+Surface_mesh_parameterization/examples/Parameterization/data/mask_cone.off -text
+Surface_mesh_parameterization/examples/Parameterization/data/nefertiti.off -text
+Surface_mesh_parameterization/examples/Parameterization/data/parameterization.mtl -text
+Surface_mesh_parameterization/examples/Parameterization/data/rotor.off -text
+Surface_mesh_parameterization/examples/Parameterization/data/sphere966.off -text
+Surface_mesh_parameterization/examples/Parameterization/data/three_peaks.off -text
+Surface_mesh_parameterization/test/Parameterization/data/aircraft.off -text
+Surface_mesh_parameterization/test/Parameterization/data/cube.off -text
+Surface_mesh_parameterization/test/Parameterization/data/knot2.off -text
+Surface_mesh_parameterization/test/Parameterization/data/torus_tri.off -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset

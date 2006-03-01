@@ -1,0 +1,69 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple_parameterization", "Simple_parameterization.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Authalic_parameterization", "Authalic_parameterization.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Complete_parameterization_example", "Complete_parameterization_example.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mesh_cutting_parameterization", "Mesh_cutting_parameterization.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "polyhedron_ex_parameterization", "polyhedron_ex_parameterization.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Square_border_parameterization", "Square_border_parameterization.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Taucs_parameterization", "Taucs_parameterization.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.ActiveCfg = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug.Build.0 = Debug|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.ActiveCfg = Release|Win32
+		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

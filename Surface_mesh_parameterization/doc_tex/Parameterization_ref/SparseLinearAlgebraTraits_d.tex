@@ -1,0 +1,122 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SparseLinearAlgebraTraits_d.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSSparseLinearAlgebraTraitsdRev}{$Id$}
+\RCSdefDate{\RCSSparseLinearAlgebraTraitsdDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SparseLinearAlgebraTraits_d}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The concept SparseLinearAlgebraTraits\_d is used to solve sparse linear systems {\em A$\ast$X = B}.
+
+\begin{description}
+\item[Todo]Add to SparseLinearAlgebraTraits\_d the ability to solve linear systems in the least squares sense.\end{description}
+
+%END-AUTO(\ccDefinition)
+
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+This is a sub-concept of LinearAlgebraTraits\_d.
+
+%END-AUTO(\ccRefines)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Matrix}
+{
+}
+\ccGlue
+\ccNestedType{Vector}
+{
+}
+\ccGlue
+\ccNestedType{NT}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{sparse_LA}  %% variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{SparseLinearAlgebraTraits_d ();}
+{
+Default constructor.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{bool linear_solver (const Matrix & A, const Vector & B, Vector & X, NT & D);}
+{
+Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
+Preconditions:\begin{itemize}
+\item A.row\_dimension() == B.dimension().\item A.column\_dimension() == X.dimension(). \end{itemize}
+}
+\ccGlue
+\ccMethod{bool is_solvable (const Matrix & A, const Vector & B);}
+{
+Indicate if the linear system can be solved and if the matrix conditioning is good.
+Preconditions:\begin{itemize}
+\item A.row\_dimension() == B.dimension(). \end{itemize}
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Taucs_solver_traits}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits}  \\
+\ccc{OpenNL::DefaultLinearSolverTraits}  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits}  \\
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d::Matrix}  \\
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d::Vector}  \\
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
