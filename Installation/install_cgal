@@ -36,7 +36,7 @@
 # ---------------------------------------------
 CGAL_VERSION="version_to_be_determined"
 # ---------------------------------------------
-CGAL_INSTALL_CGAL="`basename ${0}`"
+CGAL_INSTALL_CGAL="`basename \"${0}\"`"
 # ---------------------------------------------
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
@@ -274,7 +274,7 @@ warn_deprecated()
 # print the value of variable $1
 value_of()
 {
-    _value=`eval "${_printf} '$'$1"`
+    _value="`eval ${_printf} \"'$'$1\"`"
     eval "${_printf} \"%s\" \"${_value}\""
 }
 
@@ -282,9 +282,9 @@ value_of()
 # of the regexps $2 - $n
 value_of_without()
 {
-    _tmp=`value_of "$1"`
+    _tmp="`value_of \"$1\"`"
     while [ $# -gt 1 ]; do
-	_tmp=`${_printf} "${_tmp}\n" | ${_sed} "s/${2}//1"`
+	_tmp="`${_printf} \"${_tmp}\n\" | ${_sed} \"s/${2}//1\"`"
 	shift
     done
     ${_printf} "%s" "${_tmp}"
@@ -327,7 +327,7 @@ _real_options()
 # log_print writes to logfile only 
 log_to_file()
 {
-    INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+    INSTALL_LOGFILE_REDIRECTION=">>\"${INSTALL_LOGFILE}\""
 }
 
 # log_print writes to screen only 
@@ -339,7 +339,7 @@ log_to_screen()
 # log_print writes to both logfile and screen
 log_to_file_and_screen()
 {
-    INSTALL_LOGFILE_REDIRECTION="|print_with_indent | ${_tee} -a ${INSTALL_LOGFILE}"
+    INSTALL_LOGFILE_REDIRECTION="|print_with_indent | ${_tee} -a \"${INSTALL_LOGFILE}\""
 }
 
 log_print()
@@ -374,12 +374,12 @@ _check_for_util()
 # in /bin and /usr/bin first
 _check_for_sysutil()
 {
-    if [ -x /bin/$1 ]; then
-	eval "_$1=/bin/$1"
-    elif [ -x /usr/bin/$1 ]; then
-	eval "_$1=/usr/bin/$1"
+    if [ -x "/bin/$1" ]; then
+	eval "_$1=\"/bin/$1\""
+    elif [ -x "/usr/bin/$1" ]; then
+	eval "_$1=\"/usr/bin/$1\""
     else
-	_check_for_util ${*}
+	_check_for_util "${*}"
 	return $?
     fi
     _tmp="echo $\_`echo ${3:-$1}`"
@@ -419,8 +419,8 @@ _check_dir_exists()
     if [ ! -d "$1" ]; then
 	exit_on_error "Directory \"$1\" does not exist"
     fi
-    _check_read ${1}
-    _check_execute ${1}
+    _check_read "${1}"
+    _check_execute "${1}"
 }
 
 # check, whether there is a directory $1 (if not create it)
@@ -429,22 +429,22 @@ _check_dir_exists_create()
 {
     if [ ! -d "${1}" ]; then
 	log_print "WARNING: Directory ${1} does not exist, it will be created."
-	${_mkdir} -p ${1}
+	${_mkdir} -p "${1}"
     fi
-    _check_read ${1}
-    _check_write ${1}
-    _check_execute ${1}
+    _check_read "${1}"
+    _check_write "${1}"
+    _check_execute "${1}"
 }
 
 # check some very basic stuff
 initial_check()
 {
-    _check_dir_exists ${CGAL_DIR}
-    _check_write ${CGAL_DIR}
-    for i in ${TMP_LOGFILE} ${TMP_CXX_FILE} ${INSTALL_RIS_LOGFILE} \
-	${INSTALL_LOGFILE}; do
+    _check_dir_exists "${CGAL_DIR}"
+    _check_write "${CGAL_DIR}"
+    for i in "${TMP_LOGFILE}" "${TMP_CXX_FILE}" "${INSTALL_RIS_LOGFILE}" \
+	"${INSTALL_LOGFILE}"; do
 	if [ -f "${i}" ]; then
-	    ${_rm} -f ${i}
+	    ${_rm} -f "${i}"
 	fi
     done
     # set SUPPORT_FEATURES and SUPPORT_PKGS
@@ -510,8 +510,8 @@ get_cgal_version()
     # this file is assumed to contain one line matching "CGAL_VERSION "
     # where the third field describes the CGAL version
     FILE="${CGAL_INCL_DIR}/CGAL/version.h"
-    _check_read ${FILE}
-    CGAL_VERSION="`${_awk} '/#define CGAL_VERSION / {print $3}'  ${FILE}`"
+    _check_read "${FILE}"
+    CGAL_VERSION="`${_awk} '/#define CGAL_VERSION / {print $3}' \"${FILE}\"`"
     log_print "CGAL version is ${CGAL_VERSION}."
 }
 
@@ -527,28 +527,28 @@ init_logfiles()
     log_print "----------------------------------------------------------"
     ${_printf} "${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
-	>${INSTALL_RIS_LOGFILE}
+	>"${INSTALL_RIS_LOGFILE}"
     ${_printf} "%s\n" \
 	"${_LEFTSPACE}You built CGAL ${CGAL_VERSION} on:" \
-	>>${INSTALL_RIS_LOGFILE}
+	>>"${INSTALL_RIS_LOGFILE}"
     ${_printf} "${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
-	>>${INSTALL_RIS_LOGFILE}
+	>>"${INSTALL_RIS_LOGFILE}"
     log_print "This is ${CGAL_INSTALL_CGAL} version ${CGAL_INSTALL_VERSION}."
 }
 
 # check ${CGAL_INSTALL_CONF_DIR}: create it, if not existent
 check_conf_dir()
 {
-    _check_dir_exists ${CGAL_MAKE_DIR}
-    _check_dir_exists ${CGAL_SRC_DIR}
-    _check_dir_exists ${CGAL_INCL_DIR}
-    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}
-    _check_dir_exists ${CGAL_LIB_DIR}
-    _check_dir_exists ${CGAL_CONF_DIR}
-    _check_dir_exists ${CGAL_SUPPORT_DIR}
-    _check_dir_exists ${CGAL_TEST_CONF_DIR}
-    _check_dir_exists_create ${CGAL_INSTALL_CONF_DIR}
+    _check_dir_exists "${CGAL_MAKE_DIR}"
+    _check_dir_exists "${CGAL_SRC_DIR}"
+    _check_dir_exists "${CGAL_INCL_DIR}"
+    _check_dir_exists_create "${CGAL_INCL_CONF_DIR}"
+    _check_dir_exists "${CGAL_LIB_DIR}"
+    _check_dir_exists "${CGAL_CONF_DIR}"
+    _check_dir_exists "${CGAL_SUPPORT_DIR}"
+    _check_dir_exists "${CGAL_TEST_CONF_DIR}"
+    _check_dir_exists_create "${CGAL_INSTALL_CONF_DIR}"
 }
 
 # print the version number of this file
@@ -629,7 +629,7 @@ check_for_utils()
 
     if [ -n "${INSTALL_INTERACTIVE}" ]; then
 	if [ -n "${PAGER}" -a ! -x "${PAGER}" ]; then
-	    _check_for_sysutil `$_basename ${PAGER}` y
+	    _check_for_sysutil `$_basename "${PAGER}"` y
 	    PAGER=`eval "echo \$\_$PAGER"`
 	    PAGER=`eval "echo ${PAGER}"`
 	fi
@@ -685,22 +685,22 @@ old_guess_os()
 # -------------------------------------------------------
 set_dirs_dependant_on_cgal_dir()
 {
-    CGAL_EXAMPLE_DIR=${CGAL_DIR}/examples
-    CGAL_INCL_DIR=${CGAL_DIR}/include
-    CGAL_INCL_CONF_DIR=${CGAL_INCL_DIR}/CGAL/config
-    CGAL_LIB_DIR=${CGAL_DIR}/lib
-    CGAL_MAKE_DIR=${CGAL_DIR}/make
-    CGAL_SRC_DIR=${CGAL_DIR}/src
-    CGAL_TEST_DIR=${CGAL_DIR}/test
-    CGAL_CONF_DIR=${CGAL_DIR}/config
-    CGAL_SUPPORT_DIR=${CGAL_CONF_DIR}/support
-    CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
-    CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
-    CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
+    CGAL_EXAMPLE_DIR="${CGAL_DIR}/examples"
+    CGAL_INCL_DIR="${CGAL_DIR}/include"
+    CGAL_INCL_CONF_DIR="${CGAL_INCL_DIR}/CGAL/config"
+    CGAL_LIB_DIR="${CGAL_DIR}/lib"
+    CGAL_MAKE_DIR="${CGAL_DIR}/make"
+    CGAL_SRC_DIR="${CGAL_DIR}/src"
+    CGAL_TEST_DIR="${CGAL_DIR}/test"
+    CGAL_CONF_DIR="${CGAL_DIR}/config"
+    CGAL_SUPPORT_DIR="${CGAL_CONF_DIR}/support"
+    CGAL_INSTALL_CONF_DIR="${CGAL_CONF_DIR}/install"
+    CGAL_TEST_CONF_DIR="${CGAL_CONF_DIR}/testfiles"
+    CGAL_TESTFILE="${CGAL_TEST_DIR}/run_testsuite"
 
     # ---------------------------------------------
     # logfile for testsuite:
-    TEST_LOGFILE=${CGAL_TEST_DIR}/error.txt
+    TEST_LOGFILE="${CGAL_TEST_DIR}/error.txt"
 
     # ---------------------------------------------
     # internal variables
@@ -711,13 +711,13 @@ set_dirs_dependant_on_cgal_dir()
 
     # installation logfile (only completed compile/test runs)
     # (Really Important Stuff)
-    INSTALL_RIS_LOGFILE=${CGAL_DIR}/install.completed
+    INSTALL_RIS_LOGFILE="${CGAL_DIR}/install.completed"
 
     # compilation logfile
-    COMPILE_LOGFILE=${CGAL_DIR}/compile.log
+    COMPILE_LOGFILE="${CGAL_DIR}/compile.log"
 
     # logfile for temporary use (e.g. compiler tests)
-    TMP_LOGFILE=${CGAL_DIR}/tmptmp.log
+    TMP_LOGFILE="${CGAL_DIR}/tmptmp.log"
 
     # temporary file for confidence tests
     TMP_CXX_FILE=./tmp_test
@@ -1273,7 +1273,7 @@ EOF2
 test_compiler_specifica()
 {
     log_print "Running configuration tests..."
-    ${_cat} <<EOF5 >${_file}
+    ${_cat} <<EOF5 >"${_file}"
 $LGPL_LICENSE_HEADER
 //
 // Author(s): the install_cgal script
@@ -1285,20 +1285,19 @@ EOF5
 
     # test for other compiler features/bugs
     LONG_NAME_PROBLEM=''
-    for i in ${CGAL_TEST_CONF_DIR}/CGAL*.C; do
-	${_cat} ${i} > ${TMP_CXX_FILE}.C
+    for i in "${CGAL_TEST_CONF_DIR}"/CGAL*.C; do
+	${_cat} "${i}" > ${TMP_CXX_FILE}.C
 	${_printf} "%s%s\n" \
 	    "//+----------------------------------------------------------" \
 	    "----------------" \
-	    >> ${_file}
-	${_cat} ${i} | ${_awk} '/\/\/\|/ {print $0}' >> ${_file}
+	    >> "${_file}"
+	${_cat} "${i}" | ${_awk} '/\/\/\|/ {print $0}' >> "${_file}"
 	${_printf} "%s%s\n" \
 	    "//+----------------------------------------------------------" \
 	    "----------------" \
-	    >> ${_file}
-	_test_name="`value_of_without \
-	    \"${i}\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
-	_test_name=`${_basename} "${_test_name}"`
+	    >> "${_file}"
+	_test_name="`${_basename} \"${i}\"`"
+	_test_name="`value_of_without \"_test_name\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
 	_tmp_name="`value_of_without \"_test_name\" \"^NO_\"`"
 	if [ "${_tmp_name}" = "${_test_name}" ]; then
 	  _NO='unfortunately.'
@@ -1317,18 +1316,18 @@ EOF5
 	    "$1" \
 	    "${_NO}"
 	then
-	    ${_printf} "%s" "//" >> ${_file}
-	elif [ "`${_basename} ${i}`" = "CGAL_CFG_CCTYPE_MACRO_BUG.C" ]; then
+	    ${_printf} "%s" "//" >> "${_file}"
+	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_CCTYPE_MACRO_BUG.C" ]; then
 	    # we have to generate the redirection header cctype
 	    create_replacement_header notest cctype "" ctype.h
-	elif [ "`${_basename} ${i}`" = "CGAL_CFG_LONGNAME_BUG.C" ]; then
+	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_LONGNAME_BUG.C" ]; then
 	    LONG_NAME_PROBLEM=y
-	elif [ "`${_basename} ${i}`" = "CGAL_CFG_NO_STL.C" ]; then
+	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_NO_STL.C" ]; then
 	    log_print "`extended_compiler_description` does NOT seem to have an STL."
 	fi
 	${_printf} "%s\n\n" \
 	    "#define ${CGAL_CONFIG_PREFIX}${_test_name} 1" \
-	    >> ${_file}
+	    >> "${_file}"
 	cleanup_after_compile
     done
 }
@@ -1354,7 +1353,7 @@ posix_path()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "`escape_special \"${*}\"`"
     else
-	${_printf} "%s" "`${_cygpath} -u $*`"
+	${_printf} "%s" "`${_cygpath} -u \"$*\"`"
     fi
 }
 
@@ -1363,7 +1362,7 @@ os_path()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "`escape_special \"${*}\"`"
     else
-	${_printf} "%s" "`${_cygpath} -w $*`"
+	${_printf} "%s" "`${_cygpath} -w \"$*\"`"
     fi
 }
 
@@ -1372,7 +1371,7 @@ include_dir_option()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "-I%s " "`escape_special \"${*}\"`"
     else
-	${_printf} "'-I%s' " "`${_cygpath} -w $1`"
+	${_printf} "'-I%s' " "`${_cygpath} -w \"${*}\"`"
     fi
 }
 
@@ -1381,7 +1380,7 @@ libpath_option()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "${LIBPATH_OPT}%s " "`escape_special \"${*}\"`"
     else
-	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -w $*`"
+	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -w \"${*}\"`"
     fi
 }
 
@@ -1404,7 +1403,7 @@ object_file_name()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "`escape_special \"${*}\"`${OBJ_EXT}"
     else
-	${_printf} "%s" "'`${_cygpath} -w ${*}`${OBJ_EXT}'"
+	${_printf} "%s" "'`${_cygpath} -w \"${*}\"`${OBJ_EXT}'"
     fi
 }
 
@@ -1413,7 +1412,7 @@ to_object_file_option()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "-o `escape_special \"${*}\"`.o"
     else
-	${_printf} "%s" "'-o`${_cygpath} -w ${*}`'"
+	${_printf} "%s" "'-o`${_cygpath} -w \"${*}\"`'"
     fi
 }
 
@@ -1422,7 +1421,7 @@ output_file_option()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "${EXE_OPT}`escape_special \"${*}\"`"
     else
-	${_printf} "%s" "'${EXE_OPT}`${_cygpath} -w ${*}`'"
+	${_printf} "%s" "'${EXE_OPT}`${_cygpath} -w \"${*}\"`'"
     fi
 }
 
@@ -1482,10 +1481,12 @@ compiler_test_ldflags()
 # append ${2} to it, separate several entries by ${3}
 _append_to()
 {
-    if [ -z "`value_of \"${1}\"`" ]; then
-	eval ${1}=\"${2}\"
-    else
-	eval ${1}=\"`value_of "${1}"`${3}${2}\"
+    if [ -n "${2}" ]; then
+	if [ -z "`value_of \"${1}\"`" ]; then
+	    eval ${1}=\"${2}\"
+	else
+	    eval ${1}=\"`value_of "${1}"`${3}${2}\"
+	fi
     fi
 }
 
@@ -1493,10 +1494,12 @@ _append_to()
 # prepend ${2} to it, separate several entries by ${3}
 _prepend_to()
 {
-    if [ -z "`value_of \"${1}\"`" ]; then
-	eval ${1}=\"${2}\"
-    else
-	eval ${1}=\"${2}${3}`value_of "${1}"`\"
+    if [ -n "${2}" ]; then
+	if [ -z "`value_of \"${1}\"`" ]; then
+	    eval ${1}=\"${2}\"
+	else
+	    eval ${1}=\"${2}${3}`value_of "${1}"`\"
+	fi
     fi
 }
 
@@ -1823,7 +1826,7 @@ test_support_pkg()
 		    _append_to real_cxxflags "${tmp_cxxflags}" " "
 		    set_feature_libpathflags "${jj}" " "
 		    _append_to real_libpathflags "${tmp_libpathflags}" " "
-		    _append_to real_runtimepath "${tmp_runtimepath}" " "
+		    _append_to real_runtimepath "${tmp_runtimepath}" ":"
 		    ;;
 	    esac
 	fi  
@@ -1995,18 +1998,18 @@ EOF4
     _flags="${CUSTOM_CXXFLAGS} ${CUSTOM_LDFLAGS} ${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.C"
 
     # compile
-    ${_printf} "%s\n%s\n" "Compiler call:" "--------------" >${TMP_LOGFILE}
-    ${_printf} "%s" "$1 ${_flags}" >>${TMP_LOGFILE}
-    ${_printf} "\n\n%s\n" "Got the following error messages:" >>${TMP_LOGFILE}
-    ${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-    eval "`quote $1` ${_flags} >>${TMP_LOGFILE} 2>&1"
+    ${_printf} "%s\n%s\n" "Compiler call:" "--------------" >"${TMP_LOGFILE}"
+    ${_printf} "%s" "$1 ${_flags}" >>"${TMP_LOGFILE}"
+    ${_printf} "\n\n%s\n" "Got the following error messages:" >>"${TMP_LOGFILE}"
+    ${_printf} "%s\n" "---------------------------------" >>"${TMP_LOGFILE}"
+    eval "`quote $1` ${_flags} >>\"${TMP_LOGFILE}\" 2>&1"
     if [ $? = 0 ]; then
 	log_print "Compiler version test compiled."
-	${_printf} "\n\n%s\n" "Execution:" >>${TMP_LOGFILE}
-	${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-	${TMP_CXX_FILE} >>${TMP_LOGFILE} 2>&1
+	${_printf} "\n\n%s\n" "Execution:" >>"${TMP_LOGFILE}"
+	${_printf} "%s\n" "---------------------------------" >>"${TMP_LOGFILE}"
+	${TMP_CXX_FILE} >>"${TMP_LOGFILE}" 2>&1
 	if [ $? = 0 ]; then 	
-	    _tmp3=`eval "${TMP_CXX_FILE} 2>&1"`
+	    _tmp3=`eval "\"${TMP_CXX_FILE}\" 2>&1"`
 	    cleanup_after_compile
 	    cleanup_after_link_run
 	    return 0
@@ -2018,13 +2021,13 @@ EOF4
 	    print_headline " Compiler version test execution failed"
 	    print_center_line "You will be shown a log now ..."
 	    wait_for_enter
-	    ${PAGER:-${_cat}} ${TMP_LOGFILE} 
+	    ${PAGER:-${_cat}} "${TMP_LOGFILE}"
 	    write_buffer "\n"
 	    print_filled_line
 	    wait_for_enter
 	else
 	    ${_printf} "%s\n\n" " execution failed."
-	    ${_cat} ${TMP_LOGFILE}
+	    ${_cat} "${TMP_LOGFILE}"
 	    ${_printf} "%s\n\n" \
 		"--------------------------------------------------------"
 	fi
@@ -2040,13 +2043,13 @@ EOF4
 	    print_headline "Compiler version test compilation failed"
 	    print_center_line "You will be shown a log now ..."
 	    wait_for_enter
-	    ${PAGER:-${_cat}} ${TMP_LOGFILE}
+	    ${PAGER:-${_cat}} "${TMP_LOGFILE}"
 	    write_buffer "\n"
 	    print_filled_line
 	    wait_for_enter
 	else
 	    ${_printf} "%s\n\n" " compilation failed."
-	    ${_cat} ${TMP_LOGFILE}
+	    ${_cat} "${TMP_LOGFILE}"
 	    ${_printf} "%s\n\n" \
 		"--------------------------------------------------------"
 	fi
@@ -2134,8 +2137,8 @@ _check_and_register_compiler()
     COMPILER="${*}"
     set_ostype
     file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
-    if [ -r ${file} ]; then
-	try_to_get_var_from_config_file COMPILER ${file}
+    if [ -r "${file}" ]; then
+	try_to_get_var_from_config_file COMPILER "${file}"
 	if [ ${?} != 0 ]; then
 	    log_print "${CGAL_OS_COMPILER} has already been registered."
 	else
@@ -2195,13 +2198,13 @@ _add_flags()
 # search for supported compilers
 search_for_compilers()
 {
-    guess_os log_print
     _COMPILER_NUMBER=1
 
     # first check, which config files exist
-    for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
+    for i in `${_ls} "${CGAL_INSTALL_CONF_DIR}"/${SYST}* 2>/dev/null | ${_sed} 's/ //g'`
     do
-	try_to_get_var_from_config_file COMPILER ${i}
+        i="`echo ${i} | ${_sed} 's// /g'`"
+	try_to_get_var_from_config_file COMPILER "${i}"
 	if [ ${?} != 0 ]; then
 	    _register_compiler "${COMPILER}"
 	fi
@@ -2634,20 +2637,20 @@ set_terminal_variables()
 # return 0, iff something went wrong
 try_to_get_var_from_config_file()
 {
-    if [ -r ${2} ]; then
-	_awkprg="/${1}/"'{print $0}'
-	_tmp2=`${_awk} "${_awkprg}" ${2}`
+    if [ -r "${2}" ]; then
+	_awkprg="/ ${1}/"'{print $0}'
+	_tmp2=`${_awk} "${_awkprg}" "${2}"`
 	if [ -n "${_tmp2}" ]; then
 	    _tmp2=`${_printf} "%s\n" "${_tmp2}" | \
 		${_awk} '{for (i=4; i<NF-1; ++i) printf "%s ",$(i); \
 		    printf "%s",$(NF-1)}'`
-	    log_print "got ${1} from config/`${_basename} ${2}`."
+	    log_print "got ${1} from config/`${_basename} \"${2}\"`."
 	    log_print "set to <\${_tmp2}>."
 	    eval $1="${_tmp2}"
 	    return 1
 	else
 	    log_print \
-		"WARNING: cannot find field ${1} in file `${_basename} ${2}`."
+		"WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
 	fi
     else
 	log_print "WARNING: cannot find file ${2}."
@@ -2661,9 +2664,9 @@ try_to_get_var_from_config_file()
 # return 0, iff something went wrong
 try_to_get_var_from_file()
 {
-    if [ -r ${2} ]; then
+    if [ -r "${2}" ]; then
 	_awkprg="/${1}/"'{print $0}'
-	_tmp2=`${_awk} "${_awkprg}" ${2}`
+	_tmp2=`${_awk} "${_awkprg}" "${2}"`
 	if [ -n "${_tmp2}" ]; then
             # leading spaces would spoil the assignment below...
             _tmp2=`echo ${_tmp2} | ${_awk} 'BEGIN {FS="="} {print $2}' | \
@@ -2697,11 +2700,11 @@ cleanup_after_compile_leave_source()
     # remove irix mipspro template database
     ${_rm} -rf ii_files
     # remove tmp object file
-    ${_rm} -f ${TMP_CXX_FILE}${OBJ_EXT}
+    ${_rm} -f "${TMP_CXX_FILE}${OBJ_EXT}"
     # remove log file
-    ${_rm} -f ${TMP_LOGFILE}
+    ${_rm} -f "${TMP_LOGFILE}"
     # remove moc file
-    ${_rm} -f ${TMP_CXX_FILE}.moc
+    ${_rm} -f "${TMP_CXX_FILE}.moc"
 }
 
 # cleanup after compilation
@@ -2713,7 +2716,7 @@ cleanup_after_compile()
 {
     cleanup_after_compile_leave_source
     # remove tmp C++ file
-    ${_rm} -f ${TMP_CXX_FILE}.C
+    ${_rm} -f "${TMP_CXX_FILE}.C"
 }
 
 # run a compiler test named $1, return 0, iff ok
@@ -2735,11 +2738,11 @@ _compile_test()
     _flags="${_flags} -c '`os_path ${TMP_CXX_FILE}.C`'"
 
     # compile
-    ${_printf} "%s\n%s\n" "Compiler call:" "--------------" >${TMP_LOGFILE}
-    ${_printf} "%s" "`compiler_bin` ${_flags}" >>${TMP_LOGFILE}
-    ${_printf} "\n\n%s\n" "Got the following error messages:" >>${TMP_LOGFILE}
-    ${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-    eval "`quote \`compiler_bin\`` ${_flags} >>${TMP_LOGFILE} 2>&1"
+    ${_printf} "%s\n%s\n" "Compiler call:" "--------------" >"${TMP_LOGFILE}"
+    ${_printf} "%s" "`compiler_bin` ${_flags}" >>"${TMP_LOGFILE}"
+    ${_printf} "\n\n%s\n" "Got the following error messages:" >>"${TMP_LOGFILE}"
+    ${_printf} "%s\n" "---------------------------------" >>"${TMP_LOGFILE}"
+    eval "`quote \`compiler_bin\`` ${_flags} >>\"${TMP_LOGFILE}\" 2>&1"
     if [ $? = 0 ]; then
 	log_print "    $1 test compiled."
 	return 0
@@ -2753,13 +2756,13 @@ _compile_test()
 		print_headline "Compilation failed"
 		print_center_line "You will be shown a log now ..."
 		wait_for_enter
-		${PAGER:-${_cat}} ${TMP_LOGFILE}
+		${PAGER:-${_cat}} "${TMP_LOGFILE}"
 		write_buffer "\n"
 		print_filled_line
 		wait_for_enter
 	    else
 		${_printf} "%s\n\n" " compilation failed."
-		${_cat} ${TMP_LOGFILE}
+		${_cat} "${TMP_LOGFILE}"
 		${_printf} "%s\n\n" \
 		    "--------------------------------------------------------"
 	    fi
@@ -2768,7 +2771,7 @@ _compile_test()
 	fi
 	log_print "    remark: $1 test did not compile."
 	log_print "    vvvvvvvvvvvv compiler messages below vvvvvvvvvvvv"
-	eval ${_awk} \'{print \""   "\",\$0}\' ${TMP_LOGFILE} ${INSTALL_LOGFILE_REDIRECTION}
+	eval ${_awk} \'{print \""   "\",\$0}\' \"${TMP_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
 	log_print "    ^^^^^^^^^^^^ compiler messages above ^^^^^^^^^^^^"
 	return 1
     fi
@@ -2778,7 +2781,7 @@ _compile_test()
 cleanup_after_link_run()
 {
     # remove executable and core
-    ${_rm} -f ${TMP_CXX_FILE} core
+    ${_rm} -f "${TMP_CXX_FILE}" core
 }
 
 # run a link&run test named $1, return 0, iff ok
@@ -2804,23 +2807,23 @@ _link_run_test()
     case ${COMPILER} in
 	*CL.*|*cl.*) _link="link";;
     esac
-    ${_printf} "%s\n%s\n" "Linker call:" "--------------" >${TMP_LOGFILE}
-    ${_printf} "%s\n\n" "${_link} ${_flags}" >>${TMP_LOGFILE}
-    ${_printf} "%s\n" "Got the following error messages:" >>${TMP_LOGFILE}
-    ${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-    eval "`quote ${_link}` ${_flags} >>${TMP_LOGFILE} 2>&1"
+    ${_printf} "%s\n%s\n" "Linker call:" "--------------" >"${TMP_LOGFILE}"
+    ${_printf} "%s\n\n" "${_link} ${_flags}" >>"${TMP_LOGFILE}"
+    ${_printf} "%s\n" "Got the following error messages:" >>"${TMP_LOGFILE}"
+    ${_printf} "%s\n" "---------------------------------" >>"${TMP_LOGFILE}"
+    eval "`quote ${_link}` ${_flags} >>\"${TMP_LOGFILE}\" 2>&1"
     i=$?
     j=1
     if [ $i = 0 ]; then
 	log_print "    $1 test linking succeeded."
 	# run
 	${_printf} "%s\n" \
-	    "Run program `${_basename} ${TMP_CXX_FILE}`:" >>${TMP_LOGFILE}
+	    "Run program `${_basename} \"${TMP_CXX_FILE}\"`:" >>"${TMP_LOGFILE}"
 	${_printf} "%s\n\n" \
-	    "----------------------" >>${TMP_LOGFILE}
-	${_printf} "%s\n" "Got the following output:" >>${TMP_LOGFILE}
-	${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-	_tmp=`eval "${TMP_CXX_FILE} 2>&1 | ${_tee} -a ${TMP_LOGFILE} | ${_awk} 'BEGIN{FS=\"=\"} /^version=/{print \\$2}' | remove_special_chars"`
+	    "----------------------" >>"${TMP_LOGFILE}"
+	${_printf} "%s\n" "Got the following output:" >>"${TMP_LOGFILE}"
+	${_printf} "%s\n" "---------------------------------" >>"${TMP_LOGFILE}"
+	_tmp=`eval "${TMP_CXX_FILE} 2>&1 | ${_tee} -a \"${TMP_LOGFILE}\" | ${_awk} 'BEGIN{FS=\"=\"} /^version=/{print \\$2}' | remove_special_chars"`
 	j=$?
 	if [ $j = 0 ]; then
 	    log_print "    $1 test execution succeeded."
@@ -2859,13 +2862,13 @@ _link_run_test()
 		print_headline "Linking or execution failed"
 		print_center_line "You will be shown a log now ..."
 		wait_for_enter
-		${PAGER:-${_cat}} ${TMP_LOGFILE}
+		${PAGER:-${_cat}} "${TMP_LOGFILE}"
 		write_buffer "\n"
 		print_filled_line
 		wait_for_enter
 	    else
 		${_printf} "%s\n\n" " linking or execution failed."
-		${_cat} ${TMP_LOGFILE}
+		${_cat} "${TMP_LOGFILE}"
 		printf "%s\n\n" \
 		    "--------------------------------------------------------"
 	    fi
@@ -2873,7 +2876,7 @@ _link_run_test()
 	    ${_printf} "%s\n" " ${5:-no.}"
 	fi
 	log_print "    vvvvvvvvvvvv linker/runtime messages below vvvvvvvvvvvv"
-	eval ${_awk} \'{print \""   "\",\$0}\' ${TMP_LOGFILE} ${INSTALL_LOGFILE_REDIRECTION}
+	eval ${_awk} \'{print \""   "\",\$0}\' \"${TMP_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
 	log_print "    ^^^^^^^^^^^^ linker/runtime messages above ^^^^^^^^^^^^"
 	cleanup_after_link_run
 	return 1
@@ -2915,7 +2918,7 @@ print_os_setting()
 set_lib_compiled_flag()
 {
     # does there exist a lib for this os/compiler?
-    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${CGAL_LIBNAME} ]; then
+    if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${CGAL_LIBNAME}" ]; then
 	LIB_COMPILED='ok'
     else
 	LIB_COMPILED=''
@@ -2938,7 +2941,7 @@ retrieve_compiler_settings()
 	CGAL_INSTALL_VERSION=${_tmp_version}
     elif [ "${_tmp_version}" != "${CGAL_INSTALL_VERSION}" ]; then
 	# this config file was generated by an older install
-	log_print "WARNING: config file `$_basename ${_file}`"
+	log_print "WARNING: config file `$_basename \"${_file}\"`"
 	log_print "  was generated by another ${CGAL_INSTALL_CGAL} version."
 	SETUP_COMPLETE=''
 	CGAL_INSTALL_VERSION=${_tmp_version}
@@ -3014,7 +3017,7 @@ store_compiler_settings()
 {
     _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
     ${_printf} "%s\n" "/*" >${_file}
-    ${_printf} "%s\n" "** file: `$_basename ${_file}`" >>${_file}
+    ${_printf} "%s\n" "** file: `$_basename \"${_file}\"`" >>${_file}
     ${_printf} "%s\n" "** Configuration file for CGAL ${CGAL_VERSION}" >>${_file}
     ${_printf} "%s\n" "** on `extended_compiler_description`" >>${_file}
     ${_printf} "%s%s\n" "** Automatically created by " \
@@ -3050,10 +3053,10 @@ test_setup()
     SETUP_COMPLETE=''
     make_lib_dir
 
-    cd ${CGAL_TEST_CONF_DIR}
-    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
-    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
-    _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
+    cd "${CGAL_TEST_CONF_DIR}"
+    _check_dir_exists_create "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
+    _check_dir_exists_create "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL"
+    _file="${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h"
     
     if [ -z "${CONFIG_TEST_PASSED}" ]; then
 	print_filled_line
@@ -3066,7 +3069,7 @@ test_setup()
 	print_filled_line
 	flush_buffer
 
-	create_standard_header_replacements
+#	create_standard_header_replacements
 	test_compiler_specifica "${INSTALL_VERBOSE}"
 
         for totest in ${SUPPORT_FEATURES}; do
@@ -3121,7 +3124,7 @@ test_setup()
     fi
 
     # check supported packages
-    cd ${CGAL_SUPPORT_DIR}
+    cd "${CGAL_SUPPORT_DIR}"
     for totest in ${SUPPORT_PKGS}; do
         if [ -n "`value_of \"${totest}_SUPPORT\"`" ]; then
             if test_support_pkg "${totest}" verbose; then
@@ -3147,7 +3150,7 @@ test_setup()
           "#define CGAL_${_tmp2} ${_tmp3:-0}"
     done
     
-    cd ${CGAL_DIR}
+    cd "${CGAL_DIR}"
     if [ -z "${SETUP_COMPLETE}" ]; then return 1; fi
 
     ${_printf} "%s" "${_LEFTSPACE}Saving current setup ..."
@@ -3387,7 +3390,7 @@ compiler_choose_menu()
 		else
 		    return
 		fi
-		COMPILER="`basename ${COMPILER_NAME}`@`compiler_basename \"${_tmp3}\"`@${COMPILER_NAME}@${COMPILER_NAME}@`compiler_description \"${_tmp3}\"`@"
+		COMPILER="`basename \"${COMPILER_NAME}\"`@`compiler_basename \"${_tmp3}\"`@${COMPILER_NAME}@${COMPILER_NAME}@`compiler_description \"${_tmp3}\"`@"
                 CUSTOM_OSTYPE_TAG=''
 		_check_and_register_compiler "${COMPILER}"
 		reset_all_test_variables
@@ -3476,14 +3479,14 @@ compiler_menu()
 _do_command()
 {
     ${_printf} "%s" "${_LEFTSPACE}$2 ..."
-    if eval "$1 >${TMP_LOGFILE} 2>&1"; then
+    if eval "$1 >\"${TMP_LOGFILE}\" 2>&1"; then
 	log_print "\"$2\" succeeded."
 	${_printf} "%s\n" " done."
-	${_rm} -f ${TMP_LOGFILE}
+	${_rm} -f "${TMP_LOGFILE}"
     else
 	log_print "ERROR: \"$2\" failed."
-	${PAGER:-${_cat}} ${TMP_LOGFILE} 
-	${_rm} -f ${TMP_LOGFILE}
+	${PAGER:-${_cat}} "${TMP_LOGFILE}"
+	${_rm} -f "${TMP_LOGFILE}"
 	exit_on_error "\"$2\" failed"
     fi
 }
@@ -3494,10 +3497,10 @@ _do_command()
 _do_command_may_fail()
 {
     ${_printf} "%s" "${_LEFTSPACE}$2 ..."
-    if eval "$1 >${TMP_LOGFILE} 2>&1"; then
+    if eval "$1 >\"${TMP_LOGFILE}\" 2>&1"; then
 	log_print "\"$2\" succeeded."
 	${_printf} "%s\n" " done."
-	${_rm} -f ${TMP_LOGFILE}
+	${_rm} -f "${TMP_LOGFILE}"
 	return 0
     else
 	log_print "ERROR: \"$2\" failed."
@@ -3505,8 +3508,8 @@ _do_command_may_fail()
 	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
 	print_filled_line
 	wait_for_enter
-	${PAGER:-${_cat}} ${TMP_LOGFILE}
-	${_rm} -f ${TMP_LOGFILE}
+	${PAGER:-${_cat}} "${TMP_LOGFILE}"
+	${_rm} -f "${TMP_LOGFILE}"
 	return 1
     fi
 }
@@ -3673,7 +3676,7 @@ write_linker_flags()
 	  print_as_shell_comment "*** libpath flags for feature ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_LIBPATHFLAGS = " >> ${FILE}
 	  set_feature_libpathflags "${i}" ":"
-	  _append_to RUNTIME_PATH "${tmp_runtimepath}"
+	  _append_to RUNTIME_PATH "${tmp_runtimepath}" ":"
 	  makefile_print_from_var tmp_libpathflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3691,10 +3694,15 @@ write_linker_flags()
       fi
   done
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-      makefile_print_continuationline \
-	  "${RUNTIME_LINKER_FLAG}\$(${i}_LIBPATHFLAGS)\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER):${RUNTIME_PATH}" \
-	  >> ${FILE}
-      
+      if [ -z "${RUNTIME_PATH}" ]; then
+	  makefile_print_continuationline \
+	      "${RUNTIME_LINKER_FLAG}\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)" \
+	      >> ${FILE}
+      else
+	  makefile_print_continuationline \
+	      "${RUNTIME_LINKER_FLAG}\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER):${RUNTIME_PATH}" \
+	      >> ${FILE}
+      fi
   fi
   ${_printf} "\n\n" >> ${FILE}
   
@@ -3757,7 +3765,7 @@ write_linker_flags()
   makefile_print_continuationline "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_continuationline "`lib_option \"CGAL\"`" >> ${FILE}
   # FIXME: this special treatment is not so nice...
-  if [ -d ${CGAL_SRC_DIR}/Core -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
+  if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
       makefile_print_continuationline "`lib_option \"core++\"`" >> ${FILE}
   fi
   for i in ${R_SUPPORT_PKGS}; do
@@ -3872,10 +3880,8 @@ create_include_makefile()
   # CGAL_DIRECTORIES
   #
   makefile_header "include/lib directory settings" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_INCL_DIR = `os_path ${CGAL_INCL_DIR}`" \
-    >> ${FILE}
-  ${_printf} "%s\n" "CGAL_LIB_DIR = `os_path ${CGAL_LIB_DIR}`" \
-    >> ${FILE}
+  ${_printf} "%s\n" "CGAL_INCL_DIR = ${CGAL_INCL_DIR}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_DIR = ${CGAL_LIB_DIR}" >> ${FILE}
 
   #
   # CGAL_OS_COMPILER
@@ -3980,7 +3986,7 @@ create_include_makefile()
   #
   ${_printf} "%s\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_OBJ_PREFIX = ${CGAL_OBJ_PREFIX}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_LIB_DESTINATION = \$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_DESTINATION = '\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)'" >> ${FILE}
 
   #
   # CGAL_SHARED_LIB
@@ -4030,13 +4036,13 @@ create_include_makefile()
 
 replace_line()
 {
-  if [ ! -f $1 ] ; then
+  if [ ! -f "$1" ] ; then
     ${_printf} "%s\n" "Error: could not open file $1 in replace_line()"
     return
   fi
   if eval '${_sed} "\\^$2c\\
-$3${_EXTRA_NEWLINE}" $1 > $1.TEMP' ; then
-    ${_mv} $1.TEMP $1
+$3${_EXTRA_NEWLINE}" "$1" > "$1.TEMP"' ; then
+    ${_mv} "$1.TEMP" "$1"
   else
     ${_printf} "%s\n" "Error sed replacement failed in replace_line()"
   fi
@@ -4044,47 +4050,49 @@ $3${_EXTRA_NEWLINE}" $1 > $1.TEMP' ; then
 
 prepare_lib_makefiles()
 {
-    for FILE in ${CGAL_SRC_DIR}/makefile_lib \
-	${CGAL_SRC_DIR}/makefile_sharedlib
+    for FILE in "${CGAL_SRC_DIR}/makefile_lib" \
+	"${CGAL_SRC_DIR}/makefile_sharedlib"
     do
-	replace_line ${FILE} CGAL_MAKEFILE \
-	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+	replace_line "${FILE}" CGAL_MAKEFILE \
+	    "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
     done
-    if [ -d ${CGAL_SRC_DIR}/Core ]; then
-	replace_line ${CGAL_SRC_DIR}/Core/makefile \
-	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    if [ -d "${CGAL_SRC_DIR}/Core" ]; then
+	replace_line "${CGAL_SRC_DIR}/Core/makefile" \
+	    CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
     fi
-    if [ -d ${CGAL_SRC_DIR}/CGALQt ]; then
-	replace_line ${CGAL_SRC_DIR}/CGALQt/makefile \
-	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    if [ -d "${CGAL_SRC_DIR}/CGALQt" ]; then
+	replace_line "${CGAL_SRC_DIR}/CGALQt/makefile" \
+	    CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
     fi
 }
 
 # log via $1
 generatemakefiles()
 {
-  _check_dir_exists ${CGAL_MAKE_DIR}
-  _check_write ${CGAL_MAKE_DIR}
+  _check_dir_exists "${CGAL_MAKE_DIR}"
+  _check_write "${CGAL_MAKE_DIR}"
   # create ${CGAL_MAKEFILE}, if it does not exist
-  if [ ! -r ${CGAL_MAKEFILE} ]; then
-    $1 "remark: `${_basename} ${CGAL_MAKEFILE}` does not exist,"
+  if [ ! -r "${CGAL_MAKEFILE}" ]; then
+    $1 "remark: `${_basename} \"${CGAL_MAKEFILE}\"` does not exist,"
     $1 " creating."
   else
-    $1 "remark: `${_basename} ${CGAL_MAKEFILE}` already exists,"
+    $1 "remark: `${_basename} \"${CGAL_MAKEFILE}\"` already exists,"
     $1 " saving as \".bak\"."
-    ${_mv} ${CGAL_MAKEFILE} ${CGAL_MAKEFILE}.bak
+    ${_mv} "${CGAL_MAKEFILE}" "${CGAL_MAKEFILE}.bak"
   fi
   create_include_makefile
 
   prepare_lib_makefiles
 
-  for FILE in `${_ls} ${CGAL_EXAMPLE_DIR}/*/makefile`; do
-    replace_line ${FILE} CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+  for FILE in `${_ls} "${CGAL_EXAMPLE_DIR}"/*/makefile 2>/dev/null | ${_sed} 's/ //g'`; do
+      FILE="`echo ${FILE} | ${_sed} 's// /g'`"
+      replace_line "${FILE}" CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
   done
 
   if [ -d "${CGAL_TEST_DIR}" ]; then
-    for FILE in `${_ls} ${CGAL_TEST_DIR}/*/makefile`; do
-	replace_line ${FILE} CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    for FILE in `${_ls} "${CGAL_TEST_DIR}"/*/makefile 2>/dev/null | ${_sed} 's/ //g'`; do
+	FILE="`echo ${FILE} | ${_sed} 's// /g'`"
+	replace_line "${FILE}" CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
     done
   fi
 
@@ -4095,16 +4103,16 @@ generatemakefiles()
 _do_compile()
 {
     ${_printf} "%s" "${_LEFTSPACE}Building CGAL_$1 ..."
-    if [ -f ${COMPILE_LOGFILE} -a ! -w ${COMPILE_LOGFILE} ]; then
-	${_rm} -f ${COMPILE_LOGFILE}
+    if [ -f "${COMPILE_LOGFILE}" -a ! -w "${COMPILE_LOGFILE}" ]; then
+	${_rm} -f "${COMPILE_LOGFILE}"
     fi
-    ${_rm} -f *${OBJ_EXT}
+    ${_rm} -f *"${OBJ_EXT}"
     MAKE_OPTION="-k"
     # Check if there is a special makefile file
-    if [ -f makefile_$1 ]; then
+    if [ -f "makefile_$1" ]; then
         MAKE_OPTION="${MAKE_OPTION} -f makefile_$1"
     fi
-    if make ${MAKE_OPTION} >${COMPILE_LOGFILE} 2>&1; then
+    if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
@@ -4112,13 +4120,13 @@ _do_compile()
     else
 	log_print "Compilation of $1 ${_libname} failed."
 	log_print "vvvvvvvvvvvv error messages below vvvvvvvvvvvv"
-	eval ${_cat} ${COMPILE_LOGFILE} ${INSTALL_LOGFILE_REDIRECTION}
+	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
 	log_print "^^^^^^^^^^^^ error messages above ^^^^^^^^^^^^"
 	${_printf} "\n%s\n" "${_LEFTSPACE}Compilation of CGAL_$1 failed."
 	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
 	print_filled_line
 	wait_for_enter
-	${PAGER:-${_cat}} ${COMPILE_LOGFILE} 
+	${PAGER:-${_cat}} "${COMPILE_LOGFILE}"
 	write_buffer "\n"
 	return 1
     fi
@@ -4127,10 +4135,10 @@ _do_compile()
 # make lib dir
 make_lib_dir()
 {
-    _libname=${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}
-    _check_dir_exists_create ${_libname}
-    _libname=`${_basename} ${_libname}`
-    CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${_libname}
+    _libname="${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
+    _check_dir_exists_create "${_libname}"
+    _libname=`${_basename} "${_libname}"`
+    CGAL_MAKEFILE="${CGAL_MAKE_DIR}/makefile_${_libname}"
 }
 
 # create appropriate dirs and makefiles
@@ -4163,14 +4171,14 @@ write_menu_information()
 # USES: i _tmp
 build_cgal()
 {
-    cd ${CGAL_SRC_DIR}
+    cd "${CGAL_SRC_DIR}"
     if _do_compile lib; then
 	LIB_COMPILED='ok'
 	${_printf} "%s" "`print_os_setting 'print_with_indent'`" \
-	    >> ${INSTALL_RIS_LOGFILE}
+	    >> "${INSTALL_RIS_LOGFILE}"
 	${_printf} "\n${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
-	    >> ${INSTALL_RIS_LOGFILE}
+	    >> "${INSTALL_RIS_LOGFILE}"
         if [ -n "${ENABLE_SHARED}" ]; then
             case ${CGAL_OS_COMPILER} in
                 *CYGWIN*)
@@ -4181,19 +4189,19 @@ build_cgal()
         fi
 	# FIXME: Should this be hardcoded here?
 	# Move CGALQt into libCGAL?
-	if [ -d ${CGAL_SRC_DIR}/CGALQt -a -n "${PROVIDE_PKG_QT}" ]; then
-	    cd ${CGAL_SRC_DIR}/CGALQt
+	if [ -d "${CGAL_SRC_DIR}/CGALQt" -a -n "${PROVIDE_PKG_QT}" ]; then
+	    cd "${CGAL_SRC_DIR}/CGALQt"
 	    _do_compile Qt
 	fi
-	if [ -d ${CGAL_SRC_DIR}/Core -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
-	    cd ${CGAL_SRC_DIR}/Core
+	if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
+	    cd "${CGAL_SRC_DIR}/Core"
 	    _do_compile Core
 	fi
     fi
     write_buffer "\n"
     print_filled_line
     wait_for_enter
-    cd ${CGAL_DIR}
+    cd "${CGAL_DIR}"
 }
 
 lib_menu()
@@ -4216,8 +4224,8 @@ lib_menu()
 
 print_lib_information()
 {
-    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${CGAL_LIBNAME} ]; then
-	print_line "Libs built:          `_get_timestamp ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${CGAL_LIBNAME}`"
+    if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${CGAL_LIBNAME}" ]; then
+	print_line "Libs built:          `_get_timestamp \"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${CGAL_LIBNAME}\"`"
     else
 	print_line "There are no libs for this os/compiler."
     fi
@@ -4253,7 +4261,7 @@ installation()
 
     # ok, go ahead...
     go_down_lines 3; flush_buffer
-    _check_dir_exists_create ${CGAL_INSTALL_DIR}
+    _check_dir_exists_create "${CGAL_INSTALL_DIR}"
     # this sets $CGAL_MAKEFILE:
     make_lib_dir
 
@@ -4261,21 +4269,21 @@ installation()
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/include"
     _check_dir_exists_create "${_CGAL_IDIR}"
     _do_command \
-      "cd ${CGAL_INCL_DIR}; ${_tar} cf - . | (cd ${_CGAL_IDIR}; ${_tar} xf -)" \
+      "cd \"${CGAL_INCL_DIR}\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
       "Install CGAL headers"
  
     # install libraries
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/lib/${CGAL_OS_COMPILER}"
     _check_dir_exists_create "${_CGAL_IDIR}"
     _do_command \
-      "cd ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}; ${_tar} cf - . | (cd ${_CGAL_IDIR}; ${_tar} xf -)" \
+      "cd \"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
       "Install CGAL libraries"
 
     # install binaries
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/bin"
     _check_dir_exists_create "${_CGAL_IDIR}"
     _do_command \
-      "cd ${CGAL_DIR}/scripts; ${_tar} cf - . | (cd ${_CGAL_IDIR}; ${_tar} xf -)" \
+      "cd \"${CGAL_DIR}/scripts\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
       "Install CGAL programs"
 
    # install makefile
@@ -4283,13 +4291,13 @@ installation()
     _check_dir_exists_create "${_CGAL_IDIR}"
     CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/`${_basename} \"${CGAL_MAKEFILE}\"`"
     _do_command \
-      "(${_sed} \"s${CGAL_DIR}${CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" >${CGAL_INSTALL_MAKEFILE})" \
+      "(${_sed} \"s${CGAL_DIR}${CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
       "Install CGAL Makefile"
 
     write_buffer "\n"
     print_filled_line
     wait_for_enter
-    cd ${CGAL_DIR}
+    cd "${CGAL_DIR}"
 }
 
 install_menu()
@@ -4339,11 +4347,11 @@ _build_one()
     log_print
     log_print \
 	    "--------------------------------------------------------"
-    log_print "Build on `${_basename} $1`:"
+    log_print "Build on `${_basename} \"$1\"`:"
     log_print \
 	    "--------------------------------------------------------"
     log_to_file
-    try_to_get_var_from_config_file COMPILER $1
+    try_to_get_var_from_config_file COMPILER "$1"
     if [ -n "${COMPILER}" ]; then
         CUSTOM_OSTYPE_TAG="`custom_ostype_tag`"
         set_ostype
@@ -4374,7 +4382,7 @@ _build_one()
         log_print "Cannot rebuild the library."
         print_filled_line
         print_empty_line
-        print_headline "Cannot build on `${_basename} $1` !"
+        print_headline "Cannot build on `${_basename} \"$1\"` !"
         print_headline "No COMPILER defined in config/install/..."
         print_filled_line
         write_buffer "\n"
@@ -4401,9 +4409,10 @@ build_all()
 {
     guess_os log_print
     ${_printf} "\n\n"
-    for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
+    for i in `${_ls} "${CGAL_INSTALL_CONF_DIR}"/${SYST}* 2>/dev/null | ${_sed} 's/ //g'`
     do
-        _build_one $i
+        i="`echo ${i} | ${_sed} 's// /g'`"
+        _build_one "$i"
     done
 }
 
@@ -4416,17 +4425,17 @@ test_menu()
 {
     write_menu_information "Testing"
 
-    ${_printf} "%s" "${_LEFTSPACE}Updating `$_basename ${CGAL_TESTFILE}` ..."
-    _check_write ${CGAL_TESTFILE}
-    replace_line ${CGAL_TESTFILE} 'run_testsuite ' ""
+    ${_printf} "%s" "${_LEFTSPACE}Updating `$_basename \"${CGAL_TESTFILE}\"` ..."
+    _check_write "${CGAL_TESTFILE}"
+    replace_line "${CGAL_TESTFILE}" 'run_testsuite ' ""
     ${_printf} "%s" "run_testsuite ${CGAL_MAKE_DIR}/makefile_${CGAL_OS_COMPILER}" \
-	>> ${CGAL_TESTFILE}
-    $_chmod 744 ${CGAL_TESTFILE}
+	>> "${CGAL_TESTFILE}"
+    $_chmod 744 "${CGAL_TESTFILE}"
     ${_printf} "%s\n" " done."
 
     ${_printf} "%s\n" "${_LEFTSPACE}Starting ${CGAL_TESTFILE} ..."
-    cd ${CGAL_TEST_DIR}
-    ${CGAL_TESTFILE}
+    cd "${CGAL_TEST_DIR}"
+    "${CGAL_TESTFILE}"
     cleanup_after_compile
     log_print "Test completed."
     print_filled_line
@@ -4434,10 +4443,10 @@ test_menu()
     print_headline "Test completed."
     print_center_line "You will be shown a log now ..."
     wait_for_enter
-    ${PAGER:-${_cat}} ${TEST_LOGFILE}
+    ${PAGER:-${_cat}} "${TEST_LOGFILE}"
     write_buffer "\n"
     print_filled_line
-    cd ${CGAL_DIR}
+    cd "${CGAL_DIR}"
     wait_for_enter
     return
 }
@@ -4448,8 +4457,8 @@ test_menu()
 
 upgrade()
 {
-    _check_read ${UPGRADE_FROM}
-    _check_execute ${UPGRADE_FROM}
+    _check_read "${UPGRADE_FROM}"
+    _check_execute "${UPGRADE_FROM}"
     # copy config install files
     write_buffer "\n"
     print_filled_line
@@ -4463,7 +4472,7 @@ upgrade()
     #    # check for old format
     #    case "`awk 'BEGIN{FS=\".\"}/install_cgal/{print $0}' $i`"
     #done
-    ${_cp} -r ${UPGRADE_FROM}/config/install ${CGAL_DIR}/config
+    ${_cp} -r "${UPGRADE_FROM}/config/install" "${CGAL_DIR}/config"
     log_print "done."
 
     # copy gmp header and libs
@@ -4643,7 +4652,7 @@ support_menu()
 # (assumed to be in columns 6-8)
 _get_timestamp()
 {
-    ${_ls} -l $1 | ${_awk} '{printf "%s %s %s",$7,$6,$8}'
+    ${_ls} -l "$1" | ${_awk} '{printf "%s %s %s",$7,$6,$8}'
 }
 
 main_menu()
@@ -4696,7 +4705,7 @@ main_menu()
 # with its full path and set _tmp to its basename
 _check_comp_executable()
 {
-    _tmp=`eval "_real_basename ${*} 2>/dev/null"`
+    _tmp=`eval "_real_basename \"${*}\" 2>/dev/null"`
     if [ -z "${_tmp}" ]; then
 	exit_on_error "basename returned empty string"
     elif [ -z "${*}" ]; then
@@ -4781,12 +4790,12 @@ finish()
     else
 	go_down_lines 3
 	flush_buffer
-	${_cat} ${INSTALL_RIS_LOGFILE}
+	${_cat} "${INSTALL_RIS_LOGFILE}"
 	print_filled_line
 	print_center_line "${CGAL_INSTALL_CGAL} completed."
     fi
     print_center_line "If something went wrong, (or maybe also, if not:)"
-    print_center_line "have a look at `${_basename} ${INSTALL_LOGFILE}`."
+    print_center_line "have a look at `${_basename} \"${INSTALL_LOGFILE}\"`."
     print_filled_line
     #write_buffer "\nCGAL_LIB_DIR is\n${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}\n"
     write_buffer "\nRemember to set the CGAL_MAKEFILE environment variable, "
@@ -4902,13 +4911,13 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	MATCH=''
 	for i in ${SUPPORT_FEATURES}; do
 	    case ${_arg} in
-		-${i}_INCL_DIR*) 
+		-${i}_INCL_DIR*|-${i}_INCLDIR*) 
                     if set_variable_from_command_line "${i}_INCL_DIR" "$1" "$2"; then
 			shift
 		    fi
 		    MATCH=y
 		    ;;
-		-${i}_LIB_DIR*) 
+		-${i}_LIB_DIR*|-${i}_LIBDIR*) 
 	            if set_variable_from_command_line "${i}_LIB_DIR" "$1" "$2"; then
 			shift
 		    fi
@@ -5078,6 +5087,11 @@ case ${_WHAT_TO_DO} in
 	set_compiler_from_command_line
 	flush_buffer
         log_to_file
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Configuring CGAL:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	test_setup
         lib_menu
         installation
