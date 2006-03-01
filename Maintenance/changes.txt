@@ -1,4 +1,7 @@
 1 March 2006
+- Rename Parameterization as Surface_mesh_parameterization
+
+1 March 2006
 - Add Subdivision_method_3
 
 11 October 2005 Sylvain Pion
@@ -79,14 +82,14 @@
 - create_testresult_page :
   - remove obsolete print_header() function.
   - add <blink> for the documentation link.
-  
+
 14 August 2004 Radu Ursu
 - create_testresults_page: tried to fix warnings of this type:
-    Use of uninitialized value in numeric le (<=) at ./create_testresult_page line 70. 
+    Use of uninitialized value in numeric le (<=) at ./create_testresult_page line 70.
 
 10 August 2004 Radu Ursu
-- create_testresult_page sorts correctly the array containing the name of the 
-  testresults posted by testers. (eg. 3.1-100 > 3.1-I-99 works now) 
+- create_testresult_page sorts correctly the array containing the name of the
+  testresults posted by testers. (eg. 3.1-100 > 3.1-I-99 works now)
 
 3 August 2004 Sylvain Pion
 - create_testresult_page, to_zipped_format : make use of the new TESTER_NAME

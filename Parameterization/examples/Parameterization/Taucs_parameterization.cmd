@@ -1,1 +1,0 @@
-data/mannequin-devil.off mannequin-devil_floater_circle_taucs_parameterized.eps

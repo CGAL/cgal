@@ -18,8 +18,8 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
-#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_PATCH_3_H
-#define CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_PATCH_3_H
+#ifndef CGAL_PARAMETERIZATION_MESH_PATCH_3_H
+#define CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>

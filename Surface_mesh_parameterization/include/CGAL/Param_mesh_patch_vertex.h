@@ -77,7 +77,7 @@ public:
     {
         CGAL_surface_mesh_parameterization_assertion(adaptor_vertex != NULL);
         CGAL_surface_mesh_parameterization_assertion( (last_cw_neighbor == NULL) ==
-                                         (first_cw_neighbor == NULL) );
+                                                      (first_cw_neighbor == NULL) );
 
         m_vertex            = adaptor_vertex;
         m_last_cw_neighbor  = last_cw_neighbor;

@@ -1183,36 +1183,6 @@ Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 PS_Stream/doc_tex/PS_Stream/style.ps -text
-Parameterization/doc/specification/param.pdf -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/LSCM.eps -text
-Parameterization/doc_tex/Parameterization/LSCM.png -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/authalic.eps -text
-Parameterization/doc_tex/Parameterization/authalic.png -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/conformal.eps -text
-Parameterization/doc_tex/Parameterization/conformal.png -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/floater.eps -text
-Parameterization/doc_tex/Parameterization/floater.png -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/introduction.eps -text
-Parameterization/doc_tex/Parameterization/introduction.png -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/parameterizer_class_diagram.eps -text
-Parameterization/doc_tex/Parameterization/parameterizer_class_diagram.png -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/parameterizers_class_hierarchy.eps -text
-Parameterization/doc_tex/Parameterization/parameterizers_class_hierarchy.png -text svneol=unset#unset
-Parameterization/doc_tex/Parameterization/uniform.eps -text
-Parameterization/doc_tex/Parameterization/uniform.png -text svneol=unset#unset
-Parameterization/examples/Parameterization/data/grid512.bmp -text svneol=unset#unset
-Parameterization/examples/Parameterization/data/holes.off -text
-Parameterization/examples/Parameterization/data/mannequin-devil.off -text
-Parameterization/examples/Parameterization/data/mask_cone.off -text
-Parameterization/examples/Parameterization/data/nefertiti.off -text
-Parameterization/examples/Parameterization/data/parameterization.mtl -text
-Parameterization/examples/Parameterization/data/rotor.off -text
-Parameterization/examples/Parameterization/data/sphere966.off -text
-Parameterization/examples/Parameterization/data/three_peaks.off -text
-Parameterization/test/Parameterization/data/aircraft.off -text
-Parameterization/test/Parameterization/data/cube.off -text
-Parameterization/test/Parameterization/data/knot2.off -text
-Parameterization/test/Parameterization/data/torus_tri.off -text
 Partition_2/demo/Partition_2/partition_2.vcproj -text
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#unset
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#unset
