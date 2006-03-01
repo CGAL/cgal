@@ -42,26 +42,26 @@ A model \ccVar\ of this type must provide:
 	     OutputIterator res);}
 {Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, 
 with their multiplicity, as objects of type 
-\ccc{std::pair< AlgebraicKernelForCircles::RootForCircles_2_2, int>}.} 
+\ccc{std::pair< AlgebraicKernelForCircles::Root_for_circles_2_2, int>}.} 
 
 \ccMethod{template < class OutputIterator >
     OutputIterator
     operator()(const AlgebraicKernelForCircles::Polynomial_1_2 &p1,
-	     const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p2,
+	     const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p2,
 	     OutputIterator res);}
 {Same as previous.} 
 
 \ccMethod{template < class OutputIterator >
     OutputIterator
-    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p1,
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p1,
 	     const AlgebraicKernelForCircles::Polynomial_1_2 &p2,
 	     OutputIterator res);}
 {Same as previous.} 
 
 \ccMethod{template < class OutputIterator >
     OutputIterator
-    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p1,
-	     const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p2,
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p1,
+	     const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p2,
 	     OutputIterator res);}
 {Same as previous.} 
 
@@ -85,14 +85,14 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     OutputIterator
-    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
 	     OutputIterator res);}
 {Copies in the output iterator the \ccc{x}-critical points of polynomial 
-\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::RootForCircles_2_2}.} 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::Root_for_circles_2_2}.} 
 
 \ccMethod{template < class OutputIterator >
-    AlgebraicKernelForCircles::RootForCircles_2_2
-    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+    AlgebraicKernelForCircles::Root_for_circles_2_2
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
 	     bool i);}
 {Computes the \ccc{i}th \ccc{x}-critical point of polynomial \ccc{p}.} 
 
@@ -115,14 +115,14 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     OutputIterator
-    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
 	     OutputIterator res);}
 {Copies in the output iterator the \ccc{y}-critical points of polynomial 
-\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::RootForCircles_2_2}.} 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::Root_for_circles_2_2}.} 
 
 \ccMethod{template < class OutputIterator >
-    AlgebraicKernelForCircles::RootForCircles_2_2
-    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+    AlgebraicKernelForCircles::Root_for_circles_2_2
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
 	     bool i);}
 {Computes the \ccc{i}th \ccc{y}-critical point of polynomial \ccc{p}.} 
 
