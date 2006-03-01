@@ -21,11 +21,8 @@ IMPLEMENT_DYNCREATE(CMeshDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CMeshDoc, CDocument)
 	ON_COMMAND(ID_EDIT_OPTIONS, OnEditOptions)
-  ON_COMMAND(ID_FIT_PLANE, OnFitPlane)
-  ON_COMMAND(ID_FIT_LINE, OnFitLine)
-  ON_COMMAND(ID_POINTSET_PLANE, OnPointsetPlane)
-  ON_COMMAND(ID_POINTSET_LINE, OnPointsetLine)
-  ON_COMMAND(ID_RANDOM_ONAPLANE, OnRandomOnaplane)
+  ON_COMMAND(ID_FIT_FITPOINTSET, OnFitFitpointset)
+  ON_COMMAND(ID_FIT_TRIANGLESET32899, OnFitTriangleset32899)
 END_MESSAGE_MAP()
 
 
@@ -120,6 +117,9 @@ BOOL CMeshDoc::OnOpenDocument(LPCTSTR lpszPathName)
 			return false;
 		}
 
+  OnFitFitpointset();
+
+
 	return TRUE;
 }
 
@@ -206,13 +206,15 @@ void CMeshDoc::OnEditOptions()
 	}
 }
 
-void CMeshDoc::gl_draw_fitting_primitive()
+void CMeshDoc::gl_draw_fitting_primitives()
 {
   ::glLineWidth(2.0f);
   ::glColor3ub(255,0,0);
 
   Vector b1 = m_fitting_plane.base1();
   Vector b2 = m_fitting_plane.base2();
+  b1 = b1 / std::sqrt(b1 * b1);
+  b2 = b2 / std::sqrt(b2 * b2);
   Point c = m_centroid;
   Point p1 = c - b1 - b2;
   Point p2 = c + b1 - b2;
@@ -225,13 +227,22 @@ void CMeshDoc::gl_draw_fitting_primitive()
     ::glVertex3d(p3.x(),p3.y(),p3.z());
     ::glVertex3d(p4.x(),p4.y(),p4.z());
   ::glEnd();
+
+  ::glColor3ub(0,255,0);
+
+  Point p5 = m_fitting_line.point(1);
+  Point p6 = m_fitting_line.point(-1);
+  ::glBegin(GL_LINES);
+    ::glVertex3d(p5.x(),p5.y(),p5.z());
+    ::glVertex3d(p6.x(),p6.y(),p6.z());
+  ::glEnd();
 }
 
 
 
-void CMeshDoc::OnFitLine()
+
+void CMeshDoc::OnFitFitpointset()
 {
-  /*
   linear_least_squares_fitting_3(m_points.begin(),
                                  m_points.end(),
                                  m_fitting_line);
@@ -239,26 +250,7 @@ void CMeshDoc::OnFitLine()
                                  m_points.end(),
                                  m_fitting_line,
                                  m_centroid);
-    */                             
-  UpdateAllViews(NULL);
-}
 
-void CMeshDoc::OnFitPlane()
-{
-
-  linear_least_squares_fitting_3(m_triangles.begin(),
-                                 m_triangles.end(),
-                                 m_fitting_plane);
-                                 
-  linear_least_squares_fitting_3(m_triangles.begin(),
-                                 m_triangles.end(),
-                                 m_fitting_plane,
-                                 m_centroid);
-  UpdateAllViews(NULL);
-}
-
-void CMeshDoc::OnPointsetPlane()
-{
   linear_least_squares_fitting_3(m_points.begin(),
                                  m_points.end(),
                                  m_fitting_plane);
@@ -269,14 +261,22 @@ void CMeshDoc::OnPointsetPlane()
   UpdateAllViews(NULL);
 }
 
-void CMeshDoc::OnPointsetLine()
+void CMeshDoc::OnFitTriangleset32899()
 {
-  UpdateAllViews(NULL);
-}
+  linear_least_squares_fitting_3(m_triangles.begin(),
+                                 m_triangles.end(),
+                                 m_fitting_line);
+  linear_least_squares_fitting_3(m_triangles.begin(),
+                                 m_triangles.end(),
+                                 m_fitting_line,
+                                 m_centroid);
 
-void CMeshDoc::OnRandomOnaplane()
-{
-  // unsigned int nb_points;
-  // m_points.clear();
-  //FT 
+  linear_least_squares_fitting_3(m_triangles.begin(),
+                                 m_triangles.end(),
+                                 m_fitting_plane);
+  linear_least_squares_fitting_3(m_triangles.begin(),
+                                 m_triangles.end(),
+                                 m_fitting_plane,
+                                 m_centroid);
+  UpdateAllViews(NULL);
 }

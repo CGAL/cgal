@@ -260,7 +260,7 @@ void CMeshView::OnPaint()
 		m_Arcball.glDraw();
 
   	pDoc->m_mesh.gl_draw_sites(0,0,100,2.0f);
-    pDoc->gl_draw_fitting_primitive();
+    pDoc->gl_draw_fitting_primitives();
 
 	glPopMatrix();
 

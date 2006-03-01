@@ -118,16 +118,8 @@ BEGIN
     END
     POPUP "&Fit"
     BEGIN
-        POPUP "Point set"
-        BEGIN
-            MENUITEM "Line",                        ID_POINTSET_LINE
-            MENUITEM "Plane",                       ID_POINTSET_PLANE
-        END
-        POPUP "Triangle set"
-        BEGIN
-            MENUITEM "Line",                        ID_FIT_LINE
-            MENUITEM "Plane",                       ID_FIT_PLANE
-        END
+        MENUITEM "Point set",                   ID_FIT_FITPOINTSET
+        MENUITEM "Triangle set",                ID_FIT_TRIANGLESET32899
     END
     POPUP "Camer&a"
     BEGIN

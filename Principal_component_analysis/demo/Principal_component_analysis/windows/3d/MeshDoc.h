@@ -42,7 +42,7 @@ public:
   Line m_fitting_line;
   Plane m_fitting_plane;
 
-  void gl_draw_fitting_primitive();
+  void gl_draw_fitting_primitives();
 
 // Operations
 public:
@@ -71,11 +71,8 @@ public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	afx_msg void OnEditOptions();
-  afx_msg void OnFitPlane();
-  afx_msg void OnFitLine();
-  afx_msg void OnPointsetPlane();
-  afx_msg void OnPointsetLine();
-  afx_msg void OnRandomOnaplane();
+  afx_msg void OnFitFitpointset();
+  afx_msg void OnFitTriangleset32899();
 };
 
 
