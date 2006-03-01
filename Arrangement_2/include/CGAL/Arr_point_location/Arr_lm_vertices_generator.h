@@ -274,7 +274,7 @@ protected:
 
     double nl = static_cast<double> (num_landmarks);
     const int sqrt_num_landmarks = 
-      static_cast<int> (CGAL::sqrt(nl) + 0.5);
+      static_cast<int> (std::sqrt (nl) + 0.5);
 
     num_small_not_updated_changes++;
     if ((num_landmarks < 10) ||

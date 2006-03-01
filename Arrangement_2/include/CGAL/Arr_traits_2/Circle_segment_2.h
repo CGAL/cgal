@@ -1330,12 +1330,12 @@ public:
       if(_is_upper())
       {
         y_max = to_double(circ.center().y())+ 
-                CGAL::sqrt(to_double(circ.squared_radius()));
+                std::sqrt(to_double(circ.squared_radius()));
       }
       else
       {
         y_min = to_double(circ.center().y()) - 
-                CGAL::sqrt(to_double(circ.squared_radius()));
+                std::sqrt(to_double(circ.squared_radius()));
       }
     }
 
@@ -2396,9 +2396,9 @@ protected:
       disc = app_sqr_rad - CGAL::square(x - app_xcenter);
       CGAL_precondition(disc >= 0);
       if(is_up)
-        y = app_ycenter + CGAL::sqrt(disc);
+        y = app_ycenter + std::sqrt(disc);
       else
-        y = app_ycenter - CGAL::sqrt(disc);
+        y = app_ycenter - std::sqrt(disc);
 
       *oi = std::make_pair(x, y);
       ++oi;

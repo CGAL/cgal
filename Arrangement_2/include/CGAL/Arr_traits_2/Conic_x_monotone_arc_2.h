@@ -633,11 +633,11 @@ public:
         // based on the information flags.
         if ((this->_info & PLUS_SQRT_DISC_ROOT) != 0)
         {
-          y = (::sqrt(disc) - B) / (2*A);
+          y = (std::sqrt(disc) - B) / (2*A);
         }
         else
         {
-          y = -(B + ::sqrt (disc)) / (2*A);
+          y = -(B + std::sqrt (disc)) / (2*A);
         }
       }
 
