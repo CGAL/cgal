@@ -98,7 +98,7 @@ operations that operate on objects of these types. An instatiated
 \ccc{General_polygon_set_2} class defines the nested types 
 \ccc{General_polygon_set_2<Traits>::Polygon_2} and
 \ccc{General_polygon_set_2<Traits>::Polygon_with_holes_2}, which model
-the concept \ccc{GeneralPolygon_2} concept and
+the concepts \ccc{GeneralPolygon_2} and
 \ccc{GeneralPolygonWithHoles_2} respectively.
 
 % ------------------------------------
@@ -110,9 +110,9 @@ The traits class used to instantiate the \ccc{General_polygon_set_2}
 class template must model the concept \ccc{GeneralPolygonSetTraits_2},
 and is tailored to handle a specific family of curves. The concept
 \ccc{GeneralPolygonSetTraits_2} refines the concept
-\ccc{ArrangementDirectionalXMonotoneTraits} specified next.
+\ccc{ArrangementDirectionalXMonotoneTraits_2} specified next.
 
-The concept \ccc{ArrangementDirectionalXMonotoneTraits} refines the 
+The concept \ccc{ArrangementDirectionalXMonotoneTraits_2} refines the 
 concept \ccc{ArrangementXMonotoneTraits_2} (see 
 Section~\ref{arr_sssec:insert_x_mon} in the 2D Arrangements chapter).
 Thus, a model of this concept must define the type \ccc{X_monotone_curve_2}, 
@@ -129,7 +129,7 @@ target}, it is only required to determine the left (lexicographically
 smaller) and the right (lexicographically larger) endpoints of a given
 curve.
 
-The \ccc{ArrangementDirectionalXMonotoneTraits} concept treats its
+The \ccc{ArrangementDirectionalXMonotoneTraits_2} concept treats its
 $x$-monotone curves as directed objects. It thus requires two additional
 operations on $x$-monotone curves:
 \begin{itemize}
@@ -144,9 +144,9 @@ The traits classes \ccc{Arr_segment_traits_2},
 \ccc{Arr_conic_traits_2} and \ccc{Arr_rational_arc_traits_2}, which are 
 bundeled in the \ccc{Arrangement_2} package and distributed with \cgal,
 are all models of the refined concept 
-\ccc{ArrangementDirectionalXMonotoneTraits}.\footnote{The
+\ccc{ArrangementDirectionalXMonotoneTraits_2}.\footnote{The
 \ccc{Arr_polyline_traits_2} class is {\em not} a model of the, 
-\ccc{ArrangementDirectionalXMonotoneTraits} concept, as the
+\ccc{ArrangementDirectionalXMonotoneTraits_2} concept, as the
 $x$-monotone curve it defines is always directed from left to
 right. Thus, an opposite curve cannot be constructed. However, it is
 not very useful to construct a polygon whose edges are polylines, as
@@ -245,7 +245,7 @@ The class-template
 \ccc{Gps_traits_2<ArrDirectionalXMonotoneTraits,GeneralPolygon>}
 models the concept \ccc{GeneralPolygonSetTraits_2}. Its implementation is 
 rather simple, as it is derived from the instantiated template-parameter 
-\ccc{ArrXMonotoneTraits} inheriting its necessary types and methods, 
+\ccc{ArrXMonotoneTraits_2} inheriting its necessary types and methods, 
 and it exploits the methods provided by the instantiated parameter 
 \ccc{GeneralPolygon} --- a model of the concept \ccc{GeneralPolygon_2}.
 By default, the \ccc{GeneralPolygon} parameter is defined as
