@@ -6,8 +6,8 @@
 % |                                                                         |
 % | 02.09.1996   Lutz Kettner   kettner@acm.org                             |
 % | Zurich, Switzerland                                                     |
-% | $Id$                                                       |
-% | $Date$                                            |
+% | $Id$                |
+% | $Date$                   |
 % |_________________________________________________________________________|
 % |#########################################################################|
 
@@ -249,7 +249,7 @@ it in {\tt tt}-style.
 \label{sectionRCSmacros}
 \index{revision number}
 
-The revision control system \Dindex{RCS} manages variables like the
+The revision control system \Dindex{SVN} manages variables like the
 revision number or date within \$-symbols in source files. The macro
 \verb+\RCSdef{+{\em macro\/}\verb+}{+{\em RCSentry\/}\verb+}+ assigns
 the RCS variable contents in {\em RCSentry\/} to the given {\em
@@ -266,15 +266,17 @@ the revision of the {\tt cc\_manual.sty} are available with the macros
 \RCSdef{\aManual}{$Id$}
 \RCSdefDate{\bManual}{$Date$}
 
+\begin{scriptsize}
 \begin{tabbing}
 \lcTex{  M \= implementationNNN \= ImplementationMMMMM \= \kill}
-  \> \verb+\RCSdef{\a}{$Id$}+ \hspace*{4cm}\=\\ 
-  \> \verb+\RCSdefDate{\b}{$Date$}+\\ 
+  \> \verb@\RCSdef{\a}{$Id$}@ \hspace*{1cm}\=\\ 
+  \> \verb@\RCSdefDate{\b}{$Date$}@ \\ 
   \> \verb+\a+ \>       \aManual \\
   \> \verb+\b+ \>       \bManual \\
   \> \verb+\ccRevision+ \> \ccRevision \\
   \> \verb+\ccDate+     \> \ccDate
 \end{tabbing}\Mindex{RCSdef}\Mindex{RCSdefDate}
+\end{scriptsize}
 
 \section{Common Abbreviations}
 \label{sectionCommonAbbrev}
@@ -2385,6 +2387,3 @@ defaults.
 \input{Manual_tools/cc_manual_appendix}
 
 \end{document}
-
-
-
