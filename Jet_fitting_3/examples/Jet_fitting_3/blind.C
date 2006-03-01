@@ -25,6 +25,7 @@ typedef Data_Kernel::Vector_3 DVector;
 
 //HDS
 typedef PolyhedralSurf::Vertex Vertex;
+typedef PolyhedralSurf::Vertex_handle Vertex_handle;
 typedef PolyhedralSurf::Halfedge Halfedge;
 typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
 
@@ -33,14 +34,13 @@ typedef std::map<Vertex*, int> Vertex_VP_map_type;
 typedef boost::associative_property_map< Vertex_VP_map_type > Vertex_VPM_type;
 typedef T_PolyhedralSurf_rings<PolyhedralSurf, Vertex_VPM_type > Poly_rings;
 
-//Hedge property map, with std::map
-// typedef std::map<Halfedge, double> HEdge_PM_map_type;
-// typedef boost::associative_property_map< HEdge_PM_map_type > HEdge_HEPM_type;
-// typedef T_PolyhedralSurf_ops<PolyhedralSurf, HEdge_HEPM_type> Poly_ops;
+//Hedge property map, with enriched Halfedge
+typedef HEdge_PM<PolyhedralSurf> HEdgePM_type;
+typedef T_PolyhedralSurf_hedge_ops<PolyhedralSurf, HEdgePM_type> Poly_hedge_ops;
 
-//Hedge property map, with enricged Halfedge
-typedef THEdge_PM<PolyhedralSurf> HEdge_HEPM_type;
-typedef T_PolyhedralSurf_ops<PolyhedralSurf, HEdge_HEPM_type> Poly_ops;
+//Facet property map with enriched Facet
+typedef Facet_PM<PolyhedralSurf> FacetPM_type;
+typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, FacetPM_type> Poly_facet_ops;
 
 //Kernel for local computations
 typedef double                LFT;
@@ -238,16 +238,13 @@ int main(int argc, char *argv[])
   Vertex_VP_map_type vertex2props;
   Vertex_VPM_type vpm(vertex2props);
   
-  //hedge, with std::map
-  //HEdge_PM_map_type hedge2props;
-  //HEdge_HEPM_type hepm(hedge2props);
-  
   //hedge, with enriched hedge
-  HEdge_HEPM_type hepm = get(boost::edge_weight_t(), P);
+  HEdgePM_type hepm = get(boost::edge_weight_t(), P);
+  FacetPM_type fpm = get(boost::vertex_attribute_t(), P);
 
   //initialize Polyhedral data : length of edges, normal of facets
-  Poly_ops::compute_edges_length(P, hepm);
-  P.compute_facets_normals();
+  Poly_hedge_ops::compute_edges_length(P, hepm);
+  Poly_facet_ops::compute_facets_normals(P, fpm);
 
   //MAIN LOOP: perform calculation for each vertex
   //----------------------------------------------
@@ -256,6 +253,7 @@ int main(int argc, char *argv[])
 
   //initialize the tag of all vertices to -1
   vitb = P.vertices_begin(); vite = P.vertices_end();
+  //CGAL_For_all(vitb,vite) put(vpm, &(*vitb), -1);
   CGAL_For_all(vitb,vite) put(vpm, &(*vitb), -1);
 
   vitb = P.vertices_begin(); vite = P.vertices_end();
@@ -278,12 +276,12 @@ int main(int argc, char *argv[])
 				   monge_rep, monge_info);
  
     //switch min-max ppal curv/dir wrt the mesh orientation
-    const DVector normal_mesh = P.computeFacetsAverageUnitNormal(v);
+    const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
     monge_rep.comply_wrt_given_normal(normal_mesh);
  
     //OpenGL output. Scaling for ppal dir, may be optimized with a
     //global mean edges length computed only once on all edges of P
-    DFT scale_ppal_dir = Poly_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
+    DFT scale_ppal_dir = Poly_hedge_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
     (*out_4ogl) << v->point()  << " ";
     monge_rep.dump_4ogl(*out_4ogl, scale_ppal_dir);
 

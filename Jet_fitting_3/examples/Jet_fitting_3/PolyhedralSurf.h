@@ -17,25 +17,6 @@
 
 
 
-//----------------------------------------------------------------
-// some functors 
-//----------------------------------------------------------------
-
-//the facet stores the normal
-struct Facet_unit_normal {
-  template < class Facet > 
-  void operator() (Facet & f) 
-    {
-      typename Facet::Halfedge_handle h = f.halfedge();
-      typename Facet::Vector_3 normal =
-	CGAL::cross_product(h->vertex()->point() - 
-			    h->opposite()->vertex()->point(),
-			    h->next()->vertex()->point() -
-			    h->opposite()->vertex()->point());
-      f.setNormal( normal / CGAL::sqrt(normal * normal));
-    }
-};
-
 
 //----------------------------------------------------------------
 // A redefined items class for the Polyhedron_3 with a refined vertex
@@ -68,18 +49,49 @@ public:
 
 protected:
   Vector_3 normal;
-  int ring_index;
+  //int ring_index;
 
 public:
-  My_facet(): ring_index(-1) {}
-  Vector_3 & getUnitNormal() { return normal; }
-  void setNormal(Vector_3  n) { normal = n; }
+  const Vector_3& get_unit_normal() const { return normal; }
+  Vector_3& get_unit_normal() { return normal; }
 
-  //this is for collecting i-th ring neighbours
-  void setRingIndex(int i) { ring_index = i; }
-  int getRingIndex() { return ring_index; }
-  void resetRingIndex() { ring_index = -1; }
+  //My_facet(): ring_index(-1) {}
+  //void setNormal(Vector_3  n) { normal = n; }
+//   //this is for collecting i-th ring neighbours
+//   void setRingIndex(int i) { ring_index = i; }
+//   int getRingIndex() { return ring_index; }
+//   void resetRingIndex() { ring_index = -1; }
 };
+
+
+template <class TPoly>
+class Facet_PM : 
+  public boost::put_get_helper<typename TPoly::Traits::Vector_3, Facet_PM<TPoly> >
+{
+public: 
+
+  //read_write
+  typedef boost::read_write_property_map_tag category;
+  typedef typename TPoly::Facet key_type;
+  typedef typename TPoly::Traits::Vector_3 value_type;
+  typedef typename TPoly::Traits::Vector_3& reference;
+  
+  Facet_PM() {}
+  reference operator[](key_type f) const {return f.get_unit_normal();}
+};
+
+//XFC: we should have Facet instead of Vertex!
+namespace boost{
+  enum vertex_attribute_t        { vertex_attribute        = 1111 };
+  //BOOST_INSTALL_PROPERTY(facet, attribute);
+  BOOST_INSTALL_PROPERTY(vertex, attribute);
+
+};
+
+template <class TPoly> 
+Facet_PM<TPoly> get(boost::vertex_attribute_t, TPoly& P) {return Facet_PM<TPoly>();}
+
+
 
 //----------------------------------------------------------------
 // Halfedge
@@ -97,10 +109,43 @@ public:
   double len;
 public:
   My_halfedge(): len(-1) {}
-  void set_length(double l) { len = l; }
-  double get_length() const { return len; }
-  double& get_length_ref()  { return len; }
+  double& get_length()  { return len; }
 };
+
+//property map associated to the half edge
+template <class TPoly>
+class HEdge_PM : 
+  public boost::put_get_helper<double, HEdge_PM<TPoly> >
+{
+public: 
+
+  //read_write
+  typedef boost::read_write_property_map_tag category;
+  typedef typename TPoly::Halfedge key_type;
+  typedef typename TPoly::Traits::FT value_type;
+  typedef typename TPoly::Traits::FT& reference;
+  
+  HEdge_PM() {}
+  reference operator[](key_type h) const {return h.len;}
+};
+
+
+//use the std edge_weight_t tag...
+template <class TPoly> 
+HEdge_PM<TPoly> get(boost::edge_weight_t, TPoly& P) {return HEdge_PM<TPoly>();}
+
+
+//NOTE: for a lvalue_property_map
+  //lvalue
+//   typedef boost::lvalue_property_map_tag category;
+//   typedef typename TPoly::Halfedge key_type;
+//   typedef typename TPoly::Traits::FT value_type;
+//   typedef typename TPoly::Traits::FT& reference;//lvalue
+
+//   HEdge_PM() {}
+//   reference operator[](key_type h) const {return h.len;}//lvalue
+
+
 
 //------------------------------------------------
 // Wrappers [Vertex, Face, Halfedge]
@@ -140,29 +185,6 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
 //------------------------------------------------
 //PolyhedralSurf
 //------------------------------------------------
-template <class TPoly>
-class THEdge_PM : 
-  public boost::put_get_helper<double, THEdge_PM<TPoly> > //read_write
-  //  public boost::put_get_helper<double&, THEdge_PM<TPoly> > //lvalue
-{
-public: 
-  typedef boost::read_write_property_map_tag category;//read_write
-  //typedef boost::lvalue_property_map_tag category;//lvalue
-
-  typedef typename TPoly::Halfedge key_type;
-  typedef typename TPoly::Traits::FT value_type;
-  typedef typename TPoly::Traits::FT reference;//read_write
-  //typedef typename TPoly::Traits::FT& reference;//lvalue
-  
-  THEdge_PM() {}
-  reference operator[](key_type h) const {return h.len;}//get_length();}//read_write
-  //reference operator[](key_type h)  {return h.len;}//lvalue
-};
-
-
-//use the std edge_weight_t tag...
-template <class TPoly> 
-THEdge_PM<TPoly> get(boost::edge_weight_t, TPoly& P) {return THEdge_PM<TPoly>();}
 
 
 typedef double                DFT;
@@ -173,14 +195,6 @@ typedef Data_Kernel::Vector_3 Vector_3;
 class PolyhedralSurf:public Polyhedron {
 public:
   PolyhedralSurf() {}
-  
-  static Vector_3 getHalfedge_vector(Halfedge * h);
-  
-//   void compute_edges_length();
-//   double compute_mean_edges_length_around_vertex(Vertex * v);
-  
-  void compute_facets_normals();
-  Vector_3 computeFacetsAverageUnitNormal(Vertex * v);
 };
 
 #endif
