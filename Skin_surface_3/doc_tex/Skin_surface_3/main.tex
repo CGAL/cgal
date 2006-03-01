@@ -88,12 +88,12 @@ The function \verb~triangulate_mixed_complex_3~ computes the vertices
 and cells of the triangulation and inserts them in the
 \verb~Triangulation_incremental_builder_3~. The construction of
 vertices is complicated due to the occurrence of many degenerate
-cases.  For example, let $\vor{\inputset{X}}$ be a Voronoi edge and
-let $\vor{\inputset{X}'}, \vor{\inputset{X}''}$ be its two vertices.
+cases.  For example, let $\nu_{\mathcal{X}}$ be a Voronoi edge and
+let $\nu{\mathcal{X}'}, \nu{\mathcal{X}''}$ be its two vertices.
 If the Voronoi edge degenerates into a point, then the anchor points
-$\anchor{\foc{\inputset{X}}}{\vor{\inputset{X}}}$,
-$\anchor{\foc{\inputset{X}}}{\vor{\inputset{X}'}}$ and
-$\anchor{\foc{\inputset{X}}}{\vor{\inputset{X}''}}$ are equal. Similar
+$a_{f({\mathcal{X}})}{\nu{\mathcal{X}}}$,
+$a_{f({\mathcal{X}})}{\nu{\mathcal{X}'}}$ and
+$a_{f({\mathcal{X}})}{\nu{\mathcal{X}''}}$ are equal. Similar
 cases occur if a Voronoi facet degenerates into a line segment or a
 Voronoi cell into a facet. We first compute the anchor points of the
 triangulated mixed complex and combine anchor points that are equal
@@ -113,7 +113,7 @@ the boundary of a union of balls we implemented a function
 
 \subsection{Marching tetrahedra}
 The marching tetrahedra algorithm, introduced in
-\cite{treece99regularised}, extracts a surface from a triangulation.
+\cite{cgal:tpg-rmtiise-99}, extracts a surface from a triangulation.
 First, it labels each vertex of the triangulation either as inside or
 as outside. Using these labels the vertices of the mesh are
 constructed as the intersection point of the surface and an edge with
@@ -127,7 +127,7 @@ Figure~\ref{SkinSurface3-fig-marching}.
 \begin{figure}
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{Skin_surface_3_ref/marching}
+\includegraphics{Skin_surface_3/marching}
 \end{center}
 \end{ccTexOnly}
 \caption{Cases of the marching tetrahedra algorithm.

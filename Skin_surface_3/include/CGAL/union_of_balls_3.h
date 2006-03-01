@@ -11,72 +11,31 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://nicokruithof@scm.gforge.inria.fr/svn/cgal/trunk/Skin_surface_3/include/CGAL/skin_surface_3.h $
+// $Id: skin_surface_3.h 28711 2006-02-23 10:59:28Z nicokruithof $
 // 
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef CGAL_SKIN_SURFACE_3_H
-#define CGAL_SKIN_SURFACE_3_H
+#ifndef CGAL_UNION_OF_BALLS_3_H
+#define CGAL_UNION_OF_BALLS_3_H
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulated_mixed_complex_3.h>
-#include <CGAL/triangulate_mixed_complex_3.h>
+#include <CGAL/triangulate_voronoi_diagram_3.h>
 #include <CGAL/Marching_tetrahedra_traits_skin_surface_3.h>
 #include <CGAL/Marching_tetrahedra_observer_default_3.h>
 #include <CGAL/marching_tetrahedra_3.h>
+#include <CGAL/skin_surface_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Regular_3, class SkinSurfaceTraits_3>
-void skin_surface_construct_bounding_box_3(
-  Regular_3 &reg,
-  SkinSurfaceTraits_3 const& traits) {
-  typedef typename Regular_3::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Regular_3::Geom_traits     GT;
-  typedef typename GT::Bare_point             Point;
-  typedef typename GT::Point_3                Weighted_point;
-  typedef typename GT::RT                     RT;
-  
-  Finite_vertices_iterator vit = reg.finite_vertices_begin();
-  if (vit != reg.finite_vertices_end()) {
-    Bbox_3 bbox = vit->point().bbox();
-    RT max_weight=vit->point().weight();
-    while (++vit != reg.finite_vertices_end()) {
-      bbox = bbox + vit->point().bbox();
-      if (max_weight < vit->point().weight())
-	max_weight = vit->point().weight();
-    }
-
-    // add a bounding octahedron:
-    RT dx = bbox.xmax() - bbox.xmin();
-    RT dy = bbox.ymax() - bbox.ymin();
-    RT dz = bbox.zmax() - bbox.zmin();
-  
-    Point mid(bbox.xmin() + dx/2, bbox.ymin() + dy/2, bbox.zmin() + dz/2);
-    RT dr = sqrt(CGAL::to_double(max_weight)) + .001;
-  
-    reg.insert(Weighted_point(
-      Point(bbox.xmax()+(dy+dz+dr)/traits.shrink_factor(),mid.y(),mid.z()),-1));
-    reg.insert(Weighted_point(
-      Point(bbox.xmin()-(dy+dz+dr)/traits.shrink_factor(),mid.y(),mid.z()),-1));
-    reg.insert(Weighted_point(
-      Point(mid.x(),bbox.ymax()+(dx+dz+dr)/traits.shrink_factor(),mid.z()),-1));
-    reg.insert(Weighted_point(
-      Point(mid.x(),bbox.ymin()-(dx+dz+dr)/traits.shrink_factor(),mid.z()),-1));
-    reg.insert(Weighted_point(
-      Point(mid.x(),mid.y(),bbox.zmax()+(dx+dy+dr)/traits.shrink_factor()),-1));
-    reg.insert(Weighted_point(
-      Point(mid.x(),mid.y(),bbox.zmin()-(dx+dy+dr)/traits.shrink_factor()),-1));
-  }
-}
-
 template <class InputIterator, class Polyhedron_3, class SkinSurfaceTraits_3>
-void skin_surface_3(InputIterator first, InputIterator last,
+void union_of_balls_3(InputIterator first, InputIterator last,
   Polyhedron_3 &polyhedron, const SkinSurfaceTraits_3 &skin_surface_traits,
   bool verbose = false) {
+  std::cout << "NGHK: NOT YET WORKING";
   if (first == last) {
     std::cout << " No input balls" << std::endl;
     return;
@@ -114,7 +73,7 @@ void skin_surface_3(InputIterator first, InputIterator last,
   }
 
   // Construct the triangulated mixed complex:
-  triangulate_mixed_complex_3(
+  triangulate_voronoi_diagram_3(
     regular, triangulated_mixed_complex, skin_surface_traits);
 
   CGAL_assertion(triangulated_mixed_complex.is_valid());
@@ -136,4 +95,4 @@ void skin_surface_3(InputIterator first, InputIterator last,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SKIN_SURFACE_3_H
+#endif // CGAL_UNION_OF_BALLS_3_H

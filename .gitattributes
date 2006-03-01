@@ -1430,6 +1430,8 @@ Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.gif
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.pdf -text svneol=unset#unset
 Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.png -text
+Skin_surface_3/examples/Skin_surface_3/union_of_balls_simple.C -text
+Skin_surface_3/include/CGAL/union_of_balls_3.h -text
 Skin_surface_3/test/Skin_surface_3/data/test1.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test10.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test11.cin -text
