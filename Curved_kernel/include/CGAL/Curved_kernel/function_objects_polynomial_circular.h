@@ -28,9 +28,6 @@
 #include <CGAL/kernel_basic.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/Object.h>
-
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -54,16 +51,6 @@ namespace CircularFunctors {
                 const Circular_arc_point_2 &p1) const
     { return compare_x<CK>(p0, p1);}
 
-//     result_type
-//     operator() (const Circular_arc_point_2 &p0,
-//                 const Point_2 &p1) const
-//     { return compare_x<CK>(p0, p1);}
-
-//     result_type
-//     operator() (const Point_2 &p0,
-//                 const Circular_arc_point_2 &p1) const
-//     { return compare_x<CK>(p0, p1);}
-
   };
 
 
@@ -85,16 +72,6 @@ namespace CircularFunctors {
                 const Circular_arc_point_2 &p1) const
     {return compare_y<CK>(p0, p1);}
 
-//     result_type
-//     operator() (const Point_2 &p0,
-//                 const Circular_arc_point_2 &p1) const
-//     { return compare_y<CK>(p0, p1);}
-
-//     result_type
-//     operator() (const Circular_arc_point_2 &p0,
-//                 const Point_2 &p1) const
-//     { return compare_y<CK>(p0, p1);}
-
   };
 
   template < class CK >
@@ -114,16 +91,6 @@ namespace CircularFunctors {
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
     { return compare_xy<CK>(p0, p1);}
-
-//     result_type
-//     operator() (const Point_2 &p0,
-//                 const Circular_arc_point_2 &p1) const
-//     { return compare_xy<CK>(p0, p1);}
-
-//     result_type
-//     operator() (const Circular_arc_point_2 &p0,
-//                 const Point_2 &p1) const
-//     { return compare_xy<CK>(p0, p1);}
 
   };
 
@@ -320,13 +287,14 @@ namespace CircularFunctors {
       { 
         std::vector< std::pair<Object,bool> > vec;
 
-        advanced_make_x_monotone<CK> (A, std::back_inserter(vec));
-//return    make_x_monotone<CK> (A, res);
+//         advanced_make_x_monotone<CK> (A, std::back_inserter(vec));
 
-        for(unsigned i=0;i<vec.size();++i)
-          *res++=vec.at(i).first;       
+//         for(unsigned i=0;i<vec.size();++i)
+//           *res++=vec.at(i).first;       
 
-        return res;
+//         return res;
+
+	return    make_x_monotone<CK> (A, res);
 
       }
 
