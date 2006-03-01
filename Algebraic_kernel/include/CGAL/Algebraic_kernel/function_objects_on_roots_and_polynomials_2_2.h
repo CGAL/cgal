@@ -55,6 +55,14 @@ namespace AlgebraicFunctors {
 	       OutputIterator res) const
     { return AlgebraicFunctors::solve<AK> ( e1, e2, res); }
 
+    
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Equation_Circle & e1, 
+	       const Equation_Line & e2, 
+	       OutputIterator res) const
+    { return AlgebraicFunctors::solve<AK> ( e1, e2, res); }
+
     template < class OutputIterator >
     OutputIterator
     operator()(const Equation_Line & e1, 

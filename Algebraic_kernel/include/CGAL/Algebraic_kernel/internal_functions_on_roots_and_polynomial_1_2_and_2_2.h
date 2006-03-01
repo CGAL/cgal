@@ -141,6 +141,15 @@ namespace CGAL {
     }
   }
 
+  template < class AK, class OutputIterator >
+  inline 
+  OutputIterator
+  solve( const typename AK::Polynomial_for_circles_2_2 & e1,
+	 const typename AK::Polynomial_1_2 & e2,
+	 OutputIterator res )
+  {
+    return solve<AK> ( e2, e1, res);
+  }
 
   template < class AK, class OutputIterator >
   inline 
