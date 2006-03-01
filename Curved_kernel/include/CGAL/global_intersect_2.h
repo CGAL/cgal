@@ -31,9 +31,9 @@
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Circle_2 & c1,
-	     const typename CK::Circle_2 & c2,
-	     OutputIterator res )
+intersect( const typename CK::Circle_2 & c1,
+	   const typename CK::Circle_2 & c2,
+	   OutputIterator res )
 {
   return CK::Intersect_2()(c1,c2,res);
 }
@@ -41,9 +41,9 @@ intersect_2( const typename CK::Circle_2 & c1,
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Line_arc_2 & c1,
-	     const typename CK::Line_arc_2 & c2,
-	     OutputIterator res )
+intersect( const typename CK::Line_arc_2 & c1,
+	   const typename CK::Line_arc_2 & c2,
+	   OutputIterator res )
 {
   return CK::Intersect_2()(c1,c2,res);
 }
@@ -51,9 +51,9 @@ intersect_2( const typename CK::Line_arc_2 & c1,
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Circular_arc_2 & c1,
-	     const typename CK::Circular_arc_2 & c2,
-	     OutputIterator res )
+intersect( const typename CK::Circular_arc_2 & c1,
+	   const typename CK::Circular_arc_2 & c2,
+	   OutputIterator res )
 {
   return CK::Intersect_2()(c1,c2,res);
 }
@@ -62,18 +62,18 @@ intersect_2( const typename CK::Circular_arc_2 & c1,
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Line_arc_2 & c1,
-	     const typename CK::Circle_2 & c2,
-	     OutputIterator res )
+intersect( const typename CK::Line_arc_2 & c1,
+	   const typename CK::Circle_2 & c2,
+	   OutputIterator res )
 {
   return CK::Intersect_2()(c1,c2,res);
 }
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Circle_2 & c1,
-	     const typename CK::Line_arc_2 & c2,
-	     OutputIterator res )
+intersect( const typename CK::Circle_2 & c1,
+	   const typename CK::Line_arc_2 & c2,
+	   OutputIterator res )
 {
   return CK::Intersect_2()(c1,c2,res);
 }
@@ -81,18 +81,18 @@ intersect_2( const typename CK::Circle_2 & c1,
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Line_arc_2 & c1,
-	     const typename CK::Circular_arc_2 & c2,
-	     OutputIterator res )
+intersect( const typename CK::Line_arc_2 & c1,
+	   const typename CK::Circular_arc_2 & c2,
+	   OutputIterator res )
 {
   return CK::Intersect_2()(c1,c2,res);
 }
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Circular_arc_2 & c1,
-	     const typename CK::Line_arc_2 & c2,
-	     OutputIterator res )
+intersect( const typename CK::Circular_arc_2 & c1,
+	   const typename CK::Line_arc_2 & c2,
+	   OutputIterator res )
 {
   return CK::Intersect_2()(c1,c2,res);
 }
