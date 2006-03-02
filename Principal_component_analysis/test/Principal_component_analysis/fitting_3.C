@@ -89,7 +89,7 @@ void test_3D_triangle_set(const unsigned int nb_triangles)
   std::list<Triangle> triangles;
   unsigned int i;
   for(i=0;i<nb_triangles;i++)
-    points.push_back(Triangle(random_point_xy(),random_point_xy(),random_point_xy()));
+    triangles.push_back(Triangle(random_point_xy(),random_point_xy(),random_point_xy()));
 
   // fit a plane
   // call all versions of the function
