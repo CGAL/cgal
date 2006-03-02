@@ -12,8 +12,8 @@
 
 // types
 
-typedef CGAL::Cartesian<double> K;
-typedef Exact_predicates_exact_constructions_kernel_with_sqrt<K> Kernel:
+typedef CGAL::Cartesian<double> Kernel;
+// typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt Kernel;
 typedef Kernel::FT FT;
 
 typedef Kernel::Line_2 Line_2;
