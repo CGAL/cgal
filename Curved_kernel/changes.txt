@@ -1,3 +1,7 @@
+3rd march 2006 Monique Teillaud
+(and yesterday)
+- removed all dependencies of CK from AK global functions
+
 1st march 2006 Monique Teillaud
 I start writing in changes.txt... 
 In the last few days I cleaned various files and made sure that
