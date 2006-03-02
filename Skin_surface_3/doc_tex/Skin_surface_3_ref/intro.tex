@@ -13,9 +13,12 @@
 \ccChapterAuthor{Nico Kruithof}
 
 % +------------------------------------------------------------------------+
-\section*{Summary}
-
-Bla bla bla ...
+Skin surfaces for a class of tangent continuous surfaces defined by a
+set of balls and a scalar called the shrink factor. The skin surface
+package constructs an isotopic triangulation of the skin surface,
+using the algorithm described in \cite{cgal:kv-mssct-05}. The
+triangulation is stored in a \ccc{CGAL::Polyhedron_3}. The algorithm
+is customizable with the help of observer classes.
 
 \subsection*{Concepts}
 \ccRefIdfierPage{MarchingTetrahedraObserver_3}\\
@@ -43,7 +46,7 @@ Bla bla bla ...
 
 \subsubsection*{Traits classes}
 \ccRefIdfierPage{CGAL::Marching_tetrahedra_traits_skin_surface_3<Triangulation_3, HalfedgeDS, Converter_ >}\\
-\ccRefIdfierPage{CGAL::Skin_surface_traits_3<Regular_kernel,Triangulated_mixed_complex_kernel,Polyhedron_kernel>}
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularTriangulationTraits_3, TriangulationTraits_3, PolyhedronTraits_3>}
 
 
 \subsection*{Functions}

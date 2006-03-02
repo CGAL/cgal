@@ -21,8 +21,19 @@ simplex (Voronoi cell) closest to the center is called the anchor
 point of the simplex (cell). The anchor point coincides with the
 center of the simplex (cell) or with the center of one of its faces.
 
-The class \ccRefName\ for a given Regular simplex (Power cell) with
-the center of which simplex it coincides.
+The class \ccRefName\ defines functions for the computation of the
+anchor point of a given Regular simplex (Power cell). Given a Regular
+simplex, it returns the lowest dimesional simplex that has the same
+anchor point. For Voronoi cells, it returns the dual Regular simplex
+of the lowest dimensional Voronoi cell with the same anchor point.
+
+If the Regular triangulation is degenerate (it contains more than 4
+co-circular points), then the anchor point might not be uniquely
+defined. For example, if a Voronoi edge degenerates to a line segment,
+then both Voronoi vertices are valid anchor points. In that case,
+\ccc{is_degenerate()} returns true and the iterator range from
+\ccc{equivalent_anchors_begin()} until \ccc{equivalent_anchors_end()}
+contains the additional simplices.
 
 \ccInclude{CGAL/Compute_anchor_3.h}
 

@@ -39,30 +39,30 @@ meshing the union of a set of balls.
 
 \section{Definition}
 A skin surface is defined as the boundary of an infinite set of balls.
-Let ${S}^{(w)}$ be a set of weighted points in $\R^3$. A weighted
-point ${p}^{(w)}=(p,w_p)$ can also be seen as a ball with center $p$
+Let $\mathcal{P}$ be a set of weighted points in $\R^3$. A weighted
+point ${\hat{p}}=(p,w_p)$ can also be seen as a ball with center $p$
 and squared radius $w_p$. A vector space of weighted points is
 inherited from the bijective map
-\[\Pi({p}^{(w)}) = ({p, \|{p}\|^2-w_p})\]
+\[\Pi({\hat{p}}) = ({p, \|{p}\|^2-w_p})\]
 where $\|{p}\|$ is the two-norm. Addition of two weighted points and
 the multiplication of a weighted point by a scalar are defined in the
 vector space structure inherited under $\Pi$.
 
-A shrunk weighted point ${p}^{(w)}_{s}$ is obtained by multiplying the
-weight of the weighted point ${p}^{(w)}$ with the scalar $s$:
-${p}^{(w)}_{s}= (p,s w_p)$. A set of weighted points is shrunk by
+A shrunk weighted point ${\hat{p}}^{s}$ is obtained by multiplying the
+weight of the weighted point ${\hat{p}}$ with the scalar $s$:
+${\hat{p}}^{s}= (p,s w_p)$. A set of weighted points is shrunk by
 shrinking each weighted point seperately.
 
-The skin surface of ${S}^{(w)}$ with shrink factor $s$ is the boundary
-of the weighted points in the convex hull of ${S}^{(w)}$ shrunk by a
+The skin surface of ${\mathcal{P}}$ with shrink factor $s$ is the boundary
+of the weighted points in the convex hull of $\mathcal{P}$ shrunk by a
 factor $s$:
-\[{\tt skn}_s({S}^{(w)}) =
-\partial({\tt conv}({S}^{(w)}))_s\]
+\[{\tt skn}^s(\mathcal{P}) =
+\partial({\tt conv}(\mathcal{P}))^s\]
 
 A polyhedral complex called the mixed complex subdivides the skin
 surface into quadric patches (spheres and hyperboloids). A mixed cell
 exists for every simplex in the Regular triangulation. Adding alpha to
-the weight of each weighted point in $S^{(w)}$, does not change the
+the weight of each weighted point in $\mathcal{P}$, does not change the
 mixed complex. For a shrink factor of one, the mixed complex
 degenerates into the Voronoi diagram.
 
@@ -78,15 +78,15 @@ more detail.
 
 \subsection{Triangulation of the mixed complex.}
 The construction of the triangulated mixed complex uses a
-\verb~Triangulation_incremental_builder_3~ that constructs a
+\ccc{Triangulation_incremental_builder_3} that constructs a
 triangulation from vertices and cells. This builder first gets the
 vertices of the triangulation and then the cells, which are defined by
 references to four vertices. From these vertices and cells it
 constructs the triangulation.
 
-The function \verb~triangulate_mixed_complex_3~ computes the vertices
+The function \ccc{triangulate_mixed_complex_3} computes the vertices
 and cells of the triangulation and inserts them in the
-\verb~Triangulation_incremental_builder_3~. The construction of
+\ccc{Triangulation_incremental_builder_3}. The construction of
 vertices is complicated due to the occurrence of many degenerate
 cases.  For example, let $\nu_{\mathcal{X}}$ be a Voronoi edge and
 let $\nu{\mathcal{X}'}, \nu{\mathcal{X}''}$ be its two vertices.
@@ -106,8 +106,8 @@ For the boundary of the union of a set of balls, it is not necessary
 to triangulate all mixed cells since the only non-degenerate cells are
 mixed cells corresponding to Voronoi cells. For efficient meshing of
 the boundary of a union of balls we implemented a function
-\verb~triangulate_voronoi_diagram_3~ that is similar to
-\verb~triangulate_mixed_complex_3~.
+\ccc{triangulate_voronoi_diagram_3} that is similar to
+\ccc{triangulate_mixed_complex_3}.
 
 
 
@@ -127,7 +127,7 @@ Figure~\ref{SkinSurface3-fig-marching}.
 \begin{figure}
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{Skin_surface_3/marching}
+\includegraphics[width=\textwidth]{Skin_surface_3/marching}
 \end{center}
 \end{ccTexOnly}
 \caption{Cases of the marching tetrahedra algorithm.
@@ -143,7 +143,7 @@ alt="Cases of the marching tetrahedra algorithm.">
 Our implementation takes four arguments: the input triangulation, the
 output polyhedron, a traits class and an observer class.  The
 algorithm is performed on the triangulation and stored in the
-polyhedron. The \verb~Polyhedron_incremental_builder_3~ is used for
+polyhedron. The \ccc{CGAL::Polyhedron_incremental_builder_3} is used for
 constructing the polyhedron.
 
 The traits class defines a single predicate and a construction. First
@@ -170,8 +170,12 @@ One algorithm is implemented to enhance the coarse mesh. It subdivides
 the skin surface into smaller triangles and projects the new vertices
 onto the mesh.
 \section{Software Design}
-Back references
+NGHK: Back references
 \section{Example programs}
+The package contains wrapper function that constructs the coarse mesh
+from an iterator range of weighted points.
+\ccIncludeExampleCode{Skin_surface_3/skin_surface_simple.C}
+
 % EOF
 
 
