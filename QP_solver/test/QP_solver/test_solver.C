@@ -211,7 +211,7 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
 
   // read strategy:
   std::string st = Token::token(in);
-  Pricing_strategy_type type;
+  Pricing_strategy_type type = FE; // to kill warnings
   if (st=="fe")
     type = FE;
   else if (st=="ff")
@@ -253,7 +253,7 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
     else if (t == "-f")
       good = options.insert(Arg("Is in standard form",0)).second;
     else {
-      Input_type input;
+      Input_type input = Int_type; // to kill warnings
       if (t == "int")
 	input = Int_type;
       else if (t == "double")
@@ -443,7 +443,7 @@ bool processType(const std::string& filename,
   // look up value:
   Key_const_iterator it = options.find("Input type");
   const bool processOnlyOneValue = it != options.end();
-  Input_type value;
+  Input_type value = Int_type;
   if (processOnlyOneValue)
     value = static_cast<Input_type>(it->second);
 
@@ -481,7 +481,7 @@ bool processFType(const std::string& filename,
 {
   Key_const_iterator it = options.find("Is in standard form");
   const bool processOnlyOneValue = it != options.end();
-  bool value;
+  bool value = false;
   if (processOnlyOneValue)
     value = it->second > 0;
   bool success = true;
@@ -507,7 +507,7 @@ bool processRFType(const std::string& filename,
 {
   Key_const_iterator it = options.find("Has equalities and full rank");
   const bool processOnlyOneValue = it != options.end();
-  bool value;
+  bool value = false;
   if (processOnlyOneValue)
     value = it->second > 0;
   bool success = true;
@@ -530,7 +530,7 @@ bool processSRFType(const std::string& filename,
 {
   Key_const_iterator it = options.find("Is symmetric");
   const bool processOnlyOneValue = it != options.end();
-  bool value;
+  bool value = false;
   if (processOnlyOneValue)
     value = it->second > 0;
   bool success = true;
@@ -552,7 +552,7 @@ bool processLSRFType(const std::string& filename,
 {
   Key_const_iterator it = options.find("Is linear");
   const bool processOnlyOneValue = it != options.end();
-  bool value;
+  bool value = false;
   if (processOnlyOneValue)
     value = it->second > 0;
   bool success = true;

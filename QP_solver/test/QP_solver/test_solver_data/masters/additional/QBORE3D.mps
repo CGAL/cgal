@@ -1,6 +1,7 @@
 * Number-type: floating-point
 * Description: QBORE3D http://www.doc.ic.ac.uk/~im/
 * Generated-by: http://www.doc.ic.ac.uk/%7Eim/QPDATA2.ZIP
+* Derivatives: none
 NAME          BORE3D
 ROWS
  E  B...XI

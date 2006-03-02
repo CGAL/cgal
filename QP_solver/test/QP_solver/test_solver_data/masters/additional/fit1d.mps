@@ -1,6 +1,7 @@
 * Number-type: floating-point
 * Description: http://www.netlib.org/lp/data/
 * Generated-by: 
+* Derivatives: none
 NAME          FIT1D
 ROWS
 N PENALTY

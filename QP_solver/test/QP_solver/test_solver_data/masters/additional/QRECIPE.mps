@@ -1,6 +1,7 @@
 * Number-type: floating-point
 * Description: QRECIPE http://www.doc.ic.ac.uk/~im/
 * Generated-by: http://www.doc.ic.ac.uk/%7Eim/QPDATA2.ZIP
+* Derivatives: none
 NAME          RECIPE
 ROWS
  E  BAL...BE

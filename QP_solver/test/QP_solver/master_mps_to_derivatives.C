@@ -260,17 +260,21 @@ bool create_derivatives(const char *path,
   }
   cerr << "    MPS-file successfully input.\n";
 
-  // add D matrix if it is not yet there:
-  if (qp.is_linear())   // Note: the output MPS file will not contain
-			// D if D is zero.
-    qp.make_zero_D();
+  // no derivatives if comment says so
+  if (qp.comment().find(std::string("Derivatives: none"))!=std::string::npos) 
+    cerr << "    No derivatives made.\n";
+  else {
+    // add D matrix if it is not yet there:
+    if (qp.is_linear())   // Note: the output MPS file will not contain
+   		          // D if D is zero.
+      qp.make_zero_D();
 
-  // derivates:
-  create_shifted_instance<IT, ET>(qp, path, file, dir);
-  create_free_instance<IT, ET>(qp, path, file, dir);
-  // Note: insert additional derivative routines here! Your routine may use
-  // create_output_file() to create the output file.
-  
+    // derivates:
+    create_shifted_instance<IT, ET>(qp, path, file, dir);
+    create_free_instance<IT, ET>(qp, path, file, dir);
+    // Note: insert additional derivative routines here! Your routine may use
+    // create_output_file() to create the output file.
+  }
   // cleanup:
   f.close();
   return true;

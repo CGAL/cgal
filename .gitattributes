@@ -1299,9 +1299,6 @@ QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solv
 QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Primal_QPE_solver_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Primal_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Primal_Random_n_r_s_d_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QBORE3D_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QCAPRI_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/QPE_solver_example_bug_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/QP_Bounded_QPE_solver_free.mps -text
@@ -1318,7 +1315,6 @@ QP_solver/test/QP_solver/test_solver_data/derivatives/QP_translation_bug_free.mp
 QP_solver/test/QP_solver/test_solver_data/derivatives/QP_translation_bug_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QRECIPE_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_free.mps -text
@@ -1331,9 +1327,6 @@ QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_so
 QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/Unbounded_asymmetric_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/fit1d_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/fit2d_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/scsd1_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/cgal/QP_translation_bug.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/cgal/Unbounded_asymmetric.mps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text

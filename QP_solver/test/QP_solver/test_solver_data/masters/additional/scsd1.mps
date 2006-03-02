@@ -1,6 +1,7 @@
 * Number-type: floating-point
 * Description: http://www.netlib.org/lp/data/
 * Generated-by: 
+* Derivatives: none
 NAME          SCSD1
 ROWS
 N 50000000

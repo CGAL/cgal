@@ -1575,7 +1575,9 @@ ratio_test_1__t_j( Tag_false)
 	   "nu <= et0 violated -- is your D matrix positive semidefinite?");
 
 	// check `t_j'
-	if ( ( nu < et0) && ( ( mu * q_i) > ( x_i * nu))) {
+	CGAL_qpe_assertion(mu != et0);
+	// bg: formula below compares abs values, assuming mu < 0
+	if ( ( nu < et0) && ( ( (mu < et0 ? mu : -mu) * q_i) > ( x_i * nu))) {
 	    i = -1; q_i = et1;
 	}
     }
