@@ -7,7 +7,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
-#include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/point_generators_2.h>
 
 // types
@@ -20,10 +19,6 @@ typedef Kernel::Line_2 Line_2;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Triangle_2 Triangle_2;
 typedef Kernel::Vector_2 Vector_2;
-
-typedef Kernel::Line_3 Line_3;
-typedef Kernel::Point_3 Point_3;
-typedef Kernel::Triangle_3 Triangle_3;
 
 // case with only one point in container
 // the fitting line must be horizontal by default
@@ -90,16 +85,10 @@ void test_2D_point_set(const unsigned int nb_points)
 
 int main()
 {
-  std::cout << "Test linear_least_squares_fitting"  << std::endl;
+  std::cout << "Test 2D linear_least_squares_fitting"  << std::endl;
 
-  // 2D
   test_2D();
   test_2D_point_set(100);
-
-  // 3D
-  // test_3D();
-  // test_3D_point_set(100);
-  // test_3D_triangle_set(100);
 
   return 0; // success
 }
