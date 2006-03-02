@@ -9,7 +9,6 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 
 // types
-
 typedef CGAL::Cartesian<float> Kernel;
 typedef Kernel::FT FT;
 
@@ -30,9 +29,9 @@ void test_3D()
   // call all versions of the function
   std::cout << "fit 3D plane...";
   Kernel k;
+  FT quality;
   Plane plane;
   Point centroid;
-  FT quality;
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane);
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid);
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
@@ -47,11 +46,68 @@ void test_3D()
   }
 }
 
+Point random_point_xy()
+{
+  FT x = (FT)((double)rand() / (double)RAND_MAX);
+  FT y = (FT)((double)rand() / (double)RAND_MAX);
+  return Point(x,y,0);
+}
 
-// case with a point set on a horizontal plane
+
+// case with a random point set on a horizontal plane
 // the fitting plane must be horizontal
 void test_3D_point_set(const unsigned int nb_points)
 {
+  std::list<Point> points;
+  unsigned int i;
+  for(i=0;i<nb_points;i++)
+    points.push_back(random_point_xy());
+
+  // fit a plane
+  // call all versions of the function
+  std::cout << "fit 3D plane...";
+  Kernel k;
+  FT quality;
+  Plane plane;
+  Point centroid;
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
+  std::cout << "done (quality: " << quality << ")" << std::endl;
+
+  if(!plane.is_horizontal())
+  {
+    std::cout << "failure" << std::endl;
+    exit(1); // failure
+  }
+}
+
+// case with a point set on a horizontal plane
+// the fitting plane must be horizontal
+void test_3D_triangle_set(const unsigned int nb_triangles)
+{
+  std::list<Triangle> triangles;
+  unsigned int i;
+  for(i=0;i<nb_triangles;i++)
+    points.push_back(Triangle(random_point_xy(),random_point_xy(),random_point_xy()));
+
+  // fit a plane
+  // call all versions of the function
+  std::cout << "fit 3D plane...";
+  Kernel k;
+  FT quality;
+  Plane plane;
+  Point centroid;
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
+  std::cout << "done (quality: " << quality << ")" << std::endl;
+
+  if(!plane.is_horizontal())
+  {
+    std::cout << "failure" << std::endl;
+    exit(1); // failure
+  }
 }
 
 
@@ -62,7 +118,7 @@ int main()
   // 3D
   test_3D();
   test_3D_point_set(100);
-  // test_3D_triangle_set(100);
+  test_3D_triangle_set(100);
 
   return 0; // success
 }
