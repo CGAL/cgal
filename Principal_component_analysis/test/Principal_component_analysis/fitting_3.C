@@ -67,7 +67,6 @@ Point random_point_xy()
   return Point(x,y,0);
 }
 
-
 // case with a random point set on a horizontal plane
 // the fitting plane must be horizontal
 void test_3D_point_set(const unsigned int nb_points)
@@ -128,7 +127,7 @@ void test_3D_triangle_set(const unsigned int nb_triangles)
 
 int main()
 {
-  std::cout << "Test linear_least_squares_fitting"  << std::endl;
+  std::cout << "Test 3D linear_least_squares_fitting"  << std::endl;
 
   // 3D
   test_3D();
