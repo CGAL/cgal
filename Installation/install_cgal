@@ -774,7 +774,7 @@ set_compiler_flags()
     SHARED_LIB_EXT=".so"
     REMOVE_EXT_LIST=".o"
     LIB_OPT=" -l"
-    LIBPATH_OPT=" -L"
+    LIBPATH_OPT="-L"
     DEBUG_OPT="-g"
     EXE_OPT="-o "
     SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
@@ -1019,11 +1019,6 @@ set_compiler_flags()
 		   # g++-4.x and after: we need -frounding-math to avoid FPU rounding mode optimisations
 	    esac
 	    ;;
-    esac
-    # version specific adjustments for msvc
-    case ${CGAL_OS_COMPILER} in
-	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS}";;
-	*ICL.*|*icl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option D:/vc7/include`";;
     esac
 }
 
@@ -1357,10 +1352,19 @@ posix_path()
     fi
 }
 
-os_path()
+os_path_escape()
 {
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "`escape_special \"${*}\"`"
+    else
+	${_printf} "%s" "`${_cygpath} -w \"$*\"`"
+    fi
+}
+
+os_path()
+{
+    if [ -z "${CYGWIN_COMPILER}" ]; then
+	${_printf} "%s" "${*}"
     else
 	${_printf} "%s" "`${_cygpath} -w \"$*\"`"
     fi
@@ -1387,7 +1391,7 @@ libpath_option()
 libpath_option_pure()
 {
     if [ -z "${CYGWIN_COMPILER}" ]; then
-	${_printf} "${LIBPATH_OPT}%s " "`escape_special \"${*}\"`"
+	${_printf} "'${LIBPATH_OPT}%s' " "`escape_special \"${*}\"`"
     else
 	${_printf} "'${LIBPATH_OPT}%s' " "$*"
     fi
@@ -2805,7 +2809,15 @@ _link_run_test()
     # link
     _link="`compiler_bin`"
     case ${COMPILER} in
-	*CL.*|*cl.*) _link="link";;
+	*CL.*|*cl.*)
+	    # there is a good chance that /usr/bin/link is in the way...
+	    i="`${_dirname} \"${_link}\"`"
+	    if [ -n "${i}" ]; then
+		_link="${i}/link"
+	    else
+		_link="link"
+	    fi
+	    ;;
     esac
     ${_printf} "%s\n%s\n" "Linker call:" "--------------" >"${TMP_LOGFILE}"
     ${_printf} "%s\n\n" "${_link} ${_flags}" >>"${TMP_LOGFILE}"
@@ -3069,7 +3081,7 @@ test_setup()
 	print_filled_line
 	flush_buffer
 
-#	create_standard_header_replacements
+	create_standard_header_replacements
 	test_compiler_specifica "${INSTALL_VERBOSE}"
 
         for totest in ${SUPPORT_FEATURES}; do
@@ -3554,12 +3566,12 @@ makefile_print_continuationline()
     fi
 }
 
-# print elements from variable $1 (separated by :) on a multiline
+# print elements from variable $1 (separated by ) on a multiline
 makefile_print_from_var()
 {
     _tmp="`value_of \"${1}\"`"
     if [ -n "${_tmp}" ]; then
-	${_printf} "`echo ${_tmp} | ${_sed} 's/:/ \\\\\\n\\t/g'`" 
+	${_printf} "%s" "`echo \"${_tmp}\" | ${_sed} 's// \\\\\\n\\t/g'`" 
     fi
 }
 
@@ -3595,7 +3607,7 @@ write_compiler_flags()
       if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
 	  print_as_shell_comment "*** compiler flags for feature ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_CXXFLAGS = " >> ${FILE}
-	  set_feature_cxxflags "${i}" ":"
+	  set_feature_cxxflags "${i}" ""
 	  makefile_print_from_var tmp_cxxflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3604,7 +3616,7 @@ write_compiler_flags()
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
 	  print_as_shell_comment "*** compiler flags for package ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_PKG_CXXFLAGS = " >> ${FILE}
-	  set_package_cxxflags "${i}" ":"
+	  set_package_cxxflags "${i}" ""
 	  makefile_print_from_var tmp_cxxflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3677,6 +3689,7 @@ write_linker_flags()
 	  ${_printf} "%s" "${i}_LIBPATHFLAGS = " >> ${FILE}
 	  set_feature_libpathflags "${i}" ":"
 	  _append_to RUNTIME_PATH "${tmp_runtimepath}" ":"
+	  set_feature_libpathflags "${i}" ""
 	  makefile_print_from_var tmp_libpathflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3696,11 +3709,11 @@ write_linker_flags()
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
       if [ -z "${RUNTIME_PATH}" ]; then
 	  makefile_print_continuationline \
-	      "${RUNTIME_LINKER_FLAG}\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)" \
+	      "${RUNTIME_LINKER_FLAG}`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`" \
 	      >> ${FILE}
       else
 	  makefile_print_continuationline \
-	      "${RUNTIME_LINKER_FLAG}\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER):${RUNTIME_PATH}" \
+	      "${RUNTIME_LINKER_FLAG}`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`:${RUNTIME_PATH}" \
 	      >> ${FILE}
       fi
   fi
@@ -3751,7 +3764,7 @@ write_linker_flags()
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
 	  print_as_shell_comment "*** linker flags for package ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_LDFLAGS = " >> ${FILE}
-	  set_package_ldflags "${i}" " "
+	  set_package_ldflags "${i}" ""
 	  makefile_print_from_var tmp_ldflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3770,14 +3783,16 @@ write_linker_flags()
   fi
   for i in ${R_SUPPORT_PKGS}; do
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
-	  makefile_print_continuationline "\$(${1}_LDFLAGS)" >> ${FILE}
+	  makefile_print_continuationline "\$(${i}_LDFLAGS)" >> ${FILE}
       fi
   done
   if [ -n "${CYGWIN_COMPILER}" ]; then
       # Adding psapi.lib only for Windows needed for Memory_sizer
       makefile_print_continuationline "`lib_option psapi`" >> ${FILE}
   fi
-  makefile_print_continuationline "`math_ldflags`" >> ${FILE}
+  if [ -n "${MATH_LIB}" ]; then
+      makefile_print_continuationline "`math_ldflags`" >> ${FILE}
+  fi
   ${_printf} "\n\n" >> ${FILE}
  
 
@@ -3880,8 +3895,8 @@ create_include_makefile()
   # CGAL_DIRECTORIES
   #
   makefile_header "include/lib directory settings" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_INCL_DIR = ${CGAL_INCL_DIR}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_LIB_DIR = ${CGAL_LIB_DIR}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_INCL_DIR = `os_path \"${CGAL_INCL_DIR}\"`" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_DIR = `os_path \"${CGAL_LIB_DIR}\"`" >> ${FILE}
 
   #
   # CGAL_OS_COMPILER
