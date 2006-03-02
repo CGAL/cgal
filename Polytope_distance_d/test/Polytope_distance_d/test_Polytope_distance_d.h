@@ -15,14 +15,13 @@
 // package       : $CGAL_Package: Polytope_distance_d $
 // chapter       : Geometric Optimisation
 //
-// source        : web/Polytope_distance_d.aw
 // revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: test function for smallest enclosing sphere
+// implementation: test function for polytope distance
 // ============================================================================
 
 #ifndef CGAL_TEST_POLYTOPE_DISTANCE_D_H
@@ -40,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
             verr0.out().width( 26); verr0 << text << "..." << flush; \
             verrX.out().width(  0); verrX << "==> " << text << endl \
               << "----------------------------------------" << endl; \
-            { code } verr0 << "ok."; verr << endl;
+            { code } verr0 << "ok."; verr0 << endl;
 
 template < class ForwardIterator, class Traits >
 void
@@ -55,10 +54,11 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
 
     CGAL::Verbose_ostream verr ( verbose >= 0);
     CGAL::Verbose_ostream verr0( verbose == 0);
-    CGAL::Verbose_ostream verrX( verbose >  0);
+    CGAL::Verbose_ostream verr1( verbose == 1);
+    CGAL::Verbose_ostream verrX( verbose == 2);
     CGAL::set_pretty_mode( verr.out());
 
-    bool  is_valid_verbose = ( verbose > 0);
+    bool  is_valid_verbose = ( verbose > 1);
 
     // constructors
     COVER( "default constructor",
@@ -167,11 +167,11 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     )
 
     COVER( "insert (point set)",
-        poly_dist.insert( p_first, p_last, q_first, q_last);
+        poly_dist.insert( q_first, q_last, p_first, p_last);
         assert( poly_dist.is_valid( is_valid_verbose));
         poly_dist.clear();
-        poly_dist.insert_p( q_first, q_last);
-        poly_dist.insert_q( p_first, p_last);
+        poly_dist.insert_p( p_first, p_last);
+        poly_dist.insert_q( q_first, q_last);
         assert( poly_dist.is_valid( is_valid_verbose));
     )
 
@@ -180,7 +180,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     )
 
     COVER( "I/O",
-        verrX << poly_dist;
+        verr1 << poly_dist;
     )
 }
 

@@ -704,8 +704,14 @@ is_valid( bool verbose, int level) const
          <<          '+' << number_of_support_points_q() << endl;
 
     if ( is_finite()) {
+       // check QP solver 
+       CGAL_optimisation_assertion(solver);
+       if (!solver->is_valid()) 
+	 return  CGAL::_optimisation_is_valid_fail( 
+	   verr,
+	   "underlying QP_solver is in invalid state");
 
-        // compute normal vector
+       // compute normal vector
         ET_vector  normal( d), diff( d);
         ET  et_0 = 0, den = solver->variables_common_denominator();
         int i, j;
