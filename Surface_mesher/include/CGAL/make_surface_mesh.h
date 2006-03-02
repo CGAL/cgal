@@ -20,10 +20,16 @@
 #ifndef CGAL_MAKE_SURFACE_MESH_H
 #define CGAL_MAKE_SURFACE_MESH_H
 
-#include <CGAL/Surface_mesher/Surface_mesher.h
-#include <CGAL/Surface_mesh_traits_3_generator.h>
+#include <CGAL/Surface_mesher/Surface_mesher.h>
+#include <CGAL/Surface_mesh_traits_generator_3.h>
+
+#include <CGAL/iterator.h> // CGAL::inserter()
 
 namespace CGAL {
+
+  struct Non_manifold_tag {};
+  struct Manifold_tag {};
+  struct Manifold_with_boundary_tag {};
 
 template <typename C2T3,
 	  typename Surface,
@@ -34,9 +40,9 @@ void make_surface_mesh(C2T3& c2t3,
                        Criteria criteria,
                        Tag tag = Non_manifold_tag() ) 
 {
-  typedef typename CGAL::Surface_mesh_traits_3_generator<Surface>::type Traits;
+  typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Traits;
 
-  make_surface_mesh(c2t3, surface, criteria, Traits(), tag);  
+  make_surface_mesh(c2t3, surface, Traits(), criteria, tag);  
 }
 
 template <typename C2T3,
@@ -44,21 +50,26 @@ template <typename C2T3,
 	  typename Criteria>
 void make_surface_mesh(C2T3& c2t3,
                        typename SurfaceMeshTraits_3::Surface_3 surface,
-                       Criteria criteria,
 		       SurfaceMeshTraits_3 traits,
+                       Criteria criteria,
                        Non_manifold_tag)
 {
-  using namespace CGAL::Surface_mesher;
+  using CGAL::Surface_mesher::Surface_mesher;
   
   typedef Surface_mesher<
+    C2T3,
     typename SurfaceMeshTraits_3::Surface_3,
-    Criteria,
-    C2T3> Mesher;
-  
-  Mesher mesher(c2t3, surface, criteria, traits);
+    SurfaceMeshTraits_3,
+    Criteria> Mesher;
+
+  typename SurfaceMeshTraits_3::Construct_initial_points get_initial_points =
+    traits.construct_initial_points_object();
+
+  get_initial_points(surface, CGAL::inserter(c2t3.triangulation()));
+  Mesher mesher(c2t3, surface, traits, criteria);
   // TODO initial, then refine()
 }
 
 } // end namespace CGAL
 
-#endif CGAL_MAKE_SURFACE_MESH_H
+#endif // CGAL_MAKE_SURFACE_MESH_H

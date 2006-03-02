@@ -15,7 +15,11 @@
 // $Id$
 //
 //
-// Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
+// Author(s) : Steve Oudot,
+//             David Rey,
+//             Mariette Yvinec,
+//             Laurent Rineau,
+//             Andreas Fabri
 
 
 
@@ -23,7 +27,7 @@
 #define CGAL_SURFACE_MESHER_SURFACE_MESHER_H
 
 #include <CGAL/Mesher_level.h>
-#include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
+#include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
 
@@ -37,19 +41,22 @@ namespace CGAL {
   template <
     class C2T3,
     class Surface,
+    class SurfaceMeshTraits,
     class Criteria
     >
   class Surface_mesher_base
-    : public Triangulation_mesher_level_traits_3<typename C2T3::Triangulation>
+    : public Triangulation_mesher_level_traits_3<typename C2T3::Triangulation_3>
   {
   public:
-    typedef typename C2T3::Triangulation Tr;
+    typedef typename C2T3::Triangulation_3 Tr;
     typedef typename Tr::Point Point;
     typedef typename Tr::Edge Edge;
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
 
     typedef typename Tr::Geom_traits GT;
+
+    typedef SurfaceMeshTraits Surface_mesh_traits;
 
     typedef Triangulation_mesher_level_traits_3<Tr> Triangulation_traits;
     typedef typename Triangulation_traits::Zone Zone;
@@ -63,11 +70,15 @@ namespace CGAL {
     typedef Double_map<Facet, Quality> Bad_facets;
 
     // Constructor
-    Surface_mesher_base (C2T3& co, Surface& s, Criteria& c) :
+    Surface_mesher_base (C2T3& co, 
+                         Surface& s, 
+                         Surface_mesh_traits mesh_traits,
+                         Criteria& c) :
       Triangulation_mesher_level_traits_3<Tr>(co.triangulation()),
       c2t3(co),
       tr(co.triangulation()),
       surf(s),
+      meshtraits(mesh_traits),
       criteria(c)
     {
     }
@@ -76,8 +87,9 @@ namespace CGAL {
     C2T3& c2t3;
     Tr& tr;     // Associated triangulation reference
     Surface& surf;  // Surface
-    Bad_facets facets_to_refine;  // Set of facets to refine
+    Surface_mesh_traits meshtraits; // Surface mesh traits
     Criteria& criteria;  // Meshing criteria
+    Bad_facets facets_to_refine;  // Set of facets to refine
 
   public:
 
@@ -495,9 +507,8 @@ namespace CGAL {
     // Tests whether a given facet is restricted or not
     bool is_facet_on_surface(const Facet& f, Point& center,
 			     const bool check_visits = false) {
-      typename GT::Segment_3 s;
-      typename GT::Ray_3 r;
-      typename GT::Line_3 l;
+      typedef typename Surface_mesh_traits::Intersect_3 Intersect_3;
+      Intersect_3 intersect = meshtraits.intersect_3_object();
 
       if (check_visits) {
 	const Cell_handle& c = f.first;
@@ -510,28 +521,31 @@ namespace CGAL {
 	other_side.first->set_facet_visited(other_side.second);
       }
 
+      Object dual = tr.dual(f);
 
-      Object dual, intersection;
-      dual = tr.dual(f);
+      //      typename GT::Segment_3 segment;
+      typename GT::Segment_3 segment;
+      typename GT::Ray_3 ray;
+      typename GT::Line_3 line;
 
       // If the dual is a segment
-      if (assign(s,dual)) {
-	intersection = surf.intersect_segment_surface(s);
+      if (assign(segment, dual)) {
+	Object intersection = intersect(surf, segment);
 	if (assign(center,intersection))
 	  return true;
       }
 
       // If the dual is a ray
-      else if(assign(r,dual)) {
-	intersection = surf.intersect_ray_surface(r);
+      else if(assign(ray, dual)) {
+	Object intersection = intersect(surf, ray);
 	//std::cerr << "intersection: " << std::endl;
 	if (assign(center,intersection))
 	  return true;
       }
 
       // If the dual is a line
-      else if(assign(l,dual)) {
-	intersection = surf.intersect_line_surface(l);
+      else if(assign(line, dual)) {
+	Object intersection = intersect(surf, line);
 	if (assign(center,intersection))
 	  return true;
       }
@@ -596,22 +610,23 @@ namespace CGAL {
   template <
     typename C2T3,
     typename Surface,
+    typename SurfaceMeshTraits,
     typename Criteria,
-    typename Base = Surface_mesher_base<C2T3, Surface, Criteria>
+    typename Base = Surface_mesher_base<C2T3, Surface, SurfaceMeshTraits, Criteria>
     >
   struct Surface_mesher
     : public Base,
       public Mesher_level <
-        C2T3::Triangulation,
-        Surface_mesher<C2T3::Triangulation, Surface, Criteria, Base>,
-        typename C2T3::Triangulation::Facet,
+        typename C2T3::Triangulation_3,
+        Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria, Base>,
+        typename C2T3::Triangulation_3::Facet,
         Null_mesher_level,
-        Triangulation_mesher_level_traits_3<C2T3::Triangulation>
+        Triangulation_mesher_level_traits_3<typename C2T3::Triangulation_3>
 	>
   {
   public:
-    typedef typename C2T3::Triangulation Tr;
-    typedef Surface_mesher<C2T3, Surface, Criteria, Base> Self;
+    typedef typename C2T3::Triangulation_3 Tr;
+    typedef Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria, Base> Self;
     typedef Mesher_level <
       Tr,
       Self,
@@ -627,6 +642,7 @@ namespace CGAL {
     using Base::check_restricted_delaunay;
 
     typedef C2T3 Complex_2_in_triangulation_3;
+    typedef SurfaceMeshTraits Surface_mesh_traits;
 
   private:
     Null_mesher_level null_mesher_level;
@@ -634,8 +650,11 @@ namespace CGAL {
     bool initialized;
 
   public:
-    Surface_mesher(C2T3& co, Surface& s, Criteria& c): 
-      Base(co, s, c), 
+    Surface_mesher(C2T3& c2t3,
+                   Surface& surface,
+                   Surface_mesh_traits mesh_traits,
+                   Criteria& criteria): 
+      Base(c2t3, surface, mesh_traits, criteria), 
       Mesher_lvl(null_mesher_level),
       initialized(false)
     {}

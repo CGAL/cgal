@@ -42,7 +42,13 @@ namespace CGAL {
     typedef typename Criterion::Facet Facet;
     typedef std::vector<FT> Quality;
 
-    Standard_criteria (Criteria& c) : criteria (c) {}
+    Standard_criteria() {};
+    Standard_criteria (const Criteria& c) : criteria (c) {}
+
+    void set_criteria(const Criteria& c)
+    {
+      criteria = c;
+    }
 
     bool is_bad (const Facet& f) {
       for (typename Criteria::iterator cit = criteria.begin(); cit !=
@@ -94,7 +100,7 @@ namespace CGAL {
   public:
     // Nb: the default bound of the criterion is such that the criterion
     // is always fulfilled
-    Aspect_ratio_criterion(const int angle_min = 0, bool dbg = false) :
+    Aspect_ratio_criterion(const double angle_min = 0., bool dbg = false) :
       debug (dbg) {
       if (debug)
 	std::cerr << "angle min = " << angle_min << " degrees\n";
@@ -104,11 +110,11 @@ namespace CGAL {
 	std::cerr << "B = " << B << std::endl;
     }
 
-    Aspect_ratio_criterion(const Quality b, bool dbg = false) :
-      debug (dbg), B (b) {
-      if (debug)
-	std::cerr << "B = " << B << std::endl;
-    }
+//     Aspect_ratio_criterion(const Quality b, bool dbg = false) :
+//       debug (dbg), B (b) {
+//       if (debug)
+// 	std::cerr << "B = " << B << std::endl;
+//     }
 
 
     inline

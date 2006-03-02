@@ -13,12 +13,13 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = -I ../../../Mesh_2/include \
            -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(OTHER_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags

@@ -81,7 +81,7 @@ namespace CGAL {
 	    Vertex_handle v = c->vertex(j);
 
 	    if(bad_vertices_initialized){
-	      if ( SMREB::c2t3.is_in_complex(v) ) {
+	      if ( SMREB::c2t3.is_in_complex(v) ) { // no need to test here
 		bad_vertices.erase(v);
 	      }
 	    }
@@ -134,9 +134,9 @@ namespace CGAL {
       }
     public:
       Surface_mesher_manifold_base (Tr& t,
-						     C2t3& co,
-						     Surface& s,
-						     Criteria& c)
+				    C2t3& co,
+				    Surface& s,
+				    Criteria& c)
 	: SMREB(t, co, s, c), bad_vertices_initialized(false)
       {}
 
@@ -194,7 +194,12 @@ namespace CGAL {
 	for (typename Zone::Facets_iterator fit =
 	       zone.boundary_facets.begin(); fit !=
 	       zone.boundary_facets.end(); ++fit)
-	  handle_facet_on_boundary_of_conflict_zone (*fit);
+	  handle_facet_on_boundary_of_conflict_zone (*fit); // @TODO: test
+							    // if *fit is
+							    // in complex,
+							    // before
+							    // calling the
+							    // handle function
 
 	SMREB::before_insertion_impl(Facet(), s, zone);
       }

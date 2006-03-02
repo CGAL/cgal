@@ -1,10 +1,15 @@
-.PHONY: all examples clean dist-clean doxygen update diff
+.PHONY: all clean diff dist-clean doc doxygen examples test update
 
+all: test examples
 
-all: examples
+doc:
+	${MAKE} -C doc_tex
 
 examples:
 	${MAKE} -C examples/Surface_mesher
+
+test:
+	$(MAKE) -C test/Surface_mesher
 
 doxygen:
 	doxygen

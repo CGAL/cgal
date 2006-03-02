@@ -1,3 +1,24 @@
+2 March 2006 Laurent Rineau
+(WARNING: partially compiles, runtime errors, temporary commit)
+- Added an undocumented class Surface_mesh_triangulation_generator_3 which
+  is a meta functor Kernel->Triangulation, that computes the right
+  triangulation for make_surface_mesh()
+- Added documented files:
+    - include/CGAL/Implicit_surface_3.h
+    - include/CGAL/Surface_mesh_default_criteria_3.h
+    - include/CGAL/Surface_mesh_complex_2_in_triangulation_3.h
+- In doc, rename: 
+    - SurfaceMeshCriteria to SurfaceMeshCriteria_3
+    - Surface_mesh_default_criteria to Surface_mesh_default_criteria_3
+- Added doc_tex GNUmakefile, for developers uses.
+
+- Wrote the first test file!
+- Find Triangulation_mesher_level_traits_3.h in include/CGAL/Mesh_2/, now.
+- Major changes in template arguments, data members, and constructors of:
+  - class Surface_mesher,
+  - class Implicit_oracle,
+- Minor changes everywhere (sorry for the imprecision, too long).
+
 27 february 2006 Laurent Rineau
 (WARNING: no longer compiles, temporary commit)
 - Added number_of_facets() to C2T3 (code and documentation)
