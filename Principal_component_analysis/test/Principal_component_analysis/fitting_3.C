@@ -98,9 +98,9 @@ void test_3D_triangle_set(const unsigned int nb_triangles)
   FT quality;
   Plane plane;
   Point centroid;
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane);
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid);
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane);
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid);
+  quality = linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,k);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   Plane horizontal_plane(Point(0,0,0),Vector(0,0,1));
