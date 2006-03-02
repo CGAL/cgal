@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
@@ -11,7 +12,8 @@
 
 // types
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Cartesian<double> K;
+typedef Exact_predicates_exact_constructions_kernel_with_sqrt<K> Kernel:
 typedef Kernel::FT FT;
 
 typedef Kernel::Line_2 Line_2;
