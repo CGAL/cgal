@@ -16,13 +16,16 @@
 #define ID_EDIT_COPY32774               32774
 #define ID_SET_LOAD                     32775
 #define ID_SET_7SAVE                    32776
+#define ID_DATASET_RANDOM               32780
+#define ID_RANDOM_HORIZONTALLINE        32781
+#define ID_RANDOM_VERTICALLINE          32782
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
-#define _APS_NEXT_COMMAND_VALUE         32780
+#define _APS_NEXT_COMMAND_VALUE         32783
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

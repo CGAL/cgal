@@ -195,6 +195,11 @@ BEGIN
     BEGIN
         MENUITEM "&Load",                       ID_SET_LOAD
         MENUITEM "&Save...",                    ID_SET_7SAVE
+        POPUP "Random"
+        BEGIN
+            MENUITEM "Horizontal line",             ID_RANDOM_HORIZONTALLINE
+            MENUITEM "Vertical line",               ID_RANDOM_VERTICALLINE
+        END
         MENUITEM SEPARATOR
         MENUITEM "&Clear\tC",                   ID_SET_CLEAR
     END

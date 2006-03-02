@@ -49,36 +49,55 @@ namespace CGALi {
     FT p = c*c - 2*a*c + 4*b*b + a*a;
 
     // degenerate or isotropic case
-    if(p == 0.0 || p == 0.0) 
+    if(p == 0.0) 
     {
       // unit eigen values by default
       eigen_values.first = eigen_values.second = (FT)1.0;
 
       // any vector is eigen vector
-      // the 2D canonical frame  is set by default
+      // the 2D canonical frame is output by default
       eigen_vectors.first  = Vector((FT)1.0,(FT)0.0);
       eigen_vectors.second = Vector((FT)0.0,(FT)1.0);
     }
-    else // generic case
+    else 
     {
-      FT l1 = 0.5 * ( -std::sqrt(p) + c + a);
-      FT l2 = 0.5 * (  std::sqrt(p) + c + a);
-      // sort eigen values and vectors in descendent order.
-      if(l1 >= l2)
+      if(b == 0.0) 
       {
-        eigen_values.first  = l1;
-        eigen_values.second = l2;
-        eigen_vectors.first  = Vector((FT)1.0, -(std::sqrt(p)-c+a) / (2*b));
-        eigen_vectors.second = Vector((FT)1.0,  (std::sqrt(p)+c-a) / (2*b));
+        assert(a == 0 || c == 0.0);
+        eigen_values.first  = 1.0;
+        eigen_values.second = 0.0;
+        if(a == 0)
+        {
+          eigen_vectors.first  = Vector((FT)0.0, (FT)1.0);
+          eigen_vectors.second  = Vector((FT)1.0, (FT)0.0);
+        }
+        else
+        {
+          eigen_vectors.first  = Vector((FT)1.0, (FT)0.0);
+          eigen_vectors.second  = Vector((FT)0.0, (FT)1.0);
+        }
       }
-      else
+      else // generic case
       {
-        eigen_values.first  = l2;
-        eigen_values.second = l1;
-        eigen_vectors.first  = Vector((FT)1.0,  (std::sqrt(p)+c-a) / (2*b));
-        eigen_vectors.second = Vector((FT)1.0, -(std::sqrt(p)-c+a) / (2*b));
-      }
-    } // end generic case
+        FT l1 = (FT)(0.5 * ( -std::sqrt(p) + c + a));
+        FT l2 = (FT)(0.5 * (  std::sqrt(p) + c + a));
+        // sort eigen values and vectors in descendent order.
+        if(l1 >= l2)
+        {
+          eigen_values.first  = l1;
+          eigen_values.second = l2;
+          eigen_vectors.first  = Vector((FT)1.0, (FT)(-(std::sqrt(p)-c+a) / (2*b)));
+          eigen_vectors.second = Vector((FT)1.0, (FT)( (std::sqrt(p)+c-a) / (2*b)));
+        }
+        else
+        {
+          eigen_values.first  = l2;
+          eigen_values.second = l1;
+          eigen_vectors.first  = Vector((FT)1.0, (FT)( (std::sqrt(p)+c-a) / (2*b)));
+          eigen_vectors.second = Vector((FT)1.0, (FT)(-(std::sqrt(p)-c+a) / (2*b)));
+        }
+      } // end generic case
+    } // end non-degenerate case
   } // end eigen_symmetric_2
 } // end namespace CGALi
 

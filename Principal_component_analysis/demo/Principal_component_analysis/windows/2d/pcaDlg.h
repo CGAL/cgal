@@ -8,14 +8,16 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 
-#include <list>
+
 
 // kernel
-typedef double coord_type;
-typedef CGAL::Cartesian<coord_type> Kernel;
+typedef CGAL::Cartesian<double> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Line_2 Line_2;
+
+
+#include <vector>
 
 // CpcaDlg dialog
 class CpcaDlg : public CDialog
@@ -25,7 +27,7 @@ public:
 	CpcaDlg(CWnd* pParent = NULL);	// standard constructor
 
   // data set
-	std::list<Point_2> m_points;
+	std::vector<Point_2> m_points;
   Point_2 m_centroid;
   Line_2 m_fitting_line;
   FT m_quality;
@@ -75,4 +77,6 @@ public:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
   afx_msg void OnFitLine();
+  afx_msg void OnRandomHorizontalline();
+  afx_msg void OnRandomVerticalline();
 };

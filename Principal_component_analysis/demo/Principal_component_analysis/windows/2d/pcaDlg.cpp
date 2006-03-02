@@ -5,6 +5,8 @@
 #include "pca.h"
 #include "pcaDlg.h"
 #include ".\pcadlg.h"
+#include <CGAL/point_generators_2.h>
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -85,6 +87,8 @@ BEGIN_MESSAGE_MAP(CpcaDlg, CDialog)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
   ON_COMMAND(ID_FIT_LINE, OnFitLine)
+  ON_COMMAND(ID_RANDOM_HORIZONTALLINE, OnRandomHorizontalline)
+  ON_COMMAND(ID_RANDOM_VERTICALLINE, OnRandomVerticalline)
 END_MESSAGE_MAP()
 
 
@@ -291,13 +295,13 @@ void CpcaDlg::render()
 	// draw point set
 	glColor3ub(0,0,0);
 	glPointSize(5.0f);
-	std::list<Point_2>::iterator it;
+	std::vector<Point_2>::iterator it;
 	for(it = m_points.begin();
 		  it != m_points.end();
 			it++)
 	{
 		const Point_2& p = *it;
-    draw_disc(p,0.005,0,0,0);
+    draw_disc(p,(FT)0.005,0,0,0);
 	}
 
   // draw fitting line
@@ -311,7 +315,7 @@ void CpcaDlg::render()
 	glEnd();
 
   // draw centroid
-  draw_disc(m_centroid,0.01,255,0,0);
+  draw_disc(m_centroid,(FT)0.01,255,0,0);
 
 	glFlush();
 }
@@ -417,4 +421,56 @@ void CpcaDlg::OnFitLine()
   CString str;
   str.Format("Fitting quality: %6.3f",quality);
   SetWindowText(str);
+}
+
+void CpcaDlg::OnRandomHorizontalline()
+{
+  m_points.clear();
+  Point_2 p(0.0,0.5);
+  Point_2 q(1.0,0.5);
+  CGAL::points_on_segment_2(p,q,100,std::back_inserter(m_points));
+
+	std::vector<Point_2>::iterator it;
+	for(it = m_points.begin();
+		  it != m_points.end();
+			it++)
+	{
+		const Point_2& p = *it;
+    TRACE("point: (%g;%g)\n",p.x(),p.y());
+	}
+
+
+  OnFitLine();
+  FT a = m_fitting_line.a();
+  FT b = m_fitting_line.b();
+  FT c = m_fitting_line.c();
+
+  bool h = m_fitting_line.is_horizontal();
+  InvalidateRect(NULL,FALSE);
+}
+
+void CpcaDlg::OnRandomVerticalline()
+{
+  m_points.clear();
+  Point_2 p(0.5,0.0);
+  Point_2 q(0.5,1.0);
+  CGAL::points_on_segment_2(p,q,100,std::back_inserter(m_points));
+
+	std::vector<Point_2>::iterator it;
+	for(it = m_points.begin();
+		  it != m_points.end();
+			it++)
+	{
+		const Point_2& p = *it;
+    TRACE("point: (%g;%g)\n",p.x(),p.y());
+	}
+
+
+  OnFitLine();
+  FT a = m_fitting_line.a();
+  FT b = m_fitting_line.b();
+  FT c = m_fitting_line.c();
+
+  bool h = m_fitting_line.is_vertical();
+  InvalidateRect(NULL,FALSE);
 }
