@@ -606,7 +606,7 @@ LogFile="latex_to_html.hlg"
 if [ -r $LogFile ]; then rm $LogFile; fi
 
 OutDir="html"
-ConfigPath=${LATEX_CONV_CONFIG}
+ConfigPath="`cc_extract_html -get_latex_conv_config`"
 
 ShowDefaults=0
 KeepTmp=0

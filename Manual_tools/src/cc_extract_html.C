@@ -175,7 +175,7 @@ main( int argc, char **argv) {
     // Check environment:
     char* s = getenv("LATEX_CONV_CONFIG");
     if ( s)
-	config_path = s;
+       config_path = s;
     s = getenv("LATEX_CONV_INPUTS");
     if ( s)
        latex_conv_inputs = s;
@@ -194,8 +194,11 @@ main( int argc, char **argv) {
     insertInternalGlobalMacro( "\\lciInstallLatexConverterCSSFile", "" );
     
     for (i = 1; i < argc; i++) {
-
         /* check switches */
+        detectSwitch( dummy_switch, "get_latex_conv_config");
+            cout << config_path << endl;
+            return 0;
+        endDetect();
         detectSwitch( dummy_switch, "date");
             i++;
             if ( i < argc)
