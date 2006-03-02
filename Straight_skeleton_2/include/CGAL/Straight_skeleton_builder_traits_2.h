@@ -86,7 +86,7 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
                                           , Triedge const& aR
                                           ) const
   {
-    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_sdist_to_pointC2(toVertex(aP),aL,aR) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_dist_to_pointC2(toVertex(aP),aL,aR) ;
 
     CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compapre_dist_to_point:","P=" << aP << "\nL=" << aL << "\nR=" << aR);
 
@@ -98,7 +98,7 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
                                           , Triedge const& aR
                                           ) const
   {
-    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_sdist_to_pointC2(aS,aL,aR) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_dist_to_pointC2(aS,aL,aR) ;
 
     CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compapre_dist_to_point:","S=" << aS << "\nL=" << aL << "\nR=" << aR);
 
@@ -167,7 +167,8 @@ struct Construct_sls_event_time_and_point_2 : Sls_functor_base_2<K>
   {
     SortedTriedge sorted = collinear_sort(triedge);
 
-    CGAL_assertion(sorted.is_valid()) ;
+    CGAL_assertion(!sorted.is_indeterminate()) ;
+    CGAL_assertion(sorted.collinear_count() < 3) ;
 
     Rational<FT> qt = compute_offset_lines_isec_timeC2(sorted);
 

@@ -19,7 +19,7 @@
 #define CGAL_STRAIGHT_SKELETON_CONS_FTC2_H 1
 
 
-CGAL_BEGIN_NAMESPACE
+CGAL_BEGIN_NAMESPACE 
 
 namespace CGAL_SLS_i
 {
@@ -154,14 +154,14 @@ Rational<FT> compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& 
   Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
   Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  FT num = (l2.a()*l0.b()*l1.c())
-          -(l2.a()*l1.b()*l0.c())
-          -(l2.b()*l0.a()*l1.c())
-          +(l2.b()*l1.a()*l0.c())
-          +(l1.b()*l0.a()*l2.c())
-          -(l0.b()*l1.a()*l2.c());
-
-  FT den = (-l2.a()*l1.b())
+  FT  num = (l2.a()*l0.b()*l1.c())
+           -(l2.a()*l1.b()*l0.c())
+           -(l2.b()*l0.a()*l1.c())
+           +(l2.b()*l1.a()*l0.c())
+           +(l1.b()*l0.a()*l2.c())
+           -(l0.b()*l1.a()*l2.c());
+    
+  FT  den = (-l2.a()*l1.b())
            +(l2.a()*l0.b())
            +(l2.b()*l1.a())
            -(l2.b()*l0.a())
@@ -221,7 +221,6 @@ Rational<FT> compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> con
   //
   //
 
-
   Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
   Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
@@ -250,8 +249,10 @@ Rational<FT> compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> con
 template<class FT>
 Rational<FT> compute_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
 {
-  return triedge.is_degenerate() ? compute_degenerate_offset_lines_isec_timeC2(triedge)
-                                 : compute_normal_offset_lines_isec_timeC2    (triedge) ;
+  CGAL_precondition ( triedge.collinear_count() < 3 ) ;
+  
+  return triedge.collinear_count() == 0 ? compute_normal_offset_lines_isec_timeC2    (triedge)
+                                        : compute_degenerate_offset_lines_isec_timeC2(triedge);
 }
 
 // Given 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c)
@@ -329,8 +330,10 @@ Vertex<FT> construct_degenerate_offset_lines_isecC2 ( SortedTriedge<FT> const& t
 template<class FT>
 Vertex<FT> construct_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
 {
-  return triedge.is_degenerate() ? construct_degenerate_offset_lines_isecC2(triedge)
-                                 : construct_normal_offset_lines_isecC2    (triedge) ;
+  CGAL_precondition ( triedge.collinear_count() < 3 ) ;
+  
+  return triedge.collinear_count() == 0 ? construct_normal_offset_lines_isecC2    (triedge)
+                                        : construct_degenerate_offset_lines_isecC2(triedge) ;
 }
 
 // Give a point (px,py) and 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c),
@@ -342,7 +345,7 @@ Vertex<FT> construct_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
 // The offsets at a certain distance do intersect in a single point.
 //
 template<class FT>
-FT compute_offset_lines_isec_sdist_to_pointC2 ( Vertex<FT> const& p, SortedTriedge<FT> const& triedge )
+FT compute_offset_lines_isec_dist_to_pointC2 ( Vertex<FT> const& p, SortedTriedge<FT> const& triedge )
 {
 
   Vertex<FT> i = construct_offset_lines_isecC2(triedge);

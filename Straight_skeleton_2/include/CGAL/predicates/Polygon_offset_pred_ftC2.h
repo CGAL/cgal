@@ -37,7 +37,7 @@ compare_offset_against_isec_timeC2 ( FT t, Triedge<FT> const& triedge )
 
   SortedTriedge<FT> sorted = collinear_sort(triedge);
 
-  if ( sorted.is_valid() )
+  if ( !sorted.is_indeterminate() )
   {
     Quotient<FT> et = compute_offset_lines_isec_timeC2(sorted).to_quotient();
 

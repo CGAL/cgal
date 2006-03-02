@@ -158,20 +158,19 @@ class SortedTriedge : public Triedge<FT>
     SortedTriedge( Edge const& aE0
                  , Edge const& aE1
                  , Edge const& aE2
-                 , bool        aIsValid
-                 , bool        aIsDegenerate
+                 , int         aCollinearCount
                  )
      : Base(aE0,aE1,aE2)
-     , mIsValid(aIsValid)
-     , mIsDegenerate(aIsDegenerate)
+     , mCCount(aCollinearCount)
      {}
 
-    bool is_valid     () const { return mIsValid ; }
-    bool is_degenerate() const { return mIsDegenerate ; }
+    bool is_indeterminate() const { return mCCount == -1 ; }
+    
+    int  collinear_count() const { return mCCount  ; }
 
   private:
 
-    bool mIsValid, mIsDegenerate ;
+    int mCCount ;
 } ;
 
 template<class FT>

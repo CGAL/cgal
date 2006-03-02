@@ -77,9 +77,11 @@ private :
 
   typedef boost::intrusive_ptr<Event> EventPtr ;
 
-  typedef std::vector<EventPtr> EventPtr_Vector ;
+  typedef std::vector<EventPtr>        EventPtr_Vector ;
+  typedef std::vector<Halfedge_handle> Halfedge_handle_vector ;
 
-  typedef typename EventPtr_Vector::iterator event_iterator ;
+  typedef typename Halfedge_handle_vector::iterator Halfedge_handle_vector_iterator ;
+  typedef typename EventPtr_Vector       ::iterator event_iterator ;
 
   typedef boost::tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
 
@@ -153,6 +155,7 @@ private :
     Halfedge_handle mDefiningBorderA ;
     Halfedge_handle mDefiningBorderB ;
     Halfedge_handle mDefiningBorderC ;
+    EventPtr_Vector mReflexSplits ; // For fast vertex-event discovery.
   } ;
 
 private :
@@ -268,6 +271,21 @@ private :
   bool IsProcessed ( Vertex_handle aVertex )
   {
     return mWrappedVertices[aVertex->id()].mIsProcessed ;
+  }
+
+  void AddReflexSplit ( Vertex_handle aSeed, EventPtr aReflexSplit )
+  {
+    return mWrappedVertices[aSeed->id()].mReflexSplits.push_back(aReflexSplit) ;
+  }
+  EventPtr_Vector const& GetReflexSplits ( Vertex_handle aSeed )
+  {
+    return mWrappedVertices[aSeed->id()].mReflexSplits  ;
+  }
+
+  void EnqueEvent( EventPtr aEvent )
+  {
+    mPQ.push(aEvent);
+    CGAL_SSBUILDER_TRACE(0, *aEvent);
   }
 
   EventPtr PopEventFromPQ()
@@ -428,7 +446,7 @@ private :
                           , Halfedge_handle aBorderB
                           , Halfedge_handle aBorderC
                           , Vertex_handle   aSeedNode
-                          )
+                          ) const
   {
     bool rResult = false ;
 
@@ -448,7 +466,7 @@ private :
     return rResult ;
   }
 
-  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( iTriedge const& aTri )
+  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( iTriedge const& aTri ) const
   {
     return Construct_sls_event_time_and_point_2<Traits>(mTraits)()(aTri);
   }
@@ -480,7 +498,8 @@ private :
   EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode ) ;
 
 
-  void FindVertexEvents();
+  EventPtr FindVertexEvent( EventPtr aE0, Vertex_handle aOV ) ;
+  EventPtr FindVertexEvent( EventPtr aE0 ) ;
 
   void HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB ) ;
 
@@ -497,14 +516,15 @@ private :
 
   Vertex_handle LookupOnSLAV ( Halfedge_handle aOBorder, Event const& aEvent ) ;
 
+  Vertex_handle_pair ConstructSplitEventNodes ( SplitEvent&  aEvent, Vertex_handle aOppR ) ;
   Vertex_handle      ConstructEdgeEventNode   ( EdgeEvent&   aEvent ) ;
-  Vertex_handle_pair ConstructSplitEventNodes ( SplitEvent&  aEvent ) ;
   Vertex_handle_pair ConstructVertexEventNodes( VertexEvent& aEvent ) ;
 
-  void HandleEdgeEvent  ( EventPtr aEvent ) ;
-  void HandleSplitEvent ( EventPtr aEvent ) ;
-  void HandleVertexEvent( EventPtr aEvent ) ;
-  bool IsProcessed      ( EventPtr aEvent ) ;
+  void HandleSplitEvent          ( EventPtr aEvent, Vertex_handle aOppR ) ;
+  void HandleEdgeEvent           ( EventPtr aEvent ) ;
+  void HandleVertexEvent         ( EventPtr aEvent ) ;
+  void HandlePotentialSplitEvent ( EventPtr aEvent ) ;
+  bool IsProcessed               ( EventPtr aEvent ) ;
 
   void Propagate();
 
@@ -539,18 +559,11 @@ private:
   typename Traits::Left_turn_2 Left_turn ;
   typename Traits::Collinear_2 Collinear ;
 
+  std::vector<VertexWrapper> mWrappedVertices ;
+  Halfedge_handle_vector     mDanglingBisectors ;
+  Halfedge_handle_vector     mContourHalfedges ;
 
-  //Internal
-
-  typedef std::vector<Halfedge_handle> Halfedge_handle_vector ;
-
-  typedef typename Halfedge_handle_vector::iterator Halfedge_handle_vector_iterator ;
-
-  std::vector<VertexWrapper>   mWrappedVertices ;
-  Halfedge_handle_vector       mDanglingBisectors ;
-  Halfedge_handle_vector       mContourHalfedges ;
-
-  std::list<Vertex_handle>   mSLAV ;
+  std::list<Vertex_handle> mSLAV ;
 
   EventPtr_Vector  mSplitEvents ;
   SplitNodesVector mSplitNodes ;
@@ -572,7 +585,7 @@ public:
   template<class InputPointIterator>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd  )
   {
-    CGAL_SSBUILDER_TRACE(1,"Inserting Connected Component of the Boundary....");
+    CGAL_SSBUILDER_TRACE(0,"Inserting Connected Component of the Boundary....");
 
     if ( std::distance(aBegin,aEnd) >= 3 )
     {

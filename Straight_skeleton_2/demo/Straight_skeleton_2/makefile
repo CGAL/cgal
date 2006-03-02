@@ -14,7 +14,12 @@ include $(CGAL_MAKEFILE)
 ifeq ($(DEBUGGING), yes)
 ADDITIONAL_CXXFLAGS = -g
 else
+ifeq ($(PROFILING), yes)
+ADDITIONAL_CXXFLAGS = -O2 -pg
+ADDITIONAL_LDFLAGS = /usr/lib/gcrt1.o
+else
 ADDITIONAL_CXXFLAGS = -O2
+endif
 endif
 
 CXXFLAGS = -I../../include/ \
@@ -32,7 +37,9 @@ LIBPATH = \
 
 LDFLAGS = \
         $(LONG_NAME_PROBLEM_LDFLAGS) \
-        $(CGAL_QT_LDFLAGS)
+        $(CGAL_QT_LDFLAGS) \
+	$(ADDITIONAL_LDFLAGS)
+        
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#

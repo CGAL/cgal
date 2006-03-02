@@ -15,7 +15,7 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H
+#ifndef CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 
 #define CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 1
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
@@ -47,7 +47,8 @@ Uncertain<bool> are_edges_collinear( Edge<FT> const& e0, Edge<FT> const& e1 )
 template<class FT>
 SortedTriedge<FT> collinear_sort ( Triedge<FT> const& triedge )
 {
-  bool valid = false, degenerate = false ;
+  int lCollinearCount = -1 ;
+  
   int  idx0=0, idx1=1, idx2=2 ;
 
   Uncertain<bool> is_01 = are_edges_collinear(triedge.e0(),triedge.e1());
@@ -59,40 +60,41 @@ SortedTriedge<FT> collinear_sort ( Triedge<FT> const& triedge )
       Uncertain<bool> is_12 = are_edges_collinear(triedge.e1(),triedge.e2());
       if ( !CGAL_NTS is_indeterminate(is_01) )
       {
-        valid = true ;
         if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
         {
           idx0 = 0 ;
           idx1 = 1 ;
           idx2 = 2 ;
-          degenerate = true ;
+          lCollinearCount = 2 ;
         }
         else if ( CGAL_NTS logical_and(is_02 , !is_01 , !is_12 ) )
         {
           idx0 = 0 ;
           idx1 = 2 ;
           idx2 = 1 ;
-          degenerate = true ;
+          lCollinearCount = 2 ;
         }
         else if ( CGAL_NTS logical_and(is_12 , !is_01 , !is_02 ) )
         {
           idx0 = 1 ;
           idx1 = 2 ;
           idx2 = 0 ;
-          degenerate = true ;
+          lCollinearCount = 2 ;
         }
-        else
+        else if ( CGAL_NTS logical_and(!is_01 , !is_02, !is_12  ) )
         {
           idx0 = 0 ;
           idx1 = 1 ;
           idx2 = 2 ;
-          degenerate = false ;
+          lCollinearCount = 0 ;
         }
+        else
+          lCollinearCount = 3 ;
       }
     }
   }
 
-  return SortedTriedge<FT>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),valid,degenerate);
+  return SortedTriedge<FT>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),lCollinearCount);
 }
 
 
@@ -108,28 +110,36 @@ Uncertain<bool> exist_offset_lines_isec2 ( Triedge<FT> const& triedge )
 
   SortedTriedge<FT> sorted = collinear_sort(triedge);
 
-  if ( sorted.is_valid() )
+  if ( !sorted.is_indeterminate() ) // Couldn't determine collinearity
   {
-    CGAL_SSTRAITS_TRACE( ( sorted.is_degenerate() ? " collinear edges" : " non-collinear edges" ) ) ;
-
-    Rational<FT> t = compute_offset_lines_isec_timeC2(sorted) ;
-
-    Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t.d()) ;
-    if ( ! CGAL_NTS is_indeterminate(d_is_zero) )
+    if ( sorted.collinear_count() < 3 ) // If the 3 edges are collinear thre is no event.
     {
-      if ( !d_is_zero )
+      CGAL_SSTRAITS_TRACE( ( sorted.is_normal() ? " normal edges" : " collinear edges" ) ) ;
+  
+      Rational<FT> t = compute_offset_lines_isec_timeC2(sorted) ;
+  
+      Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t.d()) ;
+      if ( ! CGAL_NTS is_indeterminate(d_is_zero) )
       {
-        rResult = CGAL_NTS certified_is_positive(t.n()) == CGAL_NTS certified_is_positive(t.d()) ;
-        CGAL_SSTRAITS_TRACE("\nEvent time: " << (t.n()/t.d()) << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
+        if ( !d_is_zero )
+        {
+          rResult = CGAL_NTS certified_is_positive(t.to_quotient()) ;
+          CGAL_SSTRAITS_TRACE("\nEvent time: " << (t.n()/t.d()) << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
+        }
+        else
+        {
+          CGAL_SSTRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." ) ;
+          rResult = make_uncertain(false);
+        }
       }
       else
-      {
-        CGAL_SSTRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." ) ;
-        rResult = make_uncertain(false);
-      }
+        CGAL_SSTRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." ) ;
     }
     else
-      CGAL_SSTRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." ) ;
+    {
+      CGAL_SSTRAITS_TRACE("\nAll the edges are collinear. Event doesn't exist." ) ;
+      rResult = make_uncertain(false);
+    }
   }
   else
     CGAL_SSTRAITS_TRACE("\nEdges uncertainly collinear, event existance is indeterminate." ) ;
@@ -150,11 +160,14 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Triedge<FT> con
   SortedTriedge<FT> m_sorted = collinear_sort(m);
   SortedTriedge<FT> n_sorted = collinear_sort(n);
 
-  if ( m_sorted.is_valid() && n_sorted.is_valid() )
+  if ( ! ( m_sorted.is_indeterminate() || n_sorted.is_indeterminate() ) )
   {
+    CGAL_assertion ( m_sorted.collinear_count() < 3 ) ;
+    CGAL_assertion ( n_sorted.collinear_count() < 3 ) ;
+    
     Quotient<FT> mt = compute_offset_lines_isec_timeC2(m_sorted).to_quotient();
     Quotient<FT> nt = compute_offset_lines_isec_timeC2(n_sorted).to_quotient();
-
+   
     CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;
     CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;
 
@@ -172,17 +185,20 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Triedge<FT> con
 // PRECONDITION: There exist single points at which the offset line triples 'm' and 'n' at 'mt' and 'nt' intersect.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_sdist_to_pointC2 ( Vertex<FT> const& p, Triedge<FT> const& m, Triedge<FT> const& n )
+compare_offset_lines_isec_dist_to_pointC2 ( Vertex<FT> const& p, Triedge<FT> const& m, Triedge<FT> const& n )
 {
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
   SortedTriedge<FT> m_sorted = collinear_sort(m);
   SortedTriedge<FT> n_sorted = collinear_sort(n);
 
-  if ( m_sorted.is_valid() && n_sorted.is_valid() )
+  if ( ! ( m_sorted.is_indeterminate() || n_sorted.is_indeterminate() ) )
   {
-    FT dm = compute_offset_lines_isec_sdist_to_pointC2(p,m_sorted);
-    FT dn = compute_offset_lines_isec_sdist_to_pointC2(p,n_sorted);
+    CGAL_assertion ( m_sorted.collinear_count() < 3 ) ;
+    CGAL_assertion ( n_sorted.collinear_count() < 3 ) ;
+    
+    FT dm = compute_offset_lines_isec_dist_to_pointC2(p,m_sorted);
+    FT dn = compute_offset_lines_isec_dist_to_pointC2(p,n_sorted);
 
     rResult = CGAL_NTS certified_compare(dm,dn);
   }
@@ -197,18 +213,22 @@ compare_offset_lines_isec_sdist_to_pointC2 ( Vertex<FT> const& p, Triedge<FT> co
 // PRECONDITION: There exist single points at which the offsets at 'st', 'mt' and 'nt' intersect.
 template<class FT>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_sdist_to_pointC2 ( Triedge<FT> const& s
-                                           , Triedge<FT> const& m
-                                           , Triedge<FT> const& n
-                                           )
+compare_offset_lines_isec_dist_to_pointC2 ( Triedge<FT> const& s
+                                          , Triedge<FT> const& m
+                                          , Triedge<FT> const& n
+                                          )
 {
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
   SortedTriedge<FT> s_sorted = collinear_sort(s);
 
-  if ( s_sorted.is_valid() )
-    return compare_offset_lines_isec_sdist_to_pointC2(construct_offset_lines_isecC2(s_sorted),m,n);
-
+  if ( !s_sorted.is_indeterminate() )
+  {
+    CGAL_assertion ( s_sorted.collinear_count() < 3 ) ;
+    
+    rResult = compare_offset_lines_isec_dist_to_pointC2(construct_offset_lines_isecC2(s_sorted),m,n);
+  }
+  
   return rResult ;
 }
 
@@ -230,8 +250,10 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& triedge, Triedge<
   Uncertain<bool> r = Uncertain<bool>::indeterminate();
 
   SortedTriedge<FT> sorted = collinear_sort(triedge);
-  if ( sorted.is_valid() )
+  if ( !sorted.is_indeterminate() )
   {
+    CGAL_assertion ( sorted.collinear_count() < 3 ) ;
+    
     Line<FT> zl = compute_normalized_line_ceoffC2(zone.e0()) ;
     Line<FT> zc = compute_normalized_line_ceoffC2(zone.e1()) ;
     Line<FT> zr = compute_normalized_line_ceoffC2(zone.e2()) ;
@@ -320,8 +342,11 @@ Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> co
   SortedTriedge<FT> l_sorted = collinear_sort(l);
   SortedTriedge<FT> r_sorted = collinear_sort(r);
 
-  if ( l_sorted.is_valid() && r_sorted.is_valid() )
+  if ( ! ( l_sorted.is_indeterminate() || r_sorted.is_indeterminate() ) )
   {
+    CGAL_assertion ( l_sorted.collinear_count() < 3 ) ;
+    CGAL_assertion ( r_sorted.collinear_count() < 3 ) ;
+    
     Quotient<FT> lt = compute_offset_lines_isec_timeC2(l_sorted).to_quotient();
     Quotient<FT> rt = compute_offset_lines_isec_timeC2(r_sorted).to_quotient();
 

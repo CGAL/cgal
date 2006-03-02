@@ -206,7 +206,7 @@ private:
 };
 
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 2
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
@@ -308,9 +308,9 @@ int Straight_skeleton_external_draw_segment ( double sx
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
 {
-  std::cerr << "CGAL error: " << what << " violation!" << std::endl
+  std::cerr << "CGAL error: " << what << " violation!" << std::endl 
        << "Expr: " << expr << std::endl
-       << "File: " << file << std::endl
+       << "File: " << file << std::endl 
        << "Line: " << line << std::endl;
   if ( msg != 0)
       std::cerr << "Explanation:" << msg << std::endl;
@@ -754,7 +754,7 @@ private slots:
             lPoly->reverse_orientation();
           lRegion->push_back(lPoly);
         }
-//        else std::cerr << "INPUT ERROR: Non-simple contour found in " << s << std::endl ;
+        else std::cerr << "INPUT ERROR: Non-simple contour found." << std::endl ;
       }
 
       input.push_back(lRegion);

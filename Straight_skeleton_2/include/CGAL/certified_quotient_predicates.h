@@ -13,24 +13,24 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
+#ifndef CGAL_CERTIFIED_QUOTIENT_PREDICATES_H 
 #define CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
-
+ 
 #include <CGAL/certified_numeric_predicates.h>
 #include <CGAL/Quotient.h>
 
-CGAL_BEGIN_NAMESPACE
+CGAL_BEGIN_NAMESPACE 
 
 template <class NT>
-inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x)
+inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x) 
 {
   return CGAL_NTS certified_sign(x.num) == CGAL_NTS certified_sign(x.den) ;
 }
 
-template <class NT>
+template <class NT> 
 inline Uncertain<bool> certified_quotient_is_negative(const Quotient<NT>& x)
 {
   return CGAL_NTS certified_sign(x.num) != CGAL_NTS certified_sign(x.den) ;
@@ -39,10 +39,10 @@ inline Uncertain<bool> certified_quotient_is_negative(const Quotient<NT>& x)
 template <class NT>
 inline Uncertain<bool> certified_quotient_is_zero(const Quotient<NT>& x)
 {
-  return CGAL_NTS certified_is_zero(x.num) ;
+  return CGAL_NTS certified_is_zero(x.num) ; 
 }
-
-template <class NT>
+ 
+template <class NT> 
 CGAL_MEDIUM_INLINE
 Uncertain<Sign> certified_quotient_sign(const Quotient<NT>& x)
 {
