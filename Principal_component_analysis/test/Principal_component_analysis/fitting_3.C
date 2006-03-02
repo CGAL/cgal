@@ -38,7 +38,6 @@ void test_3D()
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   Plane horizontal_plane(Point(0,0,0),Vector(0,0,1));
-
   if(!parallel(horizontal_plane,plane))
   {
     std::cout << "failure" << std::endl;
@@ -75,7 +74,8 @@ void test_3D_point_set(const unsigned int nb_points)
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
-  if(!plane.is_horizontal())
+  Plane horizontal_plane(Point(0,0,0),Vector(0,0,1));
+  if(!parallel(horizontal_plane,plane))
   {
     std::cout << "failure" << std::endl;
     exit(1); // failure
@@ -103,7 +103,8 @@ void test_3D_triangle_set(const unsigned int nb_triangles)
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
-  if(!plane.is_horizontal())
+  Plane horizontal_plane(Point(0,0,0),Vector(0,0,1));
+  if(!parallel(horizontal_plane,plane))
   {
     std::cout << "failure" << std::endl;
     exit(1); // failure
