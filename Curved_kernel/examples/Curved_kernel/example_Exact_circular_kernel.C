@@ -10,7 +10,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
-typedef CGAL::Exact_circular_kernel                     Circular_k;
+typedef CGAL::Exact_circular_kernel_2                   Circular_k;
 
 typedef Circular_k::Point_2                             Point_2;
 typedef Circular_k::Circle_2                            Circle_2;

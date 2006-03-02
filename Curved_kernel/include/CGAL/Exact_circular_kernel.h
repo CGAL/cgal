@@ -59,7 +59,7 @@ CGAL_BEGIN_NAMESPACE
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
   typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2;
 
-  typedef CGAL::Lazy_curved_kernel<CK1,CK2>        Exact_circular_kernel;
+  typedef CGAL::Lazy_curved_kernel<CK1,CK2>        Exact_circular_kernel_2;
 
 CGAL_END_NAMESPACE
 

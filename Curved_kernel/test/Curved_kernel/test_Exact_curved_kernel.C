@@ -6,7 +6,7 @@
 #include <CGAL/intersections.h>
 #include <iostream>
 
-typedef CGAL::Exact_circular_kernel CK;
+typedef CGAL::Exact_circular_kernel_2 CK;
 
   CK ck;
 
