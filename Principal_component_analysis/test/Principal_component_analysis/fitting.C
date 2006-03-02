@@ -42,11 +42,6 @@ void test_2D()
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,k);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
-  Vector_2 v = line.to_vector();
-  v = v / std::sqrt(v*v); // normalize
-  std::cout << "vector: " << v.x() << " " 
-                          << v.y() << std::endl;
-
   if(!line.is_horizontal())
   {
     std::cout << "failure" << std::endl;
@@ -65,6 +60,7 @@ void test_2D_point_set(const unsigned int nb_points)
 
   std::cout << "generate " << nb_points << 
        " 2D points on a horizontal line...";
+  std::list<Point_2> points;
   points_on_segment_2(p,q,100,std::back_inserter(points));
   std::cout << "done " << std::endl;
 
