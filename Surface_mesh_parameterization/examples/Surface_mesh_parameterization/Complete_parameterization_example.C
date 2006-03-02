@@ -281,8 +281,9 @@ int main(int argc,char * argv[])
 #else // CGAL_USE_TAUCS
 
 
-#include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 
 // ----------------------------------------------------------------------------
 // Empty main() if TAUCS is not installed

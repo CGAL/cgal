@@ -46,7 +46,7 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
     assert(pFilename != NULL);
 
     std::ofstream out(pFilename);
-    if(!out) 
+    if(!out)
         return false;
     CGAL::set_ascii_mode(out);
 
@@ -73,13 +73,13 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
     }
 
     out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;
-    out << "%%BoundingBox: " << int(xmin+0.5) << " " 
-                                << int(ymin+0.5) << " " 
-                                << int(xmax+0.5) << " " 
+    out << "%%BoundingBox: " << int(xmin+0.5) << " "
+                                << int(ymin+0.5) << " "
+                                << int(xmax+0.5) << " "
                                 << int(ymax+0.5) << std::endl;
-    out << "%%HiResBoundingBox: " << xmin << " " 
-                                    << ymin << " " 
-                                    << xmax << " " 
+    out << "%%HiResBoundingBox: " << xmin << " "
+                                    << ymin << " "
+                                    << xmax << " "
                                     << ymax << std::endl;
     out << "%%EndComments" << std::endl;
     out << "gsave" << std::endl;
@@ -151,7 +151,7 @@ int main(int argc,char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) 
+    if(!stream)
     {
         std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -201,7 +201,7 @@ int main(int argc,char * argv[])
         {
             std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
             return EXIT_FAILURE;
-        }   
+        }
     }
 
     return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -211,8 +211,9 @@ int main(int argc,char * argv[])
 #else // CGAL_USE_TAUCS
 
 
-#include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 
 // ----------------------------------------------------------------------------
 // Empty main() if TAUCS is not installed
