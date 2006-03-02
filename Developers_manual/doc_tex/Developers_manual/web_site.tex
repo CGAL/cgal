@@ -4,24 +4,22 @@
 
 The web site for \cgal\ is \path|http://www.cgal.org|.  It is
 currently hosted by the Max-Planck-Institut f\"ur Informatik (MPI) and is
-maintained by \ccAnchor{mailto:ameyer@mpi-sb.mpg.de}{Andreas Meyer (primary
-contact)} and \ccAnchor{mailto:kettner@mpi-sb.mpg.de}{Lutz Kettner}.
+maintained by \ccAnchor{mailto:ameyer@mpi-inf.mpg.de}{Andreas Meyer}.
 
-\section{SVN Package and Maintenance}
+\section{SVN cgal-web Project and Maintenance}
 
-The maintenance of the actual contents is decentralized and can be
-done according to responsibilities and interests of the different
-contributors with access to the corresponding SVN package
-\index{SVN server!Web_pages package@\texttt{Web\_pages} package}
+Most files that are visible on the website are contained in a 
+seperate SVN project called 
+\index{SVN server!cgal-web project@\texttt{cgal-web} project}
 
 \begin{quote}
-    \textbf{Web\_pages}
+    \textbf{cgal-web}
 \end{quote}
 
-that contains most of the web pages. Exceptions are large binaries and,
+Exceptions are large binaries and,
 for example, the Manual, which is generated (and large) and is thus
 not suitable to be placed in SVN. One can see the distinction in the
-URL's, everything starting with
+URL's. Everything starting with
 
 \begin{quote}
     \textbf{pub/}\\
@@ -30,15 +28,14 @@ URL's, everything starting with
 \end{quote}
 
 is not in SVN. If you want something changed or added here, you have to
-contact \ccAnchor{mailto:ameyer@mpi-sb.mpg.de}{Andreas Meyer (primary
-contact)} or \ccAnchor{mailto:kettner@mpi-sb.mpg.de}{Lutz Kettner}%
+contact \ccAnchor{mailto:ameyer@mpi-inf.mpg.de}{Andreas Meyer}%
 \ccIndexSubitem{maintainer}{web site} (or some
 other \cgal\ person at MPI). (For the manual an exception for the
 above exception are some HTML files, for example the frameset,
 that are actually available in the SVN package \texttt{Manual}.)
 
-Several developers have write access to the new \texttt{Web\_pages}
-package, or might get it whenever need arises. Note that the SVN package
+Several developers have write access to the new \texttt{cgal-web}
+project, or might get it whenever need arises. Note that the SVN project
 
 \begin{quote}
   \textit{\textbf{is not automatically synchronized}}
@@ -47,14 +44,14 @@ package, or might get it whenever need arises. Note that the SVN package
 with the actual web pages. It is a manual \texttt{svn up} call that
 has to be initiated at MPI. This is also intended as a final quality
 control before updates show up on our web pages. It allows us to have
-the set of people with write access to the SVN package not to be too
+the set of people with write access to the SVN project not to be too
 restrictive.
 
 How do you get your changes finally on the web pages of \cgal?
 
 The SVN server actually informs the maintainer at MPI (see above)
 automatically by email about committed changes in the
-\texttt{Web\_pages} package. So, either just commit small changes, the
+\texttt{cgal-web} project. So, either just commit small changes, the
 maintainer verifies them and integrates them in the next update of the
 web pages. If you plan something bigger, please let the maintainer
 know, so that updates can be suspended until you are done.  Or, if you
