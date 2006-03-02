@@ -10,20 +10,21 @@
 
 // types
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Cartesian<float> Kernel;
 typedef Kernel::FT FT;
 
 typedef Kernel::Line_3 Line;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Plane_3 Plane;
+typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle;
 
 // case with only one point in container
 // the fitting plane must be horizontal by default
 void test_3D()
 {
-  std::list<Point_3> points;
-  points.push_back(Point_3(0,0,0));
+  std::list<Point> points;
+  points.push_back(Point(0,0,0));
 
   // fit a plane
   // call all versions of the function
@@ -37,7 +38,9 @@ void test_3D()
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,k);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
-  if(!plane.is_horizontal())
+  Plane horizontal_plane(Point(0,0,0),Vector(0,0,1));
+
+  if(!parallel(horizontal_plane,plane))
   {
     std::cout << "failure" << std::endl;
     exit(1); // failure
