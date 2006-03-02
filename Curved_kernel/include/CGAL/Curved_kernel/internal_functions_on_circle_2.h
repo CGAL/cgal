@@ -25,8 +25,6 @@
 #ifndef CGAL_CURVED_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 #define CGAL_CURVED_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 
-#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 // temporary function : where to put it, if we want to keep it ?
@@ -90,12 +88,11 @@ namespace CircularFunctors {
   has_on(const typename CK::Circle_2 &a,
 	 const typename CK::Circular_arc_point_2 &p)
   {
-
+    typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
     Polynomial_for_circles_2_2 equation = get_equation<CK>(a);
     
-    return (CGAL::sign_at<typename CK::Algebraic_kernel>
-	    (equation,p.coordinates()) == ZERO);
+    return (AK().sign_at_object()(equation,p.coordinates()) == ZERO);
   }
 
   template< class CK, class OutputIterator>

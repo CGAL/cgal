@@ -25,8 +25,6 @@
 #ifndef CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
 #define CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
 
-#include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
-
 namespace CGAL {
 namespace LinearFunctors {
 
@@ -51,11 +49,11 @@ namespace LinearFunctors {
   has_on(const typename CK::Line_2 & l,
 	 const typename CK::Circular_arc_point_2 &p)
   {
+    typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_1_2 Polynomial_1_2;
     Polynomial_1_2 equation = CGAL::LinearFunctors::get_equation<CK>(l);
-    
-    return(CGAL::sign_at<typename CK::Algebraic_kernel>
-	   (equation,p.coordinates())== ZERO);
+
+    return(AK().sign_at_object()(equation,p.coordinates())== ZERO);
   }
 
   template< class CK, class OutputIterator>
