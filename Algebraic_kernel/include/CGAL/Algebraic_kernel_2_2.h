@@ -31,9 +31,9 @@
 #include <CGAL/Root_for_circles_2_2.h>
 
 #include <CGAL/Algebraic_kernel/function_objects_on_roots_and_polynomials_2_2.h>
-#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
-#include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
-#include <CGAL/global_functions_on_root_for_circle_2_2.h>
+// #include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
+// #include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
+// #include <CGAL/global_functions_on_root_for_circle_2_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
