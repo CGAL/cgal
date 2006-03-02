@@ -1248,6 +1248,7 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb6.bmp -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb7.bmp -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
+Principal_component_analysis/test/Principal_component_analysis/fitting_3.C -text
 QP_solver/include/CGAL/QP_solver/Bounds.C -text
 QP_solver/test/QP_solver/README -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
