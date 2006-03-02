@@ -59,14 +59,13 @@ void test_2D()
 // the fitting line must be horizontal
 void test_2D_point_set(const unsigned int nb_points)
 {
-  // create random points on a horizontal segment
-  std::vector<Point_2> points;
-  points.push_back(Point_2(0.0,0.0));
-  points.push_back(Point_2(1.0,0.0));
+  // create points on a horizontal segment
+  Point_2 p(0.0,0.5);
+  Point_2 q(1.0,0.5);
+
   std::cout << "generate " << nb_points << 
-       " 2D random collinear points on a horizontal line...";
-  random_collinear_points_2(points.begin(),points.end(),nb_points,
-                            std::back_inserter(points));
+       " 2D points on a horizontal line...";
+  points_on_segment_2(p,q,100,std::back_inserter(points));
   std::cout << "done " << std::endl;
 
   // fit a line
@@ -82,11 +81,6 @@ void test_2D_point_set(const unsigned int nb_points)
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,k);
 
   std::cout << "done (quality: " << quality << ")" << std::endl;
-
-  FT y1 = line.y_at_x((FT)0);
-  FT y2 = line.y_at_x((FT)1);
-
-  std::cout << "y1" << y1 << " " << y2 << std::endl;
 
   if(!line.is_horizontal())
   {
