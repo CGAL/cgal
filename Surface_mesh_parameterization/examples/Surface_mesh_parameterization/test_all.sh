@@ -14,3 +14,10 @@ echo "***************************************************************"
 ./test_model.sh three_peaks
 
 echo "***************************************************************"
+
+for tst in *_parameterization
+do
+    echo " "
+    echo "*** $tst ***"
+    $tst `cat $tst.cmd`
+done
