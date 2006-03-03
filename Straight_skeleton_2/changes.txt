@@ -1,8 +1,13 @@
-07 February 2005 Andreas Fabri
-- Put the file under version control.
-16 February 2006 Fernando Cacciola
-- Bug fixes. ALL current sample cases pass for the first time (with both the SLS and the Offseting)
+ 3 March 2006 Andreas Fabri
+- Minor modifications in the manual
+
 25 February 2006 Fernando Cacciola
 - Skeleton validity check added
 - Actual construction and validity check of skeletons for a sample set added to the test suite
 - Some drawings added to the documentation
+
+16 February 2006 Fernando Cacciola
+- Bug fixes. ALL current sample cases pass for the first time (with both the SLS and the Offseting)
+
+07 February 2005 Andreas Fabri
+- Put the file under version control.
