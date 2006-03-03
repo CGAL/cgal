@@ -36,11 +36,15 @@
 \ccTypedef{typedef typename HalfedgeDS::Traits             HDS_K;}{}
 \ccGlue
 \ccTypedef{typedef typename HDS_K::Point_3              HDS_point;}{}
+\ccTypedef{typedef HDS_point::R::RT                     HDS_RT;}{}
+
 
 \ccCreation
 \ccCreationVariable{marching_traits}  %% choose variable name
 
-\ccConstructor{Marching_tetrahedra_traits_skin_surface_3(HDS_rt iso_value=0);}{}
+\ccConstructor{Marching_tetrahedra_traits_skin_surface_3();}{default constructor with
+  \ccc{iso_value} zero}
+\ccConstructor{Marching_tetrahedra_traits_skin_surface_3(HDS_RT iso_value);}{}
 
 \ccOperations
 
