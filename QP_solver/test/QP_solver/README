@@ -89,7 +89,7 @@ then you can solve this file by running
 where the "0" argument is the verbosity (tune it up if need be).
 
 
-HOW THE DERIVATES ARE GENERATED
+HOW THE DERIVATIVES ARE GENERATED
 
 The ./create_test_solver_cin script generates the derivates by calling the
 program ./master_mps_to_derivatives (compiling the latter first, if
@@ -112,3 +112,7 @@ output a new kind of derivatives, you first need to touch the masters by doing
   touch test_solver_data/masters/additional/*
 
 This will cause all derivatives to be generated anew.)
+
+If you do not want derivatives to be generated for a given master
+MPS-file, add the comment "Derivatives: none", see for instance
+test_solver_data/masters/additional/QRECIPE.mps.
