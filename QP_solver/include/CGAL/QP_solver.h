@@ -65,6 +65,11 @@ namespace QP_solver_impl {   // namespace for implemenation details
   template < class Rep_ >
   class Unbounded_direction_iterator;
 
+  // forward declaration of functor for accessing original
+  // variable values by original index
+  template < class Rep_ >
+  class Value_by_index;
+
 } // end of namespace for implementation details
 
 // ===============
@@ -153,7 +158,6 @@ public: // export some additional types:
   // its lower and upper (fixed) bound, or at zero, or whether the variable is
   // basic:
   enum  Bound_index  { LOWER, ZERO, UPPER, FIXED, BASIC };
-  
 private:
   typedef  std::vector<Bound_index>    Bound_index_values;
   typedef  typename Bound_index_values::iterator
@@ -177,6 +181,10 @@ private:
   // access values by basic index functor:
   typedef  Value_by_basic_index<Value_const_iterator>
                                       Value_by_basic_index;
+
+  // access values by original index
+  friend class QP_solver_impl::Value_by_index<Rep>;
+  typedef  QP_solver_impl::Value_by_index<Rep> Value_by_index;
 
   // access to original problem by basic variable/constraint index:
   typedef  QP_vector_accessor<
@@ -248,6 +256,12 @@ public:
     typedef  Join_input_iterator_1< Variable_numerator_iterator,
                                         Quotient_maker >
                                         Variable_value_iterator;
+    typedef Join_input_iterator_1< Index_const_iterator,Value_by_index >
+                                       Original_variable_numerator_iterator;
+    typedef  Join_input_iterator_1< Original_variable_numerator_iterator,
+                                        Quotient_maker >
+                                        Original_variable_value_iterator;
+  
     /*
     typedef  Variable_numerator_iterator
                                         Working_variable_numerator_iterator;
@@ -321,6 +335,8 @@ public:
     					// initially has the same size as A_art
     
     // current status
+    Indices                  O;         // original variables (1,2,...,n)
+
     Indices                  B_O;       // basis (original variables)
                                         // Note: the size of B_O is always
                                         // correct, i.e., equals the number of
@@ -580,6 +596,39 @@ public:
     variables_value_end  ( ) const
         { return Variable_value_iterator(
                      variables_numerator_end(),
+                     Quotient_maker( Quotient_creator(), d)); }
+
+    Original_variable_numerator_iterator
+    original_variables_numerator_begin( ) const
+        { return Original_variable_numerator_iterator( O.begin(),
+                   Value_by_index( 
+				  x_O_v_i.begin(), 
+				  in_B.begin(), 
+				  x_B_O.begin(),
+				  qp_l,
+				  qp_u));}
+    
+    Original_variable_numerator_iterator
+    original_variables_numerator_end  ( ) const
+        { return Original_variable_numerator_iterator( O.end(),
+                   Value_by_index( 
+				  x_O_v_i.begin(), 
+				  in_B.begin(), 
+				  x_B_O.begin(),
+				  qp_l,
+				  qp_u));}
+
+    
+    Original_variable_value_iterator
+    original_variables_value_begin( ) const
+        { return Original_variable_value_iterator(
+                     original_variables_numerator_begin(),
+                     Quotient_maker( Quotient_creator(), d)); }
+    
+    Original_variable_value_iterator
+    original_variables_value_end  ( ) const
+        { return Original_variable_value_iterator(
+                     original_variables_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
     
     // access to slack variables
@@ -1895,6 +1944,67 @@ compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
     }
        
 }
+
+namespace QP_solver_impl {
+// --------------------
+// Value_by_index
+// --------------------
+template < class Rep >
+class Value_by_index : public std::unary_function< int, 
+      typename QP_solver<Rep>::ET > {
+public:
+  typedef QP_solver<Rep> QP;
+  typedef typename QP::ET result_type;
+  typedef typename QP::Bound_index_value_const_iterator BIt;
+  typedef typename QP::Index_const_iterator IIt;
+  typedef typename QP::Value_const_iterator VIt;
+  typedef typename QP::L_iterator LIt;
+  typedef typename QP::U_iterator UIt;
+  typedef typename QP::ET ET;
+
+  Value_by_index( BIt x_O_v_i_it, 
+		  IIt in_B_it, 
+		  VIt x_B_O_it, 
+		  LIt qp_l_it, 
+		  UIt qp_u_it)
+	: bound_status( x_O_v_i_it), 
+	  basic_index ( in_B_it),
+	  basic_value ( x_B_O_it),
+	  lower_bound ( qp_l_it),
+	  upper_bound ( qp_u_it),
+	  z (0)
+    {}
+
+    result_type operator () ( int i) const
+    {
+      switch (bound_status[i]) {
+      case QP::UPPER:
+	return upper_bound[i];
+	break;
+      case QP::ZERO:
+	return z;
+	break;
+      case QP::LOWER:
+      case QP::FIXED:
+	return lower_bound[i];
+	break;
+      case QP::BASIC:
+	return basic_value[basic_index[i]];
+	break;
+      default: // never reached
+	return z;
+      }
+    }
+
+  BIt bound_status;
+  IIt basic_index;
+  VIt basic_value;
+  LIt lower_bound;
+  UIt upper_bound;
+  ET z;
+};
+
+} // end namespace QP_solver_impl
 
 CGAL_END_NAMESPACE
 

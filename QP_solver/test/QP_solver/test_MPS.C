@@ -115,6 +115,20 @@ int main(const int argNr,const char **args) {
     for (unsigned int i=0; i<qp.number_of_variables(); ++i)
       if (!solver.is_basic(i))
 	x[i] = solver.nonbasic_original_variable_value(i);
+
+    // test original variables iterator; once it runs, old code above
+    // can be removed
+    std::vector<ET> y;
+    std::copy(
+	      solver.original_variables_numerator_begin(),
+	      solver.original_variables_numerator_end(),
+	      std::back_inserter(y));
+    if (!std::equal(x.begin(), x.end(), y.begin())) {
+	std::cout 
+	  << "error in original_variables_numerator_iterator"
+	  << std::endl; 
+	std::exit(2);
+    }
     
     // output solution:
     cout << "Exact solution:" << endl;

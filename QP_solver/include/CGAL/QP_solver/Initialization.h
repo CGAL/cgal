@@ -108,6 +108,11 @@ set(int n, int m,
   qp_A = A_it; qp_b = b_it; qp_c = c_it; qp_D = D_it;
   qp_r = Row_type_it;
   
+  // store original variable indices (hack needed to allow
+  // access to original variable values through Join_iterator_1
+  O.reserve(qp_n);
+  for (int i=0; i<qp_n; ++i) O.push_back(i);
+
   // set up slack variables and auxiliary problem
   // --------------------------------------------
 

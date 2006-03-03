@@ -247,7 +247,6 @@ class Value_by_basic_index : public std::unary_function<
     result_type  z;
 };
 
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_QP_SOLVER_FUNCTORS_H
