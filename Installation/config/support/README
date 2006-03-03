@@ -32,14 +32,15 @@ When adding a new file here:
 
    - LIBS: list of libraries to link with, separated by spaces.
 
-   - REQUIRES: list of packages, features, or variables required by
-     the package. A required variable is prefixed by DOLLAR_, whereas
-     features appear as-is. 
+   - REQUIRES: list of features and/or variables required by the
+     package. A required variable is prefixed by the string DOLLAR_,
+     whereas features appear as-is. A package should only depend on
+     features that appear before it in the (increasing) order of
+     packages.
 
-   - INCOMPATIBLE: list of packages, features, or variables
-     incompatible with the package. An incompatible variable is
-     prefixed by DOLLAR_ and an incompatible package is prefixed by
-     PKG_; features appear as-is.
+   - INCOMPATIBLE: list of features and/or variables incompatible with
+     the package. An incompatible variable is prefixed by DOLLAR_,
+     features appear as-is.
 
    - STDINCLDIRS: list of directories (separated by :) which may be
      package include dir (may contain wildcards, if

@@ -441,8 +441,7 @@ initial_check()
 {
     _check_dir_exists "${CGAL_DIR}"
     _check_write "${CGAL_DIR}"
-    for i in "${TMP_LOGFILE}" "${TMP_CXX_FILE}" "${INSTALL_RIS_LOGFILE}" \
-	"${INSTALL_LOGFILE}"; do
+    for i in "${TMP_LOGFILE}" "${TMP_CXX_FILE}" "${INSTALL_LOGFILE}"; do
 	if [ -f "${i}" ]; then
 	    ${_rm} -f "${i}"
 	fi
@@ -529,7 +528,7 @@ init_logfiles()
 	"----------------------------------------------------------" \
 	>"${INSTALL_RIS_LOGFILE}"
     ${_printf} "%s\n" \
-	"${_LEFTSPACE}You built CGAL ${CGAL_VERSION} on:" \
+	"${_LEFTSPACE}You built CGAL on:" \
 	>>"${INSTALL_RIS_LOGFILE}"
     ${_printf} "${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
@@ -1507,6 +1506,12 @@ _prepend_to()
     fi
 }
 
+# $1 is a list of items separated by '', replace '' by $2
+split_up()
+{
+    ${_printf} "%s\n" "`value_of \"${1}\"`" | ${_sed} "s//${2}/g"
+}
+
 # enable support for package $1
 # USES: iii
 enable_support()
@@ -1532,7 +1537,7 @@ disable_support()
 	SETUP_COMPLETE=''
 	for iii in `value_of ${1}_PROVIDES`; do
 	    if [ "`value_of PROVIDE_PKG_${iii}`" != "${1}" ]; then 
-		exit_on_error "Inconsistent support settings"
+		exit_on_error "Inconsistent support settings (disable_support)"
 	    fi
 	    eval "PROVIDE_PKG_${iii}=''"
 	done
@@ -1722,14 +1727,12 @@ _check_incompatibilities()
 }
 
 # set the variable tmp_cxxflags for package $1 
-# separate subsequent options by $2
 set_package_cxxflags()
 {
     tmp_cxxflags="`value_of \"${1}_CXXFLAGS\"`"
 }
 
 # set the variable tmp_cxxflags for feature $1 
-# separate subsequent options by $2
 # USES: ii
 set_feature_cxxflags()
 {
@@ -1739,13 +1742,12 @@ set_feature_cxxflags()
     do
         ii="`echo ${ii} | ${_sed} 's// /g'`"
 	if [ -n "${ii}" ]; then 
-	    _append_to tmp_cxxflags "`include_dir_option \"${ii}\"`" "${2}"
+	    _append_to tmp_cxxflags "`include_dir_option \"${ii}\"`" ""
 	fi
     done
 }
 
-# set the variables tmp_libpathflags and tmp_runtimepath for feature
-# $1, separate subsequent options in tmp_libpathflags by $2.
+# set the variables tmp_libpathflags and tmp_runtimepath for feature $1.
 # Attention: The linker option for the runtime-linker path is not set,
 #   only the path is built up in tmp_runtimepath. (Allows for adding
 #   additional dirs in _test_support.)
@@ -1759,20 +1761,19 @@ set_feature_libpathflags()
     do
       ii="`echo ${ii} | ${_sed} 's// /g'`"
       if [ -n "${ii}" ]; then 
-	  _append_to tmp_libpathflags "`libpath_option \"${ii}\"`" "${2}"
-	  _append_to tmp_runtimepath "`os_path \"${ii}\"`" ":"
+	  _append_to tmp_libpathflags "`libpath_option \"${ii}\"`" ""
+	  _append_to tmp_runtimepath "`os_path \"${ii}\"`" ""
       fi
     done
 }
 
 # set the variable tmp_ldflags for package $1 
-# separate subsequent options by $2
 # USES: ii
 set_package_ldflags()
 {
     tmp_ldflags="`value_of \"${1}_LDFLAGS\"`"
     for ii in `value_of "${1}_LIBS"`; do
-	_append_to tmp_ldflags "`lib_option \"${ii}\"`" "${2}"
+	_append_to tmp_ldflags "`lib_option \"${ii}\"`" ""
     done
 }
 
@@ -1800,51 +1801,66 @@ test_support_pkg()
     real_libpathflags="`compiler_test_libpathflags`"
     real_ldflags="`compiler_test_ldflags`"
     real_runtimepath=''
-    set_package_cxxflags "${1}" " "
-    _append_to real_cxxflags "${tmp_cxxflags}" " "
-    set_package_ldflags "${1}" " "
-    _prepend_to real_ldflags "${tmp_ldflags}" " "
 
     # pull in flags for required packages and features
+    for jj in ${SUPPORT_FEATURES}; do eval TMP_SUPPORT_${jj}=''; done
     for jj in ${SUPPORT_PKGS}; do eval TMP_SUPPORT_${jj}=''; done
     eval "TMP_SUPPORT_${1}=y"
     for jj in ${R_SUPPORT_PKGS}; do 
 	if [ -n "`value_of \"TMP_SUPPORT_${jj}\"`" ]; then
 	    for kk in `value_of "${jj}_REQUIRES"`; do 
-		eval TMP_SUPPORT_${kk}=y
+		case "${kk}" in
+		    DOLLAR_*) _tmp=thisisnotused;;
+		    *) 
+			eval TMP_SUPPORT_${kk}=y
+			# also pull in the providing package
+			_tmp="`value_of \"PROVIDE_PKG_${kk}\"`"
+			if [ -z "${_tmp}" ]; then
+			    # this should have been caught in _check_requirements
+			    exit_on_error \
+				"Inconsistent support settings (test_support_pkg)"
+			fi
+			eval TMP_SUPPORT_${_tmp}=y
+			;;
+		esac
 	    done
+	fi
+    done
+    # generate flags
+    for jj in ${SUPPORT_FEATURES}; do
+	if [ -n "`value_of \"PROVIDE_PKG_${jj}\"`" ]; then
+	    set_feature_cxxflags "${jj}"
+	    _append_to real_cxxflags "${tmp_cxxflags}" ""
+	    set_feature_libpathflags "${jj}"
+	    _append_to real_libpathflags "${tmp_libpathflags}" ""
+	    _append_to real_runtimepath "${tmp_runtimepath}" ""
 	fi
     done
     for jj in ${SUPPORT_PKGS}; do
 	if [ -n "`value_of \"TMP_SUPPORT_${jj}\"`" ]; then
-	    case "${jj}" in
-		DOLLAR_*) _tmp=thisisnotused;;
-		*)
-		    # for features also include the providing package's options
-		    set_package_cxxflags "`value_of \"PROVIDE_PKG_${jj}\"`" " "
-		    _append_to real_cxxflags "${tmp_cxxflags}" " "
-		    set_package_ldflags "`value_of \"PROVIDE_PKG_${jj}\"`" " "
-		    _prepend_to real_ldflags "${tmp_ldflags}" " "
-		    
-		    set_feature_cxxflags "${jj}" " "
-		    _append_to real_cxxflags "${tmp_cxxflags}" " "
-		    set_feature_libpathflags "${jj}" " "
-		    _append_to real_libpathflags "${tmp_libpathflags}" " "
-		    _append_to real_runtimepath "${tmp_runtimepath}" ":"
-		    ;;
-	    esac
+	    set_package_cxxflags "${jj}"
+	    _append_to real_cxxflags "${tmp_cxxflags}" ""
+	    set_package_ldflags "${jj}"
+	    _prepend_to real_ldflags "${tmp_ldflags}" ""
 	fi  
     done
     tmp_ldflags="${real_ldflags}"
-    _append_to tmp_ldflags "`math_ldflags`" " "
+    _append_to tmp_ldflags "`math_ldflags`" ""
+    # this does not change below, hence split it here already
+    tmp_ldflags="`split_up \"tmp_ldflags\" \" \"`"
 
     # now test all provided features
     for jj in `value_of "${1}_PROVIDES"`; do
-	set_feature_cxxflags "${jj}" " "
-	_prepend_to tmp_cxxflags "${real_cxxflags}" " "
-	set_feature_libpathflags "${jj}" " "
-	_prepend_to tmp_libpathflags "${real_libpathflags}" " "
-	_prepend_to tmp_runtimepath "${real_runtimepath}" " "
+	set_feature_cxxflags "${jj}"
+	_prepend_to tmp_cxxflags "${real_cxxflags}" ""
+	set_feature_libpathflags "${jj}"
+	_prepend_to tmp_libpathflags "${real_libpathflags}" ""
+	_prepend_to tmp_runtimepath "${real_runtimepath}" ""
+
+	# split flags up
+	tmp_cxxflags="`split_up \"tmp_cxxflags\" \" \"`"
+	tmp_libpathflags="`split_up \"tmp_libpathflags\" \" \"`"
+	tmp_runtimepath="`split_up \"tmp_runtimepath\" \":\"`"
 
 	if _test_support "${1}" \
 	    "${2}" \
@@ -2800,25 +2816,27 @@ cleanup_after_link_run()
 _link_run_test()
 {
     # set flags
-    _flags="${3}"
-    case ${COMPILER} in
-     *CL.*|*cl.*|*ICL.*|*icl.*) _flags="${2} `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
-     *) _flags="${2} `output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
-    esac
+    _flags="${2} `output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${3}"
+
+#    _flags="${3}"
+#     case ${COMPILER} in
+#      *CL.*|*cl.*|*ICL.*|*icl.*) _flags="${2} `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
+#      *) _flags="${2} `output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
+#     esac
 
     # link
     _link="`compiler_bin`"
-    case ${COMPILER} in
-	*CL.*|*cl.*)
-	    # there is a good chance that /usr/bin/link is in the way...
-	    i="`${_dirname} \"${_link}\"`"
-	    if [ -n "${i}" ]; then
-		_link="${i}/link"
-	    else
-		_link="link"
-	    fi
-	    ;;
-    esac
+#     case ${COMPILER} in
+# 	*CL.*|*cl.*)
+# 	    # there is a good chance that /usr/bin/link is in the way...
+# 	    i="`${_dirname} \"${_link}\"`"
+# 	    if [ -n "${i}" ]; then
+# 		_link="${i}/link"
+# 	    else
+# 		_link="link"
+# 	    fi
+# 	    ;;
+#     esac
     ${_printf} "%s\n%s\n" "Linker call:" "--------------" >"${TMP_LOGFILE}"
     ${_printf} "%s\n\n" "${_link} ${_flags}" >>"${TMP_LOGFILE}"
     ${_printf} "%s\n" "Got the following error messages:" >>"${TMP_LOGFILE}"
@@ -3607,7 +3625,7 @@ write_compiler_flags()
       if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
 	  print_as_shell_comment "*** compiler flags for feature ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_CXXFLAGS = " >> ${FILE}
-	  set_feature_cxxflags "${i}" ""
+	  set_feature_cxxflags "${i}"
 	  makefile_print_from_var tmp_cxxflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3616,7 +3634,7 @@ write_compiler_flags()
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
 	  print_as_shell_comment "*** compiler flags for package ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_PKG_CXXFLAGS = " >> ${FILE}
-	  set_package_cxxflags "${i}" ""
+	  set_package_cxxflags "${i}"
 	  makefile_print_from_var tmp_cxxflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3687,9 +3705,8 @@ write_linker_flags()
       if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
 	  print_as_shell_comment "*** libpath flags for feature ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_LIBPATHFLAGS = " >> ${FILE}
-	  set_feature_libpathflags "${i}" ":"
-	  _append_to RUNTIME_PATH "${tmp_runtimepath}" ":"
-	  set_feature_libpathflags "${i}" ""
+	  set_feature_libpathflags "${i}"
+	  _append_to RUNTIME_PATH "${tmp_runtimepath}" ""
 	  makefile_print_from_var tmp_libpathflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -3707,6 +3724,7 @@ write_linker_flags()
       fi
   done
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+      RUNTIME_PATH="`split_up \"RUNTIME_PATH\" \":\"`"
       if [ -z "${RUNTIME_PATH}" ]; then
 	  makefile_print_continuationline \
 	      "${RUNTIME_LINKER_FLAG}`concat_path \"\\\$(CGAL_LIB_DIR)\" \"\\\$(CGAL_OS_COMPILER)\"`" \
@@ -3764,7 +3782,7 @@ write_linker_flags()
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
 	  print_as_shell_comment "*** linker flags for package ${i} ***" >> ${FILE}
 	  ${_printf} "%s" "${i}_LDFLAGS = " >> ${FILE}
-	  set_package_ldflags "${i}" ""
+	  set_package_ldflags "${i}"
 	  makefile_print_from_var tmp_ldflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
       fi
@@ -4683,6 +4701,9 @@ main_menu()
 	print_empty_line
 	print_line     "${_bold_on}<B>${_bold_off}  Build CGAL Libraries"
 	print_line     "${_bold_on}<I>${_bold_off}  Install CGAL Libraries"
+        if [ -d "${CGAL_TEST_DIR}" -a -n "${LIB_COMPILED}" ]; then
+            print_line "${_bold_on}<R>${_bold_off}  Run CGAL testsuite"
+        fi
 	menu_tailer 'OS'
 
 	case $KEY in
