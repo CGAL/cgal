@@ -4,17 +4,13 @@
 This package provides a second \ccc{parameterize()} entry point
 where the user can specify a parameterization method:
 
-\ccFunction{Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (ParameterizationMesh_3 * mesh, ParameterizerTraits_3 parameterizer);}
-{ Compute a ont-to-one mapping from a 3D triangle surface 'mesh' to a
-simple 2D domain. The mapping is piecewise linear on the triangle
-mesh. The result is a pair (u,v) of parameter coordinates for each
-vertex of the input mesh.  One-to-one mapping may be guaranteed or
-not, depending on the chosen ParametizerTraits\_3 algorithm.
+\ccFunction{Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (ParameterizationMesh_3 & mesh, ParameterizerTraits_3 parameterizer);}
+{
+Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a simple 2D domain. The mapping is piecewise linear on the triangle mesh. The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
+One-to-one mapping may be guaranteed or not, depending on the chosen ParametizerTraits algorithm.
 Preconditions:\begin{itemize}
-\item 'mesh' must be a surface with one connected component.\item
-'mesh' must be a triangle mesh.\item the mesh border must be mapped
-onto a convex polygon (for fixed border
-parameterizations).\end{itemize} }
+\item 'mesh' must be a surface with one connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon (for fixed border parameterizations).\end{itemize}
+}
 
 
 This \cgal\ package implements some of the state-of-the-art surface

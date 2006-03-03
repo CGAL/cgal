@@ -109,20 +109,20 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code parameterize (Adaptor * mesh);}
+\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code parameterize (Adaptor & mesh);}
 {
 Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
 Preconditions:\begin{itemize}
 \item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
 }
 \ccGlue
-\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code check_parameterize_preconditions (Adaptor * mesh);}
+\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code check_parameterize_preconditions (Adaptor & mesh);}
 {
 Check parameterize() preconditions:\begin{itemize}
 \item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
 }
 \ccGlue
-\ccMethod{void initialize_system_from_mesh_border (Matrix * A, Vector * Bu, Vector * Bv, const Adaptor & mesh);}
+\ccMethod{void initialize_system_from_mesh_border (Matrix & A, Vector & Bu, Vector & Bv, const Adaptor & mesh);}
 {
 Initialize A, Bu and Bv after border parameterization. Fill the border vertices' lines in both linear systems: {\em u = constant} and {\em v = constant}.
 Preconditions:\begin{itemize}
@@ -134,7 +134,7 @@ Preconditions:\begin{itemize}
 Compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement compute\_w\_ij().
 }
 \ccGlue
-\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code setup_inner_vertex_relations (Matrix * A, Vector * Bu, Vector * Bv, const Adaptor & mesh, Vertex_const_handle vertex);}
+\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code setup_inner_vertex_relations (Matrix & A, Vector & Bu, Vector & Bv, const Adaptor & mesh, Vertex_const_handle vertex);}
 {
 Compute the line i of matrix A for i inner vertex:\begin{itemize}
 \item call compute\_w\_ij() to compute the A coefficient w\_ij for each neighbor v\_j.\item compute w\_ii = - sum of w\_ijs.\end{itemize}
@@ -142,7 +142,7 @@ Preconditions:\begin{itemize}
 \item vertices must be indexed.\item vertex i musn't be already parameterized.\item line i of A must contain only zeros. \end{itemize}
 }
 \ccGlue
-\ccMethod{void set_mesh_uv_from_system (Adaptor * mesh, const Vector & Xu, const Vector & Xv);}
+\ccMethod{void set_mesh_uv_from_system (Adaptor & mesh, const Vector & Xu, const Vector & Xv);}
 {
 Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
 }

@@ -109,39 +109,39 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code parameterize (Adaptor * mesh);}
+\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code parameterize (Adaptor & mesh);}
 {
 Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
 Preconditions:\begin{itemize}
 \item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh. \end{itemize}
 }
 \ccGlue
-\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code check_parameterize_preconditions (Adaptor * mesh);}
+\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code check_parameterize_preconditions (Adaptor & mesh);}
 {
 Check parameterize() preconditions:\begin{itemize}
 \item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh. \end{itemize}
 }
 \ccGlue
-\ccMethod{void initialize_system_from_mesh_border (LeastSquaresSolver * solver, const Adaptor & mesh);}
+\ccMethod{void initialize_system_from_mesh_border (LeastSquaresSolver & solver, const Adaptor & mesh);}
 {
 Initialize {\em A$\ast$X = B} linear system after (at least 2) border vertices are parameterized.
 Preconditions:\begin{itemize}
 \item vertices must be indexed.\item X and B must be allocated and empty.\item (at least 2) border vertices must be parameterized. \end{itemize}
 }
 \ccGlue
-\ccMethod{void project_triangle (const Point_3 & p0, const Point_3 & p1, const Point_3 & p2, Point_2 * z0, Point_2 * z1, Point_2 * z2);}
+\ccMethod{void project_triangle (const Point_3 & p0, const Point_3 & p1, const Point_3 & p2, Point_2 & z0, Point_2 & z1, Point_2 & z2);}
 {
 Utility for setup\_triangle\_relations(): Computes the coordinates of the vertices of a triangle in a local 2D orthonormal basis of the triangle's plane.
 }
 \ccGlue
-\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code setup_triangle_relations (LeastSquaresSolver * solver, const Adaptor & mesh, Facet_const_handle facet);}
+\ccMethod{Parameterizer_traits_3< Adaptor >::Error_code setup_triangle_relations (LeastSquaresSolver & solver, const Adaptor & mesh, Facet_const_handle facet);}
 {
 Create 2 lines in the linear system per triangle (1 for u, 1 for v).
 Preconditions:\begin{itemize}
 \item vertices must be indexed. \end{itemize}
 }
 \ccGlue
-\ccMethod{void set_mesh_uv_from_system (Adaptor * mesh, const LeastSquaresSolver & solver);}
+\ccMethod{void set_mesh_uv_from_system (Adaptor & mesh, const LeastSquaresSolver & solver);}
 {
 Copy X coordinates into the (u,v) pair of each vertex.
 }

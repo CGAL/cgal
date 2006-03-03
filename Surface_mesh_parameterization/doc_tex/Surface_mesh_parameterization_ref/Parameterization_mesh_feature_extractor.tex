@@ -73,7 +73,7 @@ Type representing the list of all borders of the mesh = STL container of Border 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{Parameterization_mesh_feature_extractor (Adaptor * mesh);}
+\ccConstructor{Parameterization_mesh_feature_extractor (Adaptor & mesh);}
 {
 Constructor.
 CAUTION: This class caches the result of feature extractions =$>$ The caller must NOT modify 'mesh' during the Parameterization\_mesh\_feature\_extractor life cycle.
@@ -98,7 +98,7 @@ Get number of borders.
 Get extracted borders. The longest border is the first one.
 }
 \ccGlue
-\ccMethod{const Border* get_longest_border ();}
+\ccMethod{const Border& get_longest_border ();}
 {
 Get longest border.
 }

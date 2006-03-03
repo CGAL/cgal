@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -31,12 +31,12 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to 2D circle,
-/// using Floater Mean Value Coordinates algorithm.
-/// 1 to 1 mapping is guaranteed.
+/// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+/// 2D circle, using Floater Mean Value Coordinates algorithm.
+/// A one-to-one mapping is guaranteed.
 ///
-/// The mapping is linear by pieces (linear in each triangle).
-/// The result is the (u,v) pair image of each vertex of the 3D surface.
+/// The mapping is piecewise linear on the input mesh triangles.
+/// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
 ///
 /// Preconditions:
 /// - 'mesh' must be a surface with 1 connected component.
@@ -51,16 +51,16 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 }
 
 
-/// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
-/// to a piece of the 2D space.
-/// The mapping is linear by pieces (linear in each triangle).
-/// The result is the (u,v) pair image of each vertex of the 3D surface.
+/// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+/// simple 2D domain.
+/// The mapping is piecewise linear on the triangle mesh.
+/// The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
 ///
-/// 1 to 1 mapping may be guaranteed or not, depending of
-/// ParameterizerTraits_3 algorithm chosen.
+/// One-to-one mapping may be guaranteed or
+/// not, depending on the chosen ParametizerTraits\_3 algorithm.
 ///
 /// Preconditions:
-/// - 'mesh' must be a surface with 1 connected component.
+/// - 'mesh' must be a surface with one connected component.
 /// - 'mesh' must be a triangular mesh.
 /// - the mesh border must be mapped onto a convex polygon
 /// (for fixed border parameterizations).
