@@ -575,7 +575,7 @@ namespace CGAL {
 int main(int argnr, char **argv)
 {
   // output usage information:
-  if (argnr != 3) {
+  if (argnr > 3) {
     std::cerr << "Usage: " << argv[0] << " \"description\" \"problem-name\" "
                  "< datafile.data\n\n"
 	      << "The resulting MPS-file is written to standard-out, errors "
