@@ -21,10 +21,13 @@
 
 \ccc{parameterize()} is the main entry-point of the \ccc{Surface_mesh_parameterization} package.
 
-It computes a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space.
-The mapping is linear by pieces (linear in each triangle).
-The result is the (u,v) pair image of each vertex of the 3D surface.
-1 to 1 mapping may be guaranteed or not, depending of the algorithm chosen.
+It computes a one-to-one mapping from a 3D triangle surface 'mesh' to a simple 2D domain.
+The mapping is piecewise linear on the triangle mesh.
+The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
+One-to-one mapping may be guaranteed or not, depending on the chosen ParametizerTraits algorithm.
+
+The \ccc{parameterize()} function exists in two flavors, to provide a default parameterization algorithm
+of Floater Mean Value Coordinates.
 
 \ccInclude{CGAL/parameterize.h}
 
@@ -65,12 +68,22 @@ Preconditions:\begin{itemize}
 
 \ccParameters
 
-The full template declaration is:
+The full template declarations are:
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
 
-
+template$<$  \\
+class ParameterizationMesh\_3$>$  \\
+Parameterizer\_traits\_3$<$ ParameterizationMesh\_3 $>$::Error\_code  \\
+parameterize (ParameterizationMesh\_3 \&mesh);  \\
+  \\
+template$<$  \\
+class ParameterizationMesh\_3,   \\
+class ParameterizerTraits\_3$>$  \\
+Parameterizer\_traits\_3$<$ ParameterizationMesh\_3 $>$::Error\_code  \\
+parameterize (ParameterizationMesh\_3 \&mesh, ParameterizerTraits\_3 parameterizer);  \\
+  \\
 
 %END-AUTO(\ccParameters)
 
