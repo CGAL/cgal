@@ -62,7 +62,7 @@ int main() {
       std::cout << to_double(*it) << " ";
 
     std::cout << std::endl << "Full variables x: ";
-    for (Solver::Original_variable_value_iterator it = solver.original_variables_value_begin(); it != solver.original_variables_value_end(); ++it)
+    for (Solver::Variable_value_iterator it = solver.variables_value_begin(); it != solver.variables_value_end(); ++it)
       std::cout << to_double(*it) << " ";
 
     std::cout << std::endl << "f(x): " << to_double(solver.solution()) << std::endl;

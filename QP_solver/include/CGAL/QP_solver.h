@@ -250,17 +250,16 @@ public:
     
     typedef  typename C_aux::const_iterator
                                         C_auxiliary_iterator;
+//  bg: as the following refers to all variables (including slackies, it's
+//  not very useful; changed to only work with original variables
+//  typedef  Join_input_iterator_1< Index_const_iterator,Value_by_basic_index >
+//                                         Variable_numerator_iterator;
 
-    typedef  Join_input_iterator_1< Index_const_iterator,Value_by_basic_index >
-                                        Variable_numerator_iterator;
+    typedef Join_input_iterator_1< Index_const_iterator,Value_by_index >
+                                       Variable_numerator_iterator;
     typedef  Join_input_iterator_1< Variable_numerator_iterator,
                                         Quotient_maker >
                                         Variable_value_iterator;
-    typedef Join_input_iterator_1< Index_const_iterator,Value_by_index >
-                                       Original_variable_numerator_iterator;
-    typedef  Join_input_iterator_1< Original_variable_numerator_iterator,
-                                        Quotient_maker >
-                                        Original_variable_value_iterator;
   
     /*
     typedef  Variable_numerator_iterator
@@ -576,15 +575,39 @@ public:
     // access to original variables
     int  number_of_original_variables( ) const { return qp_n; }
 
+
+// bg: below are the new versions that only iterate over the
+// original variables of the problem
+//     Variable_numerator_iterator
+//     variables_numerator_begin( ) const
+//         { return Variable_numerator_iterator( in_B.begin(),
+//                    Value_by_basic_index( x_B_O.begin(), qp_n, x_B_S.begin()));}
+    
+//     Variable_numerator_iterator
+//     variables_numerator_end  ( ) const
+//         { return Variable_numerator_iterator( in_B.end(),
+//                    Value_by_basic_index( x_B_O.begin(), qp_n, x_B_S.begin()));}
+    
     Variable_numerator_iterator
     variables_numerator_begin( ) const
-        { return Variable_numerator_iterator( in_B.begin(),
-                   Value_by_basic_index( x_B_O.begin(), qp_n, x_B_S.begin()));}
+        { return Variable_numerator_iterator( O.begin(),
+                   Value_by_index( 
+				  x_O_v_i.begin(), 
+				  in_B.begin(), 
+				  x_B_O.begin(),
+				  qp_l,
+				  qp_u));}
     
     Variable_numerator_iterator
     variables_numerator_end  ( ) const
-        { return Variable_numerator_iterator( in_B.end(),
-                   Value_by_basic_index( x_B_O.begin(), qp_n, x_B_S.begin()));}
+        { return Variable_numerator_iterator( O.end(),
+                   Value_by_index( 
+				  x_O_v_i.begin(), 
+				  in_B.begin(), 
+				  x_B_O.begin(),
+				  qp_l,
+				  qp_u));}
+
     
     Variable_value_iterator
     variables_value_begin( ) const
@@ -596,39 +619,6 @@ public:
     variables_value_end  ( ) const
         { return Variable_value_iterator(
                      variables_numerator_end(),
-                     Quotient_maker( Quotient_creator(), d)); }
-
-    Original_variable_numerator_iterator
-    original_variables_numerator_begin( ) const
-        { return Original_variable_numerator_iterator( O.begin(),
-                   Value_by_index( 
-				  x_O_v_i.begin(), 
-				  in_B.begin(), 
-				  x_B_O.begin(),
-				  qp_l,
-				  qp_u));}
-    
-    Original_variable_numerator_iterator
-    original_variables_numerator_end  ( ) const
-        { return Original_variable_numerator_iterator( O.end(),
-                   Value_by_index( 
-				  x_O_v_i.begin(), 
-				  in_B.begin(), 
-				  x_B_O.begin(),
-				  qp_l,
-				  qp_u));}
-
-    
-    Original_variable_value_iterator
-    original_variables_value_begin( ) const
-        { return Original_variable_value_iterator(
-                     original_variables_numerator_begin(),
-                     Quotient_maker( Quotient_creator(), d)); }
-    
-    Original_variable_value_iterator
-    original_variables_value_end  ( ) const
-        { return Original_variable_value_iterator(
-                     original_variables_numerator_end(),
                      Quotient_maker( Quotient_creator(), d)); }
     
     // access to slack variables

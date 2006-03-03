@@ -120,8 +120,8 @@ int main(const int argNr,const char **args) {
     // can be removed
     std::vector<ET> y;
     std::copy(
-	      solver.original_variables_numerator_begin(),
-	      solver.original_variables_numerator_end(),
+	      solver.variables_numerator_begin(),
+	      solver.variables_numerator_end(),
 	      std::back_inserter(y));
     if (!std::equal(x.begin(), x.end(), y.begin())) {
 	std::cout 
