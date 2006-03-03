@@ -71,7 +71,7 @@ int main(int argc,char * argv[])
     // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
     typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
                                                         Parameterization_polyhedron_adaptor;
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     //***************************************
     // Discrete Authalic Parameterization
@@ -80,7 +80,7 @@ int main(int argc,char * argv[])
     typedef CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor>
                                                         Parameterizer;
 
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
+    Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
     if (err != Parameterizer::OK)
         std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 

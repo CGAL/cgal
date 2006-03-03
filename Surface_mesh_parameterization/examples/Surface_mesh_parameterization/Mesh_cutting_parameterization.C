@@ -45,7 +45,7 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 // CAUTION:
 // This method is provided "as is". It is very buggy and simply part of this example.
 // Developers using this package should implement a more robust cut algorithm!
-static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
+static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
 {
     // Helper class to compute genus or extract borders
     typedef CGAL::Parameterization_mesh_feature_extractor<Parameterization_polyhedron_adaptor>
@@ -53,10 +53,8 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
     Seam seam;              // returned list
 
-    // Get pointer to Polyhedron_3 mesh
-    assert(mesh_adaptor != NULL);
-    Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
-    assert(mesh != NULL);
+    // Get refererence to Polyhedron_3 mesh
+    Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
 
     // Extract mesh borders and compute genus
     Mesh_feature_extractor feature_extractor(mesh_adaptor);
@@ -67,8 +65,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
     if (genus == 0 && nb_borders > 0)
     {
         // Pick the longest border
-        const Mesh_feature_extractor::Border* pBorder = feature_extractor.get_longest_border();
-        seam = *pBorder;
+        seam = feature_extractor.get_longest_border();
     }
     else // if mesh is NOT a topological disk, create a virtual cut
     {
@@ -76,7 +73,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
         // Build consecutive halfedges array
         Polyhedron::Halfedge_handle seam_halfedges[CUT_LENGTH];
-        seam_halfedges[0] = mesh->halfedges_begin();
+        seam_halfedges[0] = mesh.halfedges_begin();
         if (seam_halfedges[0] == NULL)
             return seam;                    // return empty list
         int i;
@@ -142,12 +139,12 @@ int main(int argc,char * argv[])
     //***************************************
 
     // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
     // that makes it it homeomorphic to a disk
-    Seam seam = cut_mesh(&mesh_adaptor);
+    Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
         fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
@@ -155,7 +152,7 @@ int main(int argc,char * argv[])
     }
 
     // Create adaptor that virtually "cuts" the mesh following the 'seam' path
-    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor, seam.begin(), seam.end());
+    Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
 
     //***************************************
     // Floater Mean Value Coordinates parameterization
@@ -165,7 +162,7 @@ int main(int argc,char * argv[])
     typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron>
                                             Parameterizer;
 
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_patch);
+    Parameterizer::Error_code err = CGAL::parameterize(mesh_patch);
     if (err != Parameterizer::OK)
         std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 

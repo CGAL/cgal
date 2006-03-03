@@ -308,24 +308,21 @@ public:
     /// The input mesh can be of any genus.
     /// It can have have any number of borders. Its "main border"
     /// will be the mesh's longest border (if there is at least one border).
-    Parameterization_polyhedron_adaptor_3(Polyhedron* mesh)
+    Parameterization_polyhedron_adaptor_3(Polyhedron& mesh)
+        // Store reference to adapted mesh 
+      : m_polyhedron(mesh)
     {
         typedef typename Halfedge_info_map::value_type Halfedge_info_pair;
         typedef typename Vertex_info_map::value_type Vertex_info_pair;
 
-        assert(mesh != NULL);
-
-        // Store adapted mesh pointer
-        m_polyhedron = mesh;
-
         // Allocate extra info for each halfedge
         Halfedge_iterator he;
-        for (he = m_polyhedron->halfedges_begin(); he != m_polyhedron->halfedges_end(); he++)
+        for (he = m_polyhedron.halfedges_begin(); he != m_polyhedron.halfedges_end(); he++)
             m_halfedge_info.insert( Halfedge_info_pair(he, Halfedge_info()) );
 
         // Allocate extra info for each vertex
         Vertex_iterator vtx;
-        for (vtx = m_polyhedron->vertices_begin(); vtx != m_polyhedron->vertices_end(); vtx++)
+        for (vtx = m_polyhedron.vertices_begin(); vtx != m_polyhedron.vertices_end(); vtx++)
             m_vertex_info.insert( Vertex_info_pair(vtx, Vertex_info()) );
 
         // Extract mesh's longest border
@@ -340,8 +337,8 @@ public:
     // Default destructor, copy constructor and operator =() are fine
 
     /// Get the adapted mesh.
-    Polyhedron*       get_adapted_mesh()       { return m_polyhedron; }
-    const Polyhedron* get_adapted_mesh() const { return m_polyhedron; }
+    Polyhedron&       get_adapted_mesh()       { return m_polyhedron; }
+    const Polyhedron& get_adapted_mesh() const { return m_polyhedron; }
 
     /// Get halfedge from source and target vertices.
     /// Will assert if such an halfedge doesn't exist.
@@ -407,18 +404,18 @@ public:
 
     /// Get iterator over first vertex of mesh.
     Vertex_iterator  mesh_vertices_begin() {
-        return m_polyhedron->vertices_begin();
+        return m_polyhedron.vertices_begin();
     }
     Vertex_const_iterator  mesh_vertices_begin() const {
-        return m_polyhedron->vertices_begin();
+        return m_polyhedron.vertices_begin();
     }
 
     /// Get iterator over past-the-end vertex of mesh.
     Vertex_iterator  mesh_vertices_end() {
-        return m_polyhedron->vertices_end();
+        return m_polyhedron.vertices_end();
     }
     Vertex_const_iterator  mesh_vertices_end() const {
-        return m_polyhedron->vertices_end();
+        return m_polyhedron.vertices_end();
     }
 
     /// Count the number of vertices of the mesh.
@@ -518,18 +515,18 @@ public:
 
     /// Get iterator over first facet of mesh.
     Facet_iterator  mesh_facets_begin() {
-        return m_polyhedron->facets_begin();
+        return m_polyhedron.facets_begin();
     }
     Facet_const_iterator  mesh_facets_begin() const {
-        return m_polyhedron->facets_begin();
+        return m_polyhedron.facets_begin();
     }
 
     /// Get iterator over past-the-end facet of mesh.
     Facet_iterator  mesh_facets_end() {
-        return m_polyhedron->facets_end();
+        return m_polyhedron.facets_end();
     }
     Facet_const_iterator  mesh_facets_end() const {
-        return m_polyhedron->facets_end();
+        return m_polyhedron.facets_end();
     }
 
     /// Count the number of facets of the mesh.
@@ -551,8 +548,8 @@ public:
     /// Count the number of halfedges of the mesh.
     int  count_mesh_halfedges() const {
         int index = 0;
-        for (Halfedge_iterator pHalfedge = m_polyhedron->halfedges_begin();
-             pHalfedge != m_polyhedron->halfedges_end();
+        for (Halfedge_iterator pHalfedge = m_polyhedron.halfedges_begin();
+             pHalfedge != m_polyhedron.halfedges_end();
              pHalfedge++)
         {
             index++;
@@ -943,12 +940,10 @@ public:
 private:
 
     /// Extract mesh's longest border.
-    std::list<Vertex_handle> extract_longest_border(Polyhedron* mesh)
+    std::list<Vertex_handle> extract_longest_border(Polyhedron& mesh)
     {
         std::list<Vertex_handle> longest_border;    // returned list
         double                   max_len = 0;       // length of longest_border
-
-        assert(mesh != NULL);
 
         // Tag all vertices as unprocessed
         const int tag_free = 0;
@@ -1029,7 +1024,7 @@ private:
 private:
 
     /// The adapted mesh (cannot be NULL).
-    Polyhedron*                 m_polyhedron;
+    Polyhedron&                 m_polyhedron;
 
     /// Additional info attached to halfedges.
     Halfedge_info_map           m_halfedge_info;

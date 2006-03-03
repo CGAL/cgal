@@ -22,10 +22,9 @@
 //***************************************************
 // simple cut for genus 0 mesh
 //***************************************************
-void Mesh_cutter::cut(Backbone *pBackbone)
+void Mesh_cutter::cut(Backbone& backbone)
 {
-    m_pBackbone = pBackbone;
-    CGAL_assertion(pBackbone != NULL);
+    m_pBackbone = &backbone;
 
     // special init -> tag all vertices, but two
     m_pPolyhedron->tag_vertices(FREE);
@@ -46,10 +45,9 @@ void Mesh_cutter::cut(Backbone *pBackbone)
 //***************************************************
 // cut for genus>0 mesh
 //***************************************************
-void Mesh_cutter::cut_genus(Backbone *pBackbone)
+void Mesh_cutter::cut_genus(Backbone& backbone)
 {
-    m_pBackbone = pBackbone;
-    CGAL_assertion(pBackbone != NULL);
+    m_pBackbone = &backbone;
 
     // init
     m_pPolyhedron->tag_vertices(FREE); // all free
@@ -80,7 +78,7 @@ bool Mesh_cutter::init()
     Point_3 center(xcenter,ycenter,zcenter);
 
     // get closest facet
-    m_pSeedFacet = m_pPolyhedron->get_closest_inner_facet(&center);
+    m_pSeedFacet = m_pPolyhedron->get_closest_inner_facet(center);
     CGAL_assertion(m_pSeedFacet != NULL);
 
     Polyhedron_ex::Halfedge_handle he = m_pSeedFacet->halfedge();

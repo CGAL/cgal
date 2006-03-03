@@ -115,7 +115,7 @@ public:
     /// Preconditions:
     /// - 'mesh' must be a surface with 1 connected component.
     /// - 'mesh' must be a triangular mesh.
-    virtual Error_code  parameterize (Adaptor* mesh) = 0;
+    virtual Error_code  parameterize (Adaptor& mesh) = 0;
 
     /// Get message (in english) corresponding to an error code
     /// \param error_code The code returned by parameterize()

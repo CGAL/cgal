@@ -41,16 +41,15 @@ private:
 public:
 
     // life cycle
-    Mesh_cutter(Polyhedron_ex *pPolyhedron)
+    Mesh_cutter(Polyhedron_ex& polyhedron)
     {
-        CGAL_assertion(pPolyhedron != NULL);
-        m_pPolyhedron = pPolyhedron;
+        m_pPolyhedron = &polyhedron;
         m_pBackbone = NULL;
     }
     ~Mesh_cutter() {}
 
-    void cut(Backbone *pBackbone);
-    void cut_genus(Backbone *pBackbone);
+    void cut(Backbone& backbone);
+    void cut_genus(Backbone& backbone);
 
 // Private operations
 private:
@@ -67,8 +66,8 @@ private:
 // Fields
 private:
 
-    Polyhedron_ex *m_pPolyhedron;   // the model to cut
-    Backbone *m_pBackbone;          // the backbone to fill
+    Polyhedron_ex*              m_pPolyhedron;  // the model to cut
+    Backbone*                   m_pBackbone;    // the backbone to fill
     Polyhedron_ex::Facet_handle m_pSeedFacet;
     Polyhedron_ex::Vertex_handle m_pSeedVertex;
 };

@@ -44,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 template <class ParameterizationMesh_3>
 typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3* mesh)  ///< 3D mesh, model of ParameterizationMesh_3 concept
+parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of ParameterizationMesh_3 concept
 {
     Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3> parameterizer;
     return parameterizer.parameterize(mesh);
@@ -67,7 +67,7 @@ parameterize(ParameterizationMesh_3* mesh)  ///< 3D mesh, model of Parameterizat
 ///
 template <class ParameterizationMesh_3, class ParameterizerTraits_3>
 typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3* mesh,          ///< 3D mesh, model of ParameterizationMesh_3
+parameterize(ParameterizationMesh_3& mesh,          ///< 3D mesh, model of ParameterizationMesh_3
              ParameterizerTraits_3 parameterizer)   ///< Parameterization method for 'mesh'
 {
     return parameterizer.parameterize(mesh);

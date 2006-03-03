@@ -57,6 +57,6 @@ public:
     /// Preconditions:
     /// - 'mesh' must be a surface with 1 connected component and no hole.
     /// - 'mesh' must be a triangular mesh.
-    Error_code  parameterize (Adaptor* mesh);
+    Error_code  parameterize (Adaptor& mesh);
 };
 

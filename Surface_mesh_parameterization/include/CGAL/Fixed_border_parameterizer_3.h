@@ -155,7 +155,7 @@ public:
     /// - 'mesh' must be a surface with 1 connected component.
     /// - 'mesh' must be a triangular mesh.
     /// - the mesh border must be mapped onto a convex polygon.
-    virtual Error_code  parameterize(Adaptor* mesh);
+    virtual Error_code  parameterize(Adaptor& mesh);
 
 // Protected operations
 protected:
@@ -163,7 +163,7 @@ protected:
     /// - 'mesh' must be a surface with 1 connected component.
     /// - 'mesh' must be a triangular mesh.
     /// - the mesh border must be mapped onto a convex polygon.
-    virtual Error_code  check_parameterize_preconditions(Adaptor* mesh);
+    virtual Error_code  check_parameterize_preconditions(Adaptor& mesh);
 
     /// Initialize A, Bu and Bv after border parameterization.
     /// Fill the border vertices' lines in both linear systems:
@@ -173,7 +173,7 @@ protected:
     /// - vertices must be indexed.
     /// - A, Bu and Bv must be allocated.
     /// - border vertices must be parameterized.
-    void  initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
+    void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                               const Adaptor& mesh);
 
     /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
@@ -191,14 +191,14 @@ protected:
     /// - vertices must be indexed.
     /// - vertex i musn't be already parameterized.
     /// - line i of A must contain only zeros.
-    virtual Error_code setup_inner_vertex_relations(Matrix* A,
-                                                    Vector* Bu,
-                                                    Vector* Bv,
+    virtual Error_code setup_inner_vertex_relations(Matrix& A,
+                                                    Vector& Bu,
+                                                    Vector& Bv,
                                                     const Adaptor& mesh,
                                                     Vertex_const_handle vertex);
 
     /// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
-    void  set_mesh_uv_from_system (Adaptor* mesh,
+    void  set_mesh_uv_from_system (Adaptor& mesh,
                                    const Vector& Xu, const Vector& Xv);
 
     /// Check parameterize() postconditions:
@@ -251,10 +251,8 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-parameterize(Adaptor* mesh)
+parameterize(Adaptor& mesh)
 {
-    CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
-
 #ifdef DEBUG_TRACE
     // Create timer for traces
     CGAL::Timer timer;
@@ -271,18 +269,18 @@ parameterize(Adaptor* mesh)
         return status;
 
     // Count vertices
-    int nbVertices = mesh->count_mesh_vertices();
+    int nbVertices = mesh.count_mesh_vertices();
 
     // Index vertices from 0 to nbVertices-1
-    mesh->index_mesh_vertices();
+    mesh.index_mesh_vertices();
 
     // Mark all vertices as NOT "parameterized"
     Vertex_iterator vertexIt;
-    for (vertexIt = mesh->mesh_vertices_begin();
-        vertexIt != mesh->mesh_vertices_end();
+    for (vertexIt = mesh.mesh_vertices_begin();
+        vertexIt != mesh.mesh_vertices_end();
         vertexIt++)
     {
-        mesh->set_vertex_parameterized(vertexIt, false);
+        mesh.set_vertex_parameterized(vertexIt, false);
     }
 
     // Compute (u,v) for border vertices
@@ -305,23 +303,23 @@ parameterize(Adaptor* mesh)
     //
     // Implementation note: the current implementation does not remove
     // border vertices from the linear systems => A cannot be symmetric
-    initialize_system_from_mesh_border (&A, &Bu, &Bv, *mesh);
+    initialize_system_from_mesh_border (A, Bu, Bv, mesh);
 
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
-    for (vertexIt = mesh->mesh_vertices_begin();
-         vertexIt != mesh->mesh_vertices_end();
+    for (vertexIt = mesh.mesh_vertices_begin();
+         vertexIt != mesh.mesh_vertices_end();
          vertexIt++)
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh->is_vertex_on_main_border(vertexIt)
-                                     == mesh->is_vertex_parameterized(vertexIt));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(vertexIt)
+                                     == mesh.is_vertex_parameterized(vertexIt));
 
         // inner vertices only
-        if( ! mesh->is_vertex_on_main_border(vertexIt) )
+        if( ! mesh.is_vertex_on_main_border(vertexIt) )
         {
             // Compute the line i of matrix A for i inner vertex
-            status = setup_inner_vertex_relations(&A, &Bu, &Bv,
-                                                  *mesh,
+            status = setup_inner_vertex_relations(A, Bu, Bv,
+                                                  mesh,
                                                   vertexIt);
             if (status != Base::OK)
                 return status;
@@ -363,7 +361,7 @@ parameterize(Adaptor* mesh)
 
 
     // Check postconditions
-    status = check_parameterize_postconditions(*mesh, A, Bu, Bv);
+    status = check_parameterize_postconditions(mesh, A, Bu, Bv);
 #ifdef DEBUG_TRACE
     std::cerr << "  parameterization postconditions: " << timer.time() << " seconds." << std::endl;
 #endif
@@ -382,7 +380,7 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-check_parameterize_preconditions(Adaptor* mesh)
+check_parameterize_preconditions(Adaptor& mesh)
 {
     Error_code status = Base::OK;	    // returned value
 
@@ -392,14 +390,14 @@ check_parameterize_preconditions(Adaptor* mesh)
     Mesh_feature_extractor feature_extractor(mesh);
 
     // Allways check that mesh is not empty
-    if (mesh->mesh_vertices_begin() == mesh->mesh_vertices_end())
+    if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
         status = Base::ERROR_EMPTY_MESH;
     if (status != Base::OK) 
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
     CGAL_surface_mesh_parameterization_expensive_precondition_code(            \
-        status = mesh->is_mesh_triangular() ? Base::OK                         \
+        status = mesh.is_mesh_triangular() ? Base::OK                         \
                                             : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
     if (status != Base::OK) 
@@ -441,13 +439,9 @@ check_parameterize_preconditions(Adaptor* mesh)
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
+initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                     const Adaptor& mesh)
 {
-    CGAL_surface_mesh_parameterization_assertion(A != NULL);
-    CGAL_surface_mesh_parameterization_assertion(Bu != NULL);
-    CGAL_surface_mesh_parameterization_assertion(Bv != NULL);
-
     for (Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
          it != mesh.mesh_main_border_vertices_end();
          it++)
@@ -458,12 +452,12 @@ initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv,
         int index = mesh.get_vertex_index(it);
 
         // Write 1 as diagonal coefficient of A
-        A->set_coef(index, index, 1);
+        A.set_coef(index, index, 1);
 
         // Write constant in Bu and Bv
         Point_2 uv = mesh.get_vertex_uv(it);
-        (*Bu)[index] = uv.x();
-        (*Bv)[index] = uv.y();
+        Bu[index] = uv.x();
+        Bv[index] = uv.y();
     }
 }
 
@@ -479,9 +473,9 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-setup_inner_vertex_relations(Matrix* A,
-                             Vector* Bu,
-                             Vector* Bv,
+setup_inner_vertex_relations(Matrix& A,
+                             Vector& Bu,
+                             Vector& Bv,
                              const Adaptor& mesh,
                              Vertex_const_handle vertex)
 {
@@ -507,7 +501,7 @@ setup_inner_vertex_relations(Matrix* A,
         int j = mesh.get_vertex_index(v_j);
 
         // Set w_ij in matrix
-        A->set_coef(i,j, w_ij);
+        A.set_coef(i,j, w_ij);
 
         vertexIndex++;
     }
@@ -515,7 +509,7 @@ setup_inner_vertex_relations(Matrix* A,
         return Base::ERROR_NON_TRIANGULAR_MESH;
 
     // Set w_ii in matrix
-    A->set_coef(i,i, w_ii);
+    A.set_coef(i,i, w_ii);
 
     return Base::OK;
 }
@@ -524,22 +518,22 @@ setup_inner_vertex_relations(Matrix* A,
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-set_mesh_uv_from_system(Adaptor* mesh,
+set_mesh_uv_from_system(Adaptor& mesh,
                         const Vector& Xu, const Vector& Xv)
 {
     Vertex_iterator vertexIt;
-    for (vertexIt = mesh->mesh_vertices_begin();
-        vertexIt != mesh->mesh_vertices_end();
+    for (vertexIt = mesh.mesh_vertices_begin();
+        vertexIt != mesh.mesh_vertices_end();
         vertexIt++)
     {
-        int index = mesh->get_vertex_index(vertexIt);
+        int index = mesh.get_vertex_index(vertexIt);
 
         NT u = Xu[index];
         NT v = Xv[index];
 
         // Fill vertex (u,v) and mark it as "parameterized"
-        mesh->set_vertex_uv(vertexIt, Point_2(u,v));
-        mesh->set_vertex_parameterized(vertexIt, true);
+        mesh.set_vertex_uv(vertexIt, Point_2(u,v));
+        mesh.set_vertex_parameterized(vertexIt, true);
     }
 }
 

@@ -98,7 +98,7 @@ public:
 
     /// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized".
     typename Parameterizer_traits_3<Adaptor>::Error_code
-                                        parameterize_border(Adaptor* mesh);
+                                        parameterize_border(Adaptor& mesh);
 
     /// Indicate if border's shape is convex.
     /// Meaningless for free border parameterization algorithms.
@@ -115,14 +115,12 @@ public:
 template<class Adaptor>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
-Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
+Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 {
     Vertex_iterator it;
 
-    CGAL_surface_mesh_parameterization_assertion(mesh != NULL);
-
     // Nothing to do if no border
-    if (mesh->mesh_main_border_vertices_begin() == mesh->mesh_main_border_vertices_end())
+    if (mesh.mesh_main_border_vertices_begin() == mesh.mesh_main_border_vertices_end())
         return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
 
     // Get mesh's bounding box
@@ -132,9 +130,9 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     double xmax = -1e30 ;
     double ymax = -1e30 ;
     double zmax = -1e30 ;
-    for (it = mesh->mesh_vertices_begin(); it != mesh->mesh_vertices_end(); it++)
+    for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
     {
-        Point_3 position = mesh->get_vertex_position(it);
+        Point_3 position = mesh.get_vertex_position(it);
 
         xmin = std::min(position.x(), xmin) ;
         ymin = std::min(position.y(), ymin) ;
@@ -226,9 +224,9 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
     double  umin  = DBL_MAX ;
     Vertex_handle vxmax = NULL ;
     double  umax  = DBL_MIN ;
-    for (it = mesh->mesh_vertices_begin(); it != mesh->mesh_vertices_end(); it++)
+    for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
     {
-        Point_3  position = mesh->get_vertex_position(it);
+        Point_3  position = mesh.get_vertex_position(it);
         Vector_3 position_as_vector = position - Point_3(0,0,0);
 
         // coordinate along the bounding box' main axes
@@ -241,7 +239,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 
-        mesh->set_vertex_uv(it, Point_2(u,v)) ; // useful only for vxmin and vxmax
+        mesh.set_vertex_uv(it, Point_2(u,v)) ; // useful only for vxmin and vxmax
 
         if(u < umin) {
             vxmin = it ;
@@ -252,13 +250,13 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor* mesh)
             umax = u ;
         }
     }
-    mesh->set_vertex_parameterized(vxmin, true) ;
-    mesh->set_vertex_parameterized(vxmax, true) ;
+    mesh.set_vertex_parameterized(vxmin, true) ;
+    mesh.set_vertex_parameterized(vxmax, true) ;
 
 #ifdef DEBUG_TRACE
     std::cerr << "  map 2 vertices..." << std::endl;
-    std::cerr << "    #" << mesh->get_vertex_index(vxmin) << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
-    std::cerr << "    #" << mesh->get_vertex_index(vxmax) << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
+    std::cerr << "    #" << mesh.get_vertex_index(vxmin) << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
+    std::cerr << "    #" << mesh.get_vertex_index(vxmax) << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
 #endif
 
     return Parameterizer_traits_3<Adaptor>::OK;

@@ -90,11 +90,10 @@ public:
     /// CAUTION: This class caches the result of feature extractions
     /// => The caller must NOT modify 'mesh' during the
     /// Parameterization_mesh_feature_extractor life cycle.
-    Parameterization_mesh_feature_extractor(Adaptor *mesh)
+    Parameterization_mesh_feature_extractor(Adaptor& mesh)
+        // Store reference to adapted mesh 
+      : m_mesh_adaptor(mesh)
     {
-        m_mesh_adaptor = mesh;
-        CGAL_surface_mesh_parameterization_assertion(m_mesh_adaptor != NULL);
-
         // m_mesh_adaptor features are not yet computed
         m_nb_connex_components = -1;
         m_nb_borders = -1;
@@ -122,13 +121,13 @@ public:
         return m_skeleton;
     }
     /// Get longest border.
-    const Border* get_longest_border()
+    const Border& get_longest_border()
     {
         // At first call, extract borders and put longest one first
         if (m_nb_borders == -1)
             extract_borders();
 
-        return m_skeleton[0];
+        return *(m_skeleton[0]);
     }
 
     /// Get # of connected components.
@@ -163,11 +162,11 @@ private:
         // Tag all vertices as unprocessed
         const int tag_free = 0;
         const int tag_done = 1;
-        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
-             it != m_mesh_adaptor->mesh_vertices_end();
+        for (Vertex_iterator it = m_mesh_adaptor.mesh_vertices_begin();
+             it != m_mesh_adaptor.mesh_vertices_end();
              it++)
         {
-             m_mesh_adaptor->set_vertex_tag(it, tag_free);
+             m_mesh_adaptor.set_vertex_tag(it, tag_free);
         }
 
         // find all closed borders
@@ -211,12 +210,12 @@ private:
 
         // get any border vertex with "free" tag
         Vertex_handle seed_vertex = NULL;
-        for (Vertex_iterator pVertex = m_mesh_adaptor->mesh_vertices_begin();
-             pVertex != m_mesh_adaptor->mesh_vertices_end();
+        for (Vertex_iterator pVertex = m_mesh_adaptor.mesh_vertices_begin();
+             pVertex != m_mesh_adaptor.mesh_vertices_end();
              pVertex++)
         {
-            if (m_mesh_adaptor->is_vertex_on_border(pVertex) &&
-                m_mesh_adaptor->get_vertex_tag(pVertex) == tag_free)
+            if (m_mesh_adaptor.is_vertex_on_border(pVertex) &&
+                m_mesh_adaptor.get_vertex_tag(pVertex) == tag_free)
             {
                 seed_vertex = pVertex;
                 break;
@@ -226,12 +225,12 @@ private:
             return border;                  // return empty list
 
         // Get the border containing seed_vertex
-        border = m_mesh_adaptor->get_border(seed_vertex);
+        border = m_mesh_adaptor.get_border(seed_vertex);
 
         // Tag border vertices as "processed"
         typename std::list<Vertex_handle>::iterator it;
         for(it = border.begin(); it != border.end(); it++)
-            m_mesh_adaptor->set_vertex_tag(*it, tag_done);
+            m_mesh_adaptor.set_vertex_tag(*it, tag_done);
 
         return border;
     }
@@ -248,7 +247,7 @@ private:
         for(int i=0;i<nb;i++)
         {
             const Border *pBorder = m_skeleton[i];
-            double length = len(pBorder);
+            double length = len(*pBorder);
             if (length > max)
             {
                 index = i;
@@ -260,20 +259,20 @@ private:
     }
 
     /// Compute  total len of a border.
-    double len(const Border* pBorder) const
+    double len(const Border& border) const
     {
         double len = 0.0;
         typename std::list<typename Adaptor::Vertex_handle>::const_iterator it;
-        for(it = pBorder->begin(); it != pBorder->end(); it++)
+        for(it = border.begin(); it != border.end(); it++)
         {
             // Get next iterator (looping)
             typename std::list<typename Adaptor::Vertex_handle>::const_iterator next = it;
             next++;
-            if (next == pBorder->end())
-                next = pBorder->begin();
+            if (next == border.end())
+                next = border.begin();
 
-            Vector_3 v = m_mesh_adaptor->get_vertex_position(*next)
-                    - m_mesh_adaptor->get_vertex_position(*it);
+            Vector_3 v = m_mesh_adaptor.get_vertex_position(*next)
+                       - m_mesh_adaptor.get_vertex_position(*it);
             len += std::sqrt(v*v);
         }
         return len;
@@ -287,11 +286,11 @@ private:
 
         const int tag_free = 0;
         const int tag_done = 1;
-        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
-             it != m_mesh_adaptor->mesh_vertices_end();
+        for (Vertex_iterator it = m_mesh_adaptor.mesh_vertices_begin();
+             it != m_mesh_adaptor.mesh_vertices_end();
              it++)
         {
-             m_mesh_adaptor->set_vertex_tag(it, tag_free);
+             m_mesh_adaptor.set_vertex_tag(it, tag_free);
         }
 
         Vertex_handle seed_vertex = NULL;
@@ -305,11 +304,11 @@ private:
     /// Get any vertex with tag.
     Vertex_handle get_any_vertex_tag(int tag)
     {
-        for (Vertex_iterator it = m_mesh_adaptor->mesh_vertices_begin();
-             it != m_mesh_adaptor->mesh_vertices_end();
+        for (Vertex_iterator it = m_mesh_adaptor.mesh_vertices_begin();
+             it != m_mesh_adaptor.mesh_vertices_end();
              it++)
         {
-            if (m_mesh_adaptor->get_vertex_tag(it) == tag)
+            if (m_mesh_adaptor.get_vertex_tag(it) == tag)
                 return it;
         }
 
@@ -321,7 +320,7 @@ private:
                        const int tag_free,
                        const int tag_done)
     {
-        assert(m_mesh_adaptor->get_vertex_tag(pSeedVertex) == tag_free);
+        assert(m_mesh_adaptor.get_vertex_tag(pSeedVertex) == tag_free);
 
         std::list<Vertex_handle> vertices;
         vertices.push_front(pSeedVertex);
@@ -332,16 +331,16 @@ private:
             vertices.pop_front();
 
             // Stop if already done
-            if (m_mesh_adaptor->get_vertex_tag(pVertex) == tag_done)
+            if (m_mesh_adaptor.get_vertex_tag(pVertex) == tag_done)
                 continue;
 
-            m_mesh_adaptor->set_vertex_tag(pVertex, tag_done);
+            m_mesh_adaptor.set_vertex_tag(pVertex, tag_done);
 
             Vertex_around_vertex_circulator cir, cir_end;
-            cir     = m_mesh_adaptor->vertices_around_vertex_begin(pVertex);
+            cir     = m_mesh_adaptor.vertices_around_vertex_begin(pVertex);
             cir_end = cir;
             CGAL_For_all(cir,cir_end)
-                if (m_mesh_adaptor->get_vertex_tag(cir) == tag_free)
+                if (m_mesh_adaptor.get_vertex_tag(cir) == tag_free)
                     vertices.push_front(cir);
         }
     }
@@ -360,9 +359,9 @@ private:
     {
         int c = get_nb_connex_components();
         int b = get_nb_borders();
-        int v = m_mesh_adaptor->count_mesh_vertices();
-        int e = m_mesh_adaptor->count_mesh_halfedges()/2;
-        int f = m_mesh_adaptor->count_mesh_facets();
+        int v = m_mesh_adaptor.count_mesh_vertices();
+        int e = m_mesh_adaptor.count_mesh_halfedges()/2;
+        int f = m_mesh_adaptor.count_mesh_facets();
 
         m_genus = (2*c+e-b-f-v)/2;
     }
@@ -371,7 +370,7 @@ private:
 private:
 
     /// Pointer to mesh to parse
-    Adaptor*    m_mesh_adaptor;
+    Adaptor&    m_mesh_adaptor;
 
     /// m_mesh_adaptor features:
     int         m_nb_borders;

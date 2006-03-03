@@ -41,8 +41,7 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
                            const char *pFilename,
                            double scale = 500.0)
 {
-    const Polyhedron* mesh = mesh_adaptor.get_adapted_mesh();
-    assert(mesh != NULL);
+    const Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
     assert(pFilename != NULL);
 
     std::ofstream out(pFilename);
@@ -54,8 +53,8 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
     double xmin,xmax,ymin,ymax;
     xmin = ymin = xmax = ymax = 0;
     Polyhedron::Halfedge_const_iterator pHalfedge;
-    for (pHalfedge = mesh->halfedges_begin();
-         pHalfedge != mesh->halfedges_end();
+    for (pHalfedge = mesh.halfedges_begin();
+         pHalfedge != mesh.halfedges_end();
          pHalfedge++)
     {
         double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
@@ -99,8 +98,8 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
     out << "black" << std::endl << std::endl;
 
     // for each halfedge
-    for (pHalfedge = mesh->halfedges_begin();
-         pHalfedge != mesh->halfedges_end();
+    for (pHalfedge = mesh.halfedges_begin();
+         pHalfedge != mesh.halfedges_end();
          pHalfedge++)
     {
         double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
@@ -166,7 +165,7 @@ int main(int argc,char * argv[])
     //***************************************
 
     // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     //***************************************
     // Floater Mean Value Coordinates parameterizer (circular border)
@@ -186,7 +185,7 @@ int main(int argc,char * argv[])
                                                          Solver>
                                                         Parameterizer;
 
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
+    Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
     if (err != Parameterizer::OK)
         std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 

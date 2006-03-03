@@ -104,7 +104,7 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 // CAUTION:
 // This method is provided "as is". It is very buggy and simply part of this example.
 // Developers using this package should implement a more robust cut algorithm!
-static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
+static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
 {
     // Helper class to compute genus or extract borders
     typedef CGAL::Parameterization_mesh_feature_extractor<Parameterization_polyhedron_adaptor_ex>
@@ -114,10 +114,8 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
     Seam seam;              // returned list
 
-    // Get pointer to Polyhedron_3 mesh
-    assert(mesh_adaptor != NULL);
-    Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
-    assert(mesh != NULL);
+    // Get refererence to Polyhedron_3 mesh
+    Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
 
     // Extract mesh borders and compute genus
     Mesh_feature_extractor feature_extractor(mesh_adaptor);
@@ -128,8 +126,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
     if (genus == 0 && nb_borders > 0)
     {
         // Pick the longest border
-        const Border* pBorder = feature_extractor.get_longest_border();
-        seam = *pBorder;
+        seam = feature_extractor.get_longest_border();
     }
     else // if mesh is NOT a topological disk, create a virtual cut
     {
@@ -137,17 +134,17 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
         Backbone::iterator he;
 
         // Virtually "cut" mesh to make it a topological disk
-        mesh->compute_facet_centers();
+        mesh.compute_facet_centers();
         Mesh_cutter cutter(mesh);
         if (genus == 0)
         {
             // no border, we need to cut the mesh
             assert (nb_borders == 0);
-            cutter.cut(&seamingBackbone);   // simple cut
+            cutter.cut(seamingBackbone);    // simple cut
         }
         else // genus > 0 -> cut the mesh
         {
-            cutter.cut_genus(&seamingBackbone);
+            cutter.cut_genus(seamingBackbone);
         }
 
         // The Mesh_cutter class is quite buggy
@@ -159,7 +156,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
         //
         // 2) Check that seamingBackbone is a loop and
         //    count occurences of seam halfedges
-        mesh->tag_halfedges(0);             // Reset counters
+        mesh.tag_halfedges(0);              // Reset counters
         for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
         {
             // Get next halfedge iterator (looping)
@@ -198,7 +195,7 @@ template<class ParameterizationMesh_3,       // 3D surface
          class SparseLinearAlgebraTraits_d>
                                     // Traits class to solve a sparse linear system
 typename CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3* mesh,   // Mesh parameterization adaptor
+parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
              const char *type,      // type of parameterization (see usage)
              const char *border)    // type of border parameterization (see usage)
 {
@@ -474,14 +471,14 @@ int main(int argc,char * argv[])
     //***************************************
 
     // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_ex meshes
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     // The parameterization methods support only meshes that
     // are topological disks => we need to virtually "cut" the mesh
     // to make it homeomorphic to a disk
     //
     // 1) Cut the mesh
-    Seam seam = cut_mesh(&mesh_adaptor);
+    Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
         std::cerr << "FATAL ERROR: an unexpected error occurred while cutting the shape" << std::endl;
@@ -489,7 +486,7 @@ int main(int argc,char * argv[])
     }
     //
     // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
-    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
+    Mesh_patch_polyhedron   mesh_patch(mesh_adaptor,
                                        seam.begin(),
                                        seam.end());
 
@@ -509,7 +506,7 @@ int main(int argc,char * argv[])
     if (CGAL_CLIB_STD::strcmp(solver,"opennl") == 0)
     {
         err = parameterize<Mesh_patch_polyhedron,
-                           OpenNL::DefaultLinearSolverTraits<double> >(&mesh_patch, type, border);
+                           OpenNL::DefaultLinearSolverTraits<double> >(mesh_patch, type, border);
         if (err != Parameterizer::OK)
             std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
     }
@@ -517,7 +514,7 @@ int main(int argc,char * argv[])
     {
 #ifdef CGAL_USE_TAUCS
         err = parameterize<Mesh_patch_polyhedron,
-                           CGAL::Taucs_solver_traits<double> >(&mesh_patch, type, border);
+                           CGAL::Taucs_solver_traits<double> >(mesh_patch, type, border);
         if (err != Parameterizer::OK)
             std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 #else

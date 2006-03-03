@@ -80,9 +80,9 @@ public:
     void tag(int tag) { m_tag = tag; }
 
     // distance
-    double distance(Point_3 *pPoint) const
+    double distance(Point_3& point) const
     {
-        Vector_3 vec = (*pPoint-m_center);
+        Vector_3 vec = (point-m_center);
         return std::sqrt(vec*vec);
     }
 
@@ -262,17 +262,17 @@ public:
     }
 
     // get closest inner facet
-    Facet_handle get_closest_inner_facet(Point_3 *pPoint)
+    Facet_handle get_closest_inner_facet(Point_3& point)
     {
         Facet_iterator pFace = facets_begin();
         Facet_handle pClosest = pFace;
-        double min = pFace->distance(pPoint);
+        double min = pFace->distance(point);
         for(;pFace != facets_end();
             pFace++)
         {
             if(is_inner(pFace))
             {
-                double distance = pFace->distance(pPoint);
+                double distance = pFace->distance(point);
                 if(distance < min)
                 {
                     pClosest = pFace;

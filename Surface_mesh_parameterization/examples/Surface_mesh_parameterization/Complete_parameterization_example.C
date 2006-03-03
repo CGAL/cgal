@@ -52,7 +52,7 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 // CAUTION:
 // This method is provided "as is". It is very buggy and simply part of this example.
 // Developers using this package should implement a more robust cut algorithm!
-static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
+static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
 {
     // Helper class to compute genus or extract borders
     typedef CGAL::Parameterization_mesh_feature_extractor<Parameterization_polyhedron_adaptor>
@@ -60,10 +60,8 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
     Seam seam;              // returned list
 
-    // Get pointer to Polyhedron_3 mesh
-    assert(mesh_adaptor != NULL);
-    Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
-    assert(mesh != NULL);
+    // Get reference to Polyhedron_3 mesh
+    Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
 
     // Extract mesh borders and compute genus
     Mesh_feature_extractor feature_extractor(mesh_adaptor);
@@ -74,8 +72,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
     if (genus == 0 && nb_borders > 0)
     {
         // Pick the longest border
-        const Mesh_feature_extractor::Border* pBorder = feature_extractor.get_longest_border();
-        seam = *pBorder;
+        seam = feature_extractor.get_longest_border();
     }
     else // if mesh is NOT a topological disk, create a virtual cut
     {
@@ -83,7 +80,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 
         // Build consecutive halfedges array
         Polyhedron::Halfedge_handle seam_halfedges[CUT_LENGTH];
-        seam_halfedges[0] = mesh->halfedges_begin();
+        seam_halfedges[0] = mesh.halfedges_begin();
         if (seam_halfedges[0] == NULL)
             return seam;                    // return empty list
         int i;
@@ -109,12 +106,10 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
 // f 1 2 3 4 (1-based)
 //
 // Implementation note: the UV is meaningless for a NON parameterized halfedge
-static bool write_file_obj(Parameterization_polyhedron_adaptor* mesh_adaptor,
+static bool write_file_obj(Parameterization_polyhedron_adaptor& mesh_adaptor,
                            const char *pFilename)
 {
-    assert(mesh_adaptor != NULL);
-    Polyhedron* mesh = mesh_adaptor->get_adapted_mesh();
-    assert(mesh != NULL);
+    Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
     assert(pFilename != NULL);
 
     std::ofstream out(pFilename);
@@ -125,30 +120,30 @@ static bool write_file_obj(Parameterization_polyhedron_adaptor* mesh_adaptor,
     // Index all mesh vertices following the order of vertices_begin() iterator
     Polyhedron::Vertex_const_iterator pVertex;
     unsigned int i = 0;
-    for(pVertex = mesh->vertices_begin(); pVertex != mesh->vertices_end(); pVertex++)
-        mesh_adaptor->info(pVertex)->index(i++);
+    for(pVertex = mesh.vertices_begin(); pVertex != mesh.vertices_end(); pVertex++)
+        mesh_adaptor.info(pVertex)->index(i++);
 
     // Index all mesh half edges following the order of halfedges_begin() iterator
     Polyhedron::Halfedge_const_iterator pHalfedge;
     i = 0;
-    for(pHalfedge = mesh->halfedges_begin(); pHalfedge != mesh->halfedges_end(); pHalfedge++)
-        mesh_adaptor->info(pHalfedge)->index(i++);
+    for(pHalfedge = mesh.halfedges_begin(); pHalfedge != mesh.halfedges_end(); pHalfedge++)
+        mesh_adaptor.info(pHalfedge)->index(i++);
 
     // write the name of material file
     out <<  "mtllib parameterization.mtl" << std::endl ;
 
     // output coordinates
     out <<  "# vertices" << std::endl ;
-    for(pVertex = mesh->vertices_begin(); pVertex != mesh->vertices_end(); pVertex++)
+    for(pVertex = mesh.vertices_begin(); pVertex != mesh.vertices_end(); pVertex++)
         out << "v " << pVertex->point().x() << " "
                     << pVertex->point().y() << " "
                     << pVertex->point().z() << std::endl;
 
     // Write UVs (1 UV / halfedge)
     out <<  "# uv coordinates" << std::endl ;
-    for(pHalfedge = mesh->halfedges_begin(); pHalfedge != mesh->halfedges_end(); pHalfedge++)
+    for(pHalfedge = mesh.halfedges_begin(); pHalfedge != mesh.halfedges_end(); pHalfedge++)
     {
-        Parameterization_polyhedron_adaptor::Halfedge_info* he_info = mesh_adaptor->info(pHalfedge);
+        Parameterization_polyhedron_adaptor::Halfedge_info* he_info = mesh_adaptor.info(pHalfedge);
         if (he_info->is_parameterized())
             out << "vt " << he_info->uv().x() << " " << he_info->uv().y() << std::endl;
         else
@@ -159,13 +154,13 @@ static bool write_file_obj(Parameterization_polyhedron_adaptor* mesh_adaptor,
     out << "# facets" << std::endl;
     out << "usemtl Mat_1" << std::endl;
     Polyhedron::Facet_const_iterator pFacet;
-    for(pFacet = mesh->facets_begin(); pFacet != mesh->facets_end(); pFacet++)
+    for(pFacet = mesh.facets_begin(); pFacet != mesh.facets_end(); pFacet++)
     {
         Polyhedron::Halfedge_around_facet_const_circulator h = pFacet->facet_begin();
         out << "f";
         do {
-            Parameterization_polyhedron_adaptor::Halfedge_info* he_info  = mesh_adaptor->info(h);
-            Parameterization_polyhedron_adaptor::Vertex_info*   vtx_info = mesh_adaptor->info(h->vertex());
+            Parameterization_polyhedron_adaptor::Halfedge_info* he_info  = mesh_adaptor.info(h);
+            Parameterization_polyhedron_adaptor::Vertex_info*   vtx_info = mesh_adaptor.info(h->vertex());
             out << " " << vtx_info->index()+1;
             if (he_info->is_parameterized())
                 out <<  "/" << he_info->index()+1;
@@ -224,12 +219,12 @@ int main(int argc,char * argv[])
     //***************************************
 
     // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
     // that makes it it homeomorphic to a disk
-    Seam seam = cut_mesh(&mesh_adaptor);
+    Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
         fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
@@ -237,7 +232,7 @@ int main(int argc,char * argv[])
     }
 
     // Create adaptor that virtually "cuts" the mesh following the 'seam' path
-    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor, seam.begin(), seam.end());
+    Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
 
     //***************************************
     // Discrete Authalic Parameterization (square border)
@@ -256,7 +251,7 @@ int main(int argc,char * argv[])
                                                     Border_parameterizer,
                                                     Solver> Parameterizer;
 
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_patch, Parameterizer());
+    Parameterizer::Error_code err = CGAL::parameterize(mesh_patch, Parameterizer());
     if (err != Parameterizer::OK)
         std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 
@@ -267,7 +262,7 @@ int main(int argc,char * argv[])
     // Write Wavefront OBJ file
     if (err == Parameterizer::OK)
     {
-        if ( ! write_file_obj(&mesh_adaptor, output_filename) )
+        if ( ! write_file_obj(mesh_adaptor, output_filename) )
         {
             std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
             return EXIT_FAILURE;
