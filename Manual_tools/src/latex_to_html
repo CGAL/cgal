@@ -9,13 +9,12 @@
 #
 #  Conversion works in two steps: First all TeX files are converted into 
 #  HTML. Meanwhile the necessary information for the cross links is 
-#  collected as set of flex-rules. In the second step the hyperlinks
+#  collected as set of rules. In the second step the hyperlinks
 #  are generated for all HTML files.
 #  
 #  Besides programs and scripts distributed with this LaTeX converter,
 #  the following programs are necessary to run the converter
 #
-#    o  flex 2.5.4 + patch (see INSTALLATION file)
 #    o  C Compiler: cc / gcc
 #    o  Perl 5 (for subsequent scripts)
 #
@@ -140,7 +139,6 @@ ${BoldColor}Debug-Options:${ResetColor}
     ${BoldColor}-macroexp${ResetColor}           trace macro expansions.
     ${BoldColor}-stymacro${ResetColor}           trace style macros as well.
     ${BoldColor}-stacktrace${ResetColor}         stack trace for each error.
-    ${BoldColor}-flexwarn${ResetColor}           show warnings produced by flex.
 EOF
 }
 
@@ -615,7 +613,6 @@ Quiet=0
 RealQuiet=0
 Verbose=0
 
-Flex="flex -t -8 -w -Cae"
 MakePath="mkdir -p"
 
 set_no_color() {
@@ -759,9 +756,6 @@ while [ $# -gt 0 ]; do
 	    error_usage 1 "-sty needs an additional parameter."
 	fi
         ExtractOptions = "$ExtractOptions -sty $1"
-        ;;
-    -flexwarn)
-        Flex="flex -t -8"
         ;;
     -*)
         error_usage 2 "Unknow option $1."
