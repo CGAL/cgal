@@ -367,6 +367,20 @@ computes the Catmull-Clark edge-point \ccc{ept} and the
 Catmull-Clark vertex-point \ccc{vpt} of the border edge \ccc{e}.
 }
 
+\begin{ccTexOnly}
+  \begin{center}
+    \parbox{0.6\textwidth}{%
+      \includegraphics[width=0.6\textwidth]{Subdivision_method_3_ref/FIG/CCBorderMask}%
+    }\\ \vspace{0.5cm}
+  \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+      <img src="FIG/CCBorderMask.png" alt="PQQ stencil of border nodes"></A><P>
+    </CENTER>
+\end{ccHtmlOnly}
+
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Subdivision_method_3}\\
@@ -440,6 +454,20 @@ computes the Loop edge-point \ccc{ept} and the
 Loop vertex-point \ccc{vpt} of the border edge \ccc{e}.
 }
 
+\begin{ccTexOnly}
+  \begin{center}
+    \parbox{0.6\textwidth}{%
+      \includegraphics[width=0.6\textwidth]{Subdivision_method_3_ref/FIG/LoopBorderMask}%
+    }\\ \vspace{0.5cm}
+  \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+      <img src="FIG/LoopBorderMask.png" alt="PTQ stencil of border nodes"></A><P>
+    </CENTER>
+\end{ccHtmlOnly}
+
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Subdivision_method_3}\\
@@ -497,8 +525,22 @@ kernel, which defines the \ccc{Point_3} for the vertices.
 void corner_node(Halfedge_handle he, Point_3& pt);
 }{
 computes the Doo-Sabin point \ccc{pt} of the vertex pointed
-by the halfedge \ccc{e}.
+by the halfedge \ccc{he}.
 }
+
+\begin{ccTexOnly}
+  \begin{center}
+    \parbox{0.6\textwidth}{%
+      \includegraphics[width=0.45\textwidth]{Subdivision_method_3_ref/FIG/DSCornerMask}%
+    }\\ \vspace{0.5cm}
+  \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+      <img src="FIG/DSCornerMask.png" alt="DQQ corner stencil"></A><P>
+    </CENTER>
+\end{ccHtmlOnly}
 
 \ccSeeAlso
 
