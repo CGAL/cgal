@@ -1005,7 +1005,8 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   bool non_efective_split = false;
   if( !splitted) {
     CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
-    //    return new Node( parent, 0, 0, Plane_3(), O);
+    //    if(depth > max_depth)
+    return new Node( parent, 0, 0, Plane_3(), O);
     non_efective_split = true;
   } else {
     CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
@@ -1028,8 +1029,7 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
 
 template <typename Depth>
 bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth) {
-  //  if( depth >= max_depth)
-  if(depth >= max_depth-2)
+  if(depth >= max_depth)
     return false;
   if(std::distance(start,end)<2)
     return false;
