@@ -275,11 +275,11 @@ namespace CGALi {
 
     bool is_x_monotone() const
     {
-      int cmp_begin = CGAL::compare(_begin.y(), center().y());
-      int cmp_end   = CGAL::compare(_end.y(),   center().y());
-
       if (Cache_full == 'y' )
 	return false;
+      
+      int cmp_begin = CGAL::compare(_begin.y(), center().y());
+      int cmp_end   = CGAL::compare(_end.y(),   center().y());
 
       // XXX : be careful, this may be surprising if the return value
       // is not -1/1 but some random int...
