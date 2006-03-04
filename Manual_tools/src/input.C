@@ -29,8 +29,7 @@ using namespace std;
 
 // Path for the HTML conversion tools for the default configuration files.
 // This path will be compiled into the cc_extract_html program. It is set 
-// in the Makefile. The same variable has to be configured in the 
-// cc_manual_to_html script.
+// in the Makefile. This string can be queried.
 #ifndef LATEX_CONVERTER_CONFIG
 #define LATEX_CONVERTER_CONFIG   ""
 #endif
@@ -38,12 +37,12 @@ string config_path    = LATEX_CONVERTER_CONFIG;
 
 // List of ':' separated paths (including '.' if needed) to check
 // for LaTeX input files. Default is '.'. Can be set in the Makefile
-// with the macro LATEX_CONV_INPUTS. Is overridden by the environment
-// variable LATEX_CONV_INPUTS is it exists.
-#ifndef LATEX_CONV_INPUTS
-#define LATEX_CONV_INPUTS   ""
+// with the macro LATEX_CONVERTER_INPUTS. Is overridden by the environment
+// variable LATEX_CONVERTER_INPUTS is it exists (at runtime)
+#ifndef LATEX_CONVERTER_INPUTS
+#define LATEX_CONVERTER_INPUTS   "."
 #endif
-string latex_conv_inputs   = LATEX_CONV_INPUTS;
+string latex_conv_inputs   = LATEX_CONVERTER_INPUTS;
 
 /* Auxiliary functions for stream handling */
 /* ======================================= */

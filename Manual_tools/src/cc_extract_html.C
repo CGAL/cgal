@@ -174,14 +174,11 @@ void handleChar( char c) {
 main( int argc, char **argv) {
     // Check environment:
     char* s = getenv("LATEX_CONV_CONFIG");
-    if ( s)
+    if( s )
        config_path = s;
     s = getenv("LATEX_CONV_INPUTS");
-    if ( s)
+    if( s )
        latex_conv_inputs = s;
-    else
-       latex_conv_inputs = "."; // if the environment variable is not set,
-                                // try to get all files from current directory
 
     int i;
     int nParameters = 0;

@@ -25,6 +25,14 @@
 # Path where to copy/move the executables during installation:
 # LATEX_CONV_BIN = ${PUBLIC}/${SYSTEM}/bin
 
+# Analog of the TEXINPUTS environment variable for the cc_extract_html
+# program. It should contain a colon-separated list of directories where
+# the input files can be found. If this is not set, the default is that
+# files are looked for in the current directory. If this is set, then
+# directories are searched in the order provided in this variable (so "."
+# should be included in the list if some input files are in the current
+# directory).
+LATEX_CONV_INPUTS = .
 
 # C++ Compiler: tested compilers are: Gnu g++ 3.3 and 3.4
 # CXX = g++-3.4
@@ -137,6 +145,7 @@ OBJIMAGES = cc_extract_images_lexer.C cc_extract_images.o
 input.o: input.C
 	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} \
 		-DLATEX_CONVERTER_CONFIG=\"${LATEX_CONV_CONFIG}\" \
+		-DLATEX_CONVERTER_INPUTS=\"${LATEX_CONV_INPUTS}\" \
 		-c input.C
 
 
