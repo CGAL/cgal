@@ -730,6 +730,7 @@ Manual_tools/src/latex_converter_config/gif/cc_forall.gif -text svneol=unset#uns
 Manual_tools/src/latex_converter_config/gif/cc_frown.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_geq.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_gg.gif -text svneol=unset#unset
+Manual_tools/src/latex_converter_config/gif/cc_gtreqless.gif -text
 Manual_tools/src/latex_converter_config/gif/cc_hbar.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_heartsuit.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_hookleftarrow.gif -text svneol=unset#unset

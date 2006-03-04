@@ -102,27 +102,12 @@ Installation of the Supporting Tools:
 
 (3)  Compilation:
 
-     Type 'make' (or 'gmake') to compile all programs. In principle, no warnings
-     should show up besides possible warnings about unreachable 
-     statements from flex sources. However, other compilers or STL's
-     might produce more warnings. 
+     Do _not_ invoke `make' from within this directory.
+     Use ../install.sh instead. Exception: `make clean' will
+     remove all generated files.
 
-
-(4)  Installation:
-
-     Type 'gmake install' to copy the programs and the shell scripts
-     to $LATEX_CONV_BIN and to copy all the configuration files
-     to $LATEX_CONV_CONFIG. Note that the Perl scripts from the 
-     `../scripts/' directory are not installed by this. If the 
-     $LATEX_CONV_CONFIG directory exists already, the installation
-     process removes all old files therein.
-
-
-(5)  Cleanup:
-
-     Type 'gmake clean' to remove all temporary files (e.g. necessary
-     before compiling for another platform). Type 'gmake cleanall' to
-     remove also the compiled programs and possible template databases
-     of the C++ compiler.
+     In principle, no warnings should show up besides possible 
+     warnings about unreachable statements from flex sources. However,
+     other compilers or STL's might produce more warnings. 
 
 EOF

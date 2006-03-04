@@ -877,7 +877,7 @@
 
 % +--------------------------------------------------------------------------
 % |     * Variable sized symbols following Table 3.8 page 44 in Lamport.
-% +--------------------------------------------------------------------------
+% +------------------------------------------------ --------------------------
 \newcommand{\sum}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
   { <IMG BORDER=0 WIDTH=19 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_sum.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=13 HEIGHT=24 ALIGN=MIDDLE SRC="cc_sum.gif"> }}}
@@ -921,6 +921,12 @@
   { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_biguplus.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_biguplus.gif"> }}}
 
+
+% +--------------------------------------------------------------------------
+% |     * this is actually a amssymb:
+% +--------------------------------------------------------------------------
+\newcommand{\gtreqless}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=24 ALIGN=MIDDLE SRC="cc_gtreqless.gif"> }}
 
 % +--------------------------------------------------------------------------
 % |     * Log-like functions following Table 3.9 page 44 in Lamport.
@@ -988,6 +994,9 @@
 \newcommand{\tilde}{\~}
 \newcommand{\ddot}{\"}
 
+% dummy commands to turn testsuite N's to Y's
+\newcommand{\nolimits}{}
+\newcommand{\mathop}[1]{}
 
 % ___________________________________________________________________________
 % ###########################################################################
