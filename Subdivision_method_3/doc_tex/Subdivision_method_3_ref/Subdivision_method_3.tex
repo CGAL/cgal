@@ -36,9 +36,9 @@ primal quadrilateral quadrisection (PQQ),
 the primal triangle quadrisection (PTQ), 
 the dual quadrilateral quadrisection (DQQ), 
 and the $\sqrt{3}$ triangulation.
-Each of these refinements are respectively used in 
-Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivision, which
-are also supported as template functions in \ccClassTemplateName .
+These refinements are respectively used in 
+Catmull-Clark, Loop, Doo-Sabin and $\sqrt{3}$ subdivision.
+%, which are also supported as template functions in \ccClassTemplateName .
 
 \ccInclude{CGAL/Subdivision_method_3.h}
 
@@ -78,7 +78,7 @@ template <class Polyhedron_3, template <typename> class Mask>
 void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
 applies the PQQ refinement on the control mesh \ccc{p} \ccc{step} times.
-The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
+The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
 
@@ -87,7 +87,7 @@ template <class Polyhedron_3, template <typename> class Mask>
 void PTQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
 applies the PTQ refinement on the control mesh \ccc{p} \ccc{step} times.
-The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
+The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
 
@@ -96,7 +96,7 @@ template <class Polyhedron_3, template <typename> class Mask>
 void DQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
 applies the DQQ refinement on the control mesh \ccc{p} \ccc{step} times.
-The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
+The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
 
@@ -105,7 +105,7 @@ template <class Polyhedron_3, template <typename> class Mask>
 void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
 applies the $\sqrt{3}$ triangulation on the control mesh \ccc{p} \ccc{step} times.
-The geometry of the refined mesh is computed by the geometry policy \ccc{mask}
+The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
 This function overwrites the control mesh \ccc{p} with the refined mesh.
 }
 
