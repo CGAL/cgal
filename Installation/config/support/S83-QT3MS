@@ -1,7 +1,7 @@
 # Trolltech's QT GUI Library (http://www.trolltech.com/products/qt/)
-# R3 Version for Microsoft Windows
+# R3 Single-Threaded Version for Microsoft Windows
 
-DESCRIPTION = MS Windows
+DESCRIPTION = MS Windows (single-threaded)
 PROVIDES = QT
 CXXFLAGS = 
 LDFLAGS = 

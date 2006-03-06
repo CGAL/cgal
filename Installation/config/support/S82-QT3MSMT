@@ -1,0 +1,16 @@
+# Trolltech's QT GUI Library (http://www.trolltech.com/products/qt/)
+# R3 Multi-Threaded Version for Microsoft Windows
+
+DESCRIPTION = MS Windows (multi-threaded)
+PROVIDES = QT
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = qtmain qt-mt imm32 wsock32 gdi32 user32 ole32 winspool comdlg32 advapi32 shell32 ws2_32
+REQUIRES = DOLLAR_QTDIR DOLLAR_WINDOWS_COMPILER
+INCOMPATIBLE =
+STDINCLDIRS = ${QTDIR}/include
+INCLTHING = qglobal.h
+STDLIBDIRS = ${QTDIR}/lib
+LIBTHING = qt-mt.lib
+
+# EOF

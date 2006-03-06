@@ -1,7 +1,7 @@
 # Trolltech's QT GUI Library (http://www.trolltech.com/products/qt/)
 # R3 Multi-Threaded Version for Unix-like Systems
 
-DESCRIPTION = multi-threaded
+DESCRIPTION = Unix (multi-threaded)
 PROVIDES = QT
 CXXFLAGS = 
 LDFLAGS = 
