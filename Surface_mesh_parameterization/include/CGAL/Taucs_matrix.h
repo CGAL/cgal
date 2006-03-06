@@ -107,7 +107,7 @@ public:
         return m_matrix->n;
     }
 
-    /// Read access to 1 matrix coefficient.
+    /// Read access to a matrix coefficient.
     ///
     /// Preconditions:
     /// - 0 <= i < row_dimension().
@@ -132,7 +132,7 @@ public:
         return (element == NULL) ? 0 : (*element);
     }
 
-    /// Write access to 1 matrix coefficient: a_ij <- val.
+    /// Write access to a matrix coefficient: a_ij <- val.
     ///
     /// Optimization:
     /// For symmetric matrices, Taucs_matrix stores only the lower triangle
@@ -160,7 +160,7 @@ public:
         *element = val;                     // =
     }
 
-    /// Write access to 1 matrix coefficient: a_ij <- a_ij + val.
+    /// Write access to a matrix coefficient: a_ij <- a_ij + val.
     ///
     /// Optimization:
     /// For symmetric matrices, Taucs_matrix stores only the lower triangle
@@ -247,7 +247,7 @@ private:
             m_matrix->colptr[col] = 0;
     }
 
-    /// Read/write access to 1 matrix coefficient:
+    /// Read/write access to a matrix coefficient:
     /// Get a pointer to a matrix element. Optionaly create it.
     /// Return NULL if it doesn't exist (cannot happen if 'create' is true).
     ///
@@ -319,7 +319,7 @@ private:
         return element;
     }
 
-    /// Read access to 1 matrix coefficient:
+    /// Read access to a matrix coefficient:
     /// Get a pointer to a matrix element. Return NULL if it doesn't exist.
     ///
     /// Preconditions:

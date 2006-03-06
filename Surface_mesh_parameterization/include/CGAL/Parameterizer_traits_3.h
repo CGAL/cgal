@@ -57,7 +57,7 @@ public:
     ERROR_INVALID_BORDER,           ///< parameterization requires a convex border
     ERROR_BAD_MATRIX_CONDITIONING,  ///< result is mathematically unstable
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< cannot solve linear system
-    ERROR_NO_1_TO_1_MAPPING,        ///< parameterization does not ensure 1 to 1 mapping
+    ERROR_NO_1_TO_1_MAPPING,        ///< parameterization does not ensure a one-to-one mapping
     ERROR_NOT_ENOUGH_MEMORY,        ///< not enough memory
     ERROR_WRONG_PARAMETER           ///< a method received an unexpected parameter
     };
@@ -107,13 +107,13 @@ public:
 
     // Default constructor, copy constructor and operator =() are fine
 
-    /// Compute a 1 to 1 mapping from a 3D surface 'mesh'
+    /// Compute a one-to-one mapping from a 3D surface 'mesh'
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
     /// Preconditions:
-    /// - 'mesh' must be a surface with 1 connected component.
+    /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize (Adaptor& mesh) = 0;
 
@@ -131,7 +131,7 @@ public:
         "Parameterization requires a convex border",
         "Result is mathematically unstable",
         "Cannot solve linear system",
-        "Parameterization does not ensure 1 to 1 mapping",
+        "Parameterization does not ensure a one-to-one mapping",
         "Not enough memory",
         "A method received an unexpected parameter"
         };

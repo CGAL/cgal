@@ -44,7 +44,7 @@ One uv coordinate for each interior vertex, and one uv coordinate for each insta
 
 * Parameterizations:
   - Fixed border:
-       + Tutte Barycentric Mapping (guaranteed one-to one mapping for convex border).
+       + Tutte Barycentric Mapping (guaranteed one-to-one mapping for convex border).
        + Floater Mean Value Coordinates (ditto).
        + Discrete Conformal Map (conditionally guaranteed if all weights positive and convex border).
        + Discrete Authalic Parameterization (ditto).
@@ -63,7 +63,7 @@ One uv coordinate for each interior vertex, and one uv coordinate for each insta
 a topological disc?).
 
 * Post conditions:
-  - assess all positive coefficients (to ensure one-to one mapping)
+  - assess all positive coefficients (to ensure a one-to-one mapping)
   - assess matrix conditioning (reliability of solution).
 
 * Linear Algebra:

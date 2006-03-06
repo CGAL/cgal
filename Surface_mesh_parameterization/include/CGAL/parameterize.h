@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 /// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
 ///
 /// Preconditions:
-/// - 'mesh' must be a surface with 1 connected component.
+/// - 'mesh' must be a surface with one connected component.
 /// - 'mesh' must be a triangular mesh.
 ///
 template <class ParameterizationMesh_3>
@@ -57,7 +57,7 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 /// The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
 ///
 /// One-to-one mapping may be guaranteed or
-/// not, depending on the chosen ParametizerTraits\_3 algorithm.
+/// not, depending on the chosen ParametizerTraits_3 algorithm.
 ///
 /// Preconditions:
 /// - 'mesh' must be a surface with one connected component.

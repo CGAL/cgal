@@ -88,21 +88,21 @@ Return the matrix number of columns.
 \ccGlue
 \ccMethod{NT get_coef (int row, int column) const;}
 {
-Read access to 1 matrix coefficient.
+Read access to a matrix coefficient.
 Preconditions:\begin{itemize}
 \item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
 }
 \ccGlue
 \ccMethod{void add_coef (int row, int column, NT value);}
 {
-Write access to 1 matrix coefficient: a\_ij $<$- a\_ij + val.
+Write access to a matrix coefficient: a\_ij $<$- a\_ij + val.
 Preconditions:\begin{itemize}
 \item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
 }
 \ccGlue
 \ccMethod{void set_coef (int row, int column, NT value);}
 {
-Write access to 1 matrix coefficient.
+Write access to a matrix coefficient.
 Preconditions:\begin{itemize}
 \item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
 }

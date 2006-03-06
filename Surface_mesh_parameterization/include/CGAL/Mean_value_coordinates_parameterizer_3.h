@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
-/// 1 to 1 mapping is guaranteed if the surface's border is mapped to a convex polygon.
+/// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 ///
 /// As all parameterization algorithms of the package, this class
 /// is usually called via the global function parameterize().
@@ -167,7 +167,7 @@ protected:
         double delta_ij = compute_angle_rad(position_v_l, position_v_i, position_v_j);
 
         double weight = 0.0;
-        CGAL_surface_mesh_parameterization_assertion(len != 0.0);    // 2 points are identical!
+        CGAL_surface_mesh_parameterization_assertion(len != 0.0);    // two points are identical!
         if(len != 0.0)
             weight = (std::tan(0.5*gamma_ij) + std::tan(0.5*delta_ij)) / len;
         CGAL_surface_mesh_parameterization_assertion(weight > 0);
@@ -175,13 +175,13 @@ protected:
         return weight;
     }
 
-    /// Check if 3D -> 2D mapping is 1 to 1.
+    /// Check if 3D -> 2D mapping is one-to-one.
     virtual bool  is_one_to_one_mapping (const Adaptor& mesh,
                                          const Matrix& A,
                                          const Vector& Bu,
                                          const Vector& Bv)
     {
-        /// Theorem: 1 to 1 mapping is guaranteed if all w_ij coefficients
+        /// Theorem: one-to-one mapping is guaranteed if all w_ij coefficients
         ///          are > 0 (for j vertex neighbor of i) and if the surface
         ///          border is mapped onto a 2D convex polygon.
         /// Floater formula above implies that w_ij > 0 (for j vertex neighbor

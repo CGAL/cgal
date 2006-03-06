@@ -42,7 +42,7 @@ CGAL_BEGIN_NAMESPACE
 /// The class Fixed_border_parameterizer_3
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 ///
-/// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
 /// This class is a pure virtual class, thus cannot be instantiated.
 /// Anyway, it implements most of the parameterization algorithm parameterize().
@@ -146,13 +146,13 @@ public:
 
     // Default copy constructor and operator =() are fine
 
-    /// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+    /// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
     /// Preconditions:
-    /// - 'mesh' must be a surface with 1 connected component.
+    /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
     /// - the mesh border must be mapped onto a convex polygon.
     virtual Error_code  parameterize(Adaptor& mesh);
@@ -160,7 +160,7 @@ public:
 // Protected operations
 protected:
     /// Check parameterize() preconditions:
-    /// - 'mesh' must be a surface with 1 connected component.
+    /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
     /// - the mesh border must be mapped onto a convex polygon.
     virtual Error_code  check_parameterize_preconditions(Adaptor& mesh);
@@ -203,13 +203,13 @@ protected:
 
     /// Check parameterize() postconditions:
     /// - "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning.
-    /// - 3D -> 2D mapping is 1 to 1.
+    /// - 3D -> 2D mapping is one-to-one.
     virtual Error_code check_parameterize_postconditions(const Adaptor& mesh,
                                                          const Matrix& A,
                                                          const Vector& Bu,
                                                          const Vector& Bv);
 
-    /// Check if 3D -> 2D mapping is 1 to 1.
+    /// Check if 3D -> 2D mapping is one-to-one.
     /// The default implementation checks each normal.
     virtual bool  is_one_to_one_mapping(const Adaptor& mesh,
                                         const Matrix& A,
@@ -238,13 +238,13 @@ private:
 // Implementation
 // ------------------------------------------------------------------------------------
 
-/// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+/// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
 /// to a piece of the 2D space.
 /// The mapping is linear by pieces (linear in each triangle).
 /// The result is the (u,v) pair image of each vertex of the 3D surface.
 ///
 /// Preconditions:
-/// - 'mesh' must be a surface with 1 connected component.
+/// - 'mesh' must be a surface with one connected component.
 /// - 'mesh' must be a triangular mesh.
 /// - the mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
@@ -293,7 +293,7 @@ parameterize(Adaptor& mesh)
     if (status != Base::OK)
         return status;
 
-    // Create 2 sparse linear systems "A*Xu = Bu" and "A*Xv = Bv" (1 line/column per vertex)
+    // Create two sparse linear systems "A*Xu = Bu" and "A*Xv = Bv" (one line/column per vertex)
     Matrix A(nbVertices, nbVertices);
     Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
 
@@ -340,7 +340,7 @@ parameterize(Adaptor& mesh)
         status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
 #ifdef DEBUG_TRACE
-    std::cerr << "  solving 2 linear systems: "
+    std::cerr << "  solving two linear systems: "
               << timer.time() << " seconds." << std::endl;
     timer.reset();
 #endif
@@ -373,7 +373,7 @@ parameterize(Adaptor& mesh)
 
 
 /// Check parameterize() preconditions:
-/// - 'mesh' must be a surface with 1 connected component.
+/// - 'mesh' must be a surface with one connected component.
 /// - 'mesh' must be a triangular mesh.
 /// - the mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
@@ -404,7 +404,7 @@ check_parameterize_preconditions(Adaptor& mesh)
         return status;
 
     // The whole package is restricted to surfaces: genus = 0,
-    // 1 connected component and at least 1 border
+    // one connected component and at least one border
     CGAL_surface_mesh_parameterization_expensive_precondition_code(         \
         int genus = feature_extractor.get_genus();                          \
         int nb_borders = feature_extractor.get_nb_borders();                \
@@ -416,7 +416,7 @@ check_parameterize_preconditions(Adaptor& mesh)
     if (status != Base::OK)
         return status;
 
-    // 1 to 1 mapping is guaranteed if all w_ij coefficients are > 0 (for j vertex neighbor of i)
+    // One-to-one mapping is guaranteed if all w_ij coefficients are > 0 (for j vertex neighbor of i)
     // and if the surface border is mapped onto a 2D convex polygon
     CGAL_surface_mesh_parameterization_precondition_code(       \
         status = get_border_parameterizer().is_border_convex()  \
@@ -451,7 +451,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
         // Get vertex index in sparse linear system
         int index = mesh.get_vertex_index(it);
 
-        // Write 1 as diagonal coefficient of A
+        // Write a as diagonal coefficient of A
         A.set_coef(index, index, 1);
 
         // Write constant in Bu and Bv
@@ -539,7 +539,7 @@ set_mesh_uv_from_system(Adaptor& mesh,
 
 /// Check parameterize() postconditions:
 /// - "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning.
-/// - 3D -> 2D mapping is 1 to 1.
+/// - 3D -> 2D mapping is one-to-one.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
@@ -568,7 +568,7 @@ check_parameterize_postconditions(const Adaptor& mesh,
     if (status != Base::OK) 
         return status;
 
-    // Check if 3D -> 2D mapping is 1 to 1
+    // Check if 3D -> 2D mapping is one-to-one
     CGAL_surface_mesh_parameterization_postcondition_code(  \
         status = is_one_to_one_mapping(mesh, A, Bu, Bv)     \
                ? Base::OK                                   \
@@ -580,7 +580,7 @@ check_parameterize_postconditions(const Adaptor& mesh,
     return status;
 }
 
-/// Check if 3D -> 2D mapping is 1 to 1.
+/// Check if 3D -> 2D mapping is one-to-one.
 /// The default implementation checks each normal.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline

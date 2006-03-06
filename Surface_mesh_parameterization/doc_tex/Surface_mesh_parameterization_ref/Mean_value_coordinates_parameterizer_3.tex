@@ -27,7 +27,7 @@ The class Mean\_value\_coordinates\_parameterizer\_3 implements Floater Mean Val
 
 This is a conformal parameterization, i.e. it attempts to preserve angles.
 
-1 to 1 mapping is guaranteed if the surface's border is mapped to a convex polygon.
+One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 
 As all parameterization algorithms of the package, this class is usually called via the global function parameterize().
 
@@ -108,8 +108,8 @@ Compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
 \ccGlue
 \ccMethod{virtual bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
 {
-Check if 3D -$>$ 2D mapping is 1 to 1.
-Theorem: 1 to 1 mapping is guaranteed if all w\_ij coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface border is mapped onto a 2D convex polygon. Floater formula above implies that w\_ij $>$ 0 (for j vertex neighbor of i), thus mapping is guaranteed if the surface border is mapped onto a 2D convex polygon.
+Check if 3D -$>$ 2D mapping is one-to-one.
+Theorem: one-to-one mapping is guaranteed if all w\_ij coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface border is mapped onto a 2D convex polygon. Floater formula above implies that w\_ij $>$ 0 (for j vertex neighbor of i), thus mapping is guaranteed if the surface border is mapped onto a 2D convex polygon.
 }
 \ccGlue
 

@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
-/// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
 /// As all parameterization algorithms of the package, this class
 /// is usually called via the global function parameterize().

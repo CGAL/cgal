@@ -49,7 +49,7 @@ public:
     /// Return the vector's number of coefficients.
     int  dimension () const;
 
-    /// Read/write access to 1 vector coefficient.
+    /// Read/write access to a vector coefficient.
     ///
     /// Precondition: 0 <= row < dimension().
     NT  operator[] (int row) const;

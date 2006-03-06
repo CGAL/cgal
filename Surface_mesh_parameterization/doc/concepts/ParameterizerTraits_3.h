@@ -39,7 +39,7 @@ public:
     ERROR_INVALID_BORDER,           ///< Error: parameterization requires a convex border
     ERROR_BAD_MATRIX_CONDITIONING,  ///< Error: result is mathematically unstable
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Error: cannot solve linear system
-    ERROR_NO_1_TO_1_MAPPING,        ///< Error: parameterization does not ensure 1 to 1 mapping
+    ERROR_NO_1_TO_1_MAPPING,        ///< Error: parameterization does not ensure a one-to-one mapping
     ERROR_NOT_ENOUGH_MEMORY,        ///< Error: not enough memory
     ERROR_WRONG_PARAMETER           ///< Error: a method received an unexpected parameter
     };
@@ -49,13 +49,13 @@ public:
 
 // Public operations
 public:
-    /// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh'
+    /// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
     /// Preconditions:
-    /// - 'mesh' must be a surface with 1 connected component and no hole.
+    /// - 'mesh' must be a surface with one connected component and no hole.
     /// - 'mesh' must be a triangular mesh.
     Error_code  parameterize (Adaptor& mesh);
 };

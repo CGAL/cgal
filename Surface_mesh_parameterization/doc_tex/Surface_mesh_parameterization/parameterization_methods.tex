@@ -7,7 +7,7 @@ where the user can specify a parameterization method:
 \ccFunction{Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (ParameterizationMesh_3 & mesh, ParameterizerTraits_3 parameterizer);}
 {
 Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a simple 2D domain. The mapping is piecewise linear on the triangle mesh. The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
-One-to-one mapping may be guaranteed or not, depending on the chosen ParametizerTraits algorithm.
+One-to-one mapping may be guaranteed or not, depending on the chosen ParametizerTraits\_3 algorithm.
 Preconditions:\begin{itemize}
 \item 'mesh' must be a surface with one connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon (for fixed border parameterizations).\end{itemize}
 }
@@ -42,7 +42,7 @@ sparse linear solver for each set of parameter coordinates, with a
 \#vertices x \#vertices sparse and symmetric positive definite matrix.
 A coefficient $(i,j)$ of the matrix is set to 1 for an edge linking
 the vertex $v_i$ to the vertex $v_j$, to minus the degree of the
-vertex $v_i$ for a diagonal element, and to zero for any other matrix
+vertex $v_i$ for a diagonal element, and to 0 for any other matrix
 entry. Although Tutte Barycentric Mapping method is fast and
 guaranteed to be bijective, it does not minimize angle nor area
 distortion.

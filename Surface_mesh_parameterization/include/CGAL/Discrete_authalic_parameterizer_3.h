@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 /// DAP is a weak area-preserving parameterization. It is a compromise between
 /// area-preserving and angle-preserving.
 ///
-/// 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
 /// As all parameterization algorithms of the package, this class
 /// is usually called via the global function parameterize().
@@ -167,7 +167,7 @@ protected:
         double cotg_theta_ij = cotangent(position_v_i, position_v_j, position_v_l);
 
         double weight = 0.0;
-        CGAL_surface_mesh_parameterization_assertion(square_len != 0.0);    // 2 points are identical!
+        CGAL_surface_mesh_parameterization_assertion(square_len != 0.0);    // two points are identical!
         if(square_len != 0.0)
             weight = (cotg_psi_ij+cotg_theta_ij)/square_len;
 

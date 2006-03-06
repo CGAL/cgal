@@ -25,7 +25,7 @@
 
 The class Fixed\_border\_parameterizer\_3 is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 
-1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
+One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
 This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:\begin{itemize}
 \item They provide BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item They implement compute\_w\_ij() to compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of is\_one\_to\_one\_mapping().\end{itemize}
@@ -112,15 +112,15 @@ Constructor.
 
 \ccMethod{Parameterizer_traits_3< Adaptor >::Error_code parameterize (Adaptor & mesh);}
 {
-Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+Compute a one-to-one mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
 Preconditions:\begin{itemize}
-\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
+\item 'mesh' must be a surface with one connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
 }
 \ccGlue
 \ccMethod{Parameterizer_traits_3< Adaptor >::Error_code check_parameterize_preconditions (Adaptor & mesh);}
 {
 Check parameterize() preconditions:\begin{itemize}
-\item 'mesh' must be a surface with 1 connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
+\item 'mesh' must be a surface with one connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
 }
 \ccGlue
 \ccMethod{void initialize_system_from_mesh_border (Matrix & A, Vector & Bu, Vector & Bv, const Adaptor & mesh);}
@@ -151,12 +151,12 @@ Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
 \ccMethod{Parameterizer_traits_3< Adaptor >::Error_code check_parameterize_postconditions (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
 {
 Check parameterize() postconditions:\begin{itemize}
-\item {\em A$\ast$Xu = Bu} and {\em A$\ast$Xv = Bv} systems are solvable with a good conditioning.\item 3D -$>$ 2D mapping is 1 to 1. \end{itemize}
+\item {\em A$\ast$Xu = Bu} and {\em A$\ast$Xv = Bv} systems are solvable with a good conditioning.\item 3D -$>$ 2D mapping is one-to-one. \end{itemize}
 }
 \ccGlue
 \ccMethod{bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
 {
-Check if 3D -$>$ 2D mapping is 1 to 1. The default implementation checks each normal.
+Check if 3D -$>$ 2D mapping is one-to-one. The default implementation checks each normal.
 }
 \ccGlue
 \ccMethod{Border_param& get_border_parameterizer ();}

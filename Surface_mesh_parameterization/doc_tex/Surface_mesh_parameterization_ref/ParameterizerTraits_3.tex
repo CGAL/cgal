@@ -63,7 +63,7 @@ List of errors detected by this package.
 ]Error: parameterization requires a convex border. \item[ERROR\_BAD\_MATRIX\_CONDITIONING
 ]Error: result is mathematically unstable. \item[ERROR\_CANNOT\_SOLVE\_LINEAR\_SYSTEM
 ]Error: cannot solve linear system. \item[ERROR\_NO\_1\_TO\_1\_MAPPING
-]Error: parameterization does not ensure 1 to 1 mapping. \item[ERROR\_NOT\_ENOUGH\_MEMORY
+]Error: parameterization does not ensure a one-to-one mapping. \item[ERROR\_NOT\_ENOUGH\_MEMORY
 ]Error: not enough memory. \item[ERROR\_WRONG\_PARAMETER
 ]Error: a method received an unexpected parameter. \end{description}
 \end{description}
@@ -92,9 +92,9 @@ Construction and destruction are undefined.
 
 \ccMethod{Error_code parameterize (Adaptor & mesh);}
 {
-Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+Compute a one-to-one mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
 Preconditions:\begin{itemize}
-\item 'mesh' must be a surface with 1 connected component and no hole.\item 'mesh' must be a triangular mesh. \end{itemize}
+\item 'mesh' must be a surface with one connected component and no hole.\item 'mesh' must be a triangular mesh. \end{itemize}
 }
 \ccGlue
 

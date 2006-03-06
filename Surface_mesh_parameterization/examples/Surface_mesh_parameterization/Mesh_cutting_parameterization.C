@@ -84,7 +84,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
                 return seam;                // return empty list
         }
 
-        // Convert halfedges array to 2-ways vertices list
+        // Convert halfedges array to two-ways vertices list
         for (i=0; i<CUT_LENGTH; i++)
             seam.push_back(seam_halfedges[i]->vertex());
         for (i=CUT_LENGTH-1; i>=0; i--)

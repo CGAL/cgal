@@ -87,7 +87,7 @@ public:
         return m_dimension;
     }
 
-    /// Read/write access to 1 vector coefficient.
+    /// Read/write access to a vector coefficient.
     ///
     /// Preconditions:
     /// 0 <= i < dimension().

@@ -47,21 +47,21 @@ public:
     /// Return the matrix number of columns.
     int  column_dimension () const;
 
-    /// Read access to 1 matrix coefficient.
+    /// Read access to a matrix coefficient.
     ///
     /// Preconditions:
     /// - 0 <= row < row_dimension().
     /// - 0 <= column < column_dimension().
     NT  get_coef (int row, int column) const;
 
-    /// Write access to 1 matrix coefficient: a_ij <- a_ij + val.
+    /// Write access to a matrix coefficient: a_ij <- a_ij + val.
     ///
     /// Preconditions:
     /// - 0 <= row < row_dimension().
     /// - 0 <= column < column_dimension().
     void add_coef(int row, int column, NT value);
 
-    /// Write access to 1 matrix coefficient.
+    /// Write access to a matrix coefficient.
     ///
     /// Preconditions:
     /// - 0 <= row < row_dimension().

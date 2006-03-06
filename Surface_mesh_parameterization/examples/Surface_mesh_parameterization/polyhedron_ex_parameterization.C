@@ -34,7 +34,7 @@
 
 //----------------------------------------------------------
 // Least Squares Conformal Maps parameterization
-// 2 pinned vertices (automatically picked)
+// two pinned vertices (automatically picked)
 // OpenNL solver
 // output is a .obj
 // input file is mesh.off
@@ -174,7 +174,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
             (*he)->tag( (*he)->tag()+1 );
         }
         //
-        // 3) check that the seamingBackbone is a 2-way list
+        // 3) check that the seamingBackbone is a two-way list
         for (he = seamingBackbone.begin(); he != seamingBackbone.end(); he++)
         {
             // Counter of halfedge and opposite halfedge must be 1

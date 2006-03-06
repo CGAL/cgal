@@ -254,7 +254,7 @@ public:
         return *this;
     }
 
-    /// Compare patch vertices instead of patch vertex pointers (2 patch
+    /// Compare patch vertices instead of patch vertex pointers (two patch
     /// vertex handles are equal iff they point to the same adaptor vertex)
     bool operator==(const Self& hdl) const
     {
@@ -400,7 +400,7 @@ public:
         return *this;
     }
 
-    /// Compare patch vertices instead of patch vertex pointers (2 patch
+    /// Compare patch vertices instead of patch vertex pointers (two patch
     /// vertex handles are equal iff they point to the same adaptor vertex)
     bool operator==(const Self& hdl) const
     {

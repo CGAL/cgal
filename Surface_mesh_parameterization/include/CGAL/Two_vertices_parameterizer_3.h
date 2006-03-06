@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 //
 
 /// The class Two_vertices_parameterizer_3
-/// parameterizes 2 extreme vertices of a 3D surface.
+/// parameterizes two extreme vertices of a 3D surface.
 /// This kind of border parameterization is used by free border parameterizations.
 ///
 /// Implementation note:
@@ -96,7 +96,7 @@ private:
 public:
     // Default constructor, copy constructor and operator =() are fine.
 
-    /// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized".
+    /// Map two extreme vertices of the 3D mesh and mark them as "parameterized".
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);
 
@@ -110,7 +110,7 @@ public:
 // Implementation
 //
 
-/// Map 2 extreme vertices of the 3D mesh and mark them as "parameterized".
+/// Map two extreme vertices of the 3D mesh and mark them as "parameterized".
 /// Return false on error.
 template<class Adaptor>
 inline
@@ -254,7 +254,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     mesh.set_vertex_parameterized(vxmax, true) ;
 
 #ifdef DEBUG_TRACE
-    std::cerr << "  map 2 vertices..." << std::endl;
+    std::cerr << "  map two vertices..." << std::endl;
     std::cerr << "    #" << mesh.get_vertex_index(vxmin) << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;
     std::cerr << "    #" << mesh.get_vertex_index(vxmax) << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
 #endif

@@ -25,7 +25,7 @@
 
 The class Barycentric\_mapping\_parameterizer\_3 implements Tutte Barycentric Mapping algorithm \cite{t-hdg-63}. This algorithm is also called {\em Tutte Uniform Weights} by other authors.
 
-1 to 1 mapping is guaranteed if the surface's border is mapped to a convex polygon.
+One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 
 As all parameterization algorithms of the package, this class is usually called via the global function parameterize().
 
@@ -107,8 +107,8 @@ Tutte Barycentric Mapping algorithm is the most simple one: w\_ij = 1 for j neig
 \ccGlue
 \ccMethod{virtual bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
 {
-Check if 3D -$>$ 2D mapping is 1 to 1.
-Theorem: 1 to 1 mapping is guaranteed if all w\_ij coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface border is mapped onto a 2D convex polygon. All w\_ij coefficients = 1 (for j vertex neighbor of i), thus mapping is guaranteed if the surface border is mapped onto a 2D convex polygon.
+Check if 3D -$>$ 2D mapping is one-to-one.
+Theorem: one-to-one mapping is guaranteed if all w\_ij coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface border is mapped onto a 2D convex polygon. All w\_ij coefficients = 1 (for j vertex neighbor of i), thus mapping is guaranteed if the surface border is mapped onto a 2D convex polygon.
 }
 \ccGlue
 
