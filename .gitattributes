@@ -493,6 +493,7 @@ Installation/config/support/README -text
 Installation/config/support/S05-BOOST -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
+Installation/config/support/S25-MPFR -text
 Installation/config/support/S30-CORE -text
 Installation/config/support/S32-CGALCORE -text
 Installation/config/support/S60-LEDA -text
@@ -505,6 +506,7 @@ Installation/config/support/test_CORE.C -text
 Installation/config/support/test_GMP.C -text
 Installation/config/support/test_GMPXX.C -text
 Installation/config/support/test_LEDA.C -text
+Installation/config/support/test_MPFR.C -text
 Installation/config/support/test_QT.C -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
