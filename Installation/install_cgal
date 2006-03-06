@@ -2816,7 +2816,7 @@ cleanup_after_link_run()
 _link_run_test()
 {
     # set flags
-    _flags="${2} `output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${3}"
+    _flags="${2} `output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${START_LD_OPT} ${3}"
 
 #    _flags="${3}"
 #     case ${COMPILER} in
