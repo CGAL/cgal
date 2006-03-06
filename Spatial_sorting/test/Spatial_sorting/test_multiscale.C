@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 
-#include <CGAL/BRIO_sort.h>
+#include <CGAL/spatial_sort.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -25,7 +25,7 @@ int main ()
     const int nb_points_2 = 50000, nb_points_3 = 50000;
     CGAL::Random random (42);
 
-    std::cout << "Testing BRIO + Hilbert sort." << std::endl;
+    std::cout << "Testing Multiscale<Hilbert> sort." << std::endl;
 
     {
         std::cout << "Testing 2D: Generating points... " << std::flush;
@@ -44,7 +44,7 @@ int main ()
 
         std::cout << "            Sorting points...    " << std::flush;
 
-        CGAL::brio_sort_2 (v.begin(), v.end());
+        CGAL::spatial_sort (v.begin(), v.end());
 
         std::cout << "done." << std::endl;
 
@@ -74,7 +74,7 @@ int main ()
 
         std::cout << "            Sorting points...    " << std::flush;
 
-        CGAL::brio_sort_3 (v.begin(), v.end());
+        CGAL::spatial_sort (v.begin(), v.end());
 
         std::cout << "done." << std::endl;
 

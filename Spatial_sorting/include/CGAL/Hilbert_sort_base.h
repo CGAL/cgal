@@ -19,9 +19,8 @@ namespace CGALi {
         std::nth_element (begin, middle, end, cmp);
         return middle;
     }
-};
+}
 
 CGAL_END_NAMESPACE
-
 
 #endif//CGAL_HILBERT_SORT_BASE_H

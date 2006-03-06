@@ -1,7 +1,6 @@
 #include <CGAL/basic.h>
 
-#include <CGAL/Hilbert_sort_2.h>
-#include <CGAL/Hilbert_sort_3.h>
+#include <CGAL/hilbert_sort.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -45,7 +44,7 @@ int main ()
 
         std::cout << "            Sorting points...    " << std::flush;
 
-        CGAL::hilbert_sort_2 (v.begin(), v.end());
+        CGAL::hilbert_sort (v.begin(), v.end());
 
         std::cout << "done." << std::endl;
 
@@ -75,7 +74,7 @@ int main ()
 
         std::cout << "            Sorting points...    " << std::flush;
 
-        CGAL::hilbert_sort_3 (v.begin(), v.end());
+        CGAL::hilbert_sort (v.begin(), v.end());
 
         std::cout << "done." << std::endl;
 
