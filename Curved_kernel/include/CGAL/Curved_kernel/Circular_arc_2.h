@@ -53,12 +53,10 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &c)
       : _support(c), Cache_minmax('s'), Cache_full('y')
     {
-      // Define a circle intersecting c in the 2 vertical tangent
-      // points.
-      Circle_2 c1 (Point_2(c.center().x(), c.center().y()-1),
-		   c.squared_radius()+1);
+
+      _begin = _end  = Circular_arc_point_2
+	(CircularFunctors::x_extremal_point<CK>(supporting_circle(),true)); 
       
-      _begin = _end = CGAL::circle_intersect<CK>(c, c1, true);
     }
 
     Circular_arc_2(const Circle_2 &support,
