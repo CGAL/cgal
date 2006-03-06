@@ -3316,9 +3316,9 @@ menu_header()
     clear_screen
     print_filled_line
     print_headline "CGAL $CGAL_VERSION Installation ${1} Menu"
-    print_line     "OS:                  ${SYST}"
-    print_line     "Compiler:            `extended_compiler_description`"
-    print_line     "Support for:         ${_SUPPORT}."
+    print_line     "OS:          ${SYST}"
+    print_line     "Compiler:    `extended_compiler_description`"
+    print_line     "Support for: ${_SUPPORT}."
     print_empty_line
     if [ -n "${CGAL_SUPPORT_COMPILER}" ]; then
 	print_line     "Compiler is supported by CGAL."
@@ -3589,7 +3589,7 @@ makefile_print_from_var()
 {
     _tmp="`value_of \"${1}\"`"
     if [ -n "${_tmp}" ]; then
-	${_printf} "%s" "`echo \"${_tmp}\" | ${_sed} 's// \\\\\\n\\t/g'`" 
+	${_printf} "`echo \"${_tmp}\" | ${_sed} 's// \\\\\\\\\\\n\\\t/g'`"
     fi
 }
 
@@ -3798,6 +3798,10 @@ write_linker_flags()
   # FIXME: this special treatment is not so nice...
   if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
       makefile_print_continuationline "`lib_option \"core++\"`" >> ${FILE}
+  fi
+  # FIXME: this special treatment is not so nice...
+  if [ -d "${CGAL_SRC_DIR}/CGALQt" -a -n "${PROVIDE_PKG_QT}" ]; then
+      makefile_print_continuationline "`lib_option \"CGALQt\"`" >> ${FILE}
   fi
   for i in ${R_SUPPORT_PKGS}; do
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
@@ -4967,7 +4971,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	for i in ${SUPPORT_PKGS}; do
 	    case ${_arg} in
 		-WITH-${i}*)
-	            eval "${i}_SUPPORT='y'"
+		    enable_support "${i}"
 		    write_buffer "${_LEFTSPACE}Enable ${i} support.\n"
 		    MATCH=y
 		    ;;
