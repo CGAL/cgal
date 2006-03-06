@@ -1,3 +1,6 @@
+6 March 2006 Andreas Fabri
+- Moved the caption of a figure
+
 07 March 2005 Andreas Fabri
 - Protected intersection and volume with \ccHtmlNoLinksFrom{}
 24 August 2004 Andreas Fabri
