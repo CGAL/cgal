@@ -25,7 +25,8 @@ other purposes.
 
 Implementing a new fixed border linear parameterization is easy.  Most
 of the code of the fixed border methods is factorized in the
-\ccc{Fixed_border_parameterizer_3} class.  Subclasses must mainly
+\ccc{Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} 
+class.  Subclasses must mainly
 implement a \ccc{compute_w_ij}() method which computes each
 coefficient $w_{ij}$ = (i,j) of a matrix $A$ for $v_j$ neighbouring
 vertices of $v_i$.

@@ -7,11 +7,12 @@
 \RCSdef{\RCSBarycentricmappingparameterizerRev}{$Id$}
 \RCSdefDate{\RCSBarycentricmappingparameterizerDate}{$Date$}
 % |
+\ccRefPageBegin
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Barycentric_mapping_parameterizer_3}  %% add template arg's if necessary
+\begin{ccRefClass}{Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -116,12 +117,12 @@ Theorem: 1 to 1 mapping is guaranteed if all w\_ij coefficients are $>$ 0 (for j
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Parameterizer_traits_3}  \\
-\ccRefIdfierPage{CGAL::Fixed_border_parameterizer_3}  \\
-\ccRefIdfierPage{CGAL::Discrete_authalic_parameterizer_3}  \\
-\ccRefIdfierPage{CGAL::Discrete_conformal_map_parameterizer_3}  \\
-\ccRefIdfierPage{CGAL::LSCM_parameterizer_3}  \\
-\ccRefIdfierPage{CGAL::Mean_value_coordinates_parameterizer_3}  \\
+\ccRefIdfierPage{CGAL::Parameterizer_traits_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
 
 
 \ccExample
@@ -160,6 +161,7 @@ int main(int argc,char * argv[])
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
+\ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
 

@@ -7,11 +7,12 @@
 \RCSdef{\RCSTaucsvectorRev}{$Id$}
 \RCSdefDate{\RCSTaucsvectorDate}{$Date$}
 % |
+\ccRefPageBegin
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Taucs_vector}  %% add template arg's if necessary
+\begin{ccRefClass}{Taucs_vector<T>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -126,12 +127,12 @@ Get TAUCS vector wrapped by this object.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Taucs_solver_traits}  \\
-\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits}  \\
-\ccRefIdfierPage{CGAL::Taucs_matrix}  \\
-\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix}  \\
-\ccc{OpenNL::DefaultLinearSolverTraits}  \\
-\ccc{OpenNL::SymmetricLinearSolverTraits}  \\
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_matrix<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix<T>}  \\
+\ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
 
 
 \ccExample
@@ -156,6 +157,7 @@ int main(int argc,char * argv[])
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
+\ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
 

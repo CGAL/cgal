@@ -133,16 +133,19 @@ differ by the energy that they try to minimize, i.e. by the value of the $w_{ij}
 coefficient of the A matrix, for $v_i$ and $v_j$ neighbor vertices of the mesh
 \cite{cgal:fh-survey-05}.
 
-The consequence is that most of the code of the fixed border methods
-is factorized in the \ccc{Fixed_border_parameterizer_3} class.
+The consequence is that most of the code of the fixed border methods is factorized in the
+\ccc{Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} class.
 Subclasses:
 \begin{itemize}
-\item must provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense
-\item must implement \ccc{compute_w_ij}() to compute $w_{ij}$ = (i,j) coefficient of matrix A for $v_j$ neighbor vertex of $v_i$
+\item must provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} 
+      template parameters that make sense
+\item must implement \ccc{compute_w_ij}() to compute $w_{ij}$ = (i,j) coefficient 
+      of matrix A for $v_j$ neighbor vertex of $v_i$
 \item may implement an optimized version of \ccc{is_one_to_one_mapping}()
 \end{itemize}
 
-See \ccc{Barycentric_mapping_parameterizer_3} class as an example.
+See \ccc{Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} 
+class as an example.
 
 
 \subsection{Border Parameterizations}
@@ -183,8 +186,8 @@ The current design of this package uses the second option, which is simpler.
 Of course, we may decide to switch to the first one to reach a deeper integration
 of CGAL with Boost.
 
-Point 3) is solved by class \ccc{Parameterization_mesh_patch_3}, which takes care
-of virtually {\em cutting}
+Point 3) is solved by class \ccc{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}, 
+which takes care of virtually {\em cutting}
 a patch in a \ccc{ParameterizationPatchableMesh_3} mesh, to make it appear as a topological disk
 with a \ccc{ParameterizationMesh_3} interface.
 \ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3} and adds

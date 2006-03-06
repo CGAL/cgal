@@ -14,13 +14,13 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
 
 \item OpenNL \cite{cgal:l-nmdgp-05} is shipped with \cgal. This is the default solver:
 
-\ccc{OpenNL::DefaultLinearSolverTraits}  \\
-\ccc{OpenNL::SymmetricLinearSolverTraits}  \\
+\ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
 
 \item {\sc Taucs} is a state-of-the-art direct solver for sparse symmetric matrices.
 
-\ccc{CGAL::Taucs_solver_traits}  \\
-\ccc{CGAL::Taucs_symmetric_solver_traits}  \\
+\ccc{CGAL::Taucs_solver_traits<T>}  \\
+\ccc{CGAL::Taucs_symmetric_solver_traits<T>}  \\
 
 \item SuperLU is a state-of-the-art direct solver for sparse unsymmetric matrices.
 

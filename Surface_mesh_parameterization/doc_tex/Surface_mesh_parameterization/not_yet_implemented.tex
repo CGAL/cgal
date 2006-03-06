@@ -12,13 +12,14 @@ future:
     \item Add to OpenNL a BICGSTAB and a Conjugate Gradient solvers
     with Jacobi preconditioner, to increase speed and support larger systems.
 
-    \item \ccc{Fixed_border_parameterizer_3} should remove border vertices from
+    \item \ccc{Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} 
+    should remove border vertices from
     the linear systems, in order to have a symmetric definite positive matrix
     for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 
-    \item \ccc{Taucs_matrix} must reallocate the array of non null elements when it's full.
+    \item \ccc{Taucs_matrix<T>} must reallocate the array of non null elements when it's full.
 
-    \item Filling a \ccc{Taucs_matrix} by lines is very slow. We must optimize this code.
+    \item Filling a \ccc{Taucs_matrix<T>} by lines is very slow. We must optimize this code.
 
     \item Add traits class for SuperLU solver.
 
@@ -50,7 +51,7 @@ Data Structure enriched with 3D points.
 
     \begin{itemize}
 
-    \item Add to \ccc{SparseLinearAlgebraTraits_d}, \ccc{Taucs_symmetric_solver_traits}
+    \item Add to \ccc{SparseLinearAlgebraTraits_d}, \ccc{Taucs_symmetric_solver_traits<T>}
     and SuperLU traits class
     the ability to solve linear systems in the least squares sense. Then, access to
     the solver via the concept interface instead of calls specific to OpenNL.

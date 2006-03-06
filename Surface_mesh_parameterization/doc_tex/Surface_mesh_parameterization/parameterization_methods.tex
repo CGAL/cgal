@@ -32,7 +32,7 @@ classes to achieve this goal are described in Section
 
 \subsubsection{Tutte Barycentric Mapping}
 
-\ccc{CGAL::Barycentric_mapping_parameterizer_3}  \\
+\ccc{CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
 
 The Barycentric Mapping parameterization method has been introduced by
 Tutte~\cite{t-hdg-63}. In parameter space, each vertex is
@@ -67,7 +67,7 @@ distortion.
 
 \subsubsection{Discrete Conformal Map}
 
-\ccc{CGAL::Discrete_conformal_map_parameterizer_3}  \\
+\ccc{CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
 
 Discrete Conformal Map parameterization has been introduced by Eck et
 al. to the graphics community~\cite{cgal:eddhls-maam-95}. It attempts to
@@ -109,7 +109,7 @@ solvers (x s for the example shown).
 
 \subsubsection{Floater Mean Value Coordinates}
 
-\ccc{CGAL::Mean_value_coordinates_parameterizer_3}  \\
+\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
 
 The Mean Value Coordinates parameterization method has been introduced
 by Floater~\cite{cgal:f-mvc-03}. Each vertex in parameter space is
@@ -140,7 +140,7 @@ same for both systems) is asymmetric.
 
 \subsubsection{Discrete Authalic parameterization}
 
-\ccc{CGAL::Discrete_authalic_parameterizer_3}  \\
+\ccc{CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
 
 The Discrete Authalic parameterization method has been introduced by
 Desbrun, Meyer and Alliez~\cite{cgal:dma-ipsm-02}.  It corresponds to
@@ -198,17 +198,17 @@ arc-length parameterization being used by default.
 
 \end{itemize}
 
-\ccc{CGAL::Circular_border_arc_length_parameterizer_3}  \\
-\ccc{CGAL::Circular_border_uniform_parameterizer_3}  \\
-\ccc{CGAL::Square_border_arc_length_parameterizer_3}  \\
-\ccc{CGAL::Square_border_uniform_parameterizer_3}  \\
+\ccc{CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccc{CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccc{CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccc{CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
 
 
 \subsection{Free Border Surface Parameterizations}
 
 \subsubsection{Least Squares Conformal Maps}
 
-\ccc{CGAL::LSCM_parameterizer_3}  \\
+\ccc{CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
 
 The Least Squares Conformal Maps (LSCM) parameterization method has
 been introduced by L\'evy et al.~\cite{cgal:lprm-lscm-02}. It
@@ -253,7 +253,7 @@ positive, thus can be efficiently solved.
 
 \subsubsection{Border Parameterizations for Free Methods}
 
-\ccc{CGAL::Two_vertices_parameterizer_3}  \\
+\ccc{CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>}  \\
 
 The associated Border Parameterization method defines only two constraints
 (the pinned vertices). They have to be on the specified border.
