@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
@@ -53,7 +52,7 @@ int main(int argc,char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) 
+    if(!stream)
     {
         std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -62,21 +61,21 @@ int main(int argc,char * argv[])
     stream >> mesh;
 
     //***************************************
-    // Create mesh adaptor
-    // Note: parameterization methods support only
+    // Create Polyhedron adaptor
+    // Note: no cutting => we support only
     // meshes that are topological disks
     //***************************************
 
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>         
+    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                             Parameterization_polyhedron_adaptor;
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     //***************************************
     // Floater Mean Value Coordinates parameterization
+    // (defaults are circular border and OpenNL solver)
     //***************************************
 
-	// Type that defines the error codes
+    // Type that defines the error codes
     typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor>
                                             Parameterizer;
 

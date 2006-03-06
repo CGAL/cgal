@@ -241,57 +241,48 @@ The associated Border Parameterization method defines only two constraints
 
 \subsection{Discrete Authalic Parameterization Example}
 
-The following C++ code computes a Discrete Authalic parameterization
-to a \ccc{Polyhedron_3} mesh:
+\ccc{Authalic_parameterization.C} computes a Discrete Authalic parameterization
+over a \ccc{Polyhedron_3} mesh. 
+
+The differences with the first example \ccc{Simple_parameterization.C} are:
 
 \begin{ccExampleCode}
 
-// CGAL kernel
-typedef CGAL::Cartesian<double>                         Kernel;
+#include <CGAL/Discrete_authalic_parameterizer_3.h>
 
-// Mesh true type and parameterization adaptors
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
-                                                        Parameterization_polyhedron_adaptor;
+...
 
+//***************************************
 // Discrete Authalic Parameterization
+//***************************************
+
 typedef CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor>
-                                                        Parameterizer;
+                                                    Parameterizer;
 
-int main(int argc,char * argv[])
-{
-    Polyhedron mesh;
-    ...
+Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
 
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // The mesh must be a topological disk
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
-
-    // Discrete Authalic Parameterization
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
-    ...
-}
+...
 
 \end{ccExampleCode}
-
-The complete example is available in
-\ccc{Authalic_parameterization.C}.
 
 
 \subsection{Square Border Arc Length Parameterization Example}
 
-The following C++ code computes a Floater Mean Value Coordinates
-parameterization with a Square Border Arc Length parameterization:
+\ccc{Square_border_parameterization.C} computes a Floater Mean Value Coordinates
+parameterization with a Square Border Arc Length parameterization.
+
+The differences with the first example \ccc{Simple_parameterization.C} are:
 
 \begin{ccExampleCode}
 
-// CGAL kernel
-typedef CGAL::Cartesian<double>                         Kernel;
+#include <CGAL/Square_border_parameterizer_3.h>
 
-// Mesh true type and parameterization adaptors
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
-                                                        Parameterization_polyhedron_adaptor;
+...
+
+//***************************************
+// Floater Mean Value Coordinates parameterization
+// with square border
+//***************************************
 
 // Square border parameterizer
 typedef CGAL::Square_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
@@ -299,24 +290,12 @@ typedef CGAL::Square_border_arc_length_parameterizer_3<Parameterization_polyhedr
 
 // Floater Mean Value Coordinates parameterizer with square border
 typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
-                                                     Border_parameterizer>
-                                                        Parameterizer;
+                                                        Border_parameterizer>
+                                                    Parameterizer;
 
-int main(int argc,char * argv[])
-{
-    Polyhedron mesh;
-    ...
+Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
 
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // The mesh must be a topological disk
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
-
-    // Floater Mean Value Coordinates parameterization
-    // with a Square Border Arc Length Parameterization
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
-    ...
-}
+...
 
 \end{ccExampleCode}
 
-See the complete example \ccc{Square_border_parameterization.C}.

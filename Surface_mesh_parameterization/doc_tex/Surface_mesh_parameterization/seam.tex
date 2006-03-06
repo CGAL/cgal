@@ -31,7 +31,7 @@ solvers.
 \ccc{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}
 class is responsible for virtually
 {\em cutting} a patch to a \ccc{ParameterizationPatchableMesh_3} mesh,
-to make it similar ffromt he interface point of view to a topological
+to make it similar (from the interface point of view) to a topological
 disk with a \ccc{ParameterizationMesh_3} interface.
 
 \ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3},
@@ -48,63 +48,8 @@ The \ccc{ParameterizationMesh_3} interface with the Polyhedron is also model of
 
 \subsection{Cutting a Mesh Example}
 
-The code below virtually {\em cuts} a \ccc{Polyhedron_3} mesh to make
-it a topological disk, then applies the default parameterization:
+\ccc{Mesh_cutting_parameterization.C} virtually {\em cuts} a \ccc{Polyhedron_3} mesh
+to make it a topological disk, then applies the default parameterization:
 
-\begin{ccExampleCode}
-
-// CGAL kernel
-typedef CGAL::Cartesian<double>                             Kernel;
-
-// Mesh true type and parameterization adaptors
-typedef CGAL::Polyhedron_3<Kernel>                          Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
-                                                            Parameterization_polyhedron_adaptor;
-typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
-                                                            Mesh_patch_polyhedron;
-
-// Parameterizers base class for this kind of mesh
-typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
-
-// Type describing a border or seam as a vertex list
-typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
-                                                            Seam;
-
-// If the mesh is a topological disk, extract its longest border,
-// else compute a very simple cut to make it homeomorphic to a disk.
-// Return the border/seam (empty on error)
-static Seam cut_mesh(Parameterization_polyhedron_adaptor* mesh_adaptor)
-{
-    // To be implemented by package user
-    ...
-}
-
-int main(int argc,char * argv[])
-{
-    Polyhedron mesh;
-    ...
-
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
-
-    // The parameterization methods support only meshes that
-    // are topological disks => we need to compute a "cutting" of the mesh
-    // that makes it it homeomorphic to a disk
-    Seam seam = cut_mesh(&mesh_adaptor);
-
-    // Create adaptor that virtually "cuts" the mesh following the 'seam' path
-    Mesh_patch_polyhedron   mesh_patch(&mesh_adaptor,
-                                       seam.begin(),
-                                       seam.end());
-
-    // Floater Mean Value Coordinates parameterization
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_patch);
-    ...
-}
-
-\end{ccExampleCode}
-
-See the complete example in \ccc{Mesh_cutting_parameterization.C}
-example.
-
+\ccIncludeExampleCode{Surface_mesh_parameterization/Mesh_cutting_parameterization.C}
 

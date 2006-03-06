@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
@@ -23,14 +22,12 @@
 typedef CGAL::Cartesian<double>             Kernel;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 
-// Mesh adaptors
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>         
+// Polyhedron adaptor
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                             Parameterization_polyhedron_adaptor;
-typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
-                                            Mesh_patch_polyhedron;
 
 // Type describing a border or seam as a vertex list
-typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>   
+typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
                                             Seam;
 
 
@@ -42,9 +39,7 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 // else compute a very simple cut to make it homeomorphic to a disk.
 // Return the border of this region (empty on error)
 //
-// CAUTION:
-// This method is provided "as is". It is very buggy and simply part of this example.
-// Developers using this package should implement a more robust cut algorithm!
+// CAUTION: this cutting algorithm is very naive. Write your own!
 static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
 {
     // Helper class to compute genus or extract borders
@@ -53,7 +48,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
 
     Seam seam;              // returned list
 
-    // Get refererence to Polyhedron_3 mesh
+    // Get reference to Polyhedron_3 mesh
     Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
 
     // Extract mesh borders and compute genus
@@ -126,7 +121,7 @@ int main(int argc,char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) 
+    if(!stream)
     {
         std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -135,11 +130,14 @@ int main(int argc,char * argv[])
     stream >> mesh;
 
     //***************************************
-    // Create mesh adaptor
+    // Create Polyhedron adaptor
     //***************************************
 
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
+
+    //***************************************
+    // Virtually cut mesh
+    //***************************************
 
     // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
@@ -147,11 +145,13 @@ int main(int argc,char * argv[])
     Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
-        fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
+        std::cerr << "FATAL ERROR: an unexpected error occurred while cutting the shape" << std::endl;
         return EXIT_FAILURE;
     }
 
-    // Create adaptor that virtually "cuts" the mesh following the 'seam' path
+    // Create a second adaptor that virtually "cuts" the mesh following the 'seam' path
+    typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
+                                            Mesh_patch_polyhedron;
     Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
 
     //***************************************

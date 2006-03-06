@@ -13,15 +13,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
 // Private types
 // ----------------------------------------------------------------------------
 
-typedef CGAL::Cartesian<double>                         Kernel;
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
+typedef CGAL::Cartesian<double>             Kernel;
+typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 
 
 // ----------------------------------------------------------------------------
@@ -63,18 +62,18 @@ int main(int argc,char * argv[])
     stream >> mesh;
 
     //***************************************
-    // Create mesh adaptor
-    // Note: parameterization methods support only
+    // Create Polyhedron adaptor
+    // Note: no cutting => we support only
     // meshes that are topological disks
     //***************************************
 
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
-                                                        Parameterization_polyhedron_adaptor;
+    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
+                                            Parameterization_polyhedron_adaptor;
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     //***************************************
     // Discrete Authalic Parameterization
+    // (defaults are circular border and OpenNL solver)
     //***************************************
 
     typedef CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor>

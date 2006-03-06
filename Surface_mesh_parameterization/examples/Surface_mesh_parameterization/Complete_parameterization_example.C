@@ -20,25 +20,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
 // Private types
 // ----------------------------------------------------------------------------
 
-typedef CGAL::Cartesian<double>                         Kernel;
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
+typedef CGAL::Cartesian<double>             Kernel;
+typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 
-// Mesh adaptors
+// Polyhedron adaptor
 typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
-                                                        Parameterization_polyhedron_adaptor;
-typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
-                                                        Mesh_patch_polyhedron;
+                                            Parameterization_polyhedron_adaptor;
 
 // Type describing a border or seam as a vertex list
 typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
-                                                        Seam;
+                                            Seam;
 
 
 // ----------------------------------------------------------------------------
@@ -49,9 +46,7 @@ typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
 // else compute a very simple cut to make it homeomorphic to a disk.
 // Return the border of this region (empty on error)
 //
-// CAUTION:
-// This method is provided "as is". It is very buggy and simply part of this example.
-// Developers using this package should implement a more robust cut algorithm!
+// CAUTION: this cutting algorithm is very naive. Write your own!
 static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
 {
     // Helper class to compute genus or extract borders
@@ -101,73 +96,82 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
     return seam;
 }
 
-// Dump parameterized mesh to a Wavefront OBJ file
-// v x y z
-// f 1 2 3 4 (1-based)
-//
-// Implementation note: the UV is meaningless for a NON parameterized halfedge
-static bool write_file_obj(Parameterization_polyhedron_adaptor& mesh_adaptor,
-                           const char *pFilename)
+// Dump parameterized mesh to an eps file
+static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adaptor,
+                           const char *pFilename,
+                           double scale = 500.0)
 {
-    Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
-    assert(pFilename != NULL);
+    const Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
 
     std::ofstream out(pFilename);
     if(!out)
         return false;
     CGAL::set_ascii_mode(out);
 
-    // Index all mesh vertices following the order of vertices_begin() iterator
-    Polyhedron::Vertex_const_iterator pVertex;
-    unsigned int i = 0;
-    for(pVertex = mesh.vertices_begin(); pVertex != mesh.vertices_end(); pVertex++)
-        mesh_adaptor.info(pVertex)->index(i++);
-
-    // Index all mesh half edges following the order of halfedges_begin() iterator
+    // compute bounding box
+    double xmin,xmax,ymin,ymax;
+    xmin = ymin = xmax = ymax = 0;
     Polyhedron::Halfedge_const_iterator pHalfedge;
-    i = 0;
-    for(pHalfedge = mesh.halfedges_begin(); pHalfedge != mesh.halfedges_end(); pHalfedge++)
-        mesh_adaptor.info(pHalfedge)->index(i++);
-
-    // write the name of material file
-    out <<  "mtllib parameterization.mtl" << std::endl ;
-
-    // output coordinates
-    out <<  "# vertices" << std::endl ;
-    for(pVertex = mesh.vertices_begin(); pVertex != mesh.vertices_end(); pVertex++)
-        out << "v " << pVertex->point().x() << " "
-                    << pVertex->point().y() << " "
-                    << pVertex->point().z() << std::endl;
-
-    // Write UVs (1 UV / halfedge)
-    out <<  "# uv coordinates" << std::endl ;
-    for(pHalfedge = mesh.halfedges_begin(); pHalfedge != mesh.halfedges_end(); pHalfedge++)
+    for (pHalfedge = mesh.halfedges_begin();
+         pHalfedge != mesh.halfedges_end();
+         pHalfedge++)
     {
-        Parameterization_polyhedron_adaptor::Halfedge_info* he_info = mesh_adaptor.info(pHalfedge);
-        if (he_info->is_parameterized())
-            out << "vt " << he_info->uv().x() << " " << he_info->uv().y() << std::endl;
-        else
-            out << "vt " << 0.0 << " " << 0.0 << std::endl;
+        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
+        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
+        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
+        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
+        xmin = std::min(xmin,x1);
+        xmin = std::min(xmin,x2);
+        xmax = std::max(xmax,x1);
+        xmax = std::max(xmax,x2);
+        ymax = std::max(ymax,y1);
+        ymax = std::max(ymax,y2);
+        ymin = std::min(ymin,y1);
+        ymin = std::min(ymin,y2);
     }
 
-    // Write facets using the unique material # 1
-    out << "# facets" << std::endl;
-    out << "usemtl Mat_1" << std::endl;
-    Polyhedron::Facet_const_iterator pFacet;
-    for(pFacet = mesh.facets_begin(); pFacet != mesh.facets_end(); pFacet++)
+    out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;
+    out << "%%BoundingBox: " << int(xmin+0.5) << " "
+                                << int(ymin+0.5) << " "
+                                << int(xmax+0.5) << " "
+                                << int(ymax+0.5) << std::endl;
+    out << "%%HiResBoundingBox: " << xmin << " "
+                                    << ymin << " "
+                                    << xmax << " "
+                                    << ymax << std::endl;
+    out << "%%EndComments" << std::endl;
+    out << "gsave" << std::endl;
+    out << "0.1 setlinewidth" << std::endl;
+
+    // color macros
+    out << std::endl;
+    out << "% RGB color command - r g b C" << std::endl;
+    out << "/C { setrgbcolor } bind def" << std::endl;
+    out << "/white { 1 1 1 C } bind def" << std::endl;
+    out << "/black { 0 0 0 C } bind def" << std::endl;
+
+    // edge macro -> E
+    out << std::endl;
+    out << "% Black stroke - x1 y1 x2 y2 E" << std::endl;
+    out << "/E {moveto lineto stroke} bind def" << std::endl;
+    out << "black" << std::endl << std::endl;
+
+    // for each halfedge
+    for (pHalfedge = mesh.halfedges_begin();
+         pHalfedge != mesh.halfedges_end();
+         pHalfedge++)
     {
-        Polyhedron::Halfedge_around_facet_const_circulator h = pFacet->facet_begin();
-        out << "f";
-        do {
-            Parameterization_polyhedron_adaptor::Halfedge_info* he_info  = mesh_adaptor.info(h);
-            Parameterization_polyhedron_adaptor::Vertex_info*   vtx_info = mesh_adaptor.info(h->vertex());
-            out << " " << vtx_info->index()+1;
-            if (he_info->is_parameterized())
-                out <<  "/" << he_info->index()+1;
-        }
-        while(++h != pFacet->facet_begin());
-        out << std::endl;
+        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
+        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
+        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
+        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
+        out << x1 << " " << y1 << " " << x2 << " " << y2 << " E" << std::endl;
     }
+
+    /* Emit EPS trailer. */
+    out << "grestore" << std::endl;
+    out << std::endl;
+    out << "showpage" << std::endl;
 
     return true;
 }
@@ -184,7 +188,7 @@ int main(int argc,char * argv[])
     std::cerr << "  Square border" << std::endl;
     std::cerr << "  TAUCS solver" << std::endl;
     std::cerr << "  Very simple cut if model is not a topological disk" << std::endl;
-    std::cerr << "  Output: OBJ" << std::endl;
+    std::cerr << "  Output: EPS" << std::endl;
 
     //***************************************
     // decode parameters
@@ -192,7 +196,7 @@ int main(int argc,char * argv[])
 
     if (argc-1 != 2)
     {
-        std::cerr << "Usage: " << argv[0] << " input_file.off output_file.obj" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " input_file.off output_file.eps" << std::endl;
         return(EXIT_FAILURE);
     }
 
@@ -215,11 +219,14 @@ int main(int argc,char * argv[])
     stream >> mesh;
 
     //***************************************
-    // Create mesh adaptors
+    // Create Polyhedron adaptor
     //***************************************
 
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
+
+    //***************************************
+    // Virtually cut mesh
+    //***************************************
 
     // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
@@ -227,11 +234,13 @@ int main(int argc,char * argv[])
     Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
-        fprintf(stderr, "\nFATAL ERROR: an unexpected error occurred while cutting the shape!\n\n");
+        std::cerr << "FATAL ERROR: an unexpected error occurred while cutting the shape" << std::endl;
         return EXIT_FAILURE;
     }
 
-    // Create adaptor that virtually "cuts" the mesh following the 'seam' path
+    // Create a second adaptor that virtually "cuts" the mesh following the 'seam' path
+    typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
+                                            Mesh_patch_polyhedron;
     Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
 
     //***************************************
@@ -259,10 +268,10 @@ int main(int argc,char * argv[])
     // Output
     //***************************************
 
-    // Write Wavefront OBJ file
+    // Write Postscript file
     if (err == Parameterizer::OK)
     {
-        if ( ! write_file_obj(mesh_adaptor, output_filename) )
+        if ( ! write_file_eps(mesh_adaptor, output_filename) )
         {
             std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
             return EXIT_FAILURE;

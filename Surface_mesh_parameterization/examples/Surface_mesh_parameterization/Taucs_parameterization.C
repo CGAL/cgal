@@ -17,105 +17,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
 // Private types
 // ----------------------------------------------------------------------------
 
-typedef CGAL::Cartesian<double>                         Kernel;
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-
-// Mesh adaptor
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
-                                                        Parameterization_polyhedron_adaptor;
-
-
-// ----------------------------------------------------------------------------
-// Private functions
-// ----------------------------------------------------------------------------
-
-// Dump parameterized mesh to an eps file
-static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adaptor,
-                           const char *pFilename,
-                           double scale = 500.0)
-{
-    const Polyhedron& mesh = mesh_adaptor.get_adapted_mesh();
-    assert(pFilename != NULL);
-
-    std::ofstream out(pFilename);
-    if(!out)
-        return false;
-    CGAL::set_ascii_mode(out);
-
-    // compute bounding box
-    double xmin,xmax,ymin,ymax;
-    xmin = ymin = xmax = ymax = 0;
-    Polyhedron::Halfedge_const_iterator pHalfedge;
-    for (pHalfedge = mesh.halfedges_begin();
-         pHalfedge != mesh.halfedges_end();
-         pHalfedge++)
-    {
-        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
-        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
-        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
-        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
-        xmin = std::min(xmin,x1);
-        xmin = std::min(xmin,x2);
-        xmax = std::max(xmax,x1);
-        xmax = std::max(xmax,x2);
-        ymax = std::max(ymax,y1);
-        ymax = std::max(ymax,y2);
-        ymin = std::min(ymin,y1);
-        ymin = std::min(ymin,y2);
-    }
-
-    out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;
-    out << "%%BoundingBox: " << int(xmin+0.5) << " "
-                                << int(ymin+0.5) << " "
-                                << int(xmax+0.5) << " "
-                                << int(ymax+0.5) << std::endl;
-    out << "%%HiResBoundingBox: " << xmin << " "
-                                    << ymin << " "
-                                    << xmax << " "
-                                    << ymax << std::endl;
-    out << "%%EndComments" << std::endl;
-    out << "gsave" << std::endl;
-    out << "0.1 setlinewidth" << std::endl;
-
-    // color macros
-    out << std::endl;
-    out << "% RGB color command - r g b C" << std::endl;
-    out << "/C { setrgbcolor } bind def" << std::endl;
-    out << "/white { 1 1 1 C } bind def" << std::endl;
-    out << "/black { 0 0 0 C } bind def" << std::endl;
-
-    // edge macro -> E
-    out << std::endl;
-    out << "% Black stroke - x1 y1 x2 y2 E" << std::endl;
-    out << "/E {moveto lineto stroke} bind def" << std::endl;
-    out << "black" << std::endl << std::endl;
-
-    // for each halfedge
-    for (pHalfedge = mesh.halfedges_begin();
-         pHalfedge != mesh.halfedges_end();
-         pHalfedge++)
-    {
-        double x1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().x();
-        double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
-        double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
-        double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
-        out << x1 << " " << y1 << " " << x2 << " " << y2 << " E" << std::endl;
-    }
-
-    /* Emit EPS trailer. */
-    out << "grestore" << std::endl;
-    out << std::endl;
-    out << "showpage" << std::endl;
-
-    return true;
-}
+typedef CGAL::Cartesian<double>             Kernel;
+typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 
 
 // ----------------------------------------------------------------------------
@@ -128,21 +37,19 @@ int main(int argc,char * argv[])
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  Circle border" << std::endl;
     std::cerr << "  TAUCS solver" << std::endl;
-    std::cerr << "  Output: EPS" << std::endl;
 
     //***************************************
     // decode parameters
     //***************************************
 
-    if (argc-1 != 2)
+    if (argc-1 != 1)
     {
-        std::cerr << "Usage: " << argv[0] << " input_file.off output_file.eps" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " input_file.off" << std::endl;
         return(EXIT_FAILURE);
     }
 
-    // File names are:
+    // File name is:
     const char* input_filename  = argv[1];
-    const char* output_filename = argv[2];
 
     //***************************************
     // Read the mesh
@@ -159,17 +66,18 @@ int main(int argc,char * argv[])
     stream >> mesh;
 
     //***************************************
-    // Create mesh adaptor
-    // Note: parameterization methods support only
+    // Create Polyhedron adaptor
+    // Note: no cutting => we support only
     // meshes that are topological disks
     //***************************************
 
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
+    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
+                                            Parameterization_polyhedron_adaptor;
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     //***************************************
-    // Floater Mean Value Coordinates parameterizer (circular border)
-    // with TAUCS solver
+    // Floater Mean Value Coordinates parameterization
+    // (circular border) with TAUCS solver
     //***************************************
 
     // Circular border parameterizer (the default)
@@ -178,8 +86,8 @@ int main(int argc,char * argv[])
     // TAUCS solver
     typedef CGAL::Taucs_solver_traits<double>           Solver;
 
-    // Floater Mean Value Coordinates parameterizer (circular border)
-    // with TAUCS solver
+    // Floater Mean Value Coordinates parameterization
+    // (circular border) with TAUCS solver
     typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
                                                          Border_parameterizer,
                                                          Solver>
@@ -193,13 +101,18 @@ int main(int argc,char * argv[])
     // Output
     //***************************************
 
-    // Write Postscript file
     if (err == Parameterizer::OK)
     {
-        if ( ! write_file_eps(mesh_adaptor, output_filename) )
+        // Raw output: dump (u,v) pairs
+        Polyhedron::Vertex_const_iterator pVertex;
+        for (pVertex = mesh.vertices_begin();
+            pVertex != mesh.vertices_end();
+            pVertex++)
         {
-            std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
-            return EXIT_FAILURE;
+            // (u,v) pair is stored in any halfedge
+            double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
+            double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
+            std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
         }
     }
 
