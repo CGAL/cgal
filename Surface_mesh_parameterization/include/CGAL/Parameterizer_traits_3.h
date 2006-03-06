@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -55,7 +55,6 @@ public:
     ERROR_NON_TRIANGULAR_MESH,      ///< input mesh is not triangular
     ERROR_NO_SURFACE_MESH,          ///< input mesh is not a surface
     ERROR_INVALID_BORDER,           ///< parameterization requires a convex border
-    ERROR_BAD_MATRIX_CONDITIONING,  ///< result is mathematically unstable
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< cannot solve linear system
     ERROR_NO_1_TO_1_MAPPING,        ///< parameterization does not ensure a one-to-one mapping
     ERROR_NOT_ENOUGH_MEMORY,        ///< not enough memory
@@ -123,20 +122,19 @@ public:
     static const char* get_error_message(int error_code)
     {
         // Messages corresponding to Error_code list above. Must be kept in sync!
-        static const char* error_message[10] = {
+        static const char* error_message[9] = {
         "Success",
         "Input mesh is empty",
         "Input mesh is not triangular",
         "Input mesh is not a surface",
         "Parameterization requires a convex border",
-        "Result is mathematically unstable",
         "Cannot solve linear system",
         "Parameterization does not ensure a one-to-one mapping",
         "Not enough memory",
         "A method received an unexpected parameter"
         };
 
-        if(error_code > 10 || error_code < 0)
+        if(error_code > 9 || error_code < 0)
 	    return "Unknown error";
         else
 	    return error_message[error_code];

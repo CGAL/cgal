@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -37,7 +37,6 @@ public:
     ERROR_NON_TRIANGULAR_MESH,      ///< Error: input mesh is not triangular
     ERROR_NO_SURFACE_MESH,          ///< Error: input mesh is not a surface
     ERROR_INVALID_BORDER,           ///< Error: parameterization requires a convex border
-    ERROR_BAD_MATRIX_CONDITIONING,  ///< Error: result is mathematically unstable
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Error: cannot solve linear system
     ERROR_NO_1_TO_1_MAPPING,        ///< Error: parameterization does not ensure a one-to-one mapping
     ERROR_NOT_ENOUGH_MEMORY,        ///< Error: not enough memory

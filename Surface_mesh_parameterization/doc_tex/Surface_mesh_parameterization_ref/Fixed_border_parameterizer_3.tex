@@ -151,7 +151,7 @@ Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
 \ccMethod{Parameterizer_traits_3< Adaptor >::Error_code check_parameterize_postconditions (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}
 {
 Check parameterize() postconditions:\begin{itemize}
-\item {\em A$\ast$Xu = Bu} and {\em A$\ast$Xv = Bv} systems are solvable with a good conditioning.\item 3D -$>$ 2D mapping is one-to-one. \end{itemize}
+\item 3D -$>$ 2D mapping is one-to-one. \end{itemize}
 }
 \ccGlue
 \ccMethod{bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}

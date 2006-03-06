@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -151,22 +151,6 @@ public:
             // if incorrect matrix
             return false;
         }
-    }
-
-    /// Indicate if the linear system can be solved and if the matrix conditioning is good.
-    ///
-    /// Preconditions:
-    /// - A.row_dimension() == B.dimension().
-    ///
-    /// @todo Implement Taucs_symmetric_solver_traits::is_solvable() by solving the system,
-    /// then checking that | ||A*X||/||B|| - 1 | < epsilon.
-    bool is_solvable (const Matrix& A, const Vector& B)
-    {
-        // This feature is not implemented in TAUCS => we do only basic checking
-        if (A.row_dimension() != B.dimension())
-            return false;
-
-        return true;
     }
 
 private:
@@ -323,22 +307,6 @@ public:
             // if incorrect matrix
             return false;
         }
-    }
-
-    /// Indicate if the linear system can be solved and if the matrix conditioning is good.
-    ///
-    /// Preconditions:
-    /// - A.row_dimension() == B.dimension().
-    ///
-    /// @todo Implement Taucs_solver_traits::is_solvable() by solving the system,
-    /// then checking that | ||A*X||/||B|| - 1 | < epsilon.
-    bool is_solvable (const Matrix& A, const Vector& B)
-    {
-        // This feature is not implemented in TAUCS => we do only basic checking
-        if (A.row_dimension() != B.dimension())
-            return false;
-
-        return true;
     }
 
 private:

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -202,7 +202,6 @@ protected:
                                    const Vector& Xu, const Vector& Xv);
 
     /// Check parameterize() postconditions:
-    /// - "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning.
     /// - 3D -> 2D mapping is one-to-one.
     virtual Error_code check_parameterize_postconditions(const Adaptor& mesh,
                                                          const Matrix& A,
@@ -326,7 +325,7 @@ parameterize(Adaptor& mesh)
         }
     }
 #ifdef DEBUG_TRACE
-    std::cerr << "  matrix filling (" << nbVertices << " x " << nbVertices << "): " 
+    std::cerr << "  matrix filling (" << nbVertices << " x " << nbVertices << "): "
               << timer.time() << " seconds." << std::endl;
     timer.reset();
 #endif
@@ -354,7 +353,7 @@ parameterize(Adaptor& mesh)
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system (mesh, Xu, Xv);
 #ifdef DEBUG_TRACE
-    std::cerr << "  copy computed UVs to mesh :" 
+    std::cerr << "  copy computed UVs to mesh :"
               << timer.time() << " seconds." << std::endl;
     timer.reset();
 #endif
@@ -392,7 +391,7 @@ check_parameterize_preconditions(Adaptor& mesh)
     // Allways check that mesh is not empty
     if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
         status = Base::ERROR_EMPTY_MESH;
-    if (status != Base::OK) 
+    if (status != Base::OK)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
@@ -400,7 +399,7 @@ check_parameterize_preconditions(Adaptor& mesh)
         status = mesh.is_mesh_triangular() ? Base::OK                         \
                                             : Base::ERROR_NON_TRIANGULAR_MESH; \
     );
-    if (status != Base::OK) 
+    if (status != Base::OK)
         return status;
 
     // The whole package is restricted to surfaces: genus = 0,
@@ -423,7 +422,7 @@ check_parameterize_preconditions(Adaptor& mesh)
                ? Base::OK                                       \
                : Base::ERROR_INVALID_BORDER;                    \
     );
-    if (status != Base::OK) 
+    if (status != Base::OK)
         return status;
 
     return status;
@@ -538,7 +537,6 @@ set_mesh_uv_from_system(Adaptor& mesh,
 }
 
 /// Check parameterize() postconditions:
-/// - "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning.
 /// - 3D -> 2D mapping is one-to-one.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
@@ -551,30 +549,13 @@ check_parameterize_postconditions(const Adaptor& mesh,
 {
     Error_code status = Base::OK;
 
-    // Check if "A*Xu = Bu" and "A*Xv = Bv" systems
-    // are solvable with a good conditioning
-    CGAL_surface_mesh_parameterization_expensive_postcondition_code(\
-        status = get_linear_algebra_traits().is_solvable(A, Bu)     \
-               ? Base::OK                                           \
-               : Base::ERROR_BAD_MATRIX_CONDITIONING;               \
-    );
-    if (status != Base::OK) 
-        return status;
-    CGAL_surface_mesh_parameterization_expensive_postcondition_code(\
-        status = get_linear_algebra_traits().is_solvable(A, Bv)     \
-               ? Base::OK                                           \
-               : Base::ERROR_BAD_MATRIX_CONDITIONING;               \
-    );
-    if (status != Base::OK) 
-        return status;
-
     // Check if 3D -> 2D mapping is one-to-one
     CGAL_surface_mesh_parameterization_postcondition_code(  \
         status = is_one_to_one_mapping(mesh, A, Bu, Bv)     \
                ? Base::OK                                   \
                : Base::ERROR_NO_1_TO_1_MAPPING;             \
     );
-    if (status != Base::OK) 
+    if (status != Base::OK)
         return status;
 
     return status;

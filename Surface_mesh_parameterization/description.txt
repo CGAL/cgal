@@ -10,10 +10,10 @@ methods, such as Least Squares Conformal Maps, Discrete Conformal Map,
 Discrete Authalic Parameterization, Floater Mean Value Coordinates or
 Tutte Barycentric Mapping.
 
-The package proposes an interface with the Polyhedron.
+The package proposes currently an interface with CGAL Polyhedron_3 data structure.
 
 Since parameterizing meshes require efficient representation of sparse matrices
-and efficient iterative or direct linear solvers, we provide link to standard
-packages (TAUCS) and propose a separate package devoted to OpenNL
+and efficient iterative or direct linear solvers, we provide links to standard
+libraries (TAUCS) and propose a separate package devoted to OpenNL
 sparse linear solver (Levy).
 
