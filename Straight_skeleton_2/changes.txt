@@ -1,3 +1,6 @@
+ 6 March 2006 Andreas Fabri
+- Replaced \bf by \em in the definitions in the manual.
+
  3 March 2006 Andreas Fabri
 - Minor modifications in the manual
 
