@@ -73,9 +73,9 @@ coordinate type of the point class}
 
 \ccConstructor{AlphaShapeFace_2();}{default constructor.}
 \ccGlue
-\ccConstructor{AlphaShapeFace_2(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
+\ccConstructor{AlphaShapeFace_2(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle& v2);}{constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{AlphaShapeFace_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
+\ccConstructor{AlphaShapeFace_2(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle&  v2, const Face_handle& n0, const Face_handle& n1, const Face_handle& n2);} 
 {constructor setting the incident vertices and the neighboring faces.}
 
 \end{ccAdvanced}

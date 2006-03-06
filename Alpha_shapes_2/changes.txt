@@ -1,3 +1,6 @@
+6 March 2006 Andreas Fabri
+- Changed void* to Vertex_handle and Face_handle in some reference manual pages
+
 27 December 2004 Mariette
 - changed assert() to CGAL_triangulation_assertion()
 
