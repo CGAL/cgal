@@ -1,3 +1,6 @@
+6 March 2006 Andreas Fabri
+- Moved the caption of a figure
+
 9 February 2006 Andreas Fabri
 - The edge iterator now has the iterator category of the underlying container
  
