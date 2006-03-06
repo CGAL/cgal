@@ -1,3 +1,16 @@
+06 March 2006
+- Do not call "link" for MSVC and Intel.
+- Handle spaces in file- and dirnames (more or less).
+- Complete rewrite of 3rd party lib support; this is now
+  stored in separate specfiles in config/support similar
+  to config/testfiles.
+- Default mode is to include support for as many libraries as possible.
+  (Can be switched off using the new cmdline switch --without-autofind.)
+- Forward a lot more into install.log.
+- Major cleanup.
+- QT support now requires $QTDIR to be set.
+- Custom ostag shows up in menus etc.
+
 28 February 2006 Andreas Fabri
 - Removed glut from the OPENGL_LIBS
 
