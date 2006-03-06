@@ -28,21 +28,19 @@ surfaces that are homeomorphic to a disk (models of
 implementation of all new parameterization methods based on linear
 solvers.
 
-\ccc{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>} 
+\ccc{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}
 class is responsible for virtually
 {\em cutting} a patch to a \ccc{ParameterizationPatchableMesh_3} mesh,
 to make it similar ffromt he interface point of view to a topological
 disk with a \ccc{ParameterizationMesh_3} interface.
 
-\ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3}, 
+\ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3},
 thus is a concept for a 3D surface mesh.
-\ccc{ParameterizationPatchableMesh_3} adds the ability to support patches and 
-virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability 
+\ccc{ParameterizationPatchableMesh_3} adds the ability to support patches and
+virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability
 to behave exactly as if the surface was {\em cut} following a certain path.
 
-The \ccc{ParameterizationMesh_3} interfaces with both the 2D
-Triangulation Data Structure enriched with 3D points (not yet
-implemented) and the Polyhedron are also models of
+The \ccc{ParameterizationMesh_3} interface with the Polyhedron is also model of
 \ccc{ParameterizationPatchableMesh_3}:
 
 \ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}  \\

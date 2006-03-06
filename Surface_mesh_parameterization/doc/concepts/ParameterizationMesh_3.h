@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -44,7 +44,7 @@
 /// defines an interface oriented towards topological disks.
 ///
 /// Models:
-/// - Adaptators for Polyhedron_3 and TDS_2 with 3D points are provided.
+/// - Adaptator for Polyhedron_3 is provided.
 /// - Parameterization_mesh_patch_3<M> is a model of ParameterizationMesh_3 if
 ///   M is a model of MeshAdaptorWithStream_3.
 ///

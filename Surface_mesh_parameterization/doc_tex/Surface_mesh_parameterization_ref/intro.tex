@@ -54,8 +54,6 @@ the state-of-the-art parameterization methods:
 
     \item Least Squares Conformal Maps \cite{cgal:lprm-lscm-02}.
 
-    \item Natural Conformal Map \cite{cgal:dma-ipsm-02}.
-
     \end{itemize}
 
 \end{itemize}
@@ -125,9 +123,7 @@ cut), as long as this condition is fulfilled.
 
 \end{itemize}
 
-The package proposes
-an interface with both the 2D Triangulation Data Structure enriched
-with 3D points (not yet implemented) and the Polyhedron.
+The package provides an interface with the Polyhedron.
 
 The \cgal\ \ccc{Surface_mesh_parameterization} package is loosely linked to the
 mesh data structure. Replacing it is relatively easy.
@@ -147,8 +143,7 @@ direct linear solvers, we provide an interface to several
 sparse linear solvers:
 \begin{itemize}
 \item OpenNL (Bruno L{\'e}vy) is shipped with \cgal. This is the default solver.
-\item TAUCS is a state-of-the-art direct solver for sparse symmetric matrices.
-\item SuperLU is a state-of-the-art direct solver for sparse unsymmetric matrices (not yet implemented).
+\item {\sc Taucs} is a state-of-the-art direct solver for sparse symmetric matrices.
 \end{itemize}
 
 The \cgal\ \ccc{Surface_mesh_parameterization} package is loosely linked to the
@@ -186,7 +181,6 @@ For \emph{free} border parameterizations:
 \item Postconditions:
     \begin{itemize}
     \item check one-to-one mapping.
-    \item check if the linear system was solved with a good conditioning (expensive check, not yet implemented).
     \end{itemize}
 \end{itemize}
 

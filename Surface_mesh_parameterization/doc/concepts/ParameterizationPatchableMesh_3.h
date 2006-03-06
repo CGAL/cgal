@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -40,7 +40,7 @@
 /// interface of a 3D mesh to match the interface expected by class Parameterization_mesh_patch_3.
 ///
 /// Models:
-/// Adaptators for Polyhedron_3 and TDS_2 with 3D points are provided.
+/// Adaptator for Polyhedron_3 is provided.
 
 class ParameterizationPatchableMesh_3 : public ParameterizationMesh_3
 {

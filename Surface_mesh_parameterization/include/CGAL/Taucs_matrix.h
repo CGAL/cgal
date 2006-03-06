@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -331,8 +331,7 @@ private:
         return ((Taucs_matrix<T>*)this)->find_element(i, j, false);
     }
 
-    /// Taucs_matrix cannot be copied.
-    /// (for the moment, could be implemented if needed).
+    /// Taucs_matrix cannot be copied (yet)
     Taucs_matrix(const Taucs_matrix& rhs);
     Taucs_matrix& operator=(const Taucs_matrix& rhs);
 

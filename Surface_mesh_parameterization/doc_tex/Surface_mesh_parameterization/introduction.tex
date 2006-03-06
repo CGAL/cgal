@@ -17,20 +17,20 @@ approximating surfaces and remeshing.
 
 This \cgal\ package implements some of the state-of-the-art
 surface parameterization methods, such as Least Squares Conformal Maps,
-Discrete Conformal Map, Natural Conformal Map, Discrete Authalic
+Discrete Conformal Map, Discrete Authalic
 Parameterization, Floater Mean Value Coordinates or Tutte Barycentric
 Mapping. These methods mainly distinguish by the distortion they
 minimize (angles vs areas), by the constrained border onto the
 planar domain (convex polygon vs free border) and by the guarantees
 provided in terms of bijective mapping.
 
-The package proposes an interface with both the 2D Triangulation Data
-Structure enriched with 3D points and the Polyhedron.
+The package proposes currently an interface with \cgal\ Polyhedron_3
+data structure.
 
 Since parameterizing meshes require efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
-an interface common to state-of-the-art linear solver libraries ({\sc Taucs},
-SuperLU) and propose a separate package devoted to OpenNL sparse
+an interface common to state-of-the-art linear solver libraries ({\sc Taucs}),
+and propose a separate package devoted to OpenNL sparse
 linear solver.
 
 Note that linear solvers commonly use double precision floating point

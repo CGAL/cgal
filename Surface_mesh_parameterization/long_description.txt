@@ -11,7 +11,7 @@ Parameterizing a surface amounts to finding a one-to-one mapping from a suitable
 
 2 Proposal
 
-We propose to elaborate upon a CGAL Package which implements some of the state-of-the-art surface mesh parameterization methods, such as Least Squares Conformal Maps, Discrete Conformal Map, Natural Conformal Map, Discrete Authalic Parameterization, Floater Mean Value Coordinates or Tutte Barycentric Mapping. The package will propose an interface with both the 2D Triangulation Data Structure enriched with 3D points and the Polyhedron.  Since parameterizing meshes require efficient representation of sparse matrices and efficient iterative or direct linear solvers, we plan to evaluate the standard packages or propose a separate package devoted to linear algebra.
+We propose to elaborate upon a CGAL Package which implements some of the state-of-the-art surface mesh parameterization methods, such as Least Squares Conformal Maps, Discrete Conformal Map, Discrete Authalic Parameterization, Floater Mean Value Coordinates or Tutte Barycentric Mapping. The package will propose an interface with the Polyhedron. Since parameterizing meshes require efficient representation of sparse matrices and efficient iterative or direct linear solvers, we plan to evaluate the standard packages or propose a separate package devoted to linear algebra.
 
 3 Intended Audience
 
@@ -51,11 +51,10 @@ One uv coordinate for each interior vertex, and one uv coordinate for each insta
        + Others? (e.g. inverse, centripetal).
   - Free border:
        + Least Squares Conformal Maps.
-       + Natural Conformal Map.
 
 * Constraint builder: for fixed border methods, generates a set of constraints.
 
-* Mesh data structure: it has to be interfaced with the CGAL 2D Triangulation Data Structure (enriched with 3D points) and 3D Polyhedron.
+* Mesh data structure: it has to be interfaced with 3D Polyhedron.
 * Preconditions (may be turned off):
   - assert triangle mesh (for polyhedron).
   - assert convex polygon for fixed border methods.

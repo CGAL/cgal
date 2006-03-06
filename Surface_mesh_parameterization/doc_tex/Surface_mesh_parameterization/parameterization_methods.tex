@@ -190,10 +190,6 @@ arc-length parameterization being used by default.
     corresponds to the simplest convex shape. The square border
     parameterization is commonly used for texture mapping.
 
-    \item a convex polygon.
-
-    (not yet implemented)
-
     \end{itemize}
 
 \end{itemize}
@@ -233,22 +229,6 @@ is not guaranteed by this method. It solves a (2 $\times$
         \caption{Least Squares Conformal Maps}
     \end{figure}
 \end{center}
-
-
-\subsubsection{Natural Conformal Map}
-
-(not yet implemented)
-
-The Natural Conformal Map parameterization method has been introduced
-by Desbrun et al.~\cite{cgal:dma-ipsm-02}. It extends the Discrete
-Conformal Map method by optimizing the border vertices in addition
-to the interior vertices, as already achived by the LSCM method
-described above. At least two vertices have to be constrained to
-obtain a unique solution. This method solves a (2 $\times$ \#vertices) $\times$
-\#vertices sparse linear system.  The matrix is symmetric definite
-positive, thus can be efficiently solved.
-
-% pierre: double check that it is indeed symmetric!
 
 
 \subsubsection{Border Parameterizations for Free Methods}

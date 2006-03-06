@@ -24,15 +24,6 @@
 // polyhedron_ex_parameterization -t floater -b square -s taucs -o eps mesh.off mesh.eps
 
 //----------------------------------------------------------
-// Natural Conformal Map parameterization
-// no explicitly pinned vertices
-// OpenNL solver
-// output is a eps map
-// input file is mesh.off
-//----------------------------------------------------------
-// polyhedron_ex_parameterization -t natural -s opennl -o eps mesh.off mesh.eps
-
-//----------------------------------------------------------
 // Least Squares Conformal Maps parameterization
 // two pinned vertices (automatically picked)
 // OpenNL solver
@@ -85,11 +76,11 @@ typedef Polyhedron_ex                                       Polyhedron;
 
 // Mesh adaptors
 typedef Parameterization_polyhedron_adaptor_ex              Parameterization_polyhedron_adaptor;
-typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
+typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
                                                             Mesh_patch_polyhedron;
 
 // Type describing a border or seam as a vertex list
-typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>   
+typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
                                                             Seam;
 
 
@@ -317,7 +308,6 @@ static const char *  optv[] =
     "t:type <string>", // -t or --type
     // -t    floater     -> Floater Mean Value Coordinates (default)
     //       conformal   -> Discrete Conformal Map
-    //       natural     -> Natural Conformal Map (free border)
     //       barycentric -> Tutte Barycentric Mapping (weight = 1)
     //       authalic    -> Discrete Authalic Parameterization (weak area-preserving)
     //       lscm        -> Least Squares Conformal Maps
@@ -340,7 +330,7 @@ static const char *  optv[] =
 
 // Parameters description for usage
 static const char * usage = "off-input-file [output-file]\n\
-where type is:   floater (default), conformal, natural, barycentric, authalic or lscm\n\
+where type is:   floater (default), conformal, barycentric, authalic or lscm\n\
       border is: circle (default) or square\n\
       solver is: opennl (default) or taucs\n\
       output is: eps or obj (default is no output)";
@@ -452,7 +442,7 @@ int main(int argc,char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) 
+    if(!stream)
     {
         std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -460,7 +450,7 @@ int main(int argc,char * argv[])
     Polyhedron mesh;
     stream >> mesh;
 
-    std::cerr << "Read file " << input_filename << ": " 
+    std::cerr << "Read file " << input_filename << ": "
               << task_timer.time() << " seconds "
               << "(" << mesh.size_of_facets() << " facets, "
               << mesh.size_of_vertices() << " vertices)" << std::endl;
@@ -541,20 +531,20 @@ int main(int argc,char * argv[])
         if(CGAL_CLIB_STD::strcmp(output,"eps") == 0)
         {
             // write Postscript file
-            if ( ! mesh.write_file_eps(output_filename) ) 
+            if ( ! mesh.write_file_eps(output_filename) )
             {
                 std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
                 return EXIT_FAILURE;
-            }   
+            }
         }
         else if(CGAL_CLIB_STD::strcmp(output,"obj") == 0)
         {
             // write Wavefront obj file
-            if ( ! mesh.write_file_obj(output_filename) ) 
+            if ( ! mesh.write_file_obj(output_filename) )
             {
                 std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
                 return EXIT_FAILURE;
-            }   
+            }
         }
         else
         {
@@ -562,7 +552,7 @@ int main(int argc,char * argv[])
             err = Parameterizer::ERROR_WRONG_PARAMETER;
         }
 
-        std::cerr << "Write file " << output_filename << ": " 
+        std::cerr << "Write file " << output_filename << ": "
                   << task_timer.time() << " seconds " << std::endl;
     }
 

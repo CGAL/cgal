@@ -9,8 +9,6 @@ Surface_mesh_parameterization Package: Release changes
 
     - First version of the package is finished.
       First submission to CGAL editorial board.
-      See "Not Yet Implemented" paragraph in User Manual
-      for known bugs and tasks to do quickly.
 
 0.5 (10/18/2005)
 

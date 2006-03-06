@@ -6,8 +6,8 @@ each inner vertex, while a $(u,v)$ pair is provided for each border
 halfedge (possibly a seam in the mesh). The user has to iterate over
 the corresponding mesh elements to get the result.
 
-Note: $(u,v)$ fields do not exist in CGAL \ccc{Polyhedron_3} and
-\ccc{Triangulation_data_structure_2}, thus the output traversal is specific to the way the (u,v) fields are implemented.
+Note: $(u,v)$ fields do not exist in CGAL \ccc{Polyhedron_3},
+thus the output traversal is specific to the way the (u,v) fields are implemented.
 
 \subsection{EPS Output Example}
 
@@ -24,7 +24,7 @@ typedef CGAL::Cartesian<double>                         Kernel;
 
 // Mesh true type and parameterization adaptors
 typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>     
+typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                                         Parameterization_polyhedron_adaptor;
 ...
 
