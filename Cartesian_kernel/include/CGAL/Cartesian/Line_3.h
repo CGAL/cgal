@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_LINE_3_H
 
 #include <utility>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 

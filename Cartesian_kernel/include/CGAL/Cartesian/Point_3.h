@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_POINT_3_H
 
 #include <CGAL/Threetuple.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
 

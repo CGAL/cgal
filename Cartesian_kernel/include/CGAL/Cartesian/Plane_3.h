@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_PLANE_3_H
 
 #include <CGAL/Fourtuple.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 

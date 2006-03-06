@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_DIRECTION_2_H
 
 #include <CGAL/Twotuple.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 

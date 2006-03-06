@@ -27,6 +27,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Twotuple.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 

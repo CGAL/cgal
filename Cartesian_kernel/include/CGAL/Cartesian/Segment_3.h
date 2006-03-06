@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_SEGMENT_3_H
 
 #include <CGAL/Twotuple.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 

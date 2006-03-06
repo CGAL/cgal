@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_TETRAHEDRON_3_H
 
 #include <CGAL/Fourtuple.h>
+#include <CGAL/Handle_for.h>
 #include <vector>
 #include <functional>
 

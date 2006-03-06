@@ -1,3 +1,6 @@
+6 March 2006 Sylvain Pion
+- Add missing #include <CGAL/Handle_for.h> .
+
 23 November 2005 Sylvain Pion
 - Cartesian_converter : add missing typedefs in the specialization for <K,K,C>.
 

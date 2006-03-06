@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_LINE_2_H
 
 #include <CGAL/Threetuple.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -25,6 +25,7 @@
 #define CGAL_CARTESIAN_TRIANGLE_3_H
 
 #include <CGAL/Threetuple.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 
