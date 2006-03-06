@@ -489,6 +489,7 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.eps -text
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#unset
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#unset
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#unset
+Homogeneous_kernel/changes.txt -text
 Installation/config/support/README -text
 Installation/config/support/S05-BOOST -text
 Installation/config/support/S20-GMP -text

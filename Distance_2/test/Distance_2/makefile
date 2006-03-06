@@ -15,8 +15,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
            -I../../../Cartesian_kernel/include \
-           -I../../../H2/include \
-           -I../../../H3/include \
+           -I../../../Homogeneous_kernel/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
