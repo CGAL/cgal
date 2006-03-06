@@ -125,7 +125,7 @@ int main(const int argNr,const char **args) {
 	      std::back_inserter(y));
     if (!std::equal(x.begin(), x.end(), y.begin())) {
 	std::cout 
-	  << "error in original_variables_numerator_iterator"
+	  << "error in variables_numerator_iterator"
 	  << std::endl; 
 	std::exit(2);
     }

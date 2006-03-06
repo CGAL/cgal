@@ -590,24 +590,12 @@ public:
     
     Variable_numerator_iterator
     variables_numerator_begin( ) const
-        { return Variable_numerator_iterator( O.begin(),
-                   Value_by_index( 
-				  x_O_v_i.begin(), 
-				  in_B.begin(), 
-				  x_B_O.begin(),
-				  qp_l,
-				  qp_u));}
+    { return Variable_numerator_iterator( O.begin(), Value_by_index(this));}
+				  
     
     Variable_numerator_iterator
     variables_numerator_end  ( ) const
-        { return Variable_numerator_iterator( O.end(),
-                   Value_by_index( 
-				  x_O_v_i.begin(), 
-				  in_B.begin(), 
-				  x_B_O.begin(),
-				  qp_l,
-				  qp_u));}
-
+    { return Variable_numerator_iterator( O.end(),  Value_by_index(this));}
     
     Variable_value_iterator
     variables_value_begin( ) const
@@ -1945,53 +1933,43 @@ class Value_by_index : public std::unary_function< int,
 public:
   typedef QP_solver<Rep> QP;
   typedef typename QP::ET result_type;
-  typedef typename QP::Bound_index_value_const_iterator BIt;
-  typedef typename QP::Index_const_iterator IIt;
-  typedef typename QP::Value_const_iterator VIt;
-  typedef typename QP::L_iterator LIt;
-  typedef typename QP::U_iterator UIt;
-  typedef typename QP::ET ET;
+  typedef typename QP::Is_in_standard_form Is_in_standard_form;
 
-  Value_by_index( BIt x_O_v_i_it, 
-		  IIt in_B_it, 
-		  VIt x_B_O_it, 
-		  LIt qp_l_it, 
-		  UIt qp_u_it)
-	: bound_status( x_O_v_i_it), 
-	  basic_index ( in_B_it),
-	  basic_value ( x_B_O_it),
-	  lower_bound ( qp_l_it),
-	  upper_bound ( qp_u_it),
-	  z (0)
+  Value_by_index(const QP* solver)
+    : s (solver)
     {}
 
-    result_type operator () ( int i) const
+  // returns value * denominator 
+  result_type operator () ( int i) const
     {
-      switch (bound_status[i]) {
+      CGAL_qpe_assertion( 0 <= i && i < s->qp_n );
+      if (check_tag(Is_in_standard_form()))
+	if (s->in_B[i] < 0) 
+	  return s->et0;
+	else 
+	  return s->x_B_O[s->in_B[i]];
+
+      // now we have nonstandard form
+      switch (s->x_O_v_i[i]) {
       case QP::UPPER:
-	return upper_bound[i];
+	return result_type(s->qp_u[i]) * s->d;
 	break;
       case QP::ZERO:
-	return z;
+	return s->et0;
 	break;
       case QP::LOWER:
       case QP::FIXED:
-	return lower_bound[i];
+	return result_type(s->qp_l[i]) * s->d;
 	break;
       case QP::BASIC:
-	return basic_value[basic_index[i]];
+	return s->x_B_O[s->in_B[i]];
 	break;
       default: // never reached
-	return z;
+	return s->et0;
       }
     }
 
-  BIt bound_status;
-  IIt basic_index;
-  VIt basic_value;
-  LIt lower_bound;
-  UIt upper_bound;
-  ET z;
+  const QP* s;
 };
 
 } // end namespace QP_solver_impl

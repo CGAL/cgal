@@ -362,13 +362,19 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 
 template < class Rep_ >
 bool QP_solver<Rep_>::is_solution_feasible()
-{
+{  
+  // some simple consistency checks:
+  CGAL_qpe_assertion(is_phaseII);
+
   Values lhs_col(qp_m, et0);
-  for (int i=0; i<qp_n; ++i) {
+  Variable_numerator_iterator it = variables_numerator_begin();
+  for (int i=0; i<qp_n; ++i, ++it) {
 
     // check bounds on original variables:
     const ET var = is_basic(i)? x_B_O[in_B[i]] :  // should be ET &
       nonbasic_original_variable_value(i) * d;
+    if (var != *it)
+      return false; // variables_numerator_begin() inconsistent
     if (has_finite_lower_bound(i) && var < lower_bound(i) * d ||
 	has_finite_upper_bound(i) && var > upper_bound(i) * d)
       return false;

@@ -318,6 +318,16 @@ CGAL::QP_pricing_strategy<Traits> *
   return strat;
 }
 
+// template<typename IT>
+// std::string print_IT (IT t)
+// {
+//   using std::cout;
+//   if (is_int(t)) return "int";
+//   if (is_rational(t)) return "rational";
+//   if (is_double(t)) return "double";
+//   return "unknown";
+// } 
+
 template<typename Is_linear,
 	 typename Is_symmetric,
 	 typename Has_equalities_only_and_full_rank,
