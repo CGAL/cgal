@@ -47,10 +47,10 @@ to break the cycle, the base classes for faces and vertices
 use a \ccc{void} as triangulation
 data structure parameter. Then, 
 the \ccc{Triangulation_data_structure_2}
- uses a {\it rebind}  mecanism (similar to the one specified in
+ uses a {\it rebind}  mechanism (similar to the one specified in
 \ccc{std::allocator}) in order to plug itself 
 as parameter in the face and vertex  base classes. 
-This mecanism requires that the base class  provides
+This mechanism requires that the base class  provides
 a templated nested class \ccc{Rebind_TDS} that
 itself provides 
  the subtype \ccc{Rebind_TDS<TDS2>::Other}

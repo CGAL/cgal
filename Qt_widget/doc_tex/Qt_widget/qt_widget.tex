@@ -120,14 +120,14 @@ This example has a severe drawback: when you resize the window it is
 empty, as nothing is redrawn. This style of programs makes
 only sense, if you quickly want to validate output of a geometric
 computation. As in any event driven {\sc Gui} application,
- \qt\  provides a callback mecanism so
+ \qt\  provides a callback mechanism so
 that the window system can update the drawing
 whenever necessary. This is the topic of the next example.
 
 \subsection{Example: Signals and Slots}
 
 This example is slightly more involved and uses  the
-signal/slots mecanism of \qt\ .
+signal/slots mechanism of \qt\ .
 
 The main widget shows a
 Delaunay triangulation. Every time the mouse button is pressed over 
@@ -143,7 +143,7 @@ Furthermore, the drawing is  updated every time the window is resized.
 For example, when a user clicks on a menu item or on a toolbar button,
 the application executes some codes. The programmer of an
 application has to be able to relate events to the relevant code.
-\qt\ provide for that the signals/slots mecanism:
+\qt\ provide for that the signals/slots mechanism:
 \begin{description}
 \item{\bf Signals.}
 Each \qt\ widget declares a set of signals which, using the
@@ -180,7 +180,7 @@ file that contains the class declaration.
 
 \ccc{moc} is a pre-compiler that produces the \emph{meta object} code
 of each class that uses the macro {\sc Q\_object}. This \emph{meta
-  object} code is needed by the signal/slot mecanism. There are
+  object} code is needed by the signal/slot mechanism. There are
 several methods to compile the outputs of \ccc{moc}. In CGAL, we have
 chosen to include the outputs of \ccc{moc} in a source files. See the
 \qt\ documentation on \ccc{moc} for other possibilities.

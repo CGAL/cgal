@@ -1275,8 +1275,8 @@ the triangulation data structure, for instance a handle to a vertex,
 and he was lead to use himself 
 \ccc{void*}  pointers).
 The new solution to resolve the template dependency
-is based on a rebind mechanism similar to the mecanism used in the 
-standard allocator class std::allocator. The rebind mecanism
+is based on a rebind mechanism similar to the mechanism used in the 
+standard allocator class std::allocator. The rebind mechanism
 is described in Section~\ref{2D_TDS_default} 
 of Chapter~\ref{Chapter_2D_Triangulation_Data_Structure}.
 For now, we will just notice that the design
@@ -1284,7 +1284,7 @@ requires
 the existence in the vertex and face base classes 
 of a nested template class
 \ccc{Rebind_TDS} defining a type \ccc{Other} used by
-the rebinding mecanism.
+the rebinding mechanism.
 
 
 The two following examples show how the user
