@@ -12,7 +12,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Taucs_symmetric_matrix<T>} 
+\begin{ccRefClass}{Taucs_symmetric_matrix<T>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -77,7 +77,7 @@ struct Taucs\_symmetric\_matrix;
 
 \ccConstructor{Taucs_symmetric_matrix (int dim);}
 {
-Create a square SYMMETRIC matrix initialized with zeros. The max number of non 0 elements in the matrix is automatically computed. 
+Create a square SYMMETRIC matrix initialized with zeros. The max number of non 0 elements in the matrix is automatically computed.
 }
 \ccGlue
 \begin{description}
@@ -119,26 +119,6 @@ Create a square SYMMETRIC matrix initialized with zeros.
 \ccRefIdfierPage{CGAL::Taucs_vector<T>}  \\
 \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
 \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
-
-
-\ccExample
-
-A Taucs\_matrix object can be used as a 2D array of floating points.
-Use get\_coef() and set\_coef() to access to the matrix elements.
-
-\begin{ccExampleCode}
-
-typedef CGAL::Taucs_symmetric_matrix<double>  Matrix;
-
-int main()
-{
-    Matrix m(100);                  // 100 x 100 elements
-    m.set_coef(0, 0, 4.3);
-    double val = m.get_coef(0, 0);
-    ...
-}
-
-\end{ccExampleCode}
 
 
 \end{ccRefClass}

@@ -165,26 +165,6 @@ Get TAUCS matrix wrapped by this object.
 \ccRefIdfierPage{CGAL::Taucs_vector<T>}  \\
 
 
-\ccExample
-
-A Taucs\_matrix object can be used as a 2D array of floating points.
-Use get\_coef() and set\_coef() to access to the matrix elements.
-
-\begin{ccExampleCode}
-
-typedef CGAL::Taucs_matrix<double>  Matrix;
-
-int main()
-{
-    Matrix m(100, 50);              // 100 x 50 elements
-    m.set_coef(0, 0, 4.3);
-    double val = m.get_coef(0, 0);
-    ...
-}
-
-\end{ccExampleCode}
-
-
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

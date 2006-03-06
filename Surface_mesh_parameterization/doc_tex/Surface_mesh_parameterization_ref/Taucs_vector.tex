@@ -135,24 +135,6 @@ Get TAUCS vector wrapped by this object.
 \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
 
 
-\ccExample
-
-A Taucs\_vector object can be used as any array of floating points:
-
-\begin{ccExampleCode}
-
-typedef CGAL::Taucs_vector<double>  Vector;
-
-int main(int argc,char * argv[])
-{
-    Vector v(100);  // 100 elements
-    v[0] = 4.3;
-    ...
-}
-
-\end{ccExampleCode}
-
-
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

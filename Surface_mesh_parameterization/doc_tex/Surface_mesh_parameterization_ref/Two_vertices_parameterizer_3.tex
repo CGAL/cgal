@@ -124,39 +124,6 @@ Indicate if border's shape is convex. Meaningless for free border parameterizati
 \ccRefIdfierPage{CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
 
 
-\ccExample
-
-\begin{ccExampleCode}
-
-// CGAL kernel
-typedef CGAL::Cartesian<double>                         Kernel;
-
-// Mesh true type and parameterization adaptor
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
-                                                        Parameterization_polyhedron_adaptor;
-
-// Least Squares Conformal Maps parameterization with
-// the default border parameterization: Two_vertices_parameterizer_3
-typedef CGAL::LSCM_parameterizer_3<Parameterization_polyhedron_adaptor>
-                                                        Parameterizer;
-
-int main(int argc,char * argv[])
-{
-    Polyhedron mesh;
-    ...
-
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // The mesh must be a topological disk
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
-
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
-    ...
-}
-
-\end{ccExampleCode}
-
-
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

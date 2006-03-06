@@ -12,7 +12,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Taucs_symmetric_solver_traits<T>} 
+\begin{ccRefClass}{Taucs_symmetric_solver_traits<T>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -86,7 +86,7 @@ class Taucs\_symmetric\_solver\_traits;
 
 \ccConstructor{Taucs_symmetric_solver_traits (const char * options[] = NULL, const void * arguments[] = NULL);}
 {
-Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See taucs\_linsolve() documentation for the meaning of the 'options' and 'arguments' parameters. 
+Create a TAUCS sparse linear solver for SYMMETRIC DEFINIE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See taucs\_linsolve() documentation for the meaning of the 'options' and 'arguments' parameters.
 }
 \ccGlue
 \begin{description}
@@ -133,12 +133,6 @@ Preconditions:\begin{itemize}
 \ccRefIdfierPage{CGAL::Taucs_vector<T>}  \\
 \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
 \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
-
-
-\ccExample
-
-Currently, the \ccc{Surface_mesh_parameterization} package creates non symmetric square linear
-systems, thus no example is available.
 
 
 \end{ccRefClass}

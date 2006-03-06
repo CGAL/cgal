@@ -125,38 +125,6 @@ Theorem: 1 to 1 mapping is guaranteed if all w\_ij coefficients are $>$ 0 (for j
 \ccRefIdfierPage{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
 
 
-\ccExample
-
-\begin{ccExampleCode}
-
-// CGAL kernel
-typedef CGAL::Cartesian<double>                         Kernel;
-
-// Mesh true type and parameterization adaptor
-typedef CGAL::Polyhedron_3<Kernel>                      Polyhedron;
-typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
-                                                        Parameterization_polyhedron_adaptor;
-
-// Tutte barycentric mapping
-typedef CGAL::Barycentric_mapping_parameterizer_3<Parameterization_polyhedron_adaptor>
-                                                        Parameterizer;
-
-int main(int argc,char * argv[])
-{
-    Polyhedron mesh;
-    ...
-
-    // The Surface_mesh_parameterization package needs an adaptor to handle Polyhedron_3 meshes
-    // The mesh must be a topological disk
-    Parameterization_polyhedron_adaptor mesh_adaptor(&mesh);
-
-    Parameterizer::Error_code err = CGAL::parameterize(&mesh_adaptor, Parameterizer());
-    ...
-}
-
-\end{ccExampleCode}
-
-
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+
