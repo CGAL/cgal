@@ -27,24 +27,27 @@ set  of a function $f : \R^3 \longrightarrow \R$.
 The library provides a partial specialization
 of the  surface mesher traits generator~:
 \ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,Func > >}
-that provides a surface mesh traits for this type of surfaces.
+that provides a model of \ccc{SurfaceMeshTraits_3} for this type of surfaces.
 
 
-The parameter \ccc{Traits} is a traits class providing 
-a type \ccc{Point_3} and a numerical type \ccc{FT}.
-This parameter  must be instantiated by 
-a model of the concept \ccc{ImplicitSurfaceTraits}.
-The \ccc{Point_3} type provided by the traits class  \ccc{Traits}
-has to match  the \ccc{Point_3} type of the
-triangulation of  type \ccc{C2t3::Triangulation_3} emmbedding
-the two dimensional complex.
+The parameter \ccc{Traits} is a traits class 
+that has to be implemented with a model of 
+\ccc{ImplicitSurfaceTraits_3}.
+Actually, this traits class implements the oracle needed by the
+surface mesher~:
+the types, predicates and constructors objects provided
+in \ccc{Traits} are
+used in 
+the partial specialisation 
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,Func > >}
+to generate the model of  \ccc{SurfaceMeshTraits_3}.
 
 The template parameter \ccc{Func}  stands for a model
-of the concept \ccc{ImplicitFunction}
-The numerical type \ccc{Func::FT} has to match
+of the concept \ccc{ImplicitFunction}.
+The number type \ccc{Func::FT} has to match
 the type \ccc{Traits::FT}.
 
-NEED TO DOCUMENT CONSTRUCTOR!
+TODO : NEED TO DOCUMENT CONSTRUCTOR!
 
 \ccInclude{CGAL/Implicit_surface_3.h}
 

@@ -18,19 +18,17 @@
 
 \ccDefinition
   
-The concept \ccRefName\ provides a numerical type, \ccc{FT},
-and a point type, \ccc{Point_3}.
+The concept \ccRefName\  describes the requirements of the traits class to
+be plugged  as \ccc{Traits} in \ccc{Implicit_surface_3< Traits, Func>}.
+The concept provides the types, predicates and constructors objects
+that are  used in the 
+the partial specialisation  of 
+the  surface mesher traits generator~:
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,Func > >}.
 
 
-Whenever a model of this traits is plugged
-in \ccc{Implicit_surface_3< Traits, Func>} 
-to provide a type for  implicit surfaces to be
-meshed, 
-the types \ccc{FT} and \ccc{Point_3}
-provided are required to match respectively  the numerical type
-and the point type of the triangulation type \ccc{C2t3::Triangulation_3}
-used to represent the three dimensional triangulation embedding
-the two dimensional meshed surface.
+
+TO BE COMPLETED BE LAURENT
 
 %\ccGeneralizes
 
@@ -39,9 +37,12 @@ the two dimensional meshed surface.
 
 \ccTypes
 
-\ccNestedType{FT}{The numerical type}
+\ccNestedType{FT}{The numerical type.}
 \ccGlue
-\ccNestedType{Point_3}{The point type}
+\ccNestedType{Point_3}{The point type.}
+\ccGlue
+\ccNestedType{Sphere_3}{The sphere type.}
+
 
 %\ccCreation
 %\ccCreationVariable{a}  %% choose variable name
