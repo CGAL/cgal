@@ -54,8 +54,8 @@ namespace CGALi {
       : _support(c), Cache_minmax('s'), Cache_full('y')
     {
 
-      _begin = _end  = Circular_arc_point_2
-	(CircularFunctors::x_extremal_point<CK>(supporting_circle(),true)); 
+      _begin = _end  = 
+	CircularFunctors::x_extremal_point<CK>(supporting_circle(),true); 
       
     }
 
