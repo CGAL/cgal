@@ -2805,9 +2805,8 @@ cleanup_after_link_run()
 }
 
 # run a link&run test named $1, return 0, iff ok
-# if $2 is non-empty, use it as libpath flags
-# if $3 is empty, use standard linker flags
-# if $3 is non-empty, use it as linker flags
+# $2 is libpath flags
+# $3 is linker flags
 # if $4 is non-zero, inform about eventually occurring problems
 # $5 is message to print ("no" or "unfortunately") in case of failure.
 # The program output is scanned for a line starting with the string
@@ -2816,27 +2815,9 @@ cleanup_after_link_run()
 _link_run_test()
 {
     # set flags
-    _flags="${START_LD_OPT} ${2} `output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${3}"
-
-#    _flags="${3}"
-#     case ${COMPILER} in
-#      *CL.*|*cl.*|*ICL.*|*icl.*) _flags="${2} `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
-#      *) _flags="${2} `output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}";;
-#     esac
-
+    _flags="`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${START_LD_OPT} ${2} ${3}"
     # link
     _link="`compiler_bin`"
-#     case ${COMPILER} in
-# 	*CL.*|*cl.*)
-# 	    # there is a good chance that /usr/bin/link is in the way...
-# 	    i="`${_dirname} \"${_link}\"`"
-# 	    if [ -n "${i}" ]; then
-# 		_link="${i}/link"
-# 	    else
-# 		_link="link"
-# 	    fi
-# 	    ;;
-#     esac
     ${_printf} "%s\n%s\n" "Linker call:" "--------------" >"${TMP_LOGFILE}"
     ${_printf} "%s\n\n" "${_link} ${_flags}" >>"${TMP_LOGFILE}"
     ${_printf} "%s\n" "Got the following error messages:" >>"${TMP_LOGFILE}"
