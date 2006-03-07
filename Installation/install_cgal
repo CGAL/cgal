@@ -5083,6 +5083,7 @@ if [ -z "${COMPILER}" -a -n "${CXX}" ]; then
     COMPILER="${CXX}"
     write_buffer "${_LEFTSPACE}Set COMPILER from \$CXX.\n"
 fi
+${_printf} "${_BUF}" >> "${INSTALL_LOGFILE}"
 
 # ---------------------------------------------------------------------
 # postprocess commandline settings
