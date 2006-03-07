@@ -108,7 +108,7 @@ meshing algorithm, see Section~\ref{SurfaceMesher_section_variations}
 A call to 
 \ccc{surface_mesher(c2t3,surf,criteria) } launches 
 the meshing process with an initial 
-set of points which is the union of two subsets :
+set of points which is the union of two subsets:
 the set of vertices in the  initial triangulation pointed to by \ccc{c2t3},
 and a set of points provided by the \ccc{initial_points()} method 
 of the oracle \ccc{surf}. This initial set of points is required 
@@ -128,7 +128,7 @@ takes three numerical values \ccc{(x,y,z)} of type \ccc{FT}
 and returns a value of type \ccc{FT} which is the function $f(x,y,z)$.
 
 The default meshing criteria are  are determined  by three numerical
-values~: \\ 
+values: \\ 
 \ccc{angular_bound} is a lower bound in degrees for the angles 
      of mesh facets.\\
 \ccc{radius_bound} is an upper bound on the radii of surface Delaunay
@@ -181,12 +181,12 @@ with the size of the mesh expected by the user,
 and still have a guarantee that
 the output mesh forms a manifold surface.
 The function \ccc{make_surface_mesh} has specialized versions
-for the following  tag types~: \\
-\ccc{Manifold_tag} : the output mesh is guaranteed to be a manifold
+for the following  tag types: \\
+\ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
 surface without boundary.\\
-\ccc{Manifold_with_boundary_tag}~:the output mesh is guaranteed to be
+\ccc{Manifold_with_boundary_tag}:the output mesh is guaranteed to be
 manifold but may have boundaries.\\
-\ccc{Non_manifold_tag} : the algorithm relies on the given criteria and
+\ccc{Non_manifold_tag}: the algorithm relies on the given criteria and
 guarantees nothing else.
 
 \section{Implementation}
