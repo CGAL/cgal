@@ -1,5 +1,5 @@
-#ifndef FLAVOR_H
-#define FLAVOR_H
+#ifndef CEP_FLAVOR_H
+#define CEP_FLAVOR_H
 
 #include <CGAL/config.h>
 #include <iostream>
@@ -16,4 +16,4 @@ std::ostream& operator<<(std::ostream& os, Flavor f);
 
 std::istream& operator>>(std::istream& is, Flavor& f);
 
-#endif // FLAVOR_H
+#endif // CEP_FLAVOR_H

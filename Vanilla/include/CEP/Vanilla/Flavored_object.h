@@ -1,5 +1,5 @@
-#ifndef FLAVORED_OBJECT_H
-#define FLAVORED_OBJECT_H
+#ifndef CEP_FLAVORED_OBJECT_H
+#define CEP_FLAVORED_OBJECT_H
 
 #include <CEP/Vanilla/flavor.h>
 
@@ -43,4 +43,4 @@ private:
    Flavor _flavor;
 };
 
-#endif // FLAVORED_OBJECT_H
+#endif // CEP_FLAVORED_OBJECT_H
