@@ -4,16 +4,21 @@ and Mariette Yvinec}
 
 
 The surface mesher package offers a global function
-to build a triangular mesh approximating a surface.
+which builds a triangular mesh approximating a surface.
 
-The surface is described through an oracle  that mainly can tell whether a
-given segment, ray or line  intersects the surface or not, 
-and that can compute the
-intersections point if any. Several implementations of
-the oracle are provided. They allow to mesh
-implicit surfaces as well as  surfaces described as a gray level in a three
+The meshing algorithms requires to know the surface to be meshed
+through an oracle that mainly can tell whether a
+given segment, ray or line  intersects the surface or not
+and can compute the compute the
+intersections point if any. The oracle is cast in a traits class
+which can be passed to the meshing function
+or automatically generated for certains types of function.
+The current implementation provides 
+traits classes a
+to mesh implicit surfaces as well as  surfaces described 
+as a gray level in a three
 dimensional image.
-
+ 
 The output mesh conforms to some size and shape criteria 
 which are customizable. The criteria are passed to the mesher
 through a parameter 

@@ -73,7 +73,7 @@ to be  models  of the concepts
 
 
 The required knowledge on the surface is encapsulated in
-a surface mesher traits class  which is the only way the mesher
+traits class  which is the only way the mesher
  accesses to the surface. This traits class is required to be a model
 of the concept \ccc{SurfaceMeshTraits_3}. \\
 In the first  version
@@ -128,7 +128,7 @@ of two sets: the
 set of vertices in the initial  triangulation pointed to by the
 \ccc{c2t3} argument   and a set of
 points output by the \ccc{Construct_initial_points()} 
-of the surface.
+function objects of the traits class.
 This initial set of points is required to include at least one point
 on each connected components of the surface to be meshed.
 

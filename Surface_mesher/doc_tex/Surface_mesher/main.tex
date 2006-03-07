@@ -13,8 +13,8 @@ and Mariette Yvinec}
 This package provides a global function
 to compute a triangular mesh approximating a surface.
 
-The input surface is only required to be described
- through an oracle able to  tell whether a
+The meshing algorithm requires to know the surface to be meshed
+only  through an oracle able to  tell whether a
 given segment, line or ray intersects the surface or not
 and to compute an intersection point if any.
 This feature makes the package generic enough to be
@@ -34,9 +34,9 @@ as in a Delaunay refinement process, until some size and shape
 criteria on mesh elements are satisfied. 
 
 
-The size and shape criteria control not only the  behaviour of
-the refinement process and condition its termination
-but they also condition  the size and shape of elements in the final
+The size and shape criteria guide the  behaviour of
+the refinement process and control its termination.
+They also condition  the size and shape of the elements in the final
 mesh. Of course those criteria can be customized to satisfy
 the user needs. The \ccc{Surface mesher} package offers
 a set of standard criteria that can be scaled through
@@ -60,44 +60,83 @@ but then there is no guarantee.
 \section{The surface mesher interface}
 \label{SurfaceMesher_section_interface}
 
-The meshing process is launched through a call to a global function
-whose signature is the following:
+The meshing process is launched through a call to a global function.
+There are two overloaded versions of the meshing functions
+whose signatures are  is the following:
 
 \ccGlobalFunction{template <class C2T3,
-                            class Oracle,
+                            class Surface,
                             class Criteria,
                             class Tag >
 void make_surface_mesh(C2T3& c2t3,
-                       Oracle surf,
+                       Surface surface,
                        Criteria criteria,
-                       Tag = Non_manifold());}
+                       Tag ) ;}
 
-The first template parameter \ccc{C2T3} describes 
+
+\ccGlobalFunction{template <class C2T3,
+                            class SurfaceMeshTraits,
+                            class Criteria,
+                            class Tag >
+void make_surface_mesh(C2T3& c2t3,
+                       SurfaceMeshTraits::Surface_3  surface,
+		       SurfaceMeshTraits traits,
+                       Criteria criteria,
+                       Tag );}
+
+
+
+The template parameter \ccc{C2T3} describes 
 the data structure
 used to store  the surface mesh. This data structure
 has a pointer to a three dimensional triangulation and encodes
 the surface mesh as a subset of facets in this triangulation.
 The data structure is described in the concept
-\ccc{PureComplex_2InTriangulation_3} which is a specialized version
+\ccc{SurfaceMeshComplex_2InTriangulation_3} which is a specialized version
 of a more general concept called  \ccc{Complex_2InTriangulation_3}.
-More precisely, the concept \ccc{Complex_2InTriangulation_3}
-encodes a two dimensional complex embedded  in a three dimensional
-triangulation, which means that the faces of the complex form a subset
-of the triangulation faces. The concept \ccc{PureComplex_2InTriangulation_3} is 
-specialized to the case where the complex is pure which means that it
-is a set of facets (i.e., two dimensional faces) with  their subfaces.
+%More precisely, the concept \ccc{Complex_2InTriangulation_3}
+%encodes a two dimensional complex embedded  in a three dimensional
+%triangulation, which means that the faces of the complex form a subset
+%of the triangulation faces. The concept \ccc{PureComplex_2InTriangulation_3} is 
+%specialized to the case where the complex is pure which means that it
+%is a set of facets (i.e., two dimensional faces) with  their subfaces.
 An object of this class is passed by reference to the meshing
 function. This object holds the output mesh at the end of the
 process.
 
-The second parameter \ccc{Oracle} handles the surface
-description. This parameter  has to be a model of
-the concept \ccc{SurfaceOracle} which describes the
-required oracle on the surface. The actual surface to be meshed is
-passed  to the global function through an object of the class \ccc{Oracle}.
+The required knowledge on the surface is encapsulated in a
+traits class  which is the only way the mesher
+ accesses to the surface. This traits class is required to be a model
+of the concept \ccc{SurfaceMeshTraits_3}. \\
+In the first  version
+of  \ccRefName\, the surface type is a template paramater \ccc{Surface}
+and the surface mesher traits type 
+is  automatically generated form the surface type  through
+the class 
+\ccc{Surface_mesh_traits_generator_3<Surface>}.
+(This mechanism is similar to the 
+\ccc{Kernel_traits}  mechanism.) \\
+In the second version, the surface mesher traits type is provided
+as a template parameter 
+and the surface type is deduced from this traits type.
+Both the surface and the traits 
+are passed to the mesher as parameters. \\
+The simpler first version can be used,
+whenever the surface type either provides  a nested type
+\ccc{Surface::Surface_mesher_traits_3} 
+that is  a model of \ccc{SurfaceMeshTraits_3}
+or is a surface type for which a specialization
+of the traits generator \ccc{Surface_mesh_traits_generator_3<Surface>}
+is provided.
+Currently, the library provides partial specializations
+of  \ccc{Surface_mesher_traits_generator_3<Surface>}
+for implicit surfaces (\ccc{Implicit_surface_3<Traits, Function> }) and 
+grey level images (\ccc{Gray_level_image_3<Traits> }).
 
-The third parameter handles the description of the size and shape
-criteria driving the meshing process. The parameter \ccc{Criteria}
+
+
+The parameter \ccc{criteria} handles the description of the size and shape
+criteria driving the meshing process. The template parameter \ccc{Criteria}
 has to be instantiated by a model of the concept \ccc{MeshCriteria}.
 
 
@@ -110,8 +149,8 @@ A call to
 the meshing process with an initial 
 set of points which is the union of two subsets:
 the set of vertices in the  initial triangulation pointed to by \ccc{c2t3},
-and a set of points provided by the \ccc{initial_points()} method 
-of the oracle \ccc{surf}. This initial set of points is required 
+and a set of points provided by the \ccc{Compute_initial_points()} functor 
+of the traits class. This initial set of points is required 
 to include at least one point on each connected component of the surface
 to be meshed.
 
@@ -119,13 +158,14 @@ to be meshed.
 \section{Example}
 \label{SurfaceMesher_section_example}
 
-The following code meshes an implicit surface described as the zero level
-set of some function $f : \R^3 \longrightarrow \R$.
-The \ccc{SurfaceOracle}  is built from 
-a function object
-the type \ccc{MyFunction <K::FT>} whose operator()
-takes three numerical values \ccc{(x,y,z)} of type \ccc{FT}
-and returns a value of type \ccc{FT} which is the function $f(x,y,z)$.
+The following code meshes a sphere 
+given as the zero level set of a function $\R^3 \longrightarrow \R$
+coded in the procedure \ccc{sphere_function}.
+More precisely, 
+the surface to be meshed is created 
+by the constructor
+of the class \ccc{Implicit_surface_3<Kernel, Function>}
+from a pointer to the function \ccc{sphere_function}.
 
 The default meshing criteria are  are determined  by three numerical
 values: \\ 
@@ -135,8 +175,12 @@ values: \\
 balls. A surface Delaunay ball is ball circumscribing a mesh facet
 and centered on the surface. \\
 \ccc{distance_bound} is an upper bound for the distance 
-between the circumcenter of a mesh facet and a surface
-Delaunay ball of the same facet.
+between the circumcenter of a mesh facet and the center of a surface
+Delaunay ball of this facet.
+
+Given this surface type, the surface mesher will use
+the automatically generated traits class
+\ccc{Surface_mesh_traits_generator_3<Surface>}.
 
 \ccIncludeExampleCode{Surface_mesher/implicit_surface_mesher.C}
 
@@ -145,22 +189,25 @@ Delaunay ball of the same facet.
 \label{SurfaceMesher_section_variations}
 
 The guarantees on the output mesh depend on the mesh criteria.
-Theoretical guarantees are given in \cite{Oudot-and-co}.
+Theoretical guarantees are given in \cite{cgal:sry-mvbss-05}.
 First, the meshing algorithm is proved to terminate 
 if the angular bound is
 not smaller than $20,7^0$. 
 Furthermore, if the radius bound is everywhere smaller than 
-the $\epsilon$ times the local feature size  (where $\epsilon$ is a constant
+the $\epsilon$ times the local feature size  
+(where $\epsilon$ is a constant
 less than 0.16),  the output mesh 
 is guaranteed to be homeomorphic to the surface
-and at a bounded distance (Hausdorff and even Frechet distance)
-from the mesh.
+and  there is a guaranteed bound 
+on the  distance (Hausdorff and even Frechet distance)
+between the mesh and the surface.
 Note that the radius bound need not be uniform,
 although it is a uniform bound in the default criteria.
 
 Of course, such a theoretical guarantee can be only achieved
 for smooth surfaces which have a finite, non zero
-reach value. (The reach of a surface is the minimum value of local feature size on
+reach value. (The reach of a surface is the minimum value 
+of local feature size on
 this surface).
 
 The value of the local feature size on any point of the surface
@@ -192,7 +239,7 @@ guarantees nothing else.
 \section{Implementation}
 
 The meshing algorithm is implemented using the design of mesher levels
-described in \cite{Rineau-and-co}. 
+described in \cite{cgal:ry-gsddrm-06}. 
 
 
 
