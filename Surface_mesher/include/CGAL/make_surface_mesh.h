@@ -11,9 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: 
+// $URL: $
 // $Revision: 1.1 $ $Date: 2005/12/12 16:20:58 $
-// $Name:  $
 //
 // Author(s)     : Laurent Rineau
 
@@ -73,6 +72,7 @@ void make_surface_mesh(C2T3& c2t3,
 
   get_initial_points(surface, CGAL::inserter(c2t3.triangulation()));
   Mesher mesher(c2t3, surface, traits, criteria);
+  mesher.refine_mesh();
   // TODO initial, then refine()
 }
 
