@@ -171,38 +171,50 @@ namespace AlgebraicFunctors {
 
   };
 
-  template <typename RT>
+  template < class AK >
   class Compare_x
   {
   public:
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename AK::RT                   RT;
 
-    Comparison_result 
-    operator()(const Root_for_circles_2_2<RT>& r1, 
-	       const Root_for_circles_2_2<RT>& r2) const
+    typedef CGAL::Comparison_result result_type;
+
+    result_type
+    operator()(const Root_for_circles_2_2& r1, 
+	       const Root_for_circles_2_2& r2) const
     { return AlgebraicFunctors::compare_x<RT>(r1, r2); }
 
   };
 
-  template <typename RT>
+  template < class AK >
   class Compare_y
   {
   public:
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename AK::RT                   RT;
 
-    Comparison_result 
-    operator()(const Root_for_circles_2_2<RT>& r1, 
-	       const Root_for_circles_2_2<RT>& r2) const
+    typedef CGAL::Comparison_result result_type;
+
+    result_type
+    operator()(const Root_for_circles_2_2& r1, 
+	       const Root_for_circles_2_2& r2) const
     { return AlgebraicFunctors::compare_y<RT>(r1, r2); }
 
   };
 
-  template <typename RT>
+  template < class AK >
   class Compare_xy
   {
   public:
+    typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename AK::RT                   RT;
 
-    Comparison_result 
-    operator()(const Root_for_circles_2_2<RT>& r1, 
-	       const Root_for_circles_2_2<RT>& r2) const
+    typedef CGAL::Comparison_result result_type;
+
+    result_type
+    operator()(const Root_for_circles_2_2& r1, 
+	       const Root_for_circles_2_2& r2) const
     { return AlgebraicFunctors::compare_xy<RT>(r1, r2); }
 
   };

@@ -61,9 +61,9 @@ CGAL_BEGIN_NAMESPACE
     typedef AlgebraicFunctors::Sign_at<Self>           Sign_at;
     typedef AlgebraicFunctors::X_critical_points<Self> X_critical_points;
     typedef AlgebraicFunctors::Y_critical_points<Self> Y_critical_points;
-    typedef AlgebraicFunctors::Compare_x<RT>           Compare_x;
-    typedef AlgebraicFunctors::Compare_y<RT>           Compare_y;
-    typedef AlgebraicFunctors::Compare_xy<RT>          Compare_xy;
+    typedef AlgebraicFunctors::Compare_x<Self>         Compare_x;
+    typedef AlgebraicFunctors::Compare_y<Self>         Compare_y;
+    typedef AlgebraicFunctors::Compare_xy<Self>        Compare_xy;
 
     Construct_polynomial_1_2
                  construct_polynomial_1_2_object() const
