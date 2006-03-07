@@ -3,17 +3,22 @@
 
 Along with the framework, we provide several already implemented kinetic data structures. They currently are 
 \begin{description}
-\item[\ccc{Kinetic::Sort<Traits, Visitor>}] maintain a list of points sorted by x-coordinate.
-\item[\ccc{Kinetic::Delaunay_triangulation_2<Traits,Visitor, Triangulation>},\ccc{Kinetic::Delaunay_triangulation_3<Traits,Visitor, Triangulation>}] maintain the Delaunay triangulation of a set of two or three dimensional points.
+\item[\ccc{Kinetic::Sort<Traits, Visitor>}] maintain a list of points
+sorted by x-coordinate.
+\item[\ccc{Kinetic::Delaunay_triangulation_2<Traits,Visitor,
+Triangulation>},\ccc{Kinetic::Delaunay_triangulation_3<Traits,Visitor,
+Triangulation>}] maintain the Delaunay triangulation of a set of two
+or three dimensional points.
 \item[\ccc{Kinetic::Regular_triangulation_3<Traits, Visitor,
-Triangulation}] maintain the regular triangulation of a set of waiting three dimensional points.
-\item[\ccc{Kinetic::Enclosing_box_2<Traits>}, \ccc{Kinetic::Enclosing_box_3<Traits>}] restrict points to stay within a box by bouncing them off the walls.
+Triangulation}] maintain the regular triangulation of a set of waiting
+three dimensional points.
+\item[\ccc{Kinetic::Enclosing_box_2<Traits>},
+\ccc{Kinetic::Enclosing_box_3<Traits>}] restrict points to stay within
+a box by bouncing them off the walls.
 \end{description}
 
-Using all of the kinetic data structures is quite similar, so we only
-present the case of Delaunay triangulation in two dimensions. See the
-respective reference pages and demos for details of using the other
-data structures.
+
+\input{Kinetic_data_structures/sort_example.tex}
 
 \input{Kinetic_data_structures/delaunay_2_example.tex}
 

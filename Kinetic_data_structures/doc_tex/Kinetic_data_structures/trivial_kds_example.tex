@@ -2,9 +2,95 @@
 \subsection{Implementing a Trivial Kinetic Data Structure}
 \label{sec:trivial_kds_example}
 
- This kinetic data structure maintains one event in the queue which
-has a list of the coordinates of all the known moving objects.  Two
-classes are defined, the \ccc{Trivial_event}, and the
+\subsection{Using the Pieces of the Package}
+
+In this section we will explain in detail how a typical kinetic data
+structure uses the various pieces of the framework. The kinetic data
+structure of reference will, once again, be our implementation of
+kinetic sorting (see Figure~\ref{sort_example}).  A schematic of its
+relationship to the various components is shown in the UML diagram in
+Figure~\ref{uml_usage}. In this subsection we abuse, for reasons of
+simplicity of presentation, the concept/model semantics: when we refer
+to concepts we actually refer to an instance of a model of them.
+
+As with most kinetic data structures, \ccc{Kinetic::Sort<Traits, Visitor>} maintains
+some sort of combinatorial structure (in this case a sorted doubly linked list),
+each element of which has a corresponding certificate in the event queue
+maintained by the simulator. In the case of sorting, there is one
+certificate maintained for each ``edge'' between two consecutive
+elements in the list.
+
+On creation, the data structure is passed a copy of the
+Kinetic::SimulationTraits for this simulation, which it saves for
+future use. It gets a handle to to the Kinetic::ActiveObjectsTable by
+calling the
+\ccc{Kinetic::SimulationTraits::active\_points\_table\_1\_handle()} method
+and registers a proxy with the table in order to receive notifications
+of changes to the point set.  The Kinetic::SimulationTraits method
+returns a handle to, rather than a copy of, the
+Kinetic::ActiveObjectsTable, since the table must be shared between
+all the kinetic data structures using these points.  The handles are
+reference counted pointers, thus saving the user from worrying about
+cleaning things up properly.
+
+When new points are added to the model of the
+Kinetic::ActiveObjectsTable, the table calls the
+\ccc{new_notification()} method on the proxy of the kinetic data
+structure, which in turn calls the
+\ccc{insert(Point_key)} method of the kinetic data structure. The
+\ccc{Point_key} here is the key which uniquely identifies the
+newly inserted point in the table. The data structure then requests an
+instance of a model of the Kinetic::InstantaneousKernel from the
+Kinetic::SimulationTraits. It sets the time on the instantaneous
+kernel to the time value gotten from the
+\ccc{Kinetic::Simulator::current_time_nt()} method. This method returns
+a field number type that is between the previous and next event, as
+discussed in Section~\ref{goals}. An instance of the
+\ccc{Kinetic::InstantaneousKernel::Less_x_1} predicate and the STL
+function \ccc{std::upper_bound()} are then used to insert the new
+point in the sorted list. For each inserted object, the kinetic data
+structure removes the no
+longer relevant certificate from the event queue by calling the
+\ccc{Kinetic::Simulator::delete_event(Key)} function and creates two new
+certificates using a \ccc{Kinetic::Kernel::Is_less_x_1}
+certificate functor. The new certificates are inserted in the event
+queue by calling the \ccc{Kinetic::Simulator::new_event(Time, Event)}
+method where Kinetic::Event is a proxy object which instructs the sort
+kinetic data structure to swap two points when its \ccc{process()}
+method is called.
+
+Now that the kinetic data structure has been initialized, the
+simulator is instructed to process all events. Each time an event
+occurs, the simulator calls the \ccc{process()} method on the
+corresponding proxy object. The proxy, in turn, tells the sort kinetic
+data structure to swap the two points whose order has changed.
+
+The Kinetic::Simulator can periodically instruct the kinetic data
+structures to audit themselves.  As is explained in
+Section~\ref{simulator}, a proxy object maps the notification on to an
+\ccc{audit()} function call in the kinetic data structure. To audit
+itself the kinetic data structure builds a list of all the current
+points and uses \ccc{std::sort} to sort this list using a
+comparison function gotten from the Kinetic::InstantaneousKernel.
+This sorted list is compared to the maintained one to verify
+correctness. This auditing could also have been done by evaluating the
+Kinetic::InstantaneousKernel predicate for each sorted pair.  Since
+auditing a kinetic data structure typically requires at least linear
+time in the size of the combinatorial structure, the auditing
+procedure in between events is deactivated by default.  The user can
+however easily switch it on by defining the
+\ccc{CGAL_CHECK_EXACTNESS} and \ccc{CGAL_CHECK_EXPENSIVE} CGAL
+macros.
+
+This general structure of the interaction between the kinetic data
+structure and the framework is shared by all of the provided kinetic
+data structures and has proved itself to go quite far.
+
+To show how to implement such things, instead of presenting a full
+kinetic data structure, we present a trivial one which maintains one
+event in the queue which has a list of the coordinates of all the
+known moving objects.  Two classes are defined, the
+\ccc{Trivial_event}, and the
 \ccc{Trivial_kds}. The event classes must be declared outside of the
 kinetic data structure so that the \ccc{operator<<} can be defined for
 them. 
@@ -36,7 +122,7 @@ In addition, it has one method which is called when a certificate
 fails. The name/existence of such methods depend on the nature of the
 kinetic data structure in question.
 
-Like many kinetic data structures, it takes a \ccc{SimulationTraits}
+Like many kinetic data structures, it takes a Kinetic::SimulationTraits
 as a template argument. This traits class defines the types needed for
 the simulation and is responsible for instantiating them.
 

@@ -14,7 +14,7 @@
 % space tweaks
 %\addtolength{\parskip}{-1pt}
 
-\input{Kinetic_data_structures/todo.tex}
+%\input{Kinetic_data_structures/todo.tex}
 
 Lets say you want to maintain a sorted list of items (each item is
 associate with a real number key which they are sorted on). You can
@@ -34,17 +34,18 @@ structures implemented on top of this framework. The framework was
 first presented at ALENEX~\cite{cgal:gkr-cfhm-04}. We first, in
 Section~\ref{sec:kds_intro} introduce kinetic data structures and
 sweepline algorithms. This section can be skipped if the reader is
-already familiar with the area. The next section,
-Section~\ref{sec:kds_terms} introduces the terms we will use when
-discussing kinetic data structures, it is recommended reading. We then
-present kinetic data structures for Delaunay triangulations in two and
-three dimensions in Section~\ref{sec:provided_kdss}. Following that,
-in Section~\ref{sec:architecture} we discuss the architecture of the
+already familiar with the area. The next sectiosn,
+Section~\ref{sec:kds_terms} and Section~\ref{sec:overview} introduces
+the terms and gives an overview of the framework. They are recommended
+reading for all readers. We then present kinetic data structures for
+Delaunay triangulations in two and three dimensions in
+Section~\ref{sec:provided_kdss}. Following that, in
+Section~\ref{sec:architecture} we discuss the architecture of the
 framework and finally we give several examples of using the framework
 to implement a kinetic data structure in
 Section~\ref{sec:examples}. The framework makes heavy use of our
-\ccc{Polynomial_kernel} package to provide models of the \ccc{FunctionKernel}
-concept.
+\ccc{Polynomial_kernel} package to provide models of the
+\ccc{Kinetic::FunctionKernel} concept.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Kinetic Data Structures and Sweep Algorithms}
@@ -53,70 +54,78 @@ concept.
 
 
 \subsection{Kinetic Data Structures}
-Motion is ubiquitous in the world around us and is a feature of many
-problems of interest to computational geometers. Kinetic data
-structures were introduced by Basch et. al. in
-'97~\cite{cgal:bgh-dsmd-97}. They exploit the combinatorial nature of most
-geometric data structures---the combinatorial structure remains
-invariant under some motions of the underlying geometric primitives
-and, when the structure does need to change, it does so at discrete
-times and in a limited manner. Algorithms that fit within the kinetic
-data structures framework have been found for a number of geometric
-constructs of interest, including Delaunay and regular triangulations
-in two and three dimensions (implementations of which are provided)
-and various types of clustering.
+Kinetic data structures were first introduced in by Basch et.\ al.\ in
+1997~\cite{basch97data}.  The idea stems from the observation that
+most, if not all, computational geometry structures are built using
+{\em predicates} --- functions on quantities defining the geometric
+input (e.g.\ point coordinates), which return a discrete set of
+values. Many predicates reduce to determining the sign of a polynomial
+on the defining parameters of the primitive objects. For example, to
+test whether a point lies above or below a plane we compute the dot
+product of the point with the normal of the plane and subtract the
+plane's offset along the normal. If the result is positive, the point
+is above the plane, zero on the plane, negative below. The validity of
+many combinatorial structures built on top of geometric primitives can
+be verified by checking a finite number of predicates of the geometric
+primitives.  These predicates, which collectively certify the
+correctness of the structure, are called {\em certificates}.  For a
+Delaunay triangulation in three dimensions, for example, the
+certificates are one \ccc{InCircle} test per facet of the
+triangulation, plus a point plane orientation test for each facet or
+edge of the convex hull.
 
-Computational geometry is built on the idea of
-predicates---functions of the description of geometric
-primitives which return a discrete set of values. Many of the
-predicates reduce to determining the sign of an algebraic expression
-of the representation (i.e.\ coordinates of points) of the geometric
-primitives. For example, to test whether a point lies above or below a
-plane, we compute the dot product of the point with the normal of the
-plane and subtract the plane's offset along the normal. If the result
-is positive, the point is above the plane, zero on the plane, negative
-below.
-
-The validity of many combinatorial structures built on top of
-geometric primitives can be proved by checking a finite number of
-predicates of the primitives. These predicates are called 
-  certificates. For example, a three-dimensional convex hull is
-proved to be correct by checking, for each face, that all points are
-below the outward facing plane supporting it.
-
-The kinetic data structures framework is built on top of this view of
+The kinetic data structures approach is built on top of this view of
 computational geometry. Let the geometric primitives move by replacing
-each of their coordinates with a function of time. As time advances,
-the primitives now trace paths in space called trajectories. The
-values of the certificates which proved the correctness of the static
-structure now become functions of time, called the certificate
-  functions. As long as these functions have the correct value, the
-original structure is still correct. However, if one of the
-certificate functions changes value, the original structure must be
-updated and some new set of certificate functions computed. We call
-such occurrences events.
+each of their defining quantities with a function of time (generally a
+polynomial). As time advances, the primitives trace out paths in
+space called {\em trajectories}. The values of the polynomial
+functions of the defining quantities used to evaluate the predicates now
+also become functions of time. We call these functions
+{\em certificate functions}. Typically, a geometric structure is valid when
+all predicates have a specific non-zero sign. In the kinetic setting,
+as long as the certificate functions maintain the correct sign as time varies,
+the corresponding predicates do not change values,
+and the original data structure remains correct. However, if
+one of the certificate functions changes sign, the original structure
+must be updated, as well as the set of certificate functions that
+verify it.  We call such occurrences {\em events}.
 
 Maintaining a kinetic data structure is then a matter of determining
-which certificate function changes value next (typically this amounts
-to determining which certificate function has the first root after the
-current time) and then updating the structure and certificate
-functions.
+which certificate function changes sign next, i.e.\ determining which
+certificate function has the first real root that is greater than the
+current time, and then updating the structure and the set of
+certificate functions. In addition, the trajectories of primitives are
+allowed to change at any time, although $C^0$-continuity of the
+trajectories must be maintained.  When a trajectory update occurs for
+a geometric primitive, all certificates involving that primitive must
+be updated.  We call the collection of kinetic data structures,
+primitives, event queue and other support structures a
+{\em simulation}.
 
-The {\em Kinetic data structures framework} provides a basis for
-implementing such data structures on moving data and allows the user
-to easily change between exact, filtered or numeric computation.
+Sweepline algorithms for computing arrangements in $d$ dimensions
+easily map on to kinetic data structures by taking one of the
+coordinates of the ambient space as the time variable. The kinetic
+data structure then maintains the arrangement of a set of objects
+defined by the intersection of a hyperplane of dimension $d-1$ with
+the objects whose arrangement is being computed. 
 
-\subsection{Sweepline view}
 
-Instead of sweeping over time, we can instead sweep over one of the
-geometric coordinates. For example, we can compute a planar
-arrangement of x-monotone curves by sweeping along the x-coordinate
-from negative infinity to infinity, tracking the order the vertical
-order of the curves. The certificates are then that one curve is above
-another at the current ``time'' or x value. Each time two curves
-intersect, we must exchange their vertical order. The computation
-entailed is exactly the same as tracking the sorted order of a set of
-points as they move along the real line.
+Time is one of the central concepts in a kinetic simulation.  Just as
+static geometric data structures divide the continuous space of all
+possible inputs (as defined by sets of coordinates) into a discrete
+set of combinatorial structures, kinetic data structures divide the
+continuous time domain into a set of disjoint intervals. In each
+interval the combinatorial structure does not change, so, in terms of
+the combinatorial structure, all times in the interval are equivalent.
+We capitalize on this equivalence in the framework in order to
+simplify computations. If the primitives move on polynomial
+trajectories and the certificates are polynomials in the coordinates,
+then events occur at real roots of polynomials of time. Real numbers,
+which define the endpoints of the interval, are more expensive to
+compute with than rational numbers, so performing computations at a
+rational number inside the interval is preferable whenever
+possible. See Section~\ref{instantaneous_kernel} for an example of
+where this equivalence is exploited.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Terms Used}
@@ -124,16 +133,33 @@ points as they move along the real line.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{description}
-\item[primitive] The basic geometric types--i.e.\ the points of a triangulation. A primitive has a set of {\em coordinates}.
-\item[combinatorial structure] A structure built on top of the primitives. The structure does not depend directly on the coordinates of the primitives, only on relationships between them.
-\item[trajectory] The path traced out by a primitive as time passes. In other words how the coordinates of a primitive change with time.
-\item[snapshot] The position of all the primitives at a particular moment in time.
-\item[predicate] A function which takes the coordinates of several primitives from a snapshot as input and produces a discrete set of outputs.
-\item[certificate] One of a set of predicates which, when all having the correct values, ensure that the combinatorial structure is correct.
-\item[certificate function] A function of time which is positive when the corresponding certificate has the correct value. Then the certificate function changes sign, the combinatorial structure needs to be updated.
-\item[event] When a certificate function changes sign and the combinatorial structure needs to be updated.
+\item[primitive] The basic geometric types--i.e.\ the points of a
+triangulation. A primitive has a set of {\em coordinates}.
+\item[combinatorial structure] A structure built on top of the
+primitives. The structure does not depend directly on the coordinates
+of the primitives, only on relationships between them.
+\item[trajectory] The path traced out by a primitive as time
+passes. In other words how the coordinates of a primitive change with
+time.
+\item[snapshot] The position of all the primitives at a particular
+moment in time.
+\item[predicate] A function which takes the coordinates of several
+primitives from a snapshot as input and produces a discrete set of
+outputs.
+\item[certificate] One of a set of predicates which, when all having
+the correct values, ensure that the combinatorial structure is
+correct.
+\item[certificate function] A function of time which is positive when
+the corresponding certificate has the correct value. Then the
+certificate function changes sign, the combinatorial structure needs
+to be updated.
+\item[event] When a certificate function changes sign and the
+combinatorial structure needs to be updated.
 \item[static] Having to do with geometric data structures on non-moving primitives.
 \end{description}
+
+
+\input{Kinetic_data_structures/overview.tex}
 
 \input{Kinetic_data_structures/provided_kdss.tex}
 

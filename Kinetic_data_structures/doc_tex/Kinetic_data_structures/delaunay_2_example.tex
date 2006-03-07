@@ -1,47 +1,79 @@
 
 
-\subsection{Two Dimensional Delaunay}
+\subsection{Visualization of Kinetic Data Structures}
 \label{sec:delaunay_2_example}
 
-As with static triangulations, in order to use the data structure the
-user must provide a traits class. In addition, an optional visitor
-class can be provided to monitor how the data structure changes, and a
-custom triangulation can be provided. The traits class must be a model
-of \ccc{SimulationTraits}. Most of the details of the traits class can
-be ignored for the time being other than two parts 
-\begin{description}
-\item[\ccc{moving_point_table_pointer()}] this returns a (reference counted) pointer to a table which keeps track of all the primitives.
-\item[\ccc{simulator_pointer()}] this returns a pointer to the \ccc{Simulator} which is what controls how time advances.
-\end{description}
-The framework provides a number of models of the
-\ccc{SimulationTraits} named
-\{Exact,Inexact\}\_simulation\_traits\_\{1,2,3\}. Here we opt for
-exact computations (and require two dimensions).
+The framework includes Qt widgets for displaying kinetic data
+structures in two and three dimensions. The following example shows
+using the two dimensional widget with a Delaunay triangulation:
 
-In order to monitor the Delaunay triangulation as the simulation is
-run, we use a visitor. This is a small class, which is passed to the
-Delaunay triangulation. The triangulation calls methods on the visitor
-class whenever things happen. In the case, the visitor,
-\ccc{Kinetic::Delaunay_triangulation_event_log_visitor_2} simply makes a record of each event that occurs.
+\begin{ccExampleCode}
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
+#include <CGAL/Kinetic/Enclosing_box_2.h>
+#include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
+#include <CGAL/Kinetic/IO/Qt_triangulation_2.h>
+#include <CGAL/Kinetic/IO/Qt_widget_2.h>
 
-Once the traits class and kinetic Delaunay have been created, we need
-to add points to the simulation. To do this, we add them directly to
-the
-\ccc{ActiveObjectsTable} using the \ccc{insert} method. 
+int main(int argc, char *argv[]) {
+    using namespace CGAL::Kinetic;
+    typedef Exact_simulation_traits_2 Traits;
+    typedef Delaunay_triangulation_2<Traits> Del_2;
+    typedef Enclosing_box_2<Traits> Box_2;
+    typedef Qt_widget_2<Traits::Simulator> Qt_widget;
+    typedef Qt_moving_points_2<Traits, Qt_gui> Qt_mps;
+    typedef Qt_triangulation_2<Del_2, Qt_widget, Qt_mps> Qt_dt2;
+    
+    // create a simulation traits and add two KDSs:
+    // a kinetic Delaunay triangulation and an enclosing box;
+    // the moving points bounce against the walls of the enclosing box
+    Traits tr;
+    Box_2::Handle box = new Box_2(tr);
+    Del_2::Handle kdel = new Del_2(tr);
+
+    // register the simulator, set of moving points and
+    // Delaunay triangulation with the kinetic Qt widget
+    Qt_widget::Handle qt_w = new Qt_widget(argc, argv, tr.simulator_handle());
+    Qt_mps::Handle qt_mps = new Qt_mps(qt_w, tr);
+    Qt_dt2::Handle qt_dt2 = new Qt_dt2(kdel, qt_w, qt_mps);
+
+    // read the trajectories of the moving points
+    //  the simulation traits automatically inserts them in the two KDSs
+    // and schedules the appropriate kinetic events; as in the kinetic
+    // sorting example this is done with appropriate notifications
+    std::ifstream in("data/points_2");    
+    in  >> *tr.active_points_2_table_pointer();
+
+    // run the interactive kinetic simulation
+    return qt_w->begin_event_loop();
+};
+\end{ccExampleCode}
+
+The example shows how to use a number of additional features of the
+framework. First, it shows that two kinetic data structures
+(\ccc{Kinetic::Delaunay_triangulation_2<Traits, Triangulation>} and
+\ccc{Kinetic::Enclosing_box_2<Traits>}) can coexist on the same set of
+points without any extra effort. Both interact with the moving points
+through the active objects table, and never need to directly interact
+with one another. Second, objects (like
+\texttt{qt\_w}, \texttt{qt\_mps} and \texttt{qt\_dt2}) are all stored
+by using reference counted handles (\texttt{Object::Handle}). This
+allows them to share references to one another without the user having
+to worry about memory management and order of deletion.  For example,
+the \ccc{Kinetic::Qt_triangulation_2<KineticDelaunay_2, QtWidget_2,
+Qt_moving_points_2>} object needs a handle to the kinetic
+triangulation, in order to get the structure to display, and a handle
+to the \ccc{Active_points_1_table} to get the coordinates of the
+points.
 
 
-Now that the triangulation has been set up at points added (or
-scheduled for addition), we can run the kinetic data structure. Here
-we ask the simulation to process all events and then using the visitor
-to print out a record of all events that occur. Note that there are a
-finite number of events since eventually all the points are spread far
-apart and simply moving outward. If instead, we had added a
-\ccc{Kinetic::Enclosing_box_2<Traits>} to the simulation, then 
-there would be an infinite number of events as the points repeatedly
-bounce off the walls.
-
-For an equivalent example with a graphical interface, see
-demo/Kinetic\_data\_structures/Delaunay\_triangulation\_2.C.
+Finally, the example shows how to use the graphical interface elements
+provided, see Figure~\ref{delaunay_gui}. Our package includes
+\texttt{Qt} widgets for displaying kinetic geometry in two and three
+dimensions. In addition to being able to play and pause the
+simulation, the user can step through events one at a time and reverse
+the simulation to retrace what had happened. The three-dimensional
+visualization support is based on the Coin library~\cite{Coin}.
 
 \begin{figure*}[htb]
 \begin{ccTexOnly}
@@ -67,11 +99,26 @@ demo/Kinetic\_data\_structures/Delaunay\_triangulation\_2.C.
 <img border=1 src="./delaunay_shot_7.crop.gif" align=center alt="Frame 7">
 \end{ccHtmlOnly}
 \caption{ \label{fig:delaunay_events} 
-{\em Some events from a Delaunay triangulation kinetic data structure:} Before and after the first several events in a kinetic data structure is shown. The pictures are screen shots from demo/Kinetic\_data\_structures/Delaunay\_triangulation\_2.C. }
+{\em Some events from a Delaunay triangulation kinetic data
+structure:} Before and after the first several events in a kinetic
+data structure is shown. The pictures are screen shots from
+demo/Kinetic\_data\_structures/Delaunay\_triangulation\_2.C. }
 %\end{minipage}
 %\end{center}
 \end{figure*}
 
 
-\label{fig:delaunay_2_usage_program}
-\ccIncludeExampleCode{Kinetic_data_structures/Delaunay_triangulation_2.C}
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[scale=.5]{Kinetic_data_structures/qt_widget_marked_pct}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<img border=1 src="./qt_widget_marked_pct.gif" align=center alt="Qt widget">
+\end{ccHtmlOnly}
+\caption{\label{qtwidget_capture} The figure shows the graphical user interface for
+  controlling two-dimensional kinetic data structures. It is built on
+  top of the \ccc{Qt_widget} and adds buttons to play, pause, step
+  through and run the simulation backwards.}
+\end{figure}

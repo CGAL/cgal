@@ -5,14 +5,111 @@
 
 Here we present a simple example that uses the kinetic data structures
 framework to implement a sweepline to compute the arrangement of
-x-monotone algebraic curves in the plane. The arrangement and the
-curves are then output as a metapost file which can be converted into
-a postscript file to view using the mpost command. The code is very
-simple and written to be read.
+x-monotone algebraic curves in the plane. The example builds on top of
+the \ccc{Kinetic::Sort<Traits, Visitor>} kinetic data structure, using a visitor
+to keep track of changes to the sorted order and newly inserted
+points. To see an example using this kinetic data structure read the
+example at examples/Kinetic\_data\_structures/sweepline.C.
 
-The example code is rather large (but fairly straight foward) and
-there is not included in the manual. Please see the file in the
-\texttt{examples/Kinetic\_data\_structures} directory.
+First we define the visitor class. An object of this type is passed to
+the \ccc{Kinetic::Sort} data structure and turns events into calls on
+the arrangement structure. This class has to be handled externally
+since the arrangement will inherit from the sorting structure.
+
+\begin{ccExampleCode}
+template <class Arrangement>
+struct Arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
+{
+  Arrangement_visitor(Arrangement *a):p_(a){}
+  template <class Vertex_handle>
+  void remove_vertex(Vertex_handle a) {
+    p_->erase(a);
+  }
+  template <class Vertex_handle>
+  void create_vertex(Vertex_handle a) {
+    p_->insert(a);
+  }
+  template <class Vertex_handle>
+  void after_swap(Vertex_handle a, Vertex_handle b) {
+    p_->swap(a, b);
+  }
+  Arrangement *p_;
+};
+
+\end{ccExampleCode}
+
+Now we define the actual kinetic data structure. 
+
+\begin{ccExampleCode}
+
+template <class TraitsT> 
+class Planar_arrangement: 
+  public CGAL::Kinetic::Sort<TraitsT, 
+			     Arrangement_visitor<Planar_arrangement<TraitsT> > > {
+  typedef TraitsT Traits;
+  typedef Planar_arrangement<TraitsT> This;
+  typedef typename CGAL::Kinetic::Sort<TraitsT,
+				       Arrangement_visitor<This> > Sort;
+  typedef Arrangement_visitor<This> Visitor;
+  typedef typename Traits::Active_objects_table::Key Key;
+
+public:
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_2 Approximate_point;
+  typedef std::pair<int,int> Edge;
+  typedef typename Sort::Vertex_handle Vertex_handle; 
+
+  // Register this KDS with the MovingObjectTable and the Simulator
+  Planar_arrangement(Traits tr): Sort(tr, Visitor(this)) {}
+
+  Approximate_point vertex(int i) const
+  {
+    return approx_coords_[i];
+  }
+
+  size_t vertices_size() const
+  {
+    return approx_coords_.size();
+  }
+
+  typedef std::vector<Edge >::const_iterator Edges_iterator;
+  Edges_iterator edges_begin() const
+  {
+    return edges_.begin();
+  }
+  Edges_iterator edges_end() const
+  {
+    return edges_.end();
+  }
+
+  void insert(Vertex_handle k) {
+    last_points_[*k]=new_point(*k);
+  }
+
+  void swap(Vertex_handle a, Vertex_handle b) {
+    int swap_point= new_point(*a);
+    edges_.push_back(Edge(swap_point, last_points_[*a]));
+    edges_.push_back(Edge(swap_point, last_points_[*b]));
+    last_points_[*a]= swap_point;
+    last_points_[*b]= swap_point;
+  }
+
+  void erase(Vertex_handle a) {
+    edges_.push_back(Edge(last_points_[*a], new_point(*a)));
+  }
+
+  int new_point(typename Traits::Active_objects_table::Key k) {
+    double tv= CGAL::to_double(Sort::traits().simulator_pointer()->current_time());
+    double dv= CGAL::to_double(Sort::traits().active_objects_table_pointer()->at(k).x()(tv));
+    approx_coords_.push_back(Approximate_point(tv, dv));
+    return approx_coords_.size()-1;
+  }
+
+  std::vector<Approximate_point > approx_coords_;
+  std::map<Key, int> last_points_;
+  std::vector<Edge> edges_;
+
+};
+\end{ccExampleCode}
 
 %%% Local Variables: 
 %%% mode: latex

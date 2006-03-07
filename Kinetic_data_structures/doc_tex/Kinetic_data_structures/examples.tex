@@ -14,17 +14,17 @@ demo/Kinetic\_data\_structures directory.
 
 The next examples cover implementing kinetic data structures. They are
 \begin{itemize}
+\item Adding a certificate generator to a kernel
 \item A trivial kinetic data structure which has all the parts of a
 full kinetic data structure but doesn't do much in
 Section~\ref{sec:trivial_kds_example}
-\item The implementation of the sorting kinetic data structure in
-Section~\ref{sec:sort_kds_overview}.
 \item The implementation of the sweepline arrangement computation in
   Section~\ref{sec:sweepline_example}
 \end{itemize}
 
+In order to see more detail about how to implement a kinetic data structure, the best place to start is the source code for the kinetic sorting data structure, \ccc{CGAL::Kinetic::Sort<Traits, Visitor>}.
 
 
+\input{Kinetic_data_structures/adding_certificate.tex}
 \input{Kinetic_data_structures/trivial_kds_example.tex}
-\input{Kinetic_data_structures/sorted_impl_example.tex}
 \input{Kinetic_data_structures/sweepline_usage_example.tex}
