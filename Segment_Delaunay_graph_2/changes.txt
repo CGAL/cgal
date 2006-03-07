@@ -1,3 +1,7 @@
+8 March 2006:  Menelaos Karavelas
+- demos now include CGAL/basic.h before testing for Qt; this is essential
+  due to the recent changes in install_cgal
+
 17 December 2005:  Menelaos Karavelas
 - attempt to eliminate warning messages in Linux-2.4_g++-3.3.3 platform
 - fixed chapter name in doc
