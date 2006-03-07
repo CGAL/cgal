@@ -1,9 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh_cell_base_3.h>
-#include <CGAL/Surface_mesh_vertex_base_3.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Surface_mesh_default_criteria_3.h>
-
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
@@ -15,8 +10,8 @@ typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
 typedef Kernel::Sphere_3 Sphere_3;
 
-typedef double (*implicit_function)(double, double, double);
-typedef CGAL::Implicit_surface_3<Kernel, implicit_function> Surface_3;
+typedef double (*Function)(double, double, double);
+typedef CGAL::Implicit_surface_3<Kernel, Function> Surface_3;
 
 double sphere_function (double x, double y, double z) {
   const double x2=x*x, y2=y*y, z2=z*z;

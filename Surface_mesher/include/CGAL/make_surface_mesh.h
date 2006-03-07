@@ -22,6 +22,12 @@
 
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 #include <CGAL/Surface_mesh_traits_generator_3.h>
+#include <CGAL/Surface_mesh_cell_base_3.h>
+#include <CGAL/Surface_mesh_vertex_base_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Complex_2_in_triangulation_3.h>
+#include <CGAL/Surface_mesh_default_criteria_3.h>
+
 
 #include <CGAL/iterator.h> // CGAL::inserter()
 
