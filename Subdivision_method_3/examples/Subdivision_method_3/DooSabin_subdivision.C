@@ -3,7 +3,6 @@
 #include <CGAL/Subdivision_method_3.h>
 
 #include <iostream>
-#include <fstream>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
@@ -16,18 +15,17 @@ using namespace std;
 using namespace CGAL;
 
 int main(int argc, char **argv) {
-  if (argc != 3) { 
-    cout << "Usage: DooSabin_subdivision filename d" << endl; 
-    cout << "       filename: the input mash (.off)" << endl; 
+  if (argc != 2) { 
+    cout << "Usage: DooSabin_subdivision d < filename" << endl; 
     cout << "       d: the depth of the subdivision (0 < d < 10)" << endl; 
+    cout << "       filename: the input mash (.off)" << endl; 
     exit(1);
   }
 
-  ifstream in(argv[1]);
-  int d = argv[2][0] - '0';
+  int d = argv[1][0] - '0';
 
   Polyhedron P;
-  in >> P; // read the .off
+  cin >> P; // read the .off
 
   Subdivision_method_3::DooSabin_subdivision(P,d);
 
