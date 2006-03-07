@@ -19,7 +19,6 @@
 #include <CGAL/Nef_polyhedron_3.h>
 
 // --- begin preliminary number type converter -----------------
-// --- (to be excluded some day?) ------------------------------
 
 #ifndef NUMBER_TYPE_CONVERTER_NEF_3_H
 #define NUMBER_TYPE_CONVERTER_NEF_3_H
@@ -164,7 +163,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
       Scan_point_set V_f_scan;
       V_f_scan.reserve(NOI);
       Point_set V_f;
-      V.reserve(NOI);
+      V_f.reserve(NOI);
 
       Scan_index_it ind_it = f_it->begin();
       for (jdx=0; ind_it != f_it->end(); ++ind_it, ++jdx)
@@ -177,6 +176,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
       NOI = jdx;
 
       bool is_nef = false;
+      CGAL_assertion_msg( V_f.size() >= 1 || !verb, "empty vertex cycle");
       if ( V_f.size() >= 1 )
       {  // compute Newell vector <double>
          Scan_vector normal;
@@ -189,20 +189,12 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
             is_nef = true;
          }
       }
-      else
-      {  if (verb)
-	 {  std::cerr << "\n" << __FILE__ << ", line " << __LINE__
-	       << ": error: -> Empty vertex cycle."
-	       << std::endl;
-	 }
-      }
 
       if ( !is_nef )
       {  ++discarded_facets;
          if (verb)
-	 {  std::cerr << "(Within context:)"
-	       << " Discard input facet " << (idx+1)
-	       << " (numbered from 1)."
+	 {  std::cerr << "Hence, discard input facet " << (idx+1)
+	       << " (enumerated beginning with 1)."
 	       << " Check semantics!\n" << std::endl;
 	 }
       }
@@ -210,7 +202,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 
 #ifdef CGAL_NEF_OFF_TO_NEF_TIMER
    t_convert.stop();
-   std::cout << "time conversion: " << t_convert.time()<< std::endl;
+   std::cout << "time (conversion): " << t_convert.time()<< std::endl;
 #endif
 
    // union of queue entries
@@ -230,7 +222,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 
 #ifdef CGAL_NEF_OFF_TO_NEF_TIMER
    t_union.stop();
-   std::cout << "time union: " << t_union.time() << "\n" << std::endl;
+   std::cout << "time (union): " << t_union.time() << "\n" << std::endl;
 #endif
 
    // return values
