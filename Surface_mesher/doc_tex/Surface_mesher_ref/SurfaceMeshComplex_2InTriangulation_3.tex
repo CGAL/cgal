@@ -175,27 +175,28 @@ i, int j);}
 \ccMethod{Face_status  face_status(Vertex_handle v);}
 {Returns the status of vertex \ccc{v} in the 2D complex.}
 
+
+\ccMethod{bool is_in_complex(Facet f);}
+{Returns \ccc{true}, if the facet \ccc{f} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Cell_handle c, int i);}
+{Returns \ccc{true}, if the facet \ccc{(c,i)} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Edge e);}
+{Returns \ccc{true}, if the edge  \ccc{e} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Cell_handle c, int i, int j);}
+{Returns \ccc{true}, if the edge \ccc{(c,i,j)} belongs to the 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Vertex_handle v);}
+{Returns \ccc{true}, if the vertex \ccc{v} belongs to the 2D complex.}
+
+
 \ccMethod{bool is_regular_or_boundary_for_vertices (Vertex_handle v);}
 {Returns true if the status of vertex \ccc{v} is \ccc{REGULAR} or \ccc{BOUNDARY}.
-\ccPrecond{All the edges of the complex incident to \ccc{v} are \ccc{REGULAR} or \ccc{BOUNDARY}.}}
- 
+\ccPrecond{All the edges of the complex incident to \ccc{v} are
+\ccc{REGULAR} or \ccc{BOUNDARY}.}}
 
-
-%\ccGlue
-%\ccMethod{bool is_in_complex(Facet f);}
-%{Returns \ccc{true}, if the facet \ccc{f} belongs to the 2D complex.}
-%\ccGlue
-%\ccMethod{bool is_in_complex(Cell_handle c, int i);}
-%{Returns \ccc{true}, if the facet \ccc{(c,i)} belongs to the 2D complex.}
-%\ccGlue
-%\ccMethod{bool is_in_complex(Edge e);}
-%{Returns \ccc{true}, if the edge  \ccc{e} belongs to the 2D complex.}
-%\ccGlue
-%\ccMethod{bool is_in_complex(Cell_handle c, int i, int j);}
-%{Returns \ccc{true}, if the edge \ccc{(c,i,j)} belongs to the 2D complex.}
-%\ccGlue
-%\ccMethod{bool is_in_complex(Vertex_handle v);}
-%{Returns \ccc{true}, if the vertex \ccc{v} belongs to the 2D complex.}
 %\ccGlue
 %\ccMethod{bool is_regular(Facet f);}
 %{Returns \ccc{true}, if the facet \ccc{f} belongs to the 2D complex.}
