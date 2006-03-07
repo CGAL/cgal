@@ -1,8 +1,8 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Gray_level_image_3.tex
 % +------------------------------------------------------------------------+
-% | 22.02.2006   Author
-% | Package: Package
+% | 22.02.2006   Laurent Rineau
+% | Package: Surface_mesher
 % | 
 \RCSdef{\RCSGraylevelimage3Rev}{$Id$}
 %\RCSdefDate{\RCSGraylevelimage3Date}{$Date$}
@@ -11,56 +11,55 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Gray_level_image_3<Traits>}  %% add template arg's if necessary
+\begin{ccRefClass}{Gray_level_image_3<FT>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
-TODO (Laurent)
 
-The class \ccRefName\ does this and that.
+The class \ccRefName\ is a 3D gray image loader. A~3D gray image is a
+tri-dimensional array that associates a scalar value to each triple of
+integer $(x, y, z)$ in the range of the image. A~trilinear interpolation
+algorithm provides a map \begin{math}f : \R^3 \longrightarrow \R\end{math}.
+
+An object of type \ccRefName\ represents the implicit surface of equation
+$f(x,y,z) = iso$, on $\R^3$, where $iso$ is a given isovalue. The parameter
+\ccc{FT} is the numerical types. \ccRefName\ provides an \ccc{operator()(FT x, FT y
+  ,FT z)} that returns \ccc{FT(-1)} if $f(x,y,z)>0$, \ccc{FT(0)} if
+$f(x,y,z)=0$, and \ccc{FT(1)} if $f(x,y,z)<0$. \ccRefName\ is a model of
+\ccc{ImplicitFunction}.
+
+\ccRefName\ is a wrapper around a auxiliary library, ImageIO, and supports
+several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension
+.dim, of .ima[.gz]), and ANALYZE (extension .hdr, or .img[.gz]).
+
+An executable that uses \ccRefName\ must be linked with the ImageIO
+library. This library is shipped with \cgal\ in the
+\ccc{examples/Surface_mesher/} subdirectory.
 
 \ccInclude{CGAL/Gray_level_image_3.h}
 
 \ccIsModel
 
-Concept
+\ccc{ImplicitFunction}
 
 \ccTypes
 
-\ccNestedType{TYPE}{some nested types}
+\ccNestedType{FT}{the numerical type \ccc{FT}}
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{image}
 
-\ccConstructor{Gray_level_image_3();}{default constructor.}
-
-\ccOperations
-
-\ccMethod{void foo();}{some member functions}
+\ccConstructor{Gray_level_image_3(const char* filename, FT iso_value);}
+{\ccc{filename} is the path to a file of a type supported by ImageIO.\\
+\ccc{iso_value} is an isovalue of $f$.
+}
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Package/Gray_level_image_3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Package/Gray_level_image_3.C}
+\ccc{ImplicitFunction},
+\ccc{Implicit_surface_3<Traits, Function>}.
 
 \end{ccRefClass}
 
