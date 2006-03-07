@@ -45,27 +45,26 @@ namespace CGAL {
     typedef typename Tds::Facet Facet;
 
   private:
-    bool visited;
-      
-  public: // AF: todo: make private and wrap in functions
-    bool regular_is_cached;
+    bool in_complex;
     bool regular;
+      
+    bool status_cached;
 
   public:
     // Constructors
 
     Complex_2_in_triangulation_vertex_base_3()
-      : Vb(), visited(false), regular_is_cached(false), regular(false)
+      : Vb(), in_complex(false), regular(false), status_cached(false)
     {}
 
-    bool is_visited() const {
-      return visited;
+    bool is_in_complex() const {
+      return in_complex;
     }
 
-    void set_visited(const bool b) {
-      visited = b;
+    void set_in_complex(const bool b) {
+      in_complex = b;
     }
-      
+
     bool is_regular() const {
       return regular;
     }
@@ -74,12 +73,12 @@ namespace CGAL {
       regular = b;
     }
 
-    bool is_regular_cached() const {
-      return regular_is_cached;
+    bool is_status_cached() const {
+      return status_cached;
     }
 
-    void set_regular_cached(const bool b) {
-      regular_is_cached = b;
+    void set_status_cached(const bool b) {
+      status_cached = b;
     }
   };  // end Complex_2_in_triangulation_vertex_base_3
 

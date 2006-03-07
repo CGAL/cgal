@@ -60,33 +60,23 @@ for the vertex status.
 
 \ccOperations
 
-\ccMethod{boost::logic:tribool  is_regular();}
+\ccMethod{bool is_regular();}
 {Returns \ccc{true} if the vertex  has been marked as \ccc{REGULAR}
-or \ccc{BOUNDARY}, \ccc{false} if the vertex has been marked \ccc{SINGULAR} 
-and \ccc{boost::logic:indeterninate}  otherwise.} 
+or \ccc{BOUNDARY}, \ccc{false} if the vertex has been marked \ccc{SINGULAR}.} 
 \ccGlue
-\ccMethod{void set_regular(boost::logic::tribool b);}
-{ Sets the  mark according to b.}
+\ccMethod{void set_regular(bool b);}
+{ Sets the  mark according to \ccc{b}.}
 
+\ccMethod{bool is_in_complex();}{Returns \ccc{true} if the ``in complex'' mark
+is set.}
+\ccGlue
+\ccMethod{void  set_in_complex(bool b);}{Sets the ``in complex'' mark as \ccc{b}.}
 
-%\ccMethod{bool is_visited();}{Returns true if the visited mark
-%is est.}
-%\ccGlue
-%\ccMethod{void  set_visited(bool b);}{Sets the visited mark as b.}
-
-
-
-%\ccMethod{bool is_regular_cached();}{returns true if the regular mark
-%is valid.}
-%\ccGlue
-%\ccMethod{bool is_regular();}{returns true if the regular mark is
-%set.}
-%\ccGlue
-%\ccMethod{void set_regular_cached(bool b);}{sets the validity of
-%regular mark as b.}
-%\ccGlue
-%\ccMethod{vois set_regular(bool b);}{sets the regular mark as \ccc{b}.}
-
+\ccMethod{bool is_status_cached();}{returns \ccc{true} if the regular and
+  ``in complex'' mark are valid.}
+\ccGlue
+\ccMethod{void set_status_cached(bool b);}{sets the validity of
+regular mark as b.}
 
 
 

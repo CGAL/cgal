@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,6 +19,9 @@
 
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
+
+// TODO: add the iterator 
+// TODO: document the output/input function of C2T3?
 
 #include <CGAL/circulator.h>
 #include <CGAL/Union_find.h>
@@ -157,8 +160,8 @@ protected:
 
 
   bool is_regular(const Vertex_handle v) const {
-    if(v->regular_is_cached){ // @TODO: tribool, change this!
-      return v->regular;
+    if(v->is_status_cached()){
+      return v->is_regular();
     } else {
       // We have to find out if there is more than one umbrella with apex v.
       // We exploit the fact that the umbrellas do not share any edge.
@@ -191,9 +194,9 @@ protected:
 	  }
 	}
       }
-      v->regular = (facets.number_of_sets() == 1);
-      v->regular_is_cached = true;
-      return v->regular;
+      v->set_regular(facets.number_of_sets() == 1);
+      v->set_status_cached(true);
+      return v->is_regular();
     }
 
   }
@@ -287,7 +290,7 @@ protected:
   // Setting functions
 
   void set_in_complex (const Vertex_handle v) {
-    v->set_visited(true);
+    v->set_in_complex(true);
   }
 
 
@@ -358,8 +361,8 @@ protected:
 	    set_in_complex(v);
             // when it was singular before it is also singular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was regular
-	    if((v->regular_is_cached) && (v->regular)){
-	      v->regular_is_cached = false;
+	    if((v->is_status_cached()) && (v->is_regular())){
+	      v->set_status_cached(false);
 	    }
 	  }
 	}
@@ -368,8 +371,8 @@ protected:
   }
 
   void remove_from_complex (const Vertex_handle v) {
-    v->set_visited(false);
-    v->regular_is_cached = false;
+    v->set_in_complex(false);
+    v->set_status_cached(false);
   }
 
   void remove_from_complex (const Facet& f) {
@@ -410,8 +413,8 @@ protected:
 	    remove_from_complex(v);
 	    // when it was regular before it is also regular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was singular
-	    if((v->regular_is_cached) && (! v->regular)){
-	      v->regular_is_cached = false;
+	    if((v->is_status_cached()) && (! v->is_regular())){
+	      v->set_status_cached(false);
 	    }
 	  }
 	}
@@ -447,8 +450,8 @@ protected:
 
 	    // when it was regular before it is also regular now, or no longer in the complex
 	    // so we only have to update the regular/singular field when it was singular
-	    if((v->regular_is_cached) && (! v->regular)){
-	      v->regular_is_cached = false;
+	    if((v->is_status_cached()) && (! v->is_regular())){
+	      v->set_status_cached(false);
 	    }
 	  }
 	}
