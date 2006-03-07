@@ -51,7 +51,7 @@ add functions to store and retrieve three boolean marks.
 The mark \ccc{in_complex_mark} marks if the vertex is in the complex,
 the mark \ccc{regular_or_boundary_mark} marks if 
 status of the vertex is either \ccc{REGULAR} or \ccc{BOUNDARY}
-and the third one, \ccc{status_mark}, marks if the two other
+and the third one, \ccc{validity_mark}, marks if the two other
 marks are valid, i. e. conform to the actual status of the vertex with
 respect to the complex.
 
@@ -67,25 +67,23 @@ respect to the complex.
 
 \ccOperations
 
-\ccMethod{bool is_regular_or_boundary_mark_true();}
-{Returns \ccc{true} if the \ccc{regular_or_boundary_mark} of the
-vertex  is set to \ccc{true}, \ccc{false} otherwise.} 
+\ccMethod{bool regular_or_boundary_mark();}
+{Returns the value of the \ccc{regular_or_boundary_mark}.}
 \ccGlue
 \ccMethod{void set_regular_or_boundary_mark(bool b);}
-{ Sets the \ccc{regular_or_boundary_mark} of the vertex  according to \ccc{b}.}
+{ Sets the value of the \ccc{regular_or_boundary_mark} to \ccc{b}.}
 
-\ccMethod{bool is_in_complex_mark_true();}
-{Returns \ccc{true} if the \ccc{in_complex_mark} is set to \ccc{true},
-false otherwise.}
+\ccMethod{bool in_complex_mark();}
+{Returns the value of the \ccc{in_complex_mark}.}
 \ccGlue
 \ccMethod{void  set_in_complex_mark(bool b);}
-{Sets the \ccc{set_in_complex_mark} as \ccc{b}.}
+{Sets the value of the \ccc{in_complex_mark} to \ccc{b}.}
 
-\ccMethod{bool is_status_mark_valid();}{returns \ccc{true} if the
-status marks are valid, i. e. coherent to the actual status of the vertex.}
+\ccMethod{bool validity_mark();}{returns \ccc{true} if the
+two other marks are  valid, i. e. coherent to the actual status of the vertex.}
 \ccGlue
-\ccMethod{void set_status_cached(bool b);}{sets the validity of
-status marks  as b.}
+\ccMethod{void set_validity_mark(bool b);}{sets the value
+of the \ccc{validity_mark} to \ccc{b}.}
 
 
 \ccHasModels
