@@ -24,9 +24,9 @@ An object \ccVar\ of this type must provide:
 {For a line arc.}
 
 \ccMemberFunction{bool operator()
-	(const CircularKernel::Circular_arc_2 & l, 
+	(const CircularKernel::Circular_arc_2 & c, 
 	const CircularKernel::Circular_arc_point_2 &p);}
-{For a circular arc.}
+{For a circular arc. \ccPrecond{$c$ is $x$-monotone.}}
 
 \ccHasModels
 
@@ -55,7 +55,7 @@ An object \ccVar\ of this type must provide:
 \ccMemberFunction{bool operator()
 	(const CircularKernel::Circular_arc_2 & a0,
 	const CircularKernel::Circular_arc_2 & a1);}
-{For two circular arcs.}
+{For two circular arcs. \ccPrecond{$a_0$ and $a_1$ are $x$-monotone.}}
 
 \ccHasModels
 
