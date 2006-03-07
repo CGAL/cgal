@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Implicit_surface_3<Traits,Func>}
+\begin{ccRefClass}{Implicit_surface_3<Traits, Function>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -25,7 +25,7 @@ set  of a function \begin{math}f : \R^3 \longrightarrow \R\end{math}.
 
 The library provides a partial specialization
 of the  surface mesher traits generator~:
-\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,Func > >}
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}
 that provides a model of \ccc{SurfaceMeshTraits_3} for this type of surfaces.
 
 
@@ -38,17 +38,30 @@ the types, predicates and constructors objects provided
 in \ccc{Traits} are
 used in 
 the partial specialisation 
-\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,Func > >}
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}
 to generate the model of  \ccc{SurfaceMeshTraits_3}.
 
-The template parameter \ccc{Func}  stands for a model
+The template parameter \ccc{Function}  stands for a model
 of the concept \ccc{ImplicitFunction}.
-The number type \ccc{Func::FT} has to match
+The number type \ccc{Function::FT} has to match
 the type \ccc{Traits::FT}.
 
-TODO : NEED TO DOCUMENT CONSTRUCTOR!
-
 \ccInclude{CGAL/Implicit_surface_3.h}
+
+\ccCreation
+\ccCreationVariable{surface}
+
+\ccConstructor{
+Implicit_surface_3(Function f,
+                   const Sphere_3 bounding_sphere,
+                   const FT error_bound);}
+{\ccc{f} is the object of type \ccc{Function} that represents the implicit
+  surface.\\
+ \ccc{bounding_sphere} is a bounding sphere of the implicit surface.\\
+ \ccc{error_bound} is a bound that is used if the partial specialisation 
+ \ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}
+ to compute intersection points between the implicit surface and some
+ segments.}
 
 \ccSeeAlso
 \ccc{make_surface_mesh},\\
