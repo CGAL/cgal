@@ -1,1 +1,0 @@
-CGAL configuration test files + workarounds.

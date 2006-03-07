@@ -8,7 +8,6 @@ Boolean_set_operations_2
 Box_intersection_d
 Cartesian_kernel
 Circulator
-Configuration
 Conic_2
 Convex_hull_2
 Convex_hull_3
@@ -80,7 +79,6 @@ STL_Extension
 Straight_skeleton_2
 Stream_lines_2
 Stream_support
-Subdivision_surfaces_3
 Subdivision_method_3
 Surface_mesher
 Timer

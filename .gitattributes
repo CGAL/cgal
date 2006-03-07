@@ -393,9 +393,6 @@ Coin/demo/Coin/Terrain/terrain.vcproj -text
 Coin/demo/Coin/Triangulation_3/triangulation_3.sln -text
 Coin/demo/Coin/Triangulation_3/triangulation_3.vcproj -text
 Coin/maintainer -text
-Configuration/config/testfiles/CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG.C -text
-Configuration/config/testfiles/CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG.C -text
-Configuration/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C -text
 Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
@@ -511,6 +508,9 @@ Installation/config/support/test_GMPXX.C -text
 Installation/config/support/test_LEDA.C -text
 Installation/config/support/test_MPFR.C -text
 Installation/config/support/test_QT.C -text
+Installation/config/testfiles/CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG.C -text
+Installation/config/testfiles/CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG.C -text
+Installation/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
