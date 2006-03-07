@@ -10,6 +10,11 @@ optimiser le cas des cercles
 - enlever begin=end=... dans constructeur d'arcs
 - echecs de filtres un peu partout
 
+mettre fonctions globales 
+- systematiquement dans code (il y en a qqs unes)
+- dans doc
+- tester
+
 How can we avoid to call global functions of CK in internal code? 
 These calls look rather dirty to me. 
 I (MT) tried to remove them but could not: if these calls are replaced 
