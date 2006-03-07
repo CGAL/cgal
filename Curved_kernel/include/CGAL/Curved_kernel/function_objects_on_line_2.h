@@ -36,6 +36,7 @@ namespace LinearFunctors {
     public:
 
     typedef typename CK::Line_2 result_type;
+    typedef Arity_tag<1>        Arity;
 
     result_type
     operator() ( const typename CK::Polynomial_1_2 &eq )
@@ -50,6 +51,7 @@ namespace LinearFunctors {
     public:
 
     typedef typename CK::Polynomial_1_2 result_type;
+    typedef Arity_tag<1>                Arity;
 
     result_type
     operator() ( const typename CK::Line_2 & l )

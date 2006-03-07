@@ -43,7 +43,7 @@ namespace CircularFunctors {
 
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef Arity_tag<2>            Arity;
 
     using CK::Linear_kernel::Compare_x_2::operator();
 
@@ -64,7 +64,7 @@ namespace CircularFunctors {
 
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef Arity_tag<2>            Arity;
 
     using CK::Linear_kernel::Compare_y_2::operator();
 
@@ -84,7 +84,7 @@ namespace CircularFunctors {
     
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef Arity_tag<2>            Arity;
 
     using CK::Linear_kernel::Compare_xy_2::operator();
 
@@ -103,8 +103,8 @@ namespace CircularFunctors {
     typedef typename CK::Line_arc_2              Line_arc_2;
 
   public:
-    typedef bool result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<2> Arity;
     
     result_type
     operator()(const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
@@ -127,8 +127,8 @@ namespace CircularFunctors {
     typedef typename CK::Line_2                  Line_2;
 
   public:
-    typedef bool result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<2> Arity;
     
     result_type
     operator()(const Circle_2 &a, const Circular_arc_point_2 &p) const
@@ -159,7 +159,7 @@ namespace CircularFunctors {
 
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>             Arity;
+    typedef Arity_tag<3>            Arity;
     
     result_type
     operator()(const Circular_arc_2 &a1,
@@ -199,8 +199,8 @@ namespace CircularFunctors {
     typedef typename CK::Line_arc_2              Line_arc_2;
 
   public:
-    typedef bool result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<2> Arity;
 
     using CK::Linear_kernel::Equal_2::operator();
     
@@ -236,7 +236,7 @@ namespace CircularFunctors {
 
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef Arity_tag<2>            Arity;
     
     result_type
     operator() (const Circular_arc_point_2 &p,
@@ -257,8 +257,8 @@ namespace CircularFunctors {
     typedef typename CK::Line_arc_2     Line_arc_2;
 
   public:
-    typedef bool result_type;
-    typedef Arity_tag<2>             Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<2> Arity;
     
     result_type
     operator() (const Circular_arc_2 &A1, const Circular_arc_2 &A2) const
@@ -279,8 +279,8 @@ namespace CircularFunctors {
 
   public:
     
-     typedef void result_type;   //!!!
-     typedef Arity_tag<1>             Arity;   
+     typedef void         result_type;   //!!!
+     typedef Arity_tag<2> Arity;   
 
     template < class OutputIterator >
     OutputIterator
@@ -318,8 +318,8 @@ namespace CircularFunctors {
 
   public:
 
-     typedef void result_type;   //!!!
-     typedef Arity_tag<1>             Arity;
+     typedef void         result_type;   //!!!
+     typedef Arity_tag<2> Arity;
 
     template < class OutputIterator >
     OutputIterator
@@ -357,8 +357,8 @@ namespace CircularFunctors {
 
   public:
 
-     typedef void result_type;   //!!!
-     typedef Arity_tag<1>             Arity;
+     typedef void         result_type;   //!!!
+     typedef Arity_tag<2> Arity;
 
     template < class OutputIterator >
     OutputIterator
@@ -388,8 +388,8 @@ template < class CK >
 
   public:
 
-     typedef void result_type;   //!!!
-     typedef Arity_tag<1>             Arity;
+     typedef void         result_type;   //!!!
+     typedef Arity_tag<2> Arity;
 
     template < class OutputIterator >
     OutputIterator
@@ -422,8 +422,8 @@ template < class CK >
     
     public:
 
-    typedef void result_type;        //!!! Linear_kernel version is Object !!!
-    typedef Arity_tag<2>             Arity;
+    typedef void         result_type; 
+    typedef Arity_tag<3> Arity;
     
     using CK::Linear_kernel::Intersect_2::operator();
 
@@ -480,8 +480,8 @@ template < class CK >
 
   public:
 
-    typedef Arity_tag<5>             Arity;
-    typedef void result_type;
+    typedef void         result_type;
+    typedef Arity_tag<4> Arity;
 
     result_type
     operator()(const Circular_arc_2 &A, 
@@ -507,8 +507,8 @@ template < class CK >
 
   public:
 
-    typedef bool          result_type;
-    typedef Arity_tag<1>  Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<1> Arity;
     
     using CK::Linear_kernel::Is_vertical_2::operator();
 
@@ -538,7 +538,7 @@ template < class CK >
 
   public:
     typedef  Circular_arc_2 result_type;
-    typedef  Arity_tag<5>             Arity;
+    typedef  Arity_tag<3>   Arity;
     
     result_type
     operator()(void) 
@@ -600,8 +600,8 @@ template < class CK >
     typedef typename Line_arc_2::Rep               Rep;
 
   public:
-    typedef Line_arc_2  result_type;
-    typedef Arity_tag<5>             Arity;
+    typedef Line_arc_2   result_type;
+    typedef Arity_tag<3> Arity;
     
     result_type
     operator()(void) 
@@ -654,8 +654,8 @@ template < class CK >
                                                Root_for_circles_2_2;
 
   public:
-    typedef  Circular_arc_point_2 result_type;
-    typedef Arity_tag<1>             Arity;
+    typedef Circular_arc_point_2 result_type;
+    typedef Arity_tag<1>         Arity;
 
     result_type
     operator()(void) 
@@ -680,9 +680,9 @@ template < class CK >
 
   public:
 
-    typedef  Root_of_2  result_type;
-    typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
+    typedef Root_of_2            result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Circular_arc_point_2 & a) const
     {
@@ -699,11 +699,9 @@ template < class CK >
 
   public:
 
-    typedef Root_of_2  result_type;
-    typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
-        
-
+    typedef Root_of_2            result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
     
     qualified_result_type operator() (const Circular_arc_point_2 & a) const
     {
@@ -721,9 +719,9 @@ template < class CK >
 
   public:
 
-    typedef Circular_arc_point_2    result_type;
-    typedef const result_type &     qualified_result_type;
-    typedef Arity_tag<1>            Arity;
+    typedef Circular_arc_point_2 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Circular_arc_2 & a) const
     {
@@ -750,10 +748,9 @@ template < class CK >
 
   public:
 
-    typedef Circular_arc_point_2    result_type;
-    typedef const result_type &     qualified_result_type;
-    typedef Arity_tag<1>            Arity;
-
+    typedef Circular_arc_point_2 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
     
     qualified_result_type operator() (const Circular_arc_2 & a) const
     {
@@ -780,10 +777,9 @@ template < class CK >
 
   public:
 
-    typedef Circular_arc_point_2    result_type;
-    typedef const result_type &     qualified_result_type;
-    typedef Arity_tag<1>            Arity;    
-
+    typedef Circular_arc_point_2 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;    
     
     qualified_result_type operator() (const Circular_arc_2 & a) const
     { return a.rep().source(); }
@@ -803,10 +799,9 @@ template < class CK >
 
   public:
 
-    typedef Circular_arc_point_2     result_type;
-    typedef const result_type &      qualified_result_type;
-    typedef Arity_tag<1>             Arity;
-
+    typedef Circular_arc_point_2 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
    
     qualified_result_type operator() (const Circular_arc_2 & a) const
     { return a.rep().target();}
@@ -824,8 +819,8 @@ template < class CK >
 
   public:
 
-    typedef bool result_type;
-    typedef Arity_tag<1>             Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<1> Arity;
     
     result_type operator() (const Circular_arc_2 & a) const
     {
@@ -847,8 +842,8 @@ template < class CK >
 
   public:
 
-    typedef bool result_type;
-    typedef Arity_tag<1>             Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<1> Arity;
     
     result_type operator() (const Circular_arc_2 & a) const
     {
@@ -870,8 +865,8 @@ template < class CK >
 
   public:
 
-    typedef bool result_type;
-    typedef Arity_tag<1>             Arity;
+    typedef bool         result_type;
+    typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circular_arc_2 & a) const
     {
@@ -887,9 +882,9 @@ template < class CK >
 
   public:
 
-    typedef  Circle_2 result_type;
-    typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
+    typedef Circle_2             result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
     
     qualified_result_type operator() (const Circular_arc_2 & a) const
     {
@@ -907,9 +902,9 @@ template < class CK >
 
   public:
 
-    typedef  Line_2                    result_type;
-    typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
+    typedef Line_2               result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
     
     qualified_result_type operator() (const Line_arc_2 & a) const
     {
@@ -928,8 +923,8 @@ template < class CK >
 
   public:
 
-    typedef CGAL::Bbox_2   result_type;
-    typedef Arity_tag<1>             Arity;    
+    typedef CGAL::Bbox_2 result_type;
+    typedef Arity_tag<1> Arity;    
 
     using CK::Linear_kernel::Construct_bbox_2::operator();
 
