@@ -18,7 +18,7 @@ my $announcements_dir="/u/termite/0/user/spion/CGAL/testannouncements";
 my $lock_cmd= "/usr/local/bin/lockfile";
 my $currentdir;
 my $ftp_results_dir="/net/servers/ftp-sop/geometrica/Incoming";
-my $check_file=".processed_test_results";
+my $check_file="processed_test_results";
  
 my ($cgal_version,$tarname,@results);
 
