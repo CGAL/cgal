@@ -6,25 +6,34 @@ This package's entry point is:
 
 \begin{ccExampleCode}
 
-// Compute a one-to-one mapping from a triangular 3D surface 'mesh' to 2D circle,
-// using Floater Mean Value Coordinates algorithm.
-// One-to-one mapping is guaranteed.
+// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+// 2D circle, using Floater Mean Value Coordinates algorithm.
+// A one-to-one mapping is guaranteed.
+//
+// The mapping is piecewise linear on the input mesh triangles.
+// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
+//
 template <class ParameterizationMesh_3>
 typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3* mesh)
+parameterize(ParameterizationMesh_3& mesh)  // 3D mesh, model of ParameterizationMesh_3 concept
 {
     Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3> parameterizer;
     return parameterizer.parameterize(mesh);
 }
 
-// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
-// to a piece of the 2D space.
-// One-to-one mapping may be guaranteed or not, depending of
-// ParameterizerTraits_3 algorithm chosen.
+
+// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+// simple 2D domain.
+// The mapping is piecewise linear on the triangle mesh.
+// The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
+//
+// One-to-one mapping may be guaranteed or
+// not, depending on the chosen ParametizerTraits_3 algorithm.
+//
 template <class ParameterizationMesh_3, class ParameterizerTraits_3>
 typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3* mesh,
-             ParameterizerTraits_3 parameterizer)
+parameterize(ParameterizationMesh_3& mesh,          // 3D mesh, model of ParameterizationMesh_3
+             ParameterizerTraits_3 parameterizer)   // Parameterization method for 'mesh'
 {
     return parameterizer.parameterize(mesh);
 }
@@ -137,14 +146,14 @@ The consequence is that most of the code of the fixed border methods is factoriz
 \ccc{Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} class.
 Subclasses:
 \begin{itemize}
-\item must provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} 
+\item must provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d}
       template parameters that make sense
-\item must implement \ccc{compute_w_ij}() to compute $w_{ij}$ = (i,j) coefficient 
+\item must implement \ccc{compute_w_ij}() to compute $w_{ij}$ = (i,j) coefficient
       of matrix A for $v_j$ neighbor vertex of $v_i$
 \item may implement an optimized version of \ccc{is_one_to_one_mapping}()
 \end{itemize}
 
-See \ccc{Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} 
+See \ccc{Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
 class as an example.
 
 
@@ -186,7 +195,7 @@ The current design of this package uses the second option, which is simpler.
 Of course, we may decide to switch to the first one to reach a deeper integration
 of CGAL with Boost.
 
-Point 3) is solved by class \ccc{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}, 
+Point 3) is solved by class \ccc{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>},
 which takes care of virtually {\em cutting}
 a patch in a \ccc{ParameterizationPatchableMesh_3} mesh, to make it appear as a topological disk
 with a \ccc{ParameterizationMesh_3} interface.
