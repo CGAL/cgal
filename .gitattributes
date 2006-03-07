@@ -1661,6 +1661,8 @@ Surface_mesher/demo/Surface_mesher/windows/res/idb8.bmp -text svneol=unset#unset
 Surface_mesher/doc/scheme.fig -text
 Surface_mesher/doc/scheme.ps -text
 Surface_mesher/doc_tex/GNUmakefile -text
+Surface_mesher/examples/Surface_mesher/NOTICE -text
+Surface_mesher/examples/Surface_mesher/implicit_functions.h -text
 Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text

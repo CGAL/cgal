@@ -1,8 +1,6 @@
 include makefile
 
-ifneq ($(wildcard my_makefile), )
-  include my_makefile
-endif
+-include my_makefile
 
 dep:
 	$(MAKE) depends
