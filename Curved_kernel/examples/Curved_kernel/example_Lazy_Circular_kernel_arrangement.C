@@ -117,7 +117,7 @@ int main(){
   ArcContainer2 ac2;
   int x;
   int y;
-  for(int i = 0; i < 100; i++){
+  for(int i = 0; i < 30; i++){
     x = theRandom.get_int(random_min,random_max);
     y = theRandom.get_int(random_min,random_max);
     ac.push_back( Circle_2( Point_2(x,y), x*x + y*y));

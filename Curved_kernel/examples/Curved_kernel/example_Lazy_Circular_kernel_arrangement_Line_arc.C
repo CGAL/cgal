@@ -111,7 +111,7 @@ int main(){
   double t1,t2,t3,t4;
   CGAL::Timer clck1,clck2;
 
-    for(int i = 0; i < 800; i++){
+    for(int i = 0; i < 100; i++){
       x1 = theRandom.get_int(random_min,random_max);
       y1 = theRandom.get_int(random_min,random_max);
       do{
