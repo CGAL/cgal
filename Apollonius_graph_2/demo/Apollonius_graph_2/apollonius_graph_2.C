@@ -17,6 +17,8 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include <iostream>
