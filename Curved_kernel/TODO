@@ -10,6 +10,11 @@ optimiser le cas des cercles
 - enlever begin=end=... dans constructeur d'arcs
 - echecs de filtres un peu partout
 
+equal
+faire unoriented equal ? dans kernel aussi ? 
+en tout cas, eviter ca : if (circle1==circle2)||(circle1==circle2.opposite())
+et remplacer par : if (circle1.center()==circle2.center())&&(...)
+
 mettre fonctions globales 
 - systematiquement dans code (il y en a qqs unes)
 - dans doc
@@ -22,6 +27,7 @@ by calls of internal functions, then CK::Polynomials must be accessed,
 but they are undefined in Lazy_kernel...
 
 interface intersect avec 2 outputIt types
+rajouter cas line_2 qui a ete oublie
 
 arcs non monotones
 - fonction interne has_on/sachant que sur cercle support
