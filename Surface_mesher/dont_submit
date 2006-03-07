@@ -1,7 +1,10 @@
 GNUmakefile
 Doxyfile
 TODO
-TODO
 demo
 Complex_2_in_triangulation_3
 Complex_2_in_triangulation_3_ref
+surface_mesher.C
+surfaces_union.C
+inputs
+NOTICE
