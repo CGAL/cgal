@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_QT
 int main(int, char*)
