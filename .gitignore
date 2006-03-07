@@ -268,7 +268,7 @@ Surface_mesher/doc_tex/*.hlg
 Surface_mesher/doc_tex/*.ilg
 Surface_mesher/doc_tex/*.log
 Surface_mesher/doc_tex/*.pdflg
-Surface_mesher/doc_tex/Complex_2_in_triangulation_3.tex
+Surface_mesher/doc_tex/*.tex
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.aux
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.bbl
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.blg

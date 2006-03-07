@@ -1,8 +1,8 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: ImplicitSurfaceTraits_3.tex
 % +------------------------------------------------------------------------+
-% | 18.01.2006   Author
-% | Package: Package
+% | 18.01.2006   Laurent Rineau
+% | Package: Surface_mesher
 % | 
 \RCSdef{\RCSImplicitSurfaceTraitsRev}{$Id$}
 \RCSdefDate{\RCSImplicitSurfaceTraitsDate}{$Date$}
@@ -13,74 +13,105 @@
 
 \begin{ccRefConcept}{ImplicitSurfaceTraits_3}
 
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[concept]{} %% add further index entries
-
 \ccDefinition
   
 The concept \ccRefName\  describes the requirements of the traits class to
-be plugged  as \ccc{Traits} in \ccc{Implicit_surface_3< Traits, Function>}.
+be plugged  as \ccc{Traits} in \ccc{Implicit_surface_3<Traits, Function>}.
 The concept provides the types, predicates and constructors objects
 that are  used in the 
 the partial specialisation  of 
-the  surface mesher traits generator~:
+the  surface mesher traits generator:
 \ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}.
 
 
 
-TODO: TO BE COMPLETED BE LAURENT
-
-%\ccGeneralizes
-
-%ThisConcept \\
-%ThatConcept
 
 \ccTypes
 
 \ccNestedType{FT}{The numerical type.}
 \ccGlue
-\ccNestedType{Point_3}{The point type.}
+\ccNestedType{Point_3}{The point type. This point type must have a
+  constructor \ccc{Point_3(FT, FT, FT)}.}
+\ccGlue
+\ccNestedType{Line_3}{The line type.}
+\ccGlue
+\ccNestedType{Ray_3}{The ray type.}
+\ccGlue
+\ccNestedType{Segment_3}{The segment type.}
+\ccGlue
+\ccNestedType{Vector_3}{The vector type.}
 \ccGlue
 \ccNestedType{Sphere_3}{The sphere type.}
 
+\ccTwo{Construct_translated_point_3}{}
 
-%\ccCreation
-%\ccCreationVariable{a}  %% choose variable name
+\ccNestedType{Compute_squared_distance_3}
+{A predicate object that must provide the function operator\\
+\ccc{FT operator()(Point_3, Point_3)} which return the squared distance
+between two points.}
 
-%\ccConstructor{ImplicitSurfaceTraits_3();}{default constructor.}
+\ccNestedType{Compute_squared_radius_3}
+{A predicate object that must provide the function operator\\
+\ccc{FT operator()(const Sphere_3& s)} which returns the squared radius
+of~\ccc{s}.}
 
-%\ccOperations
 
-%\ccMethod{void foo();}{some member functions}
+\ccNestedType{Construct_center_3}
+{A predicate object that must provide the function operator\\
+\ccc{Point_3 operator()(const Sphere_3& s)} which computes the center of
+the sphere~\ccc{s}.}
+
+\ccNestedType{Construct_line_3}
+{A predicate object that must provide the function operator\\
+\ccc{Line_3 operator()(const Point_3 &p, const Point_3 &q)} which
+returns a line  passing through the points \ccc{p} and~\ccc{q}.}
+
+\ccNestedType{Construct_midpoint_3}
+{A predicate object that must provide the function operator\\
+\ccc{Point_3 operator()(const Point_3& p, const Point_3& q)} which computes
+the midpoint of the segment \ccc{pq}.}
+
+\ccNestedType{Construct_scaled_vector_3}
+{A predicate object that must provide the function operator\\
+\ccc{Vector_3 operator()(const Vector_3 &v, const FT& scale)} which returns
+the vector \ccc{v} scaled by a factor \ccc{scale}.}
+
+\ccNestedType{Construct_translated_point_3}
+{A predicate object that must provide the function operator\\
+\ccc{Point_3 operator()(const Point_3& p, const Vector_3& v)} which returns
+the point obtained by translating \ccc{p} by the vector~\ccc{v}.}
+
+\ccNestedType{Construct_vector_3}
+{A predicate object that must provide the function operator\\
+\ccc{Vector_3 operator()(const Point_3 &a, const Point_3 &b)} which returns
+the vector \ccc{b-a}.}
+
+\ccOperations
+
+The following functions give access to the predicate and construction
+objects:
+
+\ccThree{onstruct_translated_point_3xxx}{construct_translated_point_3_object()x}{}
+\ccCreationVariable{traits}
+
+\ccMethod{Compute_squared_distance_3 compute_squared_distance_3_object();}{}
+\ccMethod{Compute_squared_radius_3 compute_squared_radius_3_object();}{}
+\ccMethod{Construct_center_3 construct_center_3_object();}{}
+\ccMethod{Construct_line_3 construct_line_3_object();}{}
+\ccMethod{Construct_midpoint_3 construct_midpoint_3_object();}{}
+\ccMethod{Construct_scaled_vector_3 construct_scaled_vector_3_object();}{}
+\ccMethod{Construct_translated_point_3 construct_translated_point_3_object();}{}
+\ccMethod{Construct_vector_3 construct_vector_3_object();}{}
+
 
 \ccHasModels
 
 Any CGAL Kernel.
 
-%\ccc{Some_class},
-% \ccc{Some_other_class}.
-
 \ccSeeAlso
 
 \ccc{Implicit_surface_3<Traits, Function>},\\
 \ccc{make_surface_mesh}
-
-
-%\ccExample
-
-%A short example program.
-%Instead of a short program fragment, a full running program can be
-%included using the 
-%\verb|\ccIncludeExampleCode{Package/ImplicitSurfaceTraits_3.C}| 
-%macro. The program example would be part of the source code distribution and
-%also part of the automatic test suite.
-
-%\begin{ccExampleCode}
-%void your_example_code() {
-%}
-%\end{ccExampleCode}
-
-%%% \ccIncludeExampleCode{Package/ImplicitSurfaceTraits_3.C}
 
 \end{ccRefConcept}
 
