@@ -1,5 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/make_surface_mesh.h>
+
+#include <CGAL/Gray_level_image_3.h>
 #include <CGAL/Implicit_surface_3.h>
 
 struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
@@ -9,22 +12,19 @@ typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
 typedef Kernel::Sphere_3 Sphere_3;
+typedef Kernel::Point_3 Point_3;
 
-typedef double (*Function)(double, double, double);
+typedef CGAL::Gray_level_image_3<Kernel::FT> Function;
 typedef CGAL::Implicit_surface_3<Kernel, Function> Surface_3;
-
-double sphere_function (double x, double y, double z) {
-  const double x2=x*x, y2=y*y, z2=z*z;
-  return x2+y2+z2-1;
-}
 
 int main(int, char **) {
   Tr tr;            // 3D-Delaunay triangulation
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
   // defining the surface
-  Surface_3 surface(sphere_function, 
-                    Sphere_3(CGAL::ORIGIN, 2.),
+  Function function("ImageIO/data/skull_2.9.inr.gz");
+  Surface_3 surface(function, 
+                    Sphere_3(Point_3(250., 250., 250.), 500.),
                     1e-06);
 
   // defining meshing criteria
