@@ -19,6 +19,8 @@
 
 
 // if QT is not installed, a message will be issued in runtime.
+#include <CGAL/basic.h>
+
 #ifndef CGAL_USE_QT
 #include <iostream>
 int main(int, char*){
