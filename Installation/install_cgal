@@ -783,7 +783,7 @@ set_compiler_flags()
     CORE_LIBNAME="libcore++.a"
     CGAL_WIN_EXTRA_DIR=x11
     MATH_LIB="m"
-    OPENGL_LIBS="-lGL -lGLU -lGLUT"
+    OPENGL_LIBS="-lGL -lGLU"
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
@@ -3570,7 +3570,7 @@ makefile_print_from_var()
 {
     _tmp="`value_of \"${1}\"`"
     if [ -n "${_tmp}" ]; then
-	${_printf} "`echo \"${_tmp}\" | ${_sed} 's// \\\\\\\\\\\n\\\t/g'`"
+	echo "${_tmp}" | ${_awk} 'BEGIN {RS=""}{printf " \\\n\t%s",$0}'
     fi
 }
 
