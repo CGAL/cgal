@@ -1,3 +1,9 @@
+8 March 2006:  Menelaos Karavelas
+- demos now include CGAL/basic.h before testing for Qt; this is essential
+  due to the recent changes in install_cgal
+- added copyright notices in demo files
+- modified year in existing copyright notices
+
 26 January 2006:  Menelaos Karavelas
 - fixed typos in user manual
 
