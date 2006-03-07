@@ -1,5 +1,7 @@
 //! \file examples/Boolean_set_operations_2/ex_traits_adaptor.C
 // Using the traits adaptor to generate a traits of conics.
+#include <CGAL/basic.h>
+
 #ifndef CGAL_USE_CORE
 #include <iostream>
 int main ()
