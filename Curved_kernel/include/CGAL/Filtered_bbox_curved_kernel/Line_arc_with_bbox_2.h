@@ -32,7 +32,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class BK >
-class Line_arc_with_bbox_2 : public CGALi::Debug_id<> {
+class Line_arc_with_bbox_2 {
 
     typedef typename BK::Circular_kernel                         CK;
     typedef typename CK::FT                                    FT;

@@ -28,7 +28,6 @@
 #include <vector>
 #include <iterator>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Curved_kernel/Debug_id.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
@@ -37,7 +36,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class HK >
-class Line_arc_with_hexagon_2 : public CGALi::Debug_id<> {
+class Line_arc_with_hexagon_2 {
 
     typedef typename HK::Circular_kernel                         CK;
     typedef typename CK::FT                                    FT;

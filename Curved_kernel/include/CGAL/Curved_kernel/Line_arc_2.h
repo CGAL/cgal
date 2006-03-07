@@ -25,7 +25,6 @@
 #ifndef CGAL_CURVED_KERNEL_LINE_ARC_2_H
 #define CGAL_CURVED_KERNEL_LINE_ARC_2_H
 
-#include <CGAL/Curved_kernel/Debug_id.h>
 #include <CGAL/global_functions_on_line_2.h>
 #include <CGAL/global_functions_on_circle_2.h>
 #include <CGAL/global_functions_on_line_arcs_2.h>
@@ -40,7 +39,6 @@ namespace CGALi {
 
   template <class CK >
   class Line_arc_2
-    : public Debug_id<>
   {
     typedef typename CK::FT                        FT;
     typedef typename CK::RT                        RT;

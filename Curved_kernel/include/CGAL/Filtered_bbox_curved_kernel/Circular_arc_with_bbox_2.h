@@ -27,13 +27,12 @@
 
 #include <CGAL/Filtered_bbox_curved_kernel/Circular_arc_endpoint_with_bbox_2.h>
 #include <CGAL/Filtered_bbox_curved_kernel.h>
-#include <CGAL/Curved_kernel/Debug_id.h>
 #include <CGAL/Bbox_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class BK >
-class Circular_arc_with_bbox_2 : public CGALi::Debug_id<> {
+class Circular_arc_with_bbox_2 {
 
     typedef typename BK::Circular_kernel                         CK;
     typedef typename CK::FT                                    FT;
@@ -201,7 +200,7 @@ public:
   std::ostream &
   print(std::ostream & os, const Circular_arc_with_bbox_2<CK> &a)
   {
-    return os << "Circular_arc_2( " << a.id() << std::endl
+    return os << "Circular_arc_2( " << std::endl
               << "left : " << a.arc().left() << " , " << std::endl
               << "right : " << a.arc().right() << " , " << std::endl
 	      << "upper part : " << a.arc().on_upper_part() << std::endl

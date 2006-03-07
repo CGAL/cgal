@@ -27,7 +27,6 @@
 
 #include <iostream>
 #include <cassert>
-#include <CGAL/Curved_kernel/Debug_id.h>
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Interval_arithmetic.h>
@@ -39,7 +38,6 @@ namespace CGALi {
 
   template <class CK >
   class Circular_arc_point_2
-    : public Debug_id<>
   {
     typedef typename CK::FT                      FT;
     typedef typename CK::Root_of_2               Root_of_2;
@@ -103,7 +101,7 @@ namespace CGALi {
   std::ostream &
   print(std::ostream & os, const Circular_arc_point_2<CK> &p)
   {
-    return os << "CirclArcEndPoint_2(" << p.id() << std::endl
+    return os << "CirclArcEndPoint_2(" << std::endl
 	      << p.x() << ", " << p.y() << ')';
   }
 

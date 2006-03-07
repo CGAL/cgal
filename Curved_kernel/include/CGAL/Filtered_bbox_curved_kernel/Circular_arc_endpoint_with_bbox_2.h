@@ -26,13 +26,12 @@
 #define CGAL_CIRCULAR_ARC_POINT_WITH_BBOX_H 
 
 #include<CGAL/Bbox_2.h>
-#include <CGAL/Curved_kernel/Debug_id.h>
 //#include <CGAL/Filtered_bbox_curved_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class BK>
-class Circular_arc_point_with_bbox_2 : public CGALi::Debug_id<>{
+class Circular_arc_point_with_bbox_2 {
 
     typedef typename BK::Circular_kernel                         CK;
     typedef typename CK::FT                                    FT;

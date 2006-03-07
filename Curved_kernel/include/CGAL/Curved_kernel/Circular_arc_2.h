@@ -25,7 +25,6 @@
 #ifndef CGAL_CURVED_KERNEL_CIRCULAR_ARC_2_H
 #define CGAL_CURVED_KERNEL_CIRCULAR_ARC_2_H
 
-#include <CGAL/Curved_kernel/Debug_id.h>
 #include <CGAL/global_functions_on_circular_arcs_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h> // temporarily
 #include <CGAL/intersections.h>
@@ -36,7 +35,6 @@ namespace CGALi {
 
   template <class CK >
   class Circular_arc_2
-    : public Debug_id<>
   {
     typedef typename CK::FT                        FT;
     typedef typename CK::RT                        RT;
@@ -397,7 +395,7 @@ namespace CGALi {
   std::ostream &
   print(std::ostream & os, const Circular_arc_2<CK> &a)
   {
-    return os << "Circular_arc_2( " << a.id() << std::endl
+    return os << "Circular_arc_2( " << std::endl
               << "left : " << a.left() << " , " << std::endl
               << "right : " << a.right() << " , " << std::endl
 	      << "upper part : " << a.on_upper_part() << std::endl

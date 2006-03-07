@@ -42,8 +42,9 @@ namespace CGAL {
 //#define CGAL_NO_INLINE
 #endif
 
-// FIXME : should it be the responsibility of the tracer
-//         to add the Debug_id stuff ?
+// FIXME : the .id() came from the Debug_id base class, which used to be
+//         intrusive.  Maybe the tracer could add it to the objects itself...
+
 template < typename Traits, int debug_level = 2 >
 class Circular_arc_traits_tracer
  : public Traits
