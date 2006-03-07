@@ -1119,6 +1119,7 @@ Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#unset
 Nef_3/examples/Nef_3/polygon_construction.C -text
 Nef_3/examples/Nef_3/polyline_construction.C -text
+Nef_3/test/Nef_3/Nef_3_problematic_construction.C -text
 Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text
 Nef_3/test/Nef_3/data/2_cycles_on_halfsphere2.off -text
 Nef_3/test/Nef_3/data/centered_cube.off -text
@@ -1128,6 +1129,7 @@ Nef_3/test/Nef_3/data/cube+vee.off -text
 Nef_3/test/Nef_3/data/cube+veeee.off -text
 Nef_3/test/Nef_3/data/cube+vertex.off -text
 Nef_3/test/Nef_3/data/cube.off -text
+Nef_3/test/Nef_3/data/nine_planes.off -text
 Nef_3/test/Nef_3/data/octa.off -text
 Nef_3/test/Nef_3/data/star.off -text
 Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#unset
