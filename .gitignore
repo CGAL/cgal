@@ -306,6 +306,9 @@ Surface_mesher/doc_tex/Surface_mesher_ref/*.ilg
 Surface_mesher/doc_tex/Surface_mesher_ref/*.log
 Surface_mesher/doc_tex/Surface_mesher_ref/*.pdflg
 Surface_mesher/doxygen
+Surface_mesher/examples/Surface_mesher/*.exe
+Surface_mesher/examples/Surface_mesher/3d_image_surface_mesher
+Surface_mesher/examples/Surface_mesher/ImageIO/libImageIO.*
 Surface_mesher/examples/Surface_mesher/depends
 Surface_mesher/examples/Surface_mesher/implicit_surface_mesher
 Surface_mesher/examples/Surface_mesher/my_makefile
