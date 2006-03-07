@@ -1,5 +1,7 @@
 //! \file examples/Arrangement_2/ex_rational_functions.C
 // Constructing an arrangement of arcs of rational functions.
+#include <CGAL/basic.h>
+
 #ifndef CGAL_USE_CORE
 #include <iostream>
 int main ()

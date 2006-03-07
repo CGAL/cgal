@@ -21,6 +21,7 @@
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
+#ifdef CGAL_USE_CORE
 
 #include "MyWindow.h"
 #include "forms.h"
@@ -435,20 +436,27 @@ int main(int argc, char **argv)
   return app.exec();  
 }
 
-#else 
+#else // CGAL_USE_CORE not defined:
 
 #include <iostream>
 
+int main(int, char*)
+{
+  std::cout << "Sorry, this demo needs CORE ..." << std::endl;
+
+  return (0);
+}
+
+#endif // CGAL_USE_CORE
+#else // CGAL_USE_QT not defined:
+
+#include <iostream>
 
 int main(int, char*)
 {
 
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl;
-
-  return 0;
+  std::cout << "Sorry, this demo needs QT ..." << std::endl;
+  return (0);
 }
-
-
 
 #endif // CGAL_USE_QT
