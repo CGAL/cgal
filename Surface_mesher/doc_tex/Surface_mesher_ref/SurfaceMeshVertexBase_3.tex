@@ -20,7 +20,7 @@
   
 The concept \ccRefName\ describes the vertex base type
 of the three dimensional triangulation used
-to embed thee surface mesh.
+to embed the surface mesh.
 
 More precisely,
 the first template parameter \ccc{C2T3} of the surface mesher
@@ -44,10 +44,17 @@ required in this triangulation type.
 
 \ccc{TriangulationVertexBase_3}
 
-The concept \ccRefName\ 
-add functions to store and retrieve the status of the vertex.
-This feature is required to allow a caching mechanism
-for the vertex status.
+
+To allow a caching mechanism, 
+the concept \ccRefName\ 
+add functions to store and retrieve three boolean marks.
+The mark \ccc{in_complex_mark} marks if the vertex is in the complex,
+the mark \ccc{regular_or_boundary_mark} marks if 
+status of the vertex is either \ccc{REGULAR} or \ccc{BOUNDARY}
+and the third one, \ccc{status_mark}, marks if the two other
+marks are valid, i. e. conform to the actual status of the vertex with
+respect to the complex.
+
 
 
 %\ccTypes
@@ -60,24 +67,25 @@ for the vertex status.
 
 \ccOperations
 
-\ccMethod{bool is_regular();}
-{Returns \ccc{true} if the vertex  has been marked as \ccc{REGULAR}
-or \ccc{BOUNDARY}, \ccc{false} if the vertex has been marked \ccc{SINGULAR}.} 
+\ccMethod{bool is_regular_or_boundary_mark_true();}
+{Returns \ccc{true} if the \ccc{regular_or_boundary_mark} of the
+vertex  is set to \ccc{true}, \ccc{false} otherwise.} 
 \ccGlue
-\ccMethod{void set_regular(bool b);}
-{ Sets the  mark according to \ccc{b}.}
+\ccMethod{void set_regular_or_boundary_mark(bool b);}
+{ Sets the \ccc{regular_or_boundary_mark} of the vertex  according to \ccc{b}.}
 
-\ccMethod{bool is_in_complex();}{Returns \ccc{true} if the ``in complex'' mark
-is set.}
+\ccMethod{bool is_in_complex_mark_true();}
+{Returns \ccc{true} if the \ccc{in_complex_mark} is set to \ccc{true},
+false otherwise.}
 \ccGlue
-\ccMethod{void  set_in_complex(bool b);}{Sets the ``in complex'' mark as \ccc{b}.}
+\ccMethod{void  set_in_complex_mark(bool b);}
+{Sets the \ccc{set_in_complex_mark} as \ccc{b}.}
 
-\ccMethod{bool is_status_cached();}{returns \ccc{true} if the regular and
-  ``in complex'' mark are valid.}
+\ccMethod{bool is_status_mark_valid();}{returns \ccc{true} if the
+status marks are valid, i. e. coherent to the actual status of the vertex.}
 \ccGlue
 \ccMethod{void set_status_cached(bool b);}{sets the validity of
-regular mark as b.}
-
+status marks  as b.}
 
 
 \ccHasModels
