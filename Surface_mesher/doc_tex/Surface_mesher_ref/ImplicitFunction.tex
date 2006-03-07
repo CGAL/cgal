@@ -2,9 +2,9 @@ s
 % +------------------------------------------------------------------------+
 % | Reference manual page: ImplicitFunction.tex
 % +------------------------------------------------------------------------+
-% | 09.12.2005   Author
-% | Package: Package
-% | 
+% | 09.12.2005   Mariette Yvinec, Laurent Rineau
+% | Package: Surface_mesher
+% |
 \RCSdef{\RCSImplicitFunctionRev}{$Id$}
 \RCSdefDate{\RCSImplicitFunctionDate}{$Date$}
 % |
@@ -14,28 +14,18 @@ s
 
 \begin{ccRefConcept}{ImplicitFunction}
 
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[concept]{} %% add further index entries
-
 \ccDefinition
   
 The concept \ccRefName\ describes a function object
 whose \ccc{operator()} computes the values of a function
-$f : \R^3 \longrightarrow \R$.
-
-%\ccGeneralizes
-
-%ThisConcept \\
-%ThatConcept
+\begin{math}f : \R^3 \longrightarrow \R\end{math}.
 
 \ccTypes
 
 \ccNestedType{FT}{Number type}
 
 
-\ccCreationVariable{function}  %% choose variable name
-
-%\ccCreation
+\ccCreationVariable{function} 
 
 \ccOperations
 
@@ -43,8 +33,8 @@ $f : \R^3 \longrightarrow \R$.
 
 \ccHasModels
 
-\ccc{Gray_level_image_function}
-%\ccc{Some_other_class}.
+\ccc{Gray_level_image_function},\\
+any pointer to a function of type \ccc{FT (*)(FT, FT, FT)}.
 
 \ccSeeAlso
 \ccc{Implicit_surface_3<Traits, Func>},\\

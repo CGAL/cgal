@@ -138,38 +138,7 @@ and centered on the surface. \\
 between the circumcenter of a mesh facet and a surface
 Delaunay ball of the same facet.
 
-\begin{ccExampleCode}
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Surface_mesher/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_oracle.h>
-#include ``My_function.h''
-
-struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Surface_mesher_vertex_base_3<K> Vb;
-typedef CGAL::Surface_mesher_cell_base_3<K> Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<K, Tds> Triangulation;
-typedef CGAL::Pure_complex_2_in_triangulation_3<Del> C2t3;
-typedef MyFunction <K::FT> Func;
-typedef CGAL::Implicit_surface_oracle<Func>  Oracle;
-typedef  CGAL::Surface_mesher_default_criteria<K::FT> Criteria;
-
-int main() {
-     Triangulation tr;
-     C2t3      c2t3(tr);
-     Oracle    surf;
-     K::FT     angular_bound(30);
-     K::FT     radius_bound(0.1);
-     K::FT     distance_bound(10000);
-     Criteria  criteria(angular_bound, angular_bound,distance_bound);
-     make surface_mesh(c2t3, surf, criteria);
-     assert(c2t3.is_manifold());
-}
-
-\end{ccExampleCode}
-
+\ccIncludeExampleCode{Surface_mesher/implicit_surface_mesher.C}
 
 \section{Meshing criteria, guarantees and variations}
 \label{SurfaceMesher_section_criteria}
