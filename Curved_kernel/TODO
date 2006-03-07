@@ -6,12 +6,22 @@ vers cercles)
 
 utiliser partout ou c'est possible le constructeur de arc_point(Point_2)
 
+optimiser le cas des cercles 
+- enlever begin=end=... dans constructeur d'arcs
+- echecs de filtres un peu partout
+
 How can we avoid to call global functions of CK in internal code? 
 These calls look rather dirty to me. 
 I (MT) tried to remove them but could not: if these calls are replaced 
 by calls of internal functions, then CK::Polynomials must be accessed,
 but they are undefined in Lazy_kernel...
 
+interface intersect avec 2 outputIt types
+
+arcs non monotones
+- fonction interne has_on/sachant que sur cercle support
+- has_on, do_overlap l'utilisant
+- intersect a optimiser
 
 enlever messages de debug
 regarder traits-tracer (seg fault)
