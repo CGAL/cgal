@@ -124,6 +124,15 @@ Text\footnote{A footnote in a class environment.}.
              }{ Even more longish declarations forces the parameters printed
              one per line. This was the default formatting.}
            
+\ccMethod{
+template <class Polyhedron_3, template <typename> class Mask>
+void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
+}{
+applies the $\sqrt{3}$ triangulation on the control mesh \ccc{p} \ccc{step} times.
+The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
+This function overwrites the control mesh \ccc{p} with the refined mesh.
+}
+             
 \footnotetext{Another footnote in this class file,
   implemented with mark and text.}
 

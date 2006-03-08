@@ -42,7 +42,6 @@
 % Set this definition to \ccTrue to activate the old name definitions
 % which are still there for portability reasons.
 \newcommand{\ccPortability}{\ccFalse}
-
 % debug option, use only for small files!
 %\tracingmacros=1
 
@@ -56,6 +55,31 @@
 % chapter numbers are continuous
 \newcommand{\ccNumberChaptersByPart}{\@addtoreset{chapter}{part}}
 \newcommand{\ccMultiplePartsToc}{}
+
+% work around latex' lazy evaluation
+\newcommand{\ccCallMacroWithExpandedParameter}[2]{
+  \begingroup
+    \edef\blubb{\noexpand#1{#2}}
+    \blubb
+  \endgroup
+}
+
+\newcommand{\ccCallMacroWithExpandedParameterTwo}[3]{
+  \begingroup
+    \def\blubber##1{#1{#2}{##1}}
+    \edef\blubb{\noexpand\blubber{#3}}
+    \blubb
+  \endgroup
+}
+
+\newcommand{\ccCallMacroWithExpandedParameterThree}[4]{
+  \begingroup
+    \def\blubber##1{#1{#2}{#3}{##1}}
+    \edef\blubb{\noexpand\blubber{#4}}
+    \blubb
+  \endgroup
+}
+
 
 % example listing
 % ---------------
@@ -84,7 +108,6 @@
 \newcommand{\ccRefChapter}[2]{
  \chapter{#1}
 }
-
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -1424,14 +1447,15 @@
                    \ccConstructorXX{#1}}
 
 \long\def\ccConstructorXX #1#2{%
-                       \isTemplate{#1}\ifnum\ccBool=\ccTrue
-                           \ccTemplateLineHandling #1\ccEnd
-                           \ccConstructorXXX{#2}#1\ccEnd
-                       \else
-                           \ccConstructorCall{#2}#1\ccEnd
-                       \fi}
-\def\ccConstructorXXX #1template#2<#3>#4#5\ccEnd{%
-  \ccConstructorCall{#1}#4#5\ccEnd
+    \isTemplate{#1}\ifnum\ccBool=\ccTrue       
+        \ccSplitTemplateParameters{\templatedeclprefix}{\templatedeclsuffix}{#1}
+        \ccTemplateLineHandling{\templatedeclprefix}
+        \ccCallMacroWithExpandedParameterTwo{\ccConstructorXXX}{#2}{\templatedeclsuffix}
+    \else
+        \ccConstructorCall{#2}#1\ccEnd
+    \fi}
+\def\ccConstructorXXX #1#2{%
+  \ccConstructorCall{#1}#2\ccEnd
 }
 
 % +--------------------------------------------------------------------------
@@ -1450,18 +1474,20 @@
                        \ccFunctionX{1}}
 
 \def\ccFunctionX #1#2{%
-                       \endgroup
-                       \ccGlobalContinuation{\ccFunctionComment{#1}{#2}}}
+    \endgroup
+    \ccGlobalContinuation{\ccFunctionComment{#1}{#2}}}
 
 \long\def\ccFunctionComment #1#2#3{%
-                       \isTemplate{#2}\ifnum\ccBool=\ccTrue
-                           \ccTemplateLineHandling #2\ccEnd
-                           \ccFunctionXX{#1}{#3}#2\ccEnd
-                       \else
-                           \ccFunctionCall{#1}{#3}#2;\ccEnd
-                       \fi}
-\def\ccFunctionXX #1#2template#3<#4>#5#6\ccEnd{%
-  \ccFunctionCall{#1}{#2}#5#6;\ccEnd
+    \isTemplate{#2}\ifnum\ccBool=\ccTrue
+        \ccSplitTemplateParameters{\templatedeclprefix}{\templatedeclsuffix}{#2}
+        \ccTemplateLineHandling{\templatedeclprefix}
+        \ccCallMacroWithExpandedParameterThree{\ccFunctionXX}{#1}{#3}{\templatedeclsuffix}
+    \else
+        \ccFunctionCall{#1}{#3}#2;\ccEnd
+    \fi}
+    
+\newcommand{\ccFunctionXX}[3]{%
+    \ccFunctionCall{#1}{#2}#3;\ccEnd
 }
 
 % Is getting obsolete!
@@ -1526,18 +1552,20 @@
 \catcode`\}=12
 \gdef\ccEnumX {#1{#2}#3}[%
                    \endgroup
-                   \ccGlobalContinuation[\ccEnumXX[#1\{#2\}#3]]]
+                   \ccGlobalContinuation[\ccEnumXX[#1+#2-#3]]]
 \endgroup
 
-\long\def\ccEnumXX #1#2{%
-                   \isTemplate{#1}\ifnum\ccBool=\ccTrue
-                       \ccTemplateLineHandling #1\ccEnd
-                       \ccEnumXXX{#2}#1\ccEnd
-                   \else
-                       \ccEnumDeclaration{#2}#1\ccEnd
-                   \fi}
-\def\ccEnumXXX #1template#2<#3>#4#5\ccEnd{%
-  \ccEnumDeclaration{#1}#4#5\ccEnd
+\long\def\ccEnumXX #1#2{% 
+    \isTemplate{#1}\ifnum\ccBool=\ccTrue
+        \ccSplitTemplateParameters{\templatedeclprefix}{\templatedeclsuffix}{#1}
+        \ccTemplateLineHandling{\templatedeclprefix}
+        \ccCallMacroWithExpandedParameterTwo{\ccEnumXXX}{#2}{\templatedeclsuffix}
+    \else
+        \ccEnumDeclaration{#2}#1\ccEnd
+    \fi}
+
+\def\ccEnumXXX#1#2{%  
+  \ccEnumDeclaration{#1}#2\ccEnd
 }
 
 % a struct is formatted like an enum (needs the parantheses parsing)
@@ -1559,14 +1587,15 @@
                        \ccGlobalContinuation{\ccClassDeclarationXX{#1}}%
 }
 \long\def\ccClassDeclarationXX #1#2{%
-                   \isTemplate{#1}\ifnum\ccBool=\ccTrue
-                       \ccTemplateLineHandling #1\ccEnd
-                       \ccClassDeclarationXXX{#2}#1\ccEnd
-                   \else
-                       \ccClassDeclarationFormat{#2}#1\ccEnd
-                   \fi}
-\def\ccClassDeclarationXXX #1template#2<#3>#4#5\ccEnd{%
-    \ccClassDeclarationFormat{#1}#4#5\ccEnd
+    \isTemplate{#1}\ifnum\ccBool=\ccTrue
+        \ccSplitTemplateParameters{\templatedeclprefix}{\templatedeclsuffix}{#1}
+        \ccTemplateLineHandling{\templatedeclprefix}
+        \ccCallMacroWithExpandedParameterTwo{\ccClassDeclarationXXX}{#2}{\templatedeclsuffix}
+    \else
+        \ccClassDeclarationFormat{#2}#1\ccEnd
+    \fi}
+\def\ccClassDeclarationXXX #1#2{%
+    \ccClassDeclarationFormat{#1}#2\ccEnd
 }
 
 % ___________________________________________________________________________
@@ -1929,104 +1958,104 @@
 % The declaration has to be terminated with ";;\ccEnd" where the first ";"
 % has to be from the original call notation. The 7th parameter is there
 % to check for this ";".
-\def\ccFunctionCall #1#2#3 #4(#5)#6;#7\ccEnd{%
-                       \ccInitFunctionWidths
-                       \def\xparam{#7}\ifx\xparam\empty
-                           \errmessage{Missing ";" at the end of the 
-                           declaration. A method or function
-                           declaration has to end with a ";". 
-                           Go ahead, I've inserted one}%
-                       \fi
-                       \def\ccExtendedFormat{\ }% Switches ext. format OFF.
-                       \ccSeparateTrailingConst #6)\ccEnd
-                       \let\ccTagOperatorLayoutX=\ccTagOperatorLayout
-                       \ccBool=\ccTagOperatorLayout\ifnum\ccBool=\ccTrue
-                         \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
-                           \isConversionOperator{#3 #4(#5)#6}
-                           \ifnum\ccBool=\ccTrue
-                               \ccPrintConversionOperator #3 #4(#5)#6\ccEnd
-                           \else
-                               \ccSeparateOperator #3 #4\ccEnd%
-                               \isParenthesisOperator{#3 #4(#5)#6}%
-                               \ifnum\ccBool=\ccTrue
-                                   \ifnum\ccAutoIndex=\ccTrue%
-                                      \ccIndexOperator#1#3 operator(),#6,\ccEnd%
-                                   \fi
-                                   \setbox\functioncallbox=\hbox{{\ccFont 
-                                      \ccPrintParOperator #1#3 #4(#5)#6\ccEnd}}
-                               \else
-                                   \ifnum\ccAutoIndex=\ccTrue%
-                                      \ccIndexOperator#1#3 #4,#5,\ccEnd%
-                                   \fi%
-                                   \setbox\functioncallbox=\hbox{{\ccFont 
-                                      \ccPrintOperator #1#3 #4(#5)#6\ccEnd}}
-                               \fi
+\def\ccFunctionCall #1#2#3 #4(#5)#6;#7\ccEnd{%   
+  \ccInitFunctionWidths
+  \def\xparam{#7}\ifx\xparam\empty
+      \errmessage{Missing ";" at the end of the 
+      declaration. A method or function
+      declaration has to end with a ";". 
+      Go ahead, I've inserted one}%
+  \fi
+  \def\ccExtendedFormat{\ }% Switches ext. format OFF.
+  \ccSeparateTrailingConst #6)\ccEnd
+  \let\ccTagOperatorLayoutX=\ccTagOperatorLayout
+  \ccBool=\ccTagOperatorLayout\ifnum\ccBool=\ccTrue
+    \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
+      \isConversionOperator{#3 #4(#5)#6}
+      \ifnum\ccBool=\ccTrue
+          \ccPrintConversionOperator #3 #4(#5)#6\ccEnd
+      \else
+          \ccSeparateOperator #3 #4\ccEnd%
+          \isParenthesisOperator{#3 #4(#5)#6}%
+          \ifnum\ccBool=\ccTrue
+              \ifnum\ccAutoIndex=\ccTrue%
+                \ccIndexOperator#1#3 operator(),#6,\ccEnd%
+              \fi
+              \setbox\functioncallbox=\hbox{{\ccFont 
+                \ccPrintParOperator #1#3 #4(#5)#6\ccEnd}}
+          \else
+              \ifnum\ccAutoIndex=\ccTrue%
+                \ccIndexOperator#1#3 #4,#5,\ccEnd%
+              \fi%
+              \setbox\functioncallbox=\hbox{{\ccFont 
+                \ccPrintOperator #1#3 #4(#5)#6\ccEnd}}
+          \fi
 
-                           \fi
-                           \ccBool=\ccTrue
-                           \ifdim\wd\functioncallbox>\ccwSecondLong
-                               \ccBool=\ccFalse
-                               \let\ccTagOperatorLayoutX=\ccFalse
-                           \fi
-                         \fi
-                       \fi
-                       \ifnum\ccBool=\ccFalse
-                           \ccBool=\ccTagOperatorLayoutX\ccInvert
-                           \ifnum\ccBool=\ccTrue
-                               \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
-                                   \isConversionOperator{#3 #4(#5)#6}
-                                   \ifnum\ccBool=\ccTrue
-                                       \ccConversionFunctionCall
-                                           {#1}{#2}#3 #4(#5)#6;#7\ccEnd
-                                       \ccBool=\ccTrue
-                                   \else
-                                       \isParenthesisOperator{#3 #4(#5)#6}%
-                                       \ifnum\ccBool=\ccTrue
-                                           \ifnum\ccAutoIndex=\ccTrue%
-                                            \ccIndexOperator#1#3 operator(),#5,\ccEnd
-                                           \fi
-                                           \ccOperatorFunctionCall
-                                               {#1}{#2}#3 #4(#5)#6;#7\ccEnd
-                                           \ccBool=\ccTrue
-                                       \else
-                                           \ifnum\ccAutoIndex=\ccTrue%
-                                             \ccIndexOperator#1#3 #4,#5,\ccEnd%
-                                           \fi%
-                                           \ccOperatorNonFunctionCall
-                                               {#1}{#2}#3 #4(#5)#6;#7\ccEnd
-                                           \ccBool=\ccTrue
-                                       \fi
-                                   \fi
-                               \fi
-                           \fi
-                           \ifnum\ccBool=\ccFalse
-                               \ifnum\ccAutoIndex=\ccTrue%
-                                  \ccIndexFunction{#1}{#4}%
-                               \fi%
-                               \ccSeparateFunction{}#3 #4::\ccEnd%
-                               \setbox\returntypebox=\hbox{{\ccFont
-                                   \unhcopy\templatedeclbox
-                                   \unhbox\returntypebox
-                               }}
-                               \setbox\functioncallbox=\hbox{{\ccFont
-                                   \ifnum#1=0 \ccVar.\fi
-                                   \unhcopy\functionnamebox(% 
-                                   \isEmpty{#5}\ifnum\ccBool=\ccFalse
-                                       \ \ccPrintParamList{#5)#6}%
-                                   \fi)\unhcopy\trailingconstbox}}
-                               \ccBool=\ccTrue
-                           \else
-                               \ccBool=\ccFalse
-                           \fi
-                       \fi
-                       \ifnum\ccBool=\ccTrue
-                           \setbox\callnamebox=\hbox{{\ccFont
-                               \ifnum#1=0 \ccVar.\fi
-                               \unhbox\functionnamebox}}%
-                           \ccLayoutThreeColumns{(}{#5)#6}{)\unhbox
-                               \trailingconstbox}{#2}%
-                       \fi
-                     }
+      \fi
+      \ccBool=\ccTrue
+      \ifdim\wd\functioncallbox>\ccwSecondLong
+          \ccBool=\ccFalse
+          \let\ccTagOperatorLayoutX=\ccFalse
+      \fi
+    \fi
+  \fi
+  \ifnum\ccBool=\ccFalse
+      \ccBool=\ccTagOperatorLayoutX\ccInvert
+      \ifnum\ccBool=\ccTrue
+          \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
+              \isConversionOperator{#3 #4(#5)#6}
+              \ifnum\ccBool=\ccTrue
+                  \ccConversionFunctionCall
+                      {#1}{#2}#3 #4(#5)#6;#7\ccEnd
+                  \ccBool=\ccTrue
+              \else
+                  \isParenthesisOperator{#3 #4(#5)#6}%
+                  \ifnum\ccBool=\ccTrue
+                      \ifnum\ccAutoIndex=\ccTrue%
+                      \ccIndexOperator#1#3 operator(),#5,\ccEnd
+                      \fi
+                      \ccOperatorFunctionCall
+                          {#1}{#2}#3 #4(#5)#6;#7\ccEnd
+                      \ccBool=\ccTrue
+                  \else
+                      \ifnum\ccAutoIndex=\ccTrue%
+                        \ccIndexOperator#1#3 #4,#5,\ccEnd%
+                      \fi%
+                      \ccOperatorNonFunctionCall
+                          {#1}{#2}#3 #4(#5)#6;#7\ccEnd
+                      \ccBool=\ccTrue
+                  \fi
+              \fi
+          \fi
+      \fi
+      \ifnum\ccBool=\ccFalse
+          \ifnum\ccAutoIndex=\ccTrue%
+            \ccIndexFunction{#1}{#4}%
+          \fi%
+          \ccSeparateFunction{}#3 #4::\ccEnd%
+          \setbox\returntypebox=\hbox{{\ccFont
+              \unhcopy\templatedeclbox
+              \unhbox\returntypebox
+          }}
+          \setbox\functioncallbox=\hbox{{\ccFont
+              \ifnum#1=0 \ccVar.\fi
+              \unhcopy\functionnamebox(% 
+              \isEmpty{#5}\ifnum\ccBool=\ccFalse
+                  \ \ccPrintParamList{#5)#6}%
+              \fi)\unhcopy\trailingconstbox}}
+          \ccBool=\ccTrue
+      \else
+          \ccBool=\ccFalse
+      \fi
+  \fi
+  \ifnum\ccBool=\ccTrue
+      \setbox\callnamebox=\hbox{{\ccFont
+          \ifnum#1=0 \ccVar.\fi
+          \unhbox\functionnamebox}}%
+      \ccLayoutThreeColumns{(}{#5)#6}{)\unhbox
+          \trailingconstbox}{#2}%
+  \fi
+}
 
 
 % This macro is used to format function operators such as "operator*(....)",
@@ -2143,7 +2172,7 @@
 %   o  The 3rd parameter contains the parameter list (maybe empty).
 %   o  The 4th parameter contains an optional variable name.
 % The declaration has to be terminated with "\ccEnd".
-\def\ccEnumDeclaration #1#2\{#3\}#4\ccEnd {%
+\def\ccEnumDeclaration #1#2+#3-#4\ccEnd {%
                        \ifnum\ccAutoIndex=\ccTrue%
                           \ccIndexEnumOrStruct#2\{#3\}\ccEnd%
                        \fi%
@@ -2285,25 +2314,100 @@
 
 \newbox\templatedeclbox
 
-\def\ccTemplateLineHandling #1template#2<#3>#4\ccEnd{%
+% work around latex lazy macro parameter expansion
+\newcommand{\ccTemplateLineHandling}[1]{%
+  \ccCallMacroWithExpandedParameter{\ccTemplateLineHandlingX}{#1}
+}
+\newcommand{\ccTemplateLineHandlingX}[1]{%
     % Note: The \templatedeclbox must also be deleted after each use
     %       which is done in \ccLayoutThreeColumns.
     \ifnum\ccTagRmTemplate=\ccTrue
         \setbox\templatedeclbox=\hbox{}%
     \else
         \ifnum\ccTagTemplateInline=\ccTrue
-            \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens 
-                template#2<#3>\ccEnd\ }%
+            \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens
+                #1 \ccEnd\ }%
         \else
             \setbox\templatedeclbox=\hbox{}%
             \ccTopSkip
             \hspace*{\ccwIndent}%
-            {\ccFont\ccPrintTokens template#2<#3>\ccEnd \ccEndFont}%
+            {\ccFont\ccPrintTokens #1 \ccEnd \ccEndFont}            
             \nopagebreak[4]\par
             \ccReverseTopSkip\vspace{-\parskip}%
         \fi
     \fi
 }
+
+
+% ------------------------------
+
+% #1 = global variable to store template parameters
+% #2 = global variable to store rest
+% #3 = input with template parameters in front (eg. function declaration)
+\newcommand{\ccSplitTemplateParameters}[3]{
+  \ccSplitTemplateX{#1}{#2}#3\ccEnd
+}
+
+\newcount\templatebracecounter
+
+\def\ccCallMacroWithExpandedParameterNXN#1#2#3#4\ccEnd{  
+  \begingroup
+    \def\blubber##1{#1{#2}{##1}#4\ccEnd}
+    \edef\blubb{\noexpand\blubber{#3}}
+    \blubb
+  \endgroup
+}
+
+
+\def\ccSplitTemplateX#1#2#3template#4<#5\ccEnd{%
+  \begingroup
+    \templatebracecounter=1
+    \ccSplitTemplateXX{#2}#5\ccEnd%
+    \ccCallMacroWithExpandedParameterNXN{\ccStripSuffixFromString}{#1}{#2}template#4<#5\ccEnd
+  \endgroup
+}
+
+\def\ccSplitTemplateXX#1#2#3\ccEnd{%
+  %\typeout{[#2] [#3]}
+  \if#2<
+    %\typeout{found <}
+    \advance\templatebracecounter by 1
+  \else
+    \if#2>
+      %\typeout{found >}
+      \advance\templatebracecounter by -1
+    \fi
+  \fi
+  \ifnum\templatebracecounter=0
+    \gdef#1{#3}
+    %\typeout{finished! suffix: #1}
+  \else  
+    \isEmpty{#3}\ifnum\ccBool=\ccTrue
+      \typeout{! error while parsing template definition. unbalanced < and >}
+      \gdef#1{#3}
+    \else
+      \ccSplitTemplateXX{#1}#3\ccEnd
+    \fi
+  \fi
+}
+
+% #1 = result variable
+% #2 = suffix to strip
+% #3 = string from which suffix is to be removed
+\begingroup
+  \catcode`\[=1
+  \catcode`\]=2
+  \catcode`\{=12
+  \catcode`\}=12     
+  \gdef\ccStripSuffixFromString#1#2#3\ccEnd[  
+    \edef\testbla[\noexpand\def\noexpand\blubber####1#2\noexpand\ccEnd[\noexpand\xdef\noexpand#1[####1]]] 
+    \testbla
+    \blubber#3\ccEnd  
+  ]
+\endgroup
+
+
+% --------------------------
 
 % Set the two boxes, returntype and functionname, for an operator declaration.
 \def\ccSeparateOperator #1operator#2\ccEnd{%
