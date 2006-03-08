@@ -27,7 +27,7 @@ geometry policy class. It refines the connectivity of the
 control mesh and computes the geometry of the refined mesh.
 The geometry computation is dedicated to the custom
 geometry policy. A geometry policy consists of functions 
-that compute the new points based on a subdivision stencil.
+that compute the new point based on the subdivision stencil.
 A stencil defines the footprint (a submesh of the control mesh)
 of a new point.
 
@@ -81,9 +81,11 @@ This function overwrites the control mesh \ccc{p} with the refined mesh.
 template <class Polyhedron_3, template <typename> class Mask>
 void PTQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
-applies the PTQ refinement on the control mesh \ccc{p} \ccc{step} times.
+applies the PTQ refinement on the control mesh \ccc{p} \ccc{step} times,
+where \ccc{p} contains only triangle facets.
 The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
 This function overwrites the control mesh \ccc{p} with the refined mesh.
+The result of a non-triangle mesh \ccc{p} is undefined.
 }
 
 \ccFunction{
@@ -99,9 +101,11 @@ This function overwrites the control mesh \ccc{p} with the refined mesh.
 template <class Polyhedron_3, template <typename> class Mask>
 void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
 }{
-applies the $\sqrt{3}$ triangulation on the control mesh \ccc{p} \ccc{step} times.
+applies the $\sqrt{3}$ triangulation on the control mesh \ccc{p} 
+\ccc{step} times, where \ccc{p} contains only triangle facets.
 The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
 This function overwrites the control mesh \ccc{p} with the refined mesh.
+The result of a non-triangle mesh \ccc{p} is undefined.
 }
 
 % +-----------------------------------+

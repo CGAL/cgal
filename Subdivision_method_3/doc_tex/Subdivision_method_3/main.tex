@@ -75,7 +75,7 @@ host.
 In this chapter, we explain some fundamentals of 
 subdivision methods. We focus only on the topics that help you 
 to understand the design of the package. Interested readers can
-still refer to \cite{cgal:ww-smgd-02} for an in-depth introduction.
+refer to \cite{cgal:ww-smgd-02} for an in-depth introduction.
 Some terminologies introduced in this section will be used again
 in later sections. If you are only interested in using a 
 specific subdivision method, Section \ref{secFirstSub} 
@@ -248,7 +248,7 @@ Subdivision_method_3::CatmullClark_subdivision(P,d);
 \end{ccExampleCode}
 \ccc{Subdivision_method_3} specifies the namespace of our
 subdivision functions. \ccc{CatmullClark_subdivision(P,d)} computes the 
-Catmull-Clark subdivision surfaces of the polyhedron \ccc{P} after
+Catmull-Clark subdivision surface of the polyhedron \ccc{P} after
 \ccc{d} iterations of the refinements. The polyhedron \ccc{P} is 
 passed by reference, and is modified (i.e.~subdivided) by the 
 subdivision function.
@@ -265,14 +265,14 @@ application-defined polyhedron to work with
 \begin{itemize}
 \item
 \ccc{Point_3} is type-defined by the kernel. Without \ccc{Point_3} 
-and associated operations being defined, \ccc{Subdivision_method_3} 
+and the associated operations being defined, \ccc{Subdivision_method_3} 
 can not know how to compute and store the new vertex points.
 \item
 The primitives (such as vertices, halfedges and facets) 
 in the internal container are sequentially ordered (e.g.~
 \ccc{std::vector} and \ccc{std::list}).
-In other words, the iterators should traverse the primitives in 
-the order of the creations.
+This implies that the iterators traverse the primitives in 
+the order of their creations/insertions.
 \end{itemize}
 
 Section~\ref{secRefHost} gives detailed explanations on those 
@@ -307,24 +307,23 @@ PQQ refinement for their subdivision method,
 and developed a set of geometry masks to generate (or more 
 precisely, to approximate) the B-spline surface from 
 the control mesh.
-\ccc{Subdivision_method_3} supports a function that glues all 
+\ccc{Subdivision_method_3} provides a function that glues all 
 three components of the Catmull-Clark subdivision method.
 
 \begin{ccExampleCode}
-template <class Polyhedron, template <typename> class Mask>
-void PQQ(Polyhedron& p, Mask<Polyhedron> mask, int depth)
+template <class Polyhedron_3, template <typename> class Mask>
+void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int depth)
 \end{ccExampleCode}
 
-\ccc{Polyhedron} is a model of \ccc{Polyhedron_3}, which
-is a generic mesh data structure for arbitrary 
-2-manifolds. \ccc{PQQ(...)} provides the process refining 
-the control mesh \ccc{p}. During the refinement, 
-\ccc{PQQ(...)}, the \emph{refinement host}, computes and assigns
+\ccc{Polyhedron_3} is a generic mesh data structure for 
+arbitrary 2-manifolds. \ccc{PQQ()}, the \emph{refinement host},
+provides the process refining the control mesh \ccc{p}. 
+During the refinement, \ccc{PQQ()} computes and assigns
 new points by cooperating with the \ccc{mask}. 
 To implement Catmull-Clark subdivision,
 \ccc{Mask}, the \emph{geometry policy}, has to realize the 
 geometry masks of Catmull-Clark subdivision. 
-\ccc{depth} specifies the steps of the refinement 
+\ccc{depth} specifies the iterations of the refinement 
 on the control mesh. 
 %To make the call to
 %\ccc{PQQ} a Catmull-Clark subdivision, the only thing left is to
@@ -332,7 +331,7 @@ on the control mesh.
 
 To implement the geometry masks, we need to know how  
 a refinement host communicates with its geometry masks. 
-PQQ refinement defines three stencils, and hence 
+The PQQ refinement defines three stencils, and hence 
 three geometry masks are required for Catmull-Clark subdivision.
 The following class defines the interfaces of the stencils 
 for the PQQ refinement.
@@ -340,18 +339,18 @@ for the PQQ refinement.
 \begin{ccExampleCode}
 template <class Polyhedron_3>
 class PQQ_stencil_3 {
-  void facet_node(Facet_handle facet, Point& pt);
-  void edge_node(Halfedge_handle edge, Point& pt);
-  void vertex_node(Vertex_handle vertex, Point& pt);
+  void facet_node(Facet_handle facet, Point_3& pt);
+  void edge_node(Halfedge_handle edge, Point_3& pt);
+  void vertex_node(Vertex_handle vertex, Point_3& pt);
 };
 \end{ccExampleCode}
 
 Each class function in \ccc{PQQ_stencil_3} 
 computes a new point based on the neighbothood of the primitive 
-handle, and assigns the new point to \ccc{Point& pt}. 
+handle, and assigns the new point to \ccc{Point_3& pt}. 
 
-To implement Catmull-Clark subdivision, we realize each
-class function with geometry masks of Catmull-Clark subdivision. 
+We realize each class function with the geometry masks of 
+Catmull-Clark subdivision. 
 
 \begin{ccExampleCode}
 template <class Polyhedron_3>
@@ -409,14 +408,13 @@ This example shows the default implementation of Catmull-Clark
 masks in \ccc{Subdivision_method_3}.
 This default implementation assumes the \emph{types} 
 (such as \ccc{Point_3} and \ccc{Facet_handle}) are defined 
-within the \ccc{Polyhedron_3}. \ccc{CatmullClark_mask_3} 
+within \ccc{Polyhedron_3}. \ccc{CatmullClark_mask_3} 
 is designed to work on a \ccc{Polyhedron_3} with the \ccc{Cartesian} 
 kernel. You may need to rewrite the geometry computation
 to match the kernel geometry of your application.
 
-To invoke the Catmull-Clark subdivision method, we can 
-simply call \ccc{PQQ(...)} with the Catmull-Clark masks
-we just defined.
+To invoke the Catmull-Clark subdivision method, we
+call \ccc{PQQ()} with the Catmull-Clark masks we just defined.
 
 \begin{ccExampleCode}
 PQQ(p, CatmullClark_mask_3<Polyhedron_3>(), depth);
@@ -515,7 +513,7 @@ the internal storage.
 A sequential container guarantees that the iterators of the 
 polyhedron always traverse the primitives in the order of their 
 insertions. Non-sequential structures such as 
-tree or map do not provide the required ordering, and hence
+trees or maps do not provide the required ordering, and hence
 can not be used with \ccc{Subdivision_method_3}.
  
 Although \ccc{Subdivision_method_3} does not require flags
@@ -528,6 +526,12 @@ defined in the geometry kernel of the polyhedron
 A point of the type \ccc{Point_3} is returned by the geometry 
 policy and is then assigned to the new vertex.  
 The geometry policy is explained in next section. 
+
+Refinement hosts \ccc{PQQ} and \ccc{DQQ} work on a general 
+polyhedron, and \ccc{PTQ} and \ccc{Sqrt3} work on a triangulated
+polyhedron. The result of \ccc{PTQ} and \ccc{Sqrt3} on a non-triangle
+polyhedron is undefined. \ccc{Subdivision_method_3} does not verify
+the precondition of the mesh characteristic before the refinement.
 
 For details of the refinement implementation, 
 interested users should refer to \cite{cgal:sp-mrbee-05}.
