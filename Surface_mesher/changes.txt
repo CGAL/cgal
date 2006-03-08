@@ -1,10 +1,11 @@
-changes  in Complex_2_in_triangulatio_3 :
+8 March 2006 Mariette
+changes  in Complex_2_in_triangulation_3 :
     remove set_in_complex and remove_from_complex for vertices
     change  set_in_complex and remove_from_complex for facets
-
+    add iterators on complex faces
 
 8 March 2006 Mariette
-changes  in Complex_2_in_triangulatio_3 :
+changes  in Complex_2_in_triangulation_3 :
     fixed operator Not_in_complex
     changed face_type into face_status
     changed is_in_complex 

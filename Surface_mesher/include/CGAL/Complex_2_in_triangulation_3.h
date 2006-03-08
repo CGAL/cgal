@@ -41,22 +41,15 @@ class Complex_2_in_triangulation_3 {
   typedef Tr Triangulation_3;
 
   typedef typename Triangulation_3::Vertex_handle Vertex_handle;
-
   typedef typename Triangulation_3::Cell_handle Cell_handle;
-
   typedef typename Triangulation_3::Facet Facet;
-
   typedef typename Triangulation_3::Edge Edge;
 
   typedef std::list<Facet> Facets;
+  typedef std::list<Cell_handle> Cells;
+  typedef typename Facets::iterator Facet_list_iterator;
 
   typedef std::size_t size_type;
-
-  typedef std::list<Cell_handle> Cells;
-
-  typedef typename Facets::iterator Facets_iterator;
-
-  typedef typename Cells::iterator Cells_iterator;
 
   typedef Const_circulator_from_container<Facets> Facet_circulator;
 
@@ -69,23 +62,38 @@ class Complex_2_in_triangulation_3 {
 
   struct Not_in_complex {
 
-    bool operator()(const Facet& f) const
-    {
-      //assert(f.first < f.first->neighbor(f.second));
-      return ! f.first->is_facet_on_surface(f.second) ;
+    bool operator()(const Facet& f) const    {
+       return ! f.first->is_facet_on_surface(f.second) ;
+    }
+
+    bool operator()(const Edge& e) const {
+      return  face_status(e)== NOT_IN_COMPLEX;
     }
 
 
-    bool operator()(Vertex_handle v) const
-    {
-      //return ! v->is_visited();
+    bool operator()(Vertex_handle v) const    {
       return ! v->is_in_complex();
     }
 
   };
 
+  struct Not_on_boundary_tester {
 
+     bool operator()(const Edge& e) const {
+      return  face_status(e)!= BOUNDARY;
+    }
 
+  };
+
+  typedef typename Filter_iterator<Triangulation_3::Facet_iterator,
+				   Not_in_complex> Facet_iterator;
+  typedef typename Filter_iterator<Triangulation_3::Edge_iterator,
+				   Not_in_complex> Edge_iterator;
+  typedef typename Filter_iterator<Triangulation_3::Vertex_iterator,
+				   Not_in_complex> Vertex_iterator;  
+
+  typedef typename Filter_iterator<Triangulation_3::Edge_iterator,
+				   Not_on_boundary_tester> Boundary_edges_iterator;
 
 protected:
   Triangulation_3& tr;
@@ -319,13 +327,13 @@ size_type number_of_facets() const
 
     Facets lof = typename Facets::list();
 
-    for (Facets_iterator it = lof1.begin();
+    for (Facet_list_iterator it = lof1.begin();
 	 it != lof1.end();
 	 it++) {
       lof.push_back(*it);
     }
 
-    for (Facets_iterator it = lof2.begin();
+    for (Facet_list_iterator it = lof2.begin();
 	 it != lof2.end();
 	 it++) {
       lof.push_back(*it);
@@ -502,6 +510,49 @@ size_type number_of_facets() const
       }
     }
   }
+
+  Facet_iterator facets_begin(){
+    return filter_iterator(triangulation().finite_facets_begin(),
+			   Not_in_complex());
+  }
+
+  Facet_iterator facets_end(){
+    return filter_iterator(triangulation().finite_facets_end(),
+			   Not_in_complex());
+  }
+
+  
+  Edge_iterator edges_begin(){
+    return filter_iterator(triangulation().finite_edges_begin(),
+			   Not_in_complex());
+  }
+
+  Edge_iterator edges_end(){
+    return filter_iterator(triangulation().finite_edges_end(),
+			   Not_in_complex());
+  }
+
+  Vertex_iterator vertices_begin(){
+    return filter_iterator(triangulation().finite_vertices_begin(),
+			   Not_in_complex());
+  }
+
+  Vertex_iterator vertices_end(){
+    return filter_iterator(triangulation().finite_vertices_end(),
+			   Not_in_complex());
+  }
+
+  Boundary_edges_iterator boundary_edges_begin() {
+    return filter_iterator(triangulation().finite_edges_begin(),
+			   Not_on_boundary_tester); 
+  }
+
+  Boundary_edges_iterator boundary_edges_end() {
+    return filter_iterator(triangulation().finite_edges_end(),
+			   Not_on_boundary_tester); 
+  }
+
+
 }; // end Complex_2_in_triangulation_3
 
 } // end namespace CGAL

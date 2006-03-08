@@ -113,9 +113,9 @@ vertices of the 2D complex.}
 
 \ccNestedType{Boundary_edges_iterator}{An iterator type to visit  the
 boundary edges of the 2D complex.}
-\ccGlue
-\ccNestedType{Boundary_vertices_iterator}{An iterator type to visit  the
-boundary vertices of the 2D complex.}
+%\ccGlue
+%\ccNestedType{Boundary_vertices_iterator}{An iterator type to visit  the
+%boundary vertices of the 2D complex.}
 %\ccNestedType{Facet_circulator}{An iterator type to visit the facets
 %of the 2D complex around a boundary or regular vertex.}
 %\ccGlue
@@ -327,41 +327,41 @@ vertices of the 2D complex.}
 \ccGlue
 \ccMethod{Vertex_iterator vertices_end();}
 {Returns the past the end iterator for the above iterator.}
-\ccGlue
-\ccMethod{Boundary_vertices_iterator 
-         boundary_vertices_begin();}
-{Returns an iterator with value type \ccc{Vertex_handle} to visit the 
-vertices of the 2D complex that are  boundary vertices.}
-\ccGlue
-\ccMethod{Boundary_vertices_iterator 
- boundary_vertices_end();}
-{Returns the past the end iterator for the above iterator.}
+%\ccGlue
+%\ccMethod{Boundary_vertices_iterator 
+%         boundary_vertices_begin();}
+%{Returns an iterator with value type \ccc{Vertex_handle} to visit the 
+%vertices of the 2D complex that are  boundary vertices.}
+%\ccGlue
+%\ccMethod{Boundary_vertices_iterator 
+% boundary_vertices_end();}
+%{Returns the past the end iterator for the above iterator.}
 
 
-\ccHeading{Traversal of incident facets}
-The data structure also provides  member functions to retrieve
-the facets of the complex incident to a given face (vertex or edge).
+%\ccHeading{Traversal of incident facets}
+%The data structure also provides  member functions to retrieve
+%the facets of the complex incident to a given face (vertex or edge).
 
-\ccMethod{template <class OutputIterator>
-          OutputIterator 
-          incident_facets(Vertex_handle v, OutputIterator facets);}
- {To retrieve the facets of the complex incident to \ccc{v}.}
-\ccGlue
-\ccMethod{template <class OutputIterator>
-          OutputIterator 
-          incident_facets(Vertex_handle va, Vertex_handle vb);}
- {To  retrieve the facets of the complex incident to edge \ccc{v_i, v_j}.}
-\ccGlue
-\ccMethod{template <class OutputIterator>
-          OutputIterator 
-          incident_facets(Cell_handle c, int i, int j);}
- {To retrieve the facets of the complex incident to edge \ccc{
-(c,i,i)}.}
-\ccGlue
-\ccMethod{template <class OutputIterator>
-          OutputIterator 
-          incident_facets(Edge e);}
- {To retrieve the facets of the complex incident to edge \ccc{e}.}
+%\ccMethod{template <class OutputIterator>
+%          OutputIterator 
+%          incident_facets(Vertex_handle v, OutputIterator facets);}
+% {To retrieve the facets of the complex incident to \ccc{v}.}
+%\ccGlue
+%\ccMethod{template <class OutputIterator>
+%          OutputIterator 
+%          incident_facets(Vertex_handle va, Vertex_handle vb);}
+% {To  retrieve the facets of the complex incident to edge \ccc{v_i, v_j}.}
+%\ccGlue
+%\ccMethod{template <class OutputIterator>
+%          OutputIterator 
+%          incident_facets(Cell_handle c, int i, int j);}
+% {To retrieve the facets of the complex incident to edge \ccc{
+%(c,i,i)}.}
+%\ccGlue
+%\ccMethod{template <class OutputIterator>
+%          OutputIterator 
+%          incident_facets(Edge e);}
+% {To retrieve the facets of the complex incident to edge \ccc{e}.}
 
 
 %\ccMethod{Facet_circulator
