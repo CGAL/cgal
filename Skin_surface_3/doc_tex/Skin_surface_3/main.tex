@@ -130,14 +130,15 @@ Figure~\ref{SkinSurface3-fig-marching}.
 \includegraphics[width=\textwidth]{Skin_surface_3/marching}
 \end{center}
 \end{ccTexOnly}
-\caption{Cases of the marching tetrahedra algorithm.
-\label{SkinSurface3-fig-marching}}
 \begin{ccHtmlOnly}
 <CENTER>
 <img border=0 src="./marching.png" align=center
 alt="Cases of the marching tetrahedra algorithm.">
 </CENTER>
 \end{ccHtmlOnly}
+
+\caption{\label{SkinSurface3-fig-marching} Cases of the marching
+  tetrahedra algorithm.}
 \end{figure}
 
 Our implementation takes four arguments: the input triangulation, the
@@ -172,9 +173,19 @@ onto the mesh.
 \section{Software Design}
 NGHK: Back references
 \section{Example programs}
+\subsection{Basic example}
 The package contains wrapper function that constructs the coarse mesh
 from an iterator range of weighted points.
 \ccIncludeExampleCode{Skin_surface_3/skin_surface_simple.C}
+
+\subsection{Subdividing the coarse mesh}
+The following example expands the functions grouped together in the
+function \ccc{skin_surface_3} and subdivides the coarse mesh. It also
+stores a pointer from each polyhedral facet to the tetrahedron (of the
+triangulated mixed complex) in which it is contained. This pointer is
+used for efficient point location in the subdivision algorithm.
+
+\ccIncludeExampleCode{Skin_surface_3/skin_surface_sqrt3.C}
 
 % EOF
 

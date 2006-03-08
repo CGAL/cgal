@@ -8,8 +8,6 @@
 
 #include <CGAL/Marching_tetrahedra_observer_skin_surface_3.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 #include <list>
 #include <fstream>
 
@@ -64,19 +62,9 @@ int main(int argc, char *argv[]) {
   CGAL::marching_tetrahedra_3(
     triangulated_mixed_complex, polyhedron, marching_traits, marching_observer);
 
-  { // Write coarse mesh
-    std::ofstream out("coarse.off");
-    out << polyhedron;
-  }
-
   // Subdivide mesh:
   Skin_surface_refinement_traits refinement_traits(triangulated_mixed_complex);
   CGAL::skin_surface_sqrt3(polyhedron, refinement_traits, 3);
-  
-  { // Write subdivided mesh
-    std::ofstream out("mesh.off");
-    out << polyhedron;
-  }
   
   return 0;
 }
