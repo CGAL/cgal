@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Gray_level_image_3.tex
 % +------------------------------------------------------------------------+
-% | 22.02.2006   Laurent Rineau
+% | 06.03.2006   Laurent Rineau
 % | Package: Surface_mesher
 % | 
 \RCSdef{\RCSGraylevelimage3Rev}{$Id$}
@@ -42,11 +42,11 @@ in the input 3D gray image.
 %\ccc{ImplicitFunction}.
 
 \ccRefName\ is a wrapper around an auxiliary library called
-\ccc{ImageIO}. An executable that uses \ccRefName\ must be linked with the ImageIO
+\emph{ImageIO}. An executable that uses \ccRefName\ must be linked with the \emph{ImageIO}
 library. This library is shipped with \cgal\ in the
 \ccc{examples/Surface_mesher/} subdirectory.
 
-The library \ccc{ImageIO} and therefore \ccRefName\ support
+The library \emph{ImageIO} and therefore \ccRefName\ support
 several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension
 .dim, of .ima[.gz]), and ANALYZE (extension .hdr, or .img[.gz]).
 
@@ -65,7 +65,7 @@ several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension
 \ccCreationVariable{image}
 
 \ccConstructor{Gray_level_image_3(const char* filename, FT iso_value);}
-{\ccc{filename} is the path to a file of a type supported by ImageIO.\\
+{\ccc{filename} is the path to a file of a type supported by \emph{ImageIO}.\\
 \ccc{iso_value} is an isovalue of $f$.
 }
 
