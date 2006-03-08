@@ -75,7 +75,7 @@ dep:
 
 .PHONY: dep
 
-depends:
+depends: *.C
 	cat /dev/null > depends
 	for f in *.C; do \
 	  echo >> depends; \

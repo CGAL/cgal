@@ -17,7 +17,6 @@
 //
 // Author(s)     : Steve OUDOT, Laurent RINEAU
 
-
 #ifndef CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 #define CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 
@@ -30,10 +29,39 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
+    /**
+       Type and functions required in GT:
+         - Compute_squared_distance_3
+         - Compute_squared_radius_3
+         - Construct_center_3
+         - Construct_line_3
+         - Construct_midpoint_3
+         - Construct_scaled_vector_3
+         - Construct_translated_point_3
+         - Construct_vector_3
+         - FT
+         - Line_3
+         - Point_3
+         - Ray_3
+         - Segment_3
+         - Sphere_3
+         - compute_squared_distance_3_object
+         - compute_squared_radius_3_object
+         - construct_center_3_object
+         - construct_line_3_object
+         - construct_midpoint_3_object
+         - construct_scaled_vector_3_object
+         - construct_translated_point_3_object
+         - construct_vector_3_object
+(Computed by use of:
+ perl -ne '/gt\.([a-zA-Z_0-9]+)/ && print "$1\n";' Implicit_oracle.h | sort -u
+ perl -ne '/GT::([a-zA-Z_0-9]+)/ && print "$1\n";' Implicit_oracle.h | sort -u
+)
+    */
   template <
     class GT,
     class Surface,
-    class Point_creator = Creator_uniform_3<typename GT::RT,
+    class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
     class Visitor = Null_oracle_visitor
     >
@@ -43,10 +71,14 @@ namespace CGAL {
     typedef Implicit_surface_oracle<GT, Surface, Point_creator, Visitor> Self;
     
     typedef typename GT::Point_3 Point;
+#ifdef CGAL_DELAUNAY_MESH_3_H
     typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
+#else
+    typedef Point Kernel_point;
+#endif
 
     typedef typename GT::FT FT;
-    typedef typename Surface::Sphere_3 Sphere_3;
+    typedef typename GT::Sphere_3 Sphere_3;
 
   public:
 
@@ -91,7 +123,12 @@ namespace CGAL {
       Object operator()(const Surface_3& surface, Segment_3 s) const
       // s is passed by value, because it is used in a CGAL::assign below.
       {
-        GT ker;
+        GT gt;
+
+        const Sphere_3& sphere = surface.bounding_sphere();
+        const FT squared_radius = 
+          gt.compute_squared_radius_3_object()(sphere);
+        const FT sq_error = surface.squared_error_bound() * squared_radius;
 
         // First rescale segment if necessary
         Object obj=oracle.rescale_seg_bounding_sphere(surface, s);
@@ -123,10 +160,10 @@ namespace CGAL {
             return oracle.intersect_segment_surface_rec(surface, p1, p2);
           }
 
-          if (ker.compute_squared_distance_3_object()
-              (p1,p2) >= surface.squared_error_bound())
+          if (gt.compute_squared_distance_3_object()
+              (p1,p2) >= sq_error)
 	  {
-	    Point mid=ker.construct_midpoint_3_object()(p1,p2);
+	    Point mid=gt.construct_midpoint_3_object()(p1,p2);
 	    f.push_back(Segment_3(p1,mid));
 	    f.push_back(Segment_3(mid,p2));
 	  }
@@ -135,37 +172,37 @@ namespace CGAL {
       } // end operator()(Surface_3, Segment_3)
 
       Object operator()(const Surface_3& surface, const Ray_3& r) const {
-        GT ker;
+        GT gt;
         Point p1,p2;
 
         const Sphere_3& sphere = surface.bounding_sphere();
-        const Point center = ker.construct_center_3_object()(sphere);
+        const Point center = gt.construct_center_3_object()(sphere);
         const FT squared_radius = 
-          ker.compute_squared_radius_3_object()(sphere);
+          gt.compute_squared_radius_3_object()(sphere);
 
         p1=r.point(0);
 
         // The second point is calculated with the radius of the bounding ball
         p2=p1+
-          ker.construct_scaled_vector_3_object()
-          (ker.construct_vector_3_object()
+          gt.construct_scaled_vector_3_object()
+          (gt.construct_vector_3_object()
            (p1,r.point(1)),
            2*approximate_sqrt(std::max(squared_radius,approximate_sqrt
-                                       (ker.compute_squared_distance_3_object()
+                                       (gt.compute_squared_distance_3_object()
                                         (center,p1))) /
-                              ker.compute_squared_distance_3_object()(p1,r.point(1))));
+                              gt.compute_squared_distance_3_object()(p1,r.point(1))));
 
 
         return( operator()(surface, Segment_3(p1,p2)) );
       } // end operator()(Surface_3, Ray_3)
 
       Object operator()(const Surface_3& surface, const Line_3& l) const {
-        GT ker;
+        GT gt;
 
         const Sphere_3& sphere = surface.bounding_sphere();
-        const Point center = ker.construct_center_3_object()(sphere);
+        const Point center = gt.construct_center_3_object()(sphere);
         const FT squared_radius = 
-          ker.compute_squared_radius_3_object()(sphere);
+          gt.compute_squared_radius_3_object()(sphere);
 
          Point p1=l.point(0);
         Point p2=l.point(1);
@@ -173,22 +210,22 @@ namespace CGAL {
         // The other points are calculated with the radius of the bounding ball
 
         Point p3=p1+
-          ker.construct_scaled_vector_3_object()
-          (ker.construct_vector_3_object()
+          gt.construct_scaled_vector_3_object()
+          (gt.construct_vector_3_object()
            (p1,p2),
            2*approximate_sqrt(std::max(squared_radius,approximate_sqrt
-                                       (ker.compute_squared_distance_3_object()
+                                       (gt.compute_squared_distance_3_object()
                                         (center,p1))) /
-                              ker.compute_squared_distance_3_object()(p1,p2)));
+                              gt.compute_squared_distance_3_object()(p1,p2)));
 
         Point p4=p1+ // BEURK
-          ker.construct_scaled_vector_3_object()
-          (ker.construct_vector_3_object()
+          gt.construct_scaled_vector_3_object()
+          (gt.construct_vector_3_object()
            (p2,p1),
            2*approximate_sqrt(std::max(squared_radius,approximate_sqrt
-                                       (ker.compute_squared_distance_3_object()
+                                       (gt.compute_squared_distance_3_object()
                                         (center,p1))) /
-                              ker.compute_squared_distance_3_object()(p1,p2)));
+                              gt.compute_squared_distance_3_object()(p1,p2)));
 
         Object result_temp = operator()(surface, Segment_3(p1,p3));
 
@@ -215,23 +252,23 @@ namespace CGAL {
                                        OutputIteratorPoints out, 
                                        int n = 20) // WARNING: why 20?
       {
-        GT geom_traits;
+        GT gt;
 
         const Sphere_3& sphere = surface.bounding_sphere();
         const Point center = 
-          geom_traits.construct_center_3_object()(sphere);
+          gt.construct_center_3_object()(sphere);
         const FT squared_radius = 
-          geom_traits.compute_squared_radius_3_object()(sphere);
+          gt.compute_squared_radius_3_object()(sphere);
         const FT radius = CGAL::sqrt(squared_radius);
 
         typename CGAL::Random_points_in_sphere_3<Point,
           Point_creator> random_point_in_sphere(CGAL::to_double(radius));
         typename GT::Construct_line_3 line_3 = 
-          geom_traits.construct_line_3_object();
+          gt.construct_line_3_object();
         typename GT::Construct_vector_3 vector_3 =
-          geom_traits.construct_vector_3_object();
+          gt.construct_vector_3_object();
         typename GT::Construct_translated_point_3 translate =
-          geom_traits.construct_translated_point_3_object();
+          gt.construct_translated_point_3_object();
 
         // the exhaustive oracle is used
         bool save_parity = oracle.parity_oracle;
@@ -276,13 +313,17 @@ namespace CGAL {
     Object intersect_segment_surface_rec(const Surface_3& surface,
                                          Point p1,
                                          Point p2) {
-      GT ker;
+      GT gt;
+      const Sphere_3& sphere = surface.bounding_sphere();
+      const FT squared_radius = 
+        gt.compute_squared_radius_3_object()(sphere);
+      const FT sq_error = surface.squared_error_bound() * squared_radius;
 
       while(true){
-	Point mid = ker.construct_midpoint_3_object()(p1,p2);
+	Point mid = gt.construct_midpoint_3_object()(p1,p2);
 	// If the two points are close, then we must decide
-	if (ker.compute_squared_distance_3_object()
-	    (p1,p2) < surface.squared_error_bound())
+	if (gt.compute_squared_distance_3_object()
+	    (p1,p2) < sq_error)
 	  {
 	    visitor.new_point(mid);
 	    return make_object(mid);
@@ -306,19 +347,19 @@ namespace CGAL {
     Object rescale_seg_bounding_sphere(const Surface_3& surface,
                                        const Segment_3& s)
       {
-	GT ker;
+	GT gt;
 
         const Sphere_3& sphere = surface.bounding_sphere();
-        const Point center = ker.construct_center_3_object()(sphere);
+        const Point center = gt.construct_center_3_object()(sphere);
         const FT squared_radius = 
-          ker.compute_squared_radius_3_object()(sphere);
+          gt.compute_squared_radius_3_object()(sphere);
         const FT radius = CGAL::sqrt(squared_radius);
 
  	Point p1=s.source();
 	Point p2=s.target();
 
 	// If both points are too far away from each other, then replace them
-	if (ker.compute_squared_distance_3_object()(p1,p2) >
+	if (gt.compute_squared_distance_3_object()(p1,p2) >
 	    17*squared_radius)
 	  {
 
@@ -326,22 +367,22 @@ namespace CGAL {
 
 
 	    // If p1 is in the sphere, then replace p2
-	    if (ker.compute_squared_distance_3_object()(center,p1)
+	    if (gt.compute_squared_distance_3_object()(center,p1)
 		<= squared_radius)
 	      p2=p1 +
-		ker.construct_scaled_vector_3_object()
-		(ker.construct_vector_3_object()(p1,p2),
+		gt.construct_scaled_vector_3_object()
+		(gt.construct_vector_3_object()(p1,p2),
 		 2*radius /
-		 approximate_sqrt(ker.compute_squared_distance_3_object()(p1,p2)));
+		 approximate_sqrt(gt.compute_squared_distance_3_object()(p1,p2)));
 
 	    // If p2 is in the sphere, then replace p1
-	    else if (ker.compute_squared_distance_3_object()(center,p2)
+	    else if (gt.compute_squared_distance_3_object()(center,p2)
 		     <= squared_radius)
 	      p1=p2 +
-		ker.construct_scaled_vector_3_object()
-		(ker.construct_vector_3_object()(p2,p1),
+		gt.construct_scaled_vector_3_object()
+		(gt.construct_vector_3_object()(p2,p1),
 		 2*radius /
-		 approximate_sqrt(ker.compute_squared_distance_3_object()(p2,p1)));
+		 approximate_sqrt(gt.compute_squared_distance_3_object()(p2,p1)));
 
 	    // If both p1 and p2 are outside the sphere, replace both of them
 	    else
@@ -358,16 +399,16 @@ namespace CGAL {
 		else
 		  {
 		    p1=mid+
-		      ker.construct_scaled_vector_3_object()
-		      (ker.construct_vector_3_object()(mid,p1),
+		      gt.construct_scaled_vector_3_object()
+		      (gt.construct_vector_3_object()(mid,p1),
 		       2*radius /
-		       approximate_sqrt(ker.compute_squared_distance_3_object()(mid,p1)));
+		       approximate_sqrt(gt.compute_squared_distance_3_object()(mid,p1)));
 
 		    p2=mid+
-		      ker.construct_scaled_vector_3_object()
-		      (ker.construct_vector_3_object()(mid,p2),
+		      gt.construct_scaled_vector_3_object()
+		      (gt.construct_vector_3_object()(mid,p2),
 		       2*radius /
-		       approximate_sqrt(ker.compute_squared_distance_3_object()(mid,p2)));
+		       approximate_sqrt(gt.compute_squared_distance_3_object()(mid,p2)));
 		  }
 	      }
 
@@ -382,24 +423,24 @@ namespace CGAL {
                                     const Point& a,
                                     const Point& b) {
       FT cosine, deltaprime, root1, root2;
-      GT ker;
+      GT gt;
 
       const Sphere_3& sphere = surface.bounding_sphere();
-        const Point center = ker.construct_center_3_object()(sphere);
+        const Point center = gt.construct_center_3_object()(sphere);
       const FT squared_radius = 
-        ker.compute_squared_radius_3_object()(sphere);
+        gt.compute_squared_radius_3_object()(sphere);
 
       // Compute the squared cosine of angle ([a,center),[a,b))
       cosine=(center-a)*(b-a);
       cosine=cosine*cosine /
-	(ker.compute_squared_distance_3_object()(a,center) *
-	 ker.compute_squared_distance_3_object()(a,b));
+	(gt.compute_squared_distance_3_object()(a,center) *
+	 gt.compute_squared_distance_3_object()(a,b));
 
       // Compute the reduced discriminant
       deltaprime =
-	ker.compute_squared_distance_3_object()(a,b) *
+	gt.compute_squared_distance_3_object()(a,b) *
 	((cosine-1)*
-	 ker.compute_squared_distance_3_object()(a,center)
+	 gt.compute_squared_distance_3_object()(a,center)
 	 + squared_radius);
 
       //      cerr << endl << "   -> discriminant=" << deltaprime << endl;
@@ -411,20 +452,20 @@ namespace CGAL {
       // Else compute the two roots
       deltaprime=approximate_sqrt(deltaprime);
       root1 = ((center-a)*(b-a)) + deltaprime /
-	ker.compute_squared_distance_3_object()(a,b);
+	gt.compute_squared_distance_3_object()(a,b);
       root2 = ((center-a)*(b-a) - deltaprime) /
-	ker.compute_squared_distance_3_object()(a,b);
+	gt.compute_squared_distance_3_object()(a,b);
 
       //      cerr << "   -> roots: " << root1 << " and " << root2 << endl;
 
       // There is an intersection iff a root is between 0 and 1
       if (root1>=0 && root1<=1)
-	return make_object(a + ker.construct_scaled_vector_3_object()
-				 (ker.construct_vector_3_object()(a,b),
+	return make_object(a + gt.construct_scaled_vector_3_object()
+				 (gt.construct_vector_3_object()(a,b),
 				  root1));
       else if (root2>=0 && root2<=1)
-	return make_object(a + ker.construct_scaled_vector_3_object()
-				 (ker.construct_vector_3_object()(a,b),
+	return make_object(a + gt.construct_scaled_vector_3_object()
+				 (gt.construct_vector_3_object()(a,b),
 				  root2));
       else
 	return Object();

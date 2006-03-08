@@ -39,12 +39,12 @@ class Complex_2_in_triangulation_3 {
 
   typedef Complex_2_in_triangulation_3 < Tr > Self;
 
-  typedef Tr Triangulation_3;
+  typedef Tr Triangulation;
 
-  typedef typename Triangulation_3::Vertex_handle Vertex_handle;
-  typedef typename Triangulation_3::Cell_handle Cell_handle;
-  typedef typename Triangulation_3::Facet Facet;
-  typedef typename Triangulation_3::Edge Edge;
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename Triangulation::Cell_handle Cell_handle;
+  typedef typename Triangulation::Facet Facet;
+  typedef typename Triangulation::Edge Edge;
 
   typedef std::list<Facet> Facets;
   typedef std::list<Cell_handle> Cells;
@@ -86,18 +86,18 @@ class Complex_2_in_triangulation_3 {
 
   };
 
-  typedef Filter_iterator<typename Triangulation_3::Facet_iterator,
+  typedef Filter_iterator<typename Triangulation::Facet_iterator,
                    Not_in_complex> Facet_iterator;
-  typedef Filter_iterator<typename Triangulation_3::Edge_iterator,
+  typedef Filter_iterator<typename Triangulation::Edge_iterator,
                    Not_in_complex> Edge_iterator;
-  typedef Filter_iterator<typename Triangulation_3::Vertex_iterator,
+  typedef Filter_iterator<typename Triangulation::Vertex_iterator,
                    Not_in_complex> Vertex_iterator;  
 
-  typedef Filter_iterator<typename Triangulation_3::Edge_iterator,
+  typedef Filter_iterator<typename Triangulation::Edge_iterator,
                           Not_on_boundary_tester> Boundary_edges_iterator;
 
 protected:
-  Triangulation_3& tr;
+  Triangulation& tr;
   Edge_facet_counter  edge_facet_counter;
   size_type m_number_of_facets;
 
@@ -121,19 +121,19 @@ protected:
 
   // Constructors
 
-  Complex_2_in_triangulation_3 (Triangulation_3& t) 
+  Complex_2_in_triangulation_3 (Triangulation& t) 
     : tr(t), m_number_of_facets(0)
   {
   }
 
   // Access functions
 
-  Triangulation_3& triangulation()
+  Triangulation& triangulation()
   {
     return tr;
   }
 
-  const Triangulation_3& triangulation() const
+  const Triangulation& triangulation() const
   {
     return tr;
   }
@@ -146,8 +146,8 @@ protected:
     return (c->is_facet_on_surface(i)) ? REGULAR : NOT_IN_COMPLEX;
   }
 
-  Face_status face_status (const Edge& e) {
-    typename Edge_facet_counter::iterator it =
+  Face_status face_status (const Edge& e) const {
+    typename Edge_facet_counter::const_iterator it =
       edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
 						e.first->vertex(e.third)));
     if (it == edge_facet_counter.end()) return NOT_IN_COMPLEX;
@@ -159,12 +159,14 @@ protected:
     }
   }
 
-  Face_status face_status (const Vertex_handle v) const {
-    if(v->validity_mark() && ! v->is_in_complex_mark()) return NOT_IN_COMPLEX;
+  Face_status face_status (Vertex_handle v) {
+    // this function has not been set const, because 
+
+    if(v->in_complex_validity_mark() && ! v->in_complex_mark()) return NOT_IN_COMPLEX;
 
     //test incident edges for REUGALIRITY and count BOUNDARY edges
     typename std::list<Vertex_handle> vertices;
-    triangulation().incident_facets(v, std::back_inserter(vertices));
+    tr.incident_vertices(v, std::back_inserter(vertices));
     int number_of_boundary_incident_edges = 0; //COULD BE a Bool
     for (typename std::list<Vertex_handle>::iterator vit=vertices.begin();
 	 vit != vertices.end();
@@ -177,13 +179,13 @@ protected:
       }
     }
 
-    // from now on adjacent-edges are REGULAR or BOUNDARY
+    // from now on incident edges are REGULAR or BOUNDARY
     int i,j;
     union_find_of_incident_facets(v,i,j);
     if ( i == 0) return NOT_IN_COMPLEX;
     else if ( j > 1) return SINGULAR;
     else {// REGULAR OR BOUNDARY
-      if (number_of_boundary_incident_edges == 0) return BOUNDARY;
+      if (number_of_boundary_incident_edges != 0) return BOUNDARY;
       return REGULAR;
     }
   }
@@ -192,7 +194,7 @@ protected:
   // This function should be called only when incident edges
   // are known to be REGULAR OR BOUNDARY
   // therefore it can set the regular_or_boundary_validity_mark
-  bool is_regular_or_boundary_for_vertices(const Vertex_handle v) const {
+  bool is_regular_or_boundary_for_vertices(Vertex_handle v) const {
     if(v->validity_mark()){ return v->regular_or_boundary_mark();}
     int i,j;
     union_find_of_incident_facets(v,i,j);
@@ -201,11 +203,11 @@ protected:
   }
 
 
-   bool is_in_complex (const Vertex_handle v) const {
-    if(v->validity_mark()){ return v->is_in_complex_mark();}
+   bool is_in_complex (Vertex_handle v) {
+    if(v->in_complex_validity_mark()){ return v->in_complex_mark();}
     int i,j;
     union_find_of_incident_facets(v,i,j);
-    return ( ! i == 0);
+    return ( i != 0);
   }
 
   // extract the subset F of facets of the complex incident to v
@@ -512,43 +514,43 @@ size_type number_of_facets() const
   }
 
   Facet_iterator facets_begin(){
-    return filter_iterator(triangulation().finite_facets_begin(),
+    return filter_iterator(tr.finite_facets_begin(),
 			   Not_in_complex());
   }
 
   Facet_iterator facets_end(){
-    return filter_iterator(triangulation().finite_facets_end(),
+    return filter_iterator(tr.finite_facets_end(),
 			   Not_in_complex());
   }
 
   
   Edge_iterator edges_begin(){
-    return filter_iterator(triangulation().finite_edges_begin(),
+    return filter_iterator(tr.finite_edges_begin(),
 			   Not_in_complex());
   }
 
   Edge_iterator edges_end(){
-    return filter_iterator(triangulation().finite_edges_end(),
+    return filter_iterator(tr.finite_edges_end(),
 			   Not_in_complex());
   }
 
   Vertex_iterator vertices_begin(){
-    return filter_iterator(triangulation().finite_vertices_begin(),
+    return filter_iterator(tr.finite_vertices_begin(),
 			   Not_in_complex());
   }
 
   Vertex_iterator vertices_end(){
-    return filter_iterator(triangulation().finite_vertices_end(),
+    return filter_iterator(tr.finite_vertices_end(),
 			   Not_in_complex());
   }
 
   Boundary_edges_iterator boundary_edges_begin() {
-    return filter_iterator(triangulation().finite_edges_begin(),
+    return filter_iterator(tr.finite_edges_begin(),
 			   Not_on_boundary_tester()); 
   }
 
   Boundary_edges_iterator boundary_edges_end() {
-    return filter_iterator(triangulation().finite_edges_end(),
+    return filter_iterator(tr.finite_edges_end(),
 			   Not_on_boundary_tester()); 
   }
 

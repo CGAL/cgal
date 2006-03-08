@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,25 +20,31 @@
 #ifndef CGAL_SURFACE_MESHER_REGULAR_EDGES_H
 #define CGAL_SURFACE_MESHER_REGULAR_EDGES_H
 
-#include <CGAL/Complex_2_in_triangulation_3.h>
-#include <CGAL/Complex_2_in_triangulation_3_surface_mesh.h>
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 #include <CGAL/utility.h>
+#include <CGAL/circulator.h>
+#include <set>
 
 namespace CGAL {
 
   namespace Surface_mesher {
 
-  template < typename Tr,
-    typename Surface,
-    typename Criteria,
-    typename SMB = Surface_mesher_base <Tr, Surface, Criteria>
+  template <
+    class C2T3,
+    class Surface,
+    class SurfaceMeshTraits,
+    class Criteria,
+    typename SMB = 
+      Surface_mesher_base<C2T3, Surface, SurfaceMeshTraits, Criteria>
   >
   class Surface_mesher_regular_edges_base
-    : public SMB {
-
+    : public SMB 
+  {
     public:
-      typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
+      typedef C2T3 C2t3;
+      typedef typename C2T3::Triangulation Tr;
+      typedef typename Tr::Geom_traits GT;
+      typedef typename GT::FT FT;
       typedef typename Tr::Point Point;
     //typedef typename Tr::Edge Edge;
       typedef typename Tr::Facet Facet;
@@ -49,7 +55,6 @@ namespace CGAL {
       typedef std::pair<Vertex_handle, Vertex_handle> EdgeVV;
       //      typedef typename Tr::Facet_circulator Facet_circulator;
       typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
-      typedef typename C2t3::Face_type Face_type;
       typedef std::list<Edge> Edges;
       typedef std::list<Facet> Facets;
       typedef std::list<Cell> Cells;
@@ -118,7 +123,7 @@ namespace CGAL {
       const Point& fcenter = f.first->get_facet_surface_center(f.second);
       const Point& vpoint = v->point();
 
-      return tr.geom_traits().compute_squared_distance_3_object()(fcenter,
+      return SMB::tr.geom_traits().compute_squared_distance_3_object()(fcenter,
 								  vpoint );
     }
 
@@ -137,17 +142,17 @@ namespace CGAL {
 	     ++fcirc) {
 	  Vertex_handle fev = edge_to_edgevv(arete).first;
 	  // is the current facet bigger than the current biggest one
-	  if ( SMB::c2t3.compute_distance_to_facet_center(*fcirc, fev) >
-	       SMB::c2t3.compute_distance_to_facet_center(biggest_facet,
-							  fev) ) {
+	  if ( compute_distance_to_facet_center(*fcirc, fev) >
+	       compute_distance_to_facet_center(biggest_facet,
+                                                fev) ) {
 	    biggest_facet = *fcirc;
 	  }
 	  else { // @TODO: il ne faut pas aller voir des deux cotes: c'est
 		 // le meme centre de facet!!!
 	    Facet autre_cote = SMB::mirror_facet(*fcirc);
 	    // is the current facet bigger than the current biggest one
-	    if ( SMB::c2t3.compute_distance_to_facet_center(autre_cote, fev) >
-		 SMB::c2t3.compute_distance_to_facet_center(biggest_facet, fev) ) {
+	    if ( compute_distance_to_facet_center(autre_cote, fev) >
+		 compute_distance_to_facet_center(biggest_facet, fev) ) {
 	      biggest_facet = autre_cote;
 	    }
 	  }
@@ -163,7 +168,7 @@ namespace CGAL {
 	Facet cote = f;
 	Facet autre_cote = SMB::mirror_facet(cote);
 
-	if ( SMB::c2t3.face_type(cote) !=
+	if ( SMB::c2t3.face_status(cote) !=
 	     C2t3::NOT_IN_COMPLEX ) {
 
 	  Edges loe = edges_in_facet(cote);
@@ -183,8 +188,12 @@ namespace CGAL {
       }
 
     public:
-      Surface_mesher_regular_edges_base(Tr& t, C2t3& co, Surface& s, Criteria& c)
-      :SMB(t, co, s, c){}
+      Surface_mesher_regular_edges_base(C2T3& c2t3,
+                                        Surface& surface,
+                                        SurfaceMeshTraits mesh_traits,
+                                        Criteria& criteria)
+        : SMB(c2t3, surface, mesh_traits, criteria)
+    {}
 
     // Initialization function
     void scan_triangulation_impl() {
@@ -196,10 +205,10 @@ namespace CGAL {
       std::cout << "scanning edges..." << std::endl;
       for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit !=
 	     SMB::tr.finite_edges_end(); ++eit) {
-	if ( (SMB::c2t3.face_type(*eit)
+	if ( (SMB::c2t3.face_status(*eit)
 	      == C2t3::SINGULAR) ||
 	     ( (!withBoundary) &&
-	       (SMB::c2t3.face_type(*eit)
+	       (SMB::c2t3.face_status(*eit)
 		== C2t3::BOUNDARY) ) ) {
 	  bad_edges.insert( edge_to_edgevv(*eit) );
 	}
@@ -259,7 +268,7 @@ namespace CGAL {
 	      eit != loe.end();
 	      ++eit ) {
 	  // test if edge is in Complex
-	  if ( SMB::c2t3.face_type(*eit)
+	  if ( SMB::c2t3.face_status(*eit)
 	       != C2t3::NOT_IN_COMPLEX ) {
 	    // test if edge is not regular to store it as a "bad_edge"
 	    // e.g. more than or equal to 3 incident facets (SINGULAR)
@@ -268,10 +277,10 @@ namespace CGAL {
 	    // This test is not efficient because
 	    // edges are tried to be inserted several times
 	    // TODO one day: test if the edge is still singular
-	    if ( (SMB::c2t3.face_type(*eit)
+	    if ( (SMB::c2t3.face_status(*eit)
 		  == C2t3::SINGULAR) ||
 		 ( (!withBoundary) &&
-		   (SMB::c2t3.face_type(*eit)
+		   (SMB::c2t3.face_status(*eit)
 		    == C2t3::BOUNDARY) ) ) {
 	      bad_edges.insert( edge_to_edgevv(*eit) );
 	    }
@@ -286,93 +295,40 @@ namespace CGAL {
     void after_insertion_impl(const Vertex_handle v) {
       after_insertion_impl(v, true);
     }
-  };  // end Surface_mesher_base
 
-  template <typename Tr,
-    typename Surface,
-    typename Criteria,
-    typename Base = Surface_mesher_regular_edges_base<Tr, Surface, Criteria> >
-  class Surface_mesher_regular_edges :
-      public Base,
-      public Mesher_level <
-    Tr,
-    Surface_mesher_regular_edges<Tr, Surface, Criteria, Base>,
-    typename Tr::Facet,
-    Null_mesher_level,
-    Triangulation_mesher_level_traits_3<Tr>
-  >
-  {
-  public:
-    typedef Surface_mesher_regular_edges<Tr, Surface, Criteria, Base> Self;
-    typedef Mesher_level <
-      Tr,
-      Self,
-      typename Tr::Facet,
-      Null_mesher_level,
-      Triangulation_mesher_level_traits_3<Tr>
-    > Mesher;
-
-    typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
-
-    using Mesher::scan_triangulation;
-    using Mesher::refine;
-    using Mesher::is_algorithm_done;
-    using Mesher::one_step;
-    using Base::check_restricted_delaunay;
-
-
-  protected:
-    Null_mesher_level null_mesher_level;
-    Null_mesh_visitor null_visitor;
-    bool initialized;
-
-  public:
-    Surface_mesher_regular_edges(Tr& t, C2t3& co, Surface& s, Criteria& c):
-      Base(t, co, s, c),
-      Mesher(null_mesher_level),
-      initialized(false)
-      {}
-
-
-    // Initialization
-    void init(bool debug = false)
-      {
-	scan_triangulation();
-	initialized = true;
-	if (debug)
-	  check_restricted_delaunay();
-      }
-
-    void refine_mesh (bool verbose = false, bool debug = false) {
-      if(!initialized)
-	init (debug);
-
-
-      if (!verbose)
-	refine (null_visitor);
-      else {
-	std::cerr << "Refining...\n";
-	int nbsteps = 0;
-	std::cerr << "(" << nbsteps << ","
-		  << this->facets_to_refine.size() << ")";
-	while (!is_algorithm_done()) {
-	  one_step (null_visitor);
-	  std::cerr << "\r             \r"
-		    << "(" << ++nbsteps << ","
-		    << this->facets_to_refine.size()
-		    << ","
-		    << this->bad_edges.size()
-		    << ")";
-	}
-	std::cerr << "\ndone.\n";
-      }
-
-      if (debug)
-	check_restricted_delaunay();
-
-      initialized = false;
+    std::string debug_info() const
+    {
+      std::stringstream s;
+      s << SMB::debug_info() << "," << bad_edges.size();
+      return s.str();
     }
+  };  // end Surface_mesher_regular_edges_base
 
+  template <
+    typename C2T3,
+    typename Surface,
+    typename SurfaceMeshTraits,
+    typename Criteria
+    >
+  class Surface_mesher_regular_edges 
+    : public Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria,
+                            Surface_mesher_regular_edges_base<C2T3,
+                                                              Surface,
+                                                              SurfaceMeshTraits,
+                                                              Criteria> >
+  {
+    typedef Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria,
+                           Surface_mesher_regular_edges_base<C2T3,
+                                                             Surface,
+                                                             SurfaceMeshTraits,
+                                                             Criteria> > SM;
+  public:
+    Surface_mesher_regular_edges(C2T3& c2t3,
+                                 Surface& surface,
+                                 SurfaceMeshTraits mesh_traits,
+                                 Criteria& criteria)
+      : SM(c2t3, surface, mesh_traits, criteria)
+    {}
   };  // end Surface_mesher_regular_edges
 
   }  // end namespace Surface_mesher

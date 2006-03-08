@@ -1,24 +1,34 @@
-2 March 2006 Laurent Rineau
+8 March 2006 Laurent Rineau
 - change some hard-coded "double" to "FT"
-- fix syntax errors in include/CGAL/Complex_2_in_triangulation_3.h
 - change face_type() to face_status() in users of C2t3
+- first testsuite
+- renamed nested typedef Triangulation_3 to Triangulation, in C2t3
+- added specializations for Manifold_tag and Manifold_with_boundaries_tag, 
+  in include/CGAL/make_surface_mesh.h
+- heavy changes of template parameters and constructors of:
+     - Surface_mesher_regular_edges_without_boundary_base
+     - Surface_mesher_regular_edges_base
+     - Surface_mesher_manifold_base
+- new classes Surface_mesher_manifold, urface_mesher_regular_edges and
+  Surface_mesher_regular_edges_without_boundary, that are no longer
+  copy-pasted from Surface_mesher.
+- rename all triangulation objects to "tr", and all geom_traits objects to
+  "gt". No longer "tri3", or "ker".
+- updated the target "depends" of GNUmakefile files.
+- testsuite compiles, but runtime problem in manifold version. Non manifold
+  runs correctly.
+- fix layout of this changes.txt file
 
-8 March 2006 Mariette
-changed the booleans in Complex_2_in_triangulation_vertex_base_3
-
-
-8 March 2006 Mariette
-changes  in Complex_2_in_triangulation_3 :
-    remove set_in_complex and remove_from_complex for vertices
-    change  set_in_complex and remove_from_complex for facets
-    add iterators on complex faces
-
-8 March 2006 Mariette
-changes  in Complex_2_in_triangulation_3 :
-    fixed operator Not_in_complex
-    changed face_type into face_status
-    changed is_in_complex 
-    added is_regular_or_boundary_for_vertices
+8 March 2006 Mariette Yvinec
+- changed the booleans in Complex_2_in_triangulation_vertex_base_3
+- changes  in Complex_2_in_triangulation_3 :
+   - remove set_in_complex and remove_from_complex for vertices
+   - change  set_in_complex and remove_from_complex for facets
+   - add iterators on complex faces
+   - fixed operator Not_in_complex
+   - changed face_type into face_status
+   - changed is_in_complex 
+   - added is_regular_or_boundary_for_vertices
 
 
 2 March 2006 Laurent Rineau
@@ -51,33 +61,39 @@ changes  in Complex_2_in_triangulation_3 :
 - Remove old headers Nodes.h and Graph.h
 
 
-20 janvier 2006 Mariette
-- changed the reference page manual according to Efi comments + various discussions.
-  still missing : the concept SurfaceMeshTriangulation_3
+20 janvier 2006 Mariette Yvinec
+- changed the reference page manual according to Efi comments + various
+  discussions.
+- still missing : the concept SurfaceMeshTriangulation_3
 
 
-17 janvier 2006 Mariette
-- changed in the doc PureComplex_2InTriangulation_3 to SurfaceMeshComplex_2InTriangulation_3
-  and Pure_complex_2_in_triangulation_3.tex to Surface_mesh_complex_2_in_triangulation_3.tex
+17 janvier 2006 Mariette Yvinec
+- changed in the doc PureComplex_2InTriangulation_3 to
+  SurfaceMeshComplex_2InTriangulation_3 and
+  Pure_complex_2_in_triangulation_3.tex to
+  Surface_mesh_complex_2_in_triangulation_3.tex
 
- 9 December 2005 Andreas Fabri
+9 December 2005 Andreas Fabri
 - Replaced arrays of bool with a char and bit operations
 - Moved CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h
   to CGAL/Surface_mesher/Surface_mesh_cell_base_3.h
 
- 1 December 2005 Andreas Fabri
+1 December 2005 Andreas Fabri
 - Putting const& in the Implicit_oracle
-- Made Implicit_oracle::intersect_segment_surface_rec(Point p1, Point p2) non-recursive
+- Made Implicit_oracle::intersect_segment_surface_rec(Point p1, Point p2)
+  non-recursive
 - Replaced handwritten code with usage of  TDS_3::mirror_facet
 
 30 November 2005 Andreas Fabri
 - Introduced lazy initialization of treatment of singular vertices
 - Introduced a method for determining if a vertex is in the complex, 
   as face_type computation would trigger the lazy initialization
-- Removed the graph in the vertices for computing whether the vertex is singular
+- Removed the graph in the vertices for computing whether the vertex is
+  singular
 - Removed the facet status field and its set/get method
 - Renamed complex_subface_type by face_type
-- Replaced functions that return a list with functions that write in output iterators
+- Replaced functions that return a list with functions that write in output
+  iterators
 - Replaced the "visits" that counted with a visited that only stores a bool
   as there was only an inc and reset method, and the comparison with 0
 - Lots of small cleanup as proposed in TODO
@@ -91,12 +107,12 @@ changes  in Complex_2_in_triangulation_3 :
     include/CGAL/Weighted_point_with_surface_index.h
   This permits to save/load meshes with i/o operators of Triangulation_3.
 
-3 novembre 2005 Mariette
+3 novembre 2005 Mariette Yvinec
 - surface mesher is now on cgal cvs serveur
 - added in doc_tex the specifications of Complex_2_in Triangulation_3
   although they do not correspond to the code developped by David
 
-14 september 2005 Mariette
+14 september 2005 Mariette Yvinec
   - put package Surface_mesher on cgal local cvs serveur
 
 2 september 2005 Laurent Rineau

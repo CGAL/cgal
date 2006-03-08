@@ -2,6 +2,9 @@
 
 all: test examples
 
+# clean all object files
+clean: test.clean examples.clean
+
 doc:
 	${MAKE} -C doc_tex
 
@@ -14,9 +17,11 @@ test:
 doxygen:
 	doxygen
 
-# clean all object files
-clean: 
+examples.clean: 
 	${MAKE} -C examples/Surface_mesher clean
+
+test.clean: 
+	${MAKE} -C test/Surface_mesher clean
 
 dist-clean: clean
 	find . -name '.#*' -exec rm \{\} \;

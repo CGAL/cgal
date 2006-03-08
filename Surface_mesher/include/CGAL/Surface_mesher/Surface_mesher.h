@@ -29,7 +29,9 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Double_map.h>
-#include <CGAL/Complex_2_in_triangulation_3.h>
+#include <list>
+#include <string>
+#include <sstream>
 
 namespace CGAL {
 
@@ -45,10 +47,10 @@ namespace CGAL {
     class Criteria
     >
   class Surface_mesher_base
-    : public Triangulation_mesher_level_traits_3<typename C2T3::Triangulation_3>
+    : public Triangulation_mesher_level_traits_3<typename C2T3::Triangulation>
   {
   public:
-    typedef typename C2T3::Triangulation_3 Tr;
+    typedef typename C2T3::Triangulation Tr;
     typedef typename Tr::Point Point;
     typedef typename Tr::Edge Edge;
     typedef typename Tr::Vertex_handle Vertex_handle;
@@ -96,7 +98,7 @@ namespace CGAL {
     // Helper functions
     Facet mirror_facet(const Facet& f) const
     {
-      return c2t3.triangulation().mirror_facet(f);
+      return tr.mirror_facet(f);
     }
 
     static void set_facet_visited(Facet f)
@@ -315,14 +317,13 @@ namespace CGAL {
 	Zone zone;
 
        	// TODO may be avoid the locate here
-	zone.cell = triangulation_ref_impl().
-	  locate (p, zone.locate_type, zone.i, zone.j, f.first);
+	zone.cell =
+	  tr.locate(p, zone.locate_type, zone.i, zone.j, f.first);
 
-	triangulation_ref_impl().
-	  find_conflicts(p, zone.cell,
-			 std::back_inserter(zone.boundary_facets),
-			 std::back_inserter(zone.cells),
-			 std::back_inserter(zone.internal_facets));
+        tr.find_conflicts(p, zone.cell,
+                          std::back_inserter(zone.boundary_facets),
+                          std::back_inserter(zone.cells),
+                          std::back_inserter(zone.internal_facets));
 	return zone;
     }
 
@@ -600,6 +601,12 @@ namespace CGAL {
       }
     }
 
+    std::string debug_info() const
+    {
+      std::stringstream s;
+      s << facets_to_refine.size();
+      return s.str();
+    }
 
   };  // end Surface_mesher_base
 
@@ -617,15 +624,15 @@ namespace CGAL {
   struct Surface_mesher
     : public Base,
       public Mesher_level <
-        typename C2T3::Triangulation_3,
+        typename C2T3::Triangulation,
         Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria, Base>,
-        typename C2T3::Triangulation_3::Facet,
+        typename C2T3::Triangulation::Facet,
         Null_mesher_level,
-        Triangulation_mesher_level_traits_3<typename C2T3::Triangulation_3>
+        Triangulation_mesher_level_traits_3<typename C2T3::Triangulation>
 	>
   {
   public:
-    typedef typename C2T3::Triangulation_3 Tr;
+    typedef typename C2T3::Triangulation Tr;
     typedef Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria, Base> Self;
     typedef Mesher_level <
       Tr,
@@ -653,10 +660,10 @@ namespace CGAL {
     Surface_mesher(C2T3& c2t3,
                    Surface& surface,
                    Surface_mesh_traits mesh_traits,
-                   Criteria& criteria): 
-      Base(c2t3, surface, mesh_traits, criteria), 
-      Mesher_lvl(null_mesher_level),
-      initialized(false)
+                   Criteria& criteria)
+      : Base(c2t3, surface, mesh_traits, criteria), 
+        Mesher_lvl(null_mesher_level),
+        initialized(false)
     {}
 
     // Initialization
@@ -684,7 +691,7 @@ namespace CGAL {
 	  one_step (null_visitor);
 	  std::cerr << "\r             \r"
 		    << "(" << ++nbsteps << ","
-		    << this->facets_to_refine.size()
+		    << this->debug_info()
 		    << ")";
 	}
 	std::cerr << "\ndone.\n";

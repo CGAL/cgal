@@ -29,7 +29,6 @@ namespace CGAL {
       This model of OracleVisitor sets the point "surface_index" to a
       constant \c int.
    */
-  template <class Tr>
   struct Point_surface_indices_visitor
   {
     const int i;

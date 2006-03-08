@@ -62,22 +62,22 @@ i.e. find its size, number of connected components, genus etc...
 \ccTypes
 \ccRefName\ provides the following types.
 
-\ccNestedType{Triangulation_3}{The type of the
+\ccNestedType{Triangulation}{The type of the
 embedding 3D triangulation.}
 \ccGlue
-\ccTypedef{typedef Triangulation_3::Vertex_handle Vertex_handle;}{ The type of
+\ccTypedef{typedef Triangulation::Vertex_handle Vertex_handle;}{ The type of
 the embedding triangulation vertex handles.}
 \ccGlue
-\ccTypedef{typedef Triangulation_3::Cell_handle  Cell_handle;}{ The  type of
+\ccTypedef{typedef Triangulation::Cell_handle  Cell_handle;}{ The  type of
 the  embedding triangulation cell handles.}
 \ccGlue
-\ccTypedef{typedef Triangulation_3::Facet Facet;}{The  type of
+\ccTypedef{typedef Triangulation::Facet Facet;}{The  type of
 the  embedding triangulation facets.}
 \ccGlue
-\ccTypedef{typedef Triangulation_3::Edge Edge;} {The  type of
+\ccTypedef{typedef Triangulation::Edge Edge;} {The  type of
 the  embedding triangulation edges.}
 \ccGlue
-\ccTypedef{typedef Triangulation_3::size_type size_type;}{Size type (an
+\ccTypedef{typedef Triangulation::size_type size_type;}{Size type (an
   unsigned integral type)}
 
 \ccEnum{enum Face_status {NOT_IN_COMPLEX, BOUNDARY, REGULAR,
@@ -133,11 +133,11 @@ boundary edges of the 2D complex.}
 
 %\ccConstructor{SurfaceMeshComplex_2InTriangulation_3();}{default constructor.}
 %\ccGlue
-\ccConstructor{SurfaceMeshComplex_2InTriangulation_3(Triangulation_3& t3);}
+\ccConstructor{SurfaceMeshComplex_2InTriangulation_3(Triangulation& t3);}
  {Builds an empty 2D complex embedded in the triangulation~\ccc{t3}}
 \ccGlue
 \ccConstructor{template < class FacetSelector>
-SurfaceMeshComplex_2InTriangulation_3(Triangulation_3& t3, 
+SurfaceMeshComplex_2InTriangulation_3(Triangulation& t3, 
          FacetSelector select);}
 {Builds a 2D complex embedded in the triangulation~\ccc{t3},
 including in the 2D complex the facets of~\ccc{t3} for 
@@ -146,6 +146,10 @@ The type \ccc{FacetSelector} must be
 a function object with an operator to select facets:
 \ccc{bool operator()(Facet f);}.}
 
+
+\ccHeading{Member access}
+\ccMethod{Triangulation& triangulation();}
+{Returns the reference to the triangulation.}
 
 \ccHeading{Modifications}
 \ccMethod{void add_to_complex(Facet f);}{Adds facet \ccc{f} to the 2D complex.}

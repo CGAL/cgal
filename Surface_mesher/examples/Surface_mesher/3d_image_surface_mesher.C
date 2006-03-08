@@ -25,12 +25,12 @@ int main(int, char **) {
   Function function("ImageIO/data/skull_2.9.inr.gz");
   Surface_3 surface(function, 
                     Sphere_3(Point_3(250., 250., 250.), 500.),
-                    1e-06);
+                    1e-03);
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
-                                                     0.05,
-                                                     0.01);
+                                                     0.1,
+                                                     0.1);
   // meshing surface
   make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
