@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 template <class Poly>
 class PQQ_stencil_3 {
 public:
-  typedef Poly                                        Polyhedron;
+  typedef Poly                                         Polyhedron;
 
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -64,7 +64,7 @@ public:
 template <class Poly>
 class Linear_mask_3 : public PQQ_stencil_3<Poly> {
 public:
-  typedef Poly                                        Polyhedron;
+  typedef Poly                                         Polyhedron;
 
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
@@ -78,22 +78,21 @@ public:
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
 
-  typedef typename Kernel::FT                         FT;
-  typedef typename Kernel::Point_3                    Point;
-  typedef typename Kernel::Vector_3                   Vector;
+  typedef typename Kernel::FT                          FT;
+  typedef typename Kernel::Point_3                     Point;
+  typedef typename Kernel::Vector_3                    Vector;
 
 public:
   //
   void facet_node(Facet_handle facet, Point& pt) {
     Halfedge_around_facet_circulator hcir = facet->facet_begin();
     int n = 0;
-    FT p[] = {0,0,0};
+    Point p(0,0,0);
     do {
-      Point t = hcir->vertex()->point();
-      p[0] += t[0], p[1] += t[1], p[2] += t[2]; 
+      p = p + (hcir->vertex()->point() - ORIGIN);
       ++n;
     } while (++hcir != facet->facet_begin());
-    pt = Point(p[0]/n, p[1]/n, p[2]/n);
+    pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
   //
   void edge_node(Halfedge_handle edge, Point& pt) {
