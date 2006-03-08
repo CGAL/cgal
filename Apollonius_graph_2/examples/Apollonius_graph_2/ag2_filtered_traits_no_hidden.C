@@ -1,4 +1,4 @@
-// file: examples/Apollonius_graph_2/example3.C
+// file: examples/Apollonius_graph_2/ag2_filtered_traits_no_hidden.C
 
 #include <CGAL/basic.h>
 

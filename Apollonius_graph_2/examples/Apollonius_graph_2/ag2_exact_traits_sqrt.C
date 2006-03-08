@@ -1,4 +1,4 @@
-// file: examples/Apollonius_graph_2/example2.C
+// file: examples/Apollonius_graph_2/ag2_exact_traits_sqrt.C
 
 #include <CGAL/basic.h>
 
