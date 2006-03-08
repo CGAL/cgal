@@ -1,3 +1,5 @@
+// NGHK: NOT IN USE FOR NOW
+
 // examples/Skin_surface_3/union_of_balls_simple.C
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/skin_surface_3.h>
@@ -12,6 +14,8 @@ typedef Regular_traits::Weighted_point                   Reg_weighted_point;
 typedef CGAL::Polyhedron_3<Skin_surface_traits::Polyhedron_traits> Polyhedron;
 
 int main(int argc, char *argv[]) {
+  return 0;
+
   std::list<Reg_weighted_point> l;
   
   l.push_front(Reg_weighted_point(Reg_point(0,0,0), 1));

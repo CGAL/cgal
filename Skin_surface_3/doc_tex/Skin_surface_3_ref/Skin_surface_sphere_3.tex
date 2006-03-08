@@ -21,8 +21,15 @@
 The class \ccRefName\ represents a sphere specifically designed for
 the skin surface package.
 
-% NGHK: This is ok:
 \ccInclude{CGAL/Skin_surface_quadratic_surface_3.h}
+
+\ccParameters 
+%
+It is parameterized by a kernel that must provide types for points,
+vectors, segments and weighted points.
+
+\ccInheritsFrom \ccc{Skin_surface_quadratic_surface_3<Kernel>}
+
 \ccTypes
 The geometric types used by the sphere:
 \ccThree{typedef Weighted_point<Point, RT> x}{Triangulated}{}
@@ -40,18 +47,18 @@ The geometric types used by the sphere:
 
 \ccCreation
 \ccCreationVariable{surf}  %% choose variable name
-
-\ccConstructor{Skin_surface_quadratic_sphere_3();}{}
-
-\ccOperations
-\ccThree{virtual Vector}{Triangulated}{}
+\ccThree{Point }{Point}{}
 \ccThreeToTwo
 
-\ccMethod{In_smallest_orthogonal_sphere_3
-  in_smallest_orthogonal_sphere_3_object();}{ } 
-%
-\ccGlue
-%
+\ccConstructor{Skin_surface_sphere_3(Weighted_point wp, RT s, int
+  orient);}{The center of the sphere is defined by the location of the
+  weighted point and the radius is defined as $\sqrt{s P}$, where $P$
+  is the weight of \ccc{wp}. The orientation is -1 or 1 and }
+
+\ccOperations
+\ccThree{virtual Vector }{ to_surfaceconst Point p0, const Point }{}
+\ccThreeToTwo
+
 \ccMethod{Point to_surface(const Point &p0, const Point &p1);}
 {Returns a point close to the intersection point of the line segment
   \ccc{p0p1} with the surface.}
@@ -73,5 +80,6 @@ surface as a piecewise implicit function, and this function is $C^1$.
 }{Returns the gradient in \ccc{p}. }
 
 \ccSeeAlso
-\ccRefIdfierPage{SkinSurfaceTraits_3}
+\ccRefIdfierPage{CGAL::Skin_surface_quadratic_surface_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Skin_surface_hyperboloid_3<Kernel>}
 \end{ccRefClass}

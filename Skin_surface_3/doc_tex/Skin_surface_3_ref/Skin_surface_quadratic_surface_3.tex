@@ -44,10 +44,8 @@ The geometric types used by the quadratic surface:
 This class is virtual and cannot be constructed without a derived
 class that implements the pure virtual functions.
 
-\ccConstructor{Skin_surface_quadratic_surface_3();}{}
-
 \ccOperations
-\ccThree{virtual Vector}{Triangulated}{}
+\ccThree{Point}{to_surfaceconst Point &p0, const }{}
 \ccThreeToTwo
 
 \ccMethod{Point to_surface(const Point &p0, const Point &p1);}
@@ -59,10 +57,9 @@ class that implements the pure virtual functions.
 \ccMethod{Point to_surface(const Segment &s);}{Equal to
   \ccc{to_surface(s.source(), s.target())}.}
 
-The following two functions give an implicit representation of the
-skin surface. Each quadratic surface is defined as the zeroset of a
-scalar valued function. Using the mixed complex, we define the skin
-surface as a piecewise implicit function, and this function is $C^1$.
+The surfaces are given in implicit form, where the surface is the
+zeroset of a scalar valued function. The following two functions
+return the function value and the gradient in a given point.
 
 \ccMethod{virtual RT value(const Point &p) const = 0;}{Returns the
   function value of the quadric.}
@@ -71,6 +68,7 @@ surface as a piecewise implicit function, and this function is $C^1$.
 }{Returns the gradient in \ccc{p}. }
 
 \ccSeeAlso
-\ccRefIdfierPage{SkinSurfaceTraits_3}
+\ccRefIdfierPage{CGAL::Skin_surface_hyperboloid_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Skin_surface_sphere_3<Kernel>}
 \end{ccRefClass}
 

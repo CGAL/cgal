@@ -1,3 +1,8 @@
+// NGHK: NOT IN USE FOR NOW
+
+
+
+
 // Copyright (c) 2005 Rijksuniversiteit Groningen (Netherlands)
 // All rights reserved.
 //
