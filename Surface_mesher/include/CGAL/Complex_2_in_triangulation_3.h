@@ -20,7 +20,7 @@
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
 
-// TODO: add the iterator 
+// TODO: add the iterators
 // TODO: document the output/input function of C2T3?
 
 #include <CGAL/circulator.h>
@@ -29,7 +29,7 @@
 #include <map>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Tr >
 class Complex_2_in_triangulation_3 {
@@ -88,7 +88,7 @@ class Complex_2_in_triangulation_3 {
 
 
 protected:
-  Triangulation_3& tri3;
+  Triangulation_3& tr;
   Edge_facet_counter  edge_facet_counter;
   size_type m_number_of_facets;
 
@@ -112,8 +112,8 @@ protected:
 
   // Constructors
 
-  Complex_2_in_triangulation_3 (Triangulation_3& t3) 
-    : tri3(t3), m_number_of_facets(0)
+  Complex_2_in_triangulation_3 (Triangulation_3& t) 
+    : tr(t), m_number_of_facets(0)
   {
   }
 
@@ -121,12 +121,12 @@ protected:
 
   Triangulation_3& triangulation()
   {
-    return tri3;
+    return tr;
   }
 
   const Triangulation_3& triangulation() const
   {
-    return tri3;
+    return tr;
   }
 
   Face_status face_status (const Facet& f) const {
@@ -170,9 +170,9 @@ protected:
 
     // from now on adjacent-edges are REGULAR or BOUNDARY
     int i,j;
-    union_find_of_incident_facets{v,i,j);
-    if ( i == 0) { return NOT_IN_COMPLEX;}
-    else if ( j > 1) {return SINGULAR};
+    union_find_of_incident_facets(v,i,j);
+    if ( i == 0) return NOT_IN_COMPLEX;
+    else if ( j > 1) return SINGULAR;
     else {// REGULAR OR BOUNDARY
       if (number_of_boundary_incident_edges == 0) return BOUNDARY;
       return REGULAR;
@@ -186,7 +186,7 @@ protected:
   bool is_regular_or_boundary_for_vertices(const Vertex_handle v) const {
     if(v->validity_mark()){ return v->regular_or_boundary_mark();}
     int i,j;
-    union_find_of_incident_facets{v,i,j);
+    union_find_of_incident_facets(v,i,j);
     v->set_regular_or_boundary_validity_mark(true);
     return (j == 1);
   }
@@ -195,7 +195,7 @@ protected:
    bool is_in_complex (const Vertex_handle v) const {
     if(v->validity_mark()){ return v->is_in_complex_mark();}
     int i,j;
-    union_find_of_incident_facets{v,i,j);
+    union_find_of_incident_facets(v,i,j);
     return ( ! i == 0);
   }
 
@@ -205,10 +205,10 @@ protected:
   //     of F
   void union_find_of_incident_facets(Vertex_handle v, int& i, int& j) {
     Union_find<Facet> facets;
-    triangulation().incident_facets( v, 
-				     filter_output_iterator(
-					    std::back_inserter(facets), 
-					    Not_in_complex()));
+    tr.incident_facets( v, 
+                        filter_output_iterator(
+                                               std::back_inserter(facets), 
+                                               Not_in_complex()));
 
     typedef std::map<Vertex_handle, 
       typename Union_find<Facet>::handle>  Vertex_Set_map;
@@ -222,7 +222,7 @@ protected:
       Cell_handle ch = (*it).first;
       int i = (*it).second;
       for(int j=0; j < 3; j++){
-	Vertex_handle w = ch->vertex(triangulation().vertex_triple_index(i,j));
+	Vertex_handle w = ch->vertex(tr.vertex_triple_index(i,j));
 	if(w != v){
 	  Vertex_Set_map_iterator vsm_it = vsmap.find(w);
 	  if(vsm_it != vsmap.end()){
@@ -283,7 +283,7 @@ size_type number_of_facets() const
   OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const
   {
     // We assume that for the generated facets the Cell_handle is smaller than the opposite one
-    triangulation().incident_facets(v, filter_output_iterator(it, Not_in_complex()));
+    tr.incident_facets(v, filter_output_iterator(it, Not_in_complex()));
     return it;
   }
 
@@ -357,7 +357,7 @@ size_type number_of_facets() const
 
     // TODO the folowing code should be simplified
     // unifying cases dim == 2 ou 3
-    if (tri3.dimension() == 3) {
+    if (tr.dimension() == 3) {
       // if not already in the complex
       if ( face_status (c, i) == NOT_IN_COMPLEX ) {
 
@@ -374,7 +374,8 @@ size_type number_of_facets() const
 				      c->vertex(k));
 	      (edge_facet_counter[e]).first++;
 
-	      (edge_facet_counter[e]).second.push_back(f);
+	      (edge_facet_counter[e]).second.push_back(f); // @ODO: beurk.
+                                                           // Recode this!
 	    }
 	  }
 	}
@@ -390,7 +391,7 @@ size_type number_of_facets() const
 	}
       }
     }
-    else if (tri3.dimension() == 2) {
+    else if (tr.dimension() == 2) {
       // if not already in the complex
       if ( face_status (c, i) == NOT_IN_COMPLEX ) {
 
@@ -440,7 +441,7 @@ size_type number_of_facets() const
 
     // TODO the folowing code should be simplified
     // unifying cases dim == 2 ou 3
-    if (tri3.dimension() == 3) {
+    if (tr.dimension() == 3) {
       // if in the complex
       if ( face_status (c, i) != NOT_IN_COMPLEX ) {
 
@@ -472,7 +473,7 @@ size_type number_of_facets() const
       }
     }
     
-    else if (tri3.dimension() == 2){
+    else if (tr.dimension() == 2){
       // if in the complex
       if ( face_status (c, i) != NOT_IN_COMPLEX ) {
 
@@ -503,6 +504,6 @@ size_type number_of_facets() const
   }
 }; // end Complex_2_in_triangulation_3
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
