@@ -9,12 +9,12 @@
 The goal of the circular kernel is to offer to the user a large set of
 functionalities on circles and circular arcs in the plane. All the
 choices (interface, robustness, representation, and so on) made here
-are consistent with the choices made in the CGAL kernel, for which we
+are consistent with the choices made in the \cgal\ kernel, for which we
 refer the user to the 2D kernel manual. 
 
 In this first release, all functionalities necessary for computing an
 arrangement of circular arcs and these line segments are
-defined. Three traits classes are provided for the CGAL arrangement
+defined. Three traits classes are provided for the \cgal\ arrangement
 package. 
 
 \section{Software Design}
@@ -25,11 +25,11 @@ has therefore two template parameters:
 \begin{itemize}
 \item {} the \ccc{LinearKernel}, from which the circular kernel derives,
 provides all elementary geometric objects like points, lines, circles, and
-elementary functionality on them. It must be a model of the CGAL two 
+elementary functionality on them. It must be a model of the \cgal\ two 
 dimensional \ccc{Kernel} concept.
-%The CGAL 2D Kernel can be used as parameter,
+%The \cgal\ 2D Kernel can be used as parameter,
 %but the user may plug his own kernel 
-%instead, as long as it follows the CGAL kernel concept. 
+%instead, as long as it follows the \cgal\ kernel concept. 
 \item {} the second parameter is the algebraic kernel, which is 
 responsible for computations on polynomials and algebraic numbers. It 
 has to be a model of concept \ccc{AlgebraicKernelForCircles}. The
@@ -64,7 +64,7 @@ and provide other filtering techniques.
 %\ccc{Filtered_hexagon_curved_kernel<CircularKernel>}, and\\
 %\ccc{Filtered_bbox_curved_kernel<CircularKernel>}. \\
 %Kernels are enumerated here from finest to coarsest filtering
-%technique. As in the 2D CGAL kernel, the idea is that cascading
+%technique. As in the 2D \cgal\ kernel, the idea is that cascading
 %filters should give the most efficient result \footnote{In practice,
 %benchmarking should still be done and further optimizations will be
 %provided for future releases.}
