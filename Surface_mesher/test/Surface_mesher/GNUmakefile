@@ -49,7 +49,8 @@ test_robust_circumcenter$(EXE_EXT): test_robust_circumcenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_robust_circumcenter test_robust_circumcenter$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   test_robust_circumcenter.clean 
+                   test_robust_circumcenter.clean \
+                   implicit_surface_mesher_test.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -58,3 +59,29 @@ clean: \
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
+#---------------------------------------------------------------------#
+#
+#                        dependencies
+#
+#      if you want deps, create a file my_makefile that contains
+#      -include depends
+#
+#---------------------------------------------------------------------#
+
+-include my_makefile
+
+dep:
+	$(MAKE) depends
+
+.PHONY: dep
+
+depends:
+	cat /dev/null > depends
+	for f in *.C; do \
+	  echo >> depends; \
+	  echo >> depends; \
+	  echo "$${f%.C}$(OBJ_EXT): \\" >> depends; \
+	  $(CGAL_CXX) $(CXXFLAGS) -M -MG $$f \
+	     | grep '\.\./\.\..*/include/CGAL' >> depends; \
+	done; \
+	test -f depends
