@@ -45,41 +45,58 @@ namespace CGAL {
     typedef typename Tds::Facet Facet;
 
   private:
-    bool in_complex;
-    bool regular;
-      
-    bool status_cached;
+    bool in_complex_mark_;
+    bool regular_or_boundary_mark_;
+    bool in_complex_validity_mark_;
+    bool regular_or_boundary_validity_mark_;
+
 
   public:
     // Constructors
 
     Complex_2_in_triangulation_vertex_base_3()
-      : Vb(), in_complex(false), regular(false), status_cached(false)
+      : Vb(), 
+	in_complex_mark_(false), 
+	regular_or_boundary_mark_(false), 
+	in_complex_validity_mark_(false),
+	regular_or_boundary_validity_mark_(false)
     {}
 
-    bool is_in_complex() const {
-      return in_complex;
+    bool in_complex_mark() const {
+      return in_complex_mark_;
     }
 
-    void set_in_complex(const bool b) {
-      in_complex = b;
+    void set_in_complex_mark(const bool b) {
+      in_complex_mark_ = b;
     }
 
-    bool is_regular() const {
-      return regular;
+    bool regular_or_boundary_mark() const {
+      return regular_or_boundary_mark_;
     }
 
-    void set_regular(const bool b) {
-      regular = b;
+    void set_regular_or_boundary_mark(const bool b) {
+      regular_or_boundary_mark_ = b;
     }
 
-    bool is_status_cached() const {
-      return status_cached;
+   
+    bool in_complex_validity_mark() const {
+      return in_complex_validity_mark_;
     }
 
-    void set_status_cached(const bool b) {
-      status_cached = b;
+    void set_in_complex_validity_mark(const bool b) {
+      in_complex_validity_mark_ = b;
     }
+
+    bool regular_or_boundary_mark() const {
+      return regular_or_boundary_validity_mark_;
+    }
+
+    void set_regular_or_boundary_validity_mark(const bool b) {
+      regular_or_boundary_validity_mark_ = b;
+    }
+
+
+
   };  // end Complex_2_in_triangulation_vertex_base_3
 
 
