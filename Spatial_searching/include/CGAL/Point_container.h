@@ -232,7 +232,7 @@ public:
 
   // building an empty container 
   Point_container(const int d) :
-    b(NULL), e(NULL), bbox(d), tbox(d)  
+    bbox(d), tbox(d)  
   {}
   
   template <class Traits2>   

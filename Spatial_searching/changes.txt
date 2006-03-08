@@ -1,3 +1,6 @@
+08 March 2006 Andreas Fabri
+- Fixed bug in constructor of Point_container (nonexisting conversion from int to std::vector::iterator)
+
 05 December 2005 Andreas Fabri
 - Kd_tree::invalidate_built didn't clear vector 'data'
 
