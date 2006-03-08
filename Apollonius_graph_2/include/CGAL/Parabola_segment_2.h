@@ -61,80 +61,80 @@ public:
 
   void generate_points(std::vector<Point_2>& p) const
   {
-    FT s[2];
+    FT s0, s1;
 
-    s[0] = t(p1);
-    s[1] = t(p2);
+    s0 = t(p1);
+    s1 = t(p2);
 
-    if (CGAL::compare(s[0], s[1]) == LARGER) {
+    if (CGAL::compare(s0, s1) == LARGER) {
 #if defined(__GNUC__) && (__GNUC__ < 3)
-      FT tmp = s[0];
-      s[0] = s[1];
-      s[1] = tmp;
+      FT tmp = s0;
+      s0 = s1;
+      s1 = tmp;
 #else
-      std::swap< FT >(s[0], s[1]);
+      std::swap< FT >(s0, s1);
 #endif
     }
 
     p.clear();
 
-    if ( !(CGAL::is_positive(s[0])) &&
-	 !(CGAL::is_negative(s[1])) ) {
+    if ( !(CGAL::is_positive(s0)) &&
+	 !(CGAL::is_negative(s1)) ) {
       FT tt;
       int k;
 
       p.push_back( this->o );
       k = 1;
       tt = -this->STEP();
-      while ( CGAL::compare(tt, s[0]) == LARGER ) {
+      while ( CGAL::compare(tt, s0) == LARGER ) {
 	p.insert( p.begin(), f(tt) );
 	k--;
 	tt = -FT(k * k) * this->STEP();
       }
-      p.insert( p.begin(), f(s[0]) );
+      p.insert( p.begin(), f(s0) );
 
       k = 1;
       tt = this->STEP();
-      while ( CGAL::compare(tt, s[1]) == SMALLER ) {
+      while ( CGAL::compare(tt, s1) == SMALLER ) {
 	p.push_back( f(tt) );
 	k++;
 	tt = FT(k * k) * this->STEP();
       }
-      p.push_back( f(s[1]) );
-    } else if ( !(CGAL::is_negative(s[0])) &&
-		!(CGAL::is_negative(s[1])) ) {
+      p.push_back( f(s1) );
+    } else if ( !(CGAL::is_negative(s0)) &&
+		!(CGAL::is_negative(s1)) ) {
       FT tt;
       int k;
 
 
-      p.push_back( f(s[0]) );
+      p.push_back( f(s0) );
 
-      tt = s[0];
+      tt = s0;
       k = int(CGAL::to_double(CGAL::sqrt(tt / this->STEP())));
 
-      while ( CGAL::compare(tt, s[1]) == SMALLER ) {
-	if ( CGAL::compare(tt, s[0]) != SMALLER )
+      while ( CGAL::compare(tt, s1) == SMALLER ) {
+	if ( CGAL::compare(tt, s0) != SMALLER )
 	  p.push_back( f(tt) );
 	k++;
 	tt = FT(k * k) * this->STEP();
       }
-      p.push_back( f(s[1]) );
+      p.push_back( f(s1) );
     } else {
       FT tt;
       int k;
 
-      p.push_back( f(s[1]) );
+      p.push_back( f(s1) );
 
-      tt = s[1];
+      tt = s1;
       k = int(CGAL::to_double(-CGAL::sqrt(-tt / this->STEP())));
 
-      while ( CGAL::compare(tt, s[0]) == LARGER ) {
-	if ( CGAL::compare(tt, s[1]) != LARGER )
+      while ( CGAL::compare(tt, s0) == LARGER ) {
+	if ( CGAL::compare(tt, s1) != LARGER )
 	  p.push_back( f(tt) );
 	k--;
 	tt = -FT(k * k) * this->STEP();
       }
-      p.push_back( f(s[0]) );
+      p.push_back( f(s0) );
     }
   }
 
