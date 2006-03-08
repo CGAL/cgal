@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{ActiveObjectsTable}  %% add template arg's if necessary
+\begin{ccRefConcept}{Kinetic::ActiveObjectsTable}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -20,9 +20,9 @@
   
 
 This container holds a set of objects of a particular type. It creates
-notifications using the standard \ccc{Multi_listener} interface when a
-primitive changes or is added or deleted. Objects which are listening
-for events can then ask which primitives changed.
+notifications using the standard \ccc{ulti_listener<Interface>}
+interface when a primitive changes or is added or deleted. Objects
+which are listening for events can then ask which primitives changed.
 
 For speed, modifications to the \ccRefName\ can be grouped into
 editing sessions. A session is begun by calling
@@ -43,7 +43,9 @@ that one function call.
 
 \ccNestedType{Listener}{The base class to derive from for listening for runtime events.}
 
-The following types are iterators. Each type, \ccc{Foo_iterator} has two corresponding methods \ccc{foo_begin} and \ccc{foo_end} which allow you to iterate through the objects in the set \ccc{Foo}.
+The following types are iterators. Each type, \ccc{Foo_iterator} has
+two corresponding methods \ccc{foo_begin} and \ccc{foo_end} which
+allow you to iterate through the objects in the set \ccc{Foo}.
 
 \ccNestedType{Keys_iterator}{An iterator through all the valid keys in the table.}
 
@@ -73,29 +75,32 @@ The following types are iterators. Each type, \ccc{Foo_iterator} has two corresp
   the motion of one moving object.  The position at the current time
   should not be different from the previous current position. However,
   at the moment I do not check this as there is no reference to time
-  in the \ccRefName.
-    If \ccc{is_editing()} is not true, then it is as if the calls \ccc{set_is_editing(true)}, \ccc{set(key, value)} and finally \ccc{set_is_editing(false)} were made. If it is true, then no notifications are created.}
+  in the \ccRefName.  If \ccc{is_editing()} is not true, then it is as
+  if the calls \ccc{set_is_editing(true)}, \ccc{set(key, value)} and
+  finally \ccc{set_is_editing(false)} were made. If it is true, then
+  no notifications are created.}
 
   \ccMethod{Key insert_object(Data ob);}{Insert a new object into the
     table and return a \ccc{Key} which can be used to refer to it. See
     \ccc{set(Key, Data)} for a description of editing modes.}
 
 
- \ccMethod{void erase(Key key);}{ Delete an object from the
-   table. The object with Key key must already be in the table. This
-   does not necessarily decrease the amount of storage used at all. In
-   fact, it is unlikely to do so.  See \ccc{set(Key,Data)} for an
-   explainating of how the editing modes are used.  }
+ \ccMethod{void erase(Key key);}{ Delete an object from the table. The
+   object with Key key must already be in the table. This does not
+   necessarily decrease the amount of storage used at all. In fact, it
+   is unlikely to do so.  See \ccc{set(Key,Data)} for an explainating
+   of how the editing modes are used.  }
 
 \ccMethod{void clear();}{Remove all objects from the table and free all storage.}
 
 \ccHasModels
+
 \ccc{Kinetic::Active_objects_vector<MovingObject>}
 
 \ccSeeAlso
 
-\ccc{Multi_listener}.
-
+\ccc{Multi_listener<Interface>}.
+\ccc{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>}
 
 
 \end{ccRefConcept}

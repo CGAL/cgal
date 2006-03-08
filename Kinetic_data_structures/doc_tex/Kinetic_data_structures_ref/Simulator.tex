@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Simulator}  %% add template arg's if necessary
+\begin{ccRefConcept}{Kinetic::Simulator}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -37,6 +37,9 @@ data structures can listen for that event, and when it is made, they
 can call \ccc{Kinetic::Simulator::audit_time()} to get the time value and
 then verify that their structure is correct.
 
+Typically, the simulator is created by the Kinetic:SimulationTraits
+class and kinetic data structures request a handle to it from there.
+
 
 \ccTypes
 
@@ -44,15 +47,15 @@ then verify that their structure is correct.
 
 \ccNestedType{Listener}{Extend this base class to listen to notifications from this \ccRefName. There are two types of notifications: \ccc{HAS_AUDIT_TIME} and \ccc{DIRECTION_OF_TIME}. The first is made when kinetic data structures can perform an audit. The second is made when the direction of time is changed. }
 
-%\ccNestedType{Root_enumerator}{An instance of  \ccc{RootEnumerator} which you use to enumerator the failure times of a certificate. This type is passed as a template argument, allowing the user to specify a \ccc{RootEnumerator} model which checks for kinetic data structure specific invariants. When using numeric solvers, the appropriate kinetic solver (typically \ccc{Kinetic::Numeric_root_enumerator}) should always be used instead. }
-
 \ccNestedType{Time}{The representation type for times in the simulator. It is \ccc{Function_kernel::Root_enumerator::Root}.}
 
 \ccNestedType{Event_key}{The key to access scheduled \ccc{Event} in order to inspect or delete them.}
 
 \ccNestedType{NT}{The basic number type used in computations.}
 
+\ccNestedType{Handle}{A reference counted pointer to be used for storing references to the object.}
 
+\ccNestedType{Const_handle}{A reference counted pointer to be used for storing references to the object.}
 
 \ccCreation
 \ccCreationVariable{sim}  %% choose variable name
@@ -69,9 +72,9 @@ then verify that their structure is correct.
 
 \ccMethod{void set_current_time(Time t);}{Set the current time to \ccc{t}, which cannot be less than \ccc{current_time}. Any events in the queue before time \ccc{t} are processed.}
 
-\ccMethod{NT rational_current_time() const;}{ This returns a ration
+\ccMethod{NT current_time_nt() const;}{ This returns a ration
   number representing the current time. This only returns a valid time
-  if \ccc{has_rational_current_time()} is true.}
+  if \ccc{has_current_time_nt()} is true.}
 
 \ccMethod{bool has_rational_current_time() const;}{ Return true if there is a rational number which is equivalent to the current time. Equivalent means that it has the same ordering relation to all previous and scheduled events.}
 
@@ -113,18 +116,11 @@ Returns true if the current time is a rational number and there are no events at
 \ccMethod{void set_current_event_number(unsigned int i) const;}{Process all events up to the ith event. \ccc{i} cannot be less than \ccc{current_event_number}.}
 
 \ccSeeAlso
-\ccc{Kinetic::Simulator_objects_listener},
-\ccc{Kinetic::Simulator_kds_listener}.
+\ccc{Kinetic::Simulator_objects_listener<Simulator_listener, KDS>},
+\ccc{Kinetic::Simulator_kds_listener<Simulator_listener, KDS>}.
 
 \ccHasModels
 \ccc{Kinetic::Simulator<FunctionKernel, EventQueue>}
-
-\ccExample
-
-\ccRefName\ is used in all of the example programs, such as the sorting example
-\ccIncludeExampleCode{Kinetic_data_structures/sort.C}.
-
-
 
 \end{ccRefConcept}
 

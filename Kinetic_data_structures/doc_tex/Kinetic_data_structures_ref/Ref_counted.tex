@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Ref_counted<Object>}  %% add template arg's if necessary
+\begin{ccRefClass}{Ref_counted<T>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -25,8 +25,8 @@ The class \ccRefName\ implements a base class for objects which are reference co
 
 \ccTypes
 
-\ccNestedType{Pointer}{A reference counted pointer to an Object. }
-\ccNestedType{Const_pointer}{A const reference counted pointer to an Object. }
+\ccNestedType{Handle}{A reference counted pointer to an Object. }
+\ccNestedType{Const_handle}{A const reference counted pointer to an Object. }
 
 \ccCreation
 \ccCreationVariable{rc}  %% choose variable name

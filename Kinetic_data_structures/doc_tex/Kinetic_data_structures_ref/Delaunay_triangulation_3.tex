@@ -19,7 +19,7 @@
 \ccDefinition
   
 The class \ccRefName\ maintains a Delaunay triangulation on top of the
-points contained in a \ccc{ActiveObjectsTable}. It has one main method
+points contained in a Kinetic::ActiveObjectsTable. It has one main method
 of interest. \ccc{triangulation()} which returns the triangulation it
 is maintaining. In addition, as an optimisation, you can turn on and
 off whether it is currently maintaining its certificates. This allows
@@ -27,16 +27,17 @@ a large number of changes to the underlying points to be made at one
 time without recomputing the certificates each time a single point
 changes.
 
-The class \ccc{Kinetic::Qt_Delaunay_triangulation_3} displays a kinetic
-Delaunay triangulation in three dimensions using the Coin library.
+The class \ccc{Kinetic::Qty_triangulation_3<Traits>}, included as part
+of the demo code, displays a kinetic Delaunay triangulation in three
+dimensions using the Coin library.
 
 The optional \ccc{Visitor} template argument is a model of
-\ccc{DelaunayTriangulationVisitor_3} and can be used to monitor
+Kinetic::DelaunayTriangulationVisitor3 and can be used to monitor
 changes in the kinetic data structure.
 
 The optional \ccc{Triangulation} template argument must be a model of
 a static Delaunay triangulation and have
-\ccc{Kinetic::Delaunay_triangulation_cell_base_3<Traits>} a the cell
+\ccc{Kinetic::Delaunay_triangulation_cell_base_3<Traits, Base>} a the cell
 type.
 
 \ccInclude{CGAL/Kinetic/Delaunay_triangulation_3.h}
@@ -44,14 +45,12 @@ type.
 
 \ccTypes
 
-\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation} built using the \ccc{InstantaneousKernel} as the kernel.}
-
-\ccNestedType{Listener}{The base class to extend if you wish to subscribe to events. The \ccRefName\ has exactly one event \ccc{TRIANGULATION} which occurs when the triangulation changes.}
+\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation_3<Traits, Tds>} built using the Kinetic::InstantaneousKernel as the kernel.}
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
 
-\ccConstructor{Delaunay_triangulation_3(Simulator::Pointer sp, ActiveObjectsTable::Pointer mot);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
+\ccConstructor{Delaunay_triangulation_3(Traits tr);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
 
 \ccOperations
 
@@ -63,15 +62,10 @@ type.
 
 \ccSeeAlso
 
-\ccc{Kinetic::Regular_triangulation_3},
-\ccc{Kinetic::Delaunay_triangulation_2}, 
-\ccc{Listener}, 
-\ccc{Kinetic::Qt_Delaunay_triangulation_3}.
-
-\ccExample
-
-\ccIncludeExampleCode{Kinetic_data_structures/Delaunay_triangulation_3.C}
-
+\ccc{Kinetic::Regular_triangulation_3<Traits, Triangulation, Visitor>},
+\ccc{Kinetic::Delaunay_triangulation_2<Traits, Triangulation, Visitor}, 
+\ccc{Kinetic::Delaunay_triangulation_visitor_base_3},
+\ccc{Kinetic::Delaunay_triangulation_event_log_visitor_3}.
 
 
 \end{ccRefClass}

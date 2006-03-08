@@ -7,11 +7,11 @@
 In this section we will explain in detail how a typical kinetic data
 structure uses the various pieces of the framework. The kinetic data
 structure of reference will, once again, be our implementation of
-kinetic sorting (see Figure~\ref{sort_example}).  A schematic of its
-relationship to the various components is shown in the UML diagram in
-Figure~\ref{uml_usage}. In this subsection we abuse, for reasons of
-simplicity of presentation, the concept/model semantics: when we refer
-to concepts we actually refer to an instance of a model of them.
+kinetic sorting.  A schematic of its relationship to the various
+components is shown in the UML diagram in Figure~\ref{uml_usage}. In
+this subsection we abuse, for reasons of simplicity of presentation,
+the concept/model semantics: when we refer to concepts we actually
+refer to an instance of a model of them.
 
 As with most kinetic data structures, \ccc{Kinetic::Sort<Traits, Visitor>} maintains
 some sort of combinatorial structure (in this case a sorted doubly linked list),
@@ -45,7 +45,7 @@ Kinetic::SimulationTraits. It sets the time on the instantaneous
 kernel to the time value gotten from the
 \ccc{Kinetic::Simulator::current_time_nt()} method. This method returns
 a field number type that is between the previous and next event, as
-discussed in Section~\ref{goals}. An instance of the
+discussed in the introduction. An instance of the
 \ccc{Kinetic::InstantaneousKernel::Less_x_1} predicate and the STL
 function \ccc{std::upper_bound()} are then used to insert the new
 point in the sorted list. For each inserted object, the kinetic data

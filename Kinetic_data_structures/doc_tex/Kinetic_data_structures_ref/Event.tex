@@ -10,31 +10,33 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-
-\begin{ccRefConcept}{Event}
+\begin{ccRefConcept}{Kinetic::Event}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
   
-The concept \ccClassName\ represents a single event. Models of \ccClassName\ should be passed to the \ccc{Kinetic::Simulator} when scheduling events which will in turn pass them to the \ccc{EventQueue}.
+The concept \ccClassName\ represents a single event. Models of
+\ccClassName\ should be passed to the \ccc{Kinetic::Simulator} when
+scheduling events which will in turn pass them to the
+\ccc{EventQueue}.
 
 \ccCreationVariable{a}  %% choose variable name
 
 \ccOperations
 
-\ccMethod{void process(Time t);}{This method is called when the event occurs, and the time when it occurs is passed in as \ccc{t}. \ccc{Time} is the type defined by the \ccc{Simulator}. This method will only be called once per time this event is scheduled and the event will be removed from the queue immediately afterwards.}
+\ccMethod{void process();}{This method is called when the event occurs, and the time when it occurs is passed in as \ccc{t}. \ccc{Time} is the type defined by the \ccc{Simulator}. This method will only be called once per time this event is scheduled and the event will be removed from the queue immediately afterwards.}
 
 \ccGlobalFunction{std::ostream& operator<<(std::ostream&, Event);}{Write a text description of the event to a standard stream.}
 
 \ccHasModels
 
-\ccc{Kinetic::Sort::Event}
+All over the place. 
 
 \ccSeeAlso
 
-EventQueue
+Kinetic::EventQueue
 
 \ccExample
 
@@ -48,7 +50,7 @@ class Swap_event {
 public:
   Swap_event(Id o, typename Sort::Pointer sorter, 
 	     const Root_enumerator &s): left_object_(o), sorter_(sorter), s_(s){}
-  void process(const typename Root_enumerator::Root &){
+  void process(){
     sorter_->swap(left_object_, s_);
   }
   Id left_object_; typename Sort::Pointer sorter_; Solver s_;

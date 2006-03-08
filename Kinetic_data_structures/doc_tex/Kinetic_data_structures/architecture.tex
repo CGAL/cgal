@@ -29,7 +29,7 @@ events, advancing time and even running the simulation backwards (that
 is we run the simulation with the time running in the opposite
 direction).
 
-The kinetic sorting example in Figure~\ref{sort_example} shows the
+The kinetic sorting example in Figure~\ref{sec:sort_example} shows the
 basic usage of the Kinetic::Simulator. First, the \ccc{Simulator}
 is created by the Kinetic::SimulatorTraits. The kinetic data structure
 gets a handle to the simulator from the traits class and uses the
@@ -109,17 +109,17 @@ template argument to our Kinetic::Simulator model and, as such, it can
 be replaced by the user.  In our package, we provide two different
 types of priority queues, a heap and a two-list priority queue.  A
 two-list queue is a queue in which there is a sorted front list,
-containing all events before some time and an unsorted back
-list~\cite{5686}. The queue tries to maintain a small number of
-elements in the front list, leaving most of them in the unsorted main
-pool. The two-list queue, although an unconventional choice, is our
-default queue when using exact computation because it minimizes
-comparisons involving events that are far in the future.  These events
-are likely to be deleted before they are processed, so extra work done
-structuring them is wasted.  Our experiments have shown that, for
-example, the two-list queue causes a 20\% reduction in running time
-relative to a binary heap for Delaunay triangulations with degree 3
-polynomial motions and 20 points.
+containing all events before some time and an unsorted back list. The
+queue tries to maintain a small number of elements in the front list,
+leaving most of them in the unsorted main pool. The two-list queue,
+although an unconventional choice, is our default queue when using
+exact computation because it minimizes comparisons involving events
+that are far in the future.  These events are likely to be deleted
+before they are processed, so extra work done structuring them is
+wasted.  Our experiments have shown that, for example, the two-list
+queue causes a 20\% reduction in running time relative to a binary
+heap for Delaunay triangulations with degree 3 polynomial motions and
+20 points.
 
 
 
@@ -235,10 +235,9 @@ Kinetic::Time objects in the simulator, where we only require
 comparisons. These requirements currently rule out our algebraic
 kernels' \ccc{Root} objects (see Section \ref{algebraic_kernel}),
 since they only support comparisons and some limited arithmetic
-operations. In practice this is not a strong limitation since, as
-discussed in Section~\ref{goals}, we can almost always find a time
-that is representable by a rational number type (such as
-\ccc{Gmpq}) which is close to the current time and such
+operations. In practice this is not a strong limitation since we can
+almost always find a time that is representable by a rational number
+type (such as \ccc{Gmpq}) which is close to the current time and such
 that the combinatorial structure has not changed. Alternatively, if a
 real number type such as \ccc{CORE::Expr} is used for time, then
 computation can, of course, be performed at any time, although

@@ -4,6 +4,8 @@
 
 \begin{itemize}
 
+\item add reference pages for traits
+
 \item implemented a shared version of polynomials-- copying them all around for the roots is quite expensive
 
 \item current\_time\_nt() instead of rational
@@ -30,27 +32,11 @@
 \item the FunctionKernel is not documented much (the options are never
   explained)
 
-\item The is some confusion about where a KDS should get a
-  FunctionKernel. Currently they mostly get them from the Simulator
-  (which directly provides the RootStack). I am not sure that this is
-  the right solution. The better solution may just be to have the
-  FunctionKernel (and RootStack) be fetched from the SimulationTraits.
-
 \item The FunctionKernel numeric solver I implemented is not as good
   as the one provided by GSL which is shipped on most linux boxes. It
   is GPL, so the user does have to make a decision about using it.
   Currently, there is a traits class that the user can select if they
   want to use it (at the cost of reassembling the SimulationTraits).
-
-\item The 3d visualizion uses Coin. It is currently all in headers so
-  there is really no problem with the user only using it if they have
-  coin. It is pretty simple to port it to any other 3d viewer if CGAL
-  picks one.
-
-\item The whole SimulationTraits is a bit funny since it allows you to
-  a) fetch a bunch of kernels and b) fetch pointers to the
-  ActiveObjectsTable and simulator. I don't see an obvious way to keep
-  its simplicity and have it make more sense.
 
 \end{itemize}
 

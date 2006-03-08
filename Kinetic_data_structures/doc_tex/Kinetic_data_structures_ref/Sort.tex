@@ -10,8 +10,8 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-
-\begin{ccRefClass}{Kinetic::Sort<Traits, SortVisitor>}  %% add template arg's if necessary
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}{Kinetic::Sort<Traits, Visitor>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -23,7 +23,7 @@ simplest kinetic data structure provided and is a good place to start
 when looking at the basics of implementing a kinetic data
 structure. 
 
-The \ccc{SortVisitor} can be used to monitor what is happening.
+The Kinetic::SortVisitor can be used to monitor what is happening.
 
 \ccInclude{CGAL/Kinetic/Sort.h}
 
@@ -40,6 +40,10 @@ The \ccc{SortVisitor} can be used to monitor what is happening.
 
 \ccNestedType{Vertex_handle}{The handle used to refer to vertex in the sorted list. Derefernecing this returns a \ccc{Key} into the \ccc{ActiveObjectsTable}.}
 
+\ccNestedType{Handle}{A reference counted pointer to be used for storing references to the object.}
+
+\ccNestedType{Const_handle}{A reference counted pointer to be used for storing references to the object.}
+
 \ccOperations
 
 \ccMethod{Visitor& visitor();}{Access the visitor.}
@@ -48,15 +52,7 @@ The \ccc{SortVisitor} can be used to monitor what is happening.
 
 \ccSeeAlso
 
-\ccc{Kinetic::Ref_counted},
-\ccc{Kinetic::Delaunay_triangulation_2}.
-\ccc{Kinetic::Simple_kds_base}.
-
-\ccExample
-
-
-\ccIncludeExampleCode{Kinetic_data_structures/sort.C}| 
-
+\ccc{Kinetic::Ref_counted<T>}
 
 \end{ccRefClass}
 

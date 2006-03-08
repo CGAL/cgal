@@ -11,14 +11,20 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{InstantaneousKernel}
+\begin{ccRefConcept}{Kinetic::InstantaneousKernel}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
   
-The concept \ccRefName\ covers models that act as adaptors allowing CGAL static data structures to act on snapshots of kinetic data. It typically only supports one type of moving object.
+The concept \ccRefName\ covers models that act as adaptors allowing
+CGAL static data structures to act on snapshots of kinetic data. It
+typically only supports one type of moving object.
+
+Currently, each model is created for one particular type of kinetic
+primitive. The primitives are identified by
+Kinetic::ActiveObjectsTable::Key objects.
 
 \ccTypes 
 
@@ -29,11 +35,10 @@ The concept \ccRefName\ covers models that act as adaptors allowing CGAL static 
 \ccOperations
 
 \ccMethod{Time time();}{Return the current time.}
+
 \ccMethod{void set_time(Time);}{Set the current time to have a certain value. All existing predicates are updated automatically.}
 
-Some of the debugging operations involve writing events to standard
-out or to a log file. This operation should be supported if you wish
-to use the debugging aids.
+\ccMethod{Static_object to_static(Key);}{Return a static object corresponding to the kinetic object at this instant in time.}
 
 \ccHasModels
 

@@ -18,13 +18,22 @@
 
 \ccDefinition
   
-This class provides a model of the \ccc{InstantaneousKernel} for use with general Cartesian Geometry.
+This class provides a model of the Kinetic::InstantaneousKernel for
+use with general Cartesian Geometry. It provides all the predicates
+needed for Delaunay triangulations and regular triangulations.
+
+For technical reasons, the user must pick out one particular type of
+primitive to use when instantiating a model. For example, if the user
+passes a model of \ccc{Kinetic::Active_objects_vector} with a
+\ccc{Kinetic::Kernel::Point_2} as the kinetic primitive, then the type
+\ccc{Point_2} will be properly defined and the predicates on it will
+work properly, but the other predicates will not work.
 
 \ccInclude{CGAL/Kinetic/Cartesian_instantaneous_kernel.h}
 
 \ccIsModel
 
-InstantaneousKernel
+Kinetic::InstantaneousKernel
 
 \end{ccRefClass}
 

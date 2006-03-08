@@ -18,7 +18,9 @@
 
 \ccDefinition
   
-The class \ccRefName\ maintains a triangulation of set of moving weighted points. Its interface is the same as \ccc{Kinetic::Delaunay_triangulation_3}. 
+The class \ccRefName\ maintains a triangulation of set of moving
+weighted points. Its interface is the same as
+\ccc{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}.
 
 The \ccc{Triangulation} template argument must have
 \ccc{Kinetic::Regular_triangulation_cell_base_3<Traits, Base>} as a
@@ -28,12 +30,12 @@ cell base and \ccc{Kinetic::Regular_triangulation_vertex_base_3<Traits, Base>} a
 
 
 \ccSeeAlso
-\ccc{Kinetic::Delaunay_triangulation_3}.
+\ccc{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}.
+Kinetic::RegularTriangulationVisitor3
 
 \ccExample
 
-\ccIncludeExampleCode{Kinetic_data_structures/regular_triangulation_3.C}| 
-
+\ccIncludeExampleCode{Kinetic_data_structures/regular_triangulation_3.C}
 
 \end{ccRefClass}
 

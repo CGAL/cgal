@@ -19,34 +19,40 @@
 \ccDefinition
   
 The class \ccRefName\ maintains a Delaunay triangulation on top of the
-points contained in a \ccc{ActiveObjectsTable}. It has one main method
+points contained in a Kinetic::ActiveObjectsTable. It has one main method
 of interest. \ccc{triangulation()} which returns the triangulation it
 is maintaining. 
 
-The class \ccc{Kinetic::Qt_Delaunay_triangulation_2} displays a kinetic
-Delaunay triangulation using the Qt widget.
+The class \ccc{Kinetic::Qt_triangulation_2<KineticTriangulation_2,
+QtWidget_2, QtMovingPoints_2>} displays a kinetic Delaunay
+triangulation using the Qt widget.
 
-This class is a good example of a simple, but non-trivial, kinetic data structure. 
+This class is a good example of a simple, but non-trivial, kinetic
+data structure.
 
 The Triangulation template parameter must use
 \ccc{Traits::Instantaneous_kernel} as its geometric traits and the
-\ccc{Triangulation::Face} must inherit from \ccc{Kinetic::Delaunay_triangulation_face_base_2<Traits>}.
+\ccc{Triangulation::Face} must inherit from \ccc{Kinetic::Delaunay_triangulation_face_base_2<Traits, Base>}.
 
 The optional \ccc{Visitor} parameter takes a model of
-\ccc{DelaunayTriangulationVisitor_2}. Methods on this object will be called
+Kinetic::DelaunayTriangulationVisitor2. Methods on this object will be called
 whenever the triangulation changes.
 
 \ccInclude{CGAL/Kinetic/Delaunay_triangulation_2.h}
 
+\ccIsModel
+
+\ccc{Ref_counted<T>}
+
 
 \ccTypes
 
-\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation} built using the \ccc{InstantaneousKernel} as the kernel.}
+\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation<Traits, Tds>} built using the Kinetic::InstantaneousKernel as the kernel.}
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
 
-\ccConstructor{Delaunay_triangulation_2(Simulator::Pointer sp, ActiveObjectsTable::Pointer mot);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
+\ccConstructor{Delaunay_triangulation_2(Traits tr);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
 
 \ccOperations
 
@@ -54,18 +60,11 @@ whenever the triangulation changes.
 
 \ccSeeAlso
 
-DelaunayTriangulationVisitor2,
+Kinetic::DelaunayTriangulationVisitor2,
 \ccc{Kinetic::Delaunay_triangulation_default_visitor_2},
-\ccc{Kinetic::Delaunay_triangulation_recent_edges_visitor_2},
+\ccc{Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>},
+\ccc{Kinetic::Delaunay_triangulation_event_log_visitor_2},
 \ccc{Kinetic::Qt_Delaunay_triangulation_2}.
-
-\ccExample
-
-This example shows using the \ccRefName\ , the graphical interface and
-a watcher class. The implementation code is simple.
-
-\ccIncludeExampleCode{Kinetic_data_structures/Delaunay_triangulation_2.C}
-
 
 
 \end{ccRefClass}

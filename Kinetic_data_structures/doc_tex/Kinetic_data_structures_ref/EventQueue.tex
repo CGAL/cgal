@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{EventQueue}
+\begin{ccRefConcept}{Kinetic::EventQueue}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -28,7 +28,7 @@ queue must implement the \ccc{Event} concept.
 
 \ccNestedType{Key}{The type used to access items in the queue in order to change or delete them.}
 
-\ccNestedType{Priority}{The priority type for items in the queue. This is typically the same as \ccc{Simulator::Time}}.
+\ccNestedType{Priority}{The priority type for items in the queue. This is typically the same as Kinetic::Simulator::Time}.
 
 \ccCreation
 \ccCreationVariable{q}  %% choose variable name
@@ -59,8 +59,8 @@ queue must implement the \ccc{Event} concept.
 
 \ccHasModels
 
-\ccc{Two_list_pointer_event_queue},
-\ccc{Heap_pointer_event_queue}.
+\ccc{Kinetic::Two_list_pointer_event_queue<FunctionKernel>},
+\ccc{Kinetic::Heap_pointer_event_queue<FunctionKernel>}.
 
 
 \end{ccRefConcept}

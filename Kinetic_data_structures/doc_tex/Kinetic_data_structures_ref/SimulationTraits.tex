@@ -9,7 +9,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{SimulationTraits}
+\begin{ccRefConcept}{Kinetic::SimulationTraits}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -27,14 +27,15 @@ data structure.
 \ccNestedType{Static_kernel}{A CGAL kernel which can be used for static computations.}
 
 \ccNestedType{Instantaneous_kernel}{A model of
-  \ccc{InstantaneousKernel} which can be used to apply static CGAL
+  Kinetic::InstantaneousKernel which can be used to apply static CGAL
   data structures to snapshots of moving data.}
 
-\ccNestedType{Kinetic_kernel}{A model of \ccc{KineticKernel}.}
+\ccNestedType{Kinetic_kernel}{A model of Kineti::Kernel.}
 
-\ccNestedType{Simulator}{A model of \ccc{Simulator} which will be used by all the kinetic data structures.}
+\ccNestedType{Simulator}{A model of Kinetic::Simulator which will be
+used by all the kinetic data structures.}
 
-\ccNestedType{Active_objects_table}{A model of \ccc{ActiveObjectsTable} which can be used to store moving points of an appropriate dimension. This is really optional and not needed if no kinetic data structures use points.}
+%\ccNestedType{Active_objects_table}{A model of Kinetic::ActiveObjectsTable which can be used to store moving points of an appropriate dimension. This is really optional and not needed if no kinetic data structures use points.}
 
 \ccOperations
 \ccCreationVariable{st}
@@ -45,27 +46,22 @@ data structure.
 
 \ccMethod{Kinetic_kernel kinetic_kernel_object();}{Get a new kinetic kernel.}
 
-\ccMethod{Simulator* simulator_pointer();}{Return a pointer to the \ccc{Simulator} which is to be used in the simulation.}
+\ccMethod{Simulator::Handle simulator_handle();}{Return a pointer to the \ccc{Simulator} which is to be used in the simulation.}
 
-\ccMethod{Active_objects_table* active_objects_table_pointer();}{Return a pointer to the table holding points which is to be used in the simulation.}
+%\ccMethod{Active_objects_table* active_objects_table_pointer();}{Return a pointer to the table holding points which is to be used in the simulation.}
 
 \ccHasModels
 
+\ccc{Kinetic::Exact_simulation_traits_1},
 \ccc{Kinetic::Exact_simulation_traits_2},
 \ccc{Kinetic::Exact_simulation_traits_3},
+\ccc{Kinetic::Inexact_simulation_traits_1},
 \ccc{Kinetic::Inexact_simulation_traits_2},
 \ccc{Kinetic::Inexact_simulation_traits_3},
 \ccc{Kinetic::Exact_linear_simulation_traits_2},
 \ccc{Kinetic::Exact_linear_simulation_traits_3},
 \ccc{Kinetic::Inexact_linear_simulation_traits_2},
 \ccc{Kinetic::Inexact_linear_simulation_traits_3}
-
-
-
-\ccExample
-
-\ccIncludeExampleCode{Kinetic_data_structures/Delaunay_triangulation_2.C}| 
-
 
 \end{ccRefConcept}
 

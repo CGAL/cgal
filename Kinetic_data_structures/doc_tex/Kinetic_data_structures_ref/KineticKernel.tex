@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{KineticKernel}
+\begin{ccRefConcept}{Kinetic::Kernel}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -22,11 +22,13 @@ The concept \ccRefName\ acts as the kinetic analog of a CGAL
 kernel. It provides some set of primitives and predicats acting on
 them.
 
+
+\ccCreationVariable{kk}
 \ccTypes
 
 \ccNestedType{Motion_function}{The type which is used to represent coordinates of moving primitives. This is the analog of the CGAL kernel \ccc{RT}.}
-\ccNestedType{Certificate}{The type representing the results of predicates.}
-\ccNestedType{Function_kernel}{The type of the function kernel used.}
+\ccNestedType{Certificate}{The type representing the results of predicates. See Kinetic::Certificate.}
+\ccNestedType{Function_kernel}{The type of the function kernel used. See Kinetic::FunctionKernel.}
 
 \ccOperations
 
@@ -37,7 +39,7 @@ them.
 
 \ccHasModels
 
-\ccc{Kinetic::Cartesian_kinetic_kernel}.
+\ccc{Kinetic::Cartesian_kinetic_kernel<FunctionKernel>}.
 
 
 

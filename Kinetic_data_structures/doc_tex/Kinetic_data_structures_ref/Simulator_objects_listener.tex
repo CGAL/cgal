@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kinetic::Simulator_objects_listener<Simulator_listener, Responder>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kinetic::Simulator_objects_listener<Simulator_listener, KDS>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -30,16 +30,12 @@ simple example of using this helper function.
 \ccCreation
 \ccCreationVariable{a}  %% choose variable name
 
-\ccConstructor{Simulator_objects_listener(Simulator::Pointer, Responder*);}{default constructor.}
+\ccConstructor{Simulator_objects_listener(Simulator::Handle, KDS*);}{default constructor.}
 
 \ccSeeAlso
 
-\ccc{Kinetic::Listener},
-\ccc{Kinetic::Qt_moving_points_2}.
+\ccc{Kinetic::Listener}.
 
-\ccExample
-
-See \ccc{Kinetic::Qt_moving_points_2} for an example of usage.
 
 \end{ccRefClass}
 
