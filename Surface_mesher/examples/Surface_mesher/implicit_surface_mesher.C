@@ -25,7 +25,7 @@ int main(int, char **) {
   // defining the surface
   Surface_3 surface(sphere_function, 
                     Sphere_3(CGAL::ORIGIN, 2.),
-                    1e-06);
+                    1e-03);
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
