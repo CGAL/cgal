@@ -29,8 +29,8 @@ int main(int, char **) {
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
-                                                     0.05,
-                                                     0.01);
+                                                     0.1,
+                                                     0.1);
   // meshing surface
   make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
