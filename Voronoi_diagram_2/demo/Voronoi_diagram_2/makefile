@@ -35,7 +35,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                Voronoi_diagram_2$(EXE_EXT) 
+                voronoi_diagram_2$(EXE_EXT) 
 
 qt_file_toolbar.moc:  qt_file_toolbar.h
 	$(QT_MOC) -o qt_file_toolbar.moc qt_file_toolbar.h
@@ -47,17 +47,17 @@ my_window.moc:  my_window.h qt_layers.h qt_layers_toolbar.h
 	$(QT_MOC) -o my_window.moc my_window.h
 
 
-Voronoi_diagram_2$(OBJ_EXT): Voronoi_diagram_2.C \
+voronoi_diagram_2$(OBJ_EXT): voronoi_diagram_2.C \
 	typedefs.h \
 	include/Virtual_Voronoi_diagram_2.h \
 	my_window.moc qt_file_toolbar.moc qt_layers_toolbar.moc
 
-Voronoi_diagram_2$(EXE_EXT): Voronoi_diagram_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Voronoi_diagram_2 \
-	Voronoi_diagram_2$(OBJ_EXT) $(LDFLAGS)
+voronoi_diagram_2$(EXE_EXT): voronoi_diagram_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)voronoi_diagram_2 \
+	voronoi_diagram_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   Voronoi_diagram_2.clean ; rm -fr *.moc *.app
+                   voronoi_diagram_2.clean ; rm -fr *.moc *.app
 
 #---------------------------------------------------------------------#
 #                    suffix rules
