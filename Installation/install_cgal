@@ -815,7 +815,7 @@ set_compiler_flags()
 	    CORE_LIBNAME="libcore++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=""
-	    OPENGL_LIBS="Opengl32.lib glut32.lib Glu32.lib"
+	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    SEPARATE_LIBPATH="y"
 	    ;;
 	*ICL.*|*icl.*)
@@ -846,7 +846,7 @@ set_compiler_flags()
 	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=
-	    OPENGL_LIBS="Opengl32.lib glut32.lib Glu32.lib"
+	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*CL.*|*cl.*)
@@ -877,7 +877,7 @@ set_compiler_flags()
 	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=
-	    OPENGL_LIBS="Opengl32.lib glut32.lib Glu32.lib"
+	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*IRIX*5.*CC*)
