@@ -118,8 +118,8 @@ operator()( const char* filename1, const char* filename2 )
     }
     else
         std::cout << "--- passed --- " << std::endl;
-    fclose( infile1 );
-    fclose( infile2 );
+    std::fclose( infile1 );
+    std::fclose( infile2 );
 }
 
 }; // end class test
