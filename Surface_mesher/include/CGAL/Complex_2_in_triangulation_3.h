@@ -64,21 +64,22 @@ class Complex_2_in_triangulation_3 {
 		    std::pair<int, std::list<Facet> > >
                                                   Edge_facet_counter;
 
-  enum Face_type{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
+  enum Face_status{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
 
 
   struct Not_in_complex {
 
     bool operator()(const Facet& f) const
     {
-      assert(f.first < f.first->neighbor(f.second));
+      //assert(f.first < f.first->neighbor(f.second));
       return ! f.first->is_facet_on_surface(f.second) ;
     }
 
 
     bool operator()(Vertex_handle v) const
     {
-      return ! v->is_visited();
+      //return ! v->is_visited();
+      return ! v->is_in_complex();
     }
 
   };
@@ -128,15 +129,15 @@ protected:
     return tri3;
   }
 
-  Face_type face_type (const Facet& f) const {
-    return face_type (f.first, f.second);
+  Face_status face_status (const Facet& f) const {
+    return face_status (f.first, f.second);
   }
 
-  Face_type face_type (const Cell_handle c, const int i) const {
+  Face_status face_status (const Cell_handle c, const int i) const {
     return (c->is_facet_on_surface(i)) ? REGULAR : NOT_IN_COMPLEX;
   }
 
-  Face_type face_type (const Edge& e) {
+  Face_status face_status (const Edge& e) {
     typename Edge_facet_counter::iterator it =
       edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
 						e.first->vertex(e.third)));
@@ -149,59 +150,104 @@ protected:
     }
   }
 
-  Face_type face_type (const Vertex_handle v) const {
-    if ( v->is_visited() ) {
-      if ( is_regular(v) )
-      	return REGULAR;
-      else return SINGULAR;
+  Face_status face_status (const Vertex_handle v) const {
+    if(v->validity_mark() && ! v->is_in_complex_mark()) return NOT_IN_COMPLEX;
+
+    //test incident edges for REUGALIRITY and count BOUNDARY edges
+    typename std::list<Vertex_handle> vertices;
+    triangulation().incident_facets(v, std::back_inserter(vertices));
+    int number_of_boundary_incident_edges = 0; //COULD BE a Bool
+    for (typename std::list<Vertex_handle>::iterator vit=vertices.begin();
+	 vit != vertices.end();
+	 vit++ ) {
+      typename Edge_facet_counter::iterator eit =
+	edge_facet_counter.find(make_ordered_pair(v, *vit) );
+      if (eit != edge_facet_counter.end()) {
+	if ( eit->second.first == 1) ++number_of_boundary_incident_edges;
+	else if  (eit->second.first != 2)   return SINGULAR;
+      }
     }
-    else return NOT_IN_COMPLEX;
+
+    // from now on adjacent-edges are REGULAR or BOUNDARY
+    int i,j;
+    union_find_of_incident_facets{v,i,j);
+    if ( i == 0) { return NOT_IN_COMPLEX;}
+    else if ( j > 1) {return SINGULAR};
+    else {// REGULAR OR BOUNDARY
+      if (number_of_boundary_incident_edges == 0) return BOUNDARY;
+      return REGULAR;
+    }
   }
 
 
-  bool is_regular(const Vertex_handle v) const {
-    if(v->is_status_cached()){
-      return v->is_regular();
-    } else {
-      // We have to find out if there is more than one umbrella with apex v.
-      // We exploit the fact that the umbrellas do not share any edge.
-      // Two facets are in the same umbrella, if they share an edge.
-      // We can hence use a union find data structure to compute the sets
-      // of facets that build umbrellas
-      // At the end we are only interested in the number of umbrellas
-      Union_find<Facet> facets;
-      triangulation().incident_facets(v, filter_output_iterator(std::back_inserter(facets), Not_in_complex()));
+  // This function should be called only when incident edges
+  // are known to be REGULAR OR BOUNDARY
+  // therefore it can set the regular_or_boundary_validity_mark
+  bool is_regular_or_boundary_for_vertices(const Vertex_handle v) const {
+    if(v->validity_mark()){ return v->regular_or_boundary_mark();}
+    int i,j;
+    union_find_of_incident_facets{v,i,j);
+    v->set_regular_or_boundary_validity_mark(true);
+    return (j == 1);
+  }
 
-      typedef std::map<Vertex_handle, typename Union_find<Facet>::handle>  Vertex_Set_map;
-      typedef typename Vertex_Set_map::iterator Vertex_Set_map_iterator;
 
-      Vertex_Set_map vsmap;
+   bool is_in_complex (const Vertex_handle v) const {
+    if(v->validity_mark()){ return v->is_in_complex_mark();}
+    int i,j;
+    union_find_of_incident_facets{v,i,j);
+    return ( ! i == 0);
+  }
 
-      for(typename Union_find<Facet>::iterator it = facets.begin();
-	  it != facets.end();
-	  ++it){
-	Cell_handle ch = (*it).first;
-	int i = (*it).second;
-	for(int j=0; j < 3; j++){
-	  Vertex_handle w = ch->vertex(triangulation().vertex_triple_index(i,j));
-	  if(w != v){
-	    Vertex_Set_map_iterator vsm_it = vsmap.find(w);
-	    if(vsm_it != vsmap.end()){
-	      facets.unify_sets(vsm_it->second, it);
-	    } else {
-	      vsmap.insert(std::make_pair(w, it));
-	    }
+  // extract the subset F of facets of the complex incident to v
+  // set i to the number of facets in F
+  // set j to the number of connected component of the adjacency graph
+  //     of F
+  void union_find_of_incident_facets(Vertex_handle v, int& i, int& j) {
+    Union_find<Facet> facets;
+    triangulation().incident_facets( v, 
+				     filter_output_iterator(
+					    std::back_inserter(facets), 
+					    Not_in_complex()));
+
+    typedef std::map<Vertex_handle, 
+      typename Union_find<Facet>::handle>  Vertex_Set_map;
+    typedef typename Vertex_Set_map::iterator Vertex_Set_map_iterator;
+
+    Vertex_Set_map vsmap;
+
+    for(typename Union_find<Facet>::iterator it = facets.begin();
+	it != facets.end();
+	++it){
+      Cell_handle ch = (*it).first;
+      int i = (*it).second;
+      for(int j=0; j < 3; j++){
+	Vertex_handle w = ch->vertex(triangulation().vertex_triple_index(i,j));
+	if(w != v){
+	  Vertex_Set_map_iterator vsm_it = vsmap.find(w);
+	  if(vsm_it != vsmap.end()){
+	    facets.unify_sets(vsm_it->second, it);
+	  } else {
+	    vsmap.insert(std::make_pair(w, it));
 	  }
 	}
       }
-      v->set_regular(facets.number_of_sets() == 1);
-      v->set_status_cached(true);
-      return v->is_regular();
     }
-
+    
+    i = facets.size(); 
+    j = facets.number_of_sets();
+    v->set_in_complex_mark( i > 0);
+    v->set_in_complex_validity_mark( true);
+    v->set_regular_or_boundary_mark( j == 1);
+    // do not set regular_or_boundary_validity_mark
+    // because you because thes function  may have been called
+    // whith SINGULAR  incident edges.
+    return;
   }
 
-//   // af : added this function as calling face_type triggers update of cache
+  
+
+//   // af : added this function as calling face_status  triggers update of cache
 //   bool is_in_complex(Vertex_handle v) const
 //   {
 //     std::cerr << "Hello guys!\n";
@@ -306,7 +352,7 @@ protected:
 
     if (tri3.dimension() == 3) {
       // if not already in the complex
-      if ( face_type (c, i) == NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) == NOT_IN_COMPLEX ) {
 
 	c->set_facet_on_surface(i,true);
 	c2->set_facet_on_surface(i2,true);
@@ -337,7 +383,7 @@ protected:
     }
     else if (tri3.dimension() == 2) {
       // if not already in the complex
-      if ( face_type (c, i) == NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) == NOT_IN_COMPLEX ) {
 
 	c->set_facet_on_surface(i,true);
 
@@ -387,7 +433,7 @@ protected:
 
     if (tri3.dimension() == 3) {
       // if in the complex
-      if ( face_type (c, i) != NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) != NOT_IN_COMPLEX ) {
 
 	c->set_facet_on_surface(i,false);
 	c2->set_facet_on_surface(i2,false);
@@ -422,7 +468,7 @@ protected:
     }
     else if (tri3.dimension() == 2){
       // if in the complex
-      if ( face_type (c, i) != NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) != NOT_IN_COMPLEX ) {
 
 	c->set_facet_on_surface(i,false);
 

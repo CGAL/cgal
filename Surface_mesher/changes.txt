@@ -1,3 +1,11 @@
+8 March 2006 Mariette
+changes  in Complex_2_in_triangulatio_3 :
+    fixed operator Not_in_complex
+    changed face_type into face_status
+    changed is_in_complex 
+    added is_regular_or_boundary_for_vertices
+
+
 2 March 2006 Laurent Rineau
 (WARNING: partially compiles, runtime errors, temporary commit)
 - Added an undocumented class Surface_mesh_triangulation_generator_3 which
