@@ -83,3 +83,5 @@ int main(int argc, char **argv)
   test_with_kernel(CGAL::Cartesian<CGAL::Lazy_exact_nt<double> >(),
                    DO_NOT_RUN);
 }
+// // Explicit instantiation of the whole class :
+// template class CGAL::Triangulation_2<TestK>;

@@ -87,7 +87,7 @@ namespace CGAL {
       in_complex_validity_mark_ = b;
     }
 
-    bool regular_or_boundary_mark() const {
+    bool regular_or_boundary_validity_mark() const {
       return regular_or_boundary_validity_mark_;
     }
 

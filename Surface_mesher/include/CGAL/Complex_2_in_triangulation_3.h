@@ -24,6 +24,7 @@
 // TODO: document the output/input function of C2T3?
 
 #include <CGAL/circulator.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Union_find.h>
 #include <set>
 #include <map>
@@ -85,15 +86,15 @@ class Complex_2_in_triangulation_3 {
 
   };
 
-  typedef typename Filter_iterator<Triangulation_3::Facet_iterator,
-				   Not_in_complex> Facet_iterator;
-  typedef typename Filter_iterator<Triangulation_3::Edge_iterator,
-				   Not_in_complex> Edge_iterator;
-  typedef typename Filter_iterator<Triangulation_3::Vertex_iterator,
-				   Not_in_complex> Vertex_iterator;  
+  typedef Filter_iterator<typename Triangulation_3::Facet_iterator,
+                   Not_in_complex> Facet_iterator;
+  typedef Filter_iterator<typename Triangulation_3::Edge_iterator,
+                   Not_in_complex> Edge_iterator;
+  typedef Filter_iterator<typename Triangulation_3::Vertex_iterator,
+                   Not_in_complex> Vertex_iterator;  
 
-  typedef typename Filter_iterator<Triangulation_3::Edge_iterator,
-				   Not_on_boundary_tester> Boundary_edges_iterator;
+  typedef Filter_iterator<typename Triangulation_3::Edge_iterator,
+                          Not_on_boundary_tester> Boundary_edges_iterator;
 
 protected:
   Triangulation_3& tr;
@@ -254,7 +255,7 @@ protected:
   }
 
   
-  bool is_in_complex (const Facet& v) const {
+  bool is_in_complex (const Facet& f) const {
     return is_in_complex (f.first, f.second);
   } 
 
@@ -393,8 +394,8 @@ size_type number_of_facets() const
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    v->set_in_complex_mark(true);
-	    v->set_in_complex_mark_validity(true);
-	    v_set_reguler_or_boundary_validity_mark(false);
+	    v->set_in_complex_validity_mark(true);
+	    v->set_regular_or_boundary_validity_mark(false);
 	  }
 	}
       }
@@ -423,14 +424,13 @@ size_type number_of_facets() const
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
 	    v->set_in_complex_mark(true);
-	    v->set_in_complex_validity_mark_(true);
+	    v->set_in_complex_validity_mark(true);
 	    v->set_regular_or_boundary_validity_mark(false);
 	    }
 	  }
 	}
       }
     }
-  }
 
 //   void remove_from_complex (const Vertex_handle v) {
 //     v->set_in_complex_validity_mark_(false);
@@ -544,12 +544,12 @@ size_type number_of_facets() const
 
   Boundary_edges_iterator boundary_edges_begin() {
     return filter_iterator(triangulation().finite_edges_begin(),
-			   Not_on_boundary_tester); 
+			   Not_on_boundary_tester()); 
   }
 
   Boundary_edges_iterator boundary_edges_end() {
     return filter_iterator(triangulation().finite_edges_end(),
-			   Not_on_boundary_tester); 
+			   Not_on_boundary_tester()); 
   }
 
 

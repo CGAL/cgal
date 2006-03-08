@@ -20,6 +20,7 @@
 #ifndef CGAL_IMPLICIT_SURFACE_3_H
 #define CGAL_IMPLICIT_SURFACE_3_H
 
+#include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
 
 namespace CGAL {
@@ -43,7 +44,7 @@ namespace CGAL {
 	squared_error(error_bound*error_bound)
     {
     }
-    
+
     FT operator()(FT x, FT y, FT z)
     {
       return func(x, y, z);
@@ -53,16 +54,16 @@ namespace CGAL {
     {
       return squared_error;
     }
-    
+
     const Sphere_3& bounding_sphere() const
     {
       return sphere;
     }
-    
+
   private:
     Function func;
     Sphere_3 sphere;
-    double squared_error;
+    FT squared_error;
   }; // end Implicit_surface_3
 
 

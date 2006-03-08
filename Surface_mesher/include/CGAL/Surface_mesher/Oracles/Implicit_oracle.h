@@ -141,7 +141,7 @@ namespace CGAL {
         const Sphere_3& sphere = surface.bounding_sphere();
         const Point center = ker.construct_center_3_object()(sphere);
         const FT squared_radius = 
-          ker.construct_squared_radius_3_object()(sphere);
+          ker.compute_squared_radius_3_object()(sphere);
 
         p1=r.point(0);
 
@@ -215,8 +215,6 @@ namespace CGAL {
                                        OutputIteratorPoints out, 
                                        int n = 20) // WARNING: why 20?
       {
-        CGAL_precondition (n > 0);
-
         GT geom_traits;
 
         const Sphere_3& sphere = surface.bounding_sphere();
@@ -227,7 +225,7 @@ namespace CGAL {
         const FT radius = CGAL::sqrt(squared_radius);
 
         typename CGAL::Random_points_in_sphere_3<Point,
-          Point_creator> random_point_in_sphere(radius);
+          Point_creator> random_point_in_sphere(CGAL::to_double(radius));
         typename GT::Construct_line_3 line_3 = 
           geom_traits.construct_line_3_object();
         typename GT::Construct_vector_3 vector_3 =
@@ -299,7 +297,7 @@ namespace CGAL {
     }
 
   private:
-    static double surf_equation (Surface_3 surface, Point p) {
+    static FT surf_equation (Surface_3 surface, Point p) {
       return surface(p.x(), p.y(), p.z());
     } // @WARNING: we use x(), y() and z()
 

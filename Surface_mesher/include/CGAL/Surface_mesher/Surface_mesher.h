@@ -215,7 +215,7 @@ namespace CGAL {
     // From the element to refine, gets the point to insert
     Point refinement_point_impl(const Facet& f) const
       {
-	CGAL_assertion (c2t3.face_type(f) == C2T3::REGULAR);
+	CGAL_assertion (c2t3.face_status(f) == C2T3::REGULAR);
 	//CGAL_assertion (f.first->is_facet_on_surface (f.second));
 	return get_facet_surface_center (f);
 	//return f.first->get_facet_surface_center (f.second);
@@ -275,7 +275,7 @@ namespace CGAL {
       if( tr.is_infinite(f.first) )
 	return false;
 
-      if (c2t3.face_type(f) == C2T3::REGULAR)
+      if (c2t3.face_status(f) == C2T3::REGULAR)
 	{
 	  const Cell_handle& c = f.first;
 	  const int index = f.second;
@@ -568,8 +568,8 @@ namespace CGAL {
       for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit !=
 	     tr.finite_facets_end(); ++fit) {
 	Facet other_side = mirror_facet(*fit);
-	CGAL_assertion (c2t3.face_type(*fit) ==
-			c2t3.face_type(other_side));
+	CGAL_assertion (c2t3.face_status(*fit) ==
+			c2t3.face_status(other_side));
 	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==
 	//		other_side.first->is_facet_on_surface
 	//		(other_side.second));
@@ -578,19 +578,19 @@ namespace CGAL {
 	restr = is_facet_on_surface(*fit, center, false);
 	restr_bis = is_facet_on_surface(other_side, center, false);
 	CGAL_assertion (restr == restr_bis);
-	CGAL_assertion ((c2t3.face_type(*fit)
+	CGAL_assertion ((c2t3.face_status(*fit)
 			 == C2T3::REGULAR) == restr);
-	CGAL_assertion ((c2t3.face_type(other_side)
+	CGAL_assertion ((c2t3.face_status(other_side)
 			 == C2T3::REGULAR) == restr_bis);
 	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==
 	//		restr);
 	//CGAL_assertion (other_side.first->is_facet_on_surface
 	//		(other_side.second) == restr_bis);
 
-	if ( (c2t3.face_type(*fit) == C2T3::REGULAR) !=
+	if ( (c2t3.face_status(*fit) == C2T3::REGULAR) !=
 	    is_facet_on_surface(*fit, center, false)) {
 	  std::cerr << "Error in restricted Delaunay triangulation: ("
-		    << (c2t3.face_type(*fit) == C2T3::REGULAR)
+		    << (c2t3.face_status(*fit) == C2T3::REGULAR)
 		    << "/"
 		    << is_facet_on_surface(*fit, center, false)
 		    << ")"

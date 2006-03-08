@@ -89,6 +89,7 @@ namespace CGAL {
   class Aspect_ratio_criterion : public Refine_criterion <Tr> {
   public:
     typedef typename Refine_criterion <Tr>::Quality Quality;
+    typedef typename Tr::Geom_traits::FT FT;
 
   private:
     typedef typename Refine_criterion <Tr>::Facet Facet;
@@ -100,11 +101,11 @@ namespace CGAL {
   public:
     // Nb: the default bound of the criterion is such that the criterion
     // is always fulfilled
-    Aspect_ratio_criterion(const double angle_min = 0., bool dbg = false) :
+    Aspect_ratio_criterion(const FT angle_min = 0., bool dbg = false) :
       debug (dbg) {
       if (debug)
 	std::cerr << "angle min = " << angle_min << " degrees\n";
-      B = std::sin (CGAL_PI * angle_min / 180);
+      B = std::sin (CGAL_PI * CGAL::to_double(angle_min) / 180);
       B = B * B;
       if (debug)
 	std::cerr << "B = " << B << std::endl;
@@ -309,15 +310,16 @@ namespace CGAL {
     Quality quality (const Facet& fh) const {
 
       typedef typename Tr::Geom_traits Geom_traits;
+      typedef typename Geom_traits::FT FT;
       Geom_traits gt;
 
       Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
       Point p2 = fh.first->vertex ((fh.second+2)&3)->point();
       Point p3 = fh.first->vertex ((fh.second+3)&3)->point();
 
-      double d12 = gt.compute_squared_distance_3_object() (p1, p2);
-      double d13 = gt.compute_squared_distance_3_object() (p1, p3);
-      double d23 = gt.compute_squared_distance_3_object() (p2, p3);
+      FT d12 = gt.compute_squared_distance_3_object() (p1, p2);
+      FT d13 = gt.compute_squared_distance_3_object() (p1, p3);
+      FT d23 = gt.compute_squared_distance_3_object() (p2, p3);
 
       if (d12 > d13) {
 	if (d12 > d23)

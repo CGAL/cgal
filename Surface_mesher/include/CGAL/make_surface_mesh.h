@@ -24,7 +24,7 @@
 #include <CGAL/Surface_mesh_cell_base_3.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Complex_2_in_triangulation_3.h>
+#include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
 
 
@@ -43,24 +43,28 @@ template <typename C2T3,
 void make_surface_mesh(C2T3& c2t3,
                        Surface surface,
                        Criteria criteria,
-                       Tag tag = Non_manifold_tag() ) 
+                       Tag tag = Non_manifold_tag(),
+                       int initial_number_of_points = 20) 
 {
   typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Traits;
 
-  make_surface_mesh(c2t3, surface, Traits(), criteria, tag);  
+  make_surface_mesh(c2t3, surface, Traits(), criteria, tag,
+                    initial_number_of_points);  
 }
 
 template <typename C2T3,
 	  typename SurfaceMeshTraits_3,
-	  typename Criteria>
+          typename Criteria,
+          typename Tag>
 void make_surface_mesh(C2T3& c2t3,
                        typename SurfaceMeshTraits_3::Surface_3 surface,
 		       SurfaceMeshTraits_3 traits,
                        Criteria criteria,
-                       Non_manifold_tag)
+                       Tag,
+                       int initial_number_of_points = 20)
 {
   using CGAL::Surface_mesher::Surface_mesher;
-  
+
   typedef Surface_mesher<
     C2T3,
     typename SurfaceMeshTraits_3::Surface_3,
@@ -70,7 +74,9 @@ void make_surface_mesh(C2T3& c2t3,
   typename SurfaceMeshTraits_3::Construct_initial_points get_initial_points =
     traits.construct_initial_points_object();
 
-  get_initial_points(surface, CGAL::inserter(c2t3.triangulation()));
+  get_initial_points(surface,
+                     CGAL::inserter(c2t3.triangulation()),
+                     initial_number_of_points);
   Mesher mesher(c2t3, surface, traits, criteria);
   mesher.refine_mesh();
   // TODO initial, then refine()
