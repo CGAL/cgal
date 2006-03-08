@@ -246,15 +246,20 @@ protected:
   }
 
   
+  bool is_in_complex (const Facet& v) const {
+    return is_in_complex (f.first, f.second);
+  } 
 
-//   // af : added this function as calling face_status  triggers update of cache
-//   bool is_in_complex(Vertex_handle v) const
-//   {
-//     std::cerr << "Hello guys!\n";
-//     return v->is_visited();
-//   }
+  bool is_in_complex (const Cell_handle c, const int i) const {
+    return  face_status(c,i) != NOT_IN_COMPLEX;
+  }
 
-  size_type number_of_facets() const
+  bool is_in_complex (const Edge& e) const {
+    return  face_status(e) != NOT_IN_COMPLEX;
+  }
+
+
+size_type number_of_facets() const
   {
     return m_number_of_facets;
   }
@@ -335,9 +340,9 @@ protected:
 
   // Setting functions
 
-  void set_in_complex (const Vertex_handle v) {
-    v->set_in_complex(true);
-  }
+//    void set_in_complex (const Vertex_handle v) {
+//     v->set_in_complex(true);
+//   }
 
 
   void set_in_complex (const Facet& f) {
@@ -350,6 +355,8 @@ protected:
     int i2 = c2->index(c);
     Facet f = canonical_facet(c, i);
 
+    // TODO the folowing code should be simplified
+    // unifying cases dim == 2 ou 3
     if (tri3.dimension() == 3) {
       // if not already in the complex
       if ( face_status (c, i) == NOT_IN_COMPLEX ) {
@@ -357,6 +364,7 @@ protected:
 	c->set_facet_on_surface(i,true);
 	c2->set_facet_on_surface(i2,true);
 
+	// update c2t3 for edges of f
 	// We consider only pairs made by vertices without i
 	for (int j = 0; j < 4; j++) {
 	  for (int k = j + 1; k < 4; k++) {
@@ -370,13 +378,14 @@ protected:
 	    }
 	  }
 	}
-	// add each v of f in the complex
-	// add f in graph of each of these v
-	// with the appropriate connexity
+
+	// update c2t3 for vertices of f
 	for (int j = 0; j < 4; j++) {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
-	    set_in_complex(v);
+	    v->set_in_complex_mark(true);
+	    v->set_in_complex_mark_validity(true);
+	    v_set_reguler_or_boundary_validity_mark(false);
 	  }
 	}
       }
@@ -399,16 +408,14 @@ protected:
 	    }
 	  }
 	}
-	// add each v of f in the complex
-	// add f in graph of each of these v
+	
+	//for each vertex of f
 	for (int j = 0; j < 3; j++) {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
-	    set_in_complex(v);
-            // when it was singular before it is also singular now, or no longer in the complex
-	    // so we only have to update the regular/singular field when it was regular
-	    if((v->is_status_cached()) && (v->is_regular())){
-	      v->set_status_cached(false);
+	    v->set_in_complex_mark(true);
+	    v->set_in_complex_validity_mark_(true);
+	    v->set_regular_or_boundary_validity_mark(false);
 	    }
 	  }
 	}
@@ -416,10 +423,10 @@ protected:
     }
   }
 
-  void remove_from_complex (const Vertex_handle v) {
-    v->set_in_complex(false);
-    v->set_status_cached(false);
-  }
+//   void remove_from_complex (const Vertex_handle v) {
+//     v->set_in_complex_validity_mark_(false);
+//     v->set_regular_or_boundary_validity_mark(false);
+//   }
 
   void remove_from_complex (const Facet& f) {
     remove_from_complex (f.first, f.second);
@@ -431,6 +438,8 @@ protected:
     int i2 = c2->index(c);
     Facet f = canonical_facet(c, i);
 
+    // TODO the folowing code should be simplified
+    // unifying cases dim == 2 ou 3
     if (tri3.dimension() == 3) {
       // if in the complex
       if ( face_status (c, i) != NOT_IN_COMPLEX ) {
@@ -451,21 +460,18 @@ protected:
 	    }
 	  }
 	}
-	// remove v of f in the complex
-	// remove f in graph of each of these v
+
+	// remove f in graph of each of its vertex
 	for (int j = 0; j < 4; j++) {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
-	    remove_from_complex(v);
-	    // when it was regular before it is also regular now, or no longer in the complex
-	    // so we only have to update the regular/singular field when it was singular
-	    if((v->is_status_cached()) && (! v->is_regular())){
-	      v->set_status_cached(false);
-	    }
+	    v->set_in_complex_validity_mark(false);
+	    v->set_regular_or_boundary_validity_mark(false);
 	  }
 	}
       }
     }
+    
     else if (tri3.dimension() == 2){
       // if in the complex
       if ( face_status (c, i) != NOT_IN_COMPLEX ) {
@@ -484,21 +490,12 @@ protected:
 	    }
 	  }
 	}
-	////////////////////////////////////////////
-	////////////////// A VERIFIER QU'IL N'Y A QUE CA !!!!!!!!!!!!
-	//////////////////////////////////////////
-	// remove each v of f in the complex
-	// remove f in graph of each of these v
+
 	for (int j = 0; j < 3; j++) {
 	  if (j != i) {
 	    Vertex_handle v = c->vertex(j);
-	    remove_from_complex(v);
-
-	    // when it was regular before it is also regular now, or no longer in the complex
-	    // so we only have to update the regular/singular field when it was singular
-	    if((v->is_status_cached()) && (! v->is_regular())){
-	      v->set_status_cached(false);
-	    }
+	    v->set_in_complex_validity_mark(false);
+	    v->set_regular_or_boundary_validity_mark(false);
 	  }
 	}
       }
