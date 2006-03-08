@@ -21,6 +21,8 @@
 //
 // Author(s)     : Stefan Schirra, Radu Ursu
 
+#include <CGAL/basic.h>
+
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
   #include <iostream>
