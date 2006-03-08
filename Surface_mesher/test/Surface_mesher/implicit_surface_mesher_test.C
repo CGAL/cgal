@@ -2,7 +2,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+
 #include <CGAL/MP_Float.h>
+#include <CGAL/CORE_Expr.h>
 
 #include <CGAL/make_surface_mesh.h>
 
@@ -71,6 +73,13 @@ void test_with_kernel(K, Flag flag = NO_NOTHING)
 int main(int argc, char **argv)
 {
   test_with_kernel(CGAL::Exact_predicates_inexact_constructions_kernel());
-  test_with_kernel(CGAL::Filtered_kernel<CGAL::Cartesian<double> >());
-  test_with_kernel(CGAL::Cartesian<CGAL::Lazy_exact_nt<double> >(), DO_NOT_RUN);
+
+  test_with_kernel(CGAL::Filtered_kernel<CGAL::Cartesian<float> >());
+
+  test_with_kernel(CGAL::Filtered_kernel<
+                   CGAL::Simple_cartesian<CORE::Expr> >(),
+                   DO_NOT_RUN);
+
+  test_with_kernel(CGAL::Cartesian<CGAL::Lazy_exact_nt<double> >(),
+                   DO_NOT_RUN);
 }
