@@ -17,6 +17,7 @@
 //
 // Author(s)     :Radu Ursu
 
+#include <CGAL/basic.h>
 
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
@@ -27,7 +28,6 @@ int main(int, char*){
 }
 #else
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/function_objects.h>
