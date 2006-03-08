@@ -13,23 +13,11 @@ An object \ccVar\ of this type must provide in addition:
          const CircularKernel::Circular_arc_point_2 &q );}
 {Compares the $x$-coordinates of $p$ and $q$.}
 
-%\ccMemberFunction{Comparison_result operator()
-%	(const CircularKernel::Point_2 &p,
-%         const CircularKernel::Circular_arc_point_2 &q );}
-%{same.}
-
-%\ccMemberFunction{Comparison_result operator()
-%	(const CircularKernel::Circular_arc_point_2 &p,
-%         const CircularKernel::Point_2 &q );}
-%{same.}
-
-\ccHasModels
-
-\ccc{Circular_kernel_2::Compare_x_2;}
-
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::compare_x}
+\ccRefIdfierPage{CircularKernel::CompareY_2}\\
+\ccRefIdfierPage{CircularKernel::CompareXY_2}\\
+\ccRefIdfierPage{CircularKernel::Equal_2}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::CompareY_2} 
@@ -47,23 +35,11 @@ An object \ccVar\ of this type must provide in addition:
          const CircularKernel::Circular_arc_point_2 &q );}
 {Compares the $y$-coordinates of $p$ and $q$.}
 
-%\ccMemberFunction{Comparison_result operator()
-%	(const CircularKernel::Point_2 &p,
-%         const CircularKernel::Circular_arc_point_2 &q );}
-%{same.}
-
-%\ccMemberFunction{Comparison_result operator()
-%	(const CircularKernel::Circular_arc_point_2 &p,
-%         const CircularKernel::Point_2 &q );}
-%{same.}
-
-\ccHasModels
-
-\ccc{Circular_kernel_2::Compare_y_2;}
-
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::compare_y}
+\ccRefIdfierPage{CircularKernel::CompareX_2}\\
+\ccRefIdfierPage{CircularKernel::CompareXY_2}\\
+\ccRefIdfierPage{CircularKernel::Equal_2}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::CompareXY_2} 
@@ -81,23 +57,11 @@ An object \ccVar\ of this type must provide in addition:
          const CircularKernel::Circular_arc_point_2 &q );}
 {Compares $p$ and $q$ according to the lexicographic ordering on $x$- and $y$-coordinates.}
 
-%\ccMemberFunction{Comparison_result operator()
-%	(const CircularKernel::Point_2 &p,
-%         const CircularKernel::Circular_arc_point_2 &q );}
-%{same.}
-
-%\ccMemberFunction{Comparison_result operator()
-%	(const CircularKernel::Circular_arc_point_2 &p,
-%         const CircularKernel::Point_2 &q );}
-%{same.}
-
-\ccHasModels
-
-\ccc{Circular_kernel_2::Compare_xy_2;}
-
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::compare_xy}
+\ccRefIdfierPage{CircularKernel::CompareX_2}\\
+\ccRefIdfierPage{CircularKernel::CompareY_2}\\
+\ccRefIdfierPage{CircularKernel::Equal_2}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::CompareYatX_2}
@@ -118,14 +82,6 @@ of $a$.}}
 	(const CircularKernel::Circular_arc_point_2 &p,
         const CircularKernel::Line_arc_2 &a);}
 {Same for a segment.}
-
-\ccHasModels
-
-\ccc{Circular_kernel_2::Compare_y_at_x_2;}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{CGAL::compare_y_at_x}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::CompareYtoRight_2}
@@ -160,13 +116,5 @@ and $a_1$ and $a_2$ must be defined to the right of $p$.}}
         const Circular_kernel_2::Line_arc_2 &a2,
         const Circular_kernel_2::Circular_arc_point_2 &p);}
 {Same as previous.}
-
-\ccHasModels
-
-\ccc{Circular_kernel_2::Compare_y_to_right_2;}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{CGAL::compare_y_to_right}
 
 \end{ccRefFunctionObjectConcept}

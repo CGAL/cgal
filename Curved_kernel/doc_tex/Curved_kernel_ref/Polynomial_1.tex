@@ -2,16 +2,12 @@
 
 \ccDefinition
 
-The \ccc{AlgebraicKernelForCircles::Polynomial_1_2} represents bivariate
-polynomials of degree 1 whose coefficients are of type \ccc{RT}, a
-model of \ccc{RingNumberType}.
+Concept to represent bivariate polynomials of degree 1 whose
+coefficients are of a type that is a model of the concept
+\ccc{RingNumberType}.
 
-\ccTypes
-
-\ccCreation
-\ccCreationVariable{pol}
-
-\ccConstructor{Polynomial_1_2();}{Default constructor.}
+\ccRefines
+CopyConstructible, Assignable, DefaultConstructible
 
 %\ccAccessFunctions
 
@@ -30,7 +26,7 @@ model of \ccc{RingNumberType}.
 
 \ccHasModels
 
-\ccc{Polynomial_1_2}
+\ccc{CGAL::Polynomial_1_2}
 
 \ccSeeAlso
 

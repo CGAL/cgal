@@ -1,9 +1,5 @@
 \begin{ccRefFunctionObjectConcept}{CircularKernel::MakeXMonotone_2}
 
-\ccDefinition
-
-Splitting curves into monotone pieces. 
-
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
@@ -18,20 +14,8 @@ For the sake of completeness, the \ccc{operator()} must also be defined for a
 \ccc{Line_arc_2}. In this case, the input line arc itself is the only
 arc returned through the \ccc{OutputIterator}. 
 
-\ccHasModels
-
-\ccc{Circular_kernel_2::Make_x_monotone_2;}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{CGAL::make_x_monotone}
-
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::Intersect_2}
-
-\ccDefinition
-
-To compute intersections of objects.
 
 \ccRefines
 
@@ -101,21 +85,9 @@ intersection point between \ccc{obj_1} and \ccc{obj_2} or
 %\ccc{CircularKernel::Circle_2} or
 %\ccc{CircularKernel::Circular_arc_2}. 
 
-\ccHasModels
-
-\ccc{Circular_kernel_2::Intersect_2;}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{CGAL::intersect}
-
 \end{ccRefFunctionObjectConcept}
 
 \begin{ccRefFunctionObjectConcept}{CircularKernel::Split_2}
-
-\ccDefinition
-
-To split curves at a given point.
 
 \ccCreationVariable{fo}
 
@@ -134,13 +106,5 @@ A model \ccVar\ of this type must provide:
 	 const CircularKernel::Circular_arc_point_2 &p,
 	 CircularKernel::Line_arc_2 &l1, CircularKernel::Line_arc_2 &l2);}
 {Same for a line arc.}
-
-\ccHasModels
-
-\ccc{Circular_kernel_2::Split_2}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{CGAL::split}
 
 \end{ccRefFunctionObjectConcept}

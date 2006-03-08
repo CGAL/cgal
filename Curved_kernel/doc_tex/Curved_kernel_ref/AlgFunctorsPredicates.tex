@@ -1,7 +1,5 @@
 \begin{ccRefConcept}{AlgebraicKernelForCircles::CompareX}
 
-\ccDefinition
-
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
@@ -12,13 +10,11 @@ A model \ccVar\ of this type must provide:
 	     const AlgebraicKernelForCircles::Root_for_circles_2_2 & r2);}
 {Compares the \ccc{x} (first) variables of two \ccc{Root_for_circles_2_2}.}
 
-\ccHasModels
-
-\ccc{Algebraic_kernel_for_circles_2_2::Compare_x;}
-
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::compare_x}
+\ccRefIdfierPage{AlgebraicKernelForCircles::CompareY}\\
+\ccRefIdfierPage{AlgebraicKernelForCircles::CompareXY}\\
+\ccRefIdfierPage{CircularKernel::CompareX_2}
 
 \end{ccRefConcept}
 \begin{ccRefConcept}{AlgebraicKernelForCircles::CompareY}
@@ -35,13 +31,11 @@ A model \ccVar\ of this type must provide:
 	     const AlgebraicKernelForCircles::Root_for_circles_2_2 & r2);}
 {Compares the \ccc{y} (second) variables of two \ccc{Root_for_circles_2_2}.}
 
-\ccHasModels
-
-\ccc{Algebraic_kernel_for_circles_2_2::Compare_y;}
-
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::compare_y}
+\ccRefIdfierPage{AlgebraicKernelForCircles::CompareX}\\
+\ccRefIdfierPage{AlgebraicKernelForCircles::CompareXY}\\
+\ccRefIdfierPage{CircularKernel::CompareY_2}
 
 \end{ccRefConcept}
 \begin{ccRefConcept}{AlgebraicKernelForCircles::CompareXY}
@@ -58,13 +52,11 @@ A model \ccVar\ of this type must provide:
 	     const AlgebraicKernelForCircles::Root_for_circles_2_2 & r2);}
 {Compares two \ccc{Root_for_circles_2_2} lexicographically.}
 
-\ccHasModels
-
-\ccc{Algebraic_kernel_for_circles_2_2::Compare_xy;}
-
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::compare_xy}
+\ccRefIdfierPage{AlgebraicKernelForCircles::CompareX}\\
+\ccRefIdfierPage{AlgebraicKernelForCircles::CompareY}\\
+\ccRefIdfierPage{CircularKernel::CompareXY_2}
 
 \end{ccRefConcept}
 
@@ -87,14 +79,6 @@ A model \ccVar\ of this type must provide:
     operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 & p,
 	     const AlgebraicKernelForCircles::Root_for_circles_2_2 & r);}
 {Same as previous.}
-
-\ccHasModels
-
-\ccc{Algebraic_kernel_for_circles_2_2::Sign_at;}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{CGAL::sign_at}
 
 \end{ccRefConcept}
 

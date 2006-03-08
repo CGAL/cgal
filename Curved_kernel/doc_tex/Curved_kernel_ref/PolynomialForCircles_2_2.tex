@@ -2,17 +2,19 @@
 
 \ccDefinition
 
-The \ccc{AlgebraicKernelForCircles::PolynomialForCircles_2_2} represents
+Concept to represent
 bivariate polynomials of degree up to~2 capable of storing equations
-of circles, whose center has coordinates of type \ccc{FT}, a model of
-\ccc{FieldNumberType}, as well as the square of the radius.
-\footnote{Of course the name looks bad since it mixes geometry with algebra. 
-suggestions welcome}
+of circles, whose center's coordinates, as well as the square of the radius, 
+are of a type that is a model of the concept
+\ccc{FieldNumberType}.
+%\footnote{Of course the name looks bad since it mixes geometry with algebra. 
+%suggestions welcome}
+
+\ccRefines
+CopyConstructible, Assignable, DefaultConstructible
 
 \ccCreation
 \ccCreationVariable{pol}
-
-\ccConstructor{PolynomialForCircles_2_2();}{Default constructor.}
 
 %\ccConstructor{PolynomialForCircles_2_2(const FT & a, const FT & b, const FT & rsq);}{Constructs polynomial \ccc{(x-a)^2 + (y-b)^2 - rsq}.}
 
@@ -34,7 +36,7 @@ The comparison operator \ccc{==} must be provided.
 
 \ccHasModels
 
-\ccc{Polynomial_for_circles_2_2}
+\ccc{CGAL::Polynomial_for_circles_2_2}
 
 \ccSeeAlso
 
