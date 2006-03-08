@@ -45,15 +45,14 @@ required in this triangulation type.
 \ccc{TriangulationVertexBase_3}
 
 
+
+The class \ccRefName\ includes two boolean  mark,
+\ccc{in_complex_mark}  and \ccc{regular_or_boundary_mark}, 
+to store some information about the status of the vertex.
 To allow a caching mechanism, 
-the concept \ccRefName\ 
-add functions to store and retrieve three boolean marks.
-The mark \ccc{in_complex_mark} marks if the vertex is in the complex,
-the mark \ccc{regular_or_boundary_mark} marks if 
-status of the vertex is either \ccc{REGULAR} or \ccc{BOUNDARY}
-and the third one, \ccc{validity_mark}, marks if the two other
-marks are valid, i. e. conform to the actual status of the vertex with
-respect to the complex.
+the concept \ccRefName\ stores two additionnal boolean mark
+to mark the validity of the previous ones.
+
 
 
 
@@ -72,18 +71,24 @@ respect to the complex.
 \ccGlue
 \ccMethod{void set_regular_or_boundary_mark(bool b);}
 { Sets the value of the \ccc{regular_or_boundary_mark} to \ccc{b}.}
+\ccGlue
+\ccMethod{bool regular_or_boundary_validity_mark();}
+{Returns the value of the \ccc{regular_or_boundary_vaidity_mark}.}
+\ccGlue
+\ccMethod{void set_regular_or_boundary_validity_mark(bool b);}
+{Sets the value of the \ccc{regular_or_boundary_validity_mark} to \ccc{b}.}
 
 \ccMethod{bool in_complex_mark();}
 {Returns the value of the \ccc{in_complex_mark}.}
 \ccGlue
 \ccMethod{void  set_in_complex_mark(bool b);}
 {Sets the value of the \ccc{in_complex_mark} to \ccc{b}.}
-
-\ccMethod{bool validity_mark();}{returns \ccc{true} if the
-two other marks are  valid, i. e. coherent to the actual status of the vertex.}
 \ccGlue
-\ccMethod{void set_validity_mark(bool b);}{sets the value
-of the \ccc{validity_mark} to \ccc{b}.}
+\ccMethod{bool in_complex_validity_mark();}
+{Returns the value of the \ccc{in_complex_validity_mark}.}
+\ccGlue
+\ccMethod{void set_in_complex_validity_mark(bool b);}
+{Sets the value of the \ccc{in_complex_validity_mark} to \ccc{b}.}
 
 
 \ccHasModels
