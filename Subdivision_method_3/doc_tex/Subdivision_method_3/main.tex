@@ -358,13 +358,12 @@ class CatmullClark_mask_3 {
   void facet_node(Facet_handle facet, Point_3& pt) {
     Halfedge_around_facet_circulator hcir = facet->facet_begin();
     int n = 0;
-    FT p[] = {0,0,0};
+    Point_3 p(0,0,0);
     do {
-      Point_3 t = hcir->vertex()->point();
-      p[0] += t[0], p[1] += t[1], p[2] += t[2]; 
+      p = p + (hcir->vertex()->point() - ORIGIN);
       ++n;
     } while (++hcir != facet->facet_begin());
-    pt = Point_3(p[0]/n, p[1]/n, p[2]/n);
+    pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
   void edge_node(Halfedge_handle edge, Point_3& pt) {
     Point_3 p1 = edge->vertex()->point();
@@ -577,13 +576,12 @@ class CatmullClark_mask_3 {
   void facet_node(Facet_handle facet, Point_3& pt) {
     Halfedge_around_facet_circulator hcir = facet->facet_begin();
     int n = 0;
-    FT p[] = {0,0,0};
+    Point_3 p(0,0,0);
     do {
-      Point_3 t = hcir->vertex()->point();
-      p[0] += t[0], p[1] += t[1], p[2] += t[2]; 
+      p = p + (hcir->vertex()->point() - ORIGIN);
       ++n;
     } while (++hcir != facet->facet_begin());
-    pt = Point_3(p[0]/n, p[1]/n, p[2]/n);
+    pt = ORIGIN + (p - ORIGIN)/FT(n);
   }
 }
 \end{ccExampleCode}
