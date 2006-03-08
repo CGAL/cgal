@@ -152,7 +152,7 @@ public:
     widget = new Layout_widget(this);
     setCentralWidget(widget);
 
-    *widget << CGAL::BackgroundColor(CGAL::YELLOW);
+    *widget << CGAL::BackgroundColor(CGAL::BLACK);
     resize(x,y);
     widget->set_window(0, x, 0, y);
     widget->show();
