@@ -1,3 +1,6 @@
+08 November 2006 Andreas Fabri
+- Added intro.tex in the reference manual in order to get uniform URLs
+
 26 November 2005 Menelaos Karavelas
 - fixed reference for the segment Voronoi diagram paper.
 - removed obsolete reference for the segment Voronoi diagram tech. report.
