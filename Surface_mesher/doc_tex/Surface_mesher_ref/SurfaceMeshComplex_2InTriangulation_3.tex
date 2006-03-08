@@ -102,15 +102,15 @@ and \ccc{SINGULAR}in any other case.
 }
 
 
-\ccNestedType{Facets_iterator}{An iterator type to visit the facets
+\ccNestedType{Facet_iterator}{An iterator type to visit the facets
 of the 2D complex.}
 \ccGlue
-\ccNestedType{Edges_iterator}{An iterator type to visit  the
+\ccNestedType{Edge_iterator}{An iterator type to visit  the
 edges of the 2D complex.}
 \ccGlue
-\ccNestedType{Vertices_iterator}{An iterator type to visit 
+\ccNestedType{Vertex_iterator}{An iterator type to visit 
 vertices of the 2D complex.}
-%\ccNestedType{Facets_circulator}{An iterator type to visit the facets
+%\ccNestedType{Facet_circulator}{An iterator type to visit the facets
 %of the 2D complex around a boundary or regular vertex.}
 %\ccGlue
 %\ccNestedType{Edges_circulator}{An iterator type to visit  the
@@ -294,18 +294,18 @@ the facets, edges and vertices of the complex.
 All those iterators are bidirectional and
 non mutable.
 
-\ccMethod{Facets_iterator facets_begin();}
+\ccMethod{Facet_iterator facets_begin();}
 {Returns an iterator with value type \ccc{Facet} to visit the facets
 of the 2D complex.}
 \ccGlue
-\ccMethod{Facets_iterator facets_end();}
+\ccMethod{Facet_iterator facets_end();}
 {Returns the  past the end iterator for the above iterator.}
 
-\ccMethod{Edges_iterator edges_begin();}
+\ccMethod{Edge_iterator edges_begin();}
 {Returns an iterator with value type \ccc{Edge} to visit the
 edges of the 2D complex which are not isolated.}
 \ccGlue
-\ccMethod{Edges_iterator edges_end();}
+\ccMethod{Edge_iterator edges_end();}
 {Returns the past the end iteror for the above iterator.}
 \ccGlue
 \ccMethod{Boundary_edges_iterator boundary_edges_begin();}
@@ -315,11 +315,11 @@ boundary  edges of the complex.}
 \ccMethod{Boundary_edges_iterator boundary_edges_end();}
 {Returns the past the end iterator for the above iterator.}
 \ccGlue
-\ccMethod{Vertices_iterator vertices_begin();}
+\ccMethod{Vertex_iterator vertices_begin();}
 {Returns an iterator with value type \ccc{Vertex_handle} to visit the
 vertices of the 2D complex.}
 \ccGlue
-\ccMethod{Vertices_iterator vertices_end();}
+\ccMethod{Vertex_iterator vertices_end();}
 {Returns the past the end iterator for the above iterator.}
 \ccGlue
 \ccMethod{Boundary_vertices_iterator 
@@ -358,7 +358,7 @@ the facets of the complex incident to a given face (vertex or edge).
  {To retrieve the facets of the complex incident to edge \ccc{e}.}
 
 
-%\ccMethod{Facets_circulator
+%\ccMethod{Facet_circulator
 %incident_facets(Vertex_handle v);}
 %{Returns a circulator to visit the facets of the complex around
 %vertex \ccc{v}. Returns an empty circulator, if the vertex is 
