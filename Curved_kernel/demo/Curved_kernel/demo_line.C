@@ -17,6 +17,8 @@
 // - Move more basic IO routines in include/CGAL/IO/
 // - File menu
 
+#include <CGAL/basic.h>
+
 // if QT is not installed, a message will be issued at runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
@@ -28,7 +30,6 @@ int main() {
 
 #include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 
