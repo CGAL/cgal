@@ -21,9 +21,10 @@
 #include <CGAL/random_polygon_2.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Cartesian.h>
 
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::FT                                               NT;
 typedef CGAL::Partition_traits_2<K>                         Traits;
 typedef Traits::Point_2                                     Point_2;

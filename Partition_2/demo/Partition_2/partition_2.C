@@ -17,6 +17,8 @@
 //
 // Author(s)     : Radu Ursu
 
+#include <CGAL/basic.h>
+
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
@@ -32,7 +34,7 @@ int main(int, char*)
 }
 
 #else
-
+#include <CGAL/basic.h>
 #include <qplatinumstyle.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
