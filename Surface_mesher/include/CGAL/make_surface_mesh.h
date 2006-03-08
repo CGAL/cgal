@@ -43,8 +43,9 @@ template <typename C2T3,
 void make_surface_mesh(C2T3& c2t3,
                        Surface surface,
                        Criteria criteria,
-                       Tag tag = Non_manifold_tag(),
-                       int initial_number_of_points = 20) 
+                       Tag tag,
+                       int initial_number_of_points = 20)  // TODO: document
+                                                           // this parameter
 {
   typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Traits;
 
