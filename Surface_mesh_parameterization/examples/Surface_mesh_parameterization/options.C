@@ -36,9 +36,11 @@
 
 #include "options.h"
 
-extern "C" {
-   void  exit(int);
-}
+// LS 03/2006: include stdlib.h instead of defining directly exit()
+#include <stdlib.h>
+//extern "C" {
+//   void  exit(int);
+//}
 
 // LS 08/2005: removed unused variable ident
 //static const char ident[] = "@(#)Options  1.05" ;
