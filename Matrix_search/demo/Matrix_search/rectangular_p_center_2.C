@@ -17,6 +17,7 @@
 //
 // Author(s)     : Radu Ursu
 
+#include <CGAL/basic.h>
 
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
@@ -40,11 +41,10 @@ int main(int, char*)
 #include <string>
 #include <list>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/extremal_polygon_2.h>
 #include <CGAL/convex_hull_2.h>
-//#include <CGAL/Polygon_2_algorithms.h>
+
 #include <CGAL/point_generators_2.h>
 #include <CGAL/rectangular_p_center_2.h>
 #include <CGAL/algorithm.h>
