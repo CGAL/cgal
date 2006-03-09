@@ -17,6 +17,8 @@
 //
 // Author(s)     : Radu Ursu
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "polygon_2_toolbar.h"
