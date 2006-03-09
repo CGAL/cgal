@@ -1,3 +1,6 @@
+9 March 2006 Andreas Fabri
+- Changed names of examples
+
 10 September 2005 Sylvain Pion
 - Add missing this-> for g++ 4.1.
 
