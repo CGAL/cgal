@@ -1,4 +1,4 @@
-// file: examples/Min_ellipse_2/example_Min_ellipse_2.C
+// file: examples/Min_ellipse_2/min_ellipse_no_header_2.C
 
 // includes
 #include <cassert>
