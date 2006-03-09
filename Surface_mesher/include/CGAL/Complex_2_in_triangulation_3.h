@@ -222,7 +222,7 @@ protected:
 
   // This function should be called only when incident edges
   // are known to be REGULAR OR BOUNDARY
-  bool is_regular_or_boundary_for_vertices(Vertex_handle v) const {
+  bool is_regular_or_boundary_for_vertices(Vertex_handle v)  {
     int i,j;
     union_find_of_incident_facets(v,i,j);
     return (j == 1);

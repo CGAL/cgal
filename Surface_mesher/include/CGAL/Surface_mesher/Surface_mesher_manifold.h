@@ -77,10 +77,10 @@ namespace CGAL {
 	    Vertex_handle v = c->vertex(j);
 
 	    if(bad_vertices_initialized){
-	      if ( SMREB::c2t3.is_in_complex(v) ) { // no need to test here
+	      //if ( SMREB::c2t3.is_in_complex(v) ) { // no need to test here
 		bad_vertices.erase(v);              // il faut tester les
                                                     // facets, avant
-	      }
+		//}
 	    }
 	  }
 	}
@@ -192,42 +192,40 @@ namespace CGAL {
 	for (typename Zone::Facets_iterator fit =
 	       zone.boundary_facets.begin(); fit !=
 	       zone.boundary_facets.end(); ++fit)
-	  handle_facet_on_boundary_of_conflict_zone (*fit); // @TODO: test
-							    // if *fit is
-							    // in complex,
-							    // before
-							    // calling the
-							    // handle function
-
+	  if (SMREB::c2t3.is_in_complex(*fit)) {
+	    handle_facet_on_boundary_of_conflict_zone (*fit); 
+	  }
 	SMREB::before_insertion_impl(Facet(), s, zone);
       }
 
-      void after_insertion_impl(const Vertex_handle v) {
-	SMREB::after_insertion_impl(v);
+    void after_insertion_impl(const Vertex_handle v) {
+      SMREB::after_insertion_impl(v);
 
-	if(bad_vertices_initialized){
-	  // foreach v' in star of v
-	  Vertices vertices;
-	  SMREB::tr.incident_vertices(v, std::back_inserter(vertices));
+      if(bad_vertices_initialized){
+	// foreach v' in star of v
+	Vertices vertices;
+	SMREB::tr.incident_vertices(v, std::back_inserter(vertices));
 
-	  for (Vertices_iterator vit = vertices.begin();
-	       vit != vertices.end();
-	       ++vit)
-            if ( SMREB::c2t3.is_in_complex(*vit) )
-              // utiliser is_regular_of_boundary_for_vertices
-              if ( SMREB::c2t3.face_status(*vit) ==
-                   SMREB::C2t3::SINGULAR ) {
-                bad_vertices.insert(*vit);
-              }
-
-	  if ( SMREB::c2t3.is_in_complex(v) ) {
-	    if ( SMREB::c2t3.face_status(v) == // idem
-		 SMREB::C2t3::SINGULAR ) {
-	      bad_vertices.insert(v);
-	    }
+	// is_regular_or_boundary_for_vertices
+	// is used here also incident edges are not known to be
+	// REGULAR which may cause some singular vertices to be forgotten
+	// This causes no problem because 
+	// those SINGULAR incident SINGULAR edges are going to be handled
+	for (Vertices_iterator vit = vertices.begin();
+	     vit != vertices.end();
+	     ++vit)
+	  if ( SMREB::c2t3.is_in_complex(*vit)  &&
+	       !SMREB::c2t3.is_regular_or_boundary_for_vertices(*vit)) {
+	    bad_vertices.insert(*vit);
 	  }
+
+	if ( SMREB::c2t3.is_in_complex(v) &&
+	     !SMREB::c2t3.is_regular_or_boundary_for_vertices(v)) {
+	  bad_vertices.insert(v);
 	}
       }
+    }
+      
 
       std::string debug_info() const
       {

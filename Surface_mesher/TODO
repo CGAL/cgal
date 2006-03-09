@@ -1,3 +1,8 @@
+Rendre paresseux la gestion de la liste des bad edges
+dans Surface_mesher_manifold_edges
+comme le traitement des bad vertices dans Surface_mesher_manifold
+
+
 Laurent Rineau 2006/0227:
 (BEFORE THE CGAL-3.2 code freeze)
 - Remove Complex_2_in_triangulation_3_surface_meshe.h (not finished)
