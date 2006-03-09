@@ -38,6 +38,7 @@ CGAL_BEGIN_NAMESPACE
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
 static unsigned int num_failures_are_same_points = 0;
 static unsigned int num_failures_side_of_bisector = 0;
 static unsigned int num_failures_vertex_conflict = 0;
@@ -47,6 +48,7 @@ static unsigned int num_failures_is_degenerate_edge = 0;
 static unsigned int num_failures_arrangement_type = 0;
 static unsigned int num_failures_are_parallel = 0;
 static unsigned int num_failures_oriented_side = 0;
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
@@ -86,7 +88,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_are_same_points++;
+#endif
 
       ET v_ET[24];
 
@@ -131,7 +135,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_are_same_points++;
+#endif
 
       ET v_ET[36];
 
@@ -178,7 +184,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_side_of_bisector++;
+#endif
 
       ET v_ET[36];
 
@@ -226,7 +234,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_vertex_conflict++;
+#endif
 
       ET v_ET[12 * Num_sites];
 
@@ -274,7 +284,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_finite_edge_conflict++;
+#endif
 
       ET v_ET[12 * Num_sites];
 
@@ -323,7 +335,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_infinite_edge_conflict++;
+#endif
 
       ET v_ET[48];
 
@@ -369,7 +383,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_is_degenerate_edge++;
+#endif
 
       ET v_ET[48];
 
@@ -416,7 +432,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_arrangement_type++;
+#endif
 
       ET v_ET[24];
 
@@ -460,7 +478,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_are_parallel++;
+#endif
 
       ET v_ET[24];
 
@@ -507,7 +527,9 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTER_FAILURES
       CGAL_SEGMENT_DELAUNAY_GRAPH_2_INTERNAL_NS::num_failures_oriented_side++;
+#endif
 
       ET v_ET[12 * Num_sites];
 

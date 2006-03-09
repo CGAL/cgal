@@ -2,6 +2,7 @@
 - renamed demo files so that they have only lowercase letters in their name
   (requested by AF)
 - capitalized headings in user manual
+- attempt to fix warnings in examples for g++ 3.3.x
 
 8 March 2006:  Menelaos Karavelas
 - demos now include CGAL/basic.h before testing for Qt; this is essential
