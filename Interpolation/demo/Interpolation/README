@@ -3,7 +3,7 @@ These demos use Geomview
 Geomview 1.8.1 is required.  The geomview command must be in the user's $PATH,
 otherwise the program will not be able to execute.]
  
-------- demo_interpolation_2 -------------------------------------------------
+------- interpolation_2 -------------------------------------------------
 using Geomview
 
 This demo program dumps the plot of the different interpolation functions
@@ -20,7 +20,7 @@ shows:	the differentiability (or not) at the data points
 4) Displays the data points in geomview.
 --------------------------------------------------------------
 
-------- demo_surface_voronoi -----------------------------------------------
+------- surface_voronoi -----------------------------------------------
 This demo program displays the intersection between the three dimensional 
 Voronoi diagram of a point cloud issued from a surface (sphere,cylinder 
 or cube) and the tangent plane of another surface point. 

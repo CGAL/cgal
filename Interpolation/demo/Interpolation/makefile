@@ -34,18 +34,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                demo_interpolation_2$(EXE_EXT) \
-                demo_surface_voronoi$(EXE_EXT) 
+                interpolation_2$(EXE_EXT) \
+                surface_voronoi$(EXE_EXT) 
 
-demo_interpolation_2$(EXE_EXT): demo_interpolation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_interpolation_2 demo_interpolation_2$(OBJ_EXT) $(LDFLAGS)
+interpolation_2$(EXE_EXT): interpolation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interpolation_2 interpolation_2$(OBJ_EXT) $(LDFLAGS)
 
-demo_surface_voronoi$(EXE_EXT): demo_surface_voronoi$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_surface_voronoi demo_surface_voronoi$(OBJ_EXT) $(LDFLAGS)
+surface_voronoi$(EXE_EXT): surface_voronoi$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)surface_voronoi surface_voronoi$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   demo_interpolation_2.clean \
-                   demo_surface_voronoi.clean 
+                   interpolation_2.clean \
+                   surface_voronoi.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
