@@ -17,8 +17,8 @@
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
-#ifndef SNC_DECORATOR_TRAITS_H
-#define SNC_DECORATOR_TRAITS_H
+#ifndef CGAL_NEF3_SNC_DECORATOR_TRAITS_H
+#define CGAL_NEF3_SNC_DECORATOR_TRAITS_H
 
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 
@@ -100,4 +100,4 @@ class SNC_decorator_const_traits {
   typedef typename Refs::Shell_entry_const_iterator Shell_entry_iterator;
 };
 
-#endif // SNC_DECORATOR_TRAITS_H
+#endif // CGAL_NEF3_SNC_DECORATOR_TRAITS_H
