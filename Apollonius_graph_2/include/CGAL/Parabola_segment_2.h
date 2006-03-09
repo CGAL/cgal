@@ -59,6 +59,11 @@ public:
     this->p2 = p2;
   }
 
+  int compute_k(const FT& tt) const {
+    //    return int(CGAL::to_double(CGAL::sqrt(tt / this->STEP())));
+    return int(CGAL::sqrt(CGAL::to_double(tt) / CGAL::to_double(this->STEP())));
+  }
+
   void generate_points(std::vector<Point_2>& p) const
   {
     FT s0, s1;
@@ -110,7 +115,7 @@ public:
       p.push_back( f(s0) );
 
       tt = s0;
-      k = int(CGAL::to_double(CGAL::sqrt(tt / this->STEP())));
+      k = compute_k(tt);
 
       while ( CGAL::compare(tt, s1) == SMALLER ) {
 	if ( CGAL::compare(tt, s0) != SMALLER )
@@ -126,7 +131,7 @@ public:
       p.push_back( f(s1) );
 
       tt = s1;
-      k = int(CGAL::to_double(-CGAL::sqrt(-tt / this->STEP())));
+      k = -compute_k(-tt);
 
       while ( CGAL::compare(tt, s0) == LARGER ) {
 	if ( CGAL::compare(tt, s1) != LARGER )

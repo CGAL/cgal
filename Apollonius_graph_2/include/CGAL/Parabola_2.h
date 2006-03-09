@@ -65,6 +65,38 @@ protected:
   }
 
   inline static
+  FT divide(const FT& x, const FT& y, const Tag_false&) {
+    return CGAL::to_double(x) / CGAL::to_double(y);
+  }
+
+  inline static
+  FT divide(const FT& x, const FT& y, const Tag_true&) {
+    return x / y;
+  }
+
+  inline static
+  FT divide(const FT& x, const FT& y) {
+    static typename Number_type_traits<FT>::Has_division has_division;
+    return divide(x, y, has_division);
+  }
+
+  inline static
+  FT sqrt(const FT& x, const Tag_false&) {
+    return CGAL::sqrt(CGAL::to_double(x));
+  }
+
+  inline static
+  FT sqrt(const FT& x, const Tag_true&) {
+    return CGAL::sqrt(x);
+  }
+
+  inline static
+  FT sqrt(const FT& x) {
+    static typename Number_type_traits<FT>::Has_sqrt has_sqrt;
+    return sqrt(x, has_sqrt);
+  }
+
+  inline static
   FT norm2(const Point_2& p)
   {
     return square(p.x()) + square(p.y());
@@ -81,14 +113,14 @@ protected:
   inline static
   FT distance(const Point_2& p1, const Point_2& p2)
   {
-    return CGAL::sqrt( distance2(p1, p2) );
+    return sqrt( distance2(p1, p2) );
   }
 
   inline static
   FT distance(const Point_2& p, const Line_2& l)
   {
-    return ( p.x() * l.a() + p.y() * l.b() + l.c() ) /
-      CGAL::sqrt( square(l.a()) + square(l.b()) );
+    return divide( p.x() * l.a() + p.y() * l.b() + l.c(),
+		   sqrt( square(l.a()) + square(l.b()) ) );
   }
 
   // instance stuff
@@ -123,7 +155,7 @@ protected:
     std::vector< Point_2 > p;
 
     if ( l.a() == ZERO ) {
-      FT y = d2 * CGAL::sign(l.b()) - l.c() / l.b();
+      FT y = d2 * CGAL::sign(l.b()) - divide(l.c(), l.b());
 
       FT C = CGAL::square(y) - FT(2) * c.y() * y + 
 	square(c.x()) + square(c.y()) - d1;
@@ -132,8 +164,8 @@ protected:
 
       D = CGAL::abs(D);
 
-      FT x1 = CGAL::sqrt(D) + c.x();
-      FT x2 = -CGAL::sqrt(D) + c.x();
+      FT x1 = sqrt(D) + c.x();
+      FT x2 = -sqrt(D) + c.x();
 
       p.push_back(Point_2(x1, y));
       p.push_back(Point_2(x2, y));
@@ -141,25 +173,24 @@ protected:
       return p;
     }
 
-    FT A = d2 * CGAL::sqrt( CGAL::square(l.a()) +
-			       CGAL::square(l.b()) ) - l.c();
+    FT A = d2 * sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) - l.c();
     FT B = CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
 
-    FT alpha = FT(1) + CGAL::square(l.b() / l.a());
-    FT beta = A * l.b() / CGAL::square(l.a()) + c.y()
-      - c.x() * l.b() / l.a();
-    FT gamma = CGAL::square(A / l.a()) + B
-      - FT(2) * c.x() * A / l.a();
+    FT alpha = FT(1) + CGAL::square(divide(l.b(), l.a()));
+    FT beta = divide(A * l.b(), CGAL::square(l.a()) + c.y())
+      - divide(c.x() * l.b(), l.a());
+    FT gamma = CGAL::square(divide(A, l.a())) + B
+      - divide(FT(2) * c.x() * A, l.a());
 
     FT D = CGAL::square(beta) - alpha * gamma;
 
     D = CGAL::abs(D);
 
-    FT y1 = (beta + CGAL::sqrt(D)) / alpha;
-    FT y2 = (beta - CGAL::sqrt(D)) / alpha;
+    FT y1 = divide((beta + sqrt(D)), alpha);
+    FT y2 = divide((beta - sqrt(D)), alpha);
 
-    FT x1 = (A - l.b() * y1) / l.a();
-    FT x2 = (A - l.b() * y2) / l.a();
+    FT x1 = divide(A - l.b() * y1, l.a());
+    FT x2 = divide(A - l.b() * y2, l.a());
 
     p.push_back(Point_2(x1, y1));
     p.push_back(Point_2(x2, y2));
@@ -180,7 +211,7 @@ protected:
   {
     FT t1 = t(p1);
     FT t2 = t(p2);
-    FT midt = (t1+t2)/2;
+    FT midt = divide(t1+t2, FT(2));
     return f(midt);
   }
 
@@ -201,8 +232,8 @@ protected:
 
   void compute_origin()
   {
-    FT d = (l.a() * c.x() + l.b() * c.y() + l.c())
-      / (  FT(2) * ( square(l.a()) + square(l.b()) )  );
+    FT d = divide(l.a() * c.x() + l.b() * c.y() + l.c(),
+		  FT(2) * ( square(l.a()) + square(l.b()) )  );
     o = Point_2(c.x() - l.a() * d, c.y() - l.b() * d);
   }
 
@@ -216,7 +247,7 @@ public:
 
     FT d_a = CGAL::to_double(l1.a());
     FT d_b = CGAL::to_double(l1.b());
-    FT len = CGAL::sqrt(CGAL::square(d_a) + CGAL::square(d_b));
+    FT len = sqrt(CGAL::square(d_a) + CGAL::square(d_b));
 
     FT r = p.weight() * len;
 

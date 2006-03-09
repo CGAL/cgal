@@ -3,6 +3,12 @@
 - gave the example files some more meaningful names
 - capitalized headings in user manual
 - attempt to fix sunpro warnings
+- "fixed" code when run with a number type that does not
+  support / and sqrt ("fixed" here means that the code still runs but
+  operations are no longer exact; the operations that are not exact
+  are only used for constructions, not for predicates); the issue
+  came up in the segment Delaunay graph package which uses the
+  Parabola_2 and Parabola_segment_2 from this package.
 
 8 March 2006:  Menelaos Karavelas
 - demos now include CGAL/basic.h before testing for Qt; this is essential
