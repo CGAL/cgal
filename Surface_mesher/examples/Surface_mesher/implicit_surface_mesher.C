@@ -23,14 +23,14 @@ int main(int, char **) {
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
   // defining the surface
-  Surface_3 surface(sphere_function, 
-                    Sphere_3(CGAL::ORIGIN, 2.),
-                    1e-03);
+  Surface_3 surface(sphere_function,            // pointer to function
+                    Sphere_3(CGAL::ORIGIN, 2.), // bounding box
+                    1e-03);  // precision for intersections computations
 
   // defining meshing criteria
-  CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
-                                                     0.1,
-                                                     0.1);
+  CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,  //angular bound
+                                                     0.1,  //radius bound
+                                                     0.1); //distance bound
   // meshing surface
   make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
