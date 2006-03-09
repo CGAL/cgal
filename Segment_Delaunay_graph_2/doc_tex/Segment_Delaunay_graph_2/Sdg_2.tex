@@ -181,7 +181,7 @@ no real meaning. What has real meaning is the set of sites that
 correspond to cells of the Voronoi diagram and this is the set of
 output sites.
 
-\paragraph{Degenerate dimensions.}
+\paragraph{Degenerate Dimensions.}
 The dimension of the segment Delaunay graph is in general 2. The
 exceptions to this rule are as follows:
 \begin{itemize}
@@ -223,7 +223,7 @@ parametrized by two arguments:
 \end{itemize}
 
 
-\paragraph{Strongly intersecting sites and their representation.}
+\paragraph{Strongly Intersecting Sites and their Representation.}
 As we have mentioned above, the segment Delaunay graph package of
 \cgal\ is designed to support the computation of the segment Voronoi
 diagram even when the input segment sites are intersecting. This
@@ -380,7 +380,7 @@ to be represented by up to 6 handles (which are very lightweight
 objects) instead of 6 points, which are, compared to handles of
 course, very heavy objects.
 
-\paragraph{Optimizing memory allocation.}
+\paragraph{Optimizing Memory Allocation.}
 There are applications where we know beforehand that the input
 consists of only weakly intersecting sites. In these cases the site
 representation described above poses a significant overhead in the
@@ -432,7 +432,7 @@ of the size of the input. What we want to focus in the remainder of
 this section are the different kinds of filtering techniques that we
 have employed in our implementation.
 
-\paragraph{Geometric filtering.}
+\paragraph{Geometric Filtering.}
 Our representation of sites is coupled very naturally, with what we
 call {\em geometric filtering}. The technique
 amounts to performing simple geometric tests exploiting the
@@ -480,7 +480,7 @@ classes:
 
 
 
-\paragraph{Arithmetic filtering.}
+\paragraph{Arithmetic Filtering.}
 As mentioned above, performing computations with exact arithmetic
 can be very costly. For this reason we have devoted considerable
 effort in implementing different kinds of arithmetic filtering
@@ -553,7 +553,7 @@ class is used, the possible values are \ccc{CGAL::Sqrt_field_tag} and
 
 
 
-\section{The segment Delaunay graph hierarchy}
+\section{The Segment Delaunay Graph Hierarchy}
 \label{sec:sdg2-hierarchy}
 
 
