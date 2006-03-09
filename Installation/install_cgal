@@ -4945,10 +4945,9 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		    MATCH=y
 		    ;;
 	    esac
+	    if [ -n "${MATCH}" ]; then break; fi
         done
-        if [ -n "${MATCH}" ]; then
-	    shift; continue
-	fi
+        if [ -n "${MATCH}" ]; then shift; continue; fi
 	for i in ${SUPPORT_PKGS}; do
 	    case ${_arg} in
 		-WITH-${i}*)
@@ -4957,10 +4956,9 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		    MATCH=y
 		    ;;
 	    esac
+	    if [ -n "${MATCH}" ]; then break; fi
 	done
-	if [ -n "${MATCH}" ]; then
-	    shift; continue
-	fi
+        if [ -n "${MATCH}" ]; then shift; continue; fi
 	case ${_arg} in
 	    -QT_DIR*)
 		warn_deprecated ${1}
