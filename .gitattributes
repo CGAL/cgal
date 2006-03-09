@@ -597,6 +597,7 @@ Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Lower_bound_root
 Kinetic_data_structures/test/Kinetic_data_structures/Delaunay_triangulation_3_timing.C -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
+Maintenance/rpm/CGAL.spec -text
 Maintenance/svn_client/config -text
 Maintenance/svn_server/hooks/post-commit -text
 Maintenance/svn_server/hooks/post-commit.tmpl -text
