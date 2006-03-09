@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iomanip>
 
+#include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/point_generators_d.h>
