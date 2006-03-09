@@ -46,43 +46,43 @@ the  surface mesher traits generator:
 \ccTwo{Construct_translated_point_3}{}
 
 \ccNestedType{Compute_squared_distance_3}
-{A predicate object that must provide the function operator\\
-\ccc{FT operator()(Point_3, Point_3)} which return the squared distance
+{A function object that provides the operator\\
+\ccc{FT operator()(Point_3, Point_3)} which returns the squared distance
 between two points.}
 
 \ccNestedType{Compute_squared_radius_3}
-{A predicate object that must provide the function operator\\
+{A function object providing the operator\\
 \ccc{FT operator()(const Sphere_3& s)} which returns the squared radius
 of~\ccc{s}.}
 
 
 \ccNestedType{Construct_center_3}
-{A predicate object that must provide the function operator\\
+{A function object providing the operator\\
 \ccc{Point_3 operator()(const Sphere_3& s)} which computes the center of
 the sphere~\ccc{s}.}
 
 \ccNestedType{Construct_line_3}
-{A predicate object that must provide the function operator\\
+{A function object providing the operator\\
 \ccc{Line_3 operator()(const Point_3 &p, const Point_3 &q)} which
 returns a line  passing through the points \ccc{p} and~\ccc{q}.}
 
 \ccNestedType{Construct_midpoint_3}
-{A predicate object that must provide the function operator\\
+{A function object providing the operator\\
 \ccc{Point_3 operator()(const Point_3& p, const Point_3& q)} which computes
 the midpoint of the segment \ccc{pq}.}
 
 \ccNestedType{Construct_scaled_vector_3}
-{A predicate object that must provide the function operator\\
+{A function object providing the operator\\
 \ccc{Vector_3 operator()(const Vector_3 &v, const FT& scale)} which returns
 the vector \ccc{v} scaled by a factor \ccc{scale}.}
 
 \ccNestedType{Construct_translated_point_3}
-{A predicate object that must provide the function operator\\
+{A function object providing the operator\\
 \ccc{Point_3 operator()(const Point_3& p, const Vector_3& v)} which returns
 the point obtained by translating \ccc{p} by the vector~\ccc{v}.}
 
 \ccNestedType{Construct_vector_3}
-{A predicate object that must provide the function operator\\
+{A function object providing the operator\\
 \ccc{Vector_3 operator()(const Point_3 &a, const Point_3 &b)} which returns
 the vector \ccc{b-a}.}
 

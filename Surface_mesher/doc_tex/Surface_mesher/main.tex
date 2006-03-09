@@ -105,23 +105,25 @@ function. This object holds the output mesh at the end of the
 process.
 
 The required knowledge on the surface is encapsulated in a
-traits class  which is the only way the mesher
- accesses to the surface. This traits class is required to be a model
+traits class. The mesher accesses the surface to be meshed
+through this traits class only. 
+The traits class is required to be a model
 of the concept \ccc{SurfaceMeshTraits_3}. \\
-In the first  version
-of  \ccRefName\, the surface type is a template paramater \ccc{Surface}
+In the first  version of
+of  \ccRefName\, the surface type is a template paramater  (\ccc{Surface})
 and the surface mesher traits type 
-is  automatically generated form the surface type  through
-the class 
-\ccc{Surface_mesh_traits_generator_3<Surface>}.
+is  automatically generated form the surface type.  
+%through
+%the class 
+%\ccc{Surface_mesh_traits_generator_3<Surface>}.
 (This mechanism is similar to the 
 \ccc{Kernel_traits}  mechanism.) \\
-In the second version, the surface mesher traits type is provided
+In the second version of \ccRefName\ , the surface mesher traits type is provided
 as a template parameter 
 and the surface type is deduced from this traits type.
 Both the surface and the traits 
 are passed to the mesher as parameters. \\
-The simpler first version can be used,
+The first version is simpler and can be used,
 whenever the surface type either provides  a nested type
 \ccc{Surface::Surface_mesher_traits_3} 
 that is  a model of \ccc{SurfaceMeshTraits_3}
@@ -140,9 +142,14 @@ criteria driving the meshing process. The template parameter \ccc{Criteria}
 has to be instantiated by a model of the concept \ccc{MeshCriteria}.
 
 
-The last parameter is optional, it is a tag 
+The parameter \ccc{Tag}  is a tag 
 whose type influences the behavior of the
-meshing algorithm, see Section~\ref{SurfaceMesher_section_variations}
+meshing algorithm. For instance, this parameter
+can be used to enforce the manifold property
+of the output mesh while avoiding 
+an over-refinement of the mesh. Further details on this
+subject are given in 
+Section~\ref{SurfaceMesher_section_variations}.
 
 A call to 
 \ccc{surface_mesher(c2t3,surf,criteria) } launches 
@@ -167,7 +174,7 @@ by the constructor
 of the class \ccc{Implicit_surface_3<Kernel, Function>}
 from a pointer to the function \ccc{sphere_function}.
 
-The default meshing criteria are  are determined  by three numerical
+The default meshing criteria are determined  by three numerical
 values: \\ 
 \ccc{angular_bound} is a lower bound in degrees for the angles 
      of mesh facets.\\
@@ -193,14 +200,17 @@ Theoretical guarantees are given in \cite{cgal:sry-mvbss-05}.
 First, the meshing algorithm is proved to terminate 
 if the angular bound is
 not smaller than $20,7^o$. 
-Furthermore, if the radius bound is everywhere smaller than 
-the $\epsilon$ times the local feature size  
-(where $\epsilon$ is a constant
-less than 0.16),  the output mesh 
+Furthermore, the output mesh 
 is guaranteed to be homeomorphic to the surface
 and  there is a guaranteed bound 
 on the  distance (Hausdorff and even Frechet distance)
-between the mesh and the surface.
+between the mesh and the surface
+if the radius bound is everywhere smaller than 
+the $\epsilon$ times the local feature size. 
+Here $\epsilon$ is a constant whish has to be
+less than 0.16, and the local feature size 
+$lfs(x)$ is defined on each point $x$ of the surface
+as the distance from $x$ to the medial axis.  
 Note that the radius bound need not be uniform,
 although it is a uniform bound in the default criteria.
 
@@ -231,7 +241,7 @@ The function \ccc{make_surface_mesh} has specialized versions
 for the following  tag types: \\
 \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
 surface without boundary.\\
-\ccc{Manifold_with_boundary_tag}:the output mesh is guaranteed to be
+\ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be
 manifold but may have boundaries.\\
 \ccc{Non_manifold_tag}: the algorithm relies on the given criteria and
 guarantees nothing else.
