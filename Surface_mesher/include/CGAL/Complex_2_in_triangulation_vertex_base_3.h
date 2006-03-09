@@ -45,57 +45,45 @@ namespace CGAL {
     typedef typename Tds::Facet Facet;
 
   private:
-    bool in_complex_mark_;
-    bool regular_or_boundary_mark_;
-    bool in_complex_validity_mark_;
-    bool regular_or_boundary_validity_mark_;
-
-
+    int number_of_incident_facets_;
+    int number_of_components_; // number of components in the adjacency
+                               // graph of incident facets (in complex)
+    bool cache_validity;
   public:
     // Constructors
 
     Complex_2_in_triangulation_vertex_base_3()
       : Vb(), 
-	in_complex_mark_(false), 
-	regular_or_boundary_mark_(false), 
-	in_complex_validity_mark_(false),
-	regular_or_boundary_validity_mark_(false)
+        number_of_incident_facets_(0),
+        number_of_components_(0),
+        cache_validity(false)
     {}
 
-    bool in_complex_mark() const {
-      return in_complex_mark_;
+    bool is_c2t3_cache_valid() const {
+      return cache_validity;
     }
 
-    void set_in_complex_mark(const bool b) {
-      in_complex_mark_ = b;
+    void invalidate_c2t3_cache()
+    {
+      cache_validity = false;
     }
 
-    bool regular_or_boundary_mark() const {
-      return regular_or_boundary_mark_;
+    void set_c2t3_cache(const int i, const int j)
+    {
+      number_of_incident_facets_ = i;
+      number_of_components_ = j;
+      cache_validity = true;
     }
 
-    void set_regular_or_boundary_mark(const bool b) {
-      regular_or_boundary_mark_ = b;
+    int cached_number_of_incident_facets() const
+    {
+      return number_of_incident_facets_;
     }
-
-   
-    bool in_complex_validity_mark() const {
-      return in_complex_validity_mark_;
+    
+    int cached_number_of_components() const
+    {
+      return number_of_components_;
     }
-
-    void set_in_complex_validity_mark(const bool b) {
-      in_complex_validity_mark_ = b;
-    }
-
-    bool regular_or_boundary_validity_mark() const {
-      return regular_or_boundary_validity_mark_;
-    }
-
-    void set_regular_or_boundary_validity_mark(const bool b) {
-      regular_or_boundary_validity_mark_ = b;
-    }
-
-
 
   };  // end Complex_2_in_triangulation_vertex_base_3
 

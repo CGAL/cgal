@@ -31,6 +31,12 @@
 
 #include <CGAL/iterator.h> // CGAL::inserter()
 
+#ifdef SURFACE_MESHER_VERBOSE
+#  define SURFACE_MESHER_VERBOSE_BOOLEAN true
+#else
+#  define SURFACE_MESHER_VERBOSE_BOOLEAN false
+#endif
+
 namespace CGAL {
 
   struct Non_manifold_tag {};
@@ -151,7 +157,7 @@ void make_surface_mesh(C2T3& c2t3,
                      CGAL::inserter(c2t3.triangulation()),
                      initial_number_of_points);
   Mesher mesher(c2t3, surface, traits, criteria);
-  mesher.refine_mesh(true);
+  mesher.refine_mesh(SURFACE_MESHER_VERBOSE_BOOLEAN);
   // TODO initial, then refine()
 }
 

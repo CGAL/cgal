@@ -1,3 +1,11 @@
+9 March 2006 Laurent Rineau
+- modification of Complex_2_in_triangulation_vertex_base_3 and
+  Complex_2_in_triangulation_3: the result of
+  union_find_of_incident_facets() is cached in the vertex.
+- remove unwanted verbose output. It is now activable by defining
+  the preprocessor macro SURFACE_MESHER_VERBOSE.
+
+
 8 March 2006 Laurent Rineau
 - change some hard-coded "double" to "FT"
 - change face_type() to face_status() in users of C2t3

@@ -29,6 +29,7 @@
 #include <set>
 #include <map>
 #include <list>
+#include <vector>
 
 namespace CGAL {
 
@@ -61,37 +62,47 @@ class Complex_2_in_triangulation_3 {
   enum Face_status{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
 
 
-  struct Not_in_complex {
-
-    bool operator()(const Facet& f) const    {
-       return ! f.first->is_facet_on_surface(f.second) ;
+  class Not_in_complex {
+    Self* self;
+  public:
+    Not_in_complex(Self* self) : self(self) 
+    {
+    }
+    
+    bool operator()(const Facet& f) const {
+      return self->face_status(f) == NOT_IN_COMPLEX;
     }
 
     bool operator()(const Edge& e) const {
-      return  face_status(e)== NOT_IN_COMPLEX;
+      return self->face_status(e) == NOT_IN_COMPLEX;
     }
 
 
-    bool operator()(Vertex_handle v) const    {
-      return ! v->is_in_complex();
+    bool operator()(Vertex_handle v) const {
+      return ! self->is_in_complex(v);
     }
 
-  };
+  }; // end struct Not_in_complex
 
-  struct Not_on_boundary_tester {
+  class Not_on_boundary_tester {
+    Self* self;
+  public:
+    Not_on_boundary_tester(Self* self) : self(self) 
+    {
+    }
 
-     bool operator()(const Edge& e) const {
-      return  face_status(e)!= BOUNDARY;
+    bool operator()(const Edge& e) const {
+      return self->face_status(e)!= BOUNDARY;
     }
 
   };
 
   typedef Filter_iterator<typename Triangulation::Facet_iterator,
-                   Not_in_complex> Facet_iterator;
+                          Not_in_complex> Facet_iterator;
   typedef Filter_iterator<typename Triangulation::Edge_iterator,
-                   Not_in_complex> Edge_iterator;
+                          Not_in_complex> Edge_iterator;
   typedef Filter_iterator<typename Triangulation::Vertex_iterator,
-                   Not_in_complex> Vertex_iterator;  
+                          Not_in_complex> Vertex_iterator;  
 
   typedef Filter_iterator<typename Triangulation::Edge_iterator,
                           Not_on_boundary_tester> Boundary_edges_iterator;
@@ -147,79 +158,108 @@ protected:
   }
 
   Face_status face_status (const Edge& e) const {
+    return face_status(e.first->vertex(e.second), e.first->vertex(e.third));
+  }
+
+  Face_status face_status (const Vertex_handle& va,
+                           const Vertex_handle& vb) const
+  {
     typename Edge_facet_counter::const_iterator it =
-      edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
-						e.first->vertex(e.third)));
-    if (it == edge_facet_counter.end()) return NOT_IN_COMPLEX;
-    switch (it->second.first){
+      edge_facet_counter.find(make_ordered_pair(va, vb));
+
+    if (it == edge_facet_counter.end())
+      return NOT_IN_COMPLEX;
+
+    switch (it->second.first)
+    {
     case 0 : return ISOLATED;
     case 1 : return BOUNDARY;
     case 2 : return REGULAR;
     default : return SINGULAR;
     }
-  }
+  } // end face_status(const Vertex_handle&, const Vertex_handle&)
 
-  Face_status face_status (Vertex_handle v) {
-    // this function has not been set const, because 
-
-    if(v->in_complex_validity_mark() && ! v->in_complex_mark()) return NOT_IN_COMPLEX;
+  Face_status face_status (Vertex_handle v)
+  {
+    if(v->is_c2t3_cache_valid() && v->cached_number_of_incident_facets() == 0)
+      return NOT_IN_COMPLEX;
 
     //test incident edges for REUGALIRITY and count BOUNDARY edges
-    typename std::list<Vertex_handle> vertices;
+    typename std::vector<Vertex_handle> vertices;
+    vertices.reserve(64);
     tr.incident_vertices(v, std::back_inserter(vertices));
     int number_of_boundary_incident_edges = 0; //COULD BE a Bool
-    for (typename std::list<Vertex_handle>::iterator vit=vertices.begin();
+    for (typename std::vector<Vertex_handle>::iterator vit=vertices.begin();
 	 vit != vertices.end();
-	 vit++ ) {
-      typename Edge_facet_counter::iterator eit =
-	edge_facet_counter.find(make_ordered_pair(v, *vit) );
-      if (eit != edge_facet_counter.end()) {
-	if ( eit->second.first == 1) ++number_of_boundary_incident_edges;
-	else if  (eit->second.first != 2)   return SINGULAR;
+	 vit++ ) 
+    {
+      switch( face_status(v, *vit) )
+      {
+      case NOT_IN_COMPLEX: case REGULAR: break;
+      case BOUNDARY: ++number_of_boundary_incident_edges; break;
+      default : return SINGULAR;
       }
     }
 
-    // from now on incident edges are REGULAR or BOUNDARY
+    // from now on incident edges (in complex) are REGULAR or BOUNDARY
+
     int i,j;
     union_find_of_incident_facets(v,i,j);
-    if ( i == 0) return NOT_IN_COMPLEX;
-    else if ( j > 1) return SINGULAR;
-    else {// REGULAR OR BOUNDARY
-      if (number_of_boundary_incident_edges != 0) return BOUNDARY;
-      return REGULAR;
+
+    if ( i == 0 ) 
+      return NOT_IN_COMPLEX;
+    else if ( j > 1 ) 
+      return SINGULAR;
+    else // REGULAR OR BOUNDARY
+    {
+      if (number_of_boundary_incident_edges != 0)
+        return BOUNDARY;
+      else
+        return REGULAR;
     }
-  }
+  } //end of face_status(Vertex_handle)
 
 
   // This function should be called only when incident edges
   // are known to be REGULAR OR BOUNDARY
-  // therefore it can set the regular_or_boundary_validity_mark
   bool is_regular_or_boundary_for_vertices(Vertex_handle v) const {
-    if(v->validity_mark()){ return v->regular_or_boundary_mark();}
     int i,j;
     union_find_of_incident_facets(v,i,j);
-    v->set_regular_or_boundary_validity_mark(true);
     return (j == 1);
   }
 
-
    bool is_in_complex (Vertex_handle v) {
-    if(v->in_complex_validity_mark()){ return v->in_complex_mark();}
     int i,j;
     union_find_of_incident_facets(v,i,j);
     return ( i != 0);
   }
 
+  // auxiliary function for 
+  // union_find_of_incident_facets(const Vertex_handle v, int&, int&)
+  void profile_union_find_of_incident_facets_cache_valid()
+  {
+    CGAL_PROFILER("number of c2t3 cache success");
+  }
   // extract the subset F of facets of the complex incident to v
   // set i to the number of facets in F
   // set j to the number of connected component of the adjacency graph
   //     of F
-  void union_find_of_incident_facets(Vertex_handle v, int& i, int& j) {
+  void union_find_of_incident_facets(const Vertex_handle v, int& i, int& j) {
+    if( v->is_c2t3_cache_valid() )
+    {
+      i = v->cached_number_of_incident_facets();
+      j = v->cached_number_of_components();
+      profile_union_find_of_incident_facets_cache_valid();
+      return;
+    }
+
+    CGAL_PROFILER("number of c2t3 cache failure");
+    
     Union_find<Facet> facets;
     tr.incident_facets( v, 
                         filter_output_iterator(
                                                std::back_inserter(facets), 
-                                               Not_in_complex()));
+                                               Not_in_complex(this)));
 
     typedef std::map<Vertex_handle, 
       typename Union_find<Facet>::handle>  Vertex_Set_map;
@@ -230,10 +270,10 @@ protected:
     for(typename Union_find<Facet>::iterator it = facets.begin();
 	it != facets.end();
 	++it){
-      Cell_handle ch = (*it).first;
-      int i = (*it).second;
-      for(int j=0; j < 3; j++){
-	Vertex_handle w = ch->vertex(tr.vertex_triple_index(i,j));
+      const Cell_handle& ch = (*it).first;
+      const int& i = (*it).second;
+      for(int j=0; j < 3; ++j){
+	const Vertex_handle w = ch->vertex(tr.vertex_triple_index(i,j));
 	if(w != v){
 	  Vertex_Set_map_iterator vsm_it = vsmap.find(w);
 	  if(vsm_it != vsmap.end()){
@@ -247,15 +287,9 @@ protected:
     
     i = facets.size(); 
     j = facets.number_of_sets();
-    v->set_in_complex_mark( i > 0);
-    v->set_in_complex_validity_mark( true);
-    v->set_regular_or_boundary_mark( j == 1);
-    // do not set regular_or_boundary_validity_mark
-    // because you because thes function  may have been called
-    // whith SINGULAR  incident edges.
+    v->set_c2t3_cache(i, j);
     return;
   }
-
   
   bool is_in_complex (const Facet& f) const {
     return is_in_complex (f.first, f.second);
@@ -269,39 +303,43 @@ protected:
     return  face_status(e) != NOT_IN_COMPLEX;
   }
 
-
-size_type number_of_facets() const
+  size_type number_of_facets() const
   {
     return m_number_of_facets;
   }
 
   Facet_circulator incident_facets (const Edge& e) {
-    // position the circulator on the first element of the facets list
-    Facets& lof =
-      (edge_facet_counter[make_ordered_pair(e.first->
-					    vertex(e.second),
-					    e.first->
-					    vertex(e.third))]).second;
-  Facet_circulator fcirc(&lof);
-    return fcirc;
+    typename Edge_facet_counter::iterator it = 
+      edge_facet_counter.find(make_ordered_pair(e.first->vertex(e.second),
+                                                e.first->vertex(e.third)));
+    
+    if( it == edge_facet_counter.end() )
+      return Facet_circulator();
+    else
+    {
+      // position the circulator on the first element of the facets list
+      Facets& lof = it->second.second;
+      return Facet_circulator(&lof);
+    }
   }
-
 
   // MY TODO : turn this function into an internal function and rename it
   // because it is not conform to what the doc says.
   // The doc says that incident_facets should return a circulator
   template <typename OutputIterator>
-  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it) const
+  OutputIterator incident_facets(const Vertex_handle v, OutputIterator it)
   {
+    // TODO: review this function (Laurent Rineau)
+
     // We assume that for the generated facets the Cell_handle is smaller than the opposite one
-    tr.incident_facets(v, filter_output_iterator(it, Not_in_complex()));
+    tr.incident_facets(v, filter_output_iterator(it, Not_in_complex(this)));
     return it;
   }
 
   // computes and returns the list of adjacent facets of f
   // with the common Vertex_handle v
   Facets adjacent_facets (const Facet& f, const Vertex_handle v) {
-
+    // TODO: review this function (Laurent Rineau)
     Cell_handle c = f.first;
     int i = f.second;
     int iv = c->index(v);
@@ -351,11 +389,6 @@ size_type number_of_facets() const
 
   // Setting functions
 
-//    void set_in_complex (const Vertex_handle v) {
-//     v->set_in_complex(true);
-//   }
-
-
   void set_in_complex (const Facet& f) {
     set_in_complex (f.first, f.second);
   }
@@ -380,12 +413,13 @@ size_type number_of_facets() const
 	for (int j = 0; j < 4; j++) {
 	  for (int k = j + 1; k < 4; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle>
-		e = make_ordered_pair(c->vertex(j),
-				      c->vertex(k));
-	      (edge_facet_counter[e]).first++;
 
-	      (edge_facet_counter[e]).second.push_back(f); // @ODO: beurk.
+	      const std::pair<Vertex_handle, Vertex_handle> e = 
+                make_ordered_pair(c->vertex(j),
+                                  c->vertex(k));
+
+	      (edge_facet_counter[e]).first++;
+	      (edge_facet_counter[e]).second.push_back(f); // @TODO: beurk.
                                                            // Recode this!
 	    }
 	  }
@@ -393,12 +427,8 @@ size_type number_of_facets() const
 
 	// update c2t3 for vertices of f
 	for (int j = 0; j < 4; j++) {
-	  if (j != i) {
-	    Vertex_handle v = c->vertex(j);
-	    v->set_in_complex_mark(true);
-	    v->set_in_complex_validity_mark(true);
-	    v->set_regular_or_boundary_validity_mark(false);
-	  }
+	  if (j != i)
+	    c->vertex(j)->invalidate_c2t3_cache();
 	}
       }
     }
@@ -411,11 +441,12 @@ size_type number_of_facets() const
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle>
-		e = make_ordered_pair(c->vertex(j),
-				      c->vertex(k));
-	      (edge_facet_counter[e]).first++;
 
+	      const std::pair<Vertex_handle, Vertex_handle> e =
+		make_ordered_pair(c->vertex(j),
+                                  c->vertex(k));
+
+	      (edge_facet_counter[e]).first++;
 	      (edge_facet_counter[e]).second.push_back(f);
 	    }
 	  }
@@ -423,21 +454,12 @@ size_type number_of_facets() const
 	
 	//for each vertex of f
 	for (int j = 0; j < 3; j++) {
-	  if (j != i) {
-	    Vertex_handle v = c->vertex(j);
-	    v->set_in_complex_mark(true);
-	    v->set_in_complex_validity_mark(true);
-	    v->set_regular_or_boundary_validity_mark(false);
-	    }
-	  }
+	  if (j != i)
+	    c->vertex(j)->invalidate_c2t3_cache();
 	}
       }
     }
-
-//   void remove_from_complex (const Vertex_handle v) {
-//     v->set_in_complex_validity_mark_(false);
-//     v->set_regular_or_boundary_validity_mark(false);
-//   }
+  }
 
   void remove_from_complex (const Facet& f) {
     remove_from_complex (f.first, f.second);
@@ -462,23 +484,28 @@ size_type number_of_facets() const
 	for (int j = 0; j < 4; j++) {
 	  for (int k = j + 1; k < 4; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle>
-		e = make_ordered_pair(c->vertex(j),
-				      c->vertex(k));
-	      (edge_facet_counter[e]).first--;
 
-	      (edge_facet_counter[e]).second.remove(f);
+	      const std::pair<Vertex_handle, Vertex_handle> e =
+		make_ordered_pair(c->vertex(j),
+                                  c->vertex(k));
+
+              typename Edge_facet_counter::iterator it =
+                edge_facet_counter.find(e);
+
+              CGAL_assertion( it != edge_facet_counter.end() );
+              
+	      if(--(it->second.first) > 0)
+                it->second.second.remove(f);
+              else
+                edge_facet_counter.erase(it);
 	    }
 	  }
 	}
 
 	// remove f in graph of each of its vertex
 	for (int j = 0; j < 4; j++) {
-	  if (j != i) {
-	    Vertex_handle v = c->vertex(j);
-	    v->set_in_complex_validity_mark(false);
-	    v->set_regular_or_boundary_validity_mark(false);
-	  }
+	  if (j != i)
+	    c->vertex(j)->invalidate_c2t3_cache();
 	}
       }
     }
@@ -492,22 +519,27 @@ size_type number_of_facets() const
 	for (int j = 0; j < 3; j++) {
 	  for (int k = j + 1; k < 3; k++) {
 	    if ( (i != j) && (i != k) ){
-	      std::pair<Vertex_handle, Vertex_handle>
-		e = make_ordered_pair(c->vertex(j),
-				      c->vertex(k));
-	      (edge_facet_counter[e]).first--;
 
-	      (edge_facet_counter[e]).second.remove(f);
+	      const std::pair<Vertex_handle, Vertex_handle> e =
+		make_ordered_pair(c->vertex(j),
+                                  c->vertex(k));
+
+              typename Edge_facet_counter::iterator it =
+                edge_facet_counter.find(e);
+
+              CGAL_assertion( it != edge_facet_counter.end() );
+              
+	      if(--(it->second.first) > 0)
+                it->second.second.remove(f);
+              else
+                edge_facet_counter.erase(it);
 	    }
 	  }
 	}
 
 	for (int j = 0; j < 3; j++) {
-	  if (j != i) {
-	    Vertex_handle v = c->vertex(j);
-	    v->set_in_complex_validity_mark(false);
-	    v->set_regular_or_boundary_validity_mark(false);
-	  }
+	  if (j != i)
+	    c->vertex(j)->invalidate_c2t3_cache();
 	}
       }
     }
@@ -515,43 +547,43 @@ size_type number_of_facets() const
 
   Facet_iterator facets_begin(){
     return filter_iterator(tr.finite_facets_begin(),
-			   Not_in_complex());
+			   Not_in_complex(this));
   }
 
   Facet_iterator facets_end(){
     return filter_iterator(tr.finite_facets_end(),
-			   Not_in_complex());
+			   Not_in_complex(this));
   }
 
   
   Edge_iterator edges_begin(){
     return filter_iterator(tr.finite_edges_begin(),
-			   Not_in_complex());
+			   Not_in_complex(this));
   }
 
   Edge_iterator edges_end(){
     return filter_iterator(tr.finite_edges_end(),
-			   Not_in_complex());
+			   Not_in_complex(this));
   }
 
   Vertex_iterator vertices_begin(){
     return filter_iterator(tr.finite_vertices_begin(),
-			   Not_in_complex());
+			   Not_in_complex(this));
   }
 
   Vertex_iterator vertices_end(){
     return filter_iterator(tr.finite_vertices_end(),
-			   Not_in_complex());
+			   Not_in_complex(this));
   }
 
   Boundary_edges_iterator boundary_edges_begin() {
     return filter_iterator(tr.finite_edges_begin(),
-			   Not_on_boundary_tester()); 
+			   Not_on_boundary_tester(this)); 
   }
 
   Boundary_edges_iterator boundary_edges_end() {
     return filter_iterator(tr.finite_edges_end(),
-			   Not_on_boundary_tester()); 
+			   Not_on_boundary_tester(this)); 
   }
 
 
