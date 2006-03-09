@@ -1364,9 +1364,25 @@ public:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
+  inline FT x(const Tag_false&) const {
+    return CGAL::to_double(hx()) / CGAL::to_double(hw());
+  }
+  inline FT y(const Tag_false&) const {
+    return CGAL::to_double(hy()) / CGAL::to_double(hw());
+  }
 
-  FT x() const { return hx() / hw(); }
-  FT y() const { return hy() / hw(); }
+  inline FT x(const Tag_true&) const { return hx() / hw(); }
+  inline FT y(const Tag_true&) const { return hy() / hw(); }
+
+  inline FT x() const {
+    static typename Number_type_traits<FT>::Has_division has_division;
+    return x(has_division);
+  }
+
+  inline FT y() const {
+    static typename Number_type_traits<FT>::Has_division has_division;
+    return y(has_division);
+  }
 
   FT hx() const {
     if ( v_type == PPP ) { return ux_ppp; }

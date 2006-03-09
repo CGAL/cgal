@@ -171,6 +171,25 @@ public:
   typedef Line_2                     result_type;
   typedef Arity_tag<2>               Arity;
 
+private:
+  static
+  Point_2 midpoint(const Point_2& p, const Point_2& q, const Tag_false&) {
+    typedef typename Gt::FT  FT;
+    FT half(0.5);
+    return Point_2((p.x() + q.x()) * half,(p.y() + q.y()) * half);
+  }
+
+  static
+  Point_2 midpoint(const Point_2& p, const Point_2& q, const Tag_true&) {
+    return CGAL::midpoint(p, q);
+  }
+
+  static Point_2 midpoint(const Point_2& p, const Point_2& q) {
+    typedef typename Gt::FT  FT;
+    static typename Number_type_traits<FT>::Has_division  has_division;
+    return midpoint(p, q, has_division);
+  }
+
 public:
   Line_2 operator()(const Site_2& p, const Site_2& q) const
   {

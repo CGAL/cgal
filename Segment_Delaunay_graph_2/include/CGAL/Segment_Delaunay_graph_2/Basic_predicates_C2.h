@@ -60,7 +60,7 @@ public:
     return has_sqrt;
   }
 
-  static FT_Has_sqrt ft_has_sqrt() {
+  static const FT_Has_sqrt& ft_has_sqrt() {
     static FT_Has_sqrt has_sqrt;
     return has_sqrt;
   }
