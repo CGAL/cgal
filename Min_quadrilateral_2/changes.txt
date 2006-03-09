@@ -2,6 +2,9 @@
 //	Revision History for package Min_quadrilateral_2
 //=====================================================================
 
+9 March 2006 Andreas Fabri
+- Changed names of examples
+
 5 August 2005 Sylvain Pion
 - Remove CGAL_STD.
 
