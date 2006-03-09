@@ -1,16 +1,24 @@
- 6 March 2006 Andreas Fabri
-- Replaced \bf by \em in the definitions in the manual.
-
- 3 March 2006 Andreas Fabri
-- Minor modifications in the manual
-
+9 March 2006 Fernando Cacciola
+ - Manual improvements
+8 March 2006 Fernando Cacciola
+ - Manual improvements
+7 March 2006 Fernando Cacciola
+ - Manual<->code sync
+6 March 2006 Fernando Cacciola
+ - Bug fix: Removed erroneous event discarding logic. All the 900 cases verified
+6 March 2006 Andreas Fabri
+ - Replaced \bf by \em in the definitions in the manual.
+3 March 2006 Andreas Fabri
+ - Minor modifications in the manual
+2 March 2006 Fernando Cacciola
+ - Bug fix: All-collinear (rather than just two) cases handled correctly.
+1 March 2006 Fernando Cacciola
+ - Bug in split event look up fixed (events were discarded earlier in time)
 25 February 2006 Fernando Cacciola
-- Skeleton validity check added
-- Actual construction and validity check of skeletons for a sample set added to the test suite
-- Some drawings added to the documentation
-
+ - Skeleton validity check added
+ - Actual construction and validity check of skeletons for a sample set added to the test suite
+ - Some drawings added to the documentation
 16 February 2006 Fernando Cacciola
-- Bug fixes. ALL current sample cases pass for the first time (with both the SLS and the Offseting)
+ - Bug fixes. ALL current sample cases pass for the first time (with both the SLS and the Offseting)
+ - Some drawings added to the documentation
 
-07 February 2005 Andreas Fabri
-- Put the file under version control.
