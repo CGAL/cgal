@@ -844,18 +844,18 @@ public:
 
   void draw(Vertex_const_handle v) const
   { 
-    Point_3 bp = N.point(v);
+    Point_3 bp = v->point();
     CGAL_NEF_TRACEN("vertex " << bp);
-    ppoly_->push_back(double_point(bp), N.mark(v)); 
+    ppoly_->push_back(double_point(bp), v->mark()); 
   }
 
   void draw(Halfedge_const_handle e) const
   { 
-    Vertex_const_handle s = N.source(e);
-    Vertex_const_handle t = N.source(N.twin(e));
-    Segment_3 seg(N.point(s),N.point(t));
+    Vertex_const_handle s = e->source();
+    Vertex_const_handle t = e->twin()->source();
+    Segment_3 seg(s->point(), t->point());
     CGAL_NEF_TRACEN("edge " << seg);
-    ppoly_->push_back(double_segment(seg), N.mark(e)); 
+    ppoly_->push_back(double_segment(seg), e->mark()); 
   }
 
   void draw(Halffacet_const_handle f) const
@@ -867,16 +867,16 @@ public:
 	SHalfedge_const_handle h = fc;
 	SHalfedge_around_facet_const_circulator hc(h), he(hc);
 	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
-	  Point_3 sp = N.point(N.source(hc));
+	  Point_3 sp = hc->source()->source()->point();
 	      CGAL_NEF_TRACEN(" ");CGAL_NEF_TRACEN("facet" << sp);
 	  g.push_back_vertex(double_point(sp));
 	}
       }
-    Vector_3 v = N.plane(f).orthogonal_vector();
+    Vector_3 v = f->plane().orthogonal_vector();
     g.set_normal(CGAL::to_double(v.x()), 
 		 CGAL::to_double(v.y()), 
 		 CGAL::to_double(v.z()), 
-		 N.mark(f));
+		 f->mark());
     ppoly_->push_back(g);
   }
 
