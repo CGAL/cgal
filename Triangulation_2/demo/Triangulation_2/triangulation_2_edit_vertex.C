@@ -17,6 +17,8 @@
 //
 // Author(s)     : Laurent Rineau
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "triangulation_2_edit_vertex.h"
