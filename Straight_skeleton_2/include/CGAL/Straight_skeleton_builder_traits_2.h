@@ -49,6 +49,34 @@ struct Exist_sls_event_2 : Sls_functor_base_2<K>
   }
 };
 
+template<class K>
+struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
+{
+  typedef Sls_functor_base_2<K> Base ;
+
+  typedef typename Base::Point_2 Point_2 ;
+  typedef typename Base::Triedge Triedge ;
+
+  typedef Uncertain<Comparison_result> result_type ;
+  typedef Arity_tag<3>                 Arity ;
+
+  Uncertain<Comparison_result> operator() ( Point_2 const& aP
+                                          , Triedge const& aL
+                                          , Triedge const& aR
+                                          ) const
+  {
+    return compare_offset_lines_isec_dist_to_pointC2(toVertex(aP),aL,aR) ;
+  }
+
+  Uncertain<Comparison_result> operator() ( Triedge const& aS
+                                          , Triedge const& aL
+                                          , Triedge const& aR
+                                          ) const
+  {
+    return compare_offset_lines_isec_dist_to_pointC2(aS,aL,aR) ;
+  }
+
+};
 
 template<class K>
 struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
@@ -68,43 +96,6 @@ struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
 
     return rResult ;
   }
-};
-
-template<class K>
-struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
-{
-  typedef Sls_functor_base_2<K> Base ;
-
-  typedef typename Base::Point_2 Point_2 ;
-  typedef typename Base::Triedge Triedge ;
-
-  typedef Uncertain<Comparison_result> result_type ;
-  typedef Arity_tag<3>                 Arity ;
-
-  Uncertain<Comparison_result> operator() ( Point_2 const& aP
-                                          , Triedge const& aL
-                                          , Triedge const& aR
-                                          ) const
-  {
-    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_dist_to_pointC2(toVertex(aP),aL,aR) ;
-
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compapre_dist_to_point:","P=" << aP << "\nL=" << aL << "\nR=" << aR);
-
-    return rResult ;
-  }
-
-  Uncertain<Comparison_result> operator() ( Triedge const& aS
-                                          , Triedge const& aL
-                                          , Triedge const& aR
-                                          ) const
-  {
-    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_dist_to_pointC2(aS,aL,aR) ;
-
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compapre_dist_to_point:","S=" << aS << "\nL=" << aL << "\nR=" << aR);
-
-    return rResult ;
-  }
-
 };
 
 template<class K>
@@ -223,7 +214,7 @@ public:
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_sls_event_distance_to_seed_2>
     Compare_sls_event_distance_to_seed_2 ;
-
+    
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_sls_event_inside_offset_zone_2>
     Is_sls_event_inside_offset_zone_2 ;
 
@@ -270,8 +261,7 @@ public:
                             , C2F
                             >
     Compare_sls_event_distance_to_seed_2 ;
-
-
+    
   typedef Filtered_predicate< typename Exact    ::Is_sls_event_inside_offset_zone_2
                             , typename Filtering::Is_sls_event_inside_offset_zone_2
                             , C2E

@@ -49,18 +49,18 @@ public:
 
   bool is_bisector() const
   {
-    return !HBase::is_border() && !HBase::opposite()->is_border() ;
+    return !this->is_border() && !this->opposite()->is_border() ;
   }
 
   bool is_inner_bisector() const
   {
-    return !HBase::vertex()->is_contour() && !HBase::opposite()->HBase::vertex()->is_contour();
+    return !this->vertex()->is_contour() && !this->opposite()->vertex()->is_contour();
   }
 
-  Halfedge_const_handle defining_contour_edge() const { return HBase::face()->halfedge() ; }
-  Halfedge_handle       defining_contour_edge()       { return HBase::face()->halfedge() ; }
+  Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }
+  Halfedge_handle       defining_contour_edge()       { return this->face()->halfedge() ; }
 
-  void  set_opposite( Halfedge_handle h)  { HBase::set_opposite(h);}
+  //void  set_opposite( Halfedge_handle h)  { this->set_opposite(h);}
 
 
 private:
@@ -73,13 +73,13 @@ class Straight_skeleton_halfedge_base_2
 {
 public:
 
-  typedef Straight_skeleton_halfedge_base_base_2 < Refs, S > SSBase ;
+  typedef Straight_skeleton_halfedge_base_base_2 < Refs, S > SBase ;
 
-  typedef typename SSBase::HBase_base HBase_base ;
+  typedef typename SBase::HBase_base HBase_base ;
+  typedef typename SBase::Base       HBase ;
 
-  typedef typename SSBase::Base      HBase ;
-
-  typedef typename SSBase::Segment_2 Segment_2;
+  typedef typename SBase::Segment_2 Segment_2;
+  
   typedef typename HBase::Halfedge_handle Halfedge_handle ;
   typedef typename HBase::Vertex_handle   Vertex_handle ;
   typedef typename HBase::Face_handle     Face_handle ;
@@ -87,15 +87,15 @@ public:
 public:
 
   Straight_skeleton_halfedge_base_2() {}
-  Straight_skeleton_halfedge_base_2( int aID ) : SSBase(aID) {}
+  Straight_skeleton_halfedge_base_2( int aID ) : SBase(aID) {}
 
-  void  set_opposite( Halfedge_handle h)  { HBase_base::set_opposite(h);}
+  //void  set_opposite( Halfedge_handle h)  { this->set_opposite(h);}
 
 protected:
 
-  void set_prev  ( Halfedge_handle h ) { HBase_base::set_prev(h) ; }
-  void set_vertex( Vertex_handle   w ) { HBase_base::set_vertex(w); }
-  void set_face  ( Face_handle     g ) { HBase_base::set_face(g) ; }
+  //void set_prev  ( Halfedge_handle h ) { this->set_prev(h) ; }
+  //void set_vertex( Vertex_handle   w ) { this->set_vertex(w); }
+  //void set_face  ( Face_handle     g ) { this->set_face(g) ; }
 
 };
 CGAL_END_NAMESPACE

@@ -35,7 +35,7 @@ Polygon_offset_builder_2<Sls,Gt,Cont>::Polygon_offset_builder_2( Sls const& aSls
 
     if ( !lHE->is_bisector() && handle_assigned(lHE->face()) )
     {
-      CGAL_POLYOFFSET_SHOW (1, DrawBorder(lHE) ) ;
+      CGAL_POLYOFFSET_SHOW ( DrawBorder(lHE) ) ;
       mBorders.push_back(lHE);
     }
   }
@@ -112,8 +112,8 @@ void Polygon_offset_builder_2<Sls,Gt,Cont>::AddOffsetVertex( FT aTime, Halfedge_
 
   Point_2 lP = Construct_offset_point(aTime,aHook);
 
-  CGAL_POLYOFFSET_SHOW (1, DrawBisector(aHook) ) ;
-  CGAL_POLYOFFSET_SHOW (1, DrawOffset(aPoly,lP) ) ;
+  CGAL_POLYOFFSET_SHOW ( DrawBisector(aHook) ) ;
+  CGAL_POLYOFFSET_SHOW ( DrawOffset(aPoly,lP) ) ;
   CGAL_POLYOFFSET_TRACE(3,"Constructing offset point along B" << aHook->id() ) ;
 
   aPoly->push_back(lP);
@@ -150,7 +150,7 @@ OutputIterator Polygon_offset_builder_2<Sls,Gt,Cont>::TraceOffsetPolygon( FT aTi
     break ;
   }
 
-  CGAL_POLYOFFSET_SHOW (1, DrawOffset(lPoly,(*lPoly)[0]) ) ;
+  CGAL_POLYOFFSET_SHOW ( DrawOffset(lPoly,(*lPoly)[0]) ) ;
 
   if ( lPoly->size() >= 3 )
   {

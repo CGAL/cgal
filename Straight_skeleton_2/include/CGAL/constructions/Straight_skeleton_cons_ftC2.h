@@ -232,16 +232,19 @@ Rational<FT> compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> con
 
     num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
     den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+    
+    CGAL_SSTRAITS_TRACE("Non-vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
   }
   else
   {
     FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
 
-    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy + l0.a() * l2.c() - l2.a() * l0.c() ;
+    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy - l0.a() * l2.c() + l2.a() * l0.c() ;
     den = l0.a() * l0.b() * l2.b() - l0.b() * l0.b() * l2.a() + l2.a() - l0.a() ;
+    
+    CGAL_SSTRAITS_TRACE("Vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
   }
 
-  CGAL_SSTRAITS_TRACE("Degenerate Event:\nn=" << num << "\nd=" << den  )
 
   return Rational<FT>(num,den) ;
 }
@@ -312,7 +315,7 @@ Vertex<FT> construct_degenerate_offset_lines_isecC2 ( SortedTriedge<FT> const& t
   }
   else
   {
-    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy + l0.a() * l2.c() - l2.a() * l0.c() ;
+    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy - l0.a() * l2.c() + l2.a() * l0.c() ;
     den = l0.a() * l0.b() * l2.b() - l0.b() * l0.b() * l2.a() + l2.a() - l0.a() ;
   }
 

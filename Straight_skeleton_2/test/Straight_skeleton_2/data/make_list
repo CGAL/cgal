@@ -1,0 +1,1 @@
+ls --format=single-column -S -r

@@ -32,10 +32,12 @@ public:
 
   void draw()
   {
-    typename Sls::Rep::Construct_segment_2 construct_segment ;
+    typename Sls::Traits::Construct_segment_2 construct_segment ;
 
     widget->lock();
 
+    int watchdog_limit = mSls.size_of_halfedges();
+    
     for ( Face_const_iterator fit = mSls.faces_begin(), efit = mSls.faces_end()
           ; fit != efit
           ; ++ fit
@@ -43,6 +45,9 @@ public:
     {
       Halfedge_const_handle hstart = fit->halfedge();
       Halfedge_const_handle he     = hstart ;
+      
+      int watchdog = watchdog_limit ;
+      
       do
       {
         if ( he == null_halfedge )
@@ -84,7 +89,7 @@ public:
         }
         he = he->next();
       }
-      while ( he != hstart ) ;
+      while ( -- watchdog > 0 && he != hstart ) ;
     }
 
     widget->unlock();

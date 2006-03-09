@@ -31,21 +31,21 @@
 Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*     w
                               ,QMainWindow*         mw
                               ,demo::Regions const& in
-                              ,demo::Sls     const& sls
+                              ,demo::SSkel   const& sskel
                               ,demo::Regions const& out
                               ) : QToolBar(mw, "LT"),
      nr_of_buttons(0)
   {
-    showI   = new Qt_layer_show_regions <demo::Regions>(in,CGAL::RED);
-    showSLS = new Qt_layer_show_skeleton<demo::Sls>    (sls);
-    showO   = new Qt_layer_show_regions <demo::Regions>(out,CGAL::BLACK);
+    showI     = new Qt_layer_show_regions <demo::Regions>(in,CGAL::RED);
+    showSSkel = new Qt_layer_show_skeleton<demo::SSkel>  (sskel);
+    showO     = new Qt_layer_show_regions <demo::Regions>(out,CGAL::BLACK);
 
     //set the widget
     widget = w;
     window = mw;
 
     widget->attach(showI);
-    widget->attach(showSLS);
+    widget->attach(showSSkel);
     widget->attach(showO);
 
 
@@ -78,7 +78,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*     w
     connect(but[0], SIGNAL(stateChanged(int)),
         showI, SLOT(stateChanged(int)));
     connect(but[1], SIGNAL(stateChanged(int)),
-        showSLS, SLOT(stateChanged(int)));
+        showSSkel, SLOT(stateChanged(int)));
     connect(but[2], SIGNAL(stateChanged(int)),
         showO, SLOT(stateChanged(int)));
   }
@@ -86,7 +86,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*     w
   Layers_toolbar::~Layers_toolbar()
   {
     delete showI;
-    delete showSLS;
+    delete showSSkel;
     delete showO;
     delete button_group;
   };

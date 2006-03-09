@@ -128,6 +128,15 @@ inline Uncertain<bool> certified_is_larger_or_equal(const NT1& n1, const NT2& n2
   return certified_is_larger_or_equal(certified_compare(n1,n2)) ;
 }
 
+template <class NT>
+inline Uncertain<Sign> certified_sign_of_determinant2x2( const NT& a00
+                                                       , const NT& a01
+                                                       , const NT& a10
+                                                       , const NT& a11
+                                                       )
+{
+  return enum_cast<Sign>(certified_compare(a00*a11, a10*a01)) ;
+}
 
 CGAL_END_NAMESPACE
 

@@ -33,12 +33,10 @@
       <prio>0</prio>
       <dontact>false</dontact>
       <makebin/>
-      <makeoptions>DEBUGGING=yes</makeoptions>
+      <makeoptions>CGAL_MAKEFILE=/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6_g++-4.0.2 DEBUGGING=yes</makeoptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
-        <default>
-          <envvar value="/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6_g++-4.0.2" name="CGAL_MAKEFILE" />
-        </default>
+        <default/>
       </environments>
       <defaulttarget/>
     </make>

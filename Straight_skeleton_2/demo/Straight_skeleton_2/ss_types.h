@@ -23,19 +23,19 @@
 namespace demo
 {
 
-typedef CGAL::Straight_skeleton_2<K>                            Sls;
-typedef CGAL::Straight_skeleton_builder_traits_2<K>             SlsBuilderTraits;
-typedef CGAL::Straight_skeleton_builder_2<SlsBuilderTraits,Sls> SlsBuilder;
+typedef CGAL::Straight_skeleton_2<K>                                SSkel;
+typedef CGAL::Straight_skeleton_builder_traits_2<K>                 SSkelBuilderTraits;
+typedef CGAL::Straight_skeleton_builder_2<SSkelBuilderTraits,SSkel> SSkelBuilder;
 
-typedef CGAL::Polygon_offset_builder_traits_2<K>                        OffsetBuilderTraits;
-typedef CGAL::Polygon_offset_builder_2<Sls,OffsetBuilderTraits,Polygon> OffsetBuilder;
+typedef CGAL::Polygon_offset_builder_traits_2<K>                          OffsetBuilderTraits;
+typedef CGAL::Polygon_offset_builder_2<SSkel,OffsetBuilderTraits,Polygon> OffsetBuilder;
 
-typedef Sls::Halfedge_iterator     Halfedge_iterator;
-typedef Sls::Vertex_handle         Vertex_handle;
-typedef Sls::Face_const_iterator   Face_const_iterator;
-typedef Sls::Halfedge_const_handle Halfedge_const_handle ;
-typedef Sls::Vertex_const_handle   Vertex_const_handle ;
+typedef SSkel::Halfedge_iterator     Halfedge_iterator;
+typedef SSkel::Vertex_handle         Vertex_handle;
+typedef SSkel::Face_const_iterator   Face_const_iterator;
+typedef SSkel::Halfedge_const_handle Halfedge_const_handle ;
+typedef SSkel::Vertex_const_handle   Vertex_const_handle ;
 
-typedef CGAL::HalfedgeDS_const_decorator<Sls> Sls_const_decorator ;
+typedef CGAL::HalfedgeDS_const_decorator<SSkel> SSkel_const_decorator ;
 
 }

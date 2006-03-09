@@ -217,6 +217,8 @@ private:
 #define STATS
 //#define CGAL_SLS_PROFILING_ENABLED
 
+#define VERBOSE_VALIDATE false
+
 #if defined(STATS)
 #define LOGSTATS(m) std::cout << m << std::endl ;
 #else
@@ -325,8 +327,8 @@ const QString my_title_string("Straight_skeleton_2 Demo");
 
 int current_state;
 
-Sls     sls;
-bool    sls_valid ;
+SSkel   sskel;
+bool    sskel_valid ;
 Regions input ;
 Regions output ;
 Doubles offsets ;
@@ -422,7 +424,7 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("Generate Skeleton", this, SLOT(create_sls()), CTRL+Key_G );
+    draw->insertItem("Generate Skeleton", this, SLOT(create_skeleton()), CTRL+Key_G );
     draw->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_O );
     draw->insertItem("Set Offset Distance", this, SLOT(set_offset()));
 
@@ -440,7 +442,7 @@ public:
     newtoolbar = new Tools_toolbar(widget, this);
 
     //the new scenes toolbar
-    vtoolbar = new Layers_toolbar(widget, this, input, sls, output);
+    vtoolbar = new Layers_toolbar(widget, this, input, sskel, output);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -464,7 +466,7 @@ public slots:
     widget->lock();
     widget->clear();
     input.clear();
-    sls.clear();
+    sskel.clear();
     offsets.clear();
     output.clear();
     // set the Visible Area to the Interval
@@ -512,7 +514,7 @@ private slots:
   };
 
 
-  void create_sls()
+  void create_skeleton()
   {
     if ( input.size() > 0 )
     {
@@ -521,15 +523,15 @@ private slots:
       LOGSTATS("Creating Straight Skeleton...");
       CGAL::Real_timer t ;
       t.start();
-      SlsBuilder builder ;
+      SSkelBuilder builder ;
       for( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
       {
         builder.enter_contour((*bit)->vertices_begin(),(*bit)->vertices_end());
       }
-      sls = builder.construct_skeleton() ;
+      sskel = builder.construct_skeleton() ;
       t.stop();
-      sls_valid = Sls_const_decorator(sls).is_valid(false,3);
-      LOGSTATS( (sls_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << t.time() << " seconds.");
+      sskel_valid = SSkel_const_decorator(sskel).is_valid(VERBOSE_VALIDATE,3);
+      LOGSTATS( (sskel_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << t.time() << " seconds.");
 #ifdef CGAL_SLS_PROFILING_ENABLED
       LogProfilingResults();
 #endif
@@ -540,7 +542,7 @@ private slots:
 
   void create_offset()
   {
-    if ( sls_valid )
+    if ( sskel_valid )
     {
       LOGSTATS("Creating Offsets...");
       output.clear();
@@ -553,7 +555,7 @@ private slots:
         double offset = *i ;
         LOGSTATS("Creating offsets at " << offset );
         RegionPtr lRegion( new Region ) ;
-        OffsetBuilder lOffsetBuilder(sls);
+        OffsetBuilder lOffsetBuilder(sskel);
         lOffsetBuilder.construct_offset_polygons(offset, std::back_inserter(*lRegion) );
         LOGSTATS("Done.");
         if ( lRegion->size() > 0 )
@@ -764,7 +766,7 @@ private slots:
     }
 
     output.clear();
-    sls.clear();
+    sskel.clear();
     widget->redraw();
     something_changed();
   }

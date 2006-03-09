@@ -159,31 +159,31 @@ public:
 
   FT time() const { return mTime ; }
 
-  Halfedge_const_handle primary_bisector() const { return Base::halfedge()->next(); }
+  Halfedge_const_handle primary_bisector() const { return this->halfedge()->next(); }
 
-  Halfedge_handle primary_bisector() { return Base::halfedge()->next(); }
+  Halfedge_handle primary_bisector() { return this->halfedge()->next(); }
 
   Halfedge_around_vertex_const_circulator incident_edges_begin() const
   {
-    return Halfedge_around_vertex_const_circulator(Base::halfedge());
+    return Halfedge_around_vertex_const_circulator(this->halfedge());
   }
 
   Halfedge_around_vertex_circulator incident_edges_begin()
   {
-    return Halfedge_around_vertex_circulator(Base::halfedge());
+    return Halfedge_around_vertex_circulator(this->halfedge());
   }
   Halfedge_across_incident_faces_const_circulator defining_contour_edges_begin() const
   {
-    return Halfedge_across_incident_faces_const_circulator(Base::halfedge());
+    return Halfedge_across_incident_faces_const_circulator(this->halfedge());
   }
 
   Halfedge_across_incident_faces_circulator defining_contour_edges_begin()
   {
-    return Halfedge_across_incident_faces_circulator(Base::halfedge());
+    return Halfedge_across_incident_faces_circulator(this->halfedge());
   }
 
-  bool is_skeleton() const { return  Base::halfedge()->is_bisector() ; }
-  bool is_contour () const { return !Base::halfedge()->is_bisector() ; }
+  bool is_skeleton() const { return  this->halfedge()->is_bisector() ; }
+  bool is_contour () const { return !this->halfedge()->is_bisector() ; }
 
 private:
 
@@ -218,7 +218,7 @@ public:
     Base(aID,aP,aTime)
  {}
 protected:
-  void set_halfedge( Halfedge_handle h ) { Base_base::set_halfedge(h) ; }
+//  void set_halfedge( Halfedge_handle h ) { this->set_halfedge(h) ; }
 };
 CGAL_END_NAMESPACE
 

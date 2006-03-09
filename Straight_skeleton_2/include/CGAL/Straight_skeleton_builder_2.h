@@ -33,47 +33,47 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Traits_, class Ssds_>
+template<class Traits_, class SSkel_>
 class Straight_skeleton_builder_2
 {
 public:
 
   typedef Traits_ Traits ;
-  typedef Ssds_   Ssds ;
+  typedef SSkel_  SSkel ;
 
-  typedef typename Ssds::Traits::Segment_2 Segment_2 ;
+  typedef typename SSkel::Traits::Segment_2 Segment_2 ;
 
 private :
 
   typedef typename Traits::FT      FT ;
   typedef typename Traits::Point_2 Point_2 ;
 
-  typedef typename Ssds::Vertex   Vertex ;
-  typedef typename Ssds::Halfedge Halfedge ;
-  typedef typename Ssds::Face     Face ;
+  typedef typename SSkel::Vertex   Vertex ;
+  typedef typename SSkel::Halfedge Halfedge ;
+  typedef typename SSkel::Face     Face ;
 
-  typedef typename Ssds::Vertex_const_handle   Vertex_const_handle ;
-  typedef typename Ssds::Halfedge_const_handle Halfedge_const_handle ;
-  typedef typename Ssds::Face_const_handle     Face_const_handle ;
+  typedef typename SSkel::Vertex_const_handle   Vertex_const_handle ;
+  typedef typename SSkel::Halfedge_const_handle Halfedge_const_handle ;
+  typedef typename SSkel::Face_const_handle     Face_const_handle ;
 
-  typedef typename Ssds::Vertex_const_iterator   Vertex_const_iterator ;
-  typedef typename Ssds::Halfedge_const_iterator Halfedge_const_iterator ;
-  typedef typename Ssds::Face_const_iterator     Face_const_iterator ;
+  typedef typename SSkel::Vertex_const_iterator   Vertex_const_iterator ;
+  typedef typename SSkel::Halfedge_const_iterator Halfedge_const_iterator ;
+  typedef typename SSkel::Face_const_iterator     Face_const_iterator ;
 
-  typedef typename Ssds::Vertex_handle   Vertex_handle ;
-  typedef typename Ssds::Halfedge_handle Halfedge_handle ;
-  typedef typename Ssds::Face_handle     Face_handle ;
+  typedef typename SSkel::Vertex_handle   Vertex_handle ;
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  typedef typename SSkel::Face_handle     Face_handle ;
 
-  typedef typename Ssds::Vertex_iterator   Vertex_iterator ;
-  typedef typename Ssds::Halfedge_iterator Halfedge_iterator ;
-  typedef typename Ssds::Face_iterator     Face_iterator ;
+  typedef typename SSkel::Vertex_iterator   Vertex_iterator ;
+  typedef typename SSkel::Halfedge_iterator Halfedge_iterator ;
+  typedef typename SSkel::Face_iterator     Face_iterator ;
 
-  typedef typename Ssds::size_type size_type ;
+  typedef typename SSkel::size_type size_type ;
 
-  typedef Straight_skeleton_builder_event_2<Ssds>        Event ;
-  typedef Straight_skeleton_builder_edge_event_2<Ssds>   EdgeEvent ;
-  typedef Straight_skeleton_builder_split_event_2<Ssds>  SplitEvent ;
-  typedef Straight_skeleton_builder_vertex_event_2<Ssds> VertexEvent ;
+  typedef Straight_skeleton_builder_event_2<SSkel>        Event ;
+  typedef Straight_skeleton_builder_edge_event_2<SSkel>   EdgeEvent ;
+  typedef Straight_skeleton_builder_split_event_2<SSkel>  SplitEvent ;
+  typedef Straight_skeleton_builder_vertex_event_2<SSkel> VertexEvent ;
 
   typedef boost::intrusive_ptr<Event> EventPtr ;
 
@@ -89,13 +89,12 @@ private :
   typedef CGAL_SLS_i::Edge   <FT> iEdge ;
   typedef CGAL_SLS_i::Triedge<FT> iTriedge ;
 
-  typedef typename Halfedge::SSBase SSBase;
-  typedef typename Halfedge::Base   HBase;
-  typedef typename Vertex::Base     VBase;
-  typedef typename Face::Base       FBase;
-  typedef typename Ssds::Base       SBase ;
+  typedef typename Halfedge::Base HBase;
+  typedef typename Vertex::Base   VBase;
+  typedef typename Face::Base     FBase;
+  typedef typename SSkel::Base    SBase ;
 
-  typedef Straight_skeleton_builder_2<Traits,Ssds> Self ;
+  typedef Straight_skeleton_builder_2<Traits,SSkel> Self ;
 
 public:
 
@@ -107,7 +106,7 @@ public:
   // template<class InputPointIterator> Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd ) ;
 
 
-  Ssds construct_skeleton() ;
+  SSkel construct_skeleton() ;
 
 private :
 
@@ -426,8 +425,7 @@ private :
     }
     else return EQUAL ;
   }
-
-
+  
   bool AreEventsSimultaneous( EventPtr const& aX, EventPtr const& aY ) const
   {
     Halfedge_handle xa = aX->border_a() ;
@@ -460,7 +458,18 @@ private :
                         , CreateTriedge(lSeedBorderA,lSeedBorderB,lSeedBorderC)
                         ) == SMALLER
          )
+      {
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+        FT lTime1, lTime2 ;
+        Point_2 lP1, lP2 ;
+        boost::tie(lTime1,lP1) = ConstructEventTimeAndPoint(CreateTriedge(aBorderA,aBorderB,aBorderC));
+        boost::tie(lTime2,lP2) = ConstructEventTimeAndPoint(CreateTriedge(lSeedBorderA,lSeedBorderB,lSeedBorderC));
+        CGAL_SSBUILDER_TRACE(1,"New event for N" << aSeedNode->id() << ", with t=" << lTime1 << ", is in the past (current t="
+                            << lTime2 << "). discarded." 
+                            ) ;
+#endif                            
         rResult = true ;
+      }   
     }
 
     return rResult ;
@@ -480,7 +489,7 @@ private :
 
   void EraseBisector( Halfedge_handle aB )
   {
-    mSS.SBase::edges_erase(aB);
+    mSSkel.SBase::edges_erase(aB);
   }
 
   BorderTriple GetDefiningBorders( Vertex_handle aA, Vertex_handle aB ) ;
@@ -578,7 +587,7 @@ private:
   PQ mPQ ;
 
   //Output
-  Ssds mSS ;
+  SSkel mSSkel ;
 
 public:
 
@@ -598,17 +607,17 @@ public:
       InputPointIterator lCurr = aBegin ;
       while ( lCurr != aEnd )
       {
-        Halfedge_handle lCCWBorder = mSS.SBase::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
+        Halfedge_handle lCCWBorder = mSSkel.SBase::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
         Halfedge_handle lCWBorder = lCCWBorder->opposite();
         mEdgeID += 2 ;
 
         mContourHalfedges.push_back(lCCWBorder);
 
-        Vertex_handle lVertex = mSS.SBase::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
+        Vertex_handle lVertex = mSSkel.SBase::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
         CGAL_SSBUILDER_TRACE(2,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
         mWrappedVertices.push_back( VertexWrapper(lVertex) ) ;
 
-        Face_handle lFace = mSS.SBase::faces_push_back( Face() ) ;
+        Face_handle lFace = mSSkel.SBase::faces_push_back( Face() ) ;
 
         lCCWBorder->HBase::set_face    (lFace);
         lFace     ->FBase::set_halfedge(lCCWBorder);
@@ -641,8 +650,8 @@ public:
           CGAL_SSBUILDER_TRACE(2,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
 
           CGAL_SSBUILDER_SHOW
-          ( 2
-          , SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lVertex->point(), CGAL::RED, "Border" ) ;
+          ( 
+            SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lVertex->point(), CGAL::RED, "Border" ) ;
             draw_.Release();
           )
         }
@@ -663,8 +672,7 @@ public:
       lFirstCCWBorder->opposite()->HBase::set_vertex(lPrevVertex);
 
       CGAL_SSBUILDER_SHOW
-      ( 2
-      , SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
+      ( SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
         draw_.Release();
       )
 
@@ -682,7 +690,7 @@ public:
                           );
     }
 
-    for ( Vertex_iterator v = mSS.SBase::vertices_begin(); v != mSS.SBase::vertices_end(); ++ v )
+    for ( Vertex_iterator v = mSSkel.SBase::vertices_begin(); v != mSSkel.SBase::vertices_end(); ++ v )
     {
       mSLAV.push_back(static_cast<Vertex_handle>(v));
       Vertex_handle lPrev = GetPrevInLAV(v) ;

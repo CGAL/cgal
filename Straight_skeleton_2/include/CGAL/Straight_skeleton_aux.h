@@ -48,9 +48,9 @@
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-#  define CGAL_SSBUILDER_SHOW(l,code) if ( l <= CGAL_STRAIGHT_SKELETON_ENABLE_SHOW ) { code }
+#  define CGAL_SSBUILDER_SHOW(code) { code }
 #else
-#  define CGAL_SSBUILDER_SHOW(l,code)
+#  define CGAL_SSBUILDER_SHOW(code)
 #endif
 
 #ifdef CGAL_POLYGON_OFFSET_ENABLE_TRACE
@@ -60,9 +60,9 @@
 #endif
 
 #ifdef CGAL_POLYGON_OFFSET_ENABLE_SHOW
-#  define CGAL_POLYOFFSET_SHOW(l,code) if ( l <= CGAL_POLYGON_OFFSET_ENABLE_SHOW ) { code }
+#  define CGAL_POLYOFFSET_SHOW(code) { code }
 #else
-#  define CGAL_POLYOFFSET_SHOW(l,code)
+#  define CGAL_POLYOFFSET_SHOW(code)
 #endif
 
 CGAL_BEGIN_NAMESPACE

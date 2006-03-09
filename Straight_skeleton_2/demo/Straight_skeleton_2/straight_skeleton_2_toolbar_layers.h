@@ -41,7 +41,7 @@ public:
   Layers_toolbar( CGAL::Qt_widget*     w
                 , QMainWindow*         mw
                 , demo::Regions const& in
-                , demo::Sls     const& sls
+                , demo::SSkel   const& sskel
                 , demo::Regions const& out
                 );
   ~Layers_toolbar();
@@ -53,7 +53,7 @@ private:
   int                 nr_of_buttons;
 
   Qt_layer_show_regions <demo::Regions> *showI;
-  Qt_layer_show_skeleton<demo::Sls>     *showSLS;
+  Qt_layer_show_skeleton<demo::SSkel>   *showSSkel;
   Qt_layer_show_regions <demo::Regions> *showO;
 
 };//end class

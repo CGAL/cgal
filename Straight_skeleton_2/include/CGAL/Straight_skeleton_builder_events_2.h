@@ -22,22 +22,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class R>
+template<class SSkel>
 class Straight_skeleton_builder_event_2 : public Ref_counted_base
 {
 public:
 
-  typedef Straight_skeleton_builder_event_2<R> Self ;
+  typedef Straight_skeleton_builder_event_2<SSkel> Self ;
 
   typedef boost::intrusive_ptr<Self> SelfPtr ;
 
-  typedef typename R::Rep Rep ;
+  typedef typename SSkel::Traits Traits ;
 
-  typedef typename Rep::Point_2 Point_2 ;
-  typedef typename Rep::FT      FT ;
+  typedef typename Traits::Point_2 Point_2 ;
+  typedef typename Traits::FT      FT ;
 
-  typedef typename R::Halfedge_handle Halfedge_handle ;
-  typedef typename R::Vertex_handle   Vertex_handle ;
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
   enum Type { cEdgeEvent, cSplitEvent, cVertexEvent } ;
 
@@ -73,7 +73,7 @@ public:
   void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
 
   friend std::ostream& operator<< ( std::ostream& ss
-                                   ,Straight_skeleton_builder_event_2<R> const& e
+                                   ,Straight_skeleton_builder_event_2<SSkel> const& e
                                   )
   {
     ss << "[" ;
@@ -99,19 +99,19 @@ private :
   bool            mExcluded ;
 } ;
 
-template<class R>
-class Straight_skeleton_builder_edge_event_2 : public Straight_skeleton_builder_event_2<R>
+template<class SSkel>
+class Straight_skeleton_builder_edge_event_2 : public Straight_skeleton_builder_event_2<SSkel>
 {
 
-  typedef Straight_skeleton_builder_event_2<R> Base ;
+  typedef Straight_skeleton_builder_event_2<SSkel> Base ;
 
-  typedef typename R::Rep Rep ;
+  typedef typename SSkel::Traits Traits ;
 
-  typedef typename Rep::Point_2 Point_2 ;
-  typedef typename Rep::FT      FT ;
+  typedef typename Traits::Point_2 Point_2 ;
+  typedef typename Traits::FT      FT ;
 
-  typedef typename R::Halfedge_handle Halfedge_handle ;
-  typedef typename R::Vertex_handle   Vertex_handle ;
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
   typedef typename Base::Type Type ;
 
@@ -129,7 +129,7 @@ public:
     , mRSeed(aRSeed)
   {}
 
-  virtual Type type() const { return Base::cEdgeEvent ; }
+  virtual Type type() const { return this->cEdgeEvent ; }
 
   virtual Vertex_handle seed0() const { return mLSeed ; }
   virtual Vertex_handle seed1() const { return mRSeed ; }
@@ -148,19 +148,19 @@ private :
   Vertex_handle mRSeed ;
 } ;
 
-template<class R>
-class Straight_skeleton_builder_split_event_2 : public Straight_skeleton_builder_event_2<R>
+template<class SSkel>
+class Straight_skeleton_builder_split_event_2 : public Straight_skeleton_builder_event_2<SSkel>
 {
 
-  typedef Straight_skeleton_builder_event_2<R> Base ;
+  typedef Straight_skeleton_builder_event_2<SSkel> Base ;
 
-  typedef typename R::Rep Rep ;
+  typedef typename SSkel::Traits Traits ;
 
-  typedef typename Rep::Point_2 Point_2 ;
-  typedef typename Rep::FT      FT ;
+  typedef typename Traits::Point_2 Point_2 ;
+  typedef typename Traits::FT      FT ;
 
-  typedef typename R::Halfedge_handle Halfedge_handle ;
-  typedef typename R::Vertex_handle   Vertex_handle ;
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  typedef typename SSkel::Vertex_handle   Vertex_handle ;
   typedef typename Base::Type Type ;
 public:
 
@@ -176,7 +176,7 @@ public:
     , mOppositeBorder(aOppositeBorder)
   {}
 
-  virtual Type type() const { return Base::cSplitEvent ; }
+  virtual Type type() const { return this->cSplitEvent ; }
 
   virtual Vertex_handle seed0() const { return mSeed ; }
   virtual Vertex_handle seed1() const { return mSeed ; }
@@ -198,19 +198,19 @@ private :
   Halfedge_handle mOppositeBorder ;
 } ;
 
-template<class R>
-class Straight_skeleton_builder_vertex_event_2 : public Straight_skeleton_builder_event_2<R>
+template<class SSkel>
+class Straight_skeleton_builder_vertex_event_2 : public Straight_skeleton_builder_event_2<SSkel>
 {
 
-  typedef Straight_skeleton_builder_event_2<R> Base ;
+  typedef Straight_skeleton_builder_event_2<SSkel> Base ;
 
-  typedef typename R::Rep Rep ;
+  typedef typename SSkel::Traits Traits ;
 
-  typedef typename Rep::Point_2 Point_2 ;
-  typedef typename Rep::FT      FT ;
+  typedef typename Traits::Point_2 Point_2 ;
+  typedef typename Traits::FT      FT ;
 
-  typedef typename R::Halfedge_handle Halfedge_handle ;
-  typedef typename R::Vertex_handle   Vertex_handle ;
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
   typedef typename Base::Type Type ;
 
@@ -230,7 +230,7 @@ public:
     , mRSeed(aRSeed)
   {}
 
-  virtual Type type() const { return Base::cVertexEvent ; }
+  virtual Type type() const { return this->cVertexEvent ; }
 
   Halfedge_handle border_d() const { return mBorderD ; }
 
