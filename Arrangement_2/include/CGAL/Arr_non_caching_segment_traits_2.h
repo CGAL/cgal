@@ -168,7 +168,8 @@ public:
       const Point_2 & left = min_vertex(cv);
       const Point_2 & right = max_vertex(cv);
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on(p, cv, Has_exact_division())&&
+        (Segment_assertions::_assert_is_point_on (p, cv,
+                                                  Has_exact_division()) &&
          compare_xy(left, p) == SMALLER &&
          compare_xy(right, p) == LARGER);
 

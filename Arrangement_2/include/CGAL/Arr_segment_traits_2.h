@@ -57,8 +57,7 @@ public:
   typedef Tag_true                        Has_merge_category;
 
   typedef typename Kernel::Line_2         Line_2;
-  typedef Segment_assertions<Arr_segment_traits_2<Kernel> >
-                                          Segment_assertions;
+  typedef Segment_assertions<Kernel>      Segment_assertions;
 
   /*!
    * \class Representation of a segement with cached data.
@@ -154,10 +153,10 @@ public:
       Kernel   kernel;
 
       CGAL_precondition(
-        Segment_assertions::_assert_is_point_on(source, l,
-                                                Has_exact_division()) &&
-        Segment_assertions::_assert_is_point_on(target,l,
-                                                Has_exact_division())
+        Segment_assertions::_assert_is_point_on (source, l,
+                                                 Has_exact_division()) &&
+        Segment_assertions::_assert_is_point_on (target, l,
+                                                 Has_exact_division())
         );
 
       is_vert = kernel.is_vertical_2_object()(l);
@@ -538,10 +537,11 @@ public:
         //Compare_y_at_x_2              compare_y_at_x;
       );
 
+      typedef typename Kernel::Segment_2        Segment_2;
       CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, cv1, 
+        (Segment_assertions::_assert_is_point_on (p, (Segment_2) cv1, 
                                                   Has_exact_division()) &&
-         Segment_assertions::_assert_is_point_on (p, cv2,
+         Segment_assertions::_assert_is_point_on (p, (Segment_2) cv2,
                                                   Has_exact_division()));
 
       CGAL_precondition (compare_xy(cv1.left(), p) == SMALLER &&
@@ -593,10 +593,11 @@ public:
         //Compare_y_at_x_2              compare_y_at_x;
       );
 
+      typedef typename Kernel::Segment_2        Segment_2;
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, cv1, 
+        (Segment_assertions::_assert_is_point_on (p, (Segment_2) cv1, 
                                                   Has_exact_division()) &&
-         Segment_assertions::_assert_is_point_on (p, cv2,
+         Segment_assertions::_assert_is_point_on (p, (Segment_2) cv2,
                                                   Has_exact_division()));
 
       CGAL_precondition (compare_xy(cv1.right(), p) == LARGER &&
@@ -717,8 +718,9 @@ public:
                                                  kernel.compare_xy_2_object();
       );
 
+      typedef typename Kernel::Segment_2        Segment_2;
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, cv,
+        (Segment_assertions::_assert_is_point_on (p, (Segment_2) cv,
                                                   Has_exact_division()) &&
          compare_xy(cv.left(), p) == SMALLER &&
          compare_xy(cv.right(), p) == LARGER);

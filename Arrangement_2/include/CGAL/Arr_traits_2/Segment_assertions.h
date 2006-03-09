@@ -22,28 +22,26 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Traits_>
+template <class Kernel_>
 class Segment_assertions
 {
-  typedef Traits_                                  Traits_2;
-
-  typedef typename Traits_2::Point_2               Point_2;
-  typedef typename Traits_2::Kernel                Kernel;
-  typedef typename Kernel::Line_2                  Line_2;
-  typedef typename Traits_2::X_monotone_curve_2    X_monotone_curve_2;
+  typedef Kernel_                             Kernel;
+  typedef typename Kernel::Point_2            Point_2;
+  typedef typename Kernel::Line_2             Line_2;
+  typedef typename Kernel::Segment_2          Segment_2;
 
 public:
 
   static bool _assert_is_point_on (const Point_2& pt,
-                                   const X_monotone_curve_2& cv,
+                                   const Segment_2& s,
                                    Tag_true tag)
   {
-    Traits_2    traits;
-    return (traits.compare_y_at_x_2_object() (pt, cv) == EQUAL);
+    Kernel      kernel;
+    return (kernel.has_on_2_object() (s, pt));
   }
 
   static bool _assert_is_point_on (const Point_2& pt,
-                                   const X_monotone_curve_2& cv,
+                                   const Segment_2& s,
                                    Tag_false tag)
   {
     return (true);
