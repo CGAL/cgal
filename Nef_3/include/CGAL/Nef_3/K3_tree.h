@@ -560,14 +560,20 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
   };
 
 private:
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   bool reference_counted;
+#endif
   Traits traits;
   Node* root;
   int max_depth;
   Bounding_box_3 bounding_box;
 public:
   template<typename SNC_structure>
-  K3_tree(SNC_structure* W) : reference_counted(false) {
+  K3_tree(SNC_structure* W) 
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+    : reference_counted(false) 
+#endif
+    {
 
     typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
     typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
@@ -649,11 +655,11 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
  bounding_box = objects_bbox(objects);
  //CGAL_NEF_TRACEN("bounding box:"<<objects_bbox);
  
-
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING    
     Point_3 p1(1,2,7), p2(p1);
     reference_counted = (&(p1.hx()) == &(p2.hx()));
     CGAL_NEF_TRACEN("reference counted " << reference_counted);
-	
+#endif
     root = build_kdtree( objects, v_end, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
@@ -834,7 +840,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
 #endif
 #ifdef CGAL_NEF3_FACET_WITH_BOX
     else if( CGAL::assign(pf, *o)) {
-      if( level) os << "partial" << std::endl;
+      if( level) pf.debug();
       ++p_count;      
     }
 #endif
@@ -915,7 +921,7 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
 	           Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
   CGAL_NEF_TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
-  CGAL_NEF_TRACEN( "build_kdtree: "<<dump_object_list(O));
+  CGAL_NEF_TRACEN( "build_kdtree: "<<dump_object_list(O,1));
   if( !can_set_be_divided(O.begin(), v_end, depth)) {
     CGAL_NEF_TRACEN("build_kdtree: set cannot be divided");
     return new Node( parent, 0, 0, Plane_3(), O);
@@ -926,7 +932,11 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   Object_list O1, O2;
   Vertex_handle vm,vx;
   CGAL::assign(vm,*median);
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Side_of_plane sop(reference_counted);
+#else
+  Side_of_plane sop;
+#endif
   for(Object_iterator oi=O.begin();oi!=median;++oi) {
     O1.push_back(*oi);
     CGAL::assign(vx,*oi);
