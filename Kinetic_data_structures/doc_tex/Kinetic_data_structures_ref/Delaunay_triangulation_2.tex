@@ -19,7 +19,7 @@
 \ccDefinition
   
 The class \ccRefName\ maintains a Delaunay triangulation on top of the
-points contained in a Kinetic::ActiveObjectsTable. It has one main method
+points contained in a \ccc{Kinetic::ActiveObjectsTable}. It has one main method
 of interest. \ccc{triangulation()} which returns the triangulation it
 is maintaining. 
 
@@ -47,7 +47,7 @@ whenever the triangulation changes.
 
 \ccTypes
 
-\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation<Traits, Tds>} built using the Kinetic::InstantaneousKernel as the kernel.}
+\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation<Traits, Tds>} built using the \ccc{Kinetic::InstantaneousKernel} as the kernel.}
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
