@@ -1,2 +1,5 @@
+9 March 2006 Joachim Reichel
+- LGPL copyright notice added to src/CGALQt/kds{,_deps}.makefile
+
 9 March 2006 Andreas Fabri
 - Made heading of unser and reference manual to be the same
