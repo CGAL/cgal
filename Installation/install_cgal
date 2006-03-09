@@ -4948,7 +4948,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	    if [ -n "${MATCH}" ]; then break; fi
         done
         if [ -n "${MATCH}" ]; then shift; continue; fi
-	for i in ${SUPPORT_PKGS}; do
+	for i in ${R_SUPPORT_PKGS}; do
 	    case ${_arg} in
 		-WITH-${i}*)
 		    enable_support "${i}"
