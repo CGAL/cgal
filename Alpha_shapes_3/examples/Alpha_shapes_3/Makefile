@@ -35,23 +35,23 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                example_alpha$(EXE_EXT) \
-                example_big_alpha$(EXE_EXT) \
-                example_weight$(EXE_EXT) 
+                alpha_shapes_3$(EXE_EXT) \
+                alpha_shapes_with_hierarchy_3$(EXE_EXT) \
+                weighted_alpha_shapes_3$(EXE_EXT) 
 
-example_alpha$(EXE_EXT): example_alpha$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_alpha example_alpha$(OBJ_EXT) $(LDFLAGS)
+alpha_shapes_3$(EXE_EXT): alpha_shapes_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)alpha_shapes_3 alpha_shapes_3$(OBJ_EXT) $(LDFLAGS)
 
-example_big_alpha$(EXE_EXT): example_big_alpha$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_big_alpha example_big_alpha$(OBJ_EXT) $(LDFLAGS)
+alpha_shapes_with_hierarchy_3$(EXE_EXT): alpha_shapes_with_hierarchy_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)alpha_shapes_with_hierarchy_3 alpha_shapes_with_hierarchy_3$(OBJ_EXT) $(LDFLAGS)
 
-example_weight$(EXE_EXT): example_weight$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_weight example_weight$(OBJ_EXT) $(LDFLAGS)
+weighted_alpha_shapes_3$(EXE_EXT): weighted_alpha_shapes_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)weighted_alpha_shapes_3 weighted_alpha_shapes_3$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   example_alpha.clean \
-                   example_big_alpha.clean \
-                   example_weight.clean 
+                   alpha_shapes_3.clean \
+                   alpha_shapes_with_hierarchy_3.clean \
+                   weighted_alpha_shapes_3.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

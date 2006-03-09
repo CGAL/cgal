@@ -7,43 +7,17 @@
 
 #CGAL_MAKEFILE =$(UTIL)/CGAL/CGAL-2.3-I-76/make/makefile_sparc_SunOS-5.6_g++-2.95.3_LEDA
 
-
-# for cygwin
-#\prisme\CGAL\CGAL-2.1-I-30\make\makefile_i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168
-
-# for others
-#$(UTIL)/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-#makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-#makefile_sparc_SunOS-5.6_g++-2.95.1_LEDA
-#makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
-#makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
-#makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
-#makefile_i686_Linux-2.2.10_g++-2.95.2_LEDA
-
-#CGAL_MAKEFILE=d:/cgal/CGAL-2.4-I-71/make/makefile_i686_CYGWINNT-5.0-1.3.3_bcc32.exe-5.51
-
 include $(CGAL_MAKEFILE)
 
 # ---------------------------------------------------------------------#
 #                    compiler flags
 #----------------------------------------------------------------------#
-# rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS =  -I../../include \
-	    -I../../../Triangulation_3/include \
 	    $(CGAL_CXXFLAGS) \
 	    -g 
 
-# -mcpu=ultrasparc -mtune=ultrasparc \
-# -B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
 
-# for cygwin
-#'-Iz:\Cgal-2.0\To_submit\Alpha_shapes_2\include' \
-
-# for others
-#-I$(HOME)/Cgal-2.0/To_submit/Alpha_shapes_2/include \
-#-mcpu=ultrasparc -mtune=ultrasparc  -Wall -W -O2 -DDEBUG
-#-B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
@@ -56,17 +30,17 @@ LDFLAGS = $(CGAL_WINDOW_LDFLAGS)
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: demo_alpha$(EXE_EXT) demo_weight$(EXE_EXT)
+all: alpha_shapes_3$(EXE_EXT) weighted_alpha_shapes_3$(EXE_EXT)
 
-demo_alpha$(EXE_EXT): demo_alpha$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_alpha  demo_alpha$(OBJ_EXT) $(LDFLAGS)
+alpha_shapes_3$(EXE_EXT): alpha_shapes_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)alpha_shapes_3  alpha_shapes_3$(OBJ_EXT) $(LDFLAGS)
 
-demo_weight$(EXE_EXT): demo_weight$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_weight  demo_weight$(OBJ_EXT) $(LDFLAGS)
+weighted_alpha_shapes_3$(EXE_EXT): weighted_alpha_shapes_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)weighted_alpha_shapes_3  weighted_alpha_shapes_3$(OBJ_EXT) $(LDFLAGS)
 
 clean:
 	\rm -f *.o  *.obj *.exe \
-                   demo_alpha$(EXE_EXT)  demo_weight$(EXE_EXT) \
+                   alpha_shapes_3$(EXE_EXT)  weighted_alpha_shapes_3$(EXE_EXT) \
                    core
 
 #---------------------------------------------------------------------#
