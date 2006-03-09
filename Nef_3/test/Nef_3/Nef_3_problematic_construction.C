@@ -112,14 +112,9 @@ private:
      CGAL_assertion(off_file != NULL);
 
      std::size_t discarded = CGAL::OFF_to_nef_3 (off_file, N, true);
+     CGAL_assertion(discarded == 0);
 
      std::cout << N;
-
-     // std::cout << N.number_of_vertices() << " "
-     //           << N.number_of_edges() << " "
-     //           << N.number_of_facets() << " "
-     //           << N.number_of_volumes() << " "
-     //           << discarded << std::endl;
   }
 
 public:
@@ -150,21 +145,20 @@ int main() {
     test_Q.run_test();
   }
 
-// TO DO : out of memory
-// #ifdef CGAL_USE_LEDA
-//   { typedef CGAL::Homogeneous<LNT>              LH_kernel;
-//     typedef CGAL::Cartesian<LFNT>               LC_kernel;
-//     typedef CGAL::Cartesian<LFNT2>              LQ_kernel;
-// 
-//     test<LH_kernel>  test_LH;
-//     test<LC_kernel>  test_LC;
-//     test<LQ_kernel>  test_LQ;
-// 
-//     test_LH.run_test();
-//     test_LC.run_test();
-//     test_LQ.run_test();
-//   }
-// #endif
+#ifdef CGAL_USE_LEDA
+  { typedef CGAL::Homogeneous<LNT>              LH_kernel;
+    typedef CGAL::Cartesian<LFNT>               LC_kernel;
+    typedef CGAL::Cartesian<LFNT2>              LQ_kernel;
+    
+    test<LH_kernel>  test_LH;
+    test<LC_kernel>  test_LC;
+    test<LQ_kernel>  test_LQ;
+    
+    test_LH.run_test();
+    test_LC.run_test();
+    test_LQ.run_test();
+  }
+#endif
 
   t.stop();
   std::cout << "Time " << t.time() << std::endl;

@@ -258,6 +258,18 @@ private:
   void transformation() {
     typedef typename Kernel::RT NT;
 
+    Nef_polyhedron C = load_off("data/cube.off");
+    Nef_polyhedron N(C);
+    
+    N.transform(Aff_transformation_3(-1,0,0,
+                                      0,1,0,
+                                      0,0,1,1));
+    N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(4,0,0,1)));
+    
+    CGAL_assertion(N.is_valid(0,0));
+    CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+    CGAL_assertion(N == C);
+
     double alpha = CGAL_PI * 20 / 180.0;
     NT diry = std::sin( alpha) * 256*256*256;
     NT dirx = std::cos( alpha) * 256*256*256;
@@ -271,9 +283,7 @@ private:
 				 NT(0), cos_alpha,-sin_alpha,
 				 NT(0), sin_alpha, cos_alpha,
 				 w);
-
-    Nef_polyhedron C = load_off("data/cube.off");
-    Nef_polyhedron N(C);
+    N = C;
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,1,0,1)));
     N.transform(Aff_transformation_3( CGAL::SCALING, 6, 4));
     N.transform(Aff_transformation_3(0,-1,0,1,0,0,0,0,1,1));
@@ -1249,8 +1259,6 @@ int main() {
   test<H_kernel>  test_H;
   test<SH_kernel> test_SH;
   test<EH_kernel> test_EH;
-
-  CGAL_NEF_SETDTHREAD(43);
 
   //  test_C.run_test();
   //  test_SC.run_test();
