@@ -9,12 +9,3 @@ makefile_<os>_<compiler> :
 	system and the compiler for which the include file is
 	intended. For information on how these descriptors are
 	generated, see the installation manual.
-
-	If you choose LEDA support, the include file gets the
- 	extension _LEDA
-
-sample_makefile
-sample_makefile_LEDA :
-
-	Two examples of include makefiles.
-
