@@ -66,7 +66,8 @@ public:
     typedef Gps_segment_traits_2<Kernel_,
                                Container_,
                                Arr_seg_traits_>         Self;
-    typedef Gps_traits_adaptor<Self>                    Traits_adaptor;
+    typedef Gps_traits_adaptor<Base>                    Traits_adaptor;
+
   public:
 
     template<class XCurveIterator>
@@ -110,11 +111,20 @@ public:
     return Construct_curves_2();
   }
 
-   typedef Is_valid_2<Self>    Is_valid_2;
- 
+
+  typedef Gps_traits_adaptor<Base>                             Traits_adaptor;
+  typedef Is_valid_2<Base, Polygon_2, Polygon_with_holes_2,
+                     Curve_const_iterator, Construct_curves_2,
+                     typename Traits_adaptor::Construct_vertex_2,
+                     typename Traits_adaptor::Orientation_2>   Is_valid_2;
+
   Is_valid_2 is_valid_2_object()
   {
-    return Is_valid_2();
+    Traits_adaptor tr;
+
+    return (Is_valid_2 (this->construct_curves_2_object(),
+                        tr.construct_vertex_2_object(),
+                        tr.orientation_2_object()));
   }
 };
 
