@@ -95,13 +95,11 @@ known moving objects.  Two classes are defined, the
 kinetic data structure so that the \ccc{operator<<} can be defined for
 them. 
 
-The kinetic data structure maintains one event containing a list of
-the trajectories of all objects in the simulation. This
-event must updated whenever any objects change, in addition, it is
-always created to fail one time unit in the future, so it must be
-recreated when it fails. As a result, the kinetic data structure has
-the main parts of a real one--it responds to changes in trajectories
-of the objects and certificate failures (when the event expires).
+The kinetic data structure maintains which occurs one time unit after
+the last event or change in the set of objects occurs. As a result,
+the kinetic data structure has the main parts of a real one--it
+responds to changes in trajectories of the objects and certificate
+failures (when the event expires).
 
  The public methods can be grouped into three sets which are shared
  with almost all other kinetic data structures:
@@ -127,5 +125,116 @@ as a template argument. This traits class defines the types needed for
 the simulation and is responsible for instantiating them.
 
  \label{fig:trivial_usage_program}
-\ccIncludeExampleCode{Kinetic_data_structures/trivial_kds.C}
+
+\begin{ccExampleCode}
+#include <CGAL/Kinetic/Ref_counted.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Active_objects_listener_helper.h>
+#include <CGAL/Kinetic/Simulator_kds_listener.h>
+...
+
+// This must be external since operator<< has to be defined
+template <class KDS>
+struct Trivial_event
+{
+  Trivial_event(){}
+  Trivial_event(KDS* kds): kds_(kds) {
+  }
+  void process() const
+  {
+    kds_->process();
+  }
+  typename KDS::Pointer kds_;
+};
+
+template <class KDS>
+std::ostream &operator<<(std::ostream &out,
+			 const Trivial_event<KDS> &) {
+  out << "\"An event\"";
+  return out;
+}
+
+
+template <class Traits>
+struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
+{
+  typedef Trivial_kds<Traits> This;
+  typedef typename Traits::Active_points_1_table::Data Point;
+  typedef typename Traits::Simulator::Time Time;
+  typedef typename Traits::Active_objects_table::Key Point_key;
+  typedef typename Traits::Simulator::Event_key Event_key;
+  typedef CGAL::Kinetic::Active_objects_listener_helper<
+    typename Traits::Active_points_1_table::Listener, This> Active_objects_helper;
+  typedef CGAL::Kinetic::Simulator_kds_listener<
+    typename Traits::Simulator::Listener, This> Simulator_helper;
+
+  typedef Trivial_event<This> Event;
+
+  Trivial_kds(Traits tr): has_certificates_(true),
+			  tr_(tr),
+			  nth_(tr.active_points_1_table_handle(), this),
+			  sh_(tr.simulator_handle(), this){}
+
+  // this method is called with the value true when the event is processed
+  void process(bool tf) {
+     event_= Event_key();
+     set_has_certificates(false);
+     set_has_certificates(true);
+  }
+
+  void audit() const
+  {
+     ...
+  }
+
+  void set_has_certificates(bool tf) {
+    typename Traits::Simulator::Handle sp= tr_.simulator_handle();
+    if (has_certificates_ != tf) {
+      has_certificates_=tf;
+      if (has_certificates_) {
+	bool ev= event_;
+	CGAL_assertion(!ev);
+	Time t= CGAL::to_interval(sp->current_time()).second+1;
+	event_= sp->new_event(t, Event(this));
+      } else if (event_) {
+	sp->delete_event(event_);
+	event_=Event_key();
+      }
+    }
+  }
+
+  bool has_certificates() const {
+    return has_certificates_;
+  }
+
+  void insert(Point_key k) {
+    if (has_certificates_) {
+      set_has_certificates(false);
+      set_has_certificates(true);
+    }
+  }
+
+  void set(Point_key k) {
+    if (has_certificates_) {
+      set_has_certificates(false);
+      set_has_certificates(true);
+    }
+  }
+
+  void erase(Point_key k) {
+    if (has_certificates_) {
+      set_has_certificates(false);
+      set_has_certificates(true);
+    }
+  }
+
+protected:
+  bool has_certificates_;
+  Event_key event_;
+  Traits tr_;
+  Active_objects_helper nth_;
+  Simulator_helper sh_;
+};
+
+\end{ccExampleCode}
 %../../examples/Kinetic_data_structures/ % LocalWords: CGAL
