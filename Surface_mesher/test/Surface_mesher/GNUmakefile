@@ -48,6 +48,10 @@ implicit_surface_mesher_test$(EXE_EXT): implicit_surface_mesher_test$(OBJ_EXT)
 test_robust_circumcenter$(EXE_EXT): test_robust_circumcenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_robust_circumcenter test_robust_circumcenter$(OBJ_EXT) $(LDFLAGS)
 
+run-test:
+	./implicit_surface_mesher_test$(EXE_EXT)
+	./test_robust_circumcenter$(EXE_EXT)
+
 clean: \
                    test_robust_circumcenter.clean \
                    implicit_surface_mesher_test.clean

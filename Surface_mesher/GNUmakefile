@@ -14,6 +14,9 @@ examples:
 test:
 	$(MAKE) -C test/Surface_mesher
 
+run-test: test
+	$(MAKE) -C test/Surface_mesher run-test
+
 doxygen:
 	doxygen
 
