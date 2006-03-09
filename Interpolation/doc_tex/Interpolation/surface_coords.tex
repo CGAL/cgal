@@ -1,4 +1,4 @@
-\section{Surface natural neighbor coordinates and surface neighbors}\label{sec:surface}
+\section{Surface Natural Neighbor Coordinates and Surface Neighbors}\label{sec:surface}
 
 This section introduces the functions to compute natural neighbor
 coordinates and surface neighbors associated to a set of sample points
@@ -37,7 +37,7 @@ well known and for example provided by \cgal\ in the class
 \ccc{Regular_triangulation_2<Gt, Tds>}.
 
 \subsection{Implementation}
-\subsubsection{Voronoi intersection diagrams}
+\subsubsection{Voronoi Intersection Diagrams}
 
 In \cgal, the regular triangulation dual to the intersection of a $3D$
 Voronoi diagram with a plane $\mathcal{H}$ can be computed by
@@ -58,7 +58,7 @@ This approach allows to avoid the explicit constructions of the
 projected points and the weights which are very prone to rounding
 errors.
 
-\subsubsection{Natural neighbor coordinates on surfaces}
+\subsubsection{Natural Neighbor Coordinates on Surfaces}
 
 The computation of natural neighbor coordinates on surfaces is based
 upon the computation of regular neighbor coordinates with respect to
@@ -85,7 +85,7 @@ point) can still influence the result.  This allows to iteratively
 enlarge the set of input points until the range is sufficient to
 certify the result.
 
-\subsubsection{Surface neighbors}
+\subsubsection{Surface Neighbors}
 
 The surface neighbors of the query point are its neighbors in the
 regular triangulation that is dual to ${\rm Vor}(\mathcal{P}) \cap

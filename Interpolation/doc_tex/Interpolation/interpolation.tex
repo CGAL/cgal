@@ -1,6 +1,6 @@
-\section{Interpolation methods}\label{sec:interpolation}
+\section{Interpolation Methods}\label{sec:interpolation}
 \subsection{Introduction}
-\subsubsection{Linear precision interpolation}
+\subsubsection{Linear Precision Interpolation}
 
 Sibson \cite{s-bdnni-81} defines a very simple interpolant that
 re-produces linear functions exactly. The interpolation of
@@ -16,7 +16,7 @@ by the barycentric coordinate property. The first example in
 Subsection~\ref{subsec:interpol_examples} shows how the function is
 called.
 
-\subsubsection{Sibson's $C^1$ continuous interpolant}
+\subsubsection{Sibson's $C^1$ Continuous Interpolant}
 In \cite{s-bdnni-81}, Sibson describes a second interpolation method
 that relies also on the function gradient $\mathbf{g_i}$ for all $\mathbf{p_i} \in \mathcal{P}$. It is $C^1$ continuous with gradient $\mathbf{g_i}$ at
 $\mathbf{p_i}$. Spherical quadrics of the form $\Phi(\mathbf{x}) =a +
@@ -58,7 +58,7 @@ computation needed to compute the distance $\|\mathbf{x} -
 around $f(0)$, the faster the interpolant approaches $\xi_i$ as
 $\mathbf{x} \rightarrow \mathbf{p_i}$.
 
-\subsubsection{Farin's $C^1$ continuous interpolant}
+\subsubsection{Farin's $C^1$ Continuous Interpolant}
 
 Farin \cite{f-sodt-90} extended Sibson's work and realizes a $C^1$
 continuous interpolant by embedding natural neighbor coordinates in
@@ -69,7 +69,7 @@ approximated from the function values by Sibson's method
 \cite{s-bdnni-81} (see Section \ref{s:gradient_fitting}) which is exact only
 for spherical quadrics.
 
-\subsubsection{Quadratic precision interpolants}
+\subsubsection{Quadratic Precision Interpolants}
 
 
 Knowing the gradient $\mathbf{g_i}$ for all $\mathbf{p_i} \in
@@ -83,7 +83,7 @@ in general.  It is defined as follows:
 
 
 
-\subsection{Gradient fitting} \label{s:gradient_fitting}
+\subsection{Gradient Fitting} \label{s:gradient_fitting}
 Sibson describes a method to approximate the gradient of the function
 $f$ from the function values on the data sites. For the data point
 $\mathbf{p_i}$, we determine
@@ -109,7 +109,7 @@ type of natural neighbor coordinate (i.e.\ \ccc{natural_neighbor_coordinates_2},
 %\subsection{Implementation}
 
 \subsection{Examples}\label{subsec:interpol_examples}
-\subsubsection{Linear interpolation method}
+\subsubsection{Linear Interpolation Method}
 \ccIncludeExampleCode{Interpolation/linear_interpolation_2.C}
 
 \subsubsection{Sibson's $C^1$ interpolation scheme with gradient estimation}
