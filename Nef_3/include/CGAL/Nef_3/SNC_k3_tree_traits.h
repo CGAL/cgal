@@ -60,7 +60,11 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;  
   typedef typename Kernel::RT  RT;
 
-  Side_of_plane(bool rc = false) : reference_counted(rc) {}
+  Side_of_plane(bool rc = false)
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING    
+    : reference_counted(rc) 
+#endif
+    {}
 
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Object_handle o, Depth depth);
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Vertex_handle v, Depth depth);
@@ -72,7 +76,9 @@ public:
 #ifdef CGAL_NEF3_FACET_WITH_BOX
   template<typename Depth> Oriented_side operator()( const Plane_3& pl, const Point_3& pop, Partial_facet& f, Depth depth);
 #endif
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   bool reference_counted;
+#endif
   SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
   Unique_hash_map<const RT*, Oriented_side> OnSideMapRC;
@@ -207,6 +213,7 @@ Oriented_side
 Side_of_plane<SNC_decorator>::operator()
 ( const Plane_3& pl, const Point_3& pop, Vertex_handle v, Depth depth) {
   Comparison_result cr;
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   if(reference_counted) {
     if(!OnSideMapRC.is_defined(&(v->point().hw())))
       switch(depth%3) {
@@ -228,7 +235,8 @@ Side_of_plane<SNC_decorator>::operator()
       default: CGAL_assertion_msg(false, "wrong value");
       }
     return OnSideMapRC[&(v->point().hw())];
-  } else { 
+  } else {
+#endif
     if(!OnSideMap.is_defined(v))
       switch(depth%3) {
       case 0: 
@@ -253,7 +261,9 @@ Side_of_plane<SNC_decorator>::operator()
 	  << OnSideMap[v] << "," << pl.oriented_side(v->point()));  
     CGAL_assertion(OnSideMap[v] == pl.oriented_side(v->point()));
     return OnSideMap[v];
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   }
+#endif
   CGAL_assertion_msg(false, "should not be reached");
 }
 
@@ -336,7 +346,11 @@ Side_of_plane<SNC_decorator>::operator()
   for( int i = 0; i < 3; ++i) {
     Oriented_side side = ON_ORIENTED_BOUNDARY;
     Comparison_result cr;
-    if(!reference_counted || !OnSideMapRC.is_defined(&(tr[i].hw()))) {
+    if(
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+       !reference_counted || 
+#endif
+       !OnSideMapRC.is_defined(&(tr[i].hw()))) {
       switch(depth%3) {
       case 0: 
         cr = CGAL::compare_x(tr[i], pop);
@@ -358,10 +372,12 @@ Side_of_plane<SNC_decorator>::operator()
       CGAL_NEF_TRACEN("Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
 	        << side << "," << pl.oriented_side(tr[i]));  
       CGAL_assertion(side == pl.oriented_side(tr[i]));
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
       if(reference_counted) 
         OnSideMapRC[&(tr[i].hw())] = side;
     } else if(reference_counted)
       side = OnSideMapRC[&(tr[i].hw())];
+#endif
     if( side == ON_POSITIVE_SIDE)
       on_positive_side = true;
     else if( side == ON_NEGATIVE_SIDE)
