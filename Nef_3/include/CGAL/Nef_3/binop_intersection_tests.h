@@ -20,6 +20,8 @@
 #define CGAL_BINOP_INTERSECTION_TESTS_H
 
 #include <CGAL/box_intersection_d.h>
+#include <CGAL/Box_intersection_d/box_limits.h>
+#include <CGAL/Nef_3/Infimaximal_box.h>
 #include <vector>
 #include <iostream>
 #include <CGAL/Timer.h>
@@ -43,6 +45,7 @@ struct binop_intersection_test_segment_tree {
   typedef typename Decorator_traits::Halffacet_cycle_iterator
                                      Halffacet_cycle_iterator;
   typedef typename SNC_decorator::Infi_box               Infi_box;
+  typedef typename SNC_decorator::Kernel                 Kernel;
   typedef typename SNC_decorator::Point_3                Point_3;
   typedef typename Decorator_traits::SHalfedge_handle     SHalfedge_handle;
   typedef typename Decorator_traits::SHalfedge_iterator   SHalfedge_iterator;
@@ -53,16 +56,39 @@ struct binop_intersection_test_segment_tree {
 
   class Nef_box : public Box_intersection_d::Box_d< double, 3 >
   {
+    typedef std::pair<double, double> double_pair;
+    typedef Box_intersection_d::box_limits<double> box_limits;
+
     Halffacet_handle f;
     Halfedge_handle  e;
     enum Type { FACET, EDGE };
     Type type;
 
-    void extend( const Point_3& p ) {
+    void extend( const Point_3& p, const Tag_false& ) {
       std::pair<double, double> q[3];
       q[0] = CGAL::to_interval( p.x() );
       q[1] = CGAL::to_interval( p.y() );
       q[2] = CGAL::to_interval( p.z() );
+      Box_intersection_d::Box_d< double, 3 >::extend(q);
+    }
+
+    void extend( const Point_3& p, const Tag_true& ) {
+      double_pair q[3];
+      if(Infi_box::degree(p.hx()) == 0)
+	q[0] = CGAL::to_interval(p.x());
+      else
+	q[0] = p.x() > 0 ? double_pair(box_limits::sup(),box_limits::sup())
+      	                 : double_pair(box_limits::inf(),box_limits::inf());
+      if(Infi_box::degree(p.hy()) == 0)
+	q[1] = CGAL::to_interval(p.y());
+      else
+	q[1] = p.y() > 0 ? double_pair(box_limits::sup(),box_limits::sup())
+      	                 : double_pair(box_limits::inf(),box_limits::inf());
+      if(Infi_box::degree(p.hz()) == 0)
+	q[2] = CGAL::to_interval(p.z());
+      else
+	q[2] = p.z() > 0 ? double_pair(box_limits::sup(),box_limits::sup())
+      	                 : double_pair(box_limits::inf(),box_limits::inf());
       Box_intersection_d::Box_d< double, 3 >::extend(q);
     }
 
@@ -90,7 +116,7 @@ struct binop_intersection_test_segment_tree {
             start( edge_it ), end( edge_it );
           CGAL_For_all( start, end ) {
             const Point_3& p = start->prev()->source()->source()->point();
-            extend( p );
+            extend( p, Is_extended_kernel<Kernel>::value_type());
           }
         } else
           CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
@@ -106,8 +132,8 @@ struct binop_intersection_test_segment_tree {
         init( true );
       } else {
         init( false );
-        extend( e->source()->point());
-        extend( e->twin()->source()->point());
+        extend( e->source()->point(), Is_extended_kernel<Kernel>::value_type());
+        extend( e->twin()->source()->point(), Is_extended_kernel<Kernel>::value_type());
       }
     }
 
