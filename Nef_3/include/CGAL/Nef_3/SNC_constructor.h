@@ -46,7 +46,7 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 43
 #include <CGAL/Nef_2/debug.h>
-#include <CGAL/Nef_3/Progress_indicator.h>
+//#include <CGAL/Nef_3/Progress_indicator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -175,7 +175,11 @@ struct Halfedge_key_lt {
   typedef typename R::Vector_3 Vector;
   typedef typename R::Direction_3 Direction;
   bool operator()( const Key& k1, const Key& k2) const { 
+#ifdef CGAL_NEF_LAZY_ARITHMETIC
+    if( k1.e->source() == k2.e->source())
+#else
     if ( k1.p == k2.p ) 
+#endif
       return (k1.i < k2.i);
     /* previous code: 
        else return CGAL::lexicographically_xyz_smaller(k1.p,k2.p); */
@@ -211,6 +215,13 @@ struct Plane_lt {
     if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
     diff = h1.d()-h2.d(); return CGAL_NTS sign(diff) < 0;
   }
+};
+
+struct Plane_RT_lt {
+  template <typename R>
+  bool operator()(const CGAL::Plane_3<R>& h1,
+                  const CGAL::Plane_3<R>& h2) const
+  { return (&(h1.a())) < (&(h2.a())); }
 };
 
 // ----------------------------------------------------------------------------
@@ -1100,8 +1111,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -1129,8 +1139,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -1158,8 +1167,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -1187,8 +1195,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	CGAL_NEF_TRACEN(normalized(e1->vector())<<" -> "<<normalized(-e2->vector()));
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -1273,7 +1280,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -1294,7 +1301,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -1315,7 +1322,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -1358,6 +1365,11 @@ public:
     //    (this->sncp()->number_of_halfedges(), 
     //     "SNC_constructor: building facet cycles...");
     
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+    Point_3 p1(1,2,7), p2(p1);     
+    bool reference_counted = (&(p1.hx()) == &(p2.hx()));
+#endif
+
     Halfedge_iterator e;
     CGAL_forall_edges(e,*this->sncp()) {
       //    progress++;
@@ -1370,10 +1382,18 @@ public:
       SHalfedge_around_svertex_circulator ce(D.first_out_edge(e)),cee(ce);
       SHalfedge_around_svertex_circulator cet(Dt.first_out_edge(et)),cete(cet);
       
-      CGAL_For_all(cet,cete)
-	if ( cet->circle() == ce->circle().opposite() && 
-	     cet->source()->twin() == ce->source() ) 
-          break;
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+      if(reference_counted) {
+	CGAL_For_all(cet,cete)
+	  if ( &(cet->circle().a()) == &(ce->circle().opposite().a()) && 
+	       cet->source()->twin() == ce->source() )
+	    break;
+      } else
+#endif
+        CGAL_For_all(cet,cete)
+	  if ( cet->circle() == ce->circle().opposite() && 
+	       cet->source()->twin() == ce->source() ) 
+            break;
       
       /*    DEBUG 
 	    
@@ -1441,9 +1461,13 @@ public:
     CGAL_NEF_TRACEN(">>>>>categorize_facet_cycles_and_create_facets");
     
     typedef std::list<Object_handle> Object_list;
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+    typedef std::map<Plane_3, Object_list, Plane_RT_lt> 
+      Map_planes;
+#else
     typedef std::map<Plane_3, Object_list, Plane_lt> 
       Map_planes;
-    
+#endif 
     //  Progress_indicator_clog progress
     //    (this->sncp()->number_of_shalfedges()+this->sncp()->number_of_shalfloops(), 
     //     "SNC_constructor: categorizing facet cycles...");
@@ -1487,7 +1511,10 @@ public:
       FM_decorator D(*this->sncp());
       D.create_facet_objects(it->first,it->second.begin(),it->second.end());
     }
+  }
+
 #ifdef CGAL_NEF3_FACET_WITH_BOX 
+  void create_box() {
     typedef typename Halffacet::Box Box;
     Halffacet_handle f;
     CGAL_forall_halffacets(f, *this->sncp()) {      
@@ -1506,15 +1533,15 @@ public:
 	  if(first) {
 	    f->b = Box(q,q);
 	    first = false;
-	  } else
+	  } else {
 	    f->b.extend(q);
+	  }
 	}
       } else
 	CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?"); 
     }
-#endif
-    //    CGAL_NEF_SETDTHREAD(1);
   }
+#endif
 
   void create_volumes() {
   /*{\Mop collects all shells incident to a volume and creates the
