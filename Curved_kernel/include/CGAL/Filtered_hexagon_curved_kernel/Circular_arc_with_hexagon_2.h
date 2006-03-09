@@ -155,21 +155,21 @@ public:
 		
 		///Interface of the inner arc/// 
 
-		typename Qualified_result_of<typename HK::Construct_Circular_min_vertex_2,Circular_arc_2>::type
+		typename Qualified_result_of<typename HK::Construct_circular_min_vertex_2,Circular_arc_2>::type
                 left() const
-			{ return typename HK::Construct_Circular_min_vertex_2()(*this);}
+			{ return typename HK::Construct_circular_min_vertex_2()(*this);}
 
-                typename Qualified_result_of<typename HK::Construct_Circular_max_vertex_2,Circular_arc_2>::type
+                typename Qualified_result_of<typename HK::Construct_circular_max_vertex_2,Circular_arc_2>::type
                 right() const
-			{ return typename HK::Construct_Circular_max_vertex_2()(*this);}
+			{ return typename HK::Construct_circular_max_vertex_2()(*this);}
 
-                typename Qualified_result_of<typename HK::Construct_Circular_source_vertex_2,Circular_arc_2>::type
+                typename Qualified_result_of<typename HK::Construct_circular_source_vertex_2,Circular_arc_2>::type
                 source() const
-                        {return typename HK::Construct_Circular_source_vertex_2()(*this);}
+                        {return typename HK::Construct_circular_source_vertex_2()(*this);}
 	      
-                typename Qualified_result_of<typename HK::Construct_Circular_source_vertex_2,Circular_arc_2>::type
+                typename Qualified_result_of<typename HK::Construct_circular_source_vertex_2,Circular_arc_2>::type
                 target() const
-                        {return typename HK::Construct_Circular_target_vertex_2()(*this);}
+                        {return typename HK::Construct_circular_target_vertex_2()(*this);}
 
 		const Circle_2 & supporting_circle() const
 			{ return P_arc.supporting_circle();}

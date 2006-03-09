@@ -117,24 +117,24 @@ public:
   
 		///Interface of the inner arc/// 
 
-		typename Qualified_result_of<typename BK::Construct_Circular_source_vertex_2,Self>::type
+		typename Qualified_result_of<typename BK::Construct_circular_source_vertex_2,Self>::type
                 source() const
-			{ return typename BK::Construct_Circular_source_vertex_2()(*this);}
+			{ return typename BK::Construct_circular_source_vertex_2()(*this);}
 
-		typename Qualified_result_of<typename BK::Construct_Circular_target_vertex_2,Self>::type
+		typename Qualified_result_of<typename BK::Construct_circular_target_vertex_2,Self>::type
                 target() const
-			{ return typename BK::Construct_Circular_target_vertex_2()(*this);}
+			{ return typename BK::Construct_circular_target_vertex_2()(*this);}
 
-                typename Qualified_result_of<typename BK::Construct_Circular_min_vertex_2,Self>::type
+                typename Qualified_result_of<typename BK::Construct_circular_min_vertex_2,Self>::type
                 left() const
                         {
-			  return typename BK::Construct_Circular_min_vertex_2()(*this);
+			  return typename BK::Construct_circular_min_vertex_2()(*this);
 			}
 	      
-                typename Qualified_result_of<typename BK::Construct_Circular_max_vertex_2,Self>::type
+                typename Qualified_result_of<typename BK::Construct_circular_max_vertex_2,Self>::type
                 right() const
                         {
-			  return typename BK::Construct_Circular_max_vertex_2()(*this);
+			  return typename BK::Construct_circular_max_vertex_2()(*this);
 			}
 
 		const Circle_2 & supporting_circle() const

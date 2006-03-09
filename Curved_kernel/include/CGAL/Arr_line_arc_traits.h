@@ -63,8 +63,8 @@ public:
   typedef typename CircularKernel::Equal_2               Equal_2;
   typedef typename CircularKernel::Make_x_monotone_2     Make_x_monotone_2;
   typedef typename CircularKernel::Split_2               Split_2;
-  typedef typename CircularKernel::Construct_Circular_min_vertex_2  Construct_min_vertex_2; 
-  typedef typename CircularKernel::Construct_Circular_max_vertex_2  Construct_max_vertex_2;
+  typedef typename CircularKernel::Construct_circular_min_vertex_2  Construct_min_vertex_2; 
+  typedef typename CircularKernel::Construct_circular_max_vertex_2  Construct_max_vertex_2;
   typedef typename CircularKernel::Is_vertical_2           Is_vertical_2;
   typedef typename CircularKernel::Intersect_2 Intersect_2;
 

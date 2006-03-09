@@ -57,9 +57,9 @@ public:
   typedef typename CircularKernel::Compare_xy_2         Compare_xy_2;
   typedef typename CircularKernel::Compare_y_at_x_2     Compare_y_at_x_2;
   typedef typename CircularKernel::Compare_y_to_right_2 Compare_y_at_x_right_2;
-  typedef typename CircularKernel::Construct_Circular_max_vertex_2 
+  typedef typename CircularKernel::Construct_circular_max_vertex_2 
                                                         Construct_max_vertex_2;
-  typedef typename CircularKernel::Construct_Circular_min_vertex_2 
+  typedef typename CircularKernel::Construct_circular_min_vertex_2 
                                                         Construct_min_vertex_2;
   typedef typename CircularKernel::Equal_2              Equal_2;
   typedef typename CircularKernel::Make_x_monotone_2    Make_x_monotone_2;

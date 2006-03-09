@@ -711,7 +711,7 @@ template < class CK >
 
 
   template <class CK>
-  class Construct_Circular_min_vertex_2 : Has_qrt
+  class Construct_circular_min_vertex_2 : Has_qrt
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
@@ -740,7 +740,7 @@ template < class CK >
   };
 
   template <class CK>
-  class Construct_Circular_max_vertex_2: Has_qrt
+  class Construct_circular_max_vertex_2: Has_qrt
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
@@ -769,7 +769,7 @@ template < class CK >
   };
 
   template <class CK>
-  class Construct_Circular_source_vertex_2: Has_qrt
+  class Construct_circular_source_vertex_2: Has_qrt
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
@@ -791,7 +791,7 @@ template < class CK >
 
 
   template <class CK>
-  class Construct_Circular_target_vertex_2: Has_qrt
+  class Construct_circular_target_vertex_2: Has_qrt
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;

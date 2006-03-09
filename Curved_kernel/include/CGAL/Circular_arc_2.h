@@ -113,35 +113,35 @@ public:
 
 
   typename Qualified_result_of    
-  <typename R::Construct_Circular_source_vertex_2,Circular_arc_2>::type
+  <typename R::Construct_circular_source_vertex_2,Circular_arc_2>::type
   //const Circular_arc_point_2 &
   source() const
   {
-    return typename R::Construct_Circular_source_vertex_2()(*this);
+    return typename R::Construct_circular_source_vertex_2()(*this);
   }
 
   typename Qualified_result_of
-  <typename R::Construct_Circular_target_vertex_2,Circular_arc_2>::type
+  <typename R::Construct_circular_target_vertex_2,Circular_arc_2>::type
   //const Circular_arc_point_2 &
   target() const
   {
-    return typename R::Construct_Circular_target_vertex_2()(*this);
+    return typename R::Construct_circular_target_vertex_2()(*this);
   }
 
   typename Qualified_result_of
-  <typename R::Construct_Circular_min_vertex_2,Circular_arc_2>::type
+  <typename R::Construct_circular_min_vertex_2,Circular_arc_2>::type
   //const Circular_arc_point_2 & 
   left() const
   {
-    return typename R::Construct_Circular_min_vertex_2()(*this);
+    return typename R::Construct_circular_min_vertex_2()(*this);
   }
 
   typename Qualified_result_of
-  <typename R::Construct_Circular_max_vertex_2,Circular_arc_2>::type
+  <typename R::Construct_circular_max_vertex_2,Circular_arc_2>::type
   //const Circular_arc_point_2 & 
   right() const
   {
-    return typename R::Construct_Circular_max_vertex_2()(*this);
+    return typename R::Construct_circular_max_vertex_2()(*this);
   }
 
   bool is_x_monotone() const

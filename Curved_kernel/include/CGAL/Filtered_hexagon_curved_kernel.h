@@ -64,10 +64,10 @@ template <class CK>
     typedef typename CK::Compare_xy_2		     Compare_xy_2;
     typedef typename CK::Compute_Circular_x_2        Compute_Circular_x_2;
     typedef typename CK::Compute_Circular_y_2        Compute_Circular_y_2;
-    typedef Hexagon_functors::Construct_Circular_source_vertex_2<Self> Construct_Circular_source_vertex_2;
-    typedef Hexagon_functors::Construct_Circular_target_vertex_2<Self> Construct_Circular_target_vertex_2;
-    typedef Hexagon_functors::Construct_Circular_min_vertex_2<Self> Construct_Circular_min_vertex_2;
-    typedef Hexagon_functors::Construct_Circular_max_vertex_2<Self> Construct_Circular_max_vertex_2;
+    typedef Hexagon_functors::Construct_circular_source_vertex_2<Self> Construct_circular_source_vertex_2;
+    typedef Hexagon_functors::Construct_circular_target_vertex_2<Self> Construct_circular_target_vertex_2;
+    typedef Hexagon_functors::Construct_circular_min_vertex_2<Self> Construct_circular_min_vertex_2;
+    typedef Hexagon_functors::Construct_circular_max_vertex_2<Self> Construct_circular_max_vertex_2;
     typedef Hexagon_functors::Has_on_2<Self>		     Has_on_2;
     typedef Hexagon_functors::Compare_y_at_x_2<Self>	     Compare_y_at_x_2;
     typedef Hexagon_functors::Compare_y_to_right_2<Self>     Compare_y_to_right_2;
@@ -104,21 +104,21 @@ template <class CK>
   	compare_xy_2_object() const
     	{ return CK().compare_xy_2_object(); }
 
-	Construct_Circular_source_vertex_2
+	Construct_circular_source_vertex_2
 	construct_circular_source_vertex_2_object() const
-  	{ return Construct_Circular_source_vertex_2(); }
+  	{ return Construct_circular_source_vertex_2(); }
 
-	Construct_Circular_target_vertex_2
+	Construct_circular_target_vertex_2
 	construct_circular_target_vertex_2_object() const
-  	{ return Construct_Circular_target_vertex_2(); }
+  	{ return Construct_circular_target_vertex_2(); }
 
-	Construct_Circular_min_vertex_2
+	Construct_circular_min_vertex_2
 	construct_circular_min_vertex_2_object() const
-  	{ return Construct_Circular_min_vertex_2(); }
+  	{ return Construct_circular_min_vertex_2(); }
 
-	Construct_Circular_max_vertex_2
+	Construct_circular_max_vertex_2
 	construct_circular_max_vertex_2_object() const
-  	{ return Construct_Circular_max_vertex_2(); }
+  	{ return Construct_circular_max_vertex_2(); }
 
         Has_on_2
         has_on_2_object() const

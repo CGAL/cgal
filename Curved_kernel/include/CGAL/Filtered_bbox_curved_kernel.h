@@ -62,14 +62,14 @@ template <class CK>
     typedef typename CK::Compute_Circular_y_2        Compute_Circular_y_2;
   
 
-    typedef Bbox_functors::Construct_Circular_source_vertex_2<Self> Construct_Circular_source_vertex_2;
-    typedef Bbox_functors::Construct_Circular_target_vertex_2<Self> Construct_Circular_target_vertex_2;
+    typedef Bbox_functors::Construct_circular_source_vertex_2<Self> Construct_circular_source_vertex_2;
+    typedef Bbox_functors::Construct_circular_target_vertex_2<Self> Construct_circular_target_vertex_2;
     typedef Bbox_functors::Compare_x_2<Self>                 Compare_x_2;
     typedef Bbox_functors::Compare_y_2<Self>                 Compare_y_2;
     typedef Bbox_functors::Compare_xy_2<Self>                Compare_xy_2;
     typedef Bbox_functors::Has_on_2<Self>                    Has_on_2;
-    typedef Bbox_functors::Construct_Circular_min_vertex_2<Self> Construct_Circular_min_vertex_2;
-    typedef Bbox_functors::Construct_Circular_max_vertex_2<Self> Construct_Circular_max_vertex_2;
+    typedef Bbox_functors::Construct_circular_min_vertex_2<Self> Construct_circular_min_vertex_2;
+    typedef Bbox_functors::Construct_circular_max_vertex_2<Self> Construct_circular_max_vertex_2;
     typedef Bbox_functors::Compare_y_at_x_2<Self>	     Compare_y_at_x_2;
     typedef Bbox_functors::Compare_y_to_right_2<Self>	     Compare_y_to_right_2;
     typedef Bbox_functors::Do_overlap_2<Self>		     Do_overlap_2;
@@ -106,21 +106,21 @@ template <class CK>
   	has_on_2_object() const
     	{ return Has_on_2(); }
 
-	Construct_Circular_source_vertex_2
+	Construct_circular_source_vertex_2
 	construct_circular_source_vertex_2_object() const
-  	{ return Construct_Circular_source_vertex_2(); }
+  	{ return Construct_circular_source_vertex_2(); }
 
-	Construct_Circular_target_vertex_2
+	Construct_circular_target_vertex_2
 	construct_circular_target_vertex_2_object() const
-  	{ return Construct_Circular_target_vertex_2(); }
+  	{ return Construct_circular_target_vertex_2(); }
 
-	Construct_Circular_min_vertex_2
+	Construct_circular_min_vertex_2
 	construct_circular_min_vertex_2_object() const
-  	{ return Construct_Circular_min_vertex_2(); }
+  	{ return Construct_circular_min_vertex_2(); }
 
-	Construct_Circular_max_vertex_2
+	Construct_circular_max_vertex_2
 	construct_circular_max_vertex_2_object() const
-  	{ return Construct_Circular_max_vertex_2(); }
+  	{ return Construct_circular_max_vertex_2(); }
 
   	Compare_y_at_x_2
   	compare_y_at_x_2_object() const 
