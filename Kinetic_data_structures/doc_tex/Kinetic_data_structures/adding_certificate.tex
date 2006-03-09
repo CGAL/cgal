@@ -21,17 +21,17 @@ Then we define a kinetic kernel which includes this predicate. To do
 this we wrap the generator in a
 \ccc{Kinetic::internal::Certificate_generator<Kernel,
 Generator>}. This wrapper uses the generator to create the certificate
-function and then the Kinetic::FunctionKernel to solve the certificate
+function and then the \ccc{Kinetic::FunctionKernel} to solve the certificate
 function.
 
 \begin{ccExampleCode}
 template <class FunctionKernel> 
 class My_kinetic_kernel:
-  public CGAL::Kinetic::Cartesian_kinetic_kernel<FunctionKernel> {
-  typedef CGAL::Kinetic::Cartesian_kinetic_kernel<FunctionKernel> P;
+  public \ccc{Kinetic::Cartesian}_kinetic_kernel<FunctionKernel> {
+  typedef \ccc{Kinetic::Cartesian}_kinetic_kernel<FunctionKernel> P;
   typedef My_kinetic_kernel<FunctionKernel> This;
 public:
-  typedef CGAL::Kinetic::internal::Certificate_generator<This, Positive_x_f_2<This> > Positive_x_2;
+  typedef \ccc{Kinetic::internal}::Certificate_generator<This, Positive_x_f_2<This> > Positive_x_2;
   Positive_x_2 positive_x_2_object() const
   {
     return Positive_x_2(P::function_kernel_object());
@@ -43,20 +43,20 @@ Now we have the unfortunately rather messy part of assembling a new
 Kinetic::SimulationTraits model. This is done in two steps for convenience.
 
 \begin{ccExampleCode}
-struct My_st_types: public CGAL::Kinetic::Suggested_exact_simulation_traits_types {
-  typedef CGAL::Kinetic::Suggested_exact_simulation_traits_types P;
+struct My_st_types: public \ccc{Kinetic::Suggested}_exact_simulation_traits_types {
+  typedef \ccc{Kinetic::Suggested}_exact_simulation_traits_types P;
   typedef My_kinetic_kernel<P::Function_kernel>::Point_2 Active_object;
-  typedef CGAL::Kinetic::Active_objects_vector<Active_object> Active_objects_table;
-  typedef CGAL::Kinetic::Cartesian_instantaneous_kernel< Active_objects_table,
+  typedef \ccc{Kinetic::Active}_objects_vector<Active_object> Active_objects_table;
+  typedef \ccc{Kinetic::Cartesian}_instantaneous_kernel< Active_objects_table,
 							 Static_kernel> Instantaneous_kernel;
 };
 
 struct My_simulation_traits:
-  public  CGAL::Kinetic::Simulation_traits<My_st_types::Static_kernel,
+  public  \ccc{Kinetic::Simulation}_traits<My_st_types::Static_kernel,
 			    My_st_types::Kinetic_kernel,
 			    My_st_types::Simulator>
 {
-  typedef  CGAL::Kinetic::Simulation_traits<My_st_types::Static_kernel,
+  typedef  \ccc{Kinetic::Simulation}_traits<My_st_types::Static_kernel,
 					    My_st_types::Kinetic_kernel,
 					    My_st_types::Simulator> P;
   My_simulation_traits(const P::Time &lb= P::Time(0),

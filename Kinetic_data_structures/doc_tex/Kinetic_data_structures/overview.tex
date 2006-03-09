@@ -28,30 +28,30 @@ structure interacts with the various parts. The main concepts are
 
 \begin{itemize}
 
-\item the Kinetic::Simulator. Models of this concept process events in
+\item the \ccc{Kinetic::Simulator}. Models of this concept process events in
   the correct order and audit kinetic data structures. There should be
   one instance of a model of this concept per simulation.
-\item the Kinetic::Kernel. The structure of a
-  Kinetic::Kernel is analogous to the static CGAL (i.e.,
+\item the \ccc{Kinetic::Kernel}. The structure of a
+  \ccc{Kinetic::Kernel} is analogous to the static CGAL (i.e.,
   non-kinetic) kernels in that it defines a set of primitives and
   functors which generate certificates from the primitives.
-\item the Kinetic::ActiveObjectsTable. Models of this concept hold a
+\item the \ccc{Kinetic::ActiveObjectsTable}. Models of this concept hold a
   collection of kinetic primitives in a centralized manner. This
   structure centralizes management of the primitives in order to
   properly disseminate notifications when trajectories change, new
   primitives are added or primitives are deleted.
   There is generally one instance of a model of this concept per simulation.
-\item the Kinetic::InstantaneousKernel. Models of this concept allow
+\item the \ccc{Kinetic::InstantaneousKernel}. Models of this concept allow
   existing non-kinetic CGAL data structures to be used on a snapshot
   of kinetic data. As a result, pre-existing static structures can be
   used to initialize and audit kinetic data structures.
-\item the Kinetic::FunctionKernel. This concept is the computational
+\item the \ccc{Kinetic::FunctionKernel}. This concept is the computational
   kernel of our framework.  Models of this concept are responsible for
   representing, generating and manipulating the motional and
   certificate functions and their roots. It is this concept that
   provides the kinetic data structures framework with the necessary
   algebraic operations for manipulating event times. The
-  Kinetic::FunctionKernel is discussed in detail in Section
+  \ccc{Kinetic::FunctionKernel} is discussed in detail in Section
   \ref{algebraic_kernel}.
 \end{itemize}
 
@@ -61,14 +61,14 @@ choices for the above concepts and is responsible for creating
 instances of each of the models. The addition of this concept reduces
 the choices the user has to make to picking the dimension of the
 ambient space and choosing between exact and inexact computations. The
-model of Kinetic::SimulationTraits creates an instance each of the
-Kinetic::Simulator and Kinetic::ActiveObjectsTable. Handles for
-these instances as well as instances of the Kinetic::Kernel
-and Kinetic::InstantaneousKernel can be requested from the simulation
-traits class. Both the Kinetic::Kernel and the
-Kinetic::Simulator use the Kinetic::FunctionKernel, the former to find
+model of \ccc{Kinetic::SimulationTraits} creates an instance each of the
+Kinetic::Simulator and \ccc{Kinetic::ActiveObjectsTable}. Handles for
+these instances as well as instances of the \ccc{Kinetic::Kernel}
+and \ccc{Kinetic::InstantaneousKernel} can be requested from the simulation
+traits class. Both the \ccc{Kinetic::Kernel} and the
+Kinetic::Simulator use the \ccc{Kinetic::FunctionKernel}, the former to find
 certificate failure times and the later to operate on them. For
-technical reasons, each supplied model of Kinetic::SimulationTraits also
+technical reasons, each supplied model of \ccc{Kinetic::SimulationTraits} also
 picks out a particular type of kinetic primitive which will be used by
 the kinetic data structures.
 

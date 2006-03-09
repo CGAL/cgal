@@ -49,7 +49,7 @@ You could regroup
 #include <CGAL/Kinetic/Moving_object_inserter.h>
 in <CGAL/Kinetic/basic.h> and this one could
 be included by Cartesain_kinetic_kernel.h
-\textit{They aren't really conceptually related and can be used without one another, so I would rather not. Perhaps they can go into the ``Helper headers''. I could also use default arguments for Kinetic::Delaunay_triangulation and skip many of the headers. I had wanted to avoid that, but it could make it less intimidating.}
+\textit{They aren't really conceptually related and can be used without one another, so I would rather not. Perhaps they can go into the ``Helper headers''. I could also use default arguments for \ccc{Kinetic::Delaunay}_triangulation and skip many of the headers. I had wanted to avoid that, but it could make it less intimidating.}
 
 
 Are "Simulator", "Time", "FunctionKernel" defined in the
@@ -61,7 +61,7 @@ with the two types in there.
 \textit{It doesn't come from there, but maybe it could. Strictly speaking it is more of an adaptor, but I could simplify things. }
 
 
-The template arguments of Kinetic::Delaunay_triangulation_2
+The template arguments of \ccc{Kinetic::Delaunay}_triangulation_2
 do not correspond to the reference manual.
 \textit{Indeed. This should be fixed.}
 
@@ -103,7 +103,7 @@ p12: "or other listening class" -> "or other listening objects"
 
 p13: POLYNOMIAL -> Polynomial
 
-p14: KDSMoving_object_table -> Kinetic::Moving_object_table
+p14: KDSMoving_object_table -> \ccc{Kinetic::Moving}_object_table
 p14: passingh -> passing, possition -> position, being processs in order -> being processed in order
 
 More Typos

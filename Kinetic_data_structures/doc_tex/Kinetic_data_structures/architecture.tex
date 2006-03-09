@@ -7,15 +7,15 @@
 As we have already mentioned, one of the major goals of our package is
 to support the development of new kinetic data structures. Below we
 discuss in detail each one of the first four major concepts around which our
-package is structured: the Kinetic::Simulator, the
-Kinetic::Kernel, the Kinetic::ActiveObjectsTable and the
-\ccc{InstantaneousKernel}.  The Kinetic::FunctionKernel concept is
+package is structured: the \ccc{Kinetic::Simulator}, the
+Kinetic::Kernel, the \ccc{Kinetic::ActiveObjectsTable} and the
+\ccc{Kinetic::InstantaneousKernel}.  The \ccc{Kinetic::FunctionKernel} concept is
 discussed separately in Section \ref{algebraic_kernel}.
 
 \subsection{The Kinetic::Simulator}
 \label{simulator}
 
-The Kinetic::Simulator is the central repository of all active events.
+The \ccc{Kinetic::Simulator} is the central repository of all active events.
 It maintains the event queue and can use its knowledge of the events
 in the queue to find times for the kinetic data structures to easily
 check their own correctness (this will be discussed in more detail
@@ -24,21 +24,21 @@ Kinetic::Simulator to schedule new events, deschedule old ones and
 access and change data contained in already scheduled events (the
 operations on existing events are performed using a key which was
 returned when the event was scheduled).  For controlling the
-simulation, methods in the Kinetic::Simulator allow stepping through
+simulation, methods in the \ccc{Kinetic::Simulator} allow stepping through
 events, advancing time and even running the simulation backwards (that
 is we run the simulation with the time running in the opposite
 direction).
 
 The kinetic sorting example in Figure~\ref{sec:sort_example} shows the
-basic usage of the Kinetic::Simulator. First, the \ccc{Simulator}
-is created by the Kinetic::SimulatorTraits. The kinetic data structure
+basic usage of the \ccc{Kinetic::Simulator}. First, the \ccc{Simulator}
+is created by the \ccc{Kinetic::SimulatorTraits}. The kinetic data structure
 gets a handle to the simulator from the traits class and uses the
-handle to add its events to the simulation. The Kinetic::Simulator is
+handle to add its events to the simulation. The \ccc{Kinetic::Simulator} is
 then told to advance time up until the end of the simulation,
 processing all events along the way.
 
-Each event is represented by a Kinetic::Time and an instance of a
-model of the Kinetic::Event concept.  Models of the Kinetic::Event
+Each event is represented by a \ccc{Kinetic::Time} and an instance of a
+model of the \ccc{Kinetic::Event} concept.  Models of the \ccc{Kinetic::Event}
 concept are responsible for taking the appropriate action in order to
 handle the kinetic event they represent.  Specifically, the
 Kinetic::Event concept specifies one method,
@@ -49,17 +49,17 @@ event; for example in our kinetic sorting example, processing an event
 means calling the \ccc{Kinetic::Sort<Traits, Visitor>::swap(Iterator)}
 method of the kinetic sorting data structure.
 
-In the model of the Kinetic::Simulator concept that we provide, any
-model of the Kinetic::Event concept can be inserted as an event. This
+In the model of the \ccc{Kinetic::Simulator} concept that we provide, any
+model of the \ccc{Kinetic::Event} concept can be inserted as an event. This
 ability implies that events can be mixed at run time, which is
 essential when we want to support multiple kinetic data structures
 operating on the same set of moving geometric primitives.
 
-The Kinetic::Time concept is defined by the simulator, typically to be
+The \ccc{Kinetic::Time} concept is defined by the simulator, typically to be
 some representation of a root of a polynomial, taken from the
-Kinetic::FunctionKernel (details of the algebraic side of the package
+\ccc{Kinetic::FunctionKernel} (details of the algebraic side of the package
 will be discussed in Section~\ref{algebraic_kernel}). For most
-kinetic data structures Kinetic::Time only needs to support
+kinetic data structures \ccc{Kinetic::Time} only needs to support
 comparisons (we need to compare events, in order to process them in
 the correct order) and a few other non-arithmetic operations.
 
@@ -73,7 +73,7 @@ $I$. In addition, although the static data structures can be
 degenerate at the roots defining the two ends of the interval, they
 are not, in general, degenerate in the interior. An independent check
 of the integrity of kinetic data structures can be provided by, for
-example, using an Kinetic::InstantaneousKernel (cf. Subsection
+example, using an \ccc{Kinetic::InstantaneousKernel} (cf. Subsection
 \ref{instantaneous_kernel}) to rebuild the static version of the
 structure from scratch at some time interior to $I$ and compare it to
 the kinetic version. This auditing can typically catch algorithmic or
@@ -86,12 +86,12 @@ implementation and numeric errors is quite tricky.
 
 Kinetic data structures receive alerts of appropriate times to audit
 themselves using a notification framework. The same framework is also
-used by the Kinetic::ActiveObjectsTable to alert kinetic data
+used by the \ccc{Kinetic::ActiveObjectsTable} to alert kinetic data
 structures when the set of primitives changes (see
 Subsection~\ref{active_objects_table}). To use the notification
 framework, the kinetic data structure creates a proxy object which
 implements a standard Listener interface. It then registers
-this proxy with the Kinetic::Simulator. When the Kinetic::Simulator
+this proxy with the \ccc{Kinetic::Simulator}. When the \ccc{Kinetic::Simulator}
 finds an appropriate time for the kinetic data structures to audit
 themselves it calls the function
 \ccc{Listener::new_notification(Type)} on each of the registered
@@ -103,9 +103,9 @@ are reference counted appropriately to avoid issues caused by the
 creation and destruction order of kinetic data structures and the
 simulator.
 
-Internally the Kinetic::Simulator maintains a priority queue
+Internally the \ccc{Kinetic::Simulator} maintains a priority queue
 containing the scheduled events. The type of the priority queue is a
-template argument to our Kinetic::Simulator model and, as such, it can
+template argument to our \ccc{Kinetic::Simulator} model and, as such, it can
 be replaced by the user.  In our package, we provide two different
 types of priority queues, a heap and a two-list priority queue.  A
 two-list queue is a queue in which there is a sorted front list,
@@ -125,25 +125,25 @@ heap for Delaunay triangulations with degree 3 polynomial motions and
 
 \subsection{The Kinetic::Kernel}
 
-The Kinetic::Kernel is structured very much like static CGAL
+The \ccc{Kinetic::Kernel} is structured very much like static CGAL
 kernels. It defines a number of primitives, which in the model
 provided are \ccc{Kinetic::Kernel::Point_1},
 \ccc{Kinetic::Kernel::Point_2}, \ccc{Kinetic::Kernel::Point_3} and
 \ccc{Kinetic::Kernel::Weighted_point_3}. The primitives are defined by
 a set of Cartesian coordinates each of which is a function of time, a
-Kinetic::Kernel::MotionFunction. In addition it defines constructions
+\ccc{Kernel::MotionFunction}. In addition it defines constructions
 and certificate generators which act on the primitives.  The
 certificate generators are the direct analog of the non-kinetic
 predicates. Each certificate generator take a number of primitives as
 arguments, but instead of producing an element from a discrete set
 they produce a set of discrete failure times for the certificate.
-These failure times are wrapped in a model of Kinetic::Certificate.
+These failure times are wrapped in a model of \ccc{Kinetic::Certificate}.
 
-A Kinetic::Certificate is a simple object whose primary function is to
-produce a Kinetic::Time object representing the failure time of the
+A \ccc{Kinetic::Certificate} is a simple object whose primary function is to
+produce a \ccc{Kinetic::Time} object representing the failure time of the
 certificate.  Since, the handling of most certificate failures
 involves creating a new certificate whose certificate function is the
-negation of the old certificate function, a Kinetic::Certificate
+negation of the old certificate function, a \ccc{Kinetic::Certificate}
 object caches any work that could be useful to isolate future roots of
 the certificate function (such as the Sturm sequence of the
 certificate function). To illustrate this further, if you have two
@@ -154,7 +154,7 @@ certificate fails and the two points cross, the new certificate is
 $p_1(t)- p_0(t) > 0$, which is the negated version of the certificate
 just processed and which has the same roots.
 
-The model of Kinetic::Kernel provided includes the certificate
+The model of \ccc{Kinetic::Kernel} provided includes the certificate
 generators necessary for Delaunay triangulations (in one, two and
 three dimensions) and regular triangulations (in 3D).  New
 certificates can be fairly easily added. An example is included in the
@@ -165,7 +165,7 @@ distributed code.
 \subsection{The Kinetic::ActiveObjectsTable}
 \label{active_objects_table}
 
-The Kinetic::ActiveObjectsTable stores a set of kinetic primitives.
+The \ccc{Kinetic::ActiveObjectsTable} stores a set of kinetic primitives.
 Its purpose is to notify kinetic data structures when new primitives
 are added, when primitives are removed or when a trajectories change.
 Each primitive is uniquely identified by a Key, assigned by
@@ -176,7 +176,7 @@ Kinetic::ActiveObjectsTable concept, called
 primitives in an \ccc{std::vector<D>}.
 
 Notifications of changes to the set of active objects are handled
-using a setup similar to the Kinetic::Simulator audit time
+using a setup similar to the \ccc{Kinetic::Simulator} audit time
 notification. We provide a helper class,
 \ccc{Kinetic::Active_objects_listener_helper<ActiveObjectsTable,
 KDS>}, which translates the notifications into \ccc{insert(Key)},
@@ -188,7 +188,7 @@ structure.
 \subsection{The Kinetic::InstantaneousKernel}
 \label{instantaneous_kernel}
 
-The Kinetic::InstantaneousKernel allows existing CGAL data structures
+The \ccc{Kinetic::InstantaneousKernel} allows existing CGAL data structures
 to be used on moving data as it appears at some instant of time.
 Models of this concept are, by definition, models of a CGAL
 Kernel or a traits class, and, therefore, can then be used as
@@ -206,7 +206,7 @@ version of the Delaunay triangulation is conceptually instantiated.
 More precisely, the time for the copy of the model of the
 Kinetic::InstantaneousKernel stored in the CGAL triangulation is set
 to be the current time (or rather, as discussed in the introduction, a
-more convenient time determined by the Kinetic::Simulator
+more convenient time determined by the \ccc{Kinetic::Simulator}
 combinatorially equivalent to the current time).  The kinetic data
 structure then calls the
 \ccc{Delaunay_triangulation_3<Traits, Tds>::insert(Point)} insert
@@ -228,7 +228,7 @@ they are likely to be involved in other static predicates evaluated at
 the same time.
 
 
-Note that the time used in the Kinetic::InstantaneousKernel must be an
+Note that the time used in the \ccc{Kinetic::InstantaneousKernel} must be an
 arithmetic type that fully supports ring and possibly field
 operations.  These are much more stringent requirements than for
 Kinetic::Time objects in the simulator, where we only require
@@ -243,7 +243,7 @@ real number type such as \ccc{CORE::Expr} is used for time, then
 computation can, of course, be performed at any time, although
 computations will be significantly slower.
 % MK:: I feel something is missing from the following sentence.
-It is the job of the Kinetic::Simulator to determine an appropriate
+It is the job of the \ccc{Kinetic::Simulator} to determine an appropriate
 time to perform operations.
 
 
@@ -261,7 +261,7 @@ following sections.
 
 A number of objects need to maintain pointers to other independent
 objects. For example, each kinetic data structure must have access to
-the Kinetic::Simulator so that it can schedule and deschedule events. These
+the \ccc{Kinetic::Simulator} so that it can schedule and deschedule events. These
 pointers are all reference counted in order to guarantee that they are
 always valid. We provide a standard reference counting pointer and
 object base to facilitate this, namely \ccc{Ref_counted<Object>}.
@@ -275,7 +275,7 @@ arguments.
 \subsubsection{Runtime event passing}
 
 Runtime events must be passed from \textit{notifiers}, namely the
-Kinetic::ActiveObjectsTable and the Kinetic::Simulator to the kinetic data
+Kinetic::ActiveObjectsTable and the \ccc{Kinetic::Simulator} to the kinetic data
 structures to \textit{listeners}, such as a kinetic data structure
 which needs to update itself when an event occurs These are passed
 using a simple, standardized notification interface. To use
@@ -305,7 +305,7 @@ circular reference counted pointers.
 The interface between the algebraic kernel and the kinetic data
 structures package was kept quite minimal in order to ease the
 implementation of various underlying computation models. The interface
-is detailed in the reference page (Kinetic::FunctionKernel).
+is detailed in the reference page (\ccc{Kinetic::FunctionKernel}).
 
 We provide models of the algebraic kernel that handle polynomial
 Kinetic::Function objects. The provided models perform
@@ -355,6 +355,6 @@ cases.
 In addition, we have to specially handle even roots of functions. For
 the most part these can just be discarded as that is equivalent to
 perturbing the simulation to remove the degeneracy. However, when we
-are using the Kinetic::Simulator to audit the kinetic data structures,
+are using the \ccc{Kinetic::Simulator} to audit the kinetic data structures,
 they most be broken up in to two, equal, roots to avoid auditing at
 the degeneracy.

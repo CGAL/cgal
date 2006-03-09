@@ -18,7 +18,7 @@ since the arrangement will inherit from the sorting structure.
 
 \begin{ccExampleCode}
 template <class Arrangement>
-struct Arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
+struct Arrangement_visitor: public \ccc{Kinetic::Sort}_visitor_base
 {
   Arrangement_visitor(Arrangement *a):p_(a){}
   template <class Vertex_handle>
@@ -44,11 +44,11 @@ Now we define the actual kinetic data structure.
 
 template <class TraitsT> 
 class Planar_arrangement: 
-  public CGAL::Kinetic::Sort<TraitsT, 
+  public \ccc{Kinetic::Sort}<TraitsT, 
 			     Arrangement_visitor<Planar_arrangement<TraitsT> > > {
   typedef TraitsT Traits;
   typedef Planar_arrangement<TraitsT> This;
-  typedef typename CGAL::Kinetic::Sort<TraitsT,
+  typedef typename \ccc{Kinetic::Sort}<TraitsT,
 				       Arrangement_visitor<This> > Sort;
   typedef Arrangement_visitor<This> Visitor;
   typedef typename Traits::Active_objects_table::Key Key;

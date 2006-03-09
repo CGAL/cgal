@@ -22,11 +22,11 @@ elements in the list.
 
 On creation, the data structure is passed a copy of the
 Kinetic::SimulationTraits for this simulation, which it saves for
-future use. It gets a handle to to the Kinetic::ActiveObjectsTable by
+future use. It gets a handle to to the \ccc{Kinetic::ActiveObjectsTable} by
 calling the
 \ccc{Kinetic::SimulationTraits::active\_points\_table\_1\_handle()} method
 and registers a proxy with the table in order to receive notifications
-of changes to the point set.  The Kinetic::SimulationTraits method
+of changes to the point set.  The \ccc{Kinetic::SimulationTraits} method
 returns a handle to, rather than a copy of, the
 Kinetic::ActiveObjectsTable, since the table must be shared between
 all the kinetic data structures using these points.  The handles are
@@ -40,7 +40,7 @@ structure, which in turn calls the
 \ccc{insert(Point_key)} method of the kinetic data structure. The
 \ccc{Point_key} here is the key which uniquely identifies the
 newly inserted point in the table. The data structure then requests an
-instance of a model of the Kinetic::InstantaneousKernel from the
+instance of a model of the \ccc{Kinetic::InstantaneousKernel} from the
 Kinetic::SimulationTraits. It sets the time on the instantaneous
 kernel to the time value gotten from the
 \ccc{Kinetic::Simulator::current_time_nt()} method. This method returns
@@ -55,7 +55,7 @@ longer relevant certificate from the event queue by calling the
 certificates using a \ccc{Kinetic::Kernel::Is_less_x_1}
 certificate functor. The new certificates are inserted in the event
 queue by calling the \ccc{Kinetic::Simulator::new_event(Time, Event)}
-method where Kinetic::Event is a proxy object which instructs the sort
+method where \ccc{Kinetic::Event} is a proxy object which instructs the sort
 kinetic data structure to swap two points when its \ccc{process()}
 method is called.
 
@@ -65,13 +65,13 @@ occurs, the simulator calls the \ccc{process()} method on the
 corresponding proxy object. The proxy, in turn, tells the sort kinetic
 data structure to swap the two points whose order has changed.
 
-The Kinetic::Simulator can periodically instruct the kinetic data
+The \ccc{Kinetic::Simulator} can periodically instruct the kinetic data
 structures to audit themselves.  As is explained in
 Section~\ref{simulator}, a proxy object maps the notification on to an
 \ccc{audit()} function call in the kinetic data structure. To audit
 itself the kinetic data structure builds a list of all the current
 points and uses \ccc{std::sort} to sort this list using a
-comparison function gotten from the Kinetic::InstantaneousKernel.
+comparison function gotten from the \ccc{Kinetic::InstantaneousKernel}.
 This sorted list is compared to the maintained one to verify
 correctness. This auditing could also have been done by evaluating the
 Kinetic::InstantaneousKernel predicate for each sorted pair.  Since
@@ -122,7 +122,7 @@ In addition, it has one method which is called when a certificate
 fails. The name/existence of such methods depend on the nature of the
 kinetic data structure in question.
 
-Like many kinetic data structures, it takes a Kinetic::SimulationTraits
+Like many kinetic data structures, it takes a \ccc{Kinetic::SimulationTraits}
 as a template argument. This traits class defines the types needed for
 the simulation and is responsible for instantiating them.
 
