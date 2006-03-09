@@ -176,6 +176,7 @@ using std::max;
 #  define CGAL_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #else 
 #  define CGAL_PRETTY_FUNCTION __func__
+// with sunpro, this requires -features=extensions
 #endif
 
 #endif // CGAL_CONFIG_H
