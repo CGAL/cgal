@@ -17,8 +17,8 @@
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
-#ifndef PROGRESS_INDICATOR_H
-#define PROGRESS_INDICATOR_H
+#ifndef CGAL_NEF3_PROGRESS_INDICATOR_H
+#define CGAL_NEF3_PROGRESS_INDICATOR_H
 
 #include <iostream>
 #include <CGAL/assertions.h>
@@ -89,4 +89,4 @@ class Progress_indicator_cout
     : Base( std::cout, n, msg, s) {}
 };
 
-#endif // PROGRESS_INDICATOR_H
+#endif // CGAL_NEF3_PROGRESS_INDICATOR_H
