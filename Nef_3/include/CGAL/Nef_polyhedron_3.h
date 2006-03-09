@@ -49,6 +49,10 @@
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // CGAL_NEF3_SM_VISUALIZOR
 
+#ifdef CGAL_NEF3_OLD_VISUALIZATION 
+#include <CGAL/Nef_3/Visualizor_OpenGL_3.h>
+#endif // CGAL_NEF3_OLD_VISUALIZATION 
+
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -196,6 +200,9 @@ protected:
 #ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef typename Nef_rep::SM_visualizor       SM_visualizor;
 #endif // CGAL_NEF3_SM_VISUALIZOR
+#ifdef CGAL_NEF3_OLD_VISUALIZATION 
+  typedef CGAL::Nef_Visualizor_OpenGL_3<Nef_polyhedron_3> Visualizor;
+#endif // CGAL_NEF3_OLD_VISUALIZATION 
 
  typedef typename Nef_rep::Sphere_map                Sphere_map;
  public:
@@ -722,6 +729,14 @@ protected:
   }
 
  public:
+#ifdef CGAL_NEF3_OLD_VISUALIZATION   
+  void visualize() { 
+    Visualizor sncv(*this);
+    sncv.draw();
+    //OGL::polyhedra_.back().debug();
+    OLDOGL::start_viewer();
+  }
+#endif // CGAL_NEF3_OLD_VISUALIZATION   
    
   void clear(Content space = EMPTY)
     { *this = Nef_polyhedron_3(space, pl()->clone()); }
