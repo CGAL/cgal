@@ -748,6 +748,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     return v;
   }
 
+  /*
   Vertex_handle 
     qualify_with_respect( const Point_3 p, 
 			  const SNC_point_locator* pl1,
@@ -785,7 +786,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     else CGAL_assertion_msg(0, "Where is the point then?");
     return Vertex_handle(); // never reached
   }
-
+  */
   /*
   Vertex_handle 
     qualify_with_respect( const Point_3& p, 
@@ -950,6 +951,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
+#ifdef CGAL_NEF3_FACET_WITH_BOX 
+    SNC_constructor C1(snc1);
+    C1.create_box();
+    SNC_constructor C2(snc2);
+    C2.create_box();
+#endif
+
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
     CGAL_NEF_TRACEN("=> for all v0 in snc1, qualify v0 with respect snc2");
@@ -987,7 +995,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	sncp()->delete_vertex(v1);
       }
       else if( CGAL::assign( f, o)) {
-	CGAL_NEF_TRACEN("p0 found on facet");
+	CGAL_NEF_TRACEN("p0 found on facet" << f->plane());
 	Vertex_handle v1 = create_local_view_on( p0, f);
 	binop_local_views( v0, v1, BOP, *sncp());
 	sncp()->delete_vertex(v1);
