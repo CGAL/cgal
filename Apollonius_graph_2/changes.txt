@@ -2,6 +2,7 @@
 - changed default background color from yellow to black
 - gave the example files some more meaningful names
 - capitalized headings in user manual
+- attempt to fix sunpro warnings
 
 8 March 2006:  Menelaos Karavelas
 - demos now include CGAL/basic.h before testing for Qt; this is essential

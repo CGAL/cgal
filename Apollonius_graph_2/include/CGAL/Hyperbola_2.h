@@ -191,13 +191,13 @@ protected:
 public:
   Hyperbola_2()  { STEP = FT(2); }
 
-  Hyperbola_2(const Site_2 &f1,	const Site_2 &f2)
+  Hyperbola_2(const Site_2 &ff1, const Site_2 &ff2)
   {
     STEP = FT(2);
-    this->r = f1.weight() - f2.weight();
+    this->r = ff1.weight() - ff2.weight();
     
-    this->f1 = f1.point();
-    this->f2 = f2.point();
+    this->f1 = ff1.point();
+    this->f2 = ff2.point();
 
     compute_origin();
   }
