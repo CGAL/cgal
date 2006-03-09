@@ -18,6 +18,8 @@
 //
 // Author(s)     : Laurent Rineau
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "Show_segments_base.h"

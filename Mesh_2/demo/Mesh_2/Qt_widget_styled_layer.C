@@ -18,6 +18,8 @@
 //
 // Author(s)     : Laurent Rineau
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "Qt_widget_styled_layer.h"
