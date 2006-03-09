@@ -17,6 +17,8 @@
 //
 // Author(s)     : Radu Ursu
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "partition_2_toolbar_layers.h"
