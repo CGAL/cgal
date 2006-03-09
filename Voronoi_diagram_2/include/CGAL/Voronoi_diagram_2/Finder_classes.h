@@ -59,7 +59,7 @@ template<class VDA>
 struct Find_opposite_halfedge
 {
   typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
-  typedef Find_next_halfedge<VDA>                     Find_next_halfedge;
+  typedef Find_next_halfedge<VDA>                     Next_halfedge;
 
   void operator()(const VDA* vda, const Delaunay_face_handle& f, int i,
 		  Delaunay_face_handle& fopp, int& iopp) const 
@@ -68,7 +68,7 @@ struct Find_opposite_halfedge
     int i1;
     int i_mirror = vda->dual().tds().mirror_index(f, i);
 
-    Find_next_halfedge()(vda, f->neighbor(i), i_mirror, f1, i1);
+    Next_halfedge()(vda, f->neighbor(i), i_mirror, f1, i1);
 
     fopp = f1->neighbor(i1);
     iopp = vda->dual().tds().mirror_index(f1, i1);
