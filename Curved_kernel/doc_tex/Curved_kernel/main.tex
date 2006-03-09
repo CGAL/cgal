@@ -93,3 +93,35 @@ either circular arcs or line segments.
 \ccIncludeExampleCode{Curved_kernel/example_Exact_circular_kernel.C}
 
 \section{Design and Implementation History}
+
+The first pieces of prototype code were comparisons of algebraic
+numbers of degree~2, written by Olivier Devillers
+\cite{cgal:dfmt-amafe-00,cgal:dfmt-amafe-02}, and that are still used
+in the current implementation of \ccc{CGAL::Root_of_2}.
+
+Some work was then done in the direction of a ``kernel'' for
+\cgal.\footnote{Monique Teillaud, First Prototype of a
+\cgal\ Geometric Kernel with Circular Arcs, Technical Report
+ECG-TR-182203-01, 2002\\Sylvain Pion and Monique Teillaud,
+Towards a \cgal-like kernel for curves, Technical Report
+ECG-TR-302206-01, 2003} and the first design emerged in
+\cite{cgal:ekptt-tock-04}.
+
+The code of this package was written by Sylvain Pion and Monique
+Teillaud who also wrote the manual. Athanasios Kakargias worked on an
+prototype version of this kernel in 2003. Julien Hazebrouck
+participated in the implementation of this kernel in July and August
+2005.
+
+Some work is in progress on the implementation of a 3D kernel for
+circles, circular arcs and spherical patches (with the participation
+of Julien Hazebrouck and Damien Leroy).
+
+This work was partially supported by the IST Programme of the EU as a
+Shared-cost RTD (FET Open) Project under Contract No IST-2000-26473
+(\ccAnchor{http://www-sop.inria.fr/prisme/ECG/}{ECG} - Effective
+Computational Geometry for Curves and Surfaces).\\
+This work is now partially supported by the IST Programme of the 6th
+Framework Programme of the EU as a STREP (FET Open Scheme) Project
+under Contract No IST-006413 (\ccAnchor{http://acs.cs.rug.nl/}{ACS} -
+Algorithms for Complex Shapes).
