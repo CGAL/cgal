@@ -17,11 +17,12 @@
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
-#include <iostream>
-#include <cstdlib>
 #include <CGAL/basic.h>
 
 #ifndef CGAL_USE_QT
+
+#include <iostream>
+
 int main(int, char*)
 {
   std::cout << "Sorry, this demo needs QT...";
@@ -30,6 +31,7 @@ int main(int, char*)
 }
 #else
 
+#include <cstdlib>
 #include "cgal_types.h"
 //global flags and variables
 int current_state;

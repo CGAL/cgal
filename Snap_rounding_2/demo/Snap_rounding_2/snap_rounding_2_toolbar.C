@@ -17,6 +17,8 @@
 //
 // Author(s)     : Eli Packer <elip@post.tau.ac.il>
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
