@@ -39,12 +39,7 @@ class Vertices_on_the_same_surface_criterion :
     typedef typename Tr::Cell_handle Cell_handle;
 
   public:
-    bool is_bad (const Facet& f) const {
-      Quality q = quality(f);
-      return (q==Quality(0));
-    }
-    
-    Quality quality (const Facet& f) const {
+  bool is_bad (const Facet& f, Quality& q) const {
       const Cell_handle& ch = f.first;
       const int i = f.second;
       const Vertex_handle& v1 = ch->vertex((i+1)&3);
@@ -55,9 +50,16 @@ class Vertices_on_the_same_surface_criterion :
       if ( number == 0 ||
 	   (v2->point().surface_index() != number) ||
            (v3->point().surface_index() != number ) )
-	return Quality(0);
-      else return Quality(1);
-    }
+      {
+	q = Quality(0);
+        return true;
+      }
+      else
+      {
+        q = Quality(1);
+        return false;
+      }
+    } 
 }; // end Vertices_on_the_same_surface_criterion
 
 

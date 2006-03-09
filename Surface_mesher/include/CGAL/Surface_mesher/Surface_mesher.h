@@ -164,8 +164,9 @@ namespace CGAL {
 	    //c->set_facet_on_surface(other_side.second,true);
 	    //c->set_surface_center_facet(other_side.second,center);
 
-	    if (criteria.is_bad (*fit)) {
-	      Quality a_r = criteria.quality (*fit);
+            Quality a_r;
+            if (criteria.is_bad (*fit, a_r)) {
+               // @TODO, @WARNING: why do we insert the two sides of facets?!
 	      facets_to_refine.insert(*fit,a_r);
 	      facets_to_refine.insert(other_side,a_r);
 	    }
@@ -187,8 +188,8 @@ namespace CGAL {
 	    //c->set_facet_on_surface((*fit).second,true);
 	    //c->set_facet_surface_center((*fit).second,center);
 
-	    if (criteria.is_bad (*fit)) {
-	      Quality a_r = criteria.quality (*fit);
+            Quality a_r;
+	    if (criteria.is_bad (*fit, a_r)) {
 	      facets_to_refine.insert(*fit,a_r);
 	    }
 	  }
@@ -291,7 +292,9 @@ namespace CGAL {
 	  if( distance(center, p) <
 	      distance(center, c->vertex((index+1)&3)->point()) )
 	    {
-	      Quality q = criteria.quality(f);
+// 	      Quality q = criteria.quality(f);
+              Quality q;
+              criteria.is_bad(f, q); // to get q (passed as reference)
 	      facets_to_refine.insert(f, q);
 	      return true;
 	    }
@@ -303,7 +306,9 @@ namespace CGAL {
 	  if( distance(center, p) <
 	      distance(center, c->vertex((index+1)&3)->point()) )
 	    {
-	      Quality q = criteria.quality(f);
+// 	      Quality q = criteria.quality(f);
+              Quality q;
+              criteria.is_bad(f, q); // to get q (passed as reference)
 	      facets_to_refine.insert(f, q);
 	      return true;
 	    }
@@ -480,8 +485,9 @@ namespace CGAL {
 	set_facet_surface_center(other_side, center);
 
 	// On regarde alors si la facette est bonne
-	if (criteria.is_bad (f)) {
-	  Quality a_r = criteria.quality (f);
+        Quality a_r;
+	if (criteria.is_bad (f, a_r)) {
+          // @TODO, @WARNING: same as above, why the two sides?!
 	  facets_to_refine.insert (f, a_r);
 	  facets_to_refine.insert (other_side, a_r);
 	}

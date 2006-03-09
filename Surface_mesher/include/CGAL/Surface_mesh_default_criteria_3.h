@@ -54,16 +54,10 @@ public:
     criteria.set_criteria(criterion_vector);
   }
 
-  bool is_bad (const Facet& f)
+  bool is_bad (const Facet& f, Quality& q)
   {
-    return criteria.is_bad(f);
+    return criteria.is_bad(f, q);
   }
-
-  Quality quality(const Facet& f)
-  {
-    return criteria.quality(f);
-  }
-  
 private:
   Surface_mesher::Curvature_size_criterion<Tr> curvature_size_criterion;
   // bound on Hausdorff distance does not play any role if bigger than

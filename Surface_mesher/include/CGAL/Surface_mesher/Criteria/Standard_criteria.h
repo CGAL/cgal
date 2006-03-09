@@ -42,7 +42,8 @@ namespace CGAL {
     typedef typename Criterion::Facet Facet;
     typedef std::vector<FT> Quality;
 
-    Standard_criteria() {};
+    Standard_criteria() {}
+
     Standard_criteria (const Criteria& c) : criteria (c) {}
 
     void set_criteria(const Criteria& c)
@@ -50,26 +51,17 @@ namespace CGAL {
       criteria = c;
     }
 
-    bool is_bad (const Facet& f) {
+    bool is_bad (const Facet& f, Quality& q ) {
+      bool bad = false;
+      int i = 0;
+      q.resize(criteria.size());
       for (typename Criteria::iterator cit = criteria.begin(); cit !=
 	     criteria.end(); ++cit)
-	if ((*cit)->is_bad (f))
-	    return true;
-      return false;
-    }
-
-
-    Quality quality (const Facet& f) {
-      Quality q (criteria.size());
-      int i=0;
-      for (typename Criteria::iterator cit =
-	     criteria.begin(); cit != criteria.end(); ++cit)
-	q[i++] = (*cit)->quality (f);
-      return q;
+	if ((*cit)->is_bad (f, q[i++]))
+          bad = true;
+      return bad;
     }
   };
-
-
 
   // abstract basic Criterion class
   template <class Tr>
@@ -77,12 +69,9 @@ namespace CGAL {
   public:
     typedef typename Tr::Facet Facet;
     typedef typename Tr::Geom_traits::FT Quality;
-    virtual bool is_bad (const Facet& f) const = 0;
-    virtual Quality quality (const Facet& f) const = 0;
+    virtual bool is_bad (const Facet&, Quality& ) const = 0;
     virtual ~Refine_criterion() {}
   };
-
-
 
   // Aspect_ratio Criterion class
   template <class Tr>
@@ -95,28 +84,15 @@ namespace CGAL {
     typedef typename Refine_criterion <Tr>::Facet Facet;
     typedef typename Tr::Point Point;
 
-    bool debug;
     Quality B;
 
   public:
     // Nb: the default bound of the criterion is such that the criterion
     // is always fulfilled
-    Aspect_ratio_criterion(const FT angle_min = 0., bool dbg = false) :
-      debug (dbg) {
-      if (debug)
-	std::cerr << "angle min = " << angle_min << " degrees\n";
-      B = std::sin (CGAL_PI * CGAL::to_double(angle_min) / 180);
-      B = B * B;
-      if (debug)
-	std::cerr << "B = " << B << std::endl;
+    Aspect_ratio_criterion(const FT angle_min = 0.)
+    { // TODO: document that FT must constructible from a double!
+      set_angle_min(angle_min);
     }
-
-//     Aspect_ratio_criterion(const Quality b, bool dbg = false) :
-//       debug (dbg), B (b) {
-//       if (debug)
-// 	std::cerr << "B = " << B << std::endl;
-//     }
-
 
     inline
     Quality bound() const { return B; }
@@ -128,23 +104,12 @@ namespace CGAL {
     void set_bound(const Quality b) { B = b; };
 
     inline
-    void set_angle_min(const int angle_min) {
-      B = std::sin (M_PI * angle_min / 180);
+    void set_angle_min(const FT angle_min) {
+      B = std::sin (CGAL_PI * CGAL::to_double(angle_min) / 180);
       B = B * B;
     };
 
-    bool is_bad (const Facet& fh) const {
-      Quality a = quality (fh);
-      if (debug) {
-	if (a <= B)
-	  std::cerr << "bad: "<< a << " < " << B << std::endl;
-	else
-	  std::cerr << "good: "<< a << " >= " << B << std::endl;
-      }
-      return (a < B);
-    }
-
-    Quality quality (const Facet& fh) const {
+    bool is_bad (const Facet& fh, Quality& q) const {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
 
       typedef typename Tr::Geom_traits Geom_traits;
@@ -165,12 +130,14 @@ namespace CGAL {
 	* min_3(d12,d13,d23) / (d12*d13*d23);
 
       CGAL_assertion (aspect_ratio >= 0 && aspect_ratio <= 1);
-      return aspect_ratio;
+      q = aspect_ratio;
+      return aspect_ratio < B;
     }
 
 
   private:
-    Quality min_3 (const Quality a, const Quality b, const Quality c) const {
+    static 
+    Quality min_3 (const Quality a, const Quality b, const Quality c) {
       if (a<=b && a<=c)
 	return(a);
 
@@ -181,9 +148,6 @@ namespace CGAL {
 	return(c);
     }
   };  // end Aspect_ratio_criterion
-
-
-
 
   // Curvature_adapted size Criterion class
   template <class Tr>
@@ -209,12 +173,7 @@ namespace CGAL {
     void set_bound(const Quality b) { B = b * b; };
 
 
-    bool is_bad (const Facet& fh) const {
-      return (quality (fh) > B);
-    }
-
-
-    Quality quality (const Facet& fh) const {
+    bool is_bad (const Facet& fh, Quality& q) const {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
 
       typedef typename Tr::Geom_traits Geom_traits;
@@ -224,14 +183,13 @@ namespace CGAL {
       Point p2 = fh.first->vertex ((fh.second+2)&3)->point();
       Point p3 = fh.first->vertex ((fh.second+3)&3)->point();
 
-      return gt.compute_squared_distance_3_object()
+      q = gt.compute_squared_distance_3_object()
 	(gt.construct_circumcenter_3_object()(p1,p2,p3),
 	 fh.first->get_facet_surface_center(fh.second));
+      return q > B;
     }
 
   };  // end Curvature_size_criterion
-
-
 
   // Uniform size Criterion class
   template <class Tr>
@@ -257,12 +215,7 @@ namespace CGAL {
     void set_bound(const Quality b) { B = b * b; };
 
 
-    bool is_bad (const Facet& fh) const {
-      return (quality (fh) > B);
-    }
-
-
-    Quality quality (const Facet& fh) const {
+    bool is_bad (const Facet& fh, Quality& q) const {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
 
       typedef typename Tr::Geom_traits Geom_traits;
@@ -270,10 +223,10 @@ namespace CGAL {
 
       Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
 
-      return gt.compute_squared_distance_3_object()
+      q =  gt.compute_squared_distance_3_object()
 	(p1, fh.first->get_facet_surface_center (fh.second));
+      return q > B;
     }
-
   };  // end Uniform_size_criterion
 
 
@@ -302,13 +255,7 @@ namespace CGAL {
     void set_bound(const Quality b) { B = b * b; };
 
 
-    bool is_bad (const Facet& fh) const {
-      return (quality (fh) > B);
-    }
-
-
-    Quality quality (const Facet& fh) const {
-
+    bool is_bad (const Facet& fh, Quality& q) const {
       typedef typename Tr::Geom_traits Geom_traits;
       typedef typename Geom_traits::FT FT;
       Geom_traits gt;
@@ -323,12 +270,13 @@ namespace CGAL {
 
       if (d12 > d13) {
 	if (d12 > d23)
-	  return d12;
+	  q =  d12;
 	else
-	  return d23;
+	  q = d23;
       }
       else
-	return d13;
+	q = d13;
+      return q > B;
     }
 
   };  // end Edge_size_criterion
