@@ -49,7 +49,7 @@ CGAL_BEGIN_NAMESPACE
 /// Subclasses are Strategies [GHJV95] that modify the behavior of this algorithm:
 /// - They provide BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
 ///   parameters that make sense.
-/// - They implement compute_w_ij() to compute w_ij = (i,j) coefficient of matrix A
+/// - They implement compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i.
 /// - They may implement an optimized version of is_one_to_one_mapping().
 ///
@@ -176,7 +176,7 @@ protected:
     void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                               const Adaptor& mesh);
 
-    /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+    /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
     /// Implementation note: Subclasses must at least implement compute_w_ij().
     virtual NT compute_w_ij(const Adaptor& mesh,
                             Vertex_const_handle main_vertex_v_i,

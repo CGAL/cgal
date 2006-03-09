@@ -24,7 +24,7 @@
 /// Implementation note:
 /// To simplify the implementation, BorderParameterizer_3 models know only the
 /// ParameterizationMesh_3 class. They do not know the parameterization algorithm
-/// requirements nor the kind of sparse linear system used.
+/// requirements or the kind of sparse linear system used.
 ///
 /// Design Pattern:
 /// BorderParameterizer_3 models are Strategies [GHJV95]: they implement

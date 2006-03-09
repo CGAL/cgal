@@ -43,7 +43,7 @@ CGAL_BEGIN_NAMESPACE
 /// Mean_value_coordinates_parameterizer_3:
 /// - provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
 ///   parameters that make sense.
-/// - implements compute_w_ij() to compute w_ij = (i,j) coefficient of matrix A
+/// - implements compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.
 /// - implements an optimized version of is_one_to_one_mapping().
 ///
@@ -140,7 +140,7 @@ public:
 
 // Protected operations
 protected:
-    /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+    /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
     virtual NT compute_w_ij(const Adaptor& mesh,
                             Vertex_const_handle main_vertex_v_i,
                             Vertex_around_vertex_const_circulator neighbor_vertex_v_j)

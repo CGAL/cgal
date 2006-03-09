@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -35,7 +35,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Parameterization_mesh_patch_3 is a Decorator class to virtually "cut" a patch
+/// Parameterization_mesh_patch_3 is a Decorator class to "virtually" cut a patch
 /// in a ParameterizationPatchableMesh_3 3D surface. Only the patch is exported,
 /// making the 3D surface look like a topological disk.
 ///
@@ -173,7 +173,7 @@ public:
     Parameterization_mesh_patch_3(Adaptor& mesh,
                                   InputIterator first_seam_vertex,
                                   InputIterator end_seam_vertex)
-        // Store reference to adapted mesh 
+        // Store reference to adapted mesh
       : m_mesh_adaptor(mesh)
     {
         // Set seaming flag of all vertices and edges to INNER, BORDER or OUTER

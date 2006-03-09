@@ -4,8 +4,8 @@
 % | 29.08.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
 % | Package: Surface_mesh_parameterization
 % |
-\RCSdef{\RCSPatchableMeshAdaptorRev}{$Id$}
-\RCSdefDate{\RCSPatchableMeshAdaptorDate}{$Date$}
+\RCSdef{\RCSParameterizationPatchableMeshRev}{$Id$}
+\RCSdefDate{\RCSParameterizationPatchableMeshDate}{$Date$}
 % |
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
@@ -25,7 +25,7 @@
 
 ParameterizationPatchableMesh\_3 inherits from concept ParameterizationMesh\_3, thus is a concept of a 3D surface mesh.
 
-ParameterizationPatchableMesh\_3 adds the ability to support patches and virtual seams. Patches are a subset of a 3D mesh. Virtual seams are the ability to behave exactly as if the surface was {\em cut} following a certain path.
+ParameterizationPatchableMesh\_3 adds the ability to support patches and virtual seams. {\em Patches} are a subset of a 3D mesh. {\em Virtual seams} are the ability to behave exactly as if the surface was cut following a certain path.
 
 This mainly means that:\begin{itemize}
 \item vertices can be tagged as inside or outside the patch to parameterize.\item the fields specific to parameterizations (index, u, v, is\_parameterized) can be set per {\em corner} (aka half-edge).\end{itemize}
@@ -55,8 +55,8 @@ ParameterizationPatchableMesh\_3 inherits from concept ParameterizationMesh\_3.
 
 %END-AUTO(\ccRefines)
 
-In addition to the requirements described in the concept MeshAdaptor\_3,
-PatchableMeshAdaptor\_3 provides the following:
+In addition to the requirements described in the concept \ccc{ParameterizationMesh_3},
+\ccc{ParameterizationPatchableMesh_3} provides the following:
 
 
 \ccTypes

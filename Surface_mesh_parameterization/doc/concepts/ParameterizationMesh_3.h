@@ -39,14 +39,14 @@
 /// Among other things, this concept defines accessors to fields specific
 /// to parameterizations methods: index, u, v, is_parameterized.
 ///
-/// ParameterizationMesh_3 meshes can have any genus, arity or number of components. In the other hand,
+/// ParameterizationMesh_3 meshes can have any genus, arity or number of components. On the other hand,
 /// as parameterization methods deal only with topological disks, ParameterizationMesh_3
 /// defines an interface oriented towards topological disks.
 ///
 /// Models:
 /// - Adaptator for Polyhedron_3 is provided.
 /// - Parameterization_mesh_patch_3<M> is a model of ParameterizationMesh_3 if
-///   M is a model of MeshAdaptorWithStream_3.
+///   M is a model of ParameterizationPatchableMesh_3.
 ///
 /// Design Pattern:
 /// ParameterizationMesh_3 is an Adaptor [GHJV95]: it changes the

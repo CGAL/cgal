@@ -31,7 +31,7 @@ typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 // main()
 // ----------------------------------------------------------------------------
 
-int main(int argc,char * argv[])
+int main(int argc, char * argv[])
 {
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
@@ -131,7 +131,7 @@ int main(int argc,char * argv[])
 // Empty main() if TAUCS is not installed
 // ----------------------------------------------------------------------------
 
-int main(int argc,char * argv[])
+int main(int argc, char * argv[])
 {
     std::cerr << "Skip test as TAUCS is not installed" << std::endl;
     return EXIT_SUCCESS;

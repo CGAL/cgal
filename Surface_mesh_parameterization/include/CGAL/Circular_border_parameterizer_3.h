@@ -41,7 +41,7 @@ CGAL_BEGIN_NAMESPACE
 /// Implementation note:
 /// To simplify the implementation, BorderParameterizer_3 models know only the
 /// ParameterizationMesh_3 class. They do not know the parameterization algorithm
-/// requirements nor the kind of sparse linear system used.
+/// requirements or the kind of sparse linear system used.
 ///
 /// Concept: Model of the BorderParameterizer_3 concept (although you cannot instantiate this class).
 ///

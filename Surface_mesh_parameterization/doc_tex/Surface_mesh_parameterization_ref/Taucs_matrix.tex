@@ -131,7 +131,7 @@ Preconditions:\begin{itemize}
 \ccMethod{void set_coef (int i, int j, T val);}
 {
 Write access to a matrix coefficient: a\_ij $<$- val.
-Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle set\_coef() does nothing if (i,j) belongs to the upper triangle.
+Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle set\_coef() does nothing if (i, j) belongs to the upper triangle.
 Preconditions:\begin{itemize}
 \item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
 }
@@ -139,7 +139,7 @@ Preconditions:\begin{itemize}
 \ccMethod{void add_coef (int i, int j, T val);}
 {
 Write access to a matrix coefficient: a\_ij $<$- a\_ij + val.
-Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle add\_coef() does nothing if (i,j) belongs to the upper triangle.
+Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle add\_coef() does nothing if (i, j) belongs to the upper triangle.
 Preconditions:\begin{itemize}
 \item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
 }

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -55,8 +55,8 @@ CGAL_BEGIN_NAMESPACE
 /// will be the mesh's longest border (if there is at least one border).
 ///
 /// It has also the ability to support patches and virtual seams.
-/// Patches are a subset of a 3D mesh. Virtual seams are the ability
-/// to behave exactly as if the surface was "cut" following a certain path.
+/// "Patches" are a subset of a 3D mesh. "Virtual seams" are the ability
+/// to behave exactly as if the surface was cut following a certain path.
 ///
 /// Concept:
 /// Model of ParameterizationPatchableMesh_3 concept, whose purpose is to allow
@@ -309,7 +309,7 @@ public:
     /// It can have have any number of borders. Its "main border"
     /// will be the mesh's longest border (if there is at least one border).
     Parameterization_polyhedron_adaptor_3(Polyhedron& mesh)
-        // Store reference to adapted mesh 
+        // Store reference to adapted mesh
       : m_polyhedron(mesh)
     {
         typedef typename Halfedge_info_map::value_type Halfedge_info_pair;

@@ -54,14 +54,14 @@
 // Mesh true type and Surface_mesh_parameterization adaptors
 typedef Polyhedron_ex                                       Polyhedron;
 typedef Parameterization_polyhedron_adaptor_ex              Parameterization_polyhedron_adaptor;
-typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor> 
+typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
                                                             Mesh_patch_polyhedron;
 
 // Parameterizer for this kind of mesh
 typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron> Parameterizer;
 
 // Type describing a border or seam as a vertex list
-typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>   
+typedef std::list<Parameterization_polyhedron_adaptor::Vertex_handle>
                                                             Seam;
 
 // Sparse matrix solver 1 to test: OpenNL
@@ -118,7 +118,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
         Backbone seamingBackbone;           // result of cutting
         Backbone::iterator he;
 
-        // Virtually "cut" mesh to make it a topological disk
+        // Compute a cutting path that makes the mesh a "virtual" topological disk
         mesh.compute_facet_centers();
         Mesh_cutter cutter(mesh);
         if (genus == 0)
@@ -180,7 +180,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
 // main()
 // ----------------------------------------------------------------------------
 
-int main(int argc,char * argv[])
+int main(int argc, char * argv[])
 {
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "Test all parameterization methods and all solvers" << std::endl;
@@ -217,7 +217,7 @@ int main(int argc,char * argv[])
 
         // Read the mesh
         std::ifstream stream(input_filename);
-        if(!stream) 
+        if(!stream)
         {
             std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
@@ -225,7 +225,7 @@ int main(int argc,char * argv[])
         }
         Polyhedron mesh;
         stream >> mesh;
-        std::cerr << "Read file " << input_filename << ": " 
+        std::cerr << "Read file " << input_filename << ": "
                   << task_timer.time() << " seconds "
                   << "(" << mesh.size_of_facets() << " facets, "
                   << mesh.size_of_vertices() << " vertices)" << std::endl;
@@ -239,8 +239,8 @@ int main(int argc,char * argv[])
         Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
         // The parameterization methods support only meshes that
-        // are topological disks => we need to virtually "cut" the mesh
-        // to make it homeomorphic to a disk
+        // are topological disks => we need to compute a cutting path
+        // that makes the mesh a "virtual" topological disk
         //
         // 1) Cut the mesh
         Seam seam = cut_mesh(mesh_adaptor);

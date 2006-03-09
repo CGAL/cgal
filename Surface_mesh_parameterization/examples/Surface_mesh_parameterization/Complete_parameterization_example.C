@@ -181,7 +181,7 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
 // main()
 // ----------------------------------------------------------------------------
 
-int main(int argc,char * argv[])
+int main(int argc, char * argv[])
 {
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Discrete Authalic Parameterization" << std::endl;
@@ -230,7 +230,7 @@ int main(int argc,char * argv[])
 
     // The parameterization methods support only meshes that
     // are topological disks => we need to compute a "cutting" of the mesh
-    // that makes it it homeomorphic to a disk
+    // that makes it homeomorphic to a disk
     Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
@@ -293,7 +293,7 @@ int main(int argc,char * argv[])
 // Empty main() if TAUCS is not installed
 // ----------------------------------------------------------------------------
 
-int main(int argc,char * argv[])
+int main(int argc, char * argv[])
 {
     std::cerr << "Skip test as TAUCS is not installed" << std::endl;
     return EXIT_SUCCESS;

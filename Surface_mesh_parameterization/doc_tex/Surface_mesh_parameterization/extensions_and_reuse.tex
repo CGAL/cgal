@@ -3,8 +3,13 @@
 \subsection{Reusing Mesh Adaptors}
 
 \ccc{ParameterizationMesh_3} defines a concept to access to a
-general polyhedral mesh.  The current interface is optimized for the
-\ccc{Surface_mesh_parameterization} package, but may be easily generalized.
+general polyhedral mesh.
+It is optimized for the \ccc{Surface_mesh_parameterization} package
+only in the sense that it
+defines the accessors to fields specific to the parameterization domain
+(\ccc{index}, \ccc{u}, \ccc{v}, \ccc{is_parameterized}).
+
+It may be easily generalized.
 
 
 \subsection{Reusing Sparse Linear Algebra}
@@ -12,24 +17,24 @@ general polyhedral mesh.  The current interface is optimized for the
 The \ccc{SparseLinearAlgebraTraits_d} concept and the traits classes
 for OpenNL and {\sc Taucs} are independent of the rest of the
 \ccc{Surface_mesh_parameterization} package, and may be reused by
-CGAL developers for other purposes.
+\cgal\ developers for other purposes.
 
 
 \subsection{Adding New Parameterization Methods}
 
 Implementing a new fixed border linear parameterization is easy.  Most
 of the code of the fixed border methods is factorized in the
-\ccc{Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
+\ccc{CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
 class.  Subclasses must mainly
 implement a \ccc{compute_w_ij}() method which computes each
-coefficient $w_{ij}$ = (i,j) of a matrix $A$ for $v_j$ neighbouring
+$w_{ij}$ = $(i, j)$ coefficient of the matrix $A$ for $v_j$ neighboring
 vertices of $v_i$.
 
 Although implementing a new free border linear parameterization
 method is more challenging, the Least Squares Conformal Maps
-parameterization method is a good starting point.
+parameterization method provides a good starting point.
 
-Implementing \ccc{non} linear parameterizations is a natural extension
+Implementing \emph{non} linear parameterizations is a natural extension
 to this package, although only the mesh adaptors can be reused.
 
 
@@ -44,4 +49,4 @@ Square, circular and two-points border parameterizations are good starting point
 Obviously, this package would benefit of having robust algorithms
 which transform arbitrary meshes into topological disks.
 
-% references ?
+% pierre : references ?

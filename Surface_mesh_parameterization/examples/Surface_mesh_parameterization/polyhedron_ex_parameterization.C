@@ -124,7 +124,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
         Backbone seamingBackbone;           // result of cutting
         Backbone::iterator he;
 
-        // Virtually "cut" mesh to make it a topological disk
+        // Compute a cutting path that makes the mesh a "virtual" topological disk
         mesh.compute_facet_centers();
         Mesh_cutter cutter(mesh);
         if (genus == 0)
@@ -340,7 +340,7 @@ where type is:   floater (default), conformal, barycentric, authalic or lscm\n\
 // main()
 // ----------------------------------------------------------------------------
 
-int main(int argc,char * argv[])
+int main(int argc, char * argv[])
 {
     CGAL::Timer total_timer;
     total_timer.start();
@@ -464,8 +464,8 @@ int main(int argc,char * argv[])
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     // The parameterization methods support only meshes that
-    // are topological disks => we need to virtually "cut" the mesh
-    // to make it homeomorphic to a disk
+    // are topological disks => we need to compute a cutting path
+    // that makes the mesh a "virtual" topological disk
     //
     // 1) Cut the mesh
     Seam seam = cut_mesh(mesh_adaptor);

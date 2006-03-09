@@ -32,7 +32,7 @@ One-to-one mapping is guaranteed if the surface's border is mapped to a convex p
 As all parameterization algorithms of the package, this class is usually called via the global function parameterize().
 
 This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm Fixed\_border\_parameterizer\_3::parameterize(). Mean\_value\_coordinates\_parameterizer\_3:\begin{itemize}
-\item provides default BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_w\_ij() to compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.\item implements an optimized version of is\_one\_to\_one\_mapping().\end{itemize}
+\item provides default BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_w\_ij() to compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.\item implements an optimized version of is\_one\_to\_one\_mapping().\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -103,7 +103,7 @@ Constructor.
 
 \ccMethod{virtual NT compute_w_ij (const Adaptor & mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
 {
-Compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+Compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
 }
 \ccGlue
 \ccMethod{virtual bool is_one_to_one_mapping (const Adaptor & mesh, const Matrix & A, const Vector & Bu, const Vector & Bv);}

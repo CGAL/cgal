@@ -22,8 +22,8 @@
 /// thus is a concept of a 3D surface mesh.
 ///
 /// ParameterizationPatchableMesh_3 adds the ability to support patches and virtual seams.
-/// Patches are a subset of a 3D mesh. Virtual seams are the ability
-/// to behave exactly as if the surface was "cut" following a certain path.
+/// "Patches" are a subset of a 3D mesh. "Virtual seams" are the ability
+/// to behave exactly as if the surface was cut following a certain path.
 ///
 /// This mainly means that:
 /// - vertices can be tagged as inside or outside the patch to parameterize.

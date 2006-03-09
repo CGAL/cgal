@@ -28,7 +28,7 @@ The class Fixed\_border\_parameterizer\_3 is the base class of fixed border para
 One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
 This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:\begin{itemize}
-\item They provide BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item They implement compute\_w\_ij() to compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of is\_one\_to\_one\_mapping().\end{itemize}
+\item They provide BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item They implement compute\_w\_ij() to compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of is\_one\_to\_one\_mapping().\end{itemize}
 
 
 \begin{description}
@@ -132,7 +132,7 @@ Preconditions:\begin{itemize}
 \ccGlue
 \ccMethod{virtual NT compute_w_ij (const Adaptor & mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
 {
-Compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement compute\_w\_ij().
+Compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement compute\_w\_ij().
 }
 \ccGlue
 \ccMethod{Parameterizer_traits_3< Adaptor >::Error_code setup_inner_vertex_relations (Matrix & A, Vector & Bu, Vector & Bv, const Adaptor & mesh, Vertex_const_handle vertex);}

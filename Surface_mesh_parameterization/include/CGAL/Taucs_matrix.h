@@ -115,7 +115,7 @@ public:
     T  get_coef (int i, int j) const
     {
         // For symmetric matrices, we store only the lower triangle
-        // => swap i and j if (i,j) belongs to the upper triangle
+        // => swap i and j if (i, j) belongs to the upper triangle
         if (m_matrix->flags & TAUCS_SYMMETRIC)
         {
             assert(m_matrix->flags & TAUCS_LOWER);
@@ -136,7 +136,7 @@ public:
     ///
     /// Optimization:
     /// For symmetric matrices, Taucs_matrix stores only the lower triangle
-    /// set_coef() does nothing if (i,j) belongs to the upper triangle.
+    /// set_coef() does nothing if (i, j) belongs to the upper triangle.
     ///
     /// Preconditions:
     /// - 0 <= i < row_dimension().
@@ -164,7 +164,7 @@ public:
     ///
     /// Optimization:
     /// For symmetric matrices, Taucs_matrix stores only the lower triangle
-    /// add_coef() does nothing if (i,j) belongs to the upper triangle.
+    /// add_coef() does nothing if (i, j) belongs to the upper triangle.
     ///
     /// Preconditions:
     /// - 0 <= i < row_dimension().
@@ -274,11 +274,11 @@ private:
         // should be if it doesn't exist) + the past-the-end index of the last column
         for (int idx = m_matrix->colptr[j]; idx <= m_matrix->colptr[j+1]; idx++)
         {
-            // At the the (i,j) element's position (which may exist or not)
+            // At the the (i, j) element's position (which may exist or not)
             if ((m_matrix->rowind[idx] >= i)    // on element i position of the column j
              || (idx == m_matrix->colptr[j+1])) // or on the 1st index of column j+1
             {
-                // If the (i,j) element doesn't exist yet and 'create' is true,
+                // If the (i, j) element doesn't exist yet and 'create' is true,
                 // shift the next elements and insert a new null element
                 if (((m_matrix->rowind[idx] > i)    // too far in the column j
                  || (idx == m_matrix->colptr[j+1])) // or on the column j+1
@@ -307,7 +307,7 @@ private:
                     m_nb_elements++;
                 }
 
-                // If the (i,j) element exists (now), return its address
+                // If the (i, j) element exists (now), return its address
                 if ((m_matrix->rowind[idx] == i) && (idx < m_matrix->colptr[j+1]))
                     element = &matrix_values[idx];
 

@@ -27,7 +27,7 @@ The intended audience of this package is researchers, developers or students dev
   - One connected component.
 The input mesh can be of any genus, -but- it has to come with a description of a border (a list of oriented edges given by a set or vertices) which is the border of a topological disc. If no border is given, we assume that it coincides with the unique border already in the input mesh. Note that this way the user is responsible for cutting a closed mesh of arbitrary genus (even a topological disc with an intricate seam cut), as long as this condition is verified.
 
-* A set of constraints (a constraint specifies two u,v coordinates for each instance of a vertex along the border).
+* A set of constraints (a constraint specifies two (u,v) coordinates for each instance of a vertex along the border).
   - For free border methods: only two constraints (the pinned vertices). They have to be on the specified border.
   - For fixed border methods:
     + a list of constraints given by the user. The whole border has to be specified.

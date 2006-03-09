@@ -20,11 +20,11 @@ surface parameterization methods, such as Least Squares Conformal Maps,
 Discrete Conformal Map, Discrete Authalic
 Parameterization, Floater Mean Value Coordinates or Tutte Barycentric
 Mapping. These methods mainly distinguish by the distortion they
-minimize (angles vs areas), by the constrained border onto the
-planar domain (convex polygon vs free border) and by the guarantees
+minimize (angles vs. areas), by the constrained border onto the
+planar domain (convex polygon vs. free border) and by the guarantees
 provided in terms of bijective mapping.
 
-The package proposes currently an interface with \cgal\ \ccc{Polyhedron_3}
+The package proposes currently an interface with \ccc{CGAL::Polyhedron_3<Traits>}
 data structure.
 
 Since parameterizing meshes require efficient representation of sparse
@@ -34,7 +34,7 @@ and propose a separate package devoted to OpenNL sparse
 linear solver.
 
 Note that linear solvers commonly use double precision floating point
-numbers. This package is thus intended to be used with a \cgal\
+numbers. Therefore, this package is intended to be used with a \cgal\
 cartesian kernel with doubles.
 
 The intended audience of this package is researchers, developers or
@@ -42,7 +42,8 @@ students developing algorithms around parameterization of triangle
 meshes for geometry processing as well as for signal mapping on
 triangulated surfaces.
 
-% Insert image introduction.png/eps with title "Least Squares Conformal Maps parameterization"
+% Insert image introduction.png/eps
+% with title "Julius Cesar mask textured by Least Squares Conformal Maps parameterization"
 \begin{center}
     \label{Surface_mesh_parameterization-fig-introduction}
     % Image
@@ -54,7 +55,7 @@ triangulated surfaces.
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Least Squares Conformal Maps parameterization}
+        \caption{Julius Cesar mask textured by Least Squares Conformal Maps parameterization}
     \end{figure}
 \end{center}
 

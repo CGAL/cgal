@@ -108,7 +108,7 @@ public:
 //	    fprintf(stderr, "******************  A:  ******************\n");
 //	    for (int i=0; i<n; i++)  {
 //		    for (int j=0; j<n; j++)
-//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i,j));
+//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
 //		    fprintf(stderr, "\n");
 //	    }
 //	    fprintf(stderr, "******************  B:  ******************\n");
@@ -122,8 +122,8 @@ public:
 //	    fprintf(stderr, "******************  A*X=B  ******************\n");
 //	    for (int i=0; i<n; i++)  {
 //		for (int j=0; j<n; j++)
-//		    if ( ! IsZero(A.get_coef(i,j)) )
-//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i,j));
+//		    if ( ! IsZero(A.get_coef(i, j)) )
+//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
 //		fprintf(stderr, "\n");
 //	    }
 //	    for (int j=0; j<n; j++)
@@ -226,7 +226,7 @@ public:
 //	    fprintf(stderr, "******************  A:  ******************\n");
 //	    for (int i=0; i<n; i++)  {
 //		    for (int j=0; j<n; j++)
-//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i,j));
+//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
 //		    fprintf(stderr, "\n");
 //	    }
 //	    fprintf(stderr, "******************  B:  ******************\n");
@@ -240,8 +240,8 @@ public:
 //	    fprintf(stderr, "******************  A*X=B  ******************\n");
 //	    for (int i=0; i<n; i++)  {
 //		for (int j=0; j<n; j++)
-//		    if ( ! IsZero(A.get_coef(i,j)) )
-//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i,j));
+//		    if ( ! IsZero(A.get_coef(i, j)) )
+//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
 //		fprintf(stderr, "\n");
 //	    }
 //	    for (int j=0; j<n; j++)

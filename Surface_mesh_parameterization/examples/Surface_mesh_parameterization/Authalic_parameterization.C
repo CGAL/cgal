@@ -27,7 +27,7 @@ typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 // main()
 // ----------------------------------------------------------------------------
 
-int main(int argc,char * argv[])
+int main(int argc, char * argv[])
 {
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Discrete Authalic Parameterization" << std::endl;

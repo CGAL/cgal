@@ -25,7 +25,7 @@
 
 This is the base class of strategies that parameterize the border of a 3D surface onto a circle. Circular\_border\_parameterizer\_3 is a pure virtual class, thus cannot be instantiated. It implements most of the algorithm. Subclasses just have to implement compute\_edge\_length() to compute a segment's length.
 
-Implementation note: To simplify the implementation, BorderParameterizer\_3 models know only the ParameterizationMesh\_3 class. They do not know the parameterization algorithm requirements nor the kind of sparse linear system used.
+Implementation note: To simplify the implementation, BorderParameterizer\_3 models know only the ParameterizationMesh\_3 class. They do not know the parameterization algorithm requirements or the kind of sparse linear system used.
 
 %END-AUTO(\ccDefinition)
 
