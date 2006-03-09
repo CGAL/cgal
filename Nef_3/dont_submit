@@ -1,6 +1,7 @@
 TODO
 include/CGAL/Nef_3/Shell_constructor.h
 include/CGAL/Nef_3/Progress_indicator.h
+include/CGAL/Nef_3/Visualizor.h
 Minkowski
 k3tree
 Benchmark
