@@ -52,13 +52,13 @@ int main(int argc, char *argv[])
 //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
 
     Traits tr;
-    Box::Pointer box= new Box(tr);
-    KDel::Pointer kdel= new KDel(tr);
+    Box::Handle box= new Box(tr);
+    KDel::Handle kdel= new KDel(tr);
 
-    Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
-    Qt_mps::Pointer qtmps= new Qt_mps(qtsim, tr);
+    Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
+    Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
 
-    Qt_triangulation::Pointer qtdel= new Qt_triangulation(kdel, qtsim, qtmps);
+    Qt_triangulation::Handle qtdel= new Qt_triangulation(kdel, qtsim, qtmps);
 
     if (file.empty()) {
         CGAL::Random rand;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
             }
             Traits::Kinetic_kernel::Point_2 mp(Traits::Kinetic_kernel::Motion_function(coefsx.begin(), coefsx.end()),
 					       Traits::Kinetic_kernel::Motion_function(coefsy.begin(), coefsy.end()));
-            tr.active_objects_table_pointer()->insert(mp);
+            tr.active_points_2_table_handle()->insert(mp);
 //std::cout << mp << std::endl;
         }
     }
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
             std::istringstream il(buf);
             Traits::Kinetic_kernel::Point_2 p;
             il >> p;
-            tr.active_objects_table_pointer()->insert(p);
+            tr.active_points_2_table_handle()->insert(p);
             ++nread;
         }
         std::cout << nread << " points read.\n";

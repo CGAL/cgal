@@ -21,11 +21,11 @@ class Qt_Delaunay_stable_subset_2: public Ref_counted<Qt_Delaunay_stable_subset_
   typedef internal::Triangulation_data_structure_helper_2<typename Kinetic_Delaunay::Triangulation::Triangulation_data_structure> TDS_helper;
 public:
   //typedef Kinetic_Delaunay Kinetic_Delaunay;
-  //typedef CGAL::Ref_counted_pointer<This> Pointer;
+  //typedef CGAL::Ref_counted_handle<This> Pointer;
 
-  Qt_Delaunay_stable_subset_2(typename Qt_gui::Pointer &gui,
-			      typename Qt_mpt::Pointer &mps,
-			      typename Kinetic_Delaunay::Pointer &kdel,
+  Qt_Delaunay_stable_subset_2(typename Qt_gui::Handle &gui,
+			      typename Qt_mpt::Handle &mps,
+			      typename Kinetic_Delaunay::Handle &kdel,
 			      double threshold): mpt_(mps),
 						 listener_(gui, this),
 						 kdel_(kdel),
@@ -59,7 +59,7 @@ protected:
   {
     typedef typename Qt_gui::Listener P;
   public:
-    Listener(typename Qt_gui::Pointer &h, Qt_del *t): Qt_gui::Listener(h), t_(t){}
+    Listener(typename Qt_gui::Handle &h, Qt_del *t): Qt_gui::Listener(h), t_(t){}
     virtual void new_notification(typename Qt_gui::Listener::Notification_type nt) {
       if (nt == Qt_gui::Listener::PICTURE_IS_VALID) {
 	t_->draw(*P::widget(), P::notifier()->current_time());
@@ -118,9 +118,9 @@ protected:
     }
   }
 
-  typename Qt_mpt::Pointer mpt_;
+  typename Qt_mpt::Handle mpt_;
   Listener listener_;
-  typename Kinetic_Delaunay::Pointer kdel_;
+  typename Kinetic_Delaunay::Handle kdel_;
   double threshold_;
 };
 

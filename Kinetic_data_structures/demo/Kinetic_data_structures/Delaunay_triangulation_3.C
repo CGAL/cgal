@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
     typedef CGAL::Kinetic::Exact_simulation_traits_3 Traits;
     typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits> KDel;
     typedef Traits::Simulator::Time Time;
-    typedef CGAL::Kinetic::Insert_event<Traits::Active_objects_table> IE;
-    typedef Traits::Active_objects_table::Data MP;
+    typedef CGAL::Kinetic::Insert_event<Traits::Active_points_3_table> IE;
+    typedef Traits::Active_points_3_table::Data MP;
     typedef Traits::Kinetic_kernel::Motion_function MF;
     typedef Traits::Kinetic_kernel::Point_3 MP;
     typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
@@ -49,18 +49,18 @@ int main(int argc, char *argv[])
     typedef CGAL::Kinetic::SoQt_triangulation_3<KDel, Qt_gui, Qt_mpt> Qt_del;
 
     Traits tr;
-    Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer());
-    Qt_mpt::Pointer qtmpt= new Qt_mpt(tr, qtsim);
-    KDel::Pointer kdel= new KDel(tr);
-    Qt_del::Pointer cd= new Qt_del(kdel, qtsim, qtmpt);
+    Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
+    Qt_mpt::Handle qtmpt= new Qt_mpt(tr, qtsim);
+    KDel::Handle kdel= new KDel(tr);
+    Qt_del::Handle cd= new Qt_del(kdel, qtsim, qtmpt);
 
     typedef Traits::Simulator::Time Time;
-    typedef CGAL::Kinetic::Insert_event<Traits::Active_objects_table> MOI;
+    typedef CGAL::Kinetic::Insert_event<Traits::Active_points_3_table> MOI;
 
     Traits::Kinetic_kernel::Function_kernel::Construct_function cf= tr.kinetic_kernel_object().function_kernel_object().construct_function_object();
 //sim->end_time();
-    Traits::Simulator::Pointer sim= tr.simulator_pointer();
-    Traits::Active_objects_table::Pointer mpt= tr.active_objects_table_pointer();
+    Traits::Simulator::Handle sim= tr.simulator_handle();
+    Traits::Active_points_3_table::Handle mpt= tr.active_points_3_table_handle();
     CGAL::Kinetic::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);
 
     if (verbose) {
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
             Traits::Kinetic_kernel::Point_3 mp(Traits::Kinetic_kernel::Motion_function(coefsx.begin(), coefsx.end()),
 					       Traits::Kinetic_kernel::Motion_function(coefsy.begin(), coefsy.end()),
 					       Traits::Kinetic_kernel::Motion_function(coefsz.begin(), coefsz.end()));
-            tr.active_objects_table_pointer()->insert(mp);
+            tr.active_points_3_table_handle()->insert(mp);
         }
     }
     else {
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
             std::istringstream il(buf);
             Traits::Kinetic_kernel::Point_3 p;
             il >> p;
-            tr.active_objects_table_pointer()->insert(p);
+            tr.active_points_3_table_handle()->insert(p);
             ++nread;
         }
         std::cout << nread << " points read.\n";

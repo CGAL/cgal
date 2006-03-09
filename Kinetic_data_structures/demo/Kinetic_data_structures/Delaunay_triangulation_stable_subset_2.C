@@ -56,12 +56,12 @@ int main(int argc, char *argv[])
 
     Traits tr;
 
-    KDel::Pointer kdel= new KDel(tr);
-    EB::Pointer eb= new EB(tr,-10,10,-10,10);
-    Qt_gui::Pointer qtsim= new Qt_gui(argc, argv, tr.simulator_pointer(), -10,10,-10,10);
-    Qt_mps::Pointer qtmps= new Qt_mps(qtsim, tr);
+    KDel::Handle kdel= new KDel(tr);
+    EB::Handle eb= new EB(tr,-10,10,-10,10);
+    Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle(), -10,10,-10,10);
+    Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
 
-    Qt_triangulation::Pointer qtdel= new Qt_triangulation(qtsim, qtmps, kdel, threshold);
+    Qt_triangulation::Handle qtdel= new Qt_triangulation(qtsim, qtmps, kdel, threshold);
 
     if (file.empty()) {
         CGAL::Random rand;
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
             }
             Traits::Kinetic_kernel::Point_2 mp(Traits::Kinetic_kernel::Motion_function(coefsx.begin(), coefsx.end()),
 					       Traits::Kinetic_kernel::Motion_function(coefsy.begin(), coefsy.end()));
-            tr.active_objects_table_pointer()->insert(mp);
+            tr.active_points_2_table_handle()->insert(mp);
         }
     }
     else {
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
             std::istringstream il(buf);
             Traits::Kinetic_kernel::Point_2 p;
             il >> p;
-            tr.active_objects_table_pointer()->insert(p);
+            tr.active_points_2_table_handle()->insert(p);
             ++nread;
         }
         std::cout << nread << " points read.\n";

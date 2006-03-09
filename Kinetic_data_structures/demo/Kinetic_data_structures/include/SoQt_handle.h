@@ -27,13 +27,13 @@
 //class SoNode;
 void intrusive_ptr_add_ref(SoNode *n)
 {
-    n->ref();
+  n->ref();
 }
 
 
 void intrusive_ptr_release(SoNode *n)
 {
-    n->unref();
+  n->unref();
 }
 
 
@@ -44,15 +44,15 @@ CGAL_BEGIN_NAMESPACE;
   have to use the existing reference count.
 */
 template <class T>
-class SoQt_pointer: public boost::intrusive_ptr<T>
+class SoQt_handle: public boost::intrusive_ptr<T>
 {
-    private:
-        typedef boost::intrusive_ptr<T> P;
-    public:
-//! Pointer constructor
-        SoQt_pointer(T* t): P(t){}
-//! default constructor
-        SoQt_pointer(): P(){}
+private:
+  typedef boost::intrusive_ptr<T> P;
+public:
+  //! Pointer constructor
+  SoQt_handle(T* t): P(t){}
+  //! default constructor
+  SoQt_handle(): P(){}
 };
 
 CGAL_END_NAMESPACE

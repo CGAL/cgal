@@ -21,7 +21,7 @@
 #ifndef CGAL_KINETIC_IO_QT_SIMULATOR_3_H_
 #define CGAL_KINETIC_IO_QT_SIMULATOR_3_H_
 #include <CGAL/Kinetic/basic.h>
-#include "SoQt_pointer.h"
+#include "SoQt_handle.h"
 #include <CGAL/Kinetic/IO/internal/GUI_base.h>
 #include "SoQt_examiner_viewer.h"
 #include <CGAL/Kinetic/IO/internal/Qt_timer.h>
@@ -61,7 +61,7 @@ public:
   typedef Simulator_t Simulator;
 
   //! construct things
-  SoQt_widget_3(int argc, char *argv[], typename Simulator::Pointer sh): base_(new Graphical_base(sh)), base_listener_(base_, this) {
+  SoQt_widget_3(int argc, char *argv[], typename Simulator::Handle sh): base_(new Graphical_base(sh)), base_listener_(base_, this) {
     main_window_= SoQt::init(argc, argv, argv[0]);
     viewer_= new SoQt_examiner_viewer(main_window_);
     SoQt::show(main_window_);
@@ -78,11 +78,11 @@ public:
   }
 
   //! Return a (reference counted) pointer to the simulator.
-  typename Simulator::Pointer& simulator() {
+  typename Simulator::Handle& simulator() {
     return base_->simulator();
   }
   //! Return a const (reference counted) pointer to the simulator
-  typename Simulator::Pointer simulator() const
+  typename Simulator::Handle simulator() const
   {
     return base_->simulator();
   }
@@ -96,7 +96,7 @@ public:
   class Listener_core
   {
   public:
-    typedef typename This::Pointer Notifier_pointer;
+    typedef typename This::Handle Notifier_handle;
     typedef enum {CURRENT_TIME}
       Notification_type;
 
@@ -107,9 +107,9 @@ public:
   private:
     friend class SoQt_widget_3<Simulator_t>;
     void set_root(SoSeparator* p) {
-      parent_=SoQt_pointer<SoSeparator>(p);
+      parent_=SoQt_handle<SoSeparator>(p);
     }
-    SoQt_pointer<SoSeparator> parent_;
+    SoQt_handle<SoSeparator> parent_;
   };
 
   //! Extend this object to listen for events.
@@ -123,7 +123,7 @@ private:
   class Base_listener: public Graphical_base::Listener
   {
   public:
-    Base_listener(typename Graphical_base::Pointer &b, This *t): Graphical_base::Listener(b), t_(t){}
+    Base_listener(typename Graphical_base::Handle &b, This *t): Graphical_base::Listener(b), t_(t){}
     virtual void new_notification(typename Graphical_base::Listener::Notification_type nt) {
       if (nt== Graphical_base::Listener::CURRENT_TIME) {
 	t_->update_coordinates();
@@ -152,7 +152,7 @@ private:
   }
 
 protected:
-  typename Graphical_base::Pointer base_;
+  typename Graphical_base::Handle base_;
   QWidget *main_window_;
   std::set<Listener *> drawable_;
   Base_listener base_listener_;
