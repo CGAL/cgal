@@ -13,8 +13,8 @@
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
 
-#ifndef EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
-#define EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
+#ifndef CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
+#define CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
 
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/intersections.h>
@@ -142,4 +142,4 @@ struct Exact_triangulation_euclidean_traits_xy_3
 };
 
 CGAL_END_NAMESPACE
-#endif // EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
+#endif // CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
