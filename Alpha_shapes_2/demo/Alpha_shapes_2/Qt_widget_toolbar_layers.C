@@ -17,6 +17,9 @@
 //
 // Author(s)     : Radu Ursu
 
+
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "Qt_widget_toolbar_layers.h"
