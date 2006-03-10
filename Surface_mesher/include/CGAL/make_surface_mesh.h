@@ -139,7 +139,7 @@ template <typename C2T3,
           typename Tag>
 void make_surface_mesh(C2T3& c2t3,
                        typename SurfaceMeshTraits_3::Surface_3 surface,
-		       SurfaceMeshTraits_3 traits,
+		       SurfaceMeshTraits_3 surface_mesh_traits,
                        Criteria criteria,
                        Tag,
                        int initial_number_of_points = 20)
@@ -151,12 +151,12 @@ void make_surface_mesh(C2T3& c2t3,
     Tag>::Mesher Mesher;
 
   typename SurfaceMeshTraits_3::Construct_initial_points get_initial_points =
-    traits.construct_initial_points_object();
+    surface_mesh_traits.construct_initial_points_object();
 
   get_initial_points(surface,
                      CGAL::inserter(c2t3.triangulation()),
                      initial_number_of_points);
-  Mesher mesher(c2t3, surface, traits, criteria);
+  Mesher mesher(c2t3, surface, surface_mesh_traits, criteria);
   mesher.refine_mesh(CGAL_SURFACE_MESHER_VERBOSE_BOOLEAN);
   // TODO initial, then refine()
 }
