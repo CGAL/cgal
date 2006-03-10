@@ -2500,7 +2500,7 @@ multiply__A_S_BxB_O(Value_iterator in, Value_iterator out) const
   A_column              a_col;                             // except special)
   Index_const_iterator  row_it, col_it;
   Value_iterator        out_it;
-  ET                    in_value;
+  //ET                    in_value;
   for ( col_it = B_O.begin(); col_it != B_O.end(); ++col_it, ++in) {
     const ET in_value = *in;
     out_it   = out;
