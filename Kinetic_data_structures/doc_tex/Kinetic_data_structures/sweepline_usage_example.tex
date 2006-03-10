@@ -98,8 +98,8 @@ public:
   }
 
   int new_point(typename Traits::Active_objects_table::Key k) {
-    double tv= CGAL::to_double(Sort::traits().simulator_pointer()->current_time());
-    double dv= CGAL::to_double(Sort::traits().active_objects_table_pointer()->at(k).x()(tv));
+    double tv= CGAL::to_double(Sort::traits().simulator_handle()->current_time());
+    double dv= CGAL::to_double(Sort::traits().active_objects_table_handle()->at(k).x()(tv));
     approx_coords_.push_back(Approximate_point(tv, dv));
     return approx_coords_.size()-1;
   }

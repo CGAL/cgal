@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     // and schedules the appropriate kinetic events; as in the kinetic
     // sorting example this is done with appropriate notifications
     std::ifstream in("data/points_2");    
-    in  >> *tr.active_points_2_table_pointer();
+    in  >> *tr.active_points_2_table_handle();
 
     // run the interactive kinetic simulation
     return qt_w->begin_event_loop();
@@ -79,7 +79,7 @@ visualization support is based on the Coin library http://www.coin3d.org.
 \begin{ccTexOnly}
 \begin{center}
 1.\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_0_crop_pct} 
-2.\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_1_crop_pct}
+2.\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_1_crop2_pct}
 3.\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_2_crop_pct}\\
 4.\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_3_crop_pct}
 5.\includegraphics[ scale=.3]{Kinetic_data_structures/delaunay_shot_4_crop_pct}

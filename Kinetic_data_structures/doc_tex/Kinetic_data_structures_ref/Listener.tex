@@ -35,12 +35,12 @@ The class \ccRefName\ provides base class for listener proxy
 objects. An notifier should provide class which uses this base. To use
 this base class, implement a class, here called Interface, which
 defines a type \ccc{Interface::Notification_type} and a type
-\ccc{Interface::Notifier_pointer}.
+\ccc{Interface::Notifier_handle}.
 
 The \ccc{Notification_type} is generally an enum with one value for
 each type of notification which can be used.
 
-The \ccc{Notifier_pointer} is the type of a (ref counted) pointer to
+The \ccc{Notifier_handle} is the type of a (ref counted) pointer to
 the object providing the notifications. The ref counter pointer must
 provide a nested type \ccc{Pointer} which is the type of a raw
 pointer.
@@ -74,18 +74,18 @@ writing my own.
 
 \ccTypes
 
-\ccNestedType{Notifier_pointer}{This type is inherited from the \ccc{Interface} template argument. It is a reference counted pointer type for the object providing notifications.}
+\ccNestedType{Notifier_handle}{This type is inherited from the \ccc{Interface} template argument. It is a reference counted pointer type for the object providing notifications.}
 
 \ccNestedType{Notification_type}{The type (usually an enum) used to distinguish different types of notifications. This is inherited from the \ccc{Interface} template argument.}
 
 \ccCreation
 \ccCreationVariable{l}  %% choose variable name
 
-\ccConstructor{Listener(Notifier_pointer np);}{The \ccRefName\ subscribes to events coming from the notifier and stores a pointer to the notifier.}
+\ccConstructor{Listener(Notifier_handle np);}{The \ccRefName\ subscribes to events coming from the notifier and stores a pointer to the notifier.}
 
 \ccOperations
 
-\ccMethod{Notifier_pointer notifier();}{Return a pointer to the notifier.}
+\ccMethod{Notifier_handle notifier();}{Return a pointer to the notifier.}
 
 \ccMethod{virtual void new_notification(Notification_type);}{This method is pure virtual. A class which wishes to receive events must inherit from this class and implement this method. The method will then be called whenever there is a notification.}
 

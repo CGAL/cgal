@@ -94,7 +94,7 @@ Returns true if the current time is a rational number and there are no events at
 \ccMethod{void delete_event(const Event_key k);}{Remove the event referenced by \ccc{k} from the event queue.}
 
 \ccMethod{template <class Ev> typename
-  Queue::Event_pointer<Ev>::Pointer event(const Event_key k, const Ev
+  Queue::Event_handle<Ev>::Handle event(const Event_key k, const Ev
   e) const;} {This method returns a pointer to an event, which can be
   used for recoving data, such as cached solvers, from that event. The
   second argument really shouldn't be there, but gcc seems to
