@@ -185,7 +185,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
          // construct and enqueue Nef_polyhedron_3 <Kernel>
          Nef_3 nef (V_f.begin(), V_f.end(), normal, verb);
          if ( !nef.is_empty() )
-         {  nef_map.insert (make_pair(nef.number_of_vertices(),nef));
+         {  nef_map.insert (std::make_pair(nef.number_of_vertices(),nef));
             is_nef = true;
          }
       }
@@ -215,7 +215,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    {  Nef_map_iter nm=nef_map.begin(), nm2=nef_map.begin();
       ++nm2;
       Nef_3 nef_tmp ((nm->second)+(nm2->second));
-      nef_map.insert ( make_pair(nef_tmp.number_of_vertices(),nef_tmp));
+      nef_map.insert ( std::make_pair(nef_tmp.number_of_vertices(),nef_tmp));
       nef_map.erase(nm);
       nef_map.erase(nm2);
    }
