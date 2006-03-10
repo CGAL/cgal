@@ -121,7 +121,7 @@ public:
   virtual Bounding_box_3 operator()(Halffacet_handle f) const;
   virtual Bounding_box_3 operator()(Halffacet_triangle_handle f) const;
 
-  virtual Objects_bbox() {}
+  virtual ~Objects_bbox() {}
 
   SNC_decorator D;
 };
