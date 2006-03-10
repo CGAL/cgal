@@ -1,3 +1,6 @@
+10 March 2006  Mariette
+- doc fixes
+
 10 March 2006 Laurent Rineau
 - first correct version of SurfaceMeshTraingulation_3.tex
 - removed unused Tr::* typedefs everywhere

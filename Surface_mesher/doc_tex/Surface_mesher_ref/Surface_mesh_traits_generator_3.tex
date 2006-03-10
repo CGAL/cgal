@@ -23,14 +23,15 @@ provides a type \ccc{Type} , that is
 a model of the concept \ccc{SurfaceMeshTraits_3}
 for the surface type \ccc{Surface}.
 
-The mechanism used here is similar to the
-\ccc{Kernel_traits mechanism}. 
-More precisely, the type \ccc{Surface} is required to 
-either provide a nested type
+The type \ccc{Surface} is required 
+\begin{itemize}
+\item 
+either to provide a nested type
 \ccc{Surface::Surface_mesher_traits_3}
 that is a model of \ccc{SurfaceMeshTraits_3}
-or to be a surface type for which a specialization
-of the traits generator \ccRefName exists.
+\item or to be a surface type for which a specialization
+of the traits generator \ccRefName\ exists.
+\end{itemize}
  
 
 Currently, the library provides partial specializations

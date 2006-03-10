@@ -1,7 +1,6 @@
 \chapter{Surface mesher}
 \label{chapter_SurfaceMesher}
-\ccChapterAuthor{Andreas Fabri, Steve Oudot, David Rey, Laurent Rineau
-and Mariette Yvinec}
+\ccChapterAuthor{Laurent Rineau and Mariette Yvinec}
 
 \vspace*{-15mm}
 \minitoc
@@ -162,10 +161,11 @@ to include at least one point on each connected component of the surface
 to be meshed.
 
 
-\section{Example}
+\section{Examples}
 \label{SurfaceMesher_section_example}
 
-The following code meshes a sphere 
+\subsection{Meshing an implicit surface}
+The first example code meshes a sphere 
 given as the zero level set of a function $\R^3 \longrightarrow \R$
 coded in the procedure \ccc{sphere_function}.
 More precisely, 
@@ -191,12 +191,25 @@ the automatically generated traits class
 
 \ccIncludeExampleCode{Surface_mesher/implicit_surface_mesher.C}
 
+\subsection{Meshing a surface defined as a gray level in a 3D image}
+In this example the surface to be meshed is defined
+as the locus of points with a given gray level
+in a 3D image.
+The code is quite similar to the previous example,
+except for the definition of the \ccc{function}
+which is passed to the creator of the surface.
+In this case,  \ccc{function} is an instance of
+the \ccc{CGAL::Gray_level_image_3} class.
+\ccIncludeExampleCode{Surface_mesher/3d_image_surface_mesher.C}
+
+
+
 \section{Meshing criteria, guarantees and variations}
 \label{SurfaceMesher_section_criteria}
 \label{SurfaceMesher_section_variations}
 
 The guarantees on the output mesh depend on the mesh criteria.
-Theoretical guarantees are given in \cite{cgal:sry-mvbss-05}.
+Theoretical guarantees are given in \cite{cgal:bo-pgsms-05}.
 First, the meshing algorithm is proved to terminate 
 if the angular bound is
 not smaller than $20,7^o$. 
@@ -246,10 +259,21 @@ manifold but may have boundaries.\\
 \ccc{Non_manifold_tag}: the algorithm relies on the given criteria and
 guarantees nothing else.
 
-\section{Implementation}
+
+
+
+\section{Design and Implementation History}
 % TODO: rename it "Design and Implementation History"
+
+The algorithm implemented in this package
+is mainly based on the  work of Boissonnat and Oudot
+\cite{cgal:bo-pgsms-05}
+
 The meshing algorithm is implemented using the design of mesher levels
 described in \cite{cgal:ry-gsddrm-06}. 
+
+David Rey, Steve Oudot and Andreas Fabri have participated
+in the development of this package.
 
 
 

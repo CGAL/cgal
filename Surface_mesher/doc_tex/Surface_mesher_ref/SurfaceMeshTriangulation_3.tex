@@ -53,11 +53,18 @@
 
 \ccDefinition
 
-The concept \ccRefName\ is a concept of triangulation. All $3D$ \cgal\
-triangulations are models of \ccRefName{}. It specifies types and
-operations that are used by the surface meshing algorithm used by the
-function \ccc{make_surface_mesh}. It allows the use of an implementation of
-triangulations that is not part of \cgal{}.
+The concept \ccRefName\ describes the requirement 
+for the triangulation types 
+plugged in the class
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}. 
+Such a  triangulation type is
+used by the surface mesher  \ccc{make_surface_mesh}
+to represent the three dimensional triangulation
+embedding the surface mesh.
+
+Any \cgal\ $3D$ Delaunay
+triangulations is a  model of \ccRefName.
+
 
 \ccTypes
 
@@ -293,7 +300,7 @@ the hole, which is star-shaped wrt \ccc{p}}.}
 
 \ccHasModels
 
-All 3D Delaunay triangulation classes of \cgal{}
+Any 3D Delaunay triangulation class of \cgal{}
 
 \ccSeeAlso
 
