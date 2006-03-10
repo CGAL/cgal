@@ -44,13 +44,18 @@ required in this triangulation type.
 \ccc{TriangulationVertexBase_3}
 
 
+The surface mesher algorithm issues frequent queries
+about the status of the vertices  with respect to the
+two dimensional complex that represents the current
+surface approximation.
+The class \ccRefName\ offers a caching mechanism
+to answer  more efficiently these queries.
+The caching mechanism includes two cached integers, which, when they
+are valid, store respectively the number of complex
+facets incident to the vertex and the number
+of connected components  of the adjacency graph of those facets.
 
-The class \ccRefName\ includes two boolean  mark,
-\ccc{in_complex_mark}  and \ccc{regular_or_boundary_mark}, 
-to store some information about the status of the vertex.
-To allow a caching mechanism, 
-the concept \ccRefName\ stores two additionnal boolean mark
-to mark the validity of the previous ones.
+
 
 
 
@@ -65,30 +70,20 @@ to mark the validity of the previous ones.
 
 \ccOperations
 
-\ccMethod{bool regular_or_boundary_mark();}
-{Returns the value of the \ccc{regular_or_boundary_mark}.}
-\ccGlue
-\ccMethod{void set_regular_or_boundary_mark(bool b);}
-{ Sets the value of the \ccc{regular_or_boundary_mark} to \ccc{b}.}
-\ccGlue
-\ccMethod{bool regular_or_boundary_validity_mark();}
-{Returns the value of the \ccc{regular_or_boundary_vaidity_mark}.}
-\ccGlue
-\ccMethod{void set_regular_or_boundary_validity_mark(bool b);}
-{Sets the value of the \ccc{regular_or_boundary_validity_mark} to \ccc{b}.}
 
-\ccMethod{bool in_complex_mark();}
-{Returns the value of the \ccc{in_complex_mark}.}
+\ccMethod{bool is_c2t3_cache_valid();}
+{Returns \ccc{true} if the cache is valid.}
 \ccGlue
-\ccMethod{void  set_in_complex_mark(bool b);}
-{Sets the value of the \ccc{in_complex_mark} to \ccc{b}.}
+\ccMethod{void invalidate_c2t3_cache();}
+{Invalidates the cash.}
 \ccGlue
-\ccMethod{bool in_complex_validity_mark();}
-{Returns the value of the \ccc{in_complex_validity_mark}.}
+\ccMethod{int cached_number_of_incident_facets();}
+{Returns the cached number of facets of the complex incident to the vertex.}
 \ccGlue
-\ccMethod{void set_in_complex_validity_mark(bool b);}
-{Sets the value of the \ccc{in_complex_validity_mark} to \ccc{b}.}
-
+\ccMethod{int cached_number_of_components();}
+{ This method concerns the adjacency
+graph of  the facets of the complex incident to the vertex
+and returns a cached value for the number of connected components this graph.}
 
 \ccHasModels
 

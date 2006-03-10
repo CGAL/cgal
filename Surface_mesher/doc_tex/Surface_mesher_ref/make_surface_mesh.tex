@@ -36,7 +36,8 @@ of this function:
 void make_surface_mesh(C2T3& c2t3,
                        Surface surface,
                        Criteria criteria,
-                       Tag ) ;}
+                       Tag,
+		       int initial_number_of_points = 20) ;}
 
 
 \ccGlobalFunction{template <class C2T3,
@@ -47,7 +48,8 @@ void make_surface_mesh(C2T3& c2t3,
                        SurfaceMeshTraits::Surface_3  surface,
 		       SurfaceMeshTraits traits,
                        Criteria criteria,
-                       Tag );}
+                       Tag,
+		       int initial_number_of_points = 20 );}
 
 
 
@@ -127,11 +129,16 @@ process is started with an initial set of points which is the union
 of two sets: the
 set of vertices in the initial  triangulation pointed to by the
 \ccc{c2t3} argument   and a set of
-points output by the \ccc{Construct_initial_points()} 
-function objects of the traits class.
-This initial set of points is required to include at least one point
+points provided by the traits class.
+The optional parameter  \ccc{initial_number_of_points}
+allows to monitor the number of points in this second set.
+(This parameter is passed to the \ccc{operator()} of 
+the constructor object \ccc{Construct_initial_points} 
+in the traits class.)
+The meshing algorithm requires that the initial set of points
+includes at least one point
 on each connected components of the surface to be meshed.
-
+one.
 
 
  

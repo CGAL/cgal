@@ -19,7 +19,7 @@
 \ccDefinition
 The concept \ccRefName\ describes the cell base type
 of the three dimensional triangulation used
-to embed thee surface mesh.  
+to embed the surface mesh.  
 
 More precisely,
 the first template parameter \ccc{C2T3} of the surface mesher
@@ -31,7 +31,7 @@ a pure two dimensional complex
 embedded in a three dimensional triangulation.
 In particular, the type \ccc{C2T3} is required to provide
 a three dimensional triangulation type
-\ccc{C2T3::Triangulation_3}
+\ccc{C2T3::Triangulation_3}. 
 The concept \ccRefName\ describes the cell base type
 required in this triangulation type.
 
@@ -46,7 +46,7 @@ the facets that have been visited.
 
 This concept also provides storage for  the center of a Delaunay surface
 ball. 
-Given a surface and a three Delaunay triangulation,
+Given a surface and a 3D  Delaunay triangulation,
  a Delaunay surface ball
 is a ball circumscribed to a facet of the triangulation
 and centered on the surface and empty of triangulation vertices. 
@@ -92,7 +92,7 @@ and \ccc{NOT_IN_COMPLEX}, otherwise.}
 
 \ccMethod
 {const Point&   get_facet_surface_center(int i);}
-{Returns a reference to the surface center of \ccc{facet(i)}.}
+{Returns a const reference to the surface center of \ccc{facet(i)}.}
 \ccGlue
 \ccMethod
 {void set_facet_surface_center (int i, Point p);} 

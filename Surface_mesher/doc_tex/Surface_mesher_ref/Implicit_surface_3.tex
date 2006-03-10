@@ -53,17 +53,19 @@ the type \ccc{Traits::FT}.
 
 \ccConstructor{
 Implicit_surface_3(Function f,
-                   const Sphere_3 bounding_sphere,
-                   const FT error_bound);}
+                   Sphere_3 bounding_sphere,
+                   FT error_bound);}
 {\ccc{f} is the object of type \ccc{Function} that represents the implicit
   surface.\\
  \ccc{bounding_sphere} is a bounding sphere of the implicit surface. The
  evaluation of \ccc{f} at the center \ccc{c} of this sphere must be
  negative: $f(c)<0$.\\
- \ccc{error_bound} is a bound that is used if the partial specialisation 
- \ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}
- to compute intersection points between the implicit surface and some
- segments.}
+ \ccc{error_bound} is an error bound 
+used to  compute intersection points between the implicit surface
+and  query segments. This bound is used 
+ in  the default generated traits class
+ \ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,
+Function> >} .}
 % TODO: modify the initial points generation with bipolar oracle, because
 % f(c) < 0 
 

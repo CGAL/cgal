@@ -20,11 +20,12 @@ global function \ccc{make_surface_mesh}
 is guided by a set of refinement criteria.
 The concept \ccRefName\ describes the type  which
 handles those criteria. 
-It corresponds to the requirements for the third template parameter
-\ccc{Criteria} of the \ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}.
+It corresponds to the requirements for the template parameter
+\ccc{Criteria} of the surface mesher function
+\ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}.
 
 Typically the meshing criteria are a set
-of elementary criterion, each of which
+of elementary criteria, each of which
 has to be met by  the facets of the final mesh.
 The meshing algorithm eliminates in turn  {\em bad} facets, i.e.,
 facets that do not meet all the criteria.
@@ -47,10 +48,14 @@ with lowest quality first. The qualities are computed by a function
 
 \ccTypes
 
-\ccNestedType{Facet}{The type of facets. Must be the same as \ccc{Facet} is
-the triangulation embedded in the
-\ccc{SurfaceMeshComplex_2InTriangulation_3} passed as first argument of
- \ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}.}
+\ccNestedType{Facet}{The type of facets. This type has to match
+the \ccc{Facet} type in  the triangulation type used  by 
+the mesher function. (This triangulation type
+is the type \ccc{C2T3::Triangulation} 
+provided by the the model of
+\ccc{SurfaceMeshComplex_2InTriangulation_3} plugged 
+ as first template parameter of
+ \ccc{make_surface_mesh}).}
 
 \ccNestedType{Quality}{Copy constructible, assignable, and less-than
   comparable type.}
@@ -58,8 +63,8 @@ the triangulation embedded in the
 \ccOperations
 \ccCreationVariable{criteria}
 
-\ccMethod{bool is_bad (const Facet& f, Quality& q);}{Must assign the quality
-  of the facet \ccc{f} to~\ccc{q}, and return \ccc{true} is \ccc{f} does
+\ccMethod{bool is_bad (const Facet& f, Quality& q);}{Assigns the quality
+  of the facet \ccc{f} to~\ccc{q}, and returns \ccc{true} is \ccc{f} does
   not meet the criteria.}
 
 \ccHasModels
@@ -69,7 +74,6 @@ the triangulation embedded in the
 \ccSeeAlso
 \ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}
 
-% TODO: Mariette needs to review this file.
 
 \end{ccRefConcept}
 
