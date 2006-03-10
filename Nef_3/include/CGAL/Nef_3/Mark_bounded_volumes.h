@@ -20,42 +20,44 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<typename Const_decorator, typename Mark>
+template<typename Decorator, typename Mark>
 class Volume_setter {
 
-  typedef typename Const_decorator::Vertex_const_handle 
-                                    Vertex_const_handle;
-  typedef typename Const_decorator::Halfedge_const_handle 
-                                    Halfedge_const_handle;
-  typedef typename Const_decorator::Halffacet_const_handle 
-                                    Halffacet_const_handle;
-  typedef typename Const_decorator::SHalfedge_const_handle 
-                                    SHalfedge_const_handle;
-  typedef typename Const_decorator::SHalfloop_const_handle 
-                                    SHalfloop_const_handle;
-  typedef typename Const_decorator::SFace_const_handle 
-                                    SFace_const_handle;
+  typedef typename Decorator::Vertex_handle 
+                                    Vertex_handle;
+  typedef typename Decorator::Halfedge_handle 
+                                    Halfedge_handle;
+  typedef typename Decorator::Halffacet_handle 
+                                    Halffacet_handle;
+  typedef typename Decorator::SHalfedge_handle 
+                                    SHalfedge_handle;
+  typedef typename Decorator::SHalfloop_handle 
+                                    SHalfloop_handle;
+  typedef typename Decorator::SFace_handle 
+                                    SFace_handle;
   Mark m;
 
 public:
   Volume_setter(Mark m_in = true) : m(m_in) {}
   
-  void visit(Vertex_const_handle v) {}
-  void visit(Halfedge_const_handle e) {}
-  void visit(Halffacet_const_handle f) {}
-  void visit(SHalfedge_const_handle se) {}
-  void visit(SHalfloop_const_handle sl) {}
-  void visit(SFace_const_handle sf) {sf->mark() = m;}
+  void visit(Vertex_handle v) {}
+  void visit(Halfedge_handle e) {}
+  void visit(Halffacet_handle f) {}
+  void visit(SHalfedge_handle se) {}
+  void visit(SHalfloop_handle sl) {}
+  void visit(SFace_handle sf) {sf->mark() = m;}
 };    
 
 template<typename Nef_3>
 class Mark_bounded_volumes : public Modifier_base<typename Nef_3::SNC_structure>
-{  typedef typename Nef_3::SNC_structure        SNC_structure;
-   typedef typename SNC_structure::Infi_box     Infi_box;
-   typedef typename Nef_3::Volume_iterator      Volume_iterator;
-   typedef typename Nef_3::Shell_entry_const_iterator 
-                           Shell_entry_const_iterator;
-   typedef typename Nef_3::Mark                 Mark;
+{  typedef typename Nef_3::SNC_structure         SNC_structure;
+   typedef typename SNC_structure::SNC_decorator SNC_decorator;
+   typedef typename SNC_structure::Infi_box      Infi_box;
+   typedef typename Nef_3::SFace_handle          SFace_handle;
+   typedef typename Nef_3::Volume_iterator       Volume_iterator;
+   typedef typename Nef_3::Shell_entry_iterator 
+                           Shell_entry_iterator;
+   typedef typename Nef_3::Mark                  Mark;
 
    Mark flag;
 
@@ -69,13 +71,13 @@ public:
       if ( Infi_box::extended_kernel() ) ++vol_it; // skip Infi_box
       CGAL_assertion ( vol_it != snc.volumes_end() );
       ++vol_it; // skip unbounded volume
-      Volume_setter<Nef_3,Mark> vs(flag);
-      Nef_3 cd(snc);
+      Volume_setter<SNC_structure,Mark> vs(flag);
+      SNC_decorator D(snc);
       for (; vol_it != snc.volumes_end(); ++vol_it)
       {  vol_it->mark() = flag; // mark
-	Shell_entry_const_iterator it;
+	Shell_entry_iterator it;
 	CGAL_forall_shells_of(it,vol_it)
-	cd.visit_shell_objects(SFace_const_handle(it),vs);
+	D.visit_shell_objects(SFace_handle(it),vs);
       }
       // simplify(); // in Nef_3.delegate()
    }
