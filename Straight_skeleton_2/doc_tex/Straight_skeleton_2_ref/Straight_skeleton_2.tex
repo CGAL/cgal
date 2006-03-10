@@ -14,32 +14,36 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{StraightSkeleton_2}
+
+\begin{ccRefClass}{Straight_skeleton_2<Traits,Items,Alloc>}
+
+%% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[concept]{} %% add further index entries
-
-
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{Ss}
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for data structure used to represent a straight skeleton.
+The class \ccRefName\ provides a model for the
+\ccc{StraightSkeleton_2} concept which is the class
+type used to represent a straight skeleton.
 
-\ccTypes
-  \ccNestedType{Vertex}{A model of the \ccc{StraightSkeletonVertex_2} concept used to represent the vertices of the straight skeleton}{}
-  \ccGlue
-  \ccNestedType{Halfedge}{A model of the \ccc{StraightSkeletonHalfedge_2} concept used to represent the halfedges of the straight skeleton}{}
-  \ccGlue
-  \ccNestedType{Face}{A 2D point type}{}
+\ccInclude{CGAL/Straight_skeleton_2.h}
 
+\ccIsModel
+\ccc{StraightSkeleton_2}\\
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
 
-\ccHasModels
-
-\ccc{CGAL::Straight_skeleton_2<K>}.
-
-
-\end{ccRefConcept}
+\ccSeeAlso
+\ccc{StraightSkeletonVertex_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{StraightSkeleton_2}\\
+\end{ccRefClass}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
 % EOF
 % +------------------------------------------------------------------------+
+

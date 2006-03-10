@@ -1489,6 +1489,7 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/triangle.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/vertex_event_0.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/vertex_event_9.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/definitions.h -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig0.eps -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig0.pdf -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig0.png -text
@@ -1513,6 +1514,7 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig6.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/PolygonOffsetBuilderTraits_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Polygon_offset_builder_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Polygon_offset_builder_traits_2.tex -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Straight_skeleton_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/VertexContainer_2.tex -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop.filelist -text

@@ -51,7 +51,7 @@ To generate each offset polygon, a default constructed instance of \ccc{Containe
 
 A \ccc{boost::shared_ptr} holding onto the dynamically allocated container is inserted into the output sequence via the OutputIterator \ccc{out}.
 
-OutputIterator must be a model of the \textit{OutputIterator} category whose \ccc{value\_type} is a \ccc{boost::shared_ptr} holding the dynamically allocated instances of type Container.\\\\
+OutputIterator must be a model of the \textit{OutputIterator} category whose \ccc{value\_type} is a \ccc{boost::shared_ptr} holding the dynamically allocated instances of type Container.\\
 The method returns an OutputIterator past-the-end of the resulting sequence, which contains each offset polygon generated.
 
 You can call \ccc{construct_offset_polygons} with different offset distances (there is no need to construct the builder  again). If you call it with an offset distance so large that there are no offset polygons at that distance, no polygon is inserted into the output sequence and the returned iterator will be equal to \ccc{out}.

@@ -16,53 +16,33 @@
 
 \section{Definitions}
 
-\subsection{Simple Polygon}
+\subsection{2D Contour}
 
-A {\em 2D simple polygon} is a set of one or more simple contours. A
-{\em 2D contour} is a sequence of 3 or more non-collinear (and
-non-coincident) vertices. A {\em 2D vertex} is a \ccc{Point_2}.\\ The
-vertices in a contour embeds 2D oriented straight line segments called
-contour edges. A {\em contour edge} connects two consecutive vertices,
-and the cycle of edges in a contour is closed (i.e., there is an edge
-connecting the last and first vertices). A contour \ccc{X} is said to
-{\em intersect} contour \ccc{Y} if any edge in \ccc{Y} intersects any 
-edge in \ccc{X}; and a contour \ccc{X} is said to {\em contain} contour 
-\ccc{Y}, if any vertex of \ccc{Y} is inside \ccc{X}.
+A {\em 2D contour} is a closed sequence (a cycle) of 3 or more \textit{connected 2D oriented straight line segments} called {\em contour ddges}. The endpoints of the contour edges are called {\em vertices}. Each contour edge shares its endpoints with at least two other contour edges.\\
+If the edges are pairwise disjoint; that is, if they intersect only at the vertices or entirely, the contour is classified as {\em simple}.\\
+A contour is topologically equivalent to a \textit{disk} and a simple contour is a kind of \textit{Jordan Curve}.\\
+Contours parition the plane in one bounded and one unbounded open regions. If the bounded region of a contour is a \textit{singly-connected set}, the contour is said to be {\em strictly simple}.\\
+The \ccc{Orientation} of a contour is given by the order of the vertices around its interior. It can be \ccc{Clockwise} (CCW) or \ccc{Counterclockwise} (CW).\\
+The {\em bounded side} of a contour edge is the side facing to the bounded region of the contour. If the contour is oriented CCW, the bounded side of am edge is the left side.
 
-Contours in a simple polygon must be arranged such that no contour
-intersects any other contour and exactly one contour, called the
-{em outer contour}, contains the rest of the contours, called
-{\em inner contours} or {\em holes}. The outer contour must be
-oriented counter-clockwise (CCW) while inner contours must be oriented
-clockwise (CW). Inner contours cannot be nested, that is, no inner
-contour can contain any other contour.
+A contour with a null edge (a segment of length zero given by two consecutive coincident vertices), or with edges not connected to the bounded region (an antenna: 2 consecutive edges going forth and back along the same line), is said to be {\em degenerate} (collinear edges are \textit{not} considered a denerancy).
 
-\subsection{Inward Offset Simple Polygon}
+\subsection{2D Polygon with Holes}
 
-For any 2D simple polygon, called the {em source polygon}, there can
-exist a set of 0, 1 or more {\em inward offset simple polygons}, or
-just {\em offset polygons} for short, at some Euclidean distance
-$t>0$. Any contour edge of such offset polygon, called an
-{\em offset edge} corresponds to some contour edge of the
-source polygon, called its {\em source edge}. An offset edge is
-parallel to its source edge and has the same orientation. The
-Euclidean distance between the lines supporting an offset
-edge and its source edge is exactly \ccc{t}.
+A 2D Polygon is a contour.\\
+A 2D {\em polygon with holes} is a contour, called the {\em outer contour}, having zero or more countours, called {\em inner contours}, or {\em holes}, in its bounded region. The intersection of the bounded region of the outer contour and the unbounded regions of each inner contour is the {\em interior} of the polygon with holes. The orientation of holes must be opposite to the orientation of the outer contour and there cannot be any intersection among all the contours. A hole cannot be in the bounded region of any other hole.\\
+A polygon with holes is Strictly Simple if its interior is a singly-connected set.\\
+The Orientation of a Polygon with Holes is the orientation of its outer contour. The bounded side of \textit{any} edge, whether of the outer contour or a hole, is the \textit{same} for all edges. That is, if the outer contour is oriented CCW and the holes CW, both contour and hole edges face the polygon interior to their left.\\
 
-An offset edge is always located to the left of its source edge (which
-is an oriented straight line segment).
+Througout the rest of this chapter the term Polygon will be used as a shortcut for Polygon with Holes.
+ 
+\subsection{Inward Offset of a Non-degenerate Strictly Simple Polygon with Holes}
 
-An offset polygon can have less, equal or more sides as its source
-polygon.
-
-If the source polygon has no holes, no offset polygon has holes. If
-the source polygon has holes, any of the offset polygons can have
-holes itself, but it might as well have no holes at all (if the
-distance is sufficiently large).
-
-Since any offset polygon is a simple polygon, its outer contour is
-oriented counter-clockwise while its holes (if any) are oriented
-clockwise.
+For any 2D non-degenerate strictly-simple polygon with holes called the {\em source}, there can exist a \textit{set} of 0, 1 or more {\em inward offset polygons with holes}, or just offset polygons for short, at some euclidean distance \textit{t} $>0$ (each being strictly simple and non-degenerate). Any contour edge of such offset polygon, called an {\em offset edge} corresponds to \textit{some} contour edge of the source polygon, called its {\em source edge}. An offset edge is parallel to its source edge and has the same orientation. The Euclidean distance between the \textit{lines} supporting an offset edge and its source edge is exactly \ccc{t}.\\
+An offset edge is always located to the bounded side of its source edge (which is an oriented straight line segment).\\
+An offset polygon can have less, equal or more sides as its source polygon.\\
+If the source polygon has no holes, no offset polygon has holes. If the source polygon has holes, any of the offset polygons can have holes itself, but it might as well have no holes at all (if the distance is sufficiently large).\\
+Each offset polygon has the same orientation of the source polygon.
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -92,17 +72,10 @@ clockwise.
 \label{Simplepoly-offsets}}
 \end{figure}
 
-\subsection{Straight Skeleton of a 2D Simple Polygon}
+\subsection{Straight Skeleton of a 2D Non-degenerate Strictly-Simple Polygon with Holes}
  
-The {\em 2D straight skeleton} \cite{aaag-ntsp-95} of a simple polygon is a special
-partitioning of the polygon interior into {\em straight skeleton
-regions} corresponding to the monotone areas traced by a continuous
-inward offsetting of the contour edges. Each region
-corresponds to exactly one contour edge.
-
-These regions are bounded by angular bisectors of the supporting lines
-of the contour edges and each such region is a non-convex simple
-polygon itself.
+The {\em 2D straight skeleton} of a non-degenerate strictly-simple polygon with holes \cite{aaag-ntsp-95} is a special partitioning of the polygon interior into {\em straight skeleton regions} corresponding to the monotone areas traced by a continuous \textit{inward offsetting} of the contour edges. Each region corresponds to exactly 1 contour edge.\\
+These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is a non-convex non-degenerate strictly-simple polygon itself.
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -151,6 +124,8 @@ polygon itself.
   
 \subsubsection{Angular Bisecting Lines and Offset Bisectors}  
 
+Given two points and a line passing through them, the perpendicular line passing through the midpoint is the bisecting line (or bisector) of those points.
+
 Two non-parallel lines, intersecting at a point, are bisected by two
 other lines passing through that intersection point.
 
@@ -164,7 +139,7 @@ The bisecting lines of two edges are the lines bisecting the
 supporting lines of the edges (if the edges are parallel or collinear,
 there is just one bisecting line).
 
-The halfplane to the left of the line supporting a contour edge is
+The halfplane to the bounded side of the line supporting a contour edge is
 called the {\em offset zone} of the contour edge.
 
 Given any number of contour edges (not necessarily consecutive), the
@@ -205,7 +180,7 @@ called {\em edges}. Exactly one edge per face is a {\em contour edge}
 located in the interior of the polygon, are called {\em skeleton
 edges}, or {\em bisectors}.
 
-The Bisectors of the straight skeleton are segments of the offset
+The bisectors of the straight skeleton are segments of the offset
 bisectors as defined previously. Since an offset bisector is a ray of
 a bisecting line of 2 contour edges, each skeleton edge (or bisector)
 is uniquely given by two contour edges. These edges are called the
@@ -228,11 +203,9 @@ An {\em inner bisector} is a bisector who's defining contour edges are
 not consecutive. Such a bisector is incident upon 2 skeleton vertices
 and is strictly contained in the interior of the polygon.
 
-
-
 \section{Representation}
 
-This \cgal\ package represents a straight skeleton as a \ccc{Halfedge Data Structure} (HDS) whose vertices embeds 2D Points.
+This \cgal\ package represents a straight skeleton as a specialized \ccc{Halfedge Data Structure} (HDS) whose vertices embeds 2D Points (see the \ccc{StraightSkeleton_2} concept in the reference manual for details).
 
 Its halfedges, by considering the source and target points, implicitly embeds 2D oriented straight line segments. 
 
@@ -247,35 +220,35 @@ halfedges are oriented such that their left side faces outwards the
 polygon. Therefore, the opposite halfedge of any border halfedge is
 oriented such that its left side faces inward the polygon.
 
-The skeleton halfedges are oriented such that their left side faces
+This \cgal\ package requires the input polygon (with holes) to be non-degenerate, strictly-simple, and oriented counter-clockwise.
+
+The skeleton halfedges are oriented such that their \textit{left} side faces
 inward the region they bound. That is, the vertices (both contour and
 skeleton) of a face are circulated in counter-clockwise order. There
 is one and only one contour halfedge incident upon any face.
 
-By requirement, a simple polygon must have the outer contour oriented
-CCW and the holes oriented CW. In the straight skeleton, these
-contours are traced by the border halfedges (those facing
-outward) of the HDS, but in the opposite direction. That is, the
-vertices of the polygon's contours can only by traced from straight
-skeleton by circulating the border halfedges, and the resulting vertex
-sequence will be reversed w.r.t the input vertex sequence.
+The contours of the input polygon are traced by the border halfedges 
+of the HDS (those facing outward), but in the opposite direction. That 
+is, the vertices of the contours can only by traced from the straight
+skeleton data structure by circulating the border halfedges,
+and the resulting vertex sequence will be reversed w.r.t 
+the input vertex sequence.
 
 A skeleton edge, according to the definition given in the previous
 section, is defined by 2 contour edges. In the representation, each
 one of the opposite halfedges that represent a skeleton edge is
 associated with one of the opposite halfedges that correspond to one
 of its defining contour edges. Thus, the 2 opposite halfedges of a
-skeleton edge link it to its 2 defining contour edges.
+skeleton edge link the edge to its 2 defining contour edges.
 
 Starting from any border contour halfedge, circulating the structure
 walks through border counter halfedges and traces the vertices of the
 polygon's contours (in opposite order).
 
 Starting from any non-border but contour halfedge, circulating the
-structure walks through skeleton halfedges until the source contour
-halfedge is reached, and it traces the vertices (both contour and
-skeleton) of the face that corresponds to the source contour
-edge. Such a face is itself a non-convex simple polygon oriented CCW.
+structure walks counter-clockwise around the face corresponding
+to that contour halfedge. The vertices around a face always describe
+a non-convex non-degenerate strictly-simple polygon.
 
 A vertex is the intersection of contour and/or skeleton edges. Since a
 skeleton edge is defined by 2 contour edges, any vertex is itself
@@ -284,7 +257,7 @@ defined by a unique set of contour edges. These are called the
 
 A vertex is identified by it's set of defining contour edges. Two
 vertices are distinct if they have differing sets of defining contour
-edges.  Notw that vertices can be distinct even if they are geometrically
+edges.  Note that vertices can be distinct even if they are geometrically
 embedded at the same point.
  
 Contour vertices have exactly two defining contour edges, which are
@@ -323,17 +296,17 @@ zero.
 
 \section{API}
 
-The Straight Skeleton data structure is encapsulated by any model of the \ccc{HalfedgeDS} concept.
+The straight skeleton data structure is defined by the \ccc{StraightSkeleton_2} concept and modeled in the \ccc{Straight_skeleton_2<Traits,Items,Alloc>} class.
 
 The straight skeleton construction algorithm is encapsulated in the
-class \ccc{Straight_skeleton_builder_2<Gt,Ssds>} which is
+class \ccc{Straight_skeleton_builder_2<Gt,Ss>} which is
 parameterized on a geometric traits (class
 \ccc{Straight_skeleton_builder_traits<Kernel>}) and the Straight
-Skeleton data structure (Ssds).
+Skeleton class (Ss).
 
 The polygon offset construction algorithm is encapsulated in the class
-\ccc{Polygon_offset_builder_2<Ssds,Gt,Container>} which is
-parameterized on the Straight Skeleton data structure (Ssds), a
+\ccc{Polygon_offset_builder_2<Ss,Gt,Container>} which is
+parameterized on the Straight Skeleton class (Ss), a
 geometric traits (class \ccc{Polygon_offset_builder_traits<Kernel>})
 and a container type where the resulting offset polygons are
 generated.
@@ -343,44 +316,50 @@ To construct the straight skeleton of a simple polygon the user must:
 (1) Instantiate the straight skeleton builder.
 
 (2) Enter one contour at a time, starting from the outer contour, via
-    the method \ccc{enter_contour}. The input polygon must be strictly
-    simple (non-intersecting) and there cannot be coincident or
-    collinear vertices in the input (Keep in mind the definition and
-    requirements of a Simple Polygon as expressed in the first section
-    of this chapter).
+    the method \ccc{enter_contour}. The input polygon with holes must be 
+    non-degenerate, strictly-simple and counter-clockwise oriented
+    (see the definitions at the beginning of this chapter).
+    Collinear edges are allowed. The insertion order of each hole
+    is unimportant but the outer contour must be entered first.
 
-(3) Call \ccc{construct_skeleton} once all the contours have been entered.
+(3) Call \ccc{construct_skeleton} once \textit{all} the contours have been entered. You
+cannot enter another contour once the skeleton has been constructed.
 
-
-To construct an inward offset polygon the user must:
+To construct a set of inward offset contours the user must:
  
-(1) Construct the straight skeleton of the source polygon.
+(1) Construct the straight skeleton of the source polygon with holes.
 
-(2) Instantiate the polygon offset builder passing in the straight skeleton.
+(2) Instantiate the polygon offset builder passing in the straight skeleton as a parameter.
 
-(3) Call \ccc{construct_offset_polygons} passing the desired offset
+(3) Call \ccc{construct_offset_contours} passing the desired offset
     distance and an output iterator that can store a
-    \ccc{boost::shared_ptr} of \ccc{Container} instances (each
-    representing one offset polygon) into a resulting
-    sequence. Typically, you'll use a back insertion iterator for
-    that.
+    \ccc{boost::shared_ptr} of \ccc{Container} instances 
+    into a resulting sequence.
+    Typically, you'll use a back insertion iterator for that
+    (each returned \ccc{Container} instance represents one offset contour
+    (a polygon {\em without} holes).
 
-Each element in the resulting sequence is a \ccc{boost::shared_ptr}
-holding a dynamically allocated instance of the Container type. Such a
-container can be any model of the \ccc{VertexContainer_2} concept, for
-example, a \ccc{CGAL::Polygon_2}, or just a \ccc{std::vector} of 2D
-points.
+Each element in the resulting sequence is an {\em offset contour}, given by
+a \ccc{boost::shared_ptr} holding a dynamically allocated instance 
+of the Container type. Such a container can be any model of the 
+\ccc{VertexContainer_2} concept, for example, a \ccc{CGAL::Polygon_2}, 
+or just a \ccc{std::vector} of 2D points.
 
-Both algorithms (for the construction of the straight skeleton and
-offset polygons) are highly sensitive to roundoff errors, therefore,
-they needs exact predicates to be reliable. Without exact predicates
-is almost certain that they will fail resulting in a straight skeleton
-or polygon offset topologically inconsistent (incomplete or
-non-planar). Fortunately, they don't need exact constructions.
+The resulting sequence of offset contours can contain both outer and inner contours. 
+Each inner contour would logically correspond to some of the outer contours.
+However, this algorithm returns a sequence of contours in arbritary order and there is no
+indidication whatsoever of the parental relationship between inner and outer contours.
 
-The recommendation is to use a filtering kernel such as
-\ccc{Exact_predicates_inexact_constructions_kernel}.
+On the other hand, each outer contour is counter-clockwise oriented while each hole is clockwise-oriented.
+And since offset contours do form simple polygons with holes, it is guaranteed that no hole will be inside another hole, no outer contour will be inside any other contour, and each hole will be inside exactly 1 outer contour.
 
+Parental relationships are {\em not} automatically reconstructed by this algoritm because this relation is not directly given by the input polygon with holes and doing it \textit{robustly} is a time-consuming operation.
+
+Reconstructing the parental relations can be done by testing each inner contour
+(clockwise) against each outer contour (counter-clocwise) for insideness.
+
+This algorithm requires exact predicates but not exact constructions
+Therefore, the \ccc{Exact_predicates_inexact_constructions_kernel} should be used.
 
 \subsection{Example}
 
@@ -388,9 +367,9 @@ The recommendation is to use a filtering kernel such as
 
 \section{Straight Skeletons, Medial Axis and Voronoi Diagrams}  
 
-The straight skeleton of a simple polygon looks similar to the medial
-axis and the Voronoi diagram of the polygon in the way it partitions
-the polygon; however, unlike the medial axis and Voronoi diagram, the
+The straight skeleton of a polygon is similar to the medial
+axis and the voronoi diagram of a polygon in the way it partitions
+it; however, unlike the medial axis and voronoi diagram, the
 bisectors are not equidistant to its defining edges but to the
 supporting lines of such edges. As a result, Straight Skeleton
 bisectors might not be located in the center of the polygon and so
