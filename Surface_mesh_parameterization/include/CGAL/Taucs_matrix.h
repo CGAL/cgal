@@ -56,11 +56,8 @@ template<class T> struct Taucs_number;
 /// This kind of matrix can be either symmetric or not. Symmetric
 /// matrices store only the lower triangle.
 ///
-/// @todo Taucs_matrix must reallocate the array of non null elements when it's full.
-/// @todo Filling a Taucs_matrix by lines is very slow. We must improve this code.
-///
 /// Concept: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
-
+///
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 struct Taucs_matrix
@@ -70,66 +67,160 @@ public:
 
     typedef T NT;
 
+//__________________________________________________
+
+// Private types
+private:
+
+   /**
+    * A column of a Taucs_matrix. The column is
+    * compressed, and stored in the form of  
+    * a vector of values + a vector of indices.
+    */
+    class Column 
+    {
+    public:
+
+        // Vector of values + vector of indices (linked)
+        std::vector<T>   m_values;
+        std::vector<int> m_indices;
+
+    public:
+
+        // Return the number of elements in the column
+        int dimension() const    { return m_values.size(); }
+
+        // column{index} <- column{index} + val
+        void add_coef(int index, T val)
+        {
+            // Search for element in vectors
+            std::vector<int>::iterator          index_it;
+            typename std::vector<T>::iterator   value_it;
+            for (index_it = m_indices.begin(), value_it = m_values.begin();
+                 index_it != m_indices.end();
+                 index_it++, value_it++)
+            {
+                if(*index_it == index) {
+                    *value_it += val;       // +=
+                    return;
+                }
+            }
+
+            // Element doesn't exist yet if we reach this point
+            m_indices.push_back(index);
+            m_values.push_back(val);
+        }
+
+        // column{index} <- val
+        void set_coef(int index, T val)
+        {
+            // Search for element in vectors
+            std::vector<int>::iterator          index_it;
+            typename std::vector<T>::iterator   value_it;
+            for (index_it = m_indices.begin(), value_it = m_values.begin();
+                 index_it != m_indices.end();
+                 index_it++, value_it++)
+            {
+                if(*index_it == index) {
+                    *value_it = val;        // =
+                    return;
+                }
+            }
+
+            // Element doesn't exist yet if we reach this point
+            m_indices.push_back(index);
+            m_values.push_back(val);
+        }
+
+        // return column{index} (0 by default)
+        T get_coef(int index) const
+        {
+            // Search for element in vectors
+            std::vector<int>::const_iterator        index_it;
+            typename std::vector<T>::const_iterator value_it;
+            for (index_it = m_indices.begin(), value_it = m_values.begin();
+                 index_it != m_indices.end();
+                 index_it++, value_it++)
+            {
+                if(*index_it == index)
+                    return *value_it;       // return value
+            }
+
+            // Element doesn't exist yet if we reach this point
+            return 0;
+        }
+    }; // class Column
+
+//__________________________________________________
+
 // Public operations
 public:
 
     /// Create a square matrix initialized with zeros.
     Taucs_matrix(int  dim,                  ///< Matrix dimension.
-                 bool is_symmetric = false, ///< Symmetric/hermitian?
-                 int  nb_max_elements = 0)  ///< Max number of non 0 elements in the
-                                            ///< matrix (automatically computed if 0).
+                 bool is_symmetric = false) ///< Symmetric/hermitian?
     {
-        init(dim, dim, is_symmetric, nb_max_elements);
+        CGAL_surface_mesh_parameterization_assertion(dim > 0);
+
+        m_row_dimension     = dim;
+        m_column_dimension  = dim;
+        m_columns           = new Column[m_column_dimension];
+        m_is_symmetric      = is_symmetric;
+        m_matrix            = NULL;
     }
 
     /// Create a rectangular matrix initialized with zeros.
     Taucs_matrix(int  rows,                 ///< Matrix dimensions.
                  int  columns,
-                 bool is_symmetric = false, ///< Symmetric/hermitian?
-                 int  nb_max_elements = 0)  ///< Max number of non 0 elements in the
-                                            ///< matrix (automatically computed if 0).
+                 bool is_symmetric = false) ///< Symmetric/hermitian?
     {
-        init(rows, columns, is_symmetric, nb_max_elements);
+        CGAL_surface_mesh_parameterization_assertion(rows > 0);
+        CGAL_surface_mesh_parameterization_assertion(columns > 0);
+        if (m_is_symmetric) {
+            CGAL_surface_mesh_parameterization_assertion(rows == columns);
+        }
+
+        m_row_dimension     = rows;
+        m_column_dimension  = columns;
+        m_columns           = new Column[m_column_dimension];
+        m_is_symmetric      = is_symmetric;
+        m_matrix            = NULL;
     }
 
-    /// Delete TAUCS matrix wrapped by this object.
-    ~Taucs_matrix() {
-        taucs_ccs_free(m_matrix);
-        m_matrix = NULL;
+    /// Delete this object and the wrapped TAUCS matrix.
+    ~Taucs_matrix() 
+    {
+        // Delete the columns array
+        delete[] m_columns;
+        m_columns = NULL;
+
+        // Delete the the wrapped TAUCS matrix
+        if (m_matrix != NULL) {
+            taucs_ccs_free(m_matrix);
+            m_matrix = NULL;
+        }
     }
 
-    /// Return the matrix' number of rows.
-    inline int row_dimension() const    {
-        return m_matrix->m;
-    }
-    /// Return the matrix' number of columns.
-    inline int column_dimension() const {
-        return m_matrix->n;
-    }
+    /// Return the matrix number of rows
+    int row_dimension() const    { return dimension(); }
+    /// Return the matrix number of columns
+    int column_dimension() const { return dimension(); }
 
     /// Read access to a matrix coefficient.
     ///
     /// Preconditions:
     /// - 0 <= i < row_dimension().
     /// - 0 <= j < column_dimension().
-    T  get_coef (int i, int j) const
+    T  get_coef(int i, int j) const 
     {
         // For symmetric matrices, we store only the lower triangle
         // => swap i and j if (i, j) belongs to the upper triangle
-        if (m_matrix->flags & TAUCS_SYMMETRIC)
-        {
-            assert(m_matrix->flags & TAUCS_LOWER);
-            if (j > i)
-                std::swap(i, j);
-        }
+        if (m_is_symmetric && (j > i))
+            std::swap(i, j);
 
-        assert(i < row_dimension());
-        assert(j < column_dimension());
-
-        // Get pointer to matrix element (NULL if it doesn't exist)
-        const T* element = find_element(i, j);
-
-        return (element == NULL) ? 0 : (*element);
+        CGAL_surface_mesh_parameterization_assertion(i < m_row_dimension);
+        CGAL_surface_mesh_parameterization_assertion(j < m_column_dimension);
+        return m_columns[j].get_coef(i);
     }
 
     /// Write access to a matrix coefficient: a_ij <- val.
@@ -143,21 +234,12 @@ public:
     /// - 0 <= j < column_dimension().
     void set_coef(int i, int j, T  val)
     {
-        if (m_matrix->flags & TAUCS_SYMMETRIC)
-        {
-            assert(m_matrix->flags & TAUCS_LOWER);
-            if (j > i)
-                return;
-        }
+        if (m_is_symmetric && (j > i))
+            return;
 
-        assert(i < row_dimension());
-        assert(j < column_dimension());
-
-        // Get pointer to matrix element. Create it if it doesn't exist.
-        T* element = find_element(i, j, true);
-        assert(element != NULL);
-
-        *element = val;                     // =
+        CGAL_surface_mesh_parameterization_assertion(i < m_row_dimension);
+        CGAL_surface_mesh_parameterization_assertion(j < m_column_dimension);
+        m_columns[j].set_coef(i, val);
     }
 
     /// Write access to a matrix coefficient: a_ij <- a_ij + val.
@@ -171,165 +253,64 @@ public:
     /// - 0 <= j < column_dimension().
     void add_coef(int i, int j, T val)
     {
-        if (m_matrix->flags & TAUCS_SYMMETRIC)
-        {
-            assert(m_matrix->flags & TAUCS_LOWER);
-            if (j > i)
-                return;
-        }
+        if (m_is_symmetric && (j > i))
+            return;
 
-        assert(i < row_dimension());
-        assert(j < column_dimension());
-
-        // Get pointer to matrix element. Create it if it doesn't exist.
-        T* element = find_element(i, j, true);
-        assert(element != NULL);
-
-        *element += val;                     // +=
+        CGAL_surface_mesh_parameterization_assertion(i < m_row_dimension);
+        CGAL_surface_mesh_parameterization_assertion(j < m_column_dimension);
+        m_columns[j].add_coef(i, val);
     }
 
-    /// Get TAUCS matrix wrapped by this object.
-    const taucs_ccs_matrix* get_taucs_matrix() const {
-        return m_matrix;
-    }
-    taucs_ccs_matrix* get_taucs_matrix() {
-        return m_matrix;
-    }
-
-// Private operations
-private:
-
-    /// Create a matrix initialized with zeros.
-    void init(int  rows,                    ///< Matrix dimensions
-              int  columns,
-              bool is_symmetric,            ///< Symmetric/hermitian?
-              int  nb_max_elements)         ///< Max number of non 0 elements in the
-                                            ///< matrix (automatically computed if 0)
+    /// Construct and return the TAUCS matrix wrapped by this object.
+    /// Note: the TAUCS matrix returned by this method is valid
+    ///       only until the next call to set_coef(), add_coef() or get_taucs_matrix().
+    const taucs_ccs_matrix* get_taucs_matrix() const 
     {
-        assert(rows > 0);
-        assert(columns > 0);
+        if (m_matrix != NULL) {
+            taucs_ccs_free(m_matrix);
+            m_matrix = NULL;
+        }
 
         // Convert matrix's T type to the corresponding TAUCS constant
         int flags = Taucs_number<T>::TAUCS_FLAG;
 
         // We store only the lower triangle of symmetric matrices
-        if (is_symmetric)
-        {
-            assert(rows == columns);
+        if (m_is_symmetric)
             flags |= TAUCS_TRIANGULAR | TAUCS_SYMMETRIC | TAUCS_LOWER;
-        }
 
-        // Compute default max number of non null elements
-        if (nb_max_elements <= 0)
-        {
-            // Pick a number larger than the average valence in a triangular mesh (6)
-            int average_nb_elements_per_row_or_column = 16;
-                                            // 16 is fine for Surface_mesh_parameterization package
+        // Compute the number of non null elements in the matrix
+        int nb_max_elements = 0;
+        for (int col=0; col < m_column_dimension; col++)
+            nb_max_elements += m_columns[col].dimension();
 
-            if (!is_symmetric)
-                nb_max_elements = average_nb_elements_per_row_or_column * std::max(rows,columns);
-            else
-                nb_max_elements = (average_nb_elements_per_row_or_column/2+1) * std::max(rows,columns);
-        }
+        // Create the TAUCS matrix wrapped by this object
+        m_matrix = taucs_ccs_create(m_row_dimension, m_column_dimension, nb_max_elements, flags);
 
-        // Create TAUCS matrix wrapped by this object
-        m_matrix = taucs_ccs_create(rows, columns, nb_max_elements, flags);
-
-        // Init the current and max number of non null elements in m_matrix
-        m_nb_elements = 0;
-        m_nb_max_elements = nb_max_elements;
-
-        // Init m_matrix's colptr[] array
+        // Fill m_matrix's colptr[], rowind[] and values[] arrays
         // Implementation note:
-        // colptr[j] is the index of the first element of the column j (or where it
-        // should be if it doesn't exist) + the past-the-end index of the last column
-        for (int col=0; col <= columns; col++)
-            m_matrix->colptr[col] = 0;
-    }
-
-    /// Read/write access to a matrix coefficient:
-    /// Get a pointer to a matrix element. Optionaly create it.
-    /// Return NULL if it doesn't exist (cannot happen if 'create' is true).
-    ///
-    /// Preconditions:
-    /// - 0 <= i < row_dimension().
-    /// - 0 <= j < column_dimension().
-    /// - j <= i for symmetric matrices (we store only the lower triangle).
-    T* find_element(int i, int j, bool create)
-    {
-        T* element = NULL;                          // returned value
-        T* matrix_values = (T*)(m_matrix->values.v);// cast to actual array type
-
-        assert(i < row_dimension());
-        assert(j < column_dimension());
-        if (m_matrix->flags & TAUCS_SYMMETRIC)
+        // - rowind[] = array of non null elements of the matrix, ordered by columns
+        // - values[] = array of row index of each element of rowind[] 
+        // - colptr[j] is the index of the first element of the column j (or where it
+        //   should be if it doesn't exist) + the past-the-end index of the last column
+        m_matrix->colptr[0] = 0;
+        for (int col=0; col < m_column_dimension; col++)
         {
-            assert(m_matrix->flags & TAUCS_LOWER);
-            assert(j <= i);
+            // Number of non null elements of the column
+            int nb_elements = m_columns[col].dimension();
+
+            // Fast copy of column indices and values
+            memcpy(&m_matrix->rowind[m_matrix->colptr[col]], &m_columns[col].m_indices[0], nb_elements*sizeof(int));
+            T* taucs_values = (T*) m_matrix->values.v;
+            memcpy(&taucs_values[m_matrix->colptr[col]], &m_columns[col].m_values[0],  nb_elements*sizeof(T));
+
+            // Start of next column will be:
+            m_matrix->colptr[col+1] = m_matrix->colptr[col] + nb_elements;
         }
 
-        // Search for the i element of the j column's range in rowind[] and values[]
-        // Implementation note:
-        // colptr[j] is the index of the first element of the column j (or where it
-        // should be if it doesn't exist) + the past-the-end index of the last column
-        for (int idx = m_matrix->colptr[j]; idx <= m_matrix->colptr[j+1]; idx++)
-        {
-            // At the the (i, j) element's position (which may exist or not)
-            if ((m_matrix->rowind[idx] >= i)    // on element i position of the column j
-             || (idx == m_matrix->colptr[j+1])) // or on the 1st index of column j+1
-            {
-                // If the (i, j) element doesn't exist yet and 'create' is true,
-                // shift the next elements and insert a new null element
-                if (((m_matrix->rowind[idx] > i)    // too far in the column j
-                 || (idx == m_matrix->colptr[j+1])) // or on the column j+1
-                  && create )
-                {
-                    // @todo reallocate m_matrix if it's full
-                    assert(m_nb_elements < m_nb_max_elements);
-
-                    // The number of elements to shift is:
-                    int nb_elements_to_shift = m_matrix->colptr[column_dimension()] - idx;
-
-                    // Shift values[] and insert a 0
-                    if (nb_elements_to_shift > 0)
-                        memmove(&matrix_values[idx+1], &matrix_values[idx], nb_elements_to_shift*sizeof(T));
-                    matrix_values[idx] = 0;
-
-                    // Shift rowind[] and add the i index
-                    if (nb_elements_to_shift > 0)
-                        memmove(&m_matrix->rowind[idx+1], &m_matrix->rowind[idx], nb_elements_to_shift*sizeof(int));
-                    m_matrix->rowind[idx] = i;
-
-                    // Shift colptr[]
-                    for (int col=j+1; col <= column_dimension(); col++)
-                        m_matrix->colptr[col]++;
-
-                    m_nb_elements++;
-                }
-
-                // If the (i, j) element exists (now), return its address
-                if ((m_matrix->rowind[idx] == i) && (idx < m_matrix->colptr[j+1]))
-                    element = &matrix_values[idx];
-
-                // exit for() statement
-                break;
-            }
-        }
-
-        return element;
+        return m_matrix;
     }
 
-    /// Read access to a matrix coefficient:
-    /// Get a pointer to a matrix element. Return NULL if it doesn't exist.
-    ///
-    /// Preconditions:
-    /// - 0 <= i < row_dimension().
-    /// - 0 <= j < column_dimension().
-    /// - j <= i for symmetric matrices (we store only the lower triangle).
-    const T* find_element(int i, int j) const
-    {
-        return ((Taucs_matrix<T>*)this)->find_element(i, j, false);
-    }
+private:
 
     /// Taucs_matrix cannot be copied (yet)
     Taucs_matrix(const Taucs_matrix& rhs);
@@ -338,13 +319,20 @@ private:
 // Fields
 private:
 
-    /// The actual TAUCS matrix wrapped by this object.
-    taucs_ccs_matrix* m_matrix;
+    // Matrix dimensions
+    int     m_row_dimension, m_column_dimension;
 
-    /// Current and max number of non null elements in m_matrix.
-    int m_nb_elements;
-    int m_nb_max_elements;
-};
+    // Columns array
+    Column* m_columns;
+
+    // Symmetric/hermitian?
+    bool    m_is_symmetric;
+
+    /// The actual TAUCS matrix wrapped by this object.
+    // This is in fact a COPY of the columns array
+    mutable taucs_ccs_matrix* m_matrix;
+
+}; // Taucs_matrix
 
 
 /// The class Taucs_symmetric_matrix is a C++ wrapper
