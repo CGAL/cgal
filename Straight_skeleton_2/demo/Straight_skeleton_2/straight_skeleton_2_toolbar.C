@@ -16,6 +16,8 @@
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "straight_skeleton_2_toolbar.h"
