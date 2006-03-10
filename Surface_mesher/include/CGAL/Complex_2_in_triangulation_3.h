@@ -97,7 +97,7 @@ class Complex_2_in_triangulation_3 {
 
   };
 
-  typedef Filter_iterator<typename Triangulation::Finite_facets_iterator
+  typedef Filter_iterator<typename Triangulation::Finite_facets_iterator,
                           Not_in_complex> Facet_iterator;
   typedef Filter_iterator<typename Triangulation::Finite_edges_iterator,
                           Not_in_complex> Edge_iterator;
