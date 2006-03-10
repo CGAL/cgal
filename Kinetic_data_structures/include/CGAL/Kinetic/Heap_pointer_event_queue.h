@@ -146,7 +146,7 @@ public:
   friend class Bin_pointer_event_queue<Priority>;
   typedef Heap_pointer_event_queue<Priority> This;
   typedef internal::Heap_pointer_event_queue_item<Priority> Item;
-  typedef typename Item::Pointer Item_handle;
+  typedef typename Item::Handle Item_handle;
   typedef enum Child {FIRST=0, SECOND=1}
     Child;
 

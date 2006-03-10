@@ -1,5 +1,6 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits_1.h>
 #include <cstdlib>
 
 typedef double Time;
@@ -38,37 +39,38 @@ std::ostream &operator<<(std::ostream &out, Event e)
 
 int main(int, char *[])
 {
-    typedef CGAL::Kinetic::Heap_pointer_event_queue<Time> Q;
-    Q pq(0, 10000);
-    typedef Q::Key Key;
-    std::vector<Key>  items;
-
-    for (unsigned int i=0; i< 10000; ++i) {
-        Time t(std::rand()/100000.0);
-        items.push_back(pq.insert(t,Event(t)));
+  typedef CGAL::Kinetic::Inexact_simulation_traits_1::Kinetic_kernel::Function_kernel FK;
+  typedef CGAL::Kinetic::Heap_pointer_event_queue<FK> Q;
+  Q pq(0, 10000, FK());
+  typedef Q::Key Key;
+  std::vector<Key>  items;
+  
+  for (unsigned int i=0; i< 10000; ++i) {
+    Time t(std::rand()/100000.0);
+    items.push_back(pq.insert(t,Event(t)));
+  }
+  for (unsigned int i=0; i< 5000; ++i) {
+    pq.erase(items[i]);
+  }
+  
+  Time last_time = -1;
+  while (!pq.empty()) {
+    Time t= pq.front_priority();
+    if (t < last_time) {
+      std::cerr << "ERROR: priority of next event (" << pq.front_priority() 
+		<< ") is before the last one (" << last_time << ")." << std::cerr;
     }
-    for (unsigned int i=0; i< 5000; ++i) {
-        pq.erase(items[i]);
+    assert(t >= last_time);
+    last_time=t;
+    pq.process_front();
+    if (t < last_time) {
+      std::cerr << "ERROR: wrong event processed (" << pq.front_priority() 
+		<< ") instead of (" << proc_time_ << ")." << std::cerr;
     }
-
-    Time last_time = -1;
-    while (!pq.empty()) {
-        Time t= pq.front_priority();
-	if (t < last_time) {
-	  std::cerr << "ERROR: priority of next event (" << pq.front_priority() 
-		    << ") is before the last one (" << last_time << ")." << std::cerr;
-	}
-        assert(t >= last_time);
-        last_time=t;
-        pq.process_front();
-	if (t < last_time) {
-	  std::cerr << "ERROR: wrong event processed (" << pq.front_priority() 
-		    << ") instead of (" << proc_time_ << ")." << std::cerr;
-	}
-	if (proc_time_!= t) {
-	  std::cerr << "ERROR: wrong event time. Expected: " << t << " got " << proc_time_ <<std::endl;
-	}
-        assert(proc_time_==t);
+    if (proc_time_!= t) {
+      std::cerr << "ERROR: wrong event time. Expected: " << t << " got " << proc_time_ <<std::endl;
     }
-    return EXIT_SUCCESS;
+    assert(proc_time_==t);
+  }
+  return EXIT_SUCCESS;
 }

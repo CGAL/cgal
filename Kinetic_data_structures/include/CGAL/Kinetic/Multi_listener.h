@@ -32,49 +32,49 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 template <class Interface>
 class Multi_listener: public Interface
 {
-    typedef Multi_listener<Interface> This;
-    public:
-        typedef typename Interface::Notifier_pointer::element_type Notifier;
+  typedef Multi_listener<Interface> This;
+public:
+  typedef typename Interface::Notifier_handle::element_type Notifier;
 
-        Multi_listener(typename Interface::Notifier_pointer &nh): h_(nh) {
-            h_->new_listener(this);
-        }
+  Multi_listener(typename Interface::Notifier_handle &nh): h_(nh) {
+    h_->new_listener(this);
+  }
 
-        Multi_listener(Notifier* nh): h_(nh) {
-            h_->new_listener(this);
-        }
+  Multi_listener(Notifier* nh): h_(nh) {
+    h_->new_listener(this);
+  }
 
-        Multi_listener(){}
+  Multi_listener(){}
 
-        virtual ~Multi_listener() {
-            h_->delete_listener(this);
-        }
+  virtual ~Multi_listener() {
+    h_->delete_listener(this);
+  }
 
-        typename Interface::Notifier_pointer::element_type* notifier() {
-            return h_.get();
-        }
+  typename Interface::Notifier_handle::element_type* notifier() {
+    return h_.get();
+  }
 
-        const typename Interface::Notifier_pointer::element_type* notifier() const
-        {
+  const typename Interface::Notifier_handle::element_type* notifier() const
+  {
 
-            return h_.get();
-        }
+    return h_.get();
+  }
 
-        virtual void new_notification(typename Interface::Notification_type nt)=0;
+  virtual void new_notification(typename Interface::Notification_type nt)=0;
 
 
-        Multi_listener(const This &o) {
-            h_= o.h_;
-            h_->new_listener(this);
-        }
+  Multi_listener(const This &o) {
+    h_= o.h_;
+    h_->new_listener(this);
+  }
 
-        const This& operator=(const This &o) {
-            h_= o.h_;
-            h_->new_listener(this);
-            return *this;
-        }
-    protected:
-        typename Interface::Notifier_pointer h_;
+  const This& operator=(const This &o) {
+    h_= o.h_;
+    h_->new_listener(this);
+    return *this;
+  }
+protected:
+  typename Interface::Notifier_handle h_;
 };
 
 CGAL_KINETIC_END_NAMESPACE

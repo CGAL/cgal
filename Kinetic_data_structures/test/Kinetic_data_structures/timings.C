@@ -97,15 +97,15 @@ template < class Traits > double test_sort(unsigned int degree, unsigned int n)
         typename Traits::Kinetic_kernel::Motion_function fn(cf.begin(),
             cf.end());
         typename Traits::Kinetic_kernel::Point_1 pt(fn);
-        tr.active_objects_table_pointer()->insert(pt);
+        tr.active_points_1_table_handle()->insert(pt);
     }
     CGAL::Timer timer;
     timer.start();
     int ne = 0;
-    while (tr.simulator_pointer()->next_event_time() !=
-    tr.simulator_pointer()->end_time()) {
-        tr.simulator_pointer()->set_current_event_number(tr.
-            simulator_pointer()->
+    while (tr.simulator_handle()->next_event_time() !=
+    tr.simulator_handle()->end_time()) {
+        tr.simulator_handle()->set_current_event_number(tr.
+            simulator_handle()->
             current_event_number()
             + 1);
         ++ne;

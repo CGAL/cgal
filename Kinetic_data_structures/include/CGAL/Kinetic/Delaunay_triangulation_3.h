@@ -46,7 +46,7 @@ CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 template <class Traits>
 struct Delaunay_triangulation_3_types
 {
-  typedef typename Traits::Active_objects_table MPT;
+  typedef typename Traits::Active_points_3_table MPT;
   typedef typename Traits::Kinetic_kernel KK;
   typedef CGAL::Kinetic::Delaunay_triangulation_cell_base_3<Traits> CFBI;
   /*typedef CGAL::Triangulation_cell_base_with_info_3<Delaunay_cache_3<MPT, KK>,
@@ -97,10 +97,10 @@ private:
 
     Base_traits(This *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
 
-    Wrapper* wrapper_pointer() {
+    Wrapper* wrapper_handle() {
       return wr_;
     }
-    const Wrapper* wrapper_pointer() const
+    const Wrapper* wrapper_handle() const
     {
       return wr_;
     }
@@ -119,19 +119,19 @@ friend class  internal::Delaunay_3_facet_flip_event<This,
 
 
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Visitor> KDel;
-  typedef typename TraitsT::Active_objects_table::Key Point_key;
+  typedef typename TraitsT::Active_points_3_table::Key Point_key;
 
   struct Listener_core
   {
-    typedef typename This::Pointer Notifier_pointer;
+    typedef typename This::Handle Notifier_handle;
     typedef enum {TRIANGULATION}
       Notification_type;
   };
 
   typedef typename CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>;
-  typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_objects_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_objects_table::Listener, This>;
+  typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This> Moving_point_table_listener;
+  friend class CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This>;
 
 public:
   //! Initialize it.
@@ -140,8 +140,8 @@ public:
     #endif*/
   Delaunay_triangulation_3(TraitsT tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
 							      listener_(NULL) {
-    siml_= Simulator_listener(tr.simulator_pointer(), this);
-    motl_= Moving_point_table_listener(tr.active_objects_table_pointer(), this);
+    siml_= Simulator_listener(tr.simulator_handle(), this);
+    motl_= Moving_point_table_listener(tr.active_points_3_table_handle(), this);
   }
   /*#ifdef _MSC_VER
     #pragma warning(enable:4355)

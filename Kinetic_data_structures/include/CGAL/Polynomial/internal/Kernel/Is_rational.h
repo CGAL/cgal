@@ -41,7 +41,7 @@ class Is_rational
         template <class T>
             result_type operator()(const T &v) const
         {
-            return v.is_rational();
+	  return v.is_rational();
         }
 
         bool operator()(double) const

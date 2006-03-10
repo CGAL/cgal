@@ -29,6 +29,7 @@
 #include <CGAL/Kinetic/internal/Kernel/cartesian_predicates_3.h>
 #include <CGAL/Kinetic/internal/Kernel/Reverse_time.h>
 #include <CGAL/Kinetic/internal/Kernel/Delaunay_lifting.h>
+#include <CGAL/Kinetic/Certificate_generator.h>
 #include <CGAL/Kinetic/internal/Kernel/Certificate.h>
 #include <CGAL/Kinetic/internal/Kernel/Center.h>
 
@@ -75,7 +76,7 @@ public:
   /*!
     Takes 3 Point_2.
   */
-  typedef Certificate_function_generator<This, Cartesian_orientation_2<This> > Positive_orientation_2;
+  typedef Certificate_generator<This, Cartesian_orientation_2<This> > Positive_orientation_2;
   Positive_orientation_2 positive_orientation_2_object() const
   {
     return Positive_orientation_2(k_);
@@ -84,7 +85,7 @@ public:
   /*!
     Takes 4 Point_3.
   */
-  typedef Certificate_function_generator<This, Cartesian_orientation_3<This> > Positive_orientation_3;
+  typedef Certificate_generator<This, Cartesian_orientation_3<This> > Positive_orientation_3;
   Positive_orientation_3 positive_orientation_3_object() const
   {
     return Positive_orientation_3(k_);
@@ -97,28 +98,28 @@ public:
   }
 
   //! The in_circle test.
-  typedef Certificate_function_generator<This, Cartesian_side_of_oriented_circle_2<This> > Positive_side_of_oriented_circle_2;
+  typedef Certificate_generator<This, Cartesian_side_of_oriented_circle_2<This> > Positive_side_of_oriented_circle_2;
   Positive_side_of_oriented_circle_2 positive_side_of_oriented_circle_2_object() const
   {
     return Positive_side_of_oriented_circle_2(k_);
   }
 
   //! The 3D in_circle test.
-  typedef Certificate_function_generator<This, Cartesian_side_of_oriented_sphere_3<This> > Positive_side_of_oriented_sphere_3;
+  typedef Certificate_generator<This, Cartesian_side_of_oriented_sphere_3<This> > Positive_side_of_oriented_sphere_3;
   Positive_side_of_oriented_sphere_3 positive_side_of_oriented_sphere_3_object() const
   {
     return Positive_side_of_oriented_sphere_3(k_);
   }
 
   //! The power test for weighted points.
-  typedef Certificate_function_generator<This, Cartesian_power_test_3<This> > Positive_power_test_3;
+  typedef Certificate_generator<This, Cartesian_power_test_3<This> > Positive_power_test_3;
   Positive_power_test_3 positive_power_test_3_object() const
   {
     return Positive_power_test_3(k_);
   }
 
   //! An orientation test for weighted points.
-  typedef Certificate_function_generator<This, Cartesian_weighted_orientation_3<This> > Weighted_positive_orientation_3;
+  typedef Certificate_generator<This, Cartesian_weighted_orientation_3<This> > Weighted_positive_orientation_3;
   Weighted_positive_orientation_3 weighted_positive_orientation_3_object() const
   {
     return Weighted_positive_orientation_3(k_);
@@ -132,27 +133,27 @@ public:
 
 
   //! Compare the x coordinates of two points
-  typedef Certificate_function_generator<This, Cartesian_less_x_1<This> > Is_less_x_1;
+  typedef Certificate_generator<This, Cartesian_less_x_1<This> > Is_less_x_1;
   Is_less_x_1 is_less_x_1_object() const {return Is_less_x_1(k_);}
 
   //! Compare the x coordinates of two points
-  typedef Certificate_function_generator<This, Cartesian_less_x_2<This> > Is_less_x_2;
+  typedef Certificate_generator<This, Cartesian_less_x_2<This> > Is_less_x_2;
   Is_less_x_2 is_less_x_2_object() const {return Is_less_x_2(k_);}
 
   //! Compare the y coordinate of two points
-  typedef Certificate_function_generator<This, Cartesian_less_y_2<This> > Is_less_y_2;
+  typedef Certificate_generator<This, Cartesian_less_y_2<This> > Is_less_y_2;
   Is_less_y_2 is_less_y_2_object() const {return Is_less_y_2(k_);}
 
   //! Compare the x coordinate of two points
-  typedef Certificate_function_generator<This, Cartesian_less_x_3<This> > Is_less_x_3;
+  typedef Certificate_generator<This, Cartesian_less_x_3<This> > Is_less_x_3;
   Is_less_x_3 is_less_x_3_object() const {return Is_less_x_3(k_);}
 
   //! Compare the y coordinate of two points
-  typedef Certificate_function_generator<This, Cartesian_less_y_3<This> > Is_less_y_3;
+  typedef Certificate_generator<This, Cartesian_less_y_3<This> > Is_less_y_3;
   Is_less_y_3 is_less_y_3_object() const {return Is_less_y_3(k_);}
 
   //! Compare the z coordinate of two points
-  typedef Certificate_function_generator<This, Cartesian_less_z_3<This> > Is_less_z_3;
+  typedef Certificate_generator<This, Cartesian_less_z_3<This> > Is_less_z_3;
   Is_less_z_3 is_less_z_3_object() const {return Is_less_z_3(k_);}
 
   //! computes the lifted coordinate under the lifting map

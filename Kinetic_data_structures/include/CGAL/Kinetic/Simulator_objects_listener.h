@@ -38,8 +38,8 @@ class Simulator_objects_listener: public Simulator_listener
     typedef Simulator_listener P;
     public:
 //! THe only constructor
-        Simulator_objects_listener(typename Simulator_listener::Notifier_pointer sim,
-        MOT *kds): Simulator_listener(sim), t_(kds) {
+        Simulator_objects_listener(typename Simulator_listener::Notifier_handle sim,
+				   MOT *kds): Simulator_listener(sim), t_(kds) {
             CGAL_precondition(kds != NULL);
             if (P::notifier()->direction_of_time() != t_->direction_of_time()) {
                 t_->reverse_time();

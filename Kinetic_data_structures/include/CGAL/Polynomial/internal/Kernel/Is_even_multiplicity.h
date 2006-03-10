@@ -48,6 +48,10 @@ public:
   {
     return false;
   }
+  bool operator()(Interval_nt) const
+  {
+    return false;
+  }
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

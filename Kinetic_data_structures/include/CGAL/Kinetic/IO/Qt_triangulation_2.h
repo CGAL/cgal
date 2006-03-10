@@ -46,7 +46,7 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<Kinetic_Delaunay
     typedef Qt_triangulation_2<Kinetic_Delaunay, Qt_gui, Qt_mpt> Container;
     typedef typename Qt_gui::Listener P;
   public:
-    Listener(typename Qt_gui::Pointer &h, Container *t): P(h), t_(t){}
+    Listener(typename Qt_gui::Handle &h, Container *t): P(h), t_(t){}
     virtual void new_notification(typename P::Notification_type nt) {
       if (nt == P::PICTURE_IS_VALID) {
 	t_->draw(*P::widget(), P::notifier()->current_time());
@@ -61,9 +61,9 @@ public:
   //typedef Kinetic_Delaunay Kinetic_Delaunay;
   //typedef CGAL::Ref_counted_pointer<This> Pointer;
 
-  Qt_triangulation_2(typename Kinetic_Delaunay::Pointer &kdel,
-		     typename Qt_gui::Pointer &gui,
-		     typename Qt_mpt::Pointer &mps): mpt_(mps),
+  Qt_triangulation_2(typename Kinetic_Delaunay::Handle &kdel,
+		     typename Qt_gui::Handle &gui,
+		     typename Qt_mpt::Handle &mps): mpt_(mps),
 						     listener_(gui, this),
 						     kdel_(kdel) {
   }
@@ -106,9 +106,9 @@ protected:
     }
   }
 
-  typename Qt_mpt::Pointer mpt_;
+  typename Qt_mpt::Handle mpt_;
   Listener listener_;
-  typename Kinetic_Delaunay::Pointer kdel_;
+  typename Kinetic_Delaunay::Handle kdel_;
 };
 
 CGAL_KINETIC_END_NAMESPACE

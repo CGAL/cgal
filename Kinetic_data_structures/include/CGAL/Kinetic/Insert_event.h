@@ -30,33 +30,33 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 template <class MOT>
 class Insert_event
 {
-    typedef typename MOT::Pointer Pointer;
-    typedef typename MOT::Data Object;
-    public:
-//! Construct it with the time, the object and where to put it
-        Insert_event(const Object &obj,
-            Pointer mot):mot_(mot),
-            obj_(obj){}
-        template <class T>
-        void process(const T&) {
-            CGAL_KINETIC_LOG(LOG_SOME, "Inserting object.\n");
-            mot_->insert(obj_);
-        }
+  typedef typename MOT::Handle Pointer;
+  typedef typename MOT::Data Object;
+public:
+  //! Construct it with the time, the object and where to put it
+  Insert_event(const Object &obj,
+	       Pointer mot):mot_(mot),
+			    obj_(obj){}
+  template <class T>
+  void process(const T&) {
+    CGAL_KINETIC_LOG(LOG_SOME, "Inserting object.\n");
+    mot_->insert(obj_);
+  }
 
-        void write(std::ostream &out) const
-        {
-            out << " I" << obj_ ;
-        }
-    protected:
-        Pointer mot_;
-        Object obj_;
+  void write(std::ostream &out) const
+  {
+    out << " I" << obj_ ;
+  }
+protected:
+  Pointer mot_;
+  Object obj_;
 };
 
 template <class MH>
 std::ostream &operator<<(std::ostream &out, const Insert_event< MH> &moi)
 {
-    moi.write(out);
-    return out;
+  moi.write(out);
+  return out;
 }
 
 

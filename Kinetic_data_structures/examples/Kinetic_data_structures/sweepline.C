@@ -44,7 +44,7 @@ class Planar_arrangement:
   typedef typename CGAL::Kinetic::Sort<TraitsT,
 				       Arrangement_visitor<This> > Sort;
   typedef Arrangement_visitor<This> Visitor;
-  typedef typename Traits::Active_objects_table::Key Key;
+  typedef typename Traits::Active_points_1_table::Key Key;
 
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_2 Approximate_point;
@@ -90,9 +90,9 @@ public:
     edges_.push_back(Edge(last_points_[*a], new_point(*a)));
   }
 
-  int new_point(typename Traits::Active_objects_table::Key k) {
-    double tv= CGAL::to_double(Sort::traits().simulator_pointer()->current_time());
-    double dv= CGAL::to_double(Sort::traits().active_objects_table_pointer()->at(k).x()(tv));
+  int new_point(typename Traits::Active_points_1_table::Key k) {
+    double tv= CGAL::to_double(Sort::traits().simulator_handle()->current_time());
+    double dv= CGAL::to_double(Sort::traits().active_points_1_table_handle()->at(k).x()(tv));
     approx_coords_.push_back(Approximate_point(tv, dv));
     return approx_coords_.size()-1;
   }
@@ -117,8 +117,8 @@ int main(int, char *[])
   typedef CGAL::Kinetic::Inexact_simulation_traits_1 Traits;
   typedef Traits::Kinetic_kernel::Point_1 Point;
   typedef Traits::Simulator::Time Time;
-  typedef CGAL::Kinetic::Insert_event<Traits::Active_objects_table> Insert_event;
-  typedef CGAL::Kinetic::Erase_event<Traits::Active_objects_table> Erase_event;
+  typedef CGAL::Kinetic::Insert_event<Traits::Active_points_1_table> Insert_event;
+  typedef CGAL::Kinetic::Erase_event<Traits::Active_points_1_table> Erase_event;
   typedef Planar_arrangement<Traits> Arrangement;
 
   Traits tr;
@@ -126,7 +126,7 @@ int main(int, char *[])
 
   typedef Traits::NT NT;
 
-  Traits::Simulator::Pointer sp= tr.simulator_pointer();
+  Traits::Simulator::Handle sp= tr.simulator_handle();
 
   std::ifstream in("data/sweepline.input");
 
@@ -146,11 +146,11 @@ int main(int, char *[])
     CGAL_assertion(begin < end);
     extents.push_back(std::make_pair(begin, end));
     points.push_back(pt);
-    tr.simulator_pointer()->new_event(Time(begin),
-				      Insert_event(pt, tr.active_objects_table_pointer()));
-    tr.simulator_pointer()->new_event(Time(end),
-				      Erase_event(Traits::Active_objects_table::Key(num),
-						  tr.active_objects_table_pointer()));
+    tr.simulator_handle()->new_event(Time(begin),
+				      Insert_event(pt, tr.active_points_1_table_handle()));
+    tr.simulator_handle()->new_event(Time(end),
+				      Erase_event(Traits::Active_points_1_table::Key(num),
+						  tr.active_points_1_table_handle()));
     ++num;
   } while (true);
 

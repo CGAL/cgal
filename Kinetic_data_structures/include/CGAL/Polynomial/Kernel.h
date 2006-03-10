@@ -68,16 +68,16 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
   kernels for the non-filtered types. At the moment I don't use this
   since I don't feel like exposing the rational kernel.
 */
-template <class Polynomial_t, class Root_stack_t>
+template <class Polynomial_t, class Root_stack_t, class NT_t= typename Polynomial_t::NT>
 class Kernel: public internal::Rational_traits_base<Polynomial_t>
 {
-  typedef Kernel<Polynomial_t, Root_stack_t> This;
+  typedef Kernel<Polynomial_t, Root_stack_t, NT_t> This;
   typedef typename internal::Rational_traits_base<Polynomial_t> P;
 public:
   typedef Root_stack_t Root_stack;
   typedef typename Root_stack_t::Root Root;
   typedef Polynomial_t Function;
-  typedef typename Function::NT NT;
+  typedef NT_t NT;
   typedef typename Root_stack_t::Traits Root_stack_traits;
 
   //! \todo do something with tr

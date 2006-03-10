@@ -31,31 +31,31 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 template <class MOT>
 class Erase_event
 {
-    typedef typename MOT::Pointer Pointer;
-    typedef typename MOT::Key Key;
-    public:
-        Erase_event(Key k,
-            Pointer mot):mot_(mot),
-            k_(k){}
-        template <class T>
-        void process(const T&) {
-            CGAL_KINETIC_LOG(LOG_SOME,"Deleting object.\n");
-            mot_->erase(k_);
-        }
-        void write(std::ostream &out) const
-        {
-            out << "E" << k_;
-        }
-    protected:
-        Pointer mot_;
-        Key k_;
+  typedef typename MOT::Handle Handle;
+  typedef typename MOT::Key Key;
+public:
+  Erase_event(Key k,
+	      Handle mot):mot_(mot),
+			   k_(k){}
+  template <class T>
+  void process(const T&) {
+    CGAL_KINETIC_LOG(LOG_SOME,"Deleting object.\n");
+    mot_->erase(k_);
+  }
+  void write(std::ostream &out) const
+  {
+    out << "E" << k_;
+  }
+protected:
+  Handle mot_;
+  Key k_;
 };
 
 template <class MH>
 std::ostream &operator<<(std::ostream &out, const Erase_event<MH> &moi)
 {
-    moi.write(out);
-    return out;
+  moi.write(out);
+  return out;
 }
 
 

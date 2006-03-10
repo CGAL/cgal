@@ -77,7 +77,7 @@ class Cartesian_moving_weighted_point_3
             struct Static_traits
         {
             typedef typename SK::Weighted_point Static_type;
-            static Static_type to_static(const This &o, const typename Coordinate_t::NT &t, const SK&) {
+	  static Static_type to_static(const This &o, const typename SK::FT &t, const SK&) {
 //typedef Bare_point::Static_traits<SK> BPST;
                 return Static_type(typename SK::Bare_point(o.point().x()(t),
                     o.point().y()(t),

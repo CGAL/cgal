@@ -49,7 +49,7 @@ class Negate_variable
 
             for (int i = 0; i < size; i++) {
                 if (i%2 == 1) {
-                    coefs[i]= -f[i];
+		  coefs[i]= -f[i];
                 }
                 else {
                     coefs[i]= f[i];

@@ -25,11 +25,27 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-struct Inexact_simulation_traits_2:
-public internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_2>
-{
-    typedef internal::Suggested_inexact_simulation_traits<internal::Sist_types::Kinetic_kernel::Point_2> P;
-    Inexact_simulation_traits_2(P::Time st=0, P::Time et=1000.0): P(st, et){}
+struct Inexact_simulation_traits_2: public Suggested_inexact_simulation_traits_base {
+  typedef Suggested_inexact_simulation_traits_base P;
+  typedef Active_objects_vector<P::Kinetic_kernel::Point_2> Active_points_2_table;
+  Active_points_2_table* active_points_2_table_handle() {
+    return ap_.get();
+  }
+  const Active_points_2_table* active_points_2_table_handle() const {
+    return ap_.get();
+  }
+
+  typedef Cartesian_instantaneous_kernel<Active_points_2_table, P::Static_kernel> Instantaneous_kernel;
+  Instantaneous_kernel instantaneous_kernel_object() const {
+    return Instantaneous_kernel(ap_, P::static_kernel_object());
+  }
+  Inexact_simulation_traits_2(const P::Time &lb = 0,
+			    const P::Time &ub = std::numeric_limits<P::Time>::infinity()): P(lb,ub), 
+											   ap_(new Active_points_2_table()){}
+ 
+
+protected:
+  Active_points_2_table::Handle ap_;
 };
 
 CGAL_KINETIC_END_NAMESPACE

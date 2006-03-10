@@ -31,7 +31,7 @@ struct Trivial_event
   }
 
   std::vector<Object> objects_;
-  typename KDS::Pointer kds_;
+  typename KDS::Handle kds_;
 };
 
 template <class Object, class Time, class KDS>
@@ -52,12 +52,12 @@ template <class Traits>
 struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
 {
   typedef Trivial_kds<Traits> This;
-  typedef typename Traits::Active_objects_table::Data Point;
+  typedef typename Traits::Active_points_1_table::Data Point;
   typedef typename Traits::Simulator::Time Time;
-  typedef typename Traits::Active_objects_table::Key Point_key;
+  typedef typename Traits::Active_points_1_table::Key Point_key;
   typedef typename Traits::Simulator::Event_key Event_key;
   typedef CGAL::Kinetic::Active_objects_listener_helper<
-    typename Traits::Active_objects_table::Listener, This> Active_objects_helper;
+    typename Traits::Active_points_1_table::Listener, This> Active_points_1_helper;
   typedef CGAL::Kinetic::Simulator_kds_listener<
     typename Traits::Simulator::Listener, This> Simulator_helper;
 
@@ -65,8 +65,8 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
 
   Trivial_kds(Traits tr): has_certificates_(true),
 			  tr_(tr),
-			  nth_(tr.active_objects_table_pointer(), this),
-			  sh_(tr.simulator_pointer(), this){}
+			  nth_(tr.active_points_1_table_handle(), this),
+			  sh_(tr.simulator_handle(), this){}
 
   // this method is called with the value true when the event is processed
   void set_processed(bool tf) {
@@ -85,11 +85,11 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
     */
     CGAL_assertion(event_);
     std::cout << "The structure is trivially correct at time "
-	      << tr_.simulator_pointer()->audit_time() << std::endl;
+	      << tr_.simulator_handle()->audit_time() << std::endl;
   }
 
   void set_has_certificates(bool tf) {
-    typename Traits::Simulator::Pointer sp= tr_.simulator_pointer();
+    typename Traits::Simulator::Handle sp= tr_.simulator_handle();
     if (has_certificates_ != tf) {
       has_certificates_=tf;
       if (has_certificates_) {
@@ -98,7 +98,7 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
 	Time t= CGAL::to_interval(sp->current_time()).second+1;
 	event_= sp->new_event(t, Event(objects_.begin(),
 				       objects_.end(),
-				       *tr_.active_objects_table_pointer(),
+				       *tr_.active_points_1_table_handle(),
 				       this));
 	std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
       } else {
@@ -157,7 +157,7 @@ protected:
   std::set<Point_key > objects_;
   Event_key event_;
   Traits tr_;
-  Active_objects_helper nth_;
+  Active_points_1_helper nth_;
   Simulator_helper sh_;
 };
 
@@ -167,9 +167,9 @@ int main(int, char *[])
   typedef Trivial_kds<Traits> TKDS;
 
   Traits tr;
-  TKDS::Pointer tk= new TKDS(tr);
+  TKDS::Handle tk= new TKDS(tr);
 
-  Traits::Simulator::Pointer sp=tr.simulator_pointer();
+  Traits::Simulator::Handle sp=tr.simulator_handle();
 
   Traits::Simulator::Function_kernel::Construct_function cf
     = sp->function_kernel_object().construct_function_object();
@@ -177,13 +177,13 @@ int main(int, char *[])
   tk->set_has_certificates(true);
 
   typedef Traits::Kinetic_kernel::Point_2 Point;
-  Traits::Active_objects_table::Key k
-    = tr.active_objects_table_pointer()->insert(Point(cf(1), cf(0)));
+  Traits::Active_points_1_table::Key k
+    = tr.active_points_1_table_handle()->insert(Point(cf(1), cf(0)));
   sp->set_current_event_number(sp->current_event_number()+10);
-  tr.active_objects_table_pointer()
+  tr.active_points_1_table_handle()
     ->set(k, Traits::Kinetic_kernel::Point_2(cf(2), cf(0)));
   sp->set_current_event_number(sp->current_event_number()+10);
-  tr.active_objects_table_pointer()->erase(k);
+  tr.active_points_1_table_handle()->erase(k);
   sp->set_current_event_number(sp->current_event_number()+10);
   return EXIT_SUCCESS;
 }

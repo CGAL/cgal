@@ -1,5 +1,5 @@
-#define CGAL_CHECK_EXACTNESS
-#define CGAL_CHECK_EXPENSIVE
+//#define CGAL_CHECK_EXACTNESS
+//#define CGAL_CHECK_EXPENSIVE
 
 #include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Kinetic/Insert_event.h>
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   Tr tr;
   typedef Tr::Simulator::Time Time;
 
-  typedef CGAL::Kinetic::Insert_event<Tr::Active_objects_table> MOI;
+  typedef CGAL::Kinetic::Insert_event<Tr::Active_points_1_table> MOI;
   typedef Tr::Kinetic_kernel::Point_2 MP;
   typedef  Tr::Kinetic_kernel::Motion_function::NT NT;
 
@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
     for (unsigned int j=0; j<= degree; ++j) {
       coefs.push_back(static_cast<double>(std::rand())/static_cast<double>(RAND_MAX));
     }
-    tr.simulator_pointer()->new_event(Time(i/100.0), MOI(MP(Tr::Kinetic_kernel::Motion_function(coefs.begin(), coefs.end()),
+    tr.simulator_handle()->new_event(Time(i/100.0), MOI(MP(Tr::Kinetic_kernel::Motion_function(coefs.begin(), coefs.end()),
 							    Tr::Kinetic_kernel::Motion_function(NT(0.0))), 
-							 tr.active_objects_table_pointer()));
+							tr.active_points_1_table_handle()));
   }
 
   bool error= sort_test<Tr>(tr);

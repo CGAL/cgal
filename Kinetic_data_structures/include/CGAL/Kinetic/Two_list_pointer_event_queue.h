@@ -201,16 +201,16 @@ template <class FK>
 class Two_list_pointer_event_queue;
 
 template <class Item, class FK>
-struct Two_list_pointer_event_queue_key: private Item::Pointer
+struct Two_list_pointer_event_queue_key: private Item::Handle
 {
   typedef Two_list_pointer_event_queue_key<Item, FK> This;
-  typedef typename Item::Pointer P;
+  typedef typename Item::Handle P;
   Two_list_pointer_event_queue_key(){};
-  Two_list_pointer_event_queue_key(Item  *p): Item::Pointer(p){};
+  Two_list_pointer_event_queue_key(Item  *p): Item::Handle(p){};
   friend class Two_list_pointer_event_queue<FK>;
   void write(std::ostream &out) {
-    if (Item::Pointer::get()) {
-      out << *Item::Pointer::get();
+    if (Item::Handle::get()) {
+      out << *Item::Handle::get();
     }
     else {
       out << "null";
@@ -218,19 +218,19 @@ struct Two_list_pointer_event_queue_key: private Item::Pointer
   }
   operator bool() const
   {
-    return Item::Pointer::get() != NULL;
+    return Item::Handle::get() != NULL;
   }
   bool operator!() const
   {
-    return Item::Pointer::operator!();
+    return Item::Handle::operator!();
   }
   bool operator==(const This &o) const
   {
-    return Item::Pointer::get() == o.get();
+    return Item::Handle::get() == o.get();
   }
   bool operator!=(const This &o) const
   {
-    return Item::Pointer::get() != o.get();
+    return Item::Handle::get() != o.get();
   }
   //using P::operator<;
   bool operator<(const This& o) const
@@ -239,11 +239,11 @@ struct Two_list_pointer_event_queue_key: private Item::Pointer
   }
 
   Item* pointer() {
-    return Item::Pointer::get();
+    return Item::Handle::get();
   }
   const Item* pointer() const
   {
-    return Item::Pointer::get();
+    return Item::Handle::get();
   }
   //using P::operator>;
 };
@@ -296,10 +296,10 @@ public:
 
   typedef Two_list_pointer_event_queue_key<Item, FK> Key;
 
-  /*  struct Key: public Item::Pointer {
+  /*  struct Key: public Item::Handle {
       Key(){};
-      Key(Item*i): Item::Pointer(i){}
-      Key(typename Item::Pointer ih): Item::Pointer(ih){}
+      Key(Item*i): Item::Handle(i){}
+      Key(typename Item::Handle ih): Item::Handle(ih){}
       static Key null() {
       return Key();
       }

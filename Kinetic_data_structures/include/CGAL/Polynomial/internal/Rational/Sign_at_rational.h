@@ -43,7 +43,7 @@ class Sign_at_rational
         template <class TNT>
             Sign operator()(const TNT& t) const
         {
-            return CGAL_POLYNOMIAL_NS::sign( p(NT(t)) );
+	  return CGAL_POLYNOMIAL_NS::sign( p(t) );
         }
 
 //! Evaluate the sign of the value of the polynomial

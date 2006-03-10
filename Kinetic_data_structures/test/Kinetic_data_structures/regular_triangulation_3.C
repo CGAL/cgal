@@ -17,7 +17,7 @@ int main(int, char *[])
   typedef CGAL::Kinetic::Regular_triangulation_3<Simulation_traits, Visitor> KDel;
 
   Simulation_traits simtr;
-  Simulation_traits::Simulator::Pointer sp= simtr.simulator_pointer();
+  Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);
   //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
@@ -35,13 +35,13 @@ int main(int, char *[])
     Simulation_traits::Kinetic_kernel::Weighted_point_3 p;
     il >> p;
     //std::cout << p << std::endl;
-    simtr.active_objects_table_pointer()->insert(p);
+    simtr.active_points_3_table_handle()->insert(p);
     ++nread;
   }
   kdel.set_has_certificates(true);
 
-  while (simtr.simulator_pointer()->next_event_time()
-	 < simtr.simulator_pointer()->end_time()) {
+  while (sp->next_event_time()
+	 < sp->end_time()) {
     sp->set_current_event_number(sp->current_event_number()+1);
   }
 

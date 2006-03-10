@@ -53,23 +53,29 @@ protected:
   template <class R>
   CGAL_POLYNOMIAL_NS::Sign eval(const R &r) const
   {
+    typedef typename K::Root_stack_traits::Sign_at SA;
+    SA sa= k_.root_stack_traits_object().sign_at_object(p_);
+    return sa(r);
+  }
+
+  CGAL_POLYNOMIAL_NS::Sign eval(const typename K::Root &r) const {
     typename K::Is_rational ir= k_.is_rational_object();
 
     //std::pair<double, double> i= to_interval(r);
     if (ir(r)) {
       typename K::To_rational tr= k_.to_rational_object();
-      typename Poly::NT nt= tr(r);
+      typename K::NT nt= tr(r);
       return eval(nt);
     }
     else {
       typename K::To_isolating_interval tii= k_.to_isolating_interval_object();
-      std::pair<typename Poly::NT, typename Poly::NT> ii= tii(r);
+      std::pair<typename K::NT, typename K::NT> ii= tii(r);
       typename K::Root_stack s= k_.root_stack_object(p_,
 						     typename K::Root(ii.first),
 						     typename K::Root(ii.second));
       if (s.empty()) {
 	// there are no roots
-	typename Poly::NT mid= (ii.first + ii.second)*typename Poly::NT(.5);
+	typename K::NT mid= (ii.first + ii.second)*typename K::NT(.5);
 	return eval(mid);
       }
       else {
@@ -89,7 +95,7 @@ protected:
 	}
 	else {
 	  // There were roots below r.
-	  typename K::Sign_between_roots sbr= k_.sign_between_roots_object(r, R(ii.second));
+	  typename K::Sign_between_roots sbr= k_.sign_between_roots_object(r, typename K::Root(ii.second));
 	  return sbr(p_);
 
 	}
@@ -110,12 +116,10 @@ protected:
     return CGAL_POLYNOMIAL_NS::sign(pc(p_)(rep));
   }
 
-  CGAL_POLYNOMIAL_NS::Sign eval(const typename Poly::NT &nt) const
+  /* CGAL_POLYNOMIAL_NS::Sign eval(const typename Poly::NT &nt) const
   {
-    typedef typename K::Root_stack_traits::Sign_at SA;
-    SA sa= k_.root_stack_traits_object().sign_at_object(p_);
-    return sa(nt);
-  }
+   
+  }*/
 
   Poly p_;
   K k_;

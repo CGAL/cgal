@@ -33,57 +33,57 @@ CGAL_KINETIC_BEGIN_NAMESPACE
   type. It then calls the to_static member method of the class.
 */
 template <class Arg,
-class SK= CGAL::Simple_cartesian<typename Arg::Coefficient::NT> >
+	  class SK >
 class To_static
 {
-    typedef typename Arg::template Static_traits<SK> Traits;
-    public:
-//! The way time is represented.
-        typedef typename Arg::Coordinate::NT Time;
+  typedef typename Arg::template Static_traits<SK> Traits;
+public:
+  //! The way time is represented.
+  typedef typename SK::FT Time;
 
-//! Construct it with a static kernel
-        To_static(const SK &sk=SK()): sk_(sk), t_(-666666666) {
+  //! Construct it with a static kernel
+  To_static(const SK &sk=SK()): sk_(sk), t_(-666666666) {
 #ifndef NDEBUG
-            initialized_=false;
+    initialized_=false;
 #endif
-        }
+  }
 
-        typedef typename Traits::Static_type result_type;
-        typedef Arg argument_type;
-//! Convert an appropriate moving object to a static object
-        result_type operator()(const argument_type &arg) const
-        {
+  typedef typename Traits::Static_type result_type;
+  typedef Arg argument_type;
+  //! Convert an appropriate moving object to a static object
+  result_type operator()(const argument_type &arg) const
+  {
 #ifndef NDEBUG
-            if (!initialized_) {
-                std::cerr << "You must set time before using a snapshot.\n";
-                CGAL_precondition(initialized_);
-            }
+    if (!initialized_) {
+      std::cerr << "You must set time before using a snapshot.\n";
+      CGAL_precondition(initialized_);
+    }
 #endif
-            return Traits::to_static(arg, time(), sk_);
-        }
-//! What this believes the time to be.
-        const Time& time() const
-        {
-/*#ifndef NDEBUG
-if (!initialized_) {
-  std::cerr << "You must set time before using a snapshot.\n";
-  CGAL_precondition(initialized_);
-}
-#endif    */
-            return t_;
-        }
-//! Set the time.
-        void set_time(const Time &t) {
-            t_=t;
+    return Traits::to_static(arg, time(), sk_);
+  }
+  //! What this believes the time to be.
+  const Time& time() const
+  {
+    /*#ifndef NDEBUG
+      if (!initialized_) {
+      std::cerr << "You must set time before using a snapshot.\n";
+      CGAL_precondition(initialized_);
+      }
+      #endif    */
+    return t_;
+  }
+  //! Set the time.
+  void set_time(const Time &t) {
+    t_=t;
 #ifndef NDEBUG
-            initialized_=true;
+    initialized_=true;
 #endif
-        }
-    protected:
-        SK sk_;
-        Time t_;
+  }
+protected:
+  SK sk_;
+  Time t_;
 #ifndef NDEBUG
-        bool initialized_;
+  bool initialized_;
 #endif
 };
 CGAL_KINETIC_END_NAMESPACE

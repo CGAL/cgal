@@ -10,7 +10,7 @@ struct False{};
 
 
 
-template <class K, class CE=False>
+template <class K, class CE=False, bool CA=true>
 class Check_solver
 {
 public:
@@ -19,7 +19,7 @@ public:
   typedef std::vector<double> DV;
   typedef typename K::Root Rt;
   typedef typename K::Function Fn;
-  typedef typename K::NT NT;
+  typedef typename Fn::NT NT;
   typedef K        Kernel;
 
   K k_;
@@ -33,7 +33,7 @@ public:
 
   Check_solver(const K& k, bool verbose): k_(k), verbose(verbose), cf_(k_.construct_function_object()){}
 
-  void time_estimate(const Fn &, const Rt& , False){
+  /*void time_estimate(const Fn &, const Rt& , False){
   }
 
  
@@ -47,7 +47,7 @@ public:
     } while (timer.time() <3 && !verbose);
     timer.stop();
     ce_time= timer.time();
-  }
+    }*/
 
   template <class It>
   void check_polynomial(const Fn &q, It roots_b, It roots_e,
@@ -98,7 +98,7 @@ public:
 	  CGAL_assertion(last_root<= s.top());
 	  last_root=s.top();
 	  Rt cur= s.top();
-	  if (cur < end) {
+	  if (cur != std::numeric_limits<Rt>::infinity()) {
 	    /*if (cur == std::numeric_limits<Rt>::infinity() || cur > 10000){
 	      int i=0;
 	      }*/
@@ -116,7 +116,7 @@ public:
 	++total_roots;
       }
       ++total_roots;
-      if (reps==0 && verbose) {
+      if (reps==0 && verbose && CA) {
 	std::vector<bool> taken_maple(roots_e-roots_b, false), taken_solver(roots.size(), false);
 	for (unsigned int i=0; i< roots.size(); ++i) {
 	  double rd= CGAL::to_double(roots[i]);
@@ -177,7 +177,7 @@ public:
       total_time += timer.time();
     }
 
-    time_estimate(q, start, CE);
+    //time_estimate(q, start, CE());
   }
 
   void clear_timings() {

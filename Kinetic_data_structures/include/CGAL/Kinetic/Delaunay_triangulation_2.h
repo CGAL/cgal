@@ -118,7 +118,7 @@ public:
 
   typedef typename Simulation_traits::Kinetic_kernel Kinetic_kernel;
   typedef typename Simulation_traits::Simulator Simulator;
-  typedef typename Simulation_traits::Active_objects_table Moving_point_table;
+  typedef typename Simulation_traits::Active_points_2_table Moving_point_table;
 
   typedef typename Moving_point_table::Key Point_key;
   typedef typename Simulator::Event_key Event_key;
@@ -161,8 +161,8 @@ public:
 						  soc_(traits_.kinetic_kernel_object().positive_side_of_oriented_circle_2_object()),
 						  o2_(traits_.kinetic_kernel_object().positive_orientation_2_object()),
 						  watcher_(w) {
-    siml_ = Simulator_listener(st.simulator_pointer(), this);
-    motl_= Moving_point_table_listener(st.active_objects_table_pointer(), this);
+    siml_ = Simulator_listener(st.simulator_handle(), this);
+    motl_= Moving_point_table_listener(st.active_points_2_table_handle(), this);
   }
 
   //! Just write the objects in order;
@@ -196,9 +196,9 @@ public:
     CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_LOTS, *this);
     if (del_.dimension() != 2) return;
     Delaunay sdel(traits_.instantaneous_kernel_object());
-    sdel.geom_traits().set_time(traits_.simulator_pointer()->rational_current_time());
-    sdel.insert(traits_.active_objects_table_pointer()->keys_begin(),
-                traits_.active_objects_table_pointer()->keys_end());
+    sdel.geom_traits().set_time(traits_.simulator_handle()->rational_current_time());
+    sdel.insert(traits_.active_points_2_table_handle()->keys_begin(),
+                traits_.active_points_2_table_handle()->keys_end());
 
     CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_LOTS, sdel << std::endl);
 
@@ -240,7 +240,7 @@ public:
       Event_key key= TDS_helper::get_undirected_edge_label(*eit);
       CGAL_assertion(key);
       typename Simulator::Root_stack s= compute_failure_time(*eit);
-      if (key == traits_.simulator_pointer()->null_event()) {
+      if (key == traits_.simulator_handle()->null_event()) {
 	CGAL_exactness_assertion(s.top() == std::numeric_limits<Time>::infinity());
       }
       else {
@@ -260,7 +260,7 @@ public:
 	  Edge e(fc, j);
 	  Event_key k= TDS_helper::get_undirected_edge_label(e);
 	  if (k) {
-	    traits_.simulator_pointer()->delete_event(k);
+	    traits_.simulator_handle()->delete_event(k);
 	    TDS_helper::set_undirected_edge_label(e, Event_key());
 	  }
 	}
@@ -268,7 +268,7 @@ public:
       } while (fc != fe);
     }
     // remove from triangulation
-    del_.geom_traits().set_time(traits_.simulator_pointer()->rational_current_time());
+    del_.geom_traits().set_time(traits_.simulator_handle()->rational_current_time());
     del_.remove(vh);
     //new_edges_.clear();
     if (del_.dimension()==2) {
@@ -332,7 +332,7 @@ public:
   void insert(Point_key k) {
     bool was_2d= (del_.dimension()==2);
 
-    del_.geom_traits().set_time(traits_.simulator_pointer()->rational_current_time());
+    del_.geom_traits().set_time(traits_.simulator_handle()->rational_current_time());
     if (was_2d) {
       //std::cout << "removing extra certificates.\n";
       std::vector<Face_handle> faces;
@@ -343,7 +343,7 @@ public:
 	  Edge e(f, j);
 	  Event_key k= TDS_helper::get_undirected_edge_label(e);
 	  if (k) {
-	    traits_.simulator_pointer()->delete_event(k);
+	    traits_.simulator_handle()->delete_event(k);
 	    TDS_helper::set_undirected_edge_label(e, Event_key());
 	  }
 	}
@@ -382,12 +382,12 @@ public:
     for (unsigned int i=0; i<3; ++i) {
       Edge e0(face, i);
       if (e0.second != index) {
-	traits_.simulator_pointer()->delete_event(TDS_helper::get_undirected_edge_label(e0));
+	traits_.simulator_handle()->delete_event(TDS_helper::get_undirected_edge_label(e0));
 	TDS_helper::set_undirected_edge_label(e0, Event_key());
       }
       Edge e1(mirror_face, i);
       if (e1.second != mirror_index) {
-	traits_.simulator_pointer()->delete_event(TDS_helper::get_undirected_edge_label(e1));
+	traits_.simulator_handle()->delete_event(TDS_helper::get_undirected_edge_label(e1));
 	TDS_helper::set_undirected_edge_label(e1, Event_key());
       }
     }
@@ -451,7 +451,7 @@ protected:
 
   const typename Moving_point_table::Data& point(Point_key k) const
   {
-    return traits_.active_objects_table_pointer()->at(k);
+    return traits_.active_points_2_table_handle()->at(k);
   }
 
   bool is_hull_edge(const Edge &e) const {
@@ -473,8 +473,8 @@ protected:
  
     SOC_certificate s=soc_(point(ks[0]), point(ks[1]),
 			   point(ks[2]), point(ks[3]),
-			   traits_.simulator_pointer()->current_time(),
-			   traits_.simulator_pointer()->end_time());
+			   traits_.simulator_handle()->current_time(),
+			   traits_.simulator_handle()->end_time());
 
     return s;
   }
@@ -503,8 +503,8 @@ protected:
       std::swap(ks[0], ks[1]);
     }
     O2_certificate s=o2_(point(ks[0]), point(ks[1]), point(ks[2]),
-			  traits_.simulator_pointer()->current_time(),
-			  traits_.simulator_pointer()->end_time());
+			  traits_.simulator_handle()->current_time(),
+			  traits_.simulator_handle()->end_time());
     return s;
   }
 
@@ -516,12 +516,12 @@ protected:
       O2_certificate s= compute_hull_failure_time(e);
       Time t= s.failure_time();
       s.pop_failure_time();
-      k =traits_.simulator_pointer()->new_event(t, O2_event(s, e, this));
+      k =traits_.simulator_handle()->new_event(t, O2_event(s, e, this));
     } else {
       SOC_certificate s= compute_failure_time(e);
       Time t= s.failure_time();
       s.pop_failure_time();
-      k =traits_.simulator_pointer()->new_event(t, O2_event(s, e, this));
+      k =traits_.simulator_handle()->new_event(t, O2_event(s, e, this));
     }
     TDS_helper::set_undirected_edge_label(e, k);
   }
@@ -532,7 +532,7 @@ protected:
   */
   void rebuild_certificate( const Edge &e) {
     if (TDS_helper::get_undirected_edge_label(e)) {
-      traits_.simulator_pointer()->delete_event(TDS_helper::get_undirected_edge_label(e));
+      traits_.simulator_handle()->delete_event(TDS_helper::get_undirected_edge_label(e));
       TDS_helper::set_undirected_edge_label(e,  Event_key());
     }
     new_certificate(e);

@@ -64,7 +64,7 @@ protected:
   {
     typedef enum {IS_EDITING}
       Notification_type;
-    typedef typename This::Pointer Notifier_pointer;
+    typedef typename This::Handle Notifier_handle;
   };
 public:
   //! How to refer to points

@@ -24,11 +24,27 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-struct Exact_simulation_traits_3: public internal::Suggested_exact_simulation_traits<internal::Sest_types::Kinetic_kernel::Point_3>
-{
-    typedef internal::Suggested_exact_simulation_traits<internal::Sest_types::Kinetic_kernel::Point_3> P;
-    Exact_simulation_traits_3(const P::Time &lb = 0,
-        const P::Time &ub = std::numeric_limits<P::Time>::infinity()): P(lb,ub){}
+struct Exact_simulation_traits_3: public Suggested_exact_simulation_traits_base {
+  typedef Suggested_exact_simulation_traits_base P;
+  typedef Active_objects_vector<P::Kinetic_kernel::Point_3> Active_points_3_table;
+  Active_points_3_table* active_points_3_table_handle() {
+    return ap_.get();
+  }
+  const Active_points_3_table* active_points_3_table_handle() const {
+    return ap_.get();
+  }
+
+  typedef Cartesian_instantaneous_kernel<Active_points_3_table, P::Static_kernel> Instantaneous_kernel;
+  Instantaneous_kernel instantaneous_kernel_object() const {
+    return Instantaneous_kernel(ap_, P::static_kernel_object());
+  }
+  Exact_simulation_traits_3(const P::Time &lb = 0,
+			    const P::Time &ub = std::numeric_limits<P::Time>::infinity()): P(lb,ub), 
+											   ap_(new Active_points_3_table()){}
+ 
+
+protected:
+  Active_points_3_table::Handle ap_;
 };
 CGAL_KINETIC_END_NAMESPACE
 #endif

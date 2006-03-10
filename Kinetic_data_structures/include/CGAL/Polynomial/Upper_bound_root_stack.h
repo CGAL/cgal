@@ -308,13 +308,13 @@ protected:
       lbi= Interval(-rb);
     }
     else {
-      lbi= lb_.isolating_interval();    //power_of_two(lb_.interval().lower_bound());
+      lbi= lb_.isolating_interval_object();    //power_of_two(lb_.interval().lower_bound());
     }
     if (ub_== Root::infinity()) {
       ubi= Interval(rb);
     }
     else {
-      ubi= ub_.isolating_interval();
+      ubi= ub_.isolating_interval_object();
     }
     Interval ii= lbi || ubi;
 

@@ -1,189 +1,80 @@
-#include <CGAL/Kinetic/Ref_counted.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
-#include <CGAL/Kinetic/Active_objects_listener_helper.h>
-#include <CGAL/Kinetic/Simulator_kds_listener.h>
-#include <iostream>
-#include <set>
-#include <vector>
+#include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
+#include <CGAL/Kinetic/Simulation_traits.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 
-// This must be external since operator<< has to be defined
-template <class Object, class Time, class KDS>
-struct Trivial_event
-{
-  Trivial_event(){} dont'cdompile
-  template <class It, class Map>
-  Trivial_event(It beg, It end, const Map &m, KDS* kds): kds_(kds) {
-    for (; beg != end; ++beg) {
-      objects_.push_back(m[*beg]);
-    }
+template <class KineticKernel>
+struct Positive_x_f_2 {
+  typedef typename KineticKernel::Certificate_function result_type;
+  typedef typename KineticKernel::Point_2 argument_type;
+  result_type operator()(const argument_type &p){
+    return result_type(p.x());
   }
-  void process(Time t) const
-  {
-    std::cout << "At time " << t
-	      << " the following objects are in the table: ";
-    for (typename std::vector<Object>::const_iterator
-	   cit= objects_.begin();
-	 cit != objects_.end(); ++cit) {
-      std::cout << *cit << " ";
-    }
-    std::cout << std::endl;
-    kds_->set_processed(true);
-  }
-
-  std::vector<Object> objects_;
-  typename KDS::Pointer kds_;
 };
 
-template <class Object, class Time, class KDS>
-std::ostream &operator<<(std::ostream &out,
-			 const Trivial_event<Object, Time, KDS> &)
-{
-  out << "\"An event\"";
-  return out;
-}
-
-
-/*!  This is a trivial kinetic data structure which doesn't actually
-  do anything, other than print what it should be doing and maintain 1
-  certificate in the event queue which has a list of all the moving
-  objects in the moving object table.
-*/
-template <class Traits>
-struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
-{
-  typedef Trivial_kds<Traits> This;
-  typedef typename Traits::Active_objects_table::Data Point;
-  typedef typename Traits::Simulator::Time Time;
-  typedef typename Traits::Active_objects_table::Key Point_key;
-  typedef typename Traits::Simulator::Event_key Event_key;
-  typedef CGAL::Kinetic::Active_objects_listener_helper<
-    typename Traits::Active_objects_table::Listener, This> Active_objects_helper;
-  typedef CGAL::Kinetic::Simulator_kds_listener<
-    typename Traits::Simulator::Listener, This> Simulator_helper;
-
-  typedef Trivial_event<Point, Time, This> Event;
-
-  Trivial_kds(Traits tr): has_certificates_(true),
-			  tr_(tr),
-			  nth_(tr.active_objects_table_pointer(), this),
-			  sh_(tr.simulator_pointer(), this){}
-
-  // this method is called with the value true when the event is processed
-  void set_processed(bool tf) {
-    if (tf== true) {
-      event_= Event_key();
-      set_has_certificates(false);
-      set_has_certificates(true);
-    }
-  }
-
-  void audit() const
+template <class FunctionKernel> 
+class My_kinetic_kernel:
+  public CGAL::Kinetic::Cartesian_kinetic_kernel<FunctionKernel> {
+  typedef CGAL::Kinetic::Cartesian_kinetic_kernel<FunctionKernel> P;
+  typedef My_kinetic_kernel<FunctionKernel> This;
+public:
+  typedef CGAL::Kinetic::internal::Certificate_function_generator<This, Positive_x_f_2<This> > Positive_x_2;
+  Positive_x_2 positive_x_2_object() const
   {
-    /* In a real KDS you could use tr_.instantaneous_kernel() to build
-       a static version of the kinetic data structure and check it for
-       equality with the kinetic version.
-    */
-    CGAL_assertion(event_);
-    std::cout << "The structure is trivially correct at time "
-	      << tr_.simulator_pointer()->audit_time() << std::endl;
+    return Positive_x_2(P::function_kernel_object());
   }
+};
 
-  void set_has_certificates(bool tf) {
-    typename Traits::Simulator::Pointer sp= tr_.simulator_pointer();
-    if (has_certificates_ != tf) {
-      has_certificates_=tf;
-      if (has_certificates_) {
-	bool ev= event_;
-	CGAL_assertion(!ev);
-	Time t= CGAL::to_interval(sp->current_time()).second+1;
-	event_= sp->new_event(t, Event(objects_.begin(),
-				       objects_.end(),
-				       *tr_.active_objects_table_pointer(),
-				       this));
-	std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
-      } else {
-	if (event_) {
-	  std::cout << "Deleting event " << event_ << std::endl;
-	  sp->delete_event(event_);
-	  event_=Event_key();
-	}
-      }
-    }
+
+struct My_st_types: public CGAL::Kinetic::Suggested_exact_simulation_traits_types {
+  typedef CGAL::Kinetic::Suggested_exact_simulation_traits_types P;
+  typedef My_kinetic_kernel<P::Function_kernel>::Point_2 Active_object;
+  typedef CGAL::Kinetic::Active_objects_vector<Active_object> Active_objects_table;
+  typedef CGAL::Kinetic::Cartesian_instantaneous_kernel< Active_objects_table,
+							 Static_kernel> Instantaneous_kernel;
+};
+
+struct My_simulation_traits:
+  public  CGAL::Kinetic::Simulation_traits<My_st_types::Static_kernel,
+			    My_st_types::Kinetic_kernel,
+			    My_st_types::Simulator>
+{
+  typedef  CGAL::Kinetic::Simulation_traits<My_st_types::Static_kernel,
+					    My_st_types::Kinetic_kernel,
+					    My_st_types::Simulator> P;
+  My_simulation_traits(const P::Time &lb= P::Time(0),
+		       const P::Time &ub=std::numeric_limits<P::Time>::infinity()): 
+    P(lb,ub), 
+    ap_(new Active_points_2_table()) {}
+
+  typedef My_st_types::Active_objects_table Active_points_2_table;
+  Active_points_2_table* active_points_2_table_handle() {
+    return ap_.get();
   }
-
-  bool has_certificates() const
+  const Active_points_2_table* active_points_2_table_handle() const {
+    return ap_.get();
+  }
+  typedef My_st_types::Instantaneous_kernel Instantaneous_kernel;
+  Instantaneous_kernel instantaneous_kernel_object() const
   {
-    // you can't use !event_ because the simulation
-    // might end before the time you tried to schedule the event.
-    return has_certificates_;
-  }
-
-  void insert(Point_key k) {
-    std::cout << "Updating structure to include new object "
-	      << k << "." << std::endl;
-    objects_.insert(k);
-    if (has_certificates_) {
-      std::cout << "Updating all certificates which depend on "
-                << k << "." << std::endl;
-      set_has_certificates(false);
-      set_has_certificates(true);
+    return Instantaneous_kernel(ap_, static_kernel_object());
     }
-  }
-
-  void set(Point_key k) {
-    std::cout << "An object changed, but we shouldn't every update"
-	      << " structure when an object changes."<< std::endl;
-    if (has_certificates_) {
-      std::cout << "Updating all certificates which depend on "
-                << k << "." << std::endl;
-      set_has_certificates(false);
-      set_has_certificates(true);
-    }
-  }
-
-  void erase(Point_key k) {
-    std::cout << "An object " << k << " was removed."<< std::endl;
-    objects_.erase(k);
-    if (has_certificates_) {
-      std::cout << "Updating all certificates which depend on "
-                << k << "." << std::endl;
-      set_has_certificates(false);
-      set_has_certificates(true);
-    }
-  }
-
 protected:
-  bool has_certificates_;
-  std::set<Point_key > objects_;
-  Event_key event_;
-  Traits tr_;
-  Active_objects_helper nth_;
-  Simulator_helper sh_;
+  Active_points_2_table::Handle ap_;
 };
+
 
 int main(int, char *[])
 {
-  typedef CGAL::Kinetic::Exact_simulation_traits_1 Traits;
-  typedef Trivial_kds<Traits> TKDS;
+  typedef My_simulation_traits Traits;
+  typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits> KDel;
 
   Traits tr;
-  TKDS::Pointer tk= new TKDS(tr);
+  KDel kdel(tr);
 
-  Traits::Simulator::Pointer sp=tr.simulator_pointer();
+  std::ifstream in("data/points_2");
+  in >> *tr.active_points_2_table_handle();
+  
+  tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
 
-  Traits::Simulator::Function_kernel::Construct_function cf
-    = sp->function_kernel_object().construct_function_object();
-
-  tk->set_has_certificates(true);
-
-  typedef Traits::Kinetic_kernel::Point_2 Point;
-  Traits::Active_objects_table::Key k
-    = tr.active_objects_table_pointer()->insert(Point(cf(1), cf(0)));
-  sp->set_current_event_number(sp->current_event_number()+10);
-  tr.active_objects_table_pointer()
-    ->set(k, Traits::Kinetic_kernel::Point_2(cf(2), cf(0)));
-  sp->set_current_event_number(sp->current_event_number()+10);
-  tr.active_objects_table_pointer()->erase(k);
-  sp->set_current_event_number(sp->current_event_number()+10);
   return EXIT_SUCCESS;
 }

@@ -144,7 +144,7 @@ struct Trivial_event
   {
     kds_->process();
   }
-  typename KDS::Pointer kds_;
+  KDS* kds_;
 };
 
 template <class KDS>
@@ -226,6 +226,10 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
       set_has_certificates(false);
       set_has_certificates(true);
     }
+  }
+
+  ~Trivial_kds(){
+     set_has_certificates(false);
   }
 
 protected:

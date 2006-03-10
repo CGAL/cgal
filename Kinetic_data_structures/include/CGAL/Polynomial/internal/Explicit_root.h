@@ -114,9 +114,11 @@ public:
     }
   }
 
-  std::pair<NT, NT> isolating_interval() const
+  const std::pair<NT, NT>& isolating_interval() const
   {
-    return std::pair<NT, NT>(value_, value_);
+    static std::pair<NT, NT> ret;
+    ret= std::make_pair(value_, value_);
+    return ret;
   }
 
   bool operator<(const This &o) const

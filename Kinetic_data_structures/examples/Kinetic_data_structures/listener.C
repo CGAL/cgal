@@ -11,7 +11,7 @@ public:
   public:
     typedef enum Notification_type {DATA_CHANGED}
       Notification_type;
-    typedef Notifier::Pointer Notifier_pointer;
+    typedef Notifier::Handle Notifier_handle;
   };
 
   typedef CGAL::Kinetic::Listener<Listener_interface> Listener;
@@ -39,7 +39,7 @@ protected:
 struct My_listener: public Notifier::Listener, public CGAL::Kinetic::Ref_counted<My_listener>
 {
   typedef Notifier::Listener P;
-  typedef P::Notifier_pointer PP;
+  typedef P::Notifier_handle PP;
   My_listener(PP p): P(p){}
 
   void new_notification(P::Notification_type nt) {
@@ -55,8 +55,8 @@ struct My_listener: public Notifier::Listener, public CGAL::Kinetic::Ref_counted
 int main(int, char *[])
 {
   {
-    Notifier::Pointer n= new Notifier;
-    My_listener::Pointer ml= new My_listener(n);
+    Notifier::Handle n= new Notifier;
+    My_listener::Handle ml= new My_listener(n);
 
     n->set_data(4);
     n->set_data(4);
@@ -65,8 +65,8 @@ int main(int, char *[])
     n->set_data(6);
   }
   {
-    Notifier::Pointer n= new Notifier;
-    My_listener::Pointer ml= new My_listener(n);
+    Notifier::Handle n= new Notifier;
+    My_listener::Handle ml= new My_listener(n);
 
     n->set_data(4);
     n->set_data(4);

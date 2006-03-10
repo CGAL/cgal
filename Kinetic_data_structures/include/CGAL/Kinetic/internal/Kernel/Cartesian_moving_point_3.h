@@ -136,7 +136,7 @@ class Cartesian_moving_point_3
             struct Static_traits
         {
             typedef typename SK::Point_3 Static_type;
-            static Static_type to_static(const This &o, const NT &t, const SK &) {
+	  static Static_type to_static(const This &o, const typename SK::FT &t, const SK &) {
 	      return Static_type(o.x()(t), o.y()(t), o.z()(t));
             }
         };

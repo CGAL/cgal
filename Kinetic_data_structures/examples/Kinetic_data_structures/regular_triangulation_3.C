@@ -11,12 +11,12 @@ int main(int, char *[])
     Traits tr;
     KDel kdel(tr);
 
-    Traits::Simulator::Pointer sp= tr.simulator_pointer();
+    Traits::Simulator::Handle sp= tr.simulator_handle();
   
     std::ifstream in("data/weighted_points_3");
-    in >> *tr.active_objects_table_pointer();
+    in >> *tr.active_points_3_table_handle();
     
-    std::cout <<  *tr.active_objects_table_pointer() << std::endl;
+    std::cout <<  *tr.active_points_3_table_handle() << std::endl;
 
     kdel.set_has_certificates(true);
    

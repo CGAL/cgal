@@ -66,10 +66,10 @@ class Listener: public Interface
 {
   typedef Listener<Interface> LB_this;
 public:
-  typedef typename Interface::Notifier_pointer::element_type Notifier;
+  typedef typename Interface::Notifier_handle::element_type Notifier;
 
   //typedef typename Notifier::Handle Notifier_handle;
-  Listener(typename Interface::Notifier_pointer &nh): h_(nh) {
+  Listener(typename Interface::Notifier_handle &nh): h_(nh) {
     CGAL_precondition(h_->listener()==NULL);
     h_->set_listener(this);
   }
@@ -90,14 +90,14 @@ public:
     passed. Wrap it with a Notifier_pointer if you for some reason
     which to store it.
   */
-  typename Interface::Notifier_pointer::element_type* notifier() {
+  typename Interface::Notifier_handle::element_type* notifier() {
     return h_.get();
   }
   //! Constant version.
   /*!
     See Listener::notifier()
   */
-  const typename Interface::Notifier_pointer::element_type* notifier() const
+  const typename Interface::Notifier_handle::element_type* notifier() const
   {
     return h_.get();
   }
@@ -120,7 +120,7 @@ private:
     return *this;
   }
 protected:
-  typename Interface::Notifier_pointer h_;
+  typename Interface::Notifier_handle h_;
 };
 
 CGAL_KINETIC_END_NAMESPACE

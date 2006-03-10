@@ -40,7 +40,7 @@ class Simulator_kds_listener: public Simulator_listener
   typedef Simulator_listener P;
 public:
   //! The only constructor
-  Simulator_kds_listener(typename P::Notifier_pointer sim,
+  Simulator_kds_listener(typename P::Notifier_handle sim,
 			 KDS *kds): P(sim), t_(kds) {
     CGAL_precondition(kds != NULL);
   }

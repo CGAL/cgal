@@ -187,7 +187,7 @@ public:
 
   // KDS typedefs
   typedef typename TraitsT::Simulator Simulator;
-  typedef typename TraitsT::Active_objects_table Moving_object_table;
+  typedef typename TraitsT::Active_points_3_table Moving_object_table;
   typedef typename TraitsT::Kinetic_kernel Kinetic_kernel;
   //typedef typename Simulator::Time Time;
   typedef typename Moving_object_table::Key Point_key;
@@ -853,7 +853,7 @@ public:
     //if (!ore.empty()) {
     typename Simulator::Time t= ore.failure_time();
     ore.pop_failure_time();
-    typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(ore, middle_facet, tr_.wrapper_pointer()));
+    typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(ore, middle_facet, tr_.wrapper_handle()));
     
     triangulation_.set_label(middle_facet, k);
       /*}
@@ -988,7 +988,7 @@ public:
     //if (!ore.empty()) {
     typename Simulator::Time t= ore.failure_time();
     ore.pop_failure_time();
-    typename Simulator::Event_key k= simulator()->new_event(t, Edge_flip_event(ore, central_edge, tr_.wrapper_pointer()));
+    typename Simulator::Event_key k= simulator()->new_event(t, Edge_flip_event(ore, central_edge, tr_.wrapper_handle()));
     triangulation_.set_label(central_edge, k);
     /*}
       else {
@@ -1023,16 +1023,16 @@ public:
 
   const Moving_object_table* moving_object_table() const
   {
-    return tr_.active_objects_table_pointer();
+    return tr_.active_points_3_table_handle();
   }
 
   Simulator* simulator() {
-    return tr_.simulator_pointer();
+    return tr_.simulator_handle();
   }
 
   const Simulator* simulator() const
   {
-    return tr_.simulator_pointer();
+    return tr_.simulator_handle();
   }
 
   const Point& point(Point_key k) const
@@ -1186,7 +1186,7 @@ private:
     typename Simulator::Time t= s.failure_time();
     s.pop_failure_time();
     CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
-    typename Simulator::Event_key k=  simulator()->new_event(t, Edge_flip_event(s, e, tr_.wrapper_pointer()));
+    typename Simulator::Event_key k=  simulator()->new_event(t, Edge_flip_event(s, e, tr_.wrapper_handle()));
     triangulation_.set_label(e, k);
     /*}
     else {
@@ -1219,7 +1219,7 @@ private:
     typename Simulator::Time t= s.failure_time();
     s.pop_failure_time();
     CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
-    typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(s, e, tr_.wrapper_pointer()));
+    typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(s, e, tr_.wrapper_handle()));
     triangulation_.set_label(e, k);
     /*  }
   else {
@@ -1416,8 +1416,10 @@ private:
   }
 
   void delete_event(typename Simulator::Event_key k) {
+#if 0
     if (k && k != simulator()->null_event()) {
       //CGAL_precondition(estimates_.find(k) != estimates_.end());
+
       double bound= extract_root_stack(k).lower_bound(); 
       //HERE
       if ( simulator()->current_time() > bound) {
@@ -1431,6 +1433,7 @@ private:
         ++filtered__;
       }
     }
+#endif
     simulator()->delete_event(k);
   }
 
@@ -1476,13 +1479,13 @@ private:
   Event_key change_to_edge_flip(const Edge &e, Event_key k) {
     if (k== simulator()->null_event()) return k;
     Certificate s= extract_root_stack(k);
-    return simulator()->set_event(k, Edge_flip_event(s, e, tr_.wrapper_pointer()));
+    return simulator()->set_event(k, Edge_flip_event(s, e, tr_.wrapper_handle()));
   }
 
   Event_key change_to_facet_flip(const Facet &f, Event_key k) {
     if (k== simulator()->null_event()) return k;
     Certificate s= extract_root_stack(k);
-    return simulator()->set_event(k, Facet_flip_event(s, f, tr_.wrapper_pointer()));
+    return simulator()->set_event(k, Facet_flip_event(s, f, tr_.wrapper_handle()));
   }
 
   /*Moving_object_table* moving_object_table() {

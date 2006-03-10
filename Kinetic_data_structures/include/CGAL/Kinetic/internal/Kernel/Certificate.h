@@ -31,8 +31,8 @@ public:
   typedef typename Function_kernel_t::Function Function;
   typedef typename Function_kernel_t::Root Time;
   Certificate(const Function &f, const Function_kernel_t& fk, const Time &b, const Time &e): rs_(fk.root_stack_object(f, b, e)) {
-     typename Function_kernel_t::Lower_bound_root lbr= fk.lower_bound_root_object();
-     estimate_= lbr(f, b);
+    /*typename Function_kernel_t::Lower_bound_root lbr= fk.lower_bound_root_object();
+      estimate_= lbr(f, b);*/
   }
   Certificate(){}
 
@@ -56,41 +56,7 @@ private:
   double estimate_;
 };
 
-template <class KK_t, class Generator>
-struct Certificate_function_generator: public Generator {
-  typedef Certificate<typename KK_t::Function_kernel> result_type;
-  typedef typename KK_t::Function_kernel::Root Time;
-  Certificate_function_generator(typename KK_t::Function_kernel fk): fk_(fk){}
-  
 
-  template <class A, class B, class C, class D, class E>
-  result_type operator()(const A &a, const B &b, const C &c, const D &d, const E &e, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b, c, d, e), fk_, begin, end);
-  }
-  template <class A, class B, class C, class D>
-  result_type operator()(const A &a, const B &b, const C &c, const D &d, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b, c, d), fk_, begin, end);
-  }
-  template <class A, class B, class C>
-  result_type operator()(const A &a, const B &b, const C &c, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b, c), fk_, begin, end);
-  }
-  template <class A, class B>
-  result_type operator()(const A &a, const B &b, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b), fk_, begin, end);
-  }
-  template <class A>
-  result_type operator()(const A &a, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a), fk_,begin,end);
-  }
-
-  
-
-
-  
-
-  typename KK_t::Function_kernel fk_;
-};
 
 CGAL_KINETIC_END_INTERNAL_NAMESPACE
 

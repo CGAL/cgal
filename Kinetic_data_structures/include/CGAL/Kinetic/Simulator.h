@@ -85,7 +85,7 @@ protected:
 
   struct Listener_core
   {
-    typedef typename This::Pointer Notifier_pointer;
+    typedef typename This::Handle Notifier_handle;
     typedef enum {HAS_AUDIT_TIME, DIRECTION_OF_TIME}
       Notification_type;
   };

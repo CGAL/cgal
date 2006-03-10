@@ -46,8 +46,8 @@ public Cartesian_instantaneous_kernel<MPT, SK>
     typedef Cartesian_instantaneous_kernel<MPT, SK> Parent;
     public:
 
-        Regular_triangulation_instantaneous_traits_3(typename MPT::Const_pointer mot,
-        const typename Parent::Static_kernel &sk= typename Parent::Static_kernel()): Parent(mot, sk) {
+        Regular_triangulation_instantaneous_traits_3(typename MPT::Const_handle mot,
+						     const typename Parent::Static_kernel &sk= typename Parent::Static_kernel()): Parent(mot, sk) {
         }
 //! Use a key from the moving point table as the point primitive.
 /*!

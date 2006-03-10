@@ -24,6 +24,7 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Polynomial/internal/Explicit_root.h>
 #include <CGAL/Polynomial/internal/CORE_polynomial.h>
+#include <CORE/BigInt.h>
 
 #include <iostream>
 
@@ -43,6 +44,7 @@ class CORE_Expr_root_stack
 {
 protected:
   typedef CORE_Expr_root_stack This;
+  //typedef CORE::Poly<CORE::BigInt> BIP;
 public:
 
   typedef internal::CORE_polynomial Function;
@@ -56,7 +58,6 @@ public:
 
   typedef internal::Explicit_root<CORE::Expr> Root;
 
-  //! NOTE: The function must be square free!!!!!!!!!!!
   CORE_Expr_root_stack(const Function &f,
 		       const Root &lb,
 		       const Root &ub,
@@ -71,7 +72,7 @@ public:
     return cur_;
   }
   void pop() {
-    --num_roots_;//-=cur_.multiplicity();
+    --num_roots_;
     CGAL_precondition(num_roots_>=0);
     if (num_roots_==0) {
       no_roots();
@@ -101,8 +102,9 @@ protected:
       no_roots();
       return;
     } else {
+      //std::cout << f_ << std::endl;
       //std::cout << f_.core_polynomial() << std::endl;
-      sturm_= CORE_Sturm(f_.core_polynomial(), false);
+      sturm_= CORE_Sturm(f_.core_polynomial()/*, false*/); //BigInt to BigRat
       
 
       CORE::BigFloat bflb, bfub;
@@ -114,29 +116,32 @@ protected:
       }
 
       if (ub_ == std::numeric_limits<Root>::infinity()){
-	bfub_= f_.CauchyUpperBound();
+	bfub_=  f_.CauchyUpperBound();
       } else {
 	bfub_= bf_upper_bound(ub_.representation());
       }
-
-      num_roots_= sturm_.numberOfRoots(bflb_, bfub_);
-      std::cout << "nr= " << num_roots_ << std::endl;
-      //CORE::Expr testr;
-      ++num_roots_;
-      do {
-	--num_roots_;
-	if ( num_roots_ == 0) {
-	  no_roots();
-	  return;
-	}
-	make_root();
-	
-      } while (cur_ <= lb);
-      //make_cur_root(testr);
+      if (bflb_ > bfub_) {
+	no_roots();
+      } else {
+	//std::cout << f_ << ": " << bflb_ << " " << bfub_ << std::endl;
+	num_roots_= sturm_.numberOfRoots(bflb_, bfub_);
+	//std::cout << "nr= " << num_roots_ << std::endl;
+	//CORE::Expr testr;
+	++num_roots_;
+	do {
+	  --num_roots_;
+	  if ( num_roots_ == 0) {
+	    no_roots();
+	    return;
+	  }
+	  make_root();
+	  
+	} while (cur_ <= lb);
+	//make_cur_root(testr);
+      }
+      //std::cout << "There are " << num_roots_ << " roots.\n";
+      enforce_upper_bound();
     }
-    //std::cout << "There are " << _num_roots << " roots.\n";
-    //std::cout << "Counter is set to " << _counter << "\n";
-    enforce_upper_bound();
   }
 
   void enforce_upper_bound() {
@@ -149,14 +154,16 @@ protected:
 
   void make_root() {
     CGAL_precondition(num_roots_!=0);
-    std::cout << bflb_ << " " << bfub_ << std::endl;
+    //std::cout << bflb_ << " " << bfub_ << std::endl;
     CORE::BFInterval bfi= sturm_.isolateRoot(1, bflb_, bfub_);
     //int nr= sturm_.numberOfRoots(bfi.first, bfi.second);
     int nr=1;
     if (CGAL::sign(f_.eval(bfi.first)) == CGAL::sign(f_.eval(bfi.second))) ++nr;
-    std::cout << nr << " " << bfi.first << " " << bfi.second <<  std::endl;
+    //std::cout << nr << " " << bfi.first << " " << bfi.second <<  std::endl;
     bflb_= bfi.second;
-    cur_ =Root(CORE::Expr(f_, bfi), nr);
+    CORE::Expr e(f_, bfi);
+    cur_ =Root(e/*/f_.scale()*/, nr);
+    //std::cout << "root= " << cur_ <<  " " << e << std::endl;
   }
 
   void no_roots() {

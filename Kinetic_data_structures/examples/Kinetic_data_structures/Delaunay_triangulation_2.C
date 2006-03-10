@@ -10,12 +10,12 @@ int main(int, char *[])
     typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits> KDel;
 
     Simulation_traits tr;
-    Simulation_traits::Simulator::Pointer sp= tr.simulator_pointer();
+    Simulation_traits::Simulator::Handle sp= tr.simulator_handle();
 
     KDel kdel(tr);
   
     std::ifstream in("data/points_2");
-    in >> *tr.active_objects_table_pointer();
+    in >> *tr.active_points_2_table_handle();
 
     while (sp->next_event_time()
     < sp->end_time()) {

@@ -66,7 +66,7 @@ public:
     typedef Qt_widget_2<Simulator_t> Container;
     typedef enum {PICTURE_IS_VALID}
       Notification_type;
-    typedef typename Container::Pointer Notifier_pointer;
+    typedef typename Container::Handle Notifier_handle;
     Qt_widget* widget() const {return widget_;}
   private:
     friend class Qt_widget_2<Simulator_t>;
@@ -83,7 +83,7 @@ public:
 
   //! construct things
   Qt_widget_2(int argc, char *argv[],
-	      typename  Simulator::Pointer sh,
+	      typename  Simulator::Handle sh,
 	      double xmin=-10,double xmax=10, double ymin=-10, double ymax=10): app_(new QApplication(argc, argv)),
 										base_(new Graphical_base(sh)),
 										base_l_( base_, this) {
@@ -109,14 +109,14 @@ public:
     I am not sure that I need this method.
     \todo check if these methods are needed.
   */
-  const typename Simulator::Pointer& simulator() const
+  const typename Simulator::Const_handle& simulator() const
   {
     bool let_me_know_if_this_is_used;
     return base_->simulator();
   }
 
   //! Access a reference counted pointer to the simulator.
-  typename Simulator::Pointer& simulator() {
+  typename Simulator::Handle& simulator() {
     return base_->simulator();
   }
   //! Return true if the current image of the scene is valid.
@@ -148,7 +148,8 @@ public:
   {
     typedef Qt_widget_2<Simulator_t> Container;
   public:
-    Base_listener(typename Graphical_base::Pointer &b, Container *t): Graphical_base::Listener(b), t_(t){}
+    Base_listener(typename Graphical_base::Handle &b, Container *t): Graphical_base::Listener(b), t_(t){}
+
     virtual void new_notification(typename Graphical_base::Listener::Notification_type nt) {
       if (nt== Graphical_base::Listener::CURRENT_TIME) {
 	t_->widget()->set_picture_is_current(false);
@@ -229,7 +230,7 @@ private:
   Qt_widget_2(const This &o){}
 protected:
   std::auto_ptr<QApplication> app_;
-  typename Graphical_base::Pointer base_;
+  typename Graphical_base::Handle base_;
   std::set<Listener*> drawables_;
   Base_listener base_l_;
   std::auto_ptr<Window_listener> window_l_;

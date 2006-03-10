@@ -46,13 +46,12 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-template <class StaticKernel, class InstantaneousKernel,
-	  class KineticKernel, class SimulatorC, class ActiveObjectsTable>
+template <class StaticKernel,
+	  class KineticKernel,
+	  class SimulatorC>
 struct Simulation_traits
 {
 public:
-
-  typedef ActiveObjectsTable Active_objects_table;
 
   typedef typename StaticKernel::FT NT;
   struct Static_kernel: public StaticKernel {};
@@ -61,56 +60,41 @@ public:
 
   typedef SimulatorC Simulator;
 
-  //typedef typename Simulator::Function_kernel Function_kernel;
-
   typedef typename KineticKernel::Function_kernel::Root Time;
 
-  typedef InstantaneousKernel Instantaneous_kernel;
-
-  Simulation_traits(const Time &lb, const Time &ub): sp_(new Simulator(lb, ub)), ao_(new ActiveObjectsTable){}
-  Simulation_traits(): sp_(new Simulator()), ao_(new ActiveObjectsTable) {
+  Simulation_traits(const Time &lb, const Time &ub): sp_(new Simulator(lb, ub)){}
+  Simulation_traits(): sp_(new Simulator()) {
   }
-  /*Simulation_traits(typename Simulator::Pointer sp): sp_(sp){
-    }*/
 
-  Simulator* simulator_pointer(){ return sp_.get();}
-  const Simulator* simulator_pointer() const { return sp_.get();}
-  Active_objects_table* active_objects_table_pointer(){ return ao_.get();}
-  const Active_objects_table* active_objects_table_pointer() const { return ao_.get();}
+  Simulator* simulator_handle(){ return sp_.get();}
+  const Simulator* simulator_handle() const { return sp_.get();}
   Static_kernel& static_kernel_object(){return k_;}
   Kinetic_kernel& kinetic_kernel_object(){return kk_;}
-  //Function_kernel function_kernel_object(){return sp_->function_kernel_object();}
 
   const Static_kernel& static_kernel_object() const {return k_;}
   const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
-  //const Function_kernel function_kernel_object() const {return sp_->function_kernel_object();}
-  Instantaneous_kernel instantaneous_kernel_object() const
-  {
-    return Instantaneous_kernel(ao_, static_kernel_object());
-  }
+
 protected:
   Static_kernel k_;
   Kinetic_kernel kk_;
-  typename Simulator::Pointer sp_;
-  typename Active_objects_table::Pointer ao_;
+  typename Simulator::Handle sp_;
 };
-CGAL_KINETIC_END_NAMESPACE
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
-struct Sest_types
+struct Suggested_exact_simulation_traits_types
 {
-  typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
-  typedef Static_kernel::FT NT;
-  typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;
+  /* typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
+     typedef Static_kernel::FT NT;
+     typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;*/
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack<Root_stack_traits> Root_stack;
-  typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
-  typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
-  typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
+  /*typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
+    typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
+    typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;*/
 
-  /*typedef CGAL::Simple_cartesian<CORE::Expr> Static_kernel;
+  typedef CGAL::Simple_cartesian<CORE::Expr> Static_kernel;
   typedef Static_kernel::FT NT;
-  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;*/
+  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
+
   struct Simulator_function_kernel: public CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> {};
   typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
   typedef  Simulator_function_kernel::Root Time;
@@ -125,26 +109,18 @@ struct Sest_types
   typedef CGAL::Kinetic::Simulator<Simulator_function_kernel, Event_queue > Simulator;
 };
 
-template <class ActiveObject>
-struct Suggested_exact_simulation_traits:
-  public Simulation_traits<typename Sest_types::Static_kernel,
-			   Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
-							  typename Sest_types::Static_kernel>,
-			   typename Sest_types::Kinetic_kernel,
-			   typename Sest_types::Simulator,
-			   Active_objects_vector<ActiveObject> >
-{
-  typedef Simulation_traits<typename Sest_types::Static_kernel,
-			    Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
-							   typename Sest_types::Static_kernel>,
-			    typename Sest_types::Kinetic_kernel,
-			    typename Sest_types::Simulator,
-			    Active_objects_vector<ActiveObject> > P;
-  Suggested_exact_simulation_traits(const typename P::Time &lb,
-				    const typename P::Time &ub): P(lb,ub){}
+
+struct Suggested_exact_simulation_traits_base: public Simulation_traits<Suggested_exact_simulation_traits_types::Static_kernel,
+									Suggested_exact_simulation_traits_types::Kinetic_kernel,
+									Suggested_exact_simulation_traits_types::Simulator> {
+  typedef Simulation_traits<Suggested_exact_simulation_traits_types::Static_kernel,
+			    Suggested_exact_simulation_traits_types::Kinetic_kernel,
+			    Suggested_exact_simulation_traits_types::Simulator> P;
+  Suggested_exact_simulation_traits_base(const P::Time &lb, const P::Time &ub): P(lb, ub) {}
+  Suggested_exact_simulation_traits_base() {}
 };
 
-struct Sist_types
+struct Suggested_inexact_simulation_traits_types
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Static_kernel;
   typedef Static_kernel::FT NT;
@@ -164,23 +140,16 @@ struct Sist_types
   typedef CGAL::Kinetic::Simulator<Simulator_function_kernel, Event_queue > Simulator;
 };
 
-template <class ActiveObject>
-struct Suggested_inexact_simulation_traits: public Simulation_traits<typename Sist_types::Static_kernel,
-								     Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
-												    typename Sist_types::Static_kernel>,
-								     typename Sist_types::Kinetic_kernel,
-								     typename Sist_types::Simulator,
-								     Active_objects_vector<ActiveObject> >
-{
-  typedef Simulation_traits<typename Sist_types::Static_kernel,
-			    Cartesian_instantaneous_kernel<Active_objects_vector<ActiveObject>,
-							   typename Sist_types::Static_kernel>,
-			    typename Sist_types::Kinetic_kernel,
-			    typename Sist_types::Simulator,
-			    Active_objects_vector<ActiveObject> > P;
-  Suggested_inexact_simulation_traits(const typename P::Time &lb,
-				      const typename P::Time &ub): P(lb,ub){}
+struct Suggested_inexact_simulation_traits_base: public Simulation_traits<Suggested_inexact_simulation_traits_types::Static_kernel,
+									  Suggested_inexact_simulation_traits_types::Kinetic_kernel,
+									  Suggested_inexact_simulation_traits_types::Simulator> {
+  typedef Simulation_traits<Suggested_inexact_simulation_traits_types::Static_kernel,
+			    Suggested_inexact_simulation_traits_types::Kinetic_kernel,
+			    Suggested_inexact_simulation_traits_types::Simulator> P;
+  Suggested_inexact_simulation_traits_base(const P::Time &lb, const P::Time &ub): P(lb, ub) {}
+  Suggested_inexact_simulation_traits_base() {}
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+
+CGAL_KINETIC_END_NAMESPACE
 #endif

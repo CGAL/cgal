@@ -100,18 +100,18 @@ struct Derivative
 
         result_type operator()(const argument_type &o) const
         {
-            if (o.is_constant()) { return result_type(typename result_type::NT(0)); }
-            else {
-                It b(o.begin(),0);
-                ++b;
-                return result_type(b, It(o.end(), o.degree()+1));
-            }
+	  if (o.is_constant()) { return result_type(typename result_type::NT(0)); }
+	  else {
+	    It b(o.begin(),0);
+	    ++b;
+	    return result_type(b, It(o.end(), o.degree()+1));
+	  }
         }
-
-        void write(std::ostream &out) const
-        {
-            out << "diff";
-        }
+  
+  void write(std::ostream &out) const
+  {
+    out << "diff";
+  }
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
