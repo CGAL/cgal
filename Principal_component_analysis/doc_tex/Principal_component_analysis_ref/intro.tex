@@ -12,8 +12,11 @@
 
 \ccChapterAuthor{Pierre Alliez and Sylvain Pion}
 
-\subsection*{Definition}
+This \cgal\ package provides functions to compute global informations
+on the shape of a set of 2D or 3D objects such as points. It provides the computation of bounding boxes, centroids of point sets, barycenters of weighted point sets, as well as linear least squares fitting. It assumes the set of kernel primitive elements to be stored into an iterator range of a container.
 
+
+\subsection*{Definition}
 Given a point set in $R^d$, linear least squares fitting amounts to
 find the linear sub-space of $R^d$ which minimizes the sum of squared
 distances from the points to their projection onto this linear
@@ -23,17 +26,7 @@ being obtained by eigen decomposition of the covariance
 matrix. Eigenvectors corresponding to large eigenvalues are the
 directions in which the data has strong component, or equivalently
 large variance. If eigenvalues are the same there is no preferable
-sub-space.\\
-
-This \cgal\ package implements the linear least squares fitting for
-several objects of a CGAL 2D or 3D kernel: the best fit 2D line for 2D
-point sets, and the best fit 3D line/plane for point and
-triangle sets. It assumes the set of kernel primitive elements to be stored into an
-iterator range of a container. Bounding box, centroid and barycenter
-computations are provided as well. 
-
-%\ccHeading{Concepts}
-%\ccRefConceptPage{FittingTraits}\\
+sub-space.
 
 \ccHeading{Functions}
 
