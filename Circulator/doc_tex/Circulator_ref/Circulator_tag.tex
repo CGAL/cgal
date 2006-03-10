@@ -90,27 +90,16 @@ To use the tags or base classes only it is sufficient to include:
 
 \ccHeading{Base Classes}
 
-\begin{ccTexOnly}
-\def\dummySkipASD{\\\hspace*{18mm}}
-\ccStruct{template < class Category,
-                     class T,
-                     class Dist  = std::ptrdiff_t,
-                     class Size  = std::size_t,\dummySkipASD
-                     class Ptr   = T*,
-                     class Ref   = T&>
-    struct Circulator_base {};}{}
-\end{ccTexOnly}
-%\begin{ccHtmlOnly}
-\lcHtml{ 
-\ccStruct{template < class Category,
-                     class T,
-                     class Dist  = std::ptrdiff_t,
-                     class Size  = std::size_t,
-                     class Ptr   = T*,
-                     class Ref   = T&>
-    struct Circulator_base {};}{}
-}
-%\end{ccHtmlOnly}
+\ccStruct{
+template < class Category,
+           class T,
+           class Dist  = std::ptrdiff_t,
+           class Size  = std::size_t,
+           class Ptr   = T*,
+           class Ref   = T& >
+struct Circulator_base {};}
+{}
+
 \ccRefLabel{CGAL::Circulator_base}
 
 \ccSetTwoColumns{}{random access.}
