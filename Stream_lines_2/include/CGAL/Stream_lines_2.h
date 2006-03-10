@@ -496,6 +496,8 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
   bool bEnd = false;
   FT dist;
   Point_2 new_point = Point_2 (stl.back().x(),stl.back().y());
+  // to not have duplicate points in the streamline
+  stl.pop_back();
   Vertex_handle m_Vertex_handle = insert_point(new_point, stl_vertices.back()->face(), dist,true);
   stl_vertices.push_back(m_Vertex_handle);
   stl.push_back(new_point);
