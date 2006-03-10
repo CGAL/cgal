@@ -11,7 +11,8 @@
 
     \item One-to-one mapping
 
-        Tutte's theorem guarantees a one-to-one mapping provided that the weights are positive.
+        Tutte's theorem guarantees a one-to-one mapping provided that the weights are positive
+        and the border convex.
         It is the case for Tutte Barycentric Mapping and Floater Mean Value Coordinates.
         It is not always the case for Discrete Conformal Map (cotangents) and
         Discrete Authalic Parameterization.
@@ -38,8 +39,6 @@
         Proven for LSCM: the matrix of the system is the Gramm matrix of a matrix of maximal rank,
         and is therefore non-singular (Gramm theorem).
 
-    \item Non-singularity of the matrix
-
     \end{itemize}
 
 \end{itemize}
@@ -63,7 +62,7 @@ numbers. \\
 OpenNL's BICGSTAB solver (accessible though the
 \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} interface)
 is the only solver supported by this package that
-computes an exact results (when used with an exact arithmetic).
+computes exact results (when used with an exact arithmetic).
 
 Therefore, this package is intended to be used with a \cgal\
 cartesian kernel with doubles.
@@ -98,7 +97,6 @@ is wide (many different eigenvalues), and the solver requires nearly $5n$ iterat
 In this package, we focus on piecewise linear mappings onto a planar
 domain. All surface parameterization methods are based on solving one (or two)
 sparse linear system(s).
-
 The algorithmic complexity is dominated by the resolution of the sparse linear system(s).
 
 \emph{OpenNL's BICGSTAB example:}

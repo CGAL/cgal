@@ -64,9 +64,8 @@ virtual seams. \emph{Patches} are a subset of a 3D mesh.
 to behave exactly as if the surface was cut along a certain path.
 
 The \ccc{ParameterizationMesh_3} interface with the Polyhedron is both a model of
-\ccc{ParameterizationMesh_3} and \ccc{ParameterizationPatchableMesh_3}:
-
-\ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}  \\
+\ccc{ParameterizationMesh_3} and \ccc{ParameterizationPatchableMesh_3}: \\
+\ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}
 
 Note that this class is a decorator which adds {\em on the fly}
 the necessary fields to unmodified \cgal\ data structures (using STL

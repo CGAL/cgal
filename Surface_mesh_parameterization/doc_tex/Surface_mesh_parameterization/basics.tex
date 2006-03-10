@@ -31,9 +31,11 @@ superclass of all surface parameterizations and defines the error codes.
 \subsection{Input Mesh for parameterize()}
 \label{sec:Input-Mesh-for-parameterize}
 
-The general definition of input meshes handled by \ccc{CGAL::parameterize()} is:
+The general definition of input meshes handled \emph{directly} by \ccc{CGAL::parameterize()} is:
 
 \begin{itemize}
+
+\item Model of \ccc{ParameterizationMesh_3}.
 
 \item Triangulated.
 
@@ -45,22 +47,22 @@ The general definition of input meshes handled by \ccc{CGAL::parameterize()} is:
 
 \end{itemize}
 
-These input meshes must be models of the \ccc{ParameterizationMesh_3} concept.
-In fact, \ccc{ParameterizationMesh_3} is a general concept to access to a
+Note: \ccc{ParameterizationMesh_3} is a general concept to access to a
 polyhedral mesh.
 It is optimized for the \ccc{Surface_mesh_parameterization} package
 only in the sense that it
 defines the accessors to fields specific to the parameterization domain
 (\ccc{index}, \ccc{u}, \ccc{v}, \ccc{is_parameterized}).
-
 The extra constraints  needed by the surface parameterization methods (triangulated,
 2-manifold, homeomorphic to a disc) are not part of the concept and
 are checked at runtime.
 
 This package provides a model of the \ccc{ParameterizationMesh_3} concept
-to access \ccc{CGAL::Polyhedron_3<Traits>}:
+to access \ccc{CGAL::Polyhedron_3<Traits>}: \\
+\ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}
 
-\ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}  \\
+We will see later that \ccc{CGAL::parameterize()} can support \emph{indirectly}
+meshes that are not topological disks.
 
 
 \subsection{Default Parameterization Example}
@@ -145,7 +147,7 @@ must be models of the \ccc{ParameterizationMesh_3} concept.
 We also saw that the surface parameterization methods in this package only support
 surfaces that are homeomorphic to disks. How about non disk-like meshes?
 
-\emph{In practice}, the input mesh can be of any genus and
+Fortunately, the input mesh can be of any genus and
 have any number of connected components. If it is not a topological
 disc, it has to come with a description of a cutting path (an oriented list of
 vertices) which is the border of a topological disc.  If no cutting path is
