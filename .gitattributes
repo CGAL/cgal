@@ -1277,8 +1277,8 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb6.bmp -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb7.bmp -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
-Principal_component_analysis/doc_tex/Principal_component_analysis/fit_2d.eps -text
-Principal_component_analysis/doc_tex/Principal_component_analysis/fit_2d.png -text
+Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text
+Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text
 Principal_component_analysis/test/Principal_component_analysis/fitting_3.C -text
 QP_solver/examples/QP_solver/qp_solver1.C -text
 QP_solver/examples/QP_solver/qp_solver2.C -text
