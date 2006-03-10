@@ -36,6 +36,44 @@ The Orientation of a Polygon with Holes is the orientation of its outer contour.
 
 Througout the rest of this chapter the term Polygon will be used as a shortcut for Polygon with Holes.
  
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{Straight_skeleton_2/valid_polygons} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<TABLE CELLSPACING=40>
+<TR>
+<CENTER>
+<IMG BORDER=0 SRC="./valid_polygons.png" ALIGN=center ALT="Valid polygons">
+</CENTER>
+</TR>
+</TABLE>
+\end{ccHtmlOnly}
+\caption{Examples of strictly simple polygons: One with no holes and two edges coincident (left) and one with 2 holes (right).
+\label{Valid-polygons}}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{Straight_skeleton_2/invalid_polygons} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<TABLE CELLSPACING=40>
+<TR>
+<CENTER>
+<IMG BORDER=0 SRC="./invalid_polygons.png" ALIGN=center ALT="Valid polygons">
+</CENTER>
+</TR>
+</TABLE>
+\end{ccHtmlOnly}
+\caption{Examples of non-simple polygons: One folding into itself, that is, non-planar (left), one with a vertex touching an edge (right), and one with a hole crossing into the outside (bottom)
+\label{Invalid-polygons}}
+\end{figure}
+
 \subsection{Inward Offset of a Non-degenerate Strictly Simple Polygon with Holes}
 
 For any 2D non-degenerate strictly-simple polygon with holes called the {\em source}, there can exist a \textit{set} of 0, 1 or more {\em inward offset polygons with holes}, or just offset polygons for short, at some euclidean distance \textit{t} $>0$ (each being strictly simple and non-degenerate). Any contour edge of such offset polygon, called an {\em offset edge} corresponds to \textit{some} contour edge of the source polygon, called its {\em source edge}. An offset edge is parallel to its source edge and has the same orientation. The Euclidean distance between the \textit{lines} supporting an offset edge and its source edge is exactly \ccc{t}.\\
@@ -47,29 +85,20 @@ Each offset polygon has the same orientation of the source polygon.
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{Straight_skeleton_2/fig0} % omit suffix .eps to supprt PS and PDF
-\includegraphics{Straight_skeleton_2/fig1} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/complex_offset} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
 <TABLE CELLSPACING=40>
 <TR>
-<TD>
 <CENTER>
-<IMG BORDER=0 SRC="./fig0.png" ALIGN=center ALT="Polygon with no holes and 2 inward offsets">
+<IMG BORDER=0 SRC="./complex_offset.png" ALIGN=center ALT="Offset contours of a shaggy polygon">
 </CENTER>
-</TD>
-<TD>
-<CENTER>
-<IMG BORDER=0 SRC="./fig1.png" ALIGN=center ALT="polygon with holes and many inward offsets at various distances">
-</CENTER>
-</TD>
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
-\caption{Polygon with no holes and 2 inward offsets at distances 1 and 2 (Left) 
-         and polygon with holes and many inward offsets at various distances (Right)
-\label{Simplepoly-offsets}}
+\caption{Offset contours of a sample polygon
+\label{Offsets}}
 \end{figure}
 
 \subsection{Straight Skeleton of a 2D Non-degenerate Strictly-Simple Polygon with Holes}
@@ -80,12 +109,34 @@ These regions are bounded by angular bisectors of the supporting lines of the co
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{Straight_skeleton_2/fig2} % omit suffix .eps to supprt PS and PDF
-\includegraphics{Straight_skeleton_2/fig3} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/complex_skeleton} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<TABLE CELLSPACING=40>
+<TR>
+<CENTER>
+<IMG BORDER=0 SRC="./complex_skeleton.png" ALIGN=center ALT="Complex Straight Skeleton">
+</CENTER>
+</TR>
+</TABLE>
+\end{ccHtmlOnly}
+
+\caption{Straight skeleton of a complex shaggy contour
+\label{ComplexSLS}}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{Straight_skeleton_2/simple_skeleton_0} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \begin{center}
-\includegraphics{Straight_skeleton_2/fig4} % omit suffix .eps to supprt PS and PDF
-\includegraphics{Straight_skeleton_2/fig5} % omit suffix .eps to supprt PS and PDF
+\includegraphics{Straight_skeleton_2/simple_skeleton_1} % omit suffix .eps to supprt PS and PDF
+\end{center}
+\begin{center}
+\includegraphics{Straight_skeleton_2/poly_hole_skeleton} % omit suffix .eps to supprt PS and PDF
 \end{center}
 \end{ccTexOnly}
 
@@ -94,32 +145,25 @@ These regions are bounded by angular bisectors of the supporting lines of the co
 <TR>
 <TD>
 <CENTER>
-<IMG BORDER=0 SRC="./fig2.png" ALIGN=center ALT="Sample Skeleton 0">
+<IMG BORDER=0 SRC="./simple_skeleton_0.png" ALIGN=center ALT="Complex Straight Skeleton">
 </CENTER>
 </TD>
 <TD>
 <CENTER>
-<IMG BORDER=0 SRC="./fig3.png" ALIGN=center ALT="Sample Skeleton 1">
-</CENTER>
-</TD>
-</TR>
-<TR>
-<TD>
-<CENTER>
-<IMG BORDER=0 SRC="./fig4.png" ALIGN=center ALT="Sample Skeleton 0">
+<IMG BORDER=0 SRC="./simple_skeleton_1.png" ALIGN=center ALT="Complex Straight Skeleton">
 </CENTER>
 </TD>
 <TD>
 <CENTER>
-<IMG BORDER=0 SRC="./fig5.png" ALIGN=center ALT="Sample Skeleton 1">
+<IMG BORDER=0 SRC="./poly_hole_skeleton.png" ALIGN=center ALT="Complex Straight Skeleton">
 </CENTER>
 </TD>
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
 
-\caption{Example straight skeletons
-\label{SampleSLS}}
+\caption{Other examples: A vertex-event (left), Input with several collinear edges (middle) and Outer skelton obtained by embeeding the shape in a big rectangle (right)
+\label{MoreSLS}}
 \end{figure}
   
 \subsubsection{Angular Bisecting Lines and Offset Bisectors}  
