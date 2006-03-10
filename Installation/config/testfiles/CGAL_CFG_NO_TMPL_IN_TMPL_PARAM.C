@@ -53,11 +53,14 @@ struct D {
 template < template < class T > class HDS>
 void fct(HDS<int> h1 ) {} // here it does not compile 
 
+template < template < class T > class HDS>
+void fct2(D<double,HDS> h1 ) {}
+
 
 int main() {
     C<A> c(1);
     D< double, A> d( 3.8);
     (void) c;
-    (void) d;
+    fct2(d);
     return 0;
 }
