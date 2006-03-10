@@ -70,8 +70,6 @@ protected:
 
 public: 
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
-  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Segment_3 Segment_3;
@@ -110,6 +108,8 @@ public:
   public:
     virtual void operator()( Halfedge_handle edge, Object_handle object, 
                              const Point_3& intersection_point) const = 0;
+    
+    virtual ~Intersection_call_back() {}
   };
 
   virtual void initialize(SNC_structure* W) = 0;
@@ -164,8 +164,6 @@ public:
   typedef K3_tree SNC_candidate_provider;
   
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
-  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle; 
  #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   typedef typename Decorator_traits::Halffacet_triangle_handle 
                                      Halffacet_triangle_handle;

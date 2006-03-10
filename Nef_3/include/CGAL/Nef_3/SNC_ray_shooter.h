@@ -64,9 +64,6 @@ public:
   typedef SM_point_locator<SM_decorator>           SM_point_locator;
   typedef SNC_intersection<SNC_structure>          SNC_intersection;
 
-  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
-  typedef typename Decorator_traits::SM_decorator SM_decorator;
-
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
