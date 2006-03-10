@@ -1011,6 +1011,7 @@ Mesh_2/doc_tex/Mesh_2/example-conform.eps -text svneol=unset#unset
 Mesh_2/doc_tex/Mesh_2/example-conform.png -text svneol=unset#unset
 Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text
 Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
+Min_annulus_d/examples/min_annulus_d.C -text
 Min_circle_2/demo/Min_circle_2/min_circle_2.vcproj -text
 Min_ellipse_2/demo/Min_ellipse_2/min_ellipse_2.vcproj -text
 Min_quadrilateral_2/demo/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
