@@ -45,12 +45,12 @@ CGAL_BEGIN_NAMESPACE
     typedef RT_                                        RT;
     typedef typename Root_of_traits< RT >::RootOf_1    FT;
 
-    typedef Polynomial_1_2<RT>                     Polynomial_1_2; 
-    typedef Polynomial_for_circles_2_2<RT>         Polynomial_for_circles_2_2; 
+    typedef CGAL::Polynomial_1_2<RT>               Polynomial_1_2; 
+    typedef CGAL::Polynomial_for_circles_2_2<RT>   Polynomial_for_circles_2_2; 
     // problem RT / FT ?
 
     typedef typename Root_of_traits< RT >::RootOf_2  Root_of_2;
-    typedef Root_for_circles_2_2< RT >               Root_for_circles_2_2;
+    typedef CGAL::Root_for_circles_2_2< RT >         Root_for_circles_2_2;
 
     typedef AlgebraicFunctors::Construct_polynomial_1_2<Self>
                                          Construct_polynomial_1_2;
