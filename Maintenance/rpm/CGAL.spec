@@ -1,17 +1,25 @@
+%define internal_release 0
+%if %{internal_release}
+%define tarball_name CGAL-3.2-I-%{internal_release}
+%define release %{internal_release}
+%define CGAL_DIR %{_libdir}/CGAL-3.2-I
+%else
 %define tarball_name CGAL-3.2
+%define release 1
+%define CGAL_DIR %{_libdir}/CGAL-3.2
+%endif
 %define boost_version 1.32
-%define CGAL_DIR %{_libdir}/%{tarball_name}
 
 Summary: Computational Geometry Algorithms Library
 Name: CGAL
 Version: 3.2
-Release: 1
+Release: %{release}
 License: QPL/LGPL
 URL: http://www.cgal.org/
 Group: System Environment/Libraries
 Source: %{tarball_name}.tar.gz
-Source1:%{tarball_name}-doc_pdf.tar.gz
-Source2:%{tarball_name}-doc_html.tar.gz
+Source1:%{name}-%{version}-doc_pdf.tar.gz
+Source2:%{name}-%{version}-doc_html.tar.gz
 Patch0: CGAL.fix_perl_path.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -145,5 +153,6 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Mar 10 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - adding new sub-packages doc(pdf&html) and demo.
+- add internal_release 395flag. 
 * Thu Mar 09 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - cleanup a specfile.
