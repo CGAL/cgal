@@ -1132,6 +1132,7 @@ Nef_3/test/Nef_3/data/cube+vee.off -text
 Nef_3/test/Nef_3/data/cube+veeee.off -text
 Nef_3/test/Nef_3/data/cube+vertex.off -text
 Nef_3/test/Nef_3/data/cube.off -text
+Nef_3/test/Nef_3/data/nine_planes.nef3.H -text
 Nef_3/test/Nef_3/data/nine_planes.off -text
 Nef_3/test/Nef_3/data/octa.off -text
 Nef_3/test/Nef_3/data/star.off -text

@@ -100,7 +100,38 @@ class test {
 private:
   static const char* datadir;  
 
-  void built_nef_from_off(const char *name) {
+  bool are_files_equal(char* name1, char* name2) {
+    std::ifstream in1(name1);
+    std::ifstream in2(name2);
+    std::string s1;
+    std::string s2;
+    while(in1) {
+      in1 >> s1;
+      in2 >> s2;
+      if(s1 != s2) {
+        std::cerr << s1 << std::endl;
+	std::cerr << s2 << std::endl;
+	return false;
+      }
+    }
+    if(in2)
+      return false;
+    return true;
+  }
+
+  bool does_nef3_equals_file(Nef_polyhedron& N, char* name, char* suffix) {
+    char* fullname = new char[strlen(datadir)+strlen(name)+strlen(suffix)+1];
+    strcpy(fullname, datadir);
+    strcat(fullname, name);
+    strcat(fullname, suffix);
+    std::ofstream out("data/temp.nef3");
+    out << N;
+    bool b = are_files_equal("data/temp.nef3",fullname);
+    delete [] fullname;
+    return b;
+  }
+
+  Nef_polyhedron built_nef_from_off(const char *name) {
 
      Nef_polyhedron N;
 
@@ -113,14 +144,14 @@ private:
 
      std::size_t discarded = CGAL::OFF_to_nef_3 (off_file, N, true);
      CGAL_assertion(discarded == 0);
-
-     std::cout << N;
+     return N;
   }
 
 public:
-  void run_test() {
-
-    built_nef_from_off( "nine_planes.off");
+  void run_test(bool compare,char* suffix) {
+    Nef_polyhedron N = built_nef_from_off( "nine_planes.off");
+    if(compare)
+      CGAL_assertion(does_nef3_equals_file(N,"nine_planes.nef3",suffix));
   }
 };
 
@@ -134,29 +165,29 @@ int main() {
 
   { typedef CGAL::Homogeneous<NT>              H_kernel;
     typedef CGAL::Cartesian<FNT>               C_kernel;
-    typedef CGAL::Cartesian<FNT2>              Q_kernel;
+    //    typedef CGAL::Cartesian<FNT2>              Q_kernel;
 
     test<H_kernel>  test_H;
     test<C_kernel>  test_C;
-    test<Q_kernel>  test_Q;
+    // test<Q_kernel>  test_Q;
 
-    test_H.run_test();
-    test_C.run_test();
-    test_Q.run_test();
+    test_H.run_test(true,".H");
+    test_C.run_test(false,".C");
+    // test_Q.run_test();
   }
 
 #ifdef CGAL_USE_LEDA
   { typedef CGAL::Homogeneous<LNT>              LH_kernel;
     typedef CGAL::Cartesian<LFNT>               LC_kernel;
-    typedef CGAL::Cartesian<LFNT2>              LQ_kernel;
+    //    typedef CGAL::Cartesian<LFNT2>              LQ_kernel;
     
     test<LH_kernel>  test_LH;
     test<LC_kernel>  test_LC;
-    test<LQ_kernel>  test_LQ;
+    //    test<LQ_kernel>  test_LQ;
     
-    test_LH.run_test();
-    test_LC.run_test();
-    test_LQ.run_test();
+    test_LH.run_test(true,".H");
+    test_LC.run_test(false,".LC");
+    //    test_LQ.run_test();
   }
 #endif
 
