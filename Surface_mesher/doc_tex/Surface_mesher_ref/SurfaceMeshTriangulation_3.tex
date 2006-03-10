@@ -93,7 +93,9 @@ facets of the triangulation.
 \ccNestedType{Finite_facets_iterator}{iterator over finite facets}
 
 \ccNestedType{Geom_traits} % TODO: look at this!
-{ }
+{The geometric traits class. Must be a model of
+\ccc{DelaunayTriangulationTraits_3}.}
+
 
 \ccCreation
 \ccCreationVariable{t}  %% choose variable name
@@ -295,8 +297,8 @@ All 3D Delaunay triangulation classes of \cgal{}
 
 \ccSeeAlso
 
-\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
-\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}\\
+\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}\\
 \ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}\\
 \ccc{make_surface_mesh}
 
