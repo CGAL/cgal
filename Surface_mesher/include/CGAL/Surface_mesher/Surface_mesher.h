@@ -64,7 +64,6 @@ namespace CGAL {
     typedef typename Triangulation_traits::Zone Zone;
 
     typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
-    typedef typename Tr::Facet_circulator Facet_circulator;
     typedef typename Tr::Facet Facet;
 
     typedef typename Criteria::Quality Quality;

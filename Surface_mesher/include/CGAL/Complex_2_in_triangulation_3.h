@@ -97,14 +97,14 @@ class Complex_2_in_triangulation_3 {
 
   };
 
-  typedef Filter_iterator<typename Triangulation::Facet_iterator,
+  typedef Filter_iterator<typename Triangulation::Finite_facets_iterator
                           Not_in_complex> Facet_iterator;
-  typedef Filter_iterator<typename Triangulation::Edge_iterator,
+  typedef Filter_iterator<typename Triangulation::Finite_edges_iterator,
                           Not_in_complex> Edge_iterator;
-  typedef Filter_iterator<typename Triangulation::Vertex_iterator,
+  typedef Filter_iterator<typename Triangulation::Finite_vertices_iterator,
                           Not_in_complex> Vertex_iterator;  
 
-  typedef Filter_iterator<typename Triangulation::Edge_iterator,
+  typedef Filter_iterator<typename Triangulation::Finite_edges_iterator,
                           Not_on_boundary_tester> Boundary_edges_iterator;
 
 protected:

@@ -46,18 +46,14 @@ namespace CGAL {
       typedef typename Tr::Geom_traits GT;
       typedef typename GT::FT FT;
       typedef typename Tr::Point Point;
-    //typedef typename Tr::Edge Edge;
       typedef typename Tr::Facet Facet;
       typedef typename Tr::Edge Edge;
-      typedef typename Tr::Cell Cell;
       typedef typename Tr::Cell_handle Cell_handle;
       typedef typename Tr::Vertex_handle Vertex_handle;
       typedef std::pair<Vertex_handle, Vertex_handle> EdgeVV;
-      //      typedef typename Tr::Facet_circulator Facet_circulator;
       typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
       typedef std::list<Edge> Edges;
       typedef std::list<Facet> Facets;
-      typedef std::list<Cell> Cells;
       typedef Const_circulator_from_container<Facets> Facet_circulator;
       typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
 
