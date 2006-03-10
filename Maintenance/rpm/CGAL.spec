@@ -15,7 +15,7 @@ Source2:%{tarball_name}-doc_html.tar.gz
 Patch0: CGAL.fix_perl_path.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-Prefix: %{CGAL_DIR}
+#Prefix: %{CGAL_DIR}
 
 Prereq: /sbin/ldconfig
 Prereq: fileutils
@@ -49,17 +49,29 @@ Summary: Development files and tools for %name applications
 Requires: boost-devel >= %boost_version, gmp-devel
 Requires: %{name}  = %{version}-%{release}
 
+%package demo
+Group: Development/Libraries
+Summary: demo of %name algorithms.
+Requires: %{name}-devel  = %{version}-%{release}
+
+%package doc
+Group: Documentation
+Summary: HTML and PDF documentation for developing with %name
 
 %description devel
 The %{name}-devel package provides the headers files and tools you may need to 
 develop applications using %name.
 
-# %package doc-html
-# Group: Documentation
-# Summary: HTML documentation for developing with %name
+%description doc
+The %{name}-doc package provides the html and pdf documentation of %name.
+
+%description demo
+The %{name}-demo package provides some demos of %name algorithms.(to be compiled)
 
 %prep
 %setup -n %{name}-%{version}
+%setup -D -T -a 1
+%setup -D -T -a 2
 
 %patch0 -p1
  
@@ -115,7 +127,23 @@ rm -rf $RPM_BUILD_ROOT
 %{CGAL_DIR}/make
 %{CGAL_DIR}/bin
 /etc/profile.d/cgal.*
+%doc LICENSE*
+%doc README
+
+%files doc
+%defattr(-,root,root,-)
+%doc doc_html
+%doc doc_pdf
+%doc LICENSE*
+
+%files demo
+%defattr(-,root,root,-)
+%doc demo
+%doc LICENSE*
+%doc README
 
 %changelog
+* Fri Mar 10 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
+- adding new sub-packages doc(pdf&html) and demo.
 * Thu Mar 09 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
-- cleanup a specfile 
+- cleanup a specfile.
