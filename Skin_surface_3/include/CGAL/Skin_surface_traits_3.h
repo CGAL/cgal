@@ -58,29 +58,26 @@ public:
 // - MeshToSimplConverter 
 
 template <
-  class RegularKernel = Exact_predicates_inexact_constructions_kernel,
-  class TriangulatedMixedComplexKernel =
+  class RegularKernel_3 = Exact_predicates_inexact_constructions_kernel,
+  class TriangulatedMixedComplexKernel_3 =
   //Exact_predicates_inexact_constructions_kernel,
   Exact_predicates_exact_constructions_kernel,
-  class PolyhedronKernel = Simple_cartesian<double> >  
+  class PolyhedronKernel_3 = Simple_cartesian<double> >  
 class Skin_surface_traits_3 {
 public:
-  typedef Skin_surface_traits_3<RegularKernel, TriangulatedMixedComplexKernel,
-				PolyhedronKernel>                         Self;
+  typedef Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3,
+				PolyhedronKernel_3>                         Self;
   // Kernel definitions and converters
-  typedef RegularKernel                      Regular_kernel;
+  typedef RegularKernel_3                      Regular_kernel;
   typedef Regular_triangulation_euclidean_traits_3<Regular_kernel>
                                              Regular_traits;
-  typedef TriangulatedMixedComplexKernel     Triangulated_mixed_complex_traits;
-  typedef PolyhedronKernel                   Polyhedron_traits;
+  typedef TriangulatedMixedComplexKernel_3     Triangulated_mixed_complex_traits;
+  typedef PolyhedronKernel_3                   Polyhedron_traits;
 
   typedef typename Regular_kernel::RT        Regular_RT;
 
   typedef Regular_triangulation_euclidean_traits_3<
            Triangulated_mixed_complex_traits> Weighted_triangulated_mixed_complex_traits;
-
-  typedef typename Weighted_triangulated_mixed_complex_traits::
-    Construct_weighted_circumcenter_3         Construct_weighted_circumcenter_3;
 
   typedef Weighted_converter_3 <
     Cartesian_converter<Regular_kernel,Triangulated_mixed_complex_traits> >
@@ -95,6 +92,11 @@ public:
     Cartesian_converter<Polyhedron_traits,Triangulated_mixed_complex_traits> >
                                               P2T_converter; 
 
+  //  typedef typename Weighted_triangulated_mixed_complex_traits::
+  //    Construct_weighted_circumcenter_3         Construct_weighted_circumcenter_3;
+
+  typedef Construct_anchor_point_3<Triangulated_mixed_complex_traits>
+                                              Construct_anchor_point_3;
   Skin_surface_traits_3(Regular_RT shrink = .5) :
     shrink(shrink) {}
   
@@ -128,10 +130,9 @@ public:
       in_smallest_orthogonal_sphere_3_object();
   }
 
-  Construct_anchor_point_3<Triangulated_mixed_complex_traits>
+  Construct_anchor_point_3
   construct_anchor_point_3_object() const {
-    return Construct_anchor_point_3<Triangulated_mixed_complex_traits>(
-      r2t_converter_object()(shrink) );
+    return Construct_anchor_point_3(r2t_converter_object()(shrink) );
   }
   Regular_RT shrink_factor() const {
     return shrink;

@@ -34,8 +34,8 @@ connecting the balls.
 
 This package constructs an isotopic mesh from a set of balls and a
 shrink factor using the algorithm described in
-\cite{cgal:kv-mssct-05}. An optimized algorithm is implemented for
-meshing the union of a set of balls.
+\cite{cgal:kv-mssct-05}. 
+%An optimized algorithm is implemented for meshing the union of a set of balls.
 
 \section{Definition}
 A skin surface is defined as the boundary of an infinite set of balls.
@@ -101,13 +101,13 @@ using a union-find datastructure. We then insert all unique vertices
 and the tetrahedra that are not degenerate, i.e., have four distinct
 vertices.
 
-\subsubsection{Union of balls}
-For the boundary of the union of a set of balls, it is not necessary
-to triangulate all mixed cells since the only non-degenerate cells are
-mixed cells corresponding to Voronoi cells. For efficient meshing of
-the boundary of a union of balls we implemented a function
-\ccc{triangulate_voronoi_diagram_3} that is similar to
-\ccc{triangulate_mixed_complex_3}.
+%\subsubsection{Union of balls}
+%For the boundary of the union of a set of balls, it is not necessary
+%to triangulate all mixed cells since the only non-degenerate cells are
+%mixed cells corresponding to Voronoi cells. For efficient meshing of
+%the boundary of a union of balls we implemented a function
+%\ccc{triangulate_voronoi_diagram_3} that is similar to
+%\ccc{triangulate_mixed_complex_3}.
 
 
 

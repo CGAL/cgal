@@ -24,9 +24,11 @@
 %\ccRefines
 %\ccc{CopyConstructable}, \ccc{Assignable}.
 
+\ccThree{Skin_surface_traits_3xxx}{Triangulated}{}
+\ccThreeToTwo
 \ccTypes
 
-\ccNestedType{Regular_traits}{The traits class is used for the
+\ccNestedType{Regular_triangulation_traits}{The traits class is used for the
   regular triangulation. It is a model of the
   \ccc{RegularTriangulationTraits_3} concept.}
 
@@ -39,24 +41,27 @@
   geometric objects defined by the mesh.}
 
 \ccNestedType{R2T_converter}{Converter for geometric objects
-  defined within \ccc{Regular_traits} to objects defined within
+  defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Triangulated_mixed_complex_traits}.}
 
 \ccNestedType{R2P_converter}{Converter for geometric objects
-  defined within \ccc{Regular_traits} to objects defined within
+  defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Polyhedron_traits}.}
 
 \ccNestedType{T2P_converter}{Converter for geometric objects
   defined within \ccc{Triangulated_mixed_complex_traits} to objects
   defined within \ccc{Polyhedron_traits}.}
 
-\ccNestedType{T2P_converter}{Converter for geometric objects
+\ccNestedType{P2T_converter}{Converter for geometric objects
   defined within \ccc{Polyhedron_traits} to objects
   defined within \ccc{Triangulated_mixed_complex_traits}.}
 
-\ccNestedType{Compute_anchor_3}{A predicate object which must
-  provide the function operators defined for
-  \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
+% NGHK: These predicates need the Regular triangulation, which are not
+% known in the skin surface traits class
+
+%\ccNestedType{Compute_anchor_3}{A predicate object which must
+%  provide the function operators defined for
+%  \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
 
 \ccNestedType{Construct_anchor_point_3}{A predicate object which must
   provide the following function operator:\\
@@ -68,35 +73,37 @@
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{SkinSurfaceTraits_3( const typename Regular_traits::FT s=.5);}{
+\ccConstructor{SkinSurfaceTraits_3( const typename Regular_triangulation_traits::FT s=.5);}{
     constructor that takes the shrink factor as argument.}
 
 \ccHasModels
 
-\ccRefIdfierPage{Skin_surface_traits_3<RegularTriangulationTraits_3, TriangulationTraits_3, PolyhedronTraits_3>}
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3, PolyhedronTraits_3>}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::skin_surface_3}
 
-\ccThree{Construct_anchor_point_3}{xxx}{}
+\ccThree{Construct_anchor_point_3}{traits.shrink_factor()}{}
 \ccThreeToTwo
 
 \ccOperations
 The following functions give access to the predicate objects:
 
 \ccMethod{
-Construct_anchor_point_3 construct_anchor_point_3_object() const;
-}{}
-\ccMethod{
   Regular_RT shrink_factor() const;}{Returns the shrink factor.}
 
+\ccMethod{Construct_anchor_point_3 construct_anchor_point_3_object()
+  const;}{returns a \ccc{Construct_anchor_point_3} object.}
+
 \ccHeading{Converters:}
+\ccThree{T2P_converterx}{Construct_anchor_point_3xxx}{}
+\ccThreeToTwo
 \ccMethod{R2T_converter r2t_converter_object() const;}{returns a
-  converter of geometric objects from the \ccc{Regular_traits} to the
+  converter of geometric objects from the \ccc{Regular_triangulation_traits} to the
   \ccc{Triangulated_mixed_complex_traits}.}
 
 \ccMethod{R2P_converter r2p_converter_object() const;}{returns a
-  converter of geometric objects from the \ccc{Regular_traits} to the
+  converter of geometric objects from the \ccc{Regular_triangulation_traits} to the
   \ccc{Polyhedron_traits}.}
 
 \ccMethod{T2P_converter t2p_converter_object() const;}{returns a

@@ -6,3 +6,5 @@
 
 Documentation:
 - Add references from doc_tex/Skin_surface_3 to classes.
+- Compute anchor point types are not from Skin_surface_traits
+  since they depend on the regular triangulation and not the reg. kernel

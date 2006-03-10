@@ -14,7 +14,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Skin_surface_traits_3<RegularTriangulationTraits_3, TriangulationTraits_3, PolyhedronTraits_3>}
+\begin{ccRefClass}{Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3, PolyhedronTraits_3>}
 %\label{refSkinsurfacetraits}
 
 \ccDefinition
@@ -30,30 +30,31 @@ in the construction and refinement of a skin surface
 \ccRefConceptPage{SkinSurfaceTraits_3}
 
 \ccTypes
-\ccThree{typedef RegularTriangulationTraits_3}
-{Triangulated}{}
+\ccThree{typedef}{Triangulated_mixed_complex_traitsxxx}{}
 \ccThreeToTwo
 
-\ccTypedef{typedef RegularTriangulationTraits_3
+%
+\ccTypedef{typedef
+  Regular_triangulation_euclidean_traits_3<RegularKernel_3>
   Regular_triangulation_traits;}{The traits class is used for the
   regular triangulation. It is a model of the
-  \ccc{RegularTriangulationTraits_3} concept.}
-\ccGlue
-\ccTypedef{typedef TriangulationTraits_3
+  \ccc{RegularTriangulationTraits_3} concept.}  \ccGlue
+%
+\ccTypedef{typedef TriangulatedMixedComplexKernel
   Triangulated_mixed_complex_traits;}{The traits class used in the
   \ccc{Triangulated_mixed_complex}. It is a model of the
   \ccc{TriangulationTraits_3} concept and has to be able to store the
-  constructed vertices exactly.}
-\ccGlue
+  constructed vertices exactly.}  \ccGlue
+%
 \ccTypedef{typedef PolyhedronTraits_3 Polyhedron_traits;}{The traits class used for the
   geometric objects defined by the mesh.}
 
 \ccNestedType{R2T_converter}{Converter for geometric objects
-  defined within \ccc{Regular_traits} to objects defined within
+  defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Triangulated_mixed_complex_traits}.}
 
 \ccNestedType{R2P_converter}{Converter for geometric objects
-  defined within \ccc{Regular_traits} to objects defined within
+  defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Polyhedron_traits}.}
 
 \ccNestedType{T2P_converter}{Converter for geometric objects
@@ -68,20 +69,21 @@ in the construction and refinement of a skin surface
   provide the function operators defined for
   \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
 
-\ccNestedType{Construct_anchor_point_3}{A predicate object which must
-  provide the following function operator:\\
-  \ccc{TMC_Point operator()(const TMC_Point &center_del, const
-    TMC_Point &center_vor);}\\
-  Constructs the anchor point in between the Delaunay and Voronoi
-  centers.}
+% NGHK: we don't know the regular triangulation
+%\ccNestedType{Construct_anchor_point_3}{A predicate object which must
+%  provide the following function operator:\\
+%  \ccc{TMC_Point operator()(const TMC_Point &center_del, const
+%    TMC_Point &center_vor);}\\
+%  Constructs the anchor point in between the Delaunay and Voronoi
+%  centers.}
 
 
 \ccNestedType{R2T_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_traits} to objects defined within
+  defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Triangulated_mixed_complex_traits}.}
 
 \ccNestedType{R2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_traits} to objects defined within
+  defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Polyhedron_traits}.}
 
 \ccNestedType{T2P_converter}{Converter to convert geometric objects
@@ -101,7 +103,7 @@ in the construction and refinement of a skin surface
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{Skin_surface_traits_3( const typename Regular_traits::FT s=.5);}{
+\ccConstructor{Skin_surface_traits_3( const typename Regular_triangulation_traits::FT s=.5);}{
     constructor that takes the shrink factor as argument.}
 
 \ccOperations
@@ -114,7 +116,7 @@ in the construction and refinement of a skin surface
 \ccGlue
 \ccMethod{Construct_triangulated_mixed_complex_vertex_3
   construct_triangulated_mixed_complex_vertex_3_object();}{ }
-\ccMethod{Regular_traits::FT shrink_factor();}{ }
+\ccMethod{Regular_triangulation_traits::FT shrink_factor();}{ }
 
 
 \ccSeeAlso
