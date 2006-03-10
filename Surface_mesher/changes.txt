@@ -1,3 +1,9 @@
+10 March 2006 Laurent Rineau
+- first correct version of SurfaceMeshTraingulation_3.tex
+- removed unused Tr::* typedefs everywhere
+- renamed Triangulation::XXXX_iterator to
+  Triangulation::Finite_XXXs_iterator in C2t3.
+
 9 March 2006 Laurent Rineau
 - modification of Complex_2_in_triangulation_vertex_base_3 and
   Complex_2_in_triangulation_3: the result of
