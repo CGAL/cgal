@@ -72,13 +72,7 @@ public:
     s1 = t(p2);
 
     if (CGAL::compare(s0, s1) == LARGER) {
-#if defined(__GNUC__) && (__GNUC__ < 3)
-      FT tmp = s0;
-      s0 = s1;
-      s1 = tmp;
-#else
-      std::swap< FT >(s0, s1);
-#endif
+      std::swap(s0, s1);
     }
 
     p.clear();

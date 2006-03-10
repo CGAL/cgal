@@ -1,3 +1,7 @@
+10 March 2006:  Menelaos Karavelas
+- unqualified swap of <FT>
+- removed workaround for g++ < 3
+
 9 March 2006:  Menelaos Karavelas
 - changed default background color from yellow to black
 - gave the example files some more meaningful names
