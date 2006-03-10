@@ -461,12 +461,14 @@ initial_check()
     _no_indent
     log_print "Parsing support specfiles for 3rd party libraries:"
     _set_indent
+    log_to_file
     for i in "${CGAL_SUPPORT_DIR}"/S*; do
 	_tmp="`echo $i | ${_awk} 'BEGIN {FS=\"-\"} {print $NF}' | remove_special_chars | ${_tr} [:lower:] [:upper:]`"
 	if [ -z "${_tmp}" ]; then continue; fi
         SUPPORT_PKGS="${SUPPORT_PKGS} ${_tmp}"
         R_SUPPORT_PKGS="${_tmp} ${R_SUPPORT_PKGS}"
         log_print "${_tmp}"
+	${_printf} "%s" "${_tmp}, "
         try_to_get_var_from_file PROVIDES "${i}"
 	if [ -z "${PROVIDES}" ]; then continue; fi
 	eval "${_tmp}_PROVIDES=\"${PROVIDES}\""
@@ -500,7 +502,7 @@ initial_check()
 	    _append_to "${j}_REQUIRED_BY" " "
 	done
     done
-    log_to_file
+    ${_printf} "%s\n" "done."
 }
 
 # fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/version.h
