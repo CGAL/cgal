@@ -7,21 +7,21 @@ int main(int, char *[])
 
     typedef CGAL::Kinetic::Exact_simulation_traits_2 Simulation_traits;
     typedef Simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
-    typedef CGAL::Kinetic::Insert_event<Simulation_traits::Active_objects_table> Insert_event;
+    typedef CGAL::Kinetic::Insert_event<Simulation_traits::Active_points_2_table> Insert_event;
     typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits> KDel;
 
     Simulation_traits tr;
-    Simulation_traits::Simulator::Pointer sp= tr.simulator_pointer();
+    Simulation_traits::Simulator::Handle sp= tr.simulator_handle();
 
     KDel kdel(tr);
   
     std::ifstream in("data/points_2");
-    in >> *tr.active_objects_table_pointer();
+    in >> *tr.active_points_2_table_handle();
 
     sp->new_event(Simulation_traits::Simulator::Time(3), 
 		  Insert_event(Moving_point_2(Moving_point_2::NT(0),
 					      Moving_point_2::NT(0)),
-			       tr.active_objects_table_pointer()));
+			       tr.active_points_2_table_handle()));
 
     while (sp->next_event_time()
     < sp->end_time()) {

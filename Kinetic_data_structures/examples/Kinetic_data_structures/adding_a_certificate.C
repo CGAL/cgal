@@ -1,6 +1,7 @@
 #include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
 #include <CGAL/Kinetic/Simulation_traits.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
+#include <CGAL/Kinetic/Certificate_generator.h>
 
 template <class KineticKernel>
 struct Positive_x_f_2 {
@@ -17,7 +18,7 @@ class My_kinetic_kernel:
   typedef CGAL::Kinetic::Cartesian_kinetic_kernel<FunctionKernel> P;
   typedef My_kinetic_kernel<FunctionKernel> This;
 public:
-  typedef CGAL::Kinetic::internal::Certificate_function_generator<This, Positive_x_f_2<This> > Positive_x_2;
+  typedef CGAL::Kinetic::internal::Certificate_generator<This, Positive_x_f_2<This> > Positive_x_2;
   Positive_x_2 positive_x_2_object() const
   {
     return Positive_x_2(P::function_kernel_object());

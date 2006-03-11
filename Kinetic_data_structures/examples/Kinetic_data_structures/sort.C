@@ -20,13 +20,10 @@ int main(int, char *[])
 
     std::ifstream in("data/points_1");
     in  >> *tr.active_points_1_table_handle();
-   
 
     while (sp->next_event_time() != sp->end_time()) {
         sp->set_current_event_number(sp->current_event_number()+1);
     }
-
-   
 
     return EXIT_SUCCESS;
 };

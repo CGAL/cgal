@@ -90,18 +90,19 @@ used by the \ccc{Kinetic::ActiveObjectsTable} to alert kinetic data
 structures when the set of primitives changes (see
 Subsection~\ref{active_objects_table}). To use the notification
 framework, the kinetic data structure creates a proxy object which
-implements a standard Listener interface. It then registers
-this proxy with the \ccc{Kinetic::Simulator}. When the \ccc{Kinetic::Simulator}
-finds an appropriate time for the kinetic data structures to audit
-themselves it calls the function
-\ccc{Listener::new_notification(Type)} on each of the registered
-proxy objects.  A helper for creating such proxy objects, called
-\ccc{Kinetic::Simulator_kds_helper<Listener, KDS>}, is provided by the framework. It
-translates the notification into a function call (\ccc{audit()}) on
-the kinetic data structure.  Pointers in the notification framework
-are reference counted appropriately to avoid issues caused by the
-creation and destruction order of kinetic data structures and the
-simulator.
+implements a standard \ccc{Listener} interface. It then registers this
+proxy with the \ccc{Kinetic::Simulator}. When the
+\ccc{Kinetic::Simulator} finds an appropriate time for the kinetic
+data structures to audit themselves it calls the function
+\ccc{Listener::new_notification(Type)} on each of the registered proxy
+objects.  A helper for creating such proxy objects, called
+\ccc{Kinetic::Simulator_kds_helper<Listener, KDS>}, is provided by the
+framework. It translates the notification into a function call
+(\ccc{audit()}) on the kinetic data structure.  Pointers in the
+notification framework are reference counted appropriately to avoid
+issues caused by the creation and destruction order of kinetic data
+structures and the simulator. See Section~\ref{listener} for a more
+complete discussion of this part of the framework.
 
 Internally the \ccc{Kinetic::Simulator} maintains a priority queue
 containing the scheduled events. The type of the priority queue is a
@@ -215,9 +216,7 @@ various predicate functors on the moving points which evaluate to the
 values that the predicates have at that instant in time. Removal is
 handled in an analogous manner. Auditing of the geometric structure is
 easily handled in a similar manner (in the case of Delaunay
-% MK:: is that a verify() method of the KDS or is it the is_valid()
-% method of the static Delaunay triangulation?
-triangulations by simply calling the \ccc{is_valid()} method after
+triangulations by simply calling the \ccc{verify()} method after
 setting the time).
 
 Internally, in order to evaluate a static predicate, our model of the
@@ -228,8 +227,8 @@ they are likely to be involved in other static predicates evaluated at
 the same time.
 
 
-Note that the time used in the \ccc{Kinetic::InstantaneousKernel} must be an
-arithmetic type that fully supports ring and possibly field
+Note that the time used in the \ccc{Kinetic::InstantaneousKernel} must
+be an arithmetic type that fully supports ring and possibly field
 operations.  These are much more stringent requirements than for
 Kinetic::Time objects in the simulator, where we only require
 comparisons. These requirements currently rule out our algebraic
@@ -241,10 +240,9 @@ type (such as \ccc{Gmpq}) which is close to the current time and such
 that the combinatorial structure has not changed. Alternatively, if a
 real number type such as \ccc{CORE::Expr} is used for time, then
 computation can, of course, be performed at any time, although
-computations will be significantly slower.
-% MK:: I feel something is missing from the following sentence.
-It is the job of the \ccc{Kinetic::Simulator} to determine an appropriate
-time to perform operations.
+computations will be significantly slower.  It is the job of the
+\ccc{Kinetic::Simulator} to determine an appropriate time to perform
+operations.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,10 +259,11 @@ following sections.
 
 A number of objects need to maintain pointers to other independent
 objects. For example, each kinetic data structure must have access to
-the \ccc{Kinetic::Simulator} so that it can schedule and deschedule events. These
-pointers are all reference counted in order to guarantee that they are
-always valid. We provide a standard reference counting pointer and
-object base to facilitate this, namely \ccc{Ref_counted<Object>}.
+the \ccc{Kinetic::Simulator} so that it can schedule and deschedule
+events. These pointers are all reference counted in order to guarantee
+that they are always valid. We provide a standard reference counting
+pointer and object base to facilitate this, namely
+\ccc{Ref_counted<Object>}.
 
 Each shared object in the framework defines a type \ccc{Handle} which is the
 type for a reference counter pointer pointing to it. These should be
@@ -273,31 +272,35 @@ pointers. In addition, many of the objects expect such pointers as
 arguments.
 
 \subsubsection{Runtime event passing}
+\label{listener}
 
 Runtime events must be passed from \textit{notifiers}, namely the
-Kinetic::ActiveObjectsTable and the \ccc{Kinetic::Simulator} to the kinetic data
-structures to \textit{listeners}, such as a kinetic data structure
-which needs to update itself when an event occurs These are passed
-using a simple, standardized notification interface. To use
-notifications, first defines a small proxy class which inherits from a
-Listener base type provided by the notifier. The Listener
-base class registers itself with the notifier on construction (and
-unregisters itself on destruction).
+\ccc{Kinetic::ActiveObjectsTable} and the \ccc{Kinetic::Simulator} to
+\textit{listeners}, typically the kinetic data structures. For
+example, kinetic data structures are notified when new primitives are
+added to the \ccc{Kinetic::ActiveObjectsTable}. On reciving the
+notification, it will add the new primitive to the combinatorial
+structure it is maintaining. The events are passed using a simple,
+standardized notification interface. To receive notifications, the
+listener first defines a small proxy class which inherits from a
+\ccc{Listener} base type provided by the notifier. On creation, the
+\ccc{Listener} base class registers itself with the notifier on
+construction (and unregisters itself on destruction).
 
-When the some state of the notifier changes it, it calls the
-\ccc{new_notification} method on the proxy object provided and passes
-it a label corresponding to the name of the field that changed. The
-proxy object can then call an appropriate method on the kinetic data
-structure or other listening class.
+When the some state of the notifier changes, it calls the
+\ccc{new_notification} method on the listener proxy object provided
+and passes it a label corresponding to the name of the field that
+changed. The proxy object can then call an appropriate method on the
+kinetic data structure or whetever the listening class is.
 
-In order to unregister on destruction, the Listener must store a
-(reference counted) pointer to the object providing
-notifications. This pointer can be accessed through the \ccc{notifier()}
-field. The Listener object stores a reference counted pointer to
-the notifying object, while the notifying object stores a plain
-pointer to the Listener. It can do this since the Listener
-is guaranteed to unregister itself when it is destroyed. This avoids
-circular reference counted pointers.
+In order to unregister on destruction, the \ccc{Listener} must store a
+(reference counted) pointer to the object providing notifications.
+This pointer can be accessed through the \ccc{notifier()} field. The
+\ccc{Listener} object stores a reference counted pointer to the
+notifying object, while the notifying object stores a plain pointer to
+the \ccc{Listener}. It can do this since the \ccc{Listener} is
+guaranteed to unregister itself when it is destroyed. This avoids
+circular reference counted pointers as well as dangling pointers.
 
 \section{Algebraic Kernel}
 \label{algebraic_kernel}
@@ -312,13 +315,13 @@ Kinetic::Function objects. The provided models perform
 \begin{itemize}
 \item exact computations using Sturm sequences to isolate roots
 \item exact computations using Descartes rule of sign in order to
-isolate roots (Sturm sequences are also used in order to properly
-handle even multiplicity roots)
+  isolate roots (Sturm sequences are also used in order to properly
+  handle even multiplicity roots)
 \item filtered exact computations using Descartes rule of sign
 \item numeric (inexact) root approximations
 \item numeric root approximations which take advantage of certain
-assumptions that can be made about the types of polynomials solved in
-the process of evaluating kinetic data structures
+  assumptions that can be made about the types of polynomials solved
+  in the process of evaluating kinetic data structures
 \item a wrapper for CORE::Expr which implements the required
   concepts.
 \end{itemize}
