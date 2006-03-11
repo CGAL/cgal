@@ -7,7 +7,7 @@ Using a kinetic data structure can be as simple as the following:
 
 In the example, first the \ccc{Kinetic::SimulationTraits} object is chosen
 (in this case one that supports exact computations). Then the kinetic
-data structure is defined, using the chosen traits object and a
+data structure is defined using the chosen traits object and a
 visitor class which logs changes to the sorted list.  Next, instances
 of the two are created and a set of points is read from a file. Then,
 the simulator is instructed to process all the events until the end of
@@ -15,11 +15,12 @@ the simulation.  Finally, a record of what happened is printed to the
 terminal.
 
 Several important things happen behind the scenes in this example.
-First, the \ccc{Kinetic::ActiveObjectsTable} which holds the moving points
-notifies the kinetic data structure that new points have been added to
-the simulation. Second, the \ccc{Kinetic::Sort<Traits,Visitor>} kinetic data structure
-registers its events with the \ccc{Kinetic::Simulator} by providing a time
-and a proxy object. When a particular event occurs, the
+First, the \ccc{Kinetic::ActiveObjectsTable} which holds the moving
+points notifies the kinetic data structure that new points have been
+added to the simulation. Second, the
+\ccc{Kinetic::Sort<Traits,Visitor>} kinetic data structure registers
+its events with the \ccc{Kinetic::Simulator} by providing a time and a
+proxy object for each event. When a particular event occurs, the
 Kinetic::Simulator calls a function on the proxy object which in turn
 updates the kinetic data structure.
 
