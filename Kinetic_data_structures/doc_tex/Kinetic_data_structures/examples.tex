@@ -5,7 +5,7 @@ We provide a number of examples of different levels of usage of the
 kinetic data structures framework, both for kinetic data structures as
 well as sweepline algorithms.
 
-The first example ( in Section~\ref{sec:delaunay_2_example}) showed
+The first example (in Section~\ref{sec:sort_example}) showed
 how to used a data structure which maintains a sorted list of points
 to compute the arrangement of a set of x-monotone curves in the
 plane. Using the other kinetic data structures is substantially
@@ -14,15 +14,19 @@ demo/Kinetic\_data\_structures directory.
 
 The next examples cover implementing kinetic data structures. They are
 \begin{itemize}
-\item Adding a certificate generator to a kernel
+\item Adding a new type of certificate to a kernel in
+  Section~\ref{sec:add_cert}.
 \item A trivial kinetic data structure which has all the parts of a
 full kinetic data structure but doesn't do much in
-Section~\ref{sec:trivial_kds_example}
+Section~\ref{sec:trivial_kds_example}.
 \item The implementation of the sweepline arrangement computation in
-  Section~\ref{sec:sweepline_example}
+  Section~\ref{sec:sweepline_example} built on top of the sorting
+  datastructure.
 \end{itemize}
 
-In order to see more detail about how to implement a kinetic data structure, the best place to start is the source code for the kinetic sorting data structure, \ccc{Kinetic::Sort<Traits, Visitor>}.
+In order to see more detail about how to implement a kinetic data
+structure, the best place to start is the source code for the kinetic
+sorting data structure, \ccc{Kinetic::Sort<Traits, Visitor>}.
 
 
 \input{Kinetic_data_structures/adding_certificate.tex}
