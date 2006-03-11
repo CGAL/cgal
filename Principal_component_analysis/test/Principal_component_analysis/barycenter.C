@@ -19,16 +19,16 @@ void test_2()
   std::vector<std::pair<Point_2, FT> > wpts;
 
   Point_2 p0 (1, 2);
-  wpts.push_back(std::make_pair(p0, 2));
+  wpts.push_back(std::make_pair(p0, 2.));
 
   assert( CGAL::barycenter(wpts.begin(), wpts.end(), K()) == p0 );
 
-  wpts.push_back(std::make_pair(p0, 3));
+  wpts.push_back(std::make_pair(p0, 3.));
 
   assert( CGAL::barycenter(wpts.begin(), wpts.end()) == p0 );
 
   Point_2 p1 (2, 1);
-  wpts.push_back(std::make_pair(p1, 5));
+  wpts.push_back(std::make_pair(p1, 5.));
 
   assert( CGAL::barycenter(wpts.begin(), wpts.end())
           == CGAL::midpoint(p0, p1) );
@@ -60,16 +60,16 @@ void test_3()
   std::vector<std::pair<Point_3, FT> > wpts;
 
   Point_3 p0 (1, 2, 3);
-  wpts.push_back(std::make_pair(p0, 2));
+  wpts.push_back(std::make_pair(p0, 2.));
 
   assert( CGAL::barycenter(wpts.begin(), wpts.end(), K()) == p0 );
 
-  wpts.push_back(std::make_pair(p0, 3));
+  wpts.push_back(std::make_pair(p0, 3.));
 
   assert( CGAL::barycenter(wpts.begin(), wpts.end()) == p0 );
 
   Point_3 p1 (3, 2, 1);
-  wpts.push_back(std::make_pair(p1, 5));
+  wpts.push_back(std::make_pair(p1, 5.));
 
   assert( CGAL::barycenter(wpts.begin(), wpts.end())
            == CGAL::midpoint(p0, p1) );
