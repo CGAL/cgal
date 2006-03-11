@@ -133,28 +133,28 @@ where this equivalence is exploited.
 
 \begin{description}
 \item[primitive] The basic geometric types--i.e.\ the points of a
-triangulation. A primitive has a set of {\em coordinates}.
+  triangulation. A primitive has a set of {\em coordinates}.
 \item[combinatorial structure] A structure built on top of the
-primitives. The structure does not depend directly on the coordinates
-of the primitives, only on relationships between them.
-\item[trajectory] The path traced out by a primitive as time
-passes. In other words how the coordinates of a primitive change with
-time.
+  primitives. The structure does not depend directly on the
+  coordinates of the primitives, only on relationships between them.
+\item[trajectory] The path traced out by a primitive as time passes.
+  In other words how the coordinates of a primitive change with time.
 \item[snapshot] The position of all the primitives at a particular
-moment in time.
+  moment in time.
+\item[static] Having to do with geometric data structures on
+  non-moving primitives.
 \item[predicate] A function which takes the coordinates of several
-primitives from a snapshot as input and produces a discrete set of
-outputs.
+  primitives from a snapshot as input and produces one of a discrete
+  set of outputs.
 \item[certificate] One of a set of predicates which, when all having
-the correct values, ensure that the combinatorial structure is
-correct.
+  the correct values, ensure that the combinatorial structure is
+  correct.
 \item[certificate function] A function of time which is positive when
-the corresponding certificate has the correct value. Then the
-certificate function changes sign, the combinatorial structure needs
-to be updated.
+  the corresponding certificate has the correct value. When the
+  certificate function changes sign, the combinatorial structure needs
+  to be updated.
 \item[event] When a certificate function changes sign and the
-combinatorial structure needs to be updated.
-\item[static] Having to do with geometric data structures on non-moving primitives.
+  combinatorial structure needs to be updated.
 \end{description}
 
 
