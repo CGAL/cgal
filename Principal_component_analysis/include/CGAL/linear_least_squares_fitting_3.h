@@ -38,8 +38,8 @@ assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
                              typename K::FT covariance[6], // covariance matrix
                              const typename K::Point_3& c, // centroid
-                             const K& k,
-                             const typename K::Point_3*)
+                             const K& k,                   // kernel
+                             const typename K::Point_3*)   // used for indirection
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -74,8 +74,8 @@ assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
                              typename K::FT covariance[6], // covariance matrix
                              const typename K::Point_3& c, // centroid
-                             const K& k,
-                             const typename K::Triangle_3*)
+                             const K& k,                   // kernel
+                             const typename K::Triangle_3*)// used for indirection
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -137,9 +137,9 @@ assemble_covariance_matrix_3(InputIterator first,
 template < typename K >
 typename K::FT
 fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
-                const typename K::Point_3& c, // centroid
-                typename K::Plane_3& plane,   // best fit plane
-                const K& k)
+                const typename K::Point_3& c,       // centroid
+                typename K::Plane_3& plane,         // best fit plane
+                const K& k)                         // kernel
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -184,9 +184,9 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
 template < typename K >
 typename K::FT
 fitting_line_3(const typename K::FT covariance[6], // covariance matrix
-               const typename K::Point_3& c, // centroid
-               typename K::Line_3& line,   // best fit line
-               const K& k)
+               const typename K::Point_3& c,       // centroid
+               typename K::Line_3& line,           // best fit line
+               const K& k)                         // kernel
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -235,7 +235,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Plane_3& plane, // best fit plane
                                typename K::Point_3& c,     // centroid
                                const K& k,                 // kernel
-                               const typename K::Point_3*)
+                               const typename K::Point_3*) // used for indirection
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -268,7 +268,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Line_3& line,  // best fit line
                                typename K::Point_3& c,    // centroid
                                const K& k,                // kernel
-                               const typename K::Point_3*)
+                               const typename K::Point_3*)// used for indirection
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -295,10 +295,10 @@ template < typename InputIterator,
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
-                               typename K::Plane_3& plane, // best fit plane
-                               typename K::Point_3& c,     // centroid
-                               const K& k,                 // kernel
-                               const typename K::Triangle_3*)
+                               typename K::Plane_3& plane,   // best fit plane
+                               typename K::Point_3& c,       // centroid
+                               const K& k,                   // kernel
+                               const typename K::Triangle_3*)// used for indirection
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -325,10 +325,10 @@ template < typename InputIterator,
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
-                               typename K::Line_3& line, // best fit line
-                               typename K::Point_3& c,   // centroid
-                               const K& k,               // kernel
-                               const typename K::Triangle_3*)
+                               typename K::Line_3& line,     // best fit line
+                               typename K::Point_3& c,       // centroid
+                               const K& k,                   // kernel
+                               const typename K::Triangle_3*)// used for indirection
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -412,7 +412,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                                centroid, k,(Value_type*) NULL);
 }
 
-
 // deduces the kernel from the points in container.
 template < typename InputIterator, 
            typename Object,
@@ -442,7 +441,6 @@ linear_least_squares_fitting_3(InputIterator first,
   typedef typename Kernel_traits<Value_type>::Kernel K;
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,K());
 }
-
 
 CGAL_END_NAMESPACE
 

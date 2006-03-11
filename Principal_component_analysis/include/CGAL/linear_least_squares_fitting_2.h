@@ -11,7 +11,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Pierre Alliez and Sylvain Pion
+// Author(s) : Pierre Alliez and Sylvain Pion
 
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H
@@ -31,9 +31,9 @@ namespace CGALi {
 
 // Fits a line to a 2D point set.
 // Returns a fitting quality (1 - lambda_min/lambda_max):
-//  1 is best  (zero variance orthogonally to the fitting line)
+//  1 is best  (zero variance orthogonally to the fitting line);
 //  0 is worst (isotropic case, returns a line with horizontal
-//              direction by default)
+//              direction by default).
 template < typename InputIterator, 
            typename K >
 typename K::FT
@@ -80,7 +80,7 @@ linear_least_squares_fitting_2(InputIterator first,
   CGALi::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
   CGAL_assertion(eigen_values.first  >= 0 && eigen_values.second >= 0);
 
-  // check unicity and build fitting line accordingly.
+  // check unicity and build fitting line accordingly
   if(eigen_values.first != eigen_values.second)
   {
     // regular case
@@ -129,7 +129,6 @@ linear_least_squares_fitting_2(InputIterator first,
   return CGALi::linear_least_squares_fitting_2(first, beyond, line,
                                                centroid, k,(Value_type*) NULL);
 }
-
 
 // deduces the kernel from the points in container.
 template < typename InputIterator, 
