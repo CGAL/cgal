@@ -584,6 +584,7 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.ps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Certificate.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Time.tex -text
 Kinetic_data_structures/examples/Kinetic_data_structures/adding_a_certificate.C -text
+Kinetic_data_structures/include/CGAL/Kinetic/Certificate_generator.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Isolating_interval.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Lower_bound_root.h -text
 Kinetic_data_structures/test/Kinetic_data_structures/Delaunay_triangulation_3_timing.C -text
