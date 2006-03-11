@@ -17,16 +17,15 @@
 %\input{Kinetic_data_structures/todo.tex}
 
 Lets say you want to maintain a sorted list of items (each item is
-associate with a real number key which they are sorted on). You can
-imagine placing each of the items on the point corresponding to its
-key. Now, let the key for each item change continuously (i.e. no jumps
-are allowed). As long as no to (consecutive) items cross, the sorted
-order is intact. When two cross, they need to be exchanged in the list
-and then the sorted order is once again correct. This is a trivial
-example of a kinetic data structure and, the maintenance of a
-combinatorial which changes at discrete times (events), event though
-the basic building blocks are changing continuously is gives power to
-the kinetic data structures idea.
+associate with a real number key). You can imagine placing each of the
+items on the point on the real line corresponding to its key. Now, let
+the key for each item change continuously (i.e. no jumps are allowed).
+As long as no to (consecutive) items cross, the sorted order is
+intact. When two cross, they need to be exchanged in the list and then
+the sorted order is once again correct. This is a trivial example of a
+kinetic data structure. The key observation is that the combinatorial
+structure which is maintained changes at discrete times (events) even
+though the basic building blocks are changing continuously.
 
 This chapter describes a framework for implementing kinetic data
 structures and sweepline algorithms as well as several kinetic data
