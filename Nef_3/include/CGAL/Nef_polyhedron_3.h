@@ -206,7 +206,7 @@ protected:
 
  typedef typename Nef_rep::Sphere_map                Sphere_map;
  public:
- typedef Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>  Nef_polyhedron_S2;
+ typedef CGAL::Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map> Nef_polyhedron_S2;
  protected:
 
   SNC_structure& snc() { return this->ptr()->snc_; } 

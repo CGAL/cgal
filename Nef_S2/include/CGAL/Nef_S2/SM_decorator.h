@@ -54,7 +54,7 @@ typedef SM_decorator_traits<Map>  Decorator_traits;
 
 /*{\Mtypes 5}*/
 
-typedef SM_const_decorator<Map>   SM_const_decorator;
+typedef CGAL::SM_const_decorator<Map>   SM_const_decorator;
 
 typedef typename Map::Sphere_kernel    Sphere_kernel;
 /*{\Mtypemember spherical geometry.}*/

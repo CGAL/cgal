@@ -234,7 +234,7 @@ public:
     Infi_box::set_size_of_infimaximal_box(size); 
   }
 
-  typedef SM_point_locator<SM_const_decorator>         SM_point_locator;
+  typedef CGAL::SM_point_locator<SM_const_decorator>         SM_point_locator;
 
   Halffacet_const_handle get_visible_facet( const Vertex_const_handle v, 
 				      const Ray_3& ray) const

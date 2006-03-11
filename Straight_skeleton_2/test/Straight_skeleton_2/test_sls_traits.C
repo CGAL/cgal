@@ -105,9 +105,9 @@ struct triedge
 
   int idx( char const* d, int i ) { return d[i] - 'a' ; }
 
-  typedef Vertex <FT> Vertex ;
-  typedef Edge   <FT> Edge ;
-  typedef Triedge<FT> Triedge ;
+  typedef CGAL::CGAL_SLS_i::Vertex <FT> Vertex ;
+  typedef CGAL::CGAL_SLS_i::Edge   <FT> Edge ;
+  typedef CGAL::CGAL_SLS_i::Triedge<FT> Triedge ;
 
   Triedge triple() const
   {

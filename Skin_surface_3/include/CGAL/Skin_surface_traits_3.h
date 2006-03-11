@@ -95,7 +95,7 @@ public:
   //  typedef typename Weighted_triangulated_mixed_complex_traits::
   //    Construct_weighted_circumcenter_3         Construct_weighted_circumcenter_3;
 
-  typedef Construct_anchor_point_3<Triangulated_mixed_complex_traits>
+  typedef CGAL::Construct_anchor_point_3<Triangulated_mixed_complex_traits>
                                               Construct_anchor_point_3;
   Skin_surface_traits_3(Regular_RT shrink = .5) :
     shrink(shrink) {}

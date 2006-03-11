@@ -79,14 +79,14 @@ public:
   typedef SNC_structure<Kernel,Items,Mark>   Self;
 
   //  typedef bool                          Mark;
-  typedef SNC_decorator<Self>           SNC_decorator;
+  typedef CGAL::SNC_decorator<Self>           SNC_decorator;
 
   typedef typename Kernel::FT           FT;
   typedef typename Kernel::RT           RT;
   typedef CGAL::Sphere_geometry<Kernel> Sphere_kernel;
   
   typedef SNC_sphere_map<Kernel, Items, Mark> Sphere_map;
-  typedef SM_decorator<Sphere_map>  SM_decorator;
+  typedef CGAL::SM_decorator<Sphere_map>  SM_decorator;
 
   typedef typename Kernel::Point_3      Point_3;
   /*{\Mtypemember embedding vertices.}*/

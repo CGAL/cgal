@@ -198,8 +198,8 @@ typedef CGAL::Sphere_triangle<R>    Sphere_triangle;
 typedef CGAL::Point_3<R>            Point_3;
 typedef CGAL::Plane_3<R>            Plane_3;
 typedef CGAL::Aff_transformation_3<R> Aff_transformation_3;
-typedef Positive_halfsphere_geometry<R> Positive_halfsphere_geometry;
-typedef Negative_halfsphere_geometry<R> Negative_halfsphere_geometry;
+typedef CGAL::Positive_halfsphere_geometry<R> Positive_halfsphere_geometry;
+typedef CGAL::Negative_halfsphere_geometry<R> Negative_halfsphere_geometry;
 
 Sphere_point source(const Sphere_segment& s) const
 { return s.source(); }

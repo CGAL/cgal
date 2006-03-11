@@ -103,7 +103,7 @@ class Edge
 {
   public:
 
-    typedef Vertex<FT> Vertex ;
+    typedef CGAL_SLS_i::Vertex<FT> Vertex ;
 
     Edge( Vertex const& aS, Vertex const& aT ) : mS(aS), mT(aT) {}
 
@@ -125,7 +125,7 @@ class Triedge
 {
   public:
 
-    typedef Edge<FT> Edge ;
+    typedef CGAL_SLS_i::Edge<FT> Edge ;
 
     Triedge( Edge const& aE0, Edge const& aE1, Edge const& aE2 ) : mE0(aE0), mE1(aE1), mE2(aE2) {}
 
@@ -194,10 +194,10 @@ struct Sls_functor_base_2
   typedef typename K::FT      FT ;
   typedef typename K::Point_2 Point_2 ;
 
-  typedef Vertex       <FT> Vertex ;
-  typedef Edge         <FT> Edge   ;
-  typedef Triedge      <FT> Triedge ;
-  typedef SortedTriedge<FT> SortedTriedge ;
+  typedef CGAL_SLS_i::Vertex       <FT> Vertex ;
+  typedef CGAL_SLS_i::Edge         <FT> Edge   ;
+  typedef CGAL_SLS_i::Triedge      <FT> Triedge ;
+  typedef CGAL_SLS_i::SortedTriedge<FT> SortedTriedge ;
 
   static Vertex toVertex( Point_2 const& p ) { return Vertex(p.x(),p.y()) ; }
 

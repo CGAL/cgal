@@ -61,7 +61,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef Items_                                    Items;
   typedef Kernel_                                   Kernel;
   typedef Mark_                                     Mark;
-  typedef SNC_structure<Kernel,Items,Mark>          SNC_structure;
+  typedef CGAL::SNC_structure<Kernel,Items,Mark>    SNC_structure;
   typedef typename Items::template Vertex<SNC_structure>  Base;
   //  typedef bool                                        Mark;
   typedef CGAL::Sphere_geometry<Kernel>             Sphere_kernel;
