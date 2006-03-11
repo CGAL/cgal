@@ -8,7 +8,7 @@ Package=Alpha_shapes_3
 mode:
 	chmod a+x include include/CGAL doc_tex doc_tex/basic \
 	doc_tex/basic/$(Package) demo demo/$(Package) \
-	demo/$(Package)/Data examples examples/$(Package) \
+	demo/$(Package)/data examples examples/$(Package) \
 	examples/$(Package)/data test test/$(Package) test/$(Package)/data
 	chmod -R a+r *	
 
