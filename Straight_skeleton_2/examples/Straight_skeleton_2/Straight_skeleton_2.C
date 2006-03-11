@@ -16,22 +16,22 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef CGAL::Straight_skeleton_2<Kernel> Ssds;
+typedef CGAL::Straight_skeleton_2<Kernel> Ss;
 typedef Kernel::Point_2 Point_2;
 
-typedef CGAL::Polygon_2<Kernel>   Contour;
+typedef CGAL::Polygon_2<Kernel>    Contour;
 typedef boost::shared_ptr<Contour> ContourPtr;
-typedef std::vector<ContourPtr>  ContourSequence ;
+typedef std::vector<ContourPtr>    ContourSequence ;
 
-typedef Ssds::Halfedge_iterator Halfedge_iterator;
-typedef Ssds::Halfedge_handle   Halfedge_handle;
-typedef Ssds::Vertex_handle     Vertex_handle;
+typedef Ss::Halfedge_iterator Halfedge_iterator;
+typedef Ss::Halfedge_handle   Halfedge_handle;
+typedef Ss::Vertex_handle     Vertex_handle;
 
 typedef CGAL::Straight_skeleton_builder_traits_2<Kernel>      SsBuilderTraits;
-typedef CGAL::Straight_skeleton_builder_2<SsBuilderTraits,Ssds> SsBuilder;
+typedef CGAL::Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
 
-typedef CGAL::Polygon_offset_builder_traits_2<Kernel>                    OffsetBuilderTraits;
-typedef CGAL::Polygon_offset_builder_2<Ssds,OffsetBuilderTraits,Contour> OffsetBuilder;
+typedef CGAL::Polygon_offset_builder_traits_2<Kernel>                  OffsetBuilderTraits;
+typedef CGAL::Polygon_offset_builder_2<Ss,OffsetBuilderTraits,Contour> OffsetBuilder;
 
 
 int main()
@@ -57,7 +57,7 @@ int main()
   ssb.enter_contour(hole,hole+3);
 
   // Construct the skeleton
-  Ssds ss = ssb.construct_skeleton();
+  Ss ss = ssb.construct_skeleton();
 
   Halfedge_handle null_halfedge ;
   Vertex_handle   null_vertex ;
@@ -75,29 +75,29 @@ int main()
   }
 
   // Instantiate the container of offset polygons
-  ContourSequence offset_polygons ;
+  ContourSequence offset_contours ;
 
   // Instantiate the offset polygon builder with the skeleton
   OffsetBuilder ob(ss);
 
-  // Obtain offset polygons at distance 2
-  ob.construct_offset_polygons(2, std::back_inserter(offset_polygons));
+  // Obtain offset contours at distance 2
+  ob.construct_offset_contours(2, std::back_inserter(offset_contours));
 
-  // Obtain offset polygons at distance 5
-  ob.construct_offset_polygons(5, std::back_inserter(offset_polygons));
+  // Obtain offset contours at distance 5
+  ob.construct_offset_contours(5, std::back_inserter(offset_contours));
 
   // Dump the generated offset polygons
 
-  std::cout << offset_polygons.size() << " offset polygons obtained\n" ;
+  std::cout << offset_contours.size() << " offset contours obtained\n" ;
 
-  for (ContourSequence::const_iterator i = offset_polygons.begin()
-      ; i != offset_polygons.end()
+  for (ContourSequence::const_iterator i = offset_contours.begin()
+      ; i != offset_contours.end()
       ; ++ i
       )
   {
-    // Each element in the offset_polygons sequence is a shared pointer to a Polygon_2 instance.
+    // Each element in the offset_contours sequence is a shared pointer to a Polygon_2 instance.
 
-    std::cout << (*i)->size() << " vertices in offset polygon\n" ;
+    std::cout << (*i)->size() << " vertices in offset contour\n" ;
 
     for (Contour::Vertex_const_iterator j = (*i)->vertices_begin()
         ; j != (*i)->vertices_end()

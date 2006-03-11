@@ -45,7 +45,7 @@ public :
   Polygon_offset_builder_2( Sls const& aSls, Traits const& aTraits = Traits() )  ;
 
   template<class OutputIterator>
-  OutputIterator construct_offset_polygons( FT aTime, OutputIterator aOut ) ;
+  OutputIterator construct_offset_contours( FT aTime, OutputIterator aOut ) ;
 
 private:
 

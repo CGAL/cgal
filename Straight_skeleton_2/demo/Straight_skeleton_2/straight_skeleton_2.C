@@ -214,7 +214,7 @@ private:
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
-#define STATS
+//#define STATS
 //#define CGAL_SLS_PROFILING_ENABLED
 
 #define VERBOSE_VALIDATE false
@@ -556,7 +556,7 @@ private slots:
         LOGSTATS("Creating offsets at " << offset );
         RegionPtr lRegion( new Region ) ;
         OffsetBuilder lOffsetBuilder(sskel);
-        lOffsetBuilder.construct_offset_polygons(offset, std::back_inserter(*lRegion) );
+        lOffsetBuilder.construct_offset_contours(offset, std::back_inserter(*lRegion) );
         LOGSTATS("Done.");
         if ( lRegion->size() > 0 )
           output.push_back(lRegion);

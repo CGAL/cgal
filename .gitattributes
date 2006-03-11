@@ -1488,6 +1488,12 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_skeleton.eps -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_skeleton.pdf -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_skeleton.png -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_offset.eps -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_offset.pdf -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_offset.png -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_skeleton.eps -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_skeleton.pdf -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_skeleton.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig0.eps -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig0.pdf -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig0.png -text
@@ -1524,6 +1530,9 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2/simple_skeleton_1.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.eps -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.pdf -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.png -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.eps -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.pdf -text
+Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/PolygonOffsetBuilderTraits_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Polygon_offset_builder_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Polygon_offset_builder_traits_2.tex -text

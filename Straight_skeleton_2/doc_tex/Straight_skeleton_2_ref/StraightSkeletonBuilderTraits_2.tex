@@ -22,10 +22,10 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the geometric traits class required by the algorithm class \ccc{Straight_skeleton_builder_2<Gt,Ssds>}.
+The concept \ccRefName\ describes the requirements for the geometric traits class required by the algorithm class \ccc{Straight_skeleton_builder_2<Gt,Ss>}.
 
 \ccTypes
-  \ccNestedType{FT}{A model of the \ccc{SqrtFieldNumberType} used for scalar and Euclidean distance computations}{}
+  \ccNestedType{FT}{A model of the \ccc{SqrtFieldNumberType} used to store the time of the events in the skeleton nodes. This type is NOT used in predicate computations}{}
   \ccGlue
   \ccNestedType{Point_2}{A 2D point type}{}
   \ccGlue
@@ -35,33 +35,39 @@ The concept \ccRefName\ describes the requirements for the geometric traits clas
 
 \ccTwo{StraightSkeletonBuilderTraits_2}{}  
   
+\ccNestedType{Left_turn_2}
+{A predicate object type being a model of the \ccc{Kernel::LeftTurn_2} function object concept.}
+
+\ccNestedType{Collinear_2}
+{A predicate object type being a model of the \ccc{Kernel::Collinear_2} function object concept.}
+
 \ccNestedType{Exist_sls_event_2}
 {A predicate object type.\\
-Must provide \ccc{Uncertain<bool> operator()( EdgeTriple const& et) const}, which determines if, given the 3 \textit{oriented} lines defined by the 3 input edges (3 pair of points), there exist an Euclidean distance \ccc{t} $\geq 0$ for which the corresponding 3 \textit{offset lines at \ccc{t}} (parallel lines at an Euclidean distance of \ccc{t}) intersect in a single point.\\
+Must provide \ccc{bool operator()( EdgeTriple const& et) const}, which determines if, given the 3 \textit{oriented} lines defined by the 3 input edges (3 pair of points), there exist an Euclidean distance \ccc{t} $\geq 0$ for which the corresponding 3 \textit{offset lines at \ccc{t}} (parallel lines at an Euclidean distance of \ccc{t}) intersect in a single point.\\
 \ccPrecond{each edge in the triple must properly define an oriented line, that is, such points cannot be coincident.}}
 
 \ccNestedType{Compare_sls_event_times_2}
 {A predicate object type.\\
-Must provide \ccc{Uncertain<Comparison_result> operator()( EdgeTriple const& x, EdgeTriple const& y) const}, which compares the \ccc{times} for the events determined by the edge-triples \ccc{x} and \ccc{y}.\\
+Must provide \ccc{Comparison_result operator()( EdgeTriple const& x, EdgeTriple const& y) const}, which compares the \ccc{times} for the events determined by the edge-triples \ccc{x} and \ccc{y}.\\
 The time of an event given by an edge triple (which defines 3 oriented lines) is the Euclidean distance \ccc{t} at which the corresponding offset lines at \ccc{t} intersect in a single point.\\
 \ccPrecond{\ccc{x} and \ccc{y} must be edge-triples corresponding to events that actually exist (as determined by the predicate \ccc{Exist_sls_event_2}).}}
 
 \ccNestedType{Compare_sls_event_distance_to_seed_2}
 {A predicate object type.\\
-Must provide \ccc{Uncertain<Comparison_result> operator()( Point_2 const& p, EdgeTriple const& x, EdgeTriple const& y)}, which compares the Euclidean distance of the points of event for \ccc{x} and \ccc{y} to the point \ccc{p}.\\
+Must provide \ccc{Comparison_result operator()( Point_2 const& p, EdgeTriple const& x, EdgeTriple const& y)}, which compares the Euclidean distance of the points of event for \ccc{x} and \ccc{y} to the point \ccc{p}.\\
 The point of an event given by an edge triple (which defines 3 oriented lines) is the intersection point of the 3 corresponding offset lines at the time \ccc{t} of the event.\\
-It must also provide \ccc{Uncertain<Comparison_result> operator( EdgeTriple const& seed, EdgeTriple const& x, EdgeTriple const& y)()} which makes the same comparison as the first overload but where the seed point is given implicitly as the point of event for \ccc{seed}.\\
+It must also provide \ccc{Comparison_result operator( EdgeTriple const& seed, EdgeTriple const& x, EdgeTriple const& y)()} which makes the same comparison as the first overload but where the seed point is given implicitly as the point of event for \ccc{seed}.\\
 \ccPrecond{\ccc{seed}, \ccc{x} and \ccc{y} must be edge-triples corresponding to events that actually exist (as determined by the predicate \ccc{Exist_sls_event_2}).}}
 
 \ccNestedType{Is_sls_event_inside_offset_zone_2}
 {A predicate object type.\\
-Must provide \ccc{Uncertain<bool> operator()( EdgeTriple const& e, EdgeTriple const& zone)}, which determines if the point of event for \ccc{e} is inside the \textit{offset zone} defined by the 3 \textit{oriented} lines given by \ccc{zone}.\\
+Must provide \ccc{bool operator()( EdgeTriple const& e, EdgeTriple const& zone)}, which determines if the point of event for \ccc{e} is inside the \textit{offset zone} defined by the 3 \textit{oriented} lines given by \ccc{zone}.\\
 An offset zone given by 3 \textit{oriented} lines is the intersection of the halfplanes to the left of each oriented line.\\
 \ccPrecond{\ccc{e} must be an edge-triple corresponding to an event that actually exist (as determined by the predicate \ccc{Exist_sls_event_2}), and the 3 oriented lines given by \ccc{zone} must be well defined (no point-pair can have coincident points).}}
 
 \ccNestedType{Are_sls_events_simultaneous_2}
 {A predicate object type.\\
-Must provide \ccc{Uncertain<bool> operator()( EdgeTriple const& x, EdgeTriple const& y)}, which determines if the events given by \ccc{x} and \ccc{y} are coincident in time and space; that is, both triples of offset lines intersect at the same point and at the same Euclidean distance from their sources.\\
+Must provide \ccc{bool operator()( EdgeTriple const& x, EdgeTriple const& y)}, which determines if the events given by \ccc{x} and \ccc{y} are coincident in time and space; that is, both triples of offset lines intersect at the same point and at the same Euclidean distance from their sources.\\
 \ccPrecond{\ccc{x} and \ccc{y} must be edge-triples corresponding to events that actually exist (as determined by the predicate \ccc{Exist_sls_event_2}).}}
 
 \ccNestedType{Construct_sls_event_time_and_point_2}
@@ -76,7 +82,7 @@ Must provide \ccc{boost::tuple<FT,Point_2> operator()( EdgeTriple const& e)}, wh
 
 \ccSeeAlso
 
-\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ssds>}\\
+\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ss>}\\
 \ccc{CGAL::Straight_skeleton_builder_traits_2<K>}\\
 
 \end{ccRefConcept}
