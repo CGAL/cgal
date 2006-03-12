@@ -18,8 +18,9 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#if defined(CGAL_USE_QT)
+#include <CGAL/basic.h>
 
+#ifdef CGAL_USE_QT
 
 ////////////////////////////////////////////////////////////////////////
 

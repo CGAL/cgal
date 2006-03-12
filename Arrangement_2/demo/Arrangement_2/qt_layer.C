@@ -18,6 +18,8 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include "qt_layer.h"
@@ -75,7 +77,5 @@ void Qt_layer::draw()
   
   
 }
-
-
 
 #endif // CGAL_USE_QT

@@ -678,6 +678,4 @@ void MyWindow::fileSave_ps()
 #endif
 }
 
-
-
 #endif // CGAL_USE_QT
