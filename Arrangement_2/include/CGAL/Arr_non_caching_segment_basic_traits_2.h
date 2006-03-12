@@ -57,7 +57,9 @@ public:
   typedef typename Number_type_traits<FT>::Has_exact_division 
                                                 Has_exact_division;
 
-  typedef Segment_assertions<Kernel>            Segment_assertions;
+  typedef
+  CGAL::Segment_assertions<Arr_non_caching_segment_basic_traits_2<Kernel> >
+                                                Segment_assertions;
 
   // Categories:
   typedef Tag_true                              Has_left_category;
@@ -128,10 +130,8 @@ public:
         );
       
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, cv1,
-                                                  Has_exact_division())&&
-         Segment_assertions::_assert_is_point_on (p, cv2,
-                                                  Has_exact_division()));
+        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
+         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
       CGAL_precondition_code(
         Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
@@ -194,10 +194,8 @@ public:
         );
 
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, cv1,
-                                                  Has_exact_division())&&
-         Segment_assertions::_assert_is_point_on (p, cv2,
-                                                  Has_exact_division()));
+        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
+         Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
       CGAL_precondition_code(
         Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
