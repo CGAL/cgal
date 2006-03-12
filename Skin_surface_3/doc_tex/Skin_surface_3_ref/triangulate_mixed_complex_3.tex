@@ -13,14 +13,31 @@
 
 \begin{ccRefFunction}{triangulate_mixed_complex_3}
 
-\ccDefinition
+\ccDefinition The global function \ccRefName\ takes a regular
+triangulation as input and constructs the triangulated mixed
+complex, as described in \cite{kv-mssct-05}. It deals with all
+degeneracies.
 
 
 \ccInclude{CGAL/triangulate_mixed_complex_3.h}
 
+\ccParameters 
+%
+The first template argument \ccc{SkinSurfaceTraits_3} is a model of
+the \ccc{SkinSurfaceTraits_3} concept. It defines the shrink factor
+and is used for the construction of the vertices of the mixed complex
+from centers of Delaunay simplices and Voronoi cells.
+
+The second template argument is the type of the Regular triangulation
+from which the triangulated mixed complex is computed and the last
+template argument is the type of the triangulation in which the
+triangulated mixed complex is stored. 
+
+\ccThree{voidx }{x}{}
+\ccThreeToTwo
 
 \ccGlobalFunction{
-const template < 
+template < 
   class SkinSurfaceTraits_3,
   class Regular_3,
   class TriangulatedMixedComplex_3>

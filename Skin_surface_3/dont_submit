@@ -2,3 +2,6 @@ TODO.txt
 examples/Skin_surface_3/union_of_balls_simple.C
 include/CGAL/union_of_balls_3.h
 include/CGAL/Voronoi_triangulator_3.h
+include/CGAL/triangulate_power_diagram_3.h
+doc_tex/Skin_surface_3_ref/triangulate_power_diagram_3.tex
+doc_tex/Skin_surface_3_ref/Voronoi_triangulator_3.tex

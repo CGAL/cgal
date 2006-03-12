@@ -21,7 +21,7 @@
   
 The class \ccRefName\ is a model of the \ccc{SkinSurfaceTraits_3}
 concept.  It defines the geometric types and primitive operations used
-in the construction and refinement of a skin surface 
+in the construction and refinement of a skin surface.
 
 \ccInclude{CGAL/Skin_surface_traits_3.h}
 
@@ -48,80 +48,103 @@ in the construction and refinement of a skin surface
 %
 \ccTypedef{typedef PolyhedronTraits_3 Polyhedron_traits;}{The traits class used for the
   geometric objects defined by the mesh.}
+%
+\ccTypedef{typedef Regular_kernel::RT Regular_RT;}{}
 
-\ccNestedType{R2T_converter}{Converter for geometric objects
+\ccTypedef{typedef Weighted_converter_3 <
+  Cartesian_converter<Triangulated_mixed_complex_traits,Polyhedron_traits>
+  > R2T_converter;}{Converter to convert geometric objects
   defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Triangulated_mixed_complex_traits}.}
 
-\ccNestedType{R2P_converter}{Converter for geometric objects
-  defined within \ccc{Regular_triangulation_traits} to objects defined within
+\ccTypedef{typedef Weighted_converter_3 <
+  Cartesian_converter<Triangulated_mixed_complex_traits,Polyhedron_traits>
+  > R2P_converter;}{Converter to convert geometric objects defined
+  within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Polyhedron_traits}.}
 
-\ccNestedType{T2P_converter}{Converter for geometric objects
+\ccTypedef{typedef Weighted_converter_3 <
+  Cartesian_converter<Triangulated_mixed_complex_traits,Polyhedron_traits>
+  > T2P_converter;}{Converter to convert geometric objects
   defined within \ccc{Triangulated_mixed_complex_traits} to objects
   defined within \ccc{Polyhedron_traits}.}
 
-\ccNestedType{T2P_converter}{Converter for geometric objects
+\ccTypedef{typedef Weighted_converter_3 <
+  Cartesian_converter<Triangulated_mixed_complex_traits,Polyhedron_traits>
+  > P2T_converter;}{Converter to convert geometric objects
   defined within \ccc{Polyhedron_traits} to objects
   defined within \ccc{Triangulated_mixed_complex_traits}.}
-
-\ccNestedType{Compute_anchor_3}{A predicate object which must
-  provide the function operators defined for
-  \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
 
 % NGHK: we don't know the regular triangulation
-%\ccNestedType{Construct_anchor_point_3}{A predicate object which must
-%  provide the following function operator:\\
-%  \ccc{TMC_Point operator()(const TMC_Point &center_del, const
-%    TMC_Point &center_vor);}\\
-%  Constructs the anchor point in between the Delaunay and Voronoi
-%  centers.}
+% \ccNestedType{Compute_anchor_3}{A predicate object which provides
+%   the function operators defined for
+%   \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
 
-
-\ccNestedType{R2T_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_triangulation_traits} to objects defined within
-  \ccc{Triangulated_mixed_complex_traits}.}
-
-\ccNestedType{R2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Regular_triangulation_traits} to objects defined within
-  \ccc{Polyhedron_traits}.}
-
-\ccNestedType{T2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Triangulated_mixed_complex_traits} to objects
-  defined within \ccc{Polyhedron_traits}.}
-
-\ccNestedType{T2P_converter}{Converter to convert geometric objects
-  defined within \ccc{Polyhedron_traits} to objects
-  defined within \ccc{Triangulated_mixed_complex_traits}.}
 
 \ccTypedef{typedef
-  Regular_triangulation_traits::In_smallest_orthocenter_3
-  In_smallest_orthocenter_3;}{bla}
-\ccNestedType{Construct_weighted_circumcenter_3;}{bla}
-\ccNestedType{Construct_triangulated_mixed_complex_vertex_3}{bla}
+  Construct_anchor_point_3<Triangulated_mixed_complex_traits>
+  Construct_anchor_point_3;} {A predicate object which
+  provides the following function operator:\\
+  \ccc{TMC_Point operator()(const TMC_Point &center_del, const
+    TMC_Point &center_vor);}\\
+  Constructs the anchor point in between the Delaunay and Voronoi
+  centers.}
+
+
+% NGHK: Might be added later to provide the predicate for the anchor point.
+%\ccTypedef{typedef
+%  Regular_triangulation_traits::In_smallest_orthocenter_3
+%  In_smallest_orthocenter_3;}{bla}
+%\ccNestedType{Construct_weighted_circumcenter_3;}{bla}
+%\ccNestedType{Construct_triangulated_mixed_complex_vertex_3}{bla}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{Skin_surface_traits_3( const typename Regular_triangulation_traits::FT s=.5);}{
-    constructor that takes the shrink factor as argument.}
+\ccConstructor{Skin_surface_traits_3( const typename
+  Regular_triangulation_traits::FT s=.5);}{ constructor that takes the
+  shrink factor as argument.}
 
 \ccOperations
+\ccThree{Construct_anchor_point_3}{traits.shrink_factor()}{}
+\ccThreeToTwo
 
-\ccMethod{In_smallest_orthogonal_sphere_3
-  in_smallest_orthogonal_sphere_3_object();}{ }
+% NGHK: Not in the current version
+%\ccMethod{In_smallest_orthogonal_sphere_3
+%  in_smallest_orthogonal_sphere_3_object();}{ }
+%\ccGlue
+%\ccMethod{Construct_weighted_circumcenter_3
+%  construct_weighted_circumcenter_3_object();}{ }
+%\ccGlue
+\ccMethod{Regular_RT shrink_factor();}{ }
 \ccGlue
-\ccMethod{Construct_weighted_circumcenter_3
-  construct_weighted_circumcenter_3_object();}{ }
-\ccGlue
-\ccMethod{Construct_triangulated_mixed_complex_vertex_3
-  construct_triangulated_mixed_complex_vertex_3_object();}{ }
-\ccMethod{Regular_triangulation_traits::FT shrink_factor();}{ }
+\ccMethod{Construct_anchor_point_3 construct_anchor_point_3_object();}{ }
+
+\ccHeading{Converters:}
+\ccThree{T2P_converterx}{Construct_anchor_point_3xxx}{}
+\ccThreeToTwo
+\ccMethod{R2T_converter r2t_converter_object() const;}{returns a
+  converter of geometric objects from the \ccc{Regular_triangulation_traits} to the
+  \ccc{Triangulated_mixed_complex_traits}.}
+
+\ccMethod{R2P_converter r2p_converter_object() const;}{returns a
+  converter of geometric objects from the \ccc{Regular_triangulation_traits} to the
+  \ccc{Polyhedron_traits}.}
+
+\ccMethod{T2P_converter t2p_converter_object() const;}{returns a
+  converter of geometric objects from the
+  \ccc{Triangulated_mixed_complex_traits} to the
+  \ccc{Polyhedron_traits}.}
+
+\ccMethod{P2T_converter p2t_converter_object() const;}{returns a
+  converter of geometric objects from the
+  \ccc{Triangulated_mixed_complex_traits} to the
+  \ccc{Polyhedron_traits}.}
 
 
 \ccSeeAlso
-\ccRefIdfierPage{SkinSurfaceTraits_3}
-
+\ccRefIdfierPage{CGAL::skin_surface_3}\\
+\ccRefIdfierPage{SkinSurfaceTraits_3}\\
 
 \end{ccRefClass}
 

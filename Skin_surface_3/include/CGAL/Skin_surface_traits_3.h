@@ -27,12 +27,6 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 // Contains the weighted converter:
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
-//#include <CGAL/Regular_triangulation_3.h>
-
-//#include <CGAL/Skin_surface_simplicial_complex_3.h>
-
-//#include <CGAL/Polyhedron_3.h>
-//#include <CGAL/Skin_surface_polyhedral_items_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
@@ -114,6 +108,7 @@ public:
     return P2T_converter();
   }
 
+  // NGHK: Not in current implementation
 //   template <class Kernel>
 //   Construct_weighted_circumcenter_3<
 //     Regular_triangulation_euclidean_traits_3<Kernel> >
@@ -122,22 +117,25 @@ public:
 //       construct_weighted_circumcenter_3_object();
 //   }
 
-  template <class Kernel>
-  In_smallest_orthogonal_sphere_3<
-    Regular_triangulation_euclidean_traits_3<Kernel> >
-  in_smallest_orthogonal_sphere_3_object() const {
-    return Regular_triangulation_euclidean_traits_3<Kernel>().
-      in_smallest_orthogonal_sphere_3_object();
+  // NGHK: Not in current implementation
+//   template <class Kernel>
+//   In_smallest_orthogonal_sphere_3<
+//     Regular_triangulation_euclidean_traits_3<Kernel> >
+//   in_smallest_orthogonal_sphere_3_object() const {
+//     return Regular_triangulation_euclidean_traits_3<Kernel>().
+//       in_smallest_orthogonal_sphere_3_object();
+//   }
+
+  Regular_RT shrink_factor() const {
+    return shrink;
   }
 
   Construct_anchor_point_3
   construct_anchor_point_3_object() const {
     return Construct_anchor_point_3(r2t_converter_object()(shrink) );
   }
-  Regular_RT shrink_factor() const {
-    return shrink;
-  }
 
+private:
   Regular_RT shrink;
 };
 

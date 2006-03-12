@@ -38,6 +38,16 @@ The output is a \ccc{Polyhedron_3} and is constructed using the
 
 \ccInclude{CGAL/marching_tetrahedra_3.h}
 
+\ccParameters The first template argument defines the type of the
+triangulation that forms the input for the marching tetrahedra
+algorithm. The second parameter is the type of the polyhedral mesh in
+which the extracted surface is stored. The third template argument is
+a model of the \ccc{MarchingTetrahedraTraits_3} concept and defines
+which vertices lie inside and which outside the surface. It also
+provides a function to obtain a vertex from the intersection of an
+edge with the surface. The last template argument is a model of the
+\ccc{MarchingTetrahedraObserver_3} concept.
+
 \ccGlobalFunction{
 template <class Triangulation_3,
 	  class Polyhedron_3,

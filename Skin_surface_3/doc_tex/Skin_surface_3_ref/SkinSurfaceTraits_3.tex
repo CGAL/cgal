@@ -40,6 +40,9 @@
 \ccNestedType{Polyhedron_traits}{The traits class used for the
   geometric objects defined by the mesh.}
 
+\ccNestedType{Regular_RT}{The ring type of the
+  \ccc{Regular_triangulation_traits}.}
+
 \ccNestedType{R2T_converter}{Converter for geometric objects
   defined within \ccc{Regular_triangulation_traits} to objects defined within
   \ccc{Triangulated_mixed_complex_traits}.}
@@ -59,12 +62,12 @@
 % NGHK: These predicates need the Regular triangulation, which are not
 % known in the skin surface traits class
 
-%\ccNestedType{Compute_anchor_3}{A predicate object which must
-%  provide the function operators defined for
+%\ccNestedType{Compute_anchor_3}{A predicate object which
+%  provides the function operators defined for
 %  \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
 
-\ccNestedType{Construct_anchor_point_3}{A predicate object which must
-  provide the following function operator:\\
+\ccNestedType{Construct_anchor_point_3}{A predicate object which
+  provides the following function operator:\\
   \ccc{TMC_Point operator()(const TMC_Point &center_del, const
     TMC_Point &center_vor);}\\
   Constructs the anchor point in between the Delaunay and Voronoi
@@ -80,8 +83,6 @@
 
 \ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3, PolyhedronTraits_3>}
 
-\ccSeeAlso
-\ccRefIdfierPage{CGAL::skin_surface_3}
 
 \ccThree{Construct_anchor_point_3}{traits.shrink_factor()}{}
 \ccThreeToTwo
@@ -116,6 +117,9 @@ The following functions give access to the predicate objects:
   \ccc{Triangulated_mixed_complex_traits} to the
   \ccc{Polyhedron_traits}.}
 
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::skin_surface_3}\\
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3, PolyhedronTraits_3>}
 
 \end{ccRefConcept}
 
