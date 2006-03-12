@@ -55,14 +55,14 @@ public:
   typedef typename Rt_Geom_traits::RT                Rt_RT;
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
 
-  typedef typename Simplicial::Vertex_handle    Sc_Vertex_handle;
-  typedef typename Simplicial::Edge             Sc_Edge;
-  typedef typename Simplicial::Facet            Sc_Facet;
-  typedef typename Simplicial::Cell_handle      Sc_Cell_handle;
+  typedef typename Simplicial::Vertex_handle    TVD_Vertex_handle;
+  typedef typename Simplicial::Edge             TVD_Edge;
+  typedef typename Simplicial::Facet            TVD_Facet;
+  typedef typename Simplicial::Cell_handle      TVD_Cell_handle;
   typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel  Triangulated_mixed_complex_kernel;
-  typedef typename Triangulated_mixed_complex_kernel::Point_3        Sc_Point;
-  typedef typename Triangulated_mixed_complex_kernel::RT             Sc_RT;
-  typedef Weighted_point<Sc_Point,Sc_RT>        Sc_Weighted_point;
+  typedef typename Triangulated_mixed_complex_kernel::Point_3        TVD_Point;
+  typedef typename Triangulated_mixed_complex_kernel::RT             TVD_RT;
+  typedef Weighted_point<TVD_Point,TVD_RT>        TVD_Weighted_point;
   typedef Skin_surface_quadratic_surface_3<Mesh_K> QuadrSurface;
   typedef Skin_surface_sphere_3<Mesh_K>         Sphere_surface;
   typedef Skin_surface_hyperboloid_3<Mesh_K>    Hyperboloid_surface;
@@ -81,13 +81,13 @@ public:
   }
 
   void after_vertex_insertion(
-    Rt_Simplex &sDel, Rt_Simplex &sVor, Sc_Vertex_handle &vh)
+    Rt_Simplex &sDel, Rt_Simplex &sVor, TVD_Vertex_handle &vh)
   {
     vh->sDel = sDel;
     vh->sVor = sVor;
   }
 
-  void after_cell_insertion(Rt_Simplex &s, Sc_Cell_handle &ch) 
+  void after_cell_insertion(Rt_Simplex &s, TVD_Cell_handle &ch) 
   {
     CGAL_assertion(s.dimension() == 0);
     Rt_Vertex_handle vh = s;
@@ -137,22 +137,22 @@ private:
   typedef typename Regular::Geom_traits::RT     Rt_RT;
   typedef typename Regular::Weighted_point      Rt_Weighted_point;
 
-  typedef typename Simplicial::Vertex_handle    Sc_Vertex_handle;
-  typedef typename Simplicial::Edge             Sc_Edge;
-  typedef typename Simplicial::Facet            Sc_Facet;
-  typedef typename Simplicial::Cell_handle      Sc_Cell_handle;
+  typedef typename Simplicial::Vertex_handle    TVD_Vertex_handle;
+  typedef typename Simplicial::Edge             TVD_Edge;
+  typedef typename Simplicial::Facet            TVD_Facet;
+  typedef typename Simplicial::Cell_handle      TVD_Cell_handle;
 
-  typedef typename Simplicial::Finite_vertices_iterator Sc_Finite_vertices_iterator;
-  typedef typename Simplicial::Finite_edges_iterator    Sc_Finite_edges_iterator;
-  typedef typename Simplicial::Finite_facets_iterator   Sc_Finite_facets_iterator;
-  typedef typename Simplicial::All_cells_iterator       Sc_All_cells_iterator;
-  typedef typename Simplicial::Finite_cells_iterator    Sc_Finite_cells_iterator;
-  typedef typename Simplicial::Cell_circulator          Sc_Cell_circulator;
+  typedef typename Simplicial::Finite_vertices_iterator TVD_Finite_vertices_iterator;
+  typedef typename Simplicial::Finite_edges_iterator    TVD_Finite_edges_iterator;
+  typedef typename Simplicial::Finite_facets_iterator   TVD_Finite_facets_iterator;
+  typedef typename Simplicial::All_cells_iterator       TVD_All_cells_iterator;
+  typedef typename Simplicial::Finite_cells_iterator    TVD_Finite_cells_iterator;
+  typedef typename Simplicial::Cell_circulator          TVD_Cell_circulator;
 	
-  typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel          Sc_Geom_traits;
-  typedef typename Sc_Geom_traits::Point_3              Sc_Point;
-  typedef typename Sc_Geom_traits::RT                   Sc_RT;
-  //   typedef Weighted_point<Sc_Point>                Sc_Weighted_point;
+  typedef typename Skin_traits_3::Triangulated_mixed_complex_kernel          TVD_Geom_traits;
+  typedef typename TVD_Geom_traits::Point_3              TVD_Point;
+  typedef typename TVD_Geom_traits::RT                   TVD_RT;
+  //   typedef Weighted_point<TVD_Point>                TVD_Weighted_point;
 
   typedef Triangulation_incremental_builder_3<Simplicial>
   Triangulation_incremental_builder;
@@ -206,24 +206,24 @@ private:
     triangulation_incr_builder.end_triangulation();
   }
 
-  Sc_Vertex_handle add_vertex(Rt_Simplex &sVor); 
-  Sc_Cell_handle add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s);
+  TVD_Vertex_handle add_vertex(Rt_Simplex &sVor); 
+  TVD_Cell_handle add_cell(TVD_Vertex_handle vh[], int orient, Rt_Simplex s);
 	
-  Sc_Vertex_handle get_vertex(Rt_Simplex &sVor);
+  TVD_Vertex_handle get_vertex(Rt_Simplex &sVor);
 
 
   void construct_vertices();
-  Sc_Point get_anchor(Rt_Simplex &sVor);
+  TVD_Point get_anchor(Rt_Simplex &sVor);
 
   // triangulate Voronoi cells:
   void construct_cells();
   void compute_value_on_vertices();
 
-//  typedef std::map<Rt_Simplex, typename Sc_Geom_traits::Point_3> Focus_map;
+//  typedef std::map<Rt_Simplex, typename TVD_Geom_traits::Point_3> Focus_map;
 //  Focus_map foc_map;
 
   // Reference back to the regular triangulation
-//  std::map<Sc_Cell_handle, Rt_Simplex> backRef;
+//  std::map<TVD_Cell_handle, Rt_Simplex> backRef;
 	
 private:
   Regular &T;
@@ -234,33 +234,33 @@ private:
 
   Construct_weighted_circumcenter_3<
     Regular_triangulation_euclidean_traits_3<
-    Sc_Geom_traits> >                                orthocenter_obj;
+    TVD_Geom_traits> >                                orthocenter_obj;
   Compute_squared_radius_smallest_orthogonal_sphere_3<
     Regular_triangulation_euclidean_traits_3<
     typename Simplicial::Geom_traits> >              orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;
 
   int edge_index[4][4];
-  struct Index_c4 { Sc_Vertex_handle V[4]; };
-  struct Index_c6 { Sc_Vertex_handle V[6]; };
-  struct Index_c44 { Sc_Vertex_handle V[4][4]; };
+  struct Index_c4 { TVD_Vertex_handle V[4]; };
+  struct Index_c6 { TVD_Vertex_handle V[6]; };
+  struct Index_c44 { TVD_Vertex_handle V[4][4]; };
   struct Index_v {
-    Unique_hash_map < Rt_Vertex_handle, Sc_Vertex_handle > V;
+    Unique_hash_map < Rt_Vertex_handle, TVD_Vertex_handle > V;
   };
   // Facets on the border of the simplicial complex:
 
   // name is given by dimension of the Delaunay siplex
   // index to vertex
-  Unique_hash_map < Rt_Cell_handle, Sc_Vertex_handle > index_3;
+  Unique_hash_map < Rt_Cell_handle, TVD_Vertex_handle > index_3;
   // index points to facet
   Unique_hash_map < Rt_Cell_handle, Index_c4 > index_2;
   // From the vertex to the adjacent vertex
   Unique_hash_map < Rt_Vertex_handle, Index_v > index_1;
   // One for every vertex
-  Unique_hash_map < Rt_Vertex_handle, Sc_Vertex_handle > index_0;
+  Unique_hash_map < Rt_Vertex_handle, TVD_Vertex_handle > index_0;
 
-  //std::list<Sc_Vertex_handle> degenerate_vertices;
-  Sc_Vertex_handle debug_vh;
+  //std::list<TVD_Vertex_handle> degenerate_vertices;
+  TVD_Vertex_handle debug_vh;
 };
 
 // Constructs the vertices of the simplicial complex
@@ -278,7 +278,7 @@ construct_vertices() {
   Rt_Edge e;
   Rt_Cell_handle c1, c2;
   Rt_Simplex sVor;
-  Sc_Vertex_handle vh;
+  TVD_Vertex_handle vh;
 
   // dimVor=3
   for (cit=T.finite_cells_begin(); cit!=T.finite_cells_end(); cit++) {
@@ -342,8 +342,8 @@ void
 Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
 construct_cells() {
   Rt_Simplex sVor;
-  Sc_Vertex_handle vh[4];
-  std::list<Sc_Cell_handle> inserted_cells;
+  TVD_Vertex_handle vh[4];
+  std::list<TVD_Cell_handle> inserted_cells;
 
   for (Rt_Finite_vertices_iterator vit=T.finite_vertices_begin();
        vit!=T.finite_vertices_end(); vit++) {
@@ -375,7 +375,7 @@ construct_cells() {
 		  
 	      if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
 		
-		Sc_Cell_handle ch;
+		TVD_Cell_handle ch;
 								
 		ch = add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
 		inserted_cells.push_back(ch);
@@ -390,11 +390,11 @@ construct_cells() {
 
 // Adds a vertex to the simplicial complex
 template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::TVD_Vertex_handle
 Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
 add_vertex (Rt_Simplex &sVor)
 {
-  Sc_Vertex_handle vh = triangulation_incr_builder.add_vertex();
+  TVD_Vertex_handle vh = triangulation_incr_builder.add_vertex();
   vh->point() = get_anchor(sVor);
   visitor.after_vertex_insertion(sVor,sVor,vh); 
 
@@ -403,7 +403,7 @@ add_vertex (Rt_Simplex &sVor)
 
 // Gets a vertex from the simplicial complex based on the anchors
 template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Vertex_handle
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::TVD_Vertex_handle
 Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_vertex (
   Rt_Simplex &sVor)
 {
@@ -437,20 +437,20 @@ Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_vertex (
       assert(false);
   }
   assert(false);
-  return Sc_Vertex_handle();
+  return TVD_Vertex_handle();
 }
 
 // Adds a cell to the simplicial complex
 template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Cell_handle
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::TVD_Cell_handle
 Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::
-add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
+add_cell(TVD_Vertex_handle vh[], int orient, Rt_Simplex s) {
   assert((orient==0) || (orient==1));
-  assert(vh[0] != Sc_Vertex_handle()); assert(vh[1] != Sc_Vertex_handle());
-  assert(vh[2] != Sc_Vertex_handle()); assert(vh[3] != Sc_Vertex_handle());
+  assert(vh[0] != TVD_Vertex_handle()); assert(vh[1] != TVD_Vertex_handle());
+  assert(vh[2] != TVD_Vertex_handle()); assert(vh[3] != TVD_Vertex_handle());
   assert(vh[1] != vh[2]); assert(vh[1] != vh[3]); assert(vh[1] != vh[4]);
   assert(vh[2] != vh[3]); assert(vh[2] != vh[4]); assert(vh[3] != vh[4]);
-  Sc_Cell_handle ch;
+  TVD_Cell_handle ch;
 
 // NGHK: DEBUG:
   Orientation o = orientation(
@@ -461,7 +461,7 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
     Rt_Edge           r_e;
     Rt_Facet          r_f;
     Rt_Cell_handle    r_ch;
-    Sc_Point vert[4];
+    TVD_Point vert[4];
     for (int i=0; i<4; i++) {
       switch (vh[i]->sVor.dimension()) {
         case 0:
@@ -505,7 +505,7 @@ add_cell(Sc_Vertex_handle vh[], int orient, Rt_Simplex s) {
 }
 
 template <class SkinSurfaceTraits_3, class Mixed_complex_visitor_>
-typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::Sc_Point
+typename Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::TVD_Point
 Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_anchor(Rt_Simplex &sVor)
 {
   Rt_Vertex_handle vh;
@@ -513,7 +513,7 @@ Voronoi_triangulator_3<SkinSurfaceTraits_3,Mixed_complex_visitor_>::get_anchor(R
   Rt_Facet          f;
   Rt_Cell_handle   ch;
 	
-  Sc_Point vfoc, dfoc;
+  TVD_Point vfoc, dfoc;
   switch (sVor.dimension()) {
     case 0:
       vh=sVor;

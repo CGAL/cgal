@@ -50,14 +50,14 @@ public:
   typedef typename Rt_Geom_traits::RT                Rt_RT;
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
 
-  typedef typename Triangulated_mixed_complex::Vertex_handle Sc_Vertex_handle;
-  typedef typename Triangulated_mixed_complex::Edge          Sc_Edge;
-  typedef typename Triangulated_mixed_complex::Facet         Sc_Facet;
-  typedef typename Triangulated_mixed_complex::Cell_handle   Sc_Cell_handle;
+  typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
+  typedef typename Triangulated_mixed_complex::Edge          TMC_Edge;
+  typedef typename Triangulated_mixed_complex::Facet         TMC_Facet;
+  typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
   
-  typedef typename Triangulated_mixed_complex_kernel::Point_3        Sc_Point;
-  typedef typename Triangulated_mixed_complex_kernel::RT             Sc_RT;
-  typedef Weighted_point<Sc_Point,Sc_RT>        Sc_Weighted_point;
+  typedef typename Triangulated_mixed_complex_kernel::Point_3        TMC_Point;
+  typedef typename Triangulated_mixed_complex_kernel::RT             TMC_RT;
+  typedef Weighted_point<TMC_Point,TMC_RT>        TMC_Weighted_point;
   typedef Skin_surface_quadratic_surface_3<Polyhedron_kernel> QuadrSurface;
   typedef Skin_surface_sphere_3<Polyhedron_kernel>         Sphere_surface;
   typedef Skin_surface_hyperboloid_3<Polyhedron_kernel>    Hyperboloid_surface;
@@ -69,17 +69,22 @@ public:
   typedef typename Skin_traits_3::R2P_converter R2P_converter;
   typedef typename Skin_traits_3::T2P_converter T2P_converter;
 
+  Triangulated_mixed_complex_observer_3() : 
+    shrink(.5), r2p_converter(SkinSurfaceTraits_3().r2p_converter_object()),
+    t2p_converter(SkinSurfaceTraits_3().t2p_converter_object()) {
+  }
+
   Triangulated_mixed_complex_observer_3(Mesh_RT shrink) : 
     shrink(shrink), r2p_converter(SkinSurfaceTraits_3().r2p_converter_object()),
     t2p_converter(SkinSurfaceTraits_3().t2p_converter_object()) {
   }
 
   void after_vertex_insertion(
-    Rt_Simplex const &sDel, Rt_Simplex const &sVor, Sc_Vertex_handle const &vh) 
+    const Rt_Simplex &sDel, const Rt_Simplex &sVor, TMC_Vertex_handle &vh) 
   {
   }
 
-  void after_cell_insertion(Rt_Simplex &s, Sc_Cell_handle &ch) 
+  void after_cell_insertion(const Rt_Simplex &s, TMC_Cell_handle &ch) 
   {
     if (!(s == prev_s)) {
       prev_s = s;

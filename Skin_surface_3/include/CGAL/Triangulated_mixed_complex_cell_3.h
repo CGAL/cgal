@@ -40,7 +40,7 @@ public:
   typedef typename Triangulation_data_structure::Cell_handle   Cell_handle;
 
   typedef SurfaceKernel                                    Surface_kernel;
-  typedef Skin_surface_quadratic_surface_3<Polyhedron_3_kernel> QuadrSurface;
+  typedef Skin_surface_quadratic_surface_3<Surface_kernel> QuadrSurface;
 	
   template < class TDS2 >
   struct Rebind_TDS {
