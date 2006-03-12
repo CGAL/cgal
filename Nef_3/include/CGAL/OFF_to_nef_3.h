@@ -37,48 +37,50 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Kernel>
-typename Kernel::Point_3
-number_type_converter_nef_3 (const CGAL::Cartesian<double>::Point_3 &d)
-{
-   typedef typename Kernel::Point_3   Point_3;
-   typedef typename Kernel::RT        RT;
+class Homogeneous_tag;
+class Cartesian_tag;
+template<typename Tag, typename Kernel> class number_type_converter_nef_3;
 
-   CGAL::Gmpq x(d.x()), y(d.y()), z(d.z());
-
-   CGAL::Homogeneous<CGAL::Gmpz>::Point_3 b =
-      normalized ( CGAL::Homogeneous<CGAL::Gmpz>::Point_3 (
-         x.numerator()   * y.denominator() * z.denominator(),
+template<class Kernel>
+class number_type_converter_nef_3<Homogeneous_tag, Kernel> {
+ public:
+  static typename Kernel::Point_3
+    convert (const CGAL::Cartesian<double>::Point_3 &d)
+  {
+    typedef typename Kernel::Point_3   Point_3;
+    typedef typename Kernel::RT        RT;
+    
+    CGAL::Gmpq x(d.x()), y(d.y()), z(d.z());
+    
+      CGAL::Homogeneous<CGAL::Gmpz>::Point_3 b =
+	normalized ( CGAL::Homogeneous<CGAL::Gmpz>::Point_3 (
+	 x.numerator()   * y.denominator() * z.denominator(),
          x.denominator() * y.numerator()   * z.denominator(),
          x.denominator() * y.denominator() * z.numerator(),
          x.denominator() * y.denominator() * z.denominator() ) );
 
-   std::ostringstream outx, outy, outz, outw;
-   outx << b.hx();
-   outy << b.hy();
-   outz << b.hz();
-   outw << b.hw();
-   RT rx (outx.str().c_str());
-   RT ry (outy.str().c_str());
-   RT rz (outz.str().c_str());
-   RT rw (outw.str().c_str());
+      std::ostringstream outx, outy, outz, outw;
+      outx << b.hx();
+      outy << b.hy();
+      outz << b.hz();
+      outw << b.hw();
+      RT rx (outx.str().c_str());
+      RT ry (outy.str().c_str());
+      RT rz (outz.str().c_str());
+      RT rw (outw.str().c_str());
+      
+      return Point_3 (rx, ry, rz, rw);
+  }
+};
 
-   return Point_3 (rx, ry, rz, rw);
-}
-
-template <>
-CGAL::Cartesian<CGAL::Gmpq>::Point_3
-number_type_converter_nef_3<CGAL::Cartesian<CGAL::Gmpq> > (const CGAL::Cartesian<double>::Point_3 &d)
-{  return CGAL::Cartesian<CGAL::Gmpq>::Point_3 (d.x(), d.y(), d.z());
-}
-
-#ifdef CGAL_USE_LEDA
-template <>
-CGAL::Cartesian<leda_rational>::Point_3
-number_type_converter_nef_3<CGAL::Cartesian<leda_rational> > (const CGAL::Cartesian<double>::Point_3 &d)
-{  return CGAL::Cartesian<leda_rational>::Point_3 (d.x(), d.y(), d.z());
-}
-#endif // CGAL_USE_LEDA
+template<class Kernel>
+class number_type_converter_nef_3<Cartesian_tag, Kernel> {
+ public:
+  static typename Kernel::Point_3
+    convert (const CGAL::Cartesian<double>::Point_3 &d)
+  {  return typename Kernel::Point_3(d.x(), d.y(), d.z());
+  }
+};
 
 CGAL_END_NAMESPACE
 #endif // NUMBER_TYPE_CONVERTER_NEF_3_H
@@ -123,6 +125,9 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    typedef Scan_OFF::Facet_iterator          Scan_facet_it;
    typedef Scan_OFF::Index_iterator          Scan_index_it;
 
+   typedef typename Kernel::Kernel_tag Kernel_tag;
+   typedef typename CGAL::number_type_converter_nef_3<Kernel_tag,Kernel> ntc;
+
    // declarations and defaults
    std::size_t discarded_facets=0;
    long idx;
@@ -150,7 +155,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    Scan_vertex_it v_it = scan.vertices_begin();
    for (idx=0; v_it != scan.vertices_end(); ++v_it, ++idx)
    {  V_scan.push_back (*v_it);
-      V.push_back (CGAL::number_type_converter_nef_3<Kernel>(*v_it));
+     V.push_back (ntc::convert(*v_it));
    }
    CGAL_warning ( idx==NOV );
    NOV = idx;
