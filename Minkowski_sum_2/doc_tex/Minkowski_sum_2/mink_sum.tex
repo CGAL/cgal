@@ -26,10 +26,91 @@ Given two sets $A,B \in \reals^d$, their \emph{Minkowski sum},
 denoted by $A \oplus B$, is the set $\left\{ a + b ~\vert~ a \in
 A, b \in B \right\}$. Minkowski sum are used in many applications,
 such as motion planning and computer-aided design and
-manufacturing. This package contains functions for computing
+manufacturing. This package contains functions for computing planar
 Minkowski sums of two polygons (namely $A$ and $B$ are two closed
 polygons in $\reals^2$), and for a polygon and a disc (an operation
-also known as \emph{offsetting}).
+also known as \emph{offsetting} or \emph{dilating} a polygon).
+
+\section{Computing the Minkowski Sum of Two Polygons}
+\label{mink_sec:sum_poly}
+%====================================================
+
+Computing the Minkowski sum of two convex polygons $P$ ans $Q$ with
+$m$ and $n$ vertices respectively is very easy, as $P \oplus Q$ is a
+convex polygon bounded by copies of the $m + n$ edges, and these edges
+are sorted by the angle they form with the $x$-axis. As the two
+input polygons are convex, their edges are already sorted by the
+angle they form with the $x$-axis. The Minkowski sum can therefore be
+computed in $O(m + n)$ time, by starting from two botommost vertices
+in $P$ and in $Q$ and performing ``merge sort'' on the edges.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+    \begin{tabular}{c c}
+        \psfig{figure=Minkowski_sum_2/fig/onecyc_in.eps,width=2.5in,silent=} ~&~
+        \psfig{figure=Minkowski_sum_2/fig/onecyc_out.eps,width=2.5in,silent=}
+    \end{tabular}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/conv_onecycle.gif" border=0 alt="Convolution cycle">
+  </center>
+\end{ccHtmlOnly}
+\caption{Computing the convolution of a convex polygon and a
+non-convex polygon (left). The convolution consists of a single
+self-intersecting cycle, drawn as a sequence of arrows (right).
+The winding number associated with each face of the arrangement
+induced by the segments forming the cycle appears in dashed circles.
+The Minkowski sum of the two polygons is shaded.}
+\label{fig:onecyc}
+\end{figure}
+
+If the polygons are not convex, it is possible to use one of the following
+approaches:
+\begin{description}
+\item[Decomposition:]
+We decompose $P$ and $Q$ into convex sub-polygons, namely we obtain two
+sets of convex polygons $P_1, \ldots, P_k$ and $Q_1, \ldots, Q_\ell$ such
+that $\bugcup_{i = 1}{k}{P_i} = P$ and $\bugcup_{i = j}{\ell}{Q_j} = Q$.
+We then calculate the pairwise sums $S_{ij} = P_i \oplus Q_j$ using the
+simple procedure described above, and compute the union $P \oplus Q =
+\bigcup_{ij}{S_{ij}}$.
+
+This approach relies on a decoposition strategy that computes the convex
+decomposition of the input polygons and its performance depends on the
+quality of the decomposition.
+%
+\item[Convolution:]
+Let us denote the vertices of the input polygons by
+$P = \left( p_0, \ldots, p_{m-1} \right)$ and
+$Q = \left( q_0, \ldots, q_{n-1} \right)$. We assume that both $P$ and $Q$
+have positive orientations (i.e. their boundaries wind in a counterclockwise
+order around their interiors) and compute the convolution of the two polygon
+boundaries. The {\em convolution} of these two polygons~\cite{grs-kfcg-83},
+denoted $P * Q$, is a collection of line segments of the form
+$[p_i + q_j, p_{i+1} + q_j]$, where the vector $\overrightarrow{p_i p_{i+1}}$
+lies between $\overrightarrow{q_{j-1} q_j}$ and $\overrightarrow{q_j
+q_{j+1}}$,\footnote{We say that a vector $\vec{v}$ lies between
+two vectors $\vec{u}$ and $\vec{w}$ if we reach $\vec{v}$ strictly
+before reaching $\vec{w}$ if we move all three vectors to the origin
+and rotate $\vec{u}$ counterclockwise. Note that this also covers
+the case where $\vec{u}$ has the same direction as $\vec{v}$.} and
+--- symmetrically --- of segments of the form $[p_i + q_j, p_i + q_{j+1}]$,
+where the vector $\overrightarrow{q_j q_{j+1}}$ lies between
+$\overrightarrow{p_{i-1} p_i}$ and $\overrightarrow{p_i p_{i+1}}$.
+
+The segments of the convolution form a number of closed (not
+necessarily simple) polygonal curves called \emph{convolution
+cycles}. The Minkowski sum $P \oplus Q$ is the set of points
+having a non-zero winding number with respect to the cycles
+of $P * Q$.\footnote{Informally speaking, the winding number of a point
+$p \in \reals^2$ with respect to some planar curve $\gamma$ is an
+integer number counting how many times does $\gamma$ wind in a
+counterclockwise direction around $p$.} See Figure~\ref{fig:onecyc} for
+an illustration.
+\end{description}
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -47,5 +128,10 @@ in the example program \ccc{ex_sum_triangles.C}.}
 \label{mink_fig:sum_tri}
 \end{figure}
 
-
 \ccIncludeExampleCode{../examples/Minkowski_sum_2/ex_sum_triangles.C}
+
+
+
+\section{Offsetting a Polygon}
+\label{mink_sec:offset}
+%=============================
