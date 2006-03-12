@@ -31,10 +31,10 @@ method on the proxy, passing the type of the notification. The proxy
 stores a reference counted pointer to the notifier, ensuring that
 there are never any dangling pointers in the system.
 
-The class \ccRefName\ provides base class for listener proxy
-objects. An notifier should provide class which uses this base. To use
-this base class, implement a class, here called Interface, which
-defines a type \ccc{Interface::Notification_type} and a type
+The class \ccRefName\ provides base class for listener proxy objects.
+A notifier should provide a class which inherits from this base. To
+use this base class, implement a class, here called \ccc{Interface},
+which defines a type \ccc{Interface::Notification_type} and a type
 \ccc{Interface::Notifier_handle}.
 
 The \ccc{Notification_type} is generally an enum with one value for
@@ -48,16 +48,17 @@ pointer.
 The \ccRefName\ maintains a ref counted pointer to the object
 performing notifications. It is registered for notifications on
 construction and unregistered on destruction using the function
-\ccc{set_listener} on the object providing the notifications. The use
-of ref counted pointers means that as long as the notification object
-exists, the object providing the notifications must exist, ensuring
-that the object providing the notifications is not prematurely
-destroyed.
+\ccc{set_listener(Listener<Interface>*)} on the object providing the
+notifications. The use of ref counted pointers means that as long as
+the notification object exists, the object providing the notifications
+must exist, ensuring that the object providing the notifications is
+not prematurely destroyed.
 
 These objects cannot be copied since the notifier only support one
-listener.
+listener. If copying and more than one listener are desired, the
+\ccc{Multi_listener<Interface>} base class should be used instead.
 
-Boost provides a similar functionality in the Boost.Signal
+As a side note, Boost provides a similar functionality in the Boost.Signal
 package. However, it is quite a bit more complex (and flexible). This
 complexity add significantly to compile time and (although I did not
 test this directly), I suspect it is much slower at runtime due to the
@@ -95,7 +96,53 @@ writing my own.
 
 \ccExample
 
-\ccIncludeExampleCode{Kinetic_data_structures/listener.C}
+Here is a simplier class that provides notifications:
+\begin{ccExampleCode}
+struct Notifier: public CGAL::Kinetic::Ref_counted<Notifier>
+{
+public:
+  Notifier(): data_(0), listener_(NULL){}
+
+  struct Listener_interface
+  {
+  public:
+    typedef enum Notification_type {DATA_CHANGED} Notification_type;
+    typedef Notifier::Handle Notifier_handle;
+  };
+
+  typedef CGAL::Kinetic::Listener<Listener_interface> Listener;
+  friend class CGAL::Kinetic::Listener<Listener_interface>;
+  
+  void set_data(int d) {
+    data_=d;
+    if (listener_ != NULL) listener_->new_notification(Listener_interface::DATA_CHANGED);
+  }
+
+protected:
+  void set_listener(Listener *l) {
+    listener_= l;
+  }
+  Listener* listener() const {return listener_;}
+
+  int data_;
+  Listener *listener_;
+};
+\end{ccExampleCode}
+
+Now the listener:
+\begin{ccExampleCode}
+
+struct My_listener: public Notifier::Listener, public CGAL::Kinetic::Ref_counted<My_listener>
+{
+  typedef Notifier::Listener::Notifier_handle PP;
+  My_listener(PP p): P(p){}
+
+  void new_notification(P::Notification_type nt) {
+    ...
+  }
+};
+
+\end{ccExampleCode}
 
 
 \end{ccRefClass}

@@ -26,14 +26,18 @@ queue must implement the \ccc{Event} concept.
 
 \ccTypes
 
-\ccNestedType{Key}{The type used to access items in the queue in order to change or delete them.}
+\ccNestedType{Key}{The type used to access items in the queue in order
+  to change or delete them.}
 
-\ccNestedType{Priority}{The priority type for items in the queue. This is typically the same as \ccc{Kinetic::Simulator}::Time}.
+\ccNestedType{Priority}{The priority type for items in the queue. This
+  is typically the same as \ccc{Kinetic::Simulator::Time}}.
 
 \ccCreation
 \ccCreationVariable{q}  %% choose variable name
 
-\ccConstructor{EventQueue(Priority start, Priority end, int size_hint);}{Construct a queue which will start at time start and run until time end.}
+\ccConstructor{EventQueue(Priority start, Priority end, int
+  size_hint);}{Construct a queue which will start at time start and
+  run until time end.}
 
 \ccOperations
 

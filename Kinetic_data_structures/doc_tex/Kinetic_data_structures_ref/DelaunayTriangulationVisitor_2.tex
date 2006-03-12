@@ -23,11 +23,15 @@ This concept is for proxy objects which get notified when a kinetic Delaunay tri
 
 \ccMethod{void create_vertex(Vertex_handle);}{The vertex was just created.}
 
-\ccMethod{void modify_vertex(Vertex_handle);}{Something changed at the vertex.}
+\ccMethod{void modify_vertex(Vertex_handle);}{The trajectory of the point at the vertex changed.}
 
-\ccMethod{template <class It>  void create_faces(It begin, It end);}{New faces have just been made. The \ccc{value_type} of the iterator is a \ccc{TriangulationDataStructure_2::Face_handle}.}
+\ccMethod{template <class It> void create_faces(It begin, It
+  end);}{New faces have just been made. The \ccc{value_type} of the
+  iterator is a \ccc{TriangulationDataStructure_2::Face_handle}.}
  
-\ccMethod{template <class It> void remove_faces(It, It);}{The faces in the range are about to be deleted.  The \ccc{value_type} of the iterator is a \ccc{TriangulationDataStructure_2::Face_handle}.}
+\ccMethod{template <class It> void remove_faces(It, It);}{The faces in
+  the range are about to be deleted.  The \ccc{value_type} of the
+  iterator is a \ccc{TriangulationDataStructure_2::Face_handle}.}
 
 \ccMethod{void before_flip(Edge);}{The edge is about to be flipped.}
 
@@ -36,7 +40,9 @@ This concept is for proxy objects which get notified when a kinetic Delaunay tri
 
 \ccHasModels 
 
-\ccc{Kinetic::Delaunay_triangulation_visitor_base_2}, \ccc{Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>},  \ccc{Kinetic::Delaunay_triangulation_event_log_visitor_2}
+\ccc{Kinetic::Delaunay_triangulation_visitor_base_2},
+\ccc{Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>},
+\ccc{Kinetic::Delaunay_triangulation_event_log_visitor_2}
 
 \end{ccRefConcept}
 

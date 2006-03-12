@@ -17,20 +17,44 @@
 \ccDefinition
   
 This concept ties together the parts needed in order to run a kinetic
-data structure. 
+data structure. We provide several models of this concept:
+\begin{itemize}
+\item \ccc{Kinetic::Exact_simulation_traits_1}
+\item \ccc{Kinetic::Exact_simulation_traits_2}
+\item \ccc{Kinetic::Exact_simulation_traits_3}
+\item \ccc{Kinetic::Inexact_simulation_traits_1}
+\item \ccc{Kinetic::Inexact_simulation_traits_2}
+\item \ccc{Kinetic::Inexact_simulation_traits_3}
+\item \ccc{Kinetic::Exact_linear_simulation_traits_2}
+\item \ccc{Kinetic::Exact_linear_simulation_traits_3}
+\item \ccc{Kinetic::Inexact_linear_simulation_traits_2}
+\item \ccc{Kinetic::Inexact_linear_simulation_traits_3}
+\item \ccc{Kinetic::Regular_triangulation_exact_simulation_traits_3}
+\item \ccc{Kinetic::Regular_triangulation_inexact_simulation_traits_3}
+\end{itemize}
+
+All support trajectories defined by polynomial coordinates. The
+\ccc{Exact} vs \ccc{Inexect} picks whether the roots of the
+certificate functions are compared exactly or approximated
+numerically. The regular triangulation models have weighted points of
+the appropriate dimension as the primitive used in the
+\ccc{Kinetic::InstantaneousKernel} and the
+\ccc{Kinetic::ActiveObjectsTable}.
 
 
 \ccTypes
 
 \ccNestedType{NT}{The number type used for representation.}
 
-\ccNestedType{Static_kernel}{A CGAL kernel which can be used for static computations.}
-
 \ccNestedType{Instantaneous_kernel}{A model of
   \ccc{Kinetic::InstantaneousKernel} which can be used to apply static CGAL
   data structures to snapshots of moving data.}
 
-\ccNestedType{Kinetic_kernel}{A model of Kineti::Kernel.}
+\ccNestedType{Kinetic_kernel}{A model of \ccc{Kinetic::Kernel}.}
+
+\ccNestedType{Active_points_[123]_table}{A model of
+  \ccc{Kinetic::ActiveObjectsTable} which holds the relevant kinetic
+  primitives.}
 
 \ccNestedType{Simulator}{A model of \ccc{Kinetic::Simulator} which will be
 used by all the kinetic data structures.}
@@ -40,13 +64,16 @@ used by all the kinetic data structures.}
 \ccOperations
 \ccCreationVariable{st}
 
-\ccMethod{Static_kernel static_kernel_object();}{Get a new static kernel.}
-
 \ccMethod{Instantaneous_kernel instantaneous_kernel_object();}{Get a new instantaneous kernel.}
 
 \ccMethod{Kinetic_kernel kinetic_kernel_object();}{Get a new kinetic kernel.}
 
-\ccMethod{Simulator::Handle simulator_handle();}{Return a pointer to the \ccc{Simulator} which is to be used in the simulation.}
+\ccMethod{Simulator::Handle simulator_handle();}{Return a pointer to the \ccc{Kinetic::Simulator} which is to be used in the simulation.}
+
+\ccMethod{Active_points_[123]_table::Handle
+  active_points_[123]_table_handle();}{Return a pointer to the
+  \ccc{Kinetic::ActiveObjectsTable} which is to be used in the
+  simulation.}
 
 %\ccMethod{Active_objects_table* active_objects_table_pointer();}{Return a pointer to the table holding points which is to be used in the simulation.}
 
@@ -61,7 +88,9 @@ used by all the kinetic data structures.}
 \ccc{Kinetic::Exact_linear_simulation_traits_2},
 \ccc{Kinetic::Exact_linear_simulation_traits_3},
 \ccc{Kinetic::Inexact_linear_simulation_traits_2},
-\ccc{Kinetic::Inexact_linear_simulation_traits_3}
+\ccc{Kinetic::Inexact_linear_simulation_traits_3},
+\ccc{Kinetic::Regular_triangulation_exact_simulation_traits_3},
+\ccc{Kinetic::Regular_triangulation_inexact_simulation_traits_3}
 
 \end{ccRefConcept}
 

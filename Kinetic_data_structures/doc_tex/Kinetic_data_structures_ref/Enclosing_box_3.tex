@@ -19,11 +19,15 @@
 \ccDefinition
   
 The class \ccRefName\ keeps the points in the simulation inside of a
-box. Whenever the points come close to the wall of the box they bounce off of the wall.
+box. Whenever the points come close to the wall of the box they bounce
+off of the wall.
+
 
 Note that, in general, points hit the wall of the box at times which
-are not easily represented by number types. In order to handle this,
-the \ccRefName\ bounces the points at the nearest easily representable
+are not easily represented by standard (rational) number types. The
+resulting trajectories would also have non-rational coefficients,
+complicating and slowing the simulation. In order to handle this, the
+\ccRefName\ bounces the points at the nearest easily representable
 time before the point would leave the box.
 
 \ccInclude{CGAL/Kinetic/Enclosing_box_3.h}

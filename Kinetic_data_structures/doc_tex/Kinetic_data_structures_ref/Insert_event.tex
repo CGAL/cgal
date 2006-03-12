@@ -18,28 +18,46 @@
 
 \ccDefinition
   
-This event inserts a point into the \ccc{ActiveObjectsTable} when the event is processed.
+This event inserts a point into the \ccc{ActiveObjectsTable} when it
+is processed.
 
 \ccInclude{CGAL/Kinetic/Insert_event.h}
 
 \ccIsModel
-Kinetic::Event
+\ccc{Kinetic::Event}
 
 \ccCreation
 \ccCreationVariable{i}  %% choose variable name
 
-\ccConstructor{Insert_event(ActiveObjectsTable::Data o, ActiveObjectsTable::Handle t);}{Insert the object o, into the table t when processed.}
+\ccConstructor{Insert_event(ActiveObjectsTable::Data o,
+  ActiveObjectsTable::Handle t);}{Insert the object o, into the table
+  t when processed.}
 
 
 \ccSeeAlso
 
-Kinetic::ActiveObjectsTable,
+\ccc{Kinetic::ActiveObjectsTable},
 \ccc{Kinetic::Active_objects_vector<MovingObject>}.
 
 \ccExample
 
+\begin{ccExampleCode}
+typedef CGAL::Kinetic::Exact_simulation_traits_2 Simulation_traits;
+typedef Simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
+typedef CGAL::Kinetic::Insert_event<Simulation_traits::Active_points_2_table> Insert_event;
+typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits> KDel;
 
-\verb|\ccIncludeExampleCode{Kinetic_data_structures/insert_event.C}| 
+Simulation_traits tr;
+
+KDel kdel(tr);
+
+Moving_point_2 mp(Moving_point_2::NT(0),
+                  Moving_point_2::NT(0));
+tr.simulator_handle()->new_event(Simulation_traits::Simulator::Time(3), 
+                                 Insert_event(mp,
+			                      tr.active_points_2_table_handle()));
+
+\end{ccExampleCode}
 
 
 

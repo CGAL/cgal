@@ -4,87 +4,142 @@
 \ccHeading{Definition} 
 
 Kinetic data structures are a way of adding motion to classical
-geometric data structures. \cgal provides a number of classes to aid
+geometric data structures. \cgal\ provides a number of classes to aid
 implementation of kinetic data structures as well as a number of
 prepackaged kinetic data structures.
 
 There are three levels at which the user can interact with the
-package. The can use an existing kinetic data structure, write a new
-kinetic data structure, or replace parts of the framework. The
+package. The user can use an existing kinetic data structure, write a
+new kinetic data structure, or replace parts of the framework. The
 concepts and models are grouped into these three classes.
 
 \ccHeading{Existing Kinetic Data Structures} 
 
-First we have the
-existing kinetic data structures and the helper classes that allow
-their activity to monitored.
+First we have the existing kinetic data structures and the helper
+classes that allow their activity to monitored.
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_2<Traits, Visitor, Triangulation>}  
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>} 
+
 \ccRefIdfierPage{Kinetic::Enclosing_box_2<Traits>}  
+
 \ccRefIdfierPage{Kinetic::Enclosing_box_3<Traits>}  
-\ccRefIdfierPage{Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>} 
+
+\ccRefIdfierPage{Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>}
+
 \ccRefIdfierPage{Kinetic::Sort<Traits, Visitor>}  
  
 The visitors:
+
 \ccRefConceptPage{Kinetic::DelaunayTriangulationVisitor2}
+
 \ccRefConceptPage{Kinetic::DelaunayTriangulationVisitor3}
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_event_log_visitor_2}
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_event_log_visitor_3}
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>}
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_visitor_base_2}
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_visitor_base_3}
+
 \ccRefConceptPage{Kinetic::RegularTriangulationVisitor3}
+
 \ccRefIdfierPage{Kinetic::Regular_triangulation_visitor_base_3}
+
 \ccRefIdfierPage{Kinetic::Regular_triangulation_event_log_visitor_3}
+
 \ccRefConceptPage{Kinetic::SortVisitor}
+
 \ccRefIdfierPage{Kinetic::Sort_visitor_base}
+
 \ccRefIdfierPage{Kinetic::Sort_event_log_visitor}
 
 The support classes:
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_face_base_2<Traits, Base>}  
+
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_cell_base_3<Traits, Base>}  
+
 \ccRefIdfierPage{Kinetic::Regular_triangulation_cell_base_3<Traits, Base>}  
+
 \ccRefIdfierPage{Kinetic::Regular_triangulation_vertex_base_3<Traits, Base>}
 
 \ccHeading{Graphical display}
 Next we have some support classes which are used to display kinetic data structures:
+
 \ccRefIdfierPage{Kinetic::Qt_moving_points_2<Traits, QtWidget_2>}  
+
 \ccRefIdfierPage{Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>}  
+
 \ccRefIdfierPage{Kinetic::Qt_widget_2<Simulator>}  
 
 
 \ccHeading{Main support classes and concepts}
 Here we list the main classes and concepts provided by the framework to support implementing kinetic data structures
+
 \ccRefConceptPage{Kinetic::ActiveObjectsTable}  
+
 \ccRefConceptPage{Kinetic::FunctionKernel}
+
 \ccRefConceptPage{Kinetic::Kernel}
+
 \ccRefConceptPage{Kinetic::InstantaneousKernel}
+
+
 \ccRefConceptPage{Kinetic::SimulationTraits}
+
 \ccRefConceptPage{Kinetic::Simulator}  
 
+
+
 \ccRefIdfierPage{Kinetic::Active_objects_vector<MovingObject>}  
+
 \ccRefIdfierPage{Kinetic::Cartesian_instantaneous_kernel<ActiveObjectsTable, StaticKernel>}  
+
 \ccRefIdfierPage{Kinetic::Cartesian_kinetic_kernel<FunctionKernel>}  
+
 \ccRefIdfierPage{Kinetic::Simulator<FunctionKernel, EventQueue>}  
 
 
+
+
 \ccHeading{Miscellaneous classes and concepts}
+
 \ccRefIdfierPage{Kinetic::Regular_triangulation_instantaneous_traits_3<ActiveObjectsTable, StaticKernel>}  
+
 \ccRefConceptPage{Kinetic::EventLogVisitor}
+
 \ccRefConceptPage{Kinetic::EventQueue}
+
+
 \ccRefConceptPage{Kinetic::Event}
+
 \ccRefConceptPage{Key}
+
 \ccRefConceptPage{Kinetic::Certificate}
+
 \ccRefConceptPage{Kinetic::RootStack}
+
 \ccRefConceptPage{Kinetic::Time}
 
 
+
+
 \ccRefIdfierPage{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>}  
+
 \ccRefIdfierPage{Kinetic::Insert_event<ActiveObjectsTable>}  
+
 \ccRefIdfierPage{CGAL::Listener<Interface>}  
+
 \ccRefIdfierPage{CGAL::Multi_listener<Interface>}  
+
 \ccRefIdfierPage{CGAL::Ref_counted<T>}  
+
 \ccRefIdfierPage{Kinetic::Simulator_kds_listener<Listener, KDS>}  
+
 \ccRefIdfierPage{Kinetic::Simulator_objects_listener<Simulator_listener, KDS>}  
 
 

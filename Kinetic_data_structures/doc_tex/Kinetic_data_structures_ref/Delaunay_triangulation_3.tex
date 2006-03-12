@@ -27,7 +27,7 @@ a large number of changes to the underlying points to be made at one
 time without recomputing the certificates each time a single point
 changes.
 
-The class \ccc{Kinetic::Qty_triangulation_3<Traits>}, included as part
+The class \ccc{Kinetic::Qt_triangulation_3<Traits>}, included as part
 of the demo code, displays a kinetic Delaunay triangulation in three
 dimensions using the Coin library.
 
@@ -45,12 +45,14 @@ type.
 
 \ccTypes
 
-\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation_3<Traits, Tds>} built using the \ccc{Kinetic::InstantaneousKernel} as the kernel.}
+\ccNestedType{Triangulation}{The template argument.}
+
+\ccNestedType{Visitor}{The template argument.}
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
 
-\ccConstructor{Delaunay_triangulation_3(Traits tr);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
+\ccConstructor{Delaunay_triangulation_3(Traits tr);}{Maintain the Delaunay triangulation of the points in \ccc{tr.active_points_3_handle()}.}
 
 \ccOperations
 
@@ -59,6 +61,8 @@ type.
 \ccMethod{bool has_certificates();}{This method returns true if the \ccRefName\ is currently maintaining certificates for a Delaunay triangulation. }
 
 \ccMethod{void set_has_certificates(bool tf);}{This method allows you to control whether the triangulation is maintaining certificates.}
+
+\ccMethod{Visitor& visitor();}{Access the visitor.}
 
 \ccSeeAlso
 

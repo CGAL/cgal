@@ -18,7 +18,11 @@
 
 \ccDefinition
   
-The class \ccRefName\ implements a base class for listeners where more than one listener is allowed to subscribe to a notifier. See \ccc{Listener} for full documentation.
+The class \ccRefName\ implements a base class for listeners where more
+than one listener is allowed to subscribe to a notifier. See
+\ccc{Listener} for full documentation. This uses the function calls
+\ccc{new_listener()} and \ccc{delete_listener()} to register and
+unrester the listener (instead of \ccc{set_listener()}).
 
 \ccInclude{CGAL/Kinetic/Multi_listener.h}
 

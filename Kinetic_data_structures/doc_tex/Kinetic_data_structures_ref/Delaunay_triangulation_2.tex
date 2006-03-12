@@ -19,23 +19,25 @@
 \ccDefinition
   
 The class \ccRefName\ maintains a Delaunay triangulation on top of the
-points contained in a \ccc{Kinetic::ActiveObjectsTable}. It has one main method
-of interest. \ccc{triangulation()} which returns the triangulation it
-is maintaining. 
+points contained in a \ccc{Kinetic::ActiveObjectsTable}. It has one
+main method of interest, \ccc{triangulation()}, which returns the
+triangulation it is maintaining.
 
 The class \ccc{Kinetic::Qt_triangulation_2<KineticTriangulation_2,
-QtWidget_2, QtMovingPoints_2>} displays a kinetic Delaunay
+  QtWidget_2, QtMovingPoints_2>} displays a kinetic Delaunay
 triangulation using the Qt widget.
 
 This class is a good example of a simple, but non-trivial, kinetic
 data structure.
 
-The Triangulation template parameter must use
-\ccc{Traits::Instantaneous_kernel} as its geometric traits and the
-\ccc{Triangulation::Face} must inherit from \ccc{Kinetic::Delaunay_triangulation_face_base_2<Traits, Base>}.
+The \ccc{Triangulation} template parameter must be a model of
+\ccc{CGAL::Delaunay_triangulation_2<Traits, Tds>} which uses
+\ccc{Traits::Instantaneous_kernel} as its geometric traits and a
+\ccc{Tds} whose face inherits from
+\ccc{Kinetic::Delaunay_triangulation_face_base_2<Traits, Base>}.
 
 The optional \ccc{Visitor} parameter takes a model of
-Kinetic::DelaunayTriangulationVisitor2. Methods on this object will be called
+\ccc{Kinetic::DelaunayTriangulationVisitor2}. Methods on this object will be called
 whenever the triangulation changes.
 
 \ccInclude{CGAL/Kinetic/Delaunay_triangulation_2.h}
@@ -47,16 +49,22 @@ whenever the triangulation changes.
 
 \ccTypes
 
-\ccNestedType{Triangulation}{The type of the Delaunay triangulation it maintains. This is a \ccc{CGAL::Delaunay_triangulation<Traits, Tds>} built using the \ccc{Kinetic::InstantaneousKernel} as the kernel.}
+\ccNestedType{Triangulation}{The template argument triangulation.}
+
+\ccNestedType{Visitor}{The template argument for the visitor.}
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
 
-\ccConstructor{Delaunay_triangulation_2(Traits tr);}{Maintain the Delaunay triangulation of the points in \ccc{mot}.}
+\ccConstructor{Delaunay_triangulation_2(Traits tr);}{Maintain the
+  Delaunay triangulation of the points in
+  \ccc{tr.active_points_2_handle()}.}
 
 \ccOperations
 
-\ccMethod{const Triangulation& triangulation();}{Access the triangulation that is maintained. }
+\ccMethod{const Triangulation& triangulation() const;}{Access the triangulation that is maintained. }
+
+\ccMethod{Visitor& visitor();}{Access the visitor. }
 
 \ccSeeAlso
 

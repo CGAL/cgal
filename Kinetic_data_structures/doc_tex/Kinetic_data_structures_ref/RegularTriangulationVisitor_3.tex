@@ -23,7 +23,7 @@ This concept is for proxy objects which get notified when a kinetic regular tria
 
 \ccMethod{void create_vertex(Vertex_handle);}{The vertex was just created.}
 
-\ccMethod{void modify_vertex(Vertex_handle);}{Something changed at the vertex.}
+\ccMethod{void modify_vertex(Vertex_handle);}{The trajectory of the vertex just changed.}
 
 \ccMethod{template <class It>  void create_cells(It begin, It end);}{New faces have just been made. The iterator \ccc{value_type} is a \ccc{TriangulationDataStructure_3::Cell_handle}.}
  

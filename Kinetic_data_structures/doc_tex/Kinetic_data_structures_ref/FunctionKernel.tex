@@ -37,21 +37,29 @@ capability is not needed.
 
 \ccNestedType{Root}{A type representing the roots of a \ccc{Function}.}
 
-\ccNestedType{Root_stack}{A model of \ccc{RootEnumerator}. These objects can be created by calling the \ccc{root_enumerator_object} method with a \ccc{Function} and two (optional) \ccc{Root} objects. The enumerator then enumerates all roots of the function in the open inverval defined by the two root arguments. They optional arguments default to positive and negative infinity. }
+\ccNestedType{Root_stack}{A model of \ccc{RootStack}. These objects can be created by calling the \ccc{root_stack_object} method with a \ccc{Function} and two (optional) \ccc{Root} objects. The enumerator then enumerates all roots of the function in the open inverval defined by the two root arguments. They optional arguments default to positive and negative infinity. }
 
 \ccNestedType{Root_enumerator_traits}{The traits for the \ccc{Root_enumerator} class.}
 
-Each of the following types has a corresponding \ccc{type_object} method (not explicitly documented) which takes a \ccc{Function} as an argument.
+Each of the following types has a corresponding \ccc{type_object}
+method (not explicitly documented) which takes a \ccc{Function} as an
+argument.
 
-\ccNestedType{Sign_at}{A functor which returns the sign of a \ccc{Function} at a \ccc{NT} or \ccc{Root}.}
+\ccNestedType{Sign_at}{A functor which returns the sign of a
+  \ccc{Function} at a \ccc{NT} or \ccc{Root}.}
 
 \ccNestedType{Multiplicity}{A functor which returns the multiplicity of roots.}
 
-\ccNestedType{Sign_above}{A functor which returns sign of a function immediately above a root.}
+\ccNestedType{Sign_above}{A functor which returns sign of a function
+  immediately above a root.}
 
-The following functor likewise have a \ccc{type_object} method, but these take arguments other than a \ccc{Function}. The arguments are given below.
+The following functor likewise have a \ccc{type_object} method, but
+these take arguments other than a \ccc{Function}. The arguments are
+given below.
 
-\ccNestedType{Sign_between_roots}{This functor, creation of which requires two \ccc{Root}s, returns the sign of a passed function between the pair of roots.}
+\ccNestedType{Sign_between_roots}{This functor, creation of which
+  requires two \ccc{Root}s, returns the sign of a passed function
+  between the pair of roots.}
 
 %\ccNestedType{Compare_isolated_roots_in_interval}{This functor, creation of which requires two functions, compares the roots of two functions in an isolating invterval. More specifically, it takes two \ccc{NT}s as an argument. These numbers must isolate a root for each of the functions the functor is constructed with. The functor then returns true if the isolated root of the first function is less than that of the second.}
 
@@ -61,7 +69,7 @@ The following functor likewise have a \ccc{type_object} method, but these take a
 
 %\ccNestedType{Remainder}{Compute the remainder of one \ccc{Functions} divided by another.}
 
-\ccNestedType{Are_negations_object}{Return true of the two functions passed are negations of one another.}
+%\ccNestedType{Are_negations_object}{Return true of the two functions passed are negations of one another.}
 
 %\ccNestedType{Sturm_sequence}{This object evaluates the Sturm sequence of two \ccc{Function}s at a \ccc{NT} value. Construction requires two \ccc{Function}s.}
 
@@ -95,7 +103,7 @@ The following methods do not require any arguments to get the functor and take o
 %\ccMethod{void foo();}{some member functions}
 
 \ccHasModels
-\ccc{POLYNOMIAL::Kernel<RootEnumerator>}, \ccc{POLYNOMIAL::Filtered_kernel<RootEnumerator>}.
+\ccc{POLYNOMIAL::Kernel<RootStack>}, \ccc{POLYNOMIAL::Filtered_kernel<RootStack>}.
 
 \ccSeeAlso
 
@@ -105,7 +113,7 @@ Kinetic::RootEnumerator
 
 We provide several models of the concept, which are not documented
 separately. The models of \ccc{Kinetic::SimulationTraits} all choose
-appropriate models, so the user should have have to pick.  However, if
+appropriate models.  However, if
 more control is desired, we here provide examples of how to create the
 various supported \ccc{Kinetic::FunctionKernel}.
 
@@ -120,7 +128,7 @@ typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
 A wrapper for \ccc{CORE::Expr} which implements the necessary
 operations:
 \begin{ccExampleCode}
-  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
+typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
 \end{ccExampleCode}
 
 A function kernel which computes approximations to the roots of the polynomials:

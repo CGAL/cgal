@@ -20,7 +20,7 @@
   
 
 This container holds a set of objects of a particular type. It creates
-notifications using the standard \ccc{ulti_listener<Interface>}
+notifications using the standard \ccc{Multi_listener<Interface>}
 interface when a primitive changes or is added or deleted. Objects
 which are listening for events can then ask which primitives changed.
 
@@ -62,7 +62,7 @@ allow you to iterate through the objects in the set \ccc{Foo}.
 
 \ccMethod{Data operator[](Key key) const;}{Access the object referenced by the key.}
 
-\ccMethod{Data at(Key key) const;}{Access the object referencd by the key.}
+\ccMethod{Data at(Key key) const;}{Access the object referenced by the key.}
 
 \ccMethod{void set_is_editing(bool is_editing);}{Set the editing state of
   the object. A notification is sent when the editing state is set to
@@ -71,7 +71,7 @@ allow you to iterate through the objects in the set \ccc{Foo}.
 
 \ccMethod{bool is_editing() const;}{Access the editing state.}
 
-\ccMethod{void set(Key key, Moving_object object);}{This method changes
+\ccMethod{void set(Key key, Data object);}{This method changes
   the motion of one moving object.  The position at the current time
   should not be different from the previous current position. However,
   at the moment I do not check this as there is no reference to time
@@ -99,7 +99,7 @@ allow you to iterate through the objects in the set \ccc{Foo}.
 
 \ccSeeAlso
 
-\ccc{Multi_listener<Interface>}.
+\ccc{Multi_listener<Interface>},
 \ccc{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>}
 
 
