@@ -3,7 +3,6 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
-#include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_S2/create_random_Nef_S2.h>
 
 typedef CGAL::Gmpz RT;
