@@ -1031,6 +1031,16 @@ Min_sphere_of_spheres_d/web/figs/ss/ss_basis.eps -text
 Minkowski_sum_2/demo/Minkowski_sum_2/Approx_offset_demo.C -text
 Minkowski_sum_2/demo/Minkowski_sum_2/Minkowski_demo.C -text
 Minkowski_sum_2/demo/Minkowski_sum_2/Offset_demo.C -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/convex_offset.eps -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/convex_offset.fig -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/offset_conv.eps -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/offset_conv.fig -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/offset_decomp.eps -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/offset_decomp.fig -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/onecyc_in.eps -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/onecyc_in.fig -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/onecyc_out.eps -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/onecyc_out.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.pstex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.pstex_t -text
