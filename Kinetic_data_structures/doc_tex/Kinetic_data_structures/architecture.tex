@@ -332,32 +332,33 @@ number type coefficients and are quite robust.
 
 \subsection{Kinetic::FunctionKernel customized for kinetic data structures}
 
-There are several modifications we can make to the root isolation
-algorithms to optimize them for the case of kinetic data structures.
-The first question is how to handle degeneracies (certificate
-functions which have roots at the same time).  Naively, there is no
-way to differentiate between a certificate which fails immediately
-when it is created and one whose function is momentarily 0, but will
-be valid immediately in the future. In order to handle such
-degeneracies we ensure that all the certificate function generators
-produce certificate functions which are positive when the
+There are several modifications we can make to how the roots are
+handled to optimize for the case of kinetic data structures.  The
+first are motivated by the question of how to handle degeneracies
+(certificate functions which have roots at the same time).  Naively,
+there is no way to differentiate between a certificate which fails
+immediately when it is created and one whose function is momentarily
+0, but will be valid immediately in the future. In order to handle
+such degeneracies we ensure that all the certificate function
+generators produce certificate functions which are positive when the
 corresponding certificates are valid.  Then, if we have a degeneracy
 we can differentiate between a certificate which fails immediately and
 one which is simply degenerate by looking at the sign of the
-certificate function immediately following the root. In addition, this
-allows us, under the assumption that computations are performed
-exactly, to check that all certificates are valid upon creation.
+certificate function immediately following the root (equivalently, by
+looking at the derivative). In addition, this allows us, under the
+assumption that computations are performed exactly, to check that all
+certificates are not invalid upon creation.
 
-This assumption is particular useful when using numeric solvers.
-Without it there is no reliable way to tell whether a root near the
-current time is the certificate having become valid just before the
-current time, or failing shortly in the future. Testing the sign of
-the function immediately after the root reliably disambiguates the two
-cases.
+The assumption that certificates are positive when valid is particular
+useful when using numeric solvers.  Without it there is no reliable
+way to tell whether a root near the current time is the certificate
+having become valid just before the current time, or failing shortly
+in the future. Testing the sign of the function immediately after the
+root reliably disambiguates the two cases.
 
 In addition, we have to specially handle even roots of functions. For
-the most part these can just be discarded as that is equivalent to
-perturbing the simulation to remove the degeneracy. However, when we
-are using the \ccc{Kinetic::Simulator} to audit the kinetic data structures,
-they most be broken up in to two, equal, roots to avoid auditing at
-the degeneracy.
+the most part these can just be discarded as dropping an even root is
+equivalent to perturbing the simulation to remove the degeneracy.
+However, when we are using the \ccc{Kinetic::Simulator} to audit the
+kinetic data structures, they most be broken up in to two, equal,
+roots to avoid auditing at the degeneracy.
