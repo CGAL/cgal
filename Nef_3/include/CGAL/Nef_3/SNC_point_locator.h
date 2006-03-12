@@ -1080,7 +1080,7 @@ public:
   SNC_point_locator_naive() : initialized(false) {}
   virtual void initialize(SNC_structure* W) { 
     TIMER(ct_t.start());
-    strcpy( version_, "Naive Point Locator (tm)");
+    strcpy(this->version_, "Naive Point Locator (tm)");
     CLOG(version());
     CGAL_assertion( W != NULL);
     Base::initialize(W); 
