@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Ron Wein        <wein@post.tau.ac.il>
 
 #ifndef CGAL_GPS_POLYGON_VALIDATION_VISITOR_H
 #define CGAL_GPS_POLYGON_VALIDATION_VISITOR_H
@@ -28,7 +29,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! */
+/*! \class
+ * A visitor used for checking whether the edges of a polygon are
+ * non-intersecting.
+ */
 template <class ArrTraits_>
 class Gps_polygon_validation_visitor : public Empty_visitor<ArrTraits_>
 {
@@ -95,32 +99,34 @@ protected:
 
 };
 
-template <class ArrTraits_, class Polygon_, class PolygonWithHoles_,
-          class CurveConstIterator_, class ConstructCurves_,
-          class ConstructVertex_, class CheckOrientation_>
+/*! \class
+ * An uxiliary functor used for checking the validity of polygons.
+ */
+template <class Traits_, class TraitsAdapter_>
 class Is_valid_2
 {
-private:
-  
-  typedef ArrTraits_                               Traits_2;
-  typedef typename Traits_2::Point_2               Point_2;
-  typedef typename Traits_2::X_monotone_curve_2    X_monotone_curve_2;
-
-  typedef Polygon_                                 Polygon_2;
-  typedef PolygonWithHoles_                        Polygon_with_holes_2;
-
-  typedef CurveConstIterator_                      Curve_const_iterator;
-  typedef std::pair<Curve_const_iterator,
-                    Curve_const_iterator>          Cci_pair;
-
-  typedef Gps_polygon_validation_visitor<Traits_2> Visitor;
-  typedef Sweep_line_2<Traits_2, Visitor>          Sweep_line ;
-
 public:
 
-  typedef ConstructCurves_                         Construct_curves_2;
-  typedef ConstructVertex_                         Construct_vertex_2;
-  typedef CheckOrientation_                        Check_orientation_2;
+  typedef Traits_                                   Traits_2;
+  typedef TraitsAdapter_                            Traits_adapter_2;
+
+private:
+  
+  typedef typename Traits_2::Point_2                Point_2;
+  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Traits_2::Polygon_2              Polygon_2;
+  typedef typename Traits_2::Polygon_with_holes_2   Polygon_with_holes_2;
+  typedef typename Traits_2::Curve_const_iterator   Curve_const_iterator;
+  typedef std::pair<Curve_const_iterator,
+                    Curve_const_iterator>           Cci_pair;
+  typedef typename Traits_2::Construct_curves_2     Construct_curves_2;
+
+  typedef typename Traits_adapter_2::Construct_vertex_2
+                                                    Construct_vertex_2;
+  typedef typename Traits_adapter_2::Orientation_2  Check_orientation_2;
+
+  typedef Gps_polygon_validation_visitor<Traits_2>  Visitor;
+  typedef Sweep_line_2<Traits_2, Visitor>           Sweep_line ;
 
 private:
 
@@ -132,13 +138,13 @@ private:
 public:
 
   /*! Constructor. */
-  Is_valid_2 (const Construct_curves_2& construct_curves,
-              const Construct_vertex_2& construct_vertex,
-              const Check_orientation_2& check_orientation) :
-    construct_curves_func (construct_curves),
-    construct_vertex_func (construct_vertex),
-    check_orientation_func (check_orientation)
-  {}
+  Is_valid_2 (Traits_2& traits,
+              const Traits_adapter_2& tr_adapter)
+  {    
+    construct_curves_func = traits.construct_curves_2_object();
+    construct_vertex_func = tr_adapter.construct_vertex_2_object();
+    check_orientation_func = tr_adapter.orientation_2_object();
+  }
 
   /*! Check if the given polygon is valid. */
   bool operator()(const Polygon_2& pgn)

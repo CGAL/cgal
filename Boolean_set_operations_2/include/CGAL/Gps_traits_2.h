@@ -46,6 +46,9 @@ public:
   typedef typename Base::Construct_min_vertex_2        Construct_min_vertex_2;
   typedef typename Base::Construct_max_vertex_2        Construct_max_vertex_2;
 
+  /*!
+   * A functor for constructing a polygon from a range of x-monotone curves.
+   */
   class Construct_polygon_2
   {
   public:
@@ -64,6 +67,9 @@ public:
     return Construct_polygon_2();
   }
 
+  /*!
+   * A functor for scanning all x-monotone curves that form a polygon boundary.
+   */
   class Construct_curves_2
   {
   public:
@@ -80,19 +86,17 @@ public:
     return Construct_curves_2();
   }
 
-  typedef Gps_traits_adaptor<Base>                            Traits_adaptor;
-  typedef Is_valid_2<Base, Polygon_2, Polygon_with_holes_2,
-                     Curve_const_iterator, Construct_curves_2,
-                     typename Traits_adaptor::Construct_vertex_2,
-                     typename Traits_adaptor::Orientation_2>  Is_valid_2;
+  /*!
+   * An auxiliary functor used for validity checks.
+   */
+  typedef Gps_traits_adaptor<Base>                         Traits_adaptor;
+  typedef CGAL::Is_valid_2<Self, Traits_adaptor>           Is_valid_2;
  
   Is_valid_2 is_valid_2_object()
   {
-    Traits_adaptor   tr;
+    Traits_adaptor   tr_adp;
 
-    return (Is_valid_2 (this->construct_curves_2_object(),
-                        tr.construct_vertex_2_object(),
-                        tr.orientation_2_object()));
+    return (Is_valid_2 (*this, tr_adp));
   }
 };
 
