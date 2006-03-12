@@ -116,7 +116,7 @@ struct binop_intersection_test_segment_tree {
             start( edge_it ), end( edge_it );
           CGAL_For_all( start, end ) {
             const Point_3& p = start->prev()->source()->source()->point();
-            extend( p, Is_extended_kernel<Kernel>::value_type());
+            extend( p, typename Is_extended_kernel<Kernel>::value_type());
           }
         } else
           CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
@@ -132,8 +132,10 @@ struct binop_intersection_test_segment_tree {
         init( true );
       } else {
         init( false );
-        extend( e->source()->point(), Is_extended_kernel<Kernel>::value_type());
-        extend( e->twin()->source()->point(), Is_extended_kernel<Kernel>::value_type());
+        extend( e->source()->point(), 
+		typename Is_extended_kernel<Kernel>::value_type());
+        extend( e->twin()->source()->point(), 
+		typename Is_extended_kernel<Kernel>::value_type());
       }
     }
 
