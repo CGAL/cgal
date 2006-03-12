@@ -42,7 +42,7 @@
 #endif
 
 #if !defined(TEST_NT)
-#define TEST_NT LEDA_RAT_NT
+#define TEST_NT QUOTIENT_MP_FLOAT_NT
 #endif
 
 #if !defined(TEST_TRAITS)

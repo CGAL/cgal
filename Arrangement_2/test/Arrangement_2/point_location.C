@@ -1,28 +1,26 @@
+#include <CGAL/basic.h>
 
-//#define CONICS
-#define SEGMENTS
-//#define SEGMENTS_IN_DOUBLE
+#ifdef CGAL_USE_GMP
+
+  #include <CGAL/Gmpq.h>
+
+  typedef CGAL::Gmpq                                    Number_type;
+
+#else
+  #include <CGAL/MP_Float.h>
+  #include <CGAL/Quotient.h>
+
+  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+
+#endif
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Timer.h>
 #include <cstdlib>
 
-#ifdef SEGMENTS
-#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#elif defined (CONICS)
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#endif
-
-#ifdef SEGMENTS_IN_DOUBLE
-#include "Segment_reader_double.h"
-#elif defined (SEGMENTS)
 #include "Segment_reader.h"
-#elif defined (CONICS)
-#include "Conic_reader.h"
-#endif
 
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
@@ -32,30 +30,11 @@
 #include <CGAL/Arr_point_location/Arr_lm_grid_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_halton_generator.h>
 
-#ifdef SEGMENTS
 //#include <CGAL/Arr_triangulation_point_location.h>
 #include <CGAL/Arr_point_location/Arr_lm_middle_edges_generator.h>
-#endif
 
-#ifdef SEGMENTS
-typedef CGAL::Gmpq                                      Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
-
-#elif defined (CONICS)
-typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
-typedef Nt_traits::Rational                             Rational;
-typedef Nt_traits::Rational                             Number_type;
-typedef Nt_traits::Algebraic                            Algebraic;
-typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-typedef Rat_kernel::Point_2                             Rat_point_2;
-typedef Rat_kernel::Segment_2                           Rat_segment_2;
-typedef Rat_kernel::Circle_2                            Rat_circle_2;
-typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
-                                 Alg_kernel,
-                                 Nt_traits>             Traits_2;
-#endif
 
 typedef Traits_2::Point_2                               Point_2;
 typedef Traits_2::Curve_2                               Curve_2;
@@ -77,7 +56,7 @@ typedef CGAL::Arr_random_landmarks_generator<Arrangement_2>
                                                     Random_lm_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Random_lm_generator> 
                                                     Lm_random_point_location;
-typedef CGAL::Arr_grid_landmarks_generator<Arrangement_2>
+typedef CGAL::Arr_grid_landmarks_generator<Arrangement_2, Number_type>
                                                     Grid_lm_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Grid_lm_generator> 
                                                     Lm_grid_point_location;
@@ -85,14 +64,13 @@ typedef CGAL::Arr_halton_landmarks_generator<Arrangement_2>
                                                     Halton_lm_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Halton_lm_generator> 
                                                     Lm_halton_point_location;
-#ifdef SEGMENTS
 typedef CGAL::Arr_middle_edges_landmarks_generator<Arrangement_2>
                                                     Mide_lm_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Mide_lm_generator> 
                                                     Lm_mide_point_location;
 //typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
 //                                                    Trg_point_location;
-#endif
+
 // ===> Add new point location type here <===
 
 typedef std::list<Point_2>                                Points_list;
@@ -103,11 +81,7 @@ typedef Objects_vector::iterator                          Object_iterator;
 
 // ===> Change the number of point-location startegies
 //      when a new point location is added. <===
-#ifdef SEGMENTS
 #define NUM_OF_POINT_LOCATION_STRATEGIES 8
-#else
-#define NUM_OF_POINT_LOCATION_STRATEGIES 7
-#endif
 
 /*! */
 int check_point_location (Arrangement_2 &arr, Points_list &plist)
@@ -158,7 +132,6 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   std::cout << "Halton lm construction took " << timer.time() <<std::endl;
   //std::cout << ' ' << timer.time() ;
 
-#ifdef SEGMENTS
   timer.reset(); timer.start();
   Mide_lm_generator               mide_g(arr);
   Lm_mide_point_location          mide_lm_pl (arr, &mide_g);      // 7
@@ -169,7 +142,6 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   //Trg_point_location              trg_pl(arr);                    // 8
   //timer.stop(); 
   //std::cout << "Trg construction took " << timer.time() <<std::endl;
-#endif
   std::cout<< std::endl;
 
   // ===> Add new point location instance here. <===
@@ -271,9 +243,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   }
   timer.stop(); ///END
   std::cout << "Halton LM location took " << timer.time() <<std::endl;
-//  std::cout << ' ' << timer.time() ;
 
-#ifdef SEGMENTS
   std::cout << "Middle edges LM" ;
   timer.reset(); 
   timer.start(); //START
@@ -297,7 +267,6 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   //}
   //timer.stop(); ///END
   //std::cout << " location took " << timer.time() <<std::endl;
-#endif
   std::cout << std::endl;
 
   // ===> Add a call to operate the the new point location. <===
@@ -433,12 +402,8 @@ int read_points(const char * points_filename, Points_list &plist)
 
 bool test(const char* curves_filename, const char* points_filename)
 {
-    //read curves and insert them into the arrangement 
-#ifdef SEGMENTS
+  //read curves and insert them into the arrangement 
   Segment_reader<Traits_2> reader;
-#elif defined (CONICS)
- 	Conic_reader<Traits_2>  reader;
-#endif
 
   CGAL::Bbox_2             bbox;
   Curve_list               curve_list;

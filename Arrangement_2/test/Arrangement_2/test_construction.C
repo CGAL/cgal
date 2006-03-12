@@ -1,10 +1,20 @@
+#include <CGAL/basic.h>
 
+#ifdef CGAL_USE_GMP
+
+  #include <CGAL/Gmpq.h>
+
+  typedef CGAL::Gmpq                                    Number_type;
+
+#else
+  #include <CGAL/MP_Float.h>
+  #include <CGAL/Quotient.h>
+
+  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+
+#endif
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Gmpq.h>
-
 #include <CGAL/Arr_segment_traits_2.h>
 #include<CGAL/Arr_curve_data_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -45,12 +55,15 @@ public:
 };
 
 template <class Arrangement>
-bool are_same_results(Arrangement& arr, 
-                      unsigned int n_v,
-                      unsigned int n_e,
-                      unsigned int n_f,
-                      const std::vector<typename Arrangement::Point_2> &pts_from_file,
-                      const std::vector<typename Arrangement::X_monotone_curve_2>& subcurves_from_file)
+bool are_same_results
+    (Arrangement& arr, 
+     unsigned int n_v,
+     unsigned int n_e,
+     unsigned int n_f,
+     const std::vector<typename Arrangement::Point_2>&
+       pts_from_file,
+     const std::vector<typename Arrangement::X_monotone_curve_2>&
+       subcurves_from_file)
 {
   typedef typename Arrangement::Traits_2              Traits_2;
   typedef typename Arrangement::Point_2               Point_2;
@@ -92,13 +105,13 @@ bool are_same_results(Arrangement& arr,
   std::sort(curves_res.begin(), curves_res.end(), Curve_compare<Traits_2>());
 
   Curve_equal<Traits_2> curve_eq;
-  if(!std::equal(curves_res.begin(), curves_res.end(), subcurves_from_file.begin(), curve_eq))
+  if (! std::equal (curves_res.begin(), curves_res.end(),
+                    subcurves_from_file.begin(), curve_eq))
     return false;
 
   return true;
 }
 
-typedef CGAL::Gmpq                                    Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Base_traits_2;
 typedef Base_traits_2::Curve_2                        Base_curve_2;
@@ -165,33 +178,41 @@ bool  test_one_file(std::ifstream& in_file)
   {
     CGAL::insert_curve(arr, curves[i]);
   }
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_curve failed\n";
     return false;
   }
-  arr.clear();
 
+  arr.clear();
 
   ////////////////////////////////////////////////////////////
   // test aggregate construction
 
   CGAL::insert_curves(arr, curves.begin(), curves.end());
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_curves failed\n";
     return false;
   }
   arr.clear();
+
   /////////////////////////////////////////////////////////////
-  // insert half of the curves aggregatley and than insert the rest aggregatley 
-  //(test the addition visitor)
+  // insert half of the curves aggregatley and than insert the rest
+  // aggregatley (test the addition visitor)
   CGAL::insert_curves(arr, curves.begin(), curves.begin() + (num_of_curves/2));
   CGAL::insert_curves(arr, curves.begin() + (num_of_curves/2), curves.end());
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+  
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_curves (addition) failed\n";
     return false;
@@ -210,8 +231,10 @@ bool  test_one_file(std::ifstream& in_file)
     CGAL::insert_point(arr, iso_verts[i]);
   }
   
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_x_monotone_curve failed\n";
     return false;
@@ -219,13 +242,17 @@ bool  test_one_file(std::ifstream& in_file)
   arr.clear();
   /////////////////////////////////////////////////////////////////////
   // insert the disjoint subcurves aggregatley with  insert_x_monotone_curves
-  CGAL::insert_x_monotone_curves(arr, subcurves_from_file.begin(), subcurves_from_file.end());
+  CGAL::insert_x_monotone_curves (arr,
+                                  subcurves_from_file.begin(),
+                                  subcurves_from_file.end());
   for(i=0; i<iso_verts.size(); ++i)
   {
     CGAL::insert_point(arr, iso_verts[i]);
   }
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_x_monotone_curves failed\n";
     return false;
@@ -234,16 +261,23 @@ bool  test_one_file(std::ifstream& in_file)
 
 
   /////////////////////////////////////////////////////////////////////
-  // insert half of the disjoint subcurves aggregatley and than insert the rest aggregatley 
-  //with insert_x_monotone_curves(test the addition visitor)
-  CGAL::insert_x_monotone_curves(arr, subcurves_from_file.begin(), subcurves_from_file.begin() + (n_edges/2));
-  CGAL::insert_x_monotone_curves(arr, subcurves_from_file.begin() + (n_edges/2), subcurves_from_file.end());
+  // insert half of the disjoint subcurves aggregatley and than insert the
+  // rest aggregatley with insert_x_monotone_curves(test the addition visitor)
+  CGAL::insert_x_monotone_curves (arr,
+                                  subcurves_from_file.begin(),
+                                  subcurves_from_file.begin() + (n_edges/2));
+  CGAL::insert_x_monotone_curves (arr,
+                                  subcurves_from_file.begin() + (n_edges/2),
+                                  subcurves_from_file.end());
   for(i=0; i<iso_verts.size(); ++i)
   {
     CGAL::insert_point(arr, iso_verts[i]);
   }
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_x_monotone_curves (addition) failed\n";
     return false;
@@ -251,7 +285,8 @@ bool  test_one_file(std::ifstream& in_file)
   arr.clear();
 
   /////////////////////////////////////////////////////////////////////
-  //insert the disjoint subcurves incrementally with  insert_non_intersecting_curve
+  // insert the disjoint subcurves incrementally with 
+  // insert_non_intersecting_curve
   for(i=0; i<n_edges; ++i)
   {
     CGAL::insert_non_intersecting_curve(arr, subcurves_from_file[i]);
@@ -260,8 +295,11 @@ bool  test_one_file(std::ifstream& in_file)
   {
     CGAL::insert_point(arr, iso_verts[i]);
   }
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+  
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_non_intersecting_curve failed\n";
     return false;
@@ -269,14 +307,20 @@ bool  test_one_file(std::ifstream& in_file)
   arr.clear();
 
   /////////////////////////////////////////////////////////////////////
-  // insert the disjoint subcurves aggregatley with  insert_non_intersecting_curves
-  CGAL::insert_non_intersecting_curves(arr, subcurves_from_file.begin(), subcurves_from_file.end());
+  // insert the disjoint subcurves aggregatley with
+  // insert_non_intersecting_curves
+  CGAL::insert_non_intersecting_curves (arr,
+                                        subcurves_from_file.begin(),
+                                        subcurves_from_file.end());
   for(i=0; i<iso_verts.size(); ++i)
   {
     CGAL::insert_point(arr, iso_verts[i]);
   }
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+  
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_non_intersecting_curves failed\n";
     return false;
@@ -285,22 +329,33 @@ bool  test_one_file(std::ifstream& in_file)
 
   
 
-  // insert half of the disjoint subcurves aggregatley and than insert the rest aggregatley 
-  //with insert_non_intersecting_curves(test the addition visitor)
-  CGAL::insert_non_intersecting_curves(arr, subcurves_from_file.begin(), subcurves_from_file.begin() + (n_edges/2));
-  CGAL::insert_non_intersecting_curves(arr, subcurves_from_file.begin() + (n_edges/2), subcurves_from_file.end());
+  // insert half of the disjoint subcurves aggregatley and than insert the
+  // rest aggregatley with insert_non_intersecting_curves (test the addition
+  // visitor)
+  CGAL::insert_non_intersecting_curves 
+    (arr,
+     subcurves_from_file.begin(),
+     subcurves_from_file.begin() + (n_edges/2));
+  
+  CGAL::insert_non_intersecting_curves
+    (arr,
+     subcurves_from_file.begin() + (n_edges/2),
+     subcurves_from_file.end());
+  
   for(i=0; i<iso_verts.size(); ++i)
   {
     CGAL::insert_point(arr, iso_verts[i]);
   }
-  if(!are_same_results(arr, n_vertices, n_edges, n_faces, pts_from_file, subcurves_from_file) ||
-     !CGAL::is_valid(arr))
+
+  if (! are_same_results (arr,
+                          n_vertices, n_edges, n_faces,
+                          pts_from_file, subcurves_from_file) ||
+      ! CGAL::is_valid(arr))
   {
     std::cout<<"ERROR : insert_non_intersecting_curves (addition) failed\n";
     return false;
   }
   arr.clear();
-
 
   return true;
 }
@@ -356,4 +411,3 @@ int main(int argc, char **argv)
   
   return success;
 }
-

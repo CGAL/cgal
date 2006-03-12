@@ -42,14 +42,16 @@ CGAL_BEGIN_NAMESPACE
 * to creates the set of landmarks on the grid.
 * the size of the grid is determined by the number of landmarks. 
 */
-template <class Arrangement_>
+template <class Arrangement_, class NT_>
 class Arr_grid_landmarks_generator 
   : public Arr_observer <Arrangement_>
 {
 public:
-  typedef Arrangement_                                  Arrangement_2;
+  typedef Arrangement_                                      Arrangement_2;
+  typedef NT_                                               NT;
+  typedef Arr_grid_landmarks_generator<Arrangement_2, NT>   Self;
+
   typedef typename Arrangement_2::Traits_2              Traits_2;
-  typedef Arr_grid_landmarks_generator<Arrangement_2>   Self;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
@@ -61,13 +63,6 @@ public:
 						      Ccb_halfedge_circulator;
 
   typedef typename Traits_2::Approximate_number_type	ANT;
-
-#ifdef SEGMENTS
-  typedef typename Traits_2::Kernel::FT                 FT;
-#elif defined (CONICS)
-  typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-  typedef Nt_traits::Algebraic                          FT;
-#endif
 
   typedef typename Traits_2::Point_2                    Point_2;
 
@@ -90,7 +85,7 @@ protected:
 
   //bounding box of the arrangement
   ANT x_min, x_max, y_min, y_max;
-  FT step_x, step_y;
+  NT step_x, step_y;
   int sqrt_n;
 
 private:
@@ -271,8 +266,8 @@ protected:
 
     //calculate the step size
     sqrt_n = static_cast<int> (std::sqrt(static_cast<double> (n)) + 0.99999);
-    FT delta_x = right.x() - left.x();
-    FT delta_y = top.y() - bottom.y();
+    NT delta_x = right.x() - left.x();
+    NT delta_y = top.y() - bottom.y();
     step_x = delta_x / (sqrt_n-1);
     step_y = delta_y / (sqrt_n-1);
 
