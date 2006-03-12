@@ -133,7 +133,7 @@ private:
 
   static const char* datadir;  
 
-  bool are_files_equal(char* name1, char* name2) {
+  bool are_files_equal(const char* name1, const char* name2) {
     std::ifstream in1(name1);
     std::ifstream in2(name2);
     std::string s1;
@@ -152,7 +152,7 @@ private:
     return true;
   }
 
-  bool does_nef3_equals_file(Nef_polyhedron& N, char* name) {
+  bool does_nef3_equals_file(Nef_polyhedron& N, const char* name) {
     char* fullname = new char[strlen(datadir)+strlen(name)+1];
     strcpy(fullname, datadir);
     strcat(fullname, name);
@@ -163,7 +163,7 @@ private:
     return b;
   }
 
-  Nef_polyhedron load_off( char* name) {
+  Nef_polyhedron load_off(const char* name) {
     Polyhedron poly;
     std::ifstream off_file(name);
     CGAL_assertion(off_file != NULL);
@@ -172,7 +172,7 @@ private:
     return N;
   }
 
-  Nef_polyhedron load_nef3(char* name) {
+  Nef_polyhedron load_nef3(const char* name) {
     char* fullname = new char[strlen(datadir)+strlen(name)+1];
     strcpy(fullname, datadir);
     strcat(fullname, name);
@@ -429,7 +429,7 @@ private:
     CGAL_assertion(assign(c,o));
   }
 
-  void point_location_SNC_in(char* name) {
+  void point_location_SNC_in(const char* name) {
 
     Nef_polyhedron N = load_nef3(name);
     CGAL_assertion(N.is_valid(0,0));
@@ -1241,9 +1241,9 @@ template<typename Kernel>
 const char* test<Kernel>::datadir="data/";
 
 int main() {
-  typedef CGAL::Cartesian<FNT>               C_kernel;
-  typedef CGAL::Simple_cartesian<FNT>       SC_kernel;
-  typedef CGAL::Extended_cartesian<FNT>     EC_kernel;
+  //  typedef CGAL::Cartesian<FNT>               C_kernel;
+  //  typedef CGAL::Simple_cartesian<FNT>       SC_kernel;
+  //  typedef CGAL::Extended_cartesian<FNT>     EC_kernel;
   typedef CGAL::Homogeneous<NT>              H_kernel;
   typedef CGAL::Simple_homogeneous<NT>      SH_kernel;
   typedef CGAL::Extended_homogeneous<NT>    EH_kernel;
@@ -1253,9 +1253,9 @@ int main() {
   CGAL::Timer t;
   t.start();
 
-  test<C_kernel>  test_C;
-  test<SC_kernel> test_SC;
-  test<EC_kernel> test_EC;
+  //  test<C_kernel>  test_C;
+  //  test<SC_kernel> test_SC;
+  //  test<EC_kernel> test_EC;
   test<H_kernel>  test_H;
   test<SH_kernel> test_SH;
   test<EH_kernel> test_EH;

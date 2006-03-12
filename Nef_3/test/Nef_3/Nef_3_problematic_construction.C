@@ -100,7 +100,7 @@ class test {
 private:
   static const char* datadir;  
 
-  bool are_files_equal(char* name1, char* name2) {
+  bool are_files_equal(const char* name1, const char* name2) {
     std::ifstream in1(name1);
     std::ifstream in2(name2);
     std::string s1;
@@ -119,7 +119,7 @@ private:
     return true;
   }
 
-  bool does_nef3_equals_file(Nef_polyhedron& N, char* name, char* suffix) {
+  bool does_nef3_equals_file(Nef_polyhedron& N, const char* name, const char* suffix) {
     char* fullname = new char[strlen(datadir)+strlen(name)+strlen(suffix)+1];
     strcpy(fullname, datadir);
     strcat(fullname, name);
@@ -148,7 +148,7 @@ private:
   }
 
 public:
-  void run_test(bool compare,char* suffix) {
+  void run_test(bool compare,const char* suffix) {
     Nef_polyhedron N = built_nef_from_off( "nine_planes.off");
     if(compare)
       CGAL_assertion(does_nef3_equals_file(N,"nine_planes.nef3",suffix));
