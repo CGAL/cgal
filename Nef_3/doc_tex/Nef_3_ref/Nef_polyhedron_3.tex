@@ -169,6 +169,14 @@ template parameters.
   creates a Nef polyhedron, which represents the same point set as 
   the polyhedral surface \ccc{P} does.}
 
+\ccConstructor{Nef_polyhedron_3(Input_iterator begin, Input_iterator end);}
+              {creates a Nef polyhedron consisting of a single polygon
+              spanned by the list of points in the iterator range
+              \ccc{[begin,end)}. If the points do not on a common
+              supporting plane, the constructor tries to triangulate
+              the polygon into multiple facets.If the construction does
+              not succeed, the empty set is created.}
+
 %\ccConstructor{Nef_polyhedron_3(const char* filename);}{
 %  loads a Nef polyhedron from \ccc{filename}.}
 
