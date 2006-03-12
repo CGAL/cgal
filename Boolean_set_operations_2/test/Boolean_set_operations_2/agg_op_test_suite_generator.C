@@ -1,22 +1,33 @@
+#include <CGAL/basic.h>
 
-#include <iostream>
-#include <fstream>
+#ifdef CGAL_USE_GMP
+
+  #include <CGAL/Gmpq.h>
+
+  typedef CGAL::Gmpq                                    Number_type;
+
+#else
+
+  #include <CGAL/MP_Float.h>
+  #include <CGAL/Quotient.h>
+
+  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+
+#endif 
+
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/iterator.h>
 #include <vector>
 #include <iterator>
 #include <algorithm>
-#include <CGAL/iterator.h>
 #include <cstdlib>
+#include <iostream>
+#include <fstream>
 
-//typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
-typedef CGAL::Gmpq                                    Number_type;
-typedef CGAL::Simple_cartesian<Number_type>           Kernel;
+typedef CGAL::Simple_cartesian<Number_type>            Kernel;
 
 typedef CGAL::Polygon_2<Kernel>                        Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>             Polygon_with_holes_2;

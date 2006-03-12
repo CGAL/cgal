@@ -1,3 +1,19 @@
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_GMP
+
+  #include <CGAL/Gmpq.h>
+
+  typedef CGAL::Gmpq                                    Number_type;
+
+#else
+
+  #include <CGAL/MP_Float.h>
+  #include <CGAL/Quotient.h>
+
+  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+
+#endif 
 
 #include <string>
 #include <CGAL/Simple_cartesian.h>
@@ -8,15 +24,11 @@
 
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Gps_traits_2.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/Boolean_set_operations_2.h>
 
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Polygon_set_2.h>
 
-
-typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
 
 typedef CGAL::Polygon_2<Kernel>                       Polygon_2;
