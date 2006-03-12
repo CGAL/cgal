@@ -2,8 +2,8 @@
 // Associating a color attribute with segments using the consolidated
 // curve-data traits.
 
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -15,7 +15,6 @@ enum Segment_color
   BLUE
 };
 
-typedef CGAL::Gmpq                                        Number_type;
 typedef CGAL::Cartesian<Number_type>                      Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits_2;
 typedef Segment_traits_2::Curve_2                         Segment_2;

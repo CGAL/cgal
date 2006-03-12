@@ -1,13 +1,12 @@
 //! \file examples/Arrangement_2/ex_edge_manipulation_curve_history.C
 // Removing curves and manipulating edges in an arrangement with history.
 
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 
-typedef CGAL::Gmpq                                    Rational;
-typedef CGAL::Cartesian<Rational>                     Kernel;
+typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef Kernel::Point_2                               Rat_point_2;
 typedef Kernel::Circle_2                              Circle_2;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>     Traits_2;
@@ -22,7 +21,7 @@ int main ()
 {
   // Construct an arrangement containing nine circles: C[0] of radius 2 and
   // C[1], ..., C[8] of radius 1.
-  const Rational    _7_halves = Rational (7, 2); 
+  const Number_type _7_halves = Number_type (7, 2); 
   Arr_with_hist_2   arr;
   Curve_2           C[9];
   Curve_handle      handles[9];

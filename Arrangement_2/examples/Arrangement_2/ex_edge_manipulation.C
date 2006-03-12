@@ -1,14 +1,22 @@
 //! \file examples/Arrangement_2/ex_edge_manipulation.C
 // Using the edge-manipulation functions.
 
-#include <CGAL/Gmpz.h>
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_GMP
+  #include <CGAL/Gmpz.h>
+  typedef CGAL::Gmpz                                    Number_type;
+#else
+  #include <CGAL/MP_Float.h>
+  typedef CGAL::MP_Float                                Number_type;
+#endif
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
 #include "arr_print.h"
 
-typedef CGAL::Gmpz                                    Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;

@@ -1,7 +1,7 @@
 //! \file examples/Arrangement_2/ex_bgl_primal_adapter.C
 // Adapting an arrangement to a BGL graph.
 
-#include <CGAL/Gmpq.h>
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -11,7 +11,6 @@
 #include <CGAL/graph_traits_Arrangement_2.h>
 #include <CGAL/Arr_vertex_map.h>
 
-typedef CGAL::Gmpq                                      Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
 typedef Traits_2::Point_2                               Point_2;

@@ -1,14 +1,13 @@
 //! \file examples/Arrangement_2/ex_io_curve_history.C
 // Using the arrangement-with-history I/O operators.
 
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/IO/Arr_with_history_iostream.h>
 #include <fstream>
 
-typedef CGAL::Gmpq                                    Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;

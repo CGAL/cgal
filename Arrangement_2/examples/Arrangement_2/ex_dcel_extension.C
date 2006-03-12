@@ -1,15 +1,14 @@
 //! \file examples/Arrangement_2/ex_dcel_extension.C
 // Extending all DCEL records (vertices, edges and faces).
 
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_extended_dcel.h>
 
 enum Color {BLUE, RED, WHITE};
 
-typedef CGAL::Gmpq                                     Number_type;
 typedef CGAL::Cartesian<Number_type>                   Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>             Traits_2;
 typedef Traits_2::Point_2                              Point_2;

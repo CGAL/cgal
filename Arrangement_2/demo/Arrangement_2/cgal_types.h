@@ -28,8 +28,6 @@
 #include <CGAL/IO/Qt_help_window.h>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
@@ -80,9 +78,24 @@ typedef Coord_kernel::Segment_2                            Coord_segment;
 typedef Coord_kernel::Circle_2                             Coord_circle;
 
 
-typedef CGAL::Polygon_2<Coord_kernel> Polygon;  // polygon is usefull for filling faces
+typedef CGAL::Polygon_2<Coord_kernel> Polygon;  
+                                      // polygon is usefull for filling faces
 
-typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
+#ifdef CGAL_USE_GMP
+
+  #include <CGAL/Gmpq.h>
+
+  typedef CGAL::Gmpq                                         NT;
+
+#else
+
+  #include <CGAL/MP_Float.h>
+  #include <CGAL/Quotient.h>
+
+  typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
+
+#endif
+
 typedef CGAL::Cartesian<NT>                                Kernel;
 
 

@@ -133,24 +133,35 @@ endpoints or from a kernel segment. Moreover, an
 convertible to one another.
 
 The \ccc{Arr_segment_traits_2<Kernel>} class is very efficient for
-maintaining arrangements of a large number of intersecting line segments,
-especially if it is instantiated with the appropriate geometric kernel.
-Using \ccc{Cartesian<Gmpq>} as the kernel type is generally a good choice;
-the coordinates of the segment endpoints are represented as exact rational
-numbers, and this ensures the robustness and correctness of any computation.
-Exact computations are of course less efficient, compared to machine-precision
-floating-point arithmetic, so constructing an arrangement using the
-\ccc{Cartesian<Gmpq>} kernel is several times slower in comparison to
-a \ccc{Simple_cartesian<Gmpq>} kernel. However, in the latter case the
-correctness of the computation results is not guaranteed.
-In many cases it is possible to use filtered computations and benefit from
-both approaches, namely achieve fast running times with guaranteed results.
-In case we handle a set of line segments that have no degeneracies, namely
-no two segments share a common endpoint, and no three segments intersect at
-a common point --- or alternatively, degeneracies exist but their number is
-relatively small --- then filtered computation incur only a minor overhead
-compared to the floating-point arithmetic, while ensuring the correctness of
-the computation results.
+maintaining arrangements of a large number of intersecting line
+segments, especially if it is instantiated with the appropriate
+geometric kernel. Using \ccc{Cartesian<Gmpq>} as the kernel type is
+generally a good choice; the coordinates of the segment endpoints are
+represented as exact rational numbers, and this ensures the robustness
+and correctness of any computation. However, if the {\sc Gmp}
+library is not installed, it is possible to use the
+\ccc{Quotient<MP_Float>} number-type, provided by the support library
+of \cgal, which is somewhat less efficient.\footnote{Many of the
+example programs in the rest of the chapter include a header file
+named \ccc{arr_rational_nt.h}, which defines a type named
+\ccc{Number_type} as either \ccc{Gmpq} or \ccc{Quotient<MP_Float>},
+depending on whether {\sc Gmp} is installed or not.}
+
+Exact computations are of course less efficient, compared to
+machine-precision floating-point arithmetic, so constructing an
+arrangement using the \ccc{Cartesian<Gmpq>} kernel (or, similarly,
+\ccc{Cartesian<Quotient<MP_Float> >})  is several times slower in
+comparison to a \ccc{Simple_cartesian<double>} kernel. However, in
+the latter case the correctness of the computation results is not
+guaranteed. In many cases it is possible to use \emph{filtered}
+computations and benefit from both approaches, namely achieve fast
+running times with guaranteed results. In case we handle a set of
+line segments that have no degeneracies, namely no two segments
+share a common endpoint, and no three segments intersect at a common
+point --- or alternatively, degeneracies exist but their number is
+relatively small --- then filtered computation incur only a minor
+overhead compared to the floating-point arithmetic, while ensuring
+the correctness of the computation results.
 
 \begin{figure}[t]
 \begin{ccTexOnly}

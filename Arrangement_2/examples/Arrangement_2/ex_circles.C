@@ -1,12 +1,11 @@
 //! \file examples/Arrangement_2/ex_circles.C
 // Constructing an arrangement of circles using the conic-arc traits.
 
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Gmpq                                    Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef Kernel::Circle_2                              Circle_2;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>     Traits_2;

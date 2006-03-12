@@ -1,12 +1,11 @@
 //! \file examples/Arrangement_2/ex_circular_arc.C
 // Constructing an arrangement of various circular arcs and line segments.
 
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Gmpq                                    Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef Kernel::Circle_2                              Circle_2;
 typedef Kernel::Segment_2                             Segment_2;

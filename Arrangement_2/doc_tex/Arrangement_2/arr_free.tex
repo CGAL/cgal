@@ -307,9 +307,11 @@ arrangement edge:
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_global_insertion.C}
 
 The number type used in the example above,
-\ccc{Quotient<MP_Float>}, is capable of exactly computing the
-intersection points as long as the segment endpoints are given as
-floating-point numbers.
+\ccc{Quotient<MP_Float>}, is comprised of a numerator and a
+denominator of type \ccc{MP_Float}, namely floating-point numbers
+with unbounded mantissa. This number type is therefore capable of
+exactly computing the intersection points as long as the segment
+endpoints are given as floating-point numbers.
 
 \subsection{Removing Vertices and Edges}
 \label{arr_ssec:gl_remove}

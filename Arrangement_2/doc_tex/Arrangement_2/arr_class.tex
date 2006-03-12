@@ -672,9 +672,14 @@ instead of the built-in \ccc{int} type.\footnote{As a rule of
 thumb, one can use a bounded integer type for representing line
 segments whose coordinates are bounded by
 $\lfloor\sqrt[3]{M}\rfloor$, where $M$ is the maximal
-representable integer value. This guarantees that no overflows occur
-in the computations carried out by the traits class, hence all traits-class
-predicates always return correct results.} We also use the standard Cartesian
+representable integer value. This guarantees that no overflows
+occur in the computations carried out by the traits class, hence
+all traits-class predicates always return correct results.} 
+In case the {\sc Gmp} library is not installed (as indicated by
+the \ccc{CGAL_USE_GMP} flag defined in \ccc{CGAL/basic.h}), we
+use \ccc{MP_Float}, a number-type included in \cgal's support
+library that is capable of storing floating-point numbers with
+unbounded mantissa. We also use the standard Cartesian
 kernel of \cgal\ as our kernel. This is recommended when the
 kernel is instantiated with a more complex number type, as we
 demonstrate in other examples in this chapter.

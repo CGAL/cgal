@@ -1,7 +1,7 @@
 //! \file examples/Arrangement_2/ex_bgl_dual_adapter.C
 // Adapting the dual of an arrangement to a BGL graph.
 
-#include <CGAL/Gmpq.h>
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_extended_dcel.h>
@@ -14,7 +14,6 @@
 
 #include "arr_print.h"
 
-typedef CGAL::Gmpq                                      Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
 typedef Traits_2::Point_2                               Point_2;

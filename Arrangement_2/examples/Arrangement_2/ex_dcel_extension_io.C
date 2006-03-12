@@ -1,7 +1,7 @@
 //! \file examples/Arrangement_2/ex_dcel_extension_io.C
 // Using the I/O operators for arrangements with extended DCEL records.
 
-#include <CGAL/Gmpq.h>
+#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_extended_dcel.h>
@@ -39,7 +39,6 @@ std::istream& operator>> (std::istream& is, Color& color)
   return (is);
 }
 
-typedef CGAL::Gmpq                                        Number_type;
 typedef CGAL::Cartesian<Number_type>                      Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                Traits_2;
 typedef Traits_2::Point_2                                 Point_2;
