@@ -1,8 +1,8 @@
 //! \file examples/Boolean_set_operations_2/ex_set_union.C
 // Computing the union of a set of circles.
 
+#include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Lazy_exact_nt.h>
@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                 NT;
-typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Lazy_exact_nt<Number_type>                Lazy_exact_nt;
+typedef CGAL::Cartesian<Lazy_exact_nt>                  Kernel;
 typedef Kernel::Point_2                                 Point_2;
 typedef Kernel::Circle_2                                Circle_2;
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>       Traits_2;

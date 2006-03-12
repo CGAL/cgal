@@ -61,9 +61,14 @@ following sections.
 Testing whether two polygons intersect results with a Boolean value, 
 and does not require any additional data beyond the provision of the 
 two input polygons. The example listed below tests whether the two
-triangles depicted on the right intersect. It uses the function
-\ccc{print_polygon.h} listed above, which is located in the header file
-\ccc{print_utils.h}.
+triangles depicted on the right intersect. It uses, as do the other
+example programs in this chapter, the auxiliary header file
+\ccc{bso_rational_nt.h}, which defines the type \ccc{Number_type} as
+{\sc Gmp}'s rational number-type (\ccc{CGAL::Gmpq}), or as the
+number type \ccc{Quotient<MP_Float>} that is included in the support
+library of \cgal, based on whether the {\sc Gmp} library is installed
+or not. It also uses the function \ccc{print_polygon.h} listed above,
+which is located in the header file \ccc{print_utils.h}.
 \lcTex{%
   \end{minipage}\hspace{\minipageSpace}
   \begin{minipage}{\widthRight}

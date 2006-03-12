@@ -1,8 +1,8 @@
 //! \file examples/Boolean_set_operations_2/ex_dxf_union.C
 // Computing the union of a set of circular polygons read from a DXF file.
 
+#include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
@@ -13,8 +13,8 @@
 #include <vector>
 #include <cstdlib>
 
-typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>              NT;
-typedef CGAL::Cartesian<NT>                          Kernel;
+typedef CGAL::Lazy_exact_nt<Number_type>             Lazy_exact_nt;
+typedef CGAL::Cartesian<Lazy_exact_nt>               Kernel;
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>    Traits_2;
 typedef Traits_2::Polygon_2                          Circ_polygon_2;
 typedef Traits_2::Polygon_with_holes_2               Circ_polygon_with_holes_2;

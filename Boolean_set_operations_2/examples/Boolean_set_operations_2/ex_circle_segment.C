@@ -1,8 +1,8 @@
 //! \file examples/Boolean_set_operations_2/ex_circle_segment.C
 // Handling circles and linear segments concurrently.
 
+#include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
@@ -10,8 +10,8 @@
 
 #include <list>
 
-typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                 NT;
-typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Lazy_exact_nt<Number_type>                Lazy_exact_nt;
+typedef CGAL::Cartesian<Lazy_exact_nt>                  Kernel;
 typedef Kernel::Point_2                                 Point_2;
 typedef Kernel::Circle_2                                Circle_2;
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>       Traits_2;

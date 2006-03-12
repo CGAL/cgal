@@ -1,11 +1,10 @@
 //! \file examples/Boolean_set_operations_2/ex_do_intersect.C
 // Determining whether two triangles intersect.
 
+#include "bso_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Boolean_set_operations_2.h>
 
-typedef CGAL::Gmpq                                      Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef Kernel::Point_2                                 Point_2;
 typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
