@@ -1124,6 +1124,7 @@ Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.pdf -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3_ref/fig/snc.eps -text
 Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#unset
+Nef_3/examples/Nef_3/complex_construction.C -text
 Nef_3/examples/Nef_3/polygon_construction.C -text
 Nef_3/examples/Nef_3/polyline_construction.C -text
 Nef_3/test/Nef_3/Nef_3_problematic_construction.C -text
