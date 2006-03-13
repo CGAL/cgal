@@ -64,7 +64,7 @@ self-intersecting cycle, drawn as a sequence of arrows (right).
 The winding number associated with each face of the arrangement
 induced by the segments forming the cycle appears in dashed circles.
 The Minkowski sum of the two polygons is shaded.}
-\label{fig:onecyc}
+\label{mink_fig:onecyc}
 \end{figure}
 
 If the polygons are not convex, it is possible to use one of the following
@@ -73,7 +73,7 @@ approaches:
 \item[Decomposition:]
 We decompose $P$ and $Q$ into convex sub-polygons, namely we obtain two
 sets of convex polygons $P_1, \ldots, P_k$ and $Q_1, \ldots, Q_\ell$ such
-that $\bugcup_{i = 1}{k}{P_i} = P$ and $\bugcup_{i = j}{\ell}{Q_j} = Q$.
+that $\bigcup_{i = 1}{k}{P_i} = P$ and $\bigcup_{i = j}{\ell}{Q_j} = Q$.
 We then calculate the pairwise sums $S_{ij} = P_i \oplus Q_j$ using the
 simple procedure described above, and compute the union $P \oplus Q =
 \bigcup_{ij}{S_{ij}}$.
@@ -90,7 +90,9 @@ have positive orientations (i.e. their boundaries wind in a counterclockwise
 order around their interiors) and compute the convolution of the two polygon
 boundaries. The {\em convolution} of these two polygons~\cite{grs-kfcg-83},
 denoted $P * Q$, is a collection of line segments of the form
-$[p_i + q_j, p_{i+1} + q_j]$, where the vector $\overrightarrow{p_i p_{i+1}}$
+$[p_i + q_j, p_{i+1} + q_j]$,\footnote{Throughout this chapter, we increment
+or decrement an index of a vertex modulu the size of the polygon.}
+where the vector $\overrightarrow{p_i p_{i+1}}$
 lies between $\overrightarrow{q_{j-1} q_j}$ and $\overrightarrow{q_j
 q_{j+1}}$,\footnote{We say that a vector $\vec{v}$ lies between
 two vectors $\vec{u}$ and $\vec{w}$ if we reach $\vec{v}$ strictly
@@ -108,9 +110,31 @@ having a non-zero winding number with respect to the cycles
 of $P * Q$.\footnote{Informally speaking, the winding number of a point
 $p \in \reals^2$ with respect to some planar curve $\gamma$ is an
 integer number counting how many times does $\gamma$ wind in a
-counterclockwise direction around $p$.} See Figure~\ref{fig:onecyc} for
-an illustration.
+counterclockwise direction around $p$.} See Figure~\ref{mink_fig:onecyc}
+for an illustration.
+
+The number of segments in the convolution of two polygons is usually
+smaller than the number of segments that constitute the boundaries of the
+sub-sums $S_{ij}$ when using the decomposition approach. As both apporaches
+construct the arrangement of these segments and extract the sum from this
+arrangement, computing Minkowski sum using the convolution approach usually
+generates a smaller intermediate arrangement, hence it is faster and
+consumes less space.
 \end{description}
+
+The function \ccc{minkowski_sum (P, Q)} accepts two simple polygons $P$
+and $Q$, represented using the \ccc{Polygon_2<Kernel,Container>}
+class-template and uses the convolution method in order to compute and
+return their Minkowski sum $S = P \oplus Q$.
+
+As the input polygons may not be convex,their Minkowski sum may not be
+simply connected and contain polygonal holes; see for example
+Figure~\ref{mink_fig:onecyc}. $S$ is therefore an instance of the
+\ccc{Polygon_with_holes_2<Kernel,Container>} class-template, defined in the
+Boolean Set-Operations package: The outer boundary of $S$ is a polygon that
+can be accessed using \ccc{S.outer_boundary()}, and its polygonal holes can
+are given by the range \ccc{[S.holes_begin(), S.holes_end())} (where $S$
+contains \ccc{S.number_of_holes()} holes in its interior).
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -128,10 +152,176 @@ in the example program \ccc{ex_sum_triangles.C}.}
 \label{mink_fig:sum_tri}
 \end{figure}
 
+The following example program constructs the Minkwoski sum of two triangles,
+as depicted in Figure~\ref{mink_fig:sum_tri}. The result in this case is
+a convex hexagon:
+
 \ccIncludeExampleCode{../examples/Minkowski_sum_2/ex_sum_triangles.C}
 
+% RWRW : Here should come another example, with non-convex polygons.
 
+\subsection{Decomposition Strategies}
+\label{mink_ssec:decomp}
+%------------------------------------
+
+In order to compute Minkwoski sums using the decomposition method, it is
+possible to call the function \ccc{minkowski_sum_2 (P, Q, decomp)}, where
+\ccc{decomp} is an instance of a class that models the concept
+\ccc{PolygonConvexDecomposition}, namely it should provide a method named
+\ccc{decompose()} that receives a planar polygons and returns a range
+of convex polygons that represents its convex decomposition.
+
+The Minkowski-sum package includes for models of the concept
+\ccc{PolygonConvexDecomposition}. The first three are classes that wrap
+the decomposition functions included in the Planar Polygon Partitioning
+package, while the fourth is an implementation of a decomposition algorithm
+introduced in~\cite{???}. The convex decompositions that it creates
+usually yield efficient running times for Minkowski sum computations:
+\begin{itemize}
+\item
+The class \ccc{Optimal_convex_decomposition} uses the dynamic-programming
+algorithm of Greene~\cite{g-dpcp-83} for computing an optimal decomposition
+of a polygon into a minimal number of convex sub-polygons. The main drawback
+of this strategy is that it runs in $O(n^4)$ time and $O(n^3)$ in the worst
+case,where $n$ is the number of vertices in the input polygon.
+%
+\item
+The class \ccc{Hertel_Mehlhorn_convex_decomposition} implements the
+approximation algorithm suggested by Hertel and Mehlhorn~\cite{hm-ftsp-83},
+which triangulates the input polygon and proceeds by throwing away
+unnecessary triangulation edges.
+This algorithm requires $O(n)$ time and space and guarantees that
+the number of sub-polygons it generates is not more than four
+times the optimum.
+%
+\item
+The class \ccc{Greene_convex_decomposition} is an implementation of
+Greene's approximation algorithm~\cite{g-dpcp-83}, which computes a
+convex decomposition of the polygon based on its partitioning into
+$y$-monotone polygons. This algorithm runs in $O(n \log n)$ time
+and $O(n)$ space, and has the same approximation guarantee as
+Hertel and Mehlhorn's algorithm.
+%
+\item
+The class \ccc{short_side_angle_bisecttor_convex_decomposition} uses
+a heuristic improvement to the angle-bisector decomposition method
+suggested by Chazelle and Dobkin~\cite{cd-ocd-85}, which runs in
+$O(n^2)$ time. It starts by examining each pair of reflex vertices
+in the input polygon such that the entire interior of the diagonal
+connecting these vertices is contained in the polygon. Out of all
+available pairs, the vertices $p_i$ and $p_j$ are selected such
+that the number of reflex vertices from $p_i$ to $p_j$ (or from
+$p_j$ to $p_i$) is minimal. The polygon is split by the diagonal
+$p_i p_j$ and we continue recursively on both resulting
+sub-polygons. In case it is not possible to eliminate two reflex
+vertices at once any more, each reflex vertex is eliminated by a
+diagonal that is closest to the angle bisector emanating from this
+vertex.
+\end{itemize}
+
+% RWRW : Here comes an example.
 
 \section{Offsetting a Polygon}
 \label{mink_sec:offset}
 %=============================
+
+The operation of computing the Minkowski sum $P \oplus B_r$ of a
+polygon $P$ with $b_r$, a disc of radius $r$ centered at the origin,
+is widely known as \emph{offsetting} the polygon $P$ by a radius $r$.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+\begin{center}
+  \begin{tabular}{ccc}
+    \psfig{figure=Minkowski_sum_2/fig/convex_offset.eps,width=1.8in,silent=} &
+    \psfig{figure=Minkowski_sum_2/fig/offset_decomp.eps,width=1.8in,silent=} &
+    \psfig{figure=Minkowski_sum_2/fig/offset_conv.eps,width=1.8in,silent=} \\
+    {\small (a)} & {\small (b)} & {\small (c)}
+  \end{tabular}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/offset.gif" border=0 alt="Computing offsets of polygons">
+  </center>
+\end{ccHtmlOnly}
+\caption{(a)~Offsetting a convex polygon.
+(b)~Computing the offset of a non-convex polygon by decomposing
+it to convex sub-polygons. (c)~Offsetting a non-convex polygon
+by computing its convolution with a disc. The convolution cycle
+induces an arrangement with three faces, whose winding numbers
+are shown enclosed in dashed circles.}
+\label{mink_fig:pgn_offset}
+\end{figure}
+
+Let $P = \left( p_0, \ldots, p_{n - 1} \right)$ be the polygon vertices,
+ordered in a counterclockwise orientation around its interior. 
+If $P$ is a convex polygon the offset is easily computed by
+shifting each polygon edge by $r$ away from the polygon, namely to
+the right side of the edge. As a result we obtain a collection of
+$n$ disconnected \emph{offset edges}. Each pair of adjacent offset
+edges, induced by $p_{i-1} p_i$ and $p_i p_{i+1}$, are connected
+by a circular arc of radius $r$, whose supporting circle is
+centered at $p_i$. The angle that defines such a circular arc
+equals $180^{\circ} - \measuredangle p_{i-1} p_i p_{i+1}$; see
+Figure~\ref{mink_fig:pgn_offset}(a) for an illustration. The running
+time of this simple process is of course linear with respect to
+the size of the polygon.
+
+If $P$ is not convex, its offset can be obtained by decomposing it
+to convex sub-polygons $P_1, \ldots P_m$ such that
+$\bigcup_{i=1}^{m}{P_i} = P$, computing the offset of each
+sub-polygon and finally calculating the union of these sub-offsets
+(see Figure~\ref{fig:pgn_offset}(b)). However, as was the case with
+the Minkowski sum of a pair of polygons, here it is also more
+efficient to compute the \emph{convolution cycle} of the polygon
+with the disc $B_r$,\footnote{As the disc is convex, it is guaranteed
+that the convolution curve is comrised of a single cycle.} which can be
+constructed by applying the process described in the previous
+paragraph. The only difference is that a circular arc induced by a
+reflex vertex $p_i$ is defined by an angle $540^{\circ} - \measuredangle
+p_{i-1} p_i p_{i+1}$; see Figure~\ref{fig:pgn_offset}(c) for an
+illustration. We finally compute the winding numbers of the faces of the
+arrangement induced by the convolution cycle to obtain the offset
+polygon.
+
+%RWRW : From here ...
+
+The circular arcs of the convolution cycle are clearly supported
+by rational circles. Let us examine how the offset edges look
+like. We consider the polygon edge directed from $v_1 = (x_1,
+y_1)$ to $v_2 = (x_2, y_2)$, we denote by $\theta$ the angle
+$\vec{v_1 v_2}$ forms with the $x$ axis. Let $\ell = \sqrt{(x_2 -
+x_1)^2 + (y_2 - y_1)^2}$ be the edge length, so we have
+$\cos\theta = \frac{1}{\ell}(x_2 - x_1)$ and $\sin\theta =
+\frac{1}{\ell}(y_2 - y_1)$. As we traverse the polygon edges in a
+counterclockwise orientation, we construct the offset edge $p_1
+p_2$ that corresponds to $v_1 v_2$ by shifting either polygon
+vertex by a vector whose length is $r$ and which forms an angle of
+$\phi = \theta - \frac{\pi}{2}$ with the $x$-axis. It is easy to
+see that:
+\begin{eqnarray}
+\sin\phi &=& \sin\theta\cdot\cos\frac{\pi}{2} -
+             \cos\theta\cdot\sin\frac{\pi}{2}
+         = - \cos\theta = \frac{1}{\ell}(x_1 - x_2) \ , \\
+\cos\phi &=& \cos\theta\cdot\cos\frac{\pi}{2} +
+             \sin\theta\cdot\sin\frac{\pi}{2}
+         = \sin\theta = \frac{1}{\ell}(y_2 - y_1) \ .
+\end{eqnarray}
+Thus, $p_j = \left( x_j + \frac{r}{\ell}(y_2 - y_1), y_j +
+\frac{r}{\ell}(x_1 - x_2) \right)$ for $j = 1,2$. Indeed, the
+coordinates of these points are one-root numbers, but the segment
+$p_1 p_2$ is supported by a line whose coefficient are
+\emph{irrational}: it is easy to show that if the supporting line
+of $v_1 v_2$ is $a x + b y + c = 0$ (where $a,b,c \in {\mathbb Q}$),
+then the line supporting $p_1 p_2$ is $a x + b y + (c + \ell r) =
+0$, where $\ell$ is usually an irrational number. The coordinates
+of the intersection points between two offset edges, or between an
+offset edge and a circular arc that represents an offset vertex,
+are therefore \emph{not} one-root numbers. It should be mentioned
+that the locus of all points lying at distance $r$ from the line
+$a x + b y + c = 0$ is given by $\frac{(a x + b y + c)^2}{a^2 +
+b^2} = r^2$, which is a degenerate conic curve (a pair of parallel
+lines) with rational coefficients. Offset polygons can therefore
+by constructed in an exact manner using the conic-arc
+traits-class.
