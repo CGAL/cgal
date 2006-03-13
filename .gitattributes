@@ -1255,6 +1255,7 @@ Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Polyhedron/examples/Polyhedron/cross.off -text
 Polytope_distance_d/examples/Polytope_distance_d/polytope_distance_d.C -text
+Polytope_distance_d/examples/Polytope_distance_d/polytope_distance_d_fast_exact.C -text
 Polytope_distance_d/test/Polytope_distance_d/create_test_PD_cin -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD.C -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD.cin -text
