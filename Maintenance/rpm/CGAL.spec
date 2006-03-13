@@ -1,4 +1,7 @@
 %define internal_release 0
+%define build_doc 0
+%define build_demo 0
+
 %if %{internal_release}
 %define tarball_name CGAL-3.2-I-%{internal_release}
 %define release %{internal_release}
@@ -8,6 +11,7 @@
 %define release 1
 %define CGAL_DIR %{_libdir}/CGAL-3.2
 %endif
+
 %define boost_version 1.32
 
 Summary: Computational Geometry Algorithms Library
@@ -18,8 +22,10 @@ License: QPL/LGPL
 URL: http://www.cgal.org/
 Group: System Environment/Libraries
 Source: %{tarball_name}.tar.gz
-Source1:%{name}-%{version}-doc_pdf.tar.gz
-Source2:%{name}-%{version}-doc_html.tar.gz
+%if %{build_doc}
+Source1: CGAL-3.2-doc_pdf.tar.gz
+Source2: CGAL-3.2-doc_html.tar.gz
+%endif
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 #Prefix: %{CGAL_DIR}
@@ -56,30 +62,38 @@ Summary: Development files and tools for %name applications
 Requires: boost-devel >= %boost_version, gmp-devel
 Requires: %{name}  = %{version}-%{release}
 
+%description devel
+The %{name}-devel package provides the headers files and tools you may need to 
+develop applications using %name.
+
+%if %{build_doc}
+%package doc
+Group: Documentation
+Summary: HTML and PDF documentation for developing with %name
+
+%description doc
+The %{name}-doc package provides the html and pdf documentation of %name.
+
+%endif
+
+%if %{build_demo}
 %package demo
 Group: Development/Libraries
 Summary: demo of %name algorithms.
 Requires: %{name}-devel  = %{version}-%{release}
 
-%package doc
-Group: Documentation
-Summary: HTML and PDF documentation for developing with %name
-
-%description devel
-The %{name}-devel package provides the headers files and tools you may need to 
-develop applications using %name.
-
-%description doc
-The %{name}-doc package provides the html and pdf documentation of %name.
-
 %description demo
 The %{name}-demo package provides some demos of %name algorithms.(to be compiled)
 
+%endif
+
 %prep
 %setup -n %{name}-%{version}
+
+%if %{build_doc}
 %setup -D -T -a 1
 %setup -D -T -a 2
-
+%endif
  
 %build
 rm -rf $RPM_BUILD_ROOT
@@ -136,21 +150,26 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE*
 %doc README
 
+%if %{build_doc}
 %files doc
 %defattr(-,root,root,-)
 %doc doc_html
 %doc doc_pdf
 %doc LICENSE*
+%endif
 
+%if %{build_demo}
 %files demo
 %defattr(-,root,root,-)
 %doc demo
 %doc LICENSE*
 %doc README
+%endif
 
 %changelog
 * Mon Mar 13 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - delete the patch that fixes the perl path.
+- add build_doc and build_demo flags.
 * Fri Mar 10 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - adding new sub-packages doc(pdf&html) and demo.
 - add internal_release flag. 
