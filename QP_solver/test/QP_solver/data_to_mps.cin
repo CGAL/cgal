@@ -20,6 +20,6 @@ D-MATRIX
 0 0 1
 
 C-VECTOR-AND-BOUNDS
-3 4 (0,) 5 (,4)
+3 4 (0 ,) 5 (,4)
 
 END
