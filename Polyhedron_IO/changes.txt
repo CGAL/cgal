@@ -1,6 +1,9 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+13 March 2006 Andreas Fabri
+- Added a blank before the commas in iv2off.cin as VC8 has a bug in operator>>(istream, int&)
+
 19 December 2004 Andreas Fabri
 - Updated file headers in the demos
 
