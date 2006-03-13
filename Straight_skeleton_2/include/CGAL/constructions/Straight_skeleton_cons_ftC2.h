@@ -21,7 +21,7 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-namespace CGAL_SLS_i
+namespace CGAL_SS_i
 {
 
 template<class NT>
@@ -107,7 +107,7 @@ Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
     FT sb = e.t().x() - e.s().x();
     FT l2 = (sa*sa) + (sb*sb) ;
 
-    FT l = CGAL_SLS_i :: inexact_sqrt(l2);
+    FT l = CGAL_SS_i :: inexact_sqrt(l2);
 
     a = sa / l ;
     b = sb / l ;
@@ -363,7 +363,7 @@ FT compute_offset_lines_isec_dist_to_pointC2 ( Vertex<FT> const& p, SortedTriedg
   return sdist;
 }
 
-} // namnepsace CGAIL_SLS_i
+} // namnepsace CGAIL_SS_i
 
 CGAL_END_NAMESPACE
 

@@ -18,6 +18,7 @@
 
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
+#include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
 
 namespace demo

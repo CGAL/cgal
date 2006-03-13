@@ -38,7 +38,9 @@ template<class Gt, class SS>
 Straight_skeleton_builder_2<Gt,SS>::Straight_skeleton_builder_2 ( Traits const& aTraits )
   :
   mTraits(aTraits)
+ ,Equal    (aTraits.get<typename Traits::Equal_2    >())
  ,Left_turn(aTraits.get<typename Traits::Left_turn_2>())
+ ,Collinear(aTraits.get<typename Traits::Collinear_2>())
  ,mEventCompare(*this)
  ,mVertexID(0)
  ,mEdgeID(0)
@@ -443,7 +445,6 @@ void Straight_skeleton_builder_2<Gt,SS>::InitPhase()
 {
   CreateContourBisectors();
   CreateInitialEvents();
-  //FindVertexEvents();
 }
 
 template<class Gt, class SS>

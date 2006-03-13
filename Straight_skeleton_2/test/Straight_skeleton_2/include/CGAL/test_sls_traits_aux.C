@@ -44,7 +44,7 @@ void report( int idx, bool ok, std::string const& info = std::string("") )
 template<class Traits, class triedge>
 bool exist_event( Traits const&  aTraits, triedge const& aTriedge )
 {
-  return CGAL::Exist_sls_event_2<Traits>(aTraits)()(aTriedge.triple());
+  return CGAL::Exist_ss_event_2<Traits>(aTraits)()(aTriedge.triple());
 }
 
 template<class Traits, class triedge>
@@ -60,7 +60,7 @@ void test_exist_event( int            i
 template<class Traits, class triedge>
 CGAL::Comparison_result compare_events(Traits const& aTraits, triedge const& aTriedgeA, triedge const& aTriedgeB )
 {
-  return CGAL::Compare_sls_event_times_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple());
+  return CGAL::Compare_ss_event_times_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple());
 }
 
 template<class Traits, class triedge>
@@ -86,7 +86,7 @@ CGAL::Comparison_result compare_sdist_to_seed(Traits  const& aTraits
                                              ,triedge const& aTriedgeB
                                              )
 {
-  return CGAL::Compare_sls_event_distance_to_seed_2<Traits>(aTraits)()(aP,aTriedgeA.triple(),aTriedgeB.triple());
+  return CGAL::Compare_ss_event_distance_to_seed_2<Traits>(aTraits)()(aP,aTriedgeA.triple(),aTriedgeB.triple());
 }
 
 template<class Traits, class triedge>
@@ -96,7 +96,7 @@ CGAL::Comparison_result compare_sdist_to_seed(Traits  const& aTraits
                                              ,triedge const& aTriedgeC
                                              )
 {
-  return CGAL::Compare_sls_event_distance_to_seed_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple(),aTriedgeC.triple());
+  return CGAL::Compare_ss_event_distance_to_seed_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple(),aTriedgeC.triple());
 }
 
 template<class Traits, class Point, class triedge>
@@ -144,7 +144,7 @@ void test_compare_sdist_to_seed( int                     i
 template<class Traits, class triedge>
 bool is_inside_offset_zone( Traits const&  aTraits, triedge const& aTriedgeA, triedge const& aTriedgeB )
 {
-  return CGAL::Is_sls_event_inside_offset_zone_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple());
+  return CGAL::Is_ss_event_inside_offset_zone_2<Traits>(aTraits)()(aTriedgeA.triple(),aTriedgeB.triple());
 }
 
 template<class Traits, class triedge>

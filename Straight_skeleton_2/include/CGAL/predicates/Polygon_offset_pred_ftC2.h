@@ -22,7 +22,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGAL_SLS_i
+namespace CGAL_SS_i
 {
 
 // Given a triple of oriented lines in _normalized_ implicit form: (e0,e1,e2) such that
@@ -50,7 +50,7 @@ compare_offset_against_isec_timeC2 ( FT t, Triedge<FT> const& triedge )
 
 }
 
-} // namespace CGAL_SLS_i
+} // namespace CGAL_SS_i
 
 CGAL_END_NAMESPACE
 

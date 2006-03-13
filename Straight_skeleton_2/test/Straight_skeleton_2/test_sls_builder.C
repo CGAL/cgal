@@ -113,8 +113,8 @@ int main( int argc, char const* argv[] )
   {
     std::cout << "Testing Straight_skeleton_builder_2\n";
 
-    failed_list = new std::ofstream("./failed_cases.txt");
-    ok_list     = new std::ofstream("./ok_cases.txt");
+    failed_list = new std::ofstream("./sls_builder_failed_cases.txt");
+    ok_list     = new std::ofstream("./sls_builder_ok_cases.txt");
 
     if ( !failed_list->good() )
       cerr << "Unable to open failed_cases.txt report file." << endl ;

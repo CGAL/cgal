@@ -85,9 +85,9 @@ private :
 
   typedef boost::tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
 
-  typedef CGAL_SLS_i::Vertex <FT> iVertex ;
-  typedef CGAL_SLS_i::Edge   <FT> iEdge ;
-  typedef CGAL_SLS_i::Triedge<FT> iTriedge ;
+  typedef CGAL_SS_i::Vertex <FT> iVertex ;
+  typedef CGAL_SS_i::Edge   <FT> iEdge ;
+  typedef CGAL_SS_i::Triedge<FT> iTriedge ;
 
   typedef typename Halfedge::Base HBase;
   typedef typename Vertex::Base   VBase;
@@ -184,24 +184,26 @@ private :
     mWrappedVertices[aV->id()].mDefiningBorderC = aH ;
   }
 
-  static inline iEdge CreateEdge ( Halfedge_const_handle aH )
+  inline iEdge CreateEdge ( Halfedge_const_handle aH ) const
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
     Point_2 t = aH->vertex()->point() ;
-    return iEdge( iVertex(s.x(),s.y()), iVertex(t.x(),t.y()) );
+    return Construct_ss_edge_2<Traits>(mTraits)()(s,t);
   }
 
-  static inline iTriedge CreateTriedge ( Halfedge_const_handle aE0
-                                       , Halfedge_const_handle aE1
-                                       , Halfedge_const_handle aE2
-                                       )
+  inline iTriedge CreateTriedge ( Halfedge_const_handle aE0
+                                , Halfedge_const_handle aE1
+                                , Halfedge_const_handle aE2
+                                ) const
   {
-    return iTriedge(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
+    return Construct_ss_triedge_2<Traits>(mTraits)()(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
 
-  static inline iTriedge CreateTriedge ( BorderTriple const& aTriple )
+  inline iTriedge CreateTriedge ( BorderTriple const& aTriple ) const
   {
-    return iTriedge(CreateEdge(aTriple.get<0>()),CreateEdge(aTriple.get<1>()),CreateEdge(aTriple.get<2>()));
+    Halfedge_handle lE0, lE1, lE2 ;
+    boost::tie(lE0,lE1,lE2) = aTriple ;
+    return Construct_ss_triedge_2<Traits>(mTraits)()(CreateEdge(lE0),CreateEdge(lE1),CreateEdge(lE2));
   }
 
   Vertex_handle GetVertex ( int aIdx )
@@ -355,7 +357,7 @@ private :
 
   bool ExistEvent ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 ) const
   {
-    return Exist_sls_event_2<Traits>(mTraits)()(CreateTriedge(aE0, aE1, aE2));
+    return Exist_ss_event_2<Traits>(mTraits)()(CreateTriedge(aE0, aE1, aE2));
   }
 
   bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL
@@ -365,14 +367,14 @@ private :
                               , Halfedge_const_handle aOppositeNext
                               ) const
   {
-    return Is_sls_event_inside_offset_zone_2<Traits>(mTraits)()( CreateTriedge(aReflexL     , aReflexR, aOpposite)
-                                                               , CreateTriedge(aOppositePrev,aOpposite, aOppositeNext)
-                                                               ) ;
+    return Is_ss_event_inside_offset_zone_2<Traits>(mTraits)()( CreateTriedge(aReflexL     , aReflexR, aOpposite)
+                                                              , CreateTriedge(aOppositePrev,aOpposite, aOppositeNext)
+                                                              ) ;
   }
 
   Comparison_result CompareEvents ( iTriedge const& aA, iTriedge const& aB ) const
   {
-    return Compare_sls_event_times_2<Traits>(mTraits)()(aA,aB) ;
+    return Compare_ss_event_times_2<Traits>(mTraits)()(aA,aB) ;
   }
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
@@ -410,17 +412,17 @@ private :
                                        << ", E" << lTriple.get<2>()->id()
                             );
 
-        return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( CreateTriedge(lTriple)
-                                                                      , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                                      , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                                      ) ;
+        return Compare_ss_event_distance_to_seed_2<Traits>(mTraits)()( CreateTriedge(lTriple)
+                                                                     , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                                                                     , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                                                                     ) ;
       }
       else
       {
-        return Compare_sls_event_distance_to_seed_2<Traits>(mTraits)()( aSeed->point()
-                                                                      , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                                      , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                                      ) ;
+        return Compare_ss_event_distance_to_seed_2<Traits>(mTraits)()( aSeed->point()
+                                                                     , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                                                                     , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                                                                     ) ;
       }
     }
     else return EQUAL ;
@@ -436,7 +438,7 @@ private :
     Halfedge_handle yc = aY->border_c() ;
 
     if ( HaveTwoInCommon(xa,xb,xc,ya,yb,yc) )
-         return Are_sls_events_simultaneous_2<Traits>(mTraits)()( CreateTriedge(xa,xb,xc), CreateTriedge(ya,yb,yc)) ;
+         return Are_ss_events_simultaneous_2<Traits>(mTraits)()( CreateTriedge(xa,xb,xc), CreateTriedge(ya,yb,yc)) ;
     else return false ;
   }
 
@@ -477,7 +479,7 @@ private :
 
   boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( iTriedge const& aTri ) const
   {
-    return Construct_sls_event_time_and_point_2<Traits>(mTraits)()(aTri);
+    return Construct_ss_event_time_and_point_2<Traits>(mTraits)()(aTri);
   }
 
   void SetEventTimeAndPoint( Event& aE )
@@ -565,6 +567,7 @@ private:
   //Input
   Traits mTraits ;
 
+  typename Traits::Equal_2     Equal ;
   typename Traits::Left_turn_2 Left_turn ;
   typename Traits::Collinear_2 Collinear ;
 

@@ -27,12 +27,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Sls_, class Traits_, class Container_>
+template<class Ss_, class Traits_, class Container_>
 class Polygon_offset_builder_2
 {
 public :
 
-  typedef Sls_       Sls ;
+  typedef Ss_        Ss ;
   typedef Traits_    Traits ;
   typedef Container_ Container ;
 
@@ -42,20 +42,19 @@ public :
 
   typedef boost::shared_ptr<Container> ContainerPtr ;
 
-  Polygon_offset_builder_2( Sls const& aSls, Traits const& aTraits = Traits() )  ;
+  Polygon_offset_builder_2( Ss const& aSs, Traits const& aTraits = Traits() )  ;
 
   template<class OutputIterator>
   OutputIterator construct_offset_contours( FT aTime, OutputIterator aOut ) ;
 
 private:
 
-  typedef typename Sls::Halfedge_const_handle Halfedge_const_handle  ;
+  typedef typename Ss::Halfedge_const_handle Halfedge_const_handle  ;
 
   typedef std::vector<Halfedge_const_handle> Halfedge_vector ;
 
-  typedef CGAL_SLS_i::Vertex <FT> iVertex ;
-  typedef CGAL_SLS_i::Edge   <FT> iEdge ;
-  typedef CGAL_SLS_i::Triedge<FT> iTriedge ;
+  typedef CGAL_SS_i::Edge   <FT> iEdge ;
+  typedef CGAL_SS_i::Triedge<FT> iTriedge ;
 
   bool handled_assigned( Halfedge_const_handle aH ) const
   {
@@ -76,19 +75,19 @@ private:
 
   void Visit( Halfedge_const_handle aBisector ) { mVisitedBisectors[aBisector->id()] = 1 ; }
 
-  static inline iEdge CreateEdge ( Halfedge_const_handle aH )
+  inline iEdge CreateEdge ( Halfedge_const_handle aH ) const
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
     Point_2 t = aH->vertex()->point() ;
-    return iEdge( iVertex(s.x(),s.y()), iVertex(t.x(),t.y()) );
+    return Construct_ss_edge_2<Traits>(mTraits)()(s,t);
   }
 
-  static inline iTriedge CreateTriedge ( Halfedge_const_handle aE0
-                                       , Halfedge_const_handle aE1
-                                       , Halfedge_const_handle aE2
-                                       )
+  inline iTriedge CreateTriedge ( Halfedge_const_handle aE0
+                                , Halfedge_const_handle aE1
+                                , Halfedge_const_handle aE2
+                                ) const
   {
-    return iTriedge(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
+    return Construct_ss_triedge_2<Traits>(mTraits)()(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
 
   Comparison_result Compare_offset_against_event_time( FT aT, Halfedge_const_handle aBisector, Halfedge_const_handle aNextBisector ) const

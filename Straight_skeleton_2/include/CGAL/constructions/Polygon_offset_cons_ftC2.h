@@ -22,7 +22,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGAL_SLS_i
+namespace CGAL_SS_i
 {
 
 // Givenan offset distance 't' and 2 oriented lines l0:(a0,b0,c0), l1:(a1,b1,c1) returns the coordinates (x,y)
@@ -62,7 +62,7 @@ Vertex<FT> construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge<FT> const& 
   return Vertex<FT>(x,y) ;
 }
 
-} // namespace CGAL_SLS_i
+} // namespace CGAL_SS_i
 
 CGAL_END_NAMESPACE
 

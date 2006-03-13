@@ -27,12 +27,69 @@ CGAL_BEGIN_NAMESPACE
 
 
 
-namespace CGAL_SLS_i {
+namespace CGAL_SS_i {
 
 template<class K>
-struct Exist_sls_event_2 : Sls_functor_base_2<K>
+struct Construct_ss_vertex_2
 {
-  typedef Sls_functor_base_2<K> Base ;
+  typedef typename K::FT      FT ;
+  typedef typename K::Point_2 Point_2 ;
+  
+  typedef Vertex<FT> Vertex ;
+
+  typedef Vertex       result_type ;
+  typedef Arity_tag<1> Arity ;
+
+  Vertex operator() ( Point_2 const& aP ) const
+  {
+    K k ;
+    
+    typename K::Compute_x_2 getx = k.compute_x_2_object();
+    typename K::Compute_y_2 gety = k.compute_y_2_object();
+    
+    return Vertex(getx(aP),gety(aP));      
+  }
+};
+
+template<class K>
+struct Construct_ss_edge_2
+{
+  typedef typename K::FT      FT ;
+  typedef typename K::Point_2 Point_2 ;
+  
+  typedef Edge<FT> Edge ;
+
+  typedef Edge         result_type ;
+  typedef Arity_tag<2> Arity ;
+
+  Edge operator() ( Point_2 const& aS, Point_2 const& aT ) const
+  {
+    Construct_ss_vertex_2<K> construct_vertex ;
+    return Edge(construct_vertex(aS),construct_vertex(aT));      
+  }
+};
+
+template<class K>
+struct Construct_ss_triedge_2
+{
+  typedef typename K::FT FT ;
+  
+  typedef Edge   <FT> Edge    ;
+  typedef Triedge<FT> Triedge ;
+
+  typedef Triedge      result_type ;
+  typedef Arity_tag<3> Arity ;
+
+  Triedge operator() ( Edge const& aA, Edge const& aB, Edge const& aC ) const
+  {
+    return Triedge(aA,aB,aC);
+  }
+};
+
+template<class K>
+struct Exist_ss_event_2 : Functor_base_2<K>
+{
+  typedef Functor_base_2<K> Base ;
 
   typedef typename Base::Triedge Triedge ;
 
@@ -50,9 +107,9 @@ struct Exist_sls_event_2 : Sls_functor_base_2<K>
 };
 
 template<class K>
-struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
+struct Compare_ss_event_distance_to_seed_2 : Functor_base_2<K>
 {
-  typedef Sls_functor_base_2<K> Base ;
+  typedef Functor_base_2<K> Base ;
 
   typedef typename Base::Point_2 Point_2 ;
   typedef typename Base::Triedge Triedge ;
@@ -65,7 +122,8 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
                                           , Triedge const& aR
                                           ) const
   {
-    return compare_offset_lines_isec_dist_to_pointC2(toVertex(aP),aL,aR) ;
+    Construct_ss_vertex_2<K> construct_vertex ;
+    return compare_offset_lines_isec_dist_to_pointC2(construct_vertex(aP),aL,aR) ;
   }
 
   Uncertain<Comparison_result> operator() ( Triedge const& aS
@@ -79,9 +137,9 @@ struct Compare_sls_event_distance_to_seed_2 : Sls_functor_base_2<K>
 };
 
 template<class K>
-struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
+struct Compare_ss_event_times_2 : Functor_base_2<K>
 {
-  typedef Sls_functor_base_2<K> Base ;
+  typedef Functor_base_2<K> Base ;
 
   typedef typename Base::Triedge Triedge ;
 
@@ -99,9 +157,9 @@ struct Compare_sls_event_times_2 : Sls_functor_base_2<K>
 };
 
 template<class K>
-struct Is_sls_event_inside_offset_zone_2 : Sls_functor_base_2<K>
+struct Is_ss_event_inside_offset_zone_2 : Functor_base_2<K>
 {
-  typedef Sls_functor_base_2<K> Base ;
+  typedef Functor_base_2<K> Base ;
 
   typedef typename Base::Triedge Triedge ;
 
@@ -119,9 +177,9 @@ struct Is_sls_event_inside_offset_zone_2 : Sls_functor_base_2<K>
 };
 
 template<class K>
-struct Are_sls_events_simultaneous_2 : Sls_functor_base_2<K>
+struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
 {
-  typedef Sls_functor_base_2<K> Base ;
+  typedef Functor_base_2<K> Base ;
 
   typedef typename Base::Triedge Triedge ;
 
@@ -140,9 +198,9 @@ struct Are_sls_events_simultaneous_2 : Sls_functor_base_2<K>
 
 
 template<class K>
-struct Construct_sls_event_time_and_point_2 : Sls_functor_base_2<K>
+struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 {
-  typedef Sls_functor_base_2<K> Base ;
+  typedef Functor_base_2<K> Base ;
 
   typedef typename Base::FT            FT ;
   typedef typename Base::Point_2       Point_2 ;
@@ -171,29 +229,34 @@ struct Construct_sls_event_time_and_point_2 : Sls_functor_base_2<K>
   }
 };
 
-} // namespace CGAL_SLS_i
+} // namespace CGAL_SS_i
 
 template<class K>
 struct Straight_skeleton_builder_traits_2_functors
 {
-  typedef CGAL_SLS_i::Exist_sls_event_2                   <K> Exist_sls_event_2 ;
-  typedef CGAL_SLS_i::Compare_sls_event_times_2           <K> Compare_sls_event_times_2 ;
-  typedef CGAL_SLS_i::Compare_sls_event_distance_to_seed_2<K> Compare_sls_event_distance_to_seed_2 ;
-  typedef CGAL_SLS_i::Is_sls_event_inside_offset_zone_2   <K> Is_sls_event_inside_offset_zone_2 ;
-  typedef CGAL_SLS_i::Are_sls_events_simultaneous_2       <K> Are_sls_events_simultaneous_2 ;
-  typedef CGAL_SLS_i::Construct_sls_event_time_and_point_2<K> Construct_sls_event_time_and_point_2 ;
+  typedef CGAL_SS_i::Exist_ss_event_2                   <K> Exist_ss_event_2 ;
+  typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
+  typedef CGAL_SS_i::Compare_ss_event_distance_to_seed_2<K> Compare_ss_event_distance_to_seed_2 ;
+  typedef CGAL_SS_i::Is_ss_event_inside_offset_zone_2   <K> Is_ss_event_inside_offset_zone_2 ;
+  typedef CGAL_SS_i::Are_ss_events_simultaneous_2       <K> Are_ss_events_simultaneous_2 ;
+  typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
+  typedef CGAL_SS_i::Construct_ss_edge_2                <K> Construct_ss_edge_2 ;
+  typedef CGAL_SS_i::Construct_ss_triedge_2             <K> Construct_ss_triedge_2 ;
 } ;
 
 template<class K>
 struct Straight_skeleton_builder_traits_2_base
 {
+  typedef K Kernel ;
+  
   typedef typename K::FT      FT ;
   typedef typename K::Point_2 Point_2 ;
 
+  typedef typename K::Equal_2     Equal_2 ;
   typedef typename K::Left_turn_2 Left_turn_2 ;
   typedef typename K::Collinear_2 Collinear_2 ;
 
-  template<class F> F get() const { return F(); }
+  template<class F> F get( F const* = 0 ) const { return F(); }
 } ;
 
 
@@ -206,22 +269,24 @@ class Straight_skeleton_builder_traits_2_impl<Tag_false,K> : public Straight_ske
 
 public:
 
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Exist_sls_event_2>
-    Exist_sls_event_2 ;
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Exist_ss_event_2>
+    Exist_ss_event_2 ;
 
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_sls_event_times_2>
-    Compare_sls_event_times_2 ;
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_ss_event_times_2>
+    Compare_ss_event_times_2 ;
 
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_sls_event_distance_to_seed_2>
-    Compare_sls_event_distance_to_seed_2 ;
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_ss_event_distance_to_seed_2>
+    Compare_ss_event_distance_to_seed_2 ;
     
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_sls_event_inside_offset_zone_2>
-    Is_sls_event_inside_offset_zone_2 ;
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_ss_event_inside_offset_zone_2>
+    Is_ss_event_inside_offset_zone_2 ;
 
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_sls_events_simultaneous_2>
-    Are_sls_events_simultaneous_2 ;
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_events_simultaneous_2>
+    Are_ss_events_simultaneous_2 ;
 
-  typedef typename Unfiltering::Construct_sls_event_time_and_point_2 Construct_sls_event_time_and_point_2 ;
+  typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
+  typedef typename Unfiltering::Construct_ss_edge_2                 Construct_ss_edge_2 ;
+  typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;
 
 } ;
 
@@ -235,64 +300,66 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
   typedef typename K::C2E BaseC2E ;
   typedef typename K::C2F BaseC2F ;
 
-  typedef CGAL_SLS_i::Triedge_converter<BaseC2E> C2E ;
-  typedef CGAL_SLS_i::Triedge_converter<BaseC2F> C2F ;
+  typedef CGAL_SS_i::Triedge_converter<BaseC2E> C2E ;
+  typedef CGAL_SS_i::Triedge_converter<BaseC2F> C2F ;
 
 public:
 
-
-  typedef Filtered_predicate<typename Exact    ::Exist_sls_event_2
-                            ,typename Filtering::Exist_sls_event_2
+  typedef Filtered_predicate<typename Exact    ::Exist_ss_event_2
+                            ,typename Filtering::Exist_ss_event_2
                             , C2E
                             , C2F
                             >
-                            Exist_sls_event_2 ;
+                            Exist_ss_event_2 ;
 
-  typedef Filtered_predicate< typename Exact    ::Compare_sls_event_times_2
-                            , typename Filtering::Compare_sls_event_times_2
+  typedef Filtered_predicate< typename Exact    ::Compare_ss_event_times_2
+                            , typename Filtering::Compare_ss_event_times_2
                             , C2E
                             , C2F
                             >
-                            Compare_sls_event_times_2 ;
+                            Compare_ss_event_times_2 ;
 
-  typedef Filtered_predicate< typename Exact    ::Compare_sls_event_distance_to_seed_2
-                            , typename Filtering::Compare_sls_event_distance_to_seed_2
+  typedef Filtered_predicate< typename Exact    ::Compare_ss_event_distance_to_seed_2
+                            , typename Filtering::Compare_ss_event_distance_to_seed_2
                             , C2E
                             , C2F
                             >
-    Compare_sls_event_distance_to_seed_2 ;
+                            Compare_ss_event_distance_to_seed_2 ;
     
-  typedef Filtered_predicate< typename Exact    ::Is_sls_event_inside_offset_zone_2
-                            , typename Filtering::Is_sls_event_inside_offset_zone_2
+  typedef Filtered_predicate< typename Exact    ::Is_ss_event_inside_offset_zone_2
+                            , typename Filtering::Is_ss_event_inside_offset_zone_2
                             , C2E
                             , C2F
                             >
-    Is_sls_event_inside_offset_zone_2 ;
+                            Is_ss_event_inside_offset_zone_2 ;
 
-  typedef Filtered_predicate< typename Exact    ::Are_sls_events_simultaneous_2
-                            , typename Filtering::Are_sls_events_simultaneous_2
+  typedef Filtered_predicate< typename Exact    ::Are_ss_events_simultaneous_2
+                            , typename Filtering::Are_ss_events_simultaneous_2
                             , C2E
                             , C2F
                             >
-    Are_sls_events_simultaneous_2 ;
+                            Are_ss_events_simultaneous_2 ;
 
-  typedef typename Unfiltering::Construct_sls_event_time_and_point_2 Construct_sls_event_time_and_point_2 ;
+  typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
+  typedef typename Unfiltering::Construct_ss_edge_2                 Construct_ss_edge_2 ;
+  typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;
 
-  template<class F> F get() const { return F(); }
 } ;
 
 template<class K>
 class Straight_skeleton_builder_traits_2
-  : public Straight_skeleton_builder_traits_2_impl<typename CGAL_SLS_i::Is_filtering_kernel<K>::type, K >
+  : public Straight_skeleton_builder_traits_2_impl<typename CGAL_SS_i::Is_filtering_kernel<K>::type, K >
 {
 } ;
 
-SLS_CREATE_FUNCTOR_ADAPTER(Exist_sls_event_2);
-SLS_CREATE_FUNCTOR_ADAPTER(Compare_sls_event_times_2);
-SLS_CREATE_FUNCTOR_ADAPTER(Compare_sls_event_distance_to_seed_2);
-SLS_CREATE_FUNCTOR_ADAPTER(Is_sls_event_inside_offset_zone_2);
-SLS_CREATE_FUNCTOR_ADAPTER(Construct_sls_event_time_and_point_2);
-SLS_CREATE_FUNCTOR_ADAPTER(Are_sls_events_simultaneous_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Exist_ss_event_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_distance_to_seed_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_ss_event_inside_offset_zone_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_events_simultaneous_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_edge_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_triedge_2);
 
 CGAL_END_NAMESPACE
 

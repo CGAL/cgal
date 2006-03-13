@@ -47,7 +47,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGAL_SLS_i {
+namespace CGAL_SS_i {
 
 template<class K>
 struct Is_filtering_kernel
@@ -189,7 +189,7 @@ class Line
 } ;
 
 template<class K>
-struct Sls_functor_base_2
+struct Functor_base_2
 {
   typedef typename K::FT      FT ;
   typedef typename K::Point_2 Point_2 ;
@@ -198,8 +198,6 @@ struct Sls_functor_base_2
   typedef CGAL_SLS_i::Edge         <FT> Edge   ;
   typedef CGAL_SLS_i::Triedge      <FT> Triedge ;
   typedef CGAL_SLS_i::SortedTriedge<FT> SortedTriedge ;
-
-  static Vertex toVertex( Point_2 const& p ) { return Vertex(p.x(),p.y()) ; }
 
 };
 
@@ -244,7 +242,7 @@ struct Triedge_converter : Converter
   }
 };
 
-} // namespace CGAL_SLS_i
+} // namespace CGAL_SS_i
 
 
 //
@@ -255,7 +253,7 @@ struct Triedge_converter : Converter
 //   typedef typename CGAL::Functor<Traits>::type Functor ;
 //   result r = CGAL::Functor<Traits>(traits)(a,b,c);
 //
-#define SLS_CREATE_FUNCTOR_ADAPTER(functor) \
+#define CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(functor) \
         template<class K> \
         class functor \
         { \
@@ -263,7 +261,7 @@ struct Triedge_converter : Converter
           public: \
             typedef typename K :: functor type ; \
             functor( K const& aK ) : mK(aK) {} \
-            type operator()() const { return mK.get<type>(); } \
+            type operator()() const { return mK.get((type const*)0); } \
         }
 
 

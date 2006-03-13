@@ -40,16 +40,38 @@ class Straight_skeleton_vertex_base_base_2
 {
 protected :
 
+  class Halfedge_circulator_around_vertex_access_policy
+  {
+  public:
+    template<class Impl>
+    static typename Impl::reference access ( Impl* aImpl )
+    {
+      return aImpl->mHandle;
+    }
+  } ;
+
+  class Halfedge_circulator_across_incident_faces_access_policy
+  {
+  public:
+    template<class Impl>
+    static typename Impl::reference access ( Impl* aImpl )
+    {
+      return aImpl->mHandle->face()->halfedge();
+    }
+  } ;
+  
   template<class HalfedgeHandle, class AccessPolicy >
   class Halfedge_circulator_base
-    : boost::iterator_facade< Halfedge_circulator_base< HalfedgeHandle, AccessPolicy >
-                             ,HalfedgeHandle
-                             ,Bidirectional_circulator_tag
-                            >
+    : public boost::iterator_facade< Halfedge_circulator_base< HalfedgeHandle, AccessPolicy >
+                                   ,HalfedgeHandle
+                                   ,Bidirectional_circulator_tag
+                                   ,HalfedgeHandle
+                                  >
   {
     public:
 
       typedef HalfedgeHandle value_type ;
+      typedef HalfedgeHandle reference ;
 
       Halfedge_circulator_base () : mHandle() {}
 
@@ -62,6 +84,8 @@ protected :
 
     private :
 
+      typedef Halfedge_circulator_base<HalfedgeHandle,AccessPolicy> Self ;
+      
       friend class boost::iterator_core_access ;
       template <class,class> friend class Halfedge_circulator_base;
 
@@ -75,32 +99,16 @@ protected :
 
       void decrement() { mHandle = mHandle->next()->opposite() ; }
 
-      value_type& dereference() const { return *AccessPolicy::access(mHandle) ; }
+      reference dereference() const { return AccessPolicy::access(const_cast<Self*>(this)) ; }
 
     private :
+    
+      friend class Halfedge_circulator_around_vertex_access_policy ;
+      friend class Halfedge_circulator_across_incident_faces_access_policy ;
 
       value_type mHandle ;
   } ;
 
-  class Halfedge_circulator_around_vertex_access_policy
-  {
-  public:
-    template<class HalfedgeHandle>
-    static HalfedgeHandle access ( HalfedgeHandle aHandle )
-    {
-      return aHandle;
-    }
-  } ;
-
-  class Halfedge_circulator_across_incident_faces_access_policy
-  {
-  public:
-    template<class HalfedgeHandle>
-    static HalfedgeHandle access ( HalfedgeHandle aHandle )
-    {
-      return aHandle->face()->halfedge();
-    }
-  } ;
 
 public:
 
@@ -114,7 +122,7 @@ public:
   typedef typename Refs::Halfedge_handle       Halfedge_handle ;
   typedef typename Refs::Halfedge_const_handle Halfedge_const_handle ;
 
-  typedef Halfedge_circulator_base< Halfedge_const_handle const
+  typedef Halfedge_circulator_base< Halfedge_const_handle
                                    ,Halfedge_circulator_around_vertex_access_policy
                                   >
             Halfedge_around_vertex_const_circulator ;
@@ -124,7 +132,7 @@ public:
                                   >
             Halfedge_around_vertex_circulator ;
 
-  typedef Halfedge_circulator_base< Halfedge_const_handle const
+  typedef Halfedge_circulator_base< Halfedge_const_handle
                                    ,Halfedge_circulator_across_incident_faces_access_policy
                                   >
             Halfedge_across_incident_faces_const_circulator ;

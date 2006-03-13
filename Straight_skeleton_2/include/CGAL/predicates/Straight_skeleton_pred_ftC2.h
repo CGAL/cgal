@@ -25,7 +25,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-namespace CGAL_SLS_i
+namespace CGAL_SS_i
 {
 
 template<class FT>
@@ -420,7 +420,7 @@ Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> co
   return rResult;
 }
 
-} // namespace CGAL_SLS_i
+} // namespace CGAL_SS_i
 
 CGAL_END_NAMESPACE
 

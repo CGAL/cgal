@@ -214,7 +214,7 @@ private:
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
-//#define STATS
+#define STATS
 //#define CGAL_SLS_PROFILING_ENABLED
 
 #define VERBOSE_VALIDATE false
@@ -422,11 +422,12 @@ public:
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
     // drawing menu
-    QPopupMenu * draw = new QPopupMenu( this );
-    menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("Generate Skeleton", this, SLOT(create_skeleton()), CTRL+Key_G );
-    draw->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_O );
-    draw->insertItem("Set Offset Distance", this, SLOT(set_offset()));
+    QPopupMenu * gen = new QPopupMenu( this );
+    menuBar()->insertItem( "&Generate", gen );
+    gen->insertItem("Generate Outer Skeleton", this, SLOT(create_outer_skeleton()), CTRL+Key_G );
+    gen->insertItem("Generate Inner Skeleton", this, SLOT(create_inner_skeleton()), CTRL+Key_G );
+    gen->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_O );
+    gen->insertItem("Set Offset Distance", this, SLOT(set_offset()));
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -514,13 +515,13 @@ private slots:
   };
 
 
-  void create_skeleton()
+  void create_inner_skeleton()
   {
     if ( input.size() > 0 )
     {
       Region const& lRegion = *input.front();
 
-      LOGSTATS("Creating Straight Skeleton...");
+      LOGSTATS("Creating Inner Straight Skeleton...");
       CGAL::Real_timer t ;
       t.start();
       SSkelBuilder builder ;
@@ -540,6 +541,56 @@ private slots:
     }
   }
 
+  void create_outer_skeleton()
+  {
+    if ( input.size() > 0 )
+    {
+      Region const& lRegion = *input.front();
+      if ( lRegion.size() > 0 )
+      {
+        Polygon lOuterContourCopy( *lRegion.front() );
+        
+        lOuterContourCopy.reverse_orientation();
+        
+        double lMaxOffset = offsets.size() > 0 ? offsets.back() : 10.0 ;
+
+        double lMargin = compute_outer_frame_margin(lOuterContourCopy.vertices_begin()
+                                                   ,lOuterContourCopy.vertices_end  ()
+                                                   ,lMaxOffset
+                                                   );
+        
+        CGAL::Bbox_2 lBbox = lOuterContourCopy.bbox();
+        
+        double flx = lBbox.xmin() - lMargin ;
+        double fhx = lBbox.xmax() + lMargin ;
+        double fly = lBbox.ymin() - lMargin ;
+        double fhy = lBbox.ymax() + lMargin ;
+        
+        Point lFrame[4]= { Point(flx,fly)
+                         , Point(fhx,fly)
+                         , Point(fhx,fhy)
+                         , Point(flx,fhy)
+                         } ;
+                           
+        LOGSTATS("Creating Outer Straight Skeleton...");
+        CGAL::Real_timer t ;
+        t.start();
+        SSkelBuilder builder ;
+        builder.enter_contour(lFrame,lFrame+4);
+        builder.enter_contour(lOuterContourCopy.vertices_begin(),lOuterContourCopy.vertices_end());
+        sskel = builder.construct_skeleton() ;
+        t.stop();
+        sskel_valid = SSkel_const_decorator(sskel).is_valid(VERBOSE_VALIDATE,3);
+        LOGSTATS( (sskel_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << t.time() << " seconds.");
+#ifdef CGAL_SLS_PROFILING_ENABLED
+        LogProfilingResults();
+#endif
+        
+        widget->redraw();
+        something_changed();
+      }
+    }
+  }
   void create_offset()
   {
     if ( sskel_valid )

@@ -1,5 +1,4 @@
 ./data
-degenerate2.poly
 degenerate0.poly
 double_edge.poly
 degenerate6.poly

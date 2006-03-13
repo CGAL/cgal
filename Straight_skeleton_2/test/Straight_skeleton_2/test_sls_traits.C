@@ -83,7 +83,7 @@ struct Grid
 }
 sGrid ;
 
-using namespace CGAL::CGAL_SLS_i ;
+using namespace CGAL::CGAL_SS_i ;
 
 struct triedge
 {
