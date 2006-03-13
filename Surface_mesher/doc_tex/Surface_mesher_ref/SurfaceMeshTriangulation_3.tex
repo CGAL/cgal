@@ -53,17 +53,21 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirement 
-for the triangulation types 
-plugged in the class
-\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}. 
-Such a  triangulation type is
-used by the surface mesher  \ccc{make_surface_mesh}
-to represent the three dimensional triangulation
+The concept \ccRefName\  describes 
+the triangulation type used by the surface mesher 
+ \ccc{make_surface_mesh} to represent 
+the three dimensional triangulation
 embedding the surface mesh.
+Thus, this  concept describes the requirements
+for the triangulation type \ccc{C2T3::Triangulation}
+nested in the model of \ccc{SurfaceMeshComplex2InTriangulation3}
+plugged as the template parameter \ccc{C2T3} of
+\ccc{make_surface_mesh}. It also describes
+the requirements for the triangulation type
+plugged in the class
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}.
 
-Any \cgal\ $3D$ Delaunay
-triangulations is a  model of \ccRefName.
+
 
 
 \ccTypes
@@ -303,9 +307,9 @@ the hole, which is star-shaped wrt \ccc{p}}.}
 Any 3D Delaunay triangulation class of \cgal{}
 
 \ccSeeAlso
-
 \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}\\
 \ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}\\
+\ccc{SurfaceMeshComplex2InTriangulation3}\\
 \ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}\\
 \ccc{make_surface_mesh}
 
