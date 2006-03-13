@@ -25,7 +25,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Filtered_kernel.h>
-#include <CGAL/Gmpq.h>
+//#include <CGAL/Gmpq.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
 #include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
 #include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
@@ -41,7 +41,7 @@
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
 #include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
 #include <CGAL/Polynomial/CORE_kernel.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
@@ -82,7 +82,7 @@ protected:
 
 struct Suggested_exact_simulation_traits_types
 {
-   typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
+   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
      typedef Static_kernel::FT NT;
      typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
