@@ -1,5 +1,4 @@
-#!/usr/local/bin/perl -w
-#
+#!/usr/bin/env perl -w
 # Copyright (c) 1998,1999,2000,2001,2002  Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
