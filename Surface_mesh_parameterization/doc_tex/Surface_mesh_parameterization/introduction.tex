@@ -29,13 +29,13 @@ data structure.
 
 Since parameterizing meshes require efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
-an interface common to state-of-the-art linear solver libraries ({\sc Taucs}),
+a unified interface to state-of-the-art linear solver libraries ({\sc Taucs}),
 and propose a separate package devoted to OpenNL sparse
 linear solver.
 
 Note that linear solvers commonly use double precision floating point
 numbers. Therefore, this package is intended to be used with a \cgal\
-cartesian kernel with doubles.
+Cartesian kernel with doubles.
 
 The intended audience of this package is researchers, developers or
 students developing algorithms around parameterization of triangle

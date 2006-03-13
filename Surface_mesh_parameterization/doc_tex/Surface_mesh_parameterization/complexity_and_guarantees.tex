@@ -11,17 +11,16 @@
 
     \item One-to-one mapping
 
-        Tutte's theorem guarantees a one-to-one mapping provided that the weights are positive
+        Tutte's theorem guarantees a one-to-one mapping provided that the weights are all positive
         and the border convex.
-        It is the case for Tutte Barycentric Mapping and Floater Mean Value Coordinates.
-        It is not always the case for Discrete Conformal Map (cotangents) and
-        Discrete Authalic Parameterization.
+        It is the case for Tutte barycentric mapping and Floater mean value coordinates.
+        It is not always the case for discrete conformal map (cotangents) and
+        discrete authalic parameterization.
 
     \item Non-singularity of the matrix
 
         Geshorgin's theorem guarantees the convergence of the solver if the matrix is diagonal dominant.
-        This is the case with positive weights (Tutte Barycentric Mapping and Floater Mean Value
-        Coordinates).
+        This is the case with positive weights (Tutte barycentric mapping and Floater mean value coordinates).
 
     \end{itemize}
 
@@ -31,12 +30,12 @@
 
     \item One-to-one mapping
 
-        No guarantee can be given for LSCM (both global overlaps and triangle flips can
+        No guarantee is provided by LSCM (both global overlaps and triangle flips can
         occur).
 
     \item Non-singularity of the matrix
 
-        Proven for LSCM: the matrix of the system is the Gramm matrix of a matrix of maximal rank,
+        For LSCM, the matrix of the system is the Gramm matrix of a matrix with maximal rank,
         and is therefore non-singular (Gramm theorem).
 
     \end{itemize}
@@ -46,12 +45,12 @@
 
 \subsection{Precision}
 
-Only a few algorithms of this package construct the sparse linear system(s)
-using trigonometric functions, incompatible with an exact arithmetic:
+Two algorithms of this package construct the sparse linear system(s)
+using trigonometric functions, and are this incompatible with exact arithmetic:
 
 \begin{itemize}
 
-\item Floater Mean Value Coordinates
+\item Floater mean value coordinates
 
 \item Circular border parameterization
 
@@ -59,26 +58,22 @@ using trigonometric functions, incompatible with an exact arithmetic:
 
 On the other hand, linear solvers commonly use double precision floating point
 numbers. \\
-OpenNL's BICGSTAB solver (accessible though the
+OpenNL's BICGSTAB solver (accessible through the
 \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} interface)
-is the only solver supported by this package that
-computes exact results (when used with an exact arithmetic).
-
-Therefore, this package is intended to be used with a \cgal\
-cartesian kernel with doubles.
+is the only solver supported by this package which 
+computes exact results, when used with an exact arithmetic. This package is
+intended to be used mainly with a \cgal\ Cartesian kernel with doubles.
 
 
 \subsubsection{OpenNL's BICGSTAB Solver with an Exact Arithmetic}
 
-The BICGSTAB conjugate gradient is in fact a direct solver.
+The BICGSTAB conjugate gradient is in disguise a direct solver.
 In a nutshell, it computes a vector basis
 orthogonal with respect to the matrix, and the coordinates of the solution in this vector basis.
 Each iteration computes one component of the basis and one coordinate, therefore the algorithm
-converges to the solution in $n$ iterations, where $n$ is the dimension of the matrix.
-In fact, it can be even less than $n$, it converges in $k$ iteration, where $k$ is the number
-of distinct eigenvalues of the matrix. \\
-\emph{Note:} for a perfectly conditioned matrix, it converges in one iteration!
+converges to the solution in $n$ iterations, where $n$ is the dimension of the matrix. More precisely, it is shown to converge in $k$ iteration, where $k$ is the number of distinct eigenvalues of the matrix. 
 
+% For a perfectly conditioned matrix, it converges in a single iteration.
 
 \subsubsection{Solvers with a Floating Point Arithmetic}
 
@@ -101,9 +96,9 @@ The algorithmic complexity is dominated by the resolution of the sparse linear s
 
 \emph{OpenNL's BICGSTAB example:}
 
-At each iteration, the operation of highest complexity is the sparse-matrix x vector product.
+At each iteration, the operation of highest complexity is the product between the sparse-matrix and a vector.
 The sparse matrix has a fixed number of non-zero coefficients per row,
-therefore the sparse-matrix x vector product has $O(n)$ complexity.
+therefore the matrix / vector product has $O(n)$ complexity.
 Since convergence is reached after $k$ iterations, the complexity is $O(k.n)$
 (where $k$ is the number of distinct eigenvalues of the matrix).
 Therefore, best case complexity is $O(n)$ (equilateral triangles),

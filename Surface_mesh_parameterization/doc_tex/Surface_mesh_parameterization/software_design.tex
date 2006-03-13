@@ -54,7 +54,7 @@ On the other hand, \ccc{ParameterizerTraits_3} models do not modify the behavior
 of a common parameterization algorithm - as you might expect.
 
 In this package, we focus on triangulated surfaces that are homeomorphic to a
-disk and on piecewise linear mappings into a planar domain.
+disk and on piecewise linear mappings onto planar domains.
 A consequence is that the skeleton of all parameterization methods of this
 package is the same:
 \begin{itemize}
@@ -66,15 +66,14 @@ package is the same:
 
 It is tempting to make the parameterization method a traits class that
 modifies the behavior of a common parameterization algorithm.
-
 On the other hand, there are several differences among methods:
 \begin{itemize}
 \item Fixed border methods need to parameterize all border vertices,
-      when free border methods parameterize only two vertices.
+      while free border methods parameterize only two vertices.
 \item Some methods create symmetric definite positive systems,
       which may be solved more efficiently than general systems.
 \item Most parameterization methods use two \#vertices x \#vertices systems,
-      when Least Squares Conformal Maps uses one (2 * \#triangles) x \#vertices system.
+      where Least Squares Conformal Maps uses one (2 * \#triangles) x \#vertices system.
 \item Most parameterization methods invert the $A$ matrix,
       when Least Squares Conformal Maps solves the system in the least squares sense.
 \end{itemize}
@@ -132,9 +131,7 @@ superclass of all surface parameterization classes.
 Linear fixed border parameterization algorithms are very close. They mainly
 differ by the energy that they try to minimize, i.e. by the value of the $w_{ij}$
 coefficient of the $A$ matrix, for $v_i$ and $v_j$ neighbor vertices of the mesh
-\cite{cgal:fh-survey-05}.
-
-The consequence is that most of the code of the fixed border methods is factorized in the
+\cite{cgal:fh-survey-05}. One consequence is that most of the code of the fixed border methods is factorized in the
 \ccc{CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} class.
 
 Subclasses:
@@ -153,10 +150,8 @@ class as an example.
 \subsection{Border Parameterizations}
 
 Border Parameterizations are models of the \ccc{BorderParameterizer_3} concept.
-
 To simplify the implementation, \ccc{BorderParameterizer_3} models know only the
-\ccc{ParameterizationMesh_3} mesh class. They do not know the parameterization algorithm
-or the sparse linear solver used.
+\ccc{ParameterizationMesh_3} mesh class. They do not know the parameterization algorithm or the sparse linear solver used.
 
 
 \subsection{ParameterizationMesh\_3 and ParameterizationPatchableMesh\_3 Concepts}

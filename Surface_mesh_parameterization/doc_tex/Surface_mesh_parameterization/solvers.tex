@@ -22,8 +22,8 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
     \emph{Usage:}
 
     OpenNL (in the version shipped with \cgal) is a lightweight sparse linear solver.
-    It does not support large systems.
-    On the other hand, it is highly portable and supports exact number types.
+    It does not support large systems, but it is highly portable and
+    supports exact number types.
 
 \item
     \ccAnchor{http://www.cs.tau.ac.il/~stoledo/taucs}{{\sc Taucs}}
@@ -36,8 +36,8 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
     \emph{Usage:}
 
     {\sc Taucs} is very robust and supports large systems.
-    On the other hand, it is \emph{not} available on all platforms
-    supported by \cgal\ and does \emph{not} support exact number types.
+    On the other hand, it is not available on all platforms
+    supported by \cgal\ and does not support exact number types.
 
     \emph{Install:}
 
@@ -51,13 +51,11 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
 \subsection{{\sc Taucs} Solver Example}
 
 \ccc{Taucs_parameterization.C} computes the default parameterization
-method (Floater Mean Value Coordinates with a circular border), but
+method (Floater mean value coordinates with a circular border), but
 specifically instantiates the {\sc Taucs} solver.
 Specifying a specific solver
 instead of the default one (OpenNL) means using the third parameter of
-\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}.
-
-The differences with the first example \ccc{Simple_parameterization.C} are:
+\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}. The differences with the first example \ccc{Simple_parameterization.C} are:
 
 \begin{ccExampleCode}
 
