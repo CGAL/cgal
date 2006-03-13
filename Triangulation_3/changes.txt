@@ -1,3 +1,6 @@
+13 March 2006 Andreas Fabri
+- Forward call to base class as using directive fails for VC7 in Regular_triangulation_filtered_traits_3.h
+
 20 December 2005 Sylvain Pion
 - Add some using declarations in Delaunay_3 (spotted by the Kernel_checker
   test-suite).
