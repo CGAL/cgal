@@ -13,9 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -Ic:/cgal/develop/Min_vertex/Cartesian_kernel/include\
-           -Ic:/cgal/develop/Min_vertex/Kernel_23/include\
-           -Ic:/cgal/develop/Min_vertex/Kernel_d/include\
+CXXFLAGS = \
            -I../../include/ \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
