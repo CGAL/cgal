@@ -8,13 +8,13 @@
 #include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Gmpq.h>
+//#include <CGAL/Gmpq.h>
 #include <CGAL/Curved_kernel/function_objects_polynomial_circular.h>
 #include <CGAL/Curved_kernel/Circular_arc_2.h>
 #include <CGAL/Curved_kernel/Line_arc_2.h>
 
 #include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
+//#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
 
 #include <CGAL/Random.h>
 
@@ -1063,7 +1063,8 @@ void _test_has_on(CK ck)
 
 int main()
 {
-  typedef CGAL::Gmpq                                           NT1;
+  typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
+  //typedef CGAL::Gmpq                                           NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
