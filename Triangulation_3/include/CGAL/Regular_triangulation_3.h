@@ -224,8 +224,6 @@ public:
 private:
   typedef Facet Edge_2D;
  
-  void remove_2D(Vertex_handle v);
-  
   template < class OutputIterator >
   OutputIterator
   make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole, OutputIterator hidden);
