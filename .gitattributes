@@ -609,6 +609,7 @@ Kinetic_data_structures/include/CGAL/Polynomial/internal/CORE_polynomial.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Isolating_interval.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Lower_bound_root.h -text
 Kinetic_data_structures/test/Kinetic_data_structures/Delaunay_triangulation_3_timing.C -text
+Kinetic_data_structures/test/Polynomial_kernel/core_test.C -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Maintenance/rpm/CGAL.spec -text
