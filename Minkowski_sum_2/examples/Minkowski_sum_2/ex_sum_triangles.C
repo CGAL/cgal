@@ -1,14 +1,13 @@
 //! \file examples/Minkowski_sum_2/ex_sum_triangles.C
 // Computing the Minkowski sum of two triangles.
 
+#include "ms_rational_nt.h"
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polygon_2.h>
 #include <CGAL/minkowski_sum_2.h>
 #include <iostream>
 
 #include "print_utils.h"
 
-typedef int                                         Number_type;
 typedef CGAL::Cartesian<Number_type>                Kernel;
 typedef Kernel::Point_2                             Point_2;
 typedef CGAL::Polygon_2<Kernel>                     Polygon_2;

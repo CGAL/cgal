@@ -1044,7 +1044,14 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/onecyc_out.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.pstex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.pstex_t -text
+Minkowski_sum_2/examples/Minkowski_sum_2/ex_approx_offset.C -text
+Minkowski_sum_2/examples/Minkowski_sum_2/ex_exact_offset.C -text
+Minkowski_sum_2/examples/Minkowski_sum_2/ex_sum_by_decomposition.C -text
 Minkowski_sum_2/examples/Minkowski_sum_2/ex_sum_triangles.C -text
+Minkowski_sum_2/examples/Minkowski_sum_2/ex_sum_with_holes.C -text
+Minkowski_sum_2/examples/Minkowski_sum_2/ms_rational_nt.h -text
+Minkowski_sum_2/examples/Minkowski_sum_2/rooms_star.dat -text
+Minkowski_sum_2/examples/Minkowski_sum_2/spiked.dat -text
 Modifier/doc_tex/Modifier/idraw/modifier.eps -text
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#unset
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
