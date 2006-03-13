@@ -20,8 +20,6 @@
 #include <CGAL/Polynomial/Lazy_upper_bound_root_stack.h>
 #endif
 
-#include <CGAL/Gmpq.h>
-
 #ifdef CGAL_USE_CORE
 #include <CGAL/Polynomial/CORE_kernel.h>
 #include <CGAL/Polynomial/CORE_Expr_root_stack.h>
@@ -32,7 +30,7 @@
 #include "Check_solver.h"
 
 typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Polynomial_double;
-typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::POLYNOMIAL::Default_field_nt> Polynomial_ft;
 
 bool verbose=true;
 
@@ -159,9 +157,9 @@ int main(int argc, char* argv[])
     {
         if (verbose) std::cout <<"Descartes_lazy______________________________\n";
         else std::cout << "DL&\t";
-        typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
+        typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_ft> BIT;
         typedef CGAL_POLYNOMIAL_NS::Lazy_upper_bound_root_stack<BIT> CRE;
-        typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
+        typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_ft, CRE> K;
 
         K k;
         Check_solver<K> cc(k,verbose);
@@ -177,9 +175,9 @@ int main(int argc, char* argv[])
     {
         if (verbose) std::cout <<"Descartes_exact_____________________________\n";
         else std::cout << "Descartes&\t";
-        typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
+        typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_ft> BIT;
         typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
-        typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
+        typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_ft, CRE> K;
 
         K k;
         Check_solver<K, True> cc(k,verbose);
@@ -191,7 +189,7 @@ int main(int argc, char* argv[])
     {
         if (verbose) std::cout <<"Descartes_filtered__________________________\n";
         else std::cout << "Descartes filtered&\t";
-        typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+        typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::POLYNOMIAL::Default_field_nt> FT;
         typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
         typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
         typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
@@ -204,7 +202,7 @@ int main(int argc, char* argv[])
     /*{
         if (verbose) std::cout <<"Sturm_filtered__________________________\n";
         else std::cout << "Sturm filtered&\t";
-        typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+        typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Ft> FT;
         typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
         typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
         typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
@@ -218,9 +216,9 @@ int main(int argc, char* argv[])
     {
         if (verbose) std::cout <<"Sturm_exact_________________________________\n";
         else std::cout << "Sturm&\t";
-        typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_gmpq> RET;
+        typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_ft> RET;
         typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack<RET> RE;
-        typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
+        typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_ft, RE> K;
         K k;
         Check_solver<K > cg(k,verbose);
         cg.all();

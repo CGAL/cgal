@@ -48,6 +48,8 @@
 #endif
 #endif
 
+
+
 #define CGAL_KINETIC_BEGIN_NAMESPACE CGAL_BEGIN_NAMESPACE \
 namespace Kinetic \
 { \
@@ -61,6 +63,19 @@ namespace internal \
 
     #define CGAL_KINETIC_END_INTERNAL_NAMESPACE } \
 CGAL_KINETIC_END_NAMESPACE
+
+
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpq.h>
+CGAL_KINETIC_BEGIN_NAMESPACE
+typedef CGAL::Gmpq Default_field_nt;
+CGAL_KINETIC_END_NAMESPACE
+#else
+#include <CGAL/MPFloat.h>
+CGAL_KINETIC_BEGIN_NAMESPACE
+typedef CGAL::MPFloat Default_field_nt;
+CGAL_KINETIC_END_NAMESPACE
+#endif
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 //! The types of logs available.

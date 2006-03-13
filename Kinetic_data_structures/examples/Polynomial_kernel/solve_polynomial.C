@@ -24,7 +24,7 @@
 typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Pd;
 typedef CGAL_POLYNOMIAL_NS::Root_stack_default_traits<Pd> Ddt;
 typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Polynomial_double;
-typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::POLYNOMIAL::Default_field_nt> Polynomial_ft;
 
 
 template <class K, class P> 
@@ -110,15 +110,15 @@ int main(int argc, char *argv[])
     }
     
     {
-      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
+      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_ft> BIT;
       typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
-      typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, CRE> K;
+      typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_ft, CRE> K;
       
       K k;
       solve(k, input, lb, ub, "Descartes");
     }
     {
-      typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+      typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::POLYNOMIAL::Default_field_nt> FT;
       typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
       typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
       typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
       solve(k, input, lb, ub, "DescartesFiltered");
     }
     {
-      typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::Gmpq> FT;
+      typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::POLYNOMIAL::Default_field_nt> FT;
       typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
       typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
       typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
@@ -135,9 +135,9 @@ int main(int argc, char *argv[])
     }
 
     {
-      typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_gmpq> RET;
+      typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack_traits<Polynomial_ft> RET;
       typedef CGAL_POLYNOMIAL_NS::Sturm_root_stack<RET> RE;
-      typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_gmpq, RE> K;
+      typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_ft, RE> K;
       K k;
       solve(k, input, lb, ub, "Sturm");
     }

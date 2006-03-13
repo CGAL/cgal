@@ -43,7 +43,7 @@ struct Pseudo_quotient
         operator()(const Polynomial& t, const Polynomial& v) const
     {
         CGAL_Polynomial_precondition( t.degree() >= v.degree() );
-        CGAL_Polynomial_precondition( !v.is_zero() );
+        CGAL_Polynomial_precondition( v.degree()>=1 );
 
         int m = t.degree();
         int n = v.degree();

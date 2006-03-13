@@ -46,6 +46,18 @@
 */
 #include <CGAL/basic.h>
 
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpq.h>
+CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+typedef CGAL::Gmpq Default_field_nt;
+CGAL_POLYNOMIAL_END_NAMESPACE
+#else
+#include <CGAL/MPFloat.h>
+CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+typedef CGAL::MPFloat Default_field_nt;
+CGAL_POLYNOMIAL_END_NAMESPACE
+#endif
+
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
 /*typedef CGAL::Sign Sign;

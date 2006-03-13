@@ -17,7 +17,7 @@
 //template <class AO>
 /*struct Slest_types
 {
-    typedef CGAL::Simple_cartesian < CGAL::Gmpq > Static_kernel;
+typedef CGAL::Simple_cartesian < CGAL::Kinetic::Default_field_nt > Static_kernel;
     typedef Static_kernel::FT NT;
     typedef CGAL::POLYNOMIAL::Polynomial < NT > Function;
     typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits <

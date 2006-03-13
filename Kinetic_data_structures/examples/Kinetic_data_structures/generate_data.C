@@ -3,10 +3,10 @@
 #include <CGAL/Random.h>
 #include <algorithm>
 #include <CGAL/Polynomial/Polynomial.h>
-#include <CGAL/Gmpq.h>
 #if CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
 #endif
+
 
 template <class NT>
 void generate(int n, int d, int num_coords)
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         generate<double>(n,d,num_coords);
     }
     else {
-        generate<CGAL::Gmpq>(n,d,num_coords);
+      generate<CGAL::Kinetic::Default_field_nt>(n,d,num_coords);
     }
 
     return EXIT_SUCCESS;

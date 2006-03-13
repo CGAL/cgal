@@ -1,5 +1,3 @@
-#include <CGAL/Gmpq.h>
-
 #include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
@@ -9,7 +7,7 @@
 #include <CGAL/Polynomial/CORE_Expr_root_stack.h>
 #endif
 
-typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Polynomial_gmpq;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::POLYNOMIAL::Default_field_nt> Polynomial_ft;
 
 
 #ifdef CGAL_USE_CORE
@@ -19,7 +17,7 @@ typedef CGAL_POLYNOMIAL_NS::Polynomial<CORE::BigRat> Polynomial_bigint;
 int main(int, char *[])
 {
     {
-        typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_gmpq> BIT;
+        typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_ft> BIT;
         typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
         CRE::Root r(0);
         double d= CGAL::to_double(r);

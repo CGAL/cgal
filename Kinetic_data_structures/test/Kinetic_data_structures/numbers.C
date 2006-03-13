@@ -3,7 +3,6 @@
 
 #include <CGAL/Kinetic/basic.h>
 #include <limits>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Kinetic/Exact_simulation_traits_1.h>
 
 template <class NT>
@@ -27,7 +26,7 @@ void check_nt(NT v) {
 int main(int, char *[])
 {
  check_nt(0.0);
- check_nt(CGAL::Gmpq(1));
+ check_nt(CGAL::Kinetic::Default_field_nt(1));
   
  typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
  Tr tr;

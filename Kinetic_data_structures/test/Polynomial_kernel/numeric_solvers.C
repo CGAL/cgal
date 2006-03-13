@@ -8,8 +8,6 @@
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 
-#include <CGAL/Gmpq.h>
-
 #ifdef CGAL_POLYNOMIAL_USE_GSL
 #include <CGAL/Polynomial/internal/GSL_numeric_solver.h>
 #endif
@@ -17,12 +15,12 @@
 #include "Check_solver.h"
 bool verbose=true;
 typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Pd;
-typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::Gmpq> Pe;
+typedef CGAL_POLYNOMIAL_NS::Polynomial<CGAL::POLYNOMIAL::Default_field_nt> Pe;
 typedef CGAL_POLYNOMIAL_NS::Root_stack_default_traits<Pd> Dt;
 
 struct Interval_root_stack {
   typedef CGAL::POLYNOMIAL::Interval_polynomial Pi;
-  typedef CGAL::Gmpq ENT;
+  typedef CGAL::POLYNOMIAL::Default_field_nt ENT;
   Interval_root_stack(){}
   typedef CGAL::POLYNOMIAL::Interval_nt Root;
   typedef Root Interval;
