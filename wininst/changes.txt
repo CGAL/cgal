@@ -1,3 +1,6 @@
+13 March 2006 andreas Fabri
+- Removed directory lib/msvc7
+
 29 September 2004
 - Added mpfr.lib to the file master.vcproj
 
