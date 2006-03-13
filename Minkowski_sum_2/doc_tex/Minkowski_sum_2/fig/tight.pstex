@@ -1,10 +1,10 @@
 %!PS-Adobe-2.0 EPSF-2.0
-%%Title: onecyc_in.fig
+%%Title: tight.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Sun Mar 12 17:35:40 2006
+%%CreationDate: Mon Mar 13 11:27:17 2006
 %%For: wein@cgal (Ron Wein,,09-576985,)
-%%BoundingBox: 0 0 650 434
-%Magnification: 1.0000
+%%BoundingBox: 0 0 433 217
+%Magnification: 0.3500
 %%EndComments
 /MyAppDict 100 dict dup begin def
 /$F2psDict 200 dict def
@@ -46,8 +46,8 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 434 moveto 0 0 lineto 650 0 lineto 650 434 lineto closepath clip newpath
--71.3 486.7 translate
+newpath 0 217 moveto 0 0 lineto 433 0 lineto 433 217 lineto closepath clip newpath
+66.6 239.2 translate
 1 -1 scale
 
 % This junk string is used by the show operators
@@ -449,32 +449,70 @@ end
 $F2psBegin
 10 setmiterlimit
 0 slj 0 slc
- 0.06000 0.06000 sc
+ 0.02100 0.02100 sc
 %
 % Fig objects follow
 %
+% 
+% here starts figure with depth 70
+% Polyline
+0 slj
+0 slc
+15.000 slw
+n 7532 8796 m 8389 8367 l 8817 7510 l 8389 6653 l 7532 6225 l 7532 2367 l
+ 8389 1939 l 8817 1082 l 16103 1082 l 16532 1939 l 17389 2367 l
+ 17389 10082 l 16532 10510 l 16103 11367 l 8817 11367 l 8389 10510 l
+ 7532 10082 l
+ cp gs col4 0.50 tnt ef gr gs col0 s gr 
+% here ends figure;
+% 
+% here starts figure with depth 60
+% Polyline
+0 slj
+0 slc
+15.000 slw
+n 9675 7510 m 10103 8367 l 10960 8367 l 10960 7510 l
+ cp gs col7 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 12032 5475 m 12246 5367 l 11817 4510 l 10960 4082 l 10532 4082 l 10532 4510 l
+ 11389 4510 l 11817 5367 l
+ cp gs col7 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 11532 7224 m 11817 7082 l 12103 6510 l 11817 6653 l
+ cp gs col7 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 13103 4510 m 14389 4510 l 14389 4082 l 13960 4082 l
+ cp gs col7 1.00 shd ef gr gs col0 s gr 
+% here ends figure;
 % 
 % here starts figure with depth 50
 % Polyline
 0 slj
 0 slc
-0.000 slw
-n 1950 2100 m 11925 2100 l 11925 7500 l 1950 7500 l
- cp 
-% Polyline
 15.000 slw
-n 2250 6750 m 9750 6750 l 7500 2250 l 6000 2250 l 8250 5250 l 3000 5250 l
- 5250 2250 l 2250 2250 l
+n -1350 8839 m -1350 10125 l 5936 10125 l 5936 2410 l -1350 2410 l -1350 6268 l
+ 1222 6268 l 1222 5839 l -921 5839 l -921 2839 l 2079 2839 l
+ 2079 4125 l 2508 4125 l 2508 2839 l 5508 2839 l 5508 5839 l
+ 2508 5839 l 3793 7125 l 5508 7125 l 5508 9696 l 2936 9696 l
+ 2936 7553 l 2079 7553 l 2079 9696 l -492 9696 l -492 8839 l
+
  cp gs /PC [[1.00 1.00 1.00] [0.00 0.56 0.00]] def
-15.00 15.00 sc P4 [16 0 0 -16 150.00 150.00] PATmp PATsp ef gr PATusp gs col12 s gr 
+15.00 15.00 sc P4 [16 0 0 -16 -90.00 160.67] PATmp PATsp ef gr PATusp gs col12 s gr 
 % Polyline
-n 11325 5175 m 10575 4425 l 9825 5175 l 10575 5925 l
+n -1865 8710 m -1436 7853 l -579 7425 l -1436 6996 l -1865 6139 l -2293 6996 l
+ -3150 7425 l -2293 7853 l
  cp gs /PC [[1.00 1.00 1.00] [0.00 0.00 1.00]] def
-15.00 15.00 sc P10 [8 0 0 -16 655.00 295.00] PATmp PATsp ef gr PATusp gs col1 s gr 
+15.00 15.00 sc P10 [8 0 0 -16 -210.00 409.27] PATmp PATsp ef gr PATusp gs col1 s gr 
 % Polyline
-7.500 slw
-n 1200 900 m 12000 900 l 12000 8100 l 1200 8100 l
- cp gs col0 s gr 
+30.000 slw
+ [120] 0 sd
+n 8817 8796 m 8817 10082 l 16103 10082 l 16103 2367 l 8817 2367 l 8817 6225 l
+ 11389 6225 l 11389 5796 l 9246 5796 l 9246 2796 l 12246 2796 l
+ 12246 4082 l 12675 4082 l 12675 2796 l 15675 2796 l 15675 5796 l
+ 12675 5796 l 13960 7082 l 15675 7082 l 15675 9653 l 13103 9653 l
+ 13103 7510 l 12246 7510 l 12246 9653 l 9675 9653 l 9675 8796 l
+
+ cp gs col7 s gr  [] 0 sd
 % here ends figure;
 $F2psEnd
 rs
