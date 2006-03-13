@@ -14,7 +14,80 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_simplex_3<Kernel>}
+\begin{ccRefClass}{Triangulation_simplex_3<Triangulation_3>}
 \label{refTriangulationSimplex}
+
+\ccDefinition The class \ccRefName\ stores a simplex of any dimension
+defined by the \ccc{Triangulation_3} class. It also makes two
+simplices comparable which is necessary to create a \ccc{map} or
+\ccc{set} of simplices. The simplex is invalidated by any change in
+the simplex it points to.
+
+\ccInclude{CGAL/Triangulation_simplex_3.h}
+
+\ccParameters 
+%
+It is parameterized by the triangulation it derives the simplices
+from. 
+
+\ccTypes
+\ccThree{typedef Triangulation_3::Vertex_handle}{Triangulated}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef Triangulation_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef Triangulation_3::Edge Edge;}{}
+\ccGlue
+\ccTypedef{typedef Triangulation_3::Facet Facet;}{}
+\ccGlue
+\ccTypedef{typedef Triangulation_3::Cell_handle Cell_handle;}{}
+
+
+\ccCreation
+\ccCreationVariable{simplex}  %% choose variable name
+\ccThree{Point }{Point}{}
+\ccThreeToTwo
+
+\ccConstructor{Triangulation_simplex_3();}{Initialises the simplex to
+  an invalid simplex.}
+\ccConstructor{Triangulation_simplex_3(Vertex_handle vh);}{Initialises
+  the simplex with the vertex pointed to by \ccc{vh}.}
+\ccConstructor{Triangulation_simplex_3(Edge e);}{Initialises the
+  simplex with the edge \ccc{e}.}
+\ccConstructor{Triangulation_simplex_3(Facet f);}{Initialises the
+  simplex with the facet \ccc{f}.}
+\ccConstructor{Triangulation_simplex_3(Cell_handle ch);}{Initialises
+  the simplex with the cell pointed to by \ccc{ch}.}
+
+\ccOperations
+\ccThree{Vertex_han}{Vertex_handle(simplex)xx}{}
+\ccThreeToTwo
+
+\ccMethod{int dimension () const;}{returns the dimension of the
+  simplex.}
+%
+\ccMethod{operator Vertex_handle () const;}{Returns the \ccc{Vertex_handle}
+  stored in the simplex. \ccPrecond{dimension() == 0}}
+\ccGlue
+\ccMethod{operator Edge () const;}{Returns the \ccc{Edge}
+  stored in the simplex. \ccPrecond{dimension() == 1}}
+\ccGlue
+\ccMethod{operator Facet () const;}{Returns the \ccc{Facet}
+  stored in the simplex. \ccPrecond{dimension() == 2}}
+\ccGlue
+\ccMethod{operator Cell_handle () const;}{Returns the \ccc{Cell_handle}
+  stored in the simplex. \ccPrecond{dimension() == 3}}
+
+
+%NGHK: check
+\ccMethod{bool operator==(const Triangulation_simplex_3 &s1);}{Test
+  whether two simplices are equal.}
+\ccGlue
+%NGHK: check
+\ccMethod{bool operator< (const Triangulation_simplex_3 &s1);}{Defines
+  a partial ordering on the simplices.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 
 \end{ccRefClass}

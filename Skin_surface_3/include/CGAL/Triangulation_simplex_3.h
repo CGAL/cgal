@@ -22,9 +22,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Triangulation >
+template < class Triangulation_3 >
 class Triangulation_simplex_3 {
-  typedef Triangulation             T;
+  typedef Triangulation_3             T;
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Edge          Edge;
   typedef typename T::Facet         Facet;

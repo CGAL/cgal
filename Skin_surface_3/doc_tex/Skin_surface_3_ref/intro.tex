@@ -31,22 +31,22 @@ is customizable with the help of observer classes.
 
 \ccRefIdfierPage{CGAL::Construct_anchor_point_3<Kernel>}
 
-\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_default_3<Triangulation_3,Polyhedron_3>}\\
-\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_skin_surface_3<Triangulation_3,Polyhedron_3>}
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>}\\
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_skin_surface_3<MarchingTetrahedraTraits_3>}
 
 \ccRefIdfierPage{CGAL::Skin_surface_hyperboloid_3<Kernel>}\\
 \ccRefIdfierPage{CGAL::Skin_surface_quadratic_surface_3<Kernel>}\\
 \ccRefIdfierPage{CGAL::Skin_surface_sphere_3<Kernel>}
 
-\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_3<Kernel>}\\
-\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_cell_3<Kernel>}\\
-\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_observer_3<Kernel>}\\
-\ccRefIdfierPage{CGAL::Triangulation_incremental_builder_3<Kernel>}\\
-\ccRefIdfierPage{CGAL::Triangulation_simplex_3<Kernel>}
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_3<SkinSurfaceTraits_3,GT,PolyhedronKernel_3,Tds>}\\
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_cell_3<GT,SurfaceKernel,Cb>}\\
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_observer_3<SkinSurfaceTraits_3, TriangulatedMixedComplex_3, RegularTriangulation_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_incremental_builder_3<Triangulation_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_simplex_3<Triangulation_3>}
 
 \subsubsection*{Traits classes}
 \ccRefIdfierPage{CGAL::Marching_tetrahedra_traits_skin_surface_3<Triangulation_3, HalfedgeDS, Converter_ >}\\
-\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularKernel_3,TriangulatedMixedComplexKernel_3,PolyhedronTraits_3>}
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3, PolyhedronTraits_3>}
 
 
 \subsection*{Functions}
@@ -56,7 +56,6 @@ is customizable with the help of observer classes.
 %\ccRefIdfierPage{CGAL::triangulate_power_diagram_3}
 
 
-% NGHK: TODO:
-%\lcHtml{\subsection*{Links to the Reference Sections}}
+\lcHtml{\subsection*{Links to the Reference Sections}}
 
 %% EOF %%
