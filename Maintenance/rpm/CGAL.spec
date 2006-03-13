@@ -20,7 +20,6 @@ Group: System Environment/Libraries
 Source: %{tarball_name}.tar.gz
 Source1:%{name}-%{version}-doc_pdf.tar.gz
 Source2:%{name}-%{version}-doc_html.tar.gz
-Patch0: CGAL.fix_perl_path.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 #Prefix: %{CGAL_DIR}
@@ -81,7 +80,6 @@ The %{name}-demo package provides some demos of %name algorithms.(to be compiled
 %setup -D -T -a 1
 %setup -D -T -a 2
 
-%patch0 -p1
  
 %build
 rm -rf $RPM_BUILD_ROOT
@@ -151,8 +149,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 
 %changelog
+* Mon Mar 13 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
+- delete the patch that fixes the perl path.
 * Fri Mar 10 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - adding new sub-packages doc(pdf&html) and demo.
-- add internal_release 395flag. 
+- add internal_release flag. 
 * Thu Mar 09 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - cleanup a specfile.
