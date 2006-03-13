@@ -82,18 +82,18 @@ protected:
 
 struct Suggested_exact_simulation_traits_types
 {
-  /* typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
+   typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
      typedef Static_kernel::FT NT;
-     typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;*/
+     typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack<Root_stack_traits> Root_stack;
-  /*typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
+  typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
     typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
-    typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;*/
+    typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
 
-  typedef CGAL::Simple_cartesian<CORE::Expr> Static_kernel;
+  /*typedef CGAL::Simple_cartesian<CORE::Expr> Static_kernel;
   typedef Static_kernel::FT NT;
-  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
+  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;*/
 
   struct Simulator_function_kernel: public CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> {};
   typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;

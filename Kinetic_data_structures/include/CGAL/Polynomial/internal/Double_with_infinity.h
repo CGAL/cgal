@@ -58,6 +58,10 @@ struct Double_with_infinity {
   bool is_even_multiplicity() const {
     return false;
   }
+
+  std::pair<double, double> isolating_interval() const {
+    return std::make_pair(d_, d_);
+  }
   
 protected:
   double d_;
