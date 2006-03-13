@@ -41,23 +41,10 @@ struct Weighted_converter_3
   typedef typename Regular_triangulation_euclidean_traits_base_3<Target_kernel>
                    ::Weighted_point_3  Target_wp;
 
-  typedef typename Regular_triangulation_euclidean_traits_base_3<Source_kernel>
-                   ::Bare_point  Source_bp;
-
-  typedef typename Regular_triangulation_euclidean_traits_base_3<Target_kernel>
-                   ::Bare_point  Target_bp;
-
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Converter::operator();
-#else 
-  Target_bp
-  operator()(const Source_bp &bp) const
- {
-   return Converter::operator()(bp);
- }
 #endif
-
 
   Target_wp
   operator()(const Source_wp &wp) const
