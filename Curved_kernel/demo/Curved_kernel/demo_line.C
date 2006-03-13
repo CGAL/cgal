@@ -91,9 +91,9 @@ typedef Circular_k::Segment_2                               Segment;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Line_arc_traits<Circular_k>                  Traits;
+typedef CGAL::Arr_line_arc_traits<Circular_k>                  Traits;
 #else
-typedef CGAL::Line_arc_traits<Circular_k>                  Traits0;
+typedef CGAL::Arr_line_arc_traits<Circular_k>                  Traits0;
 typedef CGAL::Circular_arc_traits_tracer<Traits0>            Traits;
 #endif
 
