@@ -74,10 +74,10 @@ private:
 
    /**
     * A column of a Taucs_matrix. The column is
-    * compressed, and stored in the form of  
+    * compressed, and stored in the form of
     * a vector of values + a vector of indices.
     */
-    class Column 
+    class Column
     {
     public:
 
@@ -160,7 +160,7 @@ public:
     Taucs_matrix(int  dim,                  ///< Matrix dimension.
                  bool is_symmetric = false) ///< Symmetric/hermitian?
     {
-        CGAL_surface_mesh_parameterization_assertion(dim > 0);
+        assert(dim > 0);
 
         m_row_dimension     = dim;
         m_column_dimension  = dim;
@@ -174,10 +174,10 @@ public:
                  int  columns,
                  bool is_symmetric = false) ///< Symmetric/hermitian?
     {
-        CGAL_surface_mesh_parameterization_assertion(rows > 0);
-        CGAL_surface_mesh_parameterization_assertion(columns > 0);
+        assert(rows > 0);
+        assert(columns > 0);
         if (m_is_symmetric) {
-            CGAL_surface_mesh_parameterization_assertion(rows == columns);
+            assert(rows == columns);
         }
 
         m_row_dimension     = rows;
@@ -188,7 +188,7 @@ public:
     }
 
     /// Delete this object and the wrapped TAUCS matrix.
-    ~Taucs_matrix() 
+    ~Taucs_matrix()
     {
         // Delete the columns array
         delete[] m_columns;
@@ -211,15 +211,15 @@ public:
     /// Preconditions:
     /// - 0 <= i < row_dimension().
     /// - 0 <= j < column_dimension().
-    T  get_coef(int i, int j) const 
+    T  get_coef(int i, int j) const
     {
         // For symmetric matrices, we store only the lower triangle
         // => swap i and j if (i, j) belongs to the upper triangle
         if (m_is_symmetric && (j > i))
             std::swap(i, j);
 
-        CGAL_surface_mesh_parameterization_assertion(i < m_row_dimension);
-        CGAL_surface_mesh_parameterization_assertion(j < m_column_dimension);
+        assert(i < m_row_dimension);
+        assert(j < m_column_dimension);
         return m_columns[j].get_coef(i);
     }
 
@@ -237,8 +237,8 @@ public:
         if (m_is_symmetric && (j > i))
             return;
 
-        CGAL_surface_mesh_parameterization_assertion(i < m_row_dimension);
-        CGAL_surface_mesh_parameterization_assertion(j < m_column_dimension);
+        assert(i < m_row_dimension);
+        assert(j < m_column_dimension);
         m_columns[j].set_coef(i, val);
     }
 
@@ -256,15 +256,15 @@ public:
         if (m_is_symmetric && (j > i))
             return;
 
-        CGAL_surface_mesh_parameterization_assertion(i < m_row_dimension);
-        CGAL_surface_mesh_parameterization_assertion(j < m_column_dimension);
+        assert(i < m_row_dimension);
+        assert(j < m_column_dimension);
         m_columns[j].add_coef(i, val);
     }
 
     /// Construct and return the TAUCS matrix wrapped by this object.
     /// Note: the TAUCS matrix returned by this method is valid
     ///       only until the next call to set_coef(), add_coef() or get_taucs_matrix().
-    const taucs_ccs_matrix* get_taucs_matrix() const 
+    const taucs_ccs_matrix* get_taucs_matrix() const
     {
         if (m_matrix != NULL) {
             taucs_ccs_free(m_matrix);
@@ -289,7 +289,7 @@ public:
         // Fill m_matrix's colptr[], rowind[] and values[] arrays
         // Implementation note:
         // - rowind[] = array of non null elements of the matrix, ordered by columns
-        // - values[] = array of row index of each element of rowind[] 
+        // - values[] = array of row index of each element of rowind[]
         // - colptr[j] is the index of the first element of the column j (or where it
         //   should be if it doesn't exist) + the past-the-end index of the last column
         m_matrix->colptr[0] = 0;
