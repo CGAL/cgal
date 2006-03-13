@@ -41,7 +41,7 @@ InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is 
 \ccGlue
 \ccMethod{Ss construct_skeleton();}
 {Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours entered first by calling \ccc{enter_contour}. All the contours of the polygon with holes must be entered before calling \ccc{construct_skeleton}.\\
-After \ccc{construct_skeleton} completes, you cannot enter more contours and/or call construct_skeleton() again. If you need another straight skeleton for another polygon you must instantiate and use another builder.}
+After \ccc{construct_skeleton} completes, you cannot enter more contours and/or call \ccc{construct_skeleton()} again. If you need another straight skeleton for another polygon you must instantiate and use another builder.}
 
 \ccInclude{CGAL/Straight_skeleton_builder_2.h}
 
