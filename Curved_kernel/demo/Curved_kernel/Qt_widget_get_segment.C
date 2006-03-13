@@ -10,6 +10,8 @@
 
 #ifdef CGAL_USE_QT
 
+#include <CGAL/basic.h>
+
 #include "Qt_widget_get_segment.h"
 
 //void Qt_widget_get_arc_helper::new_object_time(){};
