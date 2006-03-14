@@ -17,8 +17,8 @@
 //
 // Author(s)     : Radu Ursu
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/Qt_widget_layer.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
@@ -28,8 +28,8 @@ template <class T>
 class Qt_layer_show_greene_approx : public CGAL::Qt_widget_layer
 {
 public:
-  typedef typename T::FT              FT;
-  typedef CGAL::Cartesian<FT>         K;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef K::FT                                               FT;
   typedef CGAL::Partition_traits_2<K> Traits;
 
   Qt_layer_show_greene_approx(T &p) : polygon(p)
@@ -66,8 +66,8 @@ template <class T>
 class Qt_layer_show_optimal_convex : public CGAL::Qt_widget_layer
 {
 public:
-  typedef typename T::FT              FT;
-  typedef CGAL::Cartesian<FT>         K;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef K::FT                                               FT;
   typedef CGAL::Partition_traits_2<K> Traits;
 
   Qt_layer_show_optimal_convex(T &p) : polygon(p)
@@ -146,8 +146,8 @@ template <class T>
 class Qt_layer_show_ymonotone : public CGAL::Qt_widget_layer
 {
 public:
-  typedef typename T::FT	      FT;
-  typedef CGAL::Cartesian<FT>	      K;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef K::FT                                               FT;
   typedef CGAL::Partition_traits_2<K> Traits;
 
 

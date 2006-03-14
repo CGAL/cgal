@@ -1,3 +1,6 @@
+13 March 2006 Andreas Fabri
+- Fixed the demo by using the same kernel in all .C files
+
 9 March 2006 Andreas Fabri
 - Changed names of examples
 
