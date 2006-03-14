@@ -6,8 +6,11 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-#perso bug in current CGAL-I!
-CGAL_MAKEFILE = /proj/geometrica/home/CGAL/CGAL-3.2-I-370/make/makefile_i686_Linux-2.4_g++-3.3.3
+#FC
+#CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.11-1.35-FC3_g++-3.4.4
+#MARC
+#CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
+CGAL_MAKEFILE = /home/mpouget/libs/CGAL-3.1/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
 
 #CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.4_g++-3.3.3
 include $(CGAL_MAKEFILE)
