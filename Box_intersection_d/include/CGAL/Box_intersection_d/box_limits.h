@@ -22,10 +22,8 @@
 #define CGAL_BOX_INTERSECTION_D_BOX_LIMITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/known_bit_size_integers.h>
-#include <CGAL/long_long.h>
-#include <cfloat>
-#include <climits>
+#include <CGAL/FPU.h> // for CGALi::infinity
+#include <limits>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,34 +35,26 @@ struct box_limits {};
 
 template<>
 struct box_limits<int> {
-    static int inf() { return INT_MIN; }
-    static int sup() { return INT_MAX; }
+    static int inf() { return std::numeric_limits<int>::min(); }
+    static int sup() { return std::numeric_limits<int>::max(); }
 };
 
 template<>
 struct box_limits<unsigned int> {
-    static unsigned int inf() { return 0; }
-    static unsigned int sup() { return UINT_MAX; }
+    static int inf() { return 0; }
+    static int sup() { return std::numeric_limits<unsigned int>::max(); }
 };
 
 template<>
 struct box_limits<float> {
     static float inf() { return -sup(); }
-    static float sup()
-    {
-        const UInteger32 i = 0x7f800000;
-        return *reinterpret_cast<const float*>(&i);
-    }
+    static float sup() { return CGALi::infinity; }
 };
 
 template<>
 struct box_limits<double> {
     static double inf() { return -sup(); }
-    static float sup()
-    {
-        const UInteger64 i = 0x7FF0000000000000ull;
-        return *reinterpret_cast<const double*>(&i);
-    }
+    static double sup() { return CGALi::infinity; }
 };
 
 } // end namespace Box_intersection_d
