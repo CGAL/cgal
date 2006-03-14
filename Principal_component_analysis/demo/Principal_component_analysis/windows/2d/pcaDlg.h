@@ -79,4 +79,5 @@ public:
   afx_msg void OnFitLine();
   afx_msg void OnRandomHorizontalline();
   afx_msg void OnRandomVerticalline();
+  afx_msg void OnFitDebug();
 };

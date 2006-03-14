@@ -210,6 +210,7 @@ BEGIN
     POPUP "&Fit"
     BEGIN
         MENUITEM "&Line",                       ID_FIT_LINE
+        MENUITEM "Debug",                       ID_FIT_DEBUG
     END
 END
 

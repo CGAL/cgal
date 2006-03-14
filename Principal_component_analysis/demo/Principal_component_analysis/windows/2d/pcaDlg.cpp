@@ -89,6 +89,7 @@ BEGIN_MESSAGE_MAP(CpcaDlg, CDialog)
   ON_COMMAND(ID_FIT_LINE, OnFitLine)
   ON_COMMAND(ID_RANDOM_HORIZONTALLINE, OnRandomHorizontalline)
   ON_COMMAND(ID_RANDOM_VERTICALLINE, OnRandomVerticalline)
+  ON_COMMAND(ID_FIT_DEBUG, OnFitDebug)
 END_MESSAGE_MAP()
 
 
@@ -441,11 +442,7 @@ void CpcaDlg::OnRandomHorizontalline()
 
 
   OnFitLine();
-  FT a = m_fitting_line.a();
-  FT b = m_fitting_line.b();
-  FT c = m_fitting_line.c();
-
-  bool h = m_fitting_line.is_horizontal();
+  VERIFY(m_fitting_line.is_horizontal());
   InvalidateRect(NULL,FALSE);
 }
 
@@ -467,10 +464,25 @@ void CpcaDlg::OnRandomVerticalline()
 
 
   OnFitLine();
-  FT a = m_fitting_line.a();
-  FT b = m_fitting_line.b();
-  FT c = m_fitting_line.c();
+  VERIFY(m_fitting_line.is_vertical());
+  InvalidateRect(NULL,FALSE);
+}
 
-  bool h = m_fitting_line.is_vertical();
+void CpcaDlg::OnFitDebug()
+{
+  for(int i=0;i<1000;i++)
+  {
+    m_points.clear();
+
+    double x1 = (double)rand() / (double)RAND_MAX;
+    double y1 = (double)rand() / (double)RAND_MAX;
+    double x2 = (double)rand() / (double)RAND_MAX;
+    double y2 = (double)rand() / (double)RAND_MAX;
+    m_points.push_back(Point_2(x1,y1));
+    m_points.push_back(Point_2(x2,y2));
+
+    OnFitLine();
+      // TRACE("quality: %g\n",quality);
+  }
   InvalidateRect(NULL,FALSE);
 }
