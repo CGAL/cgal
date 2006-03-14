@@ -38,19 +38,19 @@ then told to advance time up until the end of the simulation,
 processing all events along the way.
 
 Each event is represented by a \ccc{Kinetic::Simulator::Time} and an instance of a
-model of the \ccc{Kinetic::Event} concept.  Models of the \ccc{Kinetic::Event}
+model of the \ccc{Kinetic::Simulator::Event} concept.  Models of the \ccc{Kinetic::Simulator::Event}
 concept are responsible for taking the appropriate action in order to
 handle the kinetic event they represent.  Specifically, the
-\ccc{Kinetic::Event} concept specifies one method,
-\ccc{Kinetic::Event::process()}, that is called when the event occurs.
-The body of the \ccc{Kinetic::Event::process()} method typically
+\ccc{Kinetic::Simulator::Event} concept specifies one method,
+\ccc{Kinetic::Simulator::Event::process()}, that is called when the event occurs.
+The body of the \ccc{Kinetic::Simulator::Event::process()} method typically
 simply calls a method of the kinetic data structure that created the
 event; for example in our kinetic sorting example, processing an event
 means calling the \ccc{Kinetic::Sort<Traits, Visitor>::swap(Iterator)}
 method of the kinetic sorting data structure.
 
 In the model of the \ccc{Kinetic::Simulator} concept that we provide, any
-model of the \ccc{Kinetic::Event} concept can be inserted as an event. This
+model of the \ccc{Kinetic::Simulator::Event} concept can be inserted as an event. This
 ability implies that events can be mixed at run time, which is
 essential when we want to support multiple kinetic data structures
 operating on the same set of moving geometric primitives.
