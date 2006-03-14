@@ -1419,6 +1419,10 @@ Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#unset
 Qt_widget/src/CGALQt/CGALQt.sln -text
 Qt_widget/src/CGALQt/CGALQt.vcproj -text
+Ridges_3/demo/Ridges_3/README -text
+Ridges_3/demo/Ridges_3/makefile -text
+Ridges_3/demo/Ridges_3/ogl_visu.C -text
+Ridges_3/demo/Ridges_3/visu.C -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.eps -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.pdf -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.eps -text

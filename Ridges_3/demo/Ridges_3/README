@@ -1,0 +1,12 @@
+Program visu.exe 
+----------------
+
+takes as input
+1. a file.off,
+2. the corresponding file file.off.4ogl.txt computed with the example program 
+	blind.exe from file.off 
+
+it displays an OpenGL view of both the mesh and the ridge lines
+
+./visu.exe ../../examples/Ridges_3/data/ellipe0.003.off ../../examples/Ridges_3/data_ellipe0.003.off.4ogl.txt
+
