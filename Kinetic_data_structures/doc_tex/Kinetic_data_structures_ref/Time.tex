@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 \ccDefGlobalScope{CGAL::}
-\begin{ccRefConcept}{Kinetic::Time}
+\begin{ccRefConcept}[Kinetic::Simulator::]{Time}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -35,7 +35,7 @@ type, where NT is the number type used in the simulation.}
 
 \ccGlobalFunction{std::pair<double, double> to_interval(Time);}{Return an interval containing the time value.}
 
-Comparisons with other \ccc{Kinetic::Time} objects are supported.
+Comparisons with other \ccc{Kinetic::Simulator::Time} objects are supported.
 
 \ccHasModels
 
@@ -44,7 +44,7 @@ Comparisons with other \ccc{Kinetic::Time} objects are supported.
 
 \ccSeeAlso
 
-Kinetic::Simulator
+\ccc{Kinetic::Simulator}
 
 \ccExample
 

@@ -31,7 +31,7 @@ future use. It gets a handle to to the
 method and registers a proxy with the table in order to receive
 notifications of changes to the point set.  The
 \ccc{Kinetic::SimulationTraits} method returns a handle to, rather
-than a copy of, the Kinetic::ActiveObjectsTable, since the table must
+than a copy of, the \ccc{Kinetic::ActiveObjectsTable}, since the table must
 be shared between all the kinetic data structures using these points.
 The handles are reference counted pointers, thus saving the user from
 worrying about cleaning things up properly.

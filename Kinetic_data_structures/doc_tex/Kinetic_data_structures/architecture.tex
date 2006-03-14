@@ -20,7 +20,7 @@ It maintains the event queue and can use its knowledge of the events
 in the queue to find times for the kinetic data structures to easily
 check their own correctness (this will be discussed in more detail
 later in this section). Kinetic data structures call methods of the
-Kinetic::Simulator to schedule new events, deschedule old ones and
+\ccc{Kinetic::Simulator} to schedule new events, deschedule old ones and
 access and change data contained in already scheduled events (the
 operations on existing events are performed using a key which was
 returned when the event was scheduled).  For controlling the
@@ -37,11 +37,11 @@ handle to add its events to the simulation. The \ccc{Kinetic::Simulator} is
 then told to advance time up until the end of the simulation,
 processing all events along the way.
 
-Each event is represented by a \ccc{Kinetic::Time} and an instance of a
+Each event is represented by a \ccc{Kinetic::Simulator::Time} and an instance of a
 model of the \ccc{Kinetic::Event} concept.  Models of the \ccc{Kinetic::Event}
 concept are responsible for taking the appropriate action in order to
 handle the kinetic event they represent.  Specifically, the
-Kinetic::Event concept specifies one method,
+\ccc{Kinetic::Event} concept specifies one method,
 \ccc{Kinetic::Event::process()}, that is called when the event occurs.
 The body of the \ccc{Kinetic::Event::process()} method typically
 simply calls a method of the kinetic data structure that created the
@@ -55,11 +55,11 @@ ability implies that events can be mixed at run time, which is
 essential when we want to support multiple kinetic data structures
 operating on the same set of moving geometric primitives.
 
-The \ccc{Kinetic::Time} concept is defined by the simulator, typically to be
+The \ccc{Kinetic::Simulator::Time} concept is defined by the simulator, typically to be
 some representation of a root of a polynomial, taken from the
 \ccc{Kinetic::FunctionKernel} (details of the algebraic side of the package
 will be discussed in Section~\ref{algebraic_kernel}). For most
-kinetic data structures \ccc{Kinetic::Time} only needs to support
+kinetic data structures \ccc{Kinetic::Simulator::Time} only needs to support
 comparisons (we need to compare events, in order to process them in
 the correct order) and a few other non-arithmetic operations.
 
@@ -96,7 +96,7 @@ proxy with the \ccc{Kinetic::Simulator}. When the
 data structures to audit themselves it calls the function
 \ccc{Listener::new_notification(Type)} on each of the registered proxy
 objects.  A helper for creating such proxy objects, called
-\ccc{Kinetic::Simulator_kds_helper<Listener, KDS>}, is provided by the
+\ccc{Kinetic::Simulator_kds_listener<Listener, KDS>}, is provided by the
 framework. It translates the notification into a function call
 (\ccc{audit()}) on the kinetic data structure.  Pointers in the
 notification framework are reference counted appropriately to avoid
@@ -141,7 +141,7 @@ they produce a set of discrete failure times for the certificate.
 These failure times are wrapped in a model of \ccc{Kinetic::Certificate}.
 
 A \ccc{Kinetic::Certificate} is a simple object whose primary function is to
-produce a \ccc{Kinetic::Time} object representing the failure time of the
+produce a \ccc{Kinetic::Simulator::Time} object representing the failure time of the
 certificate.  Since, the handling of most certificate failures
 involves creating a new certificate whose certificate function is the
 negation of the old certificate function, a \ccc{Kinetic::Certificate}
@@ -172,7 +172,7 @@ are added, when primitives are removed or when a trajectories change.
 Each primitive is uniquely identified by a Key, assigned by
 the table when the primitive is added, that can be used to change or
 remove it.  We provide one model of the
-Kinetic::ActiveObjectsTable concept, called
+\ccc{Kinetic::ActiveObjectsTable} concept, called
 \ccc{Kinetic::Active_objects_vector<MovingObject>} which stores all the moving
 primitives in an \ccc{std::vector<D>}.
 
@@ -200,12 +200,12 @@ or three dimensions.  Internally, it uses a
 \ccc{Delaunay_triangulation_2<Traits, Tds>} or
 \ccc{Delaunay_triangulation_3<Traits, Tds>} to represent the
 triangulation, instantiated with a model of the
-Kinetic::InstantaneousKernel concept as its traits class.  At
+\ccc{Kinetic::InstantaneousKernel} concept as its traits class.  At
 initialization, as well as at times during the simulation when we want
 to insert a point to the kinetic Delaunay triangulation, a static
 version of the Delaunay triangulation is conceptually instantiated.
 More precisely, the time for the copy of the model of the
-Kinetic::InstantaneousKernel stored in the CGAL triangulation is set
+\ccc{Kinetic::InstantaneousKernel} stored in the CGAL triangulation is set
 to be the current time (or rather, as discussed in the introduction, a
 more convenient time determined by the \ccc{Kinetic::Simulator}
 combinatorially equivalent to the current time).  The kinetic data
@@ -220,7 +220,7 @@ triangulations by simply calling the \ccc{verify()} method after
 setting the time).
 
 Internally, in order to evaluate a static predicate, our model of the
-Kinetic::InstantaneousKernel computes the current instantaneous
+\ccc{Kinetic::InstantaneousKernel} computes the current instantaneous
 coordinates of the involved primitives and then passes them to a
 static predicate. The static primitive coordinates are cached since
 they are likely to be involved in other static predicates evaluated at
@@ -230,7 +230,7 @@ the same time.
 Note that the time used in the \ccc{Kinetic::InstantaneousKernel} must
 be an arithmetic type that fully supports ring and possibly field
 operations.  These are much more stringent requirements than for
-Kinetic::Time objects in the simulator, where we only require
+\ccc{Kinetic::Simulator::Time} objects in the simulator, where we only require
 comparisons. These requirements currently rule out our algebraic
 kernels' \ccc{Root} objects (see Section \ref{algebraic_kernel}),
 since they only support comparisons and some limited arithmetic
@@ -311,7 +311,7 @@ implementation of various underlying computation models. The interface
 is detailed in the reference page (\ccc{Kinetic::FunctionKernel}).
 
 We provide models of the algebraic kernel that handle polynomial
-Kinetic::Function objects. The provided models perform
+\ccc{Kinetic::Function} objects. The provided models perform
 \begin{itemize}
 \item exact computations using Sturm sequences to isolate roots
 \item exact computations using Descartes rule of sign in order to

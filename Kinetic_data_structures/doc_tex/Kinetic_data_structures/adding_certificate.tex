@@ -20,7 +20,7 @@ struct Positive_x_f_2 {
 
 Then we define a kinetic kernel which includes this predicate. To do
 this we wrap the function generator generator in a
-\ccc{Kinetic::internal::Certificate_generator<Kernel, Generator>}.
+\ccc{Kinetic::Certificate_generator<Kernel, Generator>}.
 This wrapper uses the generator to create the certificate function and
 then the \ccc{Kinetic::FunctionKernel} to solve the certificate
 function. The result is wrapped in a \ccc{Kinetic::Certificate}
@@ -42,7 +42,7 @@ public:
 \end{ccExampleCode}
 
 Now we have the unfortunately rather messy part of assembling a new
-CGAL::Kinetic::SimulationTraits model. This is done in two steps for convenience.
+\ccc{Kinetic::SimulationTraits} model. This is done in two steps for convenience.
 
 \begin{ccExampleCode}
 struct My_st_types: public CGAL::Kinetic::Suggested_exact_simulation_traits_types {
