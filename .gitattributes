@@ -1427,6 +1427,11 @@ Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.pdf -text
 Ridges_3/examples/Ridges_3/PolyhedralSurf.C -text
 Ridges_3/examples/Ridges_3/README -text
 Ridges_3/examples/Ridges_3/blind.C -text
+Ridges_3/examples/Ridges_3/data/bezierpb3-0.007812.off -text
+Ridges_3/examples/Ridges_3/data/ellipe0.003.off -text
+Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02 -text
+Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500-off -text
+Ridges_3/examples/Ridges_3/data/venus.off -text
 Ridges_3/examples/Ridges_3/makefile -text
 Ridges_3/examples/Ridges_3/options.C -text
 Robustness/demo/Robustness/robustness.vcproj -text
