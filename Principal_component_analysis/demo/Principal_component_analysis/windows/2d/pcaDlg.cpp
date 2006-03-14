@@ -470,19 +470,15 @@ void CpcaDlg::OnRandomVerticalline()
 
 void CpcaDlg::OnFitDebug()
 {
-  for(int i=0;i<1000;i++)
+  BeginWaitCursor();
+  m_points.clear();
+  for(int i=0;i<10000;i++)
   {
-    m_points.clear();
-
-    double x1 = (double)rand() / (double)RAND_MAX;
-    double y1 = (double)rand() / (double)RAND_MAX;
-    double x2 = (double)rand() / (double)RAND_MAX;
-    double y2 = (double)rand() / (double)RAND_MAX;
-    m_points.push_back(Point_2(x1,y1));
-    m_points.push_back(Point_2(x2,y2));
-
-    OnFitLine();
-      // TRACE("quality: %g\n",quality);
+    double x = (double)rand() / (double)RAND_MAX;
+    double y = (double)rand() / (double)RAND_MAX;
+    m_points.push_back(Point_2(x,y));
   }
+  OnFitLine();
+  EndWaitCursor();
   InvalidateRect(NULL,FALSE);
 }

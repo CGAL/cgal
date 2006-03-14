@@ -78,8 +78,6 @@ linear_least_squares_fitting_2(InputIterator first,
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
   CGALi::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
-  eigen_values.first  = (eigen_values.first  < 0.0) ? 0.0 : eigen_values.first;
-  eigen_values.second = (eigen_values.second < 0.0) ? 0.0 : eigen_values.second;
 
   // check unicity and build fitting line accordingly
   if(eigen_values.first != eigen_values.second)
