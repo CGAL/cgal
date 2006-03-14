@@ -25,8 +25,10 @@
 #ifndef CGAL_INCLUDED_TAUCS_H
     #define CGAL_INCLUDED_TAUCS_H
 
-    // GCC 3.3 complains if we include <complex.h> within "extern C {}"
+    // In GCC 3.x, <complex.h> includes <complex> and
+    // complains if we include <complex.h> within "extern C {}"
     #if defined(__GNUC__)
+        #undef __DEPRECATED
         #include <complex.h>
     #endif
 
@@ -202,9 +204,9 @@ public:
     }
 
     /// Return the matrix number of rows
-    int row_dimension() const    { return dimension(); }
+    int row_dimension() const    { return m_row_dimension; }
     /// Return the matrix number of columns
-    int column_dimension() const { return dimension(); }
+    int column_dimension() const { return m_column_dimension; }
 
     /// Read access to a matrix coefficient.
     ///
