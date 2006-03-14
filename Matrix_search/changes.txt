@@ -1,3 +1,6 @@
+14 March 2006 Joachim Reichel
+- Added/fixed CGAL_MAKEFILE= line in makefiles
+
 5 August 2005 Sylvain Pion
 - Remove CGAL_STD.
 

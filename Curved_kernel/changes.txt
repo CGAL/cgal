@@ -1,3 +1,6 @@
+14 March 2006 Joachim Reichel
+- Added/fixed CGAL_MAKEFILE= line in makefiles
+
 3rd march 2006 Monique Teillaud
 (and yesterday)
 - removed all dependencies of CK from AK global functions

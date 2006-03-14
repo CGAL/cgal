@@ -1,3 +1,6 @@
+14 March 2006 Joachim Reichel
+- Added/fixed CGAL_MAKEFILE= line in makefiles
+
 27 February 2006 Andreas Fabri
 - Added a Base::using in PM_point_locator.h
 - Added using statements in Bounding_box_2.h

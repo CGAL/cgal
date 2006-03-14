@@ -1,3 +1,5 @@
+14 March 2006 Joachim Reichel
+- Added/fixed CGAL_MAKEFILE= line in makefiles
 
 9 March 2006 Andreas Fabri
 - Changed names of examples
