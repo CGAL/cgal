@@ -1,3 +1,6 @@
+13 Mars 2006 Efi Fogel
+- Reflected changes from CORE sources
+
 02 February 2006 Andreas Fabri
 - BigInt.h: Instead of letting mpz_get_str(..) allocate memory we allocate/deallocate it ourselves
 - BigRat.h: Instead of letting mpq_get_str(..) allocate memory we allocate/deallocate it ourselves
