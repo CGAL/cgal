@@ -1658,6 +1658,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/square.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/triangle.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/vertex_event_0.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/vertex_event_9.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_offset_builder_types.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_builder_types.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_traits_aux.C -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_traits_types.h -text
