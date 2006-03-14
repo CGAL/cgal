@@ -88,7 +88,7 @@ test_n( unsigned int n, std::ostream& outfile )
     }
     timer_scan.stop();
     time_scan = timer_scan.time() / repetitions;
-    const unsigned int scan_counter = callback1.counter/repetitions;
+    const unsigned int scan_counter = callback1.get_counter()/repetitions;
 
     std::cout << "got " << scan_counter << " intersections in "
               << time_scan << " seconds."
@@ -110,8 +110,8 @@ test_n( unsigned int n, std::ostream& outfile )
          }
         timer.stop();
         time = timer.time() / repetitions;
-        const unsigned int stream_counter = callback2.counter/repetitions;
-        callback2.counter = 0;
+        const unsigned int stream_counter = callback2.get_counter()/repetitions;
+        callback2.reset_counter();
         if( stream_counter != scan_counter ) {
             std::cout << "!! different number of intersections! got "
                       << stream_counter << "intersections!" << std::endl;

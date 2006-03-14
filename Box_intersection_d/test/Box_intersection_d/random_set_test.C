@@ -62,9 +62,9 @@ test_n( unsigned int n,
         CGAL::Box_intersection_d::all_pairs( 
                         boxes1.begin(), boxes1.end(),
                         boxes2.begin(), boxes2.end(),
-                        callback0, typename Uti1::Traits() );
+                        callback0, typename Uti1::Traits(), bipartite == false );
         timer.stop();
-        std::cout << "got " << callback0.counter << " intersections in "
+        std::cout << "got " << callback0.get_counter() << " intersections in "
                   << timer.time() << " seconds."
             << std::endl;
         timer.reset();
@@ -82,7 +82,7 @@ test_n( unsigned int n,
                                                 typename Uti1::Traits(),
                                                 DIM - 1);
     timer.stop();
-    std::cout << "got " << callback1.counter << " intersections in "
+    std::cout << "got " << callback1.get_counter() << " intersections in "
               << timer.time() << " seconds."
               << std::endl;
 
@@ -95,11 +95,11 @@ test_n( unsigned int n,
                                       callback2, typename Uti1::Traits(),
                                       cutoff, setting );
     timer.stop();
-    std::cout << "got " << callback2.counter << " intersections in "
+    std::cout << "got " << callback2.get_counter() << " intersections in "
               << timer.time() << " seconds." << std::endl;
 
-    if( callback1.counter != callback2.counter ||
-        n < allpairs_max && callback0.counter != callback1.counter )
+    if( callback1.get_counter() != callback2.get_counter() ||
+        n < allpairs_max && callback0.get_counter() != callback1.get_counter() )
     {
         ++failed;
         std::cout << "!! failed !! " << std::endl;
@@ -114,8 +114,8 @@ void operator()() {
     for( unsigned int n = 4; n < 100000; n = (int)(n * 6)) {
         std::cout << "bipartite case: " << std::endl;
         test_n( n, CGAL::Box_intersection_d::BIPARTITE );
-        //std::cout << "complete case: " << std::endl;
-        //test_n( n, CGAL::Box_intersection_d::COMPLETE );
+        std::cout << "complete case: " << std::endl;
+        test_n( n, CGAL::Box_intersection_d::COMPLETE );
     }
 }
 
@@ -128,10 +128,10 @@ struct test
     //_test< NT, 2, true >   t1;
     _test< NT, 3, true >   t2;
     _test< NT, 4, true >   t3;
-    /*_test< NT, 10, true >  t4;
+    //_test< NT, 10, true >  t4;
     _test< NT, 1, false >  t5;
     _test< NT, 2, false >  t6;
-    _test< NT, 3, false >  t7;
+    /*_test< NT, 3, false >  t7;
     _test< NT, 4, false >  t8;
     _test< NT, 10, false > t9;*/
 
@@ -140,10 +140,10 @@ struct test
         //t1();
         t2();
         t3();
-        /*t4();
+        //t4();
         t5();
         t6();
-        t7();
+        /*t7();
         t8();
         t9();*/
     }
@@ -153,26 +153,26 @@ struct test
 
 int main( int argc, char ** argv ) {
     test<unsigned int> a;
-    //test<int> b;
-    //test<float> c;
+    test<int> b;
+    test<float> c;
     test<double> d;
     std::cout << "-------------------------" << std::endl;
-    std::cout << "unsigned int" << std::endl;
+    std::cout << "type = unsigned int" << std::endl;
     std::cout << "-------------------------" << std::endl;
     a();
-    /*std::cout << std::endl;
+    std::cout << std::endl;
     std::cout << "-------------------------" << std::endl;
-    std::cout << "signed int" << std::endl;
+    std::cout << "type = signed int" << std::endl;
     std::cout << "-------------------------" << std::endl;
     b();
     std::cout << std::endl;
     std::cout << "-------------------------" << std::endl;
-    std::cout << "float" << std::endl;
+    std::cout << "type = float" << std::endl;
     std::cout << "-------------------------" << std::endl;
     c();
-    std::cout << std::endl;*/
+    std::cout << std::endl;
     std::cout << "-------------------------" << std::endl;
-    std::cout << "double" << std::endl;
+    std::cout << "type = double" << std::endl;
     std::cout << "-------------------------" << std::endl;
     d();
 

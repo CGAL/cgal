@@ -61,12 +61,16 @@ struct Util {
     }
     
     struct Counter_callback {
-        unsigned int counter;
-        Counter_callback() : counter( 0 ) {}
+        unsigned int *counter;
+        Counter_callback() {
+          counter = new unsigned int(0);
+        }
         void operator()( const Box& a, const Box& b ) {
             assert_intersection( a, b );
-            ++counter;
+            ++(*counter);
         }
+        unsigned int get_counter() { return *counter; }
+        void reset_counter() { *counter = 0; }
     };
     
     template< class Storage = Result_container >

@@ -41,7 +41,7 @@ void
 operator()( const char* filename1, const char* filename2 )
 {
     typename Uti1::Box_container boxes1, boxes2;
-    typename Uti1::Result_container result_all_pairs, result_tree;
+    typename Uti1::Result_container result_all_pairs, result_scan, result_tree;
     std::FILE *infile1, *infile2;
     infile1 = std::fopen( filename1, "r");
     infile2 = std::fopen( filename2, "r");
@@ -50,20 +50,21 @@ operator()( const char* filename1, const char* filename2 )
     Uti1::readBoxesFromFile( infile2, boxes2 );
 
     std::cout << std::endl;
+    typename Uti1::Counter_callback callback0;
     typename Uti1::template Storage_callback<>
         callback1( result_all_pairs ),
-        callback2( result_tree );
+        callback2( result_scan ),
+        callback3( result_tree );
 
     // invoke each interface routine at least once, to check if it still
     // compiles
     CGAL::box_intersection_all_pairs_d( 
                 boxes1.begin(), boxes1.end(),
                 boxes2.begin(), boxes2.end(),
-                callback1, 
+                callback0, 
                 CLOSED ? 
                    CGAL::Box_intersection_d::CLOSED : 
                    CGAL::Box_intersection_d::HALF_OPEN );
-    callback1.counter = 0;   
     std::cout << "all pairs ......... " << std::flush;
     CGAL::Timer timer;
     timer.start();
@@ -72,7 +73,7 @@ operator()( const char* filename1, const char* filename2 )
                 boxes2.begin(), boxes2.end(),
                 callback1, typename Uti1::Traits() );
     timer.stop();
-    std::cout << "got " << callback1.counter << " intersections in "
+    std::cout << "got " << callback1.get_counter() << " intersections in "
               << timer.time() << " seconds." << std::endl;
 
 
@@ -88,10 +89,8 @@ operator()( const char* filename1, const char* filename2 )
                                             callback2,
                                             typename Uti1::Traits(), 2 );
     timer.stop();
-    std::cout << "got " << callback2.counter << " intersections in "
+    std::cout << "got " << callback2.get_counter() << " intersections in "
               << timer.time() << " seconds." << std::endl;
-    callback2.counter = 0;
-    result_tree.clear();
 
     std::cout << "segment tree ...... " << std::flush;
     timer.reset();
@@ -100,16 +99,18 @@ operator()( const char* filename1, const char* filename2 )
     const unsigned int cutoff = n < 2000 ? 6 : n / 100;
     CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback2, 
+                                                callback3, 
                                                 typename Uti1::Traits(),
                                                 cutoff );
     timer.stop();
-    std::cout << "got " << callback2.counter << " intersections in "
+    std::cout << "got " << callback3.get_counter() << " intersections in "
               << timer.time() << " seconds." << std::endl;
 
-    if( callback1.counter != callback2.counter ) {
+    if( callback1.get_counter() != callback2.get_counter() ||  
+        callback1.get_counter() != callback3.get_counter() ) 
+    {
         unsigned int missing    = Uti1::countMissingItems( result_all_pairs,
-                                                     result_tree );
+                                                           result_tree );
         unsigned int duplicates = Uti1::countDuplicates( result_tree );
         std::cout << "!! failed !! " << missing  << " missing and "
              << duplicates << " duplicate intersections in tree result."
