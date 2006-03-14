@@ -214,7 +214,7 @@ private:
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
-#define STATS
+//#define STATS
 //#define CGAL_SLS_PROFILING_ENABLED
 
 #define VERBOSE_VALIDATE false
@@ -554,10 +554,10 @@ private slots:
         
         double lMaxOffset = offsets.size() > 0 ? offsets.back() : 10.0 ;
 
-        double lMargin = compute_outer_frame_margin(lOuterContourCopy.vertices_begin()
-                                                   ,lOuterContourCopy.vertices_end  ()
-                                                   ,lMaxOffset
-                                                   );
+        double lMargin = CGAL::compute_outer_frame_margin(lOuterContourCopy.vertices_begin()
+                                                         ,lOuterContourCopy.vertices_end  ()
+                                                         ,lMaxOffset
+                                                         );
         
         CGAL::Bbox_2 lBbox = lOuterContourCopy.bbox();
         
