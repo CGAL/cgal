@@ -1,6 +1,15 @@
 Installation
 ============
 
+System Requirements:
+
+     *  C/C++ Compiler (tested: Gnu g++ 3.3 and 3.4)
+     *  flex and bison (NOTE: flex versions >  2.5.4 are NOT yet supported)
+     *  perl 5
+     *  Unix environment with tools like grep, sed, awk, ...
+     *  GNU make
+
+
 There is an install script called `install.sh' that installs the 
 Manual_tools in a default location, specified in `install.config'. 
 If you dislike the default paths, feel free to change them. Some 
