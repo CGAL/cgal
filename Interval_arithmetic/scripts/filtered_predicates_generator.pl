@@ -476,6 +476,12 @@ sub parse_dependancy_files {
 
 # Main program
 sub main {
+
+  print "===================================================================\n";
+  print "=== This script is deprecated, as is Filtered_exact ===============\n";
+  print "=== Please use Filtered_predicate and Filtered_kernel instead =====\n";
+  print "===================================================================\n";
+
   for ("Sign","Comparison_result","Orientation","Oriented_side","Bounded_side",
        "Angle")
   {
