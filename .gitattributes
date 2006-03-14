@@ -2045,6 +2045,8 @@ Triangulation_3/doc_tex/Triangulation_3/sphere.pdf -text svneol=unset#unset
 Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.eps -text
 Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
 Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.pdf -text svneol=unset#unset
+Triangulation_3/doc_tex/Triangulation_3/triangulation3.eps -text
+Triangulation_3/doc_tex/Triangulation_3/triangulation3.png -text
 Triangulation_3/doc_tex/Triangulation_3_ref/flips.eps -text
 Triangulation_3/doc_tex/Triangulation_3_ref/flips.gif -text svneol=unset#unset
 Triangulation_3/doc_tex/Triangulation_3_ref/flips.pdf -text svneol=unset#unset
