@@ -71,7 +71,7 @@ CORE_BEGIN_NAMESPACE
 template < class NT >
 class Sturm {
 public:
-  int len;      // len is 1 less than number of non-zero entries in array seq.
+  int len;      // len is 1 less than the number of non-zero entries in array seq.
   		//     I.e., len + 1 = length of the Sturm Sequence
                 // N.B. When len = -1 or len = 0 are special,
                 //     the array seq is not used!
@@ -108,7 +108,7 @@ public:
       seq[i] = seq[i-2];
       seq[i].negPseudoRemainder(seq[i-1]);
       if (zeroP(seq[i])){
-	len = i;
+	len = i-1;//Since len is one less than the number of non-zero entries.
         break;
       }
       seq[i].primPart(); // Primitive part is important to speed
@@ -138,7 +138,8 @@ public:
       seq[i] = seq[i-2];
       seq[i].negPseudoRemainder(seq[i-1]);
       if (zeroP(seq[i])){
-	len = i;
+	len = i-1;//Since len is one less than the number of non-zero entries.
+	//len = i;
         break;
       }
       seq[i].primPart(); // Primitive part is important to speed
@@ -158,7 +159,7 @@ public:
   // copy constructor
   Sturm(const Sturm&s) : len(s.len), NEWTON_DIV_BY_ZERO(s.NEWTON_DIV_BY_ZERO) {
     if (len <= 0) return;
-    seq = new Polynomial<NT> [len+1];
+    seq = new Polynomial<NT> [len];
     for (int i=0; i<=len; i++)
       seq[i] = s.seq[i];
   }
@@ -187,22 +188,12 @@ public:
 
   // METHODS
 
-  // hasExactDivision()
-  //   CHECKING if NT has exact division
-  //   NOTE: it is important that the compiler does not try to
-  //   prove theorems about arithmetic identities like "x*(y/x) == y"
-  inline bool hasExactDivision(){
-     NT one(1);
-     NT three(3);
-     return (three*(one/three) == one);
-  }
-
   // dump functions
   void dump(std::string msg) const {
     std::cerr << msg << std::endl;
     if (len <= 0) std::cerr << " len = " << len << std::endl;
     else
-       for (int i=0; i<len; i++)
+       for (int i=0; i<=len; i++)
          std::cerr << " seq[" << i << "] = " << seq[i] << std::endl;
   }
   void dump() const {
@@ -219,7 +210,7 @@ public:
     for (int i=1; i<=len; i++) {// Chee (4/29/04): Bug fix,
         // should start iteration at i=1, not i=0.  Potential error
         // if seq[0].eval(x)=0 (though not in our usage).
-      int sgn = sign(seq[i].eval(x));
+      int sgn = sign(seq[i].evalExactSign(x));
       if (sgn*last_sign < 0) {
         cnt++;
         last_sign *= -1;
@@ -233,7 +224,7 @@ public:
   //   --special return value of -1, indicating x is root!
   int signVariations(const BigFloat & x) const {
     if (len <= 0) return len; 
-    int signx = sign(seq[0].eval(x));
+    int signx = sign(seq[0].evalExactSign(x));
     if (signx == 0)
       return (-1);    // THIS indicates that x is a root...
     		      // REMARK: in our usage, this case does not arise
@@ -246,7 +237,7 @@ public:
     int cnt = 0;
     int last_sign = sign(seq[0].coeff[seq[0].getTrueDegree()]);
     assert(last_sign != 0);
-    for (int i=1; i<len; i++) {
+    for (int i=1; i<=len; i++) {
       int sgn = sign(seq[i].coeff[seq[i].getTrueDegree()]);
       if (sgn*last_sign < 0)
         cnt++;
@@ -264,7 +255,7 @@ public:
     if (seq[0].getTrueDegree() % 2 != 0)
       last_sign *= -1;
     assert(last_sign != 0);
-    for (int i=1; i<len; i++) {
+    for (int i=1; i<=len; i++) {
       int parity = (seq[i].getTrueDegree() % 2 == 0) ? 1 : -1;
       int sgn = parity * sign(seq[i].coeff[seq[i].getTrueDegree()]);
       if (sgn*last_sign < 0)
@@ -285,9 +276,9 @@ public:
   int numberOfRoots(const BigFloat &x, const BigFloat &y) const {
     assert(x <= y);   // we allow x=y
     if (len <= 0) return len;  // return of -1 means infinity of roots!
-    int signx = sign(seq[0].eval(x));
+    int signx = sign(seq[0].evalExactSign(x));
     if (x == y) return ((signx == 0) ? 1 : 0);
-    int signy = sign(seq[0].eval(y));
+    int signy = sign(seq[0].evalExactSign(y));
     // easy case: THIS SHOULD BE THE OVERWHELMING MAJORITY
 
     if (signx != 0 && signy != 0)
@@ -303,8 +294,8 @@ public:
       newy = y + sep;
     else
       newy = y;
-    return (signVariations(newx, sign(seq[0].eval(newx)))
-            - signVariations(newy, sign(seq[0].eval(newy))) );
+    return (signVariations(newx, sign(seq[0].evalExactSign(newx)))
+            - signVariations(newy, sign(seq[0].evalExactSign(newy))) );
   }//numberOfRoots
 
   // numberOfRoots():
@@ -312,36 +303,37 @@ public:
   ///////////////////////////////////////////
   int numberOfRoots() const {
     if (len <= 0) return len;  // return of -1 means infinity of roots!
-    BigFloat bd = seq[0].CauchyUpperBound();
-    return numberOfRoots(-bd, bd);
+    //    BigFloat bd = seq[0].CauchyUpperBound();
+    //    return numberOfRoots(-bd, bd);
+    return signVariationsAtNegInfty() - signVariationsAtPosInfty();
   }
 
-  // numberOfRoots above x:
+  // numberOfRoots above or equal to x:
   //   Default value x=0 (i.e., number of positive roots)
   //   assert(len >= 0)
   ///////////////////////////////////////////
   int numberOfRootsAbove(const BigFloat &x = 0) const {
     if (len <= 0) return len;  // return of -1 means infinity of roots!
-    int signx = sign(seq[0].eval(x));
+    int signx = sign(seq[0].evalExactSign(x));
     if (signx != 0)
       return signVariations(x, signx) - signVariationsAtPosInfty();
     BigFloat newx = x - (seq[0].sepBound()).div2();
-    return signVariations(newx, sign(seq[0].eval(newx)))
+    return signVariations(newx, sign(seq[0].evalExactSign(newx)))
            - signVariationsAtPosInfty();
   }
 
-  // numberOfRoots below x:
+  // numberOfRoots below or equal to x:
   //   Default value x=0 (i.e., number of negative roots)
   //   assert(len >= 0)
   ///////////////////////////////////////////
   int numberOfRootsBelow(const BigFloat &x = 0) const {
     if (len <= 0) return len;  // return of -1 means infinity of roots!
-    int signx = sign(seq[0].eval(x));
+    int signx = sign(seq[0].evalExactSign(x));
     if (signx != 0)
       return signVariationsAtNegInfty() - signVariations(x, signx);
     BigFloat newx = x + (seq[0].sepBound()).div2();
     return signVariationsAtNegInfty()
-           - signVariations(newx, sign(seq[0].eval(newx)));
+           - signVariations(newx, sign(seq[0].evalExactSign(newx)));
   }
 
 
@@ -379,7 +371,7 @@ public:
       }
     } else { // n > 1
       BigFloat mid = (x+y).div2(); // So mid is exact.
-      if (sign(seq[0].eval(mid)) != 0)  { // usual case: mid is non-root
+      if (sign(seq[0].evalExactSign(mid)) != 0)  { // usual case: mid is non-root
       	isolateRoots(x, mid, v);
       	isolateRoots(mid, y, v); 
       } else { // special case: mid is a root
@@ -445,11 +437,10 @@ public:
     if (n >= i)
 	    return isolateRoot(i, x, m);
     // Now (n < i) but we have to be careful if m is a root
-    if (sign(seq[0].eval(m)) == 0)   
+    if (sign(seq[0].evalExactSign(m)) != 0)   // usual case
+      return isolateRoot(i-n, m, y);
+    else
       return isolateRoot(i-n+1, m, y);
-
-    // The usual case:
-    return isolateRoot(i-n, m, y);
   }
 
   // same as isolateRoot(i).
@@ -496,7 +487,7 @@ public:
     //   => n = ceil(log(width/eps)) this many steps of binary search
     //   will work.
     // At each step we verify
-    //           seq[0].eval(J.first) * seq[0].eval(J.second) < 0
+    //   seq[0].evalExactSign(J.first) * seq[0].evalExactSign(J.second) < 0
 
     BigFloat width = I.second - I.first;
     if (width <= 0) return I;  // Nothing to do if the
@@ -509,12 +500,12 @@ public:
     BigFloat midpoint;
     while(n >= 0) {
       midpoint = (J.second + J.first).div2();
-      BigFloat m = seq[0].eval(midpoint);
+      BigFloat m = seq[0].evalExactSign(midpoint);
       if (m == 0) {
         J.first = J.second = midpoint;
         return J;
       }
-      if (seq[0].eval(J.first) * m < 0) {
+      if (seq[0].evalExactSign(J.first) * m < 0) {
         J.second = midpoint;
       } else {
         J.first = midpoint;
@@ -583,60 +574,28 @@ public:
     v.swap(v1);
   }//End of newtonRefineAllRoots
 
+  /** val = newtonIterN(n, bf, del, err, fuMSB, ffuMSB)
+   * 
+   *    val is the root after n iterations of Newton
+   *       starting from initial value of bf and is exact.
+   *    fuMSB and ffuMSB are precision parameters for the approximating
+   *		the coefficients of the underlyinbg polynomial, f(x).
+   *    	THEY are used ONLY if the coefficients of the polynomial
+   *		comes from a field (in particular, Expr or BigRat).
+   *		We initially approximate the coefficients of f(x) to fuMSB 
+   *		relative bits, and f'(x) to ffuMSB relative bits.
+   *		The returned values of fuMSB and ffuMSB are the final
+   *		precision used by the polynomial evaluation algorithm.
+   *    Return by reference, "del" (difference between returned val and value
+   *       in the previous Newton iteration)
+   *
+   *    Also, "err" is returned by reference and bounds the error in "del".
+   *
+   *    IMPORTANT: we assume that when x is an exact BigFloat,
+   *    then Polynomial<NT>::eval(x) will be exact!
+   *    But current implementation of eval() requires NT <= BigFloat.
+   * ****************************************************/    
 
-/* Evaluation of BigRat or Expr polynomial at BigFloat value using Filter.
- * We will evaluate this polynomial approximately using BigFloats.
- * However, we guarantee the sign of this evaluation
- *
-   We use the following heuristic estimates of precision for coefficients:
-
-      r = 1 + lg(|P|_\infty) + lg(d+1)  		if f <= 1
-      r = 1 + lg(|P|_\infty) + lg(d+1) + d*lg|f| 	if f > 1
-      
-   if the filter fails, then we use Expr to do evaluation. */
-  BigFloat evalExactSign(const Polynomial<NT>& p, const BigFloat& val, 
-  		const extLong& oldMSB) const {
-    assert(val.isExact());
-    if (p.getTrueDegree() == -1)
-      return BigFloat(0);
-  
-    extLong r;
-    r = 1 + BigFloat(p.height()).uMSB() + clLg(long(p.getTrueDegree()+1));
-    if (val > 1)
-      r += p.getTrueDegree() * val.uMSB();
-    r += core_max(extLong(0), -oldMSB);
-  
-    bool     validFlag = false;
-    BigFloat rVal = p.evalFilter(val, validFlag, r);
-
-    if (validFlag)
-      return rVal;
-    else {
-      return p.evalExact(Expr(val));
-    }
-  }//evalExactSign
-  
-  BigFloat evalPoly(const Polynomial<NT>& p, const BigFloat& val,
-		    const extLong& r) {
-    //if (NT::hasExactDivision()){// only BigRat and Expr
-    if (hasExactDivision()){// only BigRat and Expr
-      return evalExactSign(p, val, r);
-    }else
-      return p.eval(val);
-  }
-
-  // val = newtonIterN(n, bf, del, err)
-  // 
-  //    val is the root after n iterations of Newton
-  //       starting from initial value of bf and is exact.
-  //    Return by reference, "del" (difference between returned val and value
-  //       in the previous Newton iteration)
-  //
-  //    Also, "err" is returned by reference and bounds the error in "del".
-  //
-  //    IMPORTANT: we assume that when x is an exact BigFloat,
-  //    then Polynomial<NT>::eval(x) will be exact!
-  //    
   BigFloat newtonIterN(long n, const BigFloat& bf, BigFloat& del,
 	unsigned long & err, extLong& fuMSB, extLong& ffuMSB) {
     if (len <= 0) return bf;   // Nothing to do!  User must
@@ -649,7 +608,7 @@ public:
       ////////////////////////////////////////////////////
       // Filtered Eval
       ////////////////////////////////////////////////////
-      BigFloat ff = evalPoly(seq[1], val, ffuMSB);
+      BigFloat ff = seq[1].evalExactSign(val, 3*ffuMSB); //3 is a slight hack
       ffuMSB = ff.uMSB();
       //ff is guaranteed to have the correct sign as the exact evaluation.
       ////////////////////////////////////////////////////
@@ -665,7 +624,7 @@ public:
       ////////////////////////////////////////////////////
       // Filtered Eval
       ////////////////////////////////////////////////////
-      BigFloat f= evalPoly(seq[0], val, fuMSB);
+      BigFloat f= seq[0].evalExactSign(val, 3*fuMSB); //3 is a slight hack
       fuMSB = f.uMSB();
       ////////////////////////////////////////////////////
 
@@ -693,12 +652,17 @@ public:
     extLong fuMSB=0, ffuMSB=0;
     return newtonIterN(n, bf, del, err, fuMSB, ffuMSB);
   }
-  // v = newtonIterE(prec, bf, del)
+
+  // v = newtonIterE(prec, bf, del, fuMSB, ffuMSB)
   //
   //    return the value v which is obtained by Newton iteration
   //    until del.uMSB < -prec, starting from initial value of bf.
   //    Returned value is an exact BigFloat.
   //    We guarantee at least one Newton step (so del is defined).
+  //
+  //	   The parameters fuMSB and ffuMSB are precision parameters for
+  //	   evaluating coefficients of f(x) and f'(x), used similarly
+  //	   as described above for newtonIterN(....)
   //
   //    Return by reference "del" (difference between returned val and value
   //       in the previous Newton iteration).  This "del" is an upper bound
@@ -797,6 +761,10 @@ public:
   //     ---------  =  -----------                  (3)
   //    \phi(r)            4
   // 
+  // REMARK: smaleBoundTest(z) actually computes an upper bound
+  // 	on alpha(f,z), and compares it to 0.02 (then our theory
+  // 	says that z is a robust approximate zero).
+  //
   bool smaleBoundTest(const BigFloat& z){
     assert(z.isExact());   // the bound only makes sense for exact z
 
@@ -804,20 +772,22 @@ public:
     std::cout <<"Computing Smale's bound = " <<  std::endl;
 #endif
 
-    if(seq[0].eval(z) == 0)// Reached the exact root.
+    if(seq[0].evalExactSign(z) == 0)// Reached the exact root.
       return true;
 
-    BigFloat fprime = seq[1].eval(z);
+    BigFloat fprime = core_abs(seq[1].evalExactSign(z));
+    fprime.makeFloorExact();
     if (fprime == 0) return false;  // z is a critical value!
-    BigFloat temp =        // assume eval(z) return exact values!
-	    (seq[0].eval(z)/power(fprime, 2)).makeCeilExact();
-    temp = core_abs(temp)*seq[0].height();  // remains exact
+    BigFloat temp =        // evalExactSign(z) may have error.
+      core_abs(seq[0].evalExactSign(z));
+    temp = (temp.makeCeilExact()/power(fprime, 2)).makeCeilExact();
+    temp = temp*seq[0].height();  // remains exact
     //Thus, temp >=  ||f||_{\infty} |\frac{f(z)}{f'(z)^2}|
 
     int m = seq[0].getTrueDegree();    
     BigFloat x = core_abs(z);
     if (x==1)   // special case, using (3)
-	    return (temp * BigFloat(m*m*(m+1)).div2().div2() < 0.03);
+	    return (temp * BigFloat(m*m*(m+1)).div2().div2() < 0.02);
 
     BigFloat temp1;
     if (x>1) { // use formula (1)
@@ -886,13 +856,13 @@ std::cout << "In newtonRefine, input J=" << J.first
     }
     int xSign, leftSign, rightSign;
 
-    leftSign = sign(seq[0].eval(J.first));
+    leftSign = sign(seq[0].evalExactSign(J.first));
     if (leftSign == 0) {
       J.second = J.first;
       return J;
     }
 
-    rightSign = sign(seq[0].eval(J.second));
+    rightSign = sign(seq[0].evalExactSign(J.second));
     if (rightSign == 0) {
       J.first = J.second;
       return J;
@@ -902,19 +872,25 @@ std::cout << "In newtonRefine, input J=" << J.first
 
     //N is number of times Newton is called without checking
     // whether the result is still in the interval or not
-    #define NO_STEPS 1
+    #define NO_STEPS 2
+    // REMARK: NO_STEPS=1 is incorrect, as it may lead to
+    //      linear convergence (it is somewhat similar to Dekker-Brent's
+    //      idea of guaranteeing that bisection does not
+    //	    destroy the superlinear convergence of Newton.
     int N = NO_STEPS;
 
     BigFloat x, del, olddel, temp;
     unsigned long err;
     BigFloat yap = yapsBound(seq[0]);
 
+    BigFloat old_width = J.second - J.first;
     x = (J.second + J.first).div2();
 
-    // initial estimate for the evaluation of filter
-    extLong fuMSB=0, ffuMSB=0;
+    // initial estimate for the evaluation of filter to floating point precision
+    extLong fuMSB=54, ffuMSB=54;
 
-    //MAIN WHILE LOOP. We always make sure that J contains the root
+    //MAIN WHILE LOOP. We ensure that J always contains the root
+
     while ( !smaleBoundTest(x) && 
 	    (J.second - J.first) > yap &&
 	   (J.second - J.first).uMSB() >= -aprec) {
@@ -930,30 +906,35 @@ std::cout << "In newtonRefine, input J=" << J.first
       } else {
       	left += del; right -= del;
       }
-      //left and right are exact, since x is exact.
-      if ((  (J.first <= x && x <= J.second) &&
-	       (J.first < left || right < J.second ))
-          && (NEWTON_DIV_BY_ZERO == false)
-	   ) {
-                                  // we can get a better root:
-        if (left > J.first) {
-	  int lSign = sign(seq[0].eval(left));
+
+      // update interval
+      if ((left > J.first)&&(left <J.second)) {
+	  int lSign = sign(seq[0].evalExactSign(left));
           if (lSign == leftSign)  // leftSign=sign of J.first
             J.first = left;
 	  else if (lSign == 0) {
             J.first = J.second = left;
             return J;
-          }
-        }
-        if (right < J.second) {
-	  int rSign = sign(seq[0].eval(right));
+          } else {
+	    J.second = left;
+          }	
+      }
+      if ((right < J.second)&&(right >J.first)) {
+	  int rSign = sign(seq[0].evalExactSign(right));
           if (rSign == rightSign)
             J.second = right;
 	  else if (rSign == 0) {
             J.first = J.second = right;
             return J;
+          } else {
+            J.first = right;
           }
-        }
+      }
+      BigFloat width = J.second - J.first;
+
+      //left and right are exact, since x is exact.
+      if (width*2 <= old_width && !NEWTON_DIV_BY_ZERO) {
+                                  // we can get a better root:
 
 	// No, it is not necessary to update x to
 	// the midpoint of the new interval J.
@@ -964,17 +945,21 @@ std::cout << "In newtonRefine, input J=" << J.first
 	// one bit of accuracy, but you stand to loose an
 	// arbitrary amount of bits of accuracy if you are unlucky!
 	// So I will comment out the next line.  --Chee (Aug 9, 2004).
-	// RWRW: Uncommented the next line to prevent an infinite loop: 
-	x = (J.second + J.first).div2();
+	// 
+	// x = (J.second + J.first).div2();
+	if (J.first > x || J.second < x)
+	  x = (J.second + J.first).div2();
+
+	old_width = width; // update width
 
         N ++;      // be more confident or aggressive
 	           //  (perhaps we should double N)
 		   //
       } else {// Either NEWTON_DIV_BY_ZERO=true
-	      // Or Newton took us out of interval J: so we need to backup
+	      // Or width has not decreased sufficiently
 	x = (J.second + J.first).div2();//Reset x to midpoint since it was the
 	                                //value from a failed Newton step
-	xSign = sign(seq[0].eval(x));
+	xSign = sign(seq[0].evalExactSign(x));
 	if (xSign == rightSign) {
 	  J.second = x;
 	} else if (xSign == leftSign) {
@@ -983,6 +968,9 @@ std::cout << "In newtonRefine, input J=" << J.first
 	  J.first = J.second = x; return J;
 	}
 	x = (J.second + J.first).div2();
+
+	old_width = old_width.div2(); // update width
+	
 	// reduce value of N:
 	N = core_max(N-1, NO_STEPS);   // N must be at least NO_STEPS
       }
@@ -1028,7 +1016,8 @@ std::cout << "In newtonRefine, input J=" << J.first
       //
       //  LEMMA 2:  If |DEL| >= |del|,
       //  then (**) holds with X_1 and DEL in place of x_1 and del.
-      //    
+      //  
+      //  NOTE: We implemented this DEL in newtonIterE.   
 
 #ifdef CORE_DEBUG
       std::cout << "Inside Newton Refine: Refining Part " << std::endl;
@@ -1038,7 +1027,7 @@ std::cout << "In newtonRefine, input J=" << J.first
       else
 	std::cout << "Chees Bound satisfied " << std::endl;
 #endif
-      xSign = sign(seq[0].eval(x));
+      xSign = sign(seq[0].evalExactSign(x));
       if(xSign == 0){
 	J.first = J.second = x; 
 	return J; // missing before!
@@ -1046,7 +1035,7 @@ std::cout << "In newtonRefine, input J=" << J.first
 
       //int k = clLg((-(J.second - J.first).lMSB() + aprec).asLong());
       x = newtonIterE(aprec, x, del, fuMSB, ffuMSB);
-      xSign = sign(seq[0].eval(x));
+      xSign = sign(seq[0].evalExactSign(x));
 
       if(xSign == leftSign){//Root is greater than x
 	J.first = x;
@@ -1064,15 +1053,17 @@ std::cout << "In newtonRefine, input J=" << J.first
 #ifdef CORE_DEBUG
     std::cout << " Returning from Newton Refine: J.first = " << J.first
 	      << " J.second = " << J.second << " aprec = " << aprec
-	      << " Sign at the interval endpoints = " << sign(seq[0].eval(J.first))
-	      << " : " << sign(seq[0].eval(J.second)) << " Err at starting = " 
+	      << " Sign at the interval endpoints = " 
+	      << sign(seq[0].evalExactSign(J.first))
+	      << " : " << sign(seq[0].evalExactSign(J.second)) << " Err at starting = " 
 	      << J.first.err() << " Err at end = " << J.second.err() << std::endl;
 #endif
 
-    if(seq[0].eval(J.first) * seq[0].eval(J.second) > 0)
-      std::cout <<" ERROR! Root is not in the Interval " << std::endl;
+    assert( (seq[0].evalExactSign(J.first) * seq[0].evalExactSign(J.second) <= 0) );
 
 #ifdef CORE_DEBUG_NEWTON
+    if (seq[0].evalExactSign(J.first) * seq[0].evalExactSign(J.second) > 0)
+      std::cout <<" ERROR! Root is not in the Interval " << std::endl;
     if(J.second - J.first >  BigFloat(1).exp2(-aprec))
       std::cout << "ERROR! Newton Refine failed to achieve the desired precision" << std::endl;
 #endif

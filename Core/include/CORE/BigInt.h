@@ -235,15 +235,13 @@ public:
     return *this;
   }
   BigInt operator++(int) {
-    BigInt r;
-    *r.rep = *rep;
-    (*this)++;
+    BigInt r(*this);
+    ++(*this);
     return r;
   }
   BigInt operator--(int) {
-    BigInt r;
-    *r.rep = *rep;
-    (*this)--;
+    BigInt r(*this);
+    --(*this);
     return r;
   }
   //@}
@@ -518,10 +516,16 @@ inline int bitLength(const BigInt& a) {
   return mpz_sizeinbase(a.get_mp(), 2);
 }
 /// floorLg -- floor of log_2(a)
+/** Convention: a=0, floorLg(a) returns -1. 
+ *  This makes sense for integer a.
+ */
 inline long floorLg(const BigInt& a) {
   return (sign(a) == 0) ? (-1) : (bitLength(a)-1);
 }
 /// ceilLg -- ceiling of log_2(a) where a=BigInt, int or long
+/** Convention: a=0, ceilLg(a) returns -1. 
+ *  This makes sense for integer a.
+ */
 inline long ceilLg(const BigInt& a) {
   if (sign(a) == 0)
     return -1;

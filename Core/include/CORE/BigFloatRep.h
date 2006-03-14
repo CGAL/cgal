@@ -68,10 +68,12 @@ public:
 
 public:
   //  constructors
-  BigFloatRep(int);           //inline
+  BigFloatRep(int=0);           //inline
   BigFloatRep(long);          //inline
   BigFloatRep(double);        //inline
-  BigFloatRep(const BigInt& I = 0, unsigned long u = 0, long l = 0); //inline
+  BigFloatRep(const BigInt& I, unsigned long u, long l); //inline
+  BigFloatRep(const BigInt& I, long l); //inline
+  BigFloatRep(const BigInt& I); //inline
   BigFloatRep(const char *);  //inline
 
   BigRat BigRatize() const;   //inline
@@ -255,6 +257,25 @@ inline BigFloatRep::BigFloatRep(double d)
 inline BigFloatRep::BigFloatRep(const BigInt& I, unsigned long er, long ex)
   : m(I), err(er), exp(ex) {}
 
+inline BigFloatRep::BigFloatRep(const BigInt& I)
+  : m(I), err(0), exp(0) {}
+
+//Constructs the BigFloat representing I*2^{ex}.
+//If ex >=0 then it is clear how to do it.
+//Otherwise, let |ex| = CHUNK_BIT * q + r. Then
+//I*2^{ex} = I*2^{CHUNK_BIT -r} 2^{-CHUNK_BIT * (q+1)}
+inline BigFloatRep::BigFloatRep(const BigInt& I, long ex) {
+  err=0;
+  exp = chunkFloor(ex);
+  if(ex >= 0)
+    m = I<<(ex - bits(exp));
+  else{//ex < 0
+    exp = chunkFloor(abs(ex));
+    m = I << (CHUNK_BIT - (-ex - bits(exp)));
+    exp = -1*(1 + exp);
+  }
+}
+
 inline BigFloatRep::BigFloatRep(const char *str) : m(0), err(0), exp(0) {
   fromString(str);
 }
@@ -298,6 +319,10 @@ inline extLong BigFloatRep::lMSB() const {
     return extLong(CORE_negInfty);
 }
 
+/// uMSB() returns an upper bound on log_2(abs(*this)).
+/** Returns -1 if (*this)=0.  
+ * Not well-defined if zero is in the interval. 
+ */
 inline extLong BigFloatRep::uMSB() const {
   return extLong(floorLg(abs(m) + err)) + bits(exp);
 }

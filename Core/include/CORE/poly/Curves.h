@@ -271,13 +271,13 @@ class BiPoly{
   BiPoly<NT> & operator=( const BiPoly<NT>& P);
 
   // Self-addition
-  BiPoly<NT> & BiPoly<NT>::operator+=( BiPoly<NT>& P);
+  BiPoly<NT> & operator+=( BiPoly<NT>& P);
    
   // Self-subtraction
-  BiPoly<NT> & BiPoly<NT>::operator-=( BiPoly<NT>& P);
+  BiPoly<NT> & operator-=( BiPoly<NT>& P);
 
   // Self-multiplication
-  BiPoly<NT> & BiPoly<NT>::operator*=( BiPoly<NT>& P);
+  BiPoly<NT> & operator*=( BiPoly<NT>& P);
   
   // Multiply by a polynomial in X
   BiPoly<NT> & mulXpoly( Polynomial<NT> & p);

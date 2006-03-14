@@ -125,6 +125,8 @@ private:
   mpq_t mp;
 }; //BigRatRep
 
+class BigFloat;
+
 typedef RCImpl<BigRatRep> RCBigRat;
 class BigRat : public RCBigRat {
 public:
@@ -163,6 +165,8 @@ public:
   /// constructor for two <tt>BigInts</tt>
   BigRat(const BigInt& n, const BigInt& d)
       : RCBigRat(new BigRatRep(n.get_mp(), d.get_mp())) {}
+  /// constructor for <tt>BigFloat</tt>
+  BigRat(const BigFloat&);
   //@}
 
   /// \name Copy-Assignment-Destructor
@@ -248,15 +252,13 @@ public:
     return *this;
   }
   BigRat operator++(int) {
-    BigRat r;
-    *r.rep = *rep;
-    (*this)++;
+    BigRat r(*this);
+    ++(*this);
     return r;
   }
   BigRat operator--(int) {
-    BigRat r;
-    *r.rep = *rep;
-    (*this)--;
+    BigRat r(*this);
+    --(*this);
     return r;
   }
   //@}
@@ -363,16 +365,33 @@ inline BigRat operator/(const BigRat& a, const BigRat& b) {
 }
 // Chee (3/19/2004):
 //   The following definitions of div_exact(x,y) and gcd(x,y)
-//   ensures that in Polynomial<NT/// divisible(x,y) = "x | y"
+//   ensures that in Polynomial<NT>
+/// divisible(x,y) = "x | y"
 inline BigRat div_exact(const BigRat& x, const BigRat& y) {
 	BigRat z;
 	mpq_div(z.get_mp(), x.get_mp(), y.get_mp());
 	return z;
 }
+/// numerator
+inline BigInt numerator(const BigRat& a) {
+  return BigInt(a.get_num_mp());
+}
+/// denominator
+inline BigInt denominator(const BigRat& a) {
+  return BigInt(a.get_den_mp());
+}
+
 inline BigRat gcd(const BigRat& x, const BigRat& y) {
-	return BigRat(1);  // Remark: we may want replace this by
+  //	return BigRat(1);  // Remark: we may want replace this by
 			   // the definition of gcd of a quotient field
 			   // of a UFD [Yap's book, Chap.3]
+  //Here is one possible definition: gcd of x and y is just the
+  //gcd of the numerators of x and y divided by the gcd of the
+  //denominators of x and y.
+  BigInt n = gcd(numerator(x), numerator(y));
+  BigInt d = gcd(denominator(x), denominator(y));
+  return BigRat(n,d);
+		
 }
 // Chee: 8/8/2004: need isDivisible to compile Polynomial<BigRat>
 // A trivial implementation is to return true always. But this
@@ -448,14 +467,6 @@ inline BigRat neg(const BigRat& a) {
 inline BigRat div2(const BigRat& a) {
   BigRat r(a);
   return r.div2();
-}
-/// numerator
-inline BigInt numerator(const BigRat& a) {
-  return BigInt(a.get_num_mp());
-}
-/// denominator
-inline BigInt denominator(const BigRat& a) {
-  return BigInt(a.get_den_mp());
 }
 /// longValue
 inline long longValue(const BigRat& a) {

@@ -54,6 +54,8 @@ public:
 //  Line2d(const point& p, double alpha);
   //line passes through point p with direction alpha
 
+  Line2d(const double& a, const double& b, const double& c);
+
   Line2d(const Line2d &);
 
   Line2d();

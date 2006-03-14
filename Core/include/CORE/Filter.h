@@ -38,15 +38,15 @@
 #define _CORE_FILTER_H_
 
 #include <CORE/Real.h>
+#include <math.h>
 
 #if defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
   #define finite(x)	_finite(x)
   #define ilogb(x)	(int)_logb(x)
-#else
-extern "C" int finite(double);	// since SunOS defined "finite" in <ieeefp.h>,
-extern "C" int ilogb(double);	// but gnu defined it in <math.h>, so we 
-                                // declared it here explictly.
-                                // Zilin Du: 07/18/2002
+#endif
+
+#if defined(sun) || defined(__sun)
+  #include <ieeefp.h>
 #endif
 
 CORE_BEGIN_NAMESPACE
@@ -80,7 +80,10 @@ public:
     if (value != CORE_REAL_ZERO) {
       ind = 1;
       fpVal = value.doubleValue();
-      maxAbs = core_abs(fpVal); // NaN are propagated correctly by core_abs.
+      if (value.MSB() <= -1075)
+	maxAbs = 1;
+      else	
+      	maxAbs = core_abs(fpVal); // NaN are propagated correctly by core_abs.
     }
   }
   //@}
@@ -91,7 +94,7 @@ public:
   double getValue() const {
     return fpVal;
   }
-  /// check whether filtered value is OK
+  /// check whether the sign (!) of the filtered value is OK
   bool isOK() const {
     return (fpFilterFlag  && // To disable filter
             finite(fpVal) && // Test for infinite and NaNs

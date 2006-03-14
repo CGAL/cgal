@@ -178,14 +178,15 @@ int IntExponent(double d) {
 	return e-53;
 }
 
-// core_error is the method to write Core Library warning or error messages
-// 	Warnings and Errors are written to a file called CORE_DIAGFILE
-// 	But Errors are also written on std:cerr (via the std::perror()).
-//
-// file where core_error(...) writes its output
-char* CORE_DIAGFILE = "Core_Diagnostics"; // global file name
+/// CORE_DIAGFILE is file name for core_error(..) output.
+char* CORE_DIAGFILE = "Core_Diagnostics";  // global file name 
 
-// error function for general use in Core Library
+/// core_error is the method to write Core Library warning or error messages
+/** 	Both warnings and errors are written to a file called CORE_DIAGFILE.
+ *	But errors are also written on std:cerr (similar to std::perror()).
+ * */
+// Usage: core_error(message, file_with_error, line_number, err_type)
+//   where err_type=0 means WARNING, error_type=0 means ERROR
 void core_error(std::string msg, std::string file, int lineno, bool err) {
   std::ofstream outFile(CORE_DIAGFILE, std::ios::app);  // open to append
   if (!outFile) {

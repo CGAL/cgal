@@ -69,14 +69,14 @@ int InvalidFlag = 0;
  *  -- this is used by BigFloat division when the arguments are error-free.
  */
 
-extLong defBFdivRelPrec = 30;
+extLong defBFdivRelPrec = 54;
 
 /**
  *  Default BigFloat Sqrt Absolute Precision
  *  -- this is used by BigFloat sqrt when the argument is error-free.
  */
 
-extLong defBFsqrtAbsPrec = 30;
+extLong defBFsqrtAbsPrec = 54;
 
 /**
  * Escape Precision 

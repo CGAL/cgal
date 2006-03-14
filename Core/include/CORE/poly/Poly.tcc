@@ -79,6 +79,7 @@ Polynomial<NT>::Polynomial(int n) {
 
 template <class NT>
 Polynomial<NT>::Polynomial(int n, NT * c) {
+  //assert("array c has n+1 elements");
   degree = n;
   if (n >= 0) {
     coeff = new NT[n+1];
@@ -110,7 +111,7 @@ Polynomial<NT>::Polynomial(const Polynomial<NT> & p) {
 ///////////////////////////////////////
 template <class NT>
 Polynomial<NT>::Polynomial(int n, const char * s[]) {
-  assert("array s has n+1 elements");
+  //assert("array s has n+1 elements");
   degree = n;
   if (n >= 0) {
     coeff = new NT[n+1];
@@ -378,9 +379,10 @@ Polynomial<NT> & Polynomial<NT>::operator=(const Polynomial<NT>& p) {
 // getTrueDegree
 template <class NT>
 int Polynomial<NT>::getTrueDegree() const {
-  for (int i=degree; i>=0; i--) 
+  for (int i=degree; i>=0; i--) {
     if (sign(coeff[i]) != 0)
       return i;
+  }
   return -1;	// Zero polynomial
 }
 
@@ -752,74 +754,127 @@ BigFloat Polynomial<NT>::eval(const BigFloat& f) const {	// evaluation
 }//eval
 */
 
-// Evaluation Function (generic version)
-//
-//  NOTE: to call this method, a constructor of the form T(NT) must
-//    be available.  Here NT is the type of the coefficients.
-//
-// ASSERT:
-// 		Type T must be >= Type NT
-//
-// E.g., if NT is BigRat, then T be either BigRat or Expr, but NOT BigFloat.
-// 	
-// E.g., if NT is BigFloat, it is assumed that the BigFloat has
-// 	no error.  Thus, T can be BigFloat, BigRat or Expr in this case.
+/// Evaluation Function (generic version, always returns the exact value)
+///
+///  This evaluation function is easy to use, but may not be efficient
+///  when you have BigRat or Expr values.
+///
+/// User must be aware that the return type of eval is Max of Types NT and T.
+///
+/// E.g., If NT is BigRat, and T is Expr then Max(NT,T)=Expr. 
+/// 	
+/// REMARK: If NT is BigFloat, it is assumed that the BigFloat is error-free.  
 
 template <class NT>
 template <class T>
-T Polynomial<NT>::eval(const T& f) const {	// evaluation
+MAX_TYPE(NT, T) Polynomial<NT>::eval(const T& f) const {	// evaluation
+  typedef MAX_TYPE(NT, T) ResultT;
   if (degree == -1)
-    return T(0);
+    return ResultT(0);
   if (degree == 0)
-    return T(coeff[0]);
-  T val(0);
+    return ResultT(coeff[0]);
+  ResultT val(0);
   for (int i=degree; i>=0; i--) {
-    val *= f;
-    val += T(coeff[i]);	
+    val *= ResultT(f);
+    val += ResultT(coeff[i]);	
   }
   return val;
 }//eval
 
 
-// Evaluation Filter function:
+/// Approximate Evaluation of Polynomials
+/// 	the coefficients of the polynomial are approximated to some
+///	specified composite precision (r,a).
+/// @param  f evaluation point 
+/// @param  r relative precision to which the coefficients are evaluated
+/// @param  a absolute precision to which the coefficients are evaluated
+/// @return a BigFloat with error containing value of the polynomial.
+///     If zero is in this BigFloat interval, then we don't know the sign.
 //
 // 	ASSERT: NT = BigRat or Expr
 //
 template <class NT>
-BigFloat Polynomial<NT>::evalFilter(const BigFloat& f, bool& validFlag, 
+BigFloat Polynomial<NT>::evalApprox(const BigFloat& f, 
 	const extLong& r, const extLong& a) const {	// evaluation
   if (degree == -1)
     return BigFloat(0);
   if (degree == 0)
     return BigFloat(coeff[0], r, a);
 
-  BigFloat fErrFree(f), val(0), valErrFree(0), c;
-  fErrFree.makeExact();
+  BigFloat val(0), c;
   for (int i=degree; i>=0; i--) {
     c = BigFloat(coeff[i], r, a);	
     val *= f; 
     val += c;
-    valErrFree *= fErrFree;
-    valErrFree += c.makeExact();	
   }
-  validFlag = !val.isZeroIn();
-  return valErrFree;
-}//evalFilter
+  return val;
+}//evalApprox
 
+// This BigInt version of evalApprox should never be called...
 template <>
 CORE_INLINE
-BigFloat Polynomial<BigInt>::evalFilter(const BigFloat& f, bool& validFlag, 
+BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& f,
 	const extLong& r, const extLong& a) const {	// evaluation
   assert(0);
   return BigFloat(0);
 }
 
+
+
+/**
+ * Evaluation at a BigFloat value
+ * using "filter" only when NT is BigRat or Expr.
+ * Using filter means we approximate the polynomials
+ * coefficients using BigFloats.  If this does not give us
+ * the correct sign, we will resort to an "exact" evaluation
+ * using Expr.
+ *
+ * If NT <= BigFloat, we just call eval().
+ *
+   We use the following heuristic estimates of precision for coefficients:
+
+      r = 1 + lg(|P|_\infty) + lg(d+1)  		if f <= 1
+      r = 1 + lg(|P|_\infty) + lg(d+1) + d*lg|f| 	if f > 1
+      
+   if the filter fails, then we use Expr to do evaluation.
+
+   This function is mainly called by Newton iteration (which
+   has some estimate for oldMSB from previous iteration).
+
+   @param p polynomial to be evaluated
+   @param val the evaluation point
+   @param oldMSB an rough estimate of the lg|p(val)|
+   @return bigFloat interval contain p(val), with the correct sign
+
+ ***************************************************/
 template <class NT>
-BigFloat Polynomial<NT>::evalExact(const Expr& e) const {
-  Expr eVal = eval(e);
-  eVal.approx();
-  return eVal.BigFloatValue();
-} 
+BigFloat Polynomial<NT>::evalExactSign(const BigFloat& val,
+	 const extLong& oldMSB) const {
+    assert(val.isExact());
+    if (getTrueDegree() == -1)
+      return BigFloat(0);
+  
+    extLong r;
+    r = 1 + BigFloat(height()).uMSB() + clLg(long(getTrueDegree()+1));
+    if (val > 1)
+      r += getTrueDegree() * val.uMSB();
+    r += core_max(extLong(0), -oldMSB);
+  
+    if (hasExactDivision<NT>::check()) { // currently, only to detect NT=Expr and NT=BigRat
+        BigFloat rVal = evalApprox(val, r);
+        if (rVal.isZeroIn()) {
+	  Expr eVal = eval(Expr(val));	// eval gives exact value
+	  eVal.approx(54,CORE_INFTY);  // if value is 0, we get exact 0
+	  return eVal.BigFloatValue();
+	} else 
+          return rVal;
+    } else
+	return BigFloat(eval(val));
+
+   return 0;
+  }//evalExactSign
+  
+
 //============================================================
 // Bounds
 //============================================================
@@ -841,6 +896,72 @@ BigFloat Polynomial<NT>::CauchyUpperBound() const {
   // get an absolute approximate value with error < 1/4
   return (e.BigFloatValue().makeExact() + 2);
 }
+
+//============================================================
+// An iterative version of computing Cauchy Bound from Erich Kaltofen.
+// See the writeup under collab/sep/.
+//============================================================
+template < class NT >
+BigInt Polynomial<NT>::CauchyBound() const {
+  int deg = getTrueDegree();
+  BigInt B(1);
+  BigFloat lhs(0), rhs(1);
+  while (true) {
+    /* compute \sum_{i=0}{deg-1}{|a_i|B^i} */
+    lhs = 0;
+    for (int i=deg-1; i>=0; i--) {
+      lhs *= B;
+      lhs += abs(coeff[i]);
+    }
+    lhs /= abs(coeff[deg]);
+    lhs.makeFloorExact();
+    /* compute B^{deg} */
+    if (rhs <= lhs) {
+      B <<= 1;
+      rhs *= (BigInt(1)<<deg);
+    } else
+      break;
+  }
+  return B;
+}
+
+//====================================================================
+//Another iterative bound which is at least as good as the above bound
+//by Erich Kaltofen.
+//====================================================================
+template < class NT >
+BigInt Polynomial<NT>::UpperBound() const {
+  int deg = getTrueDegree();
+
+  BigInt B(1);
+  BigFloat lhsPos(0), lhsNeg(0), rhs(1);
+  while (true) {
+    /* compute \sum_{i=0}{deg-1}{|a_i|B^i} */
+    lhsPos = lhsNeg = 0;
+    for (int i=deg-1; i>=0; i--) {
+      if (coeff[i]>0) {
+      	lhsPos = lhsPos * B + coeff[i];
+      	lhsNeg = lhsNeg * B;
+      } else {
+      	lhsNeg = lhsNeg * B - coeff[i];
+      	lhsPos = lhsPos * B;
+      } 
+    }
+    lhsNeg /= abs(coeff[deg]);
+    lhsPos /= abs(coeff[deg]);
+    lhsPos.makeCeilExact();
+    lhsNeg.makeCeilExact();
+
+    /* compute B^{deg} */
+    if (rhs <= max(lhsPos,lhsNeg)) {
+      B <<= 1;
+      rhs *= (BigInt(1)<<deg);
+    } else
+      break;
+  }
+  return B;
+}
+
 // Cauchy Lower Bound on Roots
 // -- ASSERTION: NT is an integer type
 template < class NT >
@@ -884,11 +1005,12 @@ BigFloat Polynomial<NT>::sepBound() const {
         //   as long as the relative error (defBFdivRelPrec) is >1.
 }
 
-// height function
+/// height function
+/// @return a BigFloat with error
 template < class NT >
 BigFloat Polynomial<NT>::height() const {
   if (zeroP(*this))
-    return NT(0);
+    return BigFloat(0);
   int deg = getTrueDegree();
   NT ht = 0;
   for (int i = 0; i< deg; i++)
@@ -897,11 +1019,12 @@ BigFloat Polynomial<NT>::height() const {
   return BigFloat(ht);
 }
 
-// length function
+/// length function
+/// @return a BigFloat with error
 template < class NT >
 BigFloat Polynomial<NT>::length() const {
   if (zeroP(*this))
-    return NT(0);
+    return BigFloat(0);
   int deg = getTrueDegree();
   NT length = 0;
   for (int i = 0; i< deg; i++)
@@ -1005,7 +1128,7 @@ Polynomial<NT> & Polynomial<NT>::primPart() {
   if (g == 1 && coeff[d] > 0)
      return (*this);  
   for (int i=0; i<=d; i++) {
-     coeff[i] =  coeff[i]/g;
+     coeff[i] =  div_exact(coeff[i], g);
   }
   return *this;
 }// primPart

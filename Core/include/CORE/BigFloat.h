@@ -69,8 +69,13 @@ public:
   BigFloat(long& x, const extLong& r, const extLong& a)
       : RCBigFloat(new BigFloatRep(x)) {}
   /// constructor from <tt>BigInt</tt>, error and exponent values
-  BigFloat(const BigInt& I, unsigned long er = 0, long ex = 0)
+  BigFloat(const BigInt& I, unsigned long er, long ex)
       : RCBigFloat(new BigFloatRep(I, er, ex)) {}
+  /// constructor from <tt>BigInt</tt>, exponent values
+  BigFloat(const BigInt& I, long ex)
+      : RCBigFloat(new BigFloatRep(I, ex)) {}
+  BigFloat(const BigInt& I)
+      : RCBigFloat(new BigFloatRep(I)) {}
   /// constructor for <tt>BigRat</tt>
   BigFloat(const BigRat& R, const extLong& r = defRelPrec,
            const extLong& a = defAbsPrec)
@@ -82,8 +87,14 @@ public:
   // know about Expr, but BigFloat has a special role in our system!
   // ===============================
   /// constructor for <tt>Expr</tt>
-  BigFloat(const Expr& E, const extLong& r = defRelPrec,
+  explicit BigFloat(const Expr& E, const extLong& r = defRelPrec,
            const extLong& a = defAbsPrec);
+
+  //Dummy
+  explicit BigFloat(const BigFloat& E, const extLong& ,
+           const extLong&): RCBigFloat(E) {
+    rep->incRef();
+  }
 
   /// constructor for <tt>BigFloatRep</tt>
   explicit BigFloat(BigFloatRep* r) : RCBigFloat(new BigFloatRep()) {
@@ -492,16 +503,16 @@ inline long minStar(long m, long n) {
 }
 /// \name Functions for Compatibility with BigInt (needed by Poly, Curves)
 //@{
-/// isDivisible(x,y) = "is x divisible by y"
-/** 	Assuming that x and  y are in coanonized forms.
-	Defined to be true if mantissa(y) | mantissa(x) && 
-	exp(y) = min*(exp(y), exp(x)).
- *      This concepts assume x and y are exact BigFloats.
+/// isDivisible(a,b) = "is a divisible by b"
+/** 	Assuming that a and  b are in coanonized forms.
+	Defined to be true if mantissa(b) | mantissa(a) && 
+	exp(b) = min*(exp(b), exp(a)).
+ *      This concepts assume a and b are exact BigFloats.
  */
 inline bool isDivisible(const BigFloat& a, const BigFloat& b) {
-  // assert: x and y are exact BigFloats.
-  if (sign(b.m()) == 0) return true;
-  if (sign(a.m()) == 0) return false;
+  // assert: a and b are exact BigFloats.
+  if (sign(a.m()) == 0) return true;
+  if (sign(b.m()) == 0) return false;
   unsigned long bin_a = getBinExpo(a.m());
   unsigned long bin_b = getBinExpo(b.m());
   
@@ -523,13 +534,27 @@ inline bool isDivisible(double x, double y) {
 /**	This is defined only if isDivisible(x,y).
  */
 // Chee (8/1/2004)   The definition of div_exact(x,y) 
-//   ensure that Polynomials<NT> works with NT=BigFloat and NT=double:
+//   ensure that Polynomials<NT> works with NT=BigFloat and NT=double.
+//Bug: We should first normalize the mantissas of the Bigfloats and
+//then do the BigInt division. For e.g. 1 can be written as 2^{14}*2{-14}.
+//Now if we divide 2 by one using this representation of one and without
+// normalizing it then we get zero.
 inline BigFloat div_exact(const BigFloat& x, const BigFloat& y) {
   BigInt z;
   assert (isDivisible(x,y));
-  mpz_divexact(z.get_mp(), x.m().get_mp(), y.m().get_mp());
+  unsigned long bin_x = getBinExpo(x.m());
+  unsigned long bin_y = getBinExpo(y.m());
+
+  BigInt m_x = x.m() >> bin_x;
+  BigInt m_y = y.m() >> bin_y;
+  long e_x = bin_x + BigFloatRep::bits(x.exp());
+  long e_y = bin_y + BigFloatRep::bits(y.exp());
+  //Since y divides x, e_y = minstar(e_x, e_y)
+  z = div_exact(m_x, m_y);
+
+  //  mpz_divexact(z.get_mp(), x.m().get_mp(), y.m().get_mp()); THIS WAS THE BUG
   // assert: x.exp() - y.exp() does not under- or over-flow.
-  return BigFloat(z, 0, x.exp()-y.exp());  
+  return BigFloat(z, e_x - e_y);  
 }
 
 inline BigFloat div_exact(double x, double y) {
@@ -583,5 +608,9 @@ inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
 //}//
 
 
+// constructor BigRat from BigFloat
+inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
+  *this = f.BigRatValue();
+}
 CORE_END_NAMESPACE
 #endif // _CORE_BIGFLOAT_H_

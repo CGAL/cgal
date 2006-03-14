@@ -806,7 +806,7 @@ BiPoly<NT> & BiPoly<NT>::differentiateX() {
 
 template <class NT>
 BiPoly<NT> & BiPoly<NT>::differentiateXY(int m, int n) {//m times wrt X and n times wrt Y
-    assert(i >=0); assert(j >=0);
+    assert(m >=0); assert(n >=0);
     for(int i=1; i <=m; i++)
       (*this).differentiateX();
     for(int i=1; i <=n; i++)
@@ -1157,6 +1157,7 @@ int Curve<NT>::verticalIntersections(const BigFloat & x, BFVecInterval & vI,
     	   // This returns a NULL vI, which should be caught by caller
 	
     Polynomial<Expr> PY = this->yExprPolynomial(x); // should be replaced
+    // assert(x.isExact());
     // Polynomial<BigFloat> PY = yBFPolynomial(x); // unstable still
 
     d = PY.getTrueDegree();
@@ -1187,6 +1188,14 @@ int Curve<NT>::verticalIntersections(const BigFloat & x, BFVecInterval & vI,
   //    Heuristic: the open polygonal lines end when number of roots
   //    changes...
   //
+  //    TO DO:
+  //       (1) need to automatically readjust x- and y-scales
+  //              independently
+  //       (2) reorder parameters in this order: x1, x2, y1, y2
+  //            [Then y1, y2 can be automatically determined]
+  //       (3) should allow the ability to look for interesting
+  //             features
+  //
   //    ASSERTION: all input BigFloats are exact
   //
 template < class NT >
@@ -1194,6 +1203,10 @@ int Curve<NT>::plot( BigFloat eps, BigFloat x1,
 	BigFloat y1, BigFloat x2, BigFloat y2, int fileNo){
 
   const char* filename[] = {"data/input", "data/plot", "data/plot2"};
+
+  assert(eps.isExact()); // important for plotting...
+  assert(x1.isExact());
+  assert(y1.isExact());
 
   ofstream outFile;
   outFile.open(filename[fileNo]); // ought to check if open is successful!
@@ -1299,6 +1312,22 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
     if (numRoots>0){ // record curr. vertical intersections if numRoots>0
       for (unsigned int i=0; i< numRoots; i++) {
          yval = (vI[i].first + vI[i].second).doubleValue()/2;
+	 // HERE SHOULD BE A LOOP TO OUTPUT MORE POINTS IN CASE THE slope IS LARGE
+	 // Idea: let previous value of yval be yval-old.  
+	 //
+	 // Two cases:
+	 // (1) When i=0:
+	 // 	you need to search backwards and forwards
+	 // 	(yval-old is not defined in this case)
+	 //
+	 // (2) When i>0:
+	 // 	If  |yval-old - yval| > 2eps, we must plot using horizontalIntersection()
+	 // 	We must start from
+	 // 		y = yval-old until
+	 // 			EITHER (y = (vI[i+1].first + vI[i+1].second)/2)
+	 // 			OR (sign of slope changes)
+	 // 			OR (hit the ymax or ymin boundary)
+	 //
          if (yval < y1) plotCurves[i][numPoints] = y1.doubleValue();
          else if (yval > y2) plotCurves[i][numPoints] = y2.doubleValue();
          else plotCurves[i][numPoints] = yval;

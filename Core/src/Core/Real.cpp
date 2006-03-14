@@ -35,7 +35,6 @@
  ***************************************************************************/
 
 #include <ctype.h>
-#include <cstring>
 #if defined (__BORLANDC__)
   #include <mem.h>
 #endif
