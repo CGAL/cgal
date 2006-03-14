@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////
 // 
-//	Class: Enriched_polyhedron                                        
+// Class: Enriched_polyhedron
 // 
 //									
 ///////////////////////////////////////////////////////////////////////////
@@ -208,6 +208,9 @@ public :
   typedef typename kernel::Vector_3 Vector;
   typedef typename Enriched_polyhedron<kernel, items>::Vertex_handle Vertex_handle;
   typedef typename Enriched_polyhedron<kernel, items>::Facet_handle Facet_handle;
+
+  typedef typename Enriched_polyhedron<kernel, items>::Facet Facet;
+
   typedef typename Enriched_polyhedron<kernel, items>::Face_handle Face_handle;
   typedef typename Enriched_polyhedron<kernel, items>::Halfedge_handle Halfedge_handle;
   typedef typename Enriched_polyhedron<kernel, items>::Facet_iterator Facet_iterator;
@@ -217,9 +220,12 @@ public :
     items>::Halfedge_iterator Halfedge_iterator;
   typedef typename Enriched_polyhedron<kernel, items>::Point_iterator Point_iterator;
    typedef typename Enriched_polyhedron<kernel, items>::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
-  typedef typename Enriched_polyhedron<kernel, items>::Vertex_iterator Vertex_iterator;
-  typedef typename Enriched_polyhedron<kernel, items>::Edge_iterator Edge_iterator ;
 
+
+typedef typename Enriched_polyhedron<kernel, items>::Vertex_iterator Vertex_iterator;
+typedef typename Enriched_polyhedron<kernel, items>::Vertex Vertex;
+
+typedef typename Enriched_polyhedron<kernel, items>::Edge_iterator Edge_iterator ;
 public :
 
   // life	cycle
