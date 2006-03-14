@@ -24,7 +24,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
+#if defined(SLS_DEMO_EXACT)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/shared_ptr.hpp>
