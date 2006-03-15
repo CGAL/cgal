@@ -128,7 +128,8 @@ _test_circulator( const Triangulation &T )
     assert( fit->second != (fit->first)->index(vh) );
   }
 
-   Facet_circulator fc, fc0;
+   Facet_circulator fc, fc0, fc1;
+   assert(fc1 == 0);
    int i,j;
    //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
    eit=T.edges_begin(); // test (edge)

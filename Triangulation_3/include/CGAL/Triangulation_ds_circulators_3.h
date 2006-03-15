@@ -191,6 +191,7 @@ operator!=(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds
   return !(cc==ch);
 }
 #endif
+
 template < class Tds_ >
 class Triangulation_ds_facet_circulator_3
   : public Bidirectional_circulator_base<typename Tds_::Facet,
@@ -355,6 +356,17 @@ public:
   bool operator!=(const Facet_circulator & ccir) const
   {
     return ! (*this == ccir);
+  }
+
+  bool operator==(CGAL_NULL_TYPE c) const
+  {
+    CGAL_triangulation_assertion(c == CGAL_CIRC_NULL);
+    return pos == Cell_handle();
+  }
+
+  bool operator!=(CGAL_NULL_TYPE c) const
+  {
+    return ! (*this == c);
   }
 
 private:
