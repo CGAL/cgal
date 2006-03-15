@@ -17,8 +17,8 @@
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
-#ifndef BOOST_GRAPH_TRAITS_ARRANGEMENT_2_H
-#define BOOST_GRAPH_TRAITS_ARRANGEMENT_2_H
+#ifndef CGAL_BOOST_GRAPH_TRAITS_ARRANGEMENT_2_H
+#define CGAL_BOOST_GRAPH_TRAITS_ARRANGEMENT_2_H
 
 /*! \file
  * Definition of the specialized boost::graph_traits<Arrangement_2> class.

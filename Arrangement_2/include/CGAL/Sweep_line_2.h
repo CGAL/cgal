@@ -183,7 +183,7 @@ public:
   /*! Handle the subcurve to the left of the current event point. */
   void _handle_left_curves()
   { 
-    PRINT("Handling left curve" << std::endl;);
+    CGAL_PRINT("Handling left curve" << std::endl;);
 
    
 
@@ -199,7 +199,7 @@ public:
       //          \
       //           \
       */
-      PRINT(" - handling special case " << std::endl;);
+      CGAL_PRINT(" - handling special case " << std::endl;);
              
        const std::pair<StatusLineIter, bool>& pair_res = 
          this->m_statusLine.find_lower (this->m_currentEvent->get_point(), 
@@ -258,8 +258,8 @@ public:
     
         
 
-    PRINT("left curves before sorting: "<<"\n";);
-    SL_DEBUG(if (this->m_currentEvent->left_curves_begin() != 
+    CGAL_PRINT("left curves before sorting: "<<"\n";);
+    CGAL_SL_DEBUG(if (this->m_currentEvent->left_curves_begin() != 
                  this->m_currentEvent->left_curves_end() )
              {
                this->m_currentEvent->Print();
@@ -268,8 +268,8 @@ public:
     this->_sort_left_curves();
     this->m_visitor->before_handle_event(this->m_currentEvent);
 
-    PRINT("left curves after sorting: "<<"\n";);
-    SL_DEBUG(if (this->m_currentEvent->left_curves_begin() != 
+    CGAL_PRINT("left curves after sorting: "<<"\n";);
+    CGAL_SL_DEBUG(if (this->m_currentEvent->left_curves_begin() != 
                  this->m_currentEvent->left_curves_end() )
              {
                this->m_currentEvent->Print();
@@ -305,7 +305,7 @@ public:
       //between the neighbouring curves,only if the curve is removed for good)
       _remove_curve_from_status_line(leftCurve, remove_for_good);    
     }
-    PRINT( "Handling left curve END" << std::endl;);
+    CGAL_PRINT( "Handling left curve END" << std::endl;);
       
     return;
   }
@@ -317,8 +317,8 @@ public:
   /*! Handle the subcurve to the left of the current event point. */
   void _handle_right_curves()
   {
-    PRINT("Handling right curves (" ;)
-    PRINT(this->m_currentEvent->get_point() << ")\n";)
+    CGAL_PRINT("Handling right curves (" ;)
+    CGAL_PRINT(this->m_currentEvent->get_point() << ")\n";)
     
     if(! this->m_currentEvent->has_right_curves())
       return;
@@ -335,14 +335,14 @@ public:
     EventCurveIter currentOne = this->m_currentEvent->right_curves_begin();
     EventCurveIter rightCurveEnd = this->m_currentEvent->right_curves_end();
 
-    PRINT_INSERT(*currentOne);
+    CGAL_PRINT_INSERT(*currentOne);
 
     StatusLineIter slIter = 
       this->m_statusLine.insert_before (this->m_status_line_insert_hint, 
                                         *currentOne);
     ((Subcurve*)(*currentOne))->set_hint(slIter);
   
-    SL_DEBUG(PrintStatusLine(););
+    CGAL_SL_DEBUG(PrintStatusLine(););
     if ( slIter != this->m_statusLine.begin() )
     { 
       //  get the previous curve in the y-str
@@ -356,12 +356,12 @@ public:
     ++currentOne;
     while ( currentOne != rightCurveEnd )
     {
-      PRINT_INSERT(*currentOne);
+      CGAL_PRINT_INSERT(*currentOne);
       slIter = this->m_statusLine.insert_before
         (this->m_status_line_insert_hint, *currentOne);
       ((Subcurve*)(*currentOne))->set_hint(slIter);
         
-      SL_DEBUG(PrintStatusLine(););
+      CGAL_SL_DEBUG(PrintStatusLine(););
     
       //BZBZ
       if(reinterpret_cast<Event*>((*currentOne)->get_left_event()) ==
@@ -373,7 +373,7 @@ public:
       ++currentOne;
     }        
       
-    SL_DEBUG(PrintStatusLine(););
+    CGAL_SL_DEBUG(PrintStatusLine(););
 
     //the next Subcurve at the Y-str 
     ++slIter;
@@ -504,9 +504,9 @@ inline void Sweep_line_2<Traits_,
 _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
                               
 {
-  PRINT("remove_curve_from_status_line\n";);
-  SL_DEBUG(PrintStatusLine(););
-  SL_DEBUG(leftCurve->Print(););
+  CGAL_PRINT("remove_curve_from_status_line\n";);
+  CGAL_SL_DEBUG(PrintStatusLine(););
+  CGAL_SL_DEBUG(leftCurve->Print(););
 
   StatusLineIter sliter = leftCurve->get_hint(); 
   this->m_status_line_insert_hint = sliter; 
@@ -515,7 +515,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
   if(! remove_for_good)
   {
     this->m_statusLine.erase(sliter);
-    PRINT("remove_curve_from_status_line Done\n";)
+    CGAL_PRINT("remove_curve_from_status_line Done\n";)
     return;
   }
 
@@ -534,7 +534,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
                true);
   }
   this->m_statusLine.erase(sliter);
-  PRINT("remove_curve_from_status_line Done\n";)
+  CGAL_PRINT("remove_curve_from_status_line Done\n";)
 } 
 
 /*! 
@@ -561,11 +561,11 @@ void Sweep_line_2<Traits_,
                   Allocator>::
  _intersect(Subcurve *c1, Subcurve *c2, bool after_remove)
 {
-  PRINT("Looking for intersection between:\n\t";)
-  SL_DEBUG(c1->Print();)
-  PRINT("\t";)
-  SL_DEBUG(c2->Print();)
-  PRINT("\n";)
+  CGAL_PRINT("Looking for intersection between:\n\t";)
+  CGAL_SL_DEBUG(c1->Print();)
+  CGAL_PRINT("\t";)
+  CGAL_SL_DEBUG(c2->Print();)
+  CGAL_PRINT("\n";)
 
   CGAL_assertion(c1 != c2);
   
@@ -589,7 +589,7 @@ void Sweep_line_2<Traits_,
  
   if(vi == vi_end) 
   {
-    PRINT("no intersection...\n";);
+    CGAL_PRINT("no intersection...\n";);
     return; // no intersection at all
   }
   
@@ -643,7 +643,7 @@ void Sweep_line_2<Traits_,
     {
       xp = xp_point->first;
       multiplicity = xp_point->second;
-      PRINT("found an intersection point: " << xp << "\n";);
+      CGAL_PRINT("found an intersection point: " << xp << "\n";);
       _create_intersection_point(xp, multiplicity, c1, c2);
     }
     else
@@ -728,7 +728,7 @@ _create_intersection_point(const Point_2& xp,
     } 
     else   // the event already exists
     {
-      PRINT("event already exists,updating.. (" << xp <<")\n";);
+      CGAL_PRINT("event already exists,updating.. (" << xp <<")\n";);
       if( e == this->m_currentEvent)  //BZBZ
       {
         //it can happen when c1 starts at the interior of c2 (or the opposite)
@@ -767,7 +767,7 @@ _create_intersection_point(const Point_2& xp,
          std::swap(c1, c2);
      }
    
-      SL_DEBUG(e->Print();)
+      CGAL_SL_DEBUG(e->Print();)
     }
 }
 
@@ -826,7 +826,7 @@ _handle_overlap(Event* event,
 {
     // An overlap occurs:
     // TODO: take care of polylines in which overlap can happen anywhere
-    PRINT("Overlap detected at right insertion...\n";);
+    CGAL_PRINT("Overlap detected at right insertion...\n";);
     //EventCurveIter iter = pair_res.second;
        
     X_monotone_curve_2 overlap_cv;
@@ -882,7 +882,7 @@ _handle_overlap(Event* event,
     overlap_sc->init(overlap_cv, event, right_end );
     m_overlap_subCurves.push_back(overlap_sc);
 
-    PRINT(curve<<" + " <<*iter<<" => " <<overlap_sc<<"\n");
+    CGAL_PRINT(curve<<" + " <<*iter<<" => " <<overlap_sc<<"\n");
     // Set the two events' attribute to intersection
     event -> set_overlap();
     //right_end -> set_overlap();

@@ -72,7 +72,7 @@ public:
     Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr), 
     number_of_landmarks (lm_num)
   {
-    PRINT_DEBUG("Arr_halton_landmarks_generator constructor. "
+    CGAL_PRINT_DEBUG("Arr_halton_landmarks_generator constructor. "
 		<<"number_of_landmarks = "<< number_of_landmarks); 
     
     this->build_landmarks_set();
@@ -90,7 +90,7 @@ protected:
    */
   virtual void _create_points_set (Points_set & points)
   {
-    PRINT_DEBUG("create_halton_points_list");
+    CGAL_PRINT_DEBUG("create_halton_points_list");
     
     //find bounding box
     double x_min=0, x_max=0, y_min=0, y_max=0;
@@ -128,9 +128,9 @@ protected:
     //calculate
     double x_trans = x_max - x_min;
     double y_trans = y_max - y_min;
-    PRINT_DEBUG( "x_max= "<< x_max <<" x_min = "<< x_min );
-    PRINT_DEBUG( "y_max= "<< y_max <<" y_min = "<< y_min );
-    PRINT_DEBUG( "x_trans= "<< x_trans <<" y_trans = "<< y_trans );
+    CGAL_PRINT_DEBUG( "x_max= "<< x_max <<" x_min = "<< x_min );
+    CGAL_PRINT_DEBUG( "y_max= "<< y_max <<" y_min = "<< y_min );
+    CGAL_PRINT_DEBUG( "x_trans= "<< x_trans <<" y_trans = "<< y_trans );
     
     //create halton sequence
     double base_inv;
@@ -168,10 +168,10 @@ protected:
       //put in a list 
       points.push_back(p); 
       
-      PRINT_DEBUG("halton point "<< step++ <<" is= " << p );
+      CGAL_PRINT_DEBUG("halton point "<< step++ <<" is= " << p );
     }
     
-    PRINT_DEBUG("end create_halton_points_list");
+    CGAL_PRINT_DEBUG("end create_halton_points_list");
   }
 
 };

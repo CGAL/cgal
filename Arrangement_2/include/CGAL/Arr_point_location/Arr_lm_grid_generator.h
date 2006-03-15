@@ -32,8 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define CONICS
-
 /*! \class
 * This class is related to the Landmarks point location, and given as 
 * a parameter (or template parameter) to it. 
@@ -106,7 +104,7 @@ public:
     updated (false),   
     number_of_landmarks (lm_num)
   {
-    PRINT_DEBUG("Arr_grid_landmarks_generator constructor. "
+    CGAL_PRINT_DEBUG("Arr_grid_landmarks_generator constructor. "
                 <<"number_of_landmarks = "<< number_of_landmarks); 
     
     traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
@@ -132,10 +130,10 @@ public:
            std::back_inserter(lm_pairs));
     
     Pairs_iterator pit;
-    LM_DEBUG(int count =0);
+    CGAL_LM_DEBUG(int count =0);
     for (pit = lm_pairs.begin(); pit != lm_pairs.end(); pit++)
     {
-      PRINT_DEBUG("grid point "<<count++<<" is= "<< pit->first);
+      CGAL_PRINT_DEBUG("grid point "<<count++<<" is= "<< pit->first);
     }
     
     updated = true;
@@ -146,7 +144,7 @@ public:
    */
   virtual void clear_landmarks_set ()
   {
-    PRINT_DEBUG("clear_landmarks_set.");
+    CGAL_PRINT_DEBUG("clear_landmarks_set.");
     
     //clear the database
     lm_pairs.clear();
@@ -160,29 +158,29 @@ public:
   virtual Point_2 get_closest_landmark (Point_2 p, Object &obj)
   {
     CGAL_assertion(updated);
-    PRINT_DEBUG("step_x = "<<step_x << ", step_y = "<<step_y);
-    PRINT_DEBUG("x_min = "<<x_min << ", y_min = "<<y_min);
-    PRINT_DEBUG("sqrt_n = "<<sqrt_n);
+    CGAL_PRINT_DEBUG("step_x = "<<step_x << ", step_y = "<<step_y);
+    CGAL_PRINT_DEBUG("x_min = "<<x_min << ", y_min = "<<y_min);
+    CGAL_PRINT_DEBUG("sqrt_n = "<<sqrt_n);
     
     //approximate the steps
     Point_2 step_p (step_x, step_y);
     ANT ant_step_x = traits->approximate_2_object()(step_p, 0);
     ANT ant_step_y = traits->approximate_2_object()(step_p, 1);
     
-    PRINT_DEBUG("ant_step_x = "<<ant_step_x << ", ant_step_y = "<<ant_step_y);
+    CGAL_PRINT_DEBUG("ant_step_x = "<<ant_step_x << ", ant_step_y = "<<ant_step_y);
     
     //calculate the index of the point 
     ANT x = traits->approximate_2_object()(p, 0);
     ANT y = traits->approximate_2_object()(p, 1);
     
-    PRINT_DEBUG("x = "<<x << ", y = "<<y);
+    CGAL_PRINT_DEBUG("x = "<<x << ", y = "<<y);
     
     int i = static_cast<int>(((x-x_min)/ant_step_x)+0.5);
     int j = static_cast<int>(((y-y_min)/ant_step_y)+0.5);
     
     if (x > x_max || x < x_min || y > y_max || y< y_min)
     {
-      PRINT_DEBUG(" query out of range ");
+      CGAL_PRINT_DEBUG(" query out of range ");
       if (x > x_max)
         i = sqrt_n-1;
       if (y > y_max)
@@ -193,11 +191,11 @@ public:
         j = 0;
     }
 
-    PRINT_DEBUG("i = "<<i << ", j = "<<j);
+    CGAL_PRINT_DEBUG("i = "<<i << ", j = "<<j);
     
     int index = sqrt_n * i + j;
     
-    PRINT_DEBUG("index = "<<index);
+    CGAL_PRINT_DEBUG("index = "<<index);
     
     obj = lm_pairs[index].second;
     
@@ -216,7 +214,7 @@ protected:
    */
   virtual void _create_points_set (Points_set & points)
   {
-    PRINT_DEBUG("create_grid_points_list");
+    CGAL_PRINT_DEBUG("create_grid_points_list");
     
     //init min/max
     Arrangement_2 *arr = this->arrangement();
@@ -252,8 +250,8 @@ protected:
       if (y > y_max) { y_max = y; top = vit->point();}
     }
 
-    PRINT_DEBUG( "x_max= " << x_max <<" x_min = "<< x_min );
-    PRINT_DEBUG( "y_max= " << y_max <<" y_min = "<< y_min );
+    CGAL_PRINT_DEBUG( "x_max= " << x_max <<" x_min = "<< x_min );
+    CGAL_PRINT_DEBUG( "y_max= " << y_max <<" y_min = "<< y_min );
 
     // n is the number of grid points.
     //if n is not given in the constructor then this number
@@ -271,10 +269,10 @@ protected:
     step_x = delta_x / (sqrt_n-1);
     step_y = delta_y / (sqrt_n-1);
 
-    PRINT_DEBUG( "n= " << n <<" sqrt_n = "<< sqrt_n );
-    PRINT_DEBUG( "step_x= " << step_x <<" step_y = "<< step_y );
-    PRINT_DEBUG( "left= " << left <<" right = "<< right );
-    PRINT_DEBUG( "top= " << top <<" bottom = "<< bottom );
+    CGAL_PRINT_DEBUG( "n= " << n <<" sqrt_n = "<< sqrt_n );
+    CGAL_PRINT_DEBUG( "step_x= " << step_x <<" step_y = "<< step_y );
+    CGAL_PRINT_DEBUG( "left= " << left <<" right = "<< right );
+    CGAL_PRINT_DEBUG( "top= " << top <<" bottom = "<< bottom );
 
     int i, j; //i : x-indedx, j : y-index
 
@@ -287,11 +285,11 @@ protected:
         //put in a list 
         points.push_back(p); 
 
-        PRINT_DEBUG("grid point ("<<i<<','<<j<<") is= " << p);
+        CGAL_PRINT_DEBUG("grid point ("<<i<<','<<j<<") is= " << p);
       }
     }
 
-    PRINT_DEBUG("end create_grid_points_list");
+    CGAL_PRINT_DEBUG("end create_grid_points_list");
   }
 
 

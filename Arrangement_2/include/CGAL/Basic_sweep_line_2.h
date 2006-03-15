@@ -33,28 +33,28 @@
 
 #ifndef VERBOSE
 
-#define SL_DEBUG(a)
-#define PRINT_INSERT(a)
-#define PRINT_ERASE(a)
-#define PRINT_NEW_EVENT(p, e) 
-#define PRINT(a)
+#define CGAL_SL_DEBUG(a)
+#define CGAL_PRINT_INSERT(a)
+#define CGAL_PRINT_ERASE(a)
+#define CGAL_PRINT_NEW_EVENT(p, e) 
+#define CGAL_PRINT(a)
 
 
 #else
 
-#define SL_DEBUG(a) {a}
-#define PRINT_INSERT(a) { std::cout << "+++ inserting "; \
+#define CGAL_SL_DEBUG(a) {a}
+#define CGAL_PRINT_INSERT(a) { std::cout << "+++ inserting "; \
                           (a)->Print(); \
                           std::cout << "    currentPos = "  \
                                     << m_currentEvent->get_point() \
                                     << "\n"; \
                           }
-#define PRINT_ERASE(a)  { std::cout << "--- erasing " ; \
+#define CGAL_PRINT_ERASE(a)  { std::cout << "--- erasing " ; \
                           (a)->Print(); }
-#define PRINT_NEW_EVENT(p, e) \
+#define CGAL_PRINT_NEW_EVENT(p, e) \
 { std::cout << "%%% a new event was created at " << (p) << std::endl; \
   (e)->Print(); }
-#define PRINT(a) { std::cout << a ; }
+#define CGAL_PRINT(a) { std::cout << a ; }
 
 #endif
 
@@ -349,11 +349,11 @@ public:
       // Get the next event from the queue.
       m_currentEvent = *eventIter;
 
-      PRINT("------------- " 
+      CGAL_PRINT("------------- " 
             << m_currentEvent->get_point() 
             << " --------------"
             << std::endl;);
-      SL_DEBUG(PrintStatusLine();
+      CGAL_SL_DEBUG(PrintStatusLine();
                m_currentEvent->Print(););
       
       // Handle the subcurves that are to the left of the event point (i.e., 
@@ -514,7 +514,7 @@ public:
   /*! Handle the subcurve to the left of the current event point. */
   virtual void _handle_left_curves()
   { 
-    PRINT("Handling left curve" << std::endl;);
+    CGAL_PRINT("Handling left curve" << std::endl;);
 
     m_is_event_on_above = false;
 
@@ -546,8 +546,8 @@ public:
     
         
 
-    PRINT("left curves before sorting: "<<"\n";);
-    SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
+    CGAL_PRINT("left curves before sorting: "<<"\n";);
+    CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
 		 m_currentEvent->left_curves_end() )
              {
                m_currentEvent->Print();
@@ -556,8 +556,8 @@ public:
     _sort_left_curves();
     m_visitor->before_handle_event(m_currentEvent);
 
-    PRINT("left curves after sorting: "<<"\n";);
-    SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
+    CGAL_PRINT("left curves after sorting: "<<"\n";);
+    CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
 		 m_currentEvent->left_curves_end() )
              {
                m_currentEvent->Print();
@@ -573,7 +573,7 @@ public:
       //remove curve from the status line 
       _remove_curve_from_status_line(leftCurve);    
     }
-    PRINT( "Handling left curve END" << std::endl;);
+    CGAL_PRINT( "Handling left curve END" << std::endl;);
       
     return;
   }
@@ -636,8 +636,8 @@ public:
   /*! Handle the subcurve to the left of the current event point. */
   virtual void _handle_right_curves()
   {
-    PRINT("Handling right curves (" ;)
-    PRINT(m_currentEvent->get_point() << ")\n";)
+    CGAL_PRINT("Handling right curves (" ;)
+    CGAL_PRINT(m_currentEvent->get_point() << ")\n";)
     
     if(! m_currentEvent->has_right_curves())
       return;
@@ -653,16 +653,16 @@ public:
     
     while ( currentOne != rightCurveEnd )
     {
-      PRINT_INSERT(*currentOne);
+      CGAL_PRINT_INSERT(*currentOne);
       StatusLineIter slIter = 
         m_statusLine.insert_before(m_status_line_insert_hint, *currentOne);
       ((Subcurve*)(*currentOne))->set_hint(slIter);
         
-      SL_DEBUG(PrintStatusLine(););
+      CGAL_SL_DEBUG(PrintStatusLine(););
       ++currentOne;
     }        
       
-    SL_DEBUG(PrintStatusLine(););
+    CGAL_SL_DEBUG(PrintStatusLine(););
   }
 
 
@@ -778,7 +778,7 @@ protected:
       e = *(pair_res.first);
       e->set_attribute(type);
     }
-    PRINT_NEW_EVENT(pt, e);
+    CGAL_PRINT_NEW_EVENT(pt, e);
     return (std::make_pair(e, !exist));
   }
 
@@ -805,16 +805,16 @@ inline void Basic_sweep_line_2<Traits_,
 _remove_curve_from_status_line(Subcurve *leftCurve)
                               
 {
-  PRINT("remove_curve_from_status_line\n";);
-  SL_DEBUG(PrintStatusLine(););
-  SL_DEBUG(leftCurve->Print(););
+  CGAL_PRINT("remove_curve_from_status_line\n";);
+  CGAL_SL_DEBUG(PrintStatusLine(););
+  CGAL_SL_DEBUG(leftCurve->Print(););
 
   StatusLineIter sliter = leftCurve->get_hint(); 
   m_status_line_insert_hint = sliter; ++m_status_line_insert_hint; 
 
   CGAL_assertion(sliter!=m_statusLine.end());
   m_statusLine.erase(sliter);
-  PRINT("remove_curve_from_status_line Done\n";)
+  CGAL_PRINT("remove_curve_from_status_line Done\n";)
 } 
 
 

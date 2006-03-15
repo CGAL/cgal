@@ -80,7 +80,7 @@ public:
   (const Arrangement_2& arr, int lm_num = -1) : 
     Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr)
   {
-    PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
+    CGAL_PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
     
     this->build_landmarks_set();
   }
@@ -107,7 +107,7 @@ protected:
    */
   virtual void _create_nn_points_set (NN_Points_set &nn_points) 
   {
-    PRINT_DEBUG("create_middle_edges_points_list");
+    CGAL_PRINT_DEBUG("create_middle_edges_points_list");
 
     Edge_const_iterator    eit;
     Halfedge_const_handle  hh;
@@ -132,7 +132,7 @@ protected:
       const Point_2& p2 = hh->target()->point();
       Point_2 p ((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
       
-      PRINT_DEBUG("mid point is= " << p);
+      CGAL_PRINT_DEBUG("mid point is= " << p);
       
       CGAL::Object obj = CGAL::make_object(hh); 
       NN_Point_2 np(p, obj); 

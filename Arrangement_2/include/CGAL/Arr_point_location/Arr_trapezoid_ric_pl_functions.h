@@ -27,9 +27,9 @@
 #define CGAL_TRAP_DEBUG
 
 #ifdef CGAL_TRG_DEBUG
-	#define TRAP_PRINT_DEBUG(expr)   std::cout << expr << std::endl
+	#define CGAL_TRAP_PRINT_DEBUG(expr)   std::cout << expr << std::endl
 #else
-	#define TRAP_PRINT_DEBUG(expr)
+	#define CGAL_TRAP_PRINT_DEBUG(expr)
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -41,7 +41,7 @@ template <class Arrangement_2>
 Object Arr_trapezoid_ric_point_location<Arrangement_2>
 ::locate (const Point_2& p) const
 {
-  TRAP_PRINT_DEBUG("locate point "<<p);
+  CGAL_TRAP_PRINT_DEBUG("locate point "<<p);
 
   //there are different internal compiler errors if we
   // typedef the Locate_type
@@ -49,13 +49,13 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
   const X_curve_plus& cv = td.locate(p,td_lt).top();
 
-  TRAP_PRINT_DEBUG("after td.locate");
+  CGAL_TRAP_PRINT_DEBUG("after td.locate");
 
   // treat special case, where trapezoid is unbounded.
   //	for then get_parent() is not defined
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   {
-    TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
+    CGAL_TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
     //check isolated vertices
     Face_const_handle ubf = this->arrangement()->unbounded_face();
       Isolated_vertex_const_iterator   iso_verts_it;
@@ -78,7 +78,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   {
   case TD::POINT:
     {
-      TRAP_PRINT_DEBUG("POINT");
+      CGAL_TRAP_PRINT_DEBUG("POINT");
       if (traits->equal_2_object()(h->target()->point(), p))
       {
         Vertex_const_handle vh = h->target();
@@ -96,7 +96,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
   case TD::CURVE:
     {
-      TRAP_PRINT_DEBUG("CURVE");
+      CGAL_TRAP_PRINT_DEBUG("CURVE");
       if ( traits->is_in_x_range_2_object()(cv,p) && 
            traits->compare_y_at_x_2_object()(p,cv) == EQUAL)
         return (CGAL::make_object(h));
@@ -111,7 +111,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
   case TD::TRAPEZOID:
     {
-      TRAP_PRINT_DEBUG("TRAPEZOID");
+      CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
       if (!(((traits->is_in_x_range_2_object()(h->curve(),p)) &&
         (traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
         (traits->compare_x_2_object()(h->source()->point(),
@@ -135,12 +135,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       return (CGAL::make_object(fh));
     }
   default:
-    TRAP_PRINT_DEBUG("DEFAULT");
+    CGAL_TRAP_PRINT_DEBUG("DEFAULT");
     CGAL_assertion(false);
     break;
   }
 
-  TRAP_PRINT_DEBUG("EMPTY");
+  CGAL_TRAP_PRINT_DEBUG("EMPTY");
   return Object();   
 }
 

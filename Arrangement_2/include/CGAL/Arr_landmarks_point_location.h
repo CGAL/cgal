@@ -23,7 +23,7 @@
  * Definition of the Arr_landmarks_point_location<Arrangement> template.
  */
 
-//#define CGAL_LM_DEBUG
+//#define CGAL_DEBUG_LM
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_vertices_generator.h>

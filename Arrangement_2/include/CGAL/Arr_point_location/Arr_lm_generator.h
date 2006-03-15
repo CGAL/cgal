@@ -34,12 +34,12 @@
 //-------------------------------
 //#define CGAL_LM_DEBUG
 //
-//#ifdef CGAL_LM_DEBUG
-//	#define PRINT_DEBUG(expr)   std::cout << expr << std::endl
-//	#define LM_DEBUG(cmd)   cmd
+//#ifdef CGAL_DEBUG_LM
+//	#define CGAL_PRINT_DEBUG(expr)   std::cout << expr << std::endl
+//	#define CGAL_LM_DEBUG(cmd)   cmd
 //#else
-//	#define PRINT_DEBUG(expr)
-//	#define LM_DEBUG(cmd) 
+//	#define CGAL_PRINT_DEBUG(expr)
+//	#define CGAL_LM_DEBUG(cmd) 
 //#endif
 
 CGAL_BEGIN_NAMESPACE
@@ -120,7 +120,7 @@ public:
 		  updated (false), 
 		  num_small_not_updated_changes(0)
 	  {
-		  PRINT_DEBUG("Arr_landmarks_generator constructor"); 
+		  CGAL_PRINT_DEBUG("Arr_landmarks_generator constructor"); 
 		  traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
 		  // need to call this in the inherited class constructor
 		  // build_landmarks_set();
@@ -134,14 +134,14 @@ public:
 	  */
     virtual void build_landmarks_set ()
     {
-      PRINT_DEBUG("build_landmarks_set."); 
+      CGAL_PRINT_DEBUG("build_landmarks_set."); 
       NN_Points_set     nn_points; 
 
       //Go over planar map, and insert all vertices as landmarks
       _create_nn_points_set(nn_points);
 
       //the search structure is now updated
-      PRINT_DEBUG("call to initialize the nearest neighbor search."); 
+      CGAL_PRINT_DEBUG("call to initialize the nearest neighbor search."); 
       nn.clean();
       nn.init(nn_points.begin(), nn_points.end());
 
@@ -154,7 +154,7 @@ public:
 	  */
 	  virtual void clear_landmarks_set ()
 	  {
-		  PRINT_DEBUG("clear_landmarks_set.");
+		  CGAL_PRINT_DEBUG("clear_landmarks_set.");
 		  nn.clean();
 		  num_small_not_updated_changes = 0;
 		  updated = false;		  
@@ -411,7 +411,7 @@ protected:
     //call the function that creates the landmarks 
     _create_points_set(points);
 
-    PRINT_DEBUG("before batched point location."); 
+    CGAL_PRINT_DEBUG("before batched point location."); 
 
     //locate the landmarks in the arrangement using batched point location
     // global function.
@@ -421,7 +421,7 @@ protected:
     //random shuffle of the points since the batched p.l. sorts them
     std::random_shuffle ( pairs.begin (), pairs.end ());
 
-		PRINT_DEBUG("after batched point location + shuffle."); 
+		CGAL_PRINT_DEBUG("after batched point location + shuffle."); 
 
     //create the nn set 
     Pairs_iterator itr;

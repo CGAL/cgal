@@ -24,17 +24,17 @@
  * Arr_landmarks_point_location<Arrangement> class.
  */
 
-//#define CGAL_LM_DEBUG
-#ifdef CGAL_LM_DEBUG
-  #define PRINT_DEBUG(expr)   std::cout << expr << std::endl
-  #define LM_DEBUG(cmd)   cmd
+//#define CGAL_DEBUG_LM
+#ifdef CGAL_DEBUG_LM
+  #define CGAL_PRINT_DEBUG(expr)   std::cout << expr << std::endl
+  #define CGAL_LM_DEBUG(cmd)   cmd
 #else
-  #define PRINT_DEBUG(expr)
-  #define LM_DEBUG(cmd) 
+  #define CGAL_PRINT_DEBUG(expr)
+  #define CGAL_LM_DEBUG(cmd) 
 #endif
 
-//#define PRINT_ERROR(expr)   std::cerr << expr << std::endl
-#define PRINT_ERROR(expr)   std::cout << expr << std::endl
+//#define CGAL_PRINT_ERROR(expr)   std::cerr << expr << std::endl
+#define CGAL_PRINT_ERROR(expr)   std::cout << expr << std::endl
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,7 +45,7 @@ template <class Arrangement_2, class Arr_landmarks_generator>
 Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 ::locate (const Point_2& p) const
 {
-  PRINT_DEBUG("------ locate point "<< p) ;
+  CGAL_PRINT_DEBUG("------ locate point "<< p) ;
 
   //if this is an empty map - return the unbounded face
   if (p_arr->number_of_vertices() == 0) 
@@ -55,12 +55,12 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   Point_2 landmark_point = lm_gen->get_closest_landmark (p, 
                lm_location_obj);
 
-  PRINT_DEBUG("test ") ;
+  CGAL_PRINT_DEBUG("test ") ;
 
   //NN_Point_2 nearest_landmark = lm_gen->find_closest_landmark(p);
   //Point_2 landmark_point = nearest_landmarks.get_point();
   //Object  lm_location_obj = nearest_landmarks.get_obj() ;
-  PRINT_DEBUG("nearest neighbor of point "<< p << " is " << landmark_point);
+  CGAL_PRINT_DEBUG("nearest neighbor of point "<< p << " is " << landmark_point);
   
   //walk from the nearest_vertex to the point p, using walk algorithm, 
   //and find the location of p.   
@@ -74,51 +74,51 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   
   if (lm_location_obj.is_empty())
   {
-    PRINT_ERROR( "lm_location_obj is empty" );
+    CGAL_PRINT_ERROR( "lm_location_obj is empty" );
     CGAL_assertion (false);
     return out_obj;
   }
   else if ((vh = object_cast<Vertex_const_handle>(&lm_location_obj)) != NULL)
   {
-    PRINT_DEBUG( "lm_location_obj is a vertex: "<< (*vh)->point());
+    CGAL_PRINT_DEBUG( "lm_location_obj is a vertex: "<< (*vh)->point());
     out_obj = _walk_from_vertex (*vh, p);
   }
   else if ((fh = object_cast<Face_const_handle>(&lm_location_obj)) != NULL)
   {
-    PRINT_DEBUG( "lm_location_obj is a face. ");
+    CGAL_PRINT_DEBUG( "lm_location_obj is a face. ");
     out_obj = _walk_from_face (*fh, p, landmark_point);
   }
   else if ((hh = object_cast<Halfedge_const_handle>(&lm_location_obj)) != NULL)
   {
-    PRINT_DEBUG( "lm_location_obj is a halfedge: "<< (*hh)->curve());
+    CGAL_PRINT_DEBUG( "lm_location_obj is a halfedge: "<< (*hh)->curve());
     out_obj = _walk_from_edge (*hh, p, landmark_point);
   }
   else 
   {
-    PRINT_ERROR( "unknown object");
+    CGAL_PRINT_ERROR( "unknown object");
     CGAL_assertion (false);
     return out_obj;
   }
   
-  PRINT_DEBUG( "return from walk" << std::endl);
+  CGAL_PRINT_DEBUG( "return from walk" << std::endl);
   
-#ifdef CGAL_LM_DEBUG
+#ifdef CGAL_DEBUG_LM
   if (out_obj.is_empty())
   {
-    PRINT_ERROR( "object is empty" );
+    CGAL_PRINT_ERROR( "object is empty" );
     CGAL_assertion (false);
   }
   else if ((hh = object_cast<Halfedge_const_handle>(&out_obj)) != NULL)
   {
-    PRINT_DEBUG( "object is a halfedge: "<< (*hh)->curve());
+    CGAL_PRINT_DEBUG( "object is a halfedge: "<< (*hh)->curve());
   }
   else if ((vh = object_cast<Vertex_const_handle>(&out_obj)) != NULL)
   {
-    PRINT_DEBUG( "object is a vertex: "<< (*vh)->point());
+    CGAL_PRINT_DEBUG( "object is a vertex: "<< (*vh)->point());
   }
   else if ((fh = object_cast<Face_const_handle>(&out_obj)) != NULL)
   {
-    PRINT_DEBUG( "object is a face. ");
+    CGAL_PRINT_DEBUG( "object is a face. ");
   }
 #endif
   
@@ -156,7 +156,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 ::_walk_from_vertex(Vertex_const_handle nearest_vertex,
           const Point_2 & p)   const
 { 
-  PRINT_DEBUG("inside walk_from_vertex. p= "<< p  << 
+  CGAL_PRINT_DEBUG("inside walk_from_vertex. p= "<< p  << 
         ", nearest_vertex = "<<nearest_vertex->point() );
   
   //inits
@@ -185,35 +185,35 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 
     if (new_vertex)
     {
-      PRINT_DEBUG( "NEW vertex 1 " );
+      CGAL_PRINT_DEBUG( "NEW vertex 1 " );
       //check if the new vertex is really closer 
       // I removed the check if the vertex is closer since there is no 
       // compare distance 
       //if (traits->compare_distance(p, out_vertex->point(), vh->point())  
-      //  != SMALLER) {PRINT_DEBUG("Error 2: new vertex"); return; }
+      //  != SMALLER) {CGAL_PRINT_DEBUG("Error 2: new vertex"); return; }
       vh = object_cast<Vertex_const_handle> (obj);
     }
     else if (obj.is_empty())
     {
-      PRINT_ERROR( "object is empty" );
+      CGAL_PRINT_ERROR( "object is empty" );
       CGAL_assertion (false);
       return obj;
     }
     else if (object_cast<Halfedge_const_handle>(&obj) != NULL)
     {
-      PRINT_DEBUG ("_find_face found a halfedge: " << 
+      CGAL_PRINT_DEBUG ("_find_face found a halfedge: " << 
 		   (object_cast<Halfedge_const_handle>(&obj))->curve());
       return (obj);
     }
     else if (object_cast<Vertex_const_handle>(&obj) != NULL)
     {
-      PRINT_DEBUG ("_find_face found a vertex: " << 
+      CGAL_PRINT_DEBUG ("_find_face found a vertex: " << 
 		   (object_cast<Vertex_const_handle>(&obj))->point());
       return (obj);
     }
     else if ((p_fh = object_cast<Face_const_handle>(&obj)) != NULL)
     {
-      PRINT_DEBUG ("_find_face found a face.");
+      CGAL_PRINT_DEBUG ("_find_face found a face.");
       return _walk_from_face (*p_fh, p, vh->point());
     }
     
@@ -239,7 +239,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         Vertex_const_handle vh,
         bool & new_vertex) const
 { 
-  PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh->point() ); 
+  CGAL_PRINT_DEBUG("inside find_face. p ="<< p <<" , vh = "<<vh->point() ); 
   
   new_vertex = false;
   
@@ -276,8 +276,8 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   //save results 
   Comparison_result res1;
   
-  PRINT_DEBUG("seg_orient ="<< seg_orient ); 
-  PRINT_DEBUG("cv_orient ="<< cv_orient << " , circ ="<< (*circ).curve());
+  CGAL_PRINT_DEBUG("seg_orient ="<< seg_orient ); 
+  CGAL_PRINT_DEBUG("cv_orient ="<< cv_orient << " , circ ="<< (*circ).curve());
 
   /////////////////////////////////// 6.12 - wrapper  
     //TODO: what if both seg and curve are verticals ? @@@@
@@ -286,7 +286,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     //curves are to different sides
     if (cv_orient != seg_orient)  
     {
-      PRINT_DEBUG("seg_orient != cv_orient : "); 
+      CGAL_PRINT_DEBUG("seg_orient != cv_orient : "); 
       //find a curve that is on the same side as seg
       do {
         circ++;
@@ -307,12 +307,12 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     circ++;
     res1 =  compare_cw_around_point((*circ).curve(), 
             (*prev).curve(), v);//TODO, false);
-    PRINT_DEBUG("circ = " << (*circ).curve() << "  res1= " << res1 ); 
+    CGAL_PRINT_DEBUG("circ = " << (*circ).curve() << "  res1= " << res1 ); 
   } while (res1==LARGER && circ!=circ_done);
   
   //out_edge = prev;
   //found_face = true;
-  PRINT_DEBUG ( "new_find_face return face = " << (*prev).curve() );
+  CGAL_PRINT_DEBUG ( "new_find_face return face = " << (*prev).curve() );
   return (CGAL::make_object ((*prev).face()));
       }
     }
@@ -320,24 +320,24 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     //both curves are to the same side
     if (seg_orient == cv_orient) 
     {
-      PRINT_DEBUG("seg_orient == cv_orient : "); 
+      CGAL_PRINT_DEBUG("seg_orient == cv_orient : "); 
       res1 = compare_cw_around_point(seg, (*circ).curve(), v);
       if (res1 == LARGER) 
       {
         //if the segment is larger than the curve cw, we will go ++ 
         //cw with the circ and find a curve that is larger than seg. 
         //then we will take the curve that was just before that. 
-        PRINT_DEBUG("res1 == LARGER : "); 
+        CGAL_PRINT_DEBUG("res1 == LARGER : "); 
         do {
           prev = circ;
           circ++;
-          PRINT_DEBUG("circ++ = " << (*circ).curve() ); 
+          CGAL_PRINT_DEBUG("circ++ = " << (*circ).curve() ); 
           cv_orient = circ->twin()->direction();
             //RWRW: compare_xy(v,(*circ).source()->point());
           if (seg_orient == cv_orient) 
           {
             res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-            PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
+            CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
           }
         } while (res1 == LARGER && seg_orient == cv_orient 
                  && circ!=circ_done);
@@ -352,13 +352,13 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
           //in this case the seg is larger than ALL curves and all 
           //curves are to the same side 
           //we need to find the largest of all curves.
-          PRINT_DEBUG("circ == circ_done : "); 
+          CGAL_PRINT_DEBUG("circ == circ_done : "); 
           do {
             prev = circ;
             circ++;
             res1 =  compare_cw_around_point((*circ).curve(), 
                                             (*prev).curve(), v);//TODO: false);
-            PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
+            CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
           } while (res1 == LARGER && circ!=circ_done);
           //if circ == circ_done, then prev is the largest
           //else if circ is not larger than prev, than prev is 
@@ -367,7 +367,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         
         //out_edge = prev;
         //found_face = true;
-        PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+        CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
         return (CGAL::make_object ((*prev).face()));
       }
       else if (res1 ==SMALLER) 
@@ -375,7 +375,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         //if the segment is smaller (cw) than the curve, we need to find 
         //ccw (--) the curve that seg is larger than. 
         //since we can't go --, we will go ++ few times (if necessary). 
-        PRINT_DEBUG("res1 == SMALLER : "); 
+        CGAL_PRINT_DEBUG("res1 == SMALLER : "); 
         
         //loop 1 - until reach a curve on the other side, if exists
         do {
@@ -409,14 +409,14 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
             if (seg_orient == cv_orient) 
             {
               res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-              PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1);
+              CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1);
             }
           }
                 
           //now we can say that the output edge is prev
           //out_edge = prev;
           //found_face = true;
-          PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+          CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
           return (CGAL::make_object ((*prev).face()));
         }
   
@@ -427,7 +427,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     prev = circ;
     circ++;
     res1 =  compare_cw_around_point((*circ).curve(), (*prev).curve(),v);//IXX, false);
-    PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<< res1); 
+    CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<< res1); 
   } while (res1 == LARGER && circ!=circ_done);
   //now circ < prev ==> circ is the smallest
   
@@ -438,7 +438,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   {
     //out_edge = circ->twin();
     //found_face = true;
-    PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
+    CGAL_PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
     return (CGAL::make_object ((*circ).twin()->face()));
   }
   
@@ -453,17 +453,17 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   
   //out_edge = prev;
   //found_face = true;
-  PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+  CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
   return (CGAL::make_object ((*prev).face()));
       }
       else //EQUAL
       {
   //TODO: specail case - new vertex or on edge ot something
-  PRINT_DEBUG ( "specail case: seg is equal cw to circ " 
+  CGAL_PRINT_DEBUG ( "specail case: seg is equal cw to circ " 
           << (*circ).curve() );
   if (traits->equal_2_object()(p,(*circ).source()->point())) 
   {
-    PRINT_DEBUG ( "p is on a vertex ");
+    CGAL_PRINT_DEBUG ( "p is on a vertex ");
     //out_edge = circ;
     //out_vertex = circ->source();
     //lt = Planar_map::VERTEX;
@@ -475,7 +475,7 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       traits->compare_y_at_x_2_object()(p,(*circ).curve()) == EQUAL) 
   {
     // p lies on cv1  
-    PRINT_DEBUG ( "p is on an edge ");
+    CGAL_PRINT_DEBUG ( "p is on an edge ");
     Halfedge_const_handle temp_he = circ;
     //out_edge = circ;
     //lt = Planar_map::EDGE;
@@ -485,18 +485,18 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   
   //p does not lie on cv1 ==> 
   // the target of the equal curve is a better vertex to p 
-  PRINT_ERROR("WARNING 11: found closer vertex during new_find_face");
+  CGAL_PRINT_ERROR("WARNING 11: found closer vertex during new_find_face");
   // out_vertex is the closer vertex
   //out_vertex = circ->source();
   new_vertex = true;
-  PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
+  CGAL_PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
   // check validity (the new vertex is vetween them on a line) @@@@
   return (CGAL::make_object((*circ).source()));    
       }
     }
     
-    PRINT_ERROR("ERROR 13: new_find_face did not find the face !");
-    LM_DEBUG(getchar());
+    CGAL_PRINT_ERROR("ERROR 13: new_find_face did not find the face !");
+    CGAL_LM_DEBUG(getchar());
     return Object();
 }    
 
@@ -513,14 +513,14 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
           const Point_2 & np)   const    
 
 { 
-  PRINT_DEBUG("inside walk_from_edge. p= "<< p << ", eh = "
+  CGAL_PRINT_DEBUG("inside walk_from_edge. p= "<< p << ", eh = "
     <<eh->source()->point() << "-->"  <<eh->target()->point());
   const X_monotone_curve_2& cv = eh->curve() ;
   const Point_2&            src = eh->source()->point();
   const Point_2&            trg = eh->target()->point();
   Comparison_result res;
 
-  LM_DEBUG( 
+  CGAL_LM_DEBUG( 
     if (! traits->is_in_x_range_2_object()(cv, np)) 
       std::cout<<"WARNING 5: np is not on the edge's x_range"
       <<std::endl; 
@@ -528,7 +528,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
       std::cout<<"WARNING 6: np is not on the edge"
       <<std::endl; 
   );
-  PRINT_DEBUG("inside walk_from_edge. p= "<< p  << 
+  CGAL_PRINT_DEBUG("inside walk_from_edge. p= "<< p  << 
                  ", eh = "<<eh->source()->point() << "-->"  
                  <<eh->target()->point());
 
@@ -560,7 +560,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   {
     //check if p is above/below cv
     res =   traits->compare_y_at_x_2_object()(p,cv);
-    PRINT_DEBUG("curve compare y at x: p= "<< p << ", cv =  "<< cv 
+    CGAL_PRINT_DEBUG("curve compare y at x: p= "<< p << ", cv =  "<< cv 
           <<", res = "<<res);
     switch (res) { 
       case EQUAL://p is on cv - found !
@@ -576,7 +576,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
           eh = eh->twin();//it is oriented from right to left
         break;
     }  
-    PRINT_DEBUG("call from walk_from_edge to walk_from face: eh= "
+    CGAL_PRINT_DEBUG("call from walk_from_edge to walk_from face: eh= "
                   <<eh->source()->point() << "-->"  
                   <<eh->target()->point());
     return _walk_from_face (eh->face(), p, np);
@@ -594,7 +594,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
     {
       vh = eh->target();
     }
-    PRINT_DEBUG("call from walk_from_edge to walk_from_vertex: vh= "
+    CGAL_PRINT_DEBUG("call from walk_from_edge to walk_from_vertex: vh= "
           <<vh->point());
     return _walk_from_vertex(vh, p);
   }
@@ -629,7 +629,7 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
           const Point_2 & p,
           const Point_2 & np)   const   
 { 
-  PRINT_DEBUG("inside walk_from_face. p= "<< p ); 
+  CGAL_PRINT_DEBUG("inside walk_from_face. p= "<< p ); 
 
   //inits
   //Halfedge_const_handle out_edge = eh;
@@ -642,17 +642,17 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   Halfedge_const_handle out_edge;
   
   do {
-    PRINT_DEBUG(std::endl << "inside loop on face ");
+    CGAL_PRINT_DEBUG(std::endl << "inside loop on face ");
     p_in_face = false;
     if (face->is_unbounded())  {
       p_in_face = true;
-      PRINT_DEBUG("unbounded face ");
+      CGAL_PRINT_DEBUG("unbounded face ");
     }
     else {    
       h_circ = face->outer_ccb();
       p_in_face = _is_point_in_face(p, h_circ, found_edge, 
         found_vertex, out_edge); 
-      PRINT_DEBUG("is_point_in_face returned  "<<  p_in_face );
+      CGAL_PRINT_DEBUG("is_point_in_face returned  "<<  p_in_face );
     }
     if (found_vertex)
     {
@@ -666,13 +666,13 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
     }
     else if (p_in_face){
       //check holes
-      PRINT_DEBUG(" p in face. go over holes" );
+      CGAL_PRINT_DEBUG(" p in face. go over holes" );
       Hole_const_iterator hole_it  = face->holes_begin();
       Hole_const_iterator hole_end = face->holes_end();  
       bool p_in_hole;
       while (hole_it != hole_end) 
       {
-        PRINT_DEBUG(" loop on holes");
+        CGAL_PRINT_DEBUG(" loop on holes");
         p_in_hole = _is_point_in_face(p, *hole_it, 
           found_edge, found_vertex, out_edge); 
         if (found_vertex)
@@ -693,8 +693,8 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
             face = out_edge->face();
           }
           else {
-            PRINT_ERROR( "ERROR 10:  intersection not found");
-            LM_DEBUG(getchar());
+            CGAL_PRINT_ERROR( "ERROR 10:  intersection not found");
+            CGAL_LM_DEBUG(getchar());
             return (CGAL::make_object (p_arr->unbounded_face()));
           }
 
@@ -711,13 +711,13 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
       if ( _find_edge_to_flip (p, np, face->outer_ccb() , out_edge) ) {
         out_edge = out_edge->twin();        
         face = out_edge->face();
-        PRINT_DEBUG("after find_edge_to_flip. changed to twin @ " );
-        PRINT_DEBUG("out_edge  =  "<< out_edge->source()->point() 
+        CGAL_PRINT_DEBUG("after find_edge_to_flip. changed to twin @ " );
+        CGAL_PRINT_DEBUG("out_edge  =  "<< out_edge->source()->point() 
                   <<" -->"<< out_edge->target()->point() );
       }
       else {
-        PRINT_ERROR("ERROR 9:  intersection not found");
-        LM_DEBUG(getchar());
+        CGAL_PRINT_ERROR("ERROR 9:  intersection not found");
+        CGAL_LM_DEBUG(getchar());
         //e = p_arr->halfedges_end();
         //lt = Planar_map::UNBOUNDED_FACE;
         return (CGAL::make_object (p_arr->unbounded_face()));
@@ -727,11 +727,11 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
 
   if (face == p_arr->unbounded_face()) 
   {
-    PRINT_DEBUG("before return from walk from face. unbounded face.");
+    CGAL_PRINT_DEBUG("before return from walk from face. unbounded face.");
     return (CGAL::make_object (p_arr->unbounded_face()));
   }
 
-  PRINT_DEBUG("before return from walk from face. ");
+  CGAL_PRINT_DEBUG("before return from walk from face. ");
   return (CGAL::make_object (face));
 }
 
@@ -753,7 +753,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
            bool & found_vertex,      //out is p equals e->target?
            Halfedge_const_handle  & out_edge) const  //output if on curve        
 {
-  PRINT_DEBUG("inside is_point_in_face. face = " << (*face).source()->point()
+  CGAL_PRINT_DEBUG("inside is_point_in_face. face = " << (*face).source()->point()
                 <<"-->" << (*face).target()->point());
 
   found_edge = false;
@@ -780,17 +780,17 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
     if (equal(p, p1))   {
       found_vertex = true;
       out_edge = (*curr).twin() ;
-      PRINT_DEBUG("p is "<< p );
-      PRINT_DEBUG("out_edge is "<< out_edge->curve() );
-      PRINT_DEBUG("target is "<< out_edge->target()->point() );
+      CGAL_PRINT_DEBUG("p is "<< p );
+      CGAL_PRINT_DEBUG("out_edge is "<< out_edge->curve() );
+      CGAL_PRINT_DEBUG("target is "<< out_edge->target()->point() );
       return (true); 
     }
     if (equal(p, p2))   {
       found_vertex = true;
       out_edge = curr;
-      PRINT_DEBUG("p is "<< p );
-      PRINT_DEBUG("out_edge is "<< out_edge->curve() );
-      PRINT_DEBUG("target is "<< out_edge->target()->point() );
+      CGAL_PRINT_DEBUG("p is "<< p );
+      CGAL_PRINT_DEBUG("out_edge is "<< out_edge->curve() );
+      CGAL_PRINT_DEBUG("target is "<< out_edge->target()->point() );
       return (true); 
     }
 
@@ -855,7 +855,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   //what we will check is whether this edge was selected already 
   //(and flipped),  in this case we will not flip it again, 
   //but move to the next edge
-  PRINT_DEBUG("inside find_edge_to_flip.   " );
+  CGAL_PRINT_DEBUG("inside find_edge_to_flip.   " );
 
   //create a segment vp--p. 
   const Point_2&     vp = np;
@@ -882,24 +882,24 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
     Std_edge_iterator found2 = std::find (m_flipped_edges.begin(), 
       m_flipped_edges.end(), (*curr).twin());
     if (found1 != m_flipped_edges.end() || found2 != m_flipped_edges.end()) {
-      PRINT_DEBUG("curve "<<p1<<"-->"<<p2<<" was found in the list");
+      CGAL_PRINT_DEBUG("curve "<<p1<<"-->"<<p2<<" was found in the list");
     }
     else if (m_start_edge && 
              (curr == *m_start_edge || (*curr).twin() == *m_start_edge))
     { //check that curr and (*curr).twin() is not equal to m_start_edge
-      PRINT_DEBUG("curve "<<p1<<"-->"<<p2<<" is the start edge");
+      CGAL_PRINT_DEBUG("curve "<<p1<<"-->"<<p2<<" is the start edge");
     }
     else {
-      PRINT_DEBUG("curr = " << p1 << "-->" << p2 );
+      CGAL_PRINT_DEBUG("curr = " << p1 << "-->" << p2 );
 
       //check x-range
       p_in_x_range = is_in_x_range(cv, p);
       v_in_x_range = is_in_x_range(cv, vp);
       p1_in_x_range = is_in_x_range(seg, p1);
       p2_in_x_range = is_in_x_range(seg, p2);
-      PRINT_DEBUG("p_in_x_range = " << p_in_x_range 
+      CGAL_PRINT_DEBUG("p_in_x_range = " << p_in_x_range 
         << " , v_in_x_range = " << v_in_x_range);
-      PRINT_DEBUG("p1_in_x_range = " << p1_in_x_range 
+      CGAL_PRINT_DEBUG("p1_in_x_range = " << p1_in_x_range 
         << " , p2_in_x_range = " << p2_in_x_range);
 
       if (p_in_x_range || v_in_x_range || p1_in_x_range || p2_in_x_range)
@@ -916,7 +916,7 @@ bool Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
           }
         }
         else {
-          PRINT_ERROR("ERROR 12: check_approximate_intersection "\
+          CGAL_PRINT_ERROR("ERROR 12: check_approximate_intersection "\
                       <<"did not return an answer.");
         }
       }
@@ -969,8 +969,8 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   const Point_2& cv_left = traits->construct_min_vertex_2_object()(cv);
   intersect = false;
 
-  PRINT_DEBUG("seg_right =  " << seg_right << " , seg_left = " << seg_left);
-  PRINT_DEBUG("cv_right = " << cv_right << " , cv_left = " << cv_left);
+  CGAL_PRINT_DEBUG("seg_right =  " << seg_right << " , seg_left = " << seg_left);
+  CGAL_PRINT_DEBUG("cv_right = " << cv_right << " , cv_left = " << cv_left);
   
   //compare the 2 left end-points and the 2 right end-points
   Comparison_result comp_left_xy_res = compare_xy(seg_left, cv_left);
@@ -980,14 +980,14 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   //of the curve
   if (comp_left_xy_res == EQUAL) 
   {
-    PRINT_DEBUG("the left end-point of the segments is equal to the"\
+    CGAL_PRINT_DEBUG("the left end-point of the segments is equal to the"\
                 <<" left end-point of the curve");
     // compare to the right of the curves
     Comparison_result curves_comp = compare_y_at_x_right(seg,cv,seg_left);
   
     if (curves_comp == EQUAL) 
     {
-      PRINT_DEBUG("overlap !!!");
+      CGAL_PRINT_DEBUG("overlap !!!");
       //this means: 
       // 1. the query is on the curve (should have been checked). 
       // 2. the landmark is on the curve (should have been checked).
@@ -1011,13 +1011,13 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         compare_y_at_x(seg_right,cv);
 
       if (curve_comp_right_res == EQUAL) {
-        PRINT_DEBUG("2 points collide");
+        CGAL_PRINT_DEBUG("2 points collide");
         //this means that the query point is on the curve
         return (false); //V
       }
       if (curves_comp != curve_comp_right_res) 
       { //the segment is on the other side of the segment's end-point
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);
       }
@@ -1032,14 +1032,14 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         compare_y_at_x(cv_right,seg) ;      
 
       if (curve_comp_right_res == EQUAL) {
-        PRINT_DEBUG("2 points collide");
+        CGAL_PRINT_DEBUG("2 points collide");
         //this means that the curve's right enpoint is on the segment
         //intersect = false;
         return (true);
       }
       if (curves_comp == curve_comp_right_res) 
       {//the segment is on the same side as the curve's end-point
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);
       }
@@ -1049,7 +1049,7 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       }
     }
     else { //(comp_right_xy_res == EQUAL) 
-        PRINT_DEBUG("2 endpoints collide");
+        CGAL_PRINT_DEBUG("2 endpoints collide");
         //this means that the query point is on the curve
         //(even on the curve's endpoint = vertex)
         return (false); //V
@@ -1060,14 +1060,14 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   //of the curve
   else if (comp_right_xy_res == EQUAL) 
   {
-    PRINT_DEBUG("the right end-point of the segments is equal to the"\
+    CGAL_PRINT_DEBUG("the right end-point of the segments is equal to the"\
                 <<" right end-point of the curve");
     // compare to the left of the curves
     Comparison_result curves_comp = compare_y_at_x_left(seg, cv, seg_right);
 
     if (curves_comp == EQUAL) 
     {
-      PRINT_DEBUG("overlap !!!");
+      CGAL_PRINT_DEBUG("overlap !!!");
       //this means: 
       // 1. the query is on the curve (should have been checked). 
       // 2. the landmark is on the curve (should have been checked).
@@ -1091,13 +1091,13 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         compare_y_at_x(cv_left,seg) ;
 
       if (curve_comp_left_res == EQUAL) {
-        PRINT_DEBUG("2 points collide");
+        CGAL_PRINT_DEBUG("2 points collide");
         //this means that the curve's left enpoint is on the segment
         intersect = true;
         return (true);
       }
       if (curves_comp == curve_comp_left_res) {
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);
       }
@@ -1112,12 +1112,12 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
         compare_y_at_x(seg_left,cv) ;
 
       if (curve_comp_left_res == EQUAL) {
-        PRINT_DEBUG("2 points collide");
+        CGAL_PRINT_DEBUG("2 points collide");
         //this means that the query point is the curve
         return (false); //V
       }
       if (curves_comp != curve_comp_left_res) {
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);
       }
@@ -1127,7 +1127,7 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       }
     }
     else { //(comp_left_xy_res == EQUAL) 
-        PRINT_DEBUG("2 endpoints collide");
+        CGAL_PRINT_DEBUG("2 endpoints collide");
         return (false); //V
     }
   }
@@ -1136,13 +1136,13 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   else if (comp_left_xy_res != comp_right_xy_res) { 
     if (comp_left_xy_res == LARGER) 
     {  //the segment is inside the curve's x-range
-      PRINT_DEBUG("the segment is inside the curve's x-range.");
-      LM_DEBUG ( //checks for debugging - remove later
+      CGAL_PRINT_DEBUG("the segment is inside the curve's x-range.");
+      CGAL_LM_DEBUG ( //checks for debugging - remove later
         if (! is_in_x_range(cv,seg_left) ) {
-          PRINT_ERROR( "! is_in_x_range(cv,seg_left) "); 
+          CGAL_PRINT_ERROR( "! is_in_x_range(cv,seg_left) "); 
           return (false); } //V-debugging
         if (! is_in_x_range(cv,seg_right) )  {
-          PRINT_ERROR("(! is_in_x_range(cv,seg_right) "); 
+          CGAL_PRINT_ERROR("(! is_in_x_range(cv,seg_right) "); 
           return (false); } //V-debugging
       )
 
@@ -1154,39 +1154,39 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       if ((curve_comp_left_res == EQUAL)||
         (curve_comp_right_res == EQUAL))
       {
-        //PRINT_ERROR(" WARNING 7: left or right endpoint of the 
+        //CGAL_PRINT_ERROR(" WARNING 7: left or right endpoint of the 
         //segment is on the curve ");
         //this should not happen since p is on the curve, 
         //we should have find it already, and if v is on the curve, 
         //than v should have cut the curve in two
         //this can happen if we're walking from edge. 
-        PRINT_DEBUG("no intersection");
+        CGAL_PRINT_DEBUG("no intersection");
         //intersect = false;
         return (true);
         //return (false);
       }
       if  (curve_comp_left_res == curve_comp_right_res) 
       {  //no intersection
-        PRINT_DEBUG("no intersection");
+        CGAL_PRINT_DEBUG("no intersection");
         //intersect = false;
         return (true);
       }
       else 
       {
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);
       }
     }
     else
     {  //the curve is inside the segments's x-range
-      PRINT_DEBUG("the curve is inside the segments's x-range");
-      LM_DEBUG ( //checks for debugging - remove later
+      CGAL_PRINT_DEBUG("the curve is inside the segments's x-range");
+      CGAL_LM_DEBUG ( //checks for debugging - remove later
         if (! is_in_x_range(seg,cv_left) ) {
-         PRINT_ERROR( "! is_in_x_range(seg,cv_left)"); 
+         CGAL_PRINT_ERROR( "! is_in_x_range(seg,cv_left)"); 
          return (false);} //V-debugging
         if (! is_in_x_range(seg,cv_right) ) {
-         PRINT_ERROR("! is_in_x_range(seg,cv_right)"); 
+         CGAL_PRINT_ERROR("! is_in_x_range(seg,cv_right)"); 
          return (false);} //V-debugging
       )
 
@@ -1195,27 +1195,27 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
 
       if (curve_comp_right_res == EQUAL)
       {
-        PRINT_DEBUG("the curve right endpoint is on the segment");
-        PRINT_DEBUG("no intersection");
+        CGAL_PRINT_DEBUG("the curve right endpoint is on the segment");
+        CGAL_PRINT_DEBUG("no intersection");
         //intersect = false;
         return (true);
       }
       else if (curve_comp_left_res == EQUAL) 
       {
-        PRINT_DEBUG("the curve left endpoint is on the segment");
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("the curve left endpoint is on the segment");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);
       }
       else if  (curve_comp_left_res == curve_comp_right_res) 
       {  //no intersection
-        PRINT_DEBUG("no intersection");
+        CGAL_PRINT_DEBUG("no intersection");
         //intersect = false;
         return (true);
       }
       else 
       {
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);
       }
@@ -1226,14 +1226,14 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
     //x-range and one endpoitn is out, and vise versa.
     if (comp_left_xy_res == SMALLER) 
     { //if the segment right point is in and the curve's left point
-      PRINT_DEBUG("the segment right point is in and the"\
+      CGAL_PRINT_DEBUG("the segment right point is in and the"\
                   <<"curve's left point");
-      LM_DEBUG ( //checks for debugging - remove later
+      CGAL_LM_DEBUG ( //checks for debugging - remove later
         if (! is_in_x_range(seg,cv_left) ) {
-         PRINT_ERROR("! is_in_x_range(seg,cv_left)"); 
+         CGAL_PRINT_ERROR("! is_in_x_range(seg,cv_left)"); 
          return (false);}
         if (! is_in_x_range(cv,seg_right) ) {
-         PRINT_ERROR( "! is_in_x_range(cv,seg_right)"); 
+         CGAL_PRINT_ERROR( "! is_in_x_range(cv,seg_right)"); 
          return (false);}
       )
 
@@ -1248,17 +1248,17 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
           //this case is o.k., just return that there is 
           //no intersection, because probably v is the same 
           //for both curves
-          PRINT_DEBUG("segment's right endpoint = "\
+          CGAL_PRINT_DEBUG("segment's right endpoint = "\
                       <<"curve's left endpoint ");
-          PRINT_DEBUG("no intersection");
+          CGAL_PRINT_DEBUG("no intersection");
           //intersect = false;
           return (true);    
         }
         if (curve_comp_left_res == EQUAL)
         {
           //the curve's left end-point is on the segment.
-          PRINT_DEBUG("the curve's left end-point is on the segment");
-          PRINT_DEBUG("intersecting");
+          CGAL_PRINT_DEBUG("the curve's left end-point is on the segment");
+          CGAL_PRINT_DEBUG("intersecting");
           intersect = true;                    
           return (true);
         }
@@ -1267,27 +1267,27 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       }
       if  (curve_comp_left_res == curve_comp_right_res) 
       {  //intersection
-        PRINT_DEBUG("intersecting");
+        CGAL_PRINT_DEBUG("intersecting");
         intersect = true;
         return (true);        
       }
       else 
       {
-        PRINT_DEBUG("no intersection");
+        CGAL_PRINT_DEBUG("no intersection");
         //intersect = false;
         return (true);      
       }
     }
     else 
     { //if the curve's right point is in and the segment's left point
-      PRINT_DEBUG("the curve's right point is in and the "\
+      CGAL_PRINT_DEBUG("the curve's right point is in and the "\
                   <<"segment's left point");
-      LM_DEBUG ( //checks for debugging - remove later
+      CGAL_LM_DEBUG ( //checks for debugging - remove later
         if (! is_in_x_range(cv,seg_left) ) {
-          PRINT_ERROR("! is_in_x_range(cv,seg_left) ***  "); 
+          CGAL_PRINT_ERROR("! is_in_x_range(cv,seg_left) ***  "); 
           return (false);  } //V-debugging
         if (! is_in_x_range(seg,cv_right) ) {
-          PRINT_ERROR("! is_in_x_range(seg,cv_right) *** "); 
+          CGAL_PRINT_ERROR("! is_in_x_range(seg,cv_right) *** "); 
           return (false); } //V-debugging
       )
 
@@ -1296,8 +1296,8 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       Comparison_result curve_comp_right_res = 
         compare_y_at_x(cv_right,seg);
 
-      PRINT_DEBUG("curve_comp_right_res="<<curve_comp_right_res);
-      PRINT_DEBUG("curve_comp_left_res= "<<curve_comp_left_res);
+      CGAL_PRINT_DEBUG("curve_comp_right_res="<<curve_comp_right_res);
+      CGAL_PRINT_DEBUG("curve_comp_left_res= "<<curve_comp_left_res);
 
       if (curve_comp_right_res == EQUAL || curve_comp_left_res == EQUAL)
       {
@@ -1305,15 +1305,15 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
           //this case is o.k., just return that 
           //there is no intersection, because probably 
           //v is the same for both curves
-          PRINT_DEBUG("segment's left endpoint = "\
+          CGAL_PRINT_DEBUG("segment's left endpoint = "\
                       <<"curve's right endpoint ");
-          PRINT_DEBUG("no intersection");
+          CGAL_PRINT_DEBUG("no intersection");
           //intersect = false;
           return (true);    
         }
         if (curve_comp_right_res == EQUAL)
         {
-          PRINT_DEBUG("intersecting");
+          CGAL_PRINT_DEBUG("intersecting");
           intersect = true;
           return (true);        
         }
@@ -1322,13 +1322,13 @@ bool Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
       }
       if  (curve_comp_left_res == curve_comp_right_res) 
       {  //intersection
-        PRINT_DEBUG("intersecting . ");
+        CGAL_PRINT_DEBUG("intersecting . ");
         intersect = true;
         return (true);        
       }
       else 
       {
-        PRINT_DEBUG("no intersection .");
+        CGAL_PRINT_DEBUG("no intersection .");
         //intersect = false;
         return (true);      
       }

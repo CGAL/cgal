@@ -36,8 +36,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define POINT_IS_LEFT_LOW(p,q) (traits->compare_xy_2_object()((p),(q))==SMALLER)
-#define POINT_IS_RIGHT_TOP(p,q) (traits->compare_xy_2_object()((p),(q))==LARGER)
+#define CGAL_POINT_IS_LEFT_LOW(p,q) (traits->compare_xy_2_object()((p),(q))==SMALLER)
+#define CGAL_POINT_IS_RIGHT_TOP(p,q) (traits->compare_xy_2_object()((p),(q))==LARGER)
 
 /* //////////////////////////////////////////////////////////////////////////
 
@@ -224,7 +224,7 @@ public:
 #endif
           
         // handle degeneracies
-        if (!POINT_IS_LEFT_LOW(curr->left(),
+        if (!CGAL_POINT_IS_LEFT_LOW(curr->left(),
                                traits->construct_max_vertex_2_object()(sep)))
           curr=0;
         else
@@ -383,7 +383,7 @@ public:
       if (traits->is_degenerate_curve(*cand)) return cand;
       // cand was splited by a point
       while(traits->is_degenerate_point(*cand))
-        cand=POINT_IS_LEFT_LOW(cand->left(),fixed)?
+        cand=CGAL_POINT_IS_LEFT_LOW(cand->left(),fixed)?
           // move right using data structure
           cand->get_node()->right().operator->():
           // move left using data structure
@@ -879,7 +879,7 @@ output: trapezoid iterator
     
     reference currt=*tt;
     //Point p[2];
-    //int i= POINT_IS_LEFT_LOW(
+    //int i= CGAL_POINT_IS_LEFT_LOW(
     //  p[0]=traits->curve_source(cv),
     //  p[1]=traits->curve_target(cv)
     //  ) ? 0 : 1;
@@ -1230,7 +1230,7 @@ output: trapezoid iterator
     }
     
     //update right top neighbour and left bottom neighbour
-    bool b=POINT_IS_LEFT_LOW(p,sep.right());
+    bool b=CGAL_POINT_IS_LEFT_LOW(p,sep.right());
     Around_point_circulator circ(traits,p,b ? end_point.right_top_neighbour() :
                                  end_point.left_bottom_neighbour());
     
@@ -1393,12 +1393,12 @@ output: trapezoid iterator
       {
         // extract point from trapezoid
         pp = &curr->left();
-        if (POINT_IS_LEFT_LOW(p, *pp))
+        if (CGAL_POINT_IS_LEFT_LOW(p, *pp))
         {
           curr = curr.left();
           continue;
         }
-        else if (POINT_IS_LEFT_LOW(*pp, p))
+        else if (CGAL_POINT_IS_LEFT_LOW(*pp, p))
         {
           curr = curr.right();
           continue;
@@ -1447,12 +1447,12 @@ output: trapezoid iterator
         {
                 
 #ifndef CGAL_TD_DEBUG
-          CGAL_warning(POINT_IS_LEFT_LOW(p,*pp) ||
-                       POINT_IS_LEFT_LOW(*pp,p) ||
+          CGAL_warning(CGAL_POINT_IS_LEFT_LOW(p,*pp) ||
+                       CGAL_POINT_IS_LEFT_LOW(*pp,p) ||
                        traits->equal_2_object()(*pp,p));
 #else
-          CGAL_assertion(POINT_IS_LEFT_LOW(p,*pp) ||
-                         POINT_IS_LEFT_LOW(*pp,p) ||
+          CGAL_assertion(CGAL_POINT_IS_LEFT_LOW(p,*pp) ||
+                         CGAL_POINT_IS_LEFT_LOW(*pp,p) ||
                          traits->equal_2_object()(*pp,p));
 #endif
 
@@ -1762,7 +1762,7 @@ public:
       traits->curve_source(cv);
     }
     
-    if (!POINT_IS_LEFT_LOW(POINT_AT_LEFT_TOP_INFINITY,tmp=
+    if (!CGAL_POINT_IS_LEFT_LOW(POINT_AT_LEFT_TOP_INFINITY,tmp=
     traits->construct_min_vertex_2_object()(cv)))
       POINT_AT_LEFT_TOP_INFINITY=traits->point_to_left(tmp);
     if (!traits->point_is_right_top(POINT_AT_RIGHT_BOTTOM_INFINITY,tmp=
@@ -1821,7 +1821,7 @@ public:
     
     //Point p[2];
 
-    //int i= POINT_IS_LEFT_LOW(
+    //int i= CGAL_POINT_IS_LEFT_LOW(
     //  p[0]=traits->curve_source(cv),
     //  p[1]=traits->curve_target(cv)
     //  ) ? 0 : 1;
@@ -2125,7 +2125,7 @@ public:
     do
     {
       // which of bottom_it,top_it to advance.
-      bottom=POINT_IS_LEFT_LOW(bottom_it->right(),top_it->right());
+      bottom=CGAL_POINT_IS_LEFT_LOW(bottom_it->right(),top_it->right());
       Iterator& it =  bottom ? bottom_it : top_it;
       pointer& last_it = bottom ? last_bottom : last_top;
       right=it->right();
@@ -2479,21 +2479,21 @@ public:
 #ifndef CGAL_TD_DEBUG
     
     CGAL_warning(
-      POINT_IS_LEFT_LOW(
+      CGAL_POINT_IS_LEFT_LOW(
       traits->construct_min_vertex_2_object()(cv),p));
     
     CGAL_warning(
-      POINT_IS_RIGHT_TOP(
+      CGAL_POINT_IS_RIGHT_TOP(
       traits->construct_max_vertex_2_object()(cv),p));
     
 #else
     
     CGAL_precondition(
-      POINT_IS_LEFT_LOW(
+      CGAL_POINT_IS_LEFT_LOW(
       traits->construct_min_vertex_2_object()(cv),p));
     
     CGAL_precondition(
-      POINT_IS_RIGHT_TOP(
+      CGAL_POINT_IS_RIGHT_TOP(
       traits->construct_max_vertex_2_object()(cv),p));
     
 #endif
@@ -2576,9 +2576,9 @@ public:
     pointer 
       left_top_t=top_it.operator->(),
       left_bottom_t=bottom_it.operator->();
-    while(POINT_IS_LEFT_LOW(left_top_t->right(),p))
+    while(CGAL_POINT_IS_LEFT_LOW(left_top_t->right(),p))
       left_top_t=left_top_t->right_bottom_neighbour();
-    while(POINT_IS_LEFT_LOW(left_bottom_t->right(),p))
+    while(CGAL_POINT_IS_LEFT_LOW(left_bottom_t->right(),p))
       left_bottom_t=left_bottom_t->right_top_neighbour();
     Data_structure
       left_top=*left_top_t->get_node(),
@@ -2868,11 +2868,11 @@ public:
 #ifdef CGAL_TD_DEBUG
     // p is interior to the union curve
     CGAL_precondition(
-      POINT_IS_LEFT_LOW(
+      CGAL_POINT_IS_LEFT_LOW(
       traits->construct_min_vertex_2_object()(cv),p
       ));
     CGAL_precondition(
-      POINT_IS_RIGHT_TOP(
+      CGAL_POINT_IS_RIGHT_TOP(
       traits->construct_max_vertex_2_object()(cv),p
       ));
 #endif
@@ -2922,10 +2922,10 @@ public:
     CGAL_assertion(traits->equal_2_object()(
       t2.right(),rightmost
       ));
-    CGAL_assertion(POINT_IS_LEFT_LOW(
+    CGAL_assertion(CGAL_POINT_IS_LEFT_LOW(
       leftmost,p
       ));
-    CGAL_assertion(POINT_IS_LEFT_LOW(
+    CGAL_assertion(CGAL_POINT_IS_LEFT_LOW(
       p,rightmost
       ));
     CGAL_assertion(traits->equal_2_object()(
@@ -3358,7 +3358,7 @@ private:
     
     
     /*    Point tmp;
-    if (!POINT_IS_LEFT_LOW(TD_X_trapezoid<Traits,
+    if (!CGAL_POINT_IS_LEFT_LOW(TD_X_trapezoid<Traits,
     X_curve>::POINT_AT_LEFT_TOP_INFINITY,tmp=TD_X_trapezoid<Traits,
     X_curve>::POINT_AT_RIGHT_BOTTOM_INFINITY))
     TD_X_trapezoid<Traits,

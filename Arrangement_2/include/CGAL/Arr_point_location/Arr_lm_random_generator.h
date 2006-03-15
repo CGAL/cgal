@@ -72,7 +72,7 @@ public:
         Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr), 
       number_of_landmarks (lm_num)
     {
-      PRINT_DEBUG("Arr_random_landmarks_generator constructor. "
+      CGAL_PRINT_DEBUG("Arr_random_landmarks_generator constructor. "
         <<"number_of_landmarks = "<< number_of_landmarks); 
 
       this->build_landmarks_set();
@@ -81,7 +81,7 @@ public:
  /*! Destructor. */
   ~Arr_random_landmarks_generator () 
   {
-    PRINT_DEBUG("destructor lm_gen. number_of_lm = "<< number_of_landmarks);
+    CGAL_PRINT_DEBUG("destructor lm_gen. number_of_lm = "<< number_of_landmarks);
   }
 
 protected:
@@ -95,7 +95,7 @@ protected:
    */
   virtual void _create_points_set (Points_set & points)
   {
-    PRINT_DEBUG("create_random_points_list");
+    CGAL_PRINT_DEBUG("create_random_points_list");
 
     //find bounding box
     double x_min=0, x_max=0, y_min=0, y_max=0;
@@ -135,9 +135,9 @@ protected:
       //put in a list 
       points.push_back(p); 
 
-      PRINT_DEBUG("random point "<<i<< " is= " << p);
+      CGAL_PRINT_DEBUG("random point "<<i<< " is= " << p);
     }
-    PRINT_DEBUG("end create_random_points_list");
+    CGAL_PRINT_DEBUG("end create_random_points_list");
 
   }
 

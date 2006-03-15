@@ -30,9 +30,9 @@
 
 //#define CGAL_LM_VERTICES_DEBUG
 #ifdef CGAL_LM_VERTICES_DEBUG
-	#define PRINT_V_DEBUG(expr)   std::cout << expr << std::endl
+	#define CGAL_PRINT_V_DEBUG(expr)   std::cout << expr << std::endl
 #else
-	#define PRINT_V_DEBUG(expr)
+	#define CGAL_PRINT_V_DEBUG(expr)
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -104,7 +104,7 @@ public:
     num_small_not_updated_changes(0), 
     num_landmarks(0)
   {
-    PRINT_V_DEBUG("Arr_landmarks_vertices_generator constructor"); 
+    CGAL_PRINT_V_DEBUG("Arr_landmarks_vertices_generator constructor"); 
     traits = static_cast<const Traits_adaptor_2*> (arr.get_traits());
     build_landmarks_set();
   }
@@ -117,7 +117,7 @@ public:
    */
   void build_landmarks_set ()
   {
-    PRINT_V_DEBUG("build_landmarks_set."); 
+    CGAL_PRINT_V_DEBUG("build_landmarks_set."); 
     NN_Point_list      plist; 
 
     //Go over planar map, and insert all vertices as landmarks
@@ -135,7 +135,7 @@ public:
       //insert point into list
       plist.push_back(np); 
       
-      //PRINT_V_DEBUG("landmark = "<< p); 
+      //CGAL_PRINT_V_DEBUG("landmark = "<< p); 
     } 
 
     //the search structure is now updated
@@ -151,7 +151,7 @@ public:
    */
   void clear_landmarks_set ()
   {
-    PRINT_V_DEBUG("clear_landmarks_set.");
+    CGAL_PRINT_V_DEBUG("clear_landmarks_set.");
     
     nn.clean();
 
@@ -165,7 +165,7 @@ public:
    */
   Point_2 get_closest_landmark (Point_2 p, Object &obj)
   {
-    PRINT_V_DEBUG("get_closest_landmark.");
+    CGAL_PRINT_V_DEBUG("get_closest_landmark.");
 
     CGAL_assertion(updated);
     return nn.find_nearest_neighbor(p, obj);
@@ -245,7 +245,7 @@ public:
   {
     if (! ignore_notifications)
     {
-      PRINT_V_DEBUG("Arr_landmarks_vertices_generator::after_create_vertex");
+      CGAL_PRINT_V_DEBUG("Arr_landmarks_vertices_generator::after_create_vertex");
       _small_change();
     }
   }
@@ -269,7 +269,7 @@ protected:
    */
   void _small_change ()
   {
-    PRINT_V_DEBUG("small change. num_small_not_updated_changes = " 
+    CGAL_PRINT_V_DEBUG("small change. num_small_not_updated_changes = " 
       << num_small_not_updated_changes);
 
     double nl = static_cast<double> (num_landmarks);
@@ -280,7 +280,7 @@ protected:
     if ((num_landmarks < 10) ||
       (num_small_not_updated_changes >=  sqrt_num_landmarks))
     {
-      PRINT_V_DEBUG("updating ...");
+      CGAL_PRINT_V_DEBUG("updating ...");
       clear_landmarks_set();
       build_landmarks_set();
     }
