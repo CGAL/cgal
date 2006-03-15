@@ -18,8 +18,8 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 
-#ifndef DXF_BSOP_READER_H
-#define DXF_BSOP_READER_H
+#ifndef CGAL_DXF_BSOP_READER_H
+#define CGAL_DXF_BSOP_READER_H
 
 #include <CGAL/IO/Dxf_reader.h>
 #include <iostream>
