@@ -1,4 +1,7 @@
-13 Mars 2006 Efi Fogel
+14 March 2006 Andreas Fabri
+- Fixed src/Core/makefile
+
+13 March 2006 Efi Fogel
 - Reflected changes from CORE sources
 
 02 February 2006 Andreas Fabri
