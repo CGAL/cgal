@@ -136,8 +136,11 @@ namespace CGAL {
                                     Criteria& criteria)
 	: SMREB(c2t3, surface, mesh_traits, criteria),
           bad_vertices_initialized(false)
-      {}
-
+      {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+        std::cerr << "CONS: Surface_mesher_manifold_base\n";
+#endif
+      }
 
     public:
 
@@ -264,7 +267,11 @@ namespace CGAL {
                             SurfaceMeshTraits mesh_traits,
                             Criteria& criteria)
       : SM(c2t3, surface, mesh_traits, criteria)
-    {}
+    {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+      std::cerr << "CONS: Surface_mesher_manifold\n";
+#endif
+    }
   };  // end Surface_mesher_manifold
 
   }  // end namespace Surface_mesher

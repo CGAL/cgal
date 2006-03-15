@@ -189,7 +189,11 @@ namespace CGAL {
                                         SurfaceMeshTraits mesh_traits,
                                         Criteria& criteria)
         : SMB(c2t3, surface, mesh_traits, criteria)
-    {}
+    {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+      std::cerr << "CONS: Surface_mesher_regular_edges_base\n";
+#endif
+    }
 
     // Initialization function
     void scan_triangulation_impl() {
@@ -324,7 +328,11 @@ namespace CGAL {
                                  SurfaceMeshTraits mesh_traits,
                                  Criteria& criteria)
       : SM(c2t3, surface, mesh_traits, criteria)
-    {}
+    {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+      std::cerr << "CONS: Surface_mesher_regular_edges\n";
+#endif
+    }
   };  // end Surface_mesher_regular_edges
 
   }  // end namespace Surface_mesher

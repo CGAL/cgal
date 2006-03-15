@@ -82,6 +82,9 @@ namespace CGAL {
       meshtraits(mesh_traits),
       criteria(c)
     {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+      std::cerr << "CONS: Surface_mesher_base\n";
+#endif
     }
 
   protected:
@@ -669,7 +672,11 @@ namespace CGAL {
       : Base(c2t3, surface, mesh_traits, criteria), 
         Mesher_lvl(null_mesher_level),
         initialized(false)
-    {}
+    {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+      std::cerr << "CONS: Surface_mesher\n";
+#endif
+    }
 
     // Initialization
     void init(bool debug = false)
