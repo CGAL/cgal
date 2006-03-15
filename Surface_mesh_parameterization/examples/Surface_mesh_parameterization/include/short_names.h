@@ -13,13 +13,14 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 //
 // Purpose: Workaround a Visual C++ bug that emits C4503 "name too long" warnings
 
 
+#include <CGAL/basic.h>
 #include <CGAL/config.h>
 
 #if defined(CGAL_CFG_LONGNAME_BUG)

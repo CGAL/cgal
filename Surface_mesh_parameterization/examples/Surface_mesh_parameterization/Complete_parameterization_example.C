@@ -1,9 +1,10 @@
 // Complete_parameterization_example.C
 
+#include "short_names.h"                    // must be included first
+
+
 #ifdef CGAL_USE_TAUCS
 
-
-#include "short_names.h"                    // must be included first
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
