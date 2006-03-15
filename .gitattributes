@@ -1055,6 +1055,7 @@ Minkowski_sum_2/demo/Minkowski_sum_2/Offset_demo.C -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.pdf -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.pstex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.pstex_t -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/convex_offset.eps -text
@@ -1085,11 +1086,13 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/onecyc_out.pdf -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.gif -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.pdf -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.pstex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/sum_triangles.pstex_t -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.gif -text
+Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pdf -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex_t -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tmp.inputs -text
