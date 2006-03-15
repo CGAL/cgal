@@ -437,18 +437,18 @@ sub make_testscripts()
 		rename("makefile.new","makefile");
 	    } else {
                 my $options = '-t';
-		if ( -f 'create_makefile_options') {
-		    if (open(OPTIONS, "<create_makefile_options")) {
+		if ( -f 'cgal_create_makefile_options') {
+		    if (open(OPTIONS, "<cgal_create_makefile_options")) {
 		        $_ = <OPTIONS>;
 			chomp;
 			if (/^[\w\s-]+$/) { $options = $_;
 			} else {
-			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			    print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
 			}
 			close OPTIONS;
 		    }
 		}
-		system("$SCRIPTDIR/create_makefile", $options);
+		system("$SCRIPTDIR/cgal_create_makefile", $options);
 	    }
 	    if ( ! -f 'cgal_test' ) {
 		system("$SCRIPTDIR/create_cgal_test");
@@ -477,18 +477,18 @@ sub make_testscripts()
 		rename("makefile.new","makefile");
 	    } else {
                 my $options = '-d';
-		if ( -f 'create_makefile_options') {
-		    if (open(OPTIONS, "<create_makefile_options")) {
+		if ( -f 'cgal_create_makefile_options') {
+		    if (open(OPTIONS, "<cgal_create_makefile_options")) {
 		        $_ = <OPTIONS>;
 			chomp;
 			if (/^[\w\s-]+$/) { $options = $_;
 			} else {
-			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			    print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
 			}
 			close OPTIONS;
 		    }
 		}
-		system("$SCRIPTDIR/create_makefile", $options);
+		system("$SCRIPTDIR/cgal_create_makefile", $options);
 	    }
 	    chdir '..';
 	}

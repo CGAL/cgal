@@ -1,3 +1,8 @@
+15 March 2006 Joachim Reichel
+- rename create_makefile to cgal_create_makefile to avoid name clashes,
+  adjust all occurences of create_makefile and create\_makefile in the entire
+  repository (well, trunk only)
+
 11 March 2006 Joachim Reichel
 - LGPL copyright notices added to src/makefile_{shared,}lib
 

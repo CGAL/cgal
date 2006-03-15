@@ -26,7 +26,7 @@
 # This script creates a CGAL makefile with entries for all .C files in the
 # current directory.
 #
-# Usage: create_makefile [-options] [outputfile]
+# Usage: cgal_create_makefile [-options] [outputfile]
 #
 # -d   create a default CGAL makefile
 # -t   create a makefile for the test suite
@@ -100,7 +100,7 @@ create_makefile_entry()
 
 create_makefile()
 {
-  echo "# Created by the script create_makefile"
+  echo "# Created by the script cgal_create_makefile"
   echo "# This is the makefile for compiling a CGAL application."
   echo
   header "include platform specific settings"
@@ -187,7 +187,7 @@ create_makefile()
 
 usage()
 {
-     echo "Usage: create_makefile [-options] [outputfile]"
+     echo "Usage: cgal_create_makefile [-options] [outputfile]"
      echo
      echo "-d   create a default CGAL makefile"
      echo "-t   create a makefile for the test suite"

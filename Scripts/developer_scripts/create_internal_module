@@ -31,8 +31,8 @@ Exactly one of the options -h or -r must be present.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
        from the CVS. Could be a taged version (<<current_submission>>) or some
        other version.
-   The SCRIPTSDIR is the place where you have the create_makefile script.
-       This script you can take it from CVS/Scripts/scripts/create_makefile.
+   The SCRIPTSDIR is the place where you have the cgal_create_makefile script.
+       You can take this script from CVS/Scripts/scripts/cgal_create_makefile.
        You need this script to create the default makefiles for examples and
        tests.
    The LOCKFILE is some file used by lockfile command as a mutex.
@@ -758,18 +758,18 @@ sub make_testscripts()
 		rename("makefile.new","makefile");
 	    } else {
                 my $options = '-t';
-		if ( -f 'create_makefile_options') {
-		    if (open(OPTIONS, "<create_makefile_options")) {
+		if ( -f 'cgal_create_makefile_options') {
+		    if (open(OPTIONS, "<cgal_create_makefile_options")) {
 		        $_ = <OPTIONS>;
 			chomp;
 			if (/^[\w\s-]+$/) { $options = $_;
 			} else {
-			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			    print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
 			}
 			close OPTIONS;
 		    }
 		}
-		system("$SCRIPTSDIR/create_makefile", $options);
+		system("$SCRIPTSDIR/cgal_create_makefile", $options);
 	    }
 	    if ( ! -f 'cgal_test' ) {
 	      create_test();
@@ -802,18 +802,18 @@ sub make_testscripts()
 		rename("makefile.new","makefile");
 	    } else {
                 my $options = '-d';
-		if ( -f 'create_makefile_options') {
-		    if (open(OPTIONS, "<create_makefile_options")) {
+		if ( -f 'cgal_create_makefile_options') {
+		    if (open(OPTIONS, "<cgal_create_makefile_options")) {
 		        $_ = <OPTIONS>;
 			chomp;
 			if (/^[\w\s-]+$/) { $options = $_;
 			} else {
-			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			    print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
 			}
 			close OPTIONS;
 		    }
 		}
-		system("$SCRIPTSDIR/create_makefile", $options);
+		system("$SCRIPTSDIR/cgal_create_makefile", $options);
 	    }
 	    chdir '..';
 	}

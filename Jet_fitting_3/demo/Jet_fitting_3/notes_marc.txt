@@ -1,6 +1,6 @@
 Pour generer un makefile
 
-$CGAL/scripts/create_makefile -d
+$CGAL/scripts/cgal_create_makefile -d
 
 pts sur (x,y, f(x,y)= (1/10)*(x^2+2y^2) )
 0 0 0 
