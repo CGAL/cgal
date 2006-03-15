@@ -23,9 +23,18 @@
 // coordinator   : MPI Saarbruecken
 //
 // ============================================================================
-#include <CGAL/Nef_2/Nef_polynomial.h>
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+//#include <CGAL/leda_rational.h>
+typedef leda_integer NT;
+//typedef leda_rational FNT;
+#else
+#include <CGAL/Gmpz.h>
+//#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpz NT;
+//typedef CGAL::Gmpq FNT;
+#endif
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous.h>
@@ -38,17 +47,6 @@
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Timer.h>
 #include <fstream>
-
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer NT;
-typedef leda_rational FNT;
-#else
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpz NT;
-typedef CGAL::Gmpq FNT;
-#endif
 
 template<typename Kernel>
 class test {
