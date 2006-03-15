@@ -70,6 +70,37 @@ namespace CGAL {
 
   };  // end Surface_mesher_regular_edges_without_boundary_base
 
+  template <
+    typename C2T3,
+    typename Surface,
+    typename SurfaceMeshTraits,
+    typename Criteria
+    >
+  class Surface_mesher_regular_edges_without_boundary
+    : public Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria,
+           Surface_mesher_regular_edges_without_boundary_base<C2T3,
+                                                              Surface,
+                                                              SurfaceMeshTraits,
+                                                              Criteria> >
+  {
+    typedef Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria,
+          Surface_mesher_regular_edges_without_boundary_base<C2T3,
+                                                             Surface,
+                                                             SurfaceMeshTraits,
+                                                             Criteria> > SM;
+  public:
+    Surface_mesher_regular_edges_without_boundary(C2T3& c2t3,
+                                                  Surface& surface,
+                                                  SurfaceMeshTraits mesh_traits,
+                                                  Criteria& criteria)
+      : SM(c2t3, surface, mesh_traits, criteria)
+    {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+      std::cerr << "CONS: Surface_mesher_regular_edges_without_boundary\n";
+#endif
+    }
+  };  // end Surface_mesher_regular_edges_without_boundary
+
   }  // end namespace Surface_mesher
 
 }  // end namespace CGAL

@@ -1,6 +1,8 @@
 15 March 2006 Laurent Rineau
 - Added macro CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS to strace constructors
-calls of classes in include/CGAL/Surface_mesher/Surface_mesher*.h
+  calls of classes in include/CGAL/Surface_mesher/Surface_mesher*.h
+- Added a test file test/Surface_mesher/internal-test-surface-mesher.C for
+  Andreas
 
 14 March 2006 Joachim Reichel
 - Added/fixed CGAL_MAKEFILE= line in makefiles

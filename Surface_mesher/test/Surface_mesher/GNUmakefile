@@ -40,10 +40,14 @@ LDFLAGS = \
 
 all:            \
                 implicit_surface_mesher_test$(EXE_EXT) \
+                internal-test-surface-mesher$(EXE_EXT) \
                 test_robust_circumcenter$(EXE_EXT) 
 
 implicit_surface_mesher_test$(EXE_EXT): implicit_surface_mesher_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher_test implicit_surface_mesher_test$(OBJ_EXT) $(LDFLAGS)
+
+internal-test-surface-mesher$(EXE_EXT): internal-test-surface-mesher$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)internal-test-surface-mesher internal-test-surface-mesher$(OBJ_EXT) $(LDFLAGS)
 
 test_robust_circumcenter$(EXE_EXT): test_robust_circumcenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_robust_circumcenter test_robust_circumcenter$(OBJ_EXT) $(LDFLAGS)
@@ -53,8 +57,9 @@ run-test:
 	./test_robust_circumcenter$(EXE_EXT)
 
 clean: \
-                   test_robust_circumcenter.clean \
-                   implicit_surface_mesher_test.clean
+                   implicit_surface_mesher_test.clean \
+                   internal-test-surface-mesher.clean \
+                   test_robust_circumcenter.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -8,3 +8,4 @@ surface_mesher.C
 surfaces_union.C
 inputs
 NOTICE
+internal-test-surface-mesher.C

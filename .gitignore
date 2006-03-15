@@ -323,6 +323,7 @@ Surface_mesher/include/CGAL/Mesh_3
 Surface_mesher/test/Surface_mesher/*.exe
 Surface_mesher/test/Surface_mesher/depends
 Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test
+Surface_mesher/test/Surface_mesher/internal-test-surface-mesher
 Surface_mesher/test/Surface_mesher/my_makefile
 Surface_mesher/test/Surface_mesher/test_robust_circumcenter
 Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.aux
