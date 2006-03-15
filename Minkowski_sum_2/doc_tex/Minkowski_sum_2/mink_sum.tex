@@ -23,7 +23,7 @@
 % ====================
 
 Given two sets $A,B \in \reals^d$, their \emph{Minkowski sum},
-denoted by $A \oplus B$, is the set $\left\{ a + b ~\vert~ a \in
+denoted by $A \oplus B$, is the set $\left\{ a + b ~|~ a \in
 A, b \in B \right\}$. Minkowski sum are used in many applications,
 such as motion planning and computer-aided design and
 manufacturing. This package contains functions for computing planar
@@ -45,19 +45,20 @@ computed in $O(m + n)$ time, by starting from two bottommost vertices
 in $P$ and in $Q$ and performing ``merge sort'' on the edges.
 
 \begin{figure}[t]
-\begin{ccTexOnly}
-\begin{center}
-    \begin{tabular}{c c}
+  \begin{ccTexOnly}
+    \begin{center}
+      \begin{tabular}{c c}
         \includegraphics{Minkowski_sum_2/fig/onecyc_in} ~&~
-        \includegraphics{Minkowski_sum_2/fig/onecyc_out} \\
-    \end{tabular}
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-  <p><center>
-  <img src="./fig/conv_onecycle.gif" border=0 alt="Convolution cycle">
-  </center>
-\end{ccHtmlOnly}
+        \includegraphics{Minkowski_sum_2/fig/onecyc_out}
+      \end{tabular}
+    \end{center}
+  \end{ccTexOnly}
+  \begin{ccHtmlOnly}
+    <p><center>
+    <img src="./fig/onecyc_in.gif" border=0 alt="Convolution cycle">
+    <img src="./fig/onecyc_out.gif" border=0 alt="Convolution cycle">
+    </center>
+  \end{ccHtmlOnly}
 \caption{Computing the convolution of a convex polygon and a
 non-convex polygon (left). The convolution consists of a single
 self-intersecting cycle, drawn as a sequence of arrows (right).
@@ -92,16 +93,16 @@ boundaries. The {\em convolution} of these two polygons~\cite{grs-kfcg-83},
 denoted $P * Q$, is a collection of line segments of the form
 $[p_i + q_j, p_{i+1} + q_j]$,\footnote{Throughout this chapter, we increment
 or decrement an index of a vertex modulo the size of the polygon.}
-where the vector $\overrightarrow{p_i p_{i+1}}$
-lies between $\overrightarrow{q_{j-1} q_j}$ and $\overrightarrow{q_j
-q_{j+1}}$,\footnote{We say that a vector $\vec{v}$ lies between
-two vectors $\vec{u}$ and $\vec{w}$ if we reach $\vec{v}$ strictly
-before reaching $\vec{w}$ if we move all three vectors to the origin
-and rotate $\vec{u}$ counterclockwise. Note that this also covers
-the case where $\vec{u}$ has the same direction as $\vec{v}$.} and
+where the vector ${\mathbf p_i p_{i+1}}$
+lies between ${\mathbf q_{j-1} q_j}$ and ${\mathbf q_j
+q_{j+1}}$,\footnote{We say that a vector ${\mathbf v}$ lies between
+two vectors ${\mathbf u}$ and ${\mathbf w}$ if we reach ${\mathbf v}$ strictly
+before reaching ${\mathbf w}$ if we move all three vectors to the origin
+and rotate ${\mathbf u}$ counterclockwise. Note that this also covers
+the case where ${\mathbf u}$ has the same direction as ${\mathbf v}$.} and
 --- symmetrically --- of segments of the form $[p_i + q_j, p_i + q_{j+1}]$,
-where the vector $\overrightarrow{q_j q_{j+1}}$ lies between
-$\overrightarrow{p_{i-1} p_i}$ and $\overrightarrow{p_i p_{i+1}}$.
+where the vector ${\mathbf q_j q_{j+1}}$ lies between
+${\mathbf p_{i-1} p_i}$ and ${\mathbf p_i p_{i+1}}$.
 
 The segments of the convolution form a number of closed (not
 necessarily simple) polygonal curves called \emph{convolution
@@ -143,7 +144,7 @@ contains \ccc{S.number_of_holes()} holes in its interior).
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \input{Minkowski_sum_2/fig/sum_triangles.pstex_t}
+    \includegraphics{Minkowski_sum_2/fig/sum_triangles}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -169,7 +170,7 @@ The file \ccc{print_util.h} includes auxiliary functions for printing polygons.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \input{Minkowski_sum_2/fig/tight.pstex_t}
+    \includegraphics{Minkowski_sum_2/fig/tight}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -280,7 +281,9 @@ is widely known as \emph{offsetting} the polygon $P$ by a radius $r$.
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
-  <img src="./fig/offset.gif" border=0 alt="Computing offsets of polygons">
+  <img src="./fig/convex_offset.gif" border=0 alt="Computing offsets of polygons">
+  <img src="./fig/offset_decomp.gif" border=0 alt="Computing offsets of polygons">
+  <img src="./fig/offset_conv.gif" border=0 alt="Computing offsets of polygons">
   </center>
 \end{ccHtmlOnly}
 \caption{(a)~Offsetting a convex polygon.
@@ -301,7 +304,7 @@ $n$ disconnected \emph{offset edges}. Each pair of adjacent offset
 edges, induced by $p_{i-1} p_i$ and $p_i p_{i+1}$, are connected
 by a circular arc of radius $r$, whose supporting circle is
 centered at $p_i$. The angle that defines such a circular arc
-equals $180^{\circ} - \measuredangle p_{i-1} p_i p_{i+1}$; see
+equals $180^{\circ} - \angle p_{i-1} p_i p_{i+1}$; see
 Figure~\ref{mink_fig:pgn_offset}(a) for an illustration. The running
 time of this simple process is of course linear with respect to
 the size of the polygon.
@@ -317,7 +320,7 @@ with the disc $B_r$,\footnote{As the disc is convex, it is guaranteed
 that the convolution curve is comprised of a single cycle.} which can be
 constructed by applying the process described in the previous
 paragraph. The only difference is that a circular arc induced by a
-reflex vertex $p_i$ is defined by an angle $540^{\circ} - \measuredangle
+reflex vertex $p_i$ is defined by an angle $540^{\circ} - \angle
 p_{i-1} p_i p_{i+1}$; see Figure~\ref{fig:pgn_offset}(c) for an
 illustration. We finally compute the winding numbers of the faces of the
 arrangement induced by the convolution cycle to obtain the offset
@@ -363,12 +366,12 @@ conic arcs.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-  \input{Minkowski_sum_2/fig/approx_offset.pstex_t}
+  \includegraphics{Minkowski_sum_2/fig/approx_offset}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
-  <img src="./fig/tight.gif" border=0 alt="Approximating an offset edge">
+  <img src="./fig/approx_offset.gif" border=0 alt="Approximating an offset edge">
   </center>
 \end{ccHtmlOnly}
 \caption{Approximating the offset edge $o_1 o_2$ induced by the polygon
@@ -393,7 +396,8 @@ the exact offset edge $o_1 o_2$ is obtained by shifting the polygon edge
 $p_1 p_2$ by a vector whose length is $r$ that form an angle $\phi$ with the
 $x$-axis. We select two points $o'_1$ and $o'_2$ with rational coordinates
 on the two circles centered at $p_1$ and $p_2$, respectively. These points
-are selected such that if we denote the angle that the vector $\vec{p_j o_j}$
+are selected such that if we denote the angle that the vector 
+${\mathbf p_j o_j}$
 forms with the $x$-axis by $\phi'_j$ (for $j = 1, 2$), we have
 $\phi'_1 < \phi < \phi'_2$.
 %
@@ -424,9 +428,9 @@ of line segments and circular arcs).
 
 \begin{figure}[t]
 \begin{ccTexOnly}
-\begin{center}
+  \begin{center}
     \includegraphics{Minkowski_sum_2/fig/ex_offset} 
-\end{center}
+  \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
