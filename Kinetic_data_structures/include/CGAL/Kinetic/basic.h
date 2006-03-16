@@ -71,9 +71,9 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 typedef CGAL::Gmpq Default_field_nt;
 CGAL_KINETIC_END_NAMESPACE
 #else
-#include <CGAL/MPFloat.h>
+#include <CGAL/MP_Float.h>
 CGAL_KINETIC_BEGIN_NAMESPACE
-typedef CGAL::MPFloat Default_field_nt;
+typedef CGAL::MP_Float Default_field_nt;
 CGAL_KINETIC_END_NAMESPACE
 #endif
 
