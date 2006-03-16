@@ -1164,6 +1164,7 @@ Nef_3/Visual_hull/Nef_3/mpi_triang.off -text
 Nef_3/Visual_hull/Nef_3/octahedron.off -text
 Nef_3/demo/Nef_3/cube.off -text
 Nef_3/demo/Nef_3/include/CGAL/Nef_3/visual_hull_creator.h -text
+Nef_3/demo/Nef_3/mpi.vsh -text
 Nef_3/demo/Nef_3/visual_hull.C -text
 Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#unset
