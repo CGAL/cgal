@@ -69,7 +69,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
-#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
