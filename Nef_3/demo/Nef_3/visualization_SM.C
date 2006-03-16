@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Lutz Kettner
+// Author(s)     : Peter Hachenberger
 
 
 #ifndef CGAL_USE_QT
