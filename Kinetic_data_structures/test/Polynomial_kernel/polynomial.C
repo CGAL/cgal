@@ -41,6 +41,14 @@ void write_variable(const char *name, const Polynomial &v)
   }
 }
 
+template <class Traits>
+void check_equal(const typename Traits::Function&a, const typename Traits::Function &b) {
+  if (a != b) {
+    std::cerr << a <<  " != " << b << std::endl;
+    CGAL_assertion(a==b);
+  }
+}
+
 
 template <class Traits>
 void test_polynomial(const Traits &tr)
@@ -63,42 +71,42 @@ void test_polynomial(const Traits &tr)
   write_variable("q", q );
 
   write("-p", (-p));
-  CGAL_assertion(-p == cf(1,-2,-27,17));
+  check_equal<Traits>(-p , cf(1,-2,-27,17));
 
   write("p-p",(p-p));
-  CGAL_assertion((p-p) == cf(0));
+  check_equal<Traits>(p-p , cf(0));
 
   write("p+q" , (p+q) );
-  CGAL_assertion(p+q == cf( -2, 4, 54, -17));
+  check_equal<Traits>(p+q , cf( -2, 4, 54, -17));
 
   write("p-q" , (p-q));
-  CGAL_assertion(p-q == cf(0,0,0,-17));
+  check_equal<Traits>(p-q , cf(0,0,0,-17));
 
   write("q*(p-q)" , q*(p-q) );
-  CGAL_assertion(q*(p-q) == cf(0,0,0,17,-34,-459));
+  check_equal<Traits>(q*(p-q) , cf(0,0,0,17,-34,-459));
 
   write_variable( "a", a);
 
   write("(p-q)+a" , ((p-q)+a) );
-  CGAL_assertion((p-q)+a == cf(2, 0, 0, -17));
+  check_equal<Traits>((p-q)+Polynomial(a) , cf(2, 0, 0, -17));
 
   write("(p-q)-a" , ((p-q)-a) );
-  CGAL_assertion((p-q)-a == cf(-2, 0, 0, -17));
+  check_equal<Traits>((p-q)-Polynomial(a) , cf(-2, 0, 0, -17));
 
   write("a*(p-q)" , (a*(p-q)) );
-  CGAL_assertion((a*(p-q)) == cf(0,0,0,-34));
+  check_equal<Traits>((Polynomial(a)*(p-q)) , cf(0,0,0,-34));
 
   write("(p-q)*a" , ((p-q)*a) );
-  CGAL_assertion(((p-q)*a) == cf(0,0,0,-34));
+  check_equal<Traits>(((p-q)*Polynomial(a)) , cf(0,0,0,-34));
 
   write("(p-q)/a" , ((p-q)/a) );
-  CGAL_assertion(((p-q)/a) == cf(0,0,0,-NT(17)/NT(2)));
+  check_equal<Traits>((Polynomial(p-q)/a) , cf(0,0,0,-NT(17)/NT(2)));
 
   write("subs(t=-t, p)", tr.negate_variable_object()(p) );
-  CGAL_assertion(tr.negate_variable_object()(p) == cf( -1, -2, 27, 17));
+  check_equal<Traits>(tr.negate_variable_object()(p) , cf( -1, -2, 27, 17));
 
   write("t^degree(p) * subs(t=(1/t), p)", tr.invert_variable_object()(p) );
-  CGAL_assertion( tr.invert_variable_object()(p) == cf(-17, 27, 2, -1));
+  check_equal<Traits>( tr.invert_variable_object()(p) , cf(-17, 27, 2, -1));
 
   //write("diff(p,t)", tr.differentiate_object()(p) );
 
@@ -110,57 +118,57 @@ void test_polynomial(const Traits &tr)
 
   p = r * r * s + Polynomial(NT(1));
   write_variable( "p", p);
-  CGAL_assertion(p == cf(-1, 5, -4, 1));
+  check_equal<Traits>(p , cf(-1, 5, -4, 1));
 
   q = r * s;
   write_variable("q", q );
-  CGAL_assertion(q == cf( 2, -3, 1));
+  check_equal<Traits>(q , cf( 2, -3, 1));
 
   write("rem(p,q,t)",
         tr.remainder_object()(p,q) );
-  CGAL_assertion(tr.remainder_object()(p,q) == cf(1));
+  check_equal<Traits>(tr.remainder_object()(p,q) , cf(1));
 
   write("prem(p,q,t)",
         tr.pseudo_remainder_object()(p,q) );
-  CGAL_assertion(tr.pseudo_remainder_object()(p,q) == cf(1));
+  check_equal<Traits>(tr.pseudo_remainder_object()(p,q) , cf(1));
 
   write("quo(p,q,t)",
         tr.quotient_object()(p,q) );
-  CGAL_assertion(tr.quotient_object()(p,q) == cf(-1,1));
+  check_equal<Traits>(tr.quotient_object()(p,q) , cf(-1,1));
 
   write("pquo(p,q,t)",
         tr.pseudo_quotient_object()(p,q) );
-  CGAL_assertion(tr.pseudo_quotient_object()(p,q) == cf(-1,1));
+  check_equal<Traits>(tr.pseudo_quotient_object()(p,q) , cf(-1,1));
 
   p = r * r * s * s * s;
   write_variable( "p", p);
-  CGAL_assertion(p == cf(-8, 28, -38, 25, -8, 1));
+  check_equal<Traits>(p , cf(-8, 28, -38, 25, -8, 1));
 
   q = r * s;
   write_variable("q", q );
-  CGAL_assertion(q == cf(2,-3,1));
+  check_equal<Traits>(q , cf(2,-3,1));
 
   write("rem(p,q,t)",
         tr.remainder_object()(p,q) );
-  CGAL_assertion(tr.remainder_object()(p,q) == cf(0));
+  check_equal<Traits>(tr.remainder_object()(p,q) , cf(0));
 
   write("prem(p,q,t)",
         tr.pseudo_remainder_object()(p,q) );
-  CGAL_assertion(tr.pseudo_remainder_object()(p,q) == cf(0));
+  check_equal<Traits>(tr.pseudo_remainder_object()(p,q) , cf(0));
 
   write("quo(p,q,t)",
         tr.quotient_object()(p,q) );
-  CGAL_assertion(tr.quotient_object()(p,q) == cf(-4, 8, -5, 1));
+  check_equal<Traits>(tr.quotient_object()(p,q) , cf(-4, 8, -5, 1));
 
   write("pquo(p,q,t)",
         tr.pseudo_quotient_object()(p,q) );
-  CGAL_assertion(tr.pseudo_quotient_object()(p,q) == cf(-4, 8, -5, 1));
+  check_equal<Traits>(tr.pseudo_quotient_object()(p,q) , cf(-4, 8, -5, 1));
 
   int shift = 6;
 
   write("p * t^6", tr.shift_power_object(shift)(p) );
-  CGAL_assertion(tr.shift_power_object(shift)(p)
-		 == cf(0,0,0,0,0,0,-8, 28, -38, 25, -8, 1));
+  check_equal<Traits>(tr.shift_power_object(shift)(p)
+		 , cf(0,0,0,0,0,0,-8, 28, -38, 25, -8, 1));
 
   NT v3[] = {0, 1};
 
@@ -171,8 +179,8 @@ void test_polynomial(const Traits &tr)
 
   NT new_zero = NT(-1);
   write("subs(t=t-1,p)", tr.rational_translate_zero_object(new_zero)(p));
-  CGAL_assertion(tr.rational_translate_zero_object(new_zero)(p)
-		 == cf(1, -2, 1));
+  check_equal<Traits>(tr.rational_translate_zero_object(new_zero)(p)
+		 , cf(1, -2, 1));
 }
 
 
@@ -192,6 +200,7 @@ int main(int argc, char* argv[])
     write_maple_functions(std::cout);
     }*/
   {
+    std::cout << "Testing regular poly.\n";
     typedef CGAL::POLYNOMIAL::Default_field_nt                        NT;
     typedef CGAL_POLYNOMIAL_NS::Polynomial<NT>     Polynomial;
 
@@ -204,14 +213,16 @@ int main(int argc, char* argv[])
   std::cout <<"\n\n\n\n\n";
 
   {
+    std::cout << "Testing filtered poly.\n";
     typedef CGAL::POLYNOMIAL::Default_field_nt NT;
     typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<NT> FT;
     typedef CGAL_POLYNOMIAL_NS::internal::Filtered_rational_traits<FT> Tr;
     Tr tr;
     test_polynomial(tr);
   }
-
+  std::cout <<"\n\n\n\n\n";
   {
+    std::cout << "Testing core poly.\n";
     typedef CGAL_POLYNOMIAL_NS::CORE_kernel CORE_kernel;
     CORE_kernel tr;
     test_polynomial(tr);

@@ -39,6 +39,7 @@ struct CORE_polynomial: public CORE::Polynomial<CORE::BigRat> {
   }
   CORE_polynomial(NT n): P(0, &n){
   }
+  CORE_polynomial(int d): P(d){}
   CORE_polynomial(const P&p): P(p){
     /*for (int i=0; i<= degree(); ++i){
       CGAL_precondition(P::getCoeffi(i).err()==0);
@@ -55,6 +56,33 @@ struct CORE_polynomial: public CORE::Polynomial<CORE::BigRat> {
 
   NT operator()(const NT &nt) const {
     return P::eval(nt);
+  }
+
+  bool operator==(const CORE_polynomial&o ) const {
+    if (P::getTrueDegree() != o.getTrueDegree()) {
+      return false;
+    } else {
+      for (int i=0; i<= P::getTrueDegree(); ++i) {
+	if (operator[](i) != o[i]) return false;
+      }
+    }
+    return true;
+  }
+
+  CORE_polynomial operator/(const NT &nt) const {
+    CORE_polynomial ret(P::getTrueDegree());
+    for (int i=0; i<= degree(); ++i){
+      ret.setCoeff(i, operator[](i)/nt);
+    }
+    return ret;
+  }
+
+  CORE_polynomial operator-() const {
+    CORE_polynomial ret(P::getTrueDegree());
+    for (int i=0; i<= degree(); ++i){
+      ret.setCoeff(i, -operator[](i));
+    }
+    return ret;
   }
 
   CORE::Expr operator()(const CORE::Expr &nt) const {
