@@ -60,6 +60,10 @@ void test( std::string file )
   PolygonPtr lPoly = load_polygon(file);
   if ( lPoly )
   {
+     bool allok = false ;
+     
+     CGAL::Real_timer t ;
+     
      CGAL::Bbox_2 lBbox = lPoly->bbox();
      
      double w = lBbox.xmax() - lBbox.xmin();
@@ -67,90 +71,89 @@ void test( std::string file )
      double s = std::sqrt(w*w+h*h);
      double lOffset = s * 0.3 ;
      
-     double lMargin = CGAL::compute_outer_frame_margin(lPoly->vertices_begin()
-						       ,lPoly->vertices_end  ()
-						       ,lOffset
-                                                );
-     double flx = lBbox.xmin() - lMargin ;
-     double fhx = lBbox.xmax() + lMargin ;
-     double fly = lBbox.ymin() - lMargin ;
-     double fhy = lBbox.ymax() + lMargin ;
-     
-     Point lFrame[4]= { Point(flx,fly)
-                      , Point(fhx,fly)
-                      , Point(fhx,fhy)
-                      , Point(flx,fhy)
-                      } ;
-                      
-    CGAL::Real_timer t ;
-    t.start();
-    SlsBuilder builder ;
-    builder.enter_contour(lFrame,lFrame+4);
-    builder.enter_contour(lPoly->vertices_begin(),lPoly->vertices_end());
-    Sls sls = builder.construct_skeleton() ;
-    t.stop();
-    
-    bool ssok   = Sls_const_decorator(sls).is_valid(false,3);
-    bool allok = false ;
-    
-    if ( ssok )
-    {
-      RegionPtr lContours( new Region ) ;
-      OffsetBuilder lOffsetBuilder(sls);
-      lOffsetBuilder.construct_offset_contours(lOffset, std::back_inserter(*lContours) );
-      
-      // Verify there are at least 2 offset contours generated.
-      if ( lContours->size() > 1 )
-      {
-        // Find the outmost offset contour (as the one with the biggest area)
-        PolygonPtr lOutmost = lContours->front();
-        double lBestArea = CGAL_NTS abs (lOutmost->area());
-        for( Region::const_iterator cit = CGAL::successor(lContours->begin()), ecit = lContours->end() ; cit != ecit ; ++ cit )
-        {
-          PolygonPtr lContour = *cit ;
-          if ( CGAL_NTS abs (lContour->area()) > lBestArea )
-          {
-            lBestArea = lContour->area();
-            lOutmost  = lContour ;
-          }
-        }
-
-        // Verify that the outmost offset contour is a parallelogram        
-        if  ( lOutmost->size() == 5 )
-        {
-          double xmin = lOutmost->left_vertex  ()->x() ; 
-          double xmax = lOutmost->right_vertex ()->x() ; 
-          double ymin = lOutmost->bottom_vertex()->y() ; 
-          double ymax = lOutmost->top_vertex   ()->y() ; 
-          
-          CGAL::Bbox_2 lBBox = lOutmost->bbox();
-          
-          // Verify that the outmost offset contour is an iso-rectangle.
-          // If it is, assume this offset contour corresponds to the frame.
-          if (  xmin == lBBox.xmin()
-             && xmax == lBBox.xmax()
-             && ymin == lBBox.ymin()
-             && ymax == lBBox.ymax()
-             )
-          {
-            double distl = xmin - flx  ;
-            double distr = fhx  - xmax ;
-            double distb = ymin - fly  ;
-            double distt = fhy  - ymax ;
-            
-            double eps = 1e-5 ;
+     boost::optional<double> lMargin = CGAL::compute_outer_frame_margin(lPoly->vertices_begin()
+                                                                       ,lPoly->vertices_end  ()
+                                                                       ,lOffset
+                                                                       );
+     if ( lMargin )
+     {
+       double flx = lBbox.xmin() - *lMargin ;
+       double fhx = lBbox.xmax() + *lMargin ;
+       double fly = lBbox.ymin() - *lMargin ;
+       double fhy = lBbox.ymax() + *lMargin ;
+       
+       Point lFrame[4]= { Point(flx,fly)
+                        , Point(fhx,fly)
+                        , Point(fhx,fhy)
+                        , Point(flx,fhy)
+                        } ;
+                        
+       t.start();
+       SlsBuilder builder ;
+       builder.enter_contour(lFrame,lFrame+4);
+       builder.enter_contour(lPoly->vertices_begin(),lPoly->vertices_end());
+       SlsPtr sls = builder.construct_skeleton() ;
+       t.stop();
+       
+       if ( sls )
+       {
+         RegionPtr lContours( new Region ) ;
+         OffsetBuilder lOffsetBuilder(*sls);
+         lOffsetBuilder.construct_offset_contours(lOffset, std::back_inserter(*lContours) );
+         
+         // Verify there are at least 2 offset contours generated.
+         if ( lContours->size() > 1 )
+         {
+           // Find the outmost offset contour (as the one with the biggest area)
+           PolygonPtr lOutmost = lContours->front();
+           double lBestArea = CGAL_NTS abs (lOutmost->area());
+           for( Region::const_iterator cit = successor(lContours->begin()), ecit = lContours->end() ; cit != ecit ; ++ cit )
+           {
+             PolygonPtr lContour = *cit ;
+             if ( CGAL_NTS abs (lContour->area()) > lBestArea )
+             {
+               lBestArea = lContour->area();
+               lOutmost  = lContour ;
+             }
+           }
+   
+           // Verify that the outmost offset contour is a parallelogram        
+           if  ( lOutmost->size() == 5 )
+           {
+             double xmin = lOutmost->left_vertex  ()->x() ; 
+             double xmax = lOutmost->right_vertex ()->x() ; 
+             double ymin = lOutmost->bottom_vertex()->y() ; 
+             double ymax = lOutmost->top_vertex   ()->y() ; 
              
-            // Verify the offset frame is at the right distance.
-            if (  std::abs(distl-lOffset)<eps
-               && std::abs(distr-lOffset)<eps
-               && std::abs(distb-lOffset)<eps
-               && std::abs(distt-lOffset)<eps
-               )  
-              allok = true ;   
-          }
-        }
-      }
-    }
+             CGAL::Bbox_2 lBBox = lOutmost->bbox();
+             
+             // Verify that the outmost offset contour is an iso-rectangle.
+             // If it is, assume this offset contour corresponds to the frame.
+             if (  xmin == lBBox.xmin()
+                && xmax == lBBox.xmax()
+                && ymin == lBBox.ymin()
+                && ymax == lBBox.ymax()
+                )
+             {
+               double distl = xmin - flx  ;
+               double distr = fhx  - xmax ;
+               double distb = ymin - fly  ;
+               double distt = fhy  - ymax ;
+               
+               double eps = 1e-5 ;
+                
+               // Verify the offset frame is at the right distance.
+               if (  std::abs(distl-lOffset)<eps
+                  && std::abs(distr-lOffset)<eps
+                  && std::abs(distb-lOffset)<eps
+                  && std::abs(distt-lOffset)<eps
+                  )  
+                 allok = true ;   
+             }
+           }
+         }
+       }
+     }     
         
     cout << file << " : " << ( allok ? "OK" : "FAILED!" ) << " (" << t.time() << " seconds)." << endl ;
     if ( allok )

@@ -106,7 +106,7 @@ private:
     return Compare_offset_against_event_time_2<Traits>(mTraits)()(aT,CreateTriedge(lBorderA,lBorderB,lBorderC));
   }
 
-  Point_2 Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
+  boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
     CGAL_assertion(handle_assigned(aBisector->opposite()));

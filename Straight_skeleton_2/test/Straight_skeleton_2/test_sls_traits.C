@@ -16,11 +16,7 @@
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #include <CGAL/test_sls_traits_types.h>
-//#include <CGAL/Kernel_traits.h>
 
-//#define EXACT_KERNEL
-//#define JUST_SINGLE_CASE
-//#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
 #include<iostream>
@@ -37,11 +33,7 @@ std::string sPrefix ;
 
 #include <CGAL/test_sls_traits_aux.C>
 
-#ifdef EXACT_KERNEL
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K ;
-#else
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
-#endif
 
 typedef K::FT      FT;
 typedef K::Point_2 Point ;
@@ -315,24 +307,13 @@ int main()
 {
   std::cout << "Testing Straight_skeleton_traits_2\n";
 
-#ifdef JUST_SINGLE_CASE
-  sGrid.Setup(0,0,1,1);
-  test_exist_event(-1,sTraits,triedge("agc","lk"),true);
-#else
-
   const int oc = 4 ;
   const double ox[oc]={0,10,1000,10000};
   const double oy[oc]={0, 5,5000, 5000};
 
-#ifdef EXACT_KERNEL
-  const int sc = 10 ;
-  const double sx[sc]={1,1e-10,1e-5,10,1e5,1e10,10 ,0.1,1e4 ,1e-4};
-  const double sy[sc]={1,1e-10,1e-5,10,1e5,1e10,0.1,10 ,1e-4,1e4 };
-#else
   const int sc = 10 ;
   const double sx[sc]={1,ldexp(1.,-2),ldexp(1.,-8),ldexp(1.,-32),ldexp(1.,2),ldexp(1.,8),ldexp(1.,32),ldexp(1., 2),ldexp(1., 8),ldexp(1.,-8)};
   const double sy[sc]={1,ldexp(1.,-2),ldexp(1.,-8),ldexp(1.,-32),ldexp(1.,2),ldexp(1.,8),ldexp(1.,32),ldexp(1.,-2),ldexp(1.,-8),ldexp(1., 8)};
-#endif
 
   for ( int si = 0; si < sc ; ++ si )
   {
@@ -347,7 +328,6 @@ int main()
       test_is_inside_offset_zone();
     }
   }
-#endif
 
   if ( sReportSummary )
   {

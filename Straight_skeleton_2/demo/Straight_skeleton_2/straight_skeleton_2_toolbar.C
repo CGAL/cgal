@@ -37,8 +37,8 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
     nr_of_buttons = 0;
     //set the widget
     widget = w;
-    widget->attach(&getsimplebut);
-    getsimplebut.deactivate();
+    widget->attach(&getpolybut);
+    getpolybut.deactivate();
 
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
@@ -49,9 +49,9 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Deactivate Layer");
   
-  but[1] = new QToolButton(this, "spolygon");
+  but[1] = new QToolButton(this, "polygon");
   but[1]->setIconSet(set1);
-  but[1]->setTextLabel("Input Simple Polygon");
+  but[1]->setTextLabel("Input Polygon");
   
   button_group = new QButtonGroup(0, "exclusive_group");
   button_group->insert(but[0]);
@@ -62,7 +62,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
   but[1]->setToggleButton(true);
   
   connect(but[1], SIGNAL(stateChanged(int)),
-        &getsimplebut, SLOT(stateChanged(int)));
+        &getpolybut, SLOT(stateChanged(int)));
   nr_of_buttons = 2;
   };
 

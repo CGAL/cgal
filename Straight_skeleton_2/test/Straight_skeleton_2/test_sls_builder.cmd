@@ -1,4 +1,9 @@
 ./data
+consecutive_coincident_vertices_0.poly
+consecutive_coincident_vertices_1.poly
+consecutive_coincident_vertices_2.poly
+consecutive_coincident_vertices_3.poly
+consecutive_coincident_vertices_4.poly
 degenerate0.poly
 double_edge.poly
 degenerate6.poly

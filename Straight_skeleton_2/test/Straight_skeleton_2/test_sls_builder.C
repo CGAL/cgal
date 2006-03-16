@@ -76,9 +76,9 @@ void test( std::string file )
     SlsBuilder builder ;
     for( Region::const_iterator bit = lRegion->begin(), ebit = lRegion->end() ; bit != ebit ; ++ bit )
       builder.enter_contour((*bit)->vertices_begin(),(*bit)->vertices_end());
-    Sls sls = builder.construct_skeleton() ;
+    SlsPtr sls = builder.construct_skeleton() ;
     t.stop();
-    bool ok = Sls_const_decorator(sls).is_valid(false,3);
+    bool ok = sls  ;
     cout << file << " : " << ( ok ? "OK" : "FAILED!" ) << " (" << t.time() << " seconds)." << endl ;
     if ( ok )
     {

@@ -29,11 +29,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class ForwardPointIterator, class Traits>
-typename Traits::FT compute_outer_frame_margin ( ForwardPointIterator aBegin
-                                               , ForwardPointIterator aEnd
-                                               , typename Traits::FT  aOffset
-                                               , Traits const&        aTraits
-                                               )
+boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
+                                                                  , ForwardPointIterator aEnd
+                                                                  , typename Traits::FT  aOffset
+                                                                  , Traits const&        aTraits
+                                                                  )
 {
   typedef typename Traits::Kernel  Kernel ;
   typedef typename Traits::Point_2 Point_2 ;
@@ -47,10 +47,14 @@ typename Traits::FT compute_outer_frame_margin ( ForwardPointIterator aBegin
   typename Kernel::Collinear_2                collinear        = kernel.collinear_2_object();
   typename Kernel::Compute_squared_distance_2 squared_distance = kernel.compute_squared_distance_2_object();
   
+  typedef boost::optional<Point_2> OptionalPoint_2 ;
+  
   FT lMaxSDist(0.0) ;
   
   ForwardPointIterator lLast = predecessor(aEnd) ;
   
+  bool lOverflow = false ;
+
   for ( ForwardPointIterator lCurr = aBegin ; lCurr < aEnd ; ++ lCurr )
   {
     ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : predecessor(lCurr) ) ;
@@ -58,24 +62,43 @@ typename Traits::FT compute_outer_frame_margin ( ForwardPointIterator aBegin
     
     if ( !equal(*lPrev,*lCurr) && !equal(*lCurr,*lNext) && !collinear(*lPrev,*lCurr,*lNext) )
     {
-      Edge    lLEdge = Construct_ss_edge_2     <Traits>(aTraits)()(*lPrev,*lCurr);
-      Edge    lREdge = Construct_ss_edge_2     <Traits>(aTraits)()(*lCurr,*lNext);
-      Point_2 lP     = Construct_offset_point_2<Traits>(aTraits)()(aOffset,lLEdge,lREdge);
-     
-      FT lSDist = squared_distance(*lCurr,lP);
+      Edge lLEdge = Construct_ss_edge_2<Traits>(aTraits)()(*lPrev,*lCurr);
+      Edge lREdge = Construct_ss_edge_2<Traits>(aTraits)()(*lCurr,*lNext);
       
+      OptionalPoint_2 lP = Construct_offset_point_2<Traits>(aTraits)()(aOffset,lLEdge,lREdge);
+     
+      if ( !lP )
+      {
+        lOverflow = true ;
+        break ;
+      }
+       
+      FT lSDist = squared_distance(*lCurr,*lP);
+ 
+      if ( ! CGAL_NTS is_finite(lSDist) ) 
+      {
+        lOverflow = true ;
+        break ;
+      }  
+               
       if ( lSDist > lMaxSDist )
         lMaxSDist = lSDist ;
     }
   }
   
-  FT lDist = CGAL_NTS sqrt(lMaxSDist) ;
+  if ( ! lOverflow )
+  {
+    FT lDist = CGAL_NTS sqrt(lMaxSDist) ;
   
-  return lDist + ( aOffset * FT(1.05) ) ; // Add a %5 gap
+    return boost::optional<FT>( lDist + ( aOffset * FT(1.05) ) ) ; // Add a %5 gap
+  }
+  else
+    return boost::optional<FT>();
+  
 }                              
 
 template<class ForwardPointIterator, class FT>
-FT compute_outer_frame_margin ( ForwardPointIterator aBegin, ForwardPointIterator aEnd, FT aOffset )
+boost::optional<FT> compute_outer_frame_margin ( ForwardPointIterator aBegin, ForwardPointIterator aEnd, FT aOffset )
 {
   typedef typename std::iterator_traits<ForwardPointIterator>::value_type Point_2 ;
   
@@ -88,7 +111,7 @@ FT compute_outer_frame_margin ( ForwardPointIterator aBegin, ForwardPointIterato
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_COMPUTE_EXTERIOR_OFFSET_CONTOUR_FRAME_MARGIN_2_H //
+#endif // CGAL_COMPUTE_OUTER_FRAME_MARGIN_H //
 // EOF //
 
  

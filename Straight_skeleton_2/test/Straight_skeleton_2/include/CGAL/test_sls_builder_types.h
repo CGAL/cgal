@@ -54,6 +54,7 @@ typedef Sls::Vertex_const_handle   Vertex_const_handle ;
 
 typedef CGAL::HalfedgeDS_const_decorator<Sls> Sls_const_decorator ;
 
+typedef boost::shared_ptr<Sls> SlsPtr ;
 
 #endif
 

@@ -32,13 +32,19 @@ inline NT inexact_sqrt( NT const& n )
 
 inline MP_Float inexact_sqrt( MP_Float const& n )
 {
-  return CGAL_NTS approximate_sqrt(n);
+  double d = CGAL::to_double(n);
+  
+  if ( !CGAL_NTS is_finite(d) )
+    d = CGAL_NTS sign(n) == NEGATIVE ? - std::numeric_limits<double>::max() 
+                                     :   std::numeric_limits<double>::max() ;
+       
+  return MP_Float( CGAL_NTS sqrt(d) ) ;
 }
 
 inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
 {
   CGAL_precondition(q > 0);
-  return Quotient<MP_Float>(CGAL_NTS approximate_sqrt(q.numerator()*q.denominator())
+  return Quotient<MP_Float>(CGAL_SS_i::inexact_sqrt(q.numerator()*q.denominator())
                            ,q.denominator()
                            );
 }
@@ -46,11 +52,13 @@ inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
 // Given an oriented 2D stright line edge (px,py)->(qx,qy), computes the normalized coefficients (a,b,c) of the
 // supporting line.
 // POSTCONDITION: [a,b] is the leftward normal _unit_ (a²+b²=1) vector.
-//
+// POSTCONDITION: In case of overflow, an empty optional<> is returned.
 template<class FT>
-Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
+optional< Line<FT> > compute_normalized_line_ceoffC2( Edge<FT> const& e )
 {
-  FT a,b,c ;
+  bool finite = true ;
+  
+  FT a (0.0),b (0.0) ,c(0.0)  ;
 
   if(e.s().y() == e.t().y())
   {
@@ -99,7 +107,6 @@ Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
                         << "\nqx=" << e.t().x() << "\nqy=" << e.t().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c
                        ) ;
-
   }
   else
   {
@@ -107,20 +114,28 @@ Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
     FT sb = e.t().x() - e.s().x();
     FT l2 = (sa*sa) + (sb*sb) ;
 
-    FT l = CGAL_SS_i :: inexact_sqrt(l2);
-
-    a = sa / l ;
-    b = sb / l ;
-
-    c = -e.s().x()*a - e.s().y()*b;
-
+    if ( CGAL_NTS is_finite(l2) )
+    {
+      FT l = CGAL_SS_i :: inexact_sqrt(l2);
+  
+      a = sa / l ;
+      b = sb / l ;
+  
+      c = -e.s().x()*a - e.s().y()*b;
+    }
+    else finite = false ;
+    
     CGAL_SSTRAITS_TRACE("Line coefficients for line:\npx=" << e.s().x() << "\npy=" << e.s().y() << "\nqx="
                         << e.t().x() << "\nqy=" << e.t().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl:" << l
                        ) ;
   }
+  
+  if ( !finite )
+    if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) ) 
+      finite = false ;
 
-  return Line<FT>(a,b,c);
+  return make_optional( finite, Line<FT>(a,b,c) ) ;
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2 [each segment is passed as (sx,sy,tx,ty)]
@@ -133,8 +148,10 @@ Line<FT> compute_normalized_line_ceoffC2( Edge<FT> const& e )
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
 template<class FT>
-Rational<FT> compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
+optional< Rational<FT> > compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
 {
+  FT num(0.0), den(0.0) ;
+  
   // DETAILS:
   //
   // An offset line is given by:
@@ -149,28 +166,34 @@ Rational<FT> compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& 
   //      ---------------------------------------------------------------
   //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
 
+  bool ok = false ;
+  
+  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
-  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
-
-  FT  num = (l2.a()*l0.b()*l1.c())
-           -(l2.a()*l1.b()*l0.c())
-           -(l2.b()*l0.a()*l1.c())
-           +(l2.b()*l1.a()*l0.c())
-           +(l1.b()*l0.a()*l2.c())
-           -(l0.b()*l1.a()*l2.c());
-    
-  FT  den = (-l2.a()*l1.b())
-           +(l2.a()*l0.b())
-           +(l2.b()*l1.a())
-           -(l2.b()*l0.a())
-           +(l1.b()*l0.a())
-           -(l0.b()*l1.a());
-
+  if ( l0 && l1 && l2 )
+  {
+    num = (l2->a()*l0->b()*l1->c())
+         -(l2->a()*l1->b()*l0->c())
+         -(l2->b()*l0->a()*l1->c())
+         +(l2->b()*l1->a()*l0->c())
+         +(l1->b()*l0->a()*l2->c())
+         -(l0->b()*l1->a()*l2->c());
+      
+    den = (-l2->a()*l1->b())
+         +( l2->a()*l0->b())
+         +( l2->b()*l1->a())
+         -( l2->b()*l0->a())
+         +( l1->b()*l0->a())
+         -( l0->b()*l1->a());
+         
+    ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
+  }
+  
   CGAL_SSTRAITS_TRACE("Normal Event:\nn=" << num << "\nd=" << den  )
 
-  return Rational<FT>(num,den) ;
+  return make_optional(ok,Rational<FT>(num,den)) ;
 }
 
 
@@ -185,7 +208,7 @@ Rational<FT> compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& 
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
 template<class FT>
-Rational<FT> compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
+optional< Rational<FT> > compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
 {
   // DETAILS:
   //
@@ -220,37 +243,43 @@ Rational<FT> compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> con
   //   for t gives the result we want.
   //
   //
+  bool ok = false ;
 
-  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  FT num, den ;
+  FT num(0.0), den(0.0) ;
 
-  if ( ! CGAL_NTS is_zero(l0.b()) ) // Non-vertical
+  if ( l0 && l2 )
   {
-    FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
-
-    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
-    den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+    if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
+    {
+      FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
+  
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qx + l0->b() * l2->c() - l2->b() * l0->c() ;
+      den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
+      
+      CGAL_SSTRAITS_TRACE("Non-vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
+    }
+    else
+    {
+      FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
+  
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qy - l0->a() * l2->c() + l2->a() * l0->c() ;
+      den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
+      
+      CGAL_SSTRAITS_TRACE("Vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
+    }
     
-    CGAL_SSTRAITS_TRACE("Non-vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
+    ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
   }
-  else
-  {
-    FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
+  
 
-    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy - l0.a() * l2.c() + l2.a() * l0.c() ;
-    den = l0.a() * l0.b() * l2.b() - l0.b() * l0.b() * l2.a() + l2.a() - l0.a() ;
-    
-    CGAL_SSTRAITS_TRACE("Vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
-  }
-
-
-  return Rational<FT>(num,den) ;
+  return make_optional(ok,Rational<FT>(num,den)) ;
 }
 
 template<class FT>
-Rational<FT> compute_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
+optional< Rational<FT> > compute_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
 {
   CGAL_precondition ( triedge.collinear_count() < 3 ) ;
   
@@ -266,27 +295,40 @@ Rational<FT> compute_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge
 // The offsets at a certain distance do intersect in a single point.
 //
 template<class FT>
-Vertex<FT> construct_normal_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+optional< Vertex<FT> > construct_normal_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
 {
-  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
-  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  FT x(0.0),y(0.0) ;
+  
+  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  FT den = l0.a()*l2.b() - l0.a()*l1.b() - l1.a()*l2.b() + l2.a()*l1.b() + l0.b()*l1.a() - l0.b()*l2.a();
-
-  CGAL_SSTRAITS_TRACE("Event Point:\n  d=" << den  )
-
-  CGAL_assertion ( ! CGAL_NTS certified_is_zero(den) ) ;
-
-  FT numX = l0.b()*l2.c() - l0.b()*l1.c() - l1.b()*l2.c() + l2.b()*l1.c() + l1.b()*l0.c() - l2.b()*l0.c();
-  FT numY = l0.a()*l2.c() - l0.a()*l1.c() - l1.a()*l2.c() + l2.a()*l1.c() + l1.a()*l0.c() - l2.a()*l0.c();
-
-  FT x =  numX / den ;
-  FT y = -numY / den ;
-
+  bool ok = false ;
+  
+  if ( l0 && l1 && l2 )
+  {
+    FT den = l0->a()*l2->b() - l0->a()*l1->b() - l1->a()*l2->b() + l2->a()*l1->b() + l0->b()*l1->a() - l0->b()*l2->a();
+  
+    CGAL_SSTRAITS_TRACE("Event Point:\n  d=" << den  )
+  
+    CGAL_assertion ( ! CGAL_NTS certified_is_zero(den) ) ;
+  
+    FT numX = l0->b()*l2->c() - l0->b()*l1->c() - l1->b()*l2->c() + l2->b()*l1->c() + l1->b()*l0->c() - l2->b()*l0->c();
+    FT numY = l0->a()*l2->c() - l0->a()*l1->c() - l1->a()*l2->c() + l2->a()*l1->c() + l1->a()*l0->c() - l2->a()*l0->c();
+  
+    if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(numX) && CGAL_NTS is_finite(numY)  )
+    {
+      ok = true ;
+      
+      x =  numX / den ;
+      y = -numY / den ;
+    }
+    
+  }
+    
   CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
-
-  return Vertex<FT>(x,y) ;
+    
+  return make_optional(ok,Vertex<FT>(x,y)) ;
 }
 
 // Given 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c)
@@ -297,41 +339,54 @@ Vertex<FT> construct_normal_offset_lines_isecC2 ( SortedTriedge<FT> const& tried
 // The offsets at a certain distance do intersect in a single point.
 //
 template<class FT>
-Vertex<FT> construct_degenerate_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+optional< Vertex<FT> > construct_degenerate_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
 {
-  Line<FT> l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  Line<FT> l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
-  Line<FT> l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  FT x(0.0),y(0.0) ;
+  
+  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
-  FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
-
-  FT num, den ;
-
-  if ( ! CGAL_NTS is_zero(l0.b()) ) // Non-vertical
+  bool ok = false ;
+  
+  if ( l0 && l1 && l2 )
   {
-    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qx + l0.b() * l2.c() - l2.b() * l0.c() ;
-    den = (l0.a() * l0.a() - 1) * l2.b() + ( 1 - l2.a() * l0.a() ) * l0.b() ;
+    FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
+    FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
+  
+    FT num, den ;
+  
+    if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
+    {
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qx + l0->b() * l2->c() - l2->b() * l0->c() ;
+      den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
+    }
+    else
+    {
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qy - l0->a() * l2->c() + l2->a() * l0->c() ;
+      den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
+    }
+  
+    CGAL_precondition( den != static_cast<FT>(0.0) ) ;
+  
+    if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
+    {
+      x = qx + l0->a() * num / den  ;
+      y = qy + l0->b() * num / den  ;
+      
+      ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
+    }
   }
-  else
-  {
-    num = (l2.a() * l0.b() - l0.a() * l2.b() ) * qy - l0.a() * l2.c() + l2.a() * l0.c() ;
-    den = l0.a() * l0.b() * l2.b() - l0.b() * l0.b() * l2.a() + l2.a() - l0.a() ;
-  }
-
-  CGAL_precondition( den != static_cast<FT>(0.0) ) ;
-
-  FT x = qx + l0.a() * num / den  ;
-  FT y = qy + l0.b() * num / den  ;
+  
 
   CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
 
-  return Vertex<FT>(x,y) ;
+  return make_optional(ok,Vertex<FT>(x,y)) ;
 }
 
 
 template<class FT>
-Vertex<FT> construct_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+optional< Vertex<FT> > construct_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
 {
   CGAL_precondition ( triedge.collinear_count() < 3 ) ;
   
@@ -348,19 +403,27 @@ Vertex<FT> construct_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
 // The offsets at a certain distance do intersect in a single point.
 //
 template<class FT>
-FT compute_offset_lines_isec_dist_to_pointC2 ( Vertex<FT> const& p, SortedTriedge<FT> const& triedge )
+optional< FT > compute_offset_lines_isec_dist_to_pointC2 ( optional< Vertex<FT> > const& p, SortedTriedge<FT> const& triedge )
 {
+  FT sdist ;
+    
+  optional< Vertex<FT> > i = construct_offset_lines_isecC2(triedge);
 
-  Vertex<FT> i = construct_offset_lines_isecC2(triedge);
+  bool ok = false ;
+  
+  if ( p && i )
+  {
+    FT dx  = i->x() - p->x() ;
+    FT dy  = i->y() - p->y() ;
+    FT dx2 = dx * dx ;
+    FT dy2 = dy * dy ;
+  
+    sdist = dx2 + dy2 ;
+    
+    ok = CGAL_NTS is_finite(sdist);
+  }
 
-  FT dx  = i.x() - p.x() ;
-  FT dy  = i.y() - p.y() ;
-  FT dx2 = dx * dx ;
-  FT dy2 = dy * dy ;
-
-  FT sdist = dx2 + dy2 ;
-
-  return sdist;
+  return make_optional(ok,sdist);
 }
 
 } // namnepsace CGAIL_SS_i

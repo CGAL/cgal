@@ -30,17 +30,17 @@
 
 #include <qiconset.h>
 
-Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*     w
-                              ,QMainWindow*         mw
-                              ,demo::Regions const& in
-                              ,demo::SSkel   const& sskel
-                              ,demo::Regions const& out
+Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*      w
+                              ,QMainWindow*          mw
+                              ,demo::Regions  const& in
+                              ,demo::SSkelPtr const& sskel
+                              ,demo::Regions  const& out
                               ) : QToolBar(mw, "LT"),
      nr_of_buttons(0)
   {
-    showI     = new Qt_layer_show_regions <demo::Regions>(in,CGAL::RED);
-    showSSkel = new Qt_layer_show_skeleton<demo::SSkel>  (sskel);
-    showO     = new Qt_layer_show_regions <demo::Regions>(out,CGAL::BLACK);
+    showI     = new Qt_layer_show_regions <demo::Regions> (this,"Input",in,CGAL::RED);
+    showSSkel = new Qt_layer_show_skeleton<demo::SSkel>   (this,"Skeleton",sskel);
+    showO     = new Qt_layer_show_regions <demo::Regions> (this,"Offset",out,CGAL::BLACK);
 
     //set the widget
     widget = w;

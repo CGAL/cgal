@@ -78,7 +78,8 @@ Must provide \ccc{bool operator()( EdgeTriple const& x, EdgeTriple const& y)}, w
 
 \ccNestedType{Construct_ss_event_time_and_point_2}
 {A construction object type.\\
-Must provide \ccc{boost::tuple<FT,Point_2> operator()( EdgeTriple const& e)}, which given the 3 \textit{oriented} lines defined by the 3 input edges (3 pair of points), returns the Euclidean distance \ccc{t} $\geq 0$ and intersection point at which the corresponding 3 \textit{offset lines at \ccc{t}} intersect.\\
+Must provide \ccc{boost::tuple< boost::optional<FT>, boost::optional<Point_2> > operator()( EdgeTriple const& e)}, which given the 3 \textit{oriented} lines defined by the 3 input edges (3 pair of points), returns the Euclidean distance \ccc{t} $\geq 0$ and intersection point at which the corresponding 3 \textit{offset lines at \ccc{t}} intersect.\\
+If the values cannot be computed, not even approximately (because of overflow for instance), an empty optional must be returned.\\
 \ccPrecond{\ccc{e} must be an edge-triple corresponding to an event that actually exist (as determined by the predicate \ccc{Exist_sls_event_2}).}}
 
 \ccNestedType{Construct_ss_vertex_2}

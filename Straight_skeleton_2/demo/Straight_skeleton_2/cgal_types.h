@@ -24,10 +24,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
-#if defined(SLS_DEMO_EXACT)
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
-#endif
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/shared_ptr.hpp>
@@ -36,17 +32,16 @@
 namespace demo
 {
 
-#if defined(SLS_DEMO_EXACT)
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
-#elif defined(SLS_DEMO_FAST)
+#if defined(SLS_DEMO_FAST)
 typedef CGAL::Simple_cartesian<double> K ;
 #else
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 #endif
 
+typedef CGAL::Polygon_2<K>            CGAL_Polygon ;
+
 typedef K::Point_2                    Point;
-typedef CGAL::Aff_transformation_2<K> Transformation;
-typedef CGAL::Polygon_2<K>            Polygon;
+typedef std::vector<Point>            Polygon;
 typedef boost::shared_ptr<Polygon>    PolygonPtr;
 typedef CGAL::Segment_2<K>            Segment;
 typedef std::vector<PolygonPtr>       Region ;

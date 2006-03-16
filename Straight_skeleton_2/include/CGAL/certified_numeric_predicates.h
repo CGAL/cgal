@@ -32,45 +32,40 @@ inline Uncertain<bool> logical_or ( Uncertain<bool> a, Uncertain<bool> b, Uncert
 inline Uncertain<bool> logical_and( Uncertain<bool> a, Uncertain<bool> b, Uncertain<bool> c ) { return a & b & c ; }
 
 template <class NT>
-inline Uncertain<bool> certified_is_finite(const NT& x)
-{
-  return make_uncertain(CGAL_NTS is_finite(x) ) ;
-}
-
-template <class NT>
 inline Uncertain<bool> certified_is_zero(const NT& x)
 {
-  return make_uncertain(CGAL_NTS is_zero(x) ) ;
+  return CGAL_NTS is_valid(x) ? make_uncertain(CGAL_NTS is_zero(x)) : Uncertain<bool>::indeterminate() ; 
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_one(const NT& x)
 {
-  return make_uncertain(CGAL_NTS is_one(x) ) ;
+  return CGAL_NTS is_valid(x) ? make_uncertain(CGAL_NTS is_one(x) ) : Uncertain<bool>::indeterminate() ;
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_negative(const NT& x)
 {
-  return make_uncertain(CGAL_NTS is_negative(x) ) ;
+  return CGAL_NTS is_valid(x) ? make_uncertain(CGAL_NTS is_negative(x) ) : Uncertain<bool>::indeterminate()  ;
 }
 
 template <class NT>
 inline Uncertain<bool> certified_is_positive(const NT& x)
 {
-  return make_uncertain(CGAL_NTS is_positive(x) ) ;
+  return CGAL_NTS is_valid(x) ? make_uncertain(CGAL_NTS is_positive(x) ) : Uncertain<bool>::indeterminate() ;
 }
 
 template <class NT>
 inline Uncertain<Sign> certified_sign(const NT& x)
 {
-  return make_uncertain(CGAL_NTS sign(x));
+  return CGAL_NTS is_valid(x) ? make_uncertain(CGAL_NTS sign(x)) : Uncertain<Sign>::indeterminate() ;
 }
 
 template <class NT1, class NT2>
 inline Uncertain<Comparison_result> certified_compare(const NT1& n1, const NT2& n2)
 {
-  return make_uncertain(CGAL_NTS compare(n1,n2));
+  return CGAL_NTS is_valid(n1) && CGAL_NTS is_valid(n2) ? make_uncertain(CGAL_NTS compare(n1,n2)) 
+                                                        : Uncertain<Comparison_result>::indeterminate()  ;
 }
 
 inline Uncertain<bool> certified_is_smaller( Uncertain<Comparison_result> c )

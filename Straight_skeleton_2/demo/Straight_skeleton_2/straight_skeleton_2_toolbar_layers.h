@@ -38,13 +38,14 @@ class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar( CGAL::Qt_widget*     w
-                , QMainWindow*         mw
-                , demo::Regions const& in
-                , demo::SSkel   const& sskel
-                , demo::Regions const& out
+  Layers_toolbar( CGAL::Qt_widget*      w
+                , QMainWindow*          mw
+                , demo::Regions  const& in
+                , demo::SSkelPtr const& sskel
+                , demo::Regions  const& out
                 );
   ~Layers_toolbar();
+  
 private:
   QToolButton         *but[3];
   CGAL::Qt_widget     *widget;

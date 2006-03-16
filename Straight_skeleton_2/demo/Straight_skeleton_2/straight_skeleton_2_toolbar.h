@@ -23,7 +23,7 @@
 #include "cgal_types.h"
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_get_simple_polygon.h>
+#include <CGAL/IO/Qt_widget_get_polygon.h>
 
 
 #include <qobject.h>
@@ -37,14 +37,14 @@ class Tools_toolbar : public QToolBar
   Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
-
+  
 private:
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QButtonGroup    *button_group;
   int             nr_of_buttons;
 
-  CGAL::Qt_widget_get_simple_polygon<demo::Polygon> getsimplebut;
+  CGAL::Qt_widget_get_polygon<demo::CGAL_Polygon> getpolybut;
 };//end class
 
 #endif

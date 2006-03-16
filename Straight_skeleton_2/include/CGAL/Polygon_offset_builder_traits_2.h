@@ -54,14 +54,23 @@ struct Construct_offset_point_2 : Functor_base_2<K>
   typedef typename Base::Vertex  Vertex ;
   typedef typename Base::Edge    Edge ;
 
-  typedef Point_2      result_type ;
+  typedef boost::optional< Point_2 > result_type ;
+  
   typedef Arity_tag<3> Arity ;
 
-  Point_2 operator() ( FT aT, Edge const& aE0, Edge const& aE1 ) const
+  boost::optional<Point_2> operator() ( FT aT, Edge const& aE0, Edge const& aE1 ) const
   {
-    Vertex i = construct_offset_pointC2(aT,aE0,aE1);
+    FT ix(0.0), iy(0.0);
+    
+    optional<Vertex> i = construct_offset_pointC2(aT,aE0,aE1);
+    
+    if ( i )
+    {
+      ix = i->x();
+      iy = i->y();
+    }
 
-    return Point_2(i.x(),i.y()) ;
+    return make_optional(i, Point_2(ix,iy) ) ;
   }
 };
 

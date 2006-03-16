@@ -39,11 +39,16 @@ compare_offset_against_isec_timeC2 ( FT t, Triedge<FT> const& triedge )
 
   if ( !sorted.is_indeterminate() )
   {
-    Quotient<FT> et = compute_offset_lines_isec_timeC2(sorted).to_quotient();
-
-    CGAL_assertion ( CGAL_NTS certified_is_positive(et) ) ;
-
-    rResult = CGAL_NTS certified_compare(et,t);
+    optional< Rational<FT> > et_ = compute_offset_lines_isec_timeC2(sorted);
+    
+    if ( et_ )
+    {
+      Quotient<FT> et = et_->to_quotient();
+  
+      CGAL_assertion ( CGAL_NTS certified_is_positive(et) ) ;
+  
+      rResult = CGAL_NTS certified_compare(et,t);
+    }
   }
 
   return rResult ;

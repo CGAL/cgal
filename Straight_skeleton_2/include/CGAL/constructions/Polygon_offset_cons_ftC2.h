@@ -33,33 +33,43 @@ namespace CGAL_SS_i
 // The offsets at the given distance do intersect in a single point.
 
 template<class FT>
-Vertex<FT> construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge<FT> const& e1 )
+optional< Vertex<FT> > construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge<FT> const& e1 )
 {
-  FT x,y ;
+  FT x(0.0),y(0.0) ;
 
-  Line<FT> l0 = compute_normalized_line_ceoffC2(e0) ;
-  Line<FT> l1 = compute_normalized_line_ceoffC2(e1) ;
+  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(e0) ;
+  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(e1) ;
 
-  FT den = l1.a() * l0.b() - l0.a() * l1.b() ;
-
-  if ( ! CGAL_NTS is_zero(den) )
+  bool ok = false ;
+  
+  if ( l0 && l1 )
   {
-    FT numX = t * l1.b() - t * l0.b() + l0.b() * l1.c() - l1.b() * l0.c() ;
-    FT numY = t * l1.a() - t * l0.a() + l0.a() * l1.c() - l1.a() * l0.c() ;
-
-    x = -numX / den ;
-    y =  numY / den ;
+    FT den = l1->a() * l0->b() - l0->a() * l1->b() ;
+  
+    if ( CGAL_NTS is_finite(den) )
+    {
+      if ( ! CGAL_NTS is_zero(den) )
+      {
+        FT numX = t * l1->b() - t * l0->b() + l0->b() * l1->c() - l1->b() * l0->c() ;
+        FT numY = t * l1->a() - t * l0->a() + l0->a() * l1->c() - l1->a() * l0->c() ;
+          
+        x = -numX / den ;
+        y =  numY / den ;
+      }
+      else
+      {
+        FT qx = ( e0.t().x() + e1.s().x() ) / static_cast<FT>(2.0);
+        FT qy = ( e0.t().y() + e1.s().y() ) / static_cast<FT>(2.0);
+    
+        x = qx + l0->a() * t  ;
+        y = qy + l0->b() * t  ;
+      }
+      
+      ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
+    }
   }
-  else
-  {
-    FT qx = ( e0.t().x() + e1.s().x() ) / static_cast<FT>(2.0);
-    FT qy = ( e0.t().y() + e1.s().y() ) / static_cast<FT>(2.0);
 
-    x = qx + l0.a() * t  ;
-    y = qy + l0.b() * t  ;
-  }
-
-  return Vertex<FT>(x,y) ;
+  return make_optional(ok,Vertex<FT>(x,y)) ;
 }
 
 } // namespace CGAL_SS_i

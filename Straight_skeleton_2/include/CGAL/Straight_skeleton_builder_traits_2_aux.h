@@ -28,6 +28,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/optional/optional.hpp>
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
 #  include<string>
@@ -48,6 +49,12 @@
 CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {
+
+using boost::optional ;
+
+// These aren't provided in Boost <=1.31
+template<class T> optional<T> make_optional( T const& v ) { return optional<T>(v) ; }
+template<class T> optional<T> make_optional( bool cond, T const& v ) { return cond ? optional<T>(v) : optional<T>() ; }
 
 template<class K>
 struct Is_filtering_kernel
@@ -146,11 +153,11 @@ class Triedge
 } ;
 
 template<class FT>
-class SortedTriedge : public Triedge<FT>
+class SortedTriedge : public CGAL_SS_i::Triedge<FT>
 {
   public:
 
-    typedef Triedge<FT> Base ;
+    typedef CGAL_SS_i::Triedge<FT> Base ;
 
     typedef typename Base::Edge Edge ;
 
@@ -177,7 +184,9 @@ class Line
 {
   public:
 
-    Line( FT aA, FT aB, FT aC ) : mA(aA), mB(aB), mC(aC) {}
+    Line( FT aA, FT aB, FT aC ) : mA(aA), mB(aB), mC(aC)
+    {
+    }
 
     FT a() const { return mA ; }
     FT b() const { return mB ; }
@@ -214,14 +223,14 @@ struct Triedge_converter : Converter
   typedef typename Source_kernel::Point_2 Source_point_2 ;
   typedef typename Target_kernel::Point_2 Target_point_2 ;
 
-  typedef Vertex<SFT> Source_vertex ;
-  typedef Vertex<TFT> Target_vertex ;
+  typedef CGAL_SS_i::Vertex<SFT> Source_vertex ;
+  typedef CGAL_SS_i::Vertex<TFT> Target_vertex ;
 
-  typedef Edge<SFT> Source_edge ;
-  typedef Edge<TFT> Target_edge ;
+  typedef CGAL_SS_i::Edge<SFT> Source_edge ;
+  typedef CGAL_SS_i::Edge<TFT> Target_edge ;
 
-  typedef Triedge<SFT> Source_triedge ;
-  typedef Triedge<TFT> Target_triedge ;
+  typedef CGAL_SS_i::Triedge<SFT> Source_triedge ;
+  typedef CGAL_SS_i::Triedge<TFT> Target_triedge ;
 
   TFT cvtn(SFT n) const  { return Converter::operator()(n); }
 

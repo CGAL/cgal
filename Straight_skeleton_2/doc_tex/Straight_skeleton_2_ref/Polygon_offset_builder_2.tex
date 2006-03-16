@@ -58,7 +58,10 @@ You can call \ccc{construct_offset_contours} with different offset distances (th
 
 For any given input polygon, its offset polygons at a certain distance are composed of several contours. This method returns all such contours in an unspecified order and with no parental relationship between them (that is why it is called \ccc{construct_offset_contours} and not \ccc{construct_offset_polygons}).
 
-Those offset contours in the resulting sequence which are oriented counter-clockwise are outer contours and those oriented clockwise are holes. It is up to the user to match each hole to its parent in order to reconstruct the parent-hole relationship of the conceptual output. It is sufficient to test each hole against each parent as there won't be a hole inside a hole, a parent inside any other contour, or a hole inside more than one parent. The recommended insideness test is to perform a regularized Boolean set operation. \ccc{do_intersect} from the \ccc{Boolean Set Operations} package will work fine in our case since it is guaranteed that no hole would cross halfway outside any parent (in the presence of such cases, subtracting the parent from the hole works better as it correctly rejects halfway holes).}
+Those offset contours in the resulting sequence which are oriented counter-clockwise are outer contours and those oriented clockwise are holes. It is up to the user to match each hole to its parent in order to reconstruct the parent-hole relationship of the conceptual output. It is sufficient to test each hole against each parent as there won't be a hole inside a hole, a parent inside any other contour, or a hole inside more than one parent. The recommended insideness test is to perform a regularized Boolean set operation. \ccc{do_intersect} from the \ccc{Boolean Set Operations} package will work fine in our case since it is guaranteed that no hole would cross halfway outside any parent (in the presence of such cases, subtracting the parent from the hole works better as it correctly rejects halfway holes).
+
+If there are degenerate, or nearly degenerate vertices; that is, vertices whose internal or external angle approaches \ccc{0}, numerical overflow may prevent some of the polygon contours to be constructed. If that happens, the failed contour just won't be added into the resulting sequence.
+}
   
 
 \ccSeeAlso

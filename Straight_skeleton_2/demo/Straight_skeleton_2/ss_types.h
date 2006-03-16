@@ -19,7 +19,6 @@
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
-#include <CGAL/HalfedgeDS_const_decorator.h>
 
 namespace demo
 {
@@ -37,6 +36,6 @@ typedef SSkel::Face_const_iterator   Face_const_iterator;
 typedef SSkel::Halfedge_const_handle Halfedge_const_handle ;
 typedef SSkel::Vertex_const_handle   Vertex_const_handle ;
 
-typedef CGAL::HalfedgeDS_const_decorator<SSkel> SSkel_const_decorator ;
+typedef boost::shared_ptr<SSkel> SSkelPtr ;
 
 }

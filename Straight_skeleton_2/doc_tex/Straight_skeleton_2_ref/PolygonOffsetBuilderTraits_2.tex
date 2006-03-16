@@ -47,7 +47,8 @@ Must provide \ccc{Comparison_result operator()( FT d, EdgeTriple const& et) cons
 
 \ccNestedType{Construct_offset_point_2}
 {A construction object type.\\
-Must provide \ccc{Point_2 operator()( FT t, Edge const& x, Edge const& y) const}, which constructs the point of intersection of the lines obtained by offsetting the oriented lines given by \ccc{x} and \ccc{y} an Euclidean distance \ccc{t}.
+Must provide \ccc{boost::optional<Point_2> operator()( FT t, Edge const& x, Edge const& y) const}, which constructs the point of intersection of the lines obtained by offsetting the oriented lines given by \ccc{x} and \ccc{y} an Euclidean distance \ccc{t}.
+If the point cannot be computed, not even approximately (because of overflow for instance), an empty optional must be returned.\\ 
 \ccPrecond{\ccc{x} and \ccc{y} must intersect in a single point}}
 
 \ccNestedType{Construct_ss_vertex_2}

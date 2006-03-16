@@ -29,7 +29,7 @@ The function \ccRefName\ computes the separation required between a polygon and 
 
 \ccFunction
 {template <class InputIterator, class Traits>
-typename Traits::FT
+boost::optional< typename Traits::FT >
 compute_outer_frame_margin( InputIterator       first
                           , InputIterator       beyond
                           , typename Traits::FT offset
@@ -40,7 +40,7 @@ compute_outer_frame_margin( InputIterator       first
 in the range [\ccc{first},\ccc{beyond}), calculates the largest euclidean distance
 \ccc{d} between each input vertex and its corresponding offset vertex at
 a distance \ccc{offset}.\\
-Returns \ccc{d + (offset * 1.05)}.\\
+If such a distance can be approximately computed, returns an \ccc{optional<FT>} with the value \ccc{d + (offset * 1.05)}. If the distance cannot be computed, not even approximately, due to overflow for instance, returns an empty \ccc{optional<FT>} (an {\em absent result}).\\
 This result is the required separation between the input polygon
 and the rectangular frame used to construct an exterior offset contour
 at distance \ccc{offset} (which is done by placing the polygon as a hole of that frame).\\
@@ -51,7 +51,8 @@ contour offset instead of two contour offsets, one of them correspoding to the f
 Simply using \ccc{2*offset} as the separation is incorrect since \ccc{offset} is the distance 
 between an offset line and its original, not between an offset vertex and its original.
 The later, which is calculated by this function and needed to place the frame sufficientely
-away from the polygon, can be thousands of times larger than \ccc{offset}.
+away from the polygon, can be thousands of times larger than \ccc{offset}.\\
+If the result is {\em absent}, any attempt to construct an exterior offset polygon at distance \ccc{offset} will fail. This will ocurr whenever the polygon has a vertex with an internal angle approaching \ccc{0} (because the offset vertex of a vertex whose internal angle equals 0 is at {\em infinity} ).\\
 \ccPrecond offset $>$ 0.
 \ccPrecond The range [\ccc{first},\ccc{beyond}) contains the vertices
 of a non-degenerate strictly-simple 2D polygon.

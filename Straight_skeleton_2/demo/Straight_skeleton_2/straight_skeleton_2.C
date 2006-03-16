@@ -63,12 +63,21 @@ int main(int, char*)
 #include "cgal_types.h"
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/algorithm.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
+
+#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
+//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
+//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
+//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
+//#define STATS
+//#define CGAL_SLS_PROFILING_ENABLED
+
 
 class ActiveCanvasClient : QObject
 {
@@ -208,15 +217,6 @@ private:
 };
 
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
-//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
-//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
-//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
-//#define STATS
-//#define CGAL_SLS_PROFILING_ENABLED
-
 #define VERBOSE_VALIDATE false
 
 #if defined(STATS)
@@ -245,7 +245,7 @@ void register_predicate_failure( std::string pred, std::string error )
   sProfilingMap[pred].failed.push_back(error) ;
 }
 
-void LogProfilingResults()
+void log_profiling_results()
 {
   std::cout << "Profiling results" << std::endl ;
   for ( profiling_map::const_iterator it = sProfilingMap.begin() ; it != sProfilingMap.end() ; ++ it )
@@ -267,6 +267,8 @@ void LogProfilingResults()
     }
   }
 }
+#else
+void log_profiling_results() {}
 #endif
 
 
@@ -327,17 +329,16 @@ const QString my_title_string("Straight_skeleton_2 Demo");
 
 int current_state;
 
-SSkel   sskel;
-bool    sskel_valid ;
-Regions input ;
-Regions output ;
-Doubles offsets ;
+SSkelPtr sskel;
+bool     sskel_valid ;
+Regions  input ;
+Regions  output ;
+Doubles  offsets ;
 
 #ifdef STATS
 void log_regions_stats( Regions r, const char* which )
 {
   LOGSTATS( which << " region list has " << r.size() << " regions." ) ;
-
 
   int ridx = 0 ;
   for ( Regions::const_iterator ri = r.begin(), eri = r.end() ; ri != eri ; ++ri, ++ridx )
@@ -365,8 +366,8 @@ void log_regions_stats( Regions r, const char* which )
 
       int xc = 0 ;
 
-      Polygon::const_iterator vbeg = lContour.vertices_begin() ;
-      Polygon::const_iterator vend = lContour.vertices_end  () ;
+      Polygon::const_iterator vbeg = lContour.begin() ;
+      Polygon::const_iterator vend = lContour.end  () ;
       Polygon::const_iterator vlst = CGAL::predecessor(vend) ;
       for ( Polygon::const_iterator vi = vbeg ; vi != vend ; ++ vi )
       {
@@ -387,8 +388,61 @@ void log_regions_stats( Regions r, const char* which )
   }
 
 }
+
+void log_skeleton_stats( double aTime )
+{
+  LOGSTATS( "Straight skeleton statistics. " << ( sskel_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << aTime << " seconds.");
+  
+  if ( sskel_valid )
+  {
+    typedef SSkel::Vertex_const_iterator                                   Vertex_const_iterator;
+    typedef SSkel::Vertex::Halfedge_around_vertex_const_circulator         Halfedge_around_vertex_const_circulator ;
+    typedef SSkel::Vertex::Halfedge_across_incident_faces_const_circulator Halfedge_across_incident_faces_const_circulator ;
+    
+    LOGSTATS( sskel->size_of_vertices () << " vertices" ) ;
+    LOGSTATS( sskel->size_of_halfedges() << " halfedges" ) ;
+    
+    for ( Vertex_const_iterator vit = sskel->vertices_begin(); vit != sskel->vertices_end(); ++ vit )
+    {
+      if ( vit->is_skeleton() )
+      {
+        Halfedge_around_vertex_const_circulator iebegin = vit->incident_edges_begin();
+        Halfedge_around_vertex_const_circulator ie = iebegin ;
+        int idegree = 0 ;
+        do
+        {
+          Halfedge_const_handle iedge = *ie ;
+          if ( !iedge->is_bisector() )
+            std::cerr << "ERROR: edge E" << iedge->id() << " incident upon V" << vit->id() << " is not a bisector!" << std::endl ;
+          ++ie;
+          ++idegree;
+        }
+        while(ie != iebegin);
+        
+        Halfedge_across_incident_faces_const_circulator debegin = vit->defining_contour_edges_begin();
+        Halfedge_across_incident_faces_const_circulator de = debegin ;
+        int ddegree = 0 ;
+        do
+        {
+          Halfedge_const_handle dedge = *de ;
+          if ( dedge->is_bisector() )
+            std::cerr << "ERROR: edge E" << dedge->id() << " incident upon V" << vit->id() << " is not a contour edge!" << std::endl ;
+          ++de;
+          ++ddegree;
+        }
+        while(de != debegin);
+        
+        if ( idegree != ddegree )
+          std::cerr << "ERROR: degree mismatch for V" << vit->id() << std::endl ;
+          
+        LOGSTATS( "V" << vit->id() << " has degree " << idegree ) ;
+      }  
+    }
+  }        
+}
 #else
 void log_regions_stats( Regions r, const char* which ) {}
+void log_skeleton_stats(double aTime) {}
 #endif
 
 class MyWindow : public QMainWindow
@@ -414,7 +468,6 @@ public:
     file->insertSeparator();
     file->insertItem("&Load Polygon", this, SLOT(load_polygon()), CTRL+Key_L);
     file->insertItem("&Save Polygon", this, SLOT(save_polygon()), CTRL+Key_S);
-    file->insertItem("&Save Edges", this, SLOT(save_edges()), CTRL+Key_S);
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
@@ -424,10 +477,10 @@ public:
     // drawing menu
     QPopupMenu * gen = new QPopupMenu( this );
     menuBar()->insertItem( "&Generate", gen );
-    gen->insertItem("Generate Outer Skeleton", this, SLOT(create_outer_skeleton()), CTRL+Key_G );
-    gen->insertItem("Generate Inner Skeleton", this, SLOT(create_inner_skeleton()), CTRL+Key_G );
-    gen->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_O );
-    gen->insertItem("Set Offset Distance", this, SLOT(set_offset()));
+    gen->insertItem("Generate Outer Skeleton", this, SLOT(create_outer_skeleton()), CTRL+Key_O );
+    gen->insertItem("Generate Inner Skeleton", this, SLOT(create_inner_skeleton()), CTRL+Key_I );
+    gen->insertItem("Generate Offset", this, SLOT(create_offset()), CTRL+Key_F );
+    gen->insertItem("Set Offset Distance", this, SLOT(set_offset()), CTRL+Key_T );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -466,8 +519,8 @@ public slots:
   {
     widget->lock();
     widget->clear();
+    sskel = SSkelPtr() ;
     input.clear();
-    sskel.clear();
     offsets.clear();
     output.clear();
     // set the Visible Area to the Interval
@@ -480,16 +533,17 @@ private slots:
 
   void get_new_object(CGAL::Object obj)
   {
-    PolygonPtr lPoly(new Polygon());
-    if (CGAL::assign(*lPoly, obj))
+    CGAL_Polygon lCgalPoly ;
+    if (CGAL::assign(lCgalPoly, obj))
     {
-      CGAL::Bbox_2 lBbox = lPoly->bbox();
+      CGAL::Bbox_2 lBbox = lCgalPoly.bbox();
       double w = lBbox.xmax() - lBbox.xmin();
       double h = lBbox.ymax() - lBbox.ymin();
       double s = std::sqrt(w*w+h*h);
       double m = s * 0.01 ;
       offsets.clear();
-      offsets.push_back(m) ;
+      for ( int c = 1 ; c < 30 ; ++ c )
+        offsets.push_back(c*m);
 
       RegionPtr lRegion;
 
@@ -502,11 +556,11 @@ private slots:
         lRegion = input.front();
 
       CGAL::Orientation lExpected = ( lRegion->size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-      if ( lPoly->orientation() != lExpected )
-        lPoly->reverse_orientation();
+      if ( lCgalPoly.is_simple() && lCgalPoly.orientation() != lExpected )
+        lCgalPoly.reverse_orientation();
 
-      lRegion->push_back(lPoly);
-
+      lRegion->push_back( PolygonPtr( new Polygon(lCgalPoly.vertices_begin(),lCgalPoly.vertices_end()) ) ) ;
+      
       input.push_back(lRegion);
 
       log_regions_stats(input,"Input");
@@ -527,15 +581,15 @@ private slots:
       SSkelBuilder builder ;
       for( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
       {
-        builder.enter_contour((*bit)->vertices_begin(),(*bit)->vertices_end());
+        builder.enter_contour((*bit)->begin(),(*bit)->end());
       }
       sskel = builder.construct_skeleton() ;
       t.stop();
-      sskel_valid = SSkel_const_decorator(sskel).is_valid(VERBOSE_VALIDATE,3);
-      LOGSTATS( (sskel_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << t.time() << " seconds.");
-#ifdef CGAL_SLS_PROFILING_ENABLED
-      LogProfilingResults();
-#endif
+      sskel_valid = sskel ;
+      if ( !sskel_valid )
+        QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
+      log_skeleton_stats(t.time());
+      log_profiling_results();
       widget->redraw();
       something_changed();
     }
@@ -548,46 +602,46 @@ private slots:
       Region const& lRegion = *input.front();
       if ( lRegion.size() > 0 )
       {
-        Polygon lOuterContourCopy( *lRegion.front() );
-        
-        lOuterContourCopy.reverse_orientation();
+        Polygon const& lOuter = *lRegion.front() ;
         
         double lMaxOffset = offsets.size() > 0 ? offsets.back() : 10.0 ;
 
-        double lMargin = CGAL::compute_outer_frame_margin(lOuterContourCopy.vertices_begin()
-                                                         ,lOuterContourCopy.vertices_end  ()
-                                                         ,lMaxOffset
-                                                         );
+        boost::optional<double> lMargin = CGAL::compute_outer_frame_margin(lOuter.rbegin(),lOuter.rend(),lMaxOffset);
+        if ( lMargin )
+        {
+          CGAL::Bbox_2 lBbox = CGAL::bbox_2(lOuter.begin(),lOuter.end());
+          
+          double flx = lBbox.xmin() - *lMargin ;
+          double fhx = lBbox.xmax() + *lMargin ;
+          double fly = lBbox.ymin() - *lMargin ;
+          double fhy = lBbox.ymax() + *lMargin ;
+          
+          Point lFrame[4]= { Point(flx,fly)
+                           , Point(fhx,fly)
+                           , Point(fhx,fhy)
+                           , Point(flx,fhy)
+                           } ;
+                             
+          LOGSTATS("Creating Outer Straight Skeleton...");
+          CGAL::Real_timer t ;
+          t.start();
+          SSkelBuilder builder ;
+          builder.enter_contour(lFrame,lFrame+4);
+          builder.enter_contour(lOuter.rbegin(),lOuter.rend());
+          sskel = builder.construct_skeleton() ;
+          t.stop();
+          sskel_valid = sskel ;
+          if ( !sskel_valid )
+            QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
+          log_skeleton_stats(t.time());
+          log_profiling_results();
+          
+          widget->redraw();
+          something_changed();
+        }
+        else
+          QMessageBox::critical( this, my_title_string,"This polygon has a very sharp vertex. Unable to create outer straight skeleton." );
         
-        CGAL::Bbox_2 lBbox = lOuterContourCopy.bbox();
-        
-        double flx = lBbox.xmin() - lMargin ;
-        double fhx = lBbox.xmax() + lMargin ;
-        double fly = lBbox.ymin() - lMargin ;
-        double fhy = lBbox.ymax() + lMargin ;
-        
-        Point lFrame[4]= { Point(flx,fly)
-                         , Point(fhx,fly)
-                         , Point(fhx,fhy)
-                         , Point(flx,fhy)
-                         } ;
-                           
-        LOGSTATS("Creating Outer Straight Skeleton...");
-        CGAL::Real_timer t ;
-        t.start();
-        SSkelBuilder builder ;
-        builder.enter_contour(lFrame,lFrame+4);
-        builder.enter_contour(lOuterContourCopy.vertices_begin(),lOuterContourCopy.vertices_end());
-        sskel = builder.construct_skeleton() ;
-        t.stop();
-        sskel_valid = SSkel_const_decorator(sskel).is_valid(VERBOSE_VALIDATE,3);
-        LOGSTATS( (sskel_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << t.time() << " seconds.");
-#ifdef CGAL_SLS_PROFILING_ENABLED
-        LogProfilingResults();
-#endif
-        
-        widget->redraw();
-        something_changed();
       }
     }
   }
@@ -606,7 +660,7 @@ private slots:
         double offset = *i ;
         LOGSTATS("Creating offsets at " << offset );
         RegionPtr lRegion( new Region ) ;
-        OffsetBuilder lOffsetBuilder(sskel);
+        OffsetBuilder lOffsetBuilder(*sskel);
         lOffsetBuilder.construct_offset_contours(offset, std::back_inserter(*lRegion) );
         LOGSTATS("Done.");
         if ( lRegion->size() > 0 )
@@ -617,7 +671,8 @@ private slots:
       widget->redraw();
       something_changed();
     }
-    else std::cerr << "The Straight Skeleton is invalid. Cannot create offsets." << std::endl ;
+    else
+      QMessageBox::critical( this, my_title_string,"You must generate the skeleton first (outer or inner)." );
   }
 
   void set_offset()
@@ -646,8 +701,8 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-                        "Polygon partition demo\n"
-                        "Copyright CGAL @2003");
+                        "Straight Skeleton and Polygon Offsetting demo\n"
+                        "Copyright CGAL@2006");
   };
 
   void aboutQt()
@@ -705,45 +760,12 @@ private slots:
           out << lRegion.size() << std::endl ;
 
           for ( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
-            out << **bit ;
-        }
-      }
-    }
-  }
-
-  void save_edges()
-  {
-    if ( input.size() > 0 )
-    {
-      Region const& lRegion = *input.front();
-
-      if ( lRegion.size() > 0 )
-      {
-        QString fileName = QFileDialog::getSaveFileName("sample.edg", "CDT edges file (*.edg)", this );
-
-        if ( !fileName.isNull() )
-        {
-          std::ofstream out(fileName);
-
-          CGAL::set_ascii_mode(out);
-
-          std::vector<Segment> lEdges ;
-
-          for ( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
           {
-            Polygon::const_iterator first = (*bit)->vertices_begin();
-            Polygon::const_iterator end   = (*bit)->vertices_end  ();
-            Polygon::const_iterator last  = end - 1 ;
-            for ( Polygon::const_iterator it = first ; it != end ; ++ it )
-            {
-              Polygon::const_iterator nx = ( it != last ? it + 1 : first ) ;
-              lEdges.push_back( Segment(*it,*nx) ) ;
-            }
+            Polygon const& lContour = **bit ;
+            out << lContour.size();
+            for ( Polygon::const_iterator vit = lContour.begin(), evit = lContour.end() ; vit != evit ; ++ vit )
+              out << vit->x() << ' ' << vit->y() ;
           }
-
-          out << lEdges.size() << '\n' ;
-          for ( std::vector<Segment>::const_iterator sit = lEdges.begin(), esit = lEdges.end() ; sit != esit ; ++ sit )
-            out << sit->source() << ' ' << sit->target() << '\n' ;
         }
       }
     }
@@ -787,37 +809,43 @@ private slots:
       for ( int i = 0 ; i < ccb_count ; ++ i )
       {
         PolygonPtr lPoly( new Polygon() );
-        in >> *lPoly;
-        if ( lPoly->is_simple() )
+        int v_count ;
+        in >> v_count ;
+        for ( int j = 0 ; j < v_count ; ++ j )
         {
-          if ( i == 0 )
-          {
-            CGAL::Bbox_2 lBbox = lPoly->bbox();
-            double w = lBbox.xmax() - lBbox.xmin();
-            double h = lBbox.ymax() - lBbox.ymin();
-            double s = std::sqrt(w*w+h*h);
-            double m = s * 0.01 ;
-            widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
-            if ( auto_create_offsets )
-            {
-              for ( int c = 1 ; c < 30 ; ++ c )
-                offsets.push_back(c*m);
-            }
-          }
-          CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-          if ( lPoly->orientation() != expected )
-            lPoly->reverse_orientation();
-          lRegion->push_back(lPoly);
+          double x,y ;
+          in >> x >> y ;
+          lPoly->push_back( Point(x,y) ) ;
         }
-        else std::cerr << "INPUT ERROR: Non-simple contour found." << std::endl ;
+        if ( i == 0 )
+        {
+          CGAL::Bbox_2 lBbox = CGAL::bbox_2(lPoly->begin(),lPoly->end());
+          double w = lBbox.xmax() - lBbox.xmin();
+          double h = lBbox.ymax() - lBbox.ymin();
+          double s = std::sqrt(w*w+h*h);
+          double m = s * 0.01 ;
+          widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
+          if ( auto_create_offsets )
+          {
+            for ( int c = 1 ; c < 30 ; ++ c )
+              offsets.push_back(c*m);
+          }
+        }
+        CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+        if (  !CGAL::is_simple_2(lPoly->begin(),lPoly->end())
+           || CGAL::orientation_2(lPoly->begin(),lPoly->end()) == expected 
+           )
+             lRegion->push_back(lPoly);
+        else lRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
       }
 
       input.push_back(lRegion);
       log_regions_stats(input,"Input");
     }
 
+    sskel = SSkelPtr() ;
+    
     output.clear();
-    sskel.clear();
     widget->redraw();
     something_changed();
   }

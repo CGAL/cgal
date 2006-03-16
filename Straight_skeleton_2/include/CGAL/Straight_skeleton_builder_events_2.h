@@ -107,9 +107,6 @@ class Straight_skeleton_builder_edge_event_2 : public Straight_skeleton_builder_
 
   typedef typename SSkel::Traits Traits ;
 
-  typedef typename Traits::Point_2 Point_2 ;
-  typedef typename Traits::FT      FT ;
-
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
@@ -156,12 +153,11 @@ class Straight_skeleton_builder_split_event_2 : public Straight_skeleton_builder
 
   typedef typename SSkel::Traits Traits ;
 
-  typedef typename Traits::Point_2 Point_2 ;
-  typedef typename Traits::FT      FT ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
   typedef typename Base::Type Type ;
+
 public:
 
   Straight_skeleton_builder_split_event_2 (  Halfedge_handle aBorderA
@@ -201,13 +197,9 @@ private :
 template<class SSkel>
 class Straight_skeleton_builder_vertex_event_2 : public Straight_skeleton_builder_event_2<SSkel>
 {
-
   typedef Straight_skeleton_builder_event_2<SSkel> Base ;
 
   typedef typename SSkel::Traits Traits ;
-
-  typedef typename Traits::Point_2 Point_2 ;
-  typedef typename Traits::FT      FT ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;

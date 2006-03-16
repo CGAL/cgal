@@ -110,13 +110,16 @@ void Polygon_offset_builder_2<Ss,Gt,Cont>::AddOffsetVertex( FT aTime, Halfedge_c
 {
   Visit(aHook);
 
-  Point_2 lP = Construct_offset_point(aTime,aHook);
+  boost::optional<Point_2> lP = Construct_offset_point(aTime,aHook);
 
+  if ( !lP )
+    throw std::range_error("CGAL_POLYGON_OFFSET: Overflow during construction of offset vertex" ) ; // Caught by the main loop
+    
   CGAL_POLYOFFSET_SHOW ( DrawBisector(aHook) ) ;
   CGAL_POLYOFFSET_SHOW ( DrawOffset(aPoly,lP) ) ;
   CGAL_POLYOFFSET_TRACE(3,"Constructing offset point along B" << aHook->id() ) ;
 
-  aPoly->push_back(lP);
+  aPoly->push_back(*lP);
 }
 
 template<class Ss, class Gt, class Cont>
@@ -177,7 +180,16 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont>::construct_offset_contours( 
 
   CGAL_POLYOFFSET_TRACE(1,"Constructing offset polygons for offset: " << aTime ) ;
   for ( Halfedge_const_handle lSeed = LocateSeed(aTime); handle_assigned(lSeed); lSeed = LocateSeed(aTime) )
-    aOut = TraceOffsetPolygon(aTime,lSeed,aOut);
+  {
+    try
+    {
+      aOut = TraceOffsetPolygon(aTime,lSeed,aOut);
+    }
+    catch( std::exception const& e )
+    {
+      CGAL_POLYOFFSET_TRACE(0,"EXCEPTION THROWN (" << e.what() << ") during during polygon offset construction." ) ;
+    }
+  }  
 
   return aOut ;
 }

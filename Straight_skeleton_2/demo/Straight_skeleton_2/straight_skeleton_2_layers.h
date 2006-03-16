@@ -18,27 +18,37 @@
 
 #include <CGAL/IO/Qt_widget_layer.h>
 
-template <class Sls>
+template <class SSkel>
 class Qt_layer_show_skeleton : public CGAL::Qt_widget_layer
 {
-  typedef typename Sls::Halfedge_const_handle Halfedge_const_handle ;
-  typedef typename Sls::Vertex_const_handle   Vertex_const_handle ;
-  typedef typename Sls::Face_const_iterator   Face_const_iterator ;
+  
+  typedef typename SSkel::Halfedge_const_handle Halfedge_const_handle ;
+  typedef typename SSkel::Vertex_const_handle   Vertex_const_handle ;
+  typedef typename SSkel::Face_const_iterator   Face_const_iterator ;
 
+  typedef boost::shared_ptr<SSkel> SSkelPtr ;
+  
 public:
 
-  Qt_layer_show_skeleton(Sls const& aSls) : mSls(aSls)
-  {};
+  
+  Qt_layer_show_skeleton(Layers_toolbar* aParent, char const* aName, SSkelPtr const& aSSkelPtr) 
+    : CGAL::Qt_widget_layer(aParent,aName)
+    , mSSkelPtr(aSSkelPtr)
+  {
+  }
 
   void draw()
   {
-    typename Sls::Traits::Construct_segment_2 construct_segment ;
+    typename SSkel::Traits::Construct_segment_2 construct_segment ;
 
+    if ( !mSSkelPtr )
+      return ;
+      
     widget->lock();
 
-    int watchdog_limit = mSls.size_of_halfedges();
+    int watchdog_limit = mSSkelPtr->size_of_halfedges();
     
-    for ( Face_const_iterator fit = mSls.faces_begin(), efit = mSls.faces_end()
+    for ( Face_const_iterator fit = mSSkelPtr->faces_begin(), efit = mSSkelPtr->faces_end()
           ; fit != efit
           ; ++ fit
         )
@@ -94,9 +104,13 @@ public:
 
     widget->unlock();
   }
+  
+  virtual void activating  (){ widget->redraw() ; };
+  virtual void deactivating(){ widget->redraw() ; };
+  
 private:
 
-  Sls const& mSls;
+  SSkelPtr const& mSSkelPtr;
   const Halfedge_const_handle null_halfedge ;
   const Vertex_const_handle   null_vertex ;
 
@@ -121,11 +135,16 @@ class Qt_layer_show_regions : public CGAL::Qt_widget_layer
 
   typedef typename Boundary::const_iterator const_vertex_iterator ;
 
-  typename Boundary::Traits::Construct_segment_2 construct_segment ;
+  demo::K::Construct_segment_2 construct_segment ;
 
 public:
 
-  Qt_layer_show_regions(RegionList const& aRegions, CGAL::Color aColor ) : mRegions(aRegions),  mColor(aColor) {};
+  Qt_layer_show_regions(Layers_toolbar* aParent, char const* aName, RegionList const& aRegions, CGAL::Color aColor ) 
+    : CGAL::Qt_widget_layer(aParent,aName)
+    , mRegions(aRegions)
+    , mColor(aColor) 
+  {
+  }
 
   void draw()
   {
@@ -137,8 +156,8 @@ public:
     {
       for ( const_boundary_iterator bit = (*rit)->begin(), ebit = (*rit)->end(); bit != ebit; ++ bit )
       {
-        const_vertex_iterator first = (*bit)->vertices_begin();
-        const_vertex_iterator end   = (*bit)->vertices_end  ();
+        const_vertex_iterator first = (*bit)->begin();
+        const_vertex_iterator end   = (*bit)->end  ();
         const_vertex_iterator last  = end - 1 ;
         for ( const_vertex_iterator it = first ; it != end ; ++ it )
         {
@@ -151,6 +170,9 @@ public:
     widget->unlock();
 
   }
+  
+  virtual void activating  (){ widget->redraw() ; };
+  virtual void deactivating(){ widget->redraw() ; };
 
 private:
 

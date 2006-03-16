@@ -25,8 +25,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 namespace CGAL_SS_i {
 
 template<class K>
@@ -35,7 +33,7 @@ struct Construct_ss_vertex_2
   typedef typename K::FT      FT ;
   typedef typename K::Point_2 Point_2 ;
   
-  typedef Vertex<FT> Vertex ;
+  typedef CGAL_SS_i::Vertex<FT> Vertex ;
 
   typedef Vertex       result_type ;
   typedef Arity_tag<1> Arity ;
@@ -57,7 +55,7 @@ struct Construct_ss_edge_2
   typedef typename K::FT      FT ;
   typedef typename K::Point_2 Point_2 ;
   
-  typedef Edge<FT> Edge ;
+  typedef CGAL_SS_i::Edge<FT> Edge ;
 
   typedef Edge         result_type ;
   typedef Arity_tag<2> Arity ;
@@ -74,8 +72,8 @@ struct Construct_ss_triedge_2
 {
   typedef typename K::FT FT ;
   
-  typedef Edge   <FT> Edge    ;
-  typedef Triedge<FT> Triedge ;
+  typedef CGAL_SS_i::Edge   <FT> Edge    ;
+  typedef CGAL_SS_i::Triedge<FT> Triedge ;
 
   typedef Triedge      result_type ;
   typedef Arity_tag<3> Arity ;
@@ -123,7 +121,7 @@ struct Compare_ss_event_distance_to_seed_2 : Functor_base_2<K>
                                           ) const
   {
     Construct_ss_vertex_2<K> construct_vertex ;
-    return compare_offset_lines_isec_dist_to_pointC2(construct_vertex(aP),aL,aR) ;
+    return compare_offset_lines_isec_dist_to_pointC2(make_optional(construct_vertex(aP)),aL,aR) ;
   }
 
   Uncertain<Comparison_result> operator() ( Triedge const& aS
@@ -209,23 +207,41 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   typedef typename Base::Triedge       Triedge ;
   typedef typename Base::SortedTriedge SortedTriedge ;
 
-  typedef boost::tuple<FT,Point_2> result_type ;
-  typedef Arity_tag<1>             Arity ;
+  typedef boost::tuple< boost::optional<FT>, boost::optional<Point_2> > result_type ;
+  
+  typedef Arity_tag<1>  Arity ;
 
-  boost::tuple<FT,Point_2> operator() ( Triedge const& triedge ) const
+  result_type operator() ( Triedge const& triedge ) const
   {
+    optional< Rational<FT> > qt ;
+
+    optional<Vertex> i ;
+    
     SortedTriedge sorted = collinear_sort(triedge);
 
-    CGAL_assertion(!sorted.is_indeterminate()) ;
-    CGAL_assertion(sorted.collinear_count() < 3) ;
-
-    Rational<FT> qt = compute_offset_lines_isec_timeC2(sorted);
-
-    FT t = qt.n() / qt.d() ;
-
-    Vertex i = construct_offset_lines_isecC2(sorted);
-
-    return boost::make_tuple(t,Point_2(i.x(),i.y())) ;
+    FT t(0.0), ix(0.0), iy(0.0);
+    
+    if ( !sorted.is_indeterminate() )
+    {
+      CGAL_assertion(sorted.collinear_count() < 3) ;
+  
+      qt = compute_offset_lines_isec_timeC2(sorted);
+  
+      i = construct_offset_lines_isecC2(sorted);
+      
+      if ( qt )
+        t = qt->n() / qt->d() ;
+        
+      if ( i )  
+      {
+        ix = i->x();
+        iy = i->y();
+      }
+    }
+    
+    return boost::make_tuple( make_optional(qt, t    ) 
+                            , make_optional(i , Point_2(ix,iy)) 
+                            ) ;
   }
 };
 
@@ -240,6 +256,7 @@ struct Straight_skeleton_builder_traits_2_functors
   typedef CGAL_SS_i::Is_ss_event_inside_offset_zone_2   <K> Is_ss_event_inside_offset_zone_2 ;
   typedef CGAL_SS_i::Are_ss_events_simultaneous_2       <K> Are_ss_events_simultaneous_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
+  typedef CGAL_SS_i::Construct_ss_vertex_2              <K> Construct_ss_vertex_2 ;
   typedef CGAL_SS_i::Construct_ss_edge_2                <K> Construct_ss_edge_2 ;
   typedef CGAL_SS_i::Construct_ss_triedge_2             <K> Construct_ss_triedge_2 ;
 } ;
@@ -285,6 +302,7 @@ public:
     Are_ss_events_simultaneous_2 ;
 
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
+  typedef typename Unfiltering::Construct_ss_vertex_2               Construct_ss_vertex_2 ;
   typedef typename Unfiltering::Construct_ss_edge_2                 Construct_ss_edge_2 ;
   typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;
 
@@ -341,6 +359,7 @@ public:
                             Are_ss_events_simultaneous_2 ;
 
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
+  typedef typename Unfiltering::Construct_ss_vertex_2               Construct_ss_vertex_2 ;
   typedef typename Unfiltering::Construct_ss_edge_2                 Construct_ss_edge_2 ;
   typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;
 
@@ -358,6 +377,7 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_distance_to_seed_
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_ss_event_inside_offset_zone_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_events_simultaneous_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_vertex_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_edge_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_triedge_2);
 
