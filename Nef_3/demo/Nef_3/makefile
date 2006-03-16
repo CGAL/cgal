@@ -37,6 +37,7 @@ LDFLAGS = \
 
 all:            \
                 nef_3$(EXE_EXT) \
+                visual_hull$(EXE_EXT) \
                 visualization_SNC$(EXE_EXT) \
                 visualization_SM$(EXE_EXT)
 
@@ -45,6 +46,9 @@ nef_3.clean:
 
 nef_3$(EXE_EXT): nef_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) $(LDFLAGS)
+
+visual_hull$(EXE_EXT): visual_hull$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visual_hull visual_hull$(OBJ_EXT) $(LDFLAGS)
 
 visualization_SNC.clean:
 	rm -f visualization_SNC visualization_SNC$(OBJ_EXT)
@@ -60,6 +64,7 @@ visualization_SM$(EXE_EXT): visualization_SM$(OBJ_EXT)
 
 clean: \
                    nef_3.clean \
+                   visual_hull.clean \
                    visualization_SNC.clean \
                    visualization_SM.clean
 
