@@ -29,6 +29,7 @@ class client_base
 {
 public:
   virtual void call(TR) const = 0;
+  virtual ~client_base() {}
 };
 
 
