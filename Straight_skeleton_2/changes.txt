@@ -1,3 +1,6 @@
+16 March 2006 andreas Fabri
+- Added CGAL:: namespace prefix in test_offset_builder.C as ICL had a lookup problem
+
 14 March 2006 Joachim Reichel
 - Added/fixed CGAL_MAKEFILE= line in makefiles
 
