@@ -34,7 +34,7 @@ Subdivision methods are simple yet powerful ways to
 generate smooth surfaces from arbitrary polyhedral meshes. 
 Unlike spline-based surfaces (e.g NURBS) or other numeric-based 
 modeling techniques, users of subdivision
-methods do not need the mathematics knowledge of 
+methods do not need the mathematical knowledge of 
 the subdivision methods. 
 The natural intuition of the geometry suffices to control the 
 subdivision methods. 
@@ -76,16 +76,16 @@ In this chapter, we explain some fundamentals of
 subdivision methods. We focus only on the topics that help you 
 to understand the design of the package. Interested readers can
 refer to \cite{cgal:ww-smgd-02} for an in-depth introduction.
-Some terminologies introduced in this section will be used again
+Some terminology introduced in this section will be used again
 in later sections. If you are only interested in using a 
 specific subdivision method, Section \ref{secFirstSub} 
 gives a quick tutorial on Catmull-Clark subdivision.
 
 A subdivision method recursively refines a coarse mesh and 
 generates an ever closer approximation to a smooth surface.
-The coarse mesh can have arbitrary shapes, but it has to 
+The coarse mesh can have arbitrary shape, but it has to 
 be a 2-manifold. In a 2-manifold, every interior point has 
-a neighborhood homomorphic to a 2D disk. Subdivision methods
+a neighborhood homeomorphic to a 2D disk. Subdivision methods
 on non-manifolds have been developed, but are not considered
 in \ccc{Subdivision_method_3}. 
 %Subdivision algorithms (see e.g.~\cite{cgal:ww-smgd-02}) 
@@ -168,8 +168,8 @@ in red.
 Stencils with weights are called \emph{geometry masks}.
 %One practical set of geometry masks of the PQQ scheme is
 A subdivision method defines a geometry mask for each stencil, and 
-generates new points by summarizing source points weighted by the mask.
-Geometry masks are usually carefully chosen to meet requirements of 
+generates new points by averaging source points weighted by the mask.
+Geometry masks are carefully chosen to meet requirements of 
 certain surface smoothness and shape quality.
 The geometry masks of Catmull-Clark subdivision are shown
 below.  
@@ -193,7 +193,7 @@ of the vertex. The generated point, in red, is computed by a summation
 of the weighted points. For example, a Catmull-Clark facet-node is 
 computed by the summation of $1/4$ of each point on its stencil.
 
-A stencil can have unlimited number of geometry masks. For example, 
+A stencil can have an unlimited number of geometry masks. For example, 
 a facet-node of PQQ refinement may be computed by 
 the summation of $1/5$ of each stencil node instead of $1/4$.
 Although it is legal in \ccc{Subdivision_method_3} to have 
@@ -233,7 +233,7 @@ details on designing masks for a quality subdivision surface.
 % +-------------------------------------------------------------+
 \section{A Quick Example: Catmull-Clark Subdivision}
 \label{secFirstSub}
-Assuming your familiarity of \ccc{Polyhedron_3},
+Assuming you are familiar with \ccc{Polyhedron_3},
 you can integrate \ccc{Subdivision_method_3} into your program 
 without much effort.
 
@@ -346,7 +346,7 @@ class PQQ_stencil_3 {
 \end{ccExampleCode}
 
 Each class function in \ccc{PQQ_stencil_3} 
-computes a new point based on the neighbothood of the primitive 
+computes a new point based on the neighborhood of the primitive 
 handle, and assigns the new point to \ccc{Point_3& pt}. 
 
 We realize each class function with the geometry masks of 
@@ -495,12 +495,12 @@ class realizing the geometry masks of the subdivision
 method.
 
 A refinement host refines the input polyhedron, maintains 
-the stencils (i.e.~the mapping between the control mesh 
+the stencils (i.e., the mapping between the control mesh 
 and the refined mesh), and calls the geometry masks
 to compute the new points. 
 In \ccc{Subdivision_method_3}, refinements are implemented
 as a sequence of connectivity operations (mainly Euler operations).
-The order of the connectivity operations plays a key of maintaining
+The order of the connectivity operations plays a key role when maintaining
 stencils. By matching the order of the source submeshes to the refined 
 vertices, no flag in the primitives is required to register the stencils. 
 It avoids the data dependency of the refinement host on the polyhedron class. 
@@ -528,9 +528,9 @@ The geometry policy is explained in next section.
 
 Refinement hosts \ccc{PQQ} and \ccc{DQQ} work on a general 
 polyhedron, and \ccc{PTQ} and \ccc{Sqrt3} work on a triangulated
-polyhedron. The result of \ccc{PTQ} and \ccc{Sqrt3} on a non-triangle
+polyhedron. The result of \ccc{PTQ} and \ccc{Sqrt3} on a non-triangulated
 polyhedron is undefined. \ccc{Subdivision_method_3} does not verify
-the precondition of the mesh characteristic before the refinement.
+the precondition of the mesh characteristics before the refinement.
 
 For details of the refinement implementation, 
 interested users should refer to \cite{cgal:sp-mrbee-05}.
