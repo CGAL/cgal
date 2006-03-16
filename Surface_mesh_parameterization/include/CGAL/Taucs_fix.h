@@ -21,7 +21,7 @@
 #ifndef CGAL_TAUCS_FIX
 #define CGAL_TAUCS_FIX
 
-// Include TAUCS main header
+// Include TAUCS main header taucs.h
 #ifndef CGAL_INCLUDED_TAUCS_H
     #define CGAL_INCLUDED_TAUCS_H
 

@@ -1,0 +1,88 @@
+// Copyright (c) 2004  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Omer Meshar, Laurent Saboret
+
+// ---------------------------------------------------------------------
+// A short test program to evaluate a machine architecture.
+// This program is used by cgal_configure.
+// The following documentation will be pasted in the generated configfile.
+// ---------------------------------------------------------------------
+
+// Test if TAUCS is available
+// Second step "TAUCS": find TAUCS main header and library
+
+
+#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define TAUCS_CORE_DOUBLE
+
+// Include TAUCS main header taucs.h
+#ifndef CGAL_INCLUDED_TAUCS_H
+    #define CGAL_INCLUDED_TAUCS_H
+
+    // In GCC 3.x, <complex.h> includes <complex> and
+    // complains if we include <complex.h> within "extern C {}"
+    #if defined(__GNUC__)
+        #undef __DEPRECATED
+        #include <complex.h>
+    #endif
+
+    // TAUCS is a C library
+    extern "C" {
+        #include <taucs.h>
+    }
+
+    // Avoid error with std::min() and std::max()
+    #undef min
+    #undef max
+
+#endif
+
+int main(int argc, char* argv[])
+{
+    // Create a TAUCS matrix to link with TAUCS main library
+    int m = 4,n = 4,nnz = 4, i;
+    taucs_ccs_matrix* pMatrix = taucs_ccs_create(m, n, nnz, TAUCS_DOUBLE);
+    pMatrix->colptr[0] = 0;
+    pMatrix->colptr[1] = 4;
+    for ( i = 0; i < 4; i++ )
+    {
+        pMatrix->rowind[i] = i;
+        pMatrix->taucs_values[i] = i;
+    }
+    taucs_dccs_free(pMatrix);
+
+    // Call a method needing TAUCS external libraries
+    int*    perm;
+    int*    invperm;
+    taucs_ccs_order(pMatrix,
+                    &perm,
+                    &invperm,
+                    "metis");
+
+    // TAUCS provides no version number :-(
+    // Version 1 is obsolete, thus we assume version 2 (latest is 2.2 on 03/2006)
+    std::cout << "version=2" << std::endl;
+
+    return 0;
+}

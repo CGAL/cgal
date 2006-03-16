@@ -1,0 +1,16 @@
+# TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
+# Second step "TAUCS": find TAUCS main header and library
+
+DESCRIPTION =
+PROVIDES = TAUCS
+CXXFLAGS =
+LDFLAGS =
+LIBS = taucs
+REQUIRES = DOLLAR_TAUCSROOT DOLLAR_TAUCS_OSTYPE TAUCSEXTERNAL
+INCOMPATIBLE =
+STDINCLDIRS = ${TAUCSROOT}/src
+INCLTHING = taucs.h
+STDLIBDIRS = ${TAUCSROOT}/lib/${TAUCS_OSTYPE}
+LIBTHING = libtaucs.\*
+
+# EOF

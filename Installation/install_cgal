@@ -679,6 +679,42 @@ old_guess_os()
     OLD_SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_sed} -e 's/(.*)//g' -e 's/_/-/g' | ${_awk} '{print $1}'`"
 }
 
+# Set ${TAUCS_OSTYPE} (variable indicating the platform name for TAUCS library)
+# Note: This code is copied from TAUCS configure script
+set_TAUCS_OSTYPE()
+{
+# In most cases, OSTYPE is set automatically before
+# the user's shell begins, but sometimes it is
+# not set or set in a way that is inconsistent
+# with our usage.
+TAUCS_OSTYPE=${OSTYPE}
+
+# On SGI IRIX systems, OSTYPE is not set
+# (at least in Tel-Aviv University)
+if [ \( ${TAUCS_OSTYPE:-fail} = "fail" \) -a \( `uname` = "IRIX64" \) ] ; then
+  TAUCS_OSTYPE=irix
+fi
+
+# On Linux, OSTYPE is usually set to "linux",
+# but if it is not set (or if the user unsets it),
+# /bin/sh supplies its own politically-correct,
+# string, which we need to normalize.
+if [ ${TAUCS_OSTYPE:-fail} = "linux-gnu" ] ; then
+  TAUCS_OSTYPE=linux
+fi
+
+# If TAUCS_OSTYPE is still not set, we try to set it
+# from uname, folding to lower case. This should sometimes
+# work, but sometimes uname returns a value that is
+# inconsistent with the way OSTYPE is set. For example, on
+# Solaris, OSTYPE=solaris but uname returns SunOS.
+if [ ${TAUCS_OSTYPE:-fail} = "fail" ] ; then
+  TAUCS_OSTYPE=`uname | tr "A-Z" "a-z"`
+fi
+
+${_printf} "\$TAUCS_OSTYPE is set to ${TAUCS_OSTYPE}" >> "${INSTALL_LOGFILE}"
+}
+
 # -------------------------------------------------------
 # several directories depend on the setting of CGAL_DIR
 # we put these into a function that can be called in case
@@ -4879,6 +4915,9 @@ _tr=tr
 _printf=printf
 _rm=rm
 CGAL_INSTALL_VERSION="`_install_version_number`"
+
+# Set ${TAUCS_OSTYPE} (variable indicating the platform name for TAUCS library)
+set_TAUCS_OSTYPE
 
 # first quickly process "trivial" commandline options
 # (starting the whole parsing process would slowdown too much...)
