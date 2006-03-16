@@ -20,9 +20,11 @@ int main(int, char *[])
 
   KDel kdel(simtr);
 
-  std::ifstream in("data/points_3.n=100,d=1");
+  std::string inputf("data/points_3.n=100,d=1");
+
+  std::ifstream in(inputf.c_str());
   if (!in) {
-    std::cerr << "Error opening input file: " << "data" << std::endl;
+    std::cerr << "Error opening input file: " << inputf << std::endl;
     return EXIT_FAILURE;
   }
 
