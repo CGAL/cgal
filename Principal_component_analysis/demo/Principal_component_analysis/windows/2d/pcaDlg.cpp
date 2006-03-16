@@ -90,6 +90,7 @@ BEGIN_MESSAGE_MAP(CpcaDlg, CDialog)
   ON_COMMAND(ID_RANDOM_HORIZONTALLINE, OnRandomHorizontalline)
   ON_COMMAND(ID_RANDOM_VERTICALLINE, OnRandomVerticalline)
   ON_COMMAND(ID_FIT_DEBUG, OnFitDebug)
+  ON_COMMAND(ID_DEBUG_MANYTESTSFORNUMEROUSPOINTSONALINE, OnDebugManytestsfornumerouspointsonaline)
 END_MESSAGE_MAP()
 
 
@@ -471,11 +472,33 @@ void CpcaDlg::OnRandomVerticalline()
 void CpcaDlg::OnFitDebug()
 {
   BeginWaitCursor();
+  for(int i=0;i<10000;i++)
+  {
+    m_points.clear();
+    double x1 = (double)rand() / (double)RAND_MAX;
+    double y1 = (double)rand() / (double)RAND_MAX;
+    double x2 = (double)rand() / (double)RAND_MAX;
+    double y2 = (double)rand() / (double)RAND_MAX;
+    m_points.push_back(Point_2(x1,y1));
+    m_points.push_back(Point_2(x2,y2));
+    OnFitLine();
+  }
+  EndWaitCursor();
+  InvalidateRect(NULL,FALSE);
+}
+
+void CpcaDlg::OnDebugManytestsfornumerouspointsonaline()
+{
+  BeginWaitCursor();
   m_points.clear();
+  
+  // random line (y = ax + b)
+  double a = (double)rand() / (double)RAND_MAX;
+  double b = (double)rand() / (double)RAND_MAX;
   for(int i=0;i<10000;i++)
   {
     double x = (double)rand() / (double)RAND_MAX;
-    double y = (double)rand() / (double)RAND_MAX;
+    double y = a * x + b;
     m_points.push_back(Point_2(x,y));
   }
   OnFitLine();

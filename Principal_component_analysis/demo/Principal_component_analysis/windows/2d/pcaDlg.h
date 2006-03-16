@@ -80,4 +80,5 @@ public:
   afx_msg void OnRandomHorizontalline();
   afx_msg void OnRandomVerticalline();
   afx_msg void OnFitDebug();
+  afx_msg void OnDebugManytestsfornumerouspointsonaline();
 };

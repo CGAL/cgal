@@ -152,9 +152,6 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
   FT eigen_values[3];
   FT eigen_vectors[9];
   eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
-  CGAL_assertion(eigen_values[0] >= 0.0 && 
-                 eigen_values[1] >= 0.0 &&
-                 eigen_values[2] >= 0.0);
 
   // check unicity and build fitting line accordingly
   if(eigen_values[0] != eigen_values[1] &&
@@ -199,9 +196,6 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
   FT eigen_values[3];
   FT eigen_vectors[9];
   eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
-  CGAL_assertion(eigen_values[0] >= 0.0 && 
-                 eigen_values[1] >= 0.0 &&
-                 eigen_values[2] >= 0.0);
 
   // check unicity and build fitting line accordingly
   if(eigen_values[0] != eigen_values[1])

@@ -6,14 +6,14 @@
 #include <list>
 #include <iostream>
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  K;
-typedef K::Point_2           Point_2;
-typedef K::Point_3           Point_3;
+typedef double              FT;
+typedef CGAL::Cartesian<FT> K;
+typedef K::Point_2          Point_2;
+typedef K::Point_3          Point_3;
 
 int main()
 {
-  // bounding_box of 2D points
+  // axis-aligned bounding box of 2D points
   std::list<Point_2> points_2;
   points_2.push_back(Point_2(1.0, 0.0));
   points_2.push_back(Point_2(2.0, 2.0));
@@ -22,7 +22,7 @@ int main()
   K::Iso_rectangle_2 c2 = CGAL::bounding_box(points_2.begin(), points_2.end());
   std::cout << c2 << std::endl;
 
-  // bounding_box of 3D points
+  // axis-aligned bounding box of 3D points
   std::list<Point_3> points_3;
   points_3.push_back(Point_3(1.0, 0.0, 0.5));
   points_3.push_back(Point_3(2.0, 2.0, 1.2));

@@ -210,7 +210,12 @@ BEGIN
     POPUP "&Fit"
     BEGIN
         MENUITEM "&Line",                       ID_FIT_LINE
-        MENUITEM "Debug",                       ID_FIT_DEBUG
+        POPUP "Debug"
+        BEGIN
+            MENUITEM "Many tests for 2 points",     ID_FIT_DEBUG
+            MENUITEM "Many points on a line",       ID_DEBUG_MANYTESTSFORNUMEROUSPOINTSONALINE
+
+        END
     END
 END
 

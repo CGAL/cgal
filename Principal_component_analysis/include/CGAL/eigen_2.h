@@ -25,8 +25,9 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-  // extract eigenvalues and eigenvectors from a 2x2 symmetric matrix. 
-  // Note: involves a square root.
+  // extract eigenvalues and eigenvectors from a 2x2 symmetric
+  // positive definite matrix. 
+  // Note: computations involve a square root.
   // Matrix numbering:
   // a b
   // b c 
@@ -47,6 +48,8 @@ namespace CGALi {
     FT b = matrix[1];
     FT c = matrix[2];
     FT p = c*c - 2*a*c + 4*b*b + a*a;
+
+    CGAL_assertion(a >= 0.0 && c >= 0.0);
 
     // degenerate or isotropic case
     if(p == 0.0) 
