@@ -491,6 +491,7 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#
 Homogeneous_kernel/changes.txt -text
 Installation/config/support/README -text
 Installation/config/support/S05-BOOST -text
+Installation/config/support/S06-BOOST_PROGRAM_OPTIONS -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
 Installation/config/support/S25-MPFR -text
@@ -503,6 +504,7 @@ Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
 Installation/config/support/S83-QT3MSST -text
 Installation/config/support/test_BOOST.C -text
+Installation/config/support/test_BOOST_PROGRAM_OPTIONS.C -text
 Installation/config/support/test_CORE.C -text
 Installation/config/support/test_GMP.C -text
 Installation/config/support/test_GMPXX.C -text
