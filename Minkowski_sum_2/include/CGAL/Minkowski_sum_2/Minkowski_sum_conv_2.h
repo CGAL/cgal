@@ -178,21 +178,21 @@ public:
     const unsigned int    n1 = pgn1.size();
     const bool            forward1 = (pgn1.orientation() == COUNTERCLOCKWISE);
     std::vector<Direction_2>  dirs1 (n1);
-    std::vector<bool>         is_reflex1 (n2);
-    Vertex_circulator         prev1, curr1, next1;
+    Vertex_circulator         curr1, next1;
     unsigned int              k1;
 
 #ifdef RWRW_STATS
+    Vertex_circulator     prev1 = pgn1.vertices_circulator();
     unsigned int          ref1 = 0, ref2 = 0;
-#endif // RWRW_STATS
-
-    prev1 = next1 = curr1 = pgn1.vertices_circulator();
 
     if (forward1)
       --prev1;
     else
       ++prev1;
+#endif // RWRW_STATS
 
+
+    next1 = curr1 = pgn1.vertices_circulator();
     for (k1 = 0; k1 < n1; k1++)
     {
       if (forward1)
@@ -200,16 +200,15 @@ public:
       else
         --next1;
 
-      is_reflex1[k1] = (f_orientation (*prev1, *curr1, *next1) == RIGHT_TURN);
-
 #ifdef RWRW_STATS
-      if (is_reflex1[k1])
+      if (f_orientation (*prev1, *curr1, *next1) == RIGHT_TURN)
+      {
 	ref1++;
+      }
+      prev1 = curr1;
 #endif // RWRW_STATS
       
       dirs1[k1] = f_direction (f_vector (*curr1, *next1));
-
-      prev1 = curr1;
       curr1 = next1;
     }
 
@@ -218,7 +217,6 @@ public:
     const unsigned int    n2 = pgn2.size();
     const bool            forward2 = (pgn2.orientation() == COUNTERCLOCKWISE);
     std::vector<Direction_2>  dirs2 (n2);
-    std::vector<bool>         is_reflex2 (n2);
     Vertex_circulator         prev2, curr2, next2;
     Vertex_ref                bottom_left;
     bool                      is_convex2 = true;
@@ -244,8 +242,7 @@ public:
       else if (f_compare_xy (*curr2, *(bottom_left.first)) == SMALLER)
         bottom_left = Vertex_ref (curr2, k2);
 
-      is_reflex2[k2] = (f_orientation (*prev2, *curr2, *next2) == RIGHT_TURN);
-      if (is_reflex2[k2])
+      if (f_orientation (*prev2, *curr2, *next2) == RIGHT_TURN)
       {
         // We found a reflex vertex.
         is_convex2 = false;
@@ -333,10 +330,8 @@ public:
             // Add a loop to the current convolution cycle.
             curr_id++;
             _convolution_cycle (curr_id,
-                                n1, forward1, dirs1, is_reflex1,
-                                vert1.first, vert1.second,
-                                n2, forward2, dirs2, is_reflex2,
-                                vert2.first, vert2.second,
+                                n1, forward1, dirs1, vert1.first, vert1.second,
+                                n2, forward2, dirs2, vert2.first, vert2.second,
                                 used_labels, queue,
                                 cycle);
 
@@ -425,12 +420,10 @@ private:
    */
   void _convolution_cycle (unsigned int cycle_id,
                            unsigned int n1, bool forward1, 
-                           const std::vector<Direction_2>& dirs1,
-                           const std::vector<bool>& is_reflex1,
+                           const std::vector<Direction_2>& dirs1, 
                            Vertex_circulator curr1, unsigned int k1,
                            unsigned int n2, bool forward2, 
                            const std::vector<Direction_2>& dirs2, 
-                           const std::vector<bool>& is_reflex2,
                            Vertex_circulator curr2, unsigned int k2,
                            Labels_set& used_labels,
                            Anchors_queue& queue,
@@ -535,15 +528,11 @@ private:
         res = f_compare_xy (curr_pt, next_pt);
         CGAL_assertion (res != EQUAL);
 
-        //@!@
-        if (! is_reflex2[k2])
-        {
-          cycle.push_back (Labeled_segment_2 (Segment_2 (curr_pt, next_pt),
-                                              X_curve_label ((res == SMALLER),
-                                                             cycle_id,
-                                                             seg_index,
-                                                             MOVE_ON_1)));
-        }
+        cycle.push_back (Labeled_segment_2 (Segment_2 (curr_pt, next_pt),
+                                            X_curve_label ((res == SMALLER),
+                                                           cycle_id,
+                                                           seg_index,
+							   MOVE_ON_1)));
         used_labels.insert (Convolution_label (k1, k2, 1));
 	seg_index++;
 
@@ -567,15 +556,11 @@ private:
         res = f_compare_xy (curr_pt, next_pt);
         CGAL_assertion (res != EQUAL);
 
-        //@!@
-        if (! is_reflex1[k1])
-        {
-          cycle.push_back (Labeled_segment_2 (Segment_2 (curr_pt, next_pt),
-                                              X_curve_label ((res == SMALLER),
-                                                             cycle_id,
-                                                             seg_index,
-                                                             MOVE_ON_2)));
-        }
+        cycle.push_back (Labeled_segment_2 (Segment_2 (curr_pt, next_pt),
+                                            X_curve_label ((res == SMALLER),
+                                                           cycle_id,
+                                                           seg_index,
+							   MOVE_ON_2)));
         used_labels.insert (Convolution_label (k1, k2, 2));
 	seg_index++;
 
@@ -595,7 +580,6 @@ private:
 
     CGAL_assertion (f_equal (curr_pt, first_pt));
 
-    /*
     // Before moving un-necessary sub-cycles from the segment list, make sure
     // the list contains no "cyclic" sub-cylces. We do that by making sure that
     // the first and last segments of the list correspond to traversals of
@@ -676,11 +660,8 @@ private:
       for (curr = cycle.begin(); curr != cycle.end(); ++curr, ++seg_index)
         cycle.back().label().set_index (seg_index);
     }
-    */
 
-    if (cycle.back().label().index() + 1 == seg_index)
-      cycle.back().label().set_flag (true);
-
+    cycle.back().label().set_flag (true);
     return;
   }
 };

@@ -14,7 +14,7 @@ int main ()
 
 #else
 
-#define RWRW_STATS
+//#define RWRW_STATS
 #define USE_LAZY_KERNEL
 
 #include <CGAL/basic.h>
