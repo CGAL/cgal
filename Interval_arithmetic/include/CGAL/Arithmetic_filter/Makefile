@@ -7,7 +7,7 @@
 # Sylvain Pion, 1998-1999.
 
 # Tell where the script is.
-SCRIPT = ../../../scripts/filtered_predicates_generator.pl
+SCRIPT = ../../../scripts/cgal_filtered_predicates_generator.pl
 BASE = $(CGAL)/include/CGAL
 
 # Tell which files must be treated.
