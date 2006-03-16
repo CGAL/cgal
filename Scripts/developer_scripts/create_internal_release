@@ -832,7 +832,10 @@ sub make_testscripts()
 			close OPTIONS;
 		    }
 		}
-		system("$SCRIPTSDIR/cgal_create_makefile", $options);
+		$result = system("$SCRIPTSDIR/cgal_create_makefile", $options);
+		if ($result) {
+			die;
+		}
 	    }
 	    if ( ! -f 'cgal_test' ) {
 	      create_test();
@@ -878,7 +881,10 @@ sub make_testscripts()
 			close OPTIONS;
 		    }
 		}
-		system("$SCRIPTSDIR/cgal_create_makefile", $options);
+		$result = system("$SCRIPTSDIR/cgal_create_makefile", $options);
+		if ($result) {
+			die;
+		}
 	    }
 	    chdir '..';
 	}
