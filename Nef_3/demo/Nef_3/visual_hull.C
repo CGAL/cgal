@@ -103,8 +103,8 @@ int main(int argc, char* argv[]) {
       if(pi_next==li->end()) pi_next=li->begin();
       if(pi_prev==li->begin()) pi_prev=li->end();
       --pi_prev;
-      if((li==polygon_list.begin() && 
-	  CGAL::orientation(*pi_prev,*pimin,*pi_next,camera) == CGAL::POSITIVE))
+      if(CGAL::orientation(*pi_prev,*pimin,*pi_next,camera) 
+	 == CGAL::POSITIVE)
 	li->reverse();
     }
 
