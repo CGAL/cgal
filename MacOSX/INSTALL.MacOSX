@@ -49,12 +49,12 @@ version 3.3.5 or later.
 
 Running the Demos
 
-In order to run the examples you need to apply the make_macosx_app
+In order to run the examples you need to apply the cgal_make_macosx_app
 script which creates the appropriate directory structure so that a CGAL
 Qt demo can be run on MacOSX. The script resides in
 $(CGALROOT)/scripts and should be applied to the executable created by
 the demo makefile:
-    prompt:> $(CGALROOT)/scripts/make_macosx_app <demo-executable>
+    prompt:> $(CGALROOT)/scripts/cgal_make_macosx_app <demo-executable>
 The script creates a directory <demo-executable>.app/ which is the
 root directory of the directory structure needed by MacOSX.
 To run the demo use the "open" command from the prompt:

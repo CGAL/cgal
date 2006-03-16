@@ -1,3 +1,6 @@
+16 March: Joachim Reichel
+- added cgal_ prefix to make_macosx_app
+
 16 December 2005:  Menelaos Karavelas
 - added installation instructions for MacOSX
 
