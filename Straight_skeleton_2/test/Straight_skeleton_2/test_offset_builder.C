@@ -67,9 +67,9 @@ void test( std::string file )
      double s = std::sqrt(w*w+h*h);
      double lOffset = s * 0.3 ;
      
-     double lMargin = compute_outer_frame_margin(lPoly->vertices_begin()
-                                                ,lPoly->vertices_end  ()
-                                                ,lOffset
+     double lMargin = CGAL::compute_outer_frame_margin(lPoly->vertices_begin()
+						       ,lPoly->vertices_end  ()
+						       ,lOffset
                                                 );
      double flx = lBbox.xmin() - lMargin ;
      double fhx = lBbox.xmax() + lMargin ;
@@ -105,7 +105,7 @@ void test( std::string file )
         // Find the outmost offset contour (as the one with the biggest area)
         PolygonPtr lOutmost = lContours->front();
         double lBestArea = CGAL_NTS abs (lOutmost->area());
-        for( Region::const_iterator cit = successor(lContours->begin()), ecit = lContours->end() ; cit != ecit ; ++ cit )
+        for( Region::const_iterator cit = CGAL::successor(lContours->begin()), ecit = lContours->end() ; cit != ecit ; ++ cit )
         {
           PolygonPtr lContour = *cit ;
           if ( CGAL_NTS abs (lContour->area()) > lBestArea )
