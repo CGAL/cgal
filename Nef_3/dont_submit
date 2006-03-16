@@ -1,14 +1,13 @@
 TODO
 Shell_constructor.h
-CGAL/Nef_3/Progress_indicator.h
-include/CGAL/Nef_3/Visualizor.h
-test/Nef_3/FILES
+Progress_indicator.h
+Visualizor.h
+FILES
 Minkowski
 k3tree
 Benchmark
 triangulation
 bbox
 performance
-demo/Nef_3/TODO
 Visual_hull
 SNC_walker
