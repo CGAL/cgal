@@ -23,6 +23,7 @@
 
 #include <CGAL/Taucs_matrix.h>
 #include <CGAL/Taucs_vector.h>
+#include <CGAL/Taucs_fix.h>
 
 #include <cassert>
 #include <stdio.h>
@@ -92,11 +93,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-//#ifndef NDEBUG
-//        // Turn on TAUCS trace
-//        std::cerr.flush();
-//        taucs_logfile("stderr");
-//#endif
+#ifndef NDEBUG
+       // Turn on TAUCS trace
+       std::cerr.flush();
+       taucs_logfile("stderr");
+#endif
 
 //#ifndef NDEBUG
 //        // Debug trace
@@ -210,11 +211,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-//#ifndef NDEBUG
-//        // Turn on TAUCS trace
-//        std::cerr.flush();
-//        taucs_logfile("stderr");
-//#endif
+#ifndef NDEBUG
+       // Turn on TAUCS trace
+       std::cerr.flush();
+       taucs_logfile("stderr");
+#endif
 
 //#ifndef NDEBUG
 //        // Debug trace
