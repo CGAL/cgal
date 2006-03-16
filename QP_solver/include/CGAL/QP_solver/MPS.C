@@ -341,6 +341,7 @@ bool QP_MPS_instance<IT_,ET_,
     if (var_name == var_names.end()) { // new variable?
       var_index = var_names.size();
       var_names.insert(String_int_pair(t,var_index));
+      var_by_index.push_back(t);
       A_.push_back(Vector(row_names.size(),IT(0)));
       c_.push_back(IT(0));
       fl_.push_back(true);  // default lower bound is finite...

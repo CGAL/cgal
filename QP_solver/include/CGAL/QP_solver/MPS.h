@@ -136,6 +136,7 @@ private:
   std::string obj;      // name of the objective "constraint"
   Index_map row_names;
   Index_map var_names;
+  std::vector<std::string> var_by_index; // name of i-the variable
 
   // variables used in token() (see below):
   bool use_put_back_token;
@@ -374,16 +375,17 @@ public: // methods:
   const std::string& name_of_variable(unsigned int i)
   {
     CGAL_qpe_assertion(0<=i && i<number_of_variables());
-    for (Index_map::const_iterator it = var_names.begin();
-	 it != var_names.end();
-	 ++it)
-      if ((*it).second == i)
-        return (*it).first;
+    return var_by_index[i];
+//     for (Index_map::const_iterator it = var_names.begin();
+// 	 it != var_names.end();
+// 	 ++it)
+//       if ((*it).second == i)
+//         return (*it).first;
 
-    CGAL_qpe_assertion(false); // should never get here; following
-			       // only to fix compiler warnings
-    static std::string dummy;
-    return dummy;
+//     CGAL_qpe_assertion(false); // should never get here; following
+// 			       // only to fix compiler warnings
+//     static std::string dummy;
+//     return dummy;
   }
 
   // Returns the section name of the MPS stream in which the D matrix

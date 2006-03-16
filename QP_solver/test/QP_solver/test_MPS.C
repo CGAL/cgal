@@ -97,48 +97,29 @@ int main(const int argNr,const char **args) {
   }
 
   // get solution:
-  if (solver.status() != Solver::INFEASIBLE) {
-    cout << "Solution:" << endl;
-    std::vector<ET> x(qp.number_of_variables(),0);  // solution vector
-    // Note: following should be fixed to also output values for nonbasics...
-    Solver::Basic_variable_numerator_iterator
-      x_it =  solver.basic_original_variables_numerator_begin(),
-      x_end = solver.basic_original_variables_numerator_end();
-    Solver::Basic_variable_index_iterator 
-      x_ind = solver.basic_original_variables_index_begin();
-    const ET denom = solver.variables_common_denominator();
-    for (; x_it != x_end; ++x_it, ++x_ind)
-      x[*x_ind] = *x_it;
-
-    // hack to find values nonbasic variables (should be replaced
-    // with iterator access):
-    for (unsigned int i=0; i<qp.number_of_variables(); ++i)
-      if (!solver.is_basic(i))
-	x[i] = solver.nonbasic_original_variable_value(i);
-
-    // test original variables iterator; once it runs, old code above
-    // can be removed
-    std::vector<ET> y;
-    std::copy(
-	      solver.variables_numerator_begin(),
-	      solver.variables_numerator_end(),
-	      std::back_inserter(y));
-    if (!std::equal(x.begin(), x.end(), y.begin())) {
-	std::cout 
-	  << "error in variables_numerator_iterator"
-	  << std::endl; 
-	std::exit(2);
-    }
-    
+  if (solver.status() == Solver::OPTIMAL) {
     // output solution:
-    cout << "Exact solution:" << endl;
-    for (unsigned int i=0; i<qp.number_of_variables(); ++i)
-      cout << "x[" << i << "] (" << qp.name_of_variable(i) << ") = "
-	   << x[i] << "/" << denom << endl;
-    cout << "Solution (as doubles):" << endl;
-  for (unsigned int i=0; i<qp.number_of_variables(); ++i)
-    cout << "x[" << i << "] (" << qp.name_of_variable(i) << ") ~= "
-         << CGAL::to_double(x[i])/CGAL::to_double(denom)
-         << endl;
+    cout << "Objective function value: " << 
+      solver.solution() << " ~ " <<
+      CGAL::to_double(solver.solution_numerator()) /
+      CGAL::to_double(solver.solution_denominator()) <<
+      endl;     
+     
+    cout << "Variable values:" << endl;
+    Solver::Variable_value_iterator it 
+      = solver.variables_value_begin() ;
+    Solver::Variable_numerator_iterator it_n
+      = solver.variables_numerator_begin();
+    ET denom = solver.variables_common_denominator();
+    for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++it_n, ++i)
+      cout << "  " << qp.name_of_variable(i) << " = "
+	   << *it << " ~ " << CGAL::to_double(*it_n)/CGAL::to_double(denom)
+           << endl;
+    return 0;
   }
+  if  (solver.status() == Solver::INFEASIBLE)
+    cout << "Problem is infeasible." << endl;
+  else // unbounded
+    cout << "Problem is unbounded." << endl;
+  return 0;
 }

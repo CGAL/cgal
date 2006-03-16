@@ -1,4 +1,3 @@
-
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/QP_solver/Double.h>
