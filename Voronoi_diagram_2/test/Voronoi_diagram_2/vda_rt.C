@@ -33,7 +33,7 @@
 #include <CGAL/Regular_triangulation_adaptation_policies_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K>        Gt;
+struct Gt : public CGAL::Regular_triangulation_euclidean_traits_2<K> {};
 
 #if 1 // definitions for hierarchy
 
