@@ -16,7 +16,7 @@
 #
 # $URL$
 # $Id$
-# 
+#
 #
 # Author(s): Laurent Saboret, Pierre Alliez, Bruno Levy
 # Purpose: Search for the first file/folder existing in a list
@@ -29,7 +29,7 @@ usage ()
 {
 echo "\
 Search for the first file/folder existing in a list. Print an empty string on failure.
-Usage: find_file file1 file2..."
+Usage: $0 file1 file2..."
 
 exit 1
 }
