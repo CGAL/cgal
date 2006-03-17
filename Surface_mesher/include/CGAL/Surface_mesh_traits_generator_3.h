@@ -20,6 +20,7 @@
 #ifndef CGAL_SURFACE_MESH_TRAITS_GENERATOR_3_H
 #define CGAL_SURFACE_MESH_TRAITS_GENERATOR_3_H
 
+#include <CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h>
 
 namespace CGAL {
 
@@ -30,6 +31,14 @@ template <typename Surface>
 struct Surface_mesh_traits_generator_3 
 {
   typedef typename Surface::Surface_mesher_traits_3 Type;
+  typedef Type type; // for Boost compatiblity (meta-programming)
+};
+
+  // specialization for Kernel::Sphere_3
+template <typename Kernel>
+struct Surface_mesh_traits_generator_3<CGAL::Sphere_3<Kernel> >
+{
+  typedef Surface_mesher::Sphere_oracle_3<Kernel> Type;
   typedef Type type; // for Boost compatiblity (meta-programming)
 };
 

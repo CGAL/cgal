@@ -1886,6 +1886,7 @@ Surface_mesher/include/CGAL/Surface_mesh_default_criteria_3.h -text
 Surface_mesher/include/CGAL/Surface_mesh_traits_generator_3.h -text
 Surface_mesher/include/CGAL/Surface_mesh_triangulation_generator_3.h -text
 Surface_mesher/include/CGAL/Surface_mesh_vertex_base_3.h -text
+Surface_mesher/include/CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h -text
 Surface_mesher/include/CGAL/make_surface_mesh.h -text
 Surface_mesher/test/Surface_mesher/NOTICE -text
 Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test.C -text

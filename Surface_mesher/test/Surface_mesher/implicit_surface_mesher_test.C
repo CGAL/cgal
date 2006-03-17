@@ -50,6 +50,8 @@ struct Test_with_kernel {
                                                        radius_bound,
                                                        distance_bound);
 
+    std::cout << "   implicit_surface sphere(O, 1.)\n";
+
     // 2D-complex in 3D-Delaunay triangulation
     C2T3 c2t3 (tr);
 
@@ -62,9 +64,22 @@ struct Test_with_kernel {
                       criteria,
                       Tag(),
                       initial_number_of_points);
-  
+
     std::cout << "Final number of points: " << tr.number_of_vertices() 
               << std::endl;
+
+    // same test, with a Sphere_3
+    std::cout << "   Kernel::Sphere_3(ORIGIN, 1.)\n";
+    Tr tr_2;
+    C2T3 c2t3_2(tr_2);
+    make_surface_mesh(c2t3_2,
+                      Sphere_3(CGAL::ORIGIN, 1.),
+                      criteria,
+                      Tag(),
+                      initial_number_of_points);    
+    std::cout << "Final number of points: " << tr_2.number_of_vertices() 
+              << std::endl;
+  
   }
 };
 
