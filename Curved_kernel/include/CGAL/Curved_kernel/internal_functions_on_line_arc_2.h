@@ -36,8 +36,8 @@ namespace CircularFunctors {
 		   const typename CK::Circular_arc_point_2 &p) 
   {
     // range includes endpoints here
-    return ( (compare_x<CK>(p, A.source()) != compare_x<CK>(p, A.target())) 
-	     || (compare_x(p, A.source()) == CGAL::EQUAL) );
+    return ( (CircularFunctors::compare_x<CK>(p, A.source()) != CircularFunctors::compare_x<CK>(p, A.target())) 
+	     || (CircularFunctors::compare_x<CK>(p, A.source()) == CGAL::EQUAL) );
   }
   
   template < class CK >
@@ -64,8 +64,8 @@ namespace CircularFunctors {
 	 (A1.supporting_line() != A2.supporting_line().opposite())) 
       return false;
 
-    return compare_xy<CK>(A1.right(), A2.left()) > 0
-        && compare_xy<CK>(A1.left(), A2.right()) < 0;
+    return CircularFunctors::compare_xy<CK>(A1.right(), A2.left()) > 0
+        && CircularFunctors::compare_xy<CK>(A1.left(), A2.right()) < 0;
   }
 
 
@@ -77,7 +77,7 @@ namespace CircularFunctors {
     if ( ! CGAL::LinearFunctors::has_on<CK>(a.supporting_line(),p) )
       return false;
     
-    return (compare_xy<CK>(p, a.source()) != compare_xy<CK>(p, a.target()));
+    return (CircularFunctors::compare_xy<CK>(p, a.source()) != CircularFunctors::compare_xy<CK>(p, a.target()));
   }
 
 
@@ -107,9 +107,9 @@ namespace CircularFunctors {
   compare_y_at_x(const typename CK::Circular_arc_point_2 &p,
                  const typename CK::Line_arc_2 &A1)
   {
-    CGAL_kernel_precondition (point_in_x_range<CK>(A1, p));
+    CGAL_kernel_precondition (CircularFunctors::point_in_x_range<CK>(A1, p));
     //vertical case
-    if (is_vertical<CK>(A1)) {
+    if (CircularFunctors::is_vertical<CK>(A1)) {
       if (p.y() <= A1.right().y()) {
 	if(A1.left().y() <= p.y()) {
 	  return CGAL::EQUAL;
@@ -273,7 +273,7 @@ namespace CircularFunctors {
     ca1 = Line_arc_2( A.supporting_line(), A.source(), p);
     ca2 = Line_arc_2( A.supporting_line(), p, A.target());
     
-    if ( compare_xy<CK>(ca1.left(), ca2.left()) != SMALLER )
+    if ( CircularFunctors::compare_xy<CK>(ca1.left(), ca2.left()) != SMALLER )
         {
           std::swap(ca1,ca2);
         }
@@ -338,10 +338,10 @@ namespace CircularFunctors {
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
     //      (Root_for_circles_2_2(Root_of_2(pt->x()),Root_of_2(pt->y())));
     
-    if ((compare_xy<CK>(intersect_point, a1.source()) !=
-	 compare_xy<CK>(intersect_point, a1.target())) &&
-	(compare_xy<CK>(intersect_point, a2.source()) !=
-	 compare_xy<CK>(intersect_point, a2.target())))
+    if ((CircularFunctors::compare_xy<CK>(intersect_point, a1.source()) !=
+	 CircularFunctors::compare_xy<CK>(intersect_point, a1.target())) &&
+	(CircularFunctors::compare_xy<CK>(intersect_point, a2.source()) !=
+	 CircularFunctors::compare_xy<CK>(intersect_point, a2.target())))
       *res++ = make_object(std::make_pair(intersect_point, 1u));
 
     return res;

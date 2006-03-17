@@ -63,7 +63,7 @@ namespace CircularFunctors {
     result_type
     operator() ( const typename CK::Circle_2 & c )
       {
-	return get_equation<CK>(c);
+	return CircularFunctors::get_equation<CK>(c);
       }
   };
 

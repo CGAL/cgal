@@ -50,7 +50,7 @@ namespace CircularFunctors {
     result_type
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
-    { return compare_x<CK>(p0, p1);}
+    { return CircularFunctors::compare_x<CK>(p0, p1);}
 
   };
 
@@ -71,7 +71,7 @@ namespace CircularFunctors {
     result_type
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
-    {return compare_y<CK>(p0, p1);}
+    {return CircularFunctors::compare_y<CK>(p0, p1);}
 
   };
 
@@ -91,7 +91,7 @@ namespace CircularFunctors {
     result_type
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
-    { return compare_xy<CK>(p0, p1);}
+    { return CircularFunctors::compare_xy<CK>(p0, p1);}
 
   };
 
@@ -108,11 +108,11 @@ namespace CircularFunctors {
     
     result_type
     operator()(const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return point_in_x_range<CK>(a, p); }
+    { return CircularFunctors::point_in_x_range<CK>(a, p); }
 
     result_type
     operator()(const Line_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return point_in_x_range<CK>(a, p); }
+    { return CircularFunctors::point_in_x_range<CK>(a, p); }
     
   };
 
@@ -241,12 +241,12 @@ namespace CircularFunctors {
     result_type
     operator() (const Circular_arc_point_2 &p,
                 const Circular_arc_2 &A1) const
-    { return compare_y_at_x<CK>(p, A1); }
+    { return CircularFunctors::compare_y_at_x<CK>(p, A1); }
 
     result_type
     operator() (const Circular_arc_point_2 &p,
                 const Line_arc_2 &A1) const
-    { return compare_y_at_x<CK>(p, A1); }
+    { return CircularFunctors::compare_y_at_x<CK>(p, A1); }
 
   };
 
@@ -262,11 +262,11 @@ namespace CircularFunctors {
     
     result_type
     operator() (const Circular_arc_2 &A1, const Circular_arc_2 &A2) const
-    { return do_overlap<CK>(A1, A2); }
+    { return CircularFunctors::do_overlap<CK>(A1, A2); }
     
     result_type
     operator() (const Line_arc_2 &A1, const Line_arc_2 &A2) const
-    { return do_overlap<CK>(A1, A2); }
+    { return CircularFunctors::do_overlap<CK>(A1, A2); }
 
   };
 
@@ -288,7 +288,7 @@ namespace CircularFunctors {
       { 
         std::vector< std::pair<Object,bool> > vec;
 
-	return    make_x_monotone<CK> (A, res);
+	return    CircularFunctors::make_x_monotone<CK> (A, res);
 
 //         advanced_make_x_monotone<CK> (A, std::back_inserter(vec));
 
@@ -297,7 +297,7 @@ namespace CircularFunctors {
 
 //         return res;
 
-	return    make_x_monotone<CK> (A, res);
+	return    CircularFunctors::make_x_monotone<CK> (A, res);
 
       }
 
@@ -305,7 +305,7 @@ namespace CircularFunctors {
     OutputIterator
     operator()(const Line_arc_2 &A, OutputIterator res) const
     { 
-      return make_x_monotone<CK>(A,res);
+      return CircularFunctors::make_x_monotone<CK>(A,res);
     }
 
   };
@@ -329,7 +329,7 @@ namespace CircularFunctors {
         typedef std::pair< CGAL::Object, relat_pos>    Obj_descr_2;
         std::vector<Obj_descr_2> vec;
 
-        advanced_make_xy_monotone<CK> (A, std::back_inserter(vec));
+        CircularFunctors::advanced_make_xy_monotone<CK> (A, std::back_inserter(vec));
 
         for(int i=0;i<vec.size();++i)
           *res++=vec.at(i).first;
@@ -363,7 +363,7 @@ namespace CircularFunctors {
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_2 &A, OutputIterator res) const
-      {  return advanced_make_x_monotone<CK> (A, res);}
+      {  return CircularFunctors::advanced_make_x_monotone<CK> (A, res);}
 
 
  // No extra information is meant to be returned for line arcs (should it?)
@@ -394,7 +394,7 @@ template < class CK >
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_2 &A, OutputIterator res) const
-      {  return advanced_make_xy_monotone<CK> (A, res);}
+      {  return CircularFunctors::advanced_make_xy_monotone<CK> (A, res);}
 
 
  // No extra information is meant to be returned for line arcs (should it?)
@@ -430,43 +430,43 @@ template < class CK >
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle & c1, const Circle & c2, OutputIterator res) const
-      { return intersect_2<CK> (c1,c2,res); }
+      { return CircularFunctors::intersect_2<CK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc & c1, const Circular_arc & c2, 
 	       OutputIterator res) const
-      { return intersect_2<CK> (c1,c2,res); }  
+      { return CircularFunctors::intersect_2<CK> (c1,c2,res); }  
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc & c1, const Line_arc & c2, 
 	       OutputIterator res) const
-      {	return intersect_2<CK> (c1,c2,res); }  
+      {	return CircularFunctors::intersect_2<CK> (c1,c2,res); }  
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc & c1, const Circle & c2, 
 	       OutputIterator res) const
-    { return intersect_2<CK> (c1,c2,res); }
+    { return CircularFunctors::intersect_2<CK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle & c1, const Line_arc & c2, 
 	       OutputIterator res) const
-    { return intersect_2<CK> (c2,c1,res); }
+    { return CircularFunctors::intersect_2<CK> (c2,c1,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc & c1, const Circular_arc & c2, 
 	       OutputIterator res) const
-    { return intersect_2<CK> (c1,c2,res); }
+    { return CircularFunctors::intersect_2<CK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc & c1, const Line_arc & c2, 
 	       OutputIterator res) const
-    { return intersect_2<CK> (c2,c1,res); }
+    { return CircularFunctors::intersect_2<CK> (c2,c1,res); }
 
   };
 
@@ -487,14 +487,14 @@ template < class CK >
     operator()(const Circular_arc_2 &A, 
 	       const Circular_arc_point_2 &p,
 	       Circular_arc_2 &ca1, Circular_arc_2 &ca2) const
-    { return split<CK>(A, p, ca1, ca2); }
+    { return CircularFunctors::split<CK>(A, p, ca1, ca2); }
 
 
     result_type
     operator()(const Line_arc_2 &A, 
 	       const Circular_arc_point_2 &p,
 	       Line_arc_2 &ca1, Line_arc_2 &ca2) const
-    { return split<CK>(A, p, ca1, ca2); }
+    { return CircularFunctors::split<CK>(A, p, ca1, ca2); }
 
   };
 
@@ -514,11 +514,11 @@ template < class CK >
 
     result_type
     operator()(const Circular_arc_2 &A) const
-    { return is_vertical<CK>(A); }
+    { return CircularFunctors::is_vertical<CK>(A); }
 
     result_type
     operator()(const Line_arc_2 &A) const
-    { return is_vertical<CK>(A); }
+    { return CircularFunctors::is_vertical<CK>(A); }
 
   };
 

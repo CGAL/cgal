@@ -90,7 +90,7 @@ namespace CircularFunctors {
   {
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_for_circles_2_2 Polynomial_for_circles_2_2;
-    Polynomial_for_circles_2_2 equation = get_equation<CK>(a);
+    Polynomial_for_circles_2_2 equation = CircularFunctors::get_equation<CK>(a);
     
     return (AK().sign_at_object()(equation,p.coordinates()) == ZERO);
   }
@@ -104,8 +104,8 @@ namespace CircularFunctors {
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_for_circles_2_2  Equation; 
     typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
-    Equation e1 = get_equation<CK>(c1);
-    Equation e2 = get_equation<CK>(c2);
+    Equation e1 = CircularFunctors::get_equation<CK>(c1);
+    Equation e2 = CircularFunctors::get_equation<CK>(c2);
     
     if (e1 == e2) {
       *res++ = make_object(e1);

@@ -128,7 +128,7 @@ namespace CircularFunctors {
   {
     CGAL_kernel_precondition (A.is_x_monotone());
     // range includes endpoints here
-    return compare_x<CK>( p, A.source()) != compare_x<CK>(p, A.target() );
+    return CircularFunctors::compare_x<CK>( p, A.source()) != CircularFunctors::compare_x<CK>(p, A.target() );
   }
 
   template < class CK >
@@ -137,7 +137,7 @@ namespace CircularFunctors {
                  const typename CK::Circular_arc_2 &A1)
   {
     CGAL_kernel_precondition (A1.is_x_monotone());
-    CGAL_kernel_precondition (point_in_x_range<CK>(A1, p)); 
+    CGAL_kernel_precondition (CircularFunctors::point_in_x_range<CK>(A1, p)); 
     
     // Compare the ordinate of p with the ordinate of the center.
     Comparison_result sgn =
@@ -273,7 +273,7 @@ namespace CircularFunctors {
   equal(const typename CK::Circular_arc_point_2 &p0,
         const typename CK::Circular_arc_point_2 &p1)
   {
-    return compare_xy<CK>(p0, p1) == 0;
+    return CircularFunctors::compare_xy<CK>(p0, p1) == 0;
   }
 
   template < class CK >
@@ -285,8 +285,8 @@ namespace CircularFunctors {
 	(A1.supporting_circle() != A2.supporting_circle().opposite()))
       return false;
     
-    return (equal<CK>(A1.source(), A2.source()) &&
-	    equal<CK>(A1.target(), A2.target()));
+    return (CircularFunctors::equal<CK>(A1.source(), A2.source()) &&
+	    CircularFunctors::equal<CK>(A1.target(), A2.target()));
   }
 
 //   template < class CK >
@@ -318,8 +318,8 @@ namespace CircularFunctors {
 
     if ( A1.on_upper_part() != A2.on_upper_part() ) return false;
 
-    return compare_x<CK>(A1.right(), A2.left()) > 0
-        && compare_x<CK>(A1.left(), A2.right()) < 0;
+    return CircularFunctors::compare_x<CK>(A1.right(), A2.left()) > 0
+        && CircularFunctors::compare_x<CK>(A1.left(), A2.right()) < 0;
   }
 
   // Small accessory function
@@ -340,10 +340,10 @@ namespace CircularFunctors {
 //        (equation,p.coordinates())!= ZERO)
 //       return false;
     
-    if ( ! has_on<CK>(a.supporting_circle(),p) ) 
+    if ( ! CircularFunctors::has_on<CK>(a.supporting_circle(),p) ) 
       return false;
     
-    if (! point_in_x_range<CK>(a, p) )
+    if (! CircularFunctors::point_in_x_range<CK>(a, p) )
       return false;
     
     int cmp = CGAL::compare(p.y(), a.supporting_circle().center().y());
@@ -361,17 +361,17 @@ namespace CircularFunctors {
 	typename CK::Circular_arc_2 &ca2)
   {
     CGAL_kernel_precondition( A.is_x_monotone() );
-    CGAL_kernel_precondition( point_in_x_range<CK>( A, p ) );
+    CGAL_kernel_precondition( CircularFunctors::point_in_x_range<CK>( A, p ) );
     CGAL_kernel_precondition( A.on_upper_part() == (p.y() >
 			      A.supporting_circle().center().y()) );
-    CGAL_kernel_precondition( has_on<CK>(A, p) );
+    CGAL_kernel_precondition( CircularFunctors::has_on<CK>(A, p) );
    
     typedef typename CK::Circular_arc_2  Circular_arc_2;
 
     ca1 = Circular_arc_2( A.supporting_circle(), A.source(), p);
     ca2 = Circular_arc_2( A.supporting_circle(), p, A.target());
     //if ( ca1.right()!=ca2.left() )
-    if ( compare_x<CK>(ca1.left(), ca2.left()) != SMALLER )
+    if ( CircularFunctors::compare_x<CK>(ca1.left(), ca2.left()) != SMALLER )
       {
 	//std::cout << " SWAP " << std::endl;
 	std::swap(ca1,ca2);
@@ -395,8 +395,8 @@ namespace CircularFunctors {
       if ( (a1.supporting_circle() == a2.supporting_circle()) ||
 	   (a1.supporting_circle() == a2.supporting_circle().opposite()) ) {
 	// The ranges need to overlap in order for the curves to overlap.
-	if (compare_x<CK>(a1.left(), a2.right()) > 0 ||
-	    compare_x<CK>(a2.left(), a1.right()) > 0)
+	if ( CircularFunctors::compare_x<CK>(a1.left(), a2.right()) > 0 ||
+	    CircularFunctors::compare_x<CK>(a2.left(), a1.right()) > 0)
 	  return res;
 	  
 	// They both need to be on the same upper/lower part.
@@ -415,15 +415,15 @@ namespace CircularFunctors {
 	// TODO : We should use std::max and std::min, but they 
 	// require less_x_2.
 	const Circular_arc_2 & arctmp = 
-	  compare_x<CK>(a1.right(), a2.right()) < 0 ? a1 : a2;
+	  CircularFunctors::compare_x<CK>(a1.right(), a2.right()) < 0 ? a1 : a2;
 	// we know that the right endpoint is correct, let us look for
 	// the left now:
 	
 	
 	//? a1.left() : a2.left();
-	if (compare_x<CK>(a1.left(), a2.left()) > 0) {
+	if (CircularFunctors::compare_x<CK>(a1.left(), a2.left()) > 0) {
 	  //the left endpoint is a1's
-	  if (compare_x<CK>(a1.left(), a2.right()) < 0){
+	  if (CircularFunctors::compare_x<CK>(a1.left(), a2.right()) < 0){
 	    if (a1.on_upper_part()) {
 	      const Circular_arc_2 & arc =
 		Circular_arc_2(a1.supporting_circle(),a2.right(),a1.left());
@@ -440,9 +440,9 @@ namespace CircularFunctors {
 	  else
 	    *res++ = make_object(std::make_pair(arctmp.right(),1u));
 	}
-	else if( compare_x<CK>(a1.left(), a2.left()) < 0 ) {
+	else if( CircularFunctors::compare_x<CK>(a1.left(), a2.left()) < 0 ) {
 	  //the left endpoint is a2's
-	  if(compare_x<CK>(a1.right(), a2.left()) > 0) {
+	  if(CircularFunctors::compare_x<CK>(a1.right(), a2.left()) > 0) {
 	    if(a1.on_upper_part()){
 	      const Circular_arc_2 & arc =
 		Circular_arc_2(a1.supporting_circle(), a1.right(), a2.left());
@@ -460,9 +460,9 @@ namespace CircularFunctors {
 	    *res++ = make_object(std::make_pair(arctmp.right(),1u));
 	}
 	else {
-	  if(compare_x<CK>(a1.right(), a2.right()) >= 0)
+	  if(CircularFunctors::compare_x<CK>(a1.right(), a2.right()) >= 0)
 	    *res++ = make_object(a2);
-	  else if(compare_x<CK>(a1.right(), a2.right()) < 0)
+	  else if(CircularFunctors::compare_x<CK>(a1.right(), a2.right()) < 0)
 	    *res++ = make_object(a1);
 	  else
 	    *res++ = make_object(std::make_pair(arctmp.right(),1u));
@@ -491,7 +491,7 @@ namespace CircularFunctors {
 	(CGAL::object_cast< std::pair<Circular_arc_point_2, unsigned> >
 	 (&(intersection_points[0])))->first;
       if (intersection_points.size() < 2){// multiplicity 2
-	if (has_on<CK>(a1, left) && has_on<CK>(a2, left)) 
+	if (CircularFunctors::has_on<CK>(a1, left) && CircularFunctors::has_on<CK>(a2, left)) 
 	  *res++ = make_object(std::make_pair(left,2u));
       }
       else {// multiplicity 1
@@ -499,9 +499,9 @@ namespace CircularFunctors {
 	  (CGAL::object_cast< std::pair<Circular_arc_point_2, unsigned> >
 	   (&(intersection_points[1])))->first;
 	// We also need to check that these intersection points are on the arc.
-	if (has_on<CK>(a1, left) && has_on<CK>(a2, left))
+	if (CircularFunctors::has_on<CK>(a1, left) && CircularFunctors::has_on<CK>(a2, left))
 	  *res++ = make_object(std::make_pair(left,1u));
-	if (has_on<CK>(a1, right) && has_on<CK>(a2, right))
+	if (CircularFunctors::has_on<CK>(a1, right) && CircularFunctors::has_on<CK>(a2, right))
 	  *res++ = make_object(std::make_pair(right,1u));
       }
       return res;
@@ -529,7 +529,7 @@ namespace CircularFunctors {
 	  const Circular_arc_2 *a2_aux = 
 	    CGAL::object_cast<Circular_arc_2>(&*it2);
 	  std::vector< CGAL::Object > res_aux;
-	  intersect_2<CK>( *a1_aux, *a2_aux, std::back_inserter(res_aux));
+	  CircularFunctors::intersect_2<CK>( *a1_aux, *a2_aux, std::back_inserter(res_aux));
 	  if(res_aux.size() == 2){
 	    //it can't be a circular_arc_2
 	    //CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
@@ -635,7 +635,7 @@ namespace CircularFunctors {
 		   = circle_arcs.begin(); 
 		 it2 != circle_arcs.end(); ++it2 )
 	      {
-		if (has_on<CK>(*it2, *it1)) {
+		if (CircularFunctors::has_on<CK>(*it2, *it1)) {
 		  other_point = false;
 		  break;
 		}
@@ -712,11 +712,10 @@ namespace CircularFunctors {
     // in the 2 vertical tangent points
     
     std::vector< Root_for_circles_2_2 > vector_x_extremal_points;
-    x_extremal_points<CK>(A.supporting_circle(), 
+    CircularFunctors::x_extremal_points<CK>(A.supporting_circle(), 
 			  std::back_inserter(vector_x_extremal_points));
     Circular_arc_point_2 x_extremal_point1 = vector_x_extremal_points[0];
     Circular_arc_point_2 x_extremal_point2 = vector_x_extremal_points[1];
-    
     if (cmp_begin > 0) {
       *res++ = make_object(Circular_arc_2 (A.supporting_circle(),
 					   A.source(),
@@ -834,7 +833,7 @@ namespace CircularFunctors {
     
       *res++ = S_pair
 	(make_object(Circular_arc_2(A.supporting_circle(), A.source(),
-				    x_extremal_point<CK>
+				    CircularFunctors::x_extremal_point<CK>
 				    (A.supporting_circle(),true))),
 	 true);
 			       
@@ -842,22 +841,22 @@ namespace CircularFunctors {
         // We must cut in 3 parts.
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),true),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),false))),
 	   false);
 			   
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),false),
 				       A.target())),
 	   true);
       } else {    
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),true),
 				       A.target())), 
 	   false);
@@ -868,7 +867,7 @@ namespace CircularFunctors {
       *res++ = std::make_pair
 	(make_object(Circular_arc_2 (A.supporting_circle(),
 				     A.source(),
-				     x_extremal_point<CK>
+				     CircularFunctors::x_extremal_point<CK>
 				     (A.supporting_circle(),false))),
 	 false);
 			 
@@ -876,22 +875,22 @@ namespace CircularFunctors {
         // We must cut in 3 parts.
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),false), 
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),true))) ,
 	   true );
 				     					     
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),true),
 				       A.target())),
 	   false);
       } else {
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),false),
 				       A.target())),
 	   true);
@@ -903,13 +902,13 @@ namespace CircularFunctors {
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
 				       A.source(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),false))),
 	   false);
 	
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),false),
 				       A.target())),
 	   true);
@@ -920,13 +919,13 @@ namespace CircularFunctors {
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
 				       A.source(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),true))),
 	   true);		   
 			   
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
-				       x_extremal_point<CK>
+				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),true),
 				       A.target())),
 	   false);
@@ -992,7 +991,7 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 					 			 
       tmp1.first = make_object
 	(Circular_arc_2(a.supporting_circle(),tmp_arc->source(),
-			y_extremal_point<CK>
+			CircularFunctors::y_extremal_point<CK>
 			(a.supporting_circle(),!tmp.second)));
 			    	    
       tmp1.second.first=tmp.second;
@@ -1000,7 +999,7 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 		
       tmp2.first = make_object
 	(Circular_arc_2(a.supporting_circle(),
-			y_extremal_point<CK>
+			CircularFunctors::y_extremal_point<CK>
 			(a.supporting_circle(),!tmp.second),
 			tmp_arc->target()));
       
@@ -1040,10 +1039,10 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
       double ymin = (is_on_upper) ? 
 	CGAL::min(left_bb.ymin(),right_bb.ymin()) :
 	to_interval
-	( y_extremal_point<CK>(a.supporting_circle(),true).y()).first;
+	( CircularFunctors::y_extremal_point<CK>(a.supporting_circle(),true).y()).first;
       double ymax = (is_on_upper) ? 
 	to_interval
-	( y_extremal_point<CK>(a.supporting_circle(),false).y() ).second :
+	( CircularFunctors::y_extremal_point<CK>(a.supporting_circle(),false).y() ).second :
 	CGAL::max(left_bb.ymax(),right_bb.ymax()); 
       
       return Bbox_2(left_bb.xmin(),ymin,right_bb.xmax(),ymax);

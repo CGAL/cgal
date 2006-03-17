@@ -56,7 +56,7 @@ namespace LinearFunctors {
     result_type
     operator() ( const typename CK::Line_2 & l )
       {
-	return get_equation<CK>(l);
+	return LinearFunctors::get_equation<CK>(l);
       }
   };
 

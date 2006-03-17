@@ -1,3 +1,6 @@
+17 March 2006 Andreas Fabri
+- Qualified functions with their namespace so resolve ambiguities for CL and ICL
+
 14 March 2006 Joachim Reichel
 - Added/fixed CGAL_MAKEFILE= line in makefiles
 
