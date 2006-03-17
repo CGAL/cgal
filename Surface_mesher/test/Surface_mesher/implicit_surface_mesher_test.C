@@ -69,7 +69,7 @@ struct Test_with_kernel {
 };
 
 template <typename Tag>
-void test_with_tag(Tag tag = CGAL::Non_manifold_tag())
+void test_with_tag(Tag = CGAL::Non_manifold_tag())
 {
   std::cout << "\nKERNEL "
     "CGAL::Exact_predicates_inexact_constructions_kernel...\n";
@@ -87,7 +87,7 @@ void test_with_tag(Tag tag = CGAL::Non_manifold_tag())
     Tag >()(DO_NOT_RUN);
 }
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
   std::cout << "\n\n    NON MANIFOLD VERSION...\n";
   test_with_tag(CGAL::Non_manifold_tag());
