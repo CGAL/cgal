@@ -71,7 +71,7 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
     if(!compute_halfsphere[0][0])
       return Plane_3(Point_3(room_min.hx(),0,0,room_min.hw()),Vector_3(-1,0,0));
     if(!compute_halfsphere[1][1])
-      return Plane_3(Point_3(0,room_min.hy(),0,room_max.hw()),Vector_3(0,1,0));
+      return Plane_3(Point_3(0,room_max.hy(),0,room_max.hw()),Vector_3(0,1,0));
     if(!compute_halfsphere[1][0])
       return Plane_3(Point_3(0,room_min.hy(),0,room_min.hw()),Vector_3(0,-1,0));
     if(!compute_halfsphere[2][1])
@@ -134,6 +134,7 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
     std::list<Sphere_point> spoints;
     
     cut = find_cutoff_plane();
+    std::cerr << cut << std::endl;
     std::list<Point_3> points_on_plane;
     Forward_iterator pi;
     for(pi=begin;pi!=end;++pi) {
