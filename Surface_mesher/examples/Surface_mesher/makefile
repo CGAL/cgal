@@ -46,7 +46,7 @@ all:            \
                 implicit_surface_mesher$(EXE_EXT)
 
 imageio:
-	$(MAKE) -C ImageIO
+	cd ImageIO; $(MAKE)
 
 3d_image_surface_mesher$(EXE_EXT): 3d_image_surface_mesher$(OBJ_EXT) imageio
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_image_surface_mesher 3d_image_surface_mesher$(OBJ_EXT) $(LDFLAGS) -L./ImageIO -lImageIO
@@ -58,7 +58,7 @@ clean: \
                    3d_image_surface_mesher.clean \
                    implicit_functions.clean \
                    implicit_surface_mesher.clean
-	$(MAKE) -C ImageIO clean
+	cd ImageIO; $(MAKE) clean
 
 
 
