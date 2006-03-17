@@ -4,21 +4,23 @@
 \ccParDims
 
 \chapter{2D Arrangements}
+
+\begingroup
+
 \label{chapterArrangement_2}
 \ccChapterRelease{\ArrangementRev. \ \ArrangementDate}
 \ccChapterAuthor{Ron Wein, Efi Fogel, Baruch Zukerman, and Dan Halperin}
 
 \lcTex{%
-  \newlength{\widthExtra}\setlength{\widthExtra}{1.1cm}
-  \newlength{\widthLineReal}\setlength{\widthLineReal}{\linewidth}
-  \addtolength{\widthLineReal}{-\widthExtra}
-  \newlength{\minipageSpace}\setlength{\minipageSpace}{0.2cm}
+  \newlength{\ArrangementTwoWidthExtra}\setlength{\ArrangementTwoWidthExtra}{1.1cm}
+  \newlength{\ArrangementTwoWidthLineReal}\setlength{\ArrangementTwoWidthLineReal}{\linewidth}
+  \addtolength{\ArrangementTwoWidthLineReal}{-\ArrangementTwoWidthExtra}
+  \newlength{\ArrangementTwoMinipageSpace}\setlength{\ArrangementTwoMinipageSpace}{0.2cm}
 
-  \newlength{\widthLeft}
-  \newlength{\widthRight}
+  \newlength{\ArrangementTwoWidthLeft}
+  \newlength{\ArrangementTwoWidthRight}
 }
 
-\newcommand{\reals}{{\rm I\!\hspace{-0.025em} R}}
 \newcommand{\calC}{{\cal C}}
 \newcommand{\calA}{{\cal A}}
 \newcommand{\eps}{{\varepsilon}}
@@ -27,7 +29,6 @@
 \newcommand{\kdtree}{{\sc Kd}-tree}
 \newcommand{\boost}{{\sc Boost}}
 \newcommand{\bgl}{{\sc Bgl}}
-\newcommand{\Cpp}{{C}{\tt ++}}
 
 \input{Arrangement_2/arr_intro.tex}
 \input{Arrangement_2/arr_class.tex}
@@ -41,3 +42,5 @@
 \input{Arrangement_2/arr_io.tex}
 \input{Arrangement_2/arr_boost.tex}
 \input{Arrangement_2/arr_ack.tex}
+
+\endgroup

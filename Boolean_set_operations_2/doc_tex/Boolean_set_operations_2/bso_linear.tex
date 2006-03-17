@@ -35,7 +35,7 @@ The basic components of our package are the free (global) functions
 \ccc{complement()} that accepts a single \ccc{Polygon_2} object, and
 \ccc{intersection()}, \ccc{join()},\footnote{The function that
 computes the union of two polygons is called \ccc{join()}, since
-the word \ccc{union} is reserved in \Cpp.}, \ccc{difference()},
+the word \ccc{union} is reserved in \CC.}, \ccc{difference()},
 \ccc{symmetric_difference()} and the predicate \ccc{do_intersect()}
 that accept two \ccc{Polygon_2} objects as their input. We explain how
 these functions should be used throught several examples in the
@@ -47,10 +47,10 @@ following sections.
 
 \lcTex{%
   \vspace{-20pt}
-  \setlength{\widthRight}{1.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{1.4cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:example}
 \begin{ccHtmlOnly}
@@ -70,8 +70,8 @@ library of \cgal, based on whether the {\sc Gmp} library is installed
 or not. It also uses the function \ccc{print_polygon.h} listed above,
 which is located in the header file \ccc{print_utils.h}.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \vspace{20pt}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/triangles}
@@ -139,10 +139,10 @@ the closure of the interior of the corresponding ordinary operation as
 explained next.
 \newpage
 \lcTex{%
-  \setlength{\widthRight}{1.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{1.4cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:unique}
 \begin{ccHtmlOnly}
@@ -161,8 +161,8 @@ hole in its interior --- and not as three triangles that have no holes
 at all. As a general rule, if two point sets are connected, then they
 belong to the same polygon with holes.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/unique}
     \end{center}
@@ -266,10 +266,10 @@ outputs a range of polygons with holes that represents the complement
 of the polygon with holes $P$.
 
 \lcTex{%
-  \setlength{\widthRight}{2.5cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{2.5cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:sym_diff}
 \begin{ccHtmlOnly}
@@ -281,8 +281,8 @@ rectangle that contains a rectangular hole in its interior, such that
 the symmetric difference between the two sets is a single polygon that
 contains of five holes:
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/symm_diff}
     \end{center}
@@ -362,10 +362,10 @@ internal representation for the succeeding operation could be time
 consuming.
 
 \lcTex{%
-  \setlength{\widthRight}{2.3cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{2.3cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:sequence}
 \begin{ccHtmlOnly}
@@ -382,8 +382,8 @@ the area of the rectangle. The resulting set $S$ is comprised of two
 components: a polygon with a hole, and a simple polygon contained in the
 interior of this hole.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/sequence}
     \end{center}

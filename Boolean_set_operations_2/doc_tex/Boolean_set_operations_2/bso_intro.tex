@@ -57,10 +57,10 @@ context must be simple and its vertices must be ordered in a
 counterclockwise direction around the interior of the polygon.
  
 \lcTex{%
-  \setlength{\widthRight}{1.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{1.4cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:non_strictly_simple_polygon}
 \begin{ccHtmlOnly}
@@ -72,14 +72,14 @@ The counterclockwise cyclic sequence of alternating polygon edges and
 polygon vertices is referred to as the polygon {\em boundary}.
 A polygon whose boundary contains the same vertex twice or more is connected
 and simple but not necessarily strictly simple, such as the polygon depicted
-on the right.  We extend the notion of a polygon to a point set in $\reals^2$
+on the right.  We extend the notion of a polygon to a point set in $\real^2$
 that has  a topology of a polygon and its boundary edges must map to
 $x$-monotone curves, and refer to it as a {\em general polygon}. We
 sometimes use the term {\em polygon} instead of general polygon for
 simplicity hereafter.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/non_strictly_simple}
     \end{center}

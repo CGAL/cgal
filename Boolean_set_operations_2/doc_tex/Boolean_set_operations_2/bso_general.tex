@@ -3,10 +3,10 @@
 % ==================================================
 
 \lcTex{%
-  \setlength{\widthRight}{1.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{1.4cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:general_polygon}
 \begin{ccHtmlOnly}
@@ -24,8 +24,8 @@ depicted on the right is general polygon bounded by two $x$-monotone
 circular arcs that correspond to the lower half and the upper half of
 a circle.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/general_polygon}
     \end{center}
@@ -49,10 +49,10 @@ edges of a general polygon.
 \end{itemize}
 
 \lcTex{%
-  \setlength{\widthRight}{1.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{1.4cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:general_polygon_with_holes}
 \begin{ccHtmlOnly}
@@ -65,8 +65,8 @@ way to the definition of linear polygons with holes. A model of this
 concept represent a bounded or an unbounded set that may not be simply
 connected, and must provide the following operations:
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/general_polygon_with_holes}
     \end{center}
@@ -182,10 +182,10 @@ on non-linear objects; yet, it uses only rational arithmetic and is
 very efficient as a consequence.
 
 \lcTex{%
-  \setlength{\widthRight}{2.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{2.4cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:circle_recs}
 \begin{ccHtmlOnly}
@@ -203,8 +203,8 @@ are disjoint, their union is computed with the \ccc{insert} method,
 while the union with the rectangles is computed with the \ccc{join}
 operator.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/circles_rects}
     \end{center}
@@ -269,10 +269,10 @@ typedef CGAL::General_polygon_set_2<Traits_2>              General_polygon_set_2
 \end{alltt}
 
 \lcTex{%
-  \setlength{\widthRight}{6cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{6cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:conics}
 \begin{ccHtmlOnly}
@@ -293,8 +293,8 @@ $x^2 + 2y - 4 = 0$, and $x^2 - 2y - 4 = 0$. The code in the example adapts
 the traits model that handles conics included with the \ccc{Arrangement_2}
 package.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/conic_arcs}
 % Conic arcs.
@@ -320,10 +320,10 @@ this is not the case, computing the result incrementally may prove
 faster.
 
 \lcTex{%
-  \setlength{\widthRight}{3.4cm}
-  \setlength{\widthLeft}{\widthLineReal}
-  \addtolength{\widthLeft}{-\widthRight}
-  \begin{minipage}{\widthLeft}
+  \setlength{\BooleanSetOpsWidthRight}{3.4cm}
+  \setlength{\BooleanSetOpsWidthLeft}{\BooleanSetOpsWidthLineReal}
+  \addtolength{\BooleanSetOpsWidthLeft}{-\BooleanSetOpsWidthRight}
+  \begin{minipage}{\BooleanSetOpsWidthLeft}
 }
 \label{fig:disks}
 \begin{ccHtmlOnly}
@@ -336,8 +336,8 @@ placed a unit distance from the origin, as depicted to the right. The example
 also allows users to provide a different number of discs through the command
 line.
 \lcTex{%
-  \end{minipage}\hspace{\minipageSpace}
-  \begin{minipage}{\widthRight}
+  \end{minipage}\hspace{\BooleanSetOpsMinipageSpace}
+  \begin{minipage}{\BooleanSetOpsWidthRight}
     \begin{center}
     \includegraphics{Boolean_set_operations_2/fig/disks}
     \end{center}
