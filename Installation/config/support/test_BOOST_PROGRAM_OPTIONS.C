@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Utrecht University (The Netherlands),
+// Copyright (c) 2006  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,7 +19,7 @@
 // $Id: CGAL_CFG_NO_BOOST.C 28567 2006-02-16 14:30:13Z lsaboret $
 // 
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Daniel Russel
 
 // CGAL_CFG_NO_BOOST_PROGRAM_OPTIONS.C
 // ---------------------------------------------------------------------
@@ -32,8 +32,6 @@
 
 #include <iostream>
 #include <boost/program_options.hpp>
-#include <iostream>
-
 
 int main(int ac, char *av[])
 {
