@@ -34,11 +34,11 @@ typedef std::map<Vertex*, int> Vertex_VP_map_type;
 typedef boost::associative_property_map< Vertex_VP_map_type > Vertex_VPM_type;
 typedef T_PolyhedralSurf_rings<PolyhedralSurf, Vertex_VPM_type > Poly_rings;
 
-//Hedge property map, with enriched Halfedge
+//Hedge property map, with enriched Halfedge with its length
 typedef HEdge_PM<PolyhedralSurf> HEdgePM_type;
 typedef T_PolyhedralSurf_hedge_ops<PolyhedralSurf, HEdgePM_type> Poly_hedge_ops;
 
-//Facet property map with enriched Facet
+//Facet property map with enriched Facet with its normal
 typedef Facet_PM<PolyhedralSurf> FacetPM_type;
 typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, FacetPM_type> Poly_facet_ops;
 
@@ -81,91 +81,33 @@ void gather_fitting_points(Vertex* v,
 			   Vertex_VPM_type& vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
-  std::vector<Vertex*> current_ring, next_ring, gathered; 
-  std::vector<Vertex*> *p_current_ring, *p_next_ring;
-
+  std::vector<Vertex*> gathered; 
   //initialize
-  unsigned int nbp = 0, //current nb of collected points
-    ith = 0;	//i-th ring index
-  current_ring.clear();
-  next_ring.clear();
-  p_current_ring = &current_ring;
-  p_next_ring = &next_ring;
-  gathered.clear();
   in_points.clear();  
-
-  //initial vertex tagged as 0th ring
-  put(vpm, v, 0);
-
-  //collect 0th ring : the vertex v!
-  gathered.push_back(v);
-  nbp = 1;
-  //collect 1-ring
-  ith = 1;
-  nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered, vpm);
-  //collect more neighbors depending on options...
- 
-    //OPTION -p nb, with nb != 0
-    //for approximation/interpolation with a fixed nb of points, collect
-    // enough rings and discard some points of the last collected ring 
-    // to get the exact "nb_points_to_use"
-  if ( nb_points_to_use != 0 ) {
-    while( gathered.size() < nb_points_to_use ) {
-      ith++;
-      //using tags
-      nbp += Poly_rings::collect_ith_ring_neighbours(ith, *p_current_ring,
-						     *p_next_ring, gathered,
-						     vpm);
-      //next round must be launched from p_nextRing...
-      p_current_ring->clear();
-      std::swap(p_current_ring, p_next_ring);
-    }
-    //clean up
-    Poly_rings::reset_ring_indices(gathered, vpm);
-    //discard non-required collected points of the last ring
-    gathered.resize(nb_points_to_use, NULL);
-    assert(gathered.size() == nb_points_to_use );
-  }
-  else{
-    //OPTION -a nb, with nb = 0
-    //  select the mini nb of rings needed to make approx possible
-    if (nb_rings == 0) {
-      while ( gathered.size() < min_nb_points ) {
-	ith++;
-	nbp += Poly_rings::
-	  collect_ith_ring_neighbours(ith, *p_current_ring,
-				      *p_next_ring, gathered, vpm);
-	//next round must be launched from p_nextRing...
-	p_current_ring->clear();
-	std::swap(p_current_ring, p_next_ring);
-      }
-    }
-    //OPTION -a nb, with nb = 1, nothing to do! we have already
-    //      collected the 1 ring
-    //OPTION -a nb, with nb > 1
-    //for approximation with a fixed nb of rings, collect
-    //      neighbors up to the "nb_rings"th ring
-    if (nb_rings > 1)
-      while (ith < nb_rings) {
-	ith++;
-	nbp += Poly_rings::collect_ith_ring_neighbours(ith, *p_current_ring,
-						       *p_next_ring, gathered,
-						       vpm);
-	//next round must be launched from p_nextRing...
-	p_current_ring->clear();
-	std::swap(p_current_ring, p_next_ring);
-      }
-   
-    //clean up
-    Poly_rings::reset_ring_indices(gathered, vpm);
-  } //END ELSE
   
+  //OPTION -p nb_points_to_use, with nb_points_to_use != 0. Collect
+  //enough rings and discard some points of the last collected ring to
+  //get the exact "nb_points_to_use" 
+  if ( nb_points_to_use != 0 ) {
+    Poly_rings::collect_enough_rings(v, nb_points_to_use, gathered, vpm);
+    if ( gathered.size() > nb_points_to_use ) gathered.resize(nb_points_to_use);
+  }
+  else { // nb_points_to_use=0, this is the default and the option -p is not considered;
+    // then option -a nb_rings is checked. If nb_rings=0, collect
+    // enough rings to get the min_nb_points required for the fitting
+    // else collect the nb_rings required
+    if ( nb_rings == 0 ) 
+      Poly_rings::collect_enough_rings(v, min_nb_points, gathered, vpm);
+    else Poly_rings::collect_i_rings(v, nb_rings, gathered, vpm);
+  }
+     
   //store the gathered points
   std::vector<Vertex*>::iterator 
     itb = gathered.begin(), ite = gathered.end();
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
   
@@ -175,7 +117,7 @@ int main(int argc, char *argv[])
   char* verbose_fname;
   std::ofstream *out_4ogl = NULL, *out_verbose = NULL;
 
-  //parse command lie options
+  //parse command line options
   //--------------------------
   int optchar;
   char *optarg;
@@ -194,6 +136,10 @@ int main(int argc, char *argv[])
       exit(0);
     }
   }
+  //modify global variables which are fct of options:
+  min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
+  if (nb_points_to_use < min_nb_points && nb_points_to_use != 0) 
+    {std::cerr << "the nb of points asked is not enough to perform the fitting" << std::endl; exit(0);} 
 
   //prepare output file names
   //--------------------------
@@ -243,6 +189,7 @@ int main(int argc, char *argv[])
   FacetPM_type fpm = get(boost::vertex_attribute_t(), P);
 
   //initialize Polyhedral data : length of edges, normal of facets
+  //debug : these fct do nothing!
   Poly_hedge_ops::compute_edges_length(P, hepm);
   Poly_facet_ops::compute_facets_normals(P, fpm);
 
@@ -253,7 +200,6 @@ int main(int argc, char *argv[])
 
   //initialize the tag of all vertices to -1
   vitb = P.vertices_begin(); vite = P.vertices_end();
-  //CGAL_For_all(vitb,vite) put(vpm, &(*vitb), -1);
   CGAL_For_all(vitb,vite) put(vpm, &(*vitb), -1);
 
   vitb = P.vertices_begin(); vite = P.vertices_end();
@@ -264,11 +210,13 @@ int main(int argc, char *argv[])
     My_Monge_rep monge_rep;
     My_Monge_info monge_info;
       
-    //gather points arourd the vertex using rings
+    //gather points around the vertex using rings
     gather_fitting_points(v, in_points, vpm);
 
     //skip if the nb of points is to small 
-    if ( in_points.size() < min_nb_points ) continue;
+    if ( in_points.size() < min_nb_points ) 
+      {std::cerr << "not enough pts for fitting this vertex" << in_points.size() << std::endl;
+	continue;}
 
     // run the main fct : perform the fitting
     My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
@@ -277,11 +225,18 @@ int main(int argc, char *argv[])
  
     //switch min-max ppal curv/dir wrt the mesh orientation
     const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
+    //debug
+    cout << "normal_mesh" <<normal_mesh << endl;
+
     monge_rep.comply_wrt_given_normal(normal_mesh);
  
     //OpenGL output. Scaling for ppal dir, may be optimized with a
     //global mean edges length computed only once on all edges of P
     DFT scale_ppal_dir = Poly_hedge_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
+    //DEBUG this gives -.5 cause the length is intialized to -1, and
+    //not correctly computed by the pm
+    cout << scale_ppal_dir << endl;
+
     (*out_4ogl) << v->point()  << " ";
     monge_rep.dump_4ogl(*out_4ogl, scale_ppal_dir);
 

@@ -432,7 +432,7 @@ Output : monge-basis wrt fitting-basis and world-basis
 }
 
 In the fitting basis, we have determined a height function expressed
-by Eq. (\refs{eq-answer}). Computations are done in the fitting-basis.
+by Eq. (\ref{eq-answer}). Computations are done in the fitting-basis.
 The partial derivatives, evaluated at $(x,y)=(0,0)$, of the fitted
 polynomial $J_{A,d}(x,y)$ are
 $A_{i,j}=\frac{\partial^{i+j}J_{A,d}}{\partial^ix \partial^jy}$
@@ -453,7 +453,7 @@ estimation is performed, is $(0,0,A_{0,0})$. \\
 $n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}$.\\
 %%
 ---Curvature related properties are retrieved resorting to standard
-differential calculus \cite{co-carmo}. More precisely, the Weingarten
+differential calculus \cite{c-dgcs-76}. More precisely, the Weingarten
 operator $W=-I^{-1}II$ is first computed in the basis of the tangent
 plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute an orthonormal
 basis of the tangent plane using the Gram-Schimdt algorithm, and then
@@ -536,7 +536,7 @@ f_{0,0,1} ^{2}}}
 \section{Software Design}
 %%%%%%%%%%%%%%%%%%%%%%%
 
-following \cgal's best practices in geometric software development,
+Following \cgal's best practices in geometric software development,
 the package developed in fully generic in the C++ sense ---and is
 templated by three classes.
 
@@ -553,97 +553,28 @@ four, that is, we assume $d' \leq 4$.
 Regarding interpolation versus approximation, we provide a single
 function {\tt Monge\_via\_jet\_fitting} with parameters $d,d'$ and a
 range iterator. If $N=N_d$ then interpolation is performed, else
-$N > N_d$ and approximation is used. If $N < N_d$ we provide
-an exception.
+$N > N_d$ and approximation is used. 
 
-\subsection{Template parameters}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FC: dependence fig here????????????
-
-FC: rapid description of main classes
-
-Monge\_rep Monge\_info
-
-In addition, we assume implicit cast between Data, Local and Linalg
-are well defined.
-
-\subsubsection{Template class {\tt Data\_Kernel}}
-%%%%%%%%%%%
-
-This class provides the types for the input sample points, together
-with $3d$ vectors and a number type. It is used as template for the
-Monge\_rep. Typically, one can use {\tt CGAL::Cartesian<double>}.
-
-\noindent \underline{Requirements}: Types FT, Point\_3 Vector\_3
-
-\subsubsection{Template class {\tt Local\_Kernel}}
-%%%%%%%%%%%
-
-This class defines the vector and number types used (i)\ for local
-computations (ii)\ to store the Monge\_info class members. Input
-points of type Data\_Kernel::Point\_3 are converted to
-Local\_Kernel::Point\_3. For output of the Monge\_rep class, these
-types are converted back to Data\_Kernel ones.  Typically, one can use
-{\tt CGAL::Cartesian<double>}.
-
-\noindent \underline{Requirements}:  We assume the Point and Vector
-types support the dotprodut, wedge prod, sum, scalar
-multiplication,... operations.
-
-\dots=???????????
-
-\subsubsection{Template class {\tt Linalg\_traits.}}
-%%%%%%%%%%%
-
-This class provides the matrix algebra operations required by the
-fitting method.
-
-\noindent \underline{Requirements} 
+Preconditions are the following :
 
 \begin{itemize}
-\item 
-class Vector, Matrix.  Provide constructors with dimension
-information, elements are of type double (may be a template??),
-provide the standard bracket operator.
-\item 
-{\tt eigen\_symm\_algo(Matrix\& M, Vector\& eval, Matrix\& evec)} computes
-the eigen analysis of a symetric matrix and stores the eigenvalues and 
-vectors, should work for the dimensions 2 and 3.
 \item
-{\tt solve\_ls\_svd\_algo(Matrix\& M, Vector\& X, Vector\& B, double\&
-cond\_nb)} computes the SVD decomposition of the matrix M and solves
-the least square problem $\min ||MX-B||_2$ or the linear problem
-$MX=B$.
-\end{itemize}
-
-
-
-\subsubsection{Compatibility requirements}
-
-An important requirement is the following. To solve the fitting
-problem, the coordinates of the samples undergo two types of
-operations: first, an eigen analysis is performed in the world-basis
-(with doubles or the linalg ft); second, points are expressed into
-fitting-basis; third, matrices used for the linear algebra operations
-are filled from powers of the coordinates of the samples in
-fitting-basis. Linear algebra operations being used for these three
-stages, we assume the linear algebra traits class provides functions
-compatible with the number type defining the coordinates of the
-samples. In particular, for number types supporting multi-precision,
-this requires converting the samples into points with more standard
-types ---unless the user has a package supporting linear algebra
-operation on such number types.
-
-
-
+$N \geq N_d$
+\item
+$1 \leq d$, $d' \leq d$, $1 \leq d' \leq 4$ 
+\end{itemize}	
+ 
 \subsection{Output}
 %%%%%%%%%%%%%%%%%%%%
 
 As explained in section \ref{sec:intro}, the output consists of a
 coordinate system, the Monge basis, together with the Monge
-coefficients. The Monge basis is expressed in the world\_basis. These
-informations desere the following comments.
+coefficients which are stored in a Monge\_rep class. In addition, more
+information on the computational issues are stored in a Monge\_info
+class.
+
+The Monge basis is expressed in the world\_basis. These informations
+desere the following comments.
 
 \paragraph{Origin.} This is the point on the fitted polynomial surface
 where the differential quantities have been computed. In the
@@ -662,29 +593,78 @@ clear!
 
 \paragraph{Monge coefficients.}
 The vector of coefficient of the Monge form is $(k_1, k_2 (\leq k_1),
-b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, c_4)$ for $d\geq 4$.
+b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, c_4)$ for $d' = 4$.
 
-Moreover, there are degenerate cases ---section
-\ref{sec:deg-cases}. To return both the Monge infos and important
-informations related to their computations, we return instances of two
-classes, \ccc{Monge_rep} and \ccc{Monge_info}.
-
-
-\subsection{Preconditions}
+\subsection{Template parameters}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{itemize}
-\item
-$N \geq N_d$
-\item
-$1 \leq d$, $d' \leq d$, $1 \leq d' \leq 4$ 
-\end{itemize}	
- 
+The following picture illustrates the template dependencies.
+\begin{figure}[h!]
+\begin{ccTexOnly}
+\centerline{
+\includegraphics[width=.5\linewidth]{Jet_fitting_3_ref/template_dependence}}
+\end{ccTexOnly}
+
+%\label{fig:template_dependence}
+%\caption{}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="Jet_fitting_3_ref/template_dependence.jpg" width=400>
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+More details are given in the reference manual.
+
+\subsubsection{Template class {\tt Data\_Kernel}}
+%%%%%%%%%%%
+
+This class provides the types for the input sample points, together
+with $3d$ vectors and a number type. It is used as template for the
+Monge\_rep. Typically, one can use {\tt CGAL::Cartesian<double>}.
+
+\subsubsection{Template class {\tt Local\_Kernel}}
+%%%%%%%%%%%
+
+This class defines the vector and number types used (i)\ for local
+computations (ii)\ to store the Monge\_info class members. Input
+points of type Data\_Kernel::Point\_3 are converted to
+Local\_Kernel::Point\_3. For output of the Monge\_rep class, these
+types are converted back to Data\_Kernel ones.  Typically, one can use
+{\tt CGAL::Cartesian<double>}.
+
+\subsubsection{Template class {\tt Linalg\_traits.}}
+%%%%%%%%%%%
+
+This class provides the matrix algebra operations required by the
+fitting method. These are an eigen method for symmetric mtrices and
+linear solver using a singular value decomposition.
+
+\subsubsection{Compatibility requirements}
+
+An important requirement is the following. To solve the fitting
+problem, the coordinates of the samples undergo two types of
+operations: first, an eigen analysis is performed in the world-basis
+(with the LinAlgTraits::FT which is also the LocalKernel::FT); second,
+points are expressed into fitting-basis; third, matrices used for the
+linear algebra operations are filled from powers of the coordinates of
+the samples in fitting-basis. Linear algebra operations being used for
+these three stages, we assume the linear algebra traits class provides
+functions compatible with the number type defining the coordinates of
+the samples. In particular, for number types supporting
+multi-precision, this requires converting the samples into points with
+more standard types ---unless the user has a package supporting linear
+algebra operation on such number types.
+
+
+
+
 
 \section{Examples} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\paragraph{Abouta point.}
+\paragraph{About a point.}
 The first example illustrates the computation of the local
 differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
@@ -697,10 +677,10 @@ The second example illustrates the computation of local differential
 quantities for all vertices of a given mesh. Results are twofold:
 \begin{itemize}
 \item
-a human readable text file featuring ??????????
-
+a human readable text file featuring the Monge\_rep and the Monge\_info data;
 \item
-another text file which may be visualised  with the demo program. ?????????????
+another text file which may be visualised with the demo program
+visu.exe displaying the Monge basis at each vertex of the mesh.
 \end{itemize}
 
-\ccIncludeExampleCode{Jet_fitting_3/blind.C}
+\ccIncludeExampleCode{Jet_fitting_3/blind.C} %too long to be included?

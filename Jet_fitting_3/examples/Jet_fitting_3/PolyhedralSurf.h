@@ -18,11 +18,12 @@
 
 
 
-//----------------------------------------------------------------
-// A redefined items class for the Polyhedron_3 with a refined vertex
-// class that contains a member for the normal vector and a refined
-// facet with a normal vector instead of the plane equation (this is
-// an alternative solution instead of using Polyhedron_traits_with_normals_3).
+//---------------------------------------------------------------- A
+//redefined items class for the Polyhedron_3 with a refined vertex
+//class that contains nothing more! (the _ring_tag is given by an
+//externa std::map; a refined facet with a normal vector instead of
+//the plane equation (this is an alternative solution instead of using
+//Polyhedron_traits_with_normals_3). edges with the length
 //----------------------------------------------------------------
 
 template < class Refs, class Tag, class Pt, class FGeomTraits > 
