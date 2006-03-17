@@ -1869,6 +1869,7 @@ Surface_mesher/examples/Surface_mesher/ImageIO/reech4x4.c -text
 Surface_mesher/examples/Surface_mesher/ImageIO/reech4x4.h -text
 Surface_mesher/examples/Surface_mesher/ImageIO/typedefs.h -text
 Surface_mesher/examples/Surface_mesher/NOTICE -text
+Surface_mesher/examples/Surface_mesher/cgal_test -text
 Surface_mesher/examples/Surface_mesher/implicit_functions.h -text
 Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
