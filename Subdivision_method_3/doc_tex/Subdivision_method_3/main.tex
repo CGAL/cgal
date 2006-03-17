@@ -74,8 +74,8 @@ host.
 % +------------------------------------------------------------------------+
 In this chapter, we explain some fundamentals of 
 subdivision methods. We focus only on the topics that help you 
-to understand the design of the package. Interested readers can
-refer to \cite{cgal:ww-smgd-02} for an in-depth introduction.
+to understand the design of the package. \cite{cgal:ww-smgd-02} 
+has details on subdivision methods.
 Some terminology introduced in this section will be used again
 in later sections. If you are only interested in using a 
 specific subdivision method, Section \ref{secFirstSub} 
@@ -316,8 +316,9 @@ void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int depth)
 \end{ccExampleCode}
 
 \ccc{Polyhedron_3} is a generic mesh data structure for 
-arbitrary 2-manifolds. \ccc{PQQ()}, the \emph{refinement host},
-provides the process refining the control mesh \ccc{p}. 
+arbitrary 2-manifolds. \ccc{PQQ()}, which refines the control mesh 
+\ccc{p}, is a \emph{refinement host} that uses a policy class
+\ccc{Mask<Polyhedron_3>} as part of it geometry computation. 
 During the refinement, \ccc{PQQ()} computes and assigns
 new points by cooperating with the \ccc{mask}. 
 To implement Catmull-Clark subdivision,
