@@ -17,6 +17,7 @@
 //
 // Author(s)     : Peter Hachenberger
 
+#include <CGAL/basic.h>
 #ifdef CGAL_USE_QT
 #include <iostream>
 int main(int, char*){
