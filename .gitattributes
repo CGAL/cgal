@@ -1234,6 +1234,7 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#unset
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#unset
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#unset
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#unset
+Number_types/include/CGAL/Nef_polynomial_fwd.h -text
 Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#unset

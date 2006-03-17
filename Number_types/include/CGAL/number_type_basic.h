@@ -63,6 +63,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Lazy_exact_nt_fwd.h>
 #include <CGAL/Filtered_exact_fwd.h>
 #include <CGAL/MP_Float_fwd.h>
+#include <CGAL/Nef_polynomial_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpzq_fwd.h>
@@ -95,10 +96,10 @@ double to_double(Fixed_precision_nt);
 bool is_finite(Fixed_precision_nt);
 bool is_valid(Fixed_precision_nt);
 std::pair<double,double> to_interval(Fixed_precision_nt);
-
+#if 0
 // Polynomial
 
-template <typename> class Polynomial;
+template <typename T> class Polynomial;
 
 template <typename ET>
 double to_double(const Polynomial<ET> &);
@@ -124,14 +125,14 @@ Polynomial<ET> gcd(const Polynomial<ET> &, const Polynomial<ET> &);
 
 // Nef_polynomial
 
-template <typename> class Nef_polynomial;
+template <typename T> class Nef_polynomial;
 
 template <typename ET>
 double to_double(const Nef_polynomial<ET> &);
 
 template <typename ET>
 Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
-
+#endif
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
