@@ -3,6 +3,8 @@
   Sun
 - added examples/Surface_mesher/cgal_test, so that the testsuite does not
   try to compile and run examples/Surface_mesher/implicit_functions
+- try to workaround ICL and VC++ 8 bug (or not bug, I do not know), in
+  include/CGAL/Surface_mesher/Surface_mesher_manifold.h
 
 15 March 2006 Laurent Rineau
 - Added macro CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS to strace constructors
