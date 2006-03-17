@@ -82,8 +82,8 @@ namespace CGAL {
   {
     typedef Implicit_surface_3<GT, Function> Surface_type;
     typedef typename Surface_mesher::Implicit_surface_oracle<GT,
-							     Surface_type> type;
-    typedef type Type; // Boost meta-programming compatibility
+							     Surface_type> Type;
+    typedef Type type; // Boost meta-programming compatibility
   };
 
 } // end namespace CGAL
