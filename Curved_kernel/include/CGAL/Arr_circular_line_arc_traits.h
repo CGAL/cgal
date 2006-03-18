@@ -95,16 +95,16 @@ namespace CGAL {
 	    return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
 	  }
 	  else {
-	    const Arc2* arc2 = boost::get<Arc2>( &a2 );
-	    return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
+	    const Arc2* arc2e = boost::get<Arc2>( &a2 );
+	    return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2e, p);
 	  }
 	}
 	const Arc2* arc1 = boost::get<Arc2>( &a1 );
 	if ( const Arc1* arc2 = boost::get<Arc1>( &a2 ) ){
 	  return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
 	}
-	const Arc2* arc2 = boost::get<Arc2>( &a2 );
-	return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
+	const Arc2* arc2e = boost::get<Arc2>( &a2 );
+	return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2e, p);
 	
       }  
     };
@@ -264,15 +264,15 @@ namespace CGAL {
 	  }
 	}
 	else {
-	  const Arc2* arc1 = boost::get<Arc2>( &c1 );
+	  const Arc2* arc1e = boost::get<Arc2>( &c1 );
 	  if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
-	    CircularKernel().intersect_2_object()(*arc1,*arc2,  std::back_inserter(container));
+	    CircularKernel().intersect_2_object()(*arc1e,*arc2,  std::back_inserter(container));
 	    return object_to_object_variant<CircularKernel, Arc1, Arc2>(container, res);
 	  }
 	  const Arc2* arc2 = boost::get<Arc2>( &c2 );
 	  std::vector<CGAL::Object> container;
-	  CircularKernel().intersect_2_object()(*arc1,*arc2,  std::back_inserter(container));
+	  CircularKernel().intersect_2_object()(*arc1e,*arc2,  std::back_inserter(container));
 	  return object_to_object_variant<CircularKernel, Arc1, Arc2>(container, res);
 	}
 	abort();
