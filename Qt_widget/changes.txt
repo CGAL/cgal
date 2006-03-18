@@ -1,6 +1,11 @@
 09 March 2006 Joachim Reichel
 - LGPL copyright notice added to src/CGALQt/makefile
 
+26 Jan 2006 Laurent Rineau
+- fix KDS' src/CGALQt/kds_deps.makefile
+- added includes for KDS makefiles into src/CGALQt/makefile
+- remove -DCGAL_USE_CGAL_HEADERS in that makefile
+
 15 December 2005 Menelaos Karavelas
 - added this-> to a call of the is_pure method of
   Qt_widget_get_simple_polygon to please g++ 4.1.0
