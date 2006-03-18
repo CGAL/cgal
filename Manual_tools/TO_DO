@@ -112,6 +112,10 @@ OPEN:
 
 -- flex problem with version > 2.5.4 (yytext_ptr)
 
+-- \footnote{aaa \bbb ccc} : html converter does not expand \bbb if there
+   are characters in front of it, so if \bbb happens to be not defined at 
+   footnote painting time, an error occurs
+
 Feature Requests
 ============================================================================
 

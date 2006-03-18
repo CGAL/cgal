@@ -1532,9 +1532,13 @@ void format_nested_type( const char* nested_type_name) {
          is_index_enabled() ) 
     {
         // index
-        if ( ! template_class_name.empty())
-           make_index(string(nested_type_name),string(class_name),"",
+        if ( ! template_class_name.empty()) {
+          make_index(string(nested_type_name),string(class_name),"",
                    nested_type_name,'n');
+          *current_ostream << "<A NAME=\"Nested_type_";
+          filter_for_index_anchor( *current_ostream, nested_type_name);
+          *current_ostream << "\"></A>" << endl;
+        }
         // end index
     }
 
