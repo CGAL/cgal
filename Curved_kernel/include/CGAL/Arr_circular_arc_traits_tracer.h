@@ -38,8 +38,11 @@ namespace CGAL {
 
 // to get better profiles for the traits interface :
 #ifndef CGAL_NO_INLINE
-#  define CGAL_NO_INLINE __attribute__((__noinline__))
-//#define CGAL_NO_INLINE
+#  ifdef __GNUG__
+#    define CGAL_NO_INLINE __attribute__((__noinline__))
+#  else
+#    define CGAL_NO_INLINE
+#  endif
 #endif
 
 // FIXME : the .id() came from the Debug_id base class, which used to be
