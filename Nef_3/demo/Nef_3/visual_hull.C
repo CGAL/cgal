@@ -18,7 +18,7 @@
 // Author(s)     : Peter Hachenberger
 
 #include <CGAL/basic.h>
-#ifdef CGAL_USE_QT
+#ifndef CGAL_USE_QT
 #include <iostream>
 int main(int, char*){
   std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
