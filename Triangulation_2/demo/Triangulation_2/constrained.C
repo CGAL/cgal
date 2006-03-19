@@ -25,10 +25,8 @@
 
 int main(int, char*)
 {
-
   std::cout << "Sorry, this demo needs QT...";
   std::cout << std::endl;
-
   return 0;
 }
 
@@ -39,7 +37,6 @@ int main(int, char*)
 #include <set>
 #include <string>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>

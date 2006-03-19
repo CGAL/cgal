@@ -18,6 +18,8 @@
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
+#include <CGAL/basic.h>
+
 #ifndef CGAL_USE_QT
 #include <iostream>
 int main(int, char*){

@@ -40,7 +40,6 @@ int main(int, char*)
 #include <set>
 #include <string>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>

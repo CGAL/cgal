@@ -23,13 +23,10 @@
 #ifndef CGAL_USE_QT
 #include <iostream>
 
-
 int main(int, char*)
 {
-
   std::cout << "Sorry, this demo needs QT...";
   std::cout << std::endl;
-
   return 0;
 }
 
@@ -41,7 +38,6 @@ int main(int, char*)
 #include <string>
 
 //CGAL
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Polygon_2.h>

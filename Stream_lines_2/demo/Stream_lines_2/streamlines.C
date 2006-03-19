@@ -1,18 +1,19 @@
 // if QT is not installed, a message will be issued in runtime.
+
+#include <CGAL/basic.h>
 #include <iostream>
+
 #ifndef CGAL_USE_QT
 
 int main(int, char*)
 {
-
   std::cout << "Sorry, this demo needs QT...";
   std::cout << std::endl;
-
   return 0;
 }
 
 #else
-#include <CGAL/basic.h>
+
 #include <qapplication.h>
 #include <qfont.h>
 #include <qpushbutton.h>
