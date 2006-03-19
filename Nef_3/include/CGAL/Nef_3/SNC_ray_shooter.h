@@ -141,11 +141,11 @@ public:
     Object_handle o;
     Vertex_handle v;
     CGAL_forall_vertices( v, *this->sncp()) {
-      if ( ray.source() != point(v) && ray.has_on(point(v))) {
-        if(hit && !Segment_3(ray.source(), end_of_seg).has_on(point(v)))
+      if ( ray.source() != v->point() && ray.has_on(v->point())) {
+        if(hit && !Segment_3(ray.source(), end_of_seg).has_on(v->point()))
           continue;
-        CGAL_NEF_TRACEN("ray hit vertex case "<<point(v));
-        end_of_seg = point(v);
+        CGAL_NEF_TRACEN("ray hit vertex case "<<v->point());
+        end_of_seg = v->point();
         hit = true;
         o = Object_handle(v);
       }
@@ -191,7 +191,7 @@ public:
     Vertex_handle v;
     CGAL_forall_vertices( v, *this->sncp()) {
       CGAL_NEF_TRACEN("test vertex " << point(v));
-      if ( p == point(v)) {
+      if ( p == v->point()) {
 	CGAL_NEF_TRACEN("on vertex.");
 	return Object_handle(v);
       }
