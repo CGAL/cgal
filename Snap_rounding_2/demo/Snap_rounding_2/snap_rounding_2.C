@@ -62,13 +62,13 @@ Number_type prec;
 
 Number_type min(const Number_type & p, const Number_type & q, Number_type & r)
 {
-  return(p > q ? min(q,r) : min(p,r));
+  return(p > q ? CGAL::min(q,r) : CGAL::min(p,r));
 }
 
 Number_type max(const Number_type & p,const Number_type & q,
                 const Number_type & r)
 {
-  return(p > q ? max(p,r) : max(q,r));
+  return(p > q ? CGAL::max(p,r) : CGAL::max(q,r));
 }
 
 void get_extreme_points(std::list<Segment_2> &seg_list,
@@ -79,10 +79,10 @@ void get_extreme_points(std::list<Segment_2> &seg_list,
 {
   std::list<Segment_2>::iterator iter = seg_list.begin();
 
-  min_x = min(iter->source().x(),iter->target().x());
-  max_x = max(iter->source().x(),iter->target().x());
-  min_y = min(iter->source().y(),iter->target().y());
-  max_y = max(iter->source().y(),iter->target().y());
+  min_x = CGAL::min(iter->source().x(),iter->target().x());
+  max_x = CGAL::max(iter->source().x(),iter->target().x());
+  min_y = CGAL::min(iter->source().y(),iter->target().y());
+  max_y = CGAL::max(iter->source().y(),iter->target().y());
    
   for(++iter;iter != seg_list.end();++iter) {
     min_x = min(iter->source().x(),iter->target().x(),min_x);
