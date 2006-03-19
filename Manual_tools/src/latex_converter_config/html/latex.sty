@@ -195,8 +195,18 @@
     \lciIfFileExists{#GXC1#GXC2.auxtmp}{\lciInclude{#GXC1#GXC2.auxtmp}}{}}
 
 % Args: main-path, main-rootname: reads *.bbl file if it exists
+% if it does not exist, at least prepare a dummy bib page
+% to prevent dead links
 \newcommand{\lciReadBbl}[2]{%
-    \lciIfFileExists{#GXC1#GXC2.bbl}{\lciInclude{#GXC1#GXC2.bbl}}{}}
+    \lciIfFileExists{#GXC1#GXC2.bbl}%
+    {\lciInclude{#GXC1#GXC2.bbl}}%    
+    {\lciOpenTmpFile{\lciBibFilename}%
+     \lciBibFileHeader%
+     The empty bibliography.
+     \lciBibFileFooter%
+     \lciCloseFile%
+    }%
+}
 
 
 % ___________________________________________________________________________
