@@ -273,6 +273,23 @@ fi
 cmd_log="cmd_log"
 rm -f $cmd_log
 
+# search and replace
+
+#if [ "$#" != "4" ] ; then
+#  echo "usage: $0 path filenamepattern stringtofind replacement"
+#  exit 1
+#fi
+#
+#echo "looking for files named \"$2\" in dir \"$1\", replacing $3 with $4"
+
+search_and_replace() {
+    find $1 -type f -name "$2" | while read f ; do
+        sed "s/$3/$4/g" < $f > $f.tmp
+        mv $f.tmp $f
+    done
+}
+
+
 #---------------------------------------------------------------------#
 # version
 #---------------------------------------------------------------------#
@@ -1421,6 +1438,7 @@ make_manual_prime() {
     # run LaTeX_to_HTML
     $BeforeHTML ${WrapperRootName%__*}
     local HtmlExit=3
+    local LinklintExit=3
     if [ ${MakeHTML} -eq 1 ]; then
       try_command "${MakeName} ${WrapperRootName} HTML " run_html ${WrapperRootName}
       HtmlExit=$ExitCode
@@ -1429,10 +1447,29 @@ make_manual_prime() {
       fi
       if [ $MakeTestSuiteResult -eq 1 ]; then
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
+          if which linklint >& /dev/null ; then
+              mkdir testsuite/${WrapperRootName}-linklintresults
+              cd testsuite/${WrapperRootName}
+              ln -s ../../../include .
+              linklint -doc ../${WrapperRootName}-linklintresults -index contents.html -no_anchors /@  >& /dev/null
+              cd ../..
+              
+              search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" 'file:.\+doc_tex\/testsuite\/' '..\/'
+              
+              if grep 'No errors,' testsuite/${WrapperRootName}-linklintresults/log.txt >& /dev/null; then
+                  LinklintExit=0
+                  if ! grep 'no warnings.' testsuite/${WrapperRootName}-linklintresults/log.txt >& /dev/null; then
+                     LinklintExit=2
+                  fi
+              else 
+                  LinklintExit=1
+              fi
+          fi 
       fi
     fi
     if [ $MakeTestSuiteResult -eq 1 ]; then
         testsuite_entry $HtmlExit ${WrapperRootName}.hlg.txt >> testsuite/index_row
+        testsuite_entry $LinklintExit ${WrapperRootName}-linklintresults/index.html >> testsuite/index_row
     fi
 
     #---------------------------------------------------------------------#
@@ -1624,7 +1661,7 @@ problems to Lutz Kettner and Andreas Meyer.</b></p>
 <table cellpadding="5" cellspacing="2" border="1">
 <tr align="center">
   <td rowspan="2" align="left"><b>Module</b></td>
-  <td colspan="6" align="center"><b>Click to see Logfile</b></td>
+  <td colspan="7" align="center"><b>Click to see Logfile</b></td>
   <td colspan="4" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
@@ -1634,6 +1671,7 @@ problems to Lutz Kettner and Andreas Meyer.</b></p>
   <td><b>make_-<br>index</b></td>
   <td><b>Pdf-<br>LaTeX</b></td>
   <td><b>latex_-<br>to_html</b></td>
+  <td><b>linklint</b></td>
   <td><b>PS</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
@@ -1659,7 +1697,7 @@ testsuite_middle () {
 <table cellpadding="5" cellspacing="2" border="1">
 <tr align="center">
   <td rowspan="2" align="left"><b>Package</b></td>
-  <td colspan="6" align="center"><b>Click to see Logfile</b></td>
+  <td colspan="7" align="center"><b>Click to see Logfile</b></td>
   <td colspan="4" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
@@ -1669,6 +1707,7 @@ testsuite_middle () {
   <td><b>make_-<br>index</b></td>
   <td><b>Pdf-<br>LaTeX</b></td>
   <td><b>latex_-<br>to_html</b></td>
+  <td><b>linklint</b></td>
   <td><b>PS</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
