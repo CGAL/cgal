@@ -3039,8 +3039,8 @@
             % function, where the first argument is \ccVar, causes the trouble.
             % This special case is checked here.
         \else
-            \edef\ccOwnClassPair{{\ccPureClassTemplateName}{%
-                #1#2\ccPureClassTemplateName}}%
+            \edef\ccOwnClassPair{{\ccPureRefScope\ccPureClassTemplateName}{%
+                #1#2\ccPureRefScope\ccPureClassTemplateName}}%
             \expandafter\ccPrintOwnClassParameterX\ccOwnClassPair
         \fi\fi
     \fi
