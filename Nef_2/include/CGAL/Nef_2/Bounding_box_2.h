@@ -90,12 +90,12 @@ class Bounding_box_2<Tag_false,Kernel>
     SPoint minmax;
     if(dim == 0)
       minmax = d.delta(dim) < 0 
-	? SPoint(min_coord(0).numerator(),SRT(0),min_coord(0).denominator()) 
-	: SPoint(max_coord(0).numerator(),SRT(0),max_coord(0).denominator());
+	? SPoint(this->min_coord(0).numerator(),SRT(0),this->min_coord(0).denominator()) 
+	: SPoint(this->max_coord(0).numerator(),SRT(0),this->max_coord(0).denominator());
     else
       minmax = d.delta(dim) < 0 
-	? SPoint(SRT(0),min_coord(0).numerator(),min_coord(0).denominator()) 
-	: SPoint(SRT(0),max_coord(0).numerator(),max_coord(0).denominator());
+	? SPoint(SRT(0),this->min_coord(0).numerator(),this->min_coord(0).denominator()) 
+	: SPoint(SRT(0),this->max_coord(0).numerator(),this->max_coord(0).denominator());
     SLine l1(p,d);
     SLine l2 = dim == 0 
       ? SLine(minmax, SDirection(0,1)) 
