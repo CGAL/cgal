@@ -1,3 +1,7 @@
+20 March 2006 Laurent Rineau
+- fix a desynch between the doc and code: is_marked->is_in_domain, in the
+  face base type
+
 26 Febraury 2006 Laurent Rineau
 - Move the internal header
 include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h to Mesh_2.
