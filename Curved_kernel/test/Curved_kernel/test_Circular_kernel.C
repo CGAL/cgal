@@ -1,6 +1,6 @@
 #include <CGAL/Cartesian.h>
-#include <CGAL/Circular_kernel.h>
 #include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Circular_kernel.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 //#include <CGAL/Gmpq.h>
