@@ -182,10 +182,10 @@
 				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
+				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
+				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 		</Filter>
 		<Filter

@@ -179,13 +179,13 @@
 				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
-			</File>
-			<File
 				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Square_border_parameterizer_3.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 		</Filter>
 		<Filter

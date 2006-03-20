@@ -173,12 +173,6 @@
 				RelativePath="..\..\include\Cgal\Mean_value_coordinates_parameterizer_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
-			</File>
-			<File
 				RelativePath="..\..\include\Cgal\Param_mesh_patch_circulators.h">
 			</File>
 			<File
@@ -188,16 +182,22 @@
 				RelativePath="..\..\include\Cgal\Param_mesh_patch_vertex.h">
 			</File>
 			<File
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_feature_extractor.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
+			</File>
+			<File
 				RelativePath="..\..\include\Cgal\Parameterization_polyhedron_adaptor_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
+				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
+				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 		</Filter>
 		<Filter
