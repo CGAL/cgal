@@ -1,3 +1,6 @@
+20 March 2006 Laurent Rineau
+- fix include/CGAL/Gray_level_image_3.h
+
 17 March 2006 Laurent Rineau
 - modified examples/Surface_mesher/makefile, to have ImageIO compiled on
   Sun

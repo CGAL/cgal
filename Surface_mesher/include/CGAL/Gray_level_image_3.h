@@ -48,23 +48,23 @@ public:
              X<=max_x && Y<=max_y && Z<=max_z );
   }
 
-  int operator()(double x, double y, double z) const
+  FT operator()(FT x, FT y, FT z) const
   {
-    float X=static_cast<float>(x);
-    float Y=static_cast<float>(y);
-    float Z=static_cast<float>(z);
+    float X=static_cast<float>(to_double(x));
+    float Y=static_cast<float>(to_double(y));
+    float Z=static_cast<float>(to_double(z));
 
     if (!inside(X,Y,Z))
-      return 1;
+      return FT(1);
     else{
       float value = ::triLinInterp(image, X, Y, Z); 
 
       if (value > isovalue)
-	return -1;
+	return FT(1);
       else if (value < isovalue)
-	return 1;
+	return FT(-1);
       else
-	return 0;
+	return FT(0);
     }
   }
 }; // end Gray_level_image_3
