@@ -1,3 +1,7 @@
+20 March 2006 Fernando Cacciola
+- Coincident-node merging added
+- Base class qualification fixed for VC8
+
 16 March 2006 Fernando Cacciola
 - Added overflow handling (code and docs)
 - Added filter for consecutive coincident points
