@@ -22,7 +22,9 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
+#ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
+#endif
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
 #include <CGAL/Nef_3/K3_tree.h>
 #include <CGAL/Unique_hash_map.h>
@@ -1047,6 +1049,7 @@ private:
 #endif
 };
 
+#ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
 template <typename SNC_decorator>
 class SNC_point_locator_naive : 
   public SNC_ray_shooter<SNC_decorator>, 
@@ -1181,6 +1184,7 @@ public:
 private:
   bool initialized;
 };
+#endif
 
 CGAL_END_NAMESPACE
 #endif // SNC_POINT_LOCATOR_H
