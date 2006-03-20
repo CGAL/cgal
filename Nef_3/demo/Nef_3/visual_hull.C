@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
     VHC vhc(room_min, room_max, camera, polygon_list);
     N.delegate(vhc,true);
     CGAL_assertion(N.is_valid());
-    pq.insert(make_pair(N.number_of_vertices(),N));
+    pq.insert(std::make_pair(N.number_of_vertices(),N));
     t.stop();
   }
 
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
     Nef_polyhedron Ntmp(i1->second * i2->second);
     pq.erase(i1);
     pq.erase(i2);
-    pq.insert(make_pair(Ntmp.number_of_vertices(),Ntmp));
+    pq.insert(std::make_pair(Ntmp.number_of_vertices(),Ntmp));
   }
   t.stop();
 
