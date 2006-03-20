@@ -1,9 +1,18 @@
 include makefile
 
+#---------------------------------------------------------------------#
+#
+#                        dependencies
+#
+#      if you want deps, create a file my_makefile that contains
+#      -include depends
+#
+#---------------------------------------------------------------------#
+
 -include my_makefile
 
 dep:
-	$(MAKE) depends
+	rm -f depends; $(MAKE) depends
 
 .PHONY: dep
 

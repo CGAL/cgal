@@ -27,8 +27,8 @@ dist-clean: clean
 
 # make update: update the working directory
 update:
-	@cvs -q update -d -P
+	@svn -q update
 
-# make diff: diff between the cvs repository and the working copy
+# make diff: diff between the svn repository and the working copy
 diff:
-	@cvs -q diff -u | less
+	@svn -q diff | less

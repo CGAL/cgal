@@ -80,7 +80,7 @@ clean: \
 -include my_makefile
 
 dep:
-	$(MAKE) depends
+	rm depends; $(MAKE) depends
 
 .PHONY: dep
 

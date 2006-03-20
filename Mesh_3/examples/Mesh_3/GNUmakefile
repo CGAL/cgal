@@ -1,15 +1,22 @@
 include makefile
 
-ifneq ($(wildcard my_makefile), )
-  include my_makefile
-endif
+#---------------------------------------------------------------------#
+#
+#                        dependencies
+#
+#      if you want deps, create a file my_makefile that contains
+#      -include depends
+#
+#---------------------------------------------------------------------#
+
+-include my_makefile
 
 dep:
-	$(MAKE) depends
+	rm depends; $(MAKE) depends
 
 .PHONY: dep
 
-depends:
+depends: *.C
 	cat /dev/null > depends
 	for f in *.C; do \
 	  echo >> depends; \

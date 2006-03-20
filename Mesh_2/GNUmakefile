@@ -4,6 +4,7 @@
 all: run-test examples demo
 
 run-test:
+	${MAKE} -C examples/Mesh_2 run
 	${MAKE} -C test/Mesh_2 run
 
 test:

@@ -9,12 +9,6 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
-
-
-ifneq ($(wildcard my_makefile), )
-  include my_makefile
-endif
-
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
@@ -98,3 +92,29 @@ clean: \
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
+#---------------------------------------------------------------------#
+#
+#                        dependencies
+#
+#      if you want deps, create a file my_makefile that contains
+#      -include depends
+#
+#---------------------------------------------------------------------#
+
+-include my_makefile
+
+dep:
+	rm depends; $(MAKE) depends
+
+.PHONY: dep
+
+depends: *.C
+	cat /dev/null > depends
+	for f in *.C; do \
+	  echo >> depends; \
+	  echo >> depends; \
+	  echo "$${f%.C}$(OBJ_EXT): \\" >> depends; \
+	  $(CGAL_CXX) $(CXXFLAGS) -M -MG $$f \
+	     | grep '\.\./\.\..*/include/CGAL' >> depends; \
+	done; \
+	test -f depends
