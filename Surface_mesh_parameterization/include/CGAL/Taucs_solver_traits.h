@@ -90,13 +90,13 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifndef NDEBUG
+#ifdef DEBUG_TRACE
        // Turn on TAUCS trace
        std::cerr.flush();
        taucs_logfile("stderr");
 #endif
 
-//#ifndef NDEBUG
+//#ifdef DEBUG_TRACE
 //        // Debug trace
 //        fprintf(stderr, "\n");
 //        fprintf(stderr, "linear_solver:\n");
@@ -208,13 +208,13 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifndef NDEBUG
+#ifdef DEBUG_TRACE
        // Turn on TAUCS trace
        std::cerr.flush();
        taucs_logfile("stderr");
 #endif
 
-//#ifndef NDEBUG
+//#ifdef DEBUG_TRACE
 //        // Debug trace
 //        fprintf(stderr, "\n");
 //        fprintf(stderr, "linear_solver:\n");
