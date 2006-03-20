@@ -74,6 +74,8 @@ int main(int, char *[])
 
   std::ifstream in("data/points_2");
   in >> *tr.active_points_2_table_handle();
+  std::cout << "Read " << tr.active_points_2_table_handle()->size() 
+	    << " points" << std::endl;
   
   tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
 

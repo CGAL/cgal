@@ -1,22 +1,25 @@
 #include <CGAL/Kinetic/Listener.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 
+template <typename H>
+struct Listener_interface_impl
+  {
+  public:
+    typedef enum Notification_type {DATA_CHANGED}
+      Notification_type;
+   typedef H Notifier_handle;
+  };
+
+
 struct Notifier: public CGAL::Kinetic::Ref_counted<Notifier>
 {
 public:
   Notifier(): data_(0), listener_(NULL){}
 
-  struct Listener_interface
-  {
-  public:
-    typedef enum Notification_type {DATA_CHANGED}
-      Notification_type;
-    typedef Notifier::Handle Notifier_handle;
-  };
-
+  typedef CGAL::Kinetic::Ref_counted<Notifier> Base;
+  typedef Listener_interface_impl<typename Base::Handle> Listener_interface;
   typedef CGAL::Kinetic::Listener<Listener_interface> Listener;
-  friend class CGAL::Kinetic::Listener<Listener_interface>;
-  friend class Listener_interface;
+
 
   int data() const {return data_;}
   void set_data(int d) {
@@ -75,3 +78,4 @@ int main(int, char *[])
   }
   return EXIT_SUCCESS;
 }
+
