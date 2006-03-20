@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -32,9 +32,6 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 ///
-/// As all parameterization algorithms of the package, this class
-/// is usually called via the global function parameterize().
-///
 /// This class is a Strategy [GHJV95] called by the main
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
 /// Barycentric_mapping_parameterizer_3:
@@ -50,16 +47,21 @@ CGAL_BEGIN_NAMESPACE
 /// Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, ...> class is a
 /// Strategy [GHJV95]: it implements a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
+///
+/// Template parameters:
+/// @param ParameterizationMesh_3       3D surface mesh.
+/// @param BorderParameterizer_3        Strategy to parameterize the surface border.
+/// @param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
+///        Note: the system is NOT symmetric because Fixed_border_parameterizer_3
+///        does not remove (yet) border vertices from the system.
 
 template
 <
-    class ParameterizationMesh_3,     ///< 3D surface mesh
-    class BorderParameterizer_3       ///< Strategy to parameterize the surface border
+    class ParameterizationMesh_3,
+    class BorderParameterizer_3
                 = Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
-    class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
+    class SparseLinearAlgebraTraits_d
                 = OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>
-                                      ///< Note: the sparse linear system is symmetric iff
-                                      ///< Fixed_border_parameterizer_3 removes fixed vertices.
 >
 class Barycentric_mapping_parameterizer_3
     : public Fixed_border_parameterizer_3<ParameterizationMesh_3,
@@ -68,7 +70,7 @@ class Barycentric_mapping_parameterizer_3
 {
 // Private types
 private:
-    /// Superclass
+    // Superclass
     typedef Fixed_border_parameterizer_3<ParameterizationMesh_3,
                                         BorderParameterizer_3,
                                         SparseLinearAlgebraTraits_d>

@@ -300,8 +300,9 @@ parameterize(Adaptor& mesh)
     // Fill the border vertices' lines in both linear systems:
     // "u = constant" and "v = constant"
     //
-    // Implementation note: the current implementation does not remove
-    // border vertices from the linear systems => A cannot be symmetric
+    // @todo Fixed_border_parameterizer_3 should remove border vertices
+    // from the linear systems in order to have a symmetric definite positive
+    // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
     initialize_system_from_mesh_border (A, Bu, Bv, mesh);
 
     // Fill the matrix for the inner vertices v_i: compute A's coefficient

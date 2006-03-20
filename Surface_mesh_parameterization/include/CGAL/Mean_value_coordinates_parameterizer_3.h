@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -34,9 +34,6 @@ CGAL_BEGIN_NAMESPACE
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
-///
-/// As all parameterization algorithms of the package, this class
-/// is usually called via the global function parameterize().
 ///
 /// This class is a Strategy [GHJV95] called by the main
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().

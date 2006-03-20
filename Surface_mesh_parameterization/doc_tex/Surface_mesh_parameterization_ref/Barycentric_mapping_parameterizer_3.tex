@@ -27,8 +27,6 @@ The class Barycentric\_mapping\_parameterizer\_3 implements Tutte Barycentric Ma
 
 One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 
-As all parameterization algorithms of the package, this class is usually called via the global function parameterize().
-
 This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm Fixed\_border\_parameterizer\_3::parameterize(). Barycentric\_mapping\_parameterizer\_3:\begin{itemize}
 \item provides default BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_w\_ij() to compute w\_ij = (i,j) coefficient of matrix A for j neighbor vertex of i based on Tutte Barycentric Mapping method.\item implements an optimized version of is\_one\_to\_one\_mapping().\end{itemize}
 
@@ -59,6 +57,12 @@ class ParameterizationMesh\_3,   \\
 class BorderParameterizer\_3 = Circular\_border\_arc\_length\_parameterizer\_3$<$ParameterizationMesh\_3$>$,   \\
 class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename ParameterizationMesh\_3::NT$>$$>$   \\
 class Barycentric\_mapping\_parameterizer\_3;
+
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[ParameterizationMesh\_3]3D surface mesh. \item[BorderParameterizer\_3]Strategy to parameterize the surface border. \item[SparseLinearAlgebraTraits\_d]Traits class to solve a sparse linear system. Note: the system is NOT symmetric because Fixed\_border\_parameterizer\_3 does not remove (yet) border vertices from the system. \end{description}
+\end{description}
 
 %END-AUTO(\ccParameters)
 

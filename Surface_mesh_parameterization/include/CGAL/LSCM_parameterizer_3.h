@@ -47,13 +47,6 @@ CGAL_BEGIN_NAMESPACE
 /// onto a convex polygon (only two pinned vertices are needed to ensure a
 /// unique solution), but one-to-one mapping is NOT guaranteed.
 ///
-/// As all parameterization algorithms of the package, this class
-/// is usually called via the global function parameterize().
-///
-/// @todo Add to SparseLinearAlgebraTraits_d the ability to solve
-/// linear systems in the least squares sense, then access to the solver
-/// via the traits class interface instead of calls specific to OpenNL.
-///
 /// Concept: Model of the ParameterizerTraits_3 concept.
 ///
 /// Design Pattern:
@@ -63,14 +56,16 @@ CGAL_BEGIN_NAMESPACE
 
 template
 <
-    class ParameterizationMesh_3,     ///< 3D surface mesh
-    class BorderParameterizer_3       ///< Strategy to parameterize the surface border
+    class ParameterizationMesh_3,     ///< 3D surface mesh.
+    class BorderParameterizer_3
                 = Two_vertices_parameterizer_3<ParameterizationMesh_3>,
-                                      ///< Class to parameterize two border vertices
-    class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
+                                      ///< Strategy to parameterize the surface border.
+                                      ///< The minimum is to parameterize two vertices.
+    class SparseLinearAlgebraTraits_d
                 = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
-                                      ///< Symmetric solver for solving a sparse linear
-                                      ///< system in the least squares sense
+                                      ///< Traits class to solve a sparse linear system.
+                                      ///< We may use a symmetric solver because LSCM
+                                      ///< solves the system in the least squares sense.
 >
 class LSCM_parameterizer_3
     : public Parameterizer_traits_3<ParameterizationMesh_3>

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -35,9 +35,6 @@ CGAL_BEGIN_NAMESPACE
 /// area-preserving and angle-preserving.
 ///
 /// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
-///
-/// As all parameterization algorithms of the package, this class
-/// is usually called via the global function parameterize().
 ///
 /// This class is a Strategy [GHJV95] called by the main
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().

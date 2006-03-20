@@ -29,8 +29,6 @@ DAP is a weak area-preserving parameterization. It is a compromise between area-
 
 One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
-As all parameterization algorithms of the package, this class is usually called via the global function parameterize().
-
 This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm Fixed\_border\_parameterizer\_3::parameterize(). Discrete\_authalic\_parameterizer\_3:\begin{itemize}
 \item provides default BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_w\_ij() to compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.\end{itemize}
 
