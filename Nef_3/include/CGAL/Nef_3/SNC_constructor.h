@@ -1556,8 +1556,8 @@ public:
     //    CGAL_NEF_SETDTHREAD(37*43*503*509);
 
     CGAL_NEF_TRACEN(">>>>>create_volumes");
-    Sface_shell_hash     ShellSf(-1);
-    Face_shell_hash      ShellF(-1);
+    Sface_shell_hash     ShellSf(0);
+    Face_shell_hash      ShellF(0);
     SFace_visited_hash Done(false);
     Shell_explorer V(*this,ShellSf,ShellF,Done);
     std::vector<SFace_handle> MinimalSFace;
