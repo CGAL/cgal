@@ -15,21 +15,26 @@
 \label{chapterSubdivision}
 \ccChapterRelease{\subdivisionRev. \ \subdivisionDate}
 \ccChapterAuthor{Le-Jeng Andy Shiue}
-\hspace{.4cm}
-\begin{ccTexOnly}
-    \setlength{\unitlength}{1mm}
-    \begin{picture}(0,0)(0.0,0.0)
-      \put (78,25){% textwidth = 156mm
-          \includegraphics[width=0.5\textwidth]{Subdivision_method_3/FIG/teaser}
-      }
-    \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
-\end{ccTexOnly}
 
 \minitoc
 
 % +------------------------------------------------------------------------+
 \section{Introduction} \label{sectionSubIntro}
 % +------------------------------------------------------------------------+
+\begin{ccTexOnly}
+  \begin{center}
+    \parbox{0.6\textwidth}{%
+      \includegraphics[width=0.6\textwidth]{Subdivision_method_3/FIG/teaser}
+    }\\ \vspace{0.5cm}
+  \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+     <CENTER>
+         <img src="FIG/teaser.jpg" alt="Catmull-Clark subdivision"><P>
+     </CENTER>
+\end{ccHtmlOnly}
+
 Subdivision methods are simple yet powerful ways to 
 generate smooth surfaces from arbitrary polyhedral meshes. 
 Unlike spline-based surfaces (e.g NURBS) or other numeric-based 
@@ -61,12 +66,6 @@ functions. These include Catmull-Clark, Loop, Doo-Sabin and
 $\sqrt{3}$ subdivisions. Variations of these methods can be easily 
 extended by substituting the geometry computation of the refinement
 host.
-
-\begin{ccHtmlOnly}
-     <CENTER>
-         <img src="FIG/teaser.jpg" alt="Catmull-Clark subdivision"><P>
-     </CENTER>
-\end{ccHtmlOnly}
 
 % +------------------------------------------------------------------------+
 \section{Subdivision Method}
