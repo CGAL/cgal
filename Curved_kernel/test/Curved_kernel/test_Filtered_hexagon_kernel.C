@@ -2,8 +2,9 @@
 #include <CGAL/Algebraic_kernel/basic.h>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Circular_kernel.h>
 #include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Circular_kernel.h>
+#include <CGAL/Filtered_hexagon_curved_kernel.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 //#include <CGAL/Gmpq.h>
@@ -11,13 +12,14 @@
 //#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
 #include <CGAL/_test_circles_predicates.h>
 #include <CGAL/_test_circles_constructions.h>
-#include <CGAL/Filtered_hexagon_curved_kernel.h>
+
 #include <iostream>
 
 
 
 int main()
 {
+  
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
   //typedef CGAL::Gmpq                                           NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
@@ -46,6 +48,8 @@ int main()
 
   _test_circle_predicat(ck2);
   _test_circle_construct(ck2);
-
+  
   return 0;
 }
+
+
