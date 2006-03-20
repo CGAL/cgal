@@ -20,15 +20,8 @@
 Subdivision methods recursively refine the control mesh 
 (i.e.~the input mesh) and generate points approximating 
 the limit surface. 
-%\ccc{Subdivision_method_3} 
-%realizes a subdivision method as a refinement host parameterized 
-%with a geometry policy. The refinement host refines the 
-%control mesh, maintains the stencils, and
-%computes the geometry of the refined mesh. The computation
-%of the geometry is done through the geometry policy.
 Designed to work on the class \ccc{Polyhedron_3},
 \ccc{Subdivision_method_3} aims to be easy to use and to extend.
-%(see Chapter~\ref{chapterPolyhedron})
 \ccc{Subdivision_method_3} is not a class, but a namespace 
 which consists of four popular subdivision methods and their refinement
 hosts. Supported subdivision methods include Catmull-Clark, Loop, 
@@ -38,16 +31,15 @@ Variations of those methods can be easily
 extended by substituting the geometry computation of the refinement
 host.
 
-%\subsection*{Concepts}
-%\ccRefIdfierPage{PolyhedronTraits_3}\\ 
-%\ccRefIdfierPage{PolyhedronItems_3}
+\subsection*{Concepts}
+\ccRefIdfierPage{PQQMask_3}\\
+\ccRefIdfierPage{PTQMask_3}\\
+\ccRefIdfierPage{DQQMask_3}\\
+\ccRefIdfierPage{Sqrt3Mask_3}
 
 \subsection*{Classes}
 
 \ccRefIdfierPage{CGAL::Subdivision_method_3}\\ 
-%\ccRefIdfierPage{CGAL::PQQ_stencil_3<Polyhedron_3>}\\ 
-%\ccRefIdfierPage{CGAL::DQQ_stencil_3<Polyhedron_3>}\\ 
-%\ccRefIdfierPage{CGAL::Linear_mask_3<Polyhedron_3>}\\ 
 \ccRefIdfierPage{CGAL::CatmullClark_mask_3<Polyhedron_3>}\\ 
 \ccRefIdfierPage{CGAL::Loop_mask_3<Polyhedron_3>}\\ 
 \ccRefIdfierPage{CGAL::DooSabin_mask_3<Polyhedron_3>}\\ 
