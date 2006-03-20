@@ -26,7 +26,7 @@ public:
     }
   }
 
-protected:
+  //protected:
   void set_listener(Listener *l) {
     listener_= l;
   }
