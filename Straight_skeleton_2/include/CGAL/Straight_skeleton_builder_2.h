@@ -21,6 +21,8 @@
 
 #include <list>
 #include <queue>
+#include <exception>
+#include <string>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
@@ -73,6 +75,8 @@ private :
   typedef typename SSkel::Halfedge_iterator Halfedge_iterator ;
   typedef typename SSkel::Face_iterator     Face_iterator ;
 
+  typedef typename Vertex::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator ;
+  
   typedef typename SSkel::size_type size_type ;
 
   typedef Straight_skeleton_builder_event_2<SSkel>        Event ;
@@ -84,8 +88,10 @@ private :
 
   typedef std::vector<EventPtr>        EventPtr_Vector ;
   typedef std::vector<Halfedge_handle> Halfedge_handle_vector ;
+  typedef std::vector<Vertex_handle>   Vertex_handle_vector ;
 
   typedef typename Halfedge_handle_vector::iterator Halfedge_handle_vector_iterator ;
+  typedef typename Vertex_handle_vector  ::iterator Vertex_handle_vector_iterator ;
   typedef typename EventPtr_Vector       ::iterator event_iterator ;
 
   typedef boost::tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
@@ -94,15 +100,15 @@ private :
   typedef CGAL_SS_i::Edge   <FT> iEdge ;
   typedef CGAL_SS_i::Triedge<FT> iTriedge ;
 
-  typedef typename Halfedge::Base HBase;
-  typedef typename Vertex::Base   VBase;
-  typedef typename Face::Base     FBase;
-  typedef typename SSkel::Base    SBase ;
-
   typedef Straight_skeleton_builder_2<Traits,SSkel> Self ;
-
+  
 public:
 
+  struct straight_skeleton_exception : std::runtime_error
+  {
+    straight_skeleton_exception( std::string what ) : std::runtime_error(what) {}  
+  } ;
+  
   Straight_skeleton_builder_2 ( Traits const& = Traits() ) ;
 
   // NOTE: The following public method is implemented here in this header file to support some broken compilers.
@@ -115,6 +121,8 @@ public:
 
 private :
 
+  void throw_error ( char const* what ) const ;
+  
   class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
   {
   public:
@@ -164,6 +172,20 @@ private :
 
 private :
 
+  inline Halfedge_handle validate( Halfedge_handle aH ) const
+  {
+    if ( !handle_assigned(aH) )
+      throw_error("Unassigned halfedge handle") ;
+    return aH ;
+  }
+  
+  inline Vertex_handle validate( Vertex_handle aH ) const
+  {
+    if ( !handle_assigned(aH) )
+      throw_error("Unassigned vertex handle") ;
+    return aH ;
+  }
+  
   inline Halfedge_handle GetDefiningBorderA ( Vertex_handle aV ) const
   {
     return mWrappedVertices[aV->id()].mDefiningBorderA ;
@@ -258,6 +280,10 @@ private :
   {
     mWrappedVertices[aVertex->id()].mIsExcluded = true ;
   }
+  bool IsExcluded ( Vertex_const_handle aVertex ) const
+  {
+    return mWrappedVertices[aVertex->id()].mIsExcluded ;
+  }
 
   void SetIsReflex ( Vertex_handle aVertex )
   {
@@ -324,6 +350,16 @@ private :
                       ) const
   {
     return CountInCommon(aXA,aXB,aXC,aYA,aYB,aYC) == 2 ;
+  }
+  
+  // Returns true if the intersection of the sets (aXA,aXB,aXC) and (aYA,aYB,aYC) has size exactly 2
+  // (that is, both sets have 2 elements in common)
+  bool HaveTwoInCommon( BorderTriple aX, BorderTriple aY ) const
+  {
+    Halfedge_handle lXA, lXB, lXC, lYA, lYB, lYC ;
+    boost::tie(lXA,lXB,lXC) = aX ;
+    boost::tie(lYA,lYB,lYC) = aY ;
+    return CountInCommon(lXA,lXB,lXC,lYA,lYB,lYC) == 2 ;
   }
 
   // Returns true if the sets of halfedges (aXA,aXB,aXC) and (aYA,aYB,aYC) are equivalent
@@ -447,6 +483,13 @@ private :
     else return false ;
   }
 
+  bool AreSkeletonNodesCoincident( Vertex_handle aX, Vertex_handle aY ) const
+  {
+    BorderTriple lBordersX = GetSkeletonVertexDefiningBorders(aX);
+    BorderTriple lBordersY = GetSkeletonVertexDefiningBorders(aY);
+    return Are_ss_events_simultaneous_2<Traits>(mTraits)()( CreateTriedge(lBordersX), CreateTriedge(lBordersY)) ;
+  }
+  
   bool IsNewEventInThePast( Halfedge_handle aBorderA
                           , Halfedge_handle aBorderB
                           , Halfedge_handle aBorderC
@@ -485,14 +528,14 @@ private :
     boost::tie(lTime,lP) = ConstructEventTimeAndPoint( CreateTriedge(aE.border_a(),aE.border_b(),aE.border_c()) );
     
     if ( !lTime || !lP )
-      throw std::range_error("CGAL_STRAIGHT_SKELETON: Overflow during skeleton node computation."); // Caught by the main loop
+      throw_error("CGAL_STRAIGHT_SKELETON: Overflow during skeleton node computation."); // Contained in the main entry function
     
     aE.SetTimeAndPoint(*lTime,*lP);
   }
 
   void EraseBisector( Halfedge_handle aB )
   {
-    mSSkel->SBase::edges_erase(aB);
+    mSSkel->SSkel::Base::edges_erase(aB);
   }
 
   BorderTriple GetDefiningBorders( Vertex_handle aA, Vertex_handle aB ) ;
@@ -542,6 +585,14 @@ private :
 
   void MergeSplitNodes ( Vertex_handle_pair aSplitNodes ) ;
 
+  void MergeCoincidentNodes( Vertex_handle           v0
+                           , Vertex_handle           v1 
+                           , Halfedge_handle_vector& rHalfedgesToRemove
+                           , Vertex_handle_vector&   rVerticesToRemove
+                           ) ;
+  
+  void MergeCoincidentNodes() ;
+  
   void FinishUp();
 
   void Run();
@@ -632,23 +683,23 @@ public:
         continue ;
       }
       
-      Halfedge_handle lCCWBorder = mSSkel->SBase::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
+      Halfedge_handle lCCWBorder = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
       Halfedge_handle lCWBorder = lCCWBorder->opposite();
       mEdgeID += 2 ;
 
       mContourHalfedges.push_back(lCCWBorder);
 
-      Vertex_handle lVertex = mSSkel->SBase::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
+      Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
       CGAL_SSBUILDER_TRACE(2,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
       mWrappedVertices.push_back( VertexWrapper(lVertex) ) ;
 
-      Face_handle lFace = mSSkel->SBase::faces_push_back( Face() ) ;
+      Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
 
-      lCCWBorder->HBase::set_face    (lFace);
-      lFace     ->FBase::set_halfedge(lCCWBorder);
+      lCCWBorder->Halfedge::HBase::set_face(lFace);
+      lFace     ->Face::Base::set_halfedge(lCCWBorder);
 
-      lVertex   ->VBase::set_halfedge(lCCWBorder);
-      lCCWBorder->HBase::set_vertex  (lVertex);
+      lVertex   ->Vertex::Base::set_halfedge(lCCWBorder);
+      lCCWBorder->Halfedge::HBase::set_vertex(lVertex);
 
       if ( lCurr == aBegin )
       {
@@ -663,13 +714,13 @@ public:
         SetDefiningBorderA(lVertex    ,lCCWBorder);
         SetDefiningBorderB(lPrevVertex,lCCWBorder);
 
-        lCWBorder->HBase::set_vertex(lPrevVertex);
+        lCWBorder->Halfedge::HBase::set_vertex(lPrevVertex);
 
-        lCCWBorder    ->HBase::set_prev(lPrevCCWBorder);
-        lPrevCCWBorder->HBase::set_next(lCCWBorder);
+        lCCWBorder    ->Halfedge::HBase::set_prev(lPrevCCWBorder);
+        lPrevCCWBorder->Halfedge::HBase::set_next(lCCWBorder);
 
-        lNextCWBorder->HBase::set_prev(lCWBorder);
-        lCWBorder    ->HBase::set_next(lNextCWBorder);
+        lNextCWBorder->Halfedge::HBase::set_prev(lCWBorder);
+        lCWBorder    ->Halfedge::HBase::set_next(lNextCWBorder);
 
         CGAL_SSBUILDER_TRACE(2,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
         CGAL_SSBUILDER_TRACE(2,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
@@ -696,18 +747,18 @@ public:
     SetDefiningBorderA(lFirstVertex,lFirstCCWBorder);
     SetDefiningBorderB(lPrevVertex ,lFirstCCWBorder);
 
-    lFirstCCWBorder->opposite()->HBase::set_vertex(lPrevVertex);
+    lFirstCCWBorder->opposite()->Halfedge::HBase::set_vertex(lPrevVertex);
 
     CGAL_SSBUILDER_SHOW
     ( SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
       draw_.Release();
     )
 
-    lFirstCCWBorder->HBase::set_prev(lPrevCCWBorder);
-    lPrevCCWBorder ->HBase::set_next(lFirstCCWBorder);
+    lFirstCCWBorder->Halfedge::HBase::set_prev(lPrevCCWBorder);
+    lPrevCCWBorder ->Halfedge::HBase::set_next(lFirstCCWBorder);
 
-    lPrevCCWBorder ->opposite()->HBase::set_prev(lFirstCCWBorder->opposite());
-    lFirstCCWBorder->opposite()->HBase::set_next(lPrevCCWBorder ->opposite());
+    lPrevCCWBorder ->opposite()->Halfedge::HBase::set_prev(lFirstCCWBorder->opposite());
+    lFirstCCWBorder->opposite()->Halfedge::HBase::set_next(lPrevCCWBorder ->opposite());
 
     CGAL_SSBUILDER_TRACE(2
                         , "CCW Border: E" << lFirstCCWBorder->id()
@@ -716,9 +767,9 @@ public:
                         << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
                         );
      
-    CGAL_precondition_msg(mSSkel->SBase::size_of_vertices() >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
+    CGAL_precondition_msg(mSSkel->SSkel::Base::size_of_vertices() >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
     
-    for ( Vertex_iterator v = mSSkel->SBase::vertices_begin(); v != mSSkel->SBase::vertices_end(); ++ v )
+    for ( Vertex_iterator v = mSSkel->SSkel::Base::vertices_begin(); v != mSSkel->SSkel::Base::vertices_end(); ++ v )
     {
       mSLAV.push_back(static_cast<Vertex_handle>(v));
       Vertex_handle lPrev = GetPrevInLAV(v) ;

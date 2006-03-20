@@ -60,8 +60,6 @@ public:
   Halfedge_const_handle defining_contour_edge() const { return this->face()->halfedge() ; }
   Halfedge_handle       defining_contour_edge()       { return this->face()->halfedge() ; }
 
-  //void  set_opposite( Halfedge_handle h)  { this->set_opposite(h);}
-
 
 private:
   int mID ;
@@ -76,7 +74,7 @@ public:
   typedef Straight_skeleton_halfedge_base_base_2 < Refs, S > SBase ;
 
   typedef typename SBase::HBase_base HBase_base ;
-  typedef typename SBase::Base       HBase ;
+  typedef typename SBase::HBase      HBase ;
 
   typedef typename SBase::Segment_2 Segment_2;
   
@@ -88,14 +86,6 @@ public:
 
   Straight_skeleton_halfedge_base_2() {}
   Straight_skeleton_halfedge_base_2( int aID ) : SBase(aID) {}
-
-  //void  set_opposite( Halfedge_handle h)  { this->set_opposite(h);}
-
-protected:
-
-  //void set_prev  ( Halfedge_handle h ) { this->set_prev(h) ; }
-  //void set_vertex( Vertex_handle   w ) { this->set_vertex(w); }
-  //void set_face  ( Face_handle     g ) { this->set_face(g) ; }
 
 };
 CGAL_END_NAMESPACE

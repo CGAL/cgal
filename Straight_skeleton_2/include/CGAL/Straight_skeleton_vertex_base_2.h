@@ -87,7 +87,6 @@ protected :
       typedef Halfedge_circulator_base<HalfedgeHandle,AccessPolicy> Self ;
       
       friend class boost::iterator_core_access ;
-      template <class,class> friend class Halfedge_circulator_base;
 
       template < class OtherHalfedgeHandle, class OtherAccessPolicy >
       bool equal( Halfedge_circulator_base<OtherHalfedgeHandle,OtherAccessPolicy> const& aOther ) const
@@ -225,8 +224,6 @@ public:
     :
     Base(aID,aP,aTime)
  {}
-protected:
-//  void set_halfedge( Halfedge_handle h ) { this->set_halfedge(h) ; }
 };
 CGAL_END_NAMESPACE
 

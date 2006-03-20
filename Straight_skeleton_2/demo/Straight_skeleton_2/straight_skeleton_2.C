@@ -69,12 +69,10 @@ int main(int, char*)
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 0
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
-//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX
 //#define STATS
 //#define CGAL_SLS_PROFILING_ENABLED
 
@@ -356,7 +354,7 @@ void log_regions_stats( Regions r, const char* which )
       Polygon lContour = **ci ;
       if ( cidx == 0 )
       {
-        CGAL::Bbox_2 lBbox = lContour.bbox();
+        CGAL::Bbox_2 lBbox = CGAL::bbox_2(lContour.begin(),lContour.end());
         LOGSTATS( "Outer Contour BBox:\n"
                  << "xmin=" << lBbox.xmin() << " ymin=" << lBbox.ymin() << " xmax=" << lBbox.xmax() << " ymax=" << lBbox.ymax()
                  << "\nwidth=" << (lBbox.xmax() - lBbox.xmin() ) << " height=" << (lBbox.ymax() - lBbox.ymin() )
@@ -435,7 +433,7 @@ void log_skeleton_stats( double aTime )
         if ( idegree != ddegree )
           std::cerr << "ERROR: degree mismatch for V" << vit->id() << std::endl ;
           
-        LOGSTATS( "V" << vit->id() << " has degree " << idegree ) ;
+        LOGSTATS( "V" << vit->id() << " at (" << vit->point().x() << ',' << vit->point().y() << ") has degree " << idegree ) ;
       }  
     }
   }        

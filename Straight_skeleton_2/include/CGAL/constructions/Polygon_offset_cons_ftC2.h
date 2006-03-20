@@ -40,9 +40,11 @@ optional< Vertex<FT> > construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge
   optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(e0) ;
   optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(e1) ;
 
+  optional< Vertex<FT> > q = compute_oriented_midpoint(e0,e1);
+  
   bool ok = false ;
   
-  if ( l0 && l1 )
+  if ( l0 && l1 && q )
   {
     FT den = l1->a() * l0->b() - l0->a() * l1->b() ;
   
@@ -58,11 +60,8 @@ optional< Vertex<FT> > construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge
       }
       else
       {
-        FT qx = ( e0.t().x() + e1.s().x() ) / static_cast<FT>(2.0);
-        FT qy = ( e0.t().y() + e1.s().y() ) / static_cast<FT>(2.0);
-    
-        x = qx + l0->a() * t  ;
-        y = qy + l0->b() * t  ;
+        x = q->x() + l0->a() * t  ;
+        y = q->y() + l0->b() * t  ;
       }
       
       ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;

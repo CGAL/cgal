@@ -197,6 +197,43 @@ optional< Rational<FT> > compute_normal_offset_lines_isec_timeC2 ( SortedTriedge
 }
 
 
+template<class FT>
+FT compute_squared_distance ( Vertex<FT> const& p, Vertex<FT> const& q )
+{
+  return CGAL_NTS square(q.x() - p.x()) + CGAL_NTS square(q.y() - p.y()) ;
+}
+
+template<class FT>
+optional< Vertex<FT> > compute_oriented_midpoint ( Edge<FT> const& e0, Edge<FT> const& e1 )
+{
+  bool ok = false ;
+  
+  FT x(0.0),y(0.0) ;
+  
+  FT const two(2.0);
+  
+  FT delta01 = compute_squared_distance(e0.t(),e1.s());
+  FT delta10 = compute_squared_distance(e1.t(),e0.s());
+  
+  if ( CGAL_NTS is_finite(delta01) &&  CGAL_NTS is_finite(delta10) )
+  {
+    if ( delta01 <= delta10 )
+    {
+      x = ( e0.t().x() + e1.s().x() ) / two ;
+      y = ( e0.t().y() + e1.s().y() ) / two ;
+    }
+    else
+    {
+      x = ( e1.t().x() + e0.s().x() ) / two ;
+      y = ( e1.t().y() + e0.s().y() ) / two ;
+    }
+    
+    ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y);
+  }
+  
+  return make_optional(ok,Vertex<FT>(x,y));
+}
+
 // Given 3 oriented straight line segments: e0, e1, e2 [each segment is passed as (sx,sy,tx,ty)]
 // such that e0 and e1 are collinear, not neccesarily consecutive but with the same orientaton, and e2 is NOT
 // collinear with e0 and e1; returns the OFFSET DISTANCE (n/d) at which a line perpendicular to e0 (and e1) passing through
@@ -248,24 +285,22 @@ optional< Rational<FT> > compute_degenerate_offset_lines_isec_timeC2 ( SortedTri
   optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
   optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
+  optional< Vertex<FT> > q = compute_oriented_midpoint(triedge.e0(),triedge.e1());
+  
   FT num(0.0), den(0.0) ;
 
-  if ( l0 && l2 )
+  if ( l0 && l2 && q )
   {
     if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
     {
-      FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
-  
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qx + l0->b() * l2->c() - l2->b() * l0->c() ;
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * q->x() + l0->b() * l2->c() - l2->b() * l0->c() ;
       den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
       
       CGAL_SSTRAITS_TRACE("Non-vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
     }
     else
     {
-      FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
-  
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qy - l0->a() * l2->c() + l2->a() * l0->c() ;
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * q->y() - l0->a() * l2->c() + l2->a() * l0->c() ;
       den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
       
       CGAL_SSTRAITS_TRACE("Vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
@@ -346,24 +381,24 @@ optional< Vertex<FT> > construct_degenerate_offset_lines_isecC2 ( SortedTriedge<
   optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
   optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
   optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  
+  optional< Vertex<FT> > q = compute_oriented_midpoint(triedge.e0(),triedge.e1());
 
   bool ok = false ;
   
-  if ( l0 && l1 && l2 )
+  if ( l0 && l1 && l2 && q )
   {
-    FT qx = ( triedge.e0().t().x() + triedge.e1().s().x() ) / static_cast<FT>(2.0);
-    FT qy = ( triedge.e0().t().y() + triedge.e1().s().y() ) / static_cast<FT>(2.0);
   
     FT num, den ;
   
     if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
     {
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qx + l0->b() * l2->c() - l2->b() * l0->c() ;
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * q->x() + l0->b() * l2->c() - l2->b() * l0->c() ;
       den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
     }
     else
     {
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * qy - l0->a() * l2->c() + l2->a() * l0->c() ;
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * q->y() - l0->a() * l2->c() + l2->a() * l0->c() ;
       den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
     }
   
@@ -371,8 +406,8 @@ optional< Vertex<FT> > construct_degenerate_offset_lines_isecC2 ( SortedTriedge<
   
     if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
     {
-      x = qx + l0->a() * num / den  ;
-      y = qy + l0->b() * num / den  ;
+      x = q->x() + l0->a() * num / den  ;
+      y = q->y() + l0->b() * num / den  ;
       
       ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
     }
