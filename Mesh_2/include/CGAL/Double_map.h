@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -43,8 +43,10 @@ public:
   typedef typename Reverse_func::iterator reverse_iterator;
   typedef std::map <Key, reverse_iterator, Direct_compare> Direct_func;
 
-  typedef std::pair<Key, reverse_iterator> Direct_entry;
-  typedef std::pair<Data, Key> Reverse_entry;
+  typedef typename Direct_func::value_type Direct_entry;
+               // std::pair<Key, reverse_iterator> 
+  typedef typename Reverse_func::value_type Reverse_entry;
+               // std::pair<Data, Key> ;
 
   typedef typename Direct_func::size_type size_type;
 

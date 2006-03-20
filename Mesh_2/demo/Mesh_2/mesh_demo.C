@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -189,13 +189,13 @@ struct Edge_to_segment {
 };
 
 template <class Tr>
-class Show_marked_faces : public CGAL::Qt_widget_layer
+class Show_in_domain_faces : public CGAL::Qt_widget_layer
 {
   Tr *cdt;
   CGAL::Color color;
 public:
-  Show_marked_faces(Tr *t, CGAL::Color c=CGAL::GREEN,
-                    QObject* parent = 0, const char* name = 0)
+  Show_in_domain_faces(Tr *t, CGAL::Color c=CGAL::GREEN,
+                       QObject* parent = 0, const char* name = 0)
     : Qt_widget_layer(parent, name),
       cdt(t),
       color(c) 
@@ -212,7 +212,7 @@ public:
     for(Face_iterator fit=cdt->finite_faces_begin();
         fit!=cdt->finite_faces_end();
         ++fit)
-      if(fit->is_marked())
+      if(fit->is_in_domain())
         *widget << cdt->triangle(fit);
     widget->setFillColor(old_fill_color);
     widget->setLineWidth(old_line_width);
@@ -571,9 +571,9 @@ public:
                                                   CGAL::BLUE,1,
                                                   this,
                                                   "Show triangulation edges");
-      show_marked =
-        new Show_marked_faces<Tr>(&cdt, CGAL::GREEN,
-                                  this, "Show marked faces");
+      show_in_domain =
+        new Show_in_domain_faces<Tr>(&cdt, CGAL::GREEN,
+                                     this, "Show in_domain faces");
 
       show_constraints =
         new CGAL::Qt_layer_show_triangulation_constraints<Tr>
@@ -614,7 +614,7 @@ public:
 #ifdef CGAL_MESH_2_DEBUG_DRAW
       widget->attach(new CGAL::Debug_layer());
 #endif
-      widget->attach(show_marked);
+      widget->attach(show_in_domain);
       widget->attach(show_bad_faces);
       widget->attach(show_triangulation);
       widget->attach(show_constraints);
@@ -774,17 +774,17 @@ public:
       connect(pbShowConstraints, SIGNAL(stateChanged(int)),
               show_constraints, SLOT(stateChanged(int)));
 
-      QToolButton *pbShowMarked
+      QToolButton *pbShowInDomain
         = new QToolButton(QPixmap( (const char**)marked_xpm ),
-                          "Show marked faces",
+                          "Show faces in domain",
                           "Display faces that will be refined",
                           this, SLOT(fake_slot()),
                           toolbarLayers,
-                          "show marked");
-      pbShowMarked->setToggleButton(true);
-      pbShowMarked->setOn(true);
-      connect(pbShowMarked, SIGNAL(stateChanged(int)),
-              show_marked, SLOT(stateChanged(int)));
+                          "show in domain");
+      pbShowInDomain->setToggleButton(true);
+      pbShowInDomain->setOn(true);
+      connect(pbShowInDomain, SIGNAL(stateChanged(int)),
+              show_in_domain, SLOT(stateChanged(int)));
 
       QToolButton *pbShowCircles
         = new QToolButton(QPixmap( (const char**)circle_xpm ),
@@ -802,7 +802,7 @@ public:
       QButtonGroup *bgLayers =
         new QButtonGroup("Layers", 0, "layers");
       bgLayers->insert(pbShowPoints);
-      bgLayers->insert(pbShowMarked);
+      bgLayers->insert(pbShowInDomain);
       bgLayers->insert(pbShowTriangulation);
       bgLayers->insert(pbShowConstraints);
       bgLayers->insert(pbShowSeeds);
@@ -992,7 +992,7 @@ public slots:
 
             Face_handle fh = cdt.locate(p);
             criteria.set_point(p);
-            if( (fh!=NULL) && (!cdt.is_infinite(fh)) && fh->is_marked() )
+            if( (fh!=NULL) && (!cdt.is_infinite(fh)) && fh->is_in_domain() )
               {
                 Criteria::Quality q;
                 if(criteria.is_bad_object().operator()(fh, q) != 
@@ -1404,7 +1404,7 @@ private:
   CGAL::Qt_layer_show_triangulation_constraints<Tr>* show_constraints;
   CGAL::Qt_layer_show_circles<Tr>* show_circles;
   CGAL::Qt_widget_show_mouse_coordinates* show_coordinates;
-  Show_marked_faces<Tr>* show_marked;
+  Show_in_domain_faces<Tr>* show_in_domain;
 
   bool nb_of_clusters_has_to_be_updated;
   QLabel *nb_of_clusters;

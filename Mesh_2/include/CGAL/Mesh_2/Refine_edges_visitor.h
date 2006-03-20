@@ -1,4 +1,4 @@
-// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -70,8 +70,8 @@ public:
     va = fh->vertex(Tr::cw (edge_index));
     vb = fh->vertex(Tr::ccw(edge_index));
     
-    mark_at_right = fh->is_marked();
-    mark_at_left = fh->neighbor(edge_index)->is_marked();
+    mark_at_right = fh->is_in_domain();
+    mark_at_left = fh->neighbor(edge_index)->is_in_domain();
   }
 
   void before_insertion(const Edge&, const Point& p, Zone& z)
@@ -97,13 +97,13 @@ public:
     // [va,v]
     do {
       if( !tr.is_infinite(fc) )
-        fc->set_marked(mark_at_right);
+        fc->set_in_domain(mark_at_right);
       ++fc;
     } while ( fc->vertex(tr.ccw(fc->index(v))) != vb );
     // we are now at the left of [va,vb]
     do {
       if( !tr.is_infinite(fc) )
-        fc->set_marked(mark_at_left);
+        fc->set_in_domain(mark_at_left);
       ++fc;
     } while ( fc != fcbegin );
 

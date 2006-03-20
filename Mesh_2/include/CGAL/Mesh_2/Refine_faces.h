@@ -1,4 +1,4 @@
-// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -87,7 +87,7 @@ public:
 
   /** \Name MESHER_LEVEL FUNCTIONS */
 
-  /** Scans all marked faces and put them in the map if they are
+  /** Scans all faces in domain and put them in the map if they are
       bad. */
   void scan_triangulation_impl()
   {
@@ -96,7 +96,7 @@ public:
         fit != triangulation_ref_impl().finite_faces_end();
         ++fit)
     {
-      if( fit->is_marked() )
+      if( fit->is_in_domain() )
 	{
 	  Quality q;
 	  Mesh_2::Face_badness badness = is_bad(fit, q);
@@ -174,9 +174,9 @@ public:
         fh_it != zone.faces.end();
         ++fh_it)
       {
-        if(*fh_it != fh && (*fh_it)->is_marked() )
+        if(*fh_it != fh && (*fh_it)->is_in_domain() )
           remove_bad_face(*fh_it);
-        (*fh_it)->set_marked(false);
+        (*fh_it)->set_in_domain(false);
       }
   }
 
@@ -186,7 +186,7 @@ public:
     typename Tr::Face_circulator fc = 
       triangulation_ref_impl().incident_faces(v), fcbegin(fc);
     do {
-      fc->set_marked(true);
+      fc->set_in_domain(true);
     } while (++fc != fcbegin);
     compute_new_bad_faces(v);
   }
@@ -255,7 +255,7 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
   CGAL_assertion( orientation(fh->vertex(0)->point(),
                               fh->vertex(1)->point(),
                               fh->vertex(2)->point()) != COLLINEAR );
-  CGAL_assertion(fh->is_marked());
+  CGAL_assertion(fh->is_in_domain());
   bad_faces.insert(fh, q);
 }
 
@@ -280,7 +280,7 @@ compute_new_bad_faces(Vertex_handle v)
   typename Tr::Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
     if(!triangulation_ref_impl().is_infinite(fc))
-      if( fc->is_marked() )
+      if( fc->is_in_domain() )
 	{
 	  Quality q;
 	  Mesh_2::Face_badness badness = is_bad(fc, q);
