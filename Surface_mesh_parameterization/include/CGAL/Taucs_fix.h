@@ -62,26 +62,27 @@ extern "C"
 /*   returns size of memory available for allocation                */
 double cgal_taucs_available_memory_size()
 {
-  double m;
-  double m_sys;
+    double m;
+    double m_sys;
 
-  m = taucs_system_memory_size();
+    m = taucs_system_memory_size();
 
+    /* taucs_system_memory_size() is buggy on Linux 2.6 */
+    /* It returns only 1% of the actual memory          */
 #ifdef OSTYPE_linux
-  /* taucs_system_memory_size() is buggy on Linux 2.6 */
-  if (m < 1048576.0)
-  {
     m_sys  = (double) sysconf(_SC_PAGESIZE);
     m_sys *= (double) sysconf(_SC_PHYS_PAGES);
 
-    /* we limit m by 0.75*m_sys */
-    m = floor(0.75 * m_sys);
-  }
+    if (m < m_sys/10.0)
+    {
+        /* we limit m by 0.75*m_sys */
+        m = floor(0.75 * m_sys);
+    }
 #endif
 
-  taucs_printf("cgal_taucs_available_memory_size returns %lf MB\n", m/1048576.0);
+    taucs_printf("cgal_taucs_available_memory_size returns %lfMB\n", m/1048576.0);
 
-  return m;
+    return m;
 }
 
 /* Redirect calls to cgal_taucs_available_memory_size()             */
