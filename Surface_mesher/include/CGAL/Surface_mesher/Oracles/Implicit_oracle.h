@@ -39,31 +39,41 @@ namespace CGAL {
 
     /**
        Type and functions required in GT:
+         - Compute_scalar_product_3             (from rev. 29646)
          - Compute_squared_distance_3
          - Compute_squared_radius_3
          - Construct_center_3
-         - Construct_line_3
          - Construct_midpoint_3
+         - Construct_point_on_3                 (from rev. 29646)
          - Construct_scaled_vector_3
+         - Construct_segment_3                  (from rev. 29646)
          - Construct_translated_point_3
          - Construct_vector_3
          - FT
-         - Line_3
+         - Has_on_bounded_side_3                (from rev. 29646)
+         - Line_3                               (removed from rev. 29646)
          - Point_3
          - Ray_3
          - Segment_3
          - Sphere_3
+         - Vector_3                             (from rev. 29646)
+         - compute_scalar_product_3_object      (from rev. 29646)
          - compute_squared_distance_3_object
          - compute_squared_radius_3_object
          - construct_center_3_object
-         - construct_line_3_object
+         - construct_line_3_object              (no longer, since rev. 29646)
          - construct_midpoint_3_object
+         - construct_point_on_3_object          (from rev. 29646)
          - construct_scaled_vector_3_object
+         - construct_segment_3_object           (from rev. 29646)
          - construct_translated_point_3_object
          - construct_vector_3_object
+         - has_on_bounded_side_3_object         (from rev. 29646)
 (Computed by use of:
- perl -ne '/gt\.([a-zA-Z_0-9]+)/ && print "$1\n";' Implicit_oracle.h | sort -u
- perl -ne '/GT::([a-zA-Z_0-9]+)/ && print "$1\n";' Implicit_oracle.h | sort -u
+ perl -ne '/GT\(\)\.([a-zA-Z_0-9]+)/
+             && print "$1\n";' {Implicit_oracle.h,Sphere_oracle_3.h} | sort -u
+ perl -ne '/GT::([a-zA-Z_0-9]+)/
+             && print "$1\n";' {Implicit_oracle.h,Sphere_oracle_3.h} | sort -u
 )
     */
   template <
@@ -304,23 +314,21 @@ namespace CGAL {
                                        OutputIteratorPoints out, 
                                        int n = 20) // WARNING: why 20?
       {
-        GT gt;
-
         const Sphere_3& sphere = surface.bounding_sphere();
         const Point center = 
-          gt.construct_center_3_object()(sphere);
+          GT().construct_center_3_object()(sphere);
         const FT squared_radius = 
-          gt.compute_squared_radius_3_object()(sphere);
+          GT().compute_squared_radius_3_object()(sphere);
         const FT radius = CGAL::sqrt(squared_radius);
 
         typename CGAL::Random_points_on_sphere_3<Point,
           Point_creator> random_point_on_sphere(CGAL::to_double(radius));
         typename GT::Construct_segment_3 segment_3 = 
-          gt.construct_segment_3_object();
+          GT().construct_segment_3_object();
         typename GT::Construct_vector_3 vector_3 =
-          gt.construct_vector_3_object();
+          GT().construct_vector_3_object();
         typename GT::Construct_translated_point_3 translate =
-          gt.construct_translated_point_3_object();
+          GT().construct_translated_point_3_object();
 
         while (n>0) 
         {

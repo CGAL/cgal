@@ -307,8 +307,6 @@ namespace CGAL {
         
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
-        typename GT::Construct_segment_3 segment =
-          GT().construct_segment_3_object();
         typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
           GT().has_on_bounded_side_3_object();
         typename GT::Construct_vector_3 vector =
@@ -351,8 +349,6 @@ namespace CGAL {
         
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
-        typename GT::Construct_segment_3 segment =
-          GT().construct_segment_3_object();
         typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
           GT().has_on_bounded_side_3_object();
         typename GT::Construct_vector_3 vector =
@@ -399,21 +395,19 @@ namespace CGAL {
                                        OutputIteratorPoints out, 
                                        int n = 20) // WARNING: why 20?
       {
-        GT gt;
-
         const Point center = 
-          gt.construct_center_3_object()(sphere);
+          GT().construct_center_3_object()(sphere);
         const FT squared_radius = 
-          gt.compute_squared_radius_3_object()(sphere);
+          GT().compute_squared_radius_3_object()(sphere);
         const double radius_in_double = 
           CGAL::sqrt(CGAL::to_double(squared_radius));
 
         typename CGAL::Random_points_on_sphere_3<Point,
           Point_creator> random_point_on_sphere(radius_in_double);
         typename GT::Construct_vector_3 vector_3 =
-          gt.construct_vector_3_object();
+          GT().construct_vector_3_object();
         typename GT::Construct_translated_point_3 translate =
-          gt.construct_translated_point_3_object();
+          GT().construct_translated_point_3_object();
 
         while (n-->0)
           *out++ = translate(*random_point_on_sphere++,
