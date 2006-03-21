@@ -8,7 +8,7 @@
 // $Id: implicit_function.C 29089 2006-03-06 15:17:07Z lrineau $
 //
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Steve OUDOT, Laurent RINEAU
 
 
 ///////////////// Definitions of several famous surfaces /////////////////
