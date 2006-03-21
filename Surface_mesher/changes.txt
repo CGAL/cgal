@@ -5,6 +5,10 @@
 - changes template parameters of all classes
   include/CGAL/Surface_mesher/Surface_mesher*.h and update of
   include/CGAL/make_surface_mesh.h
+- Fix the compilation error on Windows compilers.
+  BUG explanation: there was a typedef name SMREB in
+  Surface_mesher_regular_edges.h and SMREB was also the name of a template
+  parameter of Surface_mesher_regular_edges.h.
 
 20 March 2006 Laurent Rineau
 - fix include/CGAL/Gray_level_image_3.h
