@@ -18,7 +18,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Omer Meshar, Laurent Saboret
+// Author(s)     : Laurent Saboret
 
 // ---------------------------------------------------------------------
 // A short test program to evaluate a machine architecture.
@@ -27,7 +27,9 @@
 // ---------------------------------------------------------------------
 
 // Test if TAUCS is available
-// Second step "TAUCS": find TAUCS main header and library
+// Second step "TAUCS": 
+// - find TAUCS second include folder ${TAUCSROOT}/src
+// - find main library "taucs"
 
 
 #include <iostream>
@@ -36,27 +38,23 @@
 
 #define TAUCS_CORE_DOUBLE
 
-// Include TAUCS main header taucs.h
-#ifndef CGAL_INCLUDED_TAUCS_H
-    #define CGAL_INCLUDED_TAUCS_H
-
-    // In GCC 3.x, <complex.h> includes <complex> and
-    // complains if we include <complex.h> within "extern C {}"
-    #if defined(__GNUC__)
-        #undef __DEPRECATED
-        #include <complex.h>
-    #endif
-
-    // TAUCS is a C library
-    extern "C" {
-        #include <taucs.h>
-    }
-
-    // Avoid error with std::min() and std::max()
-    #undef min
-    #undef max
-
+// In GCC 3.x, <complex.h> includes <complex> and
+// complains if we include <complex.h> within "extern C {}"
+#if defined(__GNUC__)
+    #undef __DEPRECATED
+    #include <complex.h>
 #endif
+
+extern "C"
+{
+    // Include TAUCS main header taucs.h in ${TAUCSROOT}/src
+    #include <taucs.h>
+}
+
+// Avoid error with std::min() and std::max()
+#undef min
+#undef max
+
 
 int main(int argc, char* argv[])
 {

@@ -1,12 +1,15 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
-# Second step "TAUCS": find TAUCS main header and library
+# Second step "TAUCS":
+# - find TAUCS second include folder ${TAUCSROOT}/src
+# - find main library "taucs"
+# Note: "-DDEBUG_TRACE" turns on TAUCS trace (temporary).
 
-DESCRIPTION =
+DESCRIPTION = TAUCS main library
 PROVIDES = TAUCS
-CXXFLAGS =
+CXXFLAGS = -DDEBUG_TRACE
 LDFLAGS =
 LIBS = taucs
-REQUIRES = DOLLAR_TAUCSROOT DOLLAR_TAUCS_OSTYPE TAUCSEXTERNAL
+REQUIRES = EXTERNTAUCS
 INCOMPATIBLE =
 STDINCLDIRS = ${TAUCSROOT}/src
 INCLTHING = taucs.h

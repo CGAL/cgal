@@ -27,26 +27,24 @@
 // ---------------------------------------------------------------------
 
 // Test if TAUCS is available
-// First step "TAUCSEXTERNAL": find TAUCS platform dependent header directory
-// + TAUCS external libs
+// First step "EXTERNTAUCS":
+// - find TAUCS first include folder ${TAUCSROOT}/build/${TAUCS_OSTYPE}
+// - find TAUCS external libs lapack f77blas cblas atlas metis g2c
 
 
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 
-// TAUCS is a C library
 extern "C"
 {
+    // Include file in ${TAUCSROOT}/build/${TAUCS_OSTYPE}
+    #include <taucs_config_build.h>
 
-// Include file in ${TAUCSROOT}/build/${TAUCS_OSTYPE}
-#include <taucs_config_build.h>
-
-/* from stuct.h in metis */
-typedef int idxtype;
-/* from metis.h */
-void METIS_NodeND(int *, idxtype *, idxtype *, int *, int *, idxtype *, idxtype *);
-
+    /* from stuct.h in metis */
+    typedef int idxtype;
+    /* from metis.h */
+    void METIS_NodeND(int *, idxtype *, idxtype *, int *, int *, idxtype *, idxtype *);
 }
 
 
@@ -55,7 +53,9 @@ int main(int argc, char* argv[])
     // Call function in metis lib
     METIS_NodeND(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
-    // TAUCS external libraries have various version numbers => do not print one
+    // TAUCS provides no version number :-(
+    // Version 1 is obsolete, thus we assume version 2 (latest is 2.2 on 03/2006)
+    std::cout << "version=2" << std::endl;
 
     return 0;
 }

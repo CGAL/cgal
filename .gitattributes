@@ -492,8 +492,8 @@ Homogeneous_kernel/changes.txt -text
 Installation/config/support/README -text
 Installation/config/support/S05-BOOST -text
 Installation/config/support/S06-BOOST_PROGRAM_OPTIONS -text
-Installation/config/support/S09-TAUCSEXTERNAL -text
-Installation/config/support/S10-TAUCSLIB -text
+Installation/config/support/S09-EXTERNTAUCS -text
+Installation/config/support/S10-TAUCS -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
 Installation/config/support/S25-MPFR -text
@@ -508,13 +508,13 @@ Installation/config/support/S83-QT3MSST -text
 Installation/config/support/test_BOOST.C -text
 Installation/config/support/test_BOOST_PROGRAM_OPTIONS.C -text
 Installation/config/support/test_CORE.C -text
+Installation/config/support/test_EXTERNTAUCS.C -text
 Installation/config/support/test_GMP.C -text
 Installation/config/support/test_GMPXX.C -text
 Installation/config/support/test_LEDA.C -text
 Installation/config/support/test_MPFR.C -text
 Installation/config/support/test_QT.C -text
 Installation/config/support/test_TAUCS.C -text
-Installation/config/support/test_TAUCSEXTERNAL.C -text
 Installation/config/testfiles/CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG.C -text
 Installation/config/testfiles/CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG.C -text
 Installation/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C -text
