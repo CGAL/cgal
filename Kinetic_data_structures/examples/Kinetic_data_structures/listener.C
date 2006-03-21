@@ -17,7 +17,7 @@ public:
   Notifier(): data_(0), listener_(NULL){}
 
   typedef CGAL::Kinetic::Ref_counted<Notifier> Base;
-  typedef Listener_interface_impl<typename Base::Handle> Listener_interface;
+  typedef Listener_interface_impl<Base::Handle> Listener_interface;
   typedef CGAL::Kinetic::Listener<Listener_interface> Listener;
 
 
