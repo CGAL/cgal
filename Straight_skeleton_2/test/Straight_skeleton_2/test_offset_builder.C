@@ -107,7 +107,7 @@ void test( std::string file )
            // Find the outmost offset contour (as the one with the biggest area)
            PolygonPtr lOutmost = lContours->front();
            double lBestArea = CGAL_NTS abs (lOutmost->area());
-           for( Region::const_iterator cit = successor(lContours->begin()), ecit = lContours->end() ; cit != ecit ; ++ cit )
+           for( Region::const_iterator cit = CGAL::successor(lContours->begin()), ecit = lContours->end() ; cit != ecit ; ++ cit )
            {
              PolygonPtr lContour = *cit ;
              if ( CGAL_NTS abs (lContour->area()) > lBestArea )
