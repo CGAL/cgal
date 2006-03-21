@@ -9,6 +9,7 @@
   BUG explanation: there was a typedef name SMREB in
   Surface_mesher_regular_edges.h and SMREB was also the name of a template
   parameter of Surface_mesher_regular_edges.h.
+- Change the compilation process of ImageIO, to be cross-platform
 
 20 March 2006 Laurent Rineau
 - fix include/CGAL/Gray_level_image_3.h

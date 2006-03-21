@@ -10,12 +10,20 @@
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
+#                    ImageIO files
+#---------------------------------------------------------------------#
+
+IMAGEIO_PATH = ImageIO/
+
+include $(IMAGEIO_PATH)/imageio.mk
+
+#---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
            -I../../include \
-	   -I./ImageIO \
+	   -I$(IMAGEIO_PATH) \
            $(OTHER_INCLUDES) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -36,8 +44,6 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-.PHONY: imageio
-
 implicit_OBJECTS = implicit_functions$(OBJ_EXT)
 
 TARGETS = 3d_image_surface_mesher$(EXE_EXT) \
@@ -45,20 +51,17 @@ TARGETS = 3d_image_surface_mesher$(EXE_EXT) \
 
 all: $(TARGETS)
 
-imageio:
-	cd ImageIO; $(MAKE)
+3d_image_surface_mesher$(EXE_EXT): 3d_image_surface_mesher$(OBJ_EXT) $(IMAGEIO_OBJECTS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_image_surface_mesher 3d_image_surface_mesher$(OBJ_EXT) $(IMAGEIO_OBJECTS) $(LDFLAGS)
 
-3d_image_surface_mesher$(EXE_EXT): 3d_image_surface_mesher$(OBJ_EXT) imageio
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_image_surface_mesher 3d_image_surface_mesher$(OBJ_EXT) $(LDFLAGS) -L./ImageIO -lImageIO
-
-implicit_surface_mesher$(EXE_EXT): implicit_surface_mesher$(OBJ_EXT)
+implicit_surface_mesher$(EXE_EXT): $(implicit_OBJECTS) implicit_surface_mesher$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher implicit_surface_mesher$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    3d_image_surface_mesher.clean \
                    implicit_functions.clean \
-                   implicit_surface_mesher.clean
-	cd ImageIO; $(MAKE) clean
+                   implicit_surface_mesher.clean \
+		   imageio-clean
 
 
 
