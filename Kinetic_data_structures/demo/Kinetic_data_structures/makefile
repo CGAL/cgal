@@ -44,17 +44,24 @@ all:            \
                 Delaunay_triangulation_3$(EXE_EXT) \
                 2d_gui$(EXE_EXT) \
                 3d_gui$(EXE_EXT) \
+                generate_data$(EXE_EXT) \
                 Delaunay_triangulation_stable_subset_2$(EXE_EXT) \
                 regular_triangulation_3$(EXE_EXT) 
 
+
+
+generate_data$(EXE_EXT): generate_data$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generate_data generate_data$(OBJ_EXT) $(BOOSTPROGRAMOPTIONS_LDFLAGS) $(LDFLAGS)
+
+
 Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS)  $(LIB_OPT)boost_program_options
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
 Delaunay_triangulation_3$(EXE_EXT): Delaunay_triangulation_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT) $(LDFLAGS)
 
 Delaunay_triangulation_stable_subset_2$(EXE_EXT): Delaunay_triangulation_stable_subset_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS)  $(LIB_OPT)boost_program_options
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS)  $(BOOSTPROGRAMOPTIONS_LDFLAGS)
 
 regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_triangulation_3 regular_triangulation_3$(OBJ_EXT)  $(LDFLAGS) 
@@ -68,6 +75,7 @@ regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT)
 clean: \
                    2d_gui.clean \
                    3d_gui.clean \
+                   generate_data.clean \
                    Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
                    Delaunay_triangulation_stable_subset_2.clean \
