@@ -43,8 +43,8 @@ struct CK : public CGAL::Simple_cartesian<double> {};
 typedef CK Rep;
 
 typedef CGAL::Filtered_kernel<CK>                              DT_GT;
-typedef CGAL::Regular_triangulation_filtered_traits_2<DT_GT>   RT_GT;
-typedef CGAL::Apollonius_graph_filtered_traits_2<CK>           AG_GT;
+struct RT_GT : public CGAL::Regular_triangulation_filtered_traits_2<DT_GT> {} ;
+struct AG_GT : public CGAL::Apollonius_graph_filtered_traits_2<CK>     {};
 
 typedef DT_GT::Point_2            Point_2;
 typedef RT_GT::Weighted_point_2   Weighted_point_2;

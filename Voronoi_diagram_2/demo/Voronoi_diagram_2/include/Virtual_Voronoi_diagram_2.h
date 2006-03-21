@@ -38,9 +38,10 @@ CGAL_BEGIN_NAMESPACE
 struct Virtual_Voronoi_diagram_2
 {
   typedef CGAL::Object     Object;
-  typedef ::Rep::Point_2   Point_2;
-  typedef ::Rep::Circle_2  Circle_2;
-
+  typedef ::Rep GlobalRep;
+  typedef GlobalRep ::Point_2   Point_2;
+  typedef GlobalRep::Circle_2  Circle_2;
+  
   // insert a site
   virtual void insert(const Point_2&) = 0;
   virtual void insert(const Circle_2&) = 0;
@@ -68,7 +69,9 @@ struct Virtual_Voronoi_diagram_2
   virtual bool is_valid() const = 0;
 
   virtual void clear() = 0;
+  
 };
+
 
 //=========================================================================
 
@@ -459,7 +462,8 @@ class Concrete_Apollonius_diagram_2
   }
 
   Geom_traits::Site_2 to_site(const Circle_2& c) const {
-    ::Rep::Point_2 center = c.center();
+    typedef ::Rep GlobalRep;
+    GlobalRep::Point_2 center = c.center();
     Geom_traits::Point_2 p(center.x(), center.y());
     Geom_traits::Site_2::Weight w = CGAL::sqrt(c.squared_radius());
     return Geom_traits::Site_2(p, w);

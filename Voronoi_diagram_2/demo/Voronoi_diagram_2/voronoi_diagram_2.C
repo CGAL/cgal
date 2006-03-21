@@ -37,7 +37,7 @@
 //************************************
 // global variables
 //************************************
-//VVD2 vd;
+
 int num_selected;
 std::vector<Site_2> sitelist;
 
@@ -52,9 +52,11 @@ std::vector<Site_2> sitelist;
 int
 main(int argc, char* argv[])
 {
+  
   int size = 750;
 
   QApplication app( argc, argv );
+  
   My_Window W(size,size);
   app.setMainWidget( &W );
 #if !defined (__POWERPC__)
@@ -64,6 +66,8 @@ main(int argc, char* argv[])
   W.show();
   W.set_window(0,size,0,size);
   W.setCaption(W.title());
+
+  
   return app.exec();
 }
 
