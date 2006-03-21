@@ -40,8 +40,7 @@ typedef CGAL::Quotient<NT> CNT;
 typedef CGAL::Cartesian<CNT> CKernel;
 typedef CGAL::Homogeneous<NT> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
-typedef Nef_polyhedron::SNC_structure SNC_structure;
-typedef CGAL::visual_hull_creator<SNC_structure> VHC;
+
 typedef CKernel::FT FT;
 typedef CKernel::Point_3 CPoint;
 typedef Kernel::Point_3 Point_3;
@@ -57,6 +56,9 @@ Point_3 read_point(std::ifstream& in) {
 }
 
 int main(int argc, char* argv[]) {
+  // We've put the typedefs here as VC7 gives us an ICE if they are global typedefs
+  typedef Nef_polyhedron::SNC_structure SNC_structure;
+  typedef CGAL::visual_hull_creator<SNC_structure> VHC;
 
   CGAL_assertion(argc==2);
 
