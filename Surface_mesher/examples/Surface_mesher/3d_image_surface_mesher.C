@@ -22,15 +22,15 @@ int main(int, char **) {
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
   // defining the surface
-  Function function("ImageIO/data/skull_2.9.inr.gz");
+  Function function("ImageIO/data/skull_2.9.inr.gz", 2.9);
   Surface_3 surface(function, 
-                    Sphere_3(Point_3(250., 250., 250.), 500.),
-                    1e-03);
+                    Sphere_3(Point_3(250., 250., 250.), 300.*300.*2.),
+                    1e-02);
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
-                                                     0.1,
-                                                     0.1);
+                                                     10.,
+                                                     10.);
   // meshing surface
   make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 

@@ -1,3 +1,8 @@
+21 March 2006 Laurent Rineau
+- fix examples/Surface_mesher/3d_image_surface_mesher.C (stupid bug: the
+  bounding sphere and the criteria were copy-pasted from
+  implicit_surface_mesher.C and were unappropriate.
+
 20 March 2006 Laurent Rineau
 - fix include/CGAL/Gray_level_image_3.h
 - added a CGAL::Timer to test/Surface_mesher/implicit_surface_mesher_test.C
