@@ -1,5 +1,7 @@
 20 March 2006 Laurent Rineau
 - fix include/CGAL/Gray_level_image_3.h
+- added a CGAL::Timer to test/Surface_mesher/implicit_surface_mesher_test.C
+  and fixed a warning ("FT(1)" instead of "1")
 
 17 March 2006 Laurent Rineau
 - modified examples/Surface_mesher/makefile, to have ImageIO compiled on

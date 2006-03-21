@@ -14,13 +14,15 @@
 #include <CGAL/Surface_mesh_default_criteria_3.h>
 #include <CGAL/Implicit_surface_3.h>
 
+#include <CGAL/Timer.h>
+
 #include <iostream>
 
 struct Sphere {
   template <typename FT>
   FT operator()(FT x, FT y, FT z)
   {
-    return x*x+y*y+z*z-1.;
+    return x*x+y*y+z*z-FT(1);
   }
 };
 
@@ -55,30 +57,36 @@ struct Test_with_kernel {
     // 2D-complex in 3D-Delaunay triangulation
     C2T3 c2t3 (tr);
 
+    CGAL::Timer timer;
+
+    timer.start();
     // Surface meshing
     make_surface_mesh(c2t3,
                       CGAL::make_implicit_surface_3(K(),
                                                     Sphere(),
-                                                    Sphere_3(CGAL::ORIGIN, 2.),
+                                                    Sphere_3(CGAL::ORIGIN, 4.),
                                                     1e-03),
                       criteria,
                       Tag(),
                       initial_number_of_points);
+    timer.stop();
 
-    std::cout << "Final number of points: " << tr.number_of_vertices() 
-              << std::endl;
+    std::cout << "Final number of points: " << tr.number_of_vertices()
+              << "  (elasped time: " << timer.time() << ")\n\n";
 
     // same test, with a Sphere_3
     std::cout << "   Kernel::Sphere_3(ORIGIN, 1.)\n";
     Tr tr_2;
     C2T3 c2t3_2(tr_2);
+    timer.reset(); timer.start();
     make_surface_mesh(c2t3_2,
                       Sphere_3(CGAL::ORIGIN, 1.),
                       criteria,
                       Tag(),
-                      initial_number_of_points);    
+                      initial_number_of_points);  
+    timer.stop();
     std::cout << "Final number of points: " << tr_2.number_of_vertices() 
-              << std::endl;
+              << "  (elasped time: " << timer.time() << ")\n\n";
   
   }
 };
