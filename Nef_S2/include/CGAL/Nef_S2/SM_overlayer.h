@@ -1109,6 +1109,7 @@ void SM_overlayer<Map>::
 set_outer_face_mark(int offset, const std::vector<Mark>& mohs) {
 
   SFace_handle sf = this->new_sface();
+  assoc_info(sf);
   mark(sf, 0) = mohs[offset];
   mark(sf, 1) = mohs[offset+2];
 
