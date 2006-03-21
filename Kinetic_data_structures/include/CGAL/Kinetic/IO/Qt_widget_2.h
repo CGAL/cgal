@@ -50,15 +50,15 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 template <class Simulator_t >
 class Qt_widget_2: public Ref_counted<Qt_widget_2<Simulator_t> >
 {
-protected:
+public:
+  // VC is complaningx
   typedef Qt_widget_2<Simulator_t> This;
   typedef Gui_base<Simulator_t, internal::Qt_timer> Graphical_base;
   typedef typename Simulator_t::Time Time;
   typedef typename internal::Qt_core_listener<Graphical_base> Window_listener;
   typedef internal::Qt_widget_2_core Qt_widget;
   typedef internal::Qt_window_2 Qt_window;
-public:
-  // VC is complaning
+ 
    class Base_listener;
 
   struct Listener_core
@@ -74,7 +74,7 @@ public:
   protected:
     Qt_widget *widget_;
   };
-public:
+
   //! The base class for listeners for events.
   typedef Multi_listener<Listener_core> Listener;
   friend class  Multi_listener<Listener_core>;
@@ -144,14 +144,15 @@ public:
   }
 
   // these should be protected, but vc seems to have problems
-  class Base_listener: public Graphical_base::Listener
+  typedef typename Graphical_base::Listener GBL;
+  class Base_listener: public GBL
   {
     typedef Qt_widget_2<Simulator_t> Container;
   public:
-    Base_listener(typename Graphical_base::Handle &b, Container *t): Graphical_base::Listener(b), t_(t){}
+    Base_listener(typename Graphical_base::Handle &b, Container *t): GBL(b), t_(t){}
 
-    virtual void new_notification(typename Graphical_base::Listener::Notification_type nt) {
-      if (nt== Graphical_base::Listener::CURRENT_TIME) {
+    virtual void new_notification(typename GBL::Notification_type nt) {
+      if (nt== GBL::CURRENT_TIME) {
 	t_->widget()->set_picture_is_current(false);
       }
     }
@@ -159,14 +160,15 @@ public:
     Container *t_;
   };
 
-  class Widget_listener: public Qt_widget::Listener
+  typedef typename Qt_widget::Listener QTL;
+  class Widget_listener: public QTL
   {
     typedef Qt_widget_2<Simulator_t> Container;
   public:
-    Widget_listener(Qt_widget *w, Container *t): Qt_widget::Listener(w),  t_(t) {
+    Widget_listener(Qt_widget *w, Container *t): QTL(w),  t_(t) {
     }
-    virtual void new_notification(typename Qt_widget::Listener::Notification_type nt) {
-      if (nt == Qt_widget::Listener::PICTURE_IS_CURRENT) {
+    virtual void new_notification(typename QTL::Notification_type nt) {
+      if (nt == QTL::PICTURE_IS_CURRENT) {
 	if (!widget()->picture_is_current()) {
 	  t_->draw();
 	}
