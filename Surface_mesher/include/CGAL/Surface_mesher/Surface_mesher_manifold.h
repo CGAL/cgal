@@ -31,10 +31,10 @@ namespace CGAL {
     class Surface,
     class SurfaceMeshTraits,
     class Criteria,
-    typename SMREB
+    typename SMMBB // ("SMM_base_base")
   >
   class Surface_mesher_manifold_base
-    : public SMREB 
+    : public SMMBB
   {
     public:
       typedef C2T3 C2t3;
@@ -75,7 +75,7 @@ namespace CGAL {
 	    Vertex_handle v = c->vertex(j);
 
 	    if(bad_vertices_initialized){
-	      //if ( SMREB::c2t3.is_in_complex(v) ) { // no need to test here
+	      //if ( SMMBB::c2t3.is_in_complex(v) ) { // no need to test here
 		bad_vertices.erase(v);              // il faut tester les
                                                     // facets, avant
 		//}
@@ -97,8 +97,8 @@ namespace CGAL {
 	     ++nit) {
 	  Facet current_facet = (*nit).first;
 	  // is the current facet bigger than the current biggest one
-	  if ( SMREB::c2t3.compute_distance_to_facet_center(current_facet, sommet) >
-	       SMREB::c2t3.compute_distance_to_facet_center(biggest_facet, sommet) ) {
+	  if ( SMMBB::c2t3.compute_distance_to_facet_center(current_facet, sommet) >
+	       SMMBB::c2t3.compute_distance_to_facet_center(biggest_facet, sommet) ) {
 	    biggest_facet = current_facet;
 	  }
 	}
@@ -109,7 +109,7 @@ namespace CGAL {
       Facet biggest_incident_facet_in_complex(const Vertex_handle sommet) const {
 
 	std::list<Facet> facets;
-	SMREB::c2t3.incident_facets(sommet, std::back_inserter(facets));
+	SMMBB::c2t3.incident_facets(sommet, std::back_inserter(facets));
 
 	typename std::list<Facet>::iterator it = facets.begin();
 	Facet first_facet = *it;
@@ -120,8 +120,8 @@ namespace CGAL {
 	     ++it) {
 	  Facet current_facet = *it;
 	  // is the current facet bigger than the current biggest one
-	  if ( SMREB::compute_distance_to_facet_center(current_facet, sommet) >
-	       SMREB::compute_distance_to_facet_center(biggest_facet, sommet) ) {
+	  if ( SMMBB::compute_distance_to_facet_center(current_facet, sommet) >
+	       SMMBB::compute_distance_to_facet_center(biggest_facet, sommet) ) {
 	    biggest_facet = current_facet;
 	  }
 	}
@@ -132,7 +132,7 @@ namespace CGAL {
                                     Surface& surface,
                                     SurfaceMeshTraits mesh_traits,
                                     Criteria& criteria)
-	: SMREB(c2t3, surface, mesh_traits, criteria),
+	: SMMBB(c2t3, surface, mesh_traits, criteria),
           bad_vertices_initialized(false)
       {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
@@ -144,7 +144,7 @@ namespace CGAL {
 
       // Tells whether there remain elements to refine
       bool no_longer_element_to_refine_impl() const {
-	if(SMREB::no_longer_element_to_refine_impl()){
+	if(SMMBB::no_longer_element_to_refine_impl()){
 	  if(! bad_vertices_initialized){
 	    initialize_bad_vertices();
 	  }
@@ -157,10 +157,10 @@ namespace CGAL {
       {
 	std::cout << "scanning vertices" << std::endl;
 	int n = 0;
-	for (Finite_vertices_iterator vit = SMREB::tr.finite_vertices_begin();
-	     vit != SMREB::tr.finite_vertices_end();
+	for (Finite_vertices_iterator vit = SMMBB::tr.finite_vertices_begin();
+	     vit != SMMBB::tr.finite_vertices_end();
 	     ++vit) {
-	  if ( (SMREB::c2t3.face_status(vit)  // @TODO: appeler is_regular
+	  if ( (SMMBB::c2t3.face_status(vit)  // @TODO: appeler is_regular
 		== C2t3::SINGULAR) ) {
 	    bad_vertices.insert( vit );
 	    ++n;
@@ -172,14 +172,14 @@ namespace CGAL {
 
       // Lazy initialization function
       void scan_triangulation_impl() {
-	SMREB::scan_triangulation_impl();
+	SMMBB::scan_triangulation_impl();
 	std::cout << "scanning vertices (lazy)" << std::endl;
       }
 
       // Returns the next element to refine
       Facet get_next_element_impl() {
-	if ( !SMREB::no_longer_element_to_refine_impl() ) {
-	  return SMREB::get_next_element_impl();
+	if ( !SMMBB::no_longer_element_to_refine_impl() ) {
+	  return SMMBB::get_next_element_impl();
 	}
 	else {
 	  assert(bad_vertices_initialized);
@@ -193,19 +193,19 @@ namespace CGAL {
 	for (typename Zone::Facets_iterator fit =
 	       zone.boundary_facets.begin(); fit !=
 	       zone.boundary_facets.end(); ++fit)
-	  if (SMREB::c2t3.is_in_complex(*fit)) {
+	  if (SMMBB::c2t3.is_in_complex(*fit)) {
 	    handle_facet_on_boundary_of_conflict_zone (*fit); 
 	  }
-	SMREB::before_insertion_impl(Facet(), s, zone);
+	SMMBB::before_insertion_impl(Facet(), s, zone);
       }
 
     void after_insertion_impl(const Vertex_handle v) {
-      SMREB::after_insertion_impl(v);
+      SMMBB::after_insertion_impl(v);
 
       if(bad_vertices_initialized){
 	// foreach v' in star of v
 	Vertices vertices;
-	SMREB::tr.incident_vertices(v, std::back_inserter(vertices));
+	SMMBB::tr.incident_vertices(v, std::back_inserter(vertices));
 
 	// is_regular_or_boundary_for_vertices
 	// is used here also incident edges are not known to be
@@ -215,13 +215,13 @@ namespace CGAL {
 	for (Vertices_iterator vit = vertices.begin();
 	     vit != vertices.end();
 	     ++vit)
-	  if ( SMREB::c2t3.is_in_complex(*vit)  &&
-	       !SMREB::c2t3.is_regular_or_boundary_for_vertices(*vit)) {
+	  if ( SMMBB::c2t3.is_in_complex(*vit)  &&
+	       !SMMBB::c2t3.is_regular_or_boundary_for_vertices(*vit)) {
 	    bad_vertices.insert(*vit);
 	  }
 
-	if ( SMREB::c2t3.is_in_complex(v) &&
-	     !SMREB::c2t3.is_regular_or_boundary_for_vertices(v)) {
+	if ( SMMBB::c2t3.is_in_complex(v) &&
+	     !SMMBB::c2t3.is_regular_or_boundary_for_vertices(v)) {
 	  bad_vertices.insert(v);
 	}
       }
@@ -231,7 +231,7 @@ namespace CGAL {
       std::string debug_info() const
       {
         std::stringstream s;
-        s << SMREB::debug_info() << "," << bad_vertices.size();
+        s << SMMBB::debug_info() << "," << bad_vertices.size();
         return s.str();
       }
     };  // end Surface_mesher_manifold_base
