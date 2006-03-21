@@ -2,13 +2,16 @@
 #
 # Creating a new CGAL internal/public release.
 #
-# Radu Ursu, Sylvain Pion, 2004, 2005.
+# Radu Ursu, Sylvain Pion, 2004-2006.
 
 # TODO :
 # - The public release case should pass the info to create_internal_release.
 # - Merge [some parts] into ./create_internal_release ?
 # - There should be command line options to set public/internal,
 #   and the major/minor/bugfix/version_file release numbers.
+
+# SVN working copy directory (TODO : pass it as command-line argument)
+SOURCES_DIR=trunk
 
 # Set the following to "y" in case of public release.
 IS_PUBLIC_RELEASE="n"
@@ -30,13 +33,13 @@ MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
 LOGFILEBASE="create_release.log"
+
 #TMPDIR="/tmp"
 TMPDIR="${HOME}/CGAL/internal_release_making"
 
 PATH=$PATH:/usr/local/bin
 TAR=/usr/bin/gnu/tar
 GZIP=/usr/bin/gnu/gzip
-DIFF=/usr/bin/diff
 
 cd ${TMPDIR} || return
 
@@ -44,7 +47,7 @@ cd ${TMPDIR} || return
 if [ $IS_PUBLIC_RELEASE = "n" ]; then
     [ -r $VERSION_FILE ] || return
     i=$(( `cat $VERSION_FILE` + 1 ))
-    rm -rf $VERSION_FILE
+    rm -f $VERSION_FILE
     printf "%d\n" "${i}" >> $VERSION_FILE
     INTERNAL_STRING="-I-${i}"
     internal_nr=`printf "%4s" "${i}" | sed "y/ /0/"`
@@ -66,23 +69,18 @@ major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
 minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
 bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
 release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
-echo "${release_number}" >> ${LOGFILE} 2>&1
+echo "Release number is ${release_number}" >> ${LOGFILE} 2>&1
 
-cd All
-svn update >> ${LOGFILE} 2>&1
+# Update the working copy
+svn update ${SOURCES_DIR} >> ${LOGFILE} 2>&1
 
-cd ..
 ./create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
 cd ${TMPDIR}
-# Make the diff with the previous release
-${DIFF} -urN previous_release "${release_name}" > ${release_name}.diff
-${GZIP} "${release_name}.diff" >> ${LOGFILE} 2>&1
-rm -rf previous_release >> ${LOGFILE} 2>&1
 # Make the release tarball
 ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
 ${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
-mv "${release_name}" previous_release >> ${LOGFILE} 2>&1
-mv "${release_name}.diff.gz" "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
+rm -rf ${release_name} >> ${LOGFILE} 2>&1
+mv "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
 
@@ -92,18 +90,6 @@ ${URL}/${release_name}.tar.gz
 EOF
 
 # Now we tag.
-cd All
-NEW_TAG=`echo $release_name | sed -e "s/[-.]/_/g"`
-echo "Tagging All with $NEW_TAG" >> ${LOGFILE} 2>&1
-svn cp -m "Internal release tag for $NEW_TAG" $SVNCGAL/trunk $SVNCGAL/tags/internal-releases/$NEW_TAG >> ${LOGFILE} 2>&1
+echo "Tagging ${SOURCES_DIR} with $release_name" >> ${LOGFILE} 2>&1
+svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name >> ${LOGFILE} 2>&1
 
-################################
-
-# The module stuff is commented out on 10/11/05, because those scripts are
-# unused now, and they might make the conversion to SVN harder.
-
-# We now call the create_modules script
-# The All directory is the CVSDIR directory
-
-# cd ${TMPDIR}
-# ./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
