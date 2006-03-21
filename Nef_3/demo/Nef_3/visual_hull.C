@@ -60,7 +60,11 @@ int main(int argc, char* argv[]) {
   typedef Nef_polyhedron::SNC_structure SNC_structure;
   typedef CGAL::visual_hull_creator<SNC_structure> VHC;
 
-  CGAL_assertion(argc==2);
+  if(argc!=2) {
+    std::cerr << "Usage: visual_hull file" << std::endl;
+    std::cerr << "For more information read the README file" << std::endl;
+    return 1;
+  }
 
   std::ifstream in(argv[1]);
 
