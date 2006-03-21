@@ -21,6 +21,10 @@ public:
   typedef MyConstruct_bbox_2<typename OldK::Construct_bbox_2> 
                                             Construct_bbox_2;
 
+  Construct_point_2
+  construct_point_2_object() const
+  { return Construct_point_2(); }
+
   template < typename Kernel2 >
   struct Base { typedef MyCartesian_base<Kernel2, K_Base>  Type; };
 };
@@ -28,7 +32,9 @@ public:
 
 template < typename FT_ >
 struct MyKernel
-  : public MyCartesian_base<MyKernel<FT_>, CGAL::Cartesian<FT_> >
+  : public CGAL::Type_equality_wrapper<
+                MyCartesian_base<MyKernel<FT_>, CGAL::Cartesian<FT_> >,
+                MyKernel<FT_> >
 {};
 
 #endif // MYKERNEL_H
