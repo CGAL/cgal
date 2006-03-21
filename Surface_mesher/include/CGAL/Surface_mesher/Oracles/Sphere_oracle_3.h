@@ -92,7 +92,7 @@ namespace CGAL {
       void intersection_line_sphere_lambda(const Surface_3& sphere,
                                            const Point& a,
                                            const Point& b, 
-                                           unsigned int& number_of_roots,
+                                           int& number_of_roots,
                                            FT& root_1,
                                            FT& root_2) const
       {
@@ -113,8 +113,9 @@ namespace CGAL {
 
           deltaprime = delta/4 = ((c-a)(b-a))^2 - (b-a)^2 * ( (c-a)^2 -r^2 )
 
-          if delta > 0, root_1 = ((c-a)(b-a) + \sqrt(delta/4)) / (b-a)^2
-                        root_2 = ((c-a)(b-a) - \sqrt(delta/4)) / (b-a)^2
+          if delta > 0, root_1 = ((c-a)(b-a) - \sqrt(delta/4)) / (b-a)^2
+                        root_2 = ((c-a)(b-a) + \sqrt(delta/4)) / (b-a)^2
+                 (root_1 < root_2)
         */
 
         typedef typename GT::Vector_3 Vector_3;
@@ -152,8 +153,8 @@ namespace CGAL {
           break;
         case POSITIVE:
           number_of_roots = 2;
-          root_1 = (ab_ac + CGAL::sqrt(deltaprime)) / ab2;
-          root_2 = (ab_ac - CGAL::sqrt(deltaprime)) / ab2;
+          root_1 = (ab_ac - CGAL::sqrt(deltaprime)) / ab2;
+          root_2 = (ab_ac + CGAL::sqrt(deltaprime)) / ab2;
         }
       } //end intersection_line_sphere_lambda
 
@@ -172,7 +173,7 @@ namespace CGAL {
         typename GT::Construct_translated_point_3 translated_point = 
           GT().construct_translated_point_3_object();
 
-        unsigned int number_of_roots;
+        int number_of_roots;
         FT root_1, root_2;
         intersection_line_sphere_lambda(sphere,
                                         a,
@@ -252,6 +253,135 @@ namespace CGAL {
         
         return private_intersection(sphere, a, b, Always_true());
       } // end operator()(Surface_3, Line_3)
+
+      /** Modifies s = [a, b] by clipping it to sphere.
+          Return false iff s is outside sphere. */
+      bool clip_segment(const Surface_3& sphere,
+                        Point_3& a,
+                        Point_3& b) const
+      {
+        typedef typename GT::Vector_3 Vector;
+        
+        typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
+          GT().has_on_bounded_side_3_object();
+        typename GT::Construct_vector_3 vector =
+          GT().construct_vector_3_object();
+        typename GT::Construct_scaled_vector_3 scaled_vector = 
+          GT().construct_scaled_vector_3_object();
+        typename GT::Construct_translated_point_3 translated_point = 
+          GT().construct_translated_point_3_object();
+
+        const bool a_in_sphere = on_bounded_side_of_sphere(sphere, a);
+        const bool b_in_sphere = on_bounded_side_of_sphere(sphere, b);        
+
+        if( a_in_sphere && b_in_sphere )
+          return true;
+
+        int number_of_roots;
+        FT root_1, root_2;
+        
+        intersection_line_sphere_lambda(sphere, a, b,
+                                        number_of_roots, root_1, root_2);
+
+        if( number_of_roots < 2 )
+          return false;
+
+        const Vector ab = vector(a, b);
+
+        if( ! a_in_sphere )
+          a = translated_point(a, scaled_vector(ab, root_1));
+        if( ! b_in_sphere )
+          b = translated_point(a, scaled_vector(ab, root_2));
+          
+        return true;
+      }
+
+      /** The return value s is r clipped to sphere.
+          Return false iff r does not intersect sphere. */
+      bool clip_ray(const Surface_3& sphere,
+                    const Ray_3& r,
+                    Point_3& a,
+                    Point_3& b) const
+      {
+        typedef typename GT::Vector_3 Vector;
+        
+        typename GT::Construct_point_on_3 point_on =
+          GT().construct_point_on_3_object();
+        typename GT::Construct_segment_3 segment =
+          GT().construct_segment_3_object();
+        typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
+          GT().has_on_bounded_side_3_object();
+        typename GT::Construct_vector_3 vector =
+          GT().construct_vector_3_object();
+        typename GT::Construct_scaled_vector_3 scaled_vector = 
+          GT().construct_scaled_vector_3_object();
+        typename GT::Construct_translated_point_3 translated_point = 
+          GT().construct_translated_point_3_object();
+
+        a = point_on(r, 0);
+        b = point_on(r, 1);
+
+        int number_of_roots;
+        FT root_1, root_2;
+        
+        intersection_line_sphere_lambda(sphere, a, b,
+                                        number_of_roots, root_1, root_2);
+
+        if( number_of_roots == 2 && root_2 > FT(0) )
+        {
+          const Vector ab = vector(a, b);
+          b = translated_point(a, scaled_vector(ab, root_2));
+          if(root_1 > FT(0))
+            a = translated_point(a, scaled_vector(ab, root_1));
+          // if root_1 <= 0, a is in the ball
+          return true;
+        }
+        else
+          // else r does not intersect the sphere
+          return false;
+      } // end clip_ray
+
+      /** The return value s is l clipped to sphere.
+          Return false iff l does not intersect sphere. */
+      bool clip_line(const Surface_3& sphere, const Line_3& l,
+                     Point& a,
+                     Point& b) const
+      {
+        typedef typename GT::Vector_3 Vector;
+        
+        typename GT::Construct_point_on_3 point_on =
+          GT().construct_point_on_3_object();
+        typename GT::Construct_segment_3 segment =
+          GT().construct_segment_3_object();
+        typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
+          GT().has_on_bounded_side_3_object();
+        typename GT::Construct_vector_3 vector =
+          GT().construct_vector_3_object();
+        typename GT::Construct_scaled_vector_3 scaled_vector = 
+          GT().construct_scaled_vector_3_object();
+        typename GT::Construct_translated_point_3 translated_point = 
+          GT().construct_translated_point_3_object();
+
+        a = point_on(l, 0);
+        b = point_on(l, 1);
+
+        int number_of_roots;
+        FT root_1, root_2;
+        
+        intersection_line_sphere_lambda(sphere, a, b,
+                                        number_of_roots, root_1, root_2);
+
+        if( number_of_roots == 2 && root_2 > FT(0) )
+        {
+          const Vector ab = vector(a, b);
+          a = translated_point(a, scaled_vector(ab, root_1));
+          b = translated_point(a, scaled_vector(ab, root_2));
+          return true;
+        }
+        else
+          // else l does not intersect the sphere
+          return false;
+      } // end clip_line
 
     }; // end nested class Intersect_3
 
