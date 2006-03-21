@@ -82,6 +82,14 @@ public:
 	FT>(domain_size_x,
 	    domain_size_y);
     }
+    
+  inline FT container_velue(int i) const
+    {
+      if (i < 2*number_of_samples_x*number_of_samples_y)
+        return vector_field[i];
+      else
+        return 0.0;
+    }
 };
 
 template <class StreamLinesTraits_2>
@@ -146,7 +154,6 @@ Regular_grid_2<StreamLinesTraits_2>::is_in_samples(const int & i,
 	  (j<=number_of_samples_y-1));
 }
 
-
 template <class StreamLinesTraits_2>
 typename Regular_grid_2<StreamLinesTraits_2>::Vector_2 
 Regular_grid_2<StreamLinesTraits_2>::get_vector_field(const Point_2 &
@@ -163,10 +170,10 @@ Regular_grid_2<StreamLinesTraits_2>::get_vector_field(const Point_2 &
   int iIndex_2 = get_index(i+1,j);
   int iIndex_3 = get_index(i,j+1);
   int iIndex_4 = get_index(i+1,j+1);
-  FT x00 = vector_field[iIndex_1];
-  FT x01 = vector_field[iIndex_2];
-  FT x10 = vector_field[iIndex_3];
-  FT x11 = vector_field[iIndex_4];
+  FT x00 = container_velue(iIndex_1);
+  FT x01 = container_velue(iIndex_2);
+  FT x10 = container_velue(iIndex_3);
+  FT x11 = container_velue(iIndex_4);
   FT x0 = x00 + xfract * (x01 - x00);
   FT x1 = x10 + xfract * (x11 - x10);
   fXv = x0 + yfract * (x1 - x0);
@@ -174,10 +181,10 @@ Regular_grid_2<StreamLinesTraits_2>::get_vector_field(const Point_2 &
   iIndex_2++;
   iIndex_3++;
   iIndex_4++;
-  FT y00 = vector_field[iIndex_1];
-  FT y01 = vector_field[iIndex_2];
-  FT y10 = vector_field[iIndex_3];
-  FT y11 = vector_field[iIndex_4];
+  FT y00 = container_velue(iIndex_1);
+  FT y01 = container_velue(iIndex_2);
+  FT y10 = container_velue(iIndex_3);
+  FT y11 = container_velue(iIndex_4);
   FT y0 = y00 + xfract * (y01 - y00);
   FT y1 = y10 + xfract * (y11 - y10);
   fYv = y0 + yfract * (y1 - y0);
