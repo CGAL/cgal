@@ -1,4 +1,5 @@
-.PHONY: all clean diff dist-clean doc doxygen examples test update
+.PHONY: all clean diff dist-clean doc doxygen examples test update run-examples \
+	run-test examples.clean test.clean run-all
 
 all: test examples
 
@@ -14,8 +15,13 @@ examples:
 test:
 	$(MAKE) -C test/Surface_mesher
 
+run-examples: examples
+	$(MAKE) -C examples/Surface_mesher run-targets
+
 run-test: test
 	$(MAKE) -C test/Surface_mesher run-test
+
+run-all: run-test run-examples
 
 doxygen:
 	doxygen

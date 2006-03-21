@@ -2,6 +2,8 @@
 - fix include/CGAL/Gray_level_image_3.h
 - added a CGAL::Timer to test/Surface_mesher/implicit_surface_mesher_test.C
   and fixed a warning ("FT(1)" instead of "1")
+- new version of include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h that
+  now uses include/CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h
 
 17 March 2006 Laurent Rineau
 - modified examples/Surface_mesher/makefile, to have ImageIO compiled on
