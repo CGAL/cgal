@@ -10,8 +10,8 @@ typedef CGAL::Gmpz  NT;
 typedef CGAL::Homogeneous<NT>  Kernel;
 typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
-typedef Nef_polyhedron::Vector_3  Vector_3;
-typedef Nef_polyhedron::Aff_transformation_3  Aff_transformation_3;
+typedef Kernel::Vector_3  Vector_3;
+typedef Kernel::Aff_transformation_3  Aff_transformation_3;
 
 int main() {
 

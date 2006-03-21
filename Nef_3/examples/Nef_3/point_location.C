@@ -7,17 +7,20 @@
 
 typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
-typedef Nef_polyhedron_3::Vertex_const_handle Vertex_const_handle;
-typedef Nef_polyhedron_3::Halfedge_const_handle Halfedge_const_handle;
-typedef Nef_polyhedron_3::Halffacet_const_handle Halffacet_const_handle;
-typedef Nef_polyhedron_3::Volume_const_handle Volume_const_handle;
-typedef Nef_polyhedron_3::Object_handle Object_handle;
-typedef Kernel::Point_3 Point_3;
+  typedef Kernel::Point_3 Point_3;
 
 int main() {
+  //We've put the typedefs here as VC7 gives us an ICE if they are global typedefs
+  typedef Nef_polyhedron_3::Vertex_const_handle Vertex_const_handle;
+  typedef Nef_polyhedron_3::Halfedge_const_handle Halfedge_const_handle;
+  typedef Nef_polyhedron_3::Halffacet_const_handle Halffacet_const_handle;
+  typedef Nef_polyhedron_3::Volume_const_handle Volume_const_handle;
+  typedef Nef_polyhedron_3::Object_handle Object_handle;
+
+  
   Nef_polyhedron_3 N;
   std::cin >> N;
-
+  
   Vertex_const_handle v;
   Halfedge_const_handle e;
   Halffacet_const_handle f;
@@ -32,6 +35,7 @@ int main() {
   else if(CGAL::assign(c,o))
     std::cout << "Locating volume" << std::endl;
   //other cases can not occur
-
+  
   return 0;
 }
+

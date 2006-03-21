@@ -1,4 +1,4 @@
-// examples/Nef_3/unary_opartions.C
+// examples/Nef_3/topolgical_operations.C
 // -------------------------------------
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
@@ -8,7 +8,6 @@
 typedef CGAL::Gmpz  NT;
 typedef CGAL::Homogeneous<NT>  Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
-typedef Nef_polyhedron::Plane_3  Plane_3;
 
 int main() {
 

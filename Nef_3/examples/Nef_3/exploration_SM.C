@@ -7,19 +7,23 @@
 
 typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
-typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
-typedef Nef_polyhedron_3::Nef_polyhedron_S2 Nef_polyhedron_S2;
-typedef Nef_polyhedron_S2::SVertex_const_handle SVertex_const_handle;
-typedef Nef_polyhedron_S2::SHalfedge_const_handle SHalfedge_const_handle;
-typedef Nef_polyhedron_S2::SHalfloop_const_handle SHalfloop_const_handle;
-typedef Nef_polyhedron_S2::SFace_const_iterator SFace_const_iterator;
-typedef Nef_polyhedron_S2::SFace_cycle_const_iterator 
-                           SFace_cycle_const_iterator;
+
 
 int main() {
+
+  // We've put the typedefs here as VC7 gives us an ICE if they are global typedefs
+  typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
+  typedef Nef_polyhedron_3::Nef_polyhedron_S2 Nef_polyhedron_S2;
+  typedef Nef_polyhedron_S2::SVertex_const_handle SVertex_const_handle;
+  typedef Nef_polyhedron_S2::SHalfedge_const_handle SHalfedge_const_handle;
+  typedef Nef_polyhedron_S2::SHalfloop_const_handle SHalfloop_const_handle;
+  typedef Nef_polyhedron_S2::SFace_const_iterator SFace_const_iterator;
+  typedef Nef_polyhedron_S2::SFace_cycle_const_iterator 
+    SFace_cycle_const_iterator;
+
   Nef_polyhedron_3 N;
   std::cin >> N;
-
+  
   Vertex_const_iterator v = N.vertices_begin();
   Nef_polyhedron_S2 S(N.get_sphere_map(v));
 
@@ -42,5 +46,6 @@ int main() {
       // other cases can not occur.
     }
   }
+  
   return 0;
 }

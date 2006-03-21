@@ -6,7 +6,7 @@
 
 typedef CGAL::Extended_homogeneous<CGAL::Gmpz>  Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
-typedef Nef_polyhedron::Plane_3  Plane_3;
+typedef Kernel::Plane_3  Plane_3;
 
 int main() {
 
