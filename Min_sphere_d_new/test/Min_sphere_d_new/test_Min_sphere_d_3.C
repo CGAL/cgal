@@ -46,8 +46,6 @@
 #include <CGAL/copy_n.h>
 #include <iterator>
 
-#define  Min_sphere_d               OTHER_Min_sphere_d
-
 // typedefs
 // --------
 // test variant 1 (needs LEDA)
