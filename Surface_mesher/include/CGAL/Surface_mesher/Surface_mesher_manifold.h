@@ -31,9 +31,7 @@ namespace CGAL {
     class Surface,
     class SurfaceMeshTraits,
     class Criteria,
-    typename SMREB = 
-      Surface_mesher_regular_edges_base<C2T3, Surface, 
-                                        SurfaceMeshTraits, Criteria>
+    typename SMREB
   >
   class Surface_mesher_manifold_base
     : public SMREB 
@@ -237,69 +235,6 @@ namespace CGAL {
         return s.str();
       }
     };  // end Surface_mesher_manifold_base
-
-    namespace details { // try to workaround VC++ and ICL bugs
-                        // I am not sure this is really a bug.
-                        // Laurent Rineau, 2006/03/17
-      template <
-        typename C2T3,
-        typename Surface,
-        typename SurfaceMeshTraits,
-        typename Criteria,
-        typename SMREB
-        >
-      struct Surface_mesher_manifold_baseclass_generator {
-        typedef Surface_mesher<C2T3,
-                               Surface,
-                               SurfaceMeshTraits,
-                               Criteria,
-                               Surface_mesher_manifold_base<C2T3,
-                                                            Surface,
-                                                            SurfaceMeshTraits,
-                                                            Criteria,
-                                                            SMREB> > Type;
-        typedef Type type;
-      }; // end class Surface_mesher_manifold_baseclass_generator
-    } // end namespace defails
-
-  template <
-    typename C2T3,
-    typename Surface,
-    typename SurfaceMeshTraits,
-    typename Criteria,
-    typename SMREB = 
-      Surface_mesher_regular_edges_base<C2T3, Surface, 
-                                        SurfaceMeshTraits, Criteria>
-    >
-  class Surface_mesher_manifold
-    : public details::Surface_mesher_manifold_baseclass_generator<
-        C2T3,
-        Surface, 
-        SurfaceMeshTraits,
-        Criteria,
-        SMREB
-       >::Type
-  {
-    typedef typename details::Surface_mesher_manifold_baseclass_generator<
-        C2T3,
-        Surface, 
-        SurfaceMeshTraits,
-        Criteria,
-        SMREB
-      >::Type Base_class;
-
-  public:
-    Surface_mesher_manifold(C2T3& c2t3,
-                            Surface& surface,
-                            SurfaceMeshTraits mesh_traits,
-                            Criteria& criteria)
-      : Base_class(c2t3, surface, mesh_traits, criteria)
-    {
-#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
-      std::cerr << "CONS: Surface_mesher_manifold\n";
-#endif
-    }
-  };  // end Surface_mesher_manifold
 
   }  // end namespace Surface_mesher
 

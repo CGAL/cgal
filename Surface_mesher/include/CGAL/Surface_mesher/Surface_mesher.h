@@ -42,14 +42,19 @@ namespace CGAL {
 
   template <
     class C2T3,
-    class Surface,
+    class Surface_,
     class SurfaceMeshTraits,
-    class Criteria
+    class Criteria_
     >
   class Surface_mesher_base
     : public Triangulation_mesher_level_traits_3<typename C2T3::Triangulation>
   {
   public:
+    typedef C2T3 Complex_2_in_triangulation_3;
+    typedef Surface_ Surface;
+    typedef SurfaceMeshTraits Surface_mesh_traits;
+    typedef Criteria_ Criteria;
+
     typedef typename C2T3::Triangulation Tr;
     typedef typename Tr::Point Point;
     typedef typename Tr::Edge Edge;
@@ -57,8 +62,6 @@ namespace CGAL {
     typedef typename Tr::Cell_handle Cell_handle;
 
     typedef typename Tr::Geom_traits GT;
-
-    typedef SurfaceMeshTraits Surface_mesh_traits;
 
     typedef Triangulation_mesher_level_traits_3<Tr> Triangulation_traits;
     typedef typename Triangulation_traits::Zone Zone;
@@ -618,37 +621,43 @@ namespace CGAL {
 
   };  // end Surface_mesher_base
 
+    namespace details {
 
+      template <typename Base, typename Self>
+      class Mesher_level_generator {
+        typedef typename Base::Complex_2_in_triangulation_3 C2T3;
+        typedef typename C2T3::Triangulation Triangulation;
+        typedef typename Triangulation::Facet Facet;
+        typedef Triangulation_mesher_level_traits_3<Triangulation> Tr_m_l_traits_3;
+      public:
+        typedef Mesher_level <Triangulation,
+                              Self,
+                              Facet,
+                              Null_mesher_level,
+                              Tr_m_l_traits_3> Type;
+        typedef Type type;
+      }; // end class Mesher_level_generator<Base, Self>
+      
+    } // end namespace details
 
-
-
-  template <
-    typename C2T3,
-    typename Surface,
-    typename SurfaceMeshTraits,
-    typename Criteria,
-    typename Base = Surface_mesher_base<C2T3, Surface, SurfaceMeshTraits, Criteria>
-    >
+  template <typename Base>
   struct Surface_mesher
     : public Base,
-      public Mesher_level <
-        typename C2T3::Triangulation,
-        Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria, Base>,
-        typename C2T3::Triangulation::Facet,
-        Null_mesher_level,
-        Triangulation_mesher_level_traits_3<typename C2T3::Triangulation>
-	>
+      public details::Mesher_level_generator<Base,
+                                             Surface_mesher<Base> >::Type
   {
   public:
-    typedef typename C2T3::Triangulation Tr;
-    typedef Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria, Base> Self;
-    typedef Mesher_level <
-      Tr,
-      Self,
-      typename Tr::Facet,
-      Null_mesher_level,
-      Triangulation_mesher_level_traits_3<Tr>
-    > Mesher_lvl;
+    typedef typename Base::Complex_2_in_triangulation_3 C2T3;
+    typedef typename C2T3::Triangulation Triangulation;
+    typedef Triangulation Tr;
+    typedef typename Base::Surface Surface;
+    typedef typename Base::Criteria Criteria;
+    typedef typename Base::Surface_mesh_traits Surface_mesh_traits;
+
+    typedef Surface_mesher<Base> Self;
+
+    typedef typename details::Mesher_level_generator<Base,
+      Surface_mesher<Base> >::Type Mesher_lvl;
 
     using Mesher_lvl::scan_triangulation;
     using Mesher_lvl::refine;
@@ -657,7 +666,6 @@ namespace CGAL {
     using Base::check_restricted_delaunay;
 
     typedef C2T3 Complex_2_in_triangulation_3;
-    typedef SurfaceMeshTraits Surface_mesh_traits;
 
   private:
     Null_mesher_level null_mesher_level;

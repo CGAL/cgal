@@ -33,14 +33,15 @@ namespace CGAL {
     class C2T3,
     class Surface,
     class SurfaceMeshTraits,
-    class Criteria,
-    typename SMB = 
-      Surface_mesher_base<C2T3, Surface, SurfaceMeshTraits, Criteria>
-  >
+    class Criteria
+    >
   class Surface_mesher_regular_edges_base
-    : public SMB 
+    : public Surface_mesher_base<C2T3, Surface, SurfaceMeshTraits, Criteria>
   {
     public:
+
+      typedef Surface_mesher_base<C2T3, Surface, SurfaceMeshTraits, Criteria> SMB ;
+
       typedef C2T3 C2t3;
       typedef typename C2T3::Triangulation Tr;
       typedef typename Tr::Geom_traits GT;
@@ -303,37 +304,6 @@ namespace CGAL {
       return s.str();
     }
   };  // end Surface_mesher_regular_edges_base
-
-  template <
-    typename C2T3,
-    typename Surface,
-    typename SurfaceMeshTraits,
-    typename Criteria
-    >
-  class Surface_mesher_regular_edges 
-    : public Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria,
-                            Surface_mesher_regular_edges_base<C2T3,
-                                                              Surface,
-                                                              SurfaceMeshTraits,
-                                                              Criteria> >
-  {
-    typedef Surface_mesher<C2T3, Surface, SurfaceMeshTraits, Criteria,
-                           Surface_mesher_regular_edges_base<C2T3,
-                                                             Surface,
-                                                             SurfaceMeshTraits,
-                                                             Criteria> > SM;
-  public:
-    Surface_mesher_regular_edges(C2T3& c2t3,
-                                 Surface& surface,
-                                 SurfaceMeshTraits mesh_traits,
-                                 Criteria& criteria)
-      : SM(c2t3, surface, mesh_traits, criteria)
-    {
-#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
-      std::cerr << "CONS: Surface_mesher_regular_edges\n";
-#endif
-    }
-  };  // end Surface_mesher_regular_edges
 
   }  // end namespace Surface_mesher
 

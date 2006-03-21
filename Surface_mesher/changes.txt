@@ -2,6 +2,9 @@
 - fix examples/Surface_mesher/3d_image_surface_mesher.C (stupid bug: the
   bounding sphere and the criteria were copy-pasted from
   implicit_surface_mesher.C and were unappropriate.
+- changes template parameters of all classes
+  include/CGAL/Surface_mesher/Surface_mesher*.h and update of
+  include/CGAL/make_surface_mesh.h
 
 20 March 2006 Laurent Rineau
 - fix include/CGAL/Gray_level_image_3.h

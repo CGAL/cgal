@@ -67,11 +67,13 @@ namespace CGAL {
     Criteria,
     Non_manifold_tag> // Non_manifold_tag partial specialization
   {
-    typedef CGAL::Surface_mesher::Surface_mesher<
+    typedef Surface_mesher::Surface_mesher_base<
       C2T3,
       typename SurfaceMeshTraits_3::Surface_3,
       SurfaceMeshTraits_3,
-      Criteria> Mesher;
+      Criteria> Mesher_base;
+
+    typedef Surface_mesher::Surface_mesher<Mesher_base> Mesher;
   };
 
   template <
@@ -86,11 +88,21 @@ namespace CGAL {
     Manifold_with_boundary_tag> // Manifold_with_boundary_tag partial
                                 // specialization
   {
-    typedef CGAL::Surface_mesher::Surface_mesher_manifold<
+    typedef Surface_mesher::Surface_mesher_regular_edges_base<
       C2T3,
       typename SurfaceMeshTraits_3::Surface_3,
       SurfaceMeshTraits_3,
-      Criteria> Mesher;
+      Criteria> Regular_edge_base;
+
+    typedef Surface_mesher::Surface_mesher_manifold_base<
+      C2T3,
+      typename SurfaceMeshTraits_3::Surface_3,
+      SurfaceMeshTraits_3,
+      Criteria,
+      Regular_edge_base
+      > Mesher_base;
+
+    typedef Surface_mesher::Surface_mesher<Mesher_base> Mesher;
   };
 
   template <
@@ -104,16 +116,21 @@ namespace CGAL {
     Criteria,
     Manifold_tag> // Manifold_tag partial specialization
   {
-    typedef CGAL::Surface_mesher::Surface_mesher_manifold<
+    typedef Surface_mesher::Surface_mesher_regular_edges_without_boundary_base<
+      C2T3,
+      typename SurfaceMeshTraits_3::Surface_3,
+      SurfaceMeshTraits_3,
+      Criteria> Regular_edge_without_boundary_base;
+
+    typedef Surface_mesher::Surface_mesher_manifold_base<
       C2T3,
       typename SurfaceMeshTraits_3::Surface_3,
       SurfaceMeshTraits_3,
       Criteria,
-      CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary_base<
-        C2T3,
-        typename SurfaceMeshTraits_3::Surface_3,
-        SurfaceMeshTraits_3,
-        Criteria> > Mesher;
+      Regular_edge_without_boundary_base
+      > Mesher_base;
+
+    typedef Surface_mesher::Surface_mesher<Mesher_base> Mesher;
   };
 
 template <typename C2T3,
@@ -127,7 +144,7 @@ void make_surface_mesh(C2T3& c2t3,
                        int initial_number_of_points = 20)  // TODO: document
                                                            // this parameter
 {
-  typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Traits;
+  typedef typename Surface_mesh_traits_generator_3<Surface>::type Traits;
 
   make_surface_mesh(c2t3, surface, Traits(), criteria, tag,
                     initial_number_of_points);  
