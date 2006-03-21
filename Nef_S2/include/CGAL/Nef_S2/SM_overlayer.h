@@ -597,6 +597,8 @@ public:
   void complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     const Below_accessor& D, std::vector<Mark>& mohs, int offset, bool both=true) const;
 
+  void complete_sface_marks() const;
+
   void set_outer_face_mark(int offset, const std::vector<Mark>& mohs);
 
   void dump(std::ostream& os = std::cerr) const
@@ -1083,6 +1085,8 @@ subdivide(const Map* M0, const Map* M1, bool with_trivial_segments)
     complete_face_support(v, this->svertices_end(), O, mohs, 1,
 			  compute_halfsphere[cs][0]);
 
+  complete_sface_marks();
+
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   CGAL_NEF_TRACEN("Vertex info after swep");
   CGAL_assertion_code(SVertex_iterator svi);
@@ -1385,7 +1389,10 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
     CGAL_NEF_TRACEN(" mark of "<<PH(v)<<" "<<mark(v,0)<<" "<<mark(v,1));
   }
- 
+}
+
+template <typename Map>
+void SM_overlayer<Map>::complete_sface_marks() const {
   SFace_iterator f;
   for (f = this->sfaces_begin(); f != this->sfaces_end(); ++f) {
     assoc_info(f);
@@ -1473,6 +1480,7 @@ select(const Selection& SP) const
     f->mark() = SP(mark(f,0),mark(f,1));
     discard_info(f);
   }
+
 }
 
 template <typename Map>
