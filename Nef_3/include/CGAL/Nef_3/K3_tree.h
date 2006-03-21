@@ -36,6 +36,7 @@
 #include <deque>
 #include <sstream>
 #include <string>
+#include <map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 503
