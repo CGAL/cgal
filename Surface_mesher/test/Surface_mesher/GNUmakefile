@@ -40,7 +40,6 @@ LDFLAGS = \
 
 all:            \
                 implicit_surface_mesher_test$(EXE_EXT) \
-                internal-test-surface-mesher$(EXE_EXT) \
                 test_robust_circumcenter$(EXE_EXT) 
 
 implicit_surface_mesher_test$(EXE_EXT): implicit_surface_mesher_test$(OBJ_EXT)
@@ -52,7 +51,7 @@ internal-test-surface-mesher$(EXE_EXT): internal-test-surface-mesher$(OBJ_EXT)
 test_robust_circumcenter$(EXE_EXT): test_robust_circumcenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_robust_circumcenter test_robust_circumcenter$(OBJ_EXT) $(LDFLAGS)
 
-run-test:
+run-test: all
 	./implicit_surface_mesher_test$(EXE_EXT)
 	./test_robust_circumcenter$(EXE_EXT)
 

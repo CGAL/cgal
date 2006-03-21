@@ -38,12 +38,12 @@ LDFLAGS = \
 
 .PHONY: imageio
 
-OBJECTS = \
-	implicit_functions$(OBJ_EXT)
+implicit_OBJECTS = implicit_functions$(OBJ_EXT)
 
-all:            \
-                3d_image_surface_mesher$(EXE_EXT) \
-                implicit_surface_mesher$(EXE_EXT)
+TARGETS = 3d_image_surface_mesher$(EXE_EXT) \
+          implicit_surface_mesher$(EXE_EXT)
+
+all: $(TARGETS)
 
 imageio:
 	cd ImageIO; $(MAKE)

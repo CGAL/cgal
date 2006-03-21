@@ -1,5 +1,10 @@
 include makefile
 
+run-targets: $(TARGETS)
+	for t in $(TARGETS); do \
+	  ./$$t; \
+	done
+
 #---------------------------------------------------------------------#
 #
 #                        dependencies
