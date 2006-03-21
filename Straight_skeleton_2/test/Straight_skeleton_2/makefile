@@ -18,13 +18,11 @@ CXXFLAGS = -I../../include \
            $(EXTRA_FLAGS) \
            -Iinclude \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           
+           $(LONG_NAME_PROBLEM_CXXFLAGS)  
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-
 LIBPATH = \
           $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
@@ -44,13 +42,13 @@ all: \
   test_offset_builder$(EXE_EXT) 
 
 test_sls_traits$(EXE_EXT): test_sls_traits$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) test_sls_traits test_sls_traits$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_sls_traits test_sls_traits$(OBJ_EXT) $(LDFLAGS)
 
 test_sls_builder$(EXE_EXT): test_sls_builder$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) test_sls_builder test_sls_builder$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_sls_builder test_sls_builder$(OBJ_EXT) $(LDFLAGS)
 
 test_offset_builder$(EXE_EXT): test_offset_builder$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) test_offset_builder test_offset_builder$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_offset_builder test_offset_builder$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
         test_sls_traits.clean \
