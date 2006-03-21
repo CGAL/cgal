@@ -42,17 +42,17 @@ typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Stream_line_iterator_2 Stl_iterator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_iterator_2 Pt_iterator;
-typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_2 Point;
+typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_2 Point_2;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Vector_2 Vector;
 
 bool d_stl = true;
 bool d_pq  = false;
 bool d_tr  = false;
 bool d_bc  = false;
-std::list<Point> _list;
-std::list<std::pair<Point, Point > > _tr_list;
-std::pair<Point, double> bc;
-std::list<Point> _bc_list;
+std::list<Point_2> _list;
+std::list<std::pair<Point_2, Point_2 > > _tr_list;
+std::pair<Point_2, double> bc;
+std::list<Point_2> _bc_list;
 
 QMenuBar   * menu;
 QPopupMenu * file;
@@ -267,7 +267,7 @@ class Placement : public QObject
       _bc_list.clear();
       for (double f=0.0;f<=6.29;f=f+0.05)
       {
-        Point p1 ( bc.first.x() + ((bc.second) * cos(f)) , bc.first.y() + ((bc.second) * sin(f)) );
+        Point_2 p1 ( bc.first.x() + ((bc.second) * cos(f)) , bc.first.y() + ((bc.second) * sin(f)) );
         _bc_list.push_front(p1);
       }
     }
@@ -402,7 +402,7 @@ class MyWidget : public QGLWidget
         glColor3f(1.0, 0.0, 0.0);
         glLineWidth(0.5f);
         glBegin(GL_POINTS);
-        for (std::list<Point>::iterator pit = _list.begin(); pit != _list.end(); pit++)
+        for (std::list<Point_2>::iterator pit = _list.begin(); pit != _list.end(); pit++)
         {
           glVertex2f((*pit).x() / 512, (*pit).y() / 512);
         }
@@ -412,7 +412,7 @@ class MyWidget : public QGLWidget
       {
         glColor3f(0.0, 0.0, 1.0);
         glLineWidth(0.25f);
-        for (std::list< std::pair<Point, Point> >::iterator pit = _tr_list.begin(); pit != _tr_list.end(); pit++)
+        for (std::list< std::pair<Point_2, Point_2> >::iterator pit = _tr_list.begin(); pit != _tr_list.end(); pit++)
         {
           glBegin(GL_LINES);
           glVertex2f((*pit).first.x() / 512, (*pit).first.y() / 512);
@@ -425,7 +425,7 @@ class MyWidget : public QGLWidget
         glColor3f(0.0, 1.0, 0.0);
         glLineWidth(0.5f);
         glBegin(GL_LINE_STRIP);
-        for (std::list<Point>::iterator pit = _bc_list.begin(); pit != _bc_list.end(); pit++)
+        for (std::list<Point_2>::iterator pit = _bc_list.begin(); pit != _bc_list.end(); pit++)
         {
           glVertex2f((*pit).x() / 512, (*pit).y() / 512);
         }
