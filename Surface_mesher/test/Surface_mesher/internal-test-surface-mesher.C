@@ -18,22 +18,23 @@ typedef CGAL::Surface_mesh_default_criteria_3<Tr> Criteria;
 
 // shorter names
 using CGAL::Surface_mesher::Surface_mesher;
-using CGAL::Surface_mesher::Surface_mesher_manifold;
-using CGAL::Surface_mesher::Surface_mesher_regular_edges;
-using CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary;
+using CGAL::Surface_mesher::Surface_mesher_base;
+using CGAL::Surface_mesher::Surface_mesher_manifold_base;
+using CGAL::Surface_mesher::Surface_mesher_regular_edges_base;
 using CGAL::Surface_mesher::Surface_mesher_regular_edges_without_boundary_base;
 
 // define the surface meshers
-typedef Surface_mesher<C2t3, Surface_3, SMTraits, Criteria> SM;
-typedef Surface_mesher_regular_edges<C2t3, Surface_3, SMTraits, Criteria> SMRE;
-typedef Surface_mesher_regular_edges_without_boundary<C2t3, Surface_3, SMTraits,
-  Criteria> SMREWB;
-typedef Surface_mesher_manifold<C2t3, Surface_3, SMTraits, Criteria> SMM;
+typedef Surface_mesher_base<C2t3, Surface_3, SMTraits, Criteria> SM_base;
+typedef Surface_mesher_regular_edges_base<C2t3, Surface_3, SMTraits, Criteria> SMRE_base;
+typedef Surface_mesher_regular_edges_without_boundary_base<C2t3, Surface_3, SMTraits, Criteria> SMREWB_base;
+typedef Surface_mesher_manifold_base<C2t3, Surface_3, SMTraits, Criteria, SMRE_base> SMM_base;
+typedef Surface_mesher_manifold_base<C2t3, Surface_3, SMTraits, Criteria, SMREWB_base> SMMWB_base;
 
-typedef Surface_mesher_regular_edges_without_boundary_base<C2t3, 
-  Surface_3, SMTraits, Criteria> SMREWB_base;
-typedef Surface_mesher_manifold<C2t3,
-  Surface_3, SMTraits, Criteria, SMREWB_base> SMMWB;
+typedef Surface_mesher<SM_base> SM;
+typedef Surface_mesher<SMRE_base> SMRE;
+typedef Surface_mesher<SMREWB_base> SMREWB;
+typedef Surface_mesher<SMM_base> SMM;
+typedef Surface_mesher<SMMWB_base> SMWB;
 
 // typedef SM Mesher;
 // typedef SMRE Mesher;
