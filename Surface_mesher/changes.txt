@@ -1,3 +1,8 @@
+22 March 2006 Laurent Rineau
+- fix doc_tex/Surface_mesher_ref/ImplicitSurfaceTraits_3.tex after the
+  changes of yesterday
+- forgot to tell that FT must be constructible from a double
+
 21 March 2006 Laurent Rineau
 - fix examples/Surface_mesher/3d_image_surface_mesher.C (stupid bug: the
   bounding sphere and the criteria were copy-pasted from
