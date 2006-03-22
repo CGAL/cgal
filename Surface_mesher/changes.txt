@@ -8,6 +8,8 @@
   Surface_mesher::refine_mesh. It is now template parameters of the class
   Surface_mesher. I have verified that the optimizer of GNU/CC is able to
   strip the debug code when NO_DEBUG is use.
+- change sligthly the code of examples, and modify sligthly the user manual
+  accordingly
 
 21 March 2006 Laurent Rineau
 - fix examples/Surface_mesher/3d_image_surface_mesher.C (stupid bug: the

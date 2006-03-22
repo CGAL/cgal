@@ -10,8 +10,6 @@ typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
-typedef Kernel::Sphere_3 Sphere_3;
-typedef Kernel::Point_3 Point_3;
 
 typedef CGAL::Gray_level_image_3<Kernel::FT> Gray_level_image;
 typedef CGAL::Implicit_surface_3<Kernel, Gray_level_image> Surface_3;
@@ -20,11 +18,20 @@ int main(int, char **) {
   Tr tr;            // 3D-Delaunay triangulation
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
-  // defining the surface
   Gray_level_image image("ImageIO/data/skull_2.9.inr.gz", 2.9);
-  Surface_3 surface(image, 
-                    Sphere_3(Point_3(250., 250., 250.), 300.*300.*2.),
-                    1e-02);
+
+  // bounding_sphere_center is a point inside the surface defined by image.
+  Kernel::Point_3 bounding_sphere_center(122., 102., 117.);
+
+  // bounding_sphere_squared_radius is chosen so that the sphere bounds the
+  // whole image
+  Kernel::FT bounding_sphere_squared_radius = 200.*200.*2.;
+
+  Kernel::Sphere_3 bounding_sphere(bounding_sphere_center,
+                                   bounding_sphere_squared_radius);
+
+  // definition of the surface
+  Surface_3 surface(image, bounding_sphere, 1e-2);
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,

@@ -25,8 +25,7 @@ int main(int, char **) {
 
   // defining the surface
   Surface_3 surface(sphere_function,            // pointer to function
-                    Sphere_3(CGAL::ORIGIN, 2.), // bounding sphere
-                    1e-03);  // precision for intersections computations
+                    Sphere_3(CGAL::ORIGIN, 2.)); // bounding sphere
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,  //angular bound

@@ -202,11 +202,15 @@ the automatically generated traits class
 In this example the surface to be meshed is defined
 as the locus of points with a given gray level
 in a 3D image.
-The code is quite similar to the previous example,
-except for the definition of the function
-which is passed to the creator of the surface.
-In this case, it is an instance of
-the \ccc{CGAL::Gray_level_image_3} class.
+The code is quite similar to the previous example. The parameters of the
+surface creator are different:
+\begin{itemize}
+\item the function is an instance of the \ccc{CGAL::Gray_level_image_3}
+  class, 
+\item the bounding sphere is chosen carefully, so that its center is inside
+  the surface and the radius high enough to actually bound the definition
+  domain of the 3D image.
+\end{itemize}
 \ccIncludeExampleCode{Surface_mesher/3d_image_surface_mesher.C}
 
 
