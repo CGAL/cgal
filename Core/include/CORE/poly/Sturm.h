@@ -159,7 +159,7 @@ public:
   // copy constructor
   Sturm(const Sturm&s) : len(s.len), NEWTON_DIV_BY_ZERO(s.NEWTON_DIV_BY_ZERO) {
     if (len <= 0) return;
-    seq = new Polynomial<NT> [len];
+    seq = new Polynomial<NT> [len+1];
     for (int i=0; i<=len; i++)
       seq[i] = s.seq[i];
   }
