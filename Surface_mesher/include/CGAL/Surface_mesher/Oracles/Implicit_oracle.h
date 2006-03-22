@@ -51,7 +51,7 @@ namespace CGAL {
          - Construct_vector_3
          - FT
          - Has_on_bounded_side_3                (from rev. 29646)
-         - Line_3                               (removed from rev. 29646)
+         - Line_3
          - Point_3
          - Ray_3
          - Segment_3
