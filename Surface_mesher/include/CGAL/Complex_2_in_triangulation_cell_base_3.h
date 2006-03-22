@@ -108,18 +108,9 @@ operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
 {
   bool b;
   is >> static_cast<Cb&>(c);
-  if( ! is )
-      std:: cerr << "Complex_2_in_triangulation_cell_base_3::operator>>\n"
-                 << "bad avant!\n";
-  if( is.eof() )
-    std::cerr << "Complex_2_in_triangulation_cell_base_3::operator>>\n"
-              << "eof!\n";
- for(int i = 0; i < 4; ++i)
+  for(int i = 0; i < 4; ++i)
   {
     is >> b;
-    if( ! is )
-      std:: cerr << "Complex_2_in_triangulation_cell_base_3::operator>>\n"
-                 << i << " bad\n";
     c.set_facet_on_surface(i, b);
   }
   return is;
