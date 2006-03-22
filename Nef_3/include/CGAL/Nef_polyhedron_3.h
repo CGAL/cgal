@@ -324,16 +324,13 @@ protected:
  public:
   /*{\Mcreation 3}*/
 
-  Nef_polyhedron_3( Content space = EMPTY,
-		    SNC_point_locator* _pl = new SNC_point_locator_default);
+  Nef_polyhedron_3( Content space = EMPTY);
 		   
   /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
   and initializes it to the empty set if |space == EMPTY|
   and to the whole space if |space == COMPLETE|.}*/
 
-  Nef_polyhedron_3(const Plane_3& p, 
-		   Boundary b = INCLUDED,
-		   SNC_point_locator* _pl = new SNC_point_locator_default);
+  Nef_polyhedron_3(const Plane_3& p, Boundary b = INCLUDED);
   /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the
   halfspace on the positive side of |p| including |p| if |b==INCLUDED|,
   excluding |p| if |b==EXCLUDED|.}*/
@@ -407,11 +404,10 @@ protected:
            template <class T31, class T32, class T33>
 #endif
            class T3, class T4 >
- Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P,
-		   SNC_point_locator* _pl = new SNC_point_locator_default) {
+ Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P) {
     CGAL_NEF_TRACEN("construction from Polyhedron_3");
     SNC_structure rsnc;
-    *this = Nef_polyhedron_3(rsnc, _pl, false);
+    *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
     initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3
       <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
@@ -783,7 +779,8 @@ protected:
   void clone_rep() { *this = Nef_polyhedron_3<Kernel,Items, Mark>(snc(), pl()); }
   void empty_rep() { 
     SNC_structure rsnc;
-    *this = Nef_polyhedron_3<Kernel,Items, Mark>(rsnc, new SNC_point_locator_default);
+    delete pl();
+    *this = Nef_polyhedron_3<Kernel,Items, Mark>(rsnc, new SNC_point_locator_default,false);
   }
 
  public:
@@ -1465,12 +1462,10 @@ protected:
 
 template <typename Kernel, typename Items, typename Mark>
 Nef_polyhedron_3<Kernel,Items, Mark>::
-Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
+Nef_polyhedron_3( Content space) {
   CGAL_NEF_TRACEN("construction from empty or space.");
-  SNC_structure rsnc;
   empty_rep();
   set_snc(snc());
-  pl() = _pl;
   if(Infi_box::extended_kernel()) {
     initialize_infibox_vertices(space);
     build_external_structure();
@@ -1483,13 +1478,12 @@ Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
 
 template <typename Kernel, typename Items, typename Mark>
 Nef_polyhedron_3<Kernel,Items, Mark>::
-Nef_polyhedron_3(const Plane_3& h, Boundary b, SNC_point_locator* _pl) {
+Nef_polyhedron_3(const Plane_3& h, Boundary b) {
   CGAL_NEF_TRACEN("construction from plane "<<h);
   empty_rep();
   set_snc(snc());
   SNC_constructor C(snc(), pl());
   Infi_box::create_vertices_of_box_with_plane(C,h,(b==INCLUDED));
-  pl() = _pl;
   build_external_structure();
 }
  
