@@ -53,7 +53,7 @@ simple_intersection$(EXE_EXT): simple_intersection$(OBJ_EXT)
 clean: \
                    construction.clean \
                    simple_intersection.clean \
-                   polylines
+                   polylines.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
