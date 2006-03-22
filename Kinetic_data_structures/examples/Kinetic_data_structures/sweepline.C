@@ -154,8 +154,6 @@ int main(int, char *[])
     ++num;
   } while (true);
 
-  std::cout << *sp << std::endl;
-
   while (sp->next_event_time() < sp->end_time()) {
     sp->set_current_event_number(sp->current_event_number()+1);
     //std::cout << *sp << std::endl;
@@ -179,7 +177,7 @@ int main(int, char *[])
 
   for (unsigned int i=0; i< points.size(); ++i) {
     mpostfile << "draw(";
-    std::cout << extents[i].first << " " << extents[i].second << std::endl;
+    //std::cout << extents[i].first << " " << extents[i].second << std::endl;
     for (NT t= extents[i].first; t < extents[i].second; t += .01) {
       NT ntv= points[i].x()(t);
       double val= snap(ntv);

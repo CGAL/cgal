@@ -166,7 +166,7 @@ int main(int, char *[])
   typedef CGAL::Kinetic::Exact_simulation_traits_1 Traits;
   typedef Trivial_kds<Traits> TKDS;
 
-  Traits tr;
+  Traits tr(1,100);
   TKDS::Handle tk= new TKDS(tr);
 
   Traits::Simulator::Handle sp=tr.simulator_handle();
