@@ -308,16 +308,17 @@ public:
   //! Construct it with a suggested size of sz.
   Two_list_pointer_event_queue(Priority start_time, Priority end_time, FK fk, int =0): tii_(fk.to_isolating_interval_object()),
 										       ub_(tii_(start_time).first),
-										       step_(1) {
+										       step_(1),
+										       ub_is_inf_(false){
     //std::cout << "UB is " << ub_ << std::endl;
     null_event_= new internal::Two_list_event_queue_dummy_item<Priority>();
-    if (end_time != std::numeric_limits<Priority>::infinity()){
-      set_end_priority(end_time);
-    } else {
+    //if (end_time != std::numeric_limits<Priority>::infinity()){
+    set_end_priority(end_time);
+      /*} else {
       NT end=std::numeric_limits<int>::max();
       std::cerr << "WARNING Infinity is being rounded down to " << end << std::endl;
       set_end_priority(end);
-    }
+      }*/
   }
 
   //! insert value_type into the queue and return a reference to it
@@ -338,7 +339,7 @@ public:
     ++queue_insertions__;
 
 
-    if (t <= ub_) {
+    if (leq_ub(t)) {
       ni->set_in_list(Item::FRONT);
       typename Queue::iterator iit=std::upper_bound(front_.begin(), front_.end(), *ni);
       /*if (iit == front_.begin()){
@@ -357,6 +358,7 @@ public:
 	++queue_front_insertions__;
 	front_.push_back(*ni);
 	ub_= NT(to_interval(tii_(t).second).second);
+	ub_is_inf_=false;
 	/*if (almost_inf(ub_)){
 	//CGAL_assertion(std::numeric_limits<NT>::has_infinity);
 	ub_= end_split();
@@ -550,12 +552,33 @@ public:
   }
 
   void set_end_priority(const Priority &o) {
+    CGAL_precondition(empty());
     //CGAL_precondition(o!= std::numeric_limits<Priority>::infinity());
     end_time_=o;
-    end_split_= tii_(o).second;
+    /*if (end_time_== std::numeric_limits<Priority>::infinity()) {
+      end_split_=std::numeric_limits<int>::max();
+    } else {
+      end_split_= tii_(o).second;
+      }*/
   }
 
 protected:
+
+  bool leq_ub(const Priority &t) const {
+    if (ub_is_inf_) return true;
+    else return (t <= ub_);
+  }
+
+  bool past_end(const NT &nt) const {
+    if (end_time_== std::numeric_limits<Priority>::infinity()){
+      return false;
+    } else {
+      return Priority(nt) > end_time();
+    }
+  }
+  bool past_end(const Priority &nt) const {
+    return nt >= end_time();
+  }
 
   template <class E>
   Item *make_event(const Priority &t, E &e) {
@@ -573,13 +596,13 @@ protected:
   bool audit() {
     for (typename Queue::const_iterator it = front_.begin(); it != front_.end(); ++it) {
       Priority t= it->time();
-      CGAL_assertion(t <= ub_);
+      CGAL_assertion(leq_ub(t));
       CGAL_assertion(it->in_list()== Item::FRONT);
       //CGAL_exactness_assertion(t >= lb_);
     }
     for (typename Queue::const_iterator it = back_.begin(); it != back_.end(); ++it) {
       Priority t= it->time();
-      CGAL_assertion(t > ub_);
+      CGAL_assertion(!leq_ub(t));
       CGAL_assertion(it->in_list()== Item::BACK);
     }
 #ifndef NDEBUG
@@ -692,30 +715,35 @@ protected:
     ub_+= step_;
     //CGAL_assertion(!too_big(ub_));
 
-    if (ub_ > end_split() ) {
-      ub_=end_split();
+    if (past_end(ub_)) {
+      ub_is_inf_=true;
+      //ub_=end_split();
     }
 
     unsigned int num= select(cand, front_, ub_);
-    if (ub_== end_split()) {
+    if (ub_is_inf_) {
       make_inf(cand, cand.begin(), cand.end());
     }
     else if (front_.empty()) {
       if (recursive_count > 10) {
 	// do something
 	std::cout << "Too many recursions " << std::endl;
-	Priority mp(end_split());
+	Priority mp;
+	bool mp_found=false;
+	//(end_split());
 	for (typename Queue::iterator it = cand.begin(); it != cand.end(); ++it) {
-	  if (it->time() < mp) {
+	  if (it->time() < end_time()) {
 	    mp = it->time();
+	    mp_found=true;
 	  }
 	}
-	if (mp < end_split()) {
+
+	if (mp_found) {
 	  ub_= NT(to_interval(tii_(mp).second).second);
+	  ub_is_inf_=false;
 	  step_=.001;
 	  grow_front(cand, recursive_count+1);
-	}
-	else {
+	} else {
 	  make_inf(cand, cand.begin(), cand.end());
 	}
       }
@@ -743,6 +771,7 @@ protected:
 	  cand.swap(front_);
 	  //ub_=lb_;
 	  ub_-=step_;
+	  CGAL_assertion(!ub_is_inf_);
 	  if (dprint) std::cout << "...overshot" << std::endl;
 	  CGAL_assertion(nstep < step_);
 	  step_=nstep;
@@ -785,11 +814,11 @@ protected:
     }
 
     NT split= NT(to_interval(tii_(it->time()).second).second);
-    if (split > end_split() ) {
+    if (past_end(split) ) {
       CGAL_assertion(back_.empty());
       it= front_.begin();
       for (unsigned int i=0; i < mf; ++i) {
-	if (it->time() >= end_time()) {
+	if (past_end(it->time())) {
 	  break;
 	}
       }
@@ -824,6 +853,7 @@ protected:
       //CGAL_assertion(!too_big(ub_));
       //CGAL_assertion(ub_ <= end_split());
       step_= oub-ub_;
+      CGAL_assertion(!ub_is_inf_);
       CGAL_postcondition_code(if (step_<0) std::cerr << step_ << std::endl;);
       CGAL_postcondition_code(if (step_<0) std::cerr << ub_ << std::endl;);
       CGAL_postcondition_code(if (step_<0) std::cerr << oub << std::endl;);
@@ -833,10 +863,10 @@ protected:
     }
   }
 
-  NT end_split() const
+  /*NT end_split() const
   {
     return end_split_;
-  }
+    }*/
 
   Priority end_time() const
   {
@@ -856,8 +886,9 @@ protected:
 #endif
   Key null_event_;
   NT ub_, step_;
+  bool ub_is_inf_;
   Priority end_time_;
-  NT end_split_;
+  //NT end_split_;
 };
 
 template <class D>
