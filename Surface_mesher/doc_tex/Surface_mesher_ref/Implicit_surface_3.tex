@@ -38,7 +38,8 @@ the types, predicates and constructors objects provided
 in \ccc{Traits} are
 used in 
 the partial specialisation 
-\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function>
+  >::Type}
 to generate the model of  \ccc{SurfaceMeshTraits_3}.
 
 The template parameter \ccc{Function}  stands for a model
@@ -62,12 +63,12 @@ Implicit_surface_3(Function f,
  negative: $f(c)<0$.\\
  \ccc{error_bound} is an error bound 
 used to  compute intersection points between the implicit surface
-and  query segments. This bound is used 
- in  the default generated traits class
+and  query segments. This bound is used in  the default generated traits class
  \ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,
-Function> >} .}
-% TODO: modify the initial points generation with bipolar oracle, because
-% f(c) < 0 
+Function> >::Type}. In this traits class, the intersection points between
+the surface and segments/rays/line are constructed by dichotomy. The
+precision of this construction by dichotomy is \ccc{error_bound} times the
+radius of \ccc{bounding_sphere}.}
 
 \ccSeeAlso
 \ccc{make_surface_mesh},\\
