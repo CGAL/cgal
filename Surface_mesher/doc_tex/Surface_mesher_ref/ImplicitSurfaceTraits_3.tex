@@ -18,13 +18,10 @@
 The concept \ccRefName\  describes the requirements of the traits class to
 be plugged  as \ccc{Traits} in \ccc{Implicit_surface_3<Traits, Function>}.
 The concept provides the types, predicates and constructors objects
-that are  used in the 
-the partial specialisation  of 
-the  surface mesher traits generator:
-\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}.
-
-
-
+that are used in
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function>
+  >::Type}, which is the model of \ccc{SurfaceMeshTraits_3} that is used
+when the first version of \ccc{make_surface_mesh} is called.
 
 \ccTypes
 
