@@ -174,7 +174,7 @@ to be meshed.
 \subsection{Meshing an implicit surface}
 The first example code meshes a sphere 
 given as the zero level set of a function $\R^3 \longrightarrow \R$
-coded in the procedure \ccc{sphere_function}.
+coded in the function \ccc{sphere_function}.
 More precisely, 
 the surface to be meshed is created 
 by the constructor
@@ -194,7 +194,7 @@ Delaunay ball of this facet.
 
 Given this surface type, the surface mesher will use
 the automatically generated traits class
-\ccc{Surface_mesh_traits_generator_3<Surface>}.
+\ccc{Surface_mesh_traits_generator_3<Surface>::Type}.
 
 \ccIncludeExampleCode{Surface_mesher/implicit_surface_mesher.C}
 
@@ -203,9 +203,9 @@ In this example the surface to be meshed is defined
 as the locus of points with a given gray level
 in a 3D image.
 The code is quite similar to the previous example,
-except for the definition of the \ccc{function}
+except for the definition of the function
 which is passed to the creator of the surface.
-In this case,  \ccc{function} is an instance of
+In this case, it is an instance of
 the \ccc{CGAL::Gray_level_image_3} class.
 \ccIncludeExampleCode{Surface_mesher/3d_image_surface_mesher.C}
 
@@ -219,7 +219,7 @@ The guarantees on the output mesh depend on the mesh criteria.
 Theoretical guarantees are given in \cite{cgal:bo-pgsms-05}.
 First, the meshing algorithm is proved to terminate 
 if the angular bound is
-not smaller than $20,7^o$. 
+not smaller than $30$~degrees. 
 Furthermore, the output mesh 
 is guaranteed to be homeomorphic to the surface
 and  there is a guaranteed bound 
