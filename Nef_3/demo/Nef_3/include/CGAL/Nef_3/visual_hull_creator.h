@@ -134,7 +134,6 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
     std::list<Sphere_point> spoints;
     
     cut = find_cutoff_plane();
-    std::cerr << cut << std::endl;
     std::list<Point_3> points_on_plane;
     Forward_iterator pi;
     for(pi=begin;pi!=end;++pi) {
