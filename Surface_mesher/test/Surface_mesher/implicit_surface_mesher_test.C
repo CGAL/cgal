@@ -18,13 +18,48 @@
 
 #include <iostream>
 
-struct Sphere {
-  template <typename FT>
+template <typename K>
+class Sphere {
+public:
+  typedef typename K::FT FT;
+  typedef typename K::Sphere_3 Sphere_3;
+
+  Sphere(Sphere_3 sphere)
+    : sphere(sphere)
+  {
+  }
+
   FT operator()(FT x, FT y, FT z)
   {
-    return x*x+y*y+z*z-FT(1);
+    x-=sphere.center().x();
+    y-=sphere.center().y();
+    z-=sphere.center().z();
+    return x*x+y*y+z*z-sphere.squared_radius();
   }
+private:
+  Sphere_3 sphere;
 };
+
+template <typename K>
+class Two_spheres 
+{
+public:
+  typedef typename K::FT FT;
+  
+  Two_spheres(Sphere<K> sphere1, Sphere<K> sphere2)
+    :  sphere1(sphere1), sphere2(sphere2)
+  {
+  }
+
+  FT operator()(FT x, FT y, FT z)
+  {
+    return sphere1(x, y, z)*sphere2(x, y, z);
+  }
+private:
+  Sphere<K> sphere1;
+  Sphere<K> sphere2;
+};
+  
 
 enum Flag { DEFAULT, DO_NOT_RUN};
 
@@ -38,7 +73,8 @@ struct Test_with_kernel {
     typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2T3;
 
     typedef typename K::Sphere_3 Sphere_3;
-
+    typedef typename K::Point_3 Point_3;
+    
     using CGAL::make_surface_mesh;
 
     Tr tr;
@@ -52,20 +88,22 @@ struct Test_with_kernel {
                                                        radius_bound,
                                                        distance_bound);
 
-    std::cout << "   implicit_surface sphere(O, 1.)\n";
+    std::cout << "   implicit_surface: sphere\n";
 
     // 2D-complex in 3D-Delaunay triangulation
     C2T3 c2t3 (tr);
+
+    typedef CGAL::Implicit_surface_3<K, Sphere<K> > Surface;
 
     CGAL::Timer timer;
 
     timer.start();
     // Surface meshing
     make_surface_mesh(c2t3,
-                      CGAL::make_implicit_surface_3(K(),
-                                                    Sphere(),
-                                                    Sphere_3(CGAL::ORIGIN, 4.),
-                                                    1e-03),
+                      Surface(Sphere<K>(Sphere_3(Point_3(0.3, -5., 1/3.),
+                                                 1.)),
+                              Sphere_3(Point_3(0.1, -4.5, 0.), 3.*3.),
+                              1e-03),
                       criteria,
                       Tag(),
                       initial_number_of_points);
@@ -88,6 +126,37 @@ struct Test_with_kernel {
     std::cout << "Final number of points: " << tr_2.number_of_vertices() 
               << "  (elasped time: " << timer.time() << ")\n\n";
   
+    typedef CGAL::Implicit_surface_3<K, Two_spheres<K> > Surface2;
+    typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::Type Surface_mesh_traits;
+    // initial points for a Sphere<K>
+
+    // same test, with Two_spheres
+    std::cout << "   Two spheres\n";
+    Tr tr_3;
+
+    Sphere<K> sphere1(Sphere_3(CGAL::ORIGIN, 1.));
+    Sphere<K> sphere2(Sphere_3(Point_3(0.9, 0., 0.),
+                               0.09*0.09));
+
+    // trick: insert in tr_3 the initial points for sphere2
+    Surface surface_of_sphere_2(sphere2, Sphere_3(Point_3(0.9, 0., 0.), 2.));
+    
+    Surface_mesh_traits().construct_initial_points_object()
+      (surface_of_sphere_2, CGAL::inserter(tr_3), initial_number_of_points);
+
+    C2T3 c2t3_3(tr_3);
+    timer.reset(); timer.start();
+    make_surface_mesh(c2t3_3,
+                      Surface2(Two_spheres<K>(sphere1,sphere2),
+                               Sphere_3(CGAL::ORIGIN, 2.)),
+                      criteria,
+                      Tag(),
+                      initial_number_of_points);
+    timer.stop();
+    std::cout << "Final number of points: " << tr_3.number_of_vertices() 
+              << "  (elasped time: " << timer.time() << ")\n\n";
+    
+
   }
 };
 

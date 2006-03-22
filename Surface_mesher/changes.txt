@@ -16,6 +16,7 @@
   Implicit_Surface_3, in its ref page
 - change some bug messages in
   include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+- add a case in the testsuite
 
 21 March 2006 Laurent Rineau
 - fix examples/Surface_mesher/3d_image_surface_mesher.C (stupid bug: the
