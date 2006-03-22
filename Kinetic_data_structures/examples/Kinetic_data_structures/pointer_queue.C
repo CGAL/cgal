@@ -9,31 +9,31 @@ Time proc_time_=-1;
 
 class Event
 {
-    public:
-        Event(double i): i_(i) {
-        }
-        Time time() const
-        {
-            return Time(i_);
-        };
-        void process(double t) const
-        {
-	  //std::cout << "Event at " << i_ << "\n";
-            proc_time_=i_;
-	    if (t != i_) {
-	      std::cerr << "ERROR: Times do not match. Got " << t 
-			<< " expected " << i_ <<std::endl;
-	    }
-            assert(t==i_);
-        }
-    protected:
-        Time i_;
+public:
+  Event(double i): i_(i) {
+  }
+  Time time() const
+  {
+    return Time(i_);
+  };
+  void process(double t) const
+  {
+    //std::cout << "Event at " << i_ << "\n";
+    proc_time_=i_;
+    if (t != i_) {
+      std::cerr << "ERROR: Times do not match. Got " << t 
+		<< " expected " << i_ <<std::endl;
+    }
+    assert(t==i_);
+  }
+protected:
+  Time i_;
 };
 
 std::ostream &operator<<(std::ostream &out, Event e)
 {
-    out << e.time();
-    return out;
+  out << e.time();
+  return out;
 }
 
 

@@ -650,13 +650,13 @@ protected:
     return false;
   }
 
-  unsigned int select(Queue &source, Queue &target, NT b) {
+  unsigned int select(Queue &source, Queue &target, NT b, bool binf) {
     unsigned int sz= source.size() + target.size();if (sz);
     int count=0;
     Iterator it= source.begin();
     while (it != source.end()) {
       // assert(it->time() >= a);
-      if (it->time() <= b) {
+      if (binf || it->time() <= b) {
 	Item *i= &*it;
 	Iterator t= boost::next(it);
 	source.erase(it);
@@ -720,7 +720,7 @@ protected:
       //ub_=end_split();
     }
 
-    unsigned int num= select(cand, front_, ub_);
+    unsigned int num= select(cand, front_, ub_, ub_is_inf_);
     if (ub_is_inf_) {
       make_inf(cand, cand.begin(), cand.end());
     }
