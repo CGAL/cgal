@@ -116,7 +116,7 @@ public:
   // Constructors:
   Polynomial(void);	// the Zero Polynomial
   Polynomial(int n);	// construct the Unit Polynomial of nominal deg n>=0
-  Polynomial(int n, NT * coef);
+  Polynomial(int n, const NT * coef);
   Polynomial(const Polynomial &);
   Polynomial(const VecNT &);
   Polynomial(int n, const char* s[]);
