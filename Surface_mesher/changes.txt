@@ -2,6 +2,12 @@
 - fix doc_tex/Surface_mesher_ref/ImplicitSurfaceTraits_3.tex after the
   changes of yesterday
 - forgot to tell that FT must be constructible from a double
+- fix the std::cerr everywhere: better use of the macro
+  CGAL_SURFACE_MESHER_VERBOSE
+- fix the (bool debug, bool verbose) parameters of
+  Surface_mesher::refine_mesh. It is now template parameters of the class
+  Surface_mesher. I have verified that the optimizer of GNU/CC is able to
+  strip the debug code when NO_DEBUG is use.
 
 21 March 2006 Laurent Rineau
 - fix examples/Surface_mesher/3d_image_surface_mesher.C (stupid bug: the

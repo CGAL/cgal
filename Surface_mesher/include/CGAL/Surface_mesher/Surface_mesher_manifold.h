@@ -155,7 +155,9 @@ namespace CGAL {
 
       void initialize_bad_vertices() const
       {
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
 	std::cout << "scanning vertices" << std::endl;
+#endif
 	int n = 0;
 	for (Finite_vertices_iterator vit = SMMBB::tr.finite_vertices_begin();
 	     vit != SMMBB::tr.finite_vertices_end();
@@ -167,13 +169,17 @@ namespace CGAL {
 	  }
 	}
 	bad_vertices_initialized = true;
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
 	std::cout << "   -> found " << n << " bad vertices\n";
+#endif
       }
 
       // Lazy initialization function
       void scan_triangulation_impl() {
 	SMMBB::scan_triangulation_impl();
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
 	std::cout << "scanning vertices (lazy)" << std::endl;
+#endif
       }
 
       // Returns the next element to refine

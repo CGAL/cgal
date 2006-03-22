@@ -203,7 +203,9 @@ namespace CGAL {
 
     void scan_triangulation_impl(const bool withBoundary) {
       SMB::scan_triangulation_impl();
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
       std::cout << "scanning edges..." << std::endl;
+#endif
       for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit !=
 	     SMB::tr.finite_edges_end(); ++eit) {
 	if ( (SMB::c2t3.face_status(*eit)

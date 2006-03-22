@@ -31,12 +31,6 @@
 
 #include <CGAL/iterator.h> // CGAL::inserter()
 
-#ifdef CGAL_SURFACE_MESHER_VERBOSE
-#  define CGAL_SURFACE_MESHER_VERBOSE_BOOLEAN true
-#else
-#  define CGAL_SURFACE_MESHER_VERBOSE_BOOLEAN false
-#endif
-
 namespace CGAL {
 
   struct Non_manifold_tag {};
@@ -52,8 +46,7 @@ namespace CGAL {
   struct Make_surface_mesh_helper {
     template <typename T>
     struct Tag_does_not_exist_error {};
-
-    typedef Tag_does_not_exist_error<Tag> Mesher;
+    typedef Tag_does_not_exist_error<Tag> Mesher_base;
   };
 
   template <
@@ -72,8 +65,6 @@ namespace CGAL {
       typename SurfaceMeshTraits_3::Surface_3,
       SurfaceMeshTraits_3,
       Criteria> Mesher_base;
-
-    typedef Surface_mesher::Surface_mesher<Mesher_base> Mesher;
   };
 
   template <
@@ -101,8 +92,6 @@ namespace CGAL {
       Criteria,
       Regular_edge_base
       > Mesher_base;
-
-    typedef Surface_mesher::Surface_mesher<Mesher_base> Mesher;
   };
 
   template <
@@ -129,8 +118,6 @@ namespace CGAL {
       Criteria,
       Regular_edge_without_boundary_base
       > Mesher_base;
-
-    typedef Surface_mesher::Surface_mesher<Mesher_base> Mesher;
   };
 
 template <typename C2T3,
@@ -165,7 +152,15 @@ void make_surface_mesh(C2T3& c2t3,
     C2T3,
     SurfaceMeshTraits_3,
     Criteria,
-    Tag>::Mesher Mesher;
+    Tag>::Mesher_base Mesher_base;
+
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
+  typedef Surface_mesher::Surface_mesher<
+    Mesher_base,
+    Surface_mesher::VERBOSE> Mesher;
+#else
+  typedef Surface_mesher::Surface_mesher<Mesher_base> Mesher;
+#endif
 
   typename SurfaceMeshTraits_3::Construct_initial_points get_initial_points =
     surface_mesh_traits.construct_initial_points_object();
@@ -174,7 +169,7 @@ void make_surface_mesh(C2T3& c2t3,
                      CGAL::inserter(c2t3.triangulation()),
                      initial_number_of_points);
   Mesher mesher(c2t3, surface, surface_mesh_traits, criteria);
-  mesher.refine_mesh(CGAL_SURFACE_MESHER_VERBOSE_BOOLEAN);
+  mesher.refine_mesh();
   // TODO initial, then refine()
 }
 

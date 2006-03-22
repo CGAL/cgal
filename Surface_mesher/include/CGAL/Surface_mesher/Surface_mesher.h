@@ -148,7 +148,9 @@ namespace CGAL {
       Point center;
       // We test only the finite Delaunay facets
 
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
       std::cout << "scanning facets..." << std::endl;
+#endif
       for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit !=
 	     tr.finite_facets_end(); ++fit) {
 	if (tr.dimension() == 3) {
@@ -564,8 +566,7 @@ namespace CGAL {
 
       // Else there is a problem with the dual
       else {
-	std::cerr << "WARNING : Pb with dual" << std::endl;
-	exit(-1);
+        CGAL_assertion(false);
       }
 
       return false;
@@ -640,7 +641,14 @@ namespace CGAL {
       
     } // end namespace details
 
-  template <typename Base>
+    enum Debug_flag { DEBUG, NO_DEBUG};
+    enum Verbose_flag { VERBOSE, NOT_VERBOSE};
+
+  template <
+    typename Base,
+    Verbose_flag verbose = NOT_VERBOSE,
+    Debug_flag debug = NO_DEBUG
+    >
   struct Surface_mesher
     : public Base,
       public details::Mesher_level_generator<Base,
@@ -687,20 +695,19 @@ namespace CGAL {
     }
 
     // Initialization
-    void init(bool debug = false)
+    void init()
       {
 	scan_triangulation();
 	initialized = true;
-	if (debug)
+	if (debug == DEBUG)
 	  check_restricted_delaunay();
       }
 
-    void refine_mesh (bool verbose = false, bool debug = false) {
+    void refine_mesh () {
       if(!initialized)
-	init (debug);
+	init();
 
-
-      if (!verbose)
+      if (verbose == NOT_VERBOSE)
 	refine (null_visitor);
       else {
 	std::cerr << "Refining...\n";
@@ -717,7 +724,7 @@ namespace CGAL {
 	std::cerr << "\ndone.\n";
       }
 
-      if (debug)
+      if (debug == DEBUG)
 	check_restricted_delaunay();
 
       initialized = false;
