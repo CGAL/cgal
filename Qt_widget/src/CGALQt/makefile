@@ -30,6 +30,16 @@
 CGAL_MAKEFILE_FAKE = REMOVE_FAKE_AND_SET_YOUR_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
+# defaut rule
+all: lib
+
+### inclusion of KDS sub-makefile
+
+# This rule to be able to compile Qt_widget without KDS.
+# For Solaris make, need to be *before* the inclusion.
+kds.makefile:
+	touch kds.makefile
+
 include kds.makefile
 
 #---------------------------------------------------------------------#
@@ -69,9 +79,10 @@ lib_no_install: $(CGAL_OBJECTS)
 clean:
 	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) *.moc
 
-kds.makefile:
-	touch kds.makefile
+### inclusion of KDS dependencies sub-makefile
 
+# This rule to be able to compile Qt_widget without KDS:
+# For Solaris make, need to be *before* the inclusion.
 kds_deps.makefile:
 	touch kds_deps.makefile
 
