@@ -5,6 +5,8 @@ run-targets: $(TARGETS)
 	  ./$$t; \
 	done
 
+.PHONY: run-targets
+
 #---------------------------------------------------------------------#
 #
 #                        dependencies

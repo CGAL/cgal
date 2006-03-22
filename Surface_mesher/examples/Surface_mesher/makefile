@@ -9,6 +9,10 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
+default-rule: all
+
+.PHONY: default-rule
+
 #---------------------------------------------------------------------#
 #                    ImageIO files
 #---------------------------------------------------------------------#
