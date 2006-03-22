@@ -32,7 +32,7 @@ class Gray_level_image_3
   float max_x, max_y, max_z;
 
 public:
-  Gray_level_image_3(const char* file, float isoval=0)
+  Gray_level_image_3(const char* file, float isoval)
   {
     image = ::_readImage(file);
     ::convertImageTypeToFloat(image);
