@@ -294,7 +294,6 @@ public:
 
   virtual void initialize(SNC_structure* W) {
 #ifdef CGAL_NEF_LIST_OF_TRIANGLES
-    initialized = true;
     set_snc(*W);
     candidate_provider = new SNC_candidate_provider(W);
 #else // CGAL_NEF_LIST_OF_TRIANGLES
@@ -308,7 +307,6 @@ public:
     CGAL_assertion( W != NULL);
 //    (Base) *this = SNC_decorator(*W);
 	set_snc(*W);
-    initialized = true;
     Object_list objects;
     Vertex_iterator v;
     Halfedge_iterator e;
@@ -394,10 +392,13 @@ public:
 #endif
     }
     Object_list_iterator oli=objects.begin()+v_end;
+    if(initialized)
+      delete candidate_provider;
     candidate_provider = new SNC_candidate_provider(objects,oli);
     // CGAL_NEF_TRACEN(*candidate_provider);
     TIMER(ct_t.stop());
 #endif // CGAL_NEF_LIST_OF_TRIANGLES
+    initialized = true;
   }
 
   virtual Self* clone() const { 
