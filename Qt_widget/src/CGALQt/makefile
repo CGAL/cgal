@@ -30,7 +30,7 @@
 CGAL_MAKEFILE_FAKE = REMOVE_FAKE_AND_SET_YOUR_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
--include kds.makefile
+include kds.makefile
 
 #---------------------------------------------------------------------#
 #                    compiler flags
@@ -69,7 +69,13 @@ lib_no_install: $(CGAL_OBJECTS)
 clean:
 	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) *.moc
 
--include kds_deps.makefile
+kds.makefile:
+	touch kds.makefile
+
+kds_deps.makefile:
+	touch kds_deps.makefile
+
+include kds_deps.makefile
 
 #---------------------------------------------------------------------#
 #                    suffix rules
