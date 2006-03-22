@@ -76,6 +76,7 @@ int main(int, char *[])
     n->set_data(5);
     n=NULL;
   }
+
   return EXIT_SUCCESS;
 }
 
