@@ -36,7 +36,7 @@ typedef CGAL::Gmpz NT;
 //typedef CGAL::Gmpq FNT;
 #endif
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Simple_homogeneous.h>
+//#include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -1243,7 +1243,7 @@ int main() {
   //  typedef CGAL::Simple_cartesian<FNT>       SC_kernel;
   //  typedef CGAL::Extended_cartesian<FNT>     EC_kernel;
   typedef CGAL::Homogeneous<NT>              H_kernel;
-  typedef CGAL::Simple_homogeneous<NT>      SH_kernel;
+  //  typedef CGAL::Simple_homogeneous<NT>      SH_kernel;
   typedef CGAL::Extended_homogeneous<NT>    EH_kernel;
   
   //std::cin>>debugthread;
@@ -1255,14 +1255,14 @@ int main() {
   //  test<SC_kernel> test_SC;
   //  test<EC_kernel> test_EC;
   test<H_kernel>  test_H;
-  test<SH_kernel> test_SH;
+  //  test<SH_kernel> test_SH;
   test<EH_kernel> test_EH;
 
   //  test_C.run_test();
   //  test_SC.run_test();
   //  test_EC.run_test();
   test_H.run_test();
-  test_SH.run_test();
+  //  test_SH.run_test();
   test_EH.run_test();
 
   t.stop();
