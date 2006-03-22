@@ -182,7 +182,9 @@ std::istream &operator>>(std::istream &in,
   Coordinate x, y;
   in >> x;
   char c;
-  in >> c;
+  do {
+    in >> c;
+  } while (std::isspace(c));
   if (c != ',') {
     in.setstate(std::ios_base::failbit);
     return in;

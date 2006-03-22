@@ -111,13 +111,13 @@ protected:
       CORE::BigFloat bflb, bfub;
       
       if (lb == -std::numeric_limits<Root>::infinity()){
-	bflb_= -f_.CauchyUpperBound();
+	bflb_= -f_.core_polynomial().CauchyUpperBound();
       } else {
 	bflb_= bf_lower_bound(lb.representation());
       }
 
       if (ub_ == std::numeric_limits<Root>::infinity()){
-	bfub_=  f_.CauchyUpperBound();
+	bfub_=  f_.core_polynomial().CauchyUpperBound();
       } else {
 	bfub_= bf_upper_bound(ub_.representation());
       }
@@ -159,10 +159,11 @@ protected:
     CORE::BFInterval bfi= sturm_.isolateRoot(1, bflb_, bfub_);
     //int nr= sturm_.numberOfRoots(bfi.first, bfi.second);
     int nr=1;
-    if (CGAL::sign(f_.eval(bfi.first)) == CGAL::sign(f_.eval(bfi.second))) ++nr;
+    if (CGAL::sign(f_.core_polynomial().eval(bfi.first)) 
+	== CGAL::sign(f_.core_polynomial().eval(bfi.second))) ++nr;
     //std::cout << nr << " " << bfi.first << " " << bfi.second <<  std::endl;
     bflb_= bfi.second;
-    CORE::Expr e(f_, bfi);
+    CORE::Expr e(f_.core_polynomial(), bfi);
     cur_ =Root(e/*/f_.scale()*/, nr);
     //std::cout << "root= " << cur_ <<  " " << e << std::endl;
   }

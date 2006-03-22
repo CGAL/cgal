@@ -281,7 +281,7 @@ public:
       Data d; 
       iss >> d;
       if (!iss) {
-	std::cerr << "Error reading object from line " << buf << std::endl;
+	std::cerr << "ERROR reading object from line " << buf << std::endl;
       } else {
 	insert(d);
       }

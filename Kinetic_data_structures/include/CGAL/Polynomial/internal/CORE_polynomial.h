@@ -25,76 +25,101 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-struct CORE_polynomial: public CORE::Polynomial<CORE::BigRat> {
+struct CORE_polynomial {
   typedef CORE::Polynomial<CORE::BigRat> P;
   typedef CORE::BigRat NT;
 
   template <class It>
-  CORE_polynomial(It b, It e): P(std::vector<NT>(b,e)) {
+  CORE_polynomial(It b, It e): p_(std::vector<NT>(b,e)) {
     /*for (int i=0; i<= degree(); ++i){
       CGAL_precondition(P::getCoeffi(i).err()==0);
       }*/
   }
   CORE_polynomial(){
   }
-  CORE_polynomial(NT n): P(0, &n){
+  CORE_polynomial(NT n): p_(0, &n){
   }
-  CORE_polynomial(int d): P(d){}
-  CORE_polynomial(const P&p): P(p){
+  CORE_polynomial(int d): p_(d){}
+  CORE_polynomial(const P&p): p_(p){
     /*for (int i=0; i<= degree(); ++i){
-      CGAL_precondition(P::getCoeffi(i).err()==0);
+      CGAL_precondition(p_.getCoeffi(i).err()==0);
       }*/
   }
 
   NT operator[](unsigned int i) const {
-    return P::getCoeffi(i);
+    return p_.getCoeffi(i);
   }
 
   /*NT &operator[](unsigned int i) {
-    return P::getCoeffi(i);
+    return p_.getCoeffi(i);
     }*/
 
   NT operator()(const NT &nt) const {
-    return P::eval(nt);
+    return p_.eval(nt);
   }
 
   bool operator==(const CORE_polynomial&o ) const {
-    if (P::getTrueDegree() != o.getTrueDegree()) {
+    if (p_.getTrueDegree() != o.p_.getTrueDegree()) {
       return false;
     } else {
-      for (int i=0; i<= P::getTrueDegree(); ++i) {
+      for (int i=0; i<= p_.getTrueDegree(); ++i) {
 	if (operator[](i) != o[i]) return false;
       }
     }
     return true;
   }
+  
+  bool operator!=(const CORE_polynomial&o ) const {
+    return !operator==(o);
+  }
 
   CORE_polynomial operator/(const NT &nt) const {
-    CORE_polynomial ret(P::getTrueDegree());
+    P ret(p_.getTrueDegree());
     for (int i=0; i<= degree(); ++i){
-      ret.setCoeff(i, operator[](i)/nt);
+      bool rr=ret.setCoeff(i, operator[](i)/nt);
+      CGAL_assertion(rr);
     }
-    return ret;
+    return CORE_polynomial(ret);
   }
 
   CORE_polynomial operator-() const {
-    CORE_polynomial ret(P::getTrueDegree());
+    P ret(p_.getTrueDegree());
     for (int i=0; i<= degree(); ++i){
-      ret.setCoeff(i, -operator[](i));
+      bool setr=ret.setCoeff(i, -operator[](i));
+      CGAL_assertion(setr);
     }
-    return ret;
+    return CORE_polynomial(ret);
+  }
+
+  CORE_polynomial operator-(const CORE_polynomial &o) const {
+    CORE_polynomial r(core_polynomial());
+    r.p_-=o.core_polynomial();
+    return r;
+  }
+
+
+  CORE_polynomial operator+(const CORE_polynomial &o) const {
+    CORE_polynomial r(core_polynomial());
+    r.p_+=o.core_polynomial();
+    return r;
+  }
+
+  CORE_polynomial operator*(const CORE_polynomial &o) const {
+    CORE_polynomial r(core_polynomial());
+    r.p_*=o.core_polynomial();
+    return r;
   }
 
   CORE::Expr operator()(const CORE::Expr &nt) const {
-    return P::eval(nt);
+    return p_.eval(nt);
   }
 
   int degree() const {
-    return P::getTrueDegree();
+    return p_.getTrueDegree();
   }
 
   const P &core_polynomial() const {
-    return *this;
+    return p_;
   }
 
   //! write it in maple format
@@ -111,12 +136,12 @@ struct CORE_polynomial: public CORE::Polynomial<CORE::BigRat> {
     else {
       for (int i=0; i<= degree(); ++i) {
 	if (i==0) {
-	  if (P::getCoeffi(i) != 0) s << P::getCoeffi(i);
+	  if (p_.getCoeffi(i) != 0) s << p_.getCoeffi(i);
 	}
 	else {
-	  if ( P::getCoeffi(i) != 0 ) {
-	    if (P::getCoeffi(i) >0) s << "+";
-	    s << P::getCoeffi(i) << "*t";
+	  if ( p_.getCoeffi(i) != 0 ) {
+	    if (p_.getCoeffi(i) >0) s << "+";
+	    s << p_.getCoeffi(i) << "*t";
 	    if (i != 1) {
 	      s << "^" << i;
 	    }
@@ -199,7 +224,7 @@ struct CORE_polynomial: public CORE::Polynomial<CORE::BigRat> {
       }
     }
     
-    P::operator=(P(coefs));
+    p_.operator=(P(coefs));
   }
 
   bool is_constant() const {
@@ -208,12 +233,15 @@ struct CORE_polynomial: public CORE::Polynomial<CORE::BigRat> {
 
   typedef const NT* iterator;
   iterator begin() const {
-    return P::coeff;
+    return p_.coeff;
   }
   iterator end() const {
-    return P::coeff+P::degree+1;
+    return p_.coeff+p_.degree+1;
   }
 
+
+protected:
+  P p_;
 };
 
 template < class C, class Tr>
@@ -230,6 +258,12 @@ inline std::istream &operator>>(std::basic_istream<C, Tr> &in,
 {
   poly.read(in);
   return in;
+}
+
+CORE_polynomial operator*(const CORE_polynomial::NT &a,
+			  const CORE_polynomial &p){
+  //CORE_polynomial::NT ac(a);
+  return CORE_polynomial(CORE_polynomial::P(0, &a)*p.core_polynomial());
 }
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

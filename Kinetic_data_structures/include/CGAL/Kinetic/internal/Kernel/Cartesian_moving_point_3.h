@@ -173,13 +173,17 @@ Cartesian_moving_point_3<Coordinate> &point)
     Coordinate x, y, z;
     in >> x;
     char c;
-    in >> c;
+    do {
+      in >> c;
+    } while (std::isspace(c));
     if (c != ',') {
         in.setstate(std::ios_base::failbit);
         return in;
     }
     in >> y;
-    in >> c;
+    do {
+      in >> c;
+    } while (std::isspace(c));
     if (c != ',') {
         in.setstate(std::ios_base::failbit);
         return in;

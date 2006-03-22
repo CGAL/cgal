@@ -87,7 +87,10 @@ void test_polynomial(const Traits &tr)
 
   write_variable( "a", a);
 
-  write("(p-q)+a" , ((p-q)+a) );
+  Polynomial diff(p-q);
+  Polynomial dp(diff +Polynomial(a));
+
+  write("(p-q)+a" , dp );
   check_equal<Traits>((p-q)+Polynomial(a) , cf(2, 0, 0, -17));
 
   write("(p-q)-a" , ((p-q)-a) );
@@ -195,6 +198,25 @@ int main(int argc, char* argv[])
   if ( argc > 1 ) {
     for_maple = atoi(argv[1]);
   }
+
+  /*
+    typedef CORE::BigRat NT;
+    typedef CORE::Polynomial<NT> P;
+    NT pc[4];
+    pc[0]=NT("-1/1");
+    pc[1]=NT("2/1");
+    pc[2]=NT("27/1");
+    pc[3]=NT("-17/1");
+    P p(3, pc);
+    NT qc[4];
+    qc[0]=NT("-1/1");
+    qc[1]=NT("2/1");
+    qc[2]=NT("27/1");
+    P q(2, qc);
+    std::cout << p << " " << q << std::endl;
+    NT a("2");
+    P r= (p+q) + a;
+    }*/
 
   /*if (for_maple){
     write_maple_functions(std::cout);

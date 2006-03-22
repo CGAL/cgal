@@ -116,14 +116,16 @@ std::ostream &operator<<(std::ostream &out, const Cartesian_moving_weighted_poin
 
 
 template <class Coordinate>
-std::istream &operator>>(std::istream &in,
+std::istream &operator>>(std::istream &in,gdb
 Cartesian_moving_weighted_point_3<Coordinate> &point)
 {
     Coordinate w;
     typename Cartesian_moving_weighted_point_3<Coordinate>::Bare_point p;
     in >> p;
     char c;
-    in >> c;
+    do {
+      in >> c;
+    } while (std::isspace(c));
     if (c != ',') {
         in.setstate(std::ios_base::failbit);
         return in;
