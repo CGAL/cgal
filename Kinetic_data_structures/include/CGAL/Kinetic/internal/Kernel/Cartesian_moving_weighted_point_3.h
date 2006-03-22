@@ -116,8 +116,8 @@ std::ostream &operator<<(std::ostream &out, const Cartesian_moving_weighted_poin
 
 
 template <class Coordinate>
-std::istream &operator>>(std::istream &in,gdb
-Cartesian_moving_weighted_point_3<Coordinate> &point)
+std::istream &operator>>(std::istream &in,
+			 Cartesian_moving_weighted_point_3<Coordinate> &point)
 {
     Coordinate w;
     typename Cartesian_moving_weighted_point_3<Coordinate>::Bare_point p;

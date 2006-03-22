@@ -7,8 +7,11 @@
 #include "include/SoQt_widget_3.h"
 #include "include/SoQt_moving_points_3.h"
 #include "include/SoQt_triangulation_3.h"
-#include <boost/program_options.hpp>
 #include <CGAL/Kinetic/Enclosing_box_3.h>
+#endif
+
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#include <boost/program_options.hpp>
 #endif
 
 int main(int argc, char *argv[])
@@ -19,6 +22,7 @@ int main(int argc, char *argv[])
     bool print_help=false;
     std::string file;
     bool verbose=false;
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
         ("help", boost::program_options::bool_switch(&print_help), "produce help message")
@@ -36,6 +40,7 @@ int main(int argc, char *argv[])
         std::cout << desc << "\n";
         return EXIT_FAILURE;
     }
+#endif
 
     typedef CGAL::Kinetic::Exact_simulation_traits_3 Traits;
     typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits> KDel;
