@@ -131,6 +131,7 @@ int main() {
   CGAL::Timer t;
   t.start();
 
+#ifndef CGAL_USE_LEDA
   { typedef CGAL::Homogeneous<NT>              H_kernel;
     typedef CGAL::Cartesian<FNT>               C_kernel;
     //    typedef CGAL::Cartesian<FNT2>              Q_kernel;
@@ -144,7 +145,7 @@ int main() {
     // test_Q.run_test();
   }
 
-#ifdef CGAL_USE_LEDA
+#else
   { typedef CGAL::Homogeneous<LNT>              LH_kernel;
     typedef CGAL::Cartesian<LFNT>               LC_kernel;
     //    typedef CGAL::Cartesian<LFNT2>              LQ_kernel;
