@@ -145,9 +145,6 @@ namespace CGAL {
           Sphere_oracle().intersect_3_object();
 
         const Sphere_3& sphere = surface.bounding_sphere();
-        const FT squared_radius = 
-          GT().compute_squared_radius_3_object()(sphere);
-        const FT sq_error = surface.squared_error_bound() * squared_radius;
 
         Point_3 a = point_on(s, 0);
         Point_3 b = point_on(s, 1);
@@ -163,7 +160,7 @@ namespace CGAL {
           return intersect_clipped_segment(surface,
                                            a,
                                            b,
-                                           sq_error);
+                                           surface.squared_error_bound());
         else
           return Object();
       } // end operator()(Surface_3, Segment_3)
@@ -173,9 +170,6 @@ namespace CGAL {
           Sphere_oracle().intersect_3_object();
 
         const Sphere_3& sphere = surface.bounding_sphere();
-        const FT squared_radius = 
-          GT().compute_squared_radius_3_object()(sphere);
-        const FT sq_error = surface.squared_error_bound() * squared_radius;
 
         Point_3 a, b;
         if(clip.clip_ray(sphere, r, a, b))
@@ -183,7 +177,7 @@ namespace CGAL {
           return intersect_clipped_segment(surface,
                                            a,
                                            b,
-                                           sq_error);
+                                           surface.squared_error_bound());
         }
         else
           return Object();
@@ -194,9 +188,6 @@ namespace CGAL {
           Sphere_oracle().intersect_3_object();
 
         const Sphere_3& sphere = surface.bounding_sphere();
-        const FT squared_radius = 
-          GT().compute_squared_radius_3_object()(sphere);
-        const FT sq_error = surface.squared_error_bound() * squared_radius;
 
         Point_3 a, b;
         if(clip.clip_line(sphere, l, a, b))
@@ -204,15 +195,13 @@ namespace CGAL {
           return intersect_clipped_segment(surface,
                                            a,
                                            b,
-                                           sq_error);
+                                           surface.squared_error_bound());
         }
         else
           return Object();
       }; // end operator()(Surface_3, Line_3)
 
-    private:
-      // Private functions
-#ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
+      // debug function
       static std::string debug_point(const Surface_3& surface,
                                      const Point& p)
       {
@@ -224,8 +213,9 @@ namespace CGAL {
           << ")";
         return s.str();
       }
-#endif
 
+    private:
+      // Private functions
       static CGAL::Sign surf_equation (Surface_3 surface,
                                        const Point& p)
       {
@@ -336,7 +326,8 @@ namespace CGAL {
                                     vector_3(CGAL::ORIGIN, center));
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS
-          std::cerr << "test (" << center << ", " << p << ")";
+          std::cerr << "test " << Self::Intersect_3::debug_point(surface, center)
+                    << ", " << Self::Intersect_3::debug_point(surface, p);
 #endif
 
           Object o = oracle.intersect_3_object()(surface,
@@ -346,7 +337,9 @@ namespace CGAL {
             *out++= intersection;
             --n;
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS
-            std::cerr << " = " << intersection << "\n";
+            std::cerr << " = "
+                      << Self::Intersect_3::debug_point(surface, intersection)
+                      << "\n";
 #endif
           }
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS

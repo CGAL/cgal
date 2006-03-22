@@ -38,11 +38,13 @@ namespace CGAL {
 
     Implicit_surface_3(Function f,
 		       const Sphere_3 bounding_sphere,
-		       const FT error_bound)
+		       const FT error_bound = FT(1e-3))
       : func(f),
-	sphere(bounding_sphere),
-	squared_error(error_bound*error_bound)
+	sphere(bounding_sphere)
     {
+      squared_error = error_bound * error_bound;
+      squared_error = squared_error * 
+        GT().compute_squared_radius_3_object()(bounding_sphere);
     }
 
     FT operator()(FT x, FT y, FT z)
