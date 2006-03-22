@@ -59,10 +59,10 @@ public:
     else{
       float value = ::triLinInterp(image, X, Y, Z); 
 
-      if (value > isovalue)
-	return FT(1);
-      else if (value < isovalue)
+      if (value > isovalue) // inside
 	return FT(-1);
+      else if (value < isovalue) // outside
+	return FT(1);
       else
 	return FT(0);
     }
