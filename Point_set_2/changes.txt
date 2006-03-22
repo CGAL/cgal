@@ -1,3 +1,9 @@
+
+22 March 2006 Andreas Fabri
+- Factorized out a common function
+- Added a comment why range search for a triangle is not exact without exact constructions
+- Minor changes in the manual
+
 14 March 2006 Joachim Reichel
 - Added/fixed CGAL_MAKEFILE= line in makefiles
 
