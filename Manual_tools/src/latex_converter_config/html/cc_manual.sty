@@ -864,7 +864,31 @@
         </TABLE><!3>
 }}
 
+
 % ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Package Descriptions
+% |
+% ###########################################################################
+
+\newcommand{\ccPkgDescriptionX}[1]{\lcRawHtml{<a href="#X1">User Manual</a>}}
+
+\newcommand{\ccPkgDescription}[3]{
+   \lciPushOutput{description}%
+   \lcRawHtml{<h2>}\lciCurrentChapterName\lcRawHtml{</h2>}
+
+   #1%   
+   
+   \lcRawHtml{<b>Maturity: </b>}#2
+   
+   \lcRawHtml{<b>Depends on: </b>}#3
+   
+   \ccPkgDescriptionX{\lciOutputFilename}
+   
+   \lciPopOutput%
+}
+
 % ###########################################################################
 % |
 % |   o   Global C++ Declarations

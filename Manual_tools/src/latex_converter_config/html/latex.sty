@@ -175,6 +175,10 @@
     \lciPushOutput{toc}\lciTocFileHeader\lciPopOutput
     \lciReadAuxtmp{\lciTmpPath}{\lciMainRootname}%  read auxtmp file
     \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
+    \lciPushOutput{description}%
+    \lciHtmlFileHeader{Package Description}%
+    \lcRawHtml{<H1>Package Description</H1>}
+    \lciPopOutput%    
 }{%
     % print remaining footnotes at the end of the conversion
     \lciPrintFootnotes\lciResetFootnotes
@@ -188,6 +192,9 @@
     % prepare Index Header and Footer (only if index is actually used)
     \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
     \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
+    \lciPushOutput{description}%    
+    \lciHtmlFileFooter%
+    \lciPopOutput%
 }
 
 % Args: tmp-path, main-rootname: reads *.auxtmp file created by latex_to_html
@@ -1057,6 +1064,7 @@
     \lciPushFootnotes
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \gdef{\lciCurrentChapterName}{#1}
     \refstepcounter{chapter}%
     \lciChapter{#1}% does also a PushOutput
     % cross linking rules

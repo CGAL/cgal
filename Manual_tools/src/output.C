@@ -45,10 +45,11 @@ ostream* main_anchor_stream    = 0; // used in Chapter's
 ostream* global_anchor_stream  = 0; // used for global files like TOC
 ostream* anchor_stream         = 0; // the current, one of the above or class
 
-ostream* pre_stream        = 0;
-ostream* main_stream       = 0;
-ostream* class_stream      = 0;
-ostream* contents_stream   = 0;
+ostream* pre_stream          = 0;
+ostream* main_stream         = 0;
+ostream* description_stream  = 0;
+ostream* class_stream        = 0;
+ostream* contents_stream     = 0;
 ostream* index_stream = 0;
 ostream* HREF_stream = 0;
 ostream* HREF_counter_stream = 0; 
@@ -189,28 +190,32 @@ void pop_current_output() {
 void set_current_output( const string& key) {
     bool new_filename = true;
     if ( key == "premain") {
-	current_output = Output_file( pre_stream, pre_main_filename);
+        current_output = Output_file( pre_stream, pre_main_filename);
         anchor_stream = global_anchor_stream;
     } else if ( key == "main") {
-	current_output = Output_file( main_stream, main_filename);
+        current_output = Output_file( main_stream, main_filename);
         anchor_stream = main_anchor_stream;
     } else if ( key == "class") {
-	current_output = Output_file( class_stream, class_filename);
+        current_output = Output_file( class_stream, class_filename);
+    } else if ( key == "description") {
+        current_output = Output_file( description_stream,  
+                                      macroX( "\\lciPkgDescriptionFilename") );
+        new_filename = false;
     } else if ( key == "toc") {
-	current_output = Output_file( contents_stream, 
-				      macroX( "\\lciContentsFilename"));
+        current_output = Output_file( contents_stream, 
+                                      macroX( "\\lciContentsFilename") );
         anchor_stream = global_anchor_stream;
     } else if ( key == "index") {
-	current_output = Output_file( index_stream,
-				      macroX( "\\lciIndexFilename"));
+        current_output = Output_file( index_stream,
+                                      macroX( "\\lciIndexFilename") );
         anchor_stream = global_anchor_stream;
         new_filename = false;
     } else if ( key == "anchor") {
-	current_output = Output_file( anchor_stream, 
-				      macroX( "\\lciAnchorFilename"));
+        current_output = Output_file( anchor_stream, 
+                                      macroX( "\\lciAnchorFilename") );
         new_filename = false;
     } else {
-	printErrorMessage( OutputStackKeyError);
+        printErrorMessage( OutputStackKeyError);
     }
     current_ostream  = current_output.stream_ptr();
     if ( new_filename) {

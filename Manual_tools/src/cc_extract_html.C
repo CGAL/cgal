@@ -422,6 +422,8 @@ main( int argc, char **argv) {
     // Prepare several streams:
     contents_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciContentsFilename"));  
+    description_stream = open_file_for_write( tmp_path + 
+                                              macroX( "\\lciPkgDescriptionFilename") );
 
     index_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciIndexFilename"));
@@ -479,6 +481,7 @@ main( int argc, char **argv) {
         insertInternalGlobalMacro( "\\lciOutputPath",    current_filepath);
         insertInternalGlobalMacro( "\\lciOutputUppath",  current_uppath);
 
+                                             
         anchor_stream = open_file_for_write( tmp_path + 
                                              macroX( "\\lciAnchorFilename"));
         global_anchor_stream = anchor_stream;
@@ -541,6 +544,9 @@ main( int argc, char **argv) {
  
     assert_file_write( *index_stream, macroX( "\\lciIndexFilename"));
     delete index_stream;
+    
+    assert_file_write( *description_stream, macroX( "\\lciPkgDescriptionFilename") );
+    delete description_stream;
    
     HREF_counter_stream = open_file_for_write( tmp_path +
                                  macroX( "\\lciHREFCounterFilename"));
