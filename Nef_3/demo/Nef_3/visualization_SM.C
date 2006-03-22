@@ -32,10 +32,15 @@ int main(int, char*){
 
 typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
-typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
-typedef Nef_polyhedron_3::Nef_polyhedron_S2 Nef_polyhedron_S2;
+
+
 
 int main(int argc, char* argv[]) {
+
+  // We've put the typedefs here as VC7 gives us an ICE if they are global typedefs
+  typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
+  typedef Nef_polyhedron_3::Nef_polyhedron_S2 Nef_polyhedron_S2;
+
   Nef_polyhedron_3 N;
   std::cin >> N;
   Vertex_const_iterator v = N.vertices_begin();
