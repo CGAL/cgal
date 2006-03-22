@@ -18,7 +18,7 @@ class Event
         };
         void process(double t) const
         {
-            std::cout << "Event at " << i_ << "\n";
+	  //std::cout << "Event at " << i_ << "\n";
             proc_time_=i_;
 	    if (t != i_) {
 	      std::cerr << "ERROR: Times do not match. Got " << t 
