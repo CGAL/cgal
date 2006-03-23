@@ -10,6 +10,8 @@
 //
 // Author(s)     : Laurent Rineau
 
+#include <assert.h>
+
 #include "parameters.h"
 #include "implicit_functions.h"
 
