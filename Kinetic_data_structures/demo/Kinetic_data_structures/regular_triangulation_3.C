@@ -65,7 +65,11 @@ int main(int argc, char *argv[])
 
     return qtsim->begin_event_loop();
 #else
-    bool regular_triangulation_3_compiled_without_CGAL_USE_SOQT_defined;
+    std::cout << "An install of Inventor and SoQt are required for this demo.  "
+      "Please make sure they are installed and then compile "
+      "using the makefile 'makefile.soqt'.\n"
+      "They can be found at http://www.coin3d.org or as an rpm from "
+      "your linux distribution (they are part of Fedora extras, for example).\n";
     return EXIT_FAILURE;
 #endif
 };
