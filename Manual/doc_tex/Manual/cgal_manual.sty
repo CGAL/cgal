@@ -231,6 +231,7 @@
   \newcommand{\packageright}[1]{\cgaldeclarepackage{##1}}%
   \newcommand{\packageleftright}[2]{%
     \cgaldeclarepackage{##1}\cgaldeclarepackage{##2}}%
+  \newcommand{\ccPartDescription}[2]{}
   #1
   \lcTex{%
     \renewcommand{\entryleft}[1]{##1}%
@@ -248,7 +249,9 @@
     \renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
     #1
   }%
-  \lcHtml{\lciIfTwoColumnToc{
+  \lcHtml{
+      \newcommand{\ccPartDescription}{\ccPartDescriptionImpl}  
+      \lciIfTwoColumnToc{
       \newcommand{\entryleft}[1]{\lcTocLeft ##1}%
       \newcommand{\entryright}[1]{\lcTocRight ##1}%
       \newcommand{\entryleftright}[2]{%
