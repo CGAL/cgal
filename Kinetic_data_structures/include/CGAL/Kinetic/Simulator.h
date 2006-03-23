@@ -235,16 +235,17 @@ public:
       /*CGAL_KINETIC_ERROR( "rational_current_time() called at time "
 	<< current_time() << " which is not rational.\n");*/
       ret= tr_(cur_time_);
-      CGAL_postcondition(ret != std::numeric_limits<NT>::infinity());
+      //std::cout << ret << " " << cur_time_ << std::endl;
+      CGAL_postcondition(!std::numeric_limits<NT>::has_infinity || ret != std::numeric_limits<NT>::infinity());
     } else {
       double ub= to_interval(current_time()).second;
       if (Time(ub) < next_event_time()) {
 	ret= NT(ub);
-	CGAL_postcondition(ret != std::numeric_limits<NT>::infinity());
+	CGAL_postcondition(!std::numeric_limits<NT>::has_infinity || ret != std::numeric_limits<NT>::infinity());
       } else {
 	typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
 	ret= bet(last_event_time(), next_event_time());
-	CGAL_postcondition(ret != std::numeric_limits<NT>::infinity());
+	CGAL_postcondition(!std::numeric_limits<NT>::has_infinity || ret != std::numeric_limits<NT>::infinity());
       }
     }
     return ret;
