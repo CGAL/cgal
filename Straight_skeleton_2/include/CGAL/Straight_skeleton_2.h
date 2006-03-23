@@ -38,6 +38,8 @@ public :
 
   typedef Traits_ Traits ;
 
+  typedef Straight_skeleton_2<Traits_,Items_,Alloc_> Self ;
+  
   typedef CGAL_HALFEDGEDS_DEFAULT <Traits_,Items_,Alloc_> Base ;
   
   typedef typename Base::Vertex_base     Vertex ;
@@ -50,8 +52,42 @@ public :
   
   typedef typename Base::Vertex_iterator Vertex_iterator ;
   typedef typename Base::Halfedge_iterator Halfedge_iterator  ;
+  typedef typename Base::Face_iterator Face_iterator  ;
 
   Straight_skeleton_2() {}
+  
+private :
+
+    Vertex_handle vertices_push_back( const Vertex& v) { return Vertex_handle(); }
+    Halfedge_handle edges_push_back( const Halfedge& h, const Halfedge& g) { return Halfedge_handle(); }
+    Halfedge_handle edges_push_back( const Halfedge& h) { return Halfedge_handle(); }
+    Face_handle faces_push_back( const Face& f) { return Face_handle(); }
+    
+    void vertices_pop_front() {}
+    void vertices_pop_back() {}
+    void vertices_erase( Vertex_handle v) {}
+    void vertices_erase( Vertex_iterator first, Vertex_iterator last) {}
+    void edges_erase( Halfedge_handle h) {}
+    void edges_pop_front() {}
+    void edges_pop_back()  {}
+    void edges_erase( Halfedge_iterator first, Halfedge_iterator last) {}
+    void faces_pop_front() {}
+    void faces_pop_back() {}
+    void faces_erase( Face_handle f) {}
+    void faces_erase( Face_iterator first, Face_iterator last) {}
+    void vertices_clear() {}
+    void edges_clear() {}
+    void faces_clear() {}
+    void clear() {}
+    void vertices_splice( Vertex_iterator target, Self &source,
+                          Vertex_iterator begin, Vertex_iterator end) {}
+
+    void halfedges_splice( Halfedge_iterator target, Self &source,
+                           Halfedge_iterator begin, Halfedge_iterator end) {}
+
+    void faces_splice( Face_iterator target, Self &source,
+                       Face_iterator begin, Face_iterator end) {}
+    void normalize_border() {}
 };
 
 

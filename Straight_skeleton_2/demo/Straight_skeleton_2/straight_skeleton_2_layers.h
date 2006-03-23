@@ -76,26 +76,6 @@ public:
             *widget << ( he->is_inner_bisector()? CGAL::BLUE : CGAL::GREEN ) ;
             *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
           }
-          /*
-          else
-          {
-            int id       = he->id();
-            int oppid    = lOppositeOK ? he->opposite()->id() : -1 ;
-            int vid      = lVertexOK ? he->vertex()->id() : -1 ;
-            int oppvid   = lOppVertexOK ? he->opposite()->vertex()->id() : -1 ;
-            int vheid    = lVertexHeOK ? he->vertex()->halfedge()->id() : -1 ;
-            int oppvheid = lOppVertexHeOK ? he->opposite()->vertex()->halfedge()->id() : -1 ;
-
-            std::printf("B%d ill-connected:\n"
-                        "  Opposite: %d\n"
-                        "  Vertex: %d\n"
-                        "  Opposite Vertex: %d\n"
-                        "  Vertex Halfedge: %d\n"
-                        "  Opposite Vertex Halfedge: %d\n"
-                        , id, oppid, vid, oppvid, vheid, oppvheid
-                        ) ;
-          }
-          */
         }
         he = he->next();
       }

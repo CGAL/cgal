@@ -1,3 +1,6 @@
+23 March 2006 Fernando Cacciola
+- More fixes for VC8
+
 20 March 2006 Fernando Cacciola
 - Coincident-node merging added
 - Base class qualification fixed for VC8

@@ -102,6 +102,11 @@ private :
 
   typedef Straight_skeleton_builder_2<Traits,SSkel> Self ;
   
+  typedef typename Halfedge::Base_base HBase_base ;
+  typedef typename Halfedge::Base      HBase ;
+  typedef typename Vertex::Base        VBase ;
+  typedef typename Face::Base          FBase ;
+  
 public:
 
   struct straight_skeleton_exception : std::runtime_error
@@ -629,7 +634,7 @@ private:
 
   std::list<Vertex_handle> mSLAV ;
 
-  EventPtr_Vector  mSplitEvents ;
+//  EventPtr_Vector  mSplitEvents ;
   SplitNodesVector mSplitNodes ;
 
   Event_compare mEventCompare ;
@@ -695,11 +700,11 @@ public:
 
       Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
 
-      lCCWBorder->Halfedge::HBase::set_face(lFace);
-      lFace     ->Face::Base::set_halfedge(lCCWBorder);
+      lCCWBorder->HBase_base::set_face(lFace);
+      lFace     ->FBase::set_halfedge(lCCWBorder);
 
-      lVertex   ->Vertex::Base::set_halfedge(lCCWBorder);
-      lCCWBorder->Halfedge::HBase::set_vertex(lVertex);
+      lVertex   ->VBase::set_halfedge(lCCWBorder);
+      lCCWBorder->HBase_base::set_vertex(lVertex);
 
       if ( lCurr == aBegin )
       {
@@ -714,13 +719,13 @@ public:
         SetDefiningBorderA(lVertex    ,lCCWBorder);
         SetDefiningBorderB(lPrevVertex,lCCWBorder);
 
-        lCWBorder->Halfedge::HBase::set_vertex(lPrevVertex);
+        lCWBorder->HBase_base::set_vertex(lPrevVertex);
 
-        lCCWBorder    ->Halfedge::HBase::set_prev(lPrevCCWBorder);
-        lPrevCCWBorder->Halfedge::HBase::set_next(lCCWBorder);
+        lCCWBorder    ->HBase_base::set_prev(lPrevCCWBorder);
+        lPrevCCWBorder->HBase_base::set_next(lCCWBorder);
 
-        lNextCWBorder->Halfedge::HBase::set_prev(lCWBorder);
-        lCWBorder    ->Halfedge::HBase::set_next(lNextCWBorder);
+        lNextCWBorder->HBase_base::set_prev(lCWBorder);
+        lCWBorder    ->HBase_base::set_next(lNextCWBorder);
 
         CGAL_SSBUILDER_TRACE(2,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
         CGAL_SSBUILDER_TRACE(2,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
@@ -747,18 +752,18 @@ public:
     SetDefiningBorderA(lFirstVertex,lFirstCCWBorder);
     SetDefiningBorderB(lPrevVertex ,lFirstCCWBorder);
 
-    lFirstCCWBorder->opposite()->Halfedge::HBase::set_vertex(lPrevVertex);
+    lFirstCCWBorder->opposite()->HBase_base::set_vertex(lPrevVertex);
 
     CGAL_SSBUILDER_SHOW
     ( SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
       draw_.Release();
     )
 
-    lFirstCCWBorder->Halfedge::HBase::set_prev(lPrevCCWBorder);
-    lPrevCCWBorder ->Halfedge::HBase::set_next(lFirstCCWBorder);
+    lFirstCCWBorder->HBase_base::set_prev(lPrevCCWBorder);
+    lPrevCCWBorder ->HBase_base::set_next(lFirstCCWBorder);
 
-    lPrevCCWBorder ->opposite()->Halfedge::HBase::set_prev(lFirstCCWBorder->opposite());
-    lFirstCCWBorder->opposite()->Halfedge::HBase::set_next(lPrevCCWBorder ->opposite());
+    lPrevCCWBorder ->opposite()->HBase_base::set_prev(lFirstCCWBorder->opposite());
+    lFirstCCWBorder->opposite()->HBase_base::set_next(lPrevCCWBorder ->opposite());
 
     CGAL_SSBUILDER_TRACE(2
                         , "CCW Border: E" << lFirstCCWBorder->id()

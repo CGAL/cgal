@@ -18,10 +18,6 @@
 #ifndef CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H
 #define CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H 1
 
-#ifndef CGAL_HALFEDGEDS_VERTEX_BASE_H
-#include <CGAL/HalfedgeDS_vertex_base.h>
-#endif
-
 #ifndef CGAL_STRAIGHT_SKELETON_HALFEDGE_BASE_2_H
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #endif
@@ -36,7 +32,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Refs, class P, class N >
 class Straight_skeleton_vertex_base_base_2
-  : public HalfedgeDS_vertex_base<Refs, Tag_true, P >
 {
 protected :
 
@@ -111,15 +106,24 @@ protected :
 
 public:
 
-  typedef HalfedgeDS_vertex_base<Refs, Tag_true, P> Base ;
-
+  typedef Straight_skeleton_vertex_base_base_2<Refs, P, N>  Base ;
+  
   typedef P Point_2;
   typedef N FT ;
 
-  typedef typename Refs::Vertex_handle         Vertex_handle ;
-  typedef typename Refs::Vertex_const_handle   Vertex_const_handle ;
-  typedef typename Refs::Halfedge_handle       Halfedge_handle ;
-  typedef typename Refs::Halfedge_const_handle Halfedge_const_handle ;
+  typedef Refs HalfedgeDS;
+  
+  typedef Tag_true Supports_vertex_halfedge;
+  typedef Tag_true Supports_vertex_point;
+  
+  typedef typename Refs::Vertex_handle         Vertex_handle;
+  typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Refs::Halfedge_handle       Halfedge_handle;
+  typedef typename Refs::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Refs::Face_handle           Face_handle;
+  typedef typename Refs::Face_const_handle     Face_const_handle;
+  typedef typename Refs::Halfedge              Halfedge;
+  typedef typename Refs::Face                  Face;
 
   typedef Halfedge_circulator_base< Halfedge_const_handle
                                    ,Halfedge_circulator_around_vertex_access_policy
@@ -141,12 +145,13 @@ public:
                                   >
             Halfedge_across_incident_faces_circulator ;
 
-protected:
+public:
 
   Straight_skeleton_vertex_base_base_2() : mID(-1) {}
+  
   Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP )
     :
-      Base(aP)
+      mP(aP)
     , mID(aID)
     , mTime(0.0)
   {
@@ -154,7 +159,7 @@ protected:
 
   Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP, FT aTime )
     :
-      Base(aP)
+      mP(aP)
     , mID(aID)
     , mTime(aTime)
  {
@@ -191,40 +196,54 @@ public:
 
   bool is_skeleton() const { return  this->halfedge()->is_bisector() ; }
   bool is_contour () const { return !this->halfedge()->is_bisector() ; }
-
+  
+  Point_2&              point()          { return mP; }
+  const Point_2&        point() const    { return mP; }
+  
+  Halfedge_handle       halfedge()       { return mHE; }
+  Halfedge_const_handle halfedge() const { return mHE; }
+  
+  void set_halfedge( Halfedge_handle aHE)  { mHE = aHE; }
+    
 private:
 
-  int mID ;
-  FT  mTime ;
+  Halfedge_handle mHE;
+  Point_2         mP;
+  int             mID ;
+  FT              mTime ;
 };
 
 template < class Refs, class P, class N >
-class Straight_skeleton_vertex_base_2
-  : public Straight_skeleton_vertex_base_base_2<Refs,P,N>
+class Straight_skeleton_vertex_base_2 : public Straight_skeleton_vertex_base_base_2<Refs,P,N>
 {
-
 public:
+
+  typedef P Point_2;
+  typedef N FT ;
+
+  typedef typename Refs::Vertex_handle         Vertex_handle;
+  typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Refs::Halfedge_handle       Halfedge_handle;
+  typedef typename Refs::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Refs::Face_handle           Face_handle;
+  typedef typename Refs::Face_const_handle     Face_const_handle;
+  typedef typename Refs::Halfedge              Halfedge;
+  typedef typename Refs::Face                  Face;
 
   typedef Straight_skeleton_vertex_base_base_2<Refs,P,N> Base ;
-
-  typedef typename Base::Base            Base_base ;
-  typedef typename Base::Point_2         Point_2;
-  typedef typename Base::FT              FT;
-  typedef typename Base::Halfedge_handle Halfedge_handle ;
-
-public:
-
+  
   Straight_skeleton_vertex_base_2() {}
-  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP )
-    :
-    Base(aID,aP)
-  {}
+  
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP ) : Base(aID,aP) {}
 
-  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime )
-    :
-    Base(aID,aP,aTime)
- {}
-};
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime ) : Base(aID,aP,aTime) {}
+  
+private:
+    
+  void set_halfedge( Halfedge_handle aHE)  { Base::set_halfedge(aHE) ; }
+} ;
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H //

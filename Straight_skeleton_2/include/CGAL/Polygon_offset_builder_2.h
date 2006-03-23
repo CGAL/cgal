@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 

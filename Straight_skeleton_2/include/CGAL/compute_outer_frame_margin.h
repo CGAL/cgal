@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Polygon_offset_builder_traits_2.h>
@@ -51,14 +52,14 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   
   FT lMaxSDist(0.0) ;
   
-  ForwardPointIterator lLast = predecessor(aEnd) ;
+  ForwardPointIterator lLast = CGAL::predecessor(aEnd) ;
   
   bool lOverflow = false ;
 
   for ( ForwardPointIterator lCurr = aBegin ; lCurr < aEnd ; ++ lCurr )
   {
-    ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : predecessor(lCurr) ) ;
-    ForwardPointIterator lNext = ( lCurr == lLast  ? aBegin : successor  (lCurr) ) ;
+    ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : CGAL::predecessor(lCurr) ) ;
+    ForwardPointIterator lNext = ( lCurr == lLast  ? aBegin : CGAL::successor  (lCurr) ) ;
     
     if ( !equal(*lPrev,*lCurr) && !equal(*lCurr,*lNext) && !collinear(*lPrev,*lCurr,*lNext) )
     {
