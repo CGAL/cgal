@@ -111,7 +111,7 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
 
     pos = strlen(buf);  
     
-    if(ImageIO_write(im, buf, strlen(buf)) == EOF) return -1;
+    if(ImageIO_write(im, buf, strlen(buf)) == 0) return -1;
     
     
     /* write user strings */
@@ -119,9 +119,9 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
       for(i = 0; i < im->nuser; i++) {
 	if ( im->user[i] == NULL ) continue;
 	pos += strlen(im->user[i]) + 2;
-	if(ImageIO_write(im, "#", 1) == EOF) return -1;
-	if(ImageIO_write(im, im->user[i], strlen(im->user[i])) == EOF) return -1;
-	if(ImageIO_write(im, "\n", 1) == EOF) return -1;
+	if(ImageIO_write(im, "#", 1) == 0) return -1;
+	if(ImageIO_write(im, im->user[i], strlen(im->user[i])) == 0) return -1;
+	if(ImageIO_write(im, "\n", 1) == 0) return -1;
       }
     }
     /* write end of header */
@@ -135,7 +135,7 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     for(i = pos; i < 252; i++) strcat(buf, "\n");
     strcat(buf, "##}\n");
     
-    if(ImageIO_write(im, buf, strlen(buf)) == EOF) return -1;
+    if(ImageIO_write(im, buf, strlen(buf)) == 0) return -1;
     else return 1;
   }
 

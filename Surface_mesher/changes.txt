@@ -1,5 +1,7 @@
 23 March 2006 Laurent Rineau
-- remove the precision from examples/Surface_mesher/3d_image_surface_mesher.C
+- remove the precision from
+  examples/Surface_mesher/3d_image_surface_mesher.C
+- killed warnings in ImageIO
 
 22 March 2006 Laurent Rineau
 - fix doc_tex/Surface_mesher_ref/ImplicitSurfaceTraits_3.tex after the

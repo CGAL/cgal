@@ -707,7 +707,7 @@ int writeGisHeader( const _image* inr )
   case DM_ASCII :
     sprintf( str+strlen(str), "-om ascii\n" );
   }
-  if( ImageIO_write( inr, str, strlen(str)) == EOF) {
+  if( ImageIO_write( inr, str, strlen(str)) == 0) {
     ImageIO_free( str );
     return -1;
   }
