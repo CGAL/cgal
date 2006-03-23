@@ -1,7 +1,7 @@
 GNUmakefile
 Doxyfile
 TODO
-demo
+windows
 Complex_2_in_triangulation_3
 Complex_2_in_triangulation_3_ref
 surface_mesher.C
