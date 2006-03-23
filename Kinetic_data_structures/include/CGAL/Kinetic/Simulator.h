@@ -230,22 +230,24 @@ public:
 
     //CGAL_exactness_precondition_code(CGAL::Interval_nt_advanced ub= CGAL::to_interval(next_event_time()));
     //CGAL_exactness_precondition(ub.inf() > lb.sup());
-    if (ir_(cur_time_)) {
+    NT ret;
+    if (ir_(cur_time_) && cur_time_ != std::numeric_limits<Time>::infinity()) {
       /*CGAL_KINETIC_ERROR( "rational_current_time() called at time "
 	<< current_time() << " which is not rational.\n");*/
-      return tr_(cur_time_);
-    }
-    else {
+      ret= tr_(cur_time_);
+      CGAL_postcondition(ret != std::numeric_limits<NT>::infinity());
+    } else {
       double ub= to_interval(current_time()).second;
       if (Time(ub) < next_event_time()) {
-	return NT(ub);
-      }
-      else {
+	ret= NT(ub);
+	CGAL_postcondition(ret != std::numeric_limits<NT>::infinity());
+      } else {
 	typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-	return bet(last_event_time(), next_event_time());
+	ret= bet(last_event_time(), next_event_time());
+	CGAL_postcondition(ret != std::numeric_limits<NT>::infinity());
       }
     }
-
+    return ret;
     //}
   }
 

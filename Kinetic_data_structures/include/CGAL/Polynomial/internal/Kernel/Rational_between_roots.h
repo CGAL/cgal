@@ -92,7 +92,11 @@ struct Rational_between_roots
     return result_type(0);
   }
   result_type operator()(double r0, double r1) const {
-    return (r0+r1)/2.0;
+    if (r1 != std::numeric_limits<double>::infinity()){
+      return (r0+r1)/2.0;
+    } else {
+      return 2*r0;
+    }
   }
 
   typename K::To_isolating_interval tii_;
