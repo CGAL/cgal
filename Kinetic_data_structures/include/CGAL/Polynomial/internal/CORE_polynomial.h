@@ -76,8 +76,8 @@ struct CORE_polynomial {
   CORE_polynomial operator/(const NT &nt) const {
     P ret(p_.getTrueDegree());
     for (int i=0; i<= degree(); ++i){
-      bool rr=ret.setCoeff(i, operator[](i)/nt);
-      CGAL_assertion(rr);
+      ret.setCoeff(i, operator[](i)/nt);
+      //CGAL_assertion(rr);
     }
     return CORE_polynomial(ret);
   }
@@ -85,8 +85,8 @@ struct CORE_polynomial {
   CORE_polynomial operator-() const {
     P ret(p_.getTrueDegree());
     for (int i=0; i<= degree(); ++i){
-      bool setr=ret.setCoeff(i, -operator[](i));
-      CGAL_assertion(setr);
+      ret.setCoeff(i, -operator[](i));
+      //CGAL_assertion(setr);
     }
     return CORE_polynomial(ret);
   }
