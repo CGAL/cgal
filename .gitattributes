@@ -1821,6 +1821,12 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/aircraft.o
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/torus_tri.off -text
+Surface_mesher/demo/Surface_mesher/implicit_functions.C -text
+Surface_mesher/demo/Surface_mesher/implicit_functions.h -text
+Surface_mesher/demo/Surface_mesher/implicit_surface_mesher.C -text
+Surface_mesher/demo/Surface_mesher/makefile -text
+Surface_mesher/demo/Surface_mesher/parameters.C -text
+Surface_mesher/demo/Surface_mesher/parameters.h -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset
