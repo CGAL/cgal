@@ -1,0 +1,114 @@
+# Created by the script cgal_create_makefile
+# This is the makefile for compiling a CGAL application.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = -g \
+           -I$(CGAL_INCL_DIR) \
+           $(CGAL_CXXFLAGS) \
+           -Iinclude\
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
+LDFLAGS =  \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS) 
+
+QT_LDFLAGS =  \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_QT_LDFLAGS) 
+
+CXXFLAGS_3D= $(CXXFLAGS) -DCGAL_USE_SOQT
+
+LDFLAGS_3D= $(QT_LDFLAGS) -lCoin -lSoQt
+
+DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+2d:          \
+                Delaunay_triangulation_2$(EXE_EXT) \
+                gui_2$(EXE_EXT) \
+                generate_data$(EXE_EXT) \
+                Delaunay_triangulation_stable_subset_2$(EXE_EXT) 
+	@echo Do install Coin and do "make 3d" to make the 3d demos
+
+all: 3d 2d
+
+
+3d:\
+	Delaunay_triangulation_3$(EXE_EXT) \
+	regular_triangulation_3$(EXE_EXT)\
+	gui_3$(EXE_EXT)
+
+
+generate_data$(EXE_EXT): generate_data$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generate_data generate_data$(OBJ_EXT) $(LDFLAGS)
+
+
+Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
+
+
+
+Delaunay_triangulation_stable_subset_2$(EXE_EXT): Delaunay_triangulation_stable_subset_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS)
+
+gui_2$(EXE_EXT): gui_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gui_2 gui_2$(OBJ_EXT) $(QT_LDFLAGS) 
+
+
+
+
+
+Delaunay_triangulation_3$(EXE_EXT): Delaunay_triangulation_3$(OBJ_EXT) $(DEPS_3D)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT) SoQt_examiner_viewer$(OBJ_EXT) $(LDFLAGS_3D)
+
+regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT) $(DEPS_3D)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_triangulation_3 regular_triangulation_3$(OBJ_EXT) SoQt_examiner_viewer$(OBJ_EXT) $(LDFLAGS_3D) 
+
+gui_3$(EXE_EXT): gui_3$(OBJ_EXT) $(DEPS_3D)
+	$(CGAL_CXX) $(CXXFLAGS_3D) $(OBJ_OPT) $<
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gui_3 gui_3$(OBJ_EXT) SoQt_examiner_viewer$(OBJ_EXT) $(LDFLAGS_3D)
+
+
+SoQt_examiner_viewer.moc: include/SoQt_examiner_viewer.h
+	$(QT_MOC) include/SoQt_examiner_viewer.h > SoQt_examiner_viewer.moc
+
+
+clean: \
+                   gui_2.clean \
+                   gui_3.clean \
+                   generate_data.clean \
+                   Delaunay_triangulation_2.clean \
+                   Delaunay_triangulation_3.clean \
+                   Delaunay_triangulation_stable_subset_2.clean \
+		   SoQt_examiner_viewer.clean\
+                   regular_triangulation_3.clean
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+

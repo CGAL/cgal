@@ -3,12 +3,12 @@
 #include <algorithm>
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
 
-#ifdef CGAL_USE_SOQT
+//#ifdef CGAL_USE_SOQT
 #include "include/SoQt_widget_3.h"
 #include "include/SoQt_moving_points_3.h"
 #include "include/SoQt_triangulation_3.h"
 #include <CGAL/Kinetic/Enclosing_box_3.h>
-#endif
+//#endif
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -16,7 +16,7 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef CGAL_USE_SOQT
+  //#ifdef CGAL_USE_SOQT
     int n=10;
     int d=2;
     bool print_help=false;
@@ -112,13 +112,13 @@ int main(int argc, char *argv[])
 
     kdel->set_has_certificates(true);
     return qtsim->begin_event_loop();
-#else
+    /*#else
     std::cout << "An install of Inventor and SoQt are required for this demo.  "
       "Please make sure they are installed and then compile "
       "using the makefile 'makefile.soqt'.\n"
       "They can be found at http://www.coin3d.org or as an rpm from "
       "your linux distribution (they are part of Fedora extras, for example).\n";
     return EXIT_FAILURE;
-#endif
+    #endif*/
 
 };

@@ -18,7 +18,7 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifdef CGAL_USE_SOQT
+//#ifdef CGAL_USE_SOQT
 
 
 #include "include/SoQt_examiner_viewer.h"
@@ -75,8 +75,8 @@ namespace CGAL
 
   };
 }
-#else 
+//#else 
 
-static bool SoQt_examiner_viewer_compiled_without_CGAL_USE_SOQT_defined;
+//static bool SoQt_examiner_viewer_compiled_without_CGAL_USE_SOQT_defined;
 
-#endif
+//#endif
