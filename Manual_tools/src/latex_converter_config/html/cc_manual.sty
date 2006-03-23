@@ -872,15 +872,10 @@
 % |
 % ###########################################################################
 
-\newcommand{\ccPkgSummary}[1]{\def\ccValueofPkgSummary{\lcRawHtml{<b>Summary: </b>}#1
-
-}}
-\newcommand{\ccPkgMaturity}[1]{\def\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1
-
-}}
-\newcommand{\ccPkgDependsOn}[1]{\def\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1
-
-}}
+\newcommand{\ccPartSummary}[1]{#1}
+\newcommand{\ccPkgSummary}[1]{\def\ccValueofPkgSummary{\lcRawHtml{<b>Summary: </b>}#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgMaturity}[1]{\def\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgDependsOn}[1]{\def\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
 
 \newenvironment{ccPkgDescription}{
   \ccPkgDescriptionX
@@ -901,15 +896,18 @@
 
 \newcommand{\ccPkgDescriptionXX}[2]{\lcRawHtml{<a href="#X1">}#2\lcRawHtml{</a>}}
 
+\newcommand{\ccPartDescriptionEnsureHR}{}
+
 \newcommand{\ccPartDescriptionImpl}[2]{
   \lciPushOutput{description}%
+  \ccPartDescriptionEnsureHR
   \lcRawHtml{<h2>}#1\lcRawHtml{</h2>} 
+  \def\ccValueofPkgSummary{}
   #2
-  \lcRawHtml{<hr>}
-  \lciPopOutput%
+  \ccValueofPkgSummary
+  \lciPopOutput%  
+  \newcommand{\ccPartDescriptionEnsureHR}{\lcRawHtml{<hr>}}
 }
-
-
 
 
 % ###########################################################################
