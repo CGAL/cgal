@@ -703,6 +703,12 @@ if [ ${TAUCS_OSTYPE:-fail} = "linux-gnu" ] ; then
   TAUCS_OSTYPE=linux
 fi
 
+# On Cygwin, OSTYPE is set to "cygwin",
+# which we need to change to "win32".
+if [ ${TAUCS_OSTYPE:-fail} = "cygwin" ] ; then
+  TAUCS_OSTYPE=win32
+fi
+
 # If TAUCS_OSTYPE is still not set, we try to set it
 # from uname, folding to lower case. This should sometimes
 # work, but sometimes uname returns a value that is
@@ -4099,6 +4105,7 @@ replace_line()
   fi
   if eval '${_sed} "\\^$2c\\
 $3${_EXTRA_NEWLINE}" "$1" > "$1.TEMP"' ; then
+    ${_rm} -f "$1"
     ${_mv} "$1.TEMP" "$1"
   else
     ${_printf} "%s\n" "Error sed replacement failed in replace_line()"

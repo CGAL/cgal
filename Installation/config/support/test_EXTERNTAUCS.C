@@ -50,12 +50,14 @@ extern "C"
 
 int main(int argc, char* argv[])
 {
-    // Call function in metis lib
-    METIS_NodeND(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Link with metis lib without actually calling METIS_NodeND(),
+    // which has complex parameters.
+    if (std::cout.bad())
+        METIS_NodeND(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     // TAUCS provides no version number :-(
     // Version 1 is obsolete, thus we assume version 2 (latest is 2.2 on 03/2006)
-    std::cout << "version=2" << std::endl;
+    std::cout << "version=2.x" << std::endl;
 
     return 0;
 }

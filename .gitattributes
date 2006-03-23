@@ -492,8 +492,10 @@ Homogeneous_kernel/changes.txt -text
 Installation/config/support/README -text
 Installation/config/support/S05-BOOST -text
 Installation/config/support/S06-BOOST_PROGRAM_OPTIONS -text
-Installation/config/support/S09-EXTERNTAUCS -text
-Installation/config/support/S10-TAUCS -text
+Installation/config/support/S08-EXTERNTAUCSNIX -text
+Installation/config/support/S09-EXTERNTAUCSMS -text
+Installation/config/support/S10-TAUCSNIX -text
+Installation/config/support/S11-TAUCSMS -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
 Installation/config/support/S25-MPFR -text

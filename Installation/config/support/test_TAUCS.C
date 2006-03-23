@@ -27,7 +27,7 @@
 // ---------------------------------------------------------------------
 
 // Test if TAUCS is available
-// Second step "TAUCS": 
+// Second step "TAUCS":
 // - find TAUCS second include folder ${TAUCSROOT}/src
 // - find main library "taucs"
 
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
     // TAUCS provides no version number :-(
     // Version 1 is obsolete, thus we assume version 2 (latest is 2.2 on 03/2006)
-    std::cout << "version=2" << std::endl;
+    std::cout << "version=2.x" << std::endl;
 
     return 0;
 }
