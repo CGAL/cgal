@@ -30,7 +30,7 @@ int main(int, char **) {
                                    bounding_sphere_squared_radius);
 
   // definition of the surface, with the 10^-2 as relative precision
-  Surface_3 surface(image, bounding_sphere);
+  Surface_3 surface(image, bounding_sphere, 1e-2);
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
