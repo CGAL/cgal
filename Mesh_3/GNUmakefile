@@ -7,6 +7,7 @@ examples:
 
 dep:
 	$(MAKE) -C examples/Mesh_3 dep
+	$(MAKE) -C test/Mesh_3 dep
 
 test:
 	${MAKE} -C test/Mesh_3 run

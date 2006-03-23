@@ -1,7 +1,11 @@
 .PHONY: all clean diff dist-clean doc doxygen examples test update run-examples \
-	run-test examples.clean test.clean run-all
+	run-test examples.clean test.clean run-all dep 
 
 all: test examples
+
+dep: 
+	$(MAKE) -C test/Surface_mesher dep
+	$(MAKE) -C examples/Surface_mesher dep
 
 # clean all object files
 clean: test.clean examples.clean

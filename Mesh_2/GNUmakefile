@@ -1,7 +1,11 @@
-.PHONY: all run test run-test demo examples clean update diff
+.PHONY: all run test run-test demo examples clean update diff dep
 
 
 all: run-test examples demo
+
+dep: 
+	$(MAKE) -C demo/Mesh_2 dep
+	$(MAKE) -C examples/Surface_mesher dep
 
 run-test:
 	${MAKE} -C examples/Mesh_2 run
