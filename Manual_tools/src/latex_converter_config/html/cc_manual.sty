@@ -872,22 +872,36 @@
 % |
 % ###########################################################################
 
-\newcommand{\ccPkgDescriptionX}[1]{\lcRawHtml{<a href="#X1">User Manual</a>}}
+\newcommand{\ccPkgSummary}[1]{\def\ccValueofPkgSummary{\lcRawHtml{<b>Summary: </b>}#1
 
-\newcommand{\ccPkgDescription}[3]{
-   \lciPushOutput{description}%
-   \lcRawHtml{<h2>}\lciCurrentChapterName\lcRawHtml{</h2>}
+}}
+\newcommand{\ccPkgMaturity}[1]{\def\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1
 
-   #1%   
-   
-   \lcRawHtml{<b>Maturity: </b>}#2
-   
-   \lcRawHtml{<b>Depends on: </b>}#3
-   
-   \ccPkgDescriptionX{\lciOutputFilename}
-   
-   \lciPopOutput%
+}}
+\newcommand{\ccPkgDependsOn}[1]{\def\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1
+
+}}
+
+\newenvironment{ccPkgDescription}{
+  \ccPkgDescriptionX
+}{
+  \ccValueofPkgSummary
+  \ccValueofPkgMaturity
+  \ccValueofPkgDependsOn
+  \ccPkgDescriptionXX{\lciOutputFilename}   
+  \lciPopOutput%
 }
+
+\newcommand{\ccPkgDescriptionX}[1]{
+  \def\ccValueofPkgName{#1}
+  \lciPushOutput{description}%
+  \lcRawHtml{<h2>}\ccValueofPkgName\lcRawHtml{</h2>} 
+  \def\ccValueofPkgSummary{}
+  \def\ccValueofPkgMaturity{}
+  \def\ccValueofPkgDependsOn{}
+}
+
+\newcommand{\ccPkgDescriptionXX}[1]{\lcRawHtml{<a href="#X1">User Manual</a>}}
 
 % ###########################################################################
 % |
