@@ -34,8 +34,10 @@
 #define CGAL_NEF3_UNMARKED_EDGE_COLOR 255,236,94
 #define CGAL_NEF3_UNMARKED_FACET_COLOR 249,215,44
 
-#ifndef _WIN32
-#define CALLBACK
+#ifdef _WIN32
+#define CGAL_GLU_TESS_CALLBACK CALLBACK
+#else
+#define CGAL_GLU_TESS_CALLBACK 
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -207,21 +209,21 @@ namespace OGL {
 // OGL Drawable Polyhedron:
 // ----------------------------------------------------------------------------
 
-  inline void beginCallback(GLenum which)
+  inline void CGAL_GLU_TESS_CALLBACK beginCallback(GLenum which)
   { glBegin(which); }
 
-  inline void endCallback(void)
+  inline void CGAL_GLU_TESS_CALLBACK endCallback(void)
   { glEnd(); }
 
-  inline void errorCallback(GLenum errorCode)
+  inline void CGAL_GLU_TESS_CALLBACK errorCallback(GLenum errorCode)
   { const GLubyte *estring;
     estring = gluErrorString(errorCode);
     fprintf(stderr, "Tessellation Error: %s\n", estring);
     std::exit (0);
   }
 
-  inline void vertexCallback(GLvoid* vertex,
-			     GLvoid* user)
+  inline void CGAL_GLU_TESS_CALLBACK vertexCallback(GLvoid* vertex,
+			                            GLvoid* user)
   { GLdouble* pc(static_cast<GLdouble*>(vertex));
     GLdouble* pu(static_cast<GLdouble*>(user));
     //    CGAL_NEF_TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
@@ -358,13 +360,13 @@ namespace OGL {
       //      CGAL_NEF_TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
-		      (GLvoid (CALLBACK *)()) &vertexCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &vertexCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_BEGIN),
-		      (GLvoid (CALLBACK *)()) &beginCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &beginCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_END),
-		      (GLvoid (CALLBACK *)()) &endCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
-		      (GLvoid (CALLBACK *)()) &errorCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &errorCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 
@@ -649,7 +651,4 @@ namespace OGL {
 } // namespace OGL
 
 CGAL_END_NAMESPACE
-#ifndef _WIN32
-#undef CALLBACK
-#endif
 #endif // CGAL_NEF_OPENGL_HELPER_H
