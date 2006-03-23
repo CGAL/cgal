@@ -20,7 +20,6 @@
 #define CGAL_MAKE_SURFACE_MESH_H
 
 #include <CGAL/Surface_mesher/Surface_mesher.h>
-#include <CGAL/Surface_mesher/Surface_mesher_regular_edges_without_boundary.h>
 #include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
 #include <CGAL/Surface_mesh_traits_generator_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
@@ -83,7 +82,8 @@ namespace CGAL {
       C2T3,
       typename SurfaceMeshTraits_3::Surface_3,
       SurfaceMeshTraits_3,
-      Criteria> Regular_edge_base;
+      Criteria,
+      true> /* true means "with boundary"*/ Regular_edge_base;
 
     typedef Surface_mesher::Surface_mesher_manifold_base<
       C2T3,
@@ -105,7 +105,7 @@ namespace CGAL {
     Criteria,
     Manifold_tag> // Manifold_tag partial specialization
   {
-    typedef Surface_mesher::Surface_mesher_regular_edges_without_boundary_base<
+    typedef Surface_mesher::Surface_mesher_regular_edges_base<
       C2T3,
       typename SurfaceMeshTraits_3::Surface_3,
       SurfaceMeshTraits_3,

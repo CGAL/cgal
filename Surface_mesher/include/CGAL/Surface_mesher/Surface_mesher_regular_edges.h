@@ -33,7 +33,8 @@ namespace CGAL {
     class C2T3,
     class Surface,
     class SurfaceMeshTraits,
-    class Criteria
+    class Criteria,
+    bool withBoundary = false
     >
   class Surface_mesher_regular_edges_base
     : public Surface_mesher_base<C2T3, Surface, SurfaceMeshTraits, Criteria>
@@ -58,8 +59,9 @@ namespace CGAL {
       typedef Const_circulator_from_container<Facets> Facet_circulator;
       typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
 
-    protected:
-      std::set <std::pair <Vertex_handle, Vertex_handle> > bad_edges;
+  protected:
+    mutable std::set <std::pair <Vertex_handle, Vertex_handle> > bad_edges;
+    mutable bool bad_edges_initialized;
 
     protected:
       bool is_in_complex(const C2t3& c, const Facet& f) const {
@@ -189,7 +191,8 @@ namespace CGAL {
                                         Surface& surface,
                                         SurfaceMeshTraits mesh_traits,
                                         Criteria& criteria)
-        : SMB(c2t3, surface, mesh_traits, criteria)
+        : SMB(c2t3, surface, mesh_traits, criteria),
+          bad_edges_initialized(false)
     {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
       std::cerr << "CONS: Surface_mesher_regular_edges_base\n";
@@ -197,15 +200,11 @@ namespace CGAL {
     }
 
     // Initialization function
-    void scan_triangulation_impl() {
-      scan_triangulation_impl(true);
-    }
-
-    void scan_triangulation_impl(const bool withBoundary) {
-      SMB::scan_triangulation_impl();
+    void initialize_bad_edges() const {
 #ifdef CGAL_SURFACE_MESHER_VERBOSE
       std::cout << "scanning edges..." << std::endl;
 #endif
+      int n = 0;
       for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit !=
 	     SMB::tr.finite_edges_end(); ++eit) {
 	if ( (SMB::c2t3.face_status(*eit)
@@ -214,22 +213,41 @@ namespace CGAL {
 	       (SMB::c2t3.face_status(*eit)
 		== C2t3::BOUNDARY) ) ) {
 	  bad_edges.insert( edge_to_edgevv(*eit) );
+          ++n;
 	}
       }
+      bad_edges_initialized = true;
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
+	std::cout << "   -> found " << n << " bad edges\n";
+#endif
+    }
+
+    void scan_triangulation_impl() {
+      SMB::scan_triangulation_impl();
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
+      std::cout << "scanning edges (lazy)" << std::endl;
+#endif
     }
 
     // Tells whether there remain elements to refine
     bool no_longer_element_to_refine_impl() const {
-      return (SMB::facets_to_refine.empty() && bad_edges.empty());
+      if(SMB::no_longer_element_to_refine_impl())
+      {
+        if( ! bad_edges_initialized )
+          initialize_bad_edges();
+        return bad_edges.empty();
+      }
+      return false;
     }
 
     // Returns the next element to refine
     Facet get_next_element_impl() {
 
-      if (!SMB::facets_to_refine.empty()) {
-	return SMB::facets_to_refine.front()->second;
+      if (!SMB::no_longer_element_to_refine_impl()) {
+	return SMB::get_next_element_impl();
       }
       else {
+        CGAL_assertion(bad_edges_initialized);
 	Edge first_bad_edge = edgevv_to_edge(*(bad_edges.begin()));
 	return biggest_incident_facet_in_complex(first_bad_edge);
       }
@@ -237,23 +255,27 @@ namespace CGAL {
 
     void before_insertion_impl(const Facet&, const Point& s,
 			       Zone& zone) {
-      for (typename Zone::Facets_iterator fit =
-	     zone.internal_facets.begin();
-	   fit != zone.internal_facets.end();
-	   ++fit)
-	handle_facet_inside_conflict_zone (*fit);
+      if( bad_edges_initialized )
+      {
+        for (typename Zone::Facets_iterator fit =
+               zone.internal_facets.begin();
+             fit != zone.internal_facets.end();
+             ++fit)
+          handle_facet_inside_conflict_zone (*fit);
 
-      for (typename Zone::Facets_iterator fit =
-	     zone.boundary_facets.begin(); fit !=
-	     zone.boundary_facets.end(); ++fit)
-	handle_facet_on_boundary_of_conflict_zone (*fit);
-
+        for (typename Zone::Facets_iterator fit =
+               zone.boundary_facets.begin(); fit !=
+               zone.boundary_facets.end(); ++fit)
+          handle_facet_on_boundary_of_conflict_zone (*fit);
+      }
       SMB::before_insertion_impl(Facet(), s, zone);
     }
 
-    void after_insertion_impl(const Vertex_handle v,
-			      const bool withBoundary) {
+    void after_insertion_impl(const Vertex_handle v) {
       SMB::after_insertion_impl(v);
+
+      if( ! bad_edges_initialized )
+        return;
 
       // search for incident facets around v
       Facets facets;
@@ -293,10 +315,6 @@ namespace CGAL {
 	  }
 	}
       }
-    }
-
-    void after_insertion_impl(const Vertex_handle v) {
-      after_insertion_impl(v, true);
     }
 
     std::string debug_info() const

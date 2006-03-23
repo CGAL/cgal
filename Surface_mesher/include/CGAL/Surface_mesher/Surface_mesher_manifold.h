@@ -52,9 +52,12 @@ namespace CGAL {
       typedef typename Vertices::iterator Vertices_iterator;
       typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
-    protected:
-      mutable std::set<Vertex_handle> bad_vertices; // @TODO, BEURK: mais
-      mutable bool bad_vertices_initialized;        // pourquoi mutable???!!!
+  protected:
+    // because of the caching, these two members have to be mutable,
+    // because they are actually updated in the const method
+    // 'no_longer_element_to_refine_impl()'
+    mutable std::set<Vertex_handle> bad_vertices;
+    mutable bool bad_vertices_initialized;
 
     private:
       Facet canonical_facet(const Facet& f) const {
@@ -65,46 +68,15 @@ namespace CGAL {
 
       // Action to perform on a facet on the boundary of the conflict zone
       void handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
-	Facet f1 = canonical_facet(f);
-	Cell_handle c = f1.first;
-	int i = f1.second;
+	const Facet f1 = canonical_facet(f);
+	const Cell_handle& c = f1.first;
+	const int i = f1.second;
 
        	// for each v of f
-	for (int j = 0; j < 4; j++) {
-	  if (i != j) {
-	    Vertex_handle v = c->vertex(j);
-
-	    if(bad_vertices_initialized){
-	      //if ( SMMBB::c2t3.is_in_complex(v) ) { // no need to test here
-		bad_vertices.erase(v);              // il faut tester les
-                                                    // facets, avant
-		//}
-	    }
-	  }
-	}
+	for (int j = 0; j < 4; j++)
+	  if (i != j)
+            bad_vertices.erase(c->vertex(j));
       }
-      /*
-      Facet biggest_incident_facet_in_complex(const Vertex_handle sommet)
-      const {
-	Graph& g = sommet->get_umbrellas_dual();
-	Nodes_map& nodes = g.get_nodes();
-	Nodes_map_iterator nit = nodes.begin();
-	Facet first_facet = (*nit).first;
-	Facet biggest_facet = first_facet;
-
-	for (++nit;
-	     nit != nodes.end();
-	     ++nit) {
-	  Facet current_facet = (*nit).first;
-	  // is the current facet bigger than the current biggest one
-	  if ( SMMBB::c2t3.compute_distance_to_facet_center(current_facet, sommet) >
-	       SMMBB::c2t3.compute_distance_to_facet_center(biggest_facet, sommet) ) {
-	    biggest_facet = current_facet;
-	  }
-	}
-	return biggest_facet;
-      }
-      */
 
       Facet biggest_incident_facet_in_complex(const Vertex_handle sommet) const {
 
@@ -127,6 +99,7 @@ namespace CGAL {
 	}
 	return biggest_facet;
       }
+
     public:
       Surface_mesher_manifold_base (C2T3& c2t3,
                                     Surface& surface,
@@ -188,7 +161,7 @@ namespace CGAL {
 	  return SMMBB::get_next_element_impl();
 	}
 	else {
-	  assert(bad_vertices_initialized);
+	  CGAL_assertion(bad_vertices_initialized);
 	  Vertex_handle first_bad_vertex = *(bad_vertices.begin());
 	  return biggest_incident_facet_in_complex(first_bad_vertex);
 	}
@@ -196,12 +169,15 @@ namespace CGAL {
 
       void before_insertion_impl(const Facet&, const Point& s,
 				 Zone& zone) {
-	for (typename Zone::Facets_iterator fit =
-	       zone.boundary_facets.begin(); fit !=
-	       zone.boundary_facets.end(); ++fit)
-	  if (SMMBB::c2t3.is_in_complex(*fit)) {
-	    handle_facet_on_boundary_of_conflict_zone (*fit); 
-	  }
+        if(bad_vertices_initialized)
+        {
+          for (typename Zone::Facets_iterator fit =
+                 zone.boundary_facets.begin(); fit !=
+                 zone.boundary_facets.end(); ++fit)
+            if (SMMBB::c2t3.is_in_complex(*fit)) {
+              handle_facet_on_boundary_of_conflict_zone (*fit); 
+            }
+        }
 	SMMBB::before_insertion_impl(Facet(), s, zone);
       }
 

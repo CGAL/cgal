@@ -3,6 +3,13 @@
   examples/Surface_mesher/3d_image_surface_mesher.C
 - killed warnings in ImageIO
 - updated test parameters
+- the handle of bad edges, in
+  include/CGAL/Surface_mesher/Surface_mesher_regular_edges.h, is now lazy,
+  like in Surface_mesher_manifold.h
+- include/CGAL/Surface_mesher/Surface_mesher_regular_edges_with_boundary.h 
+  now longer exists: Surface_mesher_regular_edges is templated by a
+  boolean (see the code)
+- fix efficiency errors in Surface_mesher_manifold.h
 
 22 March 2006 Laurent Rineau
 - fix doc_tex/Surface_mesher_ref/ImplicitSurfaceTraits_3.tex after the
