@@ -1,3 +1,15 @@
+ONGOING / QUESTIONS
+====================
+
+1. property maps: completed the solution with std::map. let's wait for
+Andreas' solution using the fields of the classes
+
+2. Visu: yes, geomview is probably the option...
+
+3. linagl ... let's see..
+
+
+
 Program blind_1pt.exe 
 --------------------- 
 takes as input a <inputPoints.txt> which is a xyz text file 

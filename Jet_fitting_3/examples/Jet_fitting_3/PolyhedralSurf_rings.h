@@ -47,7 +47,7 @@ protected:
   //collect enough rings -at least 1, to get at least min_nb of neighbors
   static void
     collect_enough_rings(Vertex* v,
-			 int min_nb,
+			 unsigned int min_nb,
 			 std::vector < Vertex * >& all, 
 			 VertexPropertyMap& vpm);
 };
@@ -128,7 +128,7 @@ collect_i_rings(Vertex* v,
 template <class TPoly, class VertexPropertyMap>
   void T_PolyhedralSurf_rings <TPoly, VertexPropertyMap>::
 collect_enough_rings(Vertex* v,
-		     int min_nb,
+		     unsigned int min_nb,
 		     std::vector < Vertex * >& all, 
 		     VertexPropertyMap& vpm)
 {

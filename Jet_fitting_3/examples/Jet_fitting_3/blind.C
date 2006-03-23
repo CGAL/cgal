@@ -24,23 +24,50 @@ typedef Data_Kernel::Point_3  DPoint;
 typedef Data_Kernel::Vector_3 DVector;
 
 //HDS
-typedef PolyhedralSurf::Vertex Vertex;
 typedef PolyhedralSurf::Vertex_handle Vertex_handle;
+typedef PolyhedralSurf::Vertex Vertex;
+typedef PolyhedralSurf::Halfedge_handle Halfedge_handle;
 typedef PolyhedralSurf::Halfedge Halfedge;
 typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
+typedef PolyhedralSurf::Facet_handle Facet_handle;
+typedef PolyhedralSurf::Facet Facet;
 
-//Vertex property map
-typedef std::map<Vertex*, int> Vertex_VP_map_type;
-typedef boost::associative_property_map< Vertex_VP_map_type > Vertex_VPM_type;
-typedef T_PolyhedralSurf_rings<PolyhedralSurf, Vertex_VPM_type > Poly_rings;
+struct Hedge_cmp{
+  bool operator()(Halfedge_handle a,  Halfedge_handle b) const{
+    return &*a < &*b;
+  }
+};
+
+struct Facet_cmp{
+  bool operator()(Facet_handle a, Facet_handle b) const{
+    return &*a < &*b;
+  }
+};
+
+
+//Vertex property map, with std::map
+typedef std::map<Vertex*, int> Vertex2int_map_type;
+typedef boost::associative_property_map< Vertex2int_map_type > Vertex_PM_type;
+typedef T_PolyhedralSurf_rings<PolyhedralSurf, Vertex_PM_type > Poly_rings;
 
 //Hedge property map, with enriched Halfedge with its length
-typedef HEdge_PM<PolyhedralSurf> HEdgePM_type;
-typedef T_PolyhedralSurf_hedge_ops<PolyhedralSurf, HEdgePM_type> Poly_hedge_ops;
+// typedef HEdge_PM<PolyhedralSurf> Hedge_PM_type;
+// typedef T_PolyhedralSurf_hedge_ops<PolyhedralSurf, Hedge_PM_type> Poly_hedge_ops;
+//Hedge property map, with std::map
+typedef std::map<Halfedge_handle, double, Hedge_cmp> Hedge2double_map_type;
+typedef boost::associative_property_map<Hedge2double_map_type> Hedge_PM_type;
+typedef T_PolyhedralSurf_hedge_ops<PolyhedralSurf, Hedge_PM_type> Poly_hedge_ops;
 
-//Facet property map with enriched Facet with its normal
-typedef Facet_PM<PolyhedralSurf> FacetPM_type;
-typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, FacetPM_type> Poly_facet_ops;
+// //Facet property map with enriched Facet with its normal
+// typedef Facet_PM<PolyhedralSurf> Facet_PM_type;
+// typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, Facet_PM_type> Poly_facet_ops;
+//Facet property map, with std::map
+typedef std::map<Facet_handle, Vector_3, Facet_cmp> Facet2normal_map_type;
+typedef boost::associative_property_map<Facet2normal_map_type> Facet_PM_type;
+typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, Facet_PM_type> Poly_facet_ops;
+
+
+
 
 //Kernel for local computations
 typedef double                LFT;
@@ -61,7 +88,7 @@ static const char *const optv[] = {
   NULL
 };
  
-// default fct parameter values and global variables
+// default parameter values and global variables
 unsigned int d_fitting = 2;
 unsigned int d_monge = 2;
 unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
@@ -72,13 +99,14 @@ unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
 
 
-//XFC document this function: explain what the cases are...
-//XFC possibly of interest, once cut into pieces, for polyhedral_surf
-
-//gather points around the vertex v using rings on the polyhedralsurf
+//gather points around the vertex v using rings on the
+//polyhedralsurf. the collection of points resorts to 3 alternatives:
+// 1. the exact number of points to be used
+// 2. the exact number of rings to be used
+// 3. nothing is specified
 void gather_fitting_points(Vertex* v, 
 			   std::vector<DPoint> &in_points,
-			   Vertex_VPM_type& vpm)
+			   Vertex_PM_type& vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
   std::vector<Vertex*> gathered; 
@@ -181,13 +209,22 @@ int main(int argc, char *argv[])
 
   //create property maps
   //-----------------------------
-  Vertex_VP_map_type vertex2props;
-  Vertex_VPM_type vpm(vertex2props);
+  //Vertex, using a std::map
+  Vertex2int_map_type vertex2props;
+  Vertex_PM_type vpm(vertex2props);
   
-  //hedge, with enriched hedge
-  HEdgePM_type hepm = get(boost::edge_weight_t(), P);
-  FacetPM_type fpm = get(boost::vertex_attribute_t(), P);
-
+  //Hedge, with enriched hedge
+  //HEdgePM_type hepm = get_hepm(boost::edge_weight_t(), P);
+  //Hedge, using a std::map
+  Hedge2double_map_type hedge2props;
+  Hedge_PM_type hepm(hedge2props);  
+  
+  //Facet PM, with enriched Facet
+  //FacetPM_type fpm = get_fpm(boost::vertex_attribute_t(), P);
+  //Facet PM, with std::map
+  Facet2normal_map_type facet2props;
+  Facet_PM_type fpm(facet2props);  
+  
   //initialize Polyhedral data : length of edges, normal of facets
   //debug : these fct do nothing!
   Poly_hedge_ops::compute_edges_length(P, hepm);

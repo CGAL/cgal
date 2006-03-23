@@ -90,7 +90,7 @@ namespace boost{
 };
 
 template <class TPoly> 
-Facet_PM<TPoly> get(boost::vertex_attribute_t, TPoly& P) {return Facet_PM<TPoly>();}
+Facet_PM<TPoly> get_fpm(boost::vertex_attribute_t, TPoly& P) {return Facet_PM<TPoly>();}
 
 
 
@@ -113,38 +113,28 @@ public:
   double& get_length()  { return len; }
 };
 
+/*XFC: tentative ... failed so far...*/
 //property map associated to the half edge
 template <class TPoly>
 class HEdge_PM : 
-  public boost::put_get_helper<double, HEdge_PM<TPoly> >
+  public boost::put_get_helper<typename TPoly::Traits::FT&, HEdge_PM<TPoly> >//double
 {
 public: 
-
-  //read_write
-  typedef boost::read_write_property_map_tag category;
+  //read_write or lvalue
+  //typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag category;
   typedef typename TPoly::Halfedge key_type;
   typedef typename TPoly::Traits::FT value_type;
   typedef typename TPoly::Traits::FT& reference;
-  
+
   HEdge_PM() {}
   reference operator[](key_type h) const {return h.len;}
 };
 
-
 //use the std edge_weight_t tag...
 template <class TPoly> 
-HEdge_PM<TPoly> get(boost::edge_weight_t, TPoly& P) {return HEdge_PM<TPoly>();}
-
-
-//NOTE: for a lvalue_property_map
-  //lvalue
-//   typedef boost::lvalue_property_map_tag category;
-//   typedef typename TPoly::Halfedge key_type;
-//   typedef typename TPoly::Traits::FT value_type;
-//   typedef typename TPoly::Traits::FT& reference;//lvalue
-
-//   HEdge_PM() {}
-//   reference operator[](key_type h) const {return h.len;}//lvalue
+HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& P) 
+{return HEdge_PM<TPoly>();}
 
 
 
