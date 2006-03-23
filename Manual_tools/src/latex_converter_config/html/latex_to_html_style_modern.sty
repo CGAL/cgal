@@ -43,6 +43,7 @@
 
 }}
 
+% FIXME: why is there a variable ccBiblioFilename, if biblio.html is still hardcoded?
 % Args: none
 \newcommand{\lciHtmlNavigationTop}{\lcRawHtml{
 <!-- Top Navigation ---------------------------------------------------- -->
@@ -52,6 +53,7 @@
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
   \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{]}}
   \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
+  <a href="}\lciOutputUppath\lcRawHtml{pkgdescription.html">Package Description</a>,
   <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
   <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
   <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>
@@ -68,6 +70,7 @@
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
   \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{]}}
   \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
+  <a href="}\lciOutputUppath\lcRawHtml{pkgdescription.html">Package Description</a>,
   <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
   <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
   <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>

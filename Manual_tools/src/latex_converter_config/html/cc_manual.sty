@@ -887,21 +887,30 @@
 }{
   \ccValueofPkgSummary
   \ccValueofPkgMaturity
-  \ccValueofPkgDependsOn
-  \ccPkgDescriptionXX{\lciOutputFilename}   
+  \ccValueofPkgDependsOn  
   \lciPopOutput%
 }
 
 \newcommand{\ccPkgDescriptionX}[1]{
-  \def\ccValueofPkgName{#1}
   \lciPushOutput{description}%
-  \lcRawHtml{<h2>}\ccValueofPkgName\lcRawHtml{</h2>} 
+  \lcRawHtml{<h3>}\ccPkgDescriptionXX{\lciOutputFilename}{#1}\lcRawHtml{</h3>} 
   \def\ccValueofPkgSummary{}
   \def\ccValueofPkgMaturity{}
   \def\ccValueofPkgDependsOn{}
 }
 
-\newcommand{\ccPkgDescriptionXX}[1]{\lcRawHtml{<a href="#X1">User Manual</a>}}
+\newcommand{\ccPkgDescriptionXX}[2]{\lcRawHtml{<a href="#X1">}#2\lcRawHtml{</a>}}
+
+\newcommand{\ccPartDescriptionImpl}[2]{
+  \lciPushOutput{description}%
+  \lcRawHtml{<h2>}#1\lcRawHtml{</h2>} 
+  #2
+  \lcRawHtml{<hr>}
+  \lciPopOutput%
+}
+
+
+
 
 % ###########################################################################
 % |

@@ -177,6 +177,7 @@
     \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
     \lciPushOutput{description}%
     \lciHtmlFileHeader{Package Description}%
+    \lciHtmlNavigationTop
     \lcRawHtml{<H1>Package Description</H1>}
     \lciPopOutput%    
 }{%
@@ -193,6 +194,7 @@
     \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
     \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
     \lciPushOutput{description}%    
+    \lciHtmlNavigationBottom
     \lciHtmlFileFooter%
     \lciPopOutput%
 }
@@ -1028,6 +1030,7 @@
 % part
 \newcommand{\part}[1]{\part[#1]{#1}}
 \newcommand{\part@om}{%
+    
     \lcNoLinkSync
     \lciEndPart
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
