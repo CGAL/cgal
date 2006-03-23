@@ -60,7 +60,7 @@ extern "C"
 
 /* taucs_avail_memory_size/cgal_taucs_available_memory_size         */
 /*   returns size of memory available for allocation                */
-double cgal_taucs_available_memory_size()
+inline double cgal_taucs_available_memory_size()
 {
     double m;
     double m_sys;
