@@ -10,6 +10,7 @@
   now longer exists: Surface_mesher_regular_edges is templated by a
   boolean (see the code)
 - fix efficiency errors in Surface_mesher_manifold.h
+- the teaser picture of the doc is now centered in HTML too
 
 22 March 2006 Laurent Rineau
 - fix doc_tex/Surface_mesher_ref/ImplicitSurfaceTraits_3.tex after the
