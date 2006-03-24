@@ -17,8 +17,8 @@
 //
 // Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
-#ifndef SM_DECORATOR_TRAITS_H
-#define SM_DECORATOR_TRAITS_H
+#ifndef CGAL_NEF_SM_DECORATOR_TRAITS_H
+#define CGAL_NEF_SM_DECORATOR_TRAITS_H
 
 template <class Refs_>
 class SM_decorator_traits {
@@ -88,4 +88,4 @@ class SM_decorator_const_traits {
   typedef typename Refs::SFace_cycle_const_iterator SFace_cycle_const_iterator;
 };
 
-#endif // SM_DECORATOR_TRAITS_H
+#endif // CGAL_NEF_SM_DECORATOR_TRAITS_H

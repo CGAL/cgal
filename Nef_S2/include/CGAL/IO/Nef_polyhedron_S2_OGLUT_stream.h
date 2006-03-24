@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#ifndef NEF_POLYHEDRON_S2_OGLUT_STREAM_H
-#define NEF_POLYHEDRON_S2_OGLUT_STREAM_H
+#ifndef CGAL_NEF_POLYHEDRON_S2_OGLUT_STREAM_H
+#define CGAL_NEF_POLYHEDRON_S2_OGLUT_STREAM_H
 
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_S2/SM_visualizor.h>
@@ -57,6 +57,6 @@ static CGAL::OGLUT_stream& operator<<(CGAL::OGLUT_stream& ogls,
 
 CGAL_END_NAMESPACE
 
-#endif // NEF_POLYHEDRON_S2_OGLUT_STREAM_H
+#endif // CGAL_NEF_POLYHEDRON_S2_OGLUT_STREAM_H
 
 

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
-#ifndef LEDA_SPHERE_MAP_H
-#define LEDA_SPHERE_MAP_H
+#ifndef CGAL_LEDA_SPHERE_MAP_H
+#define CGAL_LEDA_SPHERE_MAP_H
 
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
@@ -264,5 +264,5 @@ void dump(std::ostream& os) const
 }; // leda_sphere_map_overlayer<R>
 
 
-#endif //LEDA_SPHERE_MAP_H
+#endif //CGAL_LEDA_SPHERE_MAP_H
 

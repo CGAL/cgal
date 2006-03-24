@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
+// Author(s)     : Michael Seel       <seel@mpi-inf.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-inf.mpg.de>
 
 #ifndef CGAL_SPHERE_GEOMETRY_H
 #define CGAL_SPHERE_GEOMETRY_H

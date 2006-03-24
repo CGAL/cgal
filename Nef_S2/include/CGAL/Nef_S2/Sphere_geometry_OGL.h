@@ -36,8 +36,8 @@
 #define CGAL_NEF_DEBUG 151
 #include <CGAL/Nef_2/debug.h>
 
-#define LGREY CGAL::Color(170,170,200)
-#define DGREY CGAL::Color(30,30,50)
+#define CGAL_NEF_LGREY CGAL::Color(170,170,200)
+#define CGAL_NEF_DGREY CGAL::Color(30,30,50)
 
 CGAL_BEGIN_NAMESPACE
 namespace OGL {
@@ -702,7 +702,7 @@ public:
   Color color(SHalfloop_const_handle, Mark m) const
   { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
   Color color(SFace_const_handle, Mark m) const
-  { return ( m ? DGREY : LGREY ); }
+  { return ( m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY ); }
 };
 
 template <typename Nef_polyhedron>
@@ -770,7 +770,7 @@ class NefS2_to_UnitSphere
 		     T_.incident_mark(en)==T_.incident_mark(enn));
       Mark m = T_.incident_mark(e);
       Sphere_triangle t = T_.incident_triangle(e);
-      S_.push_back(t, (m ? DGREY : LGREY) );
+      S_.push_back(t, (m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY) );
       Done[e]=Done[en]=Done[enn]=true;
     }
     
