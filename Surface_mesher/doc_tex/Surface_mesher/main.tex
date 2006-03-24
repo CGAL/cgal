@@ -4,14 +4,14 @@
 
 \minitoc
 
+\begin{ccTexOnly}
 \begin{center}
-  \begin{ccTexOnly}
-  \includegraphics[height=10cm]{Surface_mesher/skull-surface}
-  \end{ccTexOnly}
-  \begin{ccHtmlOnly}
-  <img border="0" src="./skull-surface.png" height="75%">
-  \end{ccHtmlOnly}
+\includegraphics[height=10cm]{Surface_mesher/skull-surface}
 \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<img border="0" src="./skull-surface.png" align="center" height="75%">
+\end{ccHtmlOnly}
 
 \section{Introduction}
 \label{SurfaceMesher_section_intro}
@@ -223,15 +223,26 @@ an automatically generated traits class.
 In this example the surface to be meshed is defined
 as the locus of points with a given gray level
 in a 3D image.
-The code is quite similar to the previous example. The parameters of the
-surface creator are different:
-\begin{itemize}
-\item the function is an instance of the \ccc{CGAL::Gray_level_image_3}
-  class, 
-\item the bounding sphere is chosen carefully, so that its center is inside
-  the surface and the radius high enough to actually bound the definition
-  domain of the 3D image.
-\end{itemize}
+The code is quite similar to the previous example. 
+
+The main difference with the previous code 
+is that the function used to define the surface
+is  an object of type  \ccc{CGAL::Gray_level_image_3} created from
+an image file and a numerical value  which is  the
+ gray value of the level one wishes to mesh.
+
+Note that  surface, which is still an object of type  \ccc{Implicit_surface_3}
+is now, defined by three parametesr which are the function, the bounding
+sphere and a numerical value called {\em the precision}. This
+precision, whose value
+is relative to the bounding sphere radius, is used in the intersection
+computation.
+This parameter has a default which was used in the previous example.
+Also note that the center of the bounding sphere is required to be
+internal a point where the function has a negative value.
+
+
+
 \ccIncludeExampleCode{Surface_mesher/3d_image_surface_mesher.C}
 
 
