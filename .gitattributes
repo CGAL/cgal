@@ -501,6 +501,7 @@ Installation/config/support/S21-GMPXX -text
 Installation/config/support/S25-MPFR -text
 Installation/config/support/S30-CORE -text
 Installation/config/support/S32-CGALCORE -text
+Installation/config/support/S40-ZLIB -text
 Installation/config/support/S60-LEDA -text
 Installation/config/support/S62-LEDAMS -text
 Installation/config/support/S80-QT3MT -text
@@ -517,6 +518,7 @@ Installation/config/support/test_LEDA.C -text
 Installation/config/support/test_MPFR.C -text
 Installation/config/support/test_QT.C -text
 Installation/config/support/test_TAUCS.C -text
+Installation/config/support/test_ZLIB.C -text
 Installation/config/testfiles/CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG.C -text
 Installation/config/testfiles/CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG.C -text
 Installation/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C -text
