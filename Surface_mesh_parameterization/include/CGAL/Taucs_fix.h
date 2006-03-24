@@ -54,30 +54,27 @@ extern "C"
 
 /********************************************************************/
 /*                                                                  */
-/* FIX OF TAUCS BUGGY FUNCTION taucs_system_memory_size()           */
+/* FIX OF TAUCS BUGGY FUNCTION taucs_available_memory_size()        */
 /*                                                                  */
 /********************************************************************/
 
-/* taucs_avail_memory_size/cgal_taucs_available_memory_size         */
+/* taucs_available_memory_size/cgal_taucs_available_memory_size     */
 /*   returns size of memory available for allocation                */
 inline double cgal_taucs_available_memory_size()
 {
-    double m;
-    double m_sys;
+    double m;       /* size of memory available for allocation */
+    double m_sys;   /* size of physical memory */
 
-    m = taucs_system_memory_size();
-
-    /* taucs_system_memory_size() is buggy on Linux 2.6 */
-    /* It returns only 1% of the actual memory          */
 #ifdef OSTYPE_linux
+    /* taucs_available_memory_size() is buggy on Linux 2.6 */
+    /* It returns only 1% of the actual memory             */
     m_sys  = (double) sysconf(_SC_PAGESIZE);
     m_sys *= (double) sysconf(_SC_PHYS_PAGES);
 
-    if (m < m_sys/10.0)
-    {
-        /* we limit m by 0.75*m_sys */
-        m = floor(0.75 * m_sys);
-    }
+    /* we limit m by 0.75*m_sys */
+    m = floor(0.75 * m_sys);
+#else
+    m = taucs_available_memory_size();
 #endif
 
     taucs_printf("cgal_taucs_available_memory_size returns %lfMB\n", m/1048576.0);
