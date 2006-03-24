@@ -40,6 +40,13 @@
 #define CGAL_GLU_TESS_CALLBACK 
 #endif
 
+#ifdef __APPLE__
+    #define CGAL_GLU_TESS_DOTS ...
+#else
+    #define CGAL_GLU_TESS_DOTS
+#endif
+
+
 CGAL_BEGIN_NAMESPACE
 
 namespace OGL {
@@ -360,13 +367,13 @@ namespace OGL {
       //      CGAL_NEF_TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
-		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &vertexCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)(CGAL_GLU_TESS_DOTS)) &vertexCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_BEGIN),
-		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &beginCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)(CGAL_GLU_TESS_DOTS)) &beginCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_END),
-		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &endCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)(CGAL_GLU_TESS_DOTS)) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
-		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &errorCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)(CGAL_GLU_TESS_DOTS)) &errorCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 
