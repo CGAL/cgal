@@ -13,8 +13,8 @@
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
 
-#ifndef VERTEX_CYCLE_TO_NEF_3_H
-#define VERTEX_CYCLE_TO_NEF_3_H
+#ifndef CGAL_NEF_VERTEX_CYCLE_TO_NEF_3_H
+#define CGAL_NEF_VERTEX_CYCLE_TO_NEF_3_H
 
 #include <iostream>
 #include <sstream>
@@ -330,4 +330,4 @@ typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
 }
 
 CGAL_END_NAMESPACE
-#endif // VERTEX_CYCLE_TO_NEF_3_H
+#endif // CGAL_NEF_VERTEX_CYCLE_TO_NEF_3_H

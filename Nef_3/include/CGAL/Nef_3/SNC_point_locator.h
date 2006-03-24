@@ -17,8 +17,8 @@
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
-#ifndef SNC_POINT_LOCATOR_H
-#define SNC_POINT_LOCATOR_H
+#ifndef CGAL_NEF_SNC_POINT_LOCATOR_H
+#define CGAL_NEF_SNC_POINT_LOCATOR_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
@@ -49,11 +49,11 @@
 // TODO: find out the proper CGAL replacement for this macro and remove it
 #define CGAL_for_each( i, C) for( i = C.begin(); i != C.end(); ++i)
 
-// #define TIMER(instruction) instruction
-#define TIMER(instruction)
+// #define CGAL_NEF_TIMER(instruction) instruction
+#define CGAL_NEF_TIMER(instruction)
 
-// #define CLOG(t) std::clog <<" "<<t<<std::endl; std::clog.flush()
-#define CLOG(t)
+// #define CGAL_NEF_CLOG(t) std::clog <<" "<<t<<std::endl; std::clog.flush()
+#define CGAL_NEF_CLOG(t)
 
 CGAL_BEGIN_NAMESPACE
 
@@ -131,16 +131,16 @@ public:
   virtual void add_vertex(Vertex_handle v) {}
 
   virtual ~SNC_point_locator() {
-    CLOG("");
-    CLOG("construction_time:  "<<ct_t.time());
-    CLOG("pointlocation_time: "<<pl_t.time());
-    CLOG("rayshooting_time:   "<<rs_t.time());
-    CLOG("intersection_time:  "<<it_t.time());
+    CGAL_NEF_CLOG("");
+    CGAL_NEF_CLOG("construction_time:  "<<ct_t.time());
+    CGAL_NEF_CLOG("pointlocation_time: "<<pl_t.time());
+    CGAL_NEF_CLOG("rayshooting_time:   "<<rs_t.time());
+    CGAL_NEF_CLOG("intersection_time:  "<<it_t.time());
     // warning: the total time showed here could be actually larger
     // that the real time used by this class, since point location
     // and intersection test use the ray shooter and so the same time 
     // could be account to more than one timer
-    CLOG("pltotal_time:       "<<
+    CGAL_NEF_CLOG("pltotal_time:       "<<
       ct_t.time()+pl_t.time()+rs_t.time()+it_t.time());
   };
 };
@@ -297,12 +297,12 @@ public:
     set_snc(*W);
     candidate_provider = new SNC_candidate_provider(W);
 #else // CGAL_NEF_LIST_OF_TRIANGLES
-    TIMER(ct_t.start());
+    CGAL_NEF_TIMER(ct_t.start());
     strcpy( this->version_, "Point Locator by Spatial Subdivision (tm)");
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    CLOG(version()<<" (with triangulated facets)");
+    CGAL_NEF_CLOG(version()<<" (with triangulated facets)");
 #else
-    CLOG(version());
+    CGAL_NEF_CLOG(version());
 #endif
     CGAL_assertion( W != NULL);
 //    (Base) *this = SNC_decorator(*W);
@@ -396,7 +396,7 @@ public:
       delete candidate_provider;
     candidate_provider = new SNC_candidate_provider(objects,oli);
     // CGAL_NEF_TRACEN(*candidate_provider);
-    TIMER(ct_t.stop());
+    CGAL_NEF_TIMER(ct_t.stop());
 #endif // CGAL_NEF_LIST_OF_TRIANGLES
     initialized = true;
   }
@@ -412,10 +412,10 @@ public:
   virtual bool update( Unique_hash_map<Vertex_handle, bool>& V, 
                        Unique_hash_map<Halfedge_handle, bool>& E, 
                        Unique_hash_map<Halffacet_handle, bool>& F) {
-    TIMER(ct_t.start());
+    CGAL_NEF_TIMER(ct_t.start());
     CGAL_assertion( initialized);
     bool updated = candidate_provider->update( V, E, F);
-    TIMER(ct_t.stop());
+    CGAL_NEF_TIMER(ct_t.stop());
     return updated;
   }
 
@@ -425,7 +425,7 @@ public:
   }
 
   virtual Object_handle shoot(const Ray_3& ray, int mask=255) const {
-    TIMER(rs_t.start());
+    CGAL_NEF_TIMER(rs_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "shooting: "<<ray);
     Object_handle result;
@@ -547,13 +547,13 @@ public:
       if(!hit)
         ++objects_iterator;
     }
-    TIMER(rs_t.stop());
+    CGAL_NEF_TIMER(rs_t.stop());
     return result;
   }
 
   virtual Object_handle locate( const Point_3& p) const {
     if(Infi_box::extended_kernel()) {
-    TIMER(pl_t.start());
+    CGAL_NEF_TIMER(pl_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "locate "<<p);
     Object_handle result;
@@ -622,8 +622,8 @@ public:
       _CGAL_NEF_TRACEN("shooting ray to determine the volume");
       Ray_3 r( p, Vector_3( -1, 0, 0));
       result = Object_handle(determine_volume(r));
-    }    TIMER(pl_t.start());
-    TIMER(pl_t.stop());
+    }    CGAL_NEF_TIMER(pl_t.start());
+    CGAL_NEF_TIMER(pl_t.stop());
     return result;
   } else {   // standard kernel
     CGAL_assertion( initialized);
@@ -790,7 +790,7 @@ public:
   virtual void intersect_with_edges_and_facets( Halfedge_handle e0,
 	const typename SNC_point_locator::Intersection_call_back& call_back) const {
 
-    TIMER(it_t.start());
+    CGAL_NEF_TIMER(it_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "intersecting edge: "<<&*e0<<' '<<Segment_3(e0->source()->point(),
                                                          e0->twin()->source()->point()));
@@ -867,12 +867,12 @@ public:
       else
         CGAL_assertion_msg( 0, "wrong handle");
     }
-    TIMER(it_t.stop());
+    CGAL_NEF_TIMER(it_t.stop());
   }
 
   virtual void intersect_with_edges( Halfedge_handle e0,
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
-    TIMER(it_t.start());
+    CGAL_NEF_TIMER(it_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "intersecting edge: "<<&*e0<<' '<<Segment_3(e0->source()->point(),
                                                          e0->twin()->source()->point()));
@@ -923,12 +923,12 @@ public:
       else
         CGAL_assertion_msg( 0, "wrong handle");
     }
-    TIMER(it_t.stop());
+    CGAL_NEF_TIMER(it_t.stop());
   }
 
   virtual void intersect_with_facets( Halfedge_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
-    TIMER(it_t.start());
+    CGAL_NEF_TIMER(it_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                                e0->twin()->source()->point()));
@@ -991,7 +991,7 @@ public:
       else
         CGAL_assertion_msg( 0, "wrong handle");
     }
-    TIMER(it_t.stop());
+    CGAL_NEF_TIMER(it_t.stop());
   }
 
 private:
@@ -1083,13 +1083,13 @@ public:
 public:
   SNC_point_locator_naive() : initialized(false) {}
   virtual void initialize(SNC_structure* W) { 
-    TIMER(ct_t.start());
+    CGAL_NEF_TIMER(ct_t.start());
     strcpy(this->version_, "Naive Point Locator (tm)");
-    CLOG(version());
+    CGAL_NEF_CLOG(version());
     CGAL_assertion( W != NULL);
     Base::initialize(W); 
     initialized = true;
-    TIMER(ct_t.stop());
+    CGAL_NEF_TIMER(ct_t.stop());
   }
 
   virtual Self* clone() const { 
@@ -1099,25 +1099,25 @@ public:
   virtual bool update( Unique_hash_map<Vertex_handle, bool>& V, 
                        Unique_hash_map<Halfedge_handle, bool>& E, 
                        Unique_hash_map<Halffacet_handle, bool>& F) {
-    TIMER(ct_t.start());
+    CGAL_NEF_TIMER(ct_t.start());
     CGAL_assertion( initialized);
-    TIMER(ct_t.stop());
+    CGAL_NEF_TIMER(ct_t.stop());
     return false;
   }
 
   virtual ~SNC_point_locator_naive() {}
 
   virtual Object_handle locate(const Point_3& p) const {
-    TIMER(pl_t.start());
+    CGAL_NEF_TIMER(pl_t.start());
     CGAL_assertion( initialized);
-    TIMER(pl_t.stop());
+    CGAL_NEF_TIMER(pl_t.stop());
     return Base::locate(p);
   }
 
   virtual Object_handle shoot(const Ray_3& r, int mask=0) const {
-    TIMER(rs_t.start());
+    CGAL_NEF_TIMER(rs_t.start());
     CGAL_assertion( initialized);
-    TIMER(rs_t.stop());
+    CGAL_NEF_TIMER(rs_t.stop());
     return Base::shoot(r);
   }
 
@@ -1131,7 +1131,7 @@ public:
 
   virtual void intersect_with_edges( Halfedge_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
-    TIMER(it_t.start());
+    CGAL_NEF_TIMER(it_t.start());
     CGAL_assertion( initialized);
     CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                               e0->twin()->source()->point()));
@@ -1153,12 +1153,12 @@ public:
         call_back( e0, Object_handle(e), q);
       }
     }
-    TIMER(it_t.stop());
+    CGAL_NEF_TIMER(it_t.stop());
   }
 
   virtual void intersect_with_facets( Halfedge_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
-    TIMER(it_t.start());
+    CGAL_NEF_TIMER(it_t.start());
     CGAL_assertion( initialized);
     CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                               e0->twin()->source()->point()));
@@ -1179,7 +1179,7 @@ public:
         call_back( e0, Object_handle(f), q);
       }
     }
-    TIMER(it_t.stop());
+    CGAL_NEF_TIMER(it_t.stop());
   }
 
 private:
@@ -1188,5 +1188,5 @@ private:
 #endif
 
 CGAL_END_NAMESPACE
-#endif // SNC_POINT_LOCATOR_H
+#endif // CGAL_NEF_SNC_POINT_LOCATOR_H
 

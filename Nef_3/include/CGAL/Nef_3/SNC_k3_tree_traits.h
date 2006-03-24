@@ -17,8 +17,8 @@
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
-#ifndef SNC_K3_TREE_TRAITS_H
-#define SNC_K3_TREE_TRAITS_H
+#ifndef CGAL_NEF_SNC_K3_TREE_TRAITS_H
+#define CGAL_NEF_SNC_K3_TREE_TRAITS_H
 
 #include <CGAL/Nef_3/Bounding_box_3.h>
 #include <list>
@@ -580,5 +580,5 @@ Objects_bbox<SNC_decorator>::operator()
 
 CGAL_END_NAMESPACE
 
-#endif // SNC_K3_TREE_TRAITS_H
+#endif // CGAL_NEF_SNC_K3_TREE_TRAITS_H
 

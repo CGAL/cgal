@@ -19,8 +19,8 @@
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
-#ifndef POLYHEDRON_3_TO_NEF_3_H
-#define POLYHEDRON_3_TO_NEF_3_H
+#ifndef CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H
+#define CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H
 
 #include <CGAL/Circulator_project.h>
 #include <CGAL/normal_vector_newell_3.h>
@@ -219,5 +219,5 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 
 CGAL_END_NAMESPACE
 
-#endif //POLYHEDRON_3_TO_NEF_3_H
+#endif //CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H
 

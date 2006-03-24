@@ -28,8 +28,8 @@
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_triangulator.h>
 
-#define LGREY CGAL::Color(170,170,200)
-#define DGREY CGAL::Color(30,30,50)
+#define CGAL_NEF_LGREY CGAL::Color(170,170,200)
+#define CGAL_NEF_DGREY CGAL::Color(30,30,50)
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,7 +49,7 @@ public:
   Color color(SHalfloop_const_handle, Mark m) const
   { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
   Color color(SFace_const_handle, Mark m) const
-  { return ( m ? DGREY : LGREY ); }
+  { return ( m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY ); }
 };
 
 
@@ -160,7 +160,7 @@ void draw_map() const
       T_.incident_mark(hn) == T_.incident_mark(hnn));
     Mark m = T_.incident_mark(h);
     Sphere_triangle t = T_.incident_triangle(h);
-    S_.push_back(t, (m ? DGREY : LGREY) );
+    S_.push_back(t, (m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY) );
     Done[h]=Done[hn]=Done[hnn]=true;
   }
 
@@ -197,7 +197,7 @@ void draw_triangulation() const
 			T_.incident_mark(en)==T_.incident_mark(enn));
     Mark m = T_.incident_mark(e);
     Sphere_triangle t = T_.incident_triangle(e);
-    S_.push_back(t, (m ? DGREY : LGREY) );
+    S_.push_back(t, (m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY) );
     Done[e]=Done[en]=Done[enn]=true;
   }
 
@@ -217,7 +217,7 @@ void show_sphere_map_of(typename Map_::Vertex_handle v)
 
 
 CGAL_END_NAMESPACE
-//#undef LGREY
-//#undef DGREY
+//#undef CGAL_NEF_LGREY
+//#undef CGAL_NEF_DGREY
 #endif // CGAL_SNC_SM_VISUALIZOR_H
 

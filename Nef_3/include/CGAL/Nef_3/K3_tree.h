@@ -17,8 +17,8 @@
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
-#ifndef K3_TREE_H
-#define K3_TREE_H
+#ifndef CGAL_NEF_K3_TREE_H
+#define CGAL_NEF_K3_TREE_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -1169,5 +1169,5 @@ bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current
 
 CGAL_END_NAMESPACE
 
-#endif // K3_TREE_H
+#endif // CGAL_NEF_K3_TREE_H
 

@@ -13,15 +13,15 @@
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
 
-#ifndef OFF_TO_NEF_3_H
-#define OFF_TO_NEF_3_H
+#ifndef CGAL_OFF_TO_NEF_3_H
+#define CGAL_OFF_TO_NEF_3_H
 
 #include <CGAL/Nef_polyhedron_3.h>
 
 // --- begin preliminary number type converter -----------------
 
-#ifndef NUMBER_TYPE_CONVERTER_NEF_3_H
-#define NUMBER_TYPE_CONVERTER_NEF_3_H
+#ifndef CGAL_NUMBER_TYPE_CONVERTER_NEF_3_H
+#define CGAL_NUMBER_TYPE_CONVERTER_NEF_3_H
 
 #include<sstream>
 #include<CGAL/Gmpz.h>
@@ -241,4 +241,4 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 }
 
 CGAL_END_NAMESPACE
-#endif // OFF_TO_NEF_3_H
+#endif // CGAL_OFF_TO_NEF_3_H
