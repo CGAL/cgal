@@ -37,7 +37,7 @@ that has to be implemented with a model of
 \ccc{ImplicitSurfaceTraits_3}.
 Actually, this traits class implements the oracle needed by the
 surface mesher:
-the types, predicates and constructors objects provided
+the types, predicates and constructors  provided
 in \ccc{Traits} are
 passed by the surface mesher traits generator
 to the generated the traits class
@@ -61,7 +61,7 @@ the type \ccc{Traits::FT}.
 \ccConstructor{
 Implicit_surface_3(Function f,
                    Sphere_3 bounding_sphere,
-                   FT error_bound);}
+                   FT error_bound = FT(1e-3));}
 {\ccc{f} is the object of type \ccc{Function} that represents the implicit
   surface.\\
  \ccc{bounding_sphere} is a bounding sphere of the implicit surface. The

@@ -16,12 +16,19 @@
 \ccDefinition
   
 The concept \ccRefName\  describes the requirements of the traits class to
-be plugged  as \ccc{Traits} in \ccc{Implicit_surface_3<Traits, Function>}.
-The concept provides the types, predicates and constructors objects
-that are used in
-\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function>
-  >::Type}, which is the model of \ccc{SurfaceMeshTraits_3} that is used
-when the first version of \ccc{make_surface_mesh} is called.
+be plugged  as \ccc{Traits} in \ccc{Implicit_surface_3<Traits,
+Function>}.
+
+
+When \ccc{make_surface_mesh} is called
+with a surface of type \ccc{Implicit_surface_3<Traits,Function>},
+ the  surface mesher traits generator generates automatically
+a traits class that is a model of \ccc{SurfaceMeshTraits_3}.
+Actually, 
+the concept \ccRefName\  provides the types, predicates and constructors 
+that are passed 
+to the generated model of \ccc{SurfaceMeshTraits_3}.
+
 
 \ccTypes
 

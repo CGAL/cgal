@@ -4,14 +4,23 @@
 
 \minitoc
 
-\begin{ccTexOnly}
+%\begin{ccTexOnly}
+%\begin{center}
+%\includegraphics[height=10cm]{Surface_mesher/skull-surface}
+%\end{center}
+%\end{ccTexOnly}
+%\begin{ccHtmlOnly}
+%<img border="0" src="./skull-surface.png" align="center" height="75%">
+%\end{ccHtmlOnly}
+
 \begin{center}
-\includegraphics[height=10cm]{Surface_mesher/skull-surface}
+ \begin{ccTexOnly}
+   \includegraphics[height=10cm]{Surface_mesher/skull-surface}
+ \end{ccTexOnly}
+ \begin{ccHtmlOnly}
+   <img border="0" src="./skull-surface.png" height="75%">
+ \end{ccHtmlOnly}
 \end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-<img border="0" src="./skull-surface.png" align="center" height="75%">
-\end{ccHtmlOnly}
 
 \section{Introduction}
 \label{SurfaceMesher_section_intro}
@@ -263,7 +272,7 @@ on the  distance (Hausdorff and even Frechet distance)
 between the mesh and the surface
 if the radius bound is everywhere smaller than 
 the $\epsilon$ times the local feature size. 
-Here $\epsilon$ is a constant whish has to be
+Here $\epsilon$ is a constant which has to be
 less than 0.16, and the local feature size 
 $lfs(x)$ is defined on each point $x$ of the surface
 as the distance from $x$ to the medial axis.  
@@ -277,10 +286,10 @@ of local feature size on
 this surface).
 
 The value of the local feature size on any point of the surface
-or its minimum on the surface it usually not known
+or its minimum on the surface it usually unknown
 although it can sometimes be guessed. Also it happens frequently
 that setting the meshing criteria so as to fulfill the theoretical
-conditions yield an over refined mesh.
+conditions yields an over refined mesh.
 On the other hand, when the size criteria are relaxed,
 no homeomorphism with the input surface is guaranteed,
 and the output mesh is not even guaranteed to be manifold.
