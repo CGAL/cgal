@@ -889,13 +889,15 @@ public:
   //======================
   double compute_double(double acc = 1e-10) const
   {
-    if ( idx == -1 ) {
-      return DBL_MAX * DBL_MAX;
-    }
-
-    if ( idx == -2 ) {
+          if (idx < 0) {
+                        double inf=std::numeric_limits<double>::has_infinity? std::numeric_limits<double>::infinity() : std::numeric_limits<double>::max();
+    if ( idx == -1 ){
+                return inf;
+    } else return -inf;
+          }
+    /*if ( idx == -2 ) {
       return -DBL_MAX * DBL_MAX;
-    }
+    }*/
 
     if ( is_exact() ) {
       return CGAL_POLYNOMIAL_TO_DOUBLE(lower_bound());
@@ -1030,10 +1032,11 @@ CGAL_END_NAMESPACE
 namespace std
 {
   template <class S, class I>
-  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> >:
+  class numeric_limits<CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> >:
     public numeric_limits<typename CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT >
   {
-    typedef numeric_limits<CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> > P;
+  public:
+          typedef numeric_limits<typename CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT > P;
     typedef CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> T;
     static const bool is_specialized = true;
     static T min() throw() {return T(P::min());}

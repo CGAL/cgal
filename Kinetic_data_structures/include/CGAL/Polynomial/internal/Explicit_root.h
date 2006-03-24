@@ -250,8 +250,9 @@ CGAL_END_NAMESPACE
 namespace std
 {
   template <class Tr>
-  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> >: public numeric_limits<Tr>
+  class numeric_limits<CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> >: public numeric_limits<Tr>
   {
+  public:
     typedef numeric_limits<Tr> P;
     typedef CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> T;
     static const bool is_specialized = true;

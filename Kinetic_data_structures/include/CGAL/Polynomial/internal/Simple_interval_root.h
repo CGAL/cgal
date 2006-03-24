@@ -828,8 +828,9 @@ namespace CGAL
 namespace std
 {
   template <class Tr>
-  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> >
+  class numeric_limits<CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> >
   {
+  public:
     typedef CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> T;
     static const bool is_specialized = true;
     static T min() throw () {return -T::infinity();}

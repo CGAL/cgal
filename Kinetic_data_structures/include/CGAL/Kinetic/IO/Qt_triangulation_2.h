@@ -41,10 +41,11 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<Kinetic_Delaunay
   typedef internal::Triangulation_data_structure_helper_2<typename Kinetic_Delaunay::Triangulation::Triangulation_data_structure> TDS_helper;
 
   // maybe icl wants the class definition before the useage. 
-  class Listener: public Qt_gui::Listener
+typedef typename Qt_gui::Listener QTL;
+  class Listener: public QTL
   {
     typedef Qt_triangulation_2<Kinetic_Delaunay, Qt_gui, Qt_mpt> Container;
-    typedef typename Qt_gui::Listener P;
+    typedef typename QTL P;
   public:
     Listener(typename Qt_gui::Handle &h, Container *t): P(h), t_(t){}
     virtual void new_notification(typename P::Notification_type nt) {

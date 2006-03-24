@@ -71,8 +71,9 @@ CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
 namespace std {
   template <>
-  struct numeric_limits<CGAL_POLYNOMIAL_NS::internal::Double_with_infinity >: public numeric_limits<double>
+  class numeric_limits<CGAL_POLYNOMIAL_NS::internal::Double_with_infinity >: public numeric_limits<double>
   {
+  public:
     static const bool is_specialized = true;
     static const bool has_infinity=true;
     static double infinity() throw() {return std::numeric_limits<double>::max();}

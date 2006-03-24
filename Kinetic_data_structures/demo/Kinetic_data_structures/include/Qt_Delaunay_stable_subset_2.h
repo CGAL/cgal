@@ -51,18 +51,20 @@ protected:
     return std::acos(ac);
   }
 
+        typedef typename Qt_gui::Listener QTL;
+
   //! This class listens for redraw requests (PICTURE_IS_VALID becoming false)
   /*!
     It calls the draw method when it recieves a notification.
   */
-  class Listener: public Qt_gui::Listener
+  class Listener: public QTL
   {
-    typedef typename Qt_gui::Listener P;
+    typedef typename QTL P;
   public:
-    Listener(typename Qt_gui::Handle &h, Qt_del *t): Qt_gui::Listener(h), t_(t){}
-    virtual void new_notification(typename Qt_gui::Listener::Notification_type nt) {
-      if (nt == Qt_gui::Listener::PICTURE_IS_VALID) {
-	t_->draw(*P::widget(), P::notifier()->current_time());
+    Listener(typename Qt_gui::Handle &h, Qt_del *t): P(h), t_(t){}
+    virtual void new_notification(typename QTL::Notification_type nt) {
+      if (nt == QTL::PICTURE_IS_VALID) {
+        t_->draw(*P::widget(), P::notifier()->current_time());
       }
     }
   protected:
