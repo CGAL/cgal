@@ -22,7 +22,7 @@ The concept \ccRefName\ describes the type  which
 handles those criteria. 
 It corresponds to the requirements for the template parameter
 \ccc{Criteria} of the surface mesher function
-\ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}.
+\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,Criteria,Tag>}.
 
 Typically the meshing criteria are a set
 of elementary criteria, each of which
@@ -51,7 +51,7 @@ with lowest quality first. The qualities are computed by a function
 \ccNestedType{Facet}{The type of facets. This type has to match
 the \ccc{Facet} type in  the triangulation type used  by 
 the mesher function. (This triangulation type
-is the type \ccc{C2T3::Triangulation} 
+is the type \ccc{SurfaceMeshC2T3::Triangulation} 
 provided by the the model of
 \ccc{SurfaceMeshComplex_2InTriangulation_3} plugged 
  as first template parameter of
@@ -72,7 +72,7 @@ provided by the the model of
 \ccc{Surface_mesh_default_criteria_3<Tr>}
 
 \ccSeeAlso
-\ccc{make_surface_mesh<C2T3,Surface,Criteria,Tag>}
+\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,Criteria,Tag>}
 
 
 \end{ccRefConcept}

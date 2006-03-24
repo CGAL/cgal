@@ -23,10 +23,13 @@ as the zero level
 set  of a function \begin{math}f : \R^3 \longrightarrow \R\end{math}.
 
 
-The library provides a partial specialization
+For this type of surface, the library provides a partial specialization
 of the  surface mesher traits generator:
-\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >}
-that provides a model of \ccc{SurfaceMeshTraits_3} for this type of surfaces.
+\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,
+Function> >},
+that provides a traits class, model of the concept
+\ccc{SurfaceMeshTraits_3},
+to be used by the surface mesher.
 
 
 The parameter \ccc{Traits} is a traits class 
@@ -36,11 +39,14 @@ Actually, this traits class implements the oracle needed by the
 surface mesher:
 the types, predicates and constructors objects provided
 in \ccc{Traits} are
-used in 
-the partial specialisation 
-\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function>
-  >::Type}
-to generate the model of  \ccc{SurfaceMeshTraits_3}.
+passed by the surface mesher traits generator
+to the generated the traits class
+used by the surface mesher.
+%used in 
+%the partial specialisation 
+%\ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function>
+%  >::Type}
+%to generate the model of  \ccc{SurfaceMeshTraits_3}.
 
 The template parameter \ccc{Function}  stands for a model
 of the concept \ccc{ImplicitFunction}.
@@ -61,13 +67,13 @@ Implicit_surface_3(Function f,
  \ccc{bounding_sphere} is a bounding sphere of the implicit surface. The
  evaluation of \ccc{f} at the center \ccc{c} of this sphere must be
  negative: $f(c)<0$.\\
- \ccc{error_bound} is an error bound 
+ \ccc{error_bound} is a relative error bound 
 used to  compute intersection points between the implicit surface
-and  query segments. This bound is used in  the default generated traits class
- \ccc{Surface_mesh_traits_generator_3<Implicit_surface_3<Traits,
-Function> >::Type}. In this traits class, the intersection points between
+and  query segments. This bound is used in  the default generated traits class.
+In this traits class, the intersection points between
 the surface and segments/rays/line are constructed by dichotomy. The
-precision of this construction by dichotomy is \ccc{error_bound} times the
+dichotomy is stopped when the size of the intersected
+segment  is less than the  product of \ccc{error_bound} by the
 radius of \ccc{bounding_sphere}.}
 
 \ccSeeAlso

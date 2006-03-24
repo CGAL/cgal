@@ -23,7 +23,11 @@ provides a type \ccc{Type} , that is
 a model of the concept \ccc{SurfaceMeshTraits_3}
 for the surface type \ccc{Surface}.
 
-The type \ccc{Surface} is required 
+The type \ccc{Surface} is required to be a model of the concept
+\ccc{Surface_3},
+which means that it is copy constructible
+and assignable.
+
 \begin{itemize}
 \item 
 either to provide a nested type

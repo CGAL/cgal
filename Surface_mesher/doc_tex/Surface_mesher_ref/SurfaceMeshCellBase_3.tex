@@ -22,16 +22,16 @@ of the three dimensional triangulation used
 to embed the surface mesh.  
 
 More precisely,
-the first template parameter \ccc{C2T3} of the surface mesher
+the first template parameter \ccc{SurfaceMeshC2T3} of the surface mesher
 \ccc{make_surface_mesh}
 is a model of the concept 
 \ccc{SurfaceMeshComplex_2InTriangulation_3} 
 which describes a data structure to store
 a pure two dimensional complex 
 embedded in a three dimensional triangulation.
-In particular, the type \ccc{C2T3} is required to provide
+In particular, the type \ccc{SurfaceMeshC2T3} is required to provide
 a three dimensional triangulation type
-\ccc{C2T3::Triangulation_3}. 
+\ccc{SurfaceMeshC2T3::Triangulation_3}. 
 The concept \ccRefName\ describes the cell base type
 required in this triangulation type.
 
