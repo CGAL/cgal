@@ -1406,11 +1406,9 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       Vertex_handle v0 = ff->vertex(cw(ii)); 
       Vertex_handle v1 = ff->vertex(ccw(ii)); 
       Vertex_handle v2 = infinite_vertex(); 
+      Vertex_handle v3; 
       const Point& p0 = v0->point();
       const Point& p1 = v1->point();
-      Point p2;
-      Point p;
-      Vertex_handle vv; 
   
       typename Hole::iterator hdone = hole.end();
       hit =  hole.begin();
@@ -1423,17 +1421,17 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       while( hit != hdone) {
 	fn = (*hit).first;
 	in = (*hit).second;
-	vv = fn->vertex(ccw(in));
+        Vertex_handle vv = fn->vertex(ccw(in));
 	if (is_infinite(vv)) {
 	  if(is_infinite(v2)) cut_after = hit;
 	}
 	else {     // vv is a finite vertex
-	  p = vv->point();
+	  const Point & p = vv->point();
 	  if (orientation(p0,p1,p) == COUNTERCLOCKWISE) {
-	    if(is_infinite(v2)) { v2=vv; p2=p; cut_after=hit;}
+	    if (is_infinite(v2)) { v2=vv; v3=vv; cut_after=hit;}
 	    else{
-	      if( in_circle(p0,p1,p2,p) ==  ON_POSITIVE_SIDE){
-		v2=vv; p2=p; cut_after=hit;}
+	      if (in_circle(p0,p1,v3->point(),p) ==  ON_POSITIVE_SIDE){
+		v2=vv; v3=vv; cut_after=hit;}
 	    }
 	  }
 	}
@@ -1441,7 +1439,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       }
  
       // create new triangle and update adjacency relations
-       Face_handle newf;
+      Face_handle newf;
     
       //update the hole and push back in the Hole_List stack
       // if v2 belongs to the neighbor following or preceding *f

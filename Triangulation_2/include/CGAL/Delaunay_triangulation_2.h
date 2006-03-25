@@ -420,11 +420,11 @@ dual(const Edge &e) const
                           (dual(e.first),dual(e.first->neighbor(e.second)));
     return make_object(s);
   } 
-  // one of the adjacent face is infinite
+  // one of the adjacent faces is infinite
   Face_handle f; int i;
   if (is_infinite(e.first)) {
-    f=e.first->neighbor(e.second); f->has_neighbor(e.first,i);
-  } 
+    f=e.first->neighbor(e.second); i=f->index(e.first);
+  }
   else {
     f=e.first; i=e.second;
   }
