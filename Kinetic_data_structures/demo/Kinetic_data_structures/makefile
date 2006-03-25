@@ -51,7 +51,7 @@ DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
                 Delaunay_triangulation_stable_subset_2$(EXE_EXT) 
 	@echo Do install Coin and do "make 3d" to make the 3d demos
 
-all: 3d 2d
+all: 2d
 
 
 3d:\
