@@ -108,7 +108,7 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-C$(OBJ_EXT):
+.C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
 
