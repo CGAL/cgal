@@ -595,8 +595,8 @@ public:
   Join_input_iterator_1() {}
   Join_input_iterator_1(const Join_input_iterator_1& it)
     : i1(it.i1), op(it.op) {}
-  Join_input_iterator_1(I1 i1,const Op& op=Op())
-    : i1(i1), op(op) {}
+  Join_input_iterator_1(I1 i,const Op& o=Op())
+    : i1(i), op(o) {}
   
   I1 current_iterator1() const { return i1; }
   
