@@ -80,11 +80,8 @@ class QP_vector_accessor : public std::unary_function<
            typename std::iterator_traits<VectorIt>::value_type >::result_type
     result_type;
     QP_vector_accessor( VectorIt it, int lower = 0, int upper = 0)
-        : z( 0), v( it)
-    {
-	if ( check_lower) l = lower;
-	if ( check_upper) u = upper;
-    }
+        : z( 0), v( it), l(lower), u(upper)
+    {}
 
     result_type  operator ( ) ( int i) const
     {
