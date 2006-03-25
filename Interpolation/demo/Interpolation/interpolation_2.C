@@ -214,7 +214,7 @@ int main(int argc,  char* argv[])
   //INTERPOLATION:
   Point_coordinate_vector     coords;
   std::pair<Coord_type, bool> interpolation_result;
-  Coord_type value;
+  Coord_type value = 0; // initialization to remove compiler warning
   int n = points.size();
   ITraits traits;
 
