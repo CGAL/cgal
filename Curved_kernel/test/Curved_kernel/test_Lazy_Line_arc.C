@@ -85,7 +85,7 @@ void _test_Line_arc(CK ck)
    theConstruct_intersect_2(line_arc_horizontal,
 			    line_arc_vertical,
 			    std::back_inserter(vector_for_intersection_1));
-   std::pair<Circular_arc_point_2, std::size_t> the_pair;
+   std::pair<Circular_arc_point_2, unsigned int> the_pair;
    assert(assign(the_pair, vector_for_intersection_1[0]));
    Circular_arc_point_2 first = the_pair.first;
    assert(first.x() == 0);
@@ -365,7 +365,7 @@ void _test_intersection_Line_arc_Circle(CK ck)
   theConstruct_intersect_2(line_arc_horizontal,
 			   circle1,
 			   std::back_inserter(vector_for_intersection_1));
-  std::pair<Circular_arc_point_2, std::size_t> the_pair;
+  std::pair<Circular_arc_point_2, unsigned int> the_pair;
   assert(vector_for_intersection_1.size() == 2);
   assert(assign(the_pair, vector_for_intersection_1[0]));
   Circular_arc_point_2 first = the_pair.first;
@@ -696,7 +696,7 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
    theConstruct_intersect_2(line_arc_horizontal3,
 			    arc_1,
 			    std::back_inserter(vector_for_intersection_1));
-   std::pair<Circular_arc_point_2, std::size_t> the_pair;
+   std::pair<Circular_arc_point_2, unsigned int> the_pair;
    assert(vector_for_intersection_1.size() == 2);
    assert(assign(the_pair, vector_for_intersection_1[0]));
    Circular_arc_point_2 first = the_pair.first;
@@ -880,7 +880,7 @@ void _test_compare_y_to_right(CK ck)
    theConstruct_intersect_2(line_arc_horizontal,
 			    line_arc_diagonal,
 			    std::back_inserter(vector_for_intersection_1));
-   std::pair<Circular_arc_point_2, std::size_t> the_pair;
+   std::pair<Circular_arc_point_2, unsigned int> the_pair;
    assert(assign(the_pair, vector_for_intersection_1[0]));
    Circular_arc_point_2 first = the_pair.first;
    

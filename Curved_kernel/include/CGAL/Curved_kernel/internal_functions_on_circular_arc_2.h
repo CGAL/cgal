@@ -533,13 +533,13 @@ namespace CircularFunctors {
 	  if(res_aux.size() == 2){
 	    //it can't be a circular_arc_2
 	    //CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
-	    const std::pair<Circular_arc_point_2, std::size_t> *the_pair1 = 
-	      CGAL::object_cast<std::pair<Circular_arc_point_2, std::size_t> >
+	    const std::pair<Circular_arc_point_2, unsigned int> *the_pair1 = 
+	      CGAL::object_cast<std::pair<Circular_arc_point_2, unsigned int> >
 	      (&res_aux[0]);
 	    Circular_arc_point_2 arc_end1 = the_pair1->first;
 	    //assign(the_pair, res_aux[1]);
-	    const std::pair<Circular_arc_point_2, std::size_t> *the_pair2 = 
-	      CGAL::object_cast<std::pair<Circular_arc_point_2, std::size_t> >
+	    const std::pair<Circular_arc_point_2, unsigned int> *the_pair2 = 
+	      CGAL::object_cast<std::pair<Circular_arc_point_2, unsigned int> >
 	      (&res_aux[1]);
 	    Circular_arc_point_2 arc_end2 = the_pair2->first;
 	    bool exist = false;
@@ -576,8 +576,8 @@ namespace CircularFunctors {
 	    else {
 	      //CGAL_kernel_assertion(assign(the_pair, res_aux[0]));
 	      //assign(the_pair, res_aux[0]);
-	      const std::pair<Circular_arc_point_2, std::size_t> *the_pair = 
-		CGAL::object_cast<std::pair<Circular_arc_point_2,std::size_t> >
+	      const std::pair<Circular_arc_point_2, unsigned int> *the_pair = 
+		CGAL::object_cast<std::pair<Circular_arc_point_2, unsigned int> >
 		(&res_aux[0]);
 	      Circular_arc_point_2 arc_end = the_pair->first;
 	      if (the_pair->second == 2u) {//there are only one tangent point

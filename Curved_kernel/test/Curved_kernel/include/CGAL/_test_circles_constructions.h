@@ -100,8 +100,8 @@ void _test_circle_construct(CK ck)
 			   circ_intersections_2_2,
 			   std::back_inserter(vector_for_intersection_1));
   // there are 2 intersection's points
-  std::pair<Circular_arc_point_2, std::size_t> the_pair;
-  assign(the_pair, vector_for_intersection_1[0]);
+  std::pair<Circular_arc_point_2, unsigned > the_pair;
+  assert(assign(the_pair, vector_for_intersection_1[0]));
   Circular_arc_point_2 first = the_pair.first;
   std::cout << first << std::endl;
   assert(assign(the_pair, vector_for_intersection_1[1]));

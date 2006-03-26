@@ -155,7 +155,7 @@ template <class CK>
 			     std::back_inserter(vector_for_intersection_1));
     Circular_arc_point_2 point_top;
     Circular_arc_point_2 point_down;
-    std::pair< Circular_arc_point_2, std::size_t > aux;
+    std::pair< Circular_arc_point_2, unsigned int> aux;
     assign(aux, vector_for_intersection_1[0]);
     point_down = aux.first;
     assign(aux, vector_for_intersection_1[1]);

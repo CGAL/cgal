@@ -7,7 +7,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
+# CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
 #makefile_i686_Linux-2.6_g++33-3.3.4
 #makefile_i686_Linux-2.6_g++-3.4.4
 include $(CGAL_MAKEFILE)
