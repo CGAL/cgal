@@ -104,7 +104,7 @@ void _test_circle_construct(CK ck)
   assign(the_pair, vector_for_intersection_1[0]);
   Circular_arc_point_2 first = the_pair.first;
   std::cout << first << std::endl;
-  assign(the_pair, vector_for_intersection_1[1]);
+  assert(assign(the_pair, vector_for_intersection_1[1]));
   Circular_arc_point_2 second = the_pair.first;
   std::cout << second << std::endl;
   Compare_xy_2 theCompare_xy_2 = ck.compare_xy_2_object();
