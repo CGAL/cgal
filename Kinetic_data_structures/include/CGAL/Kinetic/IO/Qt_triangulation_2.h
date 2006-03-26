@@ -45,7 +45,7 @@ typedef typename Qt_gui::Listener QTL;
   class Listener: public QTL
   {
     typedef Qt_triangulation_2<Kinetic_Delaunay, Qt_gui, Qt_mpt> Container;
-    typedef typename QTL P;
+    typedef QTL P;
   public:
     Listener(typename Qt_gui::Handle &h, Container *t): P(h), t_(t){}
     virtual void new_notification(typename P::Notification_type nt) {

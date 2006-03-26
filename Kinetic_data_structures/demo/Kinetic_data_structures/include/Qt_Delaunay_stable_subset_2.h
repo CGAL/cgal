@@ -59,7 +59,7 @@ protected:
   */
   class Listener: public QTL
   {
-    typedef typename QTL P;
+    typedef QTL P;
   public:
     Listener(typename Qt_gui::Handle &h, Qt_del *t): P(h), t_(t){}
     virtual void new_notification(typename QTL::Notification_type nt) {
