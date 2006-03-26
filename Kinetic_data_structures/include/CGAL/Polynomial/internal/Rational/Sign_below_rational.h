@@ -44,7 +44,9 @@ const typename Kernel::NT &nt, const Kernel &k)
             else {
                 return CGAL_POLYNOMIAL_NS::POSITIVE;
             }
-        }return sn;
+        }
+	pcur= k.differentiate_object()(pcur);
+	if (pcur.degree() <0) return  CGAL_POLYNOMIAL_NS::ZERO;
     } while (1);
     //return CGAL_POLYNOMIAL_NS::ZERO;
 }
