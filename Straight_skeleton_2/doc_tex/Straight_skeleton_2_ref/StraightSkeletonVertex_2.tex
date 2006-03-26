@@ -35,11 +35,11 @@ with support for storage of the incident halfedge. The \ccRefName\ concept requi
 \ccGlue
   \ccNestedType{Halfedge_around_vertex_const_circulator}{}{}
 \ccGlue
-  \ccNestedType{Halfedge_around_vertex_circulator}{The circulator type used to visit all the incident edges around a vertex}
+  \ccNestedType{Halfedge_around_vertex_circulator}{The circulator type used to visit all the incident halfedges around a vertex}
 \ccGlue
-  \ccNestedType{Halfedge_across_incident_faces_const_circulator}{}{}
+  \ccNestedType{Defining_contour_halfedge_const_circulator}{}{}
 \ccGlue
-  \ccNestedType{Halfedge_across_incident_faces_circulator}{The circulator type used to visit all the defining contour edges of a vertex}
+  \ccNestedType{Defining_contour_halfedge_circulator}{The circulator type used to visit all the defining contour halfedges of a vertex}
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
@@ -63,21 +63,21 @@ with support for storage of the incident halfedge. The \ccRefName\ concept requi
   \ccMethod{Halfedge_const_handle primary_bisector() const;}
 {Returns the skeleton halfedge incident upon the vertex (called the \textit{primary} bisector).}
   \ccGlue
-  \ccMethod{Halfedge_around_vertex_circulator incident_edges_begin();}{}
+  \ccMethod{Halfedge_around_vertex_circulator halfedge_around_vertex_begin();}{}
   \ccGlue
-  \ccMethod{Halfedge_around_vertex_const_circulator incident_edges_begin() const;}
-{Returns a bi-directional circulator pointing to one of the incident edges (which one is unspecified).\\
-There will always be as many incident edges as the degree of the vertex.\\
-If this is a \textit{contour} vertex, its degree is exactly 3, and from the edges pointed to by the circulator, 2 are contour and 1 is a bisector.\\
-If this is an \ccc{skeleton} vertex, its degree is at least 3 and all of the edges pointed to by the circulator are bisectors.\\
-Only one halfedge of each edge will be pointed to by the circulator: the one which is oriented towards the vertex (according to the geometric embedding).}
+  \ccMethod{Halfedge_around_vertex_const_circulator halfedge_around_vertex_begin() const;}
+{Returns a bi-directional circulator pointing to one of the incident halfedges (which one is unspecified).\\
+There will always be as many incident halffedges as the degree of the vertex.\\
+If this is a \textit{contour} vertex, its degree is exactly 3, and from the halfedges pointed to by the circulator, 2 are contour and 1 is a bisector.\\
+If this is an \ccc{skeleton} vertex, its degree is at least 3 and all of the halfedges pointed to by the circulator are bisectors.\\
+Each halfedge pointed to by this circulator is the one which is oriented towards the vertex (according to the geometric embedding).}
   \ccGlue
-  \ccMethod{Halfedge_across_incident_faces_circulator defining_contour_edges_begin();}{}
+  \ccMethod{Defining_contour_halfedge_circulator defining_contour_halfedges_begin();}{}
   \ccGlue
-  \ccMethod{Halfedge_across_incident_faces_const_circulator defining_contour_edges_begin() const;}
-{Returns a bi-directional circulator pointing to one of the defining contour edges of the vertex (which one is unspecified).\\
-There will always be as many incident defining contour edges as the degree of the vertex.\\
-Only one halfedge of each contour edge will be pointed to by the circulator: the one having its left side facing inwards (which happens to be the contour halfedge for which \ccc{is\_border()} is \ccc{false}).}
+  \ccMethod{Defining_contour_halfedge_const_circulator defining_contour_halfedges_begin() const;}
+{Returns a bi-directional circulator pointing to one of the defining contour halfedges of the vertex (which one is unspecified).\\
+There will always be as many incident defining contour halfedges as the degree of the vertex.\\
+Each halfedge pointed to by this circulator is the one having its left side facing inwards (which happens to be the contour halfedge for which \ccc{is\_border()} is \ccc{false}).}
 
 
 \ccHeading{Queries}

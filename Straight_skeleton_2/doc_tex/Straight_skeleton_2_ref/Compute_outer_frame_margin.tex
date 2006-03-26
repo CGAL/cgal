@@ -47,19 +47,19 @@ at distance \ccc{offset} (which is done by placing the polygon as a hole of that
 Such a separation must be computed in this way because if the frame is 
 too close to the polygon, the inward offset contour from the frame could
 collide with the outward offset contour of the polygon, resulting in a merged
-contour offset instead of two contour offsets, one of them correspoding to the frame.\\
+contour offset instead of two contour offsets, one of them corresponding to the frame.\\
 Simply using \ccc{2*offset} as the separation is incorrect since \ccc{offset} is the distance 
 between an offset line and its original, not between an offset vertex and its original.
-The later, which is calculated by this function and needed to place the frame sufficientely
+The later, which is calculated by this function and needed to place the frame sufficiently
 away from the polygon, can be thousands of times larger than \ccc{offset}.\\
-If the result is {\em absent}, any attempt to construct an exterior offset polygon at distance \ccc{offset} will fail. This will ocurr whenever the polygon has a vertex with an internal angle approaching \ccc{0} (because the offset vertex of a vertex whose internal angle equals 0 is at {\em infinity} ).\\
+If the result is {\em absent}, any attempt to construct an exterior offset polygon at distance \ccc{offset} will fail. This will occur whenever the polygon has a vertex with an internal angle approaching \ccc{0} (because the offset vertex of a vertex whose internal angle equals 0 is at {\em infinity} ).\\
 \ccPrecond offset $>$ 0.
 \ccPrecond The range [\ccc{first},\ccc{beyond}) contains the vertices
 of a non-degenerate strictly-simple 2D polygon.
 }
 
 The default traits class \ccc{Default_traits} is an instance of the
-class \ccc{Polygon_offset_builder_traits_2<Kernel>} parametrized on
+class \ccc{Polygon_offset_builder_traits_2<Kernel>} parameterized on
 the kernel in which the type \ccc{InputIterator::value_type} is defined.
 
 \ccHeading{Requirements}

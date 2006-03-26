@@ -85,7 +85,7 @@ struct Construct_ss_triedge_2
 };
 
 template<class K>
-struct Exist_ss_event_2 : Functor_base_2<K>
+struct Do_ss_event_exist_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
@@ -250,7 +250,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 template<class K>
 struct Straight_skeleton_builder_traits_2_functors
 {
-  typedef CGAL_SS_i::Exist_ss_event_2                   <K> Exist_ss_event_2 ;
+  typedef CGAL_SS_i::Do_ss_event_exist_2                <K> Do_ss_event_exist_2 ;
   typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Compare_ss_event_distance_to_seed_2<K> Compare_ss_event_distance_to_seed_2 ;
   typedef CGAL_SS_i::Is_ss_event_inside_offset_zone_2   <K> Is_ss_event_inside_offset_zone_2 ;
@@ -286,8 +286,8 @@ class Straight_skeleton_builder_traits_2_impl<Tag_false,K> : public Straight_ske
 
 public:
 
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Exist_ss_event_2>
-    Exist_ss_event_2 ;
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Do_ss_event_exist_2>
+    Do_ss_event_exist_2 ;
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_ss_event_times_2>
     Compare_ss_event_times_2 ;
@@ -323,12 +323,12 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
 
 public:
 
-  typedef Filtered_predicate<typename Exact    ::Exist_ss_event_2
-                            ,typename Filtering::Exist_ss_event_2
+  typedef Filtered_predicate<typename Exact    ::Do_ss_event_exist_2
+                            ,typename Filtering::Do_ss_event_exist_2
                             , C2E
                             , C2F
                             >
-                            Exist_ss_event_2 ;
+                            Do_ss_event_exist_2 ;
 
   typedef Filtered_predicate< typename Exact    ::Compare_ss_event_times_2
                             , typename Filtering::Compare_ss_event_times_2
@@ -371,7 +371,7 @@ class Straight_skeleton_builder_traits_2
 {
 } ;
 
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Exist_ss_event_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Do_ss_event_exist_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_distance_to_seed_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_ss_event_inside_offset_zone_2);

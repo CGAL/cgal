@@ -403,7 +403,7 @@ private :
 
   bool ExistEvent ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 ) const
   {
-    return Exist_ss_event_2<Traits>(mTraits)()(CreateTriedge(aE0, aE1, aE2));
+    return Do_ss_event_exist_2<Traits>(mTraits)()(CreateTriedge(aE0, aE1, aE2));
   }
 
   bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL
@@ -663,7 +663,7 @@ public:
     Vertex_handle   lPrevVertex ;
 
     InputPointIterator lLast = CGAL::predecessor(aEnd) ;
-    
+     
     // Remove last points coincident with the first point.
     while ( lLast != aBegin )
     {
@@ -676,6 +676,8 @@ public:
     
     InputPointIterator lCurr = aBegin ;
     InputPointIterator lPrev = aBegin ;
+    
+    int c = 0 ;
     
     while ( lCurr != aEnd )
     {
@@ -700,6 +702,8 @@ public:
 
       Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
 
+      ++ c ;
+      
       lCCWBorder->HBase_base::set_face(lFace);
       lFace     ->FBase::set_halfedge(lCCWBorder);
 
@@ -772,21 +776,7 @@ public:
                         << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
                         );
      
-    CGAL_precondition_msg(mSSkel->SSkel::Base::size_of_vertices() >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
-    
-    for ( Vertex_iterator v = mSSkel->SSkel::Base::vertices_begin(); v != mSSkel->SSkel::Base::vertices_end(); ++ v )
-    {
-      mSLAV.push_back(static_cast<Vertex_handle>(v));
-      Vertex_handle lPrev = GetPrevInLAV(v) ;
-      Vertex_handle lNext = GetNextInLAV(v) ;
-  
-      bool lCollinear = Collinear( lPrev->point(),v->point(),lNext->point() ) ;
-      if ( lCollinear || !Left_turn( lPrev->point(),v->point(),lNext->point() ) )
-      {
-        SetIsReflex(v);
-        CGAL_SSBUILDER_TRACE(1,(lCollinear ? "COLLINEAR " : "Reflex ") << "vertex: N" << v->id() );
-      }
-    }   
+    CGAL_precondition_msg(c >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
 
     return *this ;
   }

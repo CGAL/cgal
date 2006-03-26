@@ -58,36 +58,38 @@ public :
   
 private :
 
-    Vertex_handle vertices_push_back( const Vertex& v) { return Vertex_handle(); }
-    Halfedge_handle edges_push_back( const Halfedge& h, const Halfedge& g) { return Halfedge_handle(); }
-    Halfedge_handle edges_push_back( const Halfedge& h) { return Halfedge_handle(); }
-    Face_handle faces_push_back( const Face& f) { return Face_handle(); }
+    Vertex_handle   vertices_push_back( const Vertex& v)                   { return Base::vertices_push_back(v); }
+    Halfedge_handle edges_push_back( const Halfedge& h, const Halfedge& g) { return Base::edges_push_back(h,g); }
+    Halfedge_handle edges_push_back( const Halfedge& h)                    { return Base::edges_push_back(h); }
+    Face_handle     faces_push_back( const Face& f)                        { return Base::faces_push_back(f); }
     
-    void vertices_pop_front() {}
-    void vertices_pop_back() {}
-    void vertices_erase( Vertex_handle v) {}
-    void vertices_erase( Vertex_iterator first, Vertex_iterator last) {}
-    void edges_erase( Halfedge_handle h) {}
-    void edges_pop_front() {}
-    void edges_pop_back()  {}
-    void edges_erase( Halfedge_iterator first, Halfedge_iterator last) {}
-    void faces_pop_front() {}
-    void faces_pop_back() {}
-    void faces_erase( Face_handle f) {}
-    void faces_erase( Face_iterator first, Face_iterator last) {}
-    void vertices_clear() {}
-    void edges_clear() {}
-    void faces_clear() {}
-    void clear() {}
-    void vertices_splice( Vertex_iterator target, Self &source,
-                          Vertex_iterator begin, Vertex_iterator end) {}
+    void vertices_pop_front()                                          { Base::vertifces_pop_front(); }
+    void vertices_pop_back()                                           { Base::vertifces_pop_back(); }
+    void vertices_erase( Vertex_handle v)                              { Base::vertices_erase(v); }
+    void vertices_erase( Vertex_iterator first, Vertex_iterator last)  { Base::vertices_erase(first,last); }
+    void edges_erase( Halfedge_handle h)                               { Base::edges_erase(h) ; }
+    void edges_pop_front()                                             { Base::edges_pop_front(); }
+    void edges_pop_back()                                              { Base::edges_pop_back(); }
+    void edges_erase( Halfedge_iterator first, Halfedge_iterator last) { Base::edges_erase(first,last); }
+    void faces_pop_front()                                             { Base::faces_pop_front(); }
+    void faces_pop_back()                                              { Base::faces_pop_back(); }
+    void faces_erase( Face_handle f)                                   { Base::faces_erase(f); }
+    void faces_erase( Face_iterator first, Face_iterator last)         { Base::faces_erase(first,last); }
+    void vertices_clear()                                              { Base::vertices_clear(); }
+    void edges_clear()                                                 { Base::edeges_clear(); }
+    void faces_clear()                                                 { Base::faces_clear(); }
+    void clear()                                                       { Base::clear();}
+    
+    void vertices_splice( Vertex_iterator target, Self &source, Vertex_iterator begin, Vertex_iterator end) 
+      { Base::vertices_splice(target,source,begin,end); }
 
-    void halfedges_splice( Halfedge_iterator target, Self &source,
-                           Halfedge_iterator begin, Halfedge_iterator end) {}
+    void halfedges_splice( Halfedge_iterator target, Self &source, Halfedge_iterator begin, Halfedge_iterator end)
+      { Base::halfedges_splice(target,source,begin,end); }
 
-    void faces_splice( Face_iterator target, Self &source,
-                       Face_iterator begin, Face_iterator end) {}
-    void normalize_border() {}
+    void faces_splice( Face_iterator target, Self &source,  Face_iterator begin, Face_iterator end)
+      { Base::faces_splice(target,source,begin,end); }
+    
+    void normalize_border() { Base::normalize_border(); }
 };
 
 

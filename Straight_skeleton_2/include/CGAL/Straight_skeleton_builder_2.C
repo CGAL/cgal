@@ -500,6 +500,17 @@ void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
   CGAL_SSBUILDER_TRACE(0, "Creating contour bisectors...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
   {
+    mSLAV.push_back(static_cast<Vertex_handle>(v));
+    Vertex_handle lPrev = GetPrevInLAV(v) ;
+    Vertex_handle lNext = GetNextInLAV(v) ;
+
+    bool lCollinear = Collinear( lPrev->point(),v->point(),lNext->point() ) ;
+    if ( lCollinear || !Left_turn( lPrev->point(),v->point(),lNext->point() ) )
+    {
+      SetIsReflex(v);
+      CGAL_SSBUILDER_TRACE(1,(lCollinear ? "COLLINEAR " : "Reflex ") << "vertex: N" << v->id() );
+    }
+    
     Halfedge lOB(mEdgeID++), lIB(mEdgeID++);
     Halfedge_handle lOBisector = mSSkel->SSkel::Base::edges_push_back (lOB, lIB);
     Halfedge_handle lIBisector = lOBisector->opposite();
@@ -1201,7 +1212,7 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes( Vertex_handle    
   
   Halfedge_handle_vector lToRelink ;
   
-  Halfedge_around_vertex_circulator iebegin = v1->incident_edges_begin();
+  Halfedge_around_vertex_circulator iebegin = v1->halfedge_around_vertex_begin();
   Halfedge_around_vertex_circulator ie      = iebegin ;
   do
   {

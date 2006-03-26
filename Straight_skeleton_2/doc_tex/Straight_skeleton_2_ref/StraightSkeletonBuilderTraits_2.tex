@@ -47,7 +47,7 @@ The concept \ccRefName\ describes the requirements for the geometric traits clas
 \ccNestedType{Collinear_2}
 {A predicate object type being a model of the \ccc{Kernel::Collinear_2} function object concept.}
 
-\ccNestedType{Exist_ss_event_2}
+\ccNestedType{Do_ss_event_exist_2}
 {A predicate object type.\\
 Must provide \ccc{bool operator()( EdgeTriple const& et) const}, which determines if, given the 3 \textit{oriented} lines defined by the 3 input edges (3 pair of points), there exist an Euclidean distance \ccc{t} $\geq 0$ for which the corresponding 3 \textit{offset lines at \ccc{t}} (parallel lines at an Euclidean distance of \ccc{t}) intersect in a single point.\\
 \ccPrecond{each edge in the triple must properly define an oriented line, that is, such points cannot be coincident.}}

@@ -1567,6 +1567,7 @@ Spatial_sorting/include/CGAL/spatial_sort.h -text
 Spatial_sorting/maintainer -text
 Spatial_sorting/test/Spatial_sorting/test_hilbert.C -text
 Spatial_sorting/test/Spatial_sorting/test_multiscale.C -text
+Straight_skeleton_2/demo/Straight_skeleton_2/active_canvas_client.C -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_0.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_1.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_2.poly -text

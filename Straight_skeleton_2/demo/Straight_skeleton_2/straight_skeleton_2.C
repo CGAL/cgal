@@ -56,7 +56,6 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 #include <qthread.h>
-#include <qsocket.h>
 #include <qtextstream.h>
 #include <qprogressbar.h>
 
@@ -69,151 +68,16 @@ int main(int, char*)
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 0
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
 //#define STATS
 //#define CGAL_SLS_PROFILING_ENABLED
 
-
-class ActiveCanvasClient : QObject
-{
-    Q_OBJECT
-public:
-    ActiveCanvasClient() : mID(0)
-    {
-        // create the socket and connect various of its signals
-        socket = new QSocket( this );
-        connect( socket, SIGNAL(connected()), SLOT(socketConnected()) );
-        connect( socket, SIGNAL(readyRead()), SLOT(socketReadyRead()) );
-        connect( socket, SIGNAL(connectionClosed()), SLOT(socketConnectionClosed()) );
-        connect( socket, SIGNAL(error(int)), SLOT(socketError(int)) );
-
-        Connect();
-    }
-
-    ~ActiveCanvasClient()
-    {
-    }
-
-    void Connect()
-    {
-      socket->connectToHost( "localhost", 4242 );
-    }
-
-    void undraw_object ( int n )
-    {
-      if ( !is_connected() )
-        Connect();
-
-      if ( is_connected() )
-      {
-        QString lCmd;
-        QTextOStream(&lCmd) << '~' << n << '\n' ;
-        sendToServer(lCmd);
-      }
-    }
-
-    int toInt( CGAL::Color color )
-    {
-      return ( color.red() << 16 ) + (color.green() << 8 ) + color.blue() ;
-    }
-
-    int draw_point ( double x, double y, CGAL::Color color, char const* layer )
-    {
-      int rID = -1 ;
-
-      if ( !is_connected() )
-        Connect();
-
-      if ( is_connected() )
-      {
-        QString lCmd;
-        QTextOStream(&lCmd) << 'P' << mID << ' ' << toInt(color) << ' ' << x << ' ' << y << '\n'  ;
-        sendToServer(lCmd);
-        rID = mID++;
-      }
-
-      return rID ;
-    }
-
-    int draw_segment ( double sx, double sy, double tx, double ty, CGAL::Color color, char const* layer )
-    {
-      int rID = -1 ;
-
-      if ( !is_connected() )
-        Connect();
-
-      if ( is_connected() )
-      {
-        QString lCmd;
-        QTextOStream(&lCmd) << 'S' << mID << ' ' << toInt(color) << ' ' << sx << ' ' << sy << ' ' << tx << ' ' << ty << '\n' ;
-        sendToServer(lCmd);
-        rID = mID++;
-      }
-
-      return rID ;
-    }
-
-private slots:
-    void closeConnection()
-    {
-        socket->close();
-        if ( socket->state() == QSocket::Closing )
-        {
-            // We have a delayed close.
-            connect( socket, SIGNAL(delayedCloseFinished()),
-                    SLOT(socketClosed()) );
-        }
-        else
-        {
-            // The socket is closed.
-            socketClosed();
-        }
-    }
-
-    void sendToServer( const QString& aMessage )
-    {
-      socket->writeBlock(aMessage,aMessage.length());
-      socket->flush();
-    }
-
-    void socketConnected()
-    {
-    }
-
-    void socketConnectionClosed()
-    {
-    }
-
-    void socketClosed()
-    {
-    }
-
-    void socketError( int e )
-    {
-      QTextStream ts(socket);
-      while ( socket->canReadLine() )
-        std::cerr << "Active Canvas Server socket error: " << e << std::endl ;
-    }
-
-    void socketReadyRead()
-    {
-      QTextStream ts(socket);
-      while ( socket->canReadLine() )
-        std::cerr << "Active Canvas Server Response: " << ((char const*)ts.readLine()) << std::endl ;
-    }
-
-    bool is_connected() { return socket->state() == QSocket::Connected ; }
-
-private:
-
-    QSocket *socket;
-    int mID ;
-
-};
-
+#if defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW) || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW)
+#include "active_canvas_client.C"
+#endif
 
 #define VERBOSE_VALIDATE false
 
@@ -404,7 +268,7 @@ void log_skeleton_stats( double aTime )
     {
       if ( vit->is_skeleton() )
       {
-        Halfedge_around_vertex_const_circulator iebegin = vit->incident_edges_begin();
+        Halfedge_around_vertex_const_circulator iebegin = vit->halfedge_around_vertex_begin();
         Halfedge_around_vertex_const_circulator ie = iebegin ;
         int idegree = 0 ;
         do
@@ -417,8 +281,8 @@ void log_skeleton_stats( double aTime )
         }
         while(ie != iebegin);
         
-        Halfedge_across_incident_faces_const_circulator debegin = vit->defining_contour_edges_begin();
-        Halfedge_across_incident_faces_const_circulator de = debegin ;
+        Defining_contour_halfedges_const_circulator debegin = vit->defining_contour_halfedges_begin();
+        Defining_contour_halfedges_const_circulator de = debegin ;
         int ddegree = 0 ;
         do
         {
@@ -815,26 +679,29 @@ private slots:
           in >> x >> y ;
           lPoly->push_back( Point(x,y) ) ;
         }
-        if ( i == 0 )
+        if ( lPoly->size() >= 3 )
         {
-          CGAL::Bbox_2 lBbox = CGAL::bbox_2(lPoly->begin(),lPoly->end());
-          double w = lBbox.xmax() - lBbox.xmin();
-          double h = lBbox.ymax() - lBbox.ymin();
-          double s = std::sqrt(w*w+h*h);
-          double m = s * 0.01 ;
-          widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
-          if ( auto_create_offsets )
+          if ( i == 0 )
           {
-            for ( int c = 1 ; c < 30 ; ++ c )
-              offsets.push_back(c*m);
+            CGAL::Bbox_2 lBbox = CGAL::bbox_2(lPoly->begin(),lPoly->end());
+            double w = lBbox.xmax() - lBbox.xmin();
+            double h = lBbox.ymax() - lBbox.ymin();
+            double s = std::sqrt(w*w+h*h);
+            double m = s * 0.01 ;
+            widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
+            if ( auto_create_offsets )
+            {
+              for ( int c = 1 ; c < 30 ; ++ c )
+                offsets.push_back(c*m);
+            }
           }
+          CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+          if (  !CGAL::is_simple_2(lPoly->begin(),lPoly->end())
+             || CGAL::orientation_2(lPoly->begin(),lPoly->end()) == expected 
+             )
+               lRegion->push_back(lPoly);
+          else lRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
         }
-        CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-        if (  !CGAL::is_simple_2(lPoly->begin(),lPoly->end())
-           || CGAL::orientation_2(lPoly->begin(),lPoly->end()) == expected 
-           )
-             lRegion->push_back(lPoly);
-        else lRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
       }
 
       input.push_back(lRegion);

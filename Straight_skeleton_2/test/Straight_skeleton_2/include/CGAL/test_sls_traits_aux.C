@@ -44,7 +44,7 @@ void report( int idx, bool ok, std::string const& info = std::string("") )
 template<class Traits, class triedge>
 bool exist_event( Traits const&  aTraits, triedge const& aTriedge )
 {
-  return CGAL::Exist_ss_event_2<Traits>(aTraits)()(aTriedge.triple());
+  return CGAL::Do_ss_event_exist_2<Traits>(aTraits)()(aTriedge.triple());
 }
 
 template<class Traits, class triedge>
