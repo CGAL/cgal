@@ -230,25 +230,25 @@ public:
 
     //CGAL_exactness_precondition_code(CGAL::Interval_nt_advanced ub= CGAL::to_interval(next_event_time()));
     //CGAL_exactness_precondition(ub.inf() > lb.sup());
-    NT ret;
+	NT ret;
     if (ir_(cur_time_) && cur_time_ != std::numeric_limits<Time>::infinity()) {
+
+    //if (ir_(cur_time_)) {
       /*CGAL_KINETIC_ERROR( "rational_current_time() called at time "
 	<< current_time() << " which is not rational.\n");*/
-      ret= tr_(cur_time_);
-      //std::cout << ret << " " << cur_time_ << std::endl;
-      CGAL_postcondition(!std::numeric_limits<NT>::has_infinity || ret != std::numeric_limits<NT>::infinity());
-    } else {
+      return tr_(cur_time_);
+    }
+    else {
       double ub= to_interval(current_time()).second;
       if (Time(ub) < next_event_time()) {
-	ret= NT(ub);
-	CGAL_postcondition(!std::numeric_limits<NT>::has_infinity || ret != std::numeric_limits<NT>::infinity());
-      } else {
+	return NT(ub);
+      }
+      else {
 	typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-	ret= bet(last_event_time(), next_event_time());
-	CGAL_postcondition(!std::numeric_limits<NT>::has_infinity || ret != std::numeric_limits<NT>::infinity());
+	return bet(last_event_time(), next_event_time());
       }
     }
-    return ret;
+
     //}
   }
 
