@@ -453,13 +453,12 @@ intersection(const typename CGAL_WRAP(K)::Line_3 &line,
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     bool all_values = true;
-    FT _min, _max;
+    FT _min = 0, _max = 0; // initialization to stop compiler warning
     Point_3 const & _ref_point=line.point();
     Vector_3 const & _dir=line.direction().vector();
     Point_3 const & _iso_min=box.min();
     Point_3 const & _iso_max=box.max();
-    int i;
-    for (i=0; i< _ref_point.dimension(); i++) {
+    for (int i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == RT(0)) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
                 return Object();
