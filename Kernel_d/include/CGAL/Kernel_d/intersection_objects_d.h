@@ -20,6 +20,7 @@
 // 
 //
 // Author(s)     : ?
+
 #ifndef CGAL_INTERSECTION_OBJECTS_D_H
 #define CGAL_INTERSECTION_OBJECTS_D_H
 
@@ -572,7 +573,7 @@ Ray_d_Hyperplane_d_pair<R>::intersection_type()
   // CGAL_assertion( !_r.is_degenerate() );
   typedef typename R::Line_hyperplane_intersection_d Int_obj_type;
   Int_obj_type Intersect;
-  FT lambda; 
+  FT lambda = 0; // initialize to stop compiler warning
   typename Int_obj_type::Intersection_result res = 
     Intersect(_r.point(0),_r.point(1),_h,_ip,lambda);
 
