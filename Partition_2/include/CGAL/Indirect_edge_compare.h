@@ -84,31 +84,26 @@ class Indirect_edge_compare
         if (p == q && after_p == after_q) return false;
 
         if (p == after_q) 
-        {
           return larger_x_at_vertex_y(p, q);
-        }
-        else if (after_p == q) 
-        {
-          return !larger_x_at_vertex_y(q, p);
-        }
-        else if (p == q) 
-        {
-          return larger_x_at_vertex_y(p, after_q);
-        }
-        else if (after_p == after_q) 
-        {
-          return larger_x_at_vertex_y(p, q);
-        }
-        else // neither endpoint is shared
-        {
-          // construct supporting line
-          Line_2  l_p = _construct_line_2(*p, *after_p);
-          if (_is_horizontal_2(l_p)) 
-          {
-              Line_2  l_q = _construct_line_2(*q, *after_q);
 
-              if (_is_horizontal_2(l_q))  
-              {                         
+        if (after_p == q) 
+          return !larger_x_at_vertex_y(q, p);
+
+        if (p == q) 
+          return larger_x_at_vertex_y(p, after_q);
+
+        if (after_p == after_q) 
+          return larger_x_at_vertex_y(p, q);
+
+        // else neither endpoint is shared
+        // construct supporting line
+        Line_2  l_p = _construct_line_2(*p, *after_p);
+        if (_is_horizontal_2(l_p)) 
+        {
+            Line_2  l_q = _construct_line_2(*q, *after_q);
+
+            if (_is_horizontal_2(l_q))  
+            {                         
                  Point_2 p_max;
                  Point_2 q_max;
                  if (_compare_x_2(*p, *after_p) == SMALLER)
@@ -120,35 +115,26 @@ class Indirect_edge_compare
                  else
                     q_max = *q;
                  return (_compare_x_2(p_max, q_max) == LARGER);
-              }
-              else  // p and after_p must both be on same side of l_q
-              {
+            }
+            else  // p and after_p must both be on same side of l_q
+            {
                  return (_compare_x_at_y_2(*p, l_q) == LARGER);
-              }
-          }
-          else  
-          {
-             bool q_larger_x = _compare_x_at_y_2(*q, l_p) == SMALLER;
-             bool after_q_larger_x = 
-                              _compare_x_at_y_2(*after_q, l_p) == SMALLER;
-
-             if (q_larger_x == after_q_larger_x)
-                return q_larger_x;
-             else   // one smaller and one larger
-             {
-                // construct the other line
-                Line_2 l_q = _construct_line_2(*q, *after_q); 
-                if (_is_horizontal_2(l_q))     // p is not horizontal
-                {
-                   return _compare_x_at_y_2((*q), l_p) == LARGER;
-                }
-                else 
-                {
-                  return _compare_x_at_y_2((*p), l_q) != SMALLER;
-                }
-             }
-          }   
+            }
         }
+
+        bool q_larger_x = _compare_x_at_y_2(*q, l_p) == SMALLER;
+        bool after_q_larger_x = _compare_x_at_y_2(*after_q, l_p) == SMALLER;
+
+        if (q_larger_x == after_q_larger_x)
+            return q_larger_x;
+        // else one smaller and one larger
+        // construct the other line
+        Line_2 l_q = _construct_line_2(*q, *after_q); 
+        if (_is_horizontal_2(l_q))     // p is not horizontal
+        {
+            return _compare_x_at_y_2((*q), l_p) == LARGER;
+        }
+        return _compare_x_at_y_2((*p), l_q) != SMALLER;
      }
 
    private:
