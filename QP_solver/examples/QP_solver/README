@@ -28,7 +28,7 @@ subdirectory, after setting CGAL_MAKEFILE appropriately), you can type
 
 ./data_to_mps < rational_qp.data | ./rational_qp_solver 0, or
 ./data_to_mps < double_qp.data | ./double_qp_solver 0, or
-./data_to_mps < integer_lp.data | ./integer_qp_solver 0, 
+./data_to_mps < integer_qp.data | ./integer_qp_solver 0, 
 
 and get the solution written to standard output. Replacing the
 verbosity parameter 0 with any value between 1 and 5 prints 

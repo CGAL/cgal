@@ -1377,7 +1377,7 @@ QP_solver/examples/QP_solver/README -text
 QP_solver/examples/QP_solver/data_to_mps.C -text
 QP_solver/examples/QP_solver/double_qp.data -text
 QP_solver/examples/QP_solver/double_qp_solver.C -text
-QP_solver/examples/QP_solver/integer_lp.data -text
+QP_solver/examples/QP_solver/integer_qp.data -text
 QP_solver/examples/QP_solver/integer_qp_solver.C -text
 QP_solver/examples/QP_solver/qp_solver1.C -text
 QP_solver/examples/QP_solver/qp_solver2.C -text
