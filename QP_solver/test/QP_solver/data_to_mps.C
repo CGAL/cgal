@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
+//                 Bernd Gaertner <gaertner@inf.ethz.ch>
 
 #include <iostream>
 #include <sstream>
