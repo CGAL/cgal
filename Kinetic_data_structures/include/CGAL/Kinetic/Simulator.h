@@ -230,7 +230,7 @@ public:
 
     //CGAL_exactness_precondition_code(CGAL::Interval_nt_advanced ub= CGAL::to_interval(next_event_time()));
     //CGAL_exactness_precondition(ub.inf() > lb.sup());
-	NT ret;
+    //	NT ret;
     if (ir_(cur_time_) && cur_time_ != std::numeric_limits<Time>::infinity()) {
 
     //if (ir_(cur_time_)) {
