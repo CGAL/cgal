@@ -1823,8 +1823,9 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/sphere
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/three_peaks.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/aircraft.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -text
+Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text
-Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/torus_tri.off -text
+Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text
 Surface_mesher/demo/Surface_mesher/implicit_functions.C -text
 Surface_mesher/demo/Surface_mesher/implicit_functions.h -text
 Surface_mesher/demo/Surface_mesher/implicit_surface_mesher.C -text
