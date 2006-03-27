@@ -598,7 +598,7 @@ int main(int argnr, char **argv)
   // determine number-type (test_solver needs this in order to know
   // what the numbers look like):
   Data_reader::ANT tmp = *data.c(); // any number
-  const char *number_type;
+  const char *number_type = "default"; // just to kill warnings
   if (tmp.type() == typeid(double))
     number_type = "floating-point";
   else if (tmp.type() == typeid(::Data_reader::Rational))
