@@ -30,20 +30,15 @@ public:
   bool        operator==(const MySegmentC2 &s) const;
   bool        operator!=(const MySegmentC2 &s) const;
 
-  Point_2 &   source()
-  {
-      return sp_;
-  }
-
   const Point_2 &   source() const
   {
       return sp_;
   }
+
   const Point_2 &   target() const
   {
       return tp_;
   }
-  
   const Point_2 &    start() const;
   const Point_2 &    end() const;
 
