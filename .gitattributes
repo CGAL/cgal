@@ -503,6 +503,7 @@ Installation/config/support/S25-MPFR -text
 Installation/config/support/S30-CORE -text
 Installation/config/support/S32-CGALCORE -text
 Installation/config/support/S40-ZLIB -text
+Installation/config/support/S40-ZLIBMS -text
 Installation/config/support/S60-LEDA -text
 Installation/config/support/S62-LEDAMS -text
 Installation/config/support/S80-QT3MT -text

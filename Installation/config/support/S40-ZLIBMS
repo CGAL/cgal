@@ -1,0 +1,15 @@
+# The ZLIB library (http://www.gzlib.org/zlib) 
+
+DESCRIPTION = ZLIB library for Windows
+PROVIDES = ZLIB
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = zdll
+REQUIRES = DOLLAR_WINDOWS_COMPILER
+INCOMPATIBLE = 
+STDINCLDIRS = 
+INCLTHING = 
+STDLIBDIRS = 
+LIBTHING = zdll.lib
+
+# EOF
