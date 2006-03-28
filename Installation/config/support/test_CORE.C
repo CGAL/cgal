@@ -37,7 +37,7 @@ int main() { return 0; }
 
 #else
 
-#include "CORE.h"
+#include <CORE/CORE.h>
 #include <iostream>
 
 int main()
