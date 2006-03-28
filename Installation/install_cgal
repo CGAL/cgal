@@ -1014,8 +1014,8 @@ set_compiler_flags()
 	    ;;
 	*Darwin*g++*)
 	    #### settings for gcc on Darwin
-	    ADDITIONAL_CXXFLAGS="-Wall -fno-common"
-	    CGAL_SHARED_LIB_CXXFLAGS=""
+	    ADDITIONAL_CXXFLAGS="-Wall"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
 	    SHARED_LIB_EXT=".dylib"
 	    RUNTIME_LINKER_FLAG=''
