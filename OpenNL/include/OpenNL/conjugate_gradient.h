@@ -136,11 +136,13 @@ public:
             rho=BLAS<Vector>::dot(p,p);
             sig=BLAS<Vector>::dot(r,p);
             tau=BLAS<Vector>::dot(g,r);
-            assert( ! IsZero(sig) );
+            if (IsZero(sig))
+                break;                                          // stop if bad conditioning
             t=tau/sig;
             BLAS<Vector>::axpy(t,r,x);
             BLAS<Vector>::axpy(-t,p,g);
-            assert( ! IsZero(tau) );
+            if (IsZero(tau))
+                break;                                          // stop if bad conditioning
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);

@@ -137,7 +137,8 @@ public:
         while ( rTr>err && its < max_iter) {
             mult(A,d,Ad);
             rTAd=BLAS<Vector>::dot(rT,Ad);
-            assert( ! IsZero(rTAd) );
+            if (IsZero(rTAd))
+                break;                                          // stop if bad conditioning
             alpha=rTh/rTAd;
             BLAS<Vector>::axpy(-alpha,Ad,r);
             BLAS<Vector>::copy(h,s);
@@ -156,8 +157,10 @@ public:
             BLAS<Vector>::axpy(-omega,s,x);
             BLAS<Vector>::copy(s,h);
             BLAS<Vector>::axpy(-omega,t,h);
-            assert( ! IsZero(omega) );
-            assert( ! IsZero(rTh) );
+            if (IsZero(omega))
+                break;                                          // stop if bad conditioning
+            if (IsZero(rTh))
+                break;                                          // stop if bad conditioning
             beta=(alpha/omega)/rTh; rTh=BLAS<Vector>::dot(rT,h); beta*=rTh;
             BLAS<Vector>::scal(beta,d);
             BLAS<Vector>::axpy(1,h,d);
