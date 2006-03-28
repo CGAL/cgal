@@ -1,3 +1,6 @@
+28 March 2006 Andreas Fabri
+- Replaced #ifdef WIN32 with #ifdef _MSC_VER in ImageIO.c
+
 23 March 2006 Laurent Rineau
 - new version, more didactic, of
   examples/Surface_mesher/3d_image_surface_mesher.C
