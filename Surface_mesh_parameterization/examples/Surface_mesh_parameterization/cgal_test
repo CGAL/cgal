@@ -33,7 +33,7 @@ compile_and_run()
   if [ -n "${SUCCES}" ] ; then
      OUTPUTFILE=ProgramOutput.$1.$PLATFORM
     rm -f $OUTPUTFILE
-    COMMAND="time ./$1"
+    COMMAND="./$1"
     if [ -f $1.cmd ] ; then
       COMMAND="$COMMAND `cat $1.cmd`"
     fi
