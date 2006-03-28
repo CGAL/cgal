@@ -735,7 +735,7 @@ protected:
 #endif // CGAL_NEF3_OLD_VISUALIZATION   
    
   void clear(Content space = EMPTY)
-    { *this = Nef_polyhedron_3(space, pl()->clone()); }
+    { *this = Nef_polyhedron_3(space); }
   /*{\Mop makes |\Mvar| the empty set if |space == EMPTY| and the
   full space if |space == COMPLETE|.}*/
 
