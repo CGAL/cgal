@@ -17,6 +17,8 @@
 //
 // Author(s)     : Radu Ursu
 
+#include <CGAL/basic.h>
+
 #if defined CGAL_USE_QT && defined CGAL_USE_GMP
 
 #include <CGAL/IO/Qt_widget.h>
