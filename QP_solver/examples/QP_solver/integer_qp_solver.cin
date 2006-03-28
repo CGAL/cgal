@@ -1,0 +1,17 @@
+* Number-type: integer
+* Description: Test
+* Generated-by: data2mps
+NAME Test
+ROWS
+  N obj
+COLUMNS
+  x0  obj  1
+  x1  obj  -1
+  x2  obj  1
+RHS
+BOUNDS
+  LO  BND  x1  2
+  UP  BND  x1  3
+  LO  BND  x2  2
+  UP  BND  x2  3
+ENDATA
