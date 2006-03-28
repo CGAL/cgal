@@ -316,7 +316,10 @@ private:
     Nef_polyhedron N = Nef_polyhedron(Nef_polyhedron::EMPTY);
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"empty.nef3.SH")); 
-    
+    N.clear();
+    CGAL_assertion(N.is_valid(0,0));
+    CGAL_assertion(does_nef3_equals_file(N,"empty.nef3.SH")); 
+
     N = Nef_polyhedron(Nef_polyhedron::COMPLETE);
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"complete.nef3.SH")); 
