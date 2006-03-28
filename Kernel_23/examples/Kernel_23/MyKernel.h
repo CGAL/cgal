@@ -15,7 +15,7 @@ public:
   typedef K_                                Kernel;
   typedef MyPointC2                         Point_2;
   typedef MySegmentC2<Kernel>               Segment_2;
-  typedef MyConstruct_point_2<Kernel>       Construct_point_2;
+  typedef MyConstruct_point_2<Kernel, OldK>       Construct_point_2;
   typedef const double*                     Cartesian_const_iterator_2;
   typedef MyConstruct_coord_iterator        Construct_cartesian_const_iterator_2;
   typedef MyConstruct_bbox_2<typename OldK::Construct_bbox_2> 

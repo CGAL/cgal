@@ -25,14 +25,18 @@ const int BLACK=2;
 
 int main()
 {
-  Point a(0,0, RED), b(1,0, BLACK), c(1,1, BLACK), d(0,1, RED);
+  Point a(0,0), b(1,0, BLACK), c(1,1), d(0,1);
+  a.color()=RED;
+  b.color()=BLACK;
+  d.color()=RED;
 
   Delaunay_triangulation_2 dt;
   dt.insert(a);
 
   K::Orientation_2 orientation;
   orientation(a,b,c);
-  Point p(1,2, BLACK), q;
+
+  Point p(1,2), q;
   p.color() = RED;
   q.color() = BLACK;
   std::cout << p << std::endl;
@@ -46,13 +50,10 @@ int main()
 
   K::Construct_midpoint_2 construct_midpoint_2;
 
-  construct_midpoint_2(p,q);
+  Point mp = construct_midpoint_2(p,q);
 
   assert(s1.source().color() == RED);
 
-  s1.source().color() = BLACK;
-
-  assert(s1.source().color() == BLACK);
 
   K::Intersect_2 intersection;
 
@@ -103,5 +104,7 @@ int main()
   std::cout << s1.source() << std::endl;
 
   std::cout << t1.bbox() << std::endl;
+
+  std::cout << "done" << std::endl;
   return 0;
 }

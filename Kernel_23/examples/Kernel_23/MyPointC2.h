@@ -78,32 +78,49 @@ public:
   }
 };
 
-  template <typename K>
+  template <typename K, typename OldK>
   class MyConstruct_point_2
   {
     typedef typename K::RT         RT;
     typedef typename K::Point_2    Point_2;
+    typedef typename K::Line_2    Line_2;
   public:
     typedef Point_2          result_type;
     typedef CGAL::Arity_tag< 1 >   Arity;
 
     Point_2
     operator()(CGAL::Origin o) const
-    { return Point_2(0, 0, 0); }
+    { return MyPointC2(0, 0, 0); }
 
     Point_2
     operator()(const RT& x, const RT& y) const
-    { return Point_2(x, y, 0); }
+    { 
+      return MyPointC2(x, y, 0); 
+    }
 
+    Point_2
+    operator()(const Line_2& l) const
+    {
+      typename OldK::Construct_point_2 base_operator;
+      Point_2 p = base_operator(l);
+      return p;
+    }
     
+    Point_2
+    operator()(const Line_2& l, int i) const
+    {
+      typename OldK::Construct_point_2 base_operator;
+      return base_operator(l, i);
+    }
+
     // We need this one, as such a functor is in the Filtered_kernel
     Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
     { 
       if(w != 1){
-	return Point_2(x/w, y/w, 0); 
+	return MyPointC2(x/w, y/w, 0); 
       } else {
-	return Point_2(x,y, 0);
+	return MyPointC2(x,y, 0);
       }
     }
   };
