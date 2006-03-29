@@ -1357,6 +1357,9 @@ Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_cubes_shifted.data
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_numbers.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_squares.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_andreas_example.C -text
+Principal_component_analysis/demo/Principal_component_analysis/linear_least_squares_fitting.C -text
+Principal_component_analysis/demo/Principal_component_analysis/linear_least_squares_fitting_toolbar.C -text
+Principal_component_analysis/demo/Principal_component_analysis/makefile -text
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.ico -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.rc2 -text
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Mesh.ico -text svneol=unset#unset
