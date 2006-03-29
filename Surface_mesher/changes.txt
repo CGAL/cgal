@@ -1,5 +1,5 @@
 29 March 2006 Laurent Rineau
-- New "#if CGAL_USE_CORE/#endif" around the use of CORE, in
+- New "#ifdef CGAL_USE_CORE/#endif" around the use of CORE, in
   test/Surface_mesher/implicit_surface_mesher_test.C
 - Patch to ImageIO to kill warnings of SunCC. ImageIO was a C library but
   is compiled by a C++ compiler. It needs adjustments.

@@ -6,7 +6,7 @@
 #include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/MP_Float.h>
-#if CGAL_USE_CORE == 1
+#ifdef CGAL_USE_CORE
 #  include <CGAL/CORE_Expr.h>
 #endif
 
@@ -175,7 +175,7 @@ void test_with_tag(Tag = CGAL::Non_manifold_tag())
   std::cout << "\nKERNEL CGAL::Filtered_kernel<CGAL::Cartesian<float> >...\n";
   Test_with_kernel<CGAL::Filtered_kernel<CGAL::Cartesian<float> >,Tag>()();
 
-#if CGAL_USE_CORE == 1
+#ifdef CGAL_USE_CORE
   Test_with_kernel<CGAL::Filtered_kernel<CGAL::Simple_cartesian<CORE::Expr> >,
     Tag>()(DO_NOT_RUN);
 #endif
