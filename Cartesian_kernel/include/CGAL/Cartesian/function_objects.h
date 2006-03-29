@@ -2003,17 +2003,19 @@ namespace CartesianKernelFunctors {
     Point_2
     operator()(const Line_2& l) const
     { 
+      typename K::Construct_point_2 construct_point_2;
       typename K::FT x, y;
       line_get_pointC2(l.a(), l.b(), l.c(), 0, x, y);
-      return Rep(x,y); 
+      return construct_point_2(x,y); 
     }
 
     Point_2
     operator()(const Line_2& l, int i) const
     { 
+      typename K::Construct_point_2 construct_point_2;
       typename K::FT x, y;
       line_get_pointC2(l.a(), l.b(), l.c(), i, x, y);
-      return Rep(x,y); 
+      return construct_point_2(x,y); 
     }
   };
 
