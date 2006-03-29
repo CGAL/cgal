@@ -1,12 +1,13 @@
 // test for the linear_least_square_fitting() functions.
+
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/copy_n.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
+
 #include <vector>
 #include <cassert>
 #include <stdlib.h>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
-#include <CGAL/copy_n.h>
-#include <CGAL/linear_least_squares_fitting_3.h>
 
 // types
 typedef CGAL::Cartesian<float> Kernel;
