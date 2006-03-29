@@ -30,8 +30,12 @@
 #include <CGAL/_test_cls_regular_euclidean_traits_3.C>
 
 //needs an exact number type to test the traits class
-//typedef double NT;
+#ifdef CGAL_USE_GMP
 typedef CGAL::Quotient<CGAL::Gmpz>  NT;
+#else
+typedef CGAL::Quotient<CGAL::MP_Float>  NT;
+#endif
+
 typedef CGAL::Simple_cartesian<NT> K;
 
 // Explicit instantiation of the whole class :
