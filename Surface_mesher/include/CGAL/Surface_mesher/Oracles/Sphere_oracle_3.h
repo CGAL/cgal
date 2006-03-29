@@ -190,8 +190,8 @@ namespace CGAL {
         {
           return make_object(translated_point(a, scaled_vector(ab, root_2)));
         }
-        else
-          return Object();
+        // else
+        return Object();
       } // end private_intersection
 
       struct Lambda_between_0_and_1 : public std::unary_function<FT, bool> 
@@ -334,9 +334,8 @@ namespace CGAL {
           // if root_1 <= 0, a is in the ball
           return true;
         }
-        else
-          // else r does not intersect the sphere
-          return false;
+        // else r does not intersect the sphere
+        return false;
       } // end clip_ray
 
       /** The return value s is l clipped to sphere.
@@ -374,9 +373,8 @@ namespace CGAL {
           b = translated_point(a, scaled_vector(ab, root_2));
           return true;
         }
-        else
-          // else l does not intersect the sphere
-          return false;
+        // else l does not intersect the sphere
+        return false;
       } // end clip_line
 
     }; // end nested class Intersect_3

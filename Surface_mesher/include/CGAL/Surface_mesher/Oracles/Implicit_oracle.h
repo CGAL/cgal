@@ -161,8 +161,8 @@ namespace CGAL {
                                            a,
                                            b,
                                            surface.squared_error_bound());
-        else
-          return Object();
+        // else
+        return Object();
       } // end operator()(Surface_3, Segment_3)
 
       Object operator()(const Surface_3& surface, const Ray_3& r) const {
@@ -179,8 +179,8 @@ namespace CGAL {
                                            b,
                                            surface.squared_error_bound());
         }
-        else
-          return Object();
+        // else
+        return Object();
       } // end operator()(Surface_3, Ray_3)
 
       Object operator()(const Surface_3& surface, const Line_3& l) const {
