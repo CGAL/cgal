@@ -33,9 +33,6 @@
 
 int main()
 {
-    uLong zlib_compile_flags = zlibCompileFlags();
-
-    std::cout << "version=" << ZLIB_VERSION << std::endl;
-
-    return 0;
+  std::cout << ZLIB_VERSION << std::endl;
+  return 0;
 }
