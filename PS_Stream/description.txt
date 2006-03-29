@@ -1,1 +1,0 @@
-Classes PS_Stream and PS_Stream_3 : PostScript streams.
