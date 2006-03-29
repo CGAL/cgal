@@ -1,3 +1,0 @@
-0.0 ... 14-11-2002
-------------------
-	The first files and dir structure is ready.
