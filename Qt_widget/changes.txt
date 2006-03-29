@@ -1,3 +1,6 @@
+29 March 2006 Andreas Fabri
+- Removed rounding for Gmpq as it may change orientation of points
+
 09 March 2006 Joachim Reichel
 - LGPL copyright notice added to src/CGALQt/makefile
 

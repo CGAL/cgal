@@ -404,22 +404,6 @@ void Qt_widget::zoom(double ratio)
        ymin + (ymax - ymin) / 2 );
 }
 
-#ifdef CGAL_USE_GMP
-void Qt_widget::x_real(int x, Gmpq& return_t) const
-{
-  return_t = simplest_rational_in_interval<Gmpq>( 
-                  xmin+x/xscal-(1/xscal)/2,
-                  xmin+x/xscal+(1/xscal)/2);
-}
-
-void Qt_widget::y_real(int y, Gmpq& return_t) const
-{
-  return_t = simplest_rational_in_interval<Gmpq>( 
-                  ymax - y/yscal-(1/yscal)/2,
-                  ymax - y/yscal+(1/yscal)/2);
-}
-#endif
-
 double Qt_widget::x_real(int x) const
 {
   if(xscal<1)
