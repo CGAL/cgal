@@ -17,6 +17,8 @@
 //
 // Author(s)     : Matthias Baesken
 
+#include <CGAL/basic.h>
+
 #ifndef CGAL_USE_LEDA
 int main(){
   return 0;

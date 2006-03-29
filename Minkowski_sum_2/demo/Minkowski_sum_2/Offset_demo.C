@@ -1,6 +1,9 @@
+
 /*
  * A simple demo that computes the Minkowski sum of two polygons.
  */
+#include <CGAL/basic.h>
+
 #ifndef CGAL_USE_QT
 
 #include <iostream>

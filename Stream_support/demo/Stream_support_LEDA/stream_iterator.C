@@ -22,6 +22,8 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 
+#include <CGAL/basic.h>
+
 #ifndef CGAL_USE_LEDA
 #include <iostream>
 int main(){ std::cout << "This demo needs LEDA" << std::endl; return 0;}

@@ -17,8 +17,9 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
+
+#ifdef CGAL_USE_LEDA
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/leda_integer.h>
 #include <CGAL/Convex_hull_d.h>
