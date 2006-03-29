@@ -434,12 +434,6 @@ Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#unset
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#unset
 Envelope_3/examples/Envelope_3/make_xy_mon.C -text
-ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.eps -text
-ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.fig -text
-ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.gif -text svneol=unset#unset
-ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.eps -text
-ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.fig -text
-ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
 Generator/demo/Generator/generator.vcproj -text
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
 Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#unset
