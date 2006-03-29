@@ -2276,8 +2276,6 @@ Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stock.ppt -text svneol=unset#uns
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/subdivision.eps -text
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/teaser.eps -text
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/trimming.eps -text
-Viewer_3/doc_tex/Viewer_3/viewer.eps -text
-Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip.xpm -text
 Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip_parallele.xpm -text
 Visibility_complex/demo/Visibility_complex/pixmaps/flip.xpm -text
