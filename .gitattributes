@@ -618,6 +618,8 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.pdf -text svneol=unset#unset
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.ps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Certificate.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/ConstructFunction.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Function.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Time.tex -text
 Kinetic_data_structures/examples/Kinetic_data_structures/adding_a_certificate.C -text
 Kinetic_data_structures/include/CGAL/Kinetic/Certificate_generator.h -text

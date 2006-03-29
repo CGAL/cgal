@@ -11,41 +11,35 @@
 % +------------------------------------------------------------------------+
 
 \ccDefGlobalScope{CGAL::}
-\begin{ccRefConcept}[Kinetic::Simulator::]{Time}
+\begin{ccRefConcept}[Kinetic::FunctionKernel::]{ConstructFunction}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
   
-The concept \ccClassName\ represents time in the simulator.
+The concept \ccClassName\ is used to construct functions. 
 
 \ccCreationVariable{a}  %% choose variable name
 
-\ccConstructor{Time(NT);}{Construct an instance of time from a number
-type, where NT is the number type used in the simulation.}
-
 \ccOperations
 
-%\ccMethod{std::pair<NT, NT> isolating_interval();}{Return an interval (not necessarily a narrow one), containing the time represented by this object.}
-
-\ccGlobalFunction{std::ostream& operator<<(std::ostream&, Time);}{Write it to a stream.}
-
-\ccGlobalFunction{double to_double(Time);}{Return a double approximation of the time value.}
-
-\ccGlobalFunction{std::pair<double, double> to_interval(Time);}{Return an interval containing the time value.}
-
-Comparisons with other \ccc{Kinetic::Simulator::Time} objects are supported.
-
-\ccHasModels
-
-\ccc{double}, 
-\ccc{Kinetic::FunctionKernel::Root}
+\ccMethod{Function operator()(NT a, ...);} {This family of methods
+  takes a list of coefficients and returns a function. There can be
+  any number of coeffients passed as arguments (up to about 25 in the
+  current implementations).}
 
 \ccSeeAlso
 
-\ccc{Kinetic::Simulator}
+\ccc{FunctionKernel}
 
+\ccExample
+
+\begin{ccExampleCode}
+Function_kernel fk;
+Function_kernel::Construct_function cf= fk.construct_function_object();
+Function_kernel::Function f= cf(0,1,2,3,4,5);
+\end{ccExampleCode}
 
 \end{ccRefConcept}
 
@@ -54,3 +48,8 @@ Comparisons with other \ccc{Kinetic::Simulator::Time} objects are supported.
 % EOF
 % +------------------------------------------------------------------------+
 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

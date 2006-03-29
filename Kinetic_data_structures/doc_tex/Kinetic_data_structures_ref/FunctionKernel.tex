@@ -53,6 +53,14 @@ argument.
 \ccNestedType{Sign_above}{A functor which returns sign of a function
   immediately above a root.}
 
+The following type is used to construct functions from a list of
+coefficients. To get an instance use the
+\ccc{construct_function_object()} method.
+
+\ccNestedType{Construct_function}{This functor can be used create
+  instances of \ccc{Function}. See its reference page
+  \ccc{FunctionKernel::ConstructFunction} for more details.}
+
 The following functor likewise have a \ccc{type_object} method, but
 these take arguments other than a \ccc{Function}. The arguments are
 given below.
@@ -89,9 +97,6 @@ The following methods do not require any arguments to get the functor and take o
 
 %\ccNestedType{Rational_translate_zero}{}
 %\ccNestedType{Shift_power}{}
-
-\ccNestedType{Construct_function}{The functor can be used to construct instances of \ccc{Function}.}
-
 
 %\ccCreation
 %\ccCreationVariable{fk}  %% choose variable name
