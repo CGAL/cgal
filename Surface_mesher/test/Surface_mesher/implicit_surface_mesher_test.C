@@ -1,10 +1,14 @@
+#include <CGAL/basic.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/MP_Float.h>
-#include <CGAL/CORE_Expr.h>
+#if CGAL_USE_CORE == 1
+#  include <CGAL/CORE_Expr.h>
+#endif
 
 #include <CGAL/make_surface_mesh.h>
 
@@ -171,8 +175,10 @@ void test_with_tag(Tag = CGAL::Non_manifold_tag())
   std::cout << "\nKERNEL CGAL::Filtered_kernel<CGAL::Cartesian<float> >...\n";
   Test_with_kernel<CGAL::Filtered_kernel<CGAL::Cartesian<float> >,Tag>()();
 
+#if CGAL_USE_CORE == 1
   Test_with_kernel<CGAL::Filtered_kernel<CGAL::Simple_cartesian<CORE::Expr> >,
     Tag>()(DO_NOT_RUN);
+#endif
 
   Test_with_kernel<CGAL::Cartesian<CGAL::Lazy_exact_nt<double> >,
     Tag >()(DO_NOT_RUN);
