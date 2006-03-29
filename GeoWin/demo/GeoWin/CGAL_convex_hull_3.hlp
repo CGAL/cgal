@@ -1,5 +1,0 @@
-This program shows you the 3d convex hull algorithm of CGAL.
-Use 'Show d3 output' from the window menu to view the 3d hull
-of the input.
-For generating input you can also use the generators found in
-the Edit->Generate menu entry.
