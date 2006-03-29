@@ -1,14 +1,36 @@
-.PHONY: all clean diff dist-clean doc doxygen examples test update run-examples \
-	run-test examples.clean test.clean run-all dep 
+.PHONY: all \
+	clean \
+	dep \
+	diff \
+	dist-clean \
+	demo \
+	demo.clean \
+	doc \
+	doxygen \
+	examples \
+	examples.clean \
+	run-examples \
+	run-test \
+	run-all 
+	test \
+	test.clean \
+	update
 
-all: test examples
+
+all: test examples demo
 
 dep: 
 	$(MAKE) -C test/Surface_mesher dep
 	$(MAKE) -C examples/Surface_mesher dep
 
 # clean all object files
-clean: test.clean examples.clean
+clean: test.clean examples.clean demo.clean
+
+demo:
+	$(MAKE) -C demo/Surface_mesher
+
+demo.clean:
+	$(MAKE) -C demo/Surface_mesher clean
 
 doc:
 	${MAKE} -C doc_tex
