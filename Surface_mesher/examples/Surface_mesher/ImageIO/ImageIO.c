@@ -55,11 +55,12 @@ static PTRIMAGE_FORMAT InrimageFormat=NULL;
 
 
 
-
-/* default allocation routine */
-static void *(*allocRoutine)(size_t) = 0;
-/* default deallocation routine */
-static void (*deleteRoutine)(void *) = 0;
+extern "C" {
+  /* default allocation routine */
+  static void *(*allocRoutine)(size_t) = 0;
+  /* default deallocation routine */
+  static void (*deleteRoutine)(void *) = 0;
+}
 
 void *ImageIO_alloc(size_t s) {
   if(!allocRoutine) allocRoutine = malloc;

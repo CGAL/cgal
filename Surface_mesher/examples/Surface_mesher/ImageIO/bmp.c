@@ -65,7 +65,7 @@ int readBmpImage( const char *name,_image *im)
 void *_readBmpImage( const char *name, 
 		     int *dimx, int *dimy, int *dimz )
 {
-  char *proc="_readBmpImage";
+  const char *proc="_readBmpImage";
   void *buf = (void*)NULL;
   unsigned char *myBuf;
 

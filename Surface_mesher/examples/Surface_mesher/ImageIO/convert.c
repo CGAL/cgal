@@ -28,7 +28,7 @@ void ConvertBuffer( void *bufferIn,
 		    bufferType typeOut,
 		    int bufferLength )
 {
-  char *proc = "ConvertBuffer";
+  const char *proc = "ConvertBuffer";
   register int i, min, max;
   register u8 *u8buf;
   register s8 *s8buf;

@@ -56,7 +56,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
 					       recursiveFilterType type_filter, 
 					       derivativeOrder derivative )
 {
-  char *proc="InitRecursiveCoefficients";
+  const char *proc="InitRecursiveCoefficients";
   double ex, k1, k2;
   double a0, a1, c0, c1, omega0, omega1, b0, b1;
   double cos0, sin0, cos1, sin1;
@@ -463,7 +463,7 @@ int RecursiveFilter1D( RFcoefficientType *RFC,
 		       double *work2, 
 		       int dim )
 {
-  char *proc="RecursiveFilter1D";
+  const char *proc="RecursiveFilter1D";
   register double rp0, rp1, rp2, rp3;
   register double rd1, rd2, rd3, rd4;
   register double rn0, rn1, rn2, rn3, rn4;

@@ -30,8 +30,8 @@ typedef unsigned char byte;
 
 FILE *fp;
 int   gif89 = 0;
-char *id87 = "GIF87a";
-char *id89 = "GIF89a";
+const char *id87 = "GIF87a";
+const char *id89 = "GIF89a";
 
 static int EGApalette[16][3] = {
   {0,0,0},       {0,0,128},     {0,128,0},     {0,128,128}, 
@@ -42,7 +42,7 @@ static int EGApalette[16][3] = {
 
 static int  ReadCode();
 static void DoInterlace(byte);
-static int GifError(char *);
+static int GifError(const char *);
 
 
 byte *Raster;			/* The raster data stream, unblocked */
@@ -621,7 +621,7 @@ static void DoInterlace(byte Index) {
 
       
 /*****************************/
-static int GifError(char *st) {
+static int GifError(const char *st) {
   fprintf(stderr,"readGifImage: error: %s\n",st);
 
   if (RawGIF != NULL) ImageIO_free(RawGIF);

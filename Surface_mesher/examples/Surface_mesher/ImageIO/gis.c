@@ -622,7 +622,7 @@ int readGisHeader( const char* name,_image* im)
 
 int writeGisHeader( const _image* inr )
 {
-  char *proc = "writeGisHeader";
+  const char *proc = "writeGisHeader";
   char *str = NULL;
   
   if ( inr->vectMode == VM_NON_INTERLACED ) {

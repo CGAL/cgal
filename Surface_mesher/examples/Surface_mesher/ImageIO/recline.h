@@ -75,7 +75,7 @@ typedef enum {
   UNKNOWN_FILTER = 0 /* unknown filter type */,
   ALPHA_DERICHE = 1 /* Deriche's filter (exponential (- alpha |X|)) */,
   GAUSSIAN_DERICHE = 2 /* gaussian approximation (Deriche's coefficients) */,
-  GAUSSIAN_FIDRICH = 3 /* gaussian approximation (Fidrich's coefficients) */,
+  GAUSSIAN_FIDRICH = 3 /* gaussian approximation (Fidrich's coefficients) */
 } recursiveFilterType;
 
 

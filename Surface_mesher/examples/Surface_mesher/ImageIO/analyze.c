@@ -563,7 +563,7 @@ int readAnalyzeHeader( const char* name, _image* im)
 int
 writeAnalyzeHeader( const _image* im )
 {
-  char *proc = "writeAnalyzeHeader";
+  const char *proc = "writeAnalyzeHeader";
   struct dsr hdr;
   int i ;
   int imin = 0;

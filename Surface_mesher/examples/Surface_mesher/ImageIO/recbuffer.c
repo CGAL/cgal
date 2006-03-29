@@ -65,7 +65,7 @@ int GradientModulus( void *bufferIn,
 		     float *filterCoefs,
 		     recursiveFilterType filterType )
 {
-  char *proc = "GradientModulus";
+  const char *proc = "GradientModulus";
   float *auxBuf = NULL;
   float *tmpBuf = NULL, *grdBuf = NULL;
   int sizeAuxBuf = 0;
@@ -230,7 +230,7 @@ int Laplacian_2D ( void *bufferIn,
 		   float *filterCoefs,
 		   recursiveFilterType filterType )
 {
-  char *proc = "Laplacian_2D";
+  const char *proc = "Laplacian_2D";
   float *theXX = NULL;
   float *theYY = NULL;
 
@@ -372,7 +372,7 @@ int Laplacian ( void *bufferIn,
 		   float *filterCoefs,
 		   recursiveFilterType filterType )
 {
-  char *proc = "Laplacian";
+  const char *proc = "Laplacian";
   float *theSL = NULL;
   float *theZZ = NULL;
   float *theZ0 = NULL;
@@ -574,7 +574,7 @@ int GradientHessianGradient_2D ( void *bufferIn,
 		   float *filterCoefs,
 		   recursiveFilterType filterType )
 {
-  char *proc = "GradientHessianGradient_2D";
+  const char *proc = "GradientHessianGradient_2D";
   float *theXX = NULL;
   float *theYY = NULL;
   float *theXY = NULL;
@@ -833,7 +833,7 @@ int GradientHessianGradient ( void *bufferIn,
 		   float *filterCoefs,
 		   recursiveFilterType filterType )
 {
-  char *proc = "GradientHessianGradient";
+  const char *proc = "GradientHessianGradient";
 
 
 
@@ -1183,7 +1183,7 @@ int RecursiveFilterOnBuffer( void *bufferIn,
 			     float *filterCoefs,
 			     recursiveFilterType filterType )
 {
-  char *proc = "RecursiveFilterOnBuffer";
+  const char *proc = "RecursiveFilterOnBuffer";
   register int dimx, dimxXdimy;
   int dimy, dimz;
   register int x, y, z;
