@@ -7,12 +7,23 @@
 \RCSdefDate{\skinSurfaceDate}{$Date$}
 % +------------------------------------------------------------------------+
 
+\newcommand{\dabs}[1]{{\parallel\! #1 \!\parallel}}
+
 \chapter{3D Skin Surface Meshing}
-\label{chapterSkinSurface}
+\label{chapter_SkinSurface}
 \ccChapterRelease{\skinSurfaceRev. \ \skinSurfaceDate}
 \ccChapterAuthor{Nico Kruithof}
 
 \minitoc
+
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=.75\textwidth]{Skin_surface_3/molecule}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<img border="0" src="./molecule.png" align="center" height="75%">
+\end{ccHtmlOnly}
 
 % +------------------------------------------------------------------------+
 \section{Introduction}
@@ -25,7 +36,7 @@ computing.  Meshing such surfaces is often required for further
 processing of their geometry, like in numerical simulation and
 visualization.
 
-A skin surface is parameterized by a set of weighted points (input
+A skin surface is defined by a set of weighted points (input
 balls) and a shrink factor. If the shrink factor is equal to one, the
 surface is just the boundary of the union of the input balls.  If the
 shrink factor decreases, the skin surface becomes tangent continuous,
@@ -38,33 +49,78 @@ shrink factor using the algorithm described in
 %An optimized algorithm is implemented for meshing the union of a set of balls.
 
 \section{Definition}
-A skin surface is defined as the boundary of an infinite set of balls.
-Let $\mathcal{P}$ be a set of weighted points in $\R^3$. A weighted
-point ${\hat{p}}=(p,w_p)$ can also be seen as a ball with center $p$
-and squared radius $w_p$. A vector space of weighted points is
-inherited from the bijective map
-\[\Pi({\hat{p}}) = ({p, \|{p}\|^2-w_p})\]
-where $\|{p}\|$ is the two-norm. Addition of two weighted points and
+\label{sec:skindefinition}
+This section first briefly reviews skin surfaces and then introduces
+some new concepts specific to the meshing algorithm. For a more
+thorough introduction to skin surfaces, we refer to \cite{cgal:e-dssd-99}
+where they were originally introduced.
+
+\subsection{Skin surfaces.}
+A skin surface is defined in terms of a finite set of weighted points
+$\hat{P}$ and a shrink factor $s$, with $0\leq s\leq 1$. A
+weighted point $\hat{p}=({p},\textsc{p})\in \R^d\times\R$
+corresponds to a ball with center ${p}$ and radius
+$\sqrt{\textsc{p}}$. If $\textsc{p}<0$, then the weighted point
+corresponds to an imaginary ball (a ball with imaginary radius). A
+pseudo-distance between two weighted points is given by:
+\begin{equation}
+\label{eq:dist}
+  \pi(\hat{p},\hat{q}) = \dabs{{p} - {q}}^2
+                               - \textsc{p} - \textsc{q},
+\end{equation}
+where $\hat{p}=({p},\textsc{p})$,
+$\hat{q}=({q},\textsc{q})$ and $\dabs{\cdot}$ denotes the
+Euclidean distance. The pseudo-distance $\pi(\hat{p},x)$ of a
+weighted point $\hat{p}$ to an (unweighted) point $x$ is the
+pseudo-distance of $\hat{p}$ to the weighted point centered at $x$
+with zero weight.
+%A point with zero weight is called an \emph{unweighted point}.
+Two weighted points with zero distance are called \emph{orthogonal}.
+An \emph{orthosphere} of a set of weighted points $\hat{P}$ is,
+by definition, a sphere orthogonal to each of the weighted points in
+$\hat{P}$.
+
+The space of weighted points inherits a vector space structure from
+$\R^{d+1}$ via the bijective map $\Pi:\R^d\!\times\!\R\mapsto\R^{d+1}$,
+defined by $\Pi(\hat{p}) =
+(x_1,\ldots,x_d,\dabs{{p}}^2-\textsc{p}),$ with
+${p}=(x_1,\ldots,x_d)$. Addition of two weighted points and
 the multiplication of a weighted point by a scalar are defined in the
-vector space structure inherited under $\Pi$.
+vector space structure inherited under $\Pi$. For further reading on
+the space of circles and spheres we refer to \cite{p-gcc-70}.
 
-A shrunk weighted point ${\hat{p}}^{s}$ is obtained by multiplying the
-weight of the weighted point ${\hat{p}}$ with the scalar $s$:
-${\hat{p}}^{s}= (p,s w_p)$. A set of weighted points is shrunk by
-shrinking each weighted point seperately.
+Starting from a weighted point $\hat{p}=({p},\textsc{P})$, the
+shrunken weighted point $\hat{p}^s$ is defined as $\hat{p}^s =
+({p},s\cdot \textsc{p})$.  The set $\hat{P}^s$ is the set
+obtained by shrinking every weighted point of $\hat{P}$ by a
+factor $s$.
 
-The skin surface of ${\mathcal{P}}$ with shrink factor $s$ is the boundary
-of the weighted points in the convex hull of $\mathcal{P}$ shrunk by a
-factor $s$:
-\[{\tt skn}^s(\mathcal{P}) =
-\partial({\tt conv}(\mathcal{P}))^s\]
+The skin surface $\mbox{skn}^{s}(\hat{P})$ and its body
+$\mbox{bdy}^{s}(\hat{P})$ associated with a set of weighted points
+$\hat{P}$, are defined by
+\begin{eqnarray}
+  \label{eq:defbody}
+  \mbox{bdy}^{s}(\hat{P}) &=& \cup(\mbox{conv} (\hat{P}))^s\\
+  \label{eq:defskin}
+  \mbox{skn}^{s}(\hat{P}) &=& \partial{\mbox{bdy}^{s}(\hat{P})}.
+\end{eqnarray}
+%
+Here $\mbox{conv}(\hat{P}) \subset \R^d\times\R$ is the convex hull --
+with respect to the vector space structure inherited under $\Pi$ -- of
+a set of weighted points $\hat{P}$, whereas $\partial$ denotes the
+boundary -- in $\R^d$ -- of the union of the corresponding set of
+balls. For a skin curve in $2D$ associated with two weighted points:
+see Figure~\ref{fig:twoPoints}.
 
-A polyhedral complex called the mixed complex subdivides the skin
-surface into quadric patches (spheres and hyperboloids). A mixed cell
-exists for every simplex in the Regular triangulation. Adding alpha to
-the weight of each weighted point in $\mathcal{P}$, does not change the
-mixed complex. For a shrink factor of one, the mixed complex
-degenerates into the Voronoi diagram.
+\begin{figure}
+\centering
+\includegraphics[width=.5\textwidth]{skinTwoPoints}
+\caption{\label{fig:twoPoints} The skin curve of two weighted points
+  (the two dashed circles). The smaller circles form a subset of the
+  shrunken convex hull of the input points. Its boundary forms the skin
+  curve. }
+\end{figure}
+
 
 \section{Skin surface mesh}
 The mesh is constructed in several steps:

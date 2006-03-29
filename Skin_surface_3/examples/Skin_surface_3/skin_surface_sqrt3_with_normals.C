@@ -45,13 +45,12 @@ int main(int argc, char *argv[]) {
   Regular                       regular;
   Triangulated_mixed_complex    triangulated_mixed_complex;
   Polyhedron                    polyhedron;
-  
-  l.push_front(Reg_weighted_point(Reg_point(0,0,0), 1.1));
-  l.push_front(Reg_weighted_point(Reg_point(0,1,0), 2));
-  l.push_front(Reg_weighted_point(Reg_point(0,0,2), 1));
+
+  std::ifstream in("data/caffeine.cin");
+  Reg_weighted_point wp;
+  while (in >> wp) regular.insert(wp);
 
   // Construct regular triangulation and bounding box
-  regular.insert(l.begin(), l.end());
   CGAL::skin_surface_construct_bounding_box_3(regular, skin_surface_traits);
 
   // Construct the triangulated mixed complex
@@ -66,7 +65,7 @@ int main(int argc, char *argv[]) {
 
   // Subdivide mesh:
   Skin_surface_refinement_traits refinement_traits(triangulated_mixed_complex);
-  CGAL::skin_surface_sqrt3(polyhedron, refinement_traits, 3);
+  CGAL::skin_surface_sqrt3(polyhedron, refinement_traits, 2);
   
   { // Write subdivided mesh with normals:
     typedef Polyhedron::Vertex_iterator                        Vertex_iterator;

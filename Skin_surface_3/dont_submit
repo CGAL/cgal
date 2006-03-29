@@ -1,4 +1,5 @@
 TODO.txt
+Doxyfile
 examples/Skin_surface_3/union_of_balls_simple.C
 include/CGAL/union_of_balls_3.h
 include/CGAL/Voronoi_triangulator_3.h
