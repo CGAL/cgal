@@ -1,17 +1,27 @@
-CGAL_HOME/LICENSE
+LICENSE
 -------------------------------------------------------------------------------
 
-The CGAL software falls either under the GNU Lesser General Public License (as
-published by the Free Software Foundation; version 2.1 of the License), or
-under the Q Public License (v1.0), depending on each package.  The texts of
-both licenses can be found in the files LICENSE.LGPL and LICENSE.QPL.  It is
-specified in each file of CGAL which license applies to it.
+The CGAL software consists of several parts, each of which is licensed under
+an open source license. It is also possible to obtain commercial licenses from
+GeometryFactory (www.geometryfactory.com) for all or parts of CGAL.
 
-It is possible to obtain commercial licenses from GeometryFactory
-(www.geometryfactory.com) for all or parts of CGAL.
+The source code of the CGAL library can be found in the directories {\ss}rc"
+and "include/CGAL". It is specified in each file of the CGAL library which
+license applies to it. This is either the GNU Lesser General Public License
+(as published by the Free Software Foundation; version 2.1 of the License) or
+the Q Public License (version 1.0). The texts of both licenses can be found in
+the files LICENSE.LGPL and LICENSE.QPL.  
 
 Distributed along with CGAL (for the users' convenience), but not part of CGAL,
-are the following libraries, available under their own licenses :
-- GMP, in the directory "auxiliary/", under the LGPL (see LICENSE.LGPL)
-- CORE, in the directory "src/Core/", under the QPL (see LICENSE.QPL)
-- Boost, in the directory "include/boost/", under the BSL (see LICENSE.BSL)
+are the following third-party libraries, available under their own licenses:
+
+- CORE, in the directories "include/CORE" and {\ss}rc/Core", is licensed under
+  the QPL (see LICENSE.QPL).
+- OpenNL, in the directory "include/OpenNL", is licensed under the GPL with
+  additional exceptions (see LICENSE.OPENNL).
+
+All other files that do not have an explicit copyright notice (e.g., all
+examples and some demos) are licensed under a very permissive license. The
+exact license text can be found in the file LICENSE.FREE_USE. Note that some
+subdirectories have their own copy of LICENSE.FREE_USE. These copies have the
+same license text and differ only in the copyright holder.

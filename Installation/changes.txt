@@ -1,3 +1,8 @@
+30 Match 2006 Joachim Reichel
+- LICENSE.FREE_USE added (very permissive, MIT-like license)
+- LICENSE updated (introduction rewritten, third-party libraries updated,
+  default license for files without copyright notice)
+
 30 March 2006 Laurent Rineau
 - Increase the width of the output of print_os_settings(), in install_cgal
 
