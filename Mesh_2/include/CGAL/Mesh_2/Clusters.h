@@ -108,6 +108,7 @@ private:
   /** \name Clusters associated types */
 
   typedef std::multimap<Vertex_handle, Cluster> Cluster_map;
+  typedef typename Cluster_map::value_type Cluster_map_value_type;
 
   template <class Pair>
   struct Pair_get_first: public std::unary_function<Pair,
@@ -309,7 +310,7 @@ update_cluster(Cluster& c, iterator it, Vertex_handle va,
   if(c.is_reduced())
     c.rmin = squared_distance(c.smallest_angle.first->point(),
                               c.smallest_angle.second->point())/FT(4);
-  cluster_map.insert(std::make_pair(va,c));
+  cluster_map.insert(Cluster_map_value_type(va,c));
 }
 
 template <typename Tr>
