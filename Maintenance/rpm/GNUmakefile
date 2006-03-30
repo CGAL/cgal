@@ -1,7 +1,5 @@
 CGAL_URL := $(shell ./get_cgal_trunk_url)
 
-ESSAI := $(shell echo truc | grep truc)
-
 .PHONY: \
         SOURCES/Manual_tools.tar.gz \
         SOURCES/Manual.tar.gz
@@ -20,3 +18,5 @@ SOURCES/Manual.tar.gz:
 	  svn export --force $(CGAL_URL)/Manual && \
 	  tar czf Manual.tar.gz -C Manual/ .
 	rm -rf SOURCES/Manual/
+
+-include my_makefile
