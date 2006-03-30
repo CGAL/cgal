@@ -1,3 +1,6 @@
+30 March 2006 Laurent Rineau
+- Increase the width of the output of print_os_settings(), in install_cgal
+
 16 March 2006 Laurent Saboret
 - Added detection of TAUCS library
 

@@ -2957,19 +2957,28 @@ set_ostype()
 
 # print the current os/compiler in a readable fashion
 # $1 is the print command
-# USES: i _tmp
+# USES: i l _tmp
 print_os_setting()
 {
-    ${1} "OS:\t\t${SYST}"
-    ${1} "COMPILER:\t`extended_compiler_description`"
+    ${1} "OS:\t\t\t\t${SYST}"
+    ${1} "COMPILER:\t\t\t`extended_compiler_description`"
     for i in ${SUPPORT_FEATURES}; do
 	_set_tmp_to_not_or_not "`value_of \"PROVIDE_PKG_${i}\"`"
-	length "${i}"
-	if [ ${?} -lt 5 ]; then
-	    ${1} "${i}:\t\t${_tmp}supported"
-	else
-	    ${1} "${i}:\t${_tmp}supported"
-	fi
+	length "${_LEFTSPACE}${i}:"
+        l=${?}
+	if [ ${l} -lt 8 ]; then
+	    ${1} "${i}:\t\t\t\t${_tmp}supported"
+	else 
+            if [ ${l} -lt 16 ]; then
+	        ${1} "${i}:\t\t\t${_tmp}supported"
+            else
+                if [ ${l} -lt 24 ]; then
+	          ${1} "${i}:\t\t${_tmp}supported"
+                else
+                  ${1} "${i}:\t${_tmp}supported"
+                fi
+	    fi
+        fi
     done
 }
 
