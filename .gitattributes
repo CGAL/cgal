@@ -1543,6 +1543,8 @@ Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text
+Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text
+Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text
 Skin_surface_3/doc_tex/Skin_surface_3_ref/Construct_anchor_point_3.tex -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/union_of_balls_simple.C -text
