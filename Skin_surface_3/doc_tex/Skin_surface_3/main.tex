@@ -133,7 +133,7 @@ void make_skin_surface_3
 (Iterator begin,
  Iterator end,
  FT shrinkfactor,
- Skin_surface_3 skin_surface) ;}
+ SkinSurface_3 skin_surface) ;}
 \ccGlobalFunction{template <class Iterator,
                             class FT,
                             class SkinSurface_3,
@@ -142,10 +142,10 @@ void make_skin_surface_3
 (Iterator begin,
  Iterator end,
  FT shrinkfactor,
- Skin_surface_3 skin_surface,
+ SkinSurface_3 skin_surface,
  SkinSurfaceTraits_3 traits) ;}
 
-With the \ccc{Skin_Surface_3} object it is possible to generate a
+With the \ccc{SkinSurface_3} object it is possible to generate a
 coarse mesh isotopic to the skin surface. 
 
 \ccGlobalFunction{template <class SkinSurface_3,
@@ -174,8 +174,8 @@ Therefore it can be used in the surface mesher described in
 Chapter~\ref{chapter_SurfaceMesher}.
 
 \section{Timings}
-The timings of the construction of the coarse mesh and one subdivision
-are given in seconds.
+The timings of the construction of the coarse mesh and the first
+subdivision are given in seconds.
 \begin{center}
   \begin{tabular}{|l|c|c|c|}
     \hline
@@ -187,7 +187,7 @@ are given in seconds.
     \hline
   \end{tabular}
 \end{center}
-The timings were run on a Pentium 4, 3.5 GHz, with 1 Gb of memory.
+The timings were done on a Pentium 4, 3.5 GHz, with 1 Gb of memory.
 \section{Example programs}
 \subsection{Meshing a skin surface}
 The following example shows the construction of a coarse mesh of the
@@ -258,10 +258,5 @@ insertion of a vertex in the polyhedron a function is called with the
 vertex of the polyhedron and the corresponding edge of the
 triangulation. Similarly, after insertion of a facet in the polyhedron
 a function is called with the facet of the polyhedron and the
-corresponding cell of the triangulation. Using these two functions it
-is possible to construct a reference from simplices of the mesh to the
-corresponding simplices of the triangulation.
-
-% EOF
-
+corresponding cell of the triangulation. 
 
