@@ -69,6 +69,14 @@ class Polynomial_converter
       ++it_;
       return *this;
     }
+
+
+    Iterator operator++(int) {
+      Iterator t= *this;
+      ++it_;
+      return t;
+    }
+
     Iterator operator+=(difference_type i) {
       it_+=i;
       return *this;
