@@ -116,9 +116,9 @@ public:
     fu_.resize(n, default_fu);
     l_.resize(n, default_l);
     u_.resize(n, default_u);
-    b_.resize(n);
+    b_.resize(m);
     c_.resize(n);
-    row_type_.resize(n);
+    row_type_.resize(m);
 
     if (!read_CONSTRAINTS())
       return;
