@@ -34,7 +34,7 @@
 int main()
 {
   gzFile *ptr;
-  gzwrite(ptr->fd, (void*)0, 0); 
+  gzwrite(ptr, (void*)0, 0); 
 
   std::cout << "version=" << ZLIB_VERSION << std::endl;
   return 0;
