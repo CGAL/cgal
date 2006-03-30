@@ -1,4 +1,12 @@
 Distance_3/include
+Maintenance/rpm/BUILD/*
+Maintenance/rpm/RPMS/*
+Maintenance/rpm/SOURCES/CGAL-*-I-*.tar.gz
+Maintenance/rpm/SOURCES/Manual
+Maintenance/rpm/SOURCES/Manual.tar.gz
+Maintenance/rpm/SOURCES/Manual_tools
+Maintenance/rpm/SOURCES/Manual_tools.tar.gz
+Maintenance/rpm/SRPMS/*
 Mesh_2/bench/bench
 Mesh_2/bench/semantic.cache
 Mesh_2/demo/Mesh_2/*.core

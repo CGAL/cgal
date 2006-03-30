@@ -1,0 +1,3 @@
+#!/bin/sh
+
+svn info SPECS | perl -ne 'm|URL: (.*)/Maintenance/rpm/SPECS| && print "$1\n"'

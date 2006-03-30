@@ -624,7 +624,15 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -
 Kinetic_data_structures/test/Polynomial_kernel/core_test.C -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
+Maintenance/rpm/GNUmakefile -text
+Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text
+Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch -text
+Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch -text
+Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch -text
+Maintenance/rpm/SPECS/CGAL-manual-tools.spec -text
 Maintenance/rpm/SPECS/CGAL.spec -text
+Maintenance/rpm/get_cgal_trunk_url -text
+Maintenance/rpm/rpmbuild -text
 Maintenance/svn_client/config -text
 Maintenance/svn_server/hooks/post-commit -text
 Maintenance/svn_server/hooks/post-commit.tmpl -text
