@@ -32,9 +32,12 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
-#else
+#else// CGAL_USE_LEDA
+
+#ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
-#endif // CGAL_USE_LEDA
+#endif 
+
 #include <CGAL/_test_fct_ch_I_2.h>
 
 int
@@ -45,12 +48,15 @@ main()
                                                                  cch_H_integer;
   std::cout << "Homogeneous<integer>: C   ";
   CGAL::ch__batch_test( cch_H_integer );
-#else
+#endif
+
+#ifdef CGAL_USE_GMP
   CGAL::Convex_hull_constructive_traits_2< CGAL::Homogeneous<CGAL::Gmpz> >
                                                                  cch_H_gmp;
   std::cout << "Homogeneous<gmp>: C   ";
   CGAL::ch__batch_test( cch_H_gmp );
-#endif // CGAL_USE_LEDA
+#endif
+
   CGAL::Convex_hull_constructive_traits_2< CGAL::Homogeneous<double> >
                                                                  cch_H_double;
   std::cout << "Homogeneous<double>: C ";
