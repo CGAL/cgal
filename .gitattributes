@@ -1569,6 +1569,7 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.gif -text svneol=unset#unset
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#unset
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
+Snap_rounding_2/long_description.txt -text
 Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset
 Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
