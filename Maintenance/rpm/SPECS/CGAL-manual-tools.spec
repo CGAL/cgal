@@ -1,6 +1,6 @@
 Name:           CGAL-manual-tools
 Version:        29841
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        CC Manual Style and LaTeX Converter for HTML.
 
 Group:          Development/Tools
@@ -42,7 +42,7 @@ make -C src LATEX_CONV_INPUTS=$LATEX_CONV_INPUTS \
 rm -rf $RPM_BUILD_ROOT
 ./install.sh
 cp -r doc_tex/Manual $RPM_BUILD_ROOT/usr/share/texmf/tex/latex/CGAL
-cp developer_scripts/* $RPM_BUILD_ROOT/usr/bin/ 
+cp developer_scripts/cgal_manual developer_scripts/bibmerge $RPM_BUILD_ROOT/usr/bin/ 
 
 %post
 texhash > /dev/null 2>&1 || :
@@ -70,6 +70,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Mar 30 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29841
 - Updated to rev. 29841. No longer need for patch2
+- Specify the two scripts of developer_scripts/ that need to be installed,
+to avoid things like cgal_manual.orig!
 
 * Tue Mar  7 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29111
 - Updated to Manual_tools rev 29111., Manual rev 29112.
