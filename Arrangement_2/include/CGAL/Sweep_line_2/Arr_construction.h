@@ -60,10 +60,10 @@ class Arr_construction
                                  Event,
                                  Subcurve>          Visitor;
 
-  typedef Sweep_line_2<Traits_2,
-                       Visitor,
-                       Subcurve,
-                       Event>                       Sweep_line_2;
+  typedef CGAL::Sweep_line_2<Traits_2,
+                             Visitor,
+                             Subcurve,
+                             Event>                 Sweep_line_2;
  
 public:
 
