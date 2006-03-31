@@ -15,4 +15,4 @@ Index: install.config
 +export LATEX_CONV_CONFIG=/usr/share/CGAL_latex_conv_config
 +export STYLE_FILES=$MANUAL_TOOLS_PREFIX/CGAL
 +
-+LATEX_CONV_INPUTS=.:$STYLE_FILES
++LATEX_CONV_INPUTS=.:$LATEX_CONV_CONFIG/html:$STYLE_FILES

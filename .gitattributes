@@ -628,8 +628,10 @@ Kinetic_data_structures/test/Polynomial_kernel/core_test.C -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Maintenance/rpm/GNUmakefile -text
+Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch -text
+Maintenance/rpm/SOURCES/CGAL_manual_tools-latex_to_html.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch -text
 Maintenance/rpm/SPECS/CGAL-manual-tools.spec -text
