@@ -40,7 +40,7 @@
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
 #include <CGAL/Polynomial/Upper_bound_root_stack.h>
 #include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
-#include <CGAL/Polynomial/CORE_kernel.h>
+//#include <CGAL/Polynomial/CORE_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 
