@@ -112,7 +112,7 @@ public:
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
-  typedef Bounding_box_3<Kernel_tag,Kernel> Bounding_box_3;
+  typedef CGAL::Bounding_box_3<Kernel_tag,Kernel> Bounding_box_3;
   
   virtual Bounding_box_3 operator()(const Object_list& o) const;
   virtual Bounding_box_3 operator()(Object_handle o) const;
@@ -160,11 +160,11 @@ public:
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
-  typedef Bounding_box_3<Kernel_tag,Kernel> Bounding_box_3;
+  typedef CGAL::Bounding_box_3<Kernel_tag,Kernel> Bounding_box_3;
 
   typedef typename Kernel::Intersect_3 Intersect;
-  typedef Objects_bbox<SNC_decorator> Objects_bbox;
-  typedef Side_of_plane<SNC_decorator> Side_of_plane;
+  typedef CGAL::Objects_bbox<SNC_decorator> Objects_bbox;
+  typedef CGAL::Side_of_plane<SNC_decorator> Side_of_plane;
 
   Intersect intersect_object() const {
     return Intersect();
