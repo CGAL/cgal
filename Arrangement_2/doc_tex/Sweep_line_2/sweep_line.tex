@@ -15,7 +15,7 @@ between two curves when they become contiguous. For more details on the
 This chapter describes three functions implemented using the sweep-line
 algorithm: given a collection of input curves, compute all \ccHtmlNoLinksFrom{intersection} points,
 compute the set of subcurves that are pairwise interior-disjoint induced by them,
-and cheking whether there is at least one pair of curves among them that intersect in their interior.
+and checking whether there is at least one pair of curves among them that intersect in their interior.
 
 The implementation is robust. It supports general
 curves and handles all degenerate cases, including overlapping curves,
@@ -38,15 +38,16 @@ a set of four input segments illustrated in figure \ref{SL_sec:simple}.
 \centerline{\includegraphics{Sweep_line_2/sl_simple}}
 \end{ccTexOnly}
 
-\caption{Four input segments
-\label{SL_sec:simple}}
-
 \begin{ccHtmlOnly}
 <P>
 <center>
   <img src="sl_simple.gif" border=0 alt="Four Input Segments">
 </center>
 \end{ccHtmlOnly}
+\begin{center}
+\caption{Four input segments
+\label{SL_sec:simple}}
+\end{center}
 \end{figure}
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_sweep_line.C}
