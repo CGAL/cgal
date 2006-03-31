@@ -174,7 +174,7 @@ public:
     return k_;
   }
 
-  typedef Reverse_time<This> Reverse_time;
+  typedef internal::Reverse_time<This> Reverse_time;
   Reverse_time reverse_time_object() const
   {
     return Reverse_time(k_.negate_variable_object());
