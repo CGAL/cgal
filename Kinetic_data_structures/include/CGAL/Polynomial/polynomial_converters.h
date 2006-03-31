@@ -92,11 +92,13 @@ public:
   typedef P2           result_type;
   typedef Converter_t  NT_converter;
 
-  Polynomial_converter(NT_converter cv = NT_converter()) : cv_(cv) {}
+  explicit Polynomial_converter(NT_converter cv = NT_converter()) : cv_(cv) {}
 
   P2 operator()(const P1& p1) const
   {
-    return P2(Iterator(p1.begin(), cv_), Iterator(p1.end(), cv_));
+    Iterator b(p1.begin(), cv_);
+    Iterator e(p1.end(), cv_);
+    return P2(b,e);
   }
   /*typename P2::NT operator()(const typename P1::NT &p) const {
     return cv_(p);
