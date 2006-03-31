@@ -1085,6 +1085,11 @@
     \lcRawHtml{">}Up\lcRawHtml{</a>, 
 }%
     \lciPopOutput
+    \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
+    % ^^^ this was needed to make package Qt_widget work with a class Qt_widget.
+    % I _dont_ know what's going on, i.e. where the flag is set to false ..
+    % however, setting this to a default of TRUE at the beginning of each
+    % chapter seems safe.
     % file header
     \lciHtmlFileHeader{#2}%
     \lciHtmlNavigationTop

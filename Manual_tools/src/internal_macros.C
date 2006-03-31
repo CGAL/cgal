@@ -39,15 +39,14 @@ static int cross_link_anchor_counter = 0;
 string handleHtmlCrossLink( string key, bool tmpl_class) {
     crop_string( key);
     if ( key.empty()) {
-	printErrorMessage( EmptyCrossLinkError);
-	exit( 1);
+      printErrorMessage( EmptyCrossLinkError);
+      exit( 1);
     }
     
     char *tmp_namex = convert_fontified_ascii_to_html( key);
     string tmp_name( tmp_namex );
     delete[] tmp_namex;
-    
-      
+         
     ostringstream replacement_text;
     replacement_text << REPLACE_WITH_CURRENT_PATH_TOKEN 
                      << current_basename 
@@ -65,8 +64,6 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
       *anchor_stream << endl;          
     }
     
-    
-
     return string("\n<A NAME=\"Cross_link_anchor_") 
       + int_to_string( cross_link_anchor_counter++) + "\"></A>\n";
 }
