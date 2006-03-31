@@ -293,6 +293,7 @@ Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
+Arrangement_2/long_description.txt -text
 Arrangement_2/test/Arrangement_2/data/point_location/curves/test02.txt -text
 Arrangement_2/test/Arrangement_2/data/point_location/curves/test03.txt -text
 Arrangement_2/test/Arrangement_2/data/point_location/curves/test04.txt -text
