@@ -88,7 +88,11 @@ The %{name}-demo package provides some demos of %name algorithms.(to be compiled
 %endif
 
 %prep
+%if%{internal_release}
+%setup -n %{name}-%{version}-I-%{internal_release}
+%else
 %setup -n %{name}-%{version}
+%endif
 
 %if %{build_doc}
 %setup -D -T -a 1
@@ -167,6 +171,8 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Mar 31 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
+- adding a test in the setup section.
 * Mon Mar 13 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - delete the patch that fixes the perl path.
 - add build_doc and build_demo flags.
@@ -175,3 +181,4 @@ rm -rf $RPM_BUILD_ROOT
 - add internal_release flag. 
 * Thu Mar 09 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - cleanup a specfile.
+
