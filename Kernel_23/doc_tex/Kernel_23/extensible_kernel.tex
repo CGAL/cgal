@@ -130,8 +130,7 @@ public:
 The last functor we have to provide is the one which constructs
 points. That is you are not forced to add the constructor 
 with the \ccc{Origin} as parameter to your class, nor the constructor with 
-homogeneous coordinates, and at the same time you can 
-pass the additional color argument to your point constructor.
+homogeneous coordinates.
 The functor is a kind of glue layer between the \cgal\ algorithms
 and your class.
 
@@ -192,12 +191,7 @@ data structures from the Basic Library, as the Delaunay
 triangulation work with them.  
 
 The kernel itself can be
-made robust by plugging it in the \ccc{Filtered_kernel_adaptor}.
-This class has the same functionality as the class \ccc{Filtered_kernel}
-with the only difference that it does not enforce type equality
-between \ccc{Kernel::Point_2} and \ccc{Point_2<Kernel>}, which
-does not make sense in our case as our point does not offer
-the functionality of the latter.
+made robust by plugging it in the \ccc{Filtered_kernel}.
 
 
 \ccHtmlLinksOff
@@ -212,26 +206,11 @@ The point class must have member functions \ccc{x()} and \ccc{y()}
 introduce function objects that take care of coordinate
 access.
 
-Global functions operating on, for example
-\ccc{CGAL::orientation(CGAL::MyKernel<double>::Point_2,CGAL::MyKernel<double>::Point_2,CGAL::MyKernel<double>::Point_2} will not work. 
-Instead you have to use the functor \ccc{MyKernel<double>::Orientation_2}.
 
-Rewriting the code is however straightforward: you can give
-the function object the same name as the global function.
+As we enforce type equality between \ccc{MyKernel::Point_2} and \ccc{Point_2<MyKernel>},
+the constructor with the color as third argument is not available.
 
-\ccHtmlLinksOff
-\begin{ccExampleCode}
 
-K::Orientation_2 orientation_2;
-K::Point_2 p(0,0,RED), q(1,1,BLACK), r(2,1, RED);
-
-orientation(p, q, r);
-
-\end{ccExampleCode}
-\ccHtmlLinksOn
-
-We did not go through the entire kernel, to also make
-it possible to plug in user defined lines, rays or triangles.
 
 
 
