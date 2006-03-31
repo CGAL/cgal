@@ -21,13 +21,6 @@ placements.
 \end{center}
 \end{ccTexOnly}
 
-\caption{The core idea of the algorithm is to integrate the
-streamlines from the center of the biggest empty cavities in the
-domain (left). A Delaunay triangulation of all the sample points is
-used to model the streamlines and the spaces within the domain
-(middle). A final result is shown (right).}
-
-
 \label{illustration}
 \begin{ccHtmlOnly}
 <CENTER>
@@ -36,6 +29,13 @@ used to model the streamlines and the spaces within the domain
 <img border=0 src="./3.gif" width=300>
 </CENTER>
 \end{ccHtmlOnly}
+\begin{center}
+\caption{The core idea of the algorithm is to integrate the
+streamlines from the center of the biggest empty cavities in the
+domain (left). A Delaunay triangulation of all the sample points is
+used to model the streamlines and the spaces within the domain
+(middle). A final result is shown (right).}
+\end{center}
 \end{figure}
 
 \section{Definitions}
@@ -82,7 +82,7 @@ a given interval $\Delta t$ is given by : $$p(t + \Delta t) = p(t) +
 proposed to solve this equation. In this package, the Euler, and the
 Second Order Runge Kutta algorithm are implemented.
 
-\subsection{Euler Integrator}
+\subsection{Euler integrator}
 
 \begin{figure}[h!]
 \begin{ccTexOnly}
@@ -90,13 +90,15 @@ Second Order Runge Kutta algorithm are implemented.
 \includegraphics[width=4cm]{Stream_lines_2/euler_integrator}
 \end{center}
 \end{ccTexOnly}
-\caption{Euler integrator.
-\label{euler_fig}}
 \begin{ccHtmlOnly}
 <CENTER>
 <img border=0 src="./euler_integrator.gif" width=175>
 </CENTER>
 \end{ccHtmlOnly}
+\begin{center}
+\caption{Euler integrator.
+\label{euler_fig}}
+\end{center}
 \end{figure}
 
 This algorithm approximates the point computation by this formula
@@ -115,30 +117,31 @@ and backward.
 \includegraphics[width=4cm]{Stream_lines_2/runge_kutta_integrator}
 \end{center}
 \end{ccTexOnly}
-\caption{Runge-kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point).
-\label{runge_kutta_fig}}
 \begin{ccHtmlOnly}
 <CENTER>
 <img border=0 src="./runge_kutta_integrator.gif" width=175>
 </CENTER>
 \end{ccHtmlOnly}
+\begin{center}
+\caption{Runge-kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point).
+\label{runge_kutta_fig}}
+\end{center}
 \end{figure}
 
 This method introduces an intermediate point \ccc{p'_k} between $p_k$ and $p_{k+1}$ to increase the
 precision of the computation (see~Figure~\ref{runge_kutta_fig}), where:
 
 $$
-\left\{ \begin{array}{ccccc}
+\begin{array}{ccccc}
     p'_k    & = & p_k & + & \frac{1}{2}hv(p_k) \\
     p_{k+1} & = & p_k & + & hv(p'_k)        \\
    \end{array}
-\right.
 $$
 
 See~\cite{cgal:ptvf-nrcpp-02} for further details about numerical
 integration.
 
-\section{Farthest Point Seeding Strategy}
+\section{Farthest point seeding strategy}
 \label{Section_2D_Streamlines_Strategy}
 
 The algorithm implemented in this package~\cite{cgal:mad-fpsep-05}
