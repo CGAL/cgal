@@ -1,8 +1,11 @@
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
 #include <CORE/poly/Sturm.h>
 #include <CORE/poly/Poly.h>
 #include <CORE/BigFloat.h>
-
+#endif
 //#include <CGAL/Polynomial/internal/CORE_polynomial.h>
 
 int main(int, char *[]){
@@ -15,7 +18,7 @@ int main(int, char *[]){
     std::cout << p << std::endl;
     std::cout << s.numberOfRoots() << std::endl;
     }*/
-
+#ifdef CGAL_USE_CORE
     {
       CORE::BigFloat c[3];
       c[0]= CORE::BigFloat(1.0);
@@ -105,6 +108,6 @@ int main(int, char *[]){
     std::cout << "Quo: " << cpquo << std::endl;
     std::cout << "C: " << c << std::endl;*/
     }
-  
+#endif
   return 0;
 }
