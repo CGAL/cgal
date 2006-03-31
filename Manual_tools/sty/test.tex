@@ -42,6 +42,40 @@
 
 \maketitle
 
+\begin{ccRefClass}[Nef_polyhedron_S2<Traits>::]{Sphere_point}
+\ccCreationVariable{p}
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{bool operator==(const Nef_polyhedron_S2<Traits>::Sphere_point& q) ;}{Equality.}
+\ccMethod{bool operator==(const Sphere_point& q) ;}{Equality.}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Sphere_point2}
+\ccCreationVariable{p}
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{bool operator==(const Nef_polyhedron_S2<Traits>::Sphere_point2& q) ;}{Equality.}
+\ccMethod{bool operator==(const Sphere_point2& q) ;}{Equality.}
+
+\ccSetTwoOfThreeColumns{2.5cm}{3.8cm}
+
+
+\ccFunction{bool equal_as_sets(
+  const Nef_polyhedron_S2<Traits>::Sphere_point c1, 
+  const Nef_polyhedron_S2<Traits>::Sphere_point c2) ;}{
+  returns true iff \ccc{c1} and \ccc{c2} are equal as unoriented
+  circles.  }
+
+\end{ccRefClass}
+
+
 % ----------------------------------------------------------------------
 \section{Introduction}
 

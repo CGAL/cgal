@@ -94,15 +94,34 @@ Dictionary dict_labels, dict_bib, dict_anchormode_bib, dict_cc, dict_internal;
 string   output_path;
 ofstream output_file;
 
-void
-match_cc_idfier( string s ) {
+bool
+match_cc_idfier( string s, ostream *out = NULL ) {
   string::size_type begin = 0;
   string::size_type len   = s.length();
+
   do {    
     const string id = s.substr( begin, len );
     //cout << " !! Warning: checking [" << id << "]" << endl;
-    if( dict_cc.is_defined( id ) ) 
-      output_file << dict_cc[ id ];
+    
+    string::size_type lt = id.find( "&lt;" );
+    string::size_type gt = id.rfind( "&gt;" );    
+    bool template_param_matched = false;
+
+    if( lt != string::npos && gt != string::npos ) {       
+      string tparam = s.substr( begin + lt + 4, gt - lt - 4 );
+      //std::cout << tparam << std::endl;
+      if( match_cc_idfier( tparam ) ) {
+        template_param_matched = true;        
+      }
+    }
+        
+    if( !template_param_matched && dict_cc.is_defined( id ) ) {
+      // only match the whole id if _no_ substring inside < > matched
+      if( out ) 
+        *out << dict_cc[ id ];
+      else
+        return true;
+    }
     else {
       string::size_type t = id.find_last_of( "&:, " );
       if( t != string::npos ) {
@@ -111,29 +130,30 @@ match_cc_idfier( string s ) {
         len = t;
         continue;
       } else
-        output_file << id;     
+        if( out ) *out << id;     
     }
     
     begin += len;
     while( begin < s.length() ) {
       string x = s.substr(begin, 4);
       if( x == "&lt;" || x == "&gt;" ) {
-        output_file << x;
+        if( out ) *out << x;
         begin += 4;
      } else if( x[0] == ':' && x[1] == ':' ) {
-        output_file << "::";
+        if( out ) *out << "::";
         begin += 2;
       } else if( x[0] == ',' ) {
-        output_file << ',';
+        if( out ) *out << ',';
         begin += 1;
       } else if( x[0] == ' ' ) {
-        output_file << ' ';
+        if( out ) *out << ' ';
         begin += 1;
       } else
         break;
     }
     len   = s.length() - begin;    
   } while( len > 0 );
+  return false;
 }
 
 #define ECHO output_file << yytext
@@ -268,7 +288,7 @@ cccend          "[cccend]"
       s_stream << *s;*/
 
   //match_cc_idfier( s_stream.str() ); 
-  match_cc_idfier( yytext ); 
+  match_cc_idfier( yytext, &output_file ); 
 }
 <CROSSLINKMODE>[<][^>]+[>] { ECHO; } // do not crosslink inside html tags
 <CROSSLINKMODE>.        { ECHO; }
@@ -340,6 +360,7 @@ int main( int argc, char** argv ) {
       dict_bib.add(key,value);
     } else if ( type == "c" ) {
       dict_cc.add(key,value);
+      //cerr << "c key: [" << key << "] value: [" << value << "]" << endl;
     } else if ( type == "i" ) {
       //cerr << "i key: [" << key << "] value: [" << value << "]" << endl;
       dict_internal.add(key,value);

@@ -43,7 +43,9 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
 	exit( 1);
     }
     
-    char *tmp_name = convert_fontified_ascii_to_html( key);
+    char *tmp_namex = convert_fontified_ascii_to_html( key);
+    string tmp_name( tmp_namex );
+    delete[] tmp_namex;
     
       
     ostringstream replacement_text;
@@ -53,16 +55,20 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
     
     *anchor_stream << "c " << tmp_name << '\t';
     wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
-    *anchor_stream << endl;
+    *anchor_stream << endl;    
     
-    /* TODO: is it required to have seperate dictionaries for 
-             tmpl_class == false | true ? 
-    */
+    string::size_type t = tmp_name.find( "&lt;" );
+    if( t != string::npos ) {
+      tmp_name = tmp_name.substr( 0, t );
+      *anchor_stream << "c " << tmp_name << '\t';
+      wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
+      *anchor_stream << endl;          
+    }
     
-    delete[] tmp_name;
+    
 
     return string("\n<A NAME=\"Cross_link_anchor_") 
-	 + int_to_string( cross_link_anchor_counter++) + "\"></A>\n";
+      + int_to_string( cross_link_anchor_counter++) + "\"></A>\n";
 }
 
 
@@ -813,6 +819,23 @@ int_to_alpha_upper( const string&, string param[], size_t n, size_t opt) {
     return string( s);
 }
 
+string 
+substring( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 3, 0 );
+    int begin = atoi( param[0].c_str() );
+    int end   = atoi( param[1].c_str() );    
+    string s  = param[2];
+    if( end <= 0 ) {
+      end = s.length() + end;
+      std::cout << "len: " << s.length() << " end: " << end << std::endl;
+    } else
+      end = begin + end;
+    if( end < 0 )
+      end = 0;
+    return s.substr( begin, end );
+}
+
+
 // Some special characters hard to print otherwise
 // ======================================================================
 
@@ -1295,6 +1318,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciToRomanUpper", int_to_roman_upper, 1);
     insertInternalGlobalMacro( "\\lciToAlpha",      int_to_alpha, 1);
     insertInternalGlobalMacro( "\\lciToAlphaUpper", int_to_alpha_upper, 1);
+    insertInternalGlobalMacro( "\\lciSubstring",    substring, 3);
 
     insertInternalGlobalMacro( "\\lciFormatChapterAuthor", 
                                                    format_chapter_author, 1);

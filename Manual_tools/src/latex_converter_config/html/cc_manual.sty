@@ -563,13 +563,13 @@
 % #1 = classname (functioname etc.) without template parameters
 \newcommand{\lciRefDeclDefFilename}[1]{%
     \lciRefDeclDefFilenameX{\ccPureRefScope}{#1}{\ccRefCategory}%
-      {\ccRefPureGlobalScope}}
+      {\ccRefPureGlobalScope}{\lciCCParameter}}
 
 % #1 = local scope (may be empty)
 % #2 = classname (functioname etc.) without template parameters
 % #3 = Ref category
 % #4 = global scope (may be empty)
-\newcommand{\lciRefDeclDefFilenameX}[4]{%
+\newcommand{\lciRefDeclDefFilenameX}[5]{%
     \newcommand{\ccPureClassName}{#XC1#C2}%
     \newcommand{\ccClassName}{\ccc{#XC1#C2}}%
     \gdef{\ccIndexClassName}{\ccClassName}%
@@ -578,10 +578,10 @@
     \gdef{\lciIfHtmlClassToc}{\lcFalse}%
     \lciRefDeclOpenFilenameX{#GXC3_#GXC1#GC2}{\lciHtmlSuffix}{\ccRefName}%
     \lciIfHtmlClassLinks{%
-      \ccHtmlCrossLink{#GXC4#GXC1#GC2}%
+      \ccHtmlCrossLink{#GXC4#GXC1#GXC5}%
       \lciIfEmpty{#XC4}{}{%
         % cross link names also without the global (CGAL) prefix
-        \ccHtmlCrossLink{#GXC1#GC2}%
+        \ccHtmlCrossLink{#GXC1#GXC5}%
       }%
     }{}% 
     \ccIndexRefName{#1}{\ccc{#2}}{#3}%
