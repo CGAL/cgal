@@ -815,10 +815,10 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
      do{
        p_random4 = Point_2(theRandom.get_int(random_min, random_max),
 			   theRandom.get_int(random_min, random_max));
-     }while(p_random4 == center_circle_random1);
+     }while(p_random4 == center_circle_random1 ||
+            p_random4 == p_random3);
    
-     std::vector< CGAL::Object > 
-       vector_for_intersection_random3;
+     std::vector< CGAL::Object > vector_for_intersection_random3;
      theConstruct_intersect_2(Line_arc_2(p_random3,p_random4),
 			      arc_random_1,
 			      std::back_inserter(vector_for_intersection_random3));
