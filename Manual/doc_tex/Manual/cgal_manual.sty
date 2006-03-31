@@ -195,6 +195,8 @@
   % \cgalifpackage{<package-name>}{<yes-text>}{<no-text>}
   \newcommand{\cgaldeclarepackage}[1]{%
     \expandafter\xdef\csname CgalPackage#1\endcsname{Dummy}}
+  % tex just ignores the user-ref-manual association
+  \newcommand{\cgaldeclarepackageWithRef}[2]{\cgaldeclarepackage{#1}}
 
   % Args: <package-name>, <yes-text>, <no-text>
   % Tests, if <package-name> was previously declared with 
@@ -202,6 +204,13 @@
   % and otherwise expands the <no-text>
   \newcommand{\cgalifpackage}[3]{%
     \expandafter\ifx\csname CgalPackage#1\endcsname\relax #3\else #2\fi}
+  
+  \newcommand{\ccPkgName}[1]{}
+  \newcommand{\ccPkgSummary}[1]{}
+  \newcommand{\ccPkgMaturity}[1]{}
+  \newcommand{\ccPkgDependsOn}[1]{}
+  \newcommand{\ccPkgLicense}[1]{}
+  \newenvironment{ccPkgDescription}{\ccPkgName}{}
 }
 
 \lcHtml{
@@ -209,12 +218,71 @@
   % Remembers the package name, such that it can be tested later with
   % \cgalifpackage{<package-name>}{<yes-text>}{<no-text>}
   \newcommand{\cgaldeclarepackage}[1]{\gdef{\CgalPackage#G1}{Dummy}}
+  \newcommand{\cgaldeclarepackageWithRef}[2]{\gdef{\CgalPackageHasRef#G1}{#2}}
 
   % Args: <package-name>, <yes-text>, <no-text>
   % Tests, if <package-name> was previously declared with 
   % \cgaldeclarepackage{<package-name>}, and if so expands the <yes-text>,
   % and otherwise expands the <no-text>
   \newcommand{\cgalifpackage}[3]{\lciIfDefined{\CgalPackage#G1}{#2}{#3}}
+  
+  
+  % ___________________________________________________________________________
+  % ###########################################################################
+  % |
+  % |   o   Package Descriptions
+  % |
+  % ###########################################################################
+  
+  \gdef\ccValueofPkgName{}
+  \newcommand{\ccPartSummary}[1]{#1}
+  \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{\lcRawHtml{<b>Summary: </b>}#1\lcRawHtml{<br>}}}
+  \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
+  \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
+  \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
+  
+  \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
+  
+  \newcommand{\ccPkgDescriptionX}[1]{
+    \lciPushOutput{description}%    
+    \gdef\ccValueofPkgName{#1}
+    \gdef\ccValueofPkgSummary{}
+    \gdef\ccValueofPkgMaturity{}
+    \gdef\ccValueofPkgDependsOn{}
+    \gdef\ccValueofPkgLicense{}
+  }
+
+  \newcommand{\lciFlushPkgDescription}[2]{%
+   \lciFlushPkgDescriptionX{#1}{#2}{\ccValueofPkgName}%
+  }
+  \newcommand{\lciFlushPkgDescriptionX}[3]{%
+    \lciIfEmpty{#X3}{}{%
+      \lciPushOutput{description}%     
+      \lcRawHtml{<h3>}\ccValueofPkgName\lcRawHtml{</h3>}
+      \ccValueofPkgSummary
+      \ccValueofPkgMaturity
+      \ccValueofPkgDependsOn  
+      \ccValueofPkgLicense
+      \lcRawHtml{<a href="#X1">User Manual</a> &nbsp; <a href="#X2">Reference Manual</a>}
+      \lciPopOutput%
+      \gdef\ccValueOfPkgName{}%
+    }%
+  }
+  
+  \newcommand{\ccPartDescriptionEnsureHR}{}
+  
+  \newcommand{\ccPartDescriptionImpl}[2]{
+    \lciPushOutput{description}%
+    \ccPartDescriptionEnsureHR
+    \lcRawHtml{<h2>}#1\lcRawHtml{</h2>} 
+    \def\ccValueofPkgSummary{}
+    #2
+    \ccValueofPkgSummary
+    \lciPopOutput%  
+    \newcommand{\ccPartDescriptionEnsureHR}{\lcRawHtml{<hr>}}
+  }
+  
+
 }
 
 \lcHtml{\lcTwoColumnToc}%
@@ -230,7 +298,9 @@
   \newcommand{\packageleft}[1]{\cgaldeclarepackage{##1}}%
   \newcommand{\packageright}[1]{\cgaldeclarepackage{##1}}%
   \newcommand{\packageleftright}[2]{%
-    \cgaldeclarepackage{##1}\cgaldeclarepackage{##2}}%
+    \cgaldeclarepackage{##1}\cgaldeclarepackage{##2}%
+    \cgaldeclarepackageWithRef{##1}{##2}%
+  }%
   \newcommand{\ccPartDescription}[2]{}
   #1
   \lcTex{%
@@ -257,11 +327,14 @@
       \newcommand{\entryleftright}[2]{%
         \lcTocSync\lcTocLeft ##1\lcTocRight ##2\lcTocSync}%
       \newcommand{\packageleft}[1]{\lcTocLeft \cgalreinit\include{##1/main}}%
-      % improve that later
       \newcommand{\packageright}[1]{\lcTocRight \cgalreinit\include{##1/main}}%
       \newcommand{\packageleftright}[2]{%
-        \lcTocSync\lcTocLeft\cgalreinit\include{##1/main}%
-        \lcTocRight\cgalreinit\include{##2/main}\lcTocSync}%
+        \lcTocSync%
+        \lcTocLeft\cgalreinit\include{##1/main}%
+        \edef\lciUsermanualOutputFilename{\lciOutputFilename}%
+        \lcTocRight\cgalreinit\include{##2/main}%        
+        \lciFlushPkgDescription{\lciUsermanualOutputFilename}{\lciOutputFilename}
+        \lcTocSync}%
       #1
     }{%
       \newcommand{\entryleft}[1]{##1}%
