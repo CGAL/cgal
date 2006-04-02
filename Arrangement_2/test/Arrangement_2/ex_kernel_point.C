@@ -32,16 +32,59 @@ public:
     New_point_2(const CGAL::Origin & origin, int data = 0) :
       Old_point_2(origin), m_data(data) {}
 
-    New_point_2(const RT & hx, const RT & hy, const RT & hw, int data = 0) :
-      Old_point_2(hx, hy, hw), m_data(data) {}
     New_point_2(const RT & hx, const RT & hy, int data = 0) :
       Old_point_2(hx, hy), m_data(data) {}
 
     /*! \brief obtains the data of the extended point */
-    int get_data() const { return m_data; }
+    int data() const { return m_data; }
+
+    /*! \brief sets the data of the extended point */
+    void set_data(int data) { m_data = data; }
   };
   
-  typedef New_point_2                 Point_2;
+  template <typename K, typename OldK> class New_construct_point_2 {
+    typedef typename K::RT              RT;
+    typedef typename K::Point_2         Point_2;
+    typedef typename K::Line_2          Line_2;
+
+  public:
+    typedef Point_2                     result_type;
+    typedef CGAL::Arity_tag< 1 >        Arity;
+
+    Point_2 operator()(CGAL::Origin o) const { return New_point_2(0, 0, 0); }
+
+    Point_2 operator()(const RT & x, const RT & y) const
+    { return New_point_2(x, y, 0); }
+
+    Point_2 operator()(const Line_2 & l) const
+    {
+      typename OldK::Construct_point_2 base_operator;
+      Point_2 p = base_operator(l);
+      return p;
+    }
+    
+    Point_2 operator()(const Line_2 & l, int i) const
+    {
+      typename OldK::Construct_point_2 base_operator;
+      return base_operator(l, i);
+    }
+
+    // We need this one, as such a functor is in the Filtered_kernel
+    Point_2 operator()(const RT & x, const RT & y, const RT & w) const
+    {
+      if(w != 1) {
+	return New_point_2(x/w, y/w, 0); 
+      } else {
+	return New_point_2(x,y, 0);
+      }
+    }
+  };
+
+  typedef New_point_2                                   Point_2;
+  typedef New_construct_point_2<Kernel, Old_kernel>     Construct_point_2;
+  
+  Construct_point_2 construct_point_2_object() const
+  { return Construct_point_2(); }
 
   /*! */
   template <typename Kernel2>
@@ -50,8 +93,10 @@ public:
 
 /*! The extended Kernel type */
 template <typename FT_>
-struct Ext_seg_kernel
-  : public My_cartesian_base<Ext_seg_kernel<FT_>, CGAL::Cartesian<FT_> >
+struct Ext_seg_kernel :
+  public CGAL::Type_equality_wrapper<My_cartesian_base<Ext_seg_kernel<FT_>,
+                                                       CGAL::Cartesian<FT_> >,
+                                     Ext_seg_kernel<FT_> >
 {};
 
 // The remaining types:
@@ -66,7 +111,7 @@ typedef CGAL::Arrangement_2<Traits>                     Arr;
 inline
 std::ostream & operator<<(std::ostream & o, const Point_2 & p)
 {
-  o << p.x() << ", " << p.y() << ", " << p.get_data();
+  o << p.x() << ", " << p.y() << ", " << p.data();
   return o;
 }
 
@@ -77,8 +122,12 @@ int main()
   Arr arr;
   X_monotone_curve_2 cv[5];
 
-  Point_2 p0(1, 4, 0), p1(5, 7, 1), p2(9, 4, 2), p3(5, 1, 3);
-
+  Point_2 p0(1, 4), p1(5, 7), p2(9, 4), p3(5, 1);
+  p0.set_data(0);
+  p1.set_data(1);
+  p2.set_data(2);
+  p3.set_data(3);
+ 
   // Create the curves:
   cv[0] = X_monotone_curve_2(p0, p1);
   cv[1] = X_monotone_curve_2(p1, p2);
@@ -93,7 +142,7 @@ int main()
 
   // Insert the curves into the Planar_map:
   std::cout << "Inserting the curves to the map ... ";
-  insert(arr, &cv[0], &cv[5]);
+  insert_curves(arr, &cv[0], &cv[5]);
   std::cout << ((arr.is_valid()) ? "map valid!" : "map invalid!") << std::endl
             << std::endl;
 
