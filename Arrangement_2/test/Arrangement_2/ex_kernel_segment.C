@@ -37,6 +37,9 @@ public:
 
     /*! \brief obtains the data of the extended segment */
     int data() const { return m_data; }
+
+    /*! \brief sets the data of the extended point */
+    void set_data(int data) { m_data = data; }
   };
   
   template <typename K, typename OldK>
@@ -106,16 +109,17 @@ int main()
 
   Point_2 p0(1, 4), p1(5, 7), p2(9, 4), p3(5, 1);
 
-  Kernel kernel;
-  Kernel::Construct_segment_2 construct_segment =
-    kernel.construct_segment_2_object();
-  
   // Create the curves:
-  cv[0] = construct_segment(p0, p1, 0);
-  cv[1] = construct_segment(p1, p2, 1);
-  cv[2] = construct_segment(p2, p3, 2);
-  cv[3] = construct_segment(p3, p0, 3);
-  cv[4] = construct_segment(p0, p2, 4);
+  cv[0] = X_monotone_curve_2(p0, p1);
+  cv[1] = X_monotone_curve_2(p1, p2);
+  cv[2] = X_monotone_curve_2(p2, p3);
+  cv[3] = X_monotone_curve_2(p3, p0);
+  cv[4] = X_monotone_curve_2(p0, p2);
+  cv[0].set_data(0);
+  cv[1].set_data(1);
+  cv[2].set_data(2);
+  cv[3].set_data(3);
+  cv[4].set_data(4);
 
   std::cout << "The curves of the map :" << std::endl;
   std::copy(&cv[0], &cv[5],
