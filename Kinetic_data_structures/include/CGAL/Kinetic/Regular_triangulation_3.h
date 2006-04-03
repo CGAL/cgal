@@ -366,7 +366,7 @@ public:
       Notification_type;
   };
   friend class Listener<Listener_core>;
-  typedef Listener<Listener_core> Listener;
+  typedef Kinetic::Listener<Listener_core> Listener;
 
 protected:
 
