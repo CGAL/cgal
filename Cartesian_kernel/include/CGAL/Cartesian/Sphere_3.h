@@ -122,7 +122,7 @@ public:
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const
   {
     // FIXME: precond: t.is_orthogonal() (*UNDEFINED*)
-    Vector_3 vec(FT(1), FT(0));               // unit vector
+    Vector_3 vec(FT(1), FT(0), FT(0));        // unit vector
     vec = vec.transform(t);                   // transformed
     FT sq_scale = vec.squared_length();       // squared scaling factor
 

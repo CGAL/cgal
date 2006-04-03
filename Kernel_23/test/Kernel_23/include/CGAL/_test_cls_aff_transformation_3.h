@@ -85,6 +85,7 @@ _test_cls_aff_transformation_3(const R& )
  CGAL::Triangle_3<R>     ttri;
  CGAL::Tetrahedron_3<R>  tet(p1, p2, p3, p4);
  CGAL::Tetrahedron_3<R>  ttet;
+ CGAL::Sphere_3<R>       unit_sphere(CGAL::ORIGIN, 1);
 
 
  CGAL::Aff_transformation_3<R> ident( CGAL::IDENTITY );
@@ -535,6 +536,10 @@ _test_cls_aff_transformation_3(const R& )
  assert( gat4.homogeneous(2,3) == gat4.hm(2,3) );
  assert( scale11.homogeneous(0,0) == scale11.hm(0,0) );
  assert( translate.homogeneous(1,2) == translate.hm(1,2) );
+
+ // orthogonal_transform
+ assert (unit_sphere.orthogonal_transform(ident) == unit_sphere);
+ assert (unit_sphere.orthogonal_transform(translate).center() == pnt);
 
  std::cout << "done" << std::endl;
  return true;

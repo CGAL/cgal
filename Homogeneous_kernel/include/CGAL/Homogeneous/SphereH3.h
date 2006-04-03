@@ -254,6 +254,30 @@ SphereH3<R>::bbox() const
 		maxx.sup(), maxy.sup(), maxz.sup());
 }
 
+template <class R>
+SphereH3<R>
+SphereH3<R>::
+orthogonal_transform(const typename SphereH3<R>::Aff_transformation_3& t) const
+{
+  typename R::Vector_3 vec( RT(1), RT(0), RT(0) );   // unit vector
+  vec = vec.transform(t);                     // transformed
+  FT  sq_scale = FT( vec*vec );               // squared scaling factor
+
+  if ( t.is_even() )
+  {
+      return SphereH3<R>(t.transform(center() ),
+                             sq_scale * squared_radius(),
+                             orientation() );
+  }
+  else
+  {
+      return SphereH3<R>(t.transform(center() ),
+                             sq_scale * squared_radius(),
+                             CGAL::opposite( orientation()) );
+  }
+}
+
+
 #ifndef CGAL_NO_OSTREAM_INSERT_SPHEREH3
 template < class R >
 CGAL_KERNEL_INLINE
