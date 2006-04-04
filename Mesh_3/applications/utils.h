@@ -43,7 +43,7 @@ display_facets_by_surface_indices_statistics(C2T3& c2t3,
     const typename Tr::Cell_handle& cell = fit->first;
     const int index = fit->second;
 
-    if(c2t3.complex_subface_type(cell, index) != C2T3::NOT_IN_COMPLEX)
+    if(c2t3.face_type(cell, index) != C2T3::NOT_IN_COMPLEX)
     {
       const typename Tr::Vertex_handle& va = cell->vertex((index+1)&3);
       const typename Tr::Vertex_handle& vb = cell->vertex((index+1)&3);

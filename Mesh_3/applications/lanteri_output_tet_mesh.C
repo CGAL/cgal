@@ -126,7 +126,7 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
 #include <CGAL/Mesh_3/IO.h>
 
 
-int main(int , char** argv)
+int main(int , char**)
 {
   Tr tr;
   C2T3 c2t3(tr);
@@ -268,7 +268,7 @@ int main(int , char** argv)
          fit != tr.finite_facets_end(); ++fit)
     {
       int surface_index = 0;
-      if (c2t3.complex_subface_type(fit->first,fit->second)
+      if (c2t3.face_type(fit->first,fit->second)
           != C2T3::NOT_IN_COMPLEX)
       {
         for (int i=0; i<4; i++)

@@ -70,6 +70,7 @@ Mesh_2/test/Mesh_2/semantic.cache
 Mesh_2/test/Mesh_2/test_double_map
 Mesh_2/test/Mesh_2/test_filtred_container
 Mesh_3/*.tags.xml
+Mesh_3/applications/*.exe
 Mesh_3/applications/*.maillage
 Mesh_3/applications/*.mesh
 Mesh_3/applications/*.png
@@ -79,6 +80,7 @@ Mesh_3/applications/display_distribution
 Mesh_3/applications/lanteri
 Mesh_3/applications/lanteri_output_tet_mesh
 Mesh_3/applications/off_to_ghs
+Mesh_3/applications/off_to_medit
 Mesh_3/applications/read_mesh
 Mesh_3/applications/slivers_exuder
 Mesh_3/applications/stat_mesh

@@ -102,6 +102,14 @@ Usage:
     will convert FILE_BASENAME.off to FILE_BASENAME.faces
     and FILE_BASENAME.points.
 
+off_to_medit:
+----------
+This tool creates a medit files with 0 tetrahedra, from an .off file.
+
+Usage:
+./off_to_medit [FILE_BASENAME]
+    will convert FILE_BASENAME.off to FILE_BASENAME.mesh.
+
 read_mesh:
 ---------
 Usage:

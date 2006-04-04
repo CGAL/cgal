@@ -40,6 +40,7 @@ LDFLAGS = \
 all:            \
                 display_distribution$(EXE_EXT) \
                 off_to_ghs$(EXE_EXT) \
+                off_to_medit$(EXE_EXT) \
                 lanteri$(EXE_EXT) \
                 lanteri_output_tet_mesh$(EXE_EXT) \
                 read_mesh$(EXE_EXT) \
@@ -55,6 +56,9 @@ display_distribution$(EXE_EXT): display_distribution$(OBJ_EXT)
 
 off_to_ghs$(EXE_EXT): off_to_ghs$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)off_to_ghs off_to_ghs$(OBJ_EXT) $(LDFLAGS)
+
+off_to_medit$(EXE_EXT): off_to_medit$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)off_to_medit off_to_medit$(OBJ_EXT) $(LDFLAGS)
 
 lanteri_output_tet_mesh$(EXE_EXT): lanteri_output_tet_mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_output_tet_mesh lanteri_output_tet_mesh$(OBJ_EXT) $(LDFLAGS)
@@ -95,7 +99,8 @@ clean: \
                    slivers_exuder.clean \
                    stat_mesh.clean \
                    display_distribution.clean \
-                   off_to_ghs.clean 
+                   off_to_ghs.clean \
+                   off_to_medit.clean
 
 
 #---------------------------------------------------------------------#
