@@ -1,4 +1,3 @@
-
 #ifndef CGAL_OVERLAY_FUNCTOR_H
 #define CGAL_OVERLAY_FUNCTOR_H
 
