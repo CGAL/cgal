@@ -30,7 +30,7 @@ extern Polygon_set                               blue_set;
 
 
 class  Qt_widget_locate_layer : public CGAL::Qt_widget_layer
-  {
+{
 
     //Data members
     Polygon_with_holes     m_pgn;
@@ -122,6 +122,5 @@ class  Qt_widget_locate_layer : public CGAL::Qt_widget_layer
     m_pgn.clear();
   }
 };
-
 
 #endif
