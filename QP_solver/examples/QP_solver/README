@@ -25,8 +25,9 @@ available as well, under *.cin.)
 
 You may copy the four C-files mentioned above and the *.data files
 to your working directory. After having compiled the four C-files
-mentioned above (you may use the makefile created with create_makefile
--d from CGAL's /scripts subdirectory, after setting CGAL_MAKEFILE
+mentioned above (you may use the makefile created with 
+   "cgal_create_makefile -d" 
+from CGAL's /scripts subdirectory, after setting CGAL_MAKEFILE
 appropriately), you can type
 
 ./data_to_mps < rational_qp_solver.data | ./rational_qp_solver 0, or
