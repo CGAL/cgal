@@ -41,7 +41,7 @@
 
 
 \newcommand{\lciIfRef}{\ccFalse}
-
+\gdef\lciFirstRefPageAlreadySeen{\lcFalse}%
 
 \newcommand{\ccUserChapter}[2]{
  \gdef{\lciIfRef}{\ccTrue} 
@@ -442,17 +442,19 @@
 }
 % Args: <text referring to new file>: cc_text contains filename
 \newcommand{\ccReferenceFileCont}[1]{%
-    \lciStoreFileName
+    \lciStoreFileName%
     \refstepcounter{referencepage}%
+    \lciFirstRefPageAlreadySeen{}{%
+       \section{Alphabetical List of Reference Pages}
+       \lcRawHtml{<table>}%
+       \gdef\lciFirstRefPageAlreadySeen{\lcTrue}%
+    }%
     % Make a hyperlink in the chapter to the class file.
-    \lcRawHtml{<UL><LI>
-[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</UL>
-
-}
-    \lciOpenReferenceFile
+    \lcRawHtml{<tr><td>[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</td></tr>}%
+    \lciOpenReferenceFile%
     % cross linking rules
     \lciPushOutput{anchor}%
-    \lcRawHtml{i Next_reference_link_}\thereferencepage
+    \lcRawHtml{i Next_reference_link_}\thereferencepage%
     \lcRawHtml{	<div class="NavNext"><hr> <b>Next:</b> <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
@@ -464,10 +466,10 @@
     \lcRawHtmlExpanded{\lciOutputBasename}%
     \lcRawHtml{">}#1\lcRawHtml{</a>
 }%
-    \lciPopOutput
+    \lciPopOutput%
     % file header
     \lciHtmlFileHeader{\ccReferenceFileContX #X1}%
-    \lciHtmlNavigationTop
+    \lciHtmlNavigationTop%
     %\lciHtmlReferenceToc{\thereferencepage}{#1}%
     %\lciHtmlReferenceHeader{#1}%   
 }
@@ -935,6 +937,13 @@
     \end{ccReferenceFile}%
     \gdef{\lciIfHtmlClassNotInline}{\lcTrue}%
 }
+
+\newenvironment{scriptsize}%
+  {\lcHtml{<small>}}%
+  {\lcHtml{</small>}}%
+\newenvironment{footnotesize}%
+  {\lcHtml{<small><small>}}%
+  {\lcHtml{</small></small>}}%
 
 
 % ___________________________________________________________________________

@@ -320,7 +320,7 @@ void handleIndex2(string main_item, string sub_item, string sub_sub_item,
     remove_separator( sub_sub_item);
    if (modifier==1) 
      *index_stream << "\\indexentry{" 
-		        << main_item<< "<A NAME=\""<<HREF_counter 
+		        << main_item<< "<A NAME=\""<<HREF_counter
                         <<"\"></A>";
    else {
      *index_stream << "\\indexentry{" 

@@ -74,6 +74,23 @@
 % redefined in latex_to_html.sty
 \newcommand{\lcFalse}[2]{#2}
 \newcommand{\lcTrue}[2]{#1}
+
+\newcommand{\lcLogicalOr}[4]{%
+  \def\lciLogicalOrResult{\lcFalse}%
+  #1{\def\lciLogicalOrResult{\lcTrue}}{}%
+  #2{\def\lciLogicalOrResult{\lcTrue}}{}%
+  \lciLogicalOrResult{#3}{#4}%
+}
+
+\newcommand{\lcLogicalNot}[1]{%
+  \def\lciLogicalNotResult{\lcFalse}%
+  #1{\def\lciLogicalNotResult{\lcFalse}}%
+    {\def\lciLogicalNotResult{\lcTrue}}%
+  \lciLogicalNotResult%
+}
+
+\gdef\lciTOCChapterNameSuffix{}
+
 \lciIfDefined{\lcStyleFile}{}{
     \newcommand{\lcStyleFile}[1]{\lciInputStyleFile{\lciConfigPath}{#XC1}}
     \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
@@ -1067,16 +1084,15 @@
     \lciPushFootnotes
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
-    \gdef{\lciCurrentChapterName}{#1}
     \refstepcounter{chapter}%
-    \lciChapter{#1}% does also a PushOutput
+    \lciChapter{#1\lciTOCChapterNameSuffix}% does also a PushOutput
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{chapter}%
     \lcRawHtml{	<div class="NavNext"><hr> Next chapter: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}#1\lcRawHtml{</a>
+    \lcRawHtml{">}#1\lciTOCChapterNameSuffix\lcRawHtml{</a>
 }%
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{chapter}%
     \lcRawHtml{	<a href="}%
@@ -1084,7 +1100,8 @@
     \lcRawHtmlExpanded{\lciOutputBasename}%
     \lcRawHtml{">}Up\lcRawHtml{</a>, 
 }%
-    \lciPopOutput
+    \lciPopOutput%
+    \gdef\lciFirstRefPageAlreadySeen{\lcFalse}%
     \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
     % ^^^ this was needed to make package Qt_widget work with a class Qt_widget.
     % I _dont_ know what's going on, i.e. where the flag is set to false ..
@@ -1093,17 +1110,23 @@
     % file header
     \lciHtmlFileHeader{#2}%
     \lciHtmlNavigationTop
-    \lciIfLessExpanded{\lciCountersecnumdepth}{0}{%
-      \lciHtmlChapterToc{\thechapter}{#1}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{0}%
+    {%
+      \lciHtmlChapterToc{\thechapter}{#1\lciTOCChapterNameSuffix}%
       \lciHtmlChapterHeader{#2}%
     }{%
-      \lciHtmlChapterToc{\thechapter}{\thechapter~~~#1}%
+      \lciHtmlChapterToc{\thechapter}{\thechapter~~~#1\lciTOCChapterNameSuffix}%
       \lciHtmlChapterHeader{Chapter \thechapter\\#2}%
-    }}
+    }%
+}
 \newcommand{\chapter*}[1]{%
     \lciHtmlChapterHeader{#1}}
 
 \newcommand{\lciEndChapter}{%
+  % see cc_manual.sty. there, a corresponding table has been opened
+  % for the alphabetical listing of refpages
+  \lciFirstRefPageAlreadySeen{\lcRawHtml{</table>}}{}%
+
   \lciEndSection
   \lciIfDefined{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{% check for first chapter
     \lciPrintFootnotes\lciResetFootnotes
@@ -1118,7 +1141,7 @@
     \lciPopOutput
   }%
   {\newcommand{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{}}%
-  % only do something, after the first chapter has already been processed  
+  % only do something, after the first chapter has already been processed
 }
 
 % section
