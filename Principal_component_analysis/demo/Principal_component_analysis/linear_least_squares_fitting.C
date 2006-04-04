@@ -91,13 +91,12 @@ public:
     }
     *widget << CGAL::PointSize(2);// << CGAL::PointStyle(CGAL::PIXEL);
     *widget << CGAL::RED;
-    
 
     if(list_of_points.size()>1){
       Line_2 line;
-      double quality = linear_least_squares_fitting_2(list_of_points.begin(),
-						      list_of_points.end(),
-						      line);
+      linear_least_squares_fitting_2(list_of_points.begin(),
+						                         list_of_points.end(),
+						                         line);
       
       *widget << line;
     }
