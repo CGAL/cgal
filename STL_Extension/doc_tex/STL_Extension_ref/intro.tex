@@ -20,7 +20,7 @@
 
 %% +=========================================================================+
 
-\section*{Introduction}
+
 
 \cgal\ is designed in the spirit of the generic programming paradigm
 to work together with the Standard Template Library (\stl)
@@ -34,7 +34,9 @@ arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
 Chapter~\ref{chapterCirculators}.
 
-\subsection*{Doubly-Connected List Managing Items in Place.}
+\section{Classified Reference Pages}
+
+\subsection*{Doubly-Connected List Managing Items in Place}
 
 The class \ccStyle{In_place_list<T,bool>} manages a
 sequence of items in place in a doubly-connected list. Its goals are
@@ -55,7 +57,7 @@ does not need this anymore). The usual iterators are also available.
 \ccRefIdfierPage{CGAL::In_place_list<T,bool>}\\
 \ccRefIdfierPage{CGAL::In_place_list_base<T>}
 
-\subsection*{Compact container.}
+\subsection*{Compact Container}
 
 The class \ccStyle{Compact_container<T, Allocator>} is an \stl\ like container
 which provides a very compact storage for its elements.  It achieves this goal
@@ -88,7 +90,7 @@ probably be useful for other kinds of graphs as well.
 \ccRefIdfierPage{CGAL::Compact_container_traits<T>}\\
 \ccRefIdfierPage{CGAL::Compact_container_base}
 
-\subsection*{Multiset with Extended Functionality.}
+\subsection*{Multiset with Extended Functionality}
 
 The class \ccStyle{Multiset<Type,Compare,Allocator>} represents a
 multi-set of elements of type \ccc{Type}, represented as a red-black tree
@@ -121,7 +123,7 @@ and catenating and splitting sets.
 \ccRefIdfierPage{CGAL::Multiset<Type,Compare,Allocator>}
 
 
-\subsection*{Generic Algorithms.}
+\subsection*{Generic Algorithms}
 
 \ccRefIdfierPage{CGAL::copy_n}\\
 \ccRefIdfierPage{CGAL::min_max_element}\\
@@ -145,7 +147,7 @@ and catenating and splitting sets.
 \ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
 \ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
 
-\subsection*{Functor Adaptors.}
+\subsection*{Functor Adaptors}
 
 The standard library contains some adaptors for binding functors, that
 is fixing one argument of a functor to a specific value thereby
@@ -186,7 +188,7 @@ adaptors to be used with \cgal\ functors.
 \ccRefIdfierPage{CGAL::set_arity_4}\\
 \ccRefIdfierPage{CGAL::set_arity_5}
 
-\subsection*{Projection Function Objects.}
+\subsection*{Projection Function Objects}
 
 \ccRefIdfierPage{CGAL::Identity<Value>}\\
 %%\ccRefIdfierPage{CGAL::Compose<Fct1, Fct2>}\\
@@ -203,7 +205,7 @@ adaptors to be used with \cgal\ functors.
 \ccRefIdfierPage{CGAL::Project_next_opposite<Node>}\\
 \ccRefIdfierPage{CGAL::Project_opposite_prev<Node>}
 
-\subsection*{Creator Function Objects.}
+\subsection*{Creator Function Objects}
 
 \ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}\\
 \ccRefIdfierPage{CGAL::Creator_2<Arg1, Arg2, Result>}\\
@@ -220,7 +222,7 @@ adaptors to be used with \cgal\ functors.
 \ccRefIdfierPage{CGAL::Creator_uniform_9<Arg, Result>}\\
 \ccRefIdfierPage{CGAL::Creator_uniform_d<Arg, Result>}
 
-\subsection*{Utilities.}
+\subsection*{Utilities}
 \ccRefIdfierPage{CGAL::Twotuple<T>}\\
 \ccRefIdfierPage{CGAL::Threetuple<T>}\\
 \ccRefIdfierPage{CGAL::Fourtuple<T>}\\
@@ -228,8 +230,5 @@ adaptors to be used with \cgal\ functors.
 \ccRefIdfierPage{CGAL::Triple<T1, T2, T3>}\\
 \ccRefIdfierPage{CGAL::Quadruple<T1, T2, T3, T4>}
 
-\begin{ccHtmlOnly}
-    <hr><h2>Reference Pages</h2>
-\end{ccHtmlOnly}
 
 %% EOF
