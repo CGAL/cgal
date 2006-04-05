@@ -14,14 +14,14 @@
 \label{ref-chapter-apollonius2}
 \ccChapterAuthor{Menelaos Karavelas \and Mariette Yvinec}
 
-%\ccHeading{Definition}
+\section{Summary}
 
 An Apollonius graph is the dual of the Apollonius diagram, also known
-as the additively weighted Voronoi diagram. It is essentially the
-Voronoi diagram of a set of circles, where the distance of a
-point of the plane from a circle is defined as the Euclidean
+as the {\em additively weighted Voronoi diagram}. It is essentially the
+Voronoi diagram of a set of disks, where the distance of a
+point of the plane from a disk is defined as the Euclidean
 distance of the point and the center of the circle, minus the radius
-of the circle.
+of the disk.
 
 \cgal\ provides the class \ccc{CGAL::Apollonius_graph_2<Gt,Agds>} for
 computing the 2D Apollonius graph. The two template parameters must be
@@ -35,7 +35,7 @@ structure used to represent the Apollonius graph. The classes
 afore-mentioned concepts.
 
 
-\section{Reference Pages}
+\section{Classified Reference Pages}
 
 \ccHeading{Concepts}
 \ccRefConceptPage{ApolloniusSite_2} \\
