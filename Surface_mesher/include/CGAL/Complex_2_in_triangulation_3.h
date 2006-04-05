@@ -394,7 +394,6 @@ protected:
   }
 
   void set_in_complex (const Cell_handle c, const int i) {
-    ++m_number_of_facets;
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
     Facet f = canonical_facet(c, i);
@@ -403,7 +402,9 @@ protected:
     // unifying cases dim == 2 ou 3
     if (tr.dimension() == 3) {
       // if not already in the complex
-      if ( face_status (c, i) == NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) == NOT_IN_COMPLEX )
+      {
+        ++m_number_of_facets;
 
 	c->set_facet_on_surface(i,true);
 	c2->set_facet_on_surface(i2,true);
@@ -434,7 +435,9 @@ protected:
     }
     else if (tr.dimension() == 2) {
       // if not already in the complex
-      if ( face_status (c, i) == NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) == NOT_IN_COMPLEX )
+      {
+        ++m_number_of_facets;
 
 	c->set_facet_on_surface(i,true);
 
@@ -466,7 +469,6 @@ protected:
   }
 
   void remove_from_complex (const Cell_handle c, const int i) {
-    --m_number_of_facets;
     Cell_handle c2 = c->neighbor(i);
     int i2 = c2->index(c);
     Facet f = canonical_facet(c, i);
@@ -475,7 +477,9 @@ protected:
     // unifying cases dim == 2 ou 3
     if (tr.dimension() == 3) {
       // if in the complex
-      if ( face_status (c, i) != NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) != NOT_IN_COMPLEX )
+      {
+        --m_number_of_facets;
 
 	c->set_facet_on_surface(i,false);
 	c2->set_facet_on_surface(i2,false);
@@ -512,7 +516,9 @@ protected:
     
     else if (tr.dimension() == 2){
       // if in the complex
-      if ( face_status (c, i) != NOT_IN_COMPLEX ) {
+      if ( face_status (c, i) != NOT_IN_COMPLEX ) 
+      {
+        --m_number_of_facets;
 
 	c->set_facet_on_surface(i,false);
 

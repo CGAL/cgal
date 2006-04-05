@@ -3,6 +3,8 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
+
 #include "implicit_functions.h"
 #include "parameters.h"
 
@@ -199,5 +201,14 @@ int main(int argc, char **argv) {
 
   std::cerr << "\nNumber of points after refine_surface(): "
             << tr.number_of_vertices() << std::endl;
-  
+
+  std::cerr << "\nWriting " << filename.c_str() << "...\n";
+  std::ofstream out(filename.c_str());
+  if( !out )
+    std::cerr << "Cannot open " << filename.c_str() << "!\n";
+  else
+  {
+    CGAL::output_surface_facets_to_off(out, c2t3);
+    std::cerr << "done.\n";
+  }
 }

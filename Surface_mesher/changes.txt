@@ -1,3 +1,7 @@
+5 April 2006 Laurent Rineau
+- demo now output an off file, probably non oriented.
+- Mesh_3/application/off_to_medit.C helps to convert it to a medit file.
+
 29 March 2006 Laurent Rineau
 - New "#ifdef CGAL_USE_CORE/#endif" around the use of CORE, in
   test/Surface_mesher/implicit_surface_mesher_test.C

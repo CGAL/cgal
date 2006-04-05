@@ -62,8 +62,8 @@ int main(int argc, char** argv)
     if(off)
     {
       mesh << (i1 + 1) << " "
-            << (i2 + 1) << " "
-            << (i3 + 1) << " 0\n";
+           << (i2 + 1) << " "
+           << (i3 + 1) << " 0\n";
       --number_of_faces;
     }
   }

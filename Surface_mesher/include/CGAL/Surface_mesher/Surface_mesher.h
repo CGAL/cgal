@@ -520,7 +520,7 @@ namespace CGAL {
 
     // Tests whether a given facet is restricted or not
     bool is_facet_on_surface(const Facet& f, Point& center,
-			     const bool check_visits = false) {
+			     const bool check_visits = true) {
       typedef typename Surface_mesh_traits::Intersect_3 Intersect_3;
       Intersect_3 intersect = meshtraits.intersect_3_object();
 

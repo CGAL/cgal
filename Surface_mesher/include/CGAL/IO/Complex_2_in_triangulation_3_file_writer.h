@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Id$
 //
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Steve Oudot, Laurent Rineau
 
 
 #ifndef CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
@@ -37,9 +37,11 @@ int number_of_facets_on_surface(const Tr& T) {
 }
 
 
-template < class Tr>
+template <class C2t3>
 void
-output_surface_facets_to_off (std::ostream& os, const Tr & T) {
+output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
+{
+  typedef typename C2t3::Triangulation Tr;
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -47,36 +49,41 @@ output_surface_facets_to_off (std::ostream& os, const Tr & T) {
 
   // Header.
 
+  const Tr& tr = c2t3.triangulation();
 
   os << "OFF \n"
-     << T.number_of_vertices() << " " <<
-    number_of_facets_on_surface (T) <<
-    " " << 0 << "\n";
+     << tr.number_of_vertices() << " "
+     << c2t3.number_of_facets()
+     << " " << 0 << "\n";
+
+  CGAL_assertion(c2t3.number_of_facets() == number_of_facets_on_surface(tr));
 
   os << std::setprecision(20);
 
   // Finite vertices coordinates.
   std::map<Vertex_handle, int> V;
   int inum = 0;
-  for( Finite_vertices_iterator
-      vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
+  for(Finite_vertices_iterator vit = tr.finite_vertices_begin();
+      vit != tr.finite_vertices_end();
+      ++vit)
+  {
     V[vit] = inum++;
     Point p = static_cast<Point>(vit->point());
     os << p.x() << " " << p.y() << " " << p.z() << "\n";
   }
 
   // Finite facets indices.
-  for( Finite_facets_iterator fit = T.finite_facets_begin();
-       fit != T.finite_facets_end(); ++fit)
+  for( Finite_facets_iterator fit = tr.finite_facets_begin();
+       fit != tr.finite_facets_end(); ++fit)
     if ((*fit).first->is_facet_on_surface((*fit).second)==true)
-      {
-	os << "3 ";
-	for (int i=0; i<4; i++)
-          if (i != (*fit).second)
-	    os << V[(*fit).first->vertex(i)] << " ";
-
-	os << "\n"; // without color.
-      }
+    {
+      os << "3 ";
+      for (int i=0; i<4; i++)
+        if (i != (*fit).second)
+          os << V[(*fit).first->vertex(i)] << " ";
+      
+      os << "\n"; // without color.
+    }
 }
 
 // only if cells have is_in_domain() method.
