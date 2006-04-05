@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -21,7 +21,7 @@
 #define CGAL_MESH_3_REFINE_TETS_H
 
 #include <CGAL/Mesher_level.h>
-#include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
+#include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
 
 //#include <CGAL/Mesh_3/Refine_edges.h>
 //#include <CGAL/Mesh_3/Refine_facets.h>
@@ -148,6 +148,7 @@ public:
 
 template <class Tr,
           class Criteria,
+          class Surface,
           class Oracle,
           class Container = Double_map_container<typename Tr::Cell_handle,
                                                  typename Criteria::Quality>
@@ -161,6 +162,7 @@ public:
   typedef Refine_tets_base<Tr, Criteria, Container> Base;
   typedef Refine_tets_with_oracle_base<Tr, 
                                        Criteria,
+                                       Surface,
                                        Oracle,
                                        Container> Self;
   
@@ -175,8 +177,8 @@ public:
 
   /** \name CONSTRUCTORS */
 
-  Refine_tets_with_oracle_base(Tr& t, Criteria crit, Oracle& o)
-    : Base(t, crit), oracle(o) {}
+  Refine_tets_with_oracle_base(Tr& t, Criteria crit, Surface& surface, Oracle& o)
+    : Base(t, crit), surface(surface), oracle(o) {}
 
 public:
   /* \name Overriden functions of this level */
@@ -215,7 +217,6 @@ public:
 #if CGAL_MESH_3_DEBUG_AFTER_INSERTION
     std::cerr << "  INSERTED." << std::endl;
 #endif
-    v->info()=false; // BEURK
     update_star(v);
   }
 
@@ -239,29 +240,32 @@ public:
 	  const Point& r = (*cit)->vertex(2)->point();
 	  const Point& s = (*cit)->vertex(3)->point();
 
-	  (*cit)->set_in_domain(oracle.is_in_volume(circumcenter(p,q,r,s)));
+	  (*cit)->set_in_domain(oracle.is_in_volume(surface, 
+                                                    circumcenter(p,q,r,s)));
 	  test_if_cell_is_bad(*cit);
 	}
   }
 
 private:
   /* --- private datas --- */
+  Surface& surface;
   Oracle& oracle;
 
 }; // end Refine_tets_with_oracle_base
 
 template <typename Tr,
           typename Criteria,
+          typename Surface,
           typename Oracle, // BEURK
           typename BaseP = // workaround for VC7, see below
-            Refine_tets_with_oracle_base<Tr, Criteria, Oracle>,
+             Refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle>,
           typename Facets_level = Refine_facets<Tr>
  >
 class Refine_tets : 
   public BaseP, 
   public Mesher_level <
     Tr,
-    Refine_tets<Tr, Criteria, Oracle, BaseP, Facets_level>,
+    Refine_tets<Tr, Criteria, Surface, Oracle, BaseP, Facets_level>,
     typename Tr::Cell_handle,
     Facets_level,
     Triangulation_mesher_level_traits_3<Tr>
@@ -271,17 +275,17 @@ class Refine_tets :
 
   Facets_level& f_level;
 public:
-  typedef Refine_tets<Tr, Criteria, Oracle, Base, Facets_level> Self;
+  typedef Refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level> Self;
   typedef Mesher_level <
     Tr,
-    Refine_tets<Tr, Criteria, Oracle, Base, Facets_level>,
+    Refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level>,
     typename Tr::Cell_handle,
     Facets_level,
     Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
 
-  Refine_tets(Tr& t, Criteria crit, Oracle& oracle, Facets_level& facets_level)
-    : Base(t, crit, oracle), Mesher(facets_level), f_level(facets_level)
+  Refine_tets(Tr& t, Criteria crit, Surface& surface, Oracle& oracle, Facets_level& facets_level)
+    : Base(t, crit, surface, oracle), Mesher(facets_level), f_level(facets_level)
   {} // here VC7 complain about default constructor of Base, if the
      // workaround is not used.
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -21,8 +21,7 @@
 #define CGAL_IMPLICIT_SURFACES_MESHER_3_H
 
 #include <CGAL/Mesh_3/Refine_tets.h>
-#include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
-#include <CGAL/Surface_mesher/Surface_mesher.h>
+#include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
 #include <CGAL/Mesh_3/Implicit_surface_mesher_visitor.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
@@ -34,30 +33,57 @@ namespace CGAL {
   }
 
 template <
-  typename Tr,
-  typename Oracle,
+  typename C2T3,
+  typename Surface,
   typename Facets_criteria,
-  typename Tets_criteria
+  typename Tets_criteria,
+  typename VolumeMeshTraits = 
+    typename CGAL::Surface_mesh_traits_generator_3<Surface>::type
   >
 class Implicit_surfaces_mesher_3
 {
 public:
-  typedef typename Tr::Point Point;
-  
+  // ** C2T3 **
+  typedef C2T3 C2t3;
+  typedef typename C2t3::Triangulation Tr;
 
   // ** two mesher levels **/
 
-  typedef typename
-  Surface_mesher::Surface_mesher<Tr,
-				 Oracle,
-				 Facets_criteria> Facets_level;
+  typedef typename Surface_mesher::Surface_mesher_base<
+    C2t3,
+    Surface,
+    VolumeMeshTraits,
+    Facets_criteria> Facets_level_base;
+
+#ifdef NDEBUG
+  static const Surface_mesher::Debug_flag debug_flag = Surface_mesher::NO_DEBUG;
+#else
+  static const Surface_mesher::Debug_flag debug_flag = Surface_mesher::DEBUG;
+#endif
+
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
+  static const Surface_mesher::Verbose_flag verbose_flag = 
+    Surface_mesher::VERBOSE;
+#else
+  static const Surface_mesher::Verbose_flag verbose_flag = 
+    Surface_mesher::NOT_VERBOSE;
+#endif
+
+  typedef typename 
+  Surface_mesher::Surface_mesher<Facets_level_base,
+    verbose_flag,
+    debug_flag> Facets_level;
 
   typedef typename Mesh_3::Refine_tets<Tr,
                                        Tets_criteria,
-                                       Oracle,
-                                       Mesh_3::Refine_tets_with_oracle_base<Tr,
-                                        Tets_criteria, Oracle>, Facets_level>
-                                                     Tets_level;
+                                       Surface,
+                                       VolumeMeshTraits,
+                                       Mesh_3::Refine_tets_with_oracle_base<
+                                         Tr,
+                                         Tets_criteria,
+                                         Surface,
+                                         VolumeMeshTraits>,
+                                       Facets_level> Tets_level;
 
   // ** visitors **
   typedef typename Mesh_3::tets::Refine_facets_visitor<Tr,
@@ -73,15 +99,15 @@ public:
   typedef Surface_mesher::Visitor<Tr, Facets_level, 
     Facets_visitor> Tets_visitor;
 
-  // ** C2T3 **
-  typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
 private:
+  // ** private data members **
   Null_mesher_level null_mesher_level;
   Null_mesh_visitor null_visitor;
 
-  C2t3 c2t3;
-  Oracle& oracle;
+  C2t3& c2t3;
+  VolumeMeshTraits& oracle;
+  Surface& surface;
   Facets_level facets;
   Tets_level tets;
 
@@ -92,12 +118,18 @@ private:
 
   bool initialized;
 
+  // ** types used in code **
+  typedef typename Tr::Point Point;
+
 public:
-  Implicit_surfaces_mesher_3(Tr& t, Oracle& o,
-                             Facets_criteria& c,
-                             Tets_criteria tets_crit)
-    : c2t3(t), oracle(o), 
-      facets(t, c2t3, oracle, c), tets(t, tets_crit, oracle, facets),
+  Implicit_surfaces_mesher_3(C2t3& c2t3, Surface& surface,
+                             Facets_criteria& facets_criteria,
+                             Tets_criteria tets_crit,
+                             VolumeMeshTraits volume_mesh_traits = 
+                               VolumeMeshTraits())
+    : c2t3(c2t3), oracle(volume_mesh_traits), surface(surface),
+      facets(c2t3, surface, volume_mesh_traits, facets_criteria),
+      tets(c2t3.triangulation(), tets_crit, surface, volume_mesh_traits, facets),
       surface_facets_visitor(&null_visitor),
       tets_facets_visitor(&tets, &null_visitor),
       facets_visitor(Facets_visitor(&surface_facets_visitor,
@@ -123,15 +155,9 @@ public:
 	const Point& r = cit->vertex(2)->point();
 	const Point& s = cit->vertex(3)->point();
 
-	cit->set_in_domain(oracle.is_in_volume(circumcenter(p,q,r,s)));
+	cit->set_in_domain(oracle.is_in_volume(surface, 
+                                               circumcenter(p,q,r,s)));
       }
-    
-    for(typename Tr::Finite_vertices_iterator vit = 
-      tr.finite_vertices_begin();
-      vit != tr.finite_vertices_end();
-      ++vit)
-      vit->info()=true;
-    std::cerr << "Restore infos.\n";
 
     facets.scan_triangulation();
     tets.scan_triangulation();
@@ -157,16 +183,7 @@ public:
     std::cerr << "Starting refine_surface()\n";
     
     while( ! facets.is_algorithm_done() )
-      {
-	Tr& tr = tets.triangulation_ref_impl();
-	for(typename Tr::Finite_vertices_iterator vit = 
-	      tr.finite_vertices_begin();
-	    vit != tr.finite_vertices_end();
-	    ++vit)
-	  CGAL_assertion(vit->info()==true);
-	
-	facets.one_step(tets_visitor.previous_level());
-      }
+      facets.one_step(tets_visitor.previous_level());
   }
 
   void step_by_step()

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,33 +11,30 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://lrineau@scm.gforge.inria.fr/svn/cgal/trunk/Mesh_3/include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h $
+// $Id: Complex_2_in_triangulation_cell_base_3.h 28605 2006-02-17 17:01:13Z lsaboret $
 //
 //
 // Author(s)     : Laurent RINEAU
 
 
-#ifndef CGAL_MESH_3_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
-#define CGAL_MESH_3_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
+#ifndef CGAL_VOLUME_MESHER_CELL_BASE_3_H
+#define CGAL_VOLUME_MESHER_CELL_BASE_3_H
 
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 
-#warning Deprecated header!
-
 namespace CGAL {
-  namespace Mesh_3 {
 
   template < class GT, class Cb = Triangulation_ds_cell_base_3 <> >
-  class Complex_2_in_triangulation_cell_base_3 : public Cb {
+  class Volume_mesher_cell_base_3 : public Cb {
 
   public:
-    typedef Complex_2_in_triangulation_cell_base_3 <GT, Cb> Self;
+    typedef Volume_mesher_cell_base_3 <GT, Cb> Self;
 
     template < class TDS3 >
     struct Rebind_TDS {
       typedef typename Cb::template Rebind_TDS<TDS3>::Other  Cb3;
-      typedef Complex_2_in_triangulation_cell_base_3 <GT, Cb3> Other;
+      typedef Volume_mesher_cell_base_3 <GT, Cb3> Other;
     };
 
 
@@ -55,11 +52,11 @@ namespace CGAL {
 
     // Constructors
 
-    Complex_2_in_triangulation_cell_base_3() : Cb(), domain(false)
+    Volume_mesher_cell_base_3() : Cb(), domain(false)
     {
     }
 
-    Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
+    Volume_mesher_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
 					    Vertex_handle v3)
@@ -67,7 +64,7 @@ namespace CGAL {
     {
     }
 
-    Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
+    Volume_mesher_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
 					    Vertex_handle v3,
@@ -88,12 +85,12 @@ namespace CGAL {
     {
       domain = b;
     }
-  };  // end Complex_2_in_triangulation_cell_base_3
+  };  // end Volume_mesher_cell_base_3
 
 template < class GT, class Cb >
 inline
 std::istream&
-operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
+operator>>(std::istream &is, Volume_mesher_cell_base_3<GT, Cb> &c)
 {
   bool b;
   is >> static_cast<Cb&>(c);
@@ -106,7 +103,7 @@ template < class GT, class Cb >
 inline
 std::ostream&
 operator<<(std::ostream &os,
-           const Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
+           const Volume_mesher_cell_base_3<GT, Cb> &c)
 {
   os << static_cast<const Cb&>(c);
   if(is_ascii(os))
@@ -114,8 +111,7 @@ operator<<(std::ostream &os,
   return os << c.is_in_domain();
 }
 
-  }//namespace Mesh_3
 }  // namespace CGAL
 
 
-#endif  // COMPLEX_2_IN_TRIANGULATION_3_H
+#endif  // CGAL_VOLUME_MESHER_CELL_BASE_3_H

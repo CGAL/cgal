@@ -734,10 +734,7 @@ public: // methods
 //      }
 
 
-      const bool save_info = v->info(); 
       Vertex_handle new_vertex = tr.insert(wp);
-      new_vertex->info() = save_info;
-
 
       std::vector<Cell_handle> new_cells;
       new_cells.reserve(64);
@@ -832,7 +829,7 @@ public: // methods
 	const Facet opposite_facet = tr.mirror_facet(f);
 	bool marker = 
 	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
-	c->set_surface_facet(i, marker);
+	c->set_facet_on_surface(i, marker);
       }
       else {
 
@@ -853,8 +850,8 @@ public: // methods
 // 	    std::cerr << "-";
 	    //CGAL_assertion (umbrella.erase(std::make_pair(v1, v2)));
 
-	    c->set_surface_facet(i, true);
-	    next_c->set_surface_facet(next_c->index(c), true);
+	    c->set_facet_on_surface(i, true);
+	    next_c->set_facet_on_surface(next_c->index(c), true);
 	    walk_on_the_boundary_of_the_star(Facet(next_c, next_index),
 					     !in_domain_marker,
 					     umbrella, v);
@@ -964,7 +961,7 @@ private: // methods
 // 	const Facet opposite_facet = tr.mirror_facet(f);
 // 	bool marker = 
 // 	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
-// 	(*cit)->set_surface_facet(index, marker);
+// 	(*cit)->set_facet_on_surface(index, marker);
 // 	test = test || marker;
 // 	(*cit)->set_in_domain(true);
 //       }
@@ -1027,16 +1024,16 @@ output_slivers_to_off (std::ostream& os, const Tr & T,
   {
     const Cell_handle& c = *cit;
     
-    if( c->vertex(0)->info() &&
-        c->vertex(1)->info() &&
-        c->vertex(2)->info() &&
-        c->vertex(3)->info() )
+    if( c->vertex(0)->point().surface_index() > 0 &&
+        c->vertex(1)->point().surface_index() > 0 &&
+        c->vertex(2)->point().surface_index() > 0 &&
+        c->vertex(3)->point().surface_index() > 0 )
       ++flat_slivers;
     
-    if( c->vertex(0)->info() ||
-        c->vertex(1)->info() ||
-        c->vertex(2)->info() ||
-        c->vertex(3)->info() )
+    if( c->vertex(0)->point().surface_index() > 0 ||
+        c->vertex(1)->point().surface_index() > 0 ||
+        c->vertex(2)->point().surface_index() > 0 ||
+        c->vertex(3)->point().surface_index() > 0 )
       ++surface_slivers;
     
     for(int i = 0; i < 4; ++i)

@@ -48,7 +48,6 @@ namespace CGAL {
 
       void after_insertion(const Vertex_handle& v)
       {
-	v->info()=true;
 	std::cout << v->point().surface_index();
       }
 

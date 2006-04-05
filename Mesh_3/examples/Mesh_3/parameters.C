@@ -1,26 +1,54 @@
+// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Laurent Rineau
+
+#include <assert.h>
+
 #include "parameters.h"
+#include "implicit_functions.h"
 
-int number_of_initial_points;
-
-bool bipolar_oracle;
-
+String_options string_options;
 Double_options double_options;
+Implicit_function_map functions;
 
-void init_parameters()
+void init_string_options()
+{
+  string_options["distribution_after_filename"] = "";
+  string_options["mesh_after_filename"] = "";
+  string_options["initial_surface_off"] = "";
+  string_options["initial_surface_ghs"] = "";
+  string_options["surface_ghs"] = "";
+  string_options["slivers_off"] = "";
+
+  string_options["surface_mesh"] = "";
+  string_options["surface_off"] = "";
+  string_options["read_initial_points"] = "";
+  string_options["inrimage"] = "";
+}
+
+void init_double_options()
 {
   double_options["r"] = 0;
   double_options["special"] = 0.;
-  double_options["curvature_bound"] = 1000000000000000.;
+  double_options["distance_bound"] = 1000000000000000.;
   
   // bound on radius of surface Delaunay balls
-  double_options["size_bound"] = 10000000000000.;
+  double_options["radius_bound"] = 10000000000000.;
 
   // bound on the squared radius of circumspheres
   double_options["tets_size_bound"] = 10000000000.;
-  double_options["facets_aspect_ratio_bound"] = 0.; // in degrees
+  double_options["angle_bound"] = 0.; // in degrees
   double_options["tets_aspect_ratio_bound"] = 0.;
   double_options["enclosing_sphere_radius"] = 6.;
-  double_options["precision"] = 1e-6;
+  double_options["precision"] = 1e-3;
   double_options["center_x"] = 0.0;
   double_options["center_y"] = 0.0;
   double_options["center_z"] = 0.0;
@@ -29,5 +57,39 @@ void init_parameters()
   double_options["pumping_bound"] = 0.45;
   double_options["sliver_test"] = 0.15;
   double_options["iso_value"] = 0.;
-  bipolar_oracle = true;
+}
+
+void init_functions()
+{
+  functions["generic_inrimage"] = &generic_inrimage_function;
+  functions["chair"] = &chair_function;
+  functions["ellipsoid"] = &ellipsoid_function;
+  functions["false_knot"] = &false_knot_function;
+  functions["heart"] = &heart_function;
+  functions["klein"] = &klein_function;
+  functions["knot1"] = &knot1_function;
+  functions["knot2"] = &knot2_function;
+  functions["knot3"] = &knot3_function;
+  functions["octic"] = &octic_function;
+  functions["ring"] = &ring_function;
+  functions["sphere"] = &sphere_function;
+  functions["tanglecube"] = &tanglecube_function;
+  functions["torus"] = &torus_function;
+  functions["cube"] = &cube_function;
+}
+
+void init_parameters()
+{
+  init_string_options();
+  init_double_options();
+  init_functions();
+}
+
+Gray_image* isosurface = 0;
+
+double generic_inrimage_function(double x, double y, double z)
+{
+  assert(isosurface != 0);
+
+  return (*isosurface)(x, y, z);
 }

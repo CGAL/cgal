@@ -28,7 +28,7 @@
         *is* broken.
       - File_medit.h should not require systematicaly surface_index()
 [DONE]- provide .cin files for tests (read Dev'Manual)
-      - remove info()s everywhere
+[DONE]- remove info()s everywhere
           Mesh_3/include/CGAL/Implicit_surfaces_mesher_3.h
           Mesh_3/include/CGAL/Mesh_3/Facet_on_surface_criterion.h
           Mesh_3/include/CGAL/Mesh_3/Implicit_surface_mesher_visitor.h

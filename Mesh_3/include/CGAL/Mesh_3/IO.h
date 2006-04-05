@@ -1,4 +1,4 @@
-// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -32,7 +32,7 @@ namespace CGAL { namespace Mesh_3 {
 template <class C2T3>
 void output_mesh(std::ostream& os, const C2T3& c2t3)
 {
-  typedef typename C2T3::Triangulation_3 Tr;
+  typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Cell_iterator Cell_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -80,7 +80,7 @@ input_mesh(std::istream& is,
            bool debug = false, 
            std::ostream* debug_str = &std::cout)
 {
-  typedef typename C2T3::Triangulation_3 Tr;
+  typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Triangulation_data_structure Tds;
   typedef typename Tr::Vertex_handle Vertex_handle;  
   typedef typename Tr::Cell_handle Cell_handle;  

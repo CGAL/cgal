@@ -1,10 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>
 #include <CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h>
 #include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 
@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
+#include <CGAL/Implicit_surface_oracle.h>
 #include <CGAL/Surface_mesher/Oracles/Combining_oracle.h>
 
 #include <CGAL/Mesh_3/Slivers_exuder.h>
@@ -32,8 +32,7 @@ struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
 typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 // Multi_surface_traits<Regular_traits> ?
-typedef CGAL::Triangulation_vertex_base_with_info_3<bool, My_traits> Vb1;
-typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits, Vb1> Vb;
+typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits> Vb;
 typedef CGAL::Regular_triangulation_cell_base_3<My_traits> Cb1;
 typedef CGAL::Complex_2_in_triangulation_cell_base_3<My_traits, Cb1> Cb2;
 typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<My_traits, Cb2> Cb3;
@@ -47,7 +46,6 @@ typedef K::FT FT;
 // // surface_function is a typedef of the function (FT,FT,FT)->FT
 // // defining a surface.
 
-using CGAL::Surface_mesher::Implicit_oracle;
 using CGAL::Surface_mesher::Combining_oracle;
 using CGAL::Surface_mesher::Refine_criterion;
 using CGAL::Surface_mesher::Standard_criteria;
@@ -86,10 +84,12 @@ struct Point_with_surface_index_creator
   }
 };
 
-typedef Implicit_oracle<My_traits,
-                        Sphere,
-                        Set_indices,
-                        Point_with_surface_index_creator> Single_oracle;
+typedef CGAL::Implicit_surface_oracle<
+  My_traits,
+  Sphere,
+  Set_indices,
+  Point_with_surface_index_creator> Single_oracle;
+
 typedef Combining_oracle<Single_oracle, Single_oracle> Oracle_2;
 typedef Combining_oracle<Oracle_2, Single_oracle> Oracle_3;
 typedef Combining_oracle<Oracle_3, Single_oracle> Oracle_4;
@@ -335,15 +335,7 @@ int main(int, char**)
   Oracle_4 oracle_4(oracle_3, single_oracle_4);
   Oracle_5 oracle(oracle_4, single_oracle_5);
 
-  Oracle::Points vector_of_initial_points =
-    oracle.random_points(number_of_initial_points);
-
-    for(Oracle::Points::iterator pit = vector_of_initial_points.begin();
-	pit != vector_of_initial_points.end();
-	++pit)
-    {
-      tr.insert(*pit);
-    }
+  oracle.initial_points(CGAL::inserter(tr), number_of_initial_points);
 
   CGAL::Surface_mesher::Uniform_size_criterion<Tr>
     uniform_size_criterion (facets_uniform_size_bound); 

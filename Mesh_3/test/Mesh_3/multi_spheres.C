@@ -4,7 +4,6 @@
 #include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 
@@ -28,8 +27,7 @@ struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
 typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 // Multi_surface_traits<Regular_traits> ?
-typedef CGAL::Triangulation_vertex_base_with_info_3<bool, My_traits> Vb1;
-typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits, Vb1> Vb;
+typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits> Vb;
 typedef CGAL::Regular_triangulation_cell_base_3<My_traits> Cb1;
 typedef CGAL::Complex_2_in_triangulation_cell_base_3<My_traits, Cb1> Cb2;
 typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<My_traits, Cb2> Cb3;
@@ -149,7 +147,7 @@ int main(int , char** )
   for(int i = 0; i < number_of_oracles; ++i)
   {
     Oracle::Points vector_of_initial_points =
-      oracles[i]->random_points(number_of_initial_points);
+      oracles[i]->initial_points(number_of_initial_points);
 
     for(Oracle::Points::iterator pit = vector_of_initial_points.begin();
 	pit != vector_of_initial_points.end();

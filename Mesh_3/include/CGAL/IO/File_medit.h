@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -34,7 +34,7 @@ template <class C2T3>
 void
 output_to_medit (std::ostream& os, const C2T3& c2t3)
 {
-  typedef typename C2T3::Triangulation_3 Tr;
+  typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -71,12 +71,12 @@ output_to_medit (std::ostream& os, const C2T3& c2t3)
 
   // Facets
   os << "Triangles" << std::endl
-     << number_of_facets_on_surface(tr) << std::endl;
+     << c2t3.number_of_facets() << std::endl;
   for( Finite_facets_iterator fit = tr.finite_facets_begin(); 
        fit != tr.finite_facets_end(); ++fit)
   {
     int surface_index = 0;
-    if (c2t3.complex_subface_type(fit->first,fit->second)
+    if (c2t3.face_status(fit->first,fit->second)
         != C2T3::NOT_IN_COMPLEX)
     {
       for (int i=0; i<4; i++)
@@ -150,7 +150,7 @@ input_from_medit (std::istream& is,
                        C2T3 & c2t3,
                        bool debug = false, 
                        std::ostream* debug_str = &std::cerr) {
-  typedef typename C2T3::Triangulation_3 Tr;
+  typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Triangulation_data_structure Tds;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point;
@@ -314,7 +314,7 @@ template <class C2T3>
 int number_of_facets_on_surface_with_index(const C2T3& c2t3,
                                            const unsigned int surface_index)
 {
-  typedef typename C2T3::Triangulation_3 Tr;
+  typedef typename C2T3::Triangulation Tr;
 
   const Tr& tr = c2t3.triangulation();
 
@@ -327,7 +327,7 @@ int number_of_facets_on_surface_with_index(const C2T3& c2t3,
     const typename Tr::Cell_handle& cell = fit->first;
     const int index = fit->second;
 
-    if(c2t3.complex_subface_type(cell, index) != C2T3::NOT_IN_COMPLEX)
+    if(c2t3.face_status(cell, index) != C2T3::NOT_IN_COMPLEX)
     {
       const typename Tr::Vertex_handle& va = cell->vertex((index+1)&3);
       const typename Tr::Vertex_handle& vb = cell->vertex((index+1)&3);
@@ -346,7 +346,7 @@ int number_of_facets_on_surface_with_index(const C2T3& c2t3,
     }
   }
   return count;
-} // end number_of_facets_on_surface(Tr, int) 
+} // end number_of_facets_on_surface_with_index(Tr, int) 
 
 
 } // end namespace CGAL

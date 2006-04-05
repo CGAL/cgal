@@ -1,7 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // vertex and cell bases
-#include <CGAL/Triangulation_vertex_base_with_info_3.h> // for Slivers_exuder.h
 #include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>
 #include <CGAL/Complex_2_in_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
@@ -177,7 +176,7 @@ int main(int , char**)
     std::cout << "  Writing file " << (file_prefix + ".maillage") << std::endl
               << "  and files " << (file_prefix + ".surface*") << std::endl;
 
-    typedef C2T3::Triangulation_3 Tr;
+    typedef C2T3::Triangulation Tr;
     typedef Tr::Finite_cells_iterator Finite_cells_iterator;
     typedef Tr::Finite_facets_iterator Finite_facets_iterator;
     typedef Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -268,7 +267,7 @@ int main(int , char**)
          fit != tr.finite_facets_end(); ++fit)
     {
       int surface_index = 0;
-      if (c2t3.face_type(fit->first,fit->second)
+      if (c2t3.face_status(fit->first,fit->second)
           != C2T3::NOT_IN_COMPLEX)
       {
         for (int i=0; i<4; i++)
