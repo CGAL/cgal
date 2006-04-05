@@ -1,12 +1,25 @@
 
 \begin{ccPkgDescription}{Surface mesher}
 \ccPkgSummary{
-The Surface mesher package offers a global function to build a surface mesh
-interpolating a given surface. The approximated surface can be defined
-by an implicit equation or as a gray level in a three dimensional image.
-The user has a fine control on the size and quality of the final mesh
-elements.
-There is no restriction on the topology or number of connected components of the surface.}
+The CGAL 3D Surface Mesher package provide functions to generate
+surface  meshes that appoximate, more precisely interpolate,
+smooth surfaces. The  meshing algorithm is based on Delaunay
+refinement and provides some guarantees on the resulting mesh:
+the user is able to control the size and shape of the mesh
+elements and  the accuracy of the surface approximation.
+There is no restriction on the topology and number of components
+of input surfaces. The surface mesher may also be used
+for non smooth surfaces but without guarantee.
+
+The required knowledge of the input surface
+is only an oracle that can tell whether a
+given segment intersects the surface or not
+and can compute an intersection point if any. This feature
+makes the package generic enough to be
+applied in a wide variety of situations. Currently, implementations
+are provided for implicit surfaces described as the zero level set
+of some function and surfaces described as a gray
+level set in a three-dimensional image.}
 
 %\ccPkgDependsOn{ }
 \ccPkgMaturity{Introduced in \cgal\ 3.2}
