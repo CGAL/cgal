@@ -6,8 +6,8 @@
 #include <sstream>
 
 extern "C" {
-#include <errno.h> 
-#include <dirent.h> 
+#include <errno.h>
+#include <dirent.h>
 }
 
 
@@ -45,7 +45,7 @@ struct hash<std::string>
   }
 };
 };
-        
+
 #endif
 
 using namespace std;
@@ -57,16 +57,16 @@ using namespace std;
 class Dictionary {
   typedef hash_map< string, string > Map;
   Map map;
-public: 
+public:
   void add( const string& key, const string& value ) {
     if( !is_defined( key ) )
       map[key] = value;
   }
-  
+
   bool is_defined( const string& key ) const {
    return map.find( key ) != map.end();
   }
-  
+
   string operator[]( const string& key ) const {
    Map::const_iterator it = map.find( key );
    if( it != map.end() ) {
@@ -74,7 +74,7 @@ public:
    } else {
      cerr << " internal warning: unknown dictionary key [" << key << "]" << endl;
      return string();
-   }     
+   }
   }
 };
 
@@ -102,25 +102,25 @@ match_cc_idfier( string s, ostream *out = NULL ) {
   string::size_type begin = 0;
   string::size_type len   = s.length();
 
-  do {    
+  do {
     const string id = s.substr( begin, len );
     //cout << " !! Warning: checking [" << id << "]" << endl;
-    
+
     string::size_type lt = id.find( "&lt;" );
-    string::size_type gt = id.rfind( "&gt;" );    
+    string::size_type gt = id.rfind( "&gt;" );
     bool template_param_matched = false;
 
-    if( lt != string::npos && gt != string::npos ) {       
+    if( lt != string::npos && gt != string::npos ) {
       string tparam = s.substr( begin + lt + 4, gt - lt - 4 );
       //std::cout << tparam << std::endl;
       if( match_cc_idfier( tparam ) ) {
-        template_param_matched = true;        
+        template_param_matched = true;
       }
     }
-        
+
     if( !template_param_matched && dict_cc.is_defined( id ) ) {
       // only match the whole id if _no_ substring inside < > matched
-      if( out ) 
+      if( out )
         *out << dict_cc[ id ];
       else
         return true;
@@ -133,9 +133,9 @@ match_cc_idfier( string s, ostream *out = NULL ) {
         len = t;
         continue;
       } else
-        if( out ) *out << id;     
+        if( out ) *out << id;
     }
-    
+
     begin += len;
     while( begin < s.length() ) {
       string x = s.substr(begin, 4);
@@ -154,7 +154,7 @@ match_cc_idfier( string s, ostream *out = NULL ) {
       } else
         break;
     }
-    len   = s.length() - begin;    
+    len   = s.length() - begin;
   } while( len > 0 );
   return false;
 }
@@ -180,9 +180,9 @@ match_cc_idfier( string s, ostream *out = NULL ) {
 %x HEADERMODE
 
 /* aggressive crosslinking: every CCidfier1 is crosslinked, when listed in dict */
-%x CROSSLINKMODE 
+%x CROSSLINKMODE
 
-%x BIBMODE 
+%x BIBMODE
 %x BIBMODE2
 
 
@@ -215,7 +215,7 @@ cccend          "[cccend]"
 <NOLINKMODE>{nolinkend}        { --linknesting;
                                  if ( ! linknesting) BEGIN( INITIAL);
                                }
-<NOLINKMODE>{nolinksync}       { fputs( "\nERROR: \\lcNoLinkSync used in \\lcNoLinkBegin/End block, which indicates missing or runaway \\lcNoLinkEnd.\n", stderr); 
+<NOLINKMODE>{nolinksync}       { fputs( "\nERROR: \\lcNoLinkSync used in \\lcNoLinkBegin/End block, which indicates missing or runaway \\lcNoLinkEnd.\n", stderr);
                                  linknesting = 0;
                                  BEGIN( INITIAL);
                                  error_code = 1;
@@ -231,7 +231,7 @@ cccend          "[cccend]"
 <HEADERMODE>([^[]|[\n])*{endhead} { BEGIN(INITIAL); ECHO; /* Avoid substitutions in the head */ }
 
 "<A HREF="["][^"]*"Biblio_"[^"]+["]">" { ECHO; BEGIN(BIBMODE2); }
-<BIBMODE2>[^<]+"</A>" { 
+<BIBMODE2>[^<]+"</A>" {
   yytext [ yyleng - 4 ] = '\0'; // cut off trailing </A>
   if( dict_bib.is_defined( yytext ) )
     output_file  << dict_bib[ yytext ] << "</A>";
@@ -269,9 +269,9 @@ cccend          "[cccend]"
   reftext = string(yytext + 9); // skip \reftext:
 }
 
-[\[]ref[:][^\]]+[\]] { 
+[\[]ref[:][^\]]+[\]] {
    yytext [ yyleng - 1 ] = '\0'; // cut off trailing ]
-   const char *my_yytext = yytext + 5; // skip [ref:"
+   const char *my_yytext = yytext + 5;
    if( dict_labels.is_defined( my_yytext ) ) {
      //cerr << " !! label [" << my_yytext << "] is defined as [" << dict_labels[ my_yytext ] << endl;
      output_file  << "<A HREF=\"" << dict_labels[ my_yytext ] << "\">";
@@ -285,10 +285,10 @@ cccend          "[cccend]"
    reftext = string();
 }
 
-[\[]internal[:][^\]]+[\]] { 
+[\[]internal[:][^\]]+[\]] {
    yytext [ yyleng - 1 ] = '\0'; // cut off trailing "]
    const char *my_yytext = yytext + 10; // skip [internal:"
-   
+
    if( dict_internal.is_defined( my_yytext ) )
      output_file  << dict_internal[ my_yytext ];
 }
@@ -303,67 +303,67 @@ cccend          "[cccend]"
 
 %%
 
-void 
+void
 process( const string &filename ) {
   // open input file
   FILE *in = fopen( filename.c_str(), "r" );
-  if( !in ) { 
+  if( !in ) {
     cerr << " !! Error: could not open file " << filename << " for reading." << endl;
     return;
   }
-  
+
   // open output file
   output_file.open( (output_path + filename).c_str() );
   if( !output_file ) {
     cerr << " !! Error: could not open file " << (output_path + filename) << " for writing." << endl;
-    return; 
-  } 
-  
+    return;
+  }
+
   // create new flex buffer
   yyin = in;
   yy_switch_to_buffer( yy_create_buffer( yyin, YY_BUF_SIZE));
-  
-     
+
+
   // actual lex
   yylex();
 
-  // cleanup  
+  // cleanup
   YY_BUFFER_STATE buf = YY_CURRENT_BUFFER;
   yy_delete_buffer( buf);
-  fclose( in ); 
+  fclose( in );
   output_file.close();
 }
 
 int main( int argc, char** argv ) {
-  if( argc < 3 ) {  
+  if( argc < 3 ) {
     cerr << "usage: " << argv[0] << " ruleset outputpath" << endl;
     exit(1);
   }
-  
+
   ifstream in( argv[1] );
   if( !in ) {
-    cerr << "cannot find ruleset \"" << argv[1] << "\"" << endl;      
+    cerr << "cannot find ruleset \"" << argv[1] << "\"" << endl;
   }
   //cerr << "loading ruleset : " << argv[1] << endl;
   string type, key, value, line;
   while( in ) {
     in >> type;
     std::getline( in, line );
-    
+
     std::string::size_type start = line.find_first_not_of( " " );
-    std::string::size_type end   = line.find( '\t', start + 1 );    
+    std::string::size_type end   = line.find( '\t', start + 1 );
     if( end == std::string::npos ) {
       cerr << " !! rule malformatted: " << type << line << endl;
       continue;
     }
-    key   = line.substr( start, end -1 );    
+    key   = line.substr( start, end -1 );
     value = line.substr( end + 1, line.find_last_not_of( " " ) - end );
-    
+
     //cerr << "type: " << type << " key: [" << key << "] value: [" << value << "]" << endl;
     if( type == "l" ) {
       //cerr << "l key: [" << key << "] value: [" << value << "]" << endl;
       dict_labels.add(key,value);
-    } else if ( type == "b" ) {        
+    } else if ( type == "b" ) {
       dict_bib.add(key,value);
     } else if ( type == "c" ) {
       dict_cc.add(key,value);
@@ -371,11 +371,11 @@ int main( int argc, char** argv ) {
     } else if ( type == "i" ) {
       //cerr << "i key: [" << key << "] value: [" << value << "]" << endl;
       dict_internal.add(key,value);
-    } 
+    }
   }
-  
+
   output_path = argv[2];
-  
+
   if( output_path[ output_path.length() - 1 ] != '/' )
     output_path += '/';
   DIR *pdir;
@@ -385,16 +385,16 @@ int main( int argc, char** argv ) {
   if( !pdir ) {
    exit(1);
   }
-  errno = 0; 
+  errno = 0;
   // foreach file in *.html { process( file ) }
   while( ( pent = readdir(pdir) ) ) {
     string filename = pent->d_name;
-    
+
     // filename.endsWith( ".html" )
-    if( filename.length() > 5 && filename.compare( filename.length() - 5 , 5, ".html" ) == 0 )      
+    if( filename.length() > 5 && filename.compare( filename.length() - 5 , 5, ".html" ) == 0 )
       process( filename );
   }
   closedir( pdir );
- 
+
   return error_code;
 }
