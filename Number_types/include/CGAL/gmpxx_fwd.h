@@ -26,13 +26,7 @@
 
 #ifdef CGAL_USE_GMPXX
 
-// Forward declarations for the GMPXX types.
-
-template <typename, typename> class __gmp_expr;
-class __gmpz_value;
-class __gmpq_value;
-typedef __gmp_expr<__gmpz_value, __gmpz_value> mpz_class;
-typedef __gmp_expr<__gmpq_value, __gmpq_value> mpq_class;
+#include <gmpxx.h>
 
 CGAL_BEGIN_NAMESPACE
 
