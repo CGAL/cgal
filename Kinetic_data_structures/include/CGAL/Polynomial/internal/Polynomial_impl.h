@@ -338,7 +338,7 @@ public:
       NT coef;
       // eat
       in >> coef;
-      if (!in.good()) return;
+      if (in.fail()) return;
       unsigned int pow;
       char p= in.peek();
       if (in.peek() =='*') {
