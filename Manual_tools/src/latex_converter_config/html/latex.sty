@@ -1743,13 +1743,15 @@
 \newcommand{\ref}[1]{\lcAsciiToHtml{[ref:#1]}}
 \newcommand{\pageref}[1]{\lcAsciiToHtml{[ref:#1]}}
 
+\newcommand{\ref@om}{\lcAsciiToHtml{[reftext:#1][ref:#2]}}
+
 \newcommand{\label}[1]{\lcRawHtml{<A NAME="#C1"></A>}%
     \edef\lciOut{\lciOutputBasename}%
     \edef\lciOutPath{\lciReplaceWithCurrentPathToken}%
     \lciPushOutput{anchor}%
-    \lciLabel{#1}{\lciOutPath}{\lciOut}{\lciReferenceIcon}\lciPopOutput}
+    \lciLabel{#1}{\lciOutPath}{\lciOut}\lciPopOutput}
 
-\newcommand{\lciLabel}[4]{\lciRawOutput{l #C1	<A HREF="#XC2#XC3###C1">#X4</A> 
+\newcommand{\lciLabel}[3]{\lciRawOutput{l #C1	#XC2#XC3###C1
 }}
 
 % +--------------------------------------------------------------------------

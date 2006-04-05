@@ -38,12 +38,6 @@ using namespace std;
 const string prog_name    = "cc_extract_html";
 const string prog_release = "$Id$";
 
-
-/* Constant string used for referencing. */
-/* ===================================== */
-const string reference_icon = "<IMG SRC=\"cc_ref_up_arrow.gif\" "
-            "ALT=\"reference\" WIDTH=\"10\" HEIGHT=\"10\">";
-
 /* Configurable command line options */
 /* ================================= */
 Switch  V_switch           = NO_SWITCH;
@@ -81,7 +75,6 @@ void init_commandline_args() {
     insertInternalGlobalMacro( "\\lciConfigPath",     config_path);
     insertInternalGlobalMacro( "\\lciTmpPath",        tmp_path);
     insertInternalGlobalMacro( "\\lciExtractHtmlRelease", prog_release);
-    insertInternalGlobalMacro( "\\lciReferenceIcon",  reference_icon);
     insertInternalGlobalMacro( "\\lciManualDate",     manual_date);
     // check for date format as provided by latex_to_html
     if ( std::count( manual_date.begin(), manual_date.end(), ',') == 2) {

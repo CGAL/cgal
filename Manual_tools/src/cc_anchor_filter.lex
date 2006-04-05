@@ -91,7 +91,10 @@ int linknesting;
 
 Dictionary dict_labels, dict_bib, dict_anchormode_bib, dict_cc, dict_internal;
 
-string   output_path;
+const string reference_icon = "<IMG SRC=\"cc_ref_up_arrow.gif\" "
+            "ALT=\"reference\" WIDTH=\"10\" HEIGHT=\"10\">";
+
+string   output_path, reftext;
 ofstream output_file;
 
 bool
@@ -190,7 +193,7 @@ CCletter        [a-zA-Z_]
 LT              "&lt;"
 GT              "&gt;"
 CCidfier        ({CCletter}({CCletter}|{digit})*)
-CCidfier1       {CCidfier}({CCidfier}|[ ]?({LT}[ ]?)+{CCidfier}|([ ]?{GT})*[ ]?"::"[ ]?{CCidfier}|{CCidfier}[ ]?","[ ]?{CCidfier})*([ ]?{GT})*
+CCidfier1       {CCidfier}({CCidfier}|[ ]?({LT}[ ]?)+{CCidfier}|([ ]?{GT})*[ ]?"::"[ ]?{CCidfier}|[ ]?[,][ ]?{CCidfier})*([ ]?{GT})*
 ws              [ \t\n\r]*
 par             {ws}("<"[pP]">"{ws})*
 glue            {ws}("<"[pP]">"{ws})*"<!GLUE>"{ws}("<"[pP]">"{ws})*
@@ -261,14 +264,25 @@ cccend          "[cccend]"
 "<"[^ \t\n\r]                  { BEGIN(ANCHORMODE); ECHO; }
 <ANCHORMODE>[^>]*[>]           { BEGIN(INITIAL); ECHO; }
 
+[\[]reftext[:][^\]]+[\]] {
+  yytext [ yyleng - 1 ] = '\0'; // cut off trailing ]
+  reftext = string(yytext + 9); // skip \reftext:
+}
+
 [\[]ref[:][^\]]+[\]] { 
    yytext [ yyleng - 1 ] = '\0'; // cut off trailing ]
    const char *my_yytext = yytext + 5; // skip [ref:"
    if( dict_labels.is_defined( my_yytext ) ) {
      //cerr << " !! label [" << my_yytext << "] is defined as [" << dict_labels[ my_yytext ] << endl;
-     output_file  << dict_labels[ my_yytext ];
+     output_file  << "<A HREF=\"" << dict_labels[ my_yytext ] << "\">";
+     if( reftext != string() )
+       output_file << reftext;
+     else
+       output_file << reference_icon;
+     output_file << "</A>";
    } else
      cerr << " !! Warning: undefined label \"" << my_yytext << "\"" << endl;
+   reftext = string();
 }
 
 [\[]internal[:][^\]]+[\]] { 
@@ -279,16 +293,9 @@ cccend          "[cccend]"
      output_file  << dict_internal[ my_yytext ];
 }
 
-<CROSSLINKMODE>{CCidfier1} { 
-  /*stringstream s_stream;
-
-  // remove all spaces
-  for( const char *s = yytext; *s != '\0'; ++s )
-    if( *s != ' ' && *s != '\n' && *s != '\r' && *s != '\t')
-      s_stream << *s;*/
-
-  //match_cc_idfier( s_stream.str() ); 
-  match_cc_idfier( yytext, &output_file ); 
+<CROSSLINKMODE>{CCidfier1} {
+  //output_file << "matched [" << yytext << "] as ccidfieR" << std::endl;
+  match_cc_idfier( yytext, &output_file );
 }
 <CROSSLINKMODE>[<][^>]+[>] { ECHO; } // do not crosslink inside html tags
 <CROSSLINKMODE>.        { ECHO; }

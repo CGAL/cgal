@@ -46,7 +46,6 @@ extern Switch  onlyheader_switch;
 
 extern const string prog_name;
 extern const string prog_release;
-extern const string reference_icon;
 
 
 

@@ -846,7 +846,7 @@ done
 
 # Cleanup
 # -------
-if [ $KeepTmp -eq 0 ]; then 
+if [ $KeepTmp -eq 0 ]; then
     \rm -r ${TmpDir}
 else
     echo "NOTE: The tmp directory '${TmpDir}' was kept."  1>&2
