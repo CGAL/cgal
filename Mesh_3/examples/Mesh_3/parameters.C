@@ -21,11 +21,8 @@ Implicit_function_map functions;
 
 void init_string_options()
 {
-  string_options["distribution_after_filename"] = "";
   string_options["mesh_after_filename"] = "";
   string_options["initial_surface_off"] = "";
-  string_options["initial_surface_ghs"] = "";
-  string_options["surface_ghs"] = "";
   string_options["slivers_off"] = "";
 
   string_options["surface_mesh"] = "";

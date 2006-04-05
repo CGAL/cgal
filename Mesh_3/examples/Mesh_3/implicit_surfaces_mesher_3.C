@@ -579,7 +579,7 @@ int main(int argc, char **argv) {
     tets_criteria(double_options["special"],
                   double_options["r"],
                   double_options["tets_aspect_ratio_bound"],
-                  double_options["tets_size_bound"]);
+                  double_options["tets_size_bound"]*double_options["tets_size_bound"]);
 
   std::cerr << "\nInitial number of points: " << tr.number_of_vertices() 
             << std::endl;
@@ -614,37 +614,37 @@ int main(int argc, char **argv) {
       }
   }
 
-//   timer.start();
-//   mesher.refine_mesh();
-//   timer.stop();
+  timer.start();
+  mesher.refine_mesh();
+  timer.stop();
 
-//   std::cerr << "\nFinal number of points: " << tr.number_of_vertices() 
-//             << std::endl
-//             << "Total time: " << timer.time() << std::endl;
+  std::cerr << "\nFinal number of points: " << tr.number_of_vertices() 
+            << std::endl
+            << "Total time: " << timer.time() << std::endl;
 
-//   if( output_to_file )
-//     {
-//       std::ofstream file;
-//       if( filename == "-" ) {
-// 	std::cerr << "Writing to standard out..." << std::endl;
-// 	out = &std::cout;
-//       }
-//       else {
-// 	file.open(filename.c_str());
+  if( output_to_file )
+    {
+      std::ofstream file;
+      if( filename == "-" ) {
+	std::cerr << "Writing to standard out..." << std::endl;
+	out = &std::cout;
+      }
+      else {
+	file.open(filename.c_str());
       
-// 	if( file ) {
-// 	  std::cerr << "Writing to file " << filename << "..." << std::endl;
-// 	  out = &file;
-// 	}
-// 	else {
-// 	  std::cerr << "Error: cannot open " << filename << std::endl;
-// 	  usage(argv[0]);
-// 	}
-//       }
+	if( file ) {
+	  std::cerr << "Writing to file " << filename << "..." << std::endl;
+	  out = &file;
+	}
+	else {
+	  std::cerr << "Error: cannot open " << filename << std::endl;
+	  usage(argv[0]);
+	}
+      }
     
-//       // Output
-//       output_to_medit(*out, mesher.complex_2_in_triangulation_3());
-//     }
+      // Output
+      output_to_medit(*out, mesher.complex_2_in_triangulation_3());
+    }
 
 // #ifdef CGAL_USE_QT
 //   if( dump_distribution )
@@ -652,13 +652,13 @@ int main(int argc, char **argv) {
 // 			       distribution_filename, distribution_type);
 // #endif
   
-//   CGAL::Mesh_3::Slivers_exuder<Tr> exuder(tr, double_options["pumping_bound"]);
-//   int number_of_pump = static_cast<int>(double_options["number_of_pump"]);
-//   for(int i = 0; i < number_of_pump; ++i)
-//   {
-//     exuder.init();
-//     exuder.pump_vertices();
-//   }
+  CGAL::Mesh_3::Slivers_exuder<Tr> exuder(tr, double_options["pumping_bound"]);
+  int number_of_pump = static_cast<int>(double_options["number_of_pump"]);
+  for(int i = 0; i < number_of_pump; ++i)
+  {
+    exuder.init();
+    exuder.pump_vertices();
+  }
   
 // #ifdef CGAL_USE_QT
 //   std::string distribution_after_filename = 
@@ -668,34 +668,34 @@ int main(int argc, char **argv) {
 // 			       distribution_after_filename, distribution_type);
 // #endif
 
-//   std::string mesh_after_filename = string_options["mesh_after_filename"];
-//   if( mesh_after_filename != "" )
-//   {
-//     std::ofstream file(mesh_after_filename.c_str());
-//     if( file ) {
-//       std::cerr << "Writing to file " << mesh_after_filename
-// 		<< "..." << std::endl;
-//       output_to_medit(file, mesher.complex_2_in_triangulation_3());
-//     }
-//     else
-//       usage(argv[0] , ("Error: cannot create " + mesh_after_filename).c_str());
-//   }
+  std::string mesh_after_filename = string_options["mesh_after_filename"];
+  if( mesh_after_filename != "" )
+  {
+    std::ofstream file(mesh_after_filename.c_str());
+    if( file ) {
+      std::cerr << "Writing to file " << mesh_after_filename
+		<< "..." << std::endl;
+      output_to_medit(file, mesher.complex_2_in_triangulation_3());
+    }
+    else
+      usage(argv[0] , ("Error: cannot create " + mesh_after_filename).c_str());
+  }
 
-//   {
-//     std::string dump_final_surface_filename = string_options["surface_off"];
-//     if( dump_final_surface_filename != "" )
-//       {
-// 	std::ofstream dump(dump_final_surface_filename.c_str());
-// 	if( dump ) {
-// 	  std::cerr << "Writing final surface to off file "
-// 		    << dump_final_surface_filename << "..." << std::endl;
-// 	  output_oriented_surface_facets_to_off(dump, tr);
-// 	}
-// 	else
-// 	  usage(argv[0], ("Error: cannot create " + 
-// 			  dump_final_surface_filename).c_str());
-//       }
-//   }
+  {
+    std::string dump_final_surface_filename = string_options["surface_off"];
+    if( dump_final_surface_filename != "" )
+      {
+	std::ofstream dump(dump_final_surface_filename.c_str());
+	if( dump ) {
+	  std::cerr << "Writing final surface to off file "
+		    << dump_final_surface_filename << "..." << std::endl;
+	  output_oriented_surface_facets_to_off(dump, tr);
+	}
+	else
+	  usage(argv[0], ("Error: cannot create " + 
+			  dump_final_surface_filename).c_str());
+      }
+  }
 //   {
 //     std::string dump_final_surface_filename = string_options["surface_ghs"];
 //     if( dump_final_surface_filename != "" )
@@ -715,19 +715,19 @@ int main(int argc, char **argv) {
 //       }
 //   }
   
-//   std::string dump_slivers_filename = string_options["slivers_off"];
-//   if( dump_slivers_filename != "" )
-//   {
-//     std::ofstream dump(dump_slivers_filename.c_str());
-//     if( dump ) {
-//       std::cerr << "Writing slivers to off file "
-// 		<< dump_slivers_filename << "..." << std::endl;
-//       output_slivers_to_off(dump, tr, double_options["sliver_test"]);
-//     }
-//     else
-//       usage(argv[0], ("Error: cannot create " + 
-// 		      dump_slivers_filename).c_str());
-//   }
+  std::string dump_slivers_filename = string_options["slivers_off"];
+  if( dump_slivers_filename != "" )
+  {
+    std::ofstream dump(dump_slivers_filename.c_str());
+    if( dump ) {
+      std::cerr << "Writing slivers to off file "
+		<< dump_slivers_filename << "..." << std::endl;
+      output_slivers_to_off(dump, tr, double_options["sliver_test"]);
+    }
+    else
+      usage(argv[0], ("Error: cannot create " + 
+		      dump_slivers_filename).c_str());
+  }
 
-//   std::cerr << " done\n";
+  std::cerr << " done\n";
 }
