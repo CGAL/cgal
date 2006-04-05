@@ -441,7 +441,7 @@ initial_check()
 {
     _check_dir_exists "${CGAL_DIR}"
     _check_write "${CGAL_DIR}"
-    for i in "${TMP_LOGFILE}" "${TMP_CXX_FILE}" "${INSTALL_LOGFILE}"; do
+    for i in "${TMP_LOGFILE}" "${TMPTMP_LOGFILE}" "${TMP_CXX_FILE}" "${INSTALL_LOGFILE}"; do
 	if [ -f "${i}" ]; then
 	    ${_rm} -f "${i}"
 	fi
@@ -761,6 +761,8 @@ set_dirs_dependant_on_cgal_dir()
 
     # logfile for temporary use (e.g. compiler tests)
     TMP_LOGFILE="${CGAL_DIR}/tmptmp.log"
+    # yet another logfile for temporary use (e.g. compiler tests)
+    TMPTMP_LOGFILE="${CGAL_DIR}/tmptmptmp.log"
 
     # temporary file for confidence tests
     TMP_CXX_FILE=./tmp_test
@@ -2769,7 +2771,7 @@ cleanup_after_compile_leave_source()
     # remove tmp object file
     ${_rm} -f "${TMP_CXX_FILE}${OBJ_EXT}"
     # remove log file
-    ${_rm} -f "${TMP_LOGFILE}"
+    ${_rm} -f "${TMP_LOGFILE}" "${TMPTMP_LOGFILE}"
     # remove moc file
     ${_rm} -f "${TMP_CXX_FILE}.moc"
 }
@@ -2881,8 +2883,9 @@ _link_run_test()
 	    "----------------------" >>"${TMP_LOGFILE}"
 	${_printf} "%s\n" "Got the following output:" >>"${TMP_LOGFILE}"
 	${_printf} "%s\n" "---------------------------------" >>"${TMP_LOGFILE}"
-	_tmp=`eval "${TMP_CXX_FILE} 2>&1 | ${_tee} -a \"${TMP_LOGFILE}\" | ${_awk} 'BEGIN{FS=\"=\"} /^version=/{print \\$2}' | remove_special_chars"`
+	"${TMP_CXX_FILE}" >"${TMPTMP_LOGFILE}" 2>&1
 	j=$?
+	_tmp=`${_cat} "${TMPTMP_LOGFILE}" | ${_tee} -a "${TMP_LOGFILE}" | ${_awk} 'BEGIN{FS="="} /^version=/{print $2}' | remove_special_chars`
 	if [ $j = 0 ]; then
 	    log_print "    $1 test execution succeeded."
 	    if [ -n "${6}" ]; then
