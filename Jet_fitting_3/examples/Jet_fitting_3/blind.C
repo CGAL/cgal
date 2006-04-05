@@ -226,7 +226,6 @@ int main(int argc, char *argv[])
   Facet_PM_type fpm(facet2props);  
   
   //initialize Polyhedral data : length of edges, normal of facets
-  //debug : these fct do nothing!
   Poly_hedge_ops::compute_edges_length(P, hepm);
   Poly_facet_ops::compute_facets_normals(P, fpm);
 
@@ -262,24 +261,24 @@ int main(int argc, char *argv[])
  
     //switch min-max ppal curv/dir wrt the mesh orientation
     const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
-    //debug
-    cout << "normal_mesh" <<normal_mesh << endl;
-
     monge_rep.comply_wrt_given_normal(normal_mesh);
  
     //OpenGL output. Scaling for ppal dir, may be optimized with a
     //global mean edges length computed only once on all edges of P
     DFT scale_ppal_dir = Poly_hedge_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
-    //DEBUG this gives -.5 cause the length is intialized to -1, and
-    //not correctly computed by the pm
-    cout << scale_ppal_dir << endl;
-
+ 
     (*out_4ogl) << v->point()  << " ";
     monge_rep.dump_4ogl(*out_4ogl, scale_ppal_dir);
 
     //verbose txt output 
     if (verbose){     
-      (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
+
+//debug  
+       std::vector<DPoint>::iterator itbp = in_points.begin(), itep = in_points.end();
+      (*out_verbose) << "in_points list : " << std::endl ;
+      for (;itbp!=itep;itbp++) (*out_verbose) << *itbp << std::endl ;
+					       
+        (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
 		     <<	" : " << v->point() << std::endl
 		     << "number of points used : " << in_points.size() << std::endl;
       monge_rep.dump_verbose(*out_verbose);

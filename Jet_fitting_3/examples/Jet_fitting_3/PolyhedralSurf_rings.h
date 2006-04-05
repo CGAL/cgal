@@ -44,7 +44,7 @@ protected:
 		    std::vector < Vertex * >& all, 
 		    VertexPropertyMap& vpm);
 
-  //collect enough rings -at least 1, to get at least min_nb of neighbors
+  //collect enough rings (at least 1), to get at least min_nb of neighbors
   static void
     collect_enough_rings(Vertex* v,
 			 unsigned int min_nb,
@@ -112,7 +112,9 @@ collect_i_rings(Vertex* v,
   //initialize
   p_current_ring = &current_ring;
   p_next_ring = &next_ring;
+  put(vpm, v, 0);
   current_ring.push_back(v);
+  all.push_back(v);
 
   for (int i=1; i<=ring_i; i++)
     {
@@ -138,7 +140,10 @@ collect_enough_rings(Vertex* v,
   //initialize
   p_current_ring = &current_ring;
   p_next_ring = &next_ring;
+  put(vpm, v, 0);
   current_ring.push_back(v);
+  all.push_back(v);
+
   int i = 1;
 
   while ( (all.size() < min_nb) &&  (p_current_ring->size() != 0) ) 

@@ -60,7 +60,7 @@ public:
   const std::vector<DFT> coefficients() const { return m_coefficients; }
   std::vector<DFT>& coefficients() { return m_coefficients; }
 
-  //if d>=1, number of coeffs = (d+1)(d+2)/2 -4. 
+  //if d>=2, number of coeffs = (d+1)(d+2)/2 -4. 
   //we remove cst, linear and the xy coeff which vanish
   void set_up(int degree);
   //switch min-max ppal curv/dir wrt a given normal orientation.
@@ -68,14 +68,14 @@ public:
   // if z=g(x,y) in the basis (d1,d2,n) then in the basis (d2,d1,-n)
   // z=h(x,y)=-g(y,x)
   void comply_wrt_given_normal(const DVector given_normal);
-  void dump_verbose(std::ofstream& out_stream);
-  void dump_4ogl(std::ofstream& out_stream, const DFT scale);
+  void dump_verbose(std::ostream& out_stream);
+  void dump_4ogl(std::ostream& out_stream, const DFT scale);
 };
 
 template <class DataKernel>
 void Monge_rep<DataKernel>::
 set_up(int degree) {
-  if ( degree >= 1 ) std::fill_n(back_inserter(m_coefficients),
+  if ( degree >= 2 ) std::fill_n(back_inserter(m_coefficients),
 				 (degree+1)*(degree+2)/2-4, 0.);
 }
 
@@ -103,7 +103,7 @@ comply_wrt_given_normal(const DVector given_normal)
 
 template <class DataKernel>
 void Monge_rep<DataKernel>::
-dump_verbose(std::ofstream& out_stream)
+dump_verbose(std::ostream& out_stream)
 {
   out_stream << "origin : " << origin_pt() << std::endl
 	     << "n : " << n() << std::endl;
@@ -122,12 +122,25 @@ dump_verbose(std::ofstream& out_stream)
 	       << "c1 : " << coefficients()[7] << std::endl
  	       << "c2 : " << coefficients()[8] << std::endl
  	       << "c3 : " << coefficients()[9] << std::endl 
- 	       << "c4 : " << coefficients()[10] << std::endl; 
+ 	       << "c4 : " << coefficients()[10] << std::endl
+	       <<    "P1 : " <<
+      3*coefficients()[3]*coefficients()[3]
+      +(coefficients()[0]-coefficients()[1])
+      *(coefficients()[6]
+	-3*coefficients()[0]*coefficients()[0]*coefficients()[0]) << std::endl
+      //= 3*b2^2+(k2-k1)(c4-3k2^3)
+	<< "P2 : " << 
+	3*coefficients()[4]*coefficients()[4]
+	-(coefficients()[0]-coefficients()[1])
+	*(coefficients()[10]
+	  -3*coefficients()[1]*coefficients()[1]*coefficients()[1] ) 
+	<< std::endl; 
+ 
 }
 
 template <class DataKernel>
 void Monge_rep<DataKernel>::
-dump_4ogl(std::ofstream& out_stream, const DFT scale)
+dump_4ogl(std::ostream& out_stream, const DFT scale)
 {
   CGAL_precondition( coefficients().size() >= 2 );
   out_stream << origin_pt()  << " "
@@ -164,13 +177,13 @@ public:
   const LFT cond_nb() const { return m_cond_nb; }
   LFT& cond_nb() { return m_cond_nb; }
 
-  void dump_verbose(std::ofstream& out_stream);
+  void dump_verbose(std::ostream& out_stream);
 };
 
 
 template <class LocalKernel>
 void Monge_info<LocalKernel>:: 
-dump_verbose(std::ofstream& out_stream)
+dump_verbose(std::ostream& out_stream)
 {
   out_stream << "cond_nb : " << cond_nb() << std::endl 
 	     << "pca_eigen_vals " << pca_eigen_vals()[0] 
@@ -252,7 +265,7 @@ protected:
   void compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep);
 
   //if deg_monge >=3 then 3rd (and 4th) order info are computed
-  void compute_Monge_coefficients(const LAVector &A, int dprime, 
+  void compute_Monge_coefficients( LAVector &A, int dprime, 
 				  Monge_rep& monge_rep);
 
   //for a trihedron (v1,v2,v3) switches v1 to -v1 if det(v1,v2,v3) < 0
@@ -392,7 +405,27 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
     change_basis (pca_vecs[0][0], pca_vecs[0][1], pca_vecs[0][2], 
 		  pca_vecs[1][0], pca_vecs[1][1], pca_vecs[1][2],
 		  pca_vecs[2][0], pca_vecs[2][1], pca_vecs[2][2]);
-  this->change_world2fitting = change_basis;
+   this->change_world2fitting = change_basis; 
+
+/* //debug   //test the old method, fitting basis is a permutation of the world basis */
+/*   const LVector* pca_vecs = monge_info.pca_eigen_vecs(); */
+/*   const LVector n_pca = pca_vecs[2]; */
+/*   int index_max=0; */
+/*   x = std::fabs(n_pca[0]); y = std::fabs(n_pca[1]); z = std::fabs(n_pca[2]); */
+/*   if (x>y) if (x>z) index_max = 0; else index_max = 2; */
+/*   else if (y>z) index_max = 1; else index_max = 2; */
+/*   Aff_transformation     change_basis; */
+/*   if (index_max == 0) change_basis =  Aff_transformation(0,1,0, */
+/* 							     0,0,1, */
+/* 							     1,0,0); */
+/*   if (index_max == 1) change_basis =  Aff_transformation(0,0,1, */
+/* 							     1,0,0, */
+/* 							     0,1,0); */
+/*   if (index_max == 2) change_basis =  Aff_transformation(1,0,0, */
+/* 							     0,1,0, */
+/* 							     0,0,1); */
+/*   this->change_world2fitting = change_basis; */
+  //test the old method END
 }
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
@@ -546,7 +579,7 @@ compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
-compute_Monge_coefficients(const LAVector &A, int dprime, 
+compute_Monge_coefficients( LAVector &A, int dprime, 
 			   Monge_rep& monge_rep)
 {
   //One has the equation w=J_A(u,v) of the fitted surface S 
@@ -576,6 +609,19 @@ compute_Monge_coefficients(const LAVector &A, int dprime,
   p[0][2] = this->change_fitting2monge.m(2,0);
   p[1][2] = this->change_fitting2monge.m(2,1);
   p[2][2] = this->change_fitting2monge.m(2,2);
+
+  // formula are designed for w=sum( Aij ui vj), but we have J_A = sum( Aij/i!j! ui vj)
+  for (int k=0; k <= this->deg; k++) for (int i=0; i<=k; i++)
+    A[k*(k+1)/2+i] /= fact(k-i)*fact(i);//this is A(k-i;i)
+
+/*   //debug */
+/*   std::cout << "coeff of A" << std::endl */
+/* 	    << A[0] << " "<< A[1] << " "<< A[2] << std::endl */
+/* 	    << A[3] << " "<< A[4] << " "<< A[5] << std::endl */
+/* 	    << A[6] << " "<< A[7] << " "<< A[8] << " "<< A[9]<< std::endl */
+/* 	    << A[10] << " "<< A[11] << " "<< A[12] << " "<< A[13]<< " " << A[14] << std::endl; */
+
+
 
   //     note f1 = f2 = f12 = 0 
   //     LFT f1 = A[1] * p[0][0] + A[2] * p[1][0] - p[2][0];
@@ -659,7 +705,7 @@ compute_Monge_coefficients(const LAVector &A, int dprime,
     +2*A[8]*p[0][0]*p[1][1]*p[1][2]
     +2*A[8]*p[0][1]*p[1][0]*p[1][2];
 
-  LFT b0 = 1/(f3*f3)*(-f111*f3+3*f13*11);
+  LFT b0 = 1/(f3*f3)*(-f111*f3+3*f13*f11);
   LFT b1 = 1/(f3*f3)*(-f112*f3+f23*f11);
   LFT b2 = 1/(f3*f3)*(-f122*f3+f13*f22);
   LFT b3 = -1/(f3*f3)*(f222*f3-3*f23*f22);
