@@ -1,13 +1,13 @@
 Name:           CGAL-manual-tools
-Version:        29933
+Version:        30025
 Release:        1%{?dist}
 Summary:        CC Manual Style and LaTeX Converter for HTML.
 
 Group:          Development/Tools
 License:        N/A
 URL:            http://www.cgal.org/Members/Manual_tools/
-Source0:        Manual_tools.tar.gz
-Source1:        Manual.tar.gz
+Source0:        Manual_tools-%{version}.tar.gz
+Source1:        Manual-%{version}.tar.gz
 Patch0:         CGAL_manual_tools-config.patch
 Patch1:         CGAL_manual_tools-rpm.patch
 Patch2:         CGAL_manual_tools-perl.patch
@@ -79,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/CGAL_latex_conv_config/gif
 
 %changelog
+* Wed Apr  5 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30025
+- Updated to revision 30025.
+- Source0 and Source1 now have %version in their names.
+
 * Tue Apr  4 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29933
 - Updated to revision 29933
 
