@@ -4,7 +4,6 @@
 % +------------------------------------------------------------------------+
 
 % Style files used throughout the manuals
-
 % used with LaTeX and also understood by the LaTeX to HTML Converter
 \usepackage{cc_manual}
 \usepackage{cc_manual_index}
@@ -65,7 +64,6 @@
 % Enable automatic check for C++ include files
 \gdef\ccIfCheckInclude{\ccTrue}
 
-
 % +------------------------------------------------------------------------+
 % ... end configuration section.
 % +------------------------------------------------------------------------+
@@ -99,10 +97,10 @@
 % page dimensions
 % ---------------
 \lcTex{
-  \textwidth 15.6cm 
+  \textwidth 15.6cm
   \textheight 23 cm
   \topmargin -14mm
-  \evensidemargin 3mm 
+  \evensidemargin 3mm
   \oddsidemargin 3mm
   \marginparsep10mm   % needed for the tab-markers of reference pages
   \marginparwidth15mm
@@ -133,7 +131,7 @@
 % -----------------------------------------------------------------------
 %\setlength{\ccRefTabLift}{12.5mm}
 
-% Be careful to check that other redefinitions of ccRefPageBegin and 
+% Be careful to check that other redefinitions of ccRefPageBegin and
 % ccRefPageEnd don't cause strange problems
 % (e.g. if ccAdvanced is used to bracket a ref page)
 % -------------------------------------------------------------------------
@@ -180,7 +178,7 @@
   \centerline{{\Large \cgalversion}}\vspace{1cm}
 
   \centerline{{\Large \cgalversiondate}}
-  \end{titlepage}  
+  \end{titlepage}
   \cleardoublepage
   \setcounter{page}{1}
   \pagestyle{plain}
@@ -199,12 +197,12 @@
   \newcommand{\cgaldeclarepackageWithRef}[2]{\cgaldeclarepackage{#1}}
 
   % Args: <package-name>, <yes-text>, <no-text>
-  % Tests, if <package-name> was previously declared with 
+  % Tests, if <package-name> was previously declared with
   % \cgaldeclarepackage{<package-name>}, and if so expands the <yes-text>,
   % and otherwise expands the <no-text>
   \newcommand{\cgalifpackage}[3]{%
     \expandafter\ifx\csname CgalPackage#1\endcsname\relax #3\else #2\fi}
-  
+
   \newcommand{\ccPkgName}[1]{}
   \newcommand{\ccPkgSummary}[1]{}
   \newcommand{\ccPkgMaturity}[1]{}
@@ -221,30 +219,36 @@
   \newcommand{\cgaldeclarepackageWithRef}[2]{\gdef{\CgalPackageHasRef#G1}{#2}}
 
   % Args: <package-name>, <yes-text>, <no-text>
-  % Tests, if <package-name> was previously declared with 
+  % Tests, if <package-name> was previously declared with
   % \cgaldeclarepackage{<package-name>}, and if so expands the <yes-text>,
   % and otherwise expands the <no-text>
   \newcommand{\cgalifpackage}[3]{\lciIfDefined{\CgalPackage#G1}{#2}{#3}}
-  
-  
+
+
   % ___________________________________________________________________________
   % ###########################################################################
   % |
   % |   o   Package Descriptions
   % |
   % ###########################################################################
-  
+
+  \newcommand{\ccLicense}[1]{
+    \lciIfDefined{\ccLicense#GC1}%
+      {\ccLicense#GC1}%
+      {\ref[#1]{licenses:#1}}%
+  }
+
   \gdef\ccValueofPkgName{}
   \newcommand{\ccPartSummary}[1]{#1}
-  \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{\lcRawHtml{<b>Summary: </b>}#1\lcRawHtml{<br>}}}
+  \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1\lcRawHtml{<br>}}}
   \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
   \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
-  \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
-  
+  \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
+
   \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
-  
+
   \newcommand{\ccPkgDescriptionX}[1]{
-    \lciPushOutput{description}%    
+    \lciPushOutput{description}%
     \gdef\ccValueofPkgName{#1}
     \gdef\ccValueofPkgSummary{}
     \gdef\ccValueofPkgMaturity{}
@@ -257,41 +261,42 @@
   }
   \newcommand{\lciFlushPkgDescriptionX}[3]{%
     \lciIfEmpty{#X3}{}{%
-      \lciPushOutput{description}%     
+      \lciPushOutput{description}%
       \lcRawHtml{<h3>}\ccValueofPkgName\lcRawHtml{</h3>}
       \ccValueofPkgSummary
       \ccValueofPkgMaturity
-      \ccValueofPkgDependsOn  
+      \ccValueofPkgDependsOn
       \ccValueofPkgLicense
       \lcRawHtml{<a href="#XC1">User Manual</a> &nbsp; <a href="#XC2">Reference Manual</a>}
       \lciPopOutput%
       \gdef\ccValueofPkgName{}%
     }%
   }
-  
+
   \newcommand{\ccPartDescriptionEnsureHR}{}
-  
+
   \newcommand{\ccPartDescriptionImpl}[2]{
     \lciPushOutput{description}%
     \ccPartDescriptionEnsureHR
-    \lcRawHtml{<h2>}#1\lcRawHtml{</h2>} 
+    \lcRawHtml{<h2>}#1\lcRawHtml{</h2>}
     \def\ccValueofPkgSummary{}
     #2
     \ccValueofPkgSummary
-    \lciPopOutput%  
+    \lciPopOutput%
     \newcommand{\ccPartDescriptionEnsureHR}{\lcRawHtml{<hr>}}
   }
-  
+
 
 }
 
 \lcHtml{\lcTwoColumnToc}%
 
-% Group all \entryleft, \entryright, \entryleftright, \package... commands 
+% Group all \entryleft, \entryright, \entryleftright, \package... commands
 % as argument to this macro.
 \newcommand{\cgalchapters}[1]{%
-  % make a first run over the argument 
+  % make a first run over the argument
   % and declare \ifthen variables for packages
+  \newcommand{\entry}[1]{}%
   \newcommand{\entryleft}[1]{}%
   \newcommand{\entryright}[1]{}%
   \newcommand{\entryleftright}[2]{}%
@@ -304,24 +309,33 @@
   \newcommand{\ccPartDescription}[2]{}
   #1
   \lcTex{%
+    %\renewcommand{\entryleft}[1]{##1}%
+    %\renewcommand{\entryright}[1]{}%
+    %\renewcommand{\entryleftright}[2]{##1}%
+    %\renewcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
+    %\renewcommand{\packageright}[1]{}%
+    %\renewcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}}%
+    %#1
+    %\renewcommand{\entryleft}[1]{}%
+    %\renewcommand{\entryright}[1]{##1}%
+    %\renewcommand{\entryleftright}[2]{##2}%
+    %\renewcommand{\packageleft}[1]{}%
+    %\renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
+    %\renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
+    %#1
     \renewcommand{\entryleft}[1]{##1}%
-    \renewcommand{\entryright}[1]{}%
-    \renewcommand{\entryleftright}[2]{##1}%
-    \renewcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
-    \renewcommand{\packageright}[1]{}%
-    \renewcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}}%
-    #1
-    \renewcommand{\entryleft}[1]{}%
     \renewcommand{\entryright}[1]{##1}%
-    \renewcommand{\entryleftright}[2]{##2}%
-    \renewcommand{\packageleft}[1]{}%
+    % should be deprecated, i suppose
+    \renewcommand{\entryleftright}[2]{##1##2}%
+    \renewcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
     \renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
-    \renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
+    \renewcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}\cgalreinit\include{##2/main}}%
     #1
   }%
   \lcHtml{
-      \newcommand{\ccPartDescription}{\ccPartDescriptionImpl}  
-      \lciIfTwoColumnToc{
+    \newcommand{\ccPartDescription}{\ccPartDescriptionImpl}
+    \newcommand{\entry}[1]{\lcTocWholeColumn ##1}
+    \lciIfTwoColumnToc{
       \newcommand{\entryleft}[1]{\lcTocLeft ##1}%
       \newcommand{\entryright}[1]{\lcTocRight ##1}%
       \newcommand{\entryleftright}[2]{%
@@ -330,9 +344,12 @@
       \newcommand{\packageright}[1]{\lcTocRight \cgalreinit\include{##1/main}}%
       \newcommand{\packageleftright}[2]{%
         \lcTocSync%
+        \gdef\lciTOCChapterNameSuffix{}
         \lcTocLeft\cgalreinit\include{##1/main}%
         \edef\lciUsermanualOutputFilename{\lciOutputFilename}%
-        \lcTocRight\cgalreinit\include{##2/main}%        
+        \gdef\lciTOCChapterNameSuffix{ (Reference Manual)}
+        \lcTocRight\cgalreinit\include{##2/main}%
+        \gdef\lciTOCChapterNameSuffix{}
         \lciFlushPkgDescription{\lciUsermanualOutputFilename}{\lciOutputFilename}
         \lcTocSync}%
       #1
