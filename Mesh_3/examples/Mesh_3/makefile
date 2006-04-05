@@ -9,7 +9,9 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
-default-rule: all
+DEFAULT_TARGETS = implicit_surfaces_mesher_3$(EXE_EXT)
+
+all: $(DEFAULT_TARGETS)
 
 .PHONY: default-rule
 
@@ -52,10 +54,6 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-		implicit_surfaces_mesher_3$(EXE_EXT) \
-#		polyhedral_surface_mesher$(EXE_EXT)
-
 implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.C
 
 implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) $(IMAGEIO_OBJECTS) 
@@ -68,7 +66,6 @@ polyhedral_surface_mesher$(EXE_EXT): polyhedral_surface_mesher$(OBJ_EXT) paramet
 
 
 clean: \
-                   essai.clean \
                    implicit_surfaces_mesher_3.clean \
                    polyhedral_surface_mesher.clean \
                    parameters.clean \
