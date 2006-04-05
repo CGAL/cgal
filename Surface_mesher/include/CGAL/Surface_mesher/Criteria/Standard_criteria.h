@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,11 +15,11 @@
 // $Id$
 //
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Steve OUDOT, Laurent Rineau
 
 
-#ifndef CGAL__STANDARD_CRITERIA_H
-#define CGAL__STANDARD_CRITERIA_H
+#ifndef CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
+#define CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
 
 #include <cmath>
 #include <vector>
@@ -287,5 +287,5 @@ namespace CGAL {
 }  // namespace CGAL
 
 
-#endif  // end CGAL__STANDARD_CRITERIA_H
+#endif  // end CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
 
