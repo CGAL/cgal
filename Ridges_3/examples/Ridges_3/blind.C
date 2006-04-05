@@ -37,7 +37,7 @@ typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
   back_insert_iterator< std::vector<Ridge_line*> > > Ridge_approximation;
-extern CGAL::Ridge_type  BLUE_RIDGE, RED_RIDGE, CREST, BE, BH, BC, RE, RH, RC;
+extern CGAL::Ridge_type  NONE, BLUE_RIDGE, RED_RIDGE, CREST, BE, BH, BC, RE, RH, RC;
 
 //Syntax requirred by Options
 static const char *const optv[] = {
@@ -62,101 +62,142 @@ Ridge_approximation::Tag_order tag_order = Ridge_approximation::Tag_3;
 bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
-//gather points around the vertex v using rings on the polyhedralsurf
-//for the fitting
-void gather_fitting_points( Vertex* v, 
-			    std::vector<DPoint> &in_points)
+//gather points around the vertex v using rings on the
+//polyhedralsurf. the collection of points resorts to 3 alternatives:
+// 1. the exact number of points to be used
+// 2. the exact number of rings to be used
+// 3. nothing is specified
+void gather_fitting_points(Vertex* v, 
+			   std::vector<DPoint> &in_points)
+			   //Vertex_PM_type& vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
-  std::vector<Vertex*> current_ring, next_ring, gathered; 
-  std::vector<Vertex*> *p_current_ring, *p_next_ring;
-
+  std::vector<Vertex*> gathered; 
   //initialize
-  unsigned int nbp = 0, //current nb of collected points
-    ith = 0;	//i-th ring index
-  current_ring.clear();
-  next_ring.clear();
-  p_current_ring = &current_ring;
-  p_next_ring = &next_ring;
-  gathered.clear();
   in_points.clear();  
   
-  //DO NOT FORGET TO UNTAG AT THE END!
-  v->setRingIndex(ith);
-  //collect 0th ring : the vertex v!
-  gathered.push_back(v);
-  nbp = 1;
-  //collect 1-ring
-  ith = 1;
-  nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered);
-  //collect more neighbors depending on options...
- 
-    //OPTION -p nb, with nb != 0
-    //for approximation/interpolation with a fixed nb of points, collect
-    // enough rings and discard some points of the last collected ring 
-    // to get the exact "nb_points_to_use"
+  //OPTION -p nb_points_to_use, with nb_points_to_use != 0. Collect
+  //enough rings and discard some points of the last collected ring to
+  //get the exact "nb_points_to_use" 
   if ( nb_points_to_use != 0 ) {
-    while( gathered.size() < nb_points_to_use ) {
-      ith++;
-      //using tags
-      nbp += Poly_rings::
-	collect_ith_ring_neighbours(ith, *p_current_ring,
-				    *p_next_ring, gathered);
-      //next round must be launched from p_nextRing...
-      p_current_ring->clear();
-      std::swap(p_current_ring, p_next_ring);
-    }
-    //clean up
-    Poly_rings::reset_ring_indices(gathered);
-    //discard non-required collected points of the last ring
-    gathered.resize(nb_points_to_use, NULL);
-    assert(gathered.size() == nb_points_to_use );
+    Poly_rings::collect_enough_rings(v, nb_points_to_use, gathered);//, vpm);
+    if ( gathered.size() > nb_points_to_use ) gathered.resize(nb_points_to_use);
   }
-  else{
-    //OPTION -a nb, with nb = 0
-    //  select the mini nb of rings needed to make approx possible
-    if (nb_rings == 0) {
-      while ( gathered.size() < min_nb_points ) {
-	ith++;
-	nbp += Poly_rings::
-	  collect_ith_ring_neighbours(ith, *p_current_ring,
-				      *p_next_ring, gathered);
-	//next round must be launched from p_nextRing...
-	p_current_ring->clear();
-	std::swap(p_current_ring, p_next_ring);
-      }
-    }
-    //OPTION -a nb, with nb = 1, nothing to do! we have already
-    //      collected the 1 ring
-    //OPTION -a nb, with nb > 1
-    //for approximation with a fixed nb of rings, collect
-    //      neighbors up to the "nb_rings"th ring
-    if (nb_rings > 1)
-      while (ith < nb_rings) {
-	ith++;
-	nbp += Poly_rings::
-	  collect_ith_ring_neighbours(ith, *p_current_ring,
-				      *p_next_ring, gathered);
-	//next round must be launched from p_nextRing...
-	p_current_ring->clear();
-	std::swap(p_current_ring, p_next_ring);
-      }
-   
-    //clean up
-    Poly_rings::reset_ring_indices(gathered);
-  } //END ELSE
-
+  else { // nb_points_to_use=0, this is the default and the option -p is not considered;
+    // then option -a nb_rings is checked. If nb_rings=0, collect
+    // enough rings to get the min_nb_points required for the fitting
+    // else collect the nb_rings required
+    if ( nb_rings == 0 ) 
+      Poly_rings::collect_enough_rings(v, min_nb_points, gathered);//, vpm);
+    else Poly_rings::collect_i_rings(v, nb_rings, gathered);//, vpm);
+  }
+     
   //store the gathered points
-  std::vector<Vertex*>::iterator itb = gathered.begin(),
-    ite = gathered.end();
+  std::vector<Vertex*>::iterator 
+    itb = gathered.begin(), ite = gathered.end();
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
+
+
+
+// //gather points around the vertex v using rings on the polyhedralsurf
+// //for the fitting
+// void gather_fitting_points( Vertex* v, 
+// 			    std::vector<DPoint> &in_points)
+// {
+//   //container to collect vertices of v on the PolyhedralSurf
+//   std::vector<Vertex*> current_ring, next_ring, gathered; 
+//   std::vector<Vertex*> *p_current_ring, *p_next_ring;
+
+//   //initialize
+//   unsigned int nbp = 0, //current nb of collected points
+//     ith = 0;	//i-th ring index
+//   current_ring.clear();
+//   next_ring.clear();
+//   p_current_ring = &current_ring;
+//   p_next_ring = &next_ring;
+//   gathered.clear();
+//   in_points.clear();  
+  
+//   //DO NOT FORGET TO UNTAG AT THE END!
+//   v->setRingIndex(ith);
+//   //collect 0th ring : the vertex v!
+//   gathered.push_back(v);
+//   nbp = 1;
+//   //collect 1-ring
+//   ith = 1;
+//   nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered);
+//   //collect more neighbors depending on options...
+ 
+//     //OPTION -p nb, with nb != 0
+//     //for approximation/interpolation with a fixed nb of points, collect
+//     // enough rings and discard some points of the last collected ring 
+//     // to get the exact "nb_points_to_use"
+//   if ( nb_points_to_use != 0 ) {
+//     while( gathered.size() < nb_points_to_use ) {
+//       ith++;
+//       //using tags
+//       nbp += Poly_rings::
+// 	collect_ith_ring_neighbours(ith, *p_current_ring,
+// 				    *p_next_ring, gathered);
+//       //next round must be launched from p_nextRing...
+//       p_current_ring->clear();
+//       std::swap(p_current_ring, p_next_ring);
+//     }
+//     //clean up
+//     Poly_rings::reset_ring_indices(gathered);
+//     //discard non-required collected points of the last ring
+//     gathered.resize(nb_points_to_use, NULL);
+//     assert(gathered.size() == nb_points_to_use );
+//   }
+//   else{
+//     //OPTION -a nb, with nb = 0
+//     //  select the mini nb of rings needed to make approx possible
+//     if (nb_rings == 0) {
+//       while ( gathered.size() < min_nb_points ) {
+// 	ith++;
+// 	nbp += Poly_rings::
+// 	  collect_ith_ring_neighbours(ith, *p_current_ring,
+// 				      *p_next_ring, gathered);
+// 	//next round must be launched from p_nextRing...
+// 	p_current_ring->clear();
+// 	std::swap(p_current_ring, p_next_ring);
+//       }
+//     }
+//     //OPTION -a nb, with nb = 1, nothing to do! we have already
+//     //      collected the 1 ring
+//     //OPTION -a nb, with nb > 1
+//     //for approximation with a fixed nb of rings, collect
+//     //      neighbors up to the "nb_rings"th ring
+//     if (nb_rings > 1)
+//       while (ith < nb_rings) {
+// 	ith++;
+// 	nbp += Poly_rings::
+// 	  collect_ith_ring_neighbours(ith, *p_current_ring,
+// 				      *p_next_ring, gathered);
+// 	//next round must be launched from p_nextRing...
+// 	p_current_ring->clear();
+// 	std::swap(p_current_ring, p_next_ring);
+//       }
+   
+//     //clean up
+//     Poly_rings::reset_ring_indices(gathered);
+//   } //END ELSE
+
+//   //store the gathered points
+//   std::vector<Vertex*>::iterator itb = gathered.begin(),
+//     ite = gathered.end();
+//   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
+// }
 
 
 void compute_differential_quantities(PolyhedralSurf& P)
 {
   //container for approximation points
   std::vector<DPoint> in_points;
+ 
+//debug 
+  int count=0;
  
   //MAIN LOOP
   Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
@@ -170,7 +211,7 @@ void compute_differential_quantities(PolyhedralSurf& P)
     //gather points arourd the vertex using rings
     gather_fitting_points( v, in_points);
 
-    //exit if the nb of points is to small 
+    //exit if the nb of points is too small 
     if ( in_points.size() < min_nb_points )
       {std::cerr << "nb of points is to small" << std::endl; exit(0);}
 
@@ -204,6 +245,14 @@ void compute_differential_quantities(PolyhedralSurf& P)
 	+(-v->k1()+v->k2())
 	*(monge_rep.coefficients()[10]-3*v->k2()*v->k2()*v->k2()) ; 
     }
+
+// //debug 
+//     count++;
+//     std::cout << std::endl << "vertex " << count << std::endl;
+//     monge_rep.dump_verbose(std::cout);
+ 
+    
+
   } //END FOR LOOP
 }
 
@@ -297,40 +346,22 @@ int main(int argc, char *argv[])
   Ridge_approximation ridge_approximation;
   std::vector<Ridge_line*> ridge_lines;
 
-
- //  //1, ne compile pas
-//   std::vector<Ridge_line*>::iterator it1 ;
-//   it1 = ridge_approximation.compute_all_ridges(P, 
-// 					      std::back_inserter(ridge_lines),
-// 					      Ridge_approximation::Tag_3);  
-  //2, plante
-//   std::vector<Ridge_line*>::iterator iterb = ridge_lines.begin(), it2;
-//    it2 = ridge_approximation.compute_all_ridges(P,
-// 					      iterb,
-// 					      Ridge_approximation::Tag_3);  
-  
-
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
-  //   ridge_approximation.compute_all_ridges(P, ii, tag_order);  
+  //  ridge_approximation.compute_all_ridges(P, ii, tag_order);  
 
   //Find BLUE_RIDGE, RED_RIDGE or CREST ridges 
-    ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
-  //ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
+  ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
+  ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
   //  ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
  
 
-     
-
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
     iter_end = ridge_lines.end();
-
-  // std::cout << std::endl << iter_end - iter_lines << std::endl;
   //OpenGL output
-  
   for (;iter_lines!=iter_end;iter_lines++)
     {
-      (*iter_lines)->dump_4ogl(*out_4ogl);
+         (*iter_lines)->dump_4ogl(*out_4ogl);
       //  (*iter_lines)->dump_4ogl(std::cout);
     }
     

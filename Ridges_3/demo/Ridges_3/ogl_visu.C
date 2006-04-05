@@ -45,14 +45,14 @@ read_line(std::ifstream& stream_res, int& ridge_type,
 	      >> strength
 	      >> sharpness;
       //debug
-      std::cout <<ridge_type << std::endl;
+      std::cout <<ridge_type << " ";
 
       while ( issline.good() ) {
         CGAL_point p;//there are at least 2 points in a line
 	issline >> p;
 	ridge_points.push_back(p);
 	//debug
-	std::cout << p << std::endl;
+	//	std::cout << p << std::endl;
       }
 }
 
@@ -154,6 +154,7 @@ void draw_one_ridge(data_line* line)
   std::list<CGAL_point>::iterator iter = line->ridge_points.begin(), 
     ite = line->ridge_points.end();
 
+  glLineWidth(3 );
   glBegin(GL_LINES);
   for (;iter!=ite;iter++) glVertex3d(iter->x(), iter->y(), iter->z());
   glEnd();	

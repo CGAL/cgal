@@ -41,6 +41,7 @@ public:
   const std::list<ridge_he>* line() const { return &m_line;}
 
   //constructor
+  //a ridge line begins with a segment in a triangle
   Ridge_line( Halfedge_handle h1, Halfedge_handle h2, Ridge_type r_type) :
     m_line_type(r_type), m_strength(0.), m_sharpness(0.)
     {
@@ -51,6 +52,7 @@ public:
   //compute the barycentric coordinate of the xing point (blue or red)
   //for he: p->q  coord is st xing_point = coord*p + (1-coord)*q
   FT bary_coord( Halfedge_handle he); 
+
   //When the line is extended with a he, the bary coord of the
   //crossing point is computed, the pair (he,coord) is added and the
   //weigths are updated 
@@ -82,7 +84,7 @@ addback( Halfedge_handle he)
   FT coord = bary_coord(he);
   Vertex_handle v_p = he->opposite()->vertex(), v_q = he->vertex(),
     v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he->vertex(); // he: p->q
-  FT k;//ppal curvature
+  FT k;//abs value of the ppal curvature at the Xing point on he.
   if ( (m_line_type == BE) || (m_line_type == BH) || (m_line_type == BC) ) {
     k = CGAL::abs(v_p->k1()) * coord + CGAL::abs(v_q->k1()) * (1-coord) ;   
   }
@@ -205,7 +207,15 @@ protected:
 			      Ridge_type r_type,
 			      Tag_order ord = Tag_3);
   
-  //is an edge crossed by a BLUE/RED ridge? (color is BLUE_RIDGE or RED_RIDGE)
+  //is an edge crossed by a BLUE/RED ridge? (color is BLUE_RIDGE or
+  //RED_RIDGE ).  As we only test edges of regular triangles, the ppal
+  //direction at endpoints d_p and d_q cannot be orthogonal. If both
+  //extremalities vanish, we consider no crossing occurs. If only one
+  //of them vanishes, we consider it as an positive infinitesimal and
+  //apply the general rule. The general rule is that for both
+  //non-vanishing extremalities, a crossing occurs if their sign
+  //differ; Assuming the accute rule to orient the ppal directions,
+  //there is a crossing iff d_p.d_q * b_p*b_q < 0
   void xing_on_edge(Halfedge_handle he, 
 		    bool& is_crossed, 
 		    Ridge_type color);
@@ -350,7 +360,7 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
     }
   
   //compute Xing on the 3 edges
-  bool h1_is_crossed, h2_is_crossed, h3_is_crossed;
+  bool h1_is_crossed = false, h2_is_crossed = false, h3_is_crossed = false;
   if ( r_type == BLUE_RIDGE || crest_color == BC ) 
     {
       xing_on_edge(h1, h1_is_crossed, BLUE_RIDGE);
@@ -382,7 +392,12 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
       he1 = h2; 
       he2 = h3;
     }
-  
+  //check there is no other case (just on edge crossed)
+  assert ( !( (h1_is_crossed && !h2_is_crossed && !h3_is_crossed)
+	      || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)
+	      || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)) );
+
+  //There is a ridge segment in the triangle, determine its type
   Vertex_handle v_p1 = he1->opposite()->vertex(), v_q1 = he1->vertex(),
     v_p2 = he2->opposite()->vertex(), v_q2 = he2->vertex(); // he1: p1->q1
  
@@ -393,48 +408,45 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
 					 CGAL::abs(v_q2->b0()) ); 
     if ( ord == Tag_3 ) {
       Vector_3 r1 = (v_p1->point()-ORIGIN)*coord1 +
-	 (v_q1->point()-ORIGIN)*(1-coord1), 
+	(v_q1->point()-ORIGIN)*(1-coord1), 
 	r2 = (v_p2->point()-ORIGIN)*coord2 +
-	 (v_q2->point()-ORIGIN)*(1-coord2); 
-       int b_sign = b_sign_pointing_to_ridge(v1, v2, v3, r1, r2,
-					    BLUE_RIDGE); 
-      if (b_sign == 1) { if (r_type == BLUE_RIDGE) return BE; else return BC;} 
-      if (b_sign == -1) return BH;
+	(v_q2->point()-ORIGIN)*(1-coord2); 
+      int b_sign = b_sign_pointing_to_ridge(v1, v2, v3, r1, r2, BLUE_RIDGE); 
+      if (r_type == CREST) {if (b_sign == 1) return BC; else return NONE;} 
+      if (b_sign == 1) return BE; else return BH; 
     }
     else {//ord == Tag_4, check the sign of the meanvalue of the signs
       //      of P1 at the two crossing points
       FT sign_P1 =  v_p1->P1()*coord1 + v_q1->P1()*(1-coord1) 
 	+ v_p2->P1()*coord2 + v_q2->P1()*(1-coord2);
-      if ( sign_P1 > 0 ) 
-	{ if (r_type == BLUE_RIDGE) return BE; else return BC;} 
-      else return BH;
+      if (r_type == CREST) {if ( sign_P1 < 0 ) return BC; else return NONE;}
+      if ( sign_P1 < 0 ) return BE; else return BH;
     }
   }
  
   if ( r_type == RED_RIDGE || crest_color == RC ) {
-    FT coord1 = CGAL::abs(v_q1->b0()) / ( CGAL::abs(v_p1->b0()) +
-					  CGAL::abs(v_q1->b0()) ), 
-      coord2 = CGAL::abs(v_q2->b0()) / ( CGAL::abs(v_p2->b0()) +
-					 CGAL::abs(v_q2->b0()) ); 
+    FT coord1 = CGAL::abs(v_q1->b3()) / ( CGAL::abs(v_p1->b3()) +
+					  CGAL::abs(v_q1->b3()) ), 
+      coord2 = CGAL::abs(v_q2->b3()) / ( CGAL::abs(v_p2->b3()) +
+					 CGAL::abs(v_q2->b3()) ); 
     if ( ord == Tag_3 ) {
       Vector_3 r1 = (v_p1->point()-ORIGIN)*coord1 +
 	(v_q1->point()-ORIGIN)*(1-coord1), 
 	r2 = (v_p2->point()-ORIGIN)*coord2 +
 	(v_q2->point()-ORIGIN)*(1-coord2); 
       int b_sign = b_sign_pointing_to_ridge(v1, v2, v3, r1, r2, RED_RIDGE);
-      if (b_sign == -1) { if (r_type == RED_RIDGE) return RE; else return RC;}
-      if (b_sign == 1) return BH;
+      if (r_type == CREST) {if (b_sign == -1) return RC; else return NONE;} 
+      if (b_sign == -1) return RE; else return RH; 
     } 
     else {//ord == Tag_4, check the sign of the meanvalue of the signs
       //      of P2 at the two crossing points
       FT sign_P2 =  v_p1->P2()*coord1 + v_q1->P2()*(1-coord1) 
 	+ v_p2->P2()*coord2 + v_q2->P2()*(1-coord2);
-      if ( sign_P2 > 0 ) 
-	{ if (r_type == BLUE_RIDGE) return BE; else return BC;} 
-      else return BH;
-    }
+      if (r_type == CREST) {if ( sign_P2 < 0 ) return RC; else return NONE;}
+      if ( sign_P2 < 0 ) return RE; else return RH;
+    } 
   }
-  assert(0);
+  assert(0);//should return before!
 }
 
 template < class Poly, class OutputIt >

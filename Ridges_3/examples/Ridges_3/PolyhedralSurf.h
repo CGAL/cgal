@@ -15,13 +15,10 @@
 #include "PolyhedralSurf_operations.h" 
 
 //----------------------------------------------------------------
-// A redefined items class for the Polyhedron_3 with a refined vertex
-// class that contains a member for the mesh normal vector and a refined
-// facet with a normal vector instead of the plane equation (this is
-// an alternative solution instead of using Polyhedron_traits_with_normals_3).
-//----------------------------------------------------------------
-// in addition vertices contains monge info
-// some tags.... 
+// A redefined items class for the Polyhedron_3 with 
+// a refined vertex class that contains monge data and ring_tag
+// a refined facet with a normal vector 
+// a refined halfedge with length
 template < class Refs, class Tag, class Pt, class FGeomTraits > 
 class My_vertex:public CGAL::HalfedgeDS_vertex_base < Refs, Tag, Pt >
 {
@@ -75,6 +72,7 @@ class My_vertex:public CGAL::HalfedgeDS_vertex_base < Refs, Tag, Pt >
 //----------------------------------------------------------------
 // Facet with normal and possibly more types. types are recovered
 //from the FGeomTraits template arg
+// tag for ridge computations
 //----------------------------------------------------------------
 template < class Refs, class Tag, class FGeomTraits >
 class My_facet:public CGAL::HalfedgeDS_face_base < Refs, Tag >
@@ -84,17 +82,18 @@ public:
 
 protected:
   Vector_3 normal;
-  int ring_index;
+  //  int ring_index;
   bool m_is_visited;
 public:
-  My_facet(): ring_index(-1) {}
+  My_facet() {}//: ring_index(-1) {}
   Vector_3 & getUnitNormal() { return normal; }
   void setNormal(Vector_3 n) { normal = n; }
 
-  //this is for collecting i-th ring neighbours
-  void setRingIndex(int i) { ring_index = i; }
-  int getRingIndex() { return ring_index; }
-  void resetRingIndex() { ring_index = -1; }
+/*   //this is for collecting i-th ring neighbours */
+/*   void setRingIndex(int i) { ring_index = i; } */
+/*   int getRingIndex() { return ring_index; } */
+/*   void resetRingIndex() { ring_index = -1; } */
+
   //this is for following ridge lines
   void set_visited(bool b) { m_is_visited = b; }
   const bool is_visited() const { return m_is_visited;}
@@ -102,19 +101,20 @@ public:
 };
 
 //----------------------------------------------------------------
-// Halfedge
+// Halfedge with length
 //----------------------------------------------------------------
 template < class Refs, class Tprev, class Tvertex, class Tface > 
 class My_halfedge:public CGAL::HalfedgeDS_halfedge_base < Refs, Tprev, Tvertex, Tface >
 {
 protected:
-  int ring_index;
+  //  int ring_index;
   double len;
 public:
-  My_halfedge(): ring_index(-1) {}
-  void setRingIndex(int i) {	ring_index = i;    }
-  int getRingIndex() {return ring_index;    }
-  void resetRingIndex() {ring_index = -1;    }
+  My_halfedge() {}//: ring_index(-1) {}
+ /*  void setRingIndex(int i) {	ring_index = i;    } */
+/*   int getRingIndex() {return ring_index;    } */
+/*   void resetRingIndex() {ring_index = -1;    } */
+
   void setLength(double l) { len = l; }
   double getLength() { return len; }
 };
