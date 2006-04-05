@@ -34,9 +34,9 @@
 <!-- Page automatically generated from latex_to_html converter. -->
 <!-- by cc_extract_html, #XC2 -->
 <!-- LaTeX source file: '#XC3' -->
-<html> <head>  
+<html> <head>
 <title>}#1\lcRawHtml{</title>
-</head>  
+</head>
 <link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">
 <body }\lcBodyAttributes\lcRawHtml{>
 <!-- ------------------------------------------------------------------- -->
@@ -91,7 +91,7 @@
 \lciIfEqualExpanded{\lciManualDate}{}{}{%
     \lcRawHtmlExpanded{\lciManualDate}.}\lcRawHtml{
 <hr></div>
-</body>  </html>  
+</body>  </html>
 }}
 
 
@@ -136,6 +136,21 @@
   }{}}%
   \gdef\lciTocOuterState{Sync}%
 }
+
+\newcommand{\lcTocCompleteRow}{\lciPushOutput{toc}\lciTocCompleteRow\lciPopOutput}
+\newcommand{\lciTocCompleteRow}{%
+  \lciTocCloseInner
+  \lciIfEqualExpanded{\lciTocOuterState}{Right}{\lciTocSync}{}%
+  \lciIfEqualExpanded{\lciTocOuterState}{Sync}{%
+    \lcRawHtml{  <tr valign="top"><td }%
+    \lciIfTwoColumnToc%
+      {\lcRawHtml{colspan="2" }}%
+      {}%
+    \lcRawHtml{class="TocGroup}\lciTocOdd\lcRawHtml{Left">}
+  }{}
+  \gdef\lciTocOuterState{Right}%
+}
+
 \newcommand{\lcTocLeft}{\lciPushOutput{toc}\lciTocLeft\lciPopOutput}
 \newcommand{\lciTocLeft}{%
   \lciTocCloseInner
@@ -252,7 +267,7 @@
         <a class="TocLinkTitle" href="title.html">Title Page</a>
     </tr></td>
   </table></td></tr>
-  
+
   <tr valign="top"><td class="TocGroupEvenLeft">
 }\lciTocInnerTable
 \lcRawHtml{    <tr><td class="TocContents">
@@ -273,14 +288,14 @@
         <a class="TocLinkBibliography" href="biblio.html">Bibliography</a>
     </td></tr>
   </table></td></tr>
-}\lcTocToggleOdd\lcRawHtml{  
+}\lcTocToggleOdd\lcRawHtml{
   <tr valign="top"><td class="TocGroup}\lciTocOdd\lcRawHtml{Left">
 }\lciTocInnerTable
 \lcRawHtml{    <tr><td class="TocIndex">
         <a class="TocLinkIndex" href="manual_index.html">Index</a>
     </td></tr>
   </table></td></tr>
-}}\lcRawHtml{        
+}}\lcRawHtml{
 </table>
 <!-- End of the list of contents entries -->
 }%
@@ -403,12 +418,12 @@
   \lciIfLessExpanded{\lciCountertocdepth}{\lciPartNum}{}{%
 %% %% make part entries unlinked until full output support is there
     \edef\lciOut{\lciOutputFilename}%
-    \lciPushOutput{toc}% 
+    \lciPushOutput{toc}%
     \lciTocCloseInner
     % make sure we are not in Sync state
     \lciIfEqualExpanded{\lciTocOuterState}{Sync}{\lciTocLeft}{}%
 %%    \lcRawHtml{<a href="}\lcRawHtmlExpanded{\lciOut}%
-%%    \lcRawHtml{##Part_}#C1\lcRawHtml{"><h3>}#C2\lcRawHtml{</h3></a> }% 
+%%    \lcRawHtml{##Part_}#C1\lcRawHtml{"><h3>}#C2\lcRawHtml{</h3></a> }%
     \lcRawHtml{    <!-- =================================================== -->
     <h3 class="TocPart"><br>}#C2\lcRawHtml{</h3>
 }%
@@ -426,7 +441,7 @@
       \lcRawHtml{<a name="Chapter_}#C1\lcRawHtml{"></a>}}}
   \lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
     \edef\lciOut{\lciOutputFilename}%
-    \lciPushOutput{toc}% 
+    \lciPushOutput{toc}%
     \lciTocOpenInner
     % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
     \lcRawHtml{      <tr><td class="TocChapter" colspan="6">
@@ -450,7 +465,7 @@
     \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
         \lcRawHtml{<a name="Section_}#C1\lcRawHtml{"></a>}
         \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}% 
+        \lciPushOutput{toc}%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
 }\lciTocIndentWidth
@@ -460,7 +475,7 @@
           >}#C2\lcRawHtml{</a>
         </td>
       </tr>
-}% 
+}%
         \lciPopOutput}}
 
 % Args: <header-text>:
@@ -473,7 +488,7 @@
     \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
         \lcRawHtml{<a name="Reference_}#C1\lcRawHtml{"></a>}
         \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}% 
+        \lciPushOutput{toc}%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
 }\lciTocIndentWidth
@@ -484,7 +499,7 @@
           >}#C2\lcRawHtml{</a>
         </td>
       </tr>
-}% 
+}%
         \lciPopOutput}}
 
 
@@ -500,7 +515,7 @@
 \newcommand{\lciHtmlSubsectionToc}[2]{%
     \lciIfLessExpanded{\lciCountertocdepth}{2}{}{%
         \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}% 
+        \lciPushOutput{toc}%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
 }\lciTocIndentWidth\lciTocIndentWidth
@@ -510,7 +525,7 @@
           >}#C2\lcRawHtml{</a>
         </td>
       </tr>
-}% 
+}%
         \lciPopOutput}}
 
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
@@ -525,7 +540,7 @@
 \newcommand{\lciHtmlSubsubsectionToc}[2]{%
     \lciIfLessExpanded{\lciCountertocdepth}{3}{}{%
         \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}% 
+        \lciPushOutput{toc}%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
 }\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
@@ -535,7 +550,7 @@
           >}#C2\lcRawHtml{</a>
         </td>
       </tr>
-}% 
+}%
        \lciPopOutput}}
 
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
@@ -550,7 +565,7 @@
 \newcommand{\lciHtmlParagraphToc}[2]{%
     \lciIfLessExpanded{\lciCountertocdepth}{4}{}{%
         \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}% 
+        \lciPushOutput{toc}%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
 }\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
@@ -560,7 +575,7 @@
           >}#C2\lcRawHtml{</a>
         </td>
       </tr>
-}% 
+}%
         \lciPopOutput}}
 
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
@@ -575,7 +590,7 @@
 \newcommand{\lciHtmlSubparagraphToc}[2]{%
     \lciIfLessExpanded{\lciCountertocdepth}{5}{}{%
         \edef\lciOut{\lciOutputFilename}%
-        \lciPushOutput{toc}% 
+        \lciPushOutput{toc}%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
 }\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth\lciTocIndentWidth
@@ -586,7 +601,7 @@
           >}#C2\lcRawHtml{</a>
         </td>
       </tr>
-}% 
+}%
         \lciPopOutput}}
 
 

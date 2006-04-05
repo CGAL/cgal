@@ -41,6 +41,9 @@
 
 % Set this definition to \ccTrue to activate the old name definitions
 % which are still there for portability reasons.
+
+\newcommand{\myownhyperref}[2]{\ref{#2}}
+
 \newcommand{\ccPortability}{\ccFalse}
 % debug option, use only for small files!
 %\tracingmacros=1
@@ -48,8 +51,8 @@
 % \ccRevision and \ccDate can be found below of \RCSdef and \RCSdefDate
 % There is also the code to print the message during the typesetting.
 
-% used instead of \end to terminate pattern matching. 
-\newcommand{\ccEnd}{}\def\ccEnd{\ccNeverToEval}  
+% used instead of \end to terminate pattern matching.
+\newcommand{\ccEnd}{}\def\ccEnd{\ccNeverToEval}
 
 % restarts chapter number at 1 with each new part of manual; otherwise
 % chapter numbers are continuous
@@ -119,7 +122,7 @@
 % | Dimensions (from the LEDA Manual):
 % | They are commented out since Release 2.9 because I don't know their
 % | impact and I don't want to restrict the cc_manual.sty to a certain
-% | point size. Especially the \spaceskip definition makes the 
+% | point size. Especially the \spaceskip definition makes the
 % | verbatim environment faulty (no fixed size font any more since the
 % | space can vary in its width).
 % +--------------------------------------------------------------------------
@@ -150,7 +153,7 @@
 % | New Dimensions (for the CGAL Manual):
 % | Especially to format all multi column declarations.
 % |
-% | The dimensions \ccFirst and \ccSecond are set to the appropriate 
+% | The dimensions \ccFirst and \ccSecond are set to the appropriate
 % | values. Afterwards, the \ccInitWidths does the rest.
 % | \ccInitFunctionWidths and \ccInitConstructorWidths set the
 % | \ccFirst and \ccSecond appropriately and call \ccInitWidths afterwards.
@@ -179,7 +182,7 @@
 \ccwRightMargin         = 0pt
 \ccwBetween             = 0.5cm
 \ccwParamIndent         = 1.2cm
- 
+
 \ccwFunctionFirst       = 2.5cm
 \ccwFunctionSecond      = 4.5cm
 \ccwConstructorFirst    = -1\ccwBetween
@@ -204,7 +207,7 @@
         \advance\ccwParam        \ccwBetween
         \advance\ccwParam        \ccwParamIndent
 }
-\ccInitWidths   
+\ccInitWidths
 
 
 % \ccInitFunctionWidths and \ccInitConstructorWidths set the
@@ -237,20 +240,20 @@
 \newcommand{\ccReverseTopSkip}{\vspace{-\smallskipamount}}
 \newcommand{\ccReturnSkip}{\par\hspace*{\ccwIndent}\hspace*{\ccwFirst}%
                            \hspace*{\ccwBetween}}
-\newcommand{\ccMiddleSkip}{\par\hspace*{1cm}\hfill}      % aligns commentblock 
+\newcommand{\ccMiddleSkip}{\par\hspace*{1cm}\hfill}      % aligns commentblock
                                                          % to the right
 \newcommand{\ccReverseBottomSkip}{\vspace{-\smallskipamount}}
 \newcommand{\ccReverseBottomBigSkip}{\vspace{-\bigskipamount}}
 
 % A macro to glue declarations together
 % -------------------------------------
-% We have to distinguish between different layouts in 
-% \ccLayoutThreeColumns. One uses \ccBottomSkip, one uses 
+% We have to distinguish between different layouts in
+% \ccLayoutThreeColumns. One uses \ccBottomSkip, one uses
 % \ccBottomBigSkip. The following tag stores the most recently used.
 %\newcommand{\ccTagBottomBigSkipUsed}{\ccFalse}
 \def\ccTagBottomBigSkipUsed{\ccFalse}
 
-% The layout for comments with multiple lines differ from the layout with 
+% The layout for comments with multiple lines differ from the layout with
 % single line comments. The following tag is true if the most recently
 % formatted comment had multiple lines.
 \newcommand{\ccTagMultipleLineComment}{\ccFalse}
@@ -268,7 +271,7 @@
     \fi
 }
 
-\newdimen\ccwParskipTmp  
+\newdimen\ccwParskipTmp
 
 \newcommand{\ccGlueBegin}{%
     \ccwParskipTmp = \parskip
@@ -308,7 +311,7 @@
 \newcommand{\ccTagChapterRelease}{}   % true -> the release is shown.
 \newcommand{\ccTagReplacePrefix}{}    % true -> prefixes are replaced.
 \newcommand{\ccTagReplaceInclude}{}   % true -> include file prefixes
-                                      % are replaced when 
+                                      % are replaced when
                                       % \ccTagReplacePrefix is also true.
 \newcommand{\ccLongParamLayout}{}     % false -> function parameters are
                                       % aligned below the opening paranthesis,
@@ -403,7 +406,7 @@
         \ccSetTwoOfThreeColumns{\wd0}{\wd1}%
     \else\isEmpty{#2}\ifnum\ccBool=\ccTrue
         \setbox0=\hbox{\mbox{\ccStyle{#1}}}\setbox1=\hbox{\mbox{#3}}%
-        \ccwTmp=\textwidth 
+        \ccwTmp=\textwidth
         \advance\ccwTmp -\wd0
         \advance\ccwTmp -\wd1
         \advance\ccwTmp -\ccwIndent
@@ -413,7 +416,7 @@
         \ccSetTwoOfThreeColumns{\wd0}{\ccwTmp}%
     \else\isEmpty{#1}\ifnum\ccBool=\ccTrue
         \setbox0=\hbox{\mbox{\ccStyle{#2}}}\setbox1=\hbox{\mbox{#3}}%
-        \ccwTmp=\textwidth 
+        \ccwTmp=\textwidth
         \advance\ccwTmp -\wd0
         \advance\ccwTmp -\wd1
         \advance\ccwTmp -\ccwIndent
@@ -437,7 +440,7 @@
         \ccSetOneOfTwoColumns{\wd0}%
     \else\isEmpty{#1}\ifnum\ccBool=\ccTrue
         \setbox0=\hbox{\mbox{#2}}%
-        \ccwTmp=\textwidth 
+        \ccwTmp=\textwidth
         \advance\ccwTmp -\wd0
         \advance\ccwTmp -\ccwIndent
         \advance\ccwTmp -\ccwRightMargin
@@ -476,12 +479,12 @@
 % +--------------------------------------------------------------------------
 % | Formatting styles:
 % |
-% | The style of the C++ formatting can be customized by redefining the 
+% | The style of the C++ formatting can be customized by redefining the
 % | following macros.
 % +--------------------------------------------------------------------------
 \newcommand{\ccFont}{\it}   % font or style changing command in which all C++
                         % tokens will be typeset, including the variable names.
-\newcommand{\ccEndFont}{\ifvmode\else\/\fi} 
+\newcommand{\ccEndFont}{\ifvmode\else\/\fi}
                         % will be used after a C++ text. For slanted fonts,
                         % here should stay \/ macro. The C++ code will be
                         % grouped, so this macros has not to restore the old
@@ -507,16 +510,16 @@
               \catcode`\_=12
               \catcode`\^=12
               \catcode`\#=12
-              \catcode`\%=12 
-              \catcode`\$=12 
+              \catcode`\%=12
+              \catcode`\$=12
 }
 
 % +--------------------------------------------------------------------------
 % | Replacement of Prefixes
-% | 
+% |
 % | \ccSrcPrefix     contains the old prefix
 % | \ccTargetPrefix  contains the new prefix
-% | 
+% |
 % | \ccReplacePrefix #1#2  replaces all prefixes in #1 and applies #2 to
 % |                        the partial results that have to be terminated
 % |                        by \ccEnd.
@@ -742,13 +745,13 @@
 \catcode`\]=2
 |catcode`\\=12
 |catcode`|{=12
-|catcode`|}=12    
+|catcode`|}=12
 |newcommand[|ccBackslash][\]%
 |newcommand[|ccOpenBrace][{]%
 |newcommand[|ccCloseBrace][}]%
 |catcode`|\=0
 |catcode`|{=1
-|catcode`|}=2    
+|catcode`|}=2
 \catcode`\|=12
 \catcode`\[=12
 \catcode`\]=12
@@ -764,15 +767,15 @@
 % +--------------------------------------------------------------------------
 % | Structuring macros (similar to LEDA Manual):
 % |
-% | \ccSection, \definition, \constants, \types, \creation, \operations, 
-% | \implementation, \example, \precond, \postcond, 
+% | \ccSection, \definition, \constants, \types, \creation, \operations,
+% | \implementation, \example, \precond, \postcond,
 % | \ccChapterAuthor, \ccChapterRelease, \ccChapterSubTitle
 % +--------------------------------------------------------------------------
 
 %\newcommand{\ccChapterAuthor}[1]{%
 %    \mbox{\ifnum\ccTagChapterAuthor=\ccTrue
 %        \noindent\setlength{\unitlength}{1mm}%
-%        \begin{picture}(0,0)% 
+%        \begin{picture}(0,0)%
 %            \put(0,17){{\em #1}}%
 %        \end{picture}%
 %    \fi}}
@@ -871,7 +874,7 @@
   \ifnum\ccIfCheckInclude=\ccTrue
     \ifnum\cciIfCheckIncludeOpen=\ccFalse
       \gdef\cciIfCheckIncludeOpen{\ccTrue}%
-      \newwrite\cciIncludeFileHandle      
+      \newwrite\cciIncludeFileHandle
       \openout\cciIncludeFileHandle=\jobname.inc\relax
     \fi
     \write\cciIncludeFileHandle{#1}\relax
@@ -975,7 +978,7 @@
 % +--------------------------------------------------------------------------
 % | \ccGlobalDecl, \ccGlobalContinuation for global declarations
 % +--------------------------------------------------------------------------
-% \ccGlobalContinuation and \ccGlobalDecl is used to fiddle an empty 
+% \ccGlobalContinuation and \ccGlobalDecl is used to fiddle an empty
 % comment behind the other parameters of a declaration without parsing
 % these parameters as arguments (the catcodes are not set yet).
 % Compare the normal and the global version of a declaration macro.
@@ -1011,7 +1014,7 @@
 \newlength{\ccRefTabLift}
 \ccRefTabLift=0mm
 
-\newcommand{\ccRefPageBreak}{} 
+\newcommand{\ccRefPageBreak}{}
 \gdef\ccRefPageBreak{\ccTrue}
 
 \newcommand{\ccRefPageBegin}{}
@@ -1029,10 +1032,10 @@
 \newcommand{\ccClassTemplateName}{}
 \newcommand{\ccPureClassTemplateName}{}
 
-% #1 == global scope used in ref-page section title 
+% #1 == global scope used in ref-page section title
 \newcommand{\ccDefGlobalScope}[1]{%
                    \gdef\ccPureGlobalScope{#1}%
-                   \gdef\ccGlobalScope{{\ccFont 
+                   \gdef\ccGlobalScope{{\ccFont
                            \ccPrintTokens #1\ccEnd\ccEndFont}}%
 }
 
@@ -1041,7 +1044,7 @@
 \catcode`@=11
 \newenvironment{ccRefDeclaration}[1]{%
                    \ifnum\ccRefPageBreak=\ccTrue
-                     \ifnum\ccNewRefManualStyle=\ccTrue 
+                     \ifnum\ccNewRefManualStyle=\ccTrue
                         \clearpage \thispagestyle{plain}
                      \fi
                    \fi
@@ -1081,7 +1084,7 @@
                       \renewcommand{\ccRefName}{{{%
                         \ccPrintTokens #1\ccEnd\ccEndFont}}}%
                    \else
-                      \renewcommand{\ccRefName}{{{\ccFont 
+                      \renewcommand{\ccRefName}{{{\ccFont
                         \ccPrintTokens #1\ccEnd\ccEndFont}}}%
                    \fi\fi
                    \ccRefPageBegin
@@ -1102,7 +1105,7 @@
 \gdef\ccRefDeclarationXX [#1]{%
                    \stripTrailingScope#1::\ccEnd\ccIndexClassName
                    \gdef\ccPureRefScope{#1}%
-                   \gdef\ccRefScope{{\ccFont 
+                   \gdef\ccRefScope{{\ccFont
                            \ccPrintTokens #1\ccEnd\ccEndFont}}%
                    \ccRefDeclarationX
 }
@@ -1112,13 +1115,13 @@
 \newcommand{\ccRefSection}{}
 \gdef\ccRefSection #1{\begingroup\ccCatcode\ccRefSectionX{#1}}
 \gdef\ccRefSectionX #1#2{\endgroup\section*{%
-    \ifnum\ccNewRefManualStyle=\ccTrue 
+    \ifnum\ccNewRefManualStyle=\ccTrue
        \ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat
-          \ccDrawRefTabs{FunctionObjectConcept}{#2}\\ 
+          \ccDrawRefTabs{FunctionObjectConcept}{#2}\\
        \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectClassCat
-          \ccDrawRefTabs{FunctionObjectClass}{#2}\\ 
+          \ccDrawRefTabs{FunctionObjectClass}{#2}\\
        \else
-          \ccDrawRefTabs{#1}{#2}\\ 
+          \ccDrawRefTabs{#1}{#2}\\
        \fi\fi
     \else #1 \fi
     \expandafter\ccPrintTokens\ccRefPureGlobalScope\ccEnd%
@@ -1308,7 +1311,7 @@
                       \ccIndexMainItemBegin[C]{\ccIndexClassName}%
                    \fi%
                    \def\ccPureClassTemplateName{#1}%
-                   \renewcommand{\ccClassName}{{{\ccFont 
+                   \renewcommand{\ccClassName}{{{\ccFont
                            \ccPrintTokens #1\ccEnd\ccEndFont}}}%
                    \renewcommand{\ccClassTemplateName}{{{\ccFont
                            \ccPrintTokens #1\ccEnd\ccEndFont}}}%
@@ -1447,7 +1450,7 @@
                    \ccConstructorXX{#1}}
 
 \long\def\ccConstructorXX #1#2{%
-    \isTemplate{#1}\ifnum\ccBool=\ccTrue       
+    \isTemplate{#1}\ifnum\ccBool=\ccTrue
         \ccSplitTemplateParameters{\templatedeclprefix}{\templatedeclsuffix}{#1}
         \ccTemplateLineHandling{\templatedeclprefix}
         \ccCallMacroWithExpandedParameterTwo{\ccConstructorXXX}{#2}{\templatedeclsuffix}
@@ -1485,7 +1488,7 @@
     \else
         \ccFunctionCall{#1}{#3}#2;\ccEnd
     \fi}
-    
+
 \long\def\ccFunctionXX#1#2#3{%
     \ccFunctionCall{#1}{#2}#3;\ccEnd
 }
@@ -1555,7 +1558,7 @@
                    \ccGlobalContinuation[\ccEnumXX[#1+#2-#3]]]
 \endgroup
 
-\long\def\ccEnumXX #1#2{% 
+\long\def\ccEnumXX #1#2{%
     \isTemplate{#1}\ifnum\ccBool=\ccTrue
         \ccSplitTemplateParameters{\templatedeclprefix}{\templatedeclsuffix}{#1}
         \ccTemplateLineHandling{\templatedeclprefix}
@@ -1564,7 +1567,7 @@
         \ccEnumDeclaration{#2}#1\ccEnd
     \fi}
 
-\def\ccEnumXXX#1#2{%  
+\def\ccEnumXXX#1#2{%
   \ccEnumDeclaration{#1}#2\ccEnd
 }
 
@@ -1605,7 +1608,7 @@
 % |
 % ###########################################################################
 % +--------------------------------------------------------------------------
-% | \ccGlobalFunction, \ccGlobalFunctionTemplate, \ccGlobalEnum, 
+% | \ccGlobalFunction, \ccGlobalFunctionTemplate, \ccGlobalEnum,
 % | \ccGlobalTypedef, \ccGlobalVariable
 % +--------------------------------------------------------------------------
 % All simple macros work also at the global level. The following
@@ -1763,7 +1766,7 @@
 % This macro test wheather its argument starts (after leading spaces)
 % with a valid C++ letter (incl. digits and '_').
 \def\isLetter #1{%
-    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
+    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse
         \else\isLetterX #1\ccEnd\fi}
 \def\isLetterX #1#2\ccEnd{%
     \ccBool=\ccFalse
@@ -1776,7 +1779,7 @@
 % Test for a leading underscore, either _ with changed catcode, or \_
 % (after leading spaces)
 \def\isUnderscore #1{%
-    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
+    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse
         \else\isUnderscoreX #1\ccEnd\fi}
 \def\isUnderscoreX #1#2\ccEnd{%
     \ccBool=\ccFalse
@@ -1787,7 +1790,7 @@
 % Test for a '[' which indicates an optional argument in LaTeX.
 % (after leading spaces)
 \def\isOptionalArg #1{%
-    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
+    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse
         \else\isOptionalArgX #1\ccEnd\fi}
 \def\isOptionalArgX #1#2\ccEnd{%
     \ccBool=\ccFalse
@@ -1797,7 +1800,7 @@
 % Test for a leading underscore, either _ with changed catcode, or \_,
 % or the / character. Used to validate the character after a prefix.
 \def\isPrefixFollowChar #1{%
-    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
+    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse
         \else\isPrefixFollowCharX #1\ccEnd\fi}
 \def\isPrefixFollowCharX #1#2\ccEnd{%
     \ccBool=\ccFalse
@@ -1809,12 +1812,12 @@
 
 % These macros allow the characterwise parsing of an argument, where normally
 % the spaces are ignored.
-% Here, the first macro can be applied to the rest of the argument and 
+% Here, the first macro can be applied to the rest of the argument and
 % will return \ccTrue in the \ccBool iff the rest starts with a space.
 % The second macro will produce a space "\ " iff the rest starts with a space.
 % The space of the rest will be skipped automatically in the next round.
 \def\hasLeadingSpace #1{%
-    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
+    \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse
         \else\compareSpace{#1}#1\ccEnd\fi}
 \def\compareSpace #1#2#3\ccEnd{%
    \def\xxparams{#1}\def\xxxparams{#2#3}\ifx\xxparams\xxxparams\ccBool=\ccFalse
@@ -1858,7 +1861,7 @@
         \fi
     \fi}
 
-% Check the first character in the parameter. If it is a character (or _) 
+% Check the first character in the parameter. If it is a character (or _)
 % return \ccTrue, else return \ccFalse. (It takes spaces into account
 % and returns \ccFalse if the parameter starts with a space.)
 \def\isFirstAlpha #1{%
@@ -1873,15 +1876,15 @@
     \fi
 }
 
-% Check the last character in the parameter. If it is a character (or _) 
-% return \ccTrue, else return \ccFalse. 
+% Check the last character in the parameter. If it is a character (or _)
+% return \ccTrue, else return \ccFalse.
 \def\isLastAlpha #1{%
     \isEmpty{#1}\ifnum\ccBool=\ccTrue\ccInvert
                 \else\isLastAlphaX #1\ccEnd
     \fi}
 \def\isLastAlphaX #1#2\ccEnd{%
     \def\xqqbody{\isLastAlphaX #2\ccEnd}%
-    \isLetterX #1\ccEnd 
+    \isLetterX #1\ccEnd
     \def\qqparams{#2}\ifx\qqparams\empty\let\xqqnext=\relax
     \else\isEmpty{#2}\ifnum\ccBool=\ccTrue \ccInvert
             \let\xqqnext=\relax
@@ -1898,7 +1901,7 @@
 \def\isParenthesisOperatorX #1operator#2(#3)#4\ccEnd{%
     % if and only if #2 is empty, we have the () operator.
     \isEmpty{#2}}
-    
+
 % This macro gets a complete C++ declaration for an operator and has to
 % decide weather it is the conversion operator declaration or not.
 \def\isConversionOperator #1{%
@@ -1906,7 +1909,7 @@
 \def\isConversionOperatorX #1operator#2\ccEnd{%
     % if and only if #1 is empty, we have the conversion operator.
     \isEmpty{#1}}
-    
+
 
 % +--------------------------------------------------------------------------
 % |     * Toplevel declaration formatting:
@@ -1958,12 +1961,12 @@
 % The declaration has to be terminated with ";;\ccEnd" where the first ";"
 % has to be from the original call notation. The 7th parameter is there
 % to check for this ";".
-\long\def\ccFunctionCall #1#2#3 #4(#5)#6;#7\ccEnd{%   
+\long\def\ccFunctionCall #1#2#3 #4(#5)#6;#7\ccEnd{%
   \ccInitFunctionWidths
   \def\xparam{#7}\ifx\xparam\empty
-      \errmessage{Missing ";" at the end of the 
+      \errmessage{Missing ";" at the end of the
       declaration. A method or function
-      declaration has to end with a ";". 
+      declaration has to end with a ";".
       Go ahead, I've inserted one}%
   \fi
   \def\ccExtendedFormat{\ }% Switches ext. format OFF.
@@ -1981,13 +1984,13 @@
               \ifnum\ccAutoIndex=\ccTrue%
                 \ccIndexOperator#1#3 operator(),#6,\ccEnd%
               \fi
-              \setbox\functioncallbox=\hbox{{\ccFont 
+              \setbox\functioncallbox=\hbox{{\ccFont
                 \ccPrintParOperator #1#3 #4(#5)#6\ccEnd}}
           \else
               \ifnum\ccAutoIndex=\ccTrue%
                 \ccIndexOperator#1#3 #4,#5,\ccEnd%
               \fi%
-              \setbox\functioncallbox=\hbox{{\ccFont 
+              \setbox\functioncallbox=\hbox{{\ccFont
                 \ccPrintOperator #1#3 #4(#5)#6\ccEnd}}
           \fi
 
@@ -2039,7 +2042,7 @@
           }}
           \setbox\functioncallbox=\hbox{{\ccFont
               \ifnum#1=0 \ccVar.\fi
-              \unhcopy\functionnamebox(% 
+              \unhcopy\functionnamebox(%
               \isEmpty{#5}\ifnum\ccBool=\ccFalse
                   \ \ccPrintParamList{#5)#6}%
               \fi)\unhcopy\trailingconstbox}}
@@ -2069,7 +2072,7 @@
                        }}
                        \setbox\functioncallbox=\hbox{{\ccFont
                                \ifnum#1=0 \ccVar.\fi
-                               \unhcopy\functionnamebox(% 
+                               \unhcopy\functionnamebox(%
                                \isEmpty{#5}\ifnum\ccBool=\ccFalse
                                        \ \ccPrintParamList{#5)#6}%
                                \fi)\unhcopy\trailingconstbox}}
@@ -2091,7 +2094,7 @@
                        }}
                        \setbox\functioncallbox=\hbox{{\ccFont
                            \ifnum#1=0 \ccVar.\fi
-                           \unhcopy\functionnamebox(% 
+                           \unhcopy\functionnamebox(%
                            \isEmpty{#6}\ifnum\ccBool=\ccFalse
                                \ \ccPrintParamList{#6)#7}%
                            \fi)\unhcopy\trailingconstbox}}
@@ -2114,7 +2117,7 @@
                        }}
                        \setbox\functioncallbox=\hbox{{\ccFont
                            \ifnum#1=0 \ccVar.\fi
-                           \unhcopy\functionnamebox(% 
+                           \unhcopy\functionnamebox(%
                            \isEmpty{#5}\ifnum\ccBool=\ccFalse
                                \ \ccPrintParamList{#5)#6}%
                            \fi)\unhcopy\trailingconstbox}}
@@ -2137,9 +2140,9 @@
 \def\ccVariableDeclaration #1#2 #3;#4\ccEnd{%
                        \ccInitFunctionWidths
                        \def\xparam{#4}\ifx\xparam\empty
-                           \errmessage{Missing ";" at the end of the 
+                           \errmessage{Missing ";" at the end of the
                            declaration. A variable, typedef, or constant
-                           declaration has to end with a ";". 
+                           declaration has to end with a ";".
                            Go ahead, I've inserted one}%
                        \fi
                        \ccSeparateVariable #2 #3=\ccEnd%
@@ -2212,7 +2215,7 @@
 %   o  The 1st parameter contains the opening brace.
 %   o  The 2nd parameter contains the parameter list, comma separated,
 %        including the closing parantheses which will not be printed.
-%   o  The 3rd parameter contains the closing brace. 
+%   o  The 3rd parameter contains the closing brace.
 %   o  The 4th parameter contains the comment.
 % All paramters might be empty.
 % Global variables:
@@ -2230,7 +2233,7 @@
                            \ifdim\wd\returntypebox>\ccwFirst
                                \unhbox\returntypebox\nopagebreak\ccReturnSkip
                            \else
-                               \parbox[t]{\ccwFirst}{\sloppy 
+                               \parbox[t]{\ccwFirst}{\sloppy
                                    \unhbox\returntypebox}%
                                \hspace*{\ccwBetween}%
                            \fi
@@ -2308,7 +2311,7 @@
 % \ccTemplateLineHandling: extends the \ccLayoutThreeColumns with an additional
 % line above the three columns that contains the template declaration
 % for functions or methods (if any)
-% 
+%
 %   Param   the template declaration, delimited with \ccEnd
 %           #1 should be empty or whitespace
 
@@ -2331,7 +2334,7 @@
             \setbox\templatedeclbox=\hbox{}%
             \ccTopSkip
             \hspace*{\ccwIndent}%
-            {\ccFont\ccPrintTokens #1 \ccEnd \ccEndFont}            
+            {\ccFont\ccPrintTokens #1 \ccEnd \ccEndFont}
             \nopagebreak[4]\par
             \ccReverseTopSkip\vspace{-\parskip}%
         \fi
@@ -2350,7 +2353,7 @@
 
 \newcount\templatebracecounter
 
-\def\ccCallMacroWithExpandedParameterNXN#1#2#3#4\ccEnd{  
+\def\ccCallMacroWithExpandedParameterNXN#1#2#3#4\ccEnd{
   \begingroup
     \def\blubber##1{#1{#2}{##1}#4\ccEnd}
     \edef\blubb{\noexpand\blubber{#3}}
@@ -2381,7 +2384,7 @@
   \ifnum\templatebracecounter=0
     \gdef#1{#3}
     %\typeout{finished! suffix: #1}
-  \else  
+  \else
     \isEmpty{#3}\ifnum\ccBool=\ccTrue
       \typeout{! error while parsing template definition. unbalanced < and >}
       \gdef#1{#3}
@@ -2398,11 +2401,11 @@
   \catcode`\[=1
   \catcode`\]=2
   \catcode`\{=12
-  \catcode`\}=12     
-  \gdef\ccStripSuffixFromString#1#2#3\ccEnd[  
-    \edef\testbla[\noexpand\def\noexpand\blubber####1#2\noexpand\ccEnd[\noexpand\xdef\noexpand#1[####1]]] 
+  \catcode`\}=12
+  \gdef\ccStripSuffixFromString#1#2#3\ccEnd[
+    \edef\testbla[\noexpand\def\noexpand\blubber####1#2\noexpand\ccEnd[\noexpand\xdef\noexpand#1[####1]]]
     \testbla
-    \blubber#3\ccEnd  
+    \blubber#3\ccEnd
   ]
 \endgroup
 
@@ -2444,7 +2447,7 @@
 %      character of it.
 % The part of the declaration has to be terminated with " .\ccEnd".
 \def\ccSeparateFunctionXX #1#2 #3#4\ccEnd{%
-                       \isEmpty{#4}\ifnum\ccBool=\ccTrue 
+                       \isEmpty{#4}\ifnum\ccBool=\ccTrue
                            \setbox\returntypebox=\hbox{{\ccFont
                                \ccPrintReturnType #1const.&.\ccEnd}}%
                            \setbox\functionnamebox=\hbox{{\ccFont
@@ -2658,17 +2661,17 @@
 \def\ccPrintConversionOperator #1operator #2(#3)#4\ccEnd{%
                        \setbox\returntypebox=\hbox{{\ccFont
                            \ccPrintTokens #2\ccEnd}}
-                       \setbox\functioncallbox=\hbox{{\ccFont 
+                       \setbox\functioncallbox=\hbox{{\ccFont
                            \ccPrintTokens #2(\ccVar)\ccEnd}}
                        }
 
 % An operator is detected and can be printed.
 %   #1  contains a 0 for a method call, a 1 for a function.
 %   #2  contains the \ccVar if it is a method.
-%   #3  contains the parameter list up to the first closing parenthesis. 
+%   #3  contains the parameter list up to the first closing parenthesis.
 %       It might be empty .
 %   #4  contains the remaining part of the parameter list including
-%       the closing paranthesis (and a possible trailing const). 
+%       the closing paranthesis (and a possible trailing const).
 %   #5  is the first character of the operator.
 %   #6  contains the rest of the operator.
 % The declaration ends with "\ccEnd".
@@ -2678,7 +2681,7 @@
   \gdef\ccPrintOperatorOne #1#2#3#4#5#6\ccEnd{@
                        \ccExtractParamList{#2#3#4}@
                        \operatorerror=1
-                       \isEmpty{#6}\ifnum\ccBool=\ccTrue 
+                       \isEmpty{#6}\ifnum\ccBool=\ccTrue
                            @ single character operations
                            \ifcase\NParameters         @ no parameter
                            \or                         @ 1 parameter
@@ -2729,7 +2732,7 @@
 @   o  The third parameter contains the rest of the operator.
 @ The declaration ends with "\ccEnd".
 \gdef\ccPrintOperatorTwo #1#2#3\ccEnd{@
-                   \isEmpty{#3}\ifnum\ccBool=\ccTrue 
+                   \isEmpty{#3}\ifnum\ccBool=\ccTrue
                        @ two character operations
                        \ifcase\NParameters         @ no parameter
                        \or                         @ 1 parameter
@@ -2738,7 +2741,7 @@
                            \if+#1\if+#2\ccOperatorpraefix{#1\!#2}\fi\fi
                            \if-#1\if-#2\ccOperatorpraefix{#1\!#2}\fi\fi
                        \or                         @ 2 parameters
-                           \if[#1\if]#2\ccOperatorparXX{\ccEndFont{\rm [} 
+                           \if[#1\if]#2\ccOperatorparXX{\ccEndFont{\rm [}
                                 }{\ccEndFont{\rm ]}}\fi\fi
                            \if(#1\if)#2\ccOperatorparXX{( }{)}\fi\fi
                            \if+#1\if+#2\ccOperatorpostfix{#1\!#2}\fi\fi
@@ -2781,13 +2784,13 @@
                        \fi
                    \fi
                  }
-} 
+}
 
 
 \def\ccOperatorpraefix #1{%
     $#1 \mbox{\unhbox\parameterX}$\operatorerror=0 }
 \def\ccOperatorinfix #1{%
-    $\mbox{\unhbox\parameterX\ccEndFont} #1 
+    $\mbox{\unhbox\parameterX\ccEndFont} #1
      \mbox{\unhbox\parameterXX}$\operatorerror=0 }
 \def\ccOperatorpostfix #1{%
     $\mbox{\unhbox\parameterX} #1$\operatorerror=0 }
@@ -2812,8 +2815,8 @@
 % |     * Template declaration separation
 % +--------------------------------------------------------------------------
 % | The input starts with a template declaration. This and including
-% | its parameter list will be separated from the rest of the declaration. 
-% | The macro in argument #1 will be applied to them, delimited with \ccEnd. The 
+% | its parameter list will be separated from the rest of the declaration.
+% | The macro in argument #1 will be applied to them, delimited with \ccEnd. The
 % | rest will be handed over to the command in argument #2, also delimited
 % | with \ccEnd.
 % +--------------------------------------------------------------------------
@@ -2862,7 +2865,7 @@
 % |     * Parameter list parsing:
 % +--------------------------------------------------------------------------
 % | Parameter lists are commata separated parameters. Template
-% | instantiation nesting is considered. Parentheses nesting 
+% | instantiation nesting is considered. Parentheses nesting
 % | from default initializers are also considered.
 % +--------------------------------------------------------------------------
 
@@ -2883,7 +2886,7 @@
                    \if(#2\advance\nestinglevel by1 \fi
                    \if)#2\advance\nestinglevel by-1 \fi
                    \if,#2%
-                       \ifnum\nestinglevel=0 
+                       \ifnum\nestinglevel=0
                            \ccPrintParameter #1const.&.\ccEnd,\ccExtendedFormat
                            \def\xxbody{\ccPrintParamListX{}#3\ccEnd}%
                        \else\ifnum\nestinglevel<0
@@ -2913,7 +2916,7 @@
                            \def\xxbody{\ccPrintParamListX{#1#2}#3\ccEnd}%
                        \fi
                    \fi\fi
-                   % old: \isEmpty{#3}\ifnum\ccBool=\ccTrue 
+                   % old: \isEmpty{#3}\ifnum\ccBool=\ccTrue
                    \ifnum\nestinglevel<0 \let\xxnext=\relax
                    \else\let\xxnext=\xxbody\fi
                    \xxnext}
@@ -2921,7 +2924,7 @@
 
 % If an operator is used, a specialized parameter parsing macro counts
 % the number of parameters and store the result in the three following boxes.
-% \NParameters is one of 0,1,2,3. In the case of 3, there are three or more 
+% \NParameters is one of 0,1,2,3. In the case of 3, there are three or more
 % parameters, as it was possible for the ()-operator. Thei are all together
 % stored in \box\parameterXXX.
 \newcount\NParameters   % counts number of parameters for operators
@@ -2929,7 +2932,7 @@
 \newbox\parameterXX     % second parameter
 \newbox\parameterXXX    % third and rest of parameters
 
-% Extract up to three parameters from a C++ parameter list 
+% Extract up to three parameters from a C++ parameter list
 % (separated with commatas) within the \parameterX.. boxes.
 \def\ccExtractParamList #1{%
         \nestinglevel=0
@@ -2947,7 +2950,7 @@
                    \if(#2\advance\nestinglevel by1 \fi
                    \if)#2\advance\nestinglevel by-1 \fi
                    \if,#2%
-                       \ifnum\nestinglevel=0 
+                       \ifnum\nestinglevel=0
                            \advance\NParameters by1
                            \ifnum\NParameters=1 %
                                \setbox\parameterX=%
@@ -3019,7 +3022,7 @@
 % type that equals the \ccPureClassTemplateName. It is a nested macro
 % definition. It uses the \ccPureClassTemplateName to build a matching
 % pattern to detect a possible type name to be eliminated. Similar
-% solution as \ccReplacePrefix. 
+% solution as \ccReplacePrefix.
 % If the function argument is empty, \ccPureClassTemplateName is printed.
 % The parameter has to be delimited with "<>\ccEnd".
 % Ignore leading spaces.
@@ -3031,11 +3034,11 @@
             \ccPrintTokens #1#2\ccEnd%
         \else
         \isEmpty{#2}\ifnum\ccBool=\ccTrue
-            \ccPrintTokens #1\ccEnd%  A complete hack. 
+            \ccPrintTokens #1\ccEnd%  A complete hack.
             % Necessary to work together
             % with the operator example. Otherwise a def is not working
             % (totally obscure errormessage). However, I do not understand
-            % what is going on, I assume that the special case of a member 
+            % what is going on, I assume that the special case of a member
             % function, where the first argument is \ccVar, causes the trouble.
             % This special case is checked here.
         \else
@@ -3047,11 +3050,11 @@
 }
 
 % Does the actual work:  #1 is the \ccPureClassTemplateName
-%                        #2 is the text to process with the 
+%                        #2 is the text to process with the
 %                           \ccPureClassTemplateName
 %                           appended at the end
 \def\ccPrintOwnClassParameterX #1#2{%
-    % local macro to do the parsing: 
+    % local macro to do the parsing:
     %                  ##1 is the text before \ccPureClassTemplateName
     %                  ##2 is the text after \ccPureClassTemplateName
     \def\ccRepOwnClass ##1#1##2\ccEnd{%
@@ -3060,7 +3063,7 @@
             \ccPrintTokens ##1\ccEnd%
         \else
             % \ccPureClassTemplateName is in the argument.
-            % Check that neither ##1 ends with character nor ##2 starts 
+            % Check that neither ##1 ends with character nor ##2 starts
             % with a character. Otherwise, \ccPureClassTemplateName
             % would be only a part of a longer idfier.
             \isLastAlpha{##1}\ifnum\ccBool=\ccTrue
@@ -3085,7 +3088,7 @@
         \fi
     }%
     % local macro to remove leading spaces.
-    %     ##1##2 is the (non empty) argument without leading spaces. 
+    %     ##1##2 is the (non empty) argument without leading spaces.
     %\def\ccRepOwnClassXX ##1##2\ccEnd{%
     %    \ccPrintTokens ##1##2\ccEnd%
     %}%
@@ -3101,7 +3104,7 @@
     \ifnum\ccTagRmConstRefPair=\ccFalse
         \ccPrintParameterXQ #1const#2&#3\ccEnd%
     \else
-        \if.#2\isEmpty{#1}\ifnum\ccBool=\ccFalse 
+        \if.#2\isEmpty{#1}\ifnum\ccBool=\ccFalse
             \ccPrintOwnClassParameter #1<>\ccEnd%
             \fi
         \else
@@ -3130,7 +3133,7 @@
     \ifnum\ccTagRmConstRefPair=\ccFalse
         \ccPrintReturnTypeXQ #1const#2&#3\ccEnd%
     \else
-        \if.#2\isEmpty{#1}\ifnum\ccBool=\ccFalse 
+        \if.#2\isEmpty{#1}\ifnum\ccBool=\ccFalse
             \ccPrintTokens #1\ccEnd%
             \fi
         \else
@@ -3142,7 +3145,7 @@
                     \fi
                     \ifnum\ccBool=\ccTrue
                         \ccPrintReturnType #1#2 #3\ccEnd%
-                    \else 
+                    \else
                         \ccPrintReturnTypeXQ #1const#2&#3\ccEnd%
                     \fi
                 \fi
@@ -3245,7 +3248,7 @@
 %
 \usepackage{alltt}
 
-% the graphicx package is used to include the page tabs for the reference 
+% the graphicx package is used to include the page tabs for the reference
 % pages in the new manual style, so...
 \ifnum\ccNewRefManualStyle=\ccTrue
 \usepackage{graphicx}
