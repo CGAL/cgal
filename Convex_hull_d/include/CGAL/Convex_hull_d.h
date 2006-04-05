@@ -71,7 +71,7 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Regular_complex_d.h>
-
+#include <CGAL/Handle_for.h>
 #include <list>
 #include <vector>
 
