@@ -518,6 +518,7 @@ Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.xml -text
+Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text
 Jet_fitting_3/demo/Jet_fitting_3/data/venus.off -text
 Jet_fitting_3/demo/Jet_fitting_3/test_visu.C -text

@@ -1,0 +1,20 @@
+
+-pre-requisite: introspect requires glut. under fedore, install
+freeglut-devel. (wizards's corner: as root, use synaptic .. instead of
+a manual installation with rpm -i etc)
+
+
+-in the introspec dir, a target lib allows to create a small
+archive. then, libIntrospect.a can be used from anywhere
+
+-to use the library for any package:
+
+*set INTROSPEC_DIR variable in the makefile, and use it for the
+includes and the final link with -lIntrospect
+
+*implement the SketchSample.cpp file, which tells how to draw the
+geometry
+
+*the main is in visu-test.cpp, which loads the geometry, and launches
+the window
+
