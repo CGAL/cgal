@@ -23,15 +23,15 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-ParameterizationPatchableMesh\_3 inherits from concept ParameterizationMesh\_3, thus is a concept of a 3D surface mesh.
+\ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3}, thus is a concept of a 3D surface mesh.
 
-ParameterizationPatchableMesh\_3 adds the ability to support patches and virtual seams. {\em Patches} are a subset of a 3D mesh. {\em Virtual seams} are the ability to behave exactly as if the surface was cut following a certain path.
+\ccc{ParameterizationPatchableMesh_3} adds the ability to support patches and virtual seams. {\em Patches} are a subset of a 3D mesh. {\em Virtual seams} are the ability to behave exactly as if the surface was cut following a certain path.
 
 This mainly means that:\begin{itemize}
-\item vertices can be tagged as inside or outside the patch to parameterize.\item the fields specific to parameterizations (index, u, v, is\_parameterized) can be set per {\em corner} (aka half-edge).\end{itemize}
+\item vertices can be tagged as inside or outside the patch to parameterize.\item the fields specific to parameterizations (index, u, v, \ccc{is_parameterized}) can be set per {\em corner} (aka half-edge).\end{itemize}
 
 
-The main purpose of this feature is to allow the Surface\_mesh\_parameterization package to parameterize any 3D surface by decomposing it as a list of topological disks.
+The main purpose of this feature is to allow the \ccc{Surface_mesh_parameterization} package to parameterize any 3D surface by decomposing it as a list of topological disks.
 
 %END-AUTO(\ccDefinition)
 
@@ -41,7 +41,7 @@ The main purpose of this feature is to allow the Surface\_mesh\_parameterization
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-ParameterizationPatchableMesh\_3 is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the interface of a 3D mesh to match the interface expected by class Parameterization\_mesh\_patch\_3.
+\ccc{ParameterizationPatchableMesh_3} is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the interface of a 3D mesh to match the interface expected by class \ccc{Parameterization_mesh_patch_3}.
 
 %END-AUTO(\ccHeading{Design Pattern})
 
@@ -51,7 +51,7 @@ ParameterizationPatchableMesh\_3 is an Adaptor \cite{cgal:ghjv-dpero-95}: it cha
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccRefines)
 
-ParameterizationPatchableMesh\_3 inherits from concept ParameterizationMesh\_3.
+\ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3}.
 
 %END-AUTO(\ccRefines)
 
@@ -107,7 +107,7 @@ Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to th
 \ccGlue
 \ccMethod{Point_2 get_corners_uv (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set the 2D position (= (u,v) pair) of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
+Get/set the 2D position (= (u,v) pair) of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
 \ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 & uv);}
@@ -116,7 +116,7 @@ Get/set the 2D position (= (u,v) pair) of corners at the {\em right} of the prev
 \ccGlue
 \ccMethod{bool are_corners_parameterized (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set {\em is parameterized} field of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
+Get/set {\em is parameterized} field of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
 \ccMethod{void set_corners_parameterized (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
@@ -125,7 +125,7 @@ Get/set {\em is parameterized} field of corners at the {\em right} of the prev\_
 \ccGlue
 \ccMethod{int get_corners_index (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set index of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
+Get/set index of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
 \ccMethod{void set_corners_index (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
@@ -134,7 +134,7 @@ Get/set index of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$
 \ccGlue
 \ccMethod{int get_corners_tag (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set all purpose tag of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined.
+Get/set all purpose tag of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
 \ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
@@ -150,7 +150,7 @@ Get/set all purpose tag of corners at the {\em right} of the prev\_vertex -$>$ v
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHasModels)
 
-Adaptator for Polyhedron\_3 is provided.
+Adaptator for \ccc{Polyhedron_3} is provided.
 
 %END-AUTO(\ccHasModels)
 

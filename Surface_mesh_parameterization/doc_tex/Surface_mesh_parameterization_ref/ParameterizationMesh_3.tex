@@ -23,15 +23,15 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-ParameterizationMesh\_3 is a concept for a 3D surface mesh. Its main purpose is to allow the parameterization methods to access meshes in a uniform manner.
+\ccc{ParameterizationMesh_3} is a concept for a 3D surface mesh. Its main purpose is to allow the parameterization methods to access meshes in a uniform manner.
 
-A ParameterizationMesh\_3 surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested. Vertices represent points in 3d-space. Facets are planar polygons without holes defined by the circular sequence of vertices along their border. The surface itself can have holes. The vertices along the border of a hole are called {\em border vertices}. A surface is {\em closed} if it contains no border vertices.
+A \ccc{ParameterizationMesh_3} surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested. Vertices represent points in 3d-space. Facets are planar polygons without holes defined by the circular sequence of vertices along their border. The surface itself can have holes. The vertices along the border of a hole are called {\em border vertices}. A surface is {\em closed} if it contains no border vertices.
 
 The surface must be an oriented 2-manifold with border vertices, i.e. the neighborhood of each point on the surface is either homeomorphic to a disc or to a half disc, except for vertices where many holes and surfaces with border can join.
 
-ParameterizationMesh\_3 defines the types, data and methods that a mesh must implement to allow surface parameterization. Among other things, this concept defines accessors to fields specific to parameterizations methods: index, u, v, is\_parameterized.
+\ccc{ParameterizationMesh_3} defines the types, data and methods that a mesh must implement to allow surface parameterization. Among other things, this concept defines accessors to fields specific to parameterizations methods: index, u, v, \ccc{is_parameterized}.
 
-ParameterizationMesh\_3 meshes can have any genus, arity or number of components. On the other hand, as parameterization methods deal only with topological disks, ParameterizationMesh\_3 defines an interface oriented towards topological disks.
+\ccc{ParameterizationMesh_3} meshes can have any genus, arity or number of components. On the other hand, as parameterization methods deal only with topological disks, \ccc{ParameterizationMesh_3} defines an interface oriented towards topological disks.
 
 %END-AUTO(\ccDefinition)
 
@@ -41,7 +41,7 @@ ParameterizationMesh\_3 meshes can have any genus, arity or number of components
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-ParameterizationMesh\_3 is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the interface of a 3D mesh to match the interface expected by the parameterization methods.
+\ccc{ParameterizationMesh_3} is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the interface of a 3D mesh to match the interface expected by the parameterization methods.
 
 %END-AUTO(\ccHeading{Design Pattern})
 
@@ -209,7 +209,7 @@ Count the number of vertices of the mesh.
 \ccGlue
 \ccMethod{void index_mesh_vertices ();}
 {
-Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.
+Index vertices of the mesh from 0 to \ccc{count_mesh_vertices}()-1.
 }
 \ccGlue
 \ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
@@ -232,7 +232,7 @@ Get iterator over past-the-end vertex of mesh's {\em main border}.
 \ccGlue
 \ccMethod{std::list<Vertex_handle> get_border (Vertex_handle seed_vertex);}
 {
-Return the border containing seed\_vertex. Return an empty list if not found.
+Return the border containing \ccc{seed_vertex}. Return an empty list if not found.
 }
 \ccGlue
 \ccMethod{Facet_iterator mesh_facets_begin ();}
@@ -335,7 +335,7 @@ Return true if a vertex belongs to the UNIQUE mesh's main border.
 \ccGlue
 \ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin (Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
 {
-Get circulator over the vertices incident to 'vertex'. 'start\_position' defines the optional initial position of the circulator.
+Get circulator over the vertices incident to 'vertex'. '\ccc{start_position}' defines the optional initial position of the circulator.
 }
 \ccGlue
 \ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = Vertex_const_handle()) const;}
@@ -352,7 +352,7 @@ Get circulator over the vertices incident to 'vertex'. 'start\_position' defines
 %START-AUTO(\ccHasModels)
 
 \begin{itemize}
-\item Adaptator for Polyhedron\_3 is provided.\item Parameterization\_mesh\_patch\_3$<$M$>$ is a model of ParameterizationMesh\_3 if M is a model of ParameterizationPatchableMesh\_3.\end{itemize}
+\item Adaptator for \ccc{Polyhedron_3} is provided.\item \ccc{Parameterization_mesh_patch_3<M>} is a model of \ccc{ParameterizationMesh_3} if M is a model of \ccc{ParameterizationPatchableMesh_3}.\end{itemize}
 
 %END-AUTO(\ccHasModels)
 

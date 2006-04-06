@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class Taucs\_solver\_traits is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems using TAUCS out-of-core LU factorization.
+The class \ccc{Taucs_solver_traits} is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems using TAUCS out-of-core LU factorization.
 
 %END-AUTO(\ccDefinition)
 
@@ -35,7 +35,7 @@ The class Taucs\_solver\_traits is a traits class for solving GENERAL (aka unsym
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the SparseLinearAlgebraTraits\_d concept.
+Model of the \ccc{SparseLinearAlgebraTraits_d} concept.
 
 %END-AUTO(\ccIsModel)
 
@@ -49,7 +49,7 @@ The full template declaration is:
 
 template$<$  \\
 class T$>$   \\
-class Taucs\_solver\_traits;
+class \ccc{Taucs_solver_traits};
 
 %END-AUTO(\ccParameters)
 
@@ -101,7 +101,7 @@ Create a TAUCS sparse linear solver for GENERAL (aka unsymmetric) matrices.
 {
 Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
 Preconditions:\begin{itemize}
-\item A.row\_dimension() == B.dimension().\item A.column\_dimension() == X.dimension(). \end{itemize}
+\item A.\ccc{row_dimension}() == B.dimension().\item A.\ccc{column_dimension}() == X.dimension(). \end{itemize}
 }
 \ccGlue
 

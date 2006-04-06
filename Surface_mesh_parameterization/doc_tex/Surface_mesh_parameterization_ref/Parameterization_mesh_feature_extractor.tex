@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class Parameterization\_mesh\_feature\_extractor computes features (genus, borders, ...) of a 3D surface, model of the ParameterizationMesh\_3 concept.
+The class \ccc{Parameterization_mesh_feature_extractor} computes features (genus, borders, ...) of a 3D surface, model of the \ccc{ParameterizationMesh_3} concept.
 
 %END-AUTO(\ccDefinition)
 
@@ -38,8 +38,8 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class ParameterizationMesh\_3$>$   \\
-class Parameterization\_mesh\_feature\_extractor;
+class \ccc{ParameterizationMesh_3}$>$   \\
+class \ccc{Parameterization_mesh_feature_extractor};
 
 %END-AUTO(\ccParameters)
 
@@ -51,7 +51,7 @@ class Parameterization\_mesh\_feature\_extractor;
 
 \ccNestedType{Adaptor}
 {
-Export ParameterizationMesh\_3 template parameter.
+Export \ccc{ParameterizationMesh_3} template parameter.
 }
 \ccGlue
 \ccNestedType{Border}
@@ -77,7 +77,7 @@ Type representing the list of all borders of the mesh = STL container of Border 
 \ccConstructor{Parameterization_mesh_feature_extractor (Adaptor & mesh);}
 {
 Constructor.
-CAUTION: This class caches the result of feature extractions =$>$ The caller must NOT modify 'mesh' during the Parameterization\_mesh\_feature\_extractor life cycle.
+CAUTION: This class caches the result of feature extractions =$>$ The caller must NOT modify 'mesh' during the \ccc{Parameterization_mesh_feature_extractor} life cycle.
 }
 \ccGlue
 

@@ -23,16 +23,16 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class Fixed\_border\_parameterizer\_3 is the base class of fixed border parameterization methods (Tutte, Floater, ...).
+The class \ccc{Fixed_border_parameterizer_3} is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 
 One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
 This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:\begin{itemize}
-\item They provide BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item They implement compute\_w\_ij() to compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of is\_one\_to\_one\_mapping().\end{itemize}
+\item They provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item They implement \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
 
 
 \begin{description}
-\item[Todo]Fixed\_border\_parameterizer\_3 should remove border vertices from the linear systems in order to have a symmetric definite positive matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.\end{description}
+\item[Todo]\ccc{Fixed_border_parameterizer_3} should remove border vertices from the linear systems in order to have a symmetric definite positive matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.\end{description}
 
 %END-AUTO(\ccDefinition)
 
@@ -44,7 +44,7 @@ This class is a pure virtual class, thus cannot be instantiated. Anyway, it impl
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the ParameterizerTraits\_3 concept (although you cannot instantiate this class).
+Model of the \ccc{ParameterizerTraits_3} concept (although you cannot instantiate this class).
 
 %END-AUTO(\ccIsModel)
 
@@ -57,10 +57,10 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class ParameterizationMesh\_3,   \\
-class BorderParameterizer\_3 = Circular\_border\_arc\_length\_parameterizer\_3$<$ParameterizationMesh\_3$>$,   \\
-class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename ParameterizationMesh\_3::NT$>$$>$   \\
-class Fixed\_border\_parameterizer\_3;
+class \ccc{ParameterizationMesh_3},   \\
+class \ccc{BorderParameterizer_3} = \ccc{Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>},   \\
+class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
+class \ccc{Fixed_border_parameterizer_3};
 
 %END-AUTO(\ccParameters)
 
@@ -72,12 +72,12 @@ class Fixed\_border\_parameterizer\_3;
 
 \ccNestedType{Border_param}
 {
-Export BorderParameterizer\_3 template parameter.
+Export \ccc{BorderParameterizer_3} template parameter.
 }
 \ccGlue
 \ccNestedType{Sparse_LA}
 {
-Export SparseLinearAlgebraTraits\_d template parameter.
+Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
 }
 \ccGlue
 
@@ -98,7 +98,7 @@ Constructor.
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[border\_param]Object that maps the surface's border to 2D space \item[sparse\_la]Traits object to access a sparse linear system \end{description}
+\item[\ccc{border_param}]Object that maps the surface's border to 2D space \item[\ccc{sparse_la}]Traits object to access a sparse linear system \end{description}
 \end{description}
 \ccGlue
 
@@ -132,13 +132,13 @@ Preconditions:\begin{itemize}
 \ccGlue
 \ccMethod{virtual NT compute_w_ij (const Adaptor & mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
 {
-Compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement compute\_w\_ij().
+Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement \ccc{compute_w_ij}().
 }
 \ccGlue
 \ccMethod{Parameterizer_traits_3< Adaptor >::Error_code setup_inner_vertex_relations (Matrix & A, Vector & Bu, Vector & Bv, const Adaptor & mesh, Vertex_const_handle vertex);}
 {
 Compute the line i of matrix A for i inner vertex:\begin{itemize}
-\item call compute\_w\_ij() to compute the A coefficient w\_ij for each neighbor v\_j.\item compute w\_ii = - sum of w\_ijs.\end{itemize}
+\item call \ccc{compute_w_ij}() to compute the A coefficient \ccc{w_ij} for each neighbor \ccc{v_j}.\item compute \ccc{w_ii} = - sum of \ccc{w_ijs}.\end{itemize}
 Preconditions:\begin{itemize}
 \item vertices must be indexed.\item vertex i musn't be already parameterized.\item line i of A must contain only zeros. \end{itemize}
 }

@@ -23,13 +23,13 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Parameterization\_polyhedron\_adaptor\_3 is an adaptor class to access to a Polyhedron 3D mesh using the ParameterizationPatchableMesh\_3 interface. Among other things, this concept defines the accessor to the (u,v) values computed by parameterizations methods.
+\ccc{Parameterization_polyhedron_adaptor_3} is an adaptor class to access to a Polyhedron 3D mesh using the \ccc{ParameterizationPatchableMesh_3} interface. Among other things, this concept defines the accessor to the (u,v) values computed by parameterizations methods.
 
 Note that these interfaces are decorators that add {\em on the fly} the necessary fields to unmodified CGAL data structures (using STL maps). For performance reasons, it is recommended to use CGAL data structures enriched with the proper fields.
 
-A ParameterizationMesh\_3 surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested.
+A \ccc{ParameterizationMesh_3} surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested.
 
-ParameterizationMesh\_3 meshes can have any genus, arity or number of components.
+\ccc{ParameterizationMesh_3} meshes can have any genus, arity or number of components.
 
 It can have have any number of borders. Its {\em main border} will be the mesh's longest border (if there is at least one border).
 
@@ -45,7 +45,7 @@ It has also the ability to support patches and virtual seams. {\em Patches} are 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of ParameterizationPatchableMesh\_3 concept, whose purpose is to allow the Surface\_mesh\_parameterization package to access meshes in a uniform manner.
+Model of \ccc{ParameterizationPatchableMesh_3} concept, whose purpose is to allow the \ccc{Surface_mesh_parameterization} package to access meshes in a uniform manner.
 
 %END-AUTO(\ccIsModel)
 
@@ -55,7 +55,7 @@ Model of ParameterizationPatchableMesh\_3 concept, whose purpose is to allow the
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-Parameterization\_polyhedron\_adaptor\_3 is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the Polyhedron interface to match the ParameterizationPatchableMesh\_3 concept.
+\ccc{Parameterization_polyhedron_adaptor_3} is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the Polyhedron interface to match the \ccc{ParameterizationPatchableMesh_3} concept.
 
 %END-AUTO(\ccHeading{Design Pattern})
 
@@ -68,8 +68,8 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class Polyhedron\_3\_$>$   \\
-class Parameterization\_polyhedron\_adaptor\_3;
+class \ccc{Polyhedron_3_}$>$   \\
+class \ccc{Parameterization_polyhedron_adaptor_3};
 
 %END-AUTO(\ccParameters)
 
@@ -203,7 +203,7 @@ Clockwise circulator over the vertices incident to a vertex. Model of the Bidire
 
 \ccConstructor{Parameterization_polyhedron_adaptor_3 (Polyhedron & mesh);}
 {
-Create an adaptator for an existing Polyhedron\_3 mesh. The input mesh can be of any genus. It can have have any number of borders. Its {\em main border} will be the mesh's longest border (if there is at least one border).
+Create an adaptator for an existing \ccc{Polyhedron_3} mesh. The input mesh can be of any genus. It can have have any number of borders. Its {\em main border} will be the mesh's longest border (if there is at least one border).
 }
 \ccGlue
 
@@ -280,7 +280,7 @@ Count the number of vertices of the mesh.
 \ccGlue
 \ccMethod{void index_mesh_vertices ();}
 {
-Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.
+Index vertices of the mesh from 0 to \ccc{count_mesh_vertices}()-1.
 }
 \ccGlue
 \ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
@@ -303,7 +303,7 @@ Get iterator over past-the-end vertex of mesh's {\em main border}.
 \ccGlue
 \ccMethod{std::list<Vertex_handle> get_border (Vertex_handle seed_vertex);}
 {
-Return the border containing seed\_vertex. Return an empty list if not found.
+Return the border containing \ccc{seed_vertex}. Return an empty list if not found.
 }
 \ccGlue
 \ccMethod{Facet_iterator mesh_facets_begin ();}
@@ -406,7 +406,7 @@ Return true if a vertex belongs to the UNIQUE mesh's main border, ie the mesh's 
 \ccGlue
 \ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin (Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
 {
-Get circulator over the vertices incident to 'vertex'. 'start\_position' defines the optional initial position of the circulator.
+Get circulator over the vertices incident to 'vertex'. '\ccc{start_position}' defines the optional initial position of the circulator.
 }
 \ccGlue
 \ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = Vertex_const_handle()) const;}
@@ -433,7 +433,7 @@ Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to th
 \ccGlue
 \ccMethod{Point_2 get_corners_uv (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set the 2D position (= (u,v) pair) of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set the 2D position (= (u,v) pair) of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined. (stored in incident halfedges).
 }
 \ccGlue
 \ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 & uv);}
@@ -442,7 +442,7 @@ Get/set the 2D position (= (u,v) pair) of corners at the {\em right} of the prev
 \ccGlue
 \ccMethod{bool are_corners_parameterized (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set {\em is parameterized} field of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set {\em is parameterized} field of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined. (stored in incident halfedges).
 }
 \ccGlue
 \ccMethod{void set_corners_parameterized (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
@@ -451,7 +451,7 @@ Get/set {\em is parameterized} field of corners at the {\em right} of the prev\_
 \ccGlue
 \ccMethod{int get_corners_index (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set index of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set index of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined. (stored in incident halfedges).
 }
 \ccGlue
 \ccMethod{void set_corners_index (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
@@ -460,7 +460,7 @@ Get/set index of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$
 \ccGlue
 \ccMethod{int get_corners_tag (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
-Get/set all purpose tag of corners at the {\em right} of the prev\_vertex -$>$ vertex -$>$ next\_vertex line. Default value is undefined. (stored in incident halfedges).
+Get/set all purpose tag of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined. (stored in incident halfedges).
 }
 \ccGlue
 \ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}

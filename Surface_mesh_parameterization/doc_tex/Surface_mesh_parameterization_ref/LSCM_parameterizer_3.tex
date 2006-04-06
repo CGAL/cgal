@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class LSCM\_parameterizer\_3 implements the Least Squares Conformal Maps (LSCM) parameterization \cite{cgal:lprm-lscm-02}.
+The class \ccc{LSCM_parameterizer_3} implements the Least Squares Conformal Maps (LSCM) parameterization \cite{cgal:lprm-lscm-02}.
 
 This is a conformal parameterization, i.e. it attempts to preserve angles.
 
@@ -39,7 +39,7 @@ This is a free border parameterization. No need to map the surface's border onto
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the ParameterizerTraits\_3 concept.
+Model of the \ccc{ParameterizerTraits_3} concept.
 
 %END-AUTO(\ccIsModel)
 
@@ -52,10 +52,10 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class ParameterizationMesh\_3,   \\
-class BorderParameterizer\_3 = Two\_vertices\_parameterizer\_3$<$ParameterizationMesh\_3$>$,   \\
-class SparseLinearAlgebraTraits\_d = OpenNL::SymmetricLinearSolverTraits$<$typename ParameterizationMesh\_3::NT$>$$>$   \\
-class LSCM\_parameterizer\_3;
+class \ccc{ParameterizationMesh_3},   \\
+class \ccc{BorderParameterizer_3} = \ccc{Two_vertices_parameterizer_3<ParameterizationMesh_3>},   \\
+class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
+class \ccc{LSCM_parameterizer_3};
 
 %END-AUTO(\ccParameters)
 
@@ -67,12 +67,12 @@ class LSCM\_parameterizer\_3;
 
 \ccNestedType{Border_param}
 {
-Export BorderParameterizer\_3 template parameter.
+Export \ccc{BorderParameterizer_3} template parameter.
 }
 \ccGlue
 \ccNestedType{Sparse_LA}
 {
-Export SparseLinearAlgebraTraits\_d template parameter.
+Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
 }
 \ccGlue
 
@@ -93,7 +93,7 @@ Constructor.
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[border\_param]Object that maps the surface's border to 2D space \item[sparse\_la]Traits object to access a sparse linear system \end{description}
+\item[\ccc{border_param}]Object that maps the surface's border to 2D space \item[\ccc{sparse_la}]Traits object to access a sparse linear system \end{description}
 \end{description}
 \ccGlue
 
@@ -127,7 +127,7 @@ Preconditions:\begin{itemize}
 \ccGlue
 \ccMethod{void project_triangle (const Point_3 & p0, const Point_3 & p1, const Point_3 & p2, Point_2 & z0, Point_2 & z1, Point_2 & z2);}
 {
-Utility for setup\_triangle\_relations(): Computes the coordinates of the vertices of a triangle in a local 2D orthonormal basis of the triangle's plane.
+Utility for \ccc{setup_triangle_relations}(): Computes the coordinates of the vertices of a triangle in a local 2D orthonormal basis of the triangle's plane.
 }
 \ccGlue
 \ccMethod{Parameterizer_traits_3< Adaptor >::Error_code setup_triangle_relations (LeastSquaresSolver & solver, const Adaptor & mesh, Facet_const_handle facet);}

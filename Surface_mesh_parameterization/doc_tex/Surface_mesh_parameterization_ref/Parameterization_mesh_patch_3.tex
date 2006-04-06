@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Parameterization\_mesh\_patch\_3 is a Decorator class to {\em virtually} cut a patch in a ParameterizationPatchableMesh\_3 3D surface. Only the patch is exported, making the 3D surface look like a topological disk.
+\ccc{Parameterization_mesh_patch_3} is a Decorator class to {\em virtually} cut a patch in a \ccc{ParameterizationPatchableMesh_3} 3D surface. Only the patch is exported, making the 3D surface look like a topological disk.
 
 The input mesh can be of any genus, but it has to come with a {\em seam} that describes the border of a topological disc. This border may be an actual border of the mesh or a virtual border.
 
@@ -37,7 +37,7 @@ The input mesh can be of any genus, but it has to come with a {\em seam} that de
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of ParameterizationMesh\_3 concept, whose purpose is to allow the Surface\_mesh\_parameterization package to access meshes in a uniform manner.
+Model of \ccc{ParameterizationMesh_3} concept, whose purpose is to allow the \ccc{Surface_mesh_parameterization} package to access meshes in a uniform manner.
 
 %END-AUTO(\ccIsModel)
 
@@ -47,7 +47,7 @@ Model of ParameterizationMesh\_3 concept, whose purpose is to allow the Surface\
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-Parameterization\_mesh\_patch\_3 is a Decorator \cite{cgal:ghjv-dpero-95}: it changes the behavior of a ParameterizationPatchableMesh\_3 3D surface while keeping its ParameterizationMesh\_3 interface.
+\ccc{Parameterization_mesh_patch_3} is a Decorator \cite{cgal:ghjv-dpero-95}: it changes the behavior of a \ccc{ParameterizationPatchableMesh_3} 3D surface while keeping its \ccc{ParameterizationMesh_3} interface.
 
 %END-AUTO(\ccHeading{Design Pattern})
 
@@ -60,8 +60,8 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class ParameterizationPatchableMesh\_3$>$   \\
-class Parameterization\_mesh\_patch\_3;
+class \ccc{ParameterizationPatchableMesh_3}$>$   \\
+class \ccc{Parameterization_mesh_patch_3};
 
 %END-AUTO(\ccParameters)
 
@@ -195,9 +195,9 @@ Clockwise circulator over the vertices incident to a vertex. Model of the Bidire
 
 \ccConstructor{Parameterization_mesh_patch_3 (Adaptor & mesh, InputIterator first_seam_vertex, InputIterator end_seam_vertex);}
 {
-Create a Decorator for an existing ParameterizationPatchableMesh\_3 mesh. The input mesh can be of any genus, but it has to come with a {\em seam} that describes the border of a topological disc. This border may be an actual border of the mesh or a virtual border.
+Create a Decorator for an existing \ccc{ParameterizationPatchableMesh_3} mesh. The input mesh can be of any genus, but it has to come with a {\em seam} that describes the border of a topological disc. This border may be an actual border of the mesh or a virtual border.
 Preconditions:\begin{itemize}
-\item first\_seam\_vertex -$>$ end\_seam\_vertex defines the outer seam, ie Parameterization\_mesh\_patch\_3 will export the {\em right} of the seam.\item the {\em seam} is given as a container of Adaptor::Vertex\_handle elements. \end{itemize}
+\item \ccc{first_seam_vertex} -$>$ \ccc{end_seam_vertex} defines the outer seam, ie \ccc{Parameterization_mesh_patch_3} will export the {\em right} of the seam.\item the {\em seam} is given as a container of \ccc{Adaptor::Vertex_handle} elements. \end{itemize}
 }
 \ccGlue
 
@@ -247,7 +247,7 @@ Count the number of vertices of the mesh.
 \ccGlue
 \ccMethod{void index_mesh_vertices ();}
 {
-Index vertices of the mesh from 0 to count\_mesh\_vertices()-1.
+Index vertices of the mesh from 0 to \ccc{count_mesh_vertices}()-1.
 }
 \ccGlue
 \ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
@@ -270,7 +270,7 @@ Get iterator over past-the-end vertex of mesh's main border (aka {\em seam}).
 \ccGlue
 \ccMethod{std::list<Vertex_handle> get_border (Vertex_handle seed_vertex);}
 {
-Return the border containing seed\_vertex. Return an empty list if not found.
+Return the border containing \ccc{seed_vertex}. Return an empty list if not found.
 }
 \ccGlue
 \ccMethod{Facet_iterator mesh_facets_begin ();}
@@ -373,7 +373,7 @@ Return true if a vertex belongs to the UNIQUE mesh's main border set by the cons
 \ccGlue
 \ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin (Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
 {
-Get circulator over the vertices incident to 'vertex'. 'start\_position' defines the optional initial position of the circulator.
+Get circulator over the vertices incident to 'vertex'. '\ccc{start_position}' defines the optional initial position of the circulator.
 }
 \ccGlue
 \ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = Vertex_const_handle()) const;}

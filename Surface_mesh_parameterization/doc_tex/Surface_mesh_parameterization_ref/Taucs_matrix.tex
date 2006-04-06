@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class Taucs\_matrix is a C++ wrapper around TAUCS' matrix type taucs\_ccs\_matrix.
+The class \ccc{Taucs_matrix} is a C++ wrapper around TAUCS' matrix type \ccc{taucs_ccs_matrix}.
 
 This kind of matrix can be either symmetric or not. Symmetric matrices store only the lower triangle.
 
@@ -37,7 +37,7 @@ This kind of matrix can be either symmetric or not. Symmetric matrices store onl
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the SparseLinearAlgebraTraits\_d::Matrix concept.
+Model of the \ccc{SparseLinearAlgebraTraits_d::Matrix} concept.
 
 %END-AUTO(\ccIsModel)
 
@@ -51,7 +51,7 @@ The full template declaration is:
 
 template$<$  \\
 class T$>$   \\
-struct Taucs\_matrix;
+struct \ccc{Taucs_matrix};
 
 %END-AUTO(\ccParameters)
 
@@ -83,7 +83,7 @@ Create a square matrix initialized with zeros.
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[dim]Matrix dimension. \item[is\_symmetric]Symmetric/hermitian? \end{description}
+\item[dim]Matrix dimension. \item[\ccc{is_symmetric}]Symmetric/hermitian? \end{description}
 \end{description}
 \ccGlue
 \ccConstructor{Taucs_matrix (int rows, int columns, bool is_symmetric = false);}
@@ -94,7 +94,7 @@ Create a rectangular matrix initialized with zeros.
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[rows]Matrix dimensions. \item[is\_symmetric]Symmetric/hermitian? \end{description}
+\item[rows]Matrix dimensions. \item[\ccc{is_symmetric}]Symmetric/hermitian? \end{description}
 \end{description}
 \ccGlue
 
@@ -120,28 +120,28 @@ Return the matrix number of columns.
 {
 Read access to a matrix coefficient.
 Preconditions:\begin{itemize}
-\item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
+\item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
 \ccMethod{void set_coef (int i, int j, T val);}
 {
-Write access to a matrix coefficient: a\_ij $<$- val.
-Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle set\_coef() does nothing if (i, j) belongs to the upper triangle.
+Write access to a matrix coefficient: \ccc{a_ij} $<$- val.
+Optimization: For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{set_coef}() does nothing if (i, j) belongs to the upper triangle.
 Preconditions:\begin{itemize}
-\item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
+\item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
 \ccMethod{void add_coef (int i, int j, T val);}
 {
-Write access to a matrix coefficient: a\_ij $<$- a\_ij + val.
-Optimization: For symmetric matrices, Taucs\_matrix stores only the lower triangle add\_coef() does nothing if (i, j) belongs to the upper triangle.
+Write access to a matrix coefficient: \ccc{a_ij} $<$- \ccc{a_ij} + val.
+Optimization: For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{add_coef}() does nothing if (i, j) belongs to the upper triangle.
 Preconditions:\begin{itemize}
-\item 0 $<$= i $<$ row\_dimension().\item 0 $<$= j $<$ column\_dimension(). \end{itemize}
+\item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
 \ccMethod{const taucs_ccs_matrix* get_taucs_matrix () const;}
 {
-Construct and return the TAUCS matrix wrapped by this object. Note: the TAUCS matrix returned by this method is valid only until the next call to set\_coef(), add\_coef() or get\_taucs\_matrix().
+Construct and return the TAUCS matrix wrapped by this object. Note: the TAUCS matrix returned by this method is valid only until the next call to \ccc{set_coef}(), \ccc{add_coef}() or \ccc{get_taucs_matrix}().
 }
 \ccGlue
 

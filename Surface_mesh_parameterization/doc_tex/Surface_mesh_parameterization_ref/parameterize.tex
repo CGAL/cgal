@@ -46,13 +46,13 @@ Preconditions:\begin{itemize}
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[mesh]3D mesh, model of ParameterizationMesh\_3 concept \end{description}
+\item[mesh]3D mesh, model of \ccc{ParameterizationMesh_3} concept \end{description}
 \end{description}
 \ccGlue
 \ccFunction{Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (ParameterizationMesh_3 & mesh, ParameterizerTraits_3 parameterizer);}
 {
 Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a simple 2D domain. The mapping is piecewise linear on the triangle mesh. The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
-One-to-one mapping may be guaranteed or not, depending on the chosen ParametizerTraits\_3 algorithm.
+One-to-one mapping may be guaranteed or not, depending on the chosen \ccc{ParametizerTraits_3} algorithm.
 Preconditions:\begin{itemize}
 \item 'mesh' must be a surface with one connected component.\item 'mesh' must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon (for fixed border parameterizations).\end{itemize}
 }
@@ -60,7 +60,7 @@ Preconditions:\begin{itemize}
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[mesh]3D mesh, model of ParameterizationMesh\_3 \item[parameterizer]Parameterization method for 'mesh' \end{description}
+\item[mesh]3D mesh, model of \ccc{ParameterizationMesh_3} \item[parameterizer]Parameterization method for 'mesh' \end{description}
 \end{description}
 \ccGlue
 
@@ -75,15 +75,15 @@ The full template declarations are:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class ParameterizationMesh\_3$>$  \\
-Parameterizer\_traits\_3$<$ ParameterizationMesh\_3 $>$::Error\_code  \\
-parameterize (ParameterizationMesh\_3 \&mesh);  \\
+class \ccc{ParameterizationMesh_3}$>$  \\
+\ccc{Parameterizer_traits_3< ParameterizationMesh_3 >::Error_code}  \\
+parameterize (\ccc{ParameterizationMesh_3} \&mesh);  \\
   \\
 template$<$  \\
-class ParameterizationMesh\_3,   \\
-class ParameterizerTraits\_3$>$  \\
-Parameterizer\_traits\_3$<$ ParameterizationMesh\_3 $>$::Error\_code  \\
-parameterize (ParameterizationMesh\_3 \&mesh, ParameterizerTraits\_3 parameterizer);  \\
+class \ccc{ParameterizationMesh_3},   \\
+class \ccc{ParameterizerTraits_3}$>$  \\
+\ccc{Parameterizer_traits_3< ParameterizationMesh_3 >::Error_code}  \\
+parameterize (\ccc{ParameterizationMesh_3} \&mesh, \ccc{ParameterizerTraits_3} parameterizer);  \\
   \\
 
 %END-AUTO(\ccParameters)

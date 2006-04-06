@@ -23,10 +23,10 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class Parameterizer\_traits\_3 is the base class of all parameterization methods. This class is a pure virtual class, thus cannot be instantiated.
+The class \ccc{Parameterizer_traits_3} is the base class of all parameterization methods. This class is a pure virtual class, thus cannot be instantiated.
 
-This class doesn't do much. Its main goal is to ensure that subclasses will be proper models of the ParameterizerTraits\_3 concept:\begin{itemize}
-\item Parameterizer\_traits\_3 defines the Error\_code list of errors detected by this package\item Parameterizer\_traits\_3 declares a pure virtual method parameterize()\end{itemize}
+This class doesn't do much. Its main goal is to ensure that subclasses will be proper models of the \ccc{ParameterizerTraits_3} concept:\begin{itemize}
+\item \ccc{Parameterizer_traits_3} defines the \ccc{Error_code} list of errors detected by this package\item \ccc{Parameterizer_traits_3} declares a pure virtual method parameterize()\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -38,7 +38,7 @@ This class doesn't do much. Its main goal is to ensure that subclasses will be p
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the ParameterizerTraits\_3 concept (although you cannot instantiate this class).
+Model of the \ccc{ParameterizerTraits_3} concept (although you cannot instantiate this class).
 
 %END-AUTO(\ccIsModel)
 
@@ -51,8 +51,8 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class ParameterizationMesh\_3$>$   \\
-class Parameterizer\_traits\_3;
+class \ccc{ParameterizationMesh_3}$>$   \\
+class \ccc{Parameterizer_traits_3};
 
 %END-AUTO(\ccParameters)
 
@@ -64,7 +64,7 @@ class Parameterizer\_traits\_3;
 
 \ccNestedType{Adaptor}
 {
-Export ParameterizationMesh\_3 template parameter.
+Export \ccc{ParameterizationMesh_3} template parameter.
 }
 \ccGlue
 
@@ -85,14 +85,14 @@ List of errors detected by this package.
 \item[Enumeration values: ]
 \begin{description}
 \item[OK
-]Success. \item[ERROR\_EMPTY\_MESH
-]input mesh is empty \item[ERROR\_NON\_TRIANGULAR\_MESH
-]input mesh is not triangular \item[ERROR\_NO\_SURFACE\_MESH
-]input mesh is not a surface \item[ERROR\_INVALID\_BORDER
-]parameterization requires a convex border \item[ERROR\_CANNOT\_SOLVE\_LINEAR\_SYSTEM
-]cannot solve linear system \item[ERROR\_NO\_1\_TO\_1\_MAPPING
-]parameterization does not ensure a one-to-one mapping \item[ERROR\_NOT\_ENOUGH\_MEMORY
-]not enough memory \item[ERROR\_WRONG\_PARAMETER
+]Success. \item[\ccc{ERROR_EMPTY_MESH}
+]input mesh is empty \item[\ccc{ERROR_NON_TRIANGULAR_MESH}
+]input mesh is not triangular \item[\ccc{ERROR_NO_SURFACE_MESH}
+]input mesh is not a surface \item[\ccc{ERROR_INVALID_BORDER}
+]parameterization requires a convex border \item[\ccc{ERROR_CANNOT_SOLVE_LINEAR_SYSTEM}
+]cannot solve linear system \item[\ccc{ERROR_NO_1_TO_1_MAPPING}
+]parameterization does not ensure a one-to-one mapping \item[\ccc{ERROR_NOT_ENOUGH_MEMORY}
+]not enough memory \item[\ccc{ERROR_WRONG_PARAMETER}
 ]a method received an unexpected parameter \end{description}
 \end{description}
 \ccGlue
@@ -133,7 +133,7 @@ Get message (in english) corresponding to an error code
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[error\_code]The code returned by parameterize() \end{description}
+\item[\ccc{error_code}]The code returned by parameterize() \end{description}
 \end{description}
 \begin{description}
 \item[Returns:]The string describing the error code \end{description}

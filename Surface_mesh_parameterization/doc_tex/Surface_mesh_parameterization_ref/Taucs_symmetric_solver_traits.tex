@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class Taucs\_symmetric\_solver\_traits is a traits class for solving SYMMETRIC DEFINITE POSITIVE sparse linear systems using TAUCS solvers family. The default solver is the Multifrontal Supernodal Cholesky Factorization.
+The class \ccc{Taucs_symmetric_solver_traits} is a traits class for solving SYMMETRIC DEFINITE POSITIVE sparse linear systems using TAUCS solvers family. The default solver is the Multifrontal Supernodal Cholesky Factorization.
 
 %END-AUTO(\ccDefinition)
 
@@ -35,7 +35,7 @@ The class Taucs\_symmetric\_solver\_traits is a traits class for solving SYMMETR
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the SparseLinearAlgebraTraits\_d concept.
+Model of the \ccc{SparseLinearAlgebraTraits_d} concept.
 
 %END-AUTO(\ccIsModel)
 
@@ -49,7 +49,7 @@ The full template declaration is:
 
 template$<$  \\
 class T$>$   \\
-class Taucs\_symmetric\_solver\_traits;
+class \ccc{Taucs_symmetric_solver_traits};
 
 %END-AUTO(\ccParameters)
 
@@ -83,7 +83,7 @@ class Taucs\_symmetric\_solver\_traits;
 
 \ccConstructor{Taucs_symmetric_solver_traits (const char * options[] = NULL, const void * arguments[] = NULL);}
 {
-Create a TAUCS sparse linear solver for SYMMETRIC DEFINITE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See taucs\_linsolve() documentation for the meaning of the 'options' and 'arguments' parameters. 
+Create a TAUCS sparse linear solver for SYMMETRIC DEFINITE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See \ccc{taucs_linsolve}() documentation for the meaning of the 'options' and 'arguments' parameters. 
 }
 \ccGlue
 \begin{description}
@@ -105,7 +105,7 @@ Create a TAUCS sparse linear solver for SYMMETRIC DEFINITE POSITIVE matrices. Th
 {
 Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
 Preconditions:\begin{itemize}
-\item A.row\_dimension() == B.dimension().\item A.column\_dimension() == X.dimension(). \end{itemize}
+\item A.\ccc{row_dimension}() == B.dimension().\item A.\ccc{column_dimension}() == X.dimension(). \end{itemize}
 }
 \ccGlue
 

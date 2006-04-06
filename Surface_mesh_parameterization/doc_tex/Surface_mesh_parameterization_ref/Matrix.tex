@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-SparseLinearAlgebraTraits\_d::Matrix is a concept of a sparse matrix class.
+\ccc{SparseLinearAlgebraTraits_d::Matrix} is a concept of a sparse matrix class.
 
 %END-AUTO(\ccDefinition)
 
@@ -33,7 +33,7 @@ SparseLinearAlgebraTraits\_d::Matrix is a concept of a sparse matrix class.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccRefines)
 
-This is a sub-concept of LinearAlgebraTraits\_d::Matrix.
+This is a sub-concept of \ccc{LinearAlgebraTraits_d::Matrix}.
 
 %END-AUTO(\ccRefines)
 
@@ -90,21 +90,21 @@ Return the matrix number of columns.
 {
 Read access to a matrix coefficient.
 Preconditions:\begin{itemize}
-\item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
+\item 0 $<$= row $<$ \ccc{row_dimension}().\item 0 $<$= column $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
 \ccMethod{void add_coef (int row, int column, NT value);}
 {
-Write access to a matrix coefficient: a\_ij $<$- a\_ij + val.
+Write access to a matrix coefficient: \ccc{a_ij} $<$- \ccc{a_ij} + val.
 Preconditions:\begin{itemize}
-\item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
+\item 0 $<$= row $<$ \ccc{row_dimension}().\item 0 $<$= column $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
 \ccMethod{void set_coef (int row, int column, NT value);}
 {
 Write access to a matrix coefficient.
 Preconditions:\begin{itemize}
-\item 0 $<$= row $<$ row\_dimension().\item 0 $<$= column $<$ column\_dimension(). \end{itemize}
+\item 0 $<$= row $<$ \ccc{row_dimension}().\item 0 $<$= column $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
 

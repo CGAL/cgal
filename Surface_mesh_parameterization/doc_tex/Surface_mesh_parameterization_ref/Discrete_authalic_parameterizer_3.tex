@@ -23,14 +23,14 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class Discrete\_authalic\_parameterizer\_3 implements the Discrete Authalic Parameterization algorithm \cite{cgal:dma-ipsm-02}. This method is sometimes called {\em DAP} or just {\em Authalic parameterization}.
+The class \ccc{Discrete_authalic_parameterizer_3} implements the Discrete Authalic Parameterization algorithm \cite{cgal:dma-ipsm-02}. This method is sometimes called {\em DAP} or just {\em Authalic parameterization}.
 
 DAP is a weak area-preserving parameterization. It is a compromise between area-preserving and angle-preserving.
 
 One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
-This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm Fixed\_border\_parameterizer\_3::parameterize(). Discrete\_authalic\_parameterizer\_3:\begin{itemize}
-\item provides default BorderParameterizer\_3 and SparseLinearAlgebraTraits\_d template parameters that make sense.\item implements compute\_w\_ij() to compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.\end{itemize}
+This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). \ccc{Discrete_authalic_parameterizer_3}:\begin{itemize}
+\item provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -42,7 +42,7 @@ This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameteri
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the ParameterizerTraits\_3 concept.
+Model of the \ccc{ParameterizerTraits_3} concept.
 
 %END-AUTO(\ccIsModel)
 
@@ -55,10 +55,10 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class ParameterizationMesh\_3,   \\
-class BorderParameterizer\_3 = Circular\_border\_arc\_length\_parameterizer\_3$<$ParameterizationMesh\_3$>$,   \\
-class SparseLinearAlgebraTraits\_d = OpenNL::DefaultLinearSolverTraits$<$typename ParameterizationMesh\_3::NT$>$$>$   \\
-class Discrete\_authalic\_parameterizer\_3;
+class \ccc{ParameterizationMesh_3},   \\
+class \ccc{BorderParameterizer_3} = \ccc{Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>},   \\
+class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
+class \ccc{Discrete_authalic_parameterizer_3};
 
 %END-AUTO(\ccParameters)
 
@@ -87,7 +87,7 @@ Constructor.
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[border\_param]Object that maps the surface's border to 2D space. \item[sparse\_la]Traits object to access a sparse linear system. \end{description}
+\item[\ccc{border_param}]Object that maps the surface's border to 2D space. \item[\ccc{sparse_la}]Traits object to access a sparse linear system. \end{description}
 \end{description}
 \ccGlue
 
@@ -101,7 +101,7 @@ Constructor.
 
 \ccMethod{virtual NT compute_w_ij (const Adaptor & mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
 {
-Compute w\_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.
 }
 \ccGlue
 
