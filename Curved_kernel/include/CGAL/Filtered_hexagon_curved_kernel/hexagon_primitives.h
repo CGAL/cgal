@@ -32,7 +32,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
 #include <CGAL/Object.h>
 #include <CGAL/Lazy.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>

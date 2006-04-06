@@ -32,14 +32,11 @@
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpq.h>
-#  include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
 #else
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
-#  include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
 #endif
 
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
 #include <CGAL/Lazy_curved_kernel.h>
 
 CGAL_BEGIN_NAMESPACE

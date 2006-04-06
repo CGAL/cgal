@@ -30,7 +30,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
 #include <CGAL/Filtered_hexagon_curved_kernel/hexagon_primitives.h>
 
 CGAL_BEGIN_NAMESPACE

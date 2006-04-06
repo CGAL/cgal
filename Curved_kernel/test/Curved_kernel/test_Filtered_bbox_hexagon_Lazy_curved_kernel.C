@@ -7,9 +7,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 //#include <CGAL/Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
 #include <CGAL/Lazy_curved_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Filtered_bbox_curved_kernel.h>

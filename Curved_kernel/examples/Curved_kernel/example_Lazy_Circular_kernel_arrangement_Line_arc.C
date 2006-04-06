@@ -1,15 +1,7 @@
+#include <CGAL/basic.h>
 #include <utility>
-namespace CGAL {
-class MP_Float;
-template < typename T > class Root_of_2;
-template < typename T > class Lazy_exact_nt;
-template < typename T >
-std::pair<double,double> to_interval(const Root_of_2<T>&);
-}
-
 //#include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 
@@ -17,10 +9,6 @@ std::pair<double,double> to_interval(const Root_of_2<T>&);
 
 #include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/Lazy_curved_kernel.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
-#include <CGAL/NT_extensions_Root_of/double.h>
 #include <CGAL/intersections.h>
 
 #include <CGAL/Circular_kernel.h>
@@ -29,8 +17,6 @@ std::pair<double,double> to_interval(const Root_of_2<T>&);
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-
-
 
 #include <CGAL/Random.h>
 
@@ -48,9 +34,6 @@ typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2_;
 
 
 typedef CGAL::Lazy_curved_kernel<CK1_,CK2_>                  Circular_k;
-
-
-
 
 
 

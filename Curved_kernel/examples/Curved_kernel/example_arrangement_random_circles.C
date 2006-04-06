@@ -8,8 +8,6 @@
 
 #include <CGAL/Algebraic_kernel_2_2.h>
 
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-
 #include <CGAL/Circular_kernel.h>
 
 #include <CGAL/Arr_circular_arc_traits.h>

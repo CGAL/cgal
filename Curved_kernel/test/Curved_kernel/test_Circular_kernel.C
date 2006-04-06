@@ -4,8 +4,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 //#include <CGAL/Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
 #include <CGAL/_test_circles_predicates.h>
 #include <CGAL/_test_circles_constructions.h>
 #include <CGAL/_test_circles_extention.h>

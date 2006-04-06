@@ -11,10 +11,6 @@
 
 #include <CGAL/Algebraic_kernel_2_2.h>
 
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
-
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel.h>
 #include <CGAL/Lazy_curved_kernel.h>
@@ -23,7 +19,7 @@
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Filtered_hexagon_curved_kernel.h>
 #include <CGAL/Filtered_bbox_curved_kernel.h>
-#include "boost/variant.hpp"
+#include <boost/variant.hpp>
 #include <CGAL/Timer.h>
 
 

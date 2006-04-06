@@ -37,10 +37,6 @@ int main() {
 
 #include <CGAL/Algebraic_kernel_2_2.h>
 
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
-
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>

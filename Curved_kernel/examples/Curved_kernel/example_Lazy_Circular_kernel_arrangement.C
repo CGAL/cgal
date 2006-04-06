@@ -1,17 +1,8 @@
+#include <CGAL/basic.h>
 #include <utility>
-namespace CGAL {
-class MP_Float;
-template < typename T > class Root_of_2;
-template < typename T > class Lazy_exact_nt;
-template < typename T >
-std::pair<double,double> to_interval(const Root_of_2<T>&);
-
-}
-
 
 //#include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 
@@ -20,18 +11,10 @@ std::pair<double,double> to_interval(const Root_of_2<T>&);
 #include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/Lazy_curved_kernel.h>
 
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
-#include <CGAL/NT_extensions_Root_of/double.h>
-
 //#include <CGAL/IO/Qt_widget.h>
 //#include <CGAL/IO/Qt_widget_standard_toolbar.h>
 //#include <CGAL/IO/Qt_help_window.h>
 //#include <CGAL/IO/Qt_widget_layer.h>
-
-
-
 //#include <CGAL/IO/Qt_widget_circular_arc_2.h>
 //#include <CGAL/IO/Qt_widget_circular_arc_endpoint_2.h>
 
@@ -45,10 +28,7 @@ std::pair<double,double> to_interval(const Root_of_2<T>&);
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
-
-
 #include <CGAL/Random.h>
-
 
 
 typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;

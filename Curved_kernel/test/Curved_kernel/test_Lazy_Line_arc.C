@@ -13,9 +13,6 @@
 #include <CGAL/Curved_kernel/Circular_arc_2.h>
 #include <CGAL/Curved_kernel/Line_arc_2.h>
 
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
 #include <CGAL/Lazy_curved_kernel.h>
 #include <CGAL/Random.h>
 
@@ -1083,7 +1080,4 @@ int main()
   _test_compare_y_to_right(ck);
   _test_compare_y_at_x(ck);
   _test_has_on(ck);
-
-
 }
-

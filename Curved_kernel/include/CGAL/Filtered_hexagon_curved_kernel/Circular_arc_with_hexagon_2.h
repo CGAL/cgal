@@ -29,7 +29,6 @@
 #include <iterator>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
 #include <CGAL/Curved_kernel_converter.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Filtered_hexagon_curved_kernel/hexagon_primitives.h>
