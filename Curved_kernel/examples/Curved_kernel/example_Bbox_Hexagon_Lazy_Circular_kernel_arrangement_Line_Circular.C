@@ -2,8 +2,6 @@
 
 //#include <fstream>
 
-#include <CGAL/Algebraic_kernel/basic.h>
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 

@@ -1,8 +1,6 @@
 #define CGAL_CAST_INT
-#include <CGAL/Algebraic_kernel/basic.h>
-//#include <CGAL/basic.h>
-#include<CGAL/Handle_for.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/MP_Float.h>
