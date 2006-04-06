@@ -196,7 +196,7 @@
     \lciHtmlFileHeader{Package Description}%
     \lciHtmlNavigationTop
     \lcRawHtml{<H1>Package Description</H1>}
-    \lciPopOutput%    
+    \lciPopOutput%
 }{%
     % print remaining footnotes at the end of the conversion
     \lciPrintFootnotes\lciResetFootnotes
@@ -210,7 +210,7 @@
     % prepare Index Header and Footer (only if index is actually used)
     \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
     \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
-    \lciPushOutput{description}%    
+    \lciPushOutput{description}%
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter%
     \lciPopOutput%
@@ -225,7 +225,7 @@
 % to prevent dead links
 \newcommand{\lciReadBbl}[2]{%
     \lciIfFileExists{#GXC1#GXC2.bbl}%
-    {\lciInclude{#GXC1#GXC2.bbl}}%    
+    {\lciInclude{#GXC1#GXC2.bbl}}%
     {\lciOpenTmpFile{\lciBibFilename}%
      \lciBibFileHeader%
      The empty bibliography.
@@ -1047,7 +1047,7 @@
 % part
 \newcommand{\part}[1]{\part[#1]{#1}}
 \newcommand{\part@om}{%
-    
+
     \lcNoLinkSync
     \lciEndPart
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
@@ -1098,7 +1098,7 @@
     \lcRawHtml{	<a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}Up\lcRawHtml{</a>, 
+    \lcRawHtml{">}Up\lcRawHtml{</a>,
 }%
     \lciPopOutput%
     \gdef\lciFirstRefPageAlreadySeen{\lcFalse}%
@@ -1280,7 +1280,7 @@
 \newcommand{\title}[1]{\gdef\lciTitlePageTitle{#1}}
 \newcommand{\author}[1]{\gdef\lciTitlePageAuthor{#1}}
 \newcommand{\date}[1]{\gdef\lciTitlePageDate{#1}}
-\newcommand{\thanks}[1]{% 
+\newcommand{\thanks}[1]{%
   % change footnote symbols to \fnsymbol if we have documentclass article
   \lciIfEqualExpanded{\lciDocumentClass}{article}{%
     \gdef{\lciFootnoteStyle}{\lciFootnoteSymbol}\gdef{\lciFootnotePrefix}{fn_}%
@@ -1319,7 +1319,7 @@
 
     \lciIfEmpty{\lciTitlePageAuthor}{}{%
       \lciBeginScope%
-      \newcommand{\and}{\lcRawHtml{  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+      \newcommand{\and}{\lcRawHtml{  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 }}\lcRawHtml{<br><br><p class="TitlePageAuthor">
 }\lciTitlePageAuthor\lcRawHtml{</p>}%
       \lciEndScope%
@@ -1411,7 +1411,7 @@
 %\newcommand{\frac}[2]{\lcRawHtml{<TABLE><TR><TD ALIGN=CENTER>}#1\lcRawHtml
 %    {</TD></TR><TR><TD ALIGN=CENTER><hr></TD></TR><TR><TD ALIGN=CENTER>}%
 %    #2\lcRawHtml{</TD></TR></TABLE>}}
-%% correct in HTML 3.2 ?: 
+%% correct in HTML 3.2 ?:
 % \newcommand{\frac}[2]{\lcRawHtml{<BOX>}#1\lcRawHtml{<OVER>}#2\lcRawHtml{</BOX>}}
 \newcommand{\over}{/}  %% TeX style fraction
 
@@ -1460,7 +1460,7 @@
     \lciPushGlobalStack{\lciListOfAlreadyDefinedCounters}{#C1}%
     \gdef{\lciCounter#C1}{0}%
     \gdef{\the#C1}{\arabic{#1}}%
-    \gdef{\lciDependantCounter#C1}{}%   
+    \gdef{\lciDependantCounter#C1}{}%
 }
 \newcommand{\newcounter@mo}{%
     \lciPushGlobalStack{\lciListOfAlreadyDefinedCounters}{#C1}%
@@ -1635,15 +1635,15 @@
   \renewcommand{\\*}{\lciTabularNL}%
   \renewcommand{\\@o}{\lciTabularNL}%
   \renewcommand{\\*@o}{\lciTabularNL}%
-  \newcommand{\tdAttrib}{}%  
-  \newcommand{\tdAttribOrig}{}%  
+  \newcommand{\tdAttrib}{}%
+  \newcommand{\tdAttribOrig}{}%
   \newcommand{\popTDAttrib}{%
     \lciTopStack{\tdAttrib}{\lcTabularLocalVariable}%
     \lciPopStack{\tdAttrib}%
     \lcTabularLocalVariable{}%
   }%
   \newcommand{\popTDAttribQuiet}{\lciPopStack{\tdAttrib}}%
-  \lciTabularCountColumns #2\*%  
+  \lciTabularCountColumns #2\*%
   \lciReverseStack{\tdAttrib}{\tdAttribOrig}%
   \lciTabularContNL
 }
@@ -1676,7 +1676,7 @@
   \lciIfEqual{#C1}{\multicolumn}%
     {\lciTabularMulticolumn}%
     {\lcRawHtml{
-    <TD VALIGN=TOP }\popTDAttrib\lcRawHtml{>} 
+    <TD VALIGN=TOP }\popTDAttrib\lcRawHtml{>}
 #1%
     }% else next character in table entry
 }
@@ -1704,8 +1704,8 @@
     <TD }%
     \lciIfEqual{#2}{l}{ALIGN=LEFT NOWRAP} {%
     \lciIfEqual{#2}{c}{ALIGN=CENTER NOWRAP} {%
-    \lciIfEqual{#2}{r}{ALIGN=RIGHT NOWRAP}% 
-    {ALIGN=LEFT}}}% default alignment. 
+    \lciIfEqual{#2}{r}{ALIGN=RIGHT NOWRAP}%
+    {ALIGN=LEFT}}}% default alignment.
     \lcRawHtml{ VALIGN=TOP COLSPAN=#XC1>
 }#3}
 
@@ -1743,7 +1743,7 @@
 \newcommand{\ref}[1]{\lcAsciiToHtml{[ref:#1]}}
 \newcommand{\pageref}[1]{\lcAsciiToHtml{[ref:#1]}}
 
-\newcommand{\myownhyperref}{\lcAsciiToHtml{[reftext:#1][ref:#2]}}
+\newcommand{\ccRef}{\lcAsciiToHtml{[reftext:#1][ref:#2]}}
 
 \newcommand{\label}[1]{\lcRawHtml{<A NAME="#C1"></A>}%
     \edef\lciOut{\lciOutputBasename}%
@@ -1797,7 +1797,7 @@
     \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
         <A NAME="Biblio_#C1"></A><B>[#C1]</B></TD>
     <TD ALIGN=LEFT VALIGN=TOP>}%
-    \lcNoLinkBegin  
+    \lcNoLinkBegin
 }
 \newcommand{\bibitem@om}{\bibcite{#2}{#1}\bibitem{#2}}
 
@@ -1983,7 +1983,7 @@
 \newcommand{\Huge}{\lciSetFontSize{5}}
 
 
-\newcommand{\lciFontFamily}{}  %% possible values: none = roman, 
+\newcommand{\lciFontFamily}{}  %% possible values: none = roman,
                                %%     TT = sans serife or typewriter
 \newcommand{\lciFontSeries}{}  %% possible values: none = medium, B = bold
 \newcommand{\lciFontShape}{}   %% possible values: none = upright,
@@ -2019,10 +2019,10 @@
 
 %% The order of font type changes is size, family, series, and shape.
 %% For each font type change and scope change we always close all
-%% open font scopes in HTML and reopen them according to the new 
+%% open font scopes in HTML and reopen them according to the new
 %% font type. Matching closing and opening tags will be be discarded.
 
-%% Args: old-size, old-family, old-series, old-shape,  
+%% Args: old-size, old-family, old-series, old-shape,
 %%       new-size, new-family, new-series, new-shape
 \newcommand{\lciSetFont}[8]{%
     \lciIfEqual{#X1}{#X5}{%
