@@ -89,8 +89,6 @@
   \lciLogicalNotResult%
 }
 
-\gdef\lciTOCChapterNameSuffix{}
-
 \lciIfDefined{\lcStyleFile}{}{
     \newcommand{\lcStyleFile}[1]{\lciInputStyleFile{\lciConfigPath}{#XC1}}
     \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
@@ -1085,14 +1083,14 @@
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \refstepcounter{chapter}%
-    \lciChapter{#1\lciTOCChapterNameSuffix}% does also a PushOutput
+    \lciChapter{#1}% does also a PushOutput
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{chapter}%
     \lcRawHtml{	<div class="NavNext"><hr> Next chapter: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}#1\lciTOCChapterNameSuffix\lcRawHtml{</a>
+    \lcRawHtml{">}#1\lcRawHtml{</a>
 }%
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{chapter}%
     \lcRawHtml{	<a href="}%
@@ -1112,10 +1110,10 @@
     \lciHtmlNavigationTop
     \lciIfLessExpanded{\lciCountersecnumdepth}{0}%
     {%
-      \lciHtmlChapterToc{\thechapter}{#1\lciTOCChapterNameSuffix}%
+      \lciHtmlChapterToc{\thechapter}{#1}%
       \lciHtmlChapterHeader{#2}%
     }{%
-      \lciHtmlChapterToc{\thechapter}{\thechapter~~~#1\lciTOCChapterNameSuffix}%
+      \lciHtmlChapterToc{\thechapter}{\thechapter~~~#1}%
       \lciHtmlChapterHeader{Chapter \thechapter\\#2}%
     }%
 }
