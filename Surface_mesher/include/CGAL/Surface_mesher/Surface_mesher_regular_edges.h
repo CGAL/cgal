@@ -64,10 +64,6 @@ namespace CGAL {
     mutable bool bad_edges_initialized;
 
     protected:
-      bool is_in_complex(const C2t3& c, const Facet& f) const {
-	return (c.face_type(f) != C2t3::NOT_IN_COMPLEX);
-      }
-
       // computes and return an ordered pair of Vertex
       EdgeVV make_edgevv(const Vertex_handle vh1,
 			 const Vertex_handle vh2) const {
