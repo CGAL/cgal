@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
+// #include <CGAL/Simple_cartesian.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
@@ -16,9 +16,9 @@
 
 /////////////// Types /////////////// 
 
-//struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 
-struct Kernel :public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+// struct Kernel :public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
 
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Sphere_3 Sphere_3;

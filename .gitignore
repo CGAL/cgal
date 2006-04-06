@@ -267,6 +267,8 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/debug
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/error.txt
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/release
+Surface_mesher/demo/Surface_mesher/*.exe
+Surface_mesher/demo/Surface_mesher/implicit_surface_mesher
 Surface_mesher/doc_html
 Surface_mesher/doc_pdf
 Surface_mesher/doc_ps
