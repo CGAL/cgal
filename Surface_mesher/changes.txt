@@ -19,6 +19,9 @@
   Implicit_surface to use methods x(), y() and z() of points.
 
   Fully tested, etc.
+- Performance issue, in Standard_criteria.h:
+  Quality were not defined correctly, and then facets were not ordered
+  correctly, in the Double_map.
 
 5 April 2006 Laurent Rineau
 - demo now output an off file, probably non oriented.
