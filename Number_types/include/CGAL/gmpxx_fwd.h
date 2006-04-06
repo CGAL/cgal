@@ -27,6 +27,7 @@
 #ifdef CGAL_USE_GMPXX
 
 #include <gmpxx.h>
+#include <CGAL/Root_of_2_fwd.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -74,6 +75,20 @@ bool is_positive(const ::__gmp_expr<T, U> &);
 
 template < typename T, typename U >
 bool is_negative(const ::__gmp_expr<T, U> &);
+
+template <  typename U1, typename U2, typename U3 >
+Root_of_2< ::mpz_class >
+make_root_of_2(const ::__gmp_expr< __gmpz_value, U1> & a,
+               const ::__gmp_expr< __gmpz_value, U2> & b,
+               const ::__gmp_expr< __gmpz_value, U3> & c,
+               bool d);
+
+template < typename U1, typename U2, typename U3 >
+Root_of_2< ::mpz_class >
+make_root_of_2(const ::__gmp_expr< __gmpq_value, U1> & a,
+               const ::__gmp_expr< __gmpq_value, U2> & b,
+               const ::__gmp_expr< __gmpq_value, U3> & c,
+               bool d);
 
 CGAL_END_NAMESPACE
 

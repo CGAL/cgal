@@ -25,6 +25,7 @@
 #define CGAL_GMPZQ_FWD_H
 
 #include <CGAL/Quotient_fwd.h>
+#include <CGAL/Root_of_2_fwd.h>
 
 // Forward declarations of functions over Gmpz and Gmpq.
 
@@ -51,6 +52,10 @@ bool is_finite(const Gmpq &);
 std::pair<double, double> to_interval (const Gmpq &);
 
 double to_double(const Quotient<Gmpz>&);
+
+Root_of_2< CGAL::Gmpz >
+make_root_of_2(const CGAL::Gmpq &a, const CGAL::Gmpq &b,
+               const CGAL::Gmpq &c, bool d);
 
 CGAL_END_NAMESPACE
 

@@ -77,6 +77,8 @@ CGAL_END_NAMESPACE
 #include <CGAL/Quotient_fwd.h>
 #include <CGAL/Root_of_2_fwd.h>
 
+#include <CGAL/make_root_of_2.h>
+
 // We must also include the following two, because of the overloadings
 // for Quotient<MP_Float> and Quotient<Gmpz>, which triggers their
 // instantiation, even if only to_double(double) is called, at least
@@ -96,6 +98,7 @@ double to_double(Fixed_precision_nt);
 bool is_finite(Fixed_precision_nt);
 bool is_valid(Fixed_precision_nt);
 std::pair<double,double> to_interval(Fixed_precision_nt);
+
 #if 0
 // Polynomial
 
@@ -133,6 +136,7 @@ double to_double(const Nef_polynomial<ET> &);
 template <typename ET>
 Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
 #endif
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP

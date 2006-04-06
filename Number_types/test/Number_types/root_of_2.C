@@ -19,11 +19,6 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Lazy_exact_nt.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Gmpz.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Interval_nt.h>
 #include <CGAL/Root_of_2.h>
 
 #ifdef CGAL_USE_GMP
@@ -427,10 +422,12 @@ test_root_of()
   std::cout << "  Testing Root_of_2<FT>" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     int n = rnd.get_int(0, 63);
-    typename Root::FT r(n);
+    typedef typename Root::FT FT;
+    typedef CGAL::Rational_traits<FT> Rat_traits;
+    FT r(n);
     Root r1(r);
     Root r2(n);
-    Root r3(r.denominator(),- r.numerator());
+    Root r3(Rat_traits().denominator(r),- Rat_traits().numerator(r));
     assert(r1 == r1);
     assert(r2 == r2);
     assert(r3 == r3);
@@ -476,8 +473,8 @@ int main(int argc, char **argv) {
   std::cout << "Testing Root_of_2<mpq_class>" << std::endl;
   result = result && test_root_of<Root_of_2<mpq_class> >();
 
-  std::cout << "Testing Root_of_2<Quotient<mpz_class> >" << std::endl;
-  result = result && test_root_of<Root_of_2<CGAL::Quotient<mpz_class> > >();
+  //std::cout << "Testing Root_of_2<Quotient<mpz_class> >" << std::endl;
+  //result = result && test_root_of<Root_of_2<CGAL::Quotient<mpz_class> > >();
 
   std::cout << "Testing Root_of_2<mpz_class>" << std::endl;
   result = result && test_root_of<Root_of_2<mpz_class> >();

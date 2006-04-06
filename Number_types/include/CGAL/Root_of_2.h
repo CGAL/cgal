@@ -24,6 +24,7 @@
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/Root_of_2_fwd.h>
+#include <CGAL/Root_of_traits.h>
 #include <CGAL/NT_converter.h>
 
 #include <CGAL/enum.h>
@@ -80,8 +81,6 @@ namespace CGAL {
 //   root of degree 1 polynomials.  It would be nice to have a separate
 //   polynomial class which performed this task (and others)...
 // - overloaded versions of make_root_of_2<>() for Lazy_exact_nt<> and others.
-
-template < typename RT >  struct Root_of_traits;
 
 template < typename RT_ >
 class Root_of_2 {
@@ -202,31 +201,6 @@ public:
 }; // Root_of_2
 
 
-template < typename RT >  class Root_of_2;
-template < typename RT >  class Root_of_3;
-template < typename RT >  class Root_of_4;
-
-// Template default version generating a Root_of_2<>.
-template < typename RT >
-inline
-Root_of_2<RT>
-make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller)
-{
-  CGAL_assertion( a != 0 );
-  return Root_of_2<RT>(a, b, c, smaller);
-}
-
-//Default Traits class for RT types
-template < typename RT >
-struct Root_of_traits
-{
-  typedef Quotient< RT >   RootOf_1;
-  typedef Root_of_2< RT >  RootOf_2;
-  typedef Root_of_3< RT >  RootOf_3;
-  typedef Root_of_4< RT >  RootOf_4;
-};
-
-
 template < class NT1,class NT2 >
 struct NT_converter < Root_of_2<NT1> , Root_of_2<NT2> >
   : public std::unary_function< NT1, NT2 >
@@ -265,51 +239,6 @@ struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
     }
 };
 
-  namespace CGALi {
-
-    // This version is internal and can be re-used for
-    // number types which also support division and sqrt().
-    template < typename NT >
-    NT
-    make_root_of_2_sqrt(const NT &a, const NT &b, const NT &c, bool smaller)
-    {
-      CGAL_assertion( a != 0 );
-      NT discriminant = CGAL_NTS square(b) - a*c*4;
-      CGAL_assertion( discriminant >= 0 );
-      NT d = sqrt(discriminant);
-      if ((smaller && a>0) || (!smaller && a<0))
-        d = -d;
-      return (d-b)/(a*2);
-    }
-
-    // This version is internal and can be re-used for
-    // number types which are rational.
-    template < typename RT, typename FT >
-    Root_of_2< RT >
-    make_root_of_2_rational(const FT &a, const FT &b, const FT &c, bool smaller)
-    {
-      typedef CGAL::Rational_traits< FT > Rational;
-
-      Rational r;
-      // CGAL_assertion( r.denominator(a) > 0 );
-      // CGAL_assertion( r.denominator(b) > 0 );
-      // CGAL_assertion( r.denominator(c) > 0 );
-
-/*   const RT lcm = ( r.denominator(a) * r.denominator(b) * r.denominator(c)          )/
-               ( gcd( r.denominator(a), gcd(r.denominator(b), r.denominator(c)) ) );
-
-      RT a_ = r.numerator(a) * ( lcm / r.denominator(a) );
-      RT b_ = r.numerator(b) * ( lcm / r.denominator(b) );
-      RT c_ = r.numerator(c) * ( lcm / r.denominator(c) );
-*/
-      RT a_ = r.numerator(a) * r.denominator(b) * r.denominator(c);
-      RT b_ = r.numerator(b) * r.denominator(a) * r.denominator(c);
-      RT c_ = r.numerator(c) * r.denominator(a) * r.denominator(b);
-
-      return make_root_of_2(a_,b_,c_,smaller);
-    }
-
-  } // namespace CGALi
 
 template < typename RT >
 Sign

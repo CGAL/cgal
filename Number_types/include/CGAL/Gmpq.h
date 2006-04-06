@@ -38,6 +38,10 @@
 
 #include <boost/operators.hpp>
 
+#include <CGAL/make_root_of_2.h>
+#include <CGAL/Root_of_traits.h>
+#include <CGAL/Root_of_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
 // TODO : add mixed operators with Gmpz.
@@ -317,6 +321,23 @@ struct Rational_traits<Gmpq> {
   { return Gmpq(n, d); }
   Gmpq make_rational (const Gmpq & n, const Gmpq & d) const
   { return n / d; }
+};
+
+
+inline
+Root_of_2< CGAL::Gmpz >
+make_root_of_2(const CGAL::Gmpq &a, const CGAL::Gmpq &b,
+               const CGAL::Gmpq &c, bool d)
+{
+  return CGALi::make_root_of_2_rational< CGAL::Gmpz, CGAL::Gmpq >(a,b,c,d);
+}
+
+// CGAL::Gmpq is the same as Root_of_traits< CGAL::Gmpz >::RootOf_1
+template <>
+struct Root_of_traits< CGAL::Gmpq >
+{
+  typedef CGAL::Gmpq               RootOf_1;
+  typedef Root_of_2< CGAL::Gmpz >  RootOf_2;
 };
 
 CGAL_END_NAMESPACE

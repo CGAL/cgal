@@ -42,6 +42,9 @@
 
 #include <boost/operators.hpp>
 
+#include <CGAL/Root_of_traits.h>
+#include <CGAL/Root_of_2_fwd.h>
+
 CGAL_BEGIN_NAMESPACE
 
 // TODO : benchmark without ref-counting, and maybe give the possibility
@@ -471,6 +474,27 @@ double to_double(const Quotient<Gmpz>& quot)
   double ret = mpq_get_d(mpQ);
   mpq_clear(mpQ);
   return ret;
+}
+
+CGAL_END_NAMESPACE
+
+#include <CGAL/Root_of_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <>
+struct Root_of_traits< CGAL::Gmpz >
+{
+  typedef CGAL::Gmpq               RootOf_1;
+  typedef Root_of_2< CGAL::Gmpz >  RootOf_2;
+};
+
+inline
+Root_of_2<Gmpz>
+make_root_of_2(const Gmpz &a, const Gmpz &b, const Gmpz &c, bool smaller)
+{
+  CGAL_assertion( a != 0 );
+  return Root_of_2<Gmpz>(a, b, c, smaller);
 }
 
 CGAL_END_NAMESPACE

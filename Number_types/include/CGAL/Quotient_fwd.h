@@ -27,6 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class NT> class Quotient;
+template <class RT> class Root_of_traits;
 
 template <class NT>
 Quotient<NT> sqrt(const Quotient<NT> &);
@@ -45,6 +46,11 @@ bool is_valid(const Quotient<NT>&);
 
 template <class NT>
 bool is_finite(const Quotient<NT>&);
+
+template < class NT >
+typename Root_of_traits< NT >::RootOf_2
+make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
+               const Quotient< NT > &c, bool d);
 
 CGAL_END_NAMESPACE
 

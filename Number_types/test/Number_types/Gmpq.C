@@ -1,6 +1,7 @@
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_GMP
 
-#include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 

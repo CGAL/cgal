@@ -32,6 +32,9 @@
 #include <gmpxx.h>
 #include <mpfr.h>
 
+#include <CGAL/Root_of_traits.h>
+#include <CGAL/Root_of_2.h>
+
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
 // - mpz_class
@@ -200,6 +203,63 @@ bool
 is_negative(const ::__gmp_expr<T, U> & e)
 { return ::sgn(e) < 0; }
 
+
+// XXX : __gmpz_value does not work with GMP >= 4.2
+// Idea for fixing : parameterize by __gmp_expr<T, U[123]>, and add
+// a CGALi function taking a __gmp_expr<T, T> as pointer to distinguish,
+// matching mp[zq]_class.
+template <  typename U1, typename U2, typename U3 >
+inline
+Root_of_2< ::mpz_class >
+make_root_of_2(const ::__gmp_expr< __gmpz_value, U1> & a,
+               const ::__gmp_expr< __gmpz_value, U2> & b,
+               const ::__gmp_expr< __gmpz_value, U3> & c,
+               bool d)
+{
+  return Root_of_2< ::mpz_class >(a, b, c, d);
+}
+
+template < typename U1, typename U2, typename U3 >
+inline
+Root_of_2< ::mpz_class >
+make_root_of_2(const ::__gmp_expr< __gmpq_value, U1> & a,
+               const ::__gmp_expr< __gmpq_value, U2> & b,
+               const ::__gmp_expr< __gmpq_value, U3> & c,
+               bool d)
+{
+    typedef CGAL::Rational_traits< ::mpq_class > Rational;
+
+    Rational r;
+    CGAL_assertion( r.denominator(a) > 0 );
+    CGAL_assertion( r.denominator(b) > 0 );
+    CGAL_assertion( r.denominator(c) > 0 );
+
+/*   const RT lcm = ( r.denominator(a) * r.denominator(b) * r.denominator(c)          )/
+               ( gcd( r.denominator(a), gcd(r.denominator(b), r.denominator(c)) ) );
+
+      RT a_ = r.numerator(a) * ( lcm / r.denominator(a) );
+      RT b_ = r.numerator(b) * ( lcm / r.denominator(b) );
+      RT c_ = r.numerator(c) * ( lcm / r.denominator(c) );
+*/
+    ::mpz_class a_ = r.numerator(a) * r.denominator(b) * r.denominator(c);
+    ::mpz_class b_ = r.numerator(b) * r.denominator(a) * r.denominator(c);
+    ::mpz_class c_ = r.numerator(c) * r.denominator(a) * r.denominator(b);
+
+    return Root_of_2< ::mpz_class >(a, b, c, d);
+}
+
+template < typename T, typename U >
+struct Root_of_traits< ::__gmp_expr<T, U> >
+{
+  typedef ::mpq_class               RootOf_1;
+  typedef Root_of_2< ::mpz_class >  RootOf_2;
+};
+
 CGAL_END_NAMESPACE
+
+// XXX : These seem necessary.
+// I don't know why doing them in namespace CGAL is not enough.
+// using CGAL::to_double;
+// using CGAL::is_valid;
 
 #endif // CGAL_GMPXX_H
