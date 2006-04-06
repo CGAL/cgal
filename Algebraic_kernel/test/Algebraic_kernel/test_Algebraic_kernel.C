@@ -3,8 +3,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 //#include <CGAL/Gmpq.h>
-#include <CGAL/NT_extensions_Root_of/CGAL_Quotient.h>
-//#include <CGAL/NT_extensions_Root_of/CGAL_Gmpq.h>
 #include <CGAL/_test_predicates.h>
 #include <CGAL/_test_constructor.h>
 
