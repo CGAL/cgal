@@ -214,12 +214,10 @@ public :
   typedef typename Enriched_polyhedron<kernel, items>::Face_handle Face_handle;
   typedef typename Enriched_polyhedron<kernel, items>::Halfedge_handle Halfedge_handle;
   typedef typename Enriched_polyhedron<kernel, items>::Facet_iterator Facet_iterator;
-  typedef typename Enriched_polyhedron<kernel,
-    items>::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
-  typedef typename Enriched_polyhedron<kernel,
-    items>::Halfedge_iterator Halfedge_iterator;
+  typedef typename Enriched_polyhedron<kernel, items>::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
+  typedef typename Enriched_polyhedron<kernel, items>::Halfedge_iterator Halfedge_iterator;
   typedef typename Enriched_polyhedron<kernel, items>::Point_iterator Point_iterator;
-   typedef typename Enriched_polyhedron<kernel, items>::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
+  typedef typename Enriched_polyhedron<kernel, items>::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
 
 
 typedef typename Enriched_polyhedron<kernel, items>::Vertex_iterator Vertex_iterator;

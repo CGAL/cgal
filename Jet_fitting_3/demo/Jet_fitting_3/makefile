@@ -8,9 +8,11 @@
 
 #FC
 #CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.11-1.35-FC3_g++-3.4.4
+CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6_g++-3.4.4
+
 #MARC
 #CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
-CGAL_MAKEFILE = /home/mpouget/libs/CGAL-3.1/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
+#CGAL_MAKEFILE = /home/mpouget/libs/CGAL-3.1/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
 
 include $(CGAL_MAKEFILE)
 
@@ -26,14 +28,15 @@ GSL_DIR=/usr/local/gsl
 #GLUT_DIR=/home/mpouget/Desktop/glut-3.7
 
 GSL_INC=-I$(GSL_DIR)/include
-#GLUT_INC=-I$(GLUT_DIR)/include
+
+INTROSPEC_INC=-I../../../introspect
 
 CXXFLAGS = \
            -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
 	   ${GSL_INC} $(GLUT_INC)\
-           ${CFLAGS} 
+           ${CFLAGS}  $(INTROSPEC_INC)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -51,6 +54,7 @@ CXXFLAGS = \
 
 #GLUT_LIBS_PATH=-L$(GLUT_DIR)/lib/glut -L/usr/X11R6/lib
 GLUT_LIBS=-lGL -lGLU -lglut  -lX11 -lXmu -lXi -lm
+GLUT_LIBS=
 
 GSL_LIBS_PATH=-L${GSL_DIR}/lib
 GSL_LIBS=-lgsl -lgslcblas -lm
@@ -76,6 +80,28 @@ visu: $(VISU_OBJS)
 	$(CGAL_CXX) $(LIBPATH) -o visu.exe $(VISU_OBJS) \
 	$(LDFLAGS)
 
+### visu with Camille/Laurent's tool
+test: test_visu.o
+	$(CGAL_CXX) $(LIBPATH) test_visu.o -o test $(LDFLAGS)
+
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS) -lGL -lglut
+
+QTLDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_QT_LDFLAGS) -lGL -lglut
+
+
+INTRO_LD_FLAGS=-L../../../introspect -lInstrospect
+
+
+testv: SketchSample$(OBJ_EXT) test-qt$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) $(OBJECTS) SketchSample$(OBJ_EXT) test-qt$(OBJ_EXT) \
+	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
+
+
+
 rmexe:
 	rm *.exe
 
@@ -100,18 +126,21 @@ depend:
 ogl_visu.o: ogl_visu.h /usr/include/math.h /usr/include/features.h
 ogl_visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 ogl_visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
-ogl_visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h
+ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/gl.h
+ogl_visu.o: /usr/include/GL/glext.h
+ogl_visu.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
 ogl_visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
 ogl_visu.o: /usr/include/math.h /usr/include/features.h
 ogl_visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 ogl_visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
-ogl_visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h
+ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/gl.h
+ogl_visu.o: /usr/include/GL/glext.h
+ogl_visu.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
 ogl_visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
 visu.o: ogl_visu.h /usr/include/math.h /usr/include/features.h
 visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
-visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h /usr/include/GL/glu.h
-visu.o: enriched_polyhedron.h
+visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/gl.h
+visu.o: /usr/include/GL/glext.h
+visu.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
+visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
