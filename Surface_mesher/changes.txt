@@ -5,6 +5,7 @@
   Complex_2_in_triangulation_cell_base_3, so that Surface_mesh_cell_base_3
   corresponds to its documentation (the default base class was hidding the
   problem).
+- remove an unused code, in Surface_mesher (check_visits)
 
 5 April 2006 Laurent Rineau
 - demo now output an off file, probably non oriented.

@@ -519,21 +519,9 @@ namespace CGAL {
 
 
     // Tests whether a given facet is restricted or not
-    bool is_facet_on_surface(const Facet& f, Point& center,
-			     const bool check_visits = true) {
+    bool is_facet_on_surface(const Facet& f, Point& center) {
       typedef typename Surface_mesh_traits::Intersect_3 Intersect_3;
       Intersect_3 intersect = meshtraits.intersect_3_object();
-
-      if (check_visits) {
-	const Cell_handle& c = f.first;
-	const int& i = f.second;
-	CGAL_assertion (! c->is_facet_visited(i));
-	c->set_facet_visited(i);
-	Facet other_side = mirror_facet(f);
-	CGAL_assertion 
-	  (! other_side.first->is_facet_visited(other_side.second));
-	other_side.first->set_facet_visited(other_side.second);
-      }
 
       Object dual = tr.dual(f);
 
@@ -588,8 +576,8 @@ namespace CGAL {
 	//		(other_side.second));
 	bool restr, restr_bis;
 	Point center;
-	restr = is_facet_on_surface(*fit, center, false);
-	restr_bis = is_facet_on_surface(other_side, center, false);
+	restr = is_facet_on_surface(*fit, center);
+	restr_bis = is_facet_on_surface(other_side, center);
 	CGAL_assertion (restr == restr_bis);
 	CGAL_assertion ((c2t3.face_status(*fit)
 			 == C2T3::REGULAR) == restr);
@@ -601,11 +589,11 @@ namespace CGAL {
 	//		(other_side.second) == restr_bis);
 
 	if ( (c2t3.face_status(*fit) == C2T3::REGULAR) !=
-	    is_facet_on_surface(*fit, center, false)) {
+	    is_facet_on_surface(*fit, center)) {
 	  std::cerr << "Error in restricted Delaunay triangulation: ("
 		    << (c2t3.face_status(*fit) == C2T3::REGULAR)
 		    << "/"
-		    << is_facet_on_surface(*fit, center, false)
+		    << is_facet_on_surface(*fit, center)
 		    << ")"
 		    << std::endl;
 	  exit (-1);
