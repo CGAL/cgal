@@ -26,6 +26,7 @@ template <typename K>
 class Sphere {
 public:
   typedef typename K::FT FT;
+  typedef typename K::Point_3 Point_3;
   typedef typename K::Sphere_3 Sphere_3;
 
   Sphere(Sphere_3 sphere)
@@ -33,8 +34,11 @@ public:
   {
   }
 
-  FT operator()(FT x, FT y, FT z)
+  FT operator()(const Point_3& p)
   {
+    FT x = p.x();
+    FT y = p.y();
+    FT z = p.z();
     x-=sphere.center().x();
     y-=sphere.center().y();
     z-=sphere.center().z();
@@ -49,15 +53,16 @@ class Two_spheres
 {
 public:
   typedef typename K::FT FT;
+  typedef typename K::Point_3 Point_3;
   
   Two_spheres(Sphere<K> sphere1, Sphere<K> sphere2)
     :  sphere1(sphere1), sphere2(sphere2)
   {
   }
 
-  FT operator()(FT x, FT y, FT z)
+  FT operator()(const Point_3 p)
   {
-    return sphere1(x, y, z)*sphere2(x, y, z);
+    return sphere1(p)*sphere2(p);
   }
 private:
   Sphere<K> sphere1;

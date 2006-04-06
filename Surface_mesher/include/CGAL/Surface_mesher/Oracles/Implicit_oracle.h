@@ -219,7 +219,7 @@ namespace CGAL {
       static CGAL::Sign surf_equation (Surface_3 surface,
                                        const Point& p)
       {
-        return CGAL::sign(surface(p.x(), p.y(), p.z()));
+        return CGAL::sign(surface(p));
       } // @TODO, @WARNING: we use x(), y() and z()
 
       Object intersect_clipped_segment(const Surface_3& surface,

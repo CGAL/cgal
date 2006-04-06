@@ -3,6 +3,8 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
+#include <CGAL/Gray_level_image_3.h>
+
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include "implicit_functions.h"
@@ -11,11 +13,16 @@
 #include <iostream>
 #include <fstream>
 
+
 /////////////// Types /////////////// 
 
 //struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 struct Kernel :public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+
+typedef Kernel::Point_3 Point_3;
+typedef Kernel::Sphere_3 Sphere_3;
+typedef Kernel::FT FT;
 
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
 typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
@@ -23,11 +30,20 @@ typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
 
-typedef CGAL::Implicit_surface_3<Kernel, Implicit_function*> Surface;
+typedef CGAL::Implicit_function_wrapper<FT, Point_3> Implicit_function_wrapper;
 
-typedef Kernel::Point_3 Point_3;
-typedef Kernel::Sphere_3 Sphere_3;
-typedef Kernel::FT FT;
+typedef CGAL::Implicit_surface_3<Kernel, Implicit_function_wrapper> Surface;
+
+typedef CGAL::Gray_level_image_3<FT, Point_3> Gray_image;
+
+Gray_image* isosurface = 0;
+
+double generic_inrimage_function(double x, double y, double z)
+{
+  assert(isosurface != 0);
+
+  return (*isosurface)(Point_3(x, y, z));
+}
 
 /// Global variables 
 std::ostream *out = 0;
@@ -120,7 +136,8 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 
 int main(int argc, char **argv) {
   init_parameters();
-  
+  functions["generic_inrimage"] = &generic_inrimage_function;
+
   parse_argv(argc, argv);
 
   std::string inrimage = string_options["inrimage"];

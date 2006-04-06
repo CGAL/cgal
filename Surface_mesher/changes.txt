@@ -8,6 +8,17 @@
 - remove an unused code, in Surface_mesher (check_visits)
 - change to include/CGAL/Weighted_point_with_surface_index.h, used by
   Mesh_3 only.
+- the ImplicitFunction concept now has a operator()(Point), instead of
+  operator()(FT, FT, FT). This implied the modification of:
+    - the Gray_level_image_3 and its documentation Gray_level_image_3.tex
+    (new template parameter, to have the type of point),
+    - all examples or demo,
+    - Mesh_3 examples or demo as well
+
+  This modification was mandatory, before the CGAL-3.2 release, to avoid
+  Implicit_surface to use methods x(), y() and z() of points.
+
+  Fully tested, etc.
 
 5 April 2006 Laurent Rineau
 - demo now output an off file, probably non oriented.

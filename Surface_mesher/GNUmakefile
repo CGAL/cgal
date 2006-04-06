@@ -11,7 +11,7 @@
 	examples.clean \
 	run-examples \
 	run-test \
-	run-all 
+	run-all \
 	test \
 	test.clean \
 	update

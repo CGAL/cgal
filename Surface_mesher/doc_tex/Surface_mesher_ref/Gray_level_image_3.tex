@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Gray_level_image_3<FT>}  %% add template arg's if necessary
+\begin{ccRefClass}{Gray_level_image_3<FT, Point>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,8 +26,8 @@ algorithm provides a map \begin{math}f : \R^3 \longrightarrow \R\end{math}.
 The class \ccRefName\ is a 3D gray image loader and a model
 of the concept \ccc{ImplicitFunction}.
 An object of the class \ccRefName\  is created with a parameter
-\ccc{iso} and then its \ccc{operator()}  implemenents
-the function \ccc{sign of (f(x,y,z) - iso)}.
+\ccc{iso} and then its \ccc{operator()}  implements
+the function \ccc{sign of (f(p) - iso)}, for $p \in \R^3$.
 Plugging such a function in the creation of the \ccc{Implicit_surface_3}
 object given as parameter  to \ccc{make_surface_mesh} yields
 a mesh approximating the level with value \ccc{iso}
@@ -60,6 +60,7 @@ several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension
 \ccTypes
 
 \ccNestedType{FT}{the numerical type \ccc{FT}}
+\ccNestedType{FT}{the point type \ccc{Point}}
 
 \ccCreation
 \ccCreationVariable{image}

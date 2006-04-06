@@ -61,6 +61,13 @@ double tanglecube_function (double x, double y, double z) {
   return x4 - 5*x2 + y4 - 5*y2 + z4 - 5*z2 + 11.8;
 }
 
+double cube_function (double x, double y, double z){
+  if( x < 1 && -x < 1 &&
+      y < 1 && -y < 1 &&
+      z < 1 && -z < 1 )
+    return -1.;
+  return 1.;
+}
 
 // Barth's octic surface (degree 8)
 

@@ -22,18 +22,19 @@ whose \ccc{operator()} computes the values of a function
 \ccTypes
 
 \ccNestedType{FT}{Number type}
+\ccNestedType{Point}{Point type}
 
 
 \ccCreationVariable{function} 
 
 \ccOperations
 
-\ccMethod{FT operator()(FT x, FT y, FT z);}{Returns the value $f(x,y,z)$.}
+\ccMethod{FT operator()(Point p);}{Returns the value $f(p)$, where $p \in \R^3$.}
 
 \ccHasModels
 
 \ccc{Gray_level_image_function},\\
-any pointer to a function of type \ccc{FT (*)(FT, FT, FT)}.
+any pointer to a function of type \ccc{FT (*)(Point)}.
 
 \ccSeeAlso
 \ccc{Implicit_surface_3<Traits, Function>},\\

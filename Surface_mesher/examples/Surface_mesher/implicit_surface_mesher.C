@@ -10,12 +10,15 @@ typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
 typedef Kernel::Sphere_3 Sphere_3;
+typedef Kernel::Point_3 Point_3;
+typedef Kernel::FT FT;
 
-typedef double (*Function)(double, double, double);
+typedef FT (*Function)(Point_3);
+
 typedef CGAL::Implicit_surface_3<Kernel, Function> Surface_3;
 
-double sphere_function (double x, double y, double z) {
-  const double x2=x*x, y2=y*y, z2=z*z;
+FT sphere_function (Point_3 p) {
+  const FT x2=p.x()*p.x(), y2=p.y()*p.y(), z2=p.z()*p.z();
   return x2+y2+z2-1;
 }
 

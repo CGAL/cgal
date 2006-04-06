@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-template <typename FT>
+  template <typename FT, typename Point>
 class Gray_level_image_3
 {
   _image *image;
@@ -49,11 +49,11 @@ public:
              X<=max_x && Y<=max_y && Z<=max_z );
   }
 
-  FT operator()(FT x, FT y, FT z) const
+  FT operator()(Point p) const
   {
-    float X=static_cast<float>(to_double(x));
-    float Y=static_cast<float>(to_double(y));
-    float Z=static_cast<float>(to_double(z));
+    float X=static_cast<float>(to_double(p.x()));
+    float Y=static_cast<float>(to_double(p.y()));
+    float Z=static_cast<float>(to_double(p.z()));
 
     if (!inside(X,Y,Z))
       return FT(1);

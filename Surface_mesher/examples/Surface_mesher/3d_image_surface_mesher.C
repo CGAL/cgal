@@ -11,7 +11,7 @@ typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
 
-typedef CGAL::Gray_level_image_3<Kernel::FT> Gray_level_image;
+typedef CGAL::Gray_level_image_3<Kernel::FT, Kernel::Point_3> Gray_level_image;
 typedef CGAL::Implicit_surface_3<Kernel, Gray_level_image> Surface_3;
 
 int main(int, char **) {

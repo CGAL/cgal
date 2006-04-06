@@ -6,6 +6,8 @@
   be 1, if is was 0.
 - replay-skull now run correctly too.
 - sliver exuder still crash. :-(
+- the ImplicitFunction concept now has a operator()(Point), instead of
+  operator()(FT, FT, FT).
 
 5 April 2006 Laurent Rineau
 - Too much changes, after Surface_mesher API changes.

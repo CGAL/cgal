@@ -23,6 +23,8 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
 
+#include <functional>
+
 namespace CGAL {
 
   template<
@@ -35,6 +37,7 @@ namespace CGAL {
     typedef GT Geom_traits;
     typedef typename Geom_traits::Sphere_3 Sphere_3;
     typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::Point_3 Point;
 
     Implicit_surface_3(Function f,
 		       const Sphere_3 bounding_sphere,
@@ -47,9 +50,9 @@ namespace CGAL {
         GT().compute_squared_radius_3_object()(bounding_sphere);
     }
 
-    FT operator()(FT x, FT y, FT z)
+    FT operator()(Point p)
     {
-      return func(x, y, z);
+      return func(p);
     }
 
     const FT& squared_error_bound() const
@@ -86,6 +89,23 @@ namespace CGAL {
     typedef typename Surface_mesher::Implicit_surface_oracle<GT,
 							     Surface_type> Type;
     typedef Type type; // Boost meta-programming compatibility
+  };
+
+  // non documented class
+  template <typename FT, typename Point>
+  class Implicit_function_wrapper : public std::unary_function<Point, FT> 
+  {
+    typedef FT (*Implicit_function)(FT, FT, FT);
+
+    Implicit_function function;
+
+  public:
+    Implicit_function_wrapper(Implicit_function f) : function(f) {}
+
+    FT operator()(Point p)
+    {
+      return function(p.x(), p.y(), p.z());
+    }
   };
 
 } // end namespace CGAL

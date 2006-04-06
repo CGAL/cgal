@@ -58,7 +58,6 @@ void init_double_options()
 
 void init_functions()
 {
-  functions["generic_inrimage"] = &generic_inrimage_function;
   functions["chair"] = &chair_function;
   functions["ellipsoid"] = &ellipsoid_function;
   functions["false_knot"] = &false_knot_function;
@@ -80,13 +79,4 @@ void init_parameters()
   init_string_options();
   init_double_options();
   init_functions();
-}
-
-Gray_image* isosurface = 0;
-
-double generic_inrimage_function(double x, double y, double z)
-{
-  assert(isosurface != 0);
-
-  return (*isosurface)(x, y, z);
 }

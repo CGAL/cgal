@@ -2,6 +2,8 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
+#include <CGAL/Gray_level_image_3.h>
+
 #include <CGAL/Volume_mesher_cell_base_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
@@ -57,7 +59,13 @@ typedef CGAL::Volume_mesher_cell_base_3<My_traits, Cb2> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Regular_triangulation_3<My_traits, Tds> Tr;
 
-typedef CGAL::Implicit_surface_3<My_traits, Implicit_function*> Surface;
+typedef My_traits::Point_3 Point_3;
+typedef My_traits::Sphere_3 Sphere_3;
+typedef My_traits::FT FT;
+
+typedef CGAL::Implicit_function_wrapper<FT, Point_3> Implicit_function_wrapper;
+
+typedef CGAL::Implicit_surface_3<My_traits, Implicit_function_wrapper> Surface;
 
 typedef CGAL::Surface_mesh_traits_generator_3<Surface>::type Surface_mesh_traits;
 typedef Surface_mesh_traits::Construct_initial_points Initial_points;
@@ -65,6 +73,17 @@ typedef Surface_mesh_traits::Construct_initial_points Initial_points;
 typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
 typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
+
+typedef CGAL::Gray_level_image_3<FT, Point_3> Gray_image;
+
+Gray_image* isosurface = 0;
+
+double generic_inrimage_function(double x, double y, double z)
+{
+  assert(isosurface != 0);
+
+  return (*isosurface)(Point_3(x, y, z));
+}
 
 
 
@@ -200,10 +219,6 @@ typedef CGAL::Simple_cartesian<double> Simple_kernel;
 typedef Simple_kernel::Iso_rectangle_2 Rectangle_2;
 typedef Simple_kernel::Segment_2 Segment_2;
 typedef Simple_kernel::Point_2 Point_2;
-
-typedef My_traits::Point_3 Point_3;
-typedef My_traits::Sphere_3 Sphere_3;
-typedef My_traits::FT FT;
 
 typedef CGAL::Point_traits<Point_3> Point_traits;
 typedef Point_traits::Bare_point Bare_point_3;
@@ -478,21 +493,23 @@ int main(int argc, char **argv) {
   QApplication app (argc, argv);
 #endif // CGAL_USE_QT
   init_parameters();
-  
+  functions["generic_inrimage"] = &generic_inrimage_function;
+
   parse_argv(argc, argv);
 
   std::string inrimage = string_options["inrimage"];
   if( inrimage != "")
     {
       function_name = "generic_inrimage";
+      CGAL_assertion(double_options["iso_value"] > 0);
       isosurface = new Gray_image(inrimage.c_str(),
-                                  double_options["isovalue"]);
+                                  double_options["iso_value"]);
     }
   
   // Function
   FT sphere_radius = double_options["enclosing_sphere_radius"];
-  
-  Surface surface(functions[function_name],
+
+  Surface surface(Implicit_function_wrapper(functions[function_name]),
                   Sphere_3(
                            Bare_point_3(double_options["center_x"],
                                         double_options["center_y"],
