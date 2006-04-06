@@ -24,23 +24,24 @@
 
 namespace CGAL {
   
-  template < class GT, class Cb=Complex_2_in_triangulation_cell_base_3<GT> > 
+  template < class GT, class Cb=Triangulation_cell_base_3<GT> > 
   class Surface_mesh_cell_base_3 : 
-  public Cb {    
-    
+    public Complex_2_in_triangulation_cell_base_3<GT, Cb> 
+  { 
+    typedef Complex_2_in_triangulation_cell_base_3<GT, Cb> Base;
   public:
     typedef Surface_mesh_cell_base_3 <GT, Cb> Self;
 
     template < class TDS3 >
     struct Rebind_TDS {
-      typedef typename Cb::template Rebind_TDS<TDS3>::Other  Cb3;
+      typedef typename Base::template Rebind_TDS<TDS3>::Other  Cb3;
       typedef Surface_mesh_cell_base_3 <GT, Cb3> Other;
     };
     
     
     typedef typename GT::Point_3 Point;
     
-    typedef typename Cb::Triangulation_data_structure Tds;
+    typedef typename Base::Triangulation_data_structure Tds;
     typedef typename Tds::Vertex_handle Vertex_handle;
     typedef typename Tds::Cell_handle Cell_handle;
     
@@ -57,14 +58,14 @@ namespace CGAL {
     // Constructors
 
     Surface_mesh_cell_base_3() 
-      : Cb(), c_visited(0) 
+      : Base(), c_visited(0) 
     {}
     
     Surface_mesh_cell_base_3 (Vertex_handle v0,
 			      Vertex_handle v1,
 			      Vertex_handle v2,
 			      Vertex_handle v3) 
-      : Cb (v0, v1, v2, v3), c_visited(0)  
+      : Base (v0, v1, v2, v3), c_visited(0)  
     {}
     
     Surface_mesh_cell_base_3 (Vertex_handle v0,
@@ -75,7 +76,7 @@ namespace CGAL {
 			      Cell_handle n1,
 			      Cell_handle n2,
 			      Cell_handle n3) 
-      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), c_visited(0)  
+      : Base (v0, v1, v2, v3, n0, n1, n2, n3), c_visited(0)  
     {}
     
     

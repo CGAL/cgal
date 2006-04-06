@@ -22,12 +22,12 @@
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
 
-#include <CGAL/Triangulation_ds_cell_base_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {
 
 
-  template < class GT, class Cb = Triangulation_ds_cell_base_3 <> >
+  template < class GT, class Cb = Triangulation_cell_base_3 <GT> >
   class Complex_2_in_triangulation_cell_base_3 : public Cb {
 
   public:
