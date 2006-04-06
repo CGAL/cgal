@@ -29,7 +29,8 @@ GSL_DIR=/usr/local/gsl
 
 GSL_INC=-I$(GSL_DIR)/include
 
-INTROSPEC_INC=-I../../../introspect
+INTROSPEC_DIR = ../../../introspect
+INTROSPEC_INC=-I$(INTROSPEC_DIR)
 
 CXXFLAGS = \
            -I../../include \
@@ -93,14 +94,11 @@ QTLDFLAGS = \
           $(CGAL_QT_LDFLAGS) -lGL -lglut
 
 
-INTRO_LD_FLAGS=-L../../../introspect -lInstrospect
+INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lInstrospect
 
-
-testv: SketchSample$(OBJ_EXT) test-qt$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) $(OBJECTS) SketchSample$(OBJ_EXT) test-qt$(OBJ_EXT) \
+testv: SketchSample$(OBJ_EXT) visu-test$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) $(OBJECTS) SketchSample$(OBJ_EXT) visu-test$(OBJ_EXT) \
 	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
-
-
 
 rmexe:
 	rm *.exe

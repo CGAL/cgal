@@ -6,8 +6,6 @@
 #include "SketchSample.h"
 
 
-
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
