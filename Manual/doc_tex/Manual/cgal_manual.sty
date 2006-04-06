@@ -184,6 +184,27 @@
   \pagestyle{plain}
 }
 
+% ----------- license ---------
+\newcommand{\ccLicense}[1]{\ccRef[#1]{licenses:#1}}
+
+\newcommand{\ccLicenseGPL}{ccLicense{GPL}}
+\newcommand{\ccLicenseLGPL}{ccLicense{LGPL}}
+\newcommand{\ccLicenseQPL}{ccLicense{QPL}}
+\newcommand{\ccLicenseCommercial}{ccLicense{Commercial}}
+
+% ----------- thirdparty ---------
+\newcommand{\ccThirdParty}[1]{\ccRef[#1]{thirdparty:#1}}
+
+\newcommand{\ccThirdPartyBoost}{\ccThirdParty{Boost}}
+\newcommand{\ccThirdPartyCoin}{\ccThirdParty{Coin}}
+\newcommand{\ccThirdPartyGMP}{\ccThirdParty{GMP}}
+\newcommand{\ccThirdPartyLeda}{\ccThirdParty{Leda}}
+\newcommand{\ccThirdPartyQt}{\ccThirdParty{Qt}}
+\newcommand{\ccThirdPartySTL}{\ccRef[Standard Template Library]{thirdparty:stl}}
+\newcommand{\ccThirdPartyTaucs}{\ccThirdParty{Taucs}}
+\newcommand{\ccThirdPartyZlib}{\ccThirdParty{zlib}}
+
+
 % Implement the two columns layout for the HTML converted part
 % ------------------------------------------------------------
 
@@ -232,11 +253,6 @@
   % |
   % ###########################################################################
 
-  \newcommand{\ccLicense}[1]{
-    \lciIfDefined{\ccLicense#GC1}%
-      {\ccLicense#GC1}%
-      {\ref[#1]{licenses:#1}}%
-  }
 
   \gdef\ccValueofPkgName{}
   \newcommand{\ccPartSummary}[1]{#1}
@@ -323,6 +339,7 @@
     %\renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
     %\renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
     %#1
+    \renewcommand{\entry}[1]{##1}%
     \renewcommand{\entryleft}[1]{##1}%
     \renewcommand{\entryright}[1]{##1}%
     % should be deprecated, i suppose
