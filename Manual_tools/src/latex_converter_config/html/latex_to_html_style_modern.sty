@@ -140,14 +140,12 @@
 \newcommand{\lcTocCompleteRow}{\lciPushOutput{toc}\lciTocCompleteRow\lciPopOutput}
 \newcommand{\lciTocCompleteRow}{%
   \lciTocCloseInner
-  \lciIfEqualExpanded{\lciTocOuterState}{Right}{\lciTocSync}{}%
-  \lciIfEqualExpanded{\lciTocOuterState}{Sync}{%
-    \lcRawHtml{  <tr valign="top"><td }%
-    \lciIfTwoColumnToc%
-      {\lcRawHtml{colspan="2" }}%
-      {}%
-    \lcRawHtml{class="TocGroup}\lciTocOdd\lcRawHtml{Left">}
-  }{}
+  \lciTocSync
+  \lcRawHtml{  <tr valign="top"><td }%
+  \lciIfTwoColumnToc%
+    {\lcRawHtml{colspan="2" }}%
+    {}%
+  \lcRawHtml{class="TocGroup}\lciTocOdd\lcRawHtml{Left">}
   \gdef\lciTocOuterState{Right}%
 }
 
