@@ -39,6 +39,8 @@
 
 #include <boost/operators.hpp>
 
+#include <CGAL/Root_of_traits.h>
+
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
  * where ET is an exact number type (must provide the exact operations needed).
@@ -959,6 +961,75 @@ template < typename ET >
 inline bool
 fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
 { return fit_in_double(l.approx(), r); }
+
+
+// We create a type of new node in Lazy_exact_nt's DAG
+// for the make_root_of_2() operation.
+
+template <typename ET >
+struct Lazy_exact_ro2
+  : public Lazy_exact_rep< typename Root_of_traits<ET>::RootOf_2 >
+{
+    typedef typename Root_of_traits<ET>::RootOf_2   RO2;
+    typedef Lazy_exact_rep<RO2>                     Base;
+    typedef typename Base::AT::Protector            P;
+
+
+    mutable Lazy_exact_nt<ET> op1, op2, op3;
+    bool smaller;
+
+    Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
+                    const Lazy_exact_nt<ET> &b,
+                    const Lazy_exact_nt<ET> &c, bool s)
+#ifndef CGAL_CFG_COMMA_BUG
+      : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s))),
+        op1(a), op2(b), op3(c), smaller(s) {}
+#else
+      : Base(a.approx() /* dummy value */, a),
+        op1(a), op2(b), op3(c), smaller(s)
+  {
+    P p;
+    this->approx() = make_root_of_2(a.approx(), b.approx(),
+                                    c.approx(), s);
+  }
+#endif
+
+    void update_exact()
+    {
+        this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
+                                          op3.exact(), smaller));
+
+        if (!this->approx().is_point())
+            this->at = CGAL::to_interval(*(this->et));
+        this->prune_dag();
+
+    }
+
+    void prune_dag() const
+    {
+        op1 = op2 = op3 = Lazy_exact_nt<ET>::zero();
+    }
+};
+
+template < typename ET >
+inline
+Lazy_exact_nt< typename Root_of_traits<ET>::RootOf_2 >
+make_root_of_2( const Lazy_exact_nt<ET> &a,
+                const Lazy_exact_nt<ET> &b,
+                const Lazy_exact_nt<ET> &c, bool d)
+{
+    return new Lazy_exact_ro2<ET>(a, b, c, d);
+}
+
+template <typename NT >
+struct Root_of_traits< Lazy_exact_nt < NT > >
+{
+private:
+    typedef Root_of_traits<NT> T;
+public:
+    typedef Lazy_exact_nt< typename T::RootOf_1 > RootOf_1;
+    typedef Lazy_exact_nt< typename T::RootOf_2 > RootOf_2;
+};
 
 #undef CGAL_double
 #undef CGAL_int
