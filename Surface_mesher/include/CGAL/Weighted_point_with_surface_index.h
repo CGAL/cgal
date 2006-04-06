@@ -56,9 +56,9 @@ public:
                                                                             pi)
     : Weighted_point(pi), index(pi.surface_index()) {}
 
-//   template <typename RT>
-//   Weighted_point_with_surface_index(const RT& x, const RT& y, const RT& z)
-//     : Weighted_point(Weighted_point_traits().point(Bare_point(x, y, z))), index(0) {}
+  template <typename RT>
+  Weighted_point_with_surface_index(const RT& x, const RT& y, const RT& z)
+    : Weighted_point(Bare_point(x, y, z)), index(0) {}
 
   int surface_index() const
   {

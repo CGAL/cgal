@@ -6,6 +6,8 @@
   corresponds to its documentation (the default base class was hidding the
   problem).
 - remove an unused code, in Surface_mesher (check_visits)
+- change to include/CGAL/Weighted_point_with_surface_index.h, used by
+  Mesh_3 only.
 
 5 April 2006 Laurent Rineau
 - demo now output an off file, probably non oriented.
