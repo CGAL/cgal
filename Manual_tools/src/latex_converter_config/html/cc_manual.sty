@@ -35,7 +35,7 @@
 
 % ###########################################################################
 % |
-% |   o   Link User <--> Reference
+% |   o
 % |
 % ###########################################################################
 
@@ -43,18 +43,10 @@
 \newcommand{\lciIfRef}{\ccFalse}
 \gdef\lciFirstRefPageAlreadySeen{\lcFalse}%
 
-\newcommand{\ccUserChapter}[2]{
- \gdef{\lciIfRef}{\ccTrue} 
- \chapter{#1} \lcRawHtml{ <TD ALIGN=RIGHT VALIGN=TOP>}
- \lcHtml{\ref{#2}} \lcRawHtml{ Reference Manual</TD> </TR> </TABLE> }
- \gdef{\lciIfRef}{\ccFalse}
-}
-
-\newcommand{\ccRefChapter}[2]{ 
- \gdef{\lciIfRef}{\ccTrue} 
- \chapter{#1} \lcRawHtml{ <TD ALIGN=RIGHT VALIGN=TOP > } 
- \lcHtml{\ref{#2}} \lcRawHtml{  User Manual</TD> </TR> </TABLE> }
- \gdef{\lciIfRef}{\ccFalse}
+\newcommand{\ccUserChapter}[2]{\chapter{#1}}
+\newcommand{\ccRefChapter}[2]{%
+ \chapter{#1\\
+Reference Manual}%
 }
 
 
@@ -187,8 +179,8 @@
 % +--------------------------------------------------------------------------
 % | Formatting styles:
 % |
-% | The style of the C++ formatting can be customized by redefining the 
-% | following macros. 
+% | The style of the C++ formatting can be customized by redefining the
+% | following macros.
 % +--------------------------------------------------------------------------
 \newcommand{\ccFont}{\it}   % font or style changing command in which all C++
                         % tokens will be typeset, including the variable names.
@@ -209,10 +201,10 @@
 
 % +--------------------------------------------------------------------------
 % | Replacement of Prefixes, not supported in HTML
-% | 
+% |
 % | \ccSrcPrefix     contains the old prefix
 % | \ccTargetPrefix  contains the new prefix
-% | 
+% |
 % | \ccReplacePrefix #1#2  replaces all prefixes in #1 and applies #2 to
 % |                        the partial results that have to be terminated
 % |                        by \ccEnd.
@@ -283,7 +275,7 @@
 
 % +--------------------------------------------------------------------------
 % | Macros that write the special characters \{} literally to the
-% | output stream. 
+% | output stream.
 % |
 % | \ccOpenBrace, \ccCloseBrace, \ccBackslash
 % +--------------------------------------------------------------------------
@@ -300,8 +292,8 @@
 % +--------------------------------------------------------------------------
 % | Structuring macros (similar to LEDA Manual):
 % |
-% | \ccSection, \definition, \constants, \types, \creation, \operations, 
-% | \implementation, \example, \precond, \postcond, 
+% | \ccSection, \definition, \constants, \types, \creation, \operations,
+% | \implementation, \example, \precond, \postcond,
 % | \ccChapterAuthor, \ccChapterRelease, \ccChapterSubTitle
 % +--------------------------------------------------------------------------
 
@@ -413,7 +405,7 @@
 % | \ccRefName
 % +--------------------------------------------------------------------------
 
-% have a counter for reference pages per chapter, used for 
+% have a counter for reference pages per chapter, used for
 % forward and backward linking between reference pages.
 \newcounter{referencepage}[chapter]
 \gdef{\thereferencepage}{%
@@ -458,7 +450,7 @@
     \lcRawHtml{	<div class="NavNext"><hr> <b>Next:</b> <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}#1\lcRawHtml{</a> 
+    \lcRawHtml{">}#1\lcRawHtml{</a>
 }%
     \lcRawHtml{i Toc_reference_link_}\thereferencepage%
     \lcRawHtml{	<a href="}%
@@ -471,7 +463,7 @@
     \lciHtmlFileHeader{\ccReferenceFileContX #X1}%
     \lciHtmlNavigationTop%
     %\lciHtmlReferenceToc{\thereferencepage}{#1}%
-    %\lciHtmlReferenceHeader{#1}%   
+    %\lciHtmlReferenceHeader{#1}%
 }
 % skips a leading \ccc command, useful for formatted title from reference pages
 \newcommand{\ccReferenceFileContX}[1]{%
@@ -506,7 +498,7 @@
 \gdef\ccRefCategoryIsConcept{\ccFalse}
 
 
-% #1 == global scope used in ref-page section title 
+% #1 == global scope used in ref-page section title
 \newcommand{\ccDefGlobalScope}[1]{%
                    \gdef\ccPureGlobalScope{#1}%
                    \gdef\ccGlobalScope{\ccc{#1}}%
@@ -534,7 +526,7 @@
                    \renewcommand{\ccClassTemplateName}{}%
                    \def\ccPureVar{}%
                    \renewcommand{\ccVar}{}%
-                   \lciCacheClassName % empties cached class_name 
+                   \lciCacheClassName % empties cached class_name
                    \gdef{\lciIfHtmlClassToc}{\lcTrue}%
                    \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
                    \gdef{\lciIfHtmlClassIndex}{\lcTrue}%
@@ -585,7 +577,7 @@
         % cross link names also without the global (CGAL) prefix
         \ccHtmlCrossLink{#GXC1#GXC5}%
       }%
-    }{}% 
+    }{}%
     \ccIndexRefName{#1}{\ccc{#2}}{#3}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
     \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
@@ -613,7 +605,7 @@
          \def\ccFont{}% class-names should be printed with default font
          \ccc{#XC1#XC2}%
         \endgroup% restore old ccFont
-      }%      
+      }%
       }}
 
 %% #1 == ccCategory
@@ -638,10 +630,10 @@
                    \begin{ccRefDeclaration}{Enum}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefFunction}{%
-                   \gdef\ccIsRefFunction{\lcTrue}% 
+                   \gdef\ccIsRefFunction{\lcTrue}%
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Function}}%
-                   {\gdef\ccIsRefFunction{\lcFalse}% 
+                   {\gdef\ccIsRefFunction{\lcFalse}%
                    \end{ccRefDeclaration}}
 
 \newenvironment{ccRefFunctionObjectConcept}{%
@@ -694,7 +686,7 @@
 
 % class environments
 \newenvironment{ccClass}{%
-    \lciParseCC{\lciClassCont} 
+    \lciParseCC{\lciClassCont}
 }{%
     \end{lciClassEnvironment}
 }
@@ -705,8 +697,8 @@
 \newcommand{\lciClassContforTraits}{\lciClassContforTraitsX\lciCCParameter}
 \newcommand{\lciClassContforTraitsX}[3]{
     \newcommand{\ccPureClassName}{#XC1}%
-    \newcommand{\ccClassName}{\ccc{#XC1}}% 
-    \ccIndexTraitsClassBegin{#XC1}{#XC2}{#XC3}% 
+    \newcommand{\ccClassName}{\ccc{#XC1}}%
+    \ccIndexTraitsClassBegin{#XC1}{#XC2}{#XC3}%
     \ccIndexTraitsClassEnd%
     \begin{lciClassEnvironment}{#1}%
 }
@@ -715,7 +707,7 @@
 \newcommand{\lciClassCont}{\lciClassContX\lciCCParameter}
 \newcommand{\lciClassContX}[1]{
     \newcommand{\ccPureClassName}{#XC1}%
-    \newcommand{\ccClassName}{\ccc{#XC1}}% 
+    \newcommand{\ccClassName}{\ccc{#XC1}}%
     \begin{lciClassEnvironment}{#1}%
 }
 
@@ -777,7 +769,7 @@
     \lciUndef{\ccClassName}%
     \gdef\ccIndexClassName{}%
     \lciUndef{\ccClassTemplateName}%
-    \lciCacheClassName % empties cached class_name 
+    \lciCacheClassName % empties cached class_name
 }
 \newcommand{\lciClassEnvOpenFile}[3]{\begin{ccReferenceFile}{#1#GXC2}{#3}}
 
