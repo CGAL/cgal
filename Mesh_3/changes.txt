@@ -1,3 +1,12 @@
+6 April 2006 Laurent Rineau
+- if the surface_index() of a point is 0, set it to 1, in
+  include/CGAL/Mesh_3/Implicit_surface_mesher_visitor.h
+  This visitor is passed to the Surface_mesher, when it is used from
+  Mesh_3. This patch makes surface_index() of points on the surface to
+  be 1, if is was 0.
+- replay-skull now run correctly too.
+- sliver exuder still crash. :-(
+
 5 April 2006 Laurent Rineau
 - Too much changes, after Surface_mesher API changes.
 - examples/Mesh_3/implicit_surfaces_mesher_3.C compiles
