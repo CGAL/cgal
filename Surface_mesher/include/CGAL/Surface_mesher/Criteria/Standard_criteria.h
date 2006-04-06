@@ -177,16 +177,18 @@ namespace CGAL {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
 
       typedef typename Tr::Geom_traits Geom_traits;
+      typedef typename Geom_traits::FT FT;
+
       Geom_traits gt;
 
-      Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
-      Point p2 = fh.first->vertex ((fh.second+2)&3)->point();
-      Point p3 = fh.first->vertex ((fh.second+3)&3)->point();
+      const Point& p1 = fh.first->vertex ((fh.second+1)&3)->point();
+      const Point& p2 = fh.first->vertex ((fh.second+2)&3)->point();
+      const Point& p3 = fh.first->vertex ((fh.second+3)&3)->point();
 
-      q = gt.compute_squared_distance_3_object()
+      q = B / gt.compute_squared_distance_3_object()
 	(gt.construct_circumcenter_3_object()(p1,p2,p3),
 	 fh.first->get_facet_surface_center(fh.second));
-      return q > B;
+      return q < FT(1);
     }
 
   };  // end Curvature_size_criterion
@@ -209,7 +211,7 @@ namespace CGAL {
     Uniform_size_criterion(const Quality b = 1000) : B(b * b) {}
 
     inline
-    Quality bound() const { return std::sqrt (B); }
+    Quality bound() const { return CGAL::sqrt (B); }
 
     inline
     void set_bound(const Quality b) { B = b * b; };
@@ -219,13 +221,14 @@ namespace CGAL {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
 
       typedef typename Tr::Geom_traits Geom_traits;
+      typedef typename Geom_traits::FT FT;
       Geom_traits gt;
 
       Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
 
-      q =  gt.compute_squared_distance_3_object()
+      q =  B / gt.compute_squared_distance_3_object()
 	(p1, fh.first->get_facet_surface_center (fh.second));
-      return q > B;
+      return q < FT(1);
     }
   };  // end Uniform_size_criterion
 
@@ -260,23 +263,23 @@ namespace CGAL {
       typedef typename Geom_traits::FT FT;
       Geom_traits gt;
 
-      Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
-      Point p2 = fh.first->vertex ((fh.second+2)&3)->point();
-      Point p3 = fh.first->vertex ((fh.second+3)&3)->point();
+      const Point& p1 = fh.first->vertex ((fh.second+1)&3)->point();
+      const Point& p2 = fh.first->vertex ((fh.second+2)&3)->point();
+      const Point& p3 = fh.first->vertex ((fh.second+3)&3)->point();
 
-      FT d12 = gt.compute_squared_distance_3_object() (p1, p2);
-      FT d13 = gt.compute_squared_distance_3_object() (p1, p3);
-      FT d23 = gt.compute_squared_distance_3_object() (p2, p3);
+      const FT d12 = gt.compute_squared_distance_3_object() (p1, p2);
+      const FT d13 = gt.compute_squared_distance_3_object() (p1, p3);
+      const FT d23 = gt.compute_squared_distance_3_object() (p2, p3);
 
       if (d12 > d13) {
 	if (d12 > d23)
-	  q =  d12;
+	  q =  B / d12;
 	else
-	  q = d23;
+	  q = B / d23;
       }
       else
-	q = d13;
-      return q > B;
+	q = B / d13;
+      return q < FT(1);
     }
 
   };  // end Edge_size_criterion
