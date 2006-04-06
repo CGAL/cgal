@@ -361,12 +361,9 @@
       \newcommand{\packageright}[1]{\lcTocRight \cgalreinit\include{##1/main}}%
       \newcommand{\packageleftright}[2]{%
         \lcTocSync%
-        \gdef\lciTOCChapterNameSuffix{}
         \lcTocLeft\cgalreinit\include{##1/main}%
         \edef\lciUsermanualOutputFilename{\lciOutputFilename}%
-        \gdef\lciTOCChapterNameSuffix{ (Reference Manual)}
         \lcTocRight\cgalreinit\include{##2/main}%
-        \gdef\lciTOCChapterNameSuffix{}
         \lciFlushPkgDescription{\lciUsermanualOutputFilename}{\lciOutputFilename}
         \lcTocSync}%
       #1
