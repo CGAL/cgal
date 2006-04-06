@@ -139,10 +139,10 @@ struct Test_with_kernel {
     Tr tr_3;
 
     Sphere<K> sphere1(Sphere_3(CGAL::ORIGIN, 1.));
-    Sphere<K> sphere2(Sphere_3(CGAL::ORIGIN, 0.99*0.99));
+    Sphere<K> sphere2(Sphere_3(Point_3(0.5, 0., 0.), 0.49*0.49));
 
     // trick: insert in tr_3 the initial points for sphere2
-    Surface surface_of_sphere_2(sphere2, Sphere_3(CGAL::ORIGIN, 2.));
+    Surface surface_of_sphere_2(sphere2, Sphere_3(Point_3(0.5, 0., 0.), 2.));
     
     Surface_mesh_traits().construct_initial_points_object()
       (surface_of_sphere_2, CGAL::inserter(tr_3), initial_number_of_points);
@@ -151,7 +151,7 @@ struct Test_with_kernel {
     timer.reset(); timer.start();
     make_surface_mesh(c2t3_3,
                       Surface2(Two_spheres<K>(sphere1,sphere2),
-                               Sphere_3(Point_3(0.995, 0., 0.), 2.)),
+                               Sphere_3(CGAL::ORIGIN, 2.)),
                       criteria,
                       Tag(),
                       initial_number_of_points);
@@ -172,16 +172,18 @@ void test_with_tag(Tag = CGAL::Non_manifold_tag())
   Test_with_kernel<CGAL::Exact_predicates_inexact_constructions_kernel,
     Tag>()();
 
+#ifndef CGAL_SURFACE_MESHER_SINGLE_TEST
   std::cout << "\nKERNEL CGAL::Filtered_kernel<CGAL::Cartesian<float> >...\n";
   Test_with_kernel<CGAL::Filtered_kernel<CGAL::Cartesian<float> >,Tag>()();
 
 #ifdef CGAL_USE_CORE
   Test_with_kernel<CGAL::Filtered_kernel<CGAL::Simple_cartesian<CORE::Expr> >,
     Tag>()(DO_NOT_RUN);
-#endif
+#endif // #ifdef CGAL_USE_CORE
 
   Test_with_kernel<CGAL::Cartesian<CGAL::Lazy_exact_nt<double> >,
     Tag >()(DO_NOT_RUN);
+#endif // #ifndef CGAL_SURFACE_MESHER_SINGLE_TEST
 }
 
 int main(int, char **)

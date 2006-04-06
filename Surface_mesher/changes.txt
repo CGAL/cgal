@@ -1,3 +1,7 @@
+6 April 2006 Laurent Rineau
+- better test case with two spheres (I changed the radii and centers), in
+  the testsuite.
+
 5 April 2006 Laurent Rineau
 - demo now output an off file, probably non oriented.
 - Mesh_3/application/off_to_medit.C helps to convert it to a medit file.
