@@ -1,13 +1,14 @@
+-pre-requisite 0: check out introspect, jet_fitting_3
 
--pre-requisite: introspect requires glut. under fedore, install
+-pre-requisite 1: introspect requires glut. under fedora, install
 freeglut-devel. (wizards's corner: as root, use synaptic .. instead of
-a manual installation with rpm -i etc)
+running a manual installation with rpm -i etc)
 
 
--in the introspec dir, a target lib allows to create a small
-archive. then, libIntrospect.a can be used from anywhere
+-in the introspec dir, a target lib allows to create a small archive,
+libIntrospect.a, which can then be used from anywhere
 
--to use the library for any package:
+-to use the library for/from any package:
 
 *set INTROSPEC_DIR variable in the makefile, and use it for the
 includes and the final link with -lIntrospect
@@ -17,4 +18,6 @@ geometry
 
 *the main is in visu-test.cpp, which loads the geometry, and launches
 the window
+
+-> example: see visu-test.cpp in Jet_fitting_3
 
