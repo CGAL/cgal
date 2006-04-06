@@ -76,18 +76,11 @@ bool is_positive(const ::__gmp_expr<T, U> &);
 template < typename T, typename U >
 bool is_negative(const ::__gmp_expr<T, U> &);
 
-template <  typename U1, typename U2, typename U3 >
-Root_of_2< ::mpz_class >
-make_root_of_2(const ::__gmp_expr< __gmpz_value, U1> & a,
-               const ::__gmp_expr< __gmpz_value, U2> & b,
-               const ::__gmp_expr< __gmpz_value, U3> & c,
-               bool d);
-
-template < typename U1, typename U2, typename U3 >
-Root_of_2< ::mpz_class >
-make_root_of_2(const ::__gmp_expr< __gmpq_value, U1> & a,
-               const ::__gmp_expr< __gmpq_value, U2> & b,
-               const ::__gmp_expr< __gmpq_value, U3> & c,
+template < typename T, typename U1, typename U2, typename U3 >
+typename Root_of_traits< ::__gmp_expr<T, T> >::RootOf_2
+make_root_of_2(const ::__gmp_expr< T, U1> & a,
+               const ::__gmp_expr< T, U2> & b,
+               const ::__gmp_expr< T, U3> & c,
                bool d);
 
 CGAL_END_NAMESPACE

@@ -204,28 +204,24 @@ is_negative(const ::__gmp_expr<T, U> & e)
 { return ::sgn(e) < 0; }
 
 
-// XXX : __gmpz_value does not work with GMP >= 4.2
-// Idea for fixing : parameterize by __gmp_expr<T, U[123]>, and add
-// a CGALi function taking a __gmp_expr<T, T> as pointer to distinguish,
-// matching mp[zq]_class.
-template <  typename U1, typename U2, typename U3 >
+namespace CGALi {
+
 inline
 Root_of_2< ::mpz_class >
-make_root_of_2(const ::__gmp_expr< __gmpz_value, U1> & a,
-               const ::__gmp_expr< __gmpz_value, U2> & b,
-               const ::__gmp_expr< __gmpz_value, U3> & c,
-               bool d)
+make_root_of_2_gmpxx(const ::mpz_class & a,
+                     const ::mpz_class & b,
+                     const ::mpz_class & c,
+                     bool d)
 {
   return Root_of_2< ::mpz_class >(a, b, c, d);
 }
 
-template < typename U1, typename U2, typename U3 >
 inline
 Root_of_2< ::mpz_class >
-make_root_of_2(const ::__gmp_expr< __gmpq_value, U1> & a,
-               const ::__gmp_expr< __gmpq_value, U2> & b,
-               const ::__gmp_expr< __gmpq_value, U3> & c,
-               bool d)
+make_root_of_2_gmpxx(const ::mpq_class & a,
+                     const ::mpq_class & b,
+                     const ::mpq_class & c,
+                     bool d)
 {
     typedef CGAL::Rational_traits< ::mpq_class > Rational;
 
@@ -246,6 +242,19 @@ make_root_of_2(const ::__gmp_expr< __gmpq_value, U1> & a,
     ::mpz_class c_ = r.numerator(c) * r.denominator(a) * r.denominator(b);
 
     return Root_of_2< ::mpz_class >(a, b, c, d);
+}
+
+} // CGALi
+
+template < typename T, typename U1, typename U2, typename U3 >
+inline
+typename Root_of_traits< ::__gmp_expr<T, T> >::RootOf_2
+make_root_of_2(const ::__gmp_expr< T, U1> & a,
+               const ::__gmp_expr< T, U2> & b,
+               const ::__gmp_expr< T, U3> & c,
+               bool d)
+{
+  return CGALi::make_root_of_2_gmpxx(a, b, c, d);
 }
 
 template < typename T, typename U >
