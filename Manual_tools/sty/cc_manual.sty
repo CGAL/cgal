@@ -42,7 +42,7 @@
 % Set this definition to \ccTrue to activate the old name definitions
 % which are still there for portability reasons.
 
-\newcommand{\ccRef}[2][]{#1 \ref{#2}}
+\newcommand{\ccRef}[2][]{#1 (Page \pageref{#2})}
 
 \newcommand{\ccPortability}{\ccFalse}
 % debug option, use only for small files!
@@ -3253,8 +3253,6 @@
 \ifnum\ccNewRefManualStyle=\ccTrue
 \usepackage{graphicx}
 \fi
-
-
 
 % ___________________________________________________________________________
 % ###########################################################################
