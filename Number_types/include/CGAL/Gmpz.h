@@ -482,6 +482,8 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+class Gmpq;
+
 template <>
 struct Root_of_traits< CGAL::Gmpz >
 {
