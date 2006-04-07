@@ -87,57 +87,57 @@ Construction and destruction are undefined.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{int get_vertex_seaming (Vertex_const_handle vertex) const;}
+\ccMethod{int get_vertex_seaming(Vertex_const_handle vertex) const;}
 {
 Get/set vertex seaming flag. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_vertex_seaming (Vertex_handle vertex, int seaming);}
+\ccMethod{void set_vertex_seaming(Vertex_handle vertex, int seaming);}
 {
 }
 \ccGlue
-\ccMethod{int get_halfedge_seaming (Vertex_const_handle source, Vertex_const_handle target) const;}
+\ccMethod{int get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const;}
 {
 Get/set oriented edge's seaming flag, ie position of the oriented edge wrt to the UNIQUE main border.
 }
 \ccGlue
-\ccMethod{void set_halfedge_seaming (Vertex_handle source, Vertex_handle target, int seaming);}
+\ccMethod{void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming);}
 {
 }
 \ccGlue
-\ccMethod{Point_2 get_corners_uv (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+\ccMethod{Point_2 get_corners_uv(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
 Get/set the 2D position (= (u,v) pair) of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_corners_uv (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2 & uv);}
+\ccMethod{void set_corners_uv(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2& uv);}
 {
 }
 \ccGlue
-\ccMethod{bool are_corners_parameterized (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+\ccMethod{bool are_corners_parameterized(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
 Get/set {\em is parameterized} field of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_corners_parameterized (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
+\ccMethod{void set_corners_parameterized(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
 {
 }
 \ccGlue
-\ccMethod{int get_corners_index (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+\ccMethod{int get_corners_index(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
 Get/set index of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_corners_index (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
+\ccMethod{void set_corners_index(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
 {
 }
 \ccGlue
-\ccMethod{int get_corners_tag (Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+\ccMethod{int get_corners_tag(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
 {
 Get/set all purpose tag of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_corners_tag (Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
+\ccMethod{void set_corners_tag(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
 {
 }
 \ccGlue

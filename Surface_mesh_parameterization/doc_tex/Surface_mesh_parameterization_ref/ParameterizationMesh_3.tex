@@ -184,161 +184,161 @@ non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Vertex_iterator mesh_vertices_begin ();}
+\ccMethod{Vertex_iterator mesh_vertices_begin();}
 {
 Get iterator over first vertex of mesh.
 }
 \ccGlue
-\ccMethod{Vertex_const_iterator mesh_vertices_begin () const;}
+\ccMethod{Vertex_const_iterator mesh_vertices_begin() const;}
 {
 }
 \ccGlue
-\ccMethod{Vertex_iterator mesh_vertices_end ();}
+\ccMethod{Vertex_iterator mesh_vertices_end();}
 {
 Get iterator over past-the-end vertex of mesh.
 }
 \ccGlue
-\ccMethod{Vertex_const_iterator mesh_vertices_end () const;}
+\ccMethod{Vertex_const_iterator mesh_vertices_end() const;}
 {
 }
 \ccGlue
-\ccMethod{int count_mesh_vertices () const;}
+\ccMethod{int count_mesh_vertices() const;}
 {
 Count the number of vertices of the mesh.
 }
 \ccGlue
-\ccMethod{void index_mesh_vertices ();}
+\ccMethod{void index_mesh_vertices();}
 {
 Index vertices of the mesh from 0 to \ccc{count_mesh_vertices}()-1.
 }
 \ccGlue
-\ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin ();}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin();}
 {
 Get iterator over first vertex of mesh's {\em main border}.
 }
 \ccGlue
-\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin () const;}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin() const;}
 {
 }
 \ccGlue
-\ccMethod{Border_vertex_iterator mesh_main_border_vertices_end ();}
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_end();}
 {
 Get iterator over past-the-end vertex of mesh's {\em main border}.
 }
 \ccGlue
-\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end () const;}
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end() const;}
 {
 }
 \ccGlue
-\ccMethod{std::list<Vertex_handle> get_border (Vertex_handle seed_vertex);}
+\ccMethod{std::list<Vertex_handle> get_border(Vertex_handle seed_vertex);}
 {
 Return the border containing \ccc{seed_vertex}. Return an empty list if not found.
 }
 \ccGlue
-\ccMethod{Facet_iterator mesh_facets_begin ();}
+\ccMethod{Facet_iterator mesh_facets_begin();}
 {
 Get iterator over first facet of mesh.
 }
 \ccGlue
-\ccMethod{Facet_const_iterator mesh_facets_begin () const;}
+\ccMethod{Facet_const_iterator mesh_facets_begin() const;}
 {
 }
 \ccGlue
-\ccMethod{Facet_iterator mesh_facets_end ();}
+\ccMethod{Facet_iterator mesh_facets_end();}
 {
 Get iterator over past-the-end facet of mesh.
 }
 \ccGlue
-\ccMethod{Facet_const_iterator mesh_facets_end () const;}
+\ccMethod{Facet_const_iterator mesh_facets_end() const;}
 {
 }
 \ccGlue
-\ccMethod{int count_mesh_facets () const;}
+\ccMethod{int count_mesh_facets() const;}
 {
 Count the number of facets of the mesh.
 }
 \ccGlue
-\ccMethod{bool is_mesh_triangular () const;}
+\ccMethod{bool is_mesh_triangular() const;}
 {
 Return true of all mesh's facets are triangles.
 }
 \ccGlue
-\ccMethod{int count_mesh_halfedges () const;}
+\ccMethod{int count_mesh_halfedges() const;}
 {
 Count the number of halfedges of the mesh.
 }
 \ccGlue
-\ccMethod{Vertex_around_facet_circulator facet_vertices_begin (Facet_handle facet);}
+\ccMethod{Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet);}
 {
 Get circulator over facet's vertices.
 }
 \ccGlue
-\ccMethod{Vertex_around_facet_const_circulator facet_vertices_begin (Facet_const_handle facet) const;}
+\ccMethod{Vertex_around_facet_const_circulator facet_vertices_begin(Facet_const_handle facet) const;}
 {
 }
 \ccGlue
-\ccMethod{int count_facet_vertices (Facet_const_handle facet) const;}
+\ccMethod{int count_facet_vertices(Facet_const_handle facet) const;}
 {
 Count the number of vertices of a facet.
 }
 \ccGlue
-\ccMethod{Point_3 get_vertex_position (Vertex_const_handle vertex) const;}
+\ccMethod{Point_3 get_vertex_position(Vertex_const_handle vertex) const;}
 {
 Get the 3D position of a vertex.
 }
 \ccGlue
-\ccMethod{Point_2 get_vertex_uv (Vertex_const_handle vertex) const;}
+\ccMethod{Point_2 get_vertex_uv(Vertex_const_handle vertex) const;}
 {
 Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_vertex_uv (Vertex_handle vertex, const Point_2 & uv);}
+\ccMethod{void set_vertex_uv(Vertex_handle vertex, const Point_2& uv);}
 {
 }
 \ccGlue
-\ccMethod{bool is_vertex_parameterized (Vertex_const_handle vertex) const;}
+\ccMethod{bool is_vertex_parameterized(Vertex_const_handle vertex) const;}
 {
 Get/set {\em is parameterized} field of vertex. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_vertex_parameterized (Vertex_handle vertex, bool parameterized);}
+\ccMethod{void set_vertex_parameterized(Vertex_handle vertex, bool parameterized);}
 {
 }
 \ccGlue
-\ccMethod{int get_vertex_index (Vertex_const_handle vertex) const;}
+\ccMethod{int get_vertex_index(Vertex_const_handle vertex) const;}
 {
 Get/set vertex index. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_vertex_index (Vertex_handle vertex, int index);}
+\ccMethod{void set_vertex_index(Vertex_handle vertex, int index);}
 {
 }
 \ccGlue
-\ccMethod{int get_vertex_tag (Vertex_const_handle vertex) const;}
+\ccMethod{int get_vertex_tag(Vertex_const_handle vertex) const;}
 {
 Get/set vertex' all purpose tag. Default value is undefined.
 }
 \ccGlue
-\ccMethod{void set_vertex_tag (Vertex_handle vertex, int tag);}
+\ccMethod{void set_vertex_tag(Vertex_handle vertex, int tag);}
 {
 }
 \ccGlue
-\ccMethod{bool is_vertex_on_border (Vertex_const_handle vertex) const;}
+\ccMethod{bool is_vertex_on_border(Vertex_const_handle vertex) const;}
 {
 Return true if a vertex belongs to ANY mesh's border.
 }
 \ccGlue
-\ccMethod{bool is_vertex_on_main_border (Vertex_const_handle vertex) const;}
+\ccMethod{bool is_vertex_on_main_border(Vertex_const_handle vertex) const;}
 {
 Return true if a vertex belongs to the UNIQUE mesh's main border.
 }
 \ccGlue
-\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin (Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
+\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin(Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
 {
 Get circulator over the vertices incident to 'vertex'. '\ccc{start_position}' defines the optional initial position of the circulator.
 }
 \ccGlue
-\ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin (Vertex_const_handle vertex, Vertex_const_handle start_position = Vertex_const_handle()) const;}
+\ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin(Vertex_const_handle vertex, Vertex_const_handle start_position = Vertex_const_handle()) const;}
 {
 }
 \ccGlue

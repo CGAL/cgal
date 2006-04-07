@@ -32,9 +32,6 @@ The class \ccc{Taucs_vector} is a C++ wrapper around TAUCS' vector type, which i
 
 \ccIsModel
 
-% FIXME: please change your script such that the C++ identifier
-% is contained in \ccc{...}
-
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
@@ -46,9 +43,6 @@ Model of the \ccc{SparseLinearAlgebraTraits_d::Vector} concept.
 \ccParameters
 
 The full template declaration is:
-
-% FIXME: please change your script such that the C++ identifier
-% is contained in \ccc{...}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
@@ -76,19 +70,15 @@ class \ccc{Taucs_vector};
 \ccCreation
 \ccCreationVariable{v}  %% variable name for \ccMethod
 
-% FIXME : please remove spaces from < T > . the manual tools
-% cannot match < T > against <T>, preventing nice
-% operator layout. there are other occurrences of the same kind
-
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{Taucs_vector (int dimension);}
+\ccConstructor{Taucs_vector(int dimension);}
 {
 Create a vector initialized with zeros.
 }
 \ccGlue
-\ccConstructor{Taucs_vector (const Taucs_vector< T > & toCopy);}
+\ccConstructor{Taucs_vector(const Taucs_vector<T>& toCopy);}
 {
 Copy constructor.
 }
@@ -102,32 +92,32 @@ Copy constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Taucs_vector& operator= (const Taucs_vector< T > & toCopy);}
+\ccMethod{Taucs_vector& operator=(const Taucs_vector<T>& toCopy);}
 {
 operator =()
 }
 \ccGlue
-\ccMethod{int dimension () const;}
+\ccMethod{int dimension() const;}
 {
 Return the vector's number of coefficients.
 }
 \ccGlue
-\ccMethod{T operator[] (int i) const;}
+\ccMethod{T operator[](int i) const;}
 {
 Read/write access to a vector coefficient.
 Preconditions: 0 $<$= i $<$ dimension().
 }
 \ccGlue
-\ccMethod{T& operator[] (int i);}
+\ccMethod{T& operator[](int i);}
 {
 }
 \ccGlue
-\ccMethod{const T* get_taucs_vector () const;}
+\ccMethod{const T* get_taucs_vector() const;}
 {
 Get TAUCS vector wrapped by this object.
 }
 \ccGlue
-\ccMethod{T* get_taucs_vector ();}
+\ccMethod{T* get_taucs_vector();}
 {
 }
 \ccGlue

@@ -75,7 +75,7 @@ struct \ccc{Taucs_matrix};
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{Taucs_matrix (int dim, bool is_symmetric = false);}
+\ccConstructor{Taucs_matrix(int dim, bool is_symmetric = false);}
 {
 Create a square matrix initialized with zeros.
 }
@@ -86,7 +86,7 @@ Create a square matrix initialized with zeros.
 \item[dim]Matrix dimension. \item[\ccc{is_symmetric}]Symmetric/hermitian? \end{description}
 \end{description}
 \ccGlue
-\ccConstructor{Taucs_matrix (int rows, int columns, bool is_symmetric = false);}
+\ccConstructor{Taucs_matrix(int rows, int columns, bool is_symmetric = false);}
 {
 Create a rectangular matrix initialized with zeros.
 }
@@ -106,24 +106,24 @@ Create a rectangular matrix initialized with zeros.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{int row_dimension () const;}
+\ccMethod{int row_dimension() const;}
 {
 Return the matrix number of rows.
 }
 \ccGlue
-\ccMethod{int column_dimension () const;}
+\ccMethod{int column_dimension() const;}
 {
 Return the matrix number of columns.
 }
 \ccGlue
-\ccMethod{T get_coef (int i, int j) const;}
+\ccMethod{T get_coef(int i, int j) const;}
 {
 Read access to a matrix coefficient.
 Preconditions:\begin{itemize}
 \item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
-\ccMethod{void set_coef (int i, int j, T val);}
+\ccMethod{void set_coef(int i, int j, T val);}
 {
 Write access to a matrix coefficient: \ccc{a_ij} $<$- val.
 Optimization: For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{set_coef}() does nothing if (i, j) belongs to the upper triangle.
@@ -131,7 +131,7 @@ Preconditions:\begin{itemize}
 \item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
-\ccMethod{void add_coef (int i, int j, T val);}
+\ccMethod{void add_coef(int i, int j, T val);}
 {
 Write access to a matrix coefficient: \ccc{a_ij} $<$- \ccc{a_ij} + val.
 Optimization: For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{add_coef}() does nothing if (i, j) belongs to the upper triangle.
@@ -139,7 +139,7 @@ Preconditions:\begin{itemize}
 \item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
-\ccMethod{const taucs_ccs_matrix* get_taucs_matrix () const;}
+\ccMethod{const taucs_ccs_matrix* get_taucs_matrix() const;}
 {
 Construct and return the TAUCS matrix wrapped by this object. Note: the TAUCS matrix returned by this method is valid only until the next call to \ccc{set_coef}(), \ccc{add_coef}() or \ccc{get_taucs_matrix}().
 }

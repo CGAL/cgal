@@ -59,12 +59,12 @@ This is a sub-concept of \ccc{LinearAlgebraTraits_d::Vector}.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{Vector (int rows);}
+\ccConstructor{Vector(int rows);}
 {
 Create a vector initialized with zeros.
 }
 \ccGlue
-\ccConstructor{Vector (const Vector & toCopy);}
+\ccConstructor{Vector(const Vector& toCopy);}
 {
 Copy constructor.
 }
@@ -78,23 +78,23 @@ Copy constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Vector& operator= (const Vector & toCopy);}
+\ccMethod{Vector& operator=(const Vector& toCopy);}
 {
 operator =()
 }
 \ccGlue
-\ccMethod{int dimension () const;}
+\ccMethod{int dimension() const;}
 {
 Return the vector's number of coefficients.
 }
 \ccGlue
-\ccMethod{NT operator[] (int row) const;}
+\ccMethod{NT operator[](int row) const;}
 {
 Read/write access to a vector coefficient.
 Precondition: 0 $<$= row $<$ dimension().
 }
 \ccGlue
-\ccMethod{NT& operator[] (int row);}
+\ccMethod{NT& operator[](int row);}
 {
 }
 \ccGlue

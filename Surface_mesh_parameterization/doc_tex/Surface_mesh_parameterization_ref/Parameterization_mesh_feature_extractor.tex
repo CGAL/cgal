@@ -74,7 +74,7 @@ Type representing the list of all borders of the mesh = STL container of Border 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{Parameterization_mesh_feature_extractor (Adaptor & mesh);}
+\ccConstructor{Parameterization_mesh_feature_extractor(Adaptor& mesh);}
 {
 Constructor.
 CAUTION: This class caches the result of feature extractions =$>$ The caller must NOT modify 'mesh' during the \ccc{Parameterization_mesh_feature_extractor} life cycle.
@@ -89,27 +89,27 @@ CAUTION: This class caches the result of feature extractions =$>$ The caller mus
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{int get_nb_borders ();}
+\ccMethod{int get_nb_borders();}
 {
 Get number of borders.
 }
 \ccGlue
-\ccMethod{const Skeleton& get_borders ();}
+\ccMethod{const Skeleton& get_borders();}
 {
 Get extracted borders. The longest border is the first one.
 }
 \ccGlue
-\ccMethod{const Border& get_longest_border ();}
+\ccMethod{const Border& get_longest_border();}
 {
 Get longest border.
 }
 \ccGlue
-\ccMethod{int get_nb_connex_components ();}
+\ccMethod{int get_nb_connex_components();}
 {
 Get \# of connected components.
 }
 \ccGlue
-\ccMethod{int get_genus ();}
+\ccMethod{int get_genus();}
 {
 Get the genus.
 }
