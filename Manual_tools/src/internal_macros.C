@@ -1,5 +1,5 @@
 /**************************************************************************
- 
+
   internal_macros.C
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
@@ -8,7 +8,7 @@
               as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Id$
   Date      : $Date$
- 
+
 **************************************************************************/
 
 
@@ -27,6 +27,13 @@
 #include <sstream>
 #include <cassert>
 
+#include <map>
+
+typedef std::map< string, string, Case_insensitive_string_greater_than >     String_map;
+typedef hash_map< string, String_map > String_map_table;
+
+String_map_table                       string_map_table;
+
 // ======================================================================
 // External visible functions
 // ======================================================================
@@ -42,29 +49,29 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
       printErrorMessage( EmptyCrossLinkError);
       exit( 1);
     }
-    
+
     char *tmp_namex = convert_fontified_ascii_to_html( key);
     string tmp_name( tmp_namex );
     delete[] tmp_namex;
-         
+
     ostringstream replacement_text;
-    replacement_text << REPLACE_WITH_CURRENT_PATH_TOKEN 
-                     << current_basename 
+    replacement_text << REPLACE_WITH_CURRENT_PATH_TOKEN
+                     << current_basename
                      << "#Cross_link_anchor_" << cross_link_anchor_counter;
-    
+
     *anchor_stream << "c " << tmp_name << '\t';
     wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
-    *anchor_stream << endl;    
-    
+    *anchor_stream << endl;
+
     string::size_type t = tmp_name.find( "&lt;" );
     if( t != string::npos ) {
       tmp_name = tmp_name.substr( 0, t );
       *anchor_stream << "c " << tmp_name << '\t';
       wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
-      *anchor_stream << endl;          
+      *anchor_stream << endl;
     }
-    
-    return string("\n<A NAME=\"Cross_link_anchor_") 
+
+    return string("\n<A NAME=\"Cross_link_anchor_")
       + int_to_string( cross_link_anchor_counter++) + "\"></A>\n";
 }
 
@@ -77,18 +84,18 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
 string correct_name (string s) {
 // corrects index entries for HTML (with <> and </> commands) so that
 // the result is a correct command in HTML.
-// Example: ``<I> index'' is changed into ``<I> index </I>''.  
+// Example: ``<I> index'' is changed into ``<I> index </I>''.
 
   string tab[20];
   string search_item;
   string correct_s=s;
   int tab_item=0;
   int k=1;
-  bool found; 
+  bool found;
   size_t i = 0;
 
   while (i< s.size()) {
-     if (s[i]=='<') { 
+     if (s[i]=='<') {
         if (s[i+1]=='/' && (i+1<s.size())) {
              tab_item++;
              while (i< s.size() && s[i] != '>') {
@@ -96,8 +103,8 @@ string correct_name (string s) {
                i++;
              }
              tab[tab_item].replace(0,2,"");
-             search_item = tab[tab_item]; 
-             tab[tab_item--]=""; 
+             search_item = tab[tab_item];
+             tab[tab_item--]="";
              found = false;
              while ( k<=tab_item && !(found) ) {
                 if (tab[k] == search_item) {
@@ -105,24 +112,24 @@ string correct_name (string s) {
                    found = true;
                 }
                 k++;
-             }  
-             if (!found)  correct_s = "<" + search_item + ">" + correct_s; 
-        } 
-        else { 
+             }
+             if (!found)  correct_s = "<" + search_item + ">" + correct_s;
+        }
+        else {
           tab_item++;
           while (i< s.size() && s[i] != '>') {
              tab[tab_item]+=s[i];
              i++;
           }
-          tab[tab_item].replace(0,1,""); 
+          tab[tab_item].replace(0,1,"");
         }
-     } 
+     }
      i++;
    }
    for (int j=1;j<=tab_item;j++) {
-      if (!(tab[j]=="")) 
-          correct_s += "</" + tab[j] + ">"; 
-   } 
+      if (!(tab[j]==""))
+          correct_s += "</" + tab[j] + ">";
+   }
    return correct_s;
 
 }
@@ -135,16 +142,16 @@ void mainTextParse(string s,
 
    remove_leading_spaces(s);
    size_t i = 0;
-   while (i< s.size() && s[i] != ',')  index_name+=s[i++]; 
+   while (i< s.size() && s[i] != ',')  index_name+=s[i++];
    if (s[i] ==',') {
-      s.replace(0,++i,""); 
+      s.replace(0,++i,"");
       remove_leading_spaces(s);
       i=0;
-      while (i < s.size()){  
+      while (i < s.size()){
         modifier+=s[i];
         i++;
-      }    
-   } 
+      }
+   }
    index_name = correct_name(index_name);
    modifier = correct_name(modifier);
 }
@@ -158,18 +165,18 @@ static string temp_main_filename;
 static string temp_current_filename;
 
 void OpenFileforIndex() {
-  string new_main_filename; 
+  string new_main_filename;
   temp_main_stream = main_stream;
   temp_current_stream = current_ostream;
   temp_main_filename = main_filename;
-  temp_current_filename = current_filename; 
+  temp_current_filename = current_filename;
 
   string WhichItem = macroX("\\lciWhichItem");
   if (WhichItem=="MainItem" || WhichItem=="index") {
      new_main_filename = macroX("\\lciMainItemFile");
   }
   else {
-     if (WhichItem=="SubItem") 
+     if (WhichItem=="SubItem")
         new_main_filename = macroX("\\lciSubItemFile");
      else {
         if (WhichItem=="SubSubItem") {
@@ -177,9 +184,9 @@ void OpenFileforIndex() {
         }
         else {
            cerr << " internal_macros.C : warning: unknown variable WhichItem"
-                << endl; 
+                << endl;
            exit(1);
-        } 
+        }
      }
   }
   main_filename = new_main_filename;
@@ -196,7 +203,7 @@ void CloseFileforIndex() {
   main_stream = temp_main_stream;
   current_ostream = temp_current_stream;
   main_filename = temp_main_filename;
-  current_filename = temp_current_filename; 
+  current_filename = temp_current_filename;
   insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
   insertInternalGlobalMacro( "\\lciMainFilename",   main_filename);
 }
@@ -206,18 +213,18 @@ void CloseFileforIndex() {
 string name_for_ordering(string s) {
 // index entry without HTML commands
 
-   string ord_s=""; 
+   string ord_s="";
    size_t i = 0;
    while (i< s.size()) {
-     if (s[i]=='<') { 
-        while (i< s.size() && s[i] != '>')     
+     if (s[i]=='<') {
+        while (i< s.size() && s[i] != '>')
              i++;
      }
      else {
         ord_s+=s[i];
-     }    
+     }
      i++;
-   } 
+   }
    return ord_s;
 }
 
@@ -235,31 +242,31 @@ void handleIndex() {
     string ord_index_name="", ord_sub_index_name="", ord_sub_sub_index_name="";
     string s;
 
-    string main_item = ""; 
+    string main_item = "";
     string WhichItem = macroX("\\lciWhichItem");
     if (WhichItem=="MainItem" || WhichItem=="SubItem" ||
           WhichItem=="SubSubItem") {
        open_file_to_string(tmp_path + macroX("\\lciMainItemFile"),s);
        mainTextParse(s, index_name, modifier);
        s="";
-       ord_index_name = name_for_ordering(index_name); 
+       ord_index_name = name_for_ordering(index_name);
        ord_modifier = name_for_ordering(modifier);
     }
-    if (WhichItem=="SubItem" || WhichItem=="SubSubItem") {   
+    if (WhichItem=="SubItem" || WhichItem=="SubSubItem") {
        open_file_to_string(tmp_path + macroX("\\lciSubItemFile"),s);
-       mainTextParse(s, sub_index_name, sub_modifier); 
-       s=""; 
-       ord_sub_index_name = name_for_ordering(sub_index_name); 
+       mainTextParse(s, sub_index_name, sub_modifier);
+       s="";
+       ord_sub_index_name = name_for_ordering(sub_index_name);
        ord_sub_modifier = name_for_ordering(sub_modifier);
-    } 
-   if (WhichItem=="SubSubItem") {   
+    }
+   if (WhichItem=="SubSubItem") {
        open_file_to_string(tmp_path + macroX("\\lciSubSubItemFile"),s);
        mainTextParse(s, sub_sub_index_name, sub_sub_modifier);
        s="";
-       ord_sub_sub_index_name = name_for_ordering(sub_sub_index_name); 
+       ord_sub_sub_index_name = name_for_ordering(sub_sub_index_name);
        ord_sub_sub_modifier = name_for_ordering(sub_sub_modifier);
-   } 
-    
+   }
+
    string sub_item="";
    string sub_sub_item="";
 
@@ -267,40 +274,40 @@ void handleIndex() {
    if (sub_sub_index_name!="") sub_sub_index_name="??? "+sub_sub_index_name;
 
    if (!(sub_index_name=="")) {
-       if (sub_modifier=="") 
+       if (sub_modifier=="")
           sub_item = ord_sub_index_name+"@ "+sub_index_name;
-       else    
+       else
          sub_item = ord_sub_index_name+" "+ord_sub_modifier +"@ "
-                    + sub_index_name+", "+sub_modifier;      
-   } 
+                    + sub_index_name+", "+sub_modifier;
+   }
    if (!(sub_sub_index_name=="")) {
-       if (sub_sub_modifier=="") 
+       if (sub_sub_modifier=="")
           sub_sub_item = ord_sub_sub_index_name+"@ "+sub_sub_index_name;
-       else    
-         sub_sub_item = ord_sub_sub_index_name +" " +ord_sub_sub_modifier 
-                        + "@ "+sub_sub_index_name+", " +sub_sub_modifier;      
-   } 
+       else
+         sub_sub_item = ord_sub_sub_index_name +" " +ord_sub_sub_modifier
+                        + "@ "+sub_sub_index_name+", " +sub_sub_modifier;
+   }
 
-  
+
    if (modifier=="") {
          handleIndex2( ord_index_name+"@ ??? "+ index_name, sub_item,
                        sub_sub_item, 0);
    }
-   else { 
+   else {
        int number;
        Modifier_map_iterator mod_it = modifier_map.find( modifier+index_name);
        if ( mod_it != modifier_map.end()) {
-            handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? "+index_name+ 
+            handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? "+index_name+
                          ",  "+ modifier+"<A NAME=\""
-                         + int_to_string( mod_it->second) 
-                         +"\"></A>",sub_item,sub_sub_item,0);          
+                         + int_to_string( mod_it->second)
+                         +"\"></A>",sub_item,sub_sub_item,0);
        } else {
-            if (ord_modifier=="2D" || ord_modifier=="3D" || 
+            if (ord_modifier=="2D" || ord_modifier=="3D" ||
                  ord_modifier=="dD") {
-                handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? " 
+                handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? "
                         +index_name+ ",  "+ modifier,sub_item,sub_sub_item,0);
             } else {
-                handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? " + 
+                handleIndex2(ord_index_name+" "+ord_modifier+"@ ??? " +
                    index_name+ ",  " + modifier,sub_item,sub_sub_item,1);
                 handleIndex2(ord_modifier+ " "+ord_index_name+" see "
                     +ord_index_name+", "+ord_modifier+"@"+modifier
@@ -310,20 +317,20 @@ void handleIndex() {
             }
         }
    }
-} 
+}
 
 
-void handleIndex2(string main_item, string sub_item, string sub_sub_item, 
+void handleIndex2(string main_item, string sub_item, string sub_sub_item,
                   int modifier) {
     remove_separator( main_item);
     remove_separator( sub_item);
     remove_separator( sub_sub_item);
-   if (modifier==1) 
-     *index_stream << "\\indexentry{" 
+   if (modifier==1)
+     *index_stream << "\\indexentry{"
 		        << main_item<< "<A NAME=\""<<HREF_counter
                         <<"\"></A>";
    else {
-     *index_stream << "\\indexentry{" 
+     *index_stream << "\\indexentry{"
 		        << main_item;
    }
 
@@ -331,30 +338,30 @@ void handleIndex2(string main_item, string sub_item, string sub_sub_item,
         *index_stream <<"! " << sub_item;
         if (sub_sub_item!="") *index_stream <<"! " << sub_sub_item;
    }
-   if ( !macroIsTrue("\\lciIfSeeAlso")) { 
+   if ( !macroIsTrue("\\lciIfSeeAlso")) {
       switch (modifier) {
         case 0 :
              *HREF_stream << HREF_counter << " HREF=\"" << current_filename
-                          << "#Index_anchor_" << index_anchor_counter << "\"" 
+                          << "#Index_anchor_" << index_anchor_counter << "\""
                           << endl;
              break;
         case 1 :
              *HREF_stream << HREF_counter <<" HREF=\"" << current_filename
-                          << "#Index_anchor_" << index_anchor_counter << "\"" 
+                          << "#Index_anchor_" << index_anchor_counter << "\""
                           << endl;
              break;
         case 2 :
              *HREF_stream << HREF_counter << " HREF=\"" << "#"
                           << HREF_counter-2 << "\"" << endl;
-             break; 
-      } 
-   } 
-  
-     
+             break;
+      }
+   }
+
+
    *index_stream << "}{"<< HREF_counter << "}" << endl;
 
    HREF_counter+=2;
-   *current_ostream << "\n<A NAME=\"Index_anchor_" 
+   *current_ostream << "\n<A NAME=\"Index_anchor_"
 	 << int_to_string( index_anchor_counter++)
 	 << "\"></A> \n";
 }
@@ -374,24 +381,24 @@ void TraitsClassTextParse(string s, string p) {
          remove_leading_spaces(s);
          i=0;
          remove_trailing_spaces(index_name);
-         if ( ! macroIsTrue("\\lciIfPackage"))  
+         if ( ! macroIsTrue("\\lciIfPackage"))
               index_name=name_for_ordering(index_name)+"@ ??? <I>"+
-                         name_for_ordering(index_name)+"</I>"; 
+                         name_for_ordering(index_name)+"</I>";
          else   index_name = name_for_ordering(index_name)+"@ ??? "+
                              name_for_ordering(index_name);
          handleIndex2(index_name,"traits class@ ??? traits class",
                       index_class_name,0);
-         index_name=""; 
+         index_name="";
       }
       else {
-         index_name+=s[i++]; 
+         index_name+=s[i++];
       }
    }
    remove_leading_spaces(index_name);
-   remove_trailing_spaces(index_name); 
-   if ( ! macroIsTrue("\\lciIfPackage"))  
-       index_name=name_for_ordering(index_name)+"@ ??? <I>"+ 
-                  name_for_ordering(index_name)+"</I>"; 
+   remove_trailing_spaces(index_name);
+   if ( ! macroIsTrue("\\lciIfPackage"))
+       index_name=name_for_ordering(index_name)+"@ ??? <I>"+
+                  name_for_ordering(index_name)+"</I>";
    else index_name = name_for_ordering(index_name)+"@ ??? "+
                              name_for_ordering(index_name);
    handleIndex2( index_name, "traits class@ ??? traits class",
@@ -404,13 +411,13 @@ void handleIndexTraitsClass() {
    string s1, s2;
    open_file_to_string(tmp_path + macroX("\\lciMainItemFile"),s1);
    open_file_to_string(tmp_path + macroX("\\lciSubItemFile"),s2);
-   TraitsClassTextParse(s1, s2);   
+   TraitsClassTextParse(s1, s2);
 }
 
 
 void handleIndexRefName() {
    string s1, s2, s3;
-   string index_name; 
+   string index_name;
    open_file_to_string(tmp_path + macroX("\\lciMainItemFile"),s1);
    open_file_to_string(tmp_path + macroX("\\lciSubItemFile"),s2);
    open_file_to_string(tmp_path + macroX("\\lciSubSubItemFile"),s3);
@@ -420,12 +427,12 @@ void handleIndexRefName() {
    if ((s3=="Class") || (s3=="FunctionObjectClass")) {
       index_name = name_for_ordering(s2)+"@ ??? "+s2;
       handleIndex2(index_name,"","",0);
-   } 
-   else { 
+   }
+   else {
      if ((s3=="Concept") || (s3=="FunctionObjectConcept")) {
         index_name = name_for_ordering(s2)+"@ ??? "+name_for_ordering(s2);
         handleIndex2(index_name,"","",0);
-     } 
+     }
      else {
        if (s1=="") {
           index_name = name_for_ordering(s2)+"@ ??? "+s2;
@@ -435,26 +442,26 @@ void handleIndexRefName() {
        else {
          for ( size_t i = 0; i < s1.size(); ++i) {
 	    if ( s1[i]==':' ) {
-              if ( (i+1)<s1.size() && s1[i+1]==':') { 
+              if ( (i+1)<s1.size() && s1[i+1]==':') {
 	        s1.replace(i,s1.size()-i,"");
                 break;
               }
             }
 	  }
           index_name = name_for_ordering(s1)+"@ ??? "+s1;
-          string index_name2 =  name_for_ordering(s2)+"@ ??? "+s2;  
-          if ((s3=="Function"))           
+          string index_name2 =  name_for_ordering(s2)+"@ ??? "+s2;
+          if ((s3=="Function"))
              handleIndex2(index_name2,index_name,"",0);
-          else 
+          else
              handleIndex2(index_name,index_name2,"",0);
-       }   
-     } 
+       }
+     }
    }
 }
 
 
 // Opens a new classfile of name 'filename'
-void handleClassFile( string filename) { 
+void handleClassFile( string filename) {
     string filepath = macroX( "\\lciInputPath");
     if ( filepath[0] == '/' ) {
         printErrorMessage( ClassAbsolutePathError);
@@ -478,7 +485,7 @@ void handleClassFile( string filename) {
     } else if ( current_filepath == main_filepath) {
         anchor_stream = main_anchor_stream;
     } else {
-        anchor_stream = open_file_for_append_with_path( 
+        anchor_stream = open_file_for_append_with_path(
             tmp_path + current_filepath + macroX( "\\lciAnchorFilename"));
     }
     class_stream = open_file_for_write_with_path( tmp_path + class_filename);
@@ -491,7 +498,7 @@ void handleClassFileEnd( void) {
     delete   class_stream;
     class_filename = string();
     class_stream = 0;
-        
+
     if ( anchor_stream != 0 && anchor_stream != main_anchor_stream
          && anchor_stream != global_anchor_stream) {
         assert_file_write( *anchor_stream, macroX( "\\lciAnchorFilename"));
@@ -546,7 +553,7 @@ newcommand_opt( const string&, string param[], size_t n, size_t opt) {
     if ( m < 1 || m > 9)
 	printErrorMessage( NParamRangeError);
     else
-	insertMacro( macroname, in_string->name(), in_string->line(), 
+	insertMacro( macroname, in_string->name(), in_string->line(),
 		     param[2], m);
     return string();
 }
@@ -557,7 +564,7 @@ global_newcommand( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    insertGlobalMacro( macroname, in_string->name(), in_string->line(), 
+    insertGlobalMacro( macroname, in_string->name(), in_string->line(),
 		       param[1], 0);
     return string();
 }
@@ -643,9 +650,9 @@ add_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int sum = atoi( expandFirstMacro( macroname).c_str()) 
+    int sum = atoi( expandFirstMacro( macroname).c_str())
             + atoi(param[1].c_str());
-    insertMacro( macroname, in_string->name(), in_string->line(), 
+    insertMacro( macroname, in_string->name(), in_string->line(),
 		 int_to_string( sum));
     return string();
 }
@@ -656,7 +663,7 @@ mult_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+    int prod = atoi( expandFirstMacro( macroname).c_str())
              * atoi(param[1].c_str());
     insertMacro( macroname, in_string->name(), in_string->line(),
 		 int_to_string( prod));
@@ -669,7 +676,7 @@ div_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+    int prod = atoi( expandFirstMacro( macroname).c_str())
              / atoi(param[1].c_str());
     insertMacro( macroname, in_string->name(), in_string->line(),
 		 int_to_string( prod));
@@ -682,7 +689,7 @@ mod_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+    int prod = atoi( expandFirstMacro( macroname).c_str())
              % atoi(param[1].c_str());
     insertMacro( macroname, in_string->name(), in_string->line(),
 		 int_to_string( prod));
@@ -695,9 +702,9 @@ global_add_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int sum = atoi( expandFirstMacro( macroname).c_str()) 
+    int sum = atoi( expandFirstMacro( macroname).c_str())
             + atoi(param[1].c_str());
-    insertGlobalMacro( macroname, in_string->name(), in_string->line(), 
+    insertGlobalMacro( macroname, in_string->name(), in_string->line(),
 		       int_to_string( sum));
     return string();
 }
@@ -708,7 +715,7 @@ global_mult_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+    int prod = atoi( expandFirstMacro( macroname).c_str())
              * atoi(param[1].c_str());
     insertGlobalMacro( macroname, in_string->name(), in_string->line(),
 		       int_to_string( prod));
@@ -721,7 +728,7 @@ global_div_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+    int prod = atoi( expandFirstMacro( macroname).c_str())
              / atoi(param[1].c_str());
     insertGlobalMacro( macroname, in_string->name(), in_string->line(),
 		       int_to_string( prod));
@@ -734,7 +741,7 @@ global_mod_to( const string&, string param[], size_t n, size_t opt) {
     string macroname( param[0]);
     crop_string( macroname);
     remove_separator( macroname);
-    int prod = atoi( expandFirstMacro( macroname).c_str()) 
+    int prod = atoi( expandFirstMacro( macroname).c_str())
              % atoi(param[1].c_str());
     insertGlobalMacro( macroname, in_string->name(), in_string->line(),
 		       int_to_string( prod));
@@ -745,7 +752,7 @@ global_mod_to( const string&, string param[], size_t n, size_t opt) {
 string
 add( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
-    int sum = atoi( param[0].c_str() ) 
+    int sum = atoi( param[0].c_str() )
             + atoi( param[1].c_str() );
     return int_to_string( sum );
 }
@@ -753,11 +760,11 @@ add( const string&, string param[], size_t n, size_t opt) {
 string
 expand_n( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
-    int N      = atoi( param[0].c_str() ); 
+    int N      = atoi( param[0].c_str() );
     string cmd = param[1];
     string retval = string();
     //std::cout << std::endl << "expand_n " << N << " " << cmd << " -> " << std::endl;
-    for( ; N > 0; --N ) 
+    for( ; N > 0; --N )
         retval += macroX( cmd );
     //std::cout << retval << std::endl;
     return retval;
@@ -766,7 +773,7 @@ expand_n( const string&, string param[], size_t n, size_t opt) {
 
 // String conversion
 // ======================================================================
-string 
+string
 string_to_upper( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     string s( param[0]);
@@ -775,13 +782,13 @@ string_to_upper( const string&, string param[], size_t n, size_t opt) {
     return s;
 }
 
-string 
+string
 int_to_roman( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     return int_to_roman_string( atoi( param[0].c_str()));
 }
 
-string 
+string
 int_to_roman_upper( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     string s = int_to_roman_string( atoi( param[0].c_str()));
@@ -790,7 +797,7 @@ int_to_roman_upper( const string&, string param[], size_t n, size_t opt) {
     return s;
 }
 
-string 
+string
 int_to_alpha( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     int i = atoi( param[0].c_str());
@@ -803,7 +810,7 @@ int_to_alpha( const string&, string param[], size_t n, size_t opt) {
     return string( s);
 }
 
-string 
+string
 int_to_alpha_upper( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     int i = atoi( param[0].c_str());
@@ -816,11 +823,11 @@ int_to_alpha_upper( const string&, string param[], size_t n, size_t opt) {
     return string( s);
 }
 
-string 
+string
 substring( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 3, 0 );
     int begin = atoi( param[0].c_str() );
-    int end   = atoi( param[1].c_str() );    
+    int end   = atoi( param[1].c_str() );
     string s  = param[2];
     if( end <= 0 ) {
       end = s.length() + end;
@@ -836,20 +843,20 @@ substring( const string&, string param[], size_t n, size_t opt) {
 // Some special characters hard to print otherwise
 // ======================================================================
 
-string 
+string
 format_chapter_author( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     // count if none, one, or several \and's are used
     std::string::size_type idx = param[0].find("\\and");
     // make sure it was not a macro that just starts with '\and...'
-    while ( idx != std::string::npos && idx + 4 < param[0].size() && 
+    while ( idx != std::string::npos && idx + 4 < param[0].size() &&
             std::isalpha( param[0][idx+4]))
         idx = param[0].find("\\and", idx+4);
     if ( idx == std::string::npos) // no \and's used, do nothing
         return param[0];
     std::string::size_type idx2 = param[0].find("\\and", idx+1);
     // make sure it was not a macro that just starts with '\and...'
-    while ( idx2 != std::string::npos && idx2 + 4 < param[0].size() && 
+    while ( idx2 != std::string::npos && idx2 + 4 < param[0].size() &&
             std::isalpha( param[0][idx2+4]))
         idx2 = param[0].find("\\and", idx2+4);
     if ( idx2 == std::string::npos) { // one \and used, replace with " and "
@@ -868,7 +875,7 @@ format_chapter_author( const string&, string param[], size_t n, size_t opt) {
         idx = idx2 - 2;
         idx2 = param[0].find("\\and", idx+1);
         // make sure it was not a macro that just starts with '\and...'
-        while ( idx2 != std::string::npos && idx2 + 4 < param[0].size() && 
+        while ( idx2 != std::string::npos && idx2 + 4 < param[0].size() &&
                 std::isalpha( param[0][idx2+4]))
             idx2 = param[0].find("\\and", idx2+4);
     } while (idx2 != std::string::npos);
@@ -885,19 +892,19 @@ format_chapter_author( const string&, string param[], size_t n, size_t opt) {
 
 // Some special characters hard to print otherwise
 // ======================================================================
-string 
+string
 backslash_char( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 0, 0);
     return string( "\\lciRawOutputN{1}\\");
 }
 
-string 
+string
 open_brace_char( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 0, 0);
     return string( "\\lciRawOutputN{1}{");
 }
 
-string 
+string
 close_brace_char( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 0, 0);
     return string( "\\lciRawOutputN{1}}");
@@ -907,7 +914,7 @@ close_brace_char( const string&, string param[], size_t n, size_t opt) {
 
 // Error and message output
 // ======================================================================
-string 
+string
 html_error( const string&, string param[], size_t n, size_t opt) {
     cerr << endl;
     if ( n != 1 && opt != 0)
@@ -989,7 +996,7 @@ three_column_layout( const string&, string param[], size_t n, size_t opt) {
                          // the comment is empty.
     crop_string( cc_string);
     compress_spaces_in_string( cc_string);
-    handle_three_column_layout( param[0][0], cc_string.c_str(), 
+    handle_three_column_layout( param[0][0], cc_string.c_str(),
 				param[1][0] == '1');
     return string();
 }
@@ -1042,8 +1049,8 @@ handle_to_be_included( const string& s, string param[], size_t n, size_t opt) {
       return string("\\lcFalse");
 }
 
-// another hack: 
-string 
+// another hack:
+string
 RCSdef( string input, bool date ) {
   input = input.substr( 1, input.length() -2 );
   string::size_type pos, pos2;
@@ -1057,13 +1064,13 @@ RCSdef( string input, bool date ) {
 
 string
 handle_RCSdef( const string& s, string param[], size_t n, size_t opt ) {
-  NParamCheck( 1, 0 ); 
+  NParamCheck( 1, 0 );
   return RCSdef( param[0], false );
 }
 
 string
 handle_RCSdefDate( const string& s, string param[], size_t n, size_t opt ) {
-  NParamCheck( 1, 0 ); 
+  NParamCheck( 1, 0 );
   return RCSdef( param[0], true );
 }
 
@@ -1078,7 +1085,7 @@ handle_chapter( const string&, string param[], size_t n, size_t opt) {
     string chapter_title( param[0]);
     crop_string( chapter_title);
     remove_separator( chapter_title);
-        
+
     string new_main_filename;
     string new_main_filepath = macroX( "\\lciInputPath");
     if ( new_main_filepath[0] == '/' ) {
@@ -1109,9 +1116,9 @@ handle_chapter( const string&, string param[], size_t n, size_t opt) {
         delete anchor_stream;
         anchor_stream = 0;
     }
-    if ( main_anchor_stream != 0 
+    if ( main_anchor_stream != 0
          && main_anchor_stream != global_anchor_stream) {
-        assert_file_write( *main_anchor_stream, 
+        assert_file_write( *main_anchor_stream,
                            macroX( "\\lciAnchorFilename"));
         delete main_anchor_stream;
         main_anchor_stream = 0;
@@ -1273,9 +1280,70 @@ to_html_width( const string&, string param[], size_t n, size_t opt) {
     if( pos != string::npos ) {
         width = width.substr( 0, pos );
         return float_to_string( atof( width.c_str() ) * 100.0 ) + "\\%";
-    } 
+    }
     return "0";
 }
+
+
+
+string
+sorted_map_add_to( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 3, 0);
+  string name  = param[0];
+  string key   = param[1];
+  string value = param[2];
+
+  if( key[0] == '\\' )
+    key = macroX( key );
+  if( value[0] == '\\' )
+    value = macroX( value );
+
+  string_map_table[name][ key ] = value;
+  return string();
+}
+
+string
+sorted_map_foreach( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 2, 0);
+  string name  = param[0];
+  string func  = param[1];
+
+  if( func[0] != '\\' )
+    return string("!! Error: argument to \\lciSortedMapForeach has to be a function");
+
+  const String_map& m = string_map_table[name];
+  string func_params[2];
+  Macro_item item = fetchMacro( func );
+  for( String_map::const_iterator it = m.begin(); it != m.end(); ++it ) {
+    func_params[0] = it->first;
+    func_params[1] = it->second;
+    include_stack.push_string(
+      func,
+      expandMacro(func, item, func_params, 2, 0),
+      0 );
+  }
+
+  return string();
+}
+
+string
+sorted_map_clear( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  string name  = param[0];
+  string_map_table[name].clear();
+  return string();
+}
+
+string
+sorted_map_is_empty( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  string name  = param[0];
+  if( string_map_table[name].empty() )
+    return string("\\lcTrue");
+  else
+    return string("\\lcFalse");
+}
+
 
 // Initialize
 // ======================================================================
@@ -1307,7 +1375,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciGlobalMultTo", global_mult_to, 2);
     insertInternalGlobalMacro( "\\lciGlobalDivTo",  global_div_to, 2);
     insertInternalGlobalMacro( "\\lciGlobalModTo",  global_mod_to, 2);
-    
+
     insertInternalGlobalMacro( "\\lciExpandN",      expand_n, 2);
 
     insertInternalGlobalMacro( "\\lciToUpper",      string_to_upper, 1);
@@ -1317,7 +1385,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciToAlphaUpper", int_to_alpha_upper, 1);
     insertInternalGlobalMacro( "\\lciSubstring",    substring, 3);
 
-    insertInternalGlobalMacro( "\\lciFormatChapterAuthor", 
+    insertInternalGlobalMacro( "\\lciFormatChapterAuthor",
                                                    format_chapter_author, 1);
 
     insertInternalGlobalMacro( "\\lciBackslash",   backslash_char, 0);
@@ -1339,12 +1407,17 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciHtmlIndex", html_index, 1);
     insertInternalGlobalMacro( "\\lciHtmlIndexC", html_index_C, 1);
     insertInternalGlobalMacro( "\\lciHtmlCrossLink", cross_link, 1);
-    insertInternalGlobalMacro( "\\lciHtmlCrossLinkTemplate", 
+    insertInternalGlobalMacro( "\\lciHtmlCrossLinkTemplate",
                                                        cross_link_template, 1);
-    insertInternalGlobalMacro( "\\lciOpenReferenceFile", 
+    insertInternalGlobalMacro( "\\lciOpenReferenceFile",
                                                        open_reference_file,0);
-    insertInternalGlobalMacro( "\\lciCloseReferenceFile", 
+    insertInternalGlobalMacro( "\\lciCloseReferenceFile",
                                                        close_reference_file,0);
+
+    insertInternalGlobalMacro( "\\lciSortedMapAddTo", sorted_map_add_to,3 );
+    insertInternalGlobalMacro( "\\lciSortedMapForeach", sorted_map_foreach,2 );
+    insertInternalGlobalMacro( "\\lciSortedMapClear", sorted_map_clear,1 );
+    insertInternalGlobalMacro( "\\lciSortedMapIsEmpty", sorted_map_is_empty,1 );
 
     insertInternalGlobalMacro( "\\lciIfFileExists", if_file_exists, 1);
     insertInternalGlobalMacro( "\\lciCopyFile",     copy_file, 2);
@@ -1358,7 +1431,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciCloseFile",   close_file, 0);
 
     insertInternalGlobalMacro( "\\lciLineNumber",  line_number,  0);
-    
+
     insertInternalGlobalMacro( "\\lciIncludeOnly",  handle_include_only,  1);
     insertInternalGlobalMacro( "\\lciIfToBeIncluded",  handle_to_be_included,  1);
     insertInternalGlobalMacro( "\\lciToHtmlWidth",  to_html_width,  1);

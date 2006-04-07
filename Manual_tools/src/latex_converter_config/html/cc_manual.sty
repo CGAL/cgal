@@ -41,7 +41,9 @@
 
 
 \newcommand{\lciIfRef}{\ccFalse}
-\gdef\lciFirstRefPageAlreadySeen{\lcFalse}%
+
+\gdef\lciInsideListofRefPages{\lcFalse}
+\gdef\lciIfPrintUnsortedRefpageEntries{\lcFalse}
 
 \newcommand{\ccUserChapter}[1]{\chapter{#1}}
 \newcommand{\ccRefChapter}[1]{%
@@ -49,7 +51,12 @@
 \textit{Reference~Manual}}%
 }
 
-
+\newcommand{\ccEnableUnsortedListOfRefpageEntries}{%
+  \gdef\lciIfPrintUnsortedRefpageEntries{\lcTrue}%
+}
+\newcommand{\ccDisableUnsortedListOfRefpageEntries}{%
+  \gdef\lciIfPrintUnsortedRefpageEntries{\lcFalse}%
+}
 
 
 % ___________________________________________________________________________
@@ -411,7 +418,6 @@
 \gdef{\thereferencepage}{%
     \lciCounterpart\_\lciCounterchapter\_\lciCounterreferencepage}
 
-
 % open and close a new file for reference pages and classes
 % Is between section and subsection
 % Args: <filename>, <text referring to new file>
@@ -436,14 +442,19 @@
 \newcommand{\ccReferenceFileCont}[1]{%
     \lciStoreFileName%
     \refstepcounter{referencepage}%
-    \lciFirstRefPageAlreadySeen{}{%
-       \section{Alphabetical List of Reference Pages}
-       \lcRawHtml{<table>}%
-       \gdef\lciFirstRefPageAlreadySeen{\lcTrue}%
-    }%
-    % Make a hyperlink in the chapter to the class file.
-    \lcRawHtml{<tr><td>[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</td></tr>}%
+
+    \lciIfPrintUnsortedRefpageEntries{
+      \lciInsideListofRefPages{}{%
+        \lcRawHtml{<table cellpadding="0">}%
+        \gdef\lciInsideListofRefPages{\lcTrue}%
+      }
+      % Make a hyperlink in the chapter to the class file.
+      \lcRawHtml{<tr><td>[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</td></tr>}%
+    }{}
     \lciOpenReferenceFile%
+    \lciIfPrintUnsortedRefpageEntries{}{%
+      \lciSortedMapAddTo{TocReferenceLinks}{#X1}{\lciOutputBasename}%
+    }
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_reference_link_}\thereferencepage%
