@@ -1,3 +1,8 @@
+7 April 2006 Laurent Rineau
+- added a picture for the sphere example, in manual.
+- modified the bounds for the skull example: with previous bounds (10 and
+  10), the resulting mesh was not manifold.
+
 6 April 2006 Laurent Rineau
 - better test case with two spheres (I changed the radii and centers), in
   the testsuite.

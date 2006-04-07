@@ -224,9 +224,24 @@ between the circumcenter of a mesh facet and the center of a surface
 Delaunay ball of this facet.
 \end{itemize}
 
-
 Given this surface type, the surface mesher will use
 an automatically generated traits class.
+
+The resulting mesh is shown on 
+figure~\ref{figure:Surface_mesher-sphere-surface}.
+
+\begin{figure}[h]
+  \begin{center}
+    \begin{ccTexOnly}
+      \includegraphics[height=10cm]{Surface_mesher/sphere-surface}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+      <img border="0" src="./sphere-surface.png" height="75%">
+    \end{ccHtmlOnly}
+  \end{center}
+  \caption{Surface mesh of a sphere}
+  \label{figure:Surface_mesher-sphere-surface}
+\end{figure}
 
 \ccIncludeExampleCode{Surface_mesher/implicit_surface_mesher.C}
 

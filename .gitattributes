@@ -1871,6 +1871,8 @@ Surface_mesher/demo/Surface_mesher/windows/res/idb8.bmp -text svneol=unset#unset
 Surface_mesher/doc_tex/GNUmakefile -text
 Surface_mesher/doc_tex/Surface_mesher/skull-surface.eps -text svneol=unset#application/octet-stream
 Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text
+Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/octet-stream
+Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text
 Surface_mesher/examples/Surface_mesher/3d_image_surface_mesher.C -text
 Surface_mesher/examples/Surface_mesher/ImageIO/ImageIO.c -text
 Surface_mesher/examples/Surface_mesher/ImageIO/analyze.c -text

@@ -34,8 +34,8 @@ int main(int, char **) {
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
-                                                     10.,
-                                                     10.);
+                                                     5.,
+                                                     5.);
 
   // meshing surface, with the "manifold without boundary" algorithm
   make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
