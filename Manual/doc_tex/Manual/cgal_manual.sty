@@ -223,13 +223,6 @@
   % and otherwise expands the <no-text>
   \newcommand{\cgalifpackage}[3]{%
     \expandafter\ifx\csname CgalPackage#1\endcsname\relax #3\else #2\fi}
-
-  \newcommand{\ccPkgName}[1]{}
-  \newcommand{\ccPkgSummary}[1]{}
-  \newcommand{\ccPkgMaturity}[1]{}
-  \newcommand{\ccPkgDependsOn}[1]{}
-  \newcommand{\ccPkgLicense}[1]{}
-  \newenvironment{ccPkgDescription}{\ccPkgName}{}
 }
 
 \lcHtml{
@@ -244,68 +237,6 @@
   % \cgaldeclarepackage{<package-name>}, and if so expands the <yes-text>,
   % and otherwise expands the <no-text>
   \newcommand{\cgalifpackage}[3]{\lciIfDefined{\CgalPackage#G1}{#2}{#3}}
-
-
-  % ___________________________________________________________________________
-  % ###########################################################################
-  % |
-  % |   o   Package Descriptions
-  % |
-  % ###########################################################################
-
-
-  \gdef\ccValueofPkgName{}
-  \newcommand{\ccPartSummary}[1]{#1}
-  \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1\lcRawHtml{<br>}}}
-  \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
-  \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
-  \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
-
-  \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
-
-  \newcommand{\ccPkgDescriptionX}[1]{
-    \lciPushOutput{description}%
-    \gdef\ccValueofPkgName{#1}
-    \gdef\ccValueofPkgSummary{}
-    \gdef\ccValueofPkgMaturity{}
-    \gdef\ccValueofPkgDependsOn{}
-    \gdef\ccValueofPkgLicense{}
-  }
-
-  \newcommand{\lciFlushPkgDescription}[2]{%
-   \lciFlushPkgDescriptionX{#1}{#2}{\ccValueofPkgName}%
-  }
-  \newcommand{\lciFlushPkgDescriptionX}[3]{%
-    \lciIfEmpty{#X3}{}{%
-      \lciPushOutput{description}%
-      \lcRawHtml{<h3>}\ccValueofPkgName\lcRawHtml{</h3>}
-      \lcRawHtml{<table><tr><td align="top" width="60\%">}
-      \ccValueofPkgSummary
-      \lcRawHtml{</td><td align="top" width="40\%">}
-      \ccValueofPkgMaturity
-      \ccValueofPkgDependsOn
-      \ccValueofPkgLicense
-      \lcRawHtml{<a href="#XC1">User Manual</a> &nbsp; <a href="#XC2">Reference Manual</a>}
-      \lcRawHtml{</td></td></table>}
-      \lciPopOutput%
-      \gdef\ccValueofPkgName{}%
-    }%
-  }
-
-  \newcommand{\ccPartDescriptionEnsureHR}{}
-
-  \newcommand{\ccPartDescriptionImpl}[2]{
-    \lciPushOutput{description}%
-    \ccPartDescriptionEnsureHR
-    \lcRawHtml{<h2>}#1\lcRawHtml{</h2>}
-    \def\ccValueofPkgSummary{}
-    #2
-    \ccValueofPkgSummary
-    \lciPopOutput%
-    \newcommand{\ccPartDescriptionEnsureHR}{\lcRawHtml{<hr>}}
-  }
-
-
 }
 
 \lcHtml{\lcTwoColumnToc}%
