@@ -259,7 +259,7 @@
   \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1\lcRawHtml{<br>}}}
   \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
   \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
-  \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
+  \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
 
   \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
 
@@ -279,11 +279,14 @@
     \lciIfEmpty{#X3}{}{%
       \lciPushOutput{description}%
       \lcRawHtml{<h3>}\ccValueofPkgName\lcRawHtml{</h3>}
+      \lcRawHtml{<table><tr><td align="top" width="60\%">}
       \ccValueofPkgSummary
+      \lcRawHtml{</td><td align="top" width="40\%">}
       \ccValueofPkgMaturity
       \ccValueofPkgDependsOn
       \ccValueofPkgLicense
       \lcRawHtml{<a href="#XC1">User Manual</a> &nbsp; <a href="#XC2">Reference Manual</a>}
+      \lcRawHtml{</td></td></table>}
       \lciPopOutput%
       \gdef\ccValueofPkgName{}%
     }%
