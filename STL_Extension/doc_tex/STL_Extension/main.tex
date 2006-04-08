@@ -8,24 +8,112 @@
 %% $CGAL_Chapter: STL_Extension $
 %% $Id$
 %% $Date$
-%% =============================================================================
 
-%% +------------------------------------------------------------------------+
-\ccParDims
-%%\marginparsep7mm
-%%\marginparwidth15mm
-%%\gdef\ccNewRefManualStyle{\ccTrue}
-%%\gdef\ccPureGlobalScope{CGAL::}
-%%\newcommand{\ccRequire}{\ccCommentHeading{Requirements}}
-%%\newcommand{\ccRequirements}{\ccHeading{Requirements}}
-%% +------------------------------------------------------------------------+
+\chapter{STL Extensions for CGAL}
 
-%%\ccTexHtml{\thispagestyle{empty}}{}
+\ccChapterAuthor{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}
 
-%% =============================================================================
-%% reference pages
-%% =============================================================================
 
-%%\input{STL_Extension_ref/main.tex}
+\cgal\ is designed in the spirit of the generic programming paradigm
+to work together with the Standard Template Library (\stl)
+\cite{cgal:ansi-is14882-98,cgal:a-gps-98}. This chapter documents non-geometric
+\stl-like components that are not provided in the \stl\ standard but
+in \cgal: a doubly-connected list managing items in place (where
+inserted items are not copied), a compact container, a multi-set class that
+uses three-valued comparisons and offers additional functionality,
+generic algorithms, iterators, functor adaptors for binding and swapping
+arguments and for composition, functors for projection and creation and
+adaptor classes around iterators and circulators. See also circulators in
+Chapter~\ref{chapterCirculators}.
 
-%% ===== EOF ===================================================================
+\section{Doubly-Connected List Managing Items in Place}
+
+The class \ccc{In_place_list<T,bool>} manages a
+sequence of items in place in a doubly-connected list. Its goals are
+the flexible handling of memory management and performance
+optimization. The item type has to provide the two necessary
+pointers \ccc{&T::next_link} and \ccc{&T::prev_link}. One possibility
+to obtain these pointers is to inherit them from the base class
+\ccStyle{In_place_list_base<T>}.
+
+The class \ccc{In_place_list<T,bool>} is a container quite similar
+to \stl\ containers, with the advantage that it is able to handle the
+stored elements by reference instead of copying them. It is possible
+to delete an element only knowing its address and no iterator to it.
+This used to simplify mutually pointered data structures like a halfedge
+data structure for planar maps or polyhedral surfaces (the current design
+does not need this anymore). The usual iterators are also available.
+
+\section{Compact Container}
+The class \ccStyle{Compact_container<T, Allocator>} is an \stl\ like container
+which provides a very compact storage for its elements.  It achieves this goal
+by requiring \ccc{T} to provide access to a pointer in it, which is going to be
+used by \ccStyle{Compact_container<T, Allocator>} for its internal management.
+The traits class \ccStyle{Compact_container_traits<T>} specifies the way to
+access that pointer.  The class \ccStyle{Compact_container_base} can be
+used as a base class to provide the pointer, although in this case you do not
+get the most compact representation.  The values that this pointer can have
+during valid use of the object are valid pointer values to 4 bytes aligned
+objects (i.e., the two least significant bits of the pointer need to be zero
+when the object is constructed). Another interesting property of this
+container is that iterators are not invalidated during \ccc{insert} or
+\ccc{erase} operations.
+
+The main deviation from the \stl\ container concept is that the \ccc{++} and
+\ccc{--} operators of the iterator do not have a constant time complexity in
+all cases.  The actual complexity is related to the maximum size that the
+container has had during its life time compared to its current size, because
+the iterator has to go over the "erased" elements as well, so the bad case is
+when the container used to contain lots of elements, but now has far less.  In
+this case, we suggest to do a copy of the container in order to "defragment"
+the internal representation.
+
+This container has been developed in order to efficiently handle large data
+structures like the triangulation and halfedge data structures.  It can
+probably be useful for other kinds of graphs as well.
+
+\section{Multiset with Extended Functionality}
+
+The class \ccStyle{Multiset<Type,Compare,Allocator>} represents a
+multi-set of elements of type \ccc{Type}, represented as a red-black tree
+(see~\cite[Chapter~13]{clrs-ia-01} for an excellent introduction to red-black
+trees). It differs from the \stl's \ccc{multiset} class-template mainly due
+to the fact that it is parameterized by a comparison functor \ccc{Compare}
+that returns the three-valued \ccc{Comparison_result} (namely it returns
+either \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}), rather than a {\em less}
+functor returning \ccc{bool}. Thus, it is possible to maintain
+the underlying red-black tree with less invocations of the comparison functor,
+which can considerably decrease running times, especially when comparing
+elements of type \ccc{Type} is an expensive operation.
+
+\ccStyle{Multiset<Type,Compare,Allocator>} also guarantees that the order of
+elements sent to the comparison functor is fixed. For example, if we insert
+a new element \ccc{x} into the set (or erase an element from the set), then
+we always invoke \ccc{Compare() (x, y)} (and never \ccc{Compare() (y, x)}),
+where \ccc{y} is an element already stored in the set. This behavior, not
+supported by \ccc{std::multiset}, is sometimes crucial for designing more
+efficient comparison predicates.
+
+
+The interface of \ccStyle{Multiset<Type,Compare,Allocator>} is in general
+derived from \ccc{std::multiset}. However, it extends the interface by
+offering some additional operations, such as: inserting of an element into
+the set given its {\em exact} position (and not just using an insertion hint);
+looking up keys whose type may differ from \ccc{Type}, as long as users supply
+a comparison functor \ccc{CompareKey}, between the keys and set elements;
+and catenating and splitting sets.
+
+\section*{Functor Adaptors}
+
+The standard library contains some adaptors for binding functors, that
+is fixing one argument of a functor to a specific value thereby
+creating a new functor that takes one argument less than the original
+functor.  Also, though non-standard, some STL implementations (such as
+SGI) provide adaptors to compose function objects. Unfortunately,
+these bind and compose adaptors are limited to unary and binary
+functors only, and these functors must not be overloaded.
+
+Since there are a number of functors in \cgal\ that take more than two
+arguments, and since functors may also be overloaded, i.e., accept
+several different sets of arguments, we have to define our own
+adaptors to be used with \cgal\ functors.
