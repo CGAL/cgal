@@ -1123,18 +1123,13 @@ l% ___________________________________________________________________________
 
 \newcommand{\lciPrintTOCReferenceLink}[2]{
   \lcRawHtml{<tr><td>}%
-  \lcRawHtml{ <a href="}%
-  \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
-  \lcRawHtml{#C2">}#1\lcRawHtml{</a></td></tr>}%
+  \lcRawHtml{ <a href="#C2">}\lcNoLinkBegin#1\lcNoLinkEnd\lcRawHtml{</a></td></tr>}%
 }
 
 \newcommand{\lciEndChapter}{%
   \lciEndSection
   \lciIfPrintUnsortedRefpageEntries{}{%
     \lciSortedMapIsEmpty{TocReferenceLinks}{}{%
-      % would need a change of cgal_manual.sty ... TODO tomorrow
-      %\section{Alphabetical List of Reference Pages}
-      \lcRawHtml{<h3>Alphabetical List of Reference Pages</h3>}
       \lcRawHtml{<table cellpadding="0">}
       \lciSortedMapForeach{TocReferenceLinks}{\lciPrintTOCReferenceLink}
       \lcRawHtml{</table>}

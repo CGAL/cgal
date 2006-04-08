@@ -352,7 +352,7 @@
         \newcommand{\lciLocalHtmlName}{\lcAsciiToHtml{##X1}}}%
       \lciDefLocalHtmlName\lciHeaderPath\lciLocalHtmlName%
       \lcAsciiToHtml{#C1}\lcRawHtml{">}\lcAsciiToHtml{#C1}\lcRawHtml{</A>}}%
-    {\lcRawHtml{<!NoLinkBegin>}\lcAsciiToHtml{#C1}\lcRawHtml{<!NoLinkEnd>}}%
+    {\lcNoLinkBegin\lcAsciiToHtml{#C1}\lcNoLinkEnd}%
     \lcRawHtml{&gt;</I>}%
 
 }
@@ -450,7 +450,12 @@
       }
       % Make a hyperlink in the chapter to the class file.
       \lcRawHtml{<tr><td>[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</td></tr>}%
-    }{}
+    }{
+      \lciInsideListofRefPages{}{
+        \section{Alphabetical List of Reference Pages}
+        \gdef\lciInsideListofRefPages{\lcTrue}%
+      }
+    }
     \lciOpenReferenceFile%
     \lciIfPrintUnsortedRefpageEntries{}{%
       \lciSortedMapAddTo{TocReferenceLinks}{#X1}{\lciOutputBasename}%

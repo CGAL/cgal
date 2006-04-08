@@ -255,8 +255,8 @@ cccend          "[cccend]"
 
 "<"[hH][1-6]                   { BEGIN( HEADINGMODE); ECHO;}
 <HEADINGMODE>"</"[hH][1-6]">"  { BEGIN( INITIAL); ECHO;}
-<HEADERMODE,HEADINGMODE>{cccbegin}        { ; } // consume [cccbegin] markers in headers/headingss
-<HEADERMODE,HEADINGMODE>{cccend}          { ; }
+<NOLINKMODE,HEADERMODE,HEADINGMODE>{cccbegin}        { ; } // consume [cccbegin] markers in headers/headingss/nolinkmode
+<NOLINKMODE,HEADERMODE,HEADINGMODE>{cccend}          { ; }
 <HEADINGMODE>.                 { ECHO; }
 
 &[^;]+[;]                      { ECHO; }
