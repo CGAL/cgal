@@ -280,8 +280,11 @@ cccend          "[cccend]"
      else
        output_file << reference_icon;
      output_file << "</A>";
-   } else
+   } else {
      cerr << " !! Warning: undefined label \"" << my_yytext << "\"" << endl;
+     if( reftext != string() )
+       output_file << reftext;
+   }
    reftext = string();
 }
 
