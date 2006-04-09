@@ -272,92 +272,108 @@ template <class Point_2, class Data>
 class Envelope_pm_vertex : public CGAL::Arr_vertex_base<Point_2>,
                            public Dcel_data<Data>
 {
-private:
-  // indicate if the edge was added in the decomposition process
-  // and is not part of the arrangement
-  bool         m_is_fake;
+protected:
+  // all flags are bits in this variable:
+  unsigned short flags;
 
-  // is this vertex an intersection vertex?
-  // used in the partial vd, to eliminate vertical edges from
-  // intersection points
-  bool         m_is_intersection;
-  
-  // indications for the Envelope algorithm (for an isolated vertex only)
-  bool         m_is_equal_data_in_face; 
-  bool         m_has_equal_data_in_face;
-  bool         m_is_equal_aux_data_in_face[2]; 
-  bool         m_has_equal_aux_data_in_face[2];
-
+  // the flags indications:
+  enum Bit_pos
+  {
+    // for an isolated vertex only
+    IS_EQUAL   = 0,
+    IS_EQUAL_AUX = 1,
+    HAS_EQUAL = 3,
+    HAS_EQUAL_AUX = 4,
+    // indicate if the edge was added in the decomposition process
+    // and is not part of the arrangement
+    IS_FAKE = 6,
+    // is this vertex an intersection vertex?
+    // used in the partial vd, to eliminate vertical edges from
+    // intersection points
+    IS_INTERSECTION = 7
+  };
 public:
   /*! Constructor */
   Envelope_pm_vertex() : Dcel_data<Data>()
-      , m_is_fake(false)
-      , m_is_intersection(false)
-      , m_is_equal_data_in_face(false)
-  	  , m_has_equal_data_in_face(false)
-  {
-    m_is_equal_aux_data_in_face[0] = m_is_equal_aux_data_in_face[1] = false;
-    m_has_equal_aux_data_in_face[0] = m_has_equal_aux_data_in_face[1] = false;
-  }
+        , flags(0)
+  {}
 
   void set_is_fake(bool b)
   {
-    m_is_fake = b;
+    set_bit(IS_FAKE, b);
   }
   bool get_is_fake() const
   {
-    return m_is_fake;
+    return get_bit(IS_FAKE);
   }
 
   void set_is_intersection(bool b)
   {
-    m_is_intersection = b;
+    set_bit(IS_INTERSECTION, b);
   }
   bool get_is_intersection() const
   {
-    return m_is_intersection;
+    return get_bit(IS_FAKE);
   }
 
   void set_is_equal_data_in_face(bool b)
   {
-    m_is_equal_data_in_face = b;
+    set_bit(IS_EQUAL, b);
   }
   bool get_is_equal_data_in_face() const
   {
-    return m_is_equal_data_in_face;
+    return get_bit(IS_EQUAL);
   }
 
   void set_has_equal_data_in_face(bool b)
   {
-    m_has_equal_data_in_face = b;
+    set_bit(HAS_EQUAL, b);
   }
   bool get_has_equal_data_in_face() const
   {
-    return m_has_equal_data_in_face;
+    return get_bit(HAS_EQUAL);
   }
 
   void set_is_equal_aux_data_in_face(unsigned int id, bool b)
   {
     CGAL_assertion(id < 2);
-    m_is_equal_aux_data_in_face[id] = b;
+    set_bit(IS_EQUAL_AUX+id, b);
   }
   bool get_is_equal_aux_data_in_face(unsigned int id) const
   {
     CGAL_assertion(id < 2);
-    return m_is_equal_aux_data_in_face[id];
+    return get_bit(IS_EQUAL_AUX+id);
   }
 
   void set_has_equal_aux_data_in_face(unsigned int id, bool b)
   {
     CGAL_assertion(id < 2);
-    m_has_equal_aux_data_in_face[id] = b;
+    set_bit(HAS_EQUAL_AUX+id, b);
   }
   bool get_has_equal_aux_data_in_face(unsigned int id) const
   {
     CGAL_assertion(id < 2);
-    return m_has_equal_aux_data_in_face[id];
+    return get_bit(HAS_EQUAL_AUX+id);
   }
 
+protected:
+
+  void set_bit(unsigned int ind, bool b)
+  {
+    if (b)
+      // set bit "ind" to 1:
+      flags |= (1 << ind);
+    else
+      // set bit "ind" to 0:
+      flags &= ~(1 << ind);
+  }
+
+  bool get_bit(unsigned int ind) const
+  {
+    // (1 << i) is bit i on, other bits off (start counting from 0)
+    bool result = flags & (1 << ind);
+    return result;
+  }
 };
 
 /*! Extend the planar-map halfedge */
@@ -365,155 +381,164 @@ template <class X_monotone_curve_2, class Data>
 class Envelope_pm_halfedge : public CGAL::Arr_halfedge_base<X_monotone_curve_2>,
                              public Dcel_data<Data>
 {
-private:
+protected:
 
-  // indicate if the edge was added in the decomposition process
-  // and is not part of the arrangement
-  bool         m_is_fake;
+  // all flags are bits in this variable:
+  unsigned int flags;
 
-  // indications for the Envelope algorithm
-  // relation between halfedge and incident face
-  bool         m_is_equal_data_in_face; 
-  bool         m_has_equal_data_in_face;
-  bool         m_is_equal_aux_data_in_face[2]; 
-  bool         m_has_equal_aux_data_in_face[2];
-  // relation between halfedge and target vertex
-  bool         m_is_equal_data_in_target;
-  bool         m_has_equal_data_in_target;
-  bool         m_is_equal_aux_data_in_target[2];
-  bool         m_has_equal_aux_data_in_target[2];
-  // relation between target vertex and incident face
-  bool         m_has_equal_data_in_target_and_face;
-  bool         m_has_equal_aux_data_in_target_and_face[2];
-
+  // flags indications
+  enum Bit_pos
+  {
+    // indications for the Envelope algorithm
+    // relation between halfedge and incident face
+    IS_EQUAL_FACE   = 0,
+    IS_EQUAL_AUX_FACE = 1,
+    HAS_EQUAL_FACE = 3,
+    HAS_EQUAL_AUX_FACE = 4,
+    // relation between halfedge and target vertex
+    IS_EQUAL_TARGET   = 6,
+    IS_EQUAL_AUX_TARGET = 7,
+    HAS_EQUAL_TARGET = 9,
+    HAS_EQUAL_AUX_TARGET = 10,
+    // relation between target vertex and incident face
+    HAS_EQUAL_F_T = 12,
+    HAS_EQUAL_AUX_F_T = 13,
+    // indicate if the edge was added in the decomposition process
+    // and is not part of the arrangement
+    IS_FAKE = 15
+  };
+  
 public:
   Envelope_pm_halfedge() : Dcel_data<Data>()
-                           , m_is_fake(false)
-                           , m_is_equal_data_in_face(false)
-							             , m_has_equal_data_in_face(false)
-                           , m_is_equal_data_in_target(false)
-							             , m_has_equal_data_in_target(false)
-							             , m_has_equal_data_in_target_and_face(false)
-  {
-    m_is_equal_aux_data_in_face[0] = 
-		m_is_equal_aux_data_in_face[1] = false;
-    m_has_equal_aux_data_in_face[0] = 
-		m_has_equal_aux_data_in_face[1] = false;
-    m_is_equal_aux_data_in_target[0] = 
-		m_is_equal_aux_data_in_target[1] = false;
-    m_has_equal_aux_data_in_target[0] = 
-		m_has_equal_aux_data_in_target[1] = false;
-    m_has_equal_aux_data_in_target_and_face[0] = 
-		m_has_equal_aux_data_in_target_and_face[1] = false;
-  } 
+                           , flags(0)
+  {} 
 
   void set_is_fake(bool b)
   {
-    m_is_fake = b;
+    set_bit(IS_FAKE, b);
   }
   bool get_is_fake() const
   {
-    return m_is_fake;
+    return get_bit(IS_FAKE);
   }
 
   void set_is_equal_data_in_face(bool b)
   {
-    m_is_equal_data_in_face = b;
+    set_bit(IS_EQUAL_FACE, b);
   }
   bool get_is_equal_data_in_face() const
   {
-    return m_is_equal_data_in_face;
+    return get_bit(IS_EQUAL_FACE);
   }
 
   void set_has_equal_data_in_face(bool b)
   {
-    m_has_equal_data_in_face = b;
+    set_bit(HAS_EQUAL_FACE, b);
   }
   bool get_has_equal_data_in_face() const
   {
-    return m_has_equal_data_in_face;
+    return get_bit(HAS_EQUAL_FACE);
   }
 
   void set_is_equal_aux_data_in_face(unsigned int id, bool b)
   {
     CGAL_assertion(id < 2);
-    m_is_equal_aux_data_in_face[id] = b;
+    set_bit(IS_EQUAL_AUX_FACE+id, b);
   }
   bool get_is_equal_aux_data_in_face(unsigned int id) const
   {
     CGAL_assertion(id < 2);
-    return m_is_equal_aux_data_in_face[id];
+    return get_bit(IS_EQUAL_AUX_FACE+id);
   }
 
   void set_has_equal_aux_data_in_face(unsigned int id, bool b)
   {
     CGAL_assertion(id < 2);
-    m_has_equal_aux_data_in_face[id] = b;
+    set_bit(HAS_EQUAL_AUX_FACE+id, b);
   }
   bool get_has_equal_aux_data_in_face(unsigned int id) const
   {
     CGAL_assertion(id < 2);
-    return m_has_equal_aux_data_in_face[id];
+    return get_bit(HAS_EQUAL_AUX_FACE+id);
   }
 
   void set_is_equal_data_in_target(bool b)
   {
-    m_is_equal_data_in_target = b;
+    set_bit(IS_EQUAL_TARGET, b);
   }
   bool get_is_equal_data_in_target() const
   {
-    return m_is_equal_data_in_target;
+    return get_bit(IS_EQUAL_TARGET);
   }
 
   void set_has_equal_data_in_target(bool b)
   {
-    m_has_equal_data_in_target = b;
+    set_bit(HAS_EQUAL_TARGET, b);
   }
   bool get_has_equal_data_in_target() const
   {
-    return m_has_equal_data_in_target;
+    return get_bit(HAS_EQUAL_TARGET);
   }
 
   void set_is_equal_aux_data_in_target(unsigned int id, bool b)
   {
     CGAL_assertion(id < 2);
-    m_is_equal_aux_data_in_target[id] = b;
+    set_bit(IS_EQUAL_AUX_TARGET+id, b);
   }
   bool get_is_equal_aux_data_in_target(unsigned int id) const
   {
     CGAL_assertion(id < 2);
-    return m_is_equal_aux_data_in_target[id];
+    return get_bit(IS_EQUAL_AUX_TARGET+id);
   }
 
   void set_has_equal_aux_data_in_target(unsigned int id, bool b)
   {
     CGAL_assertion(id < 2);
-    m_has_equal_aux_data_in_target[id] = b;
+    set_bit(HAS_EQUAL_AUX_TARGET+id, b);
   }
   bool get_has_equal_aux_data_in_target(unsigned int id) const
   {
     CGAL_assertion(id < 2);
-    return m_has_equal_aux_data_in_target[id];
+    return get_bit(HAS_EQUAL_AUX_TARGET+id);
   }
   // access to flags that contain relation between target and face
   void set_has_equal_data_in_target_and_face(bool b)
   {
-    m_has_equal_data_in_target_and_face = b;
+    set_bit(HAS_EQUAL_F_T, b);
   }
   bool get_has_equal_data_in_target_and_face() const
   {
-    return m_has_equal_data_in_target_and_face;
+    return get_bit(HAS_EQUAL_F_T);
   }
 
   void set_has_equal_aux_data_in_target_and_face(unsigned int id, bool b)
   {
     CGAL_assertion(id < 2);
-    m_has_equal_aux_data_in_target_and_face[id] = b;
+    set_bit(HAS_EQUAL_AUX_F_T+id, b);
   }
   bool get_has_equal_aux_data_in_target_and_face(unsigned int id) const
   {
     CGAL_assertion(id < 2);
-    return m_has_equal_aux_data_in_target_and_face[id];
+    return get_bit(HAS_EQUAL_AUX_F_T+id);
+  }
+
+protected:
+  void set_bit(unsigned int ind, bool b)
+  {
+    if (b)
+      // set bit "ind" to 1:
+      flags |= (1 << ind);
+    else
+      // set bit "ind" to 0:
+      flags &= ~(1 << ind);
+    CGAL_assertion(get_bit(ind) == b);
+  }
+
+  bool get_bit(unsigned int ind) const
+  {
+    // (1 << i) is bit i on, other bits off (start counting from 0)
+    bool result = flags & (1 << ind);
+    return result;
   }
 
 };
