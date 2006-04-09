@@ -1133,6 +1133,7 @@ Minkowski_sum_2/examples/Minkowski_sum_2/ex_sum_with_holes.C -text
 Minkowski_sum_2/examples/Minkowski_sum_2/ms_rational_nt.h -text
 Minkowski_sum_2/examples/Minkowski_sum_2/rooms_star.dat -text
 Minkowski_sum_2/examples/Minkowski_sum_2/spiked.dat -text
+Minkowski_sum_2/include/CGAL/rot_swept_volume_2.h -text
 Modifier/doc_tex/Modifier/idraw/modifier.eps -text
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#unset
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
