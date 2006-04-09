@@ -1773,7 +1773,9 @@ l% ___________________________________________________________________________
     \edef\lciOutPath{\lciReplaceWithCurrentPathToken}%
     %\edef\lciOutPath{\lciOutputPath}%
     \lciPushOutput{anchor}%
-    \lciLabel{#1}{\lciOutPath}{\lciOut}\lciPopOutput}
+    \lciLabel{#1}{\lciOutPath}{\lciOut}%
+    \lciPopOutput%
+}
 
 \newcommand{\lciLabel}[3]{\lciRawOutput{l #C1	#XC2#XC3###C1
 }}

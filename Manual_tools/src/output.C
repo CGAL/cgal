@@ -1,5 +1,5 @@
 /**************************************************************************
- 
+
   output.C
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
@@ -9,7 +9,7 @@
               as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Id$
   Date      : $Date$
- 
+
 **************************************************************************/
 
 #include <output.h>
@@ -27,8 +27,8 @@
 using namespace std;
 
 // Directory for the temporary files. A default is given.
-// This directory is the output directory for this program. Usually, 
-// the script cc_manual_to_html makes a own tmp directory and removes 
+// This directory is the output directory for this program. Usually,
+// the script cc_manual_to_html makes a own tmp directory and removes
 // it afterwards. The path must terminate with a slash.
 string tmp_path       = "/usr/tmp/";
 
@@ -52,7 +52,7 @@ ostream* class_stream        = 0;
 ostream* contents_stream     = 0;
 ostream* index_stream = 0;
 ostream* HREF_stream = 0;
-ostream* HREF_counter_stream = 0; 
+ostream* HREF_counter_stream = 0;
 
 string   pre_main_filename;
 string   main_filename = "<cout>";
@@ -86,8 +86,8 @@ bool exist_file( const string& name) {
 
 void assert_file_write( ostream& out, const string& name){
     if ( ! out) {
-        cerr << ' ' << endl 
-	     << prog_name << ": error: cannot write to file `" 
+        cerr << ' ' << endl
+	     << prog_name << ": error: cannot write to file `"
 	     << name << "'." << endl;
         exit(1);
     }
@@ -98,11 +98,11 @@ void make_path( string path){
         return;
     path.replace( path.size() - 1, 1, "");
     struct stat st;
-    int s = stat( path.c_str(), &st); 
+    int s = stat( path.c_str(), &st);
     if ( s != 0) {
         make_path( path_string( path));
         if ( mkdir( path.c_str(), 0755)) {
-            cerr << ' ' << endl 
+            cerr << ' ' << endl
                  << prog_name << ": error: cannot create directory `" << path
                  << "'." << endl;
             exit(1);
@@ -113,7 +113,7 @@ void make_path( string path){
 ostream* open_file_for_write( const string& name){
     ostream* out = new ofstream( name.c_str());
     if ( ! *out) {
-        cerr << ' ' << endl 
+        cerr << ' ' << endl
 	     << prog_name << ": error: cannot open file `" << name
 	     << "' for writing." << endl;
 	exit(1);
@@ -129,7 +129,7 @@ ostream* open_file_for_write_with_path( const string& name){
 ostream* open_file_for_append( const string& name){
     ostream* out = new ofstream( name.c_str(), std::ios::out | std::ios::app);
     if ( ! *out) {
-        cerr << ' ' << endl 
+        cerr << ' ' << endl
 	     << prog_name << ": error: cannot open file `" << name
 	     << "' for writing." << endl;
 	exit(1);
@@ -198,11 +198,11 @@ void set_current_output( const string& key) {
     } else if ( key == "class") {
         current_output = Output_file( class_stream, class_filename);
     } else if ( key == "description") {
-        current_output = Output_file( description_stream,  
+        current_output = Output_file( description_stream,
                                       macroX( "\\lciPkgDescriptionFilename") );
-        new_filename = false;
+        anchor_stream = global_anchor_stream;
     } else if ( key == "toc") {
-        current_output = Output_file( contents_stream, 
+        current_output = Output_file( contents_stream,
                                       macroX( "\\lciContentsFilename") );
         anchor_stream = global_anchor_stream;
     } else if ( key == "index") {
@@ -211,7 +211,7 @@ void set_current_output( const string& key) {
         anchor_stream = global_anchor_stream;
         new_filename = false;
     } else if ( key == "anchor") {
-        current_output = Output_file( anchor_stream, 
+        current_output = Output_file( anchor_stream,
                                       macroX( "\\lciAnchorFilename") );
         new_filename = false;
     } else {
