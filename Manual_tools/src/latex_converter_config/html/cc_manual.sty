@@ -983,10 +983,14 @@
 }
 
 \newcommand{\lciFlushPkgDescription}[2]{%
-  \lciFlushPkgDescriptionX{#1}{#2}{\ccValueofPkgName}%
+  \lciFlushPkgDescriptionX{#X1}{#X2}{\ccValueofPkgName}%
 }
 \newcommand{\lciFlushPkgDescriptionX}[3]{%
   \lciIfEmpty{#X3}{}{%
+    \lciIfEmpty{\lciCurrentPartName}{}{%
+      \lciHtmlPartPkgDesciption{\lciCurrentPartName}%
+      \gdef\lciCurrentPartName{}%
+    }%
     \lciPushOutput{description}%
     \lcRawHtml{<h3>}\ccValueofPkgName\lcRawHtml{</h3>}
     \lcRawHtml{<table><tr valign="top"><td }%
@@ -1004,7 +1008,7 @@
     \ccValueofPkgMaturity
     \ccValueofPkgDependsOn
     \ccValueofPkgLicense
-    \lcRawHtml{<a href="#XC1">User Manual</a> &nbsp; <a href="#XC2">Reference Manual</a>}
+    \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
     \lcRawHtml{</td></td></table>}
     \lciPopOutput%
     \gdef\ccValueofPkgName{}%

@@ -75,6 +75,8 @@ l% ___________________________________________________________________________
 \newcommand{\lcFalse}[2]{#2}
 \newcommand{\lcTrue}[2]{#1}
 
+\gdef{\lciCurrentPartName}{}
+
 \newcommand{\lcLogicalOr}[4]{%
   \def\lciLogicalOrResult{\lcFalse}%
   #1{\def\lciLogicalOrResult{\lcTrue}}{}%
@@ -1059,7 +1061,9 @@ l% ___________________________________________________________________________
       \lciHtmlPartHeader{\value{part}}{#2}%
       \lciHtmlPartToc{\thepart}{#1}}%
     {\lciHtmlPartHeader{\value{part}}{\thepart~~~#2}%
-      \lciHtmlPartToc{\thepart}{\thepart~~~#1}}}
+      \lciHtmlPartToc{\thepart}{\thepart~~~#1}}
+    \xdef{\lciCurrentPartName}{#2}
+}
 \newcommand{\part*}[1]{%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
@@ -1767,6 +1771,7 @@ l% ___________________________________________________________________________
 \newcommand{\label}[1]{\lcRawHtml{<A NAME="#C1"></A>}%
     \edef\lciOut{\lciOutputBasename}%
     \edef\lciOutPath{\lciReplaceWithCurrentPathToken}%
+    %\edef\lciOutPath{\lciOutputPath}%
     \lciPushOutput{anchor}%
     \lciLabel{#1}{\lciOutPath}{\lciOut}\lciPopOutput}
 

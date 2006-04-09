@@ -429,6 +429,15 @@
     \lciPopOutput
 }}
 
+\newcommand{\lciHtmlPartPkgDesciption}[1]{
+  \lciPushOutput{description}
+  \lcRawHtml{
+    <table width="100\%" border="0" cellspacing="0" cellpadding="0"><tr><td>
+    <h2 class="PkgDescPart"><br>}#XC1\lcRawHtml{</h1>
+    </td></tr></table>}
+  \lciPopOutput
+}
+
 % Args: <header-text>
 \newcommand{\lciHtmlChapterHeader}[1]{\lcRawHtml{
 <h1>}#C1\lcRawHtml{</h1>

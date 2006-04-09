@@ -47,6 +47,7 @@ td.TocGroupEvenRight,
 td.TocEmptyEvenRight   { background-color: #d0d0d0; }
 
 h3.TocPart             { background-color: #ffffa0; }
+h2.PkgDescPart         { background-color: #ffffa0; }
 
 table.TocInnerTable    {  }
 td.TocIndent           {  }
