@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
+// $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_spheres_traits_3.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -38,6 +38,8 @@ operator*(const Sign &s1, const Sign &s2)
   if ( s1 == s2 )  return POSITIVE;
   return NEGATIVE;
 }
+
+template <class Kernel_> class Envelope_sphere_3;
  
 template <class ConicTraits_2>
 class Envelope_spheres_traits_3 : public ConicTraits_2
@@ -65,11 +67,11 @@ public:
   typedef typename Alg_kernel::Point_2              Alg_point_2;
   typedef typename Alg_kernel::Circle_2             Alg_circle_2;
   
-  typedef typename Rat_kernel::Sphere_3             Surface_3;
-
+//  typedef typename Rat_kernel::Sphere_3             Surface_3;
+  typedef Envelope_sphere_3<Rat_kernel>             Surface_3;
+  
   // here we refer to the lower part of the sphere only
-  typedef typename Rat_kernel::Sphere_3             Xy_monotone_surface_3;
-
+  typedef Surface_3                                 Xy_monotone_surface_3;
 protected:
   typedef std::pair<Curve_2, Intersection_type>     Intersection_curve;
   
@@ -92,6 +94,7 @@ protected:
 
 public:
   class Construct_envelope_xy_monotone_parts_3
+
   {
   protected:
     const Self& parent;
@@ -161,6 +164,7 @@ public:
   protected:
     const Self& parent;
 
+
   public:
     Construct_projected_intersections_2(const Self* p)
       : parent(*p)
@@ -185,6 +189,17 @@ public:
       const Rational sqr_r1 = s1.squared_radius(), 
                      sqr_r2 = s2.squared_radius();
 
+//      // the spheres intersect iff d(p1, p2) <= (r1+r2)
+//      // squaring this twice, we get the condition
+//      // sqr_d^2 + (1-2*sqr_d)(sqr_r1 + sqr_r2) - 2*sqr_r1*sqr_r2 <= 0
+//      // with only rational numbers involved.
+//      // todo: check if it helps
+//      Rat_kernel ratk;
+//      Rational sqr_d = ratk.compute_squared_distance_3_object()(p1, p2);
+//      Sign do_inter = CGAL_NTS sign(sqr_d*sqr_d + (1-2*sqr_d)*(sqr_r1+sqr_r2)-2*sqr_r1*sqr_r2);
+//      if (do_inter == POSITIVE)
+//        return o;
+        
       Nt_traits nt_traits;
 
       // we check if the centers of the 2 spheres have same z coordinate -
@@ -478,6 +493,7 @@ public:
         else
           z_plane = ((c1 > c2) ? c1 : c2);
 
+
         // we get (for lower envelope)
         //           -2(a1-a2)x -2(b1-b2)y + m
         // (*)   z = -------------------------- <= z_plane
@@ -497,21 +513,21 @@ public:
         Rational lb = envelope_coef*2*b_diff*sign_c_diff;
         Rational lc = envelope_coef*sign_c_diff*(2*c_diff*z_plane - m);
 
-	if (ellipse_is_point)
-	{
-	  // as specified in the is_valid_conic_equation method, the 
+      	if (ellipse_is_point)
+      	{
+      	  // as specified in the is_valid_conic_equation method, the
           // intersection point is:
-          // 
-	  Rational px = S*(4*U - T*V)/(T*T - 4*S*R);
-	  Rational py = -(T*px + V)/(2*S);
-          // should check if the point is in the non-negative side of the 
+          //
+      	  Rational px = S*(4*U - T*V)/(T*T - 4*S*R);
+      	  Rational py = -(T*px + V)/(2*S);
+          // should check if the point is in the non-negative side of the
           // line
-	  if (CGAL_NTS sign(la*px + lb*py +lc) != NEGATIVE)
-	    *o++ = make_object(Point_2(px, py));
+      	  if (CGAL_NTS sign(la*px + lb*py +lc) != NEGATIVE)
+      	    *o++ = make_object(Point_2(px, py));
           parent.total_timer.stop();
           parent.intersection_timer.stop();
           return o;
-	}
+      	}
 
         // if (a1==a2) and (b1==b2) (*) is a plane parallel to the xy-plane
         // and either all ellipse (which should be a circle) is the
@@ -587,6 +603,7 @@ public:
             Alg_point_2 x_mid_y_points[2];
 
             Curve_2 inter_cv(R, S, T, U, V, W);
+
             x_mid_n_y_points = inter_cv.get_points_at_x(x_mid_point,
                                                         x_mid_y_points);
             
@@ -684,6 +701,7 @@ public:
 
           // for this, we find a point inside the ellipse and substitute
           // its coordinates in the line equation
+
           Curve_2 inter_cv(R, S, T, U, V, W);
           Alg_point_2 vtan_ps[2];
           int         n_vtan_ps;
@@ -802,11 +820,11 @@ public:
       Comparison_result c2 = compare_in_point_second_method(p, s1, s2);
       parent.compare_in_point2_timer.stop();
 
-//      CGAL_expensive_assertion_code(
+      CGAL_expensive_assertion_code(
 
         parent.compare_in_point1_timer.start();
-        CGAL_assertion_code(Comparison_result c1 = )
-        compare_in_point_first_method(p, s1, s2);
+        //CGAL_assertion_code(Comparison_result c1 = )
+        Comparison_result c1 = compare_in_point_first_method(p, s1, s2);
         parent.compare_in_point1_timer.stop();
 
 
@@ -814,9 +832,9 @@ public:
           std::cout << "first method returned " << c1 << std::endl <<
                        "second method returned " << c2 << std::endl;
         #endif
-//      );
-//      CGAL_expensive_assertion(c1 == c2);
-      CGAL_assertion(c1 == c2);
+      );
+      CGAL_expensive_assertion(c1 == c2);
+//      CGAL_assertion(c1 == c2);
       
       if (use_timer)
       {
@@ -1145,6 +1163,7 @@ public:
     // we assume not both are tangent, since this means that they are the
     // same sphere
     // if z != ci the tangent plane is:
+
     //      z-z0 = dz/dx (x-x0) + dz/dy (y-y0)
     // ==>
     //      (x0-ai)(x-x0) + (y0-bi)(y-y0) + (z0-ci)(z-z0) = 0
@@ -1202,6 +1221,7 @@ public:
       return LARGER;
     }
     else if (C1 == 0 && C2 != 0)
+
     {
       // sphere 1 is on the envelope (both lower & upper)
       #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
@@ -1388,6 +1408,7 @@ public:
       return true;
 
     Sign sign_C = CGAL_NTS sign(v*v - 4*s*w);
+
     return (sign_C != NEGATIVE);
   }
 
@@ -1410,69 +1431,6 @@ public:
       return cv.get_point_at_x(pt);
   }
 
-//
-//  // check if curves can be merged to one curve
-//  bool curves_can_merge(const X_monotone_curve_2 & cv1,
-//                        const X_monotone_curve_2 & cv2) const
-//  {
-//    #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-//      std::cout << "from curves_can merge: " << std::endl << cv1 << " and "
-//                << std::endl << cv2 << std::endl;
-//    #endif
-//    CGAL_precondition (cv1.is_valid());
-//    CGAL_precondition (cv2.is_valid());
-//    CGAL_precondition(is_x_monotone(cv1));
-//    CGAL_precondition(is_x_monotone(cv2));
-//    if (!cv1.has_same_base_conic(cv2))
-//      return false;
-//
-//    Point_2 left1, right1, left2, right2;
-//    if (cv1.source() < cv1.target())
-//    {
-//      left1 = cv1.source();
-//      right1 = cv1.target();
-//    }
-//    else
-//    {
-//      right1 = cv1.source();
-//      left1 = cv1.target();
-//    }
-//    if (cv2.source() < cv2.target())
-//    {
-//      left2 = cv2.source();
-//      right2 = cv2.target();
-//    }
-//    else
-//    {
-//      right2 = cv2.source();
-//      left2 = cv2.target();
-//    }
-//
-//    // make sure the result curve is x monotone
-//    bool res = (left1 == right2 || right1 == left2);
-//    #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-//      std::cout << "result: " << res << std::endl;
-//    #endif
-//    return res;
-//  }
-//
-//  // merge 2 curves into one curve
-//  // precondition: both have a common endpoint - target(cv1) == source(cv2)
-//  //               curves can merge
-//  void curves_merge(const X_monotone_curve_2 & cv1,
-//                    const X_monotone_curve_2 & cv2,
-//                    X_monotone_curve_2 & merged) const
-//  {
-//    CGAL_precondition(curves_can_merge(cv1, cv2));
-//    if (cv2.source().equals(cv1.target()))
-//      merged = X_monotone_curve_2 (cv1, cv1.source(), cv2.target());
-//    else if (cv2.source().equals(cv1.source()))
-//      merged = X_monotone_curve_2 (cv1, cv1.target(), cv2.target());
-//    else if (cv2.target().equals(cv1.target()))
-//      merged = X_monotone_curve_2 (cv1, cv1.source(), cv2.source());
-//    else if (cv2.target().equals(cv1.source()))
-//      merged = X_monotone_curve_2 (cv2, cv2.source(), cv1.target());
-//  }
   void print_times()
   {
     std::cout << total_timer.intervals()
@@ -1565,19 +1523,122 @@ public:
 
   #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
     mutable Surface_point_cache point_on_cache;
+
     mutable int     cache_hits;
   #endif
 
 };
 
+/*!
+ * \class A representation of a sphere, as used by the
+ * Envelope_spheres_traits_3 traits-class.
+ */
+template <class Kernel_>
+class Envelope_sphere_3 :
+    public Handle_for<typename Kernel_::Sphere_3>
+{
+  typedef Kernel_                                                  Kernel;
+  typedef typename Kernel::Sphere_3                                Sphere_3;
+  typedef typename Kernel::Point_3                                 Point_3;
+  typedef typename Kernel::FT                                      NT;
+  
+  typedef typename Kernel::Sphere_3                                Rep_type;
+
+public:
+
+  /*!
+   * Default constructor.
+   */
+  Envelope_sphere_3() :
+    Handle_for<Rep_type>(Rep_type())
+  {}
+
+  /*!
+   * Constructor from a "kernel" triangle.
+   * \param seg The segment.
+   */
+  Envelope_sphere_3(const Sphere_3& s) :
+    Handle_for<Rep_type>(s)
+  {}
+
+  /*!
+   * Construct a triangle from 3 end-points.
+   * \param p1 The first point.
+   * \param p2 The second point.
+   * \param p3 The third point.
+   */
+  Envelope_sphere_3(const Point_3 &c, const NT &r_sqr) :
+      Handle_for<Rep_type>(Rep_type(c, r_sqr))
+  {}
+
+    /*!
+   * Cast to a triangle.
+   */
+  operator Sphere_3() const
+  {
+    return (Sphere_3(ptr()->center(), ptr()->squared_radius()));
+  }
+
+  Point_3 center() const
+  {
+    return ptr()->center();
+  }
+
+  NT squared_radius() const
+  {
+    return ptr()->squared_radius();
+  }
+  Bbox_3 bbox() const
+  {
+    return (ptr()->bbox());
+  }
+
+};
+
 template <class Kernel>
 bool
-operator<(const CGAL::Sphere_3<Kernel> &a,
-          const CGAL::Sphere_3<Kernel> &b)
+operator<(const Envelope_sphere_3<Kernel> &a,
+          const Envelope_sphere_3<Kernel> &b)
 {
-  return (a.center() < b.center() ||
-          (a.center() == b.center() && a.squared_radius() < b.squared_radius()));
+  return (a.id() < b.id());
 }
+template <class Kernel>
+bool
+operator==(const Envelope_sphere_3<Kernel> &a,
+           const Envelope_sphere_3<Kernel> &b)
+{
+  return (a.id() == b.id());
+}
+/*!
+ * Exporter for the triangle class used by the traits-class.
+ */
+template <class Kernel, class OutputStream>
+OutputStream& operator<< (OutputStream& os, const Envelope_sphere_3<Kernel>& s)
+{
+  os << static_cast<typename Kernel::Sphere_3>(s);
+  return (os);
+}
+
+/*!
+ * Importer for the triangle class used by the traits-class.
+ */
+template <class Kernel, class InputStream>
+InputStream& operator>> (InputStream& is, Envelope_sphere_3<Kernel>& s)
+{
+  typename Kernel::Sphere_3   kernel_s;
+  is >> kernel_s;
+  s = kernel_s;
+  return (is);
+}
+
+//template <class Kernel>
+//bool
+//operator<(const CGAL::Sphere_3<Kernel> &a,
+//          const CGAL::Sphere_3<Kernel> &b)
+//{
+//  return (a.center() < b.center() ||
+//          (a.center() == b.center() && a.squared_radius() < b.squared_radius()));
+//}
 
 CGAL_END_NAMESPACE
 
