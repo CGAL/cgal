@@ -326,10 +326,14 @@ public:
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& surf, OutputIterator o) const
     {
-      parent->total_timer.start();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.start();
+      #endif
       // a triangle is already xy-monotone
       *o++ = surf;
-      parent->total_timer.stop();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.stop();
+      #endif
       return o;
     }
   };
@@ -363,9 +367,11 @@ public:
     OutputIterator operator()(const Xy_monotone_surface_3& surf,
                               OutputIterator o) const
     {
-      parent->total_timer.start();
-      parent->pboundary_timer.start();
-      
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.start();
+        parent->pboundary_timer.start();
+      #endif
+        
       const Point_3 &a1 = surf.vertex(0),
                      a2 = surf.vertex(1),
                      a3 = surf.vertex(2);
@@ -399,8 +405,10 @@ public:
           *o++ = Curve_2(b1, b3);
         }
       }
-      parent->total_timer.stop();
-      parent->pboundary_timer.stop();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.stop();
+        parent->pboundary_timer.stop();
+      #endif
       return o;
     }  
   };  
@@ -444,21 +452,27 @@ public:
                               const Xy_monotone_surface_3& s2,
                               OutputIterator o) const
     {
-      parent->total_timer.start();
-      parent->intersection_timer.start();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.start();
+        parent->intersection_timer.start();
+      #endif
       Kernel k;
       if (!k.do_intersect_3_object()(s1, s2))
       {
-        parent->total_timer.stop();
-        parent->intersection_timer.stop();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          parent->total_timer.stop();
+          parent->intersection_timer.stop();
+        #endif
         return o;
       }
         
       Object inter_obj = parent->intersection(s1,s2);
       if (inter_obj.is_empty())
       {
-        parent->total_timer.stop();
-        parent->intersection_timer.stop();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          parent->total_timer.stop();
+          parent->intersection_timer.stop();
+        #endif
         return o;
       }
 
@@ -513,9 +527,11 @@ public:
 //        // but we return it anyway, so we can only invoke compare_left over
 //        // intersection curves
       }
-      
-      parent->total_timer.stop();
-      parent->intersection_timer.stop();
+
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.stop();
+        parent->intersection_timer.stop();
+      #endif
       return o;
     }  
   };  
@@ -553,16 +569,17 @@ public:
                                  const Xy_monotone_surface_3& surf1,
                                  const Xy_monotone_surface_3& surf2) const
     {
-      bool use_timer = true;
-      if (parent->total_timer.is_running())
-        use_timer = false;
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        bool use_timer = true;
+        if (parent->total_timer.is_running())
+          use_timer = false;
 
-      if (use_timer)
-      {
-        parent->total_timer.start();
-        parent->compare_timer.start();
-
-      }
+        if (use_timer)
+        {
+          parent->total_timer.start();
+          parent->compare_timer.start();
+        }
+      #endif
       
       #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
         std::cout << "traits: point= " << p << " surf1= " << surf1 
@@ -579,11 +596,13 @@ public:
       if ((plane1 == plane2 || plane1 == plane2.opposite()) &&
           !surf1.is_vertical())
       {
-        if (use_timer)
-        {
-          parent->total_timer.stop();
-          parent->compare_timer.stop();
-        }
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          if (use_timer)
+          {
+            parent->total_timer.stop();
+            parent->compare_timer.stop();
+          }
+        #endif
         return EQUAL;
       }
 
@@ -621,7 +640,9 @@ public:
       Kernel k;
       if (!ip1_found || !ip2_found)
       {
-        parent->compute_z_at_xy_timer.start();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          parent->compute_z_at_xy_timer.start();
+        #endif
         // should calculate at least one point
 
         // Compute the intersetion between the vertical line and the given 
@@ -643,15 +664,20 @@ public:
             (parent->point_on_cache)[spair2] = ip2;
           #endif
         }
-        parent->compute_z_at_xy_timer.stop();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          parent->compute_z_at_xy_timer.stop();
+        #endif
       }
 
       
-      if (use_timer)
-      {
-        parent->total_timer.stop();
-        parent->compare_timer.stop();
-      }
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        if (use_timer)
+        {
+          parent->total_timer.stop();
+          parent->compare_timer.stop();
+        }
+      #endif
+      
       #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
         std::cout << "in compare on point, compare the points " << ip1 << " and "
                   << ip2 << std::endl;
@@ -673,17 +699,18 @@ public:
                                  const Xy_monotone_surface_3& surf1,
                                  const Xy_monotone_surface_3& surf2) const
     {
-      bool use_timer = true;
-      if (parent->total_timer.is_running())
-        use_timer = false;
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        bool use_timer = true;
+        if (parent->total_timer.is_running())
+          use_timer = false;
 
-      if (use_timer)
-      {
-        parent->total_timer.start();
-
-        parent->compare_on_cv_timer.start();
-      }
-
+        if (use_timer)
+        {
+          parent->total_timer.start();
+          parent->compare_on_cv_timer.start();
+        }
+      #endif
+      
       // first try the endpoints, if cannot be sure, use the mid point
       Comparison_result res;
       res = parent->compare_distance_to_envelope_3_object()(cv.left(), 
@@ -700,11 +727,14 @@ public:
                                                                 surf1, surf2);
         }
       }
-      if (use_timer)
-      {
-        parent->compare_on_cv_timer.stop();
-        parent->total_timer.stop();
-      }
+      
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        if (use_timer)
+        {
+          parent->compare_on_cv_timer.stop();
+          parent->total_timer.stop();
+        }
+      #endif
       return res;
     }
   
@@ -748,8 +778,10 @@ public:
                const Xy_monotone_surface_3& surf1,
                const Xy_monotone_surface_3& surf2) const
     {
-      parent->total_timer.start();
-      parent->compare_side_timer.start();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.start();
+        parent->compare_side_timer.start();
+      #endif
 
       #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
         std::cout << "compare left from : " << cv << std::endl;
@@ -770,8 +802,10 @@ public:
       
       if (parent->do_overlap(surf1, surf2))
       {
-        parent->total_timer.stop();
-        parent->compare_side_timer.stop();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          parent->total_timer.stop();
+          parent->compare_side_timer.stop();
+        #endif
         return EQUAL;
       }
 
@@ -835,8 +869,10 @@ public:
       FT x1 = p1.x(), y1 = p1.y(), x2 = p2.x(), y2 = p2.y();
 
       Sign s2 = CGAL_NTS sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
-      parent->total_timer.stop();
-      parent->compare_side_timer.stop();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        parent->total_timer.stop();
+        parent->compare_side_timer.stop();
+      #endif
       // the answer is reversed when computing upper envelope vs. lower envelope
       if (parent->get_envelope_type() == LOWER)
         return Comparison_result(s1 * s2);
@@ -1034,9 +1070,13 @@ public:
     {
       if (s1.is_vertical())
       {
-        inter_overlap_timer.start();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          inter_overlap_timer.start();
+        #endif
         Object res = intersection_on_plane_3(p1, s1, s2);
-        inter_overlap_timer.stop();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          inter_overlap_timer.stop();
+        #endif
         return res;
       }
       else
@@ -1049,9 +1089,13 @@ public:
     // supporting plane
     // if there is no intersection - then the triangles have no intersection 
     // between them.
-    inter_plane_tri_timer.start();
+    #ifdef CGAL_BENCH_ENVELOPE_DAC
+      inter_plane_tri_timer.start();
+    #endif
     Object inter_obj = intersection(p1, s2);
-    inter_plane_tri_timer.stop();
+    #ifdef CGAL_BENCH_ENVELOPE_DAC
+      inter_plane_tri_timer.stop();
+    #endif
     if (inter_obj.is_empty())
       return Object();
 
@@ -1061,9 +1105,13 @@ public:
     Point_3 inter_point;
     if (assign_obj(inter_point, inter_obj))
     {
-      inter_on_plane_tri_pt_timer.start();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        inter_on_plane_tri_pt_timer.start();
+      #endif
       Object res = intersection_on_plane_3(p1, s1, inter_point);
-      inter_on_plane_tri_pt_timer.stop();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        inter_on_plane_tri_pt_timer.stop();
+      #endif
       return res;
     }
     else
@@ -1074,122 +1122,74 @@ public:
       CGAL_assertion(assign_obj(inter_seg, inter_obj));
       assign_obj(inter_seg, inter_obj);
 
-      inter_plane_tri_timer.start();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        inter_plane_tri_timer.start();
+      #endif
       inter_obj = intersection(p2, s1);
-      inter_plane_tri_timer.stop();
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        inter_plane_tri_timer.stop();
+      #endif
 
       // if there is no intersection - then the triangles have no intersection 
       // between them.
       if (inter_obj.is_empty())
-	return Object();
+      	return Object();
       
       if (assign_obj(inter_point, inter_obj))
       {
-	// if the intersection is a point, which lies on the segment, 
-	// than it is the result,
-	// otherwise, empty result
-	 if (k.has_on_3_object()(inter_seg, inter_point))
-	   return make_object(inter_point);
-	 else
-	   return Object();
+      	// if the intersection is a point, which lies on the segment,
+      	// than it is the result,
+      	// otherwise, empty result
+      	 if (k.has_on_3_object()(inter_seg, inter_point))
+      	   return make_object(inter_point);
+      	 else
+      	   return Object();
       }
       else
       {
-	// both plane-triangle intersections are segments, which are collinear,
-	// and lie on the line which is the intersection of the two supporting
-	// planes
+      	// both plane-triangle intersections are segments, which are collinear,
+      	// and lie on the line which is the intersection of the two supporting
+      	// planes
         Segment_3 inter_seg2;
-	CGAL_assertion(assign_obj(inter_seg2, inter_obj));
-	assign_obj(inter_seg2, inter_obj);
+      	CGAL_assertion(assign_obj(inter_seg2, inter_obj));
+      	assign_obj(inter_seg2, inter_obj);
 	
-	inter_on_plane_seg_seg_timer.start();
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+	        inter_on_plane_seg_seg_timer.start();
+        #endif
 
-	Point_3 min1 = k.construct_min_vertex_3_object()(inter_seg),
-  	        max1 = k.construct_max_vertex_3_object()(inter_seg); 
-	Point_3 min2 = k.construct_min_vertex_3_object()(inter_seg2),
-	        max2 = k.construct_max_vertex_3_object()(inter_seg2); 
+      	Point_3 min1 = k.construct_min_vertex_3_object()(inter_seg),
+      	        max1 = k.construct_max_vertex_3_object()(inter_seg);
+      	Point_3 min2 = k.construct_min_vertex_3_object()(inter_seg2),
+      	        max2 = k.construct_max_vertex_3_object()(inter_seg2); 
 
-	CGAL_assertion((k.collinear_3_object()(min1, min2, max1) &&
-                  k.collinear_3_object()(min1, max2, max1)));
- 
-	// we need to find the overlapping part, if exists
-	Point_3 min, max;
-	if (k.less_xyz_3_object()(min1, min2))
-	  min = min2;
-	else
-	  min = min1;
-	if (k.less_xyz_3_object()(max1, max2))
-	  max = max1;
-	else
-	  max = max2;
-	
-	Object res;
-	Comparison_result comp_res = k.compare_xyz_3_object()(min, max);
-	if (comp_res == EQUAL)
-	  res = make_object(min);
-	else if (comp_res == SMALLER)
-	  res = make_object(Segment_3(min, max));
-	// else - empty result
-	inter_on_plane_seg_seg_timer.stop();
-	return res;
+       	CGAL_assertion((k.collinear_3_object()(min1, min2, max1) &&
+                         k.collinear_3_object()(min1, max2, max1)));
+
+       	// we need to find the overlapping part, if exists
+       	Point_3 min, max;
+       	if (k.less_xyz_3_object()(min1, min2))
+       	  min = min2;
+       	else
+       	  min = min1;
+       	if (k.less_xyz_3_object()(max1, max2))
+       	  max = max1;
+       	else
+       	  max = max2;
+
+       	Object res;
+       	Comparison_result comp_res = k.compare_xyz_3_object()(min, max);
+       	if (comp_res == EQUAL)
+       	  res = make_object(min);
+       	else if (comp_res == SMALLER)
+       	  res = make_object(Segment_3(min, max));
+       	// else - empty result
+
+        #ifdef CGAL_BENCH_ENVELOPE_DAC
+          inter_on_plane_seg_seg_timer.stop();
+        #endif
+       	return res;
       }
-    }
-  }
-
-  // intersect two 3D-triangles - old and slow method!
-  // the result can be a triangle, a segment, a polygon or a point
-  Object intersection_old(const Xy_monotone_surface_3& s1, 
-                          const Xy_monotone_surface_3& s2) const
-  {
-    CGAL_precondition( !s1.is_degenerate() );
-    CGAL_precondition( !s2.is_degenerate() );
-    Kernel k;
-
-    // first, try to intersect the bounding boxes of the triangles,
-    // eficiently return empty object when the triangles are faraway
-    if (!CGAL::do_overlap(s1.bbox(), s2.bbox()))
-      return Object();
-
-    // if both triangle lie on the same plane, should calculate the intersection
-    // as in the case of dimention 2
-    Plane_3 p1 = s1.plane();
-    Plane_3 p2 = s2.plane();
-    if  (p1 == p2 || p1 == p2.opposite())
-    {
-      inter_overlap_timer.start();
-      Object res = intersection_on_plane_3(p1, s1, s2);
-      inter_overlap_timer.stop();
-      return res;
-    }
-
-    // calculate intersection between a triangle and the other triangle's supporting plane
-    // if there is no intersection - then the triangles have no intersection between them.
-    inter_plane_tri_timer.start();
-    Object inter_obj = intersection(p1, s2);
-    inter_plane_tri_timer.stop();
-    if (inter_obj.is_empty())
-      return Object();
-
-    // otherwise, we should intersect the result (which is a point or a segment only)
-    // with the triangle (on the same plane in 3d)
-    Assign_3 assign_obj = k.assign_3_object();
-    Point_3 inter_point;
-    if (assign_obj(inter_point, inter_obj))
-    {
-      inter_on_plane_tri_pt_timer.start();
-      Object res = intersection_on_plane_3(p1, s1, inter_point);
-      inter_on_plane_tri_pt_timer.stop();
-      return res;
-    }
-    else
-    {
-      Segment_3 inter_seg;
-      CGAL_assertion(assign_obj(inter_seg, inter_obj));
-      assign_obj(inter_seg, inter_obj);
-      inter_on_plane_tri_seg_timer.start();
-      Object res = intersection_on_plane_3(p1, s1, inter_seg);
-      inter_on_plane_tri_seg_timer.stop();
-      return res;
     }
   }
 
@@ -1633,48 +1633,51 @@ public:
 
   void print_times()
   {
-    std::cout << total_timer.intervals()
-              << " number of calls to traits interface functions" << std::endl;
-    std::cout << "total time: " << total_timer.time() << " seconds"
-              << std::endl << std::endl;
+    #ifdef CGAL_BENCH_ENVELOPE_DAC
+
+      std::cout << total_timer.intervals()
+                << " number of calls to traits interface functions" << std::endl;
+      std::cout << "total time: " << total_timer.time() << " seconds"
+                << std::endl << std::endl;
 
 
 
-    std::cout << "projected boundary        #: "
-              << pboundary_timer.intervals()
-              << " total time: " << pboundary_timer.time()
-              << " average time: " 
-              << pboundary_timer.time()/pboundary_timer.intervals()
-              << std::endl;
-    std::cout << "projected intersections   #: "
-              << intersection_timer.intervals()
-              << " total time: " << intersection_timer.time()
-              << " average time: " 
-              << intersection_timer.time()/intersection_timer.intervals()
-              << std::endl;              
-    std::cout << "compare_distance on point #: " 
-              << compare_timer.intervals()
-              << " total time: " << compare_timer.time()
-              << " average time: " 
-              << compare_timer.time()/compare_timer.intervals()
-              << std::endl;
-//    std::cout << "total time spent on computing z at xy: " 
-//              << compute_z_at_xy_timer.time()
-//              << " seconds, hits# = " << cache_hits << std::endl;
-    std::cout << "compare_distance on curve #: "
-              << compare_on_cv_timer.intervals()
-              << " total time: " << compare_on_cv_timer.time()
-              << " average time: " 
-              << compare_on_cv_timer.time()/compare_on_cv_timer.intervals()
-              << std::endl;
-    std::cout << "compare_distance on side  #: "
-              << compare_side_timer.intervals()
-              << " total time: " << compare_side_timer.time()
-              << " average time: " 
-              << compare_side_timer.time()/compare_side_timer.intervals()
-              << std::endl;
-    std::cout << std::endl;              
-
+      std::cout << "projected boundary        #: "
+                << pboundary_timer.intervals()
+                << " total time: " << pboundary_timer.time()
+                << " average time: "
+                << pboundary_timer.time()/pboundary_timer.intervals()
+                << std::endl;
+      std::cout << "projected intersections   #: "
+                << intersection_timer.intervals()
+                << " total time: " << intersection_timer.time()
+                << " average time: "
+                << intersection_timer.time()/intersection_timer.intervals()
+                << std::endl;
+      std::cout << "compare_distance on point #: "
+                << compare_timer.intervals()
+                << " total time: " << compare_timer.time()
+                << " average time: "
+                << compare_timer.time()/compare_timer.intervals()
+                << std::endl;
+  //    std::cout << "total time spent on computing z at xy: "
+  //              << compute_z_at_xy_timer.time()
+  //              << " seconds, hits# = " << cache_hits << std::endl;
+      std::cout << "compare_distance on curve #: "
+                << compare_on_cv_timer.intervals()
+                << " total time: " << compare_on_cv_timer.time()
+                << " average time: "
+                << compare_on_cv_timer.time()/compare_on_cv_timer.intervals()
+                << std::endl;
+      std::cout << "compare_distance on side  #: "
+                << compare_side_timer.intervals()
+                << " total time: " << compare_side_timer.time()
+                << " average time: "
+                << compare_side_timer.time()/compare_side_timer.intervals()
+                << std::endl;
+      std::cout << std::endl;              
+    #endif
+    
 #ifdef PRINT_TRAINGLES_INTERSECTION_STATS
     std::cout << "Projected intersection calculation statistics: " << std::endl
               << "inter plane & triangle: " << inter_plane_tri_timer.time()
@@ -1694,20 +1697,22 @@ public:
   /*! reset statistics */
   void reset()
   {
-    total_timer.reset();
-    intersection_timer.reset();
-    pboundary_timer.reset();
-    compare_timer.reset();
-    compute_z_at_xy_timer.reset();
-    compare_on_cv_timer.reset();
-    compare_side_timer.reset();
+    #ifdef CGAL_BENCH_ENVELOPE_DAC
+      total_timer.reset();
+      intersection_timer.reset();
+      pboundary_timer.reset();
+      compare_timer.reset();
+      compute_z_at_xy_timer.reset();
+      compare_on_cv_timer.reset();
+      compare_side_timer.reset();
 
-    inter_plane_tri_timer.reset();
-    inter_overlap_timer.reset();
-    inter_on_plane_tri_pt_timer.reset();
-    inter_on_plane_tri_seg_timer.reset();
-    inter_on_plane_seg_seg_timer.reset();
-
+      inter_plane_tri_timer.reset();
+      inter_overlap_timer.reset();
+      inter_on_plane_tri_pt_timer.reset();
+      inter_on_plane_tri_seg_timer.reset();
+      inter_on_plane_seg_seg_timer.reset();
+    #endif
+    
     cache_hits = 0;
   }
   
@@ -1715,27 +1720,29 @@ protected:
   Envelope_type type;
 
 public:
-  // measure times:
-  // measure the total time for all interface methods
-  mutable Timer total_timer;
-  // measure the total time for the intersection method
-  mutable Timer intersection_timer;
-  // measure total time for projected boundary method
-  mutable Timer pboundary_timer;
-  // measure the total time for the compare_distance_to_envelope method
-  mutable Timer compare_timer;
-  mutable Timer compute_z_at_xy_timer;
-  mutable Timer compare_on_cv_timer;
+  #ifdef CGAL_BENCH_ENVELOPE_DAC
+    // measure times:
+    // measure the total time for all interface methods
+    mutable Timer total_timer;
+    // measure the total time for the intersection method
+    mutable Timer intersection_timer;
+    // measure total time for projected boundary method
+    mutable Timer pboundary_timer;
+    // measure the total time for the compare_distance_to_envelope method
+    mutable Timer compare_timer;
+    mutable Timer compute_z_at_xy_timer;
+    mutable Timer compare_on_cv_timer;
 
-  // measure the total time for the compare_distance_to_envelope_side method
-  mutable Timer compare_side_timer;
+    // measure the total time for the compare_distance_to_envelope_side method
+    mutable Timer compare_side_timer;
 
-  // measure intersection calculation parts, to see where is the weak part
-  mutable Timer inter_plane_tri_timer;
-  mutable Timer inter_overlap_timer;
-  mutable Timer inter_on_plane_tri_pt_timer;
-  mutable Timer inter_on_plane_tri_seg_timer;
-  mutable Timer inter_on_plane_seg_seg_timer;
+    // measure intersection calculation parts, to see where is the weak part
+    mutable Timer inter_plane_tri_timer;
+    mutable Timer inter_overlap_timer;
+    mutable Timer inter_on_plane_tri_pt_timer;
+    mutable Timer inter_on_plane_tri_seg_timer;
+    mutable Timer inter_on_plane_seg_seg_timer;
+  #endif
 
   #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
     mutable Surface_point_cache point_on_cache;
