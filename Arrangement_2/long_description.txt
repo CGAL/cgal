@@ -8,7 +8,7 @@ information systems, etc.
 
 The curves in C can intersect each other (a single curve may also
 be self-intersecting or may be comprised of several disconnected
-branches) and are not necessarily $x$-monotone. We construct a
+branches) and are not necessarily x-monotone. We construct a
 collection C'' of x-monotone subcurves that are pairwise disjoint in
 their interiors. We do it in two steps as follows. First, we decompose
 each curve in C into maximal x-monotone subcurves (and possibly
@@ -20,8 +20,8 @@ if the curves of C contain such points. The arrangement induced by the
 collection C'' can be conveniently embedded as a planar graph, whose
 vertices are associated with curve endpoints or with isolated points,
 and whose edges are associated with subcurves. It is easy to see that
-$A(C) = A(C''). This graph can be represented using a doubly-connected
-edge list} data-structure (DCEL for short), which consists of
+A(C) = A(C''). This graph can be represented using a doubly-connected
+edge list data-structure (DCEL for short), which consists of
 containers of vertices, edges, and faces and maintains the incidence
 relations among these objects.
 
