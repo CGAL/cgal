@@ -42,8 +42,7 @@
 
 \newcommand{\lciIfRef}{\ccFalse}
 
-\gdef\lciInsideListofRefPages{\lcFalse}
-\gdef\lciIfPrintUnsortedRefpageEntries{\lcFalse}
+\gdef\lciInsideListOfRefPages{\lcFalse}
 
 \newcommand{\ccUserChapter}[1]{\chapter{#1}}
 \newcommand{\ccRefChapter}[1]{%
@@ -51,13 +50,14 @@
 \textit{Reference~Manual}}%
 }
 
-\newcommand{\ccEnableUnsortedListOfRefpageEntries}{%
-  \gdef\lciIfPrintUnsortedRefpageEntries{\lcTrue}%
+\newcommand{\ccEnableRawListOfRefpages}{%
+  \gdef\lciIfPrintRawListOfRefpages{\lcTrue}%
 }
-\newcommand{\ccDisableUnsortedListOfRefpageEntries}{%
-  \gdef\lciIfPrintUnsortedRefpageEntries{\lcFalse}%
+\newcommand{\ccEnableSortedListOfRefpages}{%
+  \gdef\lciIfPrintRawListOfRefpages{\lcFalse}%
 }
 
+\ccEnableSortedListOfRefpages
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -443,23 +443,22 @@
     \lciStoreFileName%
     \refstepcounter{referencepage}%
 
-    \lciIfPrintUnsortedRefpageEntries{
-      \lciInsideListofRefPages{}{%
+    \lciIfPrintRawListOfRefpages{
+      \lciInsideListOfRefPages{}{%
         \lcRawHtml{<table cellpadding="0">}%
-        \gdef\lciInsideListofRefPages{\lcTrue}%
+        \gdef\lciInsideListOfRefPages{\lcTrue}%
       }
       % Make a hyperlink in the chapter to the class file.
       \lcRawHtml{<tr><td>[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</td></tr>}%
     }{
-      \lciInsideListofRefPages{}{
+      \lciInsideListOfRefPages{}{
         \section{Alphabetical List of Reference Pages}
-        \gdef\lciInsideListofRefPages{\lcTrue}%
+        \gdef\lciInsideListOfRefPages{\lcTrue}%
       }
     }
+
     \lciOpenReferenceFile%
-    \lciIfPrintUnsortedRefpageEntries{}{%
-      \lciSortedMapAddTo{TocReferenceLinks}{#X1}{\lciOutputBasename}%
-    }
+    \lciSortedMapAddTo{TocReferenceLinks}{#X1}{\lciOutputBasename}%
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_reference_link_}\thereferencepage%
@@ -1029,6 +1028,24 @@
 }
 
 
+\newcommand{\lciPrintTOCReferenceLink}[2]{
+  \lcRawHtml{<tr><td>}%
+  \lcRawHtml{ <a href="#C2">}\lcNoLinkBegin#1\lcNoLinkEnd\lcRawHtml{</a></td></tr>}%
+}
+
+\newcommand{\ccPrintSortedListOfRefpages}{
+  \section{Alphabetical List of Reference Pages}
+  \ccPrintSortedListOfRefpagesX
+}
+
+\newcommand{\ccPrintSortedListOfRefpagesX}{
+  \lciSortedMapIsEmpty{TocReferenceLinks}{}{%
+    \lcRawHtml{<table cellpadding="0">}
+    \lciSortedMapForeach{TocReferenceLinks}{\lciPrintTOCReferenceLink}
+    \lcRawHtml{</table>}
+    \lciSortedMapClear{TocReferenceLinks}
+  }
+}
 % ___________________________________________________________________________
 % ###########################################################################
 % | EOF

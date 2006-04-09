@@ -1099,8 +1099,8 @@ l% ___________________________________________________________________________
     \lcRawHtml{">}Up\lcRawHtml{</a>,
 }%
     \lciPopOutput%
-    \gdef\lciInsideListofRefPages{\lcFalse}%
-    \ccDisableUnsortedListOfRefpageEntries
+    \gdef\lciInsideListOfRefPages{\lcFalse}%
+    \ccEnableSortedListOfRefpages
     \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
     % ^^^ this was needed to make package Qt_widget work with a class Qt_widget.
     % I _dont_ know what's going on, i.e. where the flag is set to false ..
@@ -1121,21 +1121,10 @@ l% ___________________________________________________________________________
 \newcommand{\chapter*}[1]{%
     \lciHtmlChapterHeader{#1}}
 
-\newcommand{\lciPrintTOCReferenceLink}[2]{
-  \lcRawHtml{<tr><td>}%
-  \lcRawHtml{ <a href="#C2">}\lcNoLinkBegin#1\lcNoLinkEnd\lcRawHtml{</a></td></tr>}%
-}
 
 \newcommand{\lciEndChapter}{%
   \lciEndSection
-  \lciIfPrintUnsortedRefpageEntries{}{%
-    \lciSortedMapIsEmpty{TocReferenceLinks}{}{%
-      \lcRawHtml{<table cellpadding="0">}
-      \lciSortedMapForeach{TocReferenceLinks}{\lciPrintTOCReferenceLink}
-      \lcRawHtml{</table>}
-      \lciSortedMapClear{TocReferenceLinks}
-    }
-  }
+  \lciIfPrintRawListOfRefpages{}{\ccPrintSortedListOfRefpagesX}
   \lciIfDefined{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{% check for first chapter
     \lciPrintFootnotes\lciResetFootnotes
     \lciPopFootnotes
@@ -1163,6 +1152,7 @@ l% ___________________________________________________________________________
     {\lciHtmlSectionToc{\thesection}{\thesection~~~#1}%
       \lciHtmlSectionHeader{\thesection~~~#2}}}
 \newcommand{\section*}[1]{%
+  \lciCheckIfWeNeedToCloseRefpageTable
     \lciHtmlSectionHeader{#1}}
 
 \newcommand{\lciEndSection}{%
@@ -1182,6 +1172,7 @@ l% ___________________________________________________________________________
     {\lciHtmlSubsectionHeader{\thesubsection}{\thesubsection~~~#2}%
       \lciHtmlSubsectionToc{\thesubsection}{\thesubsection~~~#1}}}
 \newcommand{\subsection*}[1]{%
+  \lciCheckIfWeNeedToCloseRefpageTable
     \lciHtmlSubsectionHeader{}{#1}}
 
 \newcommand{\lciEndSubsection}{%
@@ -1200,27 +1191,31 @@ l% ___________________________________________________________________________
    {\lciHtmlSubsubsectionHeader{\thesubsubsection}{\thesubsubsection~~~#2}%
      \lciHtmlSubsubsectionToc{\thesubsubsection}{\thesubsubsection~~~#1}}}
 \newcommand{\subsubsection*}[1]{%
+  \lciCheckIfWeNeedToCloseRefpageTable
     \lciHtmlSubsubsectionHeader{}{#1}}
 
 
 \newcommand{\lciEndSubsubsection}{%
+  \lciCheckIfWeNeedToCloseRefpageTable
   % see cc_manual.sty. there, a corresponding table has been opened
   % for the alphabetical listing of refpages
   \lciEndParagraph
   \lciIfEqualExpanded{\lciCountersubsubsection}{0}{}{% check 1st. subsubsection
   }
-  \lciIfPrintUnsortedRefpageEntries{%
+}
+
+\newcommand{\lciCheckIfWeNeedToCloseRefpageTable}{
+  \lciIfPrintRawListOfRefpages{%
     % if we are inside a listing of refpages _and_ outside the actual refpage
     % (ie., we are in Chapter_intro.html), close the table-environment
-    \lciInsideListofRefPages{%
-      \lciIfEmpty{\ccRefCategory}{
+    \lciInsideListOfRefPages{%
+      \lciIfEmpty{\ccRefName}{
         \lcRawHtml{</table>}%
-        \gdef\lciInsideListofRefPages{\lcFalse}%
+        \gdef\lciInsideListOfRefPages{\lcFalse}%
       }{}
     }{}%
   }{}
 }
-
 
 % paragraph
 \newcommand{\paragraph}[1]{\paragraph[#1]{#1}}
