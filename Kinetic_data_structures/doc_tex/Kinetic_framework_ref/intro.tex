@@ -1,0 +1,116 @@
+\chapter{Kinetic Data Structures}
+\label{ref-chapter-kinetic}
+
+\ccHeading{Definition} 
+
+Kinetic data structures are a way of adding motion to classical
+geometric data structures. \cgal\ provides a number of classes to aid
+implementation of kinetic data structures.
+
+There are three levels at which the user can interact with the
+package. The user can use an existing kinetic data structure, write a
+new kinetic data structure, or replace parts of the framework.The
+first level is covered in the Chapter~\ref{ref-chapter-kinetic}.
+
+
+
+
+
+\ccHeading{Main support classes and concepts}
+
+Here we list the main classes and concepts provided by the framework to support implementing kinetic data structures
+
+\ccRefConceptPage{Kinetic::ActiveObjectsTable}  
+
+\ccRefConceptPage{Kinetic::FunctionKernel}
+
+\ccRefConceptPage{Kinetic::Kernel}
+
+\ccRefConceptPage{Kinetic::InstantaneousKernel}
+
+
+\ccRefConceptPage{Kinetic::SimulationTraits}
+
+\ccRefConceptPage{Kinetic::Simulator}  
+
+
+
+\ccRefIdfierPage{Kinetic::Active_objects_vector<MovingObject>}  
+
+\ccRefIdfierPage{Kinetic::Cartesian_instantaneous_kernel<ActiveObjectsTable, StaticKernel>}  
+
+\ccRefIdfierPage{Kinetic::Cartesian_kinetic_kernel<FunctionKernel>}  
+
+\ccRefIdfierPage{Kinetic::Simulator<FunctionKernel, EventQueue>}  
+
+\ccHeading{Graphical display}
+
+Next we have some support classes which are used to display kinetic data structures:
+
+\ccRefIdfierPage{Kinetic::Qt_moving_points_2<Traits, QtWidget_2>}  
+
+\ccRefIdfierPage{Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>}  
+
+\ccRefIdfierPage{Kinetic::Qt_widget_2<Simulator>}  
+
+
+\ccHeading{Miscellaneous classes and concepts}
+
+\ccRefIdfierPage{Kinetic::Regular_triangulation_instantaneous_traits_3<ActiveObjectsTable, StaticKernel>}  
+
+\ccRefConceptPage{Kinetic::EventLogVisitor}
+
+\ccRefConceptPage{Kinetic::EventQueue}
+
+
+\ccRefConceptPage{Kinetic::Simulator::Event}
+
+\ccRefConceptPage{Key}
+
+\ccRefConceptPage{Kinetic::Certificate}
+
+\ccRefConceptPage{Kinetic::RootStack}
+
+\ccRefConceptPage{Kinetic::Simulator::Time}
+
+\ccRefConceptPage{Kinetic::FunctionKernel::Function}
+
+\ccRefConceptPage{Kinetic::FunctionKernel::ConstructFunction}
+
+
+
+
+\ccRefIdfierPage{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>}  
+
+\ccRefIdfierPage{Kinetic::Insert_event<ActiveObjectsTable>}  
+
+\ccRefIdfierPage{CGAL::Listener<Interface>}  
+
+\ccRefIdfierPage{CGAL::Multi_listener<Interface>}  
+
+\ccRefIdfierPage{CGAL::Ref_counted<T>}  
+
+\ccRefIdfierPage{Kinetic::Simulator_kds_listener<Listener, KDS>}  
+
+\ccRefIdfierPage{Kinetic::Simulator_objects_listener<Simulator_listener, KDS>}  
+
+
+
+\lcHtml{\ccHeading{Links to the Reference Sections}}
+
+%It complains if I don't have any references so here one is \cite{cgal:ansi-is14882-98}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

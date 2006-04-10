@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id: InstantaneousKernel.tex 29411 2006-03-12 07:28:13Z drussel $}
+\RCSdefDate{\RCSEventDate}{$Date: 2006-03-12 08:28:13 +0100 (Sun, 12 Mar 2006) $}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::InstantaneousKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ covers models that act as adaptors allowing
+CGAL static data structures to act on snapshots of kinetic data. It
+typically only supports one type of moving object.
+
+Currently, each model is created for one particular type of kinetic
+primitive. The primitives are identified by
+\ccc{Kinetic::ActiveObjectsTable::Key} objects.
+
+\ccTypes 
+
+\ccNestedType{Time}{The type used to represent the current time. This must be a ring or field type.}
+
+\ccCreationVariable{a}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Time time();}{Return the current time.}
+
+\ccMethod{void set_time(Time);}{Set the current time to have a certain value. All existing predicates are updated automatically.}
+
+\ccMethod{Static_object to_static(Key);}{Return a static object corresponding to the kinetic object at this instant in time.}
+
+\ccHasModels
+
+\ccc{Kinetic::Cartesian_instantaneous_kernel}
+
+
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

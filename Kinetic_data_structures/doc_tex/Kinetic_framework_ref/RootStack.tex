@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: RootEnumerator.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSRootEnumeratorRev}{$Id: RootStack.tex 29411 2006-03-12 07:28:13Z drussel $}
+\RCSdefDate{\RCSRootEnumeratorDate}{$Date: 2006-03-12 08:28:13 +0100 (Sun, 12 Mar 2006) $}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::RootStack}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ enumerates through roots of a function
+contained in a certain interval. They may return one extra root which
+has value \ccc{std::numeric_limits<Root>::infinity()}, as this allows
+the root stacks to delay isolating roots until the isolation is needed
+to properly evaluate comparisons.
+
+\ccTypes
+
+\ccNestedType{Root}{The root of a function.}
+\ccNestedType{Traits}{The traits class for this concept.}
+
+\ccCreation
+\ccCreationVariable{re}  %% choose variable name
+
+\ccConstructor{RootStack();}{default constructor.}
+
+\ccConstructor{RootStack(Function f, Root lb, Root ub, Traits tr);}{Construct a \ccRefName\ over the roots of \ccc{f} in the open interval \ccc{lb} to \ccc{ub}.}
+
+\ccOperations
+
+\ccMethod{void pop();}{Advance to the next root. As a precondition, empty() must be false.}
+
+\ccMethod{Root top();}{Return the current root. As a precondition, empty() must be false. Note that the \ccc{Root} returned might not actually be in the interval (since the solver has not yet proved that there are no more roots).}
+
+\ccMethod{bool empty();}{Return true if there are known to be no more roots left. There might not actually be any roots of the polynomial left in the interval, but the work necessary to prove this has been delayed.}
+
+%\ccHasModels
+
+%\ccc{Kinetic::Numeric_root_enumerator}.
+
+\ccSeeAlso
+
+\ccc{Kinetic::FunctionKernel}, \ccc{Kinetic::Certificate}.
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

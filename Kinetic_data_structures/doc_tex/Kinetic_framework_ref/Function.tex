@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id: Event.tex 28517 2006-02-14 23:14:42Z drussel $}
+\RCSdefDate{\RCSEventDate}{$Date: 2006-02-14 15:14:42 -0800 (Tue, 14 Feb 2006) $}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefConcept}[Kinetic::FunctionKernel::]{Function}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccClassName\ represents a function. 
+
+\ccCreationVariable{a}  %% choose variable name
+
+
+\ccTypes
+
+\ccNestedType{NT}{The number type used in describing the function;}
+
+\ccConstructor{Function(NT);}{Construct a constant function from a number.}
+
+
+\ccOperations
+
+\ccMethod{NT operator()(NT);} {Evaluate the function at an \ccc{NT}.}
+
+\ccSeeAlso
+
+\ccc{FunctionKernel},
+\ccc{FunctionKernel::ConstructFunction}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "ConstructFunction"
+%%% End: 

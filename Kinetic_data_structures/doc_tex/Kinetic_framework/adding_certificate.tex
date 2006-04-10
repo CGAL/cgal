@@ -1,0 +1,87 @@
+\subsection{Adding a new certificate type}
+\label{sec:kds_add_cert}
+
+The following example shows how to add a new type of certificate to a simulation. 
+
+First we code the actual certificate function generator. It must take
+some sort (or sorts) of kinetic primitives, compute some function from
+their coordinates.
+
+\begin{ccExampleCode}
+template <class KineticKernel>
+struct Positive_x_f_2 {
+  typedef typename KineticKernel::Certificate_function result_type;
+  typedef typename KineticKernel::Point_2 argument_type;
+  result_type operator()(const argument_type &p){
+    return result_type(p.x()- result_type(0));
+  }
+};
+\end{ccExampleCode}
+
+Then we define a kinetic kernel which includes this predicate. To do
+this we wrap the function generator generator in a
+\ccc{Kinetic::Certificate_generator<Kernel, Generator>}.
+This wrapper uses the generator to create the certificate function and
+then the \ccc{Kinetic::FunctionKernel} to solve the certificate
+function. The result is wrapped in a \ccc{Kinetic::Certificate}
+object.
+
+\begin{ccExampleCode}
+template <class FunctionKernel> 
+class My_kinetic_kernel:
+  public CGAL::Kinetic::Cartesian_kinetic_kernel<FunctionKernel> {
+  typedef CGAL::Kinetic::Cartesian_kinetic_kernel<FunctionKernel> P;
+  typedef My_kinetic_kernel<FunctionKernel> This;
+public:
+  typedef CGAL::Kinetic::internal::Certificate_generator<This, Positive_x_f_2<This> > Positive_x_2;
+  Positive_x_2 positive_x_2_object() const
+  {
+    return Positive_x_2(P::function_kernel_object());
+  }
+};
+\end{ccExampleCode}
+
+Now we have the unfortunately rather messy part of assembling a new
+\ccc{Kinetic::SimulationTraits} model. This is done in two steps for convenience.
+
+\begin{ccExampleCode}
+struct My_st_types: public CGAL::Kinetic::Suggested_exact_simulation_traits_types {
+  typedef CGAL::Kinetic::Suggested_exact_simulation_traits_types P;
+  typedef My_kinetic_kernel<P::Function_kernel>::Point_2 Active_object;
+  typedef CGAL::Kinetic::Active_objects_vector<Active_object> Active_objects_table;
+  typedef CGAL::Kinetic::Cartesian_instantaneous_kernel< Active_objects_table,
+							 Static_kernel> Instantaneous_kernel;
+};
+
+struct My_simulation_traits:
+  public  CGAL::Kinetic::Simulation_traits<My_st_types::Static_kernel,
+			    My_st_types::Kinetic_kernel,
+			    My_st_types::Simulator>
+{
+  typedef  CGAL::Kinetic::Simulation_traits<My_st_types::Static_kernel,
+					    My_st_types::Kinetic_kernel,
+					    My_st_types::Simulator> P;
+  My_simulation_traits(const P::Time &lb= P::Time(0),
+		       const P::Time &ub=std::numeric_limits<P::Time>::infinity()): 
+    P(lb,ub), 
+    ap_(new Active_points_2_table()) {}
+
+  typedef My_st_types::Active_objects_table Active_points_2_table;
+  Active_points_2_table* active_points_2_table_handle() {
+    return ap_.get();
+  }
+  const Active_points_2_table* active_points_2_table_handle() const {
+    return ap_.get();
+  }
+
+  typedef My_st_types::Instantaneous_kernel Instantaneous_kernel;
+  Instantaneous_kernel instantaneous_kernel_object() const
+  {
+    return Instantaneous_kernel(ap_, static_kernel_object());
+  }
+protected:
+  Active_points_2_table::Handle ap_;
+};
+\end{ccExampleCode}
+
+Now the simulation traits can be used by a kinetic data structure.

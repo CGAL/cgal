@@ -1,0 +1,42 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Moving_object_table.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSMovingobjecttableRev}{$Id: Active_objects_vector.tex 29411 2006-03-12 07:28:13Z drussel $}
+\RCSdefDate{\RCSMovingobjecttableDate}{$Date: 2006-03-12 08:28:13 +0100 (Sun, 12 Mar 2006) $}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Active_objects_vector<MovingObject>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+
+MovingObjects are stored in a vector. This means that access is constant
+time, but storage is not generally freed. The only way to be sure is
+to remove all reference counts for the table or to call \ccc{clear()}.
+
+
+\ccInclude{CGAL/Kinetic/Active_objects_vector.h}
+
+\ccIsModel
+
+\ccc{Kinetic::ActiveObjectsTable}
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
