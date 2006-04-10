@@ -1,5 +1,4 @@
-\section{Boolean Set-Operations on Linear Polygons}
-\label{bso_sec:bso_lin}
+\section{Boolean Set-Operations on Linear Polygons\label{bso_sec:bso_lin}}
 % =================================================
 
 The basic library of \cgal\ includes the \ccc{Polygon_2<Kernel,Container>}
@@ -83,8 +82,7 @@ which is located in the header file \ccc{print_utils.h}.
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_do_intersect.C}
 
 % ----------------------------------
-\subsection{Polygons with Holes}
-\label{bso_ssec:polygons_with_holes}
+\subsection{Polygons with Holes\label{bso_ssec:polygons_with_holes}}
 % ----------------------------------
 
 \begin{figure}[!htp]
@@ -235,8 +233,7 @@ output polygons to its associated container.
 \end{itemize}
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\subsubsection{Example --- Joining and Intersecting Simple Polygons}
-\label{bso_sssec:ex_simple_bops}
+\subsubsection{Example --- Joining and Intersecting Simple Polygons\label{bso_sssec:ex_simple_bops}}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following example demonstartes the usage of the free functions
@@ -249,8 +246,7 @@ the header file \ccc{print_utils.h} under the examples folder.
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_simple_join_intersect.C}
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\subsubsection{Operations on Polygons with Holes}
-\label{bso_sssec:pwh_bops}
+\subsubsection{Operations on Polygons with Holes\label{bso_sssec:pwh_bops}}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Having introduced polygons with holes and explained how the free functions
@@ -292,8 +288,7 @@ contains of five holes:
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_symmetric_difference.C}
 
 % ------------------------------------
-\subsection{Operating on Polygon Sets}
-\label{bso_ssec:main_component}
+\subsection{Operating on Polygon Sets\label{bso_ssec:main_component}}
 % ------------------------------------
 
 We argue that the result of a regularized operations on two polygons
@@ -344,8 +339,7 @@ Similarly, \ccc{S.complement(P)} sets $S$ to be the complement of $P$,
 while $S.complement()$ simply negates the set $S$.
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\subsubsection{A Sequence of Set Operations}
-\label{bso_sssec:sequence}
+\subsubsection{A Sequence of Set Operations\label{bso_sssec:sequence}}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The free functions reviewed in Section~\ref{bso_ssec:polygons_with_holes}
@@ -394,8 +388,7 @@ interior of this hole.
 \ccIncludeExampleCode{../examples/Boolean_set_operations_2/ex_sequence.C}
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\subsubsection{Inserting Non Intersecting Polygons}
-\label{bso_ssec:insert_ni}
+\subsubsection{Inserting Non Intersecting Polygons\label{bso_ssec:insert_ni}}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to compute the union of a polygon $P$ ($P$ may be a simple
@@ -430,8 +423,7 @@ polygon set $S$, all the polygons in the range and the polygons represented
 by $S$ must be pairwise disjoint in their interiors.
 
 % -------------------------------------------
-\subsection{Performing Aggregated Operations}
-\label{bso_ssec:agg_ops}
+\subsection{Performing Aggregated Operations\label{bso_ssec:agg_ops}}
 % -------------------------------------------
 
 There are a few options to compute the union of a set of polygons
