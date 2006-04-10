@@ -1,5 +1,5 @@
-\subsection{Using a provided kinetic data structure}
-\label{sec:kds_sort_example}
+\subsection{Using a provided kinetic data structure \label{sec:kds_sort_example}}
+
 
 Using a kinetic data structure can be as simple as the following:
 \label{fig:kds_sort_program}
@@ -40,3 +40,38 @@ arrangements of $x$-monotone curves on top of the
 \ccc{Kinetic::Sort<Traits, Visitor>} data structure using about 60
 lines of code. This sweepline code is presented in
 Section~\ref{sec:kds_sweepline_example}.
+
+%\subsection{Constructing Primitives}
+%\label{sec:kds_constructing_primitives}
+
+One key part of the framework not shown is how to create kinetic
+primitives (rather than just reading them in from a file). There are
+two ways to construction the necessary motion functions (which are
+models of \ccc{Kinetic::FunctionKernel::Function}). The first is to
+create an array of polynomial coeffients and simply call the
+constructor as in:
+\begin{ccExampleCode}
+typedef Traits::Kinetic_kernel::Motion_function F;
+std::vector<F::NT> coefs;
+coefs.push_back(F::NT(1.0));
+coefs.push_back(F::NT(2.0));
+F x(coefs.begin(), coefs.end());
+\end{ccExampleCode}
+
+A slightly more flexible way is to use a
+\ccc{Kinetic::FunctionKernel::ConstructFunction} object. To do this do the following:
+\begin{ccExampleCode}
+typedef Traits::Kinetic_kernel::Function_kernel::Construct_function
+CF; typedef Traits::Kinetic_kernel::Motion_function F; CF cf; F
+x=cf(F::NT(1.0), F::NT(2.0));
+\end{ccExampleCode}
+The \ccc{Kinetic::FunctionKernel::ConstructFunction} can be passed
+(almost) an number of arguments and will construct a polynomial with
+those arguments are coefficients.
+
+Once the motion functions are constructed, constructing the primitive
+is just like constructing the corresponding static object.
+\begin{ccExampleCode}
+typedef Traits::Kinetic_kernel::Point_1 Point_1;
+Point_1 p(x);
+\end{ccExampleCode}

@@ -1,7 +1,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Architecture}
-\label{sec:kds_architecture}
+\section{Architecture\label{sec:kds_architecture}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 As we have already mentioned, one of the major goals of our package is
@@ -31,8 +31,8 @@ concept is discussed separately in Section \ref{sec:kds_algebraic_kernel}.
   functionality in STL instead.}
 \end{figure}
 
-\subsection{The Kinetic::Simulator}
-\label{sec:kds_simulator}
+\subsection{The Kinetic::Simulator\label{sec:kds_simulator}}
+
 
 The \ccc{Kinetic::Simulator} is the central repository of all active events.
 It maintains the event queue and can use its knowledge of the events
@@ -182,8 +182,8 @@ distributed code.
 
 
 
-\subsection{The Kinetic::ActiveObjectsTable}
-\label{sec:kds_active_objects_table}
+\subsection{The Kinetic::ActiveObjectsTable\label{sec:kds_active_objects_table}}
+
 
 The \ccc{Kinetic::ActiveObjectsTable} stores a set of kinetic primitives.
 Its purpose is to notify kinetic data structures when new primitives
@@ -205,8 +205,8 @@ structure.
 
 
 
-\subsection{The Kinetic::InstantaneousKernel}
-\label{sec:kds_instantaneous_kernel}
+\subsection{The Kinetic::InstantaneousKernel\label{sec:kds_instantaneous_kernel}}
+
 
 The \ccc{Kinetic::InstantaneousKernel} allows existing CGAL data structures
 to be used on moving data as it appears at some instant of time.
@@ -265,8 +265,8 @@ operations.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Miscellaneous: notification and reference management.}
-\label{sec:kds_misc}
+\subsection{Miscellaneous: notification and reference management\label{sec:kds_misc}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We describe some coding conventions used, graphical display,
@@ -290,8 +290,8 @@ used for storing pointers to the objects in order to avoid dangling
 pointers. In addition, many of the objects expect such pointers as
 arguments.
 
-\subsubsection{Runtime event passing}
-\label{sec:kds_listener}
+\subsubsection{Runtime event passing\label{sec:kds_listener}}
+
 
 Runtime events must be passed from \textit{notifiers}, namely the
 \ccc{Kinetic::ActiveObjectsTable} and the \ccc{Kinetic::Simulator} to
@@ -321,8 +321,8 @@ the \ccc{Listener}. It can do this since the \ccc{Listener} is
 guaranteed to unregister itself when it is destroyed. This avoids
 circular reference counted pointers as well as dangling pointers.
 
-\section{Algebraic Kernel}
-\label{sec:kds_algebraic_kernel}
+\section{Algebraic Kernel\label{sec:kds_algebraic_kernel}}
+
 
 The interface between the algebraic kernel and the kinetic data
 structures package was kept quite minimal in order to ease the
