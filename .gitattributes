@@ -682,7 +682,7 @@ Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Simulatorclass.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Time.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/intro.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/main.tex -text
-Kinetic_data_structures/examples/Kinetic_data_structures/adding_a_certificate.C -text
+Kinetic_data_structures/examples/Kinetic_framework/adding_a_certificate.C -text
 Kinetic_data_structures/include/CGAL/Kinetic/Certificate_generator.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/CORE_kernel.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/internal/CORE_polynomial.h -text
