@@ -1,5 +1,4 @@
-\section{Storing the Curve History}
-\label{arr_sec:arr_with_hist}
+\section{Storing the Curve History\label{arr_sec:arr_with_hist}}
 %==================================
 
 As stated at the beginning of this chapter (Section~\ref{arr_sec:intro}), 
@@ -23,8 +22,7 @@ That is, it should define the \ccc{Curve_2} type (and not just the
 \ccc{ArrangementDcel} concept. Users can use the default \dcel\ class or 
 an extended \dcel\ class according to their needs.
 
-\subsection{Traversing an Arrangement with History}
-\label{arr_ssec:arrwh_traverse}
+\subsection{Traversing an Arrangement with History\label{arr_ssec:arrwh_traverse}}
 %--------------------------------------------------
 
 The \ccc{Arrangement_with_history_2} class extends the \ccc{Arrangement_2}
@@ -79,8 +77,7 @@ and the consolidated curve set. Users can employ an overlay-traits class
 to maintain any type of auxiliary data stored with the \dcel\ features
 (see Section~\ref{arr_sec:overlay}).
 
-\subsection{Modifying an Arrangement with History}
-\label{arr_ssec:modif_traverse}
+\subsection{Modifying an Arrangement with History\label{arr_ssec:modif_traverse}}
 %-------------------------------------------------
 
 As the \ccc{Arrangement_with_history_2} class extends the \ccc{Arrangement_2}
@@ -138,8 +135,7 @@ arrangement-with-history instance in order to get detailed notifications of
 the changes the arrangements undergoes (see Section~\ref{arr_sec:notif} for
 the details).
 
-\subsection{Examples}
-\label{arr_ssec:arr_hist_ex}
+\subsection{Examples\label{arr_ssec:arr_hist_ex}}
 %---------------------------
 
 \begin{figure}[t]
@@ -156,8 +152,7 @@ the details).
 \caption{An arrangement with history as constructed in
 \ccc{ex_curve_history.C}. 
 Note that $s_1$ and $s_3$ overlap over two edges. The point-location query
-points are drawn as lightly shaded dots.}
-\label{arr_fig:ex_24}
+points are drawn as lightly shaded dots.\label{arr_fig:ex_24}}
 \end{figure}
 
 In the following example we construct a simple arrangement of six line
@@ -185,8 +180,8 @@ on the resulting arrangement, using the auxiliary function
 \ccc{ex_edge_manipulation_curve_history.C}. Note the vertical tangency points
 of $C_0$, marked as dark dots, which subdivide this circle into an upper half
 and a lower half, each consists of 9 edges. The large circle $C_0$ is
-eventually removed from the arrangement, with all 18 edges it induces.}
-\label{arr_fig:ex_25}
+eventually removed from the arrangement, with all 18 edges it
+induces.\label{arr_fig:ex_25}}
 \end{figure}
 
 The following example demonstrates the usage of the free \ccc{remove()}

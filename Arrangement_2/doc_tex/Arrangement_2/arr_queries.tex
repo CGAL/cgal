@@ -1,5 +1,4 @@
-\section{Issuing Queries on an Arrangement}
-\label{arr_sec:queries}
+\section{Issuing Queries on an Arrangement\label{arr_sec:queries}}
 %==========================================
 
 One of the most important query types defined on arrangements is
@@ -15,8 +14,7 @@ they also play an important role in the free insertion-functions
 have the ability to answer such queries effectively for any
 arrangement instance.
 
-\subsection{Point-Location Queries}
-\label{arr_ssec:pl}
+\subsection{Point-Location Queries\label{arr_ssec:pl}}
 %----------------------------------
 
 The arrangement package includes several classes (more precisely,
@@ -94,8 +92,7 @@ void point_location_query
 \}
 \end{alltt}
 
-\subsubsection{Choosing a Point-Location Strategy}
-\label{arr_sssec:pl_strat}
+\subsubsection{Choosing a Point-Location Strategy\label{arr_sssec:pl_strat}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each of the various point-location classes employs a different
@@ -190,8 +187,7 @@ dynamic and is frequently going through changes, the
 \ccc{Arr_trapezoid_ric_point_location} class should be the
 selected point-location strategy.
 
-\subsubsection{An Example}
-\label{arr_sssec:pl_ex}
+\subsubsection{An Example\label{arr_sssec:pl_ex}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \begin{figure}[t]
@@ -209,8 +205,7 @@ selected point-location strategy.
 \ccc{ex_point_location.C}, \ccc{ex_vertical_ray_shooting.C}, and
 \ccc{ex_batched_point_location.C}. The
 arrangement vertices are drawn as small discs, while the query
-points $q_1, \ldots, q_6$ are marked with crosses.}
-\label{arr_fig:ex_5}
+points $q_1, \ldots, q_6$ are marked with crosses.\label{arr_fig:ex_5}}
 \end{figure}
 
 The following program constructs a simple arrangement of five line
@@ -229,8 +224,7 @@ Note that the program uses the auxiliary
 result of each query. This function can be found in the header file
 \ccc{point_location_utils.h}.
 
-\subsection{Vertical Ray Shooting}
-\label{arr_ssec:ray_shoot}
+\subsection{Vertical Ray Shooting\label{arr_ssec:ray_shoot}}
 %---------------------------------
 
 Another important query issued on arrangements is the vertical
@@ -313,8 +307,7 @@ unbounded mantissa and a 32-bit exponent. It supports construction from an
 integer or from a machine \ccc{float} or \ccc{double} and performs additions,
 subtractions and multiplications in an exact number.
 
-\subsection{Batched Point-Location}
-\label{arr_ssec:batched_pl}
+\subsection{Batched Point-Location\label{arr_ssec:batched_pl}}
 %----------------------------------
 
 Suppose that at a given moment our application has to issue a

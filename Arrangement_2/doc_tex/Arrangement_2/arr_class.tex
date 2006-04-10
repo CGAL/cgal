@@ -1,5 +1,4 @@
-\section{The Main Arrangement Class}
-\label{arr_sec:arr_class}
+\section{The Main Arrangement Class\label{arr_sec:arr_class}}
 %===================================
 
 The class \ccc{Arrangement_2<Traits,Dcel>} is the main class in
@@ -101,8 +100,7 @@ int main()
 \}
 \end{alltt}
 
-\subsection{Traversing the Arrangement}
-\label{arr_ssec:traverse}
+\subsection{Traversing the Arrangement\label{arr_ssec:traverse}}
 %--------------------------------------
 
 The simplest and most fundamental arrangement operations are the
@@ -150,8 +148,7 @@ static function \ccc{Arrangement_2::non_const_handle()} (see, e.g.,
 Section~\ref{arr_ssec:pl}). There are
 three variant of this function, one for each type of handle.
 
-\subsubsection{Traversal Methods for an Arrangement Vertex}
-\label{arr_sssec:tr_vertex}
+\subsubsection{Traversal Methods for an Arrangement Vertex\label{arr_sssec:tr_vertex}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A vertex is always associated with a geometric entity, namely with
@@ -194,8 +191,7 @@ void print_neighboring_vertices (Arrangement_2::Vertex_const_handle v)
 In case of an isolated vertex, it is possible to obtain the face
 that contains this vertex using the \ccc{face()} method.
 
-\subsubsection{Traversal Methods for an Arrangement Halfedge}
-\label{arr_sssec:tr_halfedge}
+\subsubsection{Traversal Methods for an Arrangement Halfedge\label{arr_sssec:tr_halfedge}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each arrangement edge, realized as a pair of twin halfedges,
@@ -246,8 +242,7 @@ void print_ccb (Arrangement_2::Ccb_halfedge_const_circulator circ)
 \}
 \end{alltt}
 
-\subsubsection{Traversal Methods for an Arrangement Face}
-\label{arr_sssec:tr_face}
+\subsubsection{Traversal Methods for an Arrangement Face\label{arr_sssec:tr_face}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An arrangement of bounded curves always has a single unbounded face.
@@ -310,8 +305,7 @@ void print_face (Arrangement_2::Face_const_handle f)
 \}
 \end{alltt}
 
-\subsubsection{Additional Example}
-\label{arr_sssec:tr_ex}
+\subsubsection{Additional Example\label{arr_sssec:tr_ex}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The function listed below prints the current setting of a given
@@ -351,8 +345,7 @@ void print_arrangement (const Arrangement_2& arr)
 \}
 \end{alltt}
 
-\subsection{Modifying the Arrangement}
-\label{arr_ssec:modify}
+\subsection{Modifying the Arrangement\label{arr_ssec:modify}}
 %-------------------------------------
 
 In this section we review the various member functions of the
@@ -366,8 +359,7 @@ rather specialized, as they require a-priori knowledge on the location of
 the inserted curve. Indeed, for most purposes it is more convenient to
 construct an arrangement using the free (global) insertion-functions.
 
-\subsubsection{Inserting Non-Intersecting $x$-Monotone Curves}
-\label{arr_sssec:mf_insert_cv}
+\subsubsection{Inserting Non-Intersecting $x$-Monotone Curves\label{arr_sssec:mf_insert_cv}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The most important functions that allow users to modify the
@@ -520,8 +512,8 @@ from $v_1$ to $v_2$.
 \end{ccHtmlOnly}
 \caption{The arrangement of the line segments $s_1, \ldots, s_5$
 constructed in \ccc{ex_edge_insertion.C}. The arrows mark the direction of
-the halfedges returned from the various insertion functions.}
-\label{arr_fig:ex_1}
+the halfedges returned from the various insertion
+functions.\label{arr_fig:ex_1}}
 \end{figure}
 
 The following program demonstrates the usage of the four insertion
@@ -547,8 +539,7 @@ using the vertices created by the insertion of previous segments.
 The resulting arrangement consists of three faces, where the two
 bounded faces form together a hole in the unbounded face.
 
-\subsubsection{Manipulating Isolated Vertices}
-\label{arr_sssec:mf_iso_verts}
+\subsubsection{Manipulating Isolated Vertices\label{arr_sssec:mf_iso_verts}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Isolated points are in general simpler geometric entities than
@@ -581,8 +572,7 @@ an isolated vertex and removes it from the arrangement.
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments containing three isolated
 vertices, as constructed in \ccc{ex_isolated_vertices.C}. The vertices $u_2$
-and $u_3$ are eventually removed from the arrangement.}
-\label{arr_fig:ex_2}
+and $u_3$ are eventually removed from the arrangement.\label{arr_fig:ex_2}}
 \end{figure}
 
 The following program demonstrates the usage of the arrangement
@@ -596,8 +586,7 @@ isolated vertices that are still contained in the unbounded face
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_isolated_vertices.C}
 
-\subsubsection{Manipulating Halfedges}
-\label{arr_sssec:mf_halfedges}
+\subsubsection{Manipulating Halfedges\label{arr_sssec:mf_halfedges}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the previous subsection we showed how to introduce new isolated
@@ -658,8 +647,7 @@ are to be removed should they become isolated.
 \caption{An arrangement of line segments as constructed
 in \ccc{ex_edge_manipulation.C}. Note that the edges $e_7$ and $e_8$ and the
 vertices $w_1$ and $w_2$, introduced in step~(b) are eventually
-removed in step~(c).}
-\label{arr_fig:ex_3}
+removed in step~(c).\label{arr_fig:ex_3}}
 \end{figure}
 
 In the following example program we show how the edge-manipulation
@@ -715,8 +703,7 @@ by $(\frac{1}{2}, 3)$.
 
 \newpage
 \begin{ccAdvanced}
-\subsubsection{Advanced Insertion Functions}
-\label{arr_sssec:adv_insert}
+\subsubsection{Advanced Insertion Functions\label{arr_sssec:adv_insert}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \lcTex{%
@@ -785,8 +772,8 @@ vertex.
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments, as constructed in
 \ccc{ex_special_edge_insertion.C}. Note that $p_0$ is initially inserted as an
-isolated point and later on connected to the other four vertices.}
-\label{arr_fig:ex_4}
+isolated point and later on connected to the other four
+vertices.\label{arr_fig:ex_4}}
 \end{figure}
 
 The following program shows how to construct the arrangement

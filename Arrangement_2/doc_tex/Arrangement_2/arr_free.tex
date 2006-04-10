@@ -1,5 +1,4 @@
-\section{Free Functions in the Arrangement Package}
-\label{arr_sec:gl_funcs}
+\section{Free Functions in the Arrangement Package\label{arr_sec:gl_funcs}}
 %==================================================
 
 In Section~\ref{arr_sec:arr_class} we reviewed in details the
@@ -13,12 +12,10 @@ on arrangements. The implementation of these operations typically require
 non-trivial geometric algorithms or load some extra requirements on
 the traits class.
 
-\subsection{Incremental Insertion Functions}
-\label{arr_ssec:inc_insert}
+\subsection{Incremental Insertion Functions\label{arr_ssec:inc_insert}}
 %-------------------------------------------
 
-\subsubsection{Inserting Non-Intersecting Curves}
-\label{arr_sssec:insert_non_x}
+\subsubsection{Inserting Non-Intersecting Curves\label{arr_sssec:insert_non_x}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In Section~\ref{arr_sec:arr_class} we explained how to construct
@@ -58,8 +55,7 @@ available. Instead of accepting a user-defined point-location
 object, it defines a local instance of the walk point-location
 class and uses it to insert the curve.
 
-\subsubsection{Inserting $x$-Monotone Curves}
-\label{arr_sssec:insert_x_mon}
+\subsubsection{Inserting $x$-Monotone Curves\label{arr_sssec:insert_x_mon}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The \ccc{insert_non_intersecting_curve()} function is very
@@ -100,8 +96,7 @@ arrangement --- namely it wraps a \ccc{Vertex_const_handle}, a
 also Section~\ref{arr_ssec:pl}).
 \end{ccAdvanced}
 
-\subsubsection{Inserting General Curves}
-\label{arr_sssec:insert_gen}
+\subsubsection{Inserting General Curves\label{arr_sssec:insert_gen}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 So far all our examples were of arrangements of line segments,
@@ -135,8 +130,7 @@ $x$-monotone subcurves and inserting each one separately. Users
 may supply a point-location object \ccc{pl}, or use the default
 walk point-location strategy by calling \ccc{insert_curve(arr, c)}.
 
-\subsubsection{Inserting Points}
-\label{arr_sssec:insert_point}
+\subsubsection{Inserting Points\label{arr_sssec:insert_point}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The arrangement class enables us to insert a point as an isolated
@@ -161,8 +155,7 @@ The arrangement \ccc{arr} should be instantiated with a traits class
 that models the \ccc{ArrangementXMonotoneTraits_2} concept, as the
 insertion operation may involve splitting curves.
 
-\subsubsection{An Example}
-\label{arr_sssec:insert_ex}
+\subsubsection{An Example\label{arr_sssec:insert_ex}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \begin{figure}[t]
@@ -182,8 +175,7 @@ constructed in \ccc{ex_incremental_insertion.C} and
 endpoints are marked by black disks and the arrangement vertices
 that correspond to intersection points are marked by circles.
 The query point $q$ is marked with a cross and the face that
-contains it is shaded.}
-\label{arr_fig:ex_8}
+contains it is shaded.\label{arr_fig:ex_8}}
 \end{figure}
 
 The program below constructs an arrangement of intersecting
@@ -205,8 +197,7 @@ coordinates:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_incremental_insertion.C}
 
-\subsection{Aggregated Insertion Functions}
-\label{arr_ssec:agg_insert}
+\subsection{Aggregated Insertion Functions\label{arr_ssec:agg_insert}}
 %------------------------------------------
 
 Let us assume that we have to insert a set of $m$ input curves into an
@@ -288,8 +279,8 @@ one. For larger input sets, we use the aggregated insertion procedures.
 constructed in \ccc{ex_global_insertion.C}. The segments of ${\mathcal S}_1$
 are drawn in solid lines and the segments of ${\mathcal S}_2$ are
 drawn in dark dashed lines. Note that the segment $s$ (light
-dashed line) overlaps one of the segments in ${\mathcal S}_1$.}
-\label{arr_fig:ex_10}
+dashed line) overlaps one of the segments in
+${\mathcal S}_1$.\label{arr_fig:ex_10}}
 \end{figure}
 
 In the example below we aggregately construct an arrangement of a set
@@ -313,8 +304,7 @@ with unbounded mantissa. This number type is therefore capable of
 exactly computing the intersection points as long as the segment
 endpoints are given as floating-point numbers.
 
-\subsection{Removing Vertices and Edges}
-\label{arr_ssec:gl_remove}
+\subsection{Removing Vertices and Edges\label{arr_ssec:gl_remove}}
 %---------------------------------------
 
 The free functions \ccc{remove_vertex()} and \ccc{remove_edge()} handle

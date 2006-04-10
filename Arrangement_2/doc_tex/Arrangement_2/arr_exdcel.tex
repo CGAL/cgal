@@ -1,5 +1,4 @@
-\section{Extending the \dcel}
-\label{arr_sec:ex_dcel}
+\section{Extending the \dcel\label{arr_sec:ex_dcel}}
 %============================
 
 For many applications of the arrangement package it is necessary to
@@ -24,8 +23,7 @@ points with vertices and $x$-monotone curves with halfedge, but nothing more.
 In this section we show how to use alternative \dcel\ types to extend the 
 desired \dcel\ records.
 
-\subsection{Extending the \dcel\ Faces}
-\label{arr_ssec:ex_dcel_face}
+\subsection{Extending the \dcel\ Faces\label{arr_ssec:ex_dcel_face}}
 %--------------------------------------
 
 The \ccc{Arr_face_extended_dcel<Traits, FaceData>} class-template
@@ -63,8 +61,7 @@ modified and sets its data field accordingly.
 (in \ccc{ex_dcel_extension.C} we treat
 the segments as directed, so they are drawn as arrows directed from the
 source to the target). The indices associated with the halfedges in
-\ccc{ex_face_extension.C} are shown in brackets.}
-\label{arr_fig:ex_20}
+\ccc{ex_face_extension.C} are shown in brackets.\label{arr_fig:ex_20}}
 \end{figure}
 
 The next example constructs an arrangement that contains seven bounded 
@@ -80,8 +77,7 @@ to a non-empty arrangement.}
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_face_extension.C}
 
-\subsection{Extending All \dcel\ Records}
-\label{arr_ssec:ex_dcel_all}
+\subsection{Extending All \dcel\ Records\label{arr_ssec:ex_dcel_all}}
 %----------------------------------------
 
 The \ccc{Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>}

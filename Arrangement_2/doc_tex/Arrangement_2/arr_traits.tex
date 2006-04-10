@@ -1,6 +1,4 @@
-
-\section{Traits Classes}
-\label{arr_sec:traits}
+\section{Traits Classes\label{arr_sec:traits}}
 %=======================
 
 As mentioned in the introduction of this chapter, the traits class
@@ -106,8 +104,7 @@ decorators for geometric traits classes distributed with \cgal,
 which extend other geometric traits-class by attaching auxiliary
 data with the geometric objects.
 
-\subsection{Traits Classes for Line Segments}
-\label{arr_ssec:tr_segs}
+\subsection{Traits Classes for Line Segments\label{arr_ssec:tr_segs}}
 %--------------------------------------------
 
 The \ccc{Arr_segment_traits_2<Kernel>} class used so far
@@ -185,8 +182,8 @@ the correctness of the computation results.
 \end{ccHtmlOnly}
 \caption{(a) An arrangement of $104$ line segments from the input file
 \ccc{fan_grids.dat}. (b) An arrangement of more than $3000$ interior
-disjoint line segments, defined in the input file \ccc{Europe.dat}.}
-\label{arr_fig:predef_kernels}
+disjoint line segments, defined in the input file
+\ccc{Europe.dat}.\label{arr_fig:predef_kernels}}
 \end{figure}
 
 In the following example we use the predefined
@@ -238,8 +235,7 @@ Figure~\ref{arr_fig:predef_kernels}(b):
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_predefined_kernel_non_intersecting.C}
 
-\subsection{The Polyline-Traits Class}
-\label{arr_ssec:tr_polylines}
+\subsection{The Polyline-Traits Class\label{arr_ssec:tr_polylines}}
 %-------------------------------------
 
 The \ccc{Arr_polyline_traits_2<SegmentTraits>} class can be used
@@ -289,8 +285,7 @@ coordinates.
 polyline endpoints, while circles mark vertices that correspond
 to intersection points. Note that $\pi_2$ is split into three
 $x$-monotone polylines, and that $\pi_1$ and $\pi_3$ have two
-overlapping sections.}
-\label{arr_fig:ex_12}
+overlapping sections.\label{arr_fig:ex_12}}
 \end{figure}
 
 The following example program constructs an arrangement of three
@@ -302,8 +297,7 @@ polylines:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_polylines.C}
 
-\subsection{A Traits Class for Circular Arcs and Line Segments}
-\label{arr_ssec:tr_circ_seg}
+\subsection{A Traits Class for Circular Arcs and Line Segments\label{arr_ssec:tr_circ_seg}}
 %--------------------------------------------------------------
 
 Circles and circular arcs are the simplest form of non-linear curves.
@@ -354,8 +348,7 @@ point are represented using the nested \ccc{CoordNT} number-type.
 circular arcs, whose endpoints are drawn as disks. Circles
 mark vertices that correspond to intersection points. The vertex
 $v_{\rm max}$ is a common intersection point of all three
-circles.}
-\label{arr_fig:ex_13}
+circles.\label{arr_fig:ex_13}}
 \end{figure}
 
 In the following example an arrangement of three full circles is
@@ -399,8 +392,7 @@ $x$-monotone circular arcs or line segments, using similar constructors.
 Construction from a full circle is obviously not supported. See the Reference
 Manual for more details.
 
-\subsection{A Traits Class for Conic Arcs}
-\label{arr_ssec:tr_conic}
+\subsection{A Traits Class for Conic Arcs\label{arr_ssec:tr_conic}}
 %-----------------------------------------
 
 A {\em conic curve} is an algebraic curve of degree 2. Namely, it
@@ -523,8 +515,7 @@ also support basic access functions such as \ccc{source()},
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of mixed conic arcs, as constructed in
-\ccc{ex_conics.C}.}
-\label{arr_fig:ex_14}
+\ccc{ex_conics.C}.\label{arr_fig:ex_14}}
 \end{figure}
 
 The following example demonstrates the usage of the various
@@ -557,8 +548,7 @@ multiplicity $1$:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_conic_multiplicities.C}
 
-\subsection{A Traits Class for Arcs of Rational Functions}
-\label{arr_ssec:tr_ratfunc}
+\subsection{A Traits Class for Arcs of Rational Functions\label{arr_ssec:tr_ratfunc}}
 %---------------------------------------------------------
 
 A {\em rational function} is given by the equation $y =
@@ -615,8 +605,7 @@ $Q$.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of four arcs of rational functions, as
-constructed in \ccc{ex_rational_functions.C}.}
-\label{arr_fig:ex_16}
+constructed in \ccc{ex_rational_functions.C}.\label{arr_fig:ex_16}}
 \end{figure}
 
 The following example demonstrates the construction of an
@@ -626,8 +615,7 @@ constructors, for polynomial arcs and for rational arcs:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_rational_functions.C}
 
-\subsection{Traits-Class Decorators}
-\label{arr_ssec:meta_tr}
+\subsection{Traits-Class Decorators\label{arr_ssec:meta_tr}}
 %-----------------------------------
 
 Geometric traits-class decorators allow users to attach auxiliary
@@ -722,8 +710,7 @@ the consolidated set $S_1 \cup S_2$.
 \caption{An arrangement of six red and blue segments, as
 constructed in \ccc{ex_consolidated_curve_data.C}. Disks correspond to
 red--blue intersection points, while circles mark the endpoints
-of red--blue overlaps.}
-\label{arr_fig:ex_17}
+of red--blue overlaps.\label{arr_fig:ex_17}}
 \end{figure}
 
 In the following example, we use \ccc{Arr_segment_traits_2} as our
@@ -750,8 +737,7 @@ corresponds to overlaps between red and blue line segments:
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of four polylines, named A--D, as
-constructed in \ccc{ex_generic_curve_data.C}.}
-\label{arr_fig:ex_18}
+constructed in \ccc{ex_generic_curve_data.C}.\label{arr_fig:ex_18}}
 \end{figure}
 
 In the following example, we use \ccc{Arr_polyline_traits_2} as
