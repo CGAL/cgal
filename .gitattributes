@@ -561,6 +561,57 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#unset
 Kinetic_data_structures/demo/Kinetic_data_structures/makefile -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/PkgDescription.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.pdf -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.pdf -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.pdf -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2_example.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.pdf -text svneol=unset#unset
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.pdf -text svneol=unset#unset
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.pdf -text svneol=unset#unset
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.pdf -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.pdf -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.pdf -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.png -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/kds_intro.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/main.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/overview.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/provided_kdss.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.pdf -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_example.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.eps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.gif -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.pdf -text svneol=unset#unset
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.ps -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures/sweepline_usage_example.tex -text
 Kinetic_data_structures/examples/Kinetic_data_structures/adding_a_certificate.C -text
 Kinetic_data_structures/include/CGAL/Kinetic/Certificate_generator.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/CORE_kernel.h -text
