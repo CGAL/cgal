@@ -561,7 +561,6 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#unset
 Kinetic_data_structures/demo/Kinetic_data_structures/makefile -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/testfile -text
 Kinetic_data_structures/examples/Kinetic_data_structures/adding_a_certificate.C -text
 Kinetic_data_structures/include/CGAL/Kinetic/Certificate_generator.h -text
 Kinetic_data_structures/include/CGAL/Polynomial/CORE_kernel.h -text
