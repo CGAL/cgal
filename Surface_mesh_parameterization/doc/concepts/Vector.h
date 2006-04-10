@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -24,8 +24,8 @@
 /// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Vector.
 ///
 /// Models:
-/// - Taucs_vector
-/// - OpenNL::FullVector
+/// - CGAL::Taucs_vector<T>
+/// - OpenNL::FullVector<T> in OpenNL package
 
 class Vector
 {

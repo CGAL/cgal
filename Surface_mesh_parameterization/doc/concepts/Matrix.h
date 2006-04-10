@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -24,8 +24,9 @@
 /// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Matrix.
 ///
 /// Models:
-/// - Taucs_matrix
-/// - OpenNL::SparseMatrix
+/// - Taucs_matrix<T>
+/// - Taucs_symmetric_matrix<T>
+/// - OpenNL::SparseMatrix<T> in OpenNL package
 
 class Matrix
 {

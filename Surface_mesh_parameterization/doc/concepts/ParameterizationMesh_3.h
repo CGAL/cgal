@@ -44,9 +44,8 @@
 /// defines an interface oriented towards topological disks.
 ///
 /// Models:
-/// - Adaptator for Polyhedron_3 is provided.
-/// - Parameterization_mesh_patch_3<M> is a model of ParameterizationMesh_3 if
-///   M is a model of ParameterizationPatchableMesh_3.
+/// - Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
+/// - Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>
 ///
 /// Design Pattern:
 /// ParameterizationMesh_3 is an Adaptor [GHJV95]: it changes the

@@ -11,12 +11,10 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-
 \begin{ccRefConcept}[SparseLinearAlgebra_d::]{Vector}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
-
 
 \ccDefinition
 
@@ -36,7 +34,6 @@ This is a sub-concept of \ccc{LinearAlgebraTraits_d::Vector}.
 
 %END-AUTO(\ccRefines)
 
-
 \ccTypes
 
 % The section below is automatically generated. Do not edit!
@@ -48,7 +45,6 @@ This is a sub-concept of \ccc{LinearAlgebraTraits_d::Vector}.
 \ccGlue
 
 %END-AUTO(\ccTypes)
-
 
 \ccCreation
 \ccCreationVariable{v}  %% variable name for \ccMethod
@@ -71,7 +67,6 @@ Copy constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
-
 
 \ccOperations
 
@@ -101,18 +96,21 @@ Precondition: 0 $<$= row $<$ dimension().
 
 %END-AUTO(\ccOperations)
 
-
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Taucs_vector<T>}  \\
-\ccc{OpenNL::FullVector<T>} in OpenNL package  \\
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{CGAL::Taucs_vector<T>}  \\
+\ccc{OpenNL::FullVector<T>} in OpenNL package
+
+%END-AUTO(\ccHasModels)
 
 
 \ccSeeAlso
 
 \ccRefIdfierPage{SparseLinearAlgebraTraits_d}  \\
 \ccRefIdfierPage{SparseLinearAlgebraTraits_d::Matrix}  \\
-
 
 \end{ccRefConcept}
 
