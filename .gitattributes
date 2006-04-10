@@ -641,7 +641,6 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/SortVisitor.tex -tex
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Sort_event_log_visitor.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Sort_visitor_base.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/intro.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/main.hax -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/main.tex -text
 Kinetic_data_structures/examples/Kinetic_data_structures/adding_a_certificate.C -text
 Kinetic_data_structures/include/CGAL/Kinetic/Certificate_generator.h -text
