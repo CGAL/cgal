@@ -23,6 +23,7 @@
 #define CGAL_NUMBER_TYPES_ROOT_OF_COMPARISON_FUNCTIONS_22_H
 
 #include <CGAL/enum.h>
+#include <CGAL/kernel_assertions.h>
 
 namespace CGAL {
 namespace CGALi {
@@ -34,7 +35,7 @@ compare_11_11( const FT& A1, const FT& B1,
 	       const FT& A2, const FT& B2 )
 {
   // Compares roots of (A1 X + B1) and (A2 X + B2).
-  assert( A1 > 0 && A2 > 0 );
+  CGAL_kernel_precondition( A1 > 0 && A2 > 0 );
   return CGAL_NTS compare(B2*A1, B1*A2);
 }
 
@@ -44,7 +45,7 @@ compare_21_11(const FT& A2, const FT& B2, const FT& C2,
               const FT& A1, const FT& B1 )
 {
   // Compares roots of (A1 X + B1) and the smaller of (A2 X^2 + B2 X + C2).
-  assert(A2 > 0);
+  CGAL_kernel_precondition(A2 > 0);
 
   // First, we compare the root of P1 to the root of the derivative of P2.
 
@@ -70,7 +71,7 @@ compare_22_21( const FT& A1p, const FT& B1p, const FT& C1p,
     // It boils down to the code from the DFMT paper
     // by multiplying A* and C* by 2, and B* by -1.
 
-    assert(A1p > 0 && A2p > 0);
+    CGAL_kernel_precondition(A1p > 0 && A2p > 0);
 
     FT A1 = 2 * A1p;
     FT C1 = 2 * C1p;
@@ -123,7 +124,7 @@ compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
   // It boils down to the code from the DFMT paper
   // by multiplying A* and C* by 2, and B* by -1.
   
-  assert(A1p > 0 && A2p > 0);
+  CGAL_kernel_precondition(A1p > 0 && A2p > 0);
 
   FT A1 = 2 * A1p;
   FT C1 = 2 * C1p;
