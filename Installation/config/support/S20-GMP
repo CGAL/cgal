@@ -1,10 +1,11 @@
 # GNU Multiple Precision Arithmetic Library (http://www.swox.com/gmp/)
+# Within CGAL, we also need MPFR (http://www.mpfr.org/)
 
 DESCRIPTION = 
-PROVIDES = GMP
+PROVIDES = GMP MPFR
 CXXFLAGS = 
 LDFLAGS = 
-LIBS = gmp
+LIBS = mpfr gmp
 REQUIRES =
 INCOMPATIBLE = 
 STDINCLDIRS = 
