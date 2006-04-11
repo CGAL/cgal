@@ -1,5 +1,5 @@
 
-\ccUserChapter{Introduction}
+\ccUserChapter{General Introduction}
 
 \cgal, the {\em Computational Geometry Algorithms Library}, is written in 
 \CC\ and consists of three major parts.
@@ -44,7 +44,13 @@ Other resources for \cgal\ are the tutorials at
 \path|http://www.cgal.org/Tutorials/| and the user support page at
 \path|www.cgal.org|.
 
+\input{Introduction_ref/licenses}
 
+\input{Introduction_ref/thirdparty}
+
+\section{Advanced}
+
+In this manual you will encounter sections marked as follows.
 
 \begin{ccAdvanced}
 Some functionality is considered more advanced.
@@ -67,11 +73,11 @@ latter, however, is likely to give raise to name conflicts and is
 therefore not recommended.
 
 
-\section{Inclusion Order of Header files}
+\section{Inclusion Order of Header Files}
 
 Not all compilers fully support standard header names. \cgal\ provides 
 workarounds for these problems in \ccc{CGAL/basic.h}. Consequently, as a 
-golden rule, you should always inlcude \ccc{CGAL/basic.h} first in your 
+golden rule, you should always include \ccc{CGAL/basic.h} first in your 
 programs (or \ccc{CGAL/Cartesian.h}, or \ccc{CGAL/Homogeneous.h}, since they 
 include \ccc{CGAL/basic.h} first).
 
@@ -109,9 +115,9 @@ functions that use the macro \ccc{CGAL_KERNEL_MEDIUM_INLINE} inline functions,
 you should set the value of this macro to \texttt{inline} instead of the
 default blank. 
 
-\input{Introduction_ref/licenses}
 
-\input{Introduction_ref/thirdparty}
+
+
 
 
 \input{Introduction/checks} % extra chapter
