@@ -1056,6 +1056,8 @@ Manual_tools/src/latex_converter_config/gif/cc_wp.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_wr.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_zeta.gif -text svneol=unset#unset
 Manual_tools/src/mstring.doc -text
+Manual_tools/src/regex++.C -text
+Manual_tools/src/regex_dictionary.C -text
 Manual_tools/sty/eps_tabs/cc_Class.eps -text
 Manual_tools/sty/eps_tabs/cc_Class.pdf -text svneol=unset#unset
 Manual_tools/sty/eps_tabs/cc_Concept.eps -text

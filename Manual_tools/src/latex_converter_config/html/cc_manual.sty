@@ -32,7 +32,6 @@
 \newcommand{\ccAuto}{\lcAuto}
 
 
-
 % ###########################################################################
 % |
 % |   o
@@ -987,6 +986,12 @@
 \newcommand{\lciFlushPkgDescription}[2]{%
   \lciFlushPkgDescriptionX{#X1}{#X2}{\ccValueofPkgName}%
 }
+
+\newcommand{\lciCheckForLabelInsideHeadingX}[2]{%
+ \lciCheckForLabelInsideHeading{#XC1}{#2}{\lciLocalVariableLabel}%
+ \lciLocalVariableLabel%
+}
+
 \newcommand{\lciFlushPkgDescriptionX}[3]{%
   \lciIfEmpty{#X3}{}{%
     \lciIfEmpty{\lciCurrentPartName}{}{%
@@ -994,24 +999,20 @@
       \gdef\lciCurrentPartName{}%
     }%
     \lciPushOutput{description}%
-    \lcRawHtml{<h3>}\ccValueofPkgName\lcRawHtml{</h3>}
-    \lcRawHtml{<table><tr valign="top"><td }%
-    %\lciPkgDescriptionIsOddEntry
-    %  {\lcRawHtml{ bgcolor="#C0C0C0" }}
-    %  {}
-    \lcRawHtml{width="58\%">}
+    \lcRawHtml{<tr><td colspan="3">}%
+    \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
+    \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3></td></tr>}
+    %\lcRawHtml{<TABLE>}
+    \lcRawHtml{<tr valign="top"><td width="75\%">}
     \ccValueofPkgSummary
-    %\lcRawHtml{</td><td width="4\%">}
-    \lcRawHtml{</td><td }%
-    %\lciPkgDescriptionIsOddEntry
-    %  {}
-    %  {\lcRawHtml{ bgcolor="#C0C0C0" }}
-    \lcRawHtml{width="38\%">}
+    \lcRawHtml{</td><td width="2\%">}
+    \lcRawHtml{</td><td width="23\%">}
     \ccValueofPkgMaturity
     \ccValueofPkgDependsOn
     \ccValueofPkgLicense
     \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
-    \lcRawHtml{</td></td></table>}
+    \lcRawHtml{</td></td>}
+    %\lcRawHtml{</table>}
     \lciPopOutput%
     \gdef\ccValueofPkgName{}%
     %\lciPkgDescriptionIsOddEntry
@@ -1052,6 +1053,7 @@
     \lciSortedMapClear{TocReferenceLinks}
   }
 }
+
 % ___________________________________________________________________________
 % ###########################################################################
 % | EOF

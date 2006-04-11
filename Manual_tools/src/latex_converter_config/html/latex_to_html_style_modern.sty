@@ -432,19 +432,26 @@
 \newcommand{\lciHtmlPartPkgDesciption}[1]{
   \lciPushOutput{description}
   \lcRawHtml{
-    <table width="100\%" border="0" cellspacing="0" cellpadding="0"><tr><td>
+    <tr><td colspan="3">
     <h2 class="PkgDescPart"><br>}#XC1\lcRawHtml{</h1>
-    </td></tr></table>}
+    </td></tr>}
   \lciPopOutput
 }
 
 % Args: <header-text>
-\newcommand{\lciHtmlChapterHeader}[1]{\lcRawHtml{
-<h1>}#C1\lcRawHtml{</h1>
+\newcommand{\lciHtmlChapterHeader}[1]{
+  \lciCheckForLabelInsideHeading{#C1}%
+      {\lciLocalVariableChapterName}%
+      {\lciLocalVariableLabel}%
+  \lciLocalVariableLabel
+  \lcRawHtml{<h1>}\lciLocalVariableChapterName\lcRawHtml{</h1>
 }}
 
 % Args: <anchor-counter> <toc-entry>: Respect secnumdepth counter.
 \newcommand{\lciHtmlChapterToc}[2]{%
+  %\lciCheckForLabelInsideHeading{#2}%
+  %    {\lciLocalVariableChapterName}%
+  %    {\lciLocalVariableLabel}%
   \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
       \lcRawHtml{<a name="Chapter_}#C1\lcRawHtml{"></a>}}}
   \lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
@@ -454,7 +461,7 @@
     % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
     \lcRawHtml{      <tr><td class="TocChapter" colspan="6">
         <!-- --------------------------------------------------- -->
-        <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}%
+        <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}% \lciLocalVariableChapterName
       \lcRawHtml{"
             >}#C2\lcRawHtml{</a>
       </td></tr>
@@ -464,12 +471,20 @@
 
 
 % Args: <header-text>:
-\newcommand{\lciHtmlSectionHeader}[1]{\lcRawHtml{
-<h2>}#C1\lcRawHtml{</h2>
-}}
+\newcommand{\lciHtmlSectionHeader}[1]{%
+  \lciCheckForLabelInsideHeading{#C1}%
+      {\lciLocalVariableSectionName}%
+      {\lciLocalVariableLabel}%
+  \lciLocalVariableLabel
+  \lcRawHtml{<h2>}\lciLocalVariableSectionName\lcRawHtml{</h2>
+}
+}
 
 % Args: <anchor-counter> <toc-entry>:  Respect secnumdepth counter.
 \newcommand{\lciHtmlSectionToc}[2]{%
+    \lciCheckForLabelInsideHeading{#C2}%
+      {\lciLocalVariableSectionName}%
+      {\lciLocalVariableLabel}%
     \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
         \lcRawHtml{<a name="Section_}#C1\lcRawHtml{"></a>}
         \edef\lciOut{\lciOutputFilename}%
@@ -480,16 +495,16 @@
         \lcRawHtml{        <td class="TocSection" colspan="5">
           <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
         \lcRawHtml{##Section_}#C1\lcRawHtml{"
-          >}#C2\lcRawHtml{</a>
+          >}\lciLocalVariableSectionName\lcRawHtml{</a>
         </td>
       </tr>
 }%
         \lciPopOutput}}
 
 % Args: <header-text>:
-\newcommand{\lciHtmlReferenceHeader}[1]{\lcRawHtml{
-<h2>}#C1\lcRawHtml{</h2>
-}}
+\newcommand{\lciHtmlReferenceHeader}[1]{
+  \lcRawHtml{<h2>}#C1\lcRawHtml{</h2>}
+}
 
 % Args: <anchor-counter> <toc-entry>:  Respect secnumdepth counter.
 \newcommand{\lciHtmlReferenceToc}[2]{%
@@ -514,13 +529,20 @@
 % Args: <anchor-counter> <header-text>: if anchor counter is empty, no
 % anchor is defined. Respect secnumdepth counter.
 \newcommand{\lciHtmlSubsectionHeader}[2]{%
+    \lciCheckForLabelInsideHeading{#C2}%
+      {\lciLocalVariableSubSectionName}%
+      {\lciLocalVariableLabel}%
+    \lciLocalVariableLabel
     \lciIfEmpty{#C1}{}{\lciIfLessExpanded{\lciCountertocdepth}{2}{}{%
         \lcRawHtml{<a name="Subsection_}#C1\lcRawHtml{"></a>}}}\lcRawHtml{
-<h3>}#C2\lcRawHtml{</h3>
+<h3>}\lciLocalVariableSubSectionName\lcRawHtml{</h3>
 }}
 
 % Args: <anchor-counter> <toc-entry>
 \newcommand{\lciHtmlSubsectionToc}[2]{%
+    \lciCheckForLabelInsideHeading{#C2}%
+      {\lciLocalVariableSubSectionName}%
+      {\lciLocalVariableLabel}%
     \lciIfLessExpanded{\lciCountertocdepth}{2}{}{%
         \edef\lciOut{\lciOutputFilename}%
         \lciPushOutput{toc}%
@@ -529,8 +551,7 @@
 }\lciTocIndentWidth\lciTocIndentWidth
         \lcRawHtml{        <td class="TocSubsection" colspan="4">
           <a class="TocLinkSubsection" href="}\lcRawHtmlExpanded{\lciOut}%
-        \lcRawHtml{##Subsection_}#C1\lcRawHtml{"
-          >}#C2\lcRawHtml{</a>
+        \lcRawHtml{##Subsection_}#C1\lcRawHtml{">}\lciLocalVariableSubSectionName\lcRawHtml{</a>
         </td>
       </tr>
 }%

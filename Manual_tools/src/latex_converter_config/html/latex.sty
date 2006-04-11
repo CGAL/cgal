@@ -70,8 +70,7 @@ l% ___________________________________________________________________________
 % |#########################################################################|
 
 
-% Load latex_to_html.sty that provides the basic converter capabilities.
-% redefined in latex_to_html.sty
+
 \newcommand{\lcFalse}[2]{#2}
 \newcommand{\lcTrue}[2]{#1}
 
@@ -95,6 +94,37 @@ l% ___________________________________________________________________________
     \newcommand{\lcStyleFile}[1]{\lciInputStyleFile{\lciConfigPath}{#XC1}}
     \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
 }
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | Regular Expressions
+% ###########################################################################
+
+
+\newcommand{\lcRegexRegister}[1]{%
+  \def\lciRegexNameToBeRegistered{#1}%
+  \lciParseUntilDelimiter{\lciRegexRegisterX}}
+
+\newcommand{\lciRegexRegisterX}[1]{\lciRegexRegisterXX{\lciRegexNameToBeRegistered}{#1}}
+\newcommand{\lciRegexRegisterXX}[2]{\lciRegexRegister{#XC1}{#C2}}
+
+\lcRegexRegister{checkforlabel}@(.+)(\\label[^\}]+\})(.*)@
+
+
+\newcommand{\lciCheckForLabelInsideHeading}[3]{%
+  \lcRegexDoesMatch{checkforlabel}{#1}{%
+    % xdef doesnt work, either ..
+    \gdef#2{\lcRegexResult{1}\lcRegexResult{3}}%
+    \gdef#3{\lcRegexResult{2}}
+  }{%
+    \gdef#2{#1}%
+    \gdef#3{}%
+  }%
+}%
+
+
+% Load latex_to_html.sty that provides the basic converter capabilities.
+% redefined in latex_to_html.sty
 \lcStyleFile{latex_to_html}
 
 % print own release number
@@ -196,6 +226,7 @@ l% ___________________________________________________________________________
     \lciHtmlFileHeader{Package Description}%
     \lciHtmlNavigationTop
     \lcRawHtml{<H1>Package Description</H1>}
+    \lcRawHtml{<table>}
     \lciPopOutput%
 }{%
     % print remaining footnotes at the end of the conversion
@@ -211,6 +242,7 @@ l% ___________________________________________________________________________
     \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
     \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
     \lciPushOutput{description}%
+    \lcRawHtml{</table>}
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter%
     \lciPopOutput%
@@ -1087,14 +1119,18 @@ l% ___________________________________________________________________________
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \refstepcounter{chapter}%
-    \lciChapter{#1}% does also a PushOutput
+
+    \lciCheckForLabelInsideHeading{#1}%
+      {\lciLocalVariableChapterNameTOC}%
+      {\lciLocalVariableLabel}%
+    \lciChapter% does also a PushOutput
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{chapter}%
     \lcRawHtml{	<div class="NavNext"><hr> Next chapter: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}#1\lcRawHtml{</a>
+    \lcRawHtml{">}\lciLocalVariableChapterNameTOC\lcRawHtml{</a>
 }%
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{chapter}%
     \lcRawHtml{	<a href="}%
@@ -1111,14 +1147,14 @@ l% ___________________________________________________________________________
     % however, setting this to a default of TRUE at the beginning of each
     % chapter seems safe.
     % file header
-    \lciHtmlFileHeader{#1}%
+    \lciHtmlFileHeader{\lciLocalVariableChapterNameTOC}%
     \lciHtmlNavigationTop
     \lciIfLessExpanded{\lciCountersecnumdepth}{0}%
     {%
-      \lciHtmlChapterToc{\thechapter}{#1}%
+      \lciHtmlChapterToc{\thechapter}{\lciLocalVariableChapterNameTOC}%
       \lciHtmlChapterHeader{#2}%
     }{%
-      \lciHtmlChapterToc{\thechapter}{\thechapter~~~#1}%
+      \lciHtmlChapterToc{\thechapter}{\thechapter~~~\lciLocalVariableChapterNameTOC}%
       \lciHtmlChapterHeader{Chapter \thechapter\\#2}%
     }%
 }
@@ -1150,6 +1186,7 @@ l% ___________________________________________________________________________
 \newcommand{\section@om}{%
     \lciEndSection
     \refstepcounter{section}%
+    \lciLocalVariableLabel
     \lciIfLessExpanded{\lciCountersecnumdepth}{1}{%
       \lciHtmlSectionToc{\thesection}{#1}%
       \lciHtmlSectionHeader{#2}}%

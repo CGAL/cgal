@@ -27,6 +27,8 @@
 #include <sstream>
 #include <cassert>
 
+#include <regex_dictionary.h>
+
 #include <map>
 
 typedef std::map< string, string, Case_insensitive_string_greater_than >     String_map;
@@ -1082,9 +1084,9 @@ string                // macro
 handle_chapter( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     push_current_output();
-    string chapter_title( param[0]);
-    crop_string( chapter_title);
-    remove_separator( chapter_title);
+    //string chapter_title( param[0]);
+    //crop_string( chapter_title);
+    //remove_separator( chapter_title);
 
     string new_main_filename;
     string new_main_filepath = macroX( "\\lciInputPath");
@@ -1345,6 +1347,32 @@ sorted_map_is_empty( const string&, string param[], size_t n, size_t opt) {
 }
 
 
+/* regular expressions */
+
+
+string
+handle_regex_register( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 2, 0);
+  regex_register( param[0], param[1] );
+  return string();
+}
+
+string
+handle_regex_does_match( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 2, 0);
+  if( regex_does_match( param[0], param[1] ) )
+    return string("\\lcTrue");
+  else
+    return string("\\lcFalse");
+}
+
+string
+handle_regex_result( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  unsigned int index = atoi( param[0].c_str() );
+  return regex_get_submatch(index);
+}
+
 // Initialize
 // ======================================================================
 void init_internal_macros() {
@@ -1422,7 +1450,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciIfFileExists", if_file_exists, 1);
     insertInternalGlobalMacro( "\\lciCopyFile",     copy_file, 2);
 
-    insertInternalGlobalMacro( "\\lciChapter",     handle_chapter, 1);
+    insertInternalGlobalMacro( "\\lciChapter",     handle_chapter, 0);
 
     insertInternalGlobalMacro( "\\lciPopOutput",   pop_output,  0);
     insertInternalGlobalMacro( "\\lciPushOutput",  push_output, 1);
@@ -1435,6 +1463,10 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciIncludeOnly",  handle_include_only,  1);
     insertInternalGlobalMacro( "\\lciIfToBeIncluded",  handle_to_be_included,  1);
     insertInternalGlobalMacro( "\\lciToHtmlWidth",  to_html_width,  1);
+
+    insertInternalGlobalMacro( "\\lciRegexRegister",  handle_regex_register,   2 );
+    insertInternalGlobalMacro( "\\lcRegexDoesMatch", handle_regex_does_match, 2 );
+    insertInternalGlobalMacro( "\\lcRegexResult",    handle_regex_result, 1 );
 }
 
 // EOF //

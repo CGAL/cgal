@@ -136,7 +136,9 @@ OBJHTML    = lexer.o    \
              cpp_formatting.o    \
              input.o             \
              output.o            \
-             cc_extract_html.o
+             cc_extract_html.o	\
+	     regex++.o		\
+	     regex_dictionary.o
 
 OBJIMAGES = cc_extract_images_lexer.C cc_extract_images.o
 

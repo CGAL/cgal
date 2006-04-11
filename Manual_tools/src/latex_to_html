@@ -1,17 +1,17 @@
 #!/bin/bash
 # **************************************************************************
-# 
+#
 #  latex_to_html
 #  ===================
 #  LaTeX to HTML converter. General purpose converter (with some
 #  limitations), but particularly specialized in converting manuals
 #  with C++ specifications written with the cc_manual.sty.
 #
-#  Conversion works in two steps: First all TeX files are converted into 
-#  HTML. Meanwhile the necessary information for the cross links is 
+#  Conversion works in two steps: First all TeX files are converted into
+#  HTML. Meanwhile the necessary information for the cross links is
 #  collected as set of rules. In the second step the hyperlinks
 #  are generated for all HTML files.
-#  
+#
 #  Besides programs and scripts distributed with this LaTeX converter,
 #  the following programs are necessary to run the converter
 #
@@ -24,7 +24,7 @@
 #              Peter Hachenberger and Lutz Kettner
 #  Revision  : $Id$
 #  Date      : $Date$
-# 
+#
 # **************************************************************************
 
 # allow wildcard file expansions to become empty if nothing matches
@@ -58,7 +58,7 @@ fi
 
 # The header files within the \ccInclude macro can be linked to the original
 # header files if the -header option is given to the cc_extract_html program.
-# The environment variable LATEX_CONV_HEADER is used as default. 
+# The environment variable LATEX_CONV_HEADER is used as default.
 # If it is not set, the default setting is empty and include files are not
 # linked.
 # LATEX_CONV_HEADER=""
@@ -177,7 +177,7 @@ lgout() {
     else
         Buf="$@"
         declare -i len2=$CurrentLen+${#Buf}
-        if [ $len2 -gt 78 ]; then 
+        if [ $len2 -gt 78 ]; then
             echo ""
             echo ""  >> $LogFile
         fi
@@ -214,7 +214,7 @@ error() {
         if [ $CurrentLen -gt 0 ]; then echo ""; fi
         echo "${ErrorColor}ERROR: $@${ResetColor}" 1>&2
     fi
-    if [ $CurrentLen -gt 0 ]; then 
+    if [ $CurrentLen -gt 0 ]; then
         echo ""  >> $LogFile
     fi
     echo "ERROR: $@" >> $LogFile
@@ -237,7 +237,7 @@ error_usage() {
         echo "${ErrorColor}ERROR: $@${ResetColor}" 1>&2
         usage 1>&2
     fi
-    if [ $CurrentLen -gt 0 ]; then 
+    if [ $CurrentLen -gt 0 ]; then
         echo ""  >> $LogFile
     fi
     echo "ERROR: $@" >> $LogFile
@@ -301,9 +301,9 @@ print_time() {
 run_command() {
   ExitCode=0
   cmd=${@//(/\\(};
-  cmd=${cmd//)/\\)};  
+  cmd=${cmd//)/\\)};
   if [ $Quiet -eq 0 ] ; then
-    { 
+    {
       if ! eval "$cmd" 2>&1 ; then
         # We need to set ExitCode=1, but that won't work with that pipe.
         # Instead we touch a file and test that later.
@@ -324,7 +324,7 @@ run_command() {
   if [ -r $LogFile.tmp ]; then
     # copy temp logfile to final logfile and remove escape sequences (color)
     cat $LogFile.tmp | sed 's/[[][0-9]*m//g' >> $LogFile
-    if grep -i '^error' $LogFile.tmp > /dev/null ; then 
+    if grep -i '^error' $LogFile.tmp > /dev/null ; then
         ErrorInLogfile=1
     fi
     rm $LogFile.tmp
@@ -342,9 +342,9 @@ anchor_filter() {
     cat cc_anchor_rules.stage_1 \
         cc_anchor_rules.stage_2 \
         cc_anchor_rules.stage_3 \
-      | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_rules    
+      | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_rules
 
-    cc_anchor_filter cc_anchor_rules $1    
+    cc_anchor_filter cc_anchor_rules $1
 }
 
 #---------------------------------------------------------------------#
@@ -367,8 +367,8 @@ convert() {
 
     # relative path, can be empty. If not empty, it has a trailing '/'.
     PathName=${1%$BaseName}
-    if [ "$PathName" != "" ]; then 
-        if [[ $PathName == /* ]]; then 
+    if [ "$PathName" != "" ]; then
+        if [[ $PathName == /* ]]; then
             error 3 "LaTeX filename must be given with a relative path."
         fi
         ${MakePath} ${TmpDir}/${PathName}
@@ -408,7 +408,7 @@ convert() {
     for dir in ${AllSubDirs} ; do
       cd $dir
       cat cc_anchor_rules.stage_1 | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > cc_anchor_rules.stage_1.tmp
-      mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1      
+      mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1
       cd ${TmpDir}
     done
 
@@ -496,9 +496,9 @@ convert() {
         cd ${TmpDir}
         lgout -n "]"
     done
-    
+
     cd $CurrentDir
-    
+
     # Copy cascaded style sheet (CSS) file
     # -------------------------------------------------------
     lgout -n "copying CSS file"
@@ -527,7 +527,7 @@ convert() {
         fi
         # copy user images first
         ImageFiles=`\cat *.html | cc_extract_images | \sort | \uniq`
-        
+
         for f in $ImageFiles ; do
             ImageSearchPath="."
             if [ ! -r ${CurrentDir}/${dir}/${f} ]; then
@@ -537,7 +537,7 @@ convert() {
                 ImageBase=${f##*/}
                 # relative path, can be empty. If not empty, trailing '/'.
                 ImagePath=${f%$ImageBase}
-                if [ "$ImagePath" != "" ]; then 
+                if [ "$ImagePath" != "" ]; then
                     if [ ! -d $ImagePath ]; then ${MakePath} ${ImagePath} ; fi
                     if [ ! -d $ImagePath ]; then
                       error noexit "failed to create directory for image '$f'."
@@ -646,7 +646,7 @@ fi
 # Parse command line parameters
 # -----------------------------
 
-if [ $# -eq 0 ]; then 
+if [ $# -eq 0 ]; then
     usage
     exit 1
 fi
@@ -654,7 +654,7 @@ InFiles=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    -h | --help) 
+    -h | --help)
         usage
         exit 0
         ;;
@@ -676,60 +676,60 @@ while [ $# -gt 0 ]; do
         ;;
     -config)
         shift
-        if [[ $# -lt 1 || ! -d $1 ]]; then 
+        if [[ $# -lt 1 || ! -d $1 ]]; then
  	    error_usage 1 "-config needs a valid directory as parameter."
 	fi
 	ConfigPath="$1"
         ;;
     -tmp)
         shift
-        if [[ $# -lt 1 || ! -d $1 ]]; then 
+        if [[ $# -lt 1 || ! -d $1 ]]; then
  	    error_usage 1 "-tmp needs a valid directory as parameter."
 	fi
 	TmpPath="$1"
         ;;
     -o)
         shift
-        if [ $# -lt 1 ]; then 
+        if [ $# -lt 1 ]; then
 	    error_usage 1 "-o needs an additional parameter."
 	fi
 	if [ ! -d $1 ]; then ${MakePath} $1 ; fi
-	if [ ! -d $1 ]; then 
+	if [ ! -d $1 ]; then
 	   error_usage 1 "-o needs a directory as parameter. Cannot create it."
 	fi
 	OutDir="$1"
         ;;
     -header | -cgal_dir)  # -cgal_dir remains for backwards compatibility
         shift
-        if [ $# -lt 1 ]; then 
+        if [ $# -lt 1 ]; then
 	    error_usage 1 "-header needs an additional parameter."
 	fi
 	CppHeader="-header $1"
         ;;
     -date)
         shift
-        if [ $# -lt 1 ]; then 
+        if [ $# -lt 1 ]; then
 	    error_usage 1 "-date needs an additional parameter."
 	fi
 	LATEX_CONV_DATE="$1"
         ;;
     -release)
         shift
-        if [ $# -lt 1 ]; then 
+        if [ $# -lt 1 ]; then
 	    error_usage 1 "-release needs an additional parameter."
 	fi
 	LATEX_CONV_RELEASE="$1"
         ;;
     -title)
         shift
-        if [ $# -lt 1 ]; then 
+        if [ $# -lt 1 ]; then
 	    error_usage 1 "-title needs an additional parameter."
 	fi
 	LATEX_CONV_TITLE="$1"
         ;;
     -author)
         shift
-        if [ $# -lt 1 ]; then 
+        if [ $# -lt 1 ]; then
 	    error_usage 1 "-author needs an additional parameter."
 	fi
 	LATEX_CONV_AUTHOR="$1"
@@ -752,7 +752,7 @@ while [ $# -gt 0 ]; do
         ;;
     -sty)
         shift
-        if [ $# -lt 1 ]; then 
+        if [ $# -lt 1 ]; then
 	    error_usage 1 "-sty needs an additional parameter."
 	fi
         ExtractOptions = "$ExtractOptions -sty $1"
@@ -803,7 +803,7 @@ ConfigGif="${ConfigPath}/gif"
 # ---------------------------------------------------------------
 if [ "$OutDir" == "html" ]; then
     if [ ! -d $OutDir ]; then ${MakePath} $OutDir ; fi
-    if [ ! -d $OutDir ]; then 
+    if [ ! -d $OutDir ]; then
        error_usage 1 "Cannot create default output directory './html/' ."
     fi
 fi
@@ -834,7 +834,7 @@ TmpDir=$PWD
 cd ${CurrentDir}
 
 # convert two path variables for use with Cygwin
-if eval cygpath -i > /dev/null 2>&1 ; then 
+if eval cygpath -i > /dev/null 2>&1 ; then
     TmpDir=`cygpath -m $TmpDir`
     LATEX_CONV_CONFIG=`cygpath -m $LATEX_CONV_CONFIG`
 fi
