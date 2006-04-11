@@ -35,6 +35,7 @@
 int main()
 {
   Display* x = 0;
-  std::cout << X_PROTOCOL << "." << X_PROTOCOL_REVISION << std::endl;
+  std::cout << "version=" << X_PROTOCOL << "." << X_PROTOCOL_REVISION 
+	    << std::endl;
   return 0;
 }
