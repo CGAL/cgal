@@ -2,47 +2,16 @@
 
 \ccChapterAuthor{Daniel Russel}
 
+\section{Classified Reference Pages} 
 
 Kinetic data structures are a way of adding motion to classical
 geometric data structures. \cgal\ provides several prepackaged kinetic
 data structures. Here we present those kinetic data structures and the
 helper classes that allow their activity to monitored.
 
-\ccHeading{The Kinetic Data Structures}
-
-\ccRefIdfierPage{Kinetic::Delaunay_triangulation_2<Traits, Visitor, Triangulation>}  
-
-\ccRefIdfierPage{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>} 
-
-\ccRefIdfierPage{Kinetic::Enclosing_box_2<Traits>}  
-
-\ccRefIdfierPage{Kinetic::Enclosing_box_3<Traits>}  
-
-\ccRefIdfierPage{Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>}
+\ccHeading{Sorting}
 
 \ccRefIdfierPage{Kinetic::Sort<Traits, Visitor>}  
- 
-\ccHeading{The visitors}
-
-\ccRefConceptPage{Kinetic::DelaunayTriangulationVisitor2}
-
-\ccRefConceptPage{Kinetic::DelaunayTriangulationVisitor3}
-
-\ccRefIdfierPage{Kinetic::Delaunay_triangulation_event_log_visitor_2}
-
-\ccRefIdfierPage{Kinetic::Delaunay_triangulation_event_log_visitor_3}
-
-\ccRefIdfierPage{Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>}
-
-\ccRefIdfierPage{Kinetic::Delaunay_triangulation_visitor_base_2}
-
-\ccRefIdfierPage{Kinetic::Delaunay_triangulation_visitor_base_3}
-
-\ccRefConceptPage{Kinetic::RegularTriangulationVisitor3}
-
-\ccRefIdfierPage{Kinetic::Regular_triangulation_visitor_base_3}
-
-\ccRefIdfierPage{Kinetic::Regular_triangulation_event_log_visitor_3}
 
 \ccRefConceptPage{Kinetic::SortVisitor}
 
@@ -50,23 +19,61 @@ helper classes that allow their activity to monitored.
 
 \ccRefIdfierPage{Kinetic::Sort_event_log_visitor}
 
-\ccHeading{Support Classes}
+
+
+
+\ccHeading{Delaunay Triangulation in 2D}
+
+\ccRefIdfierPage{Kinetic::Delaunay_triangulation_2<Traits, Visitor, Triangulation>}
+
+\ccRefConceptPage{Kinetic::DelaunayTriangulationVisitor2}
+
+\ccRefIdfierPage{Kinetic::Delaunay_triangulation_event_log_visitor_2}
+
+\ccRefIdfierPage{Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>}
+
+\ccRefIdfierPage{Kinetic::Delaunay_triangulation_visitor_base_2}
 
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_face_base_2<Traits, Base>}  
+  
+
+
+\ccHeading{Delaunay and Regular Triangulations in 3D}
+
+\ccRefIdfierPage{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>} 
+
+\ccRefConceptPage{Kinetic::DelaunayTriangulationVisitor3}
+
+\ccRefIdfierPage{Kinetic::Delaunay_triangulation_event_log_visitor_3}
+
+\ccRefIdfierPage{Kinetic::Delaunay_triangulation_visitor_base_3}
 
 \ccRefIdfierPage{Kinetic::Delaunay_triangulation_cell_base_3<Traits, Base>}  
+
+\ccRefIdfierPage{Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>}
+
+\ccRefConceptPage{Kinetic::RegularTriangulationVisitor3}
+
+\ccRefIdfierPage{Kinetic::Regular_triangulation_visitor_base_3}
+
+\ccRefIdfierPage{Kinetic::Regular_triangulation_event_log_visitor_3}
 
 \ccRefIdfierPage{Kinetic::Regular_triangulation_cell_base_3<Traits, Base>}  
 
 \ccRefIdfierPage{Kinetic::Regular_triangulation_vertex_base_3<Traits, Base>}
 
+
+
+
+\ccHeading{Support Classes}
+
+\ccRefIdfierPage{Kinetic::Enclosing_box_2<Traits>}  
+
+\ccRefIdfierPage{Kinetic::Enclosing_box_3<Traits>}  
+
 \ccRefIdfierPage{Kinetic::Insert_event<ActiveObjectsTable>}  
 
 \ccRefIdfierPage{Kinetic::Erase_event<ActiveObjectsTable>}  
-
-\ccHeading{Graphical Display}
-
-Next we have some support classes which are used to display kinetic data structures:
 
 \ccRefIdfierPage{Kinetic::Qt_moving_points_2<Traits, QtWidget_2>}  
 
