@@ -1,0 +1,284 @@
+\newcommand\ssWpoint[1]{{#1}_{(w)}}
+
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=.9\textwidth]{Skin_surface_3/molecule}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <center>
+  <img border="0" src="./molecule.png" width="75%">
+  </center>
+\end{ccHtmlOnly}
+
+% +------------------------------------------------------------------------+
+\section{Introduction}
+\label{sectionSkinSurfaceIntro}
+
+Skin surfaces, introduced by Edelsbrunner in \cite{cgal:e-dssd-99},
+have a rich and simple combinatorial and geometric structure that
+makes them suitable for modeling large molecules in biological
+computing.  Meshing such surfaces is often required for further
+processing of their geometry, like in numerical simulation and
+visualization.
+
+A skin surface is defined by a set of weighted points (input balls)
+and a scalar called the shrink factor. If the shrink factor is equal
+to one, the surface is just the boundary of the union of the input
+balls.  If the shrink factor decreases, the skin surface becomes
+tangent continuous, due to the appearance of patches of spheres and
+hyperboloids connecting the balls.
+
+This package constructs an isotopic mesh from a set of balls and a
+shrink factor using the algorithm described in
+\cite{cgal:kv-mssct-05}. It also provides an interface to the surface
+mesher presented in Chapter~\ref{chapter_SurfaceMesher} by providing a
+model of the concept \ccc{Surface_3}.
+
+%An optimized algorithm is implemented for meshing the union of a set of balls.
+
+\section{Definition of a skin surface}
+\label{sec:skindefinition}
+
+\begin{figure}
+  \begin{ccTexOnly}
+    \begin{center}
+      \includegraphics[width=.25\textwidth]{Skin_surface_3/convexTwoPoints}
+      \includegraphics[width=.25\textwidth]{Skin_surface_3/skinTwoPoints}
+    \end{center}
+  \end{ccTexOnly}
+  \begin{ccHtmlOnly}
+    <center>
+    <img border="0" src="./convexTwoPoints.png" align="center" alt="Convex combinations of two weighted points">
+    <img border="0" src="./skinTwoPoints.png" align="center" alt="Skin
+    curve of two weighted points">
+    </center>
+  \end{ccHtmlOnly}
+  \caption{\label{fig:twoPoints} The skin curve of two weighted points
+    (the two dashed circles). The smaller circles form a subset of the
+    shrunk convex hull of the input points. Its boundary forms the skin
+    curve. }
+\end{figure}
+
+This section first briefly reviews skin surfaces. For a more thorough
+introduction to skin surfaces, we refer to \cite{cgal:e-dssd-99} where
+they were originally introduced.
+
+A skin surface is defined in terms of a finite set of weighted points
+$\ssWpoint{P}$ and a shrink factor $s$, with $0\leq s\leq 1$. A weighted
+point $\ssWpoint{p}=({p},\textsc{p})\in \R^d\times\R$ corresponds to a ball
+with center ${p}$ and radius $\sqrt{\textsc{p}}$. A weighted point
+with zero weight is called an unweighted point. On the set of weighted
+points, we define a pseudo-distance function:
+\[
+  \pi(\ssWpoint{p},\ssWpoint{q}) = \dabs{p-q}^2 - \textsc{p} - \textsc{q},
+\]
+where $\ssWpoint{p} = (p,\textsc{P})$ and $\ssWpoint{q} = (q,\textsc{Q})$.  The
+ball corresponding to a weighted point $\ssWpoint{p}$ is the set of
+unweighted points with zero distance to $\ssWpoint{p}$. Note that if
+$\textsc{p}<0$ the radius of the ball is imaginary and the zero-set is
+empty.
+
+We can take convex combinations of weighted points by taking convex
+combinations of their implicit functions. Figure~\ref{fig:twoPoints}
+(left) shows weighted points that are obtained as convex combinations
+of the dashed circles. For further reading on the space of circles and
+spheres we refer to \cite{p-gcc-70}.
+
+Starting from a weighted point $\ssWpoint{p}=({p},\textsc{P})$, the
+shrunk weighted point $\ssWpoint{p}^s$ is obtained by taking a convex
+combination with the unweighted point centered at $p$, formally
+$\ssWpoint{p}^s = s \ssWpoint{p} + (1-s) p$. A simple calculations
+shows that, $\ssWpoint{p}^s = ({p},s\cdot \textsc{p})$.  The set
+$\ssWpoint{P}^s$ is the set obtained by shrinking every weighted point
+of $\ssWpoint{P}$ by a factor $s$. The shrunk weighted points of
+Figure~\ref{fig:twoPoints} (left) are shown in
+Figure~\ref{fig:twoPoints} (right).
+
+The skin surface $\mbox{skn}^{s}(\ssWpoint{P})$ associated with a set
+of weighted points $\ssWpoint{P}$ is defined as the boundary of the
+union of the shrunk weighted points in the convex hull of the input
+weighted points:
+\begin{eqnarray}
+  \label{eq:defskin}
+  \mbox{skn}^{s}(\ssWpoint{P}) &=& \partial{\cup(\mbox{conv} (\ssWpoint{P})^s)}.
+\end{eqnarray}
+%
+Here $\mbox{conv}(\ssWpoint{P}) \subset \R^d\times\R$ is the convex
+hull of a set of weighted points $\ssWpoint{P}$, whereas $\partial$
+denotes the boundary -- in $\R^d$ -- of the union of the corresponding
+set of balls. 
+
+%There exists a polyhedral complex that decomposes a skin surface into
+%pieces quadrics. 
+
+\section{The interface}
+The interface to the skin surface package consists of three distinct
+global functions and a class \ccc{Skin_surface_3} which is a model of
+the concept \ccc{Surface_3}.  The first function takes a list of
+weighted points and a shrink factor and outputs a
+\ccc{Skin_surface_3}. The parameter \ccc{Tag} is a tag that controls
+whether the input balls are grown in such a way that the skin surface
+wraps around the input balls. There are two overloaded functions:
+
+\ccGlobalFunction{template <class Iterator,
+                            class FT,
+                            class SkinSurface_3,
+                            class Tag>
+void make_skin_surface_3
+(Iterator begin,
+ Iterator end,
+ FT shrinkfactor,
+ SkinSurface_3 skin_surface,
+ Tag) ;}
+\ccGlobalFunction{template <class Iterator,
+                            class FT,
+                            class SkinSurface_3,
+                            class SkinSurfaceTraits_3,
+                            class Tag>
+void make_skin_surface_3
+(Iterator begin,
+ Iterator end,
+ FT shrinkfactor,
+ SkinSurface_3 skin_surface,
+ SkinSurfaceTraits_3 traits,
+ Tag) ;}
+
+With the \ccc{SkinSurface_3} object it is possible to generate a
+coarse mesh isotopic to the skin surface. 
+
+\ccGlobalFunction{template <class SkinSurface_3,
+                            class FT,
+                            class Polyhedron>
+void mesh_skin_surface_3
+(SkinSurface_3 skin_surface,
+ Polyhedron &p) ;}
+
+The last function takes the (coarse) mesh and subdivides it in-situ by
+applying a given number of 1-4 split operations (each triangle is
+split into four sub-triangles) and then moving the vertices on the
+skin surface. If the number of iterations is not specified, one
+subdivision step is done. A model of the \ccc{SkinSurface_3} object is
+needed to move the new points on the skin surface.
+
+\ccGlobalFunction{template <class Polyhedron,
+                            class SkinSurface_3 >
+void subdivide_skin_surface_mesh_3 
+(Polyhedron &p,
+ SkinSurface_3 &skinsurface,
+ int iterations);}
+\ccGlobalFunction{template <class Polyhedron,
+                            class SkinSurface_3 >
+void subdivide_skin_surface_mesh_3 
+(Polyhedron &p,
+ SkinSurface_3 &skinsurface);}
+%
+The class \ccc{Skin_surface_3} is both a model of the concept
+\ccc{SkinSurface_3} and the concept \ccc{Surface_3}.
+Therefore it can be used in the surface mesher described in
+Chapter~\ref{chapter_SurfaceMesher}.
+
+\section{Timings}
+The timings of the construction of the coarse mesh and the first
+subdivision are given in seconds.
+\begin{center}
+  \begin{tabular}{|l|c|c|c|}
+    \hline
+    Dataset & Number of weighted points & Coarse mesh & first subdivision step\\
+    \hline
+    \hline
+    Caffeine& 23 & 0.2 & 0.05 \\
+    Gramicidin A& 318 & 5 & 2\\
+    \hline
+  \end{tabular}
+\end{center}
+The timings were done on a Pentium 4, 3.5 GHz, with 1 Gb of memory.
+\section{Example programs}
+\subsection{Meshing a skin surface}
+The following example shows the construction of a coarse mesh of the
+skin surface from an iterator range of weighted points and a shrink factor.
+\ccIncludeExampleCode{Skin_surface_3/skin_surface_simple.C}
+
+\subsection{Meshing and subdividing a skin surface}
+This example extends the previous examples with a subdivision of the
+coarse mesh to obtain a better approximation. The extension of the
+polyhedron is not necessary, but gives a significant speedup.
+\ccIncludeExampleCode{Skin_surface_3/skin_surface_sqrt3.C}
+
+
+
+\section{Marching tetrahedra}
+NGHK: Where to place this section?
+
+The marching tetrahedra algorithm, introduced in
+\cite{cgal:tpg-rmtiise-99}, is used in the construction of the coarse
+mesh isotopic to skin surface. This algorithm is of general use and
+therefore also documented.
+
+The marching tetrahedra algorithm extracts a mesh from a
+triangulation.  First, it labels each vertex of the triangulation
+either as inside or as outside. The vertices of the mesh are
+constructed as the intersection point of the surface and an edge with
+different vertex-labels. The faces of the mesh are defined by the
+tetrahedra of the triangulation. Based on the number of
+triangulation-vertices inside the surface, we can distinguish five
+cases, two of which are redundant if we allow the exchange of inside
+and outside. In the case that all four labels are equal, the
+tetrahedron does not contain a part of the surface. If three labels
+are equal, the three vertices of the mesh form a triangle. If two
+labels are equal, we construct two triangles. These three cases are
+depicted in Figure~\ref{SkinSurface3-fig-marching}.
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=.8\textwidth]{Skin_surface_3/marching}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./marching.png"
+alt="Cases of the marching tetrahedra algorithm.">
+</CENTER>
+\end{ccHtmlOnly}
+
+\caption{\label{SkinSurface3-fig-marching} Cases of the marching
+  tetrahedra algorithm.}
+\end{figure}
+
+The function takes four arguments: the input triangulation, the
+surface mesh, a policy class and an observer class.  The algorithm is
+performed on the triangulation and the resulting mesh is stored in the
+polyhedron. The \ccc{CGAL::Polyhedron_incremental_builder_3} is used
+for constructing the polyhedron. There are two overloaded functions:
+
+\ccGlobalFunction{template <class Triangulation_3,
+                            class HDS,
+                            class MarchingTetrahedraPolicy>
+  void marching_tetrahedra_3(Triangulation_3 const t,
+                             Polyhedron &p,
+                             MarchingTetrahedraPolicy policy) ;}
+\ccGlobalFunction{template <class Triangulation_3,
+                            class HDS,
+                            class MarchingTetrahedraPolicy,
+                            class MarchingTetrahedraObserver>
+  void marching_tetrahedra_3(Triangulation_3 const t,
+                             Polyhedron &p,
+                             MarchingTetrahedraPolicy policy,
+                             MarchingTetrahedraPolicy observer) ;}
+
+The policy class defines a predicate and a constructor. The predicate
+is able to test whether a vertex of the triangulation lies inside or
+outside the surface and the constructor is able to return the
+intersection point of the surface with an edge of the triangulation
+whose vertices lie on opposite sides of the surface. For skin surfaces
+the intersection point is unique.
+
+The observer class implements two functions that are called after the
+construction of a vertex and a facet of the polyhedron. After
+insertion of a vertex in the polyhedron a function is called with the
+vertex of the polyhedron and the corresponding edge of the
+triangulation. Similarly, after insertion of a facet in the polyhedron
+a function is called with the facet of the polyhedron and the
+corresponding cell of the triangulation. 
+

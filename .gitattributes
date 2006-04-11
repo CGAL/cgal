@@ -1626,6 +1626,8 @@ Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.fig
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.gif -text svneol=unset#unset
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.pdf -text svneol=unset#unset
 Skin_surface_3/Doxyfile -text
+Skin_surface_3/doc_tex/Skin_surface_3/PkgDescription.tex -text
+Skin_surface_3/doc_tex/Skin_surface_3/SkinSurface3.tex -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text

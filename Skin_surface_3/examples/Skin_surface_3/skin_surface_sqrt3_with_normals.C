@@ -46,9 +46,18 @@ int main(int argc, char *argv[]) {
   Triangulated_mixed_complex    triangulated_mixed_complex;
   Polyhedron                    polyhedron;
 
-  std::ifstream in("data/caffeine.cin");
+  std::ifstream in("data/molecule_tunnel.cin");
   Reg_weighted_point wp;
   while (in >> wp) regular.insert(wp);
+
+  std::cout << "Regular vertices: " 
+	    << regular.number_of_vertices() << std::endl;
+  std::cout << "Regular edges: "
+	    << regular.number_of_finite_edges() << std::endl;
+  std::cout << "Regular facets: " 
+	    << regular.number_of_finite_facets() << std::endl;
+  std::cout << "Regular cells: "
+	    << regular.number_of_finite_cells() << std::endl;
 
   // Construct regular triangulation and bounding box
   CGAL::skin_surface_construct_bounding_box_3(regular, skin_surface_traits);
@@ -56,6 +65,15 @@ int main(int argc, char *argv[]) {
   // Construct the triangulated mixed complex
   CGAL::triangulate_mixed_complex_3(
     regular, triangulated_mixed_complex, skin_surface_traits);
+
+  std::cout << "Triangulated_Mixed_Complex vertices: " 
+	    << triangulated_mixed_complex.number_of_vertices() << std::endl;
+  std::cout << "Triangulated_Mixed_Complex edges: "
+	    << triangulated_mixed_complex.number_of_finite_edges() << std::endl;
+  std::cout << "Triangulated_Mixed_Complex facets: " 
+	    << triangulated_mixed_complex.number_of_finite_facets() << std::endl;
+  std::cout << "Triangulated_Mixed_Complex cells: "
+	    << triangulated_mixed_complex.number_of_finite_cells() << std::endl;
 
   // Extract the coarse mesh using marching_tetrahedra
   Marching_tetrahedra_traits marching_traits;
@@ -65,7 +83,7 @@ int main(int argc, char *argv[]) {
 
   // Subdivide mesh:
   Skin_surface_refinement_traits refinement_traits(triangulated_mixed_complex);
-  CGAL::skin_surface_sqrt3(polyhedron, refinement_traits, 2);
+  CGAL::skin_surface_sqrt3(polyhedron, refinement_traits, 1);
   
   { // Write subdivided mesh with normals:
     typedef Polyhedron::Vertex_iterator                        Vertex_iterator;

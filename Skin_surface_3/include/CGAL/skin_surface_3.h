@@ -78,7 +78,6 @@ void skin_surface_3(InputIterator first, InputIterator last,
   Polyhedron_3 &polyhedron, const SkinSurfaceTraits_3 &skin_surface_traits,
   bool verbose = false) {
   if (first == last) {
-    std::cout << " No input balls" << std::endl;
     return;
   }
 
