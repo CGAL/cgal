@@ -1,6 +1,6 @@
 # The ZLIB library (http://www.gzlib.org/zlib) 
 
-DESCRIPTION = ZLIB library for Windows
+DESCRIPTION = Windows
 PROVIDES = ZLIB
 CXXFLAGS = 
 LDFLAGS = 

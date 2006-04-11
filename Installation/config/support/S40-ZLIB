@@ -1,6 +1,6 @@
 # The ZLIB library  
 
-DESCRIPTION = ZLIB library
+DESCRIPTION = Unix
 PROVIDES = ZLIB
 CXXFLAGS = 
 LDFLAGS = 
