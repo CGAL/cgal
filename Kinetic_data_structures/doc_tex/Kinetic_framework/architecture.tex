@@ -4,13 +4,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-As we have already mentioned, one of the major goals of our package is
-to support the development of new kinetic data structures. Below we
-discuss in detail each one of the first four major concepts which help
-in implementing kinetic data structures: the \ccc{Kinetic::Simulator},
+This package provides a framework to allow exact implementation of
+kinetic data structures and sweepline algorithms. Below we discuss in
+detail each one of the first four major concepts which help in
+implementing kinetic data structures: the \ccc{Kinetic::Simulator},
 the Kinetic::Kernel, the \ccc{Kinetic::ActiveObjectsTable} and the
 \ccc{Kinetic::InstantaneousKernel}.  The \ccc{Kinetic::FunctionKernel}
-concept is discussed separately in Section \ref{sec:kds_algebraic_kernel}.
+concept is discussed separately in Section
+\ref{sec:kds_algebraic_kernel}.
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -24,7 +25,7 @@ concept is discussed separately in Section \ref{sec:kds_algebraic_kernel}.
 \caption{\label{fig:kds_uml_usage_architecture} The figure, identical to the one in the
   overview, shows the interaction between the
   \ccc{Kinetic::Sort<Traits, Visitor>} kinetic data structure and the
-  various pieces of our package.  Other, more complicated, kinetic
+  various pieces of our framework.  Other, more complicated, kinetic
   data structures will also use the \ccc{Kinetic::InstantaneousKernel}
   in order to insert/remove geometric primitives and audit
   themselves. \ccc{Kinetic::Sort<Traits, Visitor>} uses the sorting
