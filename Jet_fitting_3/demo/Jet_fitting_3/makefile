@@ -8,11 +8,11 @@
 
 #FC
 #CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.11-1.35-FC3_g++-3.4.4
-CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6_g++-3.4.4
+#CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6_g++-3.4.4
 
 #MARC
 #CGAL_MAKEFILE = ${CGAL}/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
-#CGAL_MAKEFILE = /home/mpouget/libs/CGAL-3.1/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
+CGAL_MAKEFILE = /home/mpouget/libs/CGAL-3.1/make/makefile_i686_Linux-2.6.12-10-386_g++-4.0.2
 
 include $(CGAL_MAKEFILE)
 
@@ -124,21 +124,18 @@ depend:
 ogl_visu.o: ogl_visu.h /usr/include/math.h /usr/include/features.h
 ogl_visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 ogl_visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/gl.h
-ogl_visu.o: /usr/include/GL/glext.h
-ogl_visu.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
+ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
+ogl_visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h
 ogl_visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
 ogl_visu.o: /usr/include/math.h /usr/include/features.h
 ogl_visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 ogl_visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/gl.h
-ogl_visu.o: /usr/include/GL/glext.h
-ogl_visu.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
+ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
+ogl_visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h
 ogl_visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
 visu.o: ogl_visu.h /usr/include/math.h /usr/include/features.h
 visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/gl.h
-visu.o: /usr/include/GL/glext.h
-visu.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
-visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
+visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
+visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h /usr/include/GL/glu.h
+visu.o: enriched_polyhedron.h

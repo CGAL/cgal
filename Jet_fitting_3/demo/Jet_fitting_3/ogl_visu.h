@@ -41,7 +41,7 @@ struct data_line{
   CGAL_point P1,P2;	
   Vector D1,D2;
   double k1,k2;
-  data_line(CGAL_point P1,CGAL_point P2, 
+  data_line(CGAL_point P1,CGAL_point P2,
 	    Vector  D1,Vector D2, double k1,double k2 ):
     P1(P1),P2(P2),D1(D1),D2(D2),k1(k1),k2(k2)
     {};

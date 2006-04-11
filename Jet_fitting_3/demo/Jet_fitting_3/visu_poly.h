@@ -5,10 +5,14 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
+//marc
+#include "enriched_polyhedron.h" 
 
 typedef  CGAL::Cartesian<double>               Kernel;
 typedef  Kernel::Point_3                       Point;
-typedef  CGAL::Polyhedron_3<Kernel>            Mesh;
+//marc
+/* typedef  CGAL::Polyhedron_3<Kernel>            Mesh; */
+typedef Enriched_polyhedron<Kernel,Enriched_items> Mesh;
 
 typedef Kernel::FT	FT;
 typedef Kernel::Point_3 Point;

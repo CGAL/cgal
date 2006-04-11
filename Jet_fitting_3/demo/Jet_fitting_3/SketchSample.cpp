@@ -6,23 +6,56 @@
 
 #include "SketchSample.h"
 
-SketchSample::SketchSample() {
+SketchSample::SketchSample(Mesh* mesh, DS* ppal_data) {
   highlight = false;
+  p_mesh = mesh;
+  p_ppal_data = ppal_data;
 }
 
 SketchSample::~SketchSample() {
 }
 
 void SketchSample::buildDisplayList(GLuint surf) {
-  static GLfloat ared[4] = {0.8, 0.1, 0.0, 1.0 };
   glNewList(surf, GL_COMPILE);
-  glBegin(GL_TRIANGLES);
-  glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, ared );
-  glNormal3d(0., 0., 1.);
-  glVertex3d(0., 0., 0.);
-  glVertex3d(1., 0., 0.);
-  glVertex3d(0., 1., 1.);
-  glEnd();
+
+  glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHTING);
+  glShadeModel(GL_SMOOTH);
+
+  //mesh
+  glColor3f(1.,1.,1.);
+  p_mesh->gl_draw_facets(true);
+//   p_mesh->gl_draw_vertices_normal(); 
+//   p_mesh->gl_draw_edges();
+//   p_mesh->gl_draw_vertices();
+//   p_mesh->gl_draw_facets_normal();
+//   p_mesh->gl_draw_vertices_normal();
+
+  //ppal dir
+  for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
+    draw_point((*it)->P1);
+  for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
+    {	
+      glColor3f(0.,0.,1.);//dmax
+      draw_vector((*it)->P1,(*it)->D1);
+      glColor3f(1.0,0.0,0.);//dmin
+      draw_vector((*it)->P1,(*it)->D2);
+      glColor3f(0.0,1.,.0);//normal
+      Vector normal = CGAL::cross_product( (*it)->D1 ,(*it)->D2 )
+	/ CGAL::sqrt( ((*it)->D1) * ((*it)->D1) );
+      draw_vector((*it)->P1, normal) ;		
+    }
+
+//    static GLfloat ared[4] = {0.8, 0.1, 0.0, 1.0 };
+//    //  glNewList(surf, GL_COMPILE);
+//   glBegin(GL_TRIANGLES);
+//   glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, ared );
+//   glNormal3d(0., 0., 1.);
+//   glVertex3d(0., 0., 0.);
+//   glVertex3d(1., 0., 0.);
+//   glVertex3d(0., 1., 1.);
+//   glEnd();
+
   glEndList();
 }
 
@@ -80,3 +113,34 @@ double SketchSample::rmm() {
 const double* SketchSample::rcoord() {
   return 0;
 }
+
+// //move to sketch
+// void draw_point(Point& P);
+// void draw_vector(Point& P, Vector& V);
+// void MakeCallList(DS& L);
+
+
+void SketchSample::draw_point(Point& P)
+{
+  glPointSize(2.0);
+  glBegin(GL_POINTS);
+  glColor3f(1.0,1.,1.);
+  glVertex3d(P.x(),P.y(),P.z());
+  glEnd();
+  glPointSize(1.0);
+}
+
+void SketchSample::draw_vector(Point& P, Vector& V)
+{
+  glBegin(GL_LINES);
+  glVertex3d(P.x()-V.x()/2.,P.y()-V.y()/2.,P.z()-V.z()/2.);
+  glVertex3d(P.x()+V.x()/2.,P.y()+V.y()/2.,P.z()+V.z()/2.);
+  glEnd();	
+  
+  glPointSize(3.0);
+  glBegin(GL_POINTS);
+  glVertex3d(P.x()+V.x()/2.,P.y()+V.y()/2.,P.z()+V.z()/2.);		
+  glEnd();
+  glPointSize(1.0);
+}
+
