@@ -1,3 +1,6 @@
+11 April 2006 Laurent Rineau
+- patch to test file test_ZLIB.C, so that is no longer segfault with -O2.
+
 30 Match 2006 Joachim Reichel
 - LICENSE.FREE_USE added (very permissive, MIT-like license)
 - LICENSE updated (introduction rewritten, third-party libraries updated,

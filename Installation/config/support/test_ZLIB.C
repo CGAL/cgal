@@ -33,9 +33,6 @@
 
 int main()
 {
-  gzFile file;
-  gzwrite(file, (void*)0, 0); 
-
-  std::cout << "version=" << ZLIB_VERSION << std::endl;
+  std::cout << "version=" << zlibVersion() << std::endl;
   return 0;
 }
