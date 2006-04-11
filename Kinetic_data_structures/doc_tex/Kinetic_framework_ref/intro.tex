@@ -1,4 +1,5 @@
 \ccRefChapter{Kinetic Framework\label{ref-chapter-kinetic}}
+\ccChapterAuthor{Daniel Russel}
 
 \section{Classified Reference Pages} 
 
@@ -18,64 +19,50 @@ first level is covered in the Chapter~\ref{ref-chapter-kinetic}.
 
 Here we list the main classes and concepts provided by the framework to support implementing kinetic data structures
 
-\ccRefConceptPage{Kinetic::ActiveObjectsTable}  
+\ccRefConceptPage{Kinetic::ActiveObjectsTable} 
 
-\ccRefConceptPage{Kinetic::FunctionKernel}
-
-\ccRefConceptPage{Kinetic::Kernel}
-
-\ccRefConceptPage{Kinetic::InstantaneousKernel}
-
-\ccRefConceptPage{Kinetic::SimulationTraits}
-
-\ccRefConceptPage{Kinetic::Simulator}  
-
-\ccRefIdfierPage{Kinetic::Active_objects_vector<MovingObject>}  
+\ccRefIdfierPage{Kinetic::Active_objects_vector<MovingObject>}   
 
 \ccRefIdfierPage{Kinetic::Cartesian_instantaneous_kernel<ActiveObjectsTable, StaticKernel>}  
 
 \ccRefIdfierPage{Kinetic::Cartesian_kinetic_kernel<FunctionKernel>}  
 
+\ccRefConceptPage{Kinetic::FunctionKernel}
+
+\ccRefConceptPage{Kinetic::InstantaneousKernel}
+
+\ccRefConceptPage{Kinetic::Kernel}
+
+\ccRefConceptPage{Kinetic::SimulationTraits}
+
+\ccRefConceptPage{Kinetic::Simulator}  
+
 \ccRefIdfierPage{Kinetic::Simulator<FunctionKernel, EventQueue>}  
 
-\ccHeading{Graphical Display}
 
-Next we have some support classes which are used to display kinetic data structures:
-
-\ccRefIdfierPage{Kinetic::Qt_moving_points_2<Traits, QtWidget_2>}  
-
-\ccRefIdfierPage{Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>}  
-
-\ccRefIdfierPage{Kinetic::Qt_widget_2<Simulator>}  
-
-
-\ccHeading{Miscellaneous Classes and Concepts}
-
-\ccRefIdfierPage{Kinetic::Regular_triangulation_instantaneous_traits_3<ActiveObjectsTable, StaticKernel>}  
-
-\ccRefConceptPage{Kinetic::EventLogVisitor}
-
-\ccRefConceptPage{Kinetic::EventQueue}
-
-
-\ccRefConceptPage{Kinetic::Simulator::Event}
+\ccHeading{Other Concepts}
 
 \ccRefConceptPage{Key}
 
 \ccRefConceptPage{Kinetic::Certificate}
 
-\ccRefConceptPage{Kinetic::RootStack}
-
-\ccRefConceptPage{Kinetic::Simulator::Time}
-
-\ccRefConceptPage{Kinetic::FunctionKernel::Function}
+\ccRefConceptPage{Kinetic::EventQueue}
 
 \ccRefConceptPage{Kinetic::FunctionKernel::ConstructFunction}
 
+\ccRefConceptPage{Key}
+
+\ccRefConceptPage{Kinetic::FunctionKernel::Function}
+
+\ccRefConceptPage{Kinetic::RootStack}
+
+\ccRefConceptPage{Kinetic::Simulator::Event}
+
+\ccRefConceptPage{Kinetic::Simulator::Time}
 
 
 
-\ccRefIdfierPage{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>}  
+\ccHeading{Other Classes}
 
 \ccRefIdfierPage{CGAL::Listener<Interface>}  
 
@@ -83,10 +70,23 @@ Next we have some support classes which are used to display kinetic data structu
 
 \ccRefIdfierPage{CGAL::Ref_counted<T>}  
 
+\ccRefIdfierPage{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>} 
+ 
+\ccRefIdfierPage{Kinetic::Erase_event<ActiveObjectsTable>} 
+
+\ccRefIdfierPage{Kinetic::Insert_event<ActiveObjectsTable>}  
+
+\ccRefIdfierPage{Kinetic::Qt_moving_points_2<Traits, QtWidget_2>}  
+
+\ccRefIdfierPage{Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>}  
+
+\ccRefIdfierPage{Kinetic::Qt_widget_2<Simulator>}  
+
+\ccRefIdfierPage{Kinetic::Regular_triangulation_instantaneous_traits_3<ActiveObjectsTable, StaticKernel>}  
+
 \ccRefIdfierPage{Kinetic::Simulator_kds_listener<Listener, KDS>}  
 
 \ccRefIdfierPage{Kinetic::Simulator_objects_listener<Simulator_listener, KDS>}  
-
 
 
 \lcHtml{\ccHeading{Links to the Reference Sections}}
