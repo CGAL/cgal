@@ -1,4 +1,4 @@
-%define internal_release 0
+%define internal_release 430
 %define build_doc 0
 %define build_demo 0
 
@@ -26,6 +26,7 @@ Source: %{tarball_name}.tar.gz
 Source1: CGAL-3.2-doc_pdf.tar.gz
 Source2: CGAL-3.2-doc_html.tar.gz
 %endif
+Patch0: test_ZLIB.C.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 #Prefix: %{CGAL_DIR}
@@ -38,6 +39,7 @@ Requires: boost >= %boost_version
 Requires: gmp
 Requires: qt >= 3.0
 Requires: libstdc++
+Requires: zlib
 
 
 BuildRequires: gmp-devel
@@ -45,6 +47,7 @@ BuildRequires: boost-devel >= %boost_version
 BuildRequires: gcc-c++
 BuildRequires: libstdc++-devel
 BuildRequires: qt-devel >= 3.0
+BuildRequires: zlib-devel
 
 
 
@@ -98,6 +101,8 @@ The %{name}-demo package provides some demos of %name algorithms.(to be compiled
 %setup -D -T -a 1
 %setup -D -T -a 2
 %endif
+
+%patch0 -p0
  
 %build
 rm -rf $RPM_BUILD_ROOT
@@ -174,6 +179,8 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Apr 11 2006 Laurent Rineau <laurent.rineau@ens.fr>
 - Removed -g and -O2 from CUSTOM_CXXFLAGS, in the makefile only.
   They are kept during the compilation of libraries.
+- Added zlib in dependencies.
+- Added a patch to test_ZLIB.C, until it is merged upstream.
 
 * Fri Mar 31 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - adding a test in the setup section.

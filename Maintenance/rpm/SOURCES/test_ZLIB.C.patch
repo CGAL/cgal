@@ -1,0 +1,13 @@
+--- config/support/test_ZLIB.C~	2006-04-10 21:03:32.000000000 +0200
++++ config/support/test_ZLIB.C	2006-04-11 17:41:26.000000000 +0200
+@@ -33,9 +33,6 @@
+ 
+ int main()
+ {
+-  gzFile file;
+-  gzwrite(file, (void*)0, 0); 
+-
+-  std::cout << "version=" << ZLIB_VERSION << std::endl;
++  std::cout << "version=" << zlibVersion() << std::endl;
+   return 0;
+ }

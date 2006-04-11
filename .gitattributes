@@ -711,6 +711,7 @@ Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-latex_to_html.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch -text
+Maintenance/rpm/SOURCES/test_ZLIB.C.patch -text
 Maintenance/rpm/SPECS/CGAL-manual-tools.spec -text
 Maintenance/rpm/SPECS/CGAL.spec -text
 Maintenance/rpm/get_cgal_trunk_url -text
