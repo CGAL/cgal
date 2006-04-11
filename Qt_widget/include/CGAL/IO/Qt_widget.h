@@ -30,13 +30,6 @@
 //temporary, should remove next line!!
 #include <CGAL/Triangle_2_Iso_rectangle_2_intersection.h>
 #include <CGAL/IO/Color.h>
-#ifdef CGAL_USE_GMP
-  #include <CGAL/Gmpz.h>
-  #include <CGAL/Gmpq.h>
-  #include <CGAL/Quotient.h>
-  typedef CGAL::Quotient<CGAL::Gmpz> CGAL_Rational;
-  #include <CGAL/simplest_rational_in_interval.h>
-#endif //CGAL_USE_GMP
 
 #include <vector>
 #include <list>
