@@ -1595,7 +1595,7 @@ _test_support()
     if [ -n "`value_of \"${1}_DESCRIPTION\"`" ]; then
 	DESCRIPTION="${4} (`value_of \"${1}_DESCRIPTION\"`)"
     else
-	DESCRIPTION="${1}"
+	DESCRIPTION="${4}"
     fi
     while [ 0 ]; do
 	# a) try with current flags
