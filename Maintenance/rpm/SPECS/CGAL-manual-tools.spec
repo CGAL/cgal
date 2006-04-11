@@ -1,6 +1,6 @@
 Name:           CGAL-manual-tools
-Version:        30080
-Release:        1%{?dist}
+Version:        30224
+Release:        1
 Summary:        CC Manual Style and LaTeX Converter for HTML.
 
 Group:          Development/Tools
@@ -79,18 +79,24 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/CGAL_latex_conv_config/gif
 
 %changelog
+* Tue Apr 11 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30224
+- Updated to revision 30224.
+
+* Fri Apr  7 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30090
+- Updated to revision 30090.
+
 * Thu Apr  6 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30080
-- Revision 30080.
+- Updated to revision 30080.
 
 * Wed Apr  5 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30025
 - Updated to revision 30025.
 - Source0 and Source1 now have %version in their names.
 
 * Tue Apr  4 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29933
-- Updated to revision 29933
+- Updated to revision 29933.
 
 * Mon Apr  3 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29922
-- Updated to revision 29922
+- Updated to revision 29922.
 
 * Fri Mar 31 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29890
 - Updated to 29890.
