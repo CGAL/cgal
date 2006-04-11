@@ -5,7 +5,7 @@
 
 Here we present a simple example that uses the
 \ccc{Kinetic::Sort<Traits, Visitor>} kinetic data structure to compute
-an arrangement of algebraic curves. It wraps the sorting data
+an arrangement of algebraic functions. It wraps the sorting data
 structure and uses a visitor to monitor changes and map them to
 corresponding features in the arrangement. To see an example using
 this kinetic data structure read the example at
@@ -113,8 +113,26 @@ public:
 \end{ccExampleCode}
 
 Finally, we have to set everything up. To do this we use some special
-event classes: \ccc{Kinetic::Insert_event<>}
-
+event classes: \ccc{Kinetic::Insert_event<ActiveObjectsTable>} and
+\ccc{Kinetic::Erase_event<ActiveObjectsTable>}. These are events which
+can be put in the event queue which either insert a primitive into the
+set of active objects or remove it. Using these, we can allow curves
+in the arrangement to begin or end in arbitrary places.
+\begin{ccExampleCode}
+typedef CGAL::Kinetic::Insert_event<Traits::Active_points_1_table> Insert_event;
+typedef CGAL::Kinetic::Erase_event<Traits::Active_points_1_table> Erase_event;
+do {
+  NT begin, end;
+  Point function;
+  // initialize the function and the beginning and end somewhere
+  tr.simulator_handle()->new_event(Time(begin),
+			      Insert_event(function, tr.active_points_1_table_handle()));
+  tr.simulator_handle()->new_event(Time(end),
+				      Erase_event(Traits::Active_points_1_table::Key(num),
+						  tr.active_points_1_table_handle()));
+  ++num;
+} while (true);
+\end{ccExampleCode}
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: t
