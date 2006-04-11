@@ -1,7 +1,7 @@
 
 \ccSetThreeColumns{Failure_behaviour }{}{\hspace*{8.5cm}}
 
-\ccUserChapter{Checks}
+\section{Checks}
 
 Much of the {\cgal} code contains checks. 
 For example, all checks used in the kernel code are prefixed by 
@@ -63,7 +63,7 @@ be the case, due to round off errors.
 So, exactness checks should only be turned on if the computation is done 
 with some exact number type.
 
-\section{Altering the Failure Behaviour}
+\subsection{Altering the Failure Behaviour}
 
 As stated above, if a postcondition, precondition or assertion is
 violated, the program will abort (stop and produce a core dump).
@@ -101,7 +101,7 @@ The only difference is that for warnings the default value is
 set_warning_behaviour(Failure_behaviour eb);}
 \ccGlueEnd
 
-\section{Control at a Finer Granularity}
+\subsection{Control at a Finer Granularity}
 
 The compile time flags as described up to now all operate on the whole 
 library.
@@ -116,7 +116,7 @@ The name of a particular module is documented with that module.
 
 \begin{ccAdvanced}
 
-\section{Customising how Errors are Reported}
+\subsection{Customising how Errors are Reported}
 
 Normally, error messages are written to the standard error output.
 It is possible to do something different with them.
