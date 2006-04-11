@@ -625,7 +625,9 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulati
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_visitor_base_3.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Enclosing_box_2.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Enclosing_box_3.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Erase_event.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/EventLogVisitor.tex -text
+Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Insert_event.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Qt_moving_points_2.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Qt_triangulation_2.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Qt_widget_2.tex -text
@@ -666,7 +668,6 @@ Kinetic_data_structures/doc_tex/Kinetic_framework_ref/EventLogVisitor.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/EventQueue.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Function.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/FunctionKernel.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Insert_event.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/InstantaneousKernel.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Key.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/KineticKernel.tex -text

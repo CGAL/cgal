@@ -1,20 +1,21 @@
 
 
-\subsection{A Sweepline Algorithm\label{sec:kds_sweepline_example}}
+\subsection{Extending Kinetic Data Structures\label{sec:kds_sweepline_example}}
 
 
-Here we present a simple example that uses the kinetic data structures
-framework to implement a sweepline to compute the arrangement of
-x-monotone algebraic curves in the plane. The example builds on top of
-the \ccc{Kinetic::Sort<Traits, Visitor>} kinetic data structure, using a visitor
-to keep track of changes to the sorted order and newly inserted
-points. To see an example using this kinetic data structure read the
-example at examples/Kinetic\_data\_structures/sweepline.C.
+Here we present a simple example that uses the
+\ccc{Kinetic::Sort<Traits, Visitor>} kinetic data structure to compute
+an arrangement of algebraic curves. It wraps the sorting data
+structure and uses a visitor to monitor changes and map them to
+corresponding features in the arrangement. To see an example using
+this kinetic data structure read the example at
+examples/Kinetic\_data\_structures/sweepline.C.
 
 First we define the visitor class. An object of this type is passed to
-the \ccc{Kinetic::Sort} data structure and turns events into calls on
-the arrangement structure. This class has to be handled externally
-since the arrangement will inherit from the sorting structure.
+the \ccc{Kinetic::Sort<Traits, Visitor>} data structure and turns
+events into calls on the arrangement structure. This class has to be
+defined externally since the arrangement will inherit from the sorting
+structure.
 
 \begin{ccExampleCode}
 template <class Arrangement>
@@ -38,7 +39,7 @@ struct Arrangement_visitor: public Kinetic::Sort_visitor_base
 
 \end{ccExampleCode}
 
-Now we define the actual kinetic data structure. 
+Now we define the actual arrangement data structure. 
 
 \begin{ccExampleCode}
 
@@ -110,6 +111,9 @@ public:
 
 };
 \end{ccExampleCode}
+
+Finally, we have to set everything up. To do this we use some special
+event classes: \ccc{Kinetic::Insert_event<>}
 
 %%% Local Variables: 
 %%% mode: latex
