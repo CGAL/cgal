@@ -107,7 +107,7 @@ rm -rf $RPM_BUILD_ROOT
 CGAL_OS=`./install_cgal -os g++`
 MAKEFILE=makefile_${CGAL_OS}
 ln -s $MAKEFILE ${RPM_BUILD_ROOT}%{CGAL_DIR}/make/makefile
-sed -i "s,$RPM_BUILD_ROOT,,g;" ${RPM_BUILD_ROOT}%{CGAL_DIR}/make/$MAKEFILE
+sed -i "s,$RPM_BUILD_ROOT,,g; /CUSTOM_CXXFLAGS/ s/-O2 //; /CUSTOM_CXXFLAGS/ s/-g //" ${RPM_BUILD_ROOT}%{CGAL_DIR}/make/$MAKEFILE
 
 MAKEFILE=%{CGAL_DIR}/make/makefile
 cd $RPM_BUILD_ROOT
@@ -171,6 +171,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue Apr 11 2006 Laurent Rineau <laurent.rineau@ens.fr>
+- Removed -g and -O2 from CUSTOM_CXXFLAGS, in the makefile only.
+  They are kept during the compilation of libraries.
+
 * Fri Mar 31 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - adding a test in the setup section.
 * Mon Mar 13 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
