@@ -808,8 +808,6 @@ set_compiler_flags()
     CGAL_WINLIB_CXXFLAGS=""
     CGAL_QT_CXXFLAGS=""
     WINDOW_INCLUDE=""
-    WINDOW_DIR="/usr/X11R6/lib"
-    XLIBS="-lX11"
     RUNTIME_LINKER_FLAG=''
     PRINT_STACKTRACE_PROGRAM="gdb"
     WINDOWS_COMPILER=""
@@ -844,8 +842,6 @@ set_compiler_flags()
 	    CGAL_LIB_CXXFLAGS="-P"
 	    CGAL_LIB_CREATE="tlib /C /P512 ''"
 	    CGAL_OBJ_PREFIX="+"
-	    WINDOW_DIR=""
-	    XLIBS=""
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
@@ -876,8 +872,6 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
-	    WINDOW_DIR=
-	    XLIBS="ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SUFFIX=".lib"
@@ -907,8 +901,6 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
-	    WINDOW_DIR=
-	    XLIBS="ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SUFFIX=".lib"
@@ -933,7 +925,6 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
-            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*IRIX*6.*CC*7.3*)
 	    #### settings for sgi mipspro compiler V7.3 on irix6
@@ -943,7 +934,6 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
-            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
@@ -951,7 +941,6 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
-            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*IRIX*g++*)
 	    #### settings for gcc on irix
@@ -959,7 +948,6 @@ set_compiler_flags()
 	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
-            WINDOW_DIR="/usr/lib/X11"
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
@@ -968,7 +956,6 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_INCLUDE="/usr/openwin/include"
-	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
@@ -979,7 +966,6 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
 	    WINDOW_INCLUDE="/usr/openwin/include"
-	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    ;;
         *alpha*Linux*g++*)
@@ -1004,15 +990,11 @@ set_compiler_flags()
 	*CYGWIN*g++*)
 	    #### settings for gcc on Cygwin
 	    ADDITIONAL_CXXFLAGS="-Wall"
-	    WINDOW_DIR=
-	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
 	    EXE_EXT=".exe"
 	    ;;
 	*MINGW*g++*)
 	    #### settings for gcc on mingw
 	    ADDITIONAL_CXXFLAGS="-Wall"
-	    WINDOW_DIR=
-	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
 	    EXE_EXT=".exe"
 	    ;;
 	*Darwin*g++*)
@@ -1031,9 +1013,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-gccincludes -lang c++ -msgstyle gcc "
 	    CGAL_LIB_CXXFLAGS=""
 	    CGAL_LIB_CREATE="mwld -library -o "
-	    WINDOW_DIR=""
 	    CYGWIN_COMPILER="y"
-	    XLIBS=""
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    REMOVE_EXT_LIST=".obj"
@@ -3830,12 +3810,20 @@ write_linker_flags()
   done
 
   #
-  # CGAL_LDFLAGS
+  # CGAL_CGAL_LDFLAGS
   #
-  ${_printf} "%s" "CGAL_LDFLAGS =" >> ${FILE}
+  print_as_shell_comment "*** linker flags for CGAL ***" >> ${FILE}
+  ${_printf} "%s" "CGAL_CGAL_LDFLAGS =" >> ${FILE}
   makefile_print_continuationline "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}	
   makefile_print_continuationline "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_continuationline "`lib_option \"CGAL\"`" >> ${FILE}
+  ${_printf} "\n\n" >> ${FILE}
+
+  #
+  # CGAL_LDFLAGS
+  #
+  ${_printf} "%s" "CGAL_LDFLAGS =" >> ${FILE}
+  makefile_print_continuationline "\$(CGAL_CGAL_LDFLAGS)" >> ${FILE}
   # FIXME: this special treatment is not so nice...
   if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
       makefile_print_continuationline "`lib_option \"core++\"`" >> ${FILE}
@@ -3864,83 +3852,6 @@ write_linker_flags()
   ${_printf} "%s\n\n" "CGAL_GEOWIN_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
   ${_printf} "%s\n\n" "CGAL_QT_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
 
-  #
-  # CGAL_WINDOW_LIBPATH
-  #
-#   if [ -n "${WINDOW_DIR}" ]; then
-#     LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
-#     RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
-#   fi
-#   if [ -n "${SEPARATE_LIBPATH}" ]; then
-#     ${_printf}  "CGAL_WINDOW_LD_LIBPATH =\n\n" >> ${FILE}
-#     ${_printf}  "CGAL_WINDOW_LIBPATH =" >> ${FILE}
-#   else
-#     ${_printf}  "CGAL_WINDOW_LIBPATH =\n\n" >> ${FILE}
-#     ${_printf}  "CGAL_WINDOW_LD_LIBPATH =" >> ${FILE}
-#   fi
-#   makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
-#   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-#     makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
-#   	>> ${FILE}
-#   fi
-#   ${_printf} "\n\n"  >> ${FILE}
-
-  #
-  # CGAL_WINDOW_LDFLAGS
-  #
-  #${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
-  #if [ -n "${LEDA_SUPPORT}" ]; then
-  #makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
-  #makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
-  #${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
-  #else
-  #  ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
-  #fi
-
-  #
-  # CGAL_GEOWIN_LDFLAGS
-  #
-#   ${_printf} "%s\\\\\n" "CGAL_GEOWIN_LDFLAGS = " >> ${FILE}
-#   if [ -n "${LEDA_SUPPORT}" ]; then
-#     makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
-#     makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
-#     ${_printf} "\t%s\n\n" "${GEOWLIBS}" >> ${FILE}
-#   else
-#     ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
-#   fi
-
-  #
-  # CGAL_QT_LIBPATH
-  #
-  #if [ -n "${WINDOW_DIR}" ]; then
-  #  LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
-  #  RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
-  #fi
-#   if [ -n "${SEPARATE_LIBPATH}" ]; then
-#     ${_printf}  "CGAL_QT_LD_LIBPATH =\n\n" >> ${FILE}
-#     ${_printf}  "CGAL_QT_LIBPATH =" >> ${FILE}
-#   else
-#     ${_printf}  "CGAL_QT_LIBPATH =\n\n" >> ${FILE}
-#     ${_printf}  "CGAL_QT_LD_LIBPATH =" >> ${FILE}
-#   fi
-#   makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
-#   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-#     makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
-#   	>> ${FILE}
-#   fi
-#   ${_printf} "\n\n"  >> ${FILE}
-
-  #
-  # CGAL_QT_LDFLAGS
-  #
-  #${_printf} "%s\\\\\n" "CGAL_QT_LDFLAGS = " >> ${FILE}
-  #if [ -n "${QT_SUPPORT}" ]; then
-  #makefile_print_line "${START_LD_OPT}\$(CGAL_QT_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
-  #makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
-  #${_printf} "\t%s\n\n" "${QLIBS}" >> ${FILE}
-  #else
-  #  ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
-  #fi
 }
 
 # create the include makefile for current configuration
