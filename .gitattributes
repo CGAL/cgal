@@ -487,6 +487,7 @@ Installation/config/support/S08-EXTERNTAUCSNIX -text
 Installation/config/support/S09-EXTERNTAUCSMS -text
 Installation/config/support/S10-TAUCSNIX -text
 Installation/config/support/S11-TAUCSMS -text
+Installation/config/support/S15-X11 -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
 Installation/config/support/S25-MPFR -text
@@ -495,7 +496,9 @@ Installation/config/support/S32-CGALCORE -text
 Installation/config/support/S40-ZLIB -text
 Installation/config/support/S40-ZLIBMS -text
 Installation/config/support/S60-LEDA -text
+Installation/config/support/S61-LEDAWIN -text
 Installation/config/support/S62-LEDAMS -text
+Installation/config/support/S63-LEDAWINMS -text
 Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
@@ -507,9 +510,11 @@ Installation/config/support/test_EXTERNTAUCS.C -text
 Installation/config/support/test_GMP.C -text
 Installation/config/support/test_GMPXX.C -text
 Installation/config/support/test_LEDA.C -text
+Installation/config/support/test_LEDAWIN.C -text
 Installation/config/support/test_MPFR.C -text
 Installation/config/support/test_QT.C -text
 Installation/config/support/test_TAUCS.C -text
+Installation/config/support/test_X11.C -text
 Installation/config/support/test_ZLIB.C -text
 Installation/config/testfiles/CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG.C -text
 Installation/config/testfiles/CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG.C -text

@@ -1,0 +1,15 @@
+# Algorithmic Solution's LEDA Window Library (http://www.algorithmic-solutions.com/)
+
+DESCRIPTION = MS Windows
+PROVIDES = LEDAWIN
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = W
+REQUIRES = X11 LEDA DOLLAR_WINDOWS_COMPILER
+INCOMPATIBLE = 
+STDINCLDIRS = 
+INCLTHING = 
+STDLIBDIRS = 
+LIBTHING = 
+
+# EOF
