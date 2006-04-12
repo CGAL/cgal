@@ -92,8 +92,8 @@ QTLDFLAGS = \
 
 INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lInstrospect
 
-testv: SketchSample$(OBJ_EXT) visu-test$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) $(OBJECTS) SketchSample$(OBJ_EXT) visu-test$(OBJ_EXT) \
+testv: SketchSample$(OBJ_EXT) visu$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) $(OBJECTS) SketchSample$(OBJ_EXT) visu$(OBJ_EXT) \
 	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
 
 rmexe:
@@ -117,21 +117,7 @@ depend:
 
 # DO NOT DELETE
 
-ogl_visu.o: ogl_visu.h /usr/include/math.h /usr/include/features.h
-ogl_visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-ogl_visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
-ogl_visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h
-ogl_visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
-ogl_visu.o: /usr/include/math.h /usr/include/features.h
-ogl_visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-ogl_visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-ogl_visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
-ogl_visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h
-ogl_visu.o: /usr/include/GL/glu.h enriched_polyhedron.h
-visu.o: ogl_visu.h /usr/include/math.h /usr/include/features.h
-visu.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-visu.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-visu.o: /usr/include/bits/mathcalls.h /usr/include/GL/glut.h
-visu.o: /usr/include/GL/gl.h /usr/include/GL/glext.h /usr/include/GL/glu.h
-visu.o: enriched_polyhedron.h
+SketchSample.o: SketchSample.h visu_poly.h enriched_polyhedron.h
+SketchSample.o: visu_poly.h enriched_polyhedron.h
+visu.o: SketchSample.h visu_poly.h enriched_polyhedron.h
+visu_poly.o: enriched_polyhedron.h
