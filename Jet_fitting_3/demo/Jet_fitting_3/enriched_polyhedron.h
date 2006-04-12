@@ -287,6 +287,10 @@ public :
   // draw facets
   void gl_draw_facets(const bool smooth)
     {
+      glEnable(GL_LIGHTING);
+      static GLfloat tryellow[4] = {0.3, 0.3, 0.0, 1 };
+      glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, tryellow);
+
       Facet_iterator hFacet;
       for(hFacet = facets_begin();
 	  hFacet != facets_end();
@@ -297,6 +301,7 @@ public :
   void gl_draw_facet(Facet_handle hFacet,
 		     const bool smooth)
     {
+
       ::glBegin(GL_POLYGON);
 
       // one normal per facet

@@ -36,6 +36,7 @@ void SketchSample::buildDisplayList(GLuint surf) {
   for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
     draw_point((*it)->P1);
   //next, ppal dirs and normal
+  glDisable(GL_LIGHTING);
   for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
     {	
       glColor3f(0.,0.,1.);//dmax
@@ -47,6 +48,7 @@ void SketchSample::buildDisplayList(GLuint surf) {
 	/ CGAL::sqrt( ((*it)->D1) * ((*it)->D1) );
       draw_vector((*it)->P1, normal) ;		
     }
+  glEnable(GL_LIGHTING);
 
 //    static GLfloat ared[4] = {0.8, 0.1, 0.0, 1.0 };
 //    //  glNewList(surf, GL_COMPILE);
