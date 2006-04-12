@@ -1,23 +1,31 @@
-%define internal_release 430
+%define cgal_version 3.2
+
+# If this release is official, define internal_release to 0.
+%define internal_release 431
+
+# if internal_release != 0, release_number has no meaning.
+%define release_number 1
+
+# boost_version defines the minimal version needed by CGAL.
+%define boost_version 1.32
+
 %define build_doc 0
 %define build_demo 0
 
 %if %{internal_release}
-%define tarball_name CGAL-3.2-I-%{internal_release}
-%define release %{internal_release}
+%define tarball_name CGAL-%{cgal_version}-I-%{internal_release}
+%define release_value 0.%{internal_release}
 %define CGAL_DIR %{_libdir}/CGAL-3.2-I
 %else
-%define tarball_name CGAL-3.2
-%define release 1
+%define tarball_name CGAL-%{cgal_version}
 %define CGAL_DIR %{_libdir}/CGAL-3.2
+%define release_value %{release_number}
 %endif
-
-%define boost_version 1.32
 
 Summary: Computational Geometry Algorithms Library
 Name: CGAL
-Version: 3.2
-Release: %{release}
+Version: %{cgal_version}
+Release: %{release_value}
 License: QPL/LGPL
 URL: http://www.cgal.org/
 Group: System Environment/Libraries
@@ -26,22 +34,11 @@ Source: %{tarball_name}.tar.gz
 Source1: CGAL-3.2-doc_pdf.tar.gz
 Source2: CGAL-3.2-doc_html.tar.gz
 %endif
-Patch0: test_ZLIB.C.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #Prefix: %{CGAL_DIR}
 
-Prereq: /sbin/ldconfig
-Prereq: fileutils
-
 # Required packages.
-Requires: boost >= %boost_version
-Requires: gmp
-Requires: qt >= 3.0
-Requires: libstdc++
-Requires: zlib
-
-
 BuildRequires: gmp-devel
 BuildRequires: boost-devel >= %boost_version
 BuildRequires: gcc-c++
@@ -62,7 +59,6 @@ access to useful, reliable geometric algorithms.
 %package devel
 Group: Development/Libraries
 Summary: Development files and tools for %name applications
-Requires: boost-devel >= %boost_version, gmp-devel
 Requires: %{name}  = %{version}-%{release}
 
 %description devel
@@ -73,6 +69,7 @@ develop applications using %name.
 %package doc
 Group: Documentation
 Summary: HTML and PDF documentation for developing with %name
+Requires: %{name}-devel  = %{version}-%{release}
 
 %description doc
 The %{name}-doc package provides the html and pdf documentation of %name.
@@ -102,11 +99,13 @@ The %{name}-demo package provides some demos of %name algorithms.(to be compiled
 %setup -D -T -a 2
 %endif
 
-%patch0 -p0
- 
 %build
 rm -rf $RPM_BUILD_ROOT
-./install_cgal -ni g++  --prefix ${RPM_BUILD_ROOT}%{CGAL_DIR} --CUSTOM_CXXFLAGS "$RPM_OPT_FLAGS"
+
+if [ "%{_lib}" == "lib64" ] ; then
+  EXTRA_LDFLAGS="--CUSTOM_LDFLAGS -L/usr/X11R6/lib64"
+fi
+./install_cgal -ni g++  --prefix ${RPM_BUILD_ROOT}%{CGAL_DIR} --CUSTOM_CXXFLAGS "$RPM_OPT_FLAGS" $EXTRA_LDFLAGS
 
 %install
 CGAL_OS=`./install_cgal -os g++`
@@ -136,9 +135,6 @@ EOF
 chmod 755 ./etc/profile.d/cgal.*sh
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root,-)
@@ -176,7 +172,18 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Tue Apr 11 2006 Laurent Rineau <laurent.rineau@ens.fr>
+* Wed Apr 12 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.2-0.431
+- Updated to CGAL-3.2-I-431.
+- Remove the use of ldconfig.
+- Changed my email address.
+- No longer need for patch0.
+- Pass of rpmlint.
+- Remove unneeded Requires: tags (rpm find them itself).
+- Change the release tag.
+- Added comments at the beginning of the file.
+- Added custom ld flags, on 64bits archs (so that X11 is detected).
+
+* Tue Apr 11 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org>
 - Removed -g and -O2 from CUSTOM_CXXFLAGS, in the makefile only.
   They are kept during the compilation of libraries.
 - Added zlib in dependencies.
@@ -184,12 +191,15 @@ rm -rf $RPM_BUILD_ROOT
 
 * Fri Mar 31 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - adding a test in the setup section.
+
 * Mon Mar 13 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - delete the patch that fixes the perl path.
 - add build_doc and build_demo flags.
+
 * Fri Mar 10 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - adding new sub-packages doc(pdf&html) and demo.
 - add internal_release flag. 
+
 * Thu Mar 09 2006 Naceur MESKINI <nmeskini@sophia.inria.fr>
 - cleanup a specfile.
 
