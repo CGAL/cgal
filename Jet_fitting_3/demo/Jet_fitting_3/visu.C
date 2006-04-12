@@ -98,8 +98,6 @@ int main(int argc, char** argv) {
 
   load_geom(argc, argv);
   
-
-
   QApplication app(argc, argv);
 
   if ( !QGLFormat::hasOpenGL() ) {

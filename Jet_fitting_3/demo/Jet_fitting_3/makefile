@@ -65,12 +65,12 @@ LDFLAGS = \
           ${GSL_LIBS}  $(GLUT_LIBS)
 
 
+EXE_EXT = .exe
+
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-#all:            \
-#                visu
 
 #VISU_OBJS=ogl_visu.o visu.o
 #visu: $(VISU_OBJS)
@@ -92,18 +92,16 @@ QTLDFLAGS = \
 
 INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lInstrospect
 
-testv: SketchSample$(OBJ_EXT) visu$(OBJ_EXT) 
+all:            \
+                visu
+
+
+visu: SketchSample$(OBJ_EXT) visu$(OBJ_EXT) 
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) $(OBJECTS) SketchSample$(OBJ_EXT) visu$(OBJ_EXT) \
 	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
 
-rmexe:
-	rm *.exe
-
-clean: \
-        visu.clean \
-        ogl_visu.clean \
-	rmexe
-
+clean: 
+	rm *$(EXE_EXT) *$(OBJ_EXT)
 
 depend: 
 	makedepend *.[Ch]
