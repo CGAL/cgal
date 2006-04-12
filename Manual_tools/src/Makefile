@@ -199,14 +199,14 @@ pathinstall:
 	test -d ${LATEX_CONV_CONFIG}/ref_pages|| mkdir ${LATEX_CONV_CONFIG}/ref_pages
 
 gifinstall:
-	install ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
+	install -m 644 ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
 
 refinstall:
-	install ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
+	install -m 644 ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
 
 cpinstall:
 	install ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
-	install ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
+	install -m 644 ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
 
 mvinstall: ${PROGRAM_FILES}
 	install ${PROGRAM_FILES} ${LATEX_CONV_BIN}
