@@ -25,15 +25,17 @@ void SketchSample::buildDisplayList(GLuint surf) {
   //mesh
   glColor3f(1.,1.,1.);
   p_mesh->gl_draw_facets(true);
+  //additional objects that may be displayed
 //   p_mesh->gl_draw_vertices_normal(); 
 //   p_mesh->gl_draw_edges();
 //   p_mesh->gl_draw_vertices();
 //   p_mesh->gl_draw_facets_normal();
 //   p_mesh->gl_draw_vertices_normal();
 
-  //ppal dir
+  //points first
   for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
     draw_point((*it)->P1);
+  //next, ppal dirs and normal
   for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
     {	
       glColor3f(0.,0.,1.);//dmax
