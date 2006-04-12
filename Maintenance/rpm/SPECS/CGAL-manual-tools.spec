@@ -1,7 +1,7 @@
 Name:           CGAL-manual-tools
-Version:        30224
+Version:        30269
 Release:        1
-Summary:        CC Manual Style and LaTeX Converter for HTML.
+Summary:        CC Manual Style and LaTeX Converter for HTML
 
 Group:          Development/Tools
 License:        N/A
@@ -66,39 +66,39 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/*
 %dir /usr/share/texmf/tex/latex/CGAL
 %dir /usr/share/texmf/bibtex/bib/CGAL
-%dir /usr/share/texmf/bibtex/bib/CGAL/Manual
-%dir /usr/share/texmf/tex/latex/CGAL/eps_tabs/
 %dir /usr/share/CGAL_latex_conv_config
-%dir /usr/share/CGAL_latex_conv_config/html
-%dir /usr/share/CGAL_latex_conv_config/gif
-/usr/share/texmf/tex/latex/CGAL
-/usr/share/texmf/bibtex/bib/CGAL
-/usr/share/texmf/tex/latex/CGAL/eps_tabs/
-/usr/share/CGAL_latex_conv_config
-/usr/share/CGAL_latex_conv_config/html
-/usr/share/CGAL_latex_conv_config/gif
+/usr/share/texmf/tex/latex/CGAL/*
+/usr/share/texmf/bibtex/bib/CGAL/*
+/usr/share/CGAL_latex_conv_config/*
 
 %changelog
-* Tue Apr 11 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30224
+* Wed Apr 12 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30269-1
+- Updated to revision 30269.
+- Fixed the warnings (included twice, etc.) of rpmbuild.
+- Passed rpmlint.
+- Updated patch5 to new revision.
+- Changed my email address.
+
+* Tue Apr 11 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30224
 - Updated to revision 30224.
 
-* Fri Apr  7 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30090
+* Fri Apr  7 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30090
 - Updated to revision 30090.
 
-* Thu Apr  6 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30080
+* Thu Apr  6 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30080
 - Updated to revision 30080.
 
-* Wed Apr  5 2006 Laurent Rineau <laurent.rineau@ens.fr> - 30025
+* Wed Apr  5 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30025
 - Updated to revision 30025.
 - Source0 and Source1 now have %version in their names.
 
-* Tue Apr  4 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29933
+* Tue Apr  4 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 29933
 - Updated to revision 29933.
 
-* Mon Apr  3 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29922
+* Mon Apr  3 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 29922
 - Updated to revision 29922.
 
-* Fri Mar 31 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29890
+* Fri Mar 31 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 29890
 - Updated to 29890.
 - New patch, for latex_to_html
 - Updated the CGAL_manual_tools-config.patch, to add
@@ -107,17 +107,17 @@ rm -rf $RPM_BUILD_ROOT
 - Added ipe.sty to files
 - Move bib files to the bibtex installation.
 
-* Thu Mar 30 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29841
+* Thu Mar 30 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 29841
 - Updated to rev. 29841. No longer need for patch2
 - Specify the two scripts of developer_scripts/ that need to be installed,
 to avoid things like cgal_manual.orig!
 
-* Tue Mar  7 2006 Laurent Rineau <laurent.rineau@ens.fr> - 29111
+* Tue Mar  7 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 29111
 - Updated to Manual_tools rev 29111., Manual rev 29112.
 - Manual_tools are now pulled from SVN too.
 - Some patches are now included in SVN.
 
-* Fri Mar  3 2006 Laurent Rineau <laurent.rineau@ens.fr> - 3.12
+* Fri Mar  3 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.12
 - Added cgal_manual and dependancies
 - Added a call to texhash
 

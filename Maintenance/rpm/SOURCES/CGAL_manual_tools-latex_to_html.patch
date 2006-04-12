@@ -1,18 +1,18 @@
 Index: src/latex_to_html
 ===================================================================
---- src/latex_to_html	(revision 29890)
+--- src/latex_to_html	(revision 30268)
 +++ src/latex_to_html	(working copy)
 @@ -302,6 +302,7 @@
    ExitCode=0
    cmd=${@//(/\\(};
-   cmd=${cmd//)/\\)};  
+   cmd=${cmd//)/\\)};
 +  echo "$cmd"
    if [ $Quiet -eq 0 ] ; then
-     { 
+     {
        if ! eval "$cmd" 2>&1 ; then
 @@ -529,11 +530,15 @@
          ImageFiles=`\cat *.html | cc_extract_images | \sort | \uniq`
-         
+ 
          for f in $ImageFiles ; do
 +            f=`echo $f| sed -e 's|\./||'`
              ImageSearchPath="."
