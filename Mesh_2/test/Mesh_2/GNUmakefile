@@ -13,23 +13,19 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include\
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
+CXXFLAGS = \
+           -I../../include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -38,21 +34,34 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                test_conforming$(EXE_EXT) \
+                test_double_map$(EXE_EXT) \
                 test_filtred_container$(EXE_EXT) \
-                test_double_map$(EXE_EXT)
+                test_meshing$(EXE_EXT) 
 
-test_filtred_container$(EXE_EXT): test_filtred_container$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_filtred_container test_filtred_container$(OBJ_EXT) $(LDFLAGS)
+test_conforming$(EXE_EXT): test_conforming$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_conforming test_conforming$(OBJ_EXT) $(LDFLAGS)
 
 test_double_map$(EXE_EXT): test_double_map$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_double_map test_double_map$(OBJ_EXT) $(LDFLAGS)
 
+test_filtred_container$(EXE_EXT): test_filtred_container$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_filtred_container test_filtred_container$(OBJ_EXT) $(LDFLAGS)
+
+test_meshing$(EXE_EXT): test_meshing$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_meshing test_meshing$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
+                   test_conforming.clean \
+                   test_double_map.clean \
                    test_filtred_container.clean \
-                   test_double_map.clean 
+                   test_meshing.clean 
+
 
 run: all
+	./test_conforming
 	./test_filtred_container
+	./test_meshing
 	./test_double_map
 
 #---------------------------------------------------------------------#

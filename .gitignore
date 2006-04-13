@@ -68,8 +68,10 @@ Mesh_2/examples/Mesh_2/semantic.cache
 Mesh_2/include/CGAL/semantic.cache
 Mesh_2/test/Mesh_2/*.core
 Mesh_2/test/Mesh_2/semantic.cache
+Mesh_2/test/Mesh_2/test_conforming
 Mesh_2/test/Mesh_2/test_double_map
 Mesh_2/test/Mesh_2/test_filtred_container
+Mesh_2/test/Mesh_2/test_meshing
 Mesh_3/*.tags.xml
 Mesh_3/applications/*.exe
 Mesh_3/applications/*.maillage

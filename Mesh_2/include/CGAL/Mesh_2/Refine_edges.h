@@ -1,4 +1,4 @@
-// Copyright (c) 2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -487,6 +487,9 @@ public:
    */
   void after_insertion_impl(const Vertex_handle& v)
   {
+#ifdef CGAL_MESH_2_VERBOSE
+    std::cerr << "E";
+#endif
     // @todo Perhaps we should remove destroyed edges too.
     // @warning This code has been rewroten!
 

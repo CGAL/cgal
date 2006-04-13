@@ -91,6 +91,11 @@ public:
       bad. */
   void scan_triangulation_impl()
   {
+    bad_faces.clear();
+#ifdef CGAL_MESH_2_DEBUG_BAD_FACES
+    std::cerr << "bad_faces.clear()\n";
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
+
     for(typename Tr::Finite_faces_iterator fit =
 	  triangulation_ref_impl().finite_faces_begin();
         fit != triangulation_ref_impl().finite_faces_end();
@@ -116,11 +121,11 @@ public:
                                  std::back_inserter(zone.boundary_edges),
 				 fh
                                  );
-#ifdef DEBUG
+#ifdef CGAL_MESH_2_DEBUG_CONFLICTS_ZONE
     std::cerr << "get_conflicts_and_boundary(" << p << "):" << std::endl
               << "faces: " << zone.faces.size() << std::endl
               << "edges: " << zone.boundary_edges.size() << std::endl;
-#endif // DEBUG
+#endif // CGAL_MESH_2_DEBUG_CONFLICTS_ZONE
     return zone;
   }
 
@@ -183,6 +188,9 @@ public:
   /** Restore markers in the star of \c v. */
   void after_insertion_impl(const Vertex_handle& v)
   {
+#ifdef CGAL_MESH_2_VERBOSE
+    std::cerr << "*";
+#endif
     typename Tr::Face_circulator fc = 
       triangulation_ref_impl().incident_faces(v), fcbegin(fc);
     do {
@@ -229,6 +237,9 @@ public:
   void set_bad_faces(Fh_it begin, Fh_it end)
   {
     bad_faces.clear();
+#ifdef CGAL_MESH_2_DEBUG_BAD_FACES
+    std::cerr << "bad_faces.clear()\n";
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
     for(Fh_it pfit=begin; pfit!=end; ++pfit)
       push_in_bad_faces(*pfit, Quality());
   }
@@ -242,12 +253,12 @@ inline
 void Refine_faces_base<Tr, Criteria, Previous>::
 push_in_bad_faces(Face_handle fh, const Quality& q)
 {
-#ifdef DEBUG
+#ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "push_in_bad_faces("
             << fh->vertex(0)->point() << ","
             << fh->vertex(1)->point() << ","
             << fh->vertex(2)->point() << ")\n";
-#endif // DEBUG
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
   CGAL_assertion_code
     (typename Geom_traits::Orientation_2 orientation =
      triangulation_ref_impl().geom_traits().orientation_2_object()
@@ -264,12 +275,12 @@ inline
 void Refine_faces_base<Tr, Criteria, Previous>::
 remove_bad_face(Face_handle fh)
 {
-#ifdef DEBUG
+#ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "bad_faces.erase("
             << fh->vertex(0)->point() << ","
             << fh->vertex(1)->point() << ","
             << fh->vertex(2)->point() << ")\n";
-#endif // DEBUG
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
   bad_faces.erase(fh);
 }
 

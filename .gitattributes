@@ -1127,6 +1127,11 @@ Mesh_2/doc_tex/Mesh_2/example-conform.eps -text svneol=unset#unset
 Mesh_2/doc_tex/Mesh_2/example-conform.png -text svneol=unset#unset
 Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text
 Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
+Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text
+Mesh_2/test/Mesh_2/fish.edg -text
+Mesh_2/test/Mesh_2/fish.poly -text
+Mesh_2/test/Mesh_2/test_conforming.C -text
+Mesh_2/test/Mesh_2/test_meshing.C -text
 Mesh_3/applications/off_to_medit.C -text
 Mesh_3/examples/Mesh_3/implicit_functions.C -text
 Mesh_3/examples/Mesh_3/implicit_functions.h -text

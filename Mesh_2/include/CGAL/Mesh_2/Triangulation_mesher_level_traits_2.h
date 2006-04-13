@@ -55,7 +55,7 @@ struct Triangulation_mesher_level_traits_2 :
 
   Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
-#ifdef DEBUG
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
     std::cerr << "insert(" << p << "): " 
               << zone.boundary_edges.size() << " edges." << std::endl;
 #endif

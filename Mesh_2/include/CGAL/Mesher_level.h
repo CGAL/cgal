@@ -47,13 +47,13 @@ struct Null_mesher_level {
   template <typename Visitor>
   bool try_to_insert_one_point(Visitor) 
   {
-    return true;
+    return false;
   }
 
   template <typename Visitor>
   bool one_step(Visitor)
   {
-    return true;
+    return false;
   }
 
 }; // end Null_mesher_level

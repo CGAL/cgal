@@ -988,22 +988,25 @@ public slots:
         if(follow_mouse->is_active())
           {
             typedef Tr::Face_handle Face_handle;
-            std::list<Face_handle> l;
-
             Face_handle fh = cdt.locate(p);
-            criteria.set_point(p);
             if( (fh!=NULL) && (!cdt.is_infinite(fh)) && fh->is_in_domain() )
               {
+                criteria.set_local_size(true);
+                criteria.set_point(p);
+
+                std::list<Face_handle> l;
+            
                 Criteria::Quality q;
                 if(criteria.is_bad_object().operator()(fh, q) != 
 		   CGAL::Mesh_2::NOT_BAD)
                   l.push_back(fh);
-              }
-            if( mesher!=0 )
-              {
-                mesher->set_criteria(criteria);
-                mesher->set_bad_faces(l.begin(), l.end());
-                while( mesher->step_by_step_refine_mesh() );
+
+                if( mesher!=0 )
+                {
+                  mesher->set_criteria(criteria, false);
+                  mesher->set_bad_faces(l.begin(), l.end());
+                  while( mesher->step_by_step_refine_mesh() );
+                }
               }
           }
         else
@@ -1334,15 +1337,18 @@ public slots:
 
   void setLocal(bool checked)
     {
-      criteria.set_local_size(checked);
       if( mesher == 0 )
         {
           mesher = create_mesher();
           mesher->init();
           emit initializedMesher();
         }
-      mesher->set_criteria(criteria);
-      if(criteria.is_local_size())
+      if(checked == false)
+      {
+        criteria.set_local_size(false);
+        mesher->set_criteria(criteria);
+      }
+      if(checked)
         follow_mouse->activate();
       else
         follow_mouse->deactivate();
