@@ -3984,6 +3984,8 @@ create_include_makefile()
   # CGAL_SHARED_LIB
   #
   ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL${SHARED_LIB_EXT}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_CORE_SHARED_LIB = libcore++${SHARED_LIB_EXT}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_QT_SHARED_LIB = libCGALQt${SHARED_LIB_EXT}" >> ${FILE}
 
   #
   # CGAL_SHARED_LIB_CXXFLAGS
@@ -4071,18 +4073,20 @@ generatemakefiles()
 
 }
 
-# compile $1 (= static, shared, Qt, Core...)
+# compile $1 $2
+# $1 = libCGAL, libCore, libCGALQt ...
+# $2 = static, shared
 # return 0, iff success
 _do_compile()
 {
-    ${_printf} "%s" "${_LEFTSPACE}Building CGAL_$1 ..."
+    ${_printf} "%s" "${_LEFTSPACE}Building $1 $2..."
     if [ -f "${COMPILE_LOGFILE}" -a ! -w "${COMPILE_LOGFILE}" ]; then
 	${_rm} -f "${COMPILE_LOGFILE}"
     fi
     ${_rm} -f *"${OBJ_EXT}"
     MAKE_OPTION="-k CGAL_MAKEFILE=$CGAL_MAKEFILE"
 
-    case "$1" in
+    case "$2" in
 	static)
 	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_LIB_CXXFLAGS) static_lib";;
 	shared)
@@ -4090,16 +4094,16 @@ _do_compile()
     esac
 
     if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
-	log_print "Compilation of $1 ${_libname} succeeded."
+	log_print "Compilation of $1 $2 ${_libname} succeeded."
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
 	return 0
     else
-	log_print "Compilation of $1 ${_libname} failed."
+	log_print "Compilation of $1 $2 ${_libname} failed."
 	log_print "vvvvvvvvvvvv error messages below vvvvvvvvvvvv"
 	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
 	log_print "^^^^^^^^^^^^ error messages above ^^^^^^^^^^^^"
-	${_printf} "\n%s\n" "${_LEFTSPACE}Compilation of CGAL_$1 failed."
+	${_printf} "\n%s\n" "${_LEFTSPACE}Compilation of $1 $2 failed."
 	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
 	print_filled_line
 	wait_for_enter
@@ -4149,7 +4153,7 @@ write_menu_information()
 build_cgal()
 {
     cd "${CGAL_SRC_DIR}/CGAL"
-    if _do_compile static; then
+    if _do_compile libCGAL static; then
 	LIB_COMPILED='ok'
 	${_printf} "%s" "`print_os_setting 'print_with_indent'`" \
 	    >> "${INSTALL_RIS_LOGFILE}"
@@ -4161,18 +4165,20 @@ build_cgal()
                 *CYGWIN*)
                     ${_printf} "%s\n" \
 			"${_LEFTSPACE}No shared libraries on this platform!";;
-                *) _do_compile shared;;
+                *) _do_compile libCGAL shared;;
             esac
         fi
 	# FIXME: Should this be hardcoded here?
 	# Move CGALQt into libCGAL?
 	if [ -d "${CGAL_SRC_DIR}/CGALQt" -a -n "${PROVIDE_PKG_QT}" ]; then
 	    cd "${CGAL_SRC_DIR}/CGALQt"
-	    _do_compile Qt
+	    _do_compile libCGALQt static
+	    # _do_compile libCGALQt shared # Not yet ready
 	fi
 	if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
 	    cd "${CGAL_SRC_DIR}/Core"
-	    _do_compile Core
+	    _do_compile libCore static
+	    # _do_compile libCore shared # Not yet ready
 	fi
     fi
     write_buffer "\n"

@@ -20,15 +20,14 @@
 #
 # Author(s)     : various
 
-# This is the makefile for compiling the CGAL Qt support library libCGALQt.a.
+# This is the makefile for compiling the CGAL Qt support library libCGALQt.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE should be set on the make command line
-# CGAL_MAKEFILE_FAKE = REMOVE_FAKE_AND_SET_YOUR_MAKEFILE_HERE
+# CGAL_MAKEFILE = SHOULD_BE_SET_BY_COMMAND_LINE
 include $(CGAL_MAKEFILE)
 
 # defaut rule
@@ -47,7 +46,8 @@ include kds.makefile
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_QT
+# CXXFLAGS must be provided on the make command-line.
+# CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_QT
 
 #---------------------------------------------------------------------#
 # Object files
@@ -66,6 +66,10 @@ $(CGAL_KDS_OBJECTS)
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
+
+# TODO : shared_lib !
+
+static_lib: lib
 
 lib: lib_no_install
 	mv $(CGAL_QT_LIB) $(CGAL_LIB_DESTINATION)
