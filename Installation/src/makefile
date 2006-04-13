@@ -1,4 +1,4 @@
-# Copyright (c) 2004,2005,2006  Utrecht University (The Netherlands),
+# Copyright (c) 1997-2006  Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 # (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -21,25 +21,23 @@
 # Author(s)     : Radu Ursu
 #                 Sylvain Pion
 
-# This is the makefile for compiling the CGAL shared object library libCGAL.so.
-#
-# N.B. There are different makefiles for creating the object library
-# and the shared object library, because the suffix rules (in particular:
-# the compiler flags) for these libraries are different.
+# This is the makefile for compiling static and shared libraries in CGAL.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+# The following line should better be passed as command line argument.
+# CGAL_MAKEFILE = SHOULD_BE_SET_BY_INSTALL_CGAL
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
+# CXXFLAGS needs to be passed as command line argument
+# CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    object files
@@ -76,13 +74,25 @@ Turkowski_numeric_solver$(OBJ_EXT)
 #                    target entries
 #---------------------------------------------------------------------#
 
-lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+shared_lib: $(CGAL_OBJECTS)
 	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_SHARED_LIB_LDFLAGS)
 	mv $(CGAL_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
-	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+	rm $(CGAL_OBJECTS)
 
+static_lib: static_lib_no_install
+	mv $(CGAL_LIB) $(CGAL_LIB_DESTINATION)
+
+static_lib_no_install: $(CGAL_OBJECTS)
+	$(CGAL_LIB_CREATE)$(CGAL_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+		$(CGAL_LIB_LDFLAGS)
+	$(RANLIB) $(CGAL_LIB)
+	rm $(CGAL_OBJECTS)
+
+clean:
+	rm -f $(CGAL_LIB) $(CGAL_SHARED_LIB) $(CGAL_OBJECTS)
 
 #---------------------------------------------------------------------#
 #                    suffix rules

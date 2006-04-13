@@ -27,7 +27,8 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE_FAKE = REMOVE_FAKE_AND_SET_YOUR_MAKEFILE_HERE
+# CGAL_MAKEFILE should be set on the make command line
+# CGAL_MAKEFILE_FAKE = REMOVE_FAKE_AND_SET_YOUR_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 # defaut rule

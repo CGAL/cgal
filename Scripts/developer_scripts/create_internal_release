@@ -455,7 +455,6 @@ sub CreateSrcTestDir()
     print "Creating $VERSION/test/src directory ...\n";
     chdir "$RELEASEDIR/$VERSION" or die;
     system('cp', '-r', 'src', 'test');
-    rename('test/src/makefile_lib','test/src/makefile');
     open(CGAL_TEST,">test/src/cgal_test");
     print CGAL_TEST <<'EOF';
 #! /bin/sh

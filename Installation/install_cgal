@@ -4041,24 +4041,6 @@ $3${_EXTRA_NEWLINE}" "$1" > "$1.TEMP"' ; then
   fi
 }
 
-prepare_lib_makefiles()
-{
-    for FILE in "${CGAL_SRC_DIR}/makefile_lib" \
-	"${CGAL_SRC_DIR}/makefile_sharedlib"
-    do
-	replace_line "${FILE}" CGAL_MAKEFILE \
-	    "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
-    done
-    if [ -d "${CGAL_SRC_DIR}/Core" ]; then
-	replace_line "${CGAL_SRC_DIR}/Core/makefile" \
-	    CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
-    fi
-    if [ -d "${CGAL_SRC_DIR}/CGALQt" ]; then
-	replace_line "${CGAL_SRC_DIR}/CGALQt/makefile" \
-	    CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
-    fi
-}
-
 # log via $1
 generatemakefiles()
 {
@@ -4075,8 +4057,6 @@ generatemakefiles()
   fi
   create_include_makefile
 
-  prepare_lib_makefiles
-
   for FILE in `${_ls} "${CGAL_EXAMPLE_DIR}"/*/makefile 2>/dev/null | ${_sed} 's/ //g'`; do
       FILE="`echo ${FILE} | ${_sed} 's// /g'`"
       replace_line "${FILE}" CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
@@ -4091,7 +4071,7 @@ generatemakefiles()
 
 }
 
-# compile $1 (= lib, sharedlib, ...)
+# compile $1 (= static, shared, Qt, Core...)
 # return 0, iff success
 _do_compile()
 {
@@ -4100,11 +4080,15 @@ _do_compile()
 	${_rm} -f "${COMPILE_LOGFILE}"
     fi
     ${_rm} -f *"${OBJ_EXT}"
-    MAKE_OPTION="-k"
-    # Check if there is a special makefile file
-    if [ -f "makefile_$1" ]; then
-        MAKE_OPTION="${MAKE_OPTION} -f makefile_$1"
-    fi
+    MAKE_OPTION="-k CGAL_MAKEFILE=$CGAL_MAKEFILE"
+
+    case "$1" in
+	static)
+	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_LIB_CXXFLAGS) static_lib";;
+	shared)
+	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_SHARED_LIB_CXXFLAGS) shared_lib";;
+    esac
+
     if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
 	${_printf} "%s\n" " done."
@@ -4165,7 +4149,7 @@ write_menu_information()
 build_cgal()
 {
     cd "${CGAL_SRC_DIR}"
-    if _do_compile lib; then
+    if _do_compile static; then
 	LIB_COMPILED='ok'
 	${_printf} "%s" "`print_os_setting 'print_with_indent'`" \
 	    >> "${INSTALL_RIS_LOGFILE}"
@@ -4177,7 +4161,7 @@ build_cgal()
                 *CYGWIN*)
                     ${_printf} "%s\n" \
 			"${_LEFTSPACE}No shared libraries on this platform!";;
-                *) _do_compile sharedlib;;
+                *) _do_compile shared;;
             esac
         fi
 	# FIXME: Should this be hardcoded here?
