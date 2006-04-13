@@ -4148,7 +4148,7 @@ write_menu_information()
 # USES: i _tmp
 build_cgal()
 {
-    cd "${CGAL_SRC_DIR}"
+    cd "${CGAL_SRC_DIR}/CGAL"
     if _do_compile static; then
 	LIB_COMPILED='ok'
 	${_printf} "%s" "`print_os_setting 'print_with_indent'`" \

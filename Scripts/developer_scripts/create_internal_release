@@ -429,7 +429,7 @@ sub CreateSrcQtTestDir()
     chdir "$RELEASEDIR/$VERSION/" or die;
     system('cp', '-r', 'src/CGALQt', 'test/src_Qt');
     # Must be called after CreateSrcTestDir().
-    system('cp', 'test/src/cgal_test', 'test/src_Qt');
+    system('cp', 'test/src_CGAL/cgal_test', 'test/src_Qt');
 }
 
 
@@ -443,7 +443,7 @@ sub CreateSrcCoreTestDir()
     chdir "$RELEASEDIR/$VERSION/" or die;
     system('cp', '-r', 'src/Core', 'test/src_Core');
     # Must be called after CreateSrcTestDir().
-    system('cp', 'test/src/cgal_test', 'test/src_Core');
+    system('cp', 'test/src_CGAL/cgal_test', 'test/src_Core');
 }
 
 #---------------------------------------------------------------#
@@ -452,10 +452,10 @@ sub CreateSrcCoreTestDir()
 
 sub CreateSrcTestDir()
 {
-    print "Creating $VERSION/test/src directory ...\n";
+    print "Creating $VERSION/test/src_CGAL directory ...\n";
     chdir "$RELEASEDIR/$VERSION" or die;
-    system('cp', '-r', 'src', 'test');
-    open(CGAL_TEST,">test/src/cgal_test");
+    system('cp', '-r', 'src/CGAL', 'test/src_CGAL');
+    open(CGAL_TEST,">test/src_CGAL/cgal_test");
     print CGAL_TEST <<'EOF';
 #! /bin/sh
 
@@ -513,7 +513,7 @@ fi
 EOF
 
     close(CGAL_TEST);
-    chmod 0755, 'test/src/cgal_test';
+    chmod 0755, 'test/src_CGAL/cgal_test';
 }
 
 
