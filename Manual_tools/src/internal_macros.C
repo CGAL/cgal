@@ -61,17 +61,25 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
                      << current_basename
                      << "#Cross_link_anchor_" << cross_link_anchor_counter;
 
-    *anchor_stream << "c " << tmp_name << '\t';
-    wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
-    *anchor_stream << endl;
 
-    string::size_type t = tmp_name.find( "&lt;" );
-    if( t != string::npos ) {
-      tmp_name = tmp_name.substr( 0, t );
+    do {
       *anchor_stream << "c " << tmp_name << '\t';
       wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
       *anchor_stream << endl;
-    }
+
+      string::size_type t = tmp_name.rfind( "&lt;" );
+      if( t != string::npos ) {
+        string tmp_name2 = tmp_name.substr( 0, t );
+        *anchor_stream << "c " << tmp_name2 << '\t';
+        wrap_anchor( replacement_text.str(), tmp_name2, *anchor_stream );
+        *anchor_stream << endl;
+      }
+      t = tmp_name.find( "::" );
+      if( t != string::npos )
+        tmp_name = tmp_name.substr( t + 2 );
+      else
+        break;
+    } while( tmp_name.length() > 2 );
 
     return string("\n<A NAME=\"Cross_link_anchor_")
       + int_to_string( cross_link_anchor_counter++) + "\"></A>\n";
