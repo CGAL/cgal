@@ -288,34 +288,36 @@
     \newcommand{\ccPartDescription}{\ccPartDescriptionImpl}
     \newcommand{\entry}[1]{\lcTocCompleteRow ##1}
     \lciIfTwoColumnToc{
-      \newcommand{\entryleft}[1]{\lcTocLeft ##1}%
-      \newcommand{\entryright}[1]{\lcTocRight ##1}%
+      \newcommand{\entryleft}[1]{\lcTocLeft ##1\lcTocToggleOdd}%
+      \newcommand{\entryright}[1]{\lcTocRight ##1\lcTocToggleOdd}%
       \newcommand{\entryleftright}[2]{%
-        \lcTocSync\lcTocLeft ##1\lcTocRight ##2\lcTocSync}%
-      \newcommand{\packageleft}[1]{\lcTocLeft \cgalreinit\include{##1/main}}%
-      \newcommand{\packageright}[1]{\lcTocRight \cgalreinit\include{##1/main}}%
+        \lcTocSync\lcTocLeft ##1\lcTocRight ##2\lcTocSync\lcTocToggleOdd}%
+      \newcommand{\packageleft}[1]{\lcTocLeft \cgalreinit\include{##1/main}\lcTocToggleOdd}%
+      \newcommand{\packageright}[1]{\lcTocRight \cgalreinit\include{##1/main}\lcTocToggleOdd}%
       \newcommand{\packageleftright}[2]{%
         \lcTocSync%
         \lcTocLeft\cgalreinit\include{##1/main}%
         \edef\lciUsermanualOutputFilename{\lciOutputFilename}%
         \lcTocRight\cgalreinit\include{##2/main}%
-        \lciFlushPkgDescription{\lciUsermanualOutputFilename}{\lciOutputFilename}
-        \lcTocSync}%
+        \lciFlushPkgDescription{\lciUsermanualOutputFilename}{\lciOutputFilename}%
+        \lcTocSync%
+        \lcTocToggleOdd%
+      }%
       #1
     }{%
-      \newcommand{\entryleft}[1]{##1}%
+      \newcommand{\entryleft}[1]{##1\lcTocToggleOdd}%
       \newcommand{\entryright}[1]{}%
-      \newcommand{\entryleftright}[2]{##1}%
-      \newcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
+      \newcommand{\entryleftright}[2]{##1\lcTocToggleOdd}%
+      \newcommand{\packageleft}[1]{\cgalreinit\include{##1/main}\lcTocToggleOdd}%
       \newcommand{\packageright}[1]{}%
-      \newcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}}%
+      \newcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}\lcTocToggleOdd}%
       #1
       \renewcommand{\entryleft}[1]{}%
-      \renewcommand{\entryright}[1]{##1}%
-      \renewcommand{\entryleftright}[2]{##2}%
+      \renewcommand{\entryright}[1]{##1\lcTocToggleOdd}%
+      \renewcommand{\entryleftright}[2]{##2\lcTocToggleOdd}%
       \renewcommand{\packageleft}[1]{}%
-      \renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
-      \renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
+      \renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}\lcTocToggleOdd}%
+      \renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}\lcTocToggleOdd}%
       #1
     }%
   }%
