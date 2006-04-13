@@ -21,6 +21,8 @@
 //
 // Author(s)     : Laurent Rineau & Radu Ursu
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include <CGAL/Bbox_2.h>

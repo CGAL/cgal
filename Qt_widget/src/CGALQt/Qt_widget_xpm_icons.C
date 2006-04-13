@@ -21,6 +21,8 @@
 //
 // Author(s)     : Radu Ursu <rursu@geometryfactory.com>
 
+#include <CGAL/basic.h>
+
 
 
 /* XPM */

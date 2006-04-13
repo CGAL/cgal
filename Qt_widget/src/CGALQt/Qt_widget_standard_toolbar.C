@@ -21,6 +21,8 @@
 //
 // Author(s)     : Radu Ursu
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>

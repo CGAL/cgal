@@ -21,6 +21,8 @@
 //
 // Author(s)     : Radu Ursu <rursu@sophia.inria.fr
 
+#include <CGAL/basic.h>
+
 #include <CGAL/IO/Qt_help_window.h>
 
 /* XPM */

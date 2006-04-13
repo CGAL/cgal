@@ -22,6 +22,8 @@
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget_OpenGL.h>

@@ -18,6 +18,7 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
+#include <CGAL/basic.h>
 
 #include <CGAL/Kinetic/IO/internal/Qt_core.h>
 

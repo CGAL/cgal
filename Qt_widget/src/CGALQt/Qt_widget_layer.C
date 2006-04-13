@@ -21,6 +21,8 @@
 //
 // Author(s)     : Laurent Rineau & Radu Ursu
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget_layer.h>

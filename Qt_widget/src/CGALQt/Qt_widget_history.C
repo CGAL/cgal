@@ -21,6 +21,8 @@
 //
 // Author(s)     : Radu Ursu & Laurent Rineau
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget_history.h>
