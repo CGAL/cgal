@@ -18,8 +18,8 @@
 #include <CGAL/intersections.h>
 
 #include <CGAL/Circular_kernel.h>
-#include <CGAL/Circular_arc_traits.h>
-#include <CGAL/Circular_arc_traits_tracer.h>
+#include <CGAL/Arr_circular_arc_traits.h>
+//#include <CGAL/Circular_arc_traits_tracer.h>
 
 #include <CGAL/Lazy_curved_kernel.h>
 
@@ -29,7 +29,7 @@
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Variant_traits.h>
+#include <CGAL/Arr_circular_line_arc_traits.h>
 
 
 #include <CGAL/Random.h>
@@ -150,18 +150,18 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i]);			//If you want create tab
 
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>                      Algebraic_k1;
-  typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1>         CircularKernel;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
+  typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1>     CircularKernel;
 
-  #ifndef CGAL_CURVED_KERNEL_DEBUG
-   typedef CGAL::Circular_arc_traits<CircularKernel>                   CircularK_CA_Traits;
-  #else
-   typedef  CGAL::Circular_arc_traits<CircularKernel>                  Traits0;
-   typedef  CGAL::Circular_arc_traits_tracer<Traits0>                  CircularK_CA_Traits;
-  #endif
+//  #ifndef CGAL_CURVED_KERNEL_DEBUG
+  typedef CGAL::Arr_circular_arc_traits<CircularKernel> CircularK_CA_Traits;
+//   #else
+//    typedef  CGAL::Circular_arc_traits<CircularKernel>          Traits0;
+//    typedef  CGAL::Circular_arc_traits_tracer<Traits0>          CircularK_CA_Traits;
+//   #endif
   
-  typedef CircularKernel::Circular_arc_2                                          CircularKArc;
-  typedef std::vector<CircularKArc>                                      CircularKArcContainer;
+  typedef CircularKernel::Circular_arc_2      CircularKArc;
+  typedef std::vector<CircularKArc>           CircularKArcContainer;
   bench.kernel("CkCircArc");
   
   bench.Compute_no_dxf<CircularKernel,CircularK_CA_Traits,CircularKArcContainer>();
@@ -169,7 +169,7 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i]);			//If you want create tab
  
   typedef CircularKernel::Circular_arc_2                                  Circular_arc_2;
   typedef CircularKernel::Line_arc_2                                      Line_arc_2;
-  typedef CGAL::Variant_traits<CircularKernel,Line_arc_2,Circular_arc_2>  CircularK_Variant_Traits;
+  typedef CGAL::Arr_circular_line_arc_traits<CircularKernel,Line_arc_2,Circular_arc_2>  CircularK_Variant_Traits;
  
   typedef boost::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
   typedef std::vector<CircularKVarArc>                        CircularKVarArcContainer; 
@@ -203,12 +203,12 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
 
   typedef CGAL::Lazy_curved_kernel<CK2_,CK3_>                  LazyCurvedK;
   
-   #ifndef CGAL_CURVED_KERNEL_DEBUG
-  typedef CGAL::Circular_arc_traits<LazyCurvedK>                  LazyCurvedK_CA_Traits;
-   #else
-   typedef  CGAL::Circular_arc_traits<LazyCurved_k>                 Traits0_2;
-   typedef  CGAL::Circular_arc_traits_tracer<Traits0_2>         LazyCurved_kTraits;
-   #endif
+//   #ifndef CGAL_CURVED_KERNEL_DEBUG
+  typedef CGAL::Arr_circular_arc_traits<LazyCurvedK> LazyCurvedK_CA_Traits;
+//    #else
+//    typedef  CGAL::Circular_arc_traits<LazyCurved_k>                 Traits0_2;
+//    typedef  CGAL::Circular_arc_traits_tracer<Traits0_2>         LazyCurved_kTraits;
+//    #endif
   
   typedef LazyCurvedK::Circular_arc_2                              LazyArc;
   typedef std::vector<LazyArc>                                  LazyArcContainer;
@@ -222,7 +222,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
   typedef LazyCurvedK::Line_arc_2  Line_arc_3; 
   typedef boost::variant<Circular_arc_3,Line_arc_3 >               LazyVarArc;
   typedef std::vector<LazyVarArc>                                  LazyVarContainer;
-  typedef CGAL::Variant_traits<LazyCurvedK,Line_arc_3,Circular_arc_3> LazyCurvedK_Variant_Traits;
+  typedef CGAL::Arr_circular_line_arc_traits<LazyCurvedK,Line_arc_3,Circular_arc_3> LazyCurvedK_Variant_Traits;
   
   bench.kernel("LazyKVar");
   
@@ -239,12 +239,12 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
 
   typedef CGAL::Filtered_hexagon_curved_kernel<CircularKernel>        CircularKernelHexagon;
  
-  #ifndef CGAL_CURVED_KERNEL_DEBUG
-  typedef CGAL::Circular_arc_traits<CircularKernelHexagon>                 CircularKernHex_CA_Traits;
-  #else
-  typedef CGAL::Circular_arc_traits<CircularKernelHexagon>                 Traits0_3;
-  typedef CGAL::Circular_arc_traits_tracer<Traits0_3>     CircularKernHex_CA_Traits;
-  #endif  
+//   #ifndef CGAL_CURVED_KERNEL_DEBUG
+  typedef CGAL::Arr_circular_arc_traits<CircularKernelHexagon>                 CircularKernHex_CA_Traits;
+//   #else
+//   typedef CGAL::Circular_arc_traits<CircularKernelHexagon>                 Traits0_3;
+//   typedef CGAL::Circular_arc_traits_tracer<Traits0_3>     CircularKernHex_CA_Traits;
+//   #endif  
   
   typedef CircularKernelHexagon::Circular_arc_2                              CircularKernHexArc;
   typedef std::vector<CircularKernHexArc>                                CircularKernHexArcContainer;
@@ -257,7 +257,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
   typedef CircularKernelHexagon::Line_arc_2                                                       Line_arc_4;
   typedef boost::variant<  Circular_arc_4, Line_arc_4 >                          CircularKernHexVarArc;
   typedef std::vector<CircularKernHexVarArc>                                     CircularKernHexVarArcContainer; 
-  typedef CGAL::Variant_traits<CircularKernelHexagon,Circular_arc_4,Line_arc_4>  CircularKernHex_Variant_Traits;
+  typedef CGAL::Arr_circular_line_arc_traits<CircularKernelHexagon,Circular_arc_4,Line_arc_4>  CircularKernHex_Variant_Traits;
   
   bench.kernel("CK Hex VarTraits");
  
