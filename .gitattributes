@@ -1959,6 +1959,7 @@ Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#appl
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text
 Surface_mesher/examples/Surface_mesher/3d_image_surface_mesher.C -text
 Surface_mesher/examples/Surface_mesher/ImageIO/ImageIO.c -text
+Surface_mesher/examples/Surface_mesher/ImageIO/LICENSE -text
 Surface_mesher/examples/Surface_mesher/ImageIO/analyze.c -text
 Surface_mesher/examples/Surface_mesher/ImageIO/analyze.h -text
 Surface_mesher/examples/Surface_mesher/ImageIO/bmp.c -text
