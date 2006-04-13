@@ -94,6 +94,11 @@
 </body>  </html>
 }}
 
+% manage even/odd outer table blocks
+\newcommand{\lcPkgDescToggleOdd}{\lciIfEqualExpanded{\lciPkgDescOdd}{Odd}{%
+    \gdef\lciPkgDescOdd{Even}}{\gdef\lciPkgDescOdd{Odd}}}
+\gdef\lciPkgDescOdd{Odd}
+
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -105,7 +110,7 @@
 % manage even/odd outer table blocks
 \newcommand{\lcTocToggleOdd}{\lciIfEqualExpanded{\lciTocOdd}{Odd}{%
     \gdef\lciTocOdd{Even}}{\gdef\lciTocOdd{Odd}}}
-\gdef\lciTocOdd{Odd}
+\gdef\lciTocOdd{Even}
 
 % Enables and disables the two-column TOC
 \newcommand{\lcTwoColumnToc}{\gdef\lciIfTwoColumnToc{\lcTrue}}
@@ -127,12 +132,12 @@
     \lcRawHtml{  </tr>
 
 }%
-    \lcTocToggleOdd
+    %\lcTocToggleOdd
   }{\lciIfEqualExpanded{\lciTocOuterState}{Right}{%
     \lcRawHtml{  </td></tr>
 
 }%
-    \lcTocToggleOdd
+    %\lcTocToggleOdd
   }{}}%
   \gdef\lciTocOuterState{Sync}%
 }
@@ -141,13 +146,13 @@
 \newcommand{\lciTocCompleteRow}{%
   \lciTocCloseInner
   \lciTocSync
-  \lcRawHtml{  <tr valign="top"><td }%
+    \lcRawHtml{  <tr valign="top"><td }%
   \lciIfTwoColumnToc%
     {\lcRawHtml{colspan="2" }}%
     {}%
   \lcRawHtml{class="TocGroup}\lciTocOdd\lcRawHtml{Left">}
   \gdef\lciTocOuterState{Right}%
-  \lcTocToggleOdd
+  %\lcTocToggleOdd
 }
 
 \newcommand{\lcTocLeft}{\lciPushOutput{toc}\lciTocLeft\lciPopOutput}
@@ -212,7 +217,7 @@
 
 % outer table class and options
 \newcommand{\lciTocOuterTable}{%
-    \lcRawHtml{<table class="TocOuterTable" cellpadding="2" cellspacing="2">
+    \lcRawHtml{<table class="TocOuterTable" cellpadding="2" cellspacing="0">
 }}
 
 % inner table class and options
@@ -227,39 +232,24 @@
       Table of Contents}%
     \lciHtmlNavigationTop
     \lcRawHtml{
-<h1>}\lciIfEqualExpanded{\lciManualTitle}{}{}{%
-    \lciManualTitle\lcRawHtml{<br>}}%
+<h1>}\lciIfEqualExpanded{\lciManualTitle}{}{}{
+    \lciManualTitle\lcRawHtml{<br>}}
     \lcRawHtml{Table of Contents</h1>
 <hr>
 
 <!-- Begin of the list of contents entries -->
-}\lciTocOuterTable\lcRawHtml{
-}    \lciIfTwoColumnToc{\lcRawHtml{
-  <tr valign="top"><td class="TocGroupOddLeft">
-}\lciTocInnerTable
-\lcRawHtml{    <tr><td class="TocTitle">
-        <a class="TocLinkTitle" href="title.html">Title Page</a>
-    </tr></td>
-  </table></td><td class="TocGroupOddRight">
-}\lciTocInnerTable
-\lcRawHtml{    <tr><td class="TocBibliography">
-        <a class="TocLinkBibliography" href="biblio.html">Bibliography</a>
-    </td></tr>
-  </table></td></tr>
-
-  <tr valign="top"><td class="TocGroupEvenLeft">
-}\lciTocInnerTable
-\lcRawHtml{    <tr><td class="TocContents">
-        <a class="TocLinkContents" href="contents.html">Table of Contents</a>
-    </td></tr>
-  </table></td><td class="TocGroupEvenRight">
-}\lciTocInnerTable
-\lcRawHtml{    <tr><td class="TocIndex">
-        <a class="TocLinkIndex" href="manual_index.html">Index</a>
-    </td></tr>
-  </table></td></tr>
-
-}}{\lcRawHtml{
+}\lciTocOuterTable
+  \lciIfTwoColumnToc{
+    \lcTocLeft{\lcRawHtml{<a class="TocLinkTitle" href="title.html">Title Page</a>}}%
+    \lcTocRight{\lcRawHtml{<a class="TocLinkBibliography" href="biblio.html">Bibliography</a>}}%
+    \lcTocToggleOdd%
+    \lcTocLeft{\lcRawHtml{<a class="TocLinkPkgDesc" href="pkgdescription.html">Package Description</a>}}%
+    \lcTocRight{\lcRawHtml{<a class="TocLinkIndex" href="manual_index.html">Index</a>}}%
+    \lcTocToggleOdd%
+    \lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
+    \lcTocToggleOdd%
+  }{%
+  \lcRawHtml{
   <tr valign="top"><td class="TocGroupOddLeft">
 }\lciTocInnerTable
 \lcRawHtml{    <tr><td class="TocTitle">
@@ -275,12 +265,22 @@
   </table></td></tr>
 
 }%
-}}
+    \lcTocToggleOdd%
+
+  %  \gdef\lciTocOuterState{Sync}
+    %\lcTocLeft{\lcRawHtml{<a class="TocLinkTitle" href="title.html">Title Page</a>}}%
+    %\lcTocToggleOdd%
+    %\lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
+    %\lcTocToggleOdd%
+  }%
+}
 
 % Args: none
 \newcommand{\lciTocFileFooter}{%
     \lciTocSync
-    \lciIfTwoColumnToc{}{\lcRawHtml{
+    \lciIfTwoColumnToc{}{
+        \lcTocToggleOdd%
+\lcRawHtml{
   <tr valign="top"><td class="TocGroup}\lciTocOdd\lcRawHtml{Left">
 }\lciTocInnerTable
 \lcRawHtml{    <tr><td class="TocBibliography">

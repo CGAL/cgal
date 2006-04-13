@@ -38,13 +38,13 @@ p.TitlePageDate        { font-size:18pt; }
 
 table.TocOuterTable    {  }
 td.TocGroupOddLeft,
-td.TocEmptyOddLeft     { background-color: #d0d0d0; }
+td.TocEmptyOddLeft,
 td.TocGroupOddRight,
-td.TocEmptyOddRight    {  }
+td.TocEmptyOddRight    { background-color: #e7e7e7; }
 td.TocGroupEvenLeft,
-td.TocEmptyEvenLeft    {  }
+td.TocEmptyEvenLeft,
 td.TocGroupEvenRight,
-td.TocEmptyEvenRight   { background-color: #d0d0d0; }
+td.TocEmptyEvenRight   {  }
 
 h3.TocPart             { background-color: #ffffa0; }
 h2.PkgDescPart         { background-color: #ffffa0; }
@@ -62,10 +62,11 @@ td.TocSubsubsection    {  }
 td.TocParagraph        {  }
 td.TocSubparagraph     {  }
 
-a.TocLinkTitle         {  }
-a.TocLinkContents      {  }
-a.TocLinkIndex         {  }
-a.TocLinkBibliography  {  }
+a.TocLinkTitle         { font-weight: bold; }
+a.TocLinkContents      { font-weight: bold; }
+a.TocLinkIndex         { font-weight: bold; }
+a.TocLinkBibliography  { font-weight: bold; }
+a.TocLinkPkgDesc       { font-weight: bold; }
 a.TocLinkPart          {  }
 a.TocLinkChapter       {  }
 a.TocLinkSection       {  }

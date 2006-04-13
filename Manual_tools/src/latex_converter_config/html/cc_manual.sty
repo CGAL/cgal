@@ -999,20 +999,21 @@
       \gdef\lciCurrentPartName{}%
     }%
     \lciPushOutput{description}%
-    \lcRawHtml{<tr><td colspan="3">}%
+    \lcRawHtml{<tr><td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
     \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3></td></tr>}
     %\lcRawHtml{<TABLE>}
-    \lcRawHtml{<tr valign="top"><td width="75\%">}
+    \lcRawHtml{<tr valign="top"><td width="75\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \ccValueofPkgSummary
-    \lcRawHtml{</td><td width="2\%">}
-    \lcRawHtml{</td><td width="23\%">}
+    \lcRawHtml{</td><td width="2\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
+    \lcRawHtml{</td><td width="23\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \ccValueofPkgMaturity
     \ccValueofPkgDependsOn
     \ccValueofPkgLicense
     \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
     \lcRawHtml{</td></td>}
     %\lcRawHtml{</table>}
+    \lcPkgDescToggleOdd
     \lciPopOutput%
     \gdef\ccValueofPkgName{}%
     %\lciPkgDescriptionIsOddEntry
