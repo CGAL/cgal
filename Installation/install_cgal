@@ -3333,12 +3333,15 @@ menu_header()
     elif [ -z "${_SUPPORT}" ]; then
 	_SUPPORT='no other library'
     fi
+    _SUPPORT="Support for: ${_SUPPORT}."
     clear_screen
     print_filled_line
     print_headline "CGAL $CGAL_VERSION Installation ${1} Menu"
     print_line     "OS:          ${SYST}"
     print_line     "Compiler:    `extended_compiler_description`"
-    print_line     "Support for: ${_SUPPORT}."
+    flush_buffer
+    # print supported stuff nicely
+    echo "${_SUPPORT}" | ${_awk} "BEGIN {RS=\" \"; l=0; c=\"\" } {if (l+length(\$1) > 55) { printf \"${_MENU_LINE_EMPTY}\\r${_LEFTSPACE}**   %s\\n\",c; c=\"             \" \$1; l=13+length(\$1) } else { if (length(c)==0) { l+=length(\$1); c=\$1 } else { l+=length(\$1)+1; c=c \" \" \$1 } } } END { if (length(c)>0) { printf \"${_MENU_LINE_EMPTY}\\r${_LEFTSPACE}**   %s\\n\",c } }"
     print_empty_line
     if [ -n "${CGAL_SUPPORT_COMPILER}" ]; then
 	print_line     "Compiler is supported by CGAL."
