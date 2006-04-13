@@ -19,6 +19,8 @@ are the following third-party libraries, available under their own licenses:
   the QPL (see LICENSE.QPL).
 - OpenNL, in the directory "include/OpenNL", is licensed under the GPL with
   additional exceptions (see LICENSE.OPENNL).
+- ImageIO, in the directory "examples/Surface_mesher/ImageIO", is licensed
+  under the LGPL (see LICENSE.LGPL).
 
 All other files that do not have an explicit copyright notice (e.g., all
 examples and some demos) are licensed under a very permissive license. The
