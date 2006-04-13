@@ -1,10 +1,10 @@
 #define CGAL_CAST_INT
 #define CIRCULAR_KERNEL_2
 #define LAZY_CURVED_KERNEL_2
-//#define CIRCULAR_KERNEL_2_FILTERED_HEXAGON   
-//#define LAZY_CURVED_KERNEL_2_FILTERED_HEXAGON 
-// #define CIRCULAR_KERNEL_2_FILTERED_BBOX
-//#define LAZY_CURVED_KERNEL_2_FILTERED_BBOX
+#define CIRCULAR_KERNEL_2_FILTERED_HEXAGON   
+#define LAZY_CURVED_KERNEL_2_FILTERED_HEXAGON 
+#define CIRCULAR_KERNEL_2_FILTERED_BBOX
+#define LAZY_CURVED_KERNEL_2_FILTERED_BBOX
 
 
 #include <CGAL/Cartesian.h>
@@ -38,8 +38,8 @@
 #include "benchmark.h"
 
 int main(int argc, char* argv[])
-{	char* Dxffilename[]={"myFirst.dxf","cad_l1.dxf"};
-    //char* Dxffilename[]={"myFirst.dxf","minimask0.dxf","minimask1.dxf","mask0.dxf","mask1.dxf","smallpainttrack.dxf","mask0_25.dxf","mask0_5.dxf","cad_l2.dxf","cad_l1.dxf","CIOnZDraw.dxf","che_mod1.dxf","elekonta.dxf","painttrack.dxf","netlist_signal_1.dxf","51.dxf"}; 
+{	//char* Dxffilename[]={"myFirst.dxf","cad_l1.dxf"};
+    char* Dxffilename[]={"myFirst.dxf","minimask0.dxf","minimask1.dxf","mask0.dxf","mask1.dxf","smallpainttrack.dxf","mask0_25.dxf","mask0_5.dxf","cad_l2.dxf","cad_l1.dxf","CIOnZDraw.dxf","che_mod1.dxf","elekonta.dxf","painttrack.dxf","netlist_signal_1.dxf","51.dxf"}; 
     char* Htmlfilename;
     char* Texfilename;
     char exten[4];
@@ -275,12 +275,13 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
 
   typedef CGAL::Filtered_hexagon_curved_kernel<LazyCurvedK>  LazyKernelHexagon;	
    
-  #ifndef CGAL_CURVED_KERNEL_DEBUG
-  typedef CGAL::Circular_arc_traits<LazyKernelHexagon>                  LazyKernelHexagon_CA_Traits;
-  #else
-  typedef CGAL::Circular_arc_traits<LazyKernelHexagon>                  Traits0_4;
-  typedef CGAL::Circular_arc_traits_tracer<Traits0_4>            LazyKernelHexagon_CA_Traits;
-  #endif  
+//   #ifndef CGAL_CURVED_KERNEL_DEBUG
+  typedef CGAL::Arr_circular_arc_traits<LazyKernelHexagon>                  LazyKernelHexagon_CA_Traits;
+//   #else
+//   typedef CGAL::Circular_arc_traits<LazyKernelHexagon>                  Traits0_4;
+//   typedef CGAL::Circular_arc_traits_tracer<Traits0_4>            LazyKernelHexagon_CA_Traits;
+//   #endif  
+
   typedef LazyKernelHexagon::Circular_arc_2                              LazyKernelHexagonArc;
   typedef std::vector<LazyKernelHexagonArc>                                  LazyKernelHexagonArcContainer;
   bench.kernel("LazyK Hex CircArcTraits");
@@ -291,7 +292,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
   typedef LazyKernelHexagon::Line_arc_2                                            Line_arc_5;
   typedef boost::variant<Circular_arc_5,Line_arc_5 >                  HxLazyVarArc;
   typedef std::vector<HxLazyVarArc>                                   HxLazyVarContainer;
-  typedef CGAL::Variant_traits<LazyKernelHexagon,Line_arc_5,Circular_arc_5>  HxLazyVariantTraits; 
+  typedef CGAL::Arr_circular_line_arc_traits<LazyKernelHexagon,Line_arc_5,Circular_arc_5>  HxLazyVariantTraits; 
   
   bench.kernel("LazyK Hex  VarTraits") ;
 
@@ -307,12 +308,12 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
 
   typedef CGAL::Filtered_bbox_curved_kernel<CircularKernel>           BBCircularKernel ;
  
-   #ifndef CGAL_CURVED_KERNEL_DEBUG
-  typedef CGAL::Circular_arc_traits<BBCircularKernel>                  BBCircularKernel_CA_Traits;
-  #else
-  typedef CGAL::Circular_arc_traits<BBCircularKernel>                  Traits0_5;
-  typedef CGAL::Circular_arc_traits_tracer<Traits0_5>            BBCircularKernel_CA_Traits;
-  #endif  
+//    #ifndef CGAL_CURVED_KERNEL_DEBUG
+  typedef CGAL::Arr_circular_arc_traits<BBCircularKernel>                  BBCircularKernel_CA_Traits;
+//   #else
+//   typedef CGAL::Circular_arc_traits<BBCircularKernel>                  Traits0_5;
+//   typedef CGAL::Circular_arc_traits_tracer<Traits0_5>            BBCircularKernel_CA_Traits;
+//   #endif  
   typedef BBCircularKernel::Circular_arc_2                              BBCircularKernelArc;
   typedef std::vector<BBCircularKernelArc>                                 BBCircularKernelArcContainer;
   bench.kernel("CK BBox CircArcTraits");
@@ -323,7 +324,7 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
   typedef BBCircularKernel::Line_arc_2                                            Line_arc_6;
   typedef boost::variant<Circular_arc_6,Line_arc_6 >                  BBCircVarArc;
   typedef std::vector<BBCircVarArc>                                   BBCircVarContainer;
-  typedef CGAL::Variant_traits<BBCircularKernel,Line_arc_6,Circular_arc_6>  BBCircVariantTraits; 
+  typedef CGAL::Arr_circular_line_arc_traits<BBCircularKernel,Line_arc_6,Circular_arc_6>  BBCircVariantTraits; 
   
   bench.kernel("CK BBox VarTraits") ;
   
@@ -339,12 +340,13 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
 
    typedef CGAL::Filtered_bbox_curved_kernel<LazyCurvedK>              BBLazyCurvedK; 
   
-   #ifndef CGAL_CURVED_KERNEL_DEBUG
-  typedef CGAL::Circular_arc_traits<BBLazyCurvedK>                  BBLazyCurvedK_CA_Traits;
-  #else
-  typedef CGAL::Circular_arc_traits<BBLazyCurvedK>                  Traits0_6;
-  typedef CGAL::Circular_arc_traits_tracer<Traits0_6>            BBLazyCurvedK_CA_Traits;
-  #endif  
+//    #ifndef CGAL_CURVED_KERNEL_DEBUG
+  typedef CGAL::Arr_circular_arc_traits<BBLazyCurvedK>                  BBLazyCurvedK_CA_Traits;
+//   #else
+//   typedef CGAL::Circular_arc_traits<BBLazyCurvedK>                  Traits0_6;
+//   typedef CGAL::Circular_arc_traits_tracer<Traits0_6>            BBLazyCurvedK_CA_Traits;
+//   #endif  
+
   typedef BBLazyCurvedK::Circular_arc_2                              BBLazyCurvedKArc;
   typedef std::vector<BBLazyCurvedKArc>                                 BBLazyCurvedKArcContainer;
   bench.kernel("LLazyK BBox CircArcTraits");
@@ -356,7 +358,7 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
   typedef BBLazyCurvedK::Line_arc_2                                            Line_arc_7;
   typedef boost::variant<Circular_arc_7,Line_arc_7 >                  BBLazyVarArc;
   typedef std::vector< BBLazyVarArc>                                    BBLazyVarContainer;
-  typedef CGAL::Variant_traits<BBLazyCurvedK,Line_arc_7,Circular_arc_7>   BBLazyVariantTraits; 
+  typedef CGAL::Arr_circular_line_arc_traits<BBLazyCurvedK,Line_arc_7,Circular_arc_7>   BBLazyVariantTraits; 
   
   bench.kernel("LLazyK BBox VarTraits") ;
   

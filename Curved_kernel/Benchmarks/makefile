@@ -6,8 +6,6 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
-
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 
            #-DNDEBUG \
@@ -15,7 +13,8 @@ CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux
            #-DCGAL_PROFILE \
            #-g
 
-CGAL_MAKEFILE =/proj/geometrica/home/CGAL/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
+CGAL_MAKEFILE =/proj/geometrica/home/CGAL/CGAL-I/make/makefile_i686_Linux-2.6_g++-4.0.2
+#makefile_i686_Linux-2.6_g++-3.4.4
 
 include $(CGAL_MAKEFILE)
 
@@ -25,8 +24,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   -I/home/isuslov/CGAL/Curved_kernel/include/ \
-           -I../../Algebraic_kernel/include \
 	   -DNDEBUG \
 	   -O2  \
            $(TESTSUITE_CXXFLAGS) \
