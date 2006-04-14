@@ -1101,8 +1101,14 @@ Reference~Manual}%
                    \ifnum\ccAutoIndex=\ccTrue%
                       \ccIndexRefDeclarationBegin%
                    \fi%
+                   %\begingroup
+                   %  \tracingall
+                   %  \catcode`_=12
+                   %  \expandafter\addcontentslineX{\ccCurrentFilename}
+                   %\endgroup
                    \addcontentsline{ref}{refpage}{\protect\ccc{\ccPureRefName}}
                }
+%\gdef\addcontentslineX#1{\addcontentsline{#1.ref}{refpage}{\protect\ccc{\ccPureRefName}}}
 
 %% if there's an optional argument (used to specify the scope of a ceratin
 %% item, then assume it's a class name for indexing functions (and others???)
