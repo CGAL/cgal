@@ -4202,9 +4202,6 @@ lib_menu()
          "${_LEFTSPACE}  Please correct your setup."
 	print_filled_line
         wait_for_enter
-        if [ -z "${INSTALL_INTERACTIVE}" ]; then
-            exit 1
-        fi
     fi
 }
 
