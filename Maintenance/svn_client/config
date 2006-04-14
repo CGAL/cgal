@@ -124,6 +124,7 @@ TO_DO = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.bib = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.bst = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.sty = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.fd = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.aw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.awi = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.lw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
@@ -140,6 +141,7 @@ run_testsuite = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;sv
 *.c = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.C = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.cpp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.xpm = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.cc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.tcc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.stage_* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
@@ -171,8 +173,10 @@ makefile.* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.def = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.rc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.rc2 = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.reg = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.manifest = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.ini = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.dxy = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 Doxyfile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.mps = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 
