@@ -260,40 +260,50 @@
   \newcommand{\ccPartDescription}[2]{}
   #1
   \lcTex{%
-    %\renewcommand{\entryleft}[1]{##1}%
-    %\renewcommand{\entryright}[1]{}%
-    %\renewcommand{\entryleftright}[2]{##1}%
-    %\renewcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
-    %\renewcommand{\packageright}[1]{}%
-    %\renewcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}}%
-    %#1
-    %\renewcommand{\entryleft}[1]{}%
-    %\renewcommand{\entryright}[1]{##1}%
-    %\renewcommand{\entryleftright}[2]{##2}%
-    %\renewcommand{\packageleft}[1]{}%
-    %\renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
-    %\renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
-    %#1
     \renewcommand{\entry}[1]{##1}%
     \renewcommand{\entryleft}[1]{##1}%
     \renewcommand{\entryright}[1]{##1}%
-    % should be deprecated, i suppose
     \renewcommand{\entryleftright}[2]{##1##2}%
-    \renewcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
-    \renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
-    \renewcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}\cgalreinit\include{##2/main}}%
+    \renewcommand{\packageleft}[1]{%
+      \gdef\ccCurrentFilename{##1}%
+      \cgalreinit\include{##1/main}%
+    }%
+    \renewcommand{\packageright}[1]{%
+      \gdef\ccCurrentFilename{##1}%
+      \cgalreinit\include{##1/main}%
+    }%
+    \renewcommand{\packageleftright}[2]{%
+      \gdef\ccCurrentFilename{##1}%
+      \cgalreinit\include{##1/main}%
+      \gdef\ccCurrentFilename{##1}%
+      \cgalreinit\include{##2/main}%
+    }%
     #1
   }%
   \lcHtml{
     \newcommand{\ccPartDescription}{\ccPartDescriptionImpl}
     \newcommand{\entry}[1]{\lcTocCompleteRow ##1}
     \lciIfTwoColumnToc{
-      \newcommand{\entryleft}[1]{\lcTocLeft ##1\lcTocToggleOdd}%
-      \newcommand{\entryright}[1]{\lcTocRight ##1\lcTocToggleOdd}%
+      \newcommand{\entryleft}[1]{\lcTocLeft ##1 \lcTocRight \lcTocToggleOdd}%
+      \newcommand{\entryright}[1]{\lcTocLeft \lcTocRight ##1 \lcTocToggleOdd}%
       \newcommand{\entryleftright}[2]{%
         \lcTocSync\lcTocLeft ##1\lcTocRight ##2\lcTocSync\lcTocToggleOdd}%
-      \newcommand{\packageleft}[1]{\lcTocLeft \cgalreinit\include{##1/main}\lcTocToggleOdd}%
-      \newcommand{\packageright}[1]{\lcTocRight \cgalreinit\include{##1/main}\lcTocToggleOdd}%
+      \newcommand{\packageleft}[1]{%
+        \lcTocSync%
+        \lcTocLeft\cgalreinit\include{##1/main}%
+        \lcTocRight%
+        \lcTocSync%
+        \lcTocToggleOdd%
+      }%
+
+      \newcommand{\packageright}[1]{%
+        \lcTocSync%
+        \lcTocLeft%
+        \lcTocRight\cgalreinit\include{##1/main}%
+        \lcTocSync%
+        \lcTocToggleOdd%
+      }%
+
       \newcommand{\packageleftright}[2]{%
         \lcTocSync%
         \lcTocLeft\cgalreinit\include{##1/main}%
