@@ -64,9 +64,6 @@ clean:
 
 .SUFFIXES: .cpp $(SUFFIXES)
 
-.C$(OBJ_EXT):
-	$(CGAL_CXX)  $(CXXFLAGS) -c $<
-
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
 

@@ -518,7 +518,7 @@ Installation/config/support/test_ZLIB.C -text
 Installation/config/testfiles/CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG.C -text
 Installation/config/testfiles/CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG.C -text
 Installation/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C -text
-Installation/src/makefile -text
+Installation/src/CGAL/makefile -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
