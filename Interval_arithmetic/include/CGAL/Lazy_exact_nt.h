@@ -966,6 +966,7 @@ fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
 // We create a type of new node in Lazy_exact_nt's DAG
 // for the make_root_of_2() operation.
 
+#if 0 // To be finished
 template <typename ET >
 struct Lazy_exact_ro2
   : public Lazy_exact_rep< typename Root_of_traits<ET>::RootOf_2 >
@@ -1030,6 +1031,8 @@ public:
     typedef Lazy_exact_nt< typename T::RootOf_1 > RootOf_1;
     typedef Lazy_exact_nt< typename T::RootOf_2 > RootOf_2;
 };
+
+#endif // 0
 
 #undef CGAL_double
 #undef CGAL_int
