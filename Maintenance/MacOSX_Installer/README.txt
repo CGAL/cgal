@@ -25,7 +25,9 @@ The instructions below work for versions of CGAL from 3.2 and up.
    Save it as CGAL.pkg. Eventually commit your new project to the
    svn server.
 5. Open the DiskUtility and create a read-write disk image (named
-   CGAL-X.Y-RW.dmg) with the appropriate size. Copy CGAL.pkg in the disk
+   CGAL-X.Y.dmg) with the appropriate size. Copy CGAL.pkg in the disk
    image. Eject the disk image. Using the DiskUtility application convert
-   the CGAL-X.Y-RW.dmg disk image to a read-only disk image. Save the new
-   disk image as CGAL-X.Y.dmg. You all set!!!
+   the CGAL-X.Y.dmg disk image to a read-only disk image. Save the new
+   disk image as CGAL-X.Y-RO.dmg. Discard your read-write image and
+   rename CGAL-X.Y-RO.dmg to CGAL-X.Y.dmg.
+                        You all set!!!
