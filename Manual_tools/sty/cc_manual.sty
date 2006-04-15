@@ -8,8 +8,8 @@
 % | Zurich, Switzerland                                                     |
 % | 15.09.1999   Susan Hert     hert@mpi-sb.mpg.de                          |
 % | Saarbruecken, Germany                                                   |
-% | $Id$                                                       |
-% | $Date$                                            |
+% | $Id$                  |
+% | $Date$                   |
 % |_________________________________________________________________________|
 % |#########################################################################|
 % |                                                                         |
@@ -39,6 +39,13 @@
 % |                                                                         |
 % |#########################################################################|
 
+% used for writing the refpage entries.
+\newwrite\ccListOfRefpagesFile%
+% contains all processed "ccCurrentFilename"s
+\newwrite\ccListOfProcessedFilenames%
+% used to test if a file exists
+\newread\mydummyinstream
+
 % Set this definition to \ccTrue to activate the old name definitions
 % which are still there for portability reasons.
 
@@ -49,9 +56,23 @@
 %\tracingmacros=1
 
 
-\newcommand{\ccEnableRawListOfRefpages}{}
-\newcommand{\ccEnableSortedListOfRefpages}{}
-\newcommand{\ccPrintSortedListOfRefpages}{}
+\newcommand{\ccEnableRawListOfRefpages}{\gdef\ccIfPrintRawListOfRefpages{\ccTrue}}
+\newcommand{\ccEnableSortedListOfRefpages}{\gdef\ccIfPrintRawListOfRefpages{\ccFalse}}
+\newcommand{\ccPrintSortedListOfRefpages}{
+  \section{Alphabetical List of Reference Pages}
+  \openin\expandafter\mydummyinstream= \ccCurrentFilename/listofrefpages
+  \ifeof\mydummyinstream
+    \relax
+  \else
+    \closein\mydummyinstream
+    \begingroup
+      \catcode`_=12
+      \expandafter\input{\ccCurrentFilename/listofrefpages}
+    \endgroup
+  \fi
+}
+
+\ccEnableSortedListOfRefpages
 
 % \ccRevision and \ccDate can be found below of \RCSdef and \RCSdefDate
 % There is also the code to print the message during the typesetting.
@@ -114,8 +135,14 @@
 \newcommand{\ccRefChapter}[1]{%
  \chapter{#1\\
 Reference~Manual}%
+  \ifnum\ccInsideListOfRefpages=\ccTrue
+    \gdef\ccInsideListOfRefpages{\ccFalse}%
+    \immediate\closeout\ccListOfRefpagesFile%
+  \fi
+  \ccEnableSortedListOfRefpages
 }
 
+\gdef\ccInsideListOfRefpages{\ccFalse}%
 % ___________________________________________________________________________
 % ###########################################################################
 % |
@@ -1047,11 +1074,6 @@ Reference~Manual}%
 % #2 == item name (actually parsed later by ccRefDeclarationX)
 \catcode`@=11
 \newenvironment{ccRefDeclaration}[1]{%
-                   \ifnum\ccRefPageBreak=\ccTrue
-                     \ifnum\ccNewRefManualStyle=\ccTrue
-                        \clearpage \thispagestyle{plain}
-                     \fi
-                   \fi
                    \gdef\ccRefCategory{#1}%
                    \gdef\ccPureRefScope{}%
                    \gdef\ccRefScope{}%
@@ -1079,36 +1101,49 @@ Reference~Manual}%
 \catcode`@=12
 
 \gdef\ccRefDeclarationX #1{%
-                   \endgroup
-                   \gdef\ccPureRefName{#1}%
-                   \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
-                      \renewcommand{\ccRefName}{{{%
-                        \ccPrintTokens #1\ccEnd\ccEndFont}}}%
-                   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
-                      \renewcommand{\ccRefName}{{{%
-                        \ccPrintTokens #1\ccEnd\ccEndFont}}}%
-                   \else
-                      \renewcommand{\ccRefName}{{{\ccFont
-                        \ccPrintTokens #1\ccEnd\ccEndFont}}}%
-                   \fi\fi
-                   \ccRefPageBegin
-                   \ccRefSection{\ccRefCategory}{#1}%
-                   \label{ccRef_\ccRefPureGlobalScope\ccPureRefScope #1}%
-                   % needed for compliance with ccClass
-                   \gdef\ccPureClassTemplateName{#1}%
-                   \renewcommand{\ccClassTemplateName}{{{\ccFont
-                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
-                   \ifnum\ccAutoIndex=\ccTrue%
-                      \ccIndexRefDeclarationBegin%
-                   \fi%
-                   %\begingroup
-                   %  \tracingall
-                   %  \catcode`_=12
-                   %  \expandafter\addcontentslineX{\ccCurrentFilename}
-                   %\endgroup
-                   \addcontentsline{ref}{refpage}{\protect\ccc{\ccPureRefName}}
-               }
-%\gdef\addcontentslineX#1{\addcontentsline{#1.ref}{refpage}{\protect\ccc{\ccPureRefName}}}
+  \endgroup
+
+  \ifnum\ccInsideListOfRefpages=\ccFalse
+    \gdef\ccInsideListOfRefpages{\ccTrue}%
+    \ifnum\ccIfPrintRawListOfRefpages=\ccFalse
+      \ccPrintSortedListOfRefpages
+    \fi
+    \begingroup
+      \catcode`_=12
+      \openout\expandafter\ccListOfRefpagesFile= \ccCurrentFilename/listofrefpages
+    \endgroup
+  \fi
+
+  \ifnum\ccRefPageBreak=\ccTrue
+    \ifnum\ccNewRefManualStyle=\ccTrue
+      \clearpage \thispagestyle{plain}
+    \fi
+  \fi
+
+  \gdef\ccPureRefName{#1}%
+  \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+    \renewcommand{\ccRefName}{{{%
+      \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+  \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+    \renewcommand{\ccRefName}{{{%
+      \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+  \else
+    \renewcommand{\ccRefName}{{{\ccFont
+      \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+  \fi\fi
+  \ccRefPageBegin
+  \ccRefSection{\ccRefCategory}{#1}%
+  \label{ccRef_\ccRefPureGlobalScope\ccPureRefScope #1}%
+  % needed for compliance with ccClass
+  \gdef\ccPureClassTemplateName{#1}%
+  \renewcommand{\ccClassTemplateName}{{{\ccFont
+          \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+  \ifnum\ccAutoIndex=\ccTrue%
+    \ccIndexRefDeclarationBegin%
+  \fi%
+
+  \write\ccListOfRefpagesFile{\protect\ccRefIdfierPageLORF{#1}{\ccRefPureGlobalScope\ccPureRefScope#1}\noexpand\\
+}}
 
 %% if there's an optional argument (used to specify the scope of a ceratin
 %% item, then assume it's a class name for indexing functions (and others???)
@@ -1263,6 +1298,16 @@ Reference~Manual}%
       \ccc{#1}\ccRefPageFill \ccRefPage{#1}%
    \else
       \ccc{#1} (pg. \pageref{ccRef_#1})%
+   \fi
+}
+
+
+\newcommand{\ccRefIdfierPageLORF}{\begingroup\ccCatcode\ccRefIdfierPageLORFX}
+\def\ccRefIdfierPageLORFX #1#2{\endgroup%
+   \ifnum\ccRefPageNumAtMargin=\ccTrue
+      \ccc{#1}\ccRefPageFill \ccRefPage{#2}%
+   \else
+      \ccc{#1} (pg. \pageref{ccRef_#2})%
    \fi
 }
 
