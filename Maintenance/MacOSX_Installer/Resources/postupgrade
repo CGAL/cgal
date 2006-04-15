@@ -1,0 +1,9 @@
+#!/bin/sh
+cd $2/CGAL-3.2
+QTDIR=/Developer/qt
+DYLD_LIBRARY_PATH=/Developer/qt/lib
+export QTDIR DYLD_LIBRARY_PATH
+touch upgrade.cgal
+touch MacOSX-install.log
+./install_cgal -ni --CXX /usr/bin/g++ --CXXFLAGS "-Wno-long-long" >> $2/CGAL-3.2/MacOSX-install.log
+exit 0

@@ -705,6 +705,13 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -
 Kinetic_data_structures/test/Polynomial_kernel/core_test.C -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
+Maintenance/MacOSX_Installer/CGAL.pmproj -text
+Maintenance/MacOSX_Installer/Resources/License.rtf -text
+Maintenance/MacOSX_Installer/Resources/ReadMe.rtf -text
+Maintenance/MacOSX_Installer/Resources/Welcome.rtf -text
+Maintenance/MacOSX_Installer/Resources/postflight -text
+Maintenance/MacOSX_Installer/Resources/postupgrade -text
+Maintenance/MacOSX_Installer/cgal_very_small.gif -text
 Maintenance/rpm/GNUmakefile -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text

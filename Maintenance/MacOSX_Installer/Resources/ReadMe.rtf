@@ -1,0 +1,44 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;\f1\fswiss\fcharset77 Helvetica-Bold;\f2\fswiss\fcharset77 Helvetica-Oblique;
+}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 The installer will first write the CGAL files and then compile the CGAL\
+library. Consult the CGAL installation script log file MacOSX-install.log\
+(can be found under the CGAL root directory) for important information\
+about whether the CGAL setup was successful and about environment\
+variables that you need to define.\
+\
+The CGAL install program will try to find configure several libraries in\
+your system. In particular these libraries include boost, GMP/MPFR\
+and Qt.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f1\b \cf0 \
+Important note: 
+\f0\b0 boost is actually required by CGAL, which means\
+that the install program will fail if boost is not found.\
+\
+In order for these libraries to be correctly configured with CGAL you\
+must make sure, before proceeding with the installation program, that\
+they are installed under the proper path.\
+
+\f2\i You may need administrator access to setup the libraries under the\
+proper paths.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\i0 \cf0 * 
+\f1\b boost
+\f0\b0 : boost include files must be installed under /usr/include or\
+   /usr/local/include\
+* 
+\f1\b GMP/MPFR
+\f0\b0 : GMP/MPFR include files must be installed under\
+   /usr/include or /usr/local/include. GMP/MPFR libraries must be\
+   installed under /usr/lib or /usr/local/lib \
+* 
+\f1\b Qt
+\f0\b0 : Qt files must be installed under /Developer/qt.\
+}
