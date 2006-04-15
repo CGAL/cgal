@@ -41,8 +41,6 @@
 
 % used for writing the refpage entries.
 \newwrite\ccListOfRefpagesFile%
-% contains all processed "ccCurrentFilename"s
-\newwrite\ccListOfProcessedFilenames%
 % used to test if a file exists
 \newread\mydummyinstream
 
@@ -143,6 +141,8 @@ Reference~Manual}%
 }
 
 \gdef\ccInsideListOfRefpages{\ccFalse}%
+\gdef\ccCurrentFilename{.}
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
