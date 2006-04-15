@@ -143,8 +143,8 @@ struct Test_with_kernel {
     std::cout << "   Two spheres\n";
     Tr tr_3;
 
-    Sphere<K> sphere1(Sphere_3(CGAL::ORIGIN, 1.));
-    Sphere<K> sphere2(Sphere_3(Point_3(0.5, 0., 0.), 0.49*0.49));
+    Sphere<K> sphere1 = Sphere<K>(Sphere_3(CGAL::ORIGIN, 1.));
+    Sphere<K> sphere2 = Sphere<K>(Sphere_3(Point_3(0.5, 0., 0.), 0.49*0.49));
 
     // trick: insert in tr_3 the initial points for sphere2
     Surface surface_of_sphere_2(sphere2, Sphere_3(Point_3(0.5, 0., 0.), 2.));

@@ -1,3 +1,8 @@
+15 April 2006 Laurent
+- try to fix compilation problem with gcc-3.3, in
+  test/Surface_mesher/implicit_surface_mesher_test.C
+    (I am not sure to well understand this problem.)
+
 7 April 2006 Laurent Rineau
 - added a picture for the sphere example, in manual.
 - modified the bounds for the skull example: with previous bounds (10 and
