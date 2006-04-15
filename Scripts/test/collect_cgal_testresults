@@ -11,7 +11,7 @@
 
 print_platforms()
 {
-  cd src
+  cd src_CGAL
   for FILE in `ls CompilerOutput_*` ; do
     PLATFORM=`echo $FILE | sed 's/CompilerOutput_//'| sed 's/\.gz//'`
     printf "$PLATFORM "
