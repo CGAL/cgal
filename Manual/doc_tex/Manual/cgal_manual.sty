@@ -275,7 +275,7 @@
     \renewcommand{\packageleftright}[2]{%
       \gdef\ccCurrentFilename{##1}%
       \cgalreinit\include{##1/main}%
-      \gdef\ccCurrentFilename{##1}%
+      \gdef\ccCurrentFilename{##2}%
       \cgalreinit\include{##2/main}%
     }%
     #1
