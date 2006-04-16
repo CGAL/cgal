@@ -221,6 +221,10 @@ protected:
     Rat_direction_2       dir_prev1, dir_next1;
     Circ_edge_iterator    curr2;
     Rat_direction_2       dir_curr2;
+    Rat_point_2           s2, t2;
+    Rat_direction_2       dir_s2, dir_t2;
+    bool                  is_between_s2, is_between_t2;
+    bool                  is_between_prev1, is_between_next1;
 
     prev1 = pgn1.vertices_circulator();
     if (forward1)
@@ -255,13 +259,13 @@ protected:
               f_equal (dir_curr1, dir_next2))
           {
             // Shift the current edge in pgn1 by the current vertex in pgn2.
-            p2 = Rat_point_2 (curr2->source().x().alpha(),
+            s2 = Rat_point_2 (curr2->source().x().alpha(),
                               curr2->source().y().alpha());
-            ps = f_add (p2, f_vector(CGAL::ORIGIN, *curr1));
+            ps = f_add (s2, f_vector(CGAL::ORIGIN, *curr1));
             
-            p2 = Rat_point_2 (curr2->target.x().alpha(),
+            t2 = Rat_point_2 (curr2->target.x().alpha(),
                               curr2->target().y().alpha());
-            pt = f_add (p2, f_vector(CGAL::ORIGIN, *curr1));
+            pt = f_add (t2, f_vector(CGAL::ORIGIN, *curr1));
 
             res = f_compare_xy (ps, pt);
             CGAL_assertion (res != EQUAL);
@@ -277,7 +281,59 @@ protected:
         }
         else
         {
-          // 
+          // The current edge is a circular arc: compute the directions of
+          // the arc tagents at its endpoints.
+          s2 = Rat_point_2 (curr2->source().x().alpha(),
+                            curr2->source().y().alpha());
+          dir_s2 = _direction (*curr2, s2);
+
+          t2 = Rat_point_2 (curr2->target.x().alpha(),
+                            curr2->target().y().alpha());
+          dir_t2 = _direction (*curr2, s2);
+
+          CGAL_assertion (! f_equal (dir_s2, dir_t2));
+
+          // Check if these two directions are between the directions of the
+          // two edges incident to curr1.
+          is_between_s2 = f_ccw_in_between (dir_s2, dir_prev1, dir_next1) ||
+                          f_equal (dir_s2, dir_next1);
+          
+          is_between_t2 = f_ccw_in_between (dir_t2, dir_prev1, dir_next1) ||
+                          f_equal (dir_t2, dir_next1);
+
+          // Act according to the result.
+          if (is_between_s2 && is_between_t2)
+          {
+            // RWRW: (case (b))
+          }
+          else if (is_between_s2)
+          {
+            // RWRW: (case (c))
+          }
+          else if (is_between_t2)
+          {
+            // RWRW: (case (d)) 
+          }
+          else
+          {
+            // Either the two directions of the edges around curr1 are both
+            // between the two directions at the circular arc's endpoint,
+            // or both are not (in the latter case, we do nothing).
+            is_between_prev1 = f_ccw_in_between (dir_prev1, dir_s2, dir_t2) ||
+                               f_equal (dir_prev1, dir_t2);
+
+            is_between_next1 = f_ccw_in_between (dir_next1, dir_s2, dir_t2) ||
+                               f_equal (dir_next1, dir_t2);
+
+            if (is_between_prev1 && is_between_next1)
+            {
+              // RWRW: (case (e))
+            }
+            else
+            {
+              CGAL_assertion (! is_between_prev1 && ! is_between_next1);
+            }
+          }
         }
       }
 
