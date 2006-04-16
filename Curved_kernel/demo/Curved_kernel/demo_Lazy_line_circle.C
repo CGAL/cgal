@@ -35,6 +35,7 @@ int main() {
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/MP_Float.h>
+#include <CGAL/Gmpq.h>
 
 #include <CGAL/Algebraic_kernel_2_2.h>
 
