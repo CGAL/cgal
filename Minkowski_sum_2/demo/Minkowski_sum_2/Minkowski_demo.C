@@ -17,7 +17,7 @@ int main ()
 
 #else
 
-//#define RWRW_STATS
+#define RWRW_STATS
 #define USE_LAZY_KERNEL
 
 #ifdef USE_LAZY_KERNEL

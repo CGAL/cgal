@@ -21,7 +21,7 @@ int main ()
 #include <CGAL/Gmpq.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/rot_swept_volume_2.h>
+#include <CGAL/rotational_swept_area_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Timer.h>
 
@@ -59,7 +59,7 @@ typedef CGAL::Bbox_2                                    Bbox_2;
 static const int INIT_WIDTH = 600;
 static const int INIT_HEIGHT = 400;
 
-class rot_sv_window : public QMainWindow
+class RSA_window : public QMainWindow
 {
   Q_OBJECT
 
@@ -72,11 +72,11 @@ private:
 
 public:
 
-  rot_sv_window (const int& x_min, const int& y_min,
-                 const int& x_max, const int& y_max,
-                 const Polygon_2& polygon,
-                 const NT& sin_theta1, const NT& cos_theta1,
-                 const NT& sin_theta2, const NT& cos_theta2) :
+  RSA_window (const int& x_min, const int& y_min,
+              const int& x_max, const int& y_max,
+              const Polygon_2& polygon,
+              const NT& sin_theta1, const NT& cos_theta1,
+              const NT& sin_theta2, const NT& cos_theta2) :
     pgn (polygon)
   {
     // Locate the pair of vertices that are most distant from one another
@@ -110,9 +110,9 @@ public:
     CGAL::Timer       timer;
 
     timer.start();
-    sv_pgn = rot_swept_volume_2 (pgn, pc,
-                                 sin_theta1, cos_theta1,
-                                 sin_theta2, cos_theta2);
+    sv_pgn = rotational_swept_area_2 (pgn, pc,
+                                      sin_theta1, cos_theta1,
+                                      sin_theta2, cos_theta2);
     timer.stop();
 
     std::cout << "Swept-volume computation took "
@@ -264,8 +264,8 @@ bool read_polygon (const char *filename, Polygon_2& pgn)
   return (true);
 }
 
-//moc_source_file : Rot_sv_demo.C
-#include "Rot_sv_demo.moc"
+//moc_source_file : RSA_demo.C
+#include "RSA_demo.moc"
 
 /*!
  * The main.
@@ -327,19 +327,19 @@ int main (int argc, char **argv )
 
   // Create the main window.
   QApplication          app (argc, argv);
-  rot_sv_window        *w = NULL;
+  RSA_window           *w = NULL;
   const double          x_min = bbox.xmin();
   const double          x_max = bbox.xmax(); 
   const double          y_min = bbox.ymin();
   const double          y_max = bbox.ymax();
   
-  w = new rot_sv_window (static_cast<int>(x_min - 2),
-			 static_cast<int>(y_min - 2),
-			 static_cast<int>(x_max + 2),
-			 static_cast<int>(y_max + 2),
-			 pgn,
-                         sin1, cos1,
-                         sin2, cos2);
+  w = new RSA_window (static_cast<int>(x_min - 2),
+                      static_cast<int>(y_min - 2),
+                      static_cast<int>(x_max + 2),
+                      static_cast<int>(y_max + 2),
+                      pgn,
+                      sin1, cos1,
+                      sin2, cos2);
 
   app.setMainWidget (w);
   w->show();
