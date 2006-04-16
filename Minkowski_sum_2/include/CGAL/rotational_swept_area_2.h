@@ -17,8 +17,8 @@
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
-#ifndef CGAL_ROT_SWEPT_VOLUME_2_H
-#define CGAL_ROT_SWEPT_VOLUME_2_H
+#ifndef CGAL_ROTATIONAL_SWEPT_AREA_2_H
+#define CGAL_ROTATIONAL_SWEPT_AREA_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
@@ -29,15 +29,22 @@
 CGAL_BEGIN_NAMESPACE
 
 /*!
+ * Compute the area swept by a simple linear polygon when rotated in a
+ * counterclockwise direction from orientation theta1 to orientation theta2
+ * about a given point.
+ * \param pgn The polygon.
+ * \param p The center of rotation.
+ * \param sin_theta1, cos_theta1 The sine and cosine of the source orientation.
+ * \param sin_theta2, cos_theta2 The sine and cosine of the target orientation.
  */
 template <class Kernel, class Container>
 typename Gps_circle_segment_traits_2<Kernel>::Polygon_2
-rot_swept_volume_2 (const Polygon_2<Kernel,Container>& pgn,
-                    const typename Kernel::Point_2& p,
-                    const typename Kernel::FT& sin_theta1,
-                    const typename Kernel::FT& cos_theta1,
-                    const typename Kernel::FT& sin_theta2,
-                    const typename Kernel::FT& cos_theta2)
+rotational_swept_area_2 (const Polygon_2<Kernel,Container>& pgn,
+                         const typename Kernel::Point_2& p,
+                         const typename Kernel::FT& sin_theta1,
+                         const typename Kernel::FT& cos_theta1,
+                         const typename Kernel::FT& sin_theta2,
+                         const typename Kernel::FT& cos_theta2)
 {
   typedef typename Kernel::FT                         NT;
   typedef typename Kernel::Point_2                    Point_2;
