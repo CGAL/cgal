@@ -24,8 +24,6 @@ IS_PUBLIC_RELEASE="n"
 # The internal release number is extracted/updated from this file :
 VERSION_FILE="version_number"
 
-LOGFILEBASE="create_release.log"
-
 # Where to put the resulting tarball and where to send the announce.
 HTML_DIR="/u/bombyx/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
@@ -33,6 +31,8 @@ MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
+
+LOGFILE="create_release.log.`date -I`.$$"
 
 PATH=$PATH:/usr/local/bin
 TAR=/usr/bin/gnu/tar
@@ -73,7 +73,6 @@ else
     BUGFIX_STRING=""
 fi
 release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
-LOGFILE="`pwd`/${LOGFILEBASE}.${release_name}"
 echo "${release_name}" >> ${LOGFILE} 2>&1
 major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
 minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
@@ -83,7 +82,6 @@ echo "Release number is ${release_number}" >> ${LOGFILE} 2>&1
 
 # Create the release
 ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
-cd ${TMPDIR}
 # Make the release tarball
 ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
 ${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
