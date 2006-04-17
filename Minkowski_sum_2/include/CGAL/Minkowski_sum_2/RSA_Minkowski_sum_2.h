@@ -50,6 +50,10 @@ private:
   typedef typename Rat_kernel::Equal_2                 Equal_2;
   typedef typename Rat_kernel::Compare_xy_2            Compare_xy_2;
   typedef typename Rat_kernel::Construct_center_2      Construct_center_2;
+  typedef typename Rat_kernel::Compute_squared_radius_2
+                                                       Compute_sqr_radius_2;
+  typedef typename Rat_kernel::Compute_squared_distance_2
+                                                       Compute_sqr_distance_2;
   typedef typename Rat_kernel::Construct_vector_2      Construct_vector_2;
   typedef typename Rat_kernel::Construct_perpendicular_vector_2
                                                        Construct_perp_vector_2;
@@ -65,6 +69,7 @@ private:
 
   // Conic traits types:
   typedef typename Conic_traits_2::Alg_kernel           Alg_kernel;
+  typedef typename Conic_traits_2::Nt_traits            Nt_traits;
   typedef typename Alg_kernel::FT                       Algebraic;
   typedef typename Alg_kernel::Point_2                  Alg_point_2;
   typedef typename Conic_traits_2::Curve_2              Curve_2;
@@ -87,8 +92,12 @@ private:
   typedef typename Labeled_traits_2::X_monotone_curve_2  Labeled_curve_2;
 
   // Data members:
+  Nt_traits               nt_traits;
+
   Equal_2                 f_equal;
   Construct_center_2      f_center;
+  Compute_sqr_radius_2    f_sqr_radius;
+  Compute_sqr_distance_2  f_sqr_distance;
   Construct_vector_2      f_vector;
   Construct_perp_vector_2 f_perp_vector;
   Construct_direction_2   f_direction;
@@ -106,6 +115,8 @@ public:
 
     f_equal = ker.equal_2_object();
     f_center = ker.construct_center_2_object();
+    f_sqr_radius = ker.compute_squared_radius_2_object();
+    f_sqr_distance = ker.compute_squared_distance_2_object();
     f_vector = ker.construct_vector_2_object();
     f_perp_vector = ker.construct_perpendicular_vector_2_object();
     f_direction = ker.construct_direction_2_object();
@@ -373,6 +384,92 @@ protected:
       return (f_direction (f_perp_vec (vec, COUNTERCLOCKWISE)));
     }
   }
+
+  /*!
+   * Compute a point on the given circle, where the tangent to the circle
+   * has the same direction as the given vector.
+   * \param circ The circle.
+   * \param ps The source point of the vector.
+   * \param pt The target point of the vector.
+   * \return The computed point.
+   */
+  Alg_point_2 _point_on_circle (const Rat_circle_2& circ,
+                                const Rat_point_2& ps,
+                                const Rat_point_2& pt) const
+  {
+    // The angle theta between the vector v and the x-axis is given by:
+    //
+    //                 delta_y                      delta_x
+    //   sin(alpha) = ---------       cos(alpha) = ---------
+    //                   len                          len
+    //
+    const Rat_point_2     pc = f_center (circ);
+    const Rational        sqr_r = f_sqr_radius (circ);
+    const Rational        delta_x = pt.x() - ps.x();
+    const Rational        delta_y = pt.y() - ps.y();
+    const Rational        sqr_len = f_sqr_distance (ps, pt);
+
+    // To compute the desired point, we have to translate the circle
+    // center by r in a direction that forms and angle of (alpha - PI/2)
+    // with the x-axis, and we have:
+    //
+    //   trans_x = r*cos(alpha - PI/2) = r*sin(alpha)
+    //   trans_y = r*sin(alpha - PI/2) = -r*cos(alpha)
+    const Algebraic       r_over_len = nt_traits.sqrt (nt_traits.convert
+                                                       (sqr_r / sqr_len));
+    const Algebraic       trans_x = nt_traits.convert (delta_y) * r_over_len;
+    const Algebraic       trans_y = nt_traits.convert (-delta_x) * r_over_len;
+
+    return (Alg_point_2 (nt_traits.convert (pc.x()) + trans_x, 
+                         nt_traits.convert (pc.y()) + trans_y));
+  }
+
+  /*!
+   * Shift the given segment by a point with rational coordinates.
+   * \param ps The source point of the segment.
+   * \param pt The target point of the segment.
+   * \param q The shift point.
+   * \return The shifted segemnt, represented as an x-monotone conic curve.
+   */
+  X_monotone_curve_2 _shift_segment (const Rat_point_2& ps,
+                                     const Rat_point_2& pt,
+                                     const Rat_point_2& q) const
+  {
+    Rat_point_2  shift_ps = f_add (ps, f_vector(CGAL::ORIGIN, q));
+    Rat_point_2  shift_pt = f_add (pt, f_vector(CGAL::ORIGIN, q));
+    Curve_2      seg (Rat_segment_2 (shift_ps, shift_pt));
+
+    return (seg);
+  }
+
+  /*!
+   * Shift the given segment by a point with algebraic coordinates.
+   * \param ps The source point of the segment.
+   * \param pt The target point of the segment.
+   * \param q The shift point.
+   * \return The shifted segemnt, represented as an x-monotone conic curve.
+   */
+  X_monotone_curve_2 _shift_segment (const Rat_point_2& ps,
+                                     const Rat_point_2& pt,
+                                     const Alg_point_2& q) const
+  {
+    Alg_point_2  shift_ps = Alg_point_2 (nt_traits.convert (ps.x()) + q.x(), 
+                                         nt_traits.convert (ps.y()) + q.y());
+    Alg_point_2  shift_pt = Alg_point_2 (nt_traits.convert (pt.x()) + q.x(), 
+                                         nt_traits.convert (pt.y()) + q.y());
+
+    return (X_monotone_curve_2 (shift_ps, shift_pt));
+  }
+
+  /*!
+   */
+  X_monotone_curve_2 _shift_arc (const Rat_circle_2& pc,
+                                 const Alg_point_2& ps,
+                                 const Alg_point_2& pt,
+                                 const Rat_point_2& q) const
+  {
+  }
+
 };
 
 
