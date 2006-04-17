@@ -157,21 +157,6 @@ public:
       }
     }
 
-    // RWRW: Output:
-    /* RWRW - DELTE THIS:
-    std::ofstream    ofs ("decomp_segments.txt");
-
-    ofs << boundary_segments.size() << std::endl;
-    
-    typename Segments_list::const_iterator  sit;
-
-    for (sit = boundary_segments.begin(); 
-	 sit != boundary_segments.end(); ++sit)
-      ofs << sit->source() << "  " << sit->target() << std::endl;
-
-    ofs.close();
-    */
-
 #ifdef RWRW_STATS
 
     _timer.stop();

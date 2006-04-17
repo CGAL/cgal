@@ -362,20 +362,6 @@ public:
       }
     }
 
-    // RWRW: Output:
-    /* RWRW - DELETE THIS:
-    std::ofstream    ofs ("conv_segments.txt");
-
-    ofs << conv_segments.size() << std::endl;
-    
-    typename Segments_list::const_iterator  sit;
-
-    for (sit = conv_segments.begin(); sit != conv_segments.end(); ++sit)
-      ofs << sit->source() << "  " << sit->target() << std::endl;
-
-    ofs.close();
-    */
-
 #ifdef RWRW_STATS
 
     std::cout << "|P| = " << n1 << " (" << ref1

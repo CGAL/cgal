@@ -20,9 +20,23 @@
 #ifndef CGAL_RSA_MINKOWSKI_SUM_H
 #define CGAL_RSA_MINKOWSKI_SUM_H
 
+#include <CGAL/Minkowski_sum_2/RSA_Minkowski_sum_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
 /*!
+ * Compute the Minkowski sum of a linear polygon and a polygon that contains
+ * circular arcs, which represents the rotational swept-area of a linear
+ * polygon.
+ * Note that as the input polygons may not be convex, the Minkowski sum may
+ * not be a simple polygon. The result is therefore represented as
+ * polygon with holes whose arcs are conic curves (which are either line
+ * segments with irrational coefficients, or circular arcs with rational
+ * coefficients).
+ * \param pgn1 The linear polygon.
+ * \param pgn2 The polygon with circular arcs.
+ * \pre Both input polygons are simple.
+ * \return A polygon with holes that reprsents the sum.
  */
 template <class ConicTraits, class Container>
 typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
@@ -32,31 +46,18 @@ rsa_minkowski_sum_2
      const typename Gps_circle_segment_traits_2<typename 
                               ConicTraits::Rat_kernel>::Polygon_2& pgn2)
 {
-  typedef ConicTraits                                   Conic_traits_2;
-  typedef typename Conic_traits_2::Rat_kernel           Rat_kernel;
-  typedef typename Rat_kernel::FT                       Rational;
-  typedef typename Rat_kernel::Point_2                  Point_2;
-  typedef typename Rat_kernel::
-  typedef Polygon_2<Rat_kernel, Container>              Polygon_2;
-  
-  typedef typename Conic_traits_2::Alg_kernel           Alg_kernel;
-  typedef typename Alg_kernel::FT                       Algebraic;
-  typedef typename Alg_kernel::Point_2                  Alg_point_2;
-  
-  typedef Exact_offset_base_2<ConicTraits, Container>        Base;
-  typedef Offset_by_convolution_2<Base>                      Exact_offset_2;
-  typedef typename Exact_offset_2::Offset_polygon_2          Offset_polygon_2;
+  typedef RSA_Minkowski_sum_2<ConicTraits, Container>        RSA_sum_2;
+  typedef typename RSA_sum_2::Sum_polygon_2                  Sum_polygon_2;
 
-  Base                                               base;
-  Exact_offset_2                                     exact_offset (base);
-  Offset_polygon_2                                   offset_bound;
-  std::list<Offset_polygon_2>                        offset_holes;
+  RSA_sum_2                    rsa_sum;
+  Sum_polygon_2                sum_bound;
+  std::list<Sum_polygon_2>     sum_holes;
 
-  exact_offset (pgn, r, 
-                offset_bound, std::back_inserter(offset_holes));
+  rsa_sum (pgn1, pgn2, 
+           sum_bound, std::back_inserter(sum_holes));
 
   return (typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
-          (offset_bound, offset_holes.begin(), offset_holes.end()));
+          (sum_bound, sum_holes.begin(), sum_holes.end()));
 }
 
 CGAL_END_NAMESPACE

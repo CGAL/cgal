@@ -219,7 +219,7 @@ protected:
 
       // The equation of the line connecting op1 and op2 is given by:
       //
-      //   (y1 - y2)*x + (x2 - x1)*x + (r*len - y1*x2 - x1*y2) = 0
+      //   (y1 - y2)*x + (x2 - x1)*y + (r*len - y1*x2 - x1*y2) = 0
       //
       a = nt_traits.convert (-delta_y);
       b = nt_traits.convert (delta_x);
