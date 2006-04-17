@@ -1212,6 +1212,69 @@ create_standard_header_replacements()
     ${_printf} "%s\n" "${_LEFTSPACE}Checking for standard header files"
 
     #
+    # A global test for all std header files at once, to speed up the rest
+    # if a compiler is compliant.
+    ${_cat} <<EOF6 >${TMP_CXX_FILE}.C
+#include <algorithm>
+#include <ostream>
+#include <numeric>
+#include <new>
+#include <memory>
+#include <map>
+#include <locale>
+#include <list>
+#include <limits>
+#include <iterator>
+#include <istream>
+#include <iostream>
+#include <iosfwd>
+#include <ios>
+#include <iomanip>
+#include <functional>
+#include <fstream>
+#include <exception>
+#include <deque>
+#include <cwctype>
+#include <cwchar>
+#include <ctime>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <cstddef>
+#include <cstdarg>
+#include <csignal>
+#include <csetjmp>
+#include <complex>
+#include <cmath>
+#include <clocale>
+#include <climits>
+#include <ciso646>
+#include <cfloat>
+#include <cerrno>
+#include <cctype>
+#include <cassert>
+#include <bitset>
+#include <queue>
+#include <vector>
+#include <valarray>
+#include <utility>
+#include <typeinfo>
+#include <string>
+#include <streambuf>
+#include <strstream>
+#include <stdexcept>
+#include <stack>
+#include <sstream>
+#include <set>
+int main() { return 0; }
+EOF6
+    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${TMP_CXX_FILE}.C >/dev/null 2>&1"; then
+        ${_printf} "%s\n" "  all headers at once : ok."
+        return;
+    fi
+    ${_printf} "%s\n" "  all headers at once : no."
+
+    #
     # Decide if a .h suffix is needed for header files. 
     #
     ${_printf} "%s\n" "typedef int CGAL_nt;" > ${tmp_header_file}
