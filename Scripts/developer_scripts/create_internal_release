@@ -23,7 +23,7 @@ Exactly one of the options -h or -r must be present.
     -a allpackagesdir, default is releasedir/trunk
     -s scriptsdir, default is releasedir
     -l lockfile, default is releasedir/release_creation.lock
-    -p packagesfile, default is releasedir/include_in_release
+    -p packagesfile, default is allpackagesdir/Maintenance/release_building/include_in_release
 
    The version number is stored in include/CGAL/version.h.
    The RELEASEDIR is the place where the new release will be created.
@@ -36,9 +36,7 @@ Exactly one of the options -h or -r must be present.
    The LOCKFILE is some file used by lockfile command as a mutex.
    The PACKAGESFILE is the file that contains a list of the packages you want
        to include in this release. In fact it is a filter for packages you have
-       in ALLPACKAGESDIR. There is one file that is used to create the CGAL
-       internal release in SVN/Maintenance/release_building/include_in_release.
-       You can take that one too.
+       in ALLPACKAGESDIR.
 
 Example of how to use the script:
 >svn co svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk
@@ -74,7 +72,7 @@ my (
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
   $SCRIPTSDIR=$RELEASEDIR;
   $LOCKCMD='lockfile';
-  $packages_file="$RELEASEDIR/include_in_release";
+  $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
 
 
 
@@ -792,7 +790,7 @@ if ($::opt_d){
   $ALLPACKAGESDIR = "$RELEASEDIR/trunk";
   $SCRIPTSDIR = "$RELEASEDIR";
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
-  $packages_file="$RELEASEDIR/include_in_release";
+  $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
 }
 
 if ($::opt_r){
