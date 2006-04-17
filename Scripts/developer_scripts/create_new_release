@@ -74,7 +74,7 @@ echo "Release number is ${release_number}" >> ${LOGFILE} 2>&1
 # Update the working copy
 svn update ${SOURCES_DIR} >> ${LOGFILE} 2>&1
 
-./create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
+${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
 cd ${TMPDIR}
 # Make the release tarball
 ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
