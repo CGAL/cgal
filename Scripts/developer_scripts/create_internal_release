@@ -21,7 +21,7 @@ Exactly one of the options -h or -r must be present.
     -n version number (CGAL_VERSION_NR)
     -d releasedir, default releasedir is the current dir
     -a allpackagesdir, default is releasedir/trunk
-    -s scriptsdir, default is releasedir
+    -s scriptsdir, default is allpackagesdir/Scripts/scripts
     -l lockfile, default is releasedir/release_creation.lock
     -p packagesfile, default is allpackagesdir/Maintenance/release_building/include_in_release
 
@@ -30,7 +30,6 @@ Exactly one of the options -h or -r must be present.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
        from the SVN. Could be trunk or some branch.
    The SCRIPTSDIR is the place where you have the cgal_create_makefile script.
-       You can take this script from SVN/Scripts/scripts/cgal_create_makefile.
        You need this script to create the default makefiles for examples and
        tests.
    The LOCKFILE is some file used by lockfile command as a mutex.
@@ -70,7 +69,7 @@ my (
   $RELEASEDIR=cwd();
   $ALLPACKAGESDIR="$RELEASEDIR/trunk";
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
-  $SCRIPTSDIR=$RELEASEDIR;
+  $SCRIPTSDIR="$ALLPACKAGESDIR/Scripts/scripts";
   $LOCKCMD='lockfile';
   $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
 
@@ -788,7 +787,7 @@ if ($::opt_h ) {
 if ($::opt_d){
   $RELEASEDIR = $::opt_d;
   $ALLPACKAGESDIR = "$RELEASEDIR/trunk";
-  $SCRIPTSDIR = "$RELEASEDIR";
+  $SCRIPTSDIR = "$ALLPACKAGESDIR/Scripts/scripts";
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
   $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
 }
