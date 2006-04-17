@@ -10,8 +10,13 @@
 # - There should be command line options to set public/internal,
 #   and the major/minor/bugfix/version_file release numbers.
 
-# SVN working copy directory (TODO : pass it as command-line argument)
-SOURCES_DIR=trunk
+# SVN working copy directory, default is "trunk"
+if [ -z "$1" ] ; then
+  SOURCES_DIR=trunk
+else
+  SOURCES_DIR="$1"
+fi
+
 
 # Set the following to "y" in case of public release.
 IS_PUBLIC_RELEASE="n"
