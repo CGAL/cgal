@@ -16,13 +16,10 @@ SOURCES_DIR=trunk
 # Set the following to "y" in case of public release.
 IS_PUBLIC_RELEASE="n"
 
-# Set the major/minor/bugfix release numbers
-MAJOR_NUMBER="3"   # 2 digits max
-MINOR_NUMBER="2"   # 2 digits max
-BUGFIX_NUMBER="0"  # 1 digit  max
-
 # The internal release number is extracted/updated from this file :
 VERSION_FILE="version_number"
+
+LOGFILEBASE="create_release.log"
 
 # Where to put the resulting tarball and where to send the announce.
 HTML_DIR="/u/bombyx/geometrica/CGAL/Members/Releases"
@@ -32,16 +29,24 @@ MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
-LOGFILEBASE="create_release.log"
-
-#TMPDIR="/tmp"
-TMPDIR="${HOME}/CGAL/internal_release_making"
-
 PATH=$PATH:/usr/local/bin
 TAR=/usr/bin/gnu/tar
 GZIP=/usr/bin/gnu/gzip
 
+#TMPDIR="/tmp"
+TMPDIR="${HOME}/CGAL/internal_release_making"
+
+
 cd ${TMPDIR} || return
+
+# Update the working copy
+svn update ${SOURCES_DIR} >> ${LOGFILE} 2>&1
+
+# Set the major/minor/bugfix release numbers
+NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
+MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
+MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
+BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
 
 # The internal release number is considered only in non-public mode.
 if [ $IS_PUBLIC_RELEASE = "n" ]; then
@@ -71,9 +76,7 @@ bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
 release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
 echo "Release number is ${release_number}" >> ${LOGFILE} 2>&1
 
-# Update the working copy
-svn update ${SOURCES_DIR} >> ${LOGFILE} 2>&1
-
+# Create the release
 ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
 cd ${TMPDIR}
 # Make the release tarball

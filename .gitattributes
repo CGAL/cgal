@@ -712,6 +712,9 @@ Maintenance/MacOSX_Installer/Resources/Welcome.rtf -text
 Maintenance/MacOSX_Installer/Resources/postflight -text
 Maintenance/MacOSX_Installer/Resources/postupgrade -text
 Maintenance/MacOSX_Installer/cgal_very_small.gif -text
+Maintenance/release_building/BUGFIX_NUMBER -text
+Maintenance/release_building/MAJOR_NUMBER -text
+Maintenance/release_building/MINOR_NUMBER -text
 Maintenance/rpm/GNUmakefile -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text
