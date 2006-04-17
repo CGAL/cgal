@@ -20,7 +20,7 @@ Exactly one of the options -h or -r must be present.
 
     -n version number (CGAL_VERSION_NR)
     -d releasedir, default releasedir is the current dir
-    -a allpackagesdir, default is releasedir/All
+    -a allpackagesdir, default is releasedir/trunk
     -s scriptsdir, default is releasedir
     -l lockfile, default is releasedir/release_creation.lock
     -p packagesfile, default is releasedir/include_in_release
@@ -28,8 +28,7 @@ Exactly one of the options -h or -r must be present.
    The version number is stored in include/CGAL/version.h.
    The RELEASEDIR is the place where the new release will be created.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
-       from the SVN. Could be a taged version (<<current_submission>>) or some
-       other version.
+       from the SVN. Could be trunk or some branch.
    The SCRIPTSDIR is the place where you have the cgal_create_makefile script.
        You can take this script from SVN/Scripts/scripts/cgal_create_makefile.
        You need this script to create the default makefiles for examples and
@@ -43,10 +42,9 @@ Exactly one of the options -h or -r must be present.
 
 Example of how to use the script:
 >svn co svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk
->ln -s trunk All
 >./create_internal_release -r CGAL-3.3-I-1
 or
->./create_internal_release -r CGAL-3.3-I-7 -d \$HOME -a \$HOME/CGALSVN/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
+>./create_internal_release -r CGAL-3.3-I-7 -d \$HOME -a \$HOME/CGALSVN/trunk -s \$HOME/scripts -l release_creation.lock -p include_in_release
 
 
 EOF
@@ -72,7 +70,7 @@ my (
 );
 
   $RELEASEDIR=cwd();
-  $ALLPACKAGESDIR="$RELEASEDIR/All";
+  $ALLPACKAGESDIR="$RELEASEDIR/trunk";
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
   $SCRIPTSDIR=$RELEASEDIR;
   $LOCKCMD='lockfile';
@@ -791,7 +789,7 @@ if ($::opt_h ) {
 }
 if ($::opt_d){
   $RELEASEDIR = $::opt_d;
-  $ALLPACKAGESDIR = "$RELEASEDIR/All";
+  $ALLPACKAGESDIR = "$RELEASEDIR/trunk";
   $SCRIPTSDIR = "$RELEASEDIR";
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
   $packages_file="$RELEASEDIR/include_in_release";
