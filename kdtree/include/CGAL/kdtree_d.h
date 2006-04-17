@@ -1060,12 +1060,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-
-#else   /* CGAL_KDTREE_D_H */
-#error  Header file kdtree_d.h included twice
 #endif  /* CGAL_KDTREE_D_H */
-
-/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
- *     
- * kdtree_d.h - End of File
-\*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
