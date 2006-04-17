@@ -15,35 +15,35 @@ int main ()
 
 #else
 
-#define USE_LAZY_KERNEL
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
-#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/rotational_swept_area_2.h>
+#include <CGAL/rsa_minkowski_sum_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Timer.h>
-
-#ifdef USE_LAZY_KERNEL
-  typedef CGAL::Gmpq                                    Rational;
-  typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>               NT;
-#else
-  typedef CGAL::Gmpq                                    Rational;
-  typedef CGAL::Gmpq                                    NT;
-#endif
-
-typedef CGAL::Cartesian<NT>                             Kernel;
-
 #include <list>
 #include <iostream>
 #include <fstream>
 
-typedef Kernel::Point_2                                 Point_2;
-typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel,
+                                 Alg_kernel,Nt_traits>  Conic_traits_2;
 
-typedef CGAL::Gps_circle_segment_traits_2<Kernel>       Traits_2;
-typedef Traits_2::Polygon_2                             Sv_polygon_2;
+typedef Rat_kernel::Point_2                             Point_2;
+typedef CGAL::Polygon_2<Rat_kernel>                     Polygon_2;
+
+typedef CGAL::Gps_circle_segment_traits_2<Rat_kernel>   Circ_seg_traits_2;
+typedef Circ_seg_traits_2::Polygon_2                    Rsa_polygon_2;
+
+typedef CGAL::Gps_traits_2<Conic_traits_2>              Gps_conic_traits_2;
+typedef Gps_conic_traits_2::Polygon_2                   Sum_polygon_2;
+typedef Gps_conic_traits_2::Polygon_with_holes_2        Sum_polygon_wh_2;
 
 typedef CGAL::Bbox_2                                    Bbox_2;
 
@@ -66,32 +66,36 @@ class RSA_window : public QMainWindow
 private:
 
   CGAL::Qt_widget*             widget;
-  Polygon_2                    pgn;
+  Polygon_2                    pgn1;
+  Polygon_2                    pgn2;
   Point_2                      pc;
-  Sv_polygon_2                 sv_pgn;
+  Rsa_polygon_2                rsa_pgn;
+  Sum_polygon_wh_2             sum_pgn;
 
 public:
 
   RSA_window (const int& x_min, const int& y_min,
               const int& x_max, const int& y_max,
-              const Polygon_2& polygon,
-              const NT& sin_theta1, const NT& cos_theta1,
-              const NT& sin_theta2, const NT& cos_theta2) :
-    pgn (polygon)
+              const Polygon_2& polygon1,
+              const Polygon_2& polygon2,
+              const Rational& sin_theta1, const Rational& cos_theta1,
+              const Rational& sin_theta2, const Rational& cos_theta2) :
+    pgn1 (polygon1),
+    pgn2 (polygon2)
   {
     // Locate the pair of vertices that are most distant from one another
     // and compute their midpoint as the center of rotation.
     Polygon_2::Vertex_const_iterator vi, vj;
     bool                             first_pair = true;
-    Kernel                           ker;
-    Kernel::Compute_squared_distance_2 dist_f = 
-                                     ker.compute_squared_distance_2_object();
-    NT                               dist, max_dist;
-    Kernel::Construct_midpoint_2     mid_f = ker.construct_midpoint_2_object();
+    Rat_kernel                       ker;
+    Rat_kernel::Compute_squared_distance_2
+                              dist_f = ker.compute_squared_distance_2_object();
+    Rational                         dist, max_dist;
+    Rat_kernel::Construct_midpoint_2 mid_f = ker.construct_midpoint_2_object();
 
-    for (vi = pgn.vertices_begin(); vi != pgn.vertices_end(); ++vi)
+    for (vi = pgn2.vertices_begin(); vi != pgn2.vertices_end(); ++vi)
     {
-      for (vj = vi, ++vj; vj != pgn.vertices_end(); ++vj)
+      for (vj = vi, ++vj; vj != pgn2.vertices_end(); ++vj)
       {
         dist = dist_f (*vi, *vj);
         if (first_pair || CGAL::compare (dist, max_dist) == CGAL::LARGER)
@@ -105,17 +109,29 @@ public:
 
     std::cout << "Rotating around (" << pc << ")." << std::endl;
 
-    // Compute the boundary of the volume swept by the polygon when rotating
-    // it from orientation theta1 to orientation theta2.
+    // Compute the boundary of the area swept by the second polygon when
+    // rotating it from orientation theta1 to orientation theta2.
     CGAL::Timer       timer;
 
     timer.start();
-    sv_pgn = rotational_swept_area_2 (pgn, pc,
-                                      sin_theta1, cos_theta1,
-                                      sin_theta2, cos_theta2);
+    rsa_pgn = rotational_swept_area_2 (pgn2, pc,
+                                       sin_theta1, cos_theta1,
+                                       sin_theta2, cos_theta2);
     timer.stop();
 
     std::cout << "Swept-volume computation took "
+	      << timer.time() << " seconds." << std::endl;
+
+    // Compute the Minkowski sum of this swept area with the first polygon.
+    Conic_traits_2      traits;
+
+    timer.reset();
+    timer.start();
+    sum_pgn = rsa_minkowski_sum_2 (traits,
+                                   pgn1, rsa_pgn);
+    timer.stop();
+
+    std::cout << "Minkowski-sum computation took "
 	      << timer.time() << " seconds." << std::endl;
 
     // Create the window. 
@@ -138,12 +154,12 @@ private slots:
     typedef CGAL::Polygon_2<Approx_kernel>              Approx_polygon_2;
 
     // Draw the rotational swept volume.
-    widget->setFilled (true);
-    *widget << CGAL::FillColor(CGAL::RED);
-    *widget << CGAL::LineWidth(1);
-    *widget << CGAL::RED;
+    widget->setFilled (false);
+    //*widget << CGAL::FillColor(CGAL::RED);
+    *widget << CGAL::LineWidth(3);
+    *widget << CGAL::BLUE;
 
-    Sv_polygon_2::Curve_const_iterator        iter;
+    Rsa_polygon_2::Curve_const_iterator       iter;
     Approx_polygon_2                          app_pgn;
 
     const double    px = CGAL::to_double(pc.x());
@@ -159,7 +175,7 @@ private slots:
     int             n;
     int             k;
 
-    for (iter = sv_pgn.curves_begin(); iter != sv_pgn.curves_end(); ++iter)
+    for (iter = rsa_pgn.curves_begin(); iter != rsa_pgn.curves_end(); ++iter)
     { 
       sx = CGAL::to_double(iter->source().x());
       sy = CGAL::to_double(iter->source().y());
@@ -202,12 +218,16 @@ private slots:
 
     *widget << app_pgn;
 
-    // Draw the input polygon.
+    // Draw the input polygons.
     widget->setFilled (false);
 
     *widget << CGAL::LineWidth(2);
+    *widget << CGAL::BLACK;
+    *widget << pgn1;
+
+    *widget << CGAL::LineWidth(1);
     *widget << CGAL::BLUE;
-    *widget << pgn;
+    *widget << pgn2;
 
     // Draw the center of rotation.
     *widget << CGAL::BLACK;
@@ -273,54 +293,67 @@ bool read_polygon (const char *filename, Polygon_2& pgn)
 int main (int argc, char **argv )
 {
   // Read the input file.
-  if (argc < 4)
+  if (argc < 5)
   {
     std::cerr << "Usage: " << argv[0] 
-	      << " <polygon#1> <numer1>/<denom1> <numer2>/<denom2>." 
+	      << " <polygon#1> <polygon#2>"
+              << " <numer1>/<denom1> <numer2>/<denom2>." 
 	      << std::endl;
     return (1);
   }
 
-  // Read the polygon from the input file.
-  Polygon_2       pgn;
-  Bbox_2          bbox;
+  // Read the polygons from the input files.
+  Polygon_2       pgn1;
+  Bbox_2          bbox1;
   
-  if (! read_polygon (argv[1], pgn))
+  if (! read_polygon (argv[1], pgn1))
   {
     std::cerr << "Failed to read: <" << argv[1] << ">." << std::endl;
     return (1);
   }
-  bbox = pgn.bbox();
+  bbox1 = pgn1.bbox();
+
+  Polygon_2       pgn2;
+  Bbox_2          bbox2;
+  
+  if (! read_polygon (argv[2], pgn2))
+  {
+    std::cerr << "Failed to read: <" << argv[2] << ">." << std::endl;
+    return (1);
+  }
+  bbox2 = pgn2.bbox();
 
   // Read the offset radius.
   int         numer1, denom1;
   int         numer2, denom2;
-  NT          sin1, cos1, sin2, cos2;
+  Rational    sin1, cos1, sin2, cos2;
 
-  if (sscanf (argv[2], "%d/%d", &numer1, &denom1) != 2)
+  if (sscanf (argv[3], "%d/%d", &numer1, &denom1) != 2)
   {
     std::cerr << "Invalid radius: " << argv[2] << std::endl;
     return (1);
   }
-  sin1 = NT (numer1) / NT (denom1);
-  cos1 = NT (static_cast<int> (std::sqrt 
-                               (static_cast<double> 
-                                (denom1*denom1 - numer1*numer1)) + 0.001)) /
-         NT (denom1);
+  sin1 = Rational (numer1) / Rational (denom1);
+  cos1 = 
+    Rational (static_cast<int>
+              (std::sqrt (static_cast<double> 
+                          (denom1*denom1 - numer1*numer1)) + 0.001)) /
+    Rational (denom1);
 
   std::cout << "sin (theta1) = " << sin1
             << "  ,  cos(theta1) = " << cos1 << std::endl;
 
-  if (sscanf (argv[3], "%d/%d", &numer2, &denom2) != 2)
+  if (sscanf (argv[4], "%d/%d", &numer2, &denom2) != 2)
   {
     std::cerr << "Invalid radius: " << argv[3] << std::endl;
     return (1);
   }
-  sin2 = NT (numer2) / NT (denom2);
-  cos2 = NT (static_cast<int> (std::sqrt 
-                               (static_cast<double> 
-                                (denom2*denom2 - numer2*numer2)) + 0.001)) /
-         NT (denom2);
+  sin2 = Rational (numer2) / Rational (denom2);
+  cos2 = 
+    Rational (static_cast<int>
+              (std::sqrt (static_cast<double> 
+                          (denom2*denom2 - numer2*numer2)) + 0.001)) /
+    Rational (denom2);
    
   std::cout << "sin (theta2) = " << sin2
             << "  ,  cos(theta2) = " << cos2 << std::endl;
@@ -328,16 +361,20 @@ int main (int argc, char **argv )
   // Create the main window.
   QApplication          app (argc, argv);
   RSA_window           *w = NULL;
-  const double          x_min = bbox.xmin();
-  const double          x_max = bbox.xmax(); 
-  const double          y_min = bbox.ymin();
-  const double          y_max = bbox.ymax();
+  const double          x_min = bbox1.xmin() + 
+    ((bbox2.xmin() < 0) ? bbox2.xmin() : 0);
+  const double          x_max = bbox1.xmax() +
+    ((bbox2.xmax() > 0) ? bbox2.xmax() : 0);
+  const double          y_min = bbox1.ymin() + 
+    ((bbox2.ymin() < 0) ? bbox2.ymin() : 0);
+  const double          y_max = bbox1.ymax() +
+    ((bbox2.ymax() > 0) ? bbox2.ymax() : 0);
   
   w = new RSA_window (static_cast<int>(x_min - 2),
                       static_cast<int>(y_min - 2),
                       static_cast<int>(x_max + 2),
                       static_cast<int>(y_max + 2),
-                      pgn,
+                      pgn1, pgn2,
                       sin1, cos1,
                       sin2, cos2);
 
