@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class NT> class Quotient;
-template <class RT> class Root_of_traits;
+template <class RT> struct Root_of_traits;
 
 template <class NT>
 Quotient<NT> sqrt(const Quotient<NT> &);
