@@ -57,7 +57,7 @@
 \newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL release number
-\newcommand{\cgalrelease}{\cgalversion}
+\newcommand{\cgalrelease}{3.2}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -72,7 +72,7 @@
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
 \newcommand{\gmppage}{\path'http://www.swox.com/gmp/'}
 \newcommand{\boostpage}{\path'http://www.boost.org/'}
-\newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/core/'}
+\newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/core\_pages/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
 \newcommand{\qtpage}{\path'http://doc.trolltech.com/'}
@@ -206,7 +206,8 @@ computation. \core\ is not part of \cgal\ and has its own license.
 The programs in the \texttt{demo} directory provide visual output.
 Most of these use \ccc{CGAL::Qt_widget}, a widget and some helper
 classes that allow to interact with two dimensional \cgal\ objects in
-\qt\ based applications.\index{visualization!Qt}
+\qt~3 based applications.\index{visualization!Qt} There is no support
+for \qt~4 in \cgal\ yet.
 
 If you have \leda\ installed, you might want to use
 \ccc{CGAL::Window_stream} as an interface between two dimensional
@@ -263,7 +264,7 @@ dots written to the screen indicating progress.
 \begin{alltt}
 Parsing support specfiles for 3rd party libraries:
 BOOST, BOOSTPROGRAMOPTIONS, EXTERNTAUCSNIX, EXTERNTAUCSMS, TAUCSNIX,
-TAUCSMS, X11, GMPMPFR, GMPXX, CORE, CGALCORE, ZLIB, ZLIBMS, LEDA, 
+TAUCSMS, X11, GMP, GMPXX, MPFR, CORE, CGALCORE, ZLIB, ZLIBMS, LEDA, 
 LEDAWIN, LEDAMS, LEDAWINMS, QT3MT, QT3ST, QT3MSMT, QT3MSST, done.
 
 --------------------------------------------------------
@@ -286,7 +287,13 @@ your system, you are presented a list of compilers to choose from. In
 this example, only one compiler, \Gcc{3.4.5}, was found on the system
 and the script selects this compiler without any user interaction. In
 general, the selection of which compiler to use can be made from the
-compiler menu (cf. Section~\ref{sec:compiler-menu}).
+compiler menu (cf. Section~\ref{sec:compiler-menu}). 
+
+The script interprets the environment variables \texttt{CXX},
+\texttt{CXXFLAGS}, and \texttt{LDFLAGS} and accordingly sets the
+compiler, compiler flags, and linker flags, respectively.  Therefore,
+another way to select the compiler is to set the environment variable
+\texttt{CXX} to the compiler to be selected.
 
 A menu similar to the following will appear on your screen.\index{main
   menu}\index{menus!main}
@@ -350,7 +357,8 @@ is. More details about what failed
   **   regardless of the outcome of these tests.                **
   ****************************************************************
   Checking for standard header files
-  algorithm ... ok.
+  All headers at once : ok.
+  Testing for CCTYPE_MACRO_BUG ... ok.
 
   <many lines omitted>
 
