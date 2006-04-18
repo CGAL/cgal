@@ -15,8 +15,8 @@
 // package       : Nef_3
 // chapter       : 3D-Nef Polyhedra
 //
-// revision      : $Revision: 1.39 $
-// revision_date : $Date: 2006/01/20 15:18:36 $
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Ralf Osbild        <osbild@mpi-sb.mpg.de>
 // maintainer    : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>

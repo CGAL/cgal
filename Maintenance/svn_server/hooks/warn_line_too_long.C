@@ -6,8 +6,8 @@
 // File names must end with ".h", ".hpp", ".C", ".c", ".cpp".
 //
 // Sylvain Pion. 2001, 2003, 2004.
-// $Date: 2003/01/22 15:49:49 $
-// $Revision: 1.6 $
+// $Date$
+// $Revision$
 
 #include <iostream>
 #include <fstream>

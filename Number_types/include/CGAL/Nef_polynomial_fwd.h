@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://afabri@scm.gforge.inria.fr/svn/cgal/trunk/Number_types/include/CGAL/Nef_polynomial_fwd.h $
-// $Id: Gmpzq_fwd.h 28567 2006-02-16 14:30:13Z lsaboret $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion

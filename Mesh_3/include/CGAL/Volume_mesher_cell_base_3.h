@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://lrineau@scm.gforge.inria.fr/svn/cgal/trunk/Mesh_3/include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h $
-// $Id: Complex_2_in_triangulation_cell_base_3.h 28605 2006-02-17 17:01:13Z lsaboret $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Laurent RINEAU

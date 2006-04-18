@@ -7,8 +7,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Kinetic_data_structures/include/CGAL/Polynomial/Kernel.h $
-// $Id: Kernel.h 28489 2006-02-14 10:08:15Z lsaboret $ $Date: 2006-02-14 02:08:15 -0800 (Tue, 14 Feb 2006) $
+// $URL$
+// $Id$ $Date$
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>

@@ -15,8 +15,8 @@
 // package       : $CGAL_Package: Polytope_distance_d $
 // chapter       : Geometric Optimisation
 //
-// revision      : $Id: test_Polytope_distance_d_d.C 28489 2006-02-14 10:08:15Z lsaboret $
-// revision_date : $Date: 2006-02-14 11:08:15 +0100 (Tue, 14 Feb 2006) $
+// revision      : $Id$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)

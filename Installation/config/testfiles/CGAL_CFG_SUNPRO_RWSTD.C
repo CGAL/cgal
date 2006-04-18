@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Configuration/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C $
-// $Id: CGAL_CFG_SUNPRO_RWSTD.C 28738 2006-02-23 14:30:13Z glisse $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Marc Glisse

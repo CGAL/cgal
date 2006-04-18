@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source: 
-// $Revision: 1.9 $ $Date: 2005/12/01 10:30:11 $
+// $Revision$ $Date$
 // $Name:  $
 //
 // Author(s)     : Laurent RINEAU

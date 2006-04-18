@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://lrineau@scm.gforge.inria.fr/svn/cgal/trunk/Surface_mesher/include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h $
-// $Id: Implicit_oracle.h 29223 2006-03-08 23:00:44Z lrineau $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Laurent RINEAU

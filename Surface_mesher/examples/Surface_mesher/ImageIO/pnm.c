@@ -210,7 +210,7 @@ int writePpmImage( char *name,_image *im )
   
   sprintf( string, "%s\n", PPM_MAGIC );
   ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "# CREATOR: pnm.c $Revision: 1.1.1.1 $ $Date: 2005/06/28 14:07:23 $\n" );
+  sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
   ImageIO_write( im, string, strlen( string ) );
   sprintf( string, "%d %d\n", im->xdim, im->ydim );
   ImageIO_write( im, string, strlen( string ) );
@@ -518,7 +518,7 @@ int writePgmImage(char *name,_image *im  )
     sprintf( string, "%s\n", PGM_MAGIC );
   
   ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "# CREATOR: pnm.c $Revision: 1.1.1.1 $ $Date: 2005/06/28 14:07:23 $\n" );
+  sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
   ImageIO_write( im, string, strlen( string ) );
   sprintf( string, "%d %d\n", im->xdim, im->ydim );
   ImageIO_write( im, string, strlen( string ) );

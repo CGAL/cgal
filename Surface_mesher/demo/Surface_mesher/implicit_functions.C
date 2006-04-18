@@ -4,8 +4,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://lrineau@scm.gforge.inria.fr/svn/cgal/trunk/Surface_mesher/examples/Surface_mesher/implicit_functions.C $
-// $Id: implicit_functions.C 29116 2006-03-07 10:01:08Z lrineau $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Steve OUDOT, Laurent Rineau

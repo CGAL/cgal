@@ -1,7 +1,7 @@
 /*************************************************************************
  * iobmp.h - I procedures for BMP raw images
  *
- * $Id: bmp.h,v 1.1.1.1 2005/06/28 14:07:22 lrineau Exp $
+ * $Id$
  *
  * Copyright INRIA
  *

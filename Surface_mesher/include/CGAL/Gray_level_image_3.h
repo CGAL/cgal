@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source: /proj/geometrica/home/CGAL/Local/cvsroot/InrImage/include/CGAL/Isosurface.h,v $
-// $Revision: 1.2 $ $Date: 2005/08/01 17:49:26 $
+// $Revision$ $Date$
 // $Name:  $
 //
 // Author(s)     : Laurent RINEAU

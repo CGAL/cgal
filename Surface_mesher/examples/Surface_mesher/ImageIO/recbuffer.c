@@ -1,7 +1,7 @@
 /*************************************************************************
  * recbuffer.c - tools for recursive filtering of 3D and 2D image buffers
  *
- * $Id: recbuffer.c,v 1.1.1.1 2005/06/28 14:07:24 lrineau Exp $
+ * $Id$
  *
  * Copyright©INRIA 1999
  *

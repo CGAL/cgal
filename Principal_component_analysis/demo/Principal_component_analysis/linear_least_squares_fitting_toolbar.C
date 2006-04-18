@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Min_circle_2/demo/Min_circle_2/min_circle_2_toolbar.C $
-// $Id: min_circle_2_toolbar.C 28567 2006-02-16 14:30:13Z lsaboret $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Andreas Fabri

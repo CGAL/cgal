@@ -1,7 +1,7 @@
 /*************************************************************************
  * recline.h - tools for recursive filtering of 1D lines
  *
- * $Id: recline.h,v 1.1.1.1 2005/06/28 14:07:24 lrineau Exp $
+ * $Id$
  *
  * Copyright©INRIA 1998
  *

@@ -15,8 +15,8 @@
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Scripts/developer_scripts/create_internal_release $
-# $Id: create_internal_release 29699 2006-03-22 17:40:45Z spion $
+# $URL$
+# $Id$
 #
 # Author(s)     : Radu Ursu
 #                 Sylvain Pion

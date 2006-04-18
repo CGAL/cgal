@@ -1,5 +1,4 @@
 * text=auto !eol
-Alpha_shapes_2/demo/Alpha_shapes_2/alpha_shapes_2.vcproj -text
 Alpha_shapes_2/demo/Alpha_shapes_2/data/m30f.jpg -text svneol=unset#unset
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.gif -text svneol=unset#unset
@@ -7,13 +6,6 @@ Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#unset
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#unset
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.pdf -text svneol=unset#unset
-Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2.vcproj -text
-Apollonius_graph_2/demo/Apollonius_graph_2/filenew.xpm -text
-Apollonius_graph_2/demo/Apollonius_graph_2/fileopen.xpm -text
-Apollonius_graph_2/demo/Apollonius_graph_2/fileprint.xpm -text
-Apollonius_graph_2/demo/Apollonius_graph_2/filesave.xpm -text
-Apollonius_graph_2/demo/Apollonius_graph_2/remove.xpm -text
-Apollonius_graph_2/demo/Apollonius_graph_2/removecircle.xpm -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.eps -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.gif -text svneol=unset#unset
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices_bw.eps -text
@@ -58,56 +50,16 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#unset
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#unset
-Approximate_min_ellipsoid_d/dont_submit -text
-Arrangement_2/demo/Arrangement_2/icons/conic.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/conic_types.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/delete.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_arrow_down.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_arrow_up.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_colors.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_conic_3points.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_conic_5points.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_conic_circle.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_conic_ellipse.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_conic_segment.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_delete.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_fill.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_insert.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_merge.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_pointlocation.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_pointlocation.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot_down.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/demo_rayshoot_up.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_snapgrid.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_snapgrid.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_snapvertex.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_snapvertex.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_split.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_split.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_zoomin.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_zoomin.xpm -text
 Arrangement_2/demo/Arrangement_2/icons/demo_zoomout.bmp -text svneol=unset#unset
-Arrangement_2/demo/Arrangement_2/icons/demo_zoomout.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/draw.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/grid.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/hand.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/insert.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/merge.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/none.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/po.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/points.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/polyline.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/ray_shooting.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/ray_shooting2.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/snap.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/split.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/voronoi.xpm -text
-Arrangement_2/doc_tex/Arrangement_2/PkgDescription.tex -text
 Arrangement_2/doc_tex/Arrangement_2/fig/Europe.eps -text
 Arrangement_2/doc_tex/Arrangement_2/fig/Europe.fig -text
 Arrangement_2/doc_tex/Arrangement_2/fig/Europe.gif -text svneol=unset#unset
@@ -294,55 +246,21 @@ Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
-Arrangement_2/long_description.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test02.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test03.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test04.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test05.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test06.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test07.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test08.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/curves/test09.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test02.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test03.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test04.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test05.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test06.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test07.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test08.txt -text
-Arrangement_2/test/Arrangement_2/data/point_location/queries/test09.txt -text
-Arrangement_2/test/Arrangement_2/data/test_construction/test45.txt -text
-Arrangement_2/test/Arrangement_2/data/test_construction/test46.txt -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_Q.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_Q.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_PQ.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/diff_QP.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_circle.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/insert_polygon.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.bmp -text svneol=unset#unset
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.xpm -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.eps -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#unset
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#unset
@@ -381,34 +299,23 @@ Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.eps -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#unset
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#unset
 Boolean_set_operations_2/examples/Boolean_set_operations_2/test.dxf -text
-Boolean_set_operations_2/long_description.txt -text
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.eps -text
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.gif -text svneol=unset#unset
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#unset
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#unset
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#unset
-Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#unset
-Core/include/CORE/Promote.h -text
 Curved_kernel/Benchmarks/parser/Report.pdf -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.doc -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.pdf -text
 Curved_kernel/Benchmarks/readme.sxw -text svneol=unset#unset
-Curved_kernel/demo/Curved_kernel/get_arc.xpm -text
 Curved_kernel/demo/Curved_kernel/help/get_arc.jpeg -text svneol=unset#unset
 Curved_kernel/demo/Curved_kernel/help/planar_map_icon.jpeg -text svneol=unset#unset
 Curved_kernel/demo/Curved_kernel/help/sweeper.jpeg -text svneol=unset#unset
 Curved_kernel/demo/Curved_kernel/help/trash.jpeg -text svneol=unset#unset
-Curved_kernel/demo/Curved_kernel/lines_icon.xpm -text
-Curved_kernel/demo/Curved_kernel/makefile -text
-Curved_kernel/demo/Curved_kernel/planar_map_icon.xpm -text
-Curved_kernel/demo/Curved_kernel/sweeper.xpm -text
-Curved_kernel/demo/Curved_kernel/trash.xpm -text
-Curved_kernel/examples/Curved_kernel/example_Exact_circular_kernel.C -text
-Curved_kernel/test/Curved_kernel/test_Exact_curved_kernel.C -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#unset
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#unset
 Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text
@@ -436,8 +343,6 @@ Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svn
 Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#unset
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#unset
-Envelope_3/examples/Envelope_3/make_xy_mon.C -text
-Generator/demo/Generator/generator.vcproj -text
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
 Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#unset
 Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
@@ -478,9 +383,7 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.eps -text
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#unset
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#unset
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#unset
-Homogeneous_kernel/changes.txt -text
 Installation/LICENSE.FREE_USE -text
-Installation/config/support/README -text
 Installation/config/support/S05-BOOST -text
 Installation/config/support/S06-BOOST_PROGRAM_OPTIONS -text
 Installation/config/support/S08-EXTERNTAUCSNIX -text
@@ -503,34 +406,13 @@ Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
 Installation/config/support/S83-QT3MSST -text
-Installation/config/support/test_BOOST.C -text
-Installation/config/support/test_BOOST_PROGRAM_OPTIONS.C -text
-Installation/config/support/test_CORE.C -text
-Installation/config/support/test_EXTERNTAUCS.C -text
-Installation/config/support/test_GMP.C -text
-Installation/config/support/test_GMPXX.C -text
-Installation/config/support/test_LEDA.C -text
-Installation/config/support/test_LEDAWIN.C -text
-Installation/config/support/test_MPFR.C -text
-Installation/config/support/test_QT.C -text
-Installation/config/support/test_TAUCS.C -text
-Installation/config/support/test_X11.C -text
-Installation/config/support/test_ZLIB.C -text
-Installation/config/testfiles/CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG.C -text
-Installation/config/testfiles/CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG.C -text
-Installation/config/testfiles/CGAL_CFG_SUNPRO_RWSTD.C -text
-Installation/src/CGAL/makefile -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#unset
-Interpolation/doc_tex/Interpolation/nn_coords.xml -text
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text
 Jet_fitting_3/demo/Jet_fitting_3/data/venus.off -text
-Jet_fitting_3/demo/Jet_fitting_3/old/ogl_visu.C -text
-Jet_fitting_3/demo/Jet_fitting_3/old/visu.C -text
-Jet_fitting_3/demo/Jet_fitting_3/test_visu.C -text
 Jet_fitting_3/doc_tex/AIDE -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/Maple_formula.mw -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.eps -text
@@ -566,8 +448,6 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.gif -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#unset
-Kinetic_data_structures/demo/Kinetic_data_structures/makefile -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/PkgDescription.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.pdf -text
@@ -580,7 +460,6 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.pdf -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.png -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2_example.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.pdf -text svneol=unset#unset
@@ -605,97 +484,18 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.pdf -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.png -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/kds_intro.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/main.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/overview.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/provided_kdss.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.pdf -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_example.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.pdf -text svneol=unset#unset
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.ps -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/sweepline_usage_example.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/DelaunayTriangulationVisitor_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/DelaunayTriangulationVisitor_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_cell_base_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_event_log_visitor_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_event_log_visitor_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_face_base_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_recent_edges_visitor_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_visitor_base_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Delaunay_triangulation_visitor_base_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Enclosing_box_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Enclosing_box_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Erase_event.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/EventLogVisitor.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Insert_event.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Qt_moving_points_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Qt_triangulation_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Qt_widget_2.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/RegularTriangulationVisitor_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Regular_triangulation_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Regular_triangulation_cell_base_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Regular_triangulation_event_log_visitor_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Regular_triangulation_instantaneous_traits_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Regular_triangulation_vertex_base_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Regular_triangulation_visitor_base_3.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Sort.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/SortVisitor.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Sort_event_log_visitor.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/Sort_visitor_base.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/intro.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures_ref/main.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework/PkgDescription.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework/adding_certificate.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework/architecture.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.eps -text
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text
-Kinetic_data_structures/doc_tex/Kinetic_framework/examples.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework/main.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework/overview.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text
-Kinetic_data_structures/doc_tex/Kinetic_framework/trivial_kds_example.tex -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/#Time.tex# -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/ActiveObjectsTable.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Active_objects_listener_helper.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Active_objects_vector.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Cartesian_instantaneous_kernel.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Cartesian_kinetic_kernel.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Certificate.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/ConstructFunction.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Event.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/EventLogVisitor.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/EventQueue.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Function.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/FunctionKernel.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/InstantaneousKernel.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Key.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/KineticKernel.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Listener.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Multi_listener.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Ref_counted.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/RootStack.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/SimulationTraits.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Simulator.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Simulator_kds_listener.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Simulator_objects_listener.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Simulatorclass.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/Time.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/intro.tex -text
-Kinetic_data_structures/doc_tex/Kinetic_framework_ref/main.tex -text
-Kinetic_data_structures/examples/Kinetic_framework/adding_a_certificate.C -text
-Kinetic_data_structures/include/CGAL/Kinetic/Certificate_generator.h -text
-Kinetic_data_structures/include/CGAL/Polynomial/CORE_kernel.h -text
-Kinetic_data_structures/include/CGAL/Polynomial/internal/CORE_polynomial.h -text
-Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Isolating_interval.h -text
-Kinetic_data_structures/include/CGAL/Polynomial/internal/Kernel/Lower_bound_root.h -text
-Kinetic_data_structures/test/Kinetic_data_structures/Delaunay_triangulation_3_timing.C -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text
@@ -703,8 +503,6 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6 -tex
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=1 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -text
-Kinetic_data_structures/test/Polynomial_kernel/core_test.C -text
-Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Maintenance/MacOSX_Installer/CGAL.pmproj -text
 Maintenance/MacOSX_Installer/Resources/License.rtf -text
@@ -738,7 +536,6 @@ Maintenance/svn_server/hooks/pre-lock.tmpl -text
 Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/pre-unlock.tmpl -text
 Maintenance/svn_server/hooks/start-commit.tmpl -text
-Maintenance/svn_server/hooks/warn_line_too_long.C -text
 Manual/doc_tex/Manual/fig/a-simp.eps -text
 Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
 Manual/doc_tex/Manual/fig/c-simp.eps -text
@@ -1067,8 +864,6 @@ Manual_tools/src/latex_converter_config/gif/cc_wp.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_wr.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_zeta.gif -text svneol=unset#unset
 Manual_tools/src/mstring.doc -text
-Manual_tools/src/regex++.C -text
-Manual_tools/src/regex_dictionary.C -text
 Manual_tools/sty/eps_tabs/cc_Class.eps -text
 Manual_tools/sty/eps_tabs/cc_Class.pdf -text svneol=unset#unset
 Manual_tools/sty/eps_tabs/cc_Concept.eps -text
@@ -1097,8 +892,6 @@ Manual_tools/sty/eps_tabs_grey/cc_FunctionObjectConcept.eps -text
 Manual_tools/sty/eps_tabs_grey/cc_Macro.eps -text
 Manual_tools/sty/eps_tabs_grey/cc_Variable.eps -text
 Manual_tools/test/Manual_tools/html.orig.tgz -text svneol=unset#unset
-Matrix_search/demo/Matrix_search/max_k-gon.vcproj -text
-Matrix_search/demo/Matrix_search/rectangular_p_center_2.vcproj -text
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#unset
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#unset
@@ -1114,12 +907,9 @@ Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=uns
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
 Mesh_2/bench/data/square-deforme.poly -text
 Mesh_2/bench/data/square.poly -text
-Mesh_2/demo/Mesh_2/contraints.xpm -text
 Mesh_2/demo/Mesh_2/data/clusters.poly -text
 Mesh_2/demo/Mesh_2/data/fish.poly -text
 Mesh_2/demo/Mesh_2/data/trivial.poly -text
-Mesh_2/demo/Mesh_2/marked.xpm -text
-Mesh_2/demo/Mesh_2/seeds.xpm -text
 Mesh_2/doc_tex/Mesh_2/domain-mesh.eps -text svneol=unset#unset
 Mesh_2/doc_tex/Mesh_2/domain-mesh.png -text svneol=unset#unset
 Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.eps -text svneol=unset#unset
@@ -1139,17 +929,6 @@ Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
 Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text
-Mesh_2/test/Mesh_2/test_conforming.C -text
-Mesh_2/test/Mesh_2/test_meshing.C -text
-Mesh_3/applications/off_to_medit.C -text
-Mesh_3/examples/Mesh_3/implicit_functions.C -text
-Mesh_3/examples/Mesh_3/implicit_functions.h -text
-Mesh_3/include/CGAL/Volume_mesher_cell_base_3.h -text
-Min_annulus_d/examples/Min_annulus_d/min_annulus_d.C -text
-Min_annulus_d/examples/Min_annulus_d/min_annulus_d_fast_exact.C -text
-Min_circle_2/demo/Min_circle_2/min_circle_2.vcproj -text
-Min_ellipse_2/demo/Min_ellipse_2/min_ellipse_2.vcproj -text
-Min_quadrilateral_2/demo/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
 Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text
 Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -text
 Min_sphere_of_spheres_d/web/figs/heuristic/excess.eps -text
@@ -1169,9 +948,6 @@ Min_sphere_of_spheres_d/web/figs/pivot/cex1.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/basis.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/notbasis.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/ss_basis.eps -text
-Minkowski_sum_2/demo/Minkowski_sum_2/Approx_offset_demo.C -text
-Minkowski_sum_2/demo/Minkowski_sum_2/Minkowski_demo.C -text
-Minkowski_sum_2/demo/Minkowski_sum_2/Offset_demo.C -text
 Minkowski_sum_2/demo/Minkowski_sum_2/RSA_demo.C -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text
@@ -1187,7 +963,6 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/ex_offset.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/ex_offset.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/ex_offset.gif -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/ex_offset.pdf -text
-Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/makefile -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/offset_conv.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/offset_conv.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/offset_conv.gif -text
@@ -1217,13 +992,6 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pdf -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex_t -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tmp.inputs -text
-Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tmp.tex -text
-Minkowski_sum_2/examples/Minkowski_sum_2/ex_approx_offset.C -text
-Minkowski_sum_2/examples/Minkowski_sum_2/ex_exact_offset.C -text
-Minkowski_sum_2/examples/Minkowski_sum_2/ex_sum_by_decomposition.C -text
-Minkowski_sum_2/examples/Minkowski_sum_2/ex_sum_triangles.C -text
-Minkowski_sum_2/examples/Minkowski_sum_2/ex_sum_with_holes.C -text
-Minkowski_sum_2/examples/Minkowski_sum_2/ms_rational_nt.h -text
 Minkowski_sum_2/examples/Minkowski_sum_2/rooms_star.dat -text
 Minkowski_sum_2/examples/Minkowski_sum_2/spiked.dat -text
 Minkowski_sum_2/include/CGAL/rotational_swept_area_2.h -text
@@ -1231,31 +999,27 @@ Modifier/doc_tex/Modifier/idraw/modifier.eps -text
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#unset
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
 Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#unset
-Nef_2/debug.txt -text
-Nef_2/demo/Nef_2/nef_2.vcproj -text
 Nef_2/demo/Nef_2/xpms/basic.gif -text svneol=unset#unset
 Nef_2/demo/Nef_2/xpms/basic.pcx -text svneol=unset#unset
 Nef_2/demo/Nef_2/xpms/basic2.pcx -text svneol=unset#unset
 Nef_2/demo/Nef_2/xpms/boundary.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/boundary.xpm -text svneol=unset#unset
+Nef_2/demo/Nef_2/xpms/boundary.xpm svneol=native#unset
 Nef_2/demo/Nef_2/xpms/closure.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/closure.xpm -text svneol=unset#unset
+Nef_2/demo/Nef_2/xpms/closure.xpm svneol=native#unset
 Nef_2/demo/Nef_2/xpms/complement.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/complement.xpm -text svneol=unset#unset
+Nef_2/demo/Nef_2/xpms/complement.xpm svneol=native#unset
 Nef_2/demo/Nef_2/xpms/diff.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/diff.xpm -text svneol=unset#unset
+Nef_2/demo/Nef_2/xpms/diff.xpm svneol=native#unset
 Nef_2/demo/Nef_2/xpms/exor.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/exor.xpm -text svneol=unset#unset
+Nef_2/demo/Nef_2/xpms/exor.xpm svneol=native#unset
 Nef_2/demo/Nef_2/xpms/interior.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/interior.xpm -text svneol=unset#unset
+Nef_2/demo/Nef_2/xpms/interior.xpm svneol=native#unset
 Nef_2/demo/Nef_2/xpms/intersection.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/intersection.xpm -text
-Nef_2/demo/Nef_2/xpms/nef.xpm -text
 Nef_2/demo/Nef_2/xpms/newclosed.pcx -text svneol=unset#unset
 Nef_2/demo/Nef_2/xpms/newopen.pcx -text svneol=unset#unset
 Nef_2/demo/Nef_2/xpms/newpoly.pcx -text svneol=unset#unset
 Nef_2/demo/Nef_2/xpms/union.pcx -text svneol=unset#unset
-Nef_2/demo/Nef_2/xpms/union.xpm -text svneol=unset#unset
+Nef_2/demo/Nef_2/xpms/union.xpm svneol=native#unset
 Nef_2/doc_tex/Nef_2/complex.gif -text svneol=unset#unset
 Nef_2/doc_tex/Nef_2/complex.pdf -text svneol=unset#unset
 Nef_2/doc_tex/Nef_2/complex.ps -text
@@ -1265,16 +1029,13 @@ Nef_2/doc_tex/Nef_2/halfplane.ps -text
 Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text
 Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#unset
 Nef_2/doc_tex/Nef_2_ref/extsegs.pdf -text svneol=unset#unset
-Nef_2/test/Nef_2/point_location.C -text
 Nef_3/Visual_hull/Nef_3/corner.off -text
 Nef_3/Visual_hull/Nef_3/hole.off -text
 Nef_3/Visual_hull/Nef_3/mpi.off -text
 Nef_3/Visual_hull/Nef_3/mpi_triang.off -text
 Nef_3/Visual_hull/Nef_3/octahedron.off -text
 Nef_3/demo/Nef_3/cube.off -text
-Nef_3/demo/Nef_3/include/CGAL/Nef_3/visual_hull_creator.h -text
 Nef_3/demo/Nef_3/mpi.vsh -text
-Nef_3/demo/Nef_3/visual_hull.C -text
 Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#unset
@@ -1300,7 +1061,6 @@ Nef_3/doc_tex/Nef_3/fig/visualization_SNC.gif -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text
-Nef_3/doc_tex/Nef_3_ref/OFF_to_nef_3.tex -text
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.eps -text
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.gif -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.pdf -text svneol=unset#unset
@@ -1310,11 +1070,7 @@ Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.pdf -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3_ref/fig/snc.eps -text
 Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#unset
 Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#unset
-Nef_3/examples/Nef_3/complex_construction.C -text
 Nef_3/examples/Nef_3/complex_construction.cin -text
-Nef_3/examples/Nef_3/polygon_construction.C -text
-Nef_3/examples/Nef_3/polyline_construction.C -text
-Nef_3/test/Nef_3/Nef_3_problematic_construction.C -text
 Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text
 Nef_3/test/Nef_3/data/2_cycles_on_halfsphere2.off -text
 Nef_3/test/Nef_3/data/centered_cube.off -text
@@ -1324,7 +1080,6 @@ Nef_3/test/Nef_3/data/cube+vee.off -text
 Nef_3/test/Nef_3/data/cube+veeee.off -text
 Nef_3/test/Nef_3/data/cube+vertex.off -text
 Nef_3/test/Nef_3/data/cube.off -text
-Nef_3/test/Nef_3/data/nine_planes.nef3.H -text
 Nef_3/test/Nef_3/data/nine_planes.off -text
 Nef_3/test/Nef_3/data/octa.off -text
 Nef_3/test/Nef_3/data/star.off -text
@@ -1343,7 +1098,6 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#unset
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#unset
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#unset
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#unset
-Number_types/include/CGAL/Nef_polynomial_fwd.h -text
 Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#unset
@@ -1362,19 +1116,16 @@ Optimisation_doc/doc_tex/Optimisation/pcenter.pdf -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.eps -text
 Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
-Partition_2/demo/Partition_2/partition_2.vcproj -text
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#unset
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#unset
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#unset
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#unset
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text
-Polygon/demo/Polygon/polygon_2.vcproj -text
 Polygon/doc_tex/Polygon/pgn_algos.eps -text
 Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
 Polygon/doc_tex/Polygon/pgn_algos.ipe -text
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#unset
-Polygon/doc_tex/Polygon/pgn_algos.xml -text
 Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig1.pdf -text svneol=unset#unset
 Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig2.pdf -text svneol=unset#unset
 Polygonal_approximation_d/doc_tex/Polygonal_approximation_d/fig3.pdf -text svneol=unset#unset
@@ -1438,10 +1189,7 @@ Polyhedron/examples/Polyhedron/corner.off -text
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Polyhedron/examples/Polyhedron/cross.off -text
-Polytope_distance_d/examples/Polytope_distance_d/polytope_distance_d.C -text
-Polytope_distance_d/examples/Polytope_distance_d/polytope_distance_d_fast_exact.C -text
 Polytope_distance_d/test/Polytope_distance_d/create_test_PD_cin -text
-Polytope_distance_d/test/Polytope_distance_d/test_PD.C -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD.cin -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/intersecting_segments.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/overlapping_segments.data -text
@@ -1453,12 +1201,7 @@ Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_cubes_nested.data 
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_cubes_shifted.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_numbers.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_squares.data -text
-Polytope_distance_d/test/Polytope_distance_d/test_andreas_example.C -text
-Principal_component_analysis/demo/Principal_component_analysis/linear_least_squares_fitting.C -text
-Principal_component_analysis/demo/Principal_component_analysis/linear_least_squares_fitting_toolbar.C -text
-Principal_component_analysis/demo/Principal_component_analysis/makefile -text
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.ico -text svneol=unset#unset
-Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.rc2 -text
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Mesh.ico -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/MeshDoc.ico -text svneol=unset#unset
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Toolbar.bmp -text svneol=unset#unset
@@ -1473,101 +1216,20 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text
-Principal_component_analysis/test/Principal_component_analysis/fitting_3.C -text
-QP_solver/examples/QP_solver/README -text
 QP_solver/examples/QP_solver/data_to_mps.C -text
 QP_solver/examples/QP_solver/data_to_mps.cin -text
-QP_solver/examples/QP_solver/double_qp_solver.C -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
-QP_solver/examples/QP_solver/integer_qp_solver.C -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
-QP_solver/examples/QP_solver/qp_solver1.C -text
-QP_solver/examples/QP_solver/qp_solver2.C -text
-QP_solver/examples/QP_solver/rational_qp_solver.C -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
-QP_solver/include/CGAL/QP_solver/Bounds.C -text
-QP_solver/test/QP_solver/README -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
 QP_solver/test/QP_solver/data_to_mps-double.C -text
 QP_solver/test/QP_solver/data_to_mps-double.cin -text
 QP_solver/test/QP_solver/data_to_mps-rational.C -text
 QP_solver/test/QP_solver/data_to_mps-rational.cin -text
-QP_solver/test/QP_solver/data_to_mps.C -text
 QP_solver/test/QP_solver/data_to_mps.cin -text
-QP_solver/test/QP_solver/master_mps_to_derivatives.C -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Bernd3_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Bernd3_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Bernd4_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Bernd4_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Bernd5_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Bernd5_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM3_Dual_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM3_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM3_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM4_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_KM4_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_Remove_Pivots_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Test_Expel_Drive_Pivots_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_U6_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_U6_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_U6_zero_c_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Unbounded_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_Unbounded_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_no_cons_one_var_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/LP_no_cons_two_var_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_x_shifted_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Dual_y_shifted_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Primal_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/PD_Primal_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QPE_solver_example_bug_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_Bounded_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_Bounded_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_Unbounded_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_Unbounded_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_center_of_gravity_simplex_n_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_center_of_gravity_simplex_n_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_translation_bug_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_translation_bug_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QP_zero_obj_func_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_b_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_c_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_d_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Ub_LP_Chvatal_8_1_e_QPE_solver_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Unbounded_asymmetric_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/QP_translation_bug.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/Unbounded_asymmetric.mps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
@@ -1575,28 +1237,16 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#unset
-Qt_widget/src/CGALQt/CGALQt.sln -text
-Qt_widget/src/CGALQt/CGALQt.vcproj -text
-Ridges_3/demo/Ridges_3/README -text
-Ridges_3/demo/Ridges_3/makefile -text
-Ridges_3/demo/Ridges_3/ogl_visu.C -text
-Ridges_3/demo/Ridges_3/visu.C -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.eps -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.pdf -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.eps -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.jpg -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.pdf -text
-Ridges_3/examples/Ridges_3/PolyhedralSurf.C -text
-Ridges_3/examples/Ridges_3/README -text
-Ridges_3/examples/Ridges_3/blind.C -text
 Ridges_3/examples/Ridges_3/data/bezierpb3-0.007812.off -text
 Ridges_3/examples/Ridges_3/data/ellipe0.003.off -text
 Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02 -text
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500-off -text
 Ridges_3/examples/Ridges_3/data/venus.off -text
-Ridges_3/examples/Ridges_3/makefile -text
-Ridges_3/examples/Ridges_3/options.C -text
-Robustness/demo/Robustness/robustness.vcproj -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#unset
@@ -1626,10 +1276,6 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.eps -text
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#unset
-Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/filenew.xpm -text
-Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/fileopen.xpm -text
-Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/fileprint.xpm -text
-Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/filesave.xpm -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.eps -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.fig -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.gif -text svneol=unset#unset
@@ -1644,19 +1290,13 @@ Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.eps
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.fig -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.gif -text svneol=unset#unset
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.pdf -text svneol=unset#unset
-Skin_surface_3/Doxyfile -text
-Skin_surface_3/doc_tex/Skin_surface_3/PkgDescription.tex -text
-Skin_surface_3/doc_tex/Skin_surface_3/SkinSurface3.tex -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text
-Skin_surface_3/doc_tex/Skin_surface_3_ref/Construct_anchor_point_3.tex -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
-Skin_surface_3/examples/Skin_surface_3/union_of_balls_simple.C -text
-Skin_surface_3/include/CGAL/union_of_balls_3.h -text
 Skin_surface_3/test/Skin_surface_3/data/test1.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test10.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test11.cin -text
@@ -1668,29 +1308,14 @@ Skin_surface_3/test/Skin_surface_3/data/test6.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test7.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test8.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test9.cin -text
-Snap_rounding_2/demo/Snap_rounding_2/grid.xpm -text
-Snap_rounding_2/demo/Snap_rounding_2/snap_rounding_2.vcproj -text
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#unset
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.pdf -text svneol=unset#unset
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.gif -text svneol=unset#unset
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#unset
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
-Snap_rounding_2/long_description.txt -text
-Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset
 Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
-Spatial_sorting/description.txt -text
-Spatial_sorting/include/CGAL/Hilbert_sort_2.h -text
-Spatial_sorting/include/CGAL/Hilbert_sort_3.h -text
-Spatial_sorting/include/CGAL/Hilbert_sort_base.h -text
-Spatial_sorting/include/CGAL/Multiscale_sort.h -text
-Spatial_sorting/include/CGAL/hilbert_sort.h -text
-Spatial_sorting/include/CGAL/spatial_sort.h -text
-Spatial_sorting/maintainer -text
-Spatial_sorting/test/Spatial_sorting/test_hilbert.C -text
-Spatial_sorting/test/Spatial_sorting/test_multiscale.C -text
-Straight_skeleton_2/demo/Straight_skeleton_2/active_canvas_client.C -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_0.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_1.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/alley_2.poly -text
@@ -1728,8 +1353,6 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/star.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/triangle.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/vertex_event_0.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/vertex_event_9.poly -text
-Straight_skeleton_2/demo/Straight_skeleton_2/definitions.h -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.eps -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.pdf -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.png -text
@@ -1763,17 +1386,7 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.eps -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.pdf -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.png -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Compute_outer_frame_margin.tex -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/PolygonOffsetBuilderTraits_2.tex -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Polygon_offset_builder_2.tex -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Polygon_offset_builder_traits_2.tex -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Straight_skeleton_2.tex -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/VertexContainer_2.tex -text
-Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop -text
-Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop.filelist -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop.pcs -text
-Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevses -text
-Straight_skeleton_2/include/CGAL/compute_outer_frame_margin.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/alley_0.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/alley_1.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/alley_2.poly -text
@@ -1835,16 +1448,6 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/square.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/triangle.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/vertex_event_0.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/vertex_event_9.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_offset_builder_types.h -text
-Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_builder_types.h -text
-Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_traits_aux.C -text
-Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_traits_types.h -text
-Straight_skeleton_2/test/Straight_skeleton_2/makefile -text
-Straight_skeleton_2/test/Straight_skeleton_2/test_offset_builder.C -text
-Straight_skeleton_2/test/Straight_skeleton_2/test_offset_builder.cmd -text
-Straight_skeleton_2/test/Straight_skeleton_2/test_sls_builder.C -text
-Straight_skeleton_2/test/Straight_skeleton_2/test_sls_builder.cmd -text
-Straight_skeleton_2/test/Straight_skeleton_2/test_sls_traits.C -text
 Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#unset
 Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#unset
@@ -1947,12 +1550,6 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text
-Surface_mesher/demo/Surface_mesher/implicit_functions.C -text
-Surface_mesher/demo/Surface_mesher/implicit_functions.h -text
-Surface_mesher/demo/Surface_mesher/implicit_surface_mesher.C -text
-Surface_mesher/demo/Surface_mesher/makefile -text
-Surface_mesher/demo/Surface_mesher/parameters.C -text
-Surface_mesher/demo/Surface_mesher/parameters.h -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset
@@ -1971,63 +1568,13 @@ Surface_mesher/doc_tex/Surface_mesher/skull-surface.eps -text svneol=unset#appli
 Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/octet-stream
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text
-Surface_mesher/examples/Surface_mesher/3d_image_surface_mesher.C -text
-Surface_mesher/examples/Surface_mesher/ImageIO/ImageIO.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/analyze.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/analyze.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/bmp.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/bmp.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/bmpendian.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/bmpendian.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/bmpread.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/bmpread.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/bmptypes.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/convert.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/convert.h -text
 Surface_mesher/examples/Surface_mesher/ImageIO/data/skull_2.9.inr.gz -text
-Surface_mesher/examples/Surface_mesher/ImageIO/gif.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/gif.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/gis.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/gis.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/imageio.mk -text
-Surface_mesher/examples/Surface_mesher/ImageIO/imageio/ImageIO.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/inr.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/inr.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/iris.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/iris.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/mincio.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/mincio.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/pnm.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/pnm.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/recbuffer.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/recbuffer.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/recline.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/recline.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/reech4x4.c -text
-Surface_mesher/examples/Surface_mesher/ImageIO/reech4x4.h -text
-Surface_mesher/examples/Surface_mesher/ImageIO/typedefs.h -text
 Surface_mesher/examples/Surface_mesher/NOTICE -text
-Surface_mesher/examples/Surface_mesher/cgal_test -text
-Surface_mesher/examples/Surface_mesher/implicit_functions.h -text
 Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text
 Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text
-Surface_mesher/include/CGAL/Gray_level_image_3.h -text
-Surface_mesher/include/CGAL/Implicit_surface_3.h -text
-Surface_mesher/include/CGAL/Surface_mesh_cell_base_3.h -text
-Surface_mesher/include/CGAL/Surface_mesh_complex_2_in_triangulation_3.h -text
-Surface_mesher/include/CGAL/Surface_mesh_default_criteria_3.h -text
-Surface_mesher/include/CGAL/Surface_mesh_traits_generator_3.h -text
-Surface_mesher/include/CGAL/Surface_mesh_triangulation_generator_3.h -text
-Surface_mesher/include/CGAL/Surface_mesh_vertex_base_3.h -text
-Surface_mesher/include/CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h -text
-Surface_mesher/include/CGAL/make_surface_mesh.h -text
 Surface_mesher/test/Surface_mesher/NOTICE -text
-Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test.C -text
-Surface_mesher/test/Surface_mesher/internal-test-surface-mesher.C -text
-Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2.vcproj -text
-Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2.vcproj -text
 Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/conflict_zone.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/conflict_zone_after.gif -text svneol=unset#unset
@@ -2036,7 +1583,6 @@ Triangulation_2/demo/Triangulation_2/help/csegment_layer.gif -text svneol=unset#
 Triangulation_2/demo/Triangulation_2/help/input_line_layer.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/input_point_layer.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/movedelete_point_layer.gif -text svneol=unset#unset
-Triangulation_2/demo/Triangulation_2/regular_triangulation_2.vcproj -text
 Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#unset
 Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#unset
 Triangulation_2/doc_tex/TDS_2/flip.ltex -text
@@ -2074,7 +1620,6 @@ Triangulation_2/doc_tex/Triangulation_2/constraints.eps -text
 Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=unset#unset
 Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text
 Triangulation_2/doc_tex/Triangulation_2/constraints.pdf -text svneol=unset#unset
-Triangulation_2/doc_tex/Triangulation_2/constraints.xml -text
 Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#unset
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.pdf -text svneol=unset#unset
@@ -2145,7 +1690,6 @@ Triangulation_2/doc_tex/Triangulation_2/walk.eps -text
 Triangulation_2/doc_tex/Triangulation_2/walk.gif -text svneol=unset#unset
 Triangulation_2/doc_tex/Triangulation_2/walk.ipe -text
 Triangulation_2/doc_tex/Triangulation_2/walk.pdf -text svneol=unset#unset
-Triangulation_2/doc_tex/Triangulation_2/walk.xml -text
 Triangulation_2/doc_tex/Triangulation_2/walls.ipe -text
 Triangulation_2/doc_tex/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
 Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.eps -text
@@ -2243,39 +1787,19 @@ Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#unset
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.bmp -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.xpm -text
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filenew.xpm -text
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileopen.xpm -text
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileprint.xpm -text
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filesave.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.bmp -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.xpm -text
 Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.xpm -text
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text
-Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.vcproj -text
 Tutorial/tutorial/Polyhedron/data/aircraft.off -text
 Tutorial/tutorial/Polyhedron/data/aircraft_open.off -text
 Tutorial/tutorial/Polyhedron/data/bevel_cube.off -text
@@ -2341,11 +1865,7 @@ Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.eps -text
 Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.fig -text
 Tutorial/tutorial/Polyhedron/doc/save/tutorial02.tgz -text svneol=unset#unset
 Tutorial/tutorial/Polyhedron/doc/save/tutorial03.tgz -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.sln -text
-Tutorial/tutorial/Polyhedron/mfc/Subdivision/Mesh.vcproj -text
 Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.ico -text svneol=unset#unset
-Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.manifest -text
-Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Mesh.rc2 -text
 Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/MeshDoc.ico -text svneol=unset#unset
 Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/Toolbar.bmp -text svneol=unset#unset
 Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb0.bmp -text svneol=unset#unset
@@ -2390,11 +1910,6 @@ Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stock.ppt -text svneol=unset#uns
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/subdivision.eps -text
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/teaser.eps -text
 Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/trimming.eps -text
-Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip.xpm -text
-Visibility_complex/demo/Visibility_complex/pixmaps/cw_flip_parallele.xpm -text
-Visibility_complex/demo/Visibility_complex/pixmaps/flip.xpm -text
-Visibility_complex/demo/Visibility_complex/pixmaps/flip_parallele.xpm -text
-Visibility_complex/demo/Visibility_complex/pixmaps/gmin.xpm -text
 Visibility_complex/doc_tex/Visibility_complex/fig/bitangent.gif -text svneol=unset#unset
 Visibility_complex/doc_tex/Visibility_complex/fig/configuration.gif -text svneol=unset#unset
 Visibility_complex/doc_tex/Visibility_complex/fig/constraint-edge.gif -text svneol=unset#unset
@@ -2442,10 +1957,4 @@ Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#unset
 Visibility_complex/doc_tex/fig/vis-complex.eps -text
 Visibility_complex/doc_tex/fig/vis-complex.fig -text
 Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#unset
-Voronoi_diagram_2/demo/Voronoi_diagram_2/filenew.xpm -text
-Voronoi_diagram_2/demo/Voronoi_diagram_2/fileopen.xpm -text
-Voronoi_diagram_2/demo/Voronoi_diagram_2/fileprint.xpm -text
-Voronoi_diagram_2/demo/Voronoi_diagram_2/filesave.xpm -text
-wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
-wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
 wininst/src/CGAL/cgallib.vcproj -text

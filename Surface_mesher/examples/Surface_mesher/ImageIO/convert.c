@@ -1,7 +1,7 @@
 /*************************************************************************
  * convert.c - conversion between types
  *
- * $Id: convert.c,v 1.1.1.1 2005/06/28 14:07:22 lrineau Exp $
+ * $Id$
  *
  * Copyright©INRIA 1999
  *
