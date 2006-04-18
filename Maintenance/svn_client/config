@@ -164,7 +164,9 @@ makefile.* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.makefile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.mak = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.mk = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
-*.kdev* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.kdevelop = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.kdevelop.filelist = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.kdevses = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.dsp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.dsw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.vcproj = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
