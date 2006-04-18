@@ -2448,4 +2448,4 @@ Voronoi_diagram_2/demo/Voronoi_diagram_2/fileprint.xpm -text
 Voronoi_diagram_2/demo/Voronoi_diagram_2/filesave.xpm -text
 wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
 wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
-wininst/src/cgallib.vcproj -text
+wininst/src/CGAL/cgallib.vcproj -text
