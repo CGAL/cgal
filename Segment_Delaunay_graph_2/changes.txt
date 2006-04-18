@@ -1,3 +1,14 @@
+18 April 2006:  Menelaos Karavelas
+- fixed bug in CGAL/Segment_Delaunay_graph_2/Arrangement_type_C2.h.
+  The bug was reported by: Bernhard Kornberger <bkorn@ist.tugraz.at>
+  Problem: In file CGAL/Segment_Delaunay_graph_2/Arrangement_type_C2.h.
+  the operator<< for Sdg_arrangement_enum::Arrangement_type is not
+  only declared but also defined, which is bad, because it is not
+  template code. This makes that it is in all your compilation units. 
+  Solution (hack): keyword "static" added just before the
+  definition. It is then still in all compilation units, but with
+  different mangled names.
+
 9 March 2006:  Menelaos Karavelas
 - renamed demo files so that they have only lowercase letters in their name
   (requested by AF)

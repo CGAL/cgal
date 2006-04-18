@@ -125,6 +125,7 @@ namespace CGALi {
     }
   };
 
+  static
   std::ostream& operator<<(std::ostream& os,
 			   const Sdg_arrangement_enum::Arrangement_type&
 			   at)
