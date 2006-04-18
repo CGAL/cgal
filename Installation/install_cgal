@@ -1269,10 +1269,10 @@ create_standard_header_replacements()
 int main() { return 0; }
 EOF6
     if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${TMP_CXX_FILE}.C >/dev/null 2>&1"; then
-        ${_printf} "%s\n" "  all headers at once : ok."
+        ${_printf} "%s\n" "  All headers at once : ok."
         return;
     fi
-    ${_printf} "%s\n" "  all headers at once : no."
+    ${_printf} "%s\n" "  All headers at once : no."
 
     #
     # Decide if a .h suffix is needed for header files. 
@@ -5083,14 +5083,16 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	    -REBUILD*|-R*|-RB*)
 		if [ -n "${_WHAT_TO_DO}" ]; then _CONFLICT='y'; fi
 		_WHAT_TO_DO='rebuild'
-		BUILD_ONE_CONFIG=$2
-		shift
+		if set_variable_from_command_line 'BUILD_ONE_CONFIG' "$1" "$2"; then
+		    shift
+		fi
 		;;
 	    -BUILD*|-B*)
 		if [ -n "${_WHAT_TO_DO}" ]; then _CONFLICT='y';	fi
 		_WHAT_TO_DO='build'
-		BUILD_ONE_CONFIG=$2
-		shift
+		if set_variable_from_command_line 'BUILD_ONE_CONFIG' "$1" "$2"; then
+		    shift
+		fi
 		;;
 	    -DISABLE-SHARED*) ENABLE_SHARED='';;
 	    *) _WHAT_TO_DO='help';;
