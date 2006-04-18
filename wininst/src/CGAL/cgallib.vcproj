@@ -21,15 +21,16 @@
 				AdditionalOptions="/Zm900"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
-				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_GMP"
+				PreprocessorDefinitions="WIN32;_LIB"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="0"
+				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -67,20 +68,21 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;CGAL_USE_GMP"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/msvc7/CGAL.lib"/>
+				OutputFile="../../lib/msvc7/CGAL.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -108,7 +110,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="aff_transformation_tags.C">
+				RelativePath="assertions.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -123,22 +125,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="assertions.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="Bbox_2_intersections.C">
+				RelativePath="Bbox_2_intersections.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -154,7 +141,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Bbox_3_intersections.C">
+				RelativePath="Bbox_3_intersections.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -169,7 +156,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="cgal_logo.C">
+				RelativePath="cgal_logo.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -184,7 +171,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Color.C">
+				RelativePath="Color.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -199,7 +186,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="File_header_extended_OFF.C">
+				RelativePath="File_header_extended_OFF.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -214,7 +201,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="File_header_OFF.C">
+				RelativePath="File_header_OFF.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -229,7 +216,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="File_scanner_OFF.C">
+				RelativePath="File_scanner_OFF.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -244,7 +231,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="File_writer_inventor.C">
+				RelativePath="File_writer_inventor.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -259,7 +246,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="File_writer_OFF.C">
+				RelativePath="File_writer_OFF.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -274,7 +261,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="File_writer_VRML_2.C">
+				RelativePath="File_writer_VRML_2.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -289,7 +276,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="File_writer_wavefront.C">
+				RelativePath="File_writer_wavefront.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -304,7 +291,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Geomview_stream.C">
+				RelativePath="Geomview_stream.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -319,7 +306,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Interval_arithmetic.C">
+				RelativePath="Interval_arithmetic.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -334,7 +321,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="io.C">
+				RelativePath="io.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -349,7 +336,16 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="MP_Float.C">
+				RelativePath=".\JAMA_numeric_solver.cpp">
+			</File>
+			<File
+				RelativePath=".\KDS_Log.cpp">
+			</File>
+			<File
+				RelativePath=".\kernel.cpp">
+			</File>
+			<File
+				RelativePath="MP_Float.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -364,7 +360,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Origin.C">
+				RelativePath=".\numeric_solvers_support.cpp">
+			</File>
+			<File
+				RelativePath="Polynomial.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -379,7 +378,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Polynomial.C">
+				RelativePath="Random.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -394,7 +393,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Random.C">
+				RelativePath="Real_timer.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -409,7 +408,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Real_timer.C">
+				RelativePath="Timer.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -424,19 +423,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Timer.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
+				RelativePath=".\Turkowski_numeric_solver.cpp">
 			</File>
 		</Filter>
 		<Filter
