@@ -786,13 +786,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
 
   if(!compute_halfsphere[2][0]) {
     CGAL_forall_iterators(it,L) {
-      if(CGAL::orientation(it->source(),it->target(), Sphere_point(0,0,1),
-			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector())
-	 == CGAL::NEGATIVE) 
-	if((it->source().hz()==0 && it->target().hz()==0) || it->is_long()) { 
-	  compute_halfsphere[2][0] = true;
-	  break;
-	}
+      if((it->source().hz()==0 && it->target().hz()==0) || it->is_long()) { 
+	compute_halfsphere[2][0] = true;
+	break;
+      }
     }
   }
   
@@ -803,13 +800,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
   
   if(!compute_halfsphere[2][1]) {
     CGAL_forall_iterators(it,L) {
-      if(CGAL::orientation(it->source(),it->target(), Sphere_point(0,0,-1),
-			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector())
-	 == CGAL::NEGATIVE) 
-	if((it->source().hz()==0 && it->target().hz()==0) || it->is_long()) { 
-	  compute_halfsphere[2][1] = true;
-	  break;
-	}
+      if(it->is_long() || (it->source().hz()==0 && it->target().hz()==0)) { 
+	compute_halfsphere[2][1] = true;
+	break;
+      }
     }
   }
 
@@ -818,13 +812,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
 
   if(!compute_halfsphere[0][0]) {
     CGAL_forall_iterators(it,L) {
-      if(CGAL::orientation(it->source(),it->target(), Sphere_point(1,0,0),
-			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector())
-	 == CGAL::NEGATIVE) 
-	if((it->source().hx()==0 && it->target().hx()==0) || it->is_long()) { 
-	  compute_halfsphere[0][0] = true;
-	  break;
-	}
+      if((it->source().hx()==0 && it->target().hx()==0) || it->is_long()) { 
+	compute_halfsphere[0][0] = true;
+	break;
+      }
     }
   }
   
@@ -835,13 +826,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
   
   if(!compute_halfsphere[0][1]) {
     CGAL_forall_iterators(it,L) {
-      if(CGAL::orientation(it->source(),it->target(), Sphere_point(-1,0,0),
-			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector())
-	 == CGAL::NEGATIVE) 
-	if((it->source().hx()==0 && it->target().hx()==0) || it->is_long()) { 
-	  compute_halfsphere[0][1] = true;
-	  break;
-	}
+      if((it->source().hx()==0 && it->target().hx()==0) || it->is_long()) { 
+	compute_halfsphere[0][1] = true;
+	break;
+      }
     }
   }
 
@@ -851,13 +839,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
 
   if(!compute_halfsphere[1][0]) {
     CGAL_forall_iterators(it,L) {
-      if(CGAL::orientation(it->source(),it->target(), Sphere_point(0,1,0),
-			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector())
-	 == CGAL::NEGATIVE) 
-	if((it->source().hy()==0 && it->target().hy()==0) || it->is_long()) { 
-	  compute_halfsphere[1][0] = true;
-	  break;
-	}
+      if((it->source().hy()==0 && it->target().hy()==0) || it->is_long()) { 
+	compute_halfsphere[1][0] = true;
+	break;
+      }
     }
   }
   
@@ -868,13 +853,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
   
   if(!compute_halfsphere[1][1]) {
     CGAL_forall_iterators(it,L) {
-      if(CGAL::orientation(it->source(),it->target(), Sphere_point(0,-1,0),
-			   CGAL::ORIGIN+it->sphere_circle().orthogonal_vector())
-	 == CGAL::NEGATIVE) 
-	if((it->source().hy()==0 && it->target().hy()==0) || it->is_long()) { 
-	  compute_halfsphere[1][1] = true;
-	  break;
-	}
+      if((it->source().hy()==0 && it->target().hy()==0) || it->is_long()) { 
+	compute_halfsphere[1][1] = true;
+	break;
+      }
     }
   }
 
@@ -1074,6 +1056,11 @@ subdivide(const Map* M0, const Map* M1, bool with_trivial_segments)
   L0.marks_of_halfspheres(mohs, 0, cs);
   L1.marks_of_halfspheres(mohs, 2, cs);
   
+  CGAL_NEF_TRACEN("mohs[0]=" << mohs[0]);
+  CGAL_NEF_TRACEN("mohs[1]=" << mohs[1]);
+  CGAL_NEF_TRACEN("mohs[2]=" << mohs[2]);
+  CGAL_NEF_TRACEN("mohs[3]=" << mohs[3]);
+
   CGAL_NEF_TRACEN("compute_halfsphrere\n  cs = " << cs << 
 	 "\n  [cs][0] = " << compute_halfsphere[cs][0] <<
 	 "\n  [cs][1] = " << compute_halfsphere[cs][1]);
