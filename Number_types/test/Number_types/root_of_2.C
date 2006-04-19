@@ -475,6 +475,7 @@ int main(int argc, char **argv) {
 #ifdef CGAL_USE_GMPXX
   /*
   // Root_of_2 can only be instantiated with RT for now
+  // It currently fails on Windows 
   std::cout << "Testing Root_of_2<mpq_class>" << std::endl;
   result = result && test_root_of<Root_of_2<mpq_class> >();
   */
