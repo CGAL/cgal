@@ -807,6 +807,7 @@ set_compiler_flags()
     CGAL_SHARED_LIB_CXXFLAGS="-fpic"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
+    CGAL_SHARED_LIB_INSTALL_NAME=""
     CGAL_WINLIB_CXXFLAGS=""
     CGAL_QT_CXXFLAGS=""
     WINDOW_INCLUDE=""
@@ -1004,6 +1005,9 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
+	    # Note : The following CGAL_SHARED_LIB_INSTALL_NAME definition
+	    #        prevents re-use for other shared libs, e.g. libCGALQt.
+	    CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIB)"
 	    SHARED_LIB_EXT=".dylib"
 	    RANLIB="ranlib"
 	    ;;
@@ -4067,7 +4071,7 @@ create_include_makefile()
   # CGAL_SHARED_LIB_CREATE
   #
   ${_printf} "%s\n\n" \
-    "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} -o ''" \
+    "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} ${CGAL_SHARED_LIB_INSTALL_NAME} -o ''" \
     >> ${FILE}
 
   #
