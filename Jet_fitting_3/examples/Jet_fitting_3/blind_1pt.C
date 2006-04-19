@@ -8,7 +8,7 @@
 
 #include <vector>
 #include "../../include/CGAL/Monge_via_jet_fitting.h" 
-#include "GSL.h" 
+#include "LinAlg_lapack.h" 
  
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;

@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
 
   res4openGL_fname = new char[strlen(w_if_name) + 10];// append .4ogl.txt
   sprintf(res4openGL_fname, "%s.4ogl.txt", w_if_name);
-  out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out);
+  out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out); 
   assert(out_4ogl!=NULL);
   //if verbose only...
   if(verbose){
