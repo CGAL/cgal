@@ -44,7 +44,7 @@ void _test_circle_construct(CK ck)
   int random_max = 127;
   int random_min = -127;
   
-  FT sqrt2 = sqrt(2.0)/2;
+  FT sqrt2 = std::sqrt(2.0)/2;
 
   //test of get_equation_object()
   int x_equation = theRandom.get_int(random_min,random_max);

@@ -50,7 +50,7 @@ d_to_q(double x)
       const int maxiter = 20;      // ought not be necessary, but just in case,
                                    // max 300 bits of precision
       int expt;
-      double mantissa = frexp(x, &expt);
+      double mantissa = std::frexp(x, &expt);
       long exponent = expt;
       double intpart;
       int k = 0;
@@ -58,7 +58,7 @@ d_to_q(double x)
       while (mantissa != 0.0 && k++ < maxiter)
 
       { mantissa *= width; // shift double mantissa
-        mantissa = modf(mantissa, &intpart);
+        mantissa = std::modf(mantissa, &intpart);
         num *= shift_pow;
         num += (long)intpart;
         exponent -= shift;

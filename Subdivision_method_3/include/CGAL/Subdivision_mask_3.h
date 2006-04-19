@@ -361,7 +361,7 @@ public:
     size_t n = circulator_size(vcir);
     const double pi = 3.1415926;
 
-    FT a = (FT) ((4.0-2.0*cos(2.0*pi/n))/9.0);
+    FT a = (FT) ((4.0-2.0*std::cos(2.0*pi/n))/9.0);
 
     Vector cv = ((FT)(1.0-a)) * (vertex->point() - CGAL::ORIGIN);
     for (size_t i = 1; i <= n; ++i, --vcir) {

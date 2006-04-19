@@ -151,9 +151,9 @@ private:
   }
 
   bool does_nef3_equals_file(Nef_polyhedron& N, const char* name) {
-    char* fullname = new char[strlen(datadir)+strlen(name)+1];
-    strcpy(fullname, datadir);
-    strcat(fullname, name);
+    char* fullname = new char[std::strlen(datadir)+std::strlen(name)+1];
+    std::strcpy(fullname, datadir);
+    std::strcat(fullname, name);
     std::ofstream out("data/temp.nef3");
     out << N;
     bool b = are_files_equal("data/temp.nef3",fullname);
@@ -171,9 +171,9 @@ private:
   }
 
   Nef_polyhedron load_nef3(const char* name) {
-    char* fullname = new char[strlen(datadir)+strlen(name)+1];
-    strcpy(fullname, datadir);
-    strcat(fullname, name);
+    char* fullname = new char[std::strlen(datadir)+std::strlen(name)+1];
+    std::strcpy(fullname, datadir);
+    std::strcat(fullname, name);
     std::ifstream input(fullname);
     CGAL_assertion_msg(input,"could not open file");
     Nef_polyhedron tmp;

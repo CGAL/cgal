@@ -122,7 +122,7 @@ template < class Traits > void test_sort(const char *nm)
   unsigned int beg= 4, end=5;
     std::cout << "Solver: " << nm << std::endl;
     for (unsigned int i = beg; i < end; ++i) {
-      printf("%6f\t", test_sort < Traits > (i, static_cast<int>(std::ceil(500.0/i))));
+      std::printf("%6f\t", test_sort < Traits > (i, static_cast<int>(std::ceil(500.0/i))));
         std::cout << std::flush;
         if (i > 4)
             ++i;

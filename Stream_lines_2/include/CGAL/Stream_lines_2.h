@@ -250,8 +250,8 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
   while(!vector_field_2.is_in_domain(seed_point))
     {
       std::cout << "searching valid seed point..\n";
-      FT x = min_x + (FT) (((FT) rand() * xrange)/((FT) RAND_MAX));
-      FT y = min_y + (FT) (((FT) rand() * yrange)/((FT) RAND_MAX));
+      FT x = min_x + (FT) (((FT) std::rand() * xrange)/((FT) RAND_MAX));
+      FT y = min_y + (FT) (((FT) std::rand() * yrange)/((FT) RAND_MAX));
       seed_point = Point_2(x, y);
     }
   std::cout << seed_point << " first seed point\n";

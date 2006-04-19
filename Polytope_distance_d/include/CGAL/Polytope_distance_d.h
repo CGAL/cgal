@@ -493,7 +493,7 @@ template < class Point, class PointIterator >
 struct QP_rep_signed_point_iterator {
   public:
     typedef  std::pair<Point,CGAL::Sign>      value_type;
-    typedef  ptrdiff_t                        difference_type;
+    typedef  std::ptrdiff_t                   difference_type;
     typedef  value_type*                      pointer;
     typedef  value_type&                      reference;
     typedef  std::random_access_iterator_tag  iterator_category;

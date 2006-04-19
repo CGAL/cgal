@@ -596,7 +596,7 @@ namespace CGAL {
 		    << is_facet_on_surface(*fit, center)
 		    << ")"
 		    << std::endl;
-	  exit (-1);
+	  std::exit (-1);
 	}
       }
     }

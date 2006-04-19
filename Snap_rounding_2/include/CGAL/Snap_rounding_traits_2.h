@@ -63,8 +63,8 @@ public:
       NT x_tmp = p.x() / pixel_size;
       NT y_tmp = p.y() / pixel_size;
 
-      double x_floor = floor(CGAL::to_double(x_tmp));
-      double y_floor = floor(CGAL::to_double(y_tmp));
+      double x_floor = std::floor(CGAL::to_double(x_tmp));
+      double y_floor = std::floor(CGAL::to_double(y_tmp));
       x = NT(x_floor) * pixel_size + pixel_size / NT(2.0);
       y = NT(y_floor) * pixel_size + pixel_size / NT(2.0);
     }

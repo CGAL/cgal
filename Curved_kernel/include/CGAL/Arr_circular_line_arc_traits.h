@@ -275,7 +275,7 @@ namespace CGAL {
 	  CircularKernel().intersect_2_object()(*arc1e,*arc2,  std::back_inserter(container));
 	  return object_to_object_variant<CircularKernel, Arc1, Arc2>(container, res);
 	}
-	abort();
+	std::abort();
 	return res;//for no warning
       }
     

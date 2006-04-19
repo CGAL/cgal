@@ -305,6 +305,7 @@ typedef edge*   edgetriple ;
 
 int main()
 {
+  using std::ldexp;
   std::cout << "Testing Straight_skeleton_traits_2\n";
 
   const int oc = 4 ;

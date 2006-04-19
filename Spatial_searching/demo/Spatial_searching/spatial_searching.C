@@ -200,7 +200,7 @@ private slots:
         
     } else if(CGAL::assign(c, obj)){
       // exact range searching using default value 0.0 for fuzziness paramater
-      Fuzzy_circle exact_range(c.center(), sqrt(c.squared_radius()));
+      Fuzzy_circle exact_range(c.center(), std::sqrt(c.squared_radius()));
 
       typedef CGAL::Kd_tree<Traits> Tree;
       std::list<Point_2> l, res;

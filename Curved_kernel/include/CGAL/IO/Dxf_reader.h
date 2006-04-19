@@ -233,7 +233,7 @@ read_entities(std::istream& is, Polygons& polys, Circles& circles)
       
     } else {
       std::cerr << "unknown entity" << std::endl;
-      exit(0);
+      std::exit(0);
     }
   } while(str != "ENDSEC");
   is >> n;
@@ -272,7 +272,7 @@ read_entities(std::istream& is, Polygons& polys, Centers_and_radii& car)
       
     } else {
       std::cerr << "unknown entity" << std::endl;
-      exit(0);
+      std::exit(0);
     }
   } while(str != "ENDSEC");
   is >> n;

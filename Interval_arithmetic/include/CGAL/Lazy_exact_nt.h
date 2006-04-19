@@ -194,7 +194,7 @@ struct Lazy_construct_rep : public Rep
   {}
 
 private:
-  Lazy_construct_rep (const Lazy_construct_rep&) { abort(); } // cannot be copied.
+  Lazy_construct_rep (const Lazy_construct_rep&) { std::abort(); } // cannot be copied.
 public:
 
   const AT& approx() const
@@ -268,7 +268,7 @@ struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
 #endif  
 
 private:
-  Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
+  Lazy_exact_rep (const Lazy_exact_rep&) { std::abort(); } // cannot be copied.
 
 };
 

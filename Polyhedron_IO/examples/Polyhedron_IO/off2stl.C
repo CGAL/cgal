@@ -137,7 +137,7 @@ int main( int argc, char **argv) {
         Point r = h->next()->next()->vertex()->point();
         // compute normal
         Vector n = CGAL::cross_product( q-p, r-p);
-        Vector norm = n / sqrt( n * n);
+        Vector norm = n / std::sqrt( n * n);
         *p_out << "    facet normal " << norm << endl;
         *p_out << "      outer loop " << endl;
         *p_out << "        vertex " << p << endl;

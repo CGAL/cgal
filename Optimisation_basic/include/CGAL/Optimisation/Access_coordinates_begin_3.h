@@ -51,7 +51,7 @@ class Point_3_coordinate_iterator {
 
     // iterator types
     typedef  typename R::RT             value_type;
-    typedef  ptrdiff_t                  difference_type;
+    typedef  std::ptrdiff_t             difference_type;
     typedef  value_type*                pointer;
     typedef  value_type&                reference;
     typedef  std::random_access_iterator_tag

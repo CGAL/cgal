@@ -649,7 +649,7 @@ public:
     
 typename Object_list::difference_type n_vertices = std::distance(objects.begin(),v_end);
  CGAL_NEF_TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
- frexp( (double) n_vertices, &max_depth);
+ std::frexp( (double) n_vertices, &max_depth);
 
  // TODO: in the presence of a infimaximal bounding box, the bounding box does not have to be computed
  Objects_bbox objects_bbox = traits.objects_bbox_object();

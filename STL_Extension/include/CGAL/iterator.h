@@ -137,7 +137,7 @@ public:
   
   // types
   typedef  std::random_access_iterator_tag    iterator_category;
-  typedef  ptrdiff_t                          difference_type;
+  typedef  std::ptrdiff_t                     difference_type;
   typedef  T                                  value_type;
   typedef  value_type*                        pointer;
   typedef  value_type&                        reference;

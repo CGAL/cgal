@@ -3261,7 +3261,7 @@ postcondition:
       unsigned long sz = number_of_curves();
       //to avoid signed / unsigned conversion warnings
                         // rand() returns an int but a non negative one.
-      if (static_cast<unsigned long>(rand()) > 
+      if (static_cast<unsigned long>(std::rand()) > 
                             RAND_MAX / (sz+1))
                           return false;
       /*       INTERNAL COMPILER ERROR overide

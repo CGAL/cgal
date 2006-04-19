@@ -92,7 +92,7 @@ class Approximator {
     double v2l = CGAL_NTS sqrt(v2*v2);
     double v3l = CGAL_NTS sqrt(v3*v3);
     double cosalpha = v0*v3 / v0l / v3l; 
-    double alpha = acos(cosalpha);
+    double alpha = std::acos(cosalpha);
     const int units_per_halfcircle = 50;
     int units = int(units_per_halfcircle/CGAL_PI * alpha);
     if (units == 0) ++units;
@@ -112,8 +112,8 @@ class Approximator {
 	     v0.z(),v1.z(),v2.z());
     VSegment S(units+1);
     for (int i=0; i<units; ++i) 
-      S[i] = VPoint(cos(CGAL_PI*i/double(units_per_halfcircle)),
-		    sin(CGAL_PI*i/double(units_per_halfcircle)),
+      S[i] = VPoint(std::cos(CGAL_PI*i/double(units_per_halfcircle)),
+		    std::sin(CGAL_PI*i/double(units_per_halfcircle)),
 		    0.0);
     double sinalpha = 1 - cosalpha*cosalpha;
     if (sinalpha <0) sinalpha = 0; 
@@ -150,8 +150,8 @@ class Approximator {
 	     v0.z(),v1.z(),v2.z());
     VSegment S(units);
     for (int i=0; i<units; ++i) {
-      S[i] = VPoint(cos(2.0*CGAL_PI*i/double(units)),
-		    sin(2.0*CGAL_PI*i/double(units)),
+      S[i] = VPoint(std::cos(2.0*CGAL_PI*i/double(units)),
+		    std::sin(2.0*CGAL_PI*i/double(units)),
 		    0.0);
     }
     VSegment::iterator it;
@@ -168,9 +168,9 @@ class Approximator {
 
   static void refine(const DTriangle& t, VTriangle& T) {
     double angle[3]; int i(0);
-    angle[0] = acos((t[0]-CGAL::ORIGIN)*(t[1]-CGAL::ORIGIN));
-    angle[1] = acos((t[1]-CGAL::ORIGIN)*(t[2]-CGAL::ORIGIN));
-    angle[2] = acos((t[2]-CGAL::ORIGIN)*(t[0]-CGAL::ORIGIN));
+    angle[0] = std::acos((t[0]-CGAL::ORIGIN)*(t[1]-CGAL::ORIGIN));
+    angle[1] = std::acos((t[1]-CGAL::ORIGIN)*(t[2]-CGAL::ORIGIN));
+    angle[2] = std::acos((t[2]-CGAL::ORIGIN)*(t[0]-CGAL::ORIGIN));
     CGAL_NEF_TRACEN("refine "<<angle[0]<<" "<<angle[1]<<" "<<angle[2]);
     if ( angle[1] > angle[0] ) {
       if ( angle[2] > angle[1] ) i=2;

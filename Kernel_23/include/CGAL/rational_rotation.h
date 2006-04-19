@@ -166,8 +166,8 @@ rational_rotation_approximation( const double& angle,
   NT& isin = sin_num;
   NT& icos = cos_num;
   NT& iden = denom;
-  double dsin = sin(angle);
-  double dcos = cos(angle);
+  double dsin = std::sin(angle);
+  double dcos = std::cos(angle);
   double dn = CGAL::to_double(n);
   double dd = CGAL::to_double(d);
   double eps = dn / dd;
@@ -253,8 +253,8 @@ rational_rotation_approximation( const double& angle,
 
   if ( swapped ) { std::swap (isin,icos); }
 
-  dsin = sin( angle);
-  dcos = cos( angle);
+  dsin = std::sin( angle);
+  dcos = std::cos( angle);
   if (dcos < 0.0) { icos = - icos; }
   if (dsin < 0.0) { isin = - isin; }
 

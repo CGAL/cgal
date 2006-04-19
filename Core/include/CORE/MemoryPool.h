@@ -44,7 +44,7 @@ class MemoryPool {
 public:
    MemoryPool() : head( 0 ) {}
 
-   void* allocate(size_t size);
+   void* allocate(std::size_t size);
    void free(void* p);
 
   // Access the corresponding static global allocator.
@@ -70,7 +70,7 @@ template <class T, int nObjects >
 MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
 
 template< class T, int nObjects >
-void* MemoryPool< T, nObjects >::allocate(size_t) {
+void* MemoryPool< T, nObjects >::allocate(std::size_t) {
    if ( head == 0 ) { // if no more memory in the pool
       const int last = nObjects - 1;
 

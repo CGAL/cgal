@@ -938,7 +938,7 @@ struct Ith {
         return p2->first;
     
     std::cout<<" Unexpected encapsulated type "<<std::endl;
-    abort();    	    
+    std::abort();    	    
   }
 };
 

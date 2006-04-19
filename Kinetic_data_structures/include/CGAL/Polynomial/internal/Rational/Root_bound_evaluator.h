@@ -55,13 +55,13 @@ class Root_bound_evaluator
 #if 1
             double d1 = to_double(max_abs);
             double d2 = to_double(abs_lead_cf);
-            double bound = ceil(d1 / d2) + 1.0;
+            double bound = std::ceil(d1 / d2) + 1.0;
 #else
 // MK: I MAY WANT TO CHANGE TO THE FOLLOWING CODE OR EVEN DO
 //     COMPUTATIONS WITH INTERVALS
             double d1 = POLYNOMIAL_NS::to_interval(max_abs).second;
             double d2 = POLYNOMIAL_NS::to_interval(abs_lead_cf).first;
-            double bound = ceil(d1 / d2) + 1.0;
+            double bound = std::ceil(d1 / d2) + 1.0;
 #endif
             return NT(bound);
         }
