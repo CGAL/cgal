@@ -6,7 +6,7 @@
 
 
 
-#ifdef NOZLIB
+#ifndef CGAL_USE_ZLIB
 #undef ZLIB
 #else
 #define ZLIB
