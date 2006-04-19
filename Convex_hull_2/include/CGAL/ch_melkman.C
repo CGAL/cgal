@@ -103,12 +103,12 @@ ch_melkman( InputIterator first, InputIterator last,
       // right_turn( Q.back(), current, r)
       {
         s = current;
-        while ( !left_turn( r, s, Q.front()))
+        while (!Q.empty() && !left_turn( r, s, Q.front()))
         //      !left_turn( r, s, Q.front())
         { s = Q.front(); Q.pop_front(); }
         Q.push_front(s);
         s = current;
-        while ( !left_turn( s, r, Q.back()))
+        while (!Q.empty() &&  !left_turn( s, r, Q.back()))
         //     !right_turn( r, s, Q.back())
         { s = Q.back(); Q.pop_back(); }
         Q.push_back(s);
