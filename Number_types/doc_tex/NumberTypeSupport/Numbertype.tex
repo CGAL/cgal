@@ -111,13 +111,16 @@ number that \ccc{NT} is able to represent, but because it first tries to use an
 approximate value to perform computations it can be faster than the provided
 number type \ccc{NT}.  \cgal\ also provides a fixed-precision number type,
 
-\ccc{Fixed_precision_nt} that provides 24-bit numbers in fixed point
+\ccc{Fixed_precision_nt} is a number type that provides 24-bit numbers in fixed point
 representation.  This number type provides some specialized predicates
 that are exact and efficient for numbers known to be representable using
 24 bits.
 
 A number type for doing interval arithmetic, \ccc{Interval_nt}, is provided.
 This number type helps in doing filtering of predicates.
+
+ \ccc{CGAL::Root_of_2} is a number  type that allows to represents algebraic numbers of
+degree up to~2 over a \ccc{RingNumberType}.
 
 A debugging helper \ccc{Number_type_checker<NT1,NT2,Comparator>} is also provided
 which allows to compare the behavior of operations over two number types.
