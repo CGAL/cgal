@@ -10,23 +10,13 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Skin_surface_3<SkinSurfaceTraits_3>}
-  NGHK: Adapt according to the concept
-
+\begin{ccRefFunction}{mesh_skin_surface_3<SkinSurface_3, Polyhedron_3>}
   \ccDefinition
 
-  The \ccRefName\ is the main class in the
-  \ccHtmlNoLinksFrom{\ccc{Skin_surface_3}}\ package. It is a model of
-  the concept \ccc{SkinSurface_3}.  The class also defines an
-  interface to the surface mesher as it is a model of the concept
-  \ccc{Surface_3}.
+  The \ccRefName\ constructs a mesh isotopic to the skin surface. It
+  implements the algorithm in \cite{cgal:kv-mssct-05}. 
 
-  The type \ccc{SkinSurfaceTraits_3} is required to be a model of the
-  concept \ccc{SkinSurfaceTraits_3}, which means that it provides the
-  predicates to construct a regular triangulation of the weighted
-  points.
-  
-  \ccInclude{CGAL/Skin_surface_3.h}
+  \ccInclude{CGAL/mesh_skin_surface_3.h}
 
   %\ccInheritsFrom
 
@@ -96,7 +86,7 @@
 
   %\ccExample
 
-\end{ccRefClass}
+\end{ccRefFunction}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

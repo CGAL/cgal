@@ -1,0 +1,145 @@
+/*!
+	\mainpage A simple C++ PDB reader
+
+	\section i Introduction
+
+	 This is a simple C++ PDB reader along with a couple of
+	 programs which use it to manipulate pdb files (applying a
+	 rigid transform or splitting/merging). The are aimed at
+	 people interested in proteins from a geometric viewpoint as
+	 they allow easy access to the geometry and bond structure in
+	 addition of the biological information. The reader has two
+	 modes for reading/writing a pdb file. The simplest one,
+	 through the Protein class just reads and writes a single
+	 protein from/to a pdb file (which must have only one chain,
+	 but can have multiple models). The second, through the PDB
+	 class can handle pdb files with multiple models and herogens
+	 (although these are just passed through and not currently
+	 interpreted).
+
+	 Once a PDB is read, atom coordinates can be extracted,
+	 proteins can be aligned, and cRMS and dRMS can be computed, among
+	 other things.
+
+	 It is designed to be clean and easily modifiable as everyone
+	 is likely to have changes they want to make.
+
+	 The easiest changes to make are to
+
+	 - replace the point class used
+
+	 - add new atoms/bonds to residues
+	 
+	\section struct Structure
+
+	Once a PDB file is read a dsrpdb::PDB object is created. It
+	contains a number of dsrpdb::Model objects corresponding to
+	each of the models in the PDB file. Each of these contains
+	several dsrpdb::Protein objects once for each chain in the
+	dsrpdb::Model.
+	 
+	\section progs Utility Programs
+
+	The library includes several utilities
+
+	- pdb_split which can split pdb files into separate models,
+          chains, or domains. To split a pdb file into one new file
+          per model in the old file, run "pdb_split old.pdb new%d.pdb"
+          where the argument new%d.pdb is used to generate file names
+          using printf conversions. To split into chains, use the
+          command line flag "-c" and add a %c to the output file
+          name. To split domains you must specify the residue number
+          to split at using the "-d" flag.
+
+	- pdb_align, pdb_align_points which aligns two conformations
+          of the same protein, or a protein to a point set by
+          computing the optimal rigid alignment. More specifically,
+          "pdb_align base.pdb second.pdb -a output.pdb" transforms
+          second.dpb to align with base.pdb and writes it to
+          output.pdb.  It can also be used to compute cRMS and dRMS
+          between a pair of conformations.
+
+	- pdb_distance which computes the dRMS or cRMS between two
+          conformations of the same protein.
+
+	- pdb_write_distmat writes the distance matrix of a protein to
+          an image file (or alternatively, writes the distance
+          matrices of a series of models in a pdb to multiple images). 
+
+	- pdb_transform which applys a transformation matrix,
+          currently taken from a Dali results email to a pdb. To use
+          it, call the program with the pdb you with to transform and
+          the pdb file to write as arguments and paste the 3 lines of
+          the Dali file containing the transform into standard input.
+
+	The programs use boost::program_options in order to handle
+	more complicated command line arguments and the
+	pdb_write_distmat program uses Image Magick++ to write
+	images. These dependencies are checked by the configure
+	script. The boost library can be found at http://www.boost.org
+	(and there are packages for most linux distributions).
+
+	\section ex Examples
+	
+	Examples for how to use the dsrpdb::Protein and dsrpdb::PDB
+	classes for reading and writing PDB files are detailed with
+	the respective classes. In addition, a program for splitting
+	one pdb containing several models into seperate pdb files is
+	included in the examples section.
+
+	\section pc Changing the point class
+	 
+	 To change the point class just modify dsrpdb::Point in Point.h
+	 to be something else by changing Point.h.
+
+	 \section ab Adding a new Atom/Bond
+
+	 There are several different bits of information which need to
+	 be added all except for the first are in Residue_data.cc. The
+	 first is in Residue.h.
+	 
+	- add a new atom label to dsrpdb::Residue::Atom_label.  
+
+	- add a new entry to dsrpdb::Residue::atom_name_data_. The entry consists of a
+	  string which identifies the atom in pdb, the dsrpdb::Residue::Atom_label, and
+	  the element type for this atom.
+
+	- add the dsrpdb::Residue::Atom_label to the appropriate
+          residue's list in
+          dsrpdb::Residue::get_residue_initialization_data
+
+	- add appropriate bonds to the lists in
+	  dsrpdb::Residue::get_residue_initialization_data. The bond lists are
+	  processed as pairs of atoms which are considered as having a
+	  bond.
+
+	
+	\section bugs Bugs/Issues
+
+	- Heterogens are not interpreted. They will be passed through with each model just fine, but no data is extracted. 
+
+	- Heterogens which are stored using ATOM records instead of HETATM records cause errors. 
+
+	\section Download
+
+	You can download the code from 
+	http://graphics.stanford.edu/~drussel/dsr-pdb.tgz
+
+	\section Changes
+	- 1.0.2 Mostly just cleaned up the code. A bug fix with cRMS. 
+	
+	- 1.0.1 Added arguments to control printing of error messages when reading pdb files. 
+
+	- 1.0 added support for computing cRMS and dRMS to pdb_align. Some bug fixes. 
+
+	- 0.9.7 added alignment and cRMS/dRMS code. 
+
+	- 0.9.6 adds many consistency check allowing it to better handle differences in atom naming schemes. 
+
+	\section thanks Thanks
+
+	Thanks to Nikola for an earlier PDB reader from which I took the bond and atom data. 
+	The work was funded by a NSF graduate fellowship.
+	
+
+ */
