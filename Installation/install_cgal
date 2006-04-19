@@ -4145,7 +4145,7 @@ generatemakefiles()
 # return 0, iff success
 _do_compile()
 {
-    ${_printf} "%s" "${_LEFTSPACE}Building $1 $2..."
+    ${_printf} "%s" "${_LEFTSPACE}Building $1 $2 ..."
     if [ -f "${COMPILE_LOGFILE}" -a ! -w "${COMPILE_LOGFILE}" ]; then
 	${_rm} -f "${COMPILE_LOGFILE}"
     fi
@@ -4161,6 +4161,9 @@ _do_compile()
 
     if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
 	log_print "Compilation of $1 $2 ${_libname} succeeded."
+	log_print "vvvvvvvvvvvv build log for $1 $2 shown below vvvvvvvvvvvv"
+	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
+	log_print "^^^^^^^^^^^^ build log for $1 $2 shown above ^^^^^^^^^^^^"
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
 	return 0
