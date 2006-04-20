@@ -1,7 +1,6 @@
 examples/Mesh_2/makefile
 GNUmakefile
 TODO
-my_tags.j2h
 README
 bench
 Doxyfile
