@@ -36,7 +36,9 @@ namespace CircularFunctors {
 
   template < class CK >
   class Compare_x_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Compare_x_2
+#endif
   {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Point_2 Point_2;
@@ -45,7 +47,18 @@ namespace CircularFunctors {
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Compare_x_2::operator();
+#else
+    result_type
+    operator() (const Point_2 &p0,
+                const Point_2 &p1) const
+    {
+      typedef typename CK::Linear_kernel LK;
+      typedef typename LK::Compare_x_2 LK_Compare_x_2;
+      return LK_Compare_x_2()(p0, p1);
+    }
+#endif
 
     result_type
     operator() (const Circular_arc_point_2 &p0,
@@ -57,7 +70,9 @@ namespace CircularFunctors {
 
   template < class CK >
   class Compare_y_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Compare_y_2
+#endif
   {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Point_2 Point_2;
@@ -66,7 +81,18 @@ namespace CircularFunctors {
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Compare_y_2::operator();
+#else
+   result_type
+    operator() (const Point_2 &p0,
+                const Point_2 &p1) const
+    {
+      typedef typename CK::Linear_kernel LK;
+      typedef typename LK::Compare_y_2 LK_Compare_y_2;
+      return LK_Compare_y_2()(p0, p1);
+    }
+#endif
 
     result_type
     operator() (const Circular_arc_point_2 &p0,
@@ -77,7 +103,9 @@ namespace CircularFunctors {
 
   template < class CK >
   class Compare_xy_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Compare_xy_2
+#endif
   {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Point_2 Point_2;
@@ -86,7 +114,18 @@ namespace CircularFunctors {
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Compare_xy_2::operator();
+#else 
+   result_type
+    operator() (const Point_2 &p0,
+                const Point_2 &p1) const
+    {
+      typedef typename CK::Linear_kernel LK;
+      typedef typename LK::Compare_xy_2 LK_Compare_xy_2;
+      return LK_Compare_xy_2()(p0, p1);
+    }
+#endif
 
     result_type
     operator() (const Circular_arc_point_2 &p0,
@@ -192,7 +231,9 @@ namespace CircularFunctors {
  
   template < class CK >
   class Equal_2
-    : public CK::Linear_kernel::Equal_2
+ #ifndef CGAL_CFG_MATCHING_BUG_6
+  : public LK_Equal_2
+#endif
   {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Circular_arc_2          Circular_arc_2;
@@ -202,8 +243,75 @@ namespace CircularFunctors {
     typedef bool         result_type;
     typedef Arity_tag<2> Arity;
 
-    using CK::Linear_kernel::Equal_2::operator();
+    typedef typename  CK::Linear_kernel LK;
+    typedef typename LK::Equal_2 LK_Equal_2;
+
+    typedef typename LK::Point_2 Point_2;
+    typedef typename LK::Vector_2 Vector_2;
+    typedef typename LK::Direction_2 Direction_2;
+    typedef typename LK::Segment_2 Segment_2;
+    typedef typename LK::Ray_2 Ray_2;
+    typedef typename LK::Line_2 Line_2;
+    typedef typename LK::Triangle_2 Triangle_2;
+    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename LK::Circle_2 Circle_2;
+
     
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using LK_Equal_2::operator();
+#else  
+    result_type
+    operator() (const Point_2 &p0,
+                const Point_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+      
+    result_type
+    operator() (const Vector_2 &p0,
+                const Vector_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+      
+    result_type
+    operator() (const Direction_2 &p0,
+                const Direction_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+    
+  
+    result_type
+    operator() (const Segment_2 &p0,
+                const Segment_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+    
+
+    result_type
+    operator() (const Ray_2 &p0,
+                const Ray_2 &p1) const
+    { return LK_Equal_2::operator()(p0,p1); }
+    
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+    
+
+
+    result_type
+    operator() (const Triangle_2 &p0,
+                const Triangle_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+    
+
+    result_type
+    operator() (const Iso_rectangle_2 &p0,
+                const Iso_rectangle_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+    
+
+    result_type
+    operator() (const Circle_2 &p0,
+                const Circle_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+#endif
+
     result_type
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
@@ -914,7 +1022,9 @@ template < class CK >
 
   template <class CK>
   class Construct_bbox_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Construct_bbox_2
+#endif
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
@@ -926,7 +1036,23 @@ template < class CK >
     typedef CGAL::Bbox_2 result_type;
     typedef Arity_tag<1> Arity;    
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Construct_bbox_2::operator();
+#else
+    typedef typename  CK::Linear_kernel LK;
+    typedef typename LK::Construct_bbox_2 LK_Construct_bbox_2;
+    typedef typename LK::Point_2 Point_2;
+
+    result_type operator() (const Circle_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+
+    result_type operator() (const Point_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+#endif
 
     result_type operator() (const Circular_arc_point_2 & a) const
     {
