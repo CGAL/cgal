@@ -27,8 +27,8 @@
 #define CGAL_EXACT_CIRCULAR_KERNEL_H
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Circular_kernel.h>
 #include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Circular_kernel.h>
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpq.h>
