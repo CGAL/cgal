@@ -4125,17 +4125,17 @@ generatemakefiles()
   fi
   create_include_makefile
 
-  for FILE in `${_ls} "${CGAL_EXAMPLE_DIR}"/*/makefile 2>/dev/null | ${_sed} 's/ //g'`; do
-      FILE="`echo ${FILE} | ${_sed} 's// /g'`"
-      replace_line "${FILE}" CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
-  done
+#  for FILE in `${_ls} "${CGAL_EXAMPLE_DIR}"/*/makefile 2>/dev/null | ${_sed} 's/ //g'`; do
+#      FILE="`echo ${FILE} | ${_sed} 's// /g'`"
+#      replace_line "${FILE}" CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
+#  done
 
-  if [ -d "${CGAL_TEST_DIR}" ]; then
-    for FILE in `${_ls} "${CGAL_TEST_DIR}"/*/makefile 2>/dev/null | ${_sed} 's/ //g'`; do
-	FILE="`echo ${FILE} | ${_sed} 's// /g'`"
-	replace_line "${FILE}" CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
-    done
-  fi
+#  if [ -d "${CGAL_TEST_DIR}" ]; then
+#    for FILE in `${_ls} "${CGAL_TEST_DIR}"/*/makefile 2>/dev/null | ${_sed} 's/ //g'`; do
+#	FILE="`echo ${FILE} | ${_sed} 's// /g'`"
+#	replace_line "${FILE}" CGAL_MAKEFILE "CGAL_MAKEFILE = `multi_escape_special \"${CGAL_MAKEFILE}\"`"
+#    done
+#  fi
 
 }
 
