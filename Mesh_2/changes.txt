@@ -1,3 +1,11 @@
+20 April 2006 Laurent Rineau
+- small changes in the user manual:
+    - change captions location
+    - fix typos and bad english
+(thanks to Pierre Alliez)
+- fix a typo in doc_tex/Mesh_2_ref/Delaunay_mesh_*criteria_2.tex :
+  (1/2B instead of 1/4B^2)
+
 13 April 2006 Laurent Rineau
 - added test_conforming and test_meshing in test/ with test files.
 - rename test/Mesh_2/makefile to GNUmakefile, not submitted:
