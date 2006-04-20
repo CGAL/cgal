@@ -435,6 +435,9 @@ bool process(const std::string& filename,
 				 qp.row_types(),
 				 qp.fl(),qp.l(),qp.fu(),qp.u(),
 				 s,verbosity);
+  // output number of iterations
+  if (verbosity > 0) 
+     cout << "  Iterations: " << solver.iterations() << endl;
   const bool is_valid = solver.is_valid();
   delete s;
 
