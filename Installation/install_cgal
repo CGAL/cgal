@@ -4730,7 +4730,7 @@ main_menu()
 	print_line     "${_bold_on}<A>${_bold_off}  Run all setup tests (no cache)"
 	print_empty_line
 	print_line     "${_bold_on}<B>${_bold_off}  Build CGAL Libraries"
-	print_line     "${_bold_on}<I>${_bold_off}  Install CGAL Libraries"
+	print_line     "${_bold_on}<I>${_bold_off}  Install Menu"
         if [ -d "${CGAL_TEST_DIR}" -a -n "${LIB_COMPILED}" ]; then
             print_line "${_bold_on}<R>${_bold_off}  Run CGAL testsuite"
         fi
