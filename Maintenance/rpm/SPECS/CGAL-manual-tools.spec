@@ -1,5 +1,5 @@
 Name:           CGAL-manual-tools
-Version:        30269
+Version:        30675
 Release:        1
 Summary:        CC Manual Style and LaTeX Converter for HTML
 
@@ -28,7 +28,6 @@ Requires(postun): /usr/bin/texhash
 Specification and Manual Writing Tools for C++ Reference Manuals
 
 %prep
-%setup -q -n Manual_tools
 %setup -q -n Manual_tools -a 1
 %patch0 -p0
 %patch1 -p0
@@ -72,6 +71,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/CGAL_latex_conv_config/*
 
 %changelog
+* Mon Apr 19 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30346-1
+- Updated to revision 30675.
+
+* Thu Apr 13 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30269-2
+- Fix the prep part: no need for two setup macros.
+
 * Wed Apr 12 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30269-1
 - Updated to revision 30269.
 - Fixed the warnings (included twice, etc.) of rpmbuild.
