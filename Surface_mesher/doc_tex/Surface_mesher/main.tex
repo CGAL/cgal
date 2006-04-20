@@ -27,7 +27,7 @@
 \section{Introduction}
 \label{SurfaceMesher_section_intro}
 
-This package provides a global function
+This package provides a function template
 to compute a triangular mesh approximating a surface.
 
 The meshing algorithm requires to know the surface to be meshed
@@ -54,10 +54,10 @@ criteria on mesh elements are satisfied.
 The size and shape criteria guide the  behaviour of
 the refinement process and control its termination.
 They also condition  the size and shape of the elements in the final
-mesh. Of course those criteria can be customized to satisfy
+mesh. Naturally, those criteria can be customized to satisfy
 the user needs. The \ccc{Surface mesher} package offers
 a set of standard criteria that can be scaled through
-three numerical values. Also the user can plug in its own 
+three numerical values. Also the user can also plug in its own 
 set of refinement criteria.
 
 There is no restriction on the topology and number of components
@@ -77,7 +77,7 @@ but then there is no guarantee.
 \section{The Surface Mesher Interface}
 \label{SurfaceMesher_section_interface}
 
-The meshing process is launched through a call to a global function.
+The meshing process is launched through a call to a function template.
 There are two overloaded versions of the meshing function
 whose signatures are the following:
 
@@ -138,9 +138,9 @@ The difference between the two overloaded versions of
 can be explained as follows
 \begin{itemize}
 \item
-In the first  overloaded version of
+In the first  overloaded version
 of \ccc{make_surface_mesh},  the surface type  is given  
-as template paramater  (\ccc{Surface}) and the \ccc{surface}
+as template parameter  (\ccc{Surface}) and the \ccc{surface}
 to be meshed is passed as parameter to the mesher.
 In that case the surface mesher traits type 
 is  automatically generated form the surface type
@@ -159,7 +159,7 @@ are passed to the mesher as arguments.
 \end{itemize}
 
 
-The first overloaded version,  simpler,  can be used,
+The first overloaded version can be used
 whenever the surface type either provides  a nested type
 \ccc{Surface::Surface_mesher_traits_3} 
 that is  a model of \ccc{SurfaceMeshTraits_3}
@@ -254,11 +254,11 @@ The code is quite similar to the previous example.
 The main difference with the previous code 
 is that the function used to define the surface
 is  an object of type  \ccc{CGAL::Gray_level_image_3} created from
-an image file and a numerical value  which is  the
+an image file and a numerical value that is  the
  gray value of the level one wishes to mesh.
 
 Note that  surface, which is still an object of type  \ccc{Implicit_surface_3}
-is now, defined by three parametesr which are the function, the bounding
+is now, defined by three parameters that are the function, the bounding
 sphere and a numerical value called {\em the precision}. This
 precision, whose value
 is relative to the bounding sphere radius, is used in the intersection
@@ -267,11 +267,10 @@ This parameter has a default which was used in the previous example.
 Also note that the center of the bounding sphere is required to be
 internal a point where the function has a negative value.
 
-
+The chosen iso-value of this 3D~image corresponds to a head skull. The
+resulting mesh is the introducing picture of this chapter.
 
 \ccIncludeExampleCode{Surface_mesher/3d_image_surface_mesher.C}
-
-
 
 \section{Meshing Criteria, Guarantees and Variations}
 \label{SurfaceMesher_section_criteria}
@@ -289,15 +288,15 @@ on the  distance (Hausdorff and even Frechet distance)
 between the mesh and the surface
 if the radius bound is everywhere smaller than 
 the $\epsilon$ times the local feature size. 
-Here $\epsilon$ is a constant which has to be
+Here $\epsilon$ is a constant that has to be
 less than 0.16, and the local feature size 
 $lfs(x)$ is defined on each point $x$ of the surface
 as the distance from $x$ to the medial axis.  
 Note that the radius bound need not be uniform,
 although it is a uniform bound in the default criteria.
 
-Of course, such a theoretical guarantee can be only achieved
-for smooth surfaces which have a finite, non zero
+Naturally, such a theoretical guarantee can be only achieved
+for smooth surfaces that have a finite, non zero
 reach value. (The reach of a surface is the minimum value 
 of local feature size on
 this surface).
@@ -311,7 +310,7 @@ On the other hand, when the size criteria are relaxed,
 no homeomorphism with the input surface is guaranteed,
 and the output mesh is not even guaranteed to be manifold.
 To remedy this problem and give a more flexible
-meshing algorithm, the global function 
+meshing algorithm, the function template
 \ccc{make_surface_mesh} has a tag template parameter
 allowing to slightly change the behavior of the refinement process.
 This feature allows, for instance,  to run the meshing
@@ -332,7 +331,6 @@ guarantees nothing else.
 
 
 \section{Design and Implementation History}
-% TODO: rename it "Design and Implementation History"
 
 The algorithm implemented in this package
 is mainly based on the  work of Boissonnat and Oudot

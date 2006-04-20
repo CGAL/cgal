@@ -1,7 +1,11 @@
-15 April 2006 Laurent
+30 April 2006 Laurent Rineau
+- minor fixes in the documentation, after the second review of Efi.
+
+15 April 2006 Laurent Rineau
 - try to fix compilation problem with gcc-3.3, in
   test/Surface_mesher/implicit_surface_mesher_test.C
     (I am not sure to well understand this problem.)
+  (added 16th of April: actually it fixed the compilation problem.)
 
 7 April 2006 Laurent Rineau
 - added a picture for the sphere example, in manual.

@@ -97,11 +97,11 @@ handles, which support the two dereference operators \ccc{operator*} and
 The following iterators allow one to visit all finite vertices, edges and
 facets of the triangulation.
 
-\ccNestedType{Finite_vertices_iterator}{iterator over finite vertices}
+\ccNestedType{Finite_vertices_iterator}{Iterator over finite vertices}
 \ccGlue
-\ccNestedType{Finite_edges_iterator}{iterator over finite edges}
+\ccNestedType{Finite_edges_iterator}{Iterator over finite edges}
 \ccGlue
-\ccNestedType{Finite_facets_iterator}{iterator over finite facets}
+\ccNestedType{Finite_facets_iterator}{Iterator over finite facets}
 
 \ccNestedType{Geom_traits} % TODO: look at this!
 {The geometric traits class. Must be a model of
@@ -173,8 +173,8 @@ conflict, but \ccc{t->neighbor(i)} is not.\\
 two cells (resp facets) in conflict.\\
 Returns the \ccc{Triple} composed of the resulting output iterators.}
 
-The following iterators allow the user to visit facets, edges and vertices of the
-triangulation.
+The following iterators allow the user to visit facets, edges and vertices
+of the triangulation.
 
 \ccMethod{Finite_vertices_iterator finite_vertices_begin() const;}
 {Starts at an arbitrary finite vertex. Then \ccc{++} and \ccc{--} will

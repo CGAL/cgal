@@ -19,7 +19,7 @@ of meshing criteria. It involves mainly three criteria which are
 in order: 
 \begin{itemize}
 \item
-a lower bound on the minimum angle of the surface mesh facets. \\
+a lower bound on the minimum angle in degrees of the surface mesh facets. \\
 \item an upper bound on the radius of surface Delaunay balls.
  A surface Delaunay ball is a  ball circumscribing  a facet,
 centered on the surface and empty of vertices.
@@ -53,7 +53,7 @@ the sampling  that  have a Delaunay surface ball. \\
                                                FT radius_bound,
                                                FT distance_bound);}
 {Returns a \ccRefName\ with \ccc{angle_bound}, \ccc{radius_bound},
-\ccc{distance_bound} as bounds for the minimum facet angle,
+\ccc{distance_bound} as bounds for the minimum facet angle in degrees,
 the radius of the surface Delaunay balls 
 and the center-center distances respectively.}
 
