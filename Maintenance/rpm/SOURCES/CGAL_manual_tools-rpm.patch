@@ -1,8 +1,8 @@
 Index: install.sh
 ===================================================================
---- install.sh	(revision 29111)
+--- install.sh	(revision 30346)
 +++ install.sh	(working copy)
-@@ -2,14 +2,18 @@
+@@ -2,6 +2,12 @@
  
  source install.config
  
@@ -14,11 +14,10 @@ Index: install.sh
 +
  install -d $LATEX_CONV_BIN $LATEX_CONV_CONFIG $STYLE_FILES $STYLE_FILES/eps_tabs $STYLE_FILES/eps_tabs_grey
  
--cd src
--#make clean
--make || exit 1
--make install
--cd ..
+ cd src
+@@ -10,6 +16,9 @@
+ make install
+ cd ..
  
 +
 +make -C src install LATEX_CONV_CONFIG=$LATEX_CONV_CONFIG|| exit 1
@@ -26,7 +25,7 @@ Index: install.sh
  cp scripts/index_fix scripts/cc_make_ref_pages scripts/cc_ref_wizard $LATEX_CONV_BIN
  cp sty/*.sty $STYLE_FILES
  cp sty/eps_tabs/*.pdf sty/eps_tabs/*.eps $STYLE_FILES/eps_tabs
-@@ -18,4 +22,4 @@
+@@ -22,4 +31,4 @@
  echo ""
  echo "================================================"
  echo "Manual_tools successfullly installed. Do not forget to update \$TEXINPUTS:"

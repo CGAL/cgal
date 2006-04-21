@@ -1,0 +1,13 @@
+Index: install_cgal
+===================================================================
+--- install_cgal	(revision 30283)
++++ install_cgal	(working copy)
+@@ -92,7 +92,7 @@
+ 
+ # ---------------------------------------------
+ # Required support options
+-SUPPORT_REQUIRED='BOOST'
++SUPPORT_REQUIRED='BOOST BOOST_PROGRAM_OPTIONS X11 GMP MPFR GMPXX CORE ZLIB QT'
+ 
+ # ---------------------------------------------------------------------
+ # internal variables

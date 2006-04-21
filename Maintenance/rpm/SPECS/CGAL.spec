@@ -1,7 +1,7 @@
 %define cgal_version 3.2
 
 # If this release is official, define internal_release to 0.
-%define internal_release 431
+%define internal_release 440
 
 # if internal_release != 0, release_number has no meaning.
 %define release_number 1
@@ -34,6 +34,7 @@ Source: %{tarball_name}.tar.gz
 Source1: CGAL-3.2-doc_pdf.tar.gz
 Source2: CGAL-3.2-doc_html.tar.gz
 %endif
+Patch1:  CGAL-install_cgal-SUPPORT_REQUIRED.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #Prefix: %{CGAL_DIR}
@@ -79,11 +80,12 @@ The %{name}-doc package provides the html and pdf documentation of %name.
 %if %{build_demo}
 %package demo
 Group: Development/Libraries
-Summary: demo of %name algorithms.
+Summary: Demos of %name algorithms
 Requires: %{name}-devel  = %{version}-%{release}
 
 %description demo
-The %{name}-demo package provides some demos of %name algorithms.(to be compiled)
+The %{name}-demo package provides some demos of %name algorithms.
+(to be compiled)
 
 %endif
 
@@ -94,6 +96,8 @@ The %{name}-demo package provides some demos of %name algorithms.(to be compiled
 %setup -n %{name}-%{version}
 %endif
 
+%patch1 -p0
+
 %if %{build_doc}
 %setup -D -T -a 1
 %setup -D -T -a 2
@@ -102,16 +106,19 @@ The %{name}-demo package provides some demos of %name algorithms.(to be compiled
 %build
 rm -rf $RPM_BUILD_ROOT
 
-if [ "%{_lib}" == "lib64" ] ; then
-  EXTRA_LDFLAGS="--CUSTOM_LDFLAGS -L/usr/X11R6/lib64"
-fi
-./install_cgal -ni g++  --prefix ${RPM_BUILD_ROOT}%{CGAL_DIR} --CUSTOM_CXXFLAGS "$RPM_OPT_FLAGS" $EXTRA_LDFLAGS
+./install_cgal -ni g++  --prefix ${RPM_BUILD_ROOT}%{CGAL_DIR} --CUSTOM_CXXFLAGS "$RPM_OPT_FLAGS"
 
 %install
 CGAL_OS=`./install_cgal -os g++`
 MAKEFILE=makefile_${CGAL_OS}
 ln -s $MAKEFILE ${RPM_BUILD_ROOT}%{CGAL_DIR}/make/makefile
 sed -i "s,$RPM_BUILD_ROOT,,g; /CUSTOM_CXXFLAGS/ s/-O2 //; /CUSTOM_CXXFLAGS/ s/-g //" ${RPM_BUILD_ROOT}%{CGAL_DIR}/make/$MAKEFILE
+
+mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
+mv ${RPM_BUILD_ROOT}%{CGAL_DIR}/bin/cgal_* ${RPM_BUILD_ROOT}%{_bindir}
+# if %{CGAL_DIR}/bin/ contains files that are not prefixed by "cgal_",
+# rmdir will fail.
+rmdir ${RPM_BUILD_ROOT}%{CGAL_DIR}/bin
 
 MAKEFILE=%{CGAL_DIR}/make/makefile
 cd $RPM_BUILD_ROOT
@@ -147,10 +154,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root,-)
+%dir %{CGAL_DIR}
+%dir %{CGAL_DIR}/lib
+%dir %{CGAL_DIR}/lib/*
 %{CGAL_DIR}/include
 %{CGAL_DIR}/lib/*/*.a
 %{CGAL_DIR}/make
-%{CGAL_DIR}/bin
+%{_bindir}/*
 /etc/profile.d/cgal.*
 %doc LICENSE*
 %doc README
@@ -172,6 +182,14 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Apr 21 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.2-0.440
+- Updated to CGAL-3.2-I-440.
+
+* Wed Apr 19 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.2-0.438
+- Added a patch to install_cgal, to require support for BOOST, BOOST_PROGRAM_OPTIONS, X11, GMP, MPFR, GMPXX, CORE, ZLIB, and QT.
+- Move scripts to %{_bindir}
+- %{_libdir}/CGAL-I now belong to CGAL and CGAL-devel, so that it disappears when the packages are removed.
+
 * Wed Apr 12 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.2-0.431
 - Updated to CGAL-3.2-I-431.
 - Remove the use of ldconfig.

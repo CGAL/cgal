@@ -515,6 +515,7 @@ Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
 Maintenance/rpm/GNUmakefile -text
+Maintenance/rpm/SOURCES/CGAL-install_cgal-SUPPORT_REQUIRED.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text
 Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch -text
