@@ -232,7 +232,7 @@ namespace CircularFunctors {
   template < class CK >
   class Equal_2
  #ifndef CGAL_CFG_MATCHING_BUG_6
-  : public LK_Equal_2
+  : public CK::Linear_kernel::Equal_2
 #endif
   {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
@@ -258,7 +258,7 @@ namespace CircularFunctors {
 
     
 #ifndef CGAL_CFG_MATCHING_BUG_6
-    using LK_Equal_2::operator();
+    using CK::Linear_kernel::Equal_2::operator();
 #else  
     result_type
     operator() (const Point_2 &p0,
