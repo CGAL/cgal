@@ -20,11 +20,11 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(TAUCSROOT)\build\win32&quot;;&quot;$(TAUCSROOT)\src&quot;"
-				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;CGAL_USE_TAUCS;DEBUG_TRACE"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(TAUCSROOT)\build\win32_MD&quot;;&quot;$(TAUCSROOT)\src&quot;"
+				PreprocessorDefinitions="WIN32;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;CGAL_USE_TAUCS;DEBUG_TRACE;_DEBUG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
 				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="FALSE"
@@ -39,18 +39,18 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib libtaucs.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib libmetis.lib vcf2c.lib /NODEFAULTLIB:LIBCMT"
+				AdditionalOptions="CGAL_md.lib gmp.lib libtaucs.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib libmetis.lib vcf2c.lib"
 				OutputFile="$(OutDir)/Taucs_parameterization.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;;&quot;$(TAUCSROOT)\lib\win32&quot;;&quot;$(TAUCSROOT)\external\lib\win32&quot;"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;;&quot;$(TAUCSROOT)\lib\win32_MD&quot;;&quot;$(TAUCSROOT)\external\lib\win32_MD&quot;"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="editbin $(OutDir)/$(ProjectName).exe /LARGEADDRESSAWARE /NOLOGO"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -84,9 +84,9 @@
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(TAUCSROOT)\build\win32&quot;;&quot;$(TAUCSROOT)\src&quot;"
-				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;CGAL_USE_TAUCS;DEBUG_TRACE"
-				RuntimeLibrary="4"
+				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(TAUCSROOT)\build\win32_MD&quot;;&quot;$(TAUCSROOT)\src&quot;"
+				PreprocessorDefinitions="WIN32;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;CGAL_USE_TAUCS;DEBUG_TRACE"
+				RuntimeLibrary="2"
 				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
@@ -98,10 +98,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib libtaucs.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib libmetis.lib vcf2c.lib /NODEFAULTLIB:LIBCMT"
+				AdditionalOptions="CGAL_md.lib gmp.lib libtaucs.lib liblapack.lib libf77blas.lib libcblas.lib libatlas.lib libmetis.lib vcf2c.lib"
 				OutputFile="$(OutDir)/Taucs_parameterization.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;;&quot;$(TAUCSROOT)\lib\win32&quot;;&quot;$(TAUCSROOT)\external\lib\win32&quot;"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;;&quot;$(TAUCSROOT)\lib\win32_MD&quot;;&quot;$(TAUCSROOT)\external\lib\win32_MD&quot;"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -110,7 +110,8 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="editbin $(OutDir)/$(ProjectName).exe /LARGEADDRESSAWARE /NOLOGO"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -182,15 +183,14 @@
 				RelativePath="..\..\include\Cgal\parameterize.h">
 			</File>
 			<File
+				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
+			</File>
+			<File
 				RelativePath="..\..\include\Cgal\surface_mesh_parameterization_assertions.h">
 			</File>
 			<File
-				RelativePath="..\..\include\Cgal\Parameterizer_traits_3.h">
+				RelativePath="..\..\include\Cgal\Taucs_fix.h">
 			</File>
-		</Filter>
-		<Filter
-			Name="TAUCS"
-			Filter="">
 			<File
 				RelativePath="..\..\include\Cgal\Taucs_matrix.h">
 			</File>

@@ -28,10 +28,6 @@
 #include <cassert>
 #include <stdio.h>
 
-#ifdef WIN32
-    #include <Windows.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 
@@ -64,14 +60,6 @@ public:
                     const char*  options[]   = NULL,  ///< must be persistent
 		    const void*  arguments[] = NULL)  ///< must be persistent
     {
-#if _WIN32_WINNT >= 0x0400
-        // Trick to be prompted by VisualC++ debugger when an assertion
-        // fails even though we use NON debug runtime libraries
-        // (the only ones compatible with TAUCS)
-        if (IsDebuggerPresent())
-            _set_error_mode(_OUT_TO_MSGBOX);
-#endif
-
         static const char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true",
                                                  "taucs.factor.mf=true",
                                                  "taucs.factor.ordering=metis",
@@ -189,13 +177,6 @@ public:
     /// Create a TAUCS sparse linear solver for GENERAL (aka unsymmetric) matrices.
     Taucs_solver_traits()
     {
-#if _WIN32_WINNT >= 0x0400
-        // Trick to be prompted by VisualC++ debugger when an assertion
-        // fails even though we use NON debug runtime libraries
-        // (the only ones compatible with TAUCS)
-        if (IsDebuggerPresent())
-            _set_error_mode(_OUT_TO_MSGBOX);
-#endif
     }
 
     /// Solve the sparse linear system "A*X = B".
