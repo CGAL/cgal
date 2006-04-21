@@ -351,6 +351,7 @@ private:
 template < class K, class C >
 class Cartesian_converter <K, K, C>
 {
+public:
   typedef K Source_kernel;
   typedef K Target_kernel;
   typedef C Number_type_converter;
