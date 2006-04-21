@@ -1557,6 +1557,24 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text
+Surface_mesh_simplification/TODO -text
+Surface_mesh_simplification/changes.txt -text
+Surface_mesh_simplification/demo/Surface_mesh_simplification/README -text
+Surface_mesh_simplification/demo/Surface_mesh_simplification/Surface_simplification.kdevelop -text
+Surface_mesh_simplification/demo/Surface_mesh_simplification/makefile -text
+Surface_mesh_simplification/demo/Surface_mesh_simplification/simplification_demo.C -text
+Surface_mesh_simplification/include/CGAL/Polyhedron_graph_traits_3.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Collapse_operator.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Count_ratio_stop_pred.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_length_cost_map.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_selection_map.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Midpoint_vertex_placement.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/TSMS_common.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_pair_collapse.C -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_pair_collapse.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification_vertex_pair_collapse.h -text
+Surface_mesh_simplification/include/boost/relaxed_heap.hpp -text
+Surface_mesh_simplification/maintainer -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset
