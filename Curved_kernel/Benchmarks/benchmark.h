@@ -34,7 +34,7 @@ typedef std::size_t size_type;
   
 public:
   
-  Bench( char *fhtml="benchmarks.html", char* ftex="benchmarks.tex",char* Dxffilename="",const bool only_dxf=false):
+  Bench(const bool only_dxf=false, char *fhtml="benchmarks.html", char* ftex="benchmarks.tex",char* Dxffilename=""):
      htmlout(fhtml,std::ios::app),
      texout(ftex,std::ios::app){ 
 	i=0;
