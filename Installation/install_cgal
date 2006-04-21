@@ -707,9 +707,9 @@ if [ ${TAUCS_OSTYPE:-fail} = "linux-gnu" ] ; then
 fi
 
 # On Cygwin, OSTYPE is set to "cygwin",
-# which we need to change to "win32".
+# which we need to change to "win32_MD".
 if [ ${TAUCS_OSTYPE:-fail} = "cygwin" ] ; then
-  TAUCS_OSTYPE=win32
+  TAUCS_OSTYPE=win32_MD
 fi
 
 # If TAUCS_OSTYPE is still not set, we try to set it
@@ -868,7 +868,7 @@ set_compiler_flags()
 	    #### settings Intel C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-Op -TP -GR -EHsc -Zm900 -nologo -Zc:wchar_t -Zc:forScope"
+	    ADDITIONAL_CXXFLAGS="-Op -TP -GR -EHsc -Zm900 -nologo -Zc:wchar_t -Zc:forScope -MD"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 #	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
@@ -897,7 +897,7 @@ set_compiler_flags()
 	    #### settings Microsoft Visual C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo -MD"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 #	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
