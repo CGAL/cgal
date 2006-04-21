@@ -1,4 +1,9 @@
-30 April 2006 Laurent Rineau
+21 April 2006 Laurent Rineau
+- the patch of 15 April broke examples.
+- s/ZLIB/CGAL_USE_ZLIB/
+- ugly hack: need to include <CGAL/compiler_config.h> in imageio.h!
+
+20 April 2006 Laurent Rineau
 - minor fixes in the documentation, after the second review of Efi.
 
 15 April 2006 Laurent Rineau

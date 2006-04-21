@@ -89,13 +89,13 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
   case OM_CLOSE :
     return 0;
   case OM_STD :
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
     return gzwrite(im->fd, (void *) buf, len);
 #else 
     return fwrite(buf, 1, len, im->fd);
 #endif
     break;
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   case OM_GZ :
     return gzwrite(im->fd, (void *) buf, len);
     break;
@@ -127,7 +127,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
   case OM_CLOSE :
     return 0;
   case OM_STD :
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
     while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
       to_be_read -= l;
       b += l;
@@ -140,7 +140,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
 #endif
     return ( len - to_be_read );
     break;
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   case OM_GZ :
     while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
       to_be_read -= l;
@@ -178,13 +178,13 @@ char *ImageIO_gets( const _image *im, char *str, int size )
   case OM_CLOSE :
     return NULL;
   case OM_STD :
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
     ret = (char *) gzgets(im->fd, str, size );
 #else
     ret = fgets(str, size, im->fd);
 #endif
     break;
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   case OM_GZ :
     ret = (char *) gzgets(im->fd, str, size);
     break;
@@ -204,7 +204,7 @@ int ImageIO_seek( const _image *im, long offset, int whence ) {
   case OM_CLOSE :
   default :
     return -1;
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   case OM_GZ:
     return gzseek(im->fd, offset, whence );
 #endif
@@ -222,7 +222,7 @@ int ImageIO_error( const _image *im )
   case OM_CLOSE :
   default :
     return 0;
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   case OM_GZ :
     (void)gzerror(im->fd, &errnum);
     return( (errnum != Z_OK) || gzeof(im->fd) );
@@ -248,7 +248,7 @@ int ImageIO_close( _image* im )
   default :
   case OM_CLOSE :
     break;
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   case OM_GZ :
   case OM_STD :
     ret = gzclose( im->fd );
@@ -287,7 +287,7 @@ void _openReadImage(_image* im, const char *name) {
     if( name == NULL || name[0] == '\0' 
 	|| (name[0] == '-' && name[1] == '\0') 
 	|| (name[0] == '<' && name[1] == '\0') ) {
-#ifdef ZLIB      
+#ifdef CGAL_USE_ZLIB      
       im->fd = gzdopen(fileno(stdin), "rb");
 #else
       im->fd = fdopen(fileno(stdin), "rb");
@@ -296,7 +296,7 @@ void _openReadImage(_image* im, const char *name) {
     }
 
     else {
-#ifdef ZLIB     
+#ifdef CGAL_USE_ZLIB     
       im->fd = gzopen(name, "rb");
       if(im->fd) im->openMode = OM_GZ;
 #else
@@ -330,7 +330,7 @@ void _openWriteImage(_image* im, const char *name)
       || (name[0] == '-' && name[1] == '\0') 
       || (name[0] == '>' && name[1] == '\0') ) {
 
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
 #if (defined _LINUX_) || (defined _SOLARIS_) || (defined _SGI_)
     im->fd = gzdopen(1, "wb");
 #else
@@ -343,7 +343,7 @@ void _openWriteImage(_image* im, const char *name)
   }
 
   else{
-#ifdef ZLIB      
+#ifdef CGAL_USE_ZLIB      
     
     /* from gzopen() doc:
        ... The mode parameter is as in fopen ("rb" or "wb") but can
@@ -1129,14 +1129,14 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
   PTRIMAGE_FORMAT format;
 
   if(!fileName) {
-#ifdef ZLIB    
+#ifdef CGAL_USE_ZLIB    
     f = gzdopen(fileno(stdin), "rb");
 #else
     f = fdopen(fileno(stdin), "rb");
 #endif
   }
   else {
-#ifdef ZLIB      
+#ifdef CGAL_USE_ZLIB      
     f = gzopen(fileName, "rb");
 #else
     f = fopen(fileName, "rb");
@@ -1145,7 +1145,7 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
 
   if(!f) return NULL;
   
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   gzread( f, (void *) magic, 4);
 #else
   fread( (void *) magic, 1, 4, f );
@@ -1154,7 +1154,7 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
 
   magic[4] = '\0';
 
-#ifdef ZLIB 
+#ifdef CGAL_USE_ZLIB 
   gzclose( f );
 #else
   if(fileName) fclose( f );

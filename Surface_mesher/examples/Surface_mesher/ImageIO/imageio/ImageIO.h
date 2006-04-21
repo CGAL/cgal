@@ -1,18 +1,12 @@
 #ifndef IMAGEIO_H
 #define IMAGEIO_H
 
+#include <CGAL/compiler_config.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 
-
-
-#ifndef CGAL_USE_ZLIB
-#undef ZLIB
-#else
-#define ZLIB
-#endif
-
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
 #include <zlib.h>
 /* see http://www.gzip.org/zlib/
    for details and documentation
@@ -74,7 +68,7 @@ typedef enum {
   /** file is stdin or stdout */
   OM_STD,
   /** file is gzipped */
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
   OM_GZ,
 #endif
   /** normal file */
@@ -136,7 +130,7 @@ typedef enum {
 
 
 
-#ifdef ZLIB
+#ifdef CGAL_USE_ZLIB
 typedef gzFile _ImageIO_file;
 #else
 typedef FILE*  _ImageIO_file;
