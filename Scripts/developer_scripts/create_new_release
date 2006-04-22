@@ -56,12 +56,13 @@ BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
 # The internal release number is considered only in non-public mode.
 if [ $IS_PUBLIC_RELEASE = "n" ]; then
     [ -r $VERSION_FILE ] || return
-    i=$(( `cat $VERSION_FILE` + 1 ))
+    INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
     rm -f $VERSION_FILE
-    printf "%d\n" "${i}" >> $VERSION_FILE
-    INTERNAL_STRING="-I-${i}"
-    internal_nr=`printf "%4s" "${i}" | sed "y/ /0/"`
+    printf "%d\n" "${INTERNAL_NUMBER}" >> $VERSION_FILE
+    INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
+    internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
 else
+    INTERNAL_NUMBER=0
     INTERNAL_STRING=""
     internal_nr="1000"
 fi
@@ -86,7 +87,7 @@ ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -r ${release_na
 ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
 ${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
 rm -rf ${release_name} >> ${LOGFILE} 2>&1
-mv "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
+cp "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
 
@@ -98,4 +99,16 @@ EOF
 # Now we tag.
 echo "Tagging ${SOURCES_DIR} with $release_name" >> ${LOGFILE} 2>&1
 svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name >> ${LOGFILE} 2>&1
+
+# Build the SRPM
+echo "Making the SRPM file" >> ${LOGFILE} 2>&1
+rm -rf rpm >> ${LOGFILE} 2>&1
+cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
+mv ${release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
+mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
+sed -e "s/define internal_release.*/define internal_release $INTERNAL_NUMBER/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec >> ${LOGFILE} 2>&1
+make -C rpm CGAL.src >> ${LOGFILE} 2>&1
+echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" >> ${LOGFILE} 2>&1
+mv rpm/SRPMS/*.src.rpm "${HTML_DIR}" >> ${LOGFILE} 2>&1
+rm -rf rpm >> ${LOGFILE} 2>&1
 
