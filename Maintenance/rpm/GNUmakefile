@@ -129,7 +129,10 @@ endif
 $(CGAL_SRC_PACKAGE_PATH): $(CGAL_PACKAGE_DEPS)
 	./rpmbuild -bs SPECS/CGAL.spec
 
-.PHONY:: CGAL CGAL.install CGAL.rpmlint
+.PHONY:: CGAL.src CGAL CGAL.install CGAL.rpmlint
+
+CGAL.src: $(CGAL_PACKAGE_DEPS)
+	./rpmbuild -bs --nodeps SPECS/CGAL.spec
 
 CGAL: $(CGAL_PACKAGE_PATH)
 
