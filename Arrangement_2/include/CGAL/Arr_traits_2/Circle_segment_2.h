@@ -904,6 +904,15 @@ public:
   }
 
   /*!
+   * Get the supporting line. 
+   * \pre The arc is linear (a line segment).
+   */
+  Line_2 supporting_line () const
+  {
+    return (Line_2 (a(), b(), c()));
+  }
+
+  /*!
    * Get the supporting circle. 
    * \pre The arc is circular.
    */

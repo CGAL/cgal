@@ -149,9 +149,9 @@ a Cartesian point whose coordinates are algebraic numbers of type
 The \ccc{Curve_2} class nested within the traits class can represent
 arbitrary circular arcs, full circles and line segments and support their
 construction in various ways.
-The copy and default constructor as well as the assignment and equality
-operators are provided. In addition, an \ccc{operator<<}
-for the curves is defined for standard output streams.
+The copy and default constructor as well as the assignment operator are
+provided. In addition, an \ccc{operator<<} for the curves is defined for
+standard output streams.
 
 \begin{ccClass}{Arr_circle_segment_traits_2<Kernel>::Curve_2}
 
@@ -243,6 +243,12 @@ for the curves is defined for standard output streams.
 \subsection*{Class 
 Arr\_circle\_segment\_traits\_2$<$Kernel$>$::X\_monotone\_curve\_2}
 %==============================================================================
+
+The \ccc{X_monotone_curve_2} class nested within the traits class can
+represent $x$-monotone and line segments (which are always weakly $x$-monotone).
+The copy and default constructor as well as the assignment operator are
+provided. In addition, an \ccc{operator<<} for the curves is defined for
+standard output streams.
 
 \begin{ccClass}{Arr_circle_segment_traits_2<Kernel>::X_monotone_curve_2}
 
