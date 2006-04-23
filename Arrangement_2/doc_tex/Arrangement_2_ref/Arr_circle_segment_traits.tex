@@ -171,7 +171,9 @@ standard output streams.
                         const Point_2& source,
                         const Point_2& target);}
     {constructs an curve corresponding to the line segment supported by
-     the given line, directed from \ccc{source} to \ccc{target}.}
+     the given line, directed from \ccc{source} to \ccc{target}.
+     Note that the two endpoints may have one-root coordinates.
+     \ccPrecond{Both endpoints must lie on the given supporting line.}}
 
 \ccConstructor{Curve_2 (const typename Kernel::Circle_2& circ);}
     {constructs an curve corresponding to the given circle. \ccc{circ}
@@ -189,7 +191,8 @@ standard output streams.
     {constructs a circular arc supported by \ccc{circ}, which has a
      center point with rational coordinates and whose {\em squared}
      radius is rational, with the given endpoints. The orientation of the
-     arc is the same as the orientation of \ccc{circ}.}
+     arc is the same as the orientation of \ccc{circ}.
+     \ccPrecond{Both endpoints must lie on the given supporting circle.}}
 
 \ccConstructor{Curve_2 (const typename Kernel::Point_2& c,
                         const typename Kernel::FT& r,
@@ -197,14 +200,16 @@ standard output streams.
                         const Point_2& source, const Point_2& target);}
     {constructs a circular arc supported by a circle centered at the rational
      point \ccc{c} whose radius \ccc{r} is rational, directed from
-     \ccc{source} to \ccc{target} with the given orientation.}
+     \ccc{source} to \ccc{target} with the given orientation.
+     \ccPrecond{Both endpoints must lie on the supporting circle.}}
 
 \ccConstructor{Curve_2 (const typename Kernel::Point_2& source,
                         const typename Kernel::Point_2& mid,
                         const typename Kernel::Point_2& target);}
     {constructs an circular arc whose endpoints are \ccc{source} and
      \ccc{target} that passes through \ccc{mid}. All three points have
-     rational coordinates.}
+     rational coordinates.
+     \ccPrecond{The three points must not be collinear.}}
 
 \ccAccessFunctions
 %-----------------
@@ -265,23 +270,18 @@ standard output streams.
                         const Point_2& source,
                         const Point_2& target);}
     {constructs an curve corresponding to the line segment supported by
-     the given line, directed from \ccc{source} to \ccc{target}.}
+     the given line, directed from \ccc{source} to \ccc{target}.
+     Note that the two endpoints may have one-root coordinates.
+     \ccPrecond{Both endpoints must lie on the given supporting line.}}
 
 \ccConstructor{X_monotone_curve_2 (const typename Kernel::Circle_2& circ,
-                        const Point_2& source, const Point_2& target);}
+                        const Point_2& source, const Point_2& target,
+                        Orientation orient);}
     {constructs a circular arc supported by \ccc{circ}, which has a
      center point with rational coordinates and whose {\em squared}
      radius is rational, with the given endpoints. The orientation of the
-     arc is the same as the orientation of \ccc{circ}.
-     \ccPrecond{The circular arc is $x$-monotone.}}
-
-\ccConstructor{X_monotone_curve_2 (const typename Kernel::Point_2& c,
-                        const typename Kernel::FT& r,
-                        Orientation orient,
-                        const Point_2& source, const Point_2& target);}
-    {constructs a circular arc supported by a circle centered at the rational
-     point \ccc{c} whose radius \ccc{r} is rational, directed from
-     \ccc{source} to \ccc{target} with the given orientation.
+     arc is determined by \ccc{orient}.
+     \ccPrecond{Both endpoints must lie on the given supporting circle.}
      \ccPrecond{The circular arc is $x$-monotone.}}
 
 \ccAccessFunctions
