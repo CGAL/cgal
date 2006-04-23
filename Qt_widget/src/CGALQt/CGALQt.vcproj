@@ -234,6 +234,22 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
+				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc Qt_core.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h"
+						Outputs="Kinetic_Qt_core.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\include\CGAL\IO\Qt_help_window.h">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -253,6 +269,23 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h"
+						Outputs="Kinetic_Qt_timer.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h"
+						Outputs="Kinetic_Qt_timer.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\include\CGAL\IO\Qt_widget.h">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -269,6 +302,25 @@
 						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc $(CGALROOT)/include/CGAL/IO/Qt_widget.h
 "
 						Outputs="Qt_widget.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h"
+						AdditionalDependencies=""
+						Outputs="Kinetic_Qt_widget_2_core.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h"
+						AdditionalDependencies=""
+						Outputs="Kinetic_Qt_widget_2_core.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -315,8 +367,14 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_OpenGL.h
-"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h"
+						Outputs="Qt_widget_OpenGL.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h"
 						Outputs="Qt_widget_OpenGL.moc"/>
 				</FileConfiguration>
 			</File>
@@ -337,6 +395,23 @@
 						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
 "
 						Outputs="Qt_widget_standard_toolbar.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h"
+						Outputs="Kinetic_Qt_window_2.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h"
+						Outputs="Kinetic_Qt_window_2.moc"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
