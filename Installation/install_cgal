@@ -616,9 +616,6 @@ check_for_utils()
     _check_for_sysutil tee y
     _check_for_sysutil find y
     _check_for_sysutil tar y
-    case ${CGAL_OS_COMPILER} in
-	*Darwin*) _check_for_sysutil install_name_tool y;;
-    esac 
 
     # test whether sed respects newline (I have seen at least one
     # Darwin version that does not...)
@@ -4832,6 +4829,7 @@ startup()
     guess_os 'log_print'
     case ${SYST} in
         *CYGWIN*) _check_for_sysutil cygpath y;;
+	*Darwin*) _check_for_sysutil install_name_tool y;;
     esac
     ${_printf} "\n%s\n" \
         "--------------------------------------------------------"
