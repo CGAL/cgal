@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(QTDIR)/include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc7&quot;;&quot;..\..\include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
@@ -67,7 +67,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(QTDIR)/include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc7&quot;;&quot;..\..\include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;DNDEBUG"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
@@ -239,13 +239,15 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc Qt_core.h"/>
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc Qt_core.h
+"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h
+"
 						Outputs="Kinetic_Qt_core.moc"/>
 				</FileConfiguration>
 			</File>
@@ -274,14 +276,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h
+"
 						Outputs="Kinetic_Qt_timer.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_timer.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_timer.h
+"
 						Outputs="Kinetic_Qt_timer.moc"/>
 				</FileConfiguration>
 			</File>
@@ -310,7 +314,8 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h
+"
 						AdditionalDependencies=""
 						Outputs="Kinetic_Qt_widget_2_core.moc"/>
 				</FileConfiguration>
@@ -318,7 +323,8 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_widget_2_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_widget_2_core.h
+"
 						AdditionalDependencies=""
 						Outputs="Kinetic_Qt_widget_2_core.moc"/>
 				</FileConfiguration>
@@ -367,14 +373,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h
+"
 						Outputs="Qt_widget_OpenGL.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc ..\..\include\Cgal\Io\Qt_widget_OpenGL.h
+"
 						Outputs="Qt_widget_OpenGL.moc"/>
 				</FileConfiguration>
 			</File>
@@ -403,14 +411,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h
+"
 						Outputs="Kinetic_Qt_window_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_window_2.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_window_2.h
+"
 						Outputs="Kinetic_Qt_window_2.moc"/>
 				</FileConfiguration>
 			</File>
