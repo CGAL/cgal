@@ -1,11 +1,14 @@
 $(CGALROOT)/INSTALL.win32 for CGAL
 
-This file describes how to install CGAL on MS Windows for VC++ .NET 2003
+This file describes how to install CGAL on MS Windows for 
+Developer Studio (VC++ .NET 2003, and 2005)
 
-For installation on Unix and on Cygwin, please see INSTALL.
+Note that you also can install CGAL with the Microsoft compilers using
+cygwin.  For installation on Unix systems and on cygwin, please see
+INSTALL.
 
-The documentation of CGAL is available in various formats (HTML, PostScript,
-PDF). It is not bundled with the software but can be downloaded separately.
+The documentation of CGAL is available in html and pdf format. It is
+not bundled with the software but can be downloaded separately.
 
 For more information about CGAL, see the URL http://www.cgal.org/.
 
@@ -15,19 +18,49 @@ Download the Windows binary from the CGAL Download section. Run it and make
 sure you carefully read the instructions from each installation step.
 
 
-GMP
-Some examples and demos need GMP. In order to use it you have to copy
-lib/msvc7/gmp.dll and mpfr.dll to your path.
+Boost
+CGAL needs some parts of Boost. You must download it from www.boost.org.
+It is enough to unzip the file. Currently only demo programs
+in the Kinetic_data_structures directory need the compiled Boost 
+library program_options. 
 
+
+GMP and MPFR
+Some examples and demos need GMP. In order to use GMP you must download 
+GMP from http://www.swox.com/gmp and MPFR from www.mpfr.org.  
+You additionally need the patches and instructions from Brian Gladmans 
+GMP page at http://fp.gladman.plus.com/computing/gmp4win.htm
+
+For your convenience we have precompiled GMP 4.1.4 and MPFR 2.1.0.
+You can download it from where you have downloaded CGAL-3.2.zip.
+We compiled it with the /MD option, in release mode, and we didn't
+use processor specific assembler.  
+You must move the files gmp.dll and mpfr.dll to your PATH, e.g.,
+c:\Windows\System32.
+
+
+Qt
+Most demos use Qt 3. You can download it from http://www.trolltech.no.
+You must build the multi-threaded version (/MD). 
      
+
+Paths for Header Files and Libraries
+
+The individual project files do not specify where the header
+files from boost, gmp, Qt, etc. are located.  You must add
+these paths for Developer Studio in Tools->Options->Projects->VC++Directories
+in the tab "Show Directories" for "Include Files" and "Library Files"
+
+
+
 Building the Library
 
-The CGAL.lib is located in CGALROOT/lib/msvc7/CGAL.lib. It is built using
-the ML compiler option. If you want to rebuild the CGAL.lib you should go
-into the CGALROOT/src directory and open cgallib.vcproj using VC++ .NET 2003. 
-Go to "Build" menubar and press on "Rebuild Solution". The 
-CGAL library will be created in CGALROOT/lib/msvc7/ as CGAL.lib.
-
+The CGAL.lib is already precompiled and located in
+CGALROOT/lib/msvc7/CGAL.lib.  It is built using the /MD compiler
+option. If you want to rebuild the CGAL.lib you should go into the
+CGALROOT/src/CGAL directory and open cgallib.vcproj using Developer
+Studio.  Go to the "Build" menubar and press on "Rebuild Solution". 
+The CGAL library will be created in CGALROOT/lib/msvc7/ as CGAL.lib.
 
 
 
@@ -36,9 +69,9 @@ Building the Demos
 The demos come in CGALROOT/demo directory. Each demo directory contains the 
 VC++ .NET project files. To build one demo you should open one of those files.
 The demos need Qt installed. The projects are configured for commercial users.
-The libraries that are used are qt.lib and qtmain.lib, and you should change 
+The libraries that are used are qt-mt.lib and qtmain.lib, and you should change 
 manually those settings if you have a different version of Qt or you have 
-built Qt with thread support. All the demos use also the CGALQt.lib that 
+built Qt with single thread support. All the demos use also the CGALQt.lib that 
 represents the Qt_widget library also developed in the CGAL project.
 
 
@@ -48,8 +81,8 @@ The corresponding executable(s) then can be run as usual, from the
 command prompt, or via Explorer.
 
 
-NOTE for VC++ .NET 2003 Users
+NOTE for VC 2005 Users
 
-This product can convert the old VC++ .NET project files. CGAL provides only 
-project files for VC++ .NET because you should convert them without problems 
+This product can convert the project files of .net 2003. CGAL provides only 
+project files for .net 2003 because you should convert them without problems 
 using the new product. The other way around is not possible.
