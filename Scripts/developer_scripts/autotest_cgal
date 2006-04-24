@@ -22,7 +22,6 @@
 #sets the umask to 022 & 0777
 umask 022
 
-
 WGET="wget"
 CURL="curl"
 CURL_OPTS="--remote-name --silent --location-trusted"
@@ -116,7 +115,7 @@ put_on_web()
         $CURL --upload-file ${1} --user anonymous:${MAIL_ADDRESS} \
               ftp://${FTP_SERVER}/${FTP_STORE_DIR}/${2} >> ${ACTUAL_LOGFILE} 2>&1
     else
-        $FTP -n $FTP_SERVER <<EOF
+	$FTP -v -n $FTP_SERVER >> ${ACTUAL_LOGFILE} 2>&1 <<EOF
 quote USER anonymous
 quote PASS ${MAIL_ADDRESS}
 binary
@@ -169,7 +168,7 @@ remote_command()
 	eval $2
     else
       printf "** Logging into host ${1} **\n"
-      ${RSH} ${1} ${MYSHELL} \"${2}\"
+      ${RSH} ${1} "${MYSHELL} \"${2}\""
     fi
 }
 
