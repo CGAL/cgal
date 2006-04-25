@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="regular_triangulation_2"
 	ProjectGUID="{4D5CDA61-852F-4E0F-8864-61C80A21B423}"
 	Keyword="Win32Proj">
@@ -18,13 +18,14 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900"
+				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)/include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_USE_QT"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
@@ -33,10 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)/lib/msvc7/CGAL.lib
-$(QTDIR)/lib/qtmain.lib $(QTDIR)/lib/qt.lib
-$(CGALROOT)/lib/msvc7/CGALQt.lib
-imm32.lib wsock32.lib"
+				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -57,7 +55,13 @@ imm32.lib wsock32.lib"
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -67,15 +71,16 @@ imm32.lib wsock32.lib"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900"
+				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)/include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;CGAL_USE_QT"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
@@ -84,10 +89,7 @@ imm32.lib wsock32.lib"
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)/lib/msvc7/CGAL.lib
-$(QTDIR)/lib/qtmain.lib $(QTDIR)/lib/qt.lib
-$(CGALROOT)/lib/msvc7/CGALQt.lib
-imm32.lib wsock32.lib"
+				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib imm32.lib wsock32.lib"
 				OutputFile="$(OutDir)/regular_triangulation_2.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -109,9 +111,17 @@ imm32.lib wsock32.lib"
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -134,6 +144,12 @@ imm32.lib wsock32.lib"
 			<File
 				RelativePath="regular_triangulation_2_toolbar.C">
 				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
@@ -143,6 +159,12 @@ imm32.lib wsock32.lib"
 			<File
 				RelativePath="regular_triangulation_2_toolbar_layers.C">
 				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
@@ -151,6 +173,12 @@ imm32.lib wsock32.lib"
 			</File>
 			<File
 				RelativePath="triangulation_2_edit_vertex.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -171,6 +199,13 @@ imm32.lib wsock32.lib"
 			<File
 				RelativePath="regular_triangulation_2_toolbar.h">
 				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2_toolbar.moc regular_triangulation_2_toolbar.h"
+						Outputs="regular_triangulation_2_toolbar.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
@@ -181,6 +216,13 @@ imm32.lib wsock32.lib"
 			</File>
 			<File
 				RelativePath="regular_triangulation_2_toolbar_layers.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o regular_triangulation_2_toolbar_layers.moc regular_triangulation_2_toolbar_layers.h"
+						Outputs="regular_triangulation_2_toolbar_layers.moc"/>
+				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
