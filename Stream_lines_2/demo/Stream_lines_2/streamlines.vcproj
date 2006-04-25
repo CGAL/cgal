@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib Opengl32.lib Glu32.lib"
-				OutputFile="$(OutDir)/streeamlines.exe"
+				OutputFile="$(OutDir)/streamlines.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
@@ -90,7 +90,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib Opengl32.lib Glu32.lib"
-				OutputFile="$(OutDir)/streeamlines.exe"
+				OutputFile="$(OutDir)/streamlines.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
