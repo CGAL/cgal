@@ -89,7 +89,13 @@ int nesting;
 int linknesting;
 
 
-Dictionary dict_labels, dict_bib, dict_anchormode_bib, dict_cc, dict_internal;
+Dictionary
+  dict_labels,
+  dict_labels_text,
+  dict_bib,
+  dict_anchormode_bib,
+  dict_cc,
+  dict_internal;
 
 const string reference_icon = "<IMG SRC=\"cc_ref_up_arrow.gif\" "
             "ALT=\"reference\" WIDTH=\"10\" HEIGHT=\"10\">";
@@ -273,12 +279,19 @@ cccend          "[cccend]"
    yytext [ yyleng - 1 ] = '\0'; // cut off trailing ]
    const char *my_yytext = yytext + 5;
    if( dict_labels.is_defined( my_yytext ) ) {
-     //cerr << " !! label [" << my_yytext << "] is defined as [" << dict_labels[ my_yytext ] << endl;
+     //cerr << " !! label [" << my_yytext << "] is defined as [" << dict_labels[ my_yytext ] << " [" << dict_labels_text[ my_yytext ] << "]" << endl;
      output_file  << "<A HREF=\"" << dict_labels[ my_yytext ] << "\">";
-     if( reftext != string() )
-       output_file << reftext;
-     else
+     if( reftext != string() ) {
+       if( reftext == "\\icon" )
+         output_file << reference_icon;
+       else
+         output_file << reftext;
+     }
+     else {
+       if( dict_labels_text.is_defined( my_yytext ) )
+         output_file << dict_labels_text[ my_yytext ];
        output_file << reference_icon;
+     }
      output_file << "</A>";
    } else {
      cerr << " !! Warning: undefined label \"" << my_yytext << "\"" << endl;
@@ -364,8 +377,9 @@ int main( int argc, char** argv ) {
 
     //cerr << "type: " << type << " key: [" << key << "] value: [" << value << "]" << endl;
     if( type == "l" ) {
-      //cerr << "l key: [" << key << "] value: [" << value << "]" << endl;
       dict_labels.add(key,value);
+    } else if( type == "lt" ) {
+      dict_labels_text.add(key,value);
     } else if ( type == "b" ) {
       dict_bib.add(key,value);
     } else if ( type == "c" ) {

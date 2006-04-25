@@ -1542,9 +1542,13 @@ l% ___________________________________________________________________________
 \newcommand{\addtocounter}[2]{\lciGlobalAddTo{\lciCounter#GC1}{#XC2}}
 \newcommand{\value}[1]{\lciCounter#GC1}
 
+\newcommand{\stepcounterX}[1]{\gdef\lciCurrentLabel{#X1}}
+
 \newcommand{\stepcounter}[1]{%
     \lciGlobalAddTo{\lciCounter#GC1}{1}%
-    \lciGlueTwoParam{\lciDependantCounter}{#C1}}
+    \lciGlueTwoParam{\lciDependantCounter}{#C1}%
+    \stepcounterX{\the#GC1}%
+}
 \newcommand{\refstepcounter}{\stepcounter}
 
 % counter to string conversions
@@ -1800,7 +1804,7 @@ l% ___________________________________________________________________________
 % |     * Cross-References
 % +--------------------------------------------------------------------------
 \newcommand{\ref}[1]{\lcAsciiToHtml{[ref:#1]}}
-\newcommand{\pageref}[1]{\lcAsciiToHtml{[ref:#1]}}
+\newcommand{\pageref}[1]{\lcAsciiToHtml{[reftext:\icon][ref:#1]}}
 
 \newcommand{\ccRef}[1]{\lcAsciiToHtml{[ref:#1]}}
 \newcommand{\ccRef@om}{\lcAsciiToHtml{[reftext:#1][ref:#2]}}
@@ -1814,8 +1818,12 @@ l% ___________________________________________________________________________
     \lciPopOutput%
 }
 
-\newcommand{\lciLabel}[3]{\lciRawOutput{l #C1	#XC2#XC3###C1
-}}
+\gdef\lciCurrentLabel{}
+\newcommand{\lciLabel}[3]{%
+  \lciRawOutput{l #C1	#XC2#XC3###C1
+}%
+  \lciRawOutput{lt #C1	}\lciCurrentLabel{}
+}
 
 % +--------------------------------------------------------------------------
 % |     * Bibliography and Citation
