@@ -19,11 +19,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CGALROOT)/include/CGAL/config/msvc7;$(CGALROOT)/include;../../include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="../../include/CGAL/config/msvc7;../../include;../../include;$(QTDIR)/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -34,8 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib CGALQt.lib
-$(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="CGAL.lib CGALQt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/snap_rounding_2.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(CGALROOT)/lib/msvc7"
@@ -49,7 +48,7 @@ $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o snap_rounding_2.moc snap_rounding_2.cpp"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o snap_rounding_2.moc snap_rounding_2.C"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -73,9 +72,9 @@ $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(CGALROOT)/include/CGAL/config/msvc7;$(CGALROOT)/include;../../include;$(QTDIR)/include"
+				AdditionalIncludeDirectories="../../include/CGAL/config/msvc7;../../include;../../include;$(QTDIR)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -86,8 +85,7 @@ $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib CGALQt.lib
-$(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="CGAL.lib CGALQt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/snap_rounding_2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(CGALROOT)/lib/msvc7"
@@ -101,7 +99,8 @@ $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o snap_rounding_2.moc snap_rounding_2.C"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -126,10 +125,10 @@ $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\snap_rounding_2.cpp">
+				RelativePath=".\snap_rounding_2.C">
 			</File>
 			<File
-				RelativePath=".\snap_rounding_2_toolbar.cpp">
+				RelativePath=".\snap_rounding_2_toolbar.C">
 			</File>
 		</Filter>
 		<Filter
