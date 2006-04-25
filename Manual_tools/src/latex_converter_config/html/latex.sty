@@ -1542,7 +1542,12 @@ l% ___________________________________________________________________________
 \newcommand{\addtocounter}[2]{\lciGlobalAddTo{\lciCounter#GC1}{#XC2}}
 \newcommand{\value}[1]{\lciCounter#GC1}
 
-\newcommand{\stepcounterX}[1]{\gdef\lciCurrentLabel{#X1}}
+\newcommand{\stepcounterX}[1]{%
+  % do not update the current label, for reference pages (counter only used internally)
+  \lciIfEqual{#1}{\thereferencepage}{}{%
+    \gdef\lciCurrentLabel{#X1}%
+  }%
+}
 
 \newcommand{\stepcounter}[1]{%
     \lciGlobalAddTo{\lciCounter#GC1}{1}%

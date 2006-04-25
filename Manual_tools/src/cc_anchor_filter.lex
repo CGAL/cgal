@@ -287,11 +287,10 @@ cccend          "[cccend]"
        else
          output_file << reftext;
      }
-     else {
-       if( dict_labels_text.is_defined( my_yytext ) )
-         output_file << dict_labels_text[ my_yytext ];
+     else if( dict_labels_text.is_defined( my_yytext ) )
+       output_file << dict_labels_text[ my_yytext ];
+     else
        output_file << reference_icon;
-     }
      output_file << "</A>";
    } else {
      cerr << " !! Warning: undefined label \"" << my_yytext << "\"" << endl;
