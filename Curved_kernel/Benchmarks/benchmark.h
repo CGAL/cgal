@@ -12,6 +12,7 @@
 #include <fstream>
 #include "Input_data.h"
 #include <boost/variant.hpp>
+#include <exception>
 
 
 
@@ -216,16 +217,18 @@ private:
   	MemBefore = mem_sizer.virtual_size ()/1000000;
 	Pmwx _pm;
   	Point_location _pl(_pm);
-  	
 	try{
     		this->start(); 
       		insert_curves(_pm,ac.begin(),ac.end());
     		this->stop();
-  	}
-  	catch (...) {
+  	} catch (std::exception &e) {
     		this->fail();
+                std::cout << "Exception:" << std::endl << e.what() << std::endl;
     		fail=true;
-  	}
+  	} catch(...) {
+                this->fail();
+    		fail=true; 
+        }
    	vert[i]=(int)_pm.number_of_vertices();
    	hedg[i]=(int)_pm.number_of_halfedges();
 
