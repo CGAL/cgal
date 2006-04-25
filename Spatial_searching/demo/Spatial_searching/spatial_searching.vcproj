@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="spatial_searching"
 	ProjectGUID="{E319B5B7-17E5-4DA2-9B05-89F1093FA060}"
 	Keyword="Win32Proj">
@@ -20,11 +20,11 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;$(QTDIR)/include"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;$(QTDIR)/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib "
 				OutputFile="$(OutDir)/spatial_searching.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -55,7 +55,13 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -68,10 +74,10 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;$(QTDIR)/include"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;$(QTDIR)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -82,7 +88,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib "
 				OutputFile="$(OutDir)/spatial_searching.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -104,9 +110,17 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -161,24 +175,26 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
+				RelativePath="cgal_types.h">
+			</File>
+			<File
 				RelativePath="Qt_widget_move_list_point.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
+"
 						Outputs="Qt_widget_move_list_point.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
+"
 						Outputs="Qt_widget_move_list_point.moc"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="cgal_types.h">
 			</File>
 			<File
 				RelativePath="spatial_searching_toolbar.h">
@@ -186,14 +202,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o spatial_searching_toolbar.moc spatial_searching_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o spatial_searching_toolbar.moc spatial_searching_toolbar.h
+"
 						Outputs="spatial_searching_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o spatial_searching_toolbar.moc spatial_searching_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o spatial_searching_toolbar.moc spatial_searching_toolbar.h
+"
 						Outputs="spatial_searching_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
