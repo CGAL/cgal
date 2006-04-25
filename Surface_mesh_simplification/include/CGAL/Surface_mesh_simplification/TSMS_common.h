@@ -33,6 +33,21 @@ CGAL_BEGIN_NAMESPACE
 namespace Triangulated_surface_mesh { namespace Simplification 
 {
 
+template<class Handle>
+inline bool handle_assigned( Handle h ) { Handle null ; return h != null ; }
+
+template<class Iterator, class Handle>
+bool handle_exists ( Iterator begin, Iterator end, Handle h )
+{
+ if ( handle_assigned(h) )
+ {
+   while ( begin != end )
+     if ( begin++ == h )
+       return true ;
+ }
+ return false ;
+}
+
 template<class TSM> 
 struct Surface_geometric_traits 
 { 

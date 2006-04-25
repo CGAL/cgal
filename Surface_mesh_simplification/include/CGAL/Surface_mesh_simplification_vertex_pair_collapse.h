@@ -51,13 +51,13 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //   Returns the number of vertex-pairs removed or -1 if there was an error (like the surface not being a valid triangulated surface mesh)
 //       
 template<class TSM,class SelectionMap,class CostMap,class VertexPlacement,class StopPred>
-std::size_t vertex_pair_collapse ( TSM&                      aSurface
-                                 , SelectionMap       const& aSelectMap
-                                 , CostMap            const& aCostMap 
-                                 , VertexPlacement    const& aVertexPlacement
-                                 , StopPred           const& aStopPred
-                                 , bool                      aIncludeNonEdgePairs = false
-                                 ) 
+int vertex_pair_collapse ( TSM&                      aSurface
+                         , SelectionMap       const& aSelectMap
+                         , CostMap            const& aCostMap 
+                         , VertexPlacement    const& aVertexPlacement
+                         , StopPred           const& aStopPred
+                         , bool                      aIncludeNonEdgePairs = false
+                         ) 
 {
   if ( is_valid_triangulated_surface_mesh(aSurface) )
   {

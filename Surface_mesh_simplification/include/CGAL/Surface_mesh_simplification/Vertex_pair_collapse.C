@@ -41,19 +41,19 @@ VertexPairCollapse<TSM,SM,CM,VP,SP>::VertexPairCollapse( TSM&                   
   ,stop_simplification(aStopPred) 
   
   ,mIncludeNonEdgePairs(aIncludeNonEdgePairs)
-  
-  ,mPQ( boost::num_edges(aSurface) )
 {
   CGAL_TSMS_TRACE(0,"VertexPairCollapse of TSM with " << boost::num_edges(aSurface) << " edges" );
 }
 
 template<class TSM,class SM,class CM,class VP,class SP>
-std::size_t VertexPairCollapse<TSM,SM,CM,VP,SP>::run()
+int VertexPairCollapse<TSM,SM,CM,VP,SP>::run()
 {
   Collect(); 
   Loop();
   
-  return mInitialPairCount - mCurrentPairCount ;
+  CGAL_TSMS_TRACE(0,"Finished: " << (mInitialPairCount - mCurrentPairCount) << " pairs removed." ) ;
+  
+  return (int)(mInitialPairCount - mCurrentPairCount) ;
 }
 
 template<class TSM,class SM,class CM,class VP,class SP>
@@ -85,13 +85,10 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Collect()
     {
       if ( boost::get(Select_map, boost::make_tuple(s,t,true,boost::addressof(mSurface))) )
       {
-        edge_descriptor opposite = boost::opposite_edge(edge,mSurface);
-        
         vertex_pair_ptr lPair( new vertex_pair(lID++,s,t,edge,boost::addressof(mSurface),boost::addressof(Cost_map)) ) ; 
-        CGAL_TSMS_TRACE(2, *lPair << " accepted." );
-        mEdgesToPairsMap[edge    ]=lPair;
-        mEdgesToPairsMap[opposite]=lPair;
-        mPQ.push(lPair);
+        set_pair(edge,lPair);
+        insert_in_PQ(lPair);
+        CGAL_TSMS_TRACE(3, *lPair << " accepted." );
       }    
     }
   }
@@ -112,13 +109,12 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Loop()
   //
   // Pops and processes each vertex-pair from the PQ
   //
-  while ( !mPQ.empty() )
+  while ( vertex_pair_ptr lPair = pop_from_PQ() )
   {
-    vertex_pair_ptr lPair = mPQ.top();
-    mPQ.pop();
+    CGAL_TSMS_TRACE(3,"Poped " << *lPair ) ;
     
-    // The cost of a pair in the queue might be left undefined after a previous collapse
-    if ( lPair->cost() != boost::none ) 
+    // Pairs in the queue might be "fixed", that is, marked as uncollapsable, or their cost might be undefined.
+    if ( !lPair->is_fixed() && lPair->cost() != boost::none ) 
     { 
       if ( stop_simplification(*lPair->cost(),lPair->p(),lPair->q(),lPair->is_edge(),mInitialPairCount,mCurrentPairCount,mSurface) )
       {
@@ -133,18 +129,64 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Loop()
       if ( Is_collapsable(lPair) )        
         Collapse(lPair);
     }
-    else
-    {
-      CGAL_TSMS_TRACE(0,lPair << " has absent cost now. Discarded without being removed.");
-    }
   }
 }
 
 template<class TSM,class SM,class CM,class VP,class SP>
 bool VertexPairCollapse<TSM,SM,CM,VP,SP>::Is_collapsable( vertex_pair_ptr const& aPair )
 {
-  return    boost::degree(aPair->p(),mSurface) > 3
-         && boost::degree(aPair->q(),mSurface) > 3 ;
+  bool rR = true ;
+  
+  edge_descriptor p_q = aPair->edge();
+  edge_descriptor q_p = boost::opposite_edge(p_q,mSurface);
+  
+  edge_descriptor p_t = boost::next_edge_ccw(p_q,mSurface);      
+  edge_descriptor p_b = boost::next_edge_cw (p_q,mSurface);      
+  edge_descriptor q_t = boost::next_edge_cw (q_p,mSurface);      
+  edge_descriptor q_b = boost::next_edge_ccw(q_p,mSurface);      
+
+  // degree(p) and degree(q) > 3
+  if (    boost::target(p_t,mSurface) != aPair->q()
+       && boost::target(p_b,mSurface) != aPair->q()
+       && boost::target(q_t,mSurface) != aPair->p()
+       && boost::target(q_b,mSurface) != aPair->p()
+       && boost::next_edge_ccw(p_t,mSurface) != p_b
+       && boost::next_edge_cw (q_t,mSurface) != q_b
+     )
+  {
+    // link('p') .intersection. link('q') == link('p_q') (that is, exactly {'t','b'})
+    
+    if (    boost::target(p_t,mSurface) == boost::target(q_t,mSurface) 
+         && boost::target(p_b,mSurface) == boost::target(q_b,mSurface) 
+       )
+    {
+      edge_descriptor p_tn = p_t ;
+      edge_descriptor p_bn = p_b ;
+      edge_descriptor q_tn = q_t ;
+      edge_descriptor q_bn = q_b ;
+      
+      do
+      {
+        p_tn = boost::next_edge_ccw(p_tn,mSurface);      
+        p_bn = boost::next_edge_cw (p_bn,mSurface);      
+        q_tn = boost::next_edge_cw (q_tn,mSurface);      
+        q_bn = boost::next_edge_ccw(q_bn,mSurface);      
+        
+        if (    boost::target(p_tn,mSurface) == boost::target(q_tn,mSurface)
+             || boost::target(p_bn,mSurface) == boost::target(q_bn,mSurface)
+           )
+        {
+          rR = false ;
+          break ;
+        }     
+      }
+      while ( p_tn != p_bn && q_tn != q_bn ) ;
+    }   
+    else rR = false ;
+  }   
+  else rR = false ;
+  
+  return rR ;
 }
 
 template<class TSM,class SM,class CM,class VP,class SP>
@@ -160,29 +202,64 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Collapse( vertex_pair_ptr const& aPair
   optional_vertex_point_type lNewVertexPoint = construct_new_vertex_point(lP,lQ,aPair->is_edge(),mSurface);
   if ( lNewVertexPoint )
   {
-    CGAL_TSMS_TRACE(1,"New vertex point: (" << lNewVertexPoint->x() << "," << lNewVertexPoint->y() << "," << lNewVertexPoint->z() << ")");
+    CGAL_TSMS_TRACE(2,"New vertex point: (" << lNewVertexPoint->x() << "," << lNewVertexPoint->y() << "," << lNewVertexPoint->z() << ")");
         
     // The actual collapse of edge PQ merges the top and bottom facets with its left and right adjacents resp, then
     // joins P and Q.
     
     edge_descriptor lEdgePQ = aPair->edge();
     
-    edge_descriptor lEdgePT = boost::next_out_edge_ccw(lEdgePQ,mSurface);
+    edge_descriptor lEdgeQP = boost::opposite_edge(lEdgePQ,mSurface);
     
-    edge_descriptor lEdgeQB = boost::next_out_edge_ccw(boost::opposite_edge(lEdgePQ,mSurface),mSurface);
+    edge_descriptor lEdgePT = boost::next_edge_ccw(lEdgePQ,mSurface);
     
-    CGAL_TSMS_TRACE(1,"Removing:\n  " << *get_pair(lEdgePQ) << "\n  " << *get_pair(lEdgePT) << "\n  " << *get_pair(lEdgeQB) ) ;
+    edge_descriptor lEdgeQB = boost::next_edge_ccw(lEdgeQP,mSurface);
     
-    // The collapse will remove the edges from the surface so the corresponding pairs won't be valid anymore.
-    mPQ.remove( get_pair(lEdgePQ) ) ;
-    mPQ.remove( get_pair(lEdgePT) ) ;
-    mPQ.remove( get_pair(lEdgeQB) ) ;
+    CGAL_TSMS_TRACE(3,"EdgePQ E" << lEdgePQ->ID << " Opposite EdgePQ E" << lEdgePQ->opposite()->ID 
+                   << " V" <<  lEdgePQ->opposite()->vertex()->ID << "->V" << lEdgePQ->vertex()->ID ) ;
+    CGAL_TSMS_TRACE(3,"EdgePT E" << lEdgePT->ID << " Opposite EdgePT E" << lEdgePT->opposite()->ID 
+                   << " V" <<  lEdgePT->opposite()->vertex()->ID << "->V" << lEdgePT->vertex()->ID ) ;
 
     // Since vertex P will be removed during the collapse, all cached pairs linked to 'P' (either from or to) 
     // are updated to link to 'Q' instead.
-    in_edge_iterator eb, ee ; 
-    for ( boost::tie(eb,ee) = boost::in_edges(lP,mSurface) ; eb != ee ; ++ eb )
-      get_pair(*eb)->update_vertex(lP,lQ) ;
+    out_edge_iterator eb, ee ; 
+    for ( boost::tie(eb,ee) = boost::out_edges(lP,mSurface) ; eb != ee ; ++ eb )
+    {
+      edge_descriptor outedge = *eb ;
+      CGAL_TSMS_TRACE(4,"Outedge around V" << lP->ID << " E" << outedge->ID << " Opposite E" << outedge->opposite()->ID 
+                   << " V" <<  outedge->opposite()->vertex()->ID << "->V" << outedge->vertex()->ID ) ;
+      
+      if ( outedge != lEdgePQ && outedge != lEdgePT )
+      {
+        vertex_pair_ptr lPair = get_pair(outedge);
+        CGAL_TSMS_TRACE(4,"Updating vertex P in " << *lPair) ;
+        lPair->update_vertex(lP,lQ) ;
+        CGAL_TSMS_TRACE(4,"...after update: " << *lPair ) ;
+      }
+    }
+    
+    vertex_pair_ptr lPairPT = get_pair(lEdgePT) ;
+    vertex_pair_ptr lPairQB = get_pair(lEdgeQB) ;
+  
+    // The collapse will remove these edges from the surface so the corresponding pairs won't be valid anymore.
+    
+    if ( lPairPT->is_in_PQ() )
+    {
+      CGAL_TSMS_TRACE(2,"Removing from PQ VP" << lPairPT->id() ) ;
+      remove_from_PQ(lPairPT) ;
+    }
+    
+    if ( lPairQB->is_in_PQ() )
+    {
+      CGAL_TSMS_TRACE(2,"Removing from PQ VP" << lPairQB->id() ) ;
+      remove_from_PQ(lPairQB) ;
+    }
+    
+    CGAL_TSMS_TRACE(2,"Removing from surface V" << lP->ID 
+                   << " E" << lEdgePQ->ID
+                   << " E" << lEdgePT->ID
+                   << " E" << lEdgeQB->ID
+                   );
     
     // This operator IS NOT passed as a policy. It is a traits. Users only need to specialize it for
     // the particular surface type.
@@ -207,34 +284,70 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Collapse( vertex_pair_ptr const& aPair
 template<class TSM,class SM,class CM,class VP,class SP>
 void VertexPairCollapse<TSM,SM,CM,VP,SP>::Update_neighbors( vertex_descriptor const& v ) 
 {
-  CGAL_TSMS_TRACE(1,"Updating cost of neighboring edges..." ) ;
+  CGAL_TSMS_TRACE(3,"Updating cost of neighboring edges..." ) ;
   
+
   //
-  // The cost of each edge around each vertex adjacent to new vertex is updated.
+  // (A) Collect all pairs to update its cost: all those around each vertex adjacent to v  
   //
   
-  // (1) Loop around all vertices adjacent to v
+  vertex_pair_vector lToUpdate ;
+  
+  // (A.1) Loop around all vertices adjacent to v
   in_edge_iterator eb1, ee1 ; 
   for ( boost::tie(eb1,ee1) = boost::in_edges(v,mSurface) ; eb1 != ee1 ; ++ eb1 )
   {
-    vertex_descriptor adj_v = boost::source(*eb1,mSurface);
+    edge_descriptor edge1 = *eb1 ;
     
-    // (2) Loop around all edges incident on each adjacent vertex
+    CGAL_TSMS_TRACE(4,"Inedge around V" << v->ID << " E" << edge1->ID << " Opposite E" << edge1->opposite()->ID 
+                   << " V" <<  edge1->opposite()->vertex()->ID << "->V" << edge1->vertex()->ID ) ;
+                   
+    vertex_pair_ptr lPair1 = get_pair(edge1) ;
+    
+    // This is required to satisfy the transitive link_condition.
+    // That is, the edges around the replacement vertex 'v' cannot be collapsed again.
+    lPair1->is_fixed() = true ;
+   
+    vertex_descriptor adj_v = boost::source(edge1,mSurface);
+    
+    // (A.2) Loop around all edges incident on each adjacent vertex
     in_edge_iterator eb2, ee2 ; 
     for ( boost::tie(eb2,ee2) = boost::in_edges(adj_v,mSurface) ; eb2 != ee2 ; ++ eb2 )
     {
-      vertex_pair_ptr lPair = get_pair(*eb2);
+      edge_descriptor edge2 = *eb2 ;
       
-      CGAL_TSMS_TRACE(4,"Updating cost of " << *lPair) ;
-      
-      // The cost of a pair can be recalculated by invalidating its cache and updating the PQ.
-      // The PQ update will reposition the pair in the heap querying its cost(),
-      // but since the cost was invalidated, it will be computed again 
-      // (that's why the pairs hold a pointer to the CostMap)
-      lPair->invalidate_cost();
-      mPQ.update(lPair);
-    }  
+      CGAL_TSMS_TRACE(4,"Inedge around V" << adj_v->ID << " E" << edge2->ID << " Opposite E" << edge2->opposite()->ID 
+                   << " V" <<  edge2->opposite()->vertex()->ID << "->V" << edge2->vertex()->ID ) ;
+                   
+      vertex_pair_ptr lPair2 = get_pair(edge2);
+    
+      // Only those pairs still in the PQ are update.
+      // The mark is used because in the way we loop here the same pair is found many times.
+      if ( lPair2->is_in_PQ() && lPair2->mark() == 0 )
+      {
+        lPair2->mark() = 1 ;
+        lToUpdate.push_back(lPair2);
+      }  
+    } 
   }  
+  
+  //
+  // (B) Proceed to update the costs.
+  //
+  
+  for ( vertex_pair_vector_iterator it = lToUpdate.begin(), eit = lToUpdate.end() ; it != eit ; ++ it )
+  {
+    vertex_pair_ptr lPair = *it ;
+    CGAL_TSMS_TRACE(2,"Updating cost of " << *lPair) ;
+    
+    // The cost of a pair can be recalculated by invalidating its cache and updating the PQ.
+    // The PQ update will reposition the pair in the heap querying its cost(),
+    // but since the cost was invalidated, it will be computed again 
+    lPair->invalidate_cost();
+    update_in_PQ(lPair);
+    lPair->mark() = 0 ;
+  }
+    
 }
 
 } } // namespace Triangulated_surface_mesh::Simplification

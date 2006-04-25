@@ -89,24 +89,6 @@ struct Collapse_triangulation_edge
                   , DS&                    aDS 
                   ) const
   {
-    // No null edges
-    CGAL_assertion( boost::source(pq,aDS) != boost::target(pq,aDS) ) ;
-    CGAL_assertion( boost::source(pt,aDS) != boost::target(pt,aDS) ) ;
-    CGAL_assertion( boost::source(qb,aDS) != boost::target(qb,aDS) ) ;
-    
-    CGAL_assertion( boost::source(pq,aDS) == boost::source(pt,aDS) ) ;
-    CGAL_assertion( boost::target(pq,aDS) == boost::source(qb,aDS) ) ;
-    
-    CGAL_assertion(   boost::target(pt,aDS) != boost::source(pq,aDS) 
-                   && boost::target(pt,aDS) != boost::target(pq,aDS)
-                   && boost::target(pt,aDS) != boost::target(qb,aDS)
-                  ) ;
-                  
-    CGAL_assertion(   boost::target(qb,aDS) != boost::source(pq,aDS) 
-                   && boost::target(qb,aDS) != boost::target(pq,aDS)
-                   && boost::target(qb,aDS) != boost::target(pt,aDS)
-                  ) ;
-    
     aDS.join_facet (pt);
     aDS.join_facet (qb);
     aDS.join_vertex(pq);

@@ -221,13 +221,13 @@ public:
 
 template < class P >
 class boost_P_all_edges_const_iterator 
-  : public boost_P_all_edges_iterator_base<P,typename P::Halfedge_const_iterator,typename P::Halfedge_const_handle>
+  : public boost_P_all_edges_iterator_base<P,typename P::Edge_const_iterator,typename P::Halfedge_const_handle>
 {
-  typedef boost_P_all_edges_iterator_base<P,typename P::Halfedge_const_iterator,typename P::Halfedge_const_handle> Base ;
+  typedef boost_P_all_edges_iterator_base<P,typename P::Edge_const_iterator,typename P::Halfedge_const_handle> Base ;
   
 public:
 
-  typedef typename P::Halfedge_const_iterator Iterator;
+  typedef typename P::Edge_const_iterator Iterator;
 
   // CREATION
   // --------
@@ -239,13 +239,13 @@ public:
 
 template < class P >
 class boost_P_all_edges_iterator 
-  : public boost_P_all_edges_iterator_base<P,typename P::Halfedge_iterator,typename P::Halfedge_handle>
+  : public boost_P_all_edges_iterator_base<P,typename P::Edge_iterator,typename P::Halfedge_handle>
 {
-  typedef boost_P_all_edges_iterator_base<P,typename P::Halfedge_iterator,typename P::Halfedge_handle> Base ;
+  typedef boost_P_all_edges_iterator_base<P,typename P::Edge_iterator,typename P::Halfedge_handle> Base ;
   
 public:
 
-  typedef typename P::Halfedge_iterator Iterator;
+  typedef typename P::Edge_iterator Iterator;
 
   // CREATION
   // --------
@@ -489,7 +489,7 @@ class T_HDS, class Alloc>
     typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::vertex_descriptor u, 
     const CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& g)
   {
-    typename CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>::Halfedge_around_vertex_const_circulator
+    typename CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>::Halfedge_around_vertex_circulator
        ec = u->vertex_begin();
     int out_deg = out_degree(u,g);
     typedef typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >
@@ -796,35 +796,7 @@ class T_HDS, class Alloc>
 #endif
 class T_HDS, class Alloc>
   typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor
-  first_in_edge(
-    typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::vertex_descriptor u, 
-    CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& g)
-  {
-    CGAL::HalfedgeDS_items_decorator< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> > D ;
-    return D.get_vertex_halfedge(u);
-  }
-  
-  template < class PolyhedronTraits_3, class PolyhedronItems_3, 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-class T_HDS, class Alloc>
-  typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor
-  first_in_edge(
-    typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::vertex_const_descriptor u, 
-    CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> const& g)
-  {
-    CGAL::HalfedgeDS_items_decorator< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> > D ;
-    return D.get_vertex_halfedge(u);
-  }
-
-    template < class PolyhedronTraits_3, class PolyhedronItems_3, 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-class T_HDS, class Alloc>
-  typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor
-  first_out_edge(
+  out_edge(
     typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::vertex_descriptor u, 
     CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& g)
   {
@@ -838,7 +810,7 @@ class T_HDS, class Alloc>
 #endif
 class T_HDS, class Alloc>
   typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor
-  first_out_edge(
+  out_edge(
     typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::vertex_const_descriptor u, 
     CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> const& g)
   {
@@ -846,33 +818,6 @@ class T_HDS, class Alloc>
     return D.get_vertex_halfedge(u)->opposite();
   }
 
-    template < class PolyhedronTraits_3, class PolyhedronItems_3, 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-class T_HDS, class Alloc>
-  typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor
-  next_in_edge_ccw(
-    typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor inedge, 
-    CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& g)
-  {
-    CGAL::HalfedgeDS_items_decorator< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> > D ;
-    return D.get_prev(inedge->opposite())->opposite();
-  }
-  
-  template < class PolyhedronTraits_3, class PolyhedronItems_3, 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-class T_HDS, class Alloc>
-  typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor
-  next_in_edge_ccw(
-    typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor inedge, 
-    CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> const& g)
-  {
-    CGAL::HalfedgeDS_items_decorator< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> > D ;
-    return D.get_prev(inedge->opposite())->opposite();
-  }
 
     template < class PolyhedronTraits_3, class PolyhedronItems_3, 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -880,33 +825,7 @@ class T_HDS, class Alloc>
 #endif
 class T_HDS, class Alloc>
   typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor
-  next_in_edge_cw(
-    typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor inedge, 
-    CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& g)
-  {
-    return inedge->next()->opposite();
-  }
-  
-  template < class PolyhedronTraits_3, class PolyhedronItems_3, 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-class T_HDS, class Alloc>
-  typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor
-  next_in_edge_cw(
-    typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor inedge, 
-    CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> const& g)
-  {
-    return inedge->next()->opposite();
-  }
-
-    template < class PolyhedronTraits_3, class PolyhedronItems_3, 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-class T_HDS, class Alloc>
-  typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor
-  next_out_edge_ccw(
+  next_edge_ccw(
     typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor outedge, 
     CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& g)
   {
@@ -920,7 +839,7 @@ class T_HDS, class Alloc>
 #endif
 class T_HDS, class Alloc>
   typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor
-  next_out_edge_ccw(
+  next_edge_ccw(
     typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor outedge, 
     CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> const& g)
   {
@@ -934,7 +853,7 @@ class T_HDS, class Alloc>
 #endif
 class T_HDS, class Alloc>
   typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor
-  next_out_edge_cw(
+  next_edge_cw(
     typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_descriptor outedge, 
     CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& g)
   {
@@ -947,7 +866,7 @@ class T_HDS, class Alloc>
 #endif
 class T_HDS, class Alloc>
   typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor
-  next_out_edge_cw(
+  next_edge_cw(
     typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edge_const_descriptor outedge, 
     CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> const& g)
   {

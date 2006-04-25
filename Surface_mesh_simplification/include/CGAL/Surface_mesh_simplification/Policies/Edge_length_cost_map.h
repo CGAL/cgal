@@ -64,7 +64,7 @@ public:
     {
       vertex_descriptor p, q ;
       boost::tie(p,q,boost::tuples::ignore,boost::tuples::ignore) = e ;
-      return value_type(CGAL::squared_distance(p->point(), p->point()));
+      return value_type(CGAL::squared_distance(p->point(), q->point()));
     }
 };
 

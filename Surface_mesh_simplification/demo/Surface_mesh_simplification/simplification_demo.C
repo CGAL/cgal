@@ -40,7 +40,7 @@ int main() {
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 3
+//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 1
 
 void Surface_simplification_external_trace( std::string s )
 {
@@ -57,10 +57,56 @@ void Surface_simplification_external_trace( std::string s )
 #include <iostream>
 #include <fstream>
 
+template <class Refs, class Traits>
+struct My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,typename Traits::Point_3> 
+{
+  typedef CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,typename Traits::Point_3> Base ;
+ 
+  My_vertex() {} 
+  My_vertex( typename Traits::Point_3 p ) : Base(p) {}
+  
+  int ID; 
+} ;
+
+template <class Refs, class Traits>
+struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> 
+{ 
+  My_halfedge() {}
+ 
+  int ID; 
+};
+
+template <class Refs, class Traits>
+struct My_face : public CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_true,typename Traits::Plane_3>
+{
+  typedef CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_true,typename Traits::Plane_3> Base ;
+  
+  My_face() {}
+  My_face( typename Traits::Plane_3 plane ) : Base(plane) {}
+  
+  int ID; 
+};
+
+struct My_items : public CGAL::Polyhedron_items_3 
+{
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef My_vertex<Refs,Traits> Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef My_halfedge<Refs,Traits>  Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef My_face<Refs,Traits> Face;
+    };
+};
+
 typedef CGAL::Cartesian<double>                              Kernel;
 typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
-typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
+typedef CGAL::Polyhedron_3<Kernel,My_items>                  Polyhedron;
 
 typedef Polyhedron::Vertex                                   Vertex;
 typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
@@ -142,23 +188,22 @@ void subdiv( Polyhedron& P) {
     CGAL_postcondition( P.is_valid());
 }
 
-
-int main( int argc, char** argv ) 
+// This is here only to allow a breakpoint to be placed so I can trace back the problem.
+void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
 {
-    Polyhedron lP; 
-    
-    //char const* file = argc > 1 ? argv[1] : "./data/quint_tris.off" ;
-    //std::ifstream sample(file);
-    //sample >> lP ;
-    
-    Point   a(1,0,0)  
-          , b(0,0,1) 
-          , c(0,0,0) 
-          , d(0,1,0) ;
-    lP.make_tetrahedron(a,b,c,d) ;
-    
-    subdiv(lP);
-    
+  std::cerr << "CGAL error: " << what << " violation!" << std::endl 
+       << "Expr: " << expr << std::endl
+       << "File: " << file << std::endl 
+       << "Line: " << line << std::endl;
+  if ( msg != 0)
+      std::cerr << "Explanation:" << msg << std::endl;
+}
+
+
+void Simplify ( Polyhedron& aP )
+{
+   std::cout << "Simplifying surface with " << (aP.size_of_halfedges()/2) << " edges..." << std::endl ;
+
 #ifdef VISUALIZE
     CGAL::Geomview_stream gv;
     gv.set_bg_color(CGAL::BLACK);
@@ -175,15 +220,64 @@ int main( int argc, char** argv )
     Count_ratio_stop_condition<Polyhedron> stop_condition(0.5);
     
     std::cout << std::setprecision(19) ;
+
+    int lVertexID = 0 ;
+    for ( Polyhedron::Vertex_iterator vi = aP.vertices_begin(); vi != aP.vertices_end() ; ++ vi )
+      vi->ID = lVertexID ++ ;    
+      
+    int lHalfedgeID = 0 ;
+    for ( Polyhedron::Halfedge_iterator hi = aP.halfedges_begin(); hi != aP.halfedges_end() ; ++ hi )
+      hi->ID = lHalfedgeID++ ;    
     
-    vertex_pair_collapse(lP,selection_map,cost_map,vertex_placement,stop_condition);
+    int lFacetID = 0 ;
+    for ( Polyhedron::Facet_iterator fi = aP.facets_begin(); fi != aP.facets_end() ; ++ fi )
+      fi->ID = lFacetID ++ ;    
+
+   int r = vertex_pair_collapse(aP,selection_map,cost_map,vertex_placement,stop_condition);
+   
+   std::cout << "Finished...\nEdges removed: " << r << std::endl ;
 
 #ifdef VISUALIZE
-    gv << lP ;
+    gv << aP ;
     std::cout << "Press any key to finish..." << std::endl ;
     char k ;
     std::cin >> k ;
 #endif    
+}
+
+int main( int argc, char** argv ) 
+{
+    CGAL::set_error_handler  (error_handler);
+    CGAL::set_warning_handler(error_handler);
+  
+    Polyhedron lP; 
+    
+    char const* file = argc > 1 ? argv[1] : "./data/Eros_50000triangles_edited.off" ;
+    std::ifstream sample(file);
+    if ( sample )
+    {
+      sample >> lP ;
+      Simplify(lP);
+    }
+    else
+    {
+      std::cerr << "Input file not found: " << file << std::endl ;
+    }
+    
+    /*
+    double lSize = 1e2 ;
+    
+    Point   a(lSize,0,0)  
+          , b(0,0,lSize) 
+          , c(0,0,0) 
+          , d(0,lSize,0) ;
+          
+    lP.make_tetrahedron(a,b,c,d) ;
+    
+    for ( int i = 0 ; i < 4 ; ++ i )
+      subdiv(lP);
+    */
+    
 
     return 0;
 }
