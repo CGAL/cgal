@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="partition_2"
 	ProjectGUID="{4E6778C1-818F-4448-A6B5-461AE2355423}"
 	Keyword="Win32Proj">
@@ -18,13 +18,14 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900"
+				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT;CGAL_USE_GMP"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
@@ -34,10 +35,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/partition_2.exe"
 				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="LIBC"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/partition_2.pdb"
 				SubSystem="2"
@@ -56,7 +57,13 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -66,15 +73,16 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900"
+				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALROOT)/include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;CGAL_USE_GMP"
+				AdditionalIncludeDirectories="&quot;../../include/CGAL/config/msvc7&quot;;&quot;../../include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
@@ -83,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib wsock32.lib winmm.lib imm32.lib"
 				OutputFile="$(OutDir)/partition_2.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""
@@ -106,9 +114,17 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -136,11 +152,23 @@
 						Name="VCCLCompilerTool"
 						CompileAs="2"/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="partition_2_toolbar_layers.C">
 				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						CompileAs="2"/>
@@ -162,14 +190,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar.moc partition_2_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar.moc partition_2_toolbar.h
+"
 						Outputs="partition_2_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar.moc partition_2_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar.moc partition_2_toolbar.h
+"
 						Outputs="partition_2_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
@@ -179,14 +209,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h
+"
 						Outputs="partition_2_toolbar_layers.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h
+"
 						Outputs="partition_2_toolbar_layers.moc"/>
 				</FileConfiguration>
 			</File>
