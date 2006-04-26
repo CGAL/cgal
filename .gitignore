@@ -222,10 +222,6 @@ Polytope_distance_d/Makefile
 Polytope_distance_d/bin
 Polytope_distance_d/doc_ps
 Qt_widget/.env
-Qt_widget/demo/Qt_widget/Examples/*.moc
-Qt_widget/demo/Qt_widget/Examples/hellosegment
-Qt_widget/demo/Qt_widget/Examples/layer
-Qt_widget/demo/Qt_widget/Examples/standard_toolbar
 Qt_widget/src/CGALQt/*.moc
 Qt_widget/test/Qt_widget/test_qt_version
 Random_numbers/*.aux
