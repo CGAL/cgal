@@ -306,8 +306,12 @@
 \newcommand{\ccMultiplePartsToc}{\gdef{\lciIfMultipleParts}{\lcTrue}}
 
 \newcommand{\ccChapterSubTitle}[1]{\lcRawHtml{<EM>}#1\lcRawHtml{</EM><br>}}
-\newcommand{\ccChapterAuthor}[1]{\lciIf{\ccTagChapterAuthor}
-    {\ccChapterSubTitle{\lciFormatChapterAuthor{#1}}}{}}
+\newcommand{\ccChapterAuthor}[1]{%
+  \lciIf{\ccTagChapterAuthor}{%
+    \ccChapterSubTitle{\lciFormatChapterAuthor{#1}}%
+    \ccPkgAuthor{\ccChapterSubTitle{\lciFormatChapterAuthor{#1}}}%
+  }{}%
+}%
 \newcommand{\ccChapterRelease}[1]{\lciIf{\ccTagChapterRelease}
     {\ccChapterSubTitle{#1}}{}}
 
@@ -967,20 +971,24 @@
 %\gdef\lciPkgDescriptionIsOddEntry{\lcTrue}
 
 \newcommand{\ccPartSummary}[1]{#1}
+\newcommand{\ccPkgAuthor}[1]{\gdef\ccValueOfPkgAuthor{#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgIntroducedInCGAL}[1]{\gdef\ccValueofPkgIntroducedInCGAL{\lcRawHtml{<b>Introduced in: </b>}\cgal\ #1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
 
 \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
 
-\newcommand{\ccPkgDescriptionX}[1]{
+\newcommand{\ccPkgDescriptionX}[1]{%
+  \gdef\ccValueofPkgName{#1}%
+  \gdef\ccValueOfPkgAuthor{}%
+  \gdef\ccValueofPkgSummary{}%
+  \gdef\ccValueofPkgIntroducedInCGAL{}%
+  \gdef\ccValueofPkgMaturity{}%
+  \gdef\ccValueofPkgDependsOn{}%
+  \gdef\ccValueofPkgLicense{}%
   \lciPushOutput{description}%
-  \gdef\ccValueofPkgName{#1}
-  \gdef\ccValueofPkgSummary{}
-  \gdef\ccValueofPkgMaturity{}
-  \gdef\ccValueofPkgDependsOn{}
-  \gdef\ccValueofPkgLicense{}
 }
 
 \newcommand{\lciFlushPkgDescription}[2]{%
@@ -1001,24 +1009,22 @@
     \lciPushOutput{description}%
     \lcRawHtml{<tr><td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
-    \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3></td></tr>}
-    %\lcRawHtml{<TABLE>}
-    \lcRawHtml{<tr valign="top"><td width="75\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
+    \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3>}%
+    \ccValueOfPkgAuthor%
+    \lcRawHtml{</td></tr>}%
+    \lcRawHtml{<tr valign="top"><td width="75\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
     \ccValueofPkgSummary
     \lcRawHtml{<p></td><td width="2\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lcRawHtml{</td><td width="23\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
+    \ccValueofPkgIntroducedInCGAL
     \ccValueofPkgMaturity
     \ccValueofPkgDependsOn
     \ccValueofPkgLicense
     \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
     \lcRawHtml{</td></td>}
-    %\lcRawHtml{</table>}
     \lcPkgDescToggleOdd
     \lciPopOutput%
     \gdef\ccValueofPkgName{}%
-    %\lciPkgDescriptionIsOddEntry
-    %  {\gdef\lciPkgDescriptionIsOddEntry{\lcFalse}}
-    %  {\gdef\lciPkgDescriptionIsOddEntry{\lcTrue}}
   }%
 }
 
