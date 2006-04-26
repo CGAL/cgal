@@ -55,8 +55,6 @@
 \newcommand{\ccEnableSortedListOfRefpages}{%
   \gdef\lciIfPrintRawListOfRefpages{\lcFalse}%
 }
-% FIXME: remove this, after the testsuite is through
-\newcommand{\ccEnableUnsortedListOfRefpageEntries}{\ccEnableRawListOfRefpages}
 
 \ccEnableSortedListOfRefpages
 
@@ -459,7 +457,9 @@
     }
 
     \lciOpenReferenceFile%
-    \lciSortedMapAddTo{TocReferenceLinks}{#X1}{\lciOutputBasename}%
+    \lciIfPrintRawListOfRefpages{}{%
+      \lciSortedMapAddTo{TocReferenceLinks}{#X1}{\lciOutputBasename}%
+    }%
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_reference_link_}\thereferencepage%
