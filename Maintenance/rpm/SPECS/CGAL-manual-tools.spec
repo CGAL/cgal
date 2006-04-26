@@ -1,5 +1,5 @@
 Name:           CGAL-manual-tools
-Version:        30675
+Version:        30764
 Release:        1
 Summary:        CC Manual Style and LaTeX Converter for HTML
 
@@ -71,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/CGAL_latex_conv_config/*
 
 %changelog
+* Wed Apr 26 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30764-1
+- Updated to revision 30764.
+
 * Mon Apr 19 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30346-1
 - Updated to revision 30675.
 
