@@ -1361,7 +1361,7 @@ public:
         else
         {
           Lanmarks_point_location* lm_pl = NULL;
-          if(CGAL::assign(lm_pl, m_point_location));
+          if(CGAL::assign(lm_pl, m_point_location))
             delete lm_pl;
         }
       }
