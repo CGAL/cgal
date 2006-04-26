@@ -109,7 +109,7 @@ private:
     int m_index;                // for parameterization
 
     // surface cutting
-    float m_distance;
+    double m_distance;
 
 public:
     // life cycle
@@ -134,8 +134,8 @@ public:
     void seaming(int seaming) { m_seaming = seaming; }
 
     // precomputed distance
-    float distance() const { return m_distance; }
-    void distance(float distance) { m_distance = distance; }
+    double distance() const { return m_distance; }
+    void distance(double distance) { m_distance = distance; }
 
     // texture coordinates
     double u() const { return m_u; }

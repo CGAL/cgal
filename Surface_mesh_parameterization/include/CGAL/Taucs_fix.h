@@ -63,11 +63,11 @@ extern "C"
 inline double cgal_taucs_available_memory_size()
 {
     double m;       /* size of memory available for allocation */
-    double m_sys;   /* size of physical memory */
 
 #ifdef OSTYPE_linux
     /* taucs_available_memory_size() is buggy on Linux 2.6 */
     /* It returns only 1% of the actual memory             */
+    double m_sys;   /* size of physical memory */
     m_sys  = (double) sysconf(_SC_PAGESIZE);
     m_sys *= (double) sysconf(_SC_PHYS_PAGES);
 
