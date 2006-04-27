@@ -1,7 +1,7 @@
 TODO
 noweb
-demo/Nef_S2/Nef_polyhedron_S2-demo.C
-demo/Nef_S2/Nef_polyhedron_S2-demo2.C
-demo/Nef_S2/SM_overlayer-demo.C
-demo/Nef_S2/SM_triangulator-demo.C
-demo/Nef_S2/Sphere_geometry-demo.C
+Nef_polyhedron_S2-demo.C
+Nef_polyhedron_S2-demo2.C
+SM_overlayer-demo.C
+SM_triangulator-demo.C
+Sphere_geometry-demo.C
