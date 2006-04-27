@@ -421,6 +421,8 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#uns
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.eps -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text
+Jet_fitting_3/examples/Jet_fitting_3/blind_1pt_gsl.C -text
+Jet_fitting_3/examples/Jet_fitting_3/blind_gsl.C -text
 Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
