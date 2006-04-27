@@ -240,7 +240,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc Qt_core.h
-"/>
+"
+						Outputs="Kinetic_Qt_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
