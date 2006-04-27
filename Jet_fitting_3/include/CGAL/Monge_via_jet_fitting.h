@@ -29,9 +29,9 @@ protected:
   //point on the fitted surface where diff quantities are computed
   DPoint m_origin_pt;
   //the monge trihedron (d1,d2,n) is orthonormal direct
-  DVector m_d1;//maximal ppal dir
-  DVector m_d2;//minimal ppal dir
-  DVector m_n;//normal direction
+  DVector m_d1;   //maximal ppal dir
+  DVector m_d2;   //minimal ppal dir
+  DVector m_n;    //normal direction
   //coeff = (k1, k2, //ppal curv
   //         b0, b1, b2, b3, //third order
   //         c0, c1, c2, c3, c4) //fourth order
@@ -221,7 +221,6 @@ protected:
   typedef typename Data_Kernel::FT       DFT;
   typedef typename Data_Kernel::Point_3  DPoint;
 
-  typedef typename LinAlgTraits::Vector LAVector;
   typedef typename LinAlgTraits::Matrix LAMatrix;
 
 protected:
@@ -250,22 +249,21 @@ protected:
   //  p0 as origin.
   //Preconditionning is computed, M and Z are filled
   void fill_matrix(Range_Iterator begin, Range_Iterator end,
-		   int d, LAMatrix& M, LAVector& Z);
+		   int d, LAMatrix& M, LFT* Z);
 
-  //A is computed, solving MA=Z in the ls sense
+  //A is computed, solving MA=Z in the ls sense, the solution A is stored in Z
   //Preconditionning is needed
   //the condition number of the matrix M is stored in monge_info 
-  void solve_linear_system(LAMatrix &M, LAVector &A, const LAVector &Z,
-			   Monge_info& monge_info);
+  void solve_linear_system(LAMatrix &M, LFT* Z, Monge_info& monge_info);
   
   //Classical differential geometric calculus
   //change_fitting2monge is computed
   //if deg_monge =1 only 1st order info
   //if deg_monge >= 2 2nd order info are computed
-  void compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep);
+  void compute_Monge_basis(const LFT* A, Monge_rep& monge_rep);
 
   //if deg_monge >=3 then 3rd (and 4th) order info are computed
-  void compute_Monge_coefficients( LAVector &A, int dprime, 
+  void compute_Monge_coefficients(LFT* A, int dprime, 
 				  Monge_rep& monge_rep);
 
   //for a trihedron (v1,v2,v3) switches v1 to -v1 if det(v1,v2,v3) < 0
@@ -298,14 +296,13 @@ Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end,
   monge_rep.set_up(dprime);
   //for the system MA=Z
   LAMatrix M(nb_input_pts, nb_d_jet_coeff);
-  LAVector A(nb_d_jet_coeff);
-  LAVector Z(nb_input_pts);
+  LFT* Z = (LFT*) malloc(nb_input_pts*sizeof(LFT));
 
   compute_PCA(begin, end, monge_info);
   fill_matrix(begin, end, d, M, Z);//with precond
-  solve_linear_system(M, A, Z, monge_info);  //correct with precond
-  compute_Monge_basis(A, monge_rep);
-  if ( dprime >= 3) compute_Monge_coefficients(A, dprime, monge_rep);
+  solve_linear_system(M, Z, monge_info);  //correct with precond
+  compute_Monge_basis(Z, monge_rep);
+  if ( dprime >= 3) compute_Monge_coefficients(Z, dprime, monge_rep);
 } 
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
@@ -314,7 +311,7 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
 	    Monge_info &monge_info)
 {
   LAMatrix Cov(3,3);
-  LAVector eval(3);
+  LFT* eval = (LFT*) malloc(3*sizeof(LFT));
   LAMatrix evec(3,3);
   
   int n = this->nb_input_pts;
@@ -345,55 +342,30 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
   xy = sumXY - sumX * sumY;
   xz = sumXZ - sumX * sumZ;
   yz = sumYZ - sumY * sumZ;
-  Cov[0][0] = xx;
-  Cov[0][1] = xy;
-  Cov[0][2] = xz;
-  Cov[1][0] = xy;
-  Cov[1][1] = yy;
-  Cov[1][2] = yz;
-  Cov[2][0] = xz;
-  Cov[2][1] = yz;
-  Cov[2][2] = zz;
+  Cov.set_elt(0,0,xx);
+  Cov.set_elt(0,1,xy);
+  Cov.set_elt(0,2,xz);
+  Cov.set_elt(1,0,xy);
+  Cov.set_elt(1,1,yy);
+  Cov.set_elt(1,2,yz);
+  Cov.set_elt(2,0,xz);
+  Cov.set_elt(2,2,yz);
+  Cov.set_elt(2,2,zz);
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
   LinAlgTraits::eigen_symm_algo(Cov, eval, evec);
  
-  //store in monge_info
-  for (int i=0; i<3; i++)
-    {
-      monge_info.pca_eigen_vals()[i] = eval[i];//implicit cast LAFT->LFT
-      LVector temp_vect(evec[0][i],evec[1][i],evec[2][i]);
-      monge_info.pca_eigen_vecs()[i] = temp_vect;
-    }
-
-//   //ALTERNATIVE  with CGAL eigen code
-//   // assemble covariance matrix as a
-//   // semi-definite matrix. 
-//   // Matrix numbering:
-//   // 0
-//   // 1 2
-//   // 3 4 5
-//   LFT covariance[6] = {xx,xy,yy,xz,yz,zz};
-
-//   // solve for eigenvalues and eigenvectors.
-//   // eigen values are sorted in descending order, 
-//   // eigen vectors are sorted in accordance.
-//   LFT eigen_values[3];
-//   LFT eigen_vectors[9];
-//     CGAL::CGALi::eigen_symmetric<LFT>(covariance,3,eigen_vectors,eigen_values);
-//   //store in monge_info
-//   for (int i=0; i<3; i++)
-//     {
-//       monge_info.pca_eigen_vals()[i] = eigen_values[i];//implicit cast LAFT->LFT
-//     }
-//   LVector v1(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
-//       monge_info.pca_eigen_vecs()[0] = v1;
-//   LVector v2(eigen_vectors[3],eigen_vectors[4],eigen_vectors[5]);
-//       monge_info.pca_eigen_vecs()[1] = v2;
-//   LVector v3(eigen_vectors[6],eigen_vectors[7],eigen_vectors[8]);
-//       monge_info.pca_eigen_vecs()[2] = v3;
-//     ///end ALTERNATIVE with CGAL eigen code
+  //store in monge_info, pca eigenvalues are stored in descending order
+  monge_info.pca_eigen_vals()[0] = eval[2];//implicit cast LAFT->LFT
+  LVector temp_vectn(evec.get_elt(0,2),evec.get_elt(1,2),evec.get_elt(2,2));
+      monge_info.pca_eigen_vecs()[0] = temp_vectn;
+  monge_info.pca_eigen_vals()[1] = eval[1];
+  LVector temp_vect1(evec.get_elt(0,1),evec.get_elt(1,1),evec.get_elt(2,1));
+      monge_info.pca_eigen_vecs()[1] = temp_vect1;
+  monge_info.pca_eigen_vals()[2] = eval[0];
+  LVector temp_vect2(evec.get_elt(0,0),evec.get_elt(1,0),evec.get_elt(2,0));
+      monge_info.pca_eigen_vecs()[2] = temp_vect2;
 
   switch_to_direct_orientation(monge_info.pca_eigen_vecs()[0],
 			       monge_info.pca_eigen_vecs()[1],
@@ -431,7 +403,7 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
 fill_matrix(Range_Iterator begin, Range_Iterator end,
-	    int d, LAMatrix &M, LAVector &Z)
+	    int d, LAMatrix &M, LFT* Z)
 {
   //origin of fitting coord system = first input data point
   LPoint point0 = *begin;
@@ -467,26 +439,24 @@ fill_matrix(Range_Iterator begin, Range_Iterator end,
     y = itb->y();
     Z[line_count] = itb->z();
     for (int k=0; k <= d; k++) for (int i=0; i<=k; i++)
-      M[line_count][k*(k+1)/2+i] =
-	std::pow(x,k-i)*std::pow(y,i)
-	/(fact(i)*fact(k-i)*std::pow(this->preconditionning,k));
+      M.set_elt(line_count, k*(k+1)/2+i, std::pow(x,k-i)*std::pow(y,i)
+		/(fact(i)*fact(k-i)*std::pow(this->preconditionning,k)));
     line_count++;
   }
 }
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
-solve_linear_system(LAMatrix &M, LAVector &A, const LAVector &Z,
-		    Monge_info& monge_info)
+solve_linear_system(LAMatrix &M, LFT* Z, Monge_info& monge_info)
 {
- LinAlgTraits::solve_ls_svd_algo(M, A, Z, monge_info.cond_nb()); 
+ LinAlgTraits::solve_ls_svd_algo(M, Z, monge_info.cond_nb()); 
   for (int k=0; k <= this->deg; k++) for (int i=0; i<=k; i++)
-    A[k*(k+1)/2+i] /= std::pow(this->preconditionning,k);
+    Z[k*(k+1)/2+i] /= std::pow(this->preconditionning,k);
 }
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
-compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
+compute_Monge_basis(const LFT* A, Monge_rep& monge_rep)
 {
   // only 1st order info.
   if ( this->deg_monge == 1 ) {  
@@ -549,13 +519,13 @@ compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
   //switch to LinAlgTraits for diagonalization of weingarten
   LAMatrix W(2,2);
   for (int i=0; i<=1; i++) for (int j=0; j<=1; j++) 
-    W[i][j] = weingarten(i,j);
-  LAVector eval(2);
+    W.set_elt(i, j, weingarten(i,j));
+  LFT* eval = (LFT*) malloc(2*sizeof(LFT));
   LAMatrix evec(2,2);
 
   LinAlgTraits::eigen_symm_algo(W, eval, evec);
-  LVector d_max = evec[0][0]*Y + evec[1][0]*Z,
-    d_min = evec[0][1]*Y + evec[1][1]*Z;
+  LVector d_max = evec.get_elt(0,0)*Y + evec.get_elt(1,0)*Z,
+    d_min = evec.get_elt(0,1)*Y + evec.get_elt(1,1)*Z;
 
   switch_to_direct_orientation(d_max, d_min, normal);
   Aff_transformation change_basis (d_max[0], d_max[1], d_max[2], 
@@ -579,7 +549,7 @@ compute_Monge_basis(const LAVector &A, Monge_rep& monge_rep)
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
-compute_Monge_coefficients( LAVector &A, int dprime, 
+compute_Monge_coefficients(LFT* A, int dprime, 
 			   Monge_rep& monge_rep)
 {
   //One has the equation w=J_A(u,v) of the fitted surface S 
