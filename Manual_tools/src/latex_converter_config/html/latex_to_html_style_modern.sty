@@ -51,7 +51,7 @@
 <hr>
   <strong>Navigation:</strong>}
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
-  \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{]}}
+  \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}}
   \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
   <a href="}\lciOutputUppath\lcRawHtml{pkgdescription.html">Package Description</a>,
   <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
@@ -460,7 +460,7 @@
     \lciPushOutput{toc}%
     \lciTocOpenInner
     % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
-    \lcRawHtml{      <tr><td class="TocChapter" colspan="6">
+    \lcRawHtml{      <tr><td class="TocChapter" colspan="7">
         <!-- --------------------------------------------------- -->
         <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}% \lciLocalVariableChapterName
       \lcRawHtml{"
@@ -481,9 +481,9 @@
 }
 }
 
-% Args: <anchor-counter> <toc-entry>:  Respect secnumdepth counter.
-\newcommand{\lciHtmlSectionToc}[2]{%
-    \lciCheckForLabelInsideHeading{#C2}%
+% Args: <anchor-counter> <section number (if any)> <toc-entry>:  Respect secnumdepth counter.
+\newcommand{\lciHtmlSectionToc}[3]{%
+    \lciCheckForLabelInsideHeading{#C3}%
       {\lciLocalVariableSectionName}%
       {\lciLocalVariableLabel}%
     \lciIfLessExpanded{\lciCountertocdepth}{1}{}{%
@@ -492,7 +492,9 @@
         \lciPushOutput{toc}%
         \lciTocOpenInner
         \lcRawHtml{      <tr>
-}\lciTocIndentWidth
+}\lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{}
+        \lcRawHtml{        <td class="TocSection"><a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
+        \lcRawHtml{##Section_}#C1\lcRawHtml{">}#2\lcRawHtml{</a></td>}
         \lcRawHtml{        <td class="TocSection" colspan="5">
           <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
         \lcRawHtml{##Section_}#C1\lcRawHtml{"

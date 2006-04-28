@@ -43,10 +43,12 @@
 
 \gdef\lciInsideListOfRefPages{\lcFalse}
 
-\newcommand{\ccUserChapter}[1]{\chapter{#1}}
+\newcommand{\ccUserChapter}[1]{\chapter{#1}\lciChapterPartTocEntry{User Manual}}
 \newcommand{\ccRefChapter}[1]{%
- \chapter[#1 Reference~Manual]{#1\\
-\textit{Reference~Manual}}%
+ %\chapter[#1 Reference~Manual]{#1\\
+%\textit{Reference~Manual}}%
+ \lciSplitChapter{Reference Manual}{#1 Reference~Manual}{#1\\
+\textit{Reference~Manual}}
 }
 
 \newcommand{\ccEnableRawListOfRefpages}{%
@@ -982,7 +984,7 @@
 
 \newcommand{\ccPkgDescriptionX}[1]{%
   \gdef\ccValueofPkgName{#1}%
-  \gdef\ccValueOfPkgAuthor{}%
+  % author is reset in latex.sty:\chapter
   \gdef\ccValueofPkgSummary{}%
   \gdef\ccValueofPkgIntroducedInCGAL{}%
   \gdef\ccValueofPkgMaturity{}%

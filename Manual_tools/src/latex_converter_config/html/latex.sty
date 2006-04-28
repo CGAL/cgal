@@ -1119,6 +1119,7 @@
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \refstepcounter{chapter}%
+    \gdef\ccValueOfPkgAuthor{}%
 
     \lciCheckForLabelInsideHeading{#1}%
       {\lciLocalVariableChapterNameTOC}%
@@ -1126,13 +1127,13 @@
     \lciChapter% does also a PushOutput
     % cross linking rules
     \lciPushOutput{anchor}%
-    \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{chapter}%
+    \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<div class="NavNext"><hr> Next chapter: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
     \lcRawHtml{">}\lciLocalVariableChapterNameTOC\lcRawHtml{</a>
 }%
-    \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{chapter}%
+    \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
@@ -1161,24 +1162,85 @@
 \newcommand{\chapter*}[1]{%
     \lciHtmlChapterHeader{#1}}
 
+\newcommand{\lciEndChapter}{\lciEndChapterX{chapter}}
 
-\newcommand{\lciEndChapter}{%
+\newcommand{\lciEndChapterX}[1]{%
   \lciEndSection
   \lciIfPrintRawListOfRefpages{}{\ccPrintSortedListOfRefpagesX}
   \lciIfDefined{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{% check for first chapter
     \lciPrintFootnotes\lciResetFootnotes
     \lciPopFootnotes
     % navigation footer
-    \addtocounter{chapter}{1}%
-    \lcRawHtml{[internal:Next_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{]
+    \addtocounter{createdfiles}{1}%
+    \lcRawHtml{[internal:Next_#GC1_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]
 }
-    \addtocounter{chapter}{-1}%
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter
     \lciPopOutput
   }%
   {\newcommand{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{}}%
   % only do something, after the first chapter has already been processed
+}
+
+\newcommand{\lciChapterPartTocEntry}[1]{
+    \edef\lciOut{\lciOutputFilename}%
+    \lciPushOutput{toc}%
+    \lciTocOpenInner
+    \lcRawHtml{      <tr>}
+    \lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{
+      \lciIfEqualExpanded{\lciTocOuterState}{Right}{%
+        \lcRawHtml{      <tr><td class="TocChapter" colspan="7">&nbsp;</td></tr>}
+      }{}
+    }
+
+    \lcRawHtml{        <td class="TocSection" width="35">&nbsp;</td><td class="TocSection" colspan="5">
+          <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
+    \lcRawHtml{">}#1\lcRawHtml{</a>
+        </td>
+      </tr>
+}%
+    \lciPopOutput%
+}
+
+\newcommand{\lciSplitChapter}[3]{
+    \lciEndChapter{chapterpart}
+    \lciPushFootnotes
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+
+    \lciCheckForLabelInsideHeading{#2}%
+      {\lciLocalVariableChapterNameTOC}%
+      {\lciLocalVariableLabel}%
+    \gdef\lciCurrentLabel{\thechapter}%
+    \lciChapter% does also a PushOutput
+    % cross linking rules
+    \lciPushOutput{anchor}%
+    \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
+    \lcRawHtml{	<div class="NavNext"><hr> Next: <a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}#1\lcRawHtml{</a>
+}%
+    \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
+    \lcRawHtml{	<a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}Up\lcRawHtml{</a>,
+}%
+    \lciPopOutput%
+    \gdef\lciInsideListOfRefPages{\lcFalse}%
+    \ccEnableSortedListOfRefpages
+    \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
+    % ^^^ this was needed to make package Qt_widget work with a class Qt_widget.
+    % I _dont_ know what's going on, i.e. where the flag is set to false ..
+    % however, setting this to a default of TRUE at the beginning of each
+    % chapter seems safe.
+    % file header
+    \lciHtmlFileHeader{\lciLocalVariableChapterNameTOC}%
+    \lciHtmlNavigationTop
+
+    \lciChapterPartTocEntry{#1}
+    \lciHtmlChapterHeader{#3}%
 }
 
 % section
@@ -1188,9 +1250,9 @@
     \refstepcounter{section}%
     \lciLocalVariableLabel
     \lciIfLessExpanded{\lciCountersecnumdepth}{1}{%
-      \lciHtmlSectionToc{\thesection}{#1}%
+      \lciHtmlSectionToc{\thesection}{}{#1}%
       \lciHtmlSectionHeader{#2}}%
-    {\lciHtmlSectionToc{\thesection}{\thesection~~~#1}%
+    {\lciHtmlSectionToc{\thesection}{\thesection}{#1}%
       \lciHtmlSectionHeader{\thesection~~~#2}}}
 \newcommand{\section*}[1]{%
   \lciCheckIfWeNeedToCloseRefpageTable
@@ -1583,6 +1645,7 @@
 \gdef{\thepart}{\Roman{part}}
 
 \newcounter{chapter}
+\newcounter{createdfiles}
 \lciNewCounter{section}{chapter}
 \lciNewCounter{subsection}{section}
 \lciNewCounter{subsubsection}{subsection}

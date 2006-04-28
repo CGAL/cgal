@@ -127,17 +127,32 @@
 % |
 % ###########################################################################
 
+\gdef\chapterpartTocEntry#1{\addcontentsline{toc}{section}{\numberline{}{#1}}}
+
 \newcommand{\ccUserChapter}[1]{\chapter{#1}}
 
-\newcommand{\ccRefChapter}[1]{%
- \chapter{#1\\
+
+
+\begingroup
+ \catcode`\@=11
+% this one is inspired by latex.ltx
+\gdef\refstepcounterXXX#1{
+    \protected@edef\@currentlabel
+       {\csname p@#1\endcsname\csname the#1\endcsname}%
+}
+
+\gdef\ccRefChapter#1{%
+ \chapter*{#1\\
 Reference~Manual}%
+  \chapterpartTocEntry{Reference Manual}
   \ifnum\ccInsideListOfRefpages=\ccTrue
     \gdef\ccInsideListOfRefpages{\ccFalse}%
     \immediate\closeout\ccListOfRefpagesFile%
   \fi
   \ccEnableSortedListOfRefpages
+  \refstepcounterXXX{chapter}
 }
+\endgroup
 
 \gdef\ccInsideListOfRefpages{\ccFalse}%
 \gdef\ccCurrentFilename{.}
