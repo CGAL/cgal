@@ -1,7 +1,7 @@
 %define cgal_version 3.2
 
 # If this release is official, define internal_release to 0.
-%define internal_release 440
+%define internal_release 447
 
 # if internal_release != 0, release_number has no meaning.
 %define release_number 1
@@ -182,6 +182,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Apr 28 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.2-0.447
+- Update to CGAL-3.2-447.
+
 * Fri Apr 21 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.2-0.440
 - Updated to CGAL-3.2-I-440.
 
