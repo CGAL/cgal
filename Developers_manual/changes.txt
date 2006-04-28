@@ -1,3 +1,6 @@
+28 April 2006 Michael Hoffmann
+- Update documentation for autotest_cgal
+
 27 February 2006 Laurent Saboret
 - Update documentation for SVN and GForge
 
