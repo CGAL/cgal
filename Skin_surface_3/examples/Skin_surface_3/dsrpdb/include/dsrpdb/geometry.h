@@ -165,8 +165,9 @@ namespace dsrpdb {
  */
  template <class It, class K, class Voit>
  inline void all_weighted_points(It b, It e, K, Voit out){
-   typedef typename K::Weighted_point WP;
-   typedef typename K::Bare_point BP;
+   typedef typename K::FT                          Weight;
+   typedef typename K::Point_3                     BP;
+   typedef CGAL::Weighted_point<BP,Weight>         WP;
    for (; b != e; ++b){
      *out= WP(BP(b->second.cartesian_coords()),
 	      b->second.radius()*b->second.radius());

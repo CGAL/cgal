@@ -3,6 +3,7 @@
 
 #include "dsrpdb/PDB.h"
 #include "dsrpdb/geometry.h"
+#include <fstream>
 
 template <class Traits, class OutputIterator>
 void extract_balls_from_pdb(char *filename, 
