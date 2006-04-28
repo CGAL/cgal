@@ -5,16 +5,17 @@ SVN Release Branch:
 -------------------
 
 Before releasing proper, you need to create a branch, and run the internal
-release process on this branch for some time.  Experience shows (at least in
-3.1) that there is very few development (on the packages to be released) on the
-trunk.  So it seems best to branch as late as possible, in order to avoid the
-(small) pain of commiting things twice during the final stabilization phase.
+release process on this branch for some time.  Experience shows that there
+is very few development (on the packages to be released) on the trunk.
+So it seems best to branch as late as possible, in order to avoid the pain
+of committing things twice during the final stabilization phase.
 
 For branching, you need to :
   - have write access to all packages
   - export svncgal=svn+ssh://scm.gforge.inria.fr/svn/cgal
   - svn cp $svncgal/trunk $svncgal/tags/CGAL-M.m-branch_tag
   - svn cp $svncgal/trunk $svncgal/branches/CGAL-M.m-branch
+  - then switch the release building process to that branch.
 
 Releasing:
 ----------
@@ -24,15 +25,12 @@ For the library:
 Let <release_dir> be the directory in which you plan to build the release.
 
       1.  update the main CHANGES file to correspond to this release
-      2.  copy the latest internal release to <release_dir>
-      3.  unpack it and rename the directory CGAL-M.m
-      4.  edit the script release_scripts/make_public_release as instructed
-          in the script
-      5.  cd CGAL-M.m
-      6.  run the script release_scripts/make_public_release to
-               Remove non-public parts.
-               Find all .C and .h files and collect them in a file
-               Edit include/CGAL/version.h
+      2.  pick the public versions (.zip and .tar.gz) produced by the
+          release building script, corresponding to the internal
+	  release which you want to bless as public release.
+      3.  add the installation manual (?).
+      4.  The .zip file for the code needs to be repackaged for use with
+          InstallShield.  Contact the person in charge of Windows support.
 
 For the manuals:
 
@@ -52,18 +50,6 @@ For the manuals:
              remove the navigation links to bibliography, index and title;
              remove the files title.html and manual_index.html, to_html.log.
 
-Package the code:
-      1.  In directory <release_dir> do
-             find CGAL-M.m -exec touch 01221530 {} \;
-           in order to touch all files (Here the date/time  Jan 22, 15:30 was
-           used as an example)
-      2.  Make CGAL-M.m.tar.gz with tar and gzip and CGAL-M.m.zip with zip.
-           gtar zcf CGAL-M.m.gtar.gz CGAL-M.m
-           tar cf CGAL-M.m.tar CGAL-M.m
-           gzip CGAL-M.m.tar
-           zip -r CGAL-M.m.zip CGAL-M.m
-      3.  The .zip file for the code needs to be repackaged for use with
-          InstallShield.  Contact the person in charge of Windows support.
 
 For the web pages:
       1.  edit the following web pages (at least)
