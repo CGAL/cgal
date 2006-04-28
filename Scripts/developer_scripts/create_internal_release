@@ -271,7 +271,8 @@ sub create_version_file()
 
 EOF
     print TEMPFILE "#define CGAL_VERSION $newver\n";
-    print TEMPFILE "#define CGAL_VERSION_NR $VERSION_NR\n\n#endif\n";
+    print TEMPFILE "#define CGAL_VERSION_NR $VERSION_NR\n";
+    print TEMPFILE "#define CGAL_SVN_REVISION 0\n\n#endif\n";
 
     close TEMPFILE || die "Error closing temporary file: $!\n";
     system('mv', "tempfile", 'version.h');
