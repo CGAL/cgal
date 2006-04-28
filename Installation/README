@@ -1,4 +1,4 @@
-CGAL_HOME/README
+$CGAL_HOME/README
 -------------------------------------------------------------------------------
 
 This distribution of CGAL includes:
@@ -6,9 +6,9 @@ This distribution of CGAL includes:
    auxiliary/         - directory containing miscelaneous things, currently
                         only the icons needed for the demos on MacOCX.
    CHANGES            - file recording the history of changes for the library
-   config/            - directory containing several test programs used in
-                        installation and configuration and into which
-                        configuration files will be written during installation
+   config/            - directory containing several test programs used during
+                        the installation process, and into which configuration
+			files will be written during installation
    demo/              - a directory containing many demo programs for the
                         library's various packages.  These programs produce
                         visual output.  Thus, for most you must have either
@@ -27,24 +27,26 @@ This distribution of CGAL includes:
    examples/          - a directory containing programs illustrating the
                         library's functionality.  These programs do not produce
                         visual output.
-                        Makefiles and project files for MSVC IDE
+                        Makefiles and project files for the MSVC IDE
                         (experimental) are provided for all programs.
-   include/CGAL       - the include files for the library
+   include/CGAL       - the include files for the CGAL library
+   include/CORE       - the include files for the CORE library
+   include/OpenNL     - the include files for the OpenNL library
    install_cgal       - the script with which you can install CGAL
    INSTALL            - file containing information about the installation
-                        process
+                        process on Unix-like platforms
+   INSTALL.MacOSX     - file containine information about the installation
+                        process on the MacOSX platform
    INSTALL.win32      - file containing information about the installation
                         process on the Windows platform
    lib/               - directory in which the CGAL libraries will be
                         installed
    LICENSE            - A file describing the license of CGAL
+   LICENSE.FREE_USE   - A file containing the free use license (see LICENSE file)
    LICENSE.LGPL       - A file containing the LGPL v2.1 license
    LICENSE.QPL        - A file containing the QPL v1.0 license
    make/              - directory containing CGAL include makefiles, which
                         are generated during installation
-   makefile           - a makefile that can be used for instaling the CGAL
-                        libraries (to be used only if you know what you are
-                        doing; normally one should use install_cgal)
    README             - this file
    scripts/           - directory containing some useful scripts for CGAL
                         programmers
