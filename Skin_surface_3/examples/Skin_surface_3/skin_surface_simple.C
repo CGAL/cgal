@@ -9,6 +9,7 @@
 #include <list>
 // NGHK: remove later
 #include <fstream>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
@@ -16,7 +17,7 @@ typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Skin_surface_3::Bare_point                          Bare_point;
-typedef CGAL::Polyhedron_3<Traits>                          Polyhedron;
+typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 int main(int argc, char *argv[]) {
   std::list<Weighted_point> l;
@@ -32,7 +33,10 @@ int main(int argc, char *argv[]) {
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
 
   Polyhedron p;
-//   CGAL::mesh_skin_surface_3(skin_surface, p);
+  CGAL::mesh_skin_surface_3(skin_surface, p);
+
+  std::ofstream out("mesh.off");
+  out << p;
 
   return 0;
 }

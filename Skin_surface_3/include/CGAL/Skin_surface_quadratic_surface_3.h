@@ -44,18 +44,23 @@ public:
   Skin_surface_quadratic_surface_3() {
   }
   virtual ~Skin_surface_quadratic_surface_3() {};
-//   // Construct the intersection point with the segment (p0,p1)
-  Point to_surface(const Point &p0, const Point &p1) {
-    RT sq_d = squared_distance(p0,p1);
-    Point pp0=p0, pp1=p1, mid;
+  /// Construct the intersection point with the segment (p0,p1)
+  template <class Input_point>
+  Input_point to_surface(const Input_point &p0, const Input_point &p1) {
+    // NGHK: We use the kernel trick again: DOCUMENT!!!!
+    typedef Cartesian_converter<typename Input_point::R, K> Converter;
+    Converter conv;
+
+    Input_point pp0 = p0, pp1 = p1, mid;
+    double sq_d = to_double(squared_distance(pp0,pp1));
     
-    if (value(p1) < value(p0)) {
+    if (value(conv(pp1)) < value(conv(pp0))) {
       std::swap(pp0, pp1);
     }
     
-    while (sq_d > 10e-15) {
+    while (sq_d > 1.e-10) {
       mid = midpoint(pp0,pp1);
-      if (value(mid) > 0) {
+      if (value(conv(mid)) > 0) {
 	pp1 = mid;
       } else {
 	pp0 = mid;
@@ -73,7 +78,12 @@ public:
 //   virtual Point to_surface(Point const &p0) = 0;
 
   // compute the function value of p
-  virtual RT value(const Point &p) const = 0;
+  template <class Input_point>
+  RT value(const Input_point &p) const {
+    typedef Cartesian_converter<typename Input_point::R, K> Converter;
+    return _value(Converter()(p));
+  }
+  virtual RT _value(const Point &p) const = 0;
   // Compute the gradient in p
   virtual Vector gradient(const Point &p) = 0; 
 
@@ -112,7 +122,7 @@ public:
     assert((orient == -1) || (orient == 1));
   }
 	
-  RT value(Point const &x) const {
+  RT _value(Point const &x) const {
     return orient * (squared_distance(x, wp)/s - wp.weight());
   }
 
@@ -189,7 +199,7 @@ public:
     sq_t = t*t;
   }
 	
-  RT value(Point const &x) const {
+  RT _value(Point const &x) const {
     Vector dir = x-wp;
     RT tmp = dir*t;
     tmp = tmp*tmp/sq_t;

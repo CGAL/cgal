@@ -25,6 +25,7 @@
 
 CGAL_BEGIN_NAMESPACE 
 
+/// NGHK: Is the converter needed or do we just use the Cartesian_converter
 template <class Triangulation_3, class HalfedgeDS, class Converter_ >
 class Marching_tetrahedra_traits_skin_surface_3 {
 public:
@@ -61,7 +62,8 @@ private:
     return ch->surf->value(p);
   }
   HDS_RT value(const Cell_handle &ch, const Triang_point &p) const {
-    return ch->surf->value(converter(p));
+    // NGHK: Remove the to_double later ...
+    return CGAL::to_double(ch->surf->value(converter(p)));
   }
 
   Converter converter;
