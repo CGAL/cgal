@@ -1,8 +1,34 @@
 
 \begin{ccPkgDescription}{Bounding Volumes \label{Pkg:BoundingVolumes}}
 \ccPkgSummary{
-This package provides algorithms for computing bounding volumes of point sets, as the smallest enclosing sphere or ellipsoid.
-It further provides algorithms for computing inscribed areas. }
+This package provides algorithms for computing bounding volumes of point sets in d-dimensional space, as the smallest enclosing sphere, annulus, ellipsoid, or strip. For 2-dimensional space, a number of additional volumes (rectangles, parallelograms) are available.}
+
+%\ccPkgDependsOn{}
+\ccPkgIntroducedInCGAL{2.4}
+\ccPkgLicense{\ccLicenseQPL}
+\end{ccPkgDescription}
+
+\begin{ccPkgDescription}{Inscribed Areas \label{Pkg:InscribedAreas}}
+\ccPkgSummary{
+This package provides algorithms for computing inscribed areas of (convex hulls of) point sets in 2-dimensional space, as the largest inscribed k-gon (area or perimeter) and the largest inscribed rectangle.}
+
+%\ccPkgDependsOn{}
+\ccPkgIntroducedInCGAL{2.4}
+\ccPkgLicense{\ccLicenseQPL}
+\end{ccPkgDescription}
+
+\begin{ccPkgDescription}{Center Points \label{Pkg:CenterPoints}}
+\ccPkgSummary{
+This package provides algorithms for optimally covering a 2-dimensional point set with k=2,3,4 axis-aligned boxes.}
+
+%\ccPkgDependsOn{}
+\ccPkgIntroducedInCGAL{2.4}
+\ccPkgLicense{\ccLicenseQPL}
+\end{ccPkgDescription}
+
+\begin{ccPkgDescription}{Collision detection / Optimal distances \label{Pkg:OptimalDistances}}
+\ccPkgSummary{
+This package provides an algorithm for computing the distance between the convex hulls of two point sets in d-dimensional space. Due to built-in floating-point filters, the computations are fast but still exact in low dimensions. }
 
 %\ccPkgDependsOn{}
 \ccPkgIntroducedInCGAL{2.4}
@@ -10,10 +36,18 @@ It further provides algorithms for computing inscribed areas. }
 \end{ccPkgDescription}
 
 
-\begin{ccPkgDescription}{dD Smallest Enclosing Spheres and Ellipsoids \label{Pkg:EnclosingEllipsoids}}
+\begin{ccPkgDescription}{Smallest Enclosing Spheres of Spheres \label{Pkg:EnclosingSpheres}}
 \ccPkgSummary{
-This package provides algorithms for computing bounding volumes of point sets, as the smallest enclosing sphere or ellipsoid.
-It further provides algorithms for computing inscribed areas. }
+This package provides an algorithm for computing the smallest sphere containing a set of spheres in d-dimensional space. On top of the exact algorithm, a fast and very robust floating-point variant is available.}
+
+%\ccPkgDependsOn{}
+\ccPkgIntroducedInCGAL{2.4}
+\ccPkgLicense{\ccLicenseQPL}
+\end{ccPkgDescription}
+
+\begin{ccPkgDescription}{Advanced Techniques \label{Pkg:OptAdvancedTechniques}}
+\ccPkgSummary{
+This package provides abstract optimisation frameworks that can be used to model many concrete problems. One framework is monotone matrix search, the other one (to be documented in future releases) is convex quadratic programming (including linear programming). }
 
 %\ccPkgDependsOn{}
 \ccPkgIntroducedInCGAL{2.4}
