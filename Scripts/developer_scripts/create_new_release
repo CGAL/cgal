@@ -5,10 +5,17 @@
 # Radu Ursu, Sylvain Pion, 2004-2006.
 
 # TODO :
+# - Add a command-line option "--local" to avoid putting stuff on the web, etc.
+# - Use svn revision instead of separate internal release number ?
+# - Cleanup the public/internal separation:
+#   - have CGAL_VERSION_NR be not affected by the internal version
+#   - have CGAL_REVISION be the revision (replacing the internal number)
 # - The public release case should pass the info to create_internal_release.
+#   [new] : create_internal_release should not know about internal/public mode.
 # - Merge [some parts] into ./create_internal_release ?
 # - There should be command line options to set public/internal,
 #   and the major/minor/bugfix/version_file release numbers.
+#   this should be obsolete now that we generate public/internal at once.
 
 # SVN working copy directory, default is "trunk"
 if [ -z "$1" ] ; then
@@ -86,7 +93,6 @@ ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -r ${release_na
 # Make the release tarball
 ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
 ${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
-rm -rf ${release_name} >> ${LOGFILE} 2>&1
 cp "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
@@ -104,7 +110,7 @@ svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/
 echo "Making the SRPM file" >> ${LOGFILE} 2>&1
 rm -rf rpm >> ${LOGFILE} 2>&1
 cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
-mv ${release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
+cp ${release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
 mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
 sed -e "s/define internal_release.*/define internal_release $INTERNAL_NUMBER/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
 make -C rpm CGAL.src >> ${LOGFILE} 2>&1
@@ -112,3 +118,24 @@ echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
 mv rpm/SRPMS/*.src.rpm "${HTML_DIR}" >> ${LOGFILE} 2>&1
 rm -rf rpm >> ${LOGFILE} 2>&1
 
+# Build public release version
+echo "Making the public version of the tarball" >> ${LOGFILE} 2>&1
+public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
+public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
+public_release_name="CGAL-${public_release_version}"
+mv ${release_name} $public_release_name >> ${LOGFILE} 2>&1
+cd ${public_release_name} >> ${LOGFILE} 2>&1
+rm -rf test Packages developer_scripts doc_tex winutils >> ${LOGFILE} 2>&1
+rm -f examples/*/cgal_test demo/*/cgal_test >> ${LOGFILE} 2>&1
+mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
+sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/s/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
+rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
+cd .. >> ${LOGFILE} 2>&1
+${TAR} -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
+${GZIP} "${public_release_name}.tar" >> ${LOGFILE} 2>&1
+mkdir "${HTML_DIR}/${release_name}-public" >> ${LOGFILE} 2>&1
+cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+
+# remove local directory and tarball
+rm -rf ${public_release_name} >> ${LOGFILE} 2>&1
+rm ${release_name}.tar.gz ${public_release_name}.tar.gz >> ${LOGFILE} 2>&1
