@@ -7,15 +7,14 @@ SVN Release Branch:
 Before releasing proper, you need to create a branch, and run the internal
 release process on this branch for some time.  Experience shows (at least in
 3.1) that there is very few development (on the packages to be released) on the
-trunc.  So it seems best to branch as late as possible, in order to avoid the
+trunk.  So it seems best to branch as late as possible, in order to avoid the
 (small) pain of commiting things twice during the final stabilization phase.
 
 For branching, you need to :
   - have write access to all packages
   - export svncgal=svn+ssh://scm.gforge.inria.fr/svn/cgal
-  - svn co $svncgal/trunk
-  - svn cp $svncgal/trunk $svncgal/tags/CGAL_M_m_branch_tag
-  - svn cp $svncgal/trunk $svncgal/branches/CGAL_M_m_branch
+  - svn cp $svncgal/trunk $svncgal/tags/CGAL-M.m-branch_tag
+  - svn cp $svncgal/trunk $svncgal/branches/CGAL-M.m-branch
 
 Releasing:
 ----------
@@ -24,8 +23,7 @@ For the library:
 
 Let <release_dir> be the directory in which you plan to build the release.
 
-      1.  update the CHANGES file in this package to correspond to this
-          release
+      1.  update the main CHANGES file to correspond to this release
       2.  copy the latest internal release to <release_dir>
       3.  unpack it and rename the directory CGAL-M.m
       4.  edit the script release_scripts/make_public_release as instructed
@@ -35,7 +33,6 @@ Let <release_dir> be the directory in which you plan to build the release.
                Remove non-public parts.
                Find all .C and .h files and collect them in a file
                Edit include/CGAL/version.h
-      7.  Copy Release/CHANGES
 
 For the manuals:
 
