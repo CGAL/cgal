@@ -34,10 +34,11 @@ CGAL_BEGIN_NAMESPACE
 template < class Kernel >
 class Skin_surface_quadratic_surface_3 {
 public:
-  typedef typename Kernel::Point_3             Point;
-  typedef typename Kernel::Vector_3            Vector;
-  typedef typename Kernel::Segment_3           Segment;
-  typedef typename Kernel::RT                  RT;
+  typedef Kernel                          K;
+  typedef typename K::Point_3             Point;
+  typedef typename K::Vector_3            Vector;
+  typedef typename K::Segment_3           Segment;
+  typedef typename K::RT                  RT;
   typedef Weighted_point<Point, RT> Weighted_point;
 
   Skin_surface_quadratic_surface_3() {
@@ -283,7 +284,7 @@ public:
     Vector v = p - wp;
     RT vt = v*t;
     RT scale = 1-s;
-    if (s < .5) {
+    if (s < RT(.5)) {
       scale = (scale-s)/(scale*scale);
     } else {
       scale = (s-scale)/(s*s);

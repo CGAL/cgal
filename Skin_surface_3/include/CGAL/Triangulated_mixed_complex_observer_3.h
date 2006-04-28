@@ -30,9 +30,12 @@ template <class TriangulatedMixedComplex_3,
 class Triangulated_mixed_complex_observer_3 {
 public:
   typedef typename RegularTriangulation_3::Geom_traits     Regular_traits;
-  typedef typename TriangulatedMixedComplex_3::Geom_traits Triangulated_mixed_complex_kernel;
+  typedef typename TriangulatedMixedComplex_3::Geom_traits Triangulated_mixed_complex_traits;
   typedef RegularTriangulation_3                     Regular;
   typedef TriangulatedMixedComplex_3                 Triangulated_mixed_complex;
+  typedef typename Triangulated_mixed_complex::Triangulation_data_structure
+                                                     TMC_TDS;
+  typedef typename TMC_TDS::Cell::Quadratic_surface  Quadr_surface; 
 
   typedef typename Regular_traits::FT                FT;
 
@@ -48,19 +51,33 @@ public:
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
 
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
-  typedef typename Triangulated_mixed_complex::Edge          TMC_Edge;
-  typedef typename Triangulated_mixed_complex::Facet         TMC_Facet;
+//   typedef typename Triangulated_mixed_complex::Edge          TMC_Edge;
+//   typedef typename Triangulated_mixed_complex::Facet         TMC_Facet;
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
   
-  typedef typename Triangulated_mixed_complex_kernel::Point_3        TMC_Point;
-  typedef typename Triangulated_mixed_complex_kernel::RT             TMC_RT;
-  typedef Weighted_point<TMC_Point,TMC_RT>        TMC_Weighted_point;
-//   typedef Skin_surface_quadratic_surface_3<Polyhedron_kernel> QuadrSurface;
-//   typedef Skin_surface_sphere_3<Polyhedron_kernel>         Sphere_surface;
-//   typedef Skin_surface_hyperboloid_3<Polyhedron_kernel>    Hyperboloid_surface;
 
-//   typedef typename Polyhedron_kernel::RT                   Mesh_RT;
-//   typedef typename Polyhedron_kernel::Point_3              Mesh_Point;
+  typedef typename Quadr_surface::K                   Surface_traits;
+  typedef Regular_triangulation_euclidean_traits_3<Surface_traits> Surface_regular_traits;
+  typedef typename Quadr_surface::Point               Surface_point;
+  typedef typename Quadr_surface::Vector              Surface_vector;
+  typedef typename Quadr_surface::Weighted_point      Surface_weighted_point;
+  typedef typename Quadr_surface::RT                  Surface_RT;
+
+//   typedef typename Triangulated_mixed_complex_traits::Point_3        TMC_Point;
+//   typedef typename Triangulated_mixed_complex_traits::RT             TMC_RT;
+//   typedef Weighted_point<TMC_Point,TMC_RT>        TMC_Weighted_point;
+
+//   typedef Skin_surface_quadratic_surface_3<Polyhedron_traits> QuadrSurface;
+  typedef Skin_surface_sphere_3<Surface_traits>         Sphere_surface;
+  typedef Skin_surface_hyperboloid_3<Surface_traits>    Hyperboloid_surface;
+
+  typedef Weighted_converter_3< 
+    Cartesian_converter < typename Regular_traits::Bare_point::R, 
+			  typename Quadr_surface::K > >            R2S_converter;
+    
+
+//   typedef typename Polyhedron_traits::RT                   Mesh_RT;
+//   typedef typename Polyhedron_traits::Point_3              Mesh_Point;
 //   typedef Weighted_point<Mesh_Point,Mesh_RT>    Mesh_Weighted_point;
   
 //   typedef typename Skin_traits_3::R2P_converter R2P_converter;
@@ -70,92 +87,119 @@ public:
 //     shrink(.5) {
 //   }
 
-  Triangulated_mixed_complex_observer_3(FT shrink) : 
+  Triangulated_mixed_complex_observer_3(Surface_RT shrink) : 
     shrink(shrink) {
   }
 
   void after_vertex_insertion(Rt_Simplex const &sDel, 
     			      Rt_Simplex const &sVor, 
-			      TMC_Vertex_handle &vh) const 
+			      TMC_Vertex_handle &vh) 
   {
   }
 
-  void after_cell_insertion(Rt_Simplex const &s, TMC_Cell_handle &ch) const 
+  void after_cell_insertion(Rt_Simplex const &s, TMC_Cell_handle &ch)  
   {
-//     if (!(s == prev_s)) {
-//       prev_s = s;
-//       Rt_Vertex_handle vh;
-//       Rt_Edge          e;
-//       Rt_Facet         f;
-//       Rt_Cell_handle   ch;
+    if (!(s == prev_s)) {
+      prev_s = s;
+      Rt_Vertex_handle vh;
+      Rt_Edge          e;
+      Rt_Facet         f;
+      Rt_Cell_handle   ch;
 
-//       switch (s.dimension()) {
-//         case 0:
-// 	  vh = s;
-// 	  surf = new Sphere_surface(r2p_converter(vh->point()), shrink, 1);
-// 	  break;
-//         case 1:
-// 	  e = s;
-// 	  surf = new Hyperboloid_surface(
-// 	    r2p_converter(Rt_Weighted_point(
-// 	      Rt_Geom_traits().construct_weighted_circumcenter_3_object()(
-// 		e.first->vertex(e.second)->point(),
-// 		e.first->vertex(e.third)->point()),
-// 	      Rt_Geom_traits().
-// 		compute_squared_radius_smallest_orthogonal_sphere_3_object()(
-// 		  e.first->vertex(e.second)->point(),
-// 		  e.first->vertex(e.third)->point()))),
-// 	    r2p_converter(
-// 	      e.first->vertex(e.second)->point()-
-// 	      e.first->vertex(e.third)->point()),
-// 	    shrink, 1);
-// 	  break;
-//         case 2:
-// 	  f = s;
-// 	  surf = new Hyperboloid_surface(
-// 	    r2p_converter(Rt_Weighted_point(
-// 	      Rt_Geom_traits().construct_weighted_circumcenter_3_object()(
-// 		f.first->vertex((f.second+1)&3)->point(),
-// 		f.first->vertex((f.second+2)&3)->point(),
-// 		f.first->vertex((f.second+3)&3)->point()),
-// 	      Rt_Geom_traits().
-// 		compute_squared_radius_smallest_orthogonal_sphere_3_object()(
-// 		  f.first->vertex((f.second+1)&3)->point(),
-// 		  f.first->vertex((f.second+2)&3)->point(),
-// 		  f.first->vertex((f.second+3)&3)->point()))),
-// 	      typename Polyhedron_kernel::Construct_orthogonal_vector_3()(
-// 		r2p_converter(f.first->vertex((f.second+1)&3)->point()),
-// 		r2p_converter(f.first->vertex((f.second+2)&3)->point()),
-// 		r2p_converter(f.first->vertex((f.second+3)&3)->point())),
-// 	    1-shrink, -1);
-// 	  break;
-// 	case 3:
-// 	  ch = s;
-// 	  surf = new Sphere_surface(
-// 	    r2p_converter(Rt_Weighted_point(
-// 	      Rt_Geom_traits().construct_weighted_circumcenter_3_object()(
-// 		ch->vertex(0)->point(),
-// 		ch->vertex(1)->point(),
-// 		ch->vertex(2)->point(),
-// 		ch->vertex(3)->point()),
-// 	      Rt_Geom_traits().
-// 		compute_squared_radius_smallest_orthogonal_sphere_3_object()(
-// 		  ch->vertex(0)->point(),
-// 		  ch->vertex(1)->point(),
-// 		  ch->vertex(2)->point(),
-// 		  ch->vertex(3)->point()))),
-// 	      1-shrink, -1);
-//       }
-
-//     }
-//     ch->surf = surf;
+      switch (s.dimension()) {
+      case 0:
+	{
+	  vh = s;
+	  create_sphere(r2s_converter(vh->point().point()),
+			r2s_converter(vh->point().weight()),
+			shrink);
+	  break;
+	}
+      case 1:
+	{
+	  e = s;
+	  Surface_weighted_point p0 = 
+	    r2s_converter(e.first->vertex(e.second)->point());
+	  Surface_weighted_point p1 = 
+	    r2s_converter(e.first->vertex(e.third)->point());
+	  
+	  create_hyperboloid
+	    (typename Surface_regular_traits::
+	     Construct_weighted_circumcenter_3()(p0,p1),
+	     typename Surface_regular_traits::
+	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
+	     p0 - p1,
+	     shrink,
+	     1);
+	  break;
+	}
+      case 2:
+	{
+	  f = s;
+	  Surface_weighted_point p0 = 
+	    r2s_converter(f.first->vertex((f.second+1)&3)->point());
+	  Surface_weighted_point p1 = 
+	    r2s_converter(f.first->vertex((f.second+2)&3)->point());
+	  Surface_weighted_point p2 = 
+	    r2s_converter(f.first->vertex((f.second+3)&3)->point());
+	  
+	  create_hyperboloid
+	    (typename Surface_regular_traits::
+	     Construct_weighted_circumcenter_3()(p0,p1,p2),
+	     typename Surface_regular_traits::
+	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1,p2),
+	     typename Surface_regular_traits::
+	     Construct_orthogonal_vector_3()(p0,p1,p2),
+	     1-shrink,
+	     -1);
+	  break;
+	}
+      case 3:
+	{
+	  ch = s;
+	  create_sphere
+	    (typename Surface_regular_traits::
+	     Construct_weighted_circumcenter_3()
+	     (r2s_converter(ch->vertex(0)->point()),
+	      r2s_converter(ch->vertex(1)->point()),
+	      r2s_converter(ch->vertex(2)->point()),
+	      r2s_converter(ch->vertex(3)->point())),
+	     typename Surface_regular_traits::
+	     Compute_squared_radius_smallest_orthogonal_sphere_3()
+	     (r2s_converter(ch->vertex(0)->point()),
+	      r2s_converter(ch->vertex(1)->point()),
+	      r2s_converter(ch->vertex(2)->point()),
+	      r2s_converter(ch->vertex(3)->point())),
+	     shrink-1);
+	}
+      }
+    }
+    ch->surf = surf;
   }
 
-  FT shrink;
+  Surface_RT shrink;
   Rt_Simplex prev_s;
-//   QuadrSurface *surf;
-//   R2P_converter r2p_converter;
-//   T2P_converter t2p_converter;
+  Quadr_surface *surf;
+
+  void create_sphere(const Surface_point &c,
+		     const Surface_RT &w,
+		     const Surface_RT &s) {
+    if (s >= 0) {
+      surf = new Sphere_surface(Surface_weighted_point(c,w), s, 1);
+    } else {
+      surf = new Sphere_surface(Surface_weighted_point(c,w), -s, -1);
+    }
+  }
+
+  void create_hyperboloid(const Surface_point &c,
+			  const Surface_RT &w,
+			  const Surface_vector &v,
+			  const Surface_RT &s,
+			  int orient) {
+    surf = new Hyperboloid_surface(Surface_weighted_point(c,w), v, s, orient);
+  }
+
+  R2S_converter r2s_converter;
 };
 
 CGAL_END_NAMESPACE
