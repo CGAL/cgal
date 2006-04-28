@@ -39,14 +39,14 @@ MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
-LOGFILE="create_release.log.`date -I`.$$"
-
 PATH=$PATH:/usr/local/bin:/usr/bin/gnu
 TAR=/usr/bin/gnu/tar
 GZIP=/usr/bin/gnu/gzip
 
 #TMPDIR="/tmp"
 TMPDIR="${HOME}/CGAL/internal_release_making"
+
+LOGFILE="${TMPDIR}/create_release.log.`date -I`.$$"
 
 
 cd ${TMPDIR} || return
