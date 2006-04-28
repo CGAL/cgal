@@ -135,7 +135,10 @@ ${TAR} -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2
 ${GZIP} "${public_release_name}.tar" >> ${LOGFILE} 2>&1
 mkdir "${HTML_DIR}/${release_name}-public" >> ${LOGFILE} 2>&1
 cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+# Do a Zip file as well.
+zip -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
+cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
 
-# remove local directory and tarball
+# Remove local directory and tarball
 rm -rf ${public_release_name} >> ${LOGFILE} 2>&1
-rm ${release_name}.tar.gz ${public_release_name}.tar.gz >> ${LOGFILE} 2>&1
+rm ${release_name}.tar.gz ${public_release_name}.tar.gz ${public_release_name}.zip >> ${LOGFILE} 2>&1
