@@ -536,7 +536,7 @@ class T_HDS, class Alloc>
   typename graph_traits< CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> >::edges_size_type
   num_edges(const CGAL::Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>& p)
   {
-    return p.size_of_halfedges();
+    return p.size_of_halfedges() / 2 ;
   }
 
   template < class PolyhedronTraits_3, class PolyhedronItems_3, 

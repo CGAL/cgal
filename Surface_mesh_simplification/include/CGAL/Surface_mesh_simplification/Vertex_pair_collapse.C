@@ -115,7 +115,13 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Loop()
     
     // Pairs in the queue might be "fixed", that is, marked as uncollapsable, or their cost might be undefined.
     if ( !lPair->is_fixed() && lPair->cost() != boost::none ) 
-    { 
+    {
+      if ( boost::num_vertices(mSurface) <= 4 )
+      {
+        CGAL_TSMS_TRACE(0,"Thetrahedron reached.");
+        break ;
+      }
+      
       if ( stop_simplification(*lPair->cost(),lPair->p(),lPair->q(),lPair->is_edge(),mInitialPairCount,mCurrentPairCount,mSurface) )
       {
         CGAL_TSMS_TRACE(0,"Stop condition reached with InitialCount=" << mInitialPairCount
@@ -126,7 +132,7 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Loop()
       }
 
      // Proceeds only if the pair is topolofically collapsable (collapsing it results in a non-degenerate triangulation)
-      if ( Is_collapsable(lPair) )        
+     if ( Is_collapsable(lPair) )        
         Collapse(lPair);
     }
   }
@@ -145,17 +151,14 @@ bool VertexPairCollapse<TSM,SM,CM,VP,SP>::Is_collapsable( vertex_pair_ptr const&
   edge_descriptor q_t = boost::next_edge_cw (q_p,mSurface);      
   edge_descriptor q_b = boost::next_edge_ccw(q_p,mSurface);      
 
-  // degree(p) and degree(q) > 3
+  // degree(p) and degree(q) >= 3
   if (    boost::target(p_t,mSurface) != aPair->q()
        && boost::target(p_b,mSurface) != aPair->q()
        && boost::target(q_t,mSurface) != aPair->p()
        && boost::target(q_b,mSurface) != aPair->p()
-       && boost::next_edge_ccw(p_t,mSurface) != p_b
-       && boost::next_edge_cw (q_t,mSurface) != q_b
      )
   {
     // link('p') .intersection. link('q') == link('p_q') (that is, exactly {'t','b'})
-    
     if (    boost::target(p_t,mSurface) == boost::target(q_t,mSurface) 
          && boost::target(p_b,mSurface) == boost::target(q_b,mSurface) 
        )
@@ -272,7 +275,7 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Collapse( vertex_pair_ptr const& aPair
     // Updates the cost of all pairs in the PQ
     Update_neighbors(lQ);
             
-    -- mCurrentPairCount ;
+    mCurrentPairCount -= 3 ;
   }
   else
   {
@@ -306,7 +309,7 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Update_neighbors( vertex_descriptor co
     
     // This is required to satisfy the transitive link_condition.
     // That is, the edges around the replacement vertex 'v' cannot be collapsed again.
-    lPair1->is_fixed() = true ;
+    //lPair1->is_fixed() = true ;
    
     vertex_descriptor adj_v = boost::source(edge1,mSurface);
     
@@ -338,7 +341,7 @@ void VertexPairCollapse<TSM,SM,CM,VP,SP>::Update_neighbors( vertex_descriptor co
   for ( vertex_pair_vector_iterator it = lToUpdate.begin(), eit = lToUpdate.end() ; it != eit ; ++ it )
   {
     vertex_pair_ptr lPair = *it ;
-    CGAL_TSMS_TRACE(2,"Updating cost of " << *lPair) ;
+    CGAL_TSMS_TRACE(3,"Updating cost of " << *lPair) ;
     
     // The cost of a pair can be recalculated by invalidating its cache and updating the PQ.
     // The PQ update will reposition the pair in the heap querying its cost(),

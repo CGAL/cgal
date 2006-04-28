@@ -40,7 +40,7 @@ int main() {
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 1
+//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 2
 
 void Surface_simplification_external_trace( std::string s )
 {
@@ -52,7 +52,7 @@ void Surface_simplification_external_trace( std::string s )
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_selection_map.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_length_cost_map.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Midpoint_vertex_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Count_ratio_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Count_stop_pred.h>
 
 #include <iostream>
 #include <fstream>
@@ -200,7 +200,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 }
 
 
-void Simplify ( Polyhedron& aP )
+void Simplify ( Polyhedron& aP, int aMax )
 {
    std::cout << "Simplifying surface with " << (aP.size_of_halfedges()/2) << " edges..." << std::endl ;
 
@@ -217,7 +217,7 @@ void Simplify ( Polyhedron& aP )
     Lindstrom_Turk_selection<Polyhedron>   selection_map ;
     Edge_length_cost_map<Polyhedron>       cost_map ;
     Midpoint_vertex_placement<Polyhedron>  vertex_placement ;
-    Count_ratio_stop_condition<Polyhedron> stop_condition(0.5);
+    Count_stop_condition<Polyhedron>       stop_condition(aMax);
     
     std::cout << std::setprecision(19) ;
 
@@ -234,8 +234,14 @@ void Simplify ( Polyhedron& aP )
       fi->ID = lFacetID ++ ;    
 
    int r = vertex_pair_collapse(aP,selection_map,cost_map,vertex_placement,stop_condition);
-   
-   std::cout << "Finished...\nEdges removed: " << r << std::endl ;
+   std::cout << "Finished...\n"
+             << r << " edges removed.\n"
+             << aP.size_of_vertices() << " vertices.\n"
+             << (aP.size_of_halfedges()/2) << " edges.\n"
+             << aP.size_of_facets() << " triangles.\n" 
+             << ( aP.is_valid() ? " valid" : " INVALID!!" )
+             << std::endl  ;
+             ;
 
 #ifdef VISUALIZE
     gv << aP ;
@@ -252,32 +258,35 @@ int main( int argc, char** argv )
   
     Polyhedron lP; 
     
-    char const* file = argc > 1 ? argv[1] : "./data/Eros_50000triangles_edited.off" ;
-    std::ifstream sample(file);
-    if ( sample )
+    char const* infile = argc > 1 ? argv[1] : "./data/Sample0.off" ;
+    std::ifstream in(infile);
+    if ( in )
     {
-      sample >> lP ;
-      Simplify(lP);
+      in >> lP ;
+      
+      int lMax = argc > 2 ? std::atoi(argv[2]) : 1000 ; //lP.size_of_halfedges() ;
+            
+      Simplify(lP,lMax);
+      
+      char const* of = argc > 3 ? argv[3] : 0 ;
+      std::string outfile = !of ? std::string(infile) + std::string(".out.off") : of ;
+      
+      std::ofstream out(outfile.c_str());
+      if ( out )
+      {
+        out << lP ;
+      }
+      else
+      {
+        std::cerr << "Unable to open out file: " << outfile << std::endl ;
+      }
     }
     else
     {
-      std::cerr << "Input file not found: " << file << std::endl ;
+      std::cerr << "Input file not found: " << infile << std::endl ;
     }
-    
-    /*
-    double lSize = 1e2 ;
-    
-    Point   a(lSize,0,0)  
-          , b(0,0,lSize) 
-          , c(0,0,0) 
-          , d(0,lSize,0) ;
-          
-    lP.make_tetrahedron(a,b,c,d) ;
-    
-    for ( int i = 0 ; i < 4 ; ++ i )
-      subdiv(lP);
-    */
-    
+      
+  
 
     return 0;
 }
