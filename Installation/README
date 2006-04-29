@@ -11,13 +11,14 @@ This distribution of CGAL includes:
 			files will be written during installation
    demo/              - a directory containing many demo programs for the
                         library's various packages.  These programs produce
-                        visual output.  Thus, for most you must have either
-                        LEDA or libCGALwin installed (see the INSTALLATION
-                        file).  Others programs require geomview, which is
+                        visual output.  Thus, for most you must have Qt installed.
+                        Some demos use the LEDA window, for which you must
+                        have LEDA installed (see the INSTALLATION
+                        file).  Other programs require geomview, which is
                         available from www.geomview.org
                         Makefiles are provided for all programs and project
-                        files for MSVC IDE (experimental) are provided
-                        for many.
+                        files for MSVC IDE are provided.
+
    doc_html/          - a directory containing the installation manual in
                         HTML format
    doc_pdf/           - a directory containing the installation manual in
