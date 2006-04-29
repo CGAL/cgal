@@ -95,7 +95,7 @@
 % ###########################################################################
 
 % The following four lines at the beginning of other converter style
-% files provide them with the basic macro definitions to make the 
+% files provide them with the basic macro definitions to make the
 % LaTeX converter work.
 
 %% % Load latex_to_html.sty that provides the basic converter capabilities.
@@ -104,8 +104,8 @@
 %% \lcStyleFile{latex_to_html}
 
 % The \lcStyleFile macro will be overloaded here with a more sophisticated
-% version which keeps track of already loaded styles and which skips 
-% loading for style files <sty> where a macro with the name 
+% version which keeps track of already loaded styles and which skips
+% loading for style files <sty> where a macro with the name
 % \lciSkipStyle_<sty> is defined. Note that \newcommand{} or gdef{} must
 % be used to define these names, since they contain characters not allowed
 % in usual TeX macros. (I.e. \gdef\... or \def\... would not work.)
@@ -120,10 +120,10 @@
 \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
 %\newcommand{\lciInputStyleFile}[2]{\lciInclude{#C2.sty}}
 
-% Try if a style file exists. Give a warning if not (no error as 
+% Try if a style file exists. Give a warning if not (no error as
 % for \lcStyleFile itself.) Try local files and LATEX_CONV_INPUTS files
 % first, then try \lciConfigPath.
-% Param 1: filename of style file without suffix. 
+% Param 1: filename of style file without suffix.
 %          The file #1.sty must then exist in the search path (preference)
 %          or the config path.
 \newcommand{\lcTryStyleFile}[1]{%
@@ -140,7 +140,7 @@
 % ___________________________________________________________________________
 % ###########################################################################
 % |
-% |   o   Style Selection                       
+% |   o   Style Selection
 % |
 % ###########################################################################
 
@@ -350,7 +350,7 @@
 \newcommand{\lciLocalPrintStack}[2]{\{#1\}\{\lciIfEmpty{#2}{}%
     {\lciLocalPrintStack #2}\}}
 
-%% Args: old-stack, new-stack (reversed). Stacks should differ. 
+%% Args: old-stack, new-stack (reversed). Stacks should differ.
 %%       new-stack may not be empty. old-stack will be empty afterwards.
 \newcommand{\lciReverseStack}[2]{%
     \lciIfEmpty{#1}{}{%
@@ -359,7 +359,7 @@
         \lciReverseStack{#1}{#2}%
     }}
 
-% arg1: stack 
+% arg1: stack
 % arg2: operation
 \newcommand{\lciForeachElementInStack}[2]{%
   \begingroup%
@@ -428,7 +428,7 @@
 }
 
 \RCSdef{\lcRevision}{$Id$}
-\RCSdefDate{\lcDate}{$Id$} 
+\RCSdefDate{\lcDate}{$Id$}
 
 
 \newcommand{\ccRevision}{\lcRevision}

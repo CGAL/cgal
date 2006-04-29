@@ -1,5 +1,5 @@
 /**************************************************************************
- 
+
   cc_extract_html.C
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
@@ -9,7 +9,7 @@
               as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Id$
   Date      : $Date$
- 
+
 **************************************************************************/
 
 #include <stdlib.h>
@@ -86,7 +86,7 @@ void init_commandline_args() {
         string aux_date = manual_date;
         aux_date.replace( 0, pos, string());
         insertInternalGlobalMacro( "\\today", aux_date);
-        
+
     } else {
         // else keep the full date as provided
         insertInternalGlobalMacro( "\\today", manual_date);
@@ -102,7 +102,7 @@ void init_commandline_args() {
 			       ? "\\lcTrue" : "\\lcFalse");
     insertInternalGlobalMacro( "\\lciIfMacroDefFlag", macro_def2_switch
 			       ? "\\lcTrue" : "\\lcFalse");
-    insertInternalGlobalMacro( "\\lciIfMacroExpFlag", macro_exp2_switch 
+    insertInternalGlobalMacro( "\\lciIfMacroExpFlag", macro_exp2_switch
 			       ? "\\lcTrue" : "\\lcFalse");
     insertInternalGlobalMacro( "\\lciOutputFilename", "<cout>");
     insertInternalGlobalMacro( "\\lciMainFilename",   "<cout>");
@@ -137,11 +137,11 @@ void handleChar( char c) {
 
 /* main */
 /* ==== */
- 
+
 #define MaxParameters           1000
 #define MaxOptionalParameters    999
 #define ErrParameters          10000
- 
+
 /* this macro opens a block, in which the switch is detected */
 /* it must be closed with the macro endDetect()              */
 #define detectSwitch( var, text) \
@@ -151,19 +151,19 @@ void handleChar( char c) {
             var = PLUS_SWITCH; \
         else \
             var = MINUS_SWITCH;
- 
+
 #define endDetect() \
         if ( nParameters <= MaxParameters ) \
             continue; \
         else \
             break; \
     }
- 
- 
- 
+
+
+
 /* >main: main function with standard unix parameter input */
 /* ------------------------------------------------------- */
- 
+
 main( int argc, char **argv) {
     // Check environment:
     char* s = getenv("LATEX_CONV_CONFIG");
@@ -180,9 +180,9 @@ main( int argc, char **argv) {
 
     Switch help_switch  = NO_SWITCH;
     Switch dummy_switch;
-    
+
     insertInternalGlobalMacro( "\\lciInstallLatexConverterCSSFile", "" );
-    
+
     for (i = 1; i < argc; i++) {
         /* check switches */
         detectSwitch( dummy_switch, "get_latex_conv_config");
@@ -264,13 +264,13 @@ main( int argc, char **argv) {
             if ( i < argc) {
 		string s = argv[i];
 		assert_trailing_slash_in_path( s);
-		insertGlobalMacro( "\\lciHeaderPath", 
+		insertGlobalMacro( "\\lciHeaderPath",
 				   "<command line option>", 0, s);
                 if ( s[0] == '/') {
-                    insertGlobalMacro( "\\lciIfRelativeHeaderPath", 
+                    insertGlobalMacro( "\\lciIfRelativeHeaderPath",
                                        "<command line option>", 0,"\\lcFalse");
                 } else {
-                    insertGlobalMacro( "\\lciIfRelativeHeaderPath", 
+                    insertGlobalMacro( "\\lciIfRelativeHeaderPath",
                                        "<command line option>", 0, "\\lcTrue");
                 }
 	    } else {
@@ -310,7 +310,7 @@ main( int argc, char **argv) {
         endDetect();
 
         detectSwitch( V_switch, "V");
-	    cerr << prog_name << " " << prog_release << " (c) Lutz Kettner" 
+	    cerr << prog_name << " " << prog_release << " (c) Lutz Kettner"
 		 << endl;
 	    cerr << "Using: ";
             eraseMacro( "\\lciInstallLatexConverterCSSFile" );
@@ -324,7 +324,7 @@ main( int argc, char **argv) {
 
 	// check for unknown command line option
 	if ( argv[i][0] == '-' ) {
-	    cerr << "*** Error: unknown command line option `" << argv[i] 
+	    cerr << "*** Error: unknown command line option `" << argv[i]
 		 << "'." << endl;
 	    nParameters = ErrParameters;
 	}
@@ -334,26 +334,26 @@ main( int argc, char **argv) {
             parameters[nParameters ++] = argv[i];
             continue;
         }
- 
+
         nParameters = ErrParameters;
         break;
     }
     (void)(dummy_switch);  // simulate a use of 'dummy_switch'.
 
-    if (! V_switch && 
+    if (! V_switch &&
         ((nParameters < MaxParameters - MaxOptionalParameters) ||
          (nParameters > MaxParameters) || (help_switch != NO_SWITCH))) {
         if (help_switch == NO_SWITCH)
             cerr << "*** Error: in parameter list" << endl;
-	cerr << prog_name << " " << prog_release << " (c) Lutz Kettner" 
+	cerr << prog_name << " " << prog_release << " (c) Lutz Kettner"
 	     << endl;
-        cerr << "Usage: " << prog_name << " [<options>] <TeX-files...>" 
+        cerr << "Usage: " << prog_name << " [<options>] <TeX-files...>"
 	     << endl;
         cerr << "       -V                  prints version message." <<endl;
         cerr << "       -date     <text>    set a date for the manual." <<endl;
         cerr << "       -release  <text>    set a release number for the "
                                            "manual." << endl;
-        cerr << "       -title    <text>    set a title text for the manual." 
+        cerr << "       -title    <text>    set a title text for the manual."
 	     << endl;
         cerr << "       -author   <text>    set an author address (email) for "
 	                                   "the manual." << endl;
@@ -377,7 +377,7 @@ main( int argc, char **argv) {
              << endl;
         cerr << "       -line               echo currently parsed line "
                                            "numbers to cerr." << endl;
-        cerr << "(TeX-files with suffix:  .tex  or  .bbl  possible.)"  
+        cerr << "(TeX-files with suffix:  .tex  or  .bbl  possible.)"
 	     << endl;
         exit(1);
     }
@@ -386,7 +386,7 @@ main( int argc, char **argv) {
     assert_trailing_slash_in_path( tmp_path);
     assert_trailing_slash_in_path( config_path);
     config_path += "html/";
- 
+
     // Initialization
     if ( ! quiet_switch && ! V_switch)
 	cerr << '[' << prog_name << ' ' << prog_release << endl;
@@ -403,29 +403,29 @@ main( int argc, char **argv) {
     if (! include_stack.push_file( config_path + sty_filename))
 	exit(1);
     yyparse();
-    
+
     if (V_switch) {
 	cerr << endl;
 	exit(0);
     }
-   
+
 
     main_stream   = &cout;
 
     // Prepare several streams:
     contents_stream = open_file_for_write( tmp_path +
-					   macroX( "\\lciContentsFilename"));  
-    description_stream = open_file_for_write( tmp_path + 
+					   macroX( "\\lciContentsFilename"));
+    description_stream = open_file_for_write( tmp_path +
                                               macroX( "\\lciPkgDescriptionFilename") );
 
     index_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciIndexFilename"));
-    HREF_stream =  open_file_for_write( tmp_path + 
+    HREF_stream =  open_file_for_write( tmp_path +
                                            macroX( "\\lciHREFFilename"));
 
-    HREF_counter =  open_counter_file_for_read( tmp_path +  
+    HREF_counter =  open_counter_file_for_read( tmp_path +
                                            macroX("\\lciHREFCounterFilename"));
-    
+
     if ( ! pre_main_filename.empty()) {
 	pre_stream = open_file_for_write_with_path(tmp_path+pre_main_filename);
 	current_filename  = pre_main_filename;
@@ -438,7 +438,7 @@ main( int argc, char **argv) {
         current_filepath  = pre_main_filepath;
         current_uppath    = pre_main_uppath;
     }
-    
+
 
     macro_def_switch = macro_def2_switch;
     macro_exp_switch = macro_exp2_switch;
@@ -474,8 +474,8 @@ main( int argc, char **argv) {
         insertInternalGlobalMacro( "\\lciOutputPath",    current_filepath);
         insertInternalGlobalMacro( "\\lciOutputUppath",  current_uppath);
 
-                                             
-        anchor_stream = open_file_for_write( tmp_path + 
+
+        anchor_stream = open_file_for_write( tmp_path +
                                              macroX( "\\lciAnchorFilename"));
         global_anchor_stream = anchor_stream;
         main_anchor_stream   = anchor_stream;
@@ -483,11 +483,11 @@ main( int argc, char **argv) {
 	if ( include_stack.push_file( parameters[i]))
 	    yyparse();
 
-	include_stack.push_string( "<end of conversion>", 
-				   "\\lciCheckNestingScopes", 
+	include_stack.push_string( "<end of conversion>",
+				   "\\lciCheckNestingScopes",
 				   0);
-	include_stack.push_string( "<end of conversion>", 
-				   "\\lciEndOfConversion", 
+	include_stack.push_string( "<end of conversion>",
+				   "\\lciEndOfConversion",
 				   0);
 	yyparse();
 
@@ -500,20 +500,20 @@ main( int argc, char **argv) {
             delete anchor_stream;
             anchor_stream = 0;
         }
-        if ( main_anchor_stream != 0 
+        if ( main_anchor_stream != 0
              && main_anchor_stream != global_anchor_stream) {
-            assert_file_write( *main_anchor_stream, 
+            assert_file_write( *main_anchor_stream,
                                macroX( "\\lciAnchorFilename"));
             delete main_anchor_stream;
             main_anchor_stream = 0;
         }
         if ( global_anchor_stream != 0) {
-            assert_file_write( *global_anchor_stream, 
+            assert_file_write( *global_anchor_stream,
                                macroX( "\\lciAnchorFilename"));
             delete global_anchor_stream;
             global_anchor_stream = 0;
         }
- 
+
 	if ( main_stream != &cout && main_stream != pre_stream) {
 	    assert_file_write( *main_stream, main_filename);
 	    delete   main_stream;
@@ -534,22 +534,22 @@ main( int argc, char **argv) {
     } else
 	cout << endl;
 
- 
+
     assert_file_write( *index_stream, macroX( "\\lciIndexFilename"));
     delete index_stream;
-    
+
     assert_file_write( *description_stream, macroX( "\\lciPkgDescriptionFilename") );
     delete description_stream;
-   
+
     HREF_counter_stream = open_file_for_write( tmp_path +
                                  macroX( "\\lciHREFCounterFilename"));
     *HREF_counter_stream << HREF_counter;
-    assert_file_write( *HREF_counter_stream, 
+    assert_file_write( *HREF_counter_stream,
                         macroX( "\\lciHREFCounterFilename"));
     delete HREF_counter_stream;
 
 
-    assert_file_write( *contents_stream, 
+    assert_file_write( *contents_stream,
 		       macroX( "\\lciContentsFilename"));
     delete contents_stream;
 
@@ -558,7 +558,7 @@ main( int argc, char **argv) {
 
 
 
-    return firstError(); // reports non-zero return codes if there were 
+    return firstError(); // reports non-zero return codes if there were
                          // non-aborting errors.
 }
 

@@ -80,7 +80,9 @@ SCRIPT_FILES  = 	latex_to_html			\
 # Files that will be copied into LATEX_CONV_CONFIG upon installation:
 HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\
 		 	latex_converter_config/html/*.css	\
-			latex_converter_config/html/*.mst
+			latex_converter_config/html/*.mst	
+BIB_CONFIG_FILES =	latex_converter_config/html/Biblio/how_to_cite_cgal.html \
+			latex_converter_config/html/Biblio/how_to_cite_cgal.bib
 GIF_CONFIG_FILES  =	latex_converter_config/gif/*.gif
 REF_CONFIG_FILES  =	latex_converter_config/ref_pages/*.tex
 
@@ -195,6 +197,7 @@ rminstall:
 pathinstall:
 	test -d ${LATEX_CONV_CONFIG}      || mkdir ${LATEX_CONV_CONFIG}
 	test -d ${LATEX_CONV_CONFIG}/html || mkdir ${LATEX_CONV_CONFIG}/html
+	test -d ${LATEX_CONV_CONFIG}/html/Biblio || mkdir ${LATEX_CONV_CONFIG}/html/Biblio
 	test -d ${LATEX_CONV_CONFIG}/gif  || mkdir ${LATEX_CONV_CONFIG}/gif
 	test -d ${LATEX_CONV_CONFIG}/ref_pages|| mkdir ${LATEX_CONV_CONFIG}/ref_pages
 
@@ -207,6 +210,7 @@ refinstall:
 cpinstall:
 	install ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
 	install -m 644 ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
+	install ${BIB_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html/Biblio
 
 mvinstall: ${PROGRAM_FILES}
 	install ${PROGRAM_FILES} ${LATEX_CONV_BIN}

@@ -560,6 +560,8 @@ convert() {
         cd $CurrentDir
     done
 
+    cp -r ${ConfigHtml}/Biblio ${OutDir}
+
     # finish, write timing to logfile and close it
     # -------------------------------------------------------
     local EndTime=$SECONDS
