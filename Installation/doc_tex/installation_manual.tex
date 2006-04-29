@@ -35,6 +35,8 @@
 \end{titlepage}  
 
 \setcounter{page}{2}
+
+\newcommand{\myownfrontmatter}{
 \section*{Authors}
 
 Michael Hoffmann, ETH Z\"urich.\\
@@ -45,7 +47,9 @@ Wieger Wesselink, Utrecht University.
 
 This work was supported by the ESPRIT IV LTR Projects No.~21957 (CGAL)
 and No. 28155 (GALIA).
+}
 
+\lcTex{\myownfrontmatter}
 \cleardoublepage
 \pagestyle{plain}
 \pagenumbering{roman}
@@ -55,6 +59,10 @@ and No. 28155 (GALIA).
 \pagenumbering{arabic}
 \cgalColumnLayout
  
+\lcHtml{
+  \chapter{Installation Manual}
+  \myownfrontmatter
+}
 \input{Installation/installation}
 \appendix
 \input{Installation/appendix}
