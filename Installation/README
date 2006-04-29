@@ -51,7 +51,5 @@ This distribution of CGAL includes:
    scripts/           - directory containing some useful scripts for CGAL
                         programmers
    src/               - the library source code
-   winutils/          - various Windows-specific installation stuff used by
-                        cgal_config.bat
 
 -------------------------------------------------------------------------------
