@@ -16,27 +16,17 @@ SketchSample::~SketchSample() {
 }
 
 void SketchSample::buildDisplayList(GLuint surf) {
+
+  static GLfloat agray[4] = {1,1,1, 1.0 };
+
   glNewList(surf, GL_COMPILE);
 
-  glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHTING);
-  glShadeModel(GL_SMOOTH);
-
-  //mesh
-  glColor3f(1.,1.,1.);
-  p_mesh->gl_draw_facets(true);
-  //additional objects that may be displayed
-//   p_mesh->gl_draw_vertices_normal(); 
-//   p_mesh->gl_draw_edges();
-//   p_mesh->gl_draw_vertices();
-//   p_mesh->gl_draw_facets_normal();
-//   p_mesh->gl_draw_vertices_normal();
+  glDisable(GL_LIGHTING);
 
   //points first
   for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
     draw_point((*it)->P1);
   //next, ppal dirs and normal
-  glDisable(GL_LIGHTING);
   for (DS_iterator it=p_ppal_data->begin();it!=p_ppal_data->end();it++)
     {	
       glColor3f(0.,0.,1.);//dmax
@@ -48,18 +38,20 @@ void SketchSample::buildDisplayList(GLuint surf) {
 	/ CGAL::sqrt( ((*it)->D1) * ((*it)->D1) );
       draw_vector((*it)->P1, normal) ;		
     }
+  
   glEnable(GL_LIGHTING);
+  glShadeModel(GL_SMOOTH);
 
-//    static GLfloat ared[4] = {0.8, 0.1, 0.0, 1.0 };
-//    //  glNewList(surf, GL_COMPILE);
-//   glBegin(GL_TRIANGLES);
-//   glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, ared );
-//   glNormal3d(0., 0., 1.);
-//   glVertex3d(0., 0., 0.);
-//   glVertex3d(1., 0., 0.);
-//   glVertex3d(0., 1., 1.);
-//   glEnd();
-
+  //mesh
+  //glMaterialfv is def in the mesh 
+  p_mesh->gl_draw_facets(true);
+  //additional objects that may be displayed
+//   p_mesh->gl_draw_vertices_normal(); 
+//   p_mesh->gl_draw_edges();
+//   p_mesh->gl_draw_vertices();
+//   p_mesh->gl_draw_facets_normal();
+//   p_mesh->gl_draw_vertices_normal();
+ 
   glEndList();
 }
 

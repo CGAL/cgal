@@ -9,6 +9,9 @@ Andreas' solution using the fields of the classes
 3. linagl ... let's see..
 
 
+NOTE: GSL/CLAPACK
+-----------------
+There are 2 versions, _gsl and the other under contruction with clapack.
 
 Program blind_1pt.exe 
 --------------------- 

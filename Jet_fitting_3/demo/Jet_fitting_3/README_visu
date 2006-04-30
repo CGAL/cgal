@@ -1,6 +1,6 @@
-Program introspect-qt
+Program introspect-qt.exe
 ----------------
-make testv
+make 
 
 takes as input
 1. a file.off,
@@ -9,7 +9,7 @@ takes as input
 
 it displays an OpenGL view of both the mesh and the ppal directions
 
-./introspect-qt ../../examples/Jet_fitting_3/data/poly2x\^2+y\^2-0.062500-off ../../examples/Jet_fitting_3/data_poly2x\^2+y\^2-0.062500-off.4ogl.txt
+./introspect-qt.exe ../../examples/Jet_fitting_3/data/poly2x\^2+y\^2-0.062500-off ../../examples/Jet_fitting_3/data_poly2x\^2+y\^2-0.062500-off.4ogl.txt
 
 
 -pre-requisite 0: check out introspect, jet_fitting_3

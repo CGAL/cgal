@@ -288,8 +288,8 @@ public :
   void gl_draw_facets(const bool smooth)
     {
       glEnable(GL_LIGHTING);
-      static GLfloat tryellow[4] = {0.3, 0.3, 0.0, 1 };
-      glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, tryellow);
+      static GLfloat agray[4] = {1,1,1, 1.0 };
+      glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, agray);
 
       Facet_iterator hFacet;
       for(hFacet = facets_begin();
