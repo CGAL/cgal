@@ -8,5 +8,6 @@ takes as input
 
 it displays an OpenGL view of both the mesh and the ridge lines
 
-./visu.exe ../../examples/Ridges_3/data/ellipe0.003.off ../../examples/Ridges_3/data_ellipe0.003.off.4ogl.txt
+./introspect-qt.exe ../../examples/Ridges_3/data/ellipe0.003.off ../../examples/Ridges_3/data_ellipe0.003.off.4ogl.txt
+
 
