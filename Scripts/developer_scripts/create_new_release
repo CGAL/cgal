@@ -135,7 +135,7 @@ cd ${public_release_name} >> ${LOGFILE} 2>&1
 rm -rf test Packages developer_scripts doc_tex winutils >> ${LOGFILE} 2>&1
 rm -f examples/*/cgal_test demo/*/cgal_test >> ${LOGFILE} 2>&1
 mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
-sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/s/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
+sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
 rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
 cd .. >> ${LOGFILE} 2>&1
 ${TAR} -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
@@ -143,7 +143,7 @@ ${GZIP} "${public_release_name}.tar" >> ${LOGFILE} 2>&1
 mkdir "${HTML_DIR}/${release_name}-public" >> ${LOGFILE} 2>&1
 cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
 # Do a Zip file as well.
-zip -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
+zip -q -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
 cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
 
 # Remove local directory and tarball
