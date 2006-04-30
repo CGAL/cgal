@@ -1244,6 +1244,7 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#unset
+Ridges_3/demo/Ridges_3/SketchSample.C -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.eps -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.pdf -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.eps -text
