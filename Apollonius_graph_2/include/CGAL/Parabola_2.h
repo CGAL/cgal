@@ -31,6 +31,8 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt >
 class Parabola_2
 {
+private:
+  typedef Parabola_2<Gt>  Self;
 public:
   typedef typename Gt::Site_2                 Site_2;
   typedef typename Gt::Point_2                Point_2;
@@ -58,11 +60,11 @@ protected:
   }
 #endif
 
-  inline static
-  FT square(const FT &x)
-  {
-    return x * x;
-  }
+  //  inline static
+  //  FT square(const FT &x)
+  //  {
+  //    return x * x;
+  //  }
 
   inline static
   FT divide(const FT& x, const FT& y, const Tag_false&) {
@@ -99,7 +101,7 @@ protected:
   inline static
   FT norm2(const Point_2& p)
   {
-    return square(p.x()) + square(p.y());
+    return CGAL::square(p.x()) + CGAL::square(p.y());
   }
 
   inline static
@@ -107,7 +109,7 @@ protected:
   {
     FT dx = p1.x()-p2.x();
     FT dy = p1.y()-p2.y();
-    return square(dx) + square(dy);
+    return CGAL::square(dx) + CGAL::square(dy);
   }
 
   inline static
@@ -120,7 +122,7 @@ protected:
   FT distance(const Point_2& p, const Line_2& l)
   {
     return divide( p.x() * l.a() + p.y() * l.b() + l.c(),
-		   sqrt( square(l.a()) + square(l.b()) ) );
+		   sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) );
   }
 
   // instance stuff
@@ -158,9 +160,9 @@ protected:
       FT y = d2 * CGAL::sign(l.b()) - divide(l.c(), l.b());
 
       FT C = CGAL::square(y) - FT(2) * c.y() * y + 
-	square(c.x()) + square(c.y()) - d1;
+	CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
 
-      FT D = square(c.x()) - C;
+      FT D = CGAL::square(c.x()) - C;
 
       D = CGAL::abs(D);
 
@@ -177,7 +179,7 @@ protected:
     FT B = CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
 
     FT alpha = FT(1) + CGAL::square(divide(l.b(), l.a()));
-    FT beta = divide(A * l.b(), CGAL::square(l.a()) + c.y())
+    FT beta = divide(A * l.b(), CGAL::square(l.a())) + c.y()
       - divide(c.x() * l.b(), l.a());
     FT gamma = CGAL::square(divide(A, l.a())) + B
       - divide(FT(2) * c.x() * A, l.a());
@@ -233,7 +235,7 @@ protected:
   void compute_origin()
   {
     FT d = divide(l.a() * c.x() + l.b() * c.y() + l.c(),
-		  FT(2) * ( square(l.a()) + square(l.b()) )  );
+		  FT(2) * ( CGAL::square(l.a()) + CGAL::square(l.b()) )  );
     o = Point_2(c.x() - l.a() * d, c.y() - l.b() * d);
   }
 
