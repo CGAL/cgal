@@ -499,6 +499,12 @@ make_root_of_2(const Gmpz &a, const Gmpz &b, const Gmpz &c, bool smaller)
   return Root_of_2<Gmpz>(a, b, c, smaller);
 }
 
+
+#if ! defined( CGAL_DONT_USE_LINK_PRAGMA) && defined( _MSC_VER )
+    #pragma comment(lib, "gmp.lib")
+    #pragma comment(lib, "mpfr.lib")
+#endif 
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPZ_H
