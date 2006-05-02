@@ -43,6 +43,7 @@ void solve(K k, P p, double lb, double ub, const char *name){
 
 int main(int argc, char *argv[])
 {
+  std::cout << "Enter a polynomial like 1+2*x+3*x^2\n";
   while (true) {
     typedef CGAL_POLYNOMIAL_NS::Numeric_root_stack<Ddt,
       CGAL_POLYNOMIAL_NS::internal::Turkowski_numeric_solver> NRE;
@@ -52,11 +53,11 @@ int main(int argc, char *argv[])
     std::cout << "polynomial >> " << std::flush;
     std::cin >> input;
     if (!std::cin) break;
-    std::cout << "lb >> " << std::flush;
+    std::cout << "lower bound on roots >> " << std::flush;
     double lb;
     std::cin >> lb;
     if (!std::cin) break;
-    std::cout << "ub >> " << std::flush;
+    std::cout << "upper bound on roots >> " << std::flush;
     double ub;
     std::cin >> ub;
     if (!std::cin) break;
