@@ -13,31 +13,38 @@ alternative {\sc Stl} implementation.
 
 \subsection{Boost \label{thirdparty:Boost}}
 
- (www.boost.org).
+Boost is a collection of libraries. \cgal\ needs some of them, that is
+it is mandatory.  If Boost is not already on your system, e.g., on
+Windows, you can download it from \path'www.boost.org'.
 
 
 \subsection{GMP \label{thirdparty:GMP}}
 
 A library for multi precision integers and rational numbers.
-\cgal\ offers adapters for these number types.
+\cgal\ offers adapters for these number types. The usage
+of the {\sc Gmp} library is optional.  If it is not already on your system,
+e.g., on Windows, you can download it from \path'www.swox.com/gmp'.
 
-GMP (www.swox.com/gmp).
+\subsection{MPFR \label{thirdparty:MPFR}}
 
+A library for multi precision floating point numbers.  The usage of
+the {\sc Mpfr} library is optional, and you must install it when you
+use {\sc Gmp}.  You can download {\sc Mpfr} from \path'www.mpfr.org'.
 
 
 \subsection{Leda \label{thirdparty:Leda}}
 
 A library of efficient data structures and algorithms. \cgal\ offers
-adapters to the {\sc Leda} number types.
-
- (www.algorithmic-solutions.com).
+adapters to the {\sc Leda} number types. The usage is optional.
+It is only available commercially from \path'www.algorithmic-solutions.com'.
 
 
 \subsection{Taucs \label{thirdparty:Taucs}}
 
 A library of sparse linear solvers.
-It can be used by the \ccc{Surface_mesh_parametrization} package.
- (http://www.tau.ac.il/\~stoledo/taucs/).
+It can be used by the \ccc{Surface_mesh_parametrization} package
+in order to speed up the algorithm. you can download it from
+ \path'www.tau.ac.il/\~stoledo/taucs/'.
 
 \subsection{OpenNL \label{thirdparty:OpenNL}}
 
@@ -48,19 +55,20 @@ A solver.
 A data compression library.
 It is used in the examples of the \ccc{Surface_mesher} package.
 
- (www.gzip.org/zlib).
+ \path'www.gzip.org/zlib'.
 
 \subsection{Qt \label{thirdparty:Qt}}
 
 A {\sc Gui} library.   It is used in all 2D demos.
 
- (www.trolltech.com).
+As Qt is the layer underneath {\sc Kde}, Qt is installed
+on many Linux systems. Otherwise you can download it from
+ \path'www.trolltech.com'.
 
 
 \subsection{Coin \label{thirdparty:Coin}}
 
 An implementation of Open Inventor.  It is used in the demo
-of the \ccc{Kinetic_data_structures} package.
-
-(www.sim.no).
+of the \ccc{Kinetic_data_structures} package. You can download
+it from \path'www.sim.no'.
 
