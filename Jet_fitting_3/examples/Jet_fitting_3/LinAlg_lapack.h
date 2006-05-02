@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include "blaswrap.h"
 #include "f2c.h"
+extern "C" {
 #include "clapack.h"
+}
 //#include <math.h>
 
 
