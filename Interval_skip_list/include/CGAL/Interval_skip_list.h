@@ -215,6 +215,11 @@ class Interval_for_container : public Interval_
     template <class InputIterator>
     Interval_skip_list(InputIterator b, InputIterator e)
     {
+      maxLevel = 0;
+      header = new IntervalSLnode<Interval>(MAX_FORWARD);
+      for (int i = 0; i< MAX_FORWARD; i++) {
+	header->forward[i] = 0;
+      }
       for(; b!= e; ++b){
 	insert(*b);
       }
@@ -555,6 +560,9 @@ class Interval_for_container : public Interval_
       header = next;
     }
     header = new IntervalSLnode<Interval>(MAX_FORWARD);
+    for (int i = 0; i< MAX_FORWARD; i++) {
+      header->forward[i] = 0;
+    }
     maxLevel = 0;
 
   }
