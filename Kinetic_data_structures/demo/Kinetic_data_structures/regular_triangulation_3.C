@@ -63,6 +63,13 @@ int main(int argc, char *argv[])
     tr.simulator_handle()->set_current_event_number(4);
     kdel->set_has_certificates(true);
 
+
+    std::cout << "This program displays a 3D kinetic Delaunay triangulation.\n";
+    std::cout << "What is displayed can be controlled by pushing the followin keys over the Coin window and with the arrow tool selected.\n";
+    std::cout << "Press 'h' to hide/show the convex hull.\n";
+    std::cout << "Press 'f' to hide/show faces.\n";
+    std::cout << "Press 's' to show spheres for points, 'p' to show points.\n";
+
     return qtsim->begin_event_loop();
     /*#else
     std::cout << "An install of Inventor and SoQt are required for this demo.  "

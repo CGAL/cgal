@@ -37,7 +37,7 @@ QT_LDFLAGS =  \
 
 CXXFLAGS_3D= $(CXXFLAGS) -DCGAL_USE_SOQT
 
-LDFLAGS_3D= $(QT_LDFLAGS) -lCoin -lSoQt
+LDFLAGS_3D= -lCoin -lSoQt  $(QT_LDFLAGS) 
 
 DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
 
@@ -49,8 +49,7 @@ DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
                 gui_2$(EXE_EXT) \
                 generate_data$(EXE_EXT) \
                 Delaunay_triangulation_stable_subset_2$(EXE_EXT) 
-	@echo Do install Coin and do "make 3d" to make the 3d demos
-
+	@echo "Do install Coin (the headers should be Inventor/So.h etc.) and SoQt and do \"make 3d\" to make the 3d demos"
 all: 2d
 
 
@@ -96,7 +95,7 @@ SoQt_examiner_viewer.moc: include/SoQt_examiner_viewer.h
 
 clean: \
                    gui_2.clean \
-                   gui_3.clean \
+                  gui_3.clean \
                    generate_data.clean \
                    Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
