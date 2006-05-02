@@ -1,8 +1,3 @@
-To compute and run all these examples type :
-./cgal_test
-To compute and run only some of them type :
-./cgal_test name-of_wanted_example
-
 triangulation_prog1:
 The following program creates a triangulation of 2D points using 
 a default kernel of CGAL  as geometric traits and the
@@ -50,7 +45,7 @@ of a Delaunay triangulation.
 The program outputs the number of vertices
 at the different levels of the hierarchy
 
-hierarchy_plus
+constrained_hierarchy_plus
 The program shows how to use
 a triangulation hierarchy in conjunction with a Constrained 
 triangulation plus.
