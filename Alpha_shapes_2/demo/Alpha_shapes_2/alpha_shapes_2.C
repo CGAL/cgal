@@ -476,7 +476,7 @@ private:
   QLabel                  *label;
 };
 
-#include "alpha_shapes_2.maac"
+#include "alpha_shapes_2.moc"
 
 
 int
