@@ -70,8 +70,8 @@ namespace std {
 // FIXME: what is the problem with Sun 5.5? MATCHING_BUG_4 is not
 // triggered, but there are runtime errors, e.g., with Distance_3,
 // that do not appear when using the wrapper...
-#if defined(CGAL_CFG_MATCHING_BUG_4) || \
-  (defined(__sun) && defined(__SUNPRO_CC))
+#if defined(CGAL_CFG_MATCHING_BUG_4)
+ // || (defined(__sun) && defined(__SUNPRO_CC))
 namespace CGAL {
     template < typename T >
     struct Self { typedef T Type; };
