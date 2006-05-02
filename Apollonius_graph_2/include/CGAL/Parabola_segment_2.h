@@ -83,7 +83,7 @@ public:
       int k;
 
       p.push_back( this->o );
-      k = 1;
+      k = -1;
       tt = -this->STEP();
       while ( CGAL::compare(tt, s0) == LARGER ) {
 	p.insert( p.begin(), f(tt) );

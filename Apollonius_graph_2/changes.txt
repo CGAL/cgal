@@ -1,3 +1,8 @@
+2 May 2006:  Menelaos Karavelas
+- fixed bug in drawing routine of Parabola_segment_2; in somes cases
+  the drawing routine was producing some points twice. Thanks to 
+  Rafael Torres <rtorres@dimm.upv.es> for spotting the bug.
+
 1 May 2006:  Menelaos Karavelas
 - fixed bug introduced in compute_points() in Parabola_2 class during
   the changes of March 9, 2006. Drawing of parabolas or parabolic arcs
