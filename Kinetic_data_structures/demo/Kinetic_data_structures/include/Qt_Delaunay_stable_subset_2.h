@@ -77,7 +77,7 @@ protected:
   {
     //std::cout << "Drawing del\n";
     typedef typename Kinetic_Delaunay::Triangulation Del;
-
+    typedef typename Del::Geom_traits::Point_2 Point_key;
     const Del  &tri= kdel_->triangulation(typename Del::Geom_traits::Time(t));
     //tri.geom_traits().set_time(typename Del::Geom_traits::Time(t));
     w << CGAL::LineWidth(1);
@@ -85,25 +85,35 @@ protected:
     if (tri.dimension() != 2) return;
     for (typename Del::Finite_edges_iterator fit = tri.finite_edges_begin();
 	 fit != tri.finite_edges_end(); ++fit) {
-
-      Static_point o= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
-      Static_point d= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
-      Static_point a= tri.geom_traits().static_object(fit->first->vertex(fit->second)->point());
-      Static_point b= tri.geom_traits().static_object(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
-
-      double angle1= std::abs(angle(o,a, d));
-      double angle2= std::abs(angle(o,b, d));
-
-      Static_segment ss(o,d);
-
-      if (angle1+angle2 < threshold_*3.1415) {
-	if (kdel_->visitor().contains(*fit) || kdel_->visitor().contains(TDS_helper::mirror_edge(*fit))) {
-	  w<< CGAL::Color(255,0,0);
-	}
-	else {
+      if (fit->first->vertex((fit->second+1)%3)->point()
+	  && fit->first->vertex((fit->second+2)%3)->point()
+	  && fit->first->vertex(fit->second)->point()
+	  && fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point()) {
+	Static_point o= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
+	Static_point d= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
+	Static_point a= tri.geom_traits().static_object(fit->first->vertex(fit->second)->point());
+	Static_point b= tri.geom_traits().static_object(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
+	
+	double angle1= std::abs(angle(o,a, d));
+	double angle2= std::abs(angle(o,b, d));
+	
+	Static_segment ss(o,d);
+	
+	if (angle1+angle2 < threshold_*3.1415) {
+	  if (kdel_->visitor().contains(*fit) || kdel_->visitor().contains(TDS_helper::mirror_edge(*fit))) {
+	    w<< CGAL::Color(255,0,0);
+	  }
+	  else {
+	    w << CGAL::Color(0,0,0);
+	  }
+	  w << ss;
+	} else {
+	  Static_point o= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
+	  Static_point d= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
+	  Static_segment ss(o,d);
 	  w << CGAL::Color(0,0,0);
+	  w << ss;
 	}
-	w << ss;
       }
       else {
 	/*if (kdel_->visitor().contains(*fit) || kdel_->visitor().contains(TDS_helper::mirror_edge(*fit))){
