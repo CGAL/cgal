@@ -427,10 +427,10 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
     edges_->materialIndex.finishEditing();
   }
 
-  SoOutput out;
-  out.openFile("output.iv");
-  SoWriteAction wa(&out);
-  wa.apply(parent_.get());
+  //SoOutput out;
+  //out.openFile("output.iv");
+  //SoWriteAction wa(&out);
+  //wa.apply(parent_.get());
 };
 
 CGAL_KINETIC_END_NAMESPACE
