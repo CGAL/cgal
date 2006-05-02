@@ -5,8 +5,8 @@ The following functionality has been added or changed:
 1  All
 
 The following platforms are no longer supported:
- - MS Visual C++, version 7.0
  - SunPro CC versions 5.4 and 5.5 on Solaris
+ - SGI Mips Pro
 
 2 Installation
 
