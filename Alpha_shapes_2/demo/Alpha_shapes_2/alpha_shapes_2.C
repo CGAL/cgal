@@ -69,8 +69,7 @@ int main(int, char*)
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 
-const QString my_title_string(" Alpha_shapes_2 Demo with"
-			      " CGAL Qt_widget");
+const QString my_title_string(" 2D Alpha Shapes Demo");
 
 //Global variables
 Delaunay          tr1;
@@ -177,7 +176,7 @@ public:
   //the new drawing layers toolbar
   vtoolbar = new Layers_toolbar(widget, this, &tr1, &A, &image);
 
-  *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+  *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
 
   resize(w,h);
   widget->set_window(-1, 1, -1, 1);
@@ -477,7 +476,7 @@ private:
   QLabel                  *label;
 };
 
-#include "alpha_shapes_2.moc"
+#include "alpha_shapes_2.maac"
 
 
 int

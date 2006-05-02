@@ -18,7 +18,6 @@
 // Author(s)     : Radu Ursu
 
 //CGAL
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/squared_distance_2.h> 
 #include <CGAL/Delaunay_triangulation_2.h>
