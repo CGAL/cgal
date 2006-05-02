@@ -103,6 +103,7 @@ clean: \
                    Delaunay_triangulation_stable_subset_2.clean \
 		   SoQt_examiner_viewer.clean\
                    regular_triangulation_3.clean
+	rm -f SoQt_examiner_viewer.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules

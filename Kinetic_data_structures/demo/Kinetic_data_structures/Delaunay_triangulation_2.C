@@ -1,7 +1,7 @@
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
-#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_recent_edges_visitor_2.h>
 #include <CGAL/Kinetic/Enclosing_box_2.h>
@@ -10,8 +10,7 @@
 #include <CGAL/Kinetic/IO/Qt_widget_2.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Random.h>
-#include <CGAL/Random.h>
-#include <algorithm>
+
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
 #endif
@@ -41,12 +40,12 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  typedef CGAL::Kinetic::Exact_simulation_traits_2 Traits;
+  typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
   typedef CGAL::Triangulation_data_structure_2<
   CGAL::Triangulation_vertex_base_2<Traits::Instantaneous_kernel>,
     CGAL::Kinetic::Delaunay_triangulation_face_base_2<Traits> > TDS;
   typedef CGAL::Delaunay_triangulation_2<Traits::Instantaneous_kernel, TDS > Del;
-  typedef CGAL::Kinetic::Delaunay_triangulation_recent_edges_visitor_2<TDS> Visitor;
+  typedef CGAL::Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Del> Visitor;
   typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits, Visitor, Del> KDel;
   typedef CGAL::Kinetic::Qt_widget_2<Traits::Simulator> Qt_gui;
   typedef CGAL::Kinetic::Qt_moving_points_2<Traits, Qt_gui> Qt_mps;
@@ -97,6 +96,9 @@ int main(int argc, char *argv[])
     }
     std::cout << nread << " points read.\n";
   }
+
+  std::cout << "Green edges just flipped, black edges will not flip until"
+	    << " their certificate changes and red edges will flip." << std::endl;
 
   return qtsim->begin_event_loop();
 };
