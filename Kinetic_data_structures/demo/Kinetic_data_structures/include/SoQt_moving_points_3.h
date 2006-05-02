@@ -117,6 +117,7 @@ public:
     point_size_= 5;
     direction_of_time_=CGAL::POSITIVE;
     set_up_scene_graph(guil_.root());
+    sim->soqt_examiner_viewer_pointer()->getPointSizeLimits(point_size_bounds_, point_size_granularity_);
   };
 
   virtual ~SoQt_moving_points_3() {
@@ -240,9 +241,17 @@ protected:
     return ct;
   }
 
+  float fix_point_size(double ps) const {
+    if (ps <= point_size_bounds_[0]) return point_size_bounds_[0];
+    else if (ps >= point_size_bounds_[1]) return point_size_bounds_[1];
+    return ps;
+  }
+
   Draw_mode mode_;
   bool draw_labels_;
   double radius_;
+  SbVec2f point_size_bounds_;
+  float point_size_granularity_;
   double point_size_;
   SimTraits tr_;
   IK ik_;
@@ -404,7 +413,7 @@ void SoQt_moving_points_3<Tr, G>::set_up_scene_graph(SoSeparator* parent)
   parent->addChild(myevcb);
 
   style_=new SoDrawStyle;
-  style_->pointSize.setValue(point_size_);
+  style_->pointSize.setValue(fix_point_size(point_size_));
 
   coords_= new SoCoordinate3;
 

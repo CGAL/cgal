@@ -93,6 +93,10 @@ public:
     return base_->current_time();
   }
 
+  SoQt_examiner_viewer* soqt_examiner_viewer_pointer() const  {
+    return  viewer_;
+  }
+
   class Listener_core
   {
   public:
@@ -103,6 +107,7 @@ public:
     SoSeparator* root() {
       return parent_.get();
     }
+
     Listener_core(){}
   private:
     friend class SoQt_widget_3<Simulator_t>;

@@ -390,7 +390,7 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
 	++index;
 	coords[index]= facet_vertex(*ffi, 2)->point().index();
 	++index;
-	coords[index]= -1;
+	coords[index]= SO_END_LINE_INDEX;
 	++index;
 
 	mat[matindex]= id;
@@ -416,7 +416,7 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
 	++index;
 	coords[index]= edge_vertex(*fei, 1)->point().index();
 	++index;
-	coords[index]= -1;
+	coords[index]= SO_END_LINE_INDEX;
 	++index;
 
 	mat[matindex]= id;
