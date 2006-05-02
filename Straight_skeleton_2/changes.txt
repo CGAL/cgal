@@ -1,6 +1,6 @@
 26 March 2006 Fernando Cacciola
 - Even more fixes for VC8
-- More uses a the straight skeleton added to the docs
+- More uses of the straight skeleton added to the docs
 
 23 March 2006 Fernando Cacciola
 - More fixes for VC8
