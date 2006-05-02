@@ -125,6 +125,7 @@ namespace CGALi {
     }
   };
 
+#ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_ARRANGEMENT_TYPE_OUTPUT_OPERATOR
   static
   std::ostream& operator<<(std::ostream& os,
 			   const Sdg_arrangement_enum::Arrangement_type&
@@ -194,6 +195,7 @@ namespace CGALi {
 
     return os;
   }
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_ARRANGEMENT_TYPE_OUTPUT_OPERATOR
 
 } // namespace CGALi
 
