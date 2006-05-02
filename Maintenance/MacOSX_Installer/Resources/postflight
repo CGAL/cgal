@@ -8,5 +8,5 @@ if [ -e upgrade.cgal ]; then
   exit 0
 fi
 touch MacOSX-install.log
-./install_cgal -ni --CXX /usr/bin/g++ --CXXFLAGS "-Wno-long-long" >> $2/CGAL-3.2/MacOSX-install.log
+./install_cgal -ni --CXX /usr/bin/g++ >> $2/CGAL-3.2/MacOSX-install.log
 exit 0

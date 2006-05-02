@@ -1,4 +1,8 @@
-15 Appril 2006 Menelaos Karavelas
+2 May 2006 Menelaos Karavelas
+- removed the -Wno-long-long option from the set of custom compiler flags
+  passed to the CGAL install script during the MacOS X installation.
+
+15 April 2006 Menelaos Karavelas
 - added files and instructions for creating the MacOSX installer for CGAL
 
 9 March 2006
