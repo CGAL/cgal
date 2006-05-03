@@ -49,7 +49,8 @@ DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
                 gui_2$(EXE_EXT) \
                 generate_data$(EXE_EXT) \
                 Delaunay_triangulation_stable_subset_2$(EXE_EXT) 
-	@echo "Do install Coin (the headers should be Inventor/So.h etc.) and SoQt and do \"make 3d\" to make the 3d demos"
+	@echo "Do \"make 3d\" to build the 3d demos."
+	@echo "They require Coin and SoQt be available as #include <Inventor/someheader.h>."
 all: 2d
 
 
