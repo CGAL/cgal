@@ -52,6 +52,8 @@ the appropriate dimension as the primitive used in the
 
 \ccNestedType{Kinetic_kernel}{A model of \ccc{Kinetic::Kernel}.}
 
+\ccNestedType{Function_kernel}{A model of \ccc{Kinetic::FunctionKernel}.}
+
 \ccNestedType{Active_points_[123]_table}{A model of
   \ccc{Kinetic::ActiveObjectsTable} which holds the relevant kinetic
   primitives.}
@@ -67,6 +69,8 @@ used by all the kinetic data structures.}
 \ccMethod{Instantaneous_kernel instantaneous_kernel_object();}{Get a new instantaneous kernel.}
 
 \ccMethod{Kinetic_kernel kinetic_kernel_object();}{Get a new kinetic kernel.}
+
+\ccMethod{Function_kernel function_kernel_object();}{Get a new function kernel.}
 
 \ccMethod{Simulator::Handle simulator_handle();}{Return a pointer to the \ccc{Kinetic::Simulator} which is to be used in the simulation.}
 
