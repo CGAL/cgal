@@ -169,7 +169,7 @@ protected:
 
   typename Simulator::Function_kernel function_kernel_object() const
   {
-    return traits_.simulator_handle()->function_kernel_object();
+    return traits_.function_kernel_object();
   }
 
   Side try_bound(Side try_side, Point_key k,Side old_side,  double& old_time) const
