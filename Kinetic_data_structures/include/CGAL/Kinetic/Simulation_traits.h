@@ -60,9 +60,11 @@ public:
 
   typedef SimulatorC Simulator;
 
+  typedef typename Kinetic_kernel::Function_kernel Function_kernel;
+
   typedef typename KineticKernel::Function_kernel::Root Time;
 
-  Simulation_traits(const Time &lb, const Time &ub): sp_(new Simulator(lb, ub)){}
+  Simulation_traits(const Time &lb, const Time &ub): sp_(new Simulator(lb, ub, kk_.function_kernel_object())){}
   Simulation_traits(): sp_(new Simulator()) {
   }
 
@@ -73,10 +75,12 @@ public:
 
   const Static_kernel& static_kernel_object() const {return k_;}
   const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
+  const Function_kernel& function_kernel_object() const {return fk_;}
 
 protected:
   Static_kernel k_;
   Kinetic_kernel kk_;
+  Function_kernel fk_;
   typename Simulator::Handle sp_;
 };
 
