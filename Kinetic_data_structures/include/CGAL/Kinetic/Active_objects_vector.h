@@ -276,7 +276,7 @@ public:
     do {
       char buf[10000];
       in.getline(buf, 10000);
-      if (!in) break;
+      if (!in || buf[0]=='\0' || buf[0]=='#') break;
       std::istringstream iss(buf);
       Data d; 
       iss >> d;
