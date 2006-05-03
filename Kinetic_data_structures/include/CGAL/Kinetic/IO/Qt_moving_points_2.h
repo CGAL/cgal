@@ -108,7 +108,7 @@ protected:
   public:
     Guil(typename GUI::Handle &h, QtMP *t): Gui_listener(h), t_(t){}
     void new_notification(typename Gui_listener::Notification_type nt) {
-      if (nt== Gui_listener::PICTURE_IS_VALID && !P::notifier()->picture_is_valid()) {
+      if (nt== Gui_listener::PICTURE_IS_VALID) {
 	t_->draw();
       }
     }

@@ -68,8 +68,8 @@ public:
   Qt_triangulation_2(typename Kinetic_Delaunay::Handle &kdel,
 		     typename Qt_gui::Handle &gui,
 		     typename Qt_mpt::Handle &mps): mpt_(mps),
-						     listener_(gui, this),
-						     kdel_(kdel) {
+						    listener_(gui, this),
+						    kdel_(kdel) {
   }
 
 protected:
@@ -94,14 +94,15 @@ protected:
 
   void set_color(const Edge &e, CGAL::Qt_widget &w,
 		 const REV& ) const {
+    w << CGAL::LineWidth(2);
     if (!TDS_helper::get_undirected_edge_label(e)) {
       w << CGAL::Color(125,125,125);
     } else if (kdel_->visitor().contains(e) || kdel_->visitor().contains(TDS_helper::mirror_edge(e))) {
       w<< CGAL::Color(0,255,0);
     } else if (TDS_helper::get_undirected_edge_label(e) == kdel_->simulation_traits_object().simulator_handle()->null_event()){
-      w << CGAL::Color(0,0,0);
+      w << CGAL::Color(125,125,125);
     } else {
-      w << CGAL::Color(255,0,0);
+      w << CGAL::Color(0,0,0);
     }
   }
 

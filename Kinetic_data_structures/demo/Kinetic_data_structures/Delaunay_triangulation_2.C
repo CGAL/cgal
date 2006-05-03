@@ -59,9 +59,10 @@ int main(int argc, char *argv[])
   KDel::Handle kdel= new KDel(tr);
 
   Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
-  Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
 
+  Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
   Qt_triangulation::Handle qtdel= new Qt_triangulation(kdel, qtsim, qtmps);
+ 
 
   if (file.empty()) {
     CGAL::Random rand;
@@ -71,8 +72,10 @@ int main(int argc, char *argv[])
 	coefsx.push_back((rand.get_double()*10-5)/(j+1));
 	coefsy.push_back((rand.get_double()*10-5)/(j+1));
       }
-      Traits::Kinetic_kernel::Point_2 mp(Traits::Kinetic_kernel::Motion_function(coefsx.begin(), coefsx.end()),
-					 Traits::Kinetic_kernel::Motion_function(coefsy.begin(), coefsy.end()));
+      Traits::Kinetic_kernel::Point_2 mp(Traits::Kinetic_kernel::Motion_function(coefsx.begin(), 
+										 coefsx.end()),
+					 Traits::Kinetic_kernel::Motion_function(coefsy.begin(),
+										 coefsy.end()));
       tr.active_points_2_table_handle()->insert(mp);
       //std::cout << mp << std::endl;
     }
@@ -97,9 +100,9 @@ int main(int argc, char *argv[])
     std::cout << nread << " points read.\n";
   }
 
-  std::cout << "Green edges just flipped, black edges will not flip until"
-	    << " their certificate changes and red edges will flip." << std::endl;
-
+  std::cout << "Green edges just flipped, grey edges will not flip until"
+	    << " their certificate changes and black edges will flip." << std::endl;
+  
   return qtsim->begin_event_loop();
 };
 #else

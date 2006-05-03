@@ -100,7 +100,7 @@ public:
 
   //! start the gui
   int begin_event_loop() {
-    draw();
+    widget()->set_picture_is_current(false);
     return app_->exec();
   }
 
@@ -171,6 +171,8 @@ public:
       if (nt == QTL::PICTURE_IS_CURRENT) {
 	if (!widget()->picture_is_current()) {
 	  t_->draw();
+	} else {
+	  //std::cout << "Not drawing...\n";
 	}
       }
     }
@@ -180,15 +182,13 @@ public:
     Container *t_;
   };
 
-
-protected:
-
   //! Gui will call output_drawing
   void draw() {
+    //std::cout << "GUI: Starting drawing.\n";
     //CGAL_KINETIC_LOG(LOG_LOTS, "GUI: Drawing in gui.\n");
     for (typename std::set<Listener*>::iterator dit= drawables_.begin();
 	 dit != drawables_.end(); ++dit) {
-      //log()->stream(Log::LOTS) << "GUI: Drawing something.\n";
+      //std::cout << "GUI: Drawing something " << *dit << ".\n";
       (*dit)->new_notification(Listener::PICTURE_IS_VALID);
     }
   }
@@ -200,7 +200,8 @@ private:
     CGAL_KINETIC_LOG(LOG_SOME, "GUI: Registered a drawable.\n");
     drawables_.insert(d);
     d->set_widget(widget());
-    //widget()->set_picture_is_current(false);
+    //
+    //d->new_notification(PICTURE_IS_VALID);
   }
   void delete_listener(Listener* d) {
     CGAL_KINETIC_LOG(LOG_SOME,"GUI: Unregistered a drawable.\n");
