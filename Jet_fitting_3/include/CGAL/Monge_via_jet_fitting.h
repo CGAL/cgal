@@ -349,7 +349,7 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
   Cov.set_elt(1,1,yy);
   Cov.set_elt(1,2,yz);
   Cov.set_elt(2,0,xz);
-  Cov.set_elt(2,2,yz);
+  Cov.set_elt(2,1,yz);
   Cov.set_elt(2,2,zz);
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order, 
@@ -360,9 +360,11 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
   monge_info.pca_eigen_vals()[0] = eval[2];//implicit cast LAFT->LFT
   LVector temp_vectn(evec.get_elt(0,2),evec.get_elt(1,2),evec.get_elt(2,2));
       monge_info.pca_eigen_vecs()[0] = temp_vectn;
+
   monge_info.pca_eigen_vals()[1] = eval[1];
   LVector temp_vect1(evec.get_elt(0,1),evec.get_elt(1,1),evec.get_elt(2,1));
       monge_info.pca_eigen_vecs()[1] = temp_vect1;
+
   monge_info.pca_eigen_vals()[2] = eval[0];
   LVector temp_vect2(evec.get_elt(0,0),evec.get_elt(1,0),evec.get_elt(2,0));
       monge_info.pca_eigen_vecs()[2] = temp_vect2;

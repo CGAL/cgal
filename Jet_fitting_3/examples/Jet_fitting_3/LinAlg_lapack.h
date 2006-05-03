@@ -66,13 +66,27 @@ void GSL::eigen_symm_algo(Matrix& S, double* eval, Matrix& evec)
     liwork = 10*n,
     info;
   double vl=0, vu=0, abstol = 0;
-  integer* isuppz = (integer*) malloc(n*sizeof(integer));
-  double* work = (double*) malloc(lwork*sizeof(double));
-  integer* iwork = (integer*) malloc(liwork*sizeof(integer));
+/*   //c style */
+/*   integer* isuppz = (integer*) malloc(n*sizeof(integer)); */
+/*   double* work = (double*) malloc(lwork*sizeof(double)); */
+/*   integer* iwork = (integer*) malloc(liwork*sizeof(integer)); */
+  //c++ style
+   integer* isuppz;
+  isuppz = new integer [n];
+  double* work = new double [lwork];
+  integer* iwork = new integer [liwork]; 
 
   dsyevr_(&jobz, &range, &uplo, &n, S.matrix(), &lda, &vl, &vu, &il, &iu, &abstol, &m,
 	  eval, evec.matrix(), &n, isuppz, work, &lwork, iwork, &liwork, &info);
-  
+   
+/*   //clean up  */
+/*   free(isuppz); */
+/*   free(work); */
+/*   free(iwork); */
+/*    //C++ style */
+   delete [] isuppz;
+   delete [] work;
+   delete [] iwork;
 }
 
 void GSL::solve_ls_svd_algo(Matrix& M, double* B, double &cond_nb)
@@ -85,18 +99,27 @@ void GSL::solve_ls_svd_algo(Matrix& M, double* B, double &cond_nb)
     rank,
     lwork = 5*m,
     info;
-  double* sing_values = (double*) malloc(n*sizeof(double));
-  double* work = (double*) malloc(lwork*sizeof(double));
+/*   //c style */
+/*   double* sing_values = (double*) malloc(n*sizeof(double)); */
+/*   double* work = (double*) malloc(lwork*sizeof(double)); */
+  //c++ style
+  double* sing_values = new double [n];
+  double* work = new double [lwork];
+ 
   double rcond = -1;
 
-  dgelss_(&m, &n, &nrhs, M.matrix(), &lda, B, &ldb, sing_values, &rcond, &rank, work, &lwork, &info);
+  dgelss_(&m, &n, &nrhs, M.matrix(), &lda, B, &ldb, sing_values, 
+	  &rcond, &rank, work, &lwork, &info);
   assert(info==0);
 
   cond_nb = sing_values[0]/sing_values[n-1];
   
-  //clean up 
-  free(sing_values);
-  free(work);
+/*   //clean up  */
+/*   free(sing_values); */
+/*   free(work); */
+//c++ style
+   delete [] sing_values;
+  delete [] work;
 }
 
 #endif
