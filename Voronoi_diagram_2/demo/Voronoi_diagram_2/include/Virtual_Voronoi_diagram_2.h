@@ -42,6 +42,9 @@ struct Virtual_Voronoi_diagram_2
   typedef GlobalRep ::Point_2   Point_2;
   typedef GlobalRep::Circle_2  Circle_2;
   
+  // virtual destructor
+  virtual ~Virtual_Voronoi_diagram_2() {}
+
   // insert a site
   virtual void insert(const Point_2&) = 0;
   virtual void insert(const Circle_2&) = 0;
