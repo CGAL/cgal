@@ -24,6 +24,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/internal/tds_2_helpers.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_recent_edges_visitor_2.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
@@ -39,6 +40,8 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<Kinetic_Delaunay
   // in icc Qt_gui::Listener::This captures This so I need to change the name
   //typedef This Qt_tri;;
   typedef internal::Triangulation_data_structure_helper_2<typename Kinetic_Delaunay::Triangulation::Triangulation_data_structure> TDS_helper;
+
+  typedef typename TDS_helper::Edge Edge;
 
   // maybe icl wants the class definition before the useage. 
 typedef typename Qt_gui::Listener QTL;
@@ -76,6 +79,32 @@ protected:
     It calls the draw method when it recieves a notification.
   */
 
+  template <class V>
+  void set_color(const Edge &e, CGAL::Qt_widget &w, const V &) const {
+    if (!TDS_helper::get_undirected_edge_label(e)) {
+      w << CGAL::Color(125,125,125);
+    } else if (TDS_helper::get_undirected_edge_label(e) == kdel_->simulation_traits_object().simulator_handle()->null_event()){
+      w << CGAL::Color(0,0,0);
+    } else {
+      w << CGAL::Color(255,0,0);
+    }
+  }
+
+  typedef Delaunay_triangulation_recent_edges_visitor_2<typename Kinetic_Delaunay::Triangulation> REV;
+
+  void set_color(const Edge &e, CGAL::Qt_widget &w,
+		 const REV& ) const {
+    if (!TDS_helper::get_undirected_edge_label(e)) {
+      w << CGAL::Color(125,125,125);
+    } else if (kdel_->visitor().contains(e) || kdel_->visitor().contains(TDS_helper::mirror_edge(e))) {
+      w<< CGAL::Color(0,255,0);
+    } else if (TDS_helper::get_undirected_edge_label(e) == kdel_->simulation_traits_object().simulator_handle()->null_event()){
+      w << CGAL::Color(0,0,0);
+    } else {
+      w << CGAL::Color(255,0,0);
+    }
+  }
+
   //! Draw the triangulation.
   void draw( CGAL::Qt_widget &w, double t) const
   {
@@ -94,15 +123,7 @@ protected:
       Static_point p0= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
       Static_point p1= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
       Static_segment ss(p0, p1);
-      if (!TDS_helper::get_undirected_edge_label(*fit)) {
-	w << CGAL::Color(125,125,125);
-      }
-      else if (kdel_->visitor().contains(*fit) || kdel_->visitor().contains(TDS_helper::mirror_edge(*fit))) {
-	w<< CGAL::Color(0,255,0);
-      }
-      else {
-	w << CGAL::Color(0,0,0);
-      }
+      set_color(*fit, w, kdel_->visitor());
       w << ss;
     }
   }
