@@ -104,16 +104,17 @@ std::ostream& operator<<(std::ostream &out, const Delaunay_hull_edge_failure_eve
 /*!  Points are added via the Moving_point_table, so the public
   interface is very limited. See kinetic_Delaunay_2.cc for a useage example.
 */
-template <class Simulation_traits, class Visitor= Delaunay_triangulation_visitor_base_2,
+template <class Simulation_traits_t, class Visitor= Delaunay_triangulation_visitor_base_2,
 	  class Delaunay
-	  = CGAL::Delaunay_triangulation_2<typename Simulation_traits::Instantaneous_kernel,
+	  = CGAL::Delaunay_triangulation_2<typename Simulation_traits_t::Instantaneous_kernel,
 					   CGAL::Triangulation_data_structure_2<
-	    CGAL::Triangulation_vertex_base_2<typename Simulation_traits::Instantaneous_kernel>,
-	    CGAL::Kinetic::Delaunay_triangulation_face_base_2<Simulation_traits > > > >
+	    CGAL::Triangulation_vertex_base_2<typename Simulation_traits_t::Instantaneous_kernel>,
+	    CGAL::Kinetic::Delaunay_triangulation_face_base_2<Simulation_traits_t > > > >
 class Delaunay_triangulation_2:
-  public Ref_counted<Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay> >
+  public Ref_counted<Delaunay_triangulation_2<Simulation_traits_t, Visitor, Delaunay> >
 {
 public:
+  typedef Simulation_traits_t Simulation_traits;
   typedef Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay> This;
 
   typedef typename Simulation_traits::Kinetic_kernel Kinetic_kernel;
@@ -177,6 +178,10 @@ public:
     //update_instantaneous_kernel_time();
     del_.geom_traits().set_time(t);
     return del_;
+  }
+
+  const Simulation_traits& simulation_traits_object() const {
+    return traits_;
   }
 
   typedef typename Delaunay::Triangulation_data_structure Triangulation_data_structure;
