@@ -30,7 +30,7 @@ int main(int, char *[])
   
  typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
  Tr tr;
- Tr::Simulator::Function_kernel::Function fn= tr.simulator_handle()->function_kernel_object().construct_function_object()(1,0,-2);
+ Tr::Simulator::Function_kernel::Function fn= tr.kinetic_kernel_object().function_kernel_object().construct_function_object()(1,0,-2);
  check_nt(Tr::Simulator::Time(-1));
  
  return EXIT_SUCCESS;
