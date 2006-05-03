@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_SIMULATOR_BASE_H_
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
-#include <set>
+#include <vector>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Multi_listener.h>
@@ -141,13 +141,14 @@ public:
 
   //! Create a simulator passing the start time and the end time.
   Simulator(const Time &start_time=Time(0.0),
-            const Time &end_time= internal::infinity_or_max(Time())):queue_(start_time, end_time, kernel_, 100),
-								     cur_time_(start_time),
-								     end_time_(end_time),
-								     last_event_time_(-internal::infinity_or_max(Time())),
-								     mp_(kernel_.rational_between_roots_object()),
-								     ir_(kernel_.is_rational_object()),
-								     tr_(kernel_.to_rational_object()) {
+            const Time &end_time= internal::infinity_or_max(Time()),
+	    Function_kernel fk=Function_kernel()):queue_(start_time, end_time, fk, 100),
+				cur_time_(start_time),
+				last_event_time_(-internal::infinity_or_max(Time())),
+				mp_(fk.rational_between_roots_object()),
+				ir_(fk.is_rational_object()),
+				tr_(fk.to_rational_object()),
+				is_forward_(true) {
     number_of_events_=0;
 #ifdef CGAL_KINETIC_SIMULATOR_AUDITING
     // make it less than the current time.
@@ -156,34 +157,6 @@ public:
     audit_time_= -internal::infinity_or_max(NT());
 #endif
   };
-
-  //! Create a root enumerator for a particular function.
-  /*!  If the polynomial passed in is currently 0, then the failure
-    time will be the current time, otherwise, it will be the first
-    root after the current time.
-  */
-  /*Root_stack root_stack_object(const typename Function_kernel::Function &mf) const
-  {
-    CGAL_KINETIC_LOG(LOG_LOTS, "Solving " << mf << std::endl);
-    CGAL_exactness_assertion_code(typename Function_kernel::Sign_at sar=kernel_.sign_at_object(mf));
-    CGAL_exactness_assertion_code(if (sar(current_time())== CGAL::NEGATIVE) {
-				    std::cerr << "Invalid certificate with function "
-					      << std::endl << "In interval from "
-					      << current_time() << std::endl <<"to " << end_time()
-					      << std::endl;
-				  });
-    CGAL_exactness_assertion(sar(current_time())!= CGAL::NEGATIVE);
-
-    return Root_stack(mf, current_time(), end_time(), kernel_.root_stack_traits_object());
-    }*/
-  //! return the polynomial kernel
-  /*!
-    I am not sure this is useful and it possibly should be removed.
-  */
-  const Function_kernel &function_kernel_object() const
-  {
-    return kernel_;
-  }
 
   //! Return the current time
   /*!  If an event is currently being processed, then this is the
@@ -220,6 +193,12 @@ public:
     cur_time_=std::min(t, end_time());
   }
 
+  //! Not clear if I want two methods
+  void set_back_current_time(const Time &t) {
+    CGAL_precondition(t <=cur_time_);
+    cur_time_=t;
+  }
+
   //! Return a rational number for current time.
   /*!  This returns a ration number representing the current
     time. This only returns a valid time if
@@ -244,8 +223,8 @@ public:
 	return NT(ub);
       }
       else {
-	typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-	return bet(last_event_time(), next_event_time());
+	//typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
+	return mp_(last_event_time(), next_event_time());
       }
     }
 
@@ -298,8 +277,8 @@ public:
   */
   Time end_time() const
   {
-    if (end_time_ > cur_time_) {
-      return end_time_;
+    if (is_forward_) {
+      return queue_.end_priority();
     }
     else {
       return std::numeric_limits<Time>::infinity();
@@ -312,8 +291,8 @@ public:
     to ensure that no events were missed.
   */
   void set_end_time(const Time &t) {
-    CGAL_precondition(cur_time_==end_time_);
-    end_time_= t;
+    CGAL_precondition(cur_time_==end_time());
+    //end_time_= t;
     queue_.set_end_priority(t);
   }
 
@@ -326,7 +305,7 @@ public:
   */
   template <class E>
   Event_key new_event(const Time &t, const E& cert) {
-    CGAL_exactness_precondition(!(t < current_time()));
+    //CGAL_exactness_precondition(!(t < current_time()));
     //if (cert.time() == Time::infinity()) return final_event();
 
     if (!( t < end_time())){
@@ -348,6 +327,7 @@ public:
     //}
   }
 
+ 
   //! The key corresponding to events which never occur.
   /*!  Events can never occur if their time is past the end time or
     their certificate function has no roots.
@@ -460,7 +440,7 @@ public:
   //! Return the direction of time.
   CGAL::Sign direction_of_time() const
   {
-    if (current_time() < end_time_) return CGAL::POSITIVE;
+    if (is_forward_) return CGAL::POSITIVE;
     else return CGAL::NEGATIVE;
   }
 
@@ -526,8 +506,8 @@ protected:
     ++number_of_events_;
 #ifdef CGAL_KINETIC_SIMULATOR_AUDITING
     if (cur_time_ != next_event_time()) {
-      typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-      audit_time_= bet(cur_time_, next_event_time());
+      //typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
+      audit_time_= mp_(cur_time_, next_event_time());
       CGAL_KINETIC_LOG(LOG_SOME, "Next audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
 	audit_all_kdss();
@@ -562,24 +542,36 @@ private:
   */
   void new_listener(Listener *sk) {
     //std::cout << "new sim listener.\n";
-    kdss_.insert(sk);
+#ifndef NDEBUG
+    for (unsigned int i=0; i< kdss_.size(); ++i){
+      CGAL_precondition(kdss_[i] != sk);
+    }
+#endif
+    kdss_.push_back(sk);
   }
 
   //! Remove a kds
   void delete_listener(Listener *kds) {
     //std::cout << "delete sim listener.\n";
-    kdss_.erase(kds);
+    //kdss_.erase(kds);
+    for (unsigned int i=0; i< kdss_.size(); ++i){
+      if (kdss_[i] == kds) {
+	std::swap(kdss_[i], kdss_.back());
+	kdss_.pop_back();
+	return;
+      }
+    }
   }
 
 protected:
   Queue queue_;
-  std::set<Listener*> kdss_;
-  Time cur_time_, end_time_, last_event_time_;
+  std::vector<Listener*> kdss_;
+  Time cur_time_,  last_event_time_;
   unsigned int number_of_events_;
-  Function_kernel kernel_;
   typename Function_kernel::Rational_between_roots mp_;
   typename Function_kernel::Is_rational ir_;
   typename Function_kernel::To_rational tr_;
+  bool is_forward_;
 #ifdef CGAL_KINETIC_SIMULATOR_AUDITING
   NT audit_time_;
 #endif
@@ -621,24 +613,25 @@ void Simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
     }
 
     if (tdt >= next_event_time()) {
-      typename Function_kernel::Rational_between_roots rbr= kernel_.rational_between_roots_object();
-      tnt= rbr(cur_time_, next_event_time());
+      //typename Function_kernel::Rational_between_roots rbr= kernel_.rational_between_roots_object();
+      tnt= mp_(cur_time_, next_event_time());
       tdt= Time(tnt);
     }
 
     cur_time_= Time(-tnt);
 
-    end_time_=-end_time_;
+    is_forward_= !is_forward_;
+    //end_time_=-end_time_;
     last_event_time_= -std::numeric_limits<Time>::infinity();
     CGAL_KINETIC_LOG(LOG_SOME, "Current time is " << cur_time_ << " and was " << oct
-		 << ", end_time_ is " << end_time_ << " end_time() is " << end_time() << std::endl);
-    for (typename std::set<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
+		 << ", end_time() is " << end_time() << std::endl);
+    for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
       (*it)->new_notification(Listener::DIRECTION_OF_TIME);
       //std::cout << "called on something.\n";
     }
   }
   else {
-    CGAL_KINETIC_LOG(LOG_SOME, dir << " " << end_time_ << " " << cur_time_ << std::endl);
+    CGAL_KINETIC_LOG(LOG_SOME, dir << " " << end_time() << " " << cur_time_ << std::endl);
   }
 }
 
@@ -649,7 +642,7 @@ void Simulator<S, PQ>::audit_all_kdss()
 #ifdef CGAL_KINETIC_CHECK_EXPENSIVE
   cur_time_= Time(audit_time_);
   CGAL_KINETIC_LOG(LOG_SOME, "Auditing KDSs at time " << rational_current_time() << std::endl);
-  for (typename std::set<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
+  for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
     //CGAL_exactness_postcondition_code((*it)->new_notification(Listener::HAS_VERIFICATION_TIME));
     CGAL_postcondition_code((*it)->new_notification(Listener::HAS_AUDIT_TIME));
   }

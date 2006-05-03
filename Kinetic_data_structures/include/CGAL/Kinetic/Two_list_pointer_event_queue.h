@@ -311,7 +311,7 @@ public:
 										       step_(1),
 										       ub_is_inf_(false){
     //std::cout << "UB is " << ub_ << std::endl;
-    null_event_= new internal::Two_list_event_queue_dummy_item<Priority>();
+    //null_event_= 
     //if (end_time != std::numeric_limits<Priority>::infinity()){
     set_end_priority(end_time);
       /*} else {
@@ -354,7 +354,7 @@ public:
     }
     else if (front_.empty()) {
       CGAL_assertion(back_.empty());
-      if (t < end_time()) {
+      if (t < end_priority()) {
 	++queue_front_insertions__;
 	front_.push_back(*ni);
 	ub_= NT(to_interval(tii_(t).second).second);
@@ -394,7 +394,7 @@ public:
   */
   void erase(const Key &item) {
     //std::cout << "Erase event " << item.pointer() << std::endl;
-    if (item== null_event_) return;
+    if (item== end_key()) return;
     CGAL_expensive_precondition(is_in_queue(item));
     CGAL_expensive_precondition(audit());
     Item *i=item.get();
@@ -538,7 +538,8 @@ public:
 
   Key end_key() const
   {
-    return null_event_;
+    static Key null_event=new internal::Two_list_event_queue_dummy_item<Priority>();
+    return null_event;
   }
 
   void clear() {
@@ -548,7 +549,7 @@ public:
 
   const Priority& end_priority() const
   {
-    return end_time();
+    return end_time_;
   }
 
   void set_end_priority(const Priority &o) {
@@ -573,11 +574,11 @@ protected:
     if (end_time_== std::numeric_limits<Priority>::infinity()){
       return false;
     } else {
-      return Priority(nt) > end_time();
+      return Priority(nt) > end_priority();
     }
   }
   bool past_end(const Priority &nt) const {
-    return nt >= end_time();
+    return nt >= end_priority();
   }
 
   template <class E>
@@ -608,7 +609,7 @@ protected:
 #ifndef NDEBUG
     for (unsigned int i=0; i< inf_.size(); ++i) {
       Priority t= inf_[i]->time();
-      CGAL_assertion(t >= end_time());
+      CGAL_assertion(t >= end_priority());
       CGAL_assertion(inf_[i]->in_list() == Item::INF);
     }
 #endif
@@ -732,7 +733,7 @@ protected:
 	bool mp_found=false;
 	//(end_split());
 	for (typename Queue::iterator it = cand.begin(); it != cand.end(); ++it) {
-	  if (it->time() < end_time()) {
+	  if (it->time() < end_priority()) {
 	    mp = it->time();
 	    mp_found=true;
 	  }
@@ -868,10 +869,10 @@ protected:
     return end_split_;
     }*/
 
-  Priority end_time() const
+  /*const Priority& end_time() const
   {
     return end_time_;
-  }
+    }*/
 
   unsigned int max_front_size() const
   {
@@ -884,7 +885,6 @@ protected:
 #ifndef NDEBUG
   std::vector<Key> inf_;
 #endif
-  Key null_event_;
   NT ub_, step_;
   bool ub_is_inf_;
   Priority end_time_;
