@@ -172,7 +172,7 @@ int main(int, char *[])
   Traits::Simulator::Handle sp=tr.simulator_handle();
 
   Traits::Simulator::Function_kernel::Construct_function cf
-    = sp->function_kernel_object().construct_function_object();
+    = tr.kinetic_kernel_object().function_kernel_object().construct_function_object();
 
   tk->set_has_certificates(true);
 
