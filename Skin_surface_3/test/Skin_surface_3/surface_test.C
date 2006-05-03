@@ -53,7 +53,7 @@ typedef Triangulated_mixed_complex::Finite_vertices_iterator
 #include <fstream>
 
 int main(int argc, char *argv[]) {
-  double shrink = .85;
+  double shrink = .5;
   std::list<Weighted_point> l;
 
   while (argc>1) {
@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
 
     for (Tmc_Finite_vertices_iterator vit = tmc.finite_vertices_begin();
 	 vit != tmc.finite_vertices_end(); vit++) {
+      std::cout <<  std::endl;
       if (tmc.is_infinite(vit->cell())) {
 	std::cerr << "ERROR: is_infinite (main)" << std::endl;
       }
@@ -82,7 +83,7 @@ int main(int argc, char *argv[]) {
 	   cell != cells.end(); cell++) {
 	if (!tmc.is_infinite(*cell)) {
 	  Quadratic_surface::RT val2 = (*cell)->surf->value(vit->point());
-	  CGAL_assertion(val == val2);
+ 	  CGAL_assertion(val == val2);
 	}
       }
     }

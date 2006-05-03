@@ -67,9 +67,9 @@ public:
 //   typedef typename Triangulated_mixed_complex_traits::RT             TMC_RT;
 //   typedef Weighted_point<TMC_Point,TMC_RT>        TMC_Weighted_point;
 
-//   typedef Skin_surface_quadratic_surface_3<Polyhedron_traits> QuadrSurface;
-  typedef Skin_surface_sphere_3<Surface_traits>         Sphere_surface;
-  typedef Skin_surface_hyperboloid_3<Surface_traits>    Hyperboloid_surface;
+  typedef Skin_surface_quadratic_surface_3<Surface_traits> Quadratic_surface;
+//   typedef Skin_surface_sphere_3<Surface_traits>         Sphere_surface;
+//   typedef Skin_surface_hyperboloid_3<Surface_traits>    Hyperboloid_surface;
 
   typedef Weighted_converter_3< 
     Cartesian_converter < typename Regular_traits::Bare_point::R, 
@@ -111,8 +111,9 @@ public:
 	{
 	  vh = s;
 	  create_sphere(r2s_converter(vh->point().point()),
-			r2s_converter(vh->point().weight()),
-			shrink);
+			-r2s_converter(vh->point().weight()),
+			shrink,
+			1);
 	  break;
 	}
       case 1:
@@ -170,7 +171,8 @@ public:
 	      r2s_converter(ch->vertex(1)->point()),
 	      r2s_converter(ch->vertex(2)->point()),
 	      r2s_converter(ch->vertex(3)->point())),
-	     shrink-1);
+	     1-shrink,
+	     -1);
 	}
       }
     }
@@ -183,22 +185,34 @@ public:
 
   void create_sphere(const Surface_point &c,
 		     const Surface_RT &w,
-		     const Surface_RT &s) {
-    if (s >= 0) {
-      surf = new Sphere_surface(Surface_weighted_point(c,w), s, 1);
-    } else {
-      surf = new Sphere_surface(Surface_weighted_point(c,w), -s, -1);
-    }
+		     const Surface_RT &s,
+		     const int orient) {
+    Q[1] = Q[3] = Q[4] = 0;
+    Q[0] = Q[2] = Q[5] = orient*(1-s);
+    
+    surf = new Quadratic_surface(Q, c, s*(1-s)*w);
   }
 
   void create_hyperboloid(const Surface_point &c,
 			  const Surface_RT &w,
-			  const Surface_vector &v,
+			  const Surface_vector &t,
 			  const Surface_RT &s,
-			  int orient) {
-    surf = new Hyperboloid_surface(Surface_weighted_point(c,w), v, s, orient);
+			  const int orient) {
+    Surface_RT den = t*t;
+    
+    Q[0] = orient*(-  t.x()*t.x()/den + (1-s));
+    
+    Q[1] = orient*(-2*t.y()*t.x()/den);
+    Q[2] = orient*(-  t.y()*t.y()/den + (1-s));
+    
+    Q[3] = orient*(-2*t.z()*t.x()/den);
+    Q[4] = orient*(-2*t.z()*t.y()/den);
+    Q[5] = orient*(-  t.z()*t.z()/den + (1-s));
+    
+    surf = new Quadratic_surface(Q, c, s*(1-s)*w);
   }
 
+  Surface_RT Q[6];
   R2S_converter r2s_converter;
 };
 
