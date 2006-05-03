@@ -1,4 +1,5 @@
-$(CGALROOT)/INSTALL.win32 for CGAL
+$CGAL/INSTALL.win32
+----------------------------------------------------------------------
 
 This file describes how to install CGAL on MS Windows for 
 Developer Studio (VC++ .NET 2003, and 2005)

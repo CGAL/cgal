@@ -1,4 +1,4 @@
-$(CGAL_HOME)/INSTALL
+$CGAL/INSTALL
 -------------------------------------------------------------------------------
 This file describes how to install CGAL on Unix or Unix-like systems
 such as Linux, Solaris, Irix, and Cygwin on Windows. For installation

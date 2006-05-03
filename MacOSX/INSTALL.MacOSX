@@ -1,4 +1,4 @@
-$(CGALROOT)/INSTALL.MacOSX for CGAL
+$CGAL/INSTALL.MacOSX
 -----------------------------------------------------------------------------
 This file describes how to install CGAL on the MacOSX operating
 system. CGAL has been tested on Panther and Tiger. The instructions
