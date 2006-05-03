@@ -13,7 +13,9 @@
 **************************************************************************/
 
 #include <output.h>
+#include <sstream>
 #include <fstream>
+#include <cassert>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -50,9 +52,12 @@ ostream* main_stream         = 0;
 ostream* description_stream  = 0;
 ostream* class_stream        = 0;
 ostream* contents_stream     = 0;
+ostream* short_contents_stream = 0;
 ostream* index_stream = 0;
 ostream* HREF_stream = 0;
 ostream* HREF_counter_stream = 0;
+
+ostringstream* savebox_stream = new ostringstream;
 
 string   pre_main_filename;
 string   main_filename = "<cout>";
@@ -205,6 +210,10 @@ void set_current_output( const string& key) {
         current_output = Output_file( contents_stream,
                                       macroX( "\\lciContentsFilename") );
         anchor_stream = global_anchor_stream;
+    } else if ( key == "shorttoc") {
+        current_output = Output_file( short_contents_stream,
+                                      macroX( "\\lciShortContentsFilename") );
+        anchor_stream = global_anchor_stream;
     } else if ( key == "index") {
         current_output = Output_file( index_stream,
                                       macroX( "\\lciIndexFilename") );
@@ -213,6 +222,19 @@ void set_current_output( const string& key) {
     } else if ( key == "anchor") {
         current_output = Output_file( anchor_stream,
                                       macroX( "\\lciAnchorFilename") );
+        new_filename = false;
+    } else if ( key == "savebox" ) {
+        current_output = Output_file( savebox_stream, "savebox" );
+        new_filename = false;
+    } else if ( key == "savestream" ) {
+        string savestream_name = macroX( "\\lciSaveStreamName" );
+        ostream* savestream = savestream_get( savestream_name );
+        if( savestream != NULL )
+          current_output = Output_file( savestream, string("savestream") + savestream_name );
+        else {
+          std::cerr << "!! Error: savestream \"" << savestream_name << "\" unknown!" << std::endl;
+          return;
+        }
         new_filename = false;
     } else {
         printErrorMessage( OutputStackKeyError);
@@ -250,6 +272,48 @@ void push_current_output_w_filename( const string& filename) {
     insertInternalGlobalMacro( "\\lciOutputRootname",current_rootname);
     insertInternalGlobalMacro( "\\lciOutputPath",    current_filepath);
     insertInternalGlobalMacro( "\\lciOutputUppath",  current_uppath);
+}
+
+
+typedef hash_map< string, ostream* > Savestream_table;
+Savestream_table savestream_table;
+
+void
+savestream_open( const string& name ) {
+  Savestream_table::iterator it = savestream_table.find( name );
+  if( it != savestream_table.end() )
+    std::cerr << "!! Error: savestream \"" << name << "\" already open!" << std::endl;
+  else
+    savestream_table[ name ] = new ostringstream;
+}
+
+ostream*
+savestream_get( const string& name ) {
+  Savestream_table::iterator it = savestream_table.find( name );
+  if( it != savestream_table.end() )
+    return it->second;
+  else
+    return NULL;
+}
+
+string
+savestream_use( const string& name ) {
+  ostream *out = savestream_get( name );
+  if( out != NULL ) {
+    ostringstream *sout = dynamic_cast<ostringstream*>(out);
+    assert( sout != NULL );
+    return "\\lcRawHtml{" + sout->str() + "}";
+  }
+  return string();
+}
+
+void
+savestream_close( const string& name ) {
+  ostream *out = savestream_get( name );
+  if( out != NULL ) {
+    delete out;
+    savestream_table[name] = NULL;
+  }
 }
 
 // EOF //

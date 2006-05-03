@@ -15,6 +15,19 @@
 % copy the corresponding CSS file
 \lciCopyCSSFile{modern}
 
+
+\newcommand{\lciMirroredTocEntry}[1]{%
+  \begin{savebox}{\mysavebox}
+    #1
+  \end{savebox}
+  \lciPushOutput{toc}%
+    \usebox{\mysavebox}%
+  \lciPopOutput
+  \lciPushOutput{shorttoc}%
+    \usebox{\mysavebox}%
+  \lciPopOutput
+}
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
@@ -43,40 +56,32 @@
 
 }}
 
-% FIXME: why is there a variable ccBiblioFilename, if biblio.html is still hardcoded?
-% Args: none
-\newcommand{\lciHtmlNavigationTop}{\lcRawHtml{
-<!-- Top Navigation ---------------------------------------------------- -->
-<div class="NavTop">
-<hr>
-  <strong>Navigation:</strong>}
+\newcommand{\lciHtmlNavigation}{
+  \lcRawHtml{<strong>Navigation:</strong>}
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
   \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}}
-  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
+  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{shortcontents.html">Short Table of Contents</A>,
+  <a href="}\lciOutputUppath\lcRawHtml{contents.html">Long Table of Contents</A>,
   <a href="}\lciOutputUppath\lcRawHtml{pkgdescription.html">Package Description</a>,
   <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
   <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
-  <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>
-<hr><!-- End of Top Navigation ----------------------------------------- -->
-</div>
+  <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>}
+}
 
-}}
+% FIXME: why is there a variable ccBiblioFilename, if biblio.html is still hardcoded?
+% Args: none
+\newcommand{\lciHtmlNavigationTop}{%
+  \lcRawHtml{<div class="NavTop"><hr>}
+  \lciHtmlNavigation
+  \lcRawHtml{<hr></div>}
+}
 
 % Args: none
-\newcommand{\lciHtmlNavigationBottom}{\lcRawHtml{
-<div class="NavBottom">
-<hr><!-- Bottom Navigation --------------------------------------------- -->
-  <strong>Navigation:</strong>}
-\lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
-  \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{]}}
-  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
-  <a href="}\lciOutputUppath\lcRawHtml{pkgdescription.html">Package Description</a>,
-  <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
-  <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
-  <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>
-<!-- End of Bottom Navigation ------------------------------------------ -->
-
-}}
+\newcommand{\lciHtmlNavigationBottom}{
+  \lcRawHtml{<div class="NavBottom"><hr>}
+  \lciHtmlNavigation
+  \lcRawHtml{</div>}
+}
 
 % Args: none
 \newcommand{\lciHtmlFileFooter}{%
@@ -122,7 +127,7 @@
 % to the TOC, so they have to switch, while \lciToc assumes we
 % are currently writing to the TOC
 \gdef\lciTocOuterState{Sync}
-\newcommand{\lcTocSync}{\lciPushOutput{toc}\lciTocSync\lciPopOutput}
+\newcommand{\lcTocSync}{\lciMirroredTocEntry{\lciTocSync}}
 \newcommand{\lciTocSync}{%
   \lciTocCloseInner
   \lciIfEqualExpanded{\lciTocOuterState}{Left}{%
@@ -142,7 +147,7 @@
   \gdef\lciTocOuterState{Sync}%
 }
 
-\newcommand{\lcTocCompleteRow}{\lciPushOutput{toc}\lciTocCompleteRow\lciPopOutput}
+\newcommand{\lcTocCompleteRow}{\lciMirroredTocEntry{\lciTocCompleteRow}}
 \newcommand{\lciTocCompleteRow}{%
   \lciTocCloseInner
   \lciTocSync
@@ -155,7 +160,7 @@
   %\lcTocToggleOdd
 }
 
-\newcommand{\lcTocLeft}{\lciPushOutput{toc}\lciTocLeft\lciPopOutput}
+\newcommand{\lcTocLeft}{\lciMirroredTocEntry{\lciTocLeft}}
 \newcommand{\lciTocLeft}{%
   \lciTocCloseInner
   \lciIfEqualExpanded{\lciTocOuterState}{Right}{\lciTocSync}{}%
@@ -165,7 +170,7 @@
 }}{}%
   \gdef\lciTocOuterState{Left}%
 }
-\newcommand{\lcTocRight}{\lciPushOutput{toc}\lciTocRight\lciPopOutput}
+\newcommand{\lcTocRight}{\lciMirroredTocEntry{\lciTocRight}}
 \newcommand{\lciTocRight}{%
   \lciIfTwoColumnToc{%
     \lciTocCloseInner
@@ -227,18 +232,21 @@
 
 
 % Args: none
-\newcommand{\lciTocFileHeader}{%
+\newcommand{\lciTocFileHeader}[1]{%
     \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
-      Table of Contents}%
+      #1}%
     \lciHtmlNavigationTop
     \lcRawHtml{
 <h1>}\lciIfEqualExpanded{\lciManualTitle}{}{}{
     \lciManualTitle\lcRawHtml{<br>}}
-    \lcRawHtml{Table of Contents</h1>
+    #1\lcRawHtml{</h1>
 <hr>
 
 <!-- Begin of the list of contents entries -->
-}\lciTocOuterTable
+}}
+
+\newcommand{\lciTocBegin}{%
+\lciTocOuterTable
   \lciIfTwoColumnToc{
     \lcTocLeft{\lcRawHtml{<a class="TocLinkTitle" href="title.html">Title Page</a>}}%
     \lcTocRight{\lcRawHtml{<a class="TocLinkBibliography" href="biblio.html">Bibliography</a>}}%
@@ -246,8 +254,8 @@
     \lcTocLeft{\lcRawHtml{<a class="TocLinkPkgDesc" href="pkgdescription.html">Package Description</a>}}%
     \lcTocRight{\lcRawHtml{<a class="TocLinkIndex" href="manual_index.html">Index</a>}}%
     \lcTocToggleOdd%
-    \lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
-    \lcTocRight{}%
+    \lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>}}%
+    \lcTocRight{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Long Table of Contents</a>}}%
     \lcTocToggleOdd%
   }{%
   \lcRawHtml{
@@ -260,8 +268,12 @@
 
   <tr valign="top"><td class="TocGroupEvenLeft">
 }\lciTocInnerTable
-\lcRawHtml{    <tr><td class="TocContents">
-        <a class="TocLinkContents" href="contents.html">Table of Contents</a>
+\lcRawHtml{
+    <tr><td class="TocContents">
+        <a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>
+    </td></tr>
+    <tr><td class="TocContents">
+        <a class="TocLinkContents" href="contents.html">Long Table of Contents</a>
     </td></tr>
   </table></td></tr>
 
@@ -418,16 +430,16 @@
   \lciIfLessExpanded{\lciCountertocdepth}{\lciPartNum}{}{%
 %% %% make part entries unlinked until full output support is there
     \edef\lciOut{\lciOutputFilename}%
-    \lciPushOutput{toc}%
-    \lciTocCloseInner
-    % make sure we are not in Sync state
-    \lciIfEqualExpanded{\lciTocOuterState}{Sync}{\lciTocLeft}{}%
+    \lciMirroredTocEntry{
+      \lciTocCloseInner
+      % make sure we are not in Sync state
+      \lciIfEqualExpanded{\lciTocOuterState}{Sync}{\lciTocLeft}{}%
 %%    \lcRawHtml{<a href="}\lcRawHtmlExpanded{\lciOut}%
 %%    \lcRawHtml{##Part_}#C1\lcRawHtml{"><h3>}#C2\lcRawHtml{</h3></a> }%
-    \lcRawHtml{    <!-- =================================================== -->
+      \lcRawHtml{    <!-- =================================================== -->
     <h3 class="TocPart"><br>}#C2\lcRawHtml{</h3>
 }%
-    \lciPopOutput
+    }
 }}
 
 \newcommand{\lciHtmlPartPkgDesciption}[1]{
@@ -457,7 +469,7 @@
       \lcRawHtml{<a name="Chapter_}#C1\lcRawHtml{"></a>}}}
   \lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
     \edef\lciOut{\lciOutputFilename}%
-    \lciPushOutput{toc}%
+    \lciMirroredTocEntry{
     \lciTocOpenInner
     % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
     \lcRawHtml{      <tr><td class="TocChapter" colspan="7">
@@ -467,9 +479,29 @@
             >}#C2\lcRawHtml{</a>
       </td></tr>
 }%
-    \lciPopOutput
+    }
 }}
 
+
+\newcommand{\lciChapterPartTocEntry}[1]{
+    \edef\lciOut{\lciOutputFilename}%
+    \lciMirroredTocEntry{\lciTocOpenInner}
+    \lciPushOutput{toc}%
+    \lcRawHtml{      <tr>}
+    \lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{
+      \lciIfEqualExpanded{\lciTocOuterState}{Right}{%
+        \lcRawHtml{      <tr><td class="TocChapter" colspan="7">&nbsp;</td></tr>}
+      }{}
+    }
+
+    \lcRawHtml{        <td class="TocSection" width="35">&nbsp;</td><td class="TocSection" colspan="5">
+          <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
+    \lcRawHtml{"><i>}#1\lcRawHtml{</i></a>
+        </td>
+      </tr>
+}%
+    \lciPopOutput
+}
 
 % Args: <header-text>:
 \newcommand{\lciHtmlSectionHeader}[1]{%

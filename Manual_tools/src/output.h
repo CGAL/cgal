@@ -1,5 +1,5 @@
 /**************************************************************************
- 
+
   output.h
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
@@ -9,13 +9,14 @@
               as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Id$
   Date      : $Date$
- 
+
 **************************************************************************/
 
 #ifndef OUTPUT_H
 #define OUTPUT_H 1
 
 #include <iostream>
+#include <sstream>
 #include <mstring.h>
 #include <basic.h>
 
@@ -25,8 +26,8 @@
 using namespace std;
 
 // Directory for the temporary files. A default is given.
-// This directory is the output directory for this program. Usually, 
-// the script cc_manual_to_html makes a own tmp directory and removes 
+// This directory is the output directory for this program. Usually,
+// the script cc_manual_to_html makes a own tmp directory and removes
 // it afterwards. The path must terminate with a slash.
 extern string  tmp_path;
 
@@ -41,7 +42,7 @@ class Output_file {
     string   m_name;
 public:
     Output_file() : m_out(0), m_name( "<undef>") {}
-    Output_file( ostream& out, const string& name) 
+    Output_file( ostream& out, const string& name)
 	: m_out(&out), m_name(name) {}
     Output_file( ostream* out, const string& name)
 	: m_out(out), m_name(name) {}
@@ -66,7 +67,7 @@ public:
     Output_file&  operator<<( unsigned short i)         { OUT(i);}
     Output_file&  operator<<( ostream& (*f)(ostream&))  { OUT(f);}
     Output_file&  operator<<( ios& (*f)(ios&) )         { OUT(f);}
-      
+
     operator const void*() const    { return m_out ? (void*)(*m_out) : 0; }
     Output_file&  flush() {
 	if (m_out)
@@ -86,7 +87,7 @@ public:
 };
 #undef OUT
 
-// actually, this is the output that _was_ the current output 
+// actually, this is the output that _was_ the current output
 // before calling push_current_output
 extern Output_file current_output;
 
@@ -95,6 +96,8 @@ void pop_current_output();
 void set_current_output( const string& key);
 void push_current_output( const string& key);
 void push_current_output_w_filename( const string& filename);
+
+extern ostringstream* savebox_stream;
 
 extern ostream* current_ostream;
 extern string   current_filename;
@@ -112,6 +115,7 @@ extern ostream* main_stream;
 extern ostream* class_stream;
 extern ostream* description_stream;
 extern ostream* contents_stream;
+extern ostream* short_contents_stream;
 extern ostream* index_stream;
 extern ostream* HREF_stream;
 extern ostream* HREF_counter_stream;
@@ -147,6 +151,12 @@ ostream* open_file_for_write_with_path( const string& name);
 ostream* open_file_for_append( const string& name);
 ostream* open_file_for_append_with_path( const string& name);
 void     make_path( string path);
+
+void     savestream_open   ( const string& name );
+// returns NULL if not open
+ostream* savestream_get    ( const string& name );
+string   savestream_use    ( const string& name );
+void     savestream_close  ( const string& name );
 
 
 #endif // OUTPUT_H //

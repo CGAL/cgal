@@ -1381,6 +1381,37 @@ handle_regex_result( const string&, string param[], size_t n, size_t opt) {
   return regex_get_submatch(index);
 }
 
+
+string
+handle_store_savebox( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  insertInternalGlobalMacro( param[0], savebox_stream->str(), 0);
+  // clear the string stream:
+  savebox_stream->str("");
+  return string();
+}
+
+string
+handle_savestream_open( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  savestream_open( param[0] );
+  return string();
+}
+
+string
+handle_savestream_use( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  return savestream_use( param[0] );
+}
+
+string
+handle_savestream_close( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 1, 0);
+  savestream_close( param[0] );
+  return string();
+}
+
+
 // Initialize
 // ======================================================================
 void init_internal_macros() {
@@ -1475,6 +1506,11 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciRegexRegister",  handle_regex_register,   2 );
     insertInternalGlobalMacro( "\\lcRegexDoesMatch", handle_regex_does_match, 2 );
     insertInternalGlobalMacro( "\\lcRegexResult",    handle_regex_result, 1 );
+
+    insertInternalGlobalMacro( "\\lciStoreSavebox",  handle_store_savebox, 1 );
+    insertInternalGlobalMacro( "\\lciSavestreamOpen",  handle_savestream_open, 1 );
+    insertInternalGlobalMacro( "\\lciSavestreamUse",  handle_savestream_use, 1 );
+    insertInternalGlobalMacro( "\\lciSavestreamClose",  handle_savestream_close, 1 );
 }
 
 // EOF //

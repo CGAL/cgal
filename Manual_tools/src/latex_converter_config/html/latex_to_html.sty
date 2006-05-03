@@ -39,6 +39,7 @@
 \newcommand{\lciAnchorFilename}{cc_anchor_rules.stage_1}
 \newcommand{\lciPkgDescriptionFilename}{pkgdescription.html}
 \newcommand{\lciContentsFilename}{contents.html}
+\newcommand{\lciShortContentsFilename}{shortcontents.html}
 \newcommand{\lciBibFilename}{biblio.html}
 \newcommand{\lciTitleFilename}{title.html}
 \newcommand{\lciIndexFilename}{manual.hidx}
@@ -434,6 +435,11 @@
 \newcommand{\ccRevision}{\lcRevision}
 \newcommand{\ccDate}{\lcDate}
 
+
+\newcommand{\savestreamX}[1]{\gdef\lciSaveStreamName{#C1}\lciPushOutput{savestream}}
+\newenvironment{savestream}
+  {\savestreamX}
+  {\lciPopOutput}
 
 % ___________________________________________________________________________
 % ###########################################################################

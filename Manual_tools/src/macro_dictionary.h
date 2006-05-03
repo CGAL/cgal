@@ -1,5 +1,5 @@
 /**************************************************************************
- 
+
   macro_dictionary.h
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
@@ -9,7 +9,7 @@
               as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Id$
   Date      : $Date$
- 
+
 **************************************************************************/
 
 #ifndef MACRO_DICTIONARY_H
@@ -37,7 +37,7 @@ struct Macro_item {
 		size_t         ln,
 		const string&  bdy,
 		size_t         n_par = 0)
-	: filename(file), line(ln), body(bdy), n_param(n_par), 
+	: filename(file), line(ln), body(bdy), n_param(n_par),
 	  n_opt_at_end(0), fct(0)
     {}
     Macro_item(	const string&  file,
@@ -51,31 +51,31 @@ struct Macro_item {
 void          pushMacroScope();
 void          popMacroScope();
 
-void          insertMacro( const string& macro, 
+void          insertMacro( const string& macro,
 			   const string& filename,
 			   size_t        line,
 			   const string& body,
 			   size_t        n_param = 0);
 
-void          insertInternalMacro( const string&  macro, 
+void          insertInternalMacro( const string&  macro,
 				   ExpandFunction fct,
 				   size_t         n_param = 0);
 
-void          insertInternalMacro( const string&  macro, 
+void          insertInternalMacro( const string&  macro,
 				   const string&  body,
 				   size_t         n_param = 0);
 
-void          insertGlobalMacro( const string& macro, 
+void          insertGlobalMacro( const string& macro,
 				 const string& filename,
 				 size_t        line,
 				 const string& body,
 				 size_t        n_param = 0);
 
-void          insertInternalGlobalMacro( const string&  macro, 
+void          insertInternalGlobalMacro( const string&  macro,
 					 ExpandFunction fct,
 					 size_t         n_param = 0);
 
-void          insertInternalGlobalMacro( const string&  macro, 
+void          insertInternalGlobalMacro( const string&  macro,
 					 const string&  body,
 					 size_t         n_param = 0);
 
@@ -93,7 +93,7 @@ const string& macroX(  const string& macro) {
 
 void eraseMacro( const string& macro);
 
-string expandFirstMacro( string body);
+string expandFirstMacro( string body, bool expand_only_once = false);
 
 string expandMacro( const string& macro,
 		    const Macro_item& item,

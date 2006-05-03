@@ -172,6 +172,10 @@
 \newcommand{^}[1]{\lcRawHtml{<SUP>}#1\lcRawHtml{</SUP>}}
 \newcommand{_}[1]{\lcRawHtml{<SUB>}#1\lcRawHtml{</SUB>}}
 
+% only defined in HTML 4.0 ... should we use it?
+%\newcommand{--}{\lcRawHtml{&ndash;}}
+%\newcommand{---}{\lcRawHtml{&mdash;}}
+
 % +--------------------------------------------------------------------------
 % |     * Single character macro abbreviations:
 % +--------------------------------------------------------------------------
@@ -214,12 +218,22 @@
 % ###########################################################################
 
 \newenvironment{document}{%
+    \lciSavestreamOpen{completetoc}
     % prepare main HTML file
     \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
       \lciMainRootname}%
     \lciHtmlNavigationTop
+
     % prepare TOC
-    \lciPushOutput{toc}\lciTocFileHeader\lciPopOutput
+    \lciPushOutput{toc}
+      \lciTocFileHeader{Long Table of Contents}
+    \lciPopOutput
+    \lciPushOutput{shorttoc}
+      \lciTocFileHeader{Short Table of Contents}
+    \lciPopOutput
+
+    \lciMirroredTocEntry{\lciTocBegin}
+
     \lciReadAuxtmp{\lciTmpPath}{\lciMainRootname}%  read auxtmp file
     \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
     \lciPushOutput{description}%
@@ -234,7 +248,7 @@
     % close all parts, chapters, and sections at the end of the conversion
     \lciEndPart
     % finish table of contents
-    \lciPushOutput{toc}\lciTocFileFooter\lciPopOutput
+    \lciMirroredTocEntry{\lciTocFileFooter}
     % finish main HTML file
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter
@@ -1182,26 +1196,6 @@
   % only do something, after the first chapter has already been processed
 }
 
-\newcommand{\lciChapterPartTocEntry}[1]{
-    \edef\lciOut{\lciOutputFilename}%
-    \lciPushOutput{toc}%
-    \lciTocOpenInner
-    \lcRawHtml{      <tr>}
-    \lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{
-      \lciIfEqualExpanded{\lciTocOuterState}{Right}{%
-        \lcRawHtml{      <tr><td class="TocChapter" colspan="7">&nbsp;</td></tr>}
-      }{}
-    }
-
-    \lcRawHtml{        <td class="TocSection" width="35">&nbsp;</td><td class="TocSection" colspan="5">
-          <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
-    \lcRawHtml{">}#1\lcRawHtml{</a>
-        </td>
-      </tr>
-}%
-    \lciPopOutput%
-}
-
 \newcommand{\lciSplitChapter}[3]{
     \lciEndChapter{chapterpart}
     \lciPushFootnotes
@@ -2063,7 +2057,17 @@
 \newcommand{\framebox@oom}{\fbox{#3}}
 
 \newcommand{\newsavebox}[1]{\gdef{#C1}{}}
-\newcommand{\sbox}[2]{\gdef{#C1}{#X2}}
+
+\newcommand{\lciStoreSaveboxX}[1]{\lciStoreSavebox{#Y1}}
+\newenvironment{savebox}[1]
+  {\gdef\lciCurrentSaveboxName{#C1}\lciPushOutput{savebox}}
+  {\lciPopOutput\lciStoreSaveboxX{\lciCurrentSaveboxName}}
+
+\newcommand{\sbox}[2]{
+  \begin{savebox}{#1}%
+  #2
+  \end{savebox}%
+}
 \newcommand{\savebox}[2]{\sbox{#1}{#2}}
 \newcommand{\savebox@mom}{\sbox{#1}{#3}}
 \newcommand{\savebox@moom}{\sbox{#1}{#4}}
@@ -2075,7 +2079,7 @@
 \newcommand{\lciLrbox}[1]{\lciLrboxX{\lciLrboxTmp}{#C1}}
 \newcommand{\lciLrboxX}[2]{\sbox{#XC1}{#C2}}
 
-\newcommand{\usebox}[1]{#1}
+\newcommand{\usebox}[1]{\lcRawHtml{#X1}}
 
 \newcommand{\parbox}[2]{#2}
 \newcommand{\parbox@omm}{#2}
