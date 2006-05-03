@@ -3,8 +3,8 @@ $CGAL_HOME/README
 
 This distribution of CGAL includes:
 
-   auxiliary/         - directory containing miscelaneous things, currently
-                        only the icons needed for the demos on MacOCX.
+   auxiliary/         - directory containing miscellaneous things, currently
+                        only the icons needed for the demos on MacOSX.
    CHANGES            - file recording the history of changes for the library
    config/            - directory containing several test programs used during
                         the installation process, and into which configuration
