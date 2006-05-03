@@ -103,7 +103,7 @@ void test_polynomial(const Traits &tr)
   check_equal<Traits>(((p-q)*Polynomial(a)) , cf(0,0,0,-34));
 
   write("(p-q)/a" , ((p-q)/a) );
-  check_equal<Traits>((Polynomial(p-q)/a) , cf(0,0,0,-NT(17)/NT(2)));
+  check_equal<Traits>((Polynomial(p-q)/a) , cf(0,0,0,-NT(.5)*NT(17)));
 
   write("subs(t=-t, p)", tr.negate_variable_object()(p) );
   check_equal<Traits>(tr.negate_variable_object()(p) , cf( -1, -2, 27, 17));
