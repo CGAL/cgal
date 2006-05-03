@@ -1,59 +1,26 @@
 
-\begin{ccPkgDescription}{Bounding Volumes \label{Pkg:BoundingVolumes}}
+\begin{ccPkgDescription}{Geometric Optimisation \label{Pkg:Optimisation}}
 \ccHowToCite{cgal:fghhps-go-06}
 \ccPkgSummary{
-This package provides algorithms for computing bounding volumes of point sets in d-dimensional space, as the smallest enclosing sphere, annulus, ellipsoid, or strip. For 2-dimensional space, a number of additional volumes (rectangles, parallelograms) are available.}
+This package provides algorithms for computing bounding volumes, inscribed areas and polytope distances.
 
-%\ccPkgDependsOn{}
-\ccPkgIntroducedInCGAL{2.4}
-\ccPkgLicense{\ccLicenseQPL}
-\end{ccPkgDescription}
+The algorithms for bounding volumes for point sets in
+ d-dimensional space are: the smallest enclosing sphere, annulus,
+ ellipsoid, or strip. For 2-dimensional space, a number of additional
+ volumes (rectangles, parallelograms, $k=2,3,4$ axis-aligned rectangles) 
+are available.
+The smallest enclosing sphere algorithm can also be applied
+on a set of d-dimensional spheres. 
 
-\begin{ccPkgDescription}{Inscribed Areas \label{Pkg:InscribedAreas}}
-\ccHowToCite{cgal:fghhps-go-06}
-\ccPkgSummary{
-This package provides algorithms for computing inscribed areas of (convex hulls of) point sets in 2-dimensional space, as the largest inscribed k-gon (area or perimeter) and the largest inscribed rectangle.}
+The algorithms for computing inscribed areas are: the largest inscribed
+k-gon (area or perimeter) of a convex point set and the largest inscribed rectangle.
 
-%\ccPkgDependsOn{}
-\ccPkgIntroducedInCGAL{2.4}
-\ccPkgLicense{\ccLicenseQPL}
-\end{ccPkgDescription}
+The polytope distance algorithm computes the distance between the
+convex hulls of two point sets in d-dimensional space, without
+explicitely constructing the convex hulls. 
 
-\begin{ccPkgDescription}{Center Points \label{Pkg:CenterPoints}}
-\ccHowToCite{cgal:fghhps-go-06}
-\ccPkgSummary{
-This package provides algorithms for optimally covering a 2-dimensional point set with $k=2,3,4$ axis-aligned boxes.}
-
-%\ccPkgDependsOn{}
-\ccPkgIntroducedInCGAL{2.4}
-\ccPkgLicense{\ccLicenseQPL}
-\end{ccPkgDescription}
-
-\begin{ccPkgDescription}{Polytope Distance \label{Pkg:OptimalDistances}}
-\ccHowToCite{cgal:fghhps-go-06}
-\ccPkgSummary{
-This package provides an algorithm for computing the distance between the convex hulls of two point sets in d-dimensional space. Due to built-in floating-point filters, the computations are fast but still exact in low dimensions. }
-
-%\ccPkgDependsOn{}
-\ccPkgIntroducedInCGAL{2.4}
-\ccPkgLicense{\ccLicenseQPL}
-\end{ccPkgDescription}
-
-
-\begin{ccPkgDescription}{Smallest Enclosing Spheres of Spheres \label{Pkg:EnclosingSpheres}}
-\ccHowToCite{cgal:fghhps-go-06}
-\ccPkgSummary{
-This package provides an algorithm for computing the smallest sphere containing a set of spheres in d-dimensional space. On top of the exact algorithm, a fast and very robust floating-point variant is available.}
-
-%\ccPkgDependsOn{}
-\ccPkgIntroducedInCGAL{2.4}
-\ccPkgLicense{\ccLicenseQPL}
-\end{ccPkgDescription}
-
-\begin{ccPkgDescription}{Matrix Search \label{Pkg:MatrixSearch}}
-\ccHowToCite{cgal:fghhps-go-06}
-\ccPkgSummary{
-This package provides an abstract optimisation frameworks that can be used to model many concrete problems.}
+Finally this package offers a matrix search framework, which is
+the underlying machinery of some of the algorithms of this package.}
 
 %\ccPkgDependsOn{}
 \ccPkgIntroducedInCGAL{2.4}
