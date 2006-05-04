@@ -226,7 +226,7 @@
 
     % prepare TOC
     \lciPushOutput{toc}
-      \lciTocFileHeader{Long Table of Contents}
+      \lciTocFileHeader{Table of Contents}
     \lciPopOutput
     \lciPushOutput{shorttoc}
       \lciTocFileHeader{Short Table of Contents}
@@ -1093,9 +1093,13 @@
 % part
 \newcommand{\part}[1]{\part[#1]{#1}}
 \newcommand{\part@om}{%
-
     \lcNoLinkSync
     \lciEndPart
+
+    \lciCheckForLabelInsideHeading{#C2}%
+      {\lciCurrentPartName}%
+      {\lciLocalVariableLabel}%
+
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \refstepcounter{part}%
@@ -1104,11 +1108,10 @@
     \lciIfEqualExpanded{\lciDocumentClass}{article}%
         {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
     \lciIfLessExpanded{\lciCountersecnumdepth}{\lciPartNum}{%
-      \lciHtmlPartHeader{\value{part}}{#2}%
+      %\lciHtmlPartHeader{\value{part}}{#2}%
       \lciHtmlPartToc{\thepart}{#1}}%
-    {\lciHtmlPartHeader{\value{part}}{\thepart~~~#2}%
+    {%\lciHtmlPartHeader{\value{part}}{\thepart~~~#2}%
       \lciHtmlPartToc{\thepart}{\thepart~~~#1}}
-    \xdef{\lciCurrentPartName}{#2}
 }
 \newcommand{\part*}[1]{%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
@@ -1242,7 +1245,6 @@
 \newcommand{\section@om}{%
     \lciEndSection
     \refstepcounter{section}%
-    \lciLocalVariableLabel
     \lciIfLessExpanded{\lciCountersecnumdepth}{1}{%
       \lciHtmlSectionToc{\thesection}{}{#1}%
       \lciHtmlSectionHeader{#2}}%

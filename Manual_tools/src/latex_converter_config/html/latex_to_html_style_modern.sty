@@ -61,7 +61,7 @@
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
   \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}}
   \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{shortcontents.html">Short Table of Contents</A>,
-  <a href="}\lciOutputUppath\lcRawHtml{contents.html">Long Table of Contents</A>,
+  <a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
   <a href="}\lciOutputUppath\lcRawHtml{pkgdescription.html">Package Description</a>,
   <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
   <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
@@ -255,7 +255,7 @@
     \lcTocRight{\lcRawHtml{<a class="TocLinkIndex" href="manual_index.html">Index</a>}}%
     \lcTocToggleOdd%
     \lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>}}%
-    \lcTocRight{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Long Table of Contents</a>}}%
+    \lcTocRight{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
     \lcTocToggleOdd%
   }{%
   \lcRawHtml{
@@ -273,7 +273,7 @@
         <a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>
     </td></tr>
     <tr><td class="TocContents">
-        <a class="TocLinkContents" href="contents.html">Long Table of Contents</a>
+        <a class="TocLinkContents" href="contents.html">Table of Contents</a>
     </td></tr>
   </table></td></tr>
 
@@ -425,6 +425,18 @@
 
 % Args: <anchor-counter> <toc-entry>
 \newcommand{\lciHtmlPartToc}[2]{%
+  \lciCheckForLabelInsideHeading{#C2}%
+    {\lciLocalVariableCurrentPartName}%
+    {\lciLocalVariableLabel}%
+  \begingroup
+    % yet another hack:
+    % we dont want anchor replacement rules to be generated
+    % upon \label ..so we temporarily redefine the function
+    % to only generate an html-anchor
+    \newcommand{\label}[1]{\lcRawHtml{<A NAME="}##C1\lcRawHtml{"></A>}}
+    \lciMirroredTocEntry{\lciLocalVariableLabel}
+  \endgroup
+
   \lciIfEqualExpanded{\lciDocumentClass}{article}%
     {\def\lciPartNum{0}}{\def\lciPartNum{-1}}%
   \lciIfLessExpanded{\lciCountertocdepth}{\lciPartNum}{}{%
@@ -437,7 +449,7 @@
 %%    \lcRawHtml{<a href="}\lcRawHtmlExpanded{\lciOut}%
 %%    \lcRawHtml{##Part_}#C1\lcRawHtml{"><h3>}#C2\lcRawHtml{</h3></a> }%
       \lcRawHtml{    <!-- =================================================== -->
-    <h3 class="TocPart"><br>}#C2\lcRawHtml{</h3>
+    <h3 class="TocPart"><br>}\lciLocalVariableCurrentPartName\lcRawHtml{</h3>
 }%
     }
 }}
