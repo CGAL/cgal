@@ -983,6 +983,7 @@
 \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgHowToCiteCgal}[1]{\gdef\ccValueofPkgHowToCiteCgal{\lcRawHtml{<b>BibTeX Key:</b>}\ccHowToCiteCgal{#1}\lcRawHtml{<br>}}}
 
 \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\lciPopOutput}
 
@@ -994,6 +995,7 @@
   \gdef\ccValueofPkgMaturity{}%
   \gdef\ccValueofPkgDependsOn{}%
   \gdef\ccValueofPkgLicense{}%
+  \gdef\ccValueofPkgHowToCiteCgal{}
   \lciPushOutput{description}%
 }
 
@@ -1022,10 +1024,11 @@
     \ccValueofPkgSummary
     \lcRawHtml{<p></td><td width="2\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lcRawHtml{</td><td width="23\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
-    \ccValueofPkgIntroducedInCGAL
-    \ccValueofPkgMaturity
-    \ccValueofPkgDependsOn
-    \ccValueofPkgLicense
+    \ccValueofPkgIntroducedInCGAL%
+    \ccValueofPkgMaturity%
+    \ccValueofPkgDependsOn%
+    \ccValueofPkgLicense%
+    \ccValueofPkgHowToCiteCgal%
     \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
     \lcRawHtml{</td></td>}
     \lcPkgDescToggleOdd
