@@ -314,6 +314,7 @@ public:
    */
   virtual ~Qt_widget_demo_tab() 
   {
+    m_observer.detach ();
     delete m_curves_arr;
   }
   
