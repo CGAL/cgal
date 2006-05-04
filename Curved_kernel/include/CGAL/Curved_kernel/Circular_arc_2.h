@@ -269,7 +269,7 @@ namespace CGALi {
       return _end;
     }
     
-    const bool is_full() const {
+    inline const bool is_full() const {
       return Cache_full == 'y';
     }
 
