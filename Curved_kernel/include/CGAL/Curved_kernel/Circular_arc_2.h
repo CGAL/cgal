@@ -268,6 +268,10 @@ namespace CGALi {
     {
       return _end;
     }
+    
+    const bool is_full() const {
+      return Cache_full == 'y';
+    }
 
     bool is_x_monotone() const
     {
