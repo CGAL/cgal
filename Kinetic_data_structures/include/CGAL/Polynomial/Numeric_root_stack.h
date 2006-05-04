@@ -98,7 +98,7 @@ public:
     initialize(f, lb, ub);	 
     /*if (!roots_.empty()) std::cout << " got " << roots_.back() << std::endl;
       else std::cout << std::endl;*/
-#ifndef NDEBUG
+#if 0
     for (unsigned int i=1; i < roots_.size();  ++i) {
       if (roots_[i]>  roots_[i-1]){
 	std::cerr << "ERROR: roots out of order ";
