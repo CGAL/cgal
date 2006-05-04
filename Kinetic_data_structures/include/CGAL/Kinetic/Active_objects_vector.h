@@ -282,6 +282,7 @@ public:
       iss >> d;
       if (!iss) {
 	std::cerr << "ERROR reading object from line " << buf << std::endl;
+	internal::fail__=true;
       } else {
 	insert(d);
       }

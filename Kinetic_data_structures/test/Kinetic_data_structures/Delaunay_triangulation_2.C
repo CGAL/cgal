@@ -79,5 +79,7 @@ int main(int, char *[])
   if (error_count != 0) {
     std::cerr << "ERROR " << error_count << " errors in " << kdel.visitor().size() << " events.\n";
   }
-  return EXIT_SUCCESS;
+  
+  if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
+  else return EXIT_SUCCESS;
 };

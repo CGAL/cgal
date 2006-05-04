@@ -191,6 +191,9 @@ int main(int argc, char *argv[])
     std::cout << "Sort\n";
     test_sort < CGAL::Kinetic::Exact_simulation_traits_1 > ("Upper bound");
    
+    if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
+    else return EXIT_SUCCESS;
+
     //test_sort < CGAL::Kinetic::Exact_simulation_traits_1 > ("Upper bound");
     //test_sort < CGAL::Kinetic::Inexact_simulation_traits_1 > ("Numeric");
     //test_sort<Lazy_exact_traits_1>("Lazy upper bound");

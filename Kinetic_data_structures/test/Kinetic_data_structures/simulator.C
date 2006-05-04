@@ -220,5 +220,6 @@ int main(int, char *[])
 
   // if (!error) return EXIT_SUCCESS;
   //else
-  return EXIT_SUCCESS;
+  if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
+  else return EXIT_SUCCESS;
 }

@@ -622,6 +622,7 @@ protected:
 #ifndef NDEBUG
 	if (tc < tp) {
 	  std::cout << "ERROR: Out of order " << tc << std::endl << tp << std::endl << std::endl;
+	  CGAL::Kinetic::internal::fail__= true;
 	}
 #endif
 	//CGAL_assertion(tc >= tp);

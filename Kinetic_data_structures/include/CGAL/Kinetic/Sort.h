@@ -190,6 +190,7 @@ void audit() const
       std::cerr << "ERROR: order is ";
       write(std::cerr);
       std::cerr << std::endl;
+      CGAL::Kinetic::internal::fail__=true;
 
       if (!wrote_objects_) {
 	wrote_objects_=true;

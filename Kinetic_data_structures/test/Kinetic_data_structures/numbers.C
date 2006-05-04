@@ -25,13 +25,14 @@ void check_nt(NT v) {
 
 int main(int, char *[])
 {
- check_nt(0.0);
- check_nt(CGAL::Kinetic::Default_field_nt(1));
+  check_nt(0.0);
+  check_nt(CGAL::Kinetic::Default_field_nt(1));
   
- typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
- Tr tr;
- Tr::Simulator::Function_kernel::Function fn= tr.kinetic_kernel_object().function_kernel_object().construct_function_object()(1,0,-2);
- check_nt(Tr::Simulator::Time(-1));
+  typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
+  Tr tr;
+  Tr::Simulator::Function_kernel::Function fn= tr.kinetic_kernel_object().function_kernel_object().construct_function_object()(1,0,-2);
+  check_nt(Tr::Simulator::Time(-1));
  
- return EXIT_SUCCESS;
+  if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
+  else return EXIT_SUCCESS;
 }

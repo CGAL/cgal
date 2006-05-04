@@ -130,9 +130,6 @@ int main(int, char *[])
     }
   }
 
-  {
-
-  }
-
-  return EXIT_SUCCESS;
+  if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
+  else return EXIT_SUCCESS;
 }

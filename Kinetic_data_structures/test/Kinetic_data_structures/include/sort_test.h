@@ -7,8 +7,9 @@ template <class Traits>
 bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infinity())
 {
   std::string etag="WARNING: ";
-
+  bool fail=false;
   CGAL_exactness_assertion_code(etag="ERROR: ");
+  CGAL_exactness_assertion_code(fail=true);
   //CGAL_exactness_assertion_code(bool test_compiled_with_exact_checks;);
     
   typedef CGAL::Kinetic::Sort<Traits> Sort;
@@ -27,6 +28,7 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
 #ifndef NDEBUG
     if (tr.simulator_handle()->current_event_number() > max_events){
       std::cerr << "ERROR too many events" << std::endl;
+      CGAL::Kinetic::internal::fail__=true;
       std::cerr << *tr.active_points_1_table_handle() << std::endl;
     }
 #endif
@@ -58,6 +60,7 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
     std::cerr << etag << "Out of events, but the time is not rational." << std::endl;
     std::cerr << "Current time is " << tr.simulator_handle()->current_time()
 	      << " the end time is " << tr.simulator_handle()->end_time() << std::endl;
+    CGAL::Kinetic::internal::fail__|= fail;
     ratt= CGAL::to_interval(tr.simulator_handle()->end_time()).second;
     error=eret;
   }
@@ -70,6 +73,7 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
       std::cerr << etag << "Objects " << *c << " = " << tr.active_points_1_table_handle()->at(*c).x() << " and "
                 << *b << " = " << tr.active_points_1_table_handle()->at(*b).x() << " out of order at end of time "
                 <<ratt << std::endl;
+      CGAL::Kinetic::internal::fail__|= fail;
       error=eret;
     }
 

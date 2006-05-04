@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   error= sort_test<Tr>(tr, 3000);
 
 
-  if (error) {
+  if (error || CGAL::Kinetic::internal::fail__) {
     return EXIT_FAILURE;
   }
   else {
