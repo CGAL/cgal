@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source: $
-// $Revision: 28833 $ $Date: 2006-02-27 16:29:24 +0200 (Mon, 27 Feb 2006) $
+// $Revision$ $Date$
 // $Name:  $
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>

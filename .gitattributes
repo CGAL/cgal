@@ -421,8 +421,6 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#uns
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.eps -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text
-Jet_fitting_3/examples/Jet_fitting_3/blind_1pt_gsl.C -text
-Jet_fitting_3/examples/Jet_fitting_3/blind_gsl.C -text
 Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
@@ -952,7 +950,6 @@ Min_sphere_of_spheres_d/web/figs/pivot/cex1.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/basis.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/notbasis.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/ss_basis.eps -text
-Minkowski_sum_2/demo/Minkowski_sum_2/RSA_demo.C -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text
@@ -998,7 +995,6 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex_t -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tmp.inputs -text
 Minkowski_sum_2/examples/Minkowski_sum_2/rooms_star.dat -text
 Minkowski_sum_2/examples/Minkowski_sum_2/spiked.dat -text
-Minkowski_sum_2/include/CGAL/rotational_swept_area_2.h -text
 Modifier/doc_tex/Modifier/idraw/modifier.eps -text
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#unset
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
@@ -1220,7 +1216,6 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text
-QP_solver/examples/QP_solver/data_to_mps.C -text
 QP_solver/examples/QP_solver/data_to_mps.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
@@ -1229,15 +1224,9 @@ QP_solver/examples/QP_solver/integer_qp_solver.data -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
-QP_solver/test/QP_solver/data_to_mps-double.C -text
 QP_solver/test/QP_solver/data_to_mps-double.cin -text
-QP_solver/test/QP_solver/data_to_mps-rational.C -text
 QP_solver/test/QP_solver/data_to_mps-rational.cin -text
 QP_solver/test/QP_solver/data_to_mps.cin -text
-Qt_widget/demo/Qt_widget/hellosegment.C -text
-Qt_widget/demo/Qt_widget/layer.C -text
-Qt_widget/demo/Qt_widget/standard_toolbar.C -text
-Qt_widget/demo/Qt_widget/tutorial2.C -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
@@ -1245,7 +1234,6 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#unset
-Ridges_3/demo/Ridges_3/SketchSample.C -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.eps -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.pdf -text
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.eps -text
@@ -1307,11 +1295,8 @@ Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/AUTHORS -text
-Skin_surface_3/examples/Skin_surface_3/dsrpdb/README -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/main_doc -text
-Skin_surface_3/examples/Skin_surface_3/makefile -text
-Skin_surface_3/examples/Skin_surface_3/skin_surface_pdb_reader.C -text
 Skin_surface_3/test/Skin_surface_3/data/test1.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test10.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test11.cin -text
@@ -1401,7 +1386,6 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.eps -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.pdf -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.png -text
-Straight_skeleton_2/dont_submit -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.kdevelop.pcs -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/alley_0.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/alley_1.poly -text
@@ -1566,24 +1550,6 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text
-Surface_mesh_simplification/TODO -text
-Surface_mesh_simplification/changes.txt -text
-Surface_mesh_simplification/demo/Surface_mesh_simplification/README -text
-Surface_mesh_simplification/demo/Surface_mesh_simplification/Surface_simplification.kdevelop -text
-Surface_mesh_simplification/demo/Surface_mesh_simplification/makefile -text
-Surface_mesh_simplification/demo/Surface_mesh_simplification/simplification_demo.C -text
-Surface_mesh_simplification/include/CGAL/Polyhedron_graph_traits_3.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Collapse_operator.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Count_ratio_stop_pred.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_length_cost_map.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_selection_map.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Midpoint_vertex_placement.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/TSMS_common.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_pair_collapse.C -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_pair_collapse.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification_vertex_pair_collapse.h -text
-Surface_mesh_simplification/include/boost/relaxed_heap.hpp -text
-Surface_mesh_simplification/maintainer -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset
@@ -1991,4 +1957,3 @@ Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#unset
 Visibility_complex/doc_tex/fig/vis-complex.eps -text
 Visibility_complex/doc_tex/fig/vis-complex.fig -text
 Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#unset
-wininst/src/CGAL/cgallib.vcproj -text
