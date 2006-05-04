@@ -51,8 +51,8 @@ Simulation_traits tr;
 
 KDel kdel(tr);
 
-Moving_point_2 mp(Moving_point_2::NT(0),
-                  Moving_point_2::NT(0));
+Moving_point_2 mp(Moving_point_2::Coordinate(0),
+                  Moving_point_2::Coordinate(0));
 tr.simulator_handle()->new_event(Simulation_traits::Simulator::Time(3), 
                                  Insert_event(mp,
 			                      tr.active_points_2_table_handle()));
