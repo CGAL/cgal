@@ -22,14 +22,15 @@ concept is discussed separately in Section
 \begin{ccHtmlOnly}
 <img src="./sort_usage_pct.gif" align=center alt="Sort Usage"><br>
 \end{ccHtmlOnly}
-\caption{\label{fig:kds_uml_usage_architecture} The figure, identical to the one in the
-  overview, shows the interaction between the
-  \ccc{Kinetic::Sort<Traits, Visitor>} kinetic data structure and the
-  various pieces of our framework.  Other, more complicated, kinetic
-  data structures will also use the \ccc{Kinetic::InstantaneousKernel}
-  in order to insert/remove geometric primitives and audit
-  themselves. \ccc{Kinetic::Sort<Traits, Visitor>} uses the sorting
-  functionality in STL instead.}
+\caption{\label{fig:kds_uml_usage_architecture} The figure, identical
+  to the one in the overview of the previous chapter, shows the
+  interaction between the \ccc{Kinetic::Sort<Traits, Visitor>} kinetic
+  data structure and the various pieces of our framework.  Other, more
+  complicated, kinetic data structures will also use the
+  \ccc{Kinetic::InstantaneousKernel} in order to insert/remove
+  geometric primitives and audit themselves.
+  \ccc{Kinetic::Sort<Traits, Visitor>} uses the sorting functionality
+  in STL instead.}
 \end{figure}
 
 \subsection{The Kinetic::Simulator\label{sec:kds_simulator}}
@@ -51,7 +52,7 @@ direction).
 
 The kinetic sorting example in Figure~\ref{sec:kds_sort_example} shows the
 basic usage of the \ccc{Kinetic::Simulator}. First, the \ccc{Simulator}
-is created by the \ccc{Kinetic::SimulatorTraits}. The kinetic data structure
+is created by the \ccc{Kinetic::SimulationTraits}. The kinetic data structure
 gets a handle to the simulator from the traits class and uses the
 handle to add its events to the simulation. The \ccc{Kinetic::Simulator} is
 then told to advance time up until the end of the simulation,
