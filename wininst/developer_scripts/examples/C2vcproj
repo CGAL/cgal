@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 for h in $@ ; do
 if [ -d $h ]; then
   cd $h;
@@ -7,18 +9,21 @@ if [ -d $h ]; then
   if [ -e text ]; then
     rm -r text;
   fi
-  mkdir text; 
+  mkdir text;
 
   for i in *.C ; do
     if [ ! $i = "*.C" ]; then
+      # Create $jp VC++ makefile if it doesn't exist
       jp=`echo $i|sed -e "s/\.C/\.vcproj/"`;
-      ofn=`echo $i|sed -e "s/\.C/\.exe/"`;
-      k=`echo $i|sed -e "s/\.C//"`;
-      sed -e"s/master/$k/g" ../../developer_scripts/examples/master.vcproj > ./text/temp.txt;
-      sed -e"s/test_msvc7.exe/$ofn/g" ./text/temp.txt > ./text/temp2.txt;
-      sed -e"s/test_msvc7/$k/g" ./text/temp2.txt > ./text/$jp;
-      mv ./text/$jp ./; 
-      rm -rf ./text/temp.txt ./text/temp2.txt
+      if [[ ! -e $jp ]]; then
+        ofn=`echo $i|sed -e "s/\.C/\.exe/"`;
+        k=`echo $i|sed -e "s/\.C//"`;
+        sed -e"s/master/$k/g" ../../developer_scripts/examples/master.vcproj > ./text/temp.txt;
+        sed -e"s/test_msvc7.exe/$ofn/g" ./text/temp.txt > ./text/temp2.txt;
+        sed -e"s/test_msvc7/$k/g" ./text/temp2.txt > ./text/$jp;
+        mv ./text/$jp ./;
+        rm -rf ./text/temp.txt ./text/temp2.txt
+      fi
     fi
   done
 
