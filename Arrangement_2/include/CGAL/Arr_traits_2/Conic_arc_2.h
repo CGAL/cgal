@@ -1156,6 +1156,8 @@ private:
    */
   void _set (const Rational* rat_coeffs)
   {
+    _info = IS_VALID;
+
     // Convert the coefficients vector to an equivalent vector of integer
     // coefficients.
     Nt_traits         nt_traits;
