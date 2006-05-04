@@ -177,6 +177,19 @@ Arrangement_2<Traits,Dcel>::~Arrangement_2 ()
   // Free the traits object, if necessary.
   if (own_traits)
     delete traits;
+
+  // Detach all observers still attached to the arrangement.
+  Observers_iterator  iter = observers.begin();
+  Observers_iterator  next;
+  Observers_iterator  end = observers.end();
+
+  while (iter != end)
+  {
+    next = iter;
+    ++next;
+    (*iter)->detach();
+    iter = next;
+  }
 }
 
 //-----------------------------------------------------------------------------
