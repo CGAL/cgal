@@ -40,7 +40,7 @@ table.TocOuterTable    {  }
 td.TocGroupOddLeft,
 td.TocEmptyOddLeft,
 td.TocGroupOddRight,
-td.TocEmptyOddRight    { background-color: #eeeeee; }
+td.TocEmptyOddRight    { background-color: #eaeaea; }
 td.TocGroupEvenLeft,
 td.TocEmptyEvenLeft,
 td.TocGroupEvenRight,
