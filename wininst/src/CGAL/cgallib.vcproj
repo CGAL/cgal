@@ -22,20 +22,21 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc7&quot;;&quot;..\..\include&quot;"
 				PreprocessorDefinitions="WIN32;_LIB"
-				MinimalRebuild="FALSE"
+				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="0"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/msvc7/CGAL.lib"/>
+				OutputFile="../../lib/msvc7/CGAL.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -71,12 +72,13 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
