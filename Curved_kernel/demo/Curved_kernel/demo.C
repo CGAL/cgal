@@ -81,7 +81,7 @@ int main() {
 // Note that we use Core, as the visualization of circular arcs
 // is buggy due to a problem with CGAL::to_double
 #ifdef CGAL_USE_CORE
-typedef CGAL::Expr                                          NT;
+typedef CORE::Expr                                          NT;
 #else
 typedef CGAL::Gmpq                                          NT;
 #endif
