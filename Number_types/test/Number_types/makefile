@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = -g \
            -I../../include \
            -I../../../Interval_arithmetic/include \
            $(TESTSUITE_CXXFLAGS) \

@@ -12,6 +12,7 @@
 #include <CGAL/Interval_nt.h>
 #include <cassert>
 
+#include <sstream>
 
 typedef CGAL::Gmpz Gmpz;
 typedef CGAL::Gmpq Gmpq;
@@ -50,6 +51,85 @@ void test_overflow_to_double()
 
 int main() {
 
+  // Added by Daniel Russel
+  std::cout << "Testing IO" << std::endl;
+  {
+    char *buf="12345678";
+    Gmpz z;
+    std::istringstream iss(buf);
+    iss >> z;
+    assert(!iss.fail());
+    std::cout << z << "== 12345678" << std::endl;
+    assert(z== Gmpz(12345678));
+  }
+  {
+    char *buf="-65758345";
+    Gmpz z;
+    std::istringstream iss(buf);
+    iss >> z;
+    assert(!iss.fail());
+    std::cout << z << "== -65758345" << std::endl;
+    assert(z== Gmpz(-65758345));
+  }
+  {
+    char *buf="  -  65758345";
+    Gmpz z;
+    std::istringstream iss(buf);
+    iss >> z;
+    assert(!iss.fail());
+    std::cout << z << " == -65758345" << std::endl;
+    assert(z== Gmpz(-65758345));
+  }
+  {
+    char *buf="12345678a";
+    Gmpz z;
+    std::istringstream iss(buf);
+    char c;
+    iss >> z >> c;
+    assert(!iss.fail());
+    std::cout << z << " == 12345678" << std::endl;
+    assert(z== Gmpz(12345678));
+    assert(c=='a');
+  }
+
+  {
+    char *buf="asadf";
+    Gmpz z(12);
+    std::istringstream iss(buf);
+    iss >> z;
+    std::cout << z << " fails with 12" << std::endl;
+    assert(iss.fail());
+    assert(z== Gmpz(12));
+  }
+
+  {
+    char *buf="-asadf";
+    Gmpz z(12);
+    std::istringstream iss(buf);
+    iss >> z;
+    std::cout << z << " fails with 12" << std::endl;
+    assert(iss.fail());
+    assert(z== Gmpz(12));
+  }
+  {
+    char *buf="";
+    Gmpz z(12);
+    std::istringstream iss(buf);
+    iss >> z;
+    std::cout << z << " fails with 12" << std::endl;
+    assert(iss.fail());
+    assert(z== Gmpz(12));
+  }
+  {
+    char *buf="100/1";
+    Gmpq iot;
+    std::istringstream iss(buf);
+    iss >> iot;
+    std::cout << iot << "== 100 " << std::endl;
+    assert(!iss.fail());
+    assert(iot== Gmpq(100.0));
+  }
+
   Gmpq q;
   Gmpq q1(12);
   Gmpq q2(3.1415);
@@ -80,6 +160,9 @@ int main() {
   test_overflow_to_double();
   test_overflow_to_interval(Gmpz());
   test_overflow_to_interval(Gmpq());
+
+ 
+  
 #ifdef CGAL_USE_GMPXX
   test_overflow_to_interval(mpz_class());
   test_overflow_to_interval(mpq_class());

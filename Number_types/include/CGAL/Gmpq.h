@@ -290,10 +290,15 @@ operator>>(std::istream& is, Gmpq &z)
   Gmpz n, d;
   is >> n;
   is >> c;
-  CGAL_assertion(!is || c == '/');
+  //CGAL_assertion(!is || c == '/');
+  if (c != '/'){
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
   is >> d;
-  if (is)
+  if (!is.fail()) {
     z = Gmpq(n,d);
+  }
 
   return is;
 }

@@ -379,10 +379,105 @@ operator<<(std::ostream& os, const Gmpz &z)
   return os;
 }
 
-inline
+
+void gmpz_eat_white_space(std::istream &is) {
+  std::istream::int_type c;
+  do {
+    c= is.peek();
+    if (c== std::istream::traits_type::eof()) return;
+    else {
+      std::istream::char_type cc= c;
+      if (
+#ifndef CGAL_CFG_NO_LOCALE
+	     std::isspace(cc, std::locale::classic() )
+#else
+	     CGAL_CLIB_STD::isspace(cc)
+#endif // CGAL_CFG_NO_LOCALE
+	     ) {
+      is.get();
+      // since peek succeeded, this should too
+      CGAL_assertion(!is.fail());
+    } else {
+      return;
+    }
+    }
+  } while (true);
+}
+
+
+inline 
+std::istream &
+gmpz_new_read(std::istream &is, Gmpz &z) {
+  bool negative = false;
+  const std::istream::char_type zero = '0';
+  std::istream::int_type c;
+  Gmpz r;
+  std::ios::fmtflags old_flags = is.flags();
+
+  is.unsetf(std::ios::skipws);
+  gmpz_eat_white_space(is);
+   
+  c=is.peek();
+  if (c=='-'){
+    is.get();
+    CGAL_assertion(!is.fail());
+    negative=true;
+    gmpz_eat_white_space(is);
+    c=is.peek();
+  }
+  
+  std::istream::char_type cc= c;
+  
+  if (c== std::istream::traits_type::eof()
+      || 
+#ifndef CGAL_CFG_NO_LOCALE
+      !std::isdigit(cc, std::locale::classic() )
+#else
+      !std::isdigit(cc)
+#endif // CGAL_CFG_NO_LOCALE) {
+      ){
+    is.setstate(std::ios_base::failbit);
+  } else {
+    CGAL_assertion(cc==c);
+    r= cc-zero;
+    is.get();
+    CGAL_assertion(!is.fail());
+    while (true) {
+      c=is.peek();
+      if (c== std::istream::traits_type::eof()) {
+	break;
+      }
+      cc=c;
+      if  (
+#ifndef CGAL_CFG_NO_LOCALE
+	   !std::isdigit(cc, std::locale::classic() )
+#else
+	   !std::isdigit(cc)
+#endif // CGAL_CFG_NO_LOCALE
+	   ) {
+	break;
+      }
+      is.get();
+      CGAL_assertion(!is.fail());
+      CGAL_assertion(cc==c);
+      r= r*10+(cc-zero);
+    }  
+  }
+   
+  is.flags(old_flags);
+  if (!is.fail()) {
+    if (negative) {
+      z=-r;
+    } else {
+      z=r;
+    }
+  }
+  return is;
+}
+
+/*inline
 std::istream&
-operator>>(std::istream& is, Gmpz &z)
-{
+read_gmpz(std::istream& is, Gmpz &z) {
   bool negative = false;
   bool good = false;
   const int null = '0';
@@ -437,6 +532,13 @@ operator>>(std::istream& is, Gmpz &z)
 
   is.flags(old_flags);
   return is;
+  }*/
+
+inline
+std::istream&
+operator>>(std::istream& is, Gmpz &z)
+{
+  return gmpz_new_read(is, z);
 }
 
 inline
