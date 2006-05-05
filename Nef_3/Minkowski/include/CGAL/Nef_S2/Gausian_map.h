@@ -11,6 +11,10 @@
 #include <CGAL/IO/Qt_widget_Nef_S2.h>
 #include <qapplication.h>
 
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 223
+#include <CGAL/Nef_2/debug.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class K>
@@ -61,6 +65,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
   typedef typename Sphere_map::SHalfedge_iterator         SHalfedge_iterator;
   typedef typename Sphere_map::SVertex_iterator           SVertex_iterator;
   typedef typename Sphere_map::SVertex_const_iterator     SVertex_const_iterator;
+  typedef typename Sphere_map::SVertex_const_handle       SVertex_const_handle;
   typedef typename Sphere_map::SHalfedge_around_svertex_const_circulator
     SHalfedge_around_svertex_const_circulator;
   typedef typename Sphere_map::SHalfedge_around_sface_circulator
@@ -130,10 +135,10 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	int circles = 1;
 	Sphere_circle first, current;
 	first = current = sec->circle();
-	std::cerr << "first+current:" << first << "+" << current << std::endl;
+	CGAL_NEF_TRACEN( "first+current:" << first << "+" << current );
 	typename Nef_polyhedron_3::SHalfedge_around_sface_const_circulator sfc(sec), send(sfc);
 	CGAL_For_all(sfc, send) {
-	  std::cerr << "sedge->cirlce() " << sfc->circle() << std::endl;
+	  CGAL_NEF_TRACEN( "sedge->cirlce() " << sfc->circle() );
 	  if(sfc->circle() != current) {
 	    if(sfc->circle() != first)
 	      ++circles;
@@ -141,8 +146,8 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	  }
 	}
 	
-	std::cerr << "first+current:" << first << "+" << current << std::endl;
-	std::cerr << "circles " << circles << std::endl;
+	CGAL_NEF_TRACEN( "first+current:" << first << "+" << current );
+	CGAL_NEF_TRACEN( "circles " << circles );
 
 	if(circles < 3)
 	  omit_vertex[sf->center_vertex()] = true;
@@ -150,7 +155,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
   
       void visit(Halffacet_const_handle f) {
 
-	std::cerr << "SVertex_creator " << f->plane() << std::endl;
+	CGAL_NEF_TRACEN( "SVertex_creator " << f->plane() );
 
 	Halffacet_cycle_const_iterator fc = f->twin()->facet_cycles_begin();
 	SHalfedge_const_handle se(fc);
@@ -158,12 +163,12 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
 	/*
 	CGAL_For_all(hc,hend) {
-	  std::cerr << "circles " << hc->circle() << " + " << hc->sprev()->circle() << std::endl;
+	  CGAL_NEF_TRACEN( "circles " << hc->circle() << " + " << hc->sprev()->circle() );
 	  if(hc->sprev()->circle() == hc->circle()) {
 	    //	    omit_vertex[hc->source()->source()] = omit_vertex[hc->source()->twin()->source()] = true;
 	    //	    omit_edge[hc->source()] = omit_edge[hc->source()->twin()] = true;
-	    std::cerr << "omit edge1 " << hc->source()->source()->point() 
-		    << ":" << hc->source()->point() << std::endl;
+	    CGAL_NEF_TRACEN( "omit edge1 " << hc->source()->source()->point() 
+		    << ":" << hc->source()->point() );
 	  } else if(hc->snext()->snext() == hc) {
 	    //	    omit_vertex[hc->source()->source()] = true;
 	  }
@@ -171,8 +176,8 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	     ((SHalfedge_const_handle) hc == (SHalfedge_const_handle) hc->incident_sface()->sface_cycles_begin() || 
 	      hc->snext()->snext() != hc)) {
 	    //	    omit_edge[hc->source()] = omit_edge[hc->source()->twin()] = true;
-	    std::cerr << "omit edge2 " << hc->source()->source()->point() 
-		      << ":" << hc->source()->point() << std::endl;
+	    CGAL_NEF_TRACEN( "omit edge2 " << hc->source()->source()->point() 
+		      << ":" << hc->source()->point() );
 	  }
 	}
 	*/
@@ -180,9 +185,9 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	CGAL_For_all(hc,hend) {
 	  if(hc->snext()->circle() == hc->circle()) {
 	    next[hc] = hc->snext();
-	    std::cerr << "set next " << hc->source()->source()->point() << ":"
+	    CGAL_NEF_TRACEN( "set next " << hc->source()->source()->point() << ":"
 		      << hc->source()->point() << "->" << hc->twin()->source()->point() << " | " 
-		      << hc->snext()->source()->point() << "->" << hc->snext()->twin()->source()->point() << std::endl;
+		      << hc->snext()->source()->point() << "->" << hc->snext()->twin()->source()->point() );
 	    //	    omit_vertex[hc->twin()->source()->source()] = omit_vertex[hc->twin()->source()->twin()->source()] = true;
 	    omit_edge[hc->twin()->source()] = omit_edge[hc->twin()->source()->twin()] = true;
 	    //	  } else if(hc->snext()->snext() == hc) {
@@ -264,11 +269,11 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     void visit(Halffacet_const_handle f) {
 
       if(omit_facet[f]) {
-	std::cerr << "omit facet " << f->plane() << std::endl;
+	CGAL_NEF_TRACEN( "omit facet " << f->plane() );
 	return;
       }
 
-      std::cerr << "SEdge_creator " << f->plane() << std::endl;
+      CGAL_NEF_TRACEN( "SEdge_creator " << f->plane() );
       Halffacet_cycle_const_iterator fc = f->twin()->facet_cycles_begin();
       SHalfedge_const_handle se(fc);
       SHalfedge_around_facet_const_circulator hc(se), hend(hc);
@@ -286,8 +291,8 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       
       SHalfedge_handle thetwin;
       do {
-	std::cerr << "edge " << hc->source()->source()->point() 
-		  << ":" << hc->source()->point() << std::endl;
+	CGAL_NEF_TRACEN( "edge " << hc->source()->source()->point() 
+		  << ":" << hc->source()->point() );
 	Halfedge_const_handle e = hc->twin()->source();
 	if(e->point() != last->point()) {
 	  Edge2SEdge[hc->source()] = thetwin;
@@ -302,7 +307,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	    thetwin = set->twin();
 	  } 
 	  last = hc->twin()->source();
-	} else std::cerr << "omit " << std::endl;
+	} else CGAL_NEF_TRACEN( "omit " );
 	++hc;
 	while(next[hc]!=SHalfedge_const_handle()) hc = next[hc];
       } while(hc!=hend);
@@ -311,8 +316,8 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       /*
       do {
 	if(!omit_edge[hc->source()]) {
-	  std::cerr << "edge " << hc->source()->source()->point() 
-		    << ":" << hc->source()->point() << std::endl;
+	  CGAL_NEF_TRACEN( "edge " << hc->source()->source()->point() 
+		    << ":" << hc->source()->point() );
 
 	  Halfedge_const_handle e = hc->source();
 	  SHalfedge_handle set = Edge2SEdge[e->twin()];
@@ -326,8 +331,8 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	    Edge2SEdge[e] = set->twin();
 	  }
 	} else {
-	  std::cerr << "omit edge " << hc->source()->source()->point() 
-		    << ":" << hc->source()->point() << std::endl;
+	  CGAL_NEF_TRACEN( "omit edge " << hc->source()->source()->point() 
+		    << ":" << hc->source()->point() );
 	}
 	++hc;
       } while(hc != hend);
@@ -368,16 +373,15 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       void visit(Halffacet_const_handle f) {}
 
       void visit(Vertex_const_handle v) {
-	std::cerr << "SFace_creator " << v->point() << std::endl;
+	CGAL_NEF_TRACEN( "SFace_creator " << v->point() );
 
 	if(omit_vertex[v]) {
-	  std::cerr << "omit " << v->point() << std::endl;
+	  CGAL_NEF_TRACEN("omit " << v->point() );
 	  return;
 	}
 
-        CGAL::SM_io_parser<SM_decorator> O(std::cerr,SM); 
-        O.print();
-
+	//        CGAL::SM_io_parser<SM_decorator> O(std::cerr,SM); 
+	//        O.print();
 
         typename Nef_polyhedron_3::Nef_polyhedron_S2 SD(N3.get_sphere_map(v));
    
@@ -450,7 +454,9 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	top = Object_handle(SHalfedge_const_handle(sfc));
       } else {
 	CGAL_assertion(topSF.size() > 0);
-	while(sfc->source()->point()-CGAL::ORIGIN != Vector_3(0,0,1)) {
+	while(sfc->source()->point().hx()!=0 || 
+	      sfc->source()->point().hy()!=0 ||
+	      sfc->source()->point().hz()<=0) {
 	  ++sfc;
 	  CGAL_assertion(sfc != sfend);
 	}
@@ -473,7 +479,9 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	bottom = Object_handle(SHalfedge_const_handle(sfc));
       } else {
 	CGAL_assertion(bottomSF.size() > 0);
-	while(sfc->source()->point()-CGAL::ORIGIN != Vector_3(0,0,1)) {
+	while(sfc->source()->point().hx()!=0 || 
+	      sfc->source()->point().hy()!=0 || 
+	      sfc->source()->point().hz()>=0) {
 	  ++sfc;
 	  CGAL_assertion(sfc != sfend);
 	}
@@ -487,7 +495,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
   template<typename NK> 
     Gausian_map(const CGAL::Nef_polyhedron_3<NK>& N3,
-		typename CGAL::Nef_polyhedron_3<NK>::SFolume_const_iterator c) : Base(new Sphere_map) {
+		typename CGAL::Nef_polyhedron_3<NK>::Volume_const_iterator c) : Base(new Sphere_map) {
 
     typedef CGAL::Nef_polyhedron_3<NK> Nef_polyhedron_3;
     typedef typename Nef_polyhedron_3::Vertex_const_iterator 
@@ -723,10 +731,17 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     void minkowski_sum(const Gausian_map& G1, const Gausian_map& G2) {
       //      CGAL_NEF_SETDTHREAD(131);
       SM_overlayer O(sphere_map());
+#ifdef CGAL_NEF3_TIMER_OVERLAY
+      CGAL::Timer t;
+      t.start();
+#endif // CGAL_NEF3_TIMER_OVERLAY
       O.subdivide(G1.sphere_map(), G2.sphere_map(),true);
+#ifdef CGAL_NEF3_TIMER_OVERLAY
+      t.stop();
+      std::cout << "Runtime_overlay " << t.time() << std::endl;
+#endif // CGAL_NEF3_TIMER_OVERLAY
       VECTOR_ADDITION va;
       O.select(va);
-      //      dump();
       simplify();
     }
 
@@ -735,6 +750,92 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     }
     Object_handle get_bottom() {
       return bottom;
+    }
+
+    Object_handle locate_top() {
+      std::vector<SFace_iterator> topSF;
+      SFace_iterator sfi = sfaces_begin();
+      topSF.push_back(sfi);
+      
+      Comparison_result cr;
+      for(++sfi;sfi != sfaces_end(); ++sfi) {
+	cr = compare_z(sfi->mark(), (*topSF.begin())->mark());
+	if(cr != CGAL::SMALLER) {
+	  if(cr == CGAL::LARGER)
+	  topSF.clear();
+	  topSF.push_back(sfi);	
+	}
+      }
+      
+      SFace_handle sf(topSF.front());
+      if(topSF.size()==1)
+	return Object_handle(SFace_const_handle(sf));
+      else {
+	SHalfedge_handle se(sf->sface_cycles_begin());
+	SHalfedge_around_sface_circulator sfc(se), sfend(sfc);       
+	
+	if(topSF.size()==2) {
+	  while(sfc->circle().c()!=0) {
+	    ++sfc;
+	    CGAL_assertion(sfc != sfend);
+	  }
+	  return Object_handle(SHalfedge_const_handle(sfc));
+	} else {
+	  CGAL_assertion(topSF.size() > 0);
+	  while(sfc->source()->point().hx()!=0 || 
+		sfc->source()->point().hy()!=0 ||
+		sfc->source()->point().hz()<=0) {
+	    ++sfc;
+	    CGAL_assertion(sfc != sfend);
+	  }
+	  return Object_handle(SVertex_const_handle(sfc->source()));      
+	}
+      }
+      CGAL_assertion_msg(false,"line should not be executed");
+      return Object_handle();
+    }
+    
+    Object_handle locate_bottom() {
+      std::vector<SFace_iterator> bottomSF;
+      SFace_iterator sfi = sfaces_begin();
+      bottomSF.push_back(sfi);
+      
+      Comparison_result cr;
+      for(++sfi;sfi != sfaces_end(); ++sfi) {
+	cr = compare_z(sfi->mark(), (*bottomSF.begin())->mark());
+	if(cr != CGAL::LARGER) {
+	  if(cr == CGAL::SMALLER)
+	    bottomSF.clear();
+	  bottomSF.push_back(sfi);	
+	}
+      }
+      
+      SFace_handle sf(bottomSF.front());
+      if(bottomSF.size()==1)
+	return Object_handle(SFace_const_handle(sf));
+      else {
+	SHalfedge_handle se(sf->sface_cycles_begin());
+	SHalfedge_around_sface_circulator sfc(se), sfend(sfc);       
+	
+	if(bottomSF.size()==2) {
+	  while(sfc->circle().c()!=0) {
+	    ++sfc;
+	    CGAL_assertion(sfc != sfend);
+	  }
+	  return Object_handle(SHalfedge_const_handle(sfc));
+	} else {
+	  CGAL_assertion(bottomSF.size() > 0);
+	  while(sfc->source()->point().hx()!=0 || 
+		sfc->source()->point().hy()!=0 ||
+		sfc->source()->point().hz()>=0) {
+	    ++sfc;
+	    CGAL_assertion(sfc != sfend);
+	  }
+	  return Object_handle(SVertex_const_handle(sfc->source()));      
+	}
+      }
+      CGAL_assertion_msg(false,"line should not be executed");
+      return Object_handle();
     }
 
     void dump() {

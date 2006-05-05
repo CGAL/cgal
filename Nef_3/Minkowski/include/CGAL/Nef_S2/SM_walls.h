@@ -1,6 +1,10 @@
 #ifndef CGAL_SM_WALLS_H
 #define CGAL_SM_WALLS_H
 
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 227
+#include <CGAL/Nef_2/debug.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template<typename SMap>
@@ -12,6 +16,7 @@ class SM_walls : SM_decorator<SMap> {
   typedef CGAL::SM_point_locator<Base>    SM_point_locator;
   typedef typename Base::Sphere_point     Sphere_point;
   typedef typename Base::Sphere_circle    Sphere_circle;
+  typedef typename Base::Sphere_direction Sphere_direction;
   typedef typename Base::Sphere_segment   Sphere_segment;
   
   typedef typename Base::SVertex_handle   SVertex_handle;
@@ -34,8 +39,8 @@ class SM_walls : SM_decorator<SMap> {
 
   SHalfedge_handle find_cap(SVertex_handle sv, Sphere_point sp, Sphere_circle c) {
 
-    std::cerr << "find_cap " << sv->source()->point() << ":" << sv->point() 
-	      << " , sp : " << sp << std::endl;
+    CGAL_NEF_TRACEN( "find_cap " << sv->source()->point() << ":" << sv->point() 
+	      << " , sp : " << sp );
     /*
     SHalfedge_handle se = sv->out_sedge();
     if(se != SHalfedge_handle())
@@ -55,8 +60,8 @@ class SM_walls : SM_decorator<SMap> {
       return SHalfedge_handle();    
 
     //    Sphere_circle c(sv->point(), sp);
-    std::cerr << "sv    " << sv->point() << std::endl;
-    std::cerr << "c     " << c.orthogonal_vector() << std::endl;
+    CGAL_NEF_TRACEN( "sv    " << sv->point() );
+    CGAL_NEF_TRACEN( "c     " << c.orthogonal_vector() );
     SHalfedge_around_svertex_circulator sh(sv->out_sedge()), send(sh);
 
     Plane_3 pl(Point_3(0,0,0),Vector_3(sv->point()-CGAL::ORIGIN));
@@ -71,10 +76,10 @@ class SM_walls : SM_decorator<SMap> {
       shnext =sh;
       ++shnext;
 
-      std::cerr << "sh     " << sh->circle().orthogonal_vector() << std::endl;
-      std::cerr << "shnext " << shnext->circle().orthogonal_vector() << std::endl;
+      CGAL_NEF_TRACEN( "sh     " << sh->circle().orthogonal_vector() );
+      CGAL_NEF_TRACEN( "shnext " << shnext->circle().orthogonal_vector() );
       Sphere_segment seg(sh->circle().orthogonal_vector(), shnext->circle().orthogonal_vector(),cc);
-      std::cerr << "seg " << seg << std::endl;
+      CGAL_NEF_TRACEN( "seg " << seg );
       if(seg.has_on(c.orthogonal_vector()))
 	return sh;
     }
@@ -94,13 +99,16 @@ class SM_walls : SM_decorator<SMap> {
   */
 
   void insert_new_svertex_into_sedge(SVertex_handle sv, SHalfedge_handle se) {
+    
+    CGAL_NEF_TRACEN( "insert new svertex into sedge " << sv->point() << " | " 
+	      << se->source()->point() << "->" << se->twin()->source()->point() );
 
-    std::cerr << "insert new svertex into sedge " << sv->point() << " | " 
-	      << se->source()->point() << "->" << se->twin()->source()->point() << std::endl;
-
-    std::cerr << "double coords " << CGAL::to_double(sv->point().x())
+    CGAL_NEF_TRACEN( "double coords " << CGAL::to_double(sv->point().x())
 	      << ", " << CGAL::to_double(sv->point().y())
-	      << ", " << CGAL::to_double(sv->point().z()) << std::endl;
+	      << ", " << CGAL::to_double(sv->point().z()) );
+
+    //    SM_decorator SD(sphere_map());
+    //    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
 
     CGAL_assertion(se->circle().has_on(sv->point()));
 
@@ -154,20 +162,20 @@ class SM_walls : SM_decorator<SMap> {
 
   bool legal_direction(Sphere_segment seg, Object_handle& o, Sphere_point& ip) {
 
-    std::cerr << "legal_direction " << seg << std::endl;
+    CGAL_NEF_TRACEN( "legal_direction " << seg );
     //    CGAL_NEF_SETDTHREAD(47);
     SM_point_locator P(sphere_map());
     o = P.ray_shoot(seg, ip, false, false);
 
     SVertex_handle sv;
     if(assign(sv, o)) {
-      std::cerr << "  found svertex " << sv->point() << std::endl;
+      CGAL_NEF_TRACEN( "  found svertex " << sv->point() );
       return true;
     }
 
     SHalfedge_handle se;
     if(assign(se, o)) {
-      std::cerr << "  found sedge " << ip << std::endl;
+      CGAL_NEF_TRACEN( "  found sedge " << ip );
       return true;
     }
 
@@ -179,15 +187,45 @@ class SM_walls : SM_decorator<SMap> {
     if(assign(sf, o))
       CGAL_assertion_msg(false, "wrong handle");
 
+    CGAL_NEF_TRACEN("did not find anything");
+
     ip = seg.target();
     o = P.locate(seg.target());
-
-    if(assign(sf, o)) {
-      std::cerr << "  found sface" << std::endl;
-      if(sf->mark() == false)
-	return false;
+    /*
+    if(assign(sv, o)) {
+      CGAL_NEF_TRACEN( "  found svertex " << sv->point() );
+      if(is_isolated(sv))
+	return sv->incident_sface()->mark();
+      else {
+	bool collinear;
+	Sphere_direction d(seg.sphere_circle().opposite());
+	SHalfedge_handle e_res = P.out_wedge(sv, d, collinear);
+	if(collinear) {
+	  CGAL_NEF_TRACEN(" collinear ");
+	  o = Object_handle(e_res);
+	  return false;
+	} else {
+          if ( e_res->circle().has_on_negative_side(seg.source()) )
+            e_res = e_res->sprev();
+	  o = Object_handle(e_res->incident_sface());
+	  CGAL_NEF_TRACEN("  sface " << e_res->incident_sface()->mark());
+	  return e_res->incident_sface()->mark();
+	}
+      }
     }
+    */
+    if(assign(sf, o)) {
+      CGAL_NEF_TRACEN( "  found sface" );
+      return sf->mark();
+    } 
 
+    /*    
+    if(assign(se,o))
+      CGAL_assertion_msg(false,"wrong handle");
+
+    if(assign(sl,o))
+      CGAL_assertion_msg(false,"wrong handle");
+    */
     //    CGAL_NEF_SETDTHREAD(1);
     return true;
   }
@@ -228,28 +266,29 @@ class SM_walls : SM_decorator<SMap> {
   
   SVertex_handle add_ray_svertex(Sphere_point sp) {
 
-    std::cerr << "add_ray_svertex " << sp << std::endl;
+    CGAL_NEF_TRACEN( "add_ray_svertex " << sp );
 
     SM_point_locator P(sphere_map());
 
     //    SM_decorator SD(sphere_map());
     //    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
 
-    //    CGAL_NEF_SETDTHREAD(47);
     Object_handle o = P.locate(sp);
-    //    CGAL_NEF_SETDTHREAD(1);
 
     return add_svertex_into_object(sp,o);
   }
-   
+  
   SVertex_handle add_svertex_into_object(Sphere_point sp, Object_handle o) {
 
-    std::cerr << "add_svertex_into_object " << sp << std::endl;
+    CGAL_NEF_TRACEN( "add_svertex_into_object " << sp );
+
+    //    SM_decorator SD(sphere_map());
+    //    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
 
     SVertex_handle sv;
     SFace_handle sf;
     if(assign(sf, o)) {
-      std::cerr << "  found sface" << std::endl;
+      CGAL_NEF_TRACEN( "  found sface" );
       sv = new_svertex(sp);
       sv->incident_sface() = sf;
       link_as_isolated_vertex(sv,sf);
@@ -257,14 +296,13 @@ class SM_walls : SM_decorator<SMap> {
     }
     
     if(assign(sv, o)) {
-      std::cerr << "  found svertex" << std::endl;
+      CGAL_NEF_TRACEN( "  found svertex" );
       return sv;
     }
 
-
     SHalfedge_handle se;
     if(assign(se, o)) {
-      std::cerr << "  found sedge" <<std::endl;
+      CGAL_NEF_TRACEN( "  found sedge");
       sv = new_svertex(sp);
       insert_new_svertex_into_sedge(sv, se);
       return sv;
@@ -272,7 +310,7 @@ class SM_walls : SM_decorator<SMap> {
     
     SHalfloop_handle sl;
     if(assign(sl, o)) {
-      std::cerr << " found sloop" << std::endl;
+      CGAL_NEF_TRACEN( " found sloop" );
       sv = new_svertex(sp);
       insert_new_svertex_into_sloop(sv,sl);
       return sv;
@@ -286,18 +324,18 @@ class SM_walls : SM_decorator<SMap> {
 				     bool compare_to_dir = false, 
 				     const Sphere_point& dir = Sphere_point()) {
 
-    std::cerr << "add_lateral_svertex " << sphere_ray << std::endl;
+    CGAL_NEF_TRACEN( "add_lateral_svertex " << sphere_ray );
 
-    CGAL_assertion(sphere_ray.source() != dir);
+    //    CGAL_assertion(sphere_ray.source() != dir);
 
     Sphere_point sp1(sphere_ray.source());
     Sphere_point sp2(sphere_ray.target());
-    std::cerr << "double coords " << CGAL::to_double(sp1.x())
+    CGAL_NEF_TRACEN( "double coords " << CGAL::to_double(sp1.x())
 	      << ", " << CGAL::to_double(sp1.y())
 	      << ", " << CGAL::to_double(sp1.z())
 	      << "->" << CGAL::to_double(sp2.x())
 	      << ", " << CGAL::to_double(sp2.y())
-	      << ", " << CGAL::to_double(sp2.z()) << std::endl;
+	      << ", " << CGAL::to_double(sp2.z()) );
 
     Sphere_point ip;
     SM_point_locator P(sphere_map());
@@ -305,15 +343,21 @@ class SM_walls : SM_decorator<SMap> {
     Object_handle o = P.ray_shoot(sphere_ray.source(), sphere_ray.sphere_circle(), ip);
     //    CGAL_NEF_SETDTHREAD(1);
     
-    if(compare_to_dir) {
+    if(compare_to_dir && dir != sphere_ray.source() && dir != ip) {
       Sphere_segment test_seg(sphere_ray.source(), ip, sphere_ray.sphere_circle());
-      if(test_seg.has_on(dir))
-	ip = dir;
+      if(test_seg.has_on(dir)) {
+	SFace_handle sf;
+	o = P.locate(dir);
+	CGAL_assertion(assign(sf,o));
+	SVertex_handle sv = new_svertex(Sphere_point(dir));
+	link_as_isolated_vertex(sv, sf);
+	return sv;
+      }
     }
 
     SHalfedge_handle se;
     if(assign(se,o)) {
-      std::cerr << "  split sedge" << std::endl;
+      CGAL_NEF_TRACEN( "  split sedge" );
 
       SVertex_handle sv = new_svertex(ip);
       insert_new_svertex_into_sedge(sv,se);
@@ -323,13 +367,13 @@ class SM_walls : SM_decorator<SMap> {
     
     SVertex_handle sv;
     if(assign(sv,o)) {
-      std::cerr << "  found svertex " << sv->point() << std::endl;
+      CGAL_NEF_TRACEN( "  found svertex " << sv->point() );
       return sv;
     }
 
     SHalfloop_handle sl;
     if(assign(sl,o)) {
-      std::cerr << "  found sloop " << std::endl;
+      CGAL_NEF_TRACEN( "  found sloop " );
       SVertex_handle sv = new_svertex(ip);
       
       insert_new_svertex_into_sloop(sv,sl);
@@ -359,9 +403,9 @@ class SM_walls : SM_decorator<SMap> {
 
   void add_sedge_between(SVertex_handle sv1, SVertex_handle sv2, 
 			 Sphere_circle c = Sphere_circle()) { // = Sphere_circle(sv1->point(),sv2->point())) {
-    std::cerr << "add sedges between " << sv1->point() 
+    CGAL_NEF_TRACEN( "add sedges between " << sv1->point() 
 	      << ", " << sv2->point() 
-	      << " at " << sv1->source()->point() << std::endl;
+	      << " at " << sv1->source()->point() );
 
     /*
     Sphere_circle test(Sphere_circle(sv1->point(),sv2->point()));
@@ -371,11 +415,12 @@ class SM_walls : SM_decorator<SMap> {
 
     if(is_isolated(sv1)) {
       if(!is_sm_boundary_object(sv1))
-	std::cerr << "error " << sv1->point() << "at " << sv1->source()->point() << std::endl;
+	CGAL_NEF_TRACEN( "error " << sv1->point() << "at " << sv1->source()->point() );
       unlink_as_isolated_vertex(sv1);
     }
     if(is_isolated(sv2)) {
-      std::cerr << "error " << sv2->point() << "at " << sv2->source()->point() << std::endl;
+      if(!is_sm_boundary_object(sv2))
+	CGAL_NEF_TRACEN( "error " << sv2->point() << "at " << sv2->source()->point() );
       unlink_as_isolated_vertex(sv2);
     }
 
@@ -408,8 +453,8 @@ class SM_walls : SM_decorator<SMap> {
     
     se_new->mark() = se_new->twin()->mark() = true; // = se_new->incident_sface()->mark();
 
-    std::cerr << sv1->point() << "->" << sv2->point() << "==" 
-	      << se_new->source()->point() << "->" << se_new->twin()->source()->point() << std::endl;
+    CGAL_NEF_TRACEN( sv1->point() << "->" << sv2->point() << "==" 
+	      << se_new->source()->point() << "->" << se_new->twin()->source()->point() );
 
     CGAL_assertion(sv1 == se_new->source() && 
 		   sv2 == se_new->twin()->source());
@@ -419,135 +464,6 @@ class SM_walls : SM_decorator<SMap> {
 
     // does the new sedge split a facet ?
   }    
-  /*
-  SVertex_handle add_two(Sphere_point sp1, Sphere_point sp2) {
-    std::cerr << "add_two " << sp1 << ", " << sp2 << std::endl;
-    Sphere_point ip;
-    SM_point_locator P(sphere_map());
-    Object_handle o = P.ray_shoot(sp2,Sphere_circle(sp2,sp1),ip);
-
-    SHalfedge_handle se;
-    if(assign(se,o)) {
-      //      CGAL_assertion_msg(false, "wrong handle");
-      std::cerr << "split sedge" << std::endl;
-  */
-      /*
-      SVertex_handle svt = se->source();
-      typename SMap::SHalfedge_around_svertex_const_circulator sav(svt->out_sedge()), send(sav);      
-      CGAL_For_all(sav,send) {
-	std::cerr << sav->twin()->source()->point() << std::endl;
-      }
-      */
-  /*
-      SVertex_handle sv = new_svertex(ip);
-      insert_new_svertex_into_sedge(sv,se);
-  */  
-      /*
-      std::cerr << " " << std::endl;
-      CGAL_For_all(sav,send) {
-	std::cerr << sav->twin()->source()->point() << std::endl;
-      }
-
-      CGAL_For_all(sav,send) {
-	typename SMap::SHalfedge_around_svertex_const_circulator snext(sav), snn(sav);
-	++snext; ++snn; ++snn;
-	typename SMap::SVertex_const_handle stwin1(sav->twin()->source());
-	typename SMap::SVertex_const_handle stwin2(snext->twin()->source());
-	typename SMap::SVertex_const_handle stwin3(snn->twin()->source());
-	CGAL_assertion(spherical_orientation(stwin1->point(),
-					     stwin2->point(),
-					     stwin3->point()) >= 0);
-      }
-      */
-      /*
-      return sv;
-    }
-
-    SHalfloop_handle sl;
-    CGAL_assertion_msg(!assign(sl,o), "not implemented yet");
-
-    SVertex_handle sv;
-    //    CGAL_assertion_msg(!assign(sv,o), "not implemented yet");
-    if(assign(sv,o)) {
-      insert_wall(sp2,sv);
-      return sv;
-    }
-
-    CGAL_assertion_msg(false, "wrong handle");
-    return SVertex_handle();
-  }
-  */
-  /*
-  SVertex_handle add_outgoing(Sphere_point sp, SVertex_handle sv) {
-    SVertex_handle sv_new = new_svertex(sp);
-    SHalfedge_handle se_cap = find_cap(sv,sp);
-    SHalfedge_handle se_new = new_shalfedge_pair(se_cap, sv_new, AFTER);
-    se_new->incident_sface() = se_new->twin()->incident_sface() = se_cap->incident_sface();
-    se_new->circle() = Sphere_circle(se_new->source()->point(), se_new->twin()->source()->point());
-    se_new->twin()->circle() = se_new->circle().opposite();
-    return sv_new;
-  }
-  */
-  /*
-  void insert_new_svertex_into_sface(SFace_handle sf, const Sphere_point& sp) {
-    SVertex_handle sv = new_svertex(sp);
-    
-    SFace_cycles_iterator sfc = sf.sface_cycles_begin();
-    CGAL_assertion(sfc.is_shalfedge());
-    SHalfedge_around_sface_circulator sec(SHalfedge_handle(sfc)), send(sec);
-    CGAL_For_all(sec,send)
-      new_shalfedge(sv,sec.source());
-    SHalfedge_around_svertex_circulator sevc(sv.out_sedge()), eend(sevc);
-    CGAL_For_all(sevc,eend) {
-      SFace_handle sf_new = new_sface();
-      sf_new.mark() = sf.mark();
-      link_as_sface_cycle(sevc,sf_new);
-    }
-    delete_sface(sf);
-  }
-  */
-
-  /*
-  void create_opposite_vertex_on_facet(Halffacet_handle f, SVertex_handle sv_in, 
-				       const Sphere_point& sp) {
-    SVertex_handle sv = new_svertex(sp);
-    SHalfedge_around_svertex_circulator sevc(sv_in.out_sedge()), eend(sevc);
-    do { 
-      Vector_3 or(f->plane()->orthogonal_vector());
-      Sphere_point p(sevc.twin().source().point()),p_new;
-      if(p.hx() != 0)
-	p_new = Sphere_point(-(p.hy()*or.b()+p.hz()*or.c()),
-			     or.a()*p.hy(), 
-			     or.a()*p.hz(), 
-			     or.a()*p.hw());
-      else if(p.hy() !=0)
-	p_new = Sphere_point(or.b()*p.hx(),
-			     -(p.hx()*or.a()+p.hz()*or.c()),
-			     or.b()*p.hz(), 
-			     or.b()*p.hw());
-      else if(p.hz() !=0)
-	p_new = Sphere_point(or.c()*p.hx(),
-			     or.c()*p.hy(),
-			     -(p.hx()*or.a()+p.hy()*or.b()), 
-			     or.c()*p.hw());
-      SVertex_handle svh = new_svertex(p_new);
-      svh->mark() = sevc->mark();
-      --sevc;
-    } while(sevc != eend);
-
-    SVertex_iterator svi(svertices_begin());
-    ++svi;
-    SVertex_iterator sv_next(svi);
-    ++sv_next;
-    while(sv_next != svertices_end()) {
-      new_shalfedge(*svi, *(++svi));
-      new_shalfedge(*svi, sv); 
-    }
-    new_shalfedge(*svi,*(++svertices_begin()));
-    new_shalfedge(*svi, sv); 
-  }
-  */
-
 };
 
 CGAL_END_NAMESPACE
