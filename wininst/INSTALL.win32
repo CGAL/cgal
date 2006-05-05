@@ -36,7 +36,7 @@ For your convenience we have precompiled GMP 4.1.4 and MPFR 2.1.0.
 You can download it from where you have downloaded CGAL-3.2.zip.
 We compiled it with the /MD option, in release mode, and we didn't
 use processor specific assembler.  
-You must move the files gmp.dll and mpfr.dll to your PATH, e.g.,
+You must move the files libgmp-3.dll and libmpfr-1.dll to your PATH, e.g.,
 c:\Windows\System32.
 
 
