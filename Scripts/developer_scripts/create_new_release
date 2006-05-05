@@ -146,6 +146,18 @@ cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LO
 zip -q -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
 cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
 
+# Build the SRPM of the public version
+echo "Making the SRPM public file" >> ${LOGFILE} 2>&1
+rm -rf rpm >> ${LOGFILE} 2>&1
+cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
+cp ${public_release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
+mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
+sed -e "s/define internal_release.*/define internal_release 0/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
+make -C rpm CGAL.src >> ${LOGFILE} 2>&1
+# echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
+mv rpm/SRPMS/*.src.rpm "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+rm -rf rpm >> ${LOGFILE} 2>&1
+
 # Remove local directory and tarball
 rm -rf ${public_release_name} >> ${LOGFILE} 2>&1
 rm ${release_name}.tar.gz ${public_release_name}.tar.gz ${public_release_name}.zip >> ${LOGFILE} 2>&1
