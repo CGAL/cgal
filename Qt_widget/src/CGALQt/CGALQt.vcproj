@@ -22,14 +22,14 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc7&quot;;&quot;..\..\include&quot;;&quot;$(QTDIR)/include&quot;"
 				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT"
-				MinimalRebuild="FALSE"
+				MinimalRebuild="TRUE"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
+				BufferSecurityCheck="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="0"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -68,7 +68,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="&quot;..\..\include\CGAL\config\msvc7&quot;;&quot;..\..\include&quot;;&quot;$(QTDIR)/include&quot;"
-				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;DNDEBUG"
+				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_QT;NDEBUG"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
@@ -76,7 +76,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -239,14 +239,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h
+"
 						Outputs="Kinetic_Qt_core.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Kinetic_Qt_core.moc ..\..\include\Cgal\Kinetic\Io\internal\Qt_core.h
+"
 						Outputs="Kinetic_Qt_core.moc"/>
 				</FileConfiguration>
 			</File>
