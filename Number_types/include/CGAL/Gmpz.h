@@ -380,7 +380,9 @@ operator<<(std::ostream& os, const Gmpz &z)
 }
 
 
-void gmpz_eat_white_space(std::istream &is) {
+inline
+void gmpz_eat_white_space(std::istream &is)
+{
   std::istream::int_type c;
   do {
     c= is.peek();
@@ -407,7 +409,8 @@ void gmpz_eat_white_space(std::istream &is) {
 
 inline 
 std::istream &
-gmpz_new_read(std::istream &is, Gmpz &z) {
+gmpz_new_read(std::istream &is, Gmpz &z)
+{
   bool negative = false;
   const std::istream::char_type zero = '0';
   std::istream::int_type c;
