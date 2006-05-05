@@ -22,8 +22,8 @@
 #define CGAL_KINETIC_SIMULATION_TRAITS_H
 #include <CGAL/Kinetic/basic.h>
 
-//#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+//#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Filtered_kernel.h>
 //#include <CGAL/Gmpq.h>
@@ -87,7 +87,8 @@ protected:
 
 struct Suggested_exact_simulation_traits_types
 {
-  typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
+  //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
      typedef Static_kernel::FT NT;
      typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
