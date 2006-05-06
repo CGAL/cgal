@@ -232,7 +232,18 @@
       \lciTocFileHeader{Table of Contents}
     \lciPopOutput
     \lciPushOutput{shorttoc}
+      \gdef\lciFileSpecificCSS{%
+        \lcRawHtml{
+<style type="text/css">
+td.TocGroupOddLeft,
+td.TocEmptyOddLeft,
+td.TocGroupOddRight,
+td.TocEmptyOddRight    { background-color: #ffffff; }
+td.TocChapter          { font-weight: normal; }
+</style>}%
+      }
       \lciTocFileHeader{Short Table of Contents}
+      \gdef\lciFileSpecificCSS{}
     \lciPopOutput
 
     \lciMirroredTocEntry{\lciTocBegin}

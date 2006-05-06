@@ -38,6 +38,7 @@
 
 % Can be customized to have different body attributes, such as backgrounds
 \gdef{\lcBodyAttributes}{\lcRawHtml{bgcolor="white"}}
+\gdef\lciFileSpecificCSS{}
 
 % Args: <title-text>
 \newcommand{\lciHtmlFileHeader}[1]{%
@@ -50,8 +51,9 @@
 <html> <head>
 <title>}#1\lcRawHtml{</title>
 </head>
-<link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">
-<body }\lcBodyAttributes\lcRawHtml{>
+<link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">}
+\lciFileSpecificCSS%
+\lcRawHtml{<body }\lcBodyAttributes\lcRawHtml{>
 <!-- ------------------------------------------------------------------- -->
 
 }}
