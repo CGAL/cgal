@@ -49,7 +49,7 @@ ostream* anchor_stream         = 0; // the current, one of the above or class
 
 ostream* pre_stream          = 0;
 ostream* main_stream         = 0;
-ostream* description_stream  = 0;
+ostream* package_overview_stream  = 0;
 ostream* class_stream        = 0;
 ostream* contents_stream     = 0;
 ostream* short_contents_stream = 0;
@@ -202,9 +202,9 @@ void set_current_output( const string& key) {
         anchor_stream = main_anchor_stream;
     } else if ( key == "class") {
         current_output = Output_file( class_stream, class_filename);
-    } else if ( key == "description") {
-        current_output = Output_file( description_stream,
-                                      macroX( "\\lciPkgDescriptionFilename") );
+    } else if ( key == "packages") {
+        current_output = Output_file( package_overview_stream,
+                                      macroX( "\\lciPkgOverviewFilename") );
         anchor_stream = global_anchor_stream;
     } else if ( key == "toc") {
         current_output = Output_file( contents_stream,

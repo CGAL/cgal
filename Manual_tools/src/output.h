@@ -113,7 +113,7 @@ extern ostream* anchor_stream; // the current, one of the above or class env.
 extern ostream* pre_stream;
 extern ostream* main_stream;
 extern ostream* class_stream;
-extern ostream* description_stream;
+extern ostream* package_overview_stream;
 extern ostream* contents_stream;
 extern ostream* short_contents_stream;
 extern ostream* index_stream;

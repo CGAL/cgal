@@ -417,8 +417,8 @@ main( int argc, char **argv) {
 					   macroX( "\\lciContentsFilename"));
     short_contents_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciShortContentsFilename"));
-    description_stream = open_file_for_write( tmp_path +
-                                              macroX( "\\lciPkgDescriptionFilename") );
+    package_overview_stream = open_file_for_write( tmp_path +
+                                              macroX( "\\lciPkgOverviewFilename") );
 
     index_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciIndexFilename"));
@@ -540,8 +540,8 @@ main( int argc, char **argv) {
     assert_file_write( *index_stream, macroX( "\\lciIndexFilename"));
     delete index_stream;
 
-    assert_file_write( *description_stream, macroX( "\\lciPkgDescriptionFilename") );
-    delete description_stream;
+    assert_file_write( *package_overview_stream, macroX( "\\lciPkgOverviewFilename") );
+    delete package_overview_stream;
 
     HREF_counter_stream = open_file_for_write( tmp_path +
                                  macroX( "\\lciHREFCounterFilename"));

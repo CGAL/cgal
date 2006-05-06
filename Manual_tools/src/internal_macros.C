@@ -1375,10 +1375,14 @@ handle_regex_does_match( const string&, string param[], size_t n, size_t opt) {
 }
 
 string
-handle_regex_result( const string&, string param[], size_t n, size_t opt) {
-  NParamCheck( 1, 0);
-  unsigned int index = atoi( param[0].c_str() );
-  return regex_get_submatch(index);
+handle_regex_store_result( const string&, string param[], size_t n, size_t opt) {
+  NParamCheck( 2, 0);
+  unsigned int index = atoi( param[1].c_str() );
+  string macroname = param[0];
+  string result = regex_get_submatch(index);
+  //std::cerr << "!! Warning. store regex result [" << macroX(macroname) << "] [" << result << "]" << std::endl;
+  insertInternalGlobalMacro( macroname, macroX(macroname) + result, 0);
+  return string();
 }
 
 
@@ -1505,7 +1509,7 @@ void init_internal_macros() {
 
     insertInternalGlobalMacro( "\\lciRegexRegister",  handle_regex_register,   2 );
     insertInternalGlobalMacro( "\\lcRegexDoesMatch", handle_regex_does_match, 2 );
-    insertInternalGlobalMacro( "\\lcRegexResult",    handle_regex_result, 1 );
+    insertInternalGlobalMacro( "\\lcRegexStoreResult",  handle_regex_store_result, 2 );
 
     insertInternalGlobalMacro( "\\lciStoreSavebox",  handle_store_savebox, 1 );
     insertInternalGlobalMacro( "\\lciSavestreamOpen",  handle_savestream_open, 1 );

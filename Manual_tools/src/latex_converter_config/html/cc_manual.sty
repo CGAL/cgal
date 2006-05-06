@@ -996,7 +996,7 @@
   \gdef\ccValueofPkgDependsOn{}%
   \gdef\ccValueofPkgLicense{}%
   \gdef\ccValueofPkgHowToCiteCgal{}
-  \lciPushOutput{description}%
+  \lciPushOutput{packages}%
 }
 
 \newcommand{\lciFlushPkgDescription}[2]{%
@@ -1014,7 +1014,7 @@
       \lciHtmlPartPkgDesciption{\lciCurrentPartName}%
       \gdef\lciCurrentPartName{}%
     }%
-    \lciPushOutput{description}%
+    \lciPushOutput{packages}%
     \lcRawHtml{<tr><td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
     \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3>}%
@@ -1040,7 +1040,7 @@
 \newcommand{\ccPartDescriptionEnsureHR}{}
 
 \newcommand{\ccPartDescriptionImpl}[2]{
-  \lciPushOutput{description}%
+  \lciPushOutput{packages}%
   \ccPartDescriptionEnsureHR
   \lcRawHtml{<h2>}#1\lcRawHtml{</h2>}
   \def\ccValueofPkgSummary{}

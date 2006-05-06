@@ -56,19 +56,19 @@
 
 }}
 
+% FIXME: why is there a variable ccBiblioFilename, if biblio.html is still hardcoded?
 \newcommand{\lciHtmlNavigation}{
   \lcRawHtml{<strong>Navigation:</strong>}
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
   \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}}
-  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{shortcontents.html">Short Table of Contents</A>,
-  <a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,
-  <a href="}\lciOutputUppath\lcRawHtml{pkgdescription.html">Package Description</a>,
-  <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,
-  <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,
+  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,&nbsp;
+  <a href="}\lciOutputUppath\lcRawHtml{shortcontents.html">Short Table of Contents</A>,&nbsp;
+  <a href="}\lciOutputUppath\lciPkgOverviewFilename\lcRawHtml{">Package Overview</a>,&nbsp;
+  <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,&nbsp;
+  <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,&nbsp;
   <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>}
 }
 
-% FIXME: why is there a variable ccBiblioFilename, if biblio.html is still hardcoded?
 % Args: none
 \newcommand{\lciHtmlNavigationTop}{%
   \lcRawHtml{<div class="NavTop"><hr>}
@@ -251,11 +251,11 @@
     \lcTocLeft{\lcRawHtml{<a class="TocLinkTitle" href="title.html">Title Page</a>}}%
     \lcTocRight{\lcRawHtml{<a class="TocLinkBibliography" href="biblio.html">Bibliography</a>}}%
     \lcTocToggleOdd%
-    \lcTocLeft{\lcRawHtml{<a class="TocLinkPkgDesc" href="pkgdescription.html">Package Description</a>}}%
+    \lcTocLeft{\lcRawHtml{<a class="TocLinkPkgDesc" href="packages.html">Package Overview</a>}}%
     \lcTocRight{\lcRawHtml{<a class="TocLinkIndex" href="manual_index.html">Index</a>}}%
     \lcTocToggleOdd%
-    \lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>}}%
-    \lcTocRight{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
+    \lcTocLeft{\lcRawHtml{<a class="TocLinkContents" href="contents.html">Table of Contents</a>}}%
+    \lcTocRight{\lcRawHtml{<a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>}}%
     \lcTocToggleOdd%
   }{%
   \lcRawHtml{
@@ -270,10 +270,10 @@
 }\lciTocInnerTable
 \lcRawHtml{
     <tr><td class="TocContents">
-        <a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>
+        <a class="TocLinkContents" href="contents.html">Table of Contents</a>
     </td></tr>
     <tr><td class="TocContents">
-        <a class="TocLinkContents" href="contents.html">Table of Contents</a>
+        <a class="TocLinkContents" href="shortcontents.html">Short Table of Contents</a>
     </td></tr>
   </table></td></tr>
 
@@ -455,7 +455,7 @@
 }}
 
 \newcommand{\lciHtmlPartPkgDesciption}[1]{
-  \lciPushOutput{description}
+  \lciPushOutput{packages}
   \lcRawHtml{
     <tr><td colspan="3">
     <h2 class="PkgDescPart"><br>}#XC1\lcRawHtml{</h1>

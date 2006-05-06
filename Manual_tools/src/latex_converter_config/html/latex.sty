@@ -114,8 +114,11 @@
 \newcommand{\lciCheckForLabelInsideHeading}[3]{%
   \lcRegexDoesMatch{checkforlabel}{#1}{%
     % xdef doesnt work, either ..
-    \gdef#2{\lcRegexResult{1}\lcRegexResult{3}}%
-    \gdef#3{\lcRegexResult{2}}
+    \gdef#2{}%
+    \lcRegexStoreResult{#C2}{1}%
+    \lcRegexStoreResult{#C2}{3}%
+    \gdef#3{}%
+    \lcRegexStoreResult{#C3}{2}%
   }{%
     \gdef#2{#1}%
     \gdef#3{}%
@@ -236,10 +239,10 @@
 
     \lciReadAuxtmp{\lciTmpPath}{\lciMainRootname}%  read auxtmp file
     \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
-    \lciPushOutput{description}%
-    \lciHtmlFileHeader{Package Description}%
+    \lciPushOutput{packages}%
+    \lciHtmlFileHeader{Package Overview}%
     \lciHtmlNavigationTop
-    \lcRawHtml{<H1>Package Description</H1>}
+    \lcRawHtml{<H1>Package Overview</H1>}
     \lcRawHtml{<table cellpadding="2" cellspacing="0">}
     \lciPopOutput%
 }{%
@@ -255,7 +258,7 @@
     % prepare Index Header and Footer (only if index is actually used)
     \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
     \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
-    \lciPushOutput{description}%
+    \lciPushOutput{packages}%
     \lcRawHtml{</table>}
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter%
