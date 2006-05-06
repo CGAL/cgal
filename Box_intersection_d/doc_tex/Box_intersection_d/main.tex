@@ -61,7 +61,7 @@ see Section~\ref{sec:box_inters_example_proximity} for an example
 and~\cite{cgal:ze-fsbi-02} for more details.  
 
 % +------------------------------------------------------------------------+
-\section{Definition}\label{sec:box-inters-def}
+\section{Definition\label{sec:box-inters-def}}
 
 A $d$-dimensional iso-oriented box is defined as the
 \ccHtmlNoLinksFrom{Cartesian} product of $d$ intervals. We call the
@@ -214,8 +214,7 @@ void box_intersection_d(
 
 
 % +------------------------------------------------------------------------+
-\section{Minimal Example for Intersecting Boxes}
-\label{sec:box-intersect-minimal}
+\section{Minimal Example for Intersecting Boxes\label{sec:box-intersect-minimal}}
 
 The box implementation provided with
 \ccc{CGAL::Box_intersection_d::Box_d<double,2>} has a dedicated
@@ -343,7 +342,7 @@ otherwise the box might shrink and one might miss intersections.
 
 % +------------------------------------------------------------------------+
 \section{Example Using the \textit{topology} and the \textit{cutoff} 
-Parameters}\label{sec:box-inters-params}
+Parameters\label{sec:box-inters-params}}
 
 Boxes can be interpreted by the box \ccHtmlNoLinksFrom{intersection} algorithm as closed
 or as half-open boxes, see also Section~\ref{sec:box-inters-def}.  Closed
@@ -397,7 +396,7 @@ discussion.
 
 
 % +------------------------------------------------------------------------+
-\section{Runtime Performance}\label{sec:box-inters-performance}
+\section{Runtime Performance\label{sec:box-inters-performance}}
 
 The implemented algorithm is described in~\cite{cgal:ze-fsbi-02} as
 version two.  Its performance depends on a \ccc{cutoff} parameter.
@@ -495,8 +494,7 @@ member function returns the dimension.
 
 
 % +------------------------------------------------------------------------+
-\section{Example for Point Proximity Search with a Custom Traits Class}
-\label{sec:box_inters_example_proximity}
+\section{Example for Point Proximity Search with a Custom Traits Class\label{sec:box_inters_example_proximity}}
 
 Given a set of 3D points, we want to find all pairs of points that are
 less than a certain distance apart. We use the box \ccHtmlNoLinksFrom{intersection}
