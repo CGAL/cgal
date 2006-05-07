@@ -32,15 +32,15 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 */
 template <class Function_kernel_k>
 class Cartesian_kinetic_kernel:
-public internal::Cartesian_kinetic_kernel_base<Function_kernel_k,
-Cartesian_kinetic_kernel<Function_kernel_k> >
+  public internal::Cartesian_kinetic_kernel_base<Function_kernel_k,
+						 Cartesian_kinetic_kernel<Function_kernel_k> >
 {
-    typedef internal::Cartesian_kinetic_kernel_base<Function_kernel_k,
-        Cartesian_kinetic_kernel<Function_kernel_k> > P;
-    public:
+  typedef internal::Cartesian_kinetic_kernel_base<Function_kernel_k,
+						  Cartesian_kinetic_kernel<Function_kernel_k> > P;
+public:
   typedef Function_kernel_k Function_kernel;
-        Cartesian_kinetic_kernel(Function_kernel_k pk): P(pk){}
-        Cartesian_kinetic_kernel(){}
+  Cartesian_kinetic_kernel(Function_kernel_k pk): P(pk){}
+  Cartesian_kinetic_kernel(){}
 };
 
 CGAL_KINETIC_END_NAMESPACE

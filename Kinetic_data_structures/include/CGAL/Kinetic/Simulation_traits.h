@@ -61,7 +61,7 @@ public:
 
   typedef SimulatorC Simulator;
 
-  typedef typename Kinetic_kernel::Function_kernel Function_kernel;
+  typedef typename KineticKernel::Function_kernel Function_kernel;
 
   typedef typename KineticKernel::Function_kernel::Root Time;
 
