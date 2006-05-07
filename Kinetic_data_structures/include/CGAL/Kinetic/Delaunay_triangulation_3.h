@@ -81,7 +81,7 @@ private:
     typedef typename TraitsT::Kinetic_kernel::Positive_orientation_3 Positive_orientation_3;
     typedef internal::Delaunay_3_edge_flip_event<This,
 						 typename Positive_side_of_oriented_sphere_3::result_type,
-						 typename TriangulationT::Edge> Edge_flip;;
+						 typename TriangulationT::Edge> Edge_flip;
     typedef typename internal::Delaunay_3_facet_flip_event<This, typename Positive_side_of_oriented_sphere_3::result_type,
 							   typename TriangulationT::Facet> Facet_flip;
 

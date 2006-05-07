@@ -43,7 +43,7 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
 
 // friend class internal::Polynomial_impl<This, NTT>; // NOT SO CLEAN
 
-#ifndef NDEBUG
+#ifdef CGAL_POLYNOMIAL_STRING
     typedef std::string Approximation;
     void generate_approximation() const
     {
@@ -56,7 +56,7 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
 
     void approximate() const
     {
-#ifndef NDEBUG
+#ifdef CGAL_POLYNOMIAL_STRING
         generate_approximation();
 #endif
     }
@@ -72,14 +72,14 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
 
 //! Default
         Polynomial() {
-#ifndef NDEBUG
+#ifdef CGAL_POLYNOMIAL_STRING
             approximation_="Not initialized.";
 #endif
         }
 
 //! Make a constant polynomial
         Polynomial(const NTT& c): Parent(c) {
-#ifndef NDEBUG
+#ifdef CGAL_POLYNOMIAL_STRING
             approximate();
 #endif
             strip_leading_zeros();
@@ -89,14 +89,14 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
         template<typename Iterator>
             Polynomial(Iterator first, Iterator beyond)
         : Parent(first,beyond) {
-#ifndef NDEBUG
+#ifdef CGAL_POLYNOMIAL_STRING
             approximate();
 #endif
             strip_leading_zeros();
         }
 
         Polynomial(const Parent &p): Parent(p) {
-#ifndef NDEBUG
+#ifdef CGAL_POLYNOMIAL_STRING
             approximate();
 #endif
             strip_leading_zeros();
@@ -125,7 +125,7 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
         }
 
     private:
-#ifndef NDEBUG
+#ifdef CGAL_POLYNOMIAL_STRING
 /*! A string represneting the approximation of the polynomial. For
   inspection in the debugger.*/
         mutable Approximation approximation_;

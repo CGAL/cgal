@@ -717,7 +717,7 @@ public:
 	    CGAL_KINETIC_LOG(LOG_LOTS, "On init " << *kit << " is redundant" << std::endl);
 	    typename Triangulation::Cell_handle h= kdel_.triangulation().locate(*kit);
 	    redundant_points_[*kit]= make_certificate(*kit, h);
-	    redundant_cells_.insert(make_pair(h, *kit));
+	    redundant_cells_.insert(typename RCMap::value_type(h, *kit));
 	  }
 	}
       }

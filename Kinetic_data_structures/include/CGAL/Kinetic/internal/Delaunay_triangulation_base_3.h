@@ -1217,14 +1217,14 @@ public:
     int hinf=-1;
     for (unsigned int i=0; i<4; ++i) {
       Point_key k= f.first->vertex(i)->point();
-      if (!k) {
+      if (!static_cast<bool>(k)) {
 	hinf=i;
 	break;
       }
     }
     if (hinf==-1) {
       Point_key k= triangulation_.mirror_vertex(f.first, f.second)->point();
-      if ( !k ) {
+      if ( !static_cast<bool>(k) ) {
 	hinf=4;
       }
     }

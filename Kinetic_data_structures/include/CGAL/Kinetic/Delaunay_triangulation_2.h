@@ -460,10 +460,10 @@ protected:
   }
 
   bool is_hull_edge(const Edge &e) const {
-    return !TDS_helper::mirror_vertex(e)->point() 
-      || !TDS_helper::third_vertex(e)->point()
-      || !TDS_helper::origin(e)->point()
-      || !TDS_helper::destination(e)->point();
+    return !static_cast<bool>(TDS_helper::mirror_vertex(e)->point())
+      || !static_cast<bool>(TDS_helper::third_vertex(e)->point())
+      || !static_cast<bool>(TDS_helper::origin(e)->point())
+      || !static_cast<bool>(TDS_helper::destination(e)->point());
   }
 
   SOC_certificate compute_failure_time(const Edge &e) const {
@@ -517,7 +517,7 @@ protected:
     CGAL_precondition(!TDS_helper::get_undirected_edge_label(e));
     Event_key k;
 
-    if (is_hull_edge(e)) {
+    if (static_cast<bool>(is_hull_edge(e))) {
       O2_certificate s= compute_hull_failure_time(e);
       Time t= s.failure_time();
       s.pop_failure_time();
