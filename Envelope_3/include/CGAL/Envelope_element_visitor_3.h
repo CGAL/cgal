@@ -716,9 +716,9 @@ public:
     // surfaces are equal on the envelope, which is not neccessarily true if
     // vertical surfaces are involved)
     bool are_verticals_involved = false;
-    if (traits->is_vertical_3_object()(surf1) ||
-        traits->is_vertical_3_object()(surf2))
-      are_verticals_involved = true;    
+//    if (traits->is_vertical_3_object()(surf1) ||
+//        traits->is_vertical_3_object()(surf2))
+//      are_verticals_involved = true;    
     
     // check if source is a special vertex (i.e. also a projected intersection)
     // by checking the first point in the list
@@ -1184,7 +1184,6 @@ protected:
     Ccb_halfedge_circulator ccb = face->outer_ccb();
     copy_data_to_face_boundary(face, ccb);
 
-
     Hole_iterator inner_iter = face->holes_begin();
     for (; inner_iter != face->holes_end(); ++inner_iter)
     {
@@ -1194,7 +1193,6 @@ protected:
 
     Isolated_vertex_iterator iso_iter = face->isolated_vertices_begin();
     for (; iso_iter != face->isolated_vertices_end(); ++iso_iter)
-
     {
       Vertex_handle vh = iso_iter;
       if (!vh->is_decision_set() && has_equal_aux_data_with_face(vh))
@@ -1938,6 +1936,7 @@ protected:
     new_he->twin()->set_decision(res);
     return res;
   }
+
 
   // check if the point is on the curve
   // left and right should be the left and right endpoints of the curve cv
