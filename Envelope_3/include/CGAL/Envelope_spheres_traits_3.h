@@ -1034,27 +1034,6 @@ public:
 
   /***************************************************************************/
 
-  // checks if xy-monotone surface is vertical
-  // since we only deal with spheres, which are never vertical
-  // we always return false
-  class Is_vertical_3
-  {
-  public:
-    bool operator()(const Xy_monotone_surface_3& s) const
-
-    {
-      return false;
-    }
-  };
-
-  /*! Get a Is_vertical_3 functor object. */
-  Is_vertical_3 is_vertical_3_object() const
-  {
-    return Is_vertical_3();
-  }
-
-  /***************************************************************************/
-
   // public method needed for testing
 
   // checks if point is in the xy-range of surf
