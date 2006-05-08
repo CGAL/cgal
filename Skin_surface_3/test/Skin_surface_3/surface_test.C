@@ -1,31 +1,4 @@
-// test/Skin_surface_3/surface_test.C
-// #include <CGAL/Skin_surface_traits_3.h>
-// #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-// #include <CGAL/Regular_triangulation_3.h>
-// #include <CGAL/Triangulated_mixed_complex_3.h>
-// #include <CGAL/triangulate_mixed_complex_3.h>
-// #include <CGAL/Marching_tetrahedra_traits_skin_surface_3.h>
-// #include <CGAL/marching_tetrahedra_3.h>
-// #include <CGAL/Polyhedron_3.h>
-
-// typedef CGAL::Skin_surface_traits_3<>                  Skin_traits;
-// typedef Skin_traits::Regular_traits                    Regular_traits;
-
-// typedef CGAL::Regular_triangulation_3<Regular_traits> Regular;
-// typedef Regular_traits::Weighted_point                Reg_weighted_point;
-// typedef Regular_traits::Bare_point                    Reg_point;
-
-// typedef CGAL::Triangulated_mixed_complex_3<Skin_traits> Tr2;
-// typedef Tr2::Cell_handle                       Tr2_cell_handle;
-// typedef Tr2::Finite_cells_iterator             Tr2_Fin_cells_it;
-// typedef Tr2::Finite_vertices_iterator          Tr2_Fin_vertices_it;
-
-// typedef Skin_traits::Polyhedron_traits         Polyhedron_kernel;
-// typedef CGAL::Polyhedron_3<Polyhedron_kernel>  Polyhedron;
-// typedef Polyhedron_kernel::RT                  Polyhedron_rt;
-
-// typedef CGAL::Marching_tetrahedra_traits_skin_surface_3<
-//   Tr2, Polyhedron, Skin_traits::T2P_converter> Marching_tetrahedra_traits;
+#define  CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
@@ -71,7 +44,6 @@ int main(int argc, char *argv[]) {
 
     for (Tmc_Finite_vertices_iterator vit = tmc.finite_vertices_begin();
 	 vit != tmc.finite_vertices_end(); vit++) {
-      std::cout <<  std::endl;
       if (tmc.is_infinite(vit->cell())) {
 	std::cerr << "ERROR: is_infinite (main)" << std::endl;
       }
