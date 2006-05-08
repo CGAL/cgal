@@ -45,7 +45,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_> class Envelope_triangle_3;
- 
+
+// this traits class supports both triagles and segments in 3d
 template <class Kernel_>
 class Envelope_triangles_traits_3 : public Arr_segment_traits_2<Kernel_>
 {
@@ -70,14 +71,14 @@ public:
     typedef typename Kernel::Plane_3               Plane_3;
     typedef typename Kernel::Triangle_3            Triangle_3;
     typedef typename Kernel::Point_3               Point_3;
+    typedef typename Kernel::Segment_3             Segment_3;
 
   protected:
 
     Plane_3 pl;          // The plane that supports the triangle.
     Point_3 vertices[3]; // The vertices of the triangle.
-    bool    is_vert;     // Is this a vertical triangle.
-    bool    is_degen;    // Is the triangle degenerate (a single point/segment).
-
+    bool    is_vert;     // Is this a vertical triangle (or a segment).
+    bool    is_seg;  // Is this a segment.
   public:
 
     /*!
@@ -85,16 +86,18 @@ public:
      */
     _Triangle_cached_3() :
       is_vert(false),
-      is_degen(true)
+      is_seg(false)
     {}
 
     /*!
-     * Constructor from a triangle.
+     * Constructor from a non-degenerate triangle.
      * \param tri The triangle.
+     * \pre The triangle is not degenerate.
      */
     _Triangle_cached_3(const Triangle_3 & tri)
     {
       Kernel   kernel;
+      CGAL_assertion(!kernel.is_degenerate_3_object()(tri));
 
       typename Kernel::Construct_vertex_3
         construct_vertex = kernel.construct_vertex_3_object();
@@ -103,44 +106,38 @@ public:
       vertices[1] = construct_vertex(tri, 1);
       vertices[2] = construct_vertex(tri, 2);
 
-      is_degen = kernel.is_degenerate_3_object()(tri);
-
-      if (! is_degen)
-      {
-        pl = kernel.construct_plane_3_object()(vertices[0],
-                                               vertices[1], vertices[2]);
-        Self self;
-        is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
-                                              self.project(vertices[1]),
-                                              self.project(vertices[2]));
-      }
+      pl = kernel.construct_plane_3_object()(vertices[0],
+                                             vertices[1], vertices[2]);
+      Self self;
+      is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
+                                            self.project(vertices[1]),
+                                            self.project(vertices[2]));
+      is_seg = false;
     }
 
     /*!
-     * Construct a triangle from three end-points.
+     * Construct a triangle from three non-collinear end-points.
      * \param p1 The first point.
      * \param p2 The second point.
      * \param p3 The third point.
+     * \pre The 3 endpoints are not the collinear.
      */
     _Triangle_cached_3(const Point_3 &p1, const Point_3 &p2,
                        const Point_3 &p3)
     {
+      Kernel   kernel;
+      CGAL_assertion(!kernel.collinear_3_object()(p1, p2, p3));
+      
       vertices[0] = p1;
       vertices[1] = p2;
       vertices[2] = p3;
 
-      Kernel   kernel;
-
-      is_degen = kernel.collinear_3_object()(vertices[0], vertices[1], vertices[2]);
-
-      if (! is_degen)
-      {
-        pl = kernel.construct_plane_3_object()(vertices[0], vertices[1], vertices[2]);
-        Self self;
-        is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
-                                              self.project(vertices[1]),
-                                              self.project(vertices[2]));
-      }
+      pl = kernel.construct_plane_3_object()(vertices[0], vertices[1], vertices[2]);
+      Self self;
+      is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
+                                            self.project(vertices[1]),
+                                            self.project(vertices[2]));
+      is_seg = false;
     }
 
     /*!
@@ -150,7 +147,6 @@ public:
      * \param p2 The second point.
      * \param p3 The third point.
      * \pre The 3 endpoints are not the collinear and all lie on the given plane.
-
      */
     _Triangle_cached_3(const Plane_3& supp_plane,
                        const Point_3 &p1,
@@ -169,22 +165,74 @@ public:
       vertices[1] = p2;
       vertices[2] = p3;
 
-      is_degen = false;
-
       Self self;
       is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
                                             self.project(vertices[1]),
                                             self.project(vertices[2]));
+      is_seg = false;
+    }
+
+    /*!
+     * Constructor from a segment.
+     * \param seg The segment.
+     * \pre The segment is not degenerate.
+     */
+    _Triangle_cached_3(const Segment_3 & seg)
+    {
+      Kernel   kernel;
+      CGAL_assertion(!kernel.is_degenerate_3_object()(seg));
+
+      typename Kernel::Construct_vertex_3
+        construct_vertex = kernel.construct_vertex_3_object();
+
+      vertices[0] = construct_vertex(seg, 0);
+      vertices[1] = construct_vertex(seg, 1);
+      vertices[2] = vertices[1];
+
+      is_vert = true;
+      is_seg = true;
+
+      // construct a vertical plane through the segment
+      Point_3 tmp(vertices[0].x(), vertices[0].y(), vertices[0].z()-1);
+      pl = kernel.construct_plane_3_object()(vertices[0],
+                                             vertices[1], tmp);
+
+    }
+
+    /*!
+     * Constructor from two points.
+     * \param p1 The first point.
+     * \param p2 The second point.
+     * \param seg The segment.
+     * \pre The segment between the points is not degenerate.
+     */
+    _Triangle_cached_3(const Point_3 &p1, const Point_3 &p2)
+    {
+      Kernel   kernel;
+      CGAL_assertion(!kernel.equal_3_object()(p1, p2));
+
+      vertices[0] = p1;
+      vertices[1] = p2;
+      vertices[2] = p2;
+
+      is_vert = true;
+      is_seg = true;
+
+      // construct a vertical plane through the segment
+      Point_3 tmp(vertices[0].x(), vertices[0].y(), vertices[0].z()-1);
+      pl = kernel.construct_plane_3_object()(vertices[0],
+                                             vertices[1], tmp);
+
     }
 
     /*!
      * Assignment operator.
-     * \param seg the source segment to copy from
+     * \param tri the source triangle to copy from
      */
     const _Triangle_cached_3& operator=(const Triangle_3 &tri)
     {
-
       Kernel   kernel;
+      CGAL_assertion(!kernel.is_degenerate_3_object()(tri));
 
       typename Kernel_::Construct_vertex_3
         construct_vertex = kernel.construct_vertex_3_object();
@@ -193,18 +241,14 @@ public:
       vertices[1] = construct_vertex(tri, 1);
       vertices[2] = construct_vertex(tri, 2);
 
-      is_degen = kernel.is_degenerate_3_object()(tri);
-
-      if (! is_degen)
-      {
-        pl = kernel.construct_plane_3_object()(vertices[0],
-                                               vertices[1], vertices[2]);
-        Self self;
-        is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
-                                              self.project(vertices[1]),
-                                              self.project(vertices[2]));
-      }
-
+      pl = kernel.construct_plane_3_object()(vertices[0],
+                                             vertices[1], vertices[2]);
+      Self self;
+      is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
+                                            self.project(vertices[1]),
+                                            self.project(vertices[2]));
+      is_seg = false;
+      
       return (*this);
     }
 
@@ -224,7 +268,6 @@ public:
      */
     const Plane_3& plane() const
     {
-      CGAL_precondition (!is_degen);
       return (pl);
     }
 
@@ -233,18 +276,24 @@ public:
      */
     bool is_vertical() const
     {
-      CGAL_precondition (!is_degen);
       return (is_vert);
     }
 
     /*!
-     * Check if the triangle is degenerate.
+     * Check if the surface is a segment.
      */
-    bool is_degenerate() const
+    bool is_segment() const
     {
-      return (is_degen);
+      return (is_seg);
     }
 
+    /*!
+     * Check if the surface is xy-monotone (false, if it is a vertical triangle)
+     */
+    bool is_xy_monotone() const
+    {
+      return (!is_vertical() || is_segment());
+    }
   };
 
 public:
@@ -324,16 +373,156 @@ public:
     // create xy-monotone surfaces from a general surface
     // return a past-the-end iterator
     template <class OutputIterator>
-    OutputIterator operator()(const Surface_3& surf, OutputIterator o) const
+    OutputIterator operator()(const Surface_3& s, OutputIterator o) const
     {
       #ifdef CGAL_BENCH_ENVELOPE_DAC
         parent->total_timer.start();
       #endif
-      // a triangle is already xy-monotone
-      *o++ = surf;
+      // a non-vertical triangle is already xy-monotone
+      if (!s.is_vertical())
+        *o++ = s;
+      else
+      {
+        #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
+          std::cout << "vertical triangle: " << s << std::endl;
+        #endif
+        
+        // split a vertical triangle into one or two segments
+        const Point_3 &a1 = s.vertex(0),
+                       a2 = s.vertex(1),
+                       a3 = s.vertex(2);
+        Point_2 b1 = parent->project(a1),
+                b2 = parent->project(a2),
+                b3 = parent->project(a3);
+        Kernel k;
+        if (k.collinear_are_ordered_along_line_2_object()(b1, b2, b3))
+        {
+          if (k.equal_2_object()(b1, b2))
+            // only one segment in the output - the vertical does not count
+            *o++ = Xy_monotone_surface_3(find_envelope_point(a1, a2), a3);
+          else if (k.equal_2_object()(b2, b3))
+            *o++ = Xy_monotone_surface_3(a1, find_envelope_point(a2, a3));
+          else
+            // check whether two or one segments appear on the envelope
+            return find_envelope_segments(a1, a2, a3, s.plane(), o);
+        }
+        else if (k.collinear_are_ordered_along_line_2_object()(b1, b3, b2))
+        {
+          if (k.equal_2_object()(b1, b3))
+            // only one segment in the output
+            *o++ = Xy_monotone_surface_3(find_envelope_point(a1, a3), a2);
+          else
+            // check whether two or one segments appear on the envelope
+            return find_envelope_segments(a1, a3, a2, s.plane(), o);
+        }
+        else
+        {
+          // check whether two or one segments appear on the envelope
+          return find_envelope_segments(a2, a1, a3, s.plane(), o);
+        }
+
+      }
       #ifdef CGAL_BENCH_ENVELOPE_DAC
         parent->total_timer.stop();
       #endif
+      return o;
+    }
+  protected:
+    // find the envelope point among the two points with same xy coordinates
+    const Point_3& find_envelope_point(const Point_3& p1, const Point_3& p2) const
+    {
+      CGAL_precondition(p1.x() == p2.x() && p1.y() == p2.y());
+      Kernel k;
+      Comparison_result cr = k.compare_z_3_object()(p1, p2);
+      CGAL_assertion(cr != EQUAL);
+      if ((parent->get_envelope_type() == LOWER && cr == SMALLER) ||
+          (parent->get_envelope_type() == UPPER && cr == LARGER))
+        return p1;
+      else
+        return p2;      
+    }
+
+    // get the three triangle coordinates (ordered along 2d-line) and find
+    // which segment(s) is(are) the envelope of this triangle
+    // "plane" is the vertical plane on which the triangle lies
+    template <class OutputIterator>
+    OutputIterator find_envelope_segments(const Point_3& p1, const Point_3& p2,
+                                          const Point_3& p3, const Plane_3& plane,
+                                          OutputIterator o) const
+    {
+      // our vertical plane is a*x + b*y + d = 0
+      FT a = plane.a(), b = plane.b();
+      CGAL_precondition(plane.c() == 0);
+
+      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
+        std::cout << "find_envelope_segments: plane is " << plane << std::endl
+                  << "points are: " << p1 << " , " << p2 << " , " << p3
+                  << std::endl;
+      #endif
+      
+      // if the plane was parallel to the yz-plane (i.e x = const),
+      // then it was enough to use the y,z coordinates as in the 2-dimensional
+      // case, to find whether a 2d point lies below/above/on a line
+      // this test is simply computing the sign of:
+      //    (1)    [(y3 - y1)(z2 - z1) - (z3 - z1)(y2 - y1)] * sign(y3 - y1)
+      // abd comparing to 0, where pi = (xi, yi, zi), and p2 is compared to the
+      // line formed by p1 and p3 (in the direction p1 -> p3)
+      //
+ 	    // for general vertical plane, we change (x, y) coordinates to (v, w),
+      // (keeping the z-coordinate as is)
+ 	    // so the plane is parallel to the wz-plane in the new coordinates
+ 	    // (i.e v = const).
+ 	    //
+ 	    // ( v )  =  A ( x )    where A = (  a  b )
+ 	    //   w           y                  -b  a
+ 	    //
+ 	    // so v =  a*x + b*y
+ 	    //    w = -b*x + a*y
+ 	    //
+ 	    // Putting the new points coordinates in equation (1) we get:
+      //    (2)    (w3 - w1)(z2 - z1) - (z3 - z1)(w2 - w1) =
+      //           (-b*x3 + a*y3 + b*x1 - a*y1)(z2 - z1) - (z3 - z1)(-b*x2 + a*y2 + b*x1 - a*y1)
+ 	    //
+      FT w1 = a*p1.y() - b*p1.x(),
+         w2 = a*p2.y() - b*p2.x(),
+         w3 = a*p3.y() - b*p3.x();
+      
+      Sign s1 = CGAL_NTS sign((w3 - w1)*(p2.z() - p1.z()) - (p3.z() - p1.z())*(w2 - w1));
+      // the points should not be collinear
+      CGAL_assertion(s1 != 0);
+
+      // should also take care for the original and trasformed direction of
+      // the segment
+      Sign s2 = CGAL_NTS sign(w3 - w1);
+      Sign s = CGAL_NTS sign(s1 * s2);
+      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
+        std::cout << "find_envelope_segments: sign is " << s << std::endl;
+      #endif
+                  
+      bool use_one_segment = true;
+      if ((parent->get_envelope_type() == LOWER && s == NEGATIVE) ||
+          (parent->get_envelope_type() == UPPER && s == POSITIVE))
+        use_one_segment = false;
+
+      if (use_one_segment)
+      {
+        #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
+          std::cout << "find_envelope_segments: found one segment "
+                    << Xy_monotone_surface_3(p1, p3) << std::endl;                    
+        #endif
+        *o++ = Xy_monotone_surface_3(p1, p3);
+      }
+      else
+      {
+        #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
+          std::cout << "find_envelope_segments: found two segments "
+                    << Xy_monotone_surface_3(p1, p2) << " and "
+                    << std::endl
+                    << Xy_monotone_surface_3(p2, p3) << std::endl;
+        #endif
+        *o++ = Xy_monotone_surface_3(p1, p2);
+        *o++ = Xy_monotone_surface_3(p2, p3);
+      }
       return o;
     }
   };
@@ -364,46 +553,44 @@ public:
     // the vertical projection of the surface on the xy-plane
     // the OutputIterator value type is Curve_2
     template <class OutputIterator>
-    OutputIterator operator()(const Xy_monotone_surface_3& surf,
+    OutputIterator operator()(const Xy_monotone_surface_3& s,
                               OutputIterator o) const
     {
+      // the input xy-monotone surface should be either non-vertical or
+      // a segment
+      CGAL_assertion(s.is_xy_monotone());
+      
       #ifdef CGAL_BENCH_ENVELOPE_DAC
         parent->total_timer.start();
         parent->pboundary_timer.start();
       #endif
-        
-      const Point_3 &a1 = surf.vertex(0),
-                     a2 = surf.vertex(1),
-                     a3 = surf.vertex(2);
-      Point_2 b1 = parent->project(a1),
-              b2 = parent->project(a2),
-              b3 = parent->project(a3);
 
-      if (!surf.is_vertical())
+      if (!s.is_vertical())
       {
+        // the projection is a triangle
+        const Point_3 &a1 = s.vertex(0),
+                       a2 = s.vertex(1),
+                       a3 = s.vertex(2);
+        Point_2 b1 = parent->project(a1),
+                b2 = parent->project(a2),
+                b3 = parent->project(a3);
+
         *o++ = Curve_2(b1, b2);
         *o++ = Curve_2(b2, b3);
         *o++ = Curve_2(b3, b1);
       }
       else
       {
-        // only 2 curves in the output
-        Kernel k;
-        if (k.collinear_are_ordered_along_line_2_object()(b1, b2, b3))
-        {
-          *o++ = Curve_2(b1, b2);
-          *o++ = Curve_2(b2, b3);
-        }
-        else if (k.collinear_are_ordered_along_line_2_object()(b1, b3, b2))
-        {
-          *o++ = Curve_2(b1, b3);
-          *o++ = Curve_2(b3, b2);
-        }
-        else
-        {
-          *o++ = Curve_2(b2, b1);
-          *o++ = Curve_2(b1, b3);
-        }
+        // s is a segment, and so is its projection
+        // s shouldn't be a z-vertical segment
+        const Point_3 &a1 = s.vertex(0),
+                       a2 = s.vertex(1);
+        
+        Point_2 b1 = parent->project(a1),
+                b2 = parent->project(a2);
+        CGAL_assertion(b1 != b2);
+                
+        *o++ = Curve_2(b1, b2);
       }
       #ifdef CGAL_BENCH_ENVELOPE_DAC
         parent->total_timer.stop();
@@ -413,10 +600,6 @@ public:
     }  
   };  
   
-
-
-
-
   /*! Get a Construct_projected_boundary_curves_2 functor object. */
   Construct_projected_boundary_curves_2
   construct_projected_boundary_curves_2_object() const
@@ -452,12 +635,14 @@ public:
                               const Xy_monotone_surface_3& s2,
                               OutputIterator o) const
     {
+      CGAL_assertion(s1.is_xy_monotone() && s2.is_xy_monotone());
+      
       #ifdef CGAL_BENCH_ENVELOPE_DAC
         parent->total_timer.start();
         parent->intersection_timer.start();
       #endif
       Kernel k;
-      if (!k.do_intersect_3_object()(s1, s2))
+      if (!parent->do_intersect(s1, s2))
       {
         #ifdef CGAL_BENCH_ENVELOPE_DAC
           parent->total_timer.stop();
@@ -480,8 +665,12 @@ public:
       Segment_3 curve;
       if (k.assign_3_object()(point, inter_obj))
         *o++ = make_object(parent->project(point));
-      else if (k.assign_3_object()(curve, inter_obj))
+      else
       {
+        CGAL_assertion_code(bool b = )
+        k.assign_3_object()(curve, inter_obj);
+        CGAL_assertion(b);
+        
         Curve_2 projected_cv = parent->project(curve);
         if (projected_cv.is_degenerate())
           *o++ = make_object(projected_cv.left());
@@ -490,42 +679,6 @@ public:
           Intersection_curve inter_cv(projected_cv, TRANSVERSAL);
           *o++ = make_object(inter_cv);
         }
-      }
-      else
-      {
-        // if we get here the triangles may be overlapping, and the
-        // intersection is a polygon
-        // it is important to the current algorithm only if the surfaces
-        // are vertical
-        if (s1.is_vertical())
-        {
-          CGAL_assertion(s2.is_vertical());
-          std::vector<Point_3> poly;
-          CGAL_assertion(k.assign_3_object()(poly, inter_obj));
-          k.assign_3_object()(poly, inter_obj);
-          unsigned int n = poly.size();
-          // project the points
-          std::vector<Point_2> proj_poly(n);
-          for(unsigned int i=0; i<n; ++i)
-            proj_poly[i] = parent->project(poly[i]);
-          // return the projected intersections
-          for(unsigned int i=0; i<n; ++i)
-          {
-            // deal with segment between points i and i+1 
-	    // (mod proj_poly.size())
-            if (proj_poly[i] == proj_poly[(i+1) % n])
-              *o++ = make_object(proj_poly[i]);
-            else
-            {
-              Curve_2 cv(proj_poly[i], proj_poly[(i+1) % n]);
-              Intersection_curve inter_cv(cv, UNKNOWN);
-              *o++ = make_object(inter_cv);
-            }
-          }
-        }
-//        // it is irrelevant to the current d&c algorithm (redundant data)
-//        // but we return it anyway, so we can only invoke compare_left over
-//        // intersection curves
       }
 
       #ifdef CGAL_BENCH_ENVELOPE_DAC
@@ -542,8 +695,6 @@ public:
   {
     return Construct_projected_intersections_2(this);
   }
-
-
 
   /*!\brief
    * Check if the surface s1 is closer/equally distanced/farther 
@@ -929,22 +1080,22 @@ public:
 
   /***************************************************************************/
 
-  // checks if xy-monotone surface is vertical
-  class Is_vertical_3
-  {
-  public:
-
-    bool operator()(const Xy_monotone_surface_3& s) const
-    {
-      return s.is_vertical();
-    }
-  };
-
-  /*! Get a Is_vertical_3 functor object. */
-  Is_vertical_3 is_vertical_3_object() const
-  {
-    return Is_vertical_3();
-  }
+//  // checks if xy-monotone surface is vertical
+//  class Is_vertical_3
+//  {
+//  public:
+//
+//    bool operator()(const Xy_monotone_surface_3& s) const
+//    {
+//      return false;
+//    }
+//  };
+//
+//  /*! Get a Is_vertical_3 functor object. */
+//  Is_vertical_3 is_vertical_3_object() const
+//  {
+//    return Is_vertical_3();
+//  }
   
   /***************************************************************************/
 
@@ -993,7 +1144,6 @@ public:
     return Is_defined_over();
   }
 
-
   Curve_2 project(const Segment_3& segment_3) const
   {
     Kernel k;
@@ -1024,11 +1174,16 @@ public:
   }
 
   // triangles overlap if they lie on the same plane and intersect on it.
+  // this test is only needed for non-vertical triangles
   bool do_overlap(const Xy_monotone_surface_3& s1, 
-		  const Xy_monotone_surface_3& s2) const
+		              const Xy_monotone_surface_3& s2) const
   {
+    CGAL_precondition(s1.is_xy_monotone() && !s1.is_vertical());
+    CGAL_precondition(s2.is_xy_monotone() && !s2.is_vertical());
+
     Kernel k;
-    if (!k.do_intersect_3_object()(s1, s2))
+    if (!k.do_intersect_3_object()(static_cast<Triangle_3>(s1),
+                                   static_cast<Triangle_3>(s2)))
       return false;
 
     // check if they are coplanar
@@ -1048,42 +1203,64 @@ public:
     return b;    
   }
 
-  // intersect two 3D-triangles
-  // the result can be a triangle, a segment, a polygon or a point
+  // check whethe two xy-monotone surfaces (3D-triangles or segments)
+  // intersect
+  bool do_intersect(const Xy_monotone_surface_3& s1,
+                    const Xy_monotone_surface_3& s2) const
+  {
+    CGAL_precondition(s1.is_xy_monotone());
+    CGAL_precondition(s2.is_xy_monotone());
+    Kernel k;
+    if (!s1.is_segment() && !s2.is_segment())
+      return k.do_intersect_3_object()(static_cast<Triangle_3>(s1),
+                                       static_cast<Triangle_3>(s2));
+    else if (!s1.is_segment())
+      return k.do_intersect_3_object()(static_cast<Triangle_3>(s1),
+                                       static_cast<Segment_3>(s2));
+    else if (!s2.is_segment())
+      return k.do_intersect_3_object()(static_cast<Segment_3>(s1),
+                                       static_cast<Triangle_3>(s2));
+    else
+      // in case of two segments, we don't use easy do-intersect test
+      return true;
+  }
+  
+  // intersect two xy-monotone surfaces (3D-triangles or segments)
+  // if the triangles overlap, the result is empty
+  // the result can be a segment or a point
   Object intersection(const Xy_monotone_surface_3& s1, 
                       const Xy_monotone_surface_3& s2) const
   {
-    CGAL_precondition( !s1.is_degenerate() );
-    CGAL_precondition( !s2.is_degenerate() );
+    CGAL_precondition(s1.is_xy_monotone());
+    CGAL_precondition(s2.is_xy_monotone());
     Kernel k;
 
     // first, try to intersect the bounding boxes of the triangles,
-    // eficiently return empty object when the triangles are faraway
+    // efficiently return empty object when the triangles are faraway
     if (!CGAL::do_overlap(s1.bbox(), s2.bbox()))
       return Object();
 
-    // if both triangle lie on the same plane, should calculate the intersection
+    // if intersecting two segment - alculate the intersection
     // as in the case of dimention 2
+    if (s1.is_segment() && s2.is_segment())
+    {
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        inter_overlap_timer.start();
+      #endif
+      Object res = intersection_of_segments(s1, s2);
+      #ifdef CGAL_BENCH_ENVELOPE_DAC
+        inter_overlap_timer.stop();
+      #endif
+      return res;
+    }
+  
+    // if both triangles lie on the same (non-vertical) plane, they overlap
+    // we don't care about overlaps, because they are not passed to the
+    // algorithm anyway, so we save the costly computation
     Plane_3 p1 = s1.plane();
     Plane_3 p2 = s2.plane();
     if  (p1 == p2 || p1 == p2.opposite())
-    {
-      if (s1.is_vertical())
-      {
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          inter_overlap_timer.start();
-        #endif
-        Object res = intersection_on_plane_3(p1, s1, s2);
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          inter_overlap_timer.stop();
-        #endif
-        return res;
-      }
-      else
-        // we don't care about overlap, because they are not passed to the
-        // algorithm anyway, so we save the costly computation
         return Object();
-    }
 
     // calculate intersection between a triangle and the other triangle's 
     // supporting plane
@@ -1093,6 +1270,7 @@ public:
       inter_plane_tri_timer.start();
     #endif
     Object inter_obj = intersection(p1, s2);
+      
     #ifdef CGAL_BENCH_ENVELOPE_DAC
       inter_plane_tri_timer.stop();
     #endif
@@ -1199,7 +1377,7 @@ public:
                                  const Point_3& point) const
   {
     Kernel k;
-    CGAL_precondition( !triangle.is_degenerate() );
+    CGAL_precondition( triangle.is_xy_monotone() );
     CGAL_precondition( !k.is_degenerate_3_object()(plane) );
     CGAL_precondition( triangle.plane() == plane ||
                        triangle.plane() == plane.opposite());
@@ -1207,128 +1385,81 @@ public:
 
     // if the point is inside the triangle, then the point is the intersection
     // otherwise there is no intersection
-    if (k.has_on_3_object()(triangle, point))
+    bool has_on;
+    if (triangle.is_segment())
+      has_on = k.has_on_3_object()(static_cast<Segment_3>(triangle), point);
+    else
+      has_on = k.has_on_3_object()(static_cast<Triangle_3>(triangle), point);
+    if (has_on)
       return make_object(point);
     else
       return Object();
   }
 
-  // calculate intersection between triangle & segment on the same plane plane
-  Object intersection_on_plane_3(const Plane_3& plane,
-                                 const Xy_monotone_surface_3& triangle,
-                                 const Segment_3& segment) const
+  // calculate intersection between 2 segments on the same vertical plane plane
+  Object intersection_of_segments(const Xy_monotone_surface_3& s1,
+                                  const Xy_monotone_surface_3& s2) const
   {
-    Kernel k;
-    CGAL_precondition( !triangle.is_degenerate() );
-    CGAL_precondition( !k.is_degenerate_3_object()(plane) );
-    CGAL_precondition( triangle.plane() == plane ||
-                       triangle.plane() == plane.opposite());
-    CGAL_precondition( k.has_on_3_object()
-                          (plane, k.construct_vertex_3_object()(segment, 0)) );
-    CGAL_precondition( k.has_on_3_object()
-                          (plane, k.construct_vertex_3_object()(segment, 1)) );
-
-    Construct_vertex_3 vertex_on_3 = k.construct_vertex_3_object();
+    #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
+      std::cout << "intersecting two segments: " << s1
+                << " and " << s2 << std::endl;
+    #endif
     
-    // for simplicity, we transform the triangle & segment to the xy-plane,
-    // compute the intersection there, and transform it back to the 3d plane.
-    Point_2 src_t = plane.to_2d(vertex_on_3(segment, 0)),
-            tar_t = plane.to_2d(vertex_on_3(segment, 1));
-    Segment_2 segment_t(src_t, tar_t);
-
-    Point_2 v1 = plane.to_2d(triangle.vertex(0)),
-            v2 = plane.to_2d(triangle.vertex(1)),
-            v3 = plane.to_2d(triangle.vertex(2));
-    Triangle_2 triangle_t(v1, v2, v3);
-
-	  Object inter_obj = k.intersect_2_object()(triangle_t, segment_t);
-	  Assign_2 assign_2 = k.assign_2_object();
-	  if (inter_obj.is_empty())
-		  return inter_obj;
-
-  	Point_2 inter_point;
-  	if (assign_2(inter_point, inter_obj))
-  	   return make_object(plane.to_3d(inter_point));
-  	else
-  	{
-	    // intersection is a segment
-      Segment_2 inter_segment;
-      CGAL_assertion(assign_2(inter_segment, inter_obj));
-	    assign_2(inter_segment, inter_obj);
-	    return make_object(Segment_3(plane.to_3d(k.construct_vertex_2_object()(inter_segment, 0)),
-                                 plane.to_3d(k.construct_vertex_2_object()(inter_segment, 1))));
-
-
-	  }
-
-	  return Object();
-  }
-
-  // calculate intersection between 2 triangle on the same plane plane
-  Object intersection_on_plane_3(const Plane_3& plane,
-                                 const Xy_monotone_surface_3& tri1,
-                                 const Xy_monotone_surface_3& tri2) const
-  {
     Kernel k;
-    CGAL_precondition( !tri1.is_degenerate() );
-    CGAL_precondition( !tri2.is_degenerate() );
-    CGAL_precondition( !k.is_degenerate_3_object()(plane) );
-    CGAL_precondition( tri1.plane() == plane ||
-                       tri1.plane() == plane.opposite());
-    CGAL_precondition( tri2.plane() == plane ||
-                       tri2.plane() == plane.opposite());
+    CGAL_precondition( s1.is_xy_monotone() && s1.is_segment());
+    CGAL_precondition( s2.is_xy_monotone() && s2.is_segment());
 
-  	// for simplicity, we transform the triangles to the xy-plane,
+    // if the segments are not coplanar, they cannot intersect
+    if (!k.coplanar_3_object()(s1.vertex(0), s1.vertex(1),
+                               s2.vertex(0), s2.vertex(1)))
+      return Object();
+
+    const Plane_3& plane = s1.plane();
+    if (s2.plane() != plane &&
+        s2.plane() != plane.opposite())
+      // todo: this case is not needed in the algorithm,
+      // so we don't implement it
+      return Object();
+
+    CGAL_precondition( !k.is_degenerate_3_object()(plane) );
+    CGAL_precondition( s2.plane() == plane ||
+                       s2.plane() == plane.opposite());
+
+  	// for simplicity, we transform the segments to the xy-plane,
   	// compute the intersection there, and transform it back to the 3d plane.
 
-    Point_2 v1 = plane.to_2d(tri1.vertex(0)),
-            v2 = plane.to_2d(tri1.vertex(1)),
-            v3 = plane.to_2d(tri1.vertex(2));
-    Triangle_2 triangle1_t(v1, v2, v3);
+    Point_2 v1 = plane.to_2d(s1.vertex(0)),
+            v2 = plane.to_2d(s1.vertex(1));
+    Segment_2 seg1_t(v1, v2);
 
-  	Point_2 u1 = plane.to_2d(tri2.vertex(0)),
-            u2 = plane.to_2d(tri2.vertex(1)),
-            u3 = plane.to_2d(tri2.vertex(2));
-  	Triangle_2 triangle2_t(u1, u2, u3);
+  	Point_2 u1 = plane.to_2d(s2.vertex(0)),
+            u2 = plane.to_2d(s2.vertex(1));
+  	Segment_2 seg2_t(u1, u2);
 
-  	Object inter_obj = k.intersect_2_object()(triangle1_t, triangle2_t);
+  	Object inter_obj = k.intersect_2_object()(seg1_t, seg2_t);
   	Assign_2 assign_2 = k.assign_2_object();
   	if (inter_obj.is_empty())
   		return inter_obj;
 
   	Point_2 inter_point;
     Segment_2 inter_segment;
-    Triangle_2 inter_tri;
 
-   if (assign_2(inter_point, inter_obj))
-  	   return make_object(plane.to_3d(inter_point));
-  	else if (assign_2(inter_segment, inter_obj))
-  	   return make_object(Segment_3(
+    if (assign_2(inter_point, inter_obj))
+  	  return make_object(plane.to_3d(inter_point));
+    else
+    {
+      CGAL_assertion_code(bool b = )
+      assign_2(inter_segment, inter_obj);
+      CGAL_assertion(b);
+      
+  	  return make_object(Segment_3(
                   plane.to_3d(k.construct_vertex_2_object()(inter_segment, 0)),
 									plane.to_3d(k.construct_vertex_2_object()(inter_segment, 1))));
-
-  	else if (assign_2(inter_tri, inter_obj))
-  	   return make_object(Triangle_3(
-                  plane.to_3d(k.construct_vertex_2_object()(inter_tri, 0)),
-  								plane.to_3d(k.construct_vertex_2_object()(inter_tri, 1)),
-  								plane.to_3d(k.construct_vertex_2_object()(inter_tri, 2))));
-  	else
-  	{
-  	   // intersection is a polygon, given as a vector of points
-  		std::vector<Point_2> inter_poly;
-  		assign_2(inter_poly, inter_obj);
-  		std::vector<Point_3> poly(inter_poly.size());
-
-      for(unsigned int i=0; i<inter_poly.size(); ++i)
-  			poly[i] = plane.to_3d(inter_poly[i]);
-
-  		return make_object(poly);
-  	}
-  	return Object();
+    }
 
   }
 
-  // calculate the intersection between a (non degenerate) triangle
+  // calculate the intersection between a triangle/segment
   // and a (non degenerate) plane in 3d
   // the result object can be empty, a point, a segment or the original
   // triangle
@@ -1336,9 +1467,12 @@ public:
 		                  const Xy_monotone_surface_3& tri) const
   {
     Kernel k;
-    CGAL_precondition( !tri.is_degenerate() );
+    CGAL_precondition( tri.is_xy_monotone() );
     CGAL_precondition( !k.is_degenerate_3_object()(pl) );
 
+    if (tri.is_segment())
+      return k.intersect_3_object()(pl, static_cast<Segment_3>(tri));
+      
     // first, check for all 3 vertices of tri on which side of pl they lie on
     int points_on_plane[3]; // contains the indices of vertices that lie on pl
     int points_on_positive[3]; // contains the indices of vertices that lie on the positive side of pl
@@ -1454,19 +1588,24 @@ public:
   envelope_point_of_surface(const Point_2& p,
                             const Xy_monotone_surface_3& s) const
   {
+    CGAL_precondition(s.is_xy_monotone());
     CGAL_precondition(is_defined_over_object()(p, s));
 
-    // Construct a vertical line passing through point
-    Kernel k;
     Point_3 point(p.x(), p.y(), 0);
-    Direction_3 dir (0, 0, 1);
-    Line_3      vl = k.construct_line_3_object() (point, dir);
 
     // Compute the intersetion between the vertical line and the given surfaces
-    if (s.is_vertical())
-      return envelope_point_of_vertical_surface(point, s);
+    if (s.is_segment())
+      return envelope_point_of_segment(point, s);
     else
     {
+      // s is a non-vertical triangle
+      CGAL_assertion(!s.is_vertical());
+
+      // Construct a vertical line passing through point
+      Kernel k;
+      Direction_3 dir (0, 0, 1);
+      Line_3      vl = k.construct_line_3_object() (point, dir);
+
       const Plane_3& plane = s.plane();
       Object    res = k.intersect_3_object()(plane, vl);
       CGAL_assertion(!res.is_empty());
@@ -1479,17 +1618,16 @@ public:
   }
 
   // find the envelope point of the surface over the given point
-  // precondition: the surface is defined in point and is vertical
-  Point_3
-  envelope_point_of_vertical_surface(const Point_3& point,
-                                     const Xy_monotone_surface_3& surf) const
+  // precondition: the surface is defined in point and is a segment
+  Point_3 envelope_point_of_segment(const Point_3& point,
+                                    const Xy_monotone_surface_3& s) const
   {
     Kernel k;
-    CGAL_precondition(surf.is_vertical());
-    CGAL_precondition(is_defined_over_object()(project(point), surf));
+    CGAL_precondition(s.is_segment());
+    CGAL_precondition(is_defined_over_object()(project(point), s));
 
-    const Plane_3& plane = surf.plane();
-
+    // this is the vertical plane through the segment
+    const Plane_3& plane = s.plane();
 
     // Construct a vertical line passing through point
     Direction_3 dir (0, 0, 1);
@@ -1500,62 +1638,26 @@ public:
             vl_point2 = k.construct_point_on_3_object()(vl, 1);
 
     // the surface and the line are on the same plane(plane),
-    // so we transform them to the xy-plane, compute the intersecting segment
+    // so we transform them to the xy-plane, compute the intersecting point
     // and transform it back to plane.
-    Point_3 v1 = k.construct_vertex_3_object()(surf, 0);
-    Point_3 v2 = k.construct_vertex_3_object()(surf, 1);
-    Point_3 v3 = k.construct_vertex_3_object()(surf, 2);
-
+    const Point_3& v1 = s.vertex(0);
+    const Point_3& v2 = s.vertex(1);
+    
     Point_2 t1 = plane.to_2d(v1);
     Point_2 t2 = plane.to_2d(v2);
-    Point_2 t3 = plane.to_2d(v3);
 
     Point_2 tvl_point1 = plane.to_2d(vl_point1);
     Point_2 tvl_point2 = plane.to_2d(vl_point2);
     Line_2 l(tvl_point1, tvl_point2);
 
-    Triangle_2 tri(t1, t2, t3);
-    Object inter_obj = k.intersect_2_object()(tri, l);
-    Segment_2 inter_seg;
+    Segment_2 seg(t1, t2);
+    Object inter_obj = k.intersect_2_object()(seg, l);
     Point_2 inter_point;
-    bool is_inter_point = k.assign_2_object()(inter_point, inter_obj);
-    if (is_inter_point)
-       return plane.to_3d(inter_point);
-
-    // intersection must be a segment because the transformation keeps
-    // combinatorics
-    CGAL_assertion(k.assign_2_object()(inter_seg, inter_obj));
-    k.assign_2_object()(inter_seg, inter_obj);
-
-    // now find the vertex of inter_seg which is the transformed envelope
-    // point
-
-
-    #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-      std::cout << "in envelope_point_of_vertical_surface - segment is " 
-                << plane.to_3d(k.construct_min_vertex_2_object()(inter_seg))
-                << " --> "
-                << plane.to_3d(k.construct_max_vertex_2_object()(inter_seg))
-                << endl;
-
-    #endif
-    
-    Point_2 result;
-    Segment_3 seg_3(plane.to_3d(k.construct_vertex_2_object()(inter_seg, 0)),
-                    plane.to_3d(k.construct_vertex_2_object()(inter_seg, 1)));
-    if (get_envelope_type() == LOWER)
-      return k.construct_min_vertex_3_object()(seg_3);
-    else
-      return k.construct_max_vertex_3_object()(seg_3);
-    
+    CGAL_assertion_code(bool is_inter_point =)
+    k.assign_2_object()(inter_point, inter_obj);
+    CGAL_assertion(is_inter_point);
+    return plane.to_3d(inter_point);
   }
-
-//  // return true if the surface is ortogonal to the xy-plane
-//  bool surface_is_vertical(const Xy_monotone_surface_3& s) const
-//  {
-//     CGAL_precondition(!s.is_degenerate());
-//     return project(s).is_degenerate();
-//  }
 
   Point_2 construct_middle_point(const Point_2& p1, const Point_2& p2) const
   {
@@ -1639,8 +1741,6 @@ public:
                 << " number of calls to traits interface functions" << std::endl;
       std::cout << "total time: " << total_timer.time() << " seconds"
                 << std::endl << std::endl;
-
-
 
       std::cout << "projected boundary        #: "
                 << pboundary_timer.intervals()
@@ -1764,6 +1864,7 @@ class Envelope_triangle_3 :
   typedef typename Kernel::Triangle_3                              Triangle_3;
   typedef typename Kernel::Point_3                                 Point_3;
   typedef typename Kernel::Plane_3                                 Plane_3;
+  typedef typename Kernel::Segment_3                               Segment_3;
 
   typedef typename Envelope_triangles_traits_3<Kernel>::_Triangle_cached_3
                                                                    Rep_type;
@@ -1812,11 +1913,29 @@ public:
   {}
 
   /*!
+   * Construct a segment from 2 end-points.
+   * \param p1 The first point.
+   * \param p2 The second point.
+   */
+  Envelope_triangle_3(const Point_3 &p1, const Point_3 &p2) :
+      Handle_for<Rep_type>(Rep_type(p1, p2))
+  {}
+
+  /*!
    * Cast to a triangle.
    */
   operator Triangle_3() const
   {
     return (Triangle_3(ptr()->vertex(0), ptr()->vertex(1), ptr()->vertex(2)));
+  }
+
+  /*!
+   * Cast to a segment (only when possible).
+   */
+  operator Segment_3() const
+  {
+    CGAL_precondition(ptr()->is_segment());
+    return (Segment_3(ptr()->vertex(0), ptr()->vertex(1)));
   }
 
   /*!
@@ -1845,7 +1964,7 @@ public:
   }
 
   /*!
-   * Check if the triangel is vertical.
+   * Check if the triangle is vertical.
    */
   bool is_vertical() const
   {
@@ -1853,11 +1972,19 @@ public:
   }
 
   /*!
+   * Check if the surface is a segment.
+   */
+  bool is_segment() const
+  {
+    return ptr()->is_segment();
+  }
+
+  /*!
    * Check if the triangle is degenerate.
    */
-  bool is_degenerate() const
+  bool is_xy_monotone() const
   {
-    return ptr()->is_degenerate();
+    return ptr()->is_xy_monotone();
   }
 
 };
@@ -1884,6 +2011,8 @@ template <class Kernel, class OutputStream>
 OutputStream& operator<< (OutputStream& os, const Envelope_triangle_3<Kernel>& tri)
 {
   os << static_cast<typename Kernel::Triangle_3>(tri);
+  if (tri.is_segment())
+    os << " (segment)";
   return (os);
 }
 
