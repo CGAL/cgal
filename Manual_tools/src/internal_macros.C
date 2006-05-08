@@ -62,22 +62,29 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
                      << "#Cross_link_anchor_" << cross_link_anchor_counter;
 
 
+    string anchor_key = "c ";
     do {
-      *anchor_stream << "c " << tmp_name << '\t';
+      *anchor_stream << anchor_key << tmp_name << '\t';
       wrap_anchor( replacement_text.str(), tmp_name, *anchor_stream );
       *anchor_stream << endl;
 
       string::size_type t = tmp_name.rfind( "&lt;" );
-      if( t != string::npos ) {
+      string::size_type t2 = tmp_name.rfind( "::" );
+      if( t != string::npos &&
+          (t2 == string::npos || t > t2) )
+      {
         string tmp_name2 = tmp_name.substr( 0, t );
-        *anchor_stream << "c " << tmp_name2 << '\t';
+        *anchor_stream << anchor_key << tmp_name2 << '\t';
         wrap_anchor( replacement_text.str(), tmp_name2, *anchor_stream );
         *anchor_stream << endl;
       }
-      t = tmp_name.find( "::" );
-      if( t != string::npos )
-        tmp_name = tmp_name.substr( t + 2 );
-      else
+      t2 = tmp_name.find( "::" );
+      if( t2 != string::npos ) {
+        const string prefix = tmp_name.substr( 0, t2 );
+        if( prefix != "CGAL" )
+          anchor_key = "localc ";
+        tmp_name = tmp_name.substr( t2 + 2 );
+      } else
         break;
     } while( tmp_name.length() > 2 );
 

@@ -339,7 +339,8 @@ run_command() {
 #---------------------------------------------------------------------#
 
 anchor_filter() {
-    cat cc_anchor_rules.stage_1 \
+    cat cc_anchor_rules.stage_0 \
+        cc_anchor_rules.stage_1 \
         cc_anchor_rules.stage_2 \
         cc_anchor_rules.stage_3 \
       | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_rules
@@ -422,7 +423,10 @@ convert() {
         \touch ${dir}/cc_anchor_rules.stage_2  # necessary to make stage_3 work
         if [ "$dir" != "." ]; then
             cd $dir
-            \cat cc_anchor_rules.stage_1 | sed "s/REPLACE_WITH_CURRENT_PATH/REPLACE_WITH_CURRENT_PATH${dir}\//g"  >> ../cc_anchor_rules.stage_2
+            \cat cc_anchor_rules.stage_1 | sed "s/REPLACE_WITH_CURRENT_PATH/REPLACE_WITH_CURRENT_PATH${dir}\//g" | grep -v -E -e "^local" >> ../cc_anchor_rules.stage_2
+            \cat cc_anchor_rules.stage_1 | grep -E -e "^local" | sed 's/^local//' > cc_anchor_rules.stage_0
+            \cat cc_anchor_rules.stage_1 | grep -v -E -e "^local" > cc_anchor_rules.stage_1.tmp
+            \mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1
             cd ${TmpDir}
         fi
     done

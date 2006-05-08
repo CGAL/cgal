@@ -599,10 +599,10 @@
     \lciRefDeclOpenFilenameX{#GXC3_#GXC1#GC2}{\lciHtmlSuffix}{\ccRefName}%
     \lciIfHtmlClassLinks{%
       \ccHtmlCrossLink{#GXC4#GXC1#GXC5}%
-      \lciIfEmpty{#XC4}{}{%
+      %\lciIfEmpty{#XC4}{}{%
         % cross link names also without the global (CGAL) prefix
-        \ccHtmlCrossLink{#GXC1#GXC5}%
-      }%
+      %  \ccHtmlCrossLink{#GXC1#GXC5}%
+      %}%
     }{}%
     \ccIndexRefName{#1}{\ccc{#2}}{#3}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
