@@ -48,8 +48,7 @@ explains how the user can  benefit  from the flexibility
 of  \cgal\ triangulations using customized classes for faces
 and vertices.
 
-\section{Definitions}
-\label{Section_2D_Triangulations_Definitions}
+\section{Definitions\label{Section_2D_Triangulations_Definitions}}
 
 A two dimensional triangulation can be roughly described as a set $T$
 of triangular facets such that~:\\
@@ -127,8 +126,7 @@ However, following a common usage, we hereafter often call {\em
 faces}, the facets
 of a two dimensional triangulation.
 
-\section{Representation}
-\label{Section_2D_Triangulations_Representation}
+\section{Representation\label{Section_2D_Triangulations_Representation}}
 
 \subsubsection{The set of faces}
 
@@ -241,8 +239,7 @@ can be represented as well as an edge of the \ccc{neighbor(i)} of
 \end{figure}
 
 
-\section{Software Design}
-\label{Section_2D_Triangulations_Software_Design}
+\section{Software Design\label{Section_2D_Triangulations_Software_Design}}
 
 The triangulations  classes of \cgal\  
 provide high-level geometric functionalities
@@ -360,11 +357,9 @@ of the basic concepts.
 \label{2D_Triangulation_Fig_derivation_tree}
 \end{figure}
 
-\section{Basic Triangulations}
-\label{Section_2D_Triangulations_Basic}
+\section{Basic Triangulations\label{Section_2D_Triangulations_Basic}}
 
-\subsection{Description}
-\label{Subsection_2D_Triangulations_Basic_Description}
+\subsection{Description\label{Subsection_2D_Triangulations_Basic_Description}}
 
 The class \ccc{Triangulation_2<Traits,Tds>}
 serves as a base class for the other
@@ -493,8 +488,7 @@ features which are themselves derived from the corresponding iterators
 of the triangulation data structure.
 
 
-\subsubsection{ Geometric Traits}
-\label{Subsubsection_2D_Triangulation_Basic_Geometric_Traits}
+\subsubsection{Geometric Traits\label{Subsubsection_2D_Triangulation_Basic_Geometric_Traits}}
 
 The geometric traits of a triangulation 
  is required to provide
@@ -542,8 +536,7 @@ deal with projections on the
  \ccc{xz} plane  and  \ccc{yz}-plane,
 respectively.
 
-\subsection{Example of a Basic Triangulation}
-\label{Subsection_2D_Triangulations_Basic_Example}
+\subsection{Example of a Basic Triangulation\label{Subsection_2D_Triangulations_Basic_Example}}
 
 The following program  creates a  triangulation of 2D points
 using the  default kernel 
@@ -555,11 +548,9 @@ Finally points on the convex hull are written to {\tt cout}.
 \ccIncludeExampleCode{Triangulation_2/triangulation_prog1.C}
 
 
-\section{Delaunay Triangulations}
-\label{Section_2D_Triangulations_Delaunay}
+\section{Delaunay Triangulations\label{Section_2D_Triangulations_Delaunay}}
 
-\subsection{Description}
-\label{Subsection_2D_Triangulations_Delaunay_Description}
+\subsection{Description\label{Subsection_2D_Triangulations_Delaunay_Description}}
 The class \ccc{Delaunay_triangulation_2<Traits,Tds>} is designed to represent
 the Delaunay triangulation of a set of data points in the plane.
 A  Delaunay triangulation
@@ -653,8 +644,7 @@ worst case, but in time \ccTexHtml{$O(1)$}{O(1)}
 for vertices distributed uniformly at random  and any query point. 
 
 
-\subsection{Example : a Delaunay Terrain}
-\label{Subsection_2D_Triangulations_Delaunay_Terrain}
+\subsection{Example : a Delaunay Terrain\label{Subsection_2D_Triangulations_Delaunay_Terrain}}
 
 The following code  creates a Delaunay triangulation with 
 the usual Euclidean metric for the vertical projection of a 
@@ -664,8 +654,7 @@ are computed using only  the $x$ and $y$ coordinates
 of these points. 
 \ccIncludeExampleCode{Triangulation_2/terrain.C}
 
-\subsection{Example : Voronoi Diagram}
-\label{Subsection_2D_Triangulations_Voronoi}
+\subsection{Example : Voronoi Diagram\label{Subsection_2D_Triangulations_Voronoi}}
 \ccIndexMainItem{Voronoi diagram}
 The following code computes the edges of Voronoi diagram
 of a set of data points
@@ -674,11 +663,9 @@ of this diagram
 \ccIncludeExampleCode{Triangulation_2/voronoi.C}
 
 
-\section{Regular Triangulations}
-\label{Section_2D_Triangulations_Regular}
+\section{Regular Triangulations\label{Section_2D_Triangulations_Regular}}
 
-\subsection{Description}
-\label{Subsection_2D_Triangulations_Regular_Description}
+\subsection{Description\label{Subsection_2D_Triangulations_Regular_Description}}
 \ccIndexMainItem{power diagram}
 Let ${  PW} = \{(p_i, w_i), i = 1, \ldots , n \}$ be a set of 
 weighted points where each $p_i$ is a point and each $w_i$
@@ -835,8 +822,7 @@ as a default base class for faces of regular triangulations.
 
 
 
-\subsection{Example : a Regular Triangulation}
-\label{Subsection_2D_Triangulations_Regular_Example}
+\subsection{Example : a Regular Triangulation\label{Subsection_2D_Triangulations_Regular_Example}}
 
 The following code  creates a regular triangulation 
 of a set of weighted points and ouput the number
@@ -845,8 +831,7 @@ of vertices and the number of hidden vertices.
 \ccIncludeExampleCode{Triangulation_2/regular.C}
 
 
-\section{Constrained Triangulations}
-\label{Section_2D_Triangulations_Constrained}
+\section{Constrained Triangulations\label{Section_2D_Triangulations_Constrained}}
 
 %\subsection{Description}
 \label{Subsection_2D_Triangulations_Constrained_Description}
@@ -994,8 +979,7 @@ triangulation with two examples of circumcircles is shown on the right.}
 \end{figure}
 
 
-\section{Constrained Delaunay Triangulations}
-\label{Section_2D_Triangulations_Constrained_Delaunay}
+\section{Constrained Delaunay Triangulations\label{Section_2D_Triangulations_Constrained_Delaunay}}
 
 %\subsection{Description}
 \label{Subsection_2D_Triangulations_Constrained_Delaunay_Description}
@@ -1082,8 +1066,7 @@ of \ccc{ConstrainedTriangulationFaceBase_2}.
 
 
 
-\subsection{Example : a  constrained Delaunay triangulation}
-\label{Subsection_2D_Triangulations_Constrained_Delaunay_Example}
+\subsection{Example : a  constrained Delaunay triangulation\label{Subsection_2D_Triangulations_Constrained_Delaunay_Example}}
 The following code inserts a set of intersecting constraint segments
 into a triangulation 
 and counts the number of constrained edges of the
@@ -1092,8 +1075,7 @@ resulting triangulation.
 \ccIncludeExampleCode{Triangulation_2/constrained.C}
 
 
-\section{Constrained Triangulations Plus}
-\label{Section_2D_Triangulations_Constrained_Plus}
+\section{Constrained Triangulations Plus\label{Section_2D_Triangulations_Constrained_Plus}}
 
 The class \ccc{Constrained_triangulation_plus_2<Tr>}
 provides a constrained triangulation with an additional data
@@ -1139,8 +1121,7 @@ resulting triangulation.
 
 
 
-\section{The Triangulation Hierarchy}
-\label{Section_2D_Triangulations_Hierarchy}
+\section{The Triangulation Hierarchy\label{Section_2D_Triangulations_Hierarchy}}
 
 
 The class \ccc{Triangulation_hierarchy_2<Tr>}
@@ -1201,8 +1182,7 @@ either the default
 vertex class or a user customized
 vertex class with additional functionalities.
 
-\subsection{Examples of the Use of a  Triangulation Hierarchy}
-\label{Subsection_2D_Triangulations_Hierarchy_Examples}
+\subsection{Examples of the Use of a  Triangulation Hierarchy\label{Subsection_2D_Triangulations_Hierarchy_Examples}}
 
 The following program is example
 of the  standard use of a  triangulation hierarchy
@@ -1216,8 +1196,7 @@ a triangulation hierachy in conjunction with a constrained
 triangulation plus.
 \ccIncludeExampleCode{Triangulation_2/constrained_hierarchy_plus.C}
 
-\section{Flexibility: Using  Customized Vertices and Faces}
-\label{Section_2D_Triangulations_Flexibility}
+\section{Flexibility: Using  Customized Vertices and Faces\label{Section_2D_Triangulations_Flexibility}}
 
 
 To be able to adapt to  various needs, a highly
