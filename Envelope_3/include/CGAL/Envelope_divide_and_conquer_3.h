@@ -178,7 +178,8 @@ public:
     delete resolver;
   }
 
-  // compute the envelope of surfaces in 3D, using the defaul arbitrary dividor
+  // compute the envelope of surfaces in 3D, using the default arbitrary
+  // dividor
   template <class SurfaceIterator>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2 &result)
@@ -224,6 +225,47 @@ public:
     result_num_vertices = result.number_of_vertices();
     result_num_edges = result.number_of_edges();
     result_num_faces = result.number_of_faces();    
+    print_stats();
+  }
+
+  // compute the envelope of xy-monotone surfaces in 3D,
+  // using the default arbitrary dividor
+  template <class SurfaceIterator>
+  void construct_envelope_xy_monotone(SurfaceIterator begin,
+                                      SurfaceIterator end,
+                                      Minimization_diagram_2 &result)
+  {
+    Arbitrary_dividor dividor;
+    construct_envelope_xy_monotone(begin, end, result, dividor);
+  }
+
+  // compute the envelope of xy-monotone surfaces in 3D using the given
+  // set dividor
+  template <class SurfaceIterator, class SetDividor>
+  void construct_envelope_xy_monotone(SurfaceIterator begin,
+                                      SurfaceIterator end,
+                                      Minimization_diagram_2 &result,
+                                      SetDividor& dividor)
+  {
+    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
+      std::cout << "begin construct_envelope_xy_monotone" << std::endl;
+    #endif
+
+    if (begin == end)
+      return; // result is empty
+
+    init_stats();
+    envelope_timer.start();
+
+    // recursively construct the envelope of the xy-monotone parts
+    construct_lu_envelope_xy_monotones(begin, end, result, dividor);
+    CGAL_assertion(is_envelope_valid(result));
+
+	  envelope_timer.stop();
+
+    result_num_vertices = result.number_of_vertices();
+    result_num_edges = result.number_of_edges();
+    result_num_faces = result.number_of_faces();
     print_stats();
   }
 
