@@ -386,10 +386,6 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#
 Installation/LICENSE.FREE_USE -text
 Installation/config/support/S05-BOOST -text
 Installation/config/support/S06-BOOST_PROGRAM_OPTIONS -text
-Installation/config/support/S08-EXTERNTAUCSNIX -text
-Installation/config/support/S09-EXTERNTAUCSMS -text
-Installation/config/support/S10-TAUCSNIX -text
-Installation/config/support/S11-TAUCSMS -text
 Installation/config/support/S15-X11 -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
@@ -406,6 +402,8 @@ Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
 Installation/config/support/S83-QT3MSST -text
+Installation/config/support/S90-TAUCSWINATLAS -text
+Installation/config/support/S92-TAUCSLINUXATLAS -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text

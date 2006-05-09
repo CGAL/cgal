@@ -20,7 +20,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # $URL$
-# $Id$ 
+# $Id$
 # $Date$
 #
 # Author(s): Michael Hoffmann
@@ -50,7 +50,7 @@ CGAL_INSTALL_DIR=''
 INSTALL_VERBOSE=''
 
 # ---------------------------------------------
-# try to autofind as many 3rd party libraries as possible. 
+# try to autofind as many 3rd party libraries as possible.
 # Set to empty, if you want to disable autofinding.
 CGAL_AUTOFIND_PKGS=y
 
@@ -180,10 +180,10 @@ print_usage_information()
 {
 	${_printf} "%s\n" \
 "Usage: ${CGAL_INSTALL_CGAL}
-      [--help | --version | -i | --interactive | 
+      [--help | --version | -i | --interactive |
        -u <dir> | --upgrade <dir> | --build-all | --rebuild-all |
        --build <config> | --rebuild <config> | --disable-shared |
-       -ni | --non-interactive | -os] 
+       -ni | --non-interactive | -os]
       [--verbose]
       [--without-autofind]
       [--prefix <dir>]
@@ -191,10 +191,10 @@ print_usage_information()
       [--CXX <comp>] [--CXXFLAGS <flags>] [--LDFLAGS <flags>]
       [--ostype_tag <tag>]"
       for i in ${SUPPORT_PKGS}; do
-	  ${_printf} "      [--with-%s]\n" "$i" 
+	  ${_printf} "      [--with-%s]\n" "$i"
       done
       for i in ${SUPPORT_FEATURES}; do
-	  ${_printf} "      [--%s_INCL_DIR <dir>] [--%s_LIB_DIR <dir>]\n" "$i" "$i" 
+	  ${_printf} "      [--%s_INCL_DIR <dir>] [--%s_LIB_DIR <dir>]\n" "$i" "$i"
       done
       ${_printf} "\n%s\n" \
 "  --help       gives this message.
@@ -222,7 +222,7 @@ print_usage_information()
 	       (re)builds the compiler configuration file and libraries
 	       for the compiler specified by its configuration file
                config/install/<config>.
-  --non-interactive or -ni 
+  --non-interactive or -ni
                runs the script in non-interactive mode.
   -os          prints architecture/os/compiler specifications.
   --verbose    Give report for each test that fails
@@ -230,9 +230,9 @@ print_usage_information()
   --CGAL_DIR <dir>
                Specify an explicit path to use for the CGAL directory.
   --prefix <dir>
-               Specify an installation directory. 
+               Specify an installation directory.
   --without-autofind
-               Do not enable support for 3rd party libraries, unless 
+               Do not enable support for 3rd party libraries, unless
                specified explicitly.
   --disable-shared
                Do not build shared libraries, only the static archives.
@@ -324,13 +324,13 @@ _real_options()
     ${_printf} "${*}" | ${_awk} '{ for (i=2; i<=NF; ++i) if (substr($i,0,1) == "-") printf "%s",$i }'
 }
 
-# log_print writes to logfile only 
+# log_print writes to logfile only
 log_to_file()
 {
     INSTALL_LOGFILE_REDIRECTION=">>\"${INSTALL_LOGFILE}\""
 }
 
-# log_print writes to screen only 
+# log_print writes to screen only
 log_to_screen()
 {
     INSTALL_LOGFILE_REDIRECTION="| print_with_indent"
@@ -447,9 +447,9 @@ initial_check()
 	fi
     done
     # set SUPPORT_FEATURES and SUPPORT_PKGS
-    
+
     # first cleanup
-    for i in ${SUPPORT_FEATURES}; do 
+    for i in ${SUPPORT_FEATURES}; do
 	eval "SUPPORT_PKG_${i}=''"
 	eval "PROVIDE_PKG_${i}=''"
     done
@@ -485,7 +485,7 @@ initial_check()
 	done
 
 	# generate set of variables corresponding to $_tmp
-	
+
 	# read those from the specfile
 	for j in DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
 	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING
@@ -603,9 +603,9 @@ check_for_utils()
     _check_for_sysutil ln y
     _check_for_sysutil ls y
     # ls should have a -1 option to list files line-by-line
-    if ${_ls} -1 >/dev/null 2>&1; then 
-	_lsone="${_ls} -1" 
-    else 
+    if ${_ls} -1 >/dev/null 2>&1; then
+	_lsone="${_ls} -1"
+    else
 	_lsone="${_ls}"
     fi
     _check_for_sysutil chmod y
@@ -679,48 +679,6 @@ old_guess_os()
     OLD_SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_sed} -e 's/(.*)//g' -e 's/_/-/g' | ${_awk} '{print $1}'`"
 }
 
-# Set ${TAUCS_OSTYPE} (variable indicating the platform name for TAUCS library)
-# Note: This code is copied from TAUCS configure script
-set_TAUCS_OSTYPE()
-{
-# In most cases, OSTYPE is set automatically before
-# the user's shell begins, but sometimes it is
-# not set or set in a way that is inconsistent
-# with our usage.
-TAUCS_OSTYPE=${OSTYPE}
-
-# On SGI IRIX systems, OSTYPE is not set
-# (at least in Tel-Aviv University)
-if [ \( ${TAUCS_OSTYPE:-fail} = "fail" \) -a \( `uname` = "IRIX64" \) ] ; then
-  TAUCS_OSTYPE=irix
-fi
-
-# On Linux, OSTYPE is usually set to "linux",
-# but if it is not set (or if the user unsets it),
-# /bin/sh supplies its own politically-correct,
-# string, which we need to normalize.
-if [ ${TAUCS_OSTYPE:-fail} = "linux-gnu" ] ; then
-  TAUCS_OSTYPE=linux
-fi
-
-# On Cygwin, OSTYPE is set to "cygwin",
-# which we need to change to "win32_MD".
-if [ ${TAUCS_OSTYPE:-fail} = "cygwin" ] ; then
-  TAUCS_OSTYPE=win32_MD
-fi
-
-# If TAUCS_OSTYPE is still not set, we try to set it
-# from uname, folding to lower case. This should sometimes
-# work, but sometimes uname returns a value that is
-# inconsistent with the way OSTYPE is set. For example, on
-# Solaris, OSTYPE=solaris but uname returns SunOS.
-if [ ${TAUCS_OSTYPE:-fail} = "fail" ] ; then
-  TAUCS_OSTYPE=`uname | tr "A-Z" "a-z"`
-fi
-
-${_printf} "\$TAUCS_OSTYPE is set to ${TAUCS_OSTYPE}" >> "${INSTALL_LOGFILE}"
-}
-
 # -------------------------------------------------------
 # several directories depend on the setting of CGAL_DIR
 # we put these into a function that can be called in case
@@ -776,7 +734,7 @@ set_dirs_dependant_on_cgal_dir
 # -------------------------------------------------------------------
 
 # return the cmdline-switch to add directory $1
-# to the runtime linker path 
+# to the runtime linker path
 rpath_directive()
 {
     if [ -n "${RUNTIME_LINKER_FLAG}" -a -n "${1}" ]; then
@@ -1275,7 +1233,7 @@ EOF6
     ${_printf} "%s\n" "  All headers at once : no."
 
     #
-    # Decide if a .h suffix is needed for header files. 
+    # Decide if a .h suffix is needed for header files.
     #
     ${_printf} "%s\n" "typedef int CGAL_nt;" > ${tmp_header_file}
     ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
@@ -1420,15 +1378,15 @@ EOF5
 
 
 #---------------------------------------------------------
-# flags for compiler/linker and utitlities 
+# flags for compiler/linker and utitlities
 
-# escape spaces in filenames 
+# escape spaces in filenames
 escape_special()
 {
     echo "${*}" | ${_sed} 's/ /\\\ /g'
 }
 
-# double-escape spaces in filenames 
+# double-escape spaces in filenames
 multi_escape_special()
 {
     echo "${*}" | ${_sed} 's/ /\\\\\\\ /g'
@@ -1608,11 +1566,11 @@ split_up()
 # USES: iii
 enable_support()
 {
-    if [ -n "${1}" -a -z "`value_of ${1}_SUPPORT`" ]; then 
+    if [ -n "${1}" -a -z "`value_of ${1}_SUPPORT`" ]; then
 	eval "${1}_SUPPORT=y"
 	SETUP_COMPLETE=''
 	for iii in `value_of ${1}_PROVIDES`; do
-	    if [ -n "`value_of PROVIDE_PKG_${iii}`" ]; then 
+	    if [ -n "`value_of PROVIDE_PKG_${iii}`" ]; then
 		exit_on_error "`value_of PROVIDE_PKG_${iii}` and ${1} are in conflict"
 	    fi
 	    eval "PROVIDE_PKG_${iii}=${1}"
@@ -1624,23 +1582,23 @@ enable_support()
 # USES: iii
 disable_support()
 {
-    if [ -n "${1}" -a -n "`value_of ${1}_SUPPORT`" ]; then 
+    if [ -n "${1}" -a -n "`value_of ${1}_SUPPORT`" ]; then
 	eval "${1}_SUPPORT=''"
 	SETUP_COMPLETE=''
 	for iii in `value_of ${1}_PROVIDES`; do
-	    if [ "`value_of PROVIDE_PKG_${iii}`" != "${1}" ]; then 
+	    if [ "`value_of PROVIDE_PKG_${iii}`" != "${1}" ]; then
 		exit_on_error "Inconsistent support settings (disable_support)"
 	    fi
 	    eval "PROVIDE_PKG_${iii}=''"
 	done
 	for iii in `value_of ${1}_REQUIRED_BY`; do
 	    eval "${iii}_TEST_PASSED=''"
-	done	
+	done
     fi
 }
 
 # test for 3rd party package $1 ($2 != '' indicates verbosity)
-# The test program is $3 and the variables 
+# The test program is $3 and the variables
 #   tmp_cxxflags, tmp_libpathflags, and tmp_ldflags have to be preset.
 # $4 provides a literal description for the test.
 # The variable ${4}_VERSION is set according to the version information provided
@@ -1650,7 +1608,7 @@ disable_support()
 # USES: ii _ok kk _ii _kk
 _test_support()
 {
-    if [ ! -r "${3}" ]; then 
+    if [ ! -r "${3}" ]; then
 	log_print "OK: There is no test program ${3}."
 	return 1
     fi
@@ -1770,15 +1728,15 @@ _test_support()
 _check_requirements()
 {
     for jj in `value_of ${1}_REQUIRES`; do
-	case ${jj} in 
-	    DOLLAR_*) 
+	case ${jj} in
+	    DOLLAR_*)
 		_tmp="`echo ${jj} | ${_sed} 's/^DOLLAR_//'`"
 		if [ -z "`value_of ${_tmp}`" ]; then
 		    echo ${1} requires variable ${_tmp}
 		    return 0
 		fi;;
 	    *)
-		if [ -z "`value_of PROVIDE_PKG_${jj}`" ]; then 
+		if [ -z "`value_of PROVIDE_PKG_${jj}`" ]; then
 		    echo ${1} requires feature ${jj}
 		    return 0
 		fi;;
@@ -1801,15 +1759,15 @@ _check_incompatibilities()
 	fi
     done
     for jj in `value_of ${1}_INCOMPATIBLE`; do
-	case ${jj} in 
-	    DOLLAR_*) 
+	case ${jj} in
+	    DOLLAR_*)
 		_tmp="`echo ${jj} | ${_sed} 's/^DOLLAR_//'`"
 		if [ -n "`value_of ${_tmp}`" ]; then
 		    echo ${1} is incompatible with variable ${_tmp}
 		    return 0
 		fi;;
 	    *)
-		if [ -n "`value_of PROVIDE_PKG_${jj}`" ]; then 
+		if [ -n "`value_of PROVIDE_PKG_${jj}`" ]; then
 		    echo ${1} is incompatible with feature ${jj}
 		    return 0
 		fi;;
@@ -1818,13 +1776,13 @@ _check_incompatibilities()
     return 1
 }
 
-# set the variable tmp_cxxflags for package $1 
+# set the variable tmp_cxxflags for package $1
 set_package_cxxflags()
 {
     tmp_cxxflags="`value_of \"${1}_CXXFLAGS\"`"
 }
 
-# set the variable tmp_cxxflags for feature $1 
+# set the variable tmp_cxxflags for feature $1
 # USES: ii
 set_feature_cxxflags()
 {
@@ -1833,7 +1791,7 @@ set_feature_cxxflags()
               ${_sed} 's/ //g' | ${_awk} 'BEGIN {RS=":"}{print $0}'`
     do
         ii="`echo ${ii} | ${_sed} 's// /g'`"
-	if [ -n "${ii}" ]; then 
+	if [ -n "${ii}" ]; then
 	    _append_to tmp_cxxflags "`include_dir_option \"${ii}\"`" ""
 	fi
     done
@@ -1852,14 +1810,14 @@ set_feature_libpathflags()
               ${_sed} 's/ //g' | ${_awk} 'BEGIN {RS=":"}{print $0}'`
     do
       ii="`echo ${ii} | ${_sed} 's// /g'`"
-      if [ -n "${ii}" ]; then 
+      if [ -n "${ii}" ]; then
 	  _append_to tmp_libpathflags "`libpath_option \"${ii}\"`" ""
 	  _append_to tmp_runtimepath "`os_path \"${ii}\"`" ""
       fi
     done
 }
 
-# set the variable tmp_ldflags for package $1 
+# set the variable tmp_ldflags for package $1
 # USES: ii
 set_package_ldflags()
 {
@@ -1874,14 +1832,14 @@ set_package_ldflags()
 # USES: _tmp _ok ii jj kk _ii _kk
 test_support_pkg()
 {
-    if [ -n "`value_of \"${1}_SUPPORT\"`" -a -n "`value_of \"${1}_TEST_PASSED\"`" ]; then 
+    if [ -n "`value_of \"${1}_SUPPORT\"`" -a -n "`value_of \"${1}_TEST_PASSED\"`" ]; then
 	${_printf} "%s\n" "${_LEFTSPACE}${1} test has already been passed."
 	return 1
     fi
     log_print "Testing support for ${1} ..."
     # check requirements and incompatibilities
     _tmp=`_check_requirements "${1}" || _check_incompatibilities "${1}"`
-    if [ ${?} = 0 ]; then 
+    if [ ${?} = 0 ]; then
 	log_print "Failed: ${_tmp}."
 	return 0
     fi
@@ -1898,12 +1856,12 @@ test_support_pkg()
     for jj in ${SUPPORT_FEATURES}; do eval TMP_SUPPORT_${jj}=''; done
     for jj in ${SUPPORT_PKGS}; do eval TMP_SUPPORT_${jj}=''; done
     eval "TMP_SUPPORT_${1}=y"
-    for jj in ${R_SUPPORT_PKGS}; do 
+    for jj in ${R_SUPPORT_PKGS}; do
 	if [ -n "`value_of \"TMP_SUPPORT_${jj}\"`" ]; then
-	    for kk in `value_of "${jj}_REQUIRES"`; do 
+	    for kk in `value_of "${jj}_REQUIRES"`; do
 		case "${kk}" in
 		    DOLLAR_*) _tmp=thisisnotused;;
-		    *) 
+		    *)
 			eval TMP_SUPPORT_${kk}=y
 			# also pull in the providing package
 			_tmp="`value_of \"PROVIDE_PKG_${kk}\"`"
@@ -1934,7 +1892,7 @@ test_support_pkg()
 	    _append_to real_cxxflags "${tmp_cxxflags}" ""
 	    set_package_ldflags "${jj}"
 	    _prepend_to real_ldflags "${tmp_ldflags}" ""
-	fi  
+	fi
     done
     tmp_ldflags="${real_ldflags}"
     _append_to tmp_ldflags "`math_ldflags`" ""
@@ -1969,7 +1927,7 @@ test_support_pkg()
 
 
 # test the current selection for their requirements and incompatibilities
-# If any incompatibility or any missing requirement is found, 
+# If any incompatibility or any missing requirement is found,
 # the function returns 0 and outputs it; otherwise, the function returns 1.
 # USES: i jj _tmp
 test_requirements_and_incompatibilities()
@@ -1981,8 +1939,8 @@ test_requirements_and_incompatibilities()
 	fi
     done
     for i in ${SUPPORT_PKGS}; do
-        if [ -n "`value_of ${i}_SUPPORT`" ]; then 
-	    if _check_requirements "${i}" || _check_incompatibilities "${i}"; then 
+        if [ -n "`value_of ${i}_SUPPORT`" ]; then
+	    if _check_requirements "${i}" || _check_incompatibilities "${i}"; then
 		return 0
 	    fi
         fi
@@ -2015,7 +1973,7 @@ void output_first_ciff_separate(int x, int base)
 {
   int j = 1;
   while (x / (base * j) >= 1) j *= base;
-  CGAL_STDCOUT << x/j << "." << x - j * (x/j); 
+  CGAL_STDCOUT << x/j << "." << x - j * (x/j);
 }
 
 int main()
@@ -2094,7 +2052,7 @@ int main()
   // this pleases (x)emacs font-lock-mode << e;
 
   return 0;
-} 
+}
 EOF4
     # set flags
     EXE_OPT="-o "
@@ -2120,7 +2078,7 @@ EOF4
 	${_printf} "\n\n%s\n" "Execution:" >>"${TMP_LOGFILE}"
 	${_printf} "%s\n" "---------------------------------" >>"${TMP_LOGFILE}"
 	${TMP_CXX_FILE} >>"${TMP_LOGFILE}" 2>&1
-	if [ $? = 0 ]; then 	
+	if [ $? = 0 ]; then
 	    _tmp3=`eval "\"${TMP_CXX_FILE}\" 2>&1"`
 	    cleanup_after_compile
 	    cleanup_after_link_run
@@ -2932,7 +2890,7 @@ _link_run_test()
 	if [ $j = 0 ]; then
 	    log_print "    $1 test execution succeeded."
 	    if [ -n "${6}" ]; then
-                if [ -n "${_tmp}" ]; then 
+                if [ -n "${_tmp}" ]; then
 		    eval "$6=\"${_tmp}\""
                 else
 		    eval "$6=0"
@@ -3014,7 +2972,7 @@ print_os_setting()
         l=${?}
 	if [ ${l} -lt 8 ]; then
 	    ${1} "${i}:\t\t\t\t${_tmp}supported"
-	else 
+	else
             if [ ${l} -lt 16 ]; then
 	        ${1} "${i}:\t\t\t${_tmp}supported"
             else
@@ -3044,7 +3002,7 @@ set_lib_compiled_flag()
 
 # try to retrieve the compiler specific settings from
 # file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}
-# USES: i j 
+# USES: i j
 retrieve_compiler_settings()
 {
     _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
@@ -3104,7 +3062,7 @@ retrieve_compiler_settings()
 	ENABLE_SHARED='y'
 	SETUP_COMPLETE=''
     fi
-    
+
     # legacy mode: package CORE corresponds to an external CORE
     # installation now
     try_to_get_var_from_config_file CORE_INSTALLATION "${_file}"
@@ -3170,7 +3128,7 @@ test_setup()
     _check_dir_exists_create "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
     _check_dir_exists_create "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL"
     _file="${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h"
-    
+
     if [ -z "${CONFIG_TEST_PASSED}" ]; then
 	print_filled_line
 	print_line "The following lines show results of configuration tests."
@@ -3205,7 +3163,7 @@ test_setup()
         CONFIG_TEST_PASSED='y'
 
 	if [ -n "${CGAL_AUTOFIND_PKGS}" ]; then autofind_packages; fi
-	
+
     else
         # try to autofind required features
 	for totest in ${SUPPORT_REQUIRED}; do
@@ -3215,12 +3173,12 @@ test_setup()
 	    fi
 	done
     fi
- 
+
     SETUP_COMPLETE='y'
 
     # check requirements and incompatibilities
     _tmp=`test_requirements_and_incompatibilities`
-    if [ $? = 0 ]; then 
+    if [ $? = 0 ]; then
 	log_print "ERROR: ${_tmp}."
 	write_buffer "\n"
 	print_filled_line
@@ -3253,16 +3211,16 @@ test_setup()
 	_tmp2="#define CGAL_USE_${totest} 1"
 	_tmp3="//#define CGAL_USE_${totest} 1"
 	if [ -n "`value_of \"PROVIDE_PKG_${totest}\"`" ]; then
-	    replace_line "${_file}" "${_tmp3}" "${_tmp2}" 
+	    replace_line "${_file}" "${_tmp3}" "${_tmp2}"
 	else
-	    replace_line "${_file}" "${_tmp2}" "${_tmp3}" 
+	    replace_line "${_file}" "${_tmp2}" "${_tmp3}"
 	fi
 	_tmp2="${totest}_VERSION"
 	_tmp3="`value_of ${_tmp2}`"
 	replace_line "${_file}" "#define CGAL_${_tmp2}" \
           "#define CGAL_${_tmp2} ${_tmp3:-0}"
     done
-    
+
     cd "${CGAL_DIR}"
     if [ -z "${SETUP_COMPLETE}" ]; then return 1; fi
 
@@ -3285,7 +3243,7 @@ reset_all_test_variables()
 
 # load the settings for ${COMPILER},
 # if a config file exists, otherwise check for STL
-# USES: ii 
+# USES: ii
 _choose_compiler()
 {
     log_print "Choosing `extended_compiler_description` as compiler."
@@ -3823,7 +3781,7 @@ write_linker_flags()
       fi
   fi
   ${_printf} "\n\n" >> ${FILE}
-  
+
   #
   # CUSTOM_LDFLAGS
   #
@@ -3850,7 +3808,7 @@ write_linker_flags()
   print_as_shell_comment \
       "*** the libs to link against when using OpenGL" >> ${FILE}
   ${_printf} "%s\n\n" "OPENGL_LIBS = ${OPENGL_LIBS}" >> ${FILE}
-  
+
   #
   # CGAL_LIBPATH
   #
@@ -3880,7 +3838,7 @@ write_linker_flags()
   #
   print_as_shell_comment "*** linker flags for CGAL ***" >> ${FILE}
   ${_printf} "%s" "CGAL_CGAL_LDFLAGS =" >> ${FILE}
-  makefile_print_continuationline "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}	
+  makefile_print_continuationline "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
   makefile_print_continuationline "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_continuationline "`lib_option \"CGAL\"`" >> ${FILE}
   ${_printf} "\n\n" >> ${FILE}
@@ -3911,7 +3869,7 @@ write_linker_flags()
       makefile_print_continuationline "`math_ldflags`" >> ${FILE}
   fi
   ${_printf} "\n\n" >> ${FILE}
- 
+
 
   print_as_shell_comment " The following flags are obsolete" >> ${FILE}
   ${_printf} "%s\n\n" "CGAL_WINDOW_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
@@ -4290,7 +4248,7 @@ installation()
     if [ "${CGAL_DIR}" = "${CGAL_INSTALL_DIR}" ]; then
   	log_print "CGAL_DIR == CGAL_INSTALL_DIR, hence no installation."
 	${_printf} "\n%s\n\n" \
-         "${_LEFTSPACE}Remark: No need to install, as CGAL_DIR == CGAL_INSTALL_DIR." 
+         "${_LEFTSPACE}Remark: No need to install, as CGAL_DIR == CGAL_INSTALL_DIR."
 	print_filled_line
 	wait_for_enter
         return 1
@@ -4323,7 +4281,7 @@ installation()
     _do_command \
       "cd \"${CGAL_INCL_DIR}\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
       "Install CGAL headers"
- 
+
     # install libraries
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/lib/${CGAL_OS_COMPILER}"
     _check_dir_exists_create "${_CGAL_IDIR}"
@@ -4332,11 +4290,11 @@ installation()
       "Install CGAL libraries"
     # On Darwin, the path is encoded into the shared library
     case ${CGAL_OS_COMPILER} in
-	*Darwin*) 
+	*Darwin*)
 	    for i in "${_CGAL_IDIR}"/*${SHARED_LIB_EXT}; do
-		${_install_name_tool} -id "${i}" "${i}" 
+		${_install_name_tool} -id "${i}" "${i}"
 	    done;;
-    esac 
+    esac
 
     # install binaries
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/bin"
@@ -4511,7 +4469,7 @@ test_menu()
 }
 
 # ---------------------------------------------------------------------
-# upgrade 
+# upgrade
 #
 
 upgrade()
@@ -4535,7 +4493,7 @@ upgrade()
     log_print "done."
 
     # copy gmp header and libs
-    if [ -r "${UPGRADE_FROM}/include/gmp.h" ]; then 
+    if [ -r "${UPGRADE_FROM}/include/gmp.h" ]; then
         print_filled_line
         print_line "!!! ATTENTION !!!"
         print_line "You seem to have GMP installed in the CGAL directories."
@@ -4544,7 +4502,7 @@ upgrade()
         print_filled_line
         log_print "Error: GMP installation in CGAL directories is no longer supported."
         log_print "  You have to re-configure GMP support manually."
-    fi    
+    fi
     print_headline "D O N E"
     go_up_lines 1
     print_filled_line
@@ -4556,18 +4514,18 @@ upgrade()
 # support menu
 #
 
-# translate a given integer $1 from [1..24] 
+# translate a given integer $1 from [1..24]
 # into the corresponding char from [1..9,A..P]
 _int_to_char()
 {
-    if [ ${1} -lt 10 ]; then 
+    if [ ${1} -lt 10 ]; then
 	echo ${1}
     else
 	echo ${1} | ${_awk} '{printf "%c\n",$1+55}'
     fi
 }
 
-# $1 is the feature 
+# $1 is the feature
 support_feature_menu()
 {
     while [ 0 ]; do
@@ -4588,7 +4546,7 @@ support_feature_menu()
 	    else
 		_tmp2="${jj}"
 	    fi
-	    if [ "${_tmp3}" = "${jj}" ]; then 
+	    if [ "${_tmp3}" = "${jj}" ]; then
 		print_line "${_bold_on}<`_int_to_char ${ii}`>${_bold_off}  Disable ${_tmp2}"
 		print_multi_line "--> provides ${1} support currently."
 	    else
@@ -4596,7 +4554,7 @@ support_feature_menu()
 	    fi
 	    eval "${_EXPR} ${ii} + 1"
 	    ii=${_result}
-	done	
+	done
 	print_line "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Support Menu'
 
@@ -4624,13 +4582,13 @@ support_feature_menu()
 		eval "`value_of \"PROVIDE_PKG_${1}\"`_TEST_PASSED=''"
 		SETUP_COMPLETE=''
 		;;
-	    *) 
+	    *)
 		ii=3
 		for jj in `value_of "SUPPORT_PKG_${1}"`; do
 		    if [ "${KEY}" = "`_int_to_char ${ii}`" ]; then
 			_tmp3="`value_of PROVIDE_PKG_${1}`"
 			disable_support "${_tmp3}"
-			if [ "${_tmp3}" != "${jj}" ]; then 
+			if [ "${_tmp3}" != "${jj}" ]; then
 			    enable_support "${jj}"
 			    eval "${jj}_TEST_PASSED=''"
 			fi
@@ -4641,7 +4599,7 @@ support_feature_menu()
 		done;;
 	esac
     done
-    
+
 }
 
 autofind_packages()
@@ -4675,7 +4633,7 @@ support_menu()
 	    print_line "${_bold_on}<`_int_to_char ${i}`>${_bold_off}  ${j} Menu"
 	    eval "${_EXPR} ${i} + 1"
 	    i=${_result}
-	done	
+	done
 
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Main Menu'
@@ -4689,7 +4647,7 @@ support_menu()
 	    0)  go_down_lines 3
 		flush_buffer
 		autofind_packages;;
-	    *) 
+	    *)
 		i=1
 		for j in ${SUPPORT_FEATURES}; do
 		    if [ "${KEY}" = "`_int_to_char ${i}`" ]; then
@@ -4921,12 +4879,9 @@ _printf=printf
 _rm=rm
 CGAL_INSTALL_VERSION="`_install_version_number`"
 
-# Set ${TAUCS_OSTYPE} (variable indicating the platform name for TAUCS library)
-set_TAUCS_OSTYPE
-
 # first quickly process "trivial" commandline options
 # (starting the whole parsing process would slowdown too much...)
-case ${*} in 
+case ${*} in
     -version*|--version*|-VERSION*|--version*)
 	${_printf} "%s\n" "${CGAL_INSTALL_CGAL} is ${CGAL_INSTALL_VERSION}."
 	exit 0
@@ -4935,7 +4890,7 @@ case ${*} in
     -os*|--os*|-OS*|--OS*)
 	_WHAT_TO_DO='ostype'
         # legacy mode: used to have a compulsory compiler argument
-	if [ -n "$2" ]; then 
+	if [ -n "$2" ]; then
 	    case $2 in
                 # not sure whether it's ok to have empty statement here...
 		-*) _tmp=thisisnotused;;
@@ -4946,7 +4901,7 @@ case ${*} in
 	;;
 esac
 
-if [ -z "${_WHAT_TO_DO}" ]; then 
+if [ -z "${_WHAT_TO_DO}" ]; then
     init_logfiles
     log_to_file
     initial_check
@@ -4978,13 +4933,13 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	MATCH=''
 	for i in ${SUPPORT_FEATURES}; do
 	    case ${_arg} in
-		-${i}_INCL_DIR*|-${i}_INCLDIR*) 
+		-${i}_INCL_DIR*|-${i}_INCLDIR*)
                     if set_variable_from_command_line "${i}_INCL_DIR" "$1" "$2"; then
 			shift
 		    fi
 		    MATCH=y
 		    ;;
-		-${i}_LIB_DIR*|-${i}_LIBDIR*) 
+		-${i}_LIB_DIR*|-${i}_LIBDIR*)
 	            if set_variable_from_command_line "${i}_LIB_DIR" "$1" "$2"; then
 			shift
 		    fi
@@ -5018,7 +4973,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		    shift
 		fi
 		;;
-	    -QT*) warn_deprecated ${1};; 
+	    -QT*) warn_deprecated ${1};;
 	    -CXXFLAGS*|-CUSTOM_CXXFLAGS*)
 		if set_variable_from_command_line 'CUSTOM_CXXFLAGS' "$1" "$2"; then
 		    shift
@@ -5048,7 +5003,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		if [ -n "${_WHAT_TO_DO}" ]; then _CONFLICT='y'; fi
 		_WHAT_TO_DO='ostype'
                 # legacy mode: used to have a compulsory compiler argument
-		if [ -n "$2" ]; then 
+		if [ -n "$2" ]; then
 		    case $2 in
                         # not sure whether it's ok to have empty statement here...
 			-*) _tmp=thisisnotused;;
@@ -5060,7 +5015,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		if [ -n "${_WHAT_TO_DO}" ]; then _CONFLICT='y'; fi
 		_WHAT_TO_DO='non-interactive'
                 # legacy mode: used to have a compulsory compiler argument
-		if [ -n "$2" ]; then 
+		if [ -n "$2" ]; then
 		    case $2 in
 			-*) _tmp=thisisnotused;;
 			*) COMPILER=$2; shift;;
@@ -5117,15 +5072,15 @@ fi
 # process environment variables
 #
 
-if [ -z "${CUSTOM_CXXFLAGS}" -a -n "${CXXFLAGS}" ]; then 
+if [ -z "${CUSTOM_CXXFLAGS}" -a -n "${CXXFLAGS}" ]; then
     CUSTOM_CXXFLAGS="${CXXFLAGS}"
     write_buffer "${_LEFTSPACE}Set CUSTOM_CXXFLAGS from \$CXXFLAGS.\n"
 fi
-if [ -z "${CUSTOM_LDFLAGS}" -a -n "${LDFLAGS}" ]; then 
+if [ -z "${CUSTOM_LDFLAGS}" -a -n "${LDFLAGS}" ]; then
     CUSTOM_LDFLAGS="${LDFLAGS}"
     write_buffer "${_LEFTSPACE}Set CUSTOM_LDFLAGS from \$LDFLAGS.\n"
 fi
-if [ -z "${COMPILER}" -a -n "${CXX}" ]; then 
+if [ -z "${COMPILER}" -a -n "${CXX}" ]; then
     COMPILER="${CXX}"
     write_buffer "${_LEFTSPACE}Set COMPILER from \$CXX.\n"
 fi
@@ -5181,9 +5136,9 @@ case ${_WHAT_TO_DO} in
 	${_printf} "%s" "starting interactive mode -"
 	INSTALL_INTERACTIVE='y'
 	startup
-	if [ -z "${COMPILER}" ]; then 
+	if [ -z "${COMPILER}" ]; then
 	    search_for_compilers
-	    if [ ${_COMPILER_NUMBER} -gt 2 ]; then 
+	    if [ ${_COMPILER_NUMBER} -gt 2 ]; then
 		compiler_choose_menu 'Main Menu'
 	    fi
 	else
