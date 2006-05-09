@@ -1,0 +1,16 @@
+# TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
+# Note: "-DDEBUG_TRACE" turns on TAUCS trace (temporary).
+
+DESCRIPTION = TAUCS for Darwin
+PROVIDES = TAUCS
+CXXFLAGS = -DDEBUG_TRACE
+LDFLAGS = -framework vecLib
+LIBS = taucs metis f2c crypto
+REQUIRES =
+INCOMPATIBLE =
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+
+# EOF

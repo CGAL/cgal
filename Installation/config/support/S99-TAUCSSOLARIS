@@ -1,0 +1,16 @@
+# TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
+# Note: "-DDEBUG_TRACE" turns on TAUCS trace (temporary).
+
+DESCRIPTION = TAUCS for Solaris/Sun compiler
+PROVIDES = TAUCS
+CXXFLAGS = -DDEBUG_TRACE
+LDFLAGS =
+LIBS = taucs sunperf fsu lF77 M77 sunmath cx c malloc
+REQUIRES =
+INCOMPATIBLE =
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+
+# EOF

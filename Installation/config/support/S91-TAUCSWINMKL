@@ -1,0 +1,16 @@
+# TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
+# Note: "-DDEBUG_TRACE" turns on TAUCS trace (temporary).
+
+DESCRIPTION = TAUCS for Windows/Intel MKL
+PROVIDES = TAUCS
+CXXFLAGS = -DDEBUG_TRACE
+LDFLAGS =
+LIBS = libtaucs mkl_s libmetis vcf2c
+REQUIRES =
+INCOMPATIBLE =
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+
+# EOF
