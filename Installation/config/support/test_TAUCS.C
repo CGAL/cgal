@@ -27,9 +27,6 @@
 // ---------------------------------------------------------------------
 
 // Test if TAUCS is available
-// Second step "TAUCS":
-// - find TAUCS second include folder ${TAUCSROOT}/src
-// - find main library "taucs"
 
 
 #include <iostream>
@@ -47,7 +44,7 @@
 
 extern "C"
 {
-    // Include TAUCS main header taucs.h in ${TAUCSROOT}/src
+    // Include TAUCS main header taucs.h
     #include <taucs.h>
 }
 
@@ -70,7 +67,7 @@ int main(int argc, char* argv[])
     }
     taucs_dccs_free(pMatrix);
 
-    // Call a method needing TAUCS external libraries
+    // Call a method needing TAUCS external library Metis
     int*    perm;
     int*    invperm;
     taucs_ccs_order(pMatrix,
