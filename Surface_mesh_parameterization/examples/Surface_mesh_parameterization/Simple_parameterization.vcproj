@@ -27,7 +27,7 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				BrowseInformation="1"
+				BrowseInformation="0"
 				WarningLevel="2"
 				DebugInformationFormat="4"/>
 			<Tool
@@ -148,9 +148,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath=".\include\short_names.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Surface_mesh_parameterization package"

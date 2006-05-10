@@ -33,8 +33,6 @@
 // polyhedron_ex_parameterization -t lscm -o obj mesh.off mesh.obj
 
 
-#include "short_names.h"                    // must be included first
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/parameterize.h>

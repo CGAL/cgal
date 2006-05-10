@@ -1,7 +1,5 @@
 // Square_border_parameterization.C
 
-#include "short_names.h"                    // must be included first
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>

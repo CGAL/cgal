@@ -13,7 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "short_names.h"                    // must be included first
 #include <CGAL/Cartesian.h>
 
 #include "Mesh_cutter.h"

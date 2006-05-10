@@ -27,7 +27,7 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				BrowseInformation="1"
+				BrowseInformation="0"
 				WarningLevel="2"
 				DebugInformationFormat="4"/>
 			<Tool
@@ -172,9 +172,6 @@
 			</File>
 			<File
 				RelativePath="..\..\examples\Surface_mesh_parameterization\include\Polyhedron_ex.h">
-			</File>
-			<File
-				RelativePath=".\include\short_names.h">
 			</File>
 		</Filter>
 		<Filter
