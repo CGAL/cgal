@@ -463,7 +463,7 @@ initial_check()
     _set_indent
     log_to_file
     for i in "${CGAL_SUPPORT_DIR}"/S*; do
-	_tmp="`echo $i | ${_awk} 'BEGIN {FS=\"-\"} {print $NF}' | remove_special_chars | ${_tr} [:lower:] [:upper:]`"
+	_tmp="`echo $i | ${_awk} 'BEGIN {FS=\"-\"} {print $NF}' | remove_special_chars | ${_tr} '[:lower:]' '[:upper:]'`"
 	if [ -z "${_tmp}" ]; then continue; fi
         SUPPORT_PKGS="${SUPPORT_PKGS} ${_tmp}"
         R_SUPPORT_PKGS="${_tmp} ${R_SUPPORT_PKGS}"
@@ -2469,7 +2469,7 @@ write_buffer()
 remove_special_chars()
 {
     _read
-    echo "$KEY" | ${_tr} -d '\\!@#$%^&*()_|~";?<>{}[]\`/ ' | ${_tr} -d "'"
+    echo "$KEY" | ${_tr} -d '\\!@#$%^&*()_|~";?<>{}\[\]\`/ ' | ${_tr} -d "'"
 }
 
 _set_indent()
@@ -4638,7 +4638,7 @@ support_menu()
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Main Menu'
 
-	KEY=`echo "${KEY}" | ${_tr} [:lower:] [:upper:]`
+	KEY=`echo "${KEY}" | ${_tr} '[:lower:]' '[:upper:]'`
 	case $KEY in
 	    t|T) go_down_lines 3
 		flush_buffer
@@ -4909,7 +4909,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     # --- begin parsing commandline options ---
     while [ ${#} -gt 0 ]; do
         # make everything lowercase and strip possible leading -- to -
-	_arg="`echo ${*} | ${_tr} [:lower:] [:upper:] | ${_sed} 's/^--/-/'`"
+	_arg="`echo ${*} | ${_tr} '[:lower:]' '[:upper:]' | ${_sed} 's/^--/-/'`"
 	case ${_arg} in
 	    -CGAL_DIR*)
 		if set_variable_from_command_line 'CGAL_DIR' "$1" "$2"; then
