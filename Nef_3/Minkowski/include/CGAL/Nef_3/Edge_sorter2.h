@@ -1,5 +1,5 @@
-#ifndef CGAL_NEF3_EDGE_SORTER_H
-#define CGAL_NEF3_EDGE_SORTER_H
+#ifndef CGAL_NEF3_EDGE_SORTER2_H
+#define CGAL_NEF3_EDGE_SORTER2_H
 
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
@@ -9,7 +9,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<typename Nef_, typename Container>
-class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
+class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
@@ -30,14 +30,14 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
 
   struct sort_edges {
     bool operator()(Halfedge_handle e1, Halfedge_handle e2) {
-      return CGAL::lexicographically_xyz_smaller(e1->source()->point(),
-						 e2->source()->point());
+      return CGAL::lexicographically_xyz_smaller(e1->twin()->source()->point(),
+						 e2->twin()->source()->point());
     }
   };
 
-  bool split_at(Segment_3 s1, Segment_3 s2, Point_3& ip2) {
+  bool split_at(Segment_3 s1, Segment_3 s2, Point_3& ip1) {
     
-    Point_3 ip1;
+    Point_3 ip2;
     Vector_3 vec1(cross_product(s2.to_vector(),Vector_3(1,0,0)));
     Plane_3 pl1(s2.source(), vec1);
     Object o1 = intersection(pl1,s1);
@@ -59,7 +59,7 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
   SNC_point_locator* pl;
 
  public:
-  Edge_sorter(Container& cin) : c(cin) {}
+  Edge_sorter2(Container& cin) : c(cin) {}
       
   void operator()(SNC_and_PL& sncpl) {
 
@@ -67,21 +67,19 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
     pl = sncpl.pl;
     SNC_constructor C(*sncp,pl);
 
-    //    std::cerr << "edge_sorter " << c.size() << std::endl;
+    //    std::cerr << "edge_sorter2 " << c.size() << std::endl;
     std::sort(c.begin(), c.end(), sort_edges());
     
     Iterator esi1,esi2,esi3;
     for(esi1 = c.begin(); esi1 != c.end(); ++esi1) {
       //      std::cerr << "1: " << (*esi1)->source()->point() << "->" << (*esi1)->twin()->source()->point() << std::endl;
       esi2 = esi1;
-      ++esi2;
-      // while(esi2!=c.end() && (*esi1)->source()->point().x() == 
-      //			 (*esi2)->source()->point().x());
+      ++esi2; 
       if(esi2==c.end()) continue;
       //      std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
 
-      while((*esi1)->twin()->source()->point().x() >
-	    (*esi2)->source()->point().x()) {
+      while((*esi1)->source()->point().x() >
+	    (*esi2)->twin()->source()->point().x()) {
 	Point_3 ip;
 	bool b = split_at(Segment_3((*esi1)->source()->point(),
 				    (*esi1)->twin()->source()->point()), 
@@ -120,7 +118,8 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
 	  esi3 = esi2;
 	  ++esi3;
 	  while(esi3 != c.end() && 
-		(*esi3)->source()->point() < svf->source()->point())
+		(*esi3)->twin()->source()->point() < 
+		svf->twin()->source()->point())
 	    ++esi3;
 	  //	  std::cerr << "insert " << std::endl;
 	  c.insert(esi3, svf);
@@ -135,4 +134,4 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
 };
   
 CGAL_END_NAMESPACE
-#endif //CGAL_NEF3_EDGE_SORTER_H
+#endif //CGAL_NEF3_EDGE_SORTER2_H
