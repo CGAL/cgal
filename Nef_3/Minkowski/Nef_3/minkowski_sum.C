@@ -7,13 +7,21 @@
 #include <qapplication.h>
 #include <CGAL/Nef_3/Single_wall_creator.h>
 #include <CGAL/Nef_3/Single_wall_creator2.h>
+#include <CGAL/Nef_3/YVertical_wall_builder.h>
+#include <CGAL/Nef_3/Reflex_edge_searcher.h>
+#include <CGAL/Nef_3/Ray_hit_generator.h>
+#include <CGAL/Nef_3/Ray_hit_generator2.h>
 #include <CGAL/Nef_3/External_structure_builder.h>
+#include <CGAL/Nef_3/Edge_sorter.h>
+#include <CGAL/Nef_3/Edge_sorter2.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
+#include <CGAL/Nef_2/Object_index.h>
 #include <fstream>
 #include <map>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Nef_S2/Gausian_map.h>
 #include <CGAL/Nef_S2/gausian_map_to_polyhedron_3.h>
 #include <CGAL/Nef_S2/gausian_map_to_nef_3.h>
@@ -33,15 +41,147 @@ typedef Nef_polyhedron::SHalfedge_handle SHalfedge_handle;
 typedef Nef_polyhedron::Sphere_segment Sphere_segment;
 typedef Nef_polyhedron::Sphere_point   Sphere_point;
 typedef Nef_polyhedron::Volume_const_iterator  Volume_const_iterator;
+typedef Nef_polyhedron::Vertex_const_handle  Vertex_const_handle;
+typedef Nef_polyhedron::Halfedge_const_handle  Halfedge_const_handle;
+typedef Nef_polyhedron::Halffacet_const_handle  Halffacet_const_handle;
+typedef Nef_polyhedron::SHalfedge_const_handle  SHalfedge_const_handle;
+typedef Nef_polyhedron::SHalfloop_const_handle  SHalfloop_const_handle;
+typedef Nef_polyhedron::SFace_const_handle  SFace_const_handle;
+typedef Nef_polyhedron::Halffacet_cycle_const_iterator      Halffacet_cycle_const_iterator;
+typedef Nef_polyhedron::SHalfedge_around_facet_const_circulator      SHalfedge_around_facet_const_circulator;
 typedef Nef_polyhedron::Vector_3           Vector_3;
 typedef Kernel::Plane_3            Plane_3;
 typedef Kernel::Line_3             Line_3;
 typedef Kernel::Point_3            Point_3;
 
-typedef CGAL::Single_wall_creator<Nef_polyhedron> Single_wall;
+typedef CGAL::Single_wall_creator<Nef_polyhedron>  Single_wall;
 typedef CGAL::Single_wall_creator2<Nef_polyhedron> Single_wall2;
+typedef CGAL::YVertical_wall_builder<Nef_polyhedron> YVertical_wall_builder;
+typedef CGAL::Reflex_edge_searcher<Nef_polyhedron> Reflex_edge_searcher;
+typedef Reflex_edge_searcher::Reflex_edge_iterator Reflex_edge_iterator;
+typedef Reflex_edge_searcher::Container            Container;
 typedef CGAL::Ray_hit_generator<Nef_polyhedron> Ray_hit;
+typedef CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
 typedef CGAL::External_structure_builder<Nef_polyhedron> External_structure_builder;
+typedef CGAL::Edge_sorter<Nef_polyhedron, Container> Edge_sorter;
+typedef CGAL::Edge_sorter2<Nef_polyhedron, Container> Edge_sorter2;
+
+
+template <class HDS, class Const_decorator>
+class Build_polyhedron : public CGAL::Modifier_base<HDS> {
+
+  class Statistic_visitor {
+  public:
+    int vs, es, fs;
+    Statistic_visitor() : vs(0), es(0), fs(0) {}
+    void visit(SFace_const_handle s) {}
+    void visit(Halfedge_const_handle e) { if(e->is_twin()) ++es; }
+    void visit(Halffacet_const_handle f) { ++fs; }
+    void visit(Vertex_const_handle v) { ++vs; }
+    void visit(SHalfedge_const_handle se) {}
+    void visit(SHalfloop_const_handle sl) {}    
+  };
+
+  class Vertex_creator {
+    int vertex_index;
+    CGAL::Polyhedron_incremental_builder_3<HDS>* B;
+    CGAL::Object_index<Vertex_const_handle>& VI;
+  public:
+    Vertex_creator(CGAL::Polyhedron_incremental_builder_3<HDS>* Bin,
+		   CGAL::Object_index<Vertex_const_handle>& VIin) 
+      : vertex_index(0), B(Bin), VI(VIin) {}
+    void visit(SFace_const_handle s) {}
+    void visit(Halfedge_const_handle e) {}
+    void visit(Halffacet_const_handle f) {}
+    void visit(SHalfedge_const_handle se) {}
+    void visit(SHalfloop_const_handle sl) {}   
+    void visit(Vertex_const_handle v) {
+      //      std::cerr << CGAL::to_double(v->point().x()) << " "
+      //		<< CGAL::to_double(v->point().y()) << " "
+      //		<< CGAL::to_double(v->point().z()) << std::endl;
+      VI[v]=vertex_index++;
+      B->add_vertex(v->point());
+    }
+  };
+
+  class Facet_creator {
+    CGAL::Polyhedron_incremental_builder_3<HDS>* B;
+    CGAL::Object_index<Vertex_const_handle>& VI;
+  public:
+    Facet_creator(CGAL::Polyhedron_incremental_builder_3<HDS>* Bin,
+		   CGAL::Object_index<Vertex_const_handle>& VIin) 
+    : B(Bin), VI(VIin) {}
+    void visit(Halffacet_const_handle opposite_facet) {
+      //      std::cerr << "visit facet " << opposite_facet->plane() << std::endl;
+      SHalfedge_const_handle se;
+      Halffacet_cycle_const_iterator fc;
+      Halffacet_const_handle f = opposite_facet->twin();
+      
+      B->begin_facet();
+      fc = f->facet_cycles_begin();
+      se = SHalfedge_const_handle(fc);
+      CGAL_assertion(se!=0);
+      SHalfedge_around_facet_const_circulator hc_start(se);
+      SHalfedge_around_facet_const_circulator hc_end(hc_start), hcx(hc_start);
+      //      std::cerr << std::distance(++hcx,hc_end)+1;
+      CGAL_For_all(hc_start,hc_end) {
+	//	std::cerr << " " << VI[hc_start->source()->center_vertex()];
+	//	std::cerr << "  add vertex " << hc_start->source()->center_vertex()->point()
+	//		  << " with index " << VI[hc_start->source()->center_vertex()] << std::endl;
+	B->add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+      }
+      //      std::cerr << std::endl;
+      B->end_facet();
+    }
+
+    void visit(SFace_const_handle s) {}
+    void visit(Halfedge_const_handle e) {}
+    void visit(Vertex_const_handle v) {}
+    void visit(SHalfedge_const_handle se) {}
+    void visit(SHalfloop_const_handle sl) {}
+  };
+
+public:
+
+  const Const_decorator& scd;
+  Volume_const_iterator c;
+  CGAL::Object_index<Vertex_const_handle> VI;
+  CGAL::Polyhedron_incremental_builder_3<HDS>* B;    
+
+  Build_polyhedron(const Const_decorator& s, Volume_const_iterator cin) : 
+    scd(s), c(cin) {}
+    
+  void operator()( HDS& hds) {
+
+    B= new CGAL::Polyhedron_incremental_builder_3<HDS>(hds, true);
+
+    Statistic_visitor SV;
+    scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),SV);    
+
+    B->begin_surface(SV.vs,SV.fs,SV.es);
+    //    std::cerr << "OFF " << std::endl 
+    //	      << SV.vs << " " << SV.fs << " 0" << std::endl;
+      
+    Vertex_creator VC(B,VI);
+    scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),VC);    
+    
+    Facet_creator FC(B,VI);
+    scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),FC);
+
+    B->end_surface();
+    delete B;
+  }
+
+};
+
+void convert_volume2polyhedron(const Nef_polyhedron& N, 
+			       Volume_const_iterator c, Polyhedron& P) {
+
+  typedef Polyhedron::HalfedgeDS HalfedgeDS;
+  Build_polyhedron<HalfedgeDS,Nef_polyhedron> bp(N,c);
+  P.delegate(bp);
+  
+}
 
 int main(int argc, char* argv[]) {
 
@@ -58,68 +198,169 @@ int main(int argc, char* argv[]) {
 
   //  CGAL_NEF_SETDTHREAD(227*229*233);
 
-  Ray_hit rh(Vector_3(-1,0,0));
-  N.delegate(rh);
+  Reflex_edge_searcher res;
+  N.delegate(res,false,false);
+  
+  //  std::cerr << "size before sorting " << res.get_container().size() << std::endl;
 
-  Halfedge_iterator e = D.halfedges_begin();
-  for(;e != D.halfedges_end(); ++e) {
-    if(e->is_twin() && e->twin() != Halfedge_handle()) {
+  Reflex_edge_iterator rei;
+  for(rei=res.reflex_edges_begin(); rei!=res.reflex_edges_end(); ++rei) {
+    Halfedge_handle e(*rei), split_edge;
+    Ray_hit2 rh2a(Vector_3(-1,0,0),e->source());
+    N.delegate(rh2a);
+    if(rh2a.split_edge(split_edge))
+      res.append(split_edge);
+    Ray_hit2 rh2b(Vector_3(-1,0,0),e->twin()->source());
+    N.delegate(rh2b);
+    if(rh2b.split_edge(split_edge))
+      res.append(split_edge);
+  }
+  
+  Edge_sorter es(res.get_container());
+  N.delegate(es);
 
-      //      std::cerr << "edge: " << e->source()->point();
-      //      std::cerr << "->" << e->twin()->source()->point() << std::endl;
+  //  CGAL_NEF_SETDTHREAD(227*229*47);
 
-      if(e->point().hx() > 0) {
-	Single_wall W(e->twin(),Vector_3(-1,0,0));
+  for(rei=res.reflex_edges_begin(); rei!=res.reflex_edges_end(); ++rei) {
+    Halfedge_handle e = *rei;
+    //    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
+    //	      << e->twin()->source()->point() << std::endl;
+    if(e->point().hx() > 0)
+      e = e->twin();
+    Single_wall W(e,Vector_3(-1,0,0));
+    N.delegate(W);
+  }    
+
+  /*
+  Ray_hit rha(Vector_3(-1,0,0));
+  N.delegate(rha);
+
+  for(Halfedge_iterator ei = D.halfedges_begin();
+      ei != D.halfedges_end(); ++ei) {
+    if(ei->is_twin() && ei->twin() != Halfedge_handle()) {
+
+      //      std::cerr << "edge: " << ei->source()->point();
+      //      std::cerr << "->" << ei->twin()->source()->point() << std::endl;
+
+      if(ei->point().hx() > 0) {
+	Single_wall W(ei->twin(),Vector_3(-1,0,0));
 	N.delegate(W);
       } else {
-	Single_wall W(e,Vector_3(-1,0,0));
+	Single_wall W(ei,Vector_3(-1,0,0));
 	N.delegate(W);
       }
     }
   }
-
-  //  CGAL_NEF_SETDTHREAD(43);
+  */
 
   External_structure_builder esb;
   N.delegate(esb);
 
-  Ray_hit rh2(Vector_3(1,0,0));
-  N.delegate(rh2);
+  //  std::cerr << N;
 
-  for(e=D.halfedges_end();e!=D.halfedges_begin();--e) {  // Vorsicht mit begin() und end()
-    if(e->is_twin() && e->twin() != Halfedge_handle()) {
+  Reflex_edge_searcher res2;
+  N.delegate(res2, false, false);
+  
+  for(rei=res2.reflex_edges_begin(); rei!=res2.reflex_edges_end(); ++rei) {
+    Halfedge_handle e(*rei), split_edge;
+    Ray_hit2 rh2a(Vector_3(1,0,0),e->source());
+    N.delegate(rh2a);
+    if(rh2a.split_edge(split_edge))
+      res2.append(split_edge);
+    Ray_hit2 rh2b(Vector_3(1,0,0),e->twin()->source());
+    N.delegate(rh2b);
+    if(rh2b.split_edge(split_edge))
+      res2.append(split_edge);
+  }
 
-      //      std::cerr << "edge2: " << e->source()->point() << "->" 
-      //		<< e->twin()->source()->point() << std::endl;
-      
-      if(e->point().hx() < 0) {
-	Single_wall W(e->twin(),Vector_3(1,0,0));
+  Edge_sorter2 es2(res2.get_container());
+  N.delegate(es2);
+
+  rei=res2.reflex_edges_end();
+  do {
+    --rei;
+    Halfedge_handle e = *rei;
+    //    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
+    //	      << e->twin()->source()->point() << std::endl;
+    if(e->point().hx() < 0)
+      e = e->twin();
+    Single_wall W(e,Vector_3(1,0,0));
+    N.delegate(W);
+  } while(rei!=res2.reflex_edges_begin());
+
+  /*
+  Ray_hit rhb(Vector_3(1,0,0));
+  N.delegate(rhb);
+
+  for(Halfedge_iterator ei=D.halfedges_end();
+     ei!=D.halfedges_begin();--ei) {
+    if(ei->is_twin() && ei->twin() != Halfedge_handle()) {
+
+      //      std::cerr << "edge: " << ei->source()->point();
+      //      std::cerr << "->" << ei->twin()->source()->point() << std::endl;
+
+      if(ei->point().hx() < 0) {
+	Single_wall W(ei->twin(),Vector_3(1,0,0));
 	N.delegate(W);
       } else {
-	Single_wall W(e,Vector_3(1,0,0));
+	Single_wall W(ei,Vector_3(1,0,0));
 	N.delegate(W);
       }
     }
-  }
-
-  N.delegate(esb);
+  }    
+  */
   
-  //  std::cerr << N;
+  N.delegate(esb);
+  /*
+  Reflex_edge_searcher res4;
+  N.delegate(res4,false,false);  
 
+  int wrong4 = 0;
+  //  std::cerr << "tescht: only vertical reflex edges" << std::endl;
+  for(rei = res4.reflex_edges_begin(); rei != res4.reflex_edges_end(); ++rei) {
+    if((*rei)->point().y() != 0 || (*rei)->point().z() != 0) {
+      ++wrong4;
+    }
+    std::cerr << normalized((*rei)->source()->point()) << "->" 
+	      << normalized((*rei)->twin()->source()->point()) << std::endl;
+  }
+  std::cerr << "wrong " << wrong4
+	    << ", " << distance(res4.reflex_edges_begin(),res4.reflex_edges_end()) << std::endl;
+  CGAL_assertion(wrong4==0);
+  */
+  YVertical_wall_builder Y;
+  N.delegate(Y,false,false);
+
+  YVertical_wall_builder::Vertical_redge_iterator vri=Y.pos_begin();
+  for(; vri != Y.pos_end(); ++vri) {
+    //    std::cerr << "pos: " << (*vri)->source()->point()
+    //	      << "->" << (*vri)->twin()->source()->point() << std::endl;
+    Single_wall2 W((*vri),Sphere_point(0,1,0));
+    N.delegate(W);
+  }
+  for(vri = Y.neg_begin(); vri != Y.neg_end(); ++vri) {
+    //    std::cerr << "neg: " << (*vri)->source()->point()
+    //	      << "->" << (*vri)->twin()->source()->point() << std::endl;
+    Single_wall2 W((*vri),Sphere_point(0,-1,0));
+    N.delegate(W);
+  }      
+
+  /*
   SHalfedge_iterator se;
   for(se=D.shalfedges_begin();se!=D.shalfedges_end();++se) {
     Sphere_segment s(se->source()->point(), se->twin()->source()->point(), se->circle());
     if(se->incident_sface()->mark() == true && s.is_long() && se->circle().a() != 0) {
+  */
 
-      /*
-     std::cerr << "sedge at " << normalized(se->source()->source()->point()) 
-		<< " in plane " << normalized(se->circle()) << std::endl;
+    /*
+      std::cerr << "sedge at " << normalized(se->source()->source()->point()) 
+      << " in plane " << normalized(se->circle()) << std::endl;
       std::cerr << "sedge " << se->source()->point()
-		<< "->" << se->twin()->source()->point() << std::endl;   
-      */
-
-      Plane_3 pl1(se->circle()), pl2(0,0,1,0);
-      Line_3 l;
+      << "->" << se->twin()->source()->point() << std::endl;   
+    */
+    /*
+    Plane_3 pl1(se->circle()), pl2(0,0,1,0);
+    Line_3 l;
       CGAL::Object result = intersection(pl1,pl2);
       CGAL_assertion(assign(l,result));
     
@@ -155,11 +396,29 @@ int main(int argc, char* argv[]) {
       }
     }
   }
+    */
 
   N.delegate(esb);
+  /*
+  Reflex_edge_searcher res3;
+  N.delegate(res3,false,false);  
 
+  int wrong = 0;
+  //  std::cerr << "tescht: only vertical reflex edges" << std::endl;
+  for(rei = res3.reflex_edges_begin(); rei != res3.reflex_edges_end(); ++rei) {
+    if((*rei)->point().y() != 0 || (*rei)->point().z() != 0) {
+      ++wrong;
+    }
+    std::cerr << normalized((*rei)->source()->point()) << "->" 
+	      << normalized((*rei)->twin()->source()->point()) << std::endl;
+  }
+  std::cerr << "wrong " << wrong
+	    << ", " << distance(res3.reflex_edges_begin(),res3.reflex_edges_end()) << std::endl;
+  CGAL_assertion(wrong==0);
+  */
   t2.stop();
 
+  //  CGAL_NEF_SETDTHREAD(293);
   //  std::cerr << N;
   CGAL_assertion(N.is_valid());
 
@@ -176,7 +435,7 @@ int main(int argc, char* argv[]) {
 
   std::ifstream inc(argv[2]);
   Nef_polyhedron NC;
-  inc >> NC;  
+  inc >> NC;
   Gausian_map GC(NC, --NC.volumes_end());
 
 #ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
@@ -200,16 +459,19 @@ int main(int argc, char* argv[]) {
     //    if(skip_shells > 0) { --skip_shells; continue;}
     if(c->mark() == false) continue;
 
-    Gausian_map G(N, c);
+    Polyhedron P;
+    convert_volume2polyhedron(N,c,P);
+    Nef_polyhedron NP(P);
+    Gausian_map G(NP,--NP.volumes_end());
     Gausian_map GcG;
     GcG.minkowski_sum(GC,G);
 
     Polyhedron tmp;
     gausian_map_to_polyhedron_3<Kernel, Polyhedron::HDS> Converter(GcG);
     tmp.delegate(Converter);
-    // CGAL_assertion(is_strongly_convex_3(tmp));
+    CGAL_assertion(is_strongly_convex_3(tmp));
     Nef_polyhedron Ntmp(tmp);
-    //    CGAL_assertion(Ntmp.is_valid());
+    CGAL_assertion(Ntmp.is_valid());
 
 #ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
     queue.push_back(Ntmp);
