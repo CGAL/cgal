@@ -1,18 +1,14 @@
-#ifndef CGAL_NEF3_RAY_HIT_GENERATOR_H
-#define CGAL_NEF3_RAY_HIT_GENERATOR_H
+#ifndef CGAL_NEF3_RAY_HIT_GENERATOR2_H
+#define CGAL_NEF3_RAY_HIT_GENERATOR2_H
 
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_walls.h>
 
-#undef CGAL_NEF_DEBUG
-#define CGAL_NEF_DEBUG 233
-#include <CGAL/Nef_2/debug.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template<typename Nef_>
-class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
+class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
@@ -42,24 +38,27 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef typename Base::SVertex_iterator         SVertex_iterator;
 
   Vector_3 dir;
+  Vertex_handle vs;
   SNC_structure* sncp;
   SNC_point_locator* pl;
-  int mask;
+
+  bool edge_splitted;
+  Halfedge_handle second_half;
 
  public:
-  Ray_hit_generator(Vector_3 d = Vector_3()) : dir(d), mask(255) {}
-  Ray_hit_generator(SNC_structure* sncin, SNC_point_locator* plin, int m = 255) 
-    : sncp(sncin), pl(plin), mask(m) {}
+  Ray_hit_generator2(Vector_3 d, Vertex_handle v) : dir(d), vs(v) {}
       
   Vertex_handle create_vertex_on_first_hit(const Ray_3& r) {
 
-    CGAL_NEF_TRACEN( "shoot ray in SNC " << r );
+    //    std::cerr << "shoot ray in SNC " << r << std::endl;
 
-    Object_handle o = pl->shoot(r, mask);
+    //    CGAL_NEF_SETDTHREAD(503*509);
+    Object_handle o = pl->shoot(r);
+    //    CGAL_NEF_SETDTHREAD(1);
 
     Vertex_handle v;
     if(assign(v, o)) {
-      CGAL_NEF_TRACEN( "Found vertex " << v->point() );
+      //      std::cerr << "Found vertex " << v->point() << std::endl;
       return v;
     }
 
@@ -69,15 +68,15 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Halfedge_handle e;
     if(assign(e, o)) {
-      CGAL_NEF_TRACEN( "Found edge " << e->source()->point() 
-		<< "->" << e->twin()->source()->point() );
+      //      std::cerr << "Found edge " << e->source()->point() 
+      //		<< "->" << e->twin()->source()->point() << std::endl;
       Segment_3 seg(e->source()->point(), e->twin()->source()->point());
       I.does_intersect_internally(r, seg, ip);
       ip = normalized(ip);
       v = C.create_from_edge(e,ip);
       pl->add_vertex(v);
 
-      CGAL_NEF_TRACEN( "new vertex " << ip );
+      //      std::cerr << "new vertex " << ip << std::endl;
 
       SVertex_iterator svi = v->svertices_begin();
       SVertex_handle svf = svi;
@@ -98,6 +97,12 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
       pl->add_edge(svf);
       pl->add_edge(svb);
 
+      edge_splitted = true;
+      if(e->source()->point() < e->twin()->source()->point())
+	second_half = svf;
+      else
+	second_half = svb;
+      
       //      std::cerr << "new edge " << e->source()->point() << "->" << e->twin()->source()->point() << std::endl;
       //      std::cerr << "new edge " << svf->source()->point() << "->" << svf->twin()->source()->point() << std::endl;
 
@@ -106,12 +111,12 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Halffacet_handle f;
     if(assign(f, o)) {
-      CGAL_NEF_TRACEN( "Found facet " );
+      //      std::cerr << "Found facet " << std::endl;
       I.does_intersect_internally(r, f, ip);
       ip = normalized(ip);
       v = C.create_from_facet(f,ip);
       pl->add_vertex(v);
-      CGAL_NEF_TRACEN( "new vertex " << ip );
+      //      std::cerr << "new vertex " << ip << std::endl;
 
       return v;
     }
@@ -125,19 +130,26 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
     sncp = sncpl.sncp;
     pl = sncpl.pl;
 
-    Vertex_iterator vi;
-    for(vi = sncp->vertices_begin(); vi != sncp->vertices_end(); ++vi) {
-      //      std::cerr << "Ray hit from " << vi->point() << std::endl;
-      SM_walls smw(&*vi);
-      if(smw.need_to_shoot(Sphere_point(dir))) {
-	Ray_3 r(vi->point(), dir);
-	Vertex_handle v_new = create_vertex_on_first_hit(r);
-	SM_walls smw(&*v_new);
-	smw.add_ray_svertex(Sphere_point(-dir));
-      }
+    edge_splitted = false;
+
+    SM_walls smw(&*vs);
+    if(smw.need_to_shoot(Sphere_point(dir))) {
+      Ray_3 r(vs->point(), dir);
+      Vertex_handle v_new = create_vertex_on_first_hit(r);
+      SM_walls smw(&*v_new);
+      smw.add_ray_svertex(Sphere_point(-dir));
     }
   }
+
+  bool split_edge(Halfedge_handle& e) {
+    if(edge_splitted) {
+      e = second_half;
+      return true;
+    }
+    return false;
+  }
+
 };
   
 CGAL_END_NAMESPACE
-#endif //CGAL_NEF3_RAY_HIT_GENERATOR_H
+#endif //CGAL_NEF3_RAY_HIT_GENERATOR2_H
