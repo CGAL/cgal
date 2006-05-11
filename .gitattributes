@@ -402,6 +402,7 @@ Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
 Installation/config/support/S83-QT3MSST -text
+Installation/config/support/S89-TAUCSSOLARIS -text
 Installation/config/support/S90-TAUCSWINMKL -text
 Installation/config/support/S91-TAUCSWINATLAS -text
 Installation/config/support/S92-TAUCSLINUXATLAS -text
@@ -410,9 +411,8 @@ Installation/config/support/S94-TAUCSLINUXINTEL -text
 Installation/config/support/S95-TAUCSLINUXMUMPS -text
 Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S97-TAUCSFREEBSDATLAS -text
-Installation/config/support/S97-TAUCSIRIX64 -text
 Installation/config/support/S98-TAUCSIRIX32 -text
-Installation/config/support/S99-TAUCSSOLARIS -text
+Installation/config/support/S99-TAUCSIRIX64 -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
