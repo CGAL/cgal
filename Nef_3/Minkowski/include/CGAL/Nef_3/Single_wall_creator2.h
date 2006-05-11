@@ -4,6 +4,7 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_walls.h>
+#include <CGAL/Nef_S2/Normalizing.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 229
@@ -57,91 +58,26 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     : ein(e), spin(sp) {}
 
  private:
-  int need_to_create_wall() const {
-
-    int res = 0;
-
-    if((ein->point() - CGAL::ORIGIN) == dir ||
-       (ein->twin()->point() - CGAL::ORIGIN) == dir)
-      return 4;
-
-    CGAL_NEF_TRACEN( "test 0 " );
+  bool need_to_create_wall() const {
+    Sphere_circle c(ein->point(), spin);
+    c=normalized(c);
+    //    std::cerr << "need_to_create_wall " << ein->point() << ", " << spin << std::endl;
+    //    std::cerr << "need_to_create_wall " << c << std::endl;
     
-    SHalfedge_handle se;
-    SM_point_locator PS(&*ein->source());
-    Object_handle os = PS.locate(Sphere_point(dir));
-    if(assign(se,os) && (se->source() == ein || se->twin()->source() == ein))
-      return 4;
-    
-    CGAL_NEF_TRACEN( "test 1 " );
-
-    SM_point_locator PT(&*ein->target());
-    Object_handle ot = PT.locate(Sphere_point(dir));
-    if(assign(se,ot) && (se->source() == ein->twin() || se->twin()->source() == ein->twin()))
-      return 4;
-
-    CGAL_NEF_TRACEN( "test 2 " );
-
-    /*
-    SFace_handle sfs, sft;
-    if(assign(sfs,os) && sfs->mark() == false)
-      res |= 1;
-    if(assign(sft,os) && sft->mark() == false)
-      res |= 2;
-
-    CGAL_NEF_TRACEN( "test 3 " );
-    */
-  
-    /*
-    SVertex_handle sv;
-    if(assign(sv,os)) {
-      SHalfedge_around_svertex_circulator sh(sv->out_sedge()), send(sh);
-      CGAL_For_all(sh,send)
-	if(sh->twin()->source() == ein) // tighter, i.e. sedge with circle(svs,ein)
-	  res |= 1;
+    SHalfedge_around_svertex_circulator svc(ein->out_sedge()), send(svc);
+    CGAL_For_all(svc,send) {
+      std::cerr << " " << svc->circle() << std::endl;
+      if(normalized(svc->circle()) == c)
+	return false;
     }
-
-    CGAL_NEF_TRACEN( "test 4 " );
-
-    if(assign(sv,ot)) {
-      SHalfedge_around_svertex_circulator sh(sv->out_sedge()), send(sh);
-      CGAL_For_all(sh,send)
-	if(sh->twin()->source() == ein->twin()) // tighter, i.e. sedge with circle(svs,ein)
-	  res |= 2;
-    }
-    */
-
-    /*
-    SVertex_handle sv;
-    if(assign(sv,os)) {
-      SHalfedge_around_svertex_circulator sh(sv->out_sedge()), send(sh);
-      CGAL_For_all(sh,send) {
-	Sphere_circle c(sv->point(), ein->point());
-	c = normalized(c);
-	if(sh->circle() == c)
-	  res |= 1;
-      }
-    }
-
-    if(assign(sv,ot)) {
-      SHalfedge_around_svertex_circulator sh(sv->out_sedge()), send(sh);
-      CGAL_For_all(sh,send) {
-	Sphere_circle c(sv->point(), ein->twin()->point());
-	c = normalized(c);
-	if(sh->circle() == c)
-	  res |= 2;
-      }
-    }
-*/
-    // TODO: some cases missing!!!
-    
-    CGAL_NEF_TRACEN( "result " << res );
-
-    return res;
+    return true;
   }
     
  public:
   void operator()(SNC_and_PL& sncpl) {
+
+    if(!need_to_create_wall())
+      return;
 
     SNC_structure* sncp(sncpl.sncp);
     SNC_point_locator* pl(sncpl.pl);
@@ -165,6 +101,7 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     SMW_tgt.add_sedge_between(ein->twin(), lateral_sv_tgt[1], sphere_ray_tgt.sphere_circle());
 
     Sphere_circle c(sphere_ray_src.sphere_circle());
+    CGAL_assertion(c.a()==0 && c.b()==0);
     Ray_hit rh(sncp, pl);
 
     do {
