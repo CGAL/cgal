@@ -23,7 +23,7 @@
 #
 # Author(s)     : various
 
-# This script creates a CGAL makefile with entries for all .C files in the
+# This script creates a CGAL makefile with entries for all .C and .cpp files in the
 # current directory.
 #
 # Usage: cgal_create_makefile [-options] [outputfile]
@@ -63,17 +63,22 @@ create_makefile_entry_cpp()
       echo
     fi
   fi
-#  if grep 'main *(' $CFILE  > /dev/null; then
-    echo "$1\$(OBJ_EXT): $1.cpp"
-    echo "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) $1.cpp"
 
+  # Print target for $1 object file
+  echo "$1\$(OBJ_EXT): $1.cpp"
+  echo "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) $1.cpp"
+  echo
+
+  # Print target for $1 executable if $CFILE contains a function "main()"
+  egrep '\bmain[ \t]*\(' $CFILE >/dev/null 2>&1
+  if [[ $? == 0 ]]; then
     echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
     echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
     echo
-#  fi;
+  fi;
 }
 
-create_makefile_entry()
+create_makefile_entry_C()
 {
 #  local CFILE MOC_FROM MOCFILE
   CFILE=$1.C
@@ -90,16 +95,22 @@ create_makefile_entry()
       echo
     fi
   fi
-#  if grep 'main *(' $CFILE  > /dev/null; then
+
+  # Target for $1 object file is global
+
+  # Print target for $1 executable if $CFILE contains a function "main()"
+  egrep '\bmain[ \t]*\(' $CFILE >/dev/null 2>&1
+  if [[ $? == 0 ]]; then
     echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
     echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
     echo
-#  fi;
+  fi;
 }
 
 
 create_makefile()
 {
+  # print makefile header
   echo "# Created by the script cgal_create_makefile"
   echo "# This is the makefile for compiling a CGAL application."
   echo
@@ -108,20 +119,24 @@ create_makefile()
   echo
   echo    "# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE"
   echo    "include \$(CGAL_MAKEFILE)"
+
+  # print compiler flags
   echo
   header "compiler flags"
   echo
   echo    "CXXFLAGS = \\"
+  if [ -d include ] ; then
+    echo  "           -Iinclude \\"
+  fi
   echo    "           -I../../include \\"
   if [ ! -z "$TESTSUITE" ] ; then
     echo    "           \$(TESTSUITE_CXXFLAGS) \\"
     echo    "           \$(EXTRA_FLAGS) \\"
   fi
   echo    "           \$(CGAL_CXXFLAGS) \\"
-  if [ -d include ] ; then
-    echo  "           -Iinclude \\"
-  fi
   echo    "           \$(LONG_NAME_PROBLEM_CXXFLAGS)"
+
+  # print linker flags
   echo
   header "linker flags"
   echo
@@ -149,26 +164,43 @@ create_makefile()
   else
     echo    "          \$(CGAL_WINDOW_LDFLAGS)"
   fi
+
   echo
   header "target entries"
+
+  # print 'all' target
   echo
   printf "all:            "
   for file in `ls *.C 2>/dev/null | sort` ; do
+    # Add $file's executable to "all" target
+    # if $file contains a function "main()"
+    egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+    if [[ $? == 0 ]]; then
       printf "\\\\\n                `basename $file .C`\$(EXE_EXT) "
+    fi
   done
   for file in `ls *.cpp 2>/dev/null | sort` ; do
+    # Add $file's executable to "all" target
+    # if $file contains a function "main()"
+    egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+    if [[ $? == 0 ]]; then
       printf "\\\\\n                `basename $file .cpp`\$(EXE_EXT) "
+    fi
   done
   echo
+
+  # print rules for each .C and .cpp file
   echo
   for file in `ls *.C 2>/dev/null | sort` ; do
     base=`basename $file .C`
-    create_makefile_entry $base
+    create_makefile_entry_C $base
   done
   for file in `ls *.cpp 2>/dev/null | sort` ; do
     base=`basename $file .cpp`
     create_makefile_entry_cpp $base
   done
+
+  # print 'clean' target
   printf "clean: "
   for file in `ls *.C 2>/dev/null | sort` ; do
       printf "\\\\\n                   `basename $file .C`.clean "
@@ -177,6 +209,8 @@ create_makefile()
       printf "\\\\\n                   `basename $file .cpp`.clean "
   done
   printf    "\n\n"
+
+  # print "suffix rules"
   header "suffix rules"
   echo
   echo    ".C\$(OBJ_EXT):"
@@ -232,4 +266,4 @@ if [ -f ${OUTPUTFILE} ] ; then
   mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
 fi
 create_makefile > $OUTPUTFILE
-echo "created $OUTPUTFILE ..." 
+echo "created $OUTPUTFILE ..."
