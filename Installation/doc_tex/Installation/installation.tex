@@ -26,7 +26,7 @@
 %% macro for Core
 \newcommand{\core}{\textsc{Core}}
 
-%% macro for Taucs
+%% macro for TAUCS
 \newcommand{\taucs}{\textsc{Taucs}}
 
 %% macro for Windows-specific installation
@@ -125,15 +125,15 @@ that they reasonably conform to the ISO 14882 standard for \CC.
   \begin{tabular}{|l|l|} \hline
     \textbf{compiler}        & \textbf{operating system}\\\hline\hline
     %%\mipsprocc\ 7.4 (n32 and 64) \footnotemark[7] & IRIX 6.5\\\hline
-    \Gcc{3.3.3, 3.4, 4.0, 4.1} \footnotemark[9]            
+    \Gcc{3.3.3, 3.4, 4.0, 4.1} \footnotemark[9]
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / MacOS X /
       \\ & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
     %%\sunprocc{5.5} \footnotemark[11] & Solaris 2.6+\\\hline
-    \msvc{7.1} (\textsc{.NET}) \footnotemark[12]           
+    \msvc{7.1} (\textsc{.NET}) \footnotemark[12]
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
-    \icl{8.1} \footnotemark[13]                          
+    \icl{8.1} \footnotemark[13]
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
-%%    \bcc{5.5.1} \footnotemark[13]                          
+%%    \bcc{5.5.1} \footnotemark[13]
 %%    & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
   \end{tabular}
 \end{center}
@@ -168,9 +168,9 @@ Cygwin\footnote{\path~http://www.cygwin.com~}, please read
 Section~\ref{sec:cygwin} first.
 
 \section{Getting CGAL\label{sec:gettingcgal}}
-\index{CGAL@\cgal!getting}\index{getting \cgal} 
+\index{CGAL@\cgal!getting}\index{getting \cgal}
 
-The \cgal\ library can be downloaded from the \cgal\ 
+The \cgal\ library can be downloaded from the \cgal\
 homepage:\index{CGAL@\cgal!homepage}
 \begin{quote}
       \cgalhomepage
@@ -280,9 +280,10 @@ some dots written to the screen indicating progress.
 {\ccTexHtml{\scriptsize}{}
 \begin{alltt}
 Parsing support specfiles for 3rd party libraries:
-BOOST, BOOSTPROGRAMOPTIONS, EXTERNTAUCSNIX, EXTERNTAUCSMS, TAUCSNIX,
-TAUCSMS, X11, GMP, GMPXX, MPFR, CORE, CGALCORE, ZLIB, ZLIBMS, LEDA, 
-LEDAWIN, LEDAMS, LEDAWINMS, QT3MT, QT3ST, QT3MSMT, QT3MSST, done.
+BOOST, BOOSTPROGRAMOPTIONS, X11, GMP, GMPXX, MPFR, CORE, CGALCORE, ZLIB, ZLIBMS,
+LEDA, LEDAWIN, LEDAMS, LEDAWINMS, QT3MT, QT3ST, QT3MSMT, QT3MSST, TAUCSSOLARIS,
+TAUCSWINMKL, TAUCSWINATLAS, TAUCSLINUXATLAS, TAUCSLINUXMKL, TAUCSLINUXINTEL,
+TAUCSLINUXMUMPS, TAUCSDARWIN, TAUCSFREEBSDATLAS, TAUCSIRIX32, TAUCSIRIX64, done.
 
 --------------------------------------------------------
   This is the install script for CGAL \cgalrelease
@@ -296,7 +297,7 @@ Settings from Command Line/Environment:
 
   Choosing compiler GNU 3.4.5.
 \end{alltt}}
-  
+
 The script searches for \CC\ compilers that are installed on your
 system and accessible through your \texttt{PATH} environment variable.
 If more than one compiler (that is supported by \cgal) is found on
@@ -304,7 +305,7 @@ your system, you are presented a list of compilers to choose from. In
 this example, only one compiler, \Gcc{3.4.5}, was found on the system
 and the script selects this compiler without any user interaction. In
 general, the selection of which compiler to use can be made from the
-compiler menu (cf. Section~\ref{sec:compiler-menu}). 
+compiler menu (cf. Section~\ref{sec:compiler-menu}).
 
 The script interprets the environment variables \texttt{CXX},
 \texttt{CXXFLAGS}, and \texttt{LDFLAGS} and accordingly sets the
@@ -400,13 +401,13 @@ found.
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
   ****************************************************************
-  **           CGAL 3.2-I-432 Installation Main Menu            **
-  **           =====================================            **
+  **              CGAL 3.2 Installation Main Menu               **
+  **              ===============================               **
   **                                                            **
   **   OS:          i686_Linux-2.6                              **
   **   Compiler:    GNU 3.4.5                                   **
   **   Support for: BOOST, BOOST_PROGRAM_OPTIONS, X11, GMP,     **
-  **                MPFR, GMPXX, CORE, ZLIB, and QT.            **
+  **                GMPXX, MPFR, CORE, ZLIB, QT, and TAUCS.     **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
   **   The setup has been tested ok.                            **
@@ -432,7 +433,7 @@ several steps:
 %%
 \begin{enumerate}
 \item write the include makefile,
-\item compile the static libraries, 
+\item compile the static libraries,
 \item \textit{(on some systems)} compile the shared libraries,
 \item \textit{(if \qt\ support is configured)} compile the CGALQt
   library, \textit{and}
@@ -457,19 +458,18 @@ at the error messages from compiler or linker.)
 
   OS:                           i686_Linux-2.6
   COMPILER:                     GNU 3.4.5
-  BOOST:                        supported
-  BOOST_PROGRAM_OPTIONS:        supported
-  EXTERNTAUCS:                  not supported
-  TAUCS:                        not supported
-  X11:                          supported
-  GMP:                          supported
-  MPFR:                         supported
-  GMPXX:                        supported
-  CORE:                         supported
-  ZLIB:                         supported
-  LEDA:                         not supported
-  LEDAWIN:                      not supported
-  QT:                           supported
+  BOOST:			supported
+  BOOST_PROGRAM_OPTIONS:	supported
+  X11:				supported
+  GMP:				supported
+  GMPXX:			supported
+  MPFR:				supported
+  CORE:				supported
+  ZLIB:				supported
+  LEDA:				not supported
+  LEDAWIN:			not supported
+  QT:				supported
+  TAUCS:			supported
 
   Generating Makefiles ... done.
   Building CGAL_lib ... done.
@@ -482,7 +482,7 @@ at the error messages from compiler or linker.)
   ****************************************************************
 \end{verbatim}}
 {
-}  
+}
 
 That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the
 main menu. \cgal\ is now ready to use.
@@ -505,7 +505,7 @@ install menu by choosing the option ``\texttt{i}'' from the main menu.
   **   OS:          i686_Linux-2.6                              **
   **   Compiler:    GNU 3.4.5                                   **
   **   Support for: BOOST, BOOST_PROGRAM_OPTIONS, X11, GMP,     **
-  **                GMPXX, MPFR, CORE, ZLIB, and QT.            **
+  **                GMPXX, MPFR, CORE, ZLIB, QT, and TAUCS.     **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
   **   The setup has been tested ok.                            **
@@ -553,7 +553,7 @@ If you confirm the settings and enter ``\texttt{y}'', \cgal\ is
 installed below the given root directory. It can there be used
 independently from its build-tree, that is, you may even delete the
 build-tree.
-  
+
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
   Install CGAL headers ... done.
@@ -568,7 +568,7 @@ build-tree.
 }
 
 Press ``\texttt{<ENTER>}'' and then select ``\texttt{q}'' to return to
-the main menu. 
+the main menu.
 
 \subsection{Further Steps\label{sec:further}}
 
@@ -597,7 +597,7 @@ using \cgal\ on several platforms.
 \index{interactive installation}\index{installation!interactive}
 \TTsubindex{install\_cgal}{interactive mode}
 
-To run the install script in the interactive mode, go to the \cgaldir\ 
+To run the install script in the interactive mode, go to the \cgaldir\
 directory and enter the command
 \begin{verbatim}
       ./install_cgal -i
@@ -629,7 +629,7 @@ enable support for as many other libraries as possible.
 
 As a default, \cgal\ is built and installed within its build-tree. In
 case you want to install \cgal\ in a directory separate from its
-build-tree, the \textit{install menu} is the place to go to. 
+build-tree, the \textit{install menu} is the place to go to.
 
 The install script keeps track of the tests passed and only tests
 again, if you change the setup in a way that may affect the test
@@ -661,12 +661,12 @@ follows.
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{filename} & \textbf{content}\\\hline\hline
-    \texttt{install.log}\TTindex{install.log} & 
+    \texttt{install.log}\TTindex{install.log} &
     detailed overall protocol\\\hline
     \texttt{install.completed}\TTindex{install.completed} &
-    list of systems for which \cgal\ libraries 
+    list of systems for which \cgal\ libraries
     have been built\\\hline
-    \texttt{compile.log}\TTindex{compile.log} & 
+    \texttt{compile.log}\TTindex{compile.log} &
     output of the last compiler call\\\hline
   \end{tabular}
 \end{center}
@@ -765,7 +765,7 @@ Go to the \cgaldir\ directory and enter the command
       CXX=<compiler> ./install_cgal -ni
 \end{verbatim}
 where \texttt{<compiler>} is the C++ compiler executable, as described
-above. 
+above.
 
 There are a number of additional command line options to customize
 your \cgal\ setup which are discussed below. You should read the
@@ -825,9 +825,9 @@ For instance, if you have installed \boost\ in \texttt{/opt/boost/},
 type
 %%
 \begin{verbatim}
-  --BOOST_INCL_DIR /opt/boost/include --BOOST_LIB_DIR /opt/boost/lib 
+  --BOOST_INCL_DIR /opt/boost/include --BOOST_LIB_DIR /opt/boost/lib
 \end{verbatim}
-%% 
+%%
 
 Even in case you disabled the automatic support for third party
 libraries, boost support is still enabled because it is required.
@@ -847,38 +847,60 @@ In case you disabled the automatic support for third party libraries,
 support for program\_options can be enabled with the command line
 switch ``\texttt{--with-BOOSTPROGRAMOPTIONS}''.
 
-\subsection{Setup Support for Taucs\label{sec:taucs-setup}}
-\index{Taucs@\taucs!enable support}
 
-\taucs\ is library of sparse linear solvers that is available from
-\taucspage. In \cgal\ it is used to speedup the computations within
-the Parameterization package (Planar Parameterization of Triangulated
-Surface Meshes) only.
+\subsection{Setup Support for TAUCS\label{sec:taucs-setup}}
+\index{TAUCS@\taucs!enable support}
 
-\taucs\ support requires the environment variables \texttt{TAUCSROOT}
-and \texttt{TAUCS\_OSTYPE} to be set to the \taucs\ root directory and
-the \taucs\ operating system descriptor, respectively. (Just scan the
-directory \verb|${TAUCSROOT}/lib| for a directory that matches your
-OS.)
+\taucs\ is library of sparse linear solvers.
+In \cgal\ it is used to speedup the computations within
+the \ccc{Surface_mesh_parameterization} package (Planar Parameterization
+of Triangulated Surface Meshes) only.
 
-Based on these variables, \taucs\ should be found automatically.
-Therefore, it should not be necessary to specify include or lib
-directories for \taucs\ on the command line.
+You can download the official release from \taucspage
+or download a version customized
+by \cgal\ team from the Download section of \path'http://www.cgal.org'.
+
+See \taucs\ documentation to compile it. In a nutshell, on Unix machines:
+\begin{verbatim}
+  ./configure [prefix=PREFIX]
+  make
+  make install  # only available in the version customized by CGAL team
+\end{verbatim}
+
+If installed in a standard location, \taucs\ should be found
+automatically. Otherwise, you have to specify where \taucs\ is located
+on your system using the command line options
+``\texttt{--TAUCS\_INCL\_DIR}'' and ``\texttt{--TAUCS\_LIB\_DIR}''. For
+instance, if you have uncompressed and compiled the official release of \taucs\
+(which has no ``\texttt{make install}'' option) in \texttt{/opt/TAUCS/}, type
+%%
+\begin{verbatim}
+  --TAUCS_INCL_DIR "/opt/TAUCS/build/linux:/opt/TAUCS/src" --TAUCS_LIB_DIR "/opt/TAUCS/external/lib/linux:/opt/TAUCS/lib/linux"
+\end{verbatim}
+%%
+(replace ``\texttt{linux}'' by your platform).
 
 In case you disabled the automatic support for third party libraries,
 support for \taucs\ can be enabled with the command line switches
-``\texttt{--with-EXTERNTAUCSMS}'' and ``\texttt{--with-TAUCSMS}'' (for
-Microsoft and Intel Compiler) or ``\texttt{--with-EXTERNTAUCSNIX}''
-and ``\texttt{--with-TAUCSNIX}'' (all other compilers). For technical
-reasons, \taucs\ support is split into two separate features that have
-to be enabled both.
+``\texttt{--with-TAUCSSOLARIS}'',
+``\texttt{--with-TAUCSWINMKL}'',
+``\texttt{--with-TAUCSWINATLAS}'',
+``\texttt{--with-TAUCSLINUXATLAS}'',
+``\texttt{--with-TAUCSLINUXMKL}'',
+``\texttt{--with-TAUCSLINUXINTEL}'',
+``\texttt{--with-TAUCSLINUXMUMPS}'',
+``\texttt{--with-TAUCSDARWIN}'',
+``\texttt{--with-TAUCSFREEBSDATLAS}'',
+``\texttt{--with-TAUCSIRIX32}'',
+and ``\texttt{--with-TAUCSIRIX64}'' (depending of your platform and BLAS library).
+
 
 \subsection{Setup Support for X11\label{sec:x11-setup}}
 \index{X11@\texttt{X11}!enable support}
 
 As visualization in \cgal\ is done using \qt\ mostly, the direct
 support for X11 is used in conjunction with the \leda\ window library
-mostly. You can get X11 from \xpage. 
+mostly. You can get X11 from \xpage.
 
 If installed in a standard location, X11 should be found
 automatically. Otherwise, you have to specify where X11 is installed
@@ -887,9 +909,9 @@ on your system using the command line options
 instance, if you have installed X11 in \texttt{/opt/X11R8/}, type
 %%
 \begin{verbatim}
-  --X11_INCL_DIR /opt/X11R8/include --X11_LIB_DIR /opt/X11R8/lib 
+  --X11_INCL_DIR /opt/X11R8/include --X11_LIB_DIR /opt/X11R8/lib
 \end{verbatim}
-%% 
+%%
 
 In case you disabled the automatic support for third party libraries,
 support for X11 can be enabled with the command line switch
@@ -911,9 +933,9 @@ installed on your system using the command line options
 instance, if you have installed \gmp\ in \texttt{/opt/gmp}, type
 %%
 \begin{verbatim}
-  --GMP_INCL_DIR /opt/gmp/include --GMP_LIB_DIR /opt/gmp/lib 
+  --GMP_INCL_DIR /opt/gmp/include --GMP_LIB_DIR /opt/gmp/lib
 \end{verbatim}
-%% 
+%%
 
 In case you disabled the automatic support for third party libraries,
 support for \gmp\ can be enabled with the command line switch
@@ -952,9 +974,9 @@ is used and configured correctly. Otherwise, you have to specify where
 For instance, if you have installed \mpfr\ in \texttt{/opt/mpfr}, type
 %%
 \begin{verbatim}
-  --MPFR_INCL_DIR /opt/mpfr/include --MPFR_LIB_DIR /opt/mpfr/lib 
+  --MPFR_INCL_DIR /opt/mpfr/include --MPFR_LIB_DIR /opt/mpfr/lib
 \end{verbatim}
-%% 
+%%
 
 In case you disabled the automatic support for third party libraries,
 support for \mpfr\ can be enabled with the command line switch
@@ -979,9 +1001,9 @@ line options ``\texttt{--CORE\_INCL\_DIR}'' and/or
 \core\ in \texttt{/opt/core}, type
 %%
 \begin{verbatim}
-  --CORE_INCL_DIR /opt/core/include --CORE_LIB_DIR /opt/core/lib 
+  --CORE_INCL_DIR /opt/core/include --CORE_LIB_DIR /opt/core/lib
 \end{verbatim}
-%% 
+%%
 
 In case you disabled the automatic support for third party libraries,
 support for CORE can be enabled with the command line switch
@@ -1003,9 +1025,9 @@ on your system using the command line options
 For instance, if you have installed ZLIB in \texttt{/opt/zlib}, type
 %%
 \begin{verbatim}
-  --ZLIB_INCL_DIR /opt/zlib/include --ZLIB_LIB_DIR /opt/zlib/lib 
+  --ZLIB_INCL_DIR /opt/zlib/include --ZLIB_LIB_DIR /opt/zlib/lib
 \end{verbatim}
-%% 
+%%
 
 In case you disabled the automatic support for third party libraries,
 support for ZLIB can be enabled with the command line switch
@@ -1027,9 +1049,9 @@ installed on your system using the command line options
 For instance, if you have installed \leda\ in \texttt{/opt/leda}, type
 %%
 \begin{verbatim}
-  --LEDA_INCL_DIR /opt/leda/include --LEDA_LIB_DIR /opt/leda/lib 
+  --LEDA_INCL_DIR /opt/leda/include --LEDA_LIB_DIR /opt/leda/lib
 \end{verbatim}
-%% 
+%%
 
 The \leda\ window library is handled separately because it depends on
 X11. Obviously there is no need to specify include and lib directories
@@ -1177,7 +1199,7 @@ configuration files of possible previous \cgal\ installations.
 %% section \ref{sec:filescreated}) from \cgalinstconfdir\ before issuing
 %% the \texttt{rebuild-all} command.
 
-%% Similarly, you might want to use compilers with \cgal-\cgalrelease\ 
+%% Similarly, you might want to use compilers with \cgal-\cgalrelease\
 %% that have not been supported in previous releases. For these compilers
 %% please follow the usual procedure as described in section
 %% \ref{sec:interactive-mode} or \ref{sec:non-interactive}.
@@ -1255,7 +1277,7 @@ whereas in csh derivatives you use
 \begin{alltt}
   setenv CGAL_MAKEFILE <\textit{insert your CGAL makefile}>
 \end{alltt}
-For instance, 
+For instance,
 \begin{verbatim}
   setenv CGAL_MAKEFILE /usr/CGAL-3.2/make/makefile_i686_Linux-2.6_g++-3.4.4
 \end{verbatim}
@@ -1271,7 +1293,7 @@ in Bourne shell resp.
 \begin{alltt}
 setenv CGAL_MAKEFILE `\yourcgaldir/install_cgal -os g++`
 \end{alltt}
-in csh derivatives. 
+in csh derivatives.
 
 \textit{Tip:} Include the setting of \texttt{CGAL\_MAKEFILE} into your
 shell startup script (e.g. \texttt{.}(\texttt{t})\texttt{cshrc} for
@@ -1292,7 +1314,7 @@ have consequences for the makefile variables \texttt{CGAL\_CXX} and
 \texttt{CXXFLAGS}.
 
 \section{Compile a CGAL Application\label{sec:appl}}
-\index{building applications} 
+\index{building applications}
 \index{compiling applications}
 
 There is a script for conveniently creating makefiles for \cgal\
