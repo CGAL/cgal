@@ -1,5 +1,6 @@
-- Skin_surface_refinement_traits->Skin_surface_refinement_policy
+- Skin_surface_refinement_traits->Skin_surface_subdivision_policy (subdiv, policy)
 - Sqrt3->subdiv
+- refinement->subdivision
 
 
 OLD:

@@ -43,8 +43,8 @@ all:            \
                 NGHK_skin_surface_subdiv$(EXE_EXT) \
                 skin_surface_pdb_reader$(EXE_EXT) \
                 skin_surface_simple$(EXE_EXT) \
-                skin_surface_sqrt3$(EXE_EXT) \
-                skin_surface_sqrt3_with_normals$(EXE_EXT) \
+                skin_surface_subdiv$(EXE_EXT) \
+                skin_surface_subdiv_with_normals$(EXE_EXT) \
                 Surface_mesher_skin_surface$(EXE_EXT) \
                 union_of_balls_simple$(EXE_EXT) 
 
@@ -63,11 +63,11 @@ skin_surface_pdb_reader$(EXE_EXT): skin_surface_pdb_reader$(OBJ_EXT)
 skin_surface_simple$(EXE_EXT): skin_surface_simple$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)skin_surface_simple skin_surface_simple$(OBJ_EXT) $(LDFLAGS)
 
-skin_surface_sqrt3$(EXE_EXT): skin_surface_sqrt3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)skin_surface_sqrt3 skin_surface_sqrt3$(OBJ_EXT) $(LDFLAGS)
+skin_surface_subdiv$(EXE_EXT): skin_surface_subdiv$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)skin_surface_subdiv skin_surface_subdiv$(OBJ_EXT) $(LDFLAGS)
 
-skin_surface_sqrt3_with_normals$(EXE_EXT): skin_surface_sqrt3_with_normals$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)skin_surface_sqrt3_with_normals skin_surface_sqrt3_with_normals$(OBJ_EXT) $(LDFLAGS)
+skin_surface_subdiv_with_normals$(EXE_EXT): skin_surface_subdiv_with_normals$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)skin_surface_subdiv_with_normals skin_surface_subdiv_with_normals$(OBJ_EXT) $(LDFLAGS)
 
 Surface_mesher_skin_surface$(EXE_EXT): Surface_mesher_skin_surface$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Surface_mesher_skin_surface Surface_mesher_skin_surface$(OBJ_EXT) $(LDFLAGS)
@@ -81,8 +81,8 @@ clean: \
                    NGHK_skin_surface_subdiv.clean \
                    skin_surface_pdb_reader.clean \
                    skin_surface_simple.clean \
-                   skin_surface_sqrt3.clean \
-                   skin_surface_sqrt3_with_normals.clean \
+                   skin_surface_subdiv.clean \
+                   skin_surface_subdiv_with_normals.clean \
                    Surface_mesher_skin_surface.clean \
                    union_of_balls_simple.clean 
 

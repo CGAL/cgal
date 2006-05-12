@@ -29,14 +29,14 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Polyhedron_3,
 	  class SkinSurface_3,
-	  class RefinementTraits_3>
+	  class SubdivisionPolicy_3>
 class Skin_surface_sqrt3
 {
   typedef Polyhedron_3                                        Polyhedron;
   typedef SkinSurface_3                                       Skin_surface_3;
   // Projects points to the skin surface:
-  typedef RefinementTraits_3                                         Refinement_traits;
-//   typedef typename Refinement_traits::Triangulation           Triangulation;
+  typedef SubdivisionPolicy_3                                         Subdivision_policy;
+//   typedef typename Subdivision_policy::Triangulation           Triangulation;
   
   typedef typename Polyhedron::Traits                         Kernel;
   typedef typename Kernel::Point_3                            Point;
@@ -58,8 +58,8 @@ class Skin_surface_sqrt3
   typedef typename Kernel::FT                                 FT;
 
 public:
-  Skin_surface_sqrt3(Polyhedron &P, SkinSurface_3 &skin, const Refinement_traits &proj) 
-    : P(P), ss(skin), projector(proj) {}
+  Skin_surface_sqrt3(Polyhedron &P, SkinSurface_3 &skin, Subdivision_policy *policy) 
+    : P(P), ss(skin), policy(policy) {}
 
   //*********************************************
   // Subdivision
@@ -116,7 +116,7 @@ private:
     v = ++last_v; // First new vertex
     last_v = P.vertices_end();
     do {
-      v->point() = projector(v);
+      v->point() = policy->to_surface(v);
     } while (++v != last_v);
 
     CGAL_postcondition( P.is_valid());
@@ -138,7 +138,7 @@ private:
 
   Polyhedron &P;
   SkinSurface_3 &ss;
-  Refinement_traits projector;
+  Subdivision_policy *policy;
 };
 
 template <class Polyhedron_3,
@@ -147,29 +147,15 @@ void subdivide_skin_surface_mesh_3(
           Polyhedron_3 &p, 
           SkinSurface_3 &skin,
           int nSubdiv = 1) {
-  
-  typedef Skin_surface_refinement_traits_3<Polyhedron_3,SkinSurface_3> Refinement_traits;
-  typedef Skin_surface_sqrt3<Polyhedron_3, SkinSurface_3, Refinement_traits>   Sqrt3;
+  typedef Skin_surface_subdivision_policy_base_3<Polyhedron_3, SkinSurface_3> 
+    Subdivision_policy;
+  typedef Skin_surface_sqrt3<Polyhedron_3, SkinSurface_3, Subdivision_policy>   
+    Subdivider;
 
-  Sqrt3 subdivider(p, skin, Refinement_traits(skin));
+  Subdivision_policy *policy = get_subdivision_policy(p, skin);
+  Subdivider subdivider(p, skin, policy);
   subdivider.subdivide(nSubdiv);
 }
-
-template <class P_Traits,
-	  class SkinSurface_3>
-void subdivide_skin_surface_mesh_3
-(Polyhedron_3<P_Traits, 
- typename SkinSurface_3::Triangulated_mixed_complex_3> &p, 
- SkinSurface_3 &skin,
- int nSubdiv = 1) {
-  typedef Polyhedron_3<P_Traits, typename SkinSurface_3::Triangulated_mixed_complex_3> Polyhedron;
-  typedef Skin_surface_refinement_traits_with_face_info_3<Polyhedron,SkinSurface_3> Refinement_traits;
-  typedef Skin_surface_sqrt3<Polyhedron, SkinSurface_3, Refinement_traits>   Sqrt3;
-
-  Sqrt3 subdivider(p, skin, Refinement_traits(skin));
-  subdivider.subdivide(nSubdiv);
-}
-
 
 CGAL_END_NAMESPACE
 

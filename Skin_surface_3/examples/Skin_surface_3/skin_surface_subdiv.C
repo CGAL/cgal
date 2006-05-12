@@ -1,10 +1,14 @@
-// examples/Skin_surface_3/skin_surface_sqrt3.C
+// examples/Skin_surface_3/skin_surface_subdiv.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Skin_surface_polyhedral_items_3.h>
 #include <CGAL/mesh_skin_surface_3.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 #include <list>
+
+#include <fstream>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
@@ -12,7 +16,11 @@ typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Skin_surface_3::Bare_point                          Bare_point;
-typedef CGAL::Polyhedron_3<K>                               Polyhedron;
+
+// Each facet has a pointer to the tetrahedron of the TMC it is contained in
+typedef Skin_surface_3::Triangulated_mixed_complex          TMC;
+typedef CGAL::Skin_surface_polyhedral_items_3<TMC>          Poly_items;
+typedef CGAL::Polyhedron_3<K,Poly_items>                    Polyhedron;
 
 int main(int argc, char *argv[]) {
   std::list<Weighted_point> l;
@@ -28,6 +36,9 @@ int main(int argc, char *argv[]) {
   CGAL::mesh_skin_surface_3(skin_surface, p);
 
   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
+
+  std::ofstream out("mesh.off");
+  out << p;
 
   return 0;
 }
