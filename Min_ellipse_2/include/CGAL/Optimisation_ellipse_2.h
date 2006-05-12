@@ -246,9 +246,7 @@ class Optimisation_ellipse_2 {
         double r,s,t,u,v,w;
 	double_coefficients(r,s,t,u,v,w);
         e.set(r,s,t,u,v,w);
-	// actually, we would have to call e.analyse() now to get
-	// a clean conic, but since this is only internal stuff
-	// right now, the call is omitted to save time    
+	// NOTE: the set method calls analyze, so the conic is clean
     }
 
     void 
