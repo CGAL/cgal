@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# Create a .vcproj Visual C++ makefile for each .C file
+# Create a .vcproj Visual C++ makefile for each .C and .cpp file
 # Usage: C2vcproj folder1 ...
 #
 
@@ -17,26 +17,28 @@ if [ -d $h ]; then
   fi
   mkdir text;
 
-  # For each source file
-  for i in *.C ; do
-    if [ ! $i = "*.C" ]; then
-      # if $i contains a function "main()"
-      grep main $i >/dev/null 2>&1
-      if [[ $? == 0 ]]; then
-        # Create $jp VC++ makefile if it doesn't exist
-        jp=`echo $i|sed -e "s/\.C/\.vcproj/"`;
-        if [[ ! -e $jp ]]; then
-            echo "Creating $jp"
-            ofn=`echo $i|sed -e "s/\.C/\.exe/"`;
-            k=`echo $i|sed -e "s/\.C//"`;
-            sed -e"s/master/$k/g" ../../developer_scripts/examples/master.vcproj > ./text/temp.txt;
-            sed -e"s/test_msvc7.exe/$ofn/g" ./text/temp.txt > ./text/temp2.txt;
-            sed -e"s/test_msvc7/$k/g" ./text/temp2.txt > ./text/$jp;
-            mv ./text/$jp ./;
-            rm -rf ./text/temp.txt ./text/temp2.txt
+  # For each .C and .cpp file file
+  for ext in C cpp ; do
+    for i in *.$ext ; do
+      if [ ! $i = "*.$ext" ]; then
+        # if $i contains a function "main()"
+        zgrep main $i >/dev/null 2>&1
+        if [[ $? == 0 ]]; then
+          # Create $jp VC++ makefile if it doesn't exist
+          jp=`echo $i|sed -e "s/\.$ext/\.vcproj/"`;
+          if [[ ! -e $jp ]]; then
+              echo "Creating $jp"
+              ofn=`echo $i|sed -e "s/\.$ext/\.exe/"`;
+              k=`echo $i|sed -e "s/\.$ext//"`;
+              sed -e"s/master/$k/g" ../../developer_scripts/examples/master.vcproj > ./text/temp.txt;
+              sed -e"s/test_msvc7.exe/$ofn/g" ./text/temp.txt > ./text/temp2.txt;
+              sed -e"s/test_msvc7/$k/g" ./text/temp2.txt > ./text/$jp;
+              mv ./text/$jp ./;
+              rm -rf ./text/temp.txt ./text/temp2.txt
+          fi
         fi
       fi
-    fi
+    done
   done
 
   # Remove temporary subdirectory "text"
