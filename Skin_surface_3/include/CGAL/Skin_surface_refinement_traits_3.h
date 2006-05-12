@@ -21,66 +21,73 @@
 #define CGAL_SKIN_SURFACE_REFINEMENT_TRAITS_H
 
 #include <CGAL/intersection_3_1.h>
+#include <CGAL/Skin_surface_polyhedral_items_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Triangulation_3, class Polyhedron_3,
-          class T2P_converter, class P2T_converter>
+template <class Polyhedron_3, class SkinSurface_3>
 class Skin_surface_refinement_traits_3 {
 public:
-  typedef Triangulation_3                         Triangulation;
   typedef Polyhedron_3                            Polyhedron;
-  typedef typename Polyhedron::Traits             Polyhedron_traits;
+  typedef SkinSurface_3                           Skin_surface;
+  typedef typename Polyhedron::Traits             P_traits;
+  typedef typename Skin_surface::TMC_Traits       SS_traits;
 
-  typedef typename Polyhedron::Vertex_handle      Polyhedron_vertex_handle;
+  typedef Cartesian_converter<SS_traits, P_traits> T2P_converter;
+  typedef Cartesian_converter<P_traits, SS_traits> P2T_converter;
 
-  typedef typename Polyhedron_traits::RT          Polyhedron_rt;
-  typedef typename Polyhedron_traits::Point_3     Polyhedron_point;
-  typedef typename Polyhedron_traits::Segment_3   Polyhedron_segment;
-  typedef typename Polyhedron_traits::Line_3      Polyhedron_line;
-  typedef typename Polyhedron_traits::Vector_3    Polyhedron_vector;
-  typedef typename Polyhedron_traits::Plane_3     Polyhedron_plane;
+  typedef typename Polyhedron::Vertex_handle      P_vertex_handle;
 
-  typedef typename Triangulation::Cell_handle     Triang_cell_handle;
-  typedef typename Triangulation::Vertex_handle   Triang_vertex_handle;
+  typedef typename P_traits::RT          P_rt;
+  typedef typename P_traits::Point_3     P_point;
+  typedef typename P_traits::Segment_3   P_segment;
+  typedef typename P_traits::Line_3      P_line;
+  typedef typename P_traits::Vector_3    P_vector;
+  typedef typename P_traits::Plane_3     P_plane;
 
-  typedef std::map<Triang_vertex_handle,bool>     Triang_vertex_map;
-  typedef typename Triang_vertex_map::iterator    Triang_vertex_map_it;
+  typedef typename Skin_surface::TMC_Cell_handle   SS_cell_handle;
+  typedef typename Skin_surface::TMC_Vertex_handle SS_vertex_handle;
 
+  typedef std::map<SS_vertex_handle,bool>     SS_vertex_map;
+  typedef typename SS_vertex_map::iterator    SS_vertex_map_it;
 
-  Skin_surface_refinement_traits_3(
-    Triangulation const& t, 
-    Polyhedron_rt iso=0,
-    T2P_converter t2p_converter = T2P_converter(), 
-    P2T_converter p2t_converter = P2T_converter())
-  : t(t), iso_value(iso), t2p_converter(t2p_converter), p2t_converter(p2t_converter) {
+  Skin_surface_refinement_traits_3(Skin_surface const& skin)
+    : skin(skin), t2p_converter(), p2t_converter()
+  {
     
   }
     
-  Polyhedron_point to_surface_along_transversal_segment(
-    Polyhedron_vertex_handle vh) {
-    Triang_cell_handle ch = t.locate(p2t_converter(vh->point()));
+  // Use partial specialisation to optimize the locate step:
+  P_point operator()(P_vertex_handle vh) {
+    SS_cell_handle ch = locate(vh->point());
     return to_surface_along_transversal_segment(vh->point(),ch);
   }
-  Polyhedron_point to_surface_along_transversal_segment(
-    Polyhedron_point const &p, Triang_cell_handle ch) {
+
+  SS_cell_handle locate(const P_point &p) {
+    std::cout << "SLOW";
+    return skin.locate(p2t_converter(p));
+  }
+
+
+  P_point to_surface_along_transversal_segment(
+    P_point const &p, SS_cell_handle ch) {
       
-    Polyhedron_segment transversal_segment = get_transversal_segment(ch,p);
+    P_segment transversal_segment = get_transversal_segment(ch,p);
       
     return ch->surf->to_surface(
       transversal_segment.start(), transversal_segment.end());
   }
-  Polyhedron_vector normal(Polyhedron_vertex_handle vh) {
-    Triang_cell_handle ch = t.locate(p2t_converter(vh->point()));
+  P_vector normal(P_vertex_handle vh) {
+    SS_cell_handle ch = skin.locate(p2t_converter(vh->point()));
     return ch->surf->gradient(vh->point());
   }
-  int dimension(Polyhedron_vertex_handle vh) {
-    Triang_cell_handle ch = t.locate(p2t_converter(vh->point()));
+  int dimension(P_vertex_handle vh) {
+    SS_cell_handle ch = skin.locate(p2t_converter(vh->point()));
     return ch->surf->dimension();
   }
 private:
-  Polyhedron_segment get_transversal_segment(
-    Triang_cell_handle ch, Polyhedron_point const &p) {
+  P_segment get_transversal_segment(
+    SS_cell_handle ch, P_point const &p) {
     // Compute signs on vertices and sort them:
     int nIn = 0;
     int sortedV[4];
@@ -91,35 +98,35 @@ private:
         sortedV[3-i+nIn] = i;
       }
     }
-    Polyhedron_point begin_point, end_point;
+    P_point begin_point, end_point;
     Object obj;
     if (nIn==1) {
       begin_point = t2p_converter(ch->vertex(sortedV[0])->point());
       obj = CGAL::intersection(
-        Polyhedron_plane(
+        P_plane(
           t2p_converter(ch->vertex(sortedV[1])->point()),
           t2p_converter(ch->vertex(sortedV[2])->point()),
           t2p_converter(ch->vertex(sortedV[3])->point())),
-        Polyhedron_line(begin_point, p));
+        P_line(begin_point, p));
       if ( !assign(end_point, obj) )
         CGAL_assertion_msg(false,"intersection: no intersection.");
     } else if (nIn==2) {
       obj = CGAL::intersection(
-        Polyhedron_plane(
+        P_plane(
           t2p_converter(ch->vertex(sortedV[2])->point()),
           t2p_converter(ch->vertex(sortedV[3])->point()),
           p),
-        Polyhedron_line(
+        P_line(
           t2p_converter(ch->vertex(sortedV[0])->point()),
           t2p_converter(ch->vertex(sortedV[1])->point())));
       if ( !assign(begin_point, obj) )
         CGAL_assertion_msg(false,"intersection: no intersection.");
       obj = CGAL::intersection(
-        Polyhedron_plane(
+        P_plane(
           t2p_converter(ch->vertex(sortedV[0])->point()),
           t2p_converter(ch->vertex(sortedV[1])->point()),
           p),
-        Polyhedron_line(
+        P_line(
           t2p_converter(ch->vertex(sortedV[2])->point()),
           t2p_converter(ch->vertex(sortedV[3])->point())));
       if ( !assign(end_point, obj) )
@@ -127,22 +134,22 @@ private:
     } else if (nIn==3) {
       end_point = t2p_converter(ch->vertex(sortedV[3])->point());
       obj = CGAL::intersection(
-        Polyhedron_plane(
+        P_plane(
           t2p_converter(ch->vertex(sortedV[0])->point()),
           t2p_converter(ch->vertex(sortedV[1])->point()),
           t2p_converter(ch->vertex(sortedV[2])->point())),
-        Polyhedron_line(end_point, p));
+        P_line(end_point, p));
       if ( !assign(begin_point, obj) )
         CGAL_assertion_msg(false,"intersection: no intersection.");
     } else {
       CGAL_assertion(false);
     }
-    return Polyhedron_segment(begin_point, end_point);
+    return P_segment(begin_point, end_point);
   }
   
-  Polyhedron_point 
-  intersection(Polyhedron_plane const &plane, Polyhedron_line const &line) {
-    Polyhedron_point p;
+  P_point 
+  intersection(P_plane const &plane, P_line const &line) {
+    P_point p;
 
     Object result = CGALi::intersection(plane, line);
     if ( !CGAL::assign(p, result) )
@@ -150,13 +157,13 @@ private:
     return p;
   }
 
-  Sign sign(Triang_cell_handle ch, int i) {
+  Sign sign(SS_cell_handle ch, int i) {
     return CGAL_NTS sign(
-       ch->surf->value(t2p_converter(ch->vertex(i)->point())) - iso_value);
+       ch->surf->value(t2p_converter(ch->vertex(i)->point())));
   }  
-  bool is_inside(Triang_cell_handle ch, int i) {
+  bool is_inside(SS_cell_handle ch, int i) {
     //return (sign(ch,i) == POSITIVE);
-    Triang_vertex_map_it it = triang_vertex_signs.find(ch->vertex(i));
+    SS_vertex_map_it it = triang_vertex_signs.find(ch->vertex(i));
     
     if (it == triang_vertex_signs.end()) {
       bool side = (sign(ch,i) == POSITIVE);
@@ -170,13 +177,56 @@ private:
 
   
 private:
-  Triangulation const &t;
-  Polyhedron_rt const iso_value;
-  T2P_converter const &t2p_converter;
-  P2T_converter const &p2t_converter;
-  Triang_vertex_map triang_vertex_signs;
+  Skin_surface const &skin;
+  SS_vertex_map triang_vertex_signs;
+  T2P_converter const t2p_converter;
+  P2T_converter const p2t_converter;
 };
 
+template <class Polyhedron_3, class SkinSurface_3>
+class Skin_surface_refinement_traits_with_face_info_3 
+  : public Skin_surface_refinement_traits_3<Polyhedron_3, SkinSurface_3> {
+  typedef Skin_surface_refinement_traits_3<Polyhedron_3, SkinSurface_3> Base;
+public:
+  typedef Polyhedron_3                            Polyhedron;
+  typedef SkinSurface_3                           Skin_surface;
+  typedef typename Polyhedron::Traits             P_traits;
+  typedef typename Skin_surface::TMC_Traits       SS_traits;
+
+  typedef Cartesian_converter<SS_traits, P_traits> T2P_converter;
+  typedef Cartesian_converter<P_traits, SS_traits> P2T_converter;
+
+  typedef typename Polyhedron::Vertex_handle      P_vertex_handle;
+
+  typedef typename P_traits::RT          P_rt;
+  typedef typename P_traits::Point_3     P_point;
+  typedef typename P_traits::Segment_3   P_segment;
+  typedef typename P_traits::Line_3      P_line;
+  typedef typename P_traits::Vector_3    P_vector;
+  typedef typename P_traits::Plane_3     P_plane;
+
+  typedef typename Skin_surface::TMC_Cell_handle   SS_cell_handle;
+  typedef typename Skin_surface::TMC_Vertex_handle SS_vertex_handle;
+
+  typedef std::map<SS_vertex_handle,bool>     SS_vertex_map;
+  typedef typename SS_vertex_map::iterator    SS_vertex_map_it;
+
+  Skin_surface_refinement_traits_with_face_info_3(Skin_surface const& skin)
+    : Base(skin) {
+  }
+    
+  // Use partial specialisation to optimize the locate step:
+  P_point operator()(P_vertex_handle vh) {
+    SS_cell_handle ch = locate(vh->point());
+    return Base::to_surface_along_transversal_segment(vh->point(),ch);
+  }
+
+  SS_cell_handle locate(const P_point &p) {
+    std::cout << "FAST (IN PRINICPLE)";
+    return Base::skin.locate(p2t_converter(p));
+  }
+
+};
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SKIN_SURFACE_REFINEMENT_TRAITS_H
