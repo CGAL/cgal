@@ -45,7 +45,6 @@ there are \emph{convincing} reasons.
        \ccc{Class_name} instead of \ccc{functionName} or \ccc{Classname}.
       \ccIndexSubitem{naming scheme}{word separators}
       \ccIndexSubitem{naming scheme}{underscores}
-
 \item Words in the names of concepts (\textit{e.g.}, template parameters)
       \ccIndexSubitem{naming scheme}{concepts}
       \ccIndexSubitem{naming scheme}{capitalization}
@@ -58,7 +57,6 @@ there are \emph{convincing} reasons.
       the \stl\ (cf. InputIterator) and (b) it avoids name clashes between
       concepts and classes that would require one or the other to have a
       rather contrived name.
-
 \item Abbreviations of words are to be avoided%
       \ccIndexSubitem{naming scheme}{abbreviations}
       ({\em e.g.}, use
@@ -70,7 +68,6 @@ there are \emph{convincing} reasons.
       compilers.\ccIndexMainItem{long-name problem}
 %      See Section~\ref{sec:long_name_problem}
 %      for further information about the so-called ``long-name problem.''
-
 \ccIndexSubitemBegin{naming scheme}{capitalization}
 \item Names of constants are uppercase ({\em e.g.}, \ccc{ORIGIN}).
       \ccModifierCrossRefOff
@@ -199,7 +196,7 @@ Here are the naming rules:
       \ccc{equal_to}. Here, we give our dimension rule higher
       priority.
     \item The names of construction objects (category 2 above) follow
-      the pattern \ccc{Construct_{\tt type_d}}, where \texttt{type\_d}
+      the pattern \ccc{Construct_type_d}, where \texttt{type\_d}
       is the type constructed, \eg,~\ccc{Construct_point_2} and
       \ccc{Construct_line_2}.  The \ccc{operator()} of these functor
       classes is overloaded.  This reduces the number of names to
@@ -228,7 +225,7 @@ Here are the naming rules:
       For the second class, the names of the objects describe the (generic)
       action, \eg~\ccc{Intersect_2}.
 \item The equality operator (\ccc{operator==()}) is replaced by function
-      objects with names of the form \ccc{Equal_{\tt k}}, where {\tt k} is
+      objects with names of the form \ccc{Equal_k}, where {\tt k} is
       the dimension number (\ie, 2, 3, or \ccc{d}).
       For replacing arithmetic operators, we might also provide \ccc{Add_2},
       \ccc{Subtract_2}, \ccc{Multiply_2}, and \ccc{Divide_2}. (As mentioned
