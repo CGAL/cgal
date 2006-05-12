@@ -260,7 +260,7 @@ int main(int argc, char* argv[]) {
 
   Reflex_edge_searcher res2;
   N.delegate(res2, false, false);
-  
+
   for(rei=res2.reflex_edges_begin(); rei!=res2.reflex_edges_end(); ++rei) {
     Halfedge_handle e(*rei), split_edge;
     Ray_hit2 rh2a(Vector_3(1,0,0),e->source());
@@ -277,16 +277,18 @@ int main(int argc, char* argv[]) {
   N.delegate(es2);
 
   rei=res2.reflex_edges_end();
-  do {
-    --rei;
-    Halfedge_handle e = *rei;
-    //    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
-    //	      << e->twin()->source()->point() << std::endl;
-    if(e->point().hx() < 0)
-      e = e->twin();
-    Single_wall W(e,Vector_3(1,0,0));
-    N.delegate(W);
-  } while(rei!=res2.reflex_edges_begin());
+
+  if(rei!=res2.reflex_edges_begin())
+    do {
+      --rei;
+      Halfedge_handle e = *rei;
+      //    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
+      //	      << e->twin()->source()->point() << std::endl;
+      if(e->point().hx() < 0)
+	e = e->twin();
+      Single_wall W(e,Vector_3(1,0,0));
+      N.delegate(W);
+    } while(rei!=res2.reflex_edges_begin());
 
   /*
   Ray_hit rhb(Vector_3(1,0,0));
