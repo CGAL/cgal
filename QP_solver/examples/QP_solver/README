@@ -7,6 +7,13 @@ This directory contains
   for linear and quadratic programs. In the following we describe how
   to use the standalone solvers.
 
+PLEASE NOTE: the API of the QP-solver has been submitted 
+to the CGAL editorial board and is currently under revision. IT IS
+NOT GUARANTEED (ACTUALLY UNLIKELY) THAT THE CODE AS GIVEN WILL STILL
+WORK IN FUTURE RELEASES. It will have to be adpated according to the
+final API of the package. Please contact Bernd Gaertner 
+(gaertner at inf.ethz.ch) in case of problems or feedback. 
+
 Using the standalone solvers
 ----------------------------  
 There are three applications:
