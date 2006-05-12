@@ -9,6 +9,10 @@ The following platforms are no longer supported:
  - SunPro CC versions 5.4 and 5.5 on Solaris
  - SGI Mips Pro
 
+For Visual C++ the installation scripts choose the multi-threaded dynamically
+linked runtime (/MD). Before it was the single-threaded static runtime (/ML).
+ 
+
 2 Installation
 
  - The install tool tries to find third party libraries
@@ -21,6 +25,7 @@ The following platforms are no longer supported:
  
  - User and Reference manual pages of a package are in the same chapter 
 
+
 4 Kernels
 
 4.1 2D Circular Kernel (new package)
@@ -29,7 +34,7 @@ This package is an extension of the linear CGAL Kernel. It offers functionalitie
 on circles, circular arcs and line segments in the plane.
 
 
-5 Data Structures and Algorithms (new package)
+5 Data Structures and Algorithms
 
 5.1  2D Regularized Boolean Set-Operations (new package)
 
