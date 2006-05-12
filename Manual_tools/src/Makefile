@@ -210,7 +210,7 @@ refinstall:
 cpinstall:
 	install ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
 	install -m 644 ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
-	install ${BIB_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html/Biblio
+	install -m 644 ${BIB_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html/Biblio
 
 mvinstall: ${PROGRAM_FILES}
 	install ${PROGRAM_FILES} ${LATEX_CONV_BIN}
