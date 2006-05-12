@@ -1,10 +1,10 @@
 Name:           CGAL-manual-tools
-Version:        30764
+Version:        31112
 Release:        1
 Summary:        CC Manual Style and LaTeX Converter for HTML
 
 Group:          Development/Tools
-License:        N/A
+License:        Non-distributable
 URL:            http://www.cgal.org/Members/Manual_tools/
 Source0:        Manual_tools-%{version}.tar.gz
 Source1:        Manual-%{version}.tar.gz
@@ -18,7 +18,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires: bison flex
 BuildRequires:  /usr/bin/kpsewhich
-BuildRequires:  sed >= 3.95
 Requires:       tetex-latex tetex-dvips 
 Requires:       ghostscript >= 6.0
 Requires(post):	  /usr/bin/texhash
@@ -62,6 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
+%doc doc_ps/*
 /usr/bin/*
 %dir /usr/share/texmf/tex/latex/CGAL
 %dir /usr/share/texmf/bibtex/bib/CGAL
@@ -71,6 +71,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/CGAL_latex_conv_config/*
 
 %changelog
+* Thu May 11 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 31112-1
+- Update to revision 31112.
+- Remove BuildRequires: sed.
+- Change License:, to remove a rpmlint warning.
+
 * Wed Apr 26 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30764-1
 - Updated to revision 30764.
 
