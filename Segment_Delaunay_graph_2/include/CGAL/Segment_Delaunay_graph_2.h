@@ -524,14 +524,22 @@ public:
     CGAL_precondition( v0->storage_site().is_point() &&
 		       v1->storage_site().is_point() );
 
-    Storage_site_2 ss = Storage_site_2::construct_storage_site_2
-      (v0->storage_site().point(), v1->storage_site().point());
+    Point_handle h0 = v0->storage_site().point();
+    Point_handle h1 = v1->storage_site().point();
+    Storage_site_2 ss = Storage_site_2::construct_storage_site_2(h0, h1);
+
+    // update input site container
+    Point_handle_pair php = register_input_site(h0, h1);
 
     if ( number_of_vertices() == 2 ) {
       return insert_third(ss, v0, v1);
     }
 
-    return insert_segment_interior(ss.site(), ss, v0);
+    Vertex_handle v = insert_segment_interior(ss.site(), ss, v0);
+    if ( v == Vertex_handle() ) {
+      unregister_input_site(php.first, php.second);
+    }
+    return v;
   }
 
   inline Vertex_handle insert(const Point_2& p0, const Point_2& p1, 
@@ -712,6 +720,16 @@ protected:
     Site_rep_2 rep(it1.first, it2.first, false);
     isc_.insert( rep );
     return Point_handle_pair(it1.first, it2.first);
+  }
+
+  inline
+  Point_handle_pair register_input_site(const Point_handle& h0,
+					const Point_handle& h1)
+  {
+    CGAL_precondition( h0 != h1 );
+    Site_rep_2 rep(h0, h1, false);
+    isc_.insert( rep );
+    return Point_handle_pair(h0, h1);
   }
 
   Vertex_handle  insert_first(const Storage_site_2& ss, const Point_2& p);

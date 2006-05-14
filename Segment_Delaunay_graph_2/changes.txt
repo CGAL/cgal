@@ -1,3 +1,11 @@
+14 May 2006:  Menelaos Karavelas
+- fixed bug in undocumented insert method that takes two vertex
+  handles: the inserted segment was not registered in the input sites
+  container.
+  NOTE THAT THIS METHOD DOES NOT BEHAVE CORRECTLY WHEN SEGMENTS ARE
+  ALLOWED IN UPPER LEVELS OF THE HIERARCHY: THE CURRENT VERSION OF
+  THIS METHOD FOR THE HIERARCHY ONLY INSERTS AT THE LOWER LEVEL.
+
 2 May 2006:  Menelaos Karavelas
 - put the Arrangement_type output operator inside a #ifdef-#endif
   block to avoid the warning. The macro that enables the output
