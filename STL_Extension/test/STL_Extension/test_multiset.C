@@ -605,6 +605,43 @@ void test_swap_and_replace ()
     std::cout << *iter << ' ';
   std::cout << std::endl;
 
+  // Check the case of swapping two sibling nodes.
+  typedef CGAL::Multiset<int>  Int_set;
+  typedef Int_set::iterator    Int_set_iter;
+
+  Int_set                     iset;
+  Int_set_iter                pos1, pos2, iitr;
+
+  iset.insert (0);
+  iset.insert (2000);
+  iset.insert (1000);
+  iset.insert (1500);
+  pos1 = iset.insert (1250);
+  iset.insert (1375);
+  pos2 = iset.insert (1437);
+
+  for (iitr = iset.begin(); iitr != iset.end(); ++iitr)
+    std::cout << *iitr << ' ';
+  std::cout << std::endl;
+  CGAL_assertion (iset.is_valid());
+
+  *pos1 = 1438;
+  *pos2 = 1251;
+
+  for (iitr = iset.begin(); iitr != iset.end(); ++iitr)
+    std::cout << *iitr << ' ';
+  std::cout << std::endl;
+  // Note that the set is temporarily invalid!
+  CGAL_assertion (! iset.is_valid());
+
+  // Perform the swap to make it valid again.
+  iset.swap (pos1, pos2);
+ 
+  for (iitr = iset.begin(); iitr != iset.end(); ++iitr)
+    std::cout << *iitr << ' ';
+  std::cout << std::endl;
+  CGAL_assertion (iset.is_valid());
+
   return;
 }
 
