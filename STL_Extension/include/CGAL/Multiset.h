@@ -1356,6 +1356,14 @@ protected:
   void _swap (Node* node1_P, Node* node2_P);
 
   /*!
+   * Swap the location two sibling nodes in the tree.
+   * \param node1_P The first node.
+   * \param node2_P The second node.
+   * \pre The two nodes have a common parent.
+   */
+  void _swap_siblings (Node* node1_P, Node* node2_P);
+
+  /*!
    * Calculate the height of the sub-tree spanned by the given node.
    * \param nodeP The sub-tree root.
    * \return The height of the sub-tree.
@@ -2304,7 +2312,11 @@ void Multiset<Type, Compare, Allocator>::swap (iterator pos1,
                                       _pred2_P->object) != SMALLER);
 
   // Perform the swap.
-  _swap (node1_P, node2_P);
+  if (node1_P->parentP == node2_P->parentP)
+    _swap_siblings (node1_P, node2_P);
+  else
+    _swap (node1_P, node2_P);
+
   return;
 }
 
@@ -3300,6 +3312,82 @@ void Multiset<Type, Compare, Allocator>::_swap (Node* node1_P,
   {
     node2_P->leftP = node1_P;
   }
+
+  // If one of the swapped nodes used to be the tree minimum, update
+  // the properties of the fictitious before-the-begin node.
+  if (beginNode.parentP == node1_P)
+  {
+    beginNode.parentP = node2_P;
+    node2_P->leftP = &beginNode;
+  }
+  else if (beginNode.parentP == node2_P)
+  {
+    beginNode.parentP = node1_P;
+    node1_P->leftP = &beginNode;
+  }
+
+  // If one of the swapped nodes used to be the tree maximum, update
+  // the properties of the fictitious past-the-end node.
+  if (endNode.parentP == node1_P)
+  {
+    endNode.parentP = node2_P;
+    node2_P->rightP = &endNode;
+  }
+  else if (endNode.parentP == node2_P)
+  {
+    endNode.parentP = node1_P;
+    node1_P->rightP = &endNode;
+  }
+
+  return;
+}
+
+//---------------------------------------------------------
+// Swap the location two sibling nodes in the tree.
+//
+template <class Type, class Compare, typename Allocator>
+void Multiset<Type, Compare, Allocator>::_swap_siblings (Node* node1_P,
+                                                         Node* node2_P)
+{
+  CGAL_multiset_assertion (_is_valid (node1_P));
+  CGAL_multiset_assertion (_is_valid (node2_P));
+
+  // Store the properties of the first node.
+  typename Node::Node_color   color1 = node1_P->color;
+  Node        *right1_P = node1_P->rightP;
+  Node        *left1_P = node1_P->leftP;
+  
+  // Copy the properties of the second node to the first node.
+  node1_P->color = node2_P->color;
+
+  node1_P->rightP = node2_P->rightP;
+  if (_is_valid (node1_P->rightP))
+    node1_P->rightP->parentP = node1_P;
+
+  node1_P->leftP = node2_P->leftP;
+  if (_is_valid (node1_P->leftP))
+    node1_P->leftP->parentP = node1_P;
+
+  // Copy the stored properties of the first node to the second node.
+  node2_P->color = color1;
+
+  node2_P->rightP = right1_P;
+  if (_is_valid (node2_P->rightP))
+    node2_P->rightP->parentP = node2_P;
+
+  node2_P->leftP = left1_P;
+  if (_is_valid (node2_P->leftP))
+    node2_P->leftP->parentP = node2_P;
+
+  // Swap the children of the common parent node.
+  Node        *parent_P = node1_P->parentP;
+  Node        *temp;
+
+  CGAL_multiset_assertion (parent_P == node2_P->parentP);
+
+  temp = parent_P->leftP;
+  parent_P->leftP = parent_P->rightP;
+  parent_P->rightP = temp;
 
   // If one of the swapped nodes used to be the tree minimum, update
   // the properties of the fictitious before-the-begin node.
