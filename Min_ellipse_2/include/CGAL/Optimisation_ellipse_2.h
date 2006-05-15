@@ -91,7 +91,7 @@ class Optimisation_ellipse_2 {
            boundary_point3,
            boundary_point4,
            boundary_point5;                     // <= 5 support point 
-    Conic  conic1, conic2;                      // two conics
+    Conic  conic1, conic2;                      // two conics 
 
     // this gradient vector has dr=0 and is used in testing the
     // position of a point relative to an ellipse through 4 points
@@ -217,12 +217,14 @@ class Optimisation_ellipse_2 {
     void
     set( const Point& p1, const Point& p2,
          const Point& p3, const Point& p4, const Point& p5)
-    {
-        // uses the fact that the conic to be constructed has already
-        // been computed in preceding bounded-side test over a 4-point
-        // ellipse
-        conic1 = helper_conic;
-	n_boundary_points = 5;	
+    { 
+        conic1.set( p1, p2, p3, p4, p5);
+	// an optimization is possible if this set-call arose from
+	// a successful violation test of ME(p1,p2,p3,p4) and p5.
+	// In that case, we can simply set conic1 = helper_conic,
+	// but in general, this optimization is NOT valid.
+	n_boundary_points = 5;
+	CGAL_optimisation_precondition(conic1.is_ellipse());	
 	CGAL_optimisation_precondition(boundary_point1 == p1);
         CGAL_optimisation_precondition(boundary_point2 == p2);
 	CGAL_optimisation_precondition(boundary_point3 == p3);
