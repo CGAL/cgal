@@ -26,6 +26,10 @@
 #  if _MSC_VER < 1310
 #    error Unsupported version of VC++
 #  else
-#    include "cl_1310.h"
+#    ifdef __ICL
+#      include "icl_8_1.h
+#    else 
+#      include "cl_1310.h"
+#    endif
 #  endif
 #endif
