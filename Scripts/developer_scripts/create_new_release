@@ -17,6 +17,12 @@
 #   and the major/minor/bugfix/version_file release numbers.
 #   this should be obsolete now that we generate public/internal at once.
 
+# Set to non-empty for having side-effects (putting on the web site, svn
+# commits...).  Otherwise it is for local testing purposes.
+# [should be command-line option]
+DO_IT=""  # Testing
+# DO_IT="y"  # The Real Thing
+
 # SVN working copy directory, default is "trunk"
 if [ -z "$1" ] ; then
   SOURCES_DIR=trunk
@@ -46,6 +52,9 @@ GZIP=/usr/bin/gnu/gzip
 #TMPDIR="/tmp"
 TMPDIR="${HOME}/CGAL/internal_release_making"
 
+[ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
+[ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
+
 LOGFILE="${TMPDIR}/create_release.log.`date -I`.$$"
 
 
@@ -65,8 +74,7 @@ BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
 if [ $IS_PUBLIC_RELEASE = "n" ]; then
     [ -r $VERSION_FILE ] || return
     INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
-    rm -f $VERSION_FILE
-    printf "%d\n" "${INTERNAL_NUMBER}" >> $VERSION_FILE
+    [ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
     INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
     internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
 else
@@ -102,7 +110,7 @@ ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
 ${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
 cp "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
-mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
+[ "$DO_IT" ] && mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
 
 You can fetch it at :
 ${URL}/${release_name}.tar.gz
@@ -111,7 +119,7 @@ EOF
 
 # Now we tag.
 echo "Tagging ${SOURCES_DIR} with $release_name" >> ${LOGFILE} 2>&1
-svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name >> ${LOGFILE} 2>&1
+[ "$DO_IT" ] && svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name >> ${LOGFILE} 2>&1
 
 # Build the SRPM
 echo "Making the SRPM file" >> ${LOGFILE} 2>&1
