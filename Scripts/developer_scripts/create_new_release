@@ -18,10 +18,10 @@
 #   this should be obsolete now that we generate public/internal at once.
 
 # Set to non-empty for having side-effects (putting on the web site, svn
-# commits...).  Otherwise it is for local testing purposes.
+# commits...).  Otherwise it is for local testing purposes (put stuff in tmp/).
 # [should be command-line option]
-DO_IT=""  # Testing
-# DO_IT="y"  # The Real Thing
+# DO_IT=""  # Testing
+DO_IT="y"  # The Real Thing
 
 # SVN working copy directory, default is "trunk"
 if [ -z "$1" ] ; then
@@ -139,7 +139,15 @@ public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
 public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
 public_release_name="CGAL-${public_release_version}"
 mv ${release_name} $public_release_name >> ${LOGFILE} 2>&1
-cd ${public_release_name} >> ${LOGFILE} 2>&1
+# Build the Installation.pdf
+cd ${public_release_name}/doc_tex >> ${LOGFILE} 2>&1
+mv version.tex version.tex.old >> ${LOGFILE} 2>&1
+sed -e "s/.*cgalversion{.*/\\\gdef\\\cgalversion\{${public_release_name}\}/" version.tex.old > version.tex 2>> ${LOGFILE}
+export TEXINPUTS
+TEXINPUTS=$TEXINPUTS:../../${SOURCES_DIR}/Manual_tools/sty:
+../developer_scripts/cgal_manual -pdf Installation >> ${LOGFILE} 2>&1
+cd ..
+# End of build of Installation.pdf
 rm -rf test Packages developer_scripts doc_tex winutils >> ${LOGFILE} 2>&1
 rm -f examples/*/cgal_test demo/*/cgal_test >> ${LOGFILE} 2>&1
 mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
