@@ -39,7 +39,7 @@ rm -fr ${TMP_ROOT}
 mkdir -p ${TMP_ROOT}
 cp -rp Package_root ${TMP_ROOT}
 cp -rp Resources ${TMP_ROOT}
-cp -rp CGAL-tmp.pmproj ${TMP_ROOT}
+cp -rp CGAL-absolute.pmproj ${TMP_ROOT}
 cd ${TMP_ROOT}
 
 # copy the CGAL tarball at its correct place and uncompress it
@@ -52,7 +52,7 @@ rm -f CGAL-${CGALVER}.tar.gz
 cd ..
 
 # build the package
-${PACKAGEMAKER} -build -ds -proj CGAL-tmp.pmproj -p CGAL.pkg -v
+${PACKAGEMAKER} -build -ds -proj CGAL-absolute.pmproj -p CGAL.pkg -v
 
 # create the disk image
 ${HDIUTIL} create -ov -size ${VOLSIZE} -fs HFS+ -type UDIF -volname ${VOLNAME} CGAL-tmp.dmg
