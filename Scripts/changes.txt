@@ -1,3 +1,6 @@
+17 May 2006 Menelaos Karavelas
+- added script for creating the MacOSX installer/distribution
+
 15 March 2006 Joachim Reichel
 - rename create_makefile to cgal_create_makefile to avoid name clashes,
   adjust all occurences of create_makefile and create\_makefile in the entire
