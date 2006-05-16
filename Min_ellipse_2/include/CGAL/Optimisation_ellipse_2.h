@@ -118,20 +118,16 @@ class Optimisation_ellipse_2 {
     // Constructor
     // -----------
     inline
-    Optimisation_ellipse_2( )
-      : er(0), es(0), et(0), eu(0), ev(0), ew(0)
-    { }
+    Optimisation_ellipse_2( ) { }
 
     // Set functions
     // -------------
-    inline
     void
     set( )
     {
         n_boundary_points = 0;
     }
     
-    inline
     void
     set( const Point& p)
     {
@@ -139,7 +135,6 @@ class Optimisation_ellipse_2 {
         boundary_point1   = p;
     }
     
-    inline
     void
     set( const Point& p, const Point& q)
     {
@@ -148,7 +143,6 @@ class Optimisation_ellipse_2 {
         boundary_point2 = q;
     }
     
-    inline
     void
     set( const Point& p1, const Point& p2, const Point& p3)
     {       
@@ -156,10 +150,10 @@ class Optimisation_ellipse_2 {
 	CGAL_optimisation_precondition(boundary_point1 == p1);
         CGAL_optimisation_precondition(boundary_point2 == p2);
 	boundary_point3 = p3;
-        conic1.set_ellipse( p1, p2, p3);
+        helper_conic.set_ellipse( p1, p2, p3);
+	CGAL_optimisation_assertion(helper_conic.is_ellipse());
     }
     
-    inline
     void
     set( const Point& p1, const Point& p2, const Point& p3, const Point& p4)
     {
@@ -218,13 +212,15 @@ class Optimisation_ellipse_2 {
     set( const Point& p1, const Point& p2,
          const Point& p3, const Point& p4, const Point& p5)
     { 
-        conic1.set( p1, p2, p3, p4, p5);
+        helper_conic.set(conic1, conic2, p5);
+	helper_conic.analyse();
 	// an optimization is possible if this set-call arose from
 	// a successful violation test of ME(p1,p2,p3,p4) and p5.
-	// In that case, we can simply set conic1 = helper_conic,
+	// In that case, helper_conic is already correct, 
 	// but in general, this optimization is NOT valid.
 	n_boundary_points = 5;
-	CGAL_optimisation_precondition(conic1.is_ellipse());	
+	CGAL_optimisation_assertion(helper_conic.is_ellipse());	
+	CGAL_optimisation_assertion(helper_conic.has_on_boundary(p5));	
 	CGAL_optimisation_precondition(boundary_point1 == p1);
         CGAL_optimisation_precondition(boundary_point2 == p2);
 	CGAL_optimisation_precondition(boundary_point3 == p3);
@@ -258,19 +254,24 @@ class Optimisation_ellipse_2 {
       // just like double_conic, but we only get the coefficients
       CGAL_optimisation_precondition( ! is_degenerate());
     
-      double tau = 0.0;
-    
       if ( n_boundary_points == 4) {
         set_e_values();
-        tau = conic1.vol_minimum( er, es, et, eu, ev, ew);
+        double tau = conic1.vol_minimum( er, es, et, eu, ev, ew);
+	r = CGAL::to_double( conic1.r()) + tau*CGAL::to_double( er);
+	s = CGAL::to_double( conic1.s()) + tau*CGAL::to_double( es);
+	t = CGAL::to_double( conic1.t()) + tau*CGAL::to_double( et);
+	u = CGAL::to_double( conic1.u()) + tau*CGAL::to_double( eu);
+	v = CGAL::to_double( conic1.v()) + tau*CGAL::to_double( ev);
+	w = CGAL::to_double( conic1.w()) + tau*CGAL::to_double( ew);
+      } else {
+	// it's the helper_conic
+	r = CGAL::to_double(helper_conic.r());
+	s = CGAL::to_double(helper_conic.s());
+	t = CGAL::to_double(helper_conic.t());
+	u = CGAL::to_double(helper_conic.u());
+	v = CGAL::to_double(helper_conic.v());
+        w = CGAL::to_double(helper_conic.w());
       }
-
-      r = CGAL::to_double( conic1.r()) + tau*CGAL::to_double( er);
-      s = CGAL::to_double( conic1.s()) + tau*CGAL::to_double( es);
-      t = CGAL::to_double( conic1.t()) + tau*CGAL::to_double( et);
-      u = CGAL::to_double( conic1.u()) + tau*CGAL::to_double( eu);
-      v = CGAL::to_double( conic1.v()) + tau*CGAL::to_double( ev);
-      w = CGAL::to_double( conic1.w()) + tau*CGAL::to_double( ew);
     }
 
 
@@ -294,7 +295,7 @@ class Optimisation_ellipse_2 {
                          && ( boundary_point2 == e.boundary_point1)));
           case 3:
           case 5:
-            return( conic1 == e.conic1);
+            return( helper_conic == e.helper_conic);
           case 4:
             return(    (    ( conic1 == e.conic1)
                          && ( conic2 == e.conic2))
@@ -334,7 +335,7 @@ class Optimisation_ellipse_2 {
                          CGAL::ON_BOUNDARY : CGAL::ON_UNBOUNDED_SIDE);
           case 3:
           case 5:
-            return( conic1.convex_side( p));
+            return(helper_conic.convex_side( p));
           case 4: {
             helper_conic.set( conic1, conic2, p);
             helper_conic.analyse();
@@ -400,7 +401,7 @@ class Optimisation_ellipse_2 {
 	 return false; // a segment is not a circle
        case 3:
        case 5:
-	 return conic1.is_circle();
+	 return helper_conic.is_circle();
        case 4:
 	 // the smallest ellipse through four points is
 	 // a circle only if the four points are cocircular;
