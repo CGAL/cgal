@@ -1,33 +1,32 @@
-// test/Skin_surface_3/degenerate_test.C
-#include <CGAL/Skin_surface_traits_3.h>
-#include <CGAL/skin_surface_3.h>
+// examples/Skin_surface_3/skin_surface_simple.C
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Skin_surface_3.h>
 #include <CGAL/Polyhedron_3.h>
-
-// #include <CGAL/IO/Polyhedron_iostream.h>
-// #include <string.h>
+#include <CGAL/mesh_skin_surface_3.h>
 
 #include <list>
 #include <fstream>
 
-typedef CGAL::Skin_surface_traits_3<>                    Skin_surface_traits;
-typedef Skin_surface_traits::Regular_traits              Regular_traits;
-typedef Regular_traits::Bare_point                       Reg_point;
-typedef Regular_traits::Weighted_point                   Reg_weighted_point;
-typedef CGAL::Polyhedron_3<Skin_surface_traits::Polyhedron_traits> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
+typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
+typedef Skin_surface_3::FT                                  FT;
+typedef Skin_surface_3::Weighted_point                      Weighted_point;
+typedef Skin_surface_3::Bare_point                          Bare_point;
+typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 bool test(char * filename, double shrink) {
-  std::list<Reg_weighted_point> l;
+  std::list<Weighted_point> l;
   std::ifstream in(filename);
   CGAL_assertion(in.is_open());
-  Reg_weighted_point wp;
+  Weighted_point wp;
   while (in >> wp) l.push_front(wp);
 
-  Polyhedron p;
-  Skin_surface_traits skin_surface_traits(shrink);
-  CGAL::skin_surface_3(l.begin(), l.end(), p, skin_surface_traits);
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrink);
 
-//   std::ofstream out((filename+std::string(".oogl")).c_str());
-//   out << p;
+  Polyhedron p;
+  CGAL::mesh_skin_surface_3(skin_surface, p);
+
   return (p.is_valid() && p.is_closed());
 }
 

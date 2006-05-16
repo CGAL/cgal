@@ -1300,6 +1300,8 @@ Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text
+Skin_surface_3/examples/Skin_surface_3/NGHK_skin_surface_simple.C -text
+Skin_surface_3/examples/Skin_surface_3/NGHK_skin_surface_subdiv.C -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/AUTHORS -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text

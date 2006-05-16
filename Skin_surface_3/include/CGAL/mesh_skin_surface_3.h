@@ -25,6 +25,7 @@
 #include <CGAL/Marching_tetrahedra_traits_skin_surface_3.h>
 #include <CGAL/Marching_tetrahedra_observer_default_3.h>
 #include <CGAL/Marching_tetrahedra_observer_skin_surface_3.h>
+#include <CGAL/Skin_surface_polyhedral_items_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

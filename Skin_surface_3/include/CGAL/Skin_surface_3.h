@@ -101,7 +101,7 @@ public:
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
 		 FT shrink_factor,
 		 Gt gt = Gt(),
-		 bool verbose = true
+		 bool verbose = false
 		 ) 
     : regular(), gt(gt), shrink(shrink_factor), verbose(verbose) {
     
@@ -110,14 +110,18 @@ public:
   
     if (verbose) {
       std::cerr << "Triangulation ready" << std::endl;
+      std::cerr << "Vertices: " << regular.number_of_vertices() << std::endl;
+      std::cerr << "Cells:    " << regular.number_of_cells() << std::endl;
     }
     
     // Construct the triangulated mixed complex:
-    triangulate_mixed_complex_3(regular, shrink, _tmc);
+    triangulate_mixed_complex_3(regular, shrink, _tmc,verbose);
     
     CGAL_assertion(_tmc.is_valid());
     if (verbose) {
       std::cerr << "Triangulated mixed complex ready" << std::endl;
+      std::cerr << "Vertices: " << _tmc.number_of_vertices() << std::endl;
+      std::cerr << "Cells:    " << _tmc.number_of_cells() << std::endl;
     }
   }
   const Triangulated_mixed_complex &triangulated_mixed_complex() const {

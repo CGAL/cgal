@@ -101,12 +101,14 @@ public:
   Mixed_complex_triangulator_3(
     Regular const &regular,
     Rt_FT const &shrink,
-    Triangulated_mixed_complex &triangulated_mixed_complex)
+    Triangulated_mixed_complex &triangulated_mixed_complex, 
+    bool verbose)
     : regular(regular),
       shrink(shrink),
       triangulated_mixed_complex(triangulated_mixed_complex),
       triangulation_incr_builder(triangulated_mixed_complex), 
-      compute_anchor_obj(regular) {
+      compute_anchor_obj(regular),
+      verbose(verbose) {
 
     build();
   }
@@ -115,30 +117,51 @@ public:
     Regular &regular,
     Rt_FT const &shrink,
     Triangulated_mixed_complex &triangulated_mixed_complex,
-    Triangulated_mixed_complex_observer &observer)
+    Triangulated_mixed_complex_observer &observer,
+    bool verbose)
     : regular(regular),
       shrink(shrink),
       triangulated_mixed_complex(triangulated_mixed_complex),
       observer(observer),
       triangulation_incr_builder(triangulated_mixed_complex), 
-      compute_anchor_obj(regular) {
+      compute_anchor_obj(regular),
+      verbose(verbose)  {
     
     build();
   }
 
-
 private:
   void build() {
+
     triangulation_incr_builder.begin_triangulation(3);
 
+    if (verbose) std::cout << "Construct vertices" << std::endl;
     construct_vertices();
 
+    if (verbose) std::cout << "Construct 0 cells" << std::endl;
     construct_0_cells(); // mixed cells corresponding to regular vertices
+    if (verbose) std::cout << "Construct 1 cells" << std::endl;
     construct_1_cells(); // mixed cells corresponding to regular edges
+    if (verbose) std::cout << "Construct 2 cells" << std::endl;
     construct_2_cells(); // mixed cells corresponding to regular facets
+    if (verbose) std::cout << "Construct 3 cells" << std::endl;
     construct_3_cells(); // mixed cells corresponding to regular cells
 
+
+
     triangulation_incr_builder.end_triangulation();
+    
+    std::cout << map_del.size() << " vs. " << map_vor.size() << std::endl;
+    std::cout << anchor_del.size() << " vs. " << anchor_vor.size() << std::endl;
+    std::cout << "Union_find: " << anchor_del.number_of_sets () << "vs. " << anchor_del.size () << std::endl;
+    std::cout << "Union_find: " << anchor_vor.number_of_sets () << "vs. " << anchor_vor.size () << std::endl;
+    std::cout << anchors.size() << std::endl;
+
+    anchor_del.clear();
+    anchor_vor.clear();
+    map_del.clear();
+    map_vor.clear();
+    anchors.clear();
   }
 
   Tmc_Vertex_handle add_vertex(Symb_anchor const &anchor); 
@@ -163,7 +186,7 @@ private:
   template <class Point>
   Point construct_anchor_point(const Point &center_del, 
 			       const Point &center_vor) {
-    return center_del + shrink*(center_vor - center_del);
+    return center_del + shrink*(center_vor-center_del);
   }
   
   void construct_0_cells();
@@ -187,6 +210,7 @@ private:
     Regular_triangulation_euclidean_traits_3<
     Triangulated_mixed_complex_traits> >       orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;
+  bool verbose;
 
   Weighted_converter_3<
     Cartesian_converter<typename Regular_traits::Bare_point::R, 
@@ -237,15 +261,11 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
 construct_anchor_del(Rt_Simplex const &sDel) {
-  Rt_Simplex sim = sDel;
   Union_find_anchor_handle handle = anchor_del.make_set(sDel);
   map_del[sDel] = handle;
-  CGAL_assertion(sim == sDel);
   
   Rt_Simplex s = compute_anchor_obj.anchor_del(sDel);
-  CGAL_assertion(sim == sDel);
   if (sDel != s) {
-    CGAL_assertion(s != sim);
     anchor_del.unify_sets(handle, map_del[s]);
   }
 
@@ -381,8 +401,10 @@ construct_vertices() {
   Rt_Simplex sDel, sVor;
   Tmc_Vertex_handle vh;
 
+  if (verbose) std::cout << "construct_anchors" << std::endl;
   construct_anchors();
 
+  if (verbose) std::cout << "1" << std::endl;
   // anchor dimDel=0, dimVor=3
   for (cit=regular.finite_cells_begin();
        cit!=regular.finite_cells_end(); cit++) {
@@ -397,6 +419,7 @@ construct_vertices() {
     }
   }
 
+  if (verbose) std::cout << "2" << std::endl;
   // anchor dimDel=1, dimVor=3
   for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
     sVor = get_anchor_vor(Rt_Simplex(cit));
@@ -412,6 +435,7 @@ construct_vertices() {
     }
   }
 
+  if (verbose) std::cout << "3" << std::endl;
   // anchor dimDel=2, dimVor=3 and dimDel=0, dimVor=2
   for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
     // anchor dimDel=2, dimVor=3
@@ -449,6 +473,7 @@ construct_vertices() {
     }
   }
 	
+  if (verbose) std::cout << "4" << std::endl;
   // anchor dimDel=0, dimVor=1
   for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
     sVor = get_anchor_vor(*eit);
@@ -470,6 +495,7 @@ construct_vertices() {
     }
   }
 	
+  if (verbose) std::cout << "5" << std::endl;
   // anchor dimDel=3, dimVor=3
   for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
     sDel = get_anchor_del(Rt_Simplex(cit));
@@ -482,6 +508,7 @@ construct_vertices() {
   }
 
 
+  if (verbose) std::cout << "6" << std::endl;
   // anchor dimDel=0, dimVor=0
   for (vit=regular.finite_vertices_begin(); vit!=regular.finite_vertices_end(); vit++) {
     sDel = get_anchor_del(Rt_Simplex(vit));
@@ -493,6 +520,7 @@ construct_vertices() {
     }
   }
 	
+  if (verbose) std::cout << "7" << std::endl;
   // anchor dimDel=1, dimVor=2
   for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
     c1 = fit->first;
@@ -514,6 +542,7 @@ construct_vertices() {
     }
   }
 	
+  if (verbose) std::cout << "8" << std::endl;
   // anchor dimDel=2, dimVor=2
   for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
     c1 = fit->first;
@@ -528,6 +557,7 @@ construct_vertices() {
     }
   }
 	
+  if (verbose) std::cout << "9" << std::endl;
   // anchor dimDel=1, dimVor=1
   for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
     v1 = eit->first->vertex(eit->second);
@@ -986,13 +1016,14 @@ void triangulate_mixed_complex_3(
   RegularTriangulation_3 &rt,
   typename RegularTriangulation_3::Geom_traits::FT const & shrink_factor,
   TriangulatedMixedComplex_3 &tmc,
-  TriangulatedMixedComplexObserver_3 &observer) 
+  TriangulatedMixedComplexObserver_3 &observer,
+  bool verbose) 
 {
   typedef Mixed_complex_triangulator_3<
     RegularTriangulation_3,
     TriangulatedMixedComplex_3,
     TriangulatedMixedComplexObserver_3>  Mixed_complex_triangulator;
-  Mixed_complex_triangulator(rt, shrink_factor, tmc, observer);
+  Mixed_complex_triangulator(rt, shrink_factor, tmc, observer, verbose);
 }
 
 
@@ -1002,13 +1033,14 @@ template <
 void triangulate_mixed_complex_3(
   RegularTriangulation_3 const &regular, 
   typename RegularTriangulation_3::Geom_traits::FT const &shrink_factor,
-  TriangulatedMixedComplex_3 &triangulated_mixed_complex)
+  TriangulatedMixedComplex_3 &triangulated_mixed_complex,
+  bool verbose)
 {
   Triangulated_mixed_complex_observer_3<
     TriangulatedMixedComplex_3, const RegularTriangulation_3> 
     observer(shrink_factor);
   triangulate_mixed_complex_3(
-    regular, shrink_factor, triangulated_mixed_complex, observer);
+    regular, shrink_factor, triangulated_mixed_complex, observer, verbose);
 }
 
 CGAL_END_NAMESPACE
