@@ -3,6 +3,8 @@
 
 #include <CGAL/basic.h>
 
+#include <functional>
+
 #include <CGAL/Hilbert_sort_base.h>
 
 CGAL_BEGIN_NAMESPACE
