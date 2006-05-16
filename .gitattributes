@@ -512,13 +512,14 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=1 -te
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/makefile.internal -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
+Maintenance/MacOSX_Installer/CGAL-absolute.pmproj -text
 Maintenance/MacOSX_Installer/CGAL.pmproj -text
 Maintenance/MacOSX_Installer/Resources/License.rtf -text
 Maintenance/MacOSX_Installer/Resources/ReadMe.rtf -text
 Maintenance/MacOSX_Installer/Resources/Welcome.rtf -text
+Maintenance/MacOSX_Installer/Resources/cgal_very_small.gif -text
 Maintenance/MacOSX_Installer/Resources/postflight -text
 Maintenance/MacOSX_Installer/Resources/postupgrade -text
-Maintenance/MacOSX_Installer/cgal_very_small.gif -text
 Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
