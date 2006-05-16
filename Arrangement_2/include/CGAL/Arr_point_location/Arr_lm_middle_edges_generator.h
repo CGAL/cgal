@@ -97,7 +97,7 @@ public:
   virtual void after_merge_face (Face_handle /* f */){}
   virtual void after_move_hole (Ccb_halfedge_circulator /* h */){}
   virtual void after_remove_vertex () {}
-  virtual void after_remove_hole () {}
+  virtual void after_remove_hole (Face_handle /* f */) {}
   
   
 protected:

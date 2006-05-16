@@ -564,7 +564,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
   typename Arrangement_2::Ccb_halfedge_circulator  he_first;
   typename Arrangement_2::Ccb_halfedge_circulator  he_curr;
 
-  CGAL::Object               obj;
+  CGAL::Object               iobj;
   const Intersect_point_2   *int_p;
   const X_monotone_curve_2  *icv;
   Point_2                    ip;
@@ -647,14 +647,14 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       }
 
       // Compute the next intersection of cv and the current halfedge.
-      obj = _compute_next_intersection (he_curr,
-                                        left_equals_curr_endpoint);
+      iobj = _compute_next_intersection (he_curr,
+                                         left_equals_curr_endpoint);
 
-      if (! obj.is_empty())
+      if (! iobj.is_empty())
       {
         // We have found an intersection (either a simple point or an
         // overlapping x-monotone curve).
-	int_p = object_cast<Intersect_point_2> (&obj);
+	int_p = object_cast<Intersect_point_2> (&iobj);
         if (int_p != NULL)
         {
           ip = int_p->first;
@@ -675,7 +675,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           // We have located an overlapping curve. Assign ip as its left
           // endpoint.
-	  icv = object_cast<X_monotone_curve_2> (&obj);
+	  icv = object_cast<X_monotone_curve_2> (&iobj);
 	  CGAL_assertion (icv != NULL);
 
           ip = min_vertex (*icv);
@@ -788,14 +788,14 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
       }
 
       // Compute the next intersection of cv and the current halfedge.
-      obj = _compute_next_intersection (he_curr,
-                                        left_equals_curr_endpoint);
+      iobj = _compute_next_intersection (he_curr,
+                                         left_equals_curr_endpoint);
 
-      if (! obj.is_empty())
+      if (! iobj.is_empty())
       {
         // We have found an intersection (either a simple point or an
         // overlapping x-monotone curve).
-	int_p = object_cast<Intersect_point_2> (&obj);
+	int_p = object_cast<Intersect_point_2> (&iobj);
         if (int_p != NULL)
         {
           ip = int_p->first;
@@ -817,7 +817,7 @@ void Arrangement_zone_2<Arrangement,ZoneVisitor>::
         {
           // We have located an overlapping curve. Assign ip as its left
           // endpoint.
-	  icv = object_cast<X_monotone_curve_2> (&obj);
+	  icv = object_cast<X_monotone_curve_2> (&iobj);
 	  CGAL_assertion (icv != NULL);
 
           ip = min_vertex (*icv);

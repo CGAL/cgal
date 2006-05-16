@@ -386,7 +386,7 @@ public:
     * Notification before the removal of a hole.
     * \param h A circulator representing the boundary of the hole.
     */
-    virtual void after_remove_hole ()
+    virtual void after_remove_hole (Face_handle /* f */)
     {
       if (! ignore_notifications)
       {

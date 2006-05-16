@@ -200,8 +200,8 @@ public:
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->twin()->direction() == LARGER);
-      std::list<unsigned int>& list_ref = 
-        (m_he_indexes_table[res->twin()] = std::list<unsigned int>());
+      std::list<unsigned int>& list_ref = m_he_indexes_table[res->twin()];
+      list_ref.clear();
       list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
     }
     return (res);
@@ -223,8 +223,8 @@ public:
       if(sc->has_haldedges_indexes())
       {
         CGAL_assertion(res->direction() == LARGER);
-        std::list<unsigned int>& list_ref = 
-          (m_he_indexes_table[res] = std::list<unsigned int>());
+        std::list<unsigned int>& list_ref = m_he_indexes_table[res];
+        list_ref.clear();
         list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
       }
    
@@ -254,8 +254,8 @@ public:
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->direction() == LARGER);
-      std::list<unsigned int>& list_ref = 
-        (m_he_indexes_table[res] = std::list<unsigned int>());
+      std::list<unsigned int>& list_ref = m_he_indexes_table[res];
+      list_ref.clear();
       list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
     }
     return (res);
@@ -270,8 +270,8 @@ public:
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->twin()->direction() == LARGER);
-      std::list<unsigned int>& list_ref = 
-        (m_he_indexes_table[res->twin()] = std::list<unsigned int>());
+      std::list<unsigned int>& list_ref = m_he_indexes_table[res->twin()];
+      list_ref.clear();
       list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
     }
     
