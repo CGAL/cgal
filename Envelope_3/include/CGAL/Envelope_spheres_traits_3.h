@@ -479,7 +479,7 @@ public:
 
         #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
           std::cout << "ellipse is valid " 
-                    << (ellipse_is_point) ? "- ellipse is a point" : ""
+                    << (ellipse_is_point ? "- ellipse is a point" : "")
                     << std::endl;
         #endif
         
@@ -519,11 +519,18 @@ public:
           // intersection point is:
           //
       	  Rational px = S*(4*U - T*V)/(T*T - 4*S*R);
+          px = px / 2;
       	  Rational py = -(T*px + V)/(2*S);
           // should check if the point is in the non-negative side of the
           // line
       	  if (CGAL_NTS sign(la*px + lb*py +lc) != NEGATIVE)
+          {
+            #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
+              std::cout << "found intersection point " << px << " , "
+                        << py << std::endl;
+            #endif
       	    *o++ = make_object(Point_2(px, py));
+          }
           parent.total_timer.stop();
           parent.intersection_timer.stop();
           return o;
@@ -1370,7 +1377,7 @@ public:
       // x!=x0, we have only one solution for (**). So the equation represents
       // a point with coordinates x0=-B/2A, y0=-(tx0 + v)/2s
       if (sign_eq == ZERO)
-	is_point = true;
+	      is_point = true;
 
       Sign sign_disc = CGAL_NTS sign(sign_s * sign_eq);
       return (sign_disc != NEGATIVE);
