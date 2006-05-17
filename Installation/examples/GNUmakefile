@@ -11,6 +11,3 @@ clean:
 	    $(MAKE) -C $$DIR; \
 	  fi; \
 	done
-	
-
-
