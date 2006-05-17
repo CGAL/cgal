@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -48,7 +47,7 @@ namespace CGALi {
 template <class K>
 class Segment_2_Segment_2_pair {
 public:
-    enum Intersection_results {NO, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Segment_2_Segment_2_pair() ;
     Segment_2_Segment_2_pair(typename K::Segment_2 const *seg1,
                             typename K::Segment_2 const *seg2);
@@ -334,15 +333,15 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
         return _result;
     _known = true;
     if (!do_intersect(*_seg1, *_seg2, K())) {
-        _result = NO;
+        _result = NO_INTERSECTION;
         return _result;
     }
     typename K::Line_2 const &l1 = _seg1->supporting_line();
     typename K::Line_2 const &l2 = _seg2->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, &l2);
     switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO:
-        _result = NO;
+    case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+        _result = NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::POINT:
         linepair.intersection(_intersection_point);
@@ -382,7 +381,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
                 }
             }
             if (maxpt->x() < minpt->x()) {
-                _result = NO;
+                _result = NO_INTERSECTION;
                 return _result;
             }
             if (maxpt->x() == minpt->x()) {
@@ -418,7 +417,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
                 }
             }
             if (maxpt->y() < minpt->y()) {
-                _result = NO;
+                _result = NO_INTERSECTION;
                 return _result;
             }
             if (maxpt->y() == minpt->y()) {
@@ -474,7 +473,7 @@ intersection(const typename CGAL_WRAP(K)::Segment_2 &seg1,
     typedef Segment_2_Segment_2_pair<K> is_t;
     is_t ispair(&seg1, &seg2);
     switch (ispair.intersection_type()) {
-    case is_t::NO:
+    case is_t::NO_INTERSECTION:
     default:
         return Object();
     case is_t::POINT: {

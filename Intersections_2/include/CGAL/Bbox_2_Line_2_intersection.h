@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -39,7 +38,7 @@ class Bbox_2_Line_2_pair_impl;
 
 class Bbox_2_Line_2_pair {
 public:
-    enum Intersection_results {NO, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Bbox_2_Line_2_pair() ;
     Bbox_2_Line_2_pair(Bbox_2_Line_2_pair const &);
     Bbox_2_Line_2_pair(Bbox_2 const &bbox,
@@ -67,7 +66,7 @@ inline bool do_intersect_line_2(
     const Bbox_2 &box, double line_a, double line_b, double line_c)
 {
     Bbox_2_Line_2_pair pair(box, line_a, line_b, line_c);
-    return pair.intersection_type() != Bbox_2_Line_2_pair::NO;
+    return pair.intersection_type() != Bbox_2_Line_2_pair::NO_INTERSECTION;
 }
 
 template <class Line>

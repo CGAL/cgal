@@ -38,13 +38,13 @@ typedef typename R::LA LA;
 typedef typename R::Point_d Point_d;
 
 public:
-enum Intersection_result { NO, POINT, LINE };
+enum Intersection_result { NO_INTERSECTION, POINT, LINE };
 
 Intersection_result operator()(
   const Point_d& s1, const Point_d& t1,
   const Point_d& s2, const Point_d& t2,
   Point_d& p, FT& l1, FT& l2) 
-/*{\Mfunop returns |NO| if the lines which are represented by |s1t1|
+/*{\Mfunop returns |NO_INTERSECTION| if the lines which are represented by |s1t1|
 and |s2t2| don't intersect, returns |POINT| if they intersect in a
 unique point, and returns LINE if they are identical. In the |POINT|
 case the point of intersection is assigned to |p|.  Then |p = s1 + l1
@@ -80,7 +80,7 @@ is degenerate.}*/
     p = s1 + l1 * (t1 - s1);
     return POINT; 
   }
-  return NO; 
+  return NO_INTERSECTION; 
 }
 
 };
@@ -97,11 +97,11 @@ typedef typename R::Point_d      Point_d;
 typedef typename R::Hyperplane_d Hyperplane_d;
 
 public:
-enum Intersection_result { NO, POINT, LINE };
+enum Intersection_result { NO_INTERSECTION, POINT, LINE };
 
 Intersection_result operator()(const Point_d& s, const Point_d& t,
   const Hyperplane_d& h, Point_d& p, FT& lambda) 
-/*{\Mfunop returns |NO| if the line represented by |s1t1| and the
+/*{\Mfunop returns |NO_INTERSECTION| if the line represented by |s1t1| and the
 hyperplane |h| don't intersect, returns |POINT| if they intersect in a
 unique point, and returns LINE if the line is part of the
 hyperplane. In the |POINT| case the point of intersection is assigned
@@ -126,7 +126,7 @@ not degenerate.}*/
   // now the simple cases are done 
 
   RT D = S * t.homogeneous(d) - T * s.homogeneous(d);
-  if (CGAL_NTS is_zero(D)) return NO;
+  if (CGAL_NTS is_zero(D)) return NO_INTERSECTION;
 
   typename LA::Vector homog(d + 1);
   for (i = 0; i < d; ++i)

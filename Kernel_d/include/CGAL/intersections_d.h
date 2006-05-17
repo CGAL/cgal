@@ -39,7 +39,7 @@ Object intersection(const Line_d<R>& l1, const Line_d<R>& l2)
 { typedef typename R::Line_d_Line_d_pair ll_pair;
   ll_pair LL(l1, l2);
   switch (LL.intersection_type()) {
-    case ll_pair::NO:
+    case ll_pair::NO_INTERSECTION:
     default: 
       return Object();
     case ll_pair::POINT: {
@@ -60,7 +60,7 @@ Object intersection(const Ray_d<R>& l1, const Ray_d<R>& l2)
 { typedef typename R::Ray_d_Ray_d_pair ll_pair;
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
-    case ll_pair::NO:
+    case ll_pair::NO_INTERSECTION:
     default: 
       return Object();
     case ll_pair::POINT: {
@@ -89,7 +89,7 @@ Object intersection(const Segment_d<R>& l1, const Segment_d<R>& l2)
 { typedef typename R::Segment_d_Segment_d_pair ll_pair;
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
-    case ll_pair::NO:
+    case ll_pair::NO_INTERSECTION:
     default: 
       return Object();
     case ll_pair::POINT: {
@@ -113,7 +113,7 @@ Object intersection(const Line_d<R>& l, const Ray_d<R>& r)
 { typedef typename R::Line_d_Ray_d_pair lr_pair;
   lr_pair LR(l,r);
   switch (LR.intersection_type()) {
-    case lr_pair::NO:
+    case lr_pair::NO_INTERSECTION:
     default:
         return Object();
     case lr_pair::POINT: {
@@ -139,7 +139,7 @@ Object intersection(const Ray_d<R>& r, const Segment_d<R>& s)
 { typedef typename R::Ray_d_Segment_d_pair rs_pair;
   rs_pair RS(r,s);
   switch (RS.intersection_type()) {
-    case rs_pair::NO:
+    case rs_pair::NO_INTERSECTION:
     default:
         return Object();
     case rs_pair::POINT: {
@@ -167,7 +167,7 @@ Object intersection(const Line_d<R>& l, const Segment_d<R>& s)
 { typedef typename R::Line_d_Segment_d_pair rs_pair;
   rs_pair RS(l,s);
   switch (RS.intersection_type()) {
-    case rs_pair::NO:
+    case rs_pair::NO_INTERSECTION:
     default:
         return Object();
     case rs_pair::POINT: {
@@ -196,7 +196,7 @@ Object intersection(const Line_d<R>& l, const Hyperplane_d<R>& h)
   typedef typename R::Line_d_Hyperplane_d_pair lh_pair;
   lh_pair LH(l,h);
   switch (LH.intersection_type()) {
-    case lh_pair::NO:
+    case lh_pair::NO_INTERSECTION:
     default:
         return Object();
     case lh_pair::POINT: {
@@ -222,7 +222,7 @@ Object intersection(const Ray_d<R>& r, const Hyperplane_d<R>& h)
   typedef typename R::Ray_d_Hyperplane_d_pair rh_pair;
   rh_pair RH(r,h);
   switch (RH.intersection_type()) {
-    case rh_pair::NO:
+    case rh_pair::NO_INTERSECTION:
     default:
         return Object();
     case rh_pair::POINT: {
@@ -247,7 +247,7 @@ Object intersection(const Segment_d<R>& s, const Hyperplane_d<R>& h)
 { typedef typename R::Segment_d_Hyperplane_d_pair sh_pair;
   sh_pair SH(s,h);
   switch (SH.intersection_type()) {
-    case sh_pair::NO:
+    case sh_pair::NO_INTERSECTION:
     default:
         return Object();
     case sh_pair::POINT: {
@@ -271,28 +271,28 @@ template <class R>
 inline bool do_intersect(const Line_d<R> &l1, const Line_d<R> &l2)
 { typedef typename R::Line_d_Line_d_pair ll_pair;
   ll_pair LL(l1,l2);
-  return LL.intersection_type() != ll_pair::NO;
+  return LL.intersection_type() != ll_pair::NO_INTERSECTION;
 }
 
 template <class R>
 inline bool do_intersect(const Ray_d<R> &l1, const Ray_d<R> &l2)
 { typedef typename R::Ray_d_Ray_d_pair ll_pair;
   ll_pair LL(l1,l2);
-  return LL.intersection_type() != ll_pair::NO;
+  return LL.intersection_type() != ll_pair::NO_INTERSECTION;
 }
 
 template <class R>
 inline bool do_intersect(const Segment_d<R> &l1, const Segment_d<R> &l2)
 { typedef typename R::Segment_d_Segment_d_pair ll_pair;
   ll_pair LL(l1,l2);
-  return LL.intersection_type() != ll_pair::NO;
+  return LL.intersection_type() != ll_pair::NO_INTERSECTION;
 }
 
 template <class R>
 inline bool do_intersect(const Line_d<R>& l, const Ray_d<R>& r)
 { typedef typename R::Line_d_Ray_d_pair lr_pair;
   lr_pair LR(l,r);
-  return LR.intersection_type() != lr_pair::NO;
+  return LR.intersection_type() != lr_pair::NO_INTERSECTION;
 }
 
 template <class R>
@@ -303,7 +303,7 @@ template <class R>
 inline bool do_intersect(const Line_d<R>& l, const Segment_d<R>& s)
 { typedef typename R::Line_d_Segment_d_pair ls_pair;
   ls_pair LS(l,s);
-  return LS.intersection_type() != ls_pair::NO;
+  return LS.intersection_type() != ls_pair::NO_INTERSECTION;
 }
 
 template <class R>
@@ -314,7 +314,7 @@ template <class R>
 inline bool do_intersect(const Ray_d<R>& r, const Segment_d<R>& s)
 { typedef typename R::Ray_d_Segment_d_pair rs_pair;
   rs_pair RS(r,s);
-  return RS.intersection_type() != rs_pair::NO;
+  return RS.intersection_type() != rs_pair::NO_INTERSECTION;
 }
 
 template <class R>
@@ -325,7 +325,7 @@ template <class R>
 inline bool do_intersect(const Line_d<R>& l, const Hyperplane_d<R>& h)
 { typedef typename R::Line_d_Hyperplane_d_pair lh_pair;
   lh_pair LH(l,h);
-  return LH.intersection_type() != lh_pair::NO;
+  return LH.intersection_type() != lh_pair::NO_INTERSECTION;
 }
 
 template <class R>
@@ -336,7 +336,7 @@ template <class R>
 inline bool do_intersect(const Ray_d<R>& r, const Hyperplane_d<R>& h)
 { typedef typename R::Ray_d_Hyperplane_d_pair rh_pair;
   rh_pair RH(r,h);
-  return RH.intersection_type() != rh_pair::NO;
+  return RH.intersection_type() != rh_pair::NO_INTERSECTION;
 }
 
 template <class R>
@@ -347,7 +347,7 @@ template <class R>
 inline bool do_intersect(const Segment_d<R>& s, const Hyperplane_d<R>& h)
 { typedef typename R::Segment_d_Hyperplane_d_pair sh_pair;
   sh_pair SH(s,h);
-  return SH.intersection_type() != sh_pair::NO;
+  return SH.intersection_type() != sh_pair::NO_INTERSECTION;
 }
 
 template <class R>

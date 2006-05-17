@@ -88,11 +88,11 @@ Bbox_2_Line_2_pair::intersection_type() const
 // first on x value
     if (dir.x() == 0.0) {
         if (ref_point.x() < pimpl->_bbox.xmin()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
         if (ref_point.x() > pimpl->_bbox.xmax()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
     } else {
@@ -113,7 +113,7 @@ Bbox_2_Line_2_pair::intersection_type() const
             if (newmax < pimpl->_max)
                 pimpl->_max = newmax;
             if (pimpl->_max < pimpl->_min) {
-                pimpl->_result = NO;
+                pimpl->_result = NO_INTERSECTION;
                 return pimpl->_result;
             }
         }
@@ -122,11 +122,11 @@ Bbox_2_Line_2_pair::intersection_type() const
 // now on y value
     if (dir.y() == 0.0) {
         if (ref_point.y() < pimpl->_bbox.ymin()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
         if (ref_point.y() > pimpl->_bbox.ymax()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
     } else {
@@ -147,7 +147,7 @@ Bbox_2_Line_2_pair::intersection_type() const
             if (newmax < pimpl->_max)
                 pimpl->_max = newmax;
             if (pimpl->_max < pimpl->_min) {
-                pimpl->_result = NO;
+                pimpl->_result = NO_INTERSECTION;
                 return pimpl->_result;
             }
         }
@@ -254,11 +254,11 @@ Bbox_2_Ray_2_pair::intersection_type() const
 // first on x value
     if (pimpl->_dir.x() == 0.0) {
         if (pimpl->_ref_point.x() < pimpl->_box.xmin()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
         if (pimpl->_ref_point.x() > pimpl->_box.xmax()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
     } else {
@@ -279,7 +279,7 @@ Bbox_2_Ray_2_pair::intersection_type() const
                 pimpl->_max = newmax;
         }
         if (pimpl->_max < pimpl->_min){
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
         to_infinity = false;
@@ -287,11 +287,11 @@ Bbox_2_Ray_2_pair::intersection_type() const
 // now on y value
     if (pimpl->_dir.y() == 0.0) {
         if (pimpl->_ref_point.y() < pimpl->_box.ymin()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
         if (pimpl->_ref_point.y() > pimpl->_box.ymax()) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
     } else {
@@ -312,7 +312,7 @@ Bbox_2_Ray_2_pair::intersection_type() const
                 pimpl->_max = newmax;
         }
         if (pimpl->_max < pimpl->_min) {
-            pimpl->_result = NO;
+            pimpl->_result = NO_INTERSECTION;
             return pimpl->_result;
         }
         to_infinity = false;
@@ -360,7 +360,7 @@ bool do_intersect_ray_2(
     const Bbox_2 &box, double x, double y, double dx, double dy)
 {
     Bbox_2_Ray_2_pair pair(box, x, y, dx, dy);
-    return pair.intersection_type() != Bbox_2_Ray_2_pair::NO;
+    return pair.intersection_type() != Bbox_2_Ray_2_pair::NO_INTERSECTION;
 }
 
 CGAL_END_NAMESPACE

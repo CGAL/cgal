@@ -52,7 +52,7 @@ struct Pointlist_2_ {
 template <class K>
 class Triangle_2_Triangle_2_pair {
 public:
-    enum Intersection_results {NO, POINT, SEGMENT, TRIANGLE, POLYGON};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, TRIANGLE, POLYGON};
                         Triangle_2_Triangle_2_pair() ;
                         Triangle_2_Triangle_2_pair(
                                 typename K::Triangle_2 const *trian1,
@@ -83,7 +83,7 @@ protected:
 // {
 //     typedef Triangle_2_Triangle_2_pair<R> pair_t;
 //     pair_t pair(&p1, &p2);
-//     return pair.intersection_type() != pair_t::NO;
+//     return pair.intersection_type() != pair_t::NO_INTERSECTION;
 // }
 
 
@@ -220,7 +220,7 @@ Triangle_2_Triangle_2_pair<K>::intersection_type() const
 // The non const this pointer is used to cast away const.
     _known = true;
     if (!do_overlap(_trian1->bbox(), _trian2->bbox())) {
-        _result = NO;
+        _result = NO_INTERSECTION;
         return _result;
     }
     _init_list(_pointlist, *_trian1);
@@ -247,7 +247,7 @@ Triangle_2_Triangle_2_pair<K>::intersection_type() const
     }
     switch (_pointlist.size) {
     case 0:
-        _result = NO;
+        _result = NO_INTERSECTION;
         break;
     case 1:
         _result = POINT;
@@ -364,7 +364,7 @@ intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr1,
     typedef Triangle_2_Triangle_2_pair<K> is_t;
     is_t ispair(&tr1, &tr2);
     switch (ispair.intersection_type()) {
-    case is_t::NO:
+    case is_t::NO_INTERSECTION:
     default:
         return Object();
     case is_t::POINT: {

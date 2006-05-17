@@ -40,7 +40,7 @@ namespace CGALi {
 template <class K>
 class Segment_2_Line_2_pair {
 public:
-    enum Intersection_results {NO, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Segment_2_Line_2_pair() ;
     Segment_2_Line_2_pair(typename K::Segment_2 const *seg,
                             typename K::Line_2 const *line);
@@ -65,7 +65,7 @@ inline bool do_intersect(
 {
     typedef Segment_2_Line_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+    return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 template <class K>
@@ -77,7 +77,7 @@ intersection(const typename CGAL_WRAP(K)::Segment_2 &seg,
     typedef Segment_2_Line_2_pair<K> is_t;
     is_t ispair(&seg, &line);
     switch (ispair.intersection_type()) {
-    case is_t::NO:
+    case is_t::NO_INTERSECTION:
     default:
         return Object();
     case is_t::POINT: {
@@ -117,7 +117,7 @@ inline bool do_intersect(
 {
     typedef Line_2_Segment_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+    return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 
@@ -150,13 +150,13 @@ Segment_2_Line_2_pair<K>::intersection_type() const
     const typename K::Line_2 &l1 = _seg->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO:
-        _result = NO;
+    case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+        _result = NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::POINT:
         linepair.intersection(_intersection_point);
         _result = (_seg->collinear_has_on(_intersection_point) )
-                ? POINT : NO;
+                ? POINT : NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::LINE:
         _result = SEGMENT;

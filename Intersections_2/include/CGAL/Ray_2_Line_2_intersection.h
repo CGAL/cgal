@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -41,7 +40,7 @@ namespace CGALi {
 template <class K>
 class Ray_2_Line_2_pair {
 public:
-    enum Intersection_results {NO, POINT, RAY};
+    enum Intersection_results {NO_INTERSECTION, POINT, RAY};
     Ray_2_Line_2_pair() ;
     Ray_2_Line_2_pair(typename K::Ray_2 const *ray,
 		      typename K::Line_2 const *line);
@@ -66,7 +65,7 @@ inline bool do_intersect(
 {
     typedef Ray_2_Line_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+    return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 
@@ -80,7 +79,7 @@ intersection(const typename CGAL_WRAP(K)::Ray_2 &ray,
     typedef Ray_2_Line_2_pair<K> is_t;
     is_t ispair(&ray, &line);
     switch (ispair.intersection_type()) {
-    case is_t::NO:
+    case is_t::NO_INTERSECTION:
     default:
         return Object();
     case is_t::POINT: {
@@ -122,7 +121,7 @@ inline bool do_intersect(
 {
     typedef Line_2_Ray_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+    return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 
@@ -155,13 +154,13 @@ Ray_2_Line_2_pair<K>::intersection_type() const
     const typename K::Line_2 &l1 = _ray->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO:
-        _result = NO;
+    case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+        _result = NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::POINT:
         linepair.intersection(_intersection_point);
         _result = (_ray->collinear_has_on(_intersection_point) ) ?
-                POINT : NO;
+                POINT : NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::LINE:
         _result = RAY;

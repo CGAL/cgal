@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -42,7 +41,7 @@ namespace CGALi {
 template <class K>
 class Ray_2_Segment_2_pair {
 public:
-    enum Intersection_results {NO, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Ray_2_Segment_2_pair() ;
     Ray_2_Segment_2_pair(typename K::Ray_2 const *ray,
 			 typename K::Segment_2 const *line);
@@ -67,7 +66,7 @@ inline bool do_intersect(const typename CGAL_WRAP(K)::Ray_2 &p1,
 {
     typedef Ray_2_Segment_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+    return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 template <class K>
@@ -104,19 +103,19 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
     // The non const this pointer is used to cast away const.
     _known = true;
 //    if (!do_overlap(_ray->bbox(), _seg->bbox()))
-//        return NO;
+//        return NO_INTERSECTION;
     const typename K::Line_2 &l1 = _ray->supporting_line();
     const typename K::Line_2 &l2 = _seg->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, &l2);
     switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO:
-        _result = NO;
+    case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+        _result = NO_INTERSECTION;
         return _result;
     case Line_2_Line_2_pair<K>::POINT:
         linepair.intersection(_intersection_point);
         _result = (_ray->collinear_has_on(_intersection_point)
                 && _seg->collinear_has_on(_intersection_point) )
-            ? POINT :  NO;
+            ? POINT :  NO_INTERSECTION;
         return _result;
     case Line_2_Line_2_pair<K>::LINE: {
         typedef typename K::RT RT;
@@ -136,7 +135,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
             }
             if (_ray->direction().to_vector().x() > FT(0)) {
                 if (maxpt->x() < start2.x()) {
-                    _result = NO;
+                    _result = NO_INTERSECTION;
                     return _result;
                 }
                 if (maxpt->x() == start2.x()) {
@@ -155,7 +154,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                 return _result;
             } else {
                 if (minpt->x() > start2.x()) {
-                    _result = NO;
+                    _result = NO_INTERSECTION;
                     return _result;
                 }
                 if (minpt->x() == start2.x()) {
@@ -184,7 +183,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
             }
             if (_ray->direction().to_vector().y() > FT(0)) {
                 if (maxpt->y() < start2.y()) {
-                    _result = NO;
+                    _result = NO_INTERSECTION;
                     return _result;
                 }
                 if (maxpt->y() == start2.y()) {
@@ -203,7 +202,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                 return _result;
             } else {
                 if (minpt->y() > start2.y()) {
-                    _result = NO;
+                    _result = NO_INTERSECTION;
                     return _result;
                 }
                 if (minpt->y() == start2.y()) {
@@ -266,7 +265,7 @@ intersection(const typename CGAL_WRAP(K)::Ray_2 &ray,
     typedef Ray_2_Segment_2_pair<K> is_t;
     is_t ispair(&ray, &seg);
     switch (ispair.intersection_type()) {
-    case is_t::NO:
+    case is_t::NO_INTERSECTION:
     default:
         return Object();
     case is_t::POINT: {

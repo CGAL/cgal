@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -40,7 +39,7 @@ namespace CGALi {
 template <class K>
 class Line_2_Iso_rectangle_2_pair {
 public:
-    enum Intersection_results {NO, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Line_2_Iso_rectangle_2_pair() ;
     Line_2_Iso_rectangle_2_pair(typename K::Line_2 const *pt,
                             typename K::Iso_rectangle_2 const *iso);
@@ -67,7 +66,7 @@ inline bool do_intersect(const typename CGAL_WRAP(K)::Line_2 &p1,
 {
     typedef Line_2_Iso_rectangle_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO;
+    return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 template <class K>
@@ -121,12 +120,12 @@ Line_2_Iso_rectangle_2_pair<K>::intersection_type() const
 
         if (_dir.homogeneous(i) == RT(0)) {
             if (*ref_point_it < *isomin_it) {
-                _result = NO;
-                return NO;
+                _result = NO_INTERSECTION;
+                return NO_INTERSECTION;
             }
             if (*ref_point_it > *isomax_it) {
-                _result = NO;
-                return NO;
+                _result = NO_INTERSECTION;
+                return NO_INTERSECTION;
             }
         } else {
             FT newmin, newmax;
@@ -150,8 +149,8 @@ Line_2_Iso_rectangle_2_pair<K>::intersection_type() const
                 if (newmax < _max)
                     _max = newmax;
                 if (_max < _min) {
-                    _result = NO;
-                    return NO;
+                    _result = NO_INTERSECTION;
+                    return NO_INTERSECTION;
                 }
             }
             all_values = false;
@@ -212,7 +211,7 @@ intersection(const typename CGAL_WRAP(K)::Line_2 &line,
     typedef Line_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&line, &iso);
     switch (ispair.intersection_type()) {
-    case is_t::NO:
+    case is_t::NO_INTERSECTION:
     default:
         return Object();
     case is_t::POINT: {
