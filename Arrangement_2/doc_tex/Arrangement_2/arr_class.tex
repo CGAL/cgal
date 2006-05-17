@@ -80,21 +80,21 @@ in the rest of this chapter.
 
 typedef CGAL::Quotient<CGAL::MP_Float>     Number_type;
 typedef CGAL::Cartesian<Number_type>       Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel> Traits;
-typedef Traits::Point_2                    Point_2;
-typedef Traits::X_monotone_curve_2         Segment_2;
-typedef CGAL::Arrangement_2<Traits>        Arrangement_2;
+typedef CGAL::Arr_segment_traits_2<Kernel> Traits_2;
+typedef Traits_2::Point_2                  Point_2;
+typedef Traits_2::X_monotone_curve_2       Segment_2;
+typedef CGAL::Arrangement_2<Traits_2>      Arrangement_2;
 
 int main()
 \{
-  Arrangement_2       arr;
-  X_monotone_curve_2  cv[3];
-  Point_2             p1 (0, 0), p2 (0, 4), p3 (4, 0);
+  Arrangement_2   arr;
+  Segment_2       cv[3];
+  Point_2         p1 (0, 0), p2 (0, 4), p3 (4, 0);
  
   cv[0] = Segment_2 (p1, p2);
   cv[1] = Segment_2 (p2, p3);
   cv[2] = Segment_2 (p3, p1);
-  insert(arr, &cv[0], &cv[3]);
+  insert (arr, &cv[0], &cv[3]);
 
   return (0);
 \}

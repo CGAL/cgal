@@ -55,11 +55,31 @@ protected:
  
   typedef Empty_visitor<Traits,
                         Subcurve,
-                        Event >                        Base;
+                        Event>                         Base;
  
   typedef typename Base::SubCurveIter                  SubCurveIter;
   typedef typename Base::SubCurveRevIter               SubCurveRevIter;
   typedef typename Base::SL_iterator                   SL_iterator;
+
+  typedef Unique_hash_map<Halfedge_handle, 
+                          std::list<unsigned int> >    Halfedge_indexes_map;
+  typedef typename Halfedge_indexes_map::data_type     Indexes_list;
+
+protected:
+          
+  Arrangement*               m_arr;
+  Arr_accessor<Arrangement>  m_arr_access;
+  unsigned int               m_sc_counter;  // Counter for subcurves that may
+                                            // represent a hole (the upper
+                                            // subcurves that emarge from event
+                                            // points with only right curves). 
+
+  std::vector<Halfedge_handle>
+                             m_sc_he_table; // A table that maps a subcurve
+                                            // index to its halfedhe handle,
+                                            // directed from right ot left.
+
+  Halfedge_indexes_map       m_he_indexes_table;
 
 private:
 
@@ -200,7 +220,7 @@ public:
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->twin()->direction() == LARGER);
-      std::list<unsigned int>& list_ref = m_he_indexes_table[res->twin()];
+      Indexes_list& list_ref = m_he_indexes_table[res->twin()];
       list_ref.clear();
       list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
     }
@@ -223,7 +243,7 @@ public:
       if(sc->has_haldedges_indexes())
       {
         CGAL_assertion(res->direction() == LARGER);
-        std::list<unsigned int>& list_ref = m_he_indexes_table[res];
+        Indexes_list& list_ref = m_he_indexes_table[res];
         list_ref.clear();
         list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
       }
@@ -254,7 +274,7 @@ public:
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->direction() == LARGER);
-      std::list<unsigned int>& list_ref = m_he_indexes_table[res];
+      Indexes_list& list_ref = m_he_indexes_table[res];
       list_ref.clear();
       list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
     }
@@ -270,7 +290,7 @@ public:
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->twin()->direction() == LARGER);
-      std::list<unsigned int>& list_ref = m_he_indexes_table[res->twin()];
+      Indexes_list& list_ref = m_he_indexes_table[res->twin()];
       list_ref.clear();
       list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
     }
@@ -288,18 +308,18 @@ public:
 
   void relocate_holes_in_new_face(Halfedge_handle he)
   {
-    const Unique_hash_map<Halfedge_handle, std::list<unsigned int> >& 
-      const_he_indexes_table = m_he_indexes_table;
-    Face_handle new_face = he->face();
-    Halfedge_handle curr_he = he;
+    // We use a constant indexes map so no new entries are added there.
+    const Halfedge_indexes_map& const_he_indexes_table = m_he_indexes_table;
+    Face_handle                 new_face = he->face();
+    Halfedge_handle             curr_he = he;
+
     do
     {
       // we are intreseted only in halfedges directed from right to left.
       if(curr_he->direction() == LARGER)
       {
-        const std::list<unsigned int>&    indexes_list = 
-                                         const_he_indexes_table[curr_he];
-        std::list<unsigned int>::const_iterator itr;
+        const Indexes_list& indexes_list = const_he_indexes_table[curr_he];
+        typename Indexes_list::const_iterator itr;
 
         for (itr = indexes_list.begin();
              itr != indexes_list.end();
@@ -322,6 +342,7 @@ public:
     while(curr_he != he);
 
   }
+
 private:
 
   /*!
@@ -357,20 +378,6 @@ private:
     m_sc_he_table[i] = he;
   }
 
-
-
-protected:
-          
-  Arrangement*               m_arr;
-  Arr_accessor<Arrangement>  m_arr_access;
-  // counter for Subcurves that may  represent a hole (the upper sc 
-  //emarge from  an event with only right curves
-  unsigned int               m_sc_counter; 
-  std::vector<Halfedge_handle>  m_sc_he_table;  //a table that maps index of a 
-                                             // subcurve to his halfedhe handle
-                                             // directed from right ot left.
-
-  Unique_hash_map<Halfedge_handle, std::list<unsigned int> >  m_he_indexes_table;
 };
 
 CGAL_END_NAMESPACE

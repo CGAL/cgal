@@ -442,8 +442,7 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
    two other end-vertices of the two edges are associated with \ccc{c}'s
    endpoints.}}
 
-\ccMethod{Face_handle \ccHtmlNoLinksFrom{remove_edge}
-                                  (Halfedge_handle e,
+\ccMethod{Face_handle remove_edge (Halfedge_handle e,
                                    bool remove_source = true,
                                    bool remove_target = true);}
   {removes the edge \ccStyle{e} from the arrangement. Since the \ccc{e} may
@@ -458,7 +457,7 @@ $\bullet$ {\sl Modifying Vertices and Edges:}
 \ccHeading{Miscellaneous}
 % =======================
 
-\ccMethod{bool \ccHtmlNoLinksFrom{is_valid}() const;}
+\ccMethod{bool is_valid () const;}
    {returns \ccc{true} if \ccVar\ represents a valid instance of 
    \ccClassTemplateName. In particular, the functions checks the topological 
     structure of the arrangement and assures that it is valid. In addition, 
