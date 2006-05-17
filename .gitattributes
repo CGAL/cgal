@@ -413,6 +413,8 @@ Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S97-TAUCSFREEBSDATLAS -text
 Installation/config/support/S98-TAUCSIRIX32 -text
 Installation/config/support/S99-TAUCSIRIX64 -text
+Installation/demo/GNUmakefile -text
+Installation/examples/GNUmakefile -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
