@@ -1,7 +1,6 @@
 #ifndef CONIC_READER_H
 #define CONIC_READER_H
 
-#include <CGAL/Bench_parse_args.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,6 +8,7 @@
 #include <string>
 
 #include "number_type.h"
+#include "Option_parser.h"
 
 template <class Traits>
 class Conic_reader
@@ -28,7 +28,7 @@ public:
   
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,
-                CGAL::Bench_parse_args::FormatId format, CGAL::Bbox_2 & bbox)
+                Option_parser::Format_code format, CGAL::Bbox_2 & bbox)
   {
     Curve_2 cv;
     char dummy[256];

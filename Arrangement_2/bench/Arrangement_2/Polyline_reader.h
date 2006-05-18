@@ -3,13 +3,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Bench_parse_args.h>
 #include <iostream>
 #include <fstream>
 #include <list>
 
 #include "number_type.h"
 #include "Input_traits.h"
+#include "Option_parser.h"
 
 /*! Convert WNT to int. Used to calculate the bounding box */
 template <class T_NT>
@@ -41,8 +41,8 @@ public:
 
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,
-               CGAL::Bench_parse_args::FormatId format,
-               CGAL::Bbox_2 & bbox)
+                Option_parser::Format_code format,
+                CGAL::Bbox_2 & bbox)
   {
     std::ifstream file(filename);
 
@@ -59,15 +59,15 @@ public:
       points.clear();
       for (unsigned int j = 0; j < num_points; j++) {
         WNT x, y;
-        if (format == CGAL::Bench_parse_args::FORMAT_RAT) {
+        if (format == Option_parser::FORMAT_RATIONAL) {
           Input_traits<WNT>::Input_rat_type ix, iy;
           file >> ix >> iy;
           x = ix; y = iy;
-        } else if (format == CGAL::Bench_parse_args::FORMAT_INT) {
+        } else if (format == Option_parser::FORMAT_INT) {
           Input_traits<WNT>::Input_int_type ix, iy;
           file >> ix >> iy;
           x = (WNT) ix; y = (WNT) iy;
-        } else if (format == CGAL::Bench_parse_args::FORMAT_FLT) {
+        } else if (format == Option_parser::FORMAT_FLOAT) {
           Input_traits<WNT>::Input_float_type ix, iy;
           file >> ix >> iy;
           x = (WNT) ix; y = (WNT) iy;

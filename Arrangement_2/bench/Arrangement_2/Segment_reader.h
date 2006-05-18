@@ -3,13 +3,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Bench_parse_args.h>
 #include <iostream>
 #include <fstream>
 #include <list>
 
 #include "number_type.h"
 #include "Input_traits.h"
+#include "Option_parser.h"
 
 template <class Traits>
 class Segment_reader
@@ -22,7 +22,7 @@ public:
 
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,
-                CGAL::Bench_parse_args::FormatId format,
+                Option_parser::Format_code format,
                 CGAL::Bbox_2 & bbox)
   {
     std::ifstream inp(filename);
@@ -36,15 +36,15 @@ public:
     int i;
     for (i = 0; i < count; i++) {
       WNT x0, y0, x1, y1;
-      if (format == CGAL::Bench_parse_args::FORMAT_RAT) {
+      if (format == Option_parser::FORMAT_RATIONAL) {
         Input_traits<WNT>::Input_rat_type ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
         x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
-      } else if (format == CGAL::Bench_parse_args::FORMAT_INT) {
+      } else if (format == Option_parser::FORMAT_INT) {
         Input_traits<WNT>::Input_int_type ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
         x0 = (WNT) ix0; y0 = (WNT) iy0; x1 = (WNT) ix1; y1 = (WNT) iy1;
-      } else if (format == CGAL::Bench_parse_args::FORMAT_FLT) {
+      } else if (format == Option_parser::FORMAT_FLOAT) {
         Input_traits<WNT>::Input_float_type ix0, iy0, ix1, iy1;
         inp >> ix0 >> iy0 >> ix1 >> iy1;
         x0 = (WNT) ix0; y0 = (WNT) iy0; x1 = (WNT) ix1; y1 = (WNT) iy1;

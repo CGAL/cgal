@@ -131,8 +131,8 @@ endif
 
 BASENAME = bench
 INSTALLDIR0 = $(BINDIR)
-# CPPSOURCES = $(BASENAME).C
 CPPSOURCES = benchArr.C
+CPPSOURCES+= Option_parser.C
 TARGET0 = $(BASENAME)
 # LCPPDEFS+= -DVERBOSE
 
@@ -351,7 +351,6 @@ endif
 
 # Put is all together:
 TARGET0 := $(TARGET0)$(EXEFILESUFFIX)
-LOBJDIR := $(LOBJDIR)_$(COMPILER)$(COMPILER_VER)
 
 LCPPINCS = -I.
 LCPPINCS+= -I$(BASEDIR)
@@ -402,6 +401,7 @@ LLDLIBS+= $(CGALLIB) $(LEDALIBS) $(CGALQTLIB) $(QTLIB)
 LLDLIBS+= $(GMPLIBS)
 # LLDLIBS+= -lX11
 LLDLIBS+= -lm
+LLDLIBS+= -lboost_program_options
 LLDOPTS+= $(CGALLIBOPTS) $(CGALLIBDIRS)
 
 include $(ROOT)/include/make/cgalrul.mak

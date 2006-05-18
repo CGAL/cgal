@@ -50,6 +50,8 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#unset
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#unset
+Arrangement_2/bench/Arrangement_2/Option_parser.C -text
+Arrangement_2/bench/Arrangement_2/Option_parser.h -text
 Arrangement_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
 Arrangement_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
 Arrangement_2/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#unset

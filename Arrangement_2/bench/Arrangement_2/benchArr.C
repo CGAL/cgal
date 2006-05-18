@@ -193,8 +193,6 @@ enum MaxFilesNumber {
 
 #include <CGAL/Bench.h>
 #include <CGAL/Bench.C>
-#include <CGAL/Bench_parse_args.h>
-#include <CGAL/Bench_parse_args.C>
 
 #if defined(USE_CGAL_WINDOW)
 #include <CGAL/IO/Window_stream.h>
@@ -206,6 +204,8 @@ enum MaxFilesNumber {
 #include <stdlib.h>
 #include <iostream>
 #include <list>
+
+#include "Option_parser.h"
 
 #include "Point_reader.h"       //for locate and not insert
 
@@ -347,9 +347,9 @@ typedef CGAL::Arr_landmarks_point_location<Arr,Nearest_neighbor>
 typedef CGAL::Arr_triangle_point_location<Arr>          Triangle_point_location;
 #endif
 
-typedef CGAL::Bench_parse_args::TypeId                  Type_id;
-typedef CGAL::Bench_parse_args::StrategyId              Strategy_id;
-typedef CGAL::Bench_parse_args::FormatId                Format_id;
+typedef Option_parser::Type_code        Type_code;
+typedef Option_parser::Strategy_code    Strategy_code;
+typedef Option_parser::Format_code      Format_code;
 
 // Window stream:
 #if defined(USE_CGAL_WINDOW)
@@ -389,7 +389,7 @@ public:
 
   /*! Constructor */
   Basic_arr() :
-    m_filename(0), m_verbose(false), m_postscript(false),
+    m_filename(0), m_verbose_level(0), m_postscript(false),
     m_bbox(0.0, 0.0, 0.0, 0.0),
     m_width(1024), m_height(1024)
   { }
@@ -421,7 +421,8 @@ public:
     int rc = reader.read_data(m_filename, std::back_inserter(m_curve_list),
                               m_format, m_bbox);
     if (rc < 0) return rc;
-    if (m_verbose) std::cout << m_curve_list.size() << " curves" << std::endl;
+    if (m_verbose_level > 0)
+      std::cout << m_curve_list.size() << " curves" << std::endl;
 
     return 0;
   }
@@ -430,18 +431,18 @@ public:
   void clean() { m_curve_list.clear(); }
   void sync(){}
 
-  void set_format(Format_id fmt) { m_format = fmt; }
+  void set_format(Format_code fmt) { m_format = fmt; }
   void set_file_name(const char * filename, int file_index=0) 
   { m_filename = filename; }
-  void set_verbose(const bool verbose) { m_verbose = verbose; }
+  void set_verbose_level(const unsigned int level) { m_verbose_level = level; }
   void set_postscript(const bool postscript) { m_postscript = postscript; }
 
 protected:
   const char * m_filename;
   Curve_list m_curve_list;
-  bool m_verbose;
+  unsigned int m_verbose_level;
   bool m_postscript;
-  Format_id m_format;
+  Format_code m_format;
   CGAL::Bbox_2 m_bbox;
 
   int m_width, m_height;
@@ -469,7 +470,7 @@ public:
     for (i = m_curve_list.begin(); i != m_curve_list.end(); ++i)
       insert_curve(arr, *i, strategy);
     
-    if (m_verbose) {      //print to cout
+    if (m_verbose_level > 0) {      //print to cout
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
       std::cout << "# of halfedges: " << arr.number_of_halfedges() << std::endl;
@@ -508,10 +509,10 @@ class Aggregate_arr : public Basic_arr {
 public:
   void op()
   {
-    if (m_verbose) std::cout << "Inserting Aggregate" << std::endl;
+    if (m_verbose_level > 0) std::cout << "Inserting Aggregate" << std::endl;
     Arr arr;
     insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
-    if (m_verbose) {
+    if (m_verbose_level > 0) {
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
       std::cout << "# of halfedges: " << arr.number_of_halfedges() << std::endl;
@@ -536,7 +537,7 @@ public:
   {
     Arr arr;
     insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
-    if (m_verbose) {
+    if (m_verbose_level > 0) {
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << arr.number_of_vertices() << std::endl;
       std::cout << "# of halfedges: " << arr.number_of_halfedges() << std::endl;
@@ -652,15 +653,15 @@ typedef CGAL::Bench<Display_arr>                Dis_arr_bench;
 /*! */
 template <class Bench_inst, class Benchable>
 void run_bench(Bench_inst & benchInst, Benchable & benchable,
-               const char * fullname, Format_id format,
-               int samples, int iterations, bool verbose,
+               const char * fullname, Format_code format,
+               int samples, int iterations, unsigned int verbose_level,
                bool postscript = false, 
                const char * fullname2 = 0)
 {
   //set some variable
   benchable.set_format(format);
   benchable.set_file_name(fullname);
-  benchable.set_verbose(verbose);
+  benchable.set_verbose_level(verbose_level);
   benchable.set_postscript(postscript);
   if (fullname2) benchable.set_file_name(fullname2, 1);
   
@@ -671,195 +672,194 @@ void run_bench(Bench_inst & benchInst, Benchable & benchable,
   benchInst();
 
   //cout
-  if (verbose) std::cout << "(" << benchInst.get_samples() << ") "
-                         << std::endl;
+  if (verbose_level > 0) std::cout << "(" << benchInst.get_samples() << ") "
+                                   << std::endl;
 }
 
 /* */
 int main(int argc, char * argv[])
 {
-  // get arguments:
-  if ((argc < 2)) {
-    std::cout << "Usage: "<< argv[0] <<" [OPTION] input_filename"<<std::endl;
-    std::cout << "Try `"<<argv[0]<<" -h` for more information"<<std::endl;
-    exit(-1);
+  Option_parser option_parser;
+  std::cout << "10\n";
+  try {
+    option_parser(argc, argv);
+  } catch(Option_parser::Generic_option_exception & /* e */) {
+    return 0;
+  } catch(std::exception & e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
-  
-  //get arguments from command line
-  CGAL::Bench_parse_args parse_args(argc, argv);
-  int rc = parse_args.parse();
-  if (rc > 0) return 0;
-  if (rc < 0) return rc;
-  
-  bool verbose = parse_args.get_verbose();
-  unsigned int type_mask = parse_args.get_type_mask();
-  unsigned int strategy_mask = parse_args.get_strategy_mask();
-  Format_id format = parse_args.get_input_format();
-  int samples = parse_args.get_samples();
-  int iterations = parse_args.get_iterations();
-  int seconds = parse_args.get_seconds();
-  bool printHeader = parse_args.get_print_header();
-  int nameLength = parse_args.get_name_length();
-  unsigned int files_number = parse_args.get_files_number();
-  //  std::cout << "files_number: " << files_number << std::endl;
-  const char * filename[MAX_FILES_NUMBER];
-  const char * fullname[MAX_FILES_NUMBER];
+
+  unsigned int verbose_level = option_parser.get_verbose_level();
+  unsigned int type_mask = option_parser.get_type_mask();
+  unsigned int strategy_mask = option_parser.get_strategy_mask();
+  Format_code format = option_parser.get_input_format();
+  int samples = option_parser.get_samples();
+  int iterations = option_parser.get_iterations();
+  int seconds = option_parser.get_seconds();
+  bool printHeader = option_parser.get_print_header();
+  int nameLength = option_parser.get_name_length();
+  unsigned int files_number = option_parser.get_number_files();
   for (unsigned int i = 0; i < files_number; ++i) {
-    filename[i] = parse_args.get_file_name(i);
-    fullname[i] = parse_args.get_full_name(i);
-    if (verbose) {
-      std::cout << "filename: " << filename[i] << std::endl;
-      std::cout << "fullname: " << fullname[i] << std::endl;
+    if (verbose_level > 0) {
+      std::cout << "filename: " << option_parser.get_file_name(i).c_str()
+                << std::endl
+                << "fullname: " << option_parser.get_full_name(i).c_str()
+                << std::endl;
     }
   }
 
-  bool postscript = parse_args.get_postscript();
+  bool postscript = option_parser.get_postscript();
   if (postscript) samples = 1;
 
-  if (!filename[0] || !fullname[0]) return -1;
+  const char * file_name = option_parser.get_file_name(0).c_str();
+  const char * full_name = option_parser.get_full_name(0).c_str();
+  if (!file_name || !full_name) return -1;
 
   CGAL::Bench_base::set_name_length(nameLength);
   if (printHeader) CGAL::Bench_base::print_header();
   //end parameters from command line
 
   //start bench
-  if (verbose) std::cout << "start bench " << std::endl;
+  if (verbose_level > 0) std::cout << "start bench " << std::endl;
 
   //general definitions
-  Type_id type_id;           //operation we want to apply
-  Strategy_id strategy_id;   //point location strategy 
+  Type_code type_code;           // operation we want to apply
+  Strategy_code strategy_code;   // point location strategy 
   
-  if (verbose) {
+  if (verbose_level > 0) {
     std::cout << "type_mask = "<< type_mask << std::endl;
     std::cout << "strategy_mask = " << strategy_mask  << std::endl;
   }
 
-  // Construct Incrementaly  (only if type_id == incremental)
-  type_id = CGAL::Bench_parse_args::TYPE_INCREMENT;
-  if (type_mask & (0x1 << type_id)) {
-    if (verbose) std::cout << "TYPE_INCREMENT " << std::endl;
+  // Construct Incrementaly  (only if type_code == incremental)
+  type_code = Option_parser::TYPE_INCREMENT;
+  if (type_mask & (0x1 << type_code)) {
+    if (verbose_level > 0) std::cout << "TYPE_INCREMENT " << std::endl;
 
 #if defined(RIC_SUPPORTED)
     // Ric point location:
-    strategy_id = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
-    if (strategy_mask & (0x1 << strategy_id)) {
+    strategy_code = Option_parser::STRATEGY_TRAPEZOIDAL;
+    if (strategy_mask & (0x1 << strategy_code)) {
       std::string name =
-        std::string(parse_args.get_type_name(type_id)) + " " +
-        std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+        std::string(option_parser.get_type_name(type_code)) + " " +
+        std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
         NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
       Trap_inc_arr_bench benchInst(name, seconds, false);
       Trap_inc_arr & benchable = benchInst.get_benchable();
       run_bench<Trap_inc_arr_bench,Trap_inc_arr>(benchInst, benchable,
-                                                 fullname[0], format,
+                                                 full_name, format,
                                                  samples, iterations,
-                                                 verbose, postscript);
+                                                 verbose_level, postscript);
     }
 #endif
     
     // Naive point location:
-    strategy_id = CGAL::Bench_parse_args::STRATEGY_NAIVE;
-    if (strategy_mask & (0x1 << strategy_id)) {
+    strategy_code = Option_parser::STRATEGY_NAIVE;
+    if (strategy_mask & (0x1 << strategy_code)) {
       std::string name =
-        std::string(parse_args.get_type_name(type_id)) + " " +
-        std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+        std::string(option_parser.get_type_name(type_code)) + " " +
+        std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " +
-        NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
+        NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
       Naive_inc_arr_bench benchInst(name, seconds, false);
       Naive_inc_arr & benchable = benchInst.get_benchable();
       run_bench<Naive_inc_arr_bench,Naive_inc_arr>(benchInst, benchable,
-                                                   fullname[0], format,
+                                                   full_name, format,
                                                    samples, iterations,
-                                                   verbose, postscript);
+                                                   verbose_level, postscript);
     }
     
     // Walk point location:
-    strategy_id = CGAL::Bench_parse_args::STRATEGY_WALK;
-    if (strategy_mask & (0x1 << strategy_id)) {
+    strategy_code = Option_parser::STRATEGY_WALK;
+    if (strategy_mask & (0x1 << strategy_code)) {
       std::string name =
-        std::string(parse_args.get_type_name(type_id)) + " " +
-        std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+        std::string(option_parser.get_type_name(type_code)) + " " +
+        std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " +
-        NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
+        NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
       Walk_inc_arr_bench benchInst(name, seconds, false);
       Walk_inc_arr & benchable = benchInst.get_benchable();
       run_bench<Walk_inc_arr_bench,Walk_inc_arr>(benchInst, benchable,
-                                                 fullname[0], format,
+                                                 full_name, format,
                                                  samples, iterations,
-                                                 verbose, postscript);
+                                                 verbose_level, postscript);
     }
     
 #if defined(LANDMARK_SUPPORTED)
     // Landmarks point location:
-    strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
-    if (strategy_mask & (0x1 << strategy_id)) {
+    strategy_code = Option_parser::STRATEGY_LANDMARKS;
+    if (strategy_mask & (0x1 << strategy_code)) {
       std::string name =
-        std::string(parse_args.get_type_name(type_id)) + " " +
-        std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+        std::string(option_parser.get_type_name(type_code)) + " " +
+        std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " +
-        NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
+        NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
       Landmarks_inc_arr_bench benchInst(name, seconds, false);
       Landmarks_inc_arr & benchable = benchInst.get_benchable();
       run_bench<Landmarks_inc_arr_bench,Landmarks_inc_arr>(benchInst, benchable,
-                                                           fullname[0], format,
+                                                           full_name, format,
                                                            samples, iterations,
-                                                           verbose, postscript);
+                                                           verbose_level,
+                                                           postscript);
     }
 #endif
     
 #if defined(TRIANGLE_SUPPORTED)
     // Triangle point location:
-    strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
-    if (strategy_mask & (0x1 << strategy_id)) {
+    strategy_code = Option_parser::STRATEGY_TRIANGLE;
+    if (strategy_mask & (0x1 << strategy_code)) {
       std::string name =
-        std::string(parse_args.get_type_name(type_id)) + " " +
-        std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+        std::string(option_parser.get_type_name(type_code)) + " " +
+        std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
-        NUMBER_TYPE +" " + " (" + std::string(filename[0]) + ")";
+        NUMBER_TYPE +" " + " (" + std::string(file_name) + ")";
       Triangle_inc_arr_bench benchInst(name, seconds, false);
       Triangle_inc_arr & benchable = benchInst.get_benchable();
       run_bench<Triangle_inc_arr_bench,Triangle_inc_arr>(benchInst, benchable,
-                                                         fullname[0], format,
+                                                         full_name, format,
                                                          samples, iterations,
-                                                         verbose, postscript);
+                                                         verbose_level,
+                                                         postscript);
     }
 #endif
   }
   
   // Construct Aggregately
-  type_id = CGAL::Bench_parse_args::TYPE_AGGREGATE;
-  if (type_mask & (0x1 << type_id)) {
-    if (verbose) std::cout << "TYPE_AGGREGATE " << std::endl;
+  type_code = Option_parser::TYPE_AGGREGATE;
+  if (type_mask & (0x1 << type_code)) {
+    if (verbose_level > 0) std::cout << "TYPE_AGGREGATE " << std::endl;
     std::string name =
-      std::string(parse_args.get_type_name(type_id)) + " " +
+      std::string(option_parser.get_type_name(type_code)) + " " +
       TRAITS_TYPE + " " + KERNEL_TYPE + " " +
-      NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
+      NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
     Agg_arr_bench benchInst(name, seconds, false);
     Aggregate_arr & benchable = benchInst.get_benchable();
     run_bench<Agg_arr_bench,Aggregate_arr>(benchInst, benchable,
-                                           fullname[0], format,
+                                           full_name, format,
                                            samples, iterations,
-                                           verbose, postscript);
+                                           verbose_level, postscript);
   }
 
   // Construct and Display
-  type_id = CGAL::Bench_parse_args::TYPE_DISPLAY;
-  if (type_mask & (0x1 << type_id)) {
+  type_code = Option_parser::TYPE_DISPLAY;
+  if (type_mask & (0x1 << type_code)) {
 #if !defined(USE_CGAL_WINDOW)
     QApplication app(argc, argv);
     App = &app;
 #endif
-    if (verbose) std::cout << "TYPE_DISPLAY " << std::endl;
+    if (verbose_level > 0) std::cout << "TYPE_DISPLAY " << std::endl;
     std::string name =
-      std::string(parse_args.get_type_name(type_id)) + " " +
+      std::string(option_parser.get_type_name(type_code)) + " " +
       TRAITS_TYPE + " " + KERNEL_TYPE + " " +
-      NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
+      NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
     Dis_arr_bench benchInst(name, seconds, false);
     Display_arr & benchable = benchInst.get_benchable();
     run_bench<Dis_arr_bench,Display_arr>(benchInst, benchable,
-                                         fullname[0], format,
+                                         full_name, format,
                                          samples, iterations,
-                                         verbose, postscript);
+                                         verbose_level, postscript);
   }
   
   return 0;

@@ -1,0 +1,230 @@
+#ifndef OPTION_PARSER_H
+#define OPTION_PARSER_H
+
+#include <string>
+#include <vector>
+#include <boost/program_options.hpp>
+
+#include "CGAL/Dir_search.h"
+
+#define DEF_WIN_WIDTH   512
+#define DEF_WIN_HEIGHT  512
+
+namespace po = boost::program_options;
+
+class Option_parser {
+public:
+  /*! Format code */
+  enum Format_code {
+    FORMAT_INT = 0,
+    FORMAT_FLOAT,
+    FORMAT_RATIONAL,
+    FORMAT_I,
+    FORMAT_F,
+    FORMAT_R
+  };
+
+  /*! Type code */
+  enum Type_code {
+    TYPE_INCREMENT = 0,
+    TYPE_AGGREGATE,
+    TYPE_POINT_LOCATION,
+    TYPE_DISPLAY,
+    TYPE_I,
+    TYPE_A,
+    TYPE_L,
+    TYPE_D
+  };
+
+  /*! Strategy code */
+  enum Strategy_code {
+    STRATEGY_RIC = 0,
+    STRATEGY_NAIVE,
+    STRATEGY_WALK,
+    STRATEGY_SIMPLE,
+    STRATEGY_TRIANGLE,
+    STRATEGY_LENMARKS,
+    STRATEGY_R,
+    STRATEGY_N,
+    STRATEGY_W,
+    STRATEGY_S,
+    STRATEGY_T,
+    STRATEGY_L
+  };
+
+  template <class T> class Id {
+  public:
+    Id() : m_id(0) {}
+    Id(unsigned int id) : m_id(id) {}
+    unsigned int m_id;
+  };
+  typedef Id<Format_code>               Format_id;
+  typedef std::vector<Format_id>        Vector_format_id;
+  typedef Vector_format_id::iterator    Vector_format_id_iter;
+
+  typedef Id<Type_code>                 Type_id;
+  typedef std::vector<Type_id>          Vector_type_id;
+  typedef Vector_type_id::iterator      Vector_type_id_iter;
+
+  typedef Id<Strategy_code>             Strategy_id;
+  typedef std::vector<Strategy_id>      Vector_strategy_id;
+  typedef Vector_strategy_id::iterator  Vector_strategy_id_iter;
+
+public:
+  /*! \brief obtains number of format options */
+  static unsigned int get_number_opts(Format_id &);
+
+  /*! \brief obtains number of type options */
+  static unsigned int get_number_opts(Type_id &);
+
+  /*! \brief obtains number of strategy options */
+  static unsigned int get_number_opts(Strategy_id &);
+  
+  /*! Compare the i-th format option to a given option */
+  static bool compare_opt(unsigned int i, const char * opt, Format_id &)
+  { return strcmp(s_format_opts[i], opt) == 0; }
+
+  /*! Compare the i-th type option to a given option */
+  static bool compare_opt(unsigned int i, const char * opt, Type_id &)
+  { return strcmp(s_type_opts[i], opt) == 0; }
+  
+  /*! Compare the i-th strategy option to a given option */
+  static bool compare_opt(unsigned int i, const char * opt, Strategy_id &)
+  { return strcmp(s_strategy_opts[i], opt) == 0; }
+
+  Option_parser();
+  
+  enum Generic_option_id { AUTHOR, HELP, LICENSE, VERSION };
+  struct Generic_option_exception {
+    Generic_option_exception(Generic_option_id option) : m_option(option) {}
+    Generic_option_id m_option;
+  };
+
+  enum Error_id { FILE_NOT_FOUND, FILE_CANNOT_OPEN };
+  struct Error_exception {
+    Error_exception(Error_id err) : m_error(err) {}
+    Error_id m_error;
+  };
+
+  struct Input_file_missing_error : public po::error {
+    Input_file_missing_error(std::string & str) : error(str) {}
+  };
+  
+  /*! Parse the options */
+  void operator()(int argc, char * argv[]);
+
+  /*! Obtain the number of seconds allotted to perform the bench */
+  unsigned int get_seconds()  const { return m_seconds; }
+
+  /*! Obtain the number of samples to perform the bench */
+  unsigned int get_samples()  const { return m_samples; }
+
+  /*! Obtain the number of iterations */
+  unsigned int get_iterations()  const { return m_iterations; }
+  
+  /*! Obtain the verbosity level */
+  unsigned int get_verbose_level() const { return m_verbose_level; }
+
+  /*! Obtain the number of input files */
+  unsigned int get_number_files() const { return m_number_files; }
+  
+  /*! \brief obtains the base file-name */
+  const std::string & get_file_name(unsigned int i) const;
+
+  /*! \brief obtains the full file-name */
+  const std::string & get_full_name(unsigned int i) const;
+
+  bool get_postscript() const { return m_psotscript; }
+  bool get_print_header() const { return m_header; }
+  unsigned int get_name_length() const { return m_name_length; }
+  unsigned int get_type_mask() const { return m_type_mask; }
+  unsigned int get_strategy_mask() const { return m_strategy_mask; }
+  Format_code get_input_format() { return m_format; }
+
+  const char * get_type_name(Type_code id) const { return s_type_opts[id]; }
+  const char * get_strategy_name(Strategy_code id) const
+  { return s_strategy_opts[id]; }
+
+  template <class MyId>
+  static void my_validate(boost::any & v,
+                          const std::vector<std::string> & values);
+  
+protected:
+  /*! The variable map */
+  po::variables_map m_variable_map;
+
+  /*! The generic options */
+  po::options_description m_generic_opts;
+
+  /*! The bench options */
+  po::options_description m_bench_opts;
+  
+  /*! Visible options */
+  po::options_description m_visible_opts;
+  
+  /*! Command line options */
+  po::options_description m_cmd_line_opts;
+
+  /*! Config file options */
+  po::options_description m_config_file_opts;
+
+  /*! Environment variable options */
+  po::options_description m_environment_opts;
+
+  /*! The configuration option description */
+  po::options_description m_config_opts;
+
+  /*! The hidden option description */
+  po::options_description m_hidden_opts;    
+
+  /*! Positional option description */
+  po::positional_options_description m_positional_opts;
+
+private:
+  /*! Format options */
+  static char * s_format_opts[];
+
+  /*! Type options */
+  static char * s_type_opts[];
+
+  /*! Strategy options */
+  static char * s_strategy_opts[];
+
+  /*! Number of seconds allotted to perform the bench */
+  unsigned int m_seconds;
+
+  /*! Number of samples to perform the bench */
+  unsigned int m_samples;
+
+  /*! Number of iterations */
+  unsigned int m_iterations;
+
+  /*! Indicates whether to display the log-table header */
+  bool m_header;
+
+  /*! The numbr of charactes in the name field */
+  unsigned int m_name_length;
+  
+  /*! Verbosity level */
+  unsigned int m_verbose_level;  
+
+  /*! The window width */
+  unsigned int m_win_width;
+
+  /*! The window height */
+  unsigned int m_win_height;
+
+  Format_code m_format;
+  unsigned int m_type_mask;
+  unsigned int m_strategy_mask;
+  
+  bool m_psotscript;
+
+  unsigned int m_number_files;
+  
+  Dir_search m_dirs;
+
+  std::vector<std::string> m_full_names;
+};
+
+#endif
