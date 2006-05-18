@@ -1,5 +1,7 @@
 // Taucs_parameterization.C
 
+#include <CGAL/basic.h> // include basic.h before testing #defines
+
 #ifdef CGAL_USE_TAUCS
 
 
