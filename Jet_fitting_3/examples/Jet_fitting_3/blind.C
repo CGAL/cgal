@@ -10,7 +10,7 @@
 #include <boost/property_map.hpp>
 
 #include "../../include/CGAL/Monge_via_jet_fitting.h" 
-#include "GSL.h" 
+#include "LinAlg_lapack.h" 
  
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_operations.h"
@@ -72,7 +72,7 @@ typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, Facet_PM_type> Poly_facet_ops
 //Kernel for local computations
 typedef double                LFT;
 typedef CGAL::Cartesian<LFT>  Local_Kernel;
-typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
 typedef CGAL::Monge_rep<Data_Kernel> My_Monge_rep;
 typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
          

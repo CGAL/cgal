@@ -18,7 +18,7 @@ typedef CGAL::Monge_rep<Data_Kernel>   My_Monge_rep;
 typedef double                   LFT;
 typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
-typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
 
        
 int main(int argc, char *argv[])
@@ -98,7 +98,18 @@ int main(int argc, char *argv[])
   if ( d_monge >= 2) 
     outFile   << "k1 : " << monge_rep.coefficients()[0] << std::endl 
 	      << "k2 : " << monge_rep.coefficients()[1] << std::endl;
-   
+  if ( d_monge >= 3) 
+    outFile   << "b0 : " << monge_rep.coefficients()[2] << std::endl 
+	      << "b1 : " << monge_rep.coefficients()[3] << std::endl
+	      << "b2 : " << monge_rep.coefficients()[4] << std::endl 
+	      << "b3 : " << monge_rep.coefficients()[5] << std::endl; 
+  if ( d_monge >= 4) 
+    outFile   << "c0 : " << monge_rep.coefficients()[6] << std::endl 
+	      << "c1 : " << monge_rep.coefficients()[7] << std::endl
+	      << "c2 : " << monge_rep.coefficients()[8] << std::endl 
+	      << "c3 : " << monge_rep.coefficients()[9] << std::endl 
+	      << "c4 : " << monge_rep.coefficients()[10] << std::endl; 
+  
    //OUTPUT on std::cout
   CGAL::set_pretty_mode(std::cout);
   std::cout << "vertex : " << in_points[0] << std::endl

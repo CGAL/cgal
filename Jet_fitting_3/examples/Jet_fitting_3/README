@@ -21,7 +21,10 @@ it outputs results in the <output.txt> file and on the standard std::cout
 
 Usage is : main <inputPoints.txt> <output.txt> <d_fitting>, <d_monge>" 
 
+in_points are sampled on 0.1(x²+2y²)
+
 ./blind_1pt.exe data/in_points_file.txt output.txt 2 2
+
 
 ./blind_1pt.exe data/in_points_d4.txt output.txt 4 4
 

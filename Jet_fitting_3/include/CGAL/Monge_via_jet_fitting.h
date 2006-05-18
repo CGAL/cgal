@@ -525,9 +525,10 @@ compute_Monge_basis(const LFT* A, Monge_rep& monge_rep)
   LFT* eval = (LFT*) malloc(2*sizeof(LFT));
   LAMatrix evec(2,2);
 
+  //eval in increasing order
   LinAlgTraits::eigen_symm_algo(W, eval, evec);
-  LVector d_max = evec.get_elt(0,0)*Y + evec.get_elt(1,0)*Z,
-    d_min = evec.get_elt(0,1)*Y + evec.get_elt(1,1)*Z;
+  LVector d_min = evec.get_elt(0,0)*Y + evec.get_elt(1,0)*Z,
+    d_max = evec.get_elt(0,1)*Y + evec.get_elt(1,1)*Z;
 
   switch_to_direct_orientation(d_max, d_min, normal);
   Aff_transformation change_basis (d_max[0], d_max[1], d_max[2], 
@@ -543,8 +544,8 @@ compute_Monge_basis(const LFT* A, Monge_rep& monge_rep)
   monge_rep.d1() = this->change_world2fitting.inverse()(d_max);
   monge_rep.d2() = this->change_world2fitting.inverse()(d_min);
   monge_rep.n()  = this->change_world2fitting.inverse()(normal);
-  monge_rep.coefficients()[0] = eval[0];
-  monge_rep.coefficients()[1] = eval[1];
+  monge_rep.coefficients()[0] = eval[1];
+  monge_rep.coefficients()[1] = eval[0];
   }
   //end else
 }

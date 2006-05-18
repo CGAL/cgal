@@ -36,9 +36,9 @@ LIBPATH = \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          ${LAPACK_LDLIBS} \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) \
-          ${LAPACK_LDLIBS} \
           ${GSL_LIBS}	
 
 #---------------------------------------------------------------------#
@@ -122,7 +122,7 @@ blind_1pt_gsl.o: /usr/include/bits/sigset.h /usr/include/bits/time.h
 blind_1pt_gsl.o: /usr/include/sys/sysmacros.h
 blind_1pt_gsl.o: /usr/include/bits/pthreadtypes.h /usr/include/bits/sched.h
 blind_1pt_gsl.o: /usr/include/alloca.h
-blind_1pt_gsl.o: ../../include/CGAL/Monge_via_jet_fitting.h
+blind_1pt_gsl.o: ../../include/CGAL/Monge_via_jet_fitting_gsl.h
 blind_1pt_gsl.o: ../../include/CGAL/jet_fitting_3_assertions.h
 blind_1pt_gsl.o: /usr/include/math.h /usr/include/bits/huge_val.h
 blind_1pt_gsl.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h
@@ -197,55 +197,8 @@ blind.o: /usr/include/bits/sched.h /usr/include/alloca.h
 blind.o: ../../include/CGAL/Monge_via_jet_fitting.h
 blind.o: ../../include/CGAL/jet_fitting_3_assertions.h /usr/include/math.h
 blind.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-blind.o: /usr/include/bits/mathcalls.h GSL.h /usr/include/gsl/gsl_linalg.h
-blind.o: /usr/include/gsl/gsl_mode.h /usr/include/gsl/gsl_permutation.h
-blind.o: /usr/include/gsl/gsl_types.h /usr/include/gsl/gsl_errno.h
-blind.o: /usr/include/errno.h /usr/include/bits/errno.h
-blind.o: /usr/include/linux/errno.h /usr/include/asm/errno.h
-blind.o: /usr/include/asm-i386/errno.h /usr/include/gsl/gsl_check_range.h
-blind.o: /usr/include/gsl/gsl_vector.h
-blind.o: /usr/include/gsl/gsl_vector_complex_long_double.h
-blind.o: /usr/include/gsl/gsl_complex.h
-blind.o: /usr/include/gsl/gsl_vector_long_double.h
-blind.o: /usr/include/gsl/gsl_block_long_double.h
-blind.o: /usr/include/gsl/gsl_vector_complex.h
-blind.o: /usr/include/gsl/gsl_block_complex_long_double.h
-blind.o: /usr/include/gsl/gsl_vector_complex_double.h
-blind.o: /usr/include/gsl/gsl_vector_double.h
-blind.o: /usr/include/gsl/gsl_block_double.h
-blind.o: /usr/include/gsl/gsl_block_complex_double.h
-blind.o: /usr/include/gsl/gsl_vector_complex_float.h
-blind.o: /usr/include/gsl/gsl_vector_float.h
-blind.o: /usr/include/gsl/gsl_block_float.h
-blind.o: /usr/include/gsl/gsl_block_complex_float.h
-blind.o: /usr/include/gsl/gsl_vector_ulong.h
-blind.o: /usr/include/gsl/gsl_block_ulong.h
-blind.o: /usr/include/gsl/gsl_vector_long.h /usr/include/gsl/gsl_block_long.h
-blind.o: /usr/include/gsl/gsl_vector_uint.h /usr/include/gsl/gsl_block_uint.h
-blind.o: /usr/include/gsl/gsl_vector_int.h /usr/include/gsl/gsl_block_int.h
-blind.o: /usr/include/gsl/gsl_vector_ushort.h
-blind.o: /usr/include/gsl/gsl_block_ushort.h
-blind.o: /usr/include/gsl/gsl_vector_short.h
-blind.o: /usr/include/gsl/gsl_block_short.h
-blind.o: /usr/include/gsl/gsl_vector_uchar.h
-blind.o: /usr/include/gsl/gsl_block_uchar.h
-blind.o: /usr/include/gsl/gsl_vector_char.h /usr/include/gsl/gsl_block_char.h
-blind.o: /usr/include/gsl/gsl_matrix.h
-blind.o: /usr/include/gsl/gsl_matrix_complex_long_double.h
-blind.o: /usr/include/gsl/gsl_matrix_complex_double.h
-blind.o: /usr/include/gsl/gsl_matrix_complex_float.h
-blind.o: /usr/include/gsl/gsl_matrix_long_double.h
-blind.o: /usr/include/gsl/gsl_matrix_double.h
-blind.o: /usr/include/gsl/gsl_matrix_float.h
-blind.o: /usr/include/gsl/gsl_matrix_ulong.h
-blind.o: /usr/include/gsl/gsl_matrix_long.h
-blind.o: /usr/include/gsl/gsl_matrix_uint.h /usr/include/gsl/gsl_matrix_int.h
-blind.o: /usr/include/gsl/gsl_matrix_ushort.h
-blind.o: /usr/include/gsl/gsl_matrix_short.h
-blind.o: /usr/include/gsl/gsl_matrix_uchar.h
-blind.o: /usr/include/gsl/gsl_matrix_char.h /usr/include/gsl/gsl_eigen.h
-blind.o: PolyhedralSurf.h PolyhedralSurf_operations.h PolyhedralSurf_rings.h
-blind.o: options.h
+blind.o: /usr/include/bits/mathcalls.h LinAlg_lapack.h PolyhedralSurf.h
+blind.o: PolyhedralSurf_operations.h PolyhedralSurf_rings.h options.h
 blind_gsl.o: /usr/include/stdio.h /usr/include/features.h
 blind_gsl.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 blind_gsl.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h

@@ -291,11 +291,13 @@ public :
       static GLfloat agray[4] = {1,1,1, 1.0 };
       glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, agray);
 
+      glPolygonOffset( 1.0, 1.0 );
       Facet_iterator hFacet;
       for(hFacet = facets_begin();
 	  hFacet != facets_end();
 	  hFacet++)
 	gl_draw_facet(hFacet,smooth);
+      glPolygonOffset( 0.0, 0.0 );
     }
 
   void gl_draw_facet(Facet_handle hFacet,
