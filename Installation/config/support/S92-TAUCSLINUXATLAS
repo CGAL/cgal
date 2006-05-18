@@ -1,9 +1,8 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
-# Note: "-DDEBUG_TRACE" turns on TAUCS trace (temporary).
 
 DESCRIPTION = TAUCS for Linux/Atlas
 PROVIDES = TAUCS
-CXXFLAGS = -DDEBUG_TRACE
+CXXFLAGS =
 LDFLAGS =
 LIBS = taucs lapack f77blas cblas atlas metis g2c
 REQUIRES =
