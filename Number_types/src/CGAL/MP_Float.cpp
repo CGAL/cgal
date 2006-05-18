@@ -361,7 +361,7 @@ to_interval_exp(const MP_Float &b)
   double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
   double d_exp   = 1.0;
 
-  Protect_FPU_rounding<> P;
+  Interval_nt_advanced::Protector P;
   Interval_nt_advanced d = 0;
 
   exponent_type i;
@@ -380,7 +380,7 @@ to_interval_exp(const MP_Float &b)
     else
       d += Interval_nt_advanced(-d_exp, d_exp);
   }
-  
+
 #ifdef CGAL_EXPENSIVE_ASSERTION // force it always in early debugging
   if (d.is_point())
     CGAL_assertion(MP_Float(d.inf()) == b);
@@ -417,7 +417,12 @@ to_interval(const MP_Float &b)
 {
   pair<pair<double, double>, int> ap = to_interval_exp(b);
   double scale = CGAL_CLIB_STD::ldexp(1.0, ap.second);
-  return (Interval_nt<>(ap.first) * scale).pair();
+  // Fixup for overflow and underflow possibilities.
+  // maybe we need an ldexp() function for intervals which isolates this issue.
+  Interval_nt<> scale_interval (
+                      CGAL::is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
+                      scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);
+  return (Interval_nt<>(ap.first) * scale_interval).pair();
 }
 
 // FIXME : This function deserves proper testing...

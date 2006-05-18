@@ -110,6 +110,24 @@ void test_overflow_to_interval()
     val = val / (1<<16);
   }
   assert(CGAL::to_interval(val) == std::make_pair(0.5, 0.5));
+
+  // Reported by Pedro to_interval(10^400) returns [+inf;+inf] :
+  MPF m = 10;
+  for (int j=0; j<400; ++j)
+    m = 10 * m;
+  CGAL::Interval_nt<> inter = CGAL::to_interval(m);
+  std::cout << inter << std::endl;
+  assert(CGAL::is_finite(inter.inf()));
+  assert(!CGAL::is_finite(inter.sup()));
+
+  // Testing for underflow as well.
+  MPF mm = 0.1;
+  for (int k=0; k<1000; ++k)
+    mm = mm * 0.125;
+  CGAL::Interval_nt<> inter2 = CGAL::to_interval(mm);
+  std::cout << inter2 << std::endl;
+  assert(inter2.inf() == 0);
+  assert(inter2.sup() != 0);
 }
 
 void test_overflow_exponent()
