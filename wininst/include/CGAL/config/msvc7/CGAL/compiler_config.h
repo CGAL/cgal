@@ -27,7 +27,7 @@
 #    error Unsupported version of VC++
 #  else
 #    ifdef __ICL
-#      include "icl_8_1.h
+#      include "icl_8_1.h"
 #    else 
 #      include "cl_1310.h"
 #    endif
