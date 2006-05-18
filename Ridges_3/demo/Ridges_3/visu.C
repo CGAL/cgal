@@ -65,7 +65,7 @@ read_line(std::ifstream& stream_res, int& ridge_type,
       }
 }
 
-void load_data_from_file(DS& l, char* file_res)
+void load_data_from_file(DS& l, const char* file_res)
 {
   std::ifstream stream_res(file_res, std::ifstream::in);
   if(!stream_res)   {   exit(0);    }

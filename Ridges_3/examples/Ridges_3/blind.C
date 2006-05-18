@@ -10,7 +10,7 @@
 
 #include "../../include/CGAL/Ridges.h" 
 #include "../../../Jet_fitting_3/include/CGAL/Monge_via_jet_fitting.h" 
-#include "GSL.h" 
+#include "../../../Jet_fitting_3/examples/Jet_fitting_3/LinAlg_lapack.h" 
  
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_rings.h"
@@ -29,7 +29,7 @@ typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 //Kernel for local computations
 typedef double                LFT;
 typedef CGAL::Cartesian<LFT>  Local_Kernel;
-typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, GSL> My_Monge_via_jet_fitting;
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
 typedef CGAL::Monge_rep<Data_Kernel> My_Monge_rep;
 typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
       
@@ -197,7 +197,7 @@ void compute_differential_quantities(PolyhedralSurf& P)
   std::vector<DPoint> in_points;
  
 //debug 
-  int count=0;
+//  int count=0;
  
   //MAIN LOOP
   Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();

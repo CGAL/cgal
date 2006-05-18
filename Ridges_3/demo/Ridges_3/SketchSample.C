@@ -18,17 +18,19 @@ SketchSample::~SketchSample() {
 void SketchSample::buildDisplayList(GLuint surf) {
 
   glNewList(surf, GL_COMPILE);
+
+  glShadeModel(GL_SMOOTH);
+   //mesh
+  //glMaterialfv is def in the mesh 
+  p_mesh->gl_draw_facets(true);
+
+  //ridges, drawn without light
   glDisable(GL_LIGHTING);
 
   for (DS_iterator it=p_ridge_data->begin();it!=p_ridge_data->end();it++)
     draw_one_ridge(*it);
 
   glEnable(GL_LIGHTING);
-  glShadeModel(GL_SMOOTH);
-
-  //mesh
-  //glMaterialfv is def in the mesh 
-  p_mesh->gl_draw_facets(true);
 
   //additional objects that may be displayed
 //   p_mesh->gl_draw_vertices_normal(); 
