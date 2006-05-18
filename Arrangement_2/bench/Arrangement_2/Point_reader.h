@@ -3,13 +3,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Bench_parse_args.h>
 #include <iostream>
 #include <fstream>
 #include <list>
 
 #include "number_type.h"
 #include "Input_traits.h"
+#include "Option_parser.h"
 
 template <class Traits>
 class Point_reader {
@@ -18,7 +18,7 @@ public:
 
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator points_out,
-                CGAL::Bench_parse_args::FormatId format)  {
+                Option_parser::FormatId format)  {
     std::ifstream inp(filename);
     if (!inp.is_open()) {
       std::cerr << "Cannot open file " << filename << "!" << std::endl;
@@ -30,15 +30,15 @@ public:
     int i;
     for (i = 0; i < count; ++i) {
       WNT x, y;
-      if (format == CGAL::Bench_parse_args::FORMAT_RAT) {
+      if (format == Option_parser::FORMAT_RATIONAL) {
         Input_traits<WNT>::Input_rat_type ix, iy;
         inp >> ix >> iy;
         x = ix; y = iy;
-      } else if (format == CGAL::Bench_parse_args::FORMAT_INT) {
+      } else if (format == Option_parser::FORMAT_INT) {
         Input_traits<WNT>::Input_int_type ix, iy;
         inp >> ix >> iy;
         x = (WNT) ix; y = (WNT) iy; 
-      } else if (format == CGAL::Bench_parse_args::FORMAT_FLT) {
+      } else if (format == Option_parser::FORMAT_FLOAT) {
         Input_traits<WNT>::Input_float_type ix, iy;
         inp >> ix >> iy;
         x = (WNT) ix; y = (WNT) iy; 
