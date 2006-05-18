@@ -20,24 +20,17 @@ sure you carefully read the instructions from each installation step.
 
 
 Boost
-CGAL needs some parts of Boost. You must download it from www.boost.org.
+CGAL needs some parts of Boost. You must download it from http://www.boost.org.
 It is enough to unzip the file. Currently only demo programs
 in the Kinetic_data_structures directory need the compiled Boost
 library program_options.
 
 
 GMP and MPFR
-Some examples and demos need GMP. In order to use GMP you must download
-GMP from http://www.swox.com/gmp and MPFR from www.mpfr.org.
-You additionally need the patches and instructions from Brian Gladmans
-GMP page at http://fp.gladman.plus.com/computing/gmp4win.htm
-
-For your convenience we have precompiled GMP 4.1.4 and MPFR 2.1.0.
-You can download it from the Download section of http://www.cgal.org.
-We compiled it with the /MD option, in release mode, and we didn't
+Some examples and demos need GMP. On Windows, CGAL installer comes with
+GMP 4.1.4 and MPFR 2.1.0. 
+We compiled them with the /MD option, in release mode, and we didn't
 use processor specific assembler.
-You must move the files libgmp-3.dll and libmpfr-1.dll to your PATH, e.g.,
-c:\Windows\System32.
 
 
 Qt
@@ -46,34 +39,39 @@ You must build the multi-threaded version (/MD).
 
 
 TAUCS
-Only demo programs in the Surface_mesh_parameterization directory need TAUCS.
-You can download the official release from http://www.tau.ac.il/~stoledo/taucs
+Only examples in the Surface_mesh_parameterization directory need TAUCS.
+
+On Windows, CGAL installer installs TAUCS precompiled with the /MD option and 
+linked with the ATLAS library.
+Blas is provided by the ATLAS library. It is precompiled with the /MD option 
+and optimized for a Pentium 4 processor with SSE2 instructions. 
+If ATLAS is slow or crashes on your machine, please recompile it. Source code 
+can be downloaded from the official site http://math-atlas.sourceforge.net 
+or from the Download section of http://www.cgal.org.
+Due to an incompatibility between ATLAS and Visual C++ debugger, we provide 
+also the Blas and Lapack reference implementations. They are notably slow and 
+should be used only for debugging.
+
+You may use TAUCS with other Blas libraries like Intel's MKL, AMD Core Math 
+Library or Goto Blas.
+You can download the official source code from http://www.tau.ac.il/~stoledo/taucs
 or download a version modified for the /MD option from the Download section
 of http://www.cgal.org.
-See TAUCS documentation to compile it. You must compile TAUCS with the /MD option.
-In a nutshell, with the version of TAUCS available on www.cgal.org:
-    vsvars32.bat
-    configure variant=_MD
-    nmake
+See TAUCS documentation to create a "variant" makefile to compile TAUCS 
+with the /MD option and the appropriate Blas library.
 
 
 Zlib
 Currently only demo programs in the Surface_mesher directory need Zlib.
-You can download it from http://www.zlib.net/zlib123-dll.zip
+On Windows, CGAL installer comes with Zlib precompiled.
 
 
 Paths for Header Files and Libraries
 
 The individual project files do not specify where the header
-files from boost, gmp, Qt, etc. are located.  You must add
+files from Boost, GMP/MPFR, Qt, TAUCS, Zlib etc. are located.  You must add
 these paths for Developer Studio in Tools->Options->Projects->VC++Directories
 in the tab "Show Directories" for "Include Files" and "Library Files".
-
-These paths are not obvious for TAUCS:
-Add the paths to taucs_full\src and taucs_full\build\win32_MD
-to the "Include Files" section.
-Add the paths to taucs_full\lib\win32_MD and taucs_full\external\lib\win32_MD
-to the "Library Files" section.
 
 If you intend to use VC++ from an MS-DOS Prompt Shell, add the same paths
 to the %INCLUDE% and %LIB% environment variables.
