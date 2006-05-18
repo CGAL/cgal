@@ -342,8 +342,9 @@ void
 simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 {
   // Currently only simplifies the two exponents.
-  numerator.exp -= denominator.exp;
-  denominator.exp = 0;
+  numerator.exp -= denominator.exp
+                    + (MP_Float::exponent_type) denominator.v.size();
+  denominator.exp = - (MP_Float::exponent_type) denominator.v.size();
 }
 
 inline

@@ -432,7 +432,11 @@ to_interval(const Quotient<MP_Float> &q)
   pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
   pair<pair<double, double>, int> d = to_interval_exp(q.denominator());
   double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
-  return ((Interval_nt<>(n.first) / Interval_nt<>(d.first)) * scale).pair();
+  Interval_nt<> scale_interval (
+                      CGAL::is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
+                      scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);
+  return ((Interval_nt<>(n.first) / Interval_nt<>(d.first))
+          * scale_interval).pair();
 }
 
 std::ostream &
