@@ -46,11 +46,10 @@ MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
 PATH=$PATH:/usr/local/bin:/usr/bin/gnu
-TAR=/usr/bin/gnu/tar
-GZIP=/usr/bin/gnu/gzip
 
 #TMPDIR="/tmp"
-TMPDIR="${HOME}/CGAL/internal_release_making"
+#TMPDIR="${HOME}/CGAL/internal_release_making"
+TMPDIR="/home/spion/CGAL/internal_release_making"
 
 [ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
 [ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
@@ -106,8 +105,8 @@ sed -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISIO
 rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
 cd ..
 # Make the release tarball
-${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
-${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
+tar -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
+gzip "${release_name}.tar" >> ${LOGFILE} 2>&1
 cp "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 [ "$DO_IT" ] && mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
@@ -154,8 +153,8 @@ mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
 sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
 rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
 cd .. >> ${LOGFILE} 2>&1
-${TAR} -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
-${GZIP} "${public_release_name}.tar" >> ${LOGFILE} 2>&1
+tar -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
+gzip "${public_release_name}.tar" >> ${LOGFILE} 2>&1
 mkdir "${HTML_DIR}/${release_name}-public" >> ${LOGFILE} 2>&1
 cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
 # Do a Zip file as well.
