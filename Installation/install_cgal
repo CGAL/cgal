@@ -446,6 +446,11 @@ initial_check()
 	    ${_rm} -f "${i}"
 	fi
     done
+    init_logfiles
+}
+
+parse_support_options()
+{
     # set SUPPORT_FEATURES and SUPPORT_PKGS
 
     # first cleanup
@@ -519,6 +524,7 @@ get_cgal_version()
 # initialize the logfiles
 init_logfiles()
 {
+    log_to_file
     ${_printf} "%s\n" \
 	"----------------------------------------------------------" \
 	>${INSTALL_LOGFILE}
@@ -4902,9 +4908,27 @@ case ${*} in
 esac
 
 if [ -z "${_WHAT_TO_DO}" ]; then
-    init_logfiles
-    log_to_file
     initial_check
+
+    # ---------------------------------------------------------------------
+    # process environment variables
+    #
+
+    if [ -z "${CUSTOM_CXXFLAGS}" -a -n "${CXXFLAGS}" ]; then
+	CUSTOM_CXXFLAGS="${CXXFLAGS}"
+	write_buffer "${_LEFTSPACE}Set CUSTOM_CXXFLAGS from \$CXXFLAGS.\n"
+    fi
+    if [ -z "${CUSTOM_LDFLAGS}" -a -n "${LDFLAGS}" ]; then
+	CUSTOM_LDFLAGS="${LDFLAGS}"
+	write_buffer "${_LEFTSPACE}Set CUSTOM_LDFLAGS from \$LDFLAGS.\n"
+    fi
+    if [ -z "${COMPILER}" -a -n "${CXX}" ]; then
+	COMPILER="${CXX}"
+	write_buffer "${_LEFTSPACE}Set COMPILER from \$CXX.\n"
+    fi
+    ${_printf} "${_BUF}" >> "${INSTALL_LOGFILE}"
+
+    parse_support_options
 
     # --- begin parsing commandline options ---
     while [ ${#} -gt 0 ]; do
@@ -4917,6 +4941,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		fi
 		set_dirs_dependant_on_cgal_dir
 		initial_check
+		parse_support_options
 		shift; continue
 		;;
 	    -PREFIX*)
@@ -5067,24 +5092,6 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     done
     # --- end of parsing commandline options ---
 fi
-
-# ---------------------------------------------------------------------
-# process environment variables
-#
-
-if [ -z "${CUSTOM_CXXFLAGS}" -a -n "${CXXFLAGS}" ]; then
-    CUSTOM_CXXFLAGS="${CXXFLAGS}"
-    write_buffer "${_LEFTSPACE}Set CUSTOM_CXXFLAGS from \$CXXFLAGS.\n"
-fi
-if [ -z "${CUSTOM_LDFLAGS}" -a -n "${LDFLAGS}" ]; then
-    CUSTOM_LDFLAGS="${LDFLAGS}"
-    write_buffer "${_LEFTSPACE}Set CUSTOM_LDFLAGS from \$LDFLAGS.\n"
-fi
-if [ -z "${COMPILER}" -a -n "${CXX}" ]; then
-    COMPILER="${CXX}"
-    write_buffer "${_LEFTSPACE}Set COMPILER from \$CXX.\n"
-fi
-${_printf} "${_BUF}" >> "${INSTALL_LOGFILE}"
 
 # ---------------------------------------------------------------------
 # postprocess commandline settings
