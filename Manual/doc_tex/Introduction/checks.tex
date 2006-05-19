@@ -36,8 +36,31 @@ following:
 \ccStyle{CGAL_KERNEL_NO_ASSERTIONS} and 
 \ccStyle{CGAL_KERNEL_NO_WARNINGS}.
 So, in order to compile the file \verb~foo.C~ with the postcondition checks
-off, you should do:\\
+off, you can do:\\
 \verb~CC -DCGAL_KERNEL_NO_POSTCONDITIONS foo.C~
+
+This is also preferably done by modifying your makefile by adding
+\ccStyle{-DCGAL_KERNEL_NO_POSTCONDITIONS} to the \ccStyle{CXXFLAGS} variable.
+
+The name \ccStyle{KERNEL} in the macro name can be replaced by a package
+specific name in order to control assertions done in a given package.
+This name is given in the documentation of the corresponding package,
+in case it exists.
+
+Note that global macros can also be used to control the behavior over the
+whole \cgal\ library:
+\begin{itemize}
+  \item \ccStyle{CGAL_NO_PRECONDITIONS},
+  \item \ccStyle{CGAL_NO_POSTCONDITIONS},
+  \item \ccStyle{CGAL_NO_ASSERTIONS} and
+  \item \ccStyle{CGAL_NO_WARNINGS}.
+\end{itemize}
+
+Moreover, the standard macro \ccStyle{NDEBUG}, which controls the behavior of
+the \ccc{std::assert} function, also affects all checks in \cgal.  This way,
+adding \ccStyle{-DNDEBUG} to your compilation flags removes absolutely all
+checks, including standard ones using \ccc{std::assert}.  This is the default
+recommended setup for performing timing benchmarks for example.
 
 Not all checks are on by default.
 All four types of checks can be marked as expensive or exactness checks
