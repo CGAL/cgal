@@ -77,7 +77,7 @@ public:
 //                                           Triangulated_mixed_complex_tds;
 
   // defining the triangulated mixed complex:
-  typedef Exact_predicates_exact_constructions_kernel    TMC_Traits;
+  typedef Exact_predicates_inexact_constructions_kernel    TMC_Traits;
 public:
 
 #ifdef CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
@@ -100,13 +100,23 @@ public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
 		 FT shrink_factor,
+		 bool grow_balls = true,
 		 Gt gt = Gt(),
 		 bool verbose = false
 		 ) 
-    : regular(), gt(gt), shrink(shrink_factor), verbose(verbose) {
-    
-    regular.insert(begin, end);
-    construct_bounding_box();
+    : gt(gt), shrink(shrink_factor), verbose(verbose) {
+
+    CGAL_assertion(begin != end);
+
+    Regular regular;
+    if (grow_balls) {
+      for (; begin != end; begin++) {
+	regular.insert(Weighted_point(*begin, begin->weight()/shrink));
+      }
+    } else {
+      regular.insert(begin, end);
+    }
+    construct_bounding_box(regular);
   
     if (verbose) {
       std::cerr << "Triangulation ready" << std::endl;
@@ -123,6 +133,12 @@ public:
       std::cerr << "Vertices: " << _tmc.number_of_vertices() << std::endl;
       std::cerr << "Cells:    " << _tmc.number_of_cells() << std::endl;
     }
+//     std::ofstream out("vertices.txt");
+//     for (typename Triangulated_mixed_complex::Finite_vertices_iterator 
+// 	   vit = _tmc.finite_vertices_begin();
+// 	 vit != _tmc.finite_vertices_end(); vit ++) {
+//       out << vit->point().x().exact() << std::endl;
+//     }
   }
   const Triangulated_mixed_complex &triangulated_mixed_complex() const {
     return _tmc;
@@ -132,9 +148,8 @@ public:
     return _tmc.locate(p);
   }
 private:
-  void construct_bounding_box();
+  void construct_bounding_box(Regular &regular);
 
-  Regular regular;
   Gt &gt;
   FT shrink;
   Triangulated_mixed_complex _tmc;
@@ -144,7 +159,7 @@ private:
 template <class SkinSurfaceTraits_3> 
 void 
 Skin_surface_3<SkinSurfaceTraits_3>::
-construct_bounding_box() 
+construct_bounding_box(Regular &regular) 
 {
   typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Regular::Geom_traits     GT;

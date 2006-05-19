@@ -29,8 +29,6 @@
 // NGHK: move this one to SkinSurfaceTraits
 #include <CGAL/Compute_anchor_3.h>
 
-#include <CGAL/Union_find.h>
-
 CGAL_BEGIN_NAMESPACE
 
 
@@ -96,6 +94,9 @@ private:
 
   typedef Compute_anchor_3<Regular>                       Compute_anchor;
   typedef std::pair<Rt_Simplex,Rt_Simplex>                Symb_anchor;
+
+  typedef std::map<Rt_Simplex, Rt_Simplex>       Anchor_map;
+  typedef typename Anchor_map::iterator          Anchor_map_iterator;
 public:
 
   Mixed_complex_triangulator_3(
@@ -151,16 +152,6 @@ private:
 
     triangulation_incr_builder.end_triangulation();
     
-    std::cout << map_del.size() << " vs. " << map_vor.size() << std::endl;
-    std::cout << anchor_del.size() << " vs. " << anchor_vor.size() << std::endl;
-    std::cout << "Union_find: " << anchor_del.number_of_sets () << "vs. " << anchor_del.size () << std::endl;
-    std::cout << "Union_find: " << anchor_vor.number_of_sets () << "vs. " << anchor_vor.size () << std::endl;
-    std::cout << anchors.size() << std::endl;
-
-    anchor_del.clear();
-    anchor_vor.clear();
-    map_del.clear();
-    map_vor.clear();
     anchors.clear();
   }
 
@@ -174,11 +165,20 @@ private:
   void construct_anchor_vor(Rt_Simplex const &sVor);
   void construct_anchors();
   Rt_Simplex get_anchor_del(Rt_Simplex const &sDel) {
-    return *anchor_del.find(map_del[sDel]);
+    return find_anchor(anchor_del2, sDel);
   }
   Rt_Simplex get_anchor_vor(Rt_Simplex const &sVor) {
-    return *anchor_vor.find(map_vor[sVor]);
+    return find_anchor(anchor_vor2, sVor);
   }  
+  Rt_Simplex find_anchor(Anchor_map &a_map, Rt_Simplex const&s) {
+    Anchor_map_iterator it = a_map.find(s);
+    CGAL_assertion(it != a_map.end());
+    if (it->second == s) return s;
+
+    Rt_Simplex result = find_anchor(a_map,it->second);
+    it->second = result;
+    return result;
+  }
   void construct_vertices();
   
   Tmc_Point get_orthocenter(Rt_Simplex const &s);
@@ -225,18 +225,12 @@ private:
   struct Index_v {
     Unique_hash_map < Rt_Vertex_handle, Tmc_Vertex_handle > V;
   };
-  // Facets on the border of the simplicial complex:
-  // name is given by (dim del,dim vor)
 
   // index to vertex
   Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
   
-  typedef Union_find<Rt_Simplex>                 Union_find_anchor;
-  typedef typename Union_find_anchor::handle     Union_find_anchor_handle;
-  typedef typename Union_find_anchor::iterator   Union_find_anchor_iterator;
 
-  Union_find_anchor                              anchor_del, anchor_vor;
-  std::map<Rt_Simplex, Union_find_anchor_handle> map_del, map_vor;
+  Anchor_map                                     anchor_del2, anchor_vor2;
   std::map<Symb_anchor, Tmc_Vertex_handle>        anchors;
 };
 
@@ -261,20 +255,28 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
 construct_anchor_del(Rt_Simplex const &sDel) {
-  Union_find_anchor_handle handle = anchor_del.make_set(sDel);
-  map_del[sDel] = handle;
-  
   Rt_Simplex s = compute_anchor_obj.anchor_del(sDel);
-  if (sDel != s) {
-    anchor_del.unify_sets(handle, map_del[s]);
-  }
+  anchor_del2.insert(std::pair<Rt_Simplex,Rt_Simplex>(sDel, s));
 
   // degenerate simplices:
   if (compute_anchor_obj.is_degenerate()) {
-    typename Compute_anchor::Simplex_iterator it;
-    for (it = compute_anchor_obj.equivalent_anchors_begin();
-	 it != compute_anchor_obj.equivalent_anchors_end(); it++) {
-      anchor_del.unify_sets(handle, map_del[*it]);
+    s = find_anchor(anchor_del2, sDel);
+    typename Compute_anchor::Simplex_iterator degenerate_it;
+    for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
+	 degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
+	 degenerate_it++) {
+      Anchor_map_iterator it = anchor_del2.find(*degenerate_it);
+      CGAL_assertion(it != anchor_del2.end());
+      Anchor_map_iterator it2 = anchor_del2.find(it->second);
+      CGAL_assertion(it2 != anchor_del2.end());
+      // Merge sets:
+      while (it != it2) {
+	it->second = s;
+	it = it2;
+	it2 = anchor_del2.find(it->second);
+	CGAL_assertion(it2 != anchor_del2.end());
+      }
+      it->second = s;
     }
   }
 }
@@ -289,27 +291,31 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
 construct_anchor_vor(Rt_Simplex const &sVor) {
-  Union_find_anchor_handle handle = anchor_vor.make_set(sVor);
-  map_vor[sVor] = handle;
-
   Rt_Simplex s = compute_anchor_obj.anchor_vor(sVor);
-  if (sVor != s) {
-    anchor_vor.unify_sets(handle, map_vor[s]);
-  }
+  anchor_vor2.insert(std::pair<Rt_Simplex,Rt_Simplex>(sVor, s));
 
   // degenerate simplices:
   if (compute_anchor_obj.is_degenerate()) {
-    typename Compute_anchor::Simplex_iterator it;
-    for (it = compute_anchor_obj.equivalent_anchors_begin();
-	 it != compute_anchor_obj.equivalent_anchors_end(); it++) {
-      typename std::map<Rt_Simplex, Union_find_anchor_handle>::iterator h_it;
-      h_it = map_vor.find(*it);
+    s = find_anchor(anchor_vor2, sVor);
+    typename Compute_anchor::Simplex_iterator degenerate_it;
+    for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
+	 degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
+	 degenerate_it++) {
       // Possibly not found for 2 Voronoi vertices with the same center,
       // If the first vertex is inserted and the second is already found.
-      if (h_it != map_vor.end()) {
-	anchor_vor.unify_sets(handle, (*h_it).second);
-      } else {
-	CGAL_assertion(s.dimension() == 3);
+      // see compute_anchor_obj.anchor_vor(Cell_handle)
+      Anchor_map_iterator it = anchor_vor2.find(*degenerate_it);
+      if (it != anchor_vor2.end()) {
+	Anchor_map_iterator it2 = anchor_vor2.find(it->second);
+	CGAL_assertion(it2 != anchor_vor2.end());
+	// Merge sets:
+	while (it != it2) {
+	  it->second = s;
+	  it = it2;
+	  it2 = anchor_vor2.find(it->second);
+	  CGAL_assertion(it2 != anchor_vor2.end());
+	}
+	it->second = s;
       }
     }
   }
@@ -334,9 +340,7 @@ construct_anchors() {
   // Compute anchor points:
   for (vit=regular.finite_vertices_begin();
        vit!=regular.finite_vertices_end(); vit++) {
-    s = Rt_Simplex(vit);
-    construct_anchor_del(s);
-    CGAL_assertion(s.dimension() == 0);
+    construct_anchor_del(Rt_Simplex(vit));
   }  
   for (eit=regular.finite_edges_begin();
        eit!=regular.finite_edges_end(); eit++) {
@@ -371,6 +375,7 @@ construct_anchors() {
   }
   for (vit=regular.finite_vertices_begin();
        vit!=regular.finite_vertices_end(); vit++) {
+    CGAL_assertion(vit->cell() != Rt_Cell_handle());
     s = Rt_Simplex(vit);
     construct_anchor_vor(s);
     CGAL_assertion(s.dimension() == 0);
@@ -404,7 +409,7 @@ construct_vertices() {
   if (verbose) std::cout << "construct_anchors" << std::endl;
   construct_anchors();
 
-  if (verbose) std::cout << "1" << std::endl;
+  if (verbose) std::cout << "9 ";
   // anchor dimDel=0, dimVor=3
   for (cit=regular.finite_cells_begin();
        cit!=regular.finite_cells_end(); cit++) {
@@ -419,7 +424,7 @@ construct_vertices() {
     }
   }
 
-  if (verbose) std::cout << "2" << std::endl;
+  if (verbose) std::cout << "8 ";
   // anchor dimDel=1, dimVor=3
   for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
     sVor = get_anchor_vor(Rt_Simplex(cit));
@@ -435,7 +440,7 @@ construct_vertices() {
     }
   }
 
-  if (verbose) std::cout << "3" << std::endl;
+  if (verbose) std::cout << "7 ";
   // anchor dimDel=2, dimVor=3 and dimDel=0, dimVor=2
   for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
     // anchor dimDel=2, dimVor=3
@@ -473,7 +478,7 @@ construct_vertices() {
     }
   }
 	
-  if (verbose) std::cout << "4" << std::endl;
+  if (verbose) std::cout << "6 ";
   // anchor dimDel=0, dimVor=1
   for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
     sVor = get_anchor_vor(*eit);
@@ -495,7 +500,7 @@ construct_vertices() {
     }
   }
 	
-  if (verbose) std::cout << "5" << std::endl;
+  if (verbose) std::cout << "5 ";
   // anchor dimDel=3, dimVor=3
   for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
     sDel = get_anchor_del(Rt_Simplex(cit));
@@ -508,7 +513,7 @@ construct_vertices() {
   }
 
 
-  if (verbose) std::cout << "6" << std::endl;
+  if (verbose) std::cout << "4 ";
   // anchor dimDel=0, dimVor=0
   for (vit=regular.finite_vertices_begin(); vit!=regular.finite_vertices_end(); vit++) {
     sDel = get_anchor_del(Rt_Simplex(vit));
@@ -520,7 +525,7 @@ construct_vertices() {
     }
   }
 	
-  if (verbose) std::cout << "7" << std::endl;
+  if (verbose) std::cout << "3 ";
   // anchor dimDel=1, dimVor=2
   for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
     c1 = fit->first;
@@ -542,7 +547,7 @@ construct_vertices() {
     }
   }
 	
-  if (verbose) std::cout << "8" << std::endl;
+  if (verbose) std::cout << "2 ";
   // anchor dimDel=2, dimVor=2
   for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
     c1 = fit->first;
@@ -557,7 +562,7 @@ construct_vertices() {
     }
   }
 	
-  if (verbose) std::cout << "9" << std::endl;
+  if (verbose) std::cout << "1" << std::endl;
   // anchor dimDel=1, dimVor=1
   for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
     v1 = eit->first->vertex(eit->second);

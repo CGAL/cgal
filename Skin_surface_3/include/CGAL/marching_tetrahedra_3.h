@@ -120,6 +120,7 @@ public:
 
 
   bool is_inside(T_cell_iterator const ch, int i) {
+    return (traits.sign(ch,i) == POSITIVE);
     T_vertex_map_it it = triang_vertex_signs.find(ch->vertex(i));
     
     if (it == triang_vertex_signs.end()) {

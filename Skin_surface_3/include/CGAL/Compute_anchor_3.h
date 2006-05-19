@@ -265,7 +265,6 @@ compute_anchor_del(Facet const &f) {
   CGAL_assertion(!reg.is_infinite(f));
   equiv_anchors.clear();
 
-  Simplex s;
   int i;
   Sign result;
   bool contains_center = true;
@@ -289,7 +288,7 @@ compute_anchor_del(Facet const &f) {
     if (i==3) e.third = ((f.second+2)&3); 
     else e.third = ((f.second+3)&3);
 
-    s = anchor_del(e);
+    Simplex s = anchor_del(e);
     if (s.dimension() == 1) {
       equiv_anchors.clear();
       return s;
@@ -315,7 +314,6 @@ compute_anchor_del(Cell_handle const ch) {
   equiv_anchors.clear();
   
   Simplex s;
-
   bool contains_center = true;
   Sign result;
   for (int i=0; (i<4) && contains_center; i++) {
@@ -428,9 +426,9 @@ compute_anchor_vor (Vertex_handle const v) {
       } else if (s.dimension() == 3) {
         //  s lies on a Voronoi vertex
         Cell_handle ch=s;
+	CGAL_assertion(ch != Cell_handle());
         int index = ch->index(v);
         for (int i=1; (i<4) && (found); i++) {
-          Simplex tmp;
           tmp = anchor_vor(Facet(ch, (index+i)&3));
 	  found = (tmp == s);
         }
@@ -463,6 +461,7 @@ compute_anchor_vor (Vertex_handle const v) {
       s = tmp;
     }
   }
+  CGAL_assertion(false);
   return Simplex();
 }
 
@@ -561,6 +560,7 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
   
   Sign side;
   
+  CGAL_assertion(f.first != Cell_handle());
   if (!reg.is_infinite(f.first)) {
     side = test_anchor(f.first, f.second);
     if (side==NEGATIVE) {
@@ -571,6 +571,7 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
   }
 
   Cell_handle neighbor = f.first->neighbor(f.second);
+  CGAL_assertion(neighbor != Cell_handle());
   if (!reg.is_infinite(neighbor)) {
     int n_index = neighbor->index(f.first);
     side = test_anchor(neighbor, n_index);

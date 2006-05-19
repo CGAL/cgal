@@ -6,8 +6,7 @@
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 #include <list>
 
-#include <fstream>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include "skin_surface_writer.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
@@ -36,6 +35,7 @@ int main(int argc, char *argv[]) {
   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
 
   std::ofstream out("mesh.off");
+  write_polyhedron_with_normals(p, skin_surface, out);
   out << p;
 
   return 0;

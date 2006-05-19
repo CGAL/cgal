@@ -10,8 +10,7 @@
 #include <extract_balls_from_pdb.h>
 
 #include <list>
-#include <fstream>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include "skin_surface_writer.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
@@ -25,20 +24,26 @@ int main(int argc, char *argv[]) {
     std::cout << "Usage: " << argv[0] << " <pdb-file>" << std::endl;
     return 1;
   }
+
   std::list<Weighted_point> l;
   FT                        shrinkfactor = 0.5;
 
   extract_balls_from_pdb(argv[1], K(), std::back_inserter(l));
+  std::cout << "Read pdb" << std::endl;
 
-  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor, true, Traits(), true);
+  std::cout << "Constructed Skin_surface_3" << std::endl;
 
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
+  std::cout << "Meshed Skin_surface_3" << std::endl;
 
-//   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
+  //  CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
+  //  std::cout << "Subdivided Skin_surface_3" << std::endl;
 
   std::ofstream out("mesh.off");
-  out << p;
+  write_polyhedron_with_normals(p, skin_surface, out);
+  //out << p; 
 
   return 0;
 }

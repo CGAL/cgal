@@ -30,7 +30,7 @@ class Triangulation_simplex_3 {
   typedef typename T::Facet         Facet;
   typedef typename T::Cell_handle Cell_handle;
 public:
-  Triangulation_simplex_3() : ref(-1), ch() {}
+  Triangulation_simplex_3() : ref(-1), ch() { }
 	
   Triangulation_simplex_3(Vertex_handle v) {
     ch = v->cell();

@@ -65,10 +65,15 @@ public:
     return inv_conv(compute_gradient(xp));
   }
 
-  Vector compute_gradient(Point const &x) {
-    std::cout << "NGHK: NOT YET IMPLEMENTED" << std::endl;
-    // NGHK: TODO:
-    return (x-p);
+  template <class Input_point>
+  Vector compute_gradient(Input_point const &x) {
+    typedef Cartesian_converter<typename Input_point::R, K> Converter;
+    
+    Vector v = Converter()(x) - p;
+
+    return Vector(2*Q[0]*v.x() + Q[1]*v.y() + Q[3]*v.z(),
+		  Q[1]*v.x() + 2*Q[2]*v.y() + Q[4]*v.z(),
+		  Q[3]*v.x() + Q[4]*v.y() + 2*Q[5]*v.z());
   }
 	
   /// Construct the intersection point with the segment (p0,p1)
