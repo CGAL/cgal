@@ -25,19 +25,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Refs, class TriangulatedMixedComplex3>
+template <class Refs, class SkinSurface3>
 struct Skin_Surface_polyhedral_face : public CGAL::HalfedgeDS_face_base<Refs> {
-  typedef typename TriangulatedMixedComplex3::Cell_handle Triang_Cell_handle;
+  typedef SkinSurface3                                      Skin_surface;
+  typedef typename Skin_surface::Triangulated_mixed_complex TMC;
+  typedef typename TMC::Cell_handle                         Triang_Cell_handle;
 
   Triang_Cell_handle triang_ch;
 };
 
-template < class TriangulatedMixedComplex3 >
+template < class SkinSurface3 >
 struct Skin_surface_polyhedral_items_3 : public Polyhedron_items_3 {
   
   template <class Refs, class Traits>
   struct Face_wrapper {
-    typedef Skin_Surface_polyhedral_face<Refs, TriangulatedMixedComplex3> Face;
+    typedef Skin_Surface_polyhedral_face<Refs, SkinSurface3> Face;
   };
 };
 

@@ -251,20 +251,18 @@ get_subdivision_policy(Polyhedron_3  &p,
 template <class P_Traits,
 	  class SkinSurface_3>
 Skin_surface_subdivision_policy_base_3<
-  Polyhedron_3<P_Traits, 
-	       Skin_surface_polyhedral_items_3
-	       <typename SkinSurface_3::Triangulated_mixed_complex> >,
+  Polyhedron_3<P_Traits, Skin_surface_polyhedral_items_3<SkinSurface_3> >, 
   SkinSurface_3> *
-get_subdivision_policy(Polyhedron_3<P_Traits, 
-		       Skin_surface_polyhedral_items_3
-		       <typename SkinSurface_3::Triangulated_mixed_complex> > &p,
+get_subdivision_policy(Polyhedron_3<
+		       P_Traits, 
+		       Skin_surface_polyhedral_items_3<SkinSurface_3> > &p,
 		       SkinSurface_3 &skinsurface) 
 {
   typedef Polyhedron_3<P_Traits, 
-    Skin_surface_polyhedral_items_3<typename SkinSurface_3::Triangulated_mixed_complex> > 
-    Polyhedron;
-  typedef Skin_surface_subdivision_policy_with_face_info_3<Polyhedron, SkinSurface_3>
-    Policy;
+    Skin_surface_polyhedral_items_3<SkinSurface_3> >        Polyhedron;
+  typedef Skin_surface_subdivision_policy_with_face_info_3<
+    Polyhedron, 
+    SkinSurface_3>                                          Policy;
   return new Policy(skinsurface);
 }
 

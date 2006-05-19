@@ -1,6 +1,8 @@
-- Skin_surface_refinement_traits->Skin_surface_subdivision_policy (subdiv, policy)
+- Skin_surface_refinement_traits->Skin_surface_subdivision_policy (subdiv,policy)
 - Sqrt3->subdiv
 - refinement->subdivision
+- Put quadratic surfaces in a list and free the list on destruction
+- Remove 'small' edges from the triangulated mixed complex
 
 
 OLD:

@@ -62,12 +62,10 @@ template <class P_Traits,
 void mesh_skin_surface_3
   (SkinSurface_3 const &skin_surface, 
    Polyhedron_3<P_Traits, 
-     Skin_surface_polyhedral_items_3<
-       typename SkinSurface_3::Triangulated_mixed_complex> > &p)
+     Skin_surface_polyhedral_items_3<SkinSurface_3> > &p)
 {
   typedef Polyhedron_3<P_Traits, 
-              Skin_surface_polyhedral_items_3<
-                typename SkinSurface_3::Triangulated_mixed_complex> > Polyhedron;
+              Skin_surface_polyhedral_items_3<SkinSurface_3> > Polyhedron;
 
   typedef typename SkinSurface_3::Triangulated_mixed_complex 
     Triangulated_mixed_complex;
