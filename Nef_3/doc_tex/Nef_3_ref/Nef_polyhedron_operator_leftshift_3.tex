@@ -20,7 +20,7 @@ This operator writes The Nef polyhedron \emph{N} to the output stream \ccc{out}
 using a propriatary file format. It includes the 
 complete incidence structure, the geometric data, and the marks of each item.
 
-Using \cgal stream modifiers the following output formats can be chosen: 
+Using \cgal\ stream modifiers the following output formats can be chosen: 
 ASCII(\ccc{set_ascii_mode}), binary(\ccc{set_binary_mode}) or 
 pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format. It 
 is recommended to use this format for file input and output.
@@ -28,7 +28,7 @@ is recommended to use this format for file input and output.
 As the output depends on the output operators of the geometric primitives 
 provided by the traits class, it might not be possible that the input operator
 and output operators of different traits classes are not compatible. We recommend
-to use the \cgal kernels \ccc{Homogeneous}, \ccc{Simple_homogeneous}, or 
+to use the \cgal\ kernels \ccc{Homogeneous}, \ccc{Simple_homogeneous}, or 
 \ccc{Extended_homogeneous}
 parametrized with any exact number type that models $mathbb{Z}$ (e.g. \ccc{Gmpz}
 or \ccc{leda_integer}).
