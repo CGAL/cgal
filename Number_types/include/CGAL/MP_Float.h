@@ -342,9 +342,17 @@ void
 simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 {
   // Currently only simplifies the two exponents.
+#if 0
+  // This better version causes problems as the I/O is changed for
+  // Quotient<MP_Float>, which then does not appear as rational 123/345,
+  // 1.23/3.45, this causes problems in the T2 test-suite (to be investigated).
   numerator.exp -= denominator.exp
                     + (MP_Float::exponent_type) denominator.v.size();
   denominator.exp = - (MP_Float::exponent_type) denominator.v.size();
+#else
+  numerator.exp -= denominator.exp;
+  denominator.exp = 0;
+#endif
 }
 
 inline
