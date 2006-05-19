@@ -108,24 +108,6 @@ public:
     return P2T_converter();
   }
 
-  // NGHK: Not in current implementation
-//   template <class Kernel>
-//   Construct_weighted_circumcenter_3<
-//     Regular_triangulation_euclidean_traits_3<Kernel> >
-//   construct_weighted_circumcenter_3_object() const {
-//     return Regular_triangulation_euclidean_traits_3<Kernel>().
-//       construct_weighted_circumcenter_3_object();
-//   }
-
-  // NGHK: Not in current implementation
-//   template <class Kernel>
-//   In_smallest_orthogonal_sphere_3<
-//     Regular_triangulation_euclidean_traits_3<Kernel> >
-//   in_smallest_orthogonal_sphere_3_object() const {
-//     return Regular_triangulation_euclidean_traits_3<Kernel>().
-//       in_smallest_orthogonal_sphere_3_object();
-//   }
-
   Regular_RT shrink_factor() const {
     return shrink;
   }

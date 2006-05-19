@@ -58,13 +58,14 @@ private:
   typedef typename Triangulation::Geom_traits::Point_3 Triang_point;
   
   // Additional functions, not belonging to the traits concept:
-  HDS_RT value(const Cell_handle &ch, const HDS_point &p) const {
-    return ch->surf->value(p);
-  }
-//   HDS_RT value(const Cell_handle &ch, const Triang_point &p) const {
-//     // NGHK: Remove the to_double later ...
-//     return CGAL::to_double(ch->surf->value(converter(p)));
+//   HDS_RT value(const Cell_handle &ch, const HDS_point &p) const {
+//     return ch->surf->value(p);
 //   }
+  template <class Point>
+  HDS_RT value(const Cell_handle &ch, const Point &p) const {
+    // NGHK: Remove the to_double later ...
+    return ch->surf->value(converter(p));
+  }
 
   Converter converter;
   HDS_RT iso_value;

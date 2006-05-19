@@ -17,7 +17,10 @@ typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
-typedef CGAL::Polyhedron_3<K>                               Polyhedron;
+typedef CGAL::Simple_cartesian<float>                       Poly_K;
+typedef Skin_surface_3::Triangulated_mixed_complex          TMC;
+typedef CGAL::Skin_surface_polyhedral_items_3<TMC>          Poly_items;
+typedef CGAL::Polyhedron_3<Poly_K,Poly_items>               Polyhedron;
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {

@@ -95,8 +95,16 @@ private:
   typedef Compute_anchor_3<Regular>                       Compute_anchor;
   typedef std::pair<Rt_Simplex,Rt_Simplex>                Symb_anchor;
 
-  typedef std::map<Rt_Simplex, Rt_Simplex>       Anchor_map;
-  typedef typename Anchor_map::iterator          Anchor_map_iterator;
+  // You might get type differences here:
+  struct Anchor_map_iterator_tmp;
+  typedef std::map<Rt_Simplex, Anchor_map_iterator_tmp>     Anchor_map;
+  struct Anchor_map_iterator_tmp : Anchor_map::iterator {
+    Anchor_map_iterator_tmp() 
+      : Anchor_map::iterator() {}
+    Anchor_map_iterator_tmp(typename Anchor_map::iterator const &it) 
+      : Anchor_map::iterator(it) {}
+  };
+  typedef typename Anchor_map::iterator                     Anchor_map_iterator;
 public:
 
   Mixed_complex_triangulator_3(
@@ -165,19 +173,25 @@ private:
   void construct_anchor_vor(Rt_Simplex const &sVor);
   void construct_anchors();
   Rt_Simplex get_anchor_del(Rt_Simplex const &sDel) {
-    return find_anchor(anchor_del2, sDel);
+    return find_anchor(anchor_del2, sDel)->first;
   }
   Rt_Simplex get_anchor_vor(Rt_Simplex const &sVor) {
-    return find_anchor(anchor_vor2, sVor);
+    return find_anchor(anchor_vor2, sVor)->first;
   }  
-  Rt_Simplex find_anchor(Anchor_map &a_map, Rt_Simplex const&s) {
-    Anchor_map_iterator it = a_map.find(s);
+  Anchor_map_iterator find_anchor(Anchor_map &a_map, Rt_Simplex const&s) {
+    return find_anchor(a_map, a_map.find(s));
+  }
+  Anchor_map_iterator find_anchor(Anchor_map &a_map,
+				  Anchor_map_iterator const&it) {
     CGAL_assertion(it != a_map.end());
-    if (it->second == s) return s;
-
-    Rt_Simplex result = find_anchor(a_map,it->second);
-    it->second = result;
-    return result;
+    Anchor_map_iterator it2 = it->second;
+    while (it2 != it2->second) {
+      it->second = it2->second;
+      // NGHK: changed the type for the map-iterator-hack
+      it2->second = it;
+      it2 = it->second;
+    }
+    return it2;
   }
   void construct_vertices();
   
@@ -256,27 +270,32 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplexObserver_3>::
 construct_anchor_del(Rt_Simplex const &sDel) {
   Rt_Simplex s = compute_anchor_obj.anchor_del(sDel);
-  anchor_del2.insert(std::pair<Rt_Simplex,Rt_Simplex>(sDel, s));
+  anchor_del2[sDel] = Anchor_map_iterator();
+
+  Anchor_map_iterator it = anchor_del2.find(sDel);
+  Anchor_map_iterator it2 = anchor_del2.find(s);
+  CGAL_assertion(it != anchor_del2.end());
+  CGAL_assertion(it2 != anchor_del2.end());
+  it->second = it2;
 
   // degenerate simplices:
   if (compute_anchor_obj.is_degenerate()) {
-    s = find_anchor(anchor_del2, sDel);
+    it = find_anchor(anchor_del2, it);
     typename Compute_anchor::Simplex_iterator degenerate_it;
     for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
 	 degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
 	 degenerate_it++) {
-      Anchor_map_iterator it = anchor_del2.find(*degenerate_it);
-      CGAL_assertion(it != anchor_del2.end());
-      Anchor_map_iterator it2 = anchor_del2.find(it->second);
+      Anchor_map_iterator tmp;
+      it2 = anchor_del2.find(*degenerate_it);
       CGAL_assertion(it2 != anchor_del2.end());
       // Merge sets:
-      while (it != it2) {
-	it->second = s;
-	it = it2;
-	it2 = anchor_del2.find(it->second);
+      while (it2 != it2->second) {
+	tmp = it2->second;
+	it2->second = it->second;
+	it2 = tmp;
 	CGAL_assertion(it2 != anchor_del2.end());
       }
-      it->second = s;
+      it2->second = it->second;
     }
   }
 }
@@ -292,30 +311,36 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplexObserver_3>::
 construct_anchor_vor(Rt_Simplex const &sVor) {
   Rt_Simplex s = compute_anchor_obj.anchor_vor(sVor);
-  anchor_vor2.insert(std::pair<Rt_Simplex,Rt_Simplex>(sVor, s));
+  anchor_vor2[sVor] = Anchor_map_iterator();
+
+  Anchor_map_iterator it = anchor_vor2.find(sVor);
+  Anchor_map_iterator it2 = anchor_vor2.find(s);
+  CGAL_assertion(it != anchor_vor2.end());
+  CGAL_assertion(it2 != anchor_vor2.end());
+  it->second = it2;
 
   // degenerate simplices:
   if (compute_anchor_obj.is_degenerate()) {
-    s = find_anchor(anchor_vor2, sVor);
+    it = find_anchor(anchor_vor2, it);
     typename Compute_anchor::Simplex_iterator degenerate_it;
     for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
 	 degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
 	 degenerate_it++) {
+      Anchor_map_iterator tmp;
+      it2 = anchor_vor2.find(*degenerate_it);
       // Possibly not found for 2 Voronoi vertices with the same center,
       // If the first vertex is inserted and the second is already found.
       // see compute_anchor_obj.anchor_vor(Cell_handle)
-      Anchor_map_iterator it = anchor_vor2.find(*degenerate_it);
-      if (it != anchor_vor2.end()) {
-	Anchor_map_iterator it2 = anchor_vor2.find(it->second);
+      if (it2 != anchor_vor2.end()) {
 	CGAL_assertion(it2 != anchor_vor2.end());
 	// Merge sets:
-	while (it != it2) {
-	  it->second = s;
-	  it = it2;
-	  it2 = anchor_vor2.find(it->second);
+	while (it2 != it2->second) {
+	  tmp = it2->second;
+	  it2->second = it->second;
+	  it2 = tmp;
 	  CGAL_assertion(it2 != anchor_vor2.end());
 	}
-	it->second = s;
+	it2->second = it->second;
       }
     }
   }

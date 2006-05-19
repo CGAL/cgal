@@ -133,11 +133,12 @@ public:
       std::cerr << "Vertices: " << _tmc.number_of_vertices() << std::endl;
       std::cerr << "Cells:    " << _tmc.number_of_cells() << std::endl;
     }
-//     std::ofstream out("vertices.txt");
-//     for (typename Triangulated_mixed_complex::Finite_vertices_iterator 
-// 	   vit = _tmc.finite_vertices_begin();
-// 	 vit != _tmc.finite_vertices_end(); vit ++) {
-//       out << vit->point().x().exact() << std::endl;
+
+//     std::ofstream out("edgelength.txt");
+//     for (typename Triangulated_mixed_complex::Finite_edges_iterator 
+// 	   eit = _tmc.finite_edges_begin();
+// 	 eit != _tmc.finite_edges_end(); eit ++) {
+//       out << sqrt(_tmc.segment(eit).squared_length()) << std::endl;
 //     }
   }
   const Triangulated_mixed_complex &triangulated_mixed_complex() const {
