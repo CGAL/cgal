@@ -67,18 +67,9 @@ iff \cgal\ is configured with \leda\ or GMP support, respectively.
 \label{sec:boost_support}
 \cgal\ code can rely on Boost libraries to some extent.
 
-Boost is always installed with \cgal, and is updated to the latest
-version of Boost available.  Note that users may supply a version
-of Boost of their own, which implies that some care must be taken
-about which version of Boost is used, which may imply using some
-configuration programs or testing explicitly the Boost version in
-use.
+Boost was installed with \cgal\ Release 3.0, and is no longer
+installed, as it is already distributed with Linux and cygwin.  
 
-Currently, only the header files of Boost are installed, but not the
-compiled libraries.  This represents the majority of Boost libraries
-however.  If the need arise in the future, we may think about extending
-the installation process to handle the libraries with compiled parts
-as well.
 
 Since portability and backward compatibility are a concern in \cgal,
 we have decided that the list of Boost libraries usable in \cgal\ will be
@@ -100,16 +91,16 @@ with question marks are not decided yet) :
 \item Operators --- Templates ease arithmetic classes and iterators
 \item ? Any --- Safe, generic container for single values of different value
       types (what's the relation with \texttt{variant})
-\item ? Concept check --- Tools for generic programming
+\item Concept check --- Tools for generic programming
 \item ? Bind \texttt{[TR1]} and  mem\_fn --- Generalized binders for
       function/object/pointers and member functions (overlaps with STL
       Extensions)
 \item ? Graph --- Generic graph components and algorithms
 \item ? Interval --- Extends the usual arithmetic functions to mathematical intervals (overlaps with CGAL::Interval\_nt)
-\item ? Iterators --- Iterator construction framework, adaptors, concepts, and more
-\item ? MPL --- Template metaprogramming framework of compile-time algorithms, sequences and metafunction classes
-\item ? Optional --- Discriminated-union wrapper for optional values
-\item ? Property map --- Concepts defining interfaces which map key objects to value objects
+\item Iterators --- Iterator construction framework, adaptors, concepts, and more
+\item MPL --- Template metaprogramming framework of compile-time algorithms, sequences and metafunction classes
+\item Optional --- Discriminated-union wrapper for optional values
+\item Property map --- Concepts defining interfaces which map key objects to value objects
 \item ? Random \texttt{[TR1]} --- A complete system for random number generation
       (overlaps with support library)
 \item ? Rational --- A rational number class (overlaps with CGAL::Quotient)
@@ -117,7 +108,7 @@ with question marks are not decided yet) :
 %\item ? Result\_of \texttt{[TR1]}
 \item ? Smart Pointers \texttt{[TR1]} --- Five smart pointer class templates
 \item ? Static assertions --- Static assertions (compile time assertions)
-\item ? Tuple \texttt{[TR1]} --- Ease definition of functions returning multiple values, and more
+\item Tuple \texttt{[TR1]} --- Ease definition of functions returning multiple values, and more
 \item ? Type traits \texttt{[TR1]} --- Templates for fundamental properties of types
 \item ? Variant --- Safe, generic, stack-based discriminated union container
       (how does it relate to \texttt{any} ?)
@@ -199,8 +190,8 @@ GNU 2.95        & \texttt{\_\_GNUC\_MINOR\_\_}      & 95\\
 GNU 3.2.1       & \texttt{\_\_GNUC\_\_}             & 3\\
 GNU 3.2.1       & \texttt{\_\_GNUC\_MINOR\_\_}      & 2\\
 GNU 3.2.1       & \texttt{\_\_GNUC\_PATCHLEVEL\_\_} & 1\\
-Microsoft VC6.0 & \texttt{\_MSC\_VER}               & 1200\\
-Microsoft VC7.0 & \texttt{\_MSC\_VER}               & 1300\\
+Microsoft VC7.1 & \texttt{\_MSC\_VER}               & 1310\\
+Microsoft VC8.0 & \texttt{\_MSC\_VER}               & 1400\\
 Intel 7.0       & \texttt{\_\_INTEL\_COMPILER}      & ???\\
 SGI 7.3         & \texttt{\_COMPILER\_VERSION}      & 730\\
 SUN 5.0         & \texttt{\_\_SUNPRO\_CC}           & 0x500\\
