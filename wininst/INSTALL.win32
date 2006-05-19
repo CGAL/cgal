@@ -2,7 +2,7 @@ $CGAL/INSTALL.win32
 ----------------------------------------------------------------------
 
 This file describes how to install CGAL on MS Windows for
-Developer Studio (VC++ .NET 2003, and 2005)
+Developer Studio .net 2003 (VC 7.1) and 2005 (VC 8.0) 
 
 Note that you also can install CGAL with the Microsoft compilers using
 cygwin. For installation on Unix systems and on cygwin, please see
@@ -20,30 +20,38 @@ sure you carefully read the instructions from each installation step.
 
 
 Boost
-CGAL needs some parts of Boost. You must download it from http://www.boost.org.
+CGAL needs some parts of Boost. You can download it from http://www.boost.org.
 It is enough to unzip the file. Currently only demo programs
 in the Kinetic_data_structures directory need the compiled Boost
 library program_options.
+Alternatively you can use the Installer for Boost provided
+by Boost Consulting: http://www.boostconsulting/download.html.
+It allows you to select precompiled libraries. 
 
 
 GMP and MPFR
-Some examples and demos need GMP. On Windows, CGAL installer comes with
-GMP 4.1.4 and MPFR 2.1.0. 
-We compiled them with the /MD option, in release mode, and we didn't
-use processor specific assembler.
+
+Some examples and demos need GMP. The CGAL Installer installs
+precompiled versions of GMP 4.1.4 and MPFR 2.1.0. in the directory
+CGAL-3.2/auxiliary/gmp. 
+We compiled GMP and MPFR with the /MD option, in release mode, and we 
+didn't use processor specific assembler.
 
 
 Qt
+
 Most demos use Qt 3. You can download it from http://www.trolltech.no.
 You must build the multi-threaded version (/MD).
 
 
 TAUCS
+
 Only examples in the Surface_mesh_parameterization directory need TAUCS.
 
-On Windows, CGAL installer installs TAUCS precompiled with the /MD option and 
+The CGAL Installer installs a precompiled version of TAUCS in the
+directory CGAL-3.2/auxiliary/taucs. We compiled TAUCS with the /MD option and 
 linked with the ATLAS library.
-Blas is provided by the ATLAS library. It is precompiled with the /MD option 
+The ATLAS library provides BLAS . It is precompiled with the /MD option 
 and optimized for a Pentium 4 processor with SSE2 instructions. 
 If ATLAS is slow or crashes on your machine, please recompile it. Source code 
 can be downloaded from the official site http://math-atlas.sourceforge.net 
@@ -62,8 +70,9 @@ with the /MD option and the appropriate Blas library.
 
 
 Zlib
+
 Currently only demo programs in the Surface_mesher directory need Zlib.
-On Windows, CGAL installer comes with Zlib precompiled.
+The CGAL Installer comes with Zlib precompiled.
 
 
 Paths for Header Files and Libraries
@@ -72,14 +81,16 @@ The individual project files do not specify where the header
 files from Boost, GMP/MPFR, Qt, TAUCS, Zlib etc. are located.  You must add
 these paths for Developer Studio in Tools->Options->Projects->VC++Directories
 in the tab "Show Directories" for "Include Files" and "Library Files".
+The CGAL Installer tries to write the paths in a .net 2003 (VC 7.1) configuration 
+file.  If it does not succeed it shows a warning that you have to add it.
 
-If you intend to use VC++ from an MS-DOS Prompt Shell, add the same paths
+If you intend to use VC++ from a MS-DOS Prompt Shell, add the same paths
 to the %INCLUDE% and %LIB% environment variables.
 
 
 Building the Library
 
-The CGAL.lib is already precompiled and located in
+The CGAL.lib is already precompiled for .net 2003 (VC 7.1) and located in
 CGALROOT/lib/msvc7/CGAL.lib.  It is built using the /MD compiler
 option. If you want to rebuild CGAL.lib you should go into the
 CGALROOT/src/CGAL directory and open cgallib.vcproj using Developer
@@ -106,6 +117,6 @@ command prompt, or via Explorer.
 
 NOTE for VC 2005 Users
 
-This product can convert the project files of .net 2003. CGAL provides only
-project files for .net 2003 because you should convert them without problems
+This product can convert the project files of .net 2003 (VC 7.1). CGAL provides only
+project files for .net 2003 (VC 7.1) because you should convert them without problems
 using the new product. The other way around is not possible.
