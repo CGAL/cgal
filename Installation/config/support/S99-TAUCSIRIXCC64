@@ -1,10 +1,10 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
 
-DESCRIPTION = TAUCS for FreeBSD/Atlas
+DESCRIPTION = TAUCS for IRIX cc 64 bits
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS =
-LIBS = taucs lapack f77blas cblas atlas metis g2c compat
+LIBS = taucs complib.sgimath_mp metis64 c
 REQUIRES =
 INCOMPATIBLE =
 STDINCLDIRS =

@@ -1,6 +1,6 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
 
-DESCRIPTION = TAUCS for Darwin
+DESCRIPTION = TAUCS for gcc/Darwin
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS = -framework vecLib

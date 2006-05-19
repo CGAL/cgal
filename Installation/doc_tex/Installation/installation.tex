@@ -285,10 +285,7 @@ some dots written to the screen indicating progress.
 {\ccTexHtml{\scriptsize}{}
 \begin{alltt}
 Parsing support specfiles for 3rd party libraries:
-BOOST, BOOSTPROGRAMOPTIONS, X11, GMP, GMPXX, MPFR, CORE, CGALCORE, ZLIB, ZLIBMS,
-LEDA, LEDAWIN, LEDAMS, LEDAWINMS, QT3MT, QT3ST, QT3MSMT, QT3MSST, TAUCSSOLARIS,
-TAUCSWINMKL, TAUCSWINATLAS, TAUCSLINUXATLAS, TAUCSLINUXMKL, TAUCSLINUXINTEL,
-TAUCSLINUXMUMPS, TAUCSDARWIN, TAUCSFREEBSDATLAS, TAUCSIRIX32, TAUCSIRIX64, done.
+BOOST, BOOSTPROGRAMOPTIONS, X11, GMP, GMPXX, MPFR, CORE, CGALCORE, ZLIB, ZLIBMS, LEDA, LEDAWIN, LEDAMS, LEDAWINMS, QT3MT, QT3ST, QT3MSMT, QT3MSST, TAUCSSOLARISCC, TAUCSWINMKL, TAUCSWINATLAS, TAUCSGCCATLAS, TAUCSGCCATLAS2, TAUCSINTELCCATLAS, TAUCSINTELCCMUMPS, TAUCSDARWIN, TAUCSGCCMKL, TAUCSIRIXCC32, TAUCSIRIXCC64, done.
 
 --------------------------------------------------------
   This is the install script for CGAL \cgalrelease
@@ -887,17 +884,17 @@ instance, if you have uncompressed and compiled the official release of \taucs\
 
 In case you disabled the automatic support for third party libraries,
 support for \taucs\ can be enabled with the command line switches
-``\texttt{--with-TAUCSSOLARIS}'',
+``\texttt{--with-TAUCSSOLARISCC}'',
 ``\texttt{--with-TAUCSWINMKL}'',
 ``\texttt{--with-TAUCSWINATLAS}'',
-``\texttt{--with-TAUCSLINUXATLAS}'',
-``\texttt{--with-TAUCSLINUXMKL}'',
-``\texttt{--with-TAUCSLINUXINTEL}'',
-``\texttt{--with-TAUCSLINUXMUMPS}'',
+``\texttt{--with-TAUCSGCCATLAS}'',
+``\texttt{--with-TAUCSGCCATLAS2}'',
+``\texttt{--with-TAUCSINTELCCATLAS}'',
+``\texttt{--with-TAUCSINTELCCMUMPS}'',
 ``\texttt{--with-TAUCSDARWIN}'',
-``\texttt{--with-TAUCSFREEBSDATLAS}'',
-``\texttt{--with-TAUCSIRIX32}'',
-and ``\texttt{--with-TAUCSIRIX64}'' (depending of your platform and BLAS library).
+``\texttt{--with-TAUCSGCCMKL}'',
+``\texttt{--with-TAUCSIRIXCC32}'', and
+``\texttt{--with-TAUCSIRIXCC64}'' (depending of your platform and BLAS library).
 
 
 \subsection{Setup Support for X11\label{sec:x11-setup}}

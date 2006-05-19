@@ -1,6 +1,6 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
 
-DESCRIPTION = TAUCS for Windows/Atlas
+DESCRIPTION = TAUCS for Visual C++/Atlas
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS =
