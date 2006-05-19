@@ -27,6 +27,10 @@
 
 #include <cassert>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/time.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -83,42 +87,6 @@ public:
        std::cerr.flush();
        taucs_logfile("stderr");
 #endif
-
-//#ifdef DEBUG_TRACE
-//        // Debug trace
-//        fprintf(stderr, "\n");
-//        fprintf(stderr, "linear_solver:\n");
-//        int n = A.row_dimension();
-//        if (n < 20)	// if small matrix, print it entirely
-//        {
-//	    fprintf(stderr, "******************  A:  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		    for (int j=0; j<n; j++)
-//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
-//		    fprintf(stderr, "\n");
-//	    }
-//	    fprintf(stderr, "******************  B:  ******************\n");
-//	    for (int j=0; j<n; j++)
-//		    fprintf(stderr, "%lf\t", (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//        else		// if large matrix, print only not null elements
-//        {
-//	    fprintf(stderr, "******************  A*X=B  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		for (int j=0; j<n; j++)
-//		    if ( ! IsZero(A.get_coef(i, j)) )
-//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
-//		fprintf(stderr, "\n");
-//	    }
-//	    for (int j=0; j<n; j++)
-//		if ( ! IsZero(B[j]) )
-//		    fprintf(stderr, "B[%d] = %lf\t", j, (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//#endif
 
         try
         {
@@ -195,42 +163,6 @@ public:
        taucs_logfile("stderr");
 #endif
 
-//#ifdef DEBUG_TRACE
-//        // Debug trace
-//        fprintf(stderr, "\n");
-//        fprintf(stderr, "linear_solver:\n");
-//        int n = A.row_dimension();
-//        if (n < 20)	// if small matrix, print it entirely
-//        {
-//	    fprintf(stderr, "******************  A:  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		    for (int j=0; j<n; j++)
-//			    fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
-//		    fprintf(stderr, "\n");
-//	    }
-//	    fprintf(stderr, "******************  B:  ******************\n");
-//	    for (int j=0; j<n; j++)
-//		    fprintf(stderr, "%lf\t", (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//        else		// if large matrix, print only not null elements
-//        {
-//	    fprintf(stderr, "******************  A*X=B  ******************\n");
-//	    for (int i=0; i<n; i++)  {
-//		for (int j=0; j<n; j++)
-//		    if ( ! IsZero(A.get_coef(i, j)) )
-//			fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
-//		fprintf(stderr, "\n");
-//	    }
-//	    for (int j=0; j<n; j++)
-//		if ( ! IsZero(B[j]) )
-//		    fprintf(stderr, "B[%d] = %lf\t", j, (double)B[j]);
-//	    fprintf(stderr, "\n");
-//	    fprintf(stderr, "******************************************\n");
-//        }
-//#endif
-
         try
         {
             int     success;
@@ -247,10 +179,10 @@ public:
                 return false;
             }
 
-            // create multifile for out-of-core swapping
-            char*   matrixfile = tempnam(NULL, "taucs.L");
+            // create temporary multifile for out-of-core swapping
+            char*   matrixfile = tmpnam(NULL);
             taucs_io_handle* oocL = taucs_io_create_multifile(matrixfile);
-            free(matrixfile); matrixfile = NULL;
+            matrixfile = NULL;
             if (oocL == NULL) {
                 taucs_printf("\tCannot Create Multifile\n");
                 return false;
@@ -295,7 +227,71 @@ private:
     {
         return (CGAL_CLIB_STD::fabs(a) < 10.0 * std::numeric_limits<NT>::min());
     }
-};
+
+    /// Generate a temporary filename. See "man tmpnam".
+    /// This is a replacement for the standard tmpnam() function that is deprecated.
+    /// Note: this is a modified version of cupsTempFile().
+    char *                                    // Out - Filename or
+    tmpnam(char *filename)                    // In - Pointer to buffer
+    {
+        int           fd;                     // File descriptor for temp file
+#ifdef WIN32
+        char          tmpdir[1024];           // Windows temporary directory
+#else
+        char          *tmpdir;                // TMPDIR environment var
+#endif
+        struct timeval curtime;               // Current time
+        static char   buf[L_tmpnam] = "";     // Buffer if you pass in NULL
+
+        // See if a filename was specified.
+        if (filename == NULL)
+            filename = buf;
+
+        // Get temporary directory.
+#ifdef WIN32
+        if ((tmpdir = getenv("TEMP")) == NULL)
+        {
+            GetTempPath(sizeof(tmpdir), tmpdir);
+        }
+#else
+        if ((tmpdir = getenv("TMPDIR")) == NULL)
+        {
+            // Put root temp files in restricted temp directory.
+            if (getuid() == 0)
+                tmpdir = "/tmp";
+            else
+                tmpdir = "/var/tmp";
+        }
+#endif
+
+        // Make the temporary name using the specified directory.
+        do
+        {
+            // Get the current time of day...
+            gettimeofday(&curtime, NULL);
+
+            // Format a string using the hex time values...
+            snprintf(filename, L_tmpnam - 1, "%s/%08x%05x", tmpdir,
+                    (int)curtime.tv_sec, (int)curtime.tv_usec);
+
+            // Open the file in "exclusive" mode, making sure that we don't
+            // stomp on an existing file or someone's symlink crack.
+#ifdef O_NOFOLLOW
+            fd = open(filename, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, 0600);
+#else
+            fd = open(filename, O_WRONLY | O_CREAT | O_EXCL, 0600);
+#endif
+        }
+        while (fd < 0);
+
+        // Close the temp file - it'll be reopened later as needed.
+        close(fd);
+
+        // Return the temp filename.
+       return (filename);
+    }
+
+}; // Taucs_solver_traits
 
 
 CGAL_END_NAMESPACE
