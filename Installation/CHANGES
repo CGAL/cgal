@@ -3,11 +3,11 @@ $CGAL/CHANGES
 ----------------------------- Release 3.2 ----------------------------------
 The following functionality has been added or changed:
 
-1  All
+1  General
 
 The following platforms are no longer supported:
- - SunPro CC versions 5.4 and 5.5 on Solaris
- - SGI Mips Pro
+ - SunPro CC compiler versions 5.4 and 5.5 on Solaris
+ - SGI Mips Pro C++ compiler
 
 For Visual C++ the installation scripts choose the multi-threaded dynamically
 linked runtime (/MD). Before it was the single-threaded static runtime (/ML).
@@ -15,15 +15,16 @@ linked runtime (/MD). Before it was the single-threaded static runtime (/ML).
 
 2 Installation
 
- - The install tool tries to find third party libraries
+ - The installation script tries to find third party libraries
    at "standard" locations.
 
- - Installers for Apple, Windows, and rpms.
+ - OS-specific packages for Windows, MacOSX and Linux (RPM and Debian).
 
 
 3 Manuals 
  
  - User and Reference manual pages of a package are in the same chapter 
+ - General restructuring of the high-level presentation of the library
 
 
 4 Kernels
@@ -120,7 +121,7 @@ in 3D.
 
 Visualizing vector fields is important for many application domains. A
 good way to do it is to generate streamlines that describe the flow
-behaviour. This package implements the "Farthest Point Seeding"
+behavior. This package implements the "Farthest Point Seeding"
 algorithm for placing streamlines in 2D vector fields. It generates a
 list of streamlines corresponding to an input flow using a specified
 separating distance. The algorithm uses a Delaunay triangulation to
@@ -149,11 +150,18 @@ supports exact or inexact operations on primitives which move along
 polynomial trajectories.
 
 
-5.11 Smallest Enclosing Ellipsoid  (new package)
+5.11  Geometric Optimization (major revision)
+
+The underlying QP solver which is the foundation for several algorithms
+in the Geometric Optimization chapter has been completely rewritten.
+
+
+5.12 Smallest Enclosing Ellipsoid  (new package)
 
 This algorithm is new in the chapter Geometric Optimisation
 
-5.12  2D Arrangement (major revision)
+
+5.13  2D Arrangement (major revision)
 
 This package can be used to construct, maintain, alter, and display
 arrangements in the plane. Once an arrangement is constructed, the
@@ -168,11 +176,6 @@ additional data. An important extension stores the construction
 history of the arrangement, such that it is possible to obtain the
 originating curve of an arrangement subcurve.
 
-
-5.13  Geometric Optisation (major revision)
-
-The uderlying QP solver which is the foundation for several algorithms
-in the Geometric Optimisation chapter has been completely rewritten.
 
 
 
