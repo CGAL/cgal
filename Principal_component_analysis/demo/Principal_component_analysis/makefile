@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-#CGAL_MAKEFILE = Enter your makefile here
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
