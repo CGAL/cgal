@@ -111,8 +111,9 @@ The shell script
 {{\tt cgal\_create\_makefile}} creates a \cgal\ makefile
 in the current working directory.
 The makefile will have rules to make an executable from every {\tt .C}
-file in the directory.  The following options are available
-to indicate the kind of makefile to create:
+and {\tt .cpp} file which contains the word {\tt main} in the directory.
+The following options are available to indicate the kind of makefile
+to create:
 \begin{description}
 \item[-d]   create a default CGAL makefile
 \item[-t]   create a makefile for the test suite
