@@ -13,9 +13,6 @@
 # - The public release case should pass the info to create_internal_release.
 #   [new] : create_internal_release should not know about internal/public mode.
 # - Merge [some parts] into ./create_internal_release ?
-# - There should be command line options to set public/internal,
-#   and the major/minor/bugfix/version_file release numbers.
-#   this should be obsolete now that we generate public/internal at once.
 
 # Set to non-empty for having side-effects (putting on the web site, svn
 # commits...).  Otherwise it is for local testing purposes (put stuff in tmp/).
@@ -30,9 +27,6 @@ else
   SOURCES_DIR="$1"
 fi
 
-
-# Set the following to "y" in case of public release.
-IS_PUBLIC_RELEASE="n"
 
 # The internal release number is extracted/updated from this file :
 VERSION_FILE="version_number"
@@ -69,18 +63,12 @@ MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
 MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
 BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
 
-# The internal release number is considered only in non-public mode.
-if [ $IS_PUBLIC_RELEASE = "n" ]; then
-    [ -r $VERSION_FILE ] || return
-    INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
-    [ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
-    INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
-    internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
-else
-    INTERNAL_NUMBER=0
-    INTERNAL_STRING=""
-    internal_nr="1000"
-fi
+# Compute the internal release number.
+[ -r $VERSION_FILE ] || return
+INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
+[ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
+INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
+internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
 
 # Do not show the bugfix number if it is 0.
 if [ $BUGFIX_NUMBER != "0" ]; then 
