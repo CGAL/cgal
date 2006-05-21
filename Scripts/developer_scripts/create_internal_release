@@ -11,8 +11,7 @@ usage:
   $0 (-h|-r) 
              [-n version number]
              [-d releasedir] [-a allpackagesdir] 
-             [-s scriptsdir]
-             [-l lockfile] [-p packagesfile] 
+             [-l lockfile]
 
 Exactly one of the options -h or -r must be present.
     -h show this message and quit
@@ -21,27 +20,19 @@ Exactly one of the options -h or -r must be present.
     -n version number (CGAL_VERSION_NR)
     -d releasedir, default releasedir is the current dir
     -a allpackagesdir, default is releasedir/trunk
-    -s scriptsdir, default is allpackagesdir/Scripts/scripts
     -l lockfile, default is releasedir/release_creation.lock
-    -p packagesfile, default is allpackagesdir/Maintenance/release_building/include_in_release
 
    The version number is stored in include/CGAL/version.h.
    The RELEASEDIR is the place where the new release will be created.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
        from the SVN. Could be trunk or some branch.
-   The SCRIPTSDIR is the place where you have the cgal_create_makefile script.
-       You need this script to create the default makefiles for examples and
-       tests.
    The LOCKFILE is some file used by lockfile command as a mutex.
-   The PACKAGESFILE is the file that contains a list of the packages you want
-       to include in this release. In fact it is a filter for packages you have
-       in ALLPACKAGESDIR.
 
 Example of how to use the script:
 >svn co svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk
 >./create_internal_release -r CGAL-3.3-I-1
 or
->./create_internal_release -r CGAL-3.3-I-7 -d \$HOME -a \$HOME/CGALSVN/trunk -s \$HOME/scripts -l release_creation.lock -p include_in_release
+>./create_internal_release -r CGAL-3.3-I-7 -d \$HOME -a \$HOME/CGALSVN/trunk -l release_creation.lock
 
 
 EOF
@@ -65,13 +56,6 @@ my (
     $LOCKCMD,
     $packages_file
 );
-
-  $RELEASEDIR=cwd();
-  $ALLPACKAGESDIR="$RELEASEDIR/trunk";
-  $LOCKFILE="$RELEASEDIR/release_creation.lock";
-  $SCRIPTSDIR="$ALLPACKAGESDIR/Scripts/scripts";
-  $LOCKCMD='lockfile';
-  $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
 
 
 
@@ -780,6 +764,11 @@ sub file_header_setting
 
 sub main(){
 
+  $RELEASEDIR=cwd();
+  $ALLPACKAGESDIR="$RELEASEDIR/trunk";
+  $LOCKFILE="$RELEASEDIR/release_creation.lock";
+  $LOCKCMD='lockfile';
+
 getopts('hr:a:d:l:p:s:n:');
 if ($::opt_h ) {
   usage();
@@ -788,9 +777,7 @@ if ($::opt_h ) {
 if ($::opt_d){
   $RELEASEDIR = $::opt_d;
   $ALLPACKAGESDIR = "$RELEASEDIR/trunk";
-  $SCRIPTSDIR = "$ALLPACKAGESDIR/Scripts/scripts";
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
-  $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
 }
 
 if ($::opt_r){
@@ -807,15 +794,11 @@ if ($::opt_r){
 if ($::opt_a){
   $ALLPACKAGESDIR = $::opt_a;
 }
-if ($::opt_s){
-  $SCRIPTSDIR = $::opt_s;
-}
 if ($::opt_l){
   $LOCKFILE = $::opt_l;
 }
-if ($::opt_p){
-  $packages_file = $::opt_p;
-}
+  $SCRIPTSDIR="$ALLPACKAGESDIR/Scripts/scripts";
+  $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
   print "Initializing variables ...\n";
   print "  Release dir: $RELEASEDIR\n";
   print "  All packages dir: $ALLPACKAGESDIR\n";
