@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<bench name_length="96" header="false" type_mask="0x3" strategy_mask="0x4">
+<bench name_length="96" print_header="0" type_mask="0x3" strategy_mask="0x4">
   <class name="cls111" key="increment walk Non Caching Segments Cartesian Cgal Gmpq"/>
   <class name="cls112" key="aggregate Non Caching Segments Cartesian Cgal Gmpq"/>
   <class name="cls121" key="increment walk Non Caching Segments Simple Cartesian Cgal Gmpq"/>
@@ -30,13 +30,13 @@
   <class name="cls271" key=""/>
   <class name="cls272" key=""/>  
 
-  <clo name="verbose" string="-v"/> 
-  <clo name="format" string="-If="/>
-  <clo name="samples" string="-s"/> 
-  <clo name="header" string="-bh="/> 
-  <clo name="name_length" string="-bnl="/> 
-  <clo name="type_mask" string="-btm="/> 
-  <clo name="strategy_mask" string="-bsm="/> 
+  <clo name="verbose" string="--verbose"/> 
+  <clo name="format" string="--format"/>
+  <clo name="samples" string="--samples"/> 
+  <clo name="print_header" string="--print-header"/> 
+  <clo name="name_length" string="--name-length"/> 
+  <clo name="type_mask" string="--type-mask"/> 
+  <clo name="strategy_mask" string="--strategy-mask"/> 
 
   <file name="eurcut.dat" format="rat" curves="3099"
     vertices="3078" halfedges="6198" faces="39"></file>
@@ -59,7 +59,7 @@
 
   <bench samples="10" file="onebig_100_x.dat" enable="true">
     <bench enable="false">
-      <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqCartesianNonCachingSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
@@ -75,7 +75,7 @@
     </bench>
 
     <bench>
-      <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqCartesianSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianSegment/>
       <benchArrCgalGmpqLazyCartesianSegment/>
       <benchArrCgalGmpqLazySimpleCartesianSegment/>
@@ -94,7 +94,7 @@
 
   <bench samples="10" file="random_segments_100_x.dat" enable="false">
     <bench>
-      <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqCartesianNonCachingSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
@@ -110,7 +110,7 @@
     </bench>
 
     <bench>
-      <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqCartesianSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianSegment/>
       <benchArrCgalGmpqLazyCartesianSegment/>
       <benchArrCgalGmpqLazySimpleCartesianSegment/>
@@ -129,7 +129,7 @@
 
   <bench samples="4" file="onebig_250_x.dat" enable="true">
     <bench enable="false">
-      <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqCartesianNonCachingSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
@@ -145,7 +145,7 @@
     </bench>
 
     <bench>
-      <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqCartesianSegment print_header="1"/>
       <benchArrCgalGmpqCartesianSegment/>
       <benchArrCgalGmpqLazyCartesianSegment/>
       <benchArrCgalGmpqLazyCartesianSegment/>
@@ -164,7 +164,7 @@
 
   <bench samples="4" file="random_segments_500_x.dat" enable="true">
     <bench enable="false">
-      <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqCartesianNonCachingSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
@@ -180,7 +180,7 @@
     </bench>
 
     <bench>
-      <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqCartesianSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianSegment/>
       <benchArrCgalGmpqLazyCartesianSegment/>
       <benchArrCgalGmpqLazySimpleCartesianSegment/>
@@ -199,7 +199,7 @@
 
   <bench samples="4" file="random_segments_1000_x.dat" enable="true">
     <bench enable="false">
-      <benchArrCgalGmpqCartesianNonCachingSegment header="true"/>
+      <benchArrCgalGmpqCartesianNonCachingSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazyCartesianNonCachingSegment/>
       <benchArrCgalGmpqLazySimpleCartesianNonCachingSegment/>
@@ -215,7 +215,7 @@
     </bench>
 
     <bench>
-      <benchArrCgalGmpqCartesianSegment header="true"/>
+      <benchArrCgalGmpqCartesianSegment print_header="1"/>
       <benchArrCgalGmpqSimpleCartesianSegment/>
       <benchArrCgalGmpqLazyCartesianSegment/>
       <benchArrCgalGmpqLazySimpleCartesianSegment/>
