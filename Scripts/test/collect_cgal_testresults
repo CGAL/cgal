@@ -11,7 +11,7 @@
 
 print_platforms()
 {
-  cd src_CGAL
+  cd Number_types  # Pick a stable directory at random
   for FILE in `ls CompilerOutput_*` ; do
     PLATFORM=`echo $FILE | sed 's/CompilerOutput_//'| sed 's/\.gz//'`
     printf "$PLATFORM "
