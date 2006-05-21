@@ -2,7 +2,7 @@ BASEDIR =.
 
 include $(ROOT)/include/make/comdef.mak
 
-BASENAME = simple
+BASENAME = bbox
 INSTALLDIR0 = $(BINDIR)
 CPPSOURCES = $(BASENAME).C
 CPPSOURCES+= Bench_option_parser.C
@@ -14,7 +14,9 @@ LCPPINCS+= -I$(CGALROOT)/include
 LCPPINCS+= -I$(CGALROOT)/include/CGAL/config/i686_Linux-2.6_g++-3.3.5
 LCPPINCS+= $(CGALINCS)
 
-LLDLIBS = -lboost_program_options
+LLDOPTS = -L$(CGALROOT)/lib/i686_Linux-2.6_g++-$(COMPILER_VER)
+LLDOPTS+= -Wl,-R$(CGALROOT)/lib/i686_Linux-2.6_g++-$(COMPILER_VER)
+LLDLIBS = -lboost_program_options -lCGAL
 
 include $(MAKEINCDIR)/basedir.mak
 include $(MAKEINCDIR)/comrul.mak

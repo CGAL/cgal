@@ -1,8 +1,5 @@
 #include <math.h>
 
-#define CGAL_BEGIN_NAMESPACE namespace CGAL {
-#define CGAL_END_NAMESPACE }
-
 #include <CGAL/Bench.h>
 #include <CGAL/Bench_option_parser.h>
 

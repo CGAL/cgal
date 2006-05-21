@@ -248,7 +248,7 @@ Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
-Benchmark/examples/Benchmark/bbox/Makefile -text
+Benchmark/examples/Benchmark/bbox/Makefile.mak -text
 Benchmark/examples/Benchmark/bbox/bbox.cpp -text
 Benchmark/examples/Benchmark/leftturn/Makefile.mak -text
 Benchmark/examples/Benchmark/leftturn/leftturn.C -text

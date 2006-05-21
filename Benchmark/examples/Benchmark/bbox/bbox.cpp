@@ -3,41 +3,49 @@
 #include <CGAL/Quotient.h>
 
 #include <CGAL/Bench.h>
-#include <CGAL/Bench.C>
-#include <CGAL/Bench_parse_args.h>
-#include <CGAL/Bench_parse_args.C>
+#include <CGAL/Bench_option_parser.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>          NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
 
+namespace po = boost::program_options;
+
+struct Help_exception {};
+
 template <class Kernel>
-class Bench_leftturn : public Kernel {
-private:
-  typename Kernel::Point_2 p, q, r;
-  typename Kernel::Leftturn_2 leftturn;
+class Bench_bbox : public Kernel {
 public:
-  Bench_leftturn()
-  {
-    leftturn = leftturn_2_object();
-    p = typename Kernel::Point_2(0,0);
-    q = typename Kernel::Point_2(1,1);
-    r = typename Kernel::Point_2(0,1);
-  }
   int init(void) { return 0; }
   void clean(void) {}
   void sync(void) {}
-  void op(void) { leftturn(p, q, r); }
+  void op(void) {}
 };
+
+typedef Bench_bbox<Kernel>                      My_bench_bbox;
 
 int main(int argc, char * argv[])
 {
-  CGAL::Bench_parse_args parseArgs(argc, argv);
-  int rc = parseArgs.parse();
-  if (rc > 0) return 0;
-  if (rc < 0) return rc;
-  int seconds = parseArgs.getSeconds();
-  CGAL::Bench_base::printHeader();
-  CGAL::Bench<Bench_leftturn<Kernel> > benchInst("Leftturn", seconds, false);
-  benchInst();
+  po::options_description opts("Options");
+  opts.add_options()("help,h", "print help message");
+  CGAL::Bench_option_parser bench_opts;
+  opts.add(bench_opts.get_opts());
+  po::variables_map var_map;
+
+  try {
+    po::store(po::command_line_parser(argc, argv).options(opts).run(), var_map);
+    po::notify(var_map);
+    if (var_map.count("help")) {
+      std::cout << opts << std::endl;
+      throw Help_exception();
+    }
+  } catch(Help_exception & /* e */) {
+    return 0;
+  } catch(std::exception & e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
+  
+  CGAL::Bench<My_bench_bbox> bench("Leftturn", bench_opts.get_seconds());
+  bench();
   return 0;
 }
