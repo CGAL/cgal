@@ -47,4 +47,5 @@ typedef CGAL::Segment_Delaunay_graph_2<Gt_wi>   SDG2_wi;
 #include "test_types.h"
 #include "sdg_main.h"
 
+// Comment for cgal_create_makefile : main()
 
