@@ -49,7 +49,7 @@ PATH=$PATH:/usr/local/bin:/usr/bin/gnu
 
 #TMPDIR="/tmp"
 #TMPDIR="${HOME}/CGAL/internal_release_making"
-TMPDIR="/home/spion/CGAL/internal_release_making"
+TMPDIR="/home/spion/CGAL/internal_release_making-3.2-branch"
 
 [ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
 [ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
