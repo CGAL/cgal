@@ -97,7 +97,7 @@ release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
 echo "Release number is ${release_number}" >> ${LOGFILE} 2>&1
 
 # Create the release
-${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
+${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
 # Add the SVN revision to version.h
 cd "${release_name}" >> ${LOGFILE} 2>&1
 mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
