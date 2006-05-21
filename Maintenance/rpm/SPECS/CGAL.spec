@@ -1,4 +1,4 @@
-%define cgal_version 3.2
+%define cgal_version 3.3
 
 # If this release is official, define internal_release to 0.
 %define internal_release 447
@@ -15,10 +15,10 @@
 %if %{internal_release}
 %define tarball_name CGAL-%{cgal_version}-I-%{internal_release}
 %define release_value 0.%{internal_release}
-%define CGAL_DIR %{_libdir}/CGAL-3.2-I
+%define CGAL_DIR %{_libdir}/CGAL-3.3-I
 %else
 %define tarball_name CGAL-%{cgal_version}
-%define CGAL_DIR %{_libdir}/CGAL-3.2
+%define CGAL_DIR %{_libdir}/CGAL-3.3
 %define release_value %{release_number}
 %endif
 
@@ -31,8 +31,8 @@ URL: http://www.cgal.org/
 Group: System Environment/Libraries
 Source: %{tarball_name}.tar.gz
 %if %{build_doc}
-Source1: CGAL-3.2-doc_pdf.tar.gz
-Source2: CGAL-3.2-doc_html.tar.gz
+Source1: CGAL-3.3-doc_pdf.tar.gz
+Source2: CGAL-3.3-doc_html.tar.gz
 %endif
 Patch1:  CGAL-install_cgal-SUPPORT_REQUIRED.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -182,6 +182,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sun May 21 2006 Sylvain Pion <Sylvain.Pion@sophia.inria.fr> - 3.3-0.1
+- Update to CGAL-3.3-0.
+
 * Fri Apr 28 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 3.2-0.447
 - Update to CGAL-3.2-447.
 
