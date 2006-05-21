@@ -13,9 +13,13 @@ of committing things twice during the final stabilization phase.
 For branching, you need to :
   - have write access to all packages
   - export svncgal=svn+ssh://scm.gforge.inria.fr/svn/cgal
-  - svn cp $svncgal/trunk $svncgal/tags/CGAL-M.m-branch_tag
+  - svn cp $svncgal/trunk $svncgal/tags/CGAL-M.m-branch-tag
   - svn cp $svncgal/trunk $svncgal/branches/CGAL-M.m-branch
-  - then switch the release building process to that branch.
+  - then switch the release building process to that branch, i.e.:
+    - do a check out of the branch
+    - call create_new_release with the directory of the branch as argument
+  - then update the release numbers in trunk/Maintenance/release_building/*
+    and reset the version_number file to 0 for trunk.
 
 Releasing:
 ----------
@@ -28,8 +32,7 @@ Let <release_dir> be the directory in which you plan to build the release.
       2.  pick the public versions (.zip and .tar.gz) produced by the
           release building script, corresponding to the internal
 	  release which you want to bless as public release.
-      3.  add the installation manual (?).
-      4.  The .zip file for the code needs to be repackaged for use with
+      3.  The .zip file for the code needs to be repackaged for use with
           InstallShield.  Contact the person in charge of Windows support.
 
 For the manuals:
@@ -82,7 +85,7 @@ Install everything:
       4.  install the new web pages, i.e., make a svn commit in Web_pages/,
           and a 'svn up' in /www/pub/www.cgal.org/
       5.  cp cgi-bin/cgal_download.pl /www/pub/cgi-bin/www.cgal.org/
-      6.  tag SVN : svn tag CGAL_M_m_release
+      6.  tag : svn cp $svncgal/branches/CGAL-M.m-branch $svncgal/tags/CGAL-M.m-release
 
 Then finally ...
       7.  announce the release (see announcement directory)
