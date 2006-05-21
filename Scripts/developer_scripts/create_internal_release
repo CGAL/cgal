@@ -112,9 +112,6 @@ sub create_packages_dir(){
     if (-f "$ALLPACKAGESDIR/$package_name/maintainer"){
       system('cp', "$ALLPACKAGESDIR/$package_name/maintainer", "$RELEASEDIR/$VERSION/Packages/$package_name");
     }
-    if  (-f "$ALLPACKAGESDIR/$package_name/version"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/version", "$RELEASEDIR/$VERSION/Packages/$package_name");
-    }
     if (-f "$ALLPACKAGESDIR/$package_name/changes.txt"){
       system('cp', "$ALLPACKAGESDIR/$package_name/changes.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
     }
@@ -204,7 +201,7 @@ sub install_packages() {
 
   }
   closedir ALLPACKAGESDIR;
-  unlink 'temppack.tar', 'description.txt', 'long_description.txt', 'changes.txt', 'submission_info', 'long_description.txt.old';
+  unlink 'temppack.tar', 'description.txt', 'long_description.txt', 'changes.txt';
 }
 
 
