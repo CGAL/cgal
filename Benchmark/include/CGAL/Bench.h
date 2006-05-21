@@ -19,6 +19,8 @@
 #ifndef CGAL_BENCH_H
 #define CGAL_BENCH_H
 
+#include <CGAL/basic.h>
+
 #include <time.h>
 #include <signal.h>
 #include <stdio.h>

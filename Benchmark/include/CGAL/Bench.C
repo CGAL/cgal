@@ -16,7 +16,7 @@
 // 
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
-#include "CGAL/Bench.h"
+#include <CGAL/Bench.h>
 
 CGAL_BEGIN_NAMESPACE
 
