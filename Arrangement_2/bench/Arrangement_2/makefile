@@ -133,6 +133,9 @@ BASENAME = bench
 INSTALLDIR0 = $(BINDIR)
 CPPSOURCES = benchArr.C
 CPPSOURCES+= Option_parser.C
+CPPSOURCES+= Bench_option_parser.C
+CPPSOURCES+= Bench.C
+
 TARGET0 = $(BASENAME)
 # LCPPDEFS+= -DVERBOSE
 
@@ -415,3 +418,5 @@ $(BASENAME).o: $(BASENAME).moc
 include $(BASEDIR)/segments.mak
 include $(BASEDIR)/polylines.mak
 include $(BASEDIR)/conics.mak
+
+vpath %.C $(BASEDIR)/../../../Benchmark/include/CGAL

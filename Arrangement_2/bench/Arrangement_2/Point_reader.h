@@ -18,7 +18,7 @@ public:
 
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator points_out,
-                Option_parser::FormatId format)  {
+                Option_parser::Format_id format)  {
     std::ifstream inp(filename);
     if (!inp.is_open()) {
       std::cerr << "Cannot open file " << filename << "!" << std::endl;

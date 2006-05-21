@@ -65,14 +65,8 @@ void validate(boost::any & v, const std::vector<std::string> & values,
 /*! Constructor */
 Option_parser::Option_parser() :
   m_generic_opts("Generic options"),
-  m_bench_opts("Benchmark options"),
   m_config_opts("Configuration options"),
   m_hidden_opts("Hidden options"),
-  m_seconds(1),
-  m_samples(10),  
-  m_iterations(1),
-  m_header(true),
-  m_name_length(32),
   m_verbose_level(0),
   m_win_width(DEF_WIN_WIDTH),
   m_win_height(DEF_WIN_HEIGHT),
@@ -97,26 +91,12 @@ Option_parser::Option_parser() :
     ("license,l", "print licence information")
     ("version,v", "print version string")
     ;
-
-  // Generic options:
-  m_bench_opts.add_options()
-    ("header", po::value<bool>(&m_header)->default_value(true), "print header")
-    ("name-length,n",
-     po::value<unsigned int>(&m_name_length)->default_value(32),
-     "name-field length")
-    ("samples,s", po::value<unsigned int>(&m_samples)->default_value(10),
-     "number of samples")
-    ("seconds,t", po::value<unsigned int>(&m_seconds)->default_value(1),
-     "number of seconds")
-    ("iterations,i", po::value<unsigned int>(&m_iterations)->default_value(1),
-     "number of iterations")
-    ;
   
   typedef std::vector<std::string> vs;
   
   // Options allowed on the command line, config file, or env. variables
   m_config_opts.add_options()
-    ("input-path,p", po::value<vs>()->composing(), "input path")
+    ("input-path,P", po::value<vs>()->composing(), "input path")
     ("verbose,V", po::value<unsigned int>(&m_verbose_level)->default_value(0),
      "verbose level")
     ("format,f", po::value<std::vector<Format_id> >()->composing(),
@@ -170,13 +150,13 @@ Option_parser::Option_parser() :
 /*! Parse the options */
 void Option_parser::operator()(int argc, char * argv[])
 {
-  store(po::command_line_parser(argc, argv).
-        options(m_cmd_line_opts).positional(m_positional_opts).run(),
-        m_variable_map);
+  po::store(po::command_line_parser(argc, argv).
+            options(m_cmd_line_opts).positional(m_positional_opts).run(),
+            m_variable_map);
   
   std::ifstream ifs(".bench.cfg");
-  store(parse_config_file(ifs, m_config_file_opts), m_variable_map);
-  notify(m_variable_map);
+  po::store(parse_config_file(ifs, m_config_file_opts), m_variable_map);
+  po::notify(m_variable_map);
 
   if (m_variable_map.count("help")) {
     std::cout << m_visible_opts << std::endl;

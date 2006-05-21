@@ -192,7 +192,6 @@ enum MaxFilesNumber {
 #endif
 
 #include <CGAL/Bench.h>
-#include <CGAL/Bench.C>
 
 #if defined(USE_CGAL_WINDOW)
 #include <CGAL/IO/Window_stream.h>
@@ -652,7 +651,7 @@ typedef CGAL::Bench<Display_arr>                Dis_arr_bench;
 
 /*! */
 template <class Bench_inst, class Benchable>
-void run_bench(Bench_inst & benchInst, Benchable & benchable,
+void run_bench(Bench_inst & bench_inst, Benchable & benchable,
                const char * fullname, Format_code format,
                int samples, int iterations, unsigned int verbose_level,
                bool postscript = false, 
@@ -665,14 +664,14 @@ void run_bench(Bench_inst & benchInst, Benchable & benchable,
   benchable.set_postscript(postscript);
   if (fullname2) benchable.set_file_name(fullname2, 1);
   
-  if (samples > 0) benchInst.set_samples(samples);
-  else if (iterations > 0) benchInst.set_iterations(iterations);
+  if (samples > 0) bench_inst.set_samples(samples);
+  else if (iterations > 0) bench_inst.set_iterations(iterations);
   
   //opertor () in the Bench - does all the work !
-  benchInst();
+  bench_inst();
 
   //cout
-  if (verbose_level > 0) std::cout << "(" << benchInst.get_samples() << ") "
+  if (verbose_level > 0) std::cout << "(" << bench_inst.get_samples() << ") "
                                    << std::endl;
 }
 
@@ -680,7 +679,6 @@ void run_bench(Bench_inst & benchInst, Benchable & benchable,
 int main(int argc, char * argv[])
 {
   Option_parser option_parser;
-  std::cout << "10\n";
   try {
     option_parser(argc, argv);
   } catch(Option_parser::Generic_option_exception & /* e */) {
@@ -697,7 +695,7 @@ int main(int argc, char * argv[])
   int samples = option_parser.get_samples();
   int iterations = option_parser.get_iterations();
   int seconds = option_parser.get_seconds();
-  bool printHeader = option_parser.get_print_header();
+  bool print_header = option_parser.is_print_header();
   int nameLength = option_parser.get_name_length();
   unsigned int files_number = option_parser.get_number_files();
   for (unsigned int i = 0; i < files_number; ++i) {
@@ -717,7 +715,7 @@ int main(int argc, char * argv[])
   if (!file_name || !full_name) return -1;
 
   CGAL::Bench_base::set_name_length(nameLength);
-  if (printHeader) CGAL::Bench_base::print_header();
+  if (print_header) CGAL::Bench_base::print_header();
   //end parameters from command line
 
   //start bench
@@ -746,12 +744,12 @@ int main(int argc, char * argv[])
         std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
         NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
-      Trap_inc_arr_bench benchInst(name, seconds, false);
-      Trap_inc_arr & benchable = benchInst.get_benchable();
-      run_bench<Trap_inc_arr_bench,Trap_inc_arr>(benchInst, benchable,
-                                                 full_name, format,
-                                                 samples, iterations,
-                                                 verbose_level, postscript);
+      Trap_inc_arr_bench bench_inst(name, seconds, false);
+      Trap_inc_arr & benchable = bench_inst.get_benchable();
+      run_bench<Trap_inc_arr_bench, Trap_inc_arr>(bench_inst, benchable,
+                                                  full_name, format,
+                                                  samples, iterations,
+                                                  verbose_level, postscript);
     }
 #endif
     
@@ -763,12 +761,12 @@ int main(int argc, char * argv[])
         std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " +
         NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
-      Naive_inc_arr_bench benchInst(name, seconds, false);
-      Naive_inc_arr & benchable = benchInst.get_benchable();
-      run_bench<Naive_inc_arr_bench,Naive_inc_arr>(benchInst, benchable,
-                                                   full_name, format,
-                                                   samples, iterations,
-                                                   verbose_level, postscript);
+      Naive_inc_arr_bench bench_inst(name, seconds, false);
+      Naive_inc_arr & benchable = bench_inst.get_benchable();
+      run_bench<Naive_inc_arr_bench, Naive_inc_arr>(bench_inst, benchable,
+                                                    full_name, format,
+                                                    samples, iterations,
+                                                    verbose_level, postscript);
     }
     
     // Walk point location:
@@ -779,12 +777,12 @@ int main(int argc, char * argv[])
         std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " +
         NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
-      Walk_inc_arr_bench benchInst(name, seconds, false);
-      Walk_inc_arr & benchable = benchInst.get_benchable();
-      run_bench<Walk_inc_arr_bench,Walk_inc_arr>(benchInst, benchable,
-                                                 full_name, format,
-                                                 samples, iterations,
-                                                 verbose_level, postscript);
+      Walk_inc_arr_bench bench_inst(name, seconds, false);
+      Walk_inc_arr & benchable = bench_inst.get_benchable();
+      run_bench<Walk_inc_arr_bench, Walk_inc_arr>(bench_inst, benchable,
+                                                  full_name, format,
+                                                  samples, iterations,
+                                                  verbose_level, postscript);
     }
     
 #if defined(LANDMARK_SUPPORTED)
@@ -796,13 +794,14 @@ int main(int argc, char * argv[])
         std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " +
         NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
-      Landmarks_inc_arr_bench benchInst(name, seconds, false);
-      Landmarks_inc_arr & benchable = benchInst.get_benchable();
-      run_bench<Landmarks_inc_arr_bench,Landmarks_inc_arr>(benchInst, benchable,
-                                                           full_name, format,
-                                                           samples, iterations,
-                                                           verbose_level,
-                                                           postscript);
+      Landmarks_inc_arr_bench bench_inst(name, seconds, false);
+      Landmarks_inc_arr & benchable = bench_inst.get_benchable();
+      run_bench<Landmarks_inc_arr_bench, Landmarks_inc_arr>(bench_inst,
+                                                            benchable,
+                                                            full_name, format,
+                                                            samples, iterations,
+                                                            verbose_level,
+                                                            postscript);
     }
 #endif
     
@@ -815,9 +814,9 @@ int main(int argc, char * argv[])
         std::string(option_parser.get_strategy_name(strategy_code)) + " " +
         TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
         NUMBER_TYPE +" " + " (" + std::string(file_name) + ")";
-      Triangle_inc_arr_bench benchInst(name, seconds, false);
-      Triangle_inc_arr & benchable = benchInst.get_benchable();
-      run_bench<Triangle_inc_arr_bench,Triangle_inc_arr>(benchInst, benchable,
+      Triangle_inc_arr_bench bench_inst(name, seconds, false);
+      Triangle_inc_arr & benchable = bench_inst.get_benchable();
+      run_bench<Triangle_inc_arr_bench,Triangle_inc_arr>(bench_inst, benchable,
                                                          full_name, format,
                                                          samples, iterations,
                                                          verbose_level,
@@ -834,9 +833,9 @@ int main(int argc, char * argv[])
       std::string(option_parser.get_type_name(type_code)) + " " +
       TRAITS_TYPE + " " + KERNEL_TYPE + " " +
       NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
-    Agg_arr_bench benchInst(name, seconds, false);
-    Aggregate_arr & benchable = benchInst.get_benchable();
-    run_bench<Agg_arr_bench,Aggregate_arr>(benchInst, benchable,
+    Agg_arr_bench bench_inst(name, seconds, false);
+    Aggregate_arr & benchable = bench_inst.get_benchable();
+    run_bench<Agg_arr_bench,Aggregate_arr>(bench_inst, benchable,
                                            full_name, format,
                                            samples, iterations,
                                            verbose_level, postscript);
@@ -854,9 +853,9 @@ int main(int argc, char * argv[])
       std::string(option_parser.get_type_name(type_code)) + " " +
       TRAITS_TYPE + " " + KERNEL_TYPE + " " +
       NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
-    Dis_arr_bench benchInst(name, seconds, false);
-    Display_arr & benchable = benchInst.get_benchable();
-    run_bench<Dis_arr_bench,Display_arr>(benchInst, benchable,
+    Dis_arr_bench bench_inst(name, seconds, false);
+    Display_arr & benchable = bench_inst.get_benchable();
+    run_bench<Dis_arr_bench,Display_arr>(bench_inst, benchable,
                                          full_name, format,
                                          samples, iterations,
                                          verbose_level, postscript);

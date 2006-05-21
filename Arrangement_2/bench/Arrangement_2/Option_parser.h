@@ -5,14 +5,15 @@
 #include <vector>
 #include <boost/program_options.hpp>
 
-#include "CGAL/Dir_search.h"
+#include <CGAL/Bench_option_parser.h>
+#include <CGAL/Dir_search.h>
 
 #define DEF_WIN_WIDTH   512
 #define DEF_WIN_HEIGHT  512
 
 namespace po = boost::program_options;
 
-class Option_parser {
+class Option_parser : public CGAL::Bench_option_parser {
 public:
   /*! Format code */
   enum Format_code {
@@ -112,15 +113,6 @@ public:
   
   /*! Parse the options */
   void operator()(int argc, char * argv[]);
-
-  /*! Obtain the number of seconds allotted to perform the bench */
-  unsigned int get_seconds()  const { return m_seconds; }
-
-  /*! Obtain the number of samples to perform the bench */
-  unsigned int get_samples()  const { return m_samples; }
-
-  /*! Obtain the number of iterations */
-  unsigned int get_iterations()  const { return m_iterations; }
   
   /*! Obtain the verbosity level */
   unsigned int get_verbose_level() const { return m_verbose_level; }
@@ -135,8 +127,6 @@ public:
   const std::string & get_full_name(unsigned int i) const;
 
   bool get_postscript() const { return m_psotscript; }
-  bool get_print_header() const { return m_header; }
-  unsigned int get_name_length() const { return m_name_length; }
   unsigned int get_type_mask() const { return m_type_mask; }
   unsigned int get_strategy_mask() const { return m_strategy_mask; }
   Format_code get_input_format() { return m_format; }
@@ -156,9 +146,6 @@ protected:
   /*! The generic options */
   po::options_description m_generic_opts;
 
-  /*! The bench options */
-  po::options_description m_bench_opts;
-  
   /*! Visible options */
   po::options_description m_visible_opts;
   
@@ -190,21 +177,6 @@ private:
   /*! Strategy options */
   static char * s_strategy_opts[];
 
-  /*! Number of seconds allotted to perform the bench */
-  unsigned int m_seconds;
-
-  /*! Number of samples to perform the bench */
-  unsigned int m_samples;
-
-  /*! Number of iterations */
-  unsigned int m_iterations;
-
-  /*! Indicates whether to display the log-table header */
-  bool m_header;
-
-  /*! The numbr of charactes in the name field */
-  unsigned int m_name_length;
-  
   /*! Verbosity level */
   unsigned int m_verbose_level;  
 
