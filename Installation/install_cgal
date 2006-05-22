@@ -5006,9 +5006,9 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		;;
 	    -CXX*)
                 # legacy mode: COMPILER might have been set from -ni
-		if [ -n "${COMPILER}" ]; then
-		    _CONFLICT='y'
-		fi
+		# if [ -n "${COMPILER}" ]; then
+		#     _CONFLICT='y'
+		# fi
 		if set_variable_from_command_line 'COMPILER' "$1" "$2"; then
 		    shift
 		fi
