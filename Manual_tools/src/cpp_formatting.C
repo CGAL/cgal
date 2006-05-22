@@ -1220,7 +1220,9 @@ void format_function( bool method, const char* signature,
             }
             if ( scope)
                 print_ascii_to_html_spc( *current_ostream, scope);
+            //*current_ostream << "[cccend]";
             print_ascii_to_html_spc( *current_ostream, function_name);
+            //*current_ostream << "[cccbegin]";
             if ( parameter_list) {
                 *current_ostream << " ( ";
                 if ( exp_size > dd_width) {
@@ -1351,7 +1353,9 @@ void format_variable( const char* signature,
         );
     if ( scope)
         print_ascii_to_html_spc( *current_ostream, scope);
+    //*current_ostream << "[cccend]";
     print_ascii_to_html_spc( *current_ostream, variable_name);
+    //*current_ostream << "[cccbegin]";
     // *current_ostream << formatted_var;
     if ( rest) {
         *current_ostream << ' ';
@@ -1564,7 +1568,10 @@ void format_nested_type( const char* nested_type_name) {
 
     print_ascii_to_html_spc( *current_ostream, template_class_name);
     *current_ostream << "::";
+
+    //*current_ostream << "[cccend]";
     print_ascii_to_html_spc( *current_ostream, nested_type_name);
+    //*current_ostream << "[cccbegin]";
 
     delete[] formatted_type;
 
