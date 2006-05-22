@@ -79,10 +79,10 @@ int main(int, char *[])
     std::cerr << "ERROR " << error_count << " errors in " << kdel.visitor().size() << " events.\n";
   }
 
-  std::cout << "Too late on " << too_late__ << " and filtered " << filtered__ << std::endl;
-  std::cout << "Grow " << growth__ << " and shrink " << shrink__ << std::endl;
-  std::cout << "Insert " << queue_insertions__ << " and front " << queue_front_insertions__ << std::endl;
-  std::cout << "Sturm created " << sturm_created__ << " and shrink " << sturm_refined__ << std::endl;
+  //std::cout << "Too late on " << too_late__ << " and filtered " << filtered__ << std::endl;
+  //std::cout << "Grow " << growth__ << " and shrink " << shrink__ << std::endl;
+  //std::cout << "Insert " << queue_insertions__ << " and front " << queue_front_insertions__ << std::endl;
+  //std::cout << "Sturm created " << sturm_created__ << " and shrink " << sturm_refined__ << std::endl;
   
   if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
   else return EXIT_SUCCESS;

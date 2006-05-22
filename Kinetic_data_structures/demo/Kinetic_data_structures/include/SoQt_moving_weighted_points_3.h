@@ -292,11 +292,11 @@ void SoQt_moving_weighted_points_3<T,G>::update_coordinates()
     double w= CGAL::to_double(pt.weight());
     if (w < 0) w=0;
     double radius = std::sqrt(w);
-    pts[it->index()].setValue(CGAL::to_double(pt.point().x()), CGAL::to_double(pt.point().y()),
-			      CGAL::to_double(pt.point().z()));
+    pts[it->to_index()].setValue(CGAL::to_double(pt.point().x()), CGAL::to_double(pt.point().y()),
+                              CGAL::to_double(pt.point().z()));
     if (vpts != NULL) vpts[cp].setValue(CGAL::to_double(pt.point().x()),
-					CGAL::to_double(pt.point().y()),
-					CGAL::to_double(pt.point().z()));
+                                        CGAL::to_double(pt.point().y()),
+                                        CGAL::to_double(pt.point().z()));
     if (spheres_!= NULL) {
       SoNode *n= spheres_->getChild(cp);
       CGAL_assertion(n->isOfType(SoShapeKit::getClassTypeId()));
@@ -338,7 +338,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_tree()
   int maxl=-1;
   int num=0;
   for (typename MPT::Keys_iterator it= tr_.active_points_3_table_handle()->keys_begin(); it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
-    if (it->index() > maxl) maxl= it->index();
+    if (static_cast<int>(it->to_index()) > maxl) maxl= it->to_index();
     ++num;
   }
 

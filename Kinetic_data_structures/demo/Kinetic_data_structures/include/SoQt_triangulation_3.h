@@ -100,7 +100,8 @@ protected:
   }
 
   typename KDel::Triangulation::Vertex_handle edge_vertex(typename KDel::Triangulation::Edge f, int i) {
-    return vertex_of_facet(f, i);
+    if (i==0) return f.first->vertex(f.second);
+    else return f.first->vertex(f.third);
   }
 
 public:
@@ -206,24 +207,24 @@ protected:
     if (facets_draw_style()== HIDDEN) return HIDE;
     bool hinf=false;
     for (int i=0; i<4; ++i) {
-      if (!f.first->vertex(i)->point()) {
-	hinf=true;
-	break;
+      if (!f.first->vertex(i)->point().is_valid()) {
+        hinf=true;
+        break;
       }
     }
-    if (!triangulation().mirror_vertex(f.first, f.second)->point()) hinf=true;
+    if (!triangulation().mirror_vertex(f.first, f.second)->point().is_valid()) hinf=true;
 
     if (hinf && convex_hull_== HIDDEN) return HIDE;
 
     if (internal::has_degree_3(triangulation(), f)) {
       return NO_CERT;
     }
-    else if (internal::facet_label(f)) {
+    else if (internal::facet_label(f).is_valid()) {
       return CERT;
     }
     else {
       for (unsigned int i=0; i< 3; ++i) {
-	CGAL_assertion(!internal::edge_label(internal::facet_edge(f, i)));
+        CGAL_assertion(!internal::edge_label(internal::facet_edge(f, i)).is_valid());
       }
       return UNFAILING_CERT;
     }
@@ -232,7 +233,7 @@ protected:
   Color_id color(const Edge &f) const
   {
     if (!internal::has_degree_3(triangulation(), f)) return HIDE;
-    if (!internal::edge_label(f)) {
+    if (!internal::edge_label(f).is_valid()) {
       return CERT;
     }
     else {
@@ -383,15 +384,15 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
 
       }
       else {
-	coords[index]= facet_vertex(*ffi, 0)->point().index();
-	//coords[index]= ffi->vertex(0)->point().index();
-	++index;;
-	coords[index]= facet_vertex(*ffi, 1)->point().index();
-	++index;
-	coords[index]= facet_vertex(*ffi, 2)->point().index();
-	++index;
-	coords[index]= SO_END_LINE_INDEX;
-	++index;
+        coords[index]= facet_vertex(*ffi, 0)->point().to_index();
+        //coords[index]= ffi->vertex(0)->point().index();
+        ++index;;
+        coords[index]= facet_vertex(*ffi, 1)->point().to_index();
+        ++index;
+        coords[index]= facet_vertex(*ffi, 2)->point().to_index();
+        ++index;
+        coords[index]= SO_END_LINE_INDEX;
+        ++index;
 
 	mat[matindex]= id;
 	++matindex;
@@ -412,12 +413,14 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
 
       }
       else {
-	coords[index]= edge_vertex(*fei, 0)->point().index();
-	++index;
-	coords[index]= edge_vertex(*fei, 1)->point().index();
-	++index;
-	coords[index]= SO_END_LINE_INDEX;
-	++index;
+        Object_key k= edge_vertex(*fei, 0)->point();
+        coords[index]= k.to_index();
+        ++index;
+        k= edge_vertex(*fei, 1)->point();
+        coords[index]=k.to_index();
+        ++index;
+        coords[index]= SO_END_LINE_INDEX;
+        ++index;
 
 	mat[matindex]= id;
 	++matindex;

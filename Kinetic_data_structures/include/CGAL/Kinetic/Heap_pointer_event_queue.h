@@ -167,7 +167,13 @@ public:
   /*!
     It uses a prettified version of the ref counted pointer.
   */
-  typedef Item_handle Key;
+  struct Key: public Item_handle {
+    Key(){}
+    Key(Item_handle h): Item_handle(h){}
+    bool is_valid() const {
+      return this->get() != NULL;
+    }
+  };
   /*struct Key: public Item_handle {
     Key(){};
     Key(Item*i): Item_handle(i){}

@@ -27,9 +27,6 @@
 #include <CGAL/Polynomial/polynomial_converters.h>
 
 
-int too_late__=0;
-int filtered__=0;
-
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class Kernel>
@@ -50,7 +47,6 @@ struct Lower_bound_root {
     }
 
     if (ip(Interval_nt(iv.inf(), std::numeric_limits<double>::infinity())).inf() >0) {
-      ++filtered__;
       return std::numeric_limits<double>::infinity();
     }
 

@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     Traits tr;
 
-    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
 
     Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
     Qt_mpt::Handle qtmpt= new Qt_mpt(tr, qtsim);

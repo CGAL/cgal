@@ -1,7 +1,7 @@
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
-#include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_recent_edges_visitor_2.h>
 #include <CGAL/Kinetic/Enclosing_box_2.h>
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
+  typedef CGAL::Kinetic::Exact_simulation_traits_2 Traits;
   typedef CGAL::Triangulation_data_structure_2<
   CGAL::Triangulation_vertex_base_2<Traits::Instantaneous_kernel>,
     CGAL::Kinetic::Delaunay_triangulation_face_base_2<Traits> > TDS;

@@ -34,10 +34,10 @@
 
 //int two_list_remaining=0;
 
-int growth__=0;
-int shrink__=0;
-int queue_insertions__=0;
-int queue_front_insertions__=0;
+//int growth__=0;
+//int shrink__=0;
+//int queue_insertions__=0;
+//int queue_front_insertions__=0;
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
@@ -216,14 +216,17 @@ struct Two_list_pointer_event_queue_key: private Item::Handle
       out << "null";
     }
   }
-  operator bool() const
+  /*operator bool() const
   {
     return Item::Handle::get() != NULL;
+    }*/
+  bool is_valid() const {
+    return  Item::Handle::get() != NULL;
   }
-  bool operator!() const
+  /*bool operator!() const
   {
     return Item::Handle::operator!();
-  }
+    }*/
   bool operator==(const This &o) const
   {
     return Item::Handle::get() == o.get();
@@ -336,7 +339,7 @@ public:
     //CGAL_exactness_assertion(t >= lbs_);
     //lb_=std::min(t, lb_);
     
-    ++queue_insertions__;
+    //++queue_insertions__;
 
 
     if (leq_ub(t)) {
@@ -348,18 +351,18 @@ public:
       front_.insert(iit, *ni);
       CGAL_expensive_assertion(audit());
       if (front_.size() > 2*max_front_size()) {
-	shrink_front();
+        shrink_front();
       }
-      ++queue_front_insertions__;
+      //++queue_front_insertions__;
     }
     else if (front_.empty()) {
       CGAL_assertion(back_.empty());
       if (t < end_priority()) {
-	++queue_front_insertions__;
-	front_.push_back(*ni);
-	ub_= NT(to_interval(tii_(t).second).second);
-	ub_is_inf_=false;
-	/*if (almost_inf(ub_)){
+        //++queue_front_insertions__;
+        front_.push_back(*ni);
+        ub_= NT(to_interval(tii_(t).second).second);
+        ub_is_inf_=false;
+        /*if (almost_inf(ub_)){
 	//CGAL_assertion(std::numeric_limits<NT>::has_infinity);
 	ub_= end_split();
 	}*/
@@ -789,7 +792,7 @@ protected:
   }
 
   void grow_front() {
-    ++growth__;
+    //++growth__;
     //std::cout << "Growing front from " << ub_ << std::endl;
     //assert(is_valid());
     CGAL_precondition(!back_.empty());
@@ -807,7 +810,7 @@ protected:
   }
 
   void shrink_front() {
-    ++shrink__;
+    //++shrink__;
     //std::cout << "Shrinking front from " << ub_ << std::endl;
     typename Queue::iterator it=front_.begin();
     unsigned int mf= max_front_size();

@@ -261,14 +261,14 @@ public:
     Face_circulator fc= vh->incident_faces(), fe=fc;
     if (fc != NULL) {
       do {
-	for (unsigned int j=0; j<3; ++j) {
-	  Edge e(fc, j);
-	  Event_key k= TDS_helper::get_undirected_edge_label(e);
-	  if (k) {
-	    traits_.simulator_handle()->delete_event(k);
-	    TDS_helper::set_undirected_edge_label(e, Event_key());
-	  }
-	}
+        for (unsigned int j=0; j<3; ++j) {
+          Edge e(fc, j);
+          Event_key k= TDS_helper::get_undirected_edge_label(e);
+          if (k.is_valid()) {
+            traits_.simulator_handle()->delete_event(k);
+            TDS_helper::set_undirected_edge_label(e, Event_key());
+          }
+        }
 	++fc;
       } while (fc != fe);
     }
@@ -282,14 +282,14 @@ public:
       del_.get_conflicts(k,std::back_inserter(faces));
 
       for (unsigned int i=0; i< faces.size(); ++i) {
-	for (unsigned int j=0; j<3; ++j) {
-	  Edge e(faces[i],j);
-	  Event_key k= TDS_helper::get_undirected_edge_label(e);
-	  if (!k) {
-	    // a bit redundant for certificates which don't fail
-	    new_certificate(e);
-	  }
-	  else {
+        for (unsigned int j=0; j<3; ++j) {
+          Edge e(faces[i],j);
+          Event_key k= TDS_helper::get_undirected_edge_label(e);
+          if (!k.is_valid()) {
+            // a bit redundant for certificates which don't fail
+            new_certificate(e);
+          }
+          else {
 	    //CGAL_assertion(new_edges_.find(TDS_helper::mirror_edge(e)) != new_edges_.end());
 	  }
 	  //new_edges_.insert(e);
@@ -343,15 +343,15 @@ public:
       std::vector<Face_handle> faces;
       del_.get_conflicts(k, std::back_inserter(faces));
       for (unsigned int i=0; i< faces.size(); ++i) {
-	Face_handle f= faces[i];
-	for (unsigned int j=0; j<3; ++j) {
-	  Edge e(f, j);
-	  Event_key k= TDS_helper::get_undirected_edge_label(e);
-	  if (k) {
-	    traits_.simulator_handle()->delete_event(k);
-	    TDS_helper::set_undirected_edge_label(e, Event_key());
-	  }
-	}
+        Face_handle f= faces[i];
+        for (unsigned int j=0; j<3; ++j) {
+          Edge e(f, j);
+          Event_key k= TDS_helper::get_undirected_edge_label(e);
+          if (k.is_valid()) {
+            traits_.simulator_handle()->delete_event(k);
+            TDS_helper::set_undirected_edge_label(e, Event_key());
+          }
+        }
       }
       watcher_.remove_faces(faces.begin(), faces.end());
     }
@@ -413,12 +413,12 @@ public:
 
     for (unsigned int i=0; i<3; ++i) {
       Edge e0(face, i);
-      if (!TDS_helper::get_undirected_edge_label(e0)) {
-	new_certificate(e0);
+      if (!TDS_helper::get_undirected_edge_label(e0).is_valid()) {
+        new_certificate(e0);
       }
       Edge e1(mirror_face, i);
-      if (!TDS_helper::get_undirected_edge_label(e1)) {
-	new_certificate(e1);
+      if (!TDS_helper::get_undirected_edge_label(e1).is_valid()) {
+        new_certificate(e1);
       }
     }
 
@@ -460,10 +460,10 @@ protected:
   }
 
   bool is_hull_edge(const Edge &e) const {
-    return !static_cast<bool>(TDS_helper::mirror_vertex(e)->point())
-      || !static_cast<bool>(TDS_helper::third_vertex(e)->point())
-      || !static_cast<bool>(TDS_helper::origin(e)->point())
-      || !static_cast<bool>(TDS_helper::destination(e)->point());
+    return ! TDS_helper::mirror_vertex(e)->point().is_valid()
+      || ! TDS_helper::third_vertex(e)->point().is_valid()
+      || ! TDS_helper::origin(e)->point().is_valid()
+      || ! TDS_helper::destination(e)->point().is_valid();
   }
 
   SOC_certificate compute_failure_time(const Edge &e) const {
@@ -495,13 +495,13 @@ protected:
     bool infinity=false;
     for (unsigned int i=0; i<4; ++i) {
       if (infinity) {
-	ks[i-1]=ks[i];
+        ks[i-1]=ks[i];
       }
       else {
-	if (!ks[i]) {
-	  infinity=true;
-	  odd_parity= ((i%2)==1);
-	}
+        if (!ks[i].is_valid()) {
+          infinity=true;
+          odd_parity= ((i%2)==1);
+        }
       }
     }
     if (odd_parity) {
@@ -514,7 +514,7 @@ protected:
   }
 
   void new_certificate( const Edge &e) {
-    CGAL_precondition(!TDS_helper::get_undirected_edge_label(e));
+    CGAL_precondition(!TDS_helper::get_undirected_edge_label(e).is_valid());
     Event_key k;
 
     if (static_cast<bool>(is_hull_edge(e))) {
@@ -536,7 +536,7 @@ protected:
     change_object to initialize the certificates of a new object.
   */
   void rebuild_certificate( const Edge &e) {
-    if (TDS_helper::get_undirected_edge_label(e)) {
+    if (TDS_helper::get_undirected_edge_label(e).is_valid()) {
       traits_.simulator_handle()->delete_event(TDS_helper::get_undirected_edge_label(e));
       TDS_helper::set_undirected_edge_label(e,  Event_key());
     }

@@ -88,11 +88,11 @@ public:
   //! access a point
   const Data &operator[](Key key) const
   {
-    CGAL_expensive_precondition(key);
-    CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
+    CGAL_expensive_precondition(key.is_valid());
+    CGAL_precondition(static_cast<unsigned int>(key.to_index()) < storage_.size());
     //if (static_cast<unsigned int>(key.index()) >= storage_.size()) return null_object();
     /*else*/
-    return storage_[key.index()];
+    return storage_[key.to_index()];
   }
 
   //! non operator based method to access a point.
@@ -136,12 +136,12 @@ public:
   */
   void set(Key key, const Data &new_value) {
     //CGAL_precondition(editing_);
-    CGAL_precondition(key);
+    CGAL_precondition(key.is_valid());
     //CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
-    if (storage_.size() <= static_cast<unsigned int>(key.index())) {
-      storage_.resize(key.index()+1);
+    if (storage_.size() <= static_cast<unsigned int>(key.to_index())) {
+      storage_.resize(key.to_index()+1);
     }
-    storage_[key.index()]=new_value;
+    storage_[key.to_index()]=new_value;
     changed_objects_.push_back(key);
     if (!editing_) finish_editing();
   }
@@ -171,8 +171,8 @@ public:
   */
   void erase(Key key) {
     //CGAL_precondition(editing_);
-    CGAL_precondition(key);
-    CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
+    CGAL_precondition(key.is_valid());
+    CGAL_precondition(static_cast<unsigned int>(key.to_index()) < storage_.size());
     CGAL_expensive_precondition_code(for (Inserted_iterator dit= inserted_begin(); dit != inserted_end(); ++dit))
       {CGAL_expensive_precondition(*dit != key);}
     CGAL_expensive_precondition_code(for (Changed_iterator dit= changed_begin(); dit != changed_end(); ++dit))
@@ -314,7 +314,7 @@ private:
     }
 
     for (Erased_iterator it= erased_begin(); it != erased_end(); ++it) {
-      storage_[it->index()]=Data();
+      storage_[it->to_index()]=Data();
     }
 
     changed_objects_.clear();

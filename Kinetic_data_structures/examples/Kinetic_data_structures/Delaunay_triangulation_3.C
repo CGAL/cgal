@@ -14,7 +14,7 @@ int main(int , char *[])
 
     Traits::Simulator::Handle sp= tr.simulator_handle();
 
-    std::ifstream in("data/points_3.small");
+    std::ifstream in("data/points_3");
     in >> *tr.active_points_3_table_handle();
 
     kdel.set_has_certificates(true);

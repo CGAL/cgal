@@ -84,15 +84,15 @@ protected:
     // << CGAL::FillColor(CGAL::Color(0,0,0));
     if (tri.dimension() != 2) return;
     for (typename Del::Finite_edges_iterator fit = tri.finite_edges_begin();
-	 fit != tri.finite_edges_end(); ++fit) {
-      if (fit->first->vertex((fit->second+1)%3)->point()
-	  && fit->first->vertex((fit->second+2)%3)->point()
-	  && fit->first->vertex(fit->second)->point()
-	  && fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point()) {
-	Static_point o= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
-	Static_point d= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
-	Static_point a= tri.geom_traits().static_object(fit->first->vertex(fit->second)->point());
-	Static_point b= tri.geom_traits().static_object(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
+         fit != tri.finite_edges_end(); ++fit) {
+      if (fit->first->vertex((fit->second+1)%3)->point().is_valid()
+          && fit->first->vertex((fit->second+2)%3)->point().is_valid()
+          && fit->first->vertex(fit->second)->point().is_valid()
+          && fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point().is_valid()) {
+        Static_point o= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
+        Static_point d= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
+        Static_point a= tri.geom_traits().static_object(fit->first->vertex(fit->second)->point());
+        Static_point b= tri.geom_traits().static_object(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
 	
 	double angle1= std::abs(angle(o,a, d));
 	double angle2= std::abs(angle(o,b, d));
