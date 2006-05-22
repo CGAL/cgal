@@ -358,7 +358,7 @@ public:
     CGAL_KINETIC_LOG(LOG_SOME, "Deleting event " << k << std::endl);
     //if (k== final_event()) return;
     //#ifdef NDEBUG
-    if (!k) {
+    if (!k.is_valid()) {
       return;
     }
     //#endif
@@ -401,7 +401,7 @@ public:
   template <class Event_type>
   const Event_type& event(const Event_key &k) const
   {
-    CGAL_precondition(k);
+    CGAL_precondition(k.is_valid());
     CGAL_precondition(k != null_event());
     CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
     return queue_.template get<Event_type>(k);

@@ -386,10 +386,10 @@ protected:
 	CGAL_assertion_code(Point_key k= vit->point());
 	// it could be infinite
 	// !! for VC
-	CGAL_assertion(!!vit->info() || !k);
+	CGAL_assertion(vit->info().is_valid() || !k.is_valid());
       }
       else {
-	CGAL_assertion(!vit->info());
+	CGAL_assertion(!vit->info().is_valid());
       }
       CGAL_assertion(redundant_points_.find(vit->point())== redundant_points_.end());
     }
@@ -408,7 +408,7 @@ protected:
     std::vector<typename Delaunay::Vertex_handle> nvhs(kdel_.moving_object_table()->size());
     for (typename MPT::Keys_iterator it= kdel_.moving_object_table()->keys_begin();
 	 it != kdel_.moving_object_table()->keys_end(); ++it) {
-      nvhs[(*it).index()] = dt.insert(*it);
+      nvhs[(*it).to_index()] = dt.insert(*it);
     }
     CGAL_KINETIC_LOG(LOG_LOTS, "Done building." << std::endl);
     for (typename Delaunay::Finite_vertices_iterator fit= dt.finite_vertices_begin();
@@ -470,7 +470,7 @@ protected:
       std::vector<typename Delaunay::Vertex_handle> kvhs;
       // extra braces for VC
       {for (unsigned int i=0; i<4; ++i) {
-	  kvhs.push_back(nvhs[ks[i].index()]);
+	  kvhs.push_back(nvhs[ks[i].to_index()]);
 	}}
       typename Triangulation::Cell_handle h;
       int i,j,k,l;
@@ -516,7 +516,7 @@ public:
 
     for (unsigned int i=0; i< 4; ++i) {
       typename Triangulation::Vertex_handle ov= h->vertex(i);
-      if (ov->info()) {
+      if (ov->info().is_valid()) {
 	kdel_.simulator()->delete_event(ov->info());
 	ov->info()=  Event_key();
       }
@@ -643,7 +643,7 @@ public:
       // Hack
       if (redundant_points_[k] == kdel_.simulator()->null_event()
 	  || redundant_points_.find(k) == redundant_points_.end()
-	  || !redundant_points_[k] ) {
+	  || !redundant_points_[k].is_valid() ) {
 	// error handling code, this should not happen
 	std::cerr << "Hack in handling lost point.\n";
 	triangulation().geom_traits().set_time(kdel_.simulator()->rational_current_time());
@@ -686,7 +686,7 @@ public:
     if (tf==false) {
       for (typename Triangulation::Finite_vertices_iterator vit= triangulation().finite_vertices_begin();
 	   vit != triangulation().finite_vertices_end(); ++vit) {
-	if (vit->info()) {
+	if (vit->info().is_valid()) {
 	  kdel_.simulator()->delete_event(vit->info());
 	  vit->info()=  Event_key();
 	}
@@ -739,7 +739,7 @@ protected:
       if (internal::has_degree_4(triangulation(), internal::vertex_of_edge(edge, i))) {
 	typename Delaunay::Vertex_handle vh= internal::vertex_of_edge(edge, i);
 	Event_key k= vh->info();
-	if (k) {
+	if (k.is_valid()) {
 	  //typename P::Time t= kdel_.extract_time(k);
 	  //CGAL_assertion(t==simulator()->current_time());
 	  CGAL_KINETIC_LOG(LOG_SOME, "diverting edge flip to pop.\n");
@@ -759,7 +759,7 @@ protected:
     typename Triangulation::Facet_circulator fc= triangulation().incident_facets(edge), fe=fc;
     do {
       typename Triangulation::Vertex_handle vh= internal::other_vertex(*fc, edge);
-      if (vh->info()) {
+      if (vh->info().is_valid()) {
 	kdel_.simulator()->delete_event(vh->info());
 	vh->info()=Event_key();
       }
@@ -817,11 +817,11 @@ protected:
     typename Triangulation::Cell_handle och= flip_facet.first->neighbor(flip_facet.second);
     add_cell(och, redundant);
 
-    if (flip_facet.first->vertex(flip_facet.second)->info()) {
+    if (flip_facet.first->vertex(flip_facet.second)->info().is_valid()) {
       kdel_.simulator()->delete_event(flip_facet.first->vertex(flip_facet.second)->info());
       flip_facet.first->vertex(flip_facet.second)->info()=Event_key();
     }
-    if (triangulation().mirror_vertex(flip_facet.first, flip_facet.second)->info()) {
+    if (triangulation().mirror_vertex(flip_facet.first, flip_facet.second)->info().is_valid()) {
       kdel_.simulator()->delete_event(triangulation().mirror_vertex(flip_facet.first, flip_facet.second)->info());
       triangulation().mirror_vertex(flip_facet.first, flip_facet.second)->info()= Event_key();
     }
@@ -930,7 +930,7 @@ protected:
       //bool is_ok=true;
       bool hinf=false;
       for (unsigned int i=0; i< 4; ++i) {
-	if (!(*cur)->vertex(i)->point()) {
+	if (!(*cur)->vertex(i)->point().is_valid()) {
 	  hinf=true;
 	  break;
 	}
@@ -953,7 +953,7 @@ protected:
 	 it != kdel_.triangulation().finite_cells_end(); ++it) {
       bool hinf=false;
       for (unsigned int i=0; i< 4; ++i) {
-	if (!(it->vertex(i)->point())) {
+	if (!(it->vertex(i)->point().is_valid())) {
 	  hinf=true;
 	  break;
 	}
@@ -1104,7 +1104,7 @@ protected:
 	 it != ip.second; ++it) {
       CGAL_KINETIC_LOG(LOG_LOTS, it->second << " is redundant " << std::endl);
       redundant.push_back(it->second);
-      if (redundant_points_[it->second]) {
+      if (redundant_points_[it->second].is_valid()) {
 	kdel_.simulator()->delete_event(redundant_points_[it->second]);
 	redundant_points_[it->second]= Event_key();
       }

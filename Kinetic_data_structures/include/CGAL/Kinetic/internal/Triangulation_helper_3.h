@@ -268,7 +268,7 @@ class Triangulation_helper_3: public Tri
             pts.push_back(vertex(f,2)->point());
             std::sort(pts.begin(), pts.end());
             out << "[" << pts[0] << ", " << pts[1] << ", " << pts[2] << "]";
-            if (label(f)) {
+            if (label(f).is_valid()) {
                 out << " " << label(f);
             }
         }
@@ -281,7 +281,7 @@ class Triangulation_helper_3: public Tri
             pts.push_back(vertex(e,1)->point());
             std::sort(pts.begin(), pts.end());
             out << "[" << pts[0] << ", " << pts[1] << "]";
-            if (label(e) ) {
+            if (label(e).is_valid() ) {
                 out << " " << label(e);
             }
         }

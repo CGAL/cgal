@@ -41,7 +41,7 @@ protected:
 
 public:
   //! Construct it from an int
-  Label(int i):id_(i){}
+  explicit Label(int i):id_(i){}
   //! Construct a default (null) label
   Label():id_(-1) {
     if(0) print();                        // make sure it is compiled
@@ -51,28 +51,14 @@ public:
     return Label(id_+1);
   }
   //! Return the null label
-  operator bool() const
-  {
-    return id_ != -1;
+  bool is_valid() const {
+    return id_ >=0;
   }
-  operator int() const {
-    // I need this because otherwise a pathway through bool is used implicitly
-    bool use_index_instead;
-    CGAL_assertion(false);
+  unsigned int to_index() const {
+    CGAL_precondition(is_valid());
     return id_;
   }
-  operator unsigned int() const {
-    // I need this because otherwise a pathway through bool is used implicitly
-    bool use_index_instead;
-    CGAL_assertion(false);
-    return id_;
-  }
-  
-  //! Convert to an index value, -1 is invalid
-  int index() const
-  {
-    return id_;
-  }
+
   bool operator<(const This &o) const
   {
     return id_ < o.id_;

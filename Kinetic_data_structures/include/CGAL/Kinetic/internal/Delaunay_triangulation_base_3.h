@@ -33,8 +33,8 @@
 #include <ostream>
 #include <iostream>
 
-extern int too_late__;
-extern int filtered__;
+//extern int too_late__;
+//extern int filtered__;
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
@@ -452,11 +452,11 @@ public:
 	   it != incident_cells.end(); ++it) {
 	for (unsigned int i=0; i<4; ++i) {
 	  Facet f(*it,i);
-	  CGAL_precondition(!triangulation_.label(f));
+	  CGAL_precondition(!triangulation_.label(f).is_valid());
 
 	  for (unsigned int j=0; j< i; ++j) {
 	    Edge e(*it, i, j);
-	    CGAL_precondition(!triangulation_.label(e));
+	    CGAL_precondition(!triangulation_.label(e).is_valid());
 	  }
 
 	}
@@ -615,7 +615,7 @@ public:
 		  if (triangulation_.equal(e, e2)) continue;
 		  // !! is because vc complains about ambiguity otherwise
 		  else if ( triangulation_.has_degree_3(e2)
-			    && !!triangulation_.label(e2) ) {
+			    && triangulation_.label(e2).is_valid() ) {
 		    d3= true;
 		    break;
 		  }
@@ -745,7 +745,7 @@ public:
     polesi[1]= edge.first->index(poles[1]);
 
     typename Simulator::Event_key failed_key = triangulation_.label(edge);
-    CGAL_precondition(failed_key);
+    CGAL_precondition(failed_key.is_valid());
     Certificate ore= extract_root_stack(failed_key);
 
     Facet neighboring_facet= triangulation_.opposite(Facet(edge.first, polesi[0]));
@@ -1089,8 +1089,8 @@ public:
 
   Vertex_handle vertex_handle(Point_key k) const
   {
-    if (k.index()>=0 && static_cast<unsigned int>(k.index()) < vhs_.size()) {
-      return vhs_[k.index()];
+    if (k.is_valid() && k.to_index() < vhs_.size()) {
+      return vhs_[k.to_index()];
     }
     else {
       return NULL;
@@ -1098,15 +1098,15 @@ public:
   }
 
   void set_vertex_handle(Point_key k, Vertex_handle vh) {
-    CGAL_precondition(k.index() >=0);
-    unsigned int bin= k.index();
+    CGAL_precondition(k.to_index() >=0);
+    unsigned int bin= k.to_index();
     while (vhs_.size() <= bin) {
       vhs_.push_back(NULL);
     }
     /*if (vhs_.size() <=bin){
       vhs_.resize(bin+1);
       }*/
-    vhs_[k.index()]=vh;
+    vhs_[k.to_index()]=vh;
   }
 
   typename TraitsT::Positive_side_of_oriented_sphere_3 power_test_object() const
@@ -1166,7 +1166,7 @@ public:
 
     CGAL_precondition(!triangulation_.has_degree_3(e));
     for (int i=0; i<3; ++i) {
-      CGAL_precondition(!triangulation_.label(triangulation_.edge(e, i)));
+      CGAL_precondition(!triangulation_.label(triangulation_.edge(e, i)).is_valid());
     }
     Certificate s= root_stack(e, st);
    
@@ -1217,14 +1217,14 @@ public:
     int hinf=-1;
     for (unsigned int i=0; i<4; ++i) {
       Point_key k= f.first->vertex(i)->point();
-      if (!static_cast<bool>(k)) {
+      if (!k.is_valid()) {
 	hinf=i;
 	break;
       }
     }
     if (hinf==-1) {
       Point_key k= triangulation_.mirror_vertex(f.first, f.second)->point();
-      if ( !static_cast<bool>(k) ) {
+      if ( ! k.is_valid() ) {
 	hinf=4;
       }
     }
@@ -1285,7 +1285,7 @@ private:
     for (All_edges_iterator eit = triangulation_.all_edges_begin();
 	 eit != triangulation_.all_edges_end(); ++eit) {
       Event_key k= triangulation_.label(*eit);
-      if ( k ) {
+      if ( k.is_valid() ) {
 	delete_event(k);
 	triangulation_.set_label(*eit,Event_key());
       }
@@ -1293,7 +1293,7 @@ private:
     for (All_facets_iterator eit = triangulation_.all_facets_begin();
 	 eit != triangulation_.all_facets_end(); ++eit) {
       Event_key k= triangulation_.label(*eit);
-      if ( k ) {
+      if ( k.is_valid() ) {
 	delete_event(k);
 	triangulation_.set_label(*eit,Event_key());
       }
@@ -1324,12 +1324,12 @@ private:
 
   bool has_event(const Edge &e) const
   {
-    return triangulation_.label(e);
+    return triangulation_.label(e).is_valid();
   }
 
   bool has_event(const Facet &e) const
   {
-    return triangulation_.label(e);
+    return triangulation_.label(e).is_valid();
   }
 
 
@@ -1344,7 +1344,7 @@ private:
     Facet_circulator fc= triangulation_.incident_facets(edge), fe=fc;
     do {
       if (has_event(*fc)) {
-	CGAL_assertion( !k );
+	CGAL_assertion( !k.is_valid() );
 	k=triangulation_.label(*fc);
 	triangulation_.set_label(*fc, typename Simulator::Event_key());
 #ifdef NDEBUG
@@ -1359,7 +1359,7 @@ private:
       triangulation_.write_labeled_edge(edge, log_lots() );
       log_lots()  << std::endl;
       }*/
-    if ( k ) {
+    if ( k.is_valid() ) {
       /*if (triangulation_.degree(triangulation_.vertex(edge,0))==4
 	|| triangulation_.degree(triangulation_.vertex(edge,1))==4){
 	triangulation_.set_label(edge, simulator()->null_event());
@@ -1382,7 +1382,7 @@ private:
     }
     CGAL_assertion(triangulation_.has_degree_3(edge) || print());
     typename Simulator::Event_key index = triangulation_.label(edge);
-    CGAL_precondition(LAZY ||  index );
+    CGAL_precondition(LAZY ||  index.is_valid() );
 
     triangulation_.set_label(edge, typename Simulator::Event_key());
 
@@ -1390,7 +1390,7 @@ private:
     do {
       Facet cf= *fc;
       if (cf.first == cell || triangulation_.opposite(cf).first == cell) {
-	CGAL_assertion( !triangulation_.label(cf) );
+	CGAL_assertion( !triangulation_.label(cf).is_valid() );
       }
       else {
 	bool hd3=false;
@@ -1526,13 +1526,13 @@ private:
   }
 
   Event_key change_to_edge_flip(const Edge &e, Event_key k) {
-    if (k== simulator()->null_event() || LAZY && !k) return k;
+    if (k== simulator()->null_event() || LAZY && !k.is_valid()) return k;
     Certificate s= extract_root_stack(k);
     return simulator()->set_event(k, Edge_flip_event(s, e, tr_.wrapper_handle()));
   }
 
   Event_key change_to_facet_flip(const Facet &f, Event_key k) {
-    if (k== simulator()->null_event() || LAZY && !k) return k;
+    if (k== simulator()->null_event() || LAZY && !k.is_valid()) return k;
     Certificate s= extract_root_stack(k);
     return simulator()->set_event(k, Facet_flip_event(s, f, tr_.wrapper_handle()));
   }
