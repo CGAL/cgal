@@ -537,6 +537,7 @@ Maintenance/MacOSX_Installer/Resources/Welcome.rtf -text
 Maintenance/MacOSX_Installer/Resources/cgal_very_small.gif -text
 Maintenance/MacOSX_Installer/Resources/postflight -text
 Maintenance/MacOSX_Installer/Resources/postupgrade -text
+Maintenance/public_release/announcement/CGAL-3.2 -text
 Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
