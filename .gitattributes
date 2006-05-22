@@ -259,6 +259,8 @@ Benchmark/examples/Benchmark/simple/simple.C -text
 Benchmark/examples/Benchmark/simple/simple.tex -text
 Benchmark/include/CGAL/Bench_option_parser.C -text
 Benchmark/include/CGAL/Bench_option_parser.h -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_2.dxf -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.bmp -text svneol=unset#unset
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.bmp -text svneol=unset#unset
