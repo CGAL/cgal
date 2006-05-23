@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib core++.lib gmp.lib mpfr.lib wsock32.lib winmm.lib imm32.lib"
-				OutputFile="$(OutDir)/robustness.exe"
+				OutputFile="$(OutDir)/Delaunay_triangulation_2.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/robustness.pdb"
@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cgal.lib cgalqt.lib qt-mt.lib qtmain.lib core++.lib gmp.lib mpfr.lib wsock32.lib winmm.lib imm32.lib"
-				OutputFile="$(OutDir)/robustness.exe"
+				OutputFile="$(OutDir)/Delaunay_triangulation_2.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
