@@ -124,6 +124,8 @@ Qt_widget_OpenGL$(OBJ_EXT):
 	$(QT_MOC) $(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_OpenGL.h -o Qt_widget_OpenGL.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.cpp
 
+.SUFFIXES: .cpp $(SUFFIXES)
+
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
 

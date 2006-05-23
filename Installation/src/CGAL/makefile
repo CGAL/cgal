@@ -98,6 +98,8 @@ clean:
 #                    suffix rules
 #---------------------------------------------------------------------#
 
+.SUFFIXES: .cpp $(SUFFIXES)
+
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 
