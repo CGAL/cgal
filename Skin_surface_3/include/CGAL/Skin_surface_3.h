@@ -59,7 +59,34 @@ public:
     : Cb(v0, v1, v2, v3) {
   }
 
+//   template <class Input_point>
+//   Sign sign(const Input_point &p) const {
+//     return surf->sign(p);
+//   }
   Quadratic_surface *surf;
+};
+
+template < class GT, 
+	   class Vb = Triangulation_vertex_base_3<GT> >
+class Triangulated_mixed_complex_vertex_3 : public Vb
+{
+public:
+  typedef typename Vb::Point           Point;
+  typedef typename Vb::Cell_handle     Cell_handle;
+
+  template < class TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+    typedef Triangulated_mixed_complex_vertex_3<GT, Vb2>   Other;
+  };
+
+  Triangulated_mixed_complex_vertex_3() {}
+  Triangulated_mixed_complex_vertex_3(const Point&p)                : Vb(p) {}
+  Triangulated_mixed_complex_vertex_3(const Point&p, Cell_handle c) : Vb(p, c) {}
+
+  Sign sign() const {
+    return Vb::cell()->surf->sign(Vb::point());
+  }
 };
 
 template <class SkinSurfaceTraits_3> 
@@ -90,7 +117,7 @@ public:
   typedef Triangulation_3<
     TMC_Traits,
     Triangulation_data_structure_3
-    < Triangulation_vertex_base_3<TMC_Traits>,
+    < Triangulated_mixed_complex_vertex_3<TMC_Traits>,
       Triangulated_mixed_complex_cell_3<TMC_Traits,Quadratic_surface> > 
   >                                                   Triangulated_mixed_complex;
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;

@@ -1,4 +1,4 @@
-// examples/Skin_surface_3/skin_surface_subdiv.C
+// examples/Skin_surface_3/NGHK_skin_surface_subdiv.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -19,7 +19,7 @@ typedef CGAL::Polyhedron_3<K,Poly_items>                      Polyhedron;
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
-    std::cout << "Usage: " << argv[0] << " <pdb-file>" << std::endl;
+    std::cout << "Usage: " << argv[0] << " <cin-file>" << std::endl;
     return 1;
   }
 

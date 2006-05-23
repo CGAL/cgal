@@ -39,13 +39,12 @@ public:
   typedef typename HalfedgeDS::Traits::Point_3         HDS_point;
   typedef typename HDS_point::R::RT                    HDS_RT;
 
-  Marching_tetrahedra_traits_skin_surface_3(HDS_RT iso_value=0)
-    : iso_value(iso_value) {
+  Marching_tetrahedra_traits_skin_surface_3() {
   }
 
   // These two functions are required by the marching tetrahedra algorithm
   Sign sign(Cell_handle const ch, int i) const {
-    return CGAL_NTS sign(value(ch,ch->vertex(i)->point()) - iso_value);
+    return ch->vertex(i)->sign();
   }
   HDS_point intersection(Cell_handle const ch, int i, int j) const {
     // Precondition: ch is not an infinite cell: their surface is not set
@@ -58,17 +57,12 @@ private:
   typedef typename Triangulation::Geom_traits::Point_3 Triang_point;
   
   // Additional functions, not belonging to the traits concept:
-//   HDS_RT value(const Cell_handle &ch, const HDS_point &p) const {
-//     return ch->surf->value(p);
-//   }
   template <class Point>
   HDS_RT value(const Cell_handle &ch, const Point &p) const {
-    // NGHK: Remove the to_double later ...
     return ch->surf->value(converter(p));
   }
 
   Converter converter;
-  HDS_RT iso_value;
 };
 
 CGAL_END_NAMESPACE 

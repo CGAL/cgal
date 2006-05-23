@@ -52,6 +52,10 @@ public:
       v.z()*(Q[3]*v.x()+Q[4]*v.y()+Q[5]*v.z()) +
       c;
   }
+  template <class Input_point>
+  Sign sign(Input_point const &x) const {
+    return CGAL_NTS sign(value(x));
+  }
 
 
   template <class Input_point>

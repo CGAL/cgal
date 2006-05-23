@@ -78,7 +78,9 @@ clean: \
                    skin_surface_simple.clean \
                    skin_surface_subdiv.clean \
                    skin_surface_subdiv_with_normals.clean \
-                   union_of_balls_simple.clean 
+                   union_of_balls_simple.clean \
+                   NGHK_skin_surface_simple.clean \
+                   NGHK_skin_surface_subdiv.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

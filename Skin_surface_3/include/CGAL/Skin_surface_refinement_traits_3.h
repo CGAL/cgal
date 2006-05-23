@@ -156,8 +156,7 @@ private:
   }
 
   Sign sign(SS_cell_handle ch, int i) {
-    return CGAL_NTS sign(
-       ch->surf->value(t2p_converter(ch->vertex(i)->point())));
+    return ch->vertex(i)->sign();
   }  
   bool is_inside(SS_cell_handle ch, int i) {
     //return (sign(ch,i) == POSITIVE);

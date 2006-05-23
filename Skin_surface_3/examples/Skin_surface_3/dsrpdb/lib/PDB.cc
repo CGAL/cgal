@@ -82,7 +82,7 @@ namespace dsrpdb {
     assert(i < models_.size());
     return models_[i];
   };
-  unsigned int PDB::number_of_models() const {
+  size_t PDB::number_of_models() const {
     return models_.size(); 
   }
 

@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/subdivide_skin_surface_mesh_3.h>
 
 template <class Polyhedron, class SkinSurface>
 /// Write polyhedron with normals:
