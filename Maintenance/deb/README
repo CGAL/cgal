@@ -1,0 +1,6 @@
+README
+======
+
+backport for sarge:
+- adjust Standards-Version: to 3.6.1
+- adjust version suffix from -X to -0sargeY
