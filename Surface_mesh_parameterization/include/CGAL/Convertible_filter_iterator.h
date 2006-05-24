@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -60,9 +60,9 @@ public:
   /// OPERATIONS Forward Category
   /// ---------------------------
 
-    bool  operator==(CGAL_NULL_TYPE ptr) const { return Base::operator==(ptr); }
+    bool  operator==(CGAL_NULL_TYPE ptr) const { return (const Base&)*this == ptr; }
     bool  operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
-    bool  operator==(const Self& it) const { return (Base&)*this == (Base&)it; }
+    bool  operator==(const Self& it) const { return (const Base&)*this == it; }
     bool  operator!=(const Self& it) const { return ! (*this == it); }
 
     Self& operator++()     { Base::operator++(); return *this; }
