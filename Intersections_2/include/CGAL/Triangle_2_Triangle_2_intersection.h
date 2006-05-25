@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -31,8 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 template <class K>
 inline
 Object
@@ -45,5 +42,6 @@ intersection(const Triangle_2<K> &tr1,
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Triangle_2_Triangle_2_intersection.C>
+#include <CGAL/Intersections_2/Triangle_2_Triangle_2_intersection_impl.h>
+
 #endif
