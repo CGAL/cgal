@@ -19,8 +19,8 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_SHORT_NAMES_2_H
-#define CGAL_APOLLONIUS_GRAPH_SHORT_NAMES_2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H
 
 
 #define Apollonius_site_2                          As2
@@ -35,4 +35,4 @@
 #define Apollonius_graph_kernel_wrapper_2          Agkw2
 
 
-#endif //CGAL_APOLLONIUS_GRAPH_SHORT_NAMES_2_H
+#endif //CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H

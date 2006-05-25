@@ -19,12 +19,12 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_CONSTRUCTIONS_RTH2_H
-#define CGAL_APOLLONIUS_GRAPH_CONSTRUCTIONS_RTH2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_RTH2_H
+#define CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_RTH2_H
 
 #include <CGAL/determinant.h>
 
-#include <CGAL/Apollonius_graph_constructions_ftC2.h>
+#include <CGAL/Apollonius_graph_2/Constructions_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -80,4 +80,4 @@ ad_left_bitangent_lineH2(const FT &hx1, const FT &hy1, const We &w1,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_APOLLONIUS_GRAPH_CONSTRUCTIONS_RTH2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_RTH2_H

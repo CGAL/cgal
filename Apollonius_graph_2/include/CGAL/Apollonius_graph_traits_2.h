@@ -28,11 +28,11 @@
 #endif  // CGAL_REP_CLASS_DEFINED
 
 #if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/predicates/Apollonius_graph_ftC2.h>
+#include <CGAL/Apollonius_graph_2/Predicates_ftC2.h>
 #endif
 
 #include <CGAL/Number_type_traits.h>
-#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
+#include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
 
 
 

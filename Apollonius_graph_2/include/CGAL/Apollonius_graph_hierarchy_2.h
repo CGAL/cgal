@@ -24,7 +24,7 @@
 
 #include <map>
 
-#include <CGAL/Apollonius_graph_short_names_2.h>
+#include <CGAL/Apollonius_graph_2/short_names_2.h>
 
 #include <CGAL/Random.h>
 
@@ -34,7 +34,7 @@
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_vertex_base_2.h>
 
-#include <CGAL/Apollonius_graph_traits_wrapper_2.h>
+#include <CGAL/Apollonius_graph_2/Traits_wrapper_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -347,9 +347,7 @@ std::istream& operator>>(std::istream& is,
 CGAL_END_NAMESPACE
 
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Apollonius_graph_hierarchy_2.C>
-#endif
+#include <CGAL/Apollonius_graph_2/Apollonius_graph_hierarchy_2_impl.h>
 
 
 #endif // CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_H

@@ -1,3 +1,8 @@
+25 May 2006:  Menelaos Karavelas
+- moved predicate files into the Apollonius_graph_2 subdir
+- moved the *.C files to Apollonius_graph_2/*_impl.h
+- removed automatic template inclusion macros related to the *.C files
+
 2 May 2006:  Menelaos Karavelas
 - fixed bug in drawing routine of Parabola_segment_2; in somes cases
   the drawing routine was producing some points twice. Thanks to 

@@ -28,7 +28,7 @@
 
 #include <boost/tuple/tuple.hpp>
 
-#include <CGAL/Apollonius_graph_short_names_2.h>
+#include <CGAL/Apollonius_graph_2/short_names_2.h>
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
@@ -37,9 +37,9 @@
 
 #include <CGAL/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
-#include <CGAL/Apollonius_graph_traits_wrapper_2.h>
+#include <CGAL/Apollonius_graph_2/Traits_wrapper_2.h>
 
-#include <CGAL/Apollonius_graph_constructions_C2.h>
+#include <CGAL/Apollonius_graph_2/Constructions_C2.h>
 
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
@@ -1337,9 +1337,7 @@ std::istream& operator>>(std::istream& is,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Apollonius_graph_2.C>
-#endif
+#include <CGAL/Apollonius_graph_2/Apollonius_graph_2_impl.h>
 
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_H

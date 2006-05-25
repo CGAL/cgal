@@ -19,8 +19,8 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_CONSTRUCTIONS_2_H
-#define CGAL_APOLLONIUS_GRAPH_CONSTRUCTIONS_2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_2_H
 
 #include <CGAL/Parabola_segment_2.h>
 #include <CGAL/Hyperbola_2.h>
@@ -28,7 +28,7 @@
 #include <CGAL/Hyperbola_ray_2.h>
 
 
-#include <CGAL/Apollonius_graph_constructions_ftC2.h>
+#include <CGAL/Apollonius_graph_2/Constructions_ftC2.h>
 
 
 
@@ -427,4 +427,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_APOLLONIUS_GRAPH_CONSTRUCTIONS_C2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_C2_H

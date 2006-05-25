@@ -19,10 +19,10 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_KERNEL_WRAPPER_2_H
-#define CGAL_APOLLONIUS_GRAPH_KERNEL_WRAPPER_2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_KERNEL_WRAPPER_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_KERNEL_WRAPPER_2_H
 
-#include <CGAL/Apollonius_graph_short_names_2.h>
+#include <CGAL/Apollonius_graph_2/short_names_2.h>
 
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/Cartesian_converter.h>
@@ -80,4 +80,4 @@ public:
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_APOLLONIUS_GRAPH_KERNEL_WRAPPER_2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_KERNEL_WRAPPER_2_H
