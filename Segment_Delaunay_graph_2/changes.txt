@@ -1,3 +1,7 @@
+25 May 2006:  Menelaos Karavelas
+- moved *.C files to Segment_Delaunay_graph_2/*_impl.h
+- removed the check for automatic template inclusion
+
 14 May 2006:  Menelaos Karavelas
 - fixed bug in undocumented insert method that takes two vertex
   handles: the inserted segment was not registered in the input sites

@@ -449,10 +449,8 @@ std::ostream& operator<<(std::ostream& os,
 CGAL_END_NAMESPACE
 
 
+#include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_hierarchy_2_impl.h>
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Segment_Delaunay_graph_hierarchy_2.C>
-#endif
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H
 

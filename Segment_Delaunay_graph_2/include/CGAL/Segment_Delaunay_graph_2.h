@@ -1651,10 +1651,7 @@ std::ostream& operator<<(std::ostream& os,
 CGAL_END_NAMESPACE
 
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Segment_Delaunay_graph_2.C>
-#endif
-
+#include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_2_impl.h>
 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_H
