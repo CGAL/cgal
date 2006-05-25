@@ -231,8 +231,6 @@ intersection(const Iso_cuboid_3<R> &box1,
 
 CGAL_END_NAMESPACE
 
-
-#include <CGAL/intersection_3_1.C>
-
+#include <CGAL/Intersections_3/intersection_3_1_impl.h>
 
 #endif // CGAL_INTERSECTION_3_1_H
