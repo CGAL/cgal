@@ -19,13 +19,13 @@
 
 
 
-#ifndef CGAL_AG2_IS_DEGENERATE_EDGE_C2_H
-#define CGAL_AG2_IS_DEGENERATE_EDGE_C2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_IS_DEGENERATE_EDGE_C2_H
+#define CGAL_APOLLONIUS_GRAPH_2_IS_DEGENERATE_EDGE_C2_H
 
-#include <CGAL/predicates/Apollonius_graph_predicate_constructions_C2.h>
+#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
-#include <CGAL/predicates/Ag2_incircle_C2.h>
-#include <CGAL/predicates/Ag2_finite_edge_test_C2.h>
+#include <CGAL/Apollonius_graph_2/Incircle_C2.h>
+#include <CGAL/Apollonius_graph_2/Finite_edge_test_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -88,4 +88,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_AG2_IS_DEGENERATE_EDGE_C2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_IS_DEGENERATE_EDGE_C2_H

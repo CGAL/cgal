@@ -19,16 +19,16 @@
 
 
 
-#ifndef CGAL_AG2_FINITE_EDGE_TEST_C2_H
-#define CGAL_AG2_FINITE_EDGE_TEST_C2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST_C2_H
+#define CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST_C2_H
 
 #include <CGAL/enum.h>
 #include <CGAL/Number_type_traits.h>
 
-#include <CGAL/predicates/Apollonius_graph_predicate_constructions_C2.h>
+#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 #include <CGAL/functions_on_signs.h>
-#include <CGAL/predicates/compare_quadratic.h>
+#include <CGAL/Apollonius_graph_2/compare_quadratic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -617,4 +617,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_AG2_FINITE_EDGE_TEST_C2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST_C2_H

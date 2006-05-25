@@ -19,15 +19,15 @@
 
 
 
-#ifndef CGAL_COMPARE_QUADRATIC_H
-#define CGAL_COMPARE_QUADRATIC_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_COMPARE_QUADRATIC_H
+#define CGAL_APOLLONIUS_GRAPH_2_COMPARE_QUADRATIC_H
 
 #include <CGAL/functions_on_signs.h>
 
 CGAL_BEGIN_NAMESPACE
 
 #ifdef COMPARATOR_PROFILER
-#include <CGAL/predicates/comparator_profiler.h>
+#include <CGAL/Apollonius_graph_2/comparator_profiler.h>
 #endif
 
 
@@ -1011,4 +1011,4 @@ CGAL_END_NAMESPACE
 #endif // CGAL_ARITHMETIC_FILTER_H
 
 
-#endif // CGAL_COMPARE_QUADRATIC
+#endif // CGAL_APOLLONIUS_GRAPH_2_COMPARE_QUADRATIC_H

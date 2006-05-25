@@ -19,19 +19,19 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_PREDICATES_C2_H
-#define CGAL_APOLLONIUS_GRAPH_PREDICATES_C2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_PREDICATES_C2_H
+#define CGAL_APOLLONIUS_GRAPH_2_PREDICATES_C2_H
 
-#include <CGAL/predicates/Ag2_compare_x_2.h>
-#include <CGAL/predicates/Ag2_compare_y_2.h>
-#include <CGAL/predicates/Ag2_compare_weight_2.h>
-#include <CGAL/predicates/Ag2_orientation_2.h>
-#include <CGAL/predicates/Ag2_is_hidden_C2.h>
-#include <CGAL/predicates/Ag2_oriented_side_of_bisector_C2.h>
-#include <CGAL/predicates/Ag2_incircle_C2.h>
-#include <CGAL/predicates/Ag2_finite_edge_test_C2.h>
-#include <CGAL/predicates/Ag2_infinite_edge_test_C2.h>
-#include <CGAL/predicates/Ag2_is_degenerate_edge_C2.h>
+#include <CGAL/Apollonius_graph_2/Compare_x_2.h>
+#include <CGAL/Apollonius_graph_2/Compare_y_2.h>
+#include <CGAL/Apollonius_graph_2/Compare_weight_2.h>
+#include <CGAL/Apollonius_graph_2/Orientation_2.h>
+#include <CGAL/Apollonius_graph_2/Is_hidden_C2.h>
+#include <CGAL/Apollonius_graph_2/Oriented_side_of_bisector_C2.h>
+#include <CGAL/Apollonius_graph_2/Incircle_C2.h>
+#include <CGAL/Apollonius_graph_2/Finite_edge_test_C2.h>
+#include <CGAL/Apollonius_graph_2/Infinite_edge_test_C2.h>
+#include <CGAL/Apollonius_graph_2/Is_degenerate_edge_C2.h>
 
 
-#endif // CGAL_APOLLONIUS_GRAPH_PREDICATES_C2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_PREDICATES_C2_H

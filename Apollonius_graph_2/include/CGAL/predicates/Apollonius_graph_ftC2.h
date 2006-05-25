@@ -26,11 +26,11 @@
 #include <CGAL/enum.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/predicates/check_filter.h>
+#include <CGAL/Apollonius_graph_2/check_filter.h>
 #include <CGAL/functions_on_signs.h>
-#include <CGAL/predicates/Apollonius_graph_predicates_C2.h>
+#include <CGAL/Apollonius_graph_2/Predicates_C2.h>
 
-#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
+#include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

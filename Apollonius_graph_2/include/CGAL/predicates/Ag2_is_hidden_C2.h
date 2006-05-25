@@ -19,8 +19,8 @@
 
 
 
-#ifndef CGAL_AG2_IS_HIDDEN_C2_H
-#define CGAL_AG2_IS_HIDDEN_C2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_IS_HIDDEN_C2_H
+#define CGAL_APOLLONIUS_GRAPH_2_IS_HIDDEN_C2_H
 
 #include <CGAL/enum.h>
 #include <CGAL/Number_type_traits.h>
@@ -83,4 +83,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_AG2_IS_HIDDEN_C2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_IS_HIDDEN_C2_H

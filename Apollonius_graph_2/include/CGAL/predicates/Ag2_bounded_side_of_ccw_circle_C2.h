@@ -19,13 +19,13 @@
 
 
 
-#ifndef CGAL_AG2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
-#define CGAL_AG2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
+#define CGAL_APOLLONIUS_GRAPH_2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
 
 #include <CGAL/enum.h>
 #include <CGAL/Number_type_traits.h>
 
-#include <CGAL/predicates/Apollonius_graph_predicate_constructions_C2.h>
+#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -96,4 +96,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_AG2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
+#endif // CGAL_APOLLONIUS_GRAPH_2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
