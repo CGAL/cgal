@@ -21,17 +21,15 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#if defined(CGAL_POINTHD_H) && defined(CGAL_VECTORHD_H) && \
-    defined(CGAL_DIRECTIONHD_H) && defined(CGAL_HYPERPLANEHD_H) && \
-    defined(CGAL_AFF_TRANSFORMATIONHD_H) && !defined(CGAL_PVDHAHD_C)
-#define CGAL_PVDHAHD_C
+#if defined(CGAL_POINTCD_H) && defined(CGAL_VECTORCD_H) && \
+    defined(CGAL_DIRECTIONCD_H) && defined(CGAL_HYPERPLANECD_H) && \
+    defined(CGAL_AFF_TRANSFORMATIONCD_H) && !defined(CGAL_PVDHACD_C)
+#define CGAL_PVDHACD_C
 
-#include <CGAL/Kernel_d/PointHd.C>
-#include <CGAL/Kernel_d/VectorHd.C>
-#include <CGAL/Kernel_d/DirectionHd.C> 
-#include <CGAL/Kernel_d/HyperplaneHd.C>
-#include <CGAL/Kernel_d/Aff_transformationHd.C>
+#include <CGAL/Kernel_d/PointCd_impl.h>
+#include <CGAL/Kernel_d/VectorCd_impl.h>
+#include <CGAL/Kernel_d/DirectionCd_impl.h> 
+#include <CGAL/Kernel_d/HyperplaneCd_impl.h>
+#include <CGAL/Kernel_d/Aff_transformationCd_impl.h>
 
-#endif //CGAL_PVDHAHD_C
-
-
+#endif //CGAL_PVDHACD_C
