@@ -37,10 +37,10 @@
 #include <CGAL/Kernel_d/DirectionCd.h>
 #include <CGAL/Kernel_d/HyperplaneCd.h>
 #include <CGAL/Kernel_d/Aff_transformationCd.h>
-#include <CGAL/Kernel_d/PointCd.C>
-#include <CGAL/Kernel_d/VectorCd.C>
-#include <CGAL/Kernel_d/DirectionCd.C>
-#include <CGAL/Kernel_d/HyperplaneCd.C>
+#include <CGAL/Kernel_d/PointCd_impl.h>
+#include <CGAL/Kernel_d/VectorCd_impl.h>
+#include <CGAL/Kernel_d/DirectionCd_impl.h>
+#include <CGAL/Kernel_d/HyperplaneCd_impl.h>
 #include <CGAL/Kernel_d/function_objectsCd.h>
 #include <CGAL/Kernel_d/intersection_objectsCd.h>
 #include <CGAL/Kernel_d/Interface_classes.h>
@@ -397,7 +397,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Kernel_d/Segment_d.h>
 #include <CGAL/Kernel_d/Ray_d.h>
 #include <CGAL/Kernel_d/Line_d.h>
-#include <CGAL/Kernel_d/Line_d.C>
+#include <CGAL/Kernel_d/Line_d_impl.h>
 #include <CGAL/intersections_d.h>
 
 #endif // CGAL_CARTESIAN_D_H

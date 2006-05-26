@@ -120,8 +120,6 @@ public:
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Kernel_d/Linear_algebraCd.C>
+#include <CGAL/Kernel_d/Linear_algebraCd_impl.h>
 
 #endif // CGAL_LINEAR_ALGEBRACD_H
-
-

@@ -38,10 +38,10 @@
 #include <CGAL/Kernel_d/DirectionHd.h>
 #include <CGAL/Kernel_d/HyperplaneHd.h>
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
-#include <CGAL/Kernel_d/PointHd.C>
-#include <CGAL/Kernel_d/VectorHd.C>
-#include <CGAL/Kernel_d/DirectionHd.C>
-#include <CGAL/Kernel_d/HyperplaneHd.C>
+#include <CGAL/Kernel_d/PointHd_impl.h>
+#include <CGAL/Kernel_d/VectorHd_impl.h>
+#include <CGAL/Kernel_d/DirectionHd_impl.h>
+#include <CGAL/Kernel_d/HyperplaneHd_impl.h>
 #include <CGAL/Kernel_d/function_objectsHd.h>
 #include <CGAL/Kernel_d/intersection_objectsHd.h>
 #include <CGAL/Kernel_d/Interface_classes.h>
@@ -400,7 +400,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Kernel_d/Segment_d.h>
 #include <CGAL/Kernel_d/Ray_d.h>
 #include <CGAL/Kernel_d/Line_d.h>
-#include <CGAL/Kernel_d/Line_d.C>
+#include <CGAL/Kernel_d/Line_d_impl.h>
 #include <CGAL/intersections_d.h>
 
 #endif // CGAL_HOMOGENEOUS_D_H
