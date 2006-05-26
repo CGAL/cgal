@@ -12,8 +12,8 @@ Documentation
 
 Note that the CGAL documentation cannot be packaged for Debian due to unclear
 license conditions. In fact, the upstream tarball of CGAL contains the
-documentation in HTML. This documentation had to be removed from the Debian
-tarball for this reason. The complete documentation in PDF and HTML is
+installation instructions as PDF. Therefore, this document had to be removed
+from the Debian tarball. The complete documentation in PDF and HTML is
 available at http://www.cgal.org/.
 
 
