@@ -35,8 +35,6 @@ the \ccc{LocalKernel} concept~: \ccc{LocalKernel::FT}.
 % +------------------------------------------------------------------
 \ccNestedType{FT}{The scalar type.}
 \ccGlue
-\ccNestedType{Vector}{The Vector type.}
-\ccGlue
 \ccNestedType{Matrix }{The Matrix type.}
 
 %\ccCreation
@@ -45,22 +43,28 @@ the \ccc{LocalKernel} concept~: \ccc{LocalKernel::FT}.
 %\ccConstructor{LinAlgTraits();}{default constructor.}
 
 \ccOperations
+The Matrix has classical access to its elements.
 
-Usual brackets operator for Vector and Matrix types.
+\ccMethod{void set_elt(size_t i, size_t j, const FT value)}{}
+\ccGlue
+\ccMethod{FT get_elt(size_t i, size_t j)}{}
 
-\ccMethod{void eigen_symm_algo(Matrix& S, Vector& eval, Matrix&
+The LinAlgTraits has an eigenanalysis and a singular value
+decomposition algorithm.
+
+\ccMethod{void eigen_symm_algo(Matrix& S, FT* eval, Matrix&
 evec);} {Performs an eigenanalysis of a real symmetric matrix.  Eigen
-values are sorted in descending order, eigen vectors are sorted in
+values are sorted in ascending order, eigen vectors are sorted in
 accordance. }
-\ccMethod{void solve_ls_svd_algo(Matrix& M, Vector& X, const Vector&
-B, double &cond_nb);}{ Solves the system MX=B (in the least square
-sense if M is not square) using a Singular Value Decomposition and
-gives the condition number of M.}
+\ccMethod{void solve_ls_svd_algo(Matrix& M, FT* B, FT* cond_nb);}
+{ Solves the system MX=B (in the least square sense if M is not
+square) using a Singular Value Decomposition and gives the condition
+number of M. The solution is stored in B.}
 
 \ccHasModels
 % +------------------------------------------------------------------
-\ccc{GSL}. See the implementation in the exemple directory
-exemples/Jet\_fitting\_3/GSL.h .
+\ccc{Lapack}. See the implementation in the exemple directory
+exemples/Jet\_fitting\_3/LinAlg\_lapack.h .
 
 
 

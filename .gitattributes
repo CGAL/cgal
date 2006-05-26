@@ -449,6 +449,8 @@ Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
 Jet_fitting_3/examples/Jet_fitting_3/test.off -text
+Jet_fitting_3/test/Jet_fitting_3/blind_1pt.C -text
+Jet_fitting_3/test/Jet_fitting_3/makefile -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.pdf -text svneol=unset#unset

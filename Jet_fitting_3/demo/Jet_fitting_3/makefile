@@ -46,7 +46,7 @@ QTLDFLAGS = \
           $(CGAL_QT_LDFLAGS) -lGL -lglut
 
 
-INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lInstrospect
+INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lIntrospect
 
 #---------------------------------------------------------------------#
 #                    target entries

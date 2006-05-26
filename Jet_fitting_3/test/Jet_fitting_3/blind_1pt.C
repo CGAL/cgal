@@ -8,11 +8,12 @@
 
 #include <vector>
 #include "../../include/CGAL/Monge_via_jet_fitting.h" 
-#include "LinAlg_lapack.h" 
- 
+#include "include/LinAlg_lapack.h" 
+
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
+typedef Data_Kernel::Vector_3     DVector;
 typedef CGAL::Monge_rep<Data_Kernel>   My_Monge_rep;
 
 typedef double                   LFT;
@@ -21,21 +22,10 @@ typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
 
        
-int main(int argc, char *argv[])
+int main()
 {
-  //check command line  
-  if (argc<5)
-    {
-      std::cout << "Usage : blind_1pt <inputPoints.txt> <output.txt> <d_fitting>, <d_monge>" 
-		<< std::endl;
-      exit(-1);
-    }
   //open the input file
-  char name_in[20];
-  sprintf(name_in, "%s", argv[1]);
-  std::cout << name_in << '\n';
-
-  std::ifstream inFile( name_in, std::ios::in);
+  std::ifstream inFile( "data/in_points_d4.txt", std::ios::in);
   if ( !inFile ) 
     {
       std::cerr << "cannot open file for input\n";
@@ -57,8 +47,8 @@ int main(int argc, char *argv[])
   inFile.close();
 
   // fct parameters
-  int d_fitting = std::atoi(argv[3]);
-  int d_monge = std::atoi(argv[4]);
+  int d_fitting = 4;
+  int d_monge = 4;
   My_Monge_rep monge_rep;
   My_Monge_info monge_info;
   //run the main fct
@@ -66,31 +56,10 @@ int main(int argc, char *argv[])
 				 d_fitting, d_monge, 
 				 monge_rep, monge_info);
 
-  //open a file for output
-  char name_out[20];
-  sprintf(name_out, "%s", argv[2]);
-  std::cout << name_out << '\n';
-
-  std::ofstream outFile( name_out, std::ios::out);
-  if ( !outFile ) 
-    {
-      std::cerr << "cannot open file for output\n";
-      exit(-1);
-    }
-
-  //OUTPUT on outFile
-  CGAL::set_pretty_mode(outFile);
-  outFile   << "vertex : " << in_points[0] << std::endl
-	    << "number of points used : " << in_points.size() << std::endl;
-  monge_rep.dump_verbose(outFile);
-  monge_info.dump_verbose(outFile);
-  
+  monge_rep.comply_wrt_given_normal( -monge_rep.n() );
   //OUTPUT on std::cout
-  CGAL::set_pretty_mode(std::cout);
-  std::cout << "vertex : " << in_points[0] << std::endl
-	    << "number of points used : " << in_points.size() << std::endl;
-  monge_rep.dump_verbose(std::cout);
-  monge_info.dump_verbose(std::cout);
-
-  return 1;
+  monge_rep.dump_verbose( std::cout );
+  monge_rep.dump_4ogl( std::cout, 1 );
+  monge_info.dump_verbose( std::cout );
+  std::cout << "success\n";
 }
