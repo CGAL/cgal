@@ -14,6 +14,9 @@ endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
+ifndef CXX
+	CXX = g++
+endif
 
 SOVERSION=1.0.0
 SOMAJOR=1
@@ -24,7 +27,7 @@ build-stamp: patch-stamp
 	if test -d include/CORE; then mv include/CORE include/CORE.orig; fi
 	if test -d src/Core; then mv src/Core src/Core.orig; fi
 	-rm -f make/makefile_*
-	QTDIR=/usr/share/qt3 ./install_cgal -ni --without-autofind \
+	QTDIR=/usr/share/qt3 ./install_cgal -ni --CXX $(CXX) --without-autofind \
 	  --with-ZLIB --with-BOOST --with-BOOSTPROGRAMOPTIONS --with-X11 \
 	  --with-GMP --with-GMPXX --with-MPFR --with-CORE --with-QT3MT
 	touch build-stamp
