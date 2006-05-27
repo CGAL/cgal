@@ -8,6 +8,6 @@ all:
 clean:
 	@for DIR in *; do \
 	  if test -d "$$DIR"; then \
-	    ( cd "$$DIR" && $(MAKE) ) \
+	    ( cd "$$DIR" && $(MAKE) clean ) \
 	  fi; \
 	done
