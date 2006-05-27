@@ -123,34 +123,6 @@ sub create_packages_dir(){
   closedir ALLPACKAGESDIR;
 }
 
-sub create_global_makefile{
-    printf("Creating the global makefile in the test dir ...\n");
-    chdir "$RELEASEDIR/$VERSION" or die;
-    if ( -e "test/Makefile"){
-	system("rm -f Makefile");
-    }
-    opendir testdir, "test";
-    @dirs = readdir testdir;
-    closedir testdir;
-    shift @dirs; shift @dirs;
-    chdir "test" or die;
-    open(TEMPFILE, ">tempfile") or die;
-    print TEMPFILE "testsuite: ";
-    foreach $dir (@dirs){
-	if ( -d $dir){
-	    print TEMPFILE "test_$dir ";
-	}
-    }
-    print TEMPFILE "\n";
-    foreach $dir (@dirs){
-	if ( -d $dir){
-	    print TEMPFILE "test_$dir:\n\t+ ./run_testsuite $dir\n";
-	}
-    }
-
-
-    system('mv', "tempfile", 'Makefile');
-};
 
 sub install_packages() {
   my ($filename, $direc, %is_permited_package, $package_name, $tmp_package_name);
@@ -724,7 +696,6 @@ create_version_file();
 create_version_tex_file();
 make_testscripts();
 set_file_headers();
-create_global_makefile();
 
 unlock;
 }

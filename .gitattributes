@@ -1306,6 +1306,7 @@ Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02 -text
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500-off -text
 Ridges_3/examples/Ridges_3/data/venus.off -text
 Scripts/developer_scripts/create_macosx_installer -text
+Scripts/test/makefile -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#unset
