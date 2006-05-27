@@ -23,7 +23,7 @@
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/Apollonius_graph_constructions_C2.h>
+#include <CGAL/Apollonius_graph_2/Constructions_C2.h>
 #include <CGAL/Hyperbola_segment_2.h>
 #include <CGAL/Hyperbola_ray_2.h>
 #include <CGAL/Hyperbola_2.h>

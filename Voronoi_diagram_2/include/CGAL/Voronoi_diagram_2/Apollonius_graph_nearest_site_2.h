@@ -22,7 +22,7 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Triangulation_utils_2.h>
-#include <CGAL/predicates/Ag2_orientation_2.h>
+#include <CGAL/Apollonius_graph_2/Orientation_2.h>
 
 #include <boost/variant.hpp>
 
