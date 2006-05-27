@@ -25,7 +25,7 @@
 
 #include <CGAL/determinant.h>
 
-#include <CGAL/predicates/check_filter.h>
+#include <CGAL/Apollonius_graph_2/check_filter.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/Predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>

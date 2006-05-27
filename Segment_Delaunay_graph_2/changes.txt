@@ -1,3 +1,6 @@
+27 May 2006:  Menelaos Karavelas
+- fixed errors created by the move of *.C files to *_impl.h
+
 25 May 2006:  Menelaos Karavelas
 - moved *.C files to Segment_Delaunay_graph_2/*_impl.h
 - removed the check for automatic template inclusion
