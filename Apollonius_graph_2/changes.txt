@@ -1,3 +1,6 @@
+27 May 2006:  Menelaos Karavelas
+- fixed errors created by the move of *.C files to *_impl.h
+
 25 May 2006:  Menelaos Karavelas
 - moved predicate files into the Apollonius_graph_2 subdir
 - moved the *.C files to Apollonius_graph_2/*_impl.h

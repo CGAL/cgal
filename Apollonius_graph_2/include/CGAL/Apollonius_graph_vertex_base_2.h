@@ -24,7 +24,7 @@
 
 #include <list>
 
-#include <CGAL/Apollonius_graph_short_names_2.h>
+#include <CGAL/Apollonius_graph_2/short_names_2.h>
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/triangulation_assertions.h>
