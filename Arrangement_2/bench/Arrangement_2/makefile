@@ -419,4 +419,4 @@ include $(BASEDIR)/segments.mak
 include $(BASEDIR)/polylines.mak
 include $(BASEDIR)/conics.mak
 
-vpath %.C $(BASEDIR)/../../../Benchmark/include/CGAL
+vpath %.C $(BASEDIR)/../../../Benchmark/src/Benchmark
