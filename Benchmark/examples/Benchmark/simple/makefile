@@ -33,8 +33,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                simple$(EXE_EXT) 
+all: simple$(EXE_EXT) 
 
 Bench$(OBJ_EXT): Bench.C
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
@@ -45,10 +44,7 @@ Bench_option_parser$(OBJ_EXT): Bench_option_parser.C
 simple$(EXE_EXT): simple$(OBJ_EXT) Bench_option_parser$(OBJ_EXT) Bench$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simple $? $(LDFLAGS)
 
-clean: \
-                   simple.clean \
-		   Bench_option_parser.clean \
-		   Bench.clean
+clean: simple.clean Bench_option_parser.clean Bench.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -57,4 +53,4 @@ clean: \
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
-vpath %.C ../../../include/CGAL
+vpath %.C ../../../src/Benchmark

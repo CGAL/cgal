@@ -23,4 +23,4 @@ include $(MAKEINCDIR)/comrul.mak
 include $(MAKEINCDIR)/comp.mak
 include $(MAKEINCDIR)/targlink.mak
 
-vpath %.C $(BASEDIR)/../../../include/CGAL
+vpath %.C $(BASEDIR)/../../../src/Benchmark
