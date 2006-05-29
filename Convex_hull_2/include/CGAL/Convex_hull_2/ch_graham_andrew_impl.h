@@ -21,15 +21,11 @@
 #ifndef CGAL_CH_GRAHAM_ANDREW_C
 #define CGAL_CH_GRAHAM_ANDREW_C
 
-#ifndef CGAL_CH_GRAHAM_ANDREW_H
-#include <CGAL/ch_graham_andrew.h>
-#endif // CGAL_CH_GRAHAM_ANDREW_H
-
 #ifndef CGAL_CH_NO_POSTCONDITIONS
-#include <CGAL/convexity_check_2.h>
+#include <CGAL/Convex_hull_2/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/ch_assertions.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <vector>

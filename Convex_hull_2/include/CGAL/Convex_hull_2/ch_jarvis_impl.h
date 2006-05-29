@@ -21,20 +21,14 @@
 #ifndef CGAL_CH_JARVIS_C
 #define CGAL_CH_JARVIS_C
 
-#ifndef CGAL_CH_JARVIS_H
-#include <CGAL/ch_jarvis.h>
-#endif // CGAL_CH_JARVIS_H
-
 #ifndef CGAL_CH_NO_POSTCONDITIONS
-#include <CGAL/convexity_check_2.h>
+#include <CGAL/Convex_hull_2/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/ch_assertions.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/functional.h>
-#include <CGAL/ch_selected_extreme_points_2.h>
 #include <algorithm>
-
 
 CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class OutputIterator, 

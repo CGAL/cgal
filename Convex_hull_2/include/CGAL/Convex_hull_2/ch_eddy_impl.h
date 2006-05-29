@@ -21,15 +21,11 @@
 #ifndef CGAL_CH_EDDY_C
 #define CGAL_CH_EDDY_C
 
-#ifndef CGAL_CH_EDDY_H
-#include <CGAL/ch_eddy.h>
-#endif // CGAL_CH_EDDY_H
-
 #ifndef CGAL_CH_NO_POSTCONDITIONS
-#include <CGAL/convexity_check_2.h>
+#include <CGAL/Convex_hull_2/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/ch_assertions.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/functional.h>

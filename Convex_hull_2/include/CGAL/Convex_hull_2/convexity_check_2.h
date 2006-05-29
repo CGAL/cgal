@@ -124,9 +124,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/convexity_check_2.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Convex_hull_2/convexity_check_2_impl.h>
 
 #endif // CGAL_CONVEXITY_CHECK_2_H
 

@@ -22,15 +22,11 @@
 #ifndef CGAL_CH_MELKMAN_C
 #define CGAL_CH_MELKMAN_C
 
-#ifndef CGAL_CH_MELKMAN_H
-#include <CGAL/ch_melkman.h>
-#endif
-
 #ifndef CGAL_CH_NO_POSTCONDITIONS
-#include <CGAL/convexity_check_2.h>
+#include <CGAL/Convex_hull_2/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/ch_assertions.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <queue>
 #include <iterator>
 

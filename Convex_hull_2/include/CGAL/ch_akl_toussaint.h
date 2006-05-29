@@ -50,9 +50,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/ch_akl_toussaint.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Convex_hull_2/ch_akl_toussaint_impl.h>
 
 #endif // CGAL_CH_AKL_TOUSSAINT_H
 

@@ -107,9 +107,7 @@ ch_upper_hull_scan( InputIterator  first,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/ch_graham_andrew.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Convex_hull_2/ch_graham_andrew_impl.h>
 
 #endif // CGAL_CH_GRAHAM_ANDREW_H
 

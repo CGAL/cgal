@@ -45,9 +45,7 @@ ch_melkman( InputIterator first, InputIterator last,  OutputIterator result)
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/ch_melkman.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Convex_hull_2/ch_melkman_impl.h>
 
 #endif // CGAL_CH_MELKMAN_H
 

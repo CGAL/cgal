@@ -21,12 +21,8 @@
 #ifndef CGAL_CH_SELECTED_EXTREME_POINTS_2_C
 #define CGAL_CH_SELECTED_EXTREME_POINTS_2_C
 
-#ifndef CGAL_CH_SELECTED_EXTREME_POINTS_2_H
-#include <CGAL/ch_selected_extreme_points_2.h>
-#endif // CGAL_CH_SELECTED_EXTREME_POINTS_2_H
-
 #ifndef CGAL_CH_NO_POSTCONDITIONS
-#include <CGAL/convexity_check_2.h>
+#include <CGAL/Convex_hull_2/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
 CGAL_BEGIN_NAMESPACE

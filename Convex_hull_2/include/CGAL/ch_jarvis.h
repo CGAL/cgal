@@ -83,9 +83,7 @@ ch_jarvis(ForwardIterator first, ForwardIterator last, OutputIterator  result)
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/ch_jarvis.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Convex_hull_2/ch_jarvis_impl.h>
 
 #endif // CGAL_CH_JARVIS_H
 

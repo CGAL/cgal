@@ -69,9 +69,7 @@ ch_bykat_with_threshold(InputIterator first, InputIterator last,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/ch_bykat.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Convex_hull_2/ch_bykat_impl.h>
 
 #endif // CGAL_CH_BYKAT_H
 
