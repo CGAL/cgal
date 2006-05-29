@@ -38,9 +38,9 @@
 #endif // CGAL_REP_CLASS_DEFINED
 
 #include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/Polygon_2_vertex_circulator.h>
-#include <CGAL/Polygon_2_edge_iterator.h>
-#include <CGAL/Polygon_2_edge_circulator.h>
+#include <CGAL/Polygon_2/Polygon_2_vertex_circulator.h>
+#include <CGAL/Polygon_2/Polygon_2_edge_iterator.h>
+#include <CGAL/Polygon_2/Polygon_2_edge_circulator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -395,9 +395,7 @@ std::ostream
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Polygon_2.C>
-#endif
+#include <CGAL/Polygon_2/Polygon_2_impl.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -26,8 +26,8 @@
 
 #include <iterator>
 #include <CGAL/circulator.h>
-#include <CGAL/Polygon_2_vertex_circulator.h>
-#include <CGAL/polygon_assertions.h>
+#include <CGAL/Polygon_2/Polygon_2_vertex_circulator.h>
+#include <CGAL/Polygon_2/polygon_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 

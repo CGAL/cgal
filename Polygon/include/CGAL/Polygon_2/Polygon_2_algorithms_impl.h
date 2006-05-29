@@ -21,8 +21,7 @@
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
-#include "CGAL/Polygon_2_algorithms.h"
-#include "CGAL/Polygon_2_simplicity.h"
+#include <CGAL/Polygon_2/Polygon_2_simplicity.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iterator>

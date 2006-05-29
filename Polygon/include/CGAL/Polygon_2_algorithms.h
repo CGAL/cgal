@@ -29,8 +29,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>
 
-#include <CGAL/polygon_assertions.h>
-
+#include <CGAL/Polygon_2/polygon_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -277,9 +276,7 @@ Orientation orientation_2(ForwardIterator first,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION 
-#include <CGAL/Polygon_2_algorithms.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Polygon_2/Polygon_2_algorithms_impl.h>
 
 #endif // CGAL_POLYGON_2_ALGORITHMS_H
 

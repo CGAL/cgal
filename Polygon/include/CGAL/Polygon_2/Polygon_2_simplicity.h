@@ -25,7 +25,7 @@
 #define CGAL_POLYGON_2_SIMPLICITY_H
 
 #include <CGAL/enum.h>
-#include <CGAL/polygon_assertions.h>
+#include <CGAL/Polygon_2/polygon_assertions.h>
 #include <set>
 #include <vector>
 #include <algorithm>
