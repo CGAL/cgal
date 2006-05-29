@@ -18,8 +18,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H 1
 
-#include <CGAL/Straight_skeleton_aux.h>
-#include <CGAL/Straight_skeleton_builder_traits_2_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 

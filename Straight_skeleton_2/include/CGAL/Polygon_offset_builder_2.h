@@ -166,9 +166,7 @@ private:
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Polygon_offset_builder_2.C>
-#endif
+#include <CGAL/Straight_skeleton_2/Polygon_offset_builder_2_impl.h>
 
 #endif // CGAL_POLYGON_OFFSET_BUILDER_2_H //
 // EOF //

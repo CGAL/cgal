@@ -29,10 +29,10 @@
 #include <boost/shared_ptr.hpp>
 
 #include <CGAL/algorithm.h>
-#include <CGAL/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_events_2.h>
 #include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
-#include <CGAL/Straight_skeleton_builder_events_2.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
 #include <CGAL/enum.h>
 
