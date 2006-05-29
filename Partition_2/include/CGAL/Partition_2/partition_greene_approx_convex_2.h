@@ -23,15 +23,15 @@
 #include<vector>
 #include<algorithm>
 #include<iterator>
-#include<CGAL/Circulator_pair.h>
-#include<CGAL/partition_y_monotone_2.h>
-#include<CGAL/Turn_reverser.h>
+#include<CGAL/Partition_2/Circulator_pair.h>
+#include<CGAL/Partition_2/partition_y_monotone_2.h>
+#include<CGAL/Partition_2/Turn_reverser.h>
 #include<CGAL/IO/Tee_for_output_iterator.h>
-#include<CGAL/partition_assertions.h>
+#include<CGAL/Partition_2/partition_assertions.h>
 #include<CGAL/partition_is_valid_2.h>
 #include<CGAL/Partition_traits_2.h>
 #include<CGAL/is_y_monotone_2.h>
-#include<CGAL/is_degenerate_polygon_2.h>
+#include<CGAL/Partition_2/is_degenerate_polygon_2.h>
 
 // These things should be constant: 
 //   front is where you add things to a chain 

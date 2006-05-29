@@ -23,9 +23,9 @@
 #include <list>
 #include <utility>
 #include <iterator>
-#include <CGAL/partition_assertions.h>
-#include <CGAL/Partitioned_polygon_2.h>
-#include <CGAL/Partition_vertex_map.h>
+#include <CGAL/Partition_2/partition_assertions.h>
+#include <CGAL/Partition_2/Partitioned_polygon_2.h>
+#include <CGAL/Partition_2/Partition_vertex_map.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/Partition_is_valid_traits_2.h>

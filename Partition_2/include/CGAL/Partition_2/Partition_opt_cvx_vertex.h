@@ -21,7 +21,7 @@
 #define CGAL_PARTITION_OPT_CVX_VERTEX_H
 
 #include <list>
-#include <CGAL/Partition_opt_cvx_diagonal_list.h>
+#include <CGAL/Partition_2/Partition_opt_cvx_diagonal_list.h>
 
 namespace CGAL {
 

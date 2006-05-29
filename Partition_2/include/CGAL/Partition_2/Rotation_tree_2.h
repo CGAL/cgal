@@ -41,7 +41,7 @@
 #else
 #include <CGAL/vector.h>
 #endif // MSVC6
-#include <CGAL/Rotation_tree_node_2.h>
+#include <CGAL/Partition_2/Rotation_tree_node_2.h>
 #include <CGAL/functional.h>
 
 namespace CGAL {
@@ -171,9 +171,6 @@ private:
 
 }
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Rotation_tree_2.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-
+#include <CGAL/Partition_2/Rotation_tree_2_impl.h>
 
 #endif // CGAL_ROTATION_TREE_H

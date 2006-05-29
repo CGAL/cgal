@@ -63,16 +63,16 @@
 #define CGAL_PARTITION_OPTIMAL_CONVEX_H
 
 #include<CGAL/IO/Tee_for_output_iterator.h>
-#include<CGAL/Partition_opt_cvx_edge.h>
-#include<CGAL/Partition_opt_cvx_vertex.h>
-#include<CGAL/Partition_opt_cvx_diagonal_list.h>
-#include<CGAL/Matrix.h>
-#include<CGAL/Turn_reverser.h>
-#include<CGAL/Partitioned_polygon_2.h>
+#include<CGAL/Partition_2/Partition_opt_cvx_edge.h>
+#include<CGAL/Partition_2/Partition_opt_cvx_vertex.h>
+#include<CGAL/Partition_2/Partition_opt_cvx_diagonal_list.h>
+#include<CGAL/Partition_2/Matrix.h>
+#include<CGAL/Partition_2/Turn_reverser.h>
+#include<CGAL/Partition_2/Partitioned_polygon_2.h>
 #include<CGAL/partition_is_valid_2.h>
 #include<CGAL/Partition_traits_2.h>
-#include<CGAL/partition_assertions.h>
-#include<CGAL/Vertex_visibility_graph_2.h>
+#include<CGAL/Partition_2/partition_assertions.h>
+#include<CGAL/Partition_2/Vertex_visibility_graph_2.h>
 #include<utility>
 #include<vector>
 #include<iterator>

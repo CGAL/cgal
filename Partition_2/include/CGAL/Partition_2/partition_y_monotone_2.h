@@ -38,14 +38,14 @@
 #ifndef CGAL_PARTITION_Y_MONOTONE_H
 #define CGAL_PARTITION_Y_MONOTONE_H
 
-#include <CGAL/Indirect_not_less_yx_2.h>
-#include <CGAL/Indirect_edge_compare.h>
+#include <CGAL/Partition_2/Indirect_not_less_yx_2.h>
+#include <CGAL/Partition_2/Indirect_edge_compare.h>
 #include <CGAL/Segment_2_Ray_2_intersection.h>
 #include <CGAL/Object.h>
-#include <CGAL/Partitioned_polygon_2.h>
+#include <CGAL/Partition_2/Partitioned_polygon_2.h>
 #include <CGAL/ch_selected_extreme_points_2.h> 
 #include <CGAL/IO/Tee_for_output_iterator.h>
-#include <CGAL/partition_assertions.h>
+#include <CGAL/Partition_2/partition_assertions.h>
 #include <CGAL/partition_is_valid_2.h>
 #include <CGAL/Partition_traits_2.h>
 #include <map>

@@ -21,13 +21,13 @@
 #define CGAL_PARTITION_APPROX_CONVEX_H
 
 #include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/Triangulation_indirect_traits_2.h>
-#include <CGAL/Turn_reverser.h>
-#include <CGAL/Partitioned_polygon_2.h>
+#include <CGAL/Partition_2/Triangulation_indirect_traits_2.h>
+#include <CGAL/Partition_2/Turn_reverser.h>
+#include <CGAL/Partition_2/Partitioned_polygon_2.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_is_valid_2.h>
-#include <CGAL/partition_assertions.h>
+#include <CGAL/Partition_2/partition_assertions.h>
 #include <utility>
 #include <iterator>
 

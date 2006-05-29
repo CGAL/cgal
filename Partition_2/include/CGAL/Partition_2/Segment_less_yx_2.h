@@ -21,7 +21,7 @@
 #define CGAL_SEGMENT_LESS_YX_2_H
 
 #include <utility>
-#include <CGAL/Turn_reverser.h>
+#include <CGAL/Partition_2/Turn_reverser.h>
 
 namespace CGAL {
 

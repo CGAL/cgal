@@ -58,13 +58,13 @@
 #define  CGAL_VERTEX_VISIBILITY_GRAPH_2_H
 
 #include <CGAL/Segment_2.h>
-#include <CGAL/Rotation_tree_2.h>
-#include <CGAL/Indirect_less_xy_2.h>
-#include <CGAL/Iterator_list.h>
-#include <CGAL/Turn_reverser.h>
-#include <CGAL/Point_pair_less_xy_2.h>
+#include <CGAL/Partition_2/Rotation_tree_2.h>
+#include <CGAL/Partition_2/Indirect_less_xy_2.h>
+#include <CGAL/Partition_2/Iterator_list.h>
+#include <CGAL/Partition_2/Turn_reverser.h>
+#include <CGAL/Partition_2/Point_pair_less_xy_2.h>
 #include <CGAL/Segment_2_Ray_2_intersection.h>
-#include <CGAL/Segment_less_yx_2.h>
+#include <CGAL/Partition_2/Segment_less_yx_2.h>
 #include <cmath>
 #include <list>
 #include <stack>
@@ -446,8 +446,6 @@ Vertex_visibility_graph_2<Traits>::indirect_less_xy_2;
 #endif
 }
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Vertex_visibility_graph_2.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Partition_2/Vertex_visibility_graph_2_impl.h>
 
 #endif // CGAL_VERTEX_VISIBILITY_GRAPH_2_H

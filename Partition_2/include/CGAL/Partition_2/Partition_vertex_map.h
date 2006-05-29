@@ -23,7 +23,7 @@
 #include <map>
 #include <iostream>
 #include <CGAL/circulator.h>
-#include <CGAL/Indirect_less_xy_2.h>
+#include <CGAL/Partition_2/Indirect_less_xy_2.h>
 #include <cassert>
 
 namespace CGAL {
