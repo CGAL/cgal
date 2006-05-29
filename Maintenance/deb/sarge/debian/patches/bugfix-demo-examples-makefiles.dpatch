@@ -1,0 +1,29 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## bugfix-demo-examples-makefiles.dpatch by Joachim Reichel <joachim.reichel@gmx.de>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad cgal-3.2~/demo/makefile cgal-3.2/demo/makefile
+--- cgal-3.2~/demo/makefile	2006-05-22 21:00:57.000000000 +0200
++++ cgal-3.2/demo/makefile	2006-05-29 20:22:24.000000000 +0200
+@@ -8,6 +8,6 @@
+ clean:
+ 	@for DIR in *; do \
+ 	  if test -d "$$DIR"; then \
+-	    ( cd "$$DIR" && $(MAKE) ) \
++	    ( cd "$$DIR" && $(MAKE) clean ) \
+ 	  fi; \
+ 	done
+diff -urNad cgal-3.2~/examples/makefile cgal-3.2/examples/makefile
+--- cgal-3.2~/examples/makefile	2006-05-22 21:00:57.000000000 +0200
++++ cgal-3.2/examples/makefile	2006-05-29 20:22:31.000000000 +0200
+@@ -8,6 +8,6 @@
+ clean:
+ 	@for DIR in *; do \
+ 	  if test -d "$$DIR"; then \
+-	    ( cd "$$DIR" && $(MAKE) ) \
++	    ( cd "$$DIR" && $(MAKE) clean ) \
+ 	  fi; \
+ 	done

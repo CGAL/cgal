@@ -2,7 +2,7 @@ Source: cgal
 Section: non-free/libs
 Priority: optional
 Maintainer: Joachim Reichel <joachim.reichel@gmx.de>
-Build-Depends: debhelper (>> 4.0.0), dpatch, libgmp3-dev, libmpfr-dev, libcore++-dev, libqt3-mt-dev, libqt3-compat-headers, libboost-dev, libboost-graph-dev, libboost-program-options-dev, zlib1g-dev
+Build-Depends: debhelper (>= 5), dpatch, libgmp3-dev, libmpfr-dev, libcore++-dev, libqt3-mt-dev, libqt3-compat-headers, libboost-dev, libboost-graph-dev, libboost-program-options-dev, zlib1g-dev
 Standards-Version: 3.7.2
 
 Package: libcgal1

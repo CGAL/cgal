@@ -1,3 +1,10 @@
 TODO
 ====
 
+- CGAL 3.2.1
+  * do not rename root directory
+  * if possible, leave tarball untouched (doc_pdf/Installation.pdf should be
+    gone)
+
+- CGAL 3.3
+  * SONAME issue

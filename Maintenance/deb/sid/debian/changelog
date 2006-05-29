@@ -1,5 +1,6 @@
 cgal (3.2-1) unstable; urgency=low
 
-  * New upstream release
+  * New upstream release.
+  * First upload to Debian archive. (Closes: #251885)
 
- -- Joachim Reichel <joachim.reichel@gmx.de>  Wed, 24 May 2006 19:55:31 +0200
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Mon, 29 May 2006 20:24:27 +0200

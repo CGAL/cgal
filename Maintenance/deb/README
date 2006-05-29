@@ -2,5 +2,12 @@ README
 ======
 
 backport for sarge:
-- adjust Standards-Version: to 3.6.1
-- adjust version suffix from -X to -0sargeY
+- debian/control:
+  * adjust Standards-Version: to 3.6.1
+  * adjust debhelper dependency from >= 5 to >= 4
+- debian/compat:
+  * adjust debhelper compatibility level from 5 to 4
+- debian/changelog:
+  * adjust version suffix from -X to -0sargeY
+  * adjust suite from unstable to stable
+  * maintain other differences
