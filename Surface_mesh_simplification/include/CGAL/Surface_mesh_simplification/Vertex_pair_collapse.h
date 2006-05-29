@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_VERTEX_PAIR_COLLAPSE_IMPL_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_VERTEX_PAIR_COLLAPSE_IMPL_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION__VERTEX_PAIR_COLLAPSE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION__VERTEX_PAIR_COLLAPSE_H 1
 
 #include <vector>
 
@@ -41,24 +41,25 @@ namespace Triangulated_surface_mesh { namespace Simplification
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 //
 template<class TSM_
-        ,class SelectMap_
-        ,class CostMap_
-        ,class VertexPlacement_
-        ,class StopPred_
+        ,class GetCollapseData_
+        ,class GetCost_
+        ,class GetVertexPoint_
+        ,class ShouldStop_
         >
 class VertexPairCollapse
 {
 public:
 
   typedef TSM_             TSM ;
-  typedef SelectMap_       SelectMap ;
-  typedef CostMap_         CostMap ;
-  typedef VertexPlacement_ VertexPlacement ;
-  typedef StopPred_        StopPred ;
+  typedef GetCollapseData_ GetCollapseData ;
+  typedef GetCost_         GetCost ;
+  typedef GetVertexPoint_  GetVertexPoint ;
+  typedef ShouldStop_      ShouldStop ;
   
   typedef VertexPairCollapse Self ;
   
-  typedef boost::graph_traits<TSM> GraphTraits ;
+  typedef boost::graph_traits           <TSM> GraphTraits ;
+  typedef boost::undirected_graph_traits<TSM> UndirectedGraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor  vertex_descriptor ;
   typedef typename GraphTraits::vertex_iterator    vertex_iterator ;
@@ -68,10 +69,16 @@ public:
   typedef typename GraphTraits::in_edge_iterator   in_edge_iterator ;
   typedef typename GraphTraits::traversal_category traversal_category ;
   typedef typename GraphTraits::edges_size_type    size_type ;
-
-  typedef typename boost::property_traits<CostMap>::value_type optional_cost_type ;
   
-  typedef typename VertexPlacement::result_type optional_vertex_point_type ;
+  typedef typename UndirectedGraphTraits::edge_iterator undirected_edge_iterator ;
+
+  typedef typename GetCollapseData::Params        GetCollapseDataParams ;
+  
+  typedef typename GetCollapseData::Collapse_data Collapse_data ;
+  typedef typename GetCollapseData::result_type   Collapse_data_ptr ; 
+  
+  typedef typename GetCost       ::result_type Optional_cost_type ;
+  typedef typename GetVertexPoint::result_type Optional_vertex_point_type ;
      
   typedef Surface_geometric_traits<TSM> Traits ;
   
@@ -79,14 +86,14 @@ public:
 
   class vertex_pair ;
     
-  typedef boost::shared_ptr<vertex_pair> vertex_pair_ptr ;
+  typedef shared_ptr<vertex_pair> vertex_pair_ptr ;
   
   typedef Modifiable_priority_queue<vertex_pair_ptr> PQ ;
   
   typedef typename PQ::iterator pq_handle ;
   
   // The algoritm is centered around vertex-pairs, encapsulated in this type.
-  // For each pair there is a cost value provided by the external CostMap.
+  // For each pair there is a cost value provided by the external GetCost functor.
   // Vertex-pairs are stored in a priority queue based on their cost.
   // 
   // Each edge in the TSM contributes one vertex_pair.
@@ -102,19 +109,13 @@ public:
   public :
   
     vertex_pair( size_type                aID
-               , vertex_descriptor const& aP
-               , vertex_descriptor const& aQ
-               , edge_descriptor   const& aEdge
-               , TSM*                     aSurface
-               , CostMap const*           aCost_map 
+               , Collapse_data_ptr const& aData
+               , GetCost const&           aGet_cost 
                )
        : 
        mID(aID)
-     , mP(aP)
-     , mQ(aQ)
-     , mEdge(aEdge)
-     , mSurface(aSurface)
-     , Cost_map(aCost_map)
+     , mData(aData)
+     , Get_cost(addressof(aGet_cost))
      , mCostStored(false)
      , mIsFixed(false)
      , mMark(0)
@@ -123,31 +124,32 @@ public:
     size_type id() const { return mID ; } 
 
     // The cost of collapsing a vertex-pair is cached in this record.
-    // When calling cost() for the first time, the cached cost is taken from the external CostMap.
-    // Subsequent calls to cost() returns the same cached cost, that is, CostMap[] IS NOT called each time.
+    // When calling cost() for the first time, the cached cost is taken from the external GetCost functor.
+    // Subsequent calls to cost() returns the same cached cost, that is, GetCost() IS NOT called each time.
     //
-    // Such a cache cost is an optional<> value. This is because the CostMap can return "none" for too high or incomputable costs.
+    // Such a cache cost is an optional<> value. This is because the GetCost can return "none" for too high or incomputable costs.
     // Therefore, even if the cost is cached, it might be "absent" (that is, == boost::none)
     //
     // OTOH, the algorithm can invalidate the cached cost of any given pair. 
-    // If invalidate_cost() is called, the next call to cost() will take it again from the external CostMap.
+    // If invalidate_cost() is called, the next call to cost() will take it again from the external GetCost.
     // NOTE: Whether the cost is cached or not is independent from whether it is absent or none.
-    // The former is controlled by the algorithm by explicitely calling InvalidateCost() while the later is defined by the CostMap
+    // The former is controlled by the algorithm by explicitely calling InvalidateCost() while the later is defined by the GetCost
     // which can retiurn boost::none for incomputable or logically invalid costs.
     //
-    optional_cost_type cost() const { return UpdateCost() ; }
+    Optional_cost_type cost() const { return UpdateCost() ; }
     
-    void invalidate_cost() { mCostStored = false ; }
+    void reset_data( Collapse_data_ptr const& aData ) { mData = aData ; mCostStored = false ; }
     
-    vertex_descriptor p() const { return mP ; }
-    vertex_descriptor q() const { return mQ ; }
+    Collapse_data_ptr        data   () const { return mData ; }
+    vertex_descriptor const& p      () const { return mData->p() ; }
+    vertex_descriptor const& q      () const { return mData->q() ; }
+    edge_descriptor   const& edge   () const { return mData->edge() ; }
+    TSM&                     surface() const { return mData->surface() ; }
     
-    edge_descriptor edge() const { return mEdge ; }
-
     bool is_edge() const
     {
       edge_descriptor null ;
-      return mEdge != null ;
+      return edge() != null ;
     }
 
     // A pair is fixed if it cannot be collpased.
@@ -164,36 +166,24 @@ public:
     void set_PQ_handle( pq_handle h ) { mPQHandle = h ; }
     
     void reset_PQ_handle() { mPQHandle = null_PQ_handle() ; }
-    
-    void update_vertex ( vertex_descriptor oldv, vertex_descriptor newv )
-    {
-      CGAL_assertion( mP == oldv || mQ == oldv );
-      CGAL_assertion( oldv != newv );
-      
-      if ( mP == oldv )
-           mP = newv ;
-      else mQ = newv ;
-      
-      invalidate_cost();
-    }
         
-    friend bool operator< ( boost::shared_ptr<vertex_pair> const& a, boost::shared_ptr<vertex_pair> const& b ) 
+    friend bool operator< ( shared_ptr<vertex_pair> const& a, shared_ptr<vertex_pair> const& b ) 
     {
       // NOTE: cost() is an optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
       // In consequence, vertex-pairs with undefined costs will be promoted to the top of the priority queue and poped out first.
       return a->cost() < b->cost() ;
     }
-    friend bool operator== ( boost::shared_ptr<vertex_pair> const& a, boost::shared_ptr<vertex_pair> const& b ) 
+    friend bool operator== ( shared_ptr<vertex_pair> const& a, shared_ptr<vertex_pair> const& b ) 
     {
       return a->cost() == b->cost() ;
     }
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
 
-    bool is_p_in_surface   () const { return handle_exists(mSurface->vertices_begin(),mSurface->vertices_end(),p()) ; }
-    bool is_q_in_surface   () const { return handle_exists(mSurface->vertices_begin(),mSurface->vertices_end(),q()) ; }
-    bool is_edge_in_surface() const { return handle_exists(mSurface->halfedges_begin(),mSurface->halfedges_end(),edge()) ; }
+    bool is_p_in_surface   () const { return handle_exists(surface().vertices_begin (),surface().vertices_end(),p()) ; }
+    bool is_q_in_surface   () const { return handle_exists(surface().vertices_begin (),surface().vertices_end(),q()) ; }
+    bool is_edge_in_surface() const { return handle_exists(surface().halfedges_begin(),surface().halfedges_end(),edge()) ; }
          
     bool is_valid() const { return is_p_in_surface() && is_q_in_surface() && is_edge_in_surface() ; }
     
@@ -226,11 +216,11 @@ public:
   private:
     
     // Caches the cost if not currently cached, and returns it.
-    optional_cost_type UpdateCost() const
+    Optional_cost_type UpdateCost() const
     { 
       if ( !mCostStored )
       {
-        mCost = boost::get(*Cost_map, boost::make_tuple(p(),q(),is_edge(),mSurface)) ; 
+        mCost = (*Get_cost)(*mData);
         mCostStored = true ;
       }  
       return mCost ;  
@@ -240,15 +230,12 @@ public:
     
   private:  
     
-    size_type          mID ;
-    vertex_descriptor  mP ;
-    vertex_descriptor  mQ ;
-    edge_descriptor    mEdge ;
-    TSM*               mSurface ;
-    CostMap const*     Cost_map ;
+    size_type         mID ;
+    Collapse_data_ptr mData ;
+    GetCost const*    Get_cost ;
     
     mutable bool               mCostStored ;
-    mutable optional_cost_type mCost ;
+    mutable Optional_cost_type mCost ;
     
     bool      mIsFixed ;
     pq_handle mPQHandle ;
@@ -265,12 +252,13 @@ public:
     
 public:
 
-  VertexPairCollapse( TSM&                   aSurface
-                    , SelectMap       const& aSelectMap
-                    , CostMap         const& aCostMap
-                    , VertexPlacement const& aVertexPlacement
-                    , StopPred        const& aStopPred 
-                    , bool                   aIncludeNonEdgePairs 
+  VertexPairCollapse( TSM&                         aSurface
+                    , GetCollapseData const&       aGetCollapseData
+                    , GetCollapseDataParams const* aGetCollapseDataParams
+                    , GetCost const&               aGetCost
+                    , GetVertexPoint const&        aGetVertexPoint
+                    , ShouldStop const&            aShouldStop 
+                    , bool                         aIncludeNonEdgePairs 
                     ) ;
   
   int run() ;
@@ -291,7 +279,7 @@ private:
   
   void set_pair ( edge_descriptor const& e, vertex_pair_ptr aPair )
   {
-    edge_descriptor o = boost::opposite_edge(e,mSurface) ;
+    edge_descriptor o = opposite_edge(e,mSurface) ;
     
     mEdgesToPairsMap[e] = aPair ;  
     mEdgesToPairsMap[o] = aPair ;  
@@ -339,15 +327,18 @@ private:
 private:
 
   TSM& mSurface ;
+  GetCollapseDataParams const* mGetCollapseDataParams ;
 
-  SelectMap const&       Select_map ;   
-  CostMap const&         Cost_map ;
-  VertexPlacement const& construct_new_vertex_point ;
-  StopPred const&        stop_simplification ;
-
-  Collapse_triangulation_edge<TSM> collapse_triangulation_edge ;  
+  GetCollapseData const& Get_collapse_data;   
+  GetCost         const& Get_cost ;
+  GetVertexPoint  const& Get_vertex_point ;
+  ShouldStop      const& Should_stop ;
   
   bool mIncludeNonEdgePairs;
+
+private:
+
+  Collapse_triangulation_edge<TSM> Collapse_triangulation_edge ;  
 
   edges_2_pairs_map mEdgesToPairsMap ;
   PQ                mPQ ;
@@ -361,10 +352,8 @@ private:
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Surface_mesh_simplification/Vertex_pair_collapse.C>
-#endif
+#include <CGAL/Surface_mesh_simplification/Vertex_pair_collapse_impl.h>
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_VERTEX_PAIR_COLLAPSE_IMPL_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION__VERTEX_PAIR_COLLAPSE_H //
 // EOF //
  

@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Polyhedron_IO/demo/Polyhedron_IO/geomview_demo.C $
+// $Id: geomview_demo.C 28567 2006-02-16 14:30:13Z lsaboret $
 // 
 //
 // Author(s)     : Fernando Cacciola
@@ -36,11 +36,13 @@ int main() {
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_graph_traits_3.h>
+#include <CGAL/Polyhedron_BGL.h>
+#include <CGAL/Polyhedron_extended_BGL.h>
+#include <CGAL/Polyhedron_BGL_properties.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 2
+//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 4
 
 void Surface_simplification_external_trace( std::string s )
 {
@@ -49,9 +51,10 @@ void Surface_simplification_external_trace( std::string s )
 
 #include <CGAL/Surface_mesh_simplification_vertex_pair_collapse.h>
 
-#include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_selection_map.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_length_cost_map.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Construct_minimal_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_length_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Midpoint_vertex_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Count_stop_pred.h>
 
 #include <iostream>
@@ -199,55 +202,76 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
       std::cerr << "Explanation:" << msg << std::endl;
 }
 
+using namespace CGAL::Triangulated_surface_mesh::Simplification ;
+
+int Simplify_midpoint ( Polyhedron& aP, int aMax )
+{
+  typedef Minimal_collapse_data<Polyhedron> CollapseData ;
+  
+  Construct_minimal_collapse_data<Polyhedron> Construct_collapse_data ;
+  Edge_length_cost         <CollapseData>     Get_cost ;
+  Midpoint_vertex_placement<CollapseData>     Get_vertex_point ;
+  Count_stop_condition     <CollapseData>     Should_stop(aMax);
+      
+  return vertex_pair_collapse(aP,Construct_collapse_data,(void*)0,Get_cost,Get_vertex_point,Should_stop);
+}
+
+int Simplify_LT ( Polyhedron& aP, int aMax )
+{
+  typedef LindstromTurk_collapse_data<Polyhedron> CollapseData ;
+  
+  Construct_LindstromTurk_collapse_data<Polyhedron>    Construct_collapse_data ;
+  LindstromTurk_cost                   <Polyhedron>    Get_cost ;
+  LindstromTurk_vertex_placement       <Polyhedron>    Get_vertex_point ;
+  Count_stop_condition                 <CollapseData>  Should_stop(aMax);
+      
+  LindstromTurk_params lParams(1,1,1);
+  
+  return vertex_pair_collapse(aP,Construct_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop);
+}
 
 void Simplify ( Polyhedron& aP, int aMax )
 {
-   std::cout << "Simplifying surface with " << (aP.size_of_halfedges()/2) << " edges..." << std::endl ;
+ std::cout << "Simplifying surface with " << (aP.size_of_halfedges()/2) << " edges..." << std::endl ;
 
 #ifdef VISUALIZE
-    CGAL::Geomview_stream gv;
-    gv.set_bg_color(CGAL::BLACK);
-    gv.set_face_color(CGAL::WHITE);
-    gv.set_edge_color(CGAL::BLUE);
-    gv.set_vertex_color(CGAL::RED);
+  CGAL::Geomview_stream gv;
+  gv.set_bg_color(CGAL::BLACK);
+  gv.set_face_color(CGAL::WHITE);
+  gv.set_edge_color(CGAL::BLUE);
+  gv.set_vertex_color(CGAL::RED);
 #endif    
 
-    using namespace CGAL::Triangulated_surface_mesh::Simplification ;
-    
-    Lindstrom_Turk_selection<Polyhedron>   selection_map ;
-    Edge_length_cost_map<Polyhedron>       cost_map ;
-    Midpoint_vertex_placement<Polyhedron>  vertex_placement ;
-    Count_stop_condition<Polyhedron>       stop_condition(aMax);
-    
-    std::cout << std::setprecision(19) ;
+  std::cout << std::setprecision(19) ;
 
-    int lVertexID = 0 ;
-    for ( Polyhedron::Vertex_iterator vi = aP.vertices_begin(); vi != aP.vertices_end() ; ++ vi )
-      vi->ID = lVertexID ++ ;    
+  int lVertexID = 0 ;
+  for ( Polyhedron::Vertex_iterator vi = aP.vertices_begin(); vi != aP.vertices_end() ; ++ vi )
+    vi->ID = lVertexID ++ ;    
+    
+  int lHalfedgeID = 0 ;
+  for ( Polyhedron::Halfedge_iterator hi = aP.halfedges_begin(); hi != aP.halfedges_end() ; ++ hi )
+    hi->ID = lHalfedgeID++ ;    
+  
+  int lFacetID = 0 ;
+  for ( Polyhedron::Facet_iterator fi = aP.facets_begin(); fi != aP.facets_end() ; ++ fi )
+    fi->ID = lFacetID ++ ;    
+
+
+  int r = Simplify_LT(aP,aMax);
       
-    int lHalfedgeID = 0 ;
-    for ( Polyhedron::Halfedge_iterator hi = aP.halfedges_begin(); hi != aP.halfedges_end() ; ++ hi )
-      hi->ID = lHalfedgeID++ ;    
-    
-    int lFacetID = 0 ;
-    for ( Polyhedron::Facet_iterator fi = aP.facets_begin(); fi != aP.facets_end() ; ++ fi )
-      fi->ID = lFacetID ++ ;    
-
-   int r = vertex_pair_collapse(aP,selection_map,cost_map,vertex_placement,stop_condition);
-   std::cout << "Finished...\n"
-             << r << " edges removed.\n"
-             << aP.size_of_vertices() << " vertices.\n"
-             << (aP.size_of_halfedges()/2) << " edges.\n"
-             << aP.size_of_facets() << " triangles.\n" 
-             << ( aP.is_valid() ? " valid" : " INVALID!!" )
-             << std::endl  ;
-             ;
+  std::cout << "Finished...\n"
+            << r << " edges removed.\n"
+            << aP.size_of_vertices() << " vertices.\n"
+            << (aP.size_of_halfedges()/2) << " edges.\n"
+            << aP.size_of_facets() << " triangles.\n" 
+            << ( aP.is_valid() ? " valid" : " INVALID!!" )
+            << std::endl  ;
 
 #ifdef VISUALIZE
-    gv << aP ;
-    std::cout << "Press any key to finish..." << std::endl ;
-    char k ;
-    std::cin >> k ;
+  gv << aP ;
+  std::cout << "Press any key to finish..." << std::endl ;
+  char k ;
+  std::cin >> k ;
 #endif    
 }
 
@@ -258,13 +282,13 @@ int main( int argc, char** argv )
   
     Polyhedron lP; 
     
-    char const* infile = argc > 1 ? argv[1] : "./data/Sample0.off" ;
+    char const* infile = argc > 1 ? argv[1] : "./data/tetra2.off" ; //"./data/Sample0.off" ;
     std::ifstream in(infile);
     if ( in )
     {
       in >> lP ;
       
-      int lMax = argc > 2 ? std::atoi(argv[2]) : 1000 ; //lP.size_of_halfedges() ;
+      int lMax = argc > 2 ? std::atoi(argv[2]) : 1 ; // 1000
             
       Simplify(lP,lMax);
       

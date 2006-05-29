@@ -20,10 +20,9 @@
 
 #include <functional>
 #include <utility>
+#include <vector>
 
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/properties.hpp>
-#include <boost/property_map.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -32,6 +31,26 @@ CGAL_BEGIN_NAMESPACE
 
 namespace Triangulated_surface_mesh { namespace Simplification 
 {
+
+using boost::num_edges ;
+using boost::num_vertices ;
+using boost::edges ;
+using boost::out_edges ;
+using boost::in_edges ;
+using boost::source ;
+using boost::target ;
+using boost::edge_is_border_t ;
+using boost::vertex_point_t ;
+
+using boost::shared_ptr ;
+using boost::optional ;
+using boost::none ;
+using boost::put_get_helper ;
+using boost::get ;
+using boost::put ;
+using boost::addressof ;
+
+using namespace boost::tuples ;
 
 template<class Handle>
 inline bool handle_assigned( Handle h ) { Handle null ; return h != null ; }
@@ -49,13 +68,14 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
 }
 
 template<class TSM> 
-struct Surface_geometric_traits 
+struct Surface_geometric_traits
 { 
   typedef typename TSM::Point_3 Point_3 ;
   
   typedef typename Kernel_traits<Point_3>::Kernel Kernel ;
   
   typedef typename Kernel::FT FT ;
+  
 } ;
 
 } } // namespace Triangulated_surface_mesh::Simplification

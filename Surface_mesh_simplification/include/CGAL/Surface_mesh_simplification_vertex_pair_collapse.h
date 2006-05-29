@@ -32,37 +32,45 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //
 //   Candidate vertex-pairs are selected via a user-defined selection property map.
 //   Selected vertex-pairs are sorted according to a user-defined cost property map.
-//   Each vertex-pair removed is replaced by a new vertex whose location is given by a user-defined vertex placement function.
-//   The simplification continues until a user-defined stoping conidition is verified.
+//   Each vertex-pair removed is replaced by a new vertex whose location is given by the cost property-map.
+//   The simplification continues until a user-defined stoping conidition is verified or there are no collapsable edges remaining.
 // 
 //   Template Parameters:
 //
 //   TSM : the triangulated surface mesh type (a Polyhedron_3 for example)
 //   SelectionMap: the property map used to select candidate vertex-pairs.
-//   CostMap: the property map providing the collapsing-cost of each selected vertex-pair.
-//   VertexPlacement: the functor that constructs the 3D point of placement of the new vertex replacing each removed vertex-pair.
+//   CostMap: the property map providing the collapsing-cost of each selected vertex-pair, along with the location of the 
+//   replacement vertex.
 //   StopPred: the stopping condition predicate.
 //
-//   NOTE: The CostMap and the VertexPlacement functors return optional<> values. This allows any of those functions to reject a 
+//   NOTE: The CostMap returns an optional<> value. This allows the function to reject a 
 //         vertex-pair becasue it's cost is too high or uncomputable or the vertex cannot be placed in any way that satisfies the constriants
 //         required. Consequently, an accepted vertex-pair (via the SelectMap) might not be removed in the end. 
 //         Vertex-pairs are only removed if they are selected _and_ have a well defined collapsing cost and new vertex location.
 //
 //   Returns the number of vertex-pairs removed or -1 if there was an error (like the surface not being a valid triangulated surface mesh)
 //       
-template<class TSM,class SelectionMap,class CostMap,class VertexPlacement,class StopPred>
-int vertex_pair_collapse ( TSM&                      aSurface
-                         , SelectionMap       const& aSelectMap
-                         , CostMap            const& aCostMap 
-                         , VertexPlacement    const& aVertexPlacement
-                         , StopPred           const& aStopPred
-                         , bool                      aIncludeNonEdgePairs = false
+template<class TSM,class GetCollapseData,class GetCollapseDataParams,class GetCost,class GetVertexPoint,class ShouldStop>
+int vertex_pair_collapse ( TSM&                         aSurface
+                         , GetCollapseData const&       aGet_collapse_data
+                         , GetCollapseDataParams const* aGet_collapse_data_params
+                         , GetCost         const&       aGet_cost 
+                         , GetVertexPoint  const&       aGet_vertex_point
+                         , ShouldStop      const&       aShould_stop
+                         , bool                         aIncludeNonEdgePairs = false
                          ) 
 {
   if ( is_valid_triangulated_surface_mesh(aSurface) )
   {
-    typedef VertexPairCollapse<TSM,SelectionMap,CostMap,VertexPlacement,StopPred> Algorithm ;
-    Algorithm algorithm(aSurface,aSelectMap,aCostMap,aVertexPlacement,aStopPred,aIncludeNonEdgePairs) ;
+    typedef VertexPairCollapse<TSM,GetCollapseData,GetCost,GetVertexPoint,ShouldStop> Algorithm ;
+    Algorithm algorithm(aSurface
+                       ,aGet_collapse_data
+                       ,aGet_collapse_data_params
+                       ,aGet_cost
+                       ,aGet_vertex_point
+                       ,aShould_stop
+                       ,aIncludeNonEdgePairs
+                       ) ;
     return algorithm.run();
   }
   else return -1 ;

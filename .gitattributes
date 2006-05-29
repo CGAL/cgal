@@ -1615,6 +1615,31 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text
+Surface_mesh_simplification/demo/Surface_mesh_simplification/simplification_demo.cpp -text
+Surface_mesh_simplification/dont_submit -text
+Surface_mesh_simplification/include/CGAL/Cartesian/MatrixC33.h -text
+Surface_mesh_simplification/include/CGAL/Extended_BGL.h -text
+Surface_mesh_simplification/include/CGAL/HalfedgeDS_BGL_aux.h -text
+Surface_mesh_simplification/include/CGAL/Modifiable_priority_queue.h -text
+Surface_mesh_simplification/include/CGAL/Null_matrix.h -text
+Surface_mesh_simplification/include/CGAL/Polyhedron_BGL.h -text
+Surface_mesh_simplification/include/CGAL/Polyhedron_BGL_properties.h -text
+Surface_mesh_simplification/include/CGAL/Polyhedron_extended_BGL.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Construct_minimal_collapse_data.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Count_stop_pred.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_impl.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_length_cost.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_construct_collapse_data.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_cost.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_vertex_placement.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Minimal_collapse_data.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_pair_collapse_impl.h -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/LT_edge_collapse_test.cpp -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/LT_edge_collapse_test.kdevelop -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/makefile -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset

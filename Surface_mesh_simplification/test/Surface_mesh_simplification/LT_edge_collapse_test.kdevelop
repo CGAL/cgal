@@ -7,24 +7,12 @@
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <ignoreparts/>
-    <projectdirectory>.</projectdirectory>
-    <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>simplification_demo</mainprogram>
-      <directoryradio>build</directoryradio>
-      <customdirectory>/</customdirectory>
-      <programargs>./data/Sample0.off 1000</programargs>
-      <terminal>false</terminal>
-      <autocompile>true</autocompile>
-      <envvars/>
+      <mainprogram>LT_edge_collapse_test</mainprogram>
+      <directoryradio>executable</directoryradio>
     </run>
-    <build>
-      <buildtool>make</buildtool>
-      <builddir/>
-    </build>
     <make>
       <abortonerror>false</abortonerror>
       <numberofjobs>1</numberofjobs>
@@ -42,20 +30,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs/>
-      <gdbpath/>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
-      <breakonloadinglibs>true</breakonloadinglibs>
-      <separatetty>false</separatetty>
-      <floatingtoolbar>false</floatingtoolbar>
     </general>
-    <display>
-      <staticmembers>false</staticmembers>
-      <demanglenames>true</demanglenames>
-      <outputradix>10</outputradix>
-    </display>
   </kdevdebugger>
   <kdevdoctreeview>
     <ignoretocs>
@@ -125,14 +100,6 @@
       <argumentsHintDelay>400</argumentsHintDelay>
       <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
-    <creategettersetter>
-      <prefixGet/>
-      <prefixSet>set</prefixSet>
-      <prefixVariable>m_,_</prefixVariable>
-      <parameterName>theValue</parameterName>
-      <inlineGet>true</inlineGet>
-      <inlineSet>true</inlineSet>
-    </creategettersetter>
   </kdevcppsupport>
   <kdevfileview>
     <groups>
@@ -144,19 +111,4 @@
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
-  <cppsupportpart>
-    <filetemplates>
-      <interfacesuffix>.h</interfacesuffix>
-      <implementationsuffix>.cpp</implementationsuffix>
-    </filetemplates>
-  </cppsupportpart>
-  <kdevvisualadvance>
-    <emulator>VisualBoyAdvance</emulator>
-    <binary/>
-    <addOptions/>
-    <terminal>false</terminal>
-    <fullscreen>false</fullscreen>
-    <graphicFilter>-f0</graphicFilter>
-    <scaling>-1</scaling>
-  </kdevvisualadvance>
 </kdevelop>

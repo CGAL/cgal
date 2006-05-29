@@ -36,29 +36,24 @@ namespace Triangulated_surface_mesh { namespace Simplification
 // 
 // Stops when the ratio of initial to current vertex pairs is below some value.
 //
-template<class TSM_>    
+template<class Collapse_data_>    
 class Count_ratio_stop_condition
 {
 public:
 
-    typedef TSM_ TSM ;
-    
-    typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
-    typedef typename boost::graph_traits<TSM>::edges_size_type   size_type ;
-    
-    typedef typename Surface_geometric_traits<TSM>::FT FT ;
-
+  typedef Collapse_data_ Collapse_data ;
+  
+  typedef typename Collapse_data::FT        FT ;
+  typedef typename Collapse_data::size_type size_type ;
+  
 public :
   
   Count_ratio_stop_condition( double aRatio ) : mRatio(aRatio) {}
   
-  bool operator()( FT                // aCurrentCost
-                 , vertex_descriptor // p
-                 , vertex_descriptor // q
-                 , bool              // aIsEdge
-                 , size_type         aInitialCount
-                 , size_type         aCurrentCount
-                 , TSM&              // aSurface
+  bool operator()( FT const&            // aCurrentCost
+                 , Collapse_data const& //aData
+                 , size_type            aInitialCount
+                 , size_type            aCurrentCount
                  ) const 
   {
     return ( static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount) ) < mRatio ;
