@@ -41,16 +41,18 @@ the \ccc{LocalKernel} concept~: \ccc{LocalKernel::FT}.
 %\ccCreationVariable{a}  %% choose variable name
 
 %\ccConstructor{LinAlgTraits();}{default constructor.}
+\ccCreationVariable{matrix} %choose variable name
 
 \ccOperations
 The Matrix has classical access to its elements.
 
-\ccMethod{void set_elt(size_t i, size_t j, const FT value)}{}
+\ccMethod{void set_elt(size_t i, size_t j, const FT value);}{}
 \ccGlue
-\ccMethod{FT get_elt(size_t i, size_t j)}{}
+\ccMethod{FT get_elt(size_t i, size_t j);}{}
 
 The LinAlgTraits has an eigenanalysis and a singular value
 decomposition algorithm.
+\ccCreationVariable{traits} %choose variable name
 
 \ccMethod{void eigen_symm_algo(Matrix& S, FT* eval, Matrix&
 evec);} {Performs an eigenanalysis of a real symmetric matrix.  Eigen

@@ -172,6 +172,7 @@ $O(h)$ of the point where the calculation is carried out.
 The following theorem, proved in \cite{cgal:cp-edqpf-05}, provides the
 asymptotic error estimates ---which are the best known to date:
 %%
+
 \begin{theorem}
 A polynomial fitting of degree $d$ estimates any $k^{th}$-order
 differential quantity to accuracy $O(h^{d-k+1})$~:
@@ -284,7 +285,7 @@ $(f_x,f_y,f_z)$, the monge-basis $(d_1,d_2,n)$.
 
 \begin{ccHtmlOnly}
 <CENTER>
-<img border=0 src="./jet_fitting_basis.jpg" width=400>
+<img border=0 src="./jet_fitting_basis.gif" width=600>
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure}
@@ -325,19 +326,13 @@ significantly smaller.
 
 
 \paragraph{Implementation details.}
-Given a symmetric matrix $M$, we assume the following function:
+We assume a \ccc{eigen_symm_algo} function is provided by the traits
+\ccc{LinAlgTraits}.
 %%
-\begin{verbatim}
-void eigen_symm_algo(const LAMatrix& M, LAVector& eigen_vals, LAMatrix& eigen_vecs)
-\end{verbatim} 
-%%
-This function computes the eigenvalues and eigenvectors of matrix $M$.
-The eigenvalues are stored in the vector eigen\_vals and are in
-decreasing order. The corresponding eigenvectors are stored in the
-columns of the matrix eigen\_vecs. For example, the eigenvector in the
-first column corresponds to the first (and largest) eigenvalue. The
-eigenvectors are guaranteed to be mutually orthogonal and normalised
-to unit magnitude.
+This function computes the eigenvalues and eigenvectors of a real
+symmetric matrix. Eigen values are sorted in ascending order, eigen
+vectors are sorted in accordance.  The eigenvectors are guaranteed to
+be mutually orthogonal and normalised to unit magnitude.
 
 \subsection{Solving the interpolation / approximation problem}
 \label{sec:solving}
@@ -352,14 +347,13 @@ translation ($-p$) and multiplication by $ P_{W\rightarrow F}$.
 
 
 We solve the system $MA=Z$, in the least square sense for
-approximation, with a function {\tt solve\_ls\_svd}. There is a
-preconditioning of the matrix $M$ so as to improve the condition
-number. Assuming the $\{x_i\}$, $\{y_i\}$ are of order $h$, the
-pre-conditioning consists of performing a column scaling by dividing
-each monomial $x_i^ky_i^l$ by $h^{k+l}$ ---refer to
-Eq. (\ref{eq:fit-linalg}). Practically, the parameter $h$ is chosen as
-the mean value of the $\{x_i\}$ and $\{y_i\}$. In other words, the new
-system is $M'Y=(MD^{-1}(DA)=Z$ with $D$ the diagonal matrix
+approximation. There is a preconditioning of the matrix $M$ so as to
+improve the condition number. Assuming the $\{x_i\}$, $\{y_i\}$ are of
+order $h$, the pre-conditioning consists of performing a column
+scaling by dividing each monomial $x_i^ky_i^l$ by $h^{k+l}$ ---refer
+to Eq. (\ref{eq:fit-linalg}). Practically, the parameter $h$ is chosen
+as the mean value of the $\{x_i\}$ and $\{y_i\}$. In other words, the
+new system is $M'Y=(MD^{-1}(DA)=Z$ with $D$ the diagonal matrix
 $D=(1,h,h,h^2,\ldots,h^d,h^d)$, so that the solution $A$ of the
 original system is $A=D^{-1}Y$.
 
@@ -397,22 +391,15 @@ that is the smallest singular value is zero. Then, an exception is
 raised.
 
 \paragraph{Implementation details.}
-We assume function:
-\begin{verbatim}
-void solve_ls_svd_algo(const LAMatrix& M, const LAVector& B, Vector& X, double& cond_nb)
-\end{verbatim} 
- %%
-This function first factorizes the m-by-n matrix M into the singular
-value decomposition $M = U S V^T$ for $m \geq n$.  Then it solves the
-system $MX = B$ in the least square sense using the singular value
-decomposition (U, S, V) of M. The condition number of the matrix M
-which is the ratio of the largest and the smallest singular values is
-stored in $cond_{nb}$.
+We assume a \ccc{solve_ls_svd_algo} function is provided by the traits
+\ccc{LinAlgTraits}. This function solves the system MX=B (in the least square sense
+if M is not square) using a Singular Value Decomposition and gives the
+condition number of M. 
 
 \medskip
 Remark: as an alternative, other methods may be used to solve the
 system. A $QR$ decomposition can be substituted to the $SVD$. One can
-also use the normal equation $M^TMA=MTZ$ and apply methods for square
+also use the normal equation $M^TMX=MTB$ and apply methods for square
 systems such as $LU$, $QR$ or Cholesky since $M^TM$ is symmetric
 definite positive when $M$ has full rank. 
 %LU suitable for any square M
@@ -551,7 +538,7 @@ four, that is, we assume $d' \leq 4$.
 \medskip
 
 Regarding interpolation versus approximation, we provide a single
-function {\tt Monge\_via\_jet\_fitting} with parameters $d,d'$ and a
+function \ccc{Monge_via_jet_fitting} with parameters $d,d'$ and a
 range iterator. If $N=N_d$ then interpolation is performed, else
 $N > N_d$ and approximation is used. 
 
@@ -610,31 +597,31 @@ The following picture illustrates the template dependencies.
 
 \begin{ccHtmlOnly}
 <CENTER>
-<img border=0 src="Jet_fitting_3_ref/template_dependence.jpg" width=400>
+<img border=0 src="template_dependence.jpg" width=600>
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure}
 
 More details are given in the reference manual.
 
-\subsubsection{Template class {\tt Data\_Kernel}}
+\subsubsection{Template class \ccc{Data_Kernel}}
 %%%%%%%%%%%
 
 This class provides the types for the input sample points, together
 with $3d$ vectors and a number type. It is used as template for the
-Monge\_rep. Typically, one can use {\tt CGAL::Cartesian<double>}.
+\ccc{Monge_rep}. Typically, one can use \ccc{CGAL::Cartesian<double>}.
 
-\subsubsection{Template class {\tt Local\_Kernel}}
+\subsubsection{Template class \ccc{Local_Kernel}}
 %%%%%%%%%%%
 
 This class defines the vector and number types used (i)\ for local
 computations (ii)\ to store the Monge\_info class members. Input
-points of type Data\_Kernel::Point\_3 are converted to
-Local\_Kernel::Point\_3. For output of the Monge\_rep class, these
-types are converted back to Data\_Kernel ones.  Typically, one can use
-{\tt CGAL::Cartesian<double>}.
+points of type \ccc{Data_Kernel::Point_3} are converted to
+\ccc{Local_Kernel::Point_3}. For output of the \ccc{Monge_rep} class, these
+types are converted back to \ccc{Data_Kernel} ones.  Typically, one can use
+\ccc{CGAL::Cartesian<double>}.
 
-\subsubsection{Template class {\tt Linalg\_traits.}}
+\subsubsection{Template class \ccc{Linalg_traits.}}
 %%%%%%%%%%%
 
 This class provides the matrix algebra operations required by the
@@ -673,8 +660,9 @@ file to output the results, the degrees $d$ and $d'$.
 \ccIncludeExampleCode{Jet_fitting_3/blind_1pt.C}
 
 \paragraph{On a mesh.}
-The second example illustrates the computation of local differential
-quantities for all vertices of a given mesh. Results are twofold:
+The second example (cf blind.C in the exemple directory) illustrates
+the computation of local differential quantities for all vertices of a
+given mesh. Results are twofold:
 \begin{itemize}
 \item
 a human readable text file featuring the Monge\_rep and the Monge\_info data;
@@ -683,4 +671,4 @@ another text file which may be visualised with the demo program
 visu.exe displaying the Monge basis at each vertex of the mesh.
 \end{itemize}
 
-\ccIncludeExampleCode{Jet_fitting_3/blind.C} %too long to be included?
+%\ccIncludeExampleCode{Jet_fitting_3/blind.C} %too long to be included?
