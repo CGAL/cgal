@@ -1618,7 +1618,6 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -t
 Surface_mesh_simplification/demo/Surface_mesh_simplification/simplification_demo.cpp -text
 Surface_mesh_simplification/dont_submit -text
 Surface_mesh_simplification/include/CGAL/Cartesian/MatrixC33.h -text
-Surface_mesh_simplification/include/CGAL/Extended_BGL.h -text
 Surface_mesh_simplification/include/CGAL/HalfedgeDS_BGL_aux.h -text
 Surface_mesh_simplification/include/CGAL/Modifiable_priority_queue.h -text
 Surface_mesh_simplification/include/CGAL/Null_matrix.h -text
