@@ -344,7 +344,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_han
 
   CGAL_SSBUILDER_SHOW ( DrawBisector(lOB) ; )
 
-  CGAL_SSBUILDER_TRACE ( 3, "B" << lOA->id() << " and B" << lIA->id() << " erased." ) ;
+  CGAL_SSBUILDER_TRACE ( 0, "B" << lOA->id() << " and B" << lIA->id() << " erased." ) ;
   mDanglingBisectors.push_back(lOA);
 
   //
@@ -1237,13 +1237,13 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes( Vertex_handle    
     Exclude(v1);
     rVerticesToRemove.push_back(v1);
     
-    CGAL_SSBUILDER_TRACE(2, "N" << v1->id() << " removed." );
+    CGAL_SSBUILDER_TRACE(0, "N" << v1->id() << " removed." );
     
     Halfedge_handle toremove1 = toremove0->opposite();
     
     CGAL_SSBUILDER_TRACE(2,
-                        "New links: B" << toremove0->prev()->id() << "->" << toremove0->next()->id() 
-                         << "\nNew links: B" << toremove1->prev()->id() << "->" << toremove1->next()->id() 
+                        "New links: B" << toremove0->prev()->id() << "->B" << toremove0->next()->id() 
+                         << "\nNew links: B" << toremove1->prev()->id() << "->B" << toremove1->next()->id() 
                          << "\nN" << v1->id() << " removed."
                         ) ;   
                            
@@ -1256,6 +1256,8 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes( Vertex_handle    
   
     if ( v0->halfedge() == toremove1 )  
       v0->VBase::set_halfedge(toremove1->prev()) ;
+    
+    CGAL_SSBUILDER_TRACE(0, "B" << toremove0->id() << " and B" << toremove1->id() << " removed." ) ;   
     
     CGAL_SSBUILDER_TRACE(2,"New bisector of N" << v0->id() << " is B" << toremove1->prev()->id() ) ;
   
@@ -1346,7 +1348,7 @@ typename Straight_skeleton_builder_2<Gt,SS>::SSkelPtr Straight_skeleton_builder_
     mSSkel = SSkelPtr() ; 
   }
 
-  if ( !CGAL::HalfedgeDS_const_decorator<SSkel>(*mSSkel).is_valid(false,3) ) 
+  if ( !CGAL::HalfedgeDS_const_decorator<SSkel>(*mSSkel).is_valid(true,3) ) 
   {
     CGAL_SSBUILDER_TRACE(0,"Result inconsistent.");
     mSSkel = SSkelPtr() ; 
