@@ -41,6 +41,7 @@ bool QP_solver<Rep_>::is_valid()
       {
 	const bool f = this->is_solution_feasible();
 	const bool o = this->is_solution_optimal();
+	const bool v = this->is_value_correct();
 	CGAL_qpe_debug {
 	  vout << std::endl
 	       << "----------" << std::endl
@@ -49,8 +50,9 @@ bool QP_solver<Rep_>::is_valid()
 	  vout << " is in phase II: " << is_phaseII << std::endl;
 	  vout << "       feasible: " << f << std::endl;
 	  vout << "        optimal: " << o << std::endl;
+	  vout << "  correct value: " << v << std::endl;
 	}
-	return is_phaseII && f && o;
+	return is_phaseII && f && o && v;
       }
     case INFEASIBLE:
       {
@@ -172,6 +174,36 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
     if (lhs_col[i] != ET(qp_b[i]) * d)
       return false;
   return true;
+}
+
+template < class Rep_ >
+bool QP_solver<Rep_>::is_value_correct()
+{
+  // checks whether solution_numerator() returns the right value
+  // by computing x^T D x + x^T c from scratch; we use the numerators
+  // of the variables, so x^T D x carries a factor of d^2, while x^T c
+  // carries a factor of d (must be compensated for); solution_numerator() 
+  // carries a factor of d^2
+  CGAL_qpe_assertion(is_phaseII);
+  // compute x^T D x + d c = sum_i x_i (D_i x + d c_i)
+  ET z = et0; // for x^T D x + d c
+  int i = 0;
+  for (Variable_numerator_iterator i_it = variables_numerator_begin(); 
+       i_it < variables_numerator_end(); ++i_it, ++i) {
+    if (*i_it == et0) continue; // no contribution from this variable
+    ET s = et0; // for D_i x + c_i
+    int j = 0;
+    if (is_QP) {
+      for (Variable_numerator_iterator j_it = variables_numerator_begin(); 
+            j_it < variables_numerator_end(); ++j_it, ++j)
+         s += ET(qp_D[i][j]) * *j_it; // D_ij x_j
+    } 
+    // now s = D_i x
+    s += d * qp_c[i];                 // add d * c_i
+    // now s = D_i x + d c_i
+    z += s * *i_it;                   // add x_i (D_i x + d c_i)
+  }
+  return z == solution_numerator();
 }
 
 template < class Rep_ >
