@@ -138,16 +138,29 @@ class In_x_range_2
     result_type
     _in_x_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
     {
-       Bbox_2 bb1=a.bbox(),bb2=p.bbox();
-  
-       if(bb1.xmin()>bb2.xmax() || bb1.xmax()<bb2.xmin())
-         return false;
+      Bbox_2 bb11 = a.source().bbox(),
+             bb12 = a.target().bbox(),
+             bb2=p.bbox();      
+      if(bb11.xmin() > bb12.xmax()) {
+        if(bb2.xmax() < bb12.xmin()) return false;
+        else if(bb2.xmin() > bb11.xmax()) return false;
+        else if(bb12.xmax() < bb2.xmin() &&
+       	        bb2.xmax() < bb11.xmin()) return true;
+      } else if(bb11.xmax() < bb12.xmin()) {
+        if(bb2.xmax() < bb11.xmin()) return false;
+        else if(bb2.xmin() > bb12.xmax()) return false;
+        else if(bb11.xmax() < bb2.xmin() &&
+                bb2.xmax() < bb12.xmin()) return true;
+      } else {
+        if(bb2.xmin() > std::max(bb11.xmax(),bb12.xmax())) return false;
+        if(bb2.xmax() < std::min(bb11.xmin(),bb12.xmin())) return false;
+      }
+    
+      typename CK::In_x_range_2 Range;
 
-       typename CK::In_x_range_2 Range;
+      return Range(a.arc(),p.point());
 
-       return Range(a.arc(),p.point());
-
-     }
+    }
 
    public:
 
@@ -370,10 +383,20 @@ class Equal_2
     result_type
     _equal_2(const Arc_2 &a,const Arc_2 &b) const
     {
-      Bbox_2 bb1=a.bbox(),bb2=b.bbox();
+      Bbox_2 bb11=a.source().bbox(),
+             bb12=a.target().bbox(),
+             bb21=b.source().bbox(),
+             bb22=b.target().bbox();
 
-      if(bb1!=bb2)
-        return false;
+      if(bb11.xmin() > bb21.xmax()) return false;
+      if(bb11.xmax() < bb21.xmin()) return false;
+      if(bb11.ymin() > bb21.ymax()) return false;
+      if(bb11.ymax() < bb21.ymin()) return false;
+
+      if(bb12.xmin() > bb22.xmax()) return false;
+      if(bb12.xmax() < bb22.xmin()) return false;
+      if(bb12.ymin() > bb22.ymax()) return false;
+      if(bb12.ymax() < bb22.ymin()) return false;
 
       return CK().equal_2_object()( a.arc(),b.arc() );
 
@@ -386,10 +409,10 @@ class Equal_2
                 const Circular_arc_point_2 &b ) const
     { 
       Bbox_2 bb1=a.bbox(),bb2=b.bbox();
-
-      if(bb1!=bb2)
-        return false;
-
+      if(bb1.xmin() > bb2.xmax()) return false;
+      if(bb1.xmax() < bb2.xmin()) return false;
+      if(bb1.ymin() > bb2.ymax()) return false;
+      if(bb1.ymax() < bb2.ymin()) return false;
       return CK().equal_2_object()( a.point(),b.point() );
     }
 
