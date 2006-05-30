@@ -170,16 +170,20 @@ namespace CGALi {
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &middle,
                    const Point_2 &end)
-      : Cache_minmax('n'), Cache_full('n')
+      : _begin(begin), _end(end), Cache_minmax('n'), Cache_full('n')
     {
       CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
       
-      Circle_2 c  (begin, middle, end);
-      Line_2   l1 (begin, middle);
+      _support = Circle_2(begin, middle, end);
+      /*
+       *  Circle_2 c = Circle_2(begin, middle, end);
+       * Line_2   l1 (begin, middle);
       Line_2   l2 (middle, end);
       *this = Circular_arc_2(c, 
 			     l1, compare_xy(begin, middle) < 0,
-			     l2, compare_xy(end,   middle) < 0);
+			     l2, compare_xy(end,   middle) < 0);*/
+	  //std::cout << source() << std::endl;
+	  //std::cout << target() << std::endl;
     }
 
     Circular_arc_2(const Circle_2 &support,
@@ -399,17 +403,25 @@ namespace CGALi {
   std::ostream &
   print(std::ostream & os, const Circular_arc_2<CK> &a)
   {
-    return os << "Circular_arc_2( " << std::endl
-              << "left : " << a.left() << " , " << std::endl
-              << "right : " << a.right() << " , " << std::endl
-	      << "upper part : " << a.on_upper_part() << std::endl
-              << "  [[ approximate circle is (x,y,r) : "
-              << CGAL::to_double(a.supporting_circle().center().x()) << "  "
-              << CGAL::to_double(a.supporting_circle().center().y()) << "  "
-              << std::sqrt(CGAL::to_double(a.supporting_circle()
-                                            .squared_radius()))
-              << " ]]" << std::endl;
-  }
+    if(a.is_x_monotone()) {
+      return os << "Circular_arc_2( " << std::endl
+                << "left : " << a.left() << " , " << std::endl
+                << "right : " << a.right() << " , " << std::endl
+                << "upper part : " << a.on_upper_part() << std::endl
+                << "  [[ approximate circle is (x,y,r) : "
+                << CGAL::to_double(a.supporting_circle().center().x()) << ""
+                << CGAL::to_double(a.supporting_circle().center().y()) << ""
+                << std::sqrt(CGAL::to_double(a.supporting_circle().squared_radius()))
+                << " ]])" << std::endl;
+    } else {
+      return os << "Circular_arc_2( " << std::endl
+                << "  [[ approximate circle is (x,y,r) : "
+                << CGAL::to_double(a.supporting_circle().center().x()) << ""
+                << CGAL::to_double(a.supporting_circle().center().y()) << ""
+                << std::sqrt(CGAL::to_double(a.supporting_circle().squared_radius()))
+                << " ]])" << std::endl;
+    }
+  }     
 
 } // namespace CGALi
 } // namespace CGAL
