@@ -52,49 +52,55 @@ public:
 
 
 
-                ///////////Construction/////////////
+     ///////////Construction/////////////
 
-    		Circular_arc_with_bbox_2(){}
+    Circular_arc_with_bbox_2(){}
 
-    		Circular_arc_with_bbox_2(const Circle_2 &c)
-    		: P_arc(c),bb(NULL)
-    		{}
+    Circular_arc_with_bbox_2(const Circle_2 &c)
+    : P_arc(c),bb(NULL)
+    {}
 
-    		Circular_arc_with_bbox_2(const Circle_2 &support, 
-                       		   const Line_2 &l1, const bool b_l1,
-                       		   const Line_2 &l2, const bool b_l2)
-    		: P_arc(support,l1,b_l1,l2,b_l2),bb(NULL)
-    		{}
-
-    
-    		Circular_arc_with_bbox_2(const Circle_2 &c, 
-		       		   const Circle_2 &c1, const bool b_1,
-		       		   const Circle_2 &c2, const bool b_2)
-    		: P_arc(c,c1,b_1,c2,b_2),bb(NULL)
-    		{}
+    Circular_arc_with_bbox_2(const Circle_2 &support, 
+                 		   const Line_2 &l1, const bool b_l1,
+                   		   const Line_2 &l2, const bool b_l2)
+    : P_arc(support,l1,b_l1,l2,b_l2),bb(NULL)
+    {}
 
     
-    		Circular_arc_with_bbox_2(const Circular_arc_2 &A, const bool b,
-		       		   const Circle_2 &ccut, const bool b_cut)
-    		: P_arc(A, b, ccut, b_cut),bb(NULL)
-    		{}
+    Circular_arc_with_bbox_2(const Circle_2 &c, 
+	   		   const Circle_2 &c1, const bool b_1,
+	   		   const Circle_2 &c2, const bool b_2)
+    : P_arc(c,c1,b_1,c2,b_2),bb(NULL)
+    {}
+
+    
+    Circular_arc_with_bbox_2(const Circular_arc_2 &A, const bool b,
+		   const Circle_2 &ccut, const bool b_cut)
+    : P_arc(A, b, ccut, b_cut),bb(NULL)
+    {}
 
 
-    		Circular_arc_with_bbox_2(const Point_2 &start,
-                 		   const Point_2 &middle,
-                 		   const Point_2 &end)
-    		: P_arc(start, middle, end),bb(NULL)
-    		{}
+    Circular_arc_with_bbox_2(const Point_2 &start,
+    	   const Point_2 &middle,
+    	   const Point_2 &end)
+    : P_arc(start, middle, end),bb(NULL)
+    {}
 
-		Circular_arc_with_bbox_2(const Circle_2 &support,
-                 		   const Circular_arc_point_2 &begin,
-                 		   const Circular_arc_point_2 &end)
-    		: P_arc(support, begin, end),bb(NULL) 
-		{}
+    Circular_arc_with_bbox_2(const Point_2 &begin,
+                             const Point_2 &end,
+	                         const FT &bulge) 
+    : P_arc(begin, end, bulge),bb(NULL)
+    {}
 
-		Circular_arc_with_bbox_2(const Circular_arc_2 &a)
-    		: P_arc(a),bb(NULL) 
-		{}
+	Circular_arc_with_bbox_2(const Circle_2 &support,
+    	   const Circular_arc_point_2 &begin,
+    	   const Circular_arc_point_2 &end)
+    : P_arc(support, begin, end),bb(NULL) 
+	{}
+
+	Circular_arc_with_bbox_2(const Circular_arc_2 &a)
+    : P_arc(a),bb(NULL) 
+	{}
 
 
 
