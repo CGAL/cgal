@@ -426,7 +426,6 @@ bool process(const std::string& filename,
   if (!check_tag(Is_in_standard_form()) &&
       options.find("Strategy")->second != FE)
     return true;
-
   // solve:
   CGAL::QP_pricing_strategy<Traits> *s = create_strategy<Traits>(options);
   CGAL::QP_solver<Traits> solver(qp.number_of_variables(),

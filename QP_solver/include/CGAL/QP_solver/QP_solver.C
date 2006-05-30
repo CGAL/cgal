@@ -89,54 +89,68 @@ typename QP_solver<Rep_>::ET
 QP_solver<Rep_>::
 solution_numerator( ) const
 {
-    Index_const_iterator  i_it;
-    Value_const_iterator  x_i_it, c_it;
     ET   s, z = et0;
-    int  i;
+    int  i, j;
 
-    // foreach i
-    x_i_it =       x_B_O.begin();
+    if (check_tag(Is_in_standard_form()) || is_phaseI) {
+      // standard form or phase I; it suffices to go
+      // through the basic variables; all D- and c-entries
+      // are obtained through the appropriate iterators 
+      Index_const_iterator  i_it;
+      Value_const_iterator  x_i_it, c_it;
+
+      // foreach i
+      x_i_it =       x_B_O.begin();
       c_it = minus_c_B  .begin();
-    for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++x_i_it, ++c_it){
+      for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++x_i_it, ++c_it){
         i = *i_it;
 
         // quadratic part
         s = et0;
         if ( is_QP && is_phaseII) {
        
-            // foreach j < i
-	    s += std::inner_product(x_B_O.begin(), x_i_it,
-				D_pairwise_iterator(
-				    B_O.begin(),
-				    D_pairwise_accessor( qp_D, i)),
-				et0);
+	  // foreach j < i
+	  s += std::inner_product(x_B_O.begin(), x_i_it,
+				  D_pairwise_iterator(
+					 B_O.begin(),
+					 D_pairwise_accessor( qp_D, i)),
+				  et0);
 
-            // D_{i,i} x_i
-            s += ET( qp_D[ i][ i]) * *x_i_it;
+	  // D_{i,i} x_i
+	  s += ET( qp_D[ i][ i]) * *x_i_it;
         }
         // linear part
         s -= d * *c_it;
 
         // accumulate
         z += s * *x_i_it;
-    }
-    
-    //  linear part of solution numerator with upper bounding
-    if (!check_tag(Is_in_standard_form())) {
-        // only in phaseII we need to account for nonbasic original variables,
-        // since in phaseI only artificial variables have nonzero objective
-        // function coefficients
-        // Since we do not have a minus_c_N vector we have to use 
-        // qp_c
-        if (is_phaseII) {
-            s = et0;
-            for (int i = 0; i < qp_n; ++i) {
-                if (!is_basic(i)) {
-                    s += ET(qp_c[i]) * nonbasic_original_variable_value(i); 
-                }
-            }
-            z += d * d * s;
-        }
+      }
+    } else {
+      // nonstandard form and phase II, 
+      // take all original variables into account; all D- and c-entries
+      // are obtained from the input data directly
+      // order in i_it and j_it matches original variable order
+      if (is_QP) {
+	// quadratic part
+	i=0;
+	for (Variable_numerator_iterator i_it = variables_numerator_begin(); 
+	     i_it < variables_numerator_end(); ++i_it, ++i) {
+	  // do something only if *i_it != 0
+	  if (*i_it == et0) continue;
+	  s = et0; // contribution of i-th row
+	  j=0; 
+	  for (Variable_numerator_iterator j_it = variables_numerator_begin(); 
+	       j_it < variables_numerator_end(); ++j_it, ++j)
+	    s += ET(qp_D[i][j]) * *j_it;
+	  z += s * *i_it;
+	}
+      }
+      // linear part
+      j=0; s = et0;
+      for (Variable_numerator_iterator j_it = variables_numerator_begin();
+	   j_it < variables_numerator_end(); ++j_it, ++j)
+	s +=  ET(qp_c[j]) * *j_it;
+      z += d * s;
     }
     return z;
 }

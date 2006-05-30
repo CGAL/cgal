@@ -1178,6 +1178,7 @@ private:
   bool is_solution_optimal_for_auxiliary_problem();
   bool is_solution_feasible();
   bool is_solution_optimal();
+  bool is_value_correct();
   bool is_solution_unbounded();
 
 public:
