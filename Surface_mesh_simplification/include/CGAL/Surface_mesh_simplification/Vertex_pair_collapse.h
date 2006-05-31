@@ -30,6 +30,7 @@
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Collapse_operator.h>
+#include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
 #include <CGAL/Modifiable_priority_queue.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -43,23 +44,24 @@ namespace Triangulated_surface_mesh { namespace Simplification
 template<class TSM_
         ,class GetCollapseData_
         ,class GetCost_
-        ,class GetVertexPoint_
+        ,class GetNewVertexPoint_
         ,class ShouldStop_
         >
 class VertexPairCollapse
 {
 public:
 
-  typedef TSM_             TSM ;
-  typedef GetCollapseData_ GetCollapseData ;
-  typedef GetCost_         GetCost ;
-  typedef GetVertexPoint_  GetVertexPoint ;
-  typedef ShouldStop_      ShouldStop ;
+  typedef TSM_               TSM ;
+  typedef GetCollapseData_   GetCollapseData ;
+  typedef GetCost_           GetCost ;
+  typedef GetNewVertexPoint_ GetNewVertexPoint ;
+  typedef ShouldStop_        ShouldStop ;
   
   typedef VertexPairCollapse Self ;
   
-  typedef boost::graph_traits           <TSM> GraphTraits ;
-  typedef boost::undirected_graph_traits<TSM> UndirectedGraphTraits ;
+  typedef boost::graph_traits           <TSM>       GraphTraits ;
+  typedef boost::undirected_graph_traits<TSM>       UndirectedGraphTraits ;
+  typedef boost::graph_traits           <TSM const> ConstGraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor  vertex_descriptor ;
   typedef typename GraphTraits::vertex_iterator    vertex_iterator ;
@@ -70,20 +72,26 @@ public:
   typedef typename GraphTraits::traversal_category traversal_category ;
   typedef typename GraphTraits::edges_size_type    size_type ;
   
+  typedef typename ConstGraphTraits::vertex_descriptor const_vertex_descriptor ;
+  
   typedef typename UndirectedGraphTraits::edge_iterator undirected_edge_iterator ;
 
-  typedef typename GetCollapseData::Params        GetCollapseDataParams ;
+  typedef typename GetCollapseData::Params        ParamsToGetCollapseData ;
   
   typedef typename GetCollapseData::Collapse_data Collapse_data ;
   typedef typename GetCollapseData::result_type   Collapse_data_ptr ; 
   
-  typedef typename GetCost       ::result_type Optional_cost_type ;
-  typedef typename GetVertexPoint::result_type Optional_vertex_point_type ;
+  typedef typename GetCost          ::result_type Optional_cost_type ;
+  typedef typename GetNewVertexPoint::result_type Optional_vertex_point_type ;
      
   typedef Surface_geometric_traits<TSM> Traits ;
   
   typedef typename Traits::Point_3 Point_3 ;
 
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel ;
+  
+  typedef typename Kernel::Equal_3 Equal_3 ;
+  
   class vertex_pair ;
     
   typedef shared_ptr<vertex_pair> vertex_pair_ptr ;
@@ -108,16 +116,12 @@ public:
   {
   public :
   
-    vertex_pair( size_type                aID
-               , Collapse_data_ptr const& aData
-               , GetCost const&           aGet_cost 
-               )
+    vertex_pair( size_type aID, Collapse_data_ptr const& aData, GetCost const& aGet_cost )
        : 
        mID(aID)
      , mData(aData)
      , Get_cost(addressof(aGet_cost))
      , mCostStored(false)
-     , mIsFixed(false)
      , mMark(0)
     {}
     
@@ -140,11 +144,13 @@ public:
     
     void reset_data( Collapse_data_ptr const& aData ) { mData = aData ; mCostStored = false ; }
     
-    Collapse_data_ptr        data   () const { return mData ; }
-    vertex_descriptor const& p      () const { return mData->p() ; }
-    vertex_descriptor const& q      () const { return mData->q() ; }
-    edge_descriptor   const& edge   () const { return mData->edge() ; }
-    TSM&                     surface() const { return mData->surface() ; }
+    Collapse_data_ptr        data      () const { return mData ; }
+    vertex_descriptor const& p         () const { return mData->p() ; }
+    vertex_descriptor const& q         () const { return mData->q() ; }
+    bool                     is_p_fixed() const { return mData->is_p_fixed() ; }
+    bool                     is_q_fixed() const { return mData->is_q_fixed() ; }
+    edge_descriptor   const& edge      () const { return mData->edge() ; }
+    TSM&                     surface   () const { return mData->surface() ; }
     
     bool is_edge() const
     {
@@ -152,10 +158,6 @@ public:
       return edge() != null ;
     }
 
-    // A pair is fixed if it cannot be collpased.
-    bool  is_fixed() const { return mIsFixed ; }
-    bool& is_fixed()       { return mIsFixed ; }
-    
     int  mark() const { return mMark ; }
     int& mark()       { return mMark ; }
 
@@ -237,7 +239,6 @@ public:
     mutable bool               mCostStored ;
     mutable Optional_cost_type mCost ;
     
-    bool      mIsFixed ;
     pq_handle mPQHandle ;
     int       mMark ;
     
@@ -252,13 +253,13 @@ public:
     
 public:
 
-  VertexPairCollapse( TSM&                         aSurface
-                    , GetCollapseData const&       aGetCollapseData
-                    , GetCollapseDataParams const* aGetCollapseDataParams
-                    , GetCost const&               aGetCost
-                    , GetVertexPoint const&        aGetVertexPoint
-                    , ShouldStop const&            aShouldStop 
-                    , bool                         aIncludeNonEdgePairs 
+  VertexPairCollapse( TSM&                           aSurface
+                    , GetCollapseData const&         aGetCollapseData
+                    , ParamsToGetCollapseData const* aGetCollapseDataParams // Can be NULL
+                    , GetCost const&                 aGetCost
+                    , GetNewVertexPoint const&       aGetVertexPoint
+                    , ShouldStop const&              aShouldStop 
+                    , bool                           aIncludeNonEdgePairs 
                     ) ;
   
   int run() ;
@@ -267,7 +268,7 @@ private:
   
   void Collect();
   void Loop();
-  bool Is_collapsable( vertex_pair_ptr const& aPair ) ;
+  bool Is_collapsable( vertex_descriptor const& p, vertex_descriptor const& q, edge_descriptor const& p_q ) ;
   void Collapse( vertex_pair_ptr const& aPair ) ;
   void Update_neighbors( vertex_descriptor const& v ) ;
   
@@ -324,15 +325,46 @@ private:
     return rR ;
   }
 
+  Point_3 const& get_point ( const_vertex_descriptor const& v )
+  {
+    vertex_point_t vertex_point ;
+    return get(vertex_point,const_cast<TSM const&>(mSurface),v) ;
+  }
+  
+  bool is_vertex_fixed ( vertex_descriptor const& v )
+  {
+    cgal_tsms_is_vertex_fixed_t is_vertex_fixed ;
+    return get(is_vertex_fixed,mSurface,v) ;
+  }
+  
+  void GetVerticesIsFixedFlags( vertex_descriptor const& p
+                              , vertex_descriptor const& q
+                              , edge_descriptor const& p_q 
+                              , bool& aIsPFixed
+                              , bool& aIsQFixed
+                              ) 
+  {
+    if (Is_collapsable(p,q,p_q))
+    {
+      aIsPFixed = is_vertex_fixed(p);
+      aIsQFixed = is_vertex_fixed(q);
+    }
+    else
+    {
+      aIsPFixed = true ;
+      aIsQFixed = true ;
+    }
+  }                            
+  
 private:
 
   TSM& mSurface ;
-  GetCollapseDataParams const* mGetCollapseDataParams ;
+  ParamsToGetCollapseData const* mParamsToGetCollapseData ; // Can be NULL
 
-  GetCollapseData const& Get_collapse_data;   
-  GetCost         const& Get_cost ;
-  GetVertexPoint  const& Get_vertex_point ;
-  ShouldStop      const& Should_stop ;
+  GetCollapseData   const&  Get_collapse_data;   
+  GetCost           const&  Get_cost ;
+  GetNewVertexPoint const&  Get_new_vertex_point ;
+  ShouldStop        const&  Should_stop ;
   
   bool mIncludeNonEdgePairs;
 

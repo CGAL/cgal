@@ -21,7 +21,7 @@
 CGAL_BEGIN_NAMESPACE
 
 //
-// Implementation of the Vertex Placement strategy from:
+// Implementation of the strategy from:
 //
 //  "Fast and Memory Efficient Polygonal Symplification"
 //  Peter Lindstrom, Greg Turk
@@ -34,6 +34,8 @@ template<class CD>
 LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
                                         , vertex_descriptor const& aP
                                         , vertex_descriptor const& aQ
+                                        , bool                     aIsPFixed
+                                        , bool                     aIsQFixed
                                         , edge_descriptor const&   aP_Q
                                         , edge_descriptor const&   aQ_P
                                         , TSM&                     aSurface 
@@ -46,81 +48,142 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
   ,mQ_P(aQ_P)
   ,mSurface(aSurface)    
 {
-  //
-  // Each vertex constrian is an equation of the form: Ai * v = bi
-  // Where 'v' is a CVector representing the vertex,
-  // Ai is a (row) CVector 
-  // and bi a scalar.
-  //
-  // The vertex is completely determined with 3 such constrian, so is the solution
-  // to the folloing system:
-  //
-  //  A.r0(). * v = b0
-  //  A1 * v = b1
-  //  A2 * v = b2
-  //
-  // Which in matrix form is :  A * v = b
-  //
-  // (with A a 3x3 matrix and b a vector)
-  //
-  // The member variable mConstrinas contains A and b. Indidivual constrians (Ai,bi) can be added to it.
-  // Once 3 such constrians have been added v is directly solved a:
-  //
-  //  v = b*inverse(A)
-  //
-  // A constrian (Ai,bi) must be alpha-compatible with the previously added constrians (see Paper); if it's not, is discarded.
-  //
-  
-  
-  
-  // Volume preservation and optimization constrians are based on the normals to the triangles in the star of the collapsing egde 
-  // Triangle shape optimization constrians are based on the link of the collapsing edge (the cycle of vertices around the edge)
-  Triangles lTriangles;
-  Link      lLink;
-  
-  lTriangles.reserve(16);
-  lLink     .reserve(16);
-  
-  Extract_triangles_and_link(lTriangles,lLink);
 
-  // If the collapsing edge is a boundary edge, the "local boundary" is cached in a Boundary object.    
-  OptionalBoundary lBdry ;
+  Optional_FT    lOptionalCost ;
+  Optional_point lOptionalP ;
   
-  if ( is_undirected_edge_a_border(mP_Q) )
+  if ( !aIsPFixed || !aIsQFixed )
   {
-    lBdry  = Extract_boundary();
-    Add_boundary_preservation_constrians(lBdry);
-  }
+    
+    CGAL_TSMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
+    
+    
+    // Volume preservation and optimization constrians are based on the normals to the triangles in the star of the collapsing egde 
+    // Triangle shape optimization constrians are based on the link of the collapsing edge (the cycle of vertices around the edge)
+    Triangles lTriangles;
+    Link      lLink;
+    
+    lTriangles.reserve(16);
+    lLink     .reserve(16);
+    
+    Extract_triangles_and_link(lTriangles,lLink);
   
-  if ( mConstrians.n < 3 )
-    Add_volume_preservation_constrians(lTriangles);
+#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
+    std::ostringstream ss ; 
+    for( typename Link::const_iterator it = lLink.begin(), eit = lLink.end() ; it != eit ; ++it )
+      ss << "v" << (*it)->ID << " " ;
+    std::string s = ss.str(); 
+    CGAL_TSMS_LT_TRACE(3,"Link: " << s );
+#endif
     
-  if ( mConstrians.n < 3 )
-    Add_boundary_and_volume_optimization_constrians(lBdry,lTriangles); 
+    // If the collapsing edge is a boundary edge, the "local boundary" is cached in a Boundary object.    
+    OptionalBoundary lBdry ;
     
-  if ( mConstrians.n < 3 )
-    Add_shape_optimization_constrians(lLink);
+    if ( is_undirected_edge_a_border(mP_Q) )
+      lBdry = Extract_boundary();
+      
+    Point const& lP = get_point(mP) ;
+    Point const& lQ = get_point(mQ) ;
     
-  Optional_FT    lCost ;
-  Optional_point lVertexPoint ;
-  
-  // It might happen that there were not enough alpha-compatible constrians.
-  // In that case there is simply no good vertex placement (mResult is left absent)
-  if ( mConstrians.n == 3 ) 
-  {
-    optional<CMatrix> OptAi = inverse_matrix(mConstrians.A);
-    if ( OptAi )
+    Optional_vector lOptionalV ;
+    
+    if ( aIsPFixed )
     {
-      CMatrix const& Ai = *OptAi ;
+      lOptionalV = Optional_vector(lP - ORIGIN);
+    }  
+    else if ( aIsQFixed )
+    {
+      lOptionalV = Optional_vector(lQ - ORIGIN);
+    }  
+    else
+    {
+      //
+      // Each vertex constrian is an equation of the form: Ai * v = bi
+      // Where 'v' is a vector representing the vertex,
+      // 'Ai' is a (row) vector and 'bi' a scalar.
+      //
+      // The vertex is completely determined with 3 such constrians, 
+      // so is the solution to the folloing system:
+      //
+      //  A.r0(). * v = b0
+      //  A1 * v = b1
+      //  A2 * v = b2
+      //
+      // Which in matrix form is :  A * v = b
+      //
+      // (with 'A' a 3x3 matrix and 'b' a vector)
+      //
+      // The member variable mConstrinas contains A and b. Indidivual constrians (Ai,bi) can be added to it.
+      // Once 3 such constrians have been added 'v' is directly solved a:
+      //
+      //  v = b*inverse(A)
+      //
+      // A constrian (Ai,bi) must be alpha-compatible with the previously added constrians (see Paper); if it's not, is discarded.
+      //
+      if ( lBdry)
+        Add_boundary_preservation_constrians(*lBdry);
       
-      CVector v = mConstrians.b * Ai ;
+      if ( mConstrians.n < 3 )
+        Add_volume_preservation_constrians(lTriangles);
+        
+      if ( mConstrians.n < 3 )
+        Add_boundary_and_volume_optimization_constrians(lBdry,lTriangles); 
+        
+      if ( mConstrians.n < 3 )
+        Add_shape_optimization_constrians(lLink);
       
-      lVertexPoint = Optional_point(ORIGIN + toVector(v) ) ;
-      
-    }
-  }
+      // It might happen that there were not enough alpha-compatible constrians.
+      // In that case there is simply no good vertex placement
+      if ( mConstrians.n == 3 ) 
+      {
+        // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
+        optional<Matrix> lOptional_Ai = inverse_matrix(mConstrians.A);
+        if ( lOptional_Ai )
+        {
+          Matrix const& lAi = *lOptional_Ai ;
+          
+          lOptionalV = mConstrians.b * lAi ;
+          
+        }
+        else
+          CGAL_TSMS_LT_TRACE(1,"Can't solve optimization, singular system.");
+      }
+      else
+        CGAL_TSMS_LT_TRACE(1,"Can't solve optimization, not enough alpha-compatible constrians.");
+    }  
     
-  mResult = result_type( new Collapse_data(mP,mQ,mP_Q,mSurface,lCost,lVertexPoint) );
+    if ( lOptionalV )
+    {
+      //
+      // lP is the optimized new vertex position. Now we compute the collapsing cost:
+      //
+      lOptionalP = Optional_point( ORIGIN + (*lOptionalV) );
+      
+      FT lSquaredLength = squared_distance(lP,lQ);
+      
+      FT lBdryCost = 0;
+      if ( lBdry )
+        lBdryCost = Compute_boundary_cost(*lOptionalV,*lBdry);
+      
+      FT lVolumeCost = Compute_volume_cost(*lOptionalV,lTriangles);
+      
+      FT lShapeCost = Compute_shape_cost(*lOptionalP,lLink);
+      
+      FT lTotalCost =   mParams.BoundaryWeight * lBdryCost
+                      + mParams.VolumeWeight   * lVolumeCost * lSquaredLength
+                      + mParams.ShapeWeight    * lShapeCost  * lSquaredLength * lSquaredLength ;
+      
+      lOptionalCost = Optional_FT(lTotalCost);
+      
+      CGAL_TSMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(lV) << " cost: " << lTotalCost );
+    }
+    
+  }
+  else
+    CGAL_TSMS_LT_TRACE(1,"The edge is fixed edge.");
+  
+    
+  mResult = result_type( new Collapse_data(mP,mQ,aIsPFixed,aIsQFixed,mP_Q,mSurface,lOptionalCost,lOptionalP) );
 }
 
 
@@ -151,23 +214,23 @@ typename LindstromTurkImpl<CD>::OptionalBoundary LindstromTurkImpl<CD>::Extract_
   
   // o->p->q->r is the local boundary
   
-  Point o = get_point(ov);
-  Point p = get_point(mP);
-  Point q = get_point(mQ);
-  Point r = get_point(rv);
+  Point const& o = get_point(ov);
+  Point const& p = get_point(mP);
+  Point const& q = get_point(mQ);
+  Point const& r = get_point(rv);
   
   //
-  // The boundary cached contains vectors instead of points
+  // The "Boundary" object caches the boundary as displacement vectors since the code uses that.
   //
   
-  CVector op  = toCVector(p - o) ;
-  CVector opN = Point_cross_product(p,o);
+  Vector op  = p - o ;
+  Vector opN = Point_cross_product(p,o);
   
-  CVector pq  = toCVector(q - p) ;
-  CVector pqN = Point_cross_product(q,p);
+  Vector pq  = q - p ;
+  Vector pqN = Point_cross_product(q,p);
   
-  CVector qr  = toCVector(r - q) ;
-  CVector qrN = Point_cross_product(r,q);
+  Vector qr  = r - q ;
+  Vector qrN = Point_cross_product(r,q);
   
   return OptionalBoundary(Boundary(op,opN,pq,pqN,qr,qrN)) ;
 }
@@ -181,16 +244,18 @@ typename LindstromTurkImpl<CD>::Triangle LindstromTurkImpl<CD>::Get_triangle( ve
                                                                             , vertex_descriptor const& v2 
                                                                             )
 {
-  Point p0 = get_point(v0);
-  Point p1 = get_point(v1);
-  Point p2 = get_point(v2);
+  CGAL_TSMS_LT_TRACE(3,"Extracting triangle v" << v0->ID << "->v" << v1->ID << "->v" << v2->ID );
   
-  CVector v01 = toCVector(p1 - p0) ;
-  CVector v02 = toCVector(p2 - p0) ;
+  Point const& p0 = get_point(v0);
+  Point const& p1 = get_point(v1);
+  Point const& p2 = get_point(v2);
   
-  CVector lNormalV = cross_product(v01,v02);
+  Vector v01 = p1 - p0 ;
+  Vector v02 = p2 - p0 ;
   
-  FT lNormalL = Point_cross_product(p0,p1) * toCVector(p2-ORIGIN);
+  Vector lNormalV = cross_product(v01,v02);
+  
+  FT lNormalL = Point_cross_product(p0,p1) * (p2-ORIGIN);
   
   return Triangle(lNormalV,lNormalL);
 }                              
@@ -211,7 +276,7 @@ void LindstromTurkImpl<CD>::Extract_triangle( vertex_descriptor const& v0
   // The 3 vertices are obtained by circulating ccw around v0, that is, e02 = next_ccw(e01).
   // Since these vertices are NOT obtained by circulating the face, the actual triangle orientation is unspecified.
   
-  // If target(next_edge(v0))==v1 then the triangle is oriented v0->v2->v1; otherwise is oriented v0->v1->v2 ;
+  // The triangle is oriented v0->v2->v1 if the next edge that follows e02 (which is the edge v0->v2) is v2->v1.
   if ( target(next_edge(e02,mSurface),mSurface) == v1 ) 
   {
     // The triangle is oriented v0->v2->v1.
@@ -237,7 +302,7 @@ template<class CD>
 void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, Link& rLink )
 {
   // 
-  // Extract around mP CCW
+  // Extract around mP, CCW
   //  
   vertex_descriptor v0 = mP;
   vertex_descriptor v1 = mQ;
@@ -251,7 +316,10 @@ void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
     vertex_descriptor v2 = target(e02,mSurface);
   
     if ( v2 != mQ )
+    {
+      CGAL_expensive_precondition(std::find(rLink.begin(),rLink.end(),v2) == rLink.end() );
       rLink.push_back(v2) ;
+    }
       
     Extract_triangle(v0,v1,v2,e02,rTriangles);
     
@@ -260,9 +328,8 @@ void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
   while ( e02 != mP_Q ) ;
   
   // 
-  // Extract around mQ CCW
+  // Extract around mQ, CCW
   //  
-  vertex_descriptor vt = target(next_edge_cw(mQ_P,mSurface),mSurface); // This was added to the link while circulating mP
   
   v0 = mQ;
   
@@ -276,28 +343,29 @@ void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
   {
     vertex_descriptor v2 = target(e02,mSurface);
 
-    if ( v2 != vt )  
+    // Any of the vertices found around mP can be reached again around mQ, but we can't duplicate them here.
+    if ( std::find(rLink.begin(),rLink.end(),v2) == rLink.end() )
       rLink.push_back(v2) ;
     
     Extract_triangle(v0,v1,v2,e02,rTriangles);
     
     v1 = v2 ;
      
-    e02 = next_edge_cw(e02,mSurface);
+    e02 = next_edge_ccw(e02,mSurface);
     
   }
   while ( e02 != mQ_P ) ;
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Add_boundary_preservation_constrians( OptionalBoundary const& aBdry )
+void LindstromTurkImpl<CD>::Add_boundary_preservation_constrians( Boundary const& aBdry )
 {
-  CVector e1 = aBdry->op  + aBdry->pq  + aBdry->qr ;
-  CVector e3 = aBdry->opN + aBdry->pqN + aBdry->qrN ;
+  Vector e1 = aBdry.op  + aBdry.pq  + aBdry.qr ;
+  Vector e3 = aBdry.opN + aBdry.pqN + aBdry.qrN ;
 
-  CMatrix H = LT_product(e1);
+  Matrix H = LT_product(e1);
   
-  CVector c = cross_product(e1,e3);
+  Vector c = cross_product(e1,e3);
   
   mConstrians.Add_from_gradient(H,c);
 }
@@ -305,7 +373,7 @@ void LindstromTurkImpl<CD>::Add_boundary_preservation_constrians( OptionalBounda
 template<class CD>
 void LindstromTurkImpl<CD>::Add_volume_preservation_constrians( Triangles const& aTriangles )
 {
-  CVector lSumV = NULL_VECTOR ;
+  Vector lSumV = NULL_VECTOR ;
   FT      lSumL(0) ;
   
   for( typename Triangles::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
@@ -321,8 +389,8 @@ void LindstromTurkImpl<CD>::Add_volume_preservation_constrians( Triangles const&
 template<class CD>
 void LindstromTurkImpl<CD>::Add_boundary_and_volume_optimization_constrians( OptionalBoundary const& aBdry, Triangles const& aTriangles )
 {
-  CMatrix H = NULL_MATRIX ;
-  CVector c = NULL_VECTOR ;
+  Matrix H = NULL_MATRIX ;
+  Vector c = NULL_VECTOR ;
 
   //
   // Volume optimization  
@@ -342,9 +410,9 @@ void LindstromTurkImpl<CD>::Add_boundary_and_volume_optimization_constrians( Opt
     //
     // Boundary optimization
     //
-    CMatrix Hb = LT_product(aBdry->op) + LT_product(aBdry->pq) + LT_product(aBdry->qr) ;
+    Matrix Hb = LT_product(aBdry->op) + LT_product(aBdry->pq) + LT_product(aBdry->qr) ;
     
-    CVector cb =  cross_product(aBdry->op,aBdry->opN) + cross_product(aBdry->pq,aBdry->pqN) + cross_product(aBdry->qr,aBdry->qrN);
+    Vector cb =  cross_product(aBdry->op,aBdry->opN) + cross_product(aBdry->pq,aBdry->pqN) + cross_product(aBdry->qr,aBdry->qrN);
     
     //
     // Weighted average
@@ -367,26 +435,60 @@ void LindstromTurkImpl<CD>::Add_shape_optimization_constrians( Link const& aLink
 {
   FT s(aLink.size());
   
-  CMatrix H (s,0,0
-            ,0,s,0
-            ,0,0,s
-            );
+  Matrix H (s,0,0
+           ,0,s,0
+           ,0,0,s
+           );
            
-  CVector c = NULL_VECTOR ;
+  Vector c = NULL_VECTOR ;
   
   for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
-    c = c + toCVector(ORIGIN - get_point(*it)) ;  
+    c = c + (ORIGIN - get_point(*it)) ;  
            
   mConstrians.Add_from_gradient(H,c);
 }
 
-template<class Vector>
-Vector normalized_vector ( Vector const& c )
+template<class CD>
+typename LindstromTurkImpl<CD>::FT
+LindstromTurkImpl<CD>::Compute_boundary_cost( Vector const& v, Boundary const& aBdry )
 {
+  FT rCost(0);
+  return rCost ;
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( CVector const& Ai, FT const& bi )
+typename LindstromTurkImpl<CD>::FT
+LindstromTurkImpl<CD>::Compute_volume_cost( Vector const& v, Triangles const& aTriangles )
+{
+  FT rCost(0);
+  
+  for( typename Triangles::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
+  {
+    Triangle const& lTri = *it ;
+    
+    FT lF = lTri.NormalV * v - lTri.NormalL ;
+    
+    rCost += ( lF * lF ) ;
+    
+  }
+    
+  return rCost / FT(36) ;
+}
+
+template<class CD>
+typename LindstromTurkImpl<CD>::FT
+LindstromTurkImpl<CD>::Compute_shape_cost( Point const& p, Link const& aLink )
+{
+  FT rCost(0);
+  
+  for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
+    rCost += squared_distance(p,get_point(*it)) ;  
+    
+  return rCost ;
+}
+
+template<class CD>
+void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
   double slai = to_double(Ai*Ai) ;
   if ( slai > 0.0 )
@@ -405,7 +507,7 @@ void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( CVector const& 
     }
     else if ( n == 2 )
     {
-      CVector N = cross_product(A.r0(),A.r1());
+      Vector N = cross_product(A.r0(),A.r1());
       
       FT dc012 = N * Ai ;
       
@@ -422,15 +524,15 @@ void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( CVector const& 
       {
         case 0 :
           A.r0() = Ai ;
-          b = CVector(bi,b.y(),b.z());
+          b = Vector(bi,b.y(),b.z());
           break ;
         case 1 :
           A.r1() = Ai ;
-          b = CVector(b.x(),bi,b.z());
+          b = Vector(b.x(),bi,b.z());
           break ;
         case 2 :
           A.r2() = Ai ;
-          b = CVector(b.x(),b.y(),bi);
+          b = Vector(b.x(),b.y(),bi);
           break ;
       }
       ++ n ;
@@ -460,7 +562,7 @@ int index_of_max_component ( V const& v )
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Constrians::Add_from_gradient ( CMatrix const& H, CVector const& c )
+void LindstromTurkImpl<CD>::Constrians::Add_from_gradient ( Matrix const& H, Vector const& c )
 {
   CGAL_precondition(n >= 0 && n<=2 );
   
@@ -476,25 +578,25 @@ void LindstromTurkImpl<CD>::Constrians::Add_from_gradient ( CMatrix const& H, CV
       
     case 1 :
       {
-        CVector const& A0 = A.r0();
+        Vector const& A0 = A.r0();
         
-        CVector A02( A0.x()*A0.x()
-                   , A0.y()*A0.y()
-                   , A0.z()*A0.z()
-                   );
+        Vector A02( A0.x()*A0.x()
+                  , A0.y()*A0.y()
+                  , A0.z()*A0.z()
+                  );
            
-        CVector Q0 ;      
+        Vector Q0 ;      
         switch ( index_of_max_component(A02) ) 
         {
-          case 0: Q0 = CVector(- A0.z()/A0.x(),0              ,1              ); break;
-          case 1: Q0 = CVector(0              ,- A0.z()/A0.y(),1              ); break;
-          case 2: Q0 = CVector(1              ,0              ,- A0.x()/A0.z()); break;
+          case 0: Q0 = Vector(- A0.z()/A0.x(),0              ,1              ); break;
+          case 1: Q0 = Vector(0              ,- A0.z()/A0.y(),1              ); break;
+          case 2: Q0 = Vector(1              ,0              ,- A0.x()/A0.z()); break;
         }
         
-        CVector Q1 = cross_product(A0,Q0);
+        Vector Q1 = cross_product(A0,Q0);
     
-        CVector A1 = H * Q0 ;
-        CVector A2 = H * Q1 ;
+        Vector A1 = H * Q0 ;
+        Vector A2 = H * Q1 ;
         FT b1 = - ( Q0 * c ) ;
         FT b2 = - ( Q1 * c ) ;
         
@@ -507,9 +609,9 @@ void LindstromTurkImpl<CD>::Constrians::Add_from_gradient ( CMatrix const& H, CV
     case 2:
       {
     
-        CVector Q = cross_product(A.r0(),A.r1());
+        Vector Q = cross_product(A.r0(),A.r1());
         
-        CVector A2 = H * Q ;
+        Vector A2 = H * Q ;
         
         FT b2 = - ( Q * c ) ;
         

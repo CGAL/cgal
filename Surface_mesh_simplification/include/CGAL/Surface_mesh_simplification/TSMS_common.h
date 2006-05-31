@@ -26,6 +26,14 @@
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/format.hpp>
+
+namespace boost
+{
+
+struct cgal_tsms_is_vertex_fixed_t {} ;
+
+}
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,6 +49,7 @@ using boost::source ;
 using boost::target ;
 using boost::edge_is_border_t ;
 using boost::vertex_point_t ;
+using boost::cgal_tsms_is_vertex_fixed_t ;
 
 using boost::shared_ptr ;
 using boost::optional ;
@@ -51,6 +60,7 @@ using boost::put ;
 using boost::addressof ;
 
 using namespace boost::tuples ;
+
 
 template<class Handle>
 inline bool handle_assigned( Handle h ) { Handle null ; return h != null ; }
@@ -86,9 +96,24 @@ struct Surface_geometric_traits
 template<class TSM>
 inline bool is_valid_triangulated_surface_mesh ( TSM const& aTSM ) { return aTSM.is_pure_triangle() ; }
 
+template<class XYZ>
+inline std::string xyz_to_string( XYZ const& xyz )
+{
+  return boost::str( boost::format("(%1%,%2%,%3%)") % xyz.x() % xyz.y() % xyz.z() ) ;   
+}
+
+template<class T>
+inline std::string optional_to_string( boost::optional<T> const& o )
+{
+  if ( o )
+       return boost::str( boost::format("%1%") % *o ) ;   
+  else return std::string("NONE");  
+}
+
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
+#if   defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)    \
+   || defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE) 
 #define CGAL_TSMS_ENABLE_TRACE
 #endif
 
@@ -104,13 +129,46 @@ CGAL_END_NAMESPACE
      }
 #endif
 
+#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE
+#  define CGAL_TSMS_LT_TRACE(l,m) if ( l <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
+#else
+#  define CGAL_TSMS_LT_TRACE(l,m)
+#endif
+
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
 #  define CGAL_TSMS_TRACE(l,m) if ( l <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
 #else
 #  define CGAL_TSMS_TRACE(l,m)
 #endif
 
+
+
+
+#if defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_AUDIT) 
+#define CGAL_TSMS_ENABLE_AUDIT
+#endif
+
+#ifdef CGAL_TSMS_ENABLE_AUDIT
+
+#  include<string>
+#  include<iostream>
+#  include<sstream>
+#  define CGAL_TSMS_AUDIT_IMPL(m) \
+     { \
+       std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
+       Surface_simplification_external_audit(s); \
+     }
+#endif
+
+#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_AUDIT
+#  define CGAL_TSMS_AUDIT(m) CGAL_TSMS_AUDIT_IMPL(m)
+#else
+#  define CGAL_TSMS_AUDIT(m)
+#endif
+
+
 #undef CGAL_TSMS_ENABLE_TRACE
+#undef CGAL_TSMS_ENABLE_AUDIT
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_TSMS_COMMON_H //
 // EOF //

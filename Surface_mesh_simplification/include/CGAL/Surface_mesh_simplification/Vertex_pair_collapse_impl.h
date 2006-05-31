@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -24,35 +24,47 @@ namespace Triangulated_surface_mesh { namespace Simplification
 {
 
 template<class M,class D,class C,class V,class S>
-VertexPairCollapse<M,D,C,V,S>::VertexPairCollapse( TSM&                         aSurface
-                                                 , GetCollapseData const&       aGet_collapse_data
-                                                 , GetCollapseDataParams const* aGetCollapseDataParams
-                                                 , GetCost const&               aGet_cost
-                                                 , GetVertexPoint const&        aGet_vertex_point
-                                                 , ShouldStop const&            aShould_stop
-                                                 , bool                         aIncludeNonEdgePairs 
+VertexPairCollapse<M,D,C,V,S>::VertexPairCollapse( TSM&                           aSurface
+                                                 , GetCollapseData const&         aGet_collapse_data
+                                                 , ParamsToGetCollapseData const* aParamsToGetCollapseData
+                                                 , GetCost const&                 aGet_cost
+                                                 , GetNewVertexPoint const&       aGet_new_vertex_point
+                                                 , ShouldStop const&              aShould_stop
+                                                 , bool                           aIncludeNonEdgePairs 
                                                  )
   : 
    mSurface (aSurface)
-  ,mGetCollapseDataParams(aGetCollapseDataParams)
+  ,mParamsToGetCollapseData(aParamsToGetCollapseData)
    
-  ,Get_collapse_data(aGet_collapse_data)
-  ,Get_cost         (aGet_cost)
-  ,Get_vertex_point (aGet_vertex_point)
-  ,Should_stop      (aShould_stop) 
+  ,Get_collapse_data   (aGet_collapse_data)
+  ,Get_cost            (aGet_cost)
+  ,Get_new_vertex_point(aGet_new_vertex_point)
+  ,Should_stop         (aShould_stop) 
   
   ,mIncludeNonEdgePairs(aIncludeNonEdgePairs)
 {
-  CGAL_TSMS_TRACE(0,"VertexPairCollapse of TSM with " << num_edges(aSurface) << " edges" );
+  CGAL_TSMS_TRACE(0,"VertexPairCollapse of TSM with " << num_edges(aSurface)/2 << " edges" );
 }
 
 template<class M,class D,class C,class V,class S>
 int VertexPairCollapse<M,D,C,V,S>::run()
 {
-  Collect(); 
-  Loop();
+  if ( num_vertices(mSurface) > 4 )
+  {
+    // First collect all candidate edges in a PQ
+    Collect(); 
+    
+    // Then proceed to collapse each edge in turn
+    Loop();
   
-  CGAL_TSMS_TRACE(0,"Finished: " << (mInitialPairCount - mCurrentPairCount) << " pairs removed." ) ;
+    CGAL_TSMS_TRACE(0,"Finished: " << (mInitialPairCount - mCurrentPairCount) << " pairs removed." ) ;
+  }
+  else
+  {
+    mInitialPairCount = mCurrentPairCount = num_edges(mSurface) / 2 ;
+    
+    CGAL_TSMS_TRACE(0,"A thetrahedron cannot be simplified any further.");
+  }
   
   return (int)(mInitialPairCount - mCurrentPairCount) ;
 }
@@ -64,10 +76,7 @@ void VertexPairCollapse<M,D,C,V,S>::Collect()
 
   // Loop over all the edges in the surface putting the accepted vertex-pairs in the PQ
   
-  vertex_point_t vertex_point ;
-  typedef typename Kernel_traits<Point_3>::Kernel Kernel ;
-  Kernel kernel ;
-  typename Kernel::Equal_3 equal_points = kernel.equal_3_object();
+  Equal_3 equal_points = Kernel().equal_3_object();
     
   size_type lID = 0 ;
   
@@ -79,16 +88,30 @@ void VertexPairCollapse<M,D,C,V,S>::Collect()
     vertex_descriptor s = source(edge,mSurface);
     vertex_descriptor t = target(edge,mSurface);
     
-    Point_3 sp = get(vertex_point,mSurface,s) ;
-    Point_3 tp = get(vertex_point,mSurface,t) ;
+    Point_3 sp = get_point(s) ;
+    Point_3 tp = get_point(t) ;
     
     if ( ! equal_points(sp,tp) )
     {
-      Collapse_data_ptr lData = Get_collapse_data(s,t,edge,mSurface,mGetCollapseDataParams) ;
+      bool is_s_fixed, is_t_fixed ;
+      GetVerticesIsFixedFlags(s,t,edge,is_s_fixed,is_t_fixed);
+ 
+      // The collapse always keeps the vertex 't' and removes vertex 's'.
+      // If the 's' is fixed (but not t) then swap the pair to keep (the original) 's' correctly fixed.
+      if ( is_s_fixed && !is_t_fixed )
+      {
+        using std::swap ;
+        swap(s,t);
+        swap(is_s_fixed,is_t_fixed);
+        edge = opposite_edge(edge,mSurface);
+      }
+      
+      Collapse_data_ptr lData = Get_collapse_data(s,t,is_s_fixed,is_t_fixed,edge,mSurface,mParamsToGetCollapseData) ;
       vertex_pair_ptr lPair( new vertex_pair(lID++,lData,Get_cost) ) ; 
       set_pair(edge,lPair);
       insert_in_PQ(lPair);
-      CGAL_TSMS_TRACE(3, *lPair << " accepted." );
+      CGAL_TSMS_TRACE(3, (lPair->cost(),*lPair) << " accepted." );
+      CGAL_TSMS_AUDIT("C-" << xyz_to_string(sp) << "->" << xyz_to_string(tp) << "-" << optional_to_string(lPair->cost()) );
     }
   }
   
@@ -112,8 +135,7 @@ void VertexPairCollapse<M,D,C,V,S>::Loop()
   {
     CGAL_TSMS_TRACE(3,"Poped " << *lPair ) ;
     
-    // Pairs in the queue might be "fixed", that is, marked as uncollapsable, or their cost might be undefined.
-    if ( !lPair->is_fixed() && lPair->cost() != none ) 
+    if ( lPair->cost() != none ) 
     {
       if ( num_vertices(mSurface) <= 4 )
       {
@@ -130,19 +152,19 @@ void VertexPairCollapse<M,D,C,V,S>::Loop()
         break ;
       }
 
-     // Proceeds only if the pair is topolofically collapsable (collapsing it results in a non-degenerate triangulation)
-     if ( Is_collapsable(lPair) )        
-        Collapse(lPair);
+      Collapse(lPair);
     }
   }
 }
 
+// Some edges are NOT collapsable: doing so would break the topological consistency of the mesh.
+// This function returns true if a edge 'p->q' can be collapsed.
+//
 template<class M,class D,class C,class V,class S>
-bool VertexPairCollapse<M,D,C,V,S>::Is_collapsable( vertex_pair_ptr const& aPair )
+bool VertexPairCollapse<M,D,C,V,S>::Is_collapsable( vertex_descriptor const& p, vertex_descriptor const& q, edge_descriptor const& p_q )
 {
   bool rR = true ;
   
-  edge_descriptor p_q = aPair->edge();
   edge_descriptor q_p = opposite_edge(p_q,mSurface);
   
   edge_descriptor p_t = next_edge_ccw(p_q,mSurface);      
@@ -151,10 +173,10 @@ bool VertexPairCollapse<M,D,C,V,S>::Is_collapsable( vertex_pair_ptr const& aPair
   edge_descriptor q_b = next_edge_ccw(q_p,mSurface);      
 
   // degree(p) and degree(q) >= 3
-  if (    target(p_t,mSurface) != aPair->q()
-       && target(p_b,mSurface) != aPair->q()
-       && target(q_t,mSurface) != aPair->p()
-       && target(q_b,mSurface) != aPair->p()
+  if (    target(p_t,mSurface) != q
+       && target(p_b,mSurface) != q
+       && target(q_t,mSurface) != p
+       && target(q_b,mSurface) != p
      )
   {
     // link('p') .intersection. link('q') == link('p_q') (that is, exactly {'t','b'})
@@ -203,10 +225,11 @@ void VertexPairCollapse<M,D,C,V,S>::Collapse( vertex_pair_ptr const& aPair )
   
   // This external function is allowed to return an absent point if there is no way to place the vertex
   // satisfying its constrians. In that case the vertex-pair is simply not removed.
-  Optional_vertex_point_type lNewVertexPoint = Get_vertex_point(*aPair->data());
+  Optional_vertex_point_type lNewVertexPoint = Get_new_vertex_point(*aPair->data());
   if ( lNewVertexPoint )
   {
-    CGAL_TSMS_TRACE(2,"New vertex point: (" << lNewVertexPoint->x() << "," << lNewVertexPoint->y() << "," << lNewVertexPoint->z() << ")");
+    CGAL_TSMS_TRACE(2,"New vertex point: " << xyz_to_string(*lNewVertexPoint) ) ;
+    CGAL_TSMS_AUDIT("V-" << xyz_to_string(get_point(lP)) << "->" << xyz_to_string(get_point(lQ)) << "-" << xyz_to_string(*lNewVertexPoint) ); 
         
     // The actual collapse of edge PQ merges the top and bottom facets with its left and right adjacents resp, then
     // joins P and Q.
@@ -224,6 +247,8 @@ void VertexPairCollapse<M,D,C,V,S>::Collapse( vertex_pair_ptr const& aPair )
     CGAL_TSMS_TRACE(3,"EdgePT E" << lEdgePT->ID << " Opposite EdgePT E" << lEdgePT->opposite()->ID 
                    << " V" <<  lEdgePT->opposite()->vertex()->ID << "->V" << lEdgePT->vertex()->ID ) ;
 
+    vertex_pair_vector lUpdated ;
+    
     // Since vertex P will be removed during the collapse, all cached pairs linked to 'P' (either from or to) 
     // are updated to link to 'Q' instead.
     out_edge_iterator eb, ee ; 
@@ -240,32 +265,42 @@ void VertexPairCollapse<M,D,C,V,S>::Collapse( vertex_pair_ptr const& aPair )
         
         CGAL_assertion( lPair->p() == lP || lPair->q() == lP );
       
+        bool is_v0_fixed, is_v1_fixed ;
         vertex_descriptor v0, v1 ;
         edge_descriptor   edge ;
         if ( lPair->p() == lP )
         {
           v0 = lQ ;
           v1 = lPair->q() ;
+          is_v0_fixed = aPair->is_q_fixed() ;
+          is_v1_fixed = lPair->is_q_fixed() ;
           edge = outedge ;
         }
         else
         {
           v0 = lPair->p() ;
           v1 = lQ ;
+          is_v0_fixed = lPair->is_p_fixed() ;
+          is_v1_fixed = aPair->is_q_fixed() ;
           edge = opposite_edge(outedge,mSurface);
         }
       
-        Collapse_data_ptr lNewData = Get_collapse_data(v0,v1,edge,mSurface,mGetCollapseDataParams);
+        if ( !Is_collapsable(v0,v1,edge) )
+          is_v0_fixed = is_v1_fixed = true ;
+        
+        Collapse_data_ptr lNewData = Get_collapse_data(v0,v1,is_v0_fixed,is_v1_fixed,edge,mSurface,mParamsToGetCollapseData);
         lPair->reset_data(lNewData);
+        lPair->mark() = 1 ;
+        lUpdated.push_back(lPair);
         
         CGAL_TSMS_TRACE(4,"...after update: " << *lPair ) ;
       }
     }
     
+    // The collapse will remove the following edges from the surface so the corresponding pairs won't be valid anymore.
+    
     vertex_pair_ptr lPairPT = get_pair(lEdgePT) ;
     vertex_pair_ptr lPairQB = get_pair(lEdgeQB) ;
-  
-    // The collapse will remove these edges from the surface so the corresponding pairs won't be valid anymore.
     
     if ( lPairPT->is_in_PQ() )
     {
@@ -284,23 +319,26 @@ void VertexPairCollapse<M,D,C,V,S>::Collapse( vertex_pair_ptr const& aPair )
                    << " E" << lEdgePT->ID
                    << " E" << lEdgeQB->ID
                    );
-    
-    // This operator IS NOT passed as a policy. It is a traits. Users only need to specialize it for
-    // the particular surface type.
+
+                         
     Collapse_triangulation_edge(lEdgePQ,lEdgePT,lEdgeQB,mSurface);
     
     // Reset the point of placement of Q (the vertex that "replaces" the collapsed edge)
-    boost::vertex_point_t vertex_point ;
+    vertex_point_t vertex_point ;
     put(vertex_point,mSurface,lQ,*lNewVertexPoint) ;
 
     // Updates the cost of all pairs in the PQ
     Update_neighbors(lQ);
             
+    for ( vertex_pair_vector_iterator it = lUpdated.begin(), eit = lUpdated.end() ; it != eit ; ++ it )
+      (*it)->mark() = 0 ;
+      
     mCurrentPairCount -= 3 ;
   }
   else
   {
     CGAL_TSMS_TRACE(0,"Unable to calculate new vertex point. Pair " << aPair << " discarded without being removed" ) ;
+    CGAL_TSMS_AUDIT("V-" << xyz_to_string(get_point(lP)) << "->" << xyz_to_string(get_point(lQ)) << "-NONE" ); 
   }
 }
 
@@ -331,10 +369,6 @@ void VertexPairCollapse<M,D,C,V,S>::Update_neighbors( vertex_descriptor const& v
                    ) ;
                    
     
-    // This is required to satisfy the transitive link_condition.
-    // That is, the edges around the replacement vertex 'v' cannot be collapsed again.
-    //lPair1->is_fixed() = true ;
-   
     vertex_descriptor adj_v = source(edge1,mSurface);
     
     // (A.2) Loop around all edges incident on each adjacent vertex
@@ -374,7 +408,14 @@ void VertexPairCollapse<M,D,C,V,S>::Update_neighbors( vertex_descriptor const& v
     // The cost of a pair can be recalculated by invalidating its cache and updating the PQ.
     // The PQ update will reposition the pair in the heap querying its cost(),
     // but since the cost was invalidated, it will be computed again 
-    Collapse_data_ptr lNewData = Get_collapse_data(lPair->p(),lPair->q(),lPair->edge(),lPair->surface(),mGetCollapseDataParams) ;
+    Collapse_data_ptr lNewData = Get_collapse_data(lPair->p()
+                                                  ,lPair->q()
+                                                  ,lPair->is_p_fixed()
+                                                  ,lPair->is_q_fixed()
+                                                  ,lPair->edge()
+                                                  ,lPair->surface()
+                                                  ,mParamsToGetCollapseData
+                                                  ) ;
     lPair->reset_data(lNewData);
     update_in_PQ(lPair);
     lPair->mark() = 0 ;

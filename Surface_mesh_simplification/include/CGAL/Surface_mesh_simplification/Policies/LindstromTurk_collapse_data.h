@@ -46,6 +46,13 @@ public:
   
   struct Params
   {
+    Params()
+      :
+      VolumeWeight  ( FT(1) / FT(2) )
+     ,BoundaryWeight( FT(1) / FT(2) )
+     ,ShapeWeight   ( 0 )
+    {}
+    
     Params( FT const& aVolumeWeight, FT const& aBoundaryWeight, FT const& aShapeWeight )
       :
       VolumeWeight  (aVolumeWeight)
@@ -62,13 +69,15 @@ public :
 
   LindstromTurk_collapse_data ( vertex_descriptor const&  aP 
                               , vertex_descriptor const&  aQ
+                              , bool                      aIsPFixed
+                              , bool                      aIsQFixed
                               , edge_descriptor const&    aEdge 
                               , TSM&                      aSurface 
                               , Optional_FT const&        aCost
                               , Optional_point_3 const&   aVertexPoint
                               )
     :
-     Base(aP,aQ,aEdge,aSurface)
+     Base(aP,aQ,aIsPFixed,aIsQFixed,aEdge,aSurface)
     ,mCost        (aCost)
     ,mVertexPoint (aVertexPoint)
   {} 

@@ -23,6 +23,8 @@
 #include <iostream>
 #include <fstream>
 
+#define CGAL_CHECK_EXPENSIVE
+
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_BGL.h>
@@ -32,10 +34,16 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 4
+#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_AUDIT
 
-#define CREATE_TESTCASE
+//#define CREATE_TESTCASE
 
 void Surface_simplification_external_trace( std::string s )
+{
+  std::cout << s << std::endl ;
+} 
+
+void Surface_simplification_external_audit( std::string s )
 {
   std::cout << s << std::endl ;
 } 
@@ -56,16 +64,17 @@ struct My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,typen
 {
   typedef CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,typename Traits::Point_3> Base ;
  
-  My_vertex() {} 
-  My_vertex( typename Traits::Point_3 p ) : Base(p) {}
+  My_vertex() : ID(-1), IsFixed(false) {} 
+  My_vertex( typename Traits::Point_3 p ) : Base(p), ID(-1), IsFixed(false) {}
   
   int ID; 
+  bool IsFixed ;
 } ;
 
 template <class Refs, class Traits>
 struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> 
 { 
-  My_halfedge() {}
+  My_halfedge() : ID(-1) {}
  
   int ID; 
 };
@@ -75,7 +84,7 @@ struct My_face : public CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_true,typename 
 {
   typedef CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_true,typename Traits::Plane_3> Base ;
   
-  My_face() {}
+  My_face() : ID(-1) {}
   My_face( typename Traits::Plane_3 plane ) : Base(plane) {}
   
   int ID; 
@@ -97,19 +106,30 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
 };
 
-typedef CGAL::Simple_homogeneous<int>                        Kernel;
-//typedef CGAL::Simple_cartesian<double>                       Kernel;
+//typedef CGAL::Simple_homogeneous<int>                        Kernel;
+typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel,My_items>                  Polyhedron;
 
 typedef Polyhedron::Vertex                                   Vertex;
 typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
+typedef Polyhedron::Vertex_const_handle                      Vertex_const_handle;
 typedef Polyhedron::Halfedge_handle                          Halfedge_handle;
 typedef Polyhedron::Edge_iterator                            Edge_iterator;
 typedef Polyhedron::Facet_iterator                           Facet_iterator;
 typedef Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
 typedef Polyhedron::Halfedge_around_facet_circulator         HF_circulator;
+
+CGAL_BEGIN_NAMESPACE
+
+template<>
+struct External_polyhedron_get_is_vertex_fixed<Polyhedron>
+{
+  bool operator() ( Polyhedron const&, Vertex_const_handle v ) const { return v->IsFixed; }
+}  ;
+
+CGAL_END_NAMESPACE
 
 using namespace std ;
 
@@ -159,7 +179,7 @@ void Test ( char const* testcase )
     LindstromTurk_vertex_placement       <Collapse_data> Get_vertex_point ;
     Count_stop_condition                 <Collapse_data> Should_stop(0);
         
-    Collapse_data::Params lParams(1,1,1);
+    Collapse_data::Params lParams;
     
     int r = vertex_pair_collapse(lP,Construct_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop);
         
@@ -182,12 +202,16 @@ void CreateTestCase()
 {
   Polyhedron lP; 
 
-  Point p( 1, 0, 0);
-  Point q( 0, 1, 0);
-  Point r( 0, 0, 1);
-  Point s( 0, 0, 0);
+  Point p( 0  , 0 ,   0);
+  Point q( 0  ,100,   0);
+  Point r( 100, 0 ,   0);
+  Point s( 0  , 0 , 100);
   
-  lP.make_tetrahedron( p, q, r, s); 
+  Halfedge_handle h = lP.make_tetrahedron( p, q, r, s); 
+  
+  Halfedge_handle g = lP.create_center_vertex(h); 
+  
+  g->vertex()->point() = Point(25,25,0);
   
   ofstream out("data/sample0.off");
   if ( out )

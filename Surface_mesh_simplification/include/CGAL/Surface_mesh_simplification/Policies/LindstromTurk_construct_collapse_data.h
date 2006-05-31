@@ -47,6 +47,8 @@ public :
 
   result_type operator() ( vertex_descriptor const& aP 
                          , vertex_descriptor const& aQ
+                         , bool                     aIsPFixed
+                         , bool                     aIsQFixed
                          , edge_descriptor const&   aEdge 
                          , TSM&                     aSurface 
                          , Params const*            aParams
@@ -58,7 +60,7 @@ public :
     
     if ( handle_assigned(aEdge) ) 
     {
-      LindstromTurkImpl<Collapse_data> impl(*aParams,aP,aQ,aEdge,opposite_edge(aEdge,aSurface),aSurface);
+      LindstromTurkImpl<Collapse_data> impl(*aParams,aP,aQ,aIsPFixed,aIsQFixed,aEdge,opposite_edge(aEdge,aSurface),aSurface);
       
       r = impl.result() ;               
     }   

@@ -55,13 +55,11 @@ public:
   typedef typename Kernel::Vector_3 Vector ;
   typedef typename Kernel::FT       FT ;
  
-  typedef optional<FT>    Optional_FT ;
-  typedef optional<Point> Optional_point ;
+  typedef optional<FT>     Optional_FT ;
+  typedef optional<Point>  Optional_point ;
+  typedef optional<Vector> Optional_vector ;
   
-  typedef Simple_cartesian<FT> CKernel ;
-  typedef MatrixC33<CKernel>   CMatrix ;
-  typedef Vector_3<CKernel>    CVector ; 
-  
+  typedef MatrixC33<Kernel> Matrix ;
     
 public:
   
@@ -70,6 +68,8 @@ public:
   LindstromTurkImpl( Params const&            aParams
                    , vertex_descriptor const& aP
                    , vertex_descriptor const& aQ
+                   , bool                     aIsPFixed
+                   , bool                     aIsQFixed
                    , edge_descriptor const&   aP_Q
                    , edge_descriptor const&   aQ_P
                    , TSM&                     aSurface 
@@ -83,10 +83,10 @@ private :
   {
     Triangle() {}
     
-    Triangle( CVector const& aNormalV, FT const& aNormalL ) : NormalV(aNormalV), NormalL(aNormalL) {}
+    Triangle( Vector const& aNormalV, FT const& aNormalL ) : NormalV(aNormalV), NormalL(aNormalL) {}
     
-    CVector NormalV ;
-    FT      NormalL ;
+    Vector NormalV ;
+    FT     NormalL ;
   } ;
   
   typedef std::vector<Triangle>          Triangles ;
@@ -94,18 +94,18 @@ private :
 
   struct Boundary
   {
-    Boundary ( CVector const& op_
-             , CVector const& opN_
-             , CVector const& pq_
-             , CVector const& pqN_
-             , CVector const& qr_
-             , CVector const& qrN_
+    Boundary ( Vector const& op_
+             , Vector const& opN_
+             , Vector const& pq_
+             , Vector const& pqN_
+             , Vector const& qr_
+             , Vector const& qrN_
              )
       :
       op(op_), opN(opN_), pq(pq_), pqN(pqN_), qr(qr_), qrN(qrN_)
     {}
       
-    CVector op, opN, pq, pqN, qr, qrN  ;
+    Vector op, opN, pq, pqN, qr, qrN  ;
   } ;
   typedef optional<Boundary> OptionalBoundary ;
   
@@ -115,13 +115,13 @@ private :
   
     Constrians() : n(0), A(NULL_MATRIX), b(NULL_VECTOR) {}
 
-    void Add_if_alpha_compatible( CVector const& Ai, FT const& bi ) ;
+    void Add_if_alpha_compatible( Vector const& Ai, FT const& bi ) ;
   
-    void Add_from_gradient ( CMatrix const& H, CVector const& c ) ;
+    void Add_from_gradient ( Matrix const& H, Vector const& c ) ;
     
-    int     n ;
-    CMatrix A ;
-    CVector b ;
+    int    n ;
+    Matrix A ;
+    Vector b ;
     
   private:
   
@@ -132,10 +132,14 @@ private :
   
 private :
     
-  void Add_boundary_preservation_constrians( OptionalBoundary const& aBdry ) ;
+  void Add_boundary_preservation_constrians( Boundary const& aBdry ) ;
   void Add_volume_preservation_constrians( Triangles const& aTriangles );
   void Add_boundary_and_volume_optimization_constrians( OptionalBoundary const& aBdry, Triangles const& aTriangles ) ;
   void Add_shape_optimization_constrians( Link const& aLink ) ;
+
+  FT Compute_boundary_cost( Vector const& v, Boundary const&  aBdry ) ;
+  FT Compute_volume_cost  ( Vector const& v, Triangles const& aTriangles ) ;
+  FT Compute_shape_cost   ( Point const& p, Link const& aLink ) ;
 
   bool is_border ( edge_descriptor const& edge ) const
   {
@@ -153,38 +157,14 @@ private :
     return get(vertex_point_property,mSurface,v) ;
   }
   
-  static CVector toCVector ( Vector const& v )
-  {
-    return CVector(v.x(),v.y(),v.z());
-  }
   
-  static Vector toVector ( CVector const& cv )
+  static Vector Point_cross_product ( Point const& a, Point const& b ) 
   {
-    Rational_traits<FT> rat ;
-    
-    if (   (rat.denominator(cv.x()) != rat.denominator(cv.y()) )
-        || (rat.denominator(cv.x()) != rat.denominator(cv.z()) ) 
-       )
-         return Vector(rat.numerator  (cv.x()) * rat.denominator(cv.y()) * rat.denominator(cv.z())
-                      ,rat.numerator  (cv.y()) * rat.denominator(cv.x()) * rat.denominator(cv.z())
-                      ,rat.numerator  (cv.z()) * rat.denominator(cv.x()) * rat.denominator(cv.y())
-                      ,rat.denominator(cv.x()) * rat.denominator(cv.y()) * rat.denominator(cv.z())
-                      );
-    else
-         return Vector(rat.numerator(cv.x())
-                      ,rat.numerator(cv.y())
-                      ,rat.numerator(cv.z())
-                      ,rat.denominator(cv.x())
-                      );
-  }
-  
-  static CVector Point_cross_product ( Point const& a, Point const& b ) 
-  {
-    return toCVector(cross_product(a-ORIGIN,b-ORIGIN)); 
+    return cross_product(a-ORIGIN,b-ORIGIN); 
   }
 
   // This is the (uX)(Xu) product described in the Lindstrom-Turk paper
-  static CMatrix LT_product( CVector const& u ) 
+  static Matrix LT_product( Vector const& u ) 
   {
     FT a00 = ( u.y()*u.y() ) + ( u.z()*u.z() ) ;
     FT a01 = -u.x()*u.y();
@@ -198,10 +178,10 @@ private :
     FT a21 = a12 ;
     FT a22 =  ( u.x()*u.x() ) + ( u.y()*u.y() ) ;
   
-    return CMatrix(a00,a01,a02
-                  ,a10,a11,a12
-                  ,a20,a21,a22
-                  );
+    return Matrix(a00,a01,a02
+                 ,a10,a11,a12
+                 ,a20,a21,a22
+                 );
   }
     
   Triangle Get_triangle ( vertex_descriptor const& v0
@@ -232,6 +212,8 @@ private:
 private:    
 
   Constrians mConstrians ;
+  
+  Point mV ;
   
   result_type mResult;   
 

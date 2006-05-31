@@ -45,12 +45,14 @@ public :
 
   result_type operator() ( vertex_descriptor const& aP 
                          , vertex_descriptor const& aQ
+                         , bool                     aIsPFixed
+                         , bool                     aIsQFixed
                          , edge_descriptor   const& aEdge 
                          , TSM                    & aSurface 
                          , Params            const* 
                          ) const
   {
-    return result_type( new Collapse_data(aP,aQ,aEdge,aSurface) ) ;
+    return result_type( new Collapse_data(aP,aQ,aIsPFixed,aIsQFixed,aEdge,aSurface) ) ;
   }                         
   
 };    

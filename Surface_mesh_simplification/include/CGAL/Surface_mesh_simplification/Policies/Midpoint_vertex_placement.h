@@ -44,7 +44,9 @@ public:
     
   typedef Collapse_data_ Collapse_data ;
     
-  typedef typename Collapse_data::Point_3 Point_3 ;
+  typedef typename Collapse_data::TSM                TSM ;
+  typedef typename Collapse_data::vertex_descrirptor vertex_descriptor ;
+  typedef typename Collapse_data::Point_3            Point_3 ;
   
   typedef optional<Point_3> result_type ;
   
@@ -52,7 +54,25 @@ public:
     
   result_type operator()( Collapse_data const& data ) const
   {
-    return result_type(midpoint(data.p()->point(), data.q()->point()));
+    if ( !data.is_edge_fixed() )
+    {
+      Point_3 const& p = get_point(data.p(),data.surface());
+      Point_3 const& q = get_point(data.q(),data.surface());
+      
+      if ( data.is_p_fixed() )
+        return result_type(p) ;
+      else if ( data.is_q_fixed() )
+        return result_type(q); 
+      else 
+        return result_type(midpoint(p,q));
+    }
+    else return result_type();
+  }
+  
+  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface )
+  {
+    vertex_point_t vertex_point ;
+    return get(vertex_point,aSurface,v) ;
   }
 };
 
