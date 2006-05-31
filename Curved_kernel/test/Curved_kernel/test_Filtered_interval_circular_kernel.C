@@ -1,5 +1,7 @@
 #include <CGAL/basic.h>
-#include <CGAL/Exact_circular_kernel.h>
+#include <CGAL/Circular_kernel.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_interval_circular_kernel.h>
 #include <CGAL/intersections.h>
 #include <iostream>
