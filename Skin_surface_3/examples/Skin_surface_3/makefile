@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -O2\
+CXXFLAGS = -g\
            -I.\
            -Idsrpdb/include\
            -I../../include \
@@ -30,7 +30,7 @@ LIBPATH = \
           $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
-LDFLAGS = -O2\
+LDFLAGS = -g\
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)

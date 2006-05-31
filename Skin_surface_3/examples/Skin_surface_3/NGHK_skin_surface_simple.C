@@ -20,7 +20,7 @@ typedef CGAL::Polyhedron_3<K,Poly_items>                      Polyhedron;
 int main(int argc, char *argv[]) {
   if (argc < 2) {
     std::cout << "Usage: " << argv[0] << " <cin-file>" << std::endl;
-    return 1;
+    return 0;
   }
 
   std::list<Weighted_point> l;

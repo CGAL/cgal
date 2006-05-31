@@ -1,30 +1,29 @@
-// NGHK: NOT IN USE FOR NOW
-
 // examples/Skin_surface_3/union_of_balls_simple.C
-#include <CGAL/Skin_surface_traits_3.h>
-#include <CGAL/skin_surface_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Union_of_balls_3.h>
 #include <CGAL/Polyhedron_3.h>
-
+// #include <CGAL/mesh_union_of_balls_3.h>
 #include <list>
 
-typedef CGAL::Skin_surface_traits_3<>                    Skin_surface_traits;
-typedef Skin_surface_traits::Regular_traits              Regular_traits;
-typedef Regular_traits::Bare_point                       Reg_point;
-typedef Regular_traits::Weighted_point                   Reg_weighted_point;
-typedef CGAL::Polyhedron_3<Skin_surface_traits::Polyhedron_traits> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
+typedef CGAL::Union_of_balls_3<Traits>                      Union_of_balls_3;
+typedef Union_of_balls_3::FT                                FT;
+typedef Union_of_balls_3::Weighted_point                    Weighted_point;
+typedef Union_of_balls_3::Bare_point                        Bare_point;
+typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 int main(int argc, char *argv[]) {
-  return 0;
+  std::list<Weighted_point> l;
 
-  std::list<Reg_weighted_point> l;
-  
-  l.push_front(Reg_weighted_point(Reg_point(0,0,0), 1));
-  l.push_front(Reg_weighted_point(Reg_point(0,1,0), 2));
-  l.push_front(Reg_weighted_point(Reg_point(0,0,2), 1));
+  l.push_front(Weighted_point(Bare_point(0,0,0), 1));
+  l.push_front(Weighted_point(Bare_point(0,1,0), 2));
+  l.push_front(Weighted_point(Bare_point(0,0,2), 1));
 
-  Polyhedron p;
-  Skin_surface_traits skin_surface_traits(1);
-  CGAL::skin_surface_3(l.begin(), l.end(), p, skin_surface_traits);
+  Union_of_balls_3 union_of_balls(l.begin(), l.end());
+
+//   Polyhedron p;
+//   CGAL::mesh_union_of_balls_3(union_of_balls, p);
 
   return 0;
 }

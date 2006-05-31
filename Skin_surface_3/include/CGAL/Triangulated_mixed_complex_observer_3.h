@@ -188,9 +188,9 @@ public:
 		     const Surface_RT &s,
 		     const int orient) {
     Q[1] = Q[3] = Q[4] = 0;
-    Q[0] = Q[2] = Q[5] = orient*(1-s);
+    Q[0] = Q[2] = Q[5] = orient/s;
     
-    surf = new Quadratic_surface(Q, c, s*(1-s)*w);
+    surf = new Quadratic_surface(Q, c, w);
   }
 
   void create_hyperboloid(const Surface_point &c,
@@ -198,18 +198,18 @@ public:
 			  const Surface_vector &t,
 			  const Surface_RT &s,
 			  const int orient) {
-    Surface_RT den = t*t;
+    Surface_RT den = t*t*s*(1-s);
     
-    Q[0] = orient*(-  t.x()*t.x()/den + (1-s));
+    Q[0] = orient*(-  t.x()*t.x()/den + 1/s);
     
     Q[1] = orient*(-2*t.y()*t.x()/den);
-    Q[2] = orient*(-  t.y()*t.y()/den + (1-s));
+    Q[2] = orient*(-  t.y()*t.y()/den + 1/s);
     
     Q[3] = orient*(-2*t.z()*t.x()/den);
     Q[4] = orient*(-2*t.z()*t.y()/den);
-    Q[5] = orient*(-  t.z()*t.z()/den + (1-s));
+    Q[5] = orient*(-  t.z()*t.z()/den + 1/s);
     
-    surf = new Quadratic_surface(Q, c, s*(1-s)*w);
+    surf = new Quadratic_surface(Q, c, w);
   }
 
   Surface_RT Q[6];

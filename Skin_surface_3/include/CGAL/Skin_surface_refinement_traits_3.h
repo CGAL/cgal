@@ -176,8 +176,8 @@ private:
 protected:
   Skin_surface const &skin;
   SS_vertex_map triang_vertex_signs;
-  T2P_converter const t2p_converter;
-  P2T_converter const p2t_converter;
+  T2P_converter t2p_converter;
+  P2T_converter p2t_converter;
 };
 
 template <class Polyhedron_3, class SkinSurface_3>
@@ -225,13 +225,13 @@ public:
   
   P_point to_surface(P_vertex_handle vh) 
   {
-    SS_cell_handle ch = Base::skin.locate(Base::p2t_converter(vh->point()));
+    SS_cell_handle ch = Base::skin.locate(p2t_converter(vh->point()));
     return to_surface_along_transversal_segment(vh->point(),ch);
   }
   
   P_vector normal(P_vertex_handle vh) 
   {
-    SS_cell_handle ch = Base::skin.locate(Base::p2t_converter(vh->point()));
+    SS_cell_handle ch = Base::skin.locate(p2t_converter(vh->point()));
     return ch->surf->gradient(vh->point());
   }
 };
