@@ -247,7 +247,7 @@ private:
     const Circular_arc_point_2 &p) const {
     Bbox_2 bb1=a.bbox(),bb2=p.bbox();
     if(do_overlap(bb1,bb2))
-      return CK().has_on_2_object()(a.arc(),p.point());
+      return CK().has_on_2_object()(a,p);
     return false;
   }
 
@@ -255,7 +255,7 @@ public:
   result_type
   operator()(const Circular_arc_2 &a,
     const Circular_arc_point_2 &p ) const {     
-    CGAL_precondition( a.arc().is_x_monotone());
+    CGAL_precondition( a.is_x_monotone());
     return _has_on_2(a,p);
   }
 
@@ -290,7 +290,7 @@ private:
     if(bb12.xmax() < bb22.xmin()) return false;
     if(bb12.ymin() > bb22.ymax()) return false;
     if(bb12.ymax() < bb22.ymin()) return false;
-    return CK().equal_2_object()( a.arc(),b.arc() );
+    return CK().equal_2_object()(a,b);
   }
 
 public:
@@ -341,15 +341,15 @@ private:
   result_type _do_overlap_2(const Arc_2 &a, const Arc_2 &b) const {
     Bbox_2 bb1=a.bbox(),bb2=b.bbox();  
     if(do_overlap(bb1,bb2))
-      return CK().do_overlap_2_object()(a.arc(),b.arc());
+      return CK().do_overlap_2_object()(a,b);
     return false;        
   }
 
 public:
   result_type operator()(const Circular_arc_2 &a, 
     const Circular_arc_2 &b ) const {
-    CGAL_precondition( a.arc().is_x_monotone());
-    CGAL_precondition( b.arc().is_x_monotone());
+    CGAL_precondition( a.is_x_monotone());
+    CGAL_precondition( b.is_x_monotone());
     return _do_overlap_2(a,b); 
   }
 
