@@ -374,7 +374,6 @@ LCPPINCS+= -I$(EXACUS_ROOT)/NumeriX/include
 LCPPINCS+= -I$(EXACUS_ROOT)/Support/include
 LCPPINCS+= -I$(EXACUS_ROOT)/SweepX/include
 LCPPINCS+= -I$(EXACUS_ROOT)/ConiX/include
-LCPPINCS+= -I/usr/local/boost
 LCPPDEFS+= -DHAVE_CONFIG_H -DQT_NO_COMPAT -DQT_CLEAN_NAMESPACE
 LCPPOPTS+= -ftemplate-depth-50 -Wno-deprecated
 endif
