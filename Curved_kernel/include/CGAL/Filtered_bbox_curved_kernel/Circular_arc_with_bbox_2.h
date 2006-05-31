@@ -26,7 +26,6 @@
 #define CGAL_CIRCULAR_ARC_WITH_BBOX_2_H
 
 #include <CGAL/Filtered_bbox_curved_kernel/Circular_arc_endpoint_with_bbox_2.h>
-#include <CGAL/Filtered_bbox_curved_kernel.h>
 #include <CGAL/Bbox_2.h>
 
 CGAL_BEGIN_NAMESPACE
