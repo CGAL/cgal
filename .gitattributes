@@ -323,6 +323,7 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=un
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#unset
+Cubical_gaussian_map_3/include/CGAL/Polyhedral_cgm_polyhedron_3.h -text
 Curved_kernel/Benchmarks/parser/Report.pdf -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.doc -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.pdf -text

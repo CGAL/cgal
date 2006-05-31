@@ -17,7 +17,10 @@
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
-/*!
+#ifndef CGAL_POLYHEDRAL_CGM_H
+#define CGAL_POLYHEDRAL_CGM_H
+
+/*! \file
  * Polyhedral _cgm is a data dtructure that represents a 3D convex polyhedron.
  * This representation represents the 2D surface boundary of the shape. In
  * particular, it represents the 2D polygonal cells that define the 2D surface
@@ -32,23 +35,21 @@
  * a rectangle on each cubic face.
  */
 
-#ifndef CGAL_POLYHEDRAL_CGM_H
-#define CGAL_POLYHEDRAL_CGM_H
-
+#include <CGAL/basic.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_traits_with_normals_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/HalfedgeDS_face_base.h>
 #include <CGAL/Point_3.h>
-#include "CGAL/Aff_transformation_3.h"
+#include <CGAL/Aff_transformation_3.h>
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
 #include <CGAL/Arr_overlay.h>
 #include <CGAL/Cubical_gaussian_map_3.h>
+#include <CGAL/Polyhedral_cgm_polyhedron_3.h>
 #include <CGAL/Polyhedral_cgm_arr_dcel.h>
 #include <CGAL/Polyhedral_cgm_overlay.h>
 #include <CGAL/Polyhedral_cgm_change_notification.h>
@@ -132,12 +133,6 @@ private:
   typedef CGAL::Tag_true                                Tag_true;
   typedef CGAL::Tag_false                               Tag_false;
 
-  // Inexact types:
-  typedef float                                         Approximate_NT;
-  typedef CGAL::Cartesian<Approximate_NT>               Approximate_kernel;
-  typedef Approximate_kernel::Point_3                   Approximate_point_3;
-  typedef Approximate_kernel::Vector_3                  Approximate_vector_3;
-
   /*! Transforms a (planar) facet into a normal */
   struct Normal_vector {
     template <class Facet>
@@ -160,135 +155,10 @@ private:
     }
   };
 
-  // The extended Polyhedron vertex type
-  template <class Refs>
-  struct Polyhedron_3_vertex :
-    public CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Point_3>
-  {
-    typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Point_3> Base;
-    typedef typename Base::Point                                  Point;
-
-    /*! An inexact representation (good for computing the sphere bound and
-     * rendering) \todo move to Cubical_gaussian_map_geo
-     */
-    Approximate_point_3 m_approximate_point;
-
-    /*! Indicates whether it is a marked vertex */
-    bool m_marked;
-
-    /*! Constructor */
-    Polyhedron_3_vertex() : Base(), m_marked(false) {}
-
-    /*! Constructor */
-    Polyhedron_3_vertex(const Point & p) : Base(p), m_marked(false) {}
-
-    /*! Obtain the mutable (geometrical) point */
-    Point & point() { return Base::point(); }
-
-    /*! Obtain the constant (geometrical) point */
-    const Point & point () const { return Base::point(); }
-
-    /* \todo move to Cubical_gaussian_map_geo */
-    void set_approximate_point(const Approximate_point_3 & point)
-    {
-      m_approximate_point = point;
-    }
-
-    /* \todo move to Cubical_gaussian_map_geo */
-    const Approximate_point_3 & get_approximate_point(void) const
-    {
-      return m_approximate_point;
-    }
-
-    /*! Set the "marked" flag */
-    void set_marked(bool marked) { m_marked = marked; }
-
-    /*! Obtain the "marked" flag */
-    bool get_marked() const { return m_marked; }
-  };
-  
-  // The extended Polyhedron halfedge type
-  template <class Refs>
-  struct Polyhedron_3_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-
-    /*! */
-    bool m_flag;
-
-    /*! Indicates whether it is a marked vertex */
-    bool m_marked;
-    
-    /*! */
-    Polyhedron_3_halfedge() : m_flag(false), m_marked(false) {}
-
-    /*! Set the "marked" flag */
-    void set_marked(bool marked) { m_marked = marked; }
-
-    /*! Obtain the "marked" flag */
-    bool get_marked() const { return m_marked; }
-  };
-
-  /*! Represnts a polyhedron facet */
-  template <class Refs>
-  class Polyhedron_3_face :
-    public CGAL::HalfedgeDS_face_base<Refs, Tag_true, Vector_3>
-  {
-  private:
-    /*! */
-    Projected_normal m_dual;
-
-    /*! Indicates whether it is a marked face */
-    bool m_marked;
-
-  public:
-    typedef CGAL::HalfedgeDS_face_base<Refs, Tag_true, Vector_3>        Base;
-    typedef typename Base::Plane                                        Plane;
-
-    /*! Constructor */
-    Polyhedron_3_face() : m_marked(false) {}
-
-    /*! Delegate */
-    Plane & plane() { return Base::plane(); }
-    const Plane & plane() const { return Base::plane(); }
-
-    /*! \brief obtains the dual structure */
-    Projected_normal & get_dual() { return m_dual; }
-
-   /*! Set the "marked" flag */
-    void set_marked(bool marked) { m_marked = marked; }
-
-    /*! Obtain the "marked" flag */
-    bool get_marked() const { return m_marked; }
-
-    /*! Compute the central projection */
-    void compute_projection(void)
-    {
-      m_dual.compute_projection(plane());
-      m_dual.set_is_real(true);
-    }
-  };
-
-  // An items type using my halfedge.
-  struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
-    template <class Refs, class T_Traits>
-    struct Vertex_wrapper {
-      typedef Polyhedron_3_vertex<Refs> Vertex;
-    };
-    template <class Refs, class T_Traits>
-    struct Halfedge_wrapper {
-      typedef Polyhedron_3_halfedge<Refs> Halfedge;
-    };
-    template <class Refs, class T_Traits>
-    struct Face_wrapper {
-      typedef Polyhedron_3_face<Refs> Face;
-    };
-  };
-
 public:
   // Polyhedron public types and methods:
-  
-  typedef CGAL::Polyhedron_traits_with_normals_3<T_Kernel> Polyhedron_traits;
-  typedef CGAL::Polyhedron_3<Polyhedron_traits,Polyhedron_items>
-    Polyhedron;
+  typedef CGAL::Polyhedral_cgm_default_polyhedron_3<T_Kernel, Base>
+                                                        Polyhedron;
   typedef typename Polyhedron::Vertex                   Polyhedron_vertex;
   typedef Point_3                                       Polyhedron_point;
   typedef Vector_3                                      Polyhedron_normal;
@@ -322,37 +192,22 @@ public:
     Polyhedron_halfedge_around_vertex_circulator;
 
   /*! \brief obtains the polyhedral representation of the polyhedron */
-  const Polyhedron & get_polyhedron() const { return m_polyhedron; }
+  const Polyhedron & get_polyhedron() const { return *m_polyhedron; }
 
   /*! \brief returns the polyhedron number of vertices */
   unsigned int polyhedron_size_of_vertices() const
-  { return m_polyhedron.size_of_vertices(); }
+  { return m_polyhedron->size_of_vertices(); }
   
   /*! \brief begin iterator of polyhedron facets */
   Polyhedron_vertex_iterator polyhedron_vertices_begin()
-  { return m_polyhedron.vertices_begin(); }
+  { return m_polyhedron->vertices_begin(); }
 
   /*! \brief end iterator of polyhedron facets */
   Polyhedron_vertex_iterator polyhedron_vertices_end()
-  { return m_polyhedron.vertices_end(); }
+  { return m_polyhedron->vertices_end(); }
 
 private:
   typedef unsigned int *            Coord_index_iter;
-
-  /*! Stores a point in inexact number type in the vertex
-   * \todo move to Cubical_gaussian_map_geo
-   */
-  struct Convert_approximate_point {
-    void operator()(Polyhedron_vertex & vertex)
-    {
-      const Point_3 & point = vertex.point();
-      float x = CGAL::to_double(point.x());
-      float y = CGAL::to_double(point.y());
-      float z = CGAL::to_double(point.z());
-      Approximate_point_3 approximate_point(x, y, z);
-      vertex.set_approximate_point(approximate_point);
-    }
-  };
 
   /*! Add a point */
   template <class HDS, class T_Point_3_iter>
@@ -501,8 +356,11 @@ private:
   /*! Indicated whether the center has been calculated */
   bool m_dirty_center;
   
+  /*! Is the polyhedron internally allocated? */
+  bool m_self_polyhedron;
+  
   /*! The actual polyhedron object */
-  Polyhedron m_polyhedron;
+  Polyhedron * m_polyhedron;
 
   /*! The change notification function object */
   Change_notification * m_change_notification;
@@ -587,12 +445,13 @@ private:
     surface.set_marked_vertex_index(m_marked_vertex_index);
     surface.set_marked_edge_index(m_marked_edge_index);
     surface.set_marked_facet_index(m_marked_facet_index);
-    m_polyhedron.delegate(surface);
+    m_polyhedron->delegate(surface);
 
     // Mark the marked (half) edges:
     unsigned int counter = 0;
     Polyhedron_edge_iterator ei;
-    for (ei = m_polyhedron.edges_begin(); ei != m_polyhedron.edges_end(); ++ei)
+    for (ei = m_polyhedron->edges_begin(); ei != m_polyhedron->edges_end();
+         ++ei)
     {
       if (counter == m_marked_edge_index) {
         // Mark both halfedges:
@@ -603,20 +462,17 @@ private:
     }
 
 #if 0
-    if (!m_polyhedron.normalized_border_is_valid())
-      m_polyhedron.normalize_border();
+    if (!m_polyhedron->normalized_border_is_valid())
+      m_polyhedron->normalize_border();
 #else
-    m_polyhedron.normalize_border();
+    m_polyhedron->normalize_border();
 #endif
 
 #if 1
-    std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-                   m_polyhedron.planes_begin(), Normal_vector());
+    std::transform(m_polyhedron->facets_begin(), m_polyhedron->facets_end(),
+                   m_polyhedron->planes_begin(), Normal_vector());
 #endif
     
-    /*! \todo move to Cubical_gaussian_map_geo */
-    std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
-                  Convert_approximate_point());
     m_dirty_polyhedron = false;
   }
 
@@ -627,15 +483,15 @@ private:
     init_arrangements();
 
     // Compute the central projection of each facet-normal:
-    for (Polyhedron_facet_iterator fi = m_polyhedron.facets_begin();
-         fi != m_polyhedron.facets_end(); ++fi)
+    for (Polyhedron_facet_iterator fi = m_polyhedron->facets_begin();
+         fi != m_polyhedron->facets_end(); ++fi)
     {
       fi->compute_projection();
     }
 
     // Traverse all vertices:
-    for (Polyhedron_vertex_iterator src = m_polyhedron.vertices_begin();
-         src != m_polyhedron.vertices_end(); ++src)
+    for (Polyhedron_vertex_iterator src = m_polyhedron->vertices_begin();
+         src != m_polyhedron->vertices_end(); ++src)
     {
       // For each vertex, traverse incident faces:
       Polyhedron_halfedge_around_vertex_circulator hec = src->vertex_begin();
@@ -644,15 +500,15 @@ private:
       Polyhedron_halfedge_around_vertex_circulator next_hec = hec;
       next_hec++;
       do {
-        if (!next_hec->m_flag) {
+        if (!next_hec->processed()) {
           Projected_normal & dual1 = hec->facet()->get_dual();
           Projected_normal & dual2 = next_hec->facet()->get_dual();
           m_src_vertex = src;
           m_trg_vertex = next_hec->opposite()->vertex();
           m_halfedge = next_hec;
           insert(dual1, dual2, true);
-          next_hec->m_flag = true;
-          next_hec->opposite()->m_flag = true;
+          next_hec->set_processed(true);
+          next_hec->opposite()->set_processed(true);
 
           if (m_change_notification) {
             for (unsigned int i = 0; i < 3; ++i) {
@@ -734,6 +590,8 @@ public:
   Polyhedral_cgm() :
     m_dirty_polyhedron(true),
     m_dirty_center(true),
+    m_self_polyhedron(false),
+    m_polyhedron(NULL),
     m_change_notification(NULL),
     m_marked_vertex_index(0),
     m_marked_edge_index(0),
@@ -744,6 +602,16 @@ public:
 
   /*! Initialize a cubical Gaussian map
    */
+  void init(Polyhedron * polyhedron, Change_notification * cn = NULL)
+  {
+    m_change_notification = cn;
+    m_dirty_polyhedron = false;
+    m_polyhedron = polyhdron;
+    compute_projections();              // compute the central projections
+  }
+  
+  /*! Initialize a cubical Gaussian map
+   */
   template <class Point_3_iterator>  
   void init(const Point_3_iterator & points_begin,
             const Point_3_iterator & points_end,
@@ -752,6 +620,9 @@ public:
             unsigned int num_facets,
             Change_notification * cn = NULL)
   {
+    m_polyhedron = new Polyhedron;
+    m_self_polyhedron = true;
+    
     m_change_notification = cn;
     
     // Update the polyhedron:
@@ -759,7 +630,7 @@ public:
       update_polyhedron(points_begin, points_end, num_points,
                         indices_begin, indices_end, num_facets);
 #if 0
-    std::copy(m_polyhedron.points_begin(), m_polyhedron.points_end(),
+    std::copy(m_polyhedron->points_begin(), m_polyhedron->points_end(),
               std::ostream_iterator<Point_3>(std::cout, "\n"));
 #endif
 
@@ -774,13 +645,18 @@ public:
   }
   
   /*! Destructor */
-  virtual ~Polyhedral_cgm() { clear(); }
+  virtual ~Polyhedral_cgm()
+  {
+    clear();
+    if (m_self_polyhedron) delete m_polyhedron;
+    m_polyhedron = NULL;
+  }
 
   /*! \brief clears the internal representation and auxiliary data structures
    */
   void clear()
   {
-    m_polyhedron.clear();
+    m_polyhedron->clear();
     m_dirty_polyhedron = true;
     m_dirty_center = true;
     Base::clear();
@@ -1097,9 +973,9 @@ public:
   
 #if 0
     if (!m_dirty_polyhedron) {
-      CGAL_assertion(vertices_num == m_polyhedron.size_of_vertices());
-      CGAL_assertion(edges_num == m_polyhedron.size_of_halfedges()/2);
-      CGAL_assertion(faces_num == m_polyhedron.size_of_facets());
+      CGAL_assertion(vertices_num == m_polyhedron->size_of_vertices());
+      CGAL_assertion(edges_num == m_polyhedron->size_of_halfedges()/2);
+      CGAL_assertion(faces_num == m_polyhedron->size_of_facets());
     }
 #endif
   }

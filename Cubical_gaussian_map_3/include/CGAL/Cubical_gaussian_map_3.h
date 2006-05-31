@@ -1684,7 +1684,7 @@ public:
       Arr & arr = m_arrangements[i];
       Arr_vertex_iterator vit;
       for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-        if (!vit->get_location() ==  Arr_vertex::Corner) continue;
+        if (vit->get_location() !=  Arr_vertex::Corner) continue;
         for (unsigned int j = 0; j < NUM_CORNERS; ++j) {
           if (get_corner_point(j) == vit->point()) {
             m_corner_vertices[i][j] = vit;
