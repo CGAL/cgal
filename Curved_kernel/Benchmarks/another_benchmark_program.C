@@ -148,6 +148,7 @@ void do_main(char *s) {
 
 int main(){
 
+  // Set the dxf_files correctly
   char* dxf_filename[] = { "DXF/51.dxf",
                            "DXF/cad_l1.dxf",
                            "DXF/cad_l2.dxf",
@@ -157,6 +158,7 @@ int main(){
                            "DXF/elekonta.dxf",
                            "DXF/netlist_signal_1.dxf",
                            "DXF/painttrack.dxf" };   	
+  // Do some Benchs
   //do_main<AHCircularKernel,AHCircVariantTraits,
   //  AHCircVarContainer>(dxf_filename[7]);
   //do_main<BBCircularKernel,BBCircVariantTraits, 
