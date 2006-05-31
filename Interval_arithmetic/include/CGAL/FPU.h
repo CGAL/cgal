@@ -315,15 +315,14 @@ typedef unsigned long FPU_CW_t;
 #define CGAL_FE_UPWARD      FE_UPWARD 
 #define CGAL_FE_DOWNWARD    FE_DOWNWARD 
 
-#elif defined _MSC_VER
-// Found in http://msdn.microsoft.com/library/sdkdoc/directx/imover_7410.htm :
-#define CGAL_IA_SETFPCW(CW) __asm fldcw (CW)
-#define CGAL_IA_GETFPCW(CW) __asm fstcw (CW)
+#elif defined ( _MSC_VER ) 
+#define CGAL_IA_SETFPCW(CW) _controlfp (CW, _MCW_RC )
+#define CGAL_IA_GETFPCW(CW) CW = _controlfp (0, _MCW_RC )
 typedef unsigned short FPU_CW_t;
-#define CGAL_FE_TONEAREST    (0x0   | 0x127f)
-#define CGAL_FE_TOWARDZERO   (0xC00 | 0x127f)
-#define CGAL_FE_UPWARD       (0x800 | 0x127f)
-#define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
+#define CGAL_FE_TONEAREST    _RC_NEAR
+#define CGAL_FE_TOWARDZERO   _RC_CHOP
+#define CGAL_FE_UPWARD       _RC_UP
+#define CGAL_FE_DOWNWARD     _RC_DOWN
 
 #elif defined __BORLANDC__
 #define CGAL_IA_SETFPCW(CW) _control87(CW,~0)
