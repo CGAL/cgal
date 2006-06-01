@@ -26,6 +26,7 @@
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
 #include <CGAL/Curved_kernel/internal_functions_on_circle_2.h>
+#include <CGAL/Interval_arithmetic.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -1022,6 +1023,8 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
   {	
     typedef typename CK::Root_of_2 	   Root_of_2;
     typedef typename CK::FT 		   FT;
+    typedef CGAL::Interval_nt<false>::Protector IntervalProtector;
+    typedef CGAL::Interval_nt<false> Interval; 
 
     if(a.is_x_monotone()) {
 	// The arc is xy-monotone so we just add the bboxes of the endpoints
@@ -1035,7 +1038,22 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
       Bbox_2 
 	left_bb  = a.left().bbox(), 
 	right_bb = a.right().bbox();
-      
+
+      IntervalProtector ip;
+      Interval cy = to_interval(a.center().y());
+      Interval r2 = to_interval(a.squared_radius());
+      Interval r = CGAL::sqrt(r2);
+
+      double ymin, ymax;
+
+      if(is_on_upper) {
+        ymin = CGAL::min(left_bb.ymin(),right_bb.ymin());
+        ymax = cy.sup() + r.sup();
+      } else {
+        ymin = cy.inf() - r.sup();
+        ymax = CGAL::max(left_bb.ymax(),right_bb.ymax());
+      }
+      /*
       double ymin = (is_on_upper) ? 
 	CGAL::min(left_bb.ymin(),right_bb.ymin()) :
 	to_interval
@@ -1044,8 +1062,31 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 	to_interval
 	( CircularFunctors::y_extremal_point<CK>(a.supporting_circle(),false).y() ).second :
 	CGAL::max(left_bb.ymax(),right_bb.ymax()); 
-      
+      */
       return Bbox_2(left_bb.xmin(),ymin,right_bb.xmax(),ymax);
+    }
+
+    if(a.is_y_monotone()) {
+      bool is_on_left = a.on_left_part();
+      IntervalProtector ip;
+      Bbox_2 
+	left_bb  = a.left().bbox(), 
+	right_bb = a.right().bbox();
+      Interval cx = to_interval(a.center().x());
+      Interval r2 = to_interval(a.squared_radius());
+      Interval r = CGAL::sqrt(r2); 
+      double xmin, xmax;
+      if(is_on_left) {
+        xmax = right_bb.xmax(); 
+        xmin = cx.inf() - r.sup();
+      } else {
+        xmax = cx.sup() + r.sup();
+        xmin = left_bb.xmin();
+      }
+      return Bbox_2(xmin,
+                    CGAL::min(left_bb.ymin(),right_bb.ymin()),
+                    xmax,
+                    CGAL::max(left_bb.ymax(),right_bb.ymax()));
     }
 	
     // Else return the bounding box of the circle.
