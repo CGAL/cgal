@@ -178,7 +178,10 @@ inline double IA_bug_sqrt(double d)
   }
   return d;
 }
+
 #  define CGAL_BUG_SQRT(d) CGAL::IA_bug_sqrt(d)
+
+
 #elif defined __SSE2_MATH__
 // For SSE2, we need to call __builtin_sqrt() instead of libc's sqrt().
 #  define CGAL_BUG_SQRT(d) __builtin_sqrt(d)
@@ -317,7 +320,7 @@ typedef unsigned long FPU_CW_t;
 
 #elif defined ( _MSC_VER ) 
 #define CGAL_IA_SETFPCW(CW) _controlfp (CW, _MCW_RC )
-#define CGAL_IA_GETFPCW(CW) CW = _controlfp (0, _MCW_RC )
+#define CGAL_IA_GETFPCW(CW) CW = _controlfp (0, 0 ) &  _MCW_RC
 typedef unsigned short FPU_CW_t;
 #define CGAL_FE_TONEAREST    _RC_NEAR
 #define CGAL_FE_TOWARDZERO   _RC_CHOP
@@ -409,7 +412,7 @@ struct Protect_FPU_rounding<false>
 {
   Protect_FPU_rounding()
   {
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+    //    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
   }
 
   Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_UPWARD*/)
