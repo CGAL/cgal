@@ -43,15 +43,40 @@ namespace CGALi {
     typedef typename CK::Circle_2                  Circle_2;
     typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
+    typedef struct bit_field {
+      unsigned short int is_full:2;
+      unsigned short int Cache_minmax:2;
+      unsigned short int is_x_monotonic:2;
+      unsigned short int is_y_monotonic:2;
+      unsigned short int is_on_upper_part:2;
+      unsigned short int is_on_left_part:2;
+    } bit_field;
+
+  private:
+
+  // set flags to 0
+  // when 1 bit -> 0 = false, 1 = true
+  // when 2 bits -> 0 = don_know, 1 = false or 's' (Cache_minmax), 
+  //                              2 = true or 't' (Cache_minmax)
+  void reset_flags() {
+    flags.is_full = 0;
+    flags.Cache_minmax = 0;
+    flags.is_x_monotonic = 0;
+    flags.is_y_monotonic = 0;
+    flags.is_on_upper_part = 0;
+    flags.is_on_left_part = 0;
+  }
 
   public:
 
     Circular_arc_2() {}
 
     Circular_arc_2(const Circle_2 &c)
-      : _support(c), Cache_minmax('s'), Cache_full('y')
+      : _support(c)
     {
-
+      reset_flags();           // example
+      flags.is_full = 2;       // is_full = true
+      flags.Cache_minmax = 1;  // Cache_minmax = 's'
       _begin = _end  = 
 	CircularFunctors::x_extremal_point<CK>(supporting_circle(),true); 
       
@@ -59,8 +84,7 @@ namespace CGALi {
 
     Circular_arc_2(const Circle_2 &support,
                    const Line_2 &l1, bool b1,
-                   const Line_2 &l2, bool b2) 
-      : Cache_minmax('n'), Cache_full('n')
+                   const Line_2 &l2, bool b2)
     {
       Point_2 center1 (support.center().x() + l1.a()/2,
                        support.center().y() + l1.b()/2);
@@ -94,8 +118,9 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &c,
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
-      : _support(c) , Cache_minmax('n'), Cache_full('n')
+      : _support(c)
     {
+      reset_flags();
       if (c1 != c2) {
 	_begin = CGAL::circle_intersect<CK>(c, c1, b_1);
 	_end = CGAL::circle_intersect<CK>(c, c2, b_2);
@@ -142,8 +167,9 @@ namespace CGALi {
     // by b_cut
     Circular_arc_2(const Circular_arc_2 &A, const bool b,
 		   const Circle_2 &ccut, const bool b_cut)
-      : _support(A.supporting_circle()), Cache_minmax('n'), Cache_full('n')
+      : _support(A.supporting_circle())
     {
+      reset_flags();
       CGAL_kernel_precondition(A.is_x_monotone());
       CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
       
@@ -170,10 +196,10 @@ namespace CGALi {
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &middle,
                    const Point_2 &end)
-      : _begin(begin), _end(end), Cache_minmax('n'), Cache_full('n')
+      : _begin(begin), _end(end)
     {
+      reset_flags();
       CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
-      
       _support = Circle_2(begin, middle, end);
       /*
        *  Circle_2 c = Circle_2(begin, middle, end);
@@ -189,9 +215,9 @@ namespace CGALi {
     Circular_arc_2(const Circle_2 &support,
 		   const Circular_arc_point_2 &source,
 		   const Circular_arc_point_2 &target)
-      : _begin(source), _end(target), _support(support), 
-	Cache_minmax('n'), Cache_full('n')
+      : _begin(source), _end(target), _support(support)
     {
+      reset_flags();
       // We cannot enable these preconditions for now, since the 
       // Lazy_curved_kernel
       // calls it on the Interval kernel without try/catch protection
@@ -203,8 +229,9 @@ namespace CGALi {
     Circular_arc_2(const Point_2 &begin,
                    const Point_2 &end,
 		   const FT &bulge)
-      : _begin(begin), _end(end), Cache_minmax('n'), Cache_full('n')
+      : _begin(begin), _end(end)
     {
+      reset_flags();
       const FT sqr_bulge = CGAL::square(bulge);
       const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
       const FT x_coord = (begin.x() + end.x())/FT(2)
@@ -223,10 +250,9 @@ namespace CGALi {
     // If _begin == _end, then it's the full circle
     Circular_arc_point_2  _begin, _end;
     Circle_2 _support;
+    mutable bit_field flags;
 
   public:
-    mutable char Cache_minmax;
-    mutable char Cache_full; 
     // to remember if the arc was constructed from a full circle
     
     const Circular_arc_point_2 & left() const
@@ -234,15 +260,15 @@ namespace CGALi {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
 			       : compare_xy(_begin,_end)<0);
-      if (Cache_minmax == 's')
+      if (flags.Cache_minmax == 1)
 	return _end;
-      if (Cache_minmax == 't')
+      if (flags.Cache_minmax == 2)
 	return _begin;
       if (on_upper_part()) {
-	Cache_minmax = 's';
+        flags.Cache_minmax = 1;
 	return _end;
       }
-      Cache_minmax = 't';
+      flags.Cache_minmax = 2;
       return  _begin;
     }
 
@@ -251,15 +277,15 @@ namespace CGALi {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
 			       : compare_xy(_begin,_end)<0);
-      if (Cache_minmax == 's')
+      if (flags.Cache_minmax == 1)
 	return _begin;
-      if (Cache_minmax == 't')
+      if (flags.Cache_minmax == 2)
 	return _end;
       if (on_upper_part()) {
-	Cache_minmax = 's';
+	flags.Cache_minmax = 1;
 	return _begin;
       }
-      Cache_minmax = 't';
+      flags.Cache_minmax = 2;
       return  _end;
     }
 
@@ -274,13 +300,12 @@ namespace CGALi {
     }
     
     inline const bool is_full() const {
-      return Cache_full == 'y';
+      return flags.is_full == 2;
     }
 
-    bool is_x_monotone() const
+    bool _is_x_monotone() const
     {
-      if (Cache_full == 'y' )
-	return false;
+      if (is_full()) return false;
       
       int cmp_begin = CGAL::compare(_begin.y(), center().y());
       int cmp_end   = CGAL::compare(_end.y(),   center().y());
@@ -306,9 +331,22 @@ namespace CGALi {
 
       return cmp_x != 0; // full circle or half circle.
     }
+
+    bool is_x_monotone() const {
+      if(flags.is_x_monotonic == 0) {
+        bool b = _is_x_monotone();
+        if(b) flags.is_x_monotonic = 2;
+        else flags.is_x_monotonic = 1;
+        return b;
+      } else {
+        return (flags.is_x_monotonic == 1) ? false : true;
+      }
+    }  
     
-    bool is_y_monotone() const
+    bool _is_y_monotone() const
     {
+      if (is_full()) return false;
+
       int cmp_begin = CGAL::compare(_begin.x(), center().x());
       int cmp_end   = CGAL::compare(_end.x(),   center().x());
       
@@ -333,21 +371,68 @@ namespace CGALi {
       return cmp_y != 0; // full circle or half circle.
     }
 
-    bool on_upper_part() const
+    bool is_y_monotone() const {
+      if(flags.is_y_monotonic == 0) {
+        bool b = _is_y_monotone();
+        if(b) flags.is_y_monotonic = 2;
+        else flags.is_y_monotonic = 1;
+        return b;
+      } else {
+        return (flags.is_y_monotonic == 1) ? false : true;
+      }
+    }
+
+    bool _on_upper_part() const
     // check whether the endpoints are above or below the center
     { 
       CGAL_kernel_precondition(is_x_monotone());
-      
-      int begin_y = 
-	CGAL::compare(_begin.y(), supporting_circle().center().y());
-      int end_y   = 
-	CGAL::compare(_end.y(),   supporting_circle().center().y());
-
-      if (begin_y == 0 && end_y == 0)
-        return compare_x(_begin, _end) > 0;
-
-      return begin_y > 0 || end_y > 0;
+      int c1y = CGAL::compare(_begin.y(),
+        supporting_circle().center().y());
+      if(c1y > 0) return true;
+      if(c1y < 0) return false;
+      int c2y = CGAL::compare(_end.y(),
+        supporting_circle().center().y());
+      if(c2y > 0) return true;
+      if(c2y < 0) return false;
+      return compare_x(_begin, _end) > 0;
     }
+
+    bool on_upper_part() const {
+      if(flags.is_on_upper_part == 0) {
+        bool b = _on_upper_part();
+        if(b) flags.is_on_upper_part = 2;
+        else flags.is_on_upper_part = 1;
+        return b;
+      } else {
+        return (flags.is_on_upper_part == 1) ? false : true;
+      }
+    }
+
+    bool _on_left_part() const
+    // check whether the endpoints are at left or right from the center
+    { 
+      CGAL_kernel_precondition(is_y_monotone());
+      int c1x = CGAL::compare(_begin.x(), 
+        supporting_circle().center().x());
+      if(c1x < 0) return true;
+      if(c1x > 0) return false;
+      int c2x = CGAL::compare(_end.x(), 
+        supporting_circle().center().x());
+      if(c2x < 0) return true;
+      if(c2x > 0) return false;
+      return compare_y(_begin, _end) > 0;
+    }
+
+    bool on_left_part() const {
+      if(flags.is_on_left_part == 0) {
+        bool b = _on_left_part();
+        if(b) flags.is_on_left_part = 2;
+        else flags.is_on_left_part = 1;
+        return b;
+      } else {
+        return (flags.is_on_left_part == 1) ? false : true;
+      }
+    } 
 
     const Circle_2 & supporting_circle() const           
     {
