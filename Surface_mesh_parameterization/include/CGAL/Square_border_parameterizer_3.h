@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -181,7 +181,7 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     // map to [0,4[
     double len = 0.0;           // current position on square in [0, total_len[
     Offset_map offset;          // vertex index -> offset map
-    offset.reserve(mesh.count_mesh_vertices());
+    offset.resize(mesh.count_mesh_vertices());
     Border_vertex_iterator it;
     for(it = mesh.mesh_main_border_vertices_begin();
         it != mesh.mesh_main_border_vertices_end();
