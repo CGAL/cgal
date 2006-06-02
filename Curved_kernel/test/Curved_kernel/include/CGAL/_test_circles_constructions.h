@@ -174,11 +174,17 @@ void _test_circle_construct(CK ck)
   Circular_arc_2 circ_arc_2_1_part_low(circ_intersections_2_1,
 				       line_horizontal, true,
 				       line_horizontal, false);
+  //////////////if(circ_arc_2_1_low_part_high.center() == 
+  //////////////   circ_arc_2_1_part_low.center()) {
+  //////////////  std::cout << "OH NO!" << std::endl;    	
+  //////////////} else std::cout << "OK" << std::endl;    	
+  
   std::vector< CGAL::Object > 
     vector_for_intersection_3;
   theConstruct_intersect_2(circ_arc_2_1_part_low, 
 			   circ_arc_2_1_low_part_high,
 			   std::back_inserter(vector_for_intersection_3));
+  /////////////std::cout << "The size: " << vector_for_intersection_3.size() << std::endl;			   
   assert(vector_for_intersection_3.size() == 2);
   assign(the_pair, vector_for_intersection_3[0]);
   assert(the_pair.second == 1u);
@@ -239,6 +245,7 @@ void _test_circle_construct(CK ck)
 	 );
   std::cout << "Intersection : overlap on a circular arc" << std::endl;
   Circular_arc_2 circ_arc_in_overlap;
+  Circular_arc_2 circ_arc_in_overlap_2;
   std::vector< CGAL::Object > 
     vector_for_intersection_overlap_1_1;
   theConstruct_intersect_2(circ_arc_overlap_2, 
@@ -311,7 +318,33 @@ void _test_circle_construct(CK ck)
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
 
-  
+    std::cout << "arcos:" << std::endl;
+
+  std::cout << "arco1:" << std::endl;  
+  std::cout << "squared_radius = " << 
+  to_double(circ_arc_overlap_upper_part.squared_radius()) << std::endl <<
+  "center = (" << 
+  to_double(circ_arc_overlap_upper_part.center().x()) << ", " <<
+  to_double(circ_arc_overlap_upper_part.center().y()) << ")"  << std::endl;
+  std::cout << "source = (" << 
+  to_double(circ_arc_overlap_upper_part.source().x()) << ", " <<
+  to_double(circ_arc_overlap_upper_part.source().y()) << ")"  << std::endl;
+  std::cout << "target = (" << 
+  to_double(circ_arc_overlap_upper_part.target().x()) << ", " <<
+  to_double(circ_arc_overlap_upper_part.target().y()) << ")"  << std::endl;
+
+  std::cout << "arco2:" << std::endl;  
+  std::cout << "squared_radius = " << 
+  to_double(circ_arc_overlap_lower_part.squared_radius()) << std::endl <<
+  "center = (" << 
+  to_double(circ_arc_overlap_lower_part.center().x()) << ", " <<
+  to_double(circ_arc_overlap_lower_part.center().y()) << ")"  << std::endl;
+  std::cout << "source = (" << 
+  to_double(circ_arc_overlap_lower_part.source().x()) << ", " <<
+  to_double(circ_arc_overlap_lower_part.source().y()) << ")"  << std::endl;
+  std::cout << "target = (" << 
+  to_double(circ_arc_overlap_lower_part.target().x()) << ", " <<
+  to_double(circ_arc_overlap_lower_part.target().y()) << ")"  << std::endl;
 
   std::cout << "Intersection : overlap in two points: " <<
     "lower_part_arc , upper_part_arc" << std::endl;
@@ -322,13 +355,22 @@ void _test_circle_construct(CK ck)
 			   std::back_inserter(vector_for_intersection_overlap_3_1));
   
   assert(vector_for_intersection_overlap_3_1.size() == 2);
-  assign(the_pair, vector_for_intersection_overlap_3_1[0]);
+
+  assign(the_pair, vector_for_intersection_overlap_3_1[0]); // apagar depois
+  std::cout << "res1 = (" << 
+  to_double(the_pair.first.x()) << ", " <<
+  to_double(the_pair.first.y()) << ")"  << std::endl;
+  assign(the_pair, vector_for_intersection_overlap_3_1[1]);
+  std::cout << "res2 = (" << 
+  to_double(the_pair.first.x()) << ", " <<
+  to_double(the_pair.first.y()) << ")"  << std::endl;
+
+  assign(the_pair, vector_for_intersection_overlap_3_1[0]); 
   assert(the_pair.first == circ_arc_overlap_lower_part.source());
   //assert(the_pair.first.is_left());
-  assign(the_pair, vector_for_intersection_overlap_3_1[1]);
+  assign(the_pair, vector_for_intersection_overlap_3_1[1]); 
   assert(the_pair.first == circ_arc_overlap_lower_part.target());
   //assert(!the_pair.first.is_left());
-  
   std::vector< CGAL::Object > 
     vector_for_intersection_overlap_3_2;
   theConstruct_intersect_2(circ_arc_overlap_lower_part, 
@@ -526,6 +568,37 @@ void _test_circle_construct(CK ck)
  			   circ_arc_no_x_monotone_4,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_2_3));
   std::cout << vector_for_intersection_no_x_monotone_2_3.size() << std::endl;
+
+    std::cout << "arcos:" << std::endl;
+
+  std::cout << "arco1:" << std::endl;  
+  std::cout << "squared_radius = " << 
+  to_double(circ_arc_no_x_monotone_1.squared_radius()) << std::endl <<
+  "center = (" << 
+  to_double(circ_arc_no_x_monotone_1.center().x()) << ", " <<
+  to_double(circ_arc_no_x_monotone_1.center().y()) << ")"  << std::endl;
+  std::cout << "source = (" << 
+  to_double(circ_arc_no_x_monotone_1.source().x()) << ", " <<
+  to_double(circ_arc_no_x_monotone_1.source().y()) << ")"  << std::endl;
+  std::cout << "target = (" << 
+  to_double(circ_arc_no_x_monotone_1.target().x()) << ", " <<
+  to_double(circ_arc_no_x_monotone_1.target().y()) << ")"  << std::endl;
+
+  std::cout << "arco2:" << std::endl;  
+  std::cout << "squared_radius = " << 
+  to_double(circ_arc_no_x_monotone_4.squared_radius()) << std::endl <<
+  "center = (" << 
+  to_double(circ_arc_no_x_monotone_4.center().x()) << ", " <<
+  to_double(circ_arc_no_x_monotone_4.center().y()) << ")"  << std::endl;
+  std::cout << "source = (" << 
+  to_double(circ_arc_no_x_monotone_4.source().x()) << ", " <<
+  to_double(circ_arc_no_x_monotone_4.source().y()) << ")"  << std::endl;
+  std::cout << "target = (" << 
+  to_double(circ_arc_no_x_monotone_4.target().x()) << ", " <<
+  to_double(circ_arc_no_x_monotone_4.target().y()) << ")"  << std::endl;  
+
+  std::cout << vector_for_intersection_no_x_monotone_2_3.size() << std::endl;
+
   assert(vector_for_intersection_no_x_monotone_2_3.size() == 2);
   assert(assign(circ_arc_in_overlap,
 		vector_for_intersection_no_x_monotone_2_3[0]));
@@ -590,9 +663,12 @@ void _test_circle_construct(CK ck)
 			    std::back_inserter(vector_for_intersection_no_x_monotone_2_6));
   std::cout << vector_for_intersection_no_x_monotone_2_6.size() << std::endl;
   assert(vector_for_intersection_no_x_monotone_2_6.size() == 2);
-  assert(assign(circ_arc_in_overlap,
-		vector_for_intersection_no_x_monotone_2_6[0]));
-  assert(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_7.source());
+  assign(circ_arc_in_overlap,vector_for_intersection_no_x_monotone_2_6[0]);
+  assign(circ_arc_in_overlap_2,vector_for_intersection_no_x_monotone_2_6[1]);
+  assert((circ_arc_in_overlap.source() == circ_arc_no_x_monotone_7.source() &&
+          circ_arc_in_overlap.target() == circ_arc_no_x_monotone_4.target()) ||
+         (circ_arc_in_overlap_2.source() == circ_arc_no_x_monotone_7.source() &&
+          circ_arc_in_overlap_2.target() == circ_arc_no_x_monotone_4.target()));
   std::cout << "source4 : " << std::endl
 	    << circ_arc_no_x_monotone_4.source() << std::endl
 	    << "target4 : " << std::endl
@@ -602,21 +678,22 @@ void _test_circle_construct(CK ck)
 	    << "target7 : " << std::endl
 	    << circ_arc_no_x_monotone_7.target() << std::endl;
   std::cout << "res source : " << std::endl
-	    <<circ_arc_in_overlap.source() << std::endl 
+	    << circ_arc_in_overlap.source() << std::endl 
 	    << "res target : " << std::endl
 	    << circ_arc_in_overlap.target() << std::endl;
-  assert(circ_arc_in_overlap.target() == circ_arc_no_x_monotone_4.target());
   assert(circ_arc_in_overlap.is_x_monotone());
-  assert(assign(circ_arc_in_overlap,
-		vector_for_intersection_no_x_monotone_2_6[1]));
   std::cout << "res source : " << std::endl
-	    <<circ_arc_in_overlap.source() << std::endl 
+	    << circ_arc_in_overlap.source() << std::endl 
 	    << "res target : " << std::endl
 	    << circ_arc_in_overlap.target() << std::endl;
-  assert(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_4.source());
-  assert(circ_arc_in_overlap.target() == circ_arc_no_x_monotone_7.target());
-  
-
+  if(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_7.source() &&
+          circ_arc_in_overlap.target() == circ_arc_no_x_monotone_4.target()) {
+    assert(circ_arc_in_overlap_2.source() == circ_arc_no_x_monotone_4.source());
+    assert(circ_arc_in_overlap_2.target() == circ_arc_no_x_monotone_7.target());
+  } else {
+    assert(circ_arc_in_overlap.source() == circ_arc_no_x_monotone_4.source());
+    assert(circ_arc_in_overlap.target() == circ_arc_no_x_monotone_7.target());
+  }
   
   //Make_x_monotone_2 with a full circle
   Make_x_monotone_2 theMake_x_monotone = ck.make_x_monotone_2_object();
