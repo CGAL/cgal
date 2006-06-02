@@ -379,6 +379,7 @@ namespace CircularFunctors {
       int cmp_ps = CircularFunctors::compare_x<CK>(p,a.source());
       int cmp_pt = CircularFunctors::compare_x<CK>(p,a.target());
       if(cmp_ps == cmp_pt) return true;
+      if((!cmp_ps) || (!cmp_pt)) return true;
       int cmp = CGAL::compare(p.y(), a.supporting_circle().center().y());
       return  cmp == 0 || (cmp < 0 &&  a.complementary_on_upper_part())
                      || (cmp > 0 && !a.complementary_on_upper_part());
@@ -389,10 +390,11 @@ namespace CircularFunctors {
       int cmp = CGAL::compare(p.x(), a.supporting_circle().center().x());
       return  cmp == 0 || (cmp < 0 &&  a.on_left_part())
                        || (cmp > 0 && !a.on_left_part());
-    } else if(a.is_complementary_y_monotone()) {
+    } else if(a.is_complementary_y_monotone()) {      
       int cmp_ps = CircularFunctors::compare_y<CK>(p,a.source());
       int cmp_pt = CircularFunctors::compare_y<CK>(p,a.target());
       if(cmp_ps == cmp_pt) return true;
+      if((!cmp_ps) || (!cmp_pt)) return true;       
       int cmp = CGAL::compare(p.x(), a.supporting_circle().center().x());
       return  cmp == 0 || (cmp > 0 && a.complementary_on_left_part())
                      || (cmp < 0 && !a.complementary_on_left_part());
@@ -437,7 +439,7 @@ namespace CircularFunctors {
     return ;
   }
 
-  /*template< class CK, class OutputIterator>
+  template< class CK, class OutputIterator>
   OutputIterator
   intersect_2( const typename CK::Circular_arc_2 &a1,
 	       const typename CK::Circular_arc_2 &a2,
@@ -445,7 +447,7 @@ namespace CircularFunctors {
   {
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
-
+  
     if((a1.squared_radius() == a2.squared_radius()) &&
        (a1.center() == a2.center())) {
       if(a1.is_full()) {
@@ -457,8 +459,43 @@ namespace CircularFunctors {
         return res;
       } 
       bool t2_in_a1 = has_on<CK>(a1,a2.target(),true);
-      bool s2_in_a1 = has_on<CK>(a1,a2.source(),true);
+      bool s2_in_a1 = has_on<CK>(a1,a2.source(),true);      
       if(t2_in_a1 && s2_in_a1) {
+        bool t1_in_a2 = has_on<CK>(a2,a1.target(),true);
+        bool s1_in_a2 = has_on<CK>(a2,a1.source(),true);
+        if(t1_in_a2 && s1_in_a2) {
+          if(CircularFunctors::compare_xy<CK>(a1.source(), a2.source()) < 0) {
+            if(a1.source() == a2.target()) {
+              *res++ = make_object(std::make_pair(a1.source(),1u));
+            } else {
+              const Circular_arc_2 & arc =
+	      Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
+	      *res++ = make_object(arc);
+            }
+            if(a2.source() == a1.target()) {
+              *res++ = make_object(std::make_pair(a2.source(),1u));
+            } else {
+              const Circular_arc_2 & arc =
+	      Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
+	      *res++ = make_object(arc);
+            }
+          } else {
+            if(a2.source() == a1.target()) {
+              *res++ = make_object(std::make_pair(a2.source(),1u));
+            } else {
+              const Circular_arc_2 & arc =
+	      Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
+	      *res++ = make_object(arc);
+            }
+            if(a1.source() == a2.target()) {
+              *res++ = make_object(std::make_pair(a1.source(),1u));
+            } else {
+              const Circular_arc_2 & arc =
+	      Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
+	      *res++ = make_object(arc);
+            } 
+          } return res;
+        }
 	*res++ = make_object(a2);
         return res;
       }
@@ -505,11 +542,11 @@ namespace CircularFunctors {
       }
       return res;
     }
-  }*/
+  }
 
 
   // !!!! a lot of useless assertions for debug
-  template< class CK, class OutputIterator>
+  /*template< class CK, class OutputIterator>
   OutputIterator
   intersect_2( const typename CK::Circular_arc_2 &a1,
 	       const typename CK::Circular_arc_2 &a2,
@@ -786,7 +823,7 @@ namespace CircularFunctors {
 	return res;
       }
     }
-  }
+  }*/
 
   template < class CK >
   bool
@@ -1152,8 +1189,6 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
     typedef typename CK::FT 		   FT;
     typedef CGAL::Interval_nt<false>::Protector IntervalProtector;
     typedef CGAL::Interval_nt<false> Interval; 
-
-    std::cout << "Hello!" << std::endl; 
 
     if(a.is_x_monotone()) {
 	// The arc is xy-monotone so we just add the bboxes of the endpoints
