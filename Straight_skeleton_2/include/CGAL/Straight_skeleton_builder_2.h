@@ -785,9 +785,7 @@ public:
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Straight_skeleton_builder_2.C>
-#endif
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_2_impl.h>
 
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //

@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include/ \
         $(CGAL_CXXFLAGS) \
-	$(LONG_NAME_PROBLEM_CXXFLAGS) 
+	$(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
