@@ -26,6 +26,7 @@
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
 #include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
+#include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -72,10 +73,13 @@ namespace CircularFunctors {
   template < class CK >
   bool
   has_on(const typename CK::Line_arc_2 &a,
-	 const typename CK::Circular_arc_point_2 &p)
+	 const typename CK::Circular_arc_point_2 &p,
+         const bool has_on_supporting_line = false)
   {
-    if ( ! CGAL::LinearFunctors::has_on<CK>(a.supporting_line(),p) )
-      return false;
+    if(!has_on_supporting_line) {
+      if(!CGAL::LinearFunctors::has_on<CK>(a.supporting_line(),p))
+        return false;
+    }
     
     return (CircularFunctors::compare_xy<CK>(p, a.source()) != CircularFunctors::compare_xy<CK>(p, a.target()));
   }
@@ -292,6 +296,7 @@ namespace CircularFunctors {
     typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Root_of_2                Root_of_2;
     typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
+    // We can make the comparison below clevered
     if ((a1.supporting_line() == a2.supporting_line())
 	|| (a1.supporting_line() == a2.supporting_line().opposite())) {
       if(compare_xy(a1.left(),a2.left()) < 0){
@@ -361,14 +366,37 @@ namespace CircularFunctors {
     
     for (typename solutions_container::iterator it = solutions.begin(); 
 	 it != solutions.end(); ++it) {
-      const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
-      result = CGAL::object_cast
-	<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
-      if ( has_on<CK>(l,result->first ))
+      const std::pair<typename CK::Circular_arc_point_2, unsigned>
+        *result = CGAL::object_cast
+	  <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+      if ( has_on<CK>(l,result->first,true))
 	*res++ = *it;
     }
     return res;
   }
+
+  /*template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Line_arc_2 &l,
+	       const typename CK::Circle_2 &c,
+	       OutputIterator res )
+  { 
+    typedef std::vector<CGAL::Object> solutions_container;
+    solutions_container solutions;
+
+    CGAL::LinearFunctors::intersect_2<CK>
+      ( l.supporting_line(), c, std::back_inserter(solutions) );
+    
+    for (typename solutions_container::iterator it = solutions.begin(); 
+	 it != solutions.end(); ++it) {
+      const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
+      result = CGAL::object_cast
+	<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+      if ( has_on<CK>(l,result->first))
+	*res++ = *it;
+    }
+    return res;
+  }*/
 
   template< class CK, class OutputIterator>
   OutputIterator
@@ -380,6 +408,33 @@ namespace CircularFunctors {
   }
 
   template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Line_arc_2 &l,
+	       const typename CK::Circular_arc_2 &c,
+	       OutputIterator res )
+  {
+    typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef std::vector<CGAL::Object > solutions_container;
+    
+    solutions_container solutions;
+    CGAL::LinearFunctors::intersect_2<CK>
+      ( l.supporting_line(), c.supporting_circle(),
+	std::back_inserter(solutions) );
+    
+    for (typename solutions_container::iterator it = solutions.begin();
+	 it != solutions.end(); ++it) {
+      const std::pair<typename CK::Circular_arc_point_2, unsigned>
+        *result = CGAL::object_cast
+	  <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+      if (has_on<CK>(l,result->first,true) &&
+          has_on<CK>(c,result->first,true)) {
+	*res++ = *it;
+      }
+    }
+    return res;
+  }
+
+  /*template< class CK, class OutputIterator>
   OutputIterator
   intersect_2( const typename CK::Line_arc_2 &l,
 	       const typename CK::Circular_arc_2 &c,
@@ -421,7 +476,7 @@ namespace CircularFunctors {
       }
     }
     return res;
-  }
+  }*/
   
   template< class CK, class OutputIterator>
   OutputIterator
