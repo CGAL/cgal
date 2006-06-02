@@ -16,12 +16,17 @@ int main()
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
   CK1 ck1;
+  std::cout << "Testing predicates..." << std::endl;
   _test_circle_predicat(ck1);
+  std::cout << "Testing constructions..." << std::endl;
   _test_circle_construct(ck1);
+  std::cout << "Testing bboxes..." << std::endl;
   _test_circle_bbox(ck1);
+  std::cout << "Testing circular_arc_bboxes..." << std::endl;
   _test_circular_arc_bbox(ck1);
+  std::cout << "Testing has_on..." << std::endl;
   _test_has_on(ck1);
-
+/*
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
@@ -32,6 +37,6 @@ int main()
   _test_circle_construct(ck2);
   _test_circle_bbox(ck2);
   _test_circular_arc_bbox(ck2);
-  _test_has_on(ck2);
+  _test_has_on(ck2);*/
   return 0;
 }
