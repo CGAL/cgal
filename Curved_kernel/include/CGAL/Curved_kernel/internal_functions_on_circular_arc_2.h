@@ -326,10 +326,11 @@ namespace CircularFunctors {
   // Small accessory function
   // Tests whether a given point is on an arc, with the precondition that
   // it's (symbolically) on the supporting circle.
-  template < class CK >
+  /*template < class CK >
   bool
   has_on(const typename CK::Circular_arc_2 &a,
-	 const typename CK::Circular_arc_point_2 &p)
+	 const typename CK::Circular_arc_point_2 &p,
+         const bool has_on_supporting_circle = false)
   {
     CGAL_kernel_precondition(a.is_x_monotone());
     
@@ -340,9 +341,10 @@ namespace CircularFunctors {
 //     if(CGAL::sign_at<typename CK::Algebraic_kernel>
 //        (equation,p.coordinates())!= ZERO)
 //       return false;
-    
-    if ( ! CircularFunctors::has_on<CK>(a.supporting_circle(),p) ) 
-      return false;
+    if(!has_on_supporting_circle) {
+      if ( ! CircularFunctors::has_on<CK>(a.supporting_circle(),p) ) 
+        return false;
+    }
     
     if (! CircularFunctors::point_in_x_range<CK>(a, p) )
       return false;
@@ -351,6 +353,60 @@ namespace CircularFunctors {
 
     return  cmp == 0 || (cmp > 0 &&  a.on_upper_part())
                      || (cmp < 0 && !a.on_upper_part());
+  }*/
+
+  template < class CK >
+  bool
+  has_on(const typename CK::Circular_arc_2 &a,
+	 const typename CK::Circular_arc_point_2 &p,
+         const bool has_on_supporting_circle = false)
+  {
+    if(!has_on_supporting_circle) {
+      if ( ! CircularFunctors::has_on<CK>(a.supporting_circle(),p) ) 
+        return false;
+    }
+
+    if(a.is_full()) return true;
+    
+    if(a.is_x_monotone()) {
+      int cmp_ps = CircularFunctors::compare_x<CK>(p,a.source());
+      int cmp_pt = CircularFunctors::compare_x<CK>(p,a.target());
+      if(cmp_ps == cmp_pt) return false;
+      int cmp = CGAL::compare(p.y(), a.supporting_circle().center().y());
+      return  cmp == 0 || (cmp > 0 &&  a.on_upper_part())
+                       || (cmp < 0 && !a.on_upper_part());
+    } else if(a.is_complementary_x_monotone())  {
+      int cmp_ps = CircularFunctors::compare_x<CK>(p,a.source());
+      int cmp_pt = CircularFunctors::compare_x<CK>(p,a.target());
+      if(cmp_ps == cmp_pt) return true;
+      int cmp = CGAL::compare(p.y(), a.supporting_circle().center().y());
+      return  cmp == 0 || (cmp < 0 &&  a.complementary_on_upper_part())
+                     || (cmp > 0 && !a.complementary_on_upper_part());
+    } else if(a.is_y_monotone()) {
+      int cmp_ps = CircularFunctors::compare_y<CK>(p,a.source());
+      int cmp_pt = CircularFunctors::compare_y<CK>(p,a.target());
+      if(cmp_ps == cmp_pt) return false;
+      int cmp = CGAL::compare(p.x(), a.supporting_circle().center().x());
+      return  cmp == 0 || (cmp < 0 &&  a.on_left_part())
+                       || (cmp > 0 && !a.on_left_part());
+    } else if(a.is_complementary_y_monotone()) {
+      int cmp_ps = CircularFunctors::compare_y<CK>(p,a.source());
+      int cmp_pt = CircularFunctors::compare_y<CK>(p,a.target());
+      if(cmp_ps == cmp_pt) return true;
+      int cmp = CGAL::compare(p.x(), a.supporting_circle().center().x());
+      return  cmp == 0 || (cmp > 0 && a.complementary_on_left_part())
+                     || (cmp < 0 && !a.complementary_on_left_part());
+    } else {
+      int cmp_scy = CGAL::compare(a.source().y(), a.supporting_circle().center().y());
+      int cmp = CGAL::compare(p.y(), a.supporting_circle().center().y());
+      if(cmp_scy < 0) {
+        if(cmp > 0) return CGAL::compare(p.x(), a.target().x()) >= 0;
+        else return CGAL::compare(p.x(), a.source().x()) >= 0;
+      } else {
+        if(cmp > 0) return CGAL::compare(p.x(), a.source().x()) <= 0;
+        else return CGAL::compare(p.x(), a.target().x()) <= 0; 
+      }
+    }
   }
   
 
@@ -380,6 +436,77 @@ namespace CircularFunctors {
     
     return ;
   }
+
+  /*template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Circular_arc_2 &a1,
+	       const typename CK::Circular_arc_2 &a2,
+	       OutputIterator res )
+  {
+    typedef std::vector<CGAL::Object> solutions_container; 
+    typedef typename CK::Circular_arc_2 Circular_arc_2; 
+
+    if((a1.squared_radius() == a2.squared_radius()) &&
+       (a1.center() == a2.center())) {
+      if(a1.is_full()) {
+        *res++ = make_object(a2); 
+        return res;
+      }
+      if(a2.is_full()) {
+        *res++ = make_object(a1); 
+        return res;
+      } 
+      bool t2_in_a1 = has_on<CK>(a1,a2.target(),true);
+      bool s2_in_a1 = has_on<CK>(a1,a2.source(),true);
+      if(t2_in_a1 && s2_in_a1) {
+	*res++ = make_object(a2);
+        return res;
+      }
+      if(t2_in_a1) {
+        if(a1.source() == a2.target()) 
+          *res++ = make_object(std::make_pair(a1.source(),1u));
+        else {
+          const Circular_arc_2 & arc =
+	    Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
+	  *res++ = make_object(arc);
+        } return res;
+      }
+      if(s2_in_a1) {
+        if(a2.source() == a1.target()) 
+          *res++ = make_object(std::make_pair(a2.source(),1u));
+        else {
+          const Circular_arc_2 & arc =
+	    Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
+	  *res++ = make_object(arc);
+        } return res;
+      }
+      if(has_on<CK>(a2,a1.source(),true)) {
+        *res++ = make_object(a1);
+        return res;
+      } 
+      return res;
+    }
+  
+    solutions_container solutions;
+    CGAL::intersect_2<CK> ( a1.supporting_circle(), a2.supporting_circle(),
+      std::back_inserter(solutions) );
+    if(solutions.size() == 0) return res;
+    else {
+      // The supporting circles are not the same and intersects
+      for (typename solutions_container::iterator it = solutions.begin(); 
+	 it != solutions.end(); ++it) {
+        const std::pair<typename CK::Circular_arc_point_2, unsigned> 
+          *result = CGAL::object_cast
+            <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+        if (has_on<CK>(a1,result->first,true) && 
+            has_on<CK>(a2,result->first,true)) {
+          *res++ = *it;
+        }
+      }
+      return res;
+    }
+  }*/
+
 
   // !!!! a lot of useless assertions for debug
   template< class CK, class OutputIterator>
@@ -847,7 +974,7 @@ namespace CircularFunctors {
 				       CircularFunctors::x_extremal_point<CK>
 				       (A.supporting_circle(),false))),
 	   false);
-			   
+			
         *res++ = std::make_pair
 	  (make_object(Circular_arc_2 (A.supporting_circle(),
 				       CircularFunctors::x_extremal_point<CK>
@@ -1026,6 +1153,8 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
     typedef CGAL::Interval_nt<false>::Protector IntervalProtector;
     typedef CGAL::Interval_nt<false> Interval; 
 
+    std::cout << "Hello!" << std::endl; 
+
     if(a.is_x_monotone()) {
 	// The arc is xy-monotone so we just add the bboxes of the endpoints
       if(a.is_y_monotone())
@@ -1070,23 +1199,23 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
       bool is_on_left = a.on_left_part();
       IntervalProtector ip;
       Bbox_2 
-	left_bb  = a.left().bbox(), 
-	right_bb = a.right().bbox();
+	    source_bb  = a.source().bbox(), 
+	    target_bb = a.target().bbox();
       Interval cx = to_interval(a.center().x());
       Interval r2 = to_interval(a.squared_radius());
       Interval r = CGAL::sqrt(r2); 
       double xmin, xmax;
       if(is_on_left) {
-        xmax = right_bb.xmax(); 
+        xmax = CGAL::max(source_bb.xmax(), target_bb.xmax()); 
         xmin = cx.inf() - r.sup();
       } else {
         xmax = cx.sup() + r.sup();
-        xmin = left_bb.xmin();
+        xmin = CGAL::min(source_bb.xmin(), target_bb.xmin()); 
       }
       return Bbox_2(xmin,
-                    CGAL::min(left_bb.ymin(),right_bb.ymin()),
+                    CGAL::min(source_bb.ymin(),target_bb.ymin()),
                     xmax,
-                    CGAL::max(left_bb.ymax(),right_bb.ymax()));
+                    CGAL::max(source_bb.ymax(),target_bb.ymax()));
     }
 	
     // Else return the bounding box of the circle.
