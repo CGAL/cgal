@@ -7,9 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-# CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
-#makefile_i686_Linux-2.6_g++33-3.3.4
-#makefile_i686_Linux-2.6_g++-3.4.4
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -17,11 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I/user/pmachado/home/CGAL_I/include\
-           -I../../include\
+           -I../../include \
+#           -I../../../Algebraic_kernel/include \
            -Iinclude\
-	       -g\
-	       $(TESTSUITE_CXXFLAGS) \
+	   -g\
+	   $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
@@ -50,9 +47,9 @@ all:            \
 		test_Lazy_curved_kernel$(EXE_EXT) \
 		test_Exact_curved_kernel$(EXE_EXT)\
 		test_Lazy_Line_arc$(EXE_EXT)\
-        test_Filtered_interval_circular_kernel$(EXE_EXT)\
-        test_Filtered_bbox_curved_kernel$(EXE_EXT)
-          
+		test_Filtered_interval_circular_kernel$(EXE_EXT)\
+		test_Filtered_bbox_curved_kernel$(EXE_EXT)
+
 test_Circular_kernel$(EXE_EXT): test_Circular_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Circular_kernel test_Circular_kernel$(OBJ_EXT) $(LDFLAGS)
 
