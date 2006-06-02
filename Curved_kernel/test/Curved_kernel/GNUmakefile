@@ -17,11 +17,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include \
-           -I../../../Algebraic_kernel/include \
-           -Iinclude \
-	   -g \
-	   $(TESTSUITE_CXXFLAGS) \
+           -I/user/pmachado/home/CGAL_I/include\
+           -I../../include\
+           -Iinclude\
+	       -g\
+	       $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
@@ -49,8 +49,10 @@ all:            \
 		test_Filtered_hexagon_kernel$(EXE_EXT) \
 		test_Lazy_curved_kernel$(EXE_EXT) \
 		test_Exact_curved_kernel$(EXE_EXT)\
-		test_Lazy_Line_arc$(EXE_EXT)
-
+		test_Lazy_Line_arc$(EXE_EXT)\
+        test_Filtered_interval_circular_kernel$(EXE_EXT)\
+        test_Filtered_bbox_curved_kernel$(EXE_EXT)
+          
 test_Circular_kernel$(EXE_EXT): test_Circular_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Circular_kernel test_Circular_kernel$(OBJ_EXT) $(LDFLAGS)
 
@@ -69,13 +71,21 @@ test_Line_arc$(EXE_EXT): test_Line_arc$(OBJ_EXT)
 test_Lazy_Line_arc$(EXE_EXT): test_Lazy_Line_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Line_arc test_Lazy_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
+test_Filtered_interval_circular_kernel$(EXE_EXT): test_Filtered_interval_circular_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Filtered_interval_circular_kernel test_Filtered_interval_circular_kernel$(OBJ_EXT) $(LDFLAGS)
+
+test_Filtered_bbox_curved_kernel$(EXE_EXT): test_Filtered_bbox_curved_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Filtered_bbox_curved_kernel test_Filtered_bbox_curved_kernel$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    test_Circular_kernel.clean \
 		   test_Filtered_hexagon_kernel.clean \
                    test_Line_arc.clean \
 		   test_Lazy_curved_kernel.clean \
 		   test_Exact_curved_kernel.clean \
-		   test_Lazy_Line_arc.clean
+		   test_Lazy_Line_arc.clean \
+		   test_Filtered_interval_circular_kernel.clean \
+		   test_Filtered_bbox_curved_kernel.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
