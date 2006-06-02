@@ -1,14 +1,11 @@
-#include <CGAL/basic.h>
-#include <CGAL/Circular_kernel.h>
-#include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Circular_kernel.h>
+#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/Filtered_bbox_curved_kernel.h>
 #include <CGAL/intersections.h>
 #include <iostream>
-
-#include <CGAL/_test_circles_predicates.h>
-#include <CGAL/_test_circles_constructions.h>
-#include <CGAL/_test_circles_extention.h>
 
 typedef CGAL::MP_Float RT;
 typedef CGAL::Quotient<RT> NT1;
@@ -18,6 +15,10 @@ typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1> CircularKernel;
 typedef CGAL::Filtered_bbox_curved_kernel<CircularKernel> CK;
 
   CK ck;
+
+#include <CGAL/_test_circles_predicates.h>
+#include <CGAL/_test_circles_constructions.h>
+#include <CGAL/_test_circles_extention.h>
   
 int main() {
 
