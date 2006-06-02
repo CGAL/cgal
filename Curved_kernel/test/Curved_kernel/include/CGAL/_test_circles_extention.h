@@ -99,7 +99,7 @@ void _test_circle_bbox(CK ck)
 	x_random2 = theRandom.get_int(random_min, random_max);
 	y_random2 = theRandom.get_int(random_min, random_max);
       }while(x_random2 == 0 && y_random2 ==0);
-    
+
       Line_2 line_random_1(center_random,
 			   Point_2(center_random.x() +
 				   x_random1,
@@ -113,8 +113,22 @@ void _test_circle_bbox(CK ck)
       Circular_arc_2 arc_random(circle_random,
 				line_random_1, theRandom.get_bool(),
 				line_random_2, theRandom.get_bool());
-      
+
+      std::cout << "arco:" << std::endl;  
+      std::cout << "squared_radius = " << 
+      to_double(arc_random.squared_radius()) << std::endl <<
+      "center = (" << 
+      to_double(arc_random.center().x()) << ", " <<
+      to_double(arc_random.center().y()) << ")"  << std::endl;
+      std::cout << "source = (" << 
+      to_double(arc_random.source().x()) << ", " <<
+      to_double(arc_random.source().y()) << ")"  << std::endl;
+      std::cout << "target = (" << 
+      to_double(arc_random.target().x()) << ", " <<
+      to_double(arc_random.target().y()) << ")"  << std::endl;
+
       CGAL::Bbox_2 box1 = arc_random.bbox();
+      
       assert(typename CK::FT(box1.xmin()) <= arc_random.source().x());
       assert(typename CK::FT(box1.xmin()) <= arc_random.target().x());
       assert(typename CK::FT(box1.xmax()) >= arc_random.source().x());
