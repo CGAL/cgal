@@ -48,8 +48,10 @@ namespace CGALi {
       unsigned short int Cache_minmax:2;
       unsigned short int is_x_monotonic:2;
       unsigned short int is_y_monotonic:2;
-      unsigned short int is_on_upper_part:2;
-      unsigned short int is_on_left_part:2;
+      unsigned short int two_end_points_on_upper_part:2;
+      unsigned short int two_end_points_on_left_part:2;
+      unsigned short int is_complementary_x_monotone:1;
+      unsigned short int is_complementary_y_monotone:1;
     } bit_field;
 
   private:
@@ -63,8 +65,10 @@ namespace CGALi {
     flags.Cache_minmax = 0;
     flags.is_x_monotonic = 0;
     flags.is_y_monotonic = 0;
-    flags.is_on_upper_part = 0;
-    flags.is_on_left_part = 0;
+    flags.two_end_points_on_upper_part = 0;
+    flags.two_end_points_on_left_part = 0;
+    flags.is_complementary_x_monotone = 0;
+    flags.is_complementary_y_monotone = 0;
   }
 
   public:
@@ -303,8 +307,9 @@ namespace CGALi {
       return flags.is_full == 2;
     }
 
-    bool _is_x_monotone() const
-    {
+private:
+
+    bool _is_x_monotone() const {
       if (is_full()) return false;
       
       int cmp_begin = CGAL::compare(_begin.y(), center().y());
@@ -315,6 +320,11 @@ namespace CGALi {
 
       if (cmp_begin == opposite(cmp_end) && cmp_begin != 0)
         return false;
+
+      // Maybe the complementar is x_monotone
+      // but we have to go further to know
+      // see is_x_monotone()
+      flags.is_complementary_x_monotone = 1;
 
       int cmp_x = compare_x(_begin, _end);
       
@@ -332,19 +342,7 @@ namespace CGALi {
       return cmp_x != 0; // full circle or half circle.
     }
 
-    bool is_x_monotone() const {
-      if(flags.is_x_monotonic == 0) {
-        bool b = _is_x_monotone();
-        if(b) flags.is_x_monotonic = 2;
-        else flags.is_x_monotonic = 1;
-        return b;
-      } else {
-        return (flags.is_x_monotonic == 1) ? false : true;
-      }
-    }  
-    
-    bool _is_y_monotone() const
-    {
+    bool _is_y_monotone() const {
       if (is_full()) return false;
 
       int cmp_begin = CGAL::compare(_begin.x(), center().x());
@@ -354,7 +352,12 @@ namespace CGALi {
       // is not -1/1 but some random int...
       if (cmp_begin == opposite(cmp_end) && cmp_begin != 0)
         return false;
-      
+
+      // Maybe the complementar is y_monotone
+      // but we have to go further to know
+      // see is_y_monotone()
+      flags.is_complementary_y_monotone = 1;
+
       int cmp_y = compare_y(_begin, _end);
       
       // Is the arc on the right part ?
@@ -371,21 +374,7 @@ namespace CGALi {
       return cmp_y != 0; // full circle or half circle.
     }
 
-    bool is_y_monotone() const {
-      if(flags.is_y_monotonic == 0) {
-        bool b = _is_y_monotone();
-        if(b) flags.is_y_monotonic = 2;
-        else flags.is_y_monotonic = 1;
-        return b;
-      } else {
-        return (flags.is_y_monotonic == 1) ? false : true;
-      }
-    }
-
-    bool _on_upper_part() const
-    // check whether the endpoints are above or below the center
-    { 
-      CGAL_kernel_precondition(is_x_monotone());
+    bool _two_end_points_on_upper_part() const {
       int c1y = CGAL::compare(_begin.y(),
         supporting_circle().center().y());
       if(c1y > 0) return true;
@@ -397,21 +386,8 @@ namespace CGALi {
       return compare_x(_begin, _end) > 0;
     }
 
-    bool on_upper_part() const {
-      if(flags.is_on_upper_part == 0) {
-        bool b = _on_upper_part();
-        if(b) flags.is_on_upper_part = 2;
-        else flags.is_on_upper_part = 1;
-        return b;
-      } else {
-        return (flags.is_on_upper_part == 1) ? false : true;
-      }
-    }
-
-    bool _on_left_part() const
-    // check whether the endpoints are at left or right from the center
+    bool _two_end_points_on_left_part() const
     { 
-      CGAL_kernel_precondition(is_y_monotone());
       int c1x = CGAL::compare(_begin.x(), 
         supporting_circle().center().x());
       if(c1x < 0) return true;
@@ -423,18 +399,99 @@ namespace CGALi {
       return compare_y(_begin, _end) > 0;
     }
 
-    bool on_left_part() const {
-      if(flags.is_on_left_part == 0) {
-        bool b = _on_left_part();
-        if(b) flags.is_on_left_part = 2;
-        else flags.is_on_left_part = 1;
+public:
+
+    bool is_x_monotone() const {
+      if(flags.is_x_monotonic == 0) {
+        bool b = _is_x_monotone();
+        if(b) { 
+          flags.is_x_monotonic = 2;
+          flags.is_complementary_x_monotone = 0;
+        } else flags.is_x_monotonic = 1;
         return b;
       } else {
-        return (flags.is_on_left_part == 1) ? false : true;
+        return (flags.is_x_monotonic == 1) ? false : true;
       }
     } 
 
-    const Circle_2 & supporting_circle() const           
+    // Returns true if the complementary arc is x_monotone()
+    bool is_complementary_x_monotone() const {
+      // is_x_monotone calculates also if 
+      // the complementary is x-monotone if needed
+      is_x_monotone();
+      return (flags.is_complementary_x_monotone == 0) ? false : true;
+    } 
+
+    bool is_y_monotone() const {
+      if(flags.is_y_monotonic == 0) {
+        bool b = _is_y_monotone();
+        if(b) {
+          flags.is_y_monotonic = 2;
+          flags.is_complementary_y_monotone = 0;
+        } else flags.is_y_monotonic = 1;
+        return b;
+      } else {
+        return (flags.is_y_monotonic == 1) ? false : true;
+      }
+    }
+
+    // Returns true if the complementary arc is y_monotone()
+    bool is_complementary_y_monotone() const {
+      // is_y_monotone calculates also if 
+      // the complementary is y-monotone if needed
+      is_y_monotone();
+      return (flags.is_complementary_y_monotone == 0) ? false : true;
+    }
+
+    // check whether 2 endpoints are at upper or not from the center 
+    bool two_end_points_on_upper_part() const {
+      if(flags.two_end_points_on_upper_part == 0) {
+        bool b = _two_end_points_on_upper_part();
+        if(b) flags.two_end_points_on_upper_part = 2;
+        else flags.two_end_points_on_upper_part = 1;
+        return b;
+      } else {
+        return (flags.two_end_points_on_upper_part == 1) ? false : true;
+      }
+    }
+
+    // check whether the arc is at upper or not from the center 
+    bool on_upper_part() const {
+      CGAL_kernel_precondition(is_x_monotone());
+      return two_end_points_on_upper_part();
+    }
+
+    // Returns true if the complementary arc is on_upper_part()
+    bool complementary_on_upper_part() const {
+      if(is_x_monotone()) return false;
+      return two_end_points_on_upper_part();
+    }
+
+    // check whether the 2 endpoints are at left or right from the center
+    bool two_end_points_on_left_part() const {
+      if(flags.two_end_points_on_left_part == 0) {
+        bool b = _two_end_points_on_left_part();
+        if(b) flags.two_end_points_on_left_part = 2;
+        else flags.two_end_points_on_left_part = 1;
+        return b;
+      } else {
+        return (flags.two_end_points_on_left_part == 1) ? false : true;
+      }
+    }
+
+    // check whether the arc is at left or right from the center 
+    bool on_left_part() const {      
+      CGAL_kernel_precondition(is_y_monotone());
+      return two_end_points_on_left_part();
+    }
+
+    // Returns true if the complementary arc is on_left_part()
+    bool complementary_on_left_part() const {
+      if(is_y_monotone()) return false;
+      return two_end_points_on_left_part();
+    }
+
+    const Circle_2 & supporting_circle() const
     {
        return _support;
     }
