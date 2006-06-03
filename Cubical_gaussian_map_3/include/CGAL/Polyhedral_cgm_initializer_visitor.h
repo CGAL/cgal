@@ -24,8 +24,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Cgm,
-         class Polyhedron = Polyhedral_cgm_default_polyhedron_3<Cgm> >
+template<class PolyhedralCgm,
+         class Polyhedron = Polyhedral_cgm_polyhedron_3<PolyhedralCgm> >
 class Polyhedral_cgm_initializer_visitor {
 public:
   typedef typename Polyhedron::Vertex_const_handle
@@ -35,10 +35,10 @@ public:
   typedef typename Polyhedron::Facet_const_handle
     Polyhedron_facet_const_handle;
 
-  typedef typename Cgm::Arr_vertex_handle               Arr_vertex_handle;
-  typedef typename Cgm::Arr_halfedge_handle             Arr_halfedge_handle;
-  typedef typename Cgm::Arr_face_handle                 Arr_face_handle;
-  typedef typename Cgm::Arr_face_const_handle           Arr_face_const_handle;
+  typedef typename PolyhedralCgm::Arr_vertex_handle     Arr_vertex_handle;
+  typedef typename PolyhedralCgm::Arr_halfedge_handle   Arr_halfedge_handle;
+  typedef typename PolyhedralCgm::Arr_face_handle       Arr_face_handle;
+  typedef typename PolyhedralCgm::Arr_face_const_handle Arr_face_const_handle;
 
   /*! Pass information from a polyhedron vertex to its dual - a cgm-face */
   virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,

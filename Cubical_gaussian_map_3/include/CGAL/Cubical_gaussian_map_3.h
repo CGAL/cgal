@@ -449,7 +449,7 @@ protected:
       }
     } else if (proj_normal1.num_faces() == 3) {
       unsigned index = Cgm::get_corner_index(faces_mask1, id);
-      CGAL_assertion(index < NUM_CORNERS);
+      CGAL_assertion(index < Cgm::NUM_CORNERS);
       Arr_vertex_handle v =
         m_cgm.m_corner_vertices[id][index];
       /*! \todo Set the entire cyclic chain of 3 vertices, and not just the
@@ -492,7 +492,7 @@ protected:
       }
     } else if (proj_normal2.num_faces() == 3) {
       unsigned index = Cgm::get_corner_index(faces_mask2, id);
-      CGAL_assertion(index < NUM_CORNERS);
+      CGAL_assertion(index < Cgm::NUM_CORNERS);
       Arr_vertex_handle v =
         m_cgm.m_corner_vertices[id][index];
       /*! \todo Set the entire cyclic chain of 3 vertices, and not just the

@@ -25,6 +25,10 @@
  */
 
 #include <CGAL/basic.h>
+#include <CGAL/Cubical_gaussian_map_3.h>
+#include <CGAL/IO/Arr_iostream.h>
+
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,18 +55,18 @@ operator<<(std::ostream & os,
  * \param os the output stream
  * \param cgm the Cubical_gaussian_map_3 object
  */
-template <class T_Traits,
+template <class Kernel,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
 #endif
           class T_Dcel>
 inline
 std::ostream & operator<<(std::ostream & os,
-                          const Cubical_gaussian_map_3<T_Traits,T_Dcel> & cgm) 
+                          const Cubical_gaussian_map_3<Kernel,T_Dcel> & cgm) 
 {
-  typedef Cubical_gaussian_map_3<T_Traits,T_Dcel> Cgm;
-  for (unsigned int i = 0; i < Cubical_gaussian_map_3::NUM_FACES; ++i) {
-    const typename Cgm::Arrangement & arr = cgm.get_arrangement(i);
+  typedef Cubical_gaussian_map_3<Kernel,T_Dcel> Cgm;
+  for (unsigned int i = 0; i < Cgm::NUM_FACES; ++i) {
+    const typename Cgm::Arrangement & arr = cgm.arrangement(i);
     os << arr;
   }
   return os;
@@ -72,15 +76,15 @@ std::ostream & operator<<(std::ostream & os,
  * \param is the input stream
  * \param cgm the Cubical_gaussian_map_3 object
  */
-template <class T_Traits,
+template <class Kernel,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
 #endif
           class T_Dcel>
 inline std::istream & operator>>(std::istream & is,
-                                 Cubical_gaussian_map_3<T_Traits,T_Dcel> & cgm)
+                                 Cubical_gaussian_map_3<Kernel,T_Dcel> & cgm)
 {
-  typedef Cubical_gaussian_map_3<T_Traits,T_Dcel> Cgm;
+  typedef Cubical_gaussian_map_3<Kernel,T_Dcel> Cgm;
   for (unsigned int i = 0; i < Cubical_gaussian_map_3::NUM_FACES; ++i) {
     const typename Cgm::Arrangement & arr = cgm.get_arrangement(i);
     arr >> is;

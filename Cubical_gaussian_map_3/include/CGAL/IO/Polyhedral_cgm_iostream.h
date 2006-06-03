@@ -17,14 +17,18 @@
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
-#ifndef CGAL_CGM_IOSTREAM_H
-#define CGAL_CGM_IOSTREAM_H
+#ifndef CGAL_POLYHEDRAL_CGM_IOSTREAM_H
+#define CGAL_POLYHEDRAL_CGM_IOSTREAM_H
 
 /*! \file Implmentation of importer and exporter IO operations of a
  * Polyhedral_cgm object
  */
 
 #include <CGAL/basic.h>
+#include <CGAL/Polyhedral_cgm.h>
+#include <CGAL/IO/Cgm_iostream.h>
+
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,11 +41,11 @@ template <class Kernel,
           template <class T>
 #endif
           class T_Dcel>
-inline
-std::ostream & operator<<(std::ostream & os,
-                          const Polyhedral_cgm<Kernel,T_Dcel> & cgm) 
+inline std::ostream & operator<<(std::ostream & os,
+                                 const Polyhedral_cgm<Kernel,T_Dcel> & cgm) 
 {
-  os << static_cast<Cubical_gaussian_map_3<Kernel,T_Dcel>(cgm);
+  const Cubical_gaussian_map_3<Kernel,T_Dcel> * tmp = &cgm;
+  os << *tmp;
   return os;
 }
 

@@ -64,8 +64,7 @@ CGAL_BEGIN_NAMESPACE
 /*!
  */
 template <class PolyhedralCgm,
-          class Polyhedron =
-            Polyhedral_cgm_default_polyhedron_3<PolyhedralCgm>,
+          class Polyhedron = Polyhedral_cgm_polyhedron_3<PolyhedralCgm>,
           class Visitor = Polyhedral_cgm_initializer_visitor<PolyhedralCgm> >
 class Polyhedral_cgm_initializer :
   public Cgm_initializer<typename PolyhedralCgm::Base>
@@ -712,13 +711,26 @@ public:
     } while(hec != hec_begin);
   }
   
-  /*! Compute the minkowski sum
+  /*! Compute the minkowski sum of a range of objects of type Polyhedral_cgm
    */
   template <class CgmIterator>  
-  void minkowsi_sum(CgmIterator begin, CgmIterator end)
+  void minkowski_sum(CgmIterator begin, CgmIterator end)
+  {
+    Polyhedral_cgm * cgm1 = *begin++;
+    Polyhedral_cgm * cgm2 = *begin;
+    minkowski_sum(cgm1, cgm2);
+  }
+
+  /*! Compute the minkowski sum of 2 objects of type Polyhedral_cgm
+   * \param cgm1 the first Polyhedral_cgm object
+   * \param cgm2 the second Polyhedral_cgm object
+   */
+  template <>  
+  void minkowski_sum<Polyhedral_cgm *>(Polyhedral_cgm * cgm1,
+                                       Polyhedral_cgm * cgm2)
   {
     // Compute the overlays:
-    overlay(begin, end);
+    overlay(cgm1, cgm2);
 
     // Initialize the corners:
     init_corners();
@@ -748,18 +760,17 @@ public:
     // print_stat();
   }
 
-  /*! Compute the overlay
+  /*! Compute the overlay of the respective 6 face pairs of 2 Polyhedral_cgm
+   * objects.
+   * \param cgm1 the first Polyhedral_cgm object
+   * \param cgm2 the second Polyhedral_cgm object
    */
-  template <class CgmIterator>  
-  void overlay(CgmIterator & begin, CgmIterator & end)
+  void overlay(Polyhedral_cgm * cgm1, Polyhedral_cgm * cgm2)
   {
-    Polyhedral_cgm * gm1 = *begin++;
-    Polyhedral_cgm * gm2 = *begin;
-
     for (unsigned int i = 0; i < NUM_FACES; ++i) {
       Arr & arr = m_arrangements[i];
-      Arr & arr1 = gm1->m_arrangements[i];
-      Arr & arr2 = gm2->m_arrangements[i];
+      Arr & arr1 = cgm1->m_arrangements[i];
+      Arr & arr2 = cgm2->m_arrangements[i];
 
 #if 0
       Arr_halfedge_const_iterator hi;

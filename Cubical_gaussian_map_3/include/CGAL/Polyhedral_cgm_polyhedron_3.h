@@ -199,12 +199,12 @@ struct Polyhedral_cgm_polyhedron_items : public CGAL::Polyhedron_items_3 {
  * based on the new items type.
  */
 template <class Cgm>
-struct Polyhedral_cgm_default_polyhedron_3 :
+struct Polyhedral_cgm_polyhedron_3 :
   public CGAL::Polyhedron_3<CGAL::Polyhedron_traits_with_normals_3<typename Cgm::Kernel>,
                             Polyhedral_cgm_polyhedron_items<Cgm> >
 {
   /*! Constructor */
-  Polyhedral_cgm_default_polyhedron_3() {}
+  Polyhedral_cgm_polyhedron_3() {}
 };
 
 CGAL_END_NAMESPACE
