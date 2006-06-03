@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: $
+// $Id: $
 // 
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
@@ -24,11 +24,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Kernel, class Cgm>
+template<class Cgm,
+         class Polyhedron = Polyhedral_cgm_default_polyhedron_3<Cgm> >
 class Polyhedral_cgm_initializer_visitor {
 public:
-  typedef CGAL::Polyhedral_cgm_default_polyhedron_3<Kernel, Cgm>
-                                                        Polyhedron;
   typedef typename Polyhedron::Vertex_const_handle
     Polyhedron_vertex_const_handle;
   typedef typename Polyhedron::Halfedge_const_handle
