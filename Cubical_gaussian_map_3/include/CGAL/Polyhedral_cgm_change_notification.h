@@ -17,22 +17,23 @@
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
-#ifndef CGAL_POLYHEDRAL_CGM_CHANGE_NOTOFICATION_H
-#define CGAL_POLYHEDRAL_CGM_CHANGE_NOTOFICATION_H
+#ifndef CGAL_POLYHEDRAL_CGM_INITIALIZER_VISITOR_H
+#define CGAL_POLYHEDRAL_CGM_INITIALIZER_VISITOR_H
 
 #include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template<class T_Cgm>
-class Polyhedral_cgm_change_notification {
+template<class Kernel, class Cgm>
+class Polyhedral_cgm_initializer_visitor {
 public:
-  typedef T_Cgm                                         Cgm;
-  typedef typename Cgm::Polyhedron_vertex_const_handle
+  typedef CGAL::Polyhedral_cgm_default_polyhedron_3<Kernel, Cgm>
+                                                        Polyhedron;
+  typedef typename Polyhedron::Vertex_const_handle
     Polyhedron_vertex_const_handle;
-  typedef typename Cgm::Polyhedron_halfedge_const_handle
+  typedef typename Polyhedron::Halfedge_const_handle
     Polyhedron_halfedge_const_handle;
-  typedef typename Cgm::Polyhedron_facet_const_handle
+  typedef typename Polyhedron::Facet_const_handle
     Polyhedron_facet_const_handle;
 
   typedef typename Cgm::Arr_vertex_handle               Arr_vertex_handle;

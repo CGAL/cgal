@@ -17,6 +17,9 @@
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
+#ifndef CGAL_CUBICAL_GAUSSIAN_MAP_3_H
+#define CGAL_CUBICAL_GAUSSIAN_MAP_3_H
+
 /*!
  * Cubical_gaussian_map is a data dtructure that represents a Gaussinal map
  * on a cube. The representation consists of 6 arrangements that correspond to
@@ -152,9 +155,6 @@
  * Then, the following procedure compute the transion:
  */
 
-#ifndef CGAL_CUBICAL_GAUSSIAN_MAP_3_H
-#define CGAL_CUBICAL_GAUSSIAN_MAP_3_H
-
 #define CGAL_ARR_SEGMENT_TRAITS                 0
 #define CGAL_ARR_NON_CACHING_SEGMENT_TRAITS     1
 
@@ -188,16 +188,38 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! Cgm_normalizer normalizes the two coordinates of a point in tow-
+ * dimensional cartesian coordinate-system. It is parameterized by the
+ * field number-type of the point coordinates and by the type of the point
+ * which coordinates are to be normalized. Normalization is performed through
+ * a call an operator that accepts the point as a parameter.
+ * The normalization of field number-types that initiate normalization
+ * automatically (e.g., Gmpq) do not need to be initiated. Therefore, the
+ * default instance does nothing. Normalizers for field number-types that
+ * do not initiate normalization automatically, must be specialed.
+ */
 template <class FT, class Point_2>
-class Cgm_normalize {
+class Cgm_normalizer {
 public:
+  /*! Normalize the coordinates of the given point, but in fact does
+   * nothing.
+   * \param p the point which coordinates are to be normalized
+   */ 
   void operator()(Point_2 & p) {}
 };
 
 #if defined(CGAL_USE_LEDA)
+/*! Cgm_normalizer normalizes the two coordinates of a point in tow-
+ * dimensional cartesian coordinate-system. It is parameterized by the
+ * type of the point which coordinates are to be normalized, and
+ * specialized for the leda::rational field number-type.
+ */
 template <class Point_2>
-class Cgm_normalize<leda::rational, Point_2> {
+class Cgm_normalizer<leda::rational, Point_2> {
 public:
+  /*! Normalize the coordinates of the given point
+   * \param p the point which coordinates are to be normalized
+   */
   void operator()(Point_2 & p)
   {
     leda::rational x = p.x();
@@ -209,6 +231,812 @@ public:
 };
 #endif
 
+/*! Cgm_initializer is algorothmic framework that initializes a
+ * Cubical_gaussian_map_3 structure. It is parameterized by the CGM to
+ * be initialized and by a visitor class.
+ */
+template <class Cgm>
+class Cgm_initializer {
+private:
+protected:
+  typedef typename Cgm::FT                              FT;
+  typedef typename Cgm::Corner_id                       Corner_id;
+  
+  typedef typename Cgm::Kernel                          Kernel;
+  typedef typename Cgm::Projected_normal                Projected_normal;
+  typedef typename Cgm::Vector_3                        Vector_3;
+  typedef typename Cgm::Point_3                         Point_3;
+
+  typedef CGAL::Cgm_plane_3<Kernel>                     Cgm_plane_3;
+  
+  typedef typename Cgm::Arr                             Arr;
+  typedef typename Cgm::Arr_traits                      Arr_traits;
+  typedef typename Cgm::Arr_point_2                     Arr_point_2;
+  typedef typename Cgm::Arr_x_monotone_curve_2          Arr_x_monotone_curve_2;
+  typedef typename Cgm::Arr_vertex                      Arr_vertex;
+  typedef typename Cgm::Arr_point_location              Arr_point_location;
+
+  typedef typename Cgm::Arr_vertex_handle               Arr_vertex_handle;
+  typedef typename Cgm::Arr_halfedge_handle             Arr_halfedge_handle;
+  typedef typename Cgm::Arr_face_handle                 Arr_face_handle;
+
+  typedef typename Cgm::Arr_vertex_const_handle
+    Arr_vertex_const_handle;
+  typedef typename Cgm::Arr_halfedge_const_handle
+    Arr_halfedge_const_handle;
+  
+  typedef typename Cgm::Arr_vertex_iterator             Arr_vertex_iterator;
+  typedef typename Cgm::Arr_halfedge_iterator           Arr_halfedge_iterator;
+  typedef typename Cgm::Arr_face_iterator               Arr_face_iterator;
+
+  typedef typename Cgm::Arr_ccb_halfedge_circulator
+    Arr_ccb_halfedge_circulator;
+  typedef typename Cgm::Arr_halfedge_around_vertex_circulator
+    Arr_halfedge_around_vertex_circulator;
+
+  /*! The CGM to initialize */
+  Cgm & m_cgm;
+
+  /*! Constructor */
+  Cgm_initializer(Cgm & cgm) : m_cgm(cgm) { }
+
+  /*! Destructor */
+  virtual ~Cgm_initializer() {}
+  
+  /*! This function initializes the arrangements with the boundary curves */
+  void init_arrangements() { m_cgm.init_arrangements(); }
+
+  /*! Process the corners */
+  void process_corners() { m_cgm.process_corners(); }
+
+  /*! \todo elliminate this! Process the boundary edges */
+  void process_edges() { m_cgm.process_edges(); }
+
+  /*! Find the planar map on the adjacent cube face given a halfedge
+   * \pre The given halfedge is on the boundary of the arrangement
+   */
+  Arr_face_handle find_adjacent_face(Arr_halfedge_handle heh) const
+  { return m_cgm.find_adjacent_face(heh); }
+
+  Arr_vertex_handle get_corner_vertex_handle(Corner_id corner_id)
+  { return m_cgm.get_corner_vertex_handle(corner_id); }
+
+  /*! Obtain the handle of a halfedge that represents the same segment of a
+   * unit-cube edge on the adjacent unit-cube face
+   * \param he the halfedge handle that represents a segment of an edge
+   */
+  Arr_halfedge_handle get_adjacent_halfedge_handle(Arr_halfedge_handle he)
+  { return m_cgm.get_adjacent_halfedge_handle(he); }
+  
+  /*! Handle the introduction of a new boundary edge */
+  virtual void handle_new_boundary_edge(Arr_halfedge_handle edge) {}
+
+  /*! Handle the introduction of a new edge */
+  virtual void handle_new_edge(Arr_halfedge_handle edge) {}
+  
+  /*! Convert a  face mask to the index of the face resresented by the mask
+   * \param mask the face mask
+   * \return the face index
+   * \pre the mask represents a single face. That is, only one bit among the 6
+   * least significant bits is turned on
+   */
+  unsigned int face_mask_2_face_index(unsigned int mask)
+  {
+    unsigned int id;
+    for (id = 0; id < Cgm::NUM_FACES; ++id)
+      if (mask & Cgm::face_mask(id)) return id;
+    return (unsigned int) -1;
+  }
+  
+  /*! \brief returns true if two vertices given by their masks are on the same
+   * boundary of the a unit-cube face.
+   * \param mask1 the mask of the first point.
+   * \param mask2 the mask of the second point.
+   * \param id the index of the unit-cube face.
+   * \return true iff the vertices are on the same boundary.
+   */
+  bool is_on_same_boundary(unsigned int mask1, unsigned int mask2,
+                           unsigned int id) const
+  { return ((mask1 & ~Cgm::face_mask(id)) & (mask2 & ~Cgm::face_mask(id))); }
+    
+  /*! Insert a great arc whose angle is less than Pi and is represented by two
+   * normals into the CGM. Each normal defines an end point of the greate arc.
+   * The arc is projected and divided into segments, which are inserted into
+   * the corresponding arrangements.
+   * \param normal1 represents the source normal
+   * \param normal2 represents the target normal
+   */
+  void insert(const Vector_3 & normal1, const Vector_3 & normal2)
+  {
+    Projected_normal proj_normal1(normal1);
+    proj_normal1.set_is_real(true);
+
+    Projected_normal proj_normal2(normal2);
+    proj_normal2.set_is_real(true);
+
+    insert(proj_normal1, proj_normal2);
+  }
+  
+  /*! Calculate the 2D point, which is the projection of a normal, and is
+   * contained in the arrangement associated with a given unit-cube face
+   * \param projected_normat the projected normal
+   * \param id the id of the unit-cube face
+   */
+  Arr_point_2 construct_point(const Point_3 & p3, unsigned int id) const
+  {
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;    
+
+    Arr_point_2 p2 =
+      (id < 3) ? Arr_point_2(p3[k], p3[j]) : Arr_point_2(p3[j], p3[k]);
+    Cgm_normalizer<FT, Arr_point_2> normalize;
+    normalize(p2);
+    return p2;
+  }
+
+  /*! Splits an edge of a arrangement. The embedding of the edge is a curve
+   * containing a given point. The curve is split into two sub-curves, and
+   * re-inserted into the arrangement.
+   * \param arr_id the arrangement identifier
+   * \param p the split point
+   * \return handle to a halfedge e. The embedding of e is one of the
+   * sub-curves, and the embedding of the target vertex of e is the given
+   * point p.
+   * \pre p is on the boundary of the box
+   */
+  Arr_halfedge_handle split(unsigned int id, const Arr_point_2 & p,
+                            Projected_normal & dual)
+  {
+    Arr & arr = m_cgm.get_arrangement(id);
+    Arr_point_location pl(arr);
+    CGAL::Object obj = pl.locate(p);
+    if (const Arr_vertex_const_handle * const_vertex_ptr =
+        CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+    {
+      Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+      return vertex->incident_halfedges();
+    }
+    else if (const Arr_halfedge_const_handle * const_edge_ptr =
+             CGAL::object_cast<Arr_halfedge_const_handle>(&obj))
+    {
+      Arr_halfedge_handle edge = arr.non_const_handle(*const_edge_ptr);
+      const Arr_x_monotone_curve_2 & curve = edge->curve();
+      Arr_x_monotone_curve_2 cv1, cv2;
+      Arr_traits traits;
+      traits.split_2_object()(curve, p, cv1, cv2);
+      /*! \todo
+       * edge->set_is_real(false);
+       * edge>twin()->set_is_real(false);
+       */
+      Arr_halfedge_handle he = arr.split_edge(edge, cv1, cv2);
+      return he;
+    }
+    CGAL_assertion_msg(0, "Failed to locate an edge!");
+    return arr.non_const_handle(Arr_halfedge_const_handle());
+  }
+  
+  /*! Inserts a curve (segment) into a arrangement between 2 projected normals.
+   * The endpoints of the segment are central projections.
+   * \param proj_normal1 represents the source projected normal
+   * \param proj_normal2 represents the target projected normal
+   * \param id the index of the unit-cube face, which is also the index of the
+   * arrangement to insert the segment into
+   * \param boundary_flag indicates whether insert() should be called
+   * recursively in case the segment to be added lies on the boundary. A
+   * recursive call is invoced with the flag turned on. This indicates that the
+   * recursion should stop.
+   */
+  void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2,
+              unsigned int id, bool unique = false)
+  {
+    unsigned int i = (id + 0) % 3;
+    
+    unsigned int faces_mask1 = proj_normal1.get_faces_mask();
+    unsigned int faces_mask2 = proj_normal2.get_faces_mask();
+
+#if 0
+    std::cout << "inserting:" << std::endl
+              << "projected normal 1: "
+              << proj_normal1.get_projected_normal() << ", 0x"
+              << std::hex << proj_normal1.get_faces_mask() << ", "
+              << proj_normal1.get_num_faces() << std::endl
+              << "projected normal 2: "
+              << proj_normal2.get_projected_normal() << ", 0x"
+              << std::hex << proj_normal2.get_faces_mask() << ", "
+              << proj_normal2.get_num_faces() << std::endl
+              << "id: " << id << std::endl;
+#endif
+    
+    // construct the 2d point that is the projection of normal onto the face:
+    const Point_3 & point1 = proj_normal1.get_projected_normal();
+    Arr_point_2 p1 = construct_point(point1, id);
+
+    // Construct the 2d point that is the projection of normal onto the face:
+    const Point_3 & point2 = proj_normal2.get_projected_normal();
+    Arr_point_2 p2 = construct_point(point2, id);
+
+    /* If the projected normals are not uniqe, we need to locate the vertices
+     * in case they already exists.
+     */
+    if (!unique) {
+      Arr & arr = m_cgm.get_arrangement(id);
+      Arr_point_location pl(arr);
+      if (!proj_normal1.is_vertex_set(i)) {
+        if (proj_normal1.get_num_faces() == 3) {
+          // Set 1st:
+          Corner_id corner_id(id, Cgm::get_corner_index(p1));
+          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 2nd:
+          corner_id = Cgm::get_next_corner_id(corner_id);
+          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 3rd:
+          corner_id = Cgm::get_next_corner_id(corner_id);
+          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+        } else if (proj_normal1.get_num_faces() == 2) {
+          CGAL::Object obj = pl.locate(p1);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal1.set_vertex(vertex, i);
+            // Adjacent face:
+            unsigned int adj_id =
+              face_mask_2_face_index(faces_mask1 & ~Cgm::face_mask(id));
+            void * tmp = vertex->get_adjacent_vertex();
+            Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
+            proj_normal1.set_vertex(adj_vertex, adj_id % 3);
+          }
+        } else {
+          CGAL::Object obj = pl.locate(p1);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal1.set_vertex(vertex, i);
+          }
+        }
+      }
+
+      if (!proj_normal2.is_vertex_set(i)) {
+        if (proj_normal2.get_num_faces() == 3) {
+          // Set 1st:
+          Corner_id corner_id(id, Cgm::get_corner_index(p2));
+          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 2nd:
+          corner_id = Cgm::get_next_corner_id(corner_id);
+          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+          // Set 3rd:
+          corner_id = Cgm::get_next_corner_id(corner_id);
+          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
+                                  corner_id.first % 3);
+        } else if (proj_normal2.get_num_faces() == 2) {
+          CGAL::Object obj = pl.locate(p2);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal2.set_vertex(vertex, i);
+            // Adjacent face:
+            unsigned int adj_id =
+              face_mask_2_face_index(faces_mask2 & ~Cgm::face_mask(id));
+            void * tmp = vertex->get_adjacent_vertex();
+            Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
+            proj_normal2.set_vertex(adj_vertex, adj_id % 3);
+          }
+        } else {
+          CGAL::Object obj = pl.locate(p2);
+          if (const Arr_vertex_const_handle * const_vertex_ptr =
+              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
+          {
+            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
+            proj_normal2.set_vertex(vertex, i);
+          }
+        }
+      }
+    }
+
+    /* If the computed point is on the boundary of the box face, but not a
+     * corner point, locate it. If the locate returns an edge, split it at the
+     * point:
+     */
+    if (proj_normal1.get_num_faces() == 2) {
+      if (!proj_normal1.is_vertex_set(i)) {
+        Arr_halfedge_handle edge = split(id, p1, proj_normal1);
+        const Arr_vertex_handle & v = edge->target();
+        proj_normal1.set_vertex(v, i);
+        v->set_face_id(id);
+        v->set_location(Arr_vertex::Edge);
+        if (proj_normal1.get_is_real()) v->set_is_real(true);
+        
+        // Find adjacent face:
+        unsigned int adjacent_mask = faces_mask1 & ~Cgm::face_mask(id);
+        unsigned int adjacent_id = face_mask_2_face_index(adjacent_mask);
+
+        // Find adjacent vertex and update incidence relation:
+        unsigned int adjacent_i = (adjacent_id + 0) % 3;
+        CGAL_assertion(!proj_normal1.is_vertex_set(adjacent_i));
+        Arr_point_2 adjacent_p = construct_point(point1, adjacent_id);
+        Arr_halfedge_handle adjacent_edge = split(adjacent_id, adjacent_p,
+                                                 proj_normal1);
+        const Arr_vertex_handle & adjacent_v = adjacent_edge->target();
+        adjacent_v->set_location(Arr_vertex::Edge);
+        if (proj_normal1.get_is_real()) adjacent_v->set_is_real(true);
+        proj_normal1.set_vertex(adjacent_v, adjacent_i);
+        v->set_adjacent_vertex(*((void **) (&adjacent_v)));
+        adjacent_v->set_adjacent_vertex(*((void **) (&v)));
+      }
+    } else if (proj_normal1.get_num_faces() == 3) {
+      unsigned index = Cgm::get_corner_index(faces_mask1, id);
+      CGAL_assertion(index < NUM_CORNERS);
+      Arr_vertex_handle v =
+        m_cgm.get_corner_vertex_handle(Corner_id(id, index));
+      /*! \todo Set the entire cyclic chain of 3 vertices, and not just the
+       * single current vertex
+       */
+      if (proj_normal1.get_is_real()) v->set_is_real(true);
+      Arr_halfedge_handle edge = v->incident_halfedges();
+      if (!proj_normal1.is_vertex_set(i)) proj_normal1.set_vertex(v, i);
+    }
+
+    /* If the computed point is on the boundary of the box face, but not a
+     * corner point, locate it. If the locate returns an edge, split it at the
+     * point:
+     */
+    if (proj_normal2.get_num_faces() == 2) {
+      if (!proj_normal2.is_vertex_set(i)) {
+        Arr_halfedge_handle edge = split(id, p2, proj_normal2);
+        const Arr_vertex_handle & v = edge->target();
+        proj_normal2.set_vertex(v, i);
+        v->set_face_id(id);
+        v->set_location(Arr_vertex::Edge);
+        if (proj_normal2.get_is_real()) v->set_is_real(true);
+
+        // Find adjacent face:
+        unsigned int adjacent_mask = faces_mask2 & ~Cgm::face_mask(id);
+        unsigned int adjacent_id = face_mask_2_face_index(adjacent_mask);
+
+        // Find adjacent vertex and update incidence relation:
+        unsigned int adjacent_i = (adjacent_id + 0) % 3;
+        CGAL_assertion(!proj_normal2.is_vertex_set(adjacent_i));
+        Arr_point_2 adjacent_p = construct_point(point2, adjacent_id);
+        Arr_halfedge_handle adjacent_edge = split(adjacent_id, adjacent_p,
+                                                 proj_normal2);
+        const Arr_vertex_handle & adjacent_v = adjacent_edge->target();
+        adjacent_v->set_location(Arr_vertex::Edge);
+        if (proj_normal2.get_is_real()) adjacent_v->set_is_real(true);
+        proj_normal2.set_vertex(adjacent_v, adjacent_i);
+        v->set_adjacent_vertex(*((void **) (&adjacent_v)));
+        adjacent_v->set_adjacent_vertex(*((void **) (&v)));
+      }
+    } else if (proj_normal2.get_num_faces() == 3) {
+      unsigned index = Cgm::get_corner_index(faces_mask2, id);
+      CGAL_assertion(index < NUM_CORNERS);
+      Arr_vertex_handle v =
+        m_cgm.get_corner_vertex_handle(Corner_id(id, index));
+      /*! \todo Set the entire cyclic chain of 3 vertices, and not just the
+       * single current vertex
+       */
+      if (proj_normal2.get_is_real()) v->set_is_real(true);
+      Arr_halfedge_handle edge = v->incident_halfedges();
+      if (!proj_normal2.is_vertex_set(i)) proj_normal2.set_vertex(v, i);
+    }
+
+    /* If the points are on the same boundary, no need to insert a curve.
+     * Update the is_real_flag and return
+     */
+    if (is_on_same_boundary(faces_mask1, faces_mask2, id)) {
+      const Arr_vertex_handle & v1 = proj_normal1.get_vertex(i);
+      const Arr_vertex_handle & v2 = proj_normal2.get_vertex(i);
+
+      // Find the edge:
+      Arr_halfedge_around_vertex_circulator edge = v2->incident_halfedges();
+      Arr_halfedge_around_vertex_circulator begin_hec = edge;
+      do {
+        if (edge->source() == v1) break;
+        ++edge;
+      } while (edge != begin_hec);
+      CGAL_assertion((v1 == edge->source()) && (v2 == edge->target()));
+      
+      edge->set_is_real(true);
+      edge->twin()->set_is_real(true);
+      handle_new_boundary_edge(edge);
+
+      // Insert an edge into the adjacent face:
+      Arr_halfedge_handle adjacent_edge;
+      if (edge->face()->is_unbounded()) {
+        adjacent_edge = get_adjacent_halfedge_handle(edge->twin());
+        handle_new_boundary_edge(adjacent_edge);
+      } else {
+        adjacent_edge = get_adjacent_halfedge_handle(edge);
+        handle_new_boundary_edge(adjacent_edge->twin());
+      }
+      adjacent_edge->set_is_real(true);
+      adjacent_edge->twin()->set_is_real(true);
+      
+      return;
+    }
+
+    /* Insert a curve to the arrangement that corresponds to the unit-cube face
+     * with index 'id':
+     */  
+    Arr_x_monotone_curve_2 cv(p1, p2);
+    Arr_halfedge_handle edge;
+    if (proj_normal1.is_vertex_set(i) && proj_normal2.is_vertex_set(i)) {
+      const Arr_vertex_handle & v1 = proj_normal1.get_vertex(i);
+      const Arr_vertex_handle & v2 = proj_normal2.get_vertex(i);
+      // std::cout << "cv: " << cv
+      // << ", v1: " << v1->point() << ", v2: " << v2->point()
+      // << std::endl;
+      edge = m_cgm.get_arrangement(id).insert_at_vertices(cv, v1, v2);
+    
+      // Set the fields that indicates whehther the vertex is interior or not
+      v1->set_location(Cgm::num_faces_2_vertex_location(proj_normal1.get_num_faces()));
+      v2->set_location(Cgm::num_faces_2_vertex_location(proj_normal2.get_num_faces()));
+
+      // Set the flags that indicates whehther the vertex is real:
+      if (proj_normal1.get_is_real()) v1->set_is_real(true);
+      if (proj_normal2.get_is_real()) v2->set_is_real(true);
+    } else if (proj_normal1.is_vertex_set(i)) {
+      const Arr_vertex_handle & v1 = proj_normal1.get_vertex(i);
+
+      //! \todo this can done before cv is constructed!
+      // std::cout << "1: " << p1 << "," << p2 << ", v1: " << v1->point()
+      // << std::endl;
+      Arr_traits traits;
+      Comparison_result res = traits.compare_xy_2_object()(p1, p2);
+      CGAL_assertion(res != EQUAL);
+      if (res == SMALLER)
+        edge = m_cgm.get_arrangement(id).insert_from_left_vertex(cv, v1);
+      else
+        edge = m_cgm.get_arrangement(id).insert_from_right_vertex(cv, v1);
+      const Arr_vertex_handle & v2 = edge->target();
+      proj_normal2.set_vertex(v2, i);
+      v2->set_face_id(id);
+      v1->set_location(Cgm::num_faces_2_vertex_location(proj_normal1.get_num_faces()));
+      
+      // Set the flags that indicates whehther the vertex is real:
+      if (proj_normal1.get_is_real()) v1->set_is_real(true);
+      if (proj_normal2.get_is_real()) v2->set_is_real(true);
+    } else if (proj_normal2.is_vertex_set(i)) {
+      const Arr_vertex_handle & v2 = proj_normal2.get_vertex(i);
+
+      //! \todo this can done before cv is constructed!
+      // std::cout << "2: " << p1 << "," << p2 << std::endl;
+      Arr_traits traits;
+      Comparison_result res = traits.compare_xy_2_object()(p2, p1);
+      CGAL_assertion(res != EQUAL);
+      if (res == SMALLER)
+        edge = m_cgm.get_arrangement(id).insert_from_left_vertex(cv, v2);
+      else
+        edge = m_cgm.get_arrangement(id).insert_from_right_vertex(cv, v2);
+      const Arr_vertex_handle & v1 = edge->target();
+      proj_normal1.set_vertex(v1, i);
+      v1->set_face_id(id);      
+      v2->set_location(Cgm::num_faces_2_vertex_location(proj_normal2.get_num_faces()));
+      // Set the flags that indicates whehther the vertex is real:
+      if (proj_normal1.get_is_real()) v1->set_is_real(true);
+      if (proj_normal2.get_is_real()) v2->set_is_real(true);     
+    } else {
+      //! \todo use a default point location
+      edge = insert_non_intersecting_curve(m_cgm.get_arrangement(id), cv);
+      const Arr_vertex_handle & v1 = edge->source();
+      const Arr_vertex_handle & v2 = edge->target();
+
+      Arr_traits traits;
+      Comparison_result res = traits.compare_xy_2_object()(p1, p2);
+      CGAL_assertion(res != EQUAL);
+      if (res == SMALLER) {
+        proj_normal1.set_vertex(v1, i);
+        proj_normal2.set_vertex(v2, i);
+      } else {
+        proj_normal1.set_vertex(v2, i);
+        proj_normal2.set_vertex(v1, i);
+      }
+      v1->set_face_id(id);
+      v2->set_face_id(id);
+
+      // Set the flags that indicates whehther the vertex is real:
+      if (proj_normal1.get_is_real()) v1->set_is_real(true);
+      if (proj_normal2.get_is_real()) v2->set_is_real(true);
+    }
+    edge->set_is_real(true);
+    edge->twin()->set_is_real(true);
+
+    handle_new_edge(edge);
+  }
+
+  /*! Connect two projected normals. In particular, insert segments that connect
+   * the source projected normal, which projects onto the unit-cube face with
+   * a given id to, the target projected normal, which projects onto the
+   * unit-cube face with another given id.
+   * \param id1 the index of the unit-cube face the source normal project onto
+   * \param id2 the index of the unit-cube face the target normal project onto
+   * \param proj_normal1 represents the source projected normal
+   * \param proj_normal2 represents the target projected normal
+   * \param unique indicates whether projected normals are unique. If true,
+   * then two different projected normals that are passed as parameters since
+   * the last clear, must represents two different normals.
+   */
+  void connect(Projected_normal & proj_normal1, unsigned int id1,
+               Projected_normal & proj_normal2, unsigned int id2,
+               const Cgm_plane_3 & plane, bool unique = false)
+  {
+#if 0
+    std::cout << "connect from " << id1 << " to " << id2 << std::endl;
+#endif
+    
+    /* If the normals projects onto the same box face f, generate a curve
+     * between the prjection points, and insert it into the
+     * arrangement that corresponds to the box f:
+     */
+    if (id1 == id2) {
+      insert(proj_normal1, proj_normal2, id1, unique);
+      return;
+    }
+
+    unsigned int faces_mask1 = proj_normal1.get_faces_mask();
+    unsigned int faces_mask2 = proj_normal2.get_faces_mask();
+    unsigned int faces_mask = faces_mask1 & faces_mask2;
+    if (faces_mask) {
+      unsigned int id;
+      for (id = 0; id < Cgm::NUM_FACES; id++)
+        if (faces_mask & Cgm::face_mask(id)) break;
+      insert(proj_normal1, proj_normal2, id, unique);
+      return;
+    }
+
+    /* If the normals projects onto different box faces, we compute the plane
+     * induced by the origin and the 2 points, advance to the
+     * next box face, and try to connect again
+     */
+
+    // Extract the data of the first normal:
+    const Point_3 & point1 = proj_normal1.get_projected_normal();
+    
+    unsigned int i = (id1 + 0) % 3;
+    unsigned int j = (id1 + 1) % 3;
+    unsigned int k = (id1 + 2) % 3;
+  
+    // Extract the data of the second normal:
+    const Point_3 & point2 = proj_normal2.get_projected_normal();
+  
+    // We consider the boundary of box face with index 'id1':
+    unsigned int l = (id1 < 3) ? 0 : 1;
+    unsigned int m =
+      ((faces_mask1 & Cgm::face_mask(j+3)) &&
+       (faces_mask2 & Cgm::face_mask(j))) ?
+      0 : ((faces_mask1 & Cgm::face_mask(j)) &&
+           (faces_mask2 & Cgm::face_mask(j+3))) ?
+      1 : ((point1[j] + point2[j]) < 0) ? 0 : 1;
+    unsigned int n =
+      ((faces_mask1 & Cgm::face_mask(k+3)) &&
+       (faces_mask2 & Cgm::face_mask(k))) ?
+      0 : ((faces_mask1 & Cgm::face_mask(k)) &&
+           (faces_mask2 & Cgm::face_mask(k+3))) ?
+      1 : ((point1[k] + point2[k]) < 0) ? 0 : 1;
+
+    FT vec[3];
+    vec[i] = Cgm::get_extreme_coordinate(l);
+    vec[j] = Cgm::get_extreme_coordinate(m);
+    vec[k] = Cgm::get_extreme_coordinate(n);
+
+    // Check whether the point does not escape the box. There are 2 options:
+    faces_mask = 0x0;
+    unsigned int id = 0;
+    unsigned int num_faces = 0;
+    Point_3 point;
+    Arr_point_2 origin(CGAL::ORIGIN);
+    /* If the k-th coefficient is equal to 0, then the plane is prallel to 
+     * the j-k plane or to the k-i plane. In either case, the projection of the
+     * 2d point is at infinity. In this case we move to the 2nd option
+     */
+    bool flag = false;
+    bool is_set = false;
+
+#if 0
+    std::cout << "k: " << k
+              << ", j: " << j
+              << ", m: " << m
+              << ", n: " << n
+              << std::endl;
+    std::cout << "plane: " << plane << std::endl;
+#endif
+    
+    if (plane[k] != 0) {
+      id = j + 3 * m;
+      faces_mask = Cgm::face_mask(id1) | Cgm::face_mask(id);
+      num_faces = 2;
+
+#if 0
+      std::cout << "id: " << id << std::hex
+                << ", faces_mask1: " << faces_mask1
+                << ", faces_mask: " << faces_mask
+                << std::endl;
+#endif
+      
+      // Verify that the new point is different than point1:
+      if ((faces_mask1 & faces_mask) != faces_mask) {
+        Arr_point_2 p_2(vec[i], vec[j]);
+        Arr_point_2 p1_2(point1[i], point1[j]);
+        Arr_point_2 p2_2(point2[i], point2[j]);
+
+        typedef typename Kernel::Left_turn_2 Left_turn_2;
+        Kernel kernel;
+        Left_turn_2 leftturn = kernel.left_turn_2_object();
+        flag = ((leftturn(p1_2, origin, p2_2) &&
+                 leftturn(p_2, origin, p2_2) && leftturn(p1_2, origin, p_2)) ||
+                (leftturn(p2_2, origin, p1_2) &&
+                 leftturn(p_2, origin, p1_2) && leftturn(p2_2, origin, p_2)));
+        point = plane.to_3d(p_2, k);
+
+#if 0
+        std::cout << "flag: " << flag
+                  << ", point[" << k << "]: " << point[k]
+                  << std::endl;
+#endif
+        
+        // Check whether the new point is not outside the cube:
+        if (flag && (((n == 0) && (point[k] >= Cgm::get_extreme_coordinate(0))) ||
+                     ((n == 1) && (point[k] <= Cgm::get_extreme_coordinate(1)))))
+        {
+          is_set = true;
+
+          // Check whether the new point is a cube corner-point:
+          if (point[k] == Cgm::get_extreme_coordinate(n)) {
+            faces_mask |= Cgm::face_mask(k + 3 * n);
+            // If the new point coincides with the destination cube face:
+            if ((k + 3 * n) == id2) id = id2;
+            num_faces++;
+          }
+        }
+      }
+    }
+
+    // If not set, try the other index:
+    if (!is_set) {
+      CGAL_assertion(plane[j] != 0);
+
+      id = k + 3 * n;
+      faces_mask = Cgm::face_mask(id1) | Cgm::face_mask(id);
+      num_faces = 2;
+
+#if 0
+      std::cout << "id: " << id << std::hex
+                << ", faces_mask1: " << faces_mask1
+                << ", faces_mask: " << faces_mask
+                << std::endl;
+#endif
+      
+      // Verify that the new point is different than point1:
+      if ((faces_mask1 & faces_mask) != faces_mask) {
+        Arr_point_2 p_2(vec[k], vec[i]);
+        point = plane.to_3d(p_2, j);
+
+        // Check whether the new point is a cube corner-point:
+        if (point[j] == Cgm::get_extreme_coordinate(m)) {
+          faces_mask |= Cgm::face_mask(j + 3 * m);
+          // If the new point coincides with the destination cube face:
+          if ((j + 3 * m) == id2) id = id2;
+          num_faces++;
+        }
+
+#if 0
+        std::cout << "flag: " << flag
+                  << ", point[" << j << "]: " << point[j]
+                  << std::endl;
+#endif
+        
+        // Check whether the new point is not outside the cube:
+        if (((m == 0) && (point[j] >= Cgm::get_extreme_coordinate(0))) ||
+            ((m == 1) && (point[j] <= Cgm::get_extreme_coordinate(1))))
+        {
+          is_set = true;
+        }
+      }
+    }
+
+    CGAL_assertion(is_set);
+    Projected_normal proj_normal(point, faces_mask, num_faces);
+    insert(proj_normal1, proj_normal, id1, unique);
+    connect(proj_normal, id, proj_normal2, id2, plane, unique);
+  }
+
+  /*! Insert a projection of a great arc represented by two projected normals
+   * into the CGM. Each projected normal is the projection of the normal vector
+   * that defines an end point of the greate arc. The projected arc is divided
+   * into segments, which are inserted into the corresponding arrangements.
+   * First, find the two unit-cube faces that the normals project onto. Then,
+   * insert a segment or a sequence of segments that connect the projection of
+   * the 2 normals.
+   * \param proj_normal1 represents the source projected normal
+   * \param proj_normal2 represents the target projected normal
+   * \param unique indicates whether projected normals are unique. If true,
+   * then two different projected normals that are passed as parameters since
+   * the last clear, must represents two different normals.
+   */
+  void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2,
+              bool unique = false)
+  {
+    unsigned int faces_mask1 = proj_normal1.get_faces_mask();
+    unsigned int faces_mask2 = proj_normal2.get_faces_mask();
+
+    /* If the normal vectors project onto the same unit-cube face f,
+     * generate a curve between the prjection points, and insert it into the
+     * arrangement that corresponds to the box f
+     */
+    unsigned int faces_mask = faces_mask1 & faces_mask2;
+    if (faces_mask) {
+      unsigned int id;
+      for (id = 0; id < Cgm::NUM_FACES; id++)
+        if (faces_mask & Cgm::face_mask(id)) break;
+      insert(proj_normal1, proj_normal2, id, unique);
+      return;
+    }
+
+    // Find the match:
+    unsigned int num_faces1 = proj_normal1.get_num_faces();
+    unsigned int num_faces2 = proj_normal2.get_num_faces();
+
+    /* This is an optional optimization. If the 2 points are on twin cube
+     * faces, say face i and i+3, and one of them is a boundary point, say
+     * contained in faces i and j, then for this point we choose face j (we
+     * elliminate the twin face i, cause it is further than that the other
+     * face, j in this scenario, from i+3, where the other point lies in
+     */
+    if (num_faces1 > 1) {
+      for (unsigned int i1 = 0; i1 < Cgm::NUM_FACES; ++i1) {
+        unsigned int i2 = (i1+3) % Cgm::NUM_FACES;
+        if ((Cgm::face_mask(i1) & faces_mask1) &&
+            (Cgm::face_mask(i2) & faces_mask2))
+        {
+          faces_mask1 &= ~Cgm::face_mask(i1);
+          num_faces1--;
+        }
+      }
+    }
+    if (num_faces2 > 1) {
+      for (unsigned int i1 = 0; i1 < Cgm::NUM_FACES; ++i1) {
+        unsigned int i2 = (i1+3) % Cgm::NUM_FACES;
+        if ((Cgm::face_mask(i1) & faces_mask1) &&
+            (Cgm::face_mask(i2) & faces_mask2))
+        {
+          faces_mask2 &= ~Cgm::face_mask(i2);
+          num_faces2--;
+        }
+      }
+    }
+
+    unsigned int id1, id2;
+
+    // Find the (first) index of the box face the first normal projects onto:
+    for (id1 = 0; id1 < Cgm::NUM_FACES; id1++)
+      if (faces_mask1 & Cgm::face_mask(id1)) break;   
+
+    // Find the (first) index of the box face the second normal projects onto:
+    for (id2 = 0; id2 < Cgm::NUM_FACES; id2++)
+      if (faces_mask2 & Cgm::face_mask(id2)) break;    
+
+    CGAL_assertion(id1 != id2);
+    
+    /* If the normals projects onto two points that are on different unit-cube
+     * faces, we compute the plane induced by the origin and the two points,
+     * compute all the intersections of the plane with the unit-cube
+     * boundaries, and connect all the intersection properly.
+     */
+    const Point_3 & point1 = proj_normal1.get_projected_normal();
+    const Point_3 & point2 = proj_normal2.get_projected_normal();
+    Cgm_plane_3 plane(CGAL::ORIGIN, point1, point2);
+    connect(proj_normal1, id1, proj_normal2, id2, plane, unique);
+  }
+};
+
+/*!
+ */
 template <class T_Kernel,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
@@ -237,22 +1065,19 @@ public:
 private:
   typedef CGAL::Arrangement_2<Arr_traits,Arr_dcel>      Arr;
 
-  // Point_location;
-  // typedef typename CGAL::Arr_walk_along_line_point_location<Arr>
-  typedef typename CGAL::Arr_naive_point_location<Arr>  Point_location;
-
-  typedef CGAL::Cgm_plane_3<Kernel>                     Cgm_plane_3;
-public:
-  
+public:  
   typedef typename Kernel::FT                           FT;
   typedef typename Kernel::Point_3                      Point_3;
   typedef typename Kernel::Vector_3                     Vector_3;
   typedef typename Kernel::Plane_3                      Plane_3;
 
-  typedef typename Arr_traits::Point_2                  Point_2;
+  typedef typename Arr_traits::Point_2                  Arr_point_2;
   typedef typename Arr_traits::Curve_2                  Curve_2;
-  typedef typename Arr_traits::X_monotone_curve_2       X_monotone_curve_2;
+  typedef typename Arr_traits::X_monotone_curve_2       Arr_x_monotone_curve_2;
 
+  // typedef typename CGAL::Arr_walk_along_line_point_location<Arr>
+  typedef typename CGAL::Arr_naive_point_location<Arr>  Arr_point_location;
+    
   enum {NUM_CORNERS = 4};
   enum {NUM_EDGES = 12};
   
@@ -351,24 +1176,22 @@ public:
 
     /*! Return true if a arrangement vertex has been set already */
     bool is_vertex_set(unsigned int i) const
-    {
-      return m_vertices_mask & get_mask(i);
-    }
+    { return m_vertices_mask & face_mask(i); }
     
-    /*! sets a arrangement vertex */
+    /*! Set a arrangement vertex */
     void set_vertex(Arr_vertex_handle vertex, unsigned int i)
     {
       m_vertices[i] = vertex;
-      m_vertices_mask |= get_mask(i);
+      m_vertices_mask |= face_mask(i);
     }
 
-    /*! obtains the vertices mask  */
+    /*! Obtain the vertices mask  */
     unsigned int get_vertices_mask() const { return m_vertices_mask; }
 
-    /*! obtains a arrangement vertex */
+    /*! Obtain a arrangement vertex */
     Arr_vertex_handle & get_vertex(unsigned int i) { return m_vertices[i]; }
 
-    /*! \brief obtains the number of box faces the normal projects onto */
+    /*! Obtain the number of box faces the normal projects onto */
     unsigned int get_num_faces() const { return m_num_faces; }
 
     /*! Obtain the flag that indicates whether the projected normal is real */
@@ -416,22 +1239,22 @@ public:
           continue;
 
         m_central_projection = Point_3(vec[0], vec[1], vec[2]);
-        m_faces_mask = get_mask(m_i);
+        m_faces_mask = face_mask(m_i);
         m_num_faces = 1;
 
         // Handle degenerate cases:
         if (get_extreme_coordinate(0) == vec[j]) {
-          m_faces_mask |= get_mask(j);
+          m_faces_mask |= face_mask(j);
           m_num_faces++;
         } else if (get_extreme_coordinate(1) == vec[j]) {
-          m_faces_mask |= get_mask(3+j);
+          m_faces_mask |= face_mask(3+j);
           m_num_faces++;
         }
         if (get_extreme_coordinate(0) == vec[k]) {
-          m_faces_mask |= get_mask(k);
+          m_faces_mask |= face_mask(k);
           m_num_faces++;
         } else if (get_extreme_coordinate(1) == vec[k]) {
-          m_faces_mask |= get_mask(3+k);
+          m_faces_mask |= face_mask(3+k);
           m_num_faces++;
         }
         break;
@@ -459,7 +1282,7 @@ public:
    * \param p the 2D point that the normal projects onto
    * \return the normal vector
    */
-  Vector_3 calculate_normal(unsigned int id, Point_2 & p) const
+  Vector_3 calculate_normal(unsigned int id, Arr_point_2 & p) const
   {
     switch (id) {
      case 0: return Vector_3(get_extreme_coordinate(0), p.y(), p.x()); break;
@@ -472,22 +1295,6 @@ public:
     return Vector_3();
   }
   
-  /*! Calculate the 2D point, which is the projection of a normal, and is
-   * contained in the arrangement associated with a given unit-cube face
-   * \param projected_normat the projected normal
-   * \param id the id of the unit-cube face
-   */
-  Point_2 construct_point(const Point_3 & p3, unsigned int id) const
-  {
-    unsigned int j = (id + 1) % 3;
-    unsigned int k = (id + 2) % 3;    
-
-    Point_2 p2 = (id < 3) ? Point_2(p3[k], p3[j]) : Point_2(p3[j], p3[k]);
-    Cgm_normalize<FT, Point_2> normalize;
-    normalize(p2);
-    return p2;
-  }
-
   /*! A circulator over the real halfedges incident to a real vertex.
    * This is an adapter that traverses the incident arrangement halfedges
    * incident to a given vertex, skipping the non-real halfedges, and jumping
@@ -583,8 +1390,8 @@ public:
     }
   };
   
-  /*! Return the mask of a face given by the face id */
-  static unsigned int get_mask(unsigned int id)
+  /*! Obtain the mask of a face given by the face id */
+  static unsigned int face_mask(unsigned int id)
   {
     /*! A mask for each face */
     static unsigned int s_mask[NUM_FACES] = {
@@ -594,9 +1401,7 @@ public:
     return s_mask[id];
   }
 
-protected:
-  typedef unsigned int * Coord_index_iter;
-
+public:
   /*! Return an extreme (1 or -1) coordinate of the unit cube in the user
    * defined number-type.
    * \param i an index.
@@ -610,6 +1415,7 @@ protected:
     return s_extreme[i];
   }
 
+protected:
   /*! Generate and return the corner point given by its index according to the
    * chart below.
    * The index is specified on the left, and the coordinates on the right
@@ -627,35 +1433,38 @@ protected:
    * \param index the (local) index of the point
    * \return the corner point
    */
-  static const Point_2 & get_corner_point(unsigned int index)
+  static const Arr_point_2 & get_corner_point(unsigned int index)
   {
     /*! The corners */
-    static Point_2 s_corners[NUM_CORNERS] = {
-      Point_2(get_extreme_coordinate(0), get_extreme_coordinate(0)),
-      Point_2(get_extreme_coordinate(0), get_extreme_coordinate(1)),
-      Point_2(get_extreme_coordinate(1), get_extreme_coordinate(0)),
-      Point_2(get_extreme_coordinate(1), get_extreme_coordinate(1))
+    static Arr_point_2 s_corners[NUM_CORNERS] = {
+      Arr_point_2(get_extreme_coordinate(0), get_extreme_coordinate(0)),
+      Arr_point_2(get_extreme_coordinate(0), get_extreme_coordinate(1)),
+      Arr_point_2(get_extreme_coordinate(1), get_extreme_coordinate(0)),
+      Arr_point_2(get_extreme_coordinate(1), get_extreme_coordinate(1))
     };
     return s_corners[index];
   }
 
+public:
   /*! Obtain the index of a given corner point
    * \param point the corner point
    */
-  static unsigned int get_corner_index(Point_2 & point)
+  static unsigned int get_corner_index(Arr_point_2 & point)
   {
     for (unsigned int i = 0; i < NUM_CORNERS; ++i)
       if (get_corner_point(i) == point) return i;
     CGAL_assertion(0);
     return static_cast<unsigned int>(-1);
   }
-  
+
+protected:
   /*! A specific corner-vertex is identified by the id of the unit-cube face
    * associated with the arrangement containing the vertex, and the id of the
    * corner within that face.
    */
   typedef std::pair<unsigned int, unsigned int> Corner_id;
 
+public:
   /*! Obtain the handle of a corner vertex given by its id
    * \param the id of the corner vertex
    * \return the handle of the corner vertex
@@ -693,6 +1502,7 @@ protected:
     return s_next_corner[face_id][corner_index];
   }
 
+protected:
   /*! Obtain the id of one of the two corner vertices that are the target
    * vertices of 2 boundary halfedges that represent the same unit-cube edge.
    * Each edge is associated with two halfedges on the (outer) connected
@@ -731,607 +1541,17 @@ protected:
   /*! The corner vertices */
   Arr_vertex_handle m_corner_vertices[NUM_FACES][NUM_CORNERS];
 
+public:
   /*! Convert number of incident faces to vertex location
    * \param num_faces the number of faces
    */
-  Vertex_location num_faces_2_vertex_location(unsigned int num_faces)
+  static Vertex_location num_faces_2_vertex_location(unsigned int num_faces)
   {
     CGAL_assertion(num_faces);
     return (num_faces == 1) ? Arr_vertex::Interior :
       ((num_faces == 2) ? Arr_vertex::Edge : Arr_vertex::Corner);
   }
 
-  /*! Convert a  face mask to the index of the face resresented by the mask
-   * \param mask the face mask
-   * \return the face index
-   * \pre the mask represents a single face. That is, only one bit among the 6
-   * least significant bits is turned on
-   */
-  unsigned int face_mask_2_face_index(unsigned int mask)
-  {
-    unsigned int id;
-    for (id = 0; id < NUM_FACES; ++id)
-      if (mask & get_mask(id)) return id;
-    return (unsigned int) -1;
-  }
-  
-  /*! Splits an edge of a arrangement. The embedding of the edge is a curve
-   * containing a given point. The curve is split into two sub-curves, and
-   * re-inserted into the arrangement.
-   * \param arr_id the arrangement identifier
-   * \param p the split point
-   * \return handle to a halfedge e. The embedding of e is one of the
-   * sub-curves, and the embedding of the target vertex of e is the given
-   * point p.
-   * \pre p is on the boundary of the box
-   */
-  Arr_halfedge_handle split(unsigned int id, const Point_2 & p,
-                            Projected_normal & dual)
-  {
-    Arr & arr = m_arrangements[id];
-    Point_location pl(arr);
-    CGAL::Object obj = pl.locate(p);
-    if (const Arr_vertex_const_handle * const_vertex_ptr =
-        CGAL::object_cast<Arr_vertex_const_handle>(&obj))
-    {
-      Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
-      return vertex->incident_halfedges();
-    }
-    else if (const Arr_halfedge_const_handle * const_edge_ptr =
-             CGAL::object_cast<Arr_halfedge_const_handle>(&obj))
-    {
-      Arr_halfedge_handle edge = arr.non_const_handle(*const_edge_ptr);
-      const X_monotone_curve_2 & curve = edge->curve();
-      X_monotone_curve_2 cv1, cv2;
-      Arr_traits traits;
-      traits.split_2_object()(curve, p, cv1, cv2);
-      /*! \todo
-       * edge->set_is_real(false);
-       * edge>twin()->set_is_real(false);
-       */
-      Arr_halfedge_handle he = arr.split_edge(edge, cv1, cv2);
-      return he;
-    }
-    CGAL_assertion_msg(0, "Failed to locate an edge!");
-    return arr.non_const_handle(Arr_halfedge_const_handle());
-  }
-
-  /*! Inserts a curve (segment) into a arrangement between 2 projected normals.
-   * The endpoints of the segment are central projections.
-   * \param proj_normal1 represents the source projected normal
-   * \param proj_normal2 represents the target projected normal
-   * \param id the index of the unit-cube face, which is also the index of the
-   * arrangement to insert the segment into
-   * \param boundary_flag indicates whether insert() should be called
-   * recursively in case the segment to be added lies on the boundary. A
-   * recursive call is invoced with the flag turned on. This indicates that the
-   * recursion should stop.
-   */
-  void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2,
-              unsigned int id, bool unique = false)
-  {
-    unsigned int i = (id + 0) % 3;
-    
-    unsigned int faces_mask1 = proj_normal1.get_faces_mask();
-    unsigned int faces_mask2 = proj_normal2.get_faces_mask();
-
-#if 0
-    std::cout << "inserting:" << std::endl
-              << "projected normal 1: "
-              << proj_normal1.get_projected_normal() << ", 0x"
-              << std::hex << proj_normal1.get_faces_mask() << ", "
-              << proj_normal1.get_num_faces() << std::endl
-              << "projected normal 2: "
-              << proj_normal2.get_projected_normal() << ", 0x"
-              << std::hex << proj_normal2.get_faces_mask() << ", "
-              << proj_normal2.get_num_faces() << std::endl
-              << "id: " << id << std::endl;
-#endif
-    
-    // construct the 2d point that is the projection of normal onto the face:
-    const Point_3 & point1 = proj_normal1.get_projected_normal();
-    Point_2 p1 = construct_point(point1, id);
-
-    // Construct the 2d point that is the projection of normal onto the face:
-    const Point_3 & point2 = proj_normal2.get_projected_normal();
-    Point_2 p2 = construct_point(point2, id);
-
-    /* If the projected normals are not uniqe, we need to locate the vertices
-     * in case they already exists.
-     */
-    if (!unique) {
-      Arr & arr = m_arrangements[id];
-      Point_location pl(arr);
-      if (!proj_normal1.is_vertex_set(i)) {
-        if (proj_normal1.get_num_faces() == 3) {
-          // Set 1st:
-          Corner_id corner_id(id, get_corner_index(p1));
-          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
-                                  corner_id.first % 3);
-          // Set 2nd:
-          corner_id = get_next_corner_id(corner_id);
-          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
-                                  corner_id.first % 3);
-          // Set 3rd:
-          corner_id = get_next_corner_id(corner_id);
-          proj_normal1.set_vertex(get_corner_vertex_handle(corner_id),
-                                  corner_id.first % 3);
-        } else if (proj_normal1.get_num_faces() == 2) {
-          CGAL::Object obj = pl.locate(p1);
-          if (const Arr_vertex_const_handle * const_vertex_ptr =
-              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
-          {
-            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
-            proj_normal1.set_vertex(vertex, i);
-            // Adjacent face:
-            unsigned int adj_id =
-              face_mask_2_face_index(faces_mask1 & ~get_mask(id));
-            void * tmp = vertex->get_adjacent_vertex();
-            Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
-            proj_normal1.set_vertex(adj_vertex, adj_id % 3);
-          }
-        } else {
-          CGAL::Object obj = pl.locate(p1);
-          if (const Arr_vertex_const_handle * const_vertex_ptr =
-              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
-          {
-            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
-            proj_normal1.set_vertex(vertex, i);
-          }
-        }
-      }
-
-      if (!proj_normal2.is_vertex_set(i)) {
-        if (proj_normal2.get_num_faces() == 3) {
-          // Set 1st:
-          Corner_id corner_id(id, get_corner_index(p2));
-          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
-                                  corner_id.first % 3);
-          // Set 2nd:
-          corner_id = get_next_corner_id(corner_id);
-          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
-                                  corner_id.first % 3);
-          // Set 3rd:
-          corner_id = get_next_corner_id(corner_id);
-          proj_normal2.set_vertex(get_corner_vertex_handle(corner_id),
-                                  corner_id.first % 3);
-        } else if (proj_normal2.get_num_faces() == 2) {
-          CGAL::Object obj = pl.locate(p2);
-          if (const Arr_vertex_const_handle * const_vertex_ptr =
-              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
-          {
-            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
-            proj_normal2.set_vertex(vertex, i);
-            // Adjacent face:
-            unsigned int adj_id =
-              face_mask_2_face_index(faces_mask2 & ~get_mask(id));
-            void * tmp = vertex->get_adjacent_vertex();
-            Arr_vertex_handle adj_vertex = *((Arr_vertex_handle *) (&tmp));
-            proj_normal2.set_vertex(adj_vertex, adj_id % 3);
-          }
-        } else {
-          CGAL::Object obj = pl.locate(p2);
-          if (const Arr_vertex_const_handle * const_vertex_ptr =
-              CGAL::object_cast<Arr_vertex_const_handle>(&obj))
-          {
-            Arr_vertex_handle vertex = arr.non_const_handle(*const_vertex_ptr);
-            proj_normal2.set_vertex(vertex, i);
-          }
-        }
-      }
-    }
-
-    /* If the computed point is on the boundary of the box face, but not a
-     * corner point, locate it. If the locate returns an edge, split it at the
-     * point:
-     */
-    if (proj_normal1.get_num_faces() == 2) {
-      if (!proj_normal1.is_vertex_set(i)) {
-        Arr_halfedge_handle edge = split(id, p1, proj_normal1);
-        const Arr_vertex_handle & v = edge->target();
-        proj_normal1.set_vertex(v, i);
-        v->set_face_id(id);
-        v->set_location(Arr_vertex::Edge);
-        if (proj_normal1.get_is_real()) v->set_is_real(true);
-        
-        // Find adjacent face:
-        unsigned int adjacent_mask = faces_mask1 & ~get_mask(id);
-        unsigned int adjacent_id = face_mask_2_face_index(adjacent_mask);
-
-        // Find adjacent vertex and update incidence relation:
-        unsigned int adjacent_i = (adjacent_id + 0) % 3;
-        CGAL_assertion(!proj_normal1.is_vertex_set(adjacent_i));
-        Point_2 adjacent_p = construct_point(point1, adjacent_id);
-        Arr_halfedge_handle adjacent_edge = split(adjacent_id, adjacent_p,
-                                                 proj_normal1);
-        const Arr_vertex_handle & adjacent_v = adjacent_edge->target();
-        adjacent_v->set_location(Arr_vertex::Edge);
-        if (proj_normal1.get_is_real()) adjacent_v->set_is_real(true);
-        proj_normal1.set_vertex(adjacent_v, adjacent_i);
-        v->set_adjacent_vertex(*((void **) (&adjacent_v)));
-        adjacent_v->set_adjacent_vertex(*((void **) (&v)));
-      }
-    } else if (proj_normal1.get_num_faces() == 3) {
-      unsigned index = get_corner_index(faces_mask1, id);
-      CGAL_assertion(index < NUM_CORNERS);
-      Arr_vertex_handle v = m_corner_vertices[id][index];
-      /*! \todo Set the entire cyclic chain of 3 vertices, and not just the
-       * single current vertex
-       */
-      if (proj_normal1.get_is_real()) v->set_is_real(true);
-      Arr_halfedge_handle edge = v->incident_halfedges();
-      if (!proj_normal1.is_vertex_set(i)) proj_normal1.set_vertex(v, i);
-    }
-
-    /* If the computed point is on the boundary of the box face, but not a
-     * corner point, locate it. If the locate returns an edge, split it at the
-     * point:
-     */
-    if (proj_normal2.get_num_faces() == 2) {
-      if (!proj_normal2.is_vertex_set(i)) {
-        Arr_halfedge_handle edge = split(id, p2, proj_normal2);
-        const Arr_vertex_handle & v = edge->target();
-        proj_normal2.set_vertex(v, i);
-        v->set_face_id(id);
-        v->set_location(Arr_vertex::Edge);
-        if (proj_normal2.get_is_real()) v->set_is_real(true);
-
-        // Find adjacent face:
-        unsigned int adjacent_mask = faces_mask2 & ~get_mask(id);
-        unsigned int adjacent_id = face_mask_2_face_index(adjacent_mask);
-
-        // Find adjacent vertex and update incidence relation:
-        unsigned int adjacent_i = (adjacent_id + 0) % 3;
-        CGAL_assertion(!proj_normal2.is_vertex_set(adjacent_i));
-        Point_2 adjacent_p = construct_point(point2, adjacent_id);
-        Arr_halfedge_handle adjacent_edge = split(adjacent_id, adjacent_p,
-                                                 proj_normal2);
-        const Arr_vertex_handle & adjacent_v = adjacent_edge->target();
-        adjacent_v->set_location(Arr_vertex::Edge);
-        if (proj_normal2.get_is_real()) adjacent_v->set_is_real(true);
-        proj_normal2.set_vertex(adjacent_v, adjacent_i);
-        v->set_adjacent_vertex(*((void **) (&adjacent_v)));
-        adjacent_v->set_adjacent_vertex(*((void **) (&v)));
-      }
-    } else if (proj_normal2.get_num_faces() == 3) {
-      unsigned index = get_corner_index(faces_mask2, id);
-      CGAL_assertion(index < NUM_CORNERS);
-      Arr_vertex_handle v = m_corner_vertices[id][index];
-      /*! \todo Set the entire cyclic chain of 3 vertices, and not just the
-       * single current vertex
-       */
-      if (proj_normal2.get_is_real()) v->set_is_real(true);
-      Arr_halfedge_handle edge = v->incident_halfedges();
-      if (!proj_normal2.is_vertex_set(i)) proj_normal2.set_vertex(v, i);
-    }
-
-    /* If the points are on the same boundary, no need to insert a curve.
-     * Update the is_real_flag and return
-     */
-    if (is_on_same_boundary(faces_mask1, faces_mask2, id)) {
-      const Arr_vertex_handle & v1 = proj_normal1.get_vertex(i);
-      const Arr_vertex_handle & v2 = proj_normal2.get_vertex(i);
-
-      // Find the edge:
-      Arr_halfedge_around_vertex_circulator edge = v2->incident_halfedges();
-      Arr_halfedge_around_vertex_circulator begin_hec = edge;
-      do {
-        if (edge->source() == v1) break;
-        ++edge;
-      } while (edge != begin_hec);
-      CGAL_assertion((v1 == edge->source()) && (v2 == edge->target()));
-      
-      edge->set_is_real(true);
-      edge->twin()->set_is_real(true);
-      handle_new_boundary_edge(edge);
-
-      // Insert an edge into the adjacent face:
-      Arr_halfedge_handle adjacent_edge;
-      if (edge->face()->is_unbounded()) {
-        adjacent_edge = get_adjacent_halfedge_handle(edge->twin());
-        handle_new_boundary_edge(adjacent_edge);
-      } else {
-        adjacent_edge = get_adjacent_halfedge_handle(edge);
-        handle_new_boundary_edge(adjacent_edge->twin());
-      }
-      adjacent_edge->set_is_real(true);
-      adjacent_edge->twin()->set_is_real(true);
-      
-      return;
-    }
-
-    /* Insert a curve to the arrangement that corresponds to the unit-cube face
-     * with index 'id':
-     */  
-    X_monotone_curve_2 cv(p1, p2);
-    Arr_halfedge_handle edge;
-    if (proj_normal1.is_vertex_set(i) && proj_normal2.is_vertex_set(i)) {
-      const Arr_vertex_handle & v1 = proj_normal1.get_vertex(i);
-      const Arr_vertex_handle & v2 = proj_normal2.get_vertex(i);
-      // std::cout << "cv: " << cv
-      // << ", v1: " << v1->point() << ", v2: " << v2->point()
-      // << std::endl;
-      edge = m_arrangements[id].insert_at_vertices(cv, v1, v2);
-    
-      // Set the fields that indicates whehther the vertex is interior or not
-      v1->set_location(num_faces_2_vertex_location(proj_normal1.get_num_faces()));
-      v2->set_location(num_faces_2_vertex_location(proj_normal2.get_num_faces()));
-
-      // Set the flags that indicates whehther the vertex is real:
-      if (proj_normal1.get_is_real()) v1->set_is_real(true);
-      if (proj_normal2.get_is_real()) v2->set_is_real(true);
-    } else if (proj_normal1.is_vertex_set(i)) {
-      const Arr_vertex_handle & v1 = proj_normal1.get_vertex(i);
-
-      //! \todo this can done before cv is constructed!
-      // std::cout << "1: " << p1 << "," << p2 << ", v1: " << v1->point()
-      // << std::endl;
-      Arr_traits traits;
-      Comparison_result res = traits.compare_xy_2_object()(p1, p2);
-      CGAL_assertion(res != EQUAL);
-      if (res == SMALLER)
-        edge = m_arrangements[id].insert_from_left_vertex(cv, v1);
-      else
-        edge = m_arrangements[id].insert_from_right_vertex(cv, v1);
-      const Arr_vertex_handle & v2 = edge->target();
-      proj_normal2.set_vertex(v2, i);
-      v2->set_face_id(id);
-      v1->set_location(num_faces_2_vertex_location(proj_normal1.get_num_faces()));
-      
-      // Set the flags that indicates whehther the vertex is real:
-      if (proj_normal1.get_is_real()) v1->set_is_real(true);
-      if (proj_normal2.get_is_real()) v2->set_is_real(true);
-    } else if (proj_normal2.is_vertex_set(i)) {
-      const Arr_vertex_handle & v2 = proj_normal2.get_vertex(i);
-
-      //! \todo this can done before cv is constructed!
-      // std::cout << "2: " << p1 << "," << p2 << std::endl;
-      Arr_traits traits;
-      Comparison_result res = traits.compare_xy_2_object()(p2, p1);
-      CGAL_assertion(res != EQUAL);
-      if (res == SMALLER)
-        edge = m_arrangements[id].insert_from_left_vertex(cv, v2);
-      else
-        edge = m_arrangements[id].insert_from_right_vertex(cv, v2);
-      const Arr_vertex_handle & v1 = edge->target();
-      proj_normal1.set_vertex(v1, i);
-      v1->set_face_id(id);      
-      v2->set_location(num_faces_2_vertex_location(proj_normal2.get_num_faces()));
-      // Set the flags that indicates whehther the vertex is real:
-      if (proj_normal1.get_is_real()) v1->set_is_real(true);
-      if (proj_normal2.get_is_real()) v2->set_is_real(true);     
-    } else {
-      //! \todo use a default point location
-      edge = insert_non_intersecting_curve(m_arrangements[id], cv);
-      const Arr_vertex_handle & v1 = edge->source();
-      const Arr_vertex_handle & v2 = edge->target();
-
-      Arr_traits traits;
-      Comparison_result res = traits.compare_xy_2_object()(p1, p2);
-      CGAL_assertion(res != EQUAL);
-      if (res == SMALLER) {
-        proj_normal1.set_vertex(v1, i);
-        proj_normal2.set_vertex(v2, i);
-      } else {
-        proj_normal1.set_vertex(v2, i);
-        proj_normal2.set_vertex(v1, i);
-      }
-      v1->set_face_id(id);
-      v2->set_face_id(id);
-
-      // Set the flags that indicates whehther the vertex is real:
-      if (proj_normal1.get_is_real()) v1->set_is_real(true);
-      if (proj_normal2.get_is_real()) v2->set_is_real(true);
-    }
-    edge->set_is_real(true);
-    edge->twin()->set_is_real(true);
-
-    handle_new_edge(edge);
-  }
-
-  /*! Connect two projected normals. In particular, insert segments that connect
-   * the source projected normal, which projects onto the unit-cube face with
-   * a given id to, the target projected normal, which projects onto the
-   * unit-cube face with another given id.
-   * \param id1 the index of the unit-cube face the source normal project onto
-   * \param id2 the index of the unit-cube face the target normal project onto
-   * \param proj_normal1 represents the source projected normal
-   * \param proj_normal2 represents the target projected normal
-   * \param unique indicates whether projected normals are unique. If true,
-   * then two different projected normals that are passed as parameters since
-   * the last clear, must represents two different normals.
-   */
-  void connect(Projected_normal & proj_normal1, unsigned int id1,
-               Projected_normal & proj_normal2, unsigned int id2,
-               const Cgm_plane_3 & plane, bool unique = false)
-  {
-#if 0
-    std::cout << "connect from " << id1 << " to " << id2 << std::endl;
-#endif
-    
-    /* If the normals projects onto the same box face f, generate a curve
-     * between the prjection points, and insert it into the
-     * arrangement that corresponds to the box f:
-     */
-    if (id1 == id2) {
-      insert(proj_normal1, proj_normal2, id1, unique);
-      return;
-    }
-
-    unsigned int faces_mask1 = proj_normal1.get_faces_mask();
-    unsigned int faces_mask2 = proj_normal2.get_faces_mask();
-    unsigned int faces_mask = faces_mask1 & faces_mask2;
-    if (faces_mask) {
-      unsigned int id;
-      for (id = 0; id < NUM_FACES; id++)
-        if (faces_mask & get_mask(id)) break;
-      insert(proj_normal1, proj_normal2, id, unique);
-      return;
-    }
-
-    /* If the normals projects onto different box faces, we compute the plane
-     * induced by the origin and the 2 points, advance to the
-     * next box face, and try to connect again
-     */
-
-    // Extract the data of the first normal:
-    const Point_3 & point1 = proj_normal1.get_projected_normal();
-    
-    unsigned int i = (id1 + 0) % 3;
-    unsigned int j = (id1 + 1) % 3;
-    unsigned int k = (id1 + 2) % 3;
-  
-    // Extract the data of the second normal:
-    const Point_3 & point2 = proj_normal2.get_projected_normal();
-  
-    // We consider the boundary of box face with index 'id1':
-    unsigned int l = (id1 < 3) ? 0 : 1;
-    unsigned int m =
-      ((faces_mask1 & get_mask(j+3)) && (faces_mask2 & get_mask(j))) ?
-      0 : ((faces_mask1 & get_mask(j)) && (faces_mask2 & get_mask(j+3))) ?
-      1 : ((point1[j] + point2[j]) < 0) ? 0 : 1;
-    unsigned int n =
-      ((faces_mask1 & get_mask(k+3)) && (faces_mask2 & get_mask(k))) ?
-      0 : ((faces_mask1 & get_mask(k)) && (faces_mask2 & get_mask(k+3))) ?
-      1 : ((point1[k] + point2[k]) < 0) ? 0 : 1;
-
-    FT vec[3];
-    vec[i] = get_extreme_coordinate(l);
-    vec[j] = get_extreme_coordinate(m);
-    vec[k] = get_extreme_coordinate(n);
-
-    // Check whether the point does not escape the box. There are 2 options:
-    faces_mask = 0x0;
-    unsigned int id = 0;
-    unsigned int num_faces = 0;
-    Point_3 point;
-    Point_2 origin(CGAL::ORIGIN);
-    /* If the k-th coefficient is equal to 0, then the plane is prallel to 
-     * the j-k plane or to the k-i plane. In either case, the projection of the
-     * 2d point is at infinity. In this case we move to the 2nd option
-     */
-    bool flag = false;
-    bool is_set = false;
-
-#if 0
-    std::cout << "k: " << k
-              << ", j: " << j
-              << ", m: " << m
-              << ", n: " << n
-              << std::endl;
-    std::cout << "plane: " << plane << std::endl;
-#endif
-    
-    if (plane[k] != 0) {
-      id = j + 3 * m;
-      faces_mask = get_mask(id1) | get_mask(id);
-      num_faces = 2;
-
-#if 0
-      std::cout << "id: " << id << std::hex
-                << ", faces_mask1: " << faces_mask1
-                << ", faces_mask: " << faces_mask
-                << std::endl;
-#endif
-      
-      // Verify that the new point is different than point1:
-      if ((faces_mask1 & faces_mask) != faces_mask) {
-        Point_2 p_2(vec[i], vec[j]);
-        Point_2 p1_2(point1[i], point1[j]);
-        Point_2 p2_2(point2[i], point2[j]);
-
-        typedef typename T_Kernel::Left_turn_2 Left_turn_2;
-        T_Kernel kernel;
-        Left_turn_2 leftturn = kernel.left_turn_2_object();
-        flag = ((leftturn(p1_2, origin, p2_2) &&
-                 leftturn(p_2, origin, p2_2) && leftturn(p1_2, origin, p_2)) ||
-                (leftturn(p2_2, origin, p1_2) &&
-                 leftturn(p_2, origin, p1_2) && leftturn(p2_2, origin, p_2)));
-        point = plane.to_3d(p_2, k);
-
-#if 0
-        std::cout << "flag: " << flag
-                  << ", point[" << k << "]: " << point[k]
-                  << std::endl;
-#endif
-        
-        // Check whether the new point is not outside the cube:
-        if (flag && (((n == 0) && (point[k] >= get_extreme_coordinate(0))) ||
-                     ((n == 1) && (point[k] <= get_extreme_coordinate(1)))))
-        {
-          is_set = true;
-
-          // Check whether the new point is a cube corner-point:
-          if (point[k] == get_extreme_coordinate(n)) {
-            faces_mask |= get_mask(k + 3 * n);
-            // If the new point coincides with the destination cube face:
-            if ((k + 3 * n) == id2) id = id2;
-            num_faces++;
-          }
-        }
-      }
-    }
-
-    // If not set, try the other index:
-    if (!is_set) {
-      CGAL_assertion(plane[j] != 0);
-
-      id = k + 3 * n;
-      faces_mask = get_mask(id1) | get_mask(id);
-      num_faces = 2;
-
-#if 0
-      std::cout << "id: " << id << std::hex
-                << ", faces_mask1: " << faces_mask1
-                << ", faces_mask: " << faces_mask
-                << std::endl;
-#endif
-      
-      // Verify that the new point is different than point1:
-      if ((faces_mask1 & faces_mask) != faces_mask) {
-        Point_2 p_2(vec[k], vec[i]);
-        point = plane.to_3d(p_2, j);
-
-        // Check whether the new point is a cube corner-point:
-        if (point[j] == get_extreme_coordinate(m)) {
-          faces_mask |= get_mask(j + 3 * m);
-          // If the new point coincides with the destination cube face:
-          if ((j + 3 * m) == id2) id = id2;
-          num_faces++;
-        }
-
-#if 0
-        std::cout << "flag: " << flag
-                  << ", point[" << j << "]: " << point[j]
-                  << std::endl;
-#endif
-        
-        // Check whether the new point is not outside the cube:
-        if (((m == 0) && (point[j] >= get_extreme_coordinate(0))) ||
-            ((m == 1) && (point[j] <= get_extreme_coordinate(1))))
-        {
-          is_set = true;
-        }
-      }
-    }
-
-    CGAL_assertion(is_set);
-    Projected_normal proj_normal(point, faces_mask, num_faces);
-    insert(proj_normal1, proj_normal, id1, unique);
-    connect(proj_normal, id, proj_normal2, id2, plane, unique);
-  }
-  
-  /*! \brief returns true if two vertices given by their masks are on the same
-   * boundary of the a unit-cube face.
-   * \param mask1 the mask of the first point.
-   * \param mask2 the mask of the second point.
-   * \param id the index of the unit-cube face.
-   * \return true iff the vertices are on the same boundary.
-   */
-  bool is_on_same_boundary(unsigned int mask1, unsigned int mask2,
-                           unsigned int id) const
-  { return ((mask1 & ~get_mask(id)) & (mask2 & ~get_mask(id))); }
-    
   /*! Obtains the index of a corner vertex
    * \param mask the mask of the corner vertex
    * \param id the index of the unit-cube face for which the index of the corner
@@ -1339,16 +1559,17 @@ protected:
    * \pre mask must have exactly 3 bits turned on that represent the 3 unit-cube
    * faces that share the corner.
    */
-  unsigned int get_corner_index(unsigned int mask, unsigned int id) const
+  static unsigned int get_corner_index(unsigned int mask, unsigned int id)
   {
     unsigned int j = (id + 1) % 3;
     unsigned int k = (id + 2) % 3;
 
     if (id < 3) std::swap(j,k);
-    return ((mask & get_mask(j)) ? 0 : (mask & get_mask(j+3)) ? 2 : 4) +
-    ((mask & get_mask(k)) ? 0 : (mask & get_mask(k+3)) ? 1 : 4);
+    return ((mask & face_mask(j)) ? 0 : (mask & face_mask(j+3)) ? 2 : 4) +
+    ((mask & face_mask(k)) ? 0 : (mask & face_mask(k+3)) ? 1 : 4);
   }
 
+protected:
   /*! Process the corners
    * A corner point is shared by 3 vertices of 3 distinct arrangements.
    * If the vertex is real, we mark the vertex of the arrangement with the
@@ -1509,7 +1730,7 @@ protected:
    * \param point a point on the unit-cube representing a normal.
    */
   Arr_vertex_handle find_nearest_real_vertex(unsigned int arr_id,
-                                             const Point_2 & point)
+                                             const Arr_point_2 & point)
   {
     Arr_vertex_handle vh;
     Arr & arr = m_arrangements[arr_id];
@@ -1540,7 +1761,8 @@ protected:
     return vh;
   }
 #endif
-  
+
+public:
   /*! Find the planar map on the adjacent cube face given a halfedge
    * \pre The given halfedge is on the boundary of the arrangement
    */
@@ -1559,7 +1781,8 @@ protected:
     } while (hec != begin_hec);
     return hec->next()->twin()->face();
   }
-  
+
+protected:
   /*! \brief process the halfedges incident to a corner */
   template <class Halfedge_around_vertex_processor>
   void process_boundary_halfedges(Arr_vertex_const_handle vit,
@@ -1629,15 +1852,15 @@ public:
    */
   void init_arrangements()
   {
-    const Point_2 & p0 = get_corner_point(0);
-    const Point_2 & p1 = get_corner_point(1);
-    const Point_2 & p2 = get_corner_point(2);
-    const Point_2 & p3 = get_corner_point(3);
+    const Arr_point_2 & p0 = get_corner_point(0);
+    const Arr_point_2 & p1 = get_corner_point(1);
+    const Arr_point_2 & p2 = get_corner_point(2);
+    const Arr_point_2 & p3 = get_corner_point(3);
 
-    X_monotone_curve_2 cv0(p0, p1);
-    X_monotone_curve_2 cv1(p1, p3);
-    X_monotone_curve_2 cv3(p3, p2);
-    X_monotone_curve_2 cv2(p2, p0);
+    Arr_x_monotone_curve_2 cv0(p0, p1);
+    Arr_x_monotone_curve_2 cv1(p1, p3);
+    Arr_x_monotone_curve_2 cv3(p3, p2);
+    Arr_x_monotone_curve_2 cv2(p2, p0);
     
     for (unsigned int i = 0; i < NUM_FACES; ++i) {
       /*! The boundary edges */
@@ -1675,7 +1898,7 @@ public:
    * segments in each arrangement, and also initializes the global corner-
    * vertex data structure respectively. However, if the CGM is generated in a
    * different way, as in the case of overlay computation, where
-   * init_arrangements() is not utilized. The global corner-vertex structire
+   * init_arrangements() is not utilized. The global corner-vertex structure
    * must be initialized separately.
    */
   void init_corners()
@@ -1725,119 +1948,11 @@ public:
     }
   }
 
-  /*! Insert a great arc whose angle is less than Pi and is represented by two
-   * normals into the CGM. Each normal defines an end point of the greate arc.
-   * The arc is projected and divided into segments, which are inserted into
-   * the corresponding arrangements.
-   * \param normal1 represents the source normal
-   * \param normal2 represents the target normal
-   */
-  void insert(const Vector_3 & normal1, const Vector_3 & normal2)
-  {
-    Projected_normal proj_normal1(normal1);
-    proj_normal1.set_is_real(true);
-
-    Projected_normal proj_normal2(normal2);
-    proj_normal2.set_is_real(true);
-
-    insert(proj_normal1, proj_normal2);
-  }
-  
-  /*! Insert a projection of a great arc represented by two projected normals
-   * into the CGM. Each projected normal is the projection of the normal vector
-   * that defines an end point of the greate arc. The projected arc is divided
-   * into segments, which are inserted into the corresponding arrangements.
-   * First, find the two unit-cube faces that the normals project onto. Then,
-   * insert a segment or a sequence of segments that connect the projection of
-   * the 2 normals.
-   * \param proj_normal1 represents the source projected normal
-   * \param proj_normal2 represents the target projected normal
-   * \param unique indicates whether projected normals are unique. If true,
-   * then two different projected normals that are passed as parameters since
-   * the last clear, must represents two different normals.
-   */
-  void insert(Projected_normal & proj_normal1, Projected_normal & proj_normal2,
-              bool unique = false)
-  {
-    unsigned int faces_mask1 = proj_normal1.get_faces_mask();
-    unsigned int faces_mask2 = proj_normal2.get_faces_mask();
-
-    /* If the normal vectors project onto the same unit-cube face f,
-     * generate a curve between the prjection points, and insert it into the
-     * arrangement that corresponds to the box f
-     */
-    unsigned int faces_mask = faces_mask1 & faces_mask2;
-    if (faces_mask) {
-      unsigned int id;
-      for (id = 0; id < NUM_FACES; id++)
-        if (faces_mask & get_mask(id)) break;
-      insert(proj_normal1, proj_normal2, id, unique);
-      return;
-    }
-
-    // Find the match:
-    unsigned int num_faces1 = proj_normal1.get_num_faces();
-    unsigned int num_faces2 = proj_normal2.get_num_faces();
-
-    /* This is an optional optimization. If the 2 points are on twin cube
-     * faces, say face i and i+3, and one of them is a boundary point, say
-     * contained in faces i and j, then for this point we choose face j (we
-     * elliminate the twin face i, cause it is further than that the other
-     * face, j in this scenario, from i+3, where the other point lies in
-     */
-    if (num_faces1 > 1) {
-      for (unsigned int i1 = 0; i1 < NUM_FACES; ++i1) {
-        unsigned int i2 = (i1+3) % NUM_FACES;
-        if ((get_mask(i1) & faces_mask1) && (get_mask(i2) & faces_mask2)) {
-          faces_mask1 &= ~get_mask(i1);
-          num_faces1--;
-        }
-      }
-    }
-    if (num_faces2 > 1) {
-      for (unsigned int i1 = 0; i1 < NUM_FACES; ++i1) {
-        unsigned int i2 = (i1+3) % NUM_FACES;
-        if ((get_mask(i1) & faces_mask1) && (get_mask(i2) & faces_mask2)) {
-          faces_mask2 &= ~get_mask(i2);
-          num_faces2--;
-        }
-      }
-    }
-
-    unsigned int id1, id2;
-
-    // Find the (first) index of the box face the first normal projects onto:
-    for (id1 = 0; id1 < NUM_FACES; id1++)
-      if (faces_mask1 & get_mask(id1)) break;   
-
-    // Find the (first) index of the box face the second normal projects onto:
-    for (id2 = 0; id2 < NUM_FACES; id2++)
-      if (faces_mask2 & get_mask(id2)) break;    
-
-    CGAL_assertion(id1 != id2);
-    
-    /* If the normals projects onto two points that are on different unit-cube
-     * faces, we compute the plane induced by the origin and the two points,
-     * compute all the intersections of the plane with the unit-cube
-     * boundaries, and connect all the intersection properly.
-     */
-    const Point_3 & point1 = proj_normal1.get_projected_normal();
-    const Point_3 & point2 = proj_normal2.get_projected_normal();
-    Cgm_plane_3 plane(CGAL::ORIGIN, point1, point2);
-    connect(proj_normal1, id1, proj_normal2, id2, plane, unique);
-  }
-
   /* Virtual Functions */
 
   /*! Destructor */
   virtual ~Cubical_gaussian_map_3() { clear(); }
 
-  /*! Handle the introduction of a new boundary edge */
-  virtual void handle_new_boundary_edge(Arr_halfedge_handle edge) {}
-
-  /*! Handle the introduction of a new edge */
-  virtual void handle_new_edge(Arr_halfedge_handle edge) {}
-  
   /*! Clear the internal representation and auxiliary data structures */
   void clear()
   {
@@ -1873,7 +1988,7 @@ public:
     return counter;
   }
 
-  /*! Return the handle of a halfedge that represents the same segment of a
+  /*! Obtain the handle of a halfedge that represents the same segment of a
    * unit-cube edge on the adjacent unit-cube face
    * \param he the halfedge handle that represents a segment of an edge
    */
@@ -1938,69 +2053,14 @@ public:
               << std::endl;
 #endif
   }
+
+public:
+  /*! Allow the initializer to update the CGM data members */
+  friend class CGAL::Cgm_initializer<Self>;
+  typedef CGAL::Cgm_initializer<Self>           Cgm_initializer;
+  friend void Cgm_initializer::process_corners();
+  friend void Cgm_initializer::process_edges();
 };
-
-#if 0
-/*! output operator */
-template <class T_Kernel,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T>
-#endif
-          class T_Dcel>
-inline std::ostream &
-operator<<(std::ostream & os,
-           const typename Cubical_gaussian_map_3<T_Kernel,T_Dcel>::Projected_normal &
-           proj_normal)
-{
-  return os << proj_normal.get_projected_normal() << ", "
-            << std::hex << proj_normal.get_faces_mask() << ", "
-            << proj_normal.get_num_faces();
-}
-#endif
-
-#if 0
-//! \todo This doesn't work for some reasons???
-
-/*! Exporter
- * Recall that default template arguments may not be used in function templates
- */
-template <class T_Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T>
-#endif
-          class T_Dcel>
-inline
-std::ostream & operator << (std::ostream & out,
-                            const Cubical_gaussian_map_3<T_Traits,T_Dcel> & cgm) 
-{
-  typedef Cubical_gaussian_map_3<T_Traits,T_Dcel> Cgm;
-  for (unsigned int i = 0; i < Cubical_gaussian_map_3::NUM_FACES; ++i) {
-    const typename Cgm::Arrangement & arr = cgm.get_arrangement(i);
-    out << arr;
-  }
-  return out;
-}
-
-/*! Importer
- * Recall that default template arguments may not be used in function templates
- */
-template <class T_Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T>
-#endif
-          class T_Dcel>
-inline
-std::istream & operator >> (std::istream & in,
-                            Cubical_gaussian_map_3<T_Traits,T_Dcel> & cgm)
-{
-  typedef Cubical_gaussian_map_3<T_Traits,T_Dcel> Cgm;
-  for (unsigned int i = 0; i < Cubical_gaussian_map_3::NUM_FACES; ++i) {
-    const typename Cgm::Arrangement & arr = cgm.get_arrangement(i);
-    arr >> in;
-  }
-  return in;
-}
-#endif
 
 CGAL_END_NAMESPACE
 

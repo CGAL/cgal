@@ -116,13 +116,13 @@ public:
 };
 
 /*! The extended Polyhedron face type */
-template <class T_Refs, class Plane, class T_Cgm>
+template <class T_Refs, class Plane, class Cgm>
 class Polyhedral_cgm_polyhedron_3_face :
   public CGAL::HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane>
 {
 private:
   typedef CGAL::HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, Plane> Base;
-  typedef typename T_Cgm::Projected_normal                Projected_normal;
+  typedef typename Cgm::Projected_normal                Projected_normal;
   
   /*! The normal projected onto the unit cube */
   Projected_normal m_dual;
@@ -168,21 +168,21 @@ public:
  * the type of which, namely Polyhedron_3, is instantiated with this extended
  * items type.
  */
-template <class T_Cgm>
+template <class Cgm>
 struct Polyhedral_cgm_polyhedron_items : public CGAL::Polyhedron_items_3 {
   template <class T_Refs, class T_Traits>
   struct Vertex_wrapper {
-    typedef typename T_Traits::Point_3                               Point_3;
-    typedef Polyhedral_cgm_polyhedron_3_vertex<T_Refs, Point_3>      Vertex;
+    typedef typename T_Traits::Point_3                              Point_3;
+    typedef Polyhedral_cgm_polyhedron_3_vertex<T_Refs, Point_3>     Vertex;
   };
   template <class T_Refs, class T_Traits>
   struct Halfedge_wrapper {
-    typedef Polyhedral_cgm_polyhedron_3_halfedge<T_Refs>             Halfedge;
+    typedef Polyhedral_cgm_polyhedron_3_halfedge<T_Refs>            Halfedge;
   };
   template <class T_Refs, class T_Traits>
   struct Face_wrapper {
-    typedef typename T_Traits::Plane_3                               Plane_3;
-    typedef Polyhedral_cgm_polyhedron_3_face<T_Refs, Plane_3, T_Cgm> Face;
+    typedef typename T_Traits::Plane_3                              Plane_3;
+    typedef Polyhedral_cgm_polyhedron_3_face<T_Refs, Plane_3, Cgm>  Face;
   };
 };
 
@@ -198,9 +198,9 @@ struct Polyhedral_cgm_polyhedron_items : public CGAL::Polyhedron_items_3 {
  * type that is based on the extended types, and define a new polyhedron type
  * based on the new items type.
  */
-template <class Kernel, class Cgm>
+template <class Cgm>
 struct Polyhedral_cgm_default_polyhedron_3 :
-  public CGAL::Polyhedron_3<CGAL::Polyhedron_traits_with_normals_3<Kernel>,
+  public CGAL::Polyhedron_3<CGAL::Polyhedron_traits_with_normals_3<typename Cgm::Kernel>,
                             Polyhedral_cgm_polyhedron_items<Cgm> >
 {
   /*! Constructor */
