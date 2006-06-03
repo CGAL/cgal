@@ -200,7 +200,7 @@ assign(const Spherical_cgm_arr_vertex & v)
   m_dir = v.m_dir;
   m_isDist = v.m_isDist;
   m_isReal = v.m_isReal;
-  set_is_real(v.get_is_real());
+  set_is_real(v.is_real());
 }
 
 /*

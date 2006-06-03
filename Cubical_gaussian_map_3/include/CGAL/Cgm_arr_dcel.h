@@ -61,7 +61,7 @@ public:
   void set_location(Vertex_location loc) { m_location = loc; }
 
   /*! Obtain the flag that indicates whether the vertex is real */
-  bool get_is_real() const { return m_is_real; }
+  bool is_real() const { return m_is_real; }
     
   /*! Set the flag that indicates whether the vertex is real */
   void set_is_real(bool value) { m_is_real = value; }
@@ -90,7 +90,7 @@ public:
   Cgm_arr_halfedge() : m_is_real(false) {}
 
   /*! Return true if the halfedge is real */
-  bool get_is_real() const { return m_is_real; }
+  bool is_real() const { return m_is_real; }
 
   /*! Set the flag that indicates whether the halfedge is real */
   void set_is_real(bool flag) { m_is_real = flag; }

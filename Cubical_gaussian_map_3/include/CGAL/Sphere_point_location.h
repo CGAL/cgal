@@ -110,7 +110,7 @@ public:
     Point_2 point = (m_sphere->get_cgm())->construct_point(point3d, face_id);
 
     // locate on the cubical map
-    Point_location pl((m_sphere->get_cgm())->get_arrangement(face_id));
+    Point_location pl((m_sphere->get_cgm())->arrangement(face_id));
     CGAL::Object obj = pl.locate(point);
 
     // handle possible cubical elements cases
@@ -137,13 +137,13 @@ public:
           int ind;
           // check if a corner that is part of a real halfedge
           for (ind = 0; ind < 2; ++ind) {
-            if (icirc->get_is_real()) {
+            if (icirc->is_real()) {
               break;        
             }
             ++icirc;        
           }
         
-          if (!icirc->get_is_real()) {
+          if (!icirc->is_real()) {
             // corner, not part of a sphere edge
 
             // find an edge near the corner vertex
@@ -164,7 +164,7 @@ public:
               // find the last halfedge of the spherical halfedge that
               // holds the cubical halfedge
               icirc = icirc->next();
-              while (!icirc->get_is_real()) {
+              while (!icirc->is_real()) {
                 icirc = m_sphere->get_cgm()->get_adjacent_halfedge_handle(icirc);
                 icirc = icirc->next();
               }
@@ -177,7 +177,7 @@ public:
           Int_halfedge_around_vertex_const_circulator icirc;
           icirc = ver->incident_halfedges();
           // locate a real cgm halfedge around the vertex (part of sphere halfedge)
-          while (!icirc->get_is_real()) {
+          while (!icirc->is_real()) {
             ++icirc;
           }
           if ((icirc->face())->is_unbounded()) {
@@ -187,7 +187,7 @@ public:
           // holds the cubical halfedge
           while (!icirc->target()->getReal()) {
             icirc = icirc->next();
-            while (!icirc->get_is_real()) {
+            while (!icirc->is_real()) {
               icirc = m_sphere->get_cgm()->get_adjacent_halfedge_handle(icirc);
               icirc = icirc->next();
             }
@@ -208,7 +208,7 @@ public:
       // in case the direction points to a cubical halfedge
       Int_halfedge_const_handle  ihedge = *const_hed_ptr;
 
-      if (ihedge->get_is_real()) {
+      if (ihedge->is_real()) {
         // part of a real sphere halfedge
         if ((ihedge->face())->is_unbounded()) {
           ihedge = ihedge->twin();
@@ -216,7 +216,7 @@ public:
         // find the last cgm halfedge of the spherical halfedge
         while (!ihedge->target()->getReal()) {
           ihedge = ihedge->next();
-          while (!ihedge->get_is_real()) {
+          while (!ihedge->is_real()) {
             ihedge = m_sphere->get_cgm()->get_adjacent_halfedge_handle(ihedge);
             ihedge = ihedge->next();
           }

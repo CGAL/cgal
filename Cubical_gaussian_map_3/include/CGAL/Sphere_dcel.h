@@ -553,7 +553,7 @@ public:
       // found last edge, now find it's next
       cur = cur->next();
       // if cube unreal halfedge, traverse adjacent until real halfedge
-      while (!cur->get_is_real()) {
+      while (!cur->is_real()) {
         cur = m_cgm->get_adjacent_halfedge_handle(cur);
         cur = cur->next();
       }
@@ -578,7 +578,7 @@ public:
       while (!(twin->target()->getReal())) {
         twin = twin->next(); // advance cubical halfedge
   
-        while (!twin->get_is_real()) {
+        while (!twin->is_real()) {
           // traverse cubical unreal halfedges until a real halfedge
           twin = m_cgm->get_adjacent_halfedge_handle(twin);
           twin = twin->next();
@@ -606,7 +606,7 @@ public:
       while (!(twin->target()->getReal())) {
         twin = twin->next(); // advance cubical halfedge
   
-        while (!twin->get_is_real()) {
+        while (!twin->is_real()) {
           // traverse cubical unreal halfedges until a real halfedge
           twin = m_cgm->get_adjacent_halfedge_handle(twin);
           twin = twin->next();
@@ -658,7 +658,7 @@ public:
         cur = cur->next();
         
         // traverse cubical unreal halfedges until a real halfedge  
-        while (!cur->get_is_real()) {
+        while (!cur->is_real()) {
           cur = m_cgm->get_adjacent_halfedge_handle(cur);
           cur = cur->next();
         }
@@ -818,14 +818,14 @@ public:
         // search for a real halfedge on the cgm face ccb
         // if halfedge is not real but it is marked, it is known
         // that the ccb have already been processed
-        while (!curIntHe->get_is_real() && !curIntHe->getMark()) {
+        while (!curIntHe->is_real() && !curIntHe->getMark()) {
           curIntHe = curIntHe->next();
           if (curIntHe == baseIntHe) {
             break;
           }
         }    
 
-        if (curIntHe->getMark() || !curIntHe->get_is_real()) {
+        if (curIntHe->getMark() || !curIntHe->is_real()) {
           // the ccb has already been processed or isn't real,
           // any ccb will have one cgm face with real halfedge
           // and will be processed at laest in one cgm face
@@ -856,14 +856,14 @@ public:
           Int_halfedge_handle curIntHe = (*holesIt);
           Int_halfedge_handle baseIntHe = curIntHe;
           // get a real or marked halfedge on the ccb if any
-          while (!curIntHe->get_is_real() && !curIntHe->getMark()) {
+          while (!curIntHe->is_real() && !curIntHe->getMark()) {
             curIntHe = curIntHe->next();
             if (curIntHe == baseIntHe) {
               break;
             }
           }    
     
-          if (curIntHe->getMark() || !curIntHe->get_is_real()) {
+          if (curIntHe->getMark() || !curIntHe->is_real()) {
             // the ccb has already been processed or isn't real,
             // any ccb will have one cgm face with real halfedge
             // and will be processed at laest in one cgm face
@@ -905,7 +905,7 @@ public:
         // advance
         ihandle = ihandle->next();
         // if on cube unreal halfedge, traverse adjacents until real halfedge
-        while (!ihandle->get_is_real()) {
+        while (!ihandle->is_real()) {
           ihandle = cgm->get_adjacent_halfedge_handle(ihandle);
           ihandle = ihandle->next();
         }    
@@ -928,7 +928,7 @@ public:
       do {
         cur = cur->next(); // advance a halfedge
         // if on cube unreal halfedge, traverse adjacents until real halfedge
-        while (!cur->get_is_real()) {
+        while (!cur->is_real()) {
           cur = m_cgm->get_adjacent_halfedge_handle(cur);
           cur = cur->next();
         }
@@ -994,7 +994,7 @@ public:
     ccbIt = startFace->outer_ccb();
     ccbEnd = ccbIt;    
     do {
-      if (!ccbIt->get_is_real()) {
+      if (!ccbIt->is_real()) {
         // an unreal boundary, continue in adjacent face
         Int_face_handle nextFace = (cgm.get_adjacent_halfedge_handle(ccbIt))->face();
         // process adjacent cgm face

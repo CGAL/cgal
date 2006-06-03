@@ -85,7 +85,7 @@ public:
     v->set_location(v1->get_location());
 
     // If one of the vertices is real, the overlay vertex is real, or
-    v->set_is_real(v1->get_is_real() || v2->get_is_real());
+    v->set_is_real(v1->is_real() || v2->is_real());
 
     if (v1->get_location() == Arr_vertex::Interior) return;
 
@@ -98,7 +98,7 @@ public:
       v1->incident_halfedges();
     Arr_halfedge_around_vertex_const_circulator begin_hec1 = hec1;
     do {
-      if (hec1->get_is_real()) {
+      if (hec1->is_real()) {
         is_real1 = true;
         break;
       }
@@ -110,7 +110,7 @@ public:
       v2->incident_halfedges();
     Arr_halfedge_around_vertex_const_circulator begin_hec2 = hec2;
     do {
-      if (hec2->get_is_real()) {
+      if (hec2->is_real()) {
         is_real2 = true;
         break;
       }
@@ -131,7 +131,7 @@ public:
                      Vertex_handle v)
   {
     v->set_face_id(m_face_id);
-    v->set_is_real(v1->get_is_real() || h2->get_is_real());
+    v->set_is_real(v1->is_real() || h2->is_real());
     v->set_location(v1->get_location());
   }
 
@@ -140,7 +140,7 @@ public:
                      Vertex_handle v)
   {
     v->set_face_id(m_face_id);
-    v->set_is_real(v2->get_is_real() || h1->get_is_real());
+    v->set_is_real(v2->is_real() || h1->is_real());
     v->set_location(v2->get_location());
   }
 
@@ -149,7 +149,7 @@ public:
                      Vertex_handle v)
   {
     v->set_face_id(m_face_id);
-    v->set_is_real(v2->get_is_real());
+    v->set_is_real(v2->is_real());
     v->set_location(v2->get_location());
   }
 
@@ -158,7 +158,7 @@ public:
                      Vertex_handle v)
   {
     v->set_face_id(m_face_id);
-    v->set_is_real(v1->get_is_real());
+    v->set_is_real(v1->is_real());
     v->set_location(v1->get_location());
   }
 
@@ -166,7 +166,7 @@ public:
   void create_edge(Halfedge_const_handle h1, Halfedge_const_handle h2,
                    Halfedge_handle h)
   {
-    bool is_real = h1->get_is_real() || h2->get_is_real();
+    bool is_real = h1->is_real() || h2->is_real();
     h->set_is_real(is_real);
     h->twin()->set_is_real(is_real);
     h->add_arr(0);
@@ -179,7 +179,7 @@ public:
   void create_edge(Halfedge_const_handle h1, Face_const_handle f2,
                    Halfedge_handle h)
   {
-    bool is_real = h1->get_is_real();
+    bool is_real = h1->is_real();
     h->set_is_real(is_real);
     h->twin()->set_is_real(is_real);
     h->add_arr(0);
@@ -190,7 +190,7 @@ public:
   void create_edge(Face_const_handle f1, Halfedge_const_handle h2,
                    Halfedge_handle h)
   {
-    bool is_real = h2->get_is_real();
+    bool is_real = h2->is_real();
     h->set_is_real(is_real);
     h->twin()->set_is_real(is_real);
     h->add_arr(1);

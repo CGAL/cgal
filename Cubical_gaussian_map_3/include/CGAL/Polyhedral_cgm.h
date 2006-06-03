@@ -63,13 +63,16 @@ CGAL_BEGIN_NAMESPACE
 
 /*!
  */
-template <class Cgm,
-          class Polyhedron = Polyhedral_cgm_default_polyhedron_3<Cgm>,
-          class Visitor = Polyhedral_cgm_initializer_visitor<Cgm> >
-class Polyhedral_cgm_initializer : public Cgm_initializer<Cgm> {
+template <class PolyhedralCgm,
+          class Polyhedron =
+            Polyhedral_cgm_default_polyhedron_3<PolyhedralCgm>,
+          class Visitor = Polyhedral_cgm_initializer_visitor<PolyhedralCgm> >
+class Polyhedral_cgm_initializer :
+  public Cgm_initializer<typename PolyhedralCgm::Base>
+{
 private:
   // Base type:
-  typedef Cgm_initializer<Cgm>                          Cgm_initializer;
+  typedef Cgm_initializer<typename PolyhedralCgm::Base> Cgm_initializer;
 
   // Arrangement types:
   typedef typename Cgm_initializer::Arr_vertex_handle   Arr_vertex_handle;
@@ -373,8 +376,8 @@ private:
   /*! Update the point of the vertex-less cubic faces */
   void update_point()
   {
-    for (unsigned int i = 0; i < Cgm::NUM_FACES; i++) {
-      Arr & arr = m_cgm.get_arrangement(i);
+    for (unsigned int i = 0; i < PolyhedralCgm::NUM_FACES; i++) {
+      Arr & arr = m_cgm.arrangement(i);
 
       // If there are more than 1 face excluding the unbounded face, continue
       if (arr.number_of_faces() != 2) continue;
@@ -387,7 +390,7 @@ private:
       Arr_ccb_halfedge_circulator hec = fi->outer_ccb();
       Arr_ccb_halfedge_circulator hec_begin = hec;
       do {
-        if (hec->get_is_real()) {
+        if (hec->is_real()) {
           ++hec;
           continue;
         }
@@ -470,7 +473,7 @@ private:
 
 public:
   /*! Constructor */
-  Polyhedral_cgm_initializer(Cgm & cgm) :
+  Polyhedral_cgm_initializer(PolyhedralCgm & cgm) :
     Cgm_initializer(cgm),
     m_visitor(NULL),
     m_marked_vertex_index(0),
@@ -532,10 +535,13 @@ template <class Kernel,
           class T_Dcel = Polyhedral_cgm_arr_dcel>
 class Polyhedral_cgm : public Cubical_gaussian_map_3<Kernel,T_Dcel> {
 private:
-  typedef Cubical_gaussian_map_3<Kernel, T_Dcel>      Base;
-  typedef Polyhedral_cgm<Kernel, T_Dcel>              Self;
+  typedef Polyhedral_cgm<Kernel, T_Dcel>                Self;
   
 public:
+  // For some reason MSVC barfs on the friend statement below. Therefore,
+  // we declare the Base to be public to overcome the problem.
+  typedef Cubical_gaussian_map_3<Kernel, T_Dcel>        Base;
+
 #if 0
   /*! Allow the initializer to update the CGM data members */
   template <class Polyhedron, class Visitor>
@@ -695,7 +701,7 @@ public:
     Arr_ccb_halfedge_circulator hec_begin = hec;
     do {
       // Process only artificial halfedges:
-      if (!hec->get_is_real()) {
+      if (!hec->is_real()) {
         // Find the planar face in the adjacent cube face:
         Arr_face_handle face = find_adjacent_face(hec);
         if (!face->get_is_set()) {
@@ -708,8 +714,8 @@ public:
   
   /*! Compute the minkowski sum
    */
-  template <class Cgm_iter_>  
-  void minkowsi_sum(Cgm_iter_ begin, Cgm_iter_ end)
+  template <class CgmIterator>  
+  void minkowsi_sum(CgmIterator begin, CgmIterator end)
   {
     // Compute the overlays:
     overlay(begin, end);
@@ -744,8 +750,8 @@ public:
 
   /*! Compute the overlay
    */
-  template <class Cgm_iter_>  
-  void overlay(Cgm_iter_ & begin, Cgm_iter_ & end)
+  template <class CgmIterator>  
+  void overlay(CgmIterator & begin, CgmIterator & end)
   {
     Polyhedral_cgm * gm1 = *begin++;
     Polyhedral_cgm * gm2 = *begin;
@@ -780,7 +786,7 @@ public:
 
       Arr_vertex_const_iterator vit;
       for (vit = pm.vertices_begin(); vit != pm.vertices_end(); ++vit) {
-        if (!vit->get_is_real()) continue;
+        if (!vit->is_real()) continue;
         const Plane_3 & plane = vit->get_plane();
         CGAL::Oriented_side side = plane.oriented_side(p);
         if (side == CGAL::ON_NEGATIVE_SIDE) continue;
@@ -813,7 +819,7 @@ public:
       dual.compute_projection(normal);
     }
     // Find the id of the first arrangement the point maps to:
-    unsigned int faces_mask = dual.get_faces_mask();
+    unsigned int faces_mask = dual.faces_mask();
     unsigned int id;
     for (id = 0; id < NUM_FACES; ++id)
     if (faces_mask & s_mask[id]) break;
@@ -833,7 +839,7 @@ public:
     unsigned int deg = degree(vh);
     Arr_halfedge_around_vertex_const_circulator hecs[deg];
 
-    if (vh->get_is_real()) {
+    if (vh->is_real()) {
       Arr::Halfedge_around_vertex_const_circulator hec =
         vh->incident_halfedges();
       Arr_halfedge_around_vertex_const_circulator hec_start = hec;
@@ -917,7 +923,7 @@ public:
       // Traverse all halfedge:
       Arr_halfedge_const_iterator he;
       for (he = pm.halfedges_begin(); he != pm.halfedges_end(); ++he) {
-        if (he->get_is_real() && he->source()->get_is_real()) {
+        if (he->is_real() && he->source()->is_real()) {
           number_of_halfedges++;
         }
       }
@@ -941,7 +947,7 @@ public:
       // Traverse the most outer boundary of the connected component:
       begin_hec = hec;
       do {
-        if (hec->get_is_real()) num_real_edges++;
+        if (hec->is_real()) num_real_edges++;
         hec = hec->next();
       } while (hec != begin_hec);
     }
@@ -961,7 +967,7 @@ public:
       const Arr & pm = m_arrangements[i];
       Arr_vertex_const_iterator vit;
       for (vit = pm.vertices_begin(); vit != pm.vertices_end(); ++vit) {
-        if (vit->get_is_real()) {
+        if (vit->is_real()) {
           dual_vertices_num++;
           if (vit->get_location() == Arr_vertex::Corner)
             dual_corner_vertices_num++;

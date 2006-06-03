@@ -355,7 +355,7 @@ public:
     CGM_face_iterator fit;    
     for (i=0;i<6;i++) { // loop over cubical faces arrangements
       // get a cubical face arrangement
-      CGM_planar_map &curMap = m_cgm.get_arrangement(i); 
+      CGM_planar_map &curMap = m_cgm.arrangement(i); 
       // update vertices
       for (vit=curMap.vertices_begin(); vit!=curMap.vertices_end(); ++vit) {
         //loop over all map vertices
@@ -374,7 +374,7 @@ public:
         heit->setMark(false);
         // check if halfedge is real and has a real target
         if ((!(heit->face())->is_unbounded()) &&
-          (heit->get_is_real()) && (heit->target())->getReal()) {
+          (heit->is_real()) && (heit->target())->getReal()) {
           // a spherical halfedge is represented by a real cubical halfedge that
           // has a real target so if an arc span over more then one halfedges
           // on the cube, only one of these halfedges which has a real target
