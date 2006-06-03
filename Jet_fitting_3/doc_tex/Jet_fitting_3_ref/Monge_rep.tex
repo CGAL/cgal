@@ -35,22 +35,7 @@ same for the classes \ccc{Monge_rep} and
 \ccTypedef{   typedef typename DataKernel::Vector_3  DVector;}{}
 \ccGlue
 
-\ccHeading{Data members}
-% +--------------------------------------------------------------
-\ccVariable{  DPoint m_origin_pt;}{Point on the fitted surface where
-differential quantities are computed} 
 
-The basis \ccc{(m_d1, m_d2, m_n)} is direct orthonormal.
-
-\ccVariable{DVector m_d1;}{maximal principal direction} 
-\ccGlue
-\ccVariable{DVector m_d2;}{minimal principal direction} 
-\ccGlue
-\ccVariable{DVector m_n;}{normal direction} 
-\ccVariable{std::vector<DFT> m_coefficients;} {coeff = k1, k2 (principal curvatures);
-          b0, b1, b2, b3 (third order coefficients); c0, c1, c2, c3, c4 (fourth
-          order coefficients). If the degree of the Monge representation is 1 there
-          is no coefficient.}
 
 \ccCreation
 % +--------------------------------------------------------------
@@ -60,19 +45,26 @@ The basis \ccc{(m_d1, m_d2, m_n)} is direct orthonormal.
 
 \ccAccessFunctions
 % +--------------------------------------------------------------
-\ccMemberFunction{const DPoint origin_pt();}{}
+
+\ccMemberFunction{const DPoint origin_pt();}{Point on the fitted surface where
+differential quantities are computed}
 \ccGlue
 \ccMemberFunction{DPoint& origin_pt();}{}
-\ccMemberFunction{const DVector d1();}{}
+
+The basis \ccc{(m_d1, m_d2, m_n)} is direct orthonormal.
+\ccMemberFunction{const DVector d1();}{maximal principal direction}
 \ccGlue
 \ccMemberFunction{DVector& d1(); }{}
-\ccMemberFunction{const DVector d2();}{}
+\ccMemberFunction{const DVector d2();}{minimal principal direction}
 \ccGlue
 \ccMemberFunction{DVector& d2();}{}
-\ccMemberFunction{const DVector n();}{}
+\ccMemberFunction{const DVector n();}{normal direction}
 \ccGlue
 \ccMemberFunction{DVector& n();}{}
-\ccMemberFunction{const std::vector<DFT> coefficients();}{}
+\ccMemberFunction{const std::vector<DFT> coefficients();}{coeff = k1, k2 (principal curvatures);
+          b0, b1, b2, b3 (third order coefficients); c0, c1, c2, c3, c4 (fourth
+          order coefficients). If the degree of the Monge representation is 1 there
+          is no coefficient.}
 \ccGlue
 \ccMemberFunction{std::vector<DFT>& coefficients();}{}
 
