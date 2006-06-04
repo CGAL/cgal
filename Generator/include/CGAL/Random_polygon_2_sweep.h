@@ -26,11 +26,11 @@
 #define CGAL_RANDOM_POLYGON_2_SWEEP_H
 
 #include <CGAL/enum.h>
-#include <CGAL/polygon_assertions.h>
+#include <CGAL/Polygon_2/polygon_assertions.h>
 #include <set>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Polygon_2_simplicity.h>
+#include <CGAL/Polygon_2/Polygon_2_simplicity.h>
 
 /*
   A polygon is called simple of no edges intersect each other, except
