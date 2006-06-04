@@ -42,7 +42,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 /*! \class
  * The arrangement class, representing planar subdivisions induced by
  * a set of arbitrary planar curves. 
@@ -105,6 +104,53 @@ protected:
   typedef typename DFace::Isolated_vertex_const_iterator
                                                DIsolated_vertices_const_iter;
 
+protected:
+  
+  /*! \struct
+   * A functor for filtering DCEL vertices at infinity.
+   */
+  struct _Is_valid_vertex
+  {
+    bool operator() (const DVertex& v) const
+    {
+      return (v.infinite_in_x() == CGAL::ZERO &&
+              v.infinite_in_y() == CGAL::ZERO);
+    }
+  };
+
+  /*! \struct
+   * A functor for filtering fictitious DCEL halfedges.
+   */
+  struct _Is_valid_halfedge
+  {
+    bool operator() (const DHalfedge& he) const
+    {
+      return (! he.has_null_curve());
+    }
+  };
+
+  /*! \struct
+   * A functor for filtering the fictitious face.
+   */
+  struct _Is_valid_face
+  {
+    bool operator() (const DFace& f) const
+    {
+      return (f.halfedge() != NULL);
+    }
+  };
+
+  /*! \struct
+   * A functor for filtering bounded faces.
+   */
+  struct _Is_unbounded_face
+  {
+    bool operator() (const DFace& f) const
+    {
+      return (f.is_unbounded() && f.halfedge() != NULL);
+    }
+  };
+
 public:
 
   // Forward declerations:
@@ -113,42 +159,47 @@ public:
   class Face;
 
   // Definition of the halfedge data-structure itereators and circulators:
-  typedef I_HalfedgeDS_iterator
-    <DVertex_iter, Vertex, DDifference,
+  typedef I_Filtered_iterator
+    <DVertex_iter, _Is_valid_vertex,
+     Vertex, DDifference,
      DIterator_category>                          Vertex_iterator;
   
-  typedef I_HalfedgeDS_const_iterator
-    <DVertex_const_iter, DVertex_iter, Vertex,
+  typedef I_Filtered_const_iterator
+    <DVertex_const_iter, _Is_valid_vertex,
+     DVertex_iter, Vertex,
      DDifference, DIterator_category>             Vertex_const_iterator;
   
-  typedef I_HalfedgeDS_iterator
-    <DHalfedge_iter, Halfedge, DDifference,
+  typedef I_Filtered_iterator
+    <DHalfedge_iter, _Is_valid_halfedge, 
+     Halfedge, DDifference,
      DIterator_category>                          Halfedge_iterator;
   
-  typedef I_HalfedgeDS_const_iterator
-    <DHalfedge_const_iter, DHalfedge_iter,
-     Halfedge, DDifference, DIterator_category>   Halfedge_const_iterator;
+  typedef I_Filtered_const_iterator
+    <DHalfedge_const_iter, _Is_valid_halfedge,
+     DHalfedge_iter, Halfedge, DDifference,
+     DIterator_category>                          Halfedge_const_iterator;
 
   /*! \class
    * Edges iterator - defined as a derived class to make it assignable
    * to the halfedge iterator type.
    */
   class Edge_iterator :
-    public I_HalfedgeDS_iterator<DEdge_iter,
-                                 Halfedge, DDifference,
-                                 DIterator_category>
+    public I_Filtered_iterator<DEdge_iter, _Is_valid_halfedge,
+                               Halfedge, DDifference,
+                               DIterator_category>
   {
-    typedef I_HalfedgeDS_iterator<DEdge_iter,
-                                  Halfedge, DDifference,
-                                  DIterator_category>        Base;
+    typedef I_Filtered_iterator<DEdge_iter, 
+                                _Is_valid_halfedge,
+                                Halfedge, DDifference,
+                                DIterator_category>          Base;
 
   public:
  
     Edge_iterator ()
     {}
 
-    Edge_iterator (DEdge_iter iter) :
-      Base (iter)
+    Edge_iterator (DEdge_iter iter, DEdge_iter iend) :
+      Base (iter, iend)
     {}
 
     // Casting to a halfedge iterator.
@@ -165,13 +216,17 @@ public:
   };
 
   class Edge_const_iterator :
-    public I_HalfedgeDS_const_iterator<DEdge_const_iter, DEdge_iter,
-                                       Halfedge, DDifference,
-                                       DIterator_category>
+    public I_Filtered_const_iterator<DEdge_const_iter,
+                                     _Is_valid_halfedge,
+                                     DEdge_iter,
+                                     Halfedge, DDifference,
+                                     DIterator_category>
   {
-    typedef I_HalfedgeDS_const_iterator<DEdge_const_iter, DEdge_iter,
-                                        Halfedge, DDifference,
-                                        DIterator_category>           Base;
+    typedef I_Filtered_const_iterator<DEdge_const_iter,
+                                      _Is_valid_halfedge,
+                                      DEdge_iter,
+                                      Halfedge, DDifference,
+                                      DIterator_category>    Base;
 
   public:
  
@@ -179,11 +234,13 @@ public:
     {}
 
     Edge_const_iterator (Edge_iterator iter) :
-      Base (iter)
+      Base (iter.current_iterator(),
+            iter.past_the_end(),
+            iter.filter())
     {}
 
-    Edge_const_iterator (DEdge_const_iter iter) :
-      Base (iter)
+    Edge_const_iterator (DEdge_const_iter iter, DEdge_const_iter iend) :
+      Base (iter, iend)
     {}
 
     // Casting to a halfedge iterator.
@@ -194,14 +251,91 @@ public:
     }
   };
   
-  typedef I_HalfedgeDS_iterator
-    <DFace_iter, Face, DDifference,
+  typedef I_Filtered_iterator
+    <DFace_iter, _Is_valid_face,
+     Face, DDifference,
      DIterator_category>                          Face_iterator;
   
-  typedef I_HalfedgeDS_const_iterator
-    <DFace_const_iter, DFace_iter, Face,
+  typedef I_Filtered_const_iterator
+    <DFace_const_iter, _Is_valid_face, 
+     DFace_iter, Face,
      DDifference, DIterator_category>             Face_const_iterator;
 
+  /*! \class
+   * Unbounded faces iterator - defined as a derived class to make it
+   * assignable to the face iterator type.
+   */  
+  class Unbounded_face_iterator :
+    public I_Filtered_iterator<DFace_iter, _Is_unbounded_face,
+                               Face, DDifference,
+                               DIterator_category>
+  {
+    typedef I_Filtered_iterator<DFace_iter,
+                                _Is_unbounded_face,
+                                Face, DDifference,
+                                DIterator_category>         Base;
+
+  public:
+ 
+    Unbounded_face_iterator ()
+    {}
+
+    Unbounded_face_iterator (DFace_iter iter, DFace_iter iend,
+                             const _Is_unbounded_face& pred) :
+      Base (iter, iend, pred)
+    {}
+
+    // Casting to a face iterator.
+    operator Face_iterator () const
+    {
+      return (Face_iterator (DFace_iter (this->current_iterator()),
+                             DFace_iter (this->past_the_end())));
+    }
+
+    operator Face_const_iterator () const
+    {
+      return (Face_const_iterator
+              (DFace_const_iter (this->current_iterator()),
+               DFace_const_iter (this->past_the_end())));
+    }    
+  };
+
+  class Unbounded_face_const_iterator :
+    public I_Filtered_const_iterator<DFace_const_iter,
+                                     _Is_unbounded_face, 
+                                     DFace_iter, Face,
+                                     DDifference,
+                                     DIterator_category>
+  {
+    typedef I_Filtered_const_iterator<DFace_const_iter,
+                                      _Is_unbounded_face, 
+                                      DFace_iter, Face,
+                                      DDifference,
+                                      DIterator_category>   Base;
+
+  public:
+ 
+    Unbounded_face_const_iterator ()
+    {}
+
+    Unbounded_face_const_iterator (Unbounded_face_iterator iter) :
+      Base (iter)
+    {}
+
+    Unbounded_face_const_iterator (DFace_const_iter iter,
+                                   DFace_const_iter iend,
+                                   const _Is_unbounded_face& pred) :
+      Base (iter, iend, pred)
+    {}
+
+    // Casting to a face iterator.
+    operator Face_const_iterator () const
+    {
+      return (Face_const_iterator (DFace_const_iter(this->current_iterator()),
+                                   DFace_const_iter(this->past_the_end())));
+    }
+  };
+ 
   typedef _HalfedgeDS_vertex_circ
     <Halfedge, Halfedge_iterator,
      Bidirectional_circulator_tag>    Halfedge_around_vertex_circulator;
@@ -237,8 +371,7 @@ public:
    * to the vertex iterator type.
    */
   class Isolated_vertex_iterator :
-    public I_HalfedgeDS_iterator<DIsolated_vertices_iter,
-                                 Vertex, DDifference,
+    public I_HalfedgeDS_iterator<DIsolated_vertices_iter,                                 Vertex, DDifference,
                                  DIterator_category>
   {
     typedef I_HalfedgeDS_iterator<DIsolated_vertices_iter,
@@ -296,6 +429,175 @@ public:
       return (Vertex_const_iterator (DVertex_const_iter (this->ptr())));
     }
   };
+
+protected:
+
+  /*! \class
+   * A functor for filtering the four fictitious DCEL vertices.
+   */
+  class _Is_non_fictitious_vertex
+  {
+  private:
+
+    // The four fictitious vertices:
+    const DVertex   *v_bl;
+    const DVertex   *v_tl;
+    const DVertex   *v_br;
+    const DVertex   *v_tr;
+
+  public:
+
+    _Is_non_fictitious_vertex () :
+      v_bl (NULL), v_tl (NULL), v_br (NULL), v_tr (NULL)
+    {}
+
+    _Is_non_fictitious_vertex (const DVertex *bl, const DVertex *tl,
+                               const DVertex *br, const DVertex *tr) :
+      v_bl (bl), v_tl (tl), v_br (br), v_tr (tr)
+    {}
+
+    bool operator() (const DVertex& v) const
+    {
+      return (! v.has_null_point() ||
+              (&v != v_bl && &v != v_tl && &v != v_br && &v != v_tr));
+    }
+  };
+
+  /*! \class
+   * An iterator for traversing all arrangement vertices (not including the
+   * four fictitious ones, corresponding to the corners of the bounding
+   * rectangle).
+   */
+  class _All_vertex_iterator :
+    public I_Filtered_iterator<DVertex_iter,
+                               _Is_non_fictitious_vertex,
+                               Vertex, DDifference,
+                               DIterator_category>
+  {
+    typedef I_Filtered_iterator<DVertex_iter,
+                                _Is_non_fictitious_vertex,
+                                Vertex, DDifference,
+                                DIterator_category>    Base;
+
+  public:
+  
+    _All_vertex_iterator ()
+    {}
+
+    _All_vertex_iterator (DVertex_iter iter, DVertex_iter iend,
+                          const _Is_non_fictitious_vertex& pred) :
+      Base (iter, iend, pred)
+    {}
+
+    // Casting to a vertex iterator.
+    operator Vertex_iterator () const
+    {
+      return (Vertex_iterator (DVertex_iter (this->current_iterator())));
+    }
+
+    operator Vertex_const_iterator () const
+    {
+      return (Vertex_const_iterator 
+              (DVertex_const_iter (this->current_iterator())));
+    }
+  };
+
+  class _All_vertex_const_iterator :
+    public I_Filtered_const_iterator<DVertex_iter,
+                                     _Is_non_fictitious_vertex,
+                                     DVertex_const_iter,
+                                     Vertex, DDifference,
+                                     DIterator_category>
+  {
+    typedef I_Filtered_const_iterator<DVertex_iter,
+                                      _Is_non_fictitious_vertex,
+                                      DVertex_const_iter,
+                                      Vertex, DDifference,
+                                      DIterator_category>    Base;
+
+  public:
+  
+    _All_vertex_const_iterator ()
+    {}
+
+    _All_vertex_const_iterator (DVertex_const_iter iter,
+                                DVertex_const_iter iend,
+                                const _Is_non_fictitious_vertex& pred) :
+      Base (iter, iend, pred)
+    {}
+
+    // Casting to a vertex iterator.
+    operator Vertex_const_iterator () const
+    {
+      return (Vertex_const_iterator 
+              (DVertex_const_iter (this->current_iterator())));
+    }
+  };
+
+  /*! \class
+   * An iterator for traversing all arrangement edges (including the
+   * fictitious ones).
+   */
+  class _All_edge_iterator :
+    public I_HalfedgeDS_iterator<DEdge_iter, Halfedge,
+                                 DDifference, DIterator_category>
+  {
+    typedef I_HalfedgeDS_iterator<DEdge_iter, Halfedge,
+                                  DDifference, DIterator_category>   Base;
+
+  public:
+ 
+    _All_edge_iterator ()
+    {}
+
+    _All_edge_iterator (DEdge_iter iter) :
+      Base (iter)
+    {}
+
+    // Casting to a halfedge iterator.
+    operator Halfedge_iterator () const
+    {
+      return (Halfedge_iterator (DHalfedge_iter (this->current_iterator())));
+    }
+
+    operator Halfedge_const_iterator () const
+    {
+      return (Halfedge_const_iterator
+              (DHalfedge_const_iter (this->current_iterator())));
+    }    
+  };
+
+  class _All_edge_const_iterator :
+    public I_HalfedgeDS_const_iterator<DEdge_iter, DEdge_const_iter,
+                                       Halfedge, DDifference,
+                                       DIterator_category>
+  {
+    typedef I_HalfedgeDS_const_iterator<DEdge_iter, DEdge_const_iter,
+                                        Halfedge, DDifference,
+                                        DIterator_category>        Base;
+
+  public:
+ 
+    _All_edge_const_iterator ()
+    {}
+
+    _All_edge_const_iterator (DEdge_iter iter) :
+      Base (iter)
+    {}
+
+    _All_edge_const_iterator (DEdge_const_iter iter) :
+      Base (iter)
+    {}
+
+    // Casting to a halfedge iterator.
+    operator Halfedge_const_iterator () const
+    {
+      return (Halfedge_const_iterator 
+              (DHalfedge_const_iter (this->current_iterator())));
+    }
+  };
+
+public:
 
   // Definition of handles (equivalent to iterators):
   typedef Vertex_iterator              Vertex_handle;
@@ -391,6 +693,7 @@ public:
 
     // Blocking access to inherited functions from the Dcel::Vertex.
     void set_point (Point_2* );
+    void set_at_infinity (CGAL::Sign inf_x, CGAL::Sign inf_y);
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
@@ -411,6 +714,12 @@ public:
     /*! Default constrcutor. */
     Halfedge ()
     {}
+
+    /*! Check whether the halfedge is fictitious. */
+    bool is_fictitious () const
+    {
+      return (Base::has_null_curve());
+    }
 
     /*! Get the source vertex (non-const version). */
     Vertex_handle source ()
@@ -506,6 +815,7 @@ public:
   private:
 
     // Blocking access to inherited functions from the Dcel::Halfedge.
+    bool has_null_curve () const;
     void set_curve (X_monotone_curve_2* );
     const DHalfedge* opposite () const;
     DHalfedge* opposite ();
@@ -535,11 +845,26 @@ public:
     Face()
     {}
 
-    /*! Check whether the face is unbounded. */
-    bool is_unbounded () const
+    /*! Check whether the face is fictitious. */
+    bool is_fictitious () const
     {
       // Check whether the outer-boundary edge exists or not.
       return (Base::halfedge() == NULL);
+    }
+
+    /*! Get a circulator for the outer boundary (non-const version). */
+    Ccb_halfedge_circulator outer_ccb () 
+    {
+      CGAL_precondition(Base::halfedge() != NULL); 
+      return Ccb_halfedge_circulator (DHalfedge_iter (Base::halfedge()));
+    }
+
+    /*! Get a circulator for the outer boundary (const version). */
+    Ccb_halfedge_const_circulator outer_ccb () const
+    {
+      CGAL_precondition(Base::halfedge() != NULL); 
+      return Ccb_halfedge_const_circulator
+        (DHalfedge_const_iter (Base::halfedge()));
     }
 
     /*! Get an iterator for the holes inside the face (non-const version). */
@@ -594,24 +919,10 @@ public:
       return (DIsolated_vertices_const_iter (Base::isolated_vertices_end()));
     }
 
-    /*! Get a circulator for the outer boundary (non-const version). */
-    Ccb_halfedge_circulator outer_ccb () 
-    {
-      CGAL_precondition(Base::halfedge() != NULL); 
-      return Ccb_halfedge_circulator (DHalfedge_iter (Base::halfedge()));
-    }
-
-    /*! Get a circulator for the outer boundary (const version). */
-    Ccb_halfedge_const_circulator outer_ccb () const
-    {
-      CGAL_precondition(Base::halfedge() != NULL); 
-      return Ccb_halfedge_const_circulator
-        (DHalfedge_const_iter (Base::halfedge()));
-    }
-
   private:
 
     // Blocking access to inherited functions from the Dcel::Face.
+    void set_unbounded (bool );
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
@@ -638,7 +949,14 @@ protected:
 
   // Data members:
   Dcel                dcel;         // The DCEL representing the arrangement.
-  DFace              *un_face;      // The unbounded face of the DCEL.
+  DVertex            *v_bl;         // A fictitious vertex at (-oo,-oo).
+  DVertex            *v_tl;         // A fictitious vertex at (-oo,+oo).
+  DVertex            *v_br;         // A fictitious vertex at (-oo,+oo).
+  DVertex            *v_tr;         // A fictitious vertex at (+oo,+oo).
+  Size                n_inf_verts;  // Number of vertices at infinity.
+  DFace              *un_face;      // The unbounded face of the DCEL
+                                    // (if the arrangement contains unbounded
+                                    //  curves, this face is fictitious).
   Points_alloc        points_alloc; // Allocator for the points.
   Curves_alloc        curves_alloc; // Allocator for the curves.
   Observers_container observers;    // Storing pointers to existing observers.
@@ -699,8 +1017,10 @@ public:
   /*! Check whether the arrangement is empty. */
   bool is_empty () const
   {
-    return (vertices_begin() == vertices_end() &&
-            halfedges_begin() == halfedges_end());
+    // An empty arrangement contains just two four vertices at infinity
+    // and eight fictitious halfedges connecting them.
+    return (dcel.size_of_vertices() == 4 &&
+            dcel.size_of_halfedges() == 8);
   }
 
   /*!
@@ -713,7 +1033,15 @@ public:
   /*! Get the number of arrangement vertices. */
   Size number_of_vertices () const
   {
-    return (dcel.size_of_vertices());
+    // Note that we do not count vertices at infinity.
+    return (dcel.size_of_vertices() - n_inf_verts);
+  }
+
+  /*! Get the number of vertices at infinity. */
+  Size number_of_vertices_at_infinity () const
+  {
+    // Note that we do not count the four fictitious vertices.
+    return (n_inf_verts - 4);
   }
 
   /*! Get the number of isolated arrangement vertices. */
@@ -725,19 +1053,24 @@ public:
   /*! Get the number of arrangement halfedges (the result is always even). */
   Size number_of_halfedges () const
   {
-    return (dcel.size_of_halfedges());
+    // Note that we do not count fictitious halfedges (each vertex at infinity
+    // induces two fictitious halfedges).
+    return (dcel.size_of_halfedges() - 2*n_inf_verts);
   }
 
   /*! Get the number of arrangement edges. */
   Size number_of_edges () const
   {
-    return (dcel.size_of_halfedges() / 2);
+    // Note that we do not count fictitious edges (each vertex at infinity
+    // induces one fictitious edges).
+    return (dcel.size_of_halfedges() / 2 - n_inf_verts);
   }
 
   /*! Get the number of arrangement faces. */
   Size number_of_faces () const
   {
-    return (dcel.size_of_faces());
+    // We do not count the fictitious DCEL face outside the bounding rectangle.
+    return (dcel.size_of_faces() - 1);
   }
   //@}
 
@@ -747,25 +1080,29 @@ public:
   /*! Get an iterator for the first vertex in the arrangement. */
   Vertex_iterator vertices_begin() 
   { 
-    return (Vertex_iterator (dcel.vertices_begin())); 
+    return (Vertex_iterator (dcel.vertices_begin(),
+                             dcel.vertices_end())); 
   }
 
   /*! Get a past-the-end iterator for the arrangement vertices. */
   Vertex_iterator vertices_end()
   {
-    return (Vertex_iterator(dcel.vertices_end())); 
+    return (Vertex_iterator (dcel.vertices_end(),
+                             dcel.vertices_end())); 
   }
 
   /*! Get a const iterator for the first vertex in the arrangement. */
   Vertex_const_iterator vertices_begin() const
   { 
-    return (Vertex_const_iterator (dcel.vertices_begin())); 
+    return (Vertex_const_iterator (dcel.vertices_begin(),
+                                   dcel.vertices_end())); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement vertices. */
   Vertex_const_iterator vertices_end() const
   {
-    return (Vertex_const_iterator (dcel.vertices_end())); 
+    return (Vertex_const_iterator (dcel.vertices_end(),
+                                   dcel.vertices_end())); 
   }
   //@}
 
@@ -775,25 +1112,29 @@ public:
   /*! Get an iterator for the first halfedge in the arrangement. */
   Halfedge_iterator halfedges_begin() 
   { 
-    return (Halfedge_iterator (dcel.halfedges_begin())); 
+    return (Halfedge_iterator (dcel.halfedges_begin(),
+                               dcel.halfedges_end())); 
   }
 
   /*! Get a past-the-end iterator for the arrangement halfedges. */
   Halfedge_iterator halfedges_end()
   {
-    return (Halfedge_iterator(dcel.halfedges_end())); 
+    return (Halfedge_iterator (dcel.halfedges_end(),
+                               dcel.halfedges_end())); 
   }
 
   /*! Get a const iterator for the first halfedge in the arrangement. */
   Halfedge_const_iterator halfedges_begin() const
   { 
-    return (Halfedge_const_iterator (dcel.halfedges_begin())); 
+    return (Halfedge_const_iterator (dcel.halfedges_begin(),
+                                     dcel.halfedges_end())); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement halfedges. */
   Halfedge_const_iterator halfedges_end() const
   {
-    return (Halfedge_const_iterator (dcel.halfedges_end())); 
+    return (Halfedge_const_iterator (dcel.halfedges_end(),
+                                     dcel.halfedges_end())); 
   }
   //@}
 
@@ -803,67 +1144,116 @@ public:
   /*! Get an iterator for the first edge in the arrangement. */
   Edge_iterator edges_begin() 
   { 
-    return (Edge_iterator (dcel.edges_begin())); 
+    return (Edge_iterator (dcel.edges_begin(),
+                           dcel.edges_end())); 
   }
 
   /*! Get a past-the-end iterator for the arrangement edges. */
   Edge_iterator edges_end()
   {
-    return (Edge_iterator(dcel.edges_end())); 
+    return (Edge_iterator (dcel.edges_end(),
+                           dcel.edges_end())); 
   }
 
   /*! Get a const iterator for the first edge in the arrangement. */
   Edge_const_iterator edges_begin() const
   { 
-    return (Edge_const_iterator (dcel.edges_begin())); 
+    return (Edge_const_iterator (dcel.edges_begin(),
+                                 dcel.edges_end())); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement edges. */
   Edge_const_iterator edges_end() const
 
   {
-    return (Edge_const_iterator (dcel.edges_end())); 
+    return (Edge_const_iterator (dcel.edges_end(),
+                                 dcel.edges_end())); 
   }
   //@}
 
   /// \name Traversal functions for the arrangement faces.
   //@{
 
-  /*! Get the unbounded face (non-const version). */
-  Face_handle unbounded_face ()
-  {
-    return (Face_handle (un_face));
-  }
-
-  /*! Get the unbounded face (const version). */
-  Face_const_handle unbounded_face () const
-  {
-
-    return (Face_const_handle (un_face));
-  }
-
   /*! Get an iterator for the first face in the arrangement. */
   Face_iterator faces_begin() 
   { 
-    return (Face_iterator (dcel.faces_begin())); 
+    return (Face_iterator (dcel.faces_begin(),
+                           dcel.faces_end())); 
   }
 
   /*! Get a past-the-end iterator for the arrangement faces. */
   Face_iterator faces_end()
   {
-    return (Face_iterator(dcel.faces_end())); 
+    return (Face_iterator (dcel.faces_end(),
+                           dcel.faces_end())); 
   }
 
   /*! Get a const iterator for the first face in the arrangement. */
   Face_const_iterator faces_begin() const
   { 
-    return (Face_const_iterator (dcel.faces_begin())); 
+    return (Face_const_iterator (dcel.faces_begin(),
+                                 dcel.faces_end())); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement faces. */
   Face_const_iterator faces_end() const
   {
-    return (Face_const_iterator (dcel.faces_end())); 
+    return (Face_const_iterator (dcel.faces_end(),
+                                 dcel.faces_end())); 
+  }
+  //@}
+
+  /// \name Traversal functions for the unbounded faces of the arrangement.
+  //@{
+
+  /*! Get the unbounded face (non-const version). */
+  Face_handle unbounded_face ()
+  {
+    // The fictitious un_face contains all other valid faces in a single
+    // hole inside it. We return a handle to one of its neighboring faces,
+    // which is necessarily unbounded.
+    DHalfedge     *p_he = *(un_face->holes_begin());
+    
+    return (Face_handle (p_he->opposite()->face()));
+  }
+
+  /*! Get the unbounded face (const version). */
+  Face_const_handle unbounded_face () const
+  {
+    // The fictitious un_face contains all other valid faces in a single
+    // hole inside it. We return a handle to one of its neighboring faces,
+    // which is necessarily unbounded.
+    const DHalfedge     *p_he = *(un_face->holes_begin());
+    
+    return (Face_const_handle (p_he->opposite()->face()));
+  }
+
+  /*! Get an iterator for the first unbounded face in the arrangement. */
+  Unbounded_face_iterator unbounded_faces_begin() 
+  { 
+    return (Unbounded_face_iterator (dcel.faces_begin(),
+                                     dcel.faces_end())); 
+  }
+
+  /*! Get a past-the-end iterator for the unbounded arrangement faces. */
+  Unbounded_face_iterator unbounded_faces_end()
+  {
+    return (Unbounded_face_iterator (dcel.faces_end(),
+                                     dcel.faces_end())); 
+  }
+
+  /*! Get a const iterator for the first unbounded face in the arrangement. */
+  Unbounded_face_const_iterator unbounded_faces_begin() const
+  { 
+    return (Unbounded_face_const_iterator (dcel.faces_begin(),
+                                           dcel.faces_end()));
+  }
+  
+  /*! Get a past-the-end const iterator for the unbounded arrangement faces. */
+  Unbounded_face_const_iterator unbounded_faces_end() const
+  {
+    return (Unbounded_face_const_iterator (dcel.faces_end(),
+                                           dcel.faces_end()));
   }
   //@}
 
@@ -913,6 +1303,24 @@ public:
                                            Face_handle f);
 
   /*!
+   * Insert an unbounded x-monotone curve into the arrangement inside a given
+   * unbounded face, given a fictitious halfedge(s) that contains the unbounded
+   * end(s) of the curve.
+   * \param cv The given x-monotone curve.
+   * \param fict_he1 The fictitious edge that contains the unbounded end
+   *                 (or the left end, if both ends are unbounded).
+   * \param fict_he2 The fictitious edge that contains the right end
+   *                 (if both ends are unbounded).
+   * \pre fict_he contains the unbounded end(s) of cv.
+   * \return A handle for one of the halfedges corresponding to the inserted
+   *         curve, directed (lexicographically) from left to right.
+   */
+  Halfedge_handle
+  insert_in_face_interior (const X_monotone_curve_2& cv, 
+                           Halfedge_handle fict_he1,
+                           Halfedge_handle fict_he2 = Halfedge_handle());
+
+  /*!
    * Insert an x-monotone curve into the arrangement, such that its left
    * endpoint corresponds to a given arrangement vertex.
    * \param cv The given x-monotone curve.
@@ -937,6 +1345,24 @@ public:
    */
   Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv,
                                            Halfedge_handle prev);
+
+  /*!
+   * Insert an x-monotone curve into the arrangement, such that its left
+   * endpoints corresponds to a given arrangement vertex (given the exact
+   * place for the curve in the circular list around this vertex), and whose
+   * right end is unbounded and lies on a given fictitious edge.
+   * \param cv The given x-monotone curve.
+   * \param prev The reference halfedge. We should represent cv as a pair
+   *             of edges, one of them should become prev's successor.
+   * \param fict_he The fictitious edge that contains the right end.
+   * \pre The target vertex of prev is cv's left endpoint.
+   * \pre The right end of cv is unbounded and lies on fict_he.
+   * \return A handle for one of the halfedges corresponding to the inserted
+   *         curve, whose target is the new vertex that was created.
+   */
+  Halfedge_handle insert_from_left_vertex (const X_monotone_curve_2& cv,
+                                           Halfedge_handle prev,
+                                           Halfedge_handle fict_he);
 
   /*!
    * Insert an x-monotone curve into the arrangement, such that its right
@@ -964,6 +1390,24 @@ public:
    */
   Halfedge_handle insert_from_right_vertex (const X_monotone_curve_2& cv,
                                             Halfedge_handle prev);
+
+  /*!
+   * Insert an x-monotone curve into the arrangement, such that its right
+   * endpoints corresponds to a given arrangement vertex (given the exact
+   * place for the curve in the circular list around this vertex), and whose
+   * left end is unbounded and lies on a given fictitious edge.
+   * \param cv The given x-monotone curve.
+   * \param prev The reference halfedge. We should represent cv as a pair
+   *             of edges, one of them should become prev's successor.
+   * \param fict_he The fictitious edge that contains the left end.
+   * \pre The target vertex of prev is cv's right endpoint.
+   * \pre The left end of cv is unbounded and lies on fict_he.
+   * \return A handle for one of the halfedges corresponding to the inserted
+   *         curve, whose target is the new vertex that was created.
+   */
+  Halfedge_handle insert_from_right_vertex (const X_monotone_curve_2& cv,
+                                            Halfedge_handle prev,
+                                            Halfedge_handle fict_he);
   
   /*! 
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -1222,17 +1666,73 @@ protected:
   //@{
    
   /*!
+   * Construct an empty arrangement, which consists of two vertices at
+   * infinity that are connected by two edges that correspond to an empty
+   * bounding rectangle , forming two faces: An unbounded face inside the
+   * rectangle and a fictitious face outside it.
+   */
+  void _construct_empty_arrangement ();
+
+  /*!
+   * Get the curve associated with a vertex at infinity.
+   * \param v The vertex as infinity.
+   * \param ind Output: 0 if the vertex is induced by the curve's left end;
+   *                    1 if it is induced by its right end.
+   * \pre v is a valid (not fictitious) vertex at infinity.
+   * \return The curve that induces v.
+   */
+  const X_monotone_curve_2& _get_curve (const DVertex *v,
+                                        int& ind) const;
+
+  /*!
+   * Check whether the given infinite curve end lies on the given fictitious
+   * halfedge.
+   * \param cv The curve.
+   * \param ind 0 if we refer to cv's left end;
+   *            1 if we refer to its right end.
+   * \param inf_x Does its x-coordinate lies at +/- oo (ZERO if it is finite).
+   * \param inf_y Does its y-coordinate lies at +/- oo (ZERO if it is finite).
+   * \param he The fictitious halfedge.
+   * \param eq_source Output: Whether the curve coincides with he's source.
+   * \param eq_target Output: Whether the curve coincides with he's target.
+   * \return Whether the curve end lies on the fictitious halfedge.
+   */
+  bool _is_on_fictitious_edge (const X_monotone_curve_2& cv,
+                               int ind,
+                               CGAL::Sign inf_x, CGAL::Sign inf_y,
+                               const DHalfedge *he,
+                               bool& eq_source, bool& eq_target) const;
+  
+  /*!
+   * Locate an ficititious halfegde on the outer CCB of a given face which
+   * contains the given curve end in its interior.
+   * \param f The face.
+   * \param cv The curve.
+   * \param ind 0 if we refer to cv's left end;
+   *            1 if we refer to its right end.
+   * \param inf_x Does its x-coordinate lies at +/- oo (ZERO if it is finite).
+   * \param inf_y Does its y-coordinate lies at +/- oo (ZERO if it is finite).
+   * \return A pointer to a halfedge, or NULL if no such halfegde is found.
+   */
+  DHalfedge* _locate_along_ccb (DFace *f,
+                                const X_monotone_curve_2& cv,
+                                int ind,
+                                CGAL::Sign inf_x, CGAL::Sign inf_y) const;
+  
+  /*!
    * Locate the place for the given curve around the given vertex.
    * \param v The given arrangement vertex.
    * \param cv The given x-monotone curve.
-   * \pre v is one of cv's endpoints.
+   * \param ind 0 if v represents cv's left endpoint;
+   *            1 if it represents its right endpoint.
    * \return A pointer to a halfedge whose target is v, where cv should be
    *         inserted between this halfedge and the next halfedge around this
    *         vertex (in a clockwise order).
    *         A NULL return value indicates a precondition violation.
    */
   DHalfedge* _locate_around_vertex (DVertex *v,
-                                    const X_monotone_curve_2& cv) const;
+                                    const X_monotone_curve_2& cv,
+                                    int ind) const;
 
   /*!
    * Compute the distance (in halfedges) between two halfedges.
@@ -1261,6 +1761,100 @@ protected:
   bool _is_inside_new_face (const DHalfedge *prev1,
                             const DHalfedge *prev2,
                             const X_monotone_curve_2& cv) const;
+
+  /*!
+   * Compare the x-coordinate of a given vertex (which may lie at infinity if
+   * the traits class supports unbounded curves) and the given point.
+   * \param p The point.
+   * \param v The vertex.
+   * \return The result of the comparison of the x-coordinates of p and v.
+   */
+  Comparison_result _compare_x (const Point_2& p,
+                                const DVertex* v) const
+  {
+    return (_compare_x_imp (p, v,
+                            typename Traits_2::Has_infinite_category()));
+  }
+
+  Comparison_result _compare_x_imp (const Point_2& p,
+                                    const DVertex* v,
+                                    Tag_false) const
+  {
+    if (v == v_bl || v == v_tl)
+      return (LARGER);
+    else if (v == v_br || v == v_tr)
+      return (SMALLER);
+    else
+      return (traits->compare_x_2_object() (p, v->point()));
+  }
+
+  Comparison_result _compare_x_imp (const Point_2& p,
+                                    const DVertex* v,
+                                    Tag_true) const;
+
+  /*!
+   * Compare the given vertex (which may lie at infinity if the traits class
+   * supports unbounded curves) and the given point.
+   * \param p The point.
+   * \param v The vertex.
+   * \return The result of the xy-lexicographic comparison of p and v.
+   */
+  Comparison_result _compare_xy (const Point_2& p,
+                                 const DVertex* v) const
+  {
+    return (_compare_xy_imp (p, v,
+                             typename Traits_2::Has_infinite_category()));
+  }
+
+  Comparison_result _compare_xy_imp (const Point_2& p,
+                                     const DVertex* v,
+                                     Tag_false) const
+  {
+    if (v == v_bl || v == v_tl)
+      return (LARGER);
+    else if (v == v_br || v == v_tr)
+      return (SMALLER);
+    else
+      return (traits->compare_xy_2_object() (p, v->point()));
+  }
+
+  Comparison_result _compare_xy_imp (const Point_2& p,
+                                     const DVertex* v,
+                                     Tag_true) const;
+
+  /*!
+   * Compare the relative y-position of the given point and the given edge
+   * (which may be fictitious if the traits class supports unbounded curves).
+   * \param p The point.
+   * \param he The halfedge.
+   * \pre p should lie in the x-range of the given edge.
+   * \return The relative y-position of the point p and the edge.
+   */
+  Comparison_result _compare_y_at_x (const Point_2& p,
+                                     const DHalfedge* he) const
+  {
+    return (_compare_y_at_x_imp (p, he,
+                                 typename Traits_2::Has_infinite_category()));
+  }
+
+  Comparison_result _compare_y_at_x_imp (const Point_2& p,
+                                         const DHalfedge* he,
+                                         Tag_false) const
+  {
+    const CGAL::Sign         inf_y = he->vertex()->infinite_in_y();
+
+    CGAL_assertion (inf_y == he->opposite()->vertex()->infinite_in_y());
+    if (inf_y == CGAL::NEGATIVE)
+      return (LARGER);
+    else if (inf_y == CGAL::POSITIVE)
+      return (SMALLER);
+    else
+      return (traits->compare_y_at_x_2_object() (p, he->curve()));
+  }
+
+  Comparison_result _compare_y_at_x_imp (const Point_2& p,
+                                         const DHalfedge* he,
+                                         Tag_true) const;
 
   /*!
    * Determine whether a given point lies within the region bounded by
@@ -1309,6 +1903,18 @@ protected:
    * \return A pointer to the newly created vertex.
    */
   DVertex* _create_vertex (const Point_2& p);
+
+  /*!
+   * Create a new vertex at infinity.
+   * \param inf_x NEGATIVE if this vertex lies at x = -oo;
+   *              POSITIVE if this vertex lies at x = +oo;
+   *              ZERO if the vertex has a bounded x-coordinate.
+   * \param inf_y NEGATIVE if this vertex lies at y = -oo;
+   *              POSITIVE if this vertex lies at y = +oo;
+   *              ZERO if the vertex has a bounded y-coordinate.
+   * \return A pointer to the newly created vertex.
+   */
+  DVertex* _create_vertex_at_infinity (CGAL::Sign inf_x, CGAL::Sign inf_y);
   
   /*!
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -1412,6 +2018,27 @@ protected:
                      const X_monotone_curve_2& cv);
 
   /*!
+   * Check if the given vertex represents one of the ends of a given curve.
+   * \param v The vertex.
+   * \param cv The curve.
+   * \param ind 0 if we refer to the left end of cv;
+   *            1 if we refer to its right end.
+   * \return Whether v represents the left (or right) end of cv.
+   */
+  bool _are_equal (const DVertex *v,
+                   const X_monotone_curve_2& cv, int ind) const;
+
+  /*!
+   * Perform an xy-lexicographic comparison between two given vertices (which
+   * may lie at infinity).
+   * \param v1 The first vertex.
+   * \param v2 The second vertex.
+   * \return The comparison result.
+   */
+  Comparison_result _compare_vertices_xy (const DVertex *v1,
+                                          const DVertex *v2) const;
+
+  /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
    * \param e The edge to split (one of the pair of twin halfegdes).
@@ -1446,6 +2073,30 @@ protected:
                           const X_monotone_curve_2& cv2);
 
   /*!
+   * Split a given fictitious edge into two, forming a new vertex at
+   * infinity.
+   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param inf_x Does the x-coordinate of the new vertex is at +/- oo
+   *              (ZERO if it is finite).
+   * \param inf_y Does the y-coordinate of the new vertex is at +/- oo
+   *              (ZERO if it is finite).
+   * \return A pointer to the first split halfedge, whose source equals the
+   *         source of e, and whose target is v.
+   */
+  DHalfedge* _split_fictitious_edge (DHalfedge *e,
+                                     CGAL::Sign inf_x, CGAL::Sign inf_y);
+
+  /*!
+   * Split a given fictitious edge into two, at a given vertex at infinity.
+   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param v The vertex at infinity.
+   * \return A pointer to the first split halfedge, whose source equals the
+   *         source of e, and whose target is v.
+   */
+  DHalfedge* _split_fictitious_edge (DHalfedge *e,
+                                     DVertex *v);
+
+  /*!
    * Remove a pair of twin halfedges from the arrangement.
    * \param e One of the halfedges to be removed.
    * \param remove_source Should the source vertex of e be removed if it
@@ -1466,6 +2117,12 @@ protected:
    */
   void _remove_isolated_vertex (DVertex* v);
 
+  /*!
+   * Remove a vertex at infinity, causing its two incident fictitious edges
+   * to merge.
+   * \param v The vertex at infinity to remove.
+   */
+  void _remove_vertex_at_infinity (DVertex* v);
   //@}
 
   /// \name Auxiliary (protected) functions for validity checking.
@@ -1613,6 +2270,25 @@ private:
       (*iter)->after_create_vertex (v);
   }
 
+  void _notify_before_create_vertex_at_infinity (CGAL::Sign inf_x,
+                                                 CGAL::Sign inf_y)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_create_vertex_at_infinity (inf_x, inf_y);
+  }
+
+  void _notify_after_create_vertex_at_infinity (Vertex_handle v)
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_create_vertex_at_infinity (v);
+  }
+
   void _notify_before_create_edge (const X_monotone_curve_2& c,
                                    Vertex_handle v1, Vertex_handle v2)
   {
@@ -1690,6 +2366,26 @@ private:
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_edge (e1, e2);
+  }
+
+  void _notify_before_split_fictitious_edge (Halfedge_handle e,
+                                             Vertex_handle v)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_split_fictitious_edge (e, v);
+  }
+
+  void _notify_after_split_fictitious_edge (Halfedge_handle e1,
+                                            Halfedge_handle e2)
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_split_fictitious_edge (e1, e2);
   }
 
   void _notify_before_split_face (Face_handle f,
@@ -1793,6 +2489,25 @@ private:
       (*iter)->after_merge_edge (e);
   }
 
+  void _notify_before_merge_fictitious_edge (Halfedge_handle e1,
+                                             Halfedge_handle e2)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_merge_fictitious_edge (e1, e2);
+  }
+
+  void _notify_after_merge_fictitious_edge (Halfedge_handle e)
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_merge_fictitious_edge (e);
+  }
+
   void _notify_before_merge_face (Face_handle f1,
                                   Face_handle f2,
                                   Halfedge_handle e)
@@ -1892,6 +2607,24 @@ private:
 
     for (iter = observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_vertex ();
+  }
+
+  void _notify_before_remove_vertex_at_infinity (Vertex_handle v)
+  {
+    Observers_iterator   iter;
+    Observers_iterator   end = observers.end();
+
+    for (iter = observers.begin(); iter != end; ++iter)
+      (*iter)->before_remove_vertex_at_infinity (v);
+  }
+
+  void _notify_after_remove_vertex_at_infinity ()
+  {
+    Observers_rev_iterator   iter;
+    Observers_rev_iterator   end = observers.rend();
+
+    for (iter = observers.rbegin(); iter != end; ++iter)
+      (*iter)->after_remove_vertex_at_infinity ();
   }
 
   void _notify_before_remove_edge (Halfedge_handle e)

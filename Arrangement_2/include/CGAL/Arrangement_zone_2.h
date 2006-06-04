@@ -85,7 +85,9 @@ protected:
   // Data members:
   Arrangement_2&          arr;         // The associated arrangement.
   Traits_adaptor_2       *traits;      // Its associated traits object.
-                                       
+  Arr_accessor<Arrangement_2>
+                          arr_access;  // An accessor for the arrangement.
+           
   Visitor                *visitor;     // The zone visitor.
 
   Intersect_map           inter_map;   // Stores all computed intersections.
@@ -96,8 +98,12 @@ protected:
   X_monotone_curve_2  cv;              // The current portion of the
                                        // inserted curve.
   CGAL::Object        obj;             // The location of the left endpoint.
+  bool                has_left_pt;     // Is the left end of the curve
+                                       // bounded.
   Point_2             left_pt;         // Its current left endpoint.
-  Point_2             right_pt;        // Its right endpoint.
+  bool                has_right_pt;    // Is the right end of the curve
+                                       // bounded.
+  Point_2             right_pt;        // Its right endpoint (if bounded).
 
   Vertex_handle       left_v;          // The arrangement vertex associated
                                        // with the current left_pt (if any).
@@ -141,6 +147,7 @@ public:
   Arrangement_zone_2 (Arrangement_2& _arr,
 		      Visitor *_visitor) :
     arr (_arr),
+    arr_access (_arr),
     visitor (_visitor),
     invalid_v (),
     invalid_he ()
@@ -162,13 +169,38 @@ public:
   void init (const X_monotone_curve_2& _cv,
 	     const PointLocation& pl)
   {
-    // Set the curve and its endpoints.
+    // Set the curve and check whether its ends are bounded.
     cv = _cv;
-    left_pt = traits->construct_min_vertex_2_object() (cv);
-    right_pt = traits->construct_max_vertex_2_object() (cv);
 
-    // Locate the left endpoint.
-    obj = pl.locate (left_pt);
+    if (traits->infinite_in_x_2_object() (cv, 0) == CGAL::ZERO &&
+        traits->infinite_in_y_2_object() (cv, 0) == CGAL::ZERO)
+    {
+      // The left endpoint is bounded - locate it in the arrangement.
+      has_left_pt = true;
+      left_pt = traits->construct_min_vertex_2_object() (cv);
+
+      obj = pl.locate (left_pt);
+    }
+    else
+    {
+      // The left end is unbounded - locate it on the bounding rectangle.
+      has_left_pt = false;
+
+      obj = arr_access.locate_unbounded_end (cv, 0);
+    }
+
+    if (traits->infinite_in_x_2_object() (cv, 1) == CGAL::ZERO &&
+        traits->infinite_in_y_2_object() (cv, 1) == CGAL::ZERO)
+    {
+      // The right endpoint is bounded.
+      has_right_pt = true;
+      right_pt = traits->construct_max_vertex_2_object() (cv);
+    }
+    else
+    {
+      // The right end is unbounded.
+      has_right_pt = false;
+    }
 
     return;
   }
@@ -176,18 +208,27 @@ public:
   /*!
    * Initialize the zone-computation process with a given curve.
    * \param _cv The query curve.
-   * \param _obj An object that represents the location of the left
-   *             endpoint of the curve.
+   * \param _obj An object that represents the location of the left end
+   *             of the curve.
    */
   void init_with_hint (const X_monotone_curve_2& _cv,
                        const Object& _obj)
   {
-    // Set the curve and its endpoints.
+    // Set the curve and check whether its ends are bounded.
     cv = _cv;
-    left_pt = traits->construct_min_vertex_2_object() (cv);
-    right_pt = traits->construct_max_vertex_2_object() (cv);
+    has_left_pt = (traits->infinite_in_x_2_object() (cv, 0) == CGAL::ZERO &&
+                   traits->infinite_in_y_2_object() (cv, 0) == CGAL::ZERO);
 
-    // Set the object that represents the location of the left endpoint
+    if (has_left_pt)
+      left_pt = traits->construct_min_vertex_2_object() (cv);
+
+    has_right_pt = (traits->infinite_in_x_2_object() (cv, 1) == CGAL::ZERO &&
+                    traits->infinite_in_y_2_object() (cv, 1) == CGAL::ZERO);
+
+    if (has_right_pt)
+      right_pt = traits->construct_max_vertex_2_object() (cv);
+
+    // Set the object that represents the location of the left end of the curve
     // in the arrangement.
     obj = _obj;
 

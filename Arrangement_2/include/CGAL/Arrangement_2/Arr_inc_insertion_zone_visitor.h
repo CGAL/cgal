@@ -25,6 +25,8 @@
  */
 
 #include <CGAL/Arr_accessor.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+
 //#define ARR_INC_INSERT_DEBUG
 
 CGAL_BEGIN_NAMESPACE
@@ -51,11 +53,15 @@ public:
 
   typedef std::pair<Halfedge_handle, bool>            Result;
 
+protected:
+
+  typedef Arr_traits_basic_adaptor_2<Traits_2>        Traits_adaptor_2;
+
 private:
 
   Arrangement_2         *p_arr;         // The arrangement into which we
                                         // insert the curves.
-  Traits_2              *traits;        // The arrangement traits.
+  Traits_adaptor_2      *traits;        // The arrangement traits.
 
   const Vertex_handle    invalid_v;     // An invalid vertex handle.
   const Halfedge_handle  invalid_he;    // An invalid halfedge handle.
@@ -77,7 +83,7 @@ public:
   void init (Arrangement_2 *arr)
   {
     p_arr = arr;
-    traits = arr->get_traits();
+    traits = static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
   }
 
   /*!
@@ -105,18 +111,30 @@ public:
     if (left_v != invalid_v)
       std::cout << "           v1 = " << left_v->point() << std::endl;
     if (left_he != invalid_he)
-      std::cout << "           e1 = " << left_he->source()->point()
-                << "  -->  " << left_he->target()->point() << std::endl;
+      if (! left_he->is_fictitious())
+        std::cout << "           e1 = " << left_he->source()->point()
+                  << "  -->  " << left_he->target()->point() << std::endl;
+      else
+        std::cout << "           e1 is fictitious." << std::endl;
 
     if (right_v != invalid_v)
       std::cout << "           v2 = " << right_v->point() << std::endl;
     if (right_he != invalid_he)
-      std::cout << "           e2 = " << right_he->source()->point()
-                << "  -->  " << right_he->target()->point() << std::endl;
+      if (! right_he->is_fictitious())
+        std::cout << "           e2 = " << right_he->source()->point()
+                  << "  -->  " << right_he->target()->point() << std::endl;
+      else
+        std::cout << "           e2 is fictitious." << std::endl;
 #endif
 
     // Create an arrangement accessor.
     Arr_accessor<Arrangement_2>    arr_access (*p_arr);
+
+    // Check if the left end of cv is bounded of not.
+    const CGAL::Sign inf_x_left = traits->infinite_in_x_2_object() (cv, 0);
+    const CGAL::Sign inf_y_left = traits->infinite_in_y_2_object() (cv, 0);
+    const bool       left_bounded = (inf_x_left == CGAL::ZERO &&
+                                     inf_y_left == CGAL::ZERO);
 
     // Check if the left and the right endpoints of cv should be associated
     // with arrangement vertices.
@@ -140,7 +158,7 @@ public:
 
       // In case the vertex does not exist, split left_he at cv's left endpoint
       // and create the vertex.
-      if (left_v == invalid_v)
+      if (left_bounded && left_v == invalid_v)
       {
         _split_edge (left_he,
                      traits->construct_min_vertex_2_object() (cv),
@@ -214,7 +232,7 @@ public:
         inserted_he = inserted_he->twin();
       }
     }
-    else
+    else if (left_bounded)
     {
       // The left endpoint should be associated with a vertex:
       if (! vertex_for_right)
@@ -263,6 +281,59 @@ public:
                                                    left_v,
                                                    right_v);
         }
+      }
+    }
+    else
+    {
+      // The left end is unbounded, but we know the fictitious halfedge that
+      // contains it in its interior.
+      CGAL_assertion (! left_bounded && 
+                      prev_he_left != Halfedge_handle());
+
+      if (! vertex_for_right)
+      {
+        // Check if the right end is also unbounded.
+        const CGAL::Sign inf_x_right = traits->infinite_in_x_2_object()(cv, 1);
+        const CGAL::Sign inf_y_right = traits->infinite_in_y_2_object()(cv, 1);
+
+        if (inf_x_right == CGAL::ZERO && inf_y_right == CGAL::ZERO)
+        {
+          // The right end is bounded - we should insert the curve in the
+          // interior of the unbounded face incident to prev_he_left.
+          inserted_he = p_arr->insert_in_face_interior (cv,
+                                                        prev_he_left);
+        }
+        else
+        {
+          // Both ends are unbounded - locate a halfedge that contains the
+          // unbounded right end in its interior and perform the insertion.
+          prev_he_right = arr_access.locate_along_ccb (prev_he_left->face(),
+                                                       cv, 1);
+
+          inserted_he = p_arr->insert_in_face_interior (cv,
+                                                        prev_he_left,
+                                                        prev_he_right);
+        }
+      }
+      else
+      {
+        // The right endpoint is associated with an arrangement vertex.
+        // If possible, use the previous halfedge for the right vertex.
+        if (prev_he_right != invalid_he)
+        {
+          inserted_he = p_arr->insert_from_right_vertex (cv,
+                                                         prev_he_right,
+                                                         prev_he_left);
+        }
+        else
+        {
+          inserted_he = p_arr->insert_from_right_vertex (cv,
+                                                         right_v);
+        }
+
+        // The returned halfedge is directed to the newly created vertex
+        // (the left one), so we take its twin.
+        inserted_he = inserted_he->twin();
       }
     }
 
@@ -388,9 +459,7 @@ private:
     // Determine the order we send the split curves to the split_edge function,
     // depending whether the left point of sub_cv1 equals he's source (if not,
     // it equals its target).
-    if (traits->equal_2_object()
-        (he->source()->point(),
-         traits->construct_min_vertex_2_object() (sub_cv1)))
+    if (arr_access.are_equal (he->source(), sub_cv1, 0))
     {
       arr_access.split_edge_ex (he,
                                 p,

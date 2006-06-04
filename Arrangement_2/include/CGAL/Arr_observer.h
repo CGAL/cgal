@@ -234,6 +234,26 @@ public:
   {}
 
   /*!
+   * Notification before the creation of a new vertex at infinity.
+   * \param inf_x NEGATIVE if this vertex lies at x = -oo;
+   *              POSITIVE if this vertex lies at x = +oo;
+   *              ZERO if the vertex has a bounded x-coordinate.
+   * \param inf_y NEGATIVE if this vertex lies at y = -oo;
+   *              POSITIVE if this vertex lies at y = +oo;
+   *              ZERO if the vertex has a bounded y-coordinate.
+   */
+  virtual void before_create_vertex_at_infinity (CGAL::Sign /* inf_x */,
+                                                 CGAL::Sign /* inf_y */)
+  {}
+
+  /*!
+   * Notification after the creation of a new vertex at infinity.
+   * \param v A handle to the created vertex.
+   */
+  virtual void after_create_vertex_at_infinity (Vertex_handle /* v */)
+  {}
+
+  /*!
    * Notification before the creation of a new edge.
    * \param c The x-monotone curve to be associated with the edge.
    * \param v1 A handle to the first end-vertex of the edge.
@@ -303,6 +323,24 @@ public:
    */
   virtual void after_split_edge (Halfedge_handle /* e1 */,
                                  Halfedge_handle /* e2 */)
+  {}
+
+  /*!
+   * Notification before the splitting of a fictitious edge into two.
+   * \param e A handle to one of the existing halfedges.
+   * \param v A vertex representing the unbounded split point.
+   */
+  virtual void before_split_fictitious_edge (Halfedge_handle /* e */,
+                                             Vertex_handle /* v */)
+  {}
+
+  /*!
+   * Notification after a fictitious edge was split.
+   * \param e1 A handle to one of the twin halfedges forming the first edge.
+   * \param e2 A handle to one of the twin halfedges forming the second edge.
+   */
+  virtual void after_split_fictitious_edge (Halfedge_handle /* e1 */,
+                                            Halfedge_handle /* e2 */)
   {}
 
   /*!
@@ -398,6 +436,22 @@ public:
   {}
 
   /*!
+   * Notification before the merging of two fictitious edges.
+   * \param e1 A handle to one of the halfedges forming the first edge.
+   * \param e2 A handle to one of the halfedges forming the second edge.
+   */
+  virtual void before_merge_fictitious_edge (Halfedge_handle /* e1 */,
+                                             Halfedge_handle /* e2 */)
+  {}
+
+  /*!
+   * Notification after a fictitious edge was merged.
+   * \param e A handle to one of the twin halfedges forming the merged edge.
+   */
+  virtual void after_merge_fictitious_edge (Halfedge_handle /* e */)
+  {}
+
+  /*!
    * Notification before the merging of two faces.
    * \param f1 A handle to the first face.
    * \param f2 A handle to the second face.
@@ -484,6 +538,19 @@ public:
    * Notificaion after the removal of a vertex.
    */
   virtual void after_remove_vertex ()
+  {}
+
+  /*!
+   * Notificaion before the removal of a vertex at infinity.
+   * \param v A handle to the vertex to be deleted.
+   */
+  virtual void before_remove_vertex_at_infinity (Vertex_handle /* v */)
+  {}
+
+  /*!
+   * Notificaion after the removal of a vertex at infinity.
+   */
+  virtual void after_remove_vertex_at_infinity ()
   {}
 
   /*!

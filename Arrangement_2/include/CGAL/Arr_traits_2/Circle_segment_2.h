@@ -909,6 +909,8 @@ public:
    */
   Line_2 supporting_line () const
   {
+    CGAL_precondition (is_linear());
+
     return (Line_2 (a(), b(), c()));
   }
 
@@ -918,6 +920,8 @@ public:
    */
   Circle_2 supporting_circle () const
   {
+    CGAL_precondition (is_circular());
+
     typename Kernel::Point_2  center (x0(), y0());
     return (Circle_2 (center , sqr_r(), orientation()));
   }

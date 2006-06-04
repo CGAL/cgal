@@ -53,7 +53,7 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Arrangement_2     *p_arr;     // The associated arrangement.
+  const Arrangement_2     *p_arr;     // The associated arrangement.  
   const Traits_adaptor_2  *traits;    // Its associated traits object.
         
 public:

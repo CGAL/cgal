@@ -35,14 +35,15 @@ CGAL_BEGIN_NAMESPACE
 template <class T_SegmentTraits_2>
 class Arr_polyline_traits_2 {
 public:
-  typedef T_SegmentTraits_2                             Segment_traits_2;
+  typedef T_SegmentTraits_2                          Segment_traits_2;
 
   // Tag defintion:
-  typedef Tag_true                                      Has_left_category;
-  typedef Tag_true                                      Has_merge_category;
+  typedef Tag_true                                   Has_left_category;
+  typedef Tag_true                                   Has_merge_category;
+  typedef Tag_false                                  Has_infinite_category;
 
   private:
-  typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+  typedef Arr_polyline_traits_2<Segment_traits_2>    Self;
 
   // Data members:
   Segment_traits_2   seg_traits;           // The base segment-traits class.

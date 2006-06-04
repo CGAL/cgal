@@ -143,6 +143,16 @@ protected:
   Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
 
   /*!
+   * Find unbounded face that contains a vertical ray emanating from the given
+   * point.
+   * \param p The query point.
+   * \param shoot_up Indicates whether the ray is directed upward or downward.
+   * \return A handle to the unbounded face.
+   */
+  Face_const_handle _locate_unbounded_face (const Point_2& p,
+                                            bool shoot_up) const;
+
+  /*!
    * Check whether the query point lies inside the given onncected component.
    * \param p The query point.
    * \param circ A circulator for the halfedges along the connected component

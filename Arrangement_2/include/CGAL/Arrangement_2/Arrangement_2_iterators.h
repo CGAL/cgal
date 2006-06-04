@@ -246,6 +246,300 @@ public:
   //@}
 };
 
+/*!
+ * \class
+ * An iterator adaptor for the filtering a DCEL iterator (given as Iterator_)
+ * using a given filter functor (Filter_).
+ */
+template <class Iterator_, class Filter_,
+          class Value_, class Diff_, class Category_>
+class I_Filtered_iterator
+{
+public:
+
+  typedef Iterator_                       Iterator;
+  typedef Filter_                         Filter; 
+  typedef I_Filtered_iterator<Iterator_,
+                              Filter_,
+                              Value_,
+                              Diff_,
+                              Category_>  Self;
+
+  typedef Category_                       iterator_category;
+  typedef Value_                          value_type;
+  typedef value_type&                     reference;
+  typedef value_type*                     pointer;
+  typedef Diff_                           difference_type;
+
+protected:
+
+  Iterator        nt;       // The internal iterator (this member should not
+                            // be renamed in order to comply with the
+                            // HalfedgeDS circulators that refer to it).
+  Iterator        iend;     // A past-the-end iterator.        
+  Filter          filt;     // The filter functor.
+
+public:
+
+  /*! Constructors. */
+  I_Filtered_iterator()
+  {}
+
+  I_Filtered_iterator (Iterator it) :
+    nt (it)
+  {}
+
+  I_Filtered_iterator (Iterator it, Iterator end) :
+    nt (it),
+    iend (end)
+  {
+    while (nt != iend && ! filt (*nt))
+      ++nt;
+  }
+
+  I_Filtered_iterator (Iterator it, Iterator end, Filter f) :
+    nt (it),
+    iend (end),
+    filt (f)
+  {
+    while (nt != iend && ! filt (*nt))
+      ++nt;
+  }
+
+  /*! Access operations. */
+  Iterator current_iterator() const
+  {
+    return (nt);
+  }
+
+  Iterator past_the_end () const
+  {
+    return (iend);
+  }
+
+  Filter filter () const
+  {
+    return (filt);
+  }
+
+  pointer ptr() const
+  {
+    return (pointer)(&(*nt));
+  }
+
+  /*! Equality operators. */
+  bool operator== (const Self& it) const
+  {
+    return (nt == it.nt);
+  }
+  
+  bool operator!= (const Self& it) const 
+  {
+    return !(*this == it);
+  }
+  
+  /*! Dereferencing operators. */
+  reference operator*() const
+  {
+    return (*(ptr()));
+  }
+  
+  pointer operator->() const
+  {
+    return ptr();
+  }
+
+  /*! Increment operators. */
+  Self& operator++ ()
+  {
+    do
+    {
+      ++nt;
+    } while (!(nt == iend) && ! filt (*nt));
+
+    return (*this);
+  }
+   
+  Self operator++ (int)
+  {
+    Self tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+
+  /*! Decrement operators. */
+  Self& operator-- ()
+  {
+    do
+    {
+      --nt;
+    } while (!(nt == iend) && ! filt (*nt));
+
+    return (*this);
+  }
+
+  Self operator-- (int)
+  {
+    Self tmp = *this;
+    --(*this);
+    return tmp;
+  }
+};
+
+/*!
+ * \class
+ * An iterator adaptor for the filtering a DCEL const iterator (given as
+ * CIterator_) using a given filter functor (Filter_).
+ */
+template <class CIterator_, class Filter_, class MIterator_,
+          class Value_, class Diff_, class Category_>
+class I_Filtered_const_iterator
+{
+public:
+
+  typedef CIterator_                             Iterator;
+  typedef Filter_                                Filter;
+  typedef I_Filtered_const_iterator<CIterator_,
+                                    Filter_,
+                                    MIterator_,
+                                    Value_,
+                                    Diff_,
+                                    Category_>   Self;
+
+  typedef Category_                              iterator_category;
+  typedef Value_                                 value_type;
+  typedef const value_type&                      reference;
+  typedef const value_type*                      pointer;
+  typedef Diff_                                  difference_type;
+
+  typedef I_Filtered_iterator<MIterator_, Filter_,
+                              Value_, Diff_,
+                              Category_>         mutable_iterator;
+
+protected:
+
+  Iterator       nt;       // The internal iterator (this member should not
+                           // be renamed in order to comply with the
+                           // HalfedgeDS circulators that refer to it).
+  Iterator       iend;     // A past-the-end iterator.        
+  Filter         filt;     // The filter functor.
+
+public:
+
+  /*! Constructors. */
+  I_Filtered_const_iterator()
+  {}
+
+  I_Filtered_const_iterator (Iterator it) :
+    nt (it)
+  {}
+
+  I_Filtered_const_iterator (Iterator it, Iterator end) :
+    nt (it),
+    iend (end)
+  {
+    while (nt != iend && ! filt (*nt))
+      ++nt;
+  }
+
+  I_Filtered_const_iterator (Iterator it, Iterator end, Filter f) :
+    nt (it),
+    iend (end),
+    filt (f)
+  {
+    while (nt != iend && ! filt (*nt))
+      ++nt;
+  }
+
+  I_Filtered_const_iterator (mutable_iterator it) :
+    nt (it.current_iterator()),
+    iend (it.past_the_end()),
+    filt (it.filter())
+  {
+    //    while (nt != iend && ! filt (*nt))
+    //      ++nt;
+  }
+
+  /*! Access operations. */
+  Iterator current_iterator() const
+  {
+    return (nt);
+  }
+
+  Iterator past_the_end () const
+  {
+    return (iend);
+  }
+
+  Filter filter () const
+  {
+    return (filt);
+  }
+
+  pointer ptr() const
+  {
+    return (pointer)(&(*nt));
+  }
+
+  /*! Equality operators. */
+  bool operator== (const Self& it) const
+  {
+    return (nt == it.nt);
+  }
+  
+  bool operator!= (const Self& it) const 
+  {
+    return !(*this == it);
+  }
+  
+  /*! Dereferencing operators. */
+  reference operator*() const
+  {
+    return (*(ptr()));
+  }
+  
+  pointer operator->() const
+  {
+    return ptr();
+  }
+
+  /*! Increment operators. */
+  Self& operator++ ()
+  {
+    do
+    {
+      ++nt;
+    } while (!(nt == iend) && ! filt (*nt));
+
+    return (*this);
+  }
+   
+  Self operator++ (int)
+  {
+    Self tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+
+  /*! Decrement operators. */
+  Self& operator-- ()
+  {
+    do
+    {
+      --nt;
+    } while (!(nt == iend) && ! filt (*nt));
+
+    return (*this);
+  }
+
+  Self operator-- (int)
+  {
+    Self tmp = *this;
+    --(*this);
+    return tmp;
+  }
+};
+
 CGAL_END_NAMESPACE
 
 #endif

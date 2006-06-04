@@ -63,6 +63,7 @@ public:
 
   // Categories:
   typedef Tag_true                              Has_left_category;
+  typedef Tag_false                             Has_infinite_category;
     
   /*! Default Constructor */
   Arr_non_caching_segment_basic_traits_2()

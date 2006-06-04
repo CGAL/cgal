@@ -259,16 +259,15 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   Halfedge_around_vertex_const_circulator circ_done (circ);
   Halfedge_around_vertex_const_circulator prev = circ;
   
-  typename Traits_adaptor_2::Compare_xy_2           compare_xy = 
-    traits->compare_xy_2_object();
+  typename Traits_adaptor_2::Compare_xy_2
+    compare_xy =  traits->compare_xy_2_object();
   
-  typename Traits_adaptor_2::Compare_cw_around_point_2 compare_cw_around_point =
-    traits->compare_cw_around_point_2_object();
+  typename Traits_adaptor_2::Compare_cw_around_point_2
+    compare_cw_around_point = traits->compare_cw_around_point_2_object();
   
   //check if cv_other_point is to the left of v,  to the right, 
   //or if the curve is vertical
   Comparison_result cv_orient = circ->twin()->direction();
-  // RWRW: compare_xy(v, (*circ).source()->point());
   
   //check if p is to the left of v,  to the right, or if the segment is vertical
   Comparison_result seg_orient = compare_xy(v,p);
@@ -280,224 +279,247 @@ Object Arr_landmarks_point_location<Arrangement_2,Arr_landmarks_generator>
   CGAL_PRINT_DEBUG("cv_orient ="<< cv_orient << " , circ ="<< (*circ).curve());
 
   /////////////////////////////////// 6.12 - wrapper  
-    //TODO: what if both seg and curve are verticals ? @@@@
-    //what if one is vertical ?
+  //TODO: what if both seg and curve are verticals ? @@@@
+  //what if one is vertical ?
     
-    //curves are to different sides
-    if (cv_orient != seg_orient)  
+  //curves are to different sides
+  if (cv_orient != seg_orient)  
+  {
+    CGAL_PRINT_DEBUG("seg_orient != cv_orient : "); 
+    //find a curve that is on the same side as seg
+    do {
+      circ++;
+      cv_orient = circ->twin()->direction(); 
+    } while (seg_orient != cv_orient && circ!=circ_done);
+    
+    //if exists - go on from next "if" 
+    //if not exist - find the curve that is the largest (cw) 
+    //in this side, and this is the edge we're looking for
+    if (seg_orient != cv_orient) 
     {
-      CGAL_PRINT_DEBUG("seg_orient != cv_orient : "); 
-      //find a curve that is on the same side as seg
+      //seg is on one side (right/left) and all curves are on the 
+      //other side (left/right)
+      //circ == circ_done
       do {
+        prev = circ;
         circ++;
-        cv_orient = circ->twin()->direction(); 
-          // RWRW: compare_xy(v,(*circ).source()->point());
-      } while (seg_orient != cv_orient && circ!=circ_done);
+        res1 =  compare_cw_around_point 
+          (circ->curve(), (circ->direction() == LARGER), 
+           prev->curve(), (prev->direction() == LARGER), 
+           v);
+        CGAL_PRINT_DEBUG ("circ = " << (*circ).curve() << 
+                          "  res1= " << res1 ); 
+      } while (res1 == LARGER && circ!=circ_done);
       
-      //if exists - go on from next "if" 
-      //if not exist - find the curve that is the largest (cw) 
-      //in this side, and this is the edge we're looking for
-      if (seg_orient != cv_orient) 
-      {
-  //seg is on one side (right/left) and all curves are on the 
-  //other side (left/right)
-  //circ == circ_done
-  do {
-    prev = circ;
-    circ++;
-    res1 =  compare_cw_around_point((*circ).curve(), 
-            (*prev).curve(), v);//TODO, false);
-    CGAL_PRINT_DEBUG("circ = " << (*circ).curve() << "  res1= " << res1 ); 
-  } while (res1==LARGER && circ!=circ_done);
-  
-  //out_edge = prev;
-  //found_face = true;
-  CGAL_PRINT_DEBUG ( "new_find_face return face = " << (*prev).curve() );
-  return (CGAL::make_object ((*prev).face()));
-      }
+      CGAL_PRINT_DEBUG ( "new_find_face return face = " << (*prev).curve() );
+      return (CGAL::make_object ((*prev).face()));
     }
+  }
+  
+  //both curves are to the same side
+  if (seg_orient == cv_orient) 
+  {
+    CGAL_PRINT_DEBUG("seg_orient == cv_orient : "); 
+    res1 = compare_cw_around_point
+      (seg, (seg_orient == SMALLER),
+       circ->curve(), (circ->direction() == LARGER),
+       v);
     
-    //both curves are to the same side
-    if (seg_orient == cv_orient) 
+    if (res1 == LARGER) 
     {
-      CGAL_PRINT_DEBUG("seg_orient == cv_orient : "); 
-      res1 = compare_cw_around_point(seg, (*circ).curve(), v);
-      if (res1 == LARGER) 
-      {
-        //if the segment is larger than the curve cw, we will go ++ 
-        //cw with the circ and find a curve that is larger than seg. 
-        //then we will take the curve that was just before that. 
-        CGAL_PRINT_DEBUG("res1 == LARGER : "); 
+      //if the segment is larger than the curve cw, we will go ++ 
+      //cw with the circ and find a curve that is larger than seg. 
+      //then we will take the curve that was just before that. 
+      CGAL_PRINT_DEBUG("res1 == LARGER : "); 
+      do {
+        prev = circ;
+        circ++;
+        CGAL_PRINT_DEBUG("circ++ = " << (*circ).curve() ); 
+        cv_orient = circ->twin()->direction();
+        if (seg_orient == cv_orient) 
+        {
+          res1 =  compare_cw_around_point
+            (seg, (seg_orient == SMALLER),
+             circ->curve(), (circ->direction() == LARGER),
+             v);
+          CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
+        }
+      } while (res1 == LARGER && seg_orient == cv_orient 
+               && circ!=circ_done);
+      
+      //if res1 is not larger => seg is between prev and circ,return prev
+      //if seg_orient != cv_orient, then we changes side and the 
+      //other side is larger than seg.
+      // then also seg is between prev & circ and we have to return prev
+      
+      if (res1 == LARGER && seg_orient == cv_orient)  
+      {//we 're only out the while because the circ end
+        //in this case the seg is larger than ALL curves and all 
+        //curves are to the same side 
+        //we need to find the largest of all curves.
+        CGAL_PRINT_DEBUG("circ == circ_done : "); 
         do {
           prev = circ;
           circ++;
-          CGAL_PRINT_DEBUG("circ++ = " << (*circ).curve() ); 
+          res1 =  compare_cw_around_point
+            (circ->curve(), (circ->direction() == LARGER), 
+             prev->curve(), (prev->direction() == LARGER),
+             v);
+          CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
+        } while (res1 == LARGER && circ!=circ_done);
+        //if circ == circ_done, then prev is the largest
+        //else if circ is not larger than prev, than prev is 
+        //the largest. anyway, prev is the largest - return it
+      }
+      
+      //out_edge = prev;
+      //found_face = true;
+      CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+      return (CGAL::make_object ((*prev).face()));
+    }
+    else if (res1 ==SMALLER) 
+    {
+      //if the segment is smaller (cw) than the curve, we need to find 
+      //ccw (--) the curve that seg is larger than. 
+      //since we can't go --, we will go ++ few times (if necessary). 
+      CGAL_PRINT_DEBUG("res1 == SMALLER : "); 
+      
+      //loop 1 - until reach a curve on the other side, if exists
+      do {
+        prev = circ; 
+        circ++;
+        cv_orient = circ->twin()->direction();
+      } while (circ!=circ_done  && seg_orient == cv_orient); 
+      
+      if (seg_orient != cv_orient) 
+      {
+        //loop 2 - until reach the same side again 
+        do {
+          prev = circ; 
+          circ++;
           cv_orient = circ->twin()->direction();
-            //RWRW: compare_xy(v,(*circ).source()->point());
+        }  while (seg_orient != cv_orient) ;
+        
+        //prev is the last edge from the other side, 
+        //and curve is the first curve in this side
+        res1 =  compare_cw_around_point
+          (seg, (seg_orient == SMALLER),
+           circ->curve(), (circ->direction() == LARGER),
+           v);
+        
+        //loop 3 - until find curve > seg cw.
+        while (res1 == LARGER && seg_orient==cv_orient) 
+        {
+          prev = circ; 
+          circ++;
+          cv_orient = circ->twin()->direction();
           if (seg_orient == cv_orient) 
           {
-            res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-            CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
+            res1 =  compare_cw_around_point
+              (seg, (seg_orient == SMALLER),
+               circ->curve(), (circ->direction() == LARGER),
+               v);
+            CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1);
           }
-        } while (res1 == LARGER && seg_orient == cv_orient 
-                 && circ!=circ_done);
-        
-        //if res1 is not larger => seg is between prev and circ,return prev
-        //if seg_orient != cv_orient, then we changes side and the 
-        //other side is larger than seg.
-        // then also seg is between prev & circ and we have to return prev
-        
-        if (res1 == LARGER && seg_orient == cv_orient)  
-        {//we 're only out the while because the circ end
-          //in this case the seg is larger than ALL curves and all 
-          //curves are to the same side 
-          //we need to find the largest of all curves.
-          CGAL_PRINT_DEBUG("circ == circ_done : "); 
-          do {
-            prev = circ;
-            circ++;
-            res1 =  compare_cw_around_point((*circ).curve(), 
-                                            (*prev).curve(), v);//TODO: false);
-            CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1); 
-          } while (res1 == LARGER && circ!=circ_done);
-          //if circ == circ_done, then prev is the largest
-          //else if circ is not larger than prev, than prev is 
-          //the largest. anyway, prev is the largest - return it
         }
         
+        //now we can say that the output edge is prev
         //out_edge = prev;
         //found_face = true;
         CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
         return (CGAL::make_object ((*prev).face()));
       }
-      else if (res1 ==SMALLER) 
+      
+      // else - (circ == circ_done)
+      //there are no curves on the other side, 
+      //find the smallest (cw) on this side
+      do {
+        prev = circ;
+        circ++;
+        res1 =  compare_cw_around_point
+          (circ->curve(), (circ->direction() == LARGER),
+           prev->curve(), (prev->direction() == LARGER),
+           v);
+        CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<< res1); 
+      } while (res1 == LARGER && circ!=circ_done);
+      //now circ < prev ==> circ is the smallest
+      
+      //if seg > smallest, smallest++,
+      // otherwise, out_edge  = smallest->twin();
+      res1 =  compare_cw_around_point
+        (seg, (seg_orient == SMALLER),
+         circ->curve(), (circ->direction() == LARGER),
+         v);
+      
+      if (res1 == SMALLER) 
       {
-        //if the segment is smaller (cw) than the curve, we need to find 
-        //ccw (--) the curve that seg is larger than. 
-        //since we can't go --, we will go ++ few times (if necessary). 
-        CGAL_PRINT_DEBUG("res1 == SMALLER : "); 
-        
-        //loop 1 - until reach a curve on the other side, if exists
-        do {
-          prev = circ; 
-          circ++;
-          cv_orient = circ->twin()->direction();
-          // RWRW: compare_xy(v,(*circ).source()->point());
-        } while (circ!=circ_done  && seg_orient == cv_orient); 
-        
-        if (seg_orient != cv_orient) 
-        {
-          //loop 2 - until reach the same side again 
-          do {
-            prev = circ; 
-            circ++;
-            cv_orient = circ->twin()->direction();
-            // RWRW: compare_xy(v,(*circ).source()->point());
-          }  while (seg_orient != cv_orient) ;
-          
-          //prev is the last edge from the other side, 
-          //and curve is the first curve in this side
-          res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-          
-          //loop 3 - until find curve > seg cw.
-          while (res1 == LARGER && seg_orient==cv_orient) 
-          {
-            prev = circ; 
-            circ++;
-            cv_orient = circ->twin()->direction();
-            // RWRW: compare_xy(v,(*circ).source()->point());
-            if (seg_orient == cv_orient) 
-            {
-              res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-              CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<<res1);
-            }
-          }
-                
-          //now we can say that the output edge is prev
-          //out_edge = prev;
-          //found_face = true;
-          CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-          return (CGAL::make_object ((*prev).face()));
-        }
-  
-  // else - (circ == circ_done)
-  //there are no curves on the other side, 
-  //find the smallest (cw) on this side
-  do {
-    prev = circ;
-    circ++;
-    res1 =  compare_cw_around_point((*circ).curve(), (*prev).curve(),v);//IXX, false);
-    CGAL_PRINT_DEBUG("circ = "<<(*circ).curve()<<" res1= "<< res1); 
-  } while (res1 == LARGER && circ!=circ_done);
-  //now circ < prev ==> circ is the smallest
-  
-  //if seg > smallest, smallest++,
-  // otherwise, out_edge  = smallest->twin();
-  res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-  if (res1 == SMALLER) 
-  {
-    //out_edge = circ->twin();
-    //found_face = true;
-    CGAL_PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
-    return (CGAL::make_object ((*circ).twin()->face()));
-  }
-  
-  //else: seg > smallest
-  circ_done = circ; 
-  do  
-  {
-    prev = circ;
-    circ++;
-    res1 =  compare_cw_around_point(seg, (*circ).curve(), v);
-  } while (res1 == LARGER && circ!= circ_done);
-  
-  //out_edge = prev;
-  //found_face = true;
-  CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
-  return (CGAL::make_object ((*prev).face()));
+        //out_edge = circ->twin();
+        //found_face = true;
+        CGAL_PRINT_DEBUG ( "new_find_face return " << (*circ).curve() );
+        return (CGAL::make_object ((*circ).twin()->face()));
       }
-      else //EQUAL
+      
+      //else: seg > smallest
+      circ_done = circ; 
+      do  
       {
-  //TODO: specail case - new vertex or on edge ot something
-  CGAL_PRINT_DEBUG ( "specail case: seg is equal cw to circ " 
-          << (*circ).curve() );
-  if (traits->equal_2_object()(p,(*circ).source()->point())) 
-  {
-    CGAL_PRINT_DEBUG ( "p is on a vertex ");
-    //out_edge = circ;
-    //out_vertex = circ->source();
-    //lt = Planar_map::VERTEX;
-    //found_vertex_or_edge = true;
-    return (CGAL::make_object ((*circ).source()));
-  }
-  
-  if (traits->is_in_x_range_2_object()((*circ).curve(),p) && 
-      traits->compare_y_at_x_2_object()(p,(*circ).curve()) == EQUAL) 
-  {
-    // p lies on cv1  
-    CGAL_PRINT_DEBUG ( "p is on an edge ");
-    Halfedge_const_handle temp_he = circ;
-    //out_edge = circ;
-    //lt = Planar_map::EDGE;
-    //found_vertex_or_edge = true;
-    return (CGAL::make_object (temp_he)); 
-  }
-  
-  //p does not lie on cv1 ==> 
-  // the target of the equal curve is a better vertex to p 
-  CGAL_PRINT_ERROR("WARNING 11: found closer vertex during new_find_face");
-  // out_vertex is the closer vertex
-  //out_vertex = circ->source();
-  new_vertex = true;
-  CGAL_PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
-  // check validity (the new vertex is vetween them on a line) @@@@
-  return (CGAL::make_object((*circ).source()));    
-      }
+        prev = circ;
+        circ++;
+        res1 =  compare_cw_around_point
+          (seg, (seg_orient == SMALLER),
+           circ->curve(), (circ->direction() == LARGER),
+           v);
+      } while (res1 == LARGER && circ!= circ_done);
+      
+      //out_edge = prev;
+      //found_face = true;
+      CGAL_PRINT_DEBUG ( "new_find_face return " << (*prev).curve() );
+      return (CGAL::make_object ((*prev).face()));
     }
-    
-    CGAL_PRINT_ERROR("ERROR 13: new_find_face did not find the face !");
-    CGAL_LM_DEBUG(getchar());
-    return Object();
+    else //EQUAL
+    {
+      //TODO: specail case - new vertex or on edge ot something
+      CGAL_PRINT_DEBUG ( "specail case: seg is equal cw to circ " 
+                         << (*circ).curve() );
+      if (traits->equal_2_object()(p,(*circ).source()->point())) 
+      {
+        CGAL_PRINT_DEBUG ( "p is on a vertex ");
+        //out_edge = circ;
+        //out_vertex = circ->source();
+        //lt = Planar_map::VERTEX;
+        //found_vertex_or_edge = true;
+        return (CGAL::make_object ((*circ).source()));
+      }
+      
+      if (traits->is_in_x_range_2_object()((*circ).curve(),p) && 
+          traits->compare_y_at_x_2_object()(p,(*circ).curve()) == EQUAL) 
+      {
+        // p lies on cv1  
+        CGAL_PRINT_DEBUG ( "p is on an edge ");
+        Halfedge_const_handle temp_he = circ;
+        //out_edge = circ;
+        //lt = Planar_map::EDGE;
+        //found_vertex_or_edge = true;
+        return (CGAL::make_object (temp_he)); 
+      }
+      
+      //p does not lie on cv1 ==> 
+      // the target of the equal curve is a better vertex to p 
+      CGAL_PRINT_ERROR
+        ("WARNING 11: found closer vertex during new_find_face");
+      
+      // out_vertex is the closer vertex
+      //out_vertex = circ->source();
+      new_vertex = true;
+      CGAL_PRINT_DEBUG( "The new vertex is: "<< (*circ).source()->point() );
+      // check validity (the new vertex is vetween them on a line) @@@@
+      return (CGAL::make_object((*circ).source()));    
+    }
+  }
+  
+  CGAL_PRINT_ERROR("ERROR 13: new_find_face did not find the face !");
+  CGAL_LM_DEBUG(getchar());
+  return Object();
 }    
 
 //----------------------------------------------------
@@ -589,8 +611,6 @@ Object Arr_landmarks_point_location<Arrangement, Arr_landmarks_generator>
   {
     Vertex_const_handle vh = eh->source();
     if (eh->direction() != traits->compare_xy_2_object()(p, src))
-      //RWRW: if (traits->compare_xy_2_object()(src, trg) != 
-      //          traits->compare_xy_2_object()(p, src)) 
     {
       vh = eh->target();
     }

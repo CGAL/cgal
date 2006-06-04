@@ -23,6 +23,8 @@
  * Definition of the Arr_accessor<Arrangement> class.
  */
 
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
@@ -51,7 +53,14 @@ public:
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
-                                                       Ccb_halfedge_circulator;
+                                                     Ccb_halfedge_circulator;
+
+  typedef typename Arrangement_2::_All_vertex_iterator  All_vertex_iterator;
+  typedef typename Arrangement_2::_All_vertex_const_iterator
+                                                     All_vertex_const_iterator;
+  typedef typename Arrangement_2::_All_edge_iterator    All_edge_iterator;
+  typedef typename Arrangement_2::_All_edge_const_iterator
+                                                     All_edge_const_iterator;
 
 private:
 
@@ -60,6 +69,8 @@ private:
   typedef typename Arrangement_2::DFace                 DFace;
   typedef typename Arrangement_2::DHole                 DHole;
   typedef typename Arrangement_2::DIso_vert             DIso_vert;
+
+private:
 
   Arrangement_2  *p_arr;           // The associated arrangement.
 
@@ -86,8 +97,227 @@ public:
   }
   //@}
 
-  /// \name Local operations and predicated for the arrangement.
+  /// \name Traversal functions.
   //@{
+
+  /*! Get the fictitious face of the arrangement (non-const version). */
+  Face_handle fictitious_face ()
+  {
+    return (Face_handle (p_arr->un_face));
+  }
+
+  /*! Get the fictitious face of the arrangement (const version). */
+  Face_const_handle fictitious_face () const
+  {
+    return (Face_const_handle (p_arr->un_face));
+  }
+
+  /*! Get an iterator for the first vertex in the arrangement. */
+  All_vertex_iterator all_vertices_begin() 
+  { 
+    return (All_vertex_iterator (p_arr->dcel.vertices_begin(),
+                                 p_arr->dcel.vertices_end(),
+                                 _Is_non_fictitious_vertex (p_arr->v_bl,
+                                                            p_arr->v_tl,
+                                                            p_arr->v_br,
+                                                            p_arr->v_tr))); 
+  }
+
+  /*! Get a past-the-end iterator for the arrangement vertices. */
+  All_vertex_iterator all_vertices_end()
+  {
+    return (All_vertex_iterator (p_arr->dcel.vertices_end(),
+                                 p_arr->dcel.vertices_end(),
+                                 _Is_non_fictitious_vertex (p_arr->v_bl,
+                                                            p_arr->v_tl,
+                                                            p_arr->v_br,
+                                                            p_arr->v_tr))); 
+  }
+
+  /*! Get a const iterator for the first vertex in the arrangement. */
+  All_vertex_const_iterator all_vertices_begin() const 
+  { 
+    return (All_vertex_const_iterator
+            (p_arr->dcel.vertices_begin(),
+             p_arr->dcel.vertices_end(),
+             _Is_non_fictitious_vertex (p_arr->v_bl, p_arr->v_tl,
+                                        p_arr->v_br, p_arr->v_tr))); 
+  }
+
+  /*! Get a past-the-end const iterator for the arrangement vertices. */
+  All_vertex_const_iterator all_vertices_end() const
+  {
+    return (All_vertex_const_iterator
+            (p_arr->dcel.vertices_end(),
+             p_arr->dcel.vertices_end(),
+             _Is_non_fictitious_vertex (p_arr->v_bl, p_arr->v_tl,
+                                        p_arr->v_br, p_arr->v_tr))); 
+  }
+
+  /*! Get an iterator for the first edge in the arrangement. */
+  All_edge_iterator edges_begin() 
+  { 
+    return (All_edge_iterator (p_arr->dcel.edges_begin())); 
+  }
+
+  /*! Get a past-the-end iterator for the arrangement edges. */
+  All_edge_iterator edges_end()
+  {
+    return (All_edge_iterator (p_arr->dcel.edges_end())); 
+  }
+
+  /*! Get a const iterator for the first edge in the arrangement. */
+  All_edge_const_iterator edges_begin() const
+  { 
+    return (All_edge_const_iterator (p_arr->dcel.edges_begin()));
+  }
+  
+  /*! Get a past-the-end const iterator for the arrangement edges. */
+  All_edge_const_iterator edges_end() const
+  {
+    return (All_edge_const_iterator (p_arr->dcel.edges_end()));
+  }
+  //@}
+
+  /// \name Local operations and predicates for the arrangement.
+  //@{
+
+  /*!
+   * Check whether the given infinite curve end lies on the given fictitious
+   * edge.
+   * \param cv The curve.
+   * \param ind 0 if we refer to cv's left end;
+   *            1 if we refer to its right end.
+   * \param he The fictitious edge.
+   * \pre cv's end lies at infinity and he is a ficititious halsedge.
+   * \return Whether the curve end lies on the fictitious edge.
+   */
+  bool is_on_ficitious_edge (const X_monotone_curve_2& cv, int ind,
+                             Halfedge_const_handle he) const
+  {
+    typedef Arr_traits_basic_adaptor_2<typename Arrangement_2::Traits_2>
+                                                             Traits_adaptor_2;
+
+    // Check whether the relevant end of cv lies at infinity.
+    const Traits_adaptor_2  *traits =
+                   static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
+    CGAL::Sign         inf_x = traits->infinite_in_x_2_object() (cv, ind);
+    CGAL::Sign         inf_y = traits->infinite_in_y_2_object() (cv, ind);
+    bool               eq_source, eq_target;
+
+    CGAL_precondition (inf_x != CGAL::ZERO || inf_y != CGAL::ZERO);
+
+    return (p_arr->_is_on_fictitious_edge (cv, ind,
+                                           inf_x, inf_y,
+                                           p_arr->_halfedge (he),
+                                           eq_source, eq_target) &&
+            ! eq_source && ! eq_target);
+  }
+
+  /*!
+   * Locate an ficititious halfegde on the outer CCB of a given face which
+   * contains the given curve end in its interior.
+   * \param fh The face.
+   * \param cv The curve.
+   * \param ind 0 if we refer to cv's left end;
+   *            1 if we refer to its right end.
+   * \pre The relevant end of cv must lie at infinity and f must be an
+   *      unbounded face
+   * \return A handle to the halfedge along fh's outer CCB that contains the
+   *         relevant end of cv in its interior.
+   */
+  Halfedge_handle locate_along_ccb (Face_handle fh,
+                                    const X_monotone_curve_2& cv,
+                                    int ind) const
+  {
+    typedef Arr_traits_basic_adaptor_2<typename Arrangement_2::Traits_2>
+                                                             Traits_adaptor_2;
+
+    // Check whether the relevant end of cv lies at infinity.
+    const Traits_adaptor_2  *traits =
+                   static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
+    CGAL::Sign         inf_x = traits->infinite_in_x_2_object() (cv, ind);
+    CGAL::Sign         inf_y = traits->infinite_in_y_2_object() (cv, ind);
+
+    CGAL_precondition (inf_x != CGAL::ZERO || inf_y != CGAL::ZERO);
+
+    DHalfedge*  p_he = p_arr->_locate_along_ccb (p_arr->_face (fh),
+                                                 cv, ind,
+                                                 inf_x, inf_y);
+    
+    CGAL_assertion (p_he != NULL);
+    return (p_arr->_handle_for (p_he));
+  }
+
+  /*!
+   * Locate an unbounded end of a given curve along the bounding rectangle.
+   * \param cv The curve.
+   * \param ind 0 if we refer to cv's left end;
+   *            1 if we refer to its right end.
+   * \pre The left (right) end of cv lies at infinity.
+   * \return An object along the bounding rectangle that contains the curve
+   *         end. This object is either a Halfedge_const_hanlde (in the
+   *         general case) or a Vertex_const_handle in case cv overlaps
+   *         an existing edge.
+   */
+  CGAL::Object locate_unbounded_end (const X_monotone_curve_2& cv,
+                                     int ind) const
+  {
+    typedef Arr_traits_basic_adaptor_2<typename Arrangement_2::Traits_2>
+                                                             Traits_adaptor_2;
+
+    // Check whether the relevant end of cv lies at infinity.
+    const Traits_adaptor_2  *traits =
+                   static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
+    CGAL::Sign         inf_x = traits->infinite_in_x_2_object() (cv, ind);
+    CGAL::Sign         inf_y = traits->infinite_in_y_2_object() (cv, ind);
+
+    CGAL_precondition (inf_x != CGAL::ZERO || inf_y != CGAL::ZERO);
+
+    // Traverse the inner boundary of the fictitious face of the arrangement.
+    const DHalfedge   *first = *(p_arr->un_face->holes_begin());
+    const DHalfedge   *curr = first;
+    bool               eq_source, eq_target;
+
+    do
+    {
+      if (p_arr->_is_on_fictitious_edge (cv, ind,
+                                         inf_x, inf_y,
+                                         curr,
+                                         eq_source, eq_target))
+      {
+        if (eq_source)
+        {
+          // cv's end coincides with the source vertex of the current
+          // fictitious halfedge.
+          Vertex_const_handle vh = p_arr->_const_handle_for 
+                                                 (curr->opposite()->vertex());
+          return (CGAL::make_object (vh));
+        }
+        else if (eq_target)
+        {
+          // cv's end coincides with the target vertex of the current
+          // fictitious halfedge.
+          Vertex_const_handle vh = p_arr->_const_handle_for (curr->vertex());
+          return (CGAL::make_object (vh));
+        }
+
+        // The current ficitious edge contains cv's end in its interior.
+        // Note we return curr's twin, whose incident face is a valid
+        // unbounded face (whereas the incident face of curr is the fictitious
+        // face).
+        Halfedge_const_handle hh = p_arr->_const_handle_for (curr->opposite());
+        return (CGAL::make_object (hh));
+      }
+
+      curr = curr->next();
+
+    } while (curr != first);
+
+    // We should never reach here.
+    CGAL_assertion (false);
+    return Object();
+  }
 
   /*!
    * Locate the place for the given curve around the given vertex.
@@ -101,7 +331,24 @@ public:
   Halfedge_handle locate_around_vertex (Vertex_handle vh,
                                         const X_monotone_curve_2& cv) const
   {
-    DHalfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh), cv);
+    typedef Arr_traits_basic_adaptor_2<typename Arrangement_2::Traits_2>
+                                                             Traits_adaptor_2;
+
+    const Traits_adaptor_2  *traits =
+                   static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
+    int                ind = 0;
+
+    if (traits->infinite_in_x_2_object() (cv, 1) == CGAL::ZERO &&
+        traits->infinite_in_y_2_object() (cv, 1) == CGAL::ZERO &&
+        traits->equal_2_object()
+        (vh->point(),
+         p_arr->get_traits()->construct_max_vertex_2_object()(cv)))
+    {
+      ind = 1;
+    }
+
+    DHalfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh),
+                                                   cv, ind);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -158,6 +405,60 @@ public:
     return (p_arr->_is_inside_new_face (p_arr->_halfedge (prev1),
                                         p_arr->_halfedge (prev2),
                                         cv));
+  }
+
+  /*!
+   * Compare the x-coordinates of a given vertex (which may lie at infinity
+   * if the traits class supports unbounded curves) and the given point.
+   * \param p The point.
+   * \param v The vertex.
+   * \return The result of the comparison of the x-coordinates of p and v.
+   */
+  Comparison_result compare_x (const Point_2& p,
+                               Vertex_const_handle v) const
+  {
+    return (p_arr->_compare_x (p, p_arr->_vertex (v)));
+  }
+
+  /*!
+   * Compare the given vertex (which may lie at infinity if the traits class
+   * supports unbounded curves) and the given point.
+   * \param p The point.
+   * \param v The vertex.
+   * \return The result of the xy-lexicographic comparison of p and v.
+   */
+  Comparison_result compare_xy (const Point_2& p,
+                                Vertex_const_handle v) const
+  {
+    return (p_arr->_compare_xy (p, p_arr->_vertex (v)));
+  }
+
+  /*!
+   * Compare the relative y-position of the given point and the given edge
+   * (which may be fictitious if the traits class supports unbounded curves).
+   * \param p The point.
+   * \param he The halfedge.
+   * \pre p should lie in the x-range of the given edge.
+   * \return The relative y-position of the point p and the edge.
+   */
+  Comparison_result compare_y_at_x (const Point_2& p,
+                                    Halfedge_const_handle he) const
+  {
+    return (p_arr->_compare_y_at_x (p, p_arr->_halfedge (he)));
+  }
+
+  /*!
+   * Check if the given vertex represents one of the ends of a given curve.
+   * \param v The vertex.
+   * \param cv The curve.
+   * \param ind 0 if we refer to the left end of cv;
+   *            1 if we refer to its right end.
+   * \return Whether v represents the left (or right) end of cv.
+   */
+  bool are_equal (Vertex_const_handle v,
+                  const X_monotone_curve_2& cv, int ind) const
+  {
+    return (p_arr->_are_equal (p_arr->_vertex (v), cv, ind));
   }
 
   /*!
@@ -454,7 +755,6 @@ public:
    * \param e The edge to split (one of the pair of twin halfegdes).
    * \param v The split vertex.
    * \param cv1 The curve that should be associated with the first split edge,
-
    *            whose source equals e's source and its target is v's point.
    * \param cv2 The curve that should be associated with the second split edge,
    *            whose source is v's point and its target equals e's target.
@@ -472,6 +772,45 @@ public:
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
+  }
+
+  /*!
+   * Split a given fictitious edge into two, forming a new vertex at
+   * infinity.
+   * \param he The edge to split (one of the pair of twin halfegdes).
+   * \param inf_x NEGATIVE if this vertex lies at x = -oo;
+   *              POSITIVE if this vertex lies at x = +oo;
+   *              ZERO if the vertex has a bounded x-coordinate.
+   * \param inf_y NEGATIVE if this vertex lies at y = -oo;
+   *              POSITIVE if this vertex lies at y = +oo;
+   *              ZERO if the vertex has a bounded y-coordinate.
+   * \pre inf_x and inf_y cannot be both ZERO.
+   * \return A pointer to the first split halfedge, whose source equals the
+   *         source of e, and whose target is the newly created vertex.
+   */
+  Halfedge_handle split_fictitious_edge (Halfedge_handle he,
+                                         CGAL::Sign inf_x, CGAL::Sign inf_y)
+  {
+    DVertex    *p_he = p_arr->_split_fictitious_edge (p_arr->_halfedge (he),
+                                                      inf_x, inf_y);
+    
+    return (p_arr->_handle_for (p_he));
+  }
+
+  /*!
+   * Split a given fictitious edge into two at a given vertex at infinity.
+   * \param he The edge to split (one of the pair of twin halfegdes).
+   * \param v The split vertex.
+   * \return A handle for the first split halfedge, whose source equals the
+   *         source of e, and whose target is the split point.
+   */
+  Halfedge_handle split_fictitious_edge (Halfedge_handle he,
+                                         Vertex_handle v)
+  {
+    DHalfedge*  p_he = p_arr->_split_edge (p_arr->_halfedge (he),
+                                         p_arr->_vertex (v));
+
+    return (p_arr->_handle_for (p_he));
   }
 
   /*!

@@ -25,6 +25,8 @@
  * class.
  */
 
+#include <CGAL/Arr_accessor.h>
+
 CGAL_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------------
@@ -68,15 +70,9 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   }
 
   // Shoot a vertical ray from the query point.
+  // The ray shooting returns either a vertex of a halfedge.
   Object   obj = _base_vertical_ray_shoot (p, true);
 
-  if (obj.is_empty())
-  {
-    // Return the unbounded face.
-    return (CGAL::make_object (p_arr->unbounded_face()));
-  }
-
-  // The ray shooting returned either a vertex of a halfedge.
   const typename Arrangement::Vertex_const_handle    *p_vh;
   const typename Arrangement::Halfedge_const_handle  *p_hh;
 
@@ -114,6 +110,10 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
     (const Point_2& p,
      bool shoot_up) const
 {
+  typedef Arr_accessor<Arrangement_2>                            Arr_accessor;
+  typedef typename Arr_accessor::All_edge_const_iterator  
+                                                      All_edge_const_iterator;
+
   // Set the results for comparison according to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
@@ -134,20 +134,30 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   typename Traits_adaptor_2::Compare_xy_2            compare_xy =
                                        traits->compare_xy_2_object();
 
-  typename Arrangement::Edge_const_iterator    eit = p_arr->edges_begin();
+  const Arr_accessor       arr_access (const_cast<Arrangement_2&>(*p_arr));
+  All_edge_const_iterator  eit = arr_access.edges_begin();
+  Comparison_result        res_s;
+  Comparison_result        res;
+  Comparison_result        y_res;
+  bool                     in_x_range;
   typename Arrangement::Halfedge_const_handle  closest_edge;
-  Comparison_result                            res;
-  Comparison_result                            y_res;
-  bool                                         in_x_range;
   bool                                         found = false;
 
-  while (eit != p_arr->edges_end())
+  while (eit != arr_access.edges_end())
   {
     // Determine whether p is in the x-range of the curve and above or below it
     // (according to the direction of the shoot).
-    in_x_range = is_in_x_range (eit->curve(), p);
+    res_s = arr_access.compare_x (p, eit->source());
+
+    if (res_s == EQUAL)
+      in_x_range = true;
+    else if (res_s == eit->direction())
+      in_x_range = false;
+    else
+      in_x_range = (res_s != arr_access.compare_x (p, eit->target()));
+
     if (in_x_range)
-      res = compare_y_at_x (p, eit->curve());
+      res = arr_access.compare_y_at_x (p, eit);
 
     if (in_x_range && res == point_above_under)
     {
@@ -163,12 +173,16 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
         // Compare with the vertically closest curve so far and detemine the
         // curve closest to p. We first check the case that the two curves
         // have a common endpoint (note that the two curves do not intersect
-        // in their interiors).
+        // in their interiors). Observe that if such a common vertex exists,
+        // it is certainly not a vertex at infinity, therefore it is
+        // associated with a valid point.
         if ((closest_edge->source() == eit->source() &&
              closest_edge->direction() == eit->direction()) ||
             (closest_edge->source() == eit->target() &&
              closest_edge->direction() != eit->direction()))
         {
+          CGAL_assertion (! closest_edge->source()->has_null_point());
+
           if (closest_edge->direction() == SMALLER)
           {
             // Both curves extend to the right from a common point.
@@ -189,6 +203,8 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
                  (closest_edge->target() == eit->target() &&
                   closest_edge->direction() == eit->direction()))
         {
+          CGAL_assertion (! closest_edge->target()->has_null_point());
+
           if (closest_edge->direction() == SMALLER)
           {
             // Both curves extend to the left from a common point.
@@ -207,9 +223,16 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
         else
         {
           // In case the two curves do not have a common endpoint, but overlap
-          // in their x-range (both contain p), just compare their positions:
-          y_res = compare_y_position (closest_edge->curve(),
-                                      eit->curve());
+          // in their x-range (both contain p), just compare their positions.
+          // Note that in this case one of the edges may be fictitious, so we
+          // preform the comparsion symbolically in this case.
+          if (closest_edge->is_fictitious())
+            y_res = LARGER;
+          else if (eit->is_fictitious())
+            y_res = SMALLER;
+          else
+            y_res = compare_y_position (closest_edge->curve(),
+                                        eit->curve());
         }
  
         if (y_res == curve_above_under)
@@ -218,12 +241,12 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
     }
 
     if (in_x_range && res == EQUAL &&
-        is_vertical(eit->curve()))
+        ! eit->is_fictitious() && is_vertical(eit->curve()))
     {
       // Check if the query point is one of the end-vertices of the vertical
       // edge.
-      Comparison_result  res1 = compare_xy (p, eit->source()->point());
-      Comparison_result  res2 = compare_xy (p, eit->target()->point());
+      Comparison_result  res1 = arr_access.compare_xy (p, eit->source());
+      Comparison_result  res2 = arr_access.compare_xy (p, eit->target());
 
       if (! ((res1 == EQUAL && res2 == curve_above_under) ||
              (res1 == curve_above_under && res2 == EQUAL)))
@@ -239,20 +262,24 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
     ++eit;
   }
 
-  // If we have not found any edge above p, we return an empty object.
-  if (!found)
-    return Object();
+  // If we found a fictitious edge, return it now.
+  CGAL_assertion (found);
+
+  if (closest_edge->is_fictitious())
+    return (CGAL::make_object (closest_edge));
 
   // If one of the closest edge's end vertices has the same x-coordinate
   // as the query point, return this vertex.
   if (! is_vertical (closest_edge->curve()))
   {
-    if (traits->compare_x_2_object() (closest_edge->source()->point(),
+    if (! closest_edge->source()->has_null_point() &&
+        traits->compare_x_2_object() (closest_edge->source()->point(),
                                       p) == EQUAL)
     {
       return (CGAL::make_object (closest_edge->source()));
     }
-    else if (traits->compare_x_2_object() (closest_edge->target()->point(),
+    else if (! closest_edge->target()->has_null_point() &&
+             traits->compare_x_2_object() (closest_edge->target()->point(),
                                            p) == EQUAL)
     {
       return (CGAL::make_object (closest_edge->target()));
@@ -261,8 +288,11 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   else
   {
     CGAL_assertion_code(
-      Comparison_result  res1 = compare_xy (p, closest_edge->source()->point());
-      Comparison_result  res2 = compare_xy (p, closest_edge->target()->point()));
+      Comparison_result  res1 = arr_access.compare_xy (p,
+                                                       closest_edge->source());
+      Comparison_result  res2 = arr_access.compare_xy (p,
+                                                       closest_edge->target());
+      );
 
     CGAL_assertion (res1 == res2);
     CGAL_assertion (res1 = point_above_under);
@@ -290,29 +320,21 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
   // given point hits, when not considering the isolated vertices.
   // This feature may not exist, or be either a vertex of a halfedge.
   Object                 obj = _base_vertical_ray_shoot (p, shoot_up);
+  bool                   found_vertex;
   Vertex_const_handle    closest_v;
   Halfedge_const_handle  closest_he;
 
-  enum {NAIVE_PL_NONE, NAIVE_PL_VERTEX, NAIVE_PL_HALFEDGE}  type;
-
-  if (obj.is_empty())
+  const Vertex_const_handle *p_vh = object_cast<Vertex_const_handle> (&obj);
+  
+  if (p_vh != NULL)
   {
-    type = NAIVE_PL_NONE;
+    found_vertex = true;
+    closest_v = *p_vh;
   }
   else
   {
-    const Vertex_const_handle *p_vh = object_cast<Vertex_const_handle> (&obj);
-    
-    if (p_vh != NULL)
-    {
-      closest_v = *p_vh;
-      type = NAIVE_PL_VERTEX;
-    }
-    else
-    {
-      closest_he = object_cast<Halfedge_const_handle> (obj);
-      type = NAIVE_PL_HALFEDGE;
-    }
+    found_vertex = false;
+    closest_he = object_cast<Halfedge_const_handle> (obj);
   }
 
   // Set the result for comparison according to the ray direction.
@@ -347,28 +369,31 @@ Object Arr_naive_point_location<Arrangement>::_vertical_ray_shoot
 
     // Check if the isolated vertex is closer to p than the current closest
     // object.
-    if ((type == NAIVE_PL_NONE) ||
-        (type == NAIVE_PL_VERTEX &&
+    if ((found_vertex &&
          compare_xy (vh->point(), closest_v->point()) == point_above_under) ||
-        (type == NAIVE_PL_HALFEDGE &&
-         compare_y_at_x (vh->point(), closest_he->curve()) == 
-                                                         point_above_under))
+        (! found_vertex &&
+         (closest_he->is_fictitious() ||
+          compare_y_at_x (vh->point(), closest_he->curve()) == 
+                                                         point_above_under)))
     {
+      found_vertex = true;
       closest_v = vh;
-      type = NAIVE_PL_VERTEX;
     }
   }
 
   // Set back the result according to its type.
-  if (type == NAIVE_PL_NONE)
-  {
-    Face_const_handle  uf = p_arr->unbounded_face();
-    return (CGAL::make_object (uf));
-  }
-  else if (type == NAIVE_PL_VERTEX)
+  if (found_vertex)
     return (CGAL::make_object (closest_v));
-  else
+  else if (! closest_he->is_fictitious())
     return (CGAL::make_object (closest_he));
+  
+  // If we found a fictitious edge, we have to return a handle to its
+  // incident unbounded face.
+  if ((shoot_up && closest_he->direction() == SMALLER) ||
+      (!shoot_up && closest_he->direction() == LARGER))
+    closest_he = closest_he->twin();
+
+  return (CGAL::make_object (closest_he->face()));
 }
 
 //-----------------------------------------------------------------------------
@@ -387,9 +412,9 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
   typename Traits_adaptor_2::Compare_y_at_x_left_2  compare_y_at_x_left =
                                       traits->compare_y_at_x_left_2_object();
 
-  Halfedge_const_handle   invalid_handle;
-  Halfedge_const_handle   lowest_left;
-  Halfedge_const_handle   top_right;
+  const Halfedge_const_handle   invalid_handle;
+  Halfedge_const_handle         lowest_left;
+  Halfedge_const_handle         top_right;
 
   typename Arrangement::Halfedge_around_vertex_const_circulator first = 
     v->incident_halfedges();
@@ -404,9 +429,10 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
       // The curve associated with the current halfedge is defined to the left
       // of v.
       if (lowest_left == invalid_handle ||
-          compare_y_at_x_left (curr->curve(),
-                               lowest_left->curve(), 
-                               v->point()) == SMALLER)
+          (! curr->is_fictitious() &&
+           compare_y_at_x_left (curr->curve(),
+                                lowest_left->curve(), 
+                                v->point()) == SMALLER))
       {
         lowest_left = curr;
       }
@@ -416,9 +442,10 @@ Arr_naive_point_location<Arrangement>::_first_around_vertex
       // The curve associated with the current halfedge is defined to the right
       // of v.
       if (top_right == invalid_handle ||
-          compare_y_at_x_right (curr->curve(),
-                                top_right->curve(), 
-                                v->point()) == LARGER)
+          (! curr->is_fictitious() &&
+           compare_y_at_x_right (curr->curve(),
+                                 top_right->curve(), 
+                                 v->point()) == LARGER))
       {
         top_right = curr;
       }

@@ -38,6 +38,7 @@ CGAL_BEGIN_NAMESPACE
 
 #define CGAL_POINT_IS_LEFT_LOW(p,q) (traits->compare_xy_2_object()((p),(q))==SMALLER)
 #define CGAL_POINT_IS_RIGHT_TOP(p,q) (traits->compare_xy_2_object()((p),(q))==LARGER)
+#define CGAL_CURVE_IS_TO_RIGHT(cv,p) (traits->equal_2_object()(traits->construct_min_vertex_2_object()((cv)), (p)))
 
 /* //////////////////////////////////////////////////////////////////////////
 
@@ -960,16 +961,21 @@ output: trapezoid iterator
     if (circ.operator->())
     {
       if (cv_top_right)
-        while(traits->compare_cw_around_point_2_object ()(circ->top(),cv,p)!=EQUAL)
+        while(traits->compare_cw_around_point_2_object ()
+              (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
+               cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+               p) != EQUAL)
           circ++;
         else
-          while(traits->compare_cw_around_point_2_object()(circ->bottom(), cv,
-                                                          p, false)
-                != EQUAL)
+          while(traits->compare_cw_around_point_2_object()
+                (circ->bottom(), CGAL_CURVE_IS_TO_RIGHT(circ->bottom(),p),
+                 cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+                 p, false) != EQUAL)
             circ++;
-          circ.replace(t);
+      circ.replace(t);
     }
   }
+
   void insert_curve_at_point_using_geometry(reference sep, reference end_point)
   {
     
@@ -1034,8 +1040,10 @@ output: trapezoid iterator
         
 #endif
         
-        while(traits->compare_cw_around_point_2_object ()(circ->top(),cv,p)
-          ==SMALLER)
+        while (traits->compare_cw_around_point_2_object ()
+               (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
+                cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+                p) == SMALLER)
         {
           circ++;
           if (circ==stopper)
@@ -1052,10 +1060,10 @@ output: trapezoid iterator
         
 #ifdef CGAL_TD_DEBUG
         
-        CGAL_assertion(traits->compare_cw_around_point_2_object()(circ->top(), cv,
-                                                              p)
-                       != EQUAL);
-        
+        CGAL_assertion(traits->compare_cw_around_point_2_object()
+                       (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
+                        cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+                        p) != EQUAL);
 #endif
         
         circ.insert(sep);
@@ -1069,8 +1077,10 @@ output: trapezoid iterator
         }
         else
         {
-          if (traits->compare_cw_around_point_2_object()(rt->top(), cv, p, false) ==
-              SMALLER)
+          if (traits->compare_cw_around_point_2_object()
+              (rt->top(), CGAL_CURVE_IS_TO_RIGHT(rt->top(),p),
+               cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+               p, false) == SMALLER)
             end_point.set_rt(&sep);
         }
       }
@@ -1090,8 +1100,10 @@ output: trapezoid iterator
         Around_point_circulator circ(traits,p,lb ? lb : rt),stopper=circ;
         // if !lb set circ to rt
         // otherwise advance as required
-        while (traits->compare_cw_around_point_2_object()(circ->top(),cv,p, false) 
-                == SMALLER)
+        while (traits->compare_cw_around_point_2_object()
+               (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
+                cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+                p, false) == SMALLER)
         {
           circ++;
           if (circ==stopper)
@@ -1100,10 +1112,10 @@ output: trapezoid iterator
         
 #ifdef CGAL_TD_DEBUG
         
-        CGAL_assertion(traits->compare_cw_around_point_2_object()(circ->top(),
-                                                                 cv, p, false)
-                       != EQUAL);
-        
+        CGAL_assertion(traits->compare_cw_around_point_2_object()
+                       (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
+                        cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+                        p, false) != EQUAL);
 #endif
         
         circ.insert(sep);
@@ -1117,8 +1129,10 @@ output: trapezoid iterator
         else
         {
           // set end_point.right_top_neighbour();
-          if(traits->compare_cw_around_point_2_object()(lb->top(),cv,p)
-            ==SMALLER)
+          if(traits->compare_cw_around_point_2_object()
+             (lb->top(), CGAL_CURVE_IS_TO_RIGHT(lb->top(),p),
+              cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+              p) ==SMALLER)
             end_point.set_lb(&sep);
         }
       }
@@ -1288,10 +1302,15 @@ output: trapezoid iterator
     CGAL_assertion(traits);
     CGAL_precondition(lt==POINT);
     
-    if (traits->compare_cw_around_point_2_object()(cv,tr->top(),p)==SMALLER)
+    if (traits->compare_cw_around_point_2_object()
+        (cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+         tr->top(), CGAL_CURVE_IS_TO_RIGHT(tr->top(),p),
+         p) == SMALLER)
       tr->set_top(cv);
-    if (traits->compare_cw_around_point_2_object()(cv,tr->bottom(),p, false)
-      ==SMALLER)
+    if (traits->compare_cw_around_point_2_object()
+        (cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
+         tr->bottom(), CGAL_CURVE_IS_TO_RIGHT(tr->bottom(),p),
+         p, false) == SMALLER)
       tr->set_bottom(cv);
     return *tr;
   }
@@ -1550,8 +1569,14 @@ output: trapezoid iterator
               traits->equal_2_object()
               (traits->construct_min_vertex_2_object()(*cv),
                traits->construct_min_vertex_2_object()(*pc)) ?
-              traits->compare_cw_around_point_2_object()(*pc,*cv,p) :
-              traits->compare_cw_around_point_2_object()(*cv,*pc,p,false);
+              traits->compare_cw_around_point_2_object()
+              (*pc, CGAL_CURVE_IS_TO_RIGHT(*pc,p),
+               *cv, CGAL_CURVE_IS_TO_RIGHT(*cv,p),
+               p) :
+              traits->compare_cw_around_point_2_object()
+              (*cv, CGAL_CURVE_IS_TO_RIGHT(*cv,p),
+               *pc, CGAL_CURVE_IS_TO_RIGHT(*pc,p),
+               p ,false);
                     
             switch(res)
             {

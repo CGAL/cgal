@@ -55,6 +55,7 @@ public:
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
+  typedef Tag_false                       Has_infinite_category;
 
   // Traits objects:
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>     Curve_2;

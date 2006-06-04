@@ -84,6 +84,21 @@ protected:
                       // isolated). The LSB of the pointer indicates whether
                       // the vertex is isolated.
   Point      *p_pt;   // The point associated with the vertex.
+  size_t      infty;  // Whether the point lies at:
+                      //   x = -oo : 1st LSB set (1).
+                      //   x = +oo : 2nd LSB set (2).
+                      //   y = -oo : 3rd LSB set (4).
+                      //   y = +oo : 4th LSB set (8).
+
+private:
+
+  enum
+  {
+    X_MINUS_INFTY = 1,
+    X_PLUS_INFTY  = 2,
+    Y_MINUS_INFTY = 4,
+    Y_PLUS_INFTY  = 8
+  };
 
 public:
 
@@ -96,28 +111,81 @@ public:
   /*! Destructor. */
   virtual ~Arr_vertex_base() {}
 
+  /*! Check if the point pointer is NULL. */
+  bool has_null_point () const
+  {
+    return (p_pt == NULL);
+  }
+
   /*! Get the point (const version). */
   const Point& point() const 
-  { 
+  {
+    CGAL_assertion (p_pt != NULL);
     return (*p_pt);
   }
 
   /*! Get the point (non-const version). */
   Point& point() 
   { 
+    CGAL_assertion (p_pt != NULL);
     return (*p_pt);
   }
 
-  /*! Set the point. */
+  /*! Set the point (vertex not at infinity). */
   void set_point (Point *p) 
   {
     p_pt = p;
+    infty = 0;
+  }
+
+  /*! Check if the vertex is infinite at x. */
+  CGAL::Sign infinite_in_x () const
+  {
+    if ((infty & X_MINUS_INFTY) != 0)
+      return (NEGATIVE);
+    else if ((infty & X_PLUS_INFTY) != 0)
+      return (POSITIVE);
+    
+    return (ZERO);
+  }
+
+  /*! Check if the vertex is infinite at y. */
+  CGAL::Sign infinite_in_y () const
+  {
+    if ((infty & Y_MINUS_INFTY) != 0)
+      return (NEGATIVE);
+    else if ((infty & Y_PLUS_INFTY) != 0)
+      return (POSITIVE);
+    
+    return (ZERO);
+  }
+
+  /*! Set a vertex at infinity (which is not associated with a point). */
+  void set_at_infinity (CGAL::Sign inf_x, CGAL::Sign inf_y)
+  {
+    CGAL_precondition (inf_x != ZERO || inf_y != ZERO);
+
+    p_pt = NULL;
+    infty = 0;
+
+    if (inf_x == NEGATIVE)
+      infty = infty | X_MINUS_INFTY;
+    else if (inf_x == POSITIVE)
+      infty = infty | X_PLUS_INFTY;
+
+    if (inf_y == NEGATIVE)
+      infty = infty | Y_MINUS_INFTY;
+    else if (inf_y == POSITIVE)
+      infty = infty | Y_PLUS_INFTY;
+
+    return;
   }
 
   /*! Assign from another vertex. */
   virtual void assign (const Arr_vertex_base<Point>& v)
   {
     p_pt = v.p_pt;
+    infty = v.infty;
   }
 };
 
@@ -171,15 +239,23 @@ public:
   virtual ~Arr_halfedge_base()
   {}
 
+  /*! Check if the curve pointer is NULL. */
+  bool has_null_curve () const
+  {
+    return (p_cv == NULL);
+  }
+
   /*! Get the x-monotone curve (const version). */
   const X_monotone_curve& curve() const 
   {
+    CGAL_precondition (p_cv != NULL);
     return (*p_cv);
   }
 
   /*! Get the x-monotone curve (non-const version). */
   X_monotone_curve& curve () 
   {
+    CGAL_precondition (p_cv != NULL);
     return (*p_cv);
   }
 
@@ -222,6 +298,8 @@ public:
 protected:
 
   void           *p_he;        // An incident halfedge along the face boundary.
+                               // The LSB of the pointer indicates whether
+                               // the face is unbounded.
   Holes_container              holes;      // The holes inside the face.
   Isolated_vertices_container  iso_verts;  // The isolated vertices inside
                                            // the face.
@@ -313,7 +391,7 @@ public:
 
   /*! Set the isolated vertex information. */
   void set_isolated_vertex (Isolated_vertex* iv)
-  { 
+  {
     // Set the isolated vertex-information pointer and set its LSB.
     this->p_inc = _set_lsb (iv);
   }
@@ -470,7 +548,7 @@ public:
     return (reinterpret_cast<Face*>(this->p_comp));
   }
 
-  /*! Set the incident facee (for halfedges that lie on an outer CCB). */
+  /*! Set the incident face (for halfedges that lie on an outer CCB). */
   void set_face (Face* f)
   { 
     // Set the face pointer and reset the LSB.
@@ -516,22 +594,46 @@ public:
   Arr_face()
   {}
 
+  /*! Check if the face is unbounded. */
+  bool is_unbounded () const
+  {
+    // Note that we use the LSB of the p_he pointer as a Boolean flag.
+    return (_is_lsb_set (this->p_he));
+  }
+
+  /*! Set the face as bounded or unbounded. */
+  void set_unbounded (bool unbounded)
+  {
+    if (unbounded)
+      this->p_he = _set_lsb (this->p_he);
+    else
+      this->p_he = _clean_pointer (this->p_he);
+     
+    return;
+  }
+
   /*! Get an incident halfedge (const version). */
   const Halfedge * halfedge() const
   {
-    return (reinterpret_cast<const Halfedge*>(this->p_he));
+    return (reinterpret_cast<const Halfedge*>(_clean_pointer (this->p_he)));
   }
 
   /*! Get an incident halfedge (non-const version). */
   Halfedge * halfedge()
   {
-    return (reinterpret_cast<Halfedge*>(this->p_he));
+    return (reinterpret_cast<Halfedge*>(_clean_pointer (this->p_he)));
   }
 
   /*! Set an incident halfedge. */
   void set_halfedge (Halfedge* he)
   {
-    this->p_he = he;
+    // Set the halfedge pointer, preserving the content of the LSB.
+    if (_is_lsb_set (this->p_he))
+      this->p_he = _set_lsb (he);
+    else
+      this->p_he = he;
+
+    return;
   }
 
   // Define the hole iterators:

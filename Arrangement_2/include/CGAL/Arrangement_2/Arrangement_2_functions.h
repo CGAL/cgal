@@ -41,9 +41,8 @@ CGAL_BEGIN_NAMESPACE
 template<class Traits, class Dcel>
 Arrangement_2<Traits,Dcel>::Arrangement_2 ()
 {
-  // Set an empty unbounded face.
-  un_face = dcel.new_face();
-  un_face->set_halfedge(NULL);
+  // Construct an empty arrangement.
+  _construct_empty_arrangement ();
 
   // Allocate the traits.
   traits = new Traits_adaptor_2;
@@ -55,6 +54,11 @@ Arrangement_2<Traits,Dcel>::Arrangement_2 ()
 //
 template<class Traits, class Dcel>
 Arrangement_2<Traits,Dcel>::Arrangement_2 (const Self& arr) :
+  v_bl (NULL),
+  v_tl (NULL),
+  v_br (NULL),
+  v_tr (NULL),
+  n_inf_verts (0),
   un_face (NULL),
   traits (NULL),
   own_traits (false)
@@ -68,9 +72,8 @@ Arrangement_2<Traits,Dcel>::Arrangement_2 (const Self& arr) :
 template<class Traits, class Dcel>
 Arrangement_2<Traits,Dcel>::Arrangement_2 (Traits_2 *tr)
 {
-  // Set an empty unbounded face.
-  un_face = dcel.new_face();
-  un_face->set_halfedge(NULL);
+  // Construct an empty arrangement.
+  _construct_empty_arrangement ();
 
   // Set the traits.
   traits = static_cast<Traits_adaptor_2*>(tr);
@@ -106,20 +109,53 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
 
   // Duplicate the DCEL.
   un_face = dcel.assign (arr.dcel, arr.un_face);
+  n_inf_verts = arr.n_inf_verts;
 
   // Go over the vertices and create duplicates of the stored points.
   typename Dcel::Vertex_iterator       vit;
   Point_2                             *dup_p;
   DVertex                             *p_v;
+  CGAL::Sign                           inf_x, inf_y;
+  const DHalfedge                     *first_he, *next_he;
 
   for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
   {
-    // Create the duplicate point and store it in the points container.
     p_v = &(*vit);
-    dup_p = _new_point (p_v->point());
+    inf_x = p_v->infinite_in_x();
+    inf_y = p_v->infinite_in_y();
 
-    // Associate the vertex with the duplicated point.
-    p_v->set_point (dup_p);
+    if (inf_x == CGAL::ZERO && inf_y == CGAL::ZERO)
+    {
+      // Normal vertex (not at inifinity): Create the duplicate point and
+      // store it in the points container.
+      dup_p = _new_point (p_v->point());
+
+      // Associate the vertex with the duplicated point.
+      p_v->set_point (dup_p);
+    }
+    else
+    {
+      // Check if this is one of the ficitious vertices at infinity. These
+      // vertices have degree 2, as opposed to other vertices at infinity
+      // which have degree 3.
+      first_he = p_v->halfedge();
+      next_he = first_he->next()->opposite();
+      
+      if (next_he->next()->opposite() == first_he)
+      {
+        if (inf_x == CGAL::NEGATIVE && inf_y == CGAL::NEGATIVE)
+          v_bl = p_v;
+        else if (inf_x == CGAL::NEGATIVE && inf_y == CGAL::POSITIVE)
+          v_tl = p_v;
+        else if (inf_x == CGAL::POSITIVE && inf_y == CGAL::NEGATIVE)
+          v_br = p_v;
+        else if (inf_x == CGAL::POSITIVE && inf_y == CGAL::POSITIVE)
+          v_tr = p_v;
+        else
+          // We should never reach here:
+          CGAL_assertion (false);
+      }
+    }
   }
 
   // Go over the edge and create duplicates of the stored curves.
@@ -129,12 +165,16 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
 
   for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
   {
-    // Create the duplicate curve and store it in the curves container.
     p_e = &(*eit);
-    dup_cv = _new_curve (p_e->curve());
 
-    // Associate the halfedge (and its twin) with the duplicated curve. 
-    p_e->set_curve (dup_cv);
+    if (! p_e->has_null_curve())
+    {
+      // Create the duplicate curve and store it in the curves container.
+      dup_cv = _new_curve (p_e->curve());
+
+      // Associate the halfedge (and its twin) with the duplicated curve. 
+      p_e->set_curve (dup_cv);
+    }
   }
 
   // Take care of the traits object.
@@ -163,13 +203,19 @@ Arrangement_2<Traits,Dcel>::~Arrangement_2 ()
   typename Dcel::Vertex_iterator       vit;
 
   for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
-    _delete_point (vit->point());
+  {
+    if (! vit->has_null_point())
+      _delete_point (vit->point());
+  }
 
   // Free all stores curves.
   typename Dcel::Edge_iterator         eit;
 
   for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
-    _delete_curve (eit->curve());
+  {
+    if (! eit->has_null_curve())
+      _delete_curve (eit->curve());
+  }
 
   // Clear the DCEL.
   dcel.delete_all();
@@ -204,18 +250,23 @@ void Arrangement_2<Traits,Dcel>::clear ()
   typename Dcel::Vertex_iterator       vit;
 
   for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
-    _delete_point (vit->point());
+  {
+    if (! vit->has_null_point())
+      _delete_point (vit->point());
+  }
 
   // Free all stores curves.
   typename Dcel::Edge_iterator         eit;
 
   for (eit = dcel.edges_begin(); eit != dcel.edges_end(); ++eit)
-    _delete_curve (eit->curve());
+  {
+    if (! eit->has_null_curve())
+      _delete_curve (eit->curve());
+  }
 
-  // Clear the DCEL so it contains just an empty unbounded face.
+  // Clear the DCEL and construct an empty arrangement.
   dcel.delete_all();
-  un_face = dcel.new_face();
-  un_face->set_halfedge (NULL);
+  _construct_empty_arrangement ();
 
   // Notify the observers that we have just cleared the arragement.
   _notify_after_clear (unbounded_face());
@@ -254,20 +305,249 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
     (const X_monotone_curve_2& cv, 
      Face_handle f)
 {
-  DFace           *p_f = _face (f);
+  DFace            *p_f = _face (f);
 
-  // Create a new vertex associated with the curve's left endpoint.
-  DVertex         *v1 =
+  // Check if cv's left end lies at infinity, and create a vertex v1 that
+  // corresponds to this end.
+  const CGAL::Sign  inf_x1 = traits->infinite_in_x_2_object()(cv, 0);
+  const CGAL::Sign  inf_y1 = traits->infinite_in_y_2_object()(cv, 0);
+  DVertex          *v1 = NULL;
+  DHalfedge        *fict_prev1 = NULL;
+
+  if (inf_x1 == CGAL::ZERO && inf_y1 == CGAL::ZERO)
+  {
+    // The curve has a valid left endpoint: Create a new vertex associated
+    // with the curve's left endpoint.
+    v1 = _create_vertex (traits->construct_min_vertex_2_object()(cv));
+  }
+  else
+  {
+    // Locate a halfedge of f's outer CCB such that contains cv's left end
+    // in its range.
+    CGAL_precondition (f->is_unbounded());
+
+    fict_prev1 = _locate_along_ccb (p_f, cv, 0,
+                                    inf_x1, inf_y1);
+
+    CGAL_assertion (fict_prev1 != NULL);
+
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's left end.
+    fict_prev1 = _split_fictitious_edge (fict_prev1,
+                                         inf_x1, inf_y1);
+  }
+
+  // Check if cv's right end lies at infinity, and create a vertex v2 that
+  // corresponds to this end.
+  const CGAL::Sign  inf_x2 = traits->infinite_in_x_2_object()(cv, 1);
+  const CGAL::Sign  inf_y2 = traits->infinite_in_y_2_object()(cv, 1);
+  DVertex          *v2 = NULL;
+  DHalfedge        *fict_prev2 = NULL;
+
+  if (inf_x2 == CGAL::ZERO && inf_y2 == CGAL::ZERO)
+  {
+    // The curve has a valid right endpoint: Create a new vertex associated
+    // with the curve's right endpoint.
+    v2 = _create_vertex (traits->construct_max_vertex_2_object()(cv));
+  }
+  else
+  {    
+    // Locate a halfedge of f's outer CCB such that contains cv's right end
+    // in its range.
+    CGAL_precondition (f->is_unbounded());
+
+    fict_prev2 = _locate_along_ccb (p_f, cv, 1,
+                                    inf_x2, inf_y2);
+
+    CGAL_assertion (fict_prev2 != NULL);
+
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's right end.
+    fict_prev2 = _split_fictitious_edge (fict_prev2,
+                                         inf_x2, inf_y2);
+  }
+
+  // Create the edge connecting the two vertices (note we know v1 is 
+  // lexicographically smaller than v2).
+  DHalfedge       *new_he;
+
+  if (fict_prev1 == NULL && fict_prev2 == NULL)
+  {
+    // Both vertices represent valid points.
+    new_he = _insert_in_face_interior (cv, p_f, v1, v2,
+                                       SMALLER);
+  }
+  else if (fict_prev1 == NULL && fict_prev2 != NULL)
+  {
+    // v1 represents a valid point and v2 is at infinity.
+    new_he = _insert_from_vertex (cv,
+                                  fict_prev2,
+                                  v1,
+                                  LARGER);
+    new_he = new_he->opposite();
+  }
+  else if (fict_prev1 != NULL && fict_prev2 == NULL)
+  {
+    // v1 is at infinity and v2 represents a valid point.
+    new_he = _insert_from_vertex (cv,
+                                  fict_prev1,
+                                  v2,
+                                  SMALLER);
+  }
+  else
+  {
+    // Both vertices are at infinity. Note that we create a new unbounded face.
+    bool        new_face_created = false;
+
+    new_he = _insert_at_vertices (cv,
+                                  fict_prev1, 
+                                  fict_prev2,
+                                  SMALLER,
+                                  new_face_created);
+  
+    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+    new_he->face()->set_unbounded(true);
+    _relocate_in_new_face (new_he);
+  }
+
+  // Return a handle to the new halfedge directed from left to right.
+  return (Halfedge_handle (new_he));
+}
+
+//-----------------------------------------------------------------------------
+// Insert an unbounded x-monotone curve into the arrangement inside a given
+// unbounded face, given a fictitious halfedge(s) that contains the unbounded
+// end(s) of the curve.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
+Arrangement_2<Traits,Dcel>::insert_in_face_interior
+    (const X_monotone_curve_2& cv, 
+     Halfedge_handle fict_he1, Halfedge_handle fict_he2)
+{
+  CGAL_precondition_msg (fict_he1->is_fictitious() && 
+                         (fict_he2 == Halfedge_handle() ||
+                          fict_he2->is_fictitious()),
+                         "The given halfedge(s) must be fictitious.");
+
+  // Check which one of cv's ends lie at infinity (both may lie there).
+  const CGAL::Sign   inf_x1 = traits->infinite_in_x_2_object()(cv, 0);
+  const CGAL::Sign   inf_y1 = traits->infinite_in_y_2_object()(cv, 0);
+  const CGAL::Sign   inf_x2 = traits->infinite_in_x_2_object()(cv, 1);
+  const CGAL::Sign   inf_y2 = traits->infinite_in_y_2_object()(cv, 1);
+  DHalfedge         *new_he;
+
+  if (inf_x1 != CGAL::ZERO || inf_y1 != CGAL::ZERO)
+  {
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's left end.
+    DHalfedge    *fict_prev1 = _halfedge (fict_he1);
+
+    CGAL_precondition_code (
+      bool   eq_source; 
+      bool   eq_target;
+    );
+    CGAL_precondition_msg 
+      (_is_on_fictitious_edge (cv, 0, inf_x1, inf_y1, fict_prev1,
+                               eq_source, eq_target) &&
+       ! eq_source && ! eq_target,
+       "The given halfedge must contain the unbounded left end.");
+
+    fict_prev1 = _split_fictitious_edge (fict_prev1,
+                                         inf_x1, inf_y1);
+
+    if (inf_x2 != CGAL::ZERO || inf_y2 != CGAL::ZERO)
+    {
+      // Split the fictitious edge and create a vertex at infinity that
+      // represents cv's right end.
+      DHalfedge    *fict_prev2;
+      
+      if (fict_he2 != Halfedge_handle())
+      {
+        fict_prev2 = _halfedge (fict_he2);
+      }
+      else
+      {
+        if (fict_prev1->direction() == SMALLER)
+          fict_prev2 = fict_prev1->next();
+        else
+          fict_prev2 = fict_prev1;
+      }
+
+      CGAL_precondition_msg 
+        (_is_on_fictitious_edge (cv, 1, inf_x2, inf_y2, fict_prev2,
+                                 eq_source, eq_target) &&
+         ! eq_source && ! eq_target,
+         "The given halfedge must contain the unbounded right end.");
+
+      fict_prev2 = _split_fictitious_edge (fict_prev2,
+                                           inf_x2, inf_y2);
+
+      // As both end vertices are at infinity, we create a new unbounded face.
+      bool        new_face_created = false;
+
+      new_he = _insert_at_vertices (cv,
+                                    fict_prev1, 
+                                    fict_prev2,
+                                    SMALLER,
+                                    new_face_created);
+  
+      CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+      new_he->face()->set_unbounded(true);
+      _relocate_in_new_face (new_he);  
+    }
+    else
+    {
+      // Create a new vertex that corresponds to cv's right endpoint.
+      DVertex       *v2 = 
+        _create_vertex (traits->construct_max_vertex_2_object()(cv));
+
+      // Insert the curve.
+      new_he = _insert_from_vertex (cv,
+                                    fict_prev1,
+                                    v2,
+                                    SMALLER);
+    }
+  }
+  else
+  {
+    // In this case only the right end of cv is unbounded.
+    CGAL_precondition_msg (inf_x2 != CGAL::ZERO || inf_y2 != CGAL::ZERO,
+                           "The inserted curve must be unbounded.");
+
+    // Create a new vertex that corresponds to cv's left endpoint.
+    DVertex       *v1 = 
       _create_vertex (traits->construct_min_vertex_2_object()(cv));
+    
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's right end.
+    DHalfedge    *fict_prev2;
+      
+    if (fict_he2 != Halfedge_handle())
+      fict_prev2 = _halfedge (fict_he2);
+    else
+      fict_prev2 = _halfedge (fict_he1);
 
-  // Create a new vertex associated with the curve's right endpoint.
-  DVertex         *v2 =
-      _create_vertex (traits->construct_max_vertex_2_object()(cv));
+    CGAL_precondition_code (
+      bool   eq_source; 
+      bool   eq_target;
+    );
+    CGAL_precondition_msg 
+      (_is_on_fictitious_edge (cv, 1, inf_x2, inf_y2, fict_prev2,
+                               eq_source, eq_target) &&
+       ! eq_source && ! eq_target,
+       "The given halfedge must contain the unbounded right end.");
+    
+    fict_prev2 = _split_fictitious_edge (fict_prev2,
+                                         inf_x2, inf_y2);
 
-  // Create the edge connecting the two vertices (note we know v1 is smaller
-  // that v2).
-  DHalfedge       *new_he = _insert_in_face_interior (cv, p_f, v1, v2,
-                                                      SMALLER);
+    // Insert the curve.
+    new_he = _insert_from_vertex (cv,
+                                  fict_prev2,
+                                  v1,
+                                  LARGER);
+    new_he = new_he->opposite();
+  }
 
   // Return a handle to the new halfedge directed from left to right.
   return (Halfedge_handle (new_he));
@@ -283,16 +563,30 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     (const X_monotone_curve_2& cv, 
      Vertex_handle v)
 {
+  CGAL_precondition_msg
+    (v->infinite_in_x() == CGAL::ZERO && v->infinite_in_y() == CGAL::ZERO,
+     "The input vertex must not lie at infinity.");
   CGAL_precondition_msg 
     (traits->equal_2_object() (v->point(), 
                                traits->construct_min_vertex_2_object()(cv)),
      "The input vertex should be the left curve endpoint.");
 
-  // Create a new vertex associated with the curve's right endpoint.
-  DVertex         *v2 =
-      _create_vertex (traits->construct_max_vertex_2_object()(cv));
+  // Check if cv's right end lies at infinity. In case it is a regular
+  // point, create a normal vertex that correspond to this point.
+  const CGAL::Sign  inf_x2 = traits->infinite_in_x_2_object()(cv, 1);
+  const CGAL::Sign  inf_y2 = traits->infinite_in_y_2_object()(cv, 1);
+  DVertex          *v2 = NULL;
+  DHalfedge        *fict_prev2 = NULL;
 
-  // Check if the given vertex is isolated.
+  if (inf_x2 == CGAL::ZERO && inf_y2 == CGAL::ZERO)
+  {
+    // The curve has a valid right endpoint: Create a new vertex associated
+    // with the curve's right endpoint.
+    v2 = _create_vertex (traits->construct_max_vertex_2_object()(cv));
+  }
+
+  // Check if the given vertex, corresponding to the left endpoint,
+  // is isolated.
   if (v->is_isolated())
   {
     // The given vertex is an isolated one: We should in fact insert the curve
@@ -301,36 +595,106 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     DIso_vert  *iv = v1->isolated_vertex();
     DFace      *p_f = iv->face();
 
+    // If the vertex that corresponds to cv's right end lies at infinity,
+    // create it now.
+    if (v2 == NULL)
+    {    
+      // Locate a halfedge of f's outer CCB such that contains cv's right end
+      // in its range.
+      CGAL_assertion (p_f->is_unbounded());
+
+      fict_prev2 = _locate_along_ccb (p_f, cv, 1,
+                                      inf_x2, inf_y2);
+
+      CGAL_assertion (fict_prev2 != NULL);
+
+      // Split the fictitious edge and create a vertex at infinity that
+      // represents cv's right end.
+      fict_prev2 = _split_fictitious_edge (fict_prev2,
+                                           inf_x2, inf_y2);
+    }
+
     // Remove the isolated vertex v1, as it will not be isolated any more.
     p_f->erase_isolated_vertex (iv->iterator());
     dcel.delete_isolated_vertex (iv);
 
     // Create the edge connecting the two vertices (note that we know that
     // v1 is smaller than v2).
-    DHalfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2,
-                                                   SMALLER);
+    DHalfedge  *new_he;
 
-    // Return a handle to the new halfedge directed from left to right.
+    if (fict_prev2 == NULL)
+    {
+      new_he = _insert_in_face_interior (cv, p_f, v1, v2,
+                                         SMALLER);
+    }
+    else
+    {
+      new_he = _insert_from_vertex (cv,
+                                    fict_prev2, v1,
+                                    LARGER);
+      new_he = new_he->opposite();
+    }
+
+    // Return a handle to the new halfedge directed from v1 to v2.
     return (Halfedge_handle (new_he));
   }
 
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
-  DHalfedge  *prev1 = _locate_around_vertex (_vertex (v), cv);
+  DHalfedge  *prev1 = _locate_around_vertex (_vertex (v), cv, 0);
 
   CGAL_assertion_msg
     (prev1 != NULL,
      "The inserted curve should not exist in the arrangement.");
 
+  // If the vertex that corresponds to cv's right end lies at infinity,
+  // create it now.
+  if (v2 == NULL)
+  {    
+    // Locate a halfedge along the outer CCB of the incident face of prev1
+    // that contains cv's right end in its range.
+    CGAL_assertion (prev1->face()->is_unbounded());
+
+    fict_prev2 = _locate_along_ccb (prev1->face(), cv, 1,
+                                    inf_x2, inf_y2);
+
+    CGAL_assertion (fict_prev2 != NULL);
+
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's right end.
+    fict_prev2 = _split_fictitious_edge (fict_prev2,
+                                         inf_x2, inf_y2);
+  }
+
   // Perform the insertion (note that we know that prev1->vertex is smaller
   // than v2).
-  DHalfedge  *new_he = _insert_from_vertex (cv,
-                                            prev1, v2,
-                                            SMALLER);
+  DHalfedge  *new_he;
 
+  if (fict_prev2 == NULL)
+  {
+    new_he = _insert_from_vertex (cv,
+                                  prev1, v2,
+                                  SMALLER);
+  }
+  else
+  {
+    // v2 lies at infinity. Note that we create a new unbounded face.
+    bool        new_face_created = false;
+
+    new_he = _insert_at_vertices (cv,
+                                  prev1, 
+                                  fict_prev2,
+                                  SMALLER,
+                                  new_face_created);
+  
+    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+    new_he->face()->set_unbounded(true);
+    _relocate_in_new_face (new_he);
+  }
+
+  // Return a handle to the halfedge directed toward the new vertex v2.
   return (Halfedge_handle (new_he));
 }
-
 
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that one its left
@@ -344,24 +708,140 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
      Halfedge_handle prev)
 {
   CGAL_precondition_msg
+    (prev->target()->infinite_in_x() == CGAL::ZERO &&
+     prev->target()->infinite_in_y() == CGAL::ZERO,
+     "The input vertex must not lie at infinity.");
+  CGAL_precondition_msg
     (traits->equal_2_object() (prev->target()->point(),
                                traits->construct_min_vertex_2_object()(cv)),
      "The input halfedge's target should be the left curve endpoint.");
   CGAL_precondition_msg
-    (_locate_around_vertex(_vertex (prev->target()), cv) == _halfedge (prev),
+    (_locate_around_vertex(_vertex(prev->target()), cv, 0) == _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
      " cv must succeeds the curve of prev.");
 
-  // Create a new vertex associated with the curve's right endpoint.
-  DVertex         *v2 =
-      _create_vertex (traits->construct_max_vertex_2_object()(cv));
+  // Check if cv's right end lies at infinity, and create a vertex v2 that
+  // corresponds to this end.
+  const CGAL::Sign  inf_x2 = traits->infinite_in_x_2_object()(cv, 1);
+  const CGAL::Sign  inf_y2 = traits->infinite_in_y_2_object()(cv, 1);
+  DVertex          *v2 = NULL;
+  DHalfedge        *fict_prev2 = NULL;
+  DHalfedge        *prev1 = _halfedge (prev);
 
-  // Perform the insertion (note that we know that prev->vertex is smaller
+  if (inf_x2 == CGAL::ZERO && inf_y2 == CGAL::ZERO)
+  {
+    // The curve has a valid right endpoint: Create a new vertex associated
+    // with the curve's right endpoint.
+    v2 = _create_vertex (traits->construct_max_vertex_2_object()(cv));
+  }
+  else
+  {    
+    // Locate a halfedge along the outer CCB of prev's incident face that
+    // contains cv's right end in its range.
+    CGAL_precondition (prev->face()->is_unbounded());
+
+    fict_prev2 = _locate_along_ccb (prev1->face(), cv, 1,
+                                    inf_x2, inf_y2);
+
+    CGAL_assertion (fict_prev2 != NULL);
+
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's right end.
+    fict_prev2 = _split_fictitious_edge (fict_prev2,
+                                         inf_x2, inf_y2);
+  }
+
+  // Perform the insertion (note that we know that prev1->vertex is smaller
   // than v2).
-  DHalfedge  *new_he = _insert_from_vertex (cv,
-                                            _halfedge (prev), v2,
-                                            SMALLER);
+  DHalfedge  *new_he;
 
+  if (fict_prev2 == NULL)
+  {
+    new_he = _insert_from_vertex (cv,
+                                  prev1, v2,
+                                  SMALLER);
+  }
+  else
+  {
+    // v2 lies at infinity. Note that we create a new unbounded face.
+    bool        new_face_created = false;
+
+    new_he = _insert_at_vertices (cv,
+                                  prev1, 
+                                  fict_prev2,
+                                  SMALLER,
+                                  new_face_created);
+  
+    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+    new_he->face()->set_unbounded(true);
+    _relocate_in_new_face (new_he);
+  }
+
+  // Return a handle to the halfedge directed toward the new vertex v2.
+  return (Halfedge_handle (new_he));
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that its left
+// endpoints corresponds to a given arrangement vertex (given the exact
+// place for the curve in the circular list around this vertex), and whose
+// right end is unbounded and lies on a given fictitious edge.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
+Arrangement_2<Traits,Dcel>::insert_from_left_vertex
+    (const X_monotone_curve_2& cv,
+     Halfedge_handle prev,
+     Halfedge_handle fict_he)
+{
+  CGAL_precondition_msg
+    (prev->target()->infinite_in_x() == CGAL::ZERO &&
+     prev->target()->infinite_in_y() == CGAL::ZERO,
+     "The input vertex must not lie at infinity.");
+  CGAL_precondition_msg
+    (traits->equal_2_object() (prev->target()->point(),
+                               traits->construct_min_vertex_2_object()(cv)),
+     "The input halfedge's target should be the left curve endpoint.");
+  CGAL_precondition_msg
+    (_locate_around_vertex(_vertex(prev->target()), cv, 0) == _halfedge(prev),
+     "In the clockwise order of curves around the vertex, "
+     " cv must succeeds the curve of prev.");
+
+  DHalfedge        *prev1 = _halfedge (prev);
+
+  // Check that cv's right end lies at infinity, and create a vertex v2 that
+  // corresponds to this end.
+  const CGAL::Sign  inf_x2 = traits->infinite_in_x_2_object()(cv, 1);
+  const CGAL::Sign  inf_y2 = traits->infinite_in_y_2_object()(cv, 1);
+  DHalfedge        *fict_prev2 = _halfedge (fict_he);
+
+  CGAL_precondition_code (
+    bool   eq_source; 
+    bool   eq_target;
+  );
+  CGAL_precondition_msg 
+    (_is_on_fictitious_edge (cv, 1, inf_x2, inf_y2, fict_prev2,
+                             eq_source, eq_target) &&
+     ! eq_source && ! eq_target,
+     "The given halfedge must contain the unbounded right end.");
+
+  fict_prev2 = _split_fictitious_edge (fict_prev2,
+                                       inf_x2, inf_y2);
+
+  // Insert the curve and create an edge connecting the the two vertices.
+  // Note that we create a new unbounded face.
+  bool        new_face_created = false;
+  DHalfedge  *new_he = _insert_at_vertices (cv,
+                                            prev1, 
+                                            fict_prev2,
+                                            SMALLER,
+                                            new_face_created);
+  
+  CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+  new_he->face()->set_unbounded(true);
+  _relocate_in_new_face (new_he);
+
+  // Return a handle to the halfedge directed toward the new vertex v2.
   return (Halfedge_handle (new_he));
 }
 
@@ -376,13 +856,26 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
      Vertex_handle v)
 {
   CGAL_precondition_msg
+    (v->infinite_in_x() == CGAL::ZERO && v->infinite_in_y() == CGAL::ZERO,
+     "The input vertex must not lie at infinity.");
+  CGAL_precondition_msg
     (traits->equal_2_object() (v->point(),
                                traits->construct_max_vertex_2_object()(cv)),
      "The input vertex should be the right curve endpoint.");
 
-  // Create a new vertex associated with the curve's left endpoint.
-  DVertex         *v1 =
-      _create_vertex (traits->construct_min_vertex_2_object()(cv));
+  // Check if cv's left end lies at infinity. In case it is a regular
+  // point, create a normal vertex that correspond to this point.
+  const CGAL::Sign  inf_x1 = traits->infinite_in_x_2_object()(cv, 0);
+  const CGAL::Sign  inf_y1 = traits->infinite_in_y_2_object()(cv, 0);
+  DVertex          *v1 = NULL;
+  DHalfedge        *fict_prev1 = NULL;
+
+  if (inf_x1 == CGAL::ZERO && inf_y1 == CGAL::ZERO)
+  {
+    // The curve has a valid left endpoint: Create a new vertex associated
+    // with the curve's left endpoint.
+    v1 = _create_vertex (traits->construct_min_vertex_2_object()(cv));
+  }
 
   // Check if the given vertex is isolated.
   if (v->is_isolated())
@@ -393,33 +886,103 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     DIso_vert  *iv = v2->isolated_vertex();
     DFace      *p_f = iv->face();
 
+    // If the vertex that corresponds to cv's left end lies at infinity,
+    // create it now.
+    if (v1 == NULL)
+    {    
+      // Locate a halfedge of f's outer CCB such that contains cv's left end
+      // in its range.
+      CGAL_assertion (p_f->is_unbounded());
+
+      fict_prev1 = _locate_along_ccb (p_f, cv, 0,
+                                      inf_x1, inf_y1);
+
+      CGAL_assertion (fict_prev1 != NULL);
+
+      // Split the fictitious edge and create a vertex at infinity that
+      // represents cv's left end.
+      fict_prev1 = _split_fictitious_edge (fict_prev1,
+                                           inf_x1, inf_y1);
+    }
+
     // Remove the isolated vertex v2, as it will not be isolated any more.
     p_f->erase_isolated_vertex (iv->iterator());
     dcel.delete_isolated_vertex (iv);
 
     // Create the edge connecting the two vertices (note that we know that
     // v1 is smaller than v2).
-    DHalfedge  *new_he = _insert_in_face_interior (cv, p_f, v1, v2,
-                                                   SMALLER);
+    DHalfedge  *new_he;
+
+    if (fict_prev1 == NULL)
+    {
+      new_he = _insert_in_face_interior (cv, p_f, v1, v2,
+                                         SMALLER);
+    }
+    else
+    {
+      new_he = _insert_from_vertex (cv,
+                                    fict_prev1, v2,
+                                    SMALLER);
+    }
     
-    // Return a handle to the new halfedge whose target is the new vertex
+    // Return a handle to the new halfedge whose target is the new vertex v1.
     return (Halfedge_handle (new_he->opposite()));
   }
 
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
-  DHalfedge  *prev2 = _locate_around_vertex (_vertex (v), cv);
+  DHalfedge  *prev2 = _locate_around_vertex (_vertex (v), cv, 1);
 
   CGAL_assertion_msg
     (prev2 != NULL,
      "The inserted curve should not exist in the arrangement.");
+  
+  // If the vertex that corresponds to cv's left end lies at infinity,
+  // create it now.
+  if (v1 == NULL)
+  {    
+    // Locate a halfedge along the outer CCB of the incident face of prev2
+    // that contains cv's left end in its range.
+    CGAL_assertion (prev2->face()->is_unbounded());
+
+    fict_prev1 = _locate_along_ccb (prev2->face(), cv, 0,
+                                    inf_x1, inf_y1);
+
+    CGAL_assertion (fict_prev1 != NULL);
+
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's left end.
+    fict_prev1 = _split_fictitious_edge (fict_prev1,
+                                         inf_x1, inf_y1);
+  }
 
   // Perform the insertion (note that we know that prev2->vertex is larger
   // than v1).
-  DHalfedge  *new_he = _insert_from_vertex (cv,
-                                            prev2, v1,
-                                            LARGER);
+  DHalfedge  *new_he;
 
+  if (fict_prev1 == NULL)
+  {
+    new_he = _insert_from_vertex (cv,
+                                  prev2, v1,
+                                  LARGER);
+  }
+  else
+  {
+    // v1 lies at infinity. Note that we create a new unbounded face.
+    bool        new_face_created = false;
+
+    new_he = _insert_at_vertices (cv,
+                                  prev2, 
+                                  fict_prev1,
+                                  LARGER,
+                                  new_face_created);
+  
+    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+    new_he->face()->set_unbounded(true);
+    _relocate_in_new_face (new_he);
+  }
+
+  // Return a handle to the halfedge directed toward the new vertex v1.
   return (Halfedge_handle (new_he));
 }
 
@@ -433,28 +996,144 @@ typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     (const X_monotone_curve_2& cv,
      Halfedge_handle prev)
-
 {
+  CGAL_precondition_msg
+    (prev->target()->infinite_in_x() == CGAL::ZERO && 
+     prev->target()->infinite_in_y() == CGAL::ZERO,
+     "The input vertex must not lie at infinity.");
+
   CGAL_precondition_msg
     (traits->equal_2_object() (prev->target()->point(),
                                traits->construct_max_vertex_2_object()(cv)),
      "The input halfedge's target should be the right curve endpoint.");
 
   CGAL_precondition_msg
-    (_locate_around_vertex(_vertex (prev->target()), cv) == _halfedge (prev),
+    (_locate_around_vertex(_vertex(prev->target()), cv, 1) == _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
      "cv must succeeds the curve of prev.");
 
-  // Create a new vertex associated with the curve's left endpoint.
-  DVertex         *v1 =
-      _create_vertex (traits->construct_min_vertex_2_object()(cv));
+  // Check if cv's left end lies at infinity, and create a vertex v1 that
+  // corresponds to this end.
+  const CGAL::Sign  inf_x1 = traits->infinite_in_x_2_object()(cv, 0);
+  const CGAL::Sign  inf_y1 = traits->infinite_in_y_2_object()(cv, 0);
+  DVertex          *v1;
+  DHalfedge        *fict_prev1 = NULL;
+  DHalfedge        *prev2 = _halfedge (prev);
 
-  // Perform the insertion (note that we know that prev->vertex is larger
+  if (inf_x1 == CGAL::ZERO && inf_y1 == CGAL::ZERO)
+  {
+    // The curve has a valid left endpoint: Create a new vertex associated
+    // with the curve's left endpoint.
+    v1 = _create_vertex (traits->construct_min_vertex_2_object()(cv));
+  }
+  else
+  {    
+    // Locate a halfedge along the outer CCB of prev's incident face that
+    // contains cv's left end in its range.
+    CGAL_precondition (prev->face()->is_unbounded());
+
+    fict_prev1 = _locate_along_ccb (prev2->face(), cv, 0,
+                                    inf_x1, inf_y1);
+
+    CGAL_assertion (fict_prev1 != NULL);
+
+    // Split the fictitious edge and create a vertex at infinity that
+    // represents cv's left end.
+    fict_prev1 = _split_fictitious_edge (fict_prev1,
+                                         inf_x1, inf_y1);
+  }
+
+  // Perform the insertion (note that we know that prev2->vertex is larger
   // than v1).
-  DHalfedge  *new_he = _insert_from_vertex (cv,
-                                            _halfedge (prev), v1,
-                                            LARGER);
+  DHalfedge  *new_he;
 
+  if (fict_prev1 == NULL)
+  {
+    new_he = _insert_from_vertex (cv,
+                                  prev2, v1,
+                                  LARGER);
+  }
+  else
+  {
+    // v1 lies at infinity. Note that we create a new unbounded face.
+    bool        new_face_created = false;
+
+    new_he = _insert_at_vertices (cv,
+                                  prev2,
+                                  fict_prev1, 
+                                  LARGER,
+                                  new_face_created);
+  
+    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+    new_he->face()->set_unbounded(true);
+    _relocate_in_new_face (new_he);
+  }
+
+  // Return a handle to the halfedge directed toward the new vertex v1.
+  return (Halfedge_handle (new_he));
+}
+
+//-----------------------------------------------------------------------------
+// Insert an x-monotone curve into the arrangement, such that its right
+// endpoint corresponds to a given arrangement vertex (given the exact
+// place for the curve in the circular list around this vertex), and whose
+// left end is unbounded and lies on a given fictitious edge.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
+Arrangement_2<Traits,Dcel>::insert_from_right_vertex
+    (const X_monotone_curve_2& cv,
+     Halfedge_handle prev,
+     Halfedge_handle fict_he)
+{
+  CGAL_precondition_msg
+    (prev->target()->infinite_in_x() == CGAL::ZERO &&
+     prev->target()->infinite_in_y() == CGAL::ZERO,
+     "The input vertex must not lie at infinity.");
+  CGAL_precondition_msg
+    (traits->equal_2_object() (prev->target()->point(),
+                               traits->construct_max_vertex_2_object()(cv)),
+     "The input halfedge's target should be the right curve endpoint.");
+  CGAL_precondition_msg
+    (_locate_around_vertex(_vertex(prev->target()), cv, 1) == _halfedge(prev),
+     "In the clockwise order of curves around the vertex, "
+     " cv must succeeds the curve of prev.");
+
+  DHalfedge        *prev2 = _halfedge (prev);
+
+  // Check that cv's left end lies at infinity, and create a vertex v1 that
+  // corresponds to this end.
+  const CGAL::Sign  inf_x1 = traits->infinite_in_x_2_object()(cv, 0);
+  const CGAL::Sign  inf_y1 = traits->infinite_in_y_2_object()(cv, 0);
+  DHalfedge        *fict_prev1 = _halfedge (fict_he);
+
+  CGAL_precondition_code (
+    bool   eq_source; 
+    bool   eq_target;
+  );
+  CGAL_precondition_msg 
+    (_is_on_fictitious_edge (cv, 0, inf_x1, inf_y1, fict_prev1,
+                             eq_source, eq_target) &&
+     !eq_source && !eq_target,
+     "The given halfedge must contain the unbounded left end.");
+
+  fict_prev1 = _split_fictitious_edge (fict_prev1,
+                                       inf_x1, inf_y1);
+
+  // Insert the curve and create an edge connecting the the two vertices.
+  // Note that we create a new unbounded face.
+  bool        new_face_created = false;
+  DHalfedge  *new_he = _insert_at_vertices (cv,
+                                            prev2, 
+                                            fict_prev1,
+                                            LARGER,
+                                            new_face_created);
+  
+  CGAL_assertion (new_face_created && ! new_he->is_on_hole());
+  new_he->face()->set_unbounded(true);
+  _relocate_in_new_face (new_he);
+
+  // Return a handle to the halfedge directed toward the new vertex v2.
   return (Halfedge_handle (new_he));
 }
 
@@ -469,15 +1148,36 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
                                                 Vertex_handle v2)
 {
   CGAL_precondition_msg
-    ((traits->equal_2_object()(v1->point(),
-                               traits->construct_min_vertex_2_object()(cv)) &&
-      traits->equal_2_object()(v2->point(),
-                               traits->construct_max_vertex_2_object()(cv))) ||
-     (traits->equal_2_object()(v2->point(),
-                               traits->construct_min_vertex_2_object()(cv)) &&
-      traits->equal_2_object()(v1->point(),
-                               traits->construct_max_vertex_2_object()(cv))),
-     "The input vertices should match the curve endpoints.");
+    (v1->infinite_in_x() == CGAL::ZERO && v1->infinite_in_y() == CGAL::ZERO &&
+     v2->infinite_in_x() == CGAL::ZERO && v2->infinite_in_y() == CGAL::ZERO,
+     "The input vertices must not lie at infinity.");
+
+  int    ind1;
+  int    ind2;
+
+  if (traits->equal_2_object() (v1->point(),
+                                traits->construct_min_vertex_2_object()(cv)))
+  {
+    CGAL_precondition_msg 
+      (traits->equal_2_object()(v2->point(),
+                                traits->construct_max_vertex_2_object()(cv)),
+       "The input vertices should match the curve endpoints.");
+
+    ind1 = 0;
+    ind2 = 1;
+  }
+  else
+  {
+    CGAL_precondition_msg
+      (traits->equal_2_object()(v2->point(),
+                                traits->construct_min_vertex_2_object()(cv)) &&
+       traits->equal_2_object()(v1->point(),
+                                traits->construct_max_vertex_2_object()(cv)),
+       "The input vertices should match the curve endpoints.");
+
+    ind1 = 1;
+    ind2 = 0;
+  }
 
   // Check whether one of the vertices is isolated.
   if (v1->is_isolated())
@@ -524,7 +1224,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 
     // Go over the incident halfedges around v2 and find the halfedge after
     // which the new curve should be inserted.
-    DHalfedge  *prev2 = _locate_around_vertex (_vertex (v2), cv);
+    DHalfedge  *prev2 = _locate_around_vertex (_vertex (v2), cv, ind2);
 
     CGAL_assertion_msg
       (prev2 != NULL,
@@ -559,7 +1259,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 
     // Go over the incident halfedges around v1 and find the halfedge after
     // which the new curve should be inserted.
-    DHalfedge  *prev1 = _locate_around_vertex (_vertex (v1), cv);
+    DHalfedge  *prev1 = _locate_around_vertex (_vertex (v1), cv, ind1);
 
     CGAL_assertion_msg
       (prev1 != NULL,
@@ -583,8 +1283,8 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 
   // Go over the incident halfedges around v1 and v2 and find the two
   // halfedges after which the new curve should be inserted, respectively.
-  DHalfedge  *prev1 = _locate_around_vertex (_vertex (v1), cv);
-  DHalfedge  *prev2 = _locate_around_vertex (_vertex (v2), cv);
+  DHalfedge  *prev1 = _locate_around_vertex (_vertex (v1), cv, ind1);
+  DHalfedge  *prev2 = _locate_around_vertex (_vertex (v2), cv, ind2);
 
   CGAL_assertion_msg
     (prev1 != NULL && prev2 != NULL,
@@ -608,16 +1308,34 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
                                                 Vertex_handle v2)
 {
   CGAL_precondition_msg
-    ((traits->equal_2_object()(prev1->target()->point(),
-                               traits->construct_min_vertex_2_object()(cv)) &&
-      traits->equal_2_object()(v2->point(),
-                               traits->construct_max_vertex_2_object()(cv))) ||
-     (traits->equal_2_object()(v2->point(),
-                               traits->construct_min_vertex_2_object()(cv)) &&
-      traits->equal_2_object()(prev1->target()->point(),
+    (prev1->target()->infinite_in_x() == CGAL::ZERO && 
+     prev1->target()->infinite_in_y() == CGAL::ZERO &&
+     v2->infinite_in_x() == CGAL::ZERO && v2->infinite_in_y() == CGAL::ZERO,
+     "The input vertices must not lie at infinity.");
 
-                               traits->construct_max_vertex_2_object()(cv))),
-     "The input vertex and target point should match the curve endpoints.");
+  int    ind2;
+
+  if (traits->equal_2_object() (prev1->target()->point(),
+                                traits->construct_min_vertex_2_object()(cv)))
+  {
+    CGAL_precondition_msg 
+      (traits->equal_2_object()(v2->point(),
+                                traits->construct_max_vertex_2_object()(cv)),
+       "The input vertices should match the curve endpoints.");
+
+    ind2 = 1;
+  }
+  else
+  {
+    CGAL_precondition_msg
+      (traits->equal_2_object()(v2->point(),
+                                traits->construct_min_vertex_2_object()(cv)) &&
+       traits->equal_2_object()(prev1->target()->point(),
+                                traits->construct_max_vertex_2_object()(cv)),
+       "The input vertices should match the curve endpoints.");
+
+    ind2 = 0;
+  }
 
   // Check whether v2 is an isolated vertex.
   if (v2->is_isolated())
@@ -650,7 +1368,7 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
 
   // Go over the incident halfedges around v2 and find the halfedge after
   // which the new curve should be inserted.
-  DHalfedge  *prev2 = _locate_around_vertex (_vertex (v2), cv);
+  DHalfedge  *prev2 = _locate_around_vertex (_vertex (v2), cv, ind2);
 
   CGAL_assertion_msg
     (prev2 != NULL,
@@ -673,6 +1391,13 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
                                                 Halfedge_handle prev1,
                                                 Halfedge_handle prev2)
 {
+  CGAL_precondition_msg
+    (prev1->target()->infinite_in_x() == CGAL::ZERO && 
+     prev1->target()->infinite_in_y() == CGAL::ZERO &&
+     prev2->target()->infinite_in_x() == CGAL::ZERO &&
+     prev2->target()->infinite_in_y() == CGAL::ZERO,
+     "The input vertices must not lie at infinity.");
+
   CGAL_precondition_msg
     ((traits->equal_2_object()(prev1->target()->point(),
                                traits->construct_min_vertex_2_object()(cv)) &&
@@ -754,6 +1479,9 @@ typename Arrangement_2<Traits,Dcel>::Vertex_handle
 Arrangement_2<Traits,Dcel>::modify_vertex (Vertex_handle vh,
                                            const Point_2& p)
 {
+  CGAL_precondition_msg
+    (vh->infinite_in_x() == CGAL::ZERO && vh->infinite_in_y() == CGAL::ZERO,
+     "The input vertex must not lie at infinity.");
   CGAL_precondition_msg (traits->equal_2_object() (vh->point(), p),
                          "The new point is different from the current one.");
 
@@ -805,6 +1533,8 @@ typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 Arrangement_2<Traits,Dcel>::modify_edge (Halfedge_handle e,
                                          const X_monotone_curve_2& cv)
 {
+  CGAL_precondition_msg (! e->is_fictitious(),
+                         "The edge must be a valid one.");
   CGAL_precondition_msg (traits->equal_2_object() (e->curve(), cv),
                          "The new curve is different from the current one.");
 
@@ -825,12 +1555,15 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
                                         const X_monotone_curve_2& cv1,
                                         const X_monotone_curve_2& cv2)
 {
+  CGAL_precondition_msg (! e->is_fictitious(),
+                         "The edge must be a valid one.");
+
   // Get the split halfedge and its twin, its source and target.
   DHalfedge       *he1 = _halfedge (e);
   DHalfedge       *he2 = he1->opposite();
-  const Point_2&   source = he2->vertex()->point();
+  DVertex         *source = he2->vertex();
   CGAL_precondition_code (
-    const Point_2&   target = he1->vertex()->point();
+    DVertex         *target = he1->vertex();
   );
 
   // Determine the point where we split the halfedge. We also determine which
@@ -838,68 +1571,88 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   // has an endpoint that equals e's source, and which should be associated
   // with the new pair of halfedges we are about to split (the one who has
   // an endpoint which equals e's target).
-  const Point_2&  cv1_left = traits->construct_min_vertex_2_object() (cv1);
-  const Point_2&  cv1_right = traits->construct_max_vertex_2_object() (cv1);
-  const Point_2&  cv2_left = traits->construct_min_vertex_2_object() (cv2);
-  CGAL_precondition_code (
-    const Point_2&  cv2_right = traits->construct_max_vertex_2_object() (cv2);
-  );
-  const Point_2               *split_p;
-  const X_monotone_curve_2    *p_cv1;
-  const X_monotone_curve_2    *p_cv2;
+  Point_2                    split_pt;
+  const X_monotone_curve_2  *p_cv1 = NULL;
+  const X_monotone_curve_2  *p_cv2 = NULL;
 
-
-  CGAL_precondition_msg (traits->equal_2_object() (cv1_right, cv2_left) ||
-                         traits->equal_2_object() (cv2_right, cv1_left),
-
-
-                         "Curves do not share a common endpoint.");
-
-  if (traits->equal_2_object() (cv1_right, cv2_left))
+  if (traits->infinite_in_x_2_object()(cv1, 1) == CGAL::ZERO &&
+      traits->infinite_in_y_2_object()(cv1, 1) == CGAL::ZERO)
   {
-    split_p = &cv1_right;
+    const Point_2&  cv1_right = traits->construct_max_vertex_2_object() (cv1);
 
-    if (traits->equal_2_object() (source, cv1_left))
+    if (traits->infinite_in_x_2_object()(cv2, 0) == CGAL::ZERO &&
+        traits->infinite_in_y_2_object()(cv2, 0) == CGAL::ZERO &&
+        traits->equal_2_object()(traits->construct_min_vertex_2_object()(cv2),
+                                 cv1_right))
     {
-      CGAL_precondition (traits->equal_2_object() (target, cv2_right));
+      // cv1's right endpoint and cv2's left endpoint are equal, so this should
+      // be the split point. Now we check whether cv1 is incident to e's source
+      // and cv2 to its target, or vice versa.
+      split_pt = cv1_right;
 
-      p_cv1 = &cv1;
-      p_cv2 = &cv2;
-    }
-    else
-    {
-      CGAL_precondition (traits->equal_2_object() (source, cv2_right) &&
-                         traits->equal_2_object() (target, cv1_left));
+      if (_are_equal (source, cv1, 0))
+      {
+        CGAL_precondition_msg
+          (_are_equal (target, cv2, 1),
+           "The subcurve endpoints must match e's end vertices.");
 
-      p_cv1 = &cv2;
-      p_cv2 = &cv1;
-    }
-  }
-  else
-  {
-    CGAL_precondition (traits->equal_2_object() (cv2_right, cv1_left));
+        p_cv1 = &cv1;
+        p_cv2 = &cv2;
+      }
+      else
+      {
+        CGAL_precondition_msg
+          (_are_equal (source, cv2, 1) && _are_equal (target, cv1, 0),
+           "The subcurve endpoints must match e's end vertices.");
 
-    split_p = &cv1_left;
-
-    if (traits->equal_2_object() (source, cv2_left))
-    {
-      CGAL_precondition (traits->equal_2_object() (target, cv1_right));
-
-      p_cv1 = &cv2;
-      p_cv2 = &cv1;
-    }
-    else
-    {
-      CGAL_precondition (traits->equal_2_object() (source, cv1_right) &&
-                         traits->equal_2_object() (target, cv2_left));
-
-
-      p_cv1 = &cv1;
-      p_cv2 = &cv2;
+        p_cv1 = &cv2;
+        p_cv2 = &cv1;      
+      }
     }
   }
 
-  return (Halfedge_handle (_split_edge (he1, *split_p, *p_cv1, *p_cv2)));
+  if (p_cv1 == NULL && p_cv2 == NULL &&
+      traits->infinite_in_x_2_object()(cv1, 0) == CGAL::ZERO &&
+      traits->infinite_in_y_2_object()(cv1, 0) == CGAL::ZERO)
+  {
+    const Point_2&  cv1_left = traits->construct_min_vertex_2_object() (cv1);
+
+    if (traits->infinite_in_x_2_object()(cv2, 1) == CGAL::ZERO &&
+        traits->infinite_in_y_2_object()(cv2, 1) == CGAL::ZERO &&
+        traits->equal_2_object()(traits->construct_max_vertex_2_object()(cv2),
+                                 cv1_left))
+    {
+      // cv1's left endpoint and cv2's right endpoint are equal, so this should
+      // be the split point. Now we check whether cv1 is incident to e's source
+      // and cv2 to its target, or vice versa.
+      split_pt = cv1_left;
+
+      if (_are_equal (source, cv2, 0))
+      {
+        CGAL_precondition_msg
+          (_are_equal (target, cv1, 1),
+           "The subcurve endpoints must match e's end vertices.");
+
+        p_cv1 = &cv2;
+        p_cv2 = &cv1;
+      }
+      else
+      {
+        CGAL_precondition_msg
+          (_are_equal (source, cv1, 1) && _are_equal (target, cv2, 0),
+           "The subcurve endpoints must match e's end vertices.");
+
+        p_cv1 = &cv1;
+        p_cv2 = &cv2;      
+      }
+    }
+  }
+
+  CGAL_precondition_msg (p_cv1 != NULL && p_cv2 != NULL,
+                         "The two subcurves must have a common endpoint.");
+
+  // Perform the split.
+  return (Halfedge_handle (_split_edge (he1, split_pt, *p_cv1, *p_cv2)));
 }
 
 //-----------------------------------------------------------------------------
@@ -912,40 +1665,8 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
                                         Halfedge_handle e2,
                                         const X_monotone_curve_2& cv)
 {
-  CGAL_precondition_msg
-    ((traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e1->source()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e2->target()->point())) ||
-     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e1->source()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e2->source()->point())) ||
-     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e1->target()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e2->source()->point())) ||
-     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e1->target()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e2->target()->point())) ||
-     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e2->source()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e1->source()->point())) ||
-     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e2->source()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e1->target()->point())) ||
-     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e2->target()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e1->source()->point())) ||
-     (traits->equal_2_object() (traits->construct_min_vertex_2_object() (cv),
-                                e2->target()->point()) &&
-      traits->equal_2_object() (traits->construct_max_vertex_2_object() (cv),
-                                e1->target()->point())),
-     "The curve endpoints do not match the merged edges.");
+  CGAL_precondition_msg (! e1->is_fictitious() && ! e2->is_fictitious(),
+                         "The edges must be a valid.");
 
   // Assign pointers to the existing halfedges, such that we have:
   //
@@ -1001,9 +1722,21 @@ Arrangement_2<Traits,Dcel>::merge_edge (Halfedge_handle e1,
   // Make sure that he1 and he4 are the only halfedges directed to v.
   DVertex    *v = he1->vertex();
 
-  CGAL_precondition_msg(he1->next()->opposite() == he4 &&
-                        he4->next()->opposite() == he1,
-                        "The degree of the deleted vertex is greater than 2.");
+  CGAL_precondition_msg
+    (! v->has_null_point(),
+     "The vertex removed by the merge must not lie at infinity.");
+  CGAL_precondition_msg
+    (he1->next()->opposite() == he4 &&
+     he4->next()->opposite() == he1,
+     "The degree of the deleted vertex is greater than 2.");
+
+  // Make sure the curve ends match the end vertices of the merged edge.
+  CGAL_precondition_msg
+    ((_are_equal (he2->vertex(), cv, 0) && 
+      _are_equal (he3->vertex(), cv, 1)) ||
+     (_are_equal (he3->vertex(), cv, 0) && 
+      _are_equal (he2->vertex(), cv, 1)),
+     "The endpoints of the merged curve must match the end vertices.");
 
   // Keep pointers to the components that contain two halfedges he3 and he2,
   // pointing at the end vertices of the merged halfedge.
@@ -1106,6 +1839,9 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e,
                                          bool remove_source,
                                          bool remove_target)
 {
+  CGAL_precondition_msg (! e->is_fictitious(),
+                         "The edge must be a valid one.");
+
   DHalfedge   *he1 = _halfedge (e);
   DHalfedge   *he2 = he1->opposite();
   DHole       *hole1 = (he1->is_on_hole()) ? he1->hole() : NULL;
@@ -1128,19 +1864,17 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e,
     // In this case if a new hole will be created by the removal of he1 (and
     // its twin halfedge). We determine the halfedge (he1 or he2) that
     // points at the new hole in order to send it to _remove_hole().
-    // We begin by locating the leftmost point along the path from he1 to he2
-    // and the leftmost point along the path from he2 to he1.
-    typename Traits_adaptor_2::Compare_xy_2  compare_xy =
-                                                 traits->compare_xy_2_object();
-    DHalfedge      *ccb1 = he1->next();
-    DHalfedge      *ccb2 = he2->next();
-    const Point_2  *p_min1 = &(he1->vertex()->point());
-    const Point_2  *p_min2 = &(he2->vertex()->point());
+    // We begin by locating the leftmost vertex along the path from he1 to he2
+    // and the vertex point along the path from he2 to he1.
+    const DHalfedge  *ccb1 = he1->next();
+    const DHalfedge  *ccb2 = he2->next();
+    const DVertex    *v_min1 = he1->vertex();
+    const DVertex    *v_min2 = he2->vertex();
 
     do
     {
-      if (compare_xy (ccb1->vertex()->point(), *p_min1) == SMALLER)
-        p_min1 = &(ccb1->vertex()->point());
+      if (_compare_vertices_xy (ccb1->vertex(), v_min1) == SMALLER)
+        v_min1 = ccb1->vertex();
 
       ccb1 = ccb1->next();
 
@@ -1148,16 +1882,16 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e,
 
     do
     {
-      if (compare_xy (ccb2->vertex()->point(), *p_min2) == SMALLER)
-        p_min2 = &(ccb2->vertex()->point());
+      if (_compare_vertices_xy (ccb2->vertex(), v_min2) == SMALLER)
+        v_min2 = ccb2->vertex();
 
       ccb2 = ccb2->next();
 
     } while (ccb2 != he1);
 
-    // Compare the two leftmost points: p_min2 lies to the left of p_min1
+    // Compare the two leftmost points: v_min2 lies to the left of v_min1
     // if and only if he1 points at the hole we are about to create.
-    if (traits->compare_x_2_object() (*p_min2, *p_min1) == SMALLER)
+    if (_compare_vertices_xy (v_min2, v_min1) == SMALLER)
     {
       // he1 is directed to the new hole to be created.
       f = _remove_edge (he1, remove_source, remove_target);
@@ -1179,13 +1913,322 @@ Arrangement_2<Traits,Dcel>::remove_edge (Halfedge_handle e,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+// Construct an empty arrangement (with its bounding rectangle).
+//
+template<class Traits, class Dcel>
+void Arrangement_2<Traits,Dcel>::_construct_empty_arrangement ()
+{
+  // Create the fictitious unbounded face.
+  un_face = dcel.new_face();
+  un_face->set_halfedge(NULL);
+  un_face->set_unbounded(true);
+
+  // Create the four fictitious vertices corresponding to corners of the
+  // bounding rectangle.
+  v_bl = dcel.new_vertex();
+  v_bl->set_at_infinity (CGAL::NEGATIVE, CGAL::NEGATIVE);
+
+  v_tl = dcel.new_vertex();
+  v_tl->set_at_infinity (CGAL::NEGATIVE, CGAL::POSITIVE);
+
+  v_br = dcel.new_vertex();
+  v_br->set_at_infinity (CGAL::POSITIVE, CGAL::NEGATIVE);
+
+  v_tr = dcel.new_vertex();
+  v_tr->set_at_infinity (CGAL::POSITIVE, CGAL::POSITIVE);
+
+  // Create a four pairs of twin halfedges connecting the two vertices,
+  // and link them together to form the bounding rectangle, forming a hole
+  // in the fictitious face.
+  //
+  //                            he2
+  //             v_tl (.) ----------------> (.) v_tr
+  //                   ^ <------------------ 
+  //                   ||                   ^|
+  //               he1 ||        in_f       ||
+  //                   ||                   || he3
+  //                   |V                   ||
+  //                     ------------------> V 
+  //             v_bl (.) <---------------- (.) v_br
+  //                             he4
+  //
+  DHalfedge           *he1 = dcel.new_edge();
+  DHalfedge           *he1_t = he1->opposite();
+  DHalfedge           *he2 = dcel.new_edge();
+  DHalfedge           *he2_t = he2->opposite();
+  DHalfedge           *he3 = dcel.new_edge();
+  DHalfedge           *he3_t = he3->opposite();
+  DHalfedge           *he4 = dcel.new_edge();
+  DHalfedge           *he4_t = he4->opposite();
+  DHole               *hole = dcel.new_hole();
+  DFace               *in_f = dcel.new_face();
+
+  hole->set_face (un_face);
+  he1->set_curve (NULL);
+  he2->set_curve (NULL);
+  he3->set_curve (NULL);
+  he4->set_curve (NULL);
+
+  he1->set_next (he2);        he1_t->set_next (he4_t);
+  he2->set_next (he3);        he4_t->set_next (he3_t);
+  he3->set_next (he4);        he3_t->set_next (he2_t);
+  he4->set_next (he1);        he2_t->set_next (he1_t);
+
+  he1->set_vertex (v_tl);     he1_t->set_vertex (v_bl);
+  he2->set_vertex (v_tr);     he2_t->set_vertex (v_tl);
+  he3->set_vertex (v_br);     he3_t->set_vertex (v_tr);
+  he4->set_vertex (v_bl);     he4_t->set_vertex (v_br);
+
+  he1->set_hole (hole);       he1_t->set_face (in_f);
+  he2->set_hole (hole);       he2_t->set_face (in_f);
+  he3->set_hole (hole);       he3_t->set_face (in_f);
+  he4->set_hole (hole);       he4_t->set_face (in_f);
+
+  // Assign the incident halfedges of the two fictitious vertices.
+  v_bl->set_halfedge (he1_t);
+  v_tl->set_halfedge (he2_t);
+  v_tr->set_halfedge (he3_t);
+  v_br->set_halfedge (he4_t);
+
+  // Set the direction of the halfedges:
+  he1->set_direction (CGAL::SMALLER);
+  he2->set_direction (CGAL::SMALLER);
+  he3->set_direction (CGAL::LARGER);
+  he4->set_direction (CGAL::LARGER);
+
+  // Initiate a new hole inside the fictitious face.
+  hole->set_iterator (un_face->add_hole (he1));
+
+  // Set the real unbounded face, in the interior of the bounding rectangle.
+  in_f->set_unbounded (true);
+  in_f->set_halfedge (he2_t);
+
+  // Mark that there are four vertices at infinity (the fictitious ones)
+  // in the arrangement.
+  n_inf_verts = 4;
+
+  return;
+}
+
+//-----------------------------------------------------------------------------
+// Get the curve associated with a vertex at infinity.
+//
+template<class Traits, class Dcel>
+const typename Arrangement_2<Traits,Dcel>::X_monotone_curve_2&
+Arrangement_2<Traits,Dcel>::_get_curve (const DVertex *v,
+                                        int& ind) const
+{
+  // Go over the incident halfegdes of v until encountering the halfedge
+  // associated with a valid curve (v should have three incident halfedges,
+  // two of the are fictitious and one associated with a curve).
+  const DHalfedge         *he = v->halfedge();
+
+  while (he->has_null_curve())
+  {
+    he = he->next()->opposite();
+    CGAL_assertion (he != v->halfedge());   // Guard for infinitive loops.
+  }
+
+  // The halfedge he is directed toward v, so if it is directed from left to
+  // right, v represents the right end of cv (ind should be 1), otherwise it
+  // represents its left end (ind should be 0).
+  ind = (he->direction() == SMALLER) ? 1 : 0;
+  
+  // Return the x-monotone curve.
+  return (he->curve());
+}
+
+//-----------------------------------------------------------------------------
+// Check whether the given infinite curve end lies on the given fictitious
+// halfedge.
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::_is_on_fictitious_edge
+    (const X_monotone_curve_2& cv, int ind,
+     CGAL::Sign inf_x, CGAL::Sign inf_y,
+     const DHalfedge *he,
+     bool& eq_source, bool& eq_target) const
+{
+  eq_source = false;
+  eq_target = false;
+
+  // Get the end-vertices of the edge.
+  const DVertex     *v1 = he->opposite()->vertex();
+  const DVertex     *v2 = he->vertex();
+  CGAL::Sign         he_inf;
+  Comparison_result  res1, res2;
+  int                v_ind;
+
+  // Check if this is a "vertical" ficitious edge.
+  if ((he_inf = v1->infinite_in_x()) != CGAL::ZERO &&
+      he_inf == v2->infinite_in_x())
+  {
+    // If the edge lies on x = +/- oo, the curve endpoint must also lie there.
+    if (he_inf != inf_x)
+      return (false);
+
+    // Compare the y-position of the curve end to the source vertex.
+    if (v1 == v_bl || v1 == v_br)
+    {
+      // These vertices are below any curve.
+      res1 = LARGER;
+    }
+    else if (v1 == v_tl || v1 == v_tr)
+    {
+      // These vertices are above any curve.
+      res1 = SMALLER;
+    }
+    else
+    {
+      res1 = traits->compare_y_at_infinity_2_object() (cv,
+                                                       _get_curve (v1, v_ind),
+                                                       inf_x);
+      if (res1 == EQUAL)
+      {
+        eq_source = true;
+        return (true);
+      }
+    }
+
+    // Compare the y-position of the curve end to the target vertex.
+    if (v2 == v_bl || v2 == v_br)
+    {
+      // These vertices are below any curve.
+      res2 = LARGER;
+    }
+    else if (v2 == v_tl || v2 == v_tr)
+    {
+      // These vertices are above any curve.
+      res2 = SMALLER;
+    }
+    else
+    {
+      res2 = traits->compare_y_at_infinity_2_object() (cv,
+                                                       _get_curve (v2, ind),
+                                                       inf_x);
+      
+      if (res2 == EQUAL)
+      {
+        eq_target = true;
+        return (true);
+      }
+    }
+  }
+  else
+  {
+    // If we reched here, we have a "horizontal" fictitious halfedge.
+    he_inf = v1->infinite_in_y();
+
+    CGAL_assertion (he_inf != CGAL::ZERO && he_inf == v2->infinite_in_y());
+
+    // If the edge lies on y = +/- oo, the curve endpoint must also lie there
+    // (and must not lies at x = +/- oo.
+    if (inf_x != CGAL::ZERO || he_inf != inf_y)
+      return (false);
+
+    // Compare the x-position of the curve end to the source vertex.
+    if (v1 == v_bl || v1 == v_tl)
+    {
+      // These vertices are to the left of any curve.
+      res1 = LARGER;
+    }
+    else if (v1 == v_br || v1 == v_tr)
+    {
+      // These vertices are to the right of any curve.
+      res1 = SMALLER;
+    }
+    else
+    {
+      const X_monotone_curve_2&  cv1 = _get_curve (v1, v_ind);
+      res1 = traits->compare_x_at_infinity_2_object() (cv, ind,
+                                                       cv1, v_ind);
+      
+      if (res1 == EQUAL)
+      {
+        eq_source = true;
+        return (true);
+      }
+    }
+
+    // Compare the x-position of the curve end to the target vertex.
+    if (v2 == v_bl || v2 == v_tl)
+    {
+      // These vertices are to the left of any curve.
+      res2 = LARGER;
+    }
+    else if (v2 == v_br || v2 == v_tr)
+    {
+      // These vertices are to the right of any curve.
+      res2 = SMALLER;
+    }
+    else
+    {
+      const X_monotone_curve_2&  cv2 = _get_curve (v2, v_ind);
+      res1 = traits->compare_x_at_infinity_2_object() (cv, ind,
+                                                       cv2, v_ind);
+
+      if (res2 != EQUAL)
+      {
+        eq_target = true;
+        return (true);
+      }
+    }
+  }
+
+  return (res1 != res2);
+}
+
+//-----------------------------------------------------------------------------
+// Locate an ficititious halfegde on the outer CCB of a given face which
+// contains the given curve end in its interior.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::DHalfedge*
+Arrangement_2<Traits,Dcel>::_locate_along_ccb
+    (DFace *f,
+     const X_monotone_curve_2& cv, int ind,
+     CGAL::Sign inf_x, CGAL::Sign inf_y) const
+{
+  // Get a halfedge on the outer CCB of f and start traversing the CCB.
+  DHalfedge         *first = f->halfedge();
+
+  CGAL_assertion (first != NULL);
+
+  DHalfedge         *curr = first;
+  bool               eq_source, eq_target;
+
+  do
+  {
+    // Note we consider only fictitious halfedges and check whether they
+    // contain the relevant curve end.
+    if (curr->has_null_curve() &&
+        _is_on_fictitious_edge (cv, ind,
+                                inf_x, inf_y,
+                                curr,
+                                eq_source, eq_target))
+    {
+      CGAL_assertion (! eq_source && ! eq_target);
+      return (curr);
+    }
+
+    // Move to the next halfegde along the CCB.
+    curr = curr->next();
+
+  } while (curr != first);
+
+  // If we reached here, we did not find a suitable halfegde.
+  return (NULL);
+}
+
+//-----------------------------------------------------------------------------
 // Locate the place for the given curve around the given vertex.
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::DHalfedge*
 Arrangement_2<Traits,Dcel>::_locate_around_vertex
     (DVertex *v,
-     const X_monotone_curve_2& cv) const
+     const X_monotone_curve_2& cv,
+     int ind) const
 {
   // Get the first incident halfedge around v and the next halfedge.
   DHalfedge   *first = v->halfedge();
@@ -1207,10 +2250,10 @@ Arrangement_2<Traits,Dcel>::_locate_around_vertex
 
   bool       eq_curr, eq_next;
 
-  while (!is_between_cw (cv,
-                         curr->curve(),
-                         next->curve(),
-                         v->point(), eq_curr, eq_next))
+  while (! is_between_cw (cv, (ind == 0),
+                          curr->curve(), (curr->direction() == LARGER),
+                          next->curve(), (next->direction() == LARGER),
+                          v->point(), eq_curr, eq_next))
   {
     // If cv equals one of the curves associated with the halfedges, it is
     // an illegal input curve, as it already exists in the arrangement.
@@ -1284,6 +2327,9 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
   // smallest target vertex, which is also the first halfedge we encounter
   // if we go around this vertex in a counterclockwise direction, starting
   // from - and not including - "6 o'clock").
+  // We note that this predicate is called only when closing a hole
+  // comprised of finite x-monotone curves, so there are no vertices at
+  // infinity or fictitious edges along the CCB.
   typename Traits_adaptor_2::Compare_xy_2  compare_xy =
                                                  traits->compare_xy_2_object();
 
@@ -1358,6 +2404,118 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
 }
 
 //-----------------------------------------------------------------------------
+// Compare the x-coordinates of a given vertex (which may lie at infinity) and
+// the given point.
+//
+template<class Traits, class Dcel>
+Comparison_result
+Arrangement_2<Traits,Dcel>::_compare_x_imp (const Point_2& p,
+                                            const DVertex* v,
+                                            Tag_true) const
+{
+  // First check if the vertex v lies at x = -oo (then it is obviously smaller
+  // than p), or at x = +oo (then it is obviously larger).
+  const CGAL::Sign          inf_x = v->infinite_in_x();
+
+  if (inf_x == CGAL::NEGATIVE)
+    return (LARGER);
+  else if (inf_x == CGAL::POSITIVE)
+    return (SMALLER);
+
+  // Check if the vertex lies at y = +/- oo.
+  const CGAL::Sign          inf_y = v->infinite_in_y();
+
+  if (inf_y != CGAL::ZERO)
+  {
+    // Compare the x-position of the vertical asymptote of the curve incident
+    // to v with the x-coodinate of p.
+    int                       ind;
+    const X_monotone_curve_2& cv = _get_curve (v, ind);
+    
+    return (traits->compare_x_at_infinity_2_object() (p, cv, ind));
+  }
+
+  // In this case v represents a normal point, and we compare it with p.
+  return (traits->compare_x_2_object() (p, v->point()));
+}
+
+//-----------------------------------------------------------------------------
+// Compare the given vertex (which may lie at infinity) and the given point.
+//
+template<class Traits, class Dcel>
+Comparison_result
+Arrangement_2<Traits,Dcel>::_compare_xy_imp (const Point_2& p,
+                                             const DVertex* v,
+                                             Tag_true) const
+{
+  // First check if the vertex v lies at x = -oo (then it is obviously smaller
+  // than p), or at x = +oo (then it is obviously larger).
+  const CGAL::Sign          inf_x = v->infinite_in_x();
+
+  if (inf_x == CGAL::NEGATIVE)
+    return (LARGER);
+  else if (inf_x == CGAL::POSITIVE)
+    return (SMALLER);
+
+  // Check if the vertex lies at y = +/- oo.
+  const CGAL::Sign          inf_y = v->infinite_in_y();
+
+  if (inf_y != CGAL::ZERO)
+  {
+    // Compare the x-position of the vertical asymptote of the curve incident
+    // to v with the x-coodinate of p.
+    int                       ind;
+    const X_monotone_curve_2& cv = _get_curve (v, ind);
+    Comparison_result         res =
+      traits->compare_x_at_infinity_2_object() (p, cv, ind);
+
+    if (res != EQUAL)
+      return (res);
+
+    // In case of equality, consider whether v lies at y = -oo or at y = +oo.
+    if (inf_y == CGAL::NEGATIVE)
+      return (LARGER);
+    else
+      return (SMALLER);
+  }
+
+  // In this case v represents a normal point, and we compare it with p.
+  return (traits->compare_xy_2_object() (p, v->point()));
+}
+
+//-----------------------------------------------------------------------------
+// Compare the relative y-position of the given point and the given edge
+// (which may be fictitious if the traits class supports unbounded curves).
+//
+template<class Traits, class Dcel>
+Comparison_result 
+Arrangement_2<Traits,Dcel>::_compare_y_at_x_imp (const Point_2& p,
+                                                 const DHalfedge* he,
+                                                 Tag_true) const
+{
+  // In case of a valid edge, just compare p to its associated curve.
+  if (! he->has_null_curve())
+    return (traits->compare_y_at_x_2_object() (p, he->curve()));
+
+  // Otherwise, determine on which edge of the bounding rectangle does he lie.
+  // Note this can be either the top edge or the bottom edge (and not the
+  // left or the right edge), as p must lie in its x-range.
+  CGAL_assertion ((he->vertex()->infinite_in_x() == CGAL::ZERO) ||
+                  (he->vertex()->infinite_in_x() != 
+                   he->opposite()->vertex()->infinite_in_x()));
+  CGAL_assertion ((he->vertex()->infinite_in_y() != CGAL::ZERO) &&
+                  (he->vertex()->infinite_in_y() == 
+                   he->opposite()->vertex()->infinite_in_y()));
+
+  if (he->vertex()->infinite_in_y() == NEGATIVE)
+    // he lies on the bottom edge, so p is obviously above it.
+    return (LARGER);
+  else
+    // he lies on the top edge, so p is obviously below it.
+    return (SMALLER);
+}
+
+//-----------------------------------------------------------------------------
 // Determine whether a given point lies within the region bounded by
 // a boundary of a connected component.
 //
@@ -1373,15 +2531,10 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
   // explained below).
   unsigned int              n_ray_intersections = 0;
 
-  typename Traits_adaptor_2::Compare_xy_2     compare_xy =
-                                            traits->compare_xy_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
-                                            traits->compare_y_at_x_2_object();
-
-  // Go over all curves of the boundary, starting from the non-vertical curve
-  // we have located, and count those which are above p. We begin by comparing
-  // p to the source vertex of the first halfedge. Note that if p coincides
-  // with this vertex. p is obviously not in the interior of the component.
+  // Go over all curves of the boundary, and count those which are above p.
+  // We begin by comparing p to the source vertex of the first halfedge.
+  // Note that if p coincides with this vertex, p is obviously not in the
+  // interior of the component.
   const DHalfedge   *curr = he;
   Comparison_result  res_source;
   Comparison_result  res_target;
@@ -1390,7 +2543,7 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
   if (curr->opposite()->vertex() == v)
     return (false);
 
-  res_source = compare_xy (curr->opposite()->vertex()->point(), p);
+  res_source = _compare_xy (p, curr->opposite()->vertex());
 
   do
   {
@@ -1401,7 +2554,7 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
     if (curr->vertex() == v)
       return (false);
 
-    res_target = compare_xy (curr->vertex()->point(), p);
+    res_target = _compare_xy (p, curr->vertex());
 
     // In case the current halfedge belongs to an "antenna", namely its
     // incident face is the same as its twin's, we can simply skip it
@@ -1420,7 +2573,7 @@ bool Arrangement_2<Traits,Dcel>::_point_is_in (const Point_2& p,
     // the x-monotone curve associated with curr once.
     if (res_source != res_target)
     {
-      res_y_at_x = compare_y_at_x (p, curr->curve());
+      res_y_at_x = _compare_y_at_x (p, curr);
 
       if (res_y_at_x == SMALLER)
       {
@@ -1564,6 +2717,32 @@ Arrangement_2<Traits,Dcel>::_create_vertex (const Point_2& p)
   // Notify the observers that we have just created a new vertex.
   Vertex_handle   vh (v);
   _notify_after_create_vertex (vh);
+
+  return (v);
+}
+
+//-----------------------------------------------------------------------------
+// Create a new vertex at infinity.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::DVertex*
+Arrangement_2<Traits,Dcel>::_create_vertex_at_infinity (CGAL::Sign inf_x,
+                                                        CGAL::Sign inf_y)
+{
+  // Notify the observers that we are about to create a new vertex at infinity.
+  _notify_before_create_vertex_at_infinity (inf_x, inf_y);
+
+  // Create a new vertex and associate it with the given point.
+  DVertex         *v = dcel.new_vertex();
+
+  v->set_at_infinity (inf_x, inf_y);
+
+  // Increment the number of vertices at infinity.
+  n_inf_verts++;
+
+  // Notify the observers that we have just created a new vertex at infinity.
+  Vertex_handle   vh (v);
+  _notify_after_create_vertex_at_infinity (vh);
 
   return (v);
 }
@@ -1923,7 +3102,8 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
 // immediately after a face has split due to the insertion of a new halfedge.
 //
 template<class Traits, class Dcel>
-void Arrangement_2<Traits,Dcel>::_relocate_holes_in_new_face (DHalfedge *new_he)
+void 
+Arrangement_2<Traits,Dcel>::_relocate_holes_in_new_face (DHalfedge *new_he)
 {
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
@@ -2073,6 +3253,159 @@ void Arrangement_2<Traits,Dcel>::_modify_edge (DHalfedge *he,
 }
 
 //-----------------------------------------------------------------------------
+// Check if the given vertex represents one of the ends of a given curve.
+//
+template<class Traits, class Dcel>
+bool Arrangement_2<Traits,Dcel>::_are_equal (const DVertex *v,
+                                             const X_monotone_curve_2& cv,
+                                             int ind) const
+{
+  // Check if cv's end is finite and make sure that the infinity signs match
+  // those of the vertex v.
+  const CGAL::Sign    inf_x = traits->infinite_in_x_2_object() (cv, ind);
+  const CGAL::Sign    inf_y = traits->infinite_in_y_2_object() (cv, ind);
+
+  if (inf_x != v->infinite_in_x() || inf_y != v->infinite_in_y())
+    return (false);
+
+  if (inf_x != CGAL::ZERO)
+  {
+    // The curve end lies at x = +/- oo and so does v. Make sure the curve
+    // overlaps with the curve that currently induces v.
+    int                        v_ind;
+    const X_monotone_curve_2&  v_cv = _get_curve (v, v_ind);
+
+    return (traits->compare_y_at_infinity_2_object() (cv, v_cv,
+                                                      inf_x) == EQUAL);
+  }
+  
+  if (inf_y != CGAL::ZERO)
+  {
+    // The curve end lies at y = +/- oo and so does v. Make sure the curve
+    // overlaps with the curve that currently induces v.
+    int                        v_ind;
+    const X_monotone_curve_2&  v_cv = _get_curve (v, v_ind);
+
+    return (traits->compare_x_at_infinity_2_object() (cv, ind,
+                                                      v_cv, v_ind) == EQUAL);
+  }
+
+  // If we have a valid endpoint, make sure it equals the point associated
+  // with v.
+  if (ind % 2 == 0)
+    return (traits->equal_2_object() 
+            (traits->construct_min_vertex_2_object() (cv),
+             v->point()));
+  else
+    return (traits->equal_2_object() 
+            (traits->construct_max_vertex_2_object() (cv),
+             v->point()));
+}
+
+//-----------------------------------------------------------------------------
+// Perform an xy-lexicographic comparison between two given vertices (which
+// may lie at infinity).
+//
+template<class Traits, class Dcel>
+Comparison_result
+Arrangement_2<Traits,Dcel>::_compare_vertices_xy (const DVertex *v1,
+                                                  const DVertex *v2) const
+{
+  // First check if one of the vertices is associated with a valid point.
+  if (! v1->has_null_point())
+  {
+    if (! v2->has_null_point())
+    {
+      // If the two vertices are associated with valid points, simply compare
+      // these points.
+      return (traits->compare_xy_2_object() (v1->point(), v2->point()));
+    }
+
+    // Compare the valid point associated with v1 to the vertex v2.
+    return (_compare_xy (v1->point(), v2));
+  }
+  
+  if (! v2->has_null_point())
+  {
+    // Compare the valid point associated with v2 to the vertex v1.
+    Comparison_result   res = _compare_xy (v2->point(), v1);
+
+    if (res == EQUAL)
+    {
+      CGAL_assertion (v1 == v2);
+      return (res);
+    }
+
+    // Swap the result.
+    return ((res == LARGER) ? SMALLER : LARGER);
+  }
+
+  // In this case both vertices lie at infinity.
+  const CGAL::Sign   inf_x1 = v1->infinite_in_x();
+  const CGAL::Sign   inf_x2 = v2->infinite_in_x();
+
+  if (inf_x1 != inf_x2)
+  {
+    // In this case, the comparison is straightforward:
+    if (inf_x1 == CGAL::NEGATIVE || inf_x2 == CGAL::POSITIVE)
+      return (SMALLER);
+    
+    CGAL_assertion (inf_x1 == CGAL::POSITIVE || inf_x2 == CGAL::NEGATIVE);
+    return (LARGER);
+  }
+  else if (inf_x1 == CGAL::NEGATIVE)
+  {
+    // Both vertices lie at x = -oo, so we have to comapare their y-position.
+    // We first check if one of the vertices is fictitious.
+    if (v1 == v_bl || v2 == v_tl)
+      return (SMALLER);
+    else if (v1 == v_tl || v2 == v_bl)
+      return (LARGER);
+
+    int      ind1, ind2;
+
+    return (traits->compare_y_at_infinity_2_object() (_get_curve (v1, ind1), 
+                                                      _get_curve (v2, ind2),
+                                                      CGAL::NEGATIVE));
+  }
+  else if (inf_x1 == CGAL::POSITIVE)
+  {
+    // Both vertices lie at x = +oo, so we have to comapare their y-position.
+    // We first check if one of the vertices is fictitious.
+    if (v1 == v_br || v2 == v_tr)
+      return (SMALLER);
+    else if (v1 == v_tr || v2 == v_br)
+      return (LARGER);
+
+    int      ind1, ind2;
+
+    return (traits->compare_y_at_infinity_2_object() (_get_curve (v1, ind1), 
+                                                      _get_curve (v2, ind2),
+                                                      CGAL::POSITIVE));
+  }
+
+  // Both vertices lie at y = +/- oo and we should compare their x-coordinates.
+  int                        ind1, ind2;
+  const X_monotone_curve_2&  cv1 = _get_curve (v1, ind1);
+  const X_monotone_curve_2&  cv2 = _get_curve (v2, ind2);
+  Comparison_result          res =
+    traits->compare_x_at_infinity_2_object() (cv1, ind1,
+                                              cv2, ind2);
+
+  if (res != EQUAL)
+    return (res);
+
+  const CGAL::Sign           inf_y1 = v1->infinite_in_y();
+  const CGAL::Sign           inf_y2 = v2->infinite_in_y();
+
+  if (inf_y1 != inf_y2)
+    return ((inf_y1 == CGAL::NEGATIVE) ? SMALLER : LARGER);
+  
+  CGAL_assertion (v1 == v2);
+  return (EQUAL);
+}
+
+//-----------------------------------------------------------------------------
 // Split a given edge into two at a given point, and associate the given
 // x-monotone curves with the split edges.
 //
@@ -2184,6 +3517,98 @@ Arrangement_2<Traits,Dcel>::_split_edge (DHalfedge *e,
 }
 
 //-----------------------------------------------------------------------------
+// Split a given fictitious edge into two, forming a new vertex at infinity.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::DHalfedge*
+Arrangement_2<Traits,Dcel>::_split_fictitious_edge (DHalfedge *e,
+                                                    CGAL::Sign inf_x,
+                                                    CGAL::Sign inf_y)
+{
+  // Allocate a new vertex at infinity.
+  DVertex         *v = _create_vertex_at_infinity (inf_x, inf_y);
+
+  // Split the edge from the given vertex.
+  return (_split_fictitious_edge (e, v));
+}
+
+//-----------------------------------------------------------------------------
+// Split a given fictitious edge into two at a given vertex at infinity.
+//
+template<class Traits, class Dcel>
+typename Arrangement_2<Traits,Dcel>::DHalfedge*
+Arrangement_2<Traits,Dcel>::_split_fictitious_edge (DHalfedge *e,
+                                                    DVertex *v)
+{
+  // Get the split halfedge and its twin, and their incident faces.
+  // Note that he1 lies on an outer boundary of an unbounded face, while
+  // its twin he2 should lie on a hole inside the fictitious face.
+  DHalfedge       *he1 = e;
+  DHalfedge       *he2 = he1->opposite();
+
+  CGAL_assertion (! he1->is_on_hole());
+  DFace           *f1 = he1->face();
+
+  CGAL_assertion (he2->is_on_hole());
+  DHole           *hole2 = he2->hole();
+
+  CGAL_assertion (hole2->face() == un_face);
+
+  // Notify the observers that we are about to split a fictitious edge.
+  _notify_before_split_fictitious_edge (Halfedge_handle (e),
+                                        Vertex_handle (v));
+
+  // Allocate a pair of new halfedges.
+  DHalfedge   *he3 = dcel.new_edge();
+  DHalfedge   *he4 = he3->opposite();
+
+  // Connect the new halfedges:
+  //
+  //            he1      he3
+  //         -------> ------->
+  //       (.)      (.)v     (.)
+  //         <------- <-------
+  //            he2      he4
+  //
+  v->set_halfedge (he4);
+
+  // Connect e3 between e1 and its successor.
+  he3->set_next (he1->next());
+
+  // Insert he4 between he2 and its predecessor.
+  he2->prev()->set_next (he4);
+
+  // Set the properties of the new halfedges.
+  he3->set_face (f1);
+  he3->set_vertex (he1->vertex());
+
+  he4->set_vertex (v);
+  he4->set_next (he2);
+
+  he4->set_hole (hole2);
+
+  if (he1->vertex()->halfedge() == he1)
+    // If he1 is the incident halfedge to its target, he3 replaces it.
+    he1->vertex()->set_halfedge (he3);
+
+  // Update the properties of the twin halfedges we have just split.
+  he1->set_next(he3);
+  he1->set_vertex(v);
+
+  // The direction of he3 is the same as he1's (and the direction of he4 is
+  // the same as he2).
+  he3->set_direction (he1->direction());
+
+  // Notify the observers that we have split a fictitious edge into two.
+  _notify_after_split_fictitious_edge (Halfedge_handle (he1),
+                                       Halfedge_handle (he3));
+
+  // Return a pointer to one of the existing halfedge that is incident to the
+  // split vertex.
+  return (he1);
+}
+
+//-----------------------------------------------------------------------------
 // Remove a pair of twin halfedges from the arrangement.
 // In case the removal causes the creation of a new hole, the given halfedge
 // should point at this hole.
@@ -2242,7 +3667,6 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
         // Delete the he1's target vertex and its associated point.
         _notify_before_remove_vertex (Vertex_handle (he1->vertex()));
 
-
         _delete_point (he1->vertex()->point());
         dcel.delete_vertex (he1->vertex());
 
@@ -2287,8 +3711,8 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
       // In this case the two halfedges form an "antenna".
       // Make he1 point at the tip of this "antenna" (swap the pointer if
       // necessary).
-      bool    remove_tip_vertex = remove_target;
-
+      bool     remove_tip_vertex = remove_target;
+ 
       if (he2->next() == he1)
       {
         he1 = he2;
@@ -2323,7 +3747,11 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
       if (he2->vertex()->halfedge() == he2)
           he2->vertex()->set_halfedge (prev1);
 
-      // Remove the redundant vertex, if necessary.
+      // Remove the base vertex, in case it lies at infinity.
+      if (he2->vertex()->has_null_point())
+        _remove_vertex_at_infinity (he2->vertex());
+
+      // Remove the redundant tip vertex, if necessary.
       if (remove_tip_vertex)
       {
         // Delete the vertex that forms the tip of the "antenna".
@@ -2459,6 +3887,13 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
     if (he2->vertex()->halfedge() == he2)
       he2->vertex()->set_halfedge (prev1);
 
+    // Remove the end vertices, in case they lie at infinity.
+    if (he1->vertex()->has_null_point())
+      _remove_vertex_at_infinity (he1->vertex());
+
+    if (he2->vertex()->has_null_point())
+      _remove_vertex_at_infinity (he2->vertex());
+
     // Delete the curve associated with the edge to be removed.
     _delete_curve (he1->curve());
 
@@ -2547,12 +3982,21 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
     // Delete the curve associated with the edge to be removed.
     _delete_curve (he1->curve());
 
-    // Delete the face f2 and the pair of halfdges.
+    // Delete the face f2.
     dcel.delete_face (f2);
-    dcel.delete_edge (he1);
       
     // Notify the observers that the faces have been merged.
     _notify_after_merge_face (Face_handle (f1));
+
+    // Remove the end vertices, in case they lie at infinity.
+    if (he1->vertex()->has_null_point())
+      _remove_vertex_at_infinity (he1->vertex());
+
+    if (he2->vertex()->has_null_point())
+      _remove_vertex_at_infinity (he2->vertex());
+
+     // Delete the pair of halfedges.
+    dcel.delete_edge (he1);
 
     // Notify the observers that an edge has been deleted.
     _notify_after_remove_edge();
@@ -2643,12 +4087,21 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
   // Delete the curve associated with the edge to be removed.
   _delete_curve (he1->curve());
 
-  // Delete the face f2 and the pair of halfdges.
+  // Delete the face f2.
   dcel.delete_face (f2);
-  dcel.delete_edge (he1);
       
   // Notify the observers that the faces have been merged.
   _notify_after_merge_face (Face_handle (f1));
+
+  // Remove the end vertices, in case they lie at infinity.
+  if (he1->vertex()->has_null_point())
+    _remove_vertex_at_infinity (he1->vertex());
+  
+  if (he2->vertex()->has_null_point())
+    _remove_vertex_at_infinity (he2->vertex());
+
+  // Delete the pair of halfedges.
+  dcel.delete_edge (he1);
 
   // Notify the observers that an edge has been deleted.
   _notify_after_remove_edge();
@@ -2662,11 +4115,107 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
 // the dcel)
 //
 template<class Traits, class Dcel>
-void Arrangement_2<Traits,Dcel>::_remove_isolated_vertex(DVertex* v)
+void Arrangement_2<Traits,Dcel>::_remove_isolated_vertex (DVertex* v)
 {
   DIso_vert  *iv = v->isolated_vertex();
   iv->face()->erase_isolated_vertex (iv->iterator());
   dcel.delete_isolated_vertex (iv);
+}
+
+//-----------------------------------------------------------------------------
+// Remove a vertex at infinity, causing its two incident fictitious edges
+// to merge.
+template<class Traits, class Dcel>
+void Arrangement_2<Traits,Dcel>::_remove_vertex_at_infinity (DVertex* v)
+{
+  // Assign pointers to the halfedges incident to v (make sure that there
+  // are exactly teo pairs of fictitious halfedges), such that we have:
+  //
+  //            he1      he3
+  //         -------> ------->
+  //       (.)      (.)v     (.)
+  //         <------- <-------
+  //            he2      he4
+  //
+  DHalfedge   *he1 = v->halfedge();
+  DHalfedge   *he2 = he1->opposite();
+  DHalfedge   *he3 = he1->next();
+  DHalfedge   *he4 = he3->opposite();
+
+  CGAL_assertion (he1->has_null_curve() && he3->has_null_curve() &&
+                  he4->next() == he2);
+
+  // Keep pointers to the components that contain two halfedges he3 and he2,
+  // pointing at the end vertices of the merged halfedge.
+  DHole       *hole1 = (he3->is_on_hole()) ? he3->hole() : NULL;
+  DFace       *f1 = (hole1 == NULL) ? he3->face() : hole1->face();
+  DHole       *hole2 = (he4->is_on_hole()) ? he4->hole() : NULL;
+  DFace       *f2 = (hole2 == NULL) ? he4->face() : hole2->face();
+
+  // Notify the observers that we are about to merge a fictitious edge.
+  _notify_before_merge_fictitious_edge (Halfedge_handle (he1),
+                                        Halfedge_handle (he3));
+
+  // As he1 and he2 will evetually represent the merged edge, while he3 and he4
+  // will be deleted, check if the deleted halfedges are represantatives of a
+  // face boundary or a hole inside these faces. If so, replace he3 by he1 and
+  // he4 by he2. Note that as we just change the hole representatives, we do
+  // not have to notify the observers about the change.
+  if (hole1 == NULL && f1->halfedge() == he3)
+  {
+    f1->set_halfedge (he1);
+  }
+  else if (hole1 != NULL)
+  {
+    if (*(hole1->iterator()) == he3)
+    {
+      f1->erase_hole (hole1->iterator());
+      hole1->set_iterator (f1->add_hole (he1));
+    }
+  }
+
+  if (hole2 == NULL && f2->halfedge() == he4)
+  {
+    f2->set_halfedge (he2);
+  }
+  else if (hole2 != NULL)
+  {
+    if (*(hole2->iterator()) == he4)
+    {
+      f2->erase_hole (hole2->iterator());
+      hole2->set_iterator (f2->add_hole (he2));
+    }
+  }
+
+  if (he3->vertex()->halfedge() == he3)
+    // If he3 is the incident halfedge to its target, replace it by he1.
+    he3->vertex()->set_halfedge (he1);
+
+  // Disconnect he3 and he4 from the edge list.
+  CGAL_assertion (he3->next() != he4);
+
+  he1->set_next (he3->next());
+  he4->prev()->set_next (he2);
+
+  // Set the properties of the merged edge.
+  he1->set_vertex (he3->vertex());
+
+  // Notify the observers that we are about to delete a vertex.
+  _notify_before_remove_vertex_at_infinity (Vertex_handle (v));
+
+  // Delete the merged vertex.
+  dcel.delete_vertex (v);
+
+  // Notify the observers that the vertex has been deleted.
+  _notify_after_remove_vertex_at_infinity ();
+
+  // Delete the redundant halfedge pair.
+  dcel.delete_edge (he3);
+
+  // Notify the observers that the edge has been merge.
+  _notify_after_merge_fictitious_edge (Halfedge_handle (he1));
+
+  return;
 }
 
 //---------------------------------------------------------------------------
@@ -2734,7 +4283,7 @@ bool Arrangement_2<Traits,Dcel>::_is_valid(Vertex_const_handle v) const
   // face attached to it.
   if (v->is_isolated())
   {
-    return true;
+    return (true);
   }
 
   // Make sure that the vertex is the target of all its incident halfedges.
@@ -2783,27 +4332,23 @@ bool Arrangement_2<Traits,Dcel>::_is_valid (Halfedge_const_handle he) const
 
   // Check that the end points of the curve associated with the halfedge
   // really equal the source and target vertices of this halfedge.
-  const X_monotone_curve_2& cv = he->curve();
-  const Point_2& cv_min = traits->construct_min_vertex_2_object()(cv);
-  const Point_2& cv_max = traits->construct_max_vertex_2_object()(cv);
-
-  const Point_2& he_s  = he->source()->point();
-  const Point_2& he_t  = he->target()->point();
-
-  typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
-
-  Comparison_result res = traits->compare_xy_2_object() (he_s, he_t);
+  const X_monotone_curve_2&  cv = he->curve();
+  const DVertex             *source = _vertex (he->source());
+  const DVertex             *target = _vertex (he->target());
+  const Comparison_result    res = _compare_vertices_xy (source, target);
 
   if (he->direction() != res)
     return (false);
 
   if (res == SMALLER)
   {
-    return (equal (he_s, cv_min) && equal (he_t, cv_max));
+    return (_are_equal (_vertex (he->source()), cv, 0) &&
+            _are_equal (_vertex (he->target()), cv, 1));
   }
   else if (res == LARGER)
   {
-    return (equal (he_s, cv_max) && equal (he_t, cv_min));
+    return (_are_equal (_vertex (he->source()), cv, 1) &&
+            _are_equal (_vertex (he->target()), cv, 0));
   }
 
   // In that case, the source and target of the halfedge are equal.
@@ -2817,7 +4362,7 @@ template<class Traits, class Dcel>
 bool Arrangement_2<Traits,Dcel>::_is_valid (Face_const_handle f) const
 {   
   // check if all edges of f (on all ccb's) refer to f (as their face)
-  Hole_const_iterator          iccbit;
+  Hole_const_iterator           iccbit;
   Ccb_halfedge_const_circulator ccb_circ;
    
   if (! f->is_unbounded())
@@ -2918,7 +4463,9 @@ bool Arrangement_2<Traits,Dcel>::_are_curves_ordered_cw_around_vertrex
     prev = circ; --prev;
     next = circ; ++next;
 
-    if (!is_between_cw (circ->curve(), prev->curve(), next->curve(),
+    if (!is_between_cw (circ->curve(), (circ->direction() == LARGER),
+                        prev->curve(), (prev->direction() == LARGER),
+                        next->curve(), (next->direction() == LARGER),
                         v->point(), eq1, eq2))
       return (false);
 
