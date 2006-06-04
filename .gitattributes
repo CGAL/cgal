@@ -248,6 +248,9 @@ Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
+Arrangement_2/examples/Arrangement_2/ex_infinite_edge_insertion.C -text
+Arrangement_2/examples/Arrangement_2/ex_infinite_insert.C -text
+Arrangement_2/examples/Arrangement_2/ex_infinite_non_intersecting.C -text
 Benchmark/examples/Benchmark/bbox/Makefile.mak -text
 Benchmark/examples/Benchmark/bbox/bbox.C -text
 Benchmark/examples/Benchmark/leftturn/Makefile.mak -text
