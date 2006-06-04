@@ -22,7 +22,7 @@
 #define CGAL_CH_SELECTED_EXTREME_POINTS_2_C
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
-#include <CGAL/Convex_hull_2/convexity_check_2.h>
+#include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
 CGAL_BEGIN_NAMESPACE

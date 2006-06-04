@@ -21,7 +21,6 @@
 #ifndef CGAL_CONVEXITY_CHECK_2_C
 #define CGAL_CONVEXITY_CHECK_2_C
 
-#include <CGAL/convexity_check_2.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/functional.h>
 #include <algorithm>

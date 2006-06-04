@@ -22,7 +22,7 @@
 #define CGAL_CH_BYKAT_C
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
-#include <CGAL/Convex_hull_2/convexity_check_2.h>
+#include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
 #include <CGAL/Convex_hull_2/ch_assertions.h>
