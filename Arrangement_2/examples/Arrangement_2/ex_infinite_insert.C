@@ -7,7 +7,7 @@
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
+//#include <CGAL/Arr_walk_along_line_point_location.h>
 
 typedef CGAL::Gmpq                                    Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
@@ -19,7 +19,7 @@ typedef Traits_2::Line_2                              Line_2;
 typedef Traits_2::X_monotone_curve_2                  X_monotone_curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef CGAL::Arr_naive_point_location<Arrangement_2> Naive_pl;
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Walk_pl;
+//typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Walk_pl;
 
 int main ()
 {
@@ -35,14 +35,14 @@ int main ()
 
   // Construct the arrangement by inserting the curves incermentally.
   Arrangement_2      arr;
-  //  Naive_pl           naive_pl (arr);
-  Walk_pl            walk_pl (arr);
+  Naive_pl           naive_pl (arr);
+  //Walk_pl            walk_pl (arr);
   int                k;
 
   for (k = 0; k < n_curves; k++)
   {
     std::cout << "Inserting curve no. " << k + 1 << std::endl;
-    insert_x_monotone_curve (arr, curves[k], walk_pl);
+    insert_x_monotone_curve (arr, curves[k], naive_pl);
   }
 
   // Print out the size of the resulting arrangement.
