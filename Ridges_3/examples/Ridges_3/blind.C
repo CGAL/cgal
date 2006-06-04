@@ -9,6 +9,7 @@
 #include <list>
 
 #include "../../include/CGAL/Ridges.h" 
+//#include "../../include/CGAL/Umbilic.h" 
 #include "../../../Jet_fitting_3/include/CGAL/Monge_via_jet_fitting.h" 
 #include "../../../Jet_fitting_3/examples/Jet_fitting_3/LinAlg_lapack.h" 
  
@@ -39,6 +40,13 @@ typedef CGAL::Ridge_approximation < PolyhedralSurf,
   back_insert_iterator< std::vector<Ridge_line*> > > Ridge_approximation;
 extern CGAL::Ridge_type  NONE, BLUE_RIDGE, RED_RIDGE, CREST, BE, BH, BC, RE, RH, RC;
 
+//UMBILICS
+typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
+typedef CGAL::Umbilic_approximation < PolyhedralSurf,
+  back_insert_iterator< std::vector<Umbilic*> > > Umbilic_approximation;
+extern CGAL::Umbilic_type NON_GENERIC, WEDGE, TRISECTOR;
+
+
 //Syntax requirred by Options
 static const char *const optv[] = {
   "?|?",
@@ -49,16 +57,18 @@ static const char *const optv[] = {
   "p:npoints <int>",	//# points
   "t:tagorder <int>",   //order of diff quant to compute ridge type :
                         //  = 3 or 4
+  "u:umb_size  <number>",  //size of umbilic patches (as multiple of 1ring size)
   "v|",//verbose?
   NULL
 }; 
-  
+
 // default fct parameter values and global variables
 unsigned int d_fitting = 3;
 unsigned int d_monge = 3;
 unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
 unsigned int nb_points_to_use = 0;//
 Ridge_approximation::Tag_order tag_order = Ridge_approximation::Tag_3;
+double umb_size = 1;
 bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
@@ -286,6 +296,7 @@ int main(int argc, char *argv[])
 	{cerr << "tag_order must be 3 or 4";exit(0);}
       break;
     case 'v': verbose = true; break;
+    case 'u': umb_size = atof(optarg); break;
     default:
       cerr << "Unknown command line option " << optarg;
       exit(0);
@@ -351,9 +362,9 @@ int main(int argc, char *argv[])
   //  ridge_approximation.compute_all_ridges(P, ii, tag_order);  
 
   //Find BLUE_RIDGE, RED_RIDGE or CREST ridges 
-  ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
-  ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
-  //  ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
+//   ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
+//   ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
+      ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
  
 
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
@@ -370,6 +381,24 @@ int main(int argc, char *argv[])
   // 	(*out_verbose) 	 << std::endl ;
   //       } //END IF 
   
+
+
+  //UMBOLICS
+  Umbilic_approximation umbilic_approximation;
+  std::vector<Umbilic*> umbilics;
+  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  umbilic_approximation.compute(P, umb_it, umb_size);
+  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+    iter_umb_end = umbilics.end();
+  // output
+  std::cout << "nb of umbilics " << umbilics.size() << std::endl;
+  for (;iter_umb!=iter_umb_end;iter_umb++)
+    {
+      std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
+    }
+  
+  
+    
   //cleanup filenames
   delete res4openGL_fname; 
   out_4ogl->close(); 

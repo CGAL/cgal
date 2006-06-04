@@ -24,6 +24,7 @@ void SketchSample::buildDisplayList(GLuint surf) {
   //glMaterialfv is def in the mesh 
   p_mesh->gl_draw_facets(true);
 
+
   //ridges, drawn without light
   glDisable(GL_LIGHTING);
 

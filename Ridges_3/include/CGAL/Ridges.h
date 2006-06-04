@@ -4,7 +4,8 @@
 #include <CGAL/basic.h>
 #include <pair.h>
 #include <list>
-//#include <PolyhedralSurf_rings.h>
+#include "PolyhedralSurf_neighbors.h"
+#include "Umbilic.h"
 
 //note : one has to orient monge normals according to mesh normals to
 //define min/max curv
@@ -42,13 +43,8 @@ public:
 
   //constructor
   //a ridge line begins with a segment in a triangle
-  Ridge_line( Halfedge_handle h1, Halfedge_handle h2, Ridge_type r_type) :
-    m_line_type(r_type), m_strength(0.), m_sharpness(0.)
-    {
-      m_line.push_back(ridge_he(h1, bary_coord(h1)));
-      addback(h2);
-    }
-  
+  Ridge_line( Halfedge_handle h1, Halfedge_handle h2, Ridge_type r_type);
+
   //compute the barycentric coordinate of the xing point (blue or red)
   //for he: p->q  coord is st xing_point = coord*p + (1-coord)*q
   FT bary_coord( Halfedge_handle he); 
@@ -65,15 +61,15 @@ public:
 // IMPLEMENTATION OF Ridge_line members
 //////////////////////////////////////////////////////////////////////////////
 
-// //constructor
-// template < class Poly >
-// Ridge_line<Poly>::
-// Ridge_line( Halfedge_handle h1, Halfedge_handle h2, Ridge_type r_type)
-//   // :  m_line_type(r_type), strength(0.)
-// {
-//   line.push_back(h1);
-//   addback(h2);
-// }
+ //constructor
+ template < class Poly >
+ Ridge_line<Poly>::
+ Ridge_line( Halfedge_handle h1, Halfedge_handle h2, Ridge_type r_type)
+ : m_line_type(r_type), m_strength(0.), m_sharpness(0.)
+    {
+      m_line.push_back(ridge_he(h1, bary_coord(h1)));
+      addback(h2);
+    }
 
 template < class Poly >
 void Ridge_line<Poly>::
@@ -175,7 +171,7 @@ public:
   typedef typename Poly::Facet_handle Facet_handle;
   typedef typename Poly::Facet_iterator Facet_iterator;
   typedef Ridge_line<Poly> Ridge_line;
-  //  typedef T_PolyhedralSurf_rings<Poly> Poly_rings;//for umbilics??
+  //  typedef T_PolyhedralSurf_neighbors<Poly> Poly_neighbors;//for umbilics
   //are ridges tagged as elliptic or hyperbolic using 3rd or 4th order
   //differential quantitities?
   enum Tag_order {Tag_3 = 3, Tag_4 = 4};
@@ -195,7 +191,7 @@ public:
 		      Ridge_type r_type, 
 		      OutputIt ridge_lines_it,
 		      Tag_order ord = Tag_3);
-  void compute_umbilics(Poly &P	);//container, class for umbilics?
+  // void compute_umbilics(Poly &P	);//container, class for umbilics?
 
 protected:
   //is a facet crossed by a BLUE, RED or CREST ridge? if so, return
@@ -220,6 +216,7 @@ protected:
 		    bool& is_crossed, 
 		    Ridge_type color);
  
+  //for the computation with tag_order = 3
   //for a ridge segment [r1,r2] in a triangle (v1,v2,v3), let r = r2 -
   //r1 and normalize, the projection of a point p on the line (r1,r2)
   //is pp=r1+tr, with t=(p-r1)*r then the vector v starting at p is
@@ -511,7 +508,82 @@ b_sign_pointing_to_ridge(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
   if (compt > 0) return 1; else return -1;
 }
 
+//---------------------------------------------------------------------------
+//Umbilic_approximation
+//--------------------------------------------------------------------------
 
+template < class Poly, class OutputIt >
+class Umbilic_approximation
+{
+public:
+  typedef typename Poly::Traits::FT FT;
+  typedef typename Poly::Traits::Vector_3 Vector_3;
+  typedef typename Poly::Vertex_handle Vertex_handle;
+  typedef typename Poly::Halfedge_handle Halfedge_handle;
+  typedef typename Poly::Facet_handle Facet_handle;
+  typedef typename Poly::Facet_iterator Facet_iterator;
+  typedef typename Poly::Vertex_iterator Vertex_iterator;
+  typedef T_PolyhedralSurf_neighbors<Poly> Poly_neighbors;
+  typedef Umbilic<Poly> Umbilic;
+  CGAL::Abs<FT> cgal_abs;
+  static FT neigh_size;//the size of neighbourhood for umbilic
+  //  computation is (neigh_size * OneRingSize)
+ 
+  Umbilic_approximation(){};
+  OutputIt compute(Poly &P, OutputIt it, FT size);
+
+};
+
+template < class Poly, class OutputIt >
+  OutputIt Umbilic_approximation< Poly, OutputIt >::
+compute(Poly &P, OutputIt umbilics_it, FT size)
+{
+  std::vector<Vertex_handle> vces;
+  std::list<Halfedge_handle> contour;
+  double umbilicEstimatorVertex, umbilicEstimatorNeigh;
+  
+  bool is_umbilic = true;
+
+  //MAIN loop on P vertices
+  Vertex_iterator itb = P.vertices_begin(), ite = P.vertices_end();
+  for (;itb != ite; itb++) {
+    Vertex_handle vh = itb;
+    umbilicEstimatorVertex = cgal_abs(vh->k1()-vh->k2());
+    //reset vector, list and bool
+    vces.clear();
+    contour.clear();
+    is_umbilic = true;
+    Poly_neighbors::compute_neighbors(vh, vces, contour, size);
+    
+    
+    // OPTIONAL: avoid umbilics whose contours touch the border
+    typename std::list<Halfedge_handle>::iterator itb_cont = contour.begin(),
+      ite_cont = contour.end();
+    for (; itb_cont != ite_cont; itb_cont++)
+      if ( (*itb_cont)->is_border() ) {is_umbilic = false; continue;}
+    if (is_umbilic == false) continue;
+    
+    //is v an umbilic?
+    //a priori is_umbilic = true, and it switches to false as soon as a 
+    //  neigh vertex has a lower umbilicEstimator value
+    typename std::vector<Vertex_handle>::iterator itbv = vces.begin(),
+      itev = vces.end();
+    assert(*itbv ==  vh);
+    itbv++;
+    for (; itbv != itev; itbv++)
+      {	umbilicEstimatorNeigh = cgal_abs( (*itbv)->k1() - (*itbv)->k2() );
+	if ( umbilicEstimatorNeigh < umbilicEstimatorVertex ) 
+	  {is_umbilic = false; break;}
+      }
+    if (is_umbilic == false) continue;
+    
+    //v is an umbilic, compute the index
+    Umbilic*  cur_umbilic = new Umbilic(vh, contour);
+    cur_umbilic->compute_type();
+    *umbilics_it++ = cur_umbilic;
+  }
+  return umbilics_it;
+}
 
 CGAL_END_NAMESPACE
 

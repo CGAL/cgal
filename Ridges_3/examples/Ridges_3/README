@@ -20,19 +20,22 @@ Usage is : blind  with options
     "p:npoints <int>",   //# points
 			0 means this option is not considered, this is the default
 			n>=1 fixes the nb of points to be used
+  "u:umb_size  <number>",  //size of umbilic patches (as multiple of 1ring size)
     "v|",                // verbose?
  
 Note : if the nb of collected points is less than the required min number of 
    points to make the approxiamtion possible (which is constrained by the deg)
    then the vertex is skipped.
 
-
+ 
  
 
 
  ./blind.exe -f data/ellipe0.003.off -d3 -m3 -a3
 ./blind.exe -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a0 -t4
  ./blind.exe -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -p20 -t4
+
+ ./blind.exe -f data/ellipsoid_u_0.02.off -d4 -m3 -a3 -u2 -t4  ok 4 wedge umbilics
 
 visu with:
 
@@ -45,13 +48,6 @@ sur ellipsoid plus precise:
 si dans demo dir:
 introspect-qt.exe ../../examples/Ridges_3/data/ellipsoid_u_0.02 ../../examples/Ridges_3/data_ellipsoid_u_0.02.4ogl.txt
 
-
-COnstat: --------------- 
-
-sur le polynome 2x2+y2, ok, des segments sont caches par la surface, ameliorer la visu
-
-sur  ellipsoid_u_0.02: ok!
- 
 
 
 ----------------------------Surface de mailleur2 de Steve
