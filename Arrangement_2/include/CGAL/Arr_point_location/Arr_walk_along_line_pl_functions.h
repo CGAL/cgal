@@ -35,11 +35,13 @@ template <class Arrangement>
 Object Arr_walk_along_line_point_location<Arrangement>::locate
     (const Point_2& p) const
 {
-  // Start from the unbounded face, and an invalid halfedge representing
+  // Start from the fictitious face, and an invalid halfedge representing
   // the closest edge to p from above it so far.
+  Arrangement&                        arr = const_cast<Arrangement&>(*p_arr);
+  const Arr_accessor<Arrangement>     arr_access (arr);
   typename Traits_adaptor_2::Equal_2  equal = traits->equal_2_object();
   Hole_const_iterator    holes_it;
-  Face_const_handle      face = _locate_unbounded_face (p, true);
+  Face_const_handle      face = arr_access.fictitious_face();
   Halfedge_const_handle  closest_he;
   bool                   is_in_face;
   bool                   is_on_edge;
@@ -209,15 +211,15 @@ Object Arr_walk_along_line_point_location<Arrangement>::
 _vertical_ray_shoot (const Point_2& p,
                      bool shoot_up) const
 {
-  // RWRW - handle this function !!!
-
-  // Start from the unbounded face, and an invalid halfedge representing
+  // Start from the fictitious face, and an invalid halfedge representing
   // the closest edge to p from above it so far.
+  Arrangement&                        arr = const_cast<Arrangement&>(*p_arr);
+  const Arr_accessor<Arrangement>     arr_access (arr);
   typename Traits_adaptor_2::Is_vertical_2        is_vertical =
                                             traits->is_vertical_2_object();
 
-  Hole_const_iterator   holes_it;
-  Face_const_handle      face = p_arr->unbounded_face();
+  Hole_const_iterator    holes_it;
+  Face_const_handle      face = arr_access.fictitious_face();
   Halfedge_const_handle  closest_he;
   bool                   is_in_face;
   bool                   is_on_edge;
@@ -381,10 +383,17 @@ _vertical_ray_shoot (const Point_2& p,
 
   // If we reached here, closest_he is the closest edge from above (below)
   // the query point.
-  if (closest_he == invalid_he)
+  if (closest_he->is_fictitious())
   {
-    // We did not encounter any edge above (below) the query point:
-    Face_const_handle  uf = p_arr->unbounded_face();
+    // If we have a fictitious edge, the ray we shoot is completely contained
+    // in an unbounded face. This face is incident to closest_he:
+    if ((shoot_up && closest_he->direction() == SMALLER) ||
+        (!shoot_up && closest_he->direction() == LARGER))
+      closest_he = closest_he->twin();
+
+    Face_const_handle  uf = closest_he->face();
+
+    CGAL_assertion (! uf->is_fictitious());
     return (CGAL::make_object (uf));
   }
 
@@ -392,13 +401,11 @@ _vertical_ray_shoot (const Point_2& p,
   // query point, and if so, return this vertex.
   if (! is_vertical (closest_he->curve()))
   {
-    if (traits->compare_x_2_object() (closest_he->source()->point(),
-                                      p) == EQUAL)
+    if (arr_access.compare_x (p, closest_he->source()) == EQUAL)
       return (CGAL::make_object (closest_he->source()));
 
 
-    if (traits->compare_x_2_object() (closest_he->target()->point(),
-                                      p) == EQUAL)
+    if (arr_access.compare_x (p, closest_he->target()) == EQUAL)
       return (CGAL::make_object (closest_he->target()));
   }
   else
@@ -420,64 +427,6 @@ _vertical_ray_shoot (const Point_2& p,
 
   // The interior of the edge is closest to the query point:
   return (CGAL::make_object (closest_he));
-}
-
-//-----------------------------------------------------------------------------
-// Find unbounded face that contains a vertical ray emanating from the given
-// point.
-//
-template <class Arrangement>
-typename Arr_walk_along_line_point_location<Arrangement>::Face_const_handle
- Arr_walk_along_line_point_location<Arrangement>::_locate_unbounded_face
-    (const Point_2& p,
-     bool shoot_up) const
-{
-  const CGAL::Sign       fict_edge_sign = (shoot_up ? POSITIVE : NEGATIVE);
-
-  // Traverse the boundary of the single hole in the fictitious face and
-  // locate a horizontal fictitious edge that contains p in its x-range.
-  Arrangement&                      arr = const_cast<Arrangement&>(*p_arr);
-  const Arr_accessor<Arrangement>   arr_access (arr);
-  Face_const_handle                 fict_face = arr_access.fictitious_face();
-  Ccb_halfedge_const_circulator     first = *(fict_face->holes_begin());
-  Ccb_halfedge_const_circulator     curr = first;
-  Comparison_result                 res_s, res_t;
-  bool                              in_x_range;
-
-  do
-  {
-    // If this is a horizontal edge at y = +oo (if we shoot up) or at y = -oo
-    // (if we shoot down), check if p lies in its x-range.
-    if ((curr->source()->infinite_in_y() == fict_edge_sign) &&
-        (curr->target()->infinite_in_y() == fict_edge_sign))
-    {
-      res_s = arr_access.compare_xy (p, curr->source());
-
-      if (res_s == EQUAL)
-        in_x_range = true;       // RWRW ???
-      else if (res_s == curr->direction())
-        in_x_range = false;
-      else
-      {
-        res_t = arr_access.compare_x (p, curr->target());
-
-        if (res_t == EQUAL) 
-          in_x_range = true;              // RWRW ???
-        in_x_range = (res_s != res_t);
-      }
-
-      if (in_x_range)
-        // Return the incident face of the twin halfedge, which is a valid
-        // unbounded face.
-        return (curr->twin()->face());
-    }
-
-    ++curr;
-  } while (curr != first);
-    
-  // We should never reach here:
-  CGAL_assertion (false);
-  return (fict_face);
 }
 
 //-----------------------------------------------------------------------------
@@ -752,9 +701,16 @@ _is_in_connected_component (const Point_2& p,
           {
             // In case the two curves do not have a common endpoint, but
             // overlap in their x-range (both contain p), just compare their
-            // positions:
-            y_res = compare_y_position (closest_he->curve(),
-                                        curr->curve());
+            // positions. Note that in this case one of the edges may be
+            // fictitious, so we preform the comparsion symbolically in this
+            // case.
+            if (closest_he->is_fictitious())
+              y_res = curve_above_under;
+            else if (curr->is_fictitious())
+              y_res = point_above_under;
+            else
+              y_res = compare_y_position (closest_he->curve(),
+                                          curr->curve());
           }
 
           // If the current curve is closer to p than the closest curve found
