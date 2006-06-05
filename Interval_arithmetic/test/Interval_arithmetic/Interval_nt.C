@@ -451,7 +451,7 @@ int main()
   std::cout << "Stress-testing the class Interval_nt<>.\n";
   bool ok = test<CGAL::Interval_nt<> >();
   std::cout << "\nStress-testing the class Interval_nt_advanced.\n";
-  ok = ok && test<CGAL::Interval_nt_advanced>();
+  ok &= test<CGAL::Interval_nt_advanced>();
 
   return !ok;
 }

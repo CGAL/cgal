@@ -410,19 +410,29 @@ private:
 template <>
 struct Protect_FPU_rounding<false>
 {
-  Protect_FPU_rounding()
+  Protect_FPU_rounding() {}
+  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_UPWARD*/) {}
+};
+
+
+// A wrapper on top of the Protect_FPU_rounding to add "expensive" checks
+// of the rounding mode.  It is used internally, to benefit from the
+// protector declarations to add checks in non-protected mode.
+
+template <bool Protected = true>
+struct Checked_protect_FPU_rounding
+  : Protect_FPU_rounding<Protected>
+{
+  Checked_protect_FPU_rounding()
   {
-    //    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
   }
 
-  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_UPWARD*/)
+  Checked_protect_FPU_rounding(FPU_CW_t r)
+    : Protect_FPU_rounding<Protected>(r)
   {
-    //CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
   }
-
-  ~Protect_FPU_rounding() {}
-  // just to shut up a warning, but it has a performance issue with GCC 2.95,
-  // so I should disable it for the moment.  Use __attribute__((unused)) ?
 };
 
 CGAL_END_NAMESPACE
