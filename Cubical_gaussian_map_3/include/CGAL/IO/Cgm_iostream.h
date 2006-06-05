@@ -85,7 +85,7 @@ inline std::istream & operator>>(std::istream & is,
                                  Cubical_gaussian_map_3<Kernel,T_Dcel> & cgm)
 {
   typedef Cubical_gaussian_map_3<Kernel,T_Dcel> Cgm;
-  for (unsigned int i = 0; i < Cubical_gaussian_map_3::NUM_FACES; ++i) {
+  for (unsigned int i = 0; i < Cgm::NUM_FACES; ++i) {
     const typename Cgm::Arrangement & arr = cgm.get_arrangement(i);
     arr >> is;
   }

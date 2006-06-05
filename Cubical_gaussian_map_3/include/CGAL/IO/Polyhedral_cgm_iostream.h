@@ -61,7 +61,8 @@ template <class Kernel,
 inline std::istream & operator>>(std::istream & is,
                                  Polyhedral_cgm<Kernel,T_Dcel> & cgm)
 {
-  static_cast<Cubical_gaussian_map_3<Kernel,T_Dcel>(cgm) >> is;
+  const Cubical_gaussian_map_3<Kernel,T_Dcel> * tmp = &cgm;
+  *tmp >> is;
   return is;
 }
 

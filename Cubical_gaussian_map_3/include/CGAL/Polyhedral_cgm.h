@@ -72,7 +72,12 @@ class Polyhedral_cgm_initializer :
 private:
   // Base type:
   typedef Cgm_initializer<typename PolyhedralCgm::Base> Cgm_initializer;
-
+  typedef typename Cgm_initializer::FT                  FT;
+  typedef typename Cgm_initializer::Vector_3            Vector_3;
+  typedef typename Cgm_initializer::Point_3             Point_3;
+  typedef typename Cgm_initializer::Arr                 Arr;
+  typedef typename Cgm_initializer::Projected_normal    Projected_normal;
+  
   // Arrangement types:
   typedef typename Cgm_initializer::Arr_vertex_handle   Arr_vertex_handle;
   typedef typename Cgm_initializer::Arr_halfedge_handle Arr_halfedge_handle;
@@ -118,11 +123,10 @@ private:
     }
   };
 
-  /*! Add a point */
-  template <class PointIterator_3>
+  /*! A point adder */
+  template <class HDS, class PointIterator_3>
   class Point_adder {
   private:
-    typedef typename Polyhedron::HalfedgeDS                     HDS;
     typedef Polyhedron_incremental_builder_3<HDS>               Builder;
     Builder & m_B;
 
@@ -141,10 +145,9 @@ private:
     }
   };
 
-  /*! Specialized add a point */
-  template <> class Point_adder<Point_3 *> {
+  /*! Specialized point adder */
+  template <class HDS> class Point_adder<HDS, Point_3 *> {
   private:
-    typedef typename Polyhedron::HalfedgeDS                     HDS;
     typedef Polyhedron_incremental_builder_3<HDS>               Builder;
     Builder & m_B;
 
@@ -156,12 +159,9 @@ private:
     Point_adder(Builder & B) : m_B(B) {}
       
     Polyhedron_vertex_handle operator()(Point_3 * pi)
-    {
-      std::cout << "Add: " << *pi << std::endl;
-      return m_B.add_vertex(*pi);
-    }
+    { return m_B.add_vertex(*pi); }
   };
-    
+  
   /*! */
   template <class PointIterator_3>
   class Build_surface : public Modifier_base<typename Polyhedron::HalfedgeDS>
@@ -240,7 +240,7 @@ private:
       B.begin_surface(m_num_points, m_num_facets);
       // Add the points:
       unsigned int counter = 0;
-      Point_adder<PointIterator_3> add(B);
+      Point_adder<HDS, PointIterator_3> add(B);
       for (PointIterator_3 pi = m_points_begin; pi != m_points_end; ++pi) {
         Polyhedron_vertex_handle vh = add(pi);
         if (counter == m_marked_vertex_index) vh->set_marked(true);
@@ -486,6 +486,10 @@ public:
   /*! Initialize a cubical Gaussian map */
   void operator()(Polyhedron & polyhedron, Visitor * visitor = NULL)
   {
+#if 0
+    std::copy(polyhedron.points_begin(), polyhedron.points_end(),
+              std::ostream_iterator<Point_3>(std::cout, "\n"));
+#endif
     m_visitor = visitor;
     compute_projections(polyhedron);
   }
@@ -665,8 +669,7 @@ private:
   
 public:
   /*! Parameter-less Constructor */
-  Polyhedral_cgm() :
-    m_dirty_center(true)
+  Polyhedral_cgm() : m_dirty_center(true)
   {
     // The m_corner_vertices are set to NULL by their default constructor
   }
@@ -725,9 +728,7 @@ public:
    * \param cgm1 the first Polyhedral_cgm object
    * \param cgm2 the second Polyhedral_cgm object
    */
-  template <>  
-  void minkowski_sum<Polyhedral_cgm *>(Polyhedral_cgm * cgm1,
-                                       Polyhedral_cgm * cgm2)
+  void minkowski_sum(Polyhedral_cgm * cgm1, Polyhedral_cgm * cgm2)
   {
     // Compute the overlays:
     overlay(cgm1, cgm2);
@@ -759,7 +760,7 @@ public:
     
     // print_stat();
   }
-
+  
   /*! Compute the overlay of the respective 6 face pairs of 2 Polyhedral_cgm
    * objects.
    * \param cgm1 the first Polyhedral_cgm object
