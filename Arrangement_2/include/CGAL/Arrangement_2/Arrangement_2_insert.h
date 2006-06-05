@@ -592,7 +592,6 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   // take place.
   typedef Arrangement_2<Traits,Dcel>                     Arrangement_2;
 
-
   Arr_accessor<Arrangement_2>                      arr_access (arr);
 
   arr_access.notify_before_global_change();
@@ -602,9 +601,9 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   bool                                   is_removed[2];
 
   v_ends[0] = e->source();
-  is_removed[0] = (v_ends[0]->degree() == 1);
+  is_removed[0] = (v_ends[0]->has_null_point() || v_ends[0]->degree() == 1);
   v_ends[1] = e->target();
-  is_removed[1] = (v_ends[1]->degree() == 1);
+  is_removed[1] = (v_ends[1]->has_null_point() || v_ends[1]->degree() == 1);
 
   // Remove the edge from the arrangement.
   typename Arrangement_2::Face_handle    face = arr.remove_edge (e);
@@ -1030,10 +1029,10 @@ bool is_valid (const Arrangement_2<Traits_,Dcel_>& arr)
     }
     else
     {
-      // Hit nothing (the unbounded face is returned).
+      // Hit nothing (an unbounded face is returned).
       assign_ok = CGAL::assign(in_face, obj);
 
-      CGAL_assertion (assign_ok && in_face == arr.unbounded_face());
+      CGAL_assertion (assign_ok && in_face->is_unbounded());
 
       if (! assign_ok)
         return (false);

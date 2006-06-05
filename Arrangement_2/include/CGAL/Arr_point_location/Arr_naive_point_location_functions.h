@@ -227,9 +227,9 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
           // Note that in this case one of the edges may be fictitious, so we
           // preform the comparsion symbolically in this case.
           if (closest_edge->is_fictitious())
-            y_res = LARGER;
+            y_res = curve_above_under;
           else if (eit->is_fictitious())
-            y_res = SMALLER;
+            y_res = point_above_under;
           else
             y_res = compare_y_position (closest_edge->curve(),
                                         eit->curve());

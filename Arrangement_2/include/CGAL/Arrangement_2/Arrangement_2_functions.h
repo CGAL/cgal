@@ -396,7 +396,8 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
   }
   else
   {
-    // Both vertices are at infinity. Note that we create a new unbounded face.
+    // Both vertices are at infinity. Note that we may create a new unbounded
+    // face.
     bool        new_face_created = false;
 
     new_he = _insert_at_vertices (cv,
@@ -405,9 +406,12 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
                                   SMALLER,
                                   new_face_created);
   
-    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-    new_he->face()->set_unbounded(true);
-    _relocate_in_new_face (new_he);
+    if (new_face_created)
+    {
+      CGAL_assertion (! new_he->is_on_hole());
+      new_he->face()->set_unbounded(true);
+      _relocate_in_new_face (new_he);
+    }
   }
 
   // Return a handle to the new halfedge directed from left to right.
@@ -483,7 +487,8 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
       fict_prev2 = _split_fictitious_edge (fict_prev2,
                                            inf_x2, inf_y2);
 
-      // As both end vertices are at infinity, we create a new unbounded face.
+      // As both end vertices are at infinity, we may create a new unbounded
+      // face.
       bool        new_face_created = false;
 
       new_he = _insert_at_vertices (cv,
@@ -492,9 +497,12 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
                                     SMALLER,
                                     new_face_created);
   
-      CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-      new_he->face()->set_unbounded(true);
-      _relocate_in_new_face (new_he);  
+      if (new_face_created)
+      {
+        CGAL_assertion (! new_he->is_on_hole());
+        new_he->face()->set_unbounded(true);
+        _relocate_in_new_face (new_he);
+      }
     }
     else
     {
@@ -678,7 +686,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   }
   else
   {
-    // v2 lies at infinity. Note that we create a new unbounded face.
+    // v2 lies at infinity. Note that we may create a new unbounded face.
     bool        new_face_created = false;
 
     new_he = _insert_at_vertices (cv,
@@ -687,9 +695,12 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                   SMALLER,
                                   new_face_created);
   
-    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-    new_he->face()->set_unbounded(true);
-    _relocate_in_new_face (new_he);
+    if (new_face_created)
+    {
+      CGAL_assertion (! new_he->is_on_hole());
+      new_he->face()->set_unbounded(true);
+      _relocate_in_new_face (new_he);
+    }
   }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
@@ -763,7 +774,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
   }
   else
   {
-    // v2 lies at infinity. Note that we create a new unbounded face.
+    // v2 lies at infinity. Note that we may create a new unbounded face.
     bool        new_face_created = false;
 
     new_he = _insert_at_vertices (cv,
@@ -772,9 +783,12 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                   SMALLER,
                                   new_face_created);
   
-    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-    new_he->face()->set_unbounded(true);
-    _relocate_in_new_face (new_he);
+    if (new_face_created)
+    {
+      CGAL_assertion (! new_he->is_on_hole());
+      new_he->face()->set_unbounded(true);
+      _relocate_in_new_face (new_he);
+    }
   }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
@@ -829,7 +843,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                        inf_x2, inf_y2);
 
   // Insert the curve and create an edge connecting the the two vertices.
-  // Note that we create a new unbounded face.
+  // Note that we may create a new unbounded face.
   bool        new_face_created = false;
   DHalfedge  *new_he = _insert_at_vertices (cv,
                                             prev1, 
@@ -837,9 +851,12 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                             SMALLER,
                                             new_face_created);
   
-  CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-  new_he->face()->set_unbounded(true);
-  _relocate_in_new_face (new_he);
+  if (new_face_created)
+  {
+    CGAL_assertion (! new_he->is_on_hole());
+    new_he->face()->set_unbounded(true);
+    _relocate_in_new_face (new_he);
+  }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
   return (Halfedge_handle (new_he));
@@ -968,7 +985,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   }
   else
   {
-    // v1 lies at infinity. Note that we create a new unbounded face.
+    // v1 lies at infinity. Note that we may create a new unbounded face.
     bool        new_face_created = false;
 
     new_he = _insert_at_vertices (cv,
@@ -977,9 +994,12 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                   LARGER,
                                   new_face_created);
   
-    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-    new_he->face()->set_unbounded(true);
-    _relocate_in_new_face (new_he);
+    if (new_face_created)
+    {
+      CGAL_assertion (! new_he->is_on_hole());
+      new_he->face()->set_unbounded(true);
+      _relocate_in_new_face (new_he);
+    }
   }
 
   // Return a handle to the halfedge directed toward the new vertex v1.
@@ -1055,7 +1075,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   }
   else
   {
-    // v1 lies at infinity. Note that we create a new unbounded face.
+    // v1 lies at infinity. Note that we may create a new unbounded face.
     bool        new_face_created = false;
 
     new_he = _insert_at_vertices (cv,
@@ -1064,9 +1084,12 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                   LARGER,
                                   new_face_created);
   
-    CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-    new_he->face()->set_unbounded(true);
-    _relocate_in_new_face (new_he);
+    if (new_face_created)
+    {
+      CGAL_assertion (! new_he->is_on_hole());
+      new_he->face()->set_unbounded(true);
+      _relocate_in_new_face (new_he);
+    }
   }
 
   // Return a handle to the halfedge directed toward the new vertex v1.
@@ -1121,7 +1144,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                        inf_x1, inf_y1);
 
   // Insert the curve and create an edge connecting the the two vertices.
-  // Note that we create a new unbounded face.
+  // Note that we may create a new unbounded face.
   bool        new_face_created = false;
   DHalfedge  *new_he = _insert_at_vertices (cv,
                                             prev2, 
@@ -1129,9 +1152,12 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                             LARGER,
                                             new_face_created);
   
-  CGAL_assertion (new_face_created && ! new_he->is_on_hole());
-  new_he->face()->set_unbounded(true);
-  _relocate_in_new_face (new_he);
+  if (new_face_created)
+  {
+    CGAL_assertion (! new_he->is_on_hole());
+    new_he->face()->set_unbounded(true);
+    _relocate_in_new_face (new_he);
+  }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
   return (Halfedge_handle (new_he));
