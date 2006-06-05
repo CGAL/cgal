@@ -49,7 +49,7 @@ public:
   Active_objects_listener_helper(typename Moving_object_table_listener::Notifier_handle h,
 				 KDS *kds):
     Moving_object_table_listener(h), t_(kds) {
-    for (typename Moving_object_table_listener::Notifier::Keys_iterator it= P::notifier()->keys_begin();
+    for (typename Moving_object_table_listener::Notifier::Key_iterator it= P::notifier()->keys_begin();
 	 it != P::notifier()->keys_end(); ++it) {
       t_->insert(*it);
     }

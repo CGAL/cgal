@@ -214,7 +214,7 @@ void audit() const
 	if (!wrote_objects_) {
 	  wrote_objects_=true;
 	  std::cerr << "Objects are: ";
-	  for (typename Traits::Active_points_1_table::Keys_iterator kit= mot_listener_.notifier()->keys_begin();
+	  for (typename Traits::Active_points_1_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
 	       kit != mot_listener_.notifier()->keys_end(); ++kit){
 	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
 	  }

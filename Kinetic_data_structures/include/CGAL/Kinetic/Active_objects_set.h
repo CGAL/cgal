@@ -18,8 +18,8 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KINETIC_NOTIFYING_TABLE_BASE_3_H
-#define CGAL_KINETIC_NOTIFYING_TABLE_BASE_3_H
+#ifndef CGAL_KINETIC_NOTIFYING_SET_BASE_3_H
+#define CGAL_KINETIC_NOTIFYING_SET_BASE_3_H
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Tools/Label.h>
 #include <CGAL/Kinetic/Ref_counted.h>
@@ -30,9 +30,8 @@
 #include <map>
 #include <vector>
 #include <sstream>
-//#include <boost/iterator/filter_iterator.hpp>
-#include <CGAL/iterator.h>
 #include <boost/iterator/transform_iterator.hpp>
+#include <utility>
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
@@ -56,17 +55,13 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
   to remove all reference counts for the table or to call clear().
 */
 template <class Value_t >
-class Active_objects_vector:
-  public Ref_counted<Active_objects_vector<Value_t > >
+class Active_objects_set:
+  public Ref_counted<Active_objects_set<Value_t > >
 {
-public:
-  typedef typename CGAL::Label<Value_t> Key;
-  typedef Value_t Data;
 protected:
   //! Convenience
-  typedef Active_objects_vector<Value_t> This;
-  typedef std::pair<Key, Value_t> Storage_item;
-  typedef std::vector<Storage_item > Storage;
+  typedef Active_objects_set<Value_t> This;
+  typedef std::map<int, Value_t> Storage;
   struct Listener_core
   {
     typedef enum {IS_EDITING}
@@ -74,6 +69,11 @@ protected:
     typedef typename This::Handle Notifier_handle;
   };
 public:
+  //! How to refer to points
+  typedef typename CGAL::Label<Value_t> Key;
+  //! the type of the objects in the table
+  typedef Value_t Data;
+
   //! The interface to implement if you want to receive notifications.
   typedef Multi_listener<Listener_core> Listener;
 
@@ -83,19 +83,18 @@ protected:
 public:
 
   //! default constructor
-  Active_objects_vector():editing_(false), num_valid_(false){}
+  Active_objects_set():editing_(false), next_key_(0){}
 
-  ~Active_objects_vector(){CGAL_precondition(subscribers_.empty());}
+  ~Active_objects_set(){CGAL_precondition(subscribers_.empty());}
 
   //! access a point
   const Data &operator[](Key key) const
   {
-    CGAL_precondition(key.is_valid());
-    CGAL_precondition(storage_[key.to_index()].first == key);
-    CGAL_precondition(static_cast<unsigned int>(key.to_index()) < storage_.size());
+    CGAL_expensive_precondition(key.is_valid());
+    CGAL_precondition(storage_.find(key.to_index()) != storage_.end());
     //if (static_cast<unsigned int>(key.index()) >= storage_.size()) return null_object();
     /*else*/
-    return storage_[key.to_index()].second;
+    return storage_.find(key.to_index())->second;
   }
 
   //! non operator based method to access a point.
@@ -138,15 +137,10 @@ public:
     \todo check continuity.
   */
   void set(Key key, const Data &new_value) {
-    CGAL_precondition(key.is_valid());
-    CGAL_precondition(storage_[key.to_index()].first == key);
     //CGAL_precondition(editing_);
-        //CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
-    if (storage_.size() <= static_cast<unsigned int>(key.to_index())) {
-      storage_.resize(key.to_index()+1);
-    }
-    storage_[key.to_index()].first=key;
-    storage_[key.to_index()].second=new_value;
+    CGAL_precondition(key.is_valid());
+    //CGAL_precondition(static_cast<unsigned int>(key.index()) < storage_.size());
+    storage_[key.to_index()]=new_value;
     changed_objects_.push_back(key);
     if (!editing_) finish_editing();
   }
@@ -157,11 +151,12 @@ public:
   */
   Key insert(const Data &ob) {
     //CGAL_precondition(editing_);
-    storage_.push_back(Storage_item(Key(storage_.size()), ob));
-    new_objects_.push_back(storage_.back().first);
+    Key ret(next_key_); ++next_key_;
+    new_objects_.push_back(ret);
+    storage_[ret.to_index()]=ob;
 
     if (!editing_) finish_editing();
-    return storage_.back().first;
+    return ret;
   }
 
   //! Delete an object from the table.
@@ -174,9 +169,8 @@ public:
     See Data_table::set_object() for an explainating of how the editing modes are used.
   */
   void erase(Key key) {
-    CGAL_precondition(key.is_valid());
-    CGAL_precondition(storage_[key.to_index()].first == key);
     //CGAL_precondition(editing_);
+    CGAL_precondition(key.is_valid());
     CGAL_precondition(static_cast<unsigned int>(key.to_index()) < storage_.size());
     CGAL_expensive_precondition_code(for (Inserted_iterator dit= inserted_begin(); dit != inserted_end(); ++dit))
       {CGAL_expensive_precondition(*dit != key);}
@@ -195,34 +189,25 @@ public:
 
   struct Get_key {
     typedef Key result_type;
-    Key operator()(const Storage_item &o) const {
-      return o.first;
-    }
-  };
-
-  struct Is_ok {
-    typedef bool result_type;
-    //typedef const Storage_item& argument_type;
-    template <class T>
-    bool operator()(const T& p) const {
-      return !p->first.is_valid();
+    typedef typename Storage::value_type argument_type;
+    Key operator()(const typename Storage::value_type k) const {
+      return Key(k.first);
     }
   };
 
   //! An iterator to iterate through all the keys
-  typedef CGAL::Filter_iterator<typename Storage::const_iterator, Is_ok>  Fiterator;
-  typedef boost::transform_iterator<Get_key,  Fiterator> Key_iterator;
-  
+  typedef typename boost::transform_iterator<Get_key,
+					     typename Storage::const_iterator> Key_iterator;
 
   //! Begin iterating through the keys
   Key_iterator keys_begin() const
   {
-    return Key_iterator(Fiterator(storage_.end(), Is_ok(), storage_.begin()), Get_key());
+    return Key_iterator(storage_.begin());
   }
   //! End iterating through the keys.
   Key_iterator keys_end() const
   {
-    return Key_iterator(Fiterator(storage_.end(),  Is_ok()), Get_key());
+    return Key_iterator(storage_.end());
   }
 
   //! An iterator for iterating through changed objects.
@@ -276,12 +261,12 @@ public:
   */
   unsigned int size() const
   {
-    return num_valid_;
+    return storage_.size();
   }
 
   std::ostream &write(std::ostream &out) const {
     for (unsigned int i=0; i< storage_.size(); ++i){
-      out << storage_[i].second << std::endl;
+      out << storage_[i] << std::endl;
     }
     return out;
   }
@@ -336,12 +321,8 @@ private:
       (*it)->new_notification(Listener::IS_EDITING);
     }
 
-    num_valid_+= new_objects_.size();
-    num_valid_-= deleted_objects_.size();
-    CGAL_assertion(num_valid_ >=0);
     for (Erased_iterator it= erased_begin(); it != erased_end(); ++it) {
-      storage_[it->to_index()].second=Data();
-      storage_[it->to_index()].first=Key();
+      storage_.erase(it->to_index());
     }
 
     changed_objects_.clear();
@@ -353,14 +334,12 @@ private:
 protected:
 
   Storage storage_;
-  std::vector<bool> valid_;
   mutable Subscribers subscribers_;
   std::vector<Key> changed_objects_;
   std::vector<Key> deleted_objects_;
   std::vector<Key> new_objects_;
   bool editing_;
-  int num_valid_;
-
+  unsigned int next_key_;
   /*static const Data &null_object() {
     static Data o;
     return o;
@@ -368,13 +347,13 @@ protected:
 };
 
 template <class V >
-inline std::ostream &operator<<(std::ostream &out, const Active_objects_vector<V> &v) {
+inline std::ostream &operator<<(std::ostream &out, const Active_objects_set<V> &v) {
   return v.write(out);
 }
 
 
 template <class V >
-inline std::istream &operator>>(std::istream &in, Active_objects_vector<V> &v) {
+inline std::istream &operator>>(std::istream &in, Active_objects_set<V> &v) {
   return v.read(in);
 }
 

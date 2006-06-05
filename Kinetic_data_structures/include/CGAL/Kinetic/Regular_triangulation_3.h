@@ -406,7 +406,7 @@ protected:
     audit_structure();
     Delaunay dt(kdel_.triangulation().geom_traits());
     std::vector<typename Delaunay::Vertex_handle> nvhs(kdel_.moving_object_table()->size());
-    for (typename MPT::Keys_iterator it= kdel_.moving_object_table()->keys_begin();
+    for (typename MPT::Key_iterator it= kdel_.moving_object_table()->keys_begin();
 	 it != kdel_.moving_object_table()->keys_end(); ++it) {
       nvhs[(*it).to_index()] = dt.insert(*it);
     }
@@ -710,7 +710,7 @@ public:
 	    vit->info()= make_certificate(vit);
 	  }
 	}
-	for (typename Base_traits::Active_points_3_table::Keys_iterator kit= kdel_.moving_object_table()->keys_begin();
+	for (typename Base_traits::Active_points_3_table::Key_iterator kit= kdel_.moving_object_table()->keys_begin();
 	     kit != kdel_.moving_object_table()->keys_end(); ++kit) {
 	  typename Triangulation::Vertex_handle vh= kdel_.vertex_handle(*kit);
 	  if (vh == NULL) {
