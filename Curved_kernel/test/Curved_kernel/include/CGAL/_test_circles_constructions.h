@@ -317,35 +317,6 @@ void _test_circle_construct(CK ck)
   assert(square(the_pair.first.y() - RT(center_circ_intersection_2_1_y))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
 
-
-    std::cout << "arcos:" << std::endl;
-
-  std::cout << "arco1:" << std::endl;  
-  std::cout << "squared_radius = " << 
-  to_double(circ_arc_overlap_upper_part.squared_radius()) << std::endl <<
-  "center = (" << 
-  to_double(circ_arc_overlap_upper_part.center().x()) << ", " <<
-  to_double(circ_arc_overlap_upper_part.center().y()) << ")"  << std::endl;
-  std::cout << "source = (" << 
-  to_double(circ_arc_overlap_upper_part.source().x()) << ", " <<
-  to_double(circ_arc_overlap_upper_part.source().y()) << ")"  << std::endl;
-  std::cout << "target = (" << 
-  to_double(circ_arc_overlap_upper_part.target().x()) << ", " <<
-  to_double(circ_arc_overlap_upper_part.target().y()) << ")"  << std::endl;
-
-  std::cout << "arco2:" << std::endl;  
-  std::cout << "squared_radius = " << 
-  to_double(circ_arc_overlap_lower_part.squared_radius()) << std::endl <<
-  "center = (" << 
-  to_double(circ_arc_overlap_lower_part.center().x()) << ", " <<
-  to_double(circ_arc_overlap_lower_part.center().y()) << ")"  << std::endl;
-  std::cout << "source = (" << 
-  to_double(circ_arc_overlap_lower_part.source().x()) << ", " <<
-  to_double(circ_arc_overlap_lower_part.source().y()) << ")"  << std::endl;
-  std::cout << "target = (" << 
-  to_double(circ_arc_overlap_lower_part.target().x()) << ", " <<
-  to_double(circ_arc_overlap_lower_part.target().y()) << ")"  << std::endl;
-
   std::cout << "Intersection : overlap in two points: " <<
     "lower_part_arc , upper_part_arc" << std::endl;
   std::vector< CGAL::Object > 
@@ -568,34 +539,6 @@ void _test_circle_construct(CK ck)
  			   circ_arc_no_x_monotone_4,
  			   std::back_inserter(vector_for_intersection_no_x_monotone_2_3));
   std::cout << vector_for_intersection_no_x_monotone_2_3.size() << std::endl;
-
-    std::cout << "arcos:" << std::endl;
-
-  std::cout << "arco1:" << std::endl;  
-  std::cout << "squared_radius = " << 
-  to_double(circ_arc_no_x_monotone_1.squared_radius()) << std::endl <<
-  "center = (" << 
-  to_double(circ_arc_no_x_monotone_1.center().x()) << ", " <<
-  to_double(circ_arc_no_x_monotone_1.center().y()) << ")"  << std::endl;
-  std::cout << "source = (" << 
-  to_double(circ_arc_no_x_monotone_1.source().x()) << ", " <<
-  to_double(circ_arc_no_x_monotone_1.source().y()) << ")"  << std::endl;
-  std::cout << "target = (" << 
-  to_double(circ_arc_no_x_monotone_1.target().x()) << ", " <<
-  to_double(circ_arc_no_x_monotone_1.target().y()) << ")"  << std::endl;
-
-  std::cout << "arco2:" << std::endl;  
-  std::cout << "squared_radius = " << 
-  to_double(circ_arc_no_x_monotone_4.squared_radius()) << std::endl <<
-  "center = (" << 
-  to_double(circ_arc_no_x_monotone_4.center().x()) << ", " <<
-  to_double(circ_arc_no_x_monotone_4.center().y()) << ")"  << std::endl;
-  std::cout << "source = (" << 
-  to_double(circ_arc_no_x_monotone_4.source().x()) << ", " <<
-  to_double(circ_arc_no_x_monotone_4.source().y()) << ")"  << std::endl;
-  std::cout << "target = (" << 
-  to_double(circ_arc_no_x_monotone_4.target().x()) << ", " <<
-  to_double(circ_arc_no_x_monotone_4.target().y()) << ")"  << std::endl;  
 
   std::cout << vector_for_intersection_no_x_monotone_2_3.size() << std::endl;
 
