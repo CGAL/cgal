@@ -296,10 +296,16 @@ namespace CircularFunctors {
     typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Root_of_2                Root_of_2;
     typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
-    // We can make the comparison below clevered
-    if ((a1.supporting_line() == a2.supporting_line())
-	|| (a1.supporting_line() == a2.supporting_line().opposite())) {
-      if(compare_xy(a1.left(),a2.left()) < 0){
+    const typename CK::RT &a1c = a1.supporting_line().a(); 
+    const typename CK::RT &b1c = a1.supporting_line().b();
+    const typename CK::RT &c1c = a1.supporting_line().c();
+    const typename CK::RT &a2c = a2.supporting_line().a(); 
+    const typename CK::RT &b2c = a2.supporting_line().b();
+    const typename CK::RT &c2c = a2.supporting_line().c();
+    if((a1c*b2c == a2c*b1c) &&
+       (a1c*c2c == a2c*c1c) &&
+       (b1c*c2c == b2c*c1c)) {
+      if(compare_xy(a1.left(),a2.left()) < 0) {
 	int comparison = compare_xy(a2.left(),a1.right());
 	if(comparison < 0){
 	  if(compare_xy(a1.right(),a2.right()) <= 0){
