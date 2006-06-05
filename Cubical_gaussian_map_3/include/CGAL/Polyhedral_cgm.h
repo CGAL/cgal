@@ -358,18 +358,6 @@ private:
       }
       ++counter;
     }
-
-#if 0
-    if (!polyhedron.normalized_border_is_valid())
-      polyhedron.normalize_border();
-#else
-    polyhedron.normalize_border();
-#endif
-
-#if 1
-    std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
-                   polyhedron.planes_begin(), Normal_vector());
-#endif
   }
 
   /*! Update the point of the vertex-less cubic faces */
@@ -490,7 +478,20 @@ public:
     std::copy(polyhedron.points_begin(), polyhedron.points_end(),
               std::ostream_iterator<Point_3>(std::cout, "\n"));
 #endif
+
     m_visitor = visitor;
+
+#if 0
+    if (!polyhedron.normalized_border_is_valid())
+      polyhedron.normalize_border();
+#else
+    polyhedron.normalize_border();
+#endif
+#if 1
+    std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
+                   polyhedron.planes_begin(), Normal_vector());
+#endif
+
     compute_projections(polyhedron);
   }
   
@@ -513,6 +514,17 @@ public:
 #if 0
     std::copy(polyhedron.points_begin(), polyhedron.points_end(),
               std::ostream_iterator<Point_3>(std::cout, "\n"));
+#endif
+
+#if 0
+    if (!polyhedron.normalized_border_is_valid())
+      polyhedron.normalize_border();
+#else
+    polyhedron.normalize_border();
+#endif
+#if 1
+    std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
+                   polyhedron.planes_begin(), Normal_vector());
 #endif
 
     compute_projections(polyhedron);
