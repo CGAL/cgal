@@ -478,7 +478,8 @@ namespace CGAL {
     typedef typename CircularKernel::Circular_arc_point_2      Point_2;
   
     typedef CGAL::Tag_false                        Has_left_category;
-    typedef CGAL::Tag_false 			 Has_merge_category;
+    typedef CGAL::Tag_false 			   Has_merge_category;
+    typedef CGAL::Tag_false                        Has_infinite_category;
   
     typedef boost::variant< Arc1, Arc2 > Curve_2;
     typedef boost::variant< Arc1, Arc2 > X_monotone_curve_2;
