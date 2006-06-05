@@ -1,19 +1,12 @@
-assurer consistance entre manual et code
-(ex: interface intersect)
-
 tracker les vestiges de l'ancienne representation des points (pointeurs
 vers cercles)
 
 utiliser partout ou c'est possible le constructeur de arc_point(Point_2)
 
-optimiser le cas des cercles 
-- enlever begin=end=... dans constructeur d'arcs
-- echecs de filtres un peu partout
+echecs de filtres un peu partout
 
 equal
 faire unoriented equal ? dans kernel aussi ? 
-en tout cas, eviter ca : if (circle1==circle2)||(circle1==circle2.opposite())
-et remplacer par : if (circle1.center()==circle2.center())&&(...)
 
 mettre fonctions globales 
 - systematiquement dans code (il y en a qqs unes)
@@ -30,9 +23,7 @@ interface intersect avec 2 outputIt types
 rajouter cas line_2 qui a ete oublie
 
 arcs non monotones
-- fonction interne has_on/sachant que sur cercle support
 - has_on, do_overlap l'utilisant
-- intersect a optimiser
 
 enlever messages de debug
 regarder traits-tracer (seg fault)
