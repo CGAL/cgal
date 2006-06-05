@@ -23,7 +23,7 @@ interface intersect avec 2 outputIt types
 rajouter cas line_2 qui a ete oublie
 
 arcs non monotones
-- has_on, do_overlap l'utilisant
+- do_overlap utilisant has_on(...,has_on_supporting_circle)
 
 enlever messages de debug
 regarder traits-tracer (seg fault)
