@@ -1627,31 +1627,6 @@ Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_pair
 Surface_mesh_simplification/test/Surface_mesh_simplification/LT_edge_collapse_test.cpp -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/LT_edge_collapse_test.kdevelop -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/makefile -text
-Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/Toolbar.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb0.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb1.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb2.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb3.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb4.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb5.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb6.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb7.bmp -text svneol=unset#unset
-Surface_mesher/demo/Surface_mesher/windows/res/idb8.bmp -text svneol=unset#unset
-Surface_mesher/doc_tex/GNUmakefile -text
-Surface_mesher/doc_tex/Surface_mesher/skull-surface.eps -text svneol=unset#application/octet-stream
-Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text
-Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/octet-stream
-Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text
-Surface_mesher/examples/Surface_mesher/ImageIO/data/skull_2.9.inr.gz -text
-Surface_mesher/examples/Surface_mesher/NOTICE -text
-Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
-Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
-Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text
-Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text
-Surface_mesher/test/Surface_mesher/NOTICE -text
 Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/conflict_zone.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/conflict_zone_after.gif -text svneol=unset#unset
