@@ -978,30 +978,6 @@ Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=uns
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
-Mesh_2/bench/data/square-deforme.poly -text
-Mesh_2/bench/data/square.poly -text
-Mesh_2/demo/Mesh_2/data/clusters.poly -text
-Mesh_2/demo/Mesh_2/data/fish.poly -text
-Mesh_2/demo/Mesh_2/data/trivial.poly -text
-Mesh_2/doc_tex/Mesh_2/domain-mesh.eps -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/domain-mesh.png -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.eps -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.png -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/domain-seeds.eps -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/domain-seeds.png -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/domain.eps -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/domain.png -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/example-conform-Delaunay.eps -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/example-conform-Delaunay.png -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/example-conform-Gabriel.eps -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/example-conform-Gabriel.png -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/example-conform.eps -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2/example-conform.png -text svneol=unset#unset
-Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text
-Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
-Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text
-Mesh_2/test/Mesh_2/fish.edg -text
-Mesh_2/test/Mesh_2/fish.poly -text
 Mesh_3/applications/GNUmakefile -text
 Mesh_3/applications/medit_to_cgal.C -text
 Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text
