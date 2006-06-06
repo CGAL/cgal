@@ -22,7 +22,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/ch_assertions.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/convex_hull_3.h>
 #include <vector>
 #include <fstream>
