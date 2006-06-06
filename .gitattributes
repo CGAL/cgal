@@ -978,8 +978,6 @@ Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=uns
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
-Mesh_3/applications/GNUmakefile -text
-Mesh_3/applications/medit_to_cgal.C -text
 Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text
 Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -text
 Min_sphere_of_spheres_d/web/figs/heuristic/excess.eps -text

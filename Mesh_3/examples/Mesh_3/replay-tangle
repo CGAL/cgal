@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec ./implicit_surfaces_mesher_3 -f tanglecube --center_x 1.5 --center_y 1.5  --center_z 1.5   --number_of_initial_points 50 --radius_bound 0.2 --tets_aspect_ratio_bound 3  tangle.mesh --number_of_pump 0 --slivers_off tangle-slivers.off --initial_surface_off tangle-surface-initiale.off --mesh_after_filename tangle-after.mesh tangle.mesh --read_initial_points ./dump_of_initial_points_of_tangle
