@@ -1,0 +1,22 @@
+- Rewrite get_cluster. [done]
+- Use Compute_area_2 with three points instead of a triangle. [done]
+
+- Implement a method to split all clusters at the beginnning.
+
+- Histograms in the demo
+
+- do not use default constructor of Geom_traits
+
+- Rewrite Double_map.h [!]
+
+- draw() called twice in mesh_demo [!]
+
+Before CGAL-3.1:
+
+- Update the hierachy if CDT is a CT_plus_2. [DELAYED]
+- [doc] concept CDT.
+- [doc] pictures [DONE]
+- [doc] document Compute_area_2 in a concept. It is used in 
+  Delaunay_mesh_criteria_2.
+- Fix clusters bug: the algorithm should ignore the Shewchuck rule when 
+  inserting point in a *big* triangle. [DONE]

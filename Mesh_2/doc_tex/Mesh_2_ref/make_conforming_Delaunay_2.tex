@@ -1,0 +1,21 @@
+\begin{ccRefFunction}{make_conforming_Delaunay_2}
+
+\ccInclude{CGAL/Triangulation_conformer_2.h}
+
+\ccFunction{ template<class CDT> void make_conforming_Delaunay_2 (CDT &t); } 
+{ Refines the constrained Delaunay triangulation \ccc{t} into a
+  conforming Delaunay triangulation. After a call to this function,
+  all edges of \ccc{t} are Delaunay edges.   
+  \ccRequire The template parameter \ccc{CDT} should be a model of the
+  concept \ccc{ConstrainedDelaunayTriangulation_2}.
+  The geometric traits class of into the constrained Delaunay
+  triangulation must be a model of
+  \ccc{ConformingDelaunayTriangulationTraits_2}.} 
+
+\end{ccRefFunction}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***
