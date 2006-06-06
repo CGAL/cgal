@@ -1,3 +1,7 @@
+6 June 2006 Laurent Rineau
+- remove the old code Multi_implicit_oracle.h (in Surface_Mesher), and
+multi_spheres.C (in Mesh_3).
+
 1 May 2006 Laurent Rineau
 - well... the exuder works, now!
 
