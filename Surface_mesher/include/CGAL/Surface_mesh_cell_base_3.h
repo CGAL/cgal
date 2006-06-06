@@ -34,7 +34,7 @@ namespace CGAL {
 
     template < class TDS3 >
     struct Rebind_TDS {
-      typedef typename Base::template Rebind_TDS<TDS3>::Other  Cb3;
+      typedef typename Cb::template Rebind_TDS<TDS3>::Other  Cb3;
       typedef Surface_mesh_cell_base_3 <GT, Cb3> Other;
     };
     

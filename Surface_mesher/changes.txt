@@ -1,3 +1,8 @@
+4 May 2006 Laurent Rineau
+- fix a minor bug in include/CGAL/Surface_mesh_cell_base_3.h: due to the
+- added incident_facets(Vertex_handle v, OutputIterator facets) to the
+  specifications of SurfaceMeshComplex_2InTriangulation_3
+
 21 April 2006 Laurent Rineau
 - the patch of 15 April broke examples.
 - s/ZLIB/CGAL_USE_ZLIB/

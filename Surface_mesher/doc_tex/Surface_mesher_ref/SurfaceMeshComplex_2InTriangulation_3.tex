@@ -347,10 +347,15 @@ vertices of the 2D complex.}
 %The data structure also provides  member functions to retrieve
 %the facets of the complex incident to a given face (vertex or edge).
 
-%\ccMethod{template <class OutputIterator>
-%          OutputIterator 
-%          incident_facets(Vertex_handle v, OutputIterator facets);}
-% {To retrieve the facets of the complex incident to \ccc{v}.}
+\ccMethod{template <class OutputIterator>
+          OutputIterator 
+          incident_facets(Vertex_handle v, OutputIterator facets);}
+{ Copies the \ccc{Facet}s of the complex incident to \ccc{v} to the output
+  iterator \ccc{facets}.
+Returns the resulting output iterator.
+\ccPrecond{\ccVar.\ccc{triangulation().dimension()} $=3$, \ccc{v} $\neq$
+  \ccc{Vertex_handle()}, \ccVar.\ccc{triangulation().is_vertex(v)}.}}
+
 %\ccGlue
 %\ccMethod{template <class OutputIterator>
 %          OutputIterator 
