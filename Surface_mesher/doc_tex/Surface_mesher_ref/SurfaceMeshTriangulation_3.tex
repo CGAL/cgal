@@ -1,0 +1,323 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SurfaceMeshTriangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 2006.03.10   Laurent Rineau
+% | Package: Surface_mesher
+% | 
+\RCSdef{\RCSSurfaceMeshTriangulationRev}{$Id$}
+\RCSdefDate{\RCSSurfaceMeshTriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+% The following uniline of perl:
+% perl -ne '/Tr(iangulation)?::([[:alnum:]_]+)/ && print "$2\n";' **/*.h | sort -u
+% gives:
+%   Cell_handle
+%   Edge
+%   Facet
+%   Finite_edges_iterator
+%   Finite_facets_iterator
+%   Finite_vertices_iterator
+%   Geom_traits
+%   Point
+%   Vertex_handle
+
+% The following uniline of perl:
+% perl -ne '/tr\.([[:alnum:]_]+)/ && print "$1\n";' **/*.h | sort -u
+% gives:
+%   clear
+%   dimension
+%   dual
+%   find_conflicts
+%   finite_edges_begin
+%   finite_edges_end
+%   finite_facets_begin
+%   finite_facets_end
+%   finite_vertices_begin
+%   finite_vertices_end
+%   geom_traits  // TODO: look at this!
+%   incident_cells
+%   incident_facets
+%   incident_vertices
+%   is_edge
+%   is_infinite
+%   is_vertex
+%   locate
+%   mirror_facet
+%   vertex_triple_index
+%
+% + insert_in_hole used in <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>!
+
+\begin{ccRefConcept}{SurfaceMeshTriangulation_3}
+
+\ccDefinition
+
+The concept \ccRefName\  describes 
+the triangulation type used by the surface mesher 
+ \ccc{make_surface_mesh} to represent 
+the three dimensional triangulation
+embedding the surface mesh.
+Thus, this  concept describes the requirements
+for the triangulation type \ccc{SurfaceMeshC2T3::Triangulation}
+nested in the model of \ccc{SurfaceMeshComplex2InTriangulation3}
+plugged as the template parameter \ccc{SurfaceMeshC2T3} of
+\ccc{make_surface_mesh}. It also describes
+the requirements for the triangulation type
+plugged in the class
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}.
+
+
+
+
+\ccTypes
+
+\ccNestedType{Point}
+{The point type. It must be DefaultConstructible, CopyConstructible and
+  Assignable.}
+
+\emph{Vertices} and \emph{cells} of the triangulation are manipulated via
+handles, which support the two dereference operators \ccc{operator*} and
+\ccc{operator->}.
+
+\ccNestedType{Vertex_handle}
+{Handle to a data representing a \emph{vertex}. \ccc{Vertex_handle} must be
+  a model of \ccc{Handle} and its \emph{value type} must be model of
+  \ccc{TriangulationDataStructure_3::Vertex}.}
+\ccGlue
+\ccNestedType{Cell_handle}
+{Handle to a data representing a \emph{cell}. \ccc{Cell_handle} must be a
+  model of \ccc{Handle} and its \emph{value type} must be model of
+  \ccc{TriangulationDataStructure_3::Cell}.}
+
+\ccTypedef{typedef CGAL::Triple<Cell_handle, int, int>  Edge;}{The edge type.}
+\ccGlue
+\ccTypedef{typedef std::pair<Cell_handle, int> Facet;}{The facet type.}
+
+The following iterators allow one to visit all finite vertices, edges and
+facets of the triangulation.
+
+\ccNestedType{Finite_vertices_iterator}{Iterator over finite vertices}
+\ccGlue
+\ccNestedType{Finite_edges_iterator}{Iterator over finite edges}
+\ccGlue
+\ccNestedType{Finite_facets_iterator}{Iterator over finite facets}
+
+\ccNestedType{Geom_traits} % TODO: look at this!
+{The geometric traits class. Must be a model of
+\ccc{DelaunayTriangulationTraits_3}.}
+
+
+\ccCreation
+\ccCreationVariable{t}  %% choose variable name
+
+\ccConstructor{SurfaceMeshTriangulation_3();}{default constructor.}
+
+\ccConstructor{SurfaceMeshTriangulation_3(SurfaceMeshTriangulation_3 tr);}   
+{Copy constructor. All vertices and faces are duplicated.}
+
+\ccHeading{Assignment}
+
+\ccMethod{SurfaceMeshTriangulation_3 & 
+operator=(const SurfaceMeshTriangulation_3 & tr);}
+{The triangulation \ccc{tr} is duplicated, and modifying the copy after the 
+duplication does not modify the original. The previous triangulation held
+by \ccVar\ is deleted.}
+
+\ccMethod{void clear();}
+{Deletes all finite vertices and all cells of \ccVar.}
+
+\ccAccessFunctions
+
+\ccMethod{int dimension() const;}
+{Returns the dimension of the affine hull.}
+
+\ccMethod{const DelaunayTriangulationTraits_3 & geom_traits() const;}
+{Returns a const reference to a model of
+  \ccc{DelaunayTriangulationTraits_3}.}
+
+\ccHeading{Voronoi diagram}
+
+\ccMethod{Object dual(Facet f) const;}
+{Returns the dual of facet \ccc{f}, which is \\
+in dimension 3: either a segment, if the two cells incident to \ccc{f}  
+are finite, or a ray, if one of them is infinite;\\
+in dimension 2: a point.}
+
+\ccHeading{Queries}
+
+A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
+(resp. a facet \ccc{f} in dimension 2) iff \ccVar.\ccc{side_of_sphere(c, p)}
+(resp. \ccVar.\ccc{side_of_circle(f, p)}) returns \ccc{ON_BOUNDED_SIDE}.
+The set of cells (resp. facets in dimension 2) which are in conflict with
+\ccc{p} is connected, and it forms a hole.
+
+\ccMethod{template <class OutputIteratorBoundaryFacets,
+                    class OutputIteratorCells,
+                    class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts(Point p, Cell_handle c,
+                 OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+                 OutputIteratorInternalFacets ifit);}
+{Computes the  conflict hole induced by \ccc{p}.  The starting cell
+(resp.  facet) \ccc{c} must be in conflict.
+Then this function returns respectively in the output iterators:\\
+-- \ccc{cit}: the cells (resp. facets) in conflict.\\
+-- \ccc{bfit}: the facets (resp. edges) on the boundary, that is, the facets
+(resp. edges) \ccc{(t, i)} where the cell (resp. facet) \ccc{t} is in
+conflict, but \ccc{t->neighbor(i)} is not.\\
+-- \ccc{ifit}: the facets (resp. edges) inside the hole, that is, delimiting
+two cells (resp facets) in conflict.\\
+Returns the \ccc{Triple} composed of the resulting output iterators.}
+
+The following iterators allow the user to visit facets, edges and vertices
+of the triangulation.
+
+\ccMethod{Finite_vertices_iterator finite_vertices_begin() const;}
+{Starts at an arbitrary finite vertex. Then \ccc{++} and \ccc{--} will
+iterate over finite vertices. Returns \ccc{finite_vertices_end()} when
+\ccVar.\ccc{number_of_vertices()} $=0$.} 
+\ccGlue
+\ccMethod{Finite_vertices_iterator finite_vertices_end() const;}
+{Past-the-end iterator}
+\ccGlue
+\ccMethod{Finite_edges_iterator finite_edges_begin() const;}
+{Starts at an arbitrary finite edge. Then \ccc{++} and \ccc{--} will
+iterate over finite edges. Returns \ccc{finite_edges_end()} when
+\ccVar.\ccc{dimension()} $<1$.} 
+\ccGlue
+\ccMethod{Finite_edges_iterator finite_edges_end() const;}
+{Past-the-end iterator}
+\ccGlue
+\ccMethod{Finite_facets_iterator finite_facets_begin() const;}
+{Starts at an arbitrary finite facet. Then \ccc{++} and \ccc{--} will
+iterate over finite facets. Returns \ccc{finite_facets_end()} when
+\ccVar.\ccc{dimension()} $<2$.}
+\ccGlue
+\ccMethod{Finite_facets_iterator finite_facets_end() const;}
+{Past-the-end iterator}
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator
+          incident_cells(Vertex_handle v, OutputIterator cells) const;}
+{Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
+iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
+Returns the resulting output iterator.
+\ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator
+          incident_cells(Vertex_handle v, OutputIterator cells) const;}
+{Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
+iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
+Returns the resulting output iterator.}
+
+\ccMethod{bool is_vertex(const Point & p, Vertex_handle & v) const;}
+{Tests whether \ccc{p} is a vertex of \ccVar\ by locating \ccc{p} in
+the triangulation. If \ccc{p} is found, the associated vertex \ccc{v}
+is given.}
+\ccGlue
+\ccMethod{bool is_edge(Vertex_handle u, Vertex_handle v, 
+			Cell_handle & c, int & i, int & j) const;}
+{Tests whether \ccc{(u,v)} is an edge of \ccVar. If the edge is found,
+it gives a cell \ccc{c} having this edge and the indices \ccc{i}
+and \ccc{j} of the vertices \ccc{u} and \ccc{v} in \ccc{c}, in this order.
+\ccPrecond{\ccc{u} and \ccc{v} are vertices of \ccVar.}}
+
+\ccMethod{bool is_infinite(const Vertex_handle v) const;}
+{\ccc{true}, iff vertex \ccc{v} is the infinite vertex.}
+\ccGlue
+\ccMethod{bool is_infinite(const Cell_handle c) const;}
+{\ccc{true}, iff \ccc{c} is incident to the infinite vertex.
+\ccPrecond{\ccVar.\ccc{dimension()} $=3$.}}
+
+\ccMethod{Facet mirror_facet(Facet f) const;}
+{Returns the same facet viewed from the other adjacent cell.}
+
+\ccMethod{int vertex_triple_index(const int i, const int j);}
+{Return the indexes of the  \ccc{j}th vertex  of the facet of a cell
+  opposite to vertex \ccc{i}.} % TODO: document this in Triangulation_3!!
+
+\ccHeading{Point location}
+
+\ccMethod{Cell_handle
+          locate(const Point & query, Cell_handle start = Cell_handle()) const;}
+{
+If the point \ccc{query} lies inside the convex hull of the points, the cell 
+that contains the query in its interior is returned. If \ccc{query} lies on a
+facet, an edge or on a vertex, one of the cells having \ccc{query} on
+its boundary is returned.\\ 
+If the point \ccc{query} lies outside the convex hull of the points,
+an infinite cell with vertices $\{ p, q, r, \infty\}$ is returned such that
+the tetrahedron $( p, q, r, query )$ is positively oriented
+(the rest of the triangulation lies on the other side of facet 
+$( p, q, r )$). \\
+Note that locate works even in degenerate dimensions: in dimension 2
+(resp. 1, 0) the \ccc{Cell_handle} returned is the one that represents
+the facet (resp. edge, vertex) containing the query point. \\
+The optional argument \ccc{start} is used as a starting place for the search.
+}
+
+\ccMethod{Cell_handle
+          locate(const Point & query, Locate_type & lt,
+                 int & li, int & lj, Cell_handle start = Cell_handle() ) const;}
+{If \ccc{query} lies inside the affine hull of the points, the $k$-face
+(finite or infinite) that contains \ccc{query} in its interior is
+returned, by means of the cell returned together with \ccc{lt}, which
+is set to the locate type of the query (\ccc{VERTEX, EDGE, FACET,
+CELL}, or \ccc{OUTSIDE_CONVEX_HULL} if the cell is infinite and \ccc{query}
+lies strictly in it) and two indices \ccc{li} and \ccc{lj} that
+specify the $k$-face of the cell containing \ccc{query}.\\ 
+If the $k$-face is a cell, \ccc{li} and \ccc{lj} have no
+meaning; if it is a facet (resp. vertex), \ccc{li} gives the index of
+the facet (resp. vertex) and \ccc{lj} has no meaning; if it is and
+edge, \ccc{li} and \ccc{lj} give the indices of its vertices.\\ 
+If the point \ccc{query} lies outside the affine hull of the points,
+which can happen in case of degenerate dimensions, \ccc{lt} is set to
+\ccc{OUTSIDE_AFFINE_HULL}, and the cell returned has no meaning.
+As a particular case, if there is no finite vertex yet in the
+triangulation, \ccc{lt} is set to \ccc{OUTSIDE_AFFINE_HULL} and
+\ccc{locate} returns the default constructed handle. \\
+The optional argument \ccc{start} is used as a starting place for the search.
+}
+
+\ccMethod{template <class CellIt>
+     Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
+	                          Cell_handle begin, int i);}
+{Creates a new vertex by starring a hole.  It takes an iterator range
+[\ccc{cell_begin}; \ccc{cell_end}[ of \ccc{Cell_handle}s which specifies
+a hole: a set of connected cells (resp. facets in dimension 2) which is
+star-shaped wrt \ccc{p}.
+(\ccc{begin}, \ccc{i}) is a facet (resp. an edge) on the boundary of the hole,
+that is, \ccc{begin} belongs to the set of cells (resp.  facets) previously
+described, and \ccc{begin->neighbor(i)} does not.  Then this function deletes
+all the cells (resp. facets) describing the hole, creates a new vertex
+\ccc{v}, and for each facet (resp. edge) on the boundary of the hole, creates
+a new cell (resp. facet) with \ccc{v} as vertex.  Then \ccc{v->set_point(p)}
+is called and \ccc{v} is returned.\\
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, the set of cells (resp. facets in
+dimension 2) is connected, its boundary is connected, and \ccc{p} lies inside
+the hole, which is star-shaped wrt \ccc{p}}.}
+
+\ccHasModels
+
+Any 3D Delaunay triangulation class of \cgal{}
+
+\ccSeeAlso
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}\\
+\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}\\
+\ccc{SurfaceMeshComplex2InTriangulation3}\\
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}\\
+\ccc{make_surface_mesh}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
