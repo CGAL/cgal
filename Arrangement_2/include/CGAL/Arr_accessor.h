@@ -100,16 +100,64 @@ public:
   /// \name Traversal functions.
   //@{
 
+  /*!
+   * Get one of the four fictitious vertices (non-const version).
+   * \param inf_x, inf_y Specify the required fictitious vertex:
+   *                     (-oo, -oo) is the bottom-left vertex.
+   *                     (-oo, +oo) is the top-left vertex.
+   *                     (+oo, -oo) is the bottom-right vertex.
+   *                     (+oo, +oo) is the top-right vertex.
+   * \pre inf_x and inf_y are not FINITE. 
+   */
+  Vertex_handle fictitious_vertex (Infinity_type inf_x,
+                                   Infinity_type inf_y)
+  {
+    CGAL_precondition (inf_x != FINITE && inf_y != FINITE);
+
+    DVertex      *v;
+
+    if (inf_x == MINUS_INFINITY)
+      v = (inf_y == MINUS_INFINITY) ? p_arr->v_bl : p_arr->v_tl;
+    else
+      v = (inf_y == MINUS_INFINITY) ? p_arr->v_br : p_arr->v_tr;
+
+    return (p_arr->_handle_for (v));
+  }
+
+  /*!
+   * Get one of the four fictitious vertices (const version).
+   * \param inf_x, inf_y Specify the required fictitious vertex:
+   *                     (-oo, -oo) is the bottom-left vertex.
+   *                     (-oo, +oo) is the top-left vertex.
+   *                     (+oo, -oo) is the bottom-right vertex.
+   *                     (+oo, +oo) is the top-right vertex.
+   * \pre inf_x and inf_y are not FINITE. 
+   */
+  Vertex_const_handle fictitious_vertex (Infinity_type inf_x,
+                                         Infinity_type inf_y) const
+  {
+    CGAL_precondition (inf_x != FINITE && inf_y != FINITE);
+
+    const DVertex      *v;
+
+    if (inf_x == MINUS_INFINITY)
+      v = (inf_y == MINUS_INFINITY) ? p_arr->v_bl : p_arr->v_tl;
+    else
+      v = (inf_y == MINUS_INFINITY) ? p_arr->v_br : p_arr->v_tr;
+
+    return (p_arr->_const_handle_for (v));
+  }
+
   /*! Get the fictitious face of the arrangement (non-const version). */
   Face_handle fictitious_face ()
   {
-    return (Face_handle (p_arr->un_face));
+    return (p_arr->_handle_for (p_arr->un_face));
   }
 
   /*! Get the fictitious face of the arrangement (const version). */
   Face_const_handle fictitious_face () const
   {
-    return (Face_const_handle (p_arr->un_face));
+    return (p_arr->_const_handle_for (p_arr->un_face));
   }
 
   /*! Get an iterator for the first vertex in the arrangement. */
@@ -186,13 +234,14 @@ public:
    * Check whether the given infinite curve end lies on the given fictitious
    * edge.
    * \param cv The curve.
-   * \param ind 0 if we refer to cv's left end;
-   *            1 if we refer to its right end.
+   * \param ind MIN_END if we refer to cv's minimal end;
+   *            MAX_END if we refer to its maximal end.
    * \param he The fictitious edge.
-   * \pre cv's end lies at infinity and he is a ficititious halsedge.
+   * \pre The relevent end of cv lies at infinity and he is a ficititious
+   *      halfedge.
    * \return Whether the curve end lies on the fictitious edge.
    */
-  bool is_on_ficitious_edge (const X_monotone_curve_2& cv, int ind,
+  bool is_on_ficitious_edge (const X_monotone_curve_2& cv, Curve_end ind,
                              Halfedge_const_handle he) const
   {
     typedef Arr_traits_basic_adaptor_2<typename Arrangement_2::Traits_2>
@@ -201,11 +250,11 @@ public:
     // Check whether the relevant end of cv lies at infinity.
     const Traits_adaptor_2  *traits =
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
-    CGAL::Sign         inf_x = traits->infinite_in_x_2_object() (cv, ind);
-    CGAL::Sign         inf_y = traits->infinite_in_y_2_object() (cv, ind);
-    bool               eq_source, eq_target;
+    const Infinity_type  inf_x = traits->infinite_in_x_2_object() (cv, ind);
+    const Infinity_type  inf_y = traits->infinite_in_y_2_object() (cv, ind);
+    bool                 eq_source, eq_target;
 
-    CGAL_precondition (inf_x != CGAL::ZERO || inf_y != CGAL::ZERO);
+    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
 
     return (p_arr->_is_on_fictitious_edge (cv, ind,
                                            inf_x, inf_y,
@@ -219,16 +268,16 @@ public:
    * contains the given curve end in its interior.
    * \param fh The face.
    * \param cv The curve.
-   * \param ind 0 if we refer to cv's left end;
-   *            1 if we refer to its right end.
+   * \param ind MIN_END if we refer to cv's minimal end;
+   *            MAX_END if we refer to its maximal end.
    * \pre The relevant end of cv must lie at infinity and f must be an
-   *      unbounded face
+   *      unbounded face.
    * \return A handle to the halfedge along fh's outer CCB that contains the
    *         relevant end of cv in its interior.
    */
   Halfedge_handle locate_along_ccb (Face_handle fh,
                                     const X_monotone_curve_2& cv,
-                                    int ind) const
+                                    Curve_end ind) const
   {
     typedef Arr_traits_basic_adaptor_2<typename Arrangement_2::Traits_2>
                                                              Traits_adaptor_2;
@@ -236,10 +285,10 @@ public:
     // Check whether the relevant end of cv lies at infinity.
     const Traits_adaptor_2  *traits =
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
-    CGAL::Sign         inf_x = traits->infinite_in_x_2_object() (cv, ind);
-    CGAL::Sign         inf_y = traits->infinite_in_y_2_object() (cv, ind);
+    const Infinity_type  inf_x = traits->infinite_in_x_2_object() (cv, ind);
+    const Infinity_type  inf_y = traits->infinite_in_y_2_object() (cv, ind);
 
-    CGAL_precondition (inf_x != CGAL::ZERO || inf_y != CGAL::ZERO);
+    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
 
     DHalfedge*  p_he = p_arr->_locate_along_ccb (p_arr->_face (fh),
                                                  cv, ind,
@@ -252,16 +301,16 @@ public:
   /*!
    * Locate an unbounded end of a given curve along the bounding rectangle.
    * \param cv The curve.
-   * \param ind 0 if we refer to cv's left end;
-   *            1 if we refer to its right end.
-   * \pre The left (right) end of cv lies at infinity.
+   * \param ind MIN_END if we refer to cv's minimal end;
+   *            MAX_END if we refer to its maximal end.
+   * \pre The relevant end of cv lies at infinity.
    * \return An object along the bounding rectangle that contains the curve
    *         end. This object is either a Halfedge_const_hanlde (in the
    *         general case) or a Vertex_const_handle in case cv overlaps
    *         an existing edge.
    */
   CGAL::Object locate_unbounded_end (const X_monotone_curve_2& cv,
-                                     int ind) const
+                                     Curve_end ind) const
   {
     typedef Arr_traits_basic_adaptor_2<typename Arrangement_2::Traits_2>
                                                              Traits_adaptor_2;
@@ -269,10 +318,10 @@ public:
     // Check whether the relevant end of cv lies at infinity.
     const Traits_adaptor_2  *traits =
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
-    CGAL::Sign         inf_x = traits->infinite_in_x_2_object() (cv, ind);
-    CGAL::Sign         inf_y = traits->infinite_in_y_2_object() (cv, ind);
+    const Infinity_type  inf_x = traits->infinite_in_x_2_object() (cv, ind);
+    const Infinity_type  inf_y = traits->infinite_in_y_2_object() (cv, ind);
 
-    CGAL_precondition (inf_x != CGAL::ZERO || inf_y != CGAL::ZERO);
+    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
 
     // Traverse the inner boundary of the fictitious face of the arrangement.
     const DHalfedge   *first = *(p_arr->un_face->holes_begin());
@@ -336,15 +385,15 @@ public:
 
     const Traits_adaptor_2  *traits =
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
-    int                ind = 0;
+    Curve_end                ind = MIN_END;
 
-    if (traits->infinite_in_x_2_object() (cv, 1) == CGAL::ZERO &&
-        traits->infinite_in_y_2_object() (cv, 1) == CGAL::ZERO &&
+    if (traits->infinite_in_x_2_object() (cv, MAX_END) == FINITE &&
+        traits->infinite_in_y_2_object() (cv, MAX_END) == FINITE &&
         traits->equal_2_object()
         (vh->point(),
          p_arr->get_traits()->construct_max_vertex_2_object()(cv)))
     {
-      ind = 1;
+      ind = MAX_END;
     }
 
     DHalfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh),
@@ -451,12 +500,12 @@ public:
    * Check if the given vertex represents one of the ends of a given curve.
    * \param v The vertex.
    * \param cv The curve.
-   * \param ind 0 if we refer to the left end of cv;
-   *            1 if we refer to its right end.
+   * \param ind MIN_END if we refer to cv's minimal end;
+   *            MAX_END if we refer to its maximal end.
    * \return Whether v represents the left (or right) end of cv.
    */
   bool are_equal (Vertex_const_handle v,
-                  const X_monotone_curve_2& cv, int ind) const
+                  const X_monotone_curve_2& cv, Curve_end ind) const
   {
     return (p_arr->_are_equal (p_arr->_vertex (v), cv, ind));
   }
@@ -516,6 +565,25 @@ public:
     return (p_arr->_handle_for (v));    
   }
   
+  /*!
+   * Create a new vertex at infinity.
+   * \param inf_x MINUS_INFINITY if this vertex lies at x = -oo;
+   *              PLUS_INFINITY if this vertex lies at x = +oo;
+   *              FINITE if the vertex has a finite x-coordinate.
+   * \param inf_y MINUS_INFINITY if this vertex lies at y = -oo;
+   *              PLUS_INFINITY if this vertex lies at y = +oo;
+   *              FINITE if the vertex has a finite y-coordinate.
+   * \return A pointer to the newly created vertex.
+   */
+  Vertex_handle create_vertex_at_infinity (Infinity_type inf_x,
+                                           Infinity_type inf_y)
+  {
+    DVertex   *v = p_arr->_create_vertex_at_infinity (inf_x, inf_y);
+
+    CGAL_assertion (v != NULL);
+    return (p_arr->_handle_for (v));
+  }
+
   /*!
    * Insert an x-monotone curve into the arrangement, where the end vertices
    * are given by the target points of two given halfedges.
@@ -685,10 +753,25 @@ public:
    */
   void remove_isolated_vertex_ex (Vertex_handle v)
   {
-    CGAL_assertion(v->is_isolated());
+    CGAL_precondition (v->is_isolated());
     DVertex *iso_v = p_arr->_vertex (v);
 
     p_arr->_remove_isolated_vertex (iso_v);
+    return;
+  }
+
+  /*!
+   * Remove a vertex at infinity, causing its two incident fictitious edges
+   * to merge.
+   * \param v The vertex at infinity to remove.
+   */
+  void remove_vertex_at_infinity (Vertex_handle v)
+  {
+    CGAL_precondition (v->is_at_infinity());
+    DVertex  *inf_v = p_arr->_vertex (v);
+
+    p_arr->_remove_vertex_at_infinity (inf_v);
+    return;
   }
 
   /*!
@@ -778,18 +861,15 @@ public:
    * Split a given fictitious edge into two, forming a new vertex at
    * infinity.
    * \param he The edge to split (one of the pair of twin halfegdes).
-   * \param inf_x NEGATIVE if this vertex lies at x = -oo;
-   *              POSITIVE if this vertex lies at x = +oo;
-   *              ZERO if the vertex has a bounded x-coordinate.
-   * \param inf_y NEGATIVE if this vertex lies at y = -oo;
-   *              POSITIVE if this vertex lies at y = +oo;
-   *              ZERO if the vertex has a bounded y-coordinate.
-   * \pre inf_x and inf_y cannot be both ZERO.
+   * \param inf_x Is the x-coordinate of the new vertex at infinity.
+   * \param inf_y Is the y-coordinate of the new vertex at infinty.
+   * \pre inf_x and inf_y cannot be both FINITE.
    * \return A pointer to the first split halfedge, whose source equals the
    *         source of e, and whose target is the newly created vertex.
    */
   Halfedge_handle split_fictitious_edge (Halfedge_handle he,
-                                         CGAL::Sign inf_x, CGAL::Sign inf_y)
+                                         Infinity_type inf_x,
+                                         Infinity_type inf_y)
   {
     DVertex    *p_he = p_arr->_split_fictitious_edge (p_arr->_halfedge (he),
                                                       inf_x, inf_y);

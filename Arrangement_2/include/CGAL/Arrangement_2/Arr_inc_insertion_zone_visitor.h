@@ -131,10 +131,12 @@ public:
     Arr_accessor<Arrangement_2>    arr_access (*p_arr);
 
     // Check if the left end of cv is bounded of not.
-    const CGAL::Sign inf_x_left = traits->infinite_in_x_2_object() (cv, 0);
-    const CGAL::Sign inf_y_left = traits->infinite_in_y_2_object() (cv, 0);
-    const bool       left_bounded = (inf_x_left == CGAL::ZERO &&
-                                     inf_y_left == CGAL::ZERO);
+    const Infinity_type inf_x_left = 
+      traits->infinite_in_x_2_object()(cv, MIN_END);
+    const Infinity_type inf_y_left =
+      traits->infinite_in_y_2_object()(cv, MIN_END);
+    const bool          left_bounded = (inf_x_left == FINITE &&
+                                        inf_y_left == FINITE);
 
     // Check if the left and the right endpoints of cv should be associated
     // with arrangement vertices.
@@ -293,10 +295,12 @@ public:
       if (! vertex_for_right)
       {
         // Check if the right end is also unbounded.
-        const CGAL::Sign inf_x_right = traits->infinite_in_x_2_object()(cv, 1);
-        const CGAL::Sign inf_y_right = traits->infinite_in_y_2_object()(cv, 1);
+        const Infinity_type inf_x_right = 
+          traits->infinite_in_x_2_object()(cv, MAX_END);
+        const Infinity_type inf_y_right = 
+          traits->infinite_in_y_2_object()(cv, MAX_END);
 
-        if (inf_x_right == CGAL::ZERO && inf_y_right == CGAL::ZERO)
+        if (inf_x_right == FINITE && inf_y_right == FINITE)
         {
           // The right end is bounded - we should insert the curve in the
           // interior of the unbounded face incident to prev_he_left.
@@ -308,7 +312,7 @@ public:
           // Both ends are unbounded - locate a halfedge that contains the
           // unbounded right end in its interior and perform the insertion.
           prev_he_right = arr_access.locate_along_ccb (prev_he_left->face(),
-                                                       cv, 1);
+                                                       cv, MAX_END);
 
           inserted_he = p_arr->insert_in_face_interior (cv,
                                                         prev_he_left,
@@ -459,7 +463,7 @@ private:
     // Determine the order we send the split curves to the split_edge function,
     // depending whether the left point of sub_cv1 equals he's source (if not,
     // it equals its target).
-    if (arr_access.are_equal (he->source(), sub_cv1, 0))
+    if (arr_access.are_equal (he->source(), sub_cv1, MIN_END))
     {
       arr_access.split_edge_ex (he,
                                 p,

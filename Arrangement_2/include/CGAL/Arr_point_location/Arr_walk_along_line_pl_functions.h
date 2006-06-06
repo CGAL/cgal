@@ -68,13 +68,13 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
       if (is_on_edge)
       {
         // Check if the point is located on one of the edge endpoints.
-        if (! closest_he->source()->has_null_point() &&
+        if (! closest_he->source()->is_at_infinity() &&
             equal (p, closest_he->source()->point()))
         {
           // The query point is located on the source vertex:
           return (CGAL::make_object (closest_he->source()));
         }
-        else if (! closest_he->target()->has_null_point() &&
+        else if (! closest_he->target()->is_at_infinity() &&
                  equal (p, closest_he->target()->point()))
         {
           // The query point is located on the target vertex:
@@ -135,13 +135,13 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
           if (is_on_edge)
           {
             // Check if the point is located on one of the edge endpoints.
-            if (! closest_he->source()->has_null_point() &&
+            if (! closest_he->source()->is_at_infinity() &&
                 equal (p, closest_he->source()->point()))
             {
               // The query point is located on the source vertex:
               return (CGAL::make_object (closest_he->source()));
             }
-            else if (! closest_he->target()->has_null_point() &&
+            else if (! closest_he->target()->is_at_infinity() &&
                      equal (p, closest_he->target()->point()))
             {
               // The query point is located on the target vertex:
@@ -481,8 +481,8 @@ _is_in_connected_component (const Point_2& p,
     // skip it.
     if (first->is_fictitious())
     {
-      if (first->source()->infinite_in_y() != CGAL::ZERO &&
-          first->target()->infinite_in_y() != CGAL::ZERO)
+      if (first->source()->infinite_in_y() != FINITE &&
+          first->target()->infinite_in_y() != FINITE)
       {
         found_non_vertical = true;
         break;
@@ -539,11 +539,11 @@ _is_in_connected_component (const Point_2& p,
           // far.
           if (closest_he == invalid_he ||
               (closest_he != first->twin() &&
-               ((! first->source()->has_null_point() &&
+               ((! first->source()->is_at_infinity() &&
                  arr_access.compare_y_at_x
                    (first->source()->point(),
                     closest_he) == point_above_under) ||
-                (! first->target()->has_null_point() &&
+                (! first->target()->is_at_infinity() &&
                  arr_access.compare_y_at_x
                    (first->target()->point(),
                     closest_he) == point_above_under))))
@@ -607,9 +607,9 @@ _is_in_connected_component (const Point_2& p,
       {
         if (! curr->is_fictitious() &&
             is_vertical (curr->curve()) &&
-            (curr->source()->has_null_point() ||
+            (curr->source()->is_at_infinity() ||
              ! equal (curr->source()->point(), p)) &&
-            (curr->target()->has_null_point() ||
+            (curr->target()->is_at_infinity() ||
              ! equal (curr->target()->point(), p)))
         {
           closest_he = curr;
@@ -782,10 +782,10 @@ _is_in_connected_component (const Point_2& p,
       // closest edge so far.
       if (closest_he == invalid_he ||
           (! closest_in_ccb && closest_he->twin() == curr) ||
-          (! curr->source()->has_null_point() &&
+          (! curr->source()->is_at_infinity() &&
            arr_access.compare_y_at_x (curr->source()->point(),
                                       closest_he) == point_above_under) ||
-          (! curr->target()->has_null_point() &&
+          (! curr->target()->is_at_infinity() &&
            arr_access.compare_y_at_x (curr->target()->point(),
                                       closest_he) == point_above_under))
       {

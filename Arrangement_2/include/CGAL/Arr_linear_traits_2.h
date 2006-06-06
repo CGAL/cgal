@@ -28,7 +28,8 @@
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/intersections.h>
-#include <CGAL/Number_type_traits.h> 
+#include <CGAL/Number_type_traits.h>
+#include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_traits_2/Segment_assertions.h>
 #include <fstream>
 
@@ -217,43 +218,43 @@ public:
 
     /*!
      * Check if the x-coordinate of the left point is infinite.
-     * \return NEGATIVE if the left point is at x = -oo;
-     *         ZERO if the x-coordinate is finite.
+     * \return MINUS_INFINITY if the left point is at x = -oo;
+     *         FINITE if the x-coordinate is finite.
      */
-    CGAL::Sign left_infinite_in_x () const
+    Infinity_type left_infinite_in_x () const
     {
       if (is_vert || is_degen)
-        return (CGAL::ZERO);
+        return (FINITE);
 
       if (is_right)
-        return (has_source ? CGAL::ZERO : CGAL::NEGATIVE);
+        return (has_source ? FINITE : MINUS_INFINITY);
       else
-        return (has_target ? CGAL::ZERO : CGAL::NEGATIVE);
+        return (has_target ? FINITE : MINUS_INFINITY);
     }
 
     /*!
      * Check if the y-coordinate of the left point is infinite.
-     * \return NEGATIVE if the left point is at y = -oo;
-     *         POSITIVE if the left point is at y = -oo;
-     *         ZERO if the y-coordinate is finite.
+     * \return MINUS_INFINITY if the left point is at y = -oo;
+     *         PLUS_INFINITY if the left point is at y = -oo;
+     *         FINITE if the y-coordinate is finite.
      */
-    CGAL::Sign left_infinite_in_y () const
+    Infinity_type left_infinite_in_y () const
     {
       if (is_horiz || is_degen)
-        return (CGAL::ZERO);
+        return (FINITE);
 
       if (is_vert)
       {
         if (is_right)
-          return (has_source ? CGAL::ZERO : CGAL::NEGATIVE);
+          return (has_source ? FINITE : MINUS_INFINITY);
         else
-          return (has_target ? CGAL::ZERO : CGAL::NEGATIVE);
+          return (has_target ? FINITE : MINUS_INFINITY);
       }
 
       if ((is_right && has_source) || (! is_right && has_target))
-          return (CGAL::ZERO);
+          return (FINITE);
 
-      return (has_pos_slope ? CGAL::NEGATIVE : CGAL::POSITIVE);
+      return (has_pos_slope ? MINUS_INFINITY : PLUS_INFINITY);
     }
 
     /*!
@@ -322,43 +323,43 @@ public:
 
     /*!
      * Check if the x-coordinate of the right point is infinite.
-     * \return NEGATIVE if the left point is at x = +oo;
-     *         ZERO if the x-coordinate is finite.
+     * \return MINUS_INFINITY if the left point is at x = +oo;
+     *         FINITE if the x-coordinate is finite.
      */
-    CGAL::Sign right_infinite_in_x () const
+    Infinity_type right_infinite_in_x () const
     {
       if (is_vert || is_degen)
-        return (CGAL::ZERO);
+        return (FINITE);
 
       if (is_right)
-        return (has_target ? CGAL::ZERO : CGAL::POSITIVE);
+        return (has_target ? FINITE : PLUS_INFINITY);
       else
-        return (has_source ? CGAL::ZERO : CGAL::POSITIVE);
+        return (has_source ? FINITE : PLUS_INFINITY);
     }
 
     /*!
      * Check if the y-coordinate of the right point is infinite.
-     * \return NEGATIVE if the right point is at y = -oo;
-     *         POSITIVE if the right point is at y = -oo;
-     *         ZERO if the y-coordinate is finite.
+     * \return MINUS_INFINITY if the right point is at y = -oo;
+     *         PLUS_INFINITY if the right point is at y = -oo;
+     *         FINITE if the y-coordinate is finite.
      */
-    CGAL::Sign right_infinite_in_y () const
+    Infinity_type right_infinite_in_y () const
     {
       if (is_horiz || is_degen)
-        return (CGAL::ZERO);
+        return (FINITE);
 
       if (is_vert)
       {
         if (is_right)
-          return (has_target ? CGAL::ZERO : CGAL::POSITIVE);
+          return (has_target ? FINITE : PLUS_INFINITY);
         else
-          return (has_source ? CGAL::ZERO : CGAL::POSITIVE);
+          return (has_source ? FINITE : PLUS_INFINITY);
       }
 
       if ((is_right && has_target) || (! is_right && has_source))
-          return (CGAL::ZERO);
+          return (FINITE);
 
-      return (has_pos_slope ? CGAL::POSITIVE : CGAL::NEGATIVE);
+      return (has_pos_slope ? PLUS_INFINITY : MINUS_INFINITY);
     }
 
     /*!
@@ -469,9 +470,9 @@ public:
       typename Kernel_::Compare_x_2   compare_x = kernel.compare_x_2_object();
       Comparison_result               res1;
 
-      if (left_infinite_in_x() == CGAL::ZERO)
+      if (left_infinite_in_x() == FINITE)
       {
-        if (left_infinite_in_y() != CGAL::ZERO)
+        if (left_infinite_in_y() != FINITE)
           // Compare with some point on the curve.
           res1 = compare_x (p, ps);
         else
@@ -490,9 +491,9 @@ public:
 
       Comparison_result               res2;
 
-      if (right_infinite_in_x() == CGAL::ZERO)
+      if (right_infinite_in_x() == FINITE)
       {
-        if (right_infinite_in_y() != CGAL::ZERO)
+        if (right_infinite_in_y() != FINITE)
           // Compare with some point on the curve.
           res2 = compare_x (p, ps);
         else
@@ -519,11 +520,11 @@ public:
 
       Kernel                          kernel;
       typename Kernel_::Compare_y_2   compare_y = kernel.compare_y_2_object();
-      CGAL::Sign                      inf = left_infinite_in_y();
+      Infinity_type                   inf = left_infinite_in_y();
       Comparison_result               res1;
 
-      CGAL_assertion (inf != CGAL::POSITIVE);
-      if (inf == CGAL::ZERO)
+      CGAL_assertion (inf != PLUS_INFINITY);
+      if (inf == FINITE)
         res1 = compare_y (p, left());
       else
         res1 = LARGER;           // p is obviously above.
@@ -536,8 +537,8 @@ public:
       Comparison_result               res2;
 
       inf = right_infinite_in_y();
-      CGAL_assertion (inf != CGAL::NEGATIVE);
-      if (inf == CGAL::ZERO)
+      CGAL_assertion (inf != MINUS_INFINITY);
+      if (inf == FINITE)
         res2 = compare_y (p, right());
       else
         res2 = SMALLER;          // p is obviously below.
@@ -602,6 +603,58 @@ public:
 
       return (kernel.compare_x_2_object()(p1, p2));
     }
+
+    /*!
+     * Compare the relative positions of a vertical curve and another given
+     * curves at y = +/- oo.
+     * \param p A reference point; we refer to a vertical line incident to p.
+     * \param cv The compared curve.
+     * \param ind MIN_END if we refer to cv's minimal end,
+     *            MIN_END if we refer to its maximal end.
+     * \pre cv's relevant end is defined at y = +/- oo.
+     * \return SMALLER if p lies to the left of cv;
+     *         LARGER if p lies to the right cv;
+     *         EQUAL in case of an overlap.
+     */
+    Comparison_result operator() (const Point_2& p,
+                                  const X_monotone_curve_2& cv,
+                                  Curve_end ind) const
+    {
+      CGAL_assertion (! cv.is_degenerate());
+      CGAL_assertion (cv.is_vertical());
+
+      Kernel                    kernel;
+      return (kernel.compare_x_at_y_2_object() (p, cv.supp_line()));
+    }
+
+    /*!
+     * Compare the relative positions of two curves at y = +/- oo.
+     * \param cv1 The first curve.
+     * \param ind1 MIN_END if we refer to cv1's minimal end,
+     *             MIN_END if we refer to its maximal end.
+     * \param cv2 The second curve.
+     * \param ind2 MIN_END if we refer to cv2's minimal end,
+     *             MIN_END if we refer to its maximal end.
+     * \pre The curves are defined at y = +/- oo.
+     * \return SMALLER if cv1 lies to the left of cv2;
+     *         LARGER if cv1 lies to the right cv2;
+     *         EQUAL in case of an overlap.
+     */
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  Curve_end ind1,
+                                  const X_monotone_curve_2& cv2,
+                                  Curve_end ind2) const
+    {
+      CGAL_assertion (! cv1.is_degenerate());
+      CGAL_assertion (! cv2.is_degenerate());
+      CGAL_assertion (cv1.is_vertical());
+      CGAL_assertion (cv2.is_vertical());
+
+      Kernel                    kernel;
+      return (kernel.compare_x_at_y_2_object() (ORIGIN,
+                                                cv1.supp_line(),
+                                                cv2.supp_line()));
+    }
   };
 
   /*! Get a Compare_x_2 functor object. */
@@ -638,17 +691,18 @@ public:
   {
   public:
     /*!
-     * Check if an endpoint of a given x-monotone curve is infinite at x.
+     * Check if an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
-     * \param ind 0 if we refer to cv's left end;
-     *            1 if we refer to its right end.
-     * \return NEGATIVE if the left (right) end of cv lies at x = -oo;
-     *         ZERO if the left (right) end of cv has a finite x coordinate;
-     *         POSITIVE if the left (right) end of cv lies at x = +oo.
+     * \param ind MIN_END if we refer to cv's minimal end,
+     *            MIN_END if we refer to its maximal end.
+     * \return MINUS_INFINITY if the curve end lies at x = -oo;
+     *         FINITE if the curve end has a finite x-coordinate;
+     *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
-    CGAL::Sign operator() (const X_monotone_curve_2& cv, int ind) const
+    Infinity_type operator() (const X_monotone_curve_2& cv,
+                              Curve_end ind) const
     {
-      if (ind % 2 == 0)
+      if (ind == MIN_END)
         return (cv.left_infinite_in_x());
       else
         return (cv.right_infinite_in_x());
@@ -665,17 +719,18 @@ public:
   {
   public:
     /*!
-     * Check if an endpoint of a given x-monotone curve is infinite at y.
+     * Check if an end of a given x-monotone curve is infinite at y.
      * \param cv The curve.
-     * \param ind 0 if we refer to cv's left end;
-     *            1 if we refer to its right end.
-     * \return NEGATIVE if the left (right) end of cv lies at y = -oo;
-     *         ZERO if the left (right) end of cv has a finite y coordinate;
-     *         POSITIVE if the left (right) end of cv lies at y = +oo.
+     * \param ind MIN_END if we refer to cv's minimal end,
+     *            MIN_END if we refer to its maximal end.
+     * \return MINUS_INFINITY if the curve end lies at y = -oo;
+     *         FINITE if the curve end has a finite y-coordinate;
+     *         PLUS_INFINITY if the curve end lies at y = +oo.
      */
-    CGAL::Sign operator() (const X_monotone_curve_2& cv, int ind) const
+    Infinity_type operator() (const X_monotone_curve_2& cv,
+                              Curve_end ind) const
     {
-      if (ind % 2 == 0)
+      if (ind == MIN_END)
         return (cv.left_infinite_in_y());
       else
         return (cv.right_infinite_in_y());
@@ -792,6 +847,53 @@ public:
         else
           return (EQUAL);
       }
+    }
+
+    /*!
+     * Compare the relative y-positions of two curves at x = +/- oo.
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param ind MIN_END if we compare at x = -oo;
+     *            MAX_END if we compare at x = +oo.
+     * \pre The curves are defined at x = +/- oo.
+     * \return SMALLER if cv1 lies below cv2;
+     *         LARGER if cv1 lies above cv2;
+     *         EQUAL in case of an overlap.
+     */
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  const X_monotone_curve_2& cv2, 
+                                  Curve_end ind) const
+    {
+      // Make sure both curves are defined at x = -oo (or at x = +oo).
+      CGAL_precondition ((ind == MIN_END &&
+                          cv1.left_infinite_in_x() == MINUS_INFINITY &&
+                          cv2.left_infinite_in_x() == MINUS_INFINITY) ||
+                         (ind == MAX_END &&
+                          cv1.right_infinite_in_x() == PLUS_INFINITY &&
+                          cv2.right_infinite_in_x() == PLUS_INFINITY));
+
+      // Compare the slopes of the two supporting lines.
+      Kernel                    kernel;
+      const Comparison_result   res_slopes =
+        kernel.compare_slope_2_object() (cv1.supp_line(),
+                                         cv2.supp_line());
+
+      if (res_slopes == EQUAL)
+      {
+        // In case the two supporting line are parallel, compare their
+        // relative position at x = 0, which is the same as their position
+        // at infinity.
+        return (kernel.compare_y_at_x_2_object() (ORIGIN,
+                                                  cv1.supp_line(),
+                                                  cv2.supp_line()));
+      }
+
+      if (ind == MIN_END)
+        // Flip the slope result if we compare at x = -oo:
+        return ((res_slopes == LARGER) ? SMALLER : LARGER);
+
+      // If we compare at x = +oo, the slope result is what we need:
+      return (res_slopes);
     }
   };
 
@@ -971,126 +1073,6 @@ public:
   Equal_2 equal_2_object () const
   {
     return Equal_2();
-  }
-
-  class Compare_y_at_infinity_2
-  {
-  public:
-    /*!
-     * Compare the relative positions of two curves at x = +/- oo.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param sign NEGATIVE if we compare at x = -oo;
-     *             POSITIVE if we compare at x = +oo.
-     * \pre The curves are defined at x = +/- oo.
-     * \return SMALLER if cv1 lies below cv2;
-     *         LARGER if cv1 lies above cv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2, 
-                                  CGAL::Sign sign) const
-    {
-      CGAL_precondition (sign != CGAL::ZERO);
-
-      // Make sure both curves are defined at x = -oo (or at x = +oo).
-      CGAL_precondition ((sign == CGAL::NEGATIVE &&
-                          cv1.left_infinite_in_x() == CGAL::NEGATIVE &&
-                          cv2.left_infinite_in_x() == CGAL::NEGATIVE) ||
-                         (sign == CGAL::POSITIVE &&
-                          cv1.right_infinite_in_x() == CGAL::POSITIVE &&
-                          cv2.right_infinite_in_x() == CGAL::POSITIVE));
-
-      // Compare the slopes of the two supporting lines.
-      Kernel                    kernel;
-      const Comparison_result   res_slopes =
-        kernel.compare_slope_2_object() (cv1.supp_line(),
-                                         cv2.supp_line());
-
-      if (res_slopes == EQUAL)
-      {
-        // In case the two supporting line are parallel, compare their
-        // relative position at x = 0, which is the same as their position
-        // at infinity.
-        return (kernel.compare_y_at_x_2_object() (ORIGIN,
-                                                  cv1.supp_line(),
-                                                  cv2.supp_line()));
-      }
-
-      if (sign == CGAL::NEGATIVE)
-        // Flip the slope result if we compare at x = -oo:
-        return ((res_slopes == LARGER) ? SMALLER : LARGER);
-
-      // If we compare at x = +oo, the slope result is what we need:
-      return (res_slopes);
-    }
-  };
-
-  /*! Get a Compare_y_at_infinity_2 functor object. */
-  Compare_y_at_infinity_2 compare_y_at_infinity_2_object () const
-  {
-    return Compare_y_at_infinity_2();
-  }
-
-  class Compare_x_at_infinity_2
-  {
-  public:
-
-    /*!
-     * Compare the relative positions of a vertical curve and another given
-     * curves at y = +/- oo.
-     * \param p A reference point; we refer to a vertical line incident to p.
-     * \param cv The compared curve.
-     * \param ind 0 if we refer to cv's left end; 
-     *            1 if we refer to its right end.
-     * \pre cv's relevant end is defined at y = +/- oo.
-     * \return SMALLER if p lies to the left of cv2;
-     *         LARGER if p lies to the right cv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator() (const Point_2& p,
-                                  const X_monotone_curve_2& cv, int ind) const
-    {
-      CGAL_assertion (! cv.is_degenerate());
-      CGAL_assertion (cv.is_vertical());
-
-      Kernel                    kernel;
-      return (kernel.compare_x_at_y_2_object() (p, cv.supp_line()));
-    }
-
-    /*!
-     * Compare the relative positions of two curves at y = +/- oo.
-     * \param cv1 The first curve.
-     * \param ind1 0 if we refer to cv1's left end; 
-     *             1 if we refer to its right end.
-     * \param cv2 The second curve.
-     * \param ind2 0 if we refer to cv2's left end; 
-     *             1 if we refer to its right end.
-     * \pre The curves are defined at y = +/- oo.
-     * \return SMALLER if cv1 lies to the left of cv2;
-     *         LARGER if cv1 lies to the right cv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result
-        operator() (const X_monotone_curve_2& cv1, int ind1,
-                    const X_monotone_curve_2& cv2, int ind2) const
-    {
-      CGAL_assertion (! cv1.is_degenerate());
-      CGAL_assertion (! cv2.is_degenerate());
-      CGAL_assertion (cv1.is_vertical());
-      CGAL_assertion (cv2.is_vertical());
-
-      Kernel                    kernel;
-      return (kernel.compare_x_at_y_2_object() (ORIGIN,
-                                                cv1.supp_line(),
-                                                cv2.supp_line()));
-    }
-  };
-
-  /*! Get a Compare_x_at_infinity_2 functor object. */
-  Compare_x_at_infinity_2 compare_x_at_infinity_2_object () const
-  {
-    return Compare_x_at_infinity_2();
   }
   //@}
 

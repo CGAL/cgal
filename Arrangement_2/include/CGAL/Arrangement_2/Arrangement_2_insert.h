@@ -328,13 +328,13 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
 
   // Check whether the left end of c lies at infinity, or whether it is a
   // normal endpoint, and locate it in the arrangement accordingly.
-  CGAL::Sign             inf_x1 = traits->infinite_in_x_2_object() (c, 0);
-  CGAL::Sign             inf_y1 = traits->infinite_in_y_2_object() (c, 0);
-  CGAL::Object           obj1;
+  const Infinity_type  inf_x1 = traits->infinite_in_x_2_object() (c, MIN_END);
+  const Infinity_type  inf_y1 = traits->infinite_in_y_2_object() (c, MIN_END);
+  CGAL::Object         obj1;
   const Halfedge_const_handle *fict_hh1 = NULL;
   const Vertex_const_handle   *vh1 = NULL;
 
-  if (inf_x1 == CGAL::ZERO && inf_y1 == CGAL::ZERO)
+  if (inf_x1 == FINITE && inf_y1 == FINITE)
   {
     // We have a normal left endpoint.
     obj1 = pl.locate (arr.get_traits()->construct_min_vertex_2_object() (c));
@@ -350,7 +350,7 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
   else
   {
     // We have an unbounded left end.
-    obj1 = arr_access.locate_unbounded_end (c, 0);
+    obj1 = arr_access.locate_unbounded_end (c, MIN_END);
     
     // The unbounded end should lie on a fictitious edge.
     CGAL_precondition_msg
@@ -363,13 +363,13 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
 
   // Check whether the right end of c lies at infinity, or whether it is a
   // normal endpoint, and locate it in the arrangement accordingly.
-  CGAL::Sign             inf_x2 = traits->infinite_in_x_2_object() (c, 1);
-  CGAL::Sign             inf_y2 = traits->infinite_in_y_2_object() (c, 1);
-  CGAL::Object           obj2;
+  const Infinity_type  inf_x2 = traits->infinite_in_x_2_object() (c, MAX_END);
+  const Infinity_type  inf_y2 = traits->infinite_in_y_2_object() (c, MAX_END);
+  CGAL::Object         obj2;
   const Halfedge_const_handle *fict_hh2 = NULL;
   const Vertex_const_handle   *vh2 = NULL;
 
-  if (inf_x2 == CGAL::ZERO && inf_y2 == CGAL::ZERO)
+  if (inf_x2 == FINITE && inf_y2 == FINITE)
   {
     // We have a normal right endpoint.
     obj2 = pl.locate (arr.get_traits()->construct_max_vertex_2_object() (c));
@@ -385,7 +385,7 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
   else
   {
     // We have an unbounded right end.
-    obj2 = arr_access.locate_unbounded_end (c, 1);
+    obj2 = arr_access.locate_unbounded_end (c, MAX_END);
 
     // The unbounded end should lie on a fictitious edge.
     CGAL_precondition_msg
@@ -601,9 +601,9 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   bool                                   is_removed[2];
 
   v_ends[0] = e->source();
-  is_removed[0] = (v_ends[0]->has_null_point() || v_ends[0]->degree() == 1);
+  is_removed[0] = (v_ends[0]->is_at_infinity() || v_ends[0]->degree() == 1);
   v_ends[1] = e->target();
-  is_removed[1] = (v_ends[1]->has_null_point() || v_ends[1]->degree() == 1);
+  is_removed[1] = (v_ends[1]->is_at_infinity() || v_ends[1]->degree() == 1);
 
   // Remove the edge from the arrangement.
   typename Arrangement_2::Face_handle    face = arr.remove_edge (e);

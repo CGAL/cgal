@@ -30,6 +30,7 @@
  * The header file for the Arrangement_2<Traits,Dcel> class.
  */
 
+#include <CGAL/Arr_enums.h>
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arr_default_dcel.h>
@@ -113,8 +114,7 @@ protected:
   {
     bool operator() (const DVertex& v) const
     {
-      return (v.infinite_in_x() == CGAL::ZERO &&
-              v.infinite_in_y() == CGAL::ZERO);
+      return (! v.has_null_point());
     }
   };
 
@@ -621,6 +621,12 @@ public:
     Vertex()
     {}
 
+    /*! Check whether the vertex lies at infinity. */
+    bool is_at_infinity () const
+    {
+      return (Base::has_null_point());
+    }
+
     /*! Get the vertex degree (number of incident edges). */
     Size degree () const
     {
@@ -692,8 +698,9 @@ public:
   private:
 
     // Blocking access to inherited functions from the Dcel::Vertex.
+    bool has_null_point () const;
     void set_point (Point_2* );
-    void set_at_infinity (CGAL::Sign inf_x, CGAL::Sign inf_y);
+    void set_at_infinity (Infinity_type inf_x, Infinity_type inf_y);
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
@@ -1676,30 +1683,29 @@ protected:
   /*!
    * Get the curve associated with a vertex at infinity.
    * \param v The vertex as infinity.
-   * \param ind Output: 0 if the vertex is induced by the curve's left end;
-   *                    1 if it is induced by its right end.
+   * \param ind Output: MIN_END if the vertex is induced by the minimal end;
+   *                    MAX_END if it is induced by the curve's maximal end.
    * \pre v is a valid (not fictitious) vertex at infinity.
    * \return The curve that induces v.
    */
   const X_monotone_curve_2& _get_curve (const DVertex *v,
-                                        int& ind) const;
+                                        Curve_end& ind) const;
 
   /*!
    * Check whether the given infinite curve end lies on the given fictitious
    * halfedge.
    * \param cv The curve.
-   * \param ind 0 if we refer to cv's left end;
-   *            1 if we refer to its right end.
-   * \param inf_x Does its x-coordinate lies at +/- oo (ZERO if it is finite).
-   * \param inf_y Does its y-coordinate lies at +/- oo (ZERO if it is finite).
+   * \param ind Whether we refer to the minimal or maximal end of cv.
+   * \param inf_x Does its x-coordinate lies at infinity.
+   * \param inf_y Does its y-coordinate lies at infinity.
    * \param he The fictitious halfedge.
    * \param eq_source Output: Whether the curve coincides with he's source.
    * \param eq_target Output: Whether the curve coincides with he's target.
    * \return Whether the curve end lies on the fictitious halfedge.
    */
   bool _is_on_fictitious_edge (const X_monotone_curve_2& cv,
-                               int ind,
-                               CGAL::Sign inf_x, CGAL::Sign inf_y,
+                               Curve_end ind,
+                               Infinity_type inf_x, Infinity_type inf_y,
                                const DHalfedge *he,
                                bool& eq_source, bool& eq_target) const;
   
@@ -1708,23 +1714,22 @@ protected:
    * contains the given curve end in its interior.
    * \param f The face.
    * \param cv The curve.
-   * \param ind 0 if we refer to cv's left end;
-   *            1 if we refer to its right end.
-   * \param inf_x Does its x-coordinate lies at +/- oo (ZERO if it is finite).
-   * \param inf_y Does its y-coordinate lies at +/- oo (ZERO if it is finite).
+   * \param ind Whether we refer to the minimal or maximal end of cv.
+   * \param inf_x Does its x-coordinate lies at infinity.
+   * \param inf_y Does its y-coordinate lies at infinity.
    * \return A pointer to a halfedge, or NULL if no such halfegde is found.
    */
   DHalfedge* _locate_along_ccb (DFace *f,
                                 const X_monotone_curve_2& cv,
-                                int ind,
-                                CGAL::Sign inf_x, CGAL::Sign inf_y) const;
+                                Curve_end ind,
+                                Infinity_type inf_x,
+                                Infinity_type inf_y) const;
   
   /*!
    * Locate the place for the given curve around the given vertex.
    * \param v The given arrangement vertex.
    * \param cv The given x-monotone curve.
-   * \param ind 0 if v represents cv's left endpoint;
-   *            1 if it represents its right endpoint.
+   * \param ind Whether we refer to the minimal or maximal end of cv.
    * \return A pointer to a halfedge whose target is v, where cv should be
    *         inserted between this halfedge and the next halfedge around this
    *         vertex (in a clockwise order).
@@ -1732,7 +1737,7 @@ protected:
    */
   DHalfedge* _locate_around_vertex (DVertex *v,
                                     const X_monotone_curve_2& cv,
-                                    int ind) const;
+                                    Curve_end ind) const;
 
   /*!
    * Compute the distance (in halfedges) between two halfedges.
@@ -1841,12 +1846,12 @@ protected:
                                          const DHalfedge* he,
                                          Tag_false) const
   {
-    const CGAL::Sign         inf_y = he->vertex()->infinite_in_y();
+    const Infinity_type       inf_y = he->vertex()->infinite_in_y();
 
     CGAL_assertion (inf_y == he->opposite()->vertex()->infinite_in_y());
-    if (inf_y == CGAL::NEGATIVE)
+    if (inf_y == MINUS_INFINITY)
       return (LARGER);
-    else if (inf_y == CGAL::POSITIVE)
+    else if (inf_y == PLUS_INFINITY)
       return (SMALLER);
     else
       return (traits->compare_y_at_x_2_object() (p, he->curve()));
@@ -1906,15 +1911,16 @@ protected:
 
   /*!
    * Create a new vertex at infinity.
-   * \param inf_x NEGATIVE if this vertex lies at x = -oo;
-   *              POSITIVE if this vertex lies at x = +oo;
-   *              ZERO if the vertex has a bounded x-coordinate.
-   * \param inf_y NEGATIVE if this vertex lies at y = -oo;
-   *              POSITIVE if this vertex lies at y = +oo;
-   *              ZERO if the vertex has a bounded y-coordinate.
+   * \param inf_x MINUS_INFINITY if this vertex lies at x = -oo;
+   *              PLUS_INFINITY if this vertex lies at x = +oo;
+   *              FINITE if the vertex has a finite x-coordinate.
+   * \param inf_y MINUS_INFINITY if this vertex lies at y = -oo;
+   *              PLUS_INFINITY if this vertex lies at y = +oo;
+   *              FINITE if the vertex has a finite y-coordinate.
    * \return A pointer to the newly created vertex.
    */
-  DVertex* _create_vertex_at_infinity (CGAL::Sign inf_x, CGAL::Sign inf_y);
+  DVertex* _create_vertex_at_infinity (Infinity_type inf_x,
+                                       Infinity_type inf_y);
   
   /*!
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -2021,12 +2027,11 @@ protected:
    * Check if the given vertex represents one of the ends of a given curve.
    * \param v The vertex.
    * \param cv The curve.
-   * \param ind 0 if we refer to the left end of cv;
-   *            1 if we refer to its right end.
+   * \param ind Whether we refer to the minimal or maximal end of cv.
    * \return Whether v represents the left (or right) end of cv.
    */
   bool _are_equal (const DVertex *v,
-                   const X_monotone_curve_2& cv, int ind) const;
+                   const X_monotone_curve_2& cv, Curve_end ind) const;
 
   /*!
    * Perform an xy-lexicographic comparison between two given vertices (which
@@ -2076,15 +2081,13 @@ protected:
    * Split a given fictitious edge into two, forming a new vertex at
    * infinity.
    * \param e The edge to split (one of the pair of twin halfegdes).
-   * \param inf_x Does the x-coordinate of the new vertex is at +/- oo
-   *              (ZERO if it is finite).
-   * \param inf_y Does the y-coordinate of the new vertex is at +/- oo
-   *              (ZERO if it is finite).
+   * \param inf_x Is the x-coordinate of the new vertex at infinity.
+   * \param inf_y Is the y-coordinate of the new vertex at infinty.
    * \return A pointer to the first split halfedge, whose source equals the
    *         source of e, and whose target is v.
    */
   DHalfedge* _split_fictitious_edge (DHalfedge *e,
-                                     CGAL::Sign inf_x, CGAL::Sign inf_y);
+                                     Infinity_type inf_x, Infinity_type inf_y);
 
   /*!
    * Split a given fictitious edge into two, at a given vertex at infinity.
@@ -2270,8 +2273,8 @@ private:
       (*iter)->after_create_vertex (v);
   }
 
-  void _notify_before_create_vertex_at_infinity (CGAL::Sign inf_x,
-                                                 CGAL::Sign inf_y)
+  void _notify_before_create_vertex_at_infinity (Infinity_type inf_x,
+                                                 Infinity_type inf_y)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();

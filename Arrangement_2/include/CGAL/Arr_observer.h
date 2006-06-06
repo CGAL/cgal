@@ -235,15 +235,15 @@ public:
 
   /*!
    * Notification before the creation of a new vertex at infinity.
-   * \param inf_x NEGATIVE if this vertex lies at x = -oo;
-   *              POSITIVE if this vertex lies at x = +oo;
-   *              ZERO if the vertex has a bounded x-coordinate.
-   * \param inf_y NEGATIVE if this vertex lies at y = -oo;
-   *              POSITIVE if this vertex lies at y = +oo;
-   *              ZERO if the vertex has a bounded y-coordinate.
+   * \param inf_x MINUS_INFINITY if this vertex lies at x = -oo;
+   *              PLUS_INFINITY if this vertex lies at x = +oo;
+   *              FINITE if the vertex has a finite x-coordinate.
+   * \param inf_y MINUS_INFINITY if this vertex lies at y = -oo;
+   *              PLUS_INFINITY if this vertex lies at y = +oo;
+   *              FINITE if the vertex has a finite y-coordinate.
    */
-  virtual void before_create_vertex_at_infinity (CGAL::Sign /* inf_x */,
-                                                 CGAL::Sign /* inf_y */)
+  virtual void before_create_vertex_at_infinity (Infinity_type /* inf_x */,
+                                                 Infinity_type /* inf_y */)
   {}
 
   /*!

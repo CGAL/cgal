@@ -181,7 +181,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
             (closest_edge->source() == eit->target() &&
              closest_edge->direction() != eit->direction()))
         {
-          CGAL_assertion (! closest_edge->source()->has_null_point());
+          CGAL_assertion (! closest_edge->source()->is_at_infinity());
 
           if (closest_edge->direction() == SMALLER)
           {
@@ -203,7 +203,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
                  (closest_edge->target() == eit->target() &&
                   closest_edge->direction() == eit->direction()))
         {
-          CGAL_assertion (! closest_edge->target()->has_null_point());
+          CGAL_assertion (! closest_edge->target()->is_at_infinity());
 
           if (closest_edge->direction() == SMALLER)
           {
@@ -272,13 +272,13 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   // as the query point, return this vertex.
   if (! is_vertical (closest_edge->curve()))
   {
-    if (! closest_edge->source()->has_null_point() &&
+    if (! closest_edge->source()->is_at_infinity() &&
         traits->compare_x_2_object() (closest_edge->source()->point(),
                                       p) == EQUAL)
     {
       return (CGAL::make_object (closest_edge->source()));
     }
-    else if (! closest_edge->target()->has_null_point() &&
+    else if (! closest_edge->target()->is_at_infinity() &&
              traits->compare_x_2_object() (closest_edge->target()->point(),
                                            p) == EQUAL)
     {

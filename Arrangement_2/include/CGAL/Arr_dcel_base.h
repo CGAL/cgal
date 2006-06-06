@@ -26,6 +26,7 @@
  */
 
 #include <CGAL/basic.h>
+#include <CGAL/Arr_enums.h>
 #include <list>
 #include <map>
 #include <CGAL/N_step_adaptor_derived.h>
@@ -139,43 +140,43 @@ public:
   }
 
   /*! Check if the vertex is infinite at x. */
-  CGAL::Sign infinite_in_x () const
+  Infinity_type infinite_in_x () const
   {
     if ((infty & X_MINUS_INFTY) != 0)
-      return (NEGATIVE);
+      return (MINUS_INFINITY);
     else if ((infty & X_PLUS_INFTY) != 0)
-      return (POSITIVE);
+      return (PLUS_INFINITY);
     
-    return (ZERO);
+    return (FINITE);
   }
 
   /*! Check if the vertex is infinite at y. */
-  CGAL::Sign infinite_in_y () const
+  Infinity_type infinite_in_y () const
   {
     if ((infty & Y_MINUS_INFTY) != 0)
-      return (NEGATIVE);
+      return (MINUS_INFINITY);
     else if ((infty & Y_PLUS_INFTY) != 0)
-      return (POSITIVE);
+      return (PLUS_INFINITY);
     
-    return (ZERO);
+    return (FINITE);
   }
 
   /*! Set a vertex at infinity (which is not associated with a point). */
-  void set_at_infinity (CGAL::Sign inf_x, CGAL::Sign inf_y)
+  void set_at_infinity (Infinity_type inf_x, Infinity_type inf_y)
   {
-    CGAL_precondition (inf_x != ZERO || inf_y != ZERO);
+    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
 
     p_pt = NULL;
     infty = 0;
 
-    if (inf_x == NEGATIVE)
+    if (inf_x == MINUS_INFINITY)
       infty = infty | X_MINUS_INFTY;
-    else if (inf_x == POSITIVE)
+    else if (inf_x == PLUS_INFINITY)
       infty = infty | X_PLUS_INFTY;
 
-    if (inf_y == NEGATIVE)
+    if (inf_y == MINUS_INFINITY)
       infty = infty | Y_MINUS_INFTY;
-    else if (inf_y == POSITIVE)
+    else if (inf_y == PLUS_INFINITY)
       infty = infty | Y_PLUS_INFTY;
 
     return;
