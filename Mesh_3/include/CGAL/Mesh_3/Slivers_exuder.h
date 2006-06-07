@@ -590,9 +590,9 @@ public: // methods
                            opposite_cell->vertex(index_of_new_facet)->point(),
 			   v->point().point()) << "\n";
 	CGAL_assertion((number_of_erased_facets == 1 && 
-			 number_of_new_facets == 3 ) ||
-		     (number_of_erased_facets == 2 && 
-		      number_of_new_facets == 2 ));
+                        number_of_new_facets == 3 ) || // flip 2-3
+                       (number_of_erased_facets == 2 && 
+                        number_of_new_facets == 2 ));  // flip 3-2
 
         CGAL_assertion_code(size_of_pre_star = size_of_pre_star + number_of_new_facets - number_of_erased_facets);
         CGAL_assertion( pre_star.size() == size_of_pre_star );
