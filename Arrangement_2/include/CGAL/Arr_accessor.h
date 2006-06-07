@@ -596,6 +596,8 @@ public:
    * \param res The comparsion result between the points associated with the
    *            target vertex of prev and the target vertex of prev2.
    * \param new_face Output - whether a new face has been created.
+   * \param both_unbounded Indicates whether in case the face is split, both
+   *                       resulting faces should be unbounded.
    * \return A handle for one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
    *         In case a new face has been created, it is given as the incident
@@ -605,13 +607,15 @@ public:
                                          Halfedge_handle prev1, 
                                          Halfedge_handle prev2,
                                          Comparison_result res,
-                                         bool& new_face)
+                                         bool& new_face,
+                                         bool both_unbounded = false)
   {
     DHalfedge*  he = p_arr->_insert_at_vertices (cv,
                                                  p_arr->_halfedge (prev1),
                                                  p_arr->_halfedge (prev2),
                                                  res,
-                                                 new_face);
+                                                 new_face,
+                                                 both_unbounded);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));

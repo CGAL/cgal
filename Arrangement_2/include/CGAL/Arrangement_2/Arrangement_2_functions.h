@@ -404,12 +404,12 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
                                   fict_prev1, 
                                   fict_prev2,
                                   SMALLER,
-                                  new_face_created);
+                                  new_face_created,
+                                  true);
   
     if (new_face_created)
     {
       CGAL_assertion (! new_he->is_on_hole());
-      new_he->face()->set_unbounded(true);
       _relocate_in_new_face (new_he);
     }
   }
@@ -495,12 +495,12 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
                                     fict_prev1, 
                                     fict_prev2,
                                     SMALLER,
-                                    new_face_created);
+                                    new_face_created,
+                                    true);
   
       if (new_face_created)
       {
         CGAL_assertion (! new_he->is_on_hole());
-        new_he->face()->set_unbounded(true);
         _relocate_in_new_face (new_he);
       }
     }
@@ -693,12 +693,12 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                   prev1, 
                                   fict_prev2,
                                   SMALLER,
-                                  new_face_created);
+                                  new_face_created,
+                                  true);
   
     if (new_face_created)
     {
       CGAL_assertion (! new_he->is_on_hole());
-      new_he->face()->set_unbounded(true);
       _relocate_in_new_face (new_he);
     }
   }
@@ -781,12 +781,12 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                   prev1, 
                                   fict_prev2,
                                   SMALLER,
-                                  new_face_created);
+                                  new_face_created,
+                                  true);
   
     if (new_face_created)
     {
       CGAL_assertion (! new_he->is_on_hole());
-      new_he->face()->set_unbounded(true);
       _relocate_in_new_face (new_he);
     }
   }
@@ -849,12 +849,12 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
                                             prev1, 
                                             fict_prev2,
                                             SMALLER,
-                                            new_face_created);
+                                            new_face_created,
+                                            true);
   
   if (new_face_created)
   {
     CGAL_assertion (! new_he->is_on_hole());
-    new_he->face()->set_unbounded(true);
     _relocate_in_new_face (new_he);
   }
 
@@ -992,12 +992,12 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                   prev2, 
                                   fict_prev1,
                                   LARGER,
-                                  new_face_created);
+                                  new_face_created,
+                                  true);
   
     if (new_face_created)
     {
       CGAL_assertion (! new_he->is_on_hole());
-      new_he->face()->set_unbounded(true);
       _relocate_in_new_face (new_he);
     }
   }
@@ -1082,12 +1082,12 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                   prev2,
                                   fict_prev1, 
                                   LARGER,
-                                  new_face_created);
+                                  new_face_created,
+                                  true);
   
     if (new_face_created)
     {
       CGAL_assertion (! new_he->is_on_hole());
-      new_he->face()->set_unbounded(true);
       _relocate_in_new_face (new_he);
     }
   }
@@ -1150,12 +1150,12 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
                                             prev2, 
                                             fict_prev1,
                                             LARGER,
-                                            new_face_created);
+                                            new_face_created,
+                                            true);
   
   if (new_face_created)
   {
     CGAL_assertion (! new_he->is_on_hole());
-    new_he->face()->set_unbounded(true);
     _relocate_in_new_face (new_he);
   }
 
@@ -1474,8 +1474,8 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
   // Perform the insertion.
   bool        new_face_created = false;
   DHalfedge  *new_he = (prev1_before_prev2) ?
-    _insert_at_vertices (cv, p_prev1, p_prev2, res, new_face_created) :
-    _insert_at_vertices (cv, p_prev2, p_prev1, res, new_face_created);
+    _insert_at_vertices (cv, p_prev1, p_prev2, res, new_face_created, false) :
+    _insert_at_vertices (cv, p_prev2, p_prev1, res, new_face_created, false);
 
   if (new_face_created)
   {
@@ -2920,7 +2920,8 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
                                                  DHalfedge *prev1,
                                                  DHalfedge *prev2,
                                                  Comparison_result res,
-                                                 bool& new_face)
+                                                 bool& new_face,
+                                                 bool both_unbounded)
 {
   // Get the vertices that match cv's endpoints.
   DVertex    *v1 = prev1->vertex();
@@ -3111,6 +3112,35 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
       is_hole = true;
     }
 
+    // Check whether we should mark the original face and the new face as
+    // bounded or as unbounded faces.
+    if (both_unbounded)
+    {
+      // Both faces are unbounded.
+      CGAL_assertion (f->is_unbounded());
+      new_f->set_unbounded (true);
+    }
+    else
+    {
+      if (! f->is_unbounded())
+      {
+        // f is a bounded face, so the new face split from it is obviously
+        // bounded.
+        new_f->set_unbounded (false);
+      }
+      else
+      {
+        // We can have the two following cases: One face becomes is bounded
+        // and the other is not, ot both are unbounded (but they cannot both
+        // become bounded).
+        std::pair<bool, bool>   unb_res = _is_face_unbounded (he1);
+
+        if (unb_res.first || unb_res.second)
+          f->set_unbounded (unb_res.first);
+        new_f->set_unbounded (unb_res.second);
+      }
+    }
+
     // Notify the observers that we have split the face.
     _notify_after_split_face (fh,
                               Face_handle (new_f),
@@ -3122,6 +3152,42 @@ Arrangement_2<Traits,Dcel>::_insert_at_vertices (const X_monotone_curve_2& cv,
 
   // Return the halfedge directed from v1 to v2.
   return (he2);
+}
+
+//-----------------------------------------------------------------------------
+// Check whether the incident face of the given halfedge and whether the
+// incident face of its twin halfedge are unbounded.
+//
+template<class Traits, class Dcel>
+std::pair<bool, bool>
+Arrangement_2<Traits,Dcel>::_is_face_unbounded_imp (DHalfedge *he,
+                                                    Tag_true) const
+{
+  int           i;
+  bool          is_unbounded[2];
+  DHalfedge     *first;
+  DHalfedge     *curr;
+  
+  for (i = 0; i < 2; i++)
+  {
+    // Go over the CBB of the given halfedge an look for fictitious halfedges.
+    curr = first = (i == 0) ? he : he->opposite();
+
+    is_unbounded[i] = false;
+    do
+    {
+      if (curr->has_null_curve())
+      {
+        is_unbounded[i] = true;
+        break;
+      }
+
+      curr = curr->next();
+      
+    } while (curr != first);
+  }
+
+  return (std::make_pair (is_unbounded[0], is_unbounded[1]));
 }
 
 //-----------------------------------------------------------------------------

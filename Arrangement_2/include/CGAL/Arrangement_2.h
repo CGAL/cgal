@@ -1972,6 +1972,8 @@ protected:
    * \param res The comparison result of the points associated with prev1's
    *            target vertex and prev2's target vertex.
    * \param new_face Output - whether a new face has been created.
+   * \param both_unbounded Indicates whether in case the face is split, both
+   *                       resulting faces should be unbounded.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
    *         In case a new face has been created, it is given as the incident
@@ -1981,7 +1983,36 @@ protected:
                                   DHalfedge *prev1, 
                                   DHalfedge *prev2,
                                   Comparison_result res,
-                                  bool& new_face);
+                                  bool& new_face,
+                                  bool both_unbounded);
+
+  /*!
+   * Check whether the incident face of the given halfedge and whether the
+   * incident face of its twin halfedge are unbounded. We do this by trying
+   * to locate a fictitious halfedge along the two CCBs. 
+   * \param he The halfedge.
+   * \return A pair of Boolean flags, the first indicates whether there are
+   *         fictitious edges on the CCB of he, the second refers to the CCB
+   *         of its twin.
+   */
+  std::pair<bool, bool> _is_face_unbounded (DHalfedge *he) const
+  {
+    return
+      (_is_face_unbounded_imp (he, 
+                               typename Traits_2::Has_infinite_category()));
+  }
+  
+  std::pair<bool, bool> _is_face_unbounded_imp (DHalfedge *he,
+                                                Tag_true) const;
+
+  std::pair<bool, bool> _is_face_unbounded_imp (DHalfedge *he,
+                                                Tag_false) const
+  {
+    // If the traits class does not support unbounded curves, it is guaranteed
+    // that he is incident to the unbounded face and its twin lies inside a
+    // bounded hole.
+    return (std::pair<bool,bool> (true, false));
+  }
 
   /*!
    * Relocate all holes and isolated vertices to their proper position,
