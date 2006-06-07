@@ -666,7 +666,7 @@ public: // methods
 	    worst_radius_ratio = min_of_pre_star;
 	    if( !pre_star.empty() )
             {
-              CGAL_assertion( critical_r < pre_star.front()->first );
+//               CGAL_assertion( critical_r < pre_star.front()->first );
 	      best_weight = (critical_r + pre_star.front()->first) / 2;
             }
 	    else
