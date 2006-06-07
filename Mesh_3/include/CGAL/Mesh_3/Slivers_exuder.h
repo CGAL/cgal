@@ -139,11 +139,14 @@ radius_ratio(const CGAL::Tetrahedron_3<K>& t)
 
   } // end namespace details
 
-template <typename Tr, 
-          typename FT = typename Tr::Geom_traits::FT >
+template <
+  typename C2T3, 
+  typename FT = typename C2T3::Triangulation::Geom_traits::FT
+  >
 class Slivers_exuder
 {
 public: //types
+  typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -170,8 +173,9 @@ private: //types
   typedef CGAL::Double_map<Facet, double> Pre_star;
 
 public: // methods
-  Slivers_exuder(Tr& t, double d = 0.45)
-    : tr(t), sq_delta(d*d), num_of_pumped_vertices(0),
+  Slivers_exuder(C2T3 c2t3, double d = 0.45)
+    : c2t3(c2t3), tr(c2t3.triangulation()),
+      sq_delta(d*d), num_of_pumped_vertices(0),
       num_of_ignored_vertices(0), total_pumping(0.0),
       initialized(false)
   {
@@ -437,6 +441,10 @@ public: // methods
 			 make_transform_iterator(incident_vertices.end(),
 						 distance_from_v)));
 
+    // This boolean value will be set to true if one of the incident cells
+    // is in the domain.
+    CGAL_assertion_code(bool is_incident_to_a_cell_in_domain = false);
+
     // filling 'pre_star' and 'ratios' with initial values
     for(typename std::vector<Cell_handle>::const_iterator cit = 
           incident_cells.begin();
@@ -444,21 +452,34 @@ public: // methods
         ++cit)
     {
       CGAL_assertion( v->point().surface_index() > 0 || (*cit)->is_in_domain() );
-      if( !tr.is_infinite(*cit) && (*cit)->is_in_domain() )
-	{
-	  const int index = (*cit)->index(v);
-	  const Facet f = Facet(*cit, index);
-	  const double r = CGAL::to_double(radius_ratio(tr.tetrahedron(*cit)));
-	  ratios[f] = r;
-	  if( r < worst_radius_ratio ) worst_radius_ratio = r;
-	  const Facet opposite_facet = tr.mirror_facet(f);
-	  pre_star.insert(f, compute_critical_radius(v,
-						     opposite_facet.first));
+
+      const int index = (*cit)->index(v);
+      const Facet f = Facet(*cit, index);
+      if( (*cit)->is_in_domain() )
+      {
+        CGAL_assertion_code(is_incident_to_a_cell_in_domain = true);
+        const double r = CGAL::to_double(radius_ratio(tr.tetrahedron(*cit)));
+        ratios[f] = r;
+        if( r < worst_radius_ratio ) worst_radius_ratio = r;
+      }
+      const Facet opposite_facet = tr.mirror_facet(f);
+      if( !tr.is_infinite(opposite_facet.first) )
+      {
+        pre_star.insert(f, compute_critical_radius(v,
+                                                   opposite_facet.first));
+        // if the facet is on the convex hull, do not insert it in pre_star
+        // however, the corresponding cell *cit is inserted in
+        // pre_star_interior
+      }
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-          pre_star_interior.insert(*cit);
+      pre_star_interior.insert(*cit);
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-	}
     }
+
+    // every point in the mesh should be incident to a cell in domain:
+    // if it is on a surface, at least one side of the surface should be in
+    // domain.
+    CGAL_assertion(is_incident_to_a_cell_in_domain);
 
     double first_radius_ratio = worst_radius_ratio;
 
@@ -468,23 +489,22 @@ public: // methods
     CGAL_assertion_code(Pre_star best_pre_star = pre_star);
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
       
-    CGAL_assertion(!pre_star.empty());
-
-    std::pair<double, Facet> facet = *(pre_star.front());
-    Facet link = facet.second;
-
-    // first critial radius
-    double critical_r = facet.first;
-
 //     pre_star.pop_front();
 
 //     std::cerr << "v=" << &*v << std::endl;
     
-    while( (critical_r < (sq_delta * sq_d_v)) &&
+    while( !pre_star.empty() && 
+           pre_star.front()->first < (sq_delta * sq_d_v) &&
            // La condition suivante teste que la facet qui va etre flippee
            // n'est pas contrainte.
-           ! link.first->is_facet_on_surface(link.second) )
-      {
+           ! c2t3.is_in_complex(pre_star.front()->second) )
+    {
+        std::pair<double, Facet> facet = *(pre_star.front());
+        Facet link = facet.second;
+        
+        // first critial radius
+        double critical_r = facet.first;
+
 // 	std::cerr << "critical_r(" << &*link.first
 // 		  << "," << link.second
 // 		  << ", s=" << pre_star.size() << ")="
@@ -922,6 +942,7 @@ public: // methods
   } // end walk_on_the_boundary_of_the_star
   
 private: // data
+  C2T3 c2t3;
   Tr& tr;
   double sq_delta;
   double stop_limit_on_radius_ratio;
