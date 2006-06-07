@@ -252,6 +252,8 @@ Arrangement_2/examples/Arrangement_2/ex_infinite_edge_insertion.C -text
 Arrangement_2/examples/Arrangement_2/ex_infinite_insert.C -text
 Arrangement_2/examples/Arrangement_2/ex_infinite_non_intersecting.C -text
 Benchmark/examples/Benchmark/bbox.C -text
+Benchmark/examples/Benchmark/data/test1.bff -text
+Benchmark/examples/Benchmark/data/test2.bff -text
 Benchmark/examples/Benchmark/leftturn.C -text
 Benchmark/examples/Benchmark/simple.C -text
 Benchmark/include/CGAL/Bench_option_parser.h -text
