@@ -163,43 +163,55 @@ public:
   /*! Get an iterator for the first vertex in the arrangement. */
   All_vertex_iterator all_vertices_begin() 
   { 
+    typedef typename Arrangement_2::_Is_non_fictitious_vertex   
+                                                     Is_non_fictitious_vertex;
+
     return (All_vertex_iterator (p_arr->dcel.vertices_begin(),
                                  p_arr->dcel.vertices_end(),
-                                 _Is_non_fictitious_vertex (p_arr->v_bl,
-                                                            p_arr->v_tl,
-                                                            p_arr->v_br,
-                                                            p_arr->v_tr))); 
+                                 Is_non_fictitious_vertex (p_arr->v_bl,
+                                                           p_arr->v_tl,
+                                                           p_arr->v_br,
+                                                           p_arr->v_tr))); 
   }
 
   /*! Get a past-the-end iterator for the arrangement vertices. */
   All_vertex_iterator all_vertices_end()
   {
+    typedef typename Arrangement_2::_Is_non_fictitious_vertex   
+                                                     Is_non_fictitious_vertex;
+
     return (All_vertex_iterator (p_arr->dcel.vertices_end(),
                                  p_arr->dcel.vertices_end(),
-                                 _Is_non_fictitious_vertex (p_arr->v_bl,
-                                                            p_arr->v_tl,
-                                                            p_arr->v_br,
-                                                            p_arr->v_tr))); 
+                                 Is_non_fictitious_vertex (p_arr->v_bl,
+                                                           p_arr->v_tl,
+                                                           p_arr->v_br,
+                                                           p_arr->v_tr))); 
   }
 
   /*! Get a const iterator for the first vertex in the arrangement. */
   All_vertex_const_iterator all_vertices_begin() const 
   { 
+    typedef typename Arrangement_2::_Is_non_fictitious_vertex   
+                                                     Is_non_fictitious_vertex;
+
     return (All_vertex_const_iterator
             (p_arr->dcel.vertices_begin(),
              p_arr->dcel.vertices_end(),
-             _Is_non_fictitious_vertex (p_arr->v_bl, p_arr->v_tl,
-                                        p_arr->v_br, p_arr->v_tr))); 
+             Is_non_fictitious_vertex (p_arr->v_bl, p_arr->v_tl,
+                                       p_arr->v_br, p_arr->v_tr))); 
   }
 
   /*! Get a past-the-end const iterator for the arrangement vertices. */
   All_vertex_const_iterator all_vertices_end() const
   {
+    typedef typename Arrangement_2::_Is_non_fictitious_vertex   
+                                                     Is_non_fictitious_vertex;
+
     return (All_vertex_const_iterator
             (p_arr->dcel.vertices_end(),
              p_arr->dcel.vertices_end(),
-             _Is_non_fictitious_vertex (p_arr->v_bl, p_arr->v_tl,
-                                        p_arr->v_br, p_arr->v_tr))); 
+             Is_non_fictitious_vertex (p_arr->v_bl, p_arr->v_tl,
+                                       p_arr->v_br, p_arr->v_tr))); 
   }
 
   /*! Get an iterator for the first edge in the arrangement. */
