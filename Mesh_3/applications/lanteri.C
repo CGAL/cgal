@@ -20,7 +20,7 @@
 #include <CGAL/Weighted_point_with_surface_index_geom_traits.h>
 
 // radius_ratio
-#include <CGAL/Mesh_3/Slivers_exuder.h>
+#include <CGAL/Mesh_3/Slivers_exuder_aux.h>
 
 #include <sstream>
 

@@ -102,7 +102,7 @@ scan_cells_and_process(const Tr& tr, std::string filename_prefix)
     if(cit->is_in_domain())
     {
       const double quality = 
-        CGAL::to_double(radius_ratio(tr.tetrahedron(cit)));
+        CGAL::to_double(Pierre::radius_ratio(tr.tetrahedron(cit)));
       // radius ratio is in common namespace, in Slivers_exuder.h
       int index = cit->volume_index();
       if(index < 0)

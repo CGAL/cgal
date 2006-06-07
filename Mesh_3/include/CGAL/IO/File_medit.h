@@ -65,7 +65,9 @@ output_to_medit (std::ostream& os, const C2T3& c2t3)
   {
     V[vit] = inum++;
     Point p = static_cast<Point>(vit->point());
-    os << p.x() << " " << p.y() << " " << p.z() << " " 
+    os << CGAL::to_double(p.x()) << " " 
+       << CGAL::to_double(p.y()) << " " 
+       << CGAL::to_double(p.z()) << " " 
        << p.surface_index() << std::endl; // reference
   }
 

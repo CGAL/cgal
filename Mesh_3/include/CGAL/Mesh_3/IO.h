@@ -130,17 +130,17 @@ namespace Mesh_3 {
 template <class C2T3>
 void output_mesh(std::ostream& os, const C2T3& c2t3)
 {
-  typedef typename C2T3::Triangulation Tr;
-  typedef typename Tr::Cell_iterator Cell_iterator;
-  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Point Point;
+//   typedef typename C2T3::Triangulation Tr;
+//   typedef typename Tr::Cell_iterator Cell_iterator;
+//   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+//   typedef typename Tr::Vertex_handle Vertex_handle;
+//   typedef typename Tr::Point Point;
 
-  const Tr& tr = c2t3.triangulation();
-  os << "format: " << Get_io_signature<Tr>()();
+//   const Tr& tr = c2t3.triangulation();
+  os << "format: " << Get_io_signature<C2T3>()();
   if(is_ascii(os))
     os << "\n";
-  os << tr;
+  os << c2t3;
 
 //   int number_of_vertices = tr.number_of_vertices();
 
@@ -180,10 +180,10 @@ input_mesh(std::istream& is,
            bool debug = false, 
            std::ostream* debug_str = &std::cout)
 {
-  typedef typename C2T3::Triangulation Tr;
-  typedef typename Tr::Triangulation_data_structure Tds;
-  typedef typename Tr::Vertex_handle Vertex_handle;  
-  typedef typename Tr::Cell_handle Cell_handle;  
+//   typedef typename C2T3::Triangulation Tr;
+//   typedef typename Tr::Triangulation_data_structure Tds;
+//   typedef typename Tr::Vertex_handle Vertex_handle;  
+//   typedef typename Tr::Cell_handle Cell_handle;  
 
   details::Debug debug_stream(debug,
                               debug_str,
@@ -200,15 +200,13 @@ input_mesh(std::istream& is,
   }
   
   is >> format;
-  if( format != Get_io_signature<Tr>()() )
+  if( format != Get_io_signature<C2T3>()() )
   {
     debug_stream << "bad format \"" << format << "\"\n";
-    debug_stream << "expected format \"" << Get_io_signature<Tr>()() << "\"\n";
+    debug_stream << "expected format \"" << Get_io_signature<C2T3>()() << "\"\n";
     return false;
   }
-  Tr& tr = c2t3.triangulation();
-  is >> tr;
-  return (is.good());
+  return is >> c2t3;
 
 //   Tds& tds = tr.tds();
 

@@ -44,9 +44,6 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-#RUN_PROGRAMS=   multi_spheres$(EXE_EXT) \
-#		combined_spheres$(EXE_EXT)
-
 RUN_PROGRAMS=  	combined_spheres$(EXE_EXT)
 
 TOOLS=  cgal_to_medit \
@@ -75,14 +72,10 @@ tools:
 	           OTHER_CXXFLAGS=$(OTHER_CXXFLAGS) ; \
 	done
 
-multi_spheres$(EXE_EXT): multi_spheres$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)multi_spheres multi_spheres$(OBJ_EXT) $(LDFLAGS)
-
 combined_spheres$(EXE_EXT): combined_spheres$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)combined_spheres combined_spheres$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   multi_spheres.clean \
                    combined_spheres.clean
 
 #---------------------------------------------------------------------#

@@ -75,6 +75,11 @@ namespace CGAL {
 #endif
     }
 
+    const Visitor& get_visitor()
+    {
+      return visitor;
+    }
+
     // Predicates and Constructions
 
     bool is_in_volume(const Surface_3& sphere, const Point& p)
@@ -408,8 +413,12 @@ namespace CGAL {
           GT().construct_translated_point_3_object();
 
         while (n-->0)
-          *out++ = translate(*random_point_on_sphere++,
+        {
+          Point p = translate(*random_point_on_sphere++,
                              vector_3(CGAL::ORIGIN, center));
+          oracle.get_visitor().new_point(p);
+          *out++ = p;
+        }
         return out;
       }
     }; // end nested class Construct_initial_points

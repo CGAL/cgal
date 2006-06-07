@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>
+
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 
 #include <CGAL/Mesh_3/IO.h>
@@ -22,10 +23,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
 
-#include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
 #include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
-
-//#include <CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -41,14 +39,6 @@
 #include <iostream>
 #include <fstream>
 
-// #ifdef CGAL_USE_QT
-// // for distribution
-// #  include <CGAL/IO/Qt_widget.h>
-// #  include <qapplication.h> // needed by QPainter :-(
-// #  include <qpixmap.h>  // qt drawing to pixmap
-// #endif // CGAL_USE_QT
-
-#include <algorithm> // std::max_element()
 #include <sstream>
 
 #include <boost/tuple/tuple.hpp> // boost::tie
@@ -429,119 +419,11 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
     }
 }
 
-// #ifdef CGAL_USE_QT
-// template <typename Triangulation>
-// void output_distribution_to_png(Triangulation& tr,
-//                                 const int number_of_classes = 100,
-//                                 std::string filename,
-//                                 Distribution_type type = RADIUS_RATIO)
-// {
-//   typedef Triangulation Tr;
-
-//   std::vector<double> qualities;
-//   double max_quality = 0;
-  
-//   for(typename Tr::Finite_cells_iterator it = tr.finite_cells_begin();
-//       it != tr.finite_cells_end();
-//       it++)
-//     {
-//       if(it->is_in_domain())
-//         {
-//           typename Tr::Tetrahedron t = tr.tetrahedron(it);
-//           switch( type )
-//             {
-//             case ANGLE:
-//               for(int i = 0; i < 4; ++i)
-//                 for(int j = i + 1; j < 4; j++)
-//                   qualities.push_back(dihedral_angle(t, i, j));
-//               break;
-// 	    case MIN_ANGLE:
-// 	      qualities.push_back(min_dihedral_angle(t));
-// 	      break;
-//             default: // RADIUS_RATIO
-//               double q = CGAL::to_double(radius_ratio(t));
-//               qualities.push_back(q);
-//               //              max_quality = std::max(max_quality, q);
-//             }
-//         }
-//     }
-
-//   if( type == ANGLE ) max_quality = 180.;
-//   else if ( type == MIN_ANGLE ) max_quality = 90.;
-//   else max_quality = 1.;
-  
-//   const int number_of_cells = qualities.size();
-
-//   std::vector<int> distribution(number_of_classes);
-  
-//   for(int j=0;j<number_of_cells;j++)
-//     { // This block is (c) Pierre Alliez 2005
-//       int index = number_of_classes-1;
-//       // saturate highest value to last bin
-
-//       if(qualities[j] < max_quality)
-//       {
-//         double dratio = qualities[j]/max_quality;
-//         index = static_cast<int>(dratio*(double)number_of_classes);
-//       }
-//       distribution[index]++;
-//     }
-
-//   const int max_occurrence = *std::max_element(distribution.begin(), 
-//                                                distribution.end());
-
-//   CGAL::Qt_widget *widget = new CGAL::Qt_widget();
-//   qApp->setMainWidget(widget);
-//   widget->resize(distribution_x, distribution_y);
-//   widget->set_window(-0.2, 1.2, -0.2, 1.2, true); // x_min, x_max,
-//                                                   // y_min, y_max.
-//   widget->show();
-  
-//   widget->lock();
-//   *widget << CGAL::FillColor(CGAL::Color(200, 200, 200))
-//           << CGAL::Color(200, 200, 200)
-//           << Rectangle_2(Point_2(0, 0), Point_2(1,1));
-  
-//   if( number_of_classes == 0 ) return;
-//   const double width = 1.0 / number_of_classes;
-
-//   *widget << CGAL::FillColor(CGAL::BLACK);
-// //   *widget << Segment_2(Point_2(0., 0.), Point_2(1., 0.));
-//   for(int k=0;k<number_of_classes;k++)
-//     if(distribution[k]>0)
-//       {
-//         double height = ( distribution[k]+0. ) / max_occurrence;
-//         *widget << CGAL::BLACK 
-// 		<< Rectangle_2(Point_2(k*width, 0),
-// 			       Point_2((k+1)*width, height));
-//       }
-//     else
-//       *widget << CGAL::RED << Segment_2(Point_2(k*width, 0),
-// 					Point_2((k+1)*width, 0));
-  
-//   widget->unlock();
-//   if( widget->get_pixmap().save( QString(filename.c_str()),
-//                                  "PNG") )
-//     std::cerr << "Distribution saved to file " << filename
-//               << std::endl;
-//   else
-//     {
-//       std::cerr << "Error: cannot save distribution to file "
-//                 << filename << std::endl; 
-//       exit(EXIT_FAILURE);
-//     }
-//   qApp->exec();
-// }
-// #endif // CGAL_USE_QT
-
 /////////////// Main function /////////////// 
 
 int main(int argc, char **argv) {
   argv0 = argv[0];
 
-// #ifdef CGAL_USE_QT
-//   QApplication app (argc, argv);
-// #endif // CGAL_USE_QT
   init_parameters();
   functions["generic_inrimage"] = &generic_inrimage_function;
   usage_ptr = &usage;
@@ -733,13 +615,8 @@ int main(int argc, char **argv) {
       delete out;
   }
 
-// #ifdef CGAL_USE_QT
-//   if( dump_distribution )
-//     output_distribution_to_png(tr, distribution_size, 
-// 			       distribution_filename, distribution_type);
-// #endif
   CGAL_assertion(tr.is_valid(true, 100));
-  CGAL::Mesh_3::Slivers_exuder<Tr> exuder(tr);
+  CGAL::Mesh_3::Slivers_exuder<C2t3> exuder(tr);
   int number_of_pump = static_cast<int>(get_double_option("number_of_pump"));
   for(int i = 0; i < number_of_pump; ++i)
   {
@@ -748,14 +625,6 @@ int main(int argc, char **argv) {
     exuder.pump_vertices(get_double_option("pumping_bound"));
   }
   
-// #ifdef CGAL_USE_QT
-//   std::string distribution_after_filename = 
-//     get_string_option("distribution_after_filename");
-//   if( distribution_after_filename != "" )
-//     output_distribution_to_png(tr, distribution_size,
-// 			       distribution_after_filename, distribution_type);
-// #endif
-
   tie(out, need_delete) = 
     open_file_for_writing(get_string_option("cgal_mesh_after_filename"),
                           "Writing cgal mesh after exudation to ");

@@ -35,6 +35,7 @@ void init_options()
   string_options["tets"] = "";
   string_options["noboite"] = "";
   string_options["mesh"] = "";
+  string_options["cgal"] = "";
   double_options["scale"] = 1;
 }
 
@@ -53,11 +54,12 @@ void usage(char *argv0, std::string error = "")
 	    << "  --tets FILE\n"
 	    << "  --noboite FILE\n"
 	    << "  --mesh FILE\n"
+	    << "  --cgal FILE\n"
 	    << "                                "
 	    << "Read input file FILE.\n"
 	    << "                                "
 	    << "FILE must a .tets file, or a .noboite file,\n"
-	    << "                                or a .mesh file."
+	    << "                   a cgal file, or a .mesh file."
             << std::endl;
   exit(1);
 }
@@ -216,11 +218,10 @@ bool read_tets(std::vector<double>& elements, std::istream& in)
       in >> dummy >> i0 >> i1 >> i2 >> i3;
       if( dummy != 4 || !in )
 	return false;
-      Tetrahedron_3 t = Tetrahedron_3(points[i0],
-				      points[i1],
-				      points[i2],
-				      points[i3]);
-      elements.push_back(radius_ratio(t));
+      elements.push_back(radius_ratio(points[i0],
+                                      points[i1],
+                                      points[i2],
+                                      points[i3]));
     }
   return true;
 }
@@ -280,11 +281,10 @@ bool read_mesh(std::vector<double>& elements, std::istream& in)
     in >> i0 >> i1 >> i2 >> i3 >> dummy;
     if( !in )
       return failed("read_mesh: bad file (reading of cells)");
-    const Tetrahedron_3 t = Tetrahedron_3(points[i0-1],
-                                          points[i1-1],
-                                          points[i2-1],
-                                          points[i3-1]);
-    elements.push_back(radius_ratio(t));
+    elements.push_back(radius_ratio(points[i0-1],
+                                    points[i1-1],
+                                    points[i2-1],
+                                    points[i3-1]));
   }
   in >> head;
   if ( !in || head != "End")
@@ -354,11 +354,10 @@ bool read_noboite(std::vector<double>& elements, std::istream& in)
   // compute elements
   for(int i = 0; i < 4 * nb_tets; i += 4)
   {
-    const Tetrahedron_3 t = Tetrahedron_3(points[tets[i]],
-                                          points[tets[i+1]],
-                                          points[tets[i+2]],
-                                          points[tets[i+3]]);
-    elements.push_back(radius_ratio(t));
+    elements.push_back(radius_ratio(points[tets[i]],
+                                    points[tets[i+1]],
+                                    points[tets[i+2]],
+                                    points[tets[i+3]]));
   }
   return true;
 }
@@ -372,10 +371,12 @@ int main(int argc, char** argv)
   bool ghs = false;
   bool tets = false;
   bool mesh = false;
+  bool cgal = false;
   std::string filename = "";
   std::string ghs_filename = string_options["noboite"];
   std::string tets_filename = string_options["tets"];
   std::string mesh_filename = string_options["mesh"];
+  std::string cgal_filename = string_options["cgal"];
   
   if(ghs_filename != "")
   {
@@ -386,6 +387,11 @@ int main(int argc, char** argv)
   {
     mesh = true;
     filename = mesh_filename;
+  }
+  if(cgal_filename != "")
+  {
+    cgal = true;
+    filename = cgal_filename;
   }
   if(tets_filename != "")
   {
@@ -398,6 +404,8 @@ int main(int argc, char** argv)
   if(tets)
     tets = read_tets(elements, in_file);
   if(mesh)
+    mesh = read_mesh(elements, in_file);
+  if(cgal)
     mesh = read_mesh(elements, in_file);
   if(ghs)
     ghs = read_noboite(elements, in_file);

@@ -137,6 +137,11 @@ protected:
   {
   }
 
+  void clear()
+  {
+    m_number_of_facets = 0;
+  }
+
   // Access functions
 
   Triangulation& triangulation()
@@ -352,7 +357,10 @@ protected:
           face_status (c, i) == NOT_IN_COMPLEX
           : face_status (c, i) != NOT_IN_COMPLEX) )
     {
-      ++m_number_of_facets;
+      if(in_complex) 
+        ++m_number_of_facets;
+      else
+        --m_number_of_facets;
 
       Facet f = canonical_facet(c, i);
 
@@ -477,6 +485,7 @@ template < class Tr >
 std::istream & 
 operator>> (std::istream& is, Complex_2_in_triangulation_3<Tr>& c2t3)
 {
+  c2t3.clear();
   is >> c2t3.triangulation();
 
   // restore datas of c2t3

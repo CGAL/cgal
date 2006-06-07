@@ -1,4 +1,4 @@
-// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -24,6 +24,8 @@
 #include <list>
 #include <algorithm>
 
+#include <CGAL/Multi_surface_3.h>
+
 namespace CGAL {
 
   namespace Surface_mesher {
@@ -37,61 +39,102 @@ namespace CGAL {
   template <class Oracle_a, class Oracle_b>
   class Combining_oracle
   {
-  public:
-    // Public types
-
-    typedef typename Oracle_a::Point Point;
-    typedef typename Oracle_a::Segment Segment;
-    typedef typename Oracle_a::Ray Ray;
-    typedef typename Oracle_a::Line Line;
-
-    typedef typename std::list<Point> Points;
-  private:
     Oracle_a& oracle_a;
     Oracle_b& oracle_b;
+  public:
+    // Public types
+    typedef typename Oracle_a::Point_3 Point_3;
+    typedef typename Oracle_a::Segment_3 Segment_3;
+    typedef typename Oracle_a::Ray_3 Ray_3;
+    typedef typename Oracle_a::Line_3 Line_3;
+
+    typedef ::CGAL::Multi_surface_3<typename Oracle_a::Surface_3,
+      typename Oracle_b::Surface_3> Surface_3;
+
+    typedef typename Oracle_a::Intersect_3 Intersect_a;
+    typedef typename Oracle_b::Intersect_3 Intersect_b;
 
   public:
-    // Constructors
-    Combining_oracle (Oracle_a& a, Oracle_b& b) : oracle_a(a), oracle_b(b) {}
-
-    // Predicates and Constructions
-    bool is_in_volume(const Point& p)
+    Combining_oracle(Oracle_a& oracle_a, Oracle_b& oracle_b)
+      : oracle_a(oracle_a), oracle_b(oracle_b)
     {
-      return( oracle_a.is_in_volume(p) || oracle_b.is_in_volume(p) );
     }
 
-    Object intersect_segment_surface(Segment s) {
-      Object obj = oracle_a.intersect_segment_surface(s);
-      if( obj.is_empty() )
-	obj = oracle_b.intersect_segment_surface(s);
-      return obj;
+    class Intersect_3 
+    {
+      Oracle_a& oracle_a;
+      Oracle_b& oracle_b;
+    public:
+      Intersect_3(Oracle_a& oracle_a, Oracle_b& oracle_b)
+        : oracle_a(oracle_a), oracle_b(oracle_b)
+      {
+      }
+      
+      Object operator()(Surface_3& surface, Segment_3 s) const
+      {
+        const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), s);
+        if( obj.is_empty() )
+          return oracle_b.intersect_3_object()(surface.surface_b(), s);
+        return obj;
+      }
+
+      Object operator()(Surface_3& surface, const Ray_3& r) const {
+        const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), r);
+        if( obj.is_empty() )
+          return oracle_b.intersect_3_object()(surface.surface_b(), r);
+        return obj;  
+      }
+      
+      Object operator()(Surface_3& surface, const Line_3& l) const {
+        const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), l);
+        if( obj.is_empty() )
+          return oracle_b.intersect_3_object()(surface.surface_b(), l);
+        return obj;  
+      }
+    }; // end nested class Intersect_3
+
+    class Construct_initial_points
+    {
+      Oracle_a& oracle_a;
+      Oracle_b& oracle_b;
+    public:
+      Construct_initial_points(Oracle_a& oracle_a, Oracle_b& oracle_b)
+        : oracle_a(oracle_a), oracle_b(oracle_b)
+      {
+      }
+
+      // Random points
+      template <typename OutputIteratorPoints>
+      OutputIteratorPoints operator() (Surface_3& surface, 
+                                       OutputIteratorPoints out, 
+                                       int n = 20) // WARNING: why 20?
+      {
+        OutputIteratorPoints out2 = 
+          oracle_a.construct_initial_points_object()(surface.surface_a(),
+                                                     out,
+                                                     n);
+        return oracle_b.construct_initial_points_object()(surface.surface_b(),
+                                                          out2,
+                                                          n);
+      }
+    }; // end nested class Construct_initial_points
+     
+    Intersect_3 intersect_3_object()
+    {
+      return Intersect_3(oracle_a, oracle_b);
     }
 
-    Object intersect_ray_surface(Ray r) {
-      Object obj = oracle_a.intersect_ray_surface(r);
-      if( obj.is_empty() )
-	obj = oracle_b.intersect_ray_surface(r);
-      return obj;
+    Construct_initial_points construct_initial_points_object()
+    {
+      return Construct_initial_points(oracle_a, oracle_b);
     }
 
-    Object intersect_line_surface(Line l) {
-      Object obj = oracle_a.intersect_line_surface(l);
-      if( obj.is_empty() )
-	obj = oracle_b.intersect_line_surface(l);
-      return obj;
+    bool is_in_volume(Surface_3& surface, const Point_3& p)
+    {
+      return( oracle_a.is_in_volume(surface.surface_a(), p) || 
+              oracle_b.is_in_volume(surface.surface_b(), p) );
     }
-
-    // Random points
-    template <typename OutputPointIterator>
-    OutputPointIterator initial_points (OutputPointIterator out, int n) {
-      CGAL_precondition (n > 0);
-
-      out = oracle_a.initial_points(out, n);
-      return oracle_b.initial_points(out, n);
-    }
-
   };  // end Combining_oracle
-
 
   }  // namespace Surface_mesher
 

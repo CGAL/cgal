@@ -1,25 +1,32 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Regular_triangulation_3.h>
 
 // IO.h must be included before vertex and cell bases.
 #include <CGAL/Mesh_3/IO.h>
 
+#include <CGAL/make_surface_mesh.h>
+#include <CGAL/Implicit_surface_3.h>
+#include <CGAL/Multi_surface_3.h>
+
+#include <CGAL/Volume_mesher_cell_base_3.h>
+
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/Complex_2_in_triangulation_vertex_base_3.h>
-#include <CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h>
-#include <CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h>
+#include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 
 #include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
 #include <CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h>
-#include <CGAL/Mesh_criteria_3.h>
-
-#include <CGAL/Implicit_surface_oracle.h>
-#include <CGAL/Surface_mesher/Oracles/Combining_oracle.h>
 
 #include <CGAL/Mesh_3/Slivers_exuder.h>
+
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
+#include <CGAL/IO/File_medit.h>
+
+// #include <CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h>
+#include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
+
+#include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Point_traits.h>
 #include <CGAL/Weighted_point_with_surface_index_geom_traits.h>
@@ -28,28 +35,24 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-#include <CGAL/IO/File_medit.h>
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
+// struct K : public CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt {};
+typedef CGAL::Regular_triangulation_filtered_traits_3<K> Regular_traits;
 typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 // Multi_surface_traits<Regular_traits> ?
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits> Vb;
 typedef CGAL::Regular_triangulation_cell_base_3<My_traits> Cb1;
-typedef CGAL::Complex_2_in_triangulation_cell_base_3<My_traits, Cb1> Cb2;
-typedef CGAL::Complex_2_in_triangulation_surface_mesh_cell_base_3<My_traits, Cb2> Cb3;
-typedef CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3<My_traits, Cb3> Cb;
+typedef CGAL::Surface_mesh_cell_base_3<My_traits, Cb1> Cb2;
+typedef CGAL::Volume_mesher_cell_base_3<My_traits, Cb2> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Regular_triangulation_3<My_traits, Tds> Tr;
+typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
 
-typedef K::FT FT;
+typedef My_traits::Point_3 Point_3;
+typedef My_traits::Sphere_3 Sphere_3;
+typedef My_traits::FT FT;
 
-// typedef FT surface_function(const FT, const FT, const FT); 
-// // surface_function is a typedef of the function (FT,FT,FT)->FT
-// // defining a surface.
-
-using CGAL::Surface_mesher::Combining_oracle;
 using CGAL::Surface_mesher::Refine_criterion;
 using CGAL::Surface_mesher::Standard_criteria;
 using CGAL::Surface_mesher::Point_surface_indices_visitor;
@@ -58,7 +61,7 @@ typedef Refine_criterion<Tr> Criterion;
 typedef Standard_criteria <Criterion> Multi_criterion;
 // changer son nom en Multi_criterion, ou Combined_criterion
 
-typedef Point_surface_indices_visitor<Tr> Set_indices;
+typedef Point_surface_indices_visitor Set_indices;
 
 class Sphere {
 private:
@@ -66,8 +69,11 @@ private:
 public:
   Sphere(FT rayon) : r(rayon) {}
 
-  FT operator()(const FT x, const FT y, const FT z) const
+  FT operator()(const Point_3& p) const
   {
+    const FT& x = p.x();
+    const FT& y = p.y();
+    const FT& z = p.z();
     return x*x+y*y+z*z-r*r;
   }
 };
@@ -87,11 +93,20 @@ struct Point_with_surface_index_creator
   }
 };
 
-typedef CGAL::Implicit_surface_oracle<
+typedef CGAL::Implicit_surface_3<My_traits, Sphere> Implicit_sphere;
+
+typedef CGAL::Surface_mesher::Implicit_surface_oracle<
   My_traits,
-  Sphere,
-  Set_indices,
-  Point_with_surface_index_creator> Single_oracle;
+  Implicit_sphere,
+  Point_with_surface_index_creator,
+  Set_indices> Single_oracle;
+
+// typedef CGAL::Surface_mesher::Sphere_oracle_3<
+//   My_traits,
+//   Point_with_surface_index_creator,
+//   Set_indices> Single_oracle;
+
+using CGAL::Surface_mesher::Combining_oracle;
 
 typedef Combining_oracle<Single_oracle, Single_oracle> Oracle_2;
 typedef Combining_oracle<Oracle_2, Single_oracle> Oracle_3;
@@ -240,11 +255,6 @@ public:
 
 }; // end Special_tets_criteria
 
-typedef CGAL::Implicit_surfaces_mesher_3<Tr,
-					 Oracle,
-                                         Multi_criterion,
-                                         Special_tets_criteria> Mesher;
-// 					 Tets_criteria> Mesher;
 #include <vector>
 
 int main(int, char**)
@@ -269,76 +279,67 @@ int main(int, char**)
   if(!std::cin)
     return EXIT_FAILURE;
 
-  radii[0] = r1;
-  radii[1] = r2;
-  radii[2] = r3;
-  radii[3] = r4;
-  radii[4] = r5;
+  radii[0] = CGAL::to_double(r1);
+  radii[1] = CGAL::to_double(r2);
+  radii[2] = CGAL::to_double(r3);
+  radii[3] = CGAL::to_double(r4);
+  radii[4] = CGAL::to_double(r5);
 
-  const FT precision = 0.1; // mm
-  const int number_of_initial_points = 10;
+  const FT precision = 0.001;
+  const int number_of_initial_points = 20;
   const FT bounding_sphere_radius = 500.;
-  const bool use_bipolar_oracle = true;
 
   const double facets_uniform_size_bound = 30.; // mm
   const double facets_aspect_ratio_bound = 0; // degres
   const double tets_radius_edge_bound = 2.5;
 
-  Sphere sphere1(r1);
-  Sphere sphere2(r2);
-  Sphere sphere3(r3);
-  Sphere sphere4(r4);
-  Sphere sphere5(r5);
+//   Sphere_3 sphere1(CGAL::ORIGIN, r1*r1);
+//   Sphere_3 sphere2(CGAL::ORIGIN, r2*r2);
+//   Sphere_3 sphere3(CGAL::ORIGIN, r3*r3);
+//   Sphere_3 sphere4(CGAL::ORIGIN, r4*r4);
+//   Sphere_3 sphere5(CGAL::ORIGIN, r5*r5);
+
+  const Sphere_3 bounding_sphere(CGAL::ORIGIN, 
+                                 bounding_sphere_radius*bounding_sphere_radius);
+
+  Implicit_sphere sphere1(Sphere(r1), bounding_sphere, precision);
+  Implicit_sphere sphere2(Sphere(r2), bounding_sphere, precision);
+  Implicit_sphere sphere3(Sphere(r3), bounding_sphere, precision);
+  Implicit_sphere sphere4(Sphere(r4), bounding_sphere, precision);
+  Implicit_sphere sphere5(Sphere(r5), bounding_sphere, precision);
+
+  typedef CGAL::Multi_surface_3<Implicit_sphere, Implicit_sphere> Surface_2;
+  typedef CGAL::Multi_surface_3<Surface_2, Implicit_sphere> Surface_3;
+  typedef CGAL::Multi_surface_3<Surface_3, Implicit_sphere> Surface_4;
+  typedef CGAL::Multi_surface_3<Surface_4, Implicit_sphere> Surface_5;
+  typedef Surface_5 Surface;
+
+  Surface_2 surface_2(sphere1, sphere2);
+  Surface_3 surface_3(surface_2, sphere3);
+  Surface_4 surface_4(surface_3, sphere4);
+  Surface surface(surface_4, sphere5);
 
   Tr tr;
+  C2t3 c2t3(tr);
 
-  Single_oracle 
-    single_oracle_1 (sphere1,
-                     K::Point_3(CGAL::ORIGIN), // center of the bounding sphere
-                     bounding_sphere_radius,   // its radius (in mm)
-                     precision,
-                     use_bipolar_oracle,       // bipolar oracle
-                     false,                    // debug off
-                     Set_indices(1));
-  Single_oracle
-    single_oracle_2 (sphere2,
-                     K::Point_3(CGAL::ORIGIN),
-                     bounding_sphere_radius,
-                     precision,
-                     use_bipolar_oracle,
-                     false,
-                     Set_indices(2));
-  Single_oracle 
-    single_oracle_3 (sphere3,
-                     K::Point_3(CGAL::ORIGIN),
-                     bounding_sphere_radius,
-                     precision,
-                     use_bipolar_oracle,
-                     false,
-                     Set_indices(3));
-  Single_oracle 
-    single_oracle_4 (sphere4,
-                     K::Point_3(CGAL::ORIGIN),
-                     bounding_sphere_radius,
-                     precision,
-                     use_bipolar_oracle,
-                     false,
-                     Set_indices(4));
-  Single_oracle 
-    single_oracle_5 (sphere5,
-                     K::Point_3(CGAL::ORIGIN),
-                     bounding_sphere_radius,
-                     precision,
-                     use_bipolar_oracle,
-                     false,
-                     Set_indices(5));
+//   Single_oracle 
+//     single_oracle_1 (sphere1,
+//                      K::Point_3(CGAL::ORIGIN), // center of the bounding sphere
+//                      bounding_sphere_radius,   // its radius (in mm)
+//                      precision,
+//                      use_bipolar_oracle,       // bipolar oracle
+//                      false,                    // debug off
+//                      Set_indices(1));
+  Single_oracle single_oracle_1(Set_indices(1));
+  Single_oracle single_oracle_2(Set_indices(2));
+  Single_oracle single_oracle_3(Set_indices(3));
+  Single_oracle single_oracle_4(Set_indices(4));
+  Single_oracle single_oracle_5(Set_indices(5));
 
   Oracle_2 oracle_2(single_oracle_1, single_oracle_2);
   Oracle_3 oracle_3(oracle_2, single_oracle_3);
   Oracle_4 oracle_4(oracle_3, single_oracle_4);
   Oracle_5 oracle(oracle_4, single_oracle_5);
-
-  oracle.initial_points(CGAL::inserter(tr), number_of_initial_points);
 
   CGAL::Surface_mesher::Uniform_size_criterion<Tr>
     uniform_size_criterion (facets_uniform_size_bound); 
@@ -357,7 +358,17 @@ int main(int, char**)
                                       size_bounds,
 				      tets_radius_edge_bound);
 
-  Mesher mesher (tr, oracle, multi_criterion, tets_criteria);
+  typedef CGAL::Implicit_surfaces_mesher_3<C2t3,
+    Surface,
+    Multi_criterion,
+    Special_tets_criteria,
+    Oracle> Mesher;
+
+  oracle.construct_initial_points_object()(surface,
+                                           CGAL::inserter(tr),
+                                           number_of_initial_points);
+
+  Mesher mesher (c2t3, surface, multi_criterion, tets_criteria, oracle);
   mesher.refine_mesh();
 
   std::string filename;
