@@ -1,6 +1,8 @@
 7 June 2006 Laurent Rineau
 - sliver exuder fixed,
 - Combining_oracle fixed too.
+- fix a robustness issue in examples/Mesh_3/implicit_surfaces_mesher_3.C:
+  need to use CGAL::Regular_triangulation_filtered_traits_3 as geom_traits!!
 
 6 June 2006 Laurent Rineau
 - remove the old code Multi_implicit_oracle.h (in Surface_Mesher), and

@@ -12,6 +12,7 @@
 
 #include <CGAL/Volume_mesher_cell_base_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 
 #include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
@@ -48,7 +49,7 @@ using boost::tie;
 /////////////// Types /////////////// 
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
+typedef CGAL::Regular_triangulation_filtered_traits_3<K> Regular_traits;
 typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits> Vb;
 typedef CGAL::Regular_triangulation_cell_base_3<My_traits> Cb1;
