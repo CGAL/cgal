@@ -1036,7 +1036,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
   // corresponds to this end.
   const Infinity_type  inf_x1 = traits->infinite_in_x_2_object()(cv, MIN_END);
   const Infinity_type  inf_y1 = traits->infinite_in_y_2_object()(cv, MIN_END);
-  DVertex             *v1;
+  DVertex             *v1 = NULL;
   DHalfedge           *fict_prev1 = NULL;
   DHalfedge           *prev2 = _halfedge (prev);
 
@@ -2193,7 +2193,7 @@ bool Arrangement_2<Traits,Dcel>::_is_on_fictitious_edge
     else
     {
       const X_monotone_curve_2&  cv2 = _get_curve (v2, v_ind);
-      res1 = traits->compare_x_2_object() (cv, ind, cv2, v_ind);
+      res2 = traits->compare_x_2_object() (cv, ind, cv2, v_ind);
 
       if (res2 != EQUAL)
       {
