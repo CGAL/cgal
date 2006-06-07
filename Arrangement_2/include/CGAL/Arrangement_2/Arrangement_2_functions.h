@@ -355,7 +355,7 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
     // Locate a halfedge of f's outer CCB such that contains cv's right end
     // in its range.
     CGAL_precondition (f->is_unbounded());
-
+    
     fict_prev2 = _locate_along_ccb (p_f, cv, MAX_END,
                                     inf_x2, inf_y2);
 
@@ -3640,6 +3640,8 @@ Arrangement_2<Traits,Dcel>::_split_fictitious_edge (DHalfedge *e,
 
   CGAL_assertion (! he1->is_on_hole());
   DFace           *f1 = he1->face();
+  
+  CGAL_assertion (f1->is_unbounded());
 
   CGAL_assertion (he2->is_on_hole());
   DHole           *hole2 = he2->hole();
