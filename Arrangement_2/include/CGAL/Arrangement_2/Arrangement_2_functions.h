@@ -1437,15 +1437,18 @@ Arrangement_2<Traits,Dcel>::insert_at_vertices (const X_monotone_curve_2& cv,
   DHole      *hole2 = (p_prev2->is_on_hole()) ? p_prev2->hole() : NULL;
   bool        prev1_before_prev2 = true;
 
-  if (hole1 == hole2)
+  if (hole1 == hole2 && hole1 != NULL)
   {
     // If prev1 and prev2 are on different components, the insertion of the
     // new curve does not generate a new face, so the way we send these
     // halfedge pointers to the auxiliary function _insert_at_vertices() does
     // not matter.
     // However, in our case, where the two halfedges are reachable from one
-    // another, a new face will be created and we have to arrange prev1 and
-    // prev2 so that the new face will be incident to the correct halfedge.
+    // another and are located on the same hole, a new face will be created
+    // and form a hole inside their current incident face. In this case we
+    // have to arrange prev1 and prev2 so that the new face (hole) will be
+    // incident to the correct halfedge, directed from prev1's target to
+    // prev2's target.
     // To do this, we check whether prev1 lies inside the new face we are
     // about to create (or alternatively, whether prev2 does not lie inside
     // this new face).
@@ -2418,7 +2421,6 @@ bool Arrangement_2<Traits,Dcel>::_is_inside_new_face
   else
   {
     // In this case, the leftmost edge should be the one associated with the
-
     // new curve (which has not been created yet).
     cv_curr = &cv;
     cv_next = &(first->curve());

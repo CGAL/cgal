@@ -83,7 +83,8 @@ public:
   void init (Arrangement_2 *arr)
   {
     p_arr = arr;
-    traits = static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
+    traits = const_cast<Traits_adaptor_2*> 
+      (static_cast<const Traits_adaptor_2*> (p_arr->get_traits()));
   }
 
   /*!
