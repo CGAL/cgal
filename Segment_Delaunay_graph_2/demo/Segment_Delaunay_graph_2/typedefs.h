@@ -43,8 +43,20 @@ struct Rep : public CGAL::Simple_cartesian<CORE::Expr> {};
 #endif
 
 #ifdef USE_FILTERED_TRAITS
+#ifdef CGAL_USE_CORE
+typedef CGAL::Sqrt_field_tag MTag;
+typedef CGAL::Sqrt_field_tag EMTag;
+typedef CGAL::Simple_cartesian<CORE::Expr> ERep;
+struct Gt
+  : public CGAL::Segment_Delaunay_graph_filtered_traits_2<Rep,
+							  MTag,
+							  ERep,
+							  EMTag>
+{};
+#else
 struct Gt
   : public CGAL::Segment_Delaunay_graph_filtered_traits_2<Rep> {};
+#endif
 #else
 struct Gt
   : public CGAL::Segment_Delaunay_graph_traits_2<Rep,CGAL::Field_tag> {};

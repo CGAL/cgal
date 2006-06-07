@@ -30,7 +30,12 @@
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 
 struct Rep : public CGAL::Simple_cartesian<double> {};
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_Expr.h>
+struct ERep : public CGAL::Simple_cartesian<CORE::Expr> {};
+#else
 struct ERep : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
+#endif
 
 #if 0
 namespace CGAL {
@@ -44,7 +49,11 @@ namespace CGAL {
 #endif
 
 typedef CGAL::Sqrt_field_tag  MTag;
+#ifdef CGAL_USE_CORE
+typedef CGAL::Sqrt_field_tag  EMTag;
+#else
 typedef CGAL::Ring_tag        EMTag;
+#endif
 
 typedef CGAL::Tag_false      ITag;
 typedef CGAL::Tag_true       STag;
