@@ -8,6 +8,7 @@
 typedef CGAL::Quotient<CGAL::MP_Float>          NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
 
+namespace cb = CGAL::benchmark;
 namespace po = boost::program_options;
 
 struct Help_exception {};
@@ -36,7 +37,7 @@ int main(int argc, char * argv[])
 {
   po::options_description opts("Options");
   opts.add_options()("help,h", "print help message");
-  CGAL::Bench_option_parser bench_opts;
+  cb::Bench_option_parser bench_opts;
   opts.add(bench_opts.get_opts());
   po::variables_map var_map;
 
@@ -54,7 +55,7 @@ int main(int argc, char * argv[])
     return 1;
   }
   
-  CGAL::Bench<My_bench_leftturn> bench("Leftturn", bench_opts.get_seconds());
+  cb::Bench<My_bench_leftturn> bench("Leftturn", bench_opts.get_seconds());
   bench();
   return 0;
 }
