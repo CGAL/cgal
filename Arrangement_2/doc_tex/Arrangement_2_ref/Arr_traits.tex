@@ -34,18 +34,20 @@ and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
 \ccHeading{Functor Types}
 %========================
 
-\ccThree{Compare_y_at_x_2~~~}{}{\hspace*{12cm}}
+\ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
 \ccThreeToTwo
 
 \ccNestedType{Make_x_monotone_2}
-{provides the operator (parameterized by the \ccc{OutputIterator} type)~: \\
- \ccc{OutputIterator operator() (Curve_2 c, OutputIterator oi)} \\
+{provides the operator (parameterized by the \ccc{OutputIterator} type)~:
+ \begin{itemize}
+ \item \ccc{OutputIterator operator() (Curve_2 c, OutputIterator oi)} \\
  which subdivides the input curve \ccc{c} into $x$-monotone subcurves and
  isolated points, and inserts the results into a container through the
  given output iterator. The value type of \ccc{OutputIterator} is
  \ccc{CGAL::Object}, where each \ccc{Object} wraps either an
  \ccc{X_monotone_curve_2} instance or a \ccc{Point_2} instance. The
- operator returns a past-the-end iterator for the output sequence.}
+ operator returns a past-the-end iterator for the output sequence.
+ \end{itemize}}
 
 \ccCreation
 \ccCreationVariable{traits}

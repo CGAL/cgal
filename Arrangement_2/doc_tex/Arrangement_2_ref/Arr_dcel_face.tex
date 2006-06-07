@@ -52,46 +52,53 @@ and \ccc{Isolated_vertex_const_iterator} are also defined.
 All functions below also have \ccc{const} counterparts, returning non-mutable
 pointers or iterators:
 
-  \ccMethod{Halfedge* halfedge();}
-    {returns an incident halfedge along the outer boundary of the face.
-     If \ccVar{} is the unbounded face, the function returns \ccc{NULL}.}
+\ccMethod{bool is_unbounded() const;}
+  {returns whether the face is unbounded.}
 
-  \ccMethod{size_t number_of_holes() const;}
-    {returns the number of holes inside \ccVar{}.}
-  \ccGlue
-  \ccMethod{Hole_iterator holes_begin();}
-    {returns a begin-iterator for the holes inside \ccVar{}.}
-  \ccGlue
-  \ccMethod{Hole_iterator holes_end();}
-    {returns a past-the-end iterator for the holes inside \ccVar{}.}
+\ccMethod{Halfedge* halfedge();}
+  {returns an incident halfedge along the outer boundary of the face.
+   If \ccVar{} is the unbounded face, the function returns \ccc{NULL}.}
 
-  \ccMethod{size_t number_of_isolated_vertices() const;}
-    {returns the number of isolated vertices inside \ccVar{}.}
-  \ccGlue
-  \ccMethod{Isolated_vertex_iterator isolated_vertices_begin();}
-    {returns a begin-iterator for the isolated vertices inside \ccVar{}.}
-  \ccGlue
-  \ccMethod{Isolated_vertex_iterator isolated_vertices_end();}
-    {returns a past-the-end iterator for the isolated vertices inside 
-     \ccVar{}.}
+\ccMethod{size_t number_of_holes() const;}
+  {returns the number of holes inside \ccVar{}.}
+\ccGlue
+\ccMethod{Hole_iterator holes_begin();}
+  {returns a begin-iterator for the holes inside \ccVar{}.}
+\ccGlue
+\ccMethod{Hole_iterator holes_end();}
+  {returns a past-the-end iterator for the holes inside \ccVar{}.}
+
+\ccMethod{size_t number_of_isolated_vertices() const;}
+  {returns the number of isolated vertices inside \ccVar{}.}
+\ccGlue
+\ccMethod{Isolated_vertex_iterator isolated_vertices_begin();}
+  {returns a begin-iterator for the isolated vertices inside \ccVar{}.}
+\ccGlue
+\ccMethod{Isolated_vertex_iterator isolated_vertices_end();}
+  {returns a past-the-end iterator for the isolated vertices inside 
+   \ccVar{}.}
 
 \ccModifiers
 %===========
 
-  \ccMethod{void set_halfedge (Halfedge* e);}
-    {sets the incident halfedge.}
+\ccMethod{void set_unbounded (bool flag);}
+  {sets the face as unbounded (if \ccc{flag} is \ccc{true}), or as a bounded
+   face (if it is \ccc{false}).}
 
-  \ccMethod{void add_hole (Halfedge* e);}
-    {adds \ccc{e} as a hole inside \ccVar{}.}
+\ccMethod{void set_halfedge (Halfedge* e);}
+  {sets the incident halfedge.}
 
-  \ccMethod{void erase_hole (Hole_iterator it);}
-    {removes the hole that \ccc{it} points to from inside \ccVar{}.}
+\ccMethod{void add_hole (Halfedge* e);}
+  {adds \ccc{e} as a hole inside \ccVar{}.}
+
+\ccMethod{void erase_hole (Hole_iterator it);}
+  {removes the hole that \ccc{it} points to from inside \ccVar{}.}
   
-  \ccMethod{void add_isolated_vertex (Vertex* v);}
-    {adds \ccc{v} as an isolated vertex inside \ccVar{}.}
+\ccMethod{void add_isolated_vertex (Vertex* v);}
+  {adds \ccc{v} as an isolated vertex inside \ccVar{}.}
 
-  \ccMethod{void erase_isolated_vertex (Isolated_vertex_iterator it);}
-    {removes the isolated vertex that \ccc{it} points to from inside \ccVar{}.}
+\ccMethod{void erase_isolated_vertex (Isolated_vertex_iterator it);}
+  {removes the isolated vertex that \ccc{it} points to from inside \ccVar{}.}
 
 } % ccHtmlNoLinksFrom
 

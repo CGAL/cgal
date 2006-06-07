@@ -135,6 +135,17 @@ interest, it is sufficient to override just \ccc{before_split_face()}
      Note that the vertex still has no incident edges and is not connected
      to any other vertex.}
 
+\ccMethod{virtual void before_create_vertex_at_infinity (Infinity_type inf_x,
+                                                         Infinity_type inf_y);}
+    {issued just before a new vertex at infinity is created, with the
+     indication whether this vertex lies at $x = \pm\infty$ and/or
+     $y = \pm\infty$.}
+\ccGlue
+\ccMethod{virtual void after_create_vertex_at_infinity (Vertex_handle v);}
+    {issued immediately after a new vertex \ccc{v} has been created.
+     Note that the vertex still has no incident edges and is not connected
+     to any other vertex.}
+
 \ccMethod{virtual void before_create_edge (const X_monotone_curve_2& c,
                                            Vertex_handle v1,
                                            Vertex_handle v2);}
@@ -175,6 +186,17 @@ interest, it is sufficient to override just \ccc{before_split_face()}
                                          Halfedge_handle e2);}
     {issued immediately after an existing edge has been split into the two
      given edges \ccc{e1} and \ccc{e2}.}
+
+\ccMethod{virtual void before_split_fictitious_edge (Halfedge_handle e,
+                                                     Vertex_handle v);}
+    {issued just before a fictitious edge \ccc{e} is split into two. The
+     vertex at infinity \ccc{v} corresponds to the split point, and will be
+     used to separate the two resulting edges.}
+\ccGlue
+\ccMethod{virtual void after_split_fictitious_edge (Halfedge_handle e1,
+                                                    Halfedge_handle e2);}
+    {issued immediately after an existing fictitious edge has been split into
+     the two given fictitious edges \ccc{e1} and \ccc{e2}.}
 
 \ccMethod{virtual void before_split_face (Face_handle f,
                                           Halfedge_handle e);}
@@ -229,6 +251,15 @@ interest, it is sufficient to override just \ccc{before_split_face()}
     {issued immediately after two edges have been merged to form the edge
      \ccc{e}.}
 
+\ccMethod{virtual void before_merge_fictitious_edge (Halfedge_handle e1,
+                                                     Halfedge_handle e2);}
+    {issued just before the two fictitious edges \ccc{e1} and \ccc{e2} are
+     merged to form a single fictitious edge.}
+\ccGlue
+\ccMethod{virtual void after_merge_fictitious_edge (Halfedge_handle e);}
+    {issued immediately after two fictitious edges have been merged to form
+     the fictitious edge \ccc{e}.}
+
 \ccMethod{virtual void before_merge_face (Face_handle f1,
                                           Face_handle f2,
                                           Halfedge_handle e);}
@@ -276,11 +307,19 @@ interest, it is sufficient to override just \ccc{before_split_face()}
      new face.}
 
 \ccMethod{virtual void before_remove_vertex (Vertex_handle v);}
-    {issued just before the vertex \ccc{v} is removed from arrangement.}
+    {issued just before the vertex \ccc{v} is removed from the arrangement.}
 \ccGlue
 \ccMethod{virtual void after_remove_vertex ();}
     {issued immediately after a vertex has been removed (and deleted)
      from the arrangement.}
+
+\ccMethod{virtual void before_remove_vertex_at_infinity (Vertex_handle v);}
+    {issued just before the vertex at infinity \ccc{v} is removed from the
+     arrangement.}
+\ccGlue
+\ccMethod{virtual void after_remove_vertex_at_infinity ();}
+    {issued immediately after a vertex at infinity has been removed
+     (and deleted) from the arrangement.}
 
 \ccMethod{virtual void before_remove_edge (Halfedge_handle e);}
     {issued just before the edge \ccc{e} is removed from arrangement.}

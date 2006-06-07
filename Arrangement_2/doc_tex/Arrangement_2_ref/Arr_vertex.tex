@@ -34,8 +34,12 @@ that is --- a $0$-dimensional cell, associated with a point on the plane.
 All non-const methods listed below also have \ccc{const} counterparts
 that return constant handles, iterators or circulators:
 
+\ccMethod{bool is_at_infinity() const;}
+    {checks whether the vertex lies at infinity and not associated with
+     a point with bounded coordinates.}
+
 \ccMethod{bool is_isolated() const;}
-    {checks whether the vertex is isolated. (It has no incident edges.)}
+    {checks whether the vertex is isolated (i.e., has no incident edges).}
 
 \ccMethod{typename Dcel::Size degree() const;}
     {returns the number of edges incident to \ccVar{}.}
@@ -56,8 +60,17 @@ that return constant handles, iterators or circulators:
     {returns a handle to the face that contains \ccVar{} in its interior.
      \ccPrecond{\ccVar{} is an isolated vertex.}}
 
+\ccMethod{Infinity_type infinite_in_x () const;}
+    {returns whether the $x$-coordinate of the vertex is finite or whether
+     it lies at $\pm\infty$.}
+
+\ccMethod{Infinity_type infinite_in_y () const;}
+    {returns whether the $y$-coordinate of the vertex is finite or whether
+     it lies at $\pm\infty$.}
+
 \ccMethod{const typename Traits::Point_2& point() const;}
-    {returns the point associated with the vertex.}
+    {returns the point associated with the vertex.
+     \ccPrecond{\ccVar{} is not a vertex at infinity.}}
 
 \end{ccRefClass}
 

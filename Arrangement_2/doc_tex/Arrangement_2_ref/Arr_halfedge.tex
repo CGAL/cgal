@@ -41,6 +41,10 @@ chains define the inner and outer boundaries of connceted components.
 
 All non-const methods listed below also have \ccc{const} counterparts
 that return constant handles, iterators or circulators:
+
+\ccMethod{bool is_fictitious () const;}
+    {returns whether the halfedge is fictitious (i.e., connects two vertices at
+     infinity and is not associated with a valid curve).}
     
 \ccMethod{Vertex_handle source();}
     {returns a handle for the source vertex of \ccVar{}.}
@@ -74,7 +78,8 @@ that return constant handles, iterators or circulators:
      The circulator is initialized to point to \ccVar{}.}
 
 \ccMethod{const typename Traits::X_monotone_curve_2& curve() const;}
-    {returns the $x$-monotone curve associated with \ccVar{}.}
+    {returns the $x$-monotone curve associated with \ccVar{}.
+     \ccPrecond{\ccVar{} is not a fictitious halfedge.}}
 
 \end{ccRefClass}
 

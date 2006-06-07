@@ -36,6 +36,10 @@ vertices.
 All non-const methods listed below also have \ccc{const} counterparts
 that return constant handles, iterators or circulators:
 
+\ccMethod{bool is_fictitious () const;}
+    {returns whether this is the fictitious face, which contain the entire
+     arrangement (and has not outer CCB).}
+
 \ccMethod{bool is_unbounded() const;} 
     {returns whether the face is unbounded.}    
 
@@ -43,7 +47,7 @@ that return constant handles, iterators or circulators:
     {returns a circulator that allows going over the outer boundary of
      \ccVar{}. The edges along the CCB are traversed in a counterclockwise
      direction.
-     \ccPrecond{\ccVar{} is not an unbounded face.}}
+     \ccPrecond{\ccVar{} is not a fictitious face.}}
     
 \ccMethod{Hole_iterator holes_begin();}
     {returns an iterator for traversing all the holes (inner CCBs) of

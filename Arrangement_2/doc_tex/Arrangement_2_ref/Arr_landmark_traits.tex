@@ -34,20 +34,24 @@ recommended to define the approximated number type as the built-in
 \ccHeading{Functor Types}
 %========================
 
-\ccThree{Compare_y_at_x_2~~~}{}{\hspace*{12cm}}
+\ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
 \ccThreeToTwo
 
 \ccNestedType{Approximate_2}
-{provides the operator~: \\
- \ccc{Approximate_number_type operator() (Point_2 p, int i)} \\
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{Approximate_number_type operator() (Point_2 p, int i)} \\
  which returns an approximation of \ccc{p}'s $x$-coordinate (if \ccc{i == 0}),
- or of \ccc{p}'s $y$-coordinate (if \ccc{i == 1}).}
+ or of \ccc{p}'s $y$-coordinate (if \ccc{i == 1}).
+ \end{itemize}}
 
 \ccNestedType{Construct_x_monotone_curve_2}
-{provides the operator~: \\
- \ccc{X_monotone_curve_2 operator() (Point_2 p1, Point_2 p2)} \\
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{X_monotone_curve_2 operator() (Point_2 p1, Point_2 p2)} \\
  returns an $x$-monotone curve connecting \ccc{p1} and \ccc{p2} (i.e., the
- two input points are its endpoints).}
+ two input points are its endpoints).
+ \end{itemize}}
 
 \ccCreation
 \ccCreationVariable{traits}

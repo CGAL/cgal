@@ -47,12 +47,13 @@ curve splitting. The reverse merge operation is optionally supported.
 \ccHeading{Functor Types}
 %========================
 
-\ccThree{Compare_y_at_x_2~~~}{}{\hspace*{12cm}}
+\ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
 \ccThreeToTwo
 
 \ccNestedType{Intersect_2}
-{provides the operator (templated by the \ccc{OutputIterator} type)~: \\
- \ccc{OutputIterator operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
+{provides the operator (templated by the \ccc{OutputIterator} type)~:
+ \begin{itemize}
+ \item \ccc{OutputIterator operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
                                  OutputIterator oi)} \\
  which computes the intersections of \ccc{c1} and \ccc{c2} and inserts them
  {\sl in an ascending lexicographic $xy$-order} into the output iterator.
@@ -62,34 +63,41 @@ curve splitting. The reverse merge operation is optionally supported.
  multiplicity is undefined or not known, it should be set to $0$) or an
  \ccc{X_monotone_curve_2} instance, representing an overlapping subcurve of
  \ccc{c1} and \ccc{c2}. The operator returns a past-the-end iterator
- for the output sequence.}
+ for the output sequence.
+ \end{itemize}}
 
 \ccNestedType{Split_2}
-{provides the operator~: \\
- \ccc{void operator() (X_monotone_curve_2 c, Point_2 p,
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{void operator() (X_monotone_curve_2 c, Point_2 p,
                        X_monotone_curve_2& c1, X_monotone_curve_2& c2)} \\
  which accepts an input curve \ccc{c} and a split point \ccc{p} in its
  interior. It splits \ccc{c} at the split point into two subcurves \ccc{c1}
  and \ccc{c2}, such that \ccc{p} is \ccc{c1}'s {\sl right} endpoint and
- \ccc{c2}'s {\sl left} endpoint.} 
-
-The two following functor types are optional. If they are supported, the
-\ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
-\ccc{Tag_false} otherwise):
+ \ccc{c2}'s {\sl left} endpoint.
+ \end{itemize}} 
 
 \ccNestedType{Are_mergeable_2}
-{provides the operator~: \\
- \ccc{bool operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2)} \\
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{bool operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2)} \\
  which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that share
  a common endpoint, and determines whether they can be merged to form a single
- continuous $x$-monotone curve.}
+ continuous $x$-monotone curve.
+ \end{itemize}
+ This functor is required only if the traits class defines the
+ \ccc{Has_merge_category} tag as \ccc{Tag_true}).}
 
 \ccNestedType{Merge_2}
-{provides the operator~: \\
- \ccc{void operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
-                       X_monotone_curve_2& c)} \\
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{void operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
+                             X_monotone_curve_2& c)} \\
  which accepts two {\sl mergeable} $x$-monotone curves \ccc{c1} and \ccc{c2}
- (see above), and sets \ccc{c} to be the merged curve.} 
+ (see above), and sets \ccc{c} to be the merged curve.
+ \end{itemize}
+ This functor is required only if the traits class defines the
+ \ccc{Has_merge_category} tag as \ccc{Tag_true}).} 
 
 \ccCreation
 \ccCreationVariable{traits}

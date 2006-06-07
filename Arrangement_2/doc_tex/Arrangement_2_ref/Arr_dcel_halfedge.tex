@@ -84,8 +84,12 @@ pointers or references:
     {returns the hole (inner CCB) \ccVar{} belongs to.
      \ccPrecond{\ccVar{} lies on a hole inside its incident face.}}
 
+\ccMethod{bool has_null_curve() const;}
+    {returns whether the vertex is not associated with a valid curve.}
+ 
 \ccMethod{X_monotone_curve& curve();}
-    {returns the associated curve.}
+    {returns the associated curve.
+     \ccPrecond{\ccVar{} is associated with a valid curve.}}
 
 \ccModifiers
 %===========
