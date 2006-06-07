@@ -5,22 +5,18 @@
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL: $
 // $Id: $
-// 
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#include <CGAL/basic.h>
-#include <CGAL/Bench_option_parser.h>
+#include "CGAL/benchmark_basic.h"
+#include "CGAL/Bench_option_parser.h"
 
-CGAL_BEGIN_NAMESPACE
+CGAL_BENCHMARK_BEGIN_NAMESPACE
 
 /*! Constructor */
 Bench_option_parser::Bench_option_parser() :
@@ -33,7 +29,7 @@ Bench_option_parser::Bench_option_parser() :
 {
   // Generic options:
   m_bench_opts.add_options()
-    ("header,p", po::value<bool>(&m_print_header)->default_value(true),
+    ("print-header,p", po::value<bool>(&m_print_header)->default_value(true),
      "print header")
     ("name-length,n",
      po::value<unsigned int>(&m_name_length)->default_value(32),
@@ -55,4 +51,4 @@ void Bench_option_parser::operator()(po::variables_map & variable_map)
 {
 }
 
-CGAL_END_NAMESPACE
+CGAL_BENCHMARK_END_NAMESPACE

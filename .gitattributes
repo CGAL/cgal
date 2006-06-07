@@ -262,6 +262,10 @@ Benchmark/examples/Benchmark/simple/simple.C -text
 Benchmark/examples/Benchmark/simple/simple.tex -text
 Benchmark/include/CGAL/Bench_option_parser.h -text
 Benchmark/src/Benchmark/Bench_option_parser.C -text
+Benchmark/src/Benchmark/Benchmark_visitor.C -text
+Benchmark/src/Benchmark/benchmark_lexer.l -text
+Benchmark/src/Benchmark/benchmark_parser.y -text
+Benchmark/src/Benchmark/makefile -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_2.dxf -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
