@@ -280,9 +280,8 @@ public:
     Unbounded_face_iterator ()
     {}
 
-    Unbounded_face_iterator (DFace_iter iter, DFace_iter iend,
-                             const _Is_unbounded_face& pred) :
-      Base (iter, iend, pred)
+    Unbounded_face_iterator (DFace_iter iter, DFace_iter iend) :
+      Base (iter, iend)
     {}
 
     // Casting to a face iterator.
@@ -323,9 +322,8 @@ public:
     {}
 
     Unbounded_face_const_iterator (DFace_const_iter iter,
-                                   DFace_const_iter iend,
-                                   const _Is_unbounded_face& pred) :
-      Base (iter, iend, pred)
+                                   DFace_const_iter iend) :
+      Base (iter, iend)
     {}
 
     // Casting to a face iterator.
@@ -1078,6 +1076,22 @@ public:
   {
     // We do not count the fictitious DCEL face outside the bounding rectangle.
     return (dcel.size_of_faces() - 1);
+  }
+  
+  /*! Get the number of unbounded faces in the arrangement. */
+  Size number_of_unbounded_faces () const
+  {
+    Unbounded_face_const_iterator    iter = unbounded_faces_begin();
+    Unbounded_face_const_iterator    end = unbounded_faces_end();
+    Size                             n_unb = 0;
+
+    while (iter != end)
+    {
+      n_unb++;
+      ++iter;
+    }
+
+    return (n_unb);
   }
   //@}
 
