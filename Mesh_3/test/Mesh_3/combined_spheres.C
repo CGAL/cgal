@@ -371,6 +371,9 @@ int main(int, char**)
   Mesher mesher (c2t3, surface, multi_criterion, tets_criteria, oracle);
   mesher.refine_mesh();
 
+  CGAL::Mesh_3::Slivers_exuder<C2t3> exuder(tr);
+  exuder.pump_vertices(0.2);
+
   std::string filename;
   std::cout << "Ouput file name (without extension):" << std::endl;
   std::cin >> filename;
