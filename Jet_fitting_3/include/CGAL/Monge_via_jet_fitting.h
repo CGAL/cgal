@@ -187,8 +187,8 @@ dump_verbose(std::ostream& out_stream)
 {
   out_stream << "cond_nb : " << cond_nb() << std::endl 
 	     << "pca_eigen_vals " << pca_eigen_vals()[0] 
-	     << " " << pca_eigen_vals()[2] 
-	     << " " << pca_eigen_vals()[3]  << std::endl 
+	     << " " << pca_eigen_vals()[1] 
+	     << " " << pca_eigen_vals()[2]  << std::endl 
 	     << "pca_eigen_vecs : " << std::endl 
 	     << pca_eigen_vecs()[0] << std::endl 
 	     << pca_eigen_vecs()[1] << std::endl 
