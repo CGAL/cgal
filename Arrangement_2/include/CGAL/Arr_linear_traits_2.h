@@ -998,7 +998,7 @@ public:
 
       CGAL_precondition ((! cv1.has_right() ||
                           compare_xy(cv1.right(), p) == LARGER) &&
-                         (! cv1.has_right() ||
+                         (! cv2.has_right() ||
                           compare_xy(cv2.right(), p) == LARGER));
 
       // Compare the slopes of the two segments to determine thir relative
