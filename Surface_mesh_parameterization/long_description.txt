@@ -68,7 +68,7 @@ Although they are often tightly coupled, there are 2 main components:
   - Linear solver (direct or iterative)
 The CGAL parameterization package will be loosely linked to the solver. Replacing it will be easy.
 Which linear solver?
-  - OpenNL (Bruno Lévy)
+  - OpenNL (Bruno Levy)
   - others to be decided
 
 5 References
