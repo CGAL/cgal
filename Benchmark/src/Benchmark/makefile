@@ -16,7 +16,7 @@
 
 CXX ?=g++
 CXXFLAGS ?=-Wall
-CPPFLAGS =-I. -I../../include -g
+CPPFLAGS = -I. -I../../include -g
 AR ?=ar
 LEX =flex
 BISON ?=bison
@@ -57,7 +57,9 @@ clean:
 
 %.C %.h : %.y
 	$(BISON) -d $< -o $*.C
+ifeq ($(OSTYPE), linux)
 	mv $*.H $*.h
+endif
 
 %.C : %.l
 	$(LEX) -8 -o$@ $<
