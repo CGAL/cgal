@@ -210,6 +210,9 @@ private:
 
 public:
 
+  Overlay_meta_traits()
+  {}
+
   Overlay_meta_traits(Traits* base_tr) : m_base_traits(base_tr)
   {}
 

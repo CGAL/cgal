@@ -38,6 +38,9 @@ public:
 
 
   // Constructor
+  Arr_batched_point_location_meta_traits()
+  {}
+
   Arr_batched_point_location_meta_traits(const Traits* tr) : m_base_traits(tr)
   {}
 
