@@ -33,6 +33,7 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_rational_arc_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
+#include <CGAL/Arr_linear_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -74,6 +75,12 @@ template <class Kernel_, bool Filter_>
 struct Default_arr_traits<CGAL::_Circle_segment_2<Kernel_, Filter_> >
 {
   typedef CGAL::Arr_circle_segment_traits_2<Kernel_, Filter_>    Traits;
+};
+
+template <class Kernel>
+struct Default_arr_traits<CGAL::Arr_linear_object_2<Kernel> >
+{
+  typedef CGAL::Arr_linear_traits_2<Kernel>    Traits;
 };
 
 /*!

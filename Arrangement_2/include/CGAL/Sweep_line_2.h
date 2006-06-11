@@ -83,14 +83,16 @@ class Sweep_line_2 : public Basic_sweep_line_2<Traits_,
 public:
 
   typedef Traits_                                 Traits;
-  typedef typename Traits::Point_2                Point_2;
-  typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
-
   typedef Basic_sweep_line_2<Traits,
                              SweepVisitor,
                              CurveWrap,
                              SweepEvent,
                              Allocator>           Base;
+  typedef typename Base::Traits_adaptor           Traits_adaptor;
+  typedef typename Traits_adaptor::Point_2                Point_2;
+  typedef typename Traits_adaptor::X_monotone_curve_2     X_monotone_curve_2;
+
+ 
 
 
   typedef SweepEvent                              Event;
@@ -185,8 +187,6 @@ public:
   { 
     CGAL_PRINT("Handling left curve" << std::endl;);
 
-   
-
     this->m_is_event_on_above = false;
 
     if(! this->m_currentEvent->has_left_curves())
@@ -200,13 +200,9 @@ public:
       //           \
       */
       CGAL_PRINT(" - handling special case " << std::endl;);
-             
-       const std::pair<StatusLineIter, bool>& pair_res = 
-         this->m_statusLine.find_lower (this->m_currentEvent->get_point(), 
-                                        this->m_statusLineCurveLess);
-       this->m_status_line_insert_hint = pair_res.first;
-       this->m_is_event_on_above = pair_res.second;
+      this->_handle_event_without_left_curves();
 
+     
       StatusLineIter temp = this->m_status_line_insert_hint;
 
       if(this->m_is_event_on_above)
@@ -232,7 +228,7 @@ public:
         this->m_currentEvent->set_weak_intersection();
         this->m_visitor->update_event(this->m_currentEvent, sc);
         this->m_currentEvent->add_curve_to_left(sc);
- 
+  
         bool       is_overlap = _add_curve_to_right(this->m_currentEvent, sc);
 
         this->m_traits->split_2_object() (last_curve,
@@ -248,6 +244,7 @@ public:
           this->m_statusLine.erase (temp);
           return;
         }
+        
       }
       else // no left curves for sure
       {
@@ -469,15 +466,6 @@ protected:
   /*! Auxiliary varibales (for splitting curves). */
   X_monotone_curve_2  sub_cv1;
   X_monotone_curve_2  sub_cv2;
-
- 
-
-  template<class SweepCurve>
-  Point_2 get_left_end(SweepCurve* sc) const
-  {
-    return (this->m_traits->construct_min_vertex_2_object()
-            (sc->get_last_curve()));
-  }
 };
 
 
@@ -847,39 +835,48 @@ _handle_overlap(Event* event,
       overlap_cv = object_cast<X_monotone_curve_2> (obj_vec.front());
     }
 
-    // Get the left end of overlap_cv
-    Point_2 begin_overlap =
-      this->m_traits->construct_min_vertex_2_object()(overlap_cv);
+   
     // Get the right end of overlap_cv
-    Point_2 end_overlap =
-      this->m_traits->construct_max_vertex_2_object()(overlap_cv);
 
-    const std::pair<Event*, bool>& pair_res =
-      push_event(end_overlap, Base_event::OVERLAP);
-    //find the event assiciated with end_overlap point (right end point)
-    //EventQueueIter q_iter = this->m_queue->find( end_overlap );
-
-    //TODO: in polylines, the event point of the right-end of the overlap
-    // is not have to be exist yet,
-    //CGAL_assertion(q_iter != this->m_queue->end());
-
-    //Event* right_end = (*q_iter).second;
-
-    Event* right_end = pair_res.first;
-
-    if (this->m_traits->compare_xy_2_object() (event->get_point(), 
-                                               begin_overlap) != EQUAL)
+    Event* right_end;
+    if(m_traits->infinite_in_x_2_object()(overlap_cv, MAX_END) != FINITE ||
+       m_traits->infinite_in_y_2_object()(overlap_cv, MAX_END) != FINITE)
     {
-      this->m_traits->split_2_object() (overlap_cv,
-                                        event->get_point(), 
-                                        sub_cv1, sub_cv2);
-      overlap_cv = sub_cv2;
+      CGAL_assertion((*iter)->get_right_event() == curve->get_right_event());
+       right_end = (Event*)curve->get_right_event();
     }
+    else
+    {
+      Point_2 end_overlap =
+        this->m_traits->construct_max_vertex_2_object()(overlap_cv);
+
+      const std::pair<Event*, bool>& pair_res =
+        push_event(end_overlap, Base_event::OVERLAP);
+      right_end = pair_res.first;
+    }
+
+     // Get the left end of overlap_cv
+     if(m_traits->infinite_in_x_2_object()(overlap_cv, MIN_END) == FINITE &&
+        m_traits->infinite_in_y_2_object()(overlap_cv, MIN_END) == FINITE)
+     {
+       Point_2 begin_overlap =
+         this->m_traits->construct_min_vertex_2_object()(overlap_cv);
+       if (this->m_traits->compare_xy_2_object() (event->get_point(), 
+                                                  begin_overlap) != EQUAL)
+       {
+         this->m_traits->split_2_object() (overlap_cv,
+                                           event->get_point(), 
+                                           sub_cv1, sub_cv2);
+         overlap_cv = sub_cv2;
+       }
+     }
 
     // Alocate a new Subcure for the overlap
     Subcurve *overlap_sc = this->m_subCurveAlloc.allocate(1);
     this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
-    overlap_sc->init(overlap_cv, event, right_end );
+    overlap_sc->init(overlap_cv);
+    overlap_sc->set_left_event(event);
+    overlap_sc->set_right_event(right_end);
     m_overlap_subCurves.push_back(overlap_sc);
 
     CGAL_PRINT(curve<<" + " <<*iter<<" => " <<overlap_sc<<"\n");
@@ -899,10 +896,14 @@ _handle_overlap(Event* event,
 
     //BZBZ 07.09.05
     if((Event*)curve->get_right_event() != right_end)
+    {
       _add_curve_to_right(right_end, curve);
+    }
 
     if((Event*)(*iter)->get_right_event() != right_end)
+    {
       _add_curve_to_right(right_end, (*iter));
+    }
 
     // Replace current sub-curve (*iter) with the new sub-curve
     (*iter) = overlap_sc;

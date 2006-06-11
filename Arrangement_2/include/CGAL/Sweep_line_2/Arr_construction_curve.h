@@ -64,14 +64,16 @@ public:
   {}
 
   
-  template<class SweepEvent>
-  void init(const X_monotone_curve_2 &curve,
-            SweepEvent* left,
-            SweepEvent* right)
+  void init(const X_monotone_curve_2 &curve)
   {
-    Base::init(curve, left, right);
+    Base::init(curve);
+  }
+
+  template<class SweepEvent>
+  void set_left_event(SweepEvent* left)
+  {
+    Base::set_left_event(left);
     m_lastEvent = left;
-    
   }
 
   void set_last_event(Event_ptr e) {

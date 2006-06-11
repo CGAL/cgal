@@ -49,12 +49,17 @@ public:
   typedef typename Traits_2::Equal_2               Base_Equal_2;
   typedef typename Traits_2::Compare_x_2           Base_Compare_x_2;
   typedef typename Traits_2::Is_vertical_2         Base_Is_vertical_2;
+  typedef typename Traits_2::Has_infinite_category Has_infinite_category;
+  typedef typename Traits_2::Has_left_category     Has_left_category;
 
 protected:
 
   Traits_2*    m_base_traits;
 
 public:
+
+  Arr_basic_addition_traits() 
+  {}
 
   //Constructor
   Arr_basic_addition_traits (Traits_2& tr):

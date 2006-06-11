@@ -86,15 +86,22 @@ public:
 
   Sweep_line_subcurve(const X_monotone_curve_2 &curve);
 
-  template <class SweepEvent>
-  void init(const X_monotone_curve_2 &curve,
-            SweepEvent* left,
-            SweepEvent* right)
+  void init(const X_monotone_curve_2 &curve)
   {
     m_lastCurve = curve;
-    m_left_event  = reinterpret_cast<Event*>(left);
-    m_right_event = reinterpret_cast<Event*>(right);
   }
+
+  /*template <class SweepEvent>
+  void set_left_event(SweepEvent* left)
+  {
+    m_left_event  = reinterpret_cast<Event*>(left);
+  }
+
+  template <class SweepEvent>
+  void set_right_event(SweepEvent* right)
+  {
+    m_right_event  = reinterpret_cast<Event*>(right);
+  }*/
 
   ~Sweep_line_subcurve() {}
 

@@ -85,9 +85,9 @@ public:
 
   bool after_handle_event(Event* event,SL_iterator iter, bool flag)
   {
-    if(m_includeEndPoints ||
+    if((m_includeEndPoints ||
        event->is_intersection() ||
-       event->is_weak_intersection())
+       event->is_weak_intersection()) && event->is_finite())
       *m_out++ = event->get_point();
     return true;
   }

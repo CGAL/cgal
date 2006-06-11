@@ -82,7 +82,19 @@ public:
     
     WEAK_INTERSECTION = 32, // when a curve's end-point is on the interior
                            //of another curve (also may indicate overlap)
-    OVERLAP = 64 // end-point of an overlap subcurve
+    OVERLAP = 64, // end-point of an overlap subcurve
+
+    MINUS_INFINITE_X = 128,
+
+    FINITE_X = 256,
+
+    PLUS_INFINITE_X = 512,
+
+    MINUS_INFINITE_Y = 1024,
+
+    FINITE_Y = 2048,
+
+    PLUS_INFINITE_Y = 4096
 
   }Attribute;
 
@@ -101,10 +113,6 @@ public:
   ~Sweep_line_event() 
   {}
 
-
-  
-
-  
   void add_curve_to_left(SubCurve *curve)
   {
     // look for the curve, and if exists, nothing to do
@@ -141,7 +149,11 @@ public:
       return Pair(false, m_rightCurves.begin());
     }
 
-
+    //check if its an event an infinity, and if so then there's an overlap
+    //(there cannot be two non-overlap curves at the same event at infinity).
+    if(!this->is_finite())
+      return Pair(true, m_rightCurves.begin());
+ 
     SubCurveIter iter = m_rightCurves.begin();
     
     Comparison_result res;
@@ -274,13 +286,38 @@ public:
 
   /*! Returns the actual point of the event */
   const Point_2 &get_point() const {
+    //CGAL_assertion(is_finite());
     return m_point;
   }
 
   /*! Returns the actual point of the event (non-const) */
   Point_2& get_point()
   {
+    //CGAL_assertion(is_finite());
     return m_point;
+  }
+
+  const X_monotone_curve_2& get_unbounded_curve() const
+  {
+    CGAL_assertion(!this->is_finite());
+    
+    //the event cannot be isolated.
+    if(has_left_curves())
+      return m_leftCurves.front()->get_last_curve();
+
+    CGAL_assertion(has_right_curves());
+    return m_rightCurves.front()->get_last_curve();
+  }
+
+  X_monotone_curve_2& get_unbounded_curve()
+  {
+    CGAL_assertion(!this->is_finite());
+    //the event cannot be isolated.
+    if(has_left_curves())
+      return m_leftCurves.front()->get_last_curve();
+
+    CGAL_assertion(has_right_curves());
+    return m_rightCurves.front()->get_last_curve();
   }
 
   /*! change the point of the event. */
@@ -364,6 +401,78 @@ public:
     m_type |= type;
   }
 
+  void set_minus_infinite_x()
+  {
+    m_type |= MINUS_INFINITE_X;
+  }
+
+  void set_plus_infinite_x()
+  {
+    m_type |= PLUS_INFINITE_X;
+  }
+
+  void set_finite_x()
+  {
+    m_type |= FINITE_X;
+  }
+
+  void set_finite_y()
+  {
+    m_type |= FINITE_Y;
+  }
+
+  void set_finite()
+  {
+    m_type |= FINITE_X;
+    m_type |= FINITE_Y;
+
+  }
+
+  void set_minus_infinite_y()
+  {
+    m_type |= MINUS_INFINITE_Y;
+  }
+
+  void set_plus_infinite_y()
+  {
+    m_type |= PLUS_INFINITE_Y;
+  }
+
+  bool is_finite() const
+  {
+    return ((m_type & FINITE_X ) != 0) && ((m_type & FINITE_Y ) != 0);
+  }
+
+
+  bool is_minus_infinite_in_x() const
+  {
+    return ((m_type & MINUS_INFINITE_X ) != 0);
+  }
+
+  Infinity_type infinity_at_x() const
+  {
+    if((m_type & MINUS_INFINITE_X ) != 0)
+      return MINUS_INFINITY;
+
+    if((m_type & PLUS_INFINITE_X ) != 0)
+      return PLUS_INFINITY;
+
+    CGAL_assertion((m_type & FINITE_X ) != 0);
+    return FINITE;
+  }
+
+  Infinity_type infinity_at_y() const
+  {
+    if((m_type & MINUS_INFINITE_Y ) != 0)
+      return MINUS_INFINITY;
+
+    if((m_type & PLUS_INFINITE_Y ) != 0)
+      return PLUS_INFINITY;
+
+    CGAL_assertion((m_type & FINITE_Y ) != 0);
+    return FINITE;
+  }
+
   
 
 
@@ -422,7 +531,7 @@ public:
   SubcurveContainer m_rightCurves;
 
   /*! */
-  char m_type;
+  int m_type;
 
 };
 

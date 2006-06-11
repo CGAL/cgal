@@ -44,16 +44,16 @@ Basic_sweep_line_2<Traits_,
                    Allocator>::
 PrintEventQueue()
 {
-  SL_DEBUG(std::cout << std::endl << "Event queue: " << std::endl;)
+  CGAL_SL_DEBUG(std::cout << std::endl << "Event queue: " << std::endl;)
   EventQueueIter iter = m_queue->begin();
   while ( iter != m_queue->end() )
   {
-    SL_DEBUG(std::cout << "Point (" << iter->first << ")" << std::endl;)
+    CGAL_SL_DEBUG(std::cout << "Point (" << iter->first << ")" << std::endl;)
     Event *e = iter->second;
     e->Print();
     ++iter;
   }
-  SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
+  CGAL_SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
 }
 
 template <class Traits_,
@@ -69,7 +69,7 @@ Basic_sweep_line_2<Traits_,
                    Allocator>::
 PrintSubCurves()
 {
-  SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)
+  CGAL_SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)
   for(unsigned int i=0 ; i < m_num_of_subCurves ; ++i)
   {
     m_subCurves[i].Print();

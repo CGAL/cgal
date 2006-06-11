@@ -30,6 +30,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Multiset.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #ifndef VERBOSE
 
@@ -103,11 +104,12 @@ class Basic_sweep_line_2
 public:
 
   typedef Traits_                                        Traits;
-  typedef typename Traits::Point_2                       Point_2;
-  typedef typename Traits::X_monotone_curve_2            X_monotone_curve_2;
+  typedef Arr_traits_basic_adaptor_2<Traits_>            Traits_adaptor;
+  typedef typename Traits_adaptor::Point_2                       Point_2;
+  typedef typename Traits_adaptor::X_monotone_curve_2            X_monotone_curve_2;
 
   typedef SweepEvent                                     Event;
-  typedef Event_less_functor<Traits, Event>              EventLess;
+  typedef Event_less_functor<Traits_adaptor, Event>              EventLess;
   typedef Multiset<Event*, EventLess, Allocator>         EventQueue; 
   typedef typename EventQueue::iterator                  EventQueueIter;
 
@@ -139,7 +141,7 @@ public:
    * \param visitor A pointer to a sweep-line visitor object.
    */
   Basic_sweep_line_2 (SweepVisitor* visitor) :
-      m_traits(new Traits()),
+      m_traits(new Traits_adaptor()),
       m_traitsOwner(true),
       m_statusLineCurveLess(m_traits, &m_currentEvent),
       m_queueEventLess(m_traits),
@@ -159,7 +161,7 @@ public:
    * \param visitor A pointer to a sweep-line visitor object.
    */
   Basic_sweep_line_2(Traits *traits, SweepVisitor* visitor) :
-      m_traits(traits),
+      m_traits(static_cast<Traits_adaptor*>(traits)),
       m_traitsOwner(false),
       m_statusLineCurveLess(m_traits, &m_currentEvent),
       m_queueEventLess(m_traits),
@@ -401,7 +403,7 @@ public:
   /*! for each curve create a Subcurve object and two Event objects */
   template<class CurveInputIterator>
   void _init_curves(CurveInputIterator curves_begin,
-                   CurveInputIterator curves_end)
+                    CurveInputIterator curves_end)
   {
     unsigned int   index = 0;
     for(CurveInputIterator iter = curves_begin;
@@ -473,41 +475,63 @@ public:
    */
   void _init_curve(const X_monotone_curve_2 &curve,unsigned int index)
   {
-    const Point_2 &left_end =
-      m_traits->construct_min_vertex_2_object()(curve);
-    const Point_2 &right_end =
-      m_traits->construct_max_vertex_2_object()(curve);
-
-    
-    // Handle the right endpoint of the curve.
-    const std::pair<Event*, bool>& pair_res1 =
-      push_event(right_end, Base_event::RIGHT_END);
-
-    Event* right_event = pair_res1.first;
-    if(pair_res1.second == false) // the event already exist
-    {
-      m_visitor ->update_event(right_event, right_end, curve , false); //new notification function!!
-    }
-    
-    // Handle the left endpoint of the curve.
-    const std::pair<Event*, bool>& pair_res2 =
-      push_event(left_end, Base_event::LEFT_END); 
-
-    Event* left_event = pair_res2.first;
-    if(pair_res2.second == false) // the even already exist
-    {
-      m_visitor ->update_event(left_event, left_end, curve, true); //new notification function!!
-    }
-    
-    // construct a Subcurve object
+     // construct a Subcurve object
     m_subCurveAlloc.construct(m_subCurves+index, m_masterSubcurve);
 
-    (m_subCurves+index)->init(curve, left_event, right_event);
-    
-    right_event->add_curve_to_left(m_subCurves+index);  
-    _add_curve_to_right(left_event, m_subCurves+index);
-    
+    (m_subCurves+index)->init(curve);
+
+    _init_endpoint(curve, MAX_END, m_subCurves+index);
+    _init_endpoint(curve, MIN_END, m_subCurves+index);
+     
+    /*(m_subCurves+index)->set_left_event(left_event);
+    (m_subCurves+index)->set_right_event(right_event);*/
+     
     return;
+  }
+
+  Event* _init_endpoint (const X_monotone_curve_2& cv,
+                         Curve_end ind,
+                         Subcurve* sc)
+  {
+    Attribute end_attr = 
+      (ind == MIN_END) ? Base_event::LEFT_END : Base_event::RIGHT_END;
+    Point_2 end_point;
+
+    Infinity_type inf_x = m_traits->infinite_in_x_2_object()(cv, ind);
+    Infinity_type inf_y = m_traits->infinite_in_y_2_object()(cv, ind);
+    
+    std::pair<Event*, bool> pair_res;
+    if(inf_x != FINITE)
+    {
+      pair_res =
+        push_event(cv, end_attr , inf_x, inf_y, ind, sc);
+    }
+    else
+    {
+      if(inf_y != FINITE)
+      {
+        pair_res =
+          push_event(cv, end_attr , inf_x, inf_y, ind, sc);
+      }
+      else
+      {
+        end_point = 
+          ((ind == MIN_END) ? m_traits->construct_min_vertex_2_object()(cv):
+                              m_traits->construct_max_vertex_2_object()(cv));
+                              
+        pair_res =
+          push_event(end_point, end_attr, sc);
+
+      }
+    }
+    
+    Event* e = pair_res.first;
+    if(pair_res.second == false) // the event already exist
+    {
+      m_visitor ->update_event(e, end_point, cv , false); //new notification function!!
+    }
+
+    return e;
   }
   
 
@@ -520,22 +544,21 @@ public:
 
     if(! m_currentEvent->has_left_curves())
     { 
-      const std::pair<StatusLineIter, bool>& pair_res =
-        m_statusLine.find_lower (m_currentEvent->get_point(), 
-				                          m_statusLineCurveLess);
-
-      m_status_line_insert_hint = pair_res.first;
-      m_is_event_on_above = pair_res.second;
-
-      if(m_is_event_on_above)
+      _handle_event_without_left_curves();
+      if(m_currentEvent->is_finite())
       {
-        // current event is on the interior of existing curve at the Y-str,
-        // it can allowed only if the event is an isolated query point
-        CGAL_assertion(!m_currentEvent -> has_right_curves() &&
-                        m_currentEvent -> is_query());
+        if(m_is_event_on_above)
+        {
+          // current event is on the interior of existing curve at the Y-str,
+          // it can allowed only if the event is an isolated query point
+          CGAL_assertion(!m_currentEvent -> has_right_curves() &&
+                          m_currentEvent -> is_query());
 
-         //m_is_event_on_above = true;
-         m_visitor->before_handle_event(m_currentEvent);
+          //m_is_event_on_above = true;
+          m_visitor->before_handle_event(m_currentEvent);
+        }
+        else
+          m_visitor->before_handle_event(m_currentEvent);
       }
       else
         m_visitor->before_handle_event(m_currentEvent);
@@ -578,6 +601,40 @@ public:
     return;
   }
 
+  void _handle_event_without_left_curves()
+  {
+     if(m_currentEvent->is_finite())
+     {
+       const std::pair<StatusLineIter, bool>& pair_res =
+         m_statusLine.find_lower (m_currentEvent->get_point(), 
+				                          m_statusLineCurveLess);
+
+       m_status_line_insert_hint = pair_res.first;
+       m_is_event_on_above = pair_res.second;
+
+       return;
+     }
+        
+    // its an event at infinity
+    Infinity_type inf_x = m_currentEvent->infinity_at_x();
+    if(inf_x == MINUS_INFINITY)
+      m_status_line_insert_hint = m_statusLine.end();
+    else
+    {
+      CGAL_assertion(inf_x != PLUS_INFINITY); //event at plus infinity x
+                                              // must have left curve
+      Infinity_type inf_y = m_currentEvent->infinity_at_y();
+      if(inf_y == MINUS_INFINITY)
+        m_status_line_insert_hint = m_statusLine.begin();
+      else
+      {
+        CGAL_assertion(inf_y == PLUS_INFINITY);
+        m_status_line_insert_hint = m_statusLine.end();
+      }
+    }
+      
+    return;
+  }
   /*!
    * Sort the left subcurves of an event point according to their order in
    * their status line (no geometric comprasions are needed).
@@ -697,7 +754,7 @@ public:
 protected:
 
   /*! a  traits object */
-  Traits *m_traits;
+  Traits_adaptor *m_traits;
 
   /*! indicates if the traits object was allocated by the sweep */
   bool m_traitsOwner;
@@ -757,8 +814,10 @@ protected:
     return e;
   }
 
-  /*! Push event point to x-structure (m_queue) iff it doesnt exist */
-  std::pair<Event*, bool> push_event(const Point_2& pt, Attribute type)
+  /*! Push a finite event point to x-structure (m_queue) iff it doesnt exist */
+  std::pair<Event*, bool> push_event(const Point_2& pt,
+                                     Attribute type,
+                                     Subcurve* sc = NULL)
   {
     Event*    e;  
     
@@ -770,6 +829,23 @@ protected:
     {
       // We have a new event
       e = allocate_event(pt, type);
+      e->set_finite();
+
+      if(sc != NULL)
+      {
+        if(type == Base_event::LEFT_END)
+        {
+          sc->set_left_event(e);
+          _add_curve_to_right(e, sc);
+        }
+        else
+        {
+          CGAL_assertion(type == Base_event::RIGHT_END);
+          sc->set_right_event(e);
+          e->add_curve_to_left(sc);
+        }
+      }
+
       m_queue->insert_before(pair_res.first, e);
     }
     else
@@ -777,9 +853,111 @@ protected:
       // The event already exsits
       e = *(pair_res.first);
       e->set_attribute(type);
+      e->set_finite();
+      if(sc != NULL)
+      {
+        if(type == Base_event::LEFT_END)
+        {
+          sc->set_left_event(e);
+          _add_curve_to_right(e, sc);
+        }
+        else
+        {
+          CGAL_assertion(type == Base_event::RIGHT_END);
+          sc->set_right_event(e);
+          e->add_curve_to_left(sc);
+        }
+      }
     }
     CGAL_PRINT_NEW_EVENT(pt, e);
+    
     return (std::make_pair(e, !exist));
+  }
+
+  /*! Push an event at infinity to x-structure (m_queue) iff it doesnt exist (overlap) */
+  std::pair<Event*, bool> push_event(const X_monotone_curve_2& cv,
+                                     Attribute type,
+                                     Infinity_type x_inf,
+                                     Infinity_type y_inf = FINITE,
+                                     Curve_end     ind = MIN_END,
+                                     Subcurve* sc = NULL)
+  {
+    Event*    e;  
+    
+    m_queueEventLess.set_infinite_in_x(x_inf);
+    m_queueEventLess.set_infinite_in_y(y_inf);
+    m_queueEventLess.set_index(ind);
+
+    const std::pair<EventQueueIter, bool>& pair_res =
+      m_queue->find_lower(cv, m_queueEventLess);
+    bool exist = pair_res.second;
+
+    if (! exist)
+    {
+      // We have a new event
+      Point_2 pt = Point_2();
+      e = allocate_event(pt, type);
+      _set_attributes_of_infinity(e, x_inf, y_inf, ind);
+      if(sc != NULL)
+      {
+        if(type == Base_event::LEFT_END)
+        {
+          sc->set_left_event(e);
+          _add_curve_to_right(e, sc);
+        }
+        else
+        {
+          sc->set_right_event(e);
+          e->add_curve_to_left(sc);
+        }
+      }
+      m_queue->insert_before(pair_res.first, e);
+    }
+    else
+    {
+      // The event already exsits
+      e = *(pair_res.first);
+      e->set_attribute(type);
+      _set_attributes_of_infinity(e, x_inf, y_inf, ind);
+      if(sc != NULL)
+      {
+        if(type == Base_event::LEFT_END)
+        {
+          sc->set_left_event(e);
+          _add_curve_to_right(e, sc);
+        }
+        else
+        {
+          sc->set_right_event(e);
+          e->add_curve_to_left(sc);
+        }
+      }
+    }
+    
+
+    return (std::make_pair(e, !exist));
+  }
+
+  void _set_attributes_of_infinity(Event* e,
+                                   Infinity_type x_inf,
+                                   Infinity_type y_inf,
+                                   Curve_end     ind)
+  {
+    if(x_inf == MINUS_INFINITY)
+      e->set_minus_infinite_x();
+    else
+      if(x_inf == PLUS_INFINITY)
+        e->set_plus_infinite_x();
+      else
+        e->set_finite_x();
+        
+    if(y_inf == MINUS_INFINITY)
+          e->set_minus_infinite_y();
+    else
+      if(y_inf == PLUS_INFINITY)
+        e->set_plus_infinite_y();
+      else
+        e->set_finite_y();
   }
 
 };
