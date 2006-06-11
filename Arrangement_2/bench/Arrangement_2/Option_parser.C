@@ -5,10 +5,6 @@
 
 #include "Option_parser.h"
 
-char * Option_parser::s_format_opts[] = {
-  "int", "float", "rational", "i", "f", "r"
-};
-
 char * Option_parser::s_type_opts[] = {
   "increment", "aggregate", "pointLocation", "display", "i", "a", "l", "d"
 };
@@ -43,13 +39,6 @@ void Option_parser::my_validate(boost::any & v,
 
 /* Overload the 'validate' function for the user-defined class */
 void validate(boost::any & v, const std::vector<std::string> & values,
-              Option_parser::Vector_format_id * target_type, int)
-{
-  Option_parser::my_validate<Option_parser::Format_id>(v, values);
-}
-
-/* Overload the 'validate' function for the user-defined class */
-void validate(boost::any & v, const std::vector<std::string> & values,
               Option_parser::Vector_type_id * target_type, int)
 {
   Option_parser::my_validate<Option_parser::Type_id>(v, values);
@@ -70,7 +59,6 @@ Option_parser::Option_parser() :
   m_verbose_level(0),
   m_win_width(DEF_WIN_WIDTH),
   m_win_height(DEF_WIN_HEIGHT),
-  m_format(FORMAT_INT),
   m_type_mask(0xf),
   m_strategy_mask(0x3f),
   m_number_files(0)
@@ -99,12 +87,6 @@ Option_parser::Option_parser() :
     ("input-path,P", po::value<vs>()->composing(), "input path")
     ("verbose,V", po::value<unsigned int>(&m_verbose_level)->default_value(0),
      "verbose level")
-    ("format,f", po::value<std::vector<Format_id> >()->composing(),
-     "input format options\n"
-     "\t\t\t\t\ti[nt]\n"
-     "\t\t\t\t\tif[loat]\n"
-     "\t\t\t\t\tir[ational]\n"
-     )
     ("type", po::value<std::vector<Type_id> >()->composing(),
      "Type\n"
      "\t\t\t\t\ti[ncrement]\t(0x1}\n"
@@ -182,13 +164,6 @@ void Option_parser::operator()(int argc, char * argv[])
     return;
   }
 
-  if (m_variable_map.count("format")) {
-    Vector_format_id formats = m_variable_map["format"].as<Vector_format_id>();
-    for (Vector_format_id_iter it = formats.begin(); it != formats.end(); ++it) {
-      m_format = static_cast<Format_code>((*it).m_id);
-    }
-  }
-
   if (m_variable_map.count("type")) {
     Vector_type_id types = m_variable_map["type"].as<Vector_type_id>();
     for (Vector_type_id_iter it = types.begin(); it != types.end(); ++it)
@@ -242,10 +217,6 @@ const std::string & Option_parser::get_file_name(unsigned int i) const
 /*! Obtain the full file-name */
 const std::string & Option_parser::get_full_name(unsigned int i) const
 { return m_full_names[i]; }
-
-/*! Obtain number of format options */
-unsigned int Option_parser::get_number_opts(Format_id &)
-{ return sizeof(s_format_opts) / sizeof(char *); }
 
 /*! Obtain number of type options */
 unsigned int Option_parser::get_number_opts(Type_id &)

@@ -11,7 +11,7 @@
 #include "Input_traits.h"
 #include "Option_parser.h"
 
-/*! Convert WNT to int. Used to calculate the bounding box */
+/*! Convert Number_type to int. Used to calculate the bounding box */
 template <class T_NT>
 class Toint {
 public:
@@ -58,19 +58,19 @@ public:
       std::vector<Point_2> points;
       points.clear();
       for (unsigned int j = 0; j < num_points; j++) {
-        WNT x, y;
+        Number_type x, y;
         if (format == Option_parser::FORMAT_RATIONAL) {
-          Input_traits<WNT>::Input_rat_type ix, iy;
+          Input_traits<Number_type>::Input_rat_type ix, iy;
           file >> ix >> iy;
           x = ix; y = iy;
         } else if (format == Option_parser::FORMAT_INT) {
-          Input_traits<WNT>::Input_int_type ix, iy;
+          Input_traits<Number_type>::Input_int_type ix, iy;
           file >> ix >> iy;
-          x = (WNT) ix; y = (WNT) iy;
+          x = (Number_type) ix; y = (Number_type) iy;
         } else if (format == Option_parser::FORMAT_FLOAT) {
-          Input_traits<WNT>::Input_float_type ix, iy;
+          Input_traits<Number_type>::Input_float_type ix, iy;
           file >> ix >> iy;
-          x = (WNT) ix; y = (WNT) iy;
+          x = (Number_type) ix; y = (Number_type) iy;
         } else {
           std::cerr << "Illegal format!" << std::endl;
           return -1;
@@ -79,7 +79,7 @@ public:
         points.push_back(p);
 
 #if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
-        Toint<WNT> toint;
+        Toint<Number_type> toint;
         if (j == 0) {
           xmin = xmax = toint(x);
           ymin = ymax = toint(y);

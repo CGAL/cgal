@@ -80,115 +80,69 @@
 // Typedefs:
 
 #if BENCH_NT == DOUBLE_NT
-typedef CGAL::Double                                    NT;
-typedef NT                                              WNT;
-typedef NT                                              RT;
+typedef CGAL::Double                                    Number_type;
 #define NUMBER_TYPE "Double"
 
 #elif BENCH_NT == MP_FLOAT_NT
-typedef CGAL::MP_Float                                  NT;
-typedef NT                                              WNT;
-typedef NT                                              RT;
+typedef CGAL::MP_Float                                  Number_type;
 #define NUMBER_TYPE "MP Float"
 
 #elif BENCH_NT == GMPZ_NT
-typedef ::mpz_class                                     NT;
-typedef NT                                              WNT;
-typedef NT                                              RT;
+typedef ::mpz_class                                     Number_type;
 #define NUMBER_TYPE "Gmpz"
 
 #elif BENCH_NT == LEDA_RAT_NT
-typedef leda_rational                                   NT;
-typedef NT                                              WNT;
-typedef leda_integer                                    RT;
+typedef leda_rational                                   Number_type;
 #define NUMBER_TYPE "Leda Rat"
 
 #elif BENCH_NT == LAZY_LEDA_RAT_NT
-typedef leda_rational                                   NT;
-typedef CGAL::Lazy_exact_nt<NT>                         WNT;
-typedef leda_integer                                    RT;
+typedef CGAL::Lazy_exact_nt<NT>                         Number_type;
 #define NUMBER_TYPE "Lazy Leda Rat"
 
 #elif BENCH_NT == GMPQ_NT
-typedef ::mpq_class                                     NT;
-typedef NT                                              WNT;
-typedef ::mpz_class                                     RT;
-typedef ::mpq_class                                     FT;
+typedef ::mpq_class                                     Number_type;
 #define NUMBER_TYPE "Gmpq"
 
 #elif BENCH_NT == CGAL_GMPQ_NT
-typedef CGAL::Gmpq                                      NT;
-typedef NT                                              WNT;
-typedef CGAL::Gmpz                                      RT;
-typedef CGAL::Gmpq                                      FT;
+typedef CGAL::Gmpq                                      Number_type;
 #define NUMBER_TYPE "Cgal Gmpq"
 
 #elif BENCH_NT == LAZY_CGAL_GMPQ_NT
-typedef CGAL::Gmpq                                      NT;
-typedef CGAL::Lazy_exact_nt<NT>                         WNT;
-typedef CGAL::Gmpz                                      RT;
-typedef CGAL::Gmpq                                      FT;
+typedef CGAL::Lazy_exact_nt<NT>                         Number_type;
 #define NUMBER_TYPE "Lazy Cgal Gmpq"
 
 #elif BENCH_NT == QUOTIENT_MP_FLOAT_NT
-typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
-typedef NT                                              WNT;
-typedef CGAL::MP_Float                                  RT;
+typedef CGAL::Quotient<CGAL::MP_Float>                  Number_type;
 #define NUMBER_TYPE "Quotient MP Float"
 
 #elif BENCH_NT == QUOTIENT_CGAL_GMPZ_NT
-typedef CGAL::Quotient<CGAL::Gmpz>                      NT;
-typedef NT                                              WNT;
-typedef CGAL::Gmpz                                      RT;
+typedef CGAL::Quotient<CGAL::Gmpz>                      Number_type;
 #define NUMBER_TYPE "Quotient Gmpz"
 
 #elif BENCH_NT == LAZY_QUOTIENT_MP_FLOAT_NT
-typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
-typedef CGAL::Lazy_exact_nt<NT>                         WNT;
-typedef CGAL::MP_Float                                  RT;
+typedef CGAL::Lazy_exact_nt<NT>                         Number_type;
 #define NUMBER_TYPE "Lazy Quotient MP Float"
 
 #elif BENCH_NT == LEDA_REAL_NT
-typedef leda_real                                       NT;
-typedef NT                                              WNT;
-typedef NT                                              RT;
+typedef leda_real                                       Number_type;
 #define NUMBER_TYPE "Leda Real"
 
 #elif BENCH_NT == CORE_EXPR_NT
-typedef CORE::Expr                                      NT;
-typedef NT                                              WNT;
-typedef NT                                              RT;
+typedef CORE::Expr                                      Number_type;
 #define NUMBER_TYPE "Core Expr"
-
-// #elif BENCH_NT == NIX_ARITHMETIC_TRAITS_NT
-// typedef NiX::Arithmetic_traits                       Arithmetic_traits;
-// #if LiS_HAVE_LEDA
-// typedef NiX::LEDA_arithmetic_traits Arithmetic_traits;
-// #define NUMBER_TYPE "LEDA_arithmetic_traits"
-// #else
-// #if LiS_HAVE_CORE
-// typedef NiX::CORE_arithmetic_traits Arithmetic_traits;
-// #define NUMBER_TYPE "CORE_arithmetic_traits"
-// #endif
-// typedef Arithmetic_traits::Field_with_sqrt              NT;
-// typedef NT                                              WNT;
 
 #elif BENCH_NT == NIX_LEDA_FIELD_WITH_SQRT_NT
 typedef NiX::LEDA_arithmetic_traits                     Arithmetic_traits;
-typedef Arithmetic_traits::Field_with_sqrt              NT;
-typedef NT                                              WNT;
+typedef Arithmetic_traits::Field_with_sqrt              Number_type;
 #define NUMBER_TYPE "NiX Leda Real"
 
 #elif BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT
 typedef NiX::CORE_arithmetic_traits                     Arithmetic_traits;
-typedef Arithmetic_traits::Field_with_sqrt              NT;
-typedef NT                                              WNT;
+typedef Arithmetic_traits::Field_with_sqrt              Number_type;
 #define NUMBER_TYPE "NiX Core Expr"
 
 #elif BENCH_NT == LAZY_GMPZ_NT
-typedef ::mpz_class                                     NT;
-typedef CGAL::Lazy_exact_nt<NT>                         WNT;
-typedef ::mpz_class                                     RT;
+typedef CGAL::Lazy_exact_nt<NT>                         Number_type;
 #define NUMBER_TYPE "Lazy Gmpz"
 
 #else

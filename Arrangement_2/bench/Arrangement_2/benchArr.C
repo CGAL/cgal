@@ -1,9 +1,11 @@
-#include <CGAL/config.h>
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/benchmark_basic.h>
 
 #include "bench_config.h"
 #include "number_type.h"
+
+namespace cb = CGAL::benchmark;
 
 enum MaxFilesNumber {
   MAX_FILES_NUMBER = 20
@@ -206,8 +208,6 @@ enum MaxFilesNumber {
 
 #include "Option_parser.h"
 
-#include "Point_reader.h"       //for locate and not insert
-
 // Readers:
 // Conic reader:
 #if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == NON_CACHING_SEGMENT_TRAITS
@@ -233,27 +233,27 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
 #define KERNEL_TYPE "Exact"
 
 #elif BENCH_KERNEL == LEDA_KERNEL
-typedef CGAL::leda_rat_kernel_traits                    Kernel;
+typedef CGAL::leda_rat_kernel_traits                            Kernel;
 #define KERNEL_TYPE "Leda"
 
 #elif BENCH_KERNEL == MY_KERNEL
-typedef CGAL::Arr_segment_traits_leda_kernel_2          Kernel;
+typedef CGAL::Arr_segment_traits_leda_kernel_2                  Kernel;
 #define KERNEL_TYPE "Partial Leda"
 
 #elif BENCH_KERNEL == CARTESIAN_KERNEL
-typedef CGAL::Cartesian<WNT>                            Kernel;
+typedef CGAL::Cartesian<Number_type>                            Kernel;
 #define KERNEL_TYPE "Cartesian"
 
 #elif BENCH_KERNEL == SIMPLE_CARTESIAN_KERNEL
-typedef CGAL::Simple_cartesian<WNT>                     Kernel;
+typedef CGAL::Simple_cartesian<Number_type>                     Kernel;
 #define KERNEL_TYPE "Simple Cartesian"
 
 #elif BENCH_KERNEL == LAZY_CARTESIAN_KERNEL
-typedef CGAL::Lazy_kernel<CGAL::Cartesian<WNT> >         Kernel;
+typedef CGAL::Lazy_kernel<CGAL::Cartesian<Number_type> >        Kernel;
 #define KERNEL_TYPE "Lazy Cartesian"
 
 #elif BENCH_KERNEL == LAZY_SIMPLE_CARTESIAN_KERNEL
-typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<WNT> >  Kernel;
+typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<Number_type> > Kernel;
 #define KERNEL_TYPE "Lazy Simple Cartesian"
 
 #else
@@ -348,7 +348,6 @@ typedef CGAL::Arr_triangle_point_location<Arr>          Triangle_point_location;
 
 typedef Option_parser::Type_code        Type_code;
 typedef Option_parser::Strategy_code    Strategy_code;
-typedef Option_parser::Format_code      Format_code;
 
 // Window stream:
 #if defined(USE_CGAL_WINDOW)
@@ -418,7 +417,7 @@ public:
 #endif
 
     int rc = reader.read_data(m_filename, std::back_inserter(m_curve_list),
-                              m_format, m_bbox);
+                              m_bbox);
     if (rc < 0) return rc;
     if (m_verbose_level > 0)
       std::cout << m_curve_list.size() << " curves" << std::endl;
@@ -430,7 +429,6 @@ public:
   void clean() { m_curve_list.clear(); }
   void sync(){}
 
-  void set_format(Format_code fmt) { m_format = fmt; }
   void set_file_name(const char * filename, int file_index=0) 
   { m_filename = filename; }
   void set_verbose_level(const unsigned int level) { m_verbose_level = level; }
@@ -441,7 +439,6 @@ protected:
   Curve_list m_curve_list;
   unsigned int m_verbose_level;
   bool m_postscript;
-  Format_code m_format;
   CGAL::Bbox_2 m_bbox;
 
   int m_width, m_height;
@@ -485,22 +482,22 @@ public:
 };
 
 typedef Increment_arr<Trap_point_location>      Trap_inc_arr;
-typedef CGAL::Bench<Trap_inc_arr>               Trap_inc_arr_bench;
+typedef cb::Bench<Trap_inc_arr>                 Trap_inc_arr_bench;
 
 typedef Increment_arr<Naive_point_location>     Naive_inc_arr;
-typedef CGAL::Bench<Naive_inc_arr>              Naive_inc_arr_bench;
+typedef cb::Bench<Naive_inc_arr>                Naive_inc_arr_bench;
 
 typedef Increment_arr<Walk_point_location>      Walk_inc_arr;
-typedef CGAL::Bench<Walk_inc_arr>               Walk_inc_arr_bench;
+typedef cb::Bench<Walk_inc_arr>                 Walk_inc_arr_bench;
 
 #if defined(LANDMARK_SUPPORTED)
 typedef Increment_arr<Landmarks_point_location> Landmarks_inc_arr;
-typedef CGAL::Bench<Landmarks_inc_arr>          Landmarks_inc_arr_bench;
+typedef cb::Bench<Landmarks_inc_arr>            Landmarks_inc_arr_bench;
 #endif
 
 #if defined(TRIANGLE_SUPPORTED)
 typedef Increment_arr<Triangle_point_location>  Triangle_inc_arr;
-typedef CGAL::Bench<Triangle_inc_arr>           Triangle_inc_arr_bench;
+typedef cb::Bench<Triangle_inc_arr>             Triangle_inc_arr_bench;
 #endif
 
 /*! */
@@ -526,7 +523,7 @@ public:
 };
 
 /*! */
-typedef CGAL::Bench<Aggregate_arr>               Agg_arr_bench;
+typedef cb::Bench<Aggregate_arr>                Agg_arr_bench;
 
 /*! */
 class Display_arr : public Basic_arr {
@@ -647,18 +644,17 @@ private:
   Window_stream * m_window;
 };
 
-typedef CGAL::Bench<Display_arr>                Dis_arr_bench;
+typedef cb::Bench<Display_arr>                  Dis_arr_bench;
 
 /*! */
 template <class Bench_inst, class Benchable>
 void run_bench(Bench_inst & bench_inst, Benchable & benchable,
-               const char * fullname, Format_code format,
+               const char * fullname, 
                int samples, int iterations, unsigned int verbose_level,
                bool postscript = false, 
                const char * fullname2 = 0)
 {
   //set some variable
-  benchable.set_format(format);
   benchable.set_file_name(fullname);
   benchable.set_verbose_level(verbose_level);
   benchable.set_postscript(postscript);
@@ -691,7 +687,6 @@ int main(int argc, char * argv[])
   unsigned int verbose_level = option_parser.get_verbose_level();
   unsigned int type_mask = option_parser.get_type_mask();
   unsigned int strategy_mask = option_parser.get_strategy_mask();
-  Format_code format = option_parser.get_input_format();
   int samples = option_parser.get_samples();
   int iterations = option_parser.get_iterations();
   int seconds = option_parser.get_seconds();
@@ -714,8 +709,8 @@ int main(int argc, char * argv[])
   const char * full_name = option_parser.get_full_name(0).c_str();
   if (!file_name || !full_name) return -1;
 
-  CGAL::Bench_base::set_name_length(nameLength);
-  if (print_header) CGAL::Bench_base::print_header();
+  cb::Bench_base::set_name_length(nameLength);
+  if (print_header) cb::Bench_base::print_header();
   //end parameters from command line
 
   //start bench
@@ -747,7 +742,7 @@ int main(int argc, char * argv[])
       Trap_inc_arr_bench bench_inst(name, seconds, false);
       Trap_inc_arr & benchable = bench_inst.get_benchable();
       run_bench<Trap_inc_arr_bench, Trap_inc_arr>(bench_inst, benchable,
-                                                  full_name, format,
+                                                  full_name,
                                                   samples, iterations,
                                                   verbose_level, postscript);
     }
@@ -764,7 +759,7 @@ int main(int argc, char * argv[])
       Naive_inc_arr_bench bench_inst(name, seconds, false);
       Naive_inc_arr & benchable = bench_inst.get_benchable();
       run_bench<Naive_inc_arr_bench, Naive_inc_arr>(bench_inst, benchable,
-                                                    full_name, format,
+                                                    full_name,
                                                     samples, iterations,
                                                     verbose_level, postscript);
     }
@@ -780,7 +775,7 @@ int main(int argc, char * argv[])
       Walk_inc_arr_bench bench_inst(name, seconds, false);
       Walk_inc_arr & benchable = bench_inst.get_benchable();
       run_bench<Walk_inc_arr_bench, Walk_inc_arr>(bench_inst, benchable,
-                                                  full_name, format,
+                                                  full_name,
                                                   samples, iterations,
                                                   verbose_level, postscript);
     }
@@ -798,8 +793,9 @@ int main(int argc, char * argv[])
       Landmarks_inc_arr & benchable = bench_inst.get_benchable();
       run_bench<Landmarks_inc_arr_bench, Landmarks_inc_arr>(bench_inst,
                                                             benchable,
-                                                            full_name, format,
-                                                            samples, iterations,
+                                                            full_name,
+                                                            samples,
+                                                            iterations,
                                                             verbose_level,
                                                             postscript);
     }
@@ -817,7 +813,7 @@ int main(int argc, char * argv[])
       Triangle_inc_arr_bench bench_inst(name, seconds, false);
       Triangle_inc_arr & benchable = bench_inst.get_benchable();
       run_bench<Triangle_inc_arr_bench,Triangle_inc_arr>(bench_inst, benchable,
-                                                         full_name, format,
+                                                         full_name, 
                                                          samples, iterations,
                                                          verbose_level,
                                                          postscript);
@@ -835,8 +831,7 @@ int main(int argc, char * argv[])
       NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
     Agg_arr_bench bench_inst(name, seconds, false);
     Aggregate_arr & benchable = bench_inst.get_benchable();
-    run_bench<Agg_arr_bench,Aggregate_arr>(bench_inst, benchable,
-                                           full_name, format,
+    run_bench<Agg_arr_bench,Aggregate_arr>(bench_inst, benchable, full_name, 
                                            samples, iterations,
                                            verbose_level, postscript);
   }
@@ -855,8 +850,7 @@ int main(int argc, char * argv[])
       NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
     Dis_arr_bench bench_inst(name, seconds, false);
     Display_arr & benchable = bench_inst.get_benchable();
-    run_bench<Dis_arr_bench,Display_arr>(bench_inst, benchable,
-                                         full_name, format,
+    run_bench<Dis_arr_bench,Display_arr>(bench_inst, benchable, full_name, 
                                          samples, iterations,
                                          verbose_level, postscript);
   }

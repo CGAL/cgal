@@ -29,19 +29,19 @@ public:
     
     int i;
     for (i = 0; i < count; ++i) {
-      WNT x, y;
+      Number_type x, y;
       if (format == Option_parser::FORMAT_RATIONAL) {
-        Input_traits<WNT>::Input_rat_type ix, iy;
+        Input_traits<Number_type>::Input_rat_type ix, iy;
         inp >> ix >> iy;
         x = ix; y = iy;
       } else if (format == Option_parser::FORMAT_INT) {
-        Input_traits<WNT>::Input_int_type ix, iy;
+        Input_traits<Number_type>::Input_int_type ix, iy;
         inp >> ix >> iy;
-        x = (WNT) ix; y = (WNT) iy; 
+        x = (Number_type) ix; y = (Number_type) iy; 
       } else if (format == Option_parser::FORMAT_FLOAT) {
-        Input_traits<WNT>::Input_float_type ix, iy;
+        Input_traits<Number_type>::Input_float_type ix, iy;
         inp >> ix >> iy;
-        x = (WNT) ix; y = (WNT) iy; 
+        x = (Number_type) ix; y = (Number_type) iy; 
       } else {
         std::cerr << "Illegal format!" << std::endl;
         return -1;

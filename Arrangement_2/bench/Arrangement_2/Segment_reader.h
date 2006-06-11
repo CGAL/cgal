@@ -3,89 +3,154 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
-#include <iostream>
-#include <fstream>
-#include <list>
+#include <string>
+
+#include "CGAL/benchmark_basic.h"
+#include "CGAL/Benchmark_visitor.h"
 
 #include "number_type.h"
-#include "Input_traits.h"
+#include "lexical_cast.h"
+#include "Number_type_traits.h"
 #include "Option_parser.h"
+
+namespace cb = CGAL::benchmark;
 
 template <class Traits>
 class Segment_reader
 {
-
 public:
-  typedef typename Traits::Point_2    Point_2;
-  typedef typename Traits::Curve_2    Curve_2;
-  typedef typename Traits::X_monotone_curve_2  X_monotone_curve_2;
+  typedef typename Traits::Point_2              Point_2;
+  typedef typename Traits::Curve_2              Curve_2;
 
+  /*! A visitor of the parser that reads segements */
+  template <class OutputIterator>
+  class Segment_parser_visitor : public cb::Benchmark_visitor {
+  private:
+    OutputIterator & m_output_iterator;
+    Point_2 m_source;
+    bool m_source_read;
+
+    /*! Add a curve to the container the output iterator refers to
+     * \param target the target point
+     */
+    void add_curve(Point_2 & target)
+    {
+      Curve_2 seg(m_source, target);
+      ++m_output_iterator = seg;
+    }
+      
+  public:
+    /*! Constructor */
+    Segment_parser_visitor(OutputIterator & oi) :
+      m_output_iterator(oi),
+      m_source_read(false)
+    {}
+
+    /*! Suppress output */
+    virtual void token_not_handled(std::string s) {}
+
+    virtual void accept_benchmark_name(std::string s)
+    {
+      Benchmark_visitor::accept_benchmark_name(s);
+      std::cerr << "name '" << s << "', ";
+    }
+
+    /*! Accept only unbounded lines for Arrangements */ 
+    virtual void accept_classification(std::string problem,
+                                       std::string geom, 
+                                       std::string clas,
+                                       std::string family,
+                                       std::string instance,
+                                       std::string release)
+    {
+      if (problem != "Arrangement") error_handler( "classification error");
+      if (geom != "Lines") error_handler( "classification error" );
+      if (clas != "BoundedArcs") error_handler( "classification error" );
+    }
+
+    /*! A point maker */
+    template <class FT>
+    void make_point(FT & x, FT & y, Point_2 & p) { p = Point_2(x,y); }
+
+    /*! A point maker */
+    template <class FT>
+    void make_point(FT & x, FT & y, FT & w, Point_2 & p)
+    { p = Point_2(x/w, y/w); }
+
+    /*! A point maker */
+    template <class RT, class FT>
+    void make_ft(RT & num, RT & denom, FT & n) { n = FT(num, denom); }
+    
+    /*! Parse a generic Cartesian point */
+    virtual void accept_point_2(std::string x, std::string y)
+    {
+      typedef Number_type_traits<Number_type>::FT       FT;
+      FT x_ft = lexical_cast<FT>(x);
+      FT y_ft = lexical_cast<FT>(y);
+      if (m_source_read) {
+        m_source_read = false;
+        Point_2 p;
+        make_point(x_ft, y_ft, p);
+        add_curve(p);
+        return;
+      }
+      make_point(x_ft, y_ft, m_source);
+      m_source_read = true;
+    }
+
+    /*! Parse a generic Homogenuous point */
+    virtual void accept_point_2( std::string x, std::string y, std::string w)
+    {
+      typedef Number_type_traits<Number_type>::FT       FT;
+      FT x_ft = lexical_cast<FT>(x);
+      FT y_ft = lexical_cast<FT>(y);
+      FT w_ft = lexical_cast<FT>(w);
+      if (m_source_read) {
+        m_source_read = false;
+        Point_2 p;
+        make_point(x_ft, y_ft, p);
+        add_curve(p);
+        return;
+      }
+      make_point(x_ft, y_ft, w_ft, m_source);
+      m_source_read = true;
+    }
+
+    /*! Parse a rational Cartesian point */
+    virtual void accept_point_2(std::string x_num, std::string x_denom, 
+                                std::string y_num, std::string y_denom)
+    {
+      typedef Number_type_traits<Number_type>::RT       RT;
+      typedef Number_type_traits<Number_type>::FT       FT;
+      RT x_num_rt = lexical_cast<RT>(x_num);
+      RT x_denom_rt = lexical_cast<RT>(x_denom);
+      RT y_num_rt = lexical_cast<RT>(y_num);
+      RT y_denom_rt = lexical_cast<RT>(y_denom);
+
+      FT x_ft, y_ft;
+      make_ft(x_num_rt, x_denom_rt, x_ft);
+      make_ft(y_num_rt, y_denom_rt, y_ft);
+      if (m_source_read) {
+        m_source_read = false;
+        Point_2 p;
+        make_point(x_ft, y_ft, p);
+        add_curve(p);
+        return;
+      }
+      make_point(x_ft, y_ft, m_source);
+      m_source_read = true;
+    }
+  };
+
+  /*! Read the segments from the input file */
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,
-                Option_parser::Format_code format,
                 CGAL::Bbox_2 & bbox)
   {
-    std::ifstream inp(filename);
-    if (!inp.is_open()) {
-      std::cerr << "Cannot open file " << filename << "!" << std::endl;
+    Segment_parser_visitor<OutputIterator> visitor(curves_out);
+    if (!cb::benchmark_parse_file(filename, &visitor)) {
       return -1;
     }
-    int count;
-    inp >> count;
-    
-    int i;
-    for (i = 0; i < count; i++) {
-      WNT x0, y0, x1, y1;
-      if (format == Option_parser::FORMAT_RATIONAL) {
-        Input_traits<WNT>::Input_rat_type ix0, iy0, ix1, iy1;
-        inp >> ix0 >> iy0 >> ix1 >> iy1;
-        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
-      } else if (format == Option_parser::FORMAT_INT) {
-        Input_traits<WNT>::Input_int_type ix0, iy0, ix1, iy1;
-        inp >> ix0 >> iy0 >> ix1 >> iy1;
-        x0 = (WNT) ix0; y0 = (WNT) iy0; x1 = (WNT) ix1; y1 = (WNT) iy1;
-      } else if (format == Option_parser::FORMAT_FLOAT) {
-        Input_traits<WNT>::Input_float_type ix0, iy0, ix1, iy1;
-        inp >> ix0 >> iy0 >> ix1 >> iy1;
-        x0 = (WNT) ix0; y0 = (WNT) iy0; x1 = (WNT) ix1; y1 = (WNT) iy1;
-      } else {
-        std::cerr << "Illegal format!" << std::endl;
-        return -1;
-      }
-      
-      Point_2 p1(x0, y0);
-      Point_2 p2(x1, y1);
-
-      // if (p1 == p2) continue;
-      Curve_2 curve(p1, p2);
-      ++curves_out = curve;
-
-      // Update the bounding box of the arrangement.
-#if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
-      double xmin, ymin, xmax, ymax;
-      if (p1.xcoord() < p2.xcoord()) {
-        xmin = CGAL::to_double(p1.xcoord());
-        xmax = CGAL::to_double(p2.xcoord());
-      } else {
-        xmin = CGAL::to_double(p2.xcoord());
-        xmax = CGAL::to_double(p1.xcoord());
-      }
-      if (p1.ycoord() < p2.ycoord()) {
-        ymin = CGAL::to_double(p1.ycoord());
-        ymax = CGAL::to_double(p2.ycoord());
-      } else {
-        ymin = CGAL::to_double(p2.ycoord());
-        ymax = CGAL::to_double(p1.ycoord());
-      }
-      
-      CGAL::Bbox_2 curve_bbox(xmin, ymin, xmax, ymax);
-#else
-      CGAL::Bbox_2 curve_bbox = curve.bbox();
-#endif
-      if (i == 0) bbox = curve_bbox;
-      else bbox = bbox + curve_bbox;
-    }
-    inp.close();
     return 0;
   }
 };

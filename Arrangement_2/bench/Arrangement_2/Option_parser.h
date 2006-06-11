@@ -11,20 +11,11 @@
 #define DEF_WIN_WIDTH   512
 #define DEF_WIN_HEIGHT  512
 
+namespace cb = CGAL::benchmark;
 namespace po = boost::program_options;
 
-class Option_parser : public CGAL::Bench_option_parser {
+class Option_parser : public cb::Bench_option_parser {
 public:
-  /*! Format code */
-  enum Format_code {
-    FORMAT_INT = 0,
-    FORMAT_FLOAT,
-    FORMAT_RATIONAL,
-    FORMAT_I,
-    FORMAT_F,
-    FORMAT_R
-  };
-
   /*! Type code */
   enum Type_code {
     TYPE_INCREMENT = 0,
@@ -59,9 +50,6 @@ public:
     Id(unsigned int id) : m_id(id) {}
     unsigned int m_id;
   };
-  typedef Id<Format_code>               Format_id;
-  typedef std::vector<Format_id>        Vector_format_id;
-  typedef Vector_format_id::iterator    Vector_format_id_iter;
 
   typedef Id<Type_code>                 Type_id;
   typedef std::vector<Type_id>          Vector_type_id;
@@ -72,19 +60,12 @@ public:
   typedef Vector_strategy_id::iterator  Vector_strategy_id_iter;
 
 public:
-  /*! \brief obtains number of format options */
-  static unsigned int get_number_opts(Format_id &);
-
   /*! \brief obtains number of type options */
   static unsigned int get_number_opts(Type_id &);
 
   /*! \brief obtains number of strategy options */
   static unsigned int get_number_opts(Strategy_id &);
   
-  /*! Compare the i-th format option to a given option */
-  static bool compare_opt(unsigned int i, const char * opt, Format_id &)
-  { return strcmp(s_format_opts[i], opt) == 0; }
-
   /*! Compare the i-th type option to a given option */
   static bool compare_opt(unsigned int i, const char * opt, Type_id &)
   { return strcmp(s_type_opts[i], opt) == 0; }
@@ -129,7 +110,6 @@ public:
   bool get_postscript() const { return m_psotscript; }
   unsigned int get_type_mask() const { return m_type_mask; }
   unsigned int get_strategy_mask() const { return m_strategy_mask; }
-  Format_code get_input_format() { return m_format; }
 
   const char * get_type_name(Type_code id) const { return s_type_opts[id]; }
   const char * get_strategy_name(Strategy_code id) const
@@ -168,9 +148,6 @@ protected:
   po::positional_options_description m_positional_opts;
 
 private:
-  /*! Format options */
-  static char * s_format_opts[];
-
   /*! Type options */
   static char * s_type_opts[];
 
@@ -186,7 +163,6 @@ private:
   /*! The window height */
   unsigned int m_win_height;
 
-  Format_code m_format;
   unsigned int m_type_mask;
   unsigned int m_strategy_mask;
   
