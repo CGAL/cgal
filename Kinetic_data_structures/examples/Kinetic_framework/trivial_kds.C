@@ -83,7 +83,7 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
        a static version of the kinetic data structure and check it for
        equality with the kinetic version.
     */
-    CGAL_assertion(event_);
+    CGAL_assertion(event_.is_valid());
     std::cout << "The structure is trivially correct at time "
 	      << tr_.simulator_handle()->audit_time() << std::endl;
   }
@@ -93,7 +93,7 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
     if (has_certificates_ != tf) {
       has_certificates_=tf;
       if (has_certificates_) {
-	bool ev= event_;
+	bool ev= event_.is_valid();
 	CGAL_assertion(!ev);
 	Time t= CGAL::to_interval(sp->current_time()).second+1;
 	event_= sp->new_event(t, Event(objects_.begin(),
@@ -102,7 +102,7 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
 				       this));
 	std::cout << "Created event (" << event_ << ") at time " << t << std::endl;
       } else {
-	if (event_) {
+	if (event_.is_valid()) {
 	  std::cout << "Deleting event " << event_ << std::endl;
 	  sp->delete_event(event_);
 	  event_=Event_key();

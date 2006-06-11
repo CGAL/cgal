@@ -147,7 +147,7 @@ void Qt_moving_points_2<T,G>::draw() const
   *w << CGAL::Color(0,0,0);
   //out << C(P2(0,0), 2) << C(P2(0,0), 1);
   //out << CGAL::BackgroundColor(CGAL::Color(125,125,125));
-  for (typename Traits::Active_points_2_table::Keys_iterator
+  for (typename Traits::Active_points_2_table::Key_iterator
 	 it= traits_.active_points_2_table_handle()->keys_begin();
        it != traits_.active_points_2_table_handle()->keys_end(); ++it) {
     //std::cout << "drawing point " << *it  << "= " << ik_.to_static(*it) << std::endl;
@@ -168,7 +168,7 @@ void Qt_moving_points_2<T,G>::reverse_time()
   else direction_of_time_= CGAL::POSITIVE;
 
   traits_.active_points_2_table_handle()->set_is_editing(true);
-  for (typename Traits::Active_points_2_table::Keys_iterator kit
+  for (typename Traits::Active_points_2_table::Key_iterator kit
 	 = traits_.active_points_2_table_handle()->keys_begin();
        kit != traits_.active_points_2_table_handle()->keys_end(); ++kit) {
     traits_.active_points_2_table_handle()->

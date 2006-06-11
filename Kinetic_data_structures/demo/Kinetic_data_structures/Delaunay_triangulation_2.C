@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 
   if (file.empty()) {
     CGAL::Random rand;
+    Traits::Active_points_2_table::Key lk;
     for (int i=0; i< n; ++i) {
       std::vector<double> coefsx, coefsy;
       for (int j=0; j< d; ++j) {
@@ -76,11 +77,11 @@ int main(int argc, char *argv[])
 										 coefsx.end()),
 					 Traits::Kinetic_kernel::Motion_function(coefsy.begin(),
 										 coefsy.end()));
-      tr.active_points_2_table_handle()->insert(mp);
+      lk=tr.active_points_2_table_handle()->insert(mp);
       //std::cout << mp << std::endl;
     }
-  }
-  else {
+    tr.active_points_2_table_handle()->erase(lk);
+  } else {
     std::ifstream in(file.c_str());
     if (!in) {
       std::cerr << "Error opening input file: " << file << std::endl;
