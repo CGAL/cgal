@@ -1,6 +1,8 @@
 #ifndef NUMBER_TYPE_TRAITS_H
 #define NUMBER_TYPE_TRAITS_H
 
+#include <CGAL/basic.h>
+
 #include "number_type.h"
 
 template <class My_NT>
@@ -11,6 +13,7 @@ template <>
 struct Number_type_traits<int> {
   typedef int                                   RT;
   typedef int                                   FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 
 /*! float */
@@ -18,14 +21,16 @@ template <>
 struct Number_type_traits<float> {
   typedef float                                 RT;
   typedef float                                 FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 
 #ifdef DOUBLE_H
 /*! double */
 template <>
 struct Number_type_traits<CGAL::Double> {
-  typedef double                                RT;
-  typedef double                                FT;
+  typedef CGAL::Double                          RT;
+  typedef CGAL::Double                          FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 #endif
 
@@ -35,6 +40,7 @@ template <>
 struct Number_type_traits<CGAL::MP_Float> {
   typedef CGAL::MP_Float                        RT;
   typedef CGAL::MP_Float                        FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 #endif
 
@@ -44,6 +50,7 @@ template <>
 struct Number_type_traits<::mpz_class> {
   typedef ::mpz_class                           RT;
   typedef ::mpz_class                           FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 #endif
 
@@ -53,6 +60,7 @@ template <>
 struct Number_type_traits<CGAL::Gmpz> {
   typedef CGAL::Gmpz                            RT;
   typedef CGAL::Gmpz                            FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 #endif
 
@@ -62,6 +70,7 @@ template <>
 struct Number_type_traits<leda_integer> {
   typedef leda_integer                          RT;
   typedef leda_integer                          FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 #endif
 
@@ -71,6 +80,7 @@ template <>
 struct Number_type_traits<CORE::BigInt> {
   typedef CORE::BigInt                          RT;
   typedef CORE::BigInt                          FT;
+  typedef CGAL::Tag_false                       Is_rational;
 };
 #endif
 
@@ -80,6 +90,7 @@ template <>
 struct Number_type_traits<CGAL::Quotient<CGAL::MP_Float> > {
   typedef CGAL::MP_Float                        RT;
   typedef CGAL::Quotient<CGAL::MP_Float>        FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 
@@ -89,6 +100,7 @@ template <>
 struct Number_type_traits<CGAL::Quotient<::mpz_struct> > {
   typedef ::mpz_struct                          RT;
   typedef CGAL::Quotient<::mpz_struct>          FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 
@@ -98,6 +110,7 @@ template <>
 struct Number_type_traits<CGAL::Quotient<CGAL::Gmpz> > {
   typedef CGAL::Gmpz                            RT;
   typedef CGAL::Quotient<CGAL::Gmpz>            FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 
@@ -107,6 +120,7 @@ template <>
 struct Number_type_traits<::mpq_struct> {
   typedef ::mpz_struct                          RT;
   typedef ::mpq_struct                          FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 
@@ -116,6 +130,7 @@ template <>
 struct Number_type_traits<CGAL::Gmpq> {
   typedef CGAL::Gmpz                            RT;
   typedef CGAL::Gmpq                            FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 
@@ -125,6 +140,7 @@ template <>
 struct Number_type_traits<leda_rational> {
   typedef leda_integer                          RT;
   typedef leda_rational                         FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 
@@ -135,6 +151,7 @@ template <>
 struct Number_type_traits<CGAL::Lazy_exact_nt<leda_rational> > {
   typedef leda_integer                          RT;
   typedef leda_rational                         FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 
@@ -143,6 +160,7 @@ template <>
 struct Number_type_traits<CGAL::Lazy_exact_nt<CGAL::Gmpq> > {
   typedef CGAL::Gmpz                            RT;
   typedef CGAL::Gmpq                            FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 
 #ifdef CGAL_MP_FLOAT_H
@@ -151,6 +169,7 @@ template <>
 struct Number_type_traits<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > > {
   typedef CGAL::MP_Float                        RT;
   typedef CGAL::Quotient<CGAL::MP_Float>        FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 #endif
@@ -162,6 +181,7 @@ template <>
 struct Number_type_traits<CORE::Expr> {
   typedef CORE::BigInt                          RT;
   typedef CORE::Expr                            FT;
+  typedef CGAL::Tag_true                        Is_rational;
 };
 #endif
 

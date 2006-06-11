@@ -79,7 +79,12 @@ public:
 
     /*! A point maker */
     template <class RT, class FT>
-    void make_ft(RT & num, RT & denom, FT & n) { n = FT(num, denom); }
+    void make_ft(RT & num, RT & denom, FT & n, CGAL::Tag_true)
+    { n = FT(num, denom); }
+
+    template <class RT, class FT>
+    void make_ft(RT & num, RT & denom, FT & n, CGAL::Tag_false)
+    { n = num / denom; }
     
     /*! Parse a generic Cartesian point */
     virtual void accept_point_2(std::string x, std::string y)
@@ -120,16 +125,16 @@ public:
     virtual void accept_point_2(std::string x_num, std::string x_denom, 
                                 std::string y_num, std::string y_denom)
     {
-      typedef Number_type_traits<Number_type>::RT       RT;
-      typedef Number_type_traits<Number_type>::FT       FT;
+      typedef Number_type_traits<Number_type>::RT               RT;
+      typedef Number_type_traits<Number_type>::FT               FT;
+      typedef Number_type_traits<Number_type>::Is_rational      Is_rational;
       RT x_num_rt = lexical_cast<RT>(x_num);
       RT x_denom_rt = lexical_cast<RT>(x_denom);
       RT y_num_rt = lexical_cast<RT>(y_num);
       RT y_denom_rt = lexical_cast<RT>(y_denom);
-
       FT x_ft, y_ft;
-      make_ft(x_num_rt, x_denom_rt, x_ft);
-      make_ft(y_num_rt, y_denom_rt, y_ft);
+      make_ft(x_num_rt, x_denom_rt, x_ft, Is_rational());
+      make_ft(y_num_rt, y_denom_rt, y_ft, Is_rational());
       if (m_source_read) {
         m_source_read = false;
         Point_2 p;
