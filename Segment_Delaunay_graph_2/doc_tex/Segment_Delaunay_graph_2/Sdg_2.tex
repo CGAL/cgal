@@ -492,7 +492,7 @@ segment Delaunay graphs:
   number type of the form \ccc{CGAL::Filtered_exact<CT,ET>}. Then this
   kernel can be entered as the first template parameter in the
   \ccc{Segment_Delaunay_graph_2<K,MTag>} or
-  \ccc{Segment_Delaunay_graph_with_intersections_2<K,MTag>} class.
+  \ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>} class.
 \item The user can define up to three different kernels \ccc{CK},
   \ccc{FK} and \ccc{EK} (default values are provided for most
   parameters). The first kernel \ccc{CK} is used only for
@@ -512,7 +512,7 @@ filtering is more efficient among the two.
 
 Let's consider once more the classes
 \ccc{Segment_Delaunay_graph_2<K,MTag>} and 
-\ccc{Segment_Delaunay_graph_with_intersections_2<K,MTag>}.
+\ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>}.
 The template parameter \ccc{MTag} provides another degree of freedom
 to the user, who can indicate the type of arithmetic operations to
 be used in the evaluation of the predicates. More specifically, in
@@ -523,7 +523,7 @@ that the number type used in the kernel \ccc{K} supports these
 operations exactly. The second choices are \ccc{CGAL::Field_tag} for
 the \ccc{Segment_Delaunay_graph_2<K,MTag>} class, and
 \ccc{CGAL::Ring_tag} for the
-\ccc{Segment_Delaunay_graph_with_intersections_2<K,MTag>}
+\ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>}
 class. In the first case we indicate that we want the predicates to be
 computed using only the four basic arithmetic operations, whereas in
 the second case we evaluate the predicates using only ring operations.
@@ -546,7 +546,7 @@ used the possible values for \ccc{CM}, \ccc{FM} and \ccc{EM} are
 class is used, the possible values are \ccc{CGAL::Sqrt_field_tag} and
 \ccc{CGAL::Ring_tag}. The semantics are the same as in the case of the 
 \ccc{Segment_Delaunay_graph_2<K,MTag>} and 
-\ccc{Segment_Delaunay_graph_with_intersections_2<K,MTag>} classes.
+\ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>} classes.
 
 
 
