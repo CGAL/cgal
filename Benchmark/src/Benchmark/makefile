@@ -57,7 +57,7 @@ clean:
 
 %.C %.h : %.y
 	$(BISON) -d $< -o $*.C
-ifeq ($(OSTYPE), linux)
+ifeq (linux, $(findstring linux,$(OSTYPE)))
 	mv $*.H $*.h
 endif
 
