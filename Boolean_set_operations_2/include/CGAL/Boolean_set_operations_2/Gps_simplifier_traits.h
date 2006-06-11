@@ -142,6 +142,8 @@ public:
   typedef typename Base::Curve_data               Curve_data;
   typedef typename Base::Point_data               Point_data;
 
+  Gps_simplifier_traits()
+  {}
 
   Gps_simplifier_traits(Traits& tr) : Base(tr)
   {}

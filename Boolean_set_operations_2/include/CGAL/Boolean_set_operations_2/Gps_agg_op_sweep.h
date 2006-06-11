@@ -138,6 +138,9 @@ public:
         continue;
 
       event = this->allocate_event (vh->point(), event_type);
+      //TODO: when the boolean set operations will be exteneded to support
+      // unbounded curves, we will need here a special treatment.
+      event->set_finite();
 
       if (! first)
       {
@@ -179,6 +182,10 @@ public:
         if (res == SMALLER || q_iter == q_end)
         {
           event = this->allocate_event (vh->point(), event_type);
+
+          //TODO: when the boolean set operations will be exteneded to support
+          // unbounded curves, we will need here a special treatment.
+          event->set_finite();
           this->m_queue->insert_before (q_iter, event);
           vert_map[vh] = event;
         }
@@ -223,7 +230,9 @@ public:
       this->m_subCurveAlloc.construct (this->m_subCurves + index,
                                        this->m_masterSubcurve);
 
-      (this->m_subCurves + index)->init (*iter, e_left, e_right);
+      (this->m_subCurves + index)->init (*iter);
+      (this->m_subCurves + index)->set_left_event(e_left);
+      (this->m_subCurves + index)->set_right_event(e_right);
     
       e_right->add_curve_to_left (this->m_subCurves + index);  
       this->_add_curve_to_right (e_left, this->m_subCurves + index);

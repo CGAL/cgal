@@ -136,6 +136,8 @@ class Gps_agg_meta_traits :
   typedef typename Arrangement::Vertex_handle     Vertex_handle;
 
 
+  Gps_agg_meta_traits()
+  {}
 
   Gps_agg_meta_traits(Traits& base_tr) : Base(base_tr)
   {}
