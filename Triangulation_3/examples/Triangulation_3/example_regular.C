@@ -3,13 +3,17 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
+#include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <cassert>
 #include <vector>
 
+//note that the usual
+//struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+//does not work here (because there is a partial specialization in
+//Regular_triangulation_filtered_traits_3
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
+typedef CGAL::Regular_triangulation_filtered_traits_3<K>    Traits;
 
 typedef Traits::RT                                          Weight;
 typedef Traits::Bare_point                                  Point;
