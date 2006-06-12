@@ -54,7 +54,7 @@ namespace CGALi {
     {}
 
     Circular_arc_point_2(const Point_2 & p)
-      :  _p(p.x(),p.y())
+      :  _p(p.x(),p.y()/*,1,1,-p.x()-p.y()*/)
     {}
 
     const Root_of_2 & x() const 
@@ -65,12 +65,13 @@ namespace CGALi {
     
     CGAL::Bbox_2 bbox() const
     {
-      std::pair<double,double> 
+      return _p.bbox();
+      /*std::pair<double,double> 
 	ix=to_interval(x()),
 	iy=to_interval(y());
 
       return CGAL::Bbox_2(ix.first,iy.first,
-			  ix.second,iy.second);
+			  ix.second,iy.second);*/
     }
 
     const Root_for_circles_2_2 & coordinates() const 
