@@ -274,10 +274,17 @@ void _test_circle_predicat(CK ck)
   Circular_arc_2 circ1_arc_low_right(circ1,
 				     theLine_2_vertical,true,
 				     theLine_2_horizontal, false);
-  assert(!theDo_overlap_2(circ1_arc_high, circ1_arc_low_right));
+
+  //The following commented test is wrong, cause 2 arcs with the
+  //same supporting circle can overlaps on one point
+  //assert(!theDo_overlap_2(circ1_arc_high, circ1_arc_low_right));
+  assert(theDo_overlap_2(circ1_arc_high, circ1_arc_low_right));
   assert(theDo_overlap_2(circ1_arc_low, circ1_arc_low_right));
   assert(theDo_overlap_2(circ1_arc_low_right, circ1_arc_low));
-  assert(!theDo_overlap_2(circ1_arc_low, circ1_arc_high));
+  assert(theDo_overlap_2(circ1_arc_low, circ1_arc_high));
+  //The following commented test is wrong
+  //1 circle and 1 half-circle overlap
+  //assert(!theDo_overlap_2(circ1_arc_low, circ1_arc_high));
   std::cout << std::endl;
 
 
