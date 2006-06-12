@@ -46,8 +46,8 @@ namespace CircularFunctors {
   equal(const typename CK::Line_arc_2 &A1,
         const typename CK::Line_arc_2 &A2)
   {
-    if ((A1.supporting_line() != A2.supporting_line()) && 
-	(A1.supporting_line() != A2.supporting_line().opposite()))
+    if (!LinearFunctors::non_oriented_equal<CK>(
+      A1.supporting_line(),A2.supporting_line())) 
       return false;
 
     return ( (equal<CK>(A1.source(), A2.source()) &&
@@ -61,8 +61,8 @@ namespace CircularFunctors {
   do_overlap(const typename CK::Line_arc_2 &A1,
 	     const typename CK::Line_arc_2 &A2)
   {
-    if ( (A1.supporting_line() != A2.supporting_line()) &&
-	 (A1.supporting_line() != A2.supporting_line().opposite())) 
+    if (!LinearFunctors::non_oriented_equal<CK>(
+      A1.supporting_line(),A2.supporting_line())) 
       return false;
 
     return CircularFunctors::compare_xy<CK>(A1.right(), A2.left()) > 0
@@ -111,7 +111,7 @@ namespace CircularFunctors {
   compare_y_at_x(const typename CK::Circular_arc_point_2 &p,
                  const typename CK::Line_arc_2 &A1)
   {
-    CGAL_kernel_precondition (CircularFunctors::point_in_x_range<CK>(A1, p));
+    //CGAL_kernel_precondition (CircularFunctors::point_in_x_range<CK>(A1, p));
     //vertical case
     if (CircularFunctors::is_vertical<CK>(A1)) {
       if (p.y() <= A1.right().y()) {
@@ -183,7 +183,7 @@ namespace CircularFunctors {
 		     const typename CK::Circular_arc_2 &A2, 
 		     const typename CK::Circular_arc_point_2 &p)
   {
-    CGAL_kernel_precondition (A2.is_x_monotone());
+    //CGAL_kernel_precondition (A2.is_x_monotone());
     if(A1.supporting_line().is_vertical())
       return CGAL::LARGER;
 
@@ -296,15 +296,9 @@ namespace CircularFunctors {
     typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Root_of_2                Root_of_2;
     typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
-    const typename CK::RT &a1c = a1.supporting_line().a(); 
-    const typename CK::RT &b1c = a1.supporting_line().b();
-    const typename CK::RT &c1c = a1.supporting_line().c();
-    const typename CK::RT &a2c = a2.supporting_line().a(); 
-    const typename CK::RT &b2c = a2.supporting_line().b();
-    const typename CK::RT &c2c = a2.supporting_line().c();
-    if((a1c*b2c == a2c*b1c) &&
-       (a1c*c2c == a2c*c1c) &&
-       (b1c*c2c == b2c*c1c)) {
+    
+    if(LinearFunctors::non_oriented_equal<CK>(
+      a1.supporting_line(),a2.supporting_line())) {
       if(compare_xy(a1.left(),a2.left()) < 0) {
 	int comparison = compare_xy(a2.left(),a1.right());
 	if(comparison < 0){
