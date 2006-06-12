@@ -13,9 +13,10 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+BSO_CXXFLAGS = -DNDEBUG -O2
 CXXFLAGS = \
            -I../../include \
-           -DNDEBUG -O2 \
+           $(BSO_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
