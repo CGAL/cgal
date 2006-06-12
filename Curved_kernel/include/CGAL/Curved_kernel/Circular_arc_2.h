@@ -27,6 +27,7 @@
 
 #include <CGAL/global_functions_on_circular_arcs_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h> // temporarily
+#include <CGAL/Curved_kernel/intersection_line_2_circle_2_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -45,7 +46,6 @@ namespace CGALi {
     typedef typename CK::Root_of_2                 Root_of_2;
     typedef struct bit_field {
       unsigned short int is_full:2;
-      unsigned short int Cache_minmax:2;
       unsigned short int is_x_monotonic:2;
       unsigned short int is_y_monotonic:2;
       unsigned short int two_end_points_on_upper_part:2;
@@ -54,15 +54,17 @@ namespace CGALi {
       unsigned short int is_complementary_y_monotone:1;
     } bit_field;
 
+  public:
+    typedef CGALi::Intersection_line_2_circle_2_map Table;
+
   private:
 
   // set flags to 0
   // when 1 bit -> 0 = false, 1 = true
-  // when 2 bits -> 0 = don_know, 1 = false or 's' (Cache_minmax), 
-  //                              2 = true or 't' (Cache_minmax)
-  void reset_flags() {
+  // when 2 bits -> 0 = don_know, 1 = false
+  //                              2 = true
+  void reset_flags() const {
     flags.is_full = 0;
-    flags.Cache_minmax = 0;
     flags.is_x_monotonic = 0;
     flags.is_y_monotonic = 0;
     flags.two_end_points_on_upper_part = 0;
@@ -73,17 +75,23 @@ namespace CGALi {
 
   public:
 
-    Circular_arc_2() {}
+    Circular_arc_2() {
+      reset_flags();           // example
+      /* DISCUSS BEFORE COMMIT
+      _get_id_number();
+      */
+    }
 
     Circular_arc_2(const Circle_2 &c)
       : _support(c)
     {
       reset_flags();           // example
+      /* DISCUSS BEFORE COMMIT
+      _get_id_number();
+      */
       flags.is_full = 2;       // is_full = true
-      flags.Cache_minmax = 1;  // Cache_minmax = 's'
       _begin = _end  = 
 	CircularFunctors::x_extremal_point<CK>(supporting_circle(),true); 
-      
     }
 
     Circular_arc_2(const Circle_2 &support,
@@ -125,6 +133,9 @@ namespace CGALi {
       : _support(c)
     {
       reset_flags();
+      /* DISCUSS BEFORE COMMIT
+      _get_id_number();
+      */
       if (c1 != c2) {
 	_begin = CGAL::circle_intersect<CK>(c, c1, b_1);
 	_end = CGAL::circle_intersect<CK>(c, c2, b_2);
@@ -174,6 +185,9 @@ namespace CGALi {
       : _support(A.supporting_circle())
     {
       reset_flags();
+      /* DISCUSS BEFORE COMMIT
+      _get_id_number();
+      */
       CGAL_kernel_precondition(A.is_x_monotone());
       CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
       
@@ -203,6 +217,9 @@ namespace CGALi {
       : _begin(begin), _end(end)
     {
       reset_flags();
+      /* DISCUSS BEFORE COMMIT
+      _get_id_number();
+      */
       CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
       _support = Circle_2(begin, middle, end);
       /*
@@ -222,6 +239,9 @@ namespace CGALi {
       : _begin(source), _end(target), _support(support)
     {
       reset_flags();
+      /* DISCUSS BEFORE COMMIT
+      _get_id_number();
+      */
       // We cannot enable these preconditions for now, since the 
       // Lazy_curved_kernel
       // calls it on the Interval kernel without try/catch protection
@@ -236,6 +256,9 @@ namespace CGALi {
       : _begin(begin), _end(end)
     {
       reset_flags();
+      /* DISCUSS BEFORE COMMIT
+      _get_id_number();
+      */
       const FT sqr_bulge = CGAL::square(bulge);
       const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
       const FT x_coord = (begin.x() + end.x())/FT(2)
@@ -255,41 +278,45 @@ namespace CGALi {
     Circular_arc_point_2  _begin, _end;
     Circle_2 _support;
     mutable bit_field flags;
-
+    /* DISCUSS BEFORE COMMIT
+    unsigned int my_id; // the id of the arc
+    // to optimize make_x_monotone and splits
+    // so we have not echec de filtre for intersection
+    static Table table;
+    */
   public:
-    // to remember if the arc was constructed from a full circle
     
+    /* DISCUSS BEFORE COMMIT
+    template < class T >
+    static bool find_intersection(const Circular_arc_2& c1, 
+      const Circular_arc_2& c2, 
+      T& res) {
+      return table.find<T>(c1.my_id, c2.my_id, res);
+    }
+
+    template < class T >
+    static void put_intersection(const Circular_arc_2& c1, 
+      const Circular_arc_2& c2,
+      const T& res) {
+      table.put<T>(c1.my_id, c2.my_id, res);
+    }*/
+
+    // to remember if the arc was constructed from a full circle
     const Circular_arc_point_2 & left() const
     {
-      CGAL_kernel_precondition(is_x_monotone());
-      CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-			       : compare_xy(_begin,_end)<0);
-      if (flags.Cache_minmax == 1)
-	return _end;
-      if (flags.Cache_minmax == 2)
-	return _begin;
-      if (on_upper_part()) {
-        flags.Cache_minmax = 1;
-	return _end;
-      }
-      flags.Cache_minmax = 2;
+      //CGAL_kernel_precondition(is_x_monotone());
+      //CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
+      //			       : compare_xy(_begin,_end)<0);
+      if (on_upper_part()) return _end;
       return  _begin;
     }
 
     const Circular_arc_point_2 & right() const
     {
-      CGAL_kernel_precondition(is_x_monotone());
-      CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-			       : compare_xy(_begin,_end)<0);
-      if (flags.Cache_minmax == 1)
-	return _begin;
-      if (flags.Cache_minmax == 2)
-	return _end;
-      if (on_upper_part()) {
-	flags.Cache_minmax = 1;
-	return _begin;
-      }
-      flags.Cache_minmax = 2;
+      //CGAL_kernel_precondition(is_x_monotone());
+      //CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
+      //			       : compare_xy(_begin,_end)<0);
+      if (on_upper_part()) return _begin;
       return  _end;
     }
 
@@ -308,6 +335,12 @@ namespace CGALi {
     }
 
 private:
+    
+    /* DISCUSS BEFORE COMMIT
+    void _get_id_number() {
+      my_id = table.get_new_id();
+    }
+    */
 
     bool _is_x_monotone() const {
       if (is_full()) return false;
@@ -374,6 +407,8 @@ private:
       return cmp_y != 0; // full circle or half circle.
     }
 
+    // if the 2 points are on x-extremals
+    // true if the arc is on upper-part
     bool _two_end_points_on_upper_part() const {
       int c1y = CGAL::compare(_begin.y(),
         supporting_circle().center().y());
@@ -386,6 +421,8 @@ private:
       return compare_x(_begin, _end) > 0;
     }
 
+    // if the 2 points are on y-extremals
+    // true if the arc is on left-part
     bool _two_end_points_on_left_part() const
     { 
       int c1x = CGAL::compare(_begin.x(), 
@@ -415,6 +452,7 @@ public:
     } 
 
     // Returns true if the complementary arc is x_monotone()
+    // note: if semi-cercle -> false
     bool is_complementary_x_monotone() const {
       // is_x_monotone calculates also if 
       // the complementary is x-monotone if needed
@@ -436,6 +474,7 @@ public:
     }
 
     // Returns true if the complementary arc is y_monotone()
+    // note: if semi-cercle -> false
     bool is_complementary_y_monotone() const {
       // is_y_monotone calculates also if 
       // the complementary is y-monotone if needed
@@ -457,7 +496,7 @@ public:
 
     // check whether the arc is at upper or not from the center 
     bool on_upper_part() const {
-      CGAL_kernel_precondition(is_x_monotone());
+      //CGAL_kernel_precondition(is_x_monotone());
       return two_end_points_on_upper_part();
     }
 
@@ -481,7 +520,7 @@ public:
 
     // check whether the arc is at left or right from the center 
     bool on_left_part() const {      
-      CGAL_kernel_precondition(is_y_monotone());
+      //CGAL_kernel_precondition(is_y_monotone());
       return two_end_points_on_left_part();
     }
 
@@ -490,6 +529,11 @@ public:
       if(is_y_monotone()) return false;
       return two_end_points_on_left_part();
     }
+
+    /* DISCUSS BEFORE COMMIT
+    unsigned int number() const {
+      return my_id;
+    }*/
 
     const Circle_2 & supporting_circle() const
     {
@@ -510,8 +554,34 @@ public:
     {
       return CGAL::CircularFunctors::circular_arc_bbox<CK>(*this);
     }    
+
+    // Dont use this function, it is only for internal use
+    void _setx_info(unsigned short int v_is_x_monotone,
+                  unsigned short int v_two_end_points_on_upper_part,
+                  unsigned short int v_is_complementary_x_monotone) const {
+      /*if(v_is_x_monotone == 1) CGAL_kernel_precondition(!is_x_monotone());
+      if(v_is_x_monotone == 2) CGAL_kernel_precondition(is_x_monotone());
+      if(v_two_end_points_on_upper_part == 1) 
+        CGAL_kernel_precondition(!_two_end_points_on_upper_part());
+      if(v_two_end_points_on_upper_part == 2) 
+        CGAL_kernel_precondition(_two_end_points_on_upper_part());
+      if(v_is_complementary_x_monotone == 0) 
+        CGAL_kernel_precondition(!is_complementary_x_monotone());
+      if(v_is_complementary_x_monotone == 1) 
+        CGAL_kernel_precondition(is_complementary_x_monotone());
+      */
+      flags.is_x_monotonic = v_is_x_monotone;
+      flags.two_end_points_on_upper_part = v_two_end_points_on_upper_part;
+      flags.is_complementary_x_monotone = v_is_complementary_x_monotone;
+    }
     
   };
+
+  /* DISCUSS BEFORE COMMIT
+  template < typename CK >
+  CGALi::Intersection_line_2_circle_2_map Circular_arc_2< CK >::table = 
+    CGALi::Intersection_line_2_circle_2_map();
+  */
 
   template < typename CK >
   std::ostream &
