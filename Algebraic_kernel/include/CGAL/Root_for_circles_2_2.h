@@ -26,6 +26,7 @@
 #define CGAL_ROOT_FOR_CIRCLES_2_2_H
 
 #include <iostream>
+#include <CGAL/Bbox_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -34,6 +35,7 @@ class Root_for_circles_2_2 {
 
   typedef RT_                                                              RT;
   typedef typename Root_of_traits< RT >::RootOf_2    Root_of_2;
+  typedef typename Root_of_traits< RT >::RootOf_1    FT;
 
   private:
     Root_of_2 x_;
@@ -41,7 +43,7 @@ class Root_for_circles_2_2 {
     
   public:
   Root_for_circles_2_2(){}
-    
+  
   Root_for_circles_2_2(const Root_of_2& r1, const Root_of_2& r2)
     : x_(r1), y_(r2)
   {}
@@ -51,6 +53,16 @@ class Root_for_circles_2_2 {
     
   const Root_of_2& y() const 
   { return y_; }
+
+  CGAL::Bbox_2 bbox() const
+  {
+    CGAL::Interval_nt<> 
+        ix=to_interval(x()),
+        iy=to_interval(y());
+    return CGAL::Bbox_2(ix.inf(),iy.inf(),
+	                ix.sup(),iy.sup());
+  }
+
 };
   
 template < typename RT >
