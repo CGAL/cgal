@@ -567,20 +567,30 @@ was released in CGAL 2.2. However, this removal became really robust
 only in CGAL 2.3, after some research that allowed to deal with
 degenerate cases quite easily \cite{cgal:dt-pvr3d-03}. Andreas Fabri
 implemented this revised version of the removal, and a faster removal
-algorithm for CGAL 3.0.
+algorithm for CGAL 3.0. 
+
+The latter algorithm was proposed by Mariette Yvinec, who contributed
+in several ways to the package, first since she was maintaining the
+close 2D triangulation package and participated in many discussions,
+she also wrote the traits classes for regular triangulations.
 
 In 2000, Sylvain Pion started working on these packages.  He improved
 the efficiency of triangulations in CGAL 2.3 and 2.4 in several ways
 \cite{cgal:bdpty-tc-02}: he implemented the Delaunay hierarchy
-\cite{cgal:d-dh-02} in 2.3, he improved the memory footprint in 2.4 and
-3.0, he also performed work on arithmetic filters \cite{cgal:dp-eegpd-03}
-(see Support Library and Kernel) to improve the speed of
-triangulations.
-He changed the design in CGAL 3.0, allowing users to add handles in
-their own vertices and cells. 
+\cite{cgal:d-dh-02} in 2.3, he improved the memory footprint in 2.4
+and 3.0, he also performed work on arithmetic filters
+\cite{cgal:dp-eegpd-03} (see Support Library and Kernel) to improve
+the speed of triangulations.  He changed the design in CGAL 3.0,
+allowing users to add handles in their own vertices and cells.
+
+Olivier Devillers, co-author of preliminary versions of the \cgal\ 2d
+triangulations, participated in many discussions, in particular about
+the perturbations, and more concretely in the implementation of the
+Delaunay hierarchy. 
 
 In 2005, Christophe Delage implemented the vertex removal function for
-regular triangulations, which allowed to release this functionality in CGAL 3.2. 
+regular triangulations, which allowed to release this functionality in
+CGAL 3.2.
 
-The authors also wish to thank Jean-Daniel Boissonnat, Olivier Devillers
-and Mariette Yvinec for helpful discussions \cite{bdty-tcgal-00}.
+The authors also wish to thank Jean-Daniel Boissonnat for helpful
+discussions \cite{bdty-tcgal-00}.
