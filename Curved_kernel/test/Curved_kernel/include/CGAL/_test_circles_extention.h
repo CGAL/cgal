@@ -184,4 +184,54 @@ template <class CK>
     assert(!ck.has_on_2_object()(arc_down,
 				point_top));
   }
+
+template <class CK>
+    void _test_circular_arc_point_bbox(CK ck)
+  {
+    typedef typename CK::Circle_2                    Circle_2;
+    typedef typename CK::Circular_arc_2              Circular_arc_2;
+    typedef typename CK::Point_2                     Point_2;
+    typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
+    typedef typename CK::Intersect_2   Intersect_2;
+    typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
+    typedef typename CK::Line_arc_2              Line_arc_2;
+    
+    int test_suite_cases[3][2][3] = {{{-7,-8,113},{9,9,162}},
+                                     {{0,0,1},{1,2,4}},
+                                     {{0,0,1},{1,0,1}}};
+    int n_cases = 3;
+    
+    for(int i=0; i<n_cases; i++) {
+      Point_2 center_circ(test_suite_cases[i][0][0],test_suite_cases[i][0][1]);
+      Circle_2 circ(center_circ, test_suite_cases[i][0][2]);
+      Circular_arc_2 arc(circ);
+      Point_2 center_circ2(test_suite_cases[i][1][0],test_suite_cases[i][1][1]);
+      Circle_2 circ2(center_circ2, test_suite_cases[i][1][2]);
+      Circular_arc_2 arc2(circ2);
+
+      Intersect_2 theConstruct_intersect_2 
+        = ck.intersect_2_object();
+      std::vector< CGAL::Object > 
+        vector_for_intersection_1;
+      theConstruct_intersect_2(arc, 
+	  		     arc2,
+			     std::back_inserter(vector_for_intersection_1));
+      std::pair< Circular_arc_point_2, unsigned int> aux;
+      assign(aux, vector_for_intersection_1[0]);
+      CGAL::Bbox_2 box1 = aux.first.bbox(); 
+      assert(typename CK::FT(box1.xmin()) <= aux.first.x());
+      assert(typename CK::FT(box1.xmax()) >= aux.first.x());
+      assert(typename CK::FT(box1.ymin()) <= aux.first.y());
+      assert(typename CK::FT(box1.ymax()) >= aux.first.y());
+      std::cout << "Ok" << std::endl;
+      assign(aux, vector_for_intersection_1[1]);
+      CGAL::Bbox_2 box2 = aux.first.bbox(); 
+      assert(typename CK::FT(box2.xmin()) <= aux.first.x());
+      assert(typename CK::FT(box2.xmax()) >= aux.first.x());
+      assert(typename CK::FT(box2.ymin()) <= aux.first.y());
+      assert(typename CK::FT(box2.ymax()) >= aux.first.y());
+      std::cout << "Ok" << std::endl;
+    }
+  }
+  
   
