@@ -46,22 +46,14 @@ int main ()
   }
 
   // Print out the size of the resulting arrangement.
-  Arrangement_2::Face_const_iterator   fit;
-  unsigned int                         n_unb_faces = 0;
-
-  for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
-  {
-    if (fit->is_unbounded())
-      n_unb_faces++;
-  }
-
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << " (" << arr.number_of_vertices_at_infinity()
+            << " (plus " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces()
-            << " (" << n_unb_faces << " unbounded)" << std::endl;
+            << " (" << arr.number_of_unbounded_faces()
+            << " of which are unbounded)" << std::endl;
 
   // Print the vertices.
   Arrangement_2::Vertex_const_iterator   vit;

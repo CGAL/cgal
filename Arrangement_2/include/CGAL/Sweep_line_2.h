@@ -836,11 +836,13 @@ _handle_overlap(Event* event,
     }
 
    
-    // Get the right end of overlap_cv
-
+    // Get the right end of overlap_cv (if it is bounded from the right).
     Event* right_end;
-    if(m_traits->infinite_in_x_2_object()(overlap_cv, MAX_END) != FINITE ||
-       m_traits->infinite_in_y_2_object()(overlap_cv, MAX_END) != FINITE)
+
+    if(this->m_traits->infinite_in_x_2_object()(overlap_cv,
+                                                MAX_END) != FINITE ||
+       this->m_traits->infinite_in_y_2_object()(overlap_cv,
+                                                MAX_END) != FINITE)
     {
       CGAL_assertion((*iter)->get_right_event() == curve->get_right_event());
        right_end = (Event*)curve->get_right_event();
@@ -855,9 +857,11 @@ _handle_overlap(Event* event,
       right_end = pair_res.first;
     }
 
-     // Get the left end of overlap_cv
-     if(m_traits->infinite_in_x_2_object()(overlap_cv, MIN_END) == FINITE &&
-        m_traits->infinite_in_y_2_object()(overlap_cv, MIN_END) == FINITE)
+     // Get the left end of overlap_cv (if it is bounded from the left).
+     if(this->m_traits->infinite_in_x_2_object()(overlap_cv,
+                                                 MIN_END) == FINITE &&
+        this->m_traits->infinite_in_y_2_object()(overlap_cv,
+                                                 MIN_END) == FINITE)
      {
        Point_2 begin_overlap =
          this->m_traits->construct_min_vertex_2_object()(overlap_cv);

@@ -315,8 +315,9 @@ public:
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
       CGAL_precondition_code (
-        Compare_xy_2          compare_xy = tr.compare_xy_2_object();
-        Compare_y_at_x_2      compare_y_at_x = tr.compare_y_at_x_2_object();
+        Compare_xy_2                     compare_xy = tr.compare_xy_2_object();
+        typename Base::Compare_y_at_x_2  compare_y_at_x = 
+                                                  tr.compare_y_at_x_2_object();
       );
 
       CGAL_precondition (compare_y_at_x (p, cv1) == EQUAL &&
