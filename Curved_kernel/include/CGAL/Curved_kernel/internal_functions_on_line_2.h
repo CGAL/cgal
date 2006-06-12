@@ -56,6 +56,21 @@ namespace LinearFunctors {
     return(AK().sign_at_object()(equation,p.coordinates())== ZERO);
   }
 
+  template < class CK >
+  inline bool
+  non_oriented_equal(const typename CK::Line_2 & a1,
+	             const typename CK::Line_2 & a2) {
+    const typename CK::RT &a1c = a1.a(); 
+    const typename CK::RT &b1c = a1.b();
+    const typename CK::RT &c1c = a1.c();
+    const typename CK::RT &a2c = a2.a(); 
+    const typename CK::RT &b2c = a2.b();
+    const typename CK::RT &c2c = a2.c();
+    return (a1c*b2c == a2c*b1c) &&
+           (a1c*c2c == a2c*c1c) &&
+           (b1c*c2c == b2c*c1c);
+  }
+
   template< class CK, class OutputIterator>
   OutputIterator
   intersect_2( const typename CK::Line_2 & l,
