@@ -49,6 +49,18 @@ namespace CGALi {
     typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
     typedef typename CK::Segment_2                 Segment_2;
+    typedef struct bit_field {
+      unsigned char begin_less_xy_than_end:2;
+    } bit_field;
+
+    private:
+    // set flags to 0
+    // when 1 bit -> 0 = false, 1 = true
+    // when 2 bits -> 0 = don_know, 1 = false
+    //                              2 = true
+    void reset_flags() const {
+      flags.begin_less_xy_than_end = 0;
+    }
 
   public:
     //typedef typename CGAL::Simple_cartesian<Root_of_2>::Point_2
@@ -95,8 +107,7 @@ namespace CGALi {
     {
       _begin = intersect(support, c1, b1);
       _end = intersect(support, c2, b2);
-
-
+      reset_flags();
     }
 
 
@@ -115,6 +126,7 @@ namespace CGALi {
       obj = intersection(support, l2);
       const Point_2 *pt2 = CGAL::object_cast<Point_2>(&obj);
       _end = Circular_arc_point_2(*pt2);
+      reset_flags();
     }
     
     Line_arc_2(const Line_2 &support,
@@ -125,6 +137,7 @@ namespace CGALi {
       //Verifier si p1 et p2 sont sur la line
       _begin = p1;
       _end = p2;
+      reset_flags();
     }
 
     Line_arc_2(const Segment_2 &s)
@@ -132,6 +145,7 @@ namespace CGALi {
     {
       _begin = Circular_arc_point_2(s.source());
       _end = Circular_arc_point_2(s.target());
+      reset_flags();
     }
     
 
@@ -141,13 +155,24 @@ namespace CGALi {
       _support = Line_2(p1, p2);
       _begin = Circular_arc_point_2(p1);
       _end = Circular_arc_point_2(p2);
+      reset_flags();
     }
 
   private:
     
     Line_2 _support;
     Circular_arc_point_2 _begin, _end;
+    mutable bit_field flags;
 
+  private: //(some useful functions)
+
+    bool begin_less_xy_than_end() const {
+      if(flags.begin_less_xy_than_end == 0) {
+        if(compare_xy(_begin, _end) < 0)
+          flags.begin_less_xy_than_end = 2;
+        else flags.begin_less_xy_than_end = 1;
+      } return flags.begin_less_xy_than_end == 2;
+    }
 
   public :
     
@@ -158,12 +183,12 @@ namespace CGALi {
     
     const Circular_arc_point_2 & left() const
     {
-      return compare_xy(_begin, _end) < 0 ? _begin : _end;
+      return begin_less_xy_than_end() ? _begin : _end;
     }
 
     const Circular_arc_point_2 & right() const
     {
-      return compare_xy(_begin, _end) < 0 ? _end : _begin;
+      return begin_less_xy_than_end() ? _end : _begin;
     }
 
     const Circular_arc_point_2 & source() const
