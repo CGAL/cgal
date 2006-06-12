@@ -798,8 +798,18 @@ derives  from the class
 and uses a \ccc{Weighted_point} type
 derived from the type \ccc{Point_2} of
 \ccc{Triangulation_euclidean_traits_2<Rep>}.
-There is also a class \ccc{Regular_triangulation_filtered_traits_2<FK>}
-which provides filtered predicates (efficient and exact).
+
+\textbf{Note that, since the type \ccc{Weighted_point} is not defined 
+in \cgal\ kernels, plugging a filtered kernel  such as 
+\ccc{Exact_predicates_exact_constructions_kernel} in
+\ccc{Regular_triangulation_euclidean_traits_2<K,Weight>} will in fact
+not provide exact predicates on  weighted points.}
+To solve this, there is also another model of the traits concept,
+\ccc{Regular_triangulation_filtered_traits_2<FK>}, which is providing filtered
+predicates (exact and efficient). The argument \ccc{FK} must be a
+model of the \ccc{Kernel} concept, and it is also restricted to be a
+instance of the \ccc{Filtered_kernel} template. 
+
 
 
 \subsubsection{The Vertex type and Face Type of a Regular Triangulation}

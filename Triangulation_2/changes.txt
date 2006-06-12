@@ -1,3 +1,7 @@
+12 juin 2006
+- added some text in usermanual for Regular_triangulation_filtered_traits_2
+  and fixed regular example to use it.
+
 8 March 2006 Andreas Fabri
 - Added #include <CGAL/basic.h> in the demos
 
