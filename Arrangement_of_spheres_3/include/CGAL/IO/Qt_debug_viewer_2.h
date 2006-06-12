@@ -23,7 +23,7 @@ class Qt_debug_viewer_2 {
     Qt_examiner_viewer_2 *q_;
   };
 public:
-  Qt_debug_viewer_2(F f, int argc, char *argv[]):app_(argc, argv),  qtv_(10), thread_(f){
+  Qt_debug_viewer_2(F f, int argc, char *argv[]):app_(argc, argv),  qtv_(1), thread_(f){
     //qtv_= new Qt_examiner_viewer_2(10);
     thread_.set_qev(&qtv_);
   }

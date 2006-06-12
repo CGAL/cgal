@@ -1,0 +1,139 @@
+#define CGAL_CHECK_EXPENSIVE
+#define CGAL_CHECK_EXACTNESS
+
+#include <CGAL/Arrangement_of_spheres_3/Slice.h>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <CGAL/Random.h>
+
+
+struct Do_work {
+  void operator()(/*Qt_examiner_viewer_2 *q*/){
+    CGAL::Bbox_3 box(std::numeric_limits<double>::max(),
+		     std::numeric_limits<double>::max(),
+		     std::numeric_limits<double>::max(),
+		     -std::numeric_limits<double>::max(),
+		     -std::numeric_limits<double>::max(),
+		     -std::numeric_limits<double>::max());
+
+    typedef Arrangement_of_spheres_traits_3::Geometric_kernel K;
+    typedef CGAL::Simple_cartesian<double> DK;
+    std::vector<K::Sphere_3> spheres;
+    std::ifstream in("data/random_ray_shoot.spheres");
+    while (true){
+      char buf[1000];
+      in.getline(buf, 1000);
+      if (!in) break;
+      std::istringstream iss(buf);
+      DK::Sphere_3 s;
+      iss >> s;
+      if (!iss) {
+	std::cerr << "Can't parse line " << buf << std::endl;
+      } else {
+	spheres.push_back(K::Sphere_3(K::Point_3(s.center().x(), 
+						 s.center().y(),
+						 s.center().z()), 
+				      s.squared_radius()));
+	box= box+ spheres.back().bbox();
+      }
+      //std::cout << spheres.back() << std::endl;
+    }
+
+
+    std::cout << "Read " << spheres.size() << " spheres." << std::endl;
+    std::cout << "Bounding box is from " << box.zmin() << " to " << box.zmax()
+	      << std::endl;
+
+
+    Slice_arrangement::NT inf=2*std::max(box.xmax(),
+					 std::max(std::abs(box.xmin()),
+						  std::max(box.ymax(),
+							   std::max(std::abs(box.ymin()),
+								    std::max(box.zmax(),
+									     std::abs(box.zmin()))))));
+    //
+
+    CGAL::Random rand;
+
+    double z= rand.get_double(box.zmin(), box.zmax());
+  
+    std::cout << "z is " << z << std::endl;
+
+    Slice slice(spheres.begin(), spheres.end(), inf);
+    slice.set_rz(z);
+  
+   
+    //slice.draw_rz(q, z);
+    //q->show_everything();
+    //q->redraw();
+ 
+
+    for (unsigned int nit=0; nit != 100; ++nit){
+      double x,y;
+      x= rand.get_double(box.xmin(), box.xmax());
+      y= rand.get_double(box.ymin(), box.ymax());
+      Arrangement_of_spheres_traits_3::Event_point_3 sp(K::Point_3(x,y,z), 
+							K::Line_3(K::Point_3(x,y,z),
+								  K::Vector_3(0,0,1)));
+      std::cout << "Trying " << x << " " << y << std::endl;
+      try {
+	Slice::Face_const_handle f=slice.locate_point(sp);
+	std::cout << "Located in face ";
+	slice.write(f, std::cout) << std::endl;
+	
+	try {
+	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
+							   Slice::Sds::Curve::T_BIT);
+	  slice.write(h, std::cout) << std::endl;
+	} catch (Slice::On_vertex_exception v) {
+	  std::cout << "On vertex!" ;
+	  slice.write(v.vertex_handle(), std::cout) << std::endl;
+	}
+	try {
+	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
+							   Slice::Sds::Curve::B_BIT);
+	  slice.write(h, std::cout) << std::endl;
+	} catch (Slice::On_vertex_exception v) {
+	  std::cout << "On vertex!" ;
+	  slice.write(v.vertex_handle(), std::cout) << std::endl;
+	}
+	try {
+	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
+							   Slice::Sds::Curve::L_BIT);
+	  slice.write(h, std::cout) << std::endl;
+	} catch (Slice::On_vertex_exception v) {
+	  std::cout << "On vertex!" ;
+	  slice.write(v.vertex_handle(), std::cout) << std::endl;
+	}
+	try {
+	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
+							   Slice::Sds::Curve::R_BIT);
+	  slice.write(h, std::cout) << std::endl;
+	} catch (Slice::On_vertex_exception v) {
+	  std::cout << "On vertex!" ;
+	  slice.write(v.vertex_handle(), std::cout) << std::endl;
+	}
+ 
+	
+      } catch (Slice::On_edge_exception e) {
+	std::cout << "On edge!" ;
+	slice.write(e.halfedge_handle(), std::cout) << std::endl;
+      } catch (Slice::On_vertex_exception v) {
+	std::cout << "On vertex!";
+	slice.write(v.vertex_handle(), std::cout) << std::endl;
+      }
+    }
+  }
+};
+
+
+int main(int argc, char *argv[]){
+  
+  Do_work dw;
+  dw();
+
+  //Qt_debug_viewer_2<Do_work> qtd(dw, argc, argv);
+  
+  return EXIT_SUCCESS;
+}

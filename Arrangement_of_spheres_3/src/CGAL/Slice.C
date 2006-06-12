@@ -35,7 +35,7 @@ void Slice::draw_rz(Qt_examiner_viewer_2 *qtv, NT z) {
       //std::cout << "Displaying arc " << hit->curve() << std::endl;
       T::Point_2 t= display_point_rz(hit->vertex()->point(), z);
       T::Point_2 s= display_point_rz(hit->opposite()->vertex()->point(), z);
-      T::Circle_2 c= is(spheres_[hit->curve().index()]);
+      T::Circle_2 c= is(sphere(hit->curve().key()));
       if (marked) {
 	*qtv << CGAL::RED;
       } else {
@@ -62,8 +62,18 @@ void Slice::draw_rz(Qt_examiner_viewer_2 *qtv, NT z) {
     *qtv << p;
    
     std::ostringstream out;
-   
-    out << hit->point().first() << ":" << hit->point().second();
+    if (hit->point().first().is_arc()){
+      out << hit->point().first().key();
+    } else {
+      out << hit->point().first();
+    }
+    out << ":";
+    if (hit->point().second().is_arc()){
+      out << hit->point().second().key();
+    } else {
+      out << hit->point().first();
+    }
+    //out << hit->point().first() << ":" << hit->point().second();
     
     *qtv << CGAL::GRAY;
     *qtv << out.str().c_str();
@@ -79,7 +89,7 @@ void Slice::draw_rz(Qt_examiner_viewer_2 *qtv, NT z) {
 
 
 void Slice::set_rz(NT z) {
-  Slice_arrangement sa(spheres_.begin(),spheres_.end(), z, inf_);
+  Slice_arrangement sa(spheres_.begin()+3,spheres_.end(), z, inf());
   sds_.clear();
   sds_.set_is_building(true);
 

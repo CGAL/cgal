@@ -4,9 +4,9 @@
 Slice::Halfedge_const_handle Slice::shoot_rule(T::Event_point_3 source,
 					       Face_const_handle f,
 					       int type) const {
-  Temp_point tp(spheres_, source.sphere());
-  
-  return shoot_rule(source, f, Sds::Curve(tp.index(),  Sds::Curve::Part(type)));
+  //Temp_point tp(spheres_, source.sphere());
+  set_temp_sphere(source.sphere());
+  return shoot_rule(source, f, Sds::Curve(T::Key::temp_key(),  Sds::Curve::Part(type)));
 
 }
 Slice::Halfedge_const_handle Slice::shoot_rule(T::Event_point_3 source,
@@ -132,7 +132,7 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(T::Event_point_3 ep,
 				   (hp.quadrant() & Sds::Curve::T_BIT) 
 				   || rule.is_vertical() && 
 				   (hp.quadrant() & Sds::Curve::R_BIT));
-    } else if (hp.index() == hn.index()){
+    } else if (hp.key() == hn.key()){
       CGAL_assertion(hp.is_arc() && hn.is_arc());
       if (hp == hn) {
 	//CGAL_assertion(hp==hn);
@@ -154,7 +154,7 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(T::Event_point_3 ep,
 								      exact);
 	if (hp.part() & hn.part() & rule.part()) {
 	  CGAL::Comparison_result ret
-	    = CGAL::compare(spheres_[hn.index()].center()[rule.constant_coordinate()], 
+	    = CGAL::compare(center_c(hn.key(), rule.constant_coordinate()), 
 			    ep.simple_coordinate(rule.constant_coordinate()));
 	  debug_rule_shoot_check(debug_answer, ret, exact);
 	  return ret;
@@ -190,35 +190,38 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
   std::cout << "SS " << arc0 << "--" << pt << "--" << arc1 << std::endl;
    
   int C= srule.constant_coordinate();
-  bool tangent= (arc0.index()==arc1.index());
+  bool tangent= (arc0.key()==arc1.key());
   if (tangent) {
     std::cout << "Tangent." << std::endl;
-    if (arc0.index() == pt.sphere(0).index()) arc1= pt.sphere(1);
+    if (arc0.key() == pt.sphere(0).key()) arc1= pt.sphere(1);
     else arc1= pt.sphere(0);
     std::cout << "Using " << arc0 << "--" << pt << "--" << arc1 << std::endl;
   }
   // NOTE maybe make these into index based predicates
-  CGAL::Comparison_result hp= compare_sphere_to_plane(arc0.index(),
-						      ep.simple_coordinate(C), C);
-  CGAL::Comparison_result ohp= compare_sphere_to_plane(arc1.index(), 
-						       ep.simple_coordinate(C), C);
-  std::cout << "Comparisons are " << hp << " and " << ohp << std::endl;
-  if (hp== CGAL::EQUAL && ohp != CGAL::EQUAL) {
+  bool hi= sphere_intersects_rule(arc0.key(), srule.key(), C);
+  bool ohi= sphere_intersects_rule(arc0.key(), srule.key(), C);
+  CGAL::Comparison_result hp= compare_sphere_centers_c(arc0.key(),
+						       srule.key(), C);
+  CGAL::Comparison_result ohp= compare_sphere_centers_c(arc1.key(), 
+							srule.key(), C);
+  std::cout << "Comparisons are " << hi << " " << hp << " and " << ohi << " " << ohp << std::endl;
+
+  if (hi && !ohi || !ohi && !hi) {
     debug_rule_shoot_check(debug_answer,ohp, exact);
     return ohp;
-  } else if (ohp== CGAL::EQUAL && hp != CGAL::EQUAL) {
+  } else if (ohi && !hi) {
     debug_rule_shoot_check(debug_answer,hp, exact);
     return hp;
-  } else if (ohp != CGAL::EQUAL && hp != CGAL::EQUAL) {
+  } /*else if (!ohp && !hp) {
     debug_rule_shoot_check(debug_answer,hp, exact);
     CGAL_assertion(hp == ohp);
     return ohp;
-  }
+    }*/
   // now they both intersect the plane
 
 
   // NOTE  hmmm, need to clean
-  T::Plane_3 eqp= equipower_plane(arc0.index(), arc1.index());
+  T::Plane_3 eqp= equipower_plane(arc0.key(), arc1.key());
   NT v[2];
   v[C]=1;
   v[1-C]=0;
@@ -229,19 +232,19 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
   CGAL_assertion(CGAL::assign(l,o));
   CGAL::assign(l,o);
   std::cout << "The intersection line is " << l << std::endl;
-  //CGAL::Comparison_result dir= CGAL::compare(ep.simple_coordinate(1-C), spheres_[h->curve().index()].center(1-C));*/
-  T::Event_point_3 p0(spheres_[arc0.index()], l);
+  //CGAL::Comparison_result dir= CGAL::compare(ep.simple_coordinate(1-C), spheres_[h->curve().key()].center(1-C));*/
+  T::Event_point_3 p0(sphere(arc0.key()), l);
 
 
   if (!p0.is_valid()){
     std::cout << "Missed." << std::endl;
-    CGAL::Comparison_result ret= compare_equipower_point_to_plane(arc0.index(),
-								  arc1.index(),
-								  ep.simple_coordinate(C), C);
+    CGAL::Comparison_result ret= compare_equipower_point_to_rule(arc0.key(),
+								 arc1.key(),
+								 srule.key(), C);
     debug_rule_shoot_check(debug_answer,ret, exact);
     return ret;
   } else {
-    T::Event_point_3 p1(spheres_[arc0.index()], l.opposite());
+    T::Event_point_3 p1(sphere(arc0.key()), l.opposite());
       
     if (p0 > p1) {
       std::swap(p0, p1);
@@ -256,10 +259,10 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
       bool between =(ep > p0 && ep < p1);
 
       if (!between) {
-	CGAL::Comparison_result ret= compare_equipower_point_to_center_c(pt.sphere(0).index(),
-								pt.sphere(1).index(),
-								srule.index(),
-								  C);
+	CGAL::Comparison_result ret= compare_equipower_point_to_rule(pt.sphere(0).key(),
+								     pt.sphere(1).key(),
+								     srule.key(),
+								     C);
 	debug_rule_shoot_check(debug_answer, 
 			       ret, 
 			       exact);
@@ -267,8 +270,8 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
       } else {
 	if (arc0.is_inside() || arc1.is_inside()) {
 	  // arcs are at extremum of face if I am checking
-	  CGAL::Sign sn= sign_of_separating_plane_normal(pt.sphere(0).index(),
-							 pt.sphere(1).index(), C);
+	  CGAL::Sign sn= sign_of_separating_plane_normal_c(pt.sphere(0).key(),
+							   pt.sphere(1).key(), C);
 	  CGAL_assertion(sn != CGAL::ZERO);
 	  CGAL::Comparison_result cret= CGAL::enum_cast<CGAL::Comparison_result>(sn);
 	  debug_rule_shoot_check(debug_answer, 
@@ -276,11 +279,11 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
 				 exact);
 	  return cret;
 	} else {
-	  CGAL::Sign dir= sign_of_equipower_plane_normal(arc0.index(), arc1.index(),
-							 C);
+	  CGAL::Sign dir= sign_of_equipower_plane_normal_c(arc0.key(), arc1.key(),
+							   C);
 	  //CGAL::Comparison_result dir=CGAL::compare(eqp.orthogonal_vector()[C], 0); 
 	  int cum=0;
-	  CGAL::Oriented_side os= ::oriented_side(eqp, ep);
+	  CGAL::Oriented_side os= oriented_side_of_equipower_plane(arc0.key(), arc1.key(), ep);
 	  if (os == CGAL::ON_POSITIVE_SIDE) ++cum;
 	  if (dir == CGAL::POSITIVE) ++cum;
 	  if (cum%2==0) {
@@ -316,7 +319,7 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SR(T::Event_point_3 ep,
    
       
   CGAL::Bounded_side intersection_side= rule_shoot_source_side(ep, orule, 
-							       arc.index(),
+							       arc.key(),
 							       srule.constant_coordinate());
   
 
@@ -400,7 +403,7 @@ bool Slice::rule_shoot_compare_if_rational_arc(T::Event_point_3 ep,
 					       Sds::Curve rule,
 					       Sds::Curve a,
 					       CGAL::Comparison_result &ret) const {
-  CGAL::Comparison_result comp= compare_sphere_centers(a.index(), rule.index(),
+  CGAL::Comparison_result comp= compare_sphere_centers_c(a.key(), rule.key(),
 						       rule.constant_coordinate());
   // NOTE could use cached locations
   if (rule.constant_coordinate()==1){
@@ -431,9 +434,9 @@ bool Slice::rule_shoot_compare_if_rational(T::Event_point_3 ep,
 					   CGAL::Comparison_result &ret) const {
   NT coord;
   if (a.is_rule() && a.constant_coordinate()==rule.constant_coordinate()) {
-    coord= constant_coordinate(a);
+    coord= center_c(a.key(),  a.constant_coordinate());
   } else if (b.is_rule() && b.constant_coordinate()==rule.constant_coordinate()) {
-    coord= constant_coordinate(b);
+    coord= center_c(b.key(), b.constant_coordinate());
   } else {
     if (a.is_arc() && rule_shoot_compare_if_rational_arc(ep, rule, a, ret)){
       return true;
@@ -458,17 +461,17 @@ bool Slice::rule_shoot_compare_if_rational(T::Event_point_3 ep,
 // (defined by Coord C of ep) is relative to the sphere of the arc
 CGAL::Bounded_side Slice::rule_shoot_source_side(T::Event_point_3 ep,
 						 Sds::Curve orule,
-						 int arc_index,
+						 T::Key arc_index,
 						 int C) const {
   NT p[2];
   p[C]= ep.simple_coordinate(C);
-  p[1-C]= constant_coordinate(orule);
+  p[1-C]= center_c(orule.key(), orule.constant_coordinate());
     
   std::cout << "Line through " << CGAL::to_double(p[0]) 
 	    << " " << CGAL::to_double(p[1]) << std::endl;
   T::Line_3 l(T::Point_3(p[0], p[1], 0), T::Vector_3(0,0,1));
     
-  T::Event_point_3 p0=T::Event_point_3(spheres_[arc_index], l);
+  T::Event_point_3 p0=T::Event_point_3(sphere(arc_index), l);
   CGAL::Bounded_side intersection_side;
   if (!p0.is_valid()) {
     intersection_side=CGAL::ON_UNBOUNDED_SIDE;
@@ -476,7 +479,7 @@ CGAL::Bounded_side Slice::rule_shoot_source_side(T::Event_point_3 ep,
     std::cout << "Equal" << std::endl;
     intersection_side=  CGAL::ON_BOUNDARY;
   } else {
-    T::Event_point_3 p1=T::Event_point_3(spheres_[arc_index], 
+    T::Event_point_3 p1=T::Event_point_3(sphere(arc_index), 
 					 l.opposite());
     if (p1 == ep) {
       std::cout << "Equal 1" << std::endl;

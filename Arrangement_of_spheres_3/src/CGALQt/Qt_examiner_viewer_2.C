@@ -190,17 +190,23 @@ void Qt_examiner_viewer_2::show_everything() {
   {
     QMutexLocker lock(&mutex_);
     CGAL::Bbox_2 cb=layers_[0]->bounding_box();
-    for (unsigned int i=0; i< layers_.size(); ++i){
+    for (unsigned int i=1; i< layers_.size(); ++i){
       cb=cb+ layers_[i]->bounding_box();
     }
     
     double width= cb.xmax()-cb.xmin();
     double height= cb.ymax()-cb.ymin();
-    double gf=.05;
-    CGAL::Bbox_2 ncb(cb.xmin()- gf*width,
-		     cb.ymin()- gf*height,
-		     cb.xmax()+ gf*width,
-		     cb.ymax()+ gf*height);
+    CGAL::Bbox_2 ncb;
+    if (cb.xmin() >= cb.xmax() || cb.ymin() >= cb.ymax()) {
+      std::cerr << "Nothing to see here folks..." << std::endl;
+      ncb= CGAL::Bbox_2(-100,-100,100,100);
+    } else {
+      double gf=.05;
+      ncb= CGAL::Bbox_2(cb.xmin()- gf*width,
+			cb.ymin()- gf*height,
+			cb.xmax()+ gf*width,
+			cb.ymax()+ gf*height);
+    }
     P::widget()->set_window(ncb.xmin(), ncb.xmax(), ncb.ymin(), ncb.ymax());
     P::widget()->redraw();
   }

@@ -38,7 +38,7 @@ public:
   typedef K::Segment_2 Segment;
   typedef Circular_k::Circular_arc_2 Circular_arc;
 
-  Qt_examiner_viewer_2(NT scale): P(600,600),
+  Qt_examiner_viewer_2(NT scale=1): P(600,600),
 				  scale_(scale)
   {
     *P::widget() << CGAL::BackgroundColor(CGAL::WHITE);
@@ -172,8 +172,8 @@ private: // private data member
     template <class V, class VC, class VS>
     CGAL::Color draw(CGAL::Color cc, const V &v, const VC &vc, const VS &vs);
   public:
-
-    QTEV_layer(NT scale);
+    // I can't remember why I even have this
+    QTEV_layer(NT scale=1);
 
     CGAL::Bbox_2 bounding_box();
   

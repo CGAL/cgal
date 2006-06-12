@@ -1,0 +1,75 @@
+#define CGAL_CHECK_EXPENSIVE
+#define CGAL_CHECK_EXACTNESS
+
+#include <CGAL/IO/Qt_debug_viewer_2.h>
+#include <CGAL/Arrangement_of_spheres_3/Slice_arrangement.h>
+#include <CGAL/Arrangement_of_spheres_traits_3.h>
+#include <CGAL/Arrangement_of_spheres_3/Slice.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Gmpq.h>
+#include <iostream>
+#include <sstream>
+
+
+int main(int argc, char *argv[]){
+ 
+  
+  CGAL::Bbox_3 box(std::numeric_limits<double>::max(),
+		   std::numeric_limits<double>::max(),
+		   std::numeric_limits<double>::max(),
+		   -std::numeric_limits<double>::max(),
+		   -std::numeric_limits<double>::max(),
+		   -std::numeric_limits<double>::max());
+  //typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+  typedef Arrangement_of_spheres_traits_3::Geometric_kernel K;
+  typedef CGAL::Simple_cartesian<double> DK;
+  std::vector<K::Sphere_3> spheres;
+  std::vector<K::Sphere_3> shifted_spheres;
+  while (true){
+    char buf[1000];
+    std::cin.getline(buf, 1000);
+    if (!std::cin) break;
+    std::istringstream iss(buf);
+    DK::Sphere_3 s;
+    iss >> s;
+    if (!iss) {
+      std::cerr << "Can't parse line " << buf << std::endl;
+    } else {
+      spheres.push_back(K::Sphere_3(K::Point_3(s.center().x(), s.center().y(),
+					       s.center().z()), s.squared_radius()));
+      shifted_spheres.push_back(K::Sphere_3(K::Point_3(s.center().x()+.1, s.center().y()+.1,
+						       s.center().z()), s.squared_radius()));
+      box= box+ spheres.back().bbox();
+    }
+    //std::cout << spheres.back() << std::endl;
+  }
+
+
+  std::cout << "Read " << spheres.size() << " spheres." << std::endl;
+  std::cout << "Bounding box is from " << box.zmin() << " to " << box.zmax()
+	    << std::endl;
+ 
+  Slice_arrangement::NT z= atof(argv[1]);
+  Slice_arrangement::NT inf=2*std::max(box.xmax(),
+				std::max(std::abs(box.xmin()),
+					 std::max(box.ymax(),
+						  std::max(std::abs(box.ymin()),
+							   std::max(box.zmax(),
+								    std::abs(box.zmin()))))));
+  //
+  
+  Slice slice(spheres.begin(), spheres.end(), inf);
+  slice.set_rz(z);
+
+  QApplication app(argc, argv);
+  Qt_examiner_viewer_2 *qtd= new Qt_examiner_viewer_2(10);
+ 
+  
+   
+  slice.draw_rz(qtd, z);
+  app.setMainWidget( qtd);
+  qtd->show_everything();
+  qtd->show();
+  return app.exec();
+}

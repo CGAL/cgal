@@ -37,7 +37,12 @@ struct Slice {
 
 
   template <class It> 
-  Slice(It bs, It es, NT inf): spheres_(bs, es), inf_(inf){
+  Slice(It bs, It es, NT inf): has_temp_(false){
+    spheres_.reserve(std::distance(bs, es)+3);
+    spheres_.push_back(T::Sphere_3());
+    spheres_.push_back(T::Sphere_3(T::Point_3(-inf, -inf, -inf), 0));
+    spheres_.push_back(T::Sphere_3(T::Point_3(inf, inf, inf), 0));
+    spheres_.insert(spheres_.end(), bs, es);
   }
  
 
@@ -89,7 +94,7 @@ struct Slice {
 
   //Face_const_handle locate_point(int ind) const;
 
-  Face_const_handle locate_point(int ind, T::Event_point_3 ep) const;
+  Face_const_handle locate_point(T::Key ind, T::Event_point_3 ep) const;
 
   Face_const_handle locate_point(T::Event_point_3 ep) const;
 
@@ -101,7 +106,7 @@ struct Slice {
 				   int type) const ;
 
 
-  bool build_intersection_events(int a, int b, T::Event_point_3 &begin, T::Event_point_3 &end) const {
+  bool build_intersection_events(T::Key a, T::Key b, T::Event_point_3 &begin, T::Event_point_3 &end) const {
     // build equipower plane
     // intersect it with forward plane (check which is needed)
     // build events
@@ -124,14 +129,14 @@ struct Slice {
     // b is not inside
     if (a->curve().is_inside()) {
       if (a->curve().quadrant() == b->curve().quadrant()){
-	return build_intersection_events(a->curve().index(), b->curve().index(), 
+	return build_intersection_events(a->curve().key(), b->curve().key(), 
 					 begin, end);
       } else return false;
     } else {
       if (a->curve().quadrant() & b->curve().quadrant()) {
 	return false;
-      } else return build_intersection_events(a->curve().index(),
-					      b->curve().index(), begin, end);
+      } else return build_intersection_events(a->curve().key(),
+					      b->curve().key(), begin, end);
     }
   }
 
@@ -151,18 +156,16 @@ struct Slice {
   }
 
 
- 
- 
-
- 
-
- 
-
- 
- 
   
+  void set_temp_sphere(const T::Sphere_3 &s) const {
+    has_temp_=true;
+    spheres_[0]=s;
+  }
 
 
+  unsigned int number_of_spheres() const {
+    return spheres_.size()-3;
+  }
 
   // rational z functions-------------------------------------------------
 
@@ -170,7 +173,7 @@ struct Slice {
 
   void set_rz(NT z) ;
 
-  T::Point_2 center_point_rz(int a, int b, NT z) const ;
+  T::Point_2 center_point_rz(T::Key a, T::Key b, NT z) const ;
 
   T::Point_2 display_point_rz(Sds::Point pt, NT z) const;
 
@@ -180,28 +183,32 @@ struct Slice {
      constructions----------------------------------------------------
    */
 
+  NT inf() const {
+    return center_c(T::Key::TR, 1);
+  }
+
  // the point described by the vertex (a,b) should be on the positive side
-  T::Plane_3 separating_plane(int a, int b) const ;
+  T::Plane_3 separating_plane(T::Key a, T::Key b) const ;
 
   // point from the second to the first
-  T::Plane_3 equipower_plane(int a, int b) const ;
+  T::Plane_3 equipower_plane(T::Key a, T::Key b) const ;
 
-  NT disc(int i) const;
+  NT disc(T::Key i) const;
 
-  NT center_c(int ind, int C) const;
+  NT center_c(T::Key ind, int C) const;
 
-  T::Point_3 center(int ind) const;
+  T::Point_3 center(T::Key ind) const;
 
   T::Point_2 compute_rule_rule_intersection(Sds::Curve ra, Sds::Curve rb) const ;
 
-  T::Sphere_3 sphere(int ind) const;
+  const T::Sphere_3& sphere(T::Key ind) const;
 
 
   T::Line_3 in_line(Sds::Curve r, NT z) const;
   
   T::Line_3 out_line(Sds::Curve r, NT z) const;
 
-  T::Event_point_3 sphere_start(int s) const;
+  T::Event_point_3 sphere_start(T::Key s) const;
 
  
   /*
@@ -215,42 +222,42 @@ struct Slice {
      predictes--------------------------------------------------------
    */
 
-  bool intersects_rule(int sphere, int rule_sphere, int C) const;
+  bool sphere_intersects_rule(T::Key sphere, T::Key rule_sphere, int C) const;
   
   //CGAL::Comparison_result compare_sphere_to_plane(int s, NT c, int C) const;
 
-  CGAL::Comparison_result compare_equipower_point_to_rule(int sphere0,
-							  int sphere1,
-							  int rule_sphere,
+  CGAL::Comparison_result compare_equipower_point_to_rule(T::Key sphere0,
+							  T::Key sphere1,
+							  T::Key rule_sphere,
 							  int C) const;
 
-  CGAL::Comparison_result compare_sphere_center_to_rule(int sphere, 
-							int rule_sphere,
-							int C) const;
+  /*CGAL::Comparison_result compare_sphere_center_to_rule(T::Key sphere, 
+							T::Key rule_sphere,
+							int C) const;*/
 
-  
+  /*CGAL::Comparison_result compare_event_point_to_rule(const T::Event_point_3 &ep,
+    int rule_sphere,
+    int C) const;*/
 
   /*CGAL::Comparison_result compare_equipower_point_to_plane(int a, int b, 
     NT coord, int C) const;*/
 
-  CGAL::Sign sign_of_separating_plane_normal_c(int sphere0, int sphere1,
-					     int C) const ;
+  CGAL::Sign sign_of_separating_plane_normal_c(T::Key sphere0, T::Key sphere1,
+					       int C) const ;
 
 
-  CGAL::Sign sign_of_equipower_plane_normal_c(int sphere0, int spher1, 
+  CGAL::Sign sign_of_equipower_plane_normal_c(T::Key sphere0, T::Key spher1, 
 					      int C) const;
 
 
-  CGAL::Oriented_side oriented_side_of_equipower_plane(int sphere_0, int sphere_1,
+  CGAL::Oriented_side oriented_side_of_equipower_plane(T::Key sphere_0, T::Key sphere_1,
 						       const T::Sphere_point_3 &s) const;
 
-  CGAL::Oriented_side oriented_side_of_center_plane(int sphere_0, int sphere_1, 
-						    int sphere_center) const ;
+  CGAL::Oriented_side oriented_side_of_center_plane(T::Key sphere_0, T::Key sphere_1, 
+						    T::Key sphere_center) const ;
 
  
-  CGAL::Comparison_result compare_sphere_centers_c(int a, int b, int C) const;
-
-
+  CGAL::Comparison_result compare_sphere_centers_c(T::Key a, T::Key b, int C) const;
 
 
 
@@ -262,25 +269,26 @@ struct Slice {
 
   //enum Location {L_BIT=1, R_BIT=2, T_BIT=4, B_BIT=8, IN_BIT=16,  };
 
-  int sphere_location(int locate_point, int sphere) const ;
+  int sphere_location(T::Key locate_point, T::Key sphere) const ;
   
-  bool behind_arc(T::Event_point_3 ep, int ind, Sds::Curve arc, int location) const;
+  bool behind_arc(T::Event_point_3 ep, T::Key ind, Sds::Curve arc, int location) const;
 
 
-  void point_sphere_orientation(int point,
-				int sphere,
+  void point_sphere_orientation(T::Key point,
+				T::Key sphere,
 				std::vector<int> &locations) const;
 
   bool locate_point_check_face(Face_const_handle it, 
-			       int ind,
+			       T::Key ind,
 			       std::vector<int> &locations) const ;
 
   bool locate_point_check_face_arcs(T::Event_point_3 ep,
-				    int ind,
+				    T::Key ind,
 				    Face_const_handle f,
 				    std::vector<int> &locations) const ;
 
   bool locate_point_check_face_vertices(T::Event_point_3 ep,
+					T::Key index,
 					Face_const_handle it) const;
 
   CGAL::Comparison_result debug_rule_shoot_answer(T::Event_point_3 ep, 
@@ -334,7 +342,7 @@ struct Slice {
   // (defined by Coord C of ep) is relative to the sphere of the arc
   CGAL::Bounded_side rule_shoot_source_side(T::Event_point_3 ep,
 					    Sds::Curve orule,
-					    int arc_index,
+					    T::Key arc_index,
 					    int C) const;
 
 private:
@@ -347,7 +355,7 @@ private:
   };
 
 
-  struct Temp_point {
+  /*struct Temp_point {
     Temp_point(std::vector<T::Sphere_3>  &ss, T::Sphere_3 s): ss_(ss){
       ss_.push_back(s);
     }
@@ -358,14 +366,14 @@ private:
       return ss_.size()-1;
     }
     std::vector<T::Sphere_3> &ss_;
-  };
+    };*/
 
   //  HDS hds_;
   // ick, this is to handle location of points which are not already there
   // -1, -2 are bl, tr inf corners
   mutable std::vector<T::Sphere_3> spheres_;
+  mutable bool has_temp_;
   std::vector<int> errors_;
-  NT inf_;
   Slice_data_structure sds_;
   T tr_;
   std::set<Face_const_handle, Handle_compare> marked_faces_;

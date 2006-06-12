@@ -7,29 +7,41 @@ struct Combinatorial_curve{
   /* for rules
      Inside means below a horizontal arc and to the left of a vertical one
   */
-  enum PART_BITS {L_BIT=1, R_BIT=2, T_BIT=4, B_BIT=8, ARC_BIT=16, INF_BIT=32, IN_BIT=64};
+  enum PART_BITS {L_BIT=1, R_BIT=2, T_BIT=4, B_BIT=8, ARC_BIT=16, /*INF_BIT=32,*/ IN_BIT=32};
   enum LOCATION_BITS {lL_BIT=1, lR_BIT=2, lT_BIT=4, lB_BIT=8, lIN_BIT=16, lOUT_BIT=32};
   enum Part {INVALID=0, L_RULE=L_BIT, R_RULE=R_BIT, T_RULE=T_BIT, B_RULE=B_BIT,
 	     LB_ARC=L_BIT|B_BIT|ARC_BIT, 
 	     LT_ARC=L_BIT|T_BIT|ARC_BIT,
 	     RT_ARC=R_BIT|T_BIT|ARC_BIT, 
-	     RB_ARC=R_BIT|B_BIT|ARC_BIT, 
+	     RB_ARC=R_BIT|B_BIT|ARC_BIT/*, 
 	     L_INF=L_BIT|INF_BIT,
 	     R_INF=R_BIT|INF_BIT,
 	     T_INF=T_BIT|INF_BIT, 
-	     B_INF=B_BIT|INF_BIT};
+	     B_INF=B_BIT|INF_BIT*/};
+
+  typedef Arrangement_of_spheres_traits_3::Key Key;
 
   Combinatorial_curve(int i, Part pt): index_(i), pt_(pt){
+    CGAL_precondition(i>=0);
     CGAL_precondition(is_finite());
   }
-  explicit Combinatorial_curve(Part pt): index_(-1), pt_(pt){
-    CGAL_precondition(!is_finite());
+  Combinatorial_curve(Key i, Part pt): index_(i), pt_(pt){
+    //CGAL_precondition(is_finite());
   }
-  Combinatorial_curve():index_(-3), pt_(INVALID){}
+  /*explicit Combinatorial_curve(Part pt): pt_(pt){
+    if (pt_== T_BIT || pt_ == R_BIT) {
+      index_= Key(Key::TR);
+    } else {
+      CGAL_assertion(pt_ == B_BIT || pt_ == L_BIT);
+      index_= Key(Key::BL);
+    }
+    CGAL_precondition(!is_finite());
+    }*/
+  Combinatorial_curve():pt_(INVALID){}
   bool is_valid() const {
     return pt_>0 && pt_ < 128
       //&& (pt_ ^ IN_BIT)
-      && index_!=-3 
+      && index_.is_valid() 
       && !(is_arc() && !is_finite() );
   }
   Combinatorial_curve other_side() const {
@@ -64,7 +76,10 @@ struct Combinatorial_curve{
   bool is_left() const {
     return pt_ & L_BIT;
   }
-  int index() const {
+  /*int index() const {
+    return index_.to_index();
+    }*/
+  Key key() const {
     return index_;
   }
   int constant_coordinate() const {
@@ -72,7 +87,7 @@ struct Combinatorial_curve{
     int r;
     if ((pt_&R_BIT) || (pt_ &L_BIT)) r= 1;
     else r= 0;
-    if (!is_finite()) r=1-r;
+    //if (!is_finite()) r=1-r;
     return r;
   }
   bool can_intersect(int t) const {
@@ -122,7 +137,7 @@ struct Combinatorial_curve{
     return pt_&L_BIT || pt_&B_BIT;
   }
   bool is_finite() const {
-    return ! (pt_ & INF_BIT);
+    return index_.is_input(); //! (pt_ & INF_BIT);
   }
   bool is_arc() const {
     bool nb= (pt_ &ARC_BIT) != 0;
@@ -136,11 +151,11 @@ struct Combinatorial_curve{
   }
   bool is_vertical() const {
     CGAL_precondition(is_rule());
-    if (is_finite()) {
+    //if (is_finite()) {
       return (pt_ & T_BIT) || (pt_ & B_BIT);
-    } else {
+      /*} else {
       return (pt_ & L_BIT) || (pt_ & R_BIT);
-    }
+      }*/
   }
   bool is_same_side(Combinatorial_curve o) const {
     int u= o.pt_ & pt_; 
@@ -168,7 +183,7 @@ struct Combinatorial_curve{
   std::ostream &write(std::ostream&out) const {
     CGAL_precondition(is_valid());
     out << to_string(pt_);
-    if (is_finite())  out << index_;
+    /*if (is_finite())*/  out << index_;
     return out;
   }
 
@@ -232,14 +247,14 @@ struct Combinatorial_curve{
       return "RT"; 
     case RB_ARC:
       return "RB"; 
-    case L_INF:
+      /*case L_INF:
       return "L_inf";
     case R_INF:
       return "R_inf";
     case T_INF:
       return "T_inf"; 
     case B_INF:
-      return "B_inf";
+    return "B_inf";*/
 
     case L_RULE | IN_BIT :
       return "Li";
@@ -257,14 +272,14 @@ struct Combinatorial_curve{
       return "RTi"; 
     case RB_ARC | IN_BIT:
       return "RBi";
-    case L_INF | IN_BIT:
+      /*case L_INF | IN_BIT:
       return "Li_inf";
     case R_INF | IN_BIT:
       return "Ri_inf";
     case T_INF | IN_BIT:
       return "Ti_inf"; 
     case B_INF | IN_BIT:
-      return "Bi_inf";
+    return "Bi_inf";*/
     default:
       std::cerr << "Oops, I forgot: " << pt <<std::endl; 
       CGAL_assertion(0);
@@ -277,10 +292,10 @@ struct Combinatorial_curve{
 
 private:
 
-  Combinatorial_curve(int i, int pt, bool): index_(i), pt_(pt){
+  Combinatorial_curve(Key i, int pt, bool): index_(i), pt_(pt){
   }
 
-  int index_;
+  Key index_;
   int pt_;
 };
 

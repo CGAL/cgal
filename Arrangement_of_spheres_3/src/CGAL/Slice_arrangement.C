@@ -130,10 +130,10 @@ void Slice_arrangement::build_arrangement(const std::vector<Circular_k::Circle_2
   Circular_k::Line_2 b(lb, Circular_k::Vector_2(1,0));
   Circular_k::Line_2 t(rt, Circular_k::Vector_2(1,0));
   audit();
-  insert(Circular_k::Line_arc_2(l, lb, lt), Curve(Curve::L_INF));
-  insert(Circular_k::Line_arc_2(r, rb, rt), Curve(Curve::R_INF));
-  insert(Circular_k::Line_arc_2(b, lb, rb), Curve(Curve::B_INF));
-  insert(Circular_k::Line_arc_2(t, lt, rt), Curve(Curve::T_INF));
+  insert(Circular_k::Line_arc_2(l, lb, lt), Curve(Curve::Key::bl_key(), Curve::T_RULE));
+  insert(Circular_k::Line_arc_2(r, rb, rt), Curve(Curve::Key::tr_key(), Curve::B_RULE));
+  insert(Circular_k::Line_arc_2(b, lb, rb), Curve(Curve::Key::bl_key(), Curve::R_RULE));
+  insert(Circular_k::Line_arc_2(t, lt, rt), Curve(Curve::Key::tr_key(), Curve::L_RULE));
 
 
 
@@ -447,7 +447,7 @@ Slice_arrangement::Point Slice_arrangement::point(CArr::Vertex_const_handle h) c
     ++c;
     do {
       Curve fc= curve(c);
-      if ((fc.index() != fa.index() || fa.is_rule() || fc.is_rule()) && fa != fc) {
+      if ((fc.key() != fa.key() || fa.is_rule() || fc.is_rule()) && fa != fc) {
 	fb=fc;
 	hb=c;
 	break;
@@ -472,7 +472,7 @@ Slice_arrangement::Point Slice_arrangement::point(CArr::Vertex_const_handle h) c
       /*std::cout << l << std::endl;
       std::cout << "va is " << CGAL::to_double(va) << "(" << va << ")" << std::endl;
       std::cout << "vb is " << CGAL::to_double(vb) << "(" << vb << ")" << std::endl;*/
-      if ((va <0 && vb <0) || (va<0 && CGAL::abs(va) > vb) || (vb<0 && CGAL::abs(vb) > va) || va==vb && fa.index() > fb.index()) {
+      if ((va <0 && vb <0) || (va<0 && CGAL::abs(va) > vb) || (vb<0 && CGAL::abs(vb) > va) || va==vb && fa.key() > fb.key()) {
 	std::swap(fa, fb);
       }
       //std::cout << "Final is " << fa << ", " << fb << std::endl;
@@ -557,10 +557,10 @@ void Slice_arrangement::Face_iterator::fill_cache() {
 	}
       } else {
 	if (f.is_vertical()){
-	  CGAL_assertion((f.part()& Curve::L_BIT) || (f.part()& Curve::R_BIT));
+	  //CGAL_assertion((f.part()& Curve::L_BIT) || (f.part()& Curve::R_BIT));
 	  f.set_is_inside( d== CGAL::SMALLER);
 	} else {
-	  CGAL_assertion((f.part()& Curve::T_BIT) || (f.part()& Curve::B_BIT));
+	  //CGAL_assertion((f.part()& Curve::T_BIT) || (f.part()& Curve::B_BIT));
 	  f.set_is_inside( d== CGAL::LARGER);
 	}
       }
@@ -617,8 +617,8 @@ void Slice_arrangement::draw(Qt_examiner_viewer_2 *qtv) const {
     
   for (CArr::Halfedge_const_iterator cit= arr_.halfedges_begin(); cit != arr_.halfedges_end(); ++cit){
     if (curve(cit).is_arc()){
-      if (!drawn[curve(cit).index()]){
-	drawn[curve(cit).index()]=true;
+      if (!drawn[curve(cit).key().input_index()]){
+	drawn[curve(cit).key().input_index()]=true;
 	qtv->set_updating_box(true);
 	*qtv << CGAL::BLACK;
 	*qtv <<boost::apply_visitor(Get_circle(), cit->curve());
@@ -643,8 +643,8 @@ void Slice_arrangement::draw(Qt_examiner_viewer_2 *qtv) const {
     *qtv << CGAL::GREEN;
     *qtv << vit->point();
     Point pt= point(vit);
-    int sa= pt.first().index();
-    int sb= pt.second().index();
+    Curve::Key sa= pt.first().key();
+    Curve::Key sb= pt.second().key();
     std::ostringstream out;
     if (sa != sb) {
       out << sa << ":" << sb;

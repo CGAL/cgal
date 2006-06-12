@@ -7,14 +7,14 @@
    predictes--------------------------------------------------------
 */
 
-bool Slice::intersects_rule(int s, int rule, int C) const {
-  NT d= spheres_[s].center()[C]-spheres_[rule].center()[C];
-  if (CGAL::square(d) <= spheres_[s].squared_radius()) return true;
+bool Slice::sphere_intersects_rule(T::Key s, T::Key rule, int C) const {
+  NT d= center_c(s, C)-center_c(rule,C);
+  if (CGAL::square(d) <= sphere(s).squared_radius()) return true;
   else return false;
 }
 
-CGAL::Comparison_result Slice::compare_equipower_point_to_rule(int a, int b,
-							       int c, int C) const{
+CGAL::Comparison_result Slice::compare_equipower_point_to_rule(T::Key a, T::Key b,
+							       T::Key c, int C) const{
   // NOTE redo this with computing it directly
   T::Plane_3 eqp= equipower_plane(a,b);
   T::Line_3 l(center(a), (center(a)-center(b)));
@@ -27,37 +27,42 @@ CGAL::Comparison_result Slice::compare_equipower_point_to_rule(int a, int b,
 }
 
 
-CGAL::Comparison_result  Slice::compare_sphere_center_to_rule(int sphere, 
-							      int rule_sphere,
+/*CGAL::Comparison_result  Slice::compare_sphere_center_to_rule(T::Key sphere, 
+							      T::Key rule_sphere,
 							      int C) const {
-  return CGAL::compare(spheres_[sphere].center()[C],
-		       spheres_[rule_sphere].center()[C]);
-}
+  return CGAL::compare(center_c(sphere,C),
+		       center_c(rule_sphere,C));
+		       }*/
 
 
-CGAL::Sign Slice::sign_of_separating_plane_normal_c(int a, int b, int C) const {
-  CGAL::Sign sn;
-  if (C==0) {
-    sn = CGAL::sign(-spheres_[b].center()[1] + spheres_[a].center()[1]);
+CGAL::Sign Slice::sign_of_separating_plane_normal_c(T::Key a, T::Key b, int C) const {
+  CGAL_precondition(CGAL::enum_cast<CGAL::Sign>(CGAL::LARGER) == CGAL::POSITIVE);
+  int c= compare_sphere_centers_c(b, a,1-C);
+  if (C==0) c=-c;
+  CGAL::Sign ret= CGAL::enum_cast<CGAL::Sign>(c);
+  CGAL_assertion(ret== CGAL::sign(separating_plane(a,b).orthogonal_vector()[C]));
+  return ret;
+  /*if (C==0) {
+    sn = CGAL::sign(-center_c(b,1) + center_c(a,1));
   } else {
-    sn = CGAL::sign( spheres_[b].center()[0] - spheres_[a].center()[0]);
+    sn = CGAL::sign( center_c(b,0) - center_c(a,0));
   }
-  return sn;
+  return sn;*/
 }
 
 
 
 
-CGAL::Sign Slice::sign_of_equipower_plane_normal_c(int a, 
-						   int b, int C) const {
-  CGAL::Sign sn= CGAL::sign(spheres_[a].center()[C]-spheres_[b].center()[C]);
+CGAL::Sign Slice::sign_of_equipower_plane_normal_c(T::Key a, 
+						   T::Key b, int C) const {
+  CGAL::Sign sn= CGAL::sign(center_c(a,C)-center_c(b,C));
   CGAL_assertion(sn== CGAL::sign(equipower_plane(a,b).orthogonal_vector()[C]));
   return sn;
 }
 
 
 
-CGAL::Oriented_side Slice::oriented_side_of_equipower_plane(int a, int b,
+CGAL::Oriented_side Slice::oriented_side_of_equipower_plane(T::Key a, T::Key b,
 							    const T::Sphere_point_3 &s) const {
   CGAL_assertion(s.is_valid());
   T::Plane_3 p= equipower_plane(a,b);
@@ -77,19 +82,19 @@ CGAL::Oriented_side Slice::oriented_side_of_equipower_plane(int a, int b,
 }
 
 
-CGAL::Oriented_side Slice::oriented_side_of_center_plane(int a, int b,
-							 int sphere_center) const {
-  T::Vector_3 d(spheres_[b].center()-spheres_[a].center());
-  T::Line_2 l(T::Point_2(spheres_[a].center().x(),
-			 spheres_[a].center().y()), 
+CGAL::Oriented_side Slice::oriented_side_of_center_plane(T::Key a, T::Key b,
+							 T::Key sphere_center) const {
+  T::Vector_3 d(center(b)-center(a));
+  T::Line_2 l(T::Point_2(center_c(a,0),
+			 center_c(a,1)), 
 	      T::Vector_2(d.x(), d.y()));
-  return l.oriented_side(T::Point_2(spheres_[sphere_center].center().x(),
-				    spheres_[sphere_center].center().y()));
+  return l.oriented_side(T::Point_2(center_c(sphere_center, 0),
+				    center_c(sphere_center, 1)));
 }
 
-CGAL::Comparison_result Slice::compare_sphere_centers_c(int a, int b, int C) const {
-  return CGAL::compare(spheres_[a].center()[C], spheres_[b].center()[C]);
-}
+CGAL::Comparison_result Slice::compare_sphere_centers_c(T::Key a, T::Key b, int C) const {
+  return CGAL::compare(center_c(a,C), center_c(b,C));
+  }
 
 
 
@@ -111,7 +116,7 @@ CGAL::Comparison_result Slice::compare_sphere_centers_c(int a, int b, int C) con
 
 
 
-int Slice::sphere_location(int locate_point, int s) const {
+int Slice::sphere_location(T::Key locate_point, T::Key s) const {
   int r=0;
   T::Event_point_3 ep=sphere_start(locate_point);
   T::Line_3 l= ep.line();
@@ -134,21 +139,25 @@ int Slice::sphere_location(int locate_point, int s) const {
     r |= Sds::Curve::lOUT_BIT;
   }
   
-  T::Plane_3 lrp(center(s), T::Vector_3(1, 0, 0));
+  /*T::Plane_3 lrp(center(s), T::Vector_3(1, 0, 0));
   T::Plane_3 tbp(center(s), T::Vector_3(0, 1, 0));
-  CGAL::Oriented_side xo= oriented_side(lrp, ep);
-  CGAL::Oriented_side yo= oriented_side(tbp, ep);
-  if (compare_sphere_center_to_rule BLAHHHHHHHHH != CGAL::SMALLER) {
-    r |= R_BIT;
+  CGAL::Comparison_result xo= oriented_side(lrp, ep);
+  CGAL::Oriented_side yo= oriented_side(tbp, ep);*/
+  //CGAL::Comparison_result xo= compare_event_point_to_rule(ep, s, 0);
+  //CGAL::Comparison_result yo= compare_event_point_to_rule(ep, s, 1);
+  CGAL::Comparison_result xo= compare_sphere_centers_c(s, locate_point, 0);
+  CGAL::Comparison_result yo= compare_sphere_centers_c(s, locate_point, 1);
+  if (xo  != CGAL::LARGER) {
+    r |= Sds::Curve::lR_BIT;
   } 
-  if (xo != CGAL::LARGER){
-    r |= L_BIT;
+  if (xo != CGAL::SMALLER){
+    r |= Sds::Curve::lL_BIT;
   }
-  if (yo != CGAL::SMALLER) {
-    r |= T_BIT;
-  } 
   if (yo != CGAL::LARGER) {
-    r |= B_BIT;
+    r |= Sds::Curve::lT_BIT;
+  } 
+  if (yo != CGAL::SMALLER) {
+    r |= Sds::Curve::lB_BIT;
   }
   return r;
 }
@@ -161,20 +170,20 @@ int Slice::sphere_location(int locate_point, int s) const {
 
 
 
-bool Slice::behind_arc(T::Event_point_3 ep, int ind, Sds::Curve arc,
+bool Slice::behind_arc(T::Event_point_3 ep, T::Key ind, Sds::Curve arc,
 		       int location) const{
   CGAL_assertion(arc.is_compatible_location(location));
   int C=arc.is_weakly_incompatible(location);
   if (C != -1) {
     NT v[2];
-    v[C]= spheres_[arc.index()].center()[C];
-    v[1-C]= spheres_[ind].center()[1-C];
+    v[C]= center_c(arc.key(), C);
+    v[1-C]= center_c(ind, 1-C);
     T::Line_3 l(T::Point_3(v[0], v[1], 0), 
 		T::Vector_3(0,0,1));
-    T::Event_point_3 fp(spheres_[arc.index()],
+    T::Event_point_3 fp(sphere(arc.key()),
 			l);
     if (!fp.is_valid()) return false;
-    T::Event_point_3 bp(spheres_[arc.index()],
+    T::Event_point_3 bp(sphere(arc.key()),
 			l.opposite());
     if (fp <= ep && bp >=ep) {
       return true;
@@ -183,14 +192,13 @@ bool Slice::behind_arc(T::Event_point_3 ep, int ind, Sds::Curve arc,
 }
 
 
-void Slice::point_sphere_orientation(int front_point,
-				     int sphere,
+void Slice::point_sphere_orientation(T::Key front_point,
+				     T::Key sphere,
 				     std::vector<int> &locations
 				     /*,
 				       std::vector<Sds::Curve> &edges*/) const {
-  typedef T::Sphere_location SL;
-  if (locations[sphere]==0){
-    locations[sphere]=sphere_location(front_point, sphere);
+  if (locations[sphere.input_index()]==0){
+    locations[sphere.input_index()]=sphere_location(front_point, sphere);
     //DPRINT(std::cout << "For sphere " << sphere << " got " << SL::decode(locations[sphere]) << std::endl);
   }
 }

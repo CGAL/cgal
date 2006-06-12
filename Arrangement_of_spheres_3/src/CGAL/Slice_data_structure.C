@@ -49,14 +49,14 @@ void Slice_data_structure::audit_vertex(Vertex_const_handle v) const {
       
     //CGAL_assertion(curves.size() ==4);
     std::vector<bool> dirs(4, false);
-    std::map<int,int> arcs;
-    std::map<int,std::pair<int,bool> > rules;
+    std::map<Curve::Key,int> arcs;
+    std::map<Curve::Key,std::pair<int,bool> > rules;
     std::vector<Curve> ordered_arcs;
     for (unsigned int i=0; i< curves.size(); ++i){
       Curve c= curves[i];
       Curve nc= curves[(i+1)%curves.size()];
-      int ind= c.index();
-      int nind= nc.index();
+      Curve::Key ind= c.key();
+      Curve::Key nind= nc.key();
       CGAL_assertion(c.is_rule() || nc.is_rule() || ind != nind);
       if (c.is_rule()){
 	int bin=0;
@@ -82,7 +82,7 @@ void Slice_data_structure::audit_vertex(Vertex_const_handle v) const {
       }
     }
       
-    for (std::map<int,int>::const_iterator it= arcs.begin();
+    for (std::map<Curve::Key,int>::const_iterator it= arcs.begin();
 	 it != arcs.end(); ++it){
       CGAL_assertion(it->second ==2);
     }
@@ -92,8 +92,8 @@ void Slice_data_structure::audit_vertex(Vertex_const_handle v) const {
     CGAL_assertion(ordered_arcs.size()%2==0);
     int half= ordered_arcs.size()/2;
     for (unsigned int i=0; i< ordered_arcs.size(); ++i){
-      CGAL_assertion(ordered_arcs[i].index() 
-		     == ordered_arcs[(i+half)%ordered_arcs.size()].index());
+      CGAL_assertion(ordered_arcs[i].key() 
+		     == ordered_arcs[(i+half)%ordered_arcs.size()].key());
     }
   }
 }
@@ -121,21 +121,21 @@ void Slice_data_structure::audit() const {
     if (it->next() == HDS::Halfedge_handle()) {
       std::cerr<< "Invalid next for ";
       write(it, std::cerr) << std::endl;
-      errors_.push_back(it->curve().index());
+      errors_.push_back(it->curve());
     }
     if (it->prev() == HDS::Halfedge_handle()) {
       std::cerr<< "Invalid prev for ";
       write(it, std::cerr) << std::endl;
-      errors_.push_back(it->curve().index());
+      errors_.push_back(it->curve());
     } else if (it != it->prev()->next()){
       std::cerr<< "Invalid prev/next for ";
       write(it, std::cerr) << std::endl;
-      errors_.push_back(it->curve().index());
+      errors_.push_back(it->curve());
     }
     if (reachable.find(h) == reachable.end()){
       std::cerr << "Non-vertex reachable halfedge ";
       write(it, std::cerr) << std::endl;
-      errors_.push_back(it->curve().index());
+      errors_.push_back(it->curve());
     }
       
     CGAL_assertion(it->curve().is_valid());

@@ -192,7 +192,7 @@ public:
   mutable HDS hds_;
   HDSd hdsd_;
   Face_handle inf_;
-  mutable std::vector<int> errors_;
+  mutable std::vector<Curve> errors_;
 
   // for construction
   std::map<Edge, Halfedge_handle> unmatched_hedges_;
