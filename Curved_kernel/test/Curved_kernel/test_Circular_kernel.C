@@ -24,6 +24,8 @@ int main()
   _test_circle_bbox(ck1);
   std::cout << "Testing circular_arc_bboxes..." << std::endl;
   _test_circular_arc_bbox(ck1);
+  std::cout << "Testing circular_arc_point_bboxes..." << std::endl;
+  _test_circular_arc_point_bbox(ck1);
   std::cout << "Testing has_on..." << std::endl;
   _test_has_on(ck1);
 /*
