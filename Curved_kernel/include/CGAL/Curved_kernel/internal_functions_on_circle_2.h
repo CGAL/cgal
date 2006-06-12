@@ -95,6 +95,14 @@ namespace CircularFunctors {
     return (AK().sign_at_object()(equation,p.coordinates()) == ZERO);
   }
 
+  template < class CK >
+  inline bool
+  non_oriented_equal(const typename CK::Circle_2 & c1,
+	             const typename CK::Circle_2 & c2) {
+    return (c1.squared_radius() == c2.squared_radius()) &&
+           (c1.center() == c2.center());
+  }
+
   template< class CK, class OutputIterator>
   OutputIterator
   intersect_2( const typename CK::Circle_2 & c1,
