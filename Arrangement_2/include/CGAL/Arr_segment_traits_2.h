@@ -38,9 +38,15 @@ template <class Kernel_> class Arr_segment_2;
 /*!
  * \class A traits class for maintaining an arrangement of segments, aoviding
  * cascading of computations as much as possible.
+ *
+ * The class is derived from the parameterized kernel to extend the traits
+ * with all the types and operations supported by the kernel. This makes it
+ * possible to use the traits class for data structures that extends the
+ * Arrangement_2 type and require objects and operations supported by the
+ * kernel, but not defined in this derived class.
  */
 template <class Kernel_>
-class Arr_segment_traits_2
+class Arr_segment_traits_2 : public Kernel_
 {
   friend class Arr_segment_2<Kernel_>;
 
