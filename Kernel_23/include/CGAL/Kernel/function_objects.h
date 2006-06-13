@@ -50,7 +50,7 @@ namespace CommonKernelFunctors {
     Collinear_2 c;
     Collinear_are_ordered_along_line_2 cao;
   public:
-    typedef typename K::Bool        result_type;
+    typedef typename K::Bool_type   result_type;
     typedef Arity_tag< 3 >          Arity;
 
     Are_ordered_along_line_2() {}
@@ -75,7 +75,7 @@ namespace CommonKernelFunctors {
     Collinear_3 c;
     Collinear_are_ordered_along_line_3 cao;
   public:
-    typedef typename K::Bool        result_type;
+    typedef typename K::Bool_type   result_type;
     typedef Arity_tag< 3 >          Arity;
 
     Are_ordered_along_line_3() {}
@@ -100,7 +100,7 @@ namespace CommonKernelFunctors {
     Collinear_2 c;
     Collinear_are_strictly_ordered_along_line_2 cao;
   public:
-    typedef typename K::Bool        result_type;
+    typedef typename K::Bool_type   result_type;
     typedef Arity_tag< 3 >          Arity;
 
     Are_strictly_ordered_along_line_2() {}
@@ -126,7 +126,7 @@ namespace CommonKernelFunctors {
     Collinear_3 c;
     Collinear_are_strictly_ordered_along_line_3 cao;
   public:
-    typedef typename K::Bool        result_type;
+    typedef typename K::Bool_type   result_type;
     typedef Arity_tag< 3 >          Arity;
 
     Are_strictly_ordered_along_line_3() {}
@@ -146,7 +146,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Object_2  Object_2;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 2 >        Arity;
 
     template <class T>
@@ -158,10 +158,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Assign_3
   {
-    typedef typename K::Object_3 Object_3;
+    typedef typename K::Object_3        Object_3;
   public:
-    typedef typename K::Bool     result_type;
-    typedef Arity_tag< 2 >       Arity;
+    typedef typename K::Bool_type       result_type;
+    typedef Arity_tag< 2 >              Arity;
 
     template <class T>
     result_type
@@ -1395,7 +1395,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Orientation_3 Orientation_3;
     Orientation_3 o;
   public:
-    typedef typename K::Bool          result_type;
+    typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 4 >            Arity;
 
     Coplanar_3() {}
@@ -1414,7 +1414,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Direction_2  Direction_2;
   public:
-    typedef typename K::Bool         result_type;
+    typedef typename K::Bool_type    result_type;
     typedef Arity_tag< 3 >           Arity;
 
     result_type
@@ -1432,7 +1432,7 @@ namespace CommonKernelFunctors {
   class Do_intersect_2
   {
   public:
-    typedef typename K::Bool        result_type;
+    typedef typename K::Bool_type   result_type;
     typedef Arity_tag< 2 >          Arity;
 
     // There are 36 combinaisons, so I use a template.
@@ -1446,7 +1446,7 @@ namespace CommonKernelFunctors {
   class Do_intersect_3
   {
   public:
-    typedef typename K::Bool        result_type;
+    typedef typename K::Bool_type   result_type;
     typedef Arity_tag< 2 >          Arity;
 
     // There are x combinaisons, so I use a template.
@@ -1470,7 +1470,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2      Circle_2;
 
   public:
-    typedef typename K::Bool          result_type;
+    typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 2 >            Arity;
 
     result_type
@@ -1548,7 +1548,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3       Point_3;
 
   public:
-    typedef typename K::Bool          result_type;
+    typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 2 >            Arity;
 
     // template to replace n different versions
@@ -1573,7 +1573,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1598,7 +1598,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Plane_3          Plane_3;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1622,7 +1622,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1646,7 +1646,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1670,7 +1670,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1694,7 +1694,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1718,7 +1718,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1742,7 +1742,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1766,7 +1766,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1792,7 +1792,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1816,7 +1816,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Ray_2            Ray_2;
     typedef typename K::Segment_2        Segment_2;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -1877,7 +1877,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2         Segment_2;
     typedef typename K::Triangle_2        Triangle_2;
   public:
-    typedef typename K::Bool              result_type;
+    typedef typename K::Bool_type         result_type;
     typedef Arity_tag< 1 >                Arity;
 
     result_type
@@ -1917,7 +1917,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3        Triangle_3;
     typedef typename K::Tetrahedron_3     Tetrahedron_3;
   public:
-    typedef typename K::Bool              result_type;
+    typedef typename K::Bool_type         result_type;
     typedef Arity_tag< 1 >                Arity;
 
     result_type
@@ -1960,7 +1960,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2     Ray_2;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 1 >        Arity;
 
     result_type
@@ -1983,7 +1983,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2     Ray_2;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 1 >        Arity;
 
     result_type
@@ -2006,7 +2006,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Orientation_2  Orientation_2;
     Orientation_2 o;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 3 >             Arity;
 
     Left_turn_2() {}
@@ -2027,7 +2027,7 @@ namespace CommonKernelFunctors {
     Orientation_2 o;
     Collinear_are_ordered_along_line_2 co;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 3 >             Arity;
 
     Less_rotate_ccw_2() {}
