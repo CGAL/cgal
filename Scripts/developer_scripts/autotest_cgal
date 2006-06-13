@@ -336,9 +336,11 @@ copy_old_stuff()
     cd ${CGAL_DIR}
     ./install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
     
-    # update symbolic link
+    # update symbolic links
     rm ${OLD_CGAL_DIR}
     ln -s `basename ${CGAL_DIR}` ${OLD_CGAL_DIR}
+    rm ${CURRENT_CGAL_DIR}
+    ln -s `basename ${CGAL_DIR}` ${CURRENT_CGAL_DIR}
 
     log_done ${ACTUAL_LOGFILE}
 }
@@ -439,6 +441,8 @@ fi
     fi
   fi
 
+  CGAL_CURRENT_RELEASE_ID=`echo $CGAL_RELEASE_ID | sed -e 's/-I.*//'`-I
+
   # dir for the actual release
   CGAL_DIR=${CGAL_ROOT}/${CGAL_RELEASE_ID}
 
@@ -446,6 +450,7 @@ fi
   # HAS TO exist !
   # (used to copy config/install files and evt. gmp stuff)
   OLD_CGAL_DIR=${CGAL_ROOT}/CGAL-I
+  CURRENT_CGAL_DIR=${CGAL_ROOT}/${CGAL_CURRENT_RELEASE_ID}
 
   # you will guess it :)
   CGAL_INCL_DIR=${CGAL_DIR}/include
