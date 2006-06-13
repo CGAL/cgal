@@ -233,7 +233,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_2 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -284,7 +284,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_3 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -366,7 +366,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_2 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -418,7 +418,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_3 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -453,7 +453,7 @@ namespace HomogeneousKernelFunctors {
     Construct_point_on_2 cp;
     Compare_xy_2 cxy;
   public:
-    typedef typename K::Bool                  result_type;
+    typedef typename K::Bool_type             result_type;
     typedef Arity_tag< 2 >                    Arity;
 
     Collinear_has_on_2() {}
@@ -483,7 +483,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Orientation_2  Orientation_2;
     Orientation_2 o;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 3 >             Arity;
 
     Collinear_2() {}
@@ -2945,7 +2945,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2961,7 +2961,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2974,7 +2974,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2987,7 +2987,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -3000,7 +3000,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -3013,7 +3013,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -3032,7 +3032,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -3096,7 +3096,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2   Point_2;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 3 >        Arity;
 
     result_type
@@ -3149,7 +3149,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3   Point_3;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 3 >        Arity;
 
     result_type
@@ -3188,7 +3188,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2   Point_2;
     typedef typename K::Line_2    Line_2;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 4 >        Arity;
 
     result_type
@@ -3248,7 +3248,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Plane_3            Plane_3;
     typedef typename K::Construct_plane_3  Construct_plane_3;
   public:
-    typedef typename K::Bool               result_type;
+    typedef typename K::Bool_type          result_type;
     typedef Arity_tag< 3 >                 Arity;
 
     result_type
@@ -3290,7 +3290,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Compare_xyz_3  Compare_xyz_3;
     Compare_xyz_3 c;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     Less_xyz_3() {}
@@ -3308,7 +3308,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Compare_xy_2  Compare_xy_2;
     Compare_xy_2 c;
   public:
-    typedef typename K::Bool          result_type;
+    typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 2 >            Arity;
 
     Less_xy_2() {}
@@ -3326,7 +3326,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Compare_xy_3  Compare_xy_3;
     Compare_xy_3 c;
   public:
-    typedef typename K::Bool          result_type;
+    typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 2 >            Arity;
 
     Less_xy_3() {}
@@ -3340,10 +3340,10 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Less_x_2
   {
-    typedef typename K::Point_2  Point_2;
+    typedef typename K::Point_2         Point_2;
   public:
-    typedef typename K::Bool     result_type;
-    typedef Arity_tag< 2 >       Arity;
+    typedef typename K::Bool_type       result_type;
+    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3353,10 +3353,10 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Less_x_3
   {
-    typedef typename K::Point_3  Point_3;
+    typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool     result_type;
-    typedef Arity_tag< 2 >       Arity;
+    typedef typename K::Bool_type       result_type;
+    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3368,7 +3368,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2       Point_2;
   public:
-    typedef typename K::Bool          result_type;
+    typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 2 >            Arity;
 
     result_type
@@ -3402,10 +3402,10 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Less_y_2
   {
-    typedef typename K::Point_2  Point_2;
+    typedef typename K::Point_2         Point_2;
   public:
-    typedef typename K::Bool     result_type;
-    typedef Arity_tag< 2 >       Arity;
+    typedef typename K::Bool_type       result_type;
+    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3415,10 +3415,10 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Less_y_3
   {
-    typedef typename K::Point_3  Point_3;
+    typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool     result_type;
-    typedef Arity_tag< 2 >       Arity;
+    typedef typename K::Bool_type       result_type;
+    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3428,10 +3428,10 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Less_z_3
   {
-    typedef typename K::Point_3  Point_3;
+    typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool     result_type;
-    typedef Arity_tag< 2 >       Arity;
+    typedef typename K::Bool_type       result_type;
+    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
