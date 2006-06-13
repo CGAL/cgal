@@ -25,12 +25,19 @@
 # individuals.  For exact contribution history, see the revision
 # history and logs, available at http://subversion.tigris.org/.
 # ====================================================================
+#
+# Changes for CGAL project:
+# - Email content modified to be closer to CVS commit email format
+# - Email sent in both HTML + text
 
-# InriaGForge addition?
+use Mail::Sender;
+
+# Keep beginning of $data_ref up to $max_size size
 sub cut_array
 {
     my $data_ref = shift @_;
     my $max_size = shift @_;
+
     my @new_data = ();
     my $line;
     my $total_size = 0;
@@ -38,11 +45,34 @@ sub cut_array
     for $line (@{$data_ref}) {
         $total_size += length ($line);
         if ($total_size > $max_size) {
-            push @new_data, "...\n";
+            push @new_data, "\n(snip)\n";
             return @new_data;
         }
         push @new_data, $line;
     }
+    return @new_data;
+}
+
+# Encode raw text for HTML
+sub html_encode
+{
+    my $data_ref = shift @_;
+
+    my @new_data = ();
+    my $line;
+
+    for $line (@{$data_ref}) {
+        # Encode special characters
+        $line =~ s/&/&amp;/g;
+        $line =~ s/</&lt;/g;
+        $line =~ s/>/&gt;/g;
+
+        # Encode new line
+        $line =~ s/\n/<br>\n/;
+
+        push @new_data, $line;
+    }
+
     return @new_data;
 }
 
@@ -61,9 +91,6 @@ use Carp;
 ######################################################################
 # Configuration section.
 
-# Sendmail path.
-my $sendmail = "/usr/sbin/sendmail";
-
 # Svnlook path.
 my $svnlook = "/usr/bin/svnlook";
 
@@ -73,18 +100,15 @@ my $svnlook = "/usr/bin/svnlook";
 # $no_diff_deleted to 1.
 my $no_diff_deleted = 1;
 
-# ViewCVS URL on InriaGForge
+# ViewCVS URL (specific to InriaGForge)
 my $viewcvs_url = "https://gforge.inria.fr/plugins/scmsvn/viewcvs.php";
-
-# Project name
-my $project_name = "cgal";
 
 # Since the path to svnlook depends upon the local installation
 # preferences, check that the required programs exist to insure that
 # the administrator has set up the script properly.
 {
   my $ok = 1;
-  foreach my $program ($sendmail, $svnlook)
+  foreach my $program ($svnlook)
     {
       if (-e $program)
         {
@@ -359,50 +383,127 @@ my $dirlist = join(' ', @dirschanged);
 ######################################################################
 # Assembly of log message.
 
-# Put together the body of the log message.
+# Get project name (specific to InriaGForge)
+my $project_name = $repos;
+$project_name =~ s/\/svn\///;
+
+# Put together the body of the log message AS TEXT
 my @body;
-my $prev_rev = $rev - 1;
-push(@body, "New Revision: $rev\n");
-push(@body, "Author: $author\n");
-push(@body, "Date: $date\n");
-push(@body, "\n");
-push(@body, "Log message:\n");
-push(@body, @log);
-push(@body, "\n");
-push(@body, "\n");
-#
-push(@body, "Revision in ViewCVS: $viewcvs_url?rev=$rev&root=$project_name&view=rev\n");
-push(@body, "\n");
-push(@body, "\n");
-#
-if (@adds)
-  {
-    @adds = sort @adds;
-    push(@body, "Added files:\n");
+{
+    my $prev_rev = $rev - 1;
+
+    # Write summary
+    push(@body, "*Summary*\n");
     push(@body, "\n");
-    push(@body, map { /\/$/ ? "$_\n" : "$_\n$viewcvs_url/$_?root=$project_name&rev=$rev&view=markup\n" } @adds);
+    push(@body, "Revision in ViewCVS <$viewcvs_url?rev=$rev&root=$project_name&view=rev>\n");
     push(@body, "\n");
-  }
-if (@dels)
-  {
-    @dels = sort @dels;
-    push(@body, "Removed files:\n");
+    push(@body, "New Revision: $rev\n");
+    push(@body, "Author: $author\n");
+    push(@body, "Date: $date\n");
     push(@body, "\n");
-    push(@body, map { "$_\n" } @dels);
+    push(@body, "Log message:\n");
+    push(@body, @log);
     push(@body, "\n");
-  }
-if (@mods)
-  {
-    @mods = sort @mods;
-    push(@body, "Modified files:\n");
+
+    # Added files list
+    if (@adds)
+    {
+        @adds = sort @adds;
+        push(@body, "*Added files*\n");
+        push(@body, "\n");
+        push(@body, map { /\/$/ ? "$_\n" : "$_ <$viewcvs_url/$_?root=$project_name&rev=$rev&view=markup>\n" } @adds);
+        push(@body, "\n");
+    }
+
+    # Deleted files list
+    if (@dels)
+    {
+        @dels = sort @dels;
+        push(@body, "*Removed files*\n");
+        push(@body, "\n");
+        push(@body, map { "$_\n" } @dels);
+        push(@body, "\n");
+    }
+
+    # Modified files list
+    if (@mods)
+    {
+        @mods = sort @mods;
+        push(@body, "*Modified files*\n");
+        push(@body, "\n");
+        push(@body, map { "$_ <$viewcvs_url/$_?root=$project_name&rev=$rev&r1=$prev_rev&r2=$rev>\n" } @mods);
+        push(@body, "\n");
+    }
     push(@body, "\n");
-    push(@body, map { "$_\n$viewcvs_url/$_?root=$project_name&rev=$rev&r1=$prev_rev&r2=$rev\n" } @mods);
+
+    # Write svn log
+    push(@body, "*Differences as text*\n");
     push(@body, "\n");
-  }
-push(@body, "\n");
-push(@body, "Differences as text:\n");
-push(@body, "\n");
-push(@body, map { /[\r\n]+$/ ? $_ : "$_\n" } @difflines);
+    @difflines = map { /[\r\n]+$/ ? $_ : "$_\n" } @difflines;
+    push(@body, @difflines);
+
+    # Truncate very long body
+    @body = cut_array(\@body, 30000);
+
+    # Add empty lines because Mailman will concatenate an "HTML attachment was scrubbed" message
+    push(@body, "\n");
+    push(@body, "\n");
+}
+
+# Put together the body of the log message AS HTML
+my @body_html;
+{
+    my $prev_rev = $rev - 1;
+
+    # Write HTML header
+    push(@body_html, "<HTML>\n<HEAD>\n</HEAD>\n<BODY>\n");
+
+    # Write summary
+    push(@body_html, "<H3>Summary</H3>\n");
+    push(@body_html, "<a href=\"$viewcvs_url?rev=$rev&amp;root=$project_name&amp;view=rev\">Revision in ViewCVS</a><br>\n");
+    push(@body_html, "<br>\n");
+    push(@body_html, "New Revision: $rev<br>\n");
+    push(@body_html, "Author: $author<br>\n");
+    push(@body_html, "Date: $date<br>\n");
+    push(@body_html, "<br>\n");
+    push(@body_html, "Log message:<br>\n");
+    push(@body_html, html_encode(\@log));
+
+    # Added files list
+    if (@adds)
+    {
+        @adds = sort @adds;
+        push(@body_html, "<H3>Added files</H3>\n");
+        push(@body_html, map { /\/$/ ? "$_\n" : "<a href=\"$viewcvs_url/$_?root=$project_name&amp;rev=$rev&amp;view=markup\">$_</a><br>\n" } @adds);
+    }
+
+    # Deleted files list
+    if (@dels)
+    {
+        @dels = sort @dels;
+        push(@body_html, "<H3>Removed files</H3>\n");
+        push(@body_html, map { "$_<br>\n" } @dels);
+    }
+
+    # Modified files list
+    if (@mods)
+    {
+        @mods = sort @mods;
+        push(@body_html, "<H3>Modified files</H3>\n");
+        push(@body_html, map { "<a href=\"$viewcvs_url/$_?root=$project_name&amp;rev=$rev&amp;r1=$prev_rev&amp;r2=$rev\">$_</a><br>\n" } @mods);
+    }
+
+    # Write svn log
+    push(@body_html, "<H3>Differences as text</H3>\n");
+    @difflines = map { /[\r\n]+$/ ? $_ : "$_\n" } @difflines;
+    push(@body_html, html_encode(\@difflines));
+
+    # Truncate very long body
+    @body_html = cut_array(\@body_html, 30000);
+
+    # Write HTML footer
+    push(@body_html, "</BODY>\n</HTML>\n");
+}
 
 # Go through each project and see if there are any matches for this
 # project.  If so, send the log out.
@@ -454,11 +555,14 @@ foreach my $project (@project_settings_list)
         $mail_from = "$mail_from\@$hostname";
       }
 
-    my @head;
-    push(@head, "To: $to\n");
-    push(@head, "From: $mail_from\n");
-    push(@head, "Subject: $subject\n");
-    push(@head, "Reply-to: $reply_to\n") if $reply_to;
+    my $header;
+    #$header->{'debug'} = "/svn/cgal/hooks/sendmail.log";
+    $header->{'to'} = $to;
+    $header->{'from'} = $mail_from;
+    $header->{'subject'} = $subject;
+    $header->{'replyto'} = $reply_to if $reply_to;
+    $header->{'smtp'} = 'localhost';
+    $header->{'multipart'} = 'alternative';
 
     ### Below, we set the content-type etc, but see these comments
     ### from Greg Stein on why this is not a full solution.
@@ -485,25 +589,27 @@ foreach my $project (@project_settings_list)
     #
     # Basically: adding/tweaking the content-type is nice, but don't
     # think that is the proper solution.
-    push(@head, "Content-Type: text/plain; charset=UTF-8\n");
-    push(@head, "Content-Transfer-Encoding: 8bit\n");
 
-    push(@head, "\n");
-
-    if ($sendmail =~ /\w/ and @email_addresses)
+    # Send mail via Mail::Sender
+    if (@email_addresses)
       {
-        # Open a pipe to sendmail.
-        my $command = "$sendmail $userlist";
-        if (open(SENDMAIL, "| $command"))
-          {
-            print SENDMAIL @head, cut_array(\@body, 30000);
-            close SENDMAIL
-              or warn "$0: error in closing `$command' for writing: $!\n";
-          }
-        else
-          {
-            warn "$0: cannot open `| $command' for writing: $!\n";
-          }
+        my $mail;
+	# Header
+	$mail = new Mail::Sender($header) or die "$0: cannot open mail connection: $!\n";
+        $mail->OpenMultipart($header) or die "$0: cannot open mail connection: $!\n";
+        # Mail as text
+        $mail->Part({ctype => 'text/plain; charset=UTF-8',
+                    encoding => "quoted-printable",
+                    disposition => 'NONE'
+                    }) or warn "$0: cannot send mail: $!\n";
+        $mail->SendEnc(@body) or warn "$0: cannot send mail: $!\n";
+        # Mail as HTML
+        $mail->Part({ctype => 'text/html; charset=UTF-8',
+                    encoding => "quoted-printable",
+                    disposition => 'NONE'
+                    }) or warn "$0: cannot send mail: $!\n";
+        $mail->SendEnc(@body_html) or warn "$0: cannot send mail: $!\n";
+        $mail->Close() or warn "$0: cannot close mail connection: $!\n";
       }
 
     # Dump the output to logfile (if its name is not empty).
@@ -511,7 +617,7 @@ foreach my $project (@project_settings_list)
       {
         if (open(LOGFILE, ">> $log_file"))
           {
-            print LOGFILE @head, @body;
+            print LOGFILE $header, @body;
             close LOGFILE
               or warn "$0: error in closing `$log_file' for appending: $!\n";
           }
@@ -549,11 +655,15 @@ sub usage
       "To support a single project conveniently, the script initializes\n",
       "itself with an implicit -m . rule that matches any modifications\n",
       "to the repository.  Therefore, to use the script for a single\n",
-      "project repository, just use the other comand line options and\n",
+      "project repository, just use the other command line options and\n",
       "a list of email addresses on the command line.  If you do not want\n",
       "a project that matches the entire repository, then use a -m with a\n",
       "regular expression before any other command line options or email\n",
-      "addresses.\n";
+      "addresses.\n",
+      "\n",
+      "Changes for CGAL project:\n",
+      "- Email content modified to be closer to CVS commit email format\n",
+      "- Email sent in both HTML + text\n";
 }
 
 # Return a new hash data structure for a new empty project that
