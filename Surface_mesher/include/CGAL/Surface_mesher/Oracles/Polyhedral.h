@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,14 +15,13 @@
 // $Id$
 //
 //
-// Author(s)     : Steve OUDOT
+// Author(s)     : Steve OUDOT, Laurent Rineau
 
 #ifndef _POLYHEDRAL_H
 #define _POLYHEDRAL_H
 
 
-#include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Data_structure_using_octree_3.h>
+#include <CGAL/Polyhedral_surface_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Surface_mesher/Oracles/Null_oracle_visitor.h>
 
@@ -39,23 +38,26 @@ public:
 
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
-  typedef typename Geom_traits::Segment_3 Segment;
-  typedef typename Geom_traits::Ray_3 Ray;
-  typedef typename Geom_traits::Line_3 Line;
-  typedef typename Geom_traits::Triangle_3 Triangle;
+  typedef typename Geom_traits::Segment_3 Segment_3;
+  typedef typename Geom_traits::Ray_3 Ray_3;
+  typedef typename Geom_traits::Line_3 Line_3;
+  typedef typename Geom_traits::Triangle_3 Triangle_3;
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+
+  typedef Polyhedral<Tr, Visitor> Self;
+
+  typedef Data_structure_using_octree_3<Geom_traits> Subfacets_octree;
+  typedef Subfacets_octree Surface_3;
 
   // Private members
 
 private:
-  CGAL::Data_structure_using_octree_3<Geom_traits>  data_struct;
   Tr tr;
   Visitor visitor;
 
 private: // private types
   typedef typename Tr::Cell_handle Cell_handle;
-
 
 public:
 
@@ -63,66 +65,104 @@ public:
 
   // Default constructor
   Polyhedral()
-    {}
+  {}
 
   // Surface constructor
-  Polyhedral(std::ifstream& is,
+  Polyhedral(Tr& tr,
              Visitor visitor_ = Visitor() )
-    : visitor(visitor_)
+    : tr(tr), visitor(visitor_)
+  {
+//       is.seekg(0,std::ios::beg);
+//       tr.clear();
+//       // The data structure for testing intersections is set
+//       std::cerr << "Creating data structure for intersections detection... ";
+//       data_struct.input(is, CGAL::Insert_iterator<Tr>(tr));
+//       std::cerr << "done\n\n";
+  }
+
+//   Finite_vertices_iterator finite_vertices_begin()
+//   {
+//     return tr.finite_vertices_begin();
+//   }
+
+
+//   Finite_vertices_iterator finite_vertices_end()
+//   {
+//     return tr.finite_vertices_end();
+//   }
+
+  class Intersect_3;
+
+  friend class Intersect_3;
+
+  class Intersect_3 {
+    Self& self;
+  public:
+    Intersect_3(Self& self) : self(self)
     {
-      is.seekg(0,std::ios::beg);
-      tr.clear();
-      // The data structure for testing intersections is set
-      std::cerr << "Creating data structure for intersections detection... ";
-      data_struct.input(is, CGAL::Insert_iterator<Tr>(tr));
-      std::cerr << "done\n\n";
     }
 
-  Finite_vertices_iterator finite_vertices_begin()
-  {
-    return tr.finite_vertices_begin();
-  }
-
-
-  Finite_vertices_iterator finite_vertices_end()
-  {
-    return tr.finite_vertices_end();
-  }
-
-
-  // @todo random_points is ad hoc for the implicit oracle only
-  Points random_points (int n) {
-    Points res;
-
-    for (Finite_vertices_iterator vit = finite_vertices_begin();
-	 vit != finite_vertices_end() && n > 0;
-	 ++vit, --n)
-      res.push_back (vit->point());
-
-    return res;
-  }
-
-  bool is_in_volume(const Point& p)
-  {
-    Cell_handle c = tr.locate(p);
-    return c->is_in_domain();
-  }
-
-
-  // Basic intersection function for segments/rays/lines with the polyhedron
-  template <class Elt>
-  CGAL::Object intersect_with_surface (Elt e) {
-    typedef CGAL::Data_structure_using_octree_3<Geom_traits> Octree;
-    for ( typename Octree::Constraint_map_iterator cit = data_struct.c_m.begin();
-	  cit != data_struct.c_m.end(); ++cit ) {
-      if (cit->second->does_intersect (e))
-	return cit->second->intersection (e);
+    Object operator()(Surface_3& subfacets_octree, Segment_3 s) const
+    {
+      return self.intersect_segment_surface(subfacets_octree, s);
     }
+    
+    Object operator()(Surface_3& subfacets_octree, const Ray_3& r) const {
+      return self.intersect_ray_surface(subfacets_octree, r);
+    }
+      
+    Object operator()(Surface_3& subfacets_octree, const Line_3& l) const {
+      return self.intersect_line_surface(subfacets_octree, l);
+    }
+  };
 
-    return CGAL::Object();
+  Intersect_3 intersect_3_object()
+  {
+    return Intersect_3(*this);
   }
 
-  CGAL::Object intersect_segment_surface(Segment s)
+  class Construct_initial_points
+  {
+  public:
+    template <typename OutputIteratorPoints>
+    OutputIteratorPoints operator() (const Surface_3& subfacets_octree, 
+                                     OutputIteratorPoints out, 
+                                     int n = 20) // WARNING: why 20?    
+    {
+      for (typename Surface_3::Finite_vertices_iterator vit =
+             subfacets_octree.finite_vertices_begin();
+           vit != subfacets_octree.finite_vertices_end() && n > 0;
+           ++vit, --n)
+        *out++= *vit;
+      
+      return out;
+    }
+  };
+
+  Construct_initial_points construct_initial_points_object() 
+  {
+    return Construct_initial_points();
+  }
+
+  bool is_in_volume(Surface_3& subfacets_octree, const Point& p)
+  {
+    return subfacets_octree.number_of_intersection(p) & 1;
+  }
+
+//   // Basic intersection function for segments/rays/lines with the polyhedron
+//   template <class Elt>
+//   CGAL::Object intersect_with_surface (Octree data_struct, Elt e) {
+//     typedef CGAL::Data_structure_using_octree_3<Geom_traits> Octree;
+//     for ( typename Octree::Constraint_map_iterator cit = data_struct.c_m.begin();
+// 	  cit != data_struct.c_m.end(); ++cit ) {
+//       if (cit->second->does_intersect (e))
+// 	return cit->second->intersection (e);
+//     }
+
+//     return CGAL::Object();
+//   }
+
+  CGAL::Object intersect_segment_surface(Subfacets_octree& data_struct, Segment_3 s)
     {
       // debug: test if segment is degenerate
       // (can happen, because of rounding in circumcenter computations)
@@ -161,7 +201,7 @@ public:
 /*       return data_struct.intersect (s.vertex(0), s.vertex(1));  // Marie */
     }
 
-  CGAL::Object intersect_ray_surface(Ray &r)
+  CGAL::Object intersect_ray_surface(Subfacets_octree& data_struct, Ray_3 &r)
     {
       // debug: for detecting whether Marie's code works
       // (we compare with our basic intersection function)
@@ -196,7 +236,7 @@ public:
     }
 
 
-  CGAL::Object intersect_line_surface(Line &)
+  CGAL::Object intersect_line_surface(Subfacets_octree& data_struct, Line_3 &)
     {
       CGAL_assertion(false);
       return CGAL::Object();
