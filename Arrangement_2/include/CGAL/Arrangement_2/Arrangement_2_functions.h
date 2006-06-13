@@ -4076,6 +4076,11 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
     // Delete the curve associated with the edge to be removed.
     _delete_curve (he1->curve());
 
+    // If the face f2 we have just merged with f1 is unbounded, then the merged
+    // face is also unbounded.
+    if (f2->is_unbounded())
+      f1->set_unbounded(true);
+
     // Delete the face f2.
     dcel.delete_face (f2);
       
@@ -4180,6 +4185,11 @@ Arrangement_2<Traits,Dcel>::_remove_edge (DHalfedge *e,
 
   // Delete the curve associated with the edge to be removed.
   _delete_curve (he1->curve());
+
+  // If the face f2 we have just merged with f1 is unbounded, then the merged
+  // face is also unbounded.
+  if (f2->is_unbounded())
+    f1->set_unbounded(true);
 
   // Delete the face f2.
   dcel.delete_face (f2);

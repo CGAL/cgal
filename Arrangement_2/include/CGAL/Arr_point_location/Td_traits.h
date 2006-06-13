@@ -193,8 +193,6 @@ private:
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Arr_point_location/Td_traits_functions.h>
-#endif
 
 #endif
