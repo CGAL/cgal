@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
 	    << "n : " << monge_rep.n() << std::endl
 	    << "cond_nb : " << monge_info.cond_nb() << std::endl 
 	    << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
-	    << " " << monge_info.pca_eigen_vals()[2] 
-	    << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
+	    << " " << monge_info.pca_eigen_vals()[1 ] 
+	    << " " << monge_info.pca_eigen_vals()[2]  << std::endl 
 	    << "pca_eigen_vecs : " << std::endl 
 	    << monge_info.pca_eigen_vecs()[0] << std::endl 
 	    << monge_info.pca_eigen_vecs()[1] << std::endl 
@@ -109,8 +109,8 @@ int main(int argc, char *argv[])
 	    << "n : " << monge_rep.n() << std::endl
 	    << "cond_nb : " << monge_info.cond_nb() << std::endl 
 	    << "pca_eigen_vals " << monge_info.pca_eigen_vals()[0] 
-	    << " " << monge_info.pca_eigen_vals()[2] 
-	    << " " << monge_info.pca_eigen_vals()[3]  << std::endl 
+	    << " " << monge_info.pca_eigen_vals()[1] 
+	    << " " << monge_info.pca_eigen_vals()[2]  << std::endl 
 	    << "pca_eigen_vecs : " << std::endl 
 	    << monge_info.pca_eigen_vecs()[0] << std::endl 
 	    << monge_info.pca_eigen_vecs()[1] << std::endl 
