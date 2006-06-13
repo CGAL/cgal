@@ -3,15 +3,11 @@
 //
 // This file is part of an example program for CGAL.  This example
 // program may be used, distributed and modified without limitation.
-//
 
+#ifndef CGAL_CH_TIMING_2_IMPL_H
+#define CGAL_CH_TIMING_2_IMPL_H
 
-#ifndef CGAL_CH_TIMING_2_C
-#define CGAL_CH_TIMING_2_C
-
-#ifndef CGAL_CH_TIMING_2_H
 #include <CGAL/ch_timing_2.h>
-#endif // CGAL_CH_TIMING_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -114,4 +110,4 @@ ch_timing( ForwardIterator first, ForwardIterator last,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CH_TIMING_2_C
+#endif // CGAL_CH_TIMING_2_IMPL_H
