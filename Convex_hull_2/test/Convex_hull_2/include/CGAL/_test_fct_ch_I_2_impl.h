@@ -19,14 +19,13 @@
 // ============================================================================
 
 
-#ifndef _TEST_FCT_CH_I_2_C
-#define _TEST_FCT_CH_I_2_C
+#ifndef _TEST_FCT_CH_I_2_IMPL_H
+#define _TEST_FCT_CH_I_2_IMPL_H
 
-#ifndef _TEST_FCT_CH_I_2_H
 #include <CGAL/_test_fct_ch_I_2.h>
-#endif // _TEST_FCT_CH_I_2_H
 
 CGAL_BEGIN_NAMESPACE
+
 template <class Traits>
 bool
 ch__batch_test( const Traits& chI )
@@ -134,5 +133,4 @@ ch__batch_test( const Traits& chI )
 
 CGAL_END_NAMESPACE
 
-#endif // _TEST_FCT_CH_I_2_C
-
+#endif // _TEST_FCT_CH_I_2_IMPL_H

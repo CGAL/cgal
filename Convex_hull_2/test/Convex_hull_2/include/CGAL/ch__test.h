@@ -69,9 +69,6 @@ ch__test(InputIterator first, InputIterator last,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/ch__test.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/ch__test_impl.h>
 
 #endif // CGAL_CH__TEST_H
-

@@ -19,12 +19,10 @@
 // ============================================================================
 
 
-#ifndef CGAL_CH__TEST_C
-#define CGAL_CH__TEST_C
+#ifndef CGAL_CH__TEST_IMPL_H
+#define CGAL_CH__TEST_IMPL_H
 
-#ifndef CGAL_CH__TEST_H
 #include <CGAL/ch__test.h>
-#endif // CGAL_CH__TEST_H
 
 CGAL_BEGIN_NAMESPACE
 template <class InputIterator, class Traits>
@@ -289,7 +287,7 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
                                                     ch_traits);
   }
 }
+
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CH__TEST_C
-
+#endif // CGAL_CH__TEST_IMPL_H

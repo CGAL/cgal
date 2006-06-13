@@ -26,15 +26,13 @@
 #include <CGAL/ch__test.h>
 
 CGAL_BEGIN_NAMESPACE
+
 template <class Traits>
 bool
 ch__batch_test( const Traits& chI );
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/_test_fct_ch_I_2.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/_test_fct_ch_I_2_impl.h>
 
 #endif // _TEST_FCT_CH_I_2_H
-
