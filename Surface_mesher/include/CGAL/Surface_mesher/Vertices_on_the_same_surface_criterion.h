@@ -20,7 +20,7 @@
 #ifndef CGAL_VERTICES_ON_THE_SAME_SURFACE_CRITERION_H
 #define CGAL_VERTICES_ON_THE_SAME_SURFACE_CRITERION_H
 
-#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Standard_criteria.h>
 
 namespace CGAL {
 

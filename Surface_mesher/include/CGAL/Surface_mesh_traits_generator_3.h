@@ -20,7 +20,7 @@
 #ifndef CGAL_SURFACE_MESH_TRAITS_GENERATOR_3_H
 #define CGAL_SURFACE_MESH_TRAITS_GENERATOR_3_H
 
-#include <CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h>
+#include <CGAL/Surface_mesher/Sphere_oracle_3.h>
 
 namespace CGAL {
 

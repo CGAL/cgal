@@ -21,7 +21,7 @@
 #define CGAL_IMPLICIT_SURFACE_3_H
 
 #include <CGAL/make_surface_mesh.h>
-#include <CGAL/Surface_mesher/Oracles/Implicit_oracle.h>
+#include <CGAL/Surface_mesher/Implicit_surface_oracle.h>
 
 #include <functional>
 
@@ -38,6 +38,11 @@ namespace CGAL {
     typedef typename Geom_traits::Sphere_3 Sphere_3;
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3 Point;
+    typedef Implicit_surface_3<Geom_traits, Function> Self;
+
+    typedef Surface_mesher::Implicit_surface_oracle<
+      Geom_traits,
+      Self> Surface_mesher_traits_3;
 
     Implicit_surface_3(Function f,
 		       const Sphere_3 bounding_sphere,
@@ -82,14 +87,14 @@ namespace CGAL {
     return surface(f, sphere, error_bound);
   }
 
-  template <typename GT, typename Function>
-  struct Surface_mesh_traits_generator_3<Implicit_surface_3<GT, Function> >
-  {
-    typedef Implicit_surface_3<GT, Function> Surface_type;
-    typedef typename Surface_mesher::Implicit_surface_oracle<GT,
-							     Surface_type> Type;
-    typedef Type type; // Boost meta-programming compatibility
-  };
+//   template <typename GT, typename Function>
+//   struct Surface_mesh_traits_generator_3<Implicit_surface_3<GT, Function> >
+//   {
+//     typedef Implicit_surface_3<GT, Function> Surface_type;
+//     typedef typename Surface_mesher::Implicit_surface_oracle<GT,
+// 							     Surface_type> Type;
+//     typedef Type type; // Boost meta-programming compatibility
+//   };
 
   // non documented class
   template <typename FT, typename Point>

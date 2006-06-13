@@ -1,4 +1,4 @@
-// Copyright (c) 2004, 2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -13,21 +13,15 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_TRIANGULATION_MESHER_3_H
-#define CGAL_TRIANGULATION_MESHER_3_H
+/* TEMPORARY HEADER
+ * Todo: rename Implicit_oracle.h into Implicit_surface_oracle.h
+ */
 
-#include <CGAL/Mesher_level.h>
-#include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
-#include <CGAL/Mesh_3/Refine_edges.h>
-#include <CGAL/Mesh_3/Refine_facets.h>
-
-namespace CGAL {
-}
-
-}; // end namespace CGAL
-
-#endif // CGAL_TRIANGULATION_MESHER_3_H
+#ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_H
+#define CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_H
+#include <CGAL/Surface_mesher/Implicit_oracle.h>
+#endif

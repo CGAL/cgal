@@ -179,165 +179,182 @@ namespace Mesh_3 { namespace details {
 } // end namespace details
 } // end namespace Mesh_3
 
-template < class C2T3>
-bool
-input_from_medit (std::istream& is, 
-                  C2T3 & c2t3,
-                  bool debug = false, 
-                  std::ostream* debug_str = &std::cerr) {
-  typedef typename C2T3::Triangulation Tr;
-  typedef typename Tr::Triangulation_data_structure Tds;
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Point Point;
-  typedef Point_traits<Point> P_traits;
-  typedef typename P_traits::Bare_point Bare_point;
-  typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Vertex_handle Vertex_handle;
+  /**************************************************************/
+  /*********NOT POSSIBLE !!!!!***********************************/
+  /**************************************************************/
+
+// template < class C2T3>
+// bool
+// input_from_medit (std::istream& is, 
+//                   C2T3 & c2t3,
+//                   bool debug = false, 
+//                   std::ostream* debug_str = &std::cerr) {
+//   typedef typename C2T3::Triangulation Tr;
+//   typedef typename Tr::Triangulation_data_structure Tds;
+//   typedef typename Tr::Vertex_handle Vertex_handle;
+//   typedef typename Tr::Point Point;
+//   typedef Point_traits<Point> P_traits;
+//   typedef typename P_traits::Bare_point Bare_point;
+//   typedef typename Tr::Cell_handle Cell_handle;
+//   typedef typename Tr::Vertex_handle Vertex_handle;
 
   
-  Mesh_3::details::Debug debug_stream(debug,
-                                      debug_str,
-                                      "CGAL::input_from_medit()\n"
-                                      "input error:");
+//   Mesh_3::details::Debug debug_stream(debug,
+//                                       debug_str,
+//                                       "CGAL::input_from_medit()\n"
+//                                       "input error:");
 
-  Tr& tr = c2t3.triangulation();
-  Tds& tds = tr.tds();
+//   Tr& tr = c2t3.triangulation();
+//   Tds& tds = tr.tds();
 
-  tr.clear();
+//   tr.clear();
 
-  // Header
-  std::string temp_string;
-  int temp_int;
+//   tds.set_dimension(3);
 
-  is >> temp_string;
-  if( !is || temp_string != "MeshVersionFormatted")
-    return debug_stream << "  not a medit file\n";
+//   // Header
+//   std::string temp_string;
+//   int temp_int;
 
-  is >> temp_int; // version
-  if( !is || temp_int!=1 ) 
-    return debug_stream << "  wrong medit version number: " << temp_int
-                        << "\n"
-                        << "  should be 1\n";
+//   is >> temp_string;
+//   if( !is || temp_string != "MeshVersionFormatted")
+//     return debug_stream << "  not a medit file\n";
 
-  is >> temp_string;
-  if( !is || temp_string != "Dimension" )
-    return debug_stream << "  \"Dimension\" expected\n";
+//   is >> temp_int; // version
+//   if( !is || temp_int!=1 ) 
+//     return debug_stream << "  wrong medit version number: " << temp_int
+//                         << "\n"
+//                         << "  should be 1\n";
 
-  is >> temp_int; // dimension
-  if( !is || temp_int != 3 )
-    return debug_stream << "  dimension 3 expected\n";
+//   is >> temp_string;
+//   if( !is || temp_string != "Dimension" )
+//     return debug_stream << "  \"Dimension\" expected\n";
 
-  // Vertices
-  is >> temp_string;
-  if( !is || temp_string != "Vertices" )
-    return debug_stream << "  \"Vertices\" expected\n";
+//   is >> temp_int; // dimension
+//   if( !is || temp_int != 3 )
+//     return debug_stream << "  dimension 3 expected\n";
+
+//   // Vertices
+//   is >> temp_string;
+//   if( !is || temp_string != "Vertices" )
+//     return debug_stream << "  \"Vertices\" expected\n";
   
-  int number_of_vertices;
-  if( ! (is >> number_of_vertices) )
-    return debug_stream << "  number of vertices expected\n";
+//   int number_of_vertices;
+//   if( ! (is >> number_of_vertices) )
+//     return debug_stream << "  number of vertices expected\n";
   
-  std::vector<Vertex_handle> V(number_of_vertices+1);
+//   std::vector<Vertex_handle> V(number_of_vertices+1);
 
-  V[0] = tr.infinite_vertex();
+//   V[0] = tr.infinite_vertex();
 
-  for(int i = 0; i < number_of_vertices; ++i)
-  {
-    P_traits point_convert;
+//   for(int i = 0; i < number_of_vertices; ++i)
+//   {
+//     P_traits point_convert;
 
-    Bare_point bp;
-    is >> bp;
-    if( !is )
-      return debug_stream << "  point " << i 
-                          << ", error in Bare_point.operator>>()\n";
+//     Bare_point bp;
+//     is >> bp;
+//     if( !is )
+//       return debug_stream << "  point " << i 
+//                           << ", error in Bare_point.operator>>()\n";
 
-    int index;
-    is >> index;
-    if( !is )
-      return debug_stream << "  index expected\n";
+//     int index;
+//     is >> index;
+//     if( !is )
+//       return debug_stream << "  index expected\n";
 
-    Point p = point_convert.point(bp);
-    p.set_surface_index(index);
+//     Point p = point_convert.point(bp);
+//     p.set_surface_index(index);
 
-    Vertex_handle v = tds.create_vertex();
-    v->set_point(p);
-    V[i+1] = v;
-  }
+//     Vertex_handle v = tds.create_vertex();
+//     v->set_point(p);
+//     V[i+1] = v;
+//   }
 
-  // Facets
-  is >> temp_string;
-  if( !is || temp_string != "Triangles" )
-    return debug_stream << "  \"Triangles\" expected\n";
+//   // Facets
+//   is >> temp_string;
+//   if( !is || temp_string != "Triangles" )
+//     return debug_stream << "  \"Triangles\" expected\n";
 
-  int number_of_facets_on_surface;
-  is >> number_of_facets_on_surface;
-  if( !is )
-    return debug_stream << "  number of facets expected\n";
+//   int number_of_facets_on_surface;
+//   is >> number_of_facets_on_surface;
+//   if( !is )
+//     return debug_stream << "  number of facets expected\n";
 
-  std::vector< CGAL::Triple<int, int, int> > 
-    facets_vector(number_of_facets_on_surface);
+//   std::vector< CGAL::Triple<int, int, int> > 
+//     facets_vector(number_of_facets_on_surface);
 
-  for(int i = 0; i < number_of_facets_on_surface; ++i)
-  {
-    int i1, i2, i3;
-    is >> i1 >> i2 >> i3 >> temp_int;
+//   for(int i = 0; i < number_of_facets_on_surface; ++i)
+//   {
+//     int i1, i2, i3;
+//     is >> i1 >> i2 >> i3 >> temp_int;
 
-    if( !is )
-      return debug_stream << "  cannot read facet " << i << "\n";
+//     if( !is )
+//       return debug_stream << "  cannot read facet " << i << "\n";
 
-    facets_vector[i] = CGAL::make_triple(i1, i2, i3);
-  }
+//     facets_vector[i] = CGAL::make_triple(i1, i2, i3);
+//   }
   
-  // Tetrahedra
-  is >> temp_string;
+//   // Tetrahedra
+//   is >> temp_string;
   
-  if( !is || temp_string != "Tetrahedra" )
-    return debug_stream << "  \"Tetrahedra\" expected\n";
+//   if( !is || temp_string != "Tetrahedra" )
+//     return debug_stream << "  \"Tetrahedra\" expected\n";
 
-  int number_of_cells_in_domain;
-  is >> number_of_cells_in_domain;
-  if( !is )
-    return debug_stream << "  number of cells expected\n";
+//   int number_of_cells_in_domain;
+//   is >> number_of_cells_in_domain;
+//   if( !is )
+//     return debug_stream << "  number of cells expected\n";
   
-  for(int i = 0; i < number_of_cells_in_domain; ++i)
-  {
-    int i1, i2, i3, i4;
-    
-    is >> i1 >> i2 >> i3 >> i4 >> temp_int;
+//   std::vector<Cell_handle> C(number_of_cells_in_domain);
 
-    Cell_handle ch;
-    if( !is )
-      return debug_stream << "  cannot read cell " << i << "\n";
-    if( !tr.is_cell(V[i1], V[i2], V[i3],V[i4], ch) )
-      debug_stream << "  cell " << i << " is not Delaunay:\n"
-                   << i1 << " " << i2 << " " << i3 << " " << i4 << "\n";
-    ch->set_in_domain(true);
-  }
+//   for(int i = 0; i < number_of_cells_in_domain; ++i)
+//   {
+//     Cell_handle c = create_cell();
+//     for (int k=0; k<=3; ++k) {
+//       int ik;
+//       is >> ik;
+//       c->set_vertex(k, V[ik]);
+//       V[ik]->set_cell(c);
+//     }
+//     C[i] = c;
+//   }
+//   for(int i = 0; i < number_of_cells_in_domain; ++i)
+//   {
+//     is >> i1 >> i2 >> i3 >> i4 >> temp_int;
 
-  // Inserts surface facets, using facets_vector
+//     Cell_handle ch;
+//     if( !is )
+//       return debug_stream << "  cannot read cell " << i << "\n";
+//     if( !tr.is_cell(V[i1], V[i2], V[i3],V[i4], ch) )
+//       debug_stream << "  cell " << i << " is not Delaunay:\n"
+//                    << i1 << " " << i2 << " " << i3 << " " << i4 << "\n";
+//     ch->set_in_domain(true);
+//   }
 
-  for(int i = 0; i < number_of_facets_on_surface; ++i)
-  {
-    Cell_handle ch;
-    int i, j, k;
-    if( !tr.is_facet(V[facets_vector[i].first],
-                     V[facets_vector[i].second],
-                     V[facets_vector[i].third],
-                     ch, i, j, k) )
-      return debug_stream << "  facet " << i << "is not Delaunay\n";
+//   // Inserts surface facets, using facets_vector
 
-    const int index = 6-i-j-k;
+//   for(int i = 0; i < number_of_facets_on_surface; ++i)
+//   {
+//     Cell_handle ch;
+//     int i, j, k;
+//     if( !tr.is_facet(V[facets_vector[i].first],
+//                      V[facets_vector[i].second],
+//                      V[facets_vector[i].third],
+//                      ch, i, j, k) )
+//       return debug_stream << "  facet " << i << "is not Delaunay\n";
 
-    c2t3.set_in_complex(ch, index);
-  }
+//     const int index = 6-i-j-k;
+
+//     c2t3.set_in_complex(ch, index);
+//   }
   
-  // End
-  is >> temp_string;
+//   // End
+//   is >> temp_string;
 
-  if( is && temp_string == "End" )
-    return true;
-  else
-    return debug_stream << "  \"End\" expected\n"; 
-} // end input_from_medit
+//   if( is && temp_string == "End" )
+//     return true;
+//   else
+//     return debug_stream << "  \"End\" expected\n"; 
+// } // end input_from_medit
 
 template < class Tr>
 int number_of_cells_in_domain(const Tr& T) {

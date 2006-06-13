@@ -14,9 +14,9 @@
 #include <CGAL/Surface_mesher/Surface_mesher_regular_edges.h>
 #include <CGAL/Surface_mesher/Surface_mesher_regular_edges_without_boundary.h>
 #include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
-#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Standard_criteria.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-#include <CGAL/Surface_mesher/Oracles/Polyhedral.h>
+#include <CGAL/Surface_mesher/Polyhedral.h>
 
 #include <fstream>
 

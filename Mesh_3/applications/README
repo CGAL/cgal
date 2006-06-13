@@ -4,7 +4,6 @@ perhaps be moved to demo/Mesh_3/ in the future.
 
 Here is the list of tools:
     cgal_to_medit
-    medit_to_cgal
     display_distribution
     filter_remove_tets_from_medit
     lanteri
@@ -42,18 +41,6 @@ Usage:
   CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3.
 
   OUTPUT will be a medit file.
-
-medit_to_cgal:
--------------
-Usage:
-  ./medit_to_cgal INPUT OUPUT
-
-  INPUT must be a medit file.
-
-  OUTPUT will be a file of format produced by the output operator of
-  CGAL::Triangulation_3, with points
-  CGAL::Weighted_point_with_surface_index and cells
-  CGAL::Mesh_3::Complex_2_in_triangulation_cell_base_3.
 
 lanteri:
 --------

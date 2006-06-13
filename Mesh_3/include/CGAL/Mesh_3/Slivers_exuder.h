@@ -392,14 +392,16 @@ public: // methods
       for( i = 0; i < 4; ++i )
       {
         // do not pump surface vertices
-        if( c->vertex(i)->point().surface_index() == 0 
-            && pump_vertex(c->vertex(i)) )
-        {
-          std::cerr << "P";
-          break;
-        }
+        if( c->vertex(i)->point().surface_index() == 0 )
+          if( pump_vertex(c->vertex(i)) )
+          {
+            std::cout << "P"; // vertex has been pumped
+            break;
+          }
+          else
+            std::cout << "."; // cannot increase the weight of this vertex
         else
-          std::cerr << ".";
+          std::cout << "s"; // vertex is on a surface
       }
 
       // if the tet could not be deleted

@@ -20,9 +20,14 @@
 #ifndef CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 #define CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
 
-#include <CGAL/Surface_mesher/Oracles/Null_oracle_visitor.h>
+#ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_H
+#warning Deprecated header
+#warning Please include <CGAL/Surface_mesher/Implicit_surface_oracle.h> instead.
+#endif
+
+#include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h>
+#include <CGAL/Surface_mesher/Sphere_oracle_3.h>
 
 #include <queue>
 
@@ -91,11 +96,6 @@ namespace CGAL {
     typedef Sphere_oracle_3<GT, Point_creator> Sphere_oracle;
     
     typedef typename GT::Point_3 Point;
-#ifdef CGAL_DELAUNAY_MESH_3_H
-    typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
-#else
-    typedef Point Kernel_point;
-#endif
 
     typedef typename GT::FT FT;
     typedef typename GT::Sphere_3 Sphere_3;

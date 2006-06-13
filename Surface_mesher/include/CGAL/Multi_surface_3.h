@@ -49,7 +49,7 @@ namespace CGAL {
   };
 } // end namespace CGAL
 
-#include <CGAL/Surface_mesher/Oracles/Combining_oracle.h>
+#include <CGAL/Surface_mesher/Combining_oracle.h>
 
 namespace CGAL {
   template <typename Surface_a, typename Surface_b>

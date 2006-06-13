@@ -15,16 +15,14 @@
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 
-#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
-#include <CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h>
-//#include <CGAL/Mesh_3/Facet_on_surface_criterion.h>
-
+#include <CGAL/Surface_mesher/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Vertices_on_the_same_surface_criterion.h>
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
 
-#include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
+#include <CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -65,9 +63,6 @@ typedef My_traits::FT FT;
 typedef CGAL::Implicit_function_wrapper<FT, Point_3> Implicit_function_wrapper;
 
 typedef CGAL::Implicit_surface_3<My_traits, Implicit_function_wrapper> Surface;
-
-typedef CGAL::Surface_mesh_traits_generator_3<Surface>::type Surface_mesh_traits;
-typedef Surface_mesh_traits::Construct_initial_points Initial_points;
 
 typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
 typedef CGAL::Surface_mesher::Standard_criteria <Criterion > Criteria;
@@ -217,6 +212,8 @@ typedef CGAL::Surface_mesher::Implicit_surface_oracle<
   CGAL::Creator_uniform_3<My_traits::FT, My_traits::Point_3>,
   Volume_mesher_traits_visitor> Volume_mesh_traits;
 
+typedef Volume_mesh_traits::Construct_initial_points Initial_points;
+
 typedef CGAL::Implicit_surfaces_mesher_3<
   C2t3, 
   Surface,
@@ -233,19 +230,11 @@ typedef CGAL::Point_traits<Point_3> Point_traits;
 typedef Point_traits::Bare_point Bare_point_3;
 typedef Regular_traits::Point_3 Kernel_point_3;
 
-// typedef enum { RADIUS_RATIO, ANGLE, MIN_ANGLE} Distribution_type;
-
 /// Global variables 
 std::ostream *out = 0;
 std::string filename = std::string();
 std::string function_name = "sphere";
 char* argv0 = "";
-// bool dump_distribution = false;
-// std::string distribution_filename;
-// int distribution_x = 200;
-// int distribution_y = 100;
-// int distribution_size = 50;
-// Distribution_type distribution_type = RADIUS_RATIO;
 
 void usage(std::string error = "")
 {
@@ -253,17 +242,9 @@ void usage(std::string error = "")
     std:: cerr << "Error: " << error << std::endl;
   std::cerr << "Usage:\n  " 
             << argv0
-//             << " [-d <output_distribution_pixmap.png>"
-//             << "[-s x y] [-n N] [-t (ANGLE|RADIUS_RATIO|MIN_ANGLE)] ]"
             << " [-f function_name]"
             << " [output_file.mesh|-]\n"
             << "If output_file.mesh is '-', outputs to standard out.\n"
-//             << "-d  Output distribution to file"
-//             << " output_distribution_pixmap.png\n"
-//             << "-s  define pixmap size (x, y), default is (200,100)\n" 
-//             << "-n  define size of the distribution, default is 50\n"
-//             << "-t  define the type of distribution, "
-//             << "default is RADIUS_RATIO\n"
             << "-f  define the implicite function to use\n";
   for(String_options::iterator it = string_options.begin();
       it != string_options.end();
@@ -317,59 +298,6 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
       std::string arg = argv[1+extra_args];
       if( arg == "-h" || arg == "--help")
         usage();
-//       else if( arg == "-d" )
-// 	{
-// 	  dump_distribution = true;
-//           if( argc < 3)
-//             usage("-d must be followed by a filename!");
-//           distribution_filename = argv[2 + extra_args];
-//           parse_argv(argc, argv, extra_args + 2);
-//         }
-//       else if( arg == "-t" )
-// 	{
-//           if( argc < (3+extra_args) )
-//             usage("-t must be followed by a ANGLE or"
-// 		  "RADIUS_RATIO or MIN_ANGLE!");
-//           std::string arg2 = argv[2 + extra_args];
-//           if( arg2 == "ANGLE" ) distribution_type = ANGLE;
-//           else if( arg2 == "RADIUS_RATIO" ) distribution_type = RADIUS_RATIO;
-//           else if( arg2 == "MIN_ANGLE" ) distribution_type = MIN_ANGLE;
-//           else 
-//             usage("Bad type. Should be ANGLE or RADIUS_RATIO"
-// 		  " or MIN_ANGLE!");
-//           parse_argv(argc, argv, extra_args + 2);
-//         }
-//       else if( arg == "-s" )
-//         {
-//           if( argc < (4+extra_args) )
-//             usage("-s must be followed by x y!");
-//           {
-//             std::stringstream s;
-//             s << argv[2+extra_args];
-//             s >> distribution_x;
-//             if( !s )
-//               usage("Bad integer x!");
-//           }
-//           {
-//             std::stringstream s;
-//             s << argv[3+extra_args];
-//             s >> distribution_y;
-//             if( !s )
-//               usage("Bad integer y!");
-//           }
-//           parse_argv(argc, argv, extra_args + 3);
-//         }
-//       else if( arg == "-n" )
-//         {
-//           if( argc < (3+extra_args) )
-//             usage("-n must be followed by an integer!");
-//           std::stringstream s;
-//           s << argv[2+extra_args];
-//           s >> distribution_size;
-//           if( !s )
-//             usage("Bad integer N!");
-//           parse_argv(argc, argv, extra_args + 2);
-//         }
       else if( arg == "-f" )
         {
           if( argc < (3 + extra_args) )
@@ -384,8 +312,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 	  if( opt_it != double_options.end() )
 	    {
 	      if( argc < (3 + extra_args) )
-		usage(
-		      (arg + " must be followed by a double!").c_str());
+		usage((arg + " must be followed by a double!").c_str());
 	      std::stringstream s;
 	      double val;
 	      s << argv[extra_args + 2];
@@ -402,8 +329,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
             if( opt_it != string_options.end() )
             {
               if( argc < (3 + extra_args) )
-                usage(
-                      (arg + " must be followed by a string!").c_str());
+                usage((arg + " must be followed by a string!").c_str());
               std::string s = argv[extra_args + 2];
               opt_it->second = s;
               parse_argv(argc, argv, extra_args + 2);
@@ -460,6 +386,11 @@ int main(int argc, char **argv) {
   bool need_delete = false;
   std::ostream* out = 0;
 
+  // Create the volume_mesh_traits by hand, to pass it
+  // Point_surface_indices_visitor(1), that is a visitor for oracles that
+  // sets surface_index() to a given integer.
+  Volume_mesh_traits volume_mesh_traits(Volume_mesher_traits_visitor(1));
+
   // Initial point sample
   std::string read_initial_points = get_string_option("read_initial_points");
   if( read_initial_points != "")     
@@ -489,16 +420,11 @@ int main(int argc, char **argv) {
     initial_point_sample.reserve(number_of_initial_points);
 
     Initial_points get_initial_points =
-      Surface_mesh_traits().construct_initial_points_object();
+      volume_mesh_traits.construct_initial_points_object();
 
     get_initial_points(surface, 
                        std::back_inserter(initial_point_sample),
                        number_of_initial_points);
-
-    for(std::vector<Point_3>::size_type i = 0; 
-        i < initial_point_sample.size();
-        ++i)
-      initial_point_sample[i].set_surface_index(1);
 
     tie(out, need_delete) = 
       open_file_for_writing(get_string_option("dump_of_initial_points"),
@@ -524,8 +450,6 @@ int main(int argc, char **argv) {
     uniform_size_criterion (get_double_option("radius_bound"));
   CGAL::Surface_mesher::Aspect_ratio_criterion<Tr>
     aspect_ratio_criterion (get_double_option("angle_bound"));
-//   CGAL::Mesh_3::Facet_on_surface_criterion<Tr>
-//     facet_on_surface_criterion;
   CGAL::Surface_mesher::Vertices_on_the_same_surface_criterion<Tr>
     vertices_on_the_same_surface_criterion;
 
@@ -534,7 +458,6 @@ int main(int argc, char **argv) {
   criterion_vector.push_back(&uniform_size_criterion);
   criterion_vector.push_back(&curvature_size_criterion);
   criterion_vector.push_back(&vertices_on_the_same_surface_criterion);
-  //  criterion_vector.push_back(&facet_on_surface_criterion);
   Criteria criteria (criterion_vector);
 
 //   Tets_criteria tets_criteria(get_double_option("tets_aspect_ratio_bound"),
@@ -550,11 +473,6 @@ int main(int argc, char **argv) {
 
   
   // Surface meshing
-
-  // Create the volume_mesh_traits by hand, to pass it
-  // Point_surface_indices_visitor(1), that is a visitor for oracles that
-  // sets surface_index() to a given integer.
-  Volume_mesh_traits volume_mesh_traits(Volume_mesher_traits_visitor(1));
 
   Mesher mesher (c2t3, surface, criteria, tets_criteria, volume_mesh_traits);
   timer.start();
@@ -573,13 +491,6 @@ int main(int argc, char **argv) {
     if(need_delete) 
       delete out;
   }
-
-  CGAL_assertion_code(
-                      std::cerr << "checking c2t3...\n";
-                      CGAL::Mesh_3::check_c2t3(c2t3);
-                      std::cerr << "done.\n";
-                      )
-
   timer.start();
   mesher.refine_mesh();
   timer.stop();
@@ -589,12 +500,6 @@ int main(int argc, char **argv) {
   std::cerr << "\nFinal number of points: " << tr.number_of_vertices() 
             << std::endl
             << "Total time: " << timer.time() << std::endl;
-
-  CGAL_assertion_code(
-                      std::cerr << "checking c2t3...\n";
-                      CGAL::Mesh_3::check_c2t3(c2t3);
-                      std::cerr << "done.\n";
-                      )
 
   tie(out, need_delete) = 
     open_file_for_writing(filename,
@@ -616,15 +521,8 @@ int main(int argc, char **argv) {
       delete out;
   }
 
-  CGAL_assertion(tr.is_valid(true, 100));
   CGAL::Mesh_3::Slivers_exuder<C2t3> exuder(tr);
-  int number_of_pump = static_cast<int>(get_double_option("number_of_pump"));
-  for(int i = 0; i < number_of_pump; ++i)
-  {
-    std::cerr << "Pumping (" << i << "/" << number_of_pump << ")...\n";
-    exuder.init(get_double_option("pumping_bound"));
-    exuder.pump_vertices(get_double_option("pumping_bound"));
-  }
+  exuder.pump_vertices(get_double_option("pumping_bound"));
   
   tie(out, need_delete) = 
     open_file_for_writing(get_string_option("cgal_mesh_after_filename"),
@@ -651,7 +549,7 @@ int main(int argc, char **argv) {
                           "Writing finale surface off to ");
   if( out )
   {
-    CGAL::output_to_medit(*out, mesher.complex_2_in_triangulation_3());
+    CGAL::output_oriented_surface_facets_to_off(*out, tr);
     if(need_delete) 
       delete out;
   }

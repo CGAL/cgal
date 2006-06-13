@@ -15,22 +15,21 @@
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Implicit_surfaces_mesher_3.h>
 
-#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
-#include <CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h>
+#include <CGAL/Surface_mesher/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Vertices_on_the_same_surface_criterion.h>
 
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/File_medit.h>
 
-// #include <CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h>
-#include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
+// #include <CGAL/Surface_mesher/Sphere_oracle_3.h>
+#include <CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Point_traits.h>
 #include <CGAL/Weighted_point_with_surface_index_geom_traits.h>
-#include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
 
 #include <iostream>
 #include <fstream>

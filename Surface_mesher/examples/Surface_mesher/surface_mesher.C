@@ -20,14 +20,14 @@
 // #include <CGAL/Surface_mesher/Surface_mesher_regular_edges.h>
 // #include <CGAL/Surface_mesher/Surface_mesher_regular_edges_without_boundary.h>
 // #include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
-#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Standard_criteria.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #ifndef SURFACE_MESHER_POLYHEDRAL
 #  include <CGAL/Implicit_surface_oracle.h>
 #  include "implicit_function.h"
 #else // IMPLICIT
-#  include <CGAL/Surface_mesher/Oracles/Polyhedral.h>
+#  include <CGAL/Surface_mesher/Polyhedral_oracle.h>
 #endif
 
 #include <fstream>

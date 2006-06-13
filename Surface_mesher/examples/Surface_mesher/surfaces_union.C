@@ -7,17 +7,17 @@
 
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 
-#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
-#include <CGAL/Surface_mesher/Criteria/Vertices_on_the_same_surface_criterion.h>
+#include <CGAL/Surface_mesher/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Vertices_on_the_same_surface_criterion.h>
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Implicit_surface_oracle.h>
-#include <CGAL/Surface_mesher/Oracles/Polyhedral.h>
+#include <CGAL/Surface_mesher/Polyhedral_oracle.h>
 #include <CGAL/Robust_circumcenter_traits_3.h>
-#include <CGAL/Surface_mesher/Oracles/Combining_oracle.h>
+#include <CGAL/Surface_mesher/Combining_oracle.h>
 
 #include <CGAL/Point_with_surface_index_geom_traits.h>
-#include <CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h>
+#include <CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h>
 
 #include <iostream>
 #include <fstream>

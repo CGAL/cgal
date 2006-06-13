@@ -20,7 +20,7 @@
 #ifndef CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H
 #define CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H
 
-#include <CGAL/Surface_mesher/Oracles/Null_oracle_visitor.h>
+#include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/number_utils.h>
 
@@ -40,11 +40,6 @@ namespace CGAL {
     typedef Sphere_oracle_3<GT, Point_creator, Visitor> Self;
     
     typedef typename GT::Point_3 Point;
-#ifdef CGAL_DELAUNAY_MESH_3_H
-    typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
-#else
-    typedef Point Kernel_point;
-#endif
 
     typedef typename GT::FT FT;
     typedef typename GT::Sphere_3 Sphere_3;

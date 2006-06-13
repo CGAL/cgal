@@ -20,21 +20,27 @@
 #ifndef _POLYHEDRAL_H
 #define _POLYHEDRAL_H
 
+#include <boost/static_warning.hpp>
+#include <utility>
 
-#include <CGAL/Polyhedral_surface_3.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Surface_mesher/Oracles/Null_oracle_visitor.h>
+#include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 
 namespace CGAL {
   namespace Surface_mesher {
 
-template <class Tr,
-          class Visitor = Null_oracle_visitor
-         >
-class Polyhedral
+template <
+  class Surface,
+  class Point_creator = Creator_uniform_3<typename Surface::Geom_traits::FT,
+    typename Surface::Geom_traits::Point_3>,
+  class Visitor = Null_oracle_visitor
+  >
+class Polyhedral_oracle
 {
 public:
-  typedef typename Tr::Geom_traits Geom_traits;
+  typedef typename Surface::Geom_traits GT;
+  typedef GT Geom_traits;
+  typedef typename GT::FT FT;
 
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Kernel_traits<Point>::Kernel::Point_3 Kernel_point;
@@ -43,34 +49,24 @@ public:
   typedef typename Geom_traits::Line_3 Line_3;
   typedef typename Geom_traits::Triangle_3 Triangle_3;
 
-  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef Polyhedral_oracle<Surface, Point_creator, Visitor> Self;
 
-  typedef Polyhedral<Tr, Visitor> Self;
+  typedef Surface Surface_3;
 
-  typedef Data_structure_using_octree_3<Geom_traits> Subfacets_octree;
-  typedef Subfacets_octree Surface_3;
+  typedef typename Surface::Subfacets_octree Subfacets_octree;
 
   // Private members
 
 private:
-  Tr tr;
   Visitor visitor;
-
-private: // private types
-  typedef typename Tr::Cell_handle Cell_handle;
 
 public:
 
   // Public members
 
-  // Default constructor
-  Polyhedral()
-  {}
-
   // Surface constructor
-  Polyhedral(Tr& tr,
-             Visitor visitor_ = Visitor() )
-    : tr(tr), visitor(visitor_)
+  Polyhedral_oracle(Visitor visitor_ = Visitor() )
+    : visitor(visitor_)
   {
 //       is.seekg(0,std::ios::beg);
 //       tr.clear();
@@ -102,17 +98,17 @@ public:
     {
     }
 
-    Object operator()(Surface_3& subfacets_octree, Segment_3 s) const
+    Object operator()(Surface_3& surface, Segment_3 s) const
     {
-      return self.intersect_segment_surface(subfacets_octree, s);
+      return self.intersect_segment_surface(surface.subfacets_octree, s);
     }
     
-    Object operator()(Surface_3& subfacets_octree, const Ray_3& r) const {
-      return self.intersect_ray_surface(subfacets_octree, r);
+    Object operator()(Surface_3& surface, Ray_3& r) const {
+      return self.intersect_ray_surface(surface.subfacets_octree, r);
     }
       
-    Object operator()(Surface_3& subfacets_octree, const Line_3& l) const {
-      return self.intersect_line_surface(subfacets_octree, l);
+    Object operator()(Surface_3& surface, Line_3& l) const {
+      return self.intersect_line_surface(surface.subfacets_octree, l);
     }
   };
 
@@ -121,19 +117,32 @@ public:
     return Intersect_3(*this);
   }
 
+  class Construct_initial_points;
+
+  friend class Construct_initial_points;
+
   class Construct_initial_points
   {
+    Self& self;
   public:
+    Construct_initial_points(Self& self) : self(self)
+    {
+    }
+
     template <typename OutputIteratorPoints>
-    OutputIteratorPoints operator() (const Surface_3& subfacets_octree, 
+    OutputIteratorPoints operator() (Surface_3& surface, 
                                      OutputIteratorPoints out, 
                                      int n = 20) // WARNING: why 20?    
     {
-      for (typename Surface_3::Finite_vertices_iterator vit =
-             subfacets_octree.finite_vertices_begin();
-           vit != subfacets_octree.finite_vertices_end() && n > 0;
+      for (typename std::vector<Point>::iterator vit =
+             surface.input_points.begin();
+           vit != surface.input_points.end() && n > 0;
            ++vit, --n)
-        *out++= *vit;
+      {
+        Point p = *vit;
+        self.visitor.new_point(p);
+        *out++= p;
+      }
       
       return out;
     }
@@ -141,12 +150,26 @@ public:
 
   Construct_initial_points construct_initial_points_object() 
   {
-    return Construct_initial_points();
+    return Construct_initial_points(*this);
   }
 
-  bool is_in_volume(Surface_3& subfacets_octree, const Point& p)
+  bool is_in_volume(Surface_3& surface, const Point& p)
   {
-    return subfacets_octree.number_of_intersection(p) & 1;
+    typename CGAL::Random_points_on_sphere_3<Point,
+      Point_creator> random_point(FT(1));
+    typename Geom_traits::Construct_vector_3 vector =
+      Geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_ray_3 ray =
+      Geom_traits().construct_ray_3_object();
+
+    std::pair<bool, int> result = std::make_pair(false, 0);
+    while(! result.first)
+    {
+      result = surface.subfacets_octree.
+        number_of_intersections(ray(p, vector(CGAL::ORIGIN,
+                                              *random_point++)));
+    }
+    return (result.second % 2) == 1;
   }
 
 //   // Basic intersection function for segments/rays/lines with the polyhedron
@@ -236,7 +259,7 @@ public:
     }
 
 
-  CGAL::Object intersect_line_surface(Subfacets_octree& data_struct, Line_3 &)
+  CGAL::Object intersect_line_surface(Subfacets_octree&, Line_3 &)
     {
       CGAL_assertion(false);
       return CGAL::Object();
@@ -244,7 +267,21 @@ public:
 private:
 
 
-}; // end class Polyhedral
+}; // end class Polyhedral_oracle
+
+template <class GT,
+          class Visitor = Null_oracle_visitor
+         >
+class Polyhedral : public Polyhedral_oracle<GT, Visitor>
+{
+  typedef int Deprecated__class__use__Polyhedral_oracle__instead;
+
+  Polyhedral(Visitor visitor = Visitor())
+    : Polyhedral_oracle<GT, Visitor>(visitor)
+  {
+    BOOST_STATIC_WARNING(Deprecated__class__use__Polyhedral_oracle__instead() == 1);
+  }
+};
 
   } // end namespace Surface_mesher
 } // end namespace CGAL

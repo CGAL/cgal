@@ -46,14 +46,10 @@ all:            \
                 read_mesh$(EXE_EXT) \
                 slivers_exuder$(EXE_EXT) \
                 cgal_to_medit$(EXE_EXT) \
-                medit_to_cgal$(EXE_EXT) \
                 stat_mesh$(EXE_EXT) 
 
 cgal_to_medit$(EXE_EXT): cgal_to_medit$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)cgal_to_medit cgal_to_medit$(OBJ_EXT) $(LDFLAGS)
-
-medit_to_cgal$$(EXE_EXT): medit_to_cgal$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)medit_to_cgal medit_to_cgal$(OBJ_EXT) $(LDFLAGS)
 
 display_distribution$(EXE_EXT): display_distribution$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)display_distribution display_distribution$(OBJ_EXT) $(LDFLAGS)
@@ -95,7 +91,6 @@ clean: \
                    distribution.clean \
                    Gd_displayer.clean \
                    cgal_to_medit.clean \
-                   medit_to_cgal.clean \
                    lanteri.clean \
                    lanteri_output_tet_mesh.clean \
                    lanteri_process_results.clean \

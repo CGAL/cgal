@@ -20,7 +20,7 @@
 #ifndef CGAL_SURFACE_MESH_DEFAULT_CRITERIA_3_H
 #define CGAL_SURFACE_MESH_DEFAULT_CRITERIA_3_H
 
-#include <CGAL/Surface_mesher/Criteria/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Standard_criteria.h>
 
 namespace CGAL {
 
