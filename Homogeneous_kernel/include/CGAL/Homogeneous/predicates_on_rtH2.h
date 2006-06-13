@@ -25,36 +25,21 @@
 #ifndef CGAL_PREDICATES_ON_RTH2_H
 #define CGAL_PREDICATES_ON_RTH2_H
 
+#include <CGAL/predicates/sign_of_determinant.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class RT>
-CGAL_KERNEL_INLINE
+inline
 Orientation
 orientationH2( const RT& phx, const RT& phy, const RT& phw,
                const RT& qhx, const RT& qhy, const RT& qhw,
                const RT& rhx, const RT& rhy, const RT& rhw )
 {
-  const RT  RT0 = RT(0);
-  
-  // | A B |
-  // | C D |
-  
-  RT  A = phx*rhw - phw*rhx;
-  RT  B = phy*rhw - phw*rhy;
-  RT  C = qhx*rhw - qhw*rhx;
-  RT  D = qhy*rhw - qhw*rhy;
-  
-  RT  det =  A*D - B*C;
-  
-  
-  if (det < RT0  )
-  {
-      return CLOCKWISE;
-  }
-  else
-  {
-      return (RT0 < det) ? COUNTERCLOCKWISE : COLLINEAR;
-  }
+  return enum_cast<Orientation>(
+      sign_of_determinant3x3(phx,phy,phw,
+                             qhx,qhy,qhw,
+                             rhx,rhy,rhw));
 }
 
 CGAL_END_NAMESPACE
