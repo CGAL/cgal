@@ -75,7 +75,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Ray_2           Ray_2;
   
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 2 >              Arity;
 
     result_type
@@ -108,7 +108,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Plane_3         Plane_3;
   
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 2 >              Arity;
 
     result_type
@@ -253,7 +253,7 @@ namespace CartesianKernelFunctors {
     Collinear_2 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -279,7 +279,7 @@ namespace CartesianKernelFunctors {
     Collinear_3 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -306,7 +306,7 @@ namespace CartesianKernelFunctors {
     Collinear_2 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -333,7 +333,7 @@ namespace CartesianKernelFunctors {
     Collinear_3 c;
 #endif // CGAL_kernel_exactness_preconditions 
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions 
@@ -368,7 +368,7 @@ namespace CartesianKernelFunctors {
     Compare_y_2 cy;
     Collinear_are_ordered_along_line_2 co;
   public:
-    typedef typename K::Bool                  result_type;
+    typedef typename K::Bool_type             result_type;
     typedef Arity_tag< 2 >                    Arity;
 
     Collinear_has_on_2() {}
@@ -415,7 +415,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Orientation_2  Orientation_2;
     Orientation_2 o;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 3 >             Arity;
 
     Collinear_2() {}
@@ -431,7 +431,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 3 >         Arity;
 
     result_type
@@ -2431,7 +2431,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2446,7 +2446,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2459,7 +2459,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2472,7 +2472,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2485,7 +2485,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2498,7 +2498,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool       result_type;
+    typedef typename K::Bool_type  result_type;
     typedef Arity_tag< 2 >         Arity;
 
     result_type
@@ -2518,7 +2518,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Plane_3          Plane_3;
     typedef typename K::Triangle_3       Triangle_3;
   public:
-    typedef typename K::Bool             result_type;
+    typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
 
     result_type
@@ -2557,7 +2557,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2   Point_2;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 3 >        Arity;
 
     result_type
@@ -2574,7 +2574,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3   Point_3;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 3 >        Arity;
 
     result_type
@@ -2594,7 +2594,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Line_2    Line_2;
     typedef typename K::Equal_2   Equal_2;
   public:
-    typedef typename K::Bool      result_type;
+    typedef typename K::Bool_type result_type;
     typedef Arity_tag< 4 >        Arity;
 
     result_type
@@ -2625,7 +2625,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Plane_3       Plane_3;
     typedef typename K::Collinear_3   Collinear_3;
   public:
-    typedef typename K::Bool          result_type;
+    typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 3 >            Arity;
 
     result_type
@@ -2657,7 +2657,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Compare_xyz_3   Compare_xyz_3;
     Compare_xyz_3 c;
   public:
-    typedef typename K::Bool            result_type;
+    typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 2 >              Arity;
 
     Less_xyz_3() {}
@@ -2675,7 +2675,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Compare_xy_2   Compare_xy_2;
     Compare_xy_2 c;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     Less_xy_2() {}
@@ -2693,7 +2693,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Compare_xy_3   Compare_xy_3;
     Compare_xy_3 c;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     Less_xy_3() {}
@@ -2709,7 +2709,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2        Point_2;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     result_type
@@ -2722,7 +2722,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3        Point_3;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     result_type
@@ -2735,7 +2735,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2        Point_2;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     result_type
@@ -2751,7 +2751,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2        Point_2;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     result_type
@@ -2764,7 +2764,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3        Point_3;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     result_type
@@ -2777,7 +2777,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3        Point_3;
   public:
-    typedef typename K::Bool           result_type;
+    typedef typename K::Bool_type      result_type;
     typedef Arity_tag< 2 >             Arity;
 
     result_type
