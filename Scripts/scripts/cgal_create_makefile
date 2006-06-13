@@ -216,6 +216,11 @@ create_makefile()
   echo    ".C\$(OBJ_EXT):"
   echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
   echo
+  echo
+  echo    ".cpp\$(OBJ_EXT):"
+  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  echo
+}
 }
 
 
