@@ -89,8 +89,12 @@ struct Homogeneous_base
 
     // These are currently undocumented.
     // Should they be part of the Kernel interface ?
+
+    // Bool_type had originally been Bool. It was renamed to avoid a conflict
+    // between a macro defined in Xlib.h poorly chosen to have the same name,
+    // that is 'Bool'.
     typedef typename Same_uncertainty_nt<bool, FT>::type
-                                                    Bool;
+                                                    Bool_type;
     typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
                                                     Sign;
     typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
