@@ -13,6 +13,18 @@
 #include <CGAL/IO/Qt_examiner_viewer_2.h>
 #include <CGAL/IO/Qt_examiner_viewer_2.h>
 
+Slice_arrangement::Sphere_3 Slice_arrangement::unproject(Circle_2 c){
+  return Sphere_3(unproject(c.center()), c.squared_radius());
+}
+Slice_arrangement::Line_3 Slice_arrangement::unproject(Line_2 c){
+  return Line_3(unproject(c.point()), Vector_3(c.to_vector().x(),
+					       c.to_vector().y(),
+					       0));
+}
+Slice_arrangement::Point_3 Slice_arrangement::unproject(Point_2 c){
+  return Point_3(c.x(), c.y(), 0);
+}
+
 
 template <class K>
 struct Center: public boost::static_visitor<> {
@@ -32,26 +44,29 @@ struct Slice_arrangement::Rule{
   
   Rule(Circle_2 s, Curve f, NT inf): f_(f) {
     CGAL_precondition(f.is_rule());
-    Line_2 l;
+    Line_3 l;
     NT v=1;
     if (!f.is_negative()) v=-1;
     if (C== 0) {
-      l= Line_2(Point_2(s.center().x(), s.center().y()), Vector_2(v,0));
+      l= Line_3(Point_3(s.center().x(), s.center().y(),0), Vector_3(v,0,0));
     } else {
-      l= Line_2(Point_2(s.center().x(), s.center().y()), Vector_2(0,v));
+      l= Line_3(Point_3(s.center().x(), s.center().y(),0), Vector_3(0,v,0));
     }
     NT pc[2];
     pc[1-C]=s.center()[1-C];
     pc[C]=inf;
     if (f.is_negative()) pc[C]= -pc[C];
-    start_= SLI(s, l);
-    end_= SLI(Point_2(pc[0], pc[1]), l);
+    Sphere_3 s3(Point_3(s.center().x(), 
+			s.center().y(), NT(0)), 
+		s.squared_radius());
+    start_= SLI(s3,l);
+    end_= SLI(Point_3(pc[0], pc[1], 0), l);
     //std::cout << "Type: " << pt_ << " from " << start_ << " to " << end_ << std::endl;
   }
 
   bool is_on(const Point_2 &p) const {
     if (p[1-C] != constant_coordinate()) return false;
-    SLI pc(p, line());
+    SLI pc(unproject(p), unproject(line()));
     if (f_.is_negative()) {
       return pc > end_ && pc < start_;
     } else {
@@ -63,12 +78,12 @@ struct Slice_arrangement::Rule{
     return line().point()[1-C];
   }
 
-  typename SLI::Exact_NT source_coordinate() const {
-    return start_.exact_coordinate(C);
+  typename SLI::Quadratic_NT source_coordinate() const {
+    return start_.exact_coordinate(Coordinate_index(C));
   }
 
-  typename SLI::Exact_NT target_coordinate() const {
-    return end_.exact_coordinate(C);
+  typename SLI::Quadratic_NT target_coordinate() const {
+    return end_.exact_coordinate(Coordinate_index(C));
   }
 
   void clip(SLI o) {
@@ -82,6 +97,8 @@ struct Slice_arrangement::Rule{
 
   }
   Line_2 line() const {
+    //std::cout << start_.line() << std::endl;
+    //std::cout << end_.line() << std::endl;
     CGAL_assertion(start_.line() == end_.line()  || start_.line().opposite() == end_.line());
     return Line_2(Point_2(start_.line().point().x(), 
 			  start_.line().point().y()),
@@ -93,8 +110,8 @@ struct Slice_arrangement::Rule{
   }
 
   void clip(Circle_2 c) {
-    SLI i0(c, line());
-    SLI i1(c, line().opposite());
+    SLI i0(unproject(c), start_.line());
+    SLI i1(unproject(c), start_.line().opposite());
     clip(i0);
     clip(i1);
   }
@@ -107,7 +124,7 @@ struct Slice_arrangement::Rule{
     Point_2 pi(pc[0], pc[1]);
     //if (CGAL::assign(pi, oi)){
     if (ra.is_on(Point_2(pi.x(), pi.y()))){
-      SLI ib(pi, line()); 
+      SLI ib(unproject(pi), start_.line()); 
       clip(ib);
     }
   }

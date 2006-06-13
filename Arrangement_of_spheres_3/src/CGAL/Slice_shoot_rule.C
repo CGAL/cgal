@@ -1,15 +1,15 @@
 #include <CGAL/Arrangement_of_spheres_3/Slice.h>
 
 // hits in order T R B L
-Slice::Halfedge_const_handle Slice::shoot_rule(T::Event_point_3 source,
+Slice::Halfedge_const_handle Slice::shoot_rule(const T::Sphere_point_3& source,
 					       Face_const_handle f,
 					       int type) const {
   //Temp_point tp(spheres_, source.sphere());
-  set_temp_sphere(source.sphere());
+  t_.set_temp_sphere(source.sphere());
   return shoot_rule(source, f, Sds::Curve(T::Key::temp_key(),  Sds::Curve::Part(type)));
 
 }
-Slice::Halfedge_const_handle Slice::shoot_rule(T::Event_point_3 source,
+Slice::Halfedge_const_handle Slice::shoot_rule(const T::Sphere_point_3 & source,
 					       Face_const_handle f,
 					       Sds::Curve rule) const {
   bool backwards= (rule.is_top() || rule.is_left());
@@ -101,7 +101,7 @@ Slice::Halfedge_const_handle Slice::shoot_rule(T::Event_point_3 source,
 
 // return comparison of separator to intersection point on the C coordinate
 // i.e. SMALLER if the separator is SMALLER than the intersection point
-CGAL::Comparison_result Slice::rule_shoot_edge_vertex(T::Event_point_3 ep, 
+CGAL::Comparison_result Slice::rule_shoot_edge_vertex(const T::Sphere_point_3 & ep, 
 						      Sds::Curve rule,
 						      Sds::Curve hp,
 						      Sds::Point p,
@@ -137,7 +137,7 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(T::Event_point_3 ep,
       if (hp == hn) {
 	//CGAL_assertion(hp==hn);
 	bool arc_top;
-	if (rule.constant_coordinate()==0) {
+	if (rule.constant_coordinate() == T::Coordinate_index(0)) {
 	  arc_top= hp.is_right();
 	} else {
 	  arc_top = hp.is_top();
@@ -154,7 +154,7 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(T::Event_point_3 ep,
 								      exact);
 	if (hp.part() & hn.part() & rule.part()) {
 	  CGAL::Comparison_result ret
-	    = CGAL::compare(center_c(hn.key(), rule.constant_coordinate()), 
+	    = CGAL::compare(t_.center_c(hn.key(), rule.constant_coordinate()), 
 			    ep.simple_coordinate(rule.constant_coordinate()));
 	  debug_rule_shoot_check(debug_answer, ret, exact);
 	  return ret;
@@ -177,7 +177,7 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(T::Event_point_3 ep,
 }
 
 
-CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep, 
+CGAL::Comparison_result Slice::rule_shoot_compare_SS(const T::Sphere_point_3 & ep, 
 						     Sds::Curve srule,
 						     Sds::Curve arc0,
 						     Sds::Point pt,
@@ -189,7 +189,7 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
 								exact);
   std::cout << "SS " << arc0 << "--" << pt << "--" << arc1 << std::endl;
    
-  int C= srule.constant_coordinate();
+  T::Coordinate_index C= srule.constant_coordinate();
   bool tangent= (arc0.key()==arc1.key());
   if (tangent) {
     std::cout << "Tangent." << std::endl;
@@ -198,12 +198,12 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
     std::cout << "Using " << arc0 << "--" << pt << "--" << arc1 << std::endl;
   }
   // NOTE maybe make these into index based predicates
-  bool hi= sphere_intersects_rule(arc0.key(), srule.key(), C);
-  bool ohi= sphere_intersects_rule(arc0.key(), srule.key(), C);
-  CGAL::Comparison_result hp= compare_sphere_centers_c(arc0.key(),
-						       srule.key(), C);
-  CGAL::Comparison_result ohp= compare_sphere_centers_c(arc1.key(), 
-							srule.key(), C);
+  bool hi= t_.sphere_intersects_rule(arc0.key(), srule.key(), C);
+  bool ohi= t_.sphere_intersects_rule(arc0.key(), srule.key(), C);
+  CGAL::Comparison_result hp= t_.compare_sphere_centers_c(arc0.key(),
+							  srule.key(), C);
+  CGAL::Comparison_result ohp= t_.compare_sphere_centers_c(arc1.key(), 
+							   srule.key(), C);
   std::cout << "Comparisons are " << hi << " " << hp << " and " << ohi << " " << ohp << std::endl;
 
   if (hi && !ohi || !ohi && !hi) {
@@ -221,79 +221,49 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
 
 
   // NOTE  hmmm, need to clean
-  T::Plane_3 eqp= equipower_plane(arc0.key(), arc1.key());
-  NT v[2];
-  v[C]=1;
-  v[1-C]=0;
-  T::Plane_3 pp(T::Point_3(ep.simple_coordinate(0), ep.simple_coordinate(1), 0),
-		T::Vector_3(v[0], v[1], 0));
-  T::Line_3 l;
-  CGAL::Object o= CGAL::intersection(eqp, pp);
-  CGAL_assertion(CGAL::assign(l,o));
-  CGAL::assign(l,o);
-  std::cout << "The intersection line is " << l << std::endl;
-  //CGAL::Comparison_result dir= CGAL::compare(ep.simple_coordinate(1-C), spheres_[h->curve().key()].center(1-C));*/
-  T::Event_point_3 p0(sphere(arc0.key()), l);
-
-
-  if (!p0.is_valid()){
+  CGAL::Bounded_side bs
+    = t_.bounded_side_of_sphere_on_equipower_plane_rule_line(arc0.key(), 
+							      arc1.key(),
+							      srule.key(),
+							      T::Coordinate_index(C),
+							     ep);
+  if (bs == CGAL::ON_UNBOUNDED_SIDE){
     std::cout << "Missed." << std::endl;
-    CGAL::Comparison_result ret= compare_equipower_point_to_rule(arc0.key(),
+    CGAL::Comparison_result ret= t_.compare_equipower_point_to_rule(arc0.key(),
 								 arc1.key(),
 								 srule.key(), C);
     debug_rule_shoot_check(debug_answer,ret, exact);
     return ret;
+  } else if (bs== CGAL::ON_BOUNDARY) {
+    std::cout << "Equal one of them " << std::endl;
+    debug_rule_shoot_check(debug_answer,CGAL::EQUAL, exact);
+    return CGAL::EQUAL;
   } else {
-    T::Event_point_3 p1(sphere(arc0.key()), l.opposite());
-      
-    if (p0 > p1) {
-      std::swap(p0, p1);
-    }
-    CGAL_assertion(p0 < p1);
-    if (ep == p0 || ep ==p1) {
-      std::cout << "Equal one of them " << std::endl;
-      debug_rule_shoot_check(debug_answer,CGAL::EQUAL, exact);
-      return CGAL::EQUAL;
+    if (arc0.is_inside() || arc1.is_inside()) {
+      // arcs are at extremum of face if I am checking
+      CGAL::Sign sn= t_.sign_of_separating_plane_normal_c(pt.sphere(0).key(),
+						       pt.sphere(1).key(), C);
+      CGAL_assertion(sn != CGAL::ZERO);
+      CGAL::Comparison_result cret= CGAL::enum_cast<CGAL::Comparison_result>(sn);
+      debug_rule_shoot_check(debug_answer, 
+			     cret, 
+			     exact);
+      return cret;
     } else {
-
-      bool between =(ep > p0 && ep < p1);
-
-      if (!between) {
-	CGAL::Comparison_result ret= compare_equipower_point_to_rule(pt.sphere(0).key(),
-								     pt.sphere(1).key(),
-								     srule.key(),
-								     C);
-	debug_rule_shoot_check(debug_answer, 
-			       ret, 
-			       exact);
-	return ret;
+      //bool between =true;
+      CGAL::Sign dir= t_.sign_of_equipower_plane_normal_c(arc0.key(), arc1.key(),
+						       C);
+      //CGAL::Comparison_result dir=CGAL::compare(eqp.orthogonal_vector()[C], 0); 
+      int cum=0;
+      CGAL::Oriented_side os= t_.oriented_side_of_equipower_plane(arc0.key(), arc1.key(), ep);
+      if (os == CGAL::ON_POSITIVE_SIDE) ++cum;
+      if (dir == CGAL::POSITIVE) ++cum;
+      if (cum%2==0) {
+	debug_rule_shoot_check(debug_answer,CGAL::SMALLER, exact);
+	return CGAL::SMALLER;
       } else {
-	if (arc0.is_inside() || arc1.is_inside()) {
-	  // arcs are at extremum of face if I am checking
-	  CGAL::Sign sn= sign_of_separating_plane_normal_c(pt.sphere(0).key(),
-							   pt.sphere(1).key(), C);
-	  CGAL_assertion(sn != CGAL::ZERO);
-	  CGAL::Comparison_result cret= CGAL::enum_cast<CGAL::Comparison_result>(sn);
-	  debug_rule_shoot_check(debug_answer, 
-				 cret, 
-				 exact);
-	  return cret;
-	} else {
-	  CGAL::Sign dir= sign_of_equipower_plane_normal_c(arc0.key(), arc1.key(),
-							   C);
-	  //CGAL::Comparison_result dir=CGAL::compare(eqp.orthogonal_vector()[C], 0); 
-	  int cum=0;
-	  CGAL::Oriented_side os= oriented_side_of_equipower_plane(arc0.key(), arc1.key(), ep);
-	  if (os == CGAL::ON_POSITIVE_SIDE) ++cum;
-	  if (dir == CGAL::POSITIVE) ++cum;
-	  if (cum%2==0) {
-	    debug_rule_shoot_check(debug_answer,CGAL::SMALLER, exact);
-	    return CGAL::SMALLER;
-	  } else {
-	    debug_rule_shoot_check(debug_answer,CGAL::LARGER, exact);
-	    return CGAL::LARGER;
-	  }
-	}
+	debug_rule_shoot_check(debug_answer,CGAL::LARGER, exact);
+	return CGAL::LARGER;
       }
     }
   }
@@ -301,7 +271,7 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SS(T::Event_point_3 ep,
 
 
 
-CGAL::Comparison_result Slice::rule_shoot_compare_SR(T::Event_point_3 ep, 
+CGAL::Comparison_result Slice::rule_shoot_compare_SR(const T::Sphere_point_3 & ep, 
 						     Sds::Curve srule,
 						     Sds::Curve arc,
 						     Sds::Curve orule,
@@ -318,9 +288,21 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SR(T::Event_point_3 ep,
 
    
       
-  CGAL::Bounded_side intersection_side= rule_shoot_source_side(ep, orule, 
-							       arc.key(),
-							       srule.constant_coordinate());
+  CGAL::Bounded_side intersection_side;
+  if (srule.constant_coordinate() == Coordinate_index(0)) {
+    intersection_side= t_.bounded_side_of_sphere(arc.key(),
+						 srule.key(),
+						 orule.key(),
+						 ep);
+  } else {
+    intersection_side= t_.bounded_side_of_sphere(arc.key(),
+						 orule.key(),
+						 srule.key(),
+						 ep);
+  }
+  //ep, orule, 
+  //							       arc.key(),
+  //							       srule.constant_coordinate());
   
 
   if (intersection_side== CGAL::ON_BOUNDARY){
@@ -344,33 +326,33 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SR(T::Event_point_3 ep,
 }
 
 
-CGAL::Comparison_result Slice::debug_rule_shoot_answer(T::Event_point_3 ep, 
+CGAL::Comparison_result Slice::debug_rule_shoot_answer(const T::Sphere_point_3 & ep, 
 						       Sds::Curve rule,
 						       Sds::Curve p,
 						       Sds::Curve n,
 						       bool &exact) const {
   //CGAL::Comparison_result answer;
   NT z;
-  if (ep.has_simple_coordinate(2)) {
-    z= ep.simple_coordinate(2);
+  if (ep.has_simple_coordinate(T::Coordinate_index(2))) {
+    z= ep.simple_coordinate(T::Coordinate_index(2));
     exact=true;
   } else {
-    z= ep.approximate_coordinate(2);
+    z= ep.approximate_coordinate(T::Coordinate_index(2));
     exact=false;
   }
 
   std::cout << "Z is " << z << " and exact is " << exact << std::endl;
 
   Sds::Point pt(p,n);
-  T::Sphere_point_3 sp= sphere_point_rz(pt, z);
+  const T::Sphere_point_3 & sp= sphere_point_rz(pt, z);
   /*if (!sp.is_valid()) {
-    T::Sphere_point_3 sp2= sphere_point_rz(pt, z);
+    const T::Sphere_point_3 & sp2= sphere_point_rz(pt, z);
     }*/
   CGAL_assertion(sp.is_valid());
     
   std::cout << "The point " << pt << " is " 
-	    << CGAL::to_double(sp.exact_coordinate(0)) << " " 
-	    << CGAL::to_double(sp.exact_coordinate(1)) << std::endl; 
+	    << CGAL::to_double(sp.exact_coordinate(T::Coordinate_index(0))) << " " 
+	    << CGAL::to_double(sp.exact_coordinate(T::Coordinate_index(1))) << std::endl; 
     
     
   CGAL::Comparison_result ans= sp.compare(ep, rule.constant_coordinate());
@@ -399,14 +381,14 @@ void Slice::debug_rule_shoot_check(CGAL::Comparison_result check,
 }
 
 
-bool Slice::rule_shoot_compare_if_rational_arc(T::Event_point_3 ep,
+bool Slice::rule_shoot_compare_if_rational_arc(const T::Sphere_point_3 & ep,
 					       Sds::Curve rule,
 					       Sds::Curve a,
 					       CGAL::Comparison_result &ret) const {
-  CGAL::Comparison_result comp= compare_sphere_centers_c(a.key(), rule.key(),
-						       rule.constant_coordinate());
+  CGAL::Comparison_result comp= t_.compare_sphere_centers_c(a.key(), rule.key(),
+							    rule.constant_coordinate());
   // NOTE could use cached locations
-  if (rule.constant_coordinate()==1){
+  if (rule.constant_coordinate()==T::Coordinate_index(1)){
     if (a.is_top() && comp == CGAL::LARGER) {
       ret= CGAL::LARGER;
       return true;
@@ -427,16 +409,16 @@ bool Slice::rule_shoot_compare_if_rational_arc(T::Event_point_3 ep,
 }
 
 
-bool Slice::rule_shoot_compare_if_rational(T::Event_point_3 ep,
+bool Slice::rule_shoot_compare_if_rational(const T::Sphere_point_3 & ep,
 					   Sds::Curve rule,
 					   Sds::Curve a,
 					   Sds::Curve b,
 					   CGAL::Comparison_result &ret) const {
   NT coord;
   if (a.is_rule() && a.constant_coordinate()==rule.constant_coordinate()) {
-    coord= center_c(a.key(),  a.constant_coordinate());
+    coord= t_.center_c(a.key(),  a.constant_coordinate());
   } else if (b.is_rule() && b.constant_coordinate()==rule.constant_coordinate()) {
-    coord= center_c(b.key(), b.constant_coordinate());
+    coord= t_.center_c(b.key(), b.constant_coordinate());
   } else {
     if (a.is_arc() && rule_shoot_compare_if_rational_arc(ep, rule, a, ret)){
       return true;
@@ -459,11 +441,18 @@ bool Slice::rule_shoot_compare_if_rational(T::Event_point_3 ep,
 
 // compare along C where the intersection point of the two rules
 // (defined by Coord C of ep) is relative to the sphere of the arc
-CGAL::Bounded_side Slice::rule_shoot_source_side(T::Event_point_3 ep,
+#if 0
+CGAL::Bounded_side Slice::rule_shoot_source_side(const T::Sphere_point_3 & ep,
+						 T::Key rule,
 						 Sds::Curve orule,
 						 T::Key arc_index,
 						 int C) const {
-  NT p[2];
+  return sc_.bounded_side_of_sphere_rule_rule_line(epi,
+						   orule.index(),
+						   arc_index,
+						   C,
+						   ep);
+  /*NT p[2];
   p[C]= ep.simple_coordinate(C);
   p[1-C]= center_c(orule.key(), orule.constant_coordinate());
     
@@ -471,7 +460,7 @@ CGAL::Bounded_side Slice::rule_shoot_source_side(T::Event_point_3 ep,
 	    << " " << CGAL::to_double(p[1]) << std::endl;
   T::Line_3 l(T::Point_3(p[0], p[1], 0), T::Vector_3(0,0,1));
     
-  T::Event_point_3 p0=T::Event_point_3(sphere(arc_index), l);
+  const T::Sphere_point_3 & p0=const T::Sphere_point_3 &(sphere(arc_index), l);
   CGAL::Bounded_side intersection_side;
   if (!p0.is_valid()) {
     intersection_side=CGAL::ON_UNBOUNDED_SIDE;
@@ -479,7 +468,7 @@ CGAL::Bounded_side Slice::rule_shoot_source_side(T::Event_point_3 ep,
     std::cout << "Equal" << std::endl;
     intersection_side=  CGAL::ON_BOUNDARY;
   } else {
-    T::Event_point_3 p1=T::Event_point_3(sphere(arc_index), 
+    const T::Sphere_point_3 & p1=const T::Sphere_point_3 &(sphere(arc_index), 
 					 l.opposite());
     if (p1 == ep) {
       std::cout << "Equal 1" << std::endl;
@@ -492,5 +481,6 @@ CGAL::Bounded_side Slice::rule_shoot_source_side(T::Event_point_3 ep,
       intersection_side= CGAL::ON_UNBOUNDED_SIDE;
     }
   }
-  return intersection_side;
+  return intersection_side;*/
 }
+#endif

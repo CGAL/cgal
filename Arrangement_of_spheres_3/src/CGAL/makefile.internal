@@ -24,7 +24,7 @@ CXXFLAGS = -I../../include -pg -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_
 # Object files
 #---------------------------------------------------------------------#
 
-CGAL_OBJECTS = Slice_arrangement$(OBJ_EXT) Slice_data_structure$(OBJ_EXT)  Slice$(OBJ_EXT) Slice_predicates$(OBJ_EXT) Slice_constructions$(OBJ_EXT) Slice_point_location$(OBJ_EXT) Slice_shoot_rule$(OBJ_EXT)
+CGAL_OBJECTS = Slice_arrangement$(OBJ_EXT) Slice_data_structure$(OBJ_EXT)  Slice$(OBJ_EXT) Slice_predicates$(OBJ_EXT) Slice_constructions$(OBJ_EXT) Slice_point_location$(OBJ_EXT) Slice_shoot_rule$(OBJ_EXT) Arrangement_of_spheres_traits_3$(OBJ_EXT) Slice_modifiers$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    target entries

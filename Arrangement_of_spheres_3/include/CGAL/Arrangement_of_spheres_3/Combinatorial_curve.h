@@ -1,9 +1,12 @@
 #ifndef CGAL_ARRANGEMENT_SPHERES_3_FEATURE_H
 #define CGAL_ARRANGEMENT_SPHERES_3_FEATURE_H
 
-#include <CGAL/Arrangement_of_spheres_traits_3.h>
+#include <CGAL/Tools/Coordinate_index.h>
+#include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
 
 struct Combinatorial_curve{
+  typedef ::Coordinate_index Coordinate_index;
+
   /* for rules
      Inside means below a horizontal arc and to the left of a vertical one
   */
@@ -19,7 +22,7 @@ struct Combinatorial_curve{
 	     T_INF=T_BIT|INF_BIT, 
 	     B_INF=B_BIT|INF_BIT*/};
 
-  typedef Arrangement_of_spheres_traits_3::Key Key;
+  typedef Sphere_key Key;
 
   Combinatorial_curve(int i, Part pt): index_(i), pt_(pt){
     CGAL_precondition(i>=0);
@@ -82,11 +85,15 @@ struct Combinatorial_curve{
   Key key() const {
     return index_;
   }
-  int constant_coordinate() const {
+
+
+  Coordinate_index
+  constant_coordinate() const {
     CGAL_precondition(is_rule());
-    int r;
-    if ((pt_&R_BIT) || (pt_ &L_BIT)) r= 1;
-    else r= 0;
+    Coordinate_index r;
+    if ((pt_&R_BIT) || (pt_ &L_BIT)) 
+      r= Coordinate_index(1);
+    else r= Coordinate_index(0);
     //if (!is_finite()) r=1-r;
     return r;
   }
@@ -220,11 +227,11 @@ struct Combinatorial_curve{
     return pt_&o.quadrant();
   }
 
-  int is_weakly_incompatible(int i) const {
+  Coordinate_index is_weakly_incompatible(int i) const {
     int a= i&pt_;
-    if (a== L_BIT || a==R_BIT) return 1;
-    else if (a== T_BIT || a== B_BIT) return 0;
-    else return -1;
+    if (a== L_BIT || a==R_BIT) return Coordinate_index(1);
+    else if (a== T_BIT || a== B_BIT) return Coordinate_index(0);
+    else return Coordinate_index();
   }
 
   static const char *to_string(int pt){

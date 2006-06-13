@@ -252,11 +252,15 @@ Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
 Arrangement_2/examples/Arrangement_2/ex_infinite_edge_insertion.C -text
 Arrangement_2/examples/Arrangement_2/ex_infinite_insert.C -text
 Arrangement_2/examples/Arrangement_2/ex_infinite_non_intersecting.C -text
+Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Sphere_key.h -text
+Arrangement_of_spheres_3/include/CGAL/Tools/Coordinate_index.h -text
+Arrangement_of_spheres_3/src/CGAL/Arrangement_of_spheres_traits_3.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice.backup.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice_arrangement.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice_constructions.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice_data_structure.C -text
+Arrangement_of_spheres_3/src/CGAL/Slice_modifiers.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice_point_location.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice_predicates.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice_shoot_rule.C -text

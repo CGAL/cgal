@@ -49,8 +49,9 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   /*Sphere_line_intersection(NT n):  first_(false){
     initialize_const(n);
     }*/
-  Filtered_sphere_line_intersection(typename K::Point_3 p3): P(p3,typename K::Line_3(p3,
-										     typename K::Vector_3(1,1,1))){
+  Filtered_sphere_line_intersection(typename K::Point_3 p3,
+				    typename K::Line_3 l): 
+    P(p3, l){
     std::pair<double,double> i= CGAL::to_interval(p3[C]);
     lb_=i.first;
     ub_=i.second;
@@ -60,19 +61,19 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   // NOTE add a constructor where the line is known to point along C
   // this saves many computations for closest point
 
-  Filtered_sphere_line_intersection(typename K::Point_3 p3, 
+  /*Filtered_sphere_line_intersection(typename K::Point_3 p3, 
 				    typename K::Line_3 l): P(p3, l){
     std::pair<double,double> i= CGAL::to_interval(p3[C]);
     lb_=i.first;
     ub_=i.second;
-  }
+    }*/
   
   // assume the line hits
-  Filtered_sphere_line_intersection( typename K::Sphere_3 s, 
+  /*Filtered_sphere_line_intersection( typename K::Sphere_3 s, 
 				     typename K::Line_3 l, 
 				     CGAL::Tag_true ): P(s,l, CGAL::Tag_true()){
     initialize();
-  }
+    }*/
  
   Filtered_sphere_line_intersection(typename K::Sphere_3 s, 
 				    typename K::Line_3 l): P(s,l){
@@ -86,7 +87,7 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
     }
   }
 
-  Filtered_sphere_line_intersection(typename K::Circle_2 s, 
+  /*Filtered_sphere_line_intersection(typename K::Circle_2 s, 
 				    typename K::Line_2 l): P(s,l){
     // hope the compiler collapses the duplicate work
     CGAL_precondition(C!= 2);
@@ -97,20 +98,20 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
       typename K::Point_2 cp= l.projection(s.center()); 
       initialize(cp[C]);
     }
-  }
+    }*/
 
-  Filtered_sphere_line_intersection( typename K::Circle_2 s, 
+  /*Filtered_sphere_line_intersection( typename K::Circle_2 s, 
 				     typename K::Line_2 l, 
 				     CGAL::Tag_true ): P(s,l, CGAL::Tag_true()){
     initialize();
-  }
-  Filtered_sphere_line_intersection(typename K::Point_2 p3, 
+    }*/
+  /*Filtered_sphere_line_intersection(typename K::Point_2 p3, 
 				    typename K::Line_2 l): P(p3, l){
     CGAL_precondition(C==0 || C==1);
     std::pair<double,double> i= CGAL::to_interval(p3[C]);
     lb_=i.first;
     ub_=i.second;
-  }
+    }*/
 
   Filtered_sphere_line_intersection(typename P::NT p): P(typename K::Point_3(p,p,p),
 							 typename K::Line_3(typename K::Point_3(p,p,p), 
@@ -160,12 +161,20 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   }
 
   void initialize() {
-    initialize(closest_coord<K, C>(P::sphere().center(), P::line()));
+    // fix this
+    typename P::NT t= (P::line().to_vector()*(P::sphere().center()-CGAL::ORIGIN) 
+		       - P::line().to_vector()*(P::line().point()-CGAL::ORIGIN))/(P::line().to_vector()*P::line().to_vector());
+    typename P::NT r= P::line().point()[C]+t*P::line().to_vector()[C];
+    initialize(r);
   }
 
   void initialize(typename P::NT cc) {
     //NT cc =closest_coord<C>(s_.center(), P::line());
-    CGAL_precondition(P::sphere().bounded_side(point_on_line<K, C>(P::line(), cc)) != CGAL::ON_UNBOUNDED_SIDE);
+    CGAL_precondition_code(typename P::NT t=(cc-P::line().point()[C])/P::line().to_vector()[C]);
+    CGAL_precondition_code(typename P::Point_3 pol=P::line().point()+t*P::line().to_vector());
+    CGAL_precondition(P::sphere().bounded_side(pol) != CGAL::ON_UNBOUNDED_SIDE);
+    
+    
     std::pair<double,double> i=CGAL::to_interval(cc);
     if (P::line().to_vector()[C]>0) {
       ub_=i.second;
@@ -200,7 +209,11 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   double double_value() const {
     if (ub_== lb_) return ub_;
     else if (ub_-lb_ < .00001) return .5*(lb_+ub_);
-    return approximate_intersection<K>(P::sphere(), P::line(), C);
+    else {
+      double d=CGAL::to_double(P::exact_coordinate(typename P::Coordinate_index(C)));
+      CGAL_assertion(d>=lb_ && d<= ub_);
+      return d;
+    }
   }
 
   std::pair<double, double> interval_value() const {
@@ -217,13 +230,23 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
 	ub_=bm;
       }
     } else {
-      typename K::Point_3 p= point_on_line<K, C>(P::line(), typename P::NT(bm));
+      typename P::NT t=(typename P::NT(bm)-P::line().point()[C])
+	/P::line().to_vector()[C];
+      typename K::Point_3 p=  P::line().point()+t*P::line().to_vector();
+
+      //= point_on_line<K, C>(P::line(), typename P::NT(bm));
       CGAL::Bounded_side bs= P::sphere().bounded_side(p);
       switch(bs) {
       case CGAL::ON_BOUNDED_SIDE: if (P::line().to_vector()[C] > 0) ub_=bm; else lb_=bm; break;
       case CGAL::ON_UNBOUNDED_SIDE: if (P::line().to_vector()[C] > 0) lb_=bm; else ub_=bm; break;
       case CGAL::ON_BOUNDARY: lb_=ub_=bm; break;
       };
+    }
+    {
+      CGAL_assertion(P::exact_coordinate(typename P::Coordinate_index(C)) 
+		     >= typename P::Quadratic_NT(typename P::NT(lb_)));
+      CGAL_assertion(P::exact_coordinate(typename P::Coordinate_index(C)) 
+		     <= typename P::Quadratic_NT(typename P::NT(ub_)));
     }
   }
 
@@ -239,6 +262,13 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   }
 
   static void test();
+
+  
+  typename P::NT coord_on_line(typename P::NT v,
+			       typename P::Coordinate_index CC) const {
+    typename P::NT t=(v-P::line().point()[C])/P::line().to_vector()[C];
+    return  P::line().point()[CC]+t*P::line().to_vector()[CC];
+  }
 
   /*void assert_is_valid() {
     if (lb_ != ub_ && .5*(lb_+ub_) != lb_ && .5*(lb_+ub_) != ub_) {
@@ -261,23 +291,25 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
 
   static Extended_comparison_result compare_bounds(const This &a,
 						   const This &b,
-						   int CC){
+						   typename P::Coordinate_index CC){
     //typedef Filtered_sphere_line_intersection<K,C> FS;
     if (a.line().to_vector()[CC] == 0 || b.line().to_vector()[CC]== 0){
       // just punt and fall back on exact for now. 
       return UNKNOWN;
     } else {
-      typename P::NT tl= coord_on_line<K>(a.line(), typename P::NT(a.lb()), C, CC);
-      typename P::NT tu= coord_on_line<K>(a.line(), typename P::NT(a.ub()), C, CC);
-      typename P::NT ol= coord_on_line<K>(b.line(), typename P::NT(b.lb()), C, CC);
-      typename P::NT ou= coord_on_line<K>(b.line(), typename P::NT(b.ub()), C, CC);
+      typename P::NT tl= a.coord_on_line(typename P::NT(a.lb()), CC);
+      typename P::NT tu= a.coord_on_line(typename P::NT(a.ub()), CC);
+      typename P::NT ol= b.coord_on_line(typename P::NT(b.lb()), CC);
+      typename P::NT ou= b.coord_on_line(typename P::NT(b.ub()), CC);
       if (tl > tu) std::swap(tl,tu);
       if (ol > ou) std::swap(ol,ou);
       if (tu < ol) {
-	CGAL_assertion(C != CC || a.double_value() < b.double_value());
+	CGAL_assertion(Coordinate_index(C) != CC 
+		       || a.double_value() < b.double_value());
 	return SMALLER;
       } else if (ou < tl) {
-	CGAL_assertion(C != CC || a.double_value() > b.double_value());
+	CGAL_assertion(Coordinate_index(C) != CC 
+		       || a.double_value() > b.double_value());
 	return LARGER;
       }
       else if (tl==tu && ol==ou && tl==ol) return EQUAL;
@@ -300,7 +332,9 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   }
   
 
-  inline CGAL::Comparison_result compare_2(const This &o, int CC, int sct=0) const {
+  inline CGAL::Comparison_result compare_2(const This &o,
+					   typename P::Coordinate_index CC, 
+					   int sct=0) const {
     Extended_comparison_result ecr= compare_bounds(*this, o, CC);
     if (ecr != UNKNOWN) return CGAL::enum_cast<CGAL::Comparison_result>(ecr); 
     else {
@@ -327,11 +361,12 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
 	return compare_C2(o, sct+1);
       } else {
 	//++num_exact_tests_;
-	return static_cast<const P*>(this)->compare(o, C);
+	return static_cast<const P*>(this)->compare(o, typename P::Coordinate_index(C));
       }
     }
   }
-  inline CGAL::Comparison_result  compare(const This &o, int CC) const {
+  inline CGAL::Comparison_result  compare(const This &o, 
+					  typename P::Coordinate_index CC) const {
     //++num_tests_;
     // see if intervals overlap
     Extended_comparison_result ecr= compare_bounds(*this, o, CC);
@@ -339,10 +374,10 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
     // question of <= vs <
     // if so cut at shared part
     // not useful if we are comparing at another coordinate than C, but not really harmful either.
-    else if (C==CC && lb_ <= o.lb_) {
+    else if (typename P::Coordinate_index(C)==CC && lb_ <= o.lb_) {
       if (ub_ != o.lb_) refine(o.lb_);
       if (ub_ < o.ub_) o.refine(ub_);
-    } else if (C==CC && o.lb_ <= lb_) {
+    } else if (typename P::Coordinate_index(C)==CC && o.lb_ <= lb_) {
       if (o.ub_ != lb_) o.refine(lb_);
       if (o.ub_ < ub_) refine(o.ub_);
     }

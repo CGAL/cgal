@@ -37,6 +37,10 @@ public:
   typedef Circular_k::Vector_2                           Vector_2;
   typedef Circular_k::Line_2                             Line_2;
   typedef Circular_k::Circle_2                           Circle_2;
+  typedef Circular_k::Point_3                            Point_3;
+  typedef Circular_k::Vector_3                           Vector_3;
+  typedef Circular_k::Line_3                             Line_3;
+  typedef Circular_k::Sphere_3                           Sphere_3;
 
   typedef CGAL::Arr_circular_line_arc_traits
   <Circular_k, Circular_arc_2, Line_arc_2>  Arr_traits;
@@ -133,6 +137,10 @@ protected:
   
   void write(std::ostream& out, const Circular_k::Circular_arc_2 &k) const;
   void write(std::ostream& out, const Circular_k::Line_arc_2 &k) const;
+
+  static Sphere_3 unproject(Circle_2 c);
+  static Line_3 unproject(Line_2 c);
+  static Point_3 unproject(Point_2 c);
 
   struct Curve_handle_less {
     bool operator()(CArr::Curve_const_handle a, CArr::Curve_const_handle b) const {

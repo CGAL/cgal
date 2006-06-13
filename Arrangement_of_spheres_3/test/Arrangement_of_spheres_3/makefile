@@ -73,6 +73,8 @@ sphere_location$(EXE_EXT):  sphere_location$(OBJ_EXT) ../../src/CGAL/libCGAL.a .
 
 
 clean: sphere_location.clean sphere_line_intersection_test.clean random_ray_shoot.clean random_point_locate.clean point_locate.clean show_slice.clean interactive_point_location.clean interactive_ray_shooting.clean
+	cd ../../src/CGAL; make -f makefile.internal clean
+	cd ../../src/CGALQt; make -f makefile.internal clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -23,11 +23,11 @@ void test(){
     std::cout << s2 << std::endl;
     
     //CGAL::Oriented_side os= oriented_side(
-    CGAL::Comparison_result c0= s0.compare(s1, 0);
-    CGAL::Comparison_result c1= s0.compare(s1, 1);
-    CGAL::Comparison_result c2= s0.compare(s1, 2);
-    CGAL::Comparison_result c3= s0.compare(s2, 2);
-    CGAL::Comparison_result c4= s1.compare(s2, 2);
+    CGAL::Comparison_result c0= s0.compare(s1, typename T::Coordinate_index(0));
+    CGAL::Comparison_result c1= s0.compare(s1, typename T::Coordinate_index(1));
+    CGAL::Comparison_result c2= s0.compare(s1, typename T::Coordinate_index(2));
+    CGAL::Comparison_result c3= s0.compare(s2, typename T::Coordinate_index(2));
+    CGAL::Comparison_result c4= s1.compare(s2, typename T::Coordinate_index(2));
     CGAL_assertion(c0== CGAL::EQUAL);
     CGAL_assertion(c1== CGAL::EQUAL); 
     CGAL_assertion(c2== CGAL::LARGER);
@@ -47,11 +47,11 @@ void test(){
     std::cout << s2 << std::endl;
     
     //CGAL::Oriented_side os= oriented_side(
-    CGAL::Comparison_result c0= s0.compare(s1, 0);
-    CGAL::Comparison_result c1= s0.compare(s1, 1);
-    CGAL::Comparison_result c2= s0.compare(s1, 2);
-    CGAL::Comparison_result c3= s0.compare(s2, 2);
-    CGAL::Comparison_result c4= s1.compare(s2, 2);
+    CGAL::Comparison_result c0= s0.compare(s1, typename T::Coordinate_index(0));
+    CGAL::Comparison_result c1= s0.compare(s1, typename T::Coordinate_index(1));
+    CGAL::Comparison_result c2= s0.compare(s1, typename T::Coordinate_index(2));
+    CGAL::Comparison_result c3= s0.compare(s2, typename T::Coordinate_index(2));
+    CGAL::Comparison_result c4= s1.compare(s2, typename T::Coordinate_index(2));
     CGAL_assertion(c0== CGAL::SMALLER);
     CGAL_assertion(c1== CGAL::SMALLER); 
     CGAL_assertion(c2== CGAL::LARGER);
@@ -74,7 +74,7 @@ void test(){
 int main(int, char *[]){
   
   test<SLI>();
-  test<Filtered_sphere_line_intersection<Traits::Geometric_kernel, 2> >();
+  test<Filtered_sphere_line_intersection<Traits::Geometric_traits, 2> >();
   
   return EXIT_SUCCESS;
 }

@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
 		   -std::numeric_limits<double>::max(),
 		   -std::numeric_limits<double>::max());
   //typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-  typedef Arrangement_of_spheres_traits_3::Geometric_kernel K;
+  typedef Arrangement_of_spheres_traits_3::Geometric_traits K;
   typedef CGAL::Simple_cartesian<double> DK;
   std::vector<K::Sphere_3> spheres;
   std::vector<K::Sphere_3> shifted_spheres;
@@ -51,15 +51,10 @@ int main(int argc, char *argv[]){
 	    << std::endl;
  
   Slice_arrangement::NT z= atof(argv[1]);
-  Slice_arrangement::NT inf=2*std::max(box.xmax(),
-				std::max(std::abs(box.xmin()),
-					 std::max(box.ymax(),
-						  std::max(std::abs(box.ymin()),
-							   std::max(box.zmax(),
-								    std::abs(box.zmin()))))));
+ 
   //
   
-  Slice slice(spheres.begin(), spheres.end(), inf);
+  Slice slice(spheres.begin(), spheres.end());
   slice.set_rz(z);
 
   QApplication app(argc, argv);

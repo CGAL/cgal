@@ -3,7 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Root_of_traits.h>
-#include <CGAL/Arrangement_of_spheres_3/utilities.h>
+#include <CGAL/Tools/Coordinate_index.h>
 #include <CGAL/tags.h>
 
 
@@ -35,35 +35,46 @@ private:
 public:
   typedef K T;
   typedef typename K::FT NT;
-  typedef typename CGAL::Root_of_traits<NT>::RootOf_2 Exact_NT;
+  typedef typename CGAL::Root_of_traits<NT>::RootOf_2 Quadratic_NT;
   typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Line_3 Line_3;
   typedef typename K::Sphere_3 Sphere_3;
+  typedef ::Coordinate_index Coordinate_index;
 
   //enum Type {FIRST, SECOND, ONE, INVALID};
 
-  Sphere_line_intersection(): l_(Point_3(0,0,0), Vector_3(0,0,0)){
+  Sphere_line_intersection(): l_(Point_3(0,0,0), Vector_3(0,0,0)),
+			      has_exact_(false){
     CGAL_assertion(l_.is_degenerate());
   }
 
   /*Sphere_line_intersection(NT n):  type_(false){
     initialize_const(n);
     }*/
-  Sphere_line_intersection(typename T::Point_3 p3): s_(p3,0), l_(p3, Vector_3(1,0,0)){
-  }
-
-
-  Sphere_line_intersection(typename T::Point_3 p3, typename T::Line_3 l): s_(p3,0),l_(l){
+  Sphere_line_intersection(typename T::Point_3 p3,
+			   typename T::Line_3 l): s_(p3,0), 
+						  l_(l), 
+						  has_exact_(false){
     CGAL_exactness_precondition(l.has_on(p3));
   }
-  // assume the line hits
-  Sphere_line_intersection( typename T::Sphere_3 s, 
-			    typename T::Line_3 l, CGAL::Tag_true ): s_(s), 
-								    l_(l){
+
+
+  Sphere_line_intersection(typename T::Point_3 p3 ): s_(p3,0),
+						      l_(p3, Vector_3(1,0,0)),
+						     has_exact_(false){
+   
   }
+  // assume the line hits
+  /*Sphere_line_intersection( typename T::Sphere_3 s, 
+			    typename T::Line_3 l, CGAL::Tag_true ): s_(s), 
+								    l_(l),
+								    has_exact_(false){
+								    }*/
  
-  Sphere_line_intersection(typename T::Sphere_3 s, typename T::Line_3 l): s_(s), l_(l) {
+  Sphere_line_intersection(typename T::Sphere_3 s, typename T::Line_3 l): s_(s), 
+									  l_(l), 
+									  has_exact_(false) {
     typename T::Point_3 cp= l_.projection(s_.center()); //typename T::closest_point(l, s.center());
     CGAL::Bounded_side bs= s_.bounded_side(cp);
     if (bs == CGAL::ON_UNBOUNDED_SIDE){
@@ -75,32 +86,35 @@ public:
       s_= Sphere_3(cp, 0);
     }
   }
-
+  
   /*Sphere_line_intersection(typename T::Line_3 l, bool pos): l_(l) {
     if (pos) {
       type_=PINF;
-    } else {
+      } else {
       type_=NINF;
-    }
-    }*/
-
+      }
+      }*/
+  
   // 2D constructors
   
-  Sphere_line_intersection(typename T::Circle_2 s, typename T::Line_2 l): s_(unproject(s.center()),
-					   s.squared_radius()), 
-					l_(unproject(l)) {
+  /*Sphere_line_intersection(typename T::Circle_2 s, typename T::Line_2 l): 
+    s_(unproject(s.center()), s.squared_radius()), 
+    l_(unproject(l)), has_exact_(false) {
     typename T::Point_2 cp= l.projection(s.center()); //typename T::closest_point(l, s.center());
     if (s.bounded_side(cp) == CGAL::ON_UNBOUNDED_SIDE){
       s_= Sphere_3();
       l_=Line_3(Point_3(0,0,0), Vector_3(0,0,0));
       CGAL_assertion(l_.is_degenerate());
     }
-  }
+    }*/
 
-  Sphere_line_intersection(typename T::Circle_2 s, typename T::Line_2 l, CGAL::Tag_true): s_(unproject(s.center()),
-											     s.squared_radius()), 
-											  l_(unproject(l)) {
-  }
+  /*Sphere_line_intersection(typename T::Circle_2 s, 
+			   typename T::Line_2 l, 
+			   CGAL::Tag_true): s_(unproject(s.center()),
+					       s.squared_radius()), 
+					    l_(unproject(l)), 
+					    has_exact_(false) {
+					    }*/
 
   /*Sphere_line_intersection(typename T::Line_2 l, bool pos): l_(unproject(l)) {
   if (pos) {
@@ -110,9 +124,11 @@ public:
     }
     }*/
 
-  Sphere_line_intersection(typename T::Point_2 p3, typename T::Line_2 l): s_(unproject(p3),0),
-									  l_(unproject(l)) {
-  }
+  /*Sphere_line_intersection(typename T::Point_2 p3, 
+			   typename T::Line_2 l): s_(unproject(p3),0),
+						  l_(unproject(l)), 
+						  has_exact_(false) {
+						  }*/
 
   /*bool is_finite() const {
     return type_ != NINF && type_!= PINF;
@@ -138,7 +154,7 @@ public:
   CGAL::Comparison_result compare_on_line(const Point_3 &pt) const {
     CGAL_precondition(line().has_on(pt));
     for (unsigned int i=0; i< 3; ++i){
-      CGAL::Comparison_result c= compare(pt,i);
+      CGAL::Comparison_result c= compare(pt,Coordinate_index(i));
       if (c != CGAL::EQUAL) {
 	if (line().to_vector()[i] >0) return c;
 	else return CGAL::Comparison_result(-c);
@@ -167,9 +183,9 @@ public:
       out << "(" << s_.center() << ")";
     } else {
       out << "(" << s_ << ", " << l_ << ": " 
-	  << approximate_coordinate(0)
-	  << " " << approximate_coordinate(1)
-	  << " " << approximate_coordinate(2) << ")";
+	  << approximate_coordinate(Coordinate_index(0))
+	  << " " << approximate_coordinate(Coordinate_index(1))
+	  << " " << approximate_coordinate(Coordinate_index(2)) << ")";
     }
     return out;
   }
@@ -184,36 +200,67 @@ public:
     } else return true;
     }*/
 
-  CGAL::Comparison_result compare(const Sphere_line_intersection &o, int CC) const;
-  CGAL::Comparison_result compare(const Point_3 &o, int CC) const;
+  CGAL::Comparison_result compare(const Sphere_line_intersection &o, Coordinate_index i) const;
+  CGAL::Comparison_result compare(const Point_3 &o, Coordinate_index i) const;
 
-  Exact_NT exact_coordinate(int i) const {
-    //CGAL_precondition(is_finite(i));
-    if (l_.to_vector()[i]==0) return Exact_NT(l_.point()[i]);
-    else if (s_.squared_radius()==0) return s_.center()[i];
-    else return exact_intersection<K>(s_, l_, i);
+  Quadratic_NT exact_coordinate(Coordinate_index i) const {
+    if (has_simple_coordinate(i)) return simple_coordinate(i);
+    else {
+      if (!has_exact_) {
+	Vector_3 lp= l_.point()-CGAL::ORIGIN;
+	Vector_3 vc= s_.center()-CGAL::ORIGIN;
+	Vector_3 lv= l_.to_vector(); 
+	NT a=lv*lv;
+	NT b=2*lv*(lp-vc); //-2*lv* vc + 2*lv*lp;
+	NT c=lp*lp + vc*vc-s_.squared_radius()-2*lp*vc;
+	
+	NT disc= b*b-4*a*c;
+	CGAL_assertion(disc >= 0);
+	CGAL_precondition(a!=0);
+	
+	bool first= CGAL::sign(l_.to_vector()[i]) == CGAL::POSITIVE;
+	bool rt= first && CGAL::sign(lv[i]) == CGAL::POSITIVE 
+	  || !first && CGAL::sign(lv[i]) == CGAL::NEGATIVE;
+	CGAL_assertion(first && CGAL::sign(lv[i]) == CGAL::POSITIVE
+		       || !first && CGAL::sign(lv[i]) == CGAL::NEGATIVE);
+	/*|| !first && CGAL::sign(lv[C]) == CGAL::NEGATIVE;*/
+	Quadratic_NT t=CGAL::make_root_of_2(a,b,c,rt);
+	
+	
+	/*if (first) {
+	  CGAL_assertion(t*lv[C] <= lv[C] *CGAL::make_root_of_2(a,b,c, !rt));
+	  } else {
+	CGAL_assertion(t*lv[C] >= lv[C] *CGAL::make_root_of_2(a,b,c, !rt)); 
+	}*/
+	exact_[0]= lp[0] + lv[0]*t;
+	exact_[1]= lp[1] + lv[1]*t;
+	exact_[2]= lp[2] + lv[2]*t;
+	has_exact_=true;
+      } 
+      return exact_[i];
+    }
   }
 
- bool has_simple_coordinate(int i){
+  bool has_simple_coordinate(Coordinate_index i) const {
     return (l_.to_vector()[i] ==0 || s_.squared_radius()==0);
   }
 
 
-  NT simple_coordinate(int i){
+  NT simple_coordinate(Coordinate_index i) const {
     CGAL_assertion(has_simple_coordinate(i));
     if (s_.squared_radius()==0) return s_.center()[i];
     else return l_.point()[i];
   }
 
-  /*Exact_NT clipped_exact_coordinate(int i, NT max=NT(1000)) const {
+  /*Quadratic_NT clipped_exact_coordinate(int i, NT max=NT(1000)) const {
     CGAL_precondition(max>0);
     if (is_finite(i)) return exact_coordinate(i);
-    else if (l_.to_vector()[i]==0) return Exact_NT(l_.point()[i]);
-    else if (type_==NINF) return Exact_NT(-max);
-    else return Exact_NT(max);
+    else if (l_.to_vector()[i]==0) return Quadratic_NT(l_.point()[i]);
+    else if (type_==NINF) return Quadratic_NT(-max);
+    else return Quadratic_NT(max);
     }*/
 
-  double approximate_coordinate(int i) const {
+  double approximate_coordinate(Coordinate_index i) const {
     /*if (!is_finite(i)) {
       if (type_== PINF) return std::numeric_limits<double>::infinity();
       else return -std::numeric_limits<double>::infinity();
@@ -227,7 +274,7 @@ public:
     std::swap(l_, o.l_);
   }
 
-  Sphere_line_intersection flip_on(int c) const {
+  Sphere_line_intersection flip_on(Coordinate_index i) const {
     Sphere_line_intersection r;
     CGAL_assertion(0);
     return r;
@@ -235,6 +282,8 @@ public:
 
   Sphere_3 s_;
   Line_3 l_;
+  mutable bool has_exact_;
+  mutable Quadratic_NT exact_[3];
 };
 
 template <class K>
@@ -245,11 +294,11 @@ inline std::ostream &operator<<(std::ostream &out, const Sphere_line_intersectio
 
 
 template <class K>
-inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K> &o, int CC) const {
+inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K> &o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
   CGAL_assertion(o.is_valid());
-  Exact_NT mc= exact_coordinate(CC);
-  Exact_NT oc= o.exact_coordinate(CC);
+  Quadratic_NT mc= exact_coordinate(CC);
+  Quadratic_NT oc= o.exact_coordinate(CC);
   //std::cout << "Performing exact comparison " << mc << " vs " << oc << std::endl;
   if (mc < oc) return CGAL::SMALLER;
   else if (oc < mc) return CGAL::LARGER;
@@ -257,9 +306,9 @@ inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere
 }
 
 template <class K>
-inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K>::Point_3 &o, int CC) const {
+inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere_line_intersection<K>::Point_3 &o, Coordinate_index CC) const {
   CGAL_assertion(is_valid());
-  Exact_NT mc= exact_coordinate(CC);
+  Quadratic_NT mc= exact_coordinate(CC);
   NT oc= o[CC];
   if (mc < oc) return CGAL::SMALLER;
   else if (oc < mc) return CGAL::LARGER;
