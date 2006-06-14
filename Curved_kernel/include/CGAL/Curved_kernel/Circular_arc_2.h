@@ -308,18 +308,18 @@ namespace CGALi {
     // to remember if the arc was constructed from a full circle
     const Circular_arc_point_2 & left() const
     {
-      //CGAL_kernel_precondition(is_x_monotone());
-      //CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-      //			       : compare_xy(_begin,_end)<0);
+      CGAL_kernel_precondition(is_x_monotone());
+      CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
+      			       : compare_xy(_begin,_end)<0);
       if (on_upper_part()) return _end;
       return  _begin;
     }
 
     const Circular_arc_point_2 & right() const
     {
-      //CGAL_kernel_precondition(is_x_monotone());
-      //CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-      //			       : compare_xy(_begin,_end)<0);
+      CGAL_kernel_precondition(is_x_monotone());
+      CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
+      			       : compare_xy(_begin,_end)<0);
       if (on_upper_part()) return _begin;
       return  _end;
     }
@@ -500,7 +500,7 @@ public:
 
     // check whether the arc is at upper or not from the center 
     bool on_upper_part() const {
-      //CGAL_kernel_precondition(is_x_monotone());
+      CGAL_kernel_precondition(is_x_monotone());
       return two_end_points_on_upper_part();
     }
 
@@ -524,7 +524,7 @@ public:
 
     // check whether the arc is at left or right from the center 
     bool on_left_part() const {      
-      //CGAL_kernel_precondition(is_y_monotone());
+      CGAL_kernel_precondition(is_y_monotone());
       return two_end_points_on_left_part();
     }
 
@@ -563,17 +563,6 @@ public:
     void _setx_info(unsigned short int v_is_x_monotone,
                   unsigned short int v_two_end_points_on_upper_part,
                   unsigned short int v_is_complementary_x_monotone) const {
-      /*if(v_is_x_monotone == 1) CGAL_kernel_precondition(!is_x_monotone());
-      if(v_is_x_monotone == 2) CGAL_kernel_precondition(is_x_monotone());
-      if(v_two_end_points_on_upper_part == 1) 
-        CGAL_kernel_precondition(!_two_end_points_on_upper_part());
-      if(v_two_end_points_on_upper_part == 2) 
-        CGAL_kernel_precondition(_two_end_points_on_upper_part());
-      if(v_is_complementary_x_monotone == 0) 
-        CGAL_kernel_precondition(!is_complementary_x_monotone());
-      if(v_is_complementary_x_monotone == 1) 
-        CGAL_kernel_precondition(is_complementary_x_monotone());
-      */
       flags.is_x_monotonic = v_is_x_monotone;
       flags.two_end_points_on_upper_part = v_two_end_points_on_upper_part;
       flags.is_complementary_x_monotone = v_is_complementary_x_monotone;
