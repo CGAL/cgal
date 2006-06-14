@@ -479,6 +479,7 @@ Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S97-TAUCSGCCMKL -text
 Installation/config/support/S98-TAUCSIRIXCC32 -text
 Installation/config/support/S99-TAUCSIRIXCC64 -text
+Installation/config/testfiles/CGAL_CFG_ISTREAM_INT_BUG.C -text
 Installation/demo/makefile -text
 Installation/examples/makefile -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
