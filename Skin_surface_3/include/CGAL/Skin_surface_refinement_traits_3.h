@@ -106,8 +106,9 @@ private:
           t2p_converter(ch->vertex(sortedV[2])->point()),
           t2p_converter(ch->vertex(sortedV[3])->point())),
         P_line(begin_point, p));
-      if ( !assign(end_point, obj) )
+      if ( !assign(end_point, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
     } else if (nIn==2) {
       obj = CGAL::intersection(
         P_plane(
@@ -117,8 +118,9 @@ private:
         P_line(
           t2p_converter(ch->vertex(sortedV[0])->point()),
           t2p_converter(ch->vertex(sortedV[1])->point())));
-      if ( !assign(begin_point, obj) )
+      if ( !assign(begin_point, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
       obj = CGAL::intersection(
         P_plane(
           t2p_converter(ch->vertex(sortedV[0])->point()),
@@ -127,8 +129,9 @@ private:
         P_line(
           t2p_converter(ch->vertex(sortedV[2])->point()),
           t2p_converter(ch->vertex(sortedV[3])->point())));
-      if ( !assign(end_point, obj) )
+      if ( !assign(end_point, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
     } else if (nIn==3) {
       end_point = t2p_converter(ch->vertex(sortedV[3])->point());
       obj = CGAL::intersection(
@@ -137,8 +140,9 @@ private:
           t2p_converter(ch->vertex(sortedV[1])->point()),
           t2p_converter(ch->vertex(sortedV[2])->point())),
         P_line(end_point, p));
-      if ( !assign(begin_point, obj) )
+      if ( !assign(begin_point, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
     } else {
       CGAL_assertion(false);
     }

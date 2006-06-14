@@ -1,8 +1,8 @@
 // examples/Skin_surface_3/union_of_balls_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/union_of_balls_3.h>
+#include <CGAL/Union_of_balls_3.h>
 #include <CGAL/Polyhedron_3.h>
-// #include <CGAL/mesh_union_of_balls_3.h>
+#include <CGAL/mesh_union_of_balls_3.h>
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -22,8 +22,8 @@ int main(int argc, char *argv[]) {
 
   Union_of_balls_3 union_of_balls(l.begin(), l.end());
 
-//   Polyhedron p;
-//   CGAL::mesh_union_of_balls_3(union_of_balls, p);
+  Polyhedron p;
+  CGAL::mesh_union_of_balls_3(union_of_balls, p);
 
   return 0;
 }
