@@ -26,8 +26,7 @@ typedef double Rational;
 
 int main()
 {
-  // VC++ 2005 cannot read comma separated int
-#if (_MSC_VER == 1400 ) 
+#ifdef CGAL_CFG_ISTREAM_INT_BUG
   std::locale::global(std::locale("C")); 
 #endif
 
