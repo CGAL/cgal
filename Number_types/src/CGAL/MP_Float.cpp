@@ -430,6 +430,8 @@ to_interval(const Quotient<MP_Float> &q)
 {
   pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
   pair<pair<double, double>, int> d = to_interval_exp(q.denominator());
+  CGAL_assertion_msg(CGAL::abs(1.0*n.second - d.second) < (1<<30)*2.0,
+                     "Exponent overflow in Quotient<MP_Float> to_interval");
   return ldexp(Interval_nt<>(n.first) / Interval_nt<>(d.first),
                n.second - d.second).pair();
 }
