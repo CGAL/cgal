@@ -416,13 +416,7 @@ pair<double,double>
 to_interval(const MP_Float &b)
 {
   pair<pair<double, double>, int> ap = to_interval_exp(b);
-  double scale = CGAL_CLIB_STD::ldexp(1.0, ap.second);
-  // Fixup for overflow and underflow possibilities.
-  // maybe we need an ldexp() function for intervals which isolates this issue.
-  Interval_nt<> scale_interval (
-                      CGAL::is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
-                      scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);
-  return (Interval_nt<>(ap.first) * scale_interval).pair();
+  return ldexp(Interval_nt<>(ap.first), ap.second).pair();
 }
 
 // FIXME : This function deserves proper testing...
@@ -431,12 +425,8 @@ to_interval(const Quotient<MP_Float> &q)
 {
   pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
   pair<pair<double, double>, int> d = to_interval_exp(q.denominator());
-  double scale = CGAL_CLIB_STD::ldexp(1.0, n.second - d.second);
-  Interval_nt<> scale_interval (
-                      CGAL::is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
-                      scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);
-  return ((Interval_nt<>(n.first) / Interval_nt<>(d.first))
-          * scale_interval).pair();
+  return ldexp(Interval_nt<>(n.first) / Interval_nt<>(d.first),
+               n.second - d.second).pair();
 }
 
 std::ostream &
