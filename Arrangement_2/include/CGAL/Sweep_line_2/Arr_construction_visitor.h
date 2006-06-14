@@ -38,6 +38,7 @@ protected:
   typedef typename Arrangement::Halfedge_handle        Halfedge_handle;
   typedef typename Arrangement::Vertex_handle          Vertex_handle;
   typedef typename Arrangement::Face_handle            Face_handle;
+  typedef typename Arrangement::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
   typedef typename Arrangement::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
   typedef typename Arrangement::Hole_iterator         Hole_iterator;
@@ -81,6 +82,19 @@ protected:
 
   Halfedge_indexes_map       m_he_indexes_table;
 
+  // additional data members to support construction of unbounded arrangement.
+  Halfedge_handle            m_lh;
+  Halfedge_handle            m_th;
+  Halfedge_handle            m_bh;
+  Halfedge_handle            m_rh;
+  std::list<unsigned int>    m_subcurves_at_ubf;
+  Event*                     m_prev_minus_inf_x_event;
+  Event*                     m_prev_plus_inf_y_event;
+
+  
+
+
+
 private:
 
   Arr_construction_visitor (const Self& );
@@ -92,8 +106,40 @@ public:
       m_arr(arr),
       m_arr_access (*arr),
       m_sc_counter (0),
-      m_sc_he_table(1)
-  {}
+      m_sc_he_table(1),
+      m_prev_minus_inf_x_event(NULL),
+      m_prev_plus_inf_y_event(NULL)
+  {
+    m_lh = m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
+    if(m_lh->source() != m_arr_access.bottom_left_fictitious_vertex())
+      m_lh = m_lh->next();
+    else
+      m_lh = m_lh->twin();
+
+    m_bh = m_lh->next();
+    m_rh = m_bh->next();
+    m_th = m_rh->next();
+
+    CGAL_assertion(m_lh->direction() == LARGER);
+    CGAL_assertion(m_lh->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_lh->source() == m_arr_access.top_left_fictitious_vertex() &&
+                   m_lh->target() == m_arr_access.bottom_left_fictitious_vertex());
+
+    CGAL_assertion(m_bh->direction() == SMALLER);
+    CGAL_assertion(m_bh->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_bh->source() == m_arr_access.bottom_left_fictitious_vertex() &&
+                   m_bh->target() == m_arr_access.bottom_right_fictitious_vertex());
+
+    CGAL_assertion(m_rh->direction() == SMALLER);
+    CGAL_assertion(m_rh->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_rh->source() == m_arr_access.bottom_right_fictitious_vertex() &&
+                   m_rh->target() == m_arr_access.top_right_fictitious_vertex());
+
+    CGAL_assertion(m_th->direction() == LARGER);
+    CGAL_assertion(m_th->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_th->source() == m_arr_access.top_right_fictitious_vertex() &&
+                   m_th->target() == m_arr_access.top_left_fictitious_vertex());
+  }
 
   virtual ~Arr_construction_visitor(){}
 
@@ -107,7 +153,7 @@ public:
       return true;
     }
 
-    if(!event->has_left_curves())
+    if(!event->has_left_curves() && event->is_finite())
     {
       CGAL_assertion(event->has_right_curves());
       //its an event that may represent a hole
@@ -117,6 +163,8 @@ public:
         Subcurve *sc_above = *iter;
         sc_above->push_back_halfedge_index(m_sc_counter);
       }
+      else
+        m_subcurves_at_ubf.push_back(m_sc_counter);
     }
 
     for(SubCurveIter itr = event->left_curves_begin();
@@ -215,8 +263,18 @@ public:
     insert_in_face_interior(const X_monotone_curve_2& cv,
 			    Subcurve* sc)
   {
-    Halfedge_handle res =  m_arr->insert_in_face_interior (_curve(cv),
-					    m_arr->unbounded_face());
+    /*Halfedge_handle res =  m_arr->insert_in_face_interior (_curve(cv),
+					    m_arr->unbounded_face());*/
+    Vertex_handle v1 = 
+      m_arr_access.create_vertex(_point(reinterpret_cast<Event*>(sc->get_last_event())->get_point()));
+    Vertex_handle v2 =
+      m_arr_access.create_vertex(_point(this->current_event()->get_point()));
+    Halfedge_handle res =
+      m_arr_access.insert_in_face_interior_ex(_curve(cv),
+                                              m_th->face(),
+                                              v1,
+                                              v2,
+                                              SMALLER);                                                                  
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->twin()->direction() == LARGER);
@@ -234,11 +292,14 @@ public:
                                              Subcurve* sc,
                                              bool &new_face_created)
   {
+    const bool      both_unbounded = hhandle->is_fictitious() || prev->is_fictitious();
     Halfedge_handle res =
       m_arr_access.insert_at_vertices_ex (_curve(cv),
                                           hhandle, prev,
                                           LARGER,
-                                          new_face_created);
+                                          new_face_created,
+                                          both_unbounded);
+
      // map the halfedge to the indexes list of all subcurves that are below him
       if(sc->has_haldedges_indexes())
       {
@@ -256,7 +317,7 @@ public:
       // the relevant features in the new face.
       //m_arr_access.relocate_in_new_face (res);
       CGAL_assertion(res->face() != res->twin()->face());
-      CGAL_assertion(res->face() != m_arr->unbounded_face());
+      //CGAL_assertion(res->face() != m_arr->unbounded_face());
       
       this->relocate_holes_in_new_face(res);
       m_arr_access.relocate_isolated_vertices_in_new_face(res);
@@ -270,7 +331,10 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    Halfedge_handle res = m_arr->insert_from_right_vertex (_curve(cv), he);
+    //Halfedge_handle res = m_arr->insert_from_right_vertex (_curve(cv), he);
+    Vertex_handle v = 
+      m_arr_access.create_vertex(_point(reinterpret_cast<Event*>(sc->get_last_event())->get_point()));
+    Halfedge_handle res = m_arr_access.insert_from_vertex_ex(_curve(cv), he, v, LARGER);
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->direction() == LARGER);
@@ -286,7 +350,10 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    Halfedge_handle res = m_arr->insert_from_left_vertex (_curve(cv), he);
+    //Halfedge_handle res = m_arr->insert_from_left_vertex (_curve(cv), he);
+    Vertex_handle v = 
+      m_arr_access.create_vertex(_point(this->current_event()->get_point()));
+    Halfedge_handle res = m_arr_access.insert_from_vertex_ex(_curve(cv), he, v, SMALLER);
     if(sc->has_haldedges_indexes())
     {
       CGAL_assertion(res->twin()->direction() == LARGER);
@@ -303,7 +370,7 @@ public:
                                                SL_iterator iter)
   {
     return (m_arr->insert_in_face_interior (_point(pt),
-					    m_arr->unbounded_face()));
+					                                  m_th->face()));
   }
 
   void relocate_holes_in_new_face(Halfedge_handle he)
@@ -342,6 +409,68 @@ public:
     while(curr_he != he);
 
   }
+
+  void before_handle_event(Event* event)
+  {
+    if(event->is_finite())
+      return;
+
+     // if it is an event at infinity, split the corresponding fictitious edge.
+    Infinity_type inf_x = event->infinity_at_x();
+    Infinity_type inf_y = event->infinity_at_y();
+
+    Vertex_handle v_at_inf = 
+      m_arr_access.create_vertex_at_infinity(inf_x, inf_y);
+    switch(inf_x)
+    {
+    case MINUS_INFINITY:
+      m_arr_access.split_fictitious_edge(m_lh, v_at_inf);
+      event->set_halfedge_handle(m_lh);
+      if(m_prev_minus_inf_x_event != NULL)
+        m_prev_minus_inf_x_event->set_halfedge_handle(m_lh->next());
+      m_prev_minus_inf_x_event = event;
+      return;
+
+    case PLUS_INFINITY:
+      m_arr_access.split_fictitious_edge(m_rh, v_at_inf);
+      event->set_halfedge_handle(m_rh);
+      m_rh = m_rh->next();
+      return;
+
+    case FINITE:
+    default:
+      break;
+    }
+
+    switch(inf_y)
+    {
+      case MINUS_INFINITY:
+        m_arr_access.split_fictitious_edge(m_bh, v_at_inf);
+        event->set_halfedge_handle(m_bh);
+        m_bh = m_bh->next();
+        return;
+
+      case PLUS_INFINITY:
+        {
+          m_arr_access.split_fictitious_edge(m_th, v_at_inf);
+          event->set_halfedge_handle(m_th);
+          if(m_prev_plus_inf_y_event != NULL)
+            m_prev_plus_inf_y_event->set_halfedge_handle(m_th->next());
+          m_prev_plus_inf_y_event = event;
+          Indexes_list& list_ref = m_he_indexes_table[m_th->next()];
+          list_ref.clear();
+          list_ref.splice(list_ref.end(), m_subcurves_at_ubf);
+          CGAL_assertion(m_subcurves_at_ubf.empty());
+        }
+        return;
+
+      case FINITE:
+      default:
+        // doesn't suppose to reach here at all.
+        CGAL_assertion(false);
+    }
+  }
+  
 
 private:
 

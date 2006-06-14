@@ -87,34 +87,7 @@ public:
   void insert_curves (XCurveInputIterator begin,
                       XCurveInputIterator end)
   {
-    // Copy the x-montone curves.
-    std::list<X_monotone_curve_2>      x_curves;
-
-    std::copy (begin, end, std::back_inserter(x_curves));
-
-    // Add the existing curves in the arrangement.
-    Edge_iterator                      eit;
-
-    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
-      x_curves.push_back (eit->curve());
-
-    // Add the existing isolated vertices in the arrangement.
-    std::list<Point_2>                 iso_points;
-    Vertex_iterator                    vit;
-
-    for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
-    {
-      if (vit->is_isolated())
-        iso_points.push_back (vit->point());
-    }
-
-    // Perform the sweep.
-    m_arr->clear();
-    m_sweep_line.sweep (x_curves.begin(),
-			                  x_curves.end(),
-			                  iso_points.begin(),
-			                  iso_points.end());
-
+    m_sweep_line.sweep (begin, end);
     return;
   }
               

@@ -1581,7 +1581,9 @@ public:
     if (this->has_source)
       ray = kernel.construct_ray_2_object() (this->ps, this->l);
     else
-      ray = kernel.construct_ray_2_object() (this->pt, this->l);
+      ray = kernel.construct_ray_2_object()
+        (this->pt, 
+         kernel.construct_opposite_line_2_object()(this->l));
 
     return (ray);
   }

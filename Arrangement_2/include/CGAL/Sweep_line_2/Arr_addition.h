@@ -92,19 +92,19 @@ public:
     typename std::list<typename Base_traits::X_monotone_curve_2>::iterator xit;
     typename std::list<typename Base_traits::Point_2>::iterator            pit;
     std::vector<X_monotone_curve_2>   xcurves_vec (base_xcurves.size() +
-						   m_arr->number_of_edges());
+                                                   m_arr->number_of_edges());
     std::vector<Point_2>              iso_points (base_points.size() +
-				         m_arr->number_of_isolated_vertices());
+                                         m_arr->number_of_isolated_vertices());
     int                               i_cv = 0, i_pt = 0;
 
     for (xit = base_xcurves.begin();
-	 xit != base_xcurves.end(); ++xit, i_cv++)
+         xit != base_xcurves.end(); ++xit, i_cv++)
     {
       xcurves_vec[i_cv] = X_monotone_curve_2 (*xit);
     }
 
     for (pit = base_points.begin();
-	 pit != base_points.end(); ++pit, i_pt++)
+         pit != base_points.end(); ++pit, i_pt++)
     {
       iso_points[i_pt] = Point_2 (*pit);
     }
@@ -130,7 +130,7 @@ public:
       if (vit->is_isolated())
       {
         iso_points[i_pt] = Point_2 (vit->point(), vit);
-	i_pt++;
+        i_pt++;
       }
     }
 

@@ -148,6 +148,70 @@ public:
     return (p_arr->_const_handle_for (v));
   }
 
+  /*!
+   * Get the bottom left vertex (const version).
+   */
+  Vertex_const_handle bottom_left_fictitious_vertex() const
+  {
+    return (p_arr->_const_handle_for (p_arr->v_bl));
+  }
+
+  /*!
+   * Get the top left vertex (const version).
+   */
+  Vertex_const_handle top_left_fictitious_vertex() const
+  {
+    return (p_arr->_const_handle_for (p_arr->v_tl));
+  }
+
+  /*!
+   * Get the bottom right vertex (const version).
+   */
+  Vertex_const_handle bottom_right_fictitious_vertex() const
+  {
+    return (p_arr->_const_handle_for (p_arr->v_br));
+  }
+
+  /*!
+   * Get the top right vertex (const version).
+   */
+  Vertex_const_handle top_right_fictitious_vertex() const
+  {
+    return (p_arr->_const_handle_for (p_arr->v_tr));
+  }
+
+  /*!
+   * Get the bottom left vertex (non-const version).
+   */
+  Vertex_handle bottom_left_fictitious_vertex() 
+  {
+    return (p_arr->_handle_for (p_arr->v_bl));
+  }
+
+  /*!
+   * Get the top left vertex (non-const version).
+   */
+  Vertex_handle top_left_fictitious_vertex() 
+  {
+    return (p_arr->_handle_for (p_arr->v_tl));
+  }
+
+  /*!
+   * Get the bottom right vertex (non-const version).
+   */
+  Vertex_handle bottom_right_fictitious_vertex() 
+  {
+    return (p_arr->_handle_for (p_arr->v_br));
+  }
+
+  /*!
+   * Get the top right vertex (non-const version).
+   */
+  Vertex_handle top_right_fictitious_vertex() 
+  {
+    return (p_arr->_handle_for (p_arr->v_tr));
+  }
+
   /*! Get the fictitious face of the arrangement (non-const version). */
   Face_handle fictitious_face ()
   {
@@ -903,8 +967,8 @@ public:
   Halfedge_handle split_fictitious_edge (Halfedge_handle he,
                                          Vertex_handle v)
   {
-    DHalfedge*  p_he = p_arr->_split_edge (p_arr->_halfedge (he),
-                                         p_arr->_vertex (v));
+    DHalfedge*  p_he = p_arr->_split_fictitious_edge (p_arr->_halfedge (he),
+                                                      p_arr->_vertex (v));
 
     return (p_arr->_handle_for (p_he));
   }

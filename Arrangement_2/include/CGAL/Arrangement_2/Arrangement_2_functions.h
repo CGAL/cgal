@@ -3167,10 +3167,10 @@ Arrangement_2<Traits,Dcel>::_is_face_unbounded_imp (DHalfedge *he,
   bool          is_unbounded[2];
   DHalfedge     *first;
   DHalfedge     *curr;
-  
+
   for (i = 0; i < 2; i++)
   {
-    // Go over the CBB of the given halfedge an look for fictitious halfedges.
+    // Go over the CBB of the given halfedge and look for fictitious halfedges.
     curr = first = (i == 0) ? he : he->opposite();
 
     is_unbounded[i] = false;
@@ -3183,7 +3183,7 @@ Arrangement_2<Traits,Dcel>::_is_face_unbounded_imp (DHalfedge *he,
       }
 
       curr = curr->next();
-      
+
     } while (curr != first);
   }
 
@@ -3637,7 +3637,7 @@ Arrangement_2<Traits,Dcel>::_split_fictitious_edge (DHalfedge *e,
   // its twin he2 should lie on a hole inside the fictitious face.
   DHalfedge       *he1 = e;
   DHalfedge       *he2 = he1->opposite();
-
+  
   CGAL_assertion (! he1->is_on_hole());
   DFace           *f1 = he1->face();
   

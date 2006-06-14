@@ -64,6 +64,8 @@ public:
  
   typedef std::pair<bool, SubCurveIter>                    Pair;
 
+  typedef typename Traits::Has_infinite_category           Has_infinite_category;
+
 
   /*! The type of the event */
   typedef enum 
@@ -438,11 +440,23 @@ public:
     m_type |= PLUS_INFINITE_Y;
   }
 
-  bool is_finite() const
+  inline bool is_finite() const
   {
     return ((m_type & FINITE_X ) != 0) && ((m_type & FINITE_Y ) != 0);
   }
+  /*inline bool is_finite() const
+  {
+    return is_finite_impl(Has_infinite_category());
+  }
+  inline bool is_finite_impl(Tag_false) const
+  {
+    return (true);
+  }
 
+  inline bool is_finite_impl(Tag_true) const
+  {
+    return ((m_type & FINITE_X ) != 0) && ((m_type & FINITE_Y ) != 0);
+  }*/
 
   bool is_minus_infinite_in_x() const
   {

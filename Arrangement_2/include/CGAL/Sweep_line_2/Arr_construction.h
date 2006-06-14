@@ -73,7 +73,9 @@ public:
     m_traits (arr.get_traits()),
     m_visitor (&arr),
     m_sweep_line (m_traits, &m_visitor)
-  {}
+  {
+    CGAL_precondition (m_arr->is_empty());
+  }
 
   /*!
    * Insert a range of curves (not necessarily x-monotone) into the
@@ -84,7 +86,7 @@ public:
    */
   template<class CurveInputIterator>
   void insert_curves (CurveInputIterator begin, 
-		      CurveInputIterator end)
+                      CurveInputIterator end)
   {
     CGAL_precondition(m_arr->is_empty());
 
@@ -94,16 +96,16 @@ public:
     std::list<Point_2>                 iso_points;
 
     make_x_monotone (begin,
-		     end,
-		     std::back_inserter(x_curves),
-		     std::back_inserter(iso_points),
-		     m_traits);
+                     end,
+                     std::back_inserter(x_curves),
+                     std::back_inserter(iso_points),
+                     m_traits);
    
     ////Perform the sweep.
     m_sweep_line.sweep (x_curves.begin(),
-			x_curves.end(),
-			iso_points.begin(),
-			iso_points.end());
+                        x_curves.end(),
+                        iso_points.begin(),
+                        iso_points.end());
    
     return;
   }
@@ -116,35 +118,11 @@ public:
    */
   template<class XCurveInputIterator>
   void insert_x_curves (XCurveInputIterator begin,
-			XCurveInputIterator end)
+                        XCurveInputIterator end)
   {
-    // Copy the x-montone curves.
-    std::list<X_monotone_curve_2>      x_curves;
-
-    std::copy (begin, end, std::back_inserter(x_curves));
-
-    // Add the existing curves in the arrangement.
-    Edge_iterator                      eit;
-
-    for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
-      x_curves.push_back ((*eit).curve());
-
-    // Add the existing isolated vertices in the arrangement.
-    std::list<Point_2>                 iso_points;
-    Vertex_iterator                    vit;
-
-    for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
-    {
-      if ((*vit).is_isolated())
-	iso_points.push_back ((*vit).point());
-    }
-
     //Perform the sweep.
-    m_arr->clear();
-    m_sweep_line.sweep (x_curves.begin(),
-			x_curves.end(),
-			iso_points.begin(),
-			iso_points.end());
+    m_sweep_line.sweep (begin, 
+                        end);
 
     return;
   }
