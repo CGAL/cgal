@@ -1251,6 +1251,10 @@ int main() {
   
   //std::cin>>debugthread;
 
+#ifdef CGAL_CFG_ISTREAM_INT_BUG
+  std::locale::global(std::locale("C")); 
+#endif
+
   CGAL::Timer t;
   t.start();
 
