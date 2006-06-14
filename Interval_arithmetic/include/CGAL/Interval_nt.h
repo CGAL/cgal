@@ -745,6 +745,19 @@ to_interval (const long & l)
     return std::pair<double,double>(l,l);
 }
 
+// TODO : document, when we are OK with the interface.
+// - should it allow other number types for the exponent ?
+template < bool b >
+Interval_nt<b>
+ldexp(const Interval_nt<b> &i, int e)
+{
+  double scale = CGAL_CLIB_STD::ldexp(1.0, e);
+  Interval_nt<b> scale_interval (
+                      CGAL::is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
+                      scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);
+  return i * scale_interval;
+}
+
 
 // We also specialize some corresponding functors returning Uncertain<>.
 
