@@ -344,6 +344,9 @@ to_double_exp(const MP_Float &b)
     d += d_exp * b.of_exp(i);
   }
 
+  CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,
+                     "Exponent overflow in MP_Float to_double");
+
   // The cast is necessary for SunPro.
   return std::make_pair(d, static_cast<int>(exp * log_limb));
 }
@@ -388,6 +391,8 @@ to_interval_exp(const MP_Float &b)
     CGAL_assertion(MP_Float(d.inf()) <= b && MP_Float(d.sup()) >= b);
 #endif
 
+  CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,
+                     "Exponent overflow in MP_Float to_interval");
   return std::make_pair(d.pair(), static_cast<int>(exp * log_limb));
 }
 
