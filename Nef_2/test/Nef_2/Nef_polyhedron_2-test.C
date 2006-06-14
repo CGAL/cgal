@@ -26,6 +26,11 @@ typedef double Rational;
 
 int main()
 {
+  // VC++ 2005 cannot read comma separated int
+#if (_MSC_VER == 1400 ) 
+  std::locale::global(std::locale("C")); 
+#endif
+
   CGAL_NEF_SETDTHREAD(911); // 911
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
