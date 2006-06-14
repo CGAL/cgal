@@ -26,12 +26,3 @@ libIntrospect.a, which can then be used from anywhere
 
 *set INTROSPEC_DIR variable in the makefile, and use it for the
 includes and the final link with -lIntrospect
-
-*implement the SketchSample.cpp file, which tells how to draw the
-geometry
-
-*the main is in visu-test.cpp, which loads the geometry, and launches
-the window
-
--> example: see visu-test.cpp in Jet_fitting_3
-

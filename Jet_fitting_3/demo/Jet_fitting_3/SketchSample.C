@@ -17,8 +17,6 @@ SketchSample::~SketchSample() {
 
 void SketchSample::buildDisplayList(GLuint surf) {
 
-  static GLfloat agray[4] = {1,1,1, 1.0 };
-
   glNewList(surf, GL_COMPILE);
 
   glDisable(GL_LIGHTING);

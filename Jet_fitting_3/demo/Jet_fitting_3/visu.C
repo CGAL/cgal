@@ -1,4 +1,4 @@
-//visu, lib
+//visu, lib introspect
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include "Observer.h"
@@ -6,18 +6,14 @@
 
 //visu, local
 #include "SketchSample.h"
-
-
 //geom, local
 #include "visu_poly.h"
-//marc
 #include "enriched_polyhedron.h" 
 
 #include <iostream>
 #include <fstream>
 
 Mesh m_mesh;
-
 DS ppal_data;
 
 void clean_DS(DS& L)
@@ -49,7 +45,7 @@ read_line(FILE* file, Point& P1,Point& P2,
   fscanf(file, "%lf%lf",&k1,&k2);
 }
 
-void load_data_from_file(DS& l, char* file_res)
+void load_data_from_file(DS& l, const char* file_res)
 {
   FILE *file;
   if((file = fopen(file_res, "r")) != NULL) 
@@ -90,15 +86,13 @@ void load_geom(int argc, char* argv[])
 
 }
 
-
-
-
-
+/////////////////////MAIN////////////////////////
 int main(int argc, char** argv) {
 
   load_geom(argc, argv);
   
   QApplication app(argc, argv);
+  glutInit(&argc, argv);
 
   if ( !QGLFormat::hasOpenGL() ) {
     qWarning( "This system has no OpenGL support. Exiting." );
@@ -119,35 +113,3 @@ int main(int argc, char** argv) {
 
   return app.exec();
 }
-
-
-
-// void parse_facet(Facet_handle f, const Vertex_index& vi)
-// {
-//   int idx, n=0;
-
-//   Halfedge_around_facet_const_circulator hc = f->facet_begin();
-//   Halfedge_around_facet_const_circulator hc_end = hc;
-  
-//   //std::cerr << "here\n";
-//   do
-//   {
-//     idx = vi[Vertex_const_iterator(hc->vertex())];
-//     ++hc; n++;
-//   }
-//   while (hc != hc_end);
-//   //std::cerr << n << '\n';
-// }
-
-
-// void parse_triangles(Mesh& m){
-//   Facet_handle f;
-
-//   Vertex_index vi(m.vertices_begin(), m.vertices_end());
-  
-//   Facet_iterator fib = m.facets_begin(), fie = m.facets_end();
-//   for (; fib != fie; ++fib){
-//     f = fib;
-//     parse_facet(f, vi);
-//   }
-// }
