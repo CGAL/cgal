@@ -27,7 +27,9 @@
 
 #include <CGAL/global_functions_on_circular_arcs_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h> // temporarily
+/* DISCUSS BEFORE COMMIT
 #include <CGAL/Curved_kernel/intersection_line_2_circle_2_map.h>
+*/
 #include <CGAL/intersections.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -53,9 +55,11 @@ namespace CGALi {
       unsigned short int is_complementary_x_monotone:1;
       unsigned short int is_complementary_y_monotone:1;
     } bit_field;
-
+  
+  /* DISCUSS BEFORE COMMIT
   public:
     typedef CGALi::Intersection_line_2_circle_2_map Table;
+  */
 
   private:
 
