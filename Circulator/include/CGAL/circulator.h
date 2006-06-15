@@ -1012,6 +1012,7 @@ private:
     I m_begin;
     I m_end;
     I current;
+    bool empty;
 
     // The following static iterator is needed so that we have a value
     // that can be uniquely compared (the default constructed one can be
@@ -1023,16 +1024,17 @@ public:
 
     Circulator_from_iterator() : m_begin( null_iterator),
                                  m_end(   null_iterator),
-                                 current( null_iterator) {}
+                                 current( null_iterator),
+	                             empty( true) {}
 
     Circulator_from_iterator( const I& bgn, const I& end)
-        : m_begin(bgn), m_end(end), current(bgn) {}
+        : m_begin(bgn), m_end(end), current(bgn), empty(bgn==end) {}
 
     Circulator_from_iterator( const I& bgn, const I& end, const I& cur)
-        : m_begin(bgn), m_end(end), current(cur) {}
+        : m_begin(bgn), m_end(end), current(cur), empty(bgn==end) {}
 
     Circulator_from_iterator( const Self& c, const I& cur)
-        : m_begin( c.m_begin), m_end( c.m_end), current(cur) {}
+        : m_begin( c.m_begin), m_end( c.m_end), current(cur), empty(c.empty) {}
 
 
     template <class II, class A1, class A2, class A3>
@@ -1041,15 +1043,14 @@ public:
     Circulator_from_iterator(
         const Circulator_from_iterator<II,A1,A2,A3>& ii)
     : m_begin( ii.begin()), m_end( ii.end()),
-        current(ii.current_iterator()) {}
+        current(ii.current_iterator()), empty(ii.empty) {}
 
 //
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
         CGAL_assertion( p == CGAL_CIRC_NULL);
-        CGAL_assertion((m_end == m_begin) || (current != m_end));
-        return m_end == m_begin;
+        return empty;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return current == c.current;}
