@@ -25,6 +25,7 @@ CGAL_BEGIN_NAMESPACE
 
 #include <CGAL/Sweep_line_2_empty_visitor.h>
 #include <CGAL/Object.h>
+#include <CGAL/Arr_accessor.h>
 #include <utility>
 
 
@@ -50,6 +51,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   typedef typename Arrangement::Halfedge_const_handle    Halfedge_const_handle;
   typedef typename Arrangement::Vertex_const_handle      Vertex_const_handle;
   typedef std::pair<Base_Point_2,Object>                 PL_Pair;
+  typedef Arr_accessor<Arrangement>                      Arr_accessor;
 
 
   public:
@@ -58,8 +60,20 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   Arr_batched_point_location_visitor(OutputIerator out,
                                      const Arrangement& arr):
                                      m_out(out),
-                                     m_arr(arr)
-  {}
+                                     m_arr(arr),
+                                     m_arr_access(const_cast<Arrangement&>(arr))
+  {
+    //initialize m_top_fict
+    Vertex_const_handle top_left_v = m_arr_access.top_left_fictitious_vertex();
+    m_top_fict = top_left_v->incident_halfedges();
+    if(m_top_fict->source() == m_arr_access.bottom_left_fictitious_vertex())
+      m_top_fict = m_top_fict->next()->twin();
+
+    CGAL_assertion((m_top_fict->source() == 
+                    m_arr_access.top_right_fictitious_vertex()) &&
+                    (m_top_fict->target() == 
+                     m_arr_access.top_left_fictitious_vertex()));
+  }
 
   
 
@@ -67,6 +81,20 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   //(above_on_event is true iff 'above' subcurve is on the event
   bool after_handle_event(Event* event, SL_iterator above, bool above_on_event)
   {
+    if(!event->is_finite())
+    {
+      //its an event at infinity, we need to update m_top_fict in case its
+      //in Y=+00 (vertical curve or curve with vertical asymptote)
+      if(event->infinity_at_x() != FINITE)
+        return true;
+
+      Infinity_type y_inf = event->infinity_at_y();
+      if(y_inf == PLUS_INFINITY)
+        m_top_fict = m_top_fict->twin()->next()->twin();
+
+      return true;
+    }
+
     if(! event->is_query())
       return true;
 
@@ -105,7 +133,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     if(above == this ->status_line_end())
     {
       *m_out = std::make_pair (event->get_point().base_point(),
-                               CGAL::make_object(m_arr.unbounded_face()));
+                               CGAL::make_object(m_top_fict->face()));
       ++m_out;
       return true;
     }
@@ -139,6 +167,8 @@ protected:
 
   OutputIerator      m_out;
   const Arrangement& m_arr;
+  Arr_accessor       m_arr_access;
+  Halfedge_const_handle m_top_fict;
 };
 
 
