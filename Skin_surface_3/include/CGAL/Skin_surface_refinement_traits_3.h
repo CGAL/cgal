@@ -58,20 +58,8 @@ public:
   }
     
   virtual P_point to_surface(P_vertex_handle vh) = 0;
-//  {
-//     SS_cell_handle ch = locate(vh->point());
-//     return to_surface_along_transversal_segment(vh->point(),ch);
-//   }
-
-//   SS_cell_handle locate(const P_point &p) {
-//     return skin.locate(p2t_converter(p));
-//   }
 
   virtual P_vector normal(P_vertex_handle vh) = 0;
-//   {
-//     SS_cell_handle ch = skin.locate(p2t_converter(vh->point()));
-//     return ch->surf->gradient(vh->point());
-//   }
 
   virtual ~Skin_surface_subdivision_policy_base_3() {}
 protected:
