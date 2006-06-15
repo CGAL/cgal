@@ -491,15 +491,15 @@ public:
 
   Alpha_shape_cells_iterator alpha_shape_cells_begin() const 
     {
-      return filter_iterator(finite_cells_end(),
-			     Exterior_cell_test(this),
-			     finite_cells_begin());
+      return CGAL::filter_iterator(finite_cells_end(),
+			           Exterior_cell_test(this),
+			           finite_cells_begin());
     }
   
   Alpha_shape_cells_iterator alpha_shape_cells_end() const
     {
-      return filter_iterator(finite_cells_end(),
-			     Exterior_cell_test(this));
+      return CGAL::filter_iterator(finite_cells_end(),
+			           Exterior_cell_test(this));
     }
 
 
