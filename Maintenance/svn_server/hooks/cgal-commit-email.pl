@@ -493,13 +493,15 @@ my @body_html;
         push(@body_html, map { "<a href=\"$viewcvs_url/$_?root=$project_name&amp;rev=$rev&amp;r1=$prev_rev&amp;r2=$rev\">$_</a><br>\n" } @mods);
     }
 
-    # Write svn log
+    # Write svn log (with a fixed font)
     push(@body_html, "<H3>Differences as text</H3>\n");
+    push(@body_html, "<tt>\n");
     @difflines = map { /[\r\n]+$/ ? $_ : "$_\n" } @difflines;
     push(@body_html, html_encode(\@difflines));
-
+    #
     # Truncate very long body
     @body_html = cut_array(\@body_html, 30000);
+    push(@body_html, "</tt>\n");
 
     # Write HTML footer
     push(@body_html, "</BODY>\n</HTML>\n");
