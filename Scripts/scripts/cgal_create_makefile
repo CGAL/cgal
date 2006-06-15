@@ -220,7 +220,7 @@ create_makefile()
   echo    ".cpp\$(OBJ_EXT):"
   echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
   echo
-}
+
 }
 
 
