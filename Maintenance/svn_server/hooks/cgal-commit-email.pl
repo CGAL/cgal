@@ -445,8 +445,8 @@ my @body;
     # Truncate very long body
     @body = cut_array(\@body, 30000);
 
-    # Add empty lines because Mailman will concatenate an "HTML attachment was scrubbed" message
-    push(@body, "\n");
+    # Add empty line to have a prettier output
+    # as Mailman will concatenate an "HTML attachment was scrubbed" comment
     push(@body, "\n");
 }
 
@@ -493,15 +493,15 @@ my @body_html;
         push(@body_html, map { "<a href=\"$viewcvs_url/$_?root=$project_name&amp;rev=$rev&amp;r1=$prev_rev&amp;r2=$rev\">$_</a><br>\n" } @mods);
     }
 
-    # Write svn log (with a fixed font)
+    # Write svn log (as plain text)
     push(@body_html, "<H3>Differences as text</H3>\n");
-    push(@body_html, "<tt>\n");
+    push(@body_html, "<pre>\n");
     @difflines = map { /[\r\n]+$/ ? $_ : "$_\n" } @difflines;
-    push(@body_html, html_encode(\@difflines));
-    #
+    push(@body_html, @difflines);
+    push(@body_html, "</pre>\n");
+
     # Truncate very long body
     @body_html = cut_array(\@body_html, 30000);
-    push(@body_html, "</tt>\n");
 
     # Write HTML footer
     push(@body_html, "</BODY>\n</HTML>\n");
