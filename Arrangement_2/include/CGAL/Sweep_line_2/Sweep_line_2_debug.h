@@ -88,8 +88,16 @@ PrintStatusLine()
     std::cout << std::endl << "Status line: empty" << std::endl;
     return;
   }
-  std::cout << std::endl << "Status line: (" 
-            << m_currentEvent->get_point() << ")" << std::endl;
+  std::cout << std::endl << "Status line: (" ;
+  if(m_currentEvent->is_finite())
+    std::cout << m_currentEvent->get_point() << ")" << std::endl;
+  else
+  {
+    Infinity_type x = m_currentEvent->infinity_at_x(),
+                  y = m_currentEvent->infinity_at_y();
+
+    PrintInfinityType(x, y);
+  }
   StatusLineIter iter = m_statusLine.begin();
   while ( iter != m_statusLine.end() )
   {
@@ -98,6 +106,71 @@ PrintStatusLine()
   }
   std::cout << "Status line - end" << std::endl;
 }
+
+template <class Traits_,
+          class SweepVisitor,
+          class CurveWrap,
+          class SweepEvent,
+          typename Allocator>
+inline void 
+Basic_sweep_line_2<Traits_,
+                   SweepVisitor,
+                   CurveWrap,
+                   SweepEvent,
+                   Allocator>::
+PrintInfinityType(Infinity_type x, Infinity_type y)
+{
+  switch(x)
+  {
+  case MINUS_INFINITY:
+    std::cout<<" X = -00 ";
+    return;
+  case PLUS_INFINITY:
+    std::cout<<" X = +00 ";
+    return;
+  case FINITE:
+    break;
+  }
+
+  switch(y)
+  {
+  case MINUS_INFINITY:
+    std::cout<<" Y = -00 ";
+    return;
+  case PLUS_INFINITY:
+    std::cout<<" Y = +00 ";
+    return;
+  case FINITE:
+    CGAL_assertion(false);
+  }
+}
+
+template <class Traits_,
+          class SweepVisitor,
+          class CurveWrap,
+          class SweepEvent,
+          typename Allocator>
+inline void 
+Basic_sweep_line_2<Traits_,
+                   SweepVisitor,
+                   CurveWrap,
+                   SweepEvent,
+                   Allocator>::
+PrintEvent(const Event* e)
+{
+  if(e->is_finite())
+    std::cout<< e->get_point();
+  else
+  {
+    Infinity_type x = e->infinity_at_x(),
+                  y = e->infinity_at_y();
+    PrintInfinityType(x, y);
+    std::cout<<" with unbounded curve: " <<e->get_unbounded_curve();
+  }
+
+ 
+}
+          
 
 
 

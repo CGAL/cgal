@@ -46,9 +46,9 @@
 #define CGAL_SL_DEBUG(a) {a}
 #define CGAL_PRINT_INSERT(a) { std::cout << "+++ inserting "; \
                           (a)->Print(); \
-                          std::cout << "    currentPos = "  \
-                                    << m_currentEvent->get_point() \
-                                    << "\n"; \
+                          std::cout << "    currentPos = "; \
+                          PrintEvent(m_currentEvent); \
+                          std::cout << "\n"; \
                           }
 #define CGAL_PRINT_ERASE(a)  { std::cout << "--- erasing " ; \
                           (a)->Print(); }
@@ -351,10 +351,9 @@ public:
       // Get the next event from the queue.
       m_currentEvent = *eventIter;
 
-      CGAL_PRINT("------------- " 
-            << m_currentEvent->get_point() 
-            << " --------------"
-            << std::endl;);
+      CGAL_PRINT("------------- ");
+      CGAL_SL_DEBUG(PrintEvent(m_currentEvent););
+      CGAL_PRINT ( " --------------\n");
       CGAL_SL_DEBUG(PrintStatusLine();
                m_currentEvent->Print(););
       
@@ -749,6 +748,8 @@ public:
   void PrintEventQueue();
   void PrintSubCurves();
   void PrintStatusLine();
+  void PrintInfinityType(Infinity_type x, Infinity_type y);
+  void PrintEvent(const Event* e);
 #endif
 
 protected:

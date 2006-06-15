@@ -314,8 +314,9 @@ public:
   /*! Handle the subcurve to the left of the current event point. */
   void _handle_right_curves()
   {
-    CGAL_PRINT("Handling right curves (" ;)
-    CGAL_PRINT(this->m_currentEvent->get_point() << ")\n";)
+    CGAL_PRINT("Handling right curves (" ;);
+    CGAL_SL_DEBUG(PrintEvent(m_currentEvent););
+    CGAL_PRINT(")\n";);
     
     if(! this->m_currentEvent->has_right_curves())
       return;

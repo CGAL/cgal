@@ -148,7 +148,7 @@ public:
       break;
     }
 
-    //if we have reached here, then e1 is event at y=+-00
+    //if we have reached here, then e1 is event at y=+-oo
     CGAL_assertion(infinite_in_y == MINUS_INFINITY ||
                    infinite_in_y == PLUS_INFINITY);
     switch(e2->infinity_at_x())

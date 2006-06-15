@@ -288,14 +288,14 @@ public:
 
   /*! Returns the actual point of the event */
   const Point_2 &get_point() const {
-    //CGAL_assertion(is_finite());
+    CGAL_assertion(is_finite());
     return m_point;
   }
 
   /*! Returns the actual point of the event (non-const) */
   Point_2& get_point()
   {
-    //CGAL_assertion(is_finite());
+    CGAL_assertion(is_finite());
     return m_point;
   }
 
@@ -560,7 +560,39 @@ Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 Print() 
 {
   std::cout << "\tEvent info: "  << "\n" ;
-  std::cout << "\t" << m_point << "\n" ;
+  if(this->is_finite())
+    std::cout << "\t" << m_point << "\n" ;
+  else
+  {
+    std::cout << "\t";
+    Infinity_type x = this->infinity_at_x(),
+                  y = this->infinity_at_y();
+    switch(x)
+    {
+    case MINUS_INFINITY:
+      std::cout<<" X = -00 ";
+      break;
+    case PLUS_INFINITY:
+      std::cout<<" X = +00 ";
+      break;
+    case FINITE:
+      {
+        switch(y)
+        {
+        case MINUS_INFINITY:
+          std::cout<<" Y = -00 ";
+          break;
+        case PLUS_INFINITY:
+          std::cout<<" Y = +00 ";
+          break;
+        case FINITE:
+          CGAL_assertion(false);
+        }
+      } 
+    }
+  }
+  std::cout<<"\n";
+
   std::cout << "\tLeft curves: \n" ;
   for ( SubCurveIter iter = m_leftCurves.begin() ;
         iter != m_leftCurves.end() ; ++iter )
