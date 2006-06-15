@@ -3938,6 +3938,13 @@ create_include_makefile()
 	*)            ${_printf} "\n.C:\n" >> ${FILE};;
     esac
     ${_printf} "\t%s %s%s\n" "\$(MAKE)" '$*' "${EXE_EXT}" >> ${FILE}
+
+    case ${CGAL_OS_COMPILER} in
+	*CYGWIN*g++*) ${_printf} "\n.o:\n" >> ${FILE};;
+	*)            ${_printf} "\n.cpp:\n" >> ${FILE};;
+    esac
+    ${_printf} "\t%s %s%s\n" "\$(MAKE)" '$*' "${EXE_EXT}" >> ${FILE}
+
   fi
   ${_printf} "\n.C.clean:\n" >> ${FILE}
   ${_printf} "\trm -f \$*%s" "${EXE_EXT}" >> ${FILE}
@@ -3954,6 +3961,25 @@ create_include_makefile()
 	    ${_printf} "\n" >> ${FILE};;
   esac
   ${_printf} "\n" >> ${FILE}
+
+
+
+  ${_printf} "\n.cpp.clean:\n" >> ${FILE}
+  ${_printf} "\trm -f \$*%s" "${EXE_EXT}" >> ${FILE}
+  if [ -n "${REMOVE_EXT_LIST}" ]; then
+      for extension in ${REMOVE_EXT_LIST}
+      do
+          ${_printf} " \$*%s" "${extension}" >> ${FILE}
+      done
+  fi
+  case ${CGAL_OS_COMPILER} in
+	mips_IRIX*-6*_CC-*32-*)
+	    ${_printf} " ii_files/\$*.ii*\n" >> ${FILE};;
+	*)
+	    ${_printf} "\n" >> ${FILE};;
+  esac
+  ${_printf} "\n" >> ${FILE}
+
 
   #
   # CGAL_CXX
