@@ -18,11 +18,11 @@
 #
 # If the hook program exits with success, the propchange happens; but
 # if it exits with failure (non-zero), the propchange doesn't happen.
-# The hook program can use the 'svnlook' utility to examine the 
+# The hook program can use the 'svnlook' utility to examine the
 # existing value of the revision property.
 #
 # WARNING: unlike other hooks, this hook MUST exist for revision
-# properties to be changed.  If the hook does not exist, Subversion 
+# properties to be changed.  If the hook does not exist, Subversion
 # will behave as if the hook were present, but failed.  The reason
 # for this is that revision properties are UNVERSIONED, meaning that
 # a successful propchange is destructive;  the old value is gone
@@ -46,21 +46,16 @@
 # that subprograms fail to launch unless invoked via absolute path.
 # If you're having unexpected problems with a hook program, the
 # culprit may be unusual (or missing) environment variables.
-# 
-# Here is an example hook script, for a Unix /bin/sh interpreter.
-# For more examples and pre-written hooks, see those in
-# the Subversion repository at
-# http://svn.collab.net/repos/svn/trunk/tools/hook-scripts/ and
-# http://svn.collab.net/repos/svn/trunk/contrib/hook-scripts/
-
 
 REPOS="$1"
 REV="$2"
 USER="$3"
 PROPNAME="$4"
-ACTION="$5"
+ACTION="$5"     # empty on 06/15/2006
 
-if [ "$ACTION" = "M" -a "$PROPNAME" = "svn:log" ]; then exit 0; fi
-
-echo "Changing revision properties other than svn:log is prohibited" >&2
-exit 1
+if [ "$PROPNAME" = "svn:log" ]; then
+    exit 0;
+else
+    echo "Changing revision properties other than svn:log is prohibited" >&2
+    exit 1
+fi

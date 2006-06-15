@@ -647,10 +647,12 @@ Maintenance/rpm/rpmbuild -text
 Maintenance/svn_server/hooks/post-commit -text
 Maintenance/svn_server/hooks/post-commit.tmpl -text
 Maintenance/svn_server/hooks/post-lock.tmpl -text
+Maintenance/svn_server/hooks/post-revprop-change -text
 Maintenance/svn_server/hooks/post-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/post-unlock.tmpl -text
 Maintenance/svn_server/hooks/pre-commit.tmpl -text
 Maintenance/svn_server/hooks/pre-lock.tmpl -text
+Maintenance/svn_server/hooks/pre-revprop-change -text
 Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/pre-unlock.tmpl -text
 Maintenance/svn_server/hooks/start-commit.tmpl -text
