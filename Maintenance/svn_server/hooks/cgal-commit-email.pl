@@ -474,7 +474,7 @@ my @body_html;
     {
         @adds = sort @adds;
         push(@body_html, "<H3>Added files</H3>\n");
-        push(@body_html, map { /\/$/ ? "$_\n" : "<a href=\"$viewcvs_url/$_?root=$project_name&amp;rev=$rev&amp;view=markup\">$_</a><br>\n" } @adds);
+        push(@body_html, map { /\/$/ ? "$_<br>\n" : "<a href=\"$viewcvs_url/$_?root=$project_name&amp;rev=$rev&amp;view=markup\">$_</a><br>\n" } @adds);
     }
 
     # Deleted files list
