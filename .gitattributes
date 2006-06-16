@@ -488,7 +488,6 @@ Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#unset
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text
-Jet_fitting_3/demo/Jet_fitting_3/data/venus.off -text
 Jet_fitting_3/doc_tex/AIDE -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/Maple_formula.mw -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.eps -text
@@ -501,7 +500,6 @@ Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text
 Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
-Jet_fitting_3/examples/Jet_fitting_3/data/venus.off -text
 Jet_fitting_3/test/Jet_fitting_3/blind_1pt.C -text
 Jet_fitting_3/test/Jet_fitting_3/makefile -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
