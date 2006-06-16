@@ -4,4 +4,3 @@
 9 March 2006 Andreas Fabri
 - Made heading of unser and reference manual to be the same
 
-really, i made some more
