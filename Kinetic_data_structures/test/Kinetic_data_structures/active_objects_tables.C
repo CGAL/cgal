@@ -38,7 +38,7 @@ void test(AOT &aot, Erase_tag et) {
   }
   CGAL_assertion(std::distance(aot.keys_begin(), aot.keys_end()) == keys.size());
 
-  for (int i=0; i< 100; ++i){
+  for (unsigned int i=0; i< 100; ++i){
     CGAL_assertion(aot[keys[i]]==i);
   }
   CGAL_assertion(aot.size()==100);
