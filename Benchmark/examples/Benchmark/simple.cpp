@@ -1,33 +1,37 @@
-#include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
+#include <math.h>
 
-#include <CGAL/Bench.h>
-#include <CGAL/Bench_option_parser.h>
+#include <CGAL/benchmark_basic.hpp>
+#include <CGAL/Bench.hpp>
+#include <CGAL/Bench_option_parser.hpp>
 
-typedef CGAL::Quotient<CGAL::MP_Float>          NT;
-typedef CGAL::Cartesian<NT>                     Kernel;
+#if (defined _MSC_VER)
+#define M_PI 3.14159265358979323846
+#endif
 
-namespace po = boost::program_options;
+class Bench_sqrt {
+private:
+  double n;
 
-struct Help_exception {};
-
-template <class Kernel>
-class Bench_bbox : public Kernel {
 public:
+  Bench_sqrt() : n(M_PI) {}
   int init(void) { return 0; }
   void clean(void) {}
   void sync(void) {}
-  void op(void) {}
+  void op(void) { sqrt(n); }
+
+  void set(unsigned int u) { n = u; }
 };
 
-typedef Bench_bbox<Kernel>                      My_bench_bbox;
+namespace po = boost::program_options;
+namespace cb = CGAL::benchmark;
+
+struct Help_exception {};
 
 int main(int argc, char * argv[])
 {
   po::options_description opts("Options");
   opts.add_options()("help,h", "print help message");
-  CGAL::Bench_option_parser bench_opts;
+  cb::Bench_option_parser bench_opts;
   opts.add(bench_opts.get_opts());
   po::variables_map var_map;
 
@@ -44,8 +48,8 @@ int main(int argc, char * argv[])
     std::cerr << e.what() << std::endl;
     return 1;
   }
-  
-  CGAL::Bench<My_bench_bbox> bench("Leftturn", bench_opts.get_seconds());
+
+  cb::Bench<Bench_sqrt> bench("Square root", bench_opts.get_seconds());
   bench();
   return 0;
 }

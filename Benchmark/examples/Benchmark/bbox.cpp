@@ -2,42 +2,32 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 
-#include <CGAL/Bench.h>
-#include <CGAL/Bench_option_parser.h>
+#include <CGAL/Bench.hpp>
+#include <CGAL/Bench_option_parser.hpp>
 
 typedef CGAL::Quotient<CGAL::MP_Float>          NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
 
-namespace cb = CGAL::benchmark;
 namespace po = boost::program_options;
 
 struct Help_exception {};
 
 template <class Kernel>
-class Bench_leftturn : public Kernel {
+class Bench_bbox : public Kernel {
 public:
-  typename Kernel::Point_2 p, q, r;
-  typename Kernel::Left_turn_2 leftturn;
-  Bench_leftturn()
-  {
-    leftturn = left_turn_2_object();
-    p = typename Kernel::Point_2(0,0);
-    q = typename Kernel::Point_2(1,1);
-    r = typename Kernel::Point_2(0,1);
-  }
   int init(void) { return 0; }
   void clean(void) {}
   void sync(void) {}
-  void op(void) { leftturn(p, q, r); }
+  void op(void) {}
 };
 
-typedef Bench_leftturn<Kernel>                  My_bench_leftturn;
+typedef Bench_bbox<Kernel>                      My_bench_bbox;
 
 int main(int argc, char * argv[])
 {
   po::options_description opts("Options");
   opts.add_options()("help,h", "print help message");
-  cb::Bench_option_parser bench_opts;
+  CGAL::Bench_option_parser bench_opts;
   opts.add(bench_opts.get_opts());
   po::variables_map var_map;
 
@@ -55,7 +45,7 @@ int main(int argc, char * argv[])
     return 1;
   }
   
-  cb::Bench<My_bench_leftturn> bench("Leftturn", bench_opts.get_seconds());
+  CGAL::Bench<My_bench_bbox> bench("Leftturn", bench_opts.get_seconds());
   bench();
   return 0;
 }

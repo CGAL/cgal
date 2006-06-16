@@ -22,9 +22,15 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LIBPATH = $(CGAL_LIBPATH) -L../../src/Benchmark
+LIBPATH = $(CGAL_LIBPATH)
 
-LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS) -lCGALBenchmark
+LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS)
+ifneq (linux, $(findstring linux,$(OSTYPE)))
+LDFLAGS+= ../../src/Benchmark/CGALBenchmark.lib
+else
+LIBPATH+= $(LIBPATH_OPT)../../src/Benchmark
+LDFLAGS+= -lCGALBenchmark
+endif
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -47,5 +53,13 @@ clean: check_syntax.clean simple.clean leftturn.clean
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+# Until CGAL_MAKEFILE supports .cpp extension:
+
+.cpp:
+	$(MAKE) $*$(EXE_EXT)
+
+.cpp.clean:
+	rm -f $*$(EXE_EXT) $*$(OBJ_EXT) $*.moc

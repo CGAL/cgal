@@ -290,13 +290,13 @@ Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/show_slice.C -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/sphere_line_intersection_test.C -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/sphere_location.C -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/the_plan -text
-Benchmark/examples/Benchmark/bbox.C -text
-Benchmark/examples/Benchmark/check_syntax.C -text
+Benchmark/examples/Benchmark/bbox.cpp -text
+Benchmark/examples/Benchmark/check_syntax.cpp -text
 Benchmark/examples/Benchmark/data/test1.bff -text
 Benchmark/examples/Benchmark/data/test2.bff -text
-Benchmark/examples/Benchmark/leftturn.C -text
+Benchmark/examples/Benchmark/leftturn.cpp -text
 Benchmark/examples/Benchmark/makefile -text
-Benchmark/examples/Benchmark/simple.C -text
+Benchmark/examples/Benchmark/simple.cpp -text
 Benchmark/include/CGAL/Bench_option_parser.hpp -text
 Benchmark/include/CGAL/Benchmark_visitor.hpp -text
 Benchmark/include/CGAL/benchmark_basic.hpp -text
