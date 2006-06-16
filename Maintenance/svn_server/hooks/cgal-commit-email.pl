@@ -7,11 +7,6 @@
 # For usage, see the usage subroutine or run the script with no
 # command line arguments.
 #
-# $HeadURL$
-# $LastChangedDate$
-# $LastChangedBy$
-# $LastChangedRevision$
-#
 # ====================================================================
 # Copyright (c) 2000-2004 CollabNet.  All rights reserved.
 #
@@ -577,7 +572,7 @@ foreach my $project (@project_settings_list)
       }
 
     my $header;
-    #$header->{'debug'} = "/svn/cgal/hooks/sendmail.log";
+    #$header->{'debug'} = "/tmp/sendmail.log";
     $header->{'to'} = $to;
     $header->{'from'} = $mail_from;
     $header->{'subject'} = $subject;
