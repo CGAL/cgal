@@ -130,6 +130,7 @@ public:
     : C0( - CGAL_NTS square(c0)), C1(0), C2(CGAL_NTS square(c1)),
       _smaller( CGAL_NTS sign(c1) == CGAL_NTS sign(c0) )
   {
+    simplify_root_of_2(C2,C1,C0);
     CGAL_assertion(is_valid());
   }
 
@@ -142,6 +143,7 @@ public:
       C1 = -b;
       C2 = -a;
     }
+    simplify_root_of_2(C2,C1,C0);
     CGAL_assertion(is_valid());
   }
 
@@ -239,6 +241,12 @@ struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
     }
 };
 
+// Simplify the coefficients of root_of_2.
+// Currently the default template doesn't do anything.
+// This function is not documented as a number type requirement for now.
+template < typename RT >
+inline void
+simplify_root_of_2(RT &, RT &, RT&) {}
 
 template < typename RT >
 Sign
@@ -264,12 +272,16 @@ sign(const Root_of_2<RT> &a)
   return a.is_smaller() ? NEGATIVE : POSITIVE;
 }
 
-
 template < typename RT >
 Comparison_result
 compare(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 {
   CGAL_assertion(is_valid(a) && is_valid(b));
+
+  Interval_nt<> ia = to_interval(a);
+  Interval_nt<> ib = to_interval(b);
+  Uncertain<Comparison_result> res = CGAL_NTS compare(ia, ib);
+  if (is_singleton(res)) return res;
 
   // Now a and b are both of degree 2.
   if (a.is_smaller())
@@ -293,6 +305,11 @@ compare(const Root_of_2<RT> &a,
   typedef typename Root_of_traits< RT >::RootOf_1 RootOf_1;
   
   CGAL_assertion(is_valid(a) && is_valid(b));
+
+  Interval_nt<> ia = to_interval(a);
+  Interval_nt<> ib = to_interval(b);
+  Uncertain<Comparison_result> res = CGAL_NTS compare(ia, ib);
+  if (is_singleton(res)) return res;
 
   RootOf_1 d_a(-a[1],2*a[2]);
 
@@ -326,6 +343,11 @@ Comparison_result
 compare(const Root_of_2<RT> &a, const RT &b)
 {
   CGAL_assertion(is_valid(a));
+
+  Interval_nt<> ia = to_interval(a);
+  Interval_nt<> ib = to_interval(b);
+  Uncertain<Comparison_result> res = CGAL_NTS compare(ia, ib);
+  if (is_singleton(res)) return res;
 
   // First, we compare b to the root of the derivative of a.
   int cmp = CGAL_NTS compare(2*a[2]*b, -a[1]);
@@ -973,8 +995,8 @@ to_interval(const Root_of_2<RT> &x)
 
   Interval_nt<> a = to_interval(x[2]);
   Interval_nt<> b = to_interval(x[1]);
-  Interval_nt<> disc = to_interval(x.discriminant());
-  Interval_nt<> d = sqrt(disc);
+  Interval_nt<> c = to_interval(x[0]);
+  Interval_nt<> d = CGAL::sqrt(CGAL_NTS square(b) - 4*a*c);
 
   if (x.is_smaller())
     d = -d;
@@ -989,9 +1011,7 @@ operator<<(std::ostream &os, const Root_of_2<RT> &r)
   return os << r[2] << " "
 	    << r[1] << " "
 	    << r[0] << " "
-	    << r.is_smaller() << " ";
-  
-  //return os << to_double(r);
+	    << r.is_smaller(); 
 }
 
 template < typename RT >
@@ -1052,3 +1072,4 @@ io_tag(const Root_of_2<RT>&)
 #undef CGAL_double
 
 #endif // CGAL_ROOT_OF_2_H
+
