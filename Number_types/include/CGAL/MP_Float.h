@@ -26,6 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Root_of_2.h> // needed because of the [] operation on Root_of_2 
 #include <CGAL/MP_Float_fwd.h>
 #include <iostream>
 #include <vector>
@@ -355,12 +356,97 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 #endif
 }
 
+inline void simplify_root_of_2(MP_Float &a, MP_Float &b, MP_Float&c) {
+#if 0
+  if(CGAL::is_zero(a)) {
+  	simplify_quotient(b,c); return;
+  } else if(CGAL::is_zero(b)) {
+  	simplify_quotient(a,c); return;
+  } else if(CGAL::is_zero(c)) {
+  	simplify_quotient(a,b); return;
+  }  	
+  MP_Float::exponent_type va = a.exp + 
+    (MP_Float::exponent_type) a.v.size();	
+  MP_Float::exponent_type vb = b.exp + 
+    (MP_Float::exponent_type) b.v.size();
+  MP_Float::exponent_type vc = c.exp + 
+    (MP_Float::exponent_type) c.v.size();
+  MP_Float::exponent_type min = std::min(std::min(va,vb),vc);	
+  MP_Float::exponent_type max = std::max(std::max(va,vb),vc);
+  MP_Float::exponent_type med = (min+max)/2.0;
+  a.exp -= med;
+  b.exp -= med;
+  c.exp -= med;  
+#endif    	
+}
+
 std::pair<double, int>
 to_double_exp(const MP_Float &b);
 
 // Returns (first * 2^second), an interval surrounding b.
 std::pair<std::pair<double, double>, int>
 to_interval_exp(const MP_Float &b);
+
+namespace CGALi {
+  inline void simplify_3_exp(int &a, int &b, int &c) {
+    int min = std::min(std::min(a,b),c);	
+    int max = std::max(std::max(a,b),c);
+    int med = (min+max)/2;
+    a -= med;
+    b -= med;
+    c -= med;
+  }
+}
+
+inline
+double
+to_double(const Root_of_2<MP_Float> &r)
+{
+  const MP_Float &ra = r[2];
+  const MP_Float &rb = r[1];
+  const MP_Float &rc = r[0];
+
+  std::pair<double, int> pa = to_double_exp(ra);
+  std::pair<double, int> pb = to_double_exp(rb);
+  std::pair<double, int> pc = to_double_exp(rc);
+
+  CGALi::simplify_3_exp(pa.second,pb.second,pc.second);
+
+  double a = CGAL_CLIB_STD::ldexp(pa.first,pa.second);
+  double b = CGAL_CLIB_STD::ldexp(pb.first,pb.second);
+  double c = CGAL_CLIB_STD::ldexp(pc.first,pc.second);
+
+  // Maybe it is better to calculate the delta in Exact Computation
+  double d = sqrt(square(b) - 4*a*c);
+  if (r.is_smaller())
+    d = -d;
+
+  return (d-b)/(a*2);
+}
+
+inline
+std::pair<double,double>
+to_interval(const Root_of_2<MP_Float> &r)
+{
+  const MP_Float &ra = r[2];
+  const MP_Float &rb = r[1];
+  const MP_Float &rc = r[0];
+
+  std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
+  std::pair<std::pair<double, double>, int> pb = to_interval_exp(rb);
+  std::pair<std::pair<double, double>, int> pc = to_interval_exp(rc);
+
+  CGALi::simplify_3_exp(pa.second,pb.second,pc.second);
+
+  Interval_nt<> a = ldexp(Interval_nt<>(pa.first),pa.second);
+  Interval_nt<> b = ldexp(Interval_nt<>(pb.first),pb.second);
+  Interval_nt<> c = ldexp(Interval_nt<>(pc.first),pc.second);
+  Interval_nt<> d = sqrt(square(b) - 4*a*c);
+  if (r.is_smaller())
+    d = -d;
+
+  return ((d-b)/(a*2)).pair();
+}
 
 inline
 bool
