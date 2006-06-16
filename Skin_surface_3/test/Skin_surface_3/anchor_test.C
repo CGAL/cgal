@@ -1,14 +1,13 @@
 // Use the default kernels and the default conversions:
-#include <CGAL/Skin_surface_traits_3.h>
-typedef CGAL::Skin_surface_traits_3<>                     Skin_traits;
 
 // *********************
 // Regular triangulation
 // *********************
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
-typedef Skin_traits::Regular_traits                       Regular_traits;
-typedef CGAL::Regular_triangulation_3<Regular_traits>     Regular;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Regular_traits;
+typedef CGAL::Regular_triangulation_3<Regular_traits>       Regular;
 
 #include <CGAL/Compute_anchor_3.h>
 
