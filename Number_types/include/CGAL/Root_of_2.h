@@ -280,8 +280,8 @@ compare(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 
   Interval_nt<> ia = to_interval(a);
   Interval_nt<> ib = to_interval(b);
-  Uncertain<Comparison_result> res = CGAL_NTS compare(ia, ib);
-  if (is_singleton(res)) return res;
+  if(ia.inf() > ib.sup()) return LARGER;
+  if(ia.sup() < ib.inf()) return SMALLER;
 
   // Now a and b are both of degree 2.
   if (a.is_smaller())
@@ -308,8 +308,8 @@ compare(const Root_of_2<RT> &a,
 
   Interval_nt<> ia = to_interval(a);
   Interval_nt<> ib = to_interval(b);
-  Uncertain<Comparison_result> res = CGAL_NTS compare(ia, ib);
-  if (is_singleton(res)) return res;
+  if(ia.inf() > ib.sup()) return LARGER;
+  if(ia.sup() < ib.inf()) return SMALLER;
 
   RootOf_1 d_a(-a[1],2*a[2]);
 
@@ -346,8 +346,8 @@ compare(const Root_of_2<RT> &a, const RT &b)
 
   Interval_nt<> ia = to_interval(a);
   Interval_nt<> ib = to_interval(b);
-  Uncertain<Comparison_result> res = CGAL_NTS compare(ia, ib);
-  if (is_singleton(res)) return res;
+  if(ia.inf() > ib.sup()) return LARGER;
+  if(ia.sup() < ib.inf()) return SMALLER;
 
   // First, we compare b to the root of the derivative of a.
   int cmp = CGAL_NTS compare(2*a[2]*b, -a[1]);
