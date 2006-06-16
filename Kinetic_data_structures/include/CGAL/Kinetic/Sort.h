@@ -211,13 +211,13 @@ void audit() const
 	std::cerr << "Time is " <<simulator()->rational_current_time() << std::endl; 
 	std::cerr << "WARNING: order is ";
 	write(std::cerr);
-	if (!wrote_objects_) {
-	  wrote_objects_=true;
-	  std::cerr << "Objects are: ";
-	  for (typename Traits::Active_points_1_table::Keys_iterator kit= mot_listener_.notifier()->keys_begin();
-	       kit != mot_listener_.notifier()->keys_end(); ++kit){
-	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
-	  }
+        if (!wrote_objects_) {
+          wrote_objects_=true;
+          std::cerr << "Objects are: ";
+          for (typename Traits::Active_points_1_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
+               kit != mot_listener_.notifier()->keys_end(); ++kit){
+            std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
+          }
 	}
 	warned_[*it].insert(*next(it));
 	std::cerr << std::endl;

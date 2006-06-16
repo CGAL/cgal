@@ -93,9 +93,9 @@ protected:
   typedef Delaunay_triangulation_recent_edges_visitor_2<typename Kinetic_Delaunay::Triangulation> REV;
 
   void set_color(const Edge &e, CGAL::Qt_widget &w,
-		 const REV& ) const {
+                 const REV& ) const {
     w << CGAL::LineWidth(2);
-    if (!TDS_helper::get_undirected_edge_label(e).is_valid()) {
+    if (!TDS_helper::get_undirected_edge_label(e)) {
       w << CGAL::Color(125,125,125);
     } else if (kdel_->visitor().contains(e) || kdel_->visitor().contains(TDS_helper::mirror_edge(e))) {
       w<< CGAL::Color(0,255,0);
