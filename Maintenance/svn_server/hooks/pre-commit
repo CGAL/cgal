@@ -52,8 +52,12 @@ TXN="$2"
 
 # Make sure that the log message contains some text.
 SVNLOOK=/usr/bin/svnlook
-$SVNLOOK log -t "$TXN" "$REPOS" | \
-   grep "[a-zA-Z0-9]" > /dev/null || exit 1
+$SVNLOOK log -t "$TXN" "$REPOS" | grep "[a-zA-Z0-9]" >/dev/null
+if [[ $? != 0 ]]; then
+    echo "" >&2
+    echo "Invalid commit message" >&2
+    exit 1
+fi
 
 # Check that the author of this commit has the rights to perform
 # the commit on the files and directories being modified.
