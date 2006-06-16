@@ -32,7 +32,7 @@ public:
   typedef typename K::Vector_3            Vector;
   typedef typename K::Segment_3           Segment;
   typedef typename K::RT                  RT;
-  typedef Weighted_point<Point, RT> Weighted_point;
+  typedef CGAL::Weighted_point<Point, RT> Weighted_point;
 
   Skin_surface_quadratic_surface_3(RT Qinput[], Point p, RT c)
     : p(p), c(c) 
@@ -104,7 +104,7 @@ public:
       sq_d /= 4;
     }
     return midpoint(pp0,pp1);
-  };
+  }
 private:
   RT Q[6]; 
   Point p; 

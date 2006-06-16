@@ -84,7 +84,9 @@ private:
         sortedV[3-i+nIn] = i;
       }
     }
-    P_point begin_point, end_point;
+    // Make g++-4.1.1 happy
+    P_point begin_point = P_point(); 
+    P_point end_point = P_point(); 
     Object obj;
     if (nIn==1) {
       begin_point = t2p_converter(ch->vertex(sortedV[0])->point());
