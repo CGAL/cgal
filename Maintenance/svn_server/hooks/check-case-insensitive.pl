@@ -216,6 +216,7 @@ while (<SVNLOOK>) {
     } else {
       $index = $changed . '/' . $name;
     }
+    $index =~ s/\/$//; # Remove trailing slash to compare file and folders
     $tree{lc($index)} = $name; # Index the hash with case folded name.
     print STDERR "\$tree{lc($index)}=$name (dir)\n" if ($debug > 1);
   } elsif (/^(\s+)(.*)$/) {  # This is a real file name, not a directory.
@@ -242,6 +243,7 @@ my $failmsg;
 
 my %newtree;
 foreach my $newfile (@added) {
+  $newfile =~ s/\/$//; # Remove trailing slash to compare file and folders
   print STDERR "Checking \$tree{lc($newfile)}\n" if ($debug > 1);
   # Without the following line it gets the lc() wrong.
   my $junk = "x$newfile";
