@@ -301,8 +301,8 @@ Benchmark/include/CGAL/Bench_option_parser.h -text
 Benchmark/include/CGAL/Benchmark_visitor.h -text
 Benchmark/include/CGAL/benchmark_basic.h -text
 Benchmark/include/CGAL/benchmark_config.h -text
-Benchmark/src/Benchmark/Bench_option_parser.C -text
-Benchmark/src/Benchmark/Benchmark_visitor.C -text
+Benchmark/src/Benchmark/Bench_option_parser.cpp -text
+Benchmark/src/Benchmark/Benchmark_visitor.cpp -text
 Benchmark/src/Benchmark/benchmark_lexer.l -text
 Benchmark/src/Benchmark/benchmark_parser.y -text
 Benchmark/src/Benchmark/makefile -text

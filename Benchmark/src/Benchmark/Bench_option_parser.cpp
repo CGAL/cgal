@@ -13,8 +13,8 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#include "CGAL/benchmark_basic.h"
-#include "CGAL/Bench_option_parser.h"
+#include "CGAL/benchmark_basic.hpp"
+#include "CGAL/Bench_option_parser.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 

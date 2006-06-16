@@ -16,7 +16,7 @@
 
 CXX ?=g++
 CXXFLAGS ?=-Wall
-CPPFLAGS = -I. -I../../include -g
+CPPFLAGS ?= -I. -I../../include -g
 AR ?=ar
 LEX =flex
 BISON ?=bison
@@ -25,15 +25,15 @@ RANLIB ?=ranlib
 PREFIX ?=/usr/local
 
 TARGET =libCGALBenchmark.a
-CPPSOURCES =Benchmark_visitor.C
-CPPSOURCES+=Bench.C
-CPPSOURCES+=Bench_option_parser.C
+CPPSOURCES =Benchmark_visitor.cpp
+CPPSOURCES+=Bench.cpp
+CPPSOURCES+=Bench_option_parser.cpp
 BISONSOURCES =benchmark_parser.y
 LEXSOURCES =benchmark_lexer.l
-DIRT =benchmark_parser.C benchmark_parser.h benchmark_parser.output
-DIRT+=benchmark_lexer.C
+DIRT =benchmark_parser.cpp benchmark_parser.hpp benchmark_parser.output
+DIRT+=benchmark_lexer.cpp
 
-CPPOBJECTS =$(CPPSOURCES:.C=.o)
+CPPOBJECTS =$(CPPSOURCES:.cpp=.o)
 BISONOBJECTS =$(BISONSOURCES:.y=.o)
 LEXOBJECTS =$(LEXSOURCES:.l=.o)
 OBJECTS = $(CPPOBJECTS) $(BISONOBJECTS) $(LEXOBJECTS)
@@ -50,19 +50,16 @@ $(TARGET): $(OBJECTS)
 # 	${RANLIB} ${PREFIX}/lib/${TARGET}
 
 clean:
-	-rm -f *.o $(DIRT)
+	-rm -f *.o $(TARGET) $(DIRT)
 
 .SUFFIXES:
-.SUFFIXES: .o .l .y .C
+.SUFFIXES: .o .l .y .cpp
 
-%.C %.h : %.y
-	$(BISON) -d $< -o $*.C
-ifeq (linux, $(findstring linux,$(OSTYPE)))
-	mv $*.H $*.h
-endif
+%.cpp %.hpp : %.y
+	$(BISON) -d $< -o $*.cpp
 
-%.C : %.l
+%.cpp : %.l
 	$(LEX) -8 -o$@ $<
 
-Benchmark_visitor.o: benchmark_parser.h
-benchmark_lexer.o: benchmark_parser.h
+Benchmark_visitor.o: benchmark_parser.hpp
+benchmark_lexer.o: benchmark_parser.hpp

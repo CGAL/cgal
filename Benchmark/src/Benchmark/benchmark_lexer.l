@@ -25,9 +25,9 @@
 
 /* Use C++ std::string as semantic value to communicate with lexer */
 #define YYSTYPE std::string
-#include "CGAL/benchmark_basic.h"
+#include "CGAL/benchmark_basic.hpp"
 
-#include "benchmark_parser.h" 	  // gets definitions from syntax parser
+#include "benchmark_parser.hpp"	// gets definitions from syntax parser
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
