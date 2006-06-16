@@ -38,29 +38,29 @@ namespace CGAL {
     assert( ! (e1 == e2) ); // polynomials of this type cannot be multiple 
     // of one another if they are not equal
 
-    typedef typename AK::FT FT;
+    typedef typename AK::RT RT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
-    FT dx = e2.a() - e1.a();
-    FT dy = e2.b() - e1.b();
+    RT dx = e2.a() - e1.a();
+    RT dy = e2.b() - e1.b();
 
-    FT dx2 = CGAL::square(dx);
-    FT dy2 = CGAL::square(dy);
-    FT dist2 = dx2 + dy2; // squared distance between centers
+    RT dx2 = CGAL::square(dx);
+    RT dy2 = CGAL::square(dy);
+    RT dist2 = dx2 + dy2; // squared distance between centers
 
-    FT cond = 4*e1.r_sq()*e2.r_sq() - 
+    RT cond = 4*e1.r_sq()*e2.r_sq() - 
       CGAL::square( e1.r_sq() + e2.r_sq() - dist2 );
 
     if (cond < 0) return res;
 
-    FT px = e2.a() + e1.a();
-    FT py = e2.b() + e1.b();
-    FT rx1 = e1.r_sq() - CGAL::square(e1.a());
-    FT ry1 = e1.r_sq() - CGAL::square(e1.b());
-    FT rx2 = e2.r_sq() - CGAL::square(e2.a());
-    FT ry2 = e2.r_sq() - CGAL::square(e2.b());
+    RT px = e2.a() + e1.a();
+    RT py = e2.b() + e1.b();
+    RT rx1 = e1.r_sq() - CGAL::square(e1.a());
+    RT ry1 = e1.r_sq() - CGAL::square(e1.b());
+    RT rx2 = e2.r_sq() - CGAL::square(e2.a());
+    RT ry2 = e2.r_sq() - CGAL::square(e2.b());
     
-    FT drx = rx2 - rx1;
-    FT dry = ry2 - ry1;
+    RT drx = rx2 - rx1;
+    RT dry = ry2 - ry1;
     
     if (cond == 0) {
       // one double root, 
@@ -114,18 +114,19 @@ namespace CGAL {
    return res;
   }
 
-    template < class AK >
-    inline 
-    Sign sign_at( const typename AK::Polynomial_for_circles_2_2 & equation,
-		  const typename AK::Root_for_circles_2_2 & r)
-    {
-      typedef typename AK::Root_of_2 Root_of_2;
-      Root_of_2 part_left = square(r.x() - equation.a());
-      Root_of_2 part_right = equation.r_sq() - square(r.y() - equation.b());
-      if (part_left == part_right)
-	return ZERO;
-      return (part_left < part_right) ? NEGATIVE : POSITIVE; 
-    }
+  template < class AK >
+  inline 
+  Sign sign_at( const typename AK::Polynomial_for_circles_2_2 & equation,
+	 const typename AK::Root_for_circles_2_2 & r)
+  {
+    typedef typename AK::Root_of_2 Root_of_2;
+    Root_of_2 part_left = square(r.x() - equation.a());
+    Root_of_2 part_right = equation.r_sq() - square(r.y() - equation.b());
+    Comparison_result c = compare(part_left, part_right);
+    if(c == EQUAL) return ZERO;
+    if(c == LARGER) return POSITIVE;
+    return NEGATIVE;
+  }
 
 
   template <class AK>
@@ -198,3 +199,4 @@ namespace CGAL {
 } // namespace CGAL
 
 #endif //  CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_2_H
+
