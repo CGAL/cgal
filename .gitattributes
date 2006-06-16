@@ -644,6 +644,7 @@ Maintenance/rpm/SPECS/CGAL-manual-tools.spec -text
 Maintenance/rpm/SPECS/CGAL.spec -text
 Maintenance/rpm/get_cgal_trunk_url -text
 Maintenance/rpm/rpmbuild -text
+Maintenance/svn_server/hooks/Warn_line_too_long.C -text
 Maintenance/svn_server/hooks/post-commit -text
 Maintenance/svn_server/hooks/post-commit.tmpl -text
 Maintenance/svn_server/hooks/post-lock.tmpl -text
