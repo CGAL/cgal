@@ -414,14 +414,14 @@ public:
   // FACE ITERATORS
  private:
   Non_degenerate_faces_iterator non_degenerate_faces_begin() const {
-    return filter_iterator( dual_.finite_vertices_end(),
-			    Face_rejector_binder(this),
-			    dual_.finite_vertices_begin() );
+    return CGAL::filter_iterator( dual_.finite_vertices_end(),
+				  Face_rejector_binder(this),
+				  dual_.finite_vertices_begin() );
   }
 
   Non_degenerate_faces_iterator non_degenerate_faces_end() const {
-    return filter_iterator( dual_.finite_vertices_end(),
-			    Face_rejector_binder(this) );
+    return CGAL::filter_iterator( dual_.finite_vertices_end(),
+				  Face_rejector_binder(this) );
   }
 
  public:
@@ -435,25 +435,25 @@ public:
 
  private:
   Unbounded_faces_iterator_base unbounded_faces_base_begin() const {
-    return filter_iterator( non_degenerate_faces_end(),
-			    Bounded_face_tester(this),
-			    non_degenerate_faces_begin() );
+    return CGAL::filter_iterator( non_degenerate_faces_end(),
+				  Bounded_face_tester(this),
+				  non_degenerate_faces_begin() );
   }
 
   Unbounded_faces_iterator_base unbounded_faces_base_end() const {
-    return filter_iterator( non_degenerate_faces_end(),
-			    Bounded_face_tester(this) );
+    return CGAL::filter_iterator( non_degenerate_faces_end(),
+				  Bounded_face_tester(this) );
   }
 
   Bounded_faces_iterator_base bounded_faces_base_begin() const {
-    return filter_iterator( non_degenerate_faces_end(),
-			    Unbounded_face_tester(this),
-			    non_degenerate_faces_begin() );
+    return CGAL::filter_iterator( non_degenerate_faces_end(),
+				  Unbounded_face_tester(this),
+				  non_degenerate_faces_begin() );
   }
 
   Bounded_faces_iterator_base bounded_faces_base_end() const {
-    return filter_iterator( non_degenerate_faces_end(),
-			    Unbounded_face_tester(this) );
+    return CGAL::filter_iterator( non_degenerate_faces_end(),
+				  Unbounded_face_tester(this) );
   }
 
  public:
@@ -476,14 +476,14 @@ public:
   // EDGE ITERATORS
  private:
   Non_degenerate_edges_iterator non_degenerate_edges_begin() const {
-    return filter_iterator( dual_.finite_edges_end(),
-			    Edge_rejector_binder(this),
-			    dual_.finite_edges_begin() );
+    return CGAL::filter_iterator( dual_.finite_edges_end(),
+				  Edge_rejector_binder(this),
+				  dual_.finite_edges_begin() );
   }
 
   Non_degenerate_edges_iterator non_degenerate_edges_end() const {
-    return filter_iterator( dual_.finite_edges_end(),
-			    Edge_rejector_binder(this) );
+    return CGAL::filter_iterator( dual_.finite_edges_end(),
+				  Edge_rejector_binder(this) );
   }
 
 
@@ -496,14 +496,14 @@ public:
   }
 
   Valid_edges_iterator valid_edges_begin() const {
-    return filter_iterator( edges_base_end(),
-			    Edge_validity_tester(this),
-			    edges_base_begin() );
+    return CGAL::filter_iterator( edges_base_end(),
+				  Edge_validity_tester(this),
+				  edges_base_begin() );
   }
 
   Valid_edges_iterator valid_edges_end() const {
-    return filter_iterator( edges_base_end(),
-			    Edge_validity_tester(this) );
+    return CGAL::filter_iterator( edges_base_end(),
+				  Edge_validity_tester(this) );
   }
 
  public:
@@ -525,25 +525,25 @@ public:
 
  protected:
   Unbounded_edges_iterator_base unbounded_edges_base_begin() const {
-    return filter_iterator( edges_end(),
-			    Bounded_edge_tester(this),
-			    edges_begin() );
+    return CGAL::filter_iterator( edges_end(),
+				  Bounded_edge_tester(this),
+				  edges_begin() );
   }
 
   Unbounded_edges_iterator_base unbounded_edges_base_end() const {
-    return filter_iterator( edges_end(),
-			    Bounded_edge_tester(this) );
+    return CGAL::filter_iterator( edges_end(),
+				  Bounded_edge_tester(this) );
   }
 
   Bounded_edges_iterator_base bounded_edges_base_begin() const {
-    return filter_iterator( edges_end(),
-			    Unbounded_edge_tester(this),
-			    edges_begin() );
+    return CGAL::filter_iterator( edges_end(),
+				  Unbounded_edge_tester(this),
+				  edges_begin() );
   }
 
   Bounded_edges_iterator_base bounded_edges_base_end() const {
-    return filter_iterator( edges_end(),
-			    Unbounded_edge_tester(this) );
+    return CGAL::filter_iterator( edges_end(),
+				  Unbounded_edge_tester(this) );
   }
 
  public:
@@ -566,14 +566,14 @@ public:
   // VERTEX ITERATORS
  private:
   Non_degenerate_vertices_iterator non_degenerate_vertices_begin() const {
-    return filter_iterator( dual_.finite_faces_end(),
-			    Vertex_validity_tester(this),
-			    dual_.finite_faces_begin() );
+    return CGAL::filter_iterator( dual_.finite_faces_end(),
+				  Vertex_validity_tester(this),
+				  dual_.finite_faces_begin() );
   }
 
   Non_degenerate_vertices_iterator non_degenerate_vertices_end() const {
-    return filter_iterator( dual_.finite_faces_end(),
-			    Vertex_validity_tester(this) );
+    return CGAL::filter_iterator( dual_.finite_faces_end(),
+				  Vertex_validity_tester(this) );
   }
 
  public:
