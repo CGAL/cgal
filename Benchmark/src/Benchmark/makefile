@@ -16,7 +16,7 @@
 
 CXX ?=g++
 CXXFLAGS ?=-Wall
-CPPFLAGS ?= -I. -I../../include -g
+CPPFLAGS = -I. -I../../include -g
 AR ?=ar
 LEX =flex
 BISON ?=bison
