@@ -3,7 +3,7 @@
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
-#---------------------------------------------------------------------#
+#--------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 include $(CGAL_MAKEFILE)
 
@@ -46,7 +46,7 @@ QTLDFLAGS = \
           $(CGAL_QT_LDFLAGS) -lGL -lglut
 
 
-INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lInstrospect
+INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lIntrospect
 
 
 #---------------------------------------------------------------------#

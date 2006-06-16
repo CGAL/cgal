@@ -16,6 +16,9 @@
 #include <sstream>
 #include <string>
 
+#include "jv_writer.h"
+
+
 Mesh m_mesh;
 
 DS ridge_data;
@@ -36,7 +39,7 @@ void clean_DS(DS& L)
 void 
 read_line(std::ifstream& stream_res, int& ridge_type, 
 	  double& strength, double& sharpness, 
-	  std::list<Point>& ridge_points) 
+	  std::vector<Point>& ridge_points) 
 {
       const int max_line_size = 100000;
       char cline[max_line_size];
@@ -74,7 +77,7 @@ void load_data_from_file(DS& l, const char* file_res)
     {
       int ridge_type;
       double strength, sharpness;
-      std::list<Point> ridge_points;
+      std::vector<Point> ridge_points;
 
       read_line(stream_res, ridge_type, strength, sharpness,
 		ridge_points);
@@ -115,6 +118,7 @@ int main(int argc, char** argv) {
   load_geom(argc, argv);
   
   QApplication app(argc, argv);
+  glutInit(&argc, argv);
 
   if ( !QGLFormat::hasOpenGL() ) {
     qWarning( "This system has no OpenGL support. Exiting." );
@@ -133,5 +137,45 @@ int main(int argc, char** argv) {
 
   main.show();
 
+  //debug  visu with a jvx file
+  std::cout << ridge_data.size() << std::endl;
+  DS_iterator iter_lines = ridge_data.begin(), iter_end = ridge_data.end();
+  
+  std::ofstream out_jvx("debug.jvx");
+  CGAL::Javaview_writer<std::ofstream> jvw(out_jvx);
+  jvw.set_title("ridges");
+  jvw.write_header();
+
+//   //first the polysurf
+//   jvw.set_geometry_name("polysurf");
+//   jvw.begin_geometry();
+//   polyhedron_javaview_writer(jvw, P);
+//   jvw.end_geometry();
+
+  int compt = 0;
+ 
+  for (;iter_lines!=iter_end;iter_lines++) {
+    compt++;
+    // create the name of the ridge
+    std::ostringstream str;
+    str << "ridge " << compt;
+    jvw.set_geometry_name(str.str());
+
+    //color
+    if ((*iter_lines)->ridge_type ==BC) jvw.set_color(CGAL::BLUE);
+    else jvw.set_color(CGAL::RED);
+
+    //lines
+    jvw.begin_geometry();
+    polyline_javaview_writer(jvw, (*iter_lines)->ridge_points.begin(),
+			     (*iter_lines)->ridge_points.end());
+    jvw.end_geometry();
+  }
+    
+  jvw.write_footer();
+
+
+
   return app.exec();
+
 }

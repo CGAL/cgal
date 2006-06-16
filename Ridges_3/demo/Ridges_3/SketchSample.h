@@ -17,9 +17,9 @@ enum Ridge_type {NONE=0, BLUE_RIDGE, RED_RIDGE, CREST, BE, BH, BC, RE, RH, RC};
 struct data_line{
   int ridge_type;
   double strength, sharpness;
-  std::list<Point> ridge_points;
+  std::vector<Point> ridge_points;
   data_line(int ridge_type, double strength, double sharpness,
-	    std::list<Point> ridge_points): 
+	    std::vector<Point> ridge_points): 
   ridge_type(ridge_type), strength(strength), sharpness(sharpness),
     ridge_points(ridge_points)
     {};

@@ -31,7 +31,7 @@ Note : if the nb of collected points is less than the required min number of
  
 
 
- ./blind.exe -f data/ellipe0.003.off -d3 -m3 -a3
+ ./blind.exe -f data/ellipe0.003.off -d4 -m4 -a3 -t4
 ./blind.exe -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a0 -t4
  ./blind.exe -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -p20 -t4
 

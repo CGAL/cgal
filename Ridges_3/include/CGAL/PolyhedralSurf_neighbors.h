@@ -133,6 +133,7 @@ compute_one_ring(Vertex_handle v,
   Vector_3 p0p;
   FT d = OneRingSize;
   for (; itb != ite; itb++){
+
     p = (*itb)->point();
     p0p = p0 - p;
     d =  CGAL::sqrt(p0p*p0p);

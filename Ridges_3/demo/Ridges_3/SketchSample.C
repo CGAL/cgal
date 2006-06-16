@@ -16,17 +16,17 @@ SketchSample::~SketchSample() {
 }
 
 void SketchSample::buildDisplayList(GLuint surf) {
-
   glNewList(surf, GL_COMPILE);
-
-  glShadeModel(GL_SMOOTH);
-   //mesh
-  //glMaterialfv is def in the mesh 
+  
+  glEnable(GL_LIGHTING);
+  //  glShadeModel(GL_SMOOTH);
+  glShadeModel(GL_FLAT);
+  //mesh glMaterialfv is def in the mesh with offset to see the lines z_buffered
   p_mesh->gl_draw_facets(true);
-
 
   //ridges, drawn without light
   glDisable(GL_LIGHTING);
+  glColor3d(1., 1., 0.);
 
   for (DS_iterator it=p_ridge_data->begin();it!=p_ridge_data->end();it++)
     draw_one_ridge(*it);
@@ -108,11 +108,11 @@ void SketchSample::draw_one_ridge(data_line* line)
   if (line->ridge_type == RH) glColor3f(1.,1.,0.);
   if (line->ridge_type == RC) glColor3f(1.,0.,0.);
   
-  std::list<Point>::iterator iter = line->ridge_points.begin(), 
+  std::vector<Point>::iterator iter = line->ridge_points.begin(), 
     ite = line->ridge_points.end();
 
   glLineWidth(3 );
-  glBegin(GL_LINES);
-  for (;iter!=ite;iter++) glVertex3d(iter->x(), iter->y(), iter->z());
+  glBegin(GL_LINE_STRIP);
+  for (;iter!=ite;iter++)  glVertex3d(iter->x(), iter->y(), iter->z()); 
   glEnd();	
 }

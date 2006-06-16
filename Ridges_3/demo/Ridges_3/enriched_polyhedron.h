@@ -254,9 +254,12 @@ public :
   // draw	edges
   void gl_draw_edges()
     {
+      ::glColor3f(1,0,0);
+      ::glBegin(GL_LINES);
+
       Halfedge_iterator it;
-      for(it = edges_begin();
-	  it != edges_end();
+      for(it = this->edges_begin();
+	  it != this->edges_end();
 	  it++)
 	{
 	  Halfedge_handle he = it;
@@ -265,7 +268,8 @@ public :
 	  ::glVertex3d(p1[0],p1[1],p1[2]);
 	  ::glVertex3d(p2[0],p2[1],p2[2]);
 	}
-    }
+      ::glEnd();
+     }
 
 
   // draw vertices
@@ -274,8 +278,8 @@ public :
       ::glPointSize(5.0f);
       ::glBegin(GL_POINTS);
       Point_iterator it;
-      for(it = points_begin();
-	  it != points_end();
+      for(it = this->points_begin();
+	  it != this->points_end();
 	  it++)
 	{
 	  const Point& p = *it;
@@ -291,16 +295,19 @@ public :
       static GLfloat agray[4] = {1,1,1, 1.0 };
       glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, agray);
       
-      glPolygonOffset( 1.0, 1.0 );
-      glPolygonMode(GL_FRONT, GL_FILL);
-      glEnable(GL_POLYGON_OFFSET_FILL);
+     glEnable(GL_POLYGON_OFFSET_FILL);
+     glPolygonOffset( 1.0, 1.0 );
+    glPolygonMode(GL_FRONT, GL_FILL);
 
       Facet_iterator hFacet;
-      for(hFacet = facets_begin();
-	  hFacet != facets_end();
+      for(hFacet = this->facets_begin();
+	  hFacet != this->facets_end();
 	  hFacet++)
 	gl_draw_facet(hFacet,smooth);
+      
       glPolygonOffset( 0.0, 0.0 );
+      glDisable(GL_POLYGON_OFFSET_FILL);
+
    }
 
   void gl_draw_facet(Facet_handle hFacet,
@@ -362,8 +369,8 @@ public :
       ::glBegin(GL_LINES);
 
       Facet_iterator hFacet;
-      for(hFacet = facets_begin();
-	  hFacet != facets_end();
+      for(hFacet = this->facets_begin();
+	  hFacet != this->facets_end();
 	  hFacet++)
 	{
 	  Point p = iso_barycentre(hFacet);
@@ -383,8 +390,8 @@ public :
     {
       ::glBegin(GL_LINES);
       Vertex_iterator it;
-      for(it = vertices_begin();
-	  it != vertices_end();
+      for(it = this->vertices_begin();
+	  it != this->vertices_end();
 	  it++)
 	{
 	  const typename Vertex::Normal_3& normal	=	it->normal();
@@ -400,11 +407,11 @@ public :
   // normals (per	facet, then	per	vertex)
   void compute_normals_per_facet()
     {
-      std::for_each(facets_begin(),facets_end(),Facet_normal());
+      std::for_each(this->facets_begin(),this->facets_end(),Facet_normal());
     }
 void compute_normals_per_vertex()
 {
-  std::for_each(vertices_begin(),vertices_end(),Vertex_normal());
+  std::for_each(this->vertices_begin(),this->vertices_end(),Vertex_normal());
 }
 void compute_normals()
 {
@@ -419,7 +426,7 @@ int nb_component()
   unsigned int nb = 0;
   tag_facets(0);
   Facet_handle seed_facet	=	NULL;
-  while((seed_facet	=	get_facet_tag(0))	!= NULL)
+  while((seed_facet	=	this->get_facet_tag(0))	!= NULL)
     {
       nb++;
       tag_component(seed_facet,0,1);
@@ -430,8 +437,8 @@ int nb_component()
 // tag all facets
 void tag_facets(const	int	tag)
 {
-  for(Facet_iterator pFace	=	facets_begin();
-      pFace	!= facets_end();
+  for(Facet_iterator pFace	=	this->facets_begin();
+      pFace	!= this->facets_end();
       pFace++)
     pFace->tag(tag);
 }
@@ -467,8 +474,8 @@ void tag_component(Facet_handle	pSeedFacet,
 // tag all halfedges
 void tag_halfedges(const int tag)
 {
-  for(Halfedge_iterator pHalfedge	=	halfedges_begin();
-      pHalfedge	!= halfedges_end();
+  for(Halfedge_iterator pHalfedge	=	this->halfedges_begin();
+      pHalfedge	!= this->halfedges_end();
       pHalfedge++)
     pHalfedge->tag(tag);
 }
@@ -479,7 +486,7 @@ unsigned int nb_boundaries()
   unsigned int nb = 0;
   tag_halfedges(0);
   Halfedge_handle	seed_halfedge	=	NULL;
-  while((seed_halfedge = get_border_halfedge_tag(0)) !=	NULL)
+  while((seed_halfedge = this->get_border_halfedge_tag(0)) !=	NULL)
     {
       nb++;
       seed_halfedge->tag(1);
@@ -501,21 +508,21 @@ unsigned int nb_boundaries()
 void subdivide_sqrt3 ()
 {
   // check for valid polygon mesh
-  if(size_of_facets() == 0)
+  if(this->size_of_facets() == 0)
     return;
 
 
   // subdivision
   // We use that new vertices/halfedges/facets are appended at the end.
-  std::size_t nv = size_of_vertices();
-  Vertex_iterator last_v = vertices_end();
+  std::size_t nv = this->size_of_vertices();
+  Vertex_iterator last_v = this->vertices_end();
   -- last_v;  // the last of the old vertices
-  Edge_iterator last_e = edges_end();
+  Edge_iterator last_e = this->edges_end();
   -- last_e;  // the last of the old edges
-  Facet_iterator last_f = facets_end();
+  Facet_iterator last_f = this->facets_end();
   -- last_f;  // the last of the old facets
 
-  Facet_iterator f = facets_begin();    // create new centre vertices
+  Facet_iterator f = this->facets_begin();    // create new centre vertices
   do {
     star_facet( f);
   } while ( f++ != last_f);
@@ -527,7 +534,7 @@ void subdivide_sqrt3 ()
   //	++e; // careful, incr. before flip since flip destroys current edge
   //	flip_edge( h);
   //};
-  CGAL_postcondition(is_valid());
+  CGAL_postcondition(this->is_valid());
 
 
 }

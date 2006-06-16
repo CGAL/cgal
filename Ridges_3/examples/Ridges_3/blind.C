@@ -383,19 +383,19 @@ int main(int argc, char *argv[])
   
 
 
-  //UMBOLICS
-  Umbilic_approximation umbilic_approximation;
-  std::vector<Umbilic*> umbilics;
-  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
-  umbilic_approximation.compute(P, umb_it, umb_size);
-  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
-    iter_umb_end = umbilics.end();
-  // output
-  std::cout << "nb of umbilics " << umbilics.size() << std::endl;
-  for (;iter_umb!=iter_umb_end;iter_umb++)
-    {
-      std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
-    }
+//   //UMBOLICS
+//   Umbilic_approximation umbilic_approximation;
+//   std::vector<Umbilic*> umbilics;
+//   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+//   umbilic_approximation.compute(P, umb_it, umb_size);
+//   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+//     iter_umb_end = umbilics.end();
+//   // output
+//   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
+//   for (;iter_umb!=iter_umb_end;iter_umb++)
+//     {
+//       std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
+//     }
   
   
     

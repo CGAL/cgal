@@ -17,7 +17,7 @@
 //----------------------------------------------------------------
 // A redefined items class for the Polyhedron_3 with 
 // a refined vertex class that contains monge data and ring_tag
-// a refined facet with a normal vector 
+// a refined facet with a normal vector + tag is_visited
 // a refined halfedge with length
 template < class Refs, class Tag, class Pt, class FGeomTraits > 
 class My_vertex:public CGAL::HalfedgeDS_vertex_base < Refs, Tag, Pt >

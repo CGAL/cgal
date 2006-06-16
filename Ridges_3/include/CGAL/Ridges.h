@@ -2,7 +2,7 @@
 #define _RIDGE_3_H_
 
 #include <CGAL/basic.h>
-#include <pair.h>
+#include <utility>
 #include <list>
 #include "PolyhedralSurf_neighbors.h"
 #include "Umbilic.h"
