@@ -188,9 +188,10 @@ namespace CGAL {
       typedef typename AK::Root_of_2 Root_of_2;
       Root_of_2 part_left = r.x()*equation.a();
       Root_of_2 part_right =  -equation.c() - r.y()*equation.b();
-      if (part_left == part_right)
-	return ZERO;
-      return (part_left < part_right) ? NEGATIVE : POSITIVE; 
+      Comparison_result c = compare(part_left, part_right);
+      if(c == EQUAL) return ZERO;
+      if(c == LARGER) return POSITIVE;
+      return NEGATIVE;
     }
 
 
