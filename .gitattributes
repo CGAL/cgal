@@ -650,6 +650,7 @@ Maintenance/svn_server/hooks/post-lock.tmpl -text
 Maintenance/svn_server/hooks/post-revprop-change -text
 Maintenance/svn_server/hooks/post-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/post-unlock.tmpl -text
+Maintenance/svn_server/hooks/pre-commit -text
 Maintenance/svn_server/hooks/pre-commit.tmpl -text
 Maintenance/svn_server/hooks/pre-lock.tmpl -text
 Maintenance/svn_server/hooks/pre-revprop-change -text
