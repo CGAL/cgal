@@ -53,7 +53,7 @@ sub cut_array
     return @new_data;
 }
 
-# Encode raw text for HTML
+# Encode raw text as HTML text
 sub html_encode
 {
     my $data_ref = shift @_;
@@ -62,13 +62,32 @@ sub html_encode
     my $line;
 
     for $line (@{$data_ref}) {
-        # Encode special characters
+        # Encode special characters ; < >
         $line =~ s/&/&amp;/g;
         $line =~ s/</&lt;/g;
         $line =~ s/>/&gt;/g;
 
         # Encode new line
         $line =~ s/\n/<br>\n/;
+
+        push @new_data, $line;
+    }
+
+    return @new_data;
+}
+
+# Encode raw text for HTML <pre> tag
+sub encode_for_pre
+{
+    my $data_ref = shift @_;
+
+    my @new_data = ();
+    my $line;
+
+    for $line (@{$data_ref}) {
+        # Encode special characters < >
+        $line =~ s/</&lt;/g;
+        $line =~ s/>/&gt;/g;
 
         push @new_data, $line;
     }
@@ -497,7 +516,7 @@ my @body_html;
     push(@body_html, "<H3>Differences as text</H3>\n");
     push(@body_html, "<pre>\n");
     @difflines = map { /[\r\n]+$/ ? $_ : "$_\n" } @difflines;
-    push(@body_html, @difflines);
+    push(@body_html, encode_for_pre(\@difflines));
     push(@body_html, "</pre>\n");
 
     # Truncate very long body
