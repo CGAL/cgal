@@ -324,9 +324,7 @@ approximate_sqrt(const MP_Float &d)
   return MP_Float(CGAL_NTS sqrt(CGAL::to_double(d)));
 }
 
-namespace {
 // Returns (first * 2^second), an approximation of b.
-inline
 pair<double, int>
 to_double_exp(const MP_Float &b)
 {
@@ -352,7 +350,6 @@ to_double_exp(const MP_Float &b)
 }
 
 // Returns (first * 2^second), an interval surrounding b.
-inline
 pair<pair<double, double>, int>
 to_interval_exp(const MP_Float &b)
 {
@@ -394,8 +391,6 @@ to_interval_exp(const MP_Float &b)
   CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,
                      "Exponent overflow in MP_Float to_interval");
   return std::make_pair(d.pair(), static_cast<int>(exp * log_limb));
-}
-
 }
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
