@@ -236,8 +236,8 @@ protected:
 
   unsigned int size() {
     unsigned int ct=0;
-    for (typename MPT::Keys_iterator it= tr_.active_points_3_table_handle()->keys_begin();
-	 it != tr_.active_points_3_table_handle()->keys_end(); ++it, ++ct);
+    for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
+         it != tr_.active_points_3_table_handle()->keys_end(); ++it, ++ct);
     return ct;
   }
 
@@ -286,15 +286,15 @@ void SoQt_moving_points_3<Tr, G>::update_coordinates()
   }
 
   int cp=0;
-  for (typename MPT::Keys_iterator it= tr_.active_points_3_table_handle()->keys_begin();
+  for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
        it != tr_.active_points_3_table_handle()->keys_end(); ++it, ++cp) {
     //std::cout << "drawing point " << *it  << "= " << ik_.to_static(*it) << std::endl;
     typename IK::Static_kernel::Point_3 pt= ik_.static_object(*it);
     pts[it->to_index()].setValue(CGAL::to_double(pt.x()), CGAL::to_double(pt.y()),
-                              CGAL::to_double(pt.z()));
+			      CGAL::to_double(pt.z()));
     if (vpts != NULL) vpts[cp].setValue(CGAL::to_double(pt.x()),
-                                        CGAL::to_double(pt.y()),
-                                        CGAL::to_double(pt.z()));
+					CGAL::to_double(pt.y()),
+					CGAL::to_double(pt.z()));
     if (spheres_!= NULL) {
       SoNode *n= spheres_->getChild(cp);
       CGAL_assertion(n->isOfType(SoShapeKit::getClassTypeId()));
@@ -326,7 +326,7 @@ void SoQt_moving_points_3<Tr, G>::update_tree()
   //if (parent_==NULL) return;
   int maxl=-1;
   int num=0;
-  for (typename MPT::Keys_iterator it= tr_.active_points_3_table_handle()->keys_begin(); it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
+  for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin(); it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
     if (static_cast<int>(it->to_index()) > maxl) maxl= it->to_index();
     ++num;
   }
@@ -387,8 +387,8 @@ void SoQt_moving_points_3<Tr, G>::update_tree()
     mat->diffuseColor.setValue(1,1,1);
     mat->emissiveColor.setValue(1,1,1);
     labels_= new SoGroup;
-    for (typename MPT::Keys_iterator kit = tr_.active_points_3_table_handle()->keys_begin();
-	 kit != tr_.active_points_3_table_handle()->keys_end(); ++kit) {
+    for (typename MPT::Key_iterator kit = tr_.active_points_3_table_handle()->keys_begin();
+         kit != tr_.active_points_3_table_handle()->keys_end(); ++kit) {
       SoQt_handle<SoShapeKit> k = new SoShapeKit;
       labels_->addChild(k.get());
       SoQt_handle<SoText2> s= new SoText2;
@@ -432,7 +432,7 @@ void SoQt_moving_points_3<Tr, G>::reverse_time()
 
   tr_.active_points_3_table_handle()->set_is_editing(true);
   //typename MP::Traits::Reverse_time rt= tr_.active_points_3_table_pointer()->traits_object().reverse_time_object();
-  for (typename Tr::Active_points_3_table::Keys_iterator kit= tr_.active_points_3_table_handle()->keys_begin(); kit != tr_.active_points_3_table_handle()->keys_end(); ++kit) {
+  for (typename Tr::Active_points_3_table::Key_iterator kit= tr_.active_points_3_table_handle()->keys_begin(); kit != tr_.active_points_3_table_handle()->keys_end(); ++kit) {
     tr_.active_points_3_table_handle()->set(*kit, rt_(tr_.active_points_3_table_handle()->at(*kit)));
   }
   tr_.active_points_3_table_handle()->set_is_editing(false);
@@ -467,7 +467,7 @@ template <class Tr, class G>
 void SoQt_moving_points_3<Tr, G>::write(std::ostream &out) const
 {
   ik_.set_time(guil_.notifier()->current_time());
-  for (typename MPT::Keys_iterator it= tr_.active_points_3_table_handle()->keys_begin();
+  for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
        it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
     out << *it;
     out << ": " << ik_.static_object(*it) << std::endl;

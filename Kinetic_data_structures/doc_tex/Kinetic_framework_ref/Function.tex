@@ -39,6 +39,29 @@ The concept \ccClassName\ represents a function.
 \ccc{FunctionKernel},
 \ccc{FunctionKernel::ConstructFunction}
 
+\ccExample
+
+Several ways to create functions:
+
+Using \ccc{Kinetic::ConstructFunction}:
+\begin{ccExampleCode}
+Traits::Function_kernel::Construct_function cf= traits.function_kernel_object().construct_function_object();
+Traits::Kinetic_kernel::Motion_function x= cf(0.0,1.0,2.0);
+Traits::Kinetic_kernel::Motion_function y= cf(0.0,1.0,2.0);
+Traits::Kinetic_kernel::Point_2 pt(x,y);
+\end{ccExampleCode}
+
+Using the constructor:
+\begin{ccExampleCode}
+double coefs[]={1.0, 2.0, 3.0};
+Traits::Kinetic_kernel::Motion_function z(coefs, coefs+3);
+\end{ccExampleCode}
+
+Using ring operations:
+\begin{ccExampleCode}
+Traits::Kinetic_kernel::Motion_function z= x*z+y;
+\end{ccExampleCode}
+
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+
