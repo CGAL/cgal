@@ -15,8 +15,8 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_BENCHMARK_CONFIG_H
-#define CGAL_BENCHMARK_CONFIG_H
+#ifndef CGAL_BENCHMARK_CONFIG_HPP
+#define CGAL_BENCHMARK_CONFIG_HPP
 
 #ifdef CGAL_BENCHMARK_CFG_NO_NAMESPACE
 #  define CGAL_BENCHMARK_USING_NAMESPACE_STD

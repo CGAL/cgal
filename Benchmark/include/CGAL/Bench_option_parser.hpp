@@ -13,12 +13,12 @@
 // 
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_BENCH_OPTION_PARSER_H
-#define CGAL_BENCH_OPTION_PARSER_H
+#ifndef CGAL_BENCH_OPTION_PARSER_HPP
+#define CGAL_BENCH_OPTION_PARSER_HPP
 
 #include <boost/program_options.hpp>
 
-#include "CGAL/benchmark_basic.h"
+#include "CGAL/benchmark_basic.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 

@@ -297,10 +297,10 @@ Benchmark/examples/Benchmark/data/test2.bff -text
 Benchmark/examples/Benchmark/leftturn.C -text
 Benchmark/examples/Benchmark/makefile -text
 Benchmark/examples/Benchmark/simple.C -text
-Benchmark/include/CGAL/Bench_option_parser.h -text
-Benchmark/include/CGAL/Benchmark_visitor.h -text
-Benchmark/include/CGAL/benchmark_basic.h -text
-Benchmark/include/CGAL/benchmark_config.h -text
+Benchmark/include/CGAL/Bench_option_parser.hpp -text
+Benchmark/include/CGAL/Benchmark_visitor.hpp -text
+Benchmark/include/CGAL/benchmark_basic.hpp -text
+Benchmark/include/CGAL/benchmark_config.hpp -text
 Benchmark/src/Benchmark/Bench_option_parser.cpp -text
 Benchmark/src/Benchmark/Benchmark_visitor.cpp -text
 Benchmark/src/Benchmark/benchmark_lexer.l -text

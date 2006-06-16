@@ -14,8 +14,8 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_BENCH_H
-#define CGAL_BENCH_H
+#ifndef CGAL_BENCH_HPP
+#define CGAL_BENCH_HPP
 
 #include <time.h>
 #include <signal.h>
@@ -28,7 +28,7 @@
 #include <unistd.h>
 #endif
 
-#include "CGAL/benchmark_basic.h"
+#include "CGAL/benchmark_basic.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
