@@ -26,6 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Root_of_2.h>
 #include <CGAL/MP_Float_fwd.h>
 #include <iostream>
 #include <vector>
@@ -346,7 +347,7 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
   // This better version causes problems as the I/O is changed for
   // Quotient<MP_Float>, which then does not appear as rational 123/345,
   // 1.23/3.45, this causes problems in the T2 test-suite (to be investigated).
-  numerator.exp -= denominator.exp
+  numerator.exp -= denominator.exp 
                     + (MP_Float::exponent_type) denominator.v.size();
   denominator.exp = - (MP_Float::exponent_type) denominator.v.size();
 #else
@@ -354,6 +355,13 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
   denominator.exp = 0;
 #endif
 }
+
+std::pair<double, int>
+to_double_exp(const MP_Float &b);
+
+// Returns (first * 2^second), an interval surrounding b.
+std::pair<std::pair<double, double>, int>
+to_interval_exp(const MP_Float &b);
 
 inline
 bool
