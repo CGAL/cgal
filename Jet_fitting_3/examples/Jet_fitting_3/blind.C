@@ -10,7 +10,7 @@
 #include <boost/property_map.hpp>
 
 #include "../../include/CGAL/Monge_via_jet_fitting.h" 
-#include "LinAlg_lapack.h" 
+#include "../../include/CGAL/LinAlg_lapack.h" 
  
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_operations.h"
@@ -97,8 +97,6 @@ bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
 
-
-
 //gather points around the vertex v using rings on the
 //polyhedralsurf. the collection of points resorts to 3 alternatives:
 // 1. the exact number of points to be used
@@ -135,7 +133,7 @@ void gather_fitting_points(Vertex* v,
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////MAIN///////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
   
@@ -271,14 +269,12 @@ int main(int argc, char *argv[])
     monge_rep.dump_4ogl(*out_4ogl, scale_ppal_dir);
 
     //verbose txt output 
-    if (verbose){     
-
-//debug  
-       std::vector<DPoint>::iterator itbp = in_points.begin(), itep = in_points.end();
+    if (verbose) {     
+      std::vector<DPoint>::iterator itbp = in_points.begin(), itep = in_points.end();
       (*out_verbose) << "in_points list : " << std::endl ;
       for (;itbp!=itep;itbp++) (*out_verbose) << *itbp << std::endl ;
-					       
-        (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
+      
+      (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
 		     <<	" : " << v->point() << std::endl
 		     << "number of points used : " << in_points.size() << std::endl;
       monge_rep.dump_verbose(*out_verbose);

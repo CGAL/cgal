@@ -32,16 +32,6 @@ classes \ccc{Monge_info} and \ccc{Monge_via_jet_fitting}.
 \ccTypedef{  typedef typename LocalKernel::Vector_3  LVector;}{}
 \ccGlue
 
-%\ccNestedType{TYPE}{some nested types}
-\ccHeading{Data members}
-% +--------------------------------------------------------------
-\ccVariable{  LFT m_pca_eigen_vals[3]; }{Eigenvalues of the PCA of the
-input points, sorted in descending order.} 
-\ccVariable{  LVector m_pca_eigen_vecs[3]; }{Eigenvectors of the PCA
-are sorted in accordance.}  
-\ccVariable{  LFT m_cond_nb; }{Condition number of the least square system.} 
-%\ccVariable{ }{} 
-
 \ccCreation
 % +--------------------------------------------------------------  
 \ccCreationVariable{monge_info}  %% choose variable name
@@ -50,13 +40,15 @@ are sorted in accordance.}
 
 \ccAccessFunctions
 % +--------------------------------------------------------------
-\ccMemberFunction{const LFT* pca_eigen_vals();}{}
+\ccMemberFunction{const LFT* pca_eigen_vals();}{Eigenvalues of the PCA of the
+input points, sorted in descending order.}
 \ccGlue
 \ccMemberFunction{LFT* pca_eigen_vals();}{}
-\ccMemberFunction{const LVector* pca_eigen_vecs();}{}
+\ccMemberFunction{const LVector* pca_eigen_vecs();}{Eigenvectors of the PCA
+are sorted in accordance.}
 \ccGlue
 \ccMemberFunction{LVector* pca_eigen_vecs();}{}
-\ccMemberFunction{const LFT cond_nb();}{}
+\ccMemberFunction{const LFT cond_nb();}{Condition number of the least square system.}
 \ccGlue
 \ccMemberFunction{LFT& cond_nb();}{}
 
@@ -70,22 +62,6 @@ are sorted in accordance.}
 % +--------------------------------------------------------------  
 \ccc{Monge_via_jet_fitting}.
 %\ccc{some_other_function}.
-
-%\ccExample
-
-%A short example program.
-%Instead of a short program fragment, a full running program can be
-%included using the 
-%\verb|\ccIncludeExampleCode{Jet_fitting_3/Monge_info.C}| 
-%macro. The program example would be part of the source code distribution and
-%also part of the automatic test suite.
-
-%\begin{ccExampleCode}
-%void your_example_code() {
-%}
-%\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Jet_fitting_3/Monge_info.C}
 
 \end{ccRefClass}
 
