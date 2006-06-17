@@ -338,6 +338,13 @@ to_double(const Quotient<MP_Float> &b);
 std::pair<double, double>
 to_interval(const Quotient<MP_Float> &b);
 
+std::pair<double, int>
+to_double_exp(const MP_Float &b);
+
+// Returns (first * 2^second), an interval surrounding b.
+std::pair<std::pair<double, double>, int>
+to_interval_exp(const MP_Float &b);
+
 inline
 void
 simplify_quotient(MP_Float & numerator, MP_Float & denominator)
@@ -380,13 +387,6 @@ inline void simplify_root_of_2(MP_Float &a, MP_Float &b, MP_Float&c) {
 #endif    	
 }
 
-std::pair<double, int>
-to_double_exp(const MP_Float &b);
-
-// Returns (first * 2^second), an interval surrounding b.
-std::pair<std::pair<double, double>, int>
-to_interval_exp(const MP_Float &b);
-
 namespace CGALi {
   inline void simplify_3_exp(int &a, int &b, int &c) {
     int min = std::min(std::min(a,b),c);	
@@ -428,9 +428,38 @@ inline
 std::pair<double,double>
 to_interval(const Root_of_2<MP_Float> &r)
 {
+
   const MP_Float &ra = r[2];
   const MP_Float &rb = r[1];
   const MP_Float &rc = r[0];
+
+  if(is_zero(rc)) {
+    if(is_negative(rb)) {
+      if(r.is_smaller()) return std::make_pair(0.0,0.0);
+      std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
+      std::pair<std::pair<double, double>, int> pb = to_interval_exp(rb);
+      Interval_nt<> a = ldexp(Interval_nt<>(pa.first),pa.second);
+      Interval_nt<> b = ldexp(Interval_nt<>(pb.first),pb.second);  
+      return (CGAL::sqrt(-b/a)).pair();
+    } 
+    if(r.is_smaller()) {
+      std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
+      std::pair<std::pair<double, double>, int> pb = to_interval_exp(rb);
+      Interval_nt<> a = ldexp(Interval_nt<>(pa.first),pa.second);
+      Interval_nt<> b = ldexp(Interval_nt<>(pb.first),pb.second);  
+      return (CGAL::sqrt(-b/a)).pair();
+    } return std::make_pair(0.0,0.0);
+  }
+
+  if(is_zero(rb)) {
+    std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
+    std::pair<std::pair<double, double>, int> pc = to_interval_exp(rc);
+    Interval_nt<> a = ldexp(Interval_nt<>(pa.first),pa.second);
+    Interval_nt<> c = ldexp(Interval_nt<>(pc.first),pc.second);  
+    if(r.is_smaller())
+      return (-CGAL::sqrt(-c/a)).pair();
+    else return (CGAL::sqrt(-c/a)).pair();
+  }
 
   std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
   std::pair<std::pair<double, double>, int> pb = to_interval_exp(rb);
