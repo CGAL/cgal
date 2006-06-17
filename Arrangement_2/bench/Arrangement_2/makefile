@@ -131,8 +131,8 @@ endif
 
 BASENAME = bench
 INSTALLDIR0 = $(BINDIR)
-CPPSOURCES = benchArr.C
-CPPSOURCES+= Option_parser.C
+CPPSOURCES = arr_bench.C
+CPPSOURCES+= Option_parser.cpp
 
 TARGET0 = $(BASENAME)
 # LCPPDEFS+= -DVERBOSE

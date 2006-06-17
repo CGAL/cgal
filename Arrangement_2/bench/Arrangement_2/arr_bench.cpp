@@ -1,9 +1,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/benchmark_basic.h>
+#include <CGAL/benchmark_basic.hpp>
 
-#include "bench_config.h"
-#include "number_type.h"
+#include "bench_config.hpp"
+#include "number_type.hpp"
 
 namespace cb = CGAL::benchmark;
 
@@ -193,7 +193,7 @@ enum MaxFilesNumber {
 #include <CGAL/Arr_triangle_point_location.h>
 #endif
 
-#include <CGAL/Bench.h>
+#include <CGAL/Bench.hpp>
 
 #if defined(USE_CGAL_WINDOW)
 #include <CGAL/IO/Window_stream.h>
@@ -206,22 +206,22 @@ enum MaxFilesNumber {
 #include <iostream>
 #include <list>
 
-#include "Option_parser.h"
+#include "Option_parser.hpp"
 
 // Readers:
 // Conic reader:
 #if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == NON_CACHING_SEGMENT_TRAITS
-#include "Segment_reader.h"
+#include "Segment_reader.hpp"
 
 #elif BENCH_TRAITS == LEDA_CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS ||\
       BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
       BENCH_TRAITS == EXACUS_CONIC_TRAITS
-#include "Conic_reader.h"
+#include "Conic_reader.hpp"
 
 // Polyline reader:
 #elif BENCH_TRAITS == POLYLINE_TRAITS || \
       BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
-#include "Polyline_reader.h"
+#include "Polyline_reader.hpp"
 
 #else
 #error No traits (TRAITS) specified

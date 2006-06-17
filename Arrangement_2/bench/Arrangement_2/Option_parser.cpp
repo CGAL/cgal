@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 
-#include "Option_parser.h"
+#include "Option_parser.hpp"
 
 char * Option_parser::s_type_opts[] = {
   "increment", "aggregate", "pointLocation", "display", "i", "a", "l", "d"

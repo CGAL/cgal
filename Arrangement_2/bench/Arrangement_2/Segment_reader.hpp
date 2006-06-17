@@ -1,17 +1,16 @@
-#ifndef SEGMENT_READER_H
-#define SEGMENT_READER_H
+#ifndef SEGMENT_READER_HPP
+#define SEGMENT_READER_HPP
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
 #include <string>
 
-#include "CGAL/benchmark_basic.h"
-#include "CGAL/Benchmark_visitor.h"
+#include "CGAL/benchmark_basic.hpp"
+#include "CGAL/Benchmark_visitor.hpp"
 
-#include "number_type.h"
-#include "lexical_cast.h"
-#include "Number_type_traits.h"
-#include "Option_parser.h"
+#include "number_type.hpp"
+#include "lexical_cast.hpp"
+#include "Number_type_traits.hpp"
 
 namespace cb = CGAL::benchmark;
 
@@ -28,17 +27,9 @@ public:
   private:
     OutputIterator & m_output_iterator;
     Point_2 m_source;
+    Point_2 m_target;
     bool m_source_read;
 
-    /*! Add a curve to the container the output iterator refers to
-     * \param target the target point
-     */
-    void add_curve(Point_2 & target)
-    {
-      Curve_2 seg(m_source, target);
-      ++m_output_iterator = seg;
-    }
-      
   public:
     /*! Constructor */
     Segment_parser_visitor(OutputIterator & oi) :
@@ -93,10 +84,7 @@ public:
       FT x_ft = lexical_cast<FT>(x);
       FT y_ft = lexical_cast<FT>(y);
       if (m_source_read) {
-        m_source_read = false;
-        Point_2 p;
-        make_point(x_ft, y_ft, p);
-        add_curve(p);
+        make_point(x_ft, y_ft, m_target);
         return;
       }
       make_point(x_ft, y_ft, m_source);
@@ -111,10 +99,7 @@ public:
       FT y_ft = lexical_cast<FT>(y);
       FT w_ft = lexical_cast<FT>(w);
       if (m_source_read) {
-        m_source_read = false;
-        Point_2 p;
-        make_point(x_ft, y_ft, p);
-        add_curve(p);
+        make_point(x_ft, y_ft, m_target);
         return;
       }
       make_point(x_ft, y_ft, w_ft, m_source);
@@ -136,14 +121,26 @@ public:
       make_ft(x_num_rt, x_denom_rt, x_ft, Is_rational());
       make_ft(y_num_rt, y_denom_rt, y_ft, Is_rational());
       if (m_source_read) {
-        m_source_read = false;
-        Point_2 p;
-        make_point(x_ft, y_ft, p);
-        add_curve(p);
+        make_point(x_ft, y_ft, m_target);
         return;
       }
       make_point(x_ft, y_ft, m_source);
       m_source_read = true;
+    }
+
+    /*! Process start line */
+    virtual void begin_line_segment_2()
+    {
+      m_source_read = false;
+    }
+
+    /*! Add a curve to the container the output iterator refers to
+     */
+    /*! Process end line */
+    virtual void end_line_segment_2()
+    {
+      Curve_2 seg(m_source, m_target);
+      ++m_output_iterator = seg;
     }
   };
 

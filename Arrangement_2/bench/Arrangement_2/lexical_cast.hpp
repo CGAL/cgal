@@ -1,5 +1,5 @@
-#ifndef LEXICAL_CAST_H
-#define LEXICAL_CAST_H
+#ifndef LEXICAL_CAST_HPP
+#define LEXICAL_CAST_HPP
 
 /*! This files provides lexical casts from std::string to any one of the number
  * types we intend to use in the benchmark, and a lexical cast does not exist.
@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <boost/lexical_cast.hpp>
 
-#include "number_type.h"
+#include "number_type.hpp"
 
 #if 0
 template<typename Target, typename Source>
@@ -105,7 +105,7 @@ template <> CGAL::Gmpq lexical_cast<CGAL::Gmpq>(std::string & str)
 
 #endif
 
-#ifdef DOUBLE_H
+#ifdef DOUBLE_HPP
 
 template <> CGAL::Double lexical_cast<CGAL::Double>(std::string & str)
 {

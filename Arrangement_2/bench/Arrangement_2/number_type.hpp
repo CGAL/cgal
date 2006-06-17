@@ -1,13 +1,13 @@
-#ifndef NUMBER_TYPE_H
-#define NUMBER_TYPE_H
+#ifndef NUMBER_TYPE_HPP
+#define NUMBER_TYPE_HPP
 
 #include <CGAL/config.h>
 #include <CGAL/basic.h>
 
-#include "bench_config.h"
+#include "bench_config.hpp"
 
 #if BENCH_NT == DOUBLE_NT
-#include "Double.h"
+#include "Double.hpp"
 
 #elif BENCH_NT == MP_FLOAT_NT
 #include <CGAL/MP_Float.h>

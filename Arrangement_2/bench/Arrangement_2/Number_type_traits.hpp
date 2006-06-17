@@ -1,9 +1,9 @@
-#ifndef NUMBER_TYPE_TRAITS_H
-#define NUMBER_TYPE_TRAITS_H
+#ifndef NUMBER_TYPE_TRAITS_HPP
+#define NUMBER_TYPE_TRAITS_HPP
 
 #include <CGAL/basic.h>
 
-#include "number_type.h"
+#include "number_type.hpp"
 
 template <class My_NT>
 struct Number_type_traits {};
@@ -24,7 +24,7 @@ struct Number_type_traits<float> {
   typedef CGAL::Tag_false                       Is_rational;
 };
 
-#ifdef DOUBLE_H
+#ifdef DOUBLE_HPP
 /*! double */
 template <>
 struct Number_type_traits<CGAL::Double> {
@@ -155,6 +155,7 @@ struct Number_type_traits<CGAL::Lazy_exact_nt<leda_rational> > {
 };
 #endif
 
+#if defined(CGAL_GMPQ_H)
 /*! CGAL::Lazy_exact_nt<CGAL::Gmpq> */
 template <>
 struct Number_type_traits<CGAL::Lazy_exact_nt<CGAL::Gmpq> > {
@@ -162,6 +163,7 @@ struct Number_type_traits<CGAL::Lazy_exact_nt<CGAL::Gmpq> > {
   typedef CGAL::Gmpq                            FT;
   typedef CGAL::Tag_true                        Is_rational;
 };
+#endif
 
 #ifdef CGAL_MP_FLOAT_H
 /*! CGAL::Lazy_exact_nt<Quotient<MP_float>> */

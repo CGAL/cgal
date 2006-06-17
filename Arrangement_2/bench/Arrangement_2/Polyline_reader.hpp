@@ -1,5 +1,5 @@
-#ifndef POLYLINE_READER_H
-#define POLYLINE_READER_H
+#ifndef POLYLINE_READER_HPP
+#define POLYLINE_READER_HPP
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
@@ -7,9 +7,9 @@
 #include <fstream>
 #include <list>
 
-#include "number_type.h"
-#include "Input_traits.h"
-#include "Option_parser.h"
+#include "number_type.hpp"
+#include "Number_type_traits.hpp"
+#include "Option_parser.hpp"
 
 /*! Convert Number_type to int. Used to calculate the bounding box */
 template <class T_NT>

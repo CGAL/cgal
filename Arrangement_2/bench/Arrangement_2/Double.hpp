@@ -1,5 +1,5 @@
-#ifndef DOUBLE_H
-#define DOUBLE_H
+#ifndef DOUBLE_HPP
+#define DOUBLE_HPP
 
 #include <math.h>
 #include <iostream>

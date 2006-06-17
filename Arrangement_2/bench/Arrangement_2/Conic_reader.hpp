@@ -1,5 +1,5 @@
-#ifndef CONIC_READER_H
-#define CONIC_READER_H
+#ifndef CONIC_READER_HPP
+#define CONIC_READER_HPP
 
 #include <iostream>
 #include <fstream>
@@ -7,8 +7,8 @@
 #include <list>
 #include <string>
 
-#include "number_type.h"
-#include "Option_parser.h"
+#include "number_type.hpp"
+#include "Option_parser.hpp"
 
 template <class Traits>
 class Conic_reader

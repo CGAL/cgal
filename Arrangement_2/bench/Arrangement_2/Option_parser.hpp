@@ -1,12 +1,12 @@
-#ifndef OPTION_PARSER_H
-#define OPTION_PARSER_H
+#ifndef OPTION_PARSER_HPP
+#define OPTION_PARSER_HPP
 
 #include <string>
 #include <vector>
 #include <boost/program_options.hpp>
 
-#include <CGAL/Bench_option_parser.h>
-#include <CGAL/Dir_search.h>
+#include <CGAL/Bench_option_parser.hpp>
+#include <CGAL/Dir_search.hpp>
 
 #define DEF_WIN_WIDTH   512
 #define DEF_WIN_HEIGHT  512
