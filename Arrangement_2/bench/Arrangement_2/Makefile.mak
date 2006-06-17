@@ -131,10 +131,8 @@ endif
 
 BASENAME = bench
 INSTALLDIR0 = $(BINDIR)
-CPPSOURCES = benchArr.C
-CPPSOURCES+= Option_parser.C
-CPPSOURCES+= Bench_option_parser.C
-CPPSOURCES+= Bench.C
+CPPSOURCES = arr_bench.C
+CPPSOURCES+= Option_parser.cpp
 
 TARGET0 = $(BASENAME)
 # LCPPDEFS+= -DVERBOSE
@@ -386,9 +384,12 @@ LCPPINCS+= -I$(CURVED_KERNEL_ROOT)/include
 endif
 LCPPINCS+= $(CGALINCS)
 
+LLDOPTS+= -L$(CGAL_WORKDIR)/Benchmark/src/Benchmark
+LLDLIBS+= -lCGALBenchmark
+
 # ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
-LLDOPTS = -L$(COREROOT)/lib
-LLDLIBS = -lcore++
+LLDOPTS+= -L$(COREROOT)/lib
+LLDLIBS+= -lcore++
 # else
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LLDLIBS+= $(EXACUS_ROOT)/ConiX/src/.libs/libCnX.so
@@ -417,5 +418,3 @@ $(BASENAME).o: $(BASENAME).moc
 include $(BASEDIR)/segments.mak
 include $(BASEDIR)/polylines.mak
 include $(BASEDIR)/conics.mak
-
-vpath %.C $(BASEDIR)/../../../Benchmark/src/Benchmark
