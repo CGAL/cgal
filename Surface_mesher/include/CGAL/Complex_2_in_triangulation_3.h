@@ -432,44 +432,44 @@ protected:
   }
 
   Facet_iterator facets_begin(){
-    return filter_iterator(tr.finite_facets_begin(),
-			   Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_facets_begin(),
+                                 Not_in_complex(this));
   }
 
   Facet_iterator facets_end(){
-    return filter_iterator(tr.finite_facets_end(),
-			   Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_facets_end(),
+                                 Not_in_complex(this));
   }
 
   
   Edge_iterator edges_begin(){
-    return filter_iterator(tr.finite_edges_begin(),
-			   Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_edges_begin(),
+                                 Not_in_complex(this));
   }
 
   Edge_iterator edges_end(){
-    return filter_iterator(tr.finite_edges_end(),
-			   Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_edges_end(),
+                                 Not_in_complex(this));
   }
 
   Vertex_iterator vertices_begin(){
-    return filter_iterator(tr.finite_vertices_begin(),
-			   Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_vertices_begin(),
+                                 Not_in_complex(this));
   }
 
   Vertex_iterator vertices_end(){
-    return filter_iterator(tr.finite_vertices_end(),
-			   Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_vertices_end(),
+                                 Not_in_complex(this));
   }
 
   Boundary_edges_iterator boundary_edges_begin() {
-    return filter_iterator(tr.finite_edges_begin(),
-			   Not_on_boundary_tester(this)); 
+    return CGAL::filter_iterator(tr.finite_edges_begin(),
+                                 Not_on_boundary_tester(this)); 
   }
 
   Boundary_edges_iterator boundary_edges_end() {
-    return filter_iterator(tr.finite_edges_end(),
-			   Not_on_boundary_tester(this)); 
+    return CGAL::filter_iterator(tr.finite_edges_end(),
+                                 Not_on_boundary_tester(this)); 
   }
 
 #ifdef CGAL_MESH_3_IO_H
