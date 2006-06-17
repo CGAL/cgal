@@ -84,13 +84,13 @@ namespace CGAL {
 
 template < typename RT_ >
 class Root_of_2 {
-  RT_  C0,C1,C2; // Coefficients (see below)
-  char _smaller; // Is it the smaller of the two roots (for degree 2) ?
-                 // (we use a char because it's smaller than a bool)
+
+  RT_  C0,C1,C2;   // Coefficients (see below)
+                           // _smaller indicates if it's the smaller of the 2 roots.
+  unsigned char _smaller;  // (we use a unsigned char because it's smaller than a bool)
 
   // the value is the root of P(X) = C2.X^2 + C1.X + C0,
   // and C2 > 0.
-  // _smaller indicates if it's the smaller of the 2 roots.
 
 public:
 
@@ -128,7 +128,7 @@ public:
 
   Root_of_2(const RT& c1, const RT& c0)
     : C0( - CGAL_NTS square(c0)), C1(0), C2(CGAL_NTS square(c1)),
-      _smaller( CGAL_NTS sign(c1) == CGAL_NTS sign(c0) )
+    _smaller(CGAL_NTS sign(c1) == CGAL_NTS sign(c0))
   {
     simplify_root_of_2(C2,C1,C0);
     CGAL_assertion(is_valid());
@@ -156,7 +156,7 @@ public:
 
   Root_of_2 operator-() const
   {
-    return Root_of_2 (C2, -C1, C0, !_smaller);
+    return Root_of_2 (C2, -C1, C0, !is_smaller());
   }
 
   bool is_valid() const
@@ -164,13 +164,13 @@ public:
     return (C2 > 0) && ! is_negative(discriminant());
   }
 
-  // The following functions deal with the internal polynomial.
-  // Probably they should move to a separate polynomial class.
-
   bool is_smaller() const
   {
     return _smaller;
   }
+
+  // The following functions deal with the internal polynomial.
+  // Probably they should move to a separate polynomial class.
 
   const RT & operator[](int i) const
   {
@@ -198,7 +198,7 @@ public:
 
   Root_of_2 conjugate() const
   {
-    return Root_of_2(C2, C1, C0, !_smaller);
+    return Root_of_2(C2, C1, C0, !is_smaller());
   }
 }; // Root_of_2
 
@@ -993,6 +993,28 @@ to_interval(const Root_of_2<RT> &x)
 {
   CGAL_assertion(is_valid(x));
 
+  if(is_zero(x[0])) {
+    if(is_negative(x[1])) {
+      if(x.is_smaller()) return std::make_pair(0.0,0.0);
+      Interval_nt<> a = to_interval(x[2]);
+      Interval_nt<> b = to_interval(x[1]);  
+      return (CGAL::sqrt(-b/a)).pair();
+    } 
+    if(x.is_smaller()) {
+      Interval_nt<> a = to_interval(x[2]);
+      Interval_nt<> b = to_interval(x[1]);  
+      return (CGAL::sqrt(-b/a)).pair();
+    } return std::make_pair(0.0,0.0);
+  }
+
+  if(is_zero(x[1])) {
+    Interval_nt<> a = to_interval(x[2]);
+    Interval_nt<> c = to_interval(x[0]);
+    if(x.is_smaller())
+      return (-CGAL::sqrt(-c/a)).pair();
+    else return (CGAL::sqrt(-c/a)).pair();
+  }
+
   Interval_nt<> a = to_interval(x[2]);
   Interval_nt<> b = to_interval(x[1]);
   Interval_nt<> c = to_interval(x[0]);
@@ -1072,4 +1094,3 @@ io_tag(const Root_of_2<RT>&)
 #undef CGAL_double
 
 #endif // CGAL_ROOT_OF_2_H
-
