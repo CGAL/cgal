@@ -69,8 +69,10 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     if(m_top_fict->direction() == SMALLER)
       m_top_fict = m_top_fict->next()->twin();
 
-    CGAL_assertion((m_top_fict->source()->infinite_in_x() == FINITE) &&
-                    (m_top_fict->source()->infinite_in_y() == PLUS_INFINITY));
+    CGAL_assertion((m_top_fict->source() == 
+                    m_arr_access.top_right_fictitious_vertex()) ||
+                   (m_top_fict->source()->infinite_in_x() == FINITE) &&
+                   (m_top_fict->source()->infinite_in_y() == PLUS_INFINITY));
     CGAL_assertion(m_top_fict->target() == 
                    m_arr_access.top_left_fictitious_vertex());
   }
@@ -84,7 +86,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
     if(!event->is_finite())
     {
       //its an event at infinity, we need to update m_top_fict in case its
-      //in Y=+00 (vertical curve or curve with vertical asymptote)
+      //in Y=+oo (vertical curve or curve with vertical asymptote)
       if(event->infinity_at_x() != FINITE)
         return true;
 
