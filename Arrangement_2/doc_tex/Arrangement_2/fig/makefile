@@ -32,6 +32,7 @@ TARGET_PDFS+= ex_3c.pdf
 TARGET_PDFS+= insert_in_face.pdf
 TARGET_PDFS+= insert_from_vertex.pdf
 TARGET_PDFS+= insert_at_vertices.pdf
+TARGET_PDFS+= unb_dcel.pdf
 
 TARGET0 = $(TARGET_GIFS)
 TARGET1 = $(TARGET_PDFS)

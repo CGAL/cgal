@@ -65,19 +65,19 @@ CCB} for short).
 
 The unique CCB of halfedges winding in a counterclockwise orientation
 along a face boundary is referred to as the {\em outer CCB} of the
-face. Exactly one unbounded face exists in every arrangement, as the
-arrangement package supports only bounded curves at this point. The
-unbounded face does not have an outer boundary. Any other connected
-component of the boundary of the face is called a {\em hole} (or {\em
-inner CCB}), and can be represented as a circular chain of halfedges
-winding in a clockwise orientation around it. Note that a hole does not
-necessarily correspond to a single face, as it may have no area,
-or alternatively it may consist of several connected faces.  Every
-face can have several holes contained in its interior (or no holes at
-all). In addition, every face may contain isolated vertices in its
-interior. See Figure~\ref{arr_fig:seg_dcel} for an illustration of the
-various \dcel\ features. For more details on the \dcel\ data structure
-see~\cite[Chapter~2]{bkos-cgaa-00}.
+face. For the time being let us consider only arrangements of
+bounded curves, such that exactly one unbounded face exists in every
+arrangement. The unbounded face does not have an outer boundary. Any
+other connected component of the boundary of the face is called a
+{\em hole} (or {\em inner CCB}), and can be represented as a circular
+chain of halfedges winding in a clockwise orientation around it.
+Note that a hole does not necessarily correspond to a single face,
+as it may have no area, or alternatively it may consist of several
+connected faces. Every face can have several holes contained in its
+interior (or no holes at all). In addition, every face may contain
+isolated vertices in its interior. See Figure~\ref{arr_fig:seg_dcel}
+for an illustration of the various \dcel\ features. For more details
+on the \dcel\ data structure see~\cite[Chapter~2]{bkos-cgaa-00}.
 
 \begin{figure}[t]
 \begin{ccTexOnly}

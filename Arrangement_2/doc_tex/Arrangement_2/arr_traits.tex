@@ -104,11 +104,11 @@ decorators for geometric traits classes distributed with \cgal,
 which extend other geometric traits-class by attaching auxiliary
 data with the geometric objects.
 
-\subsection{Traits Classes for Line Segments\label{arr_ssec:tr_segs}}
-%--------------------------------------------
+\subsection{Traits Classes for Line Segments and Linear Objects\label{arr_ssec:tr_segs}}
+%--------------------------------------------------------------
 
 The \ccc{Arr_segment_traits_2<Kernel>} class used so far
-in all example programs in this chapter is parameterized by a
+in most example programs in this chapter is parameterized by a
 geometric kernel and uses the \ccc{Kernel::Point_2} type as it
 point type. However, neither the \ccc{Curve_2} nor the
 \ccc{X_monotone_curve_2} types are identical to the
@@ -234,6 +234,17 @@ with floating-point coordinates that form the map of Europe, as depicted in
 Figure~\ref{arr_fig:predef_kernels}(b):
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_predefined_kernel_non_intersecting.C}
+
+The \ccc{Arr_linear_traits_2<Kernel>} class used for demonstrating the
+construction of arrangements of unbounded curves is capable of handling
+bounded and unbounded linear objects, namely lines, rays and line
+segments. It is parameterized by a geometric kernel and such that
+its nested \ccc{Point_2} type is the same as the kernel point. The
+\ccc{Curve_2} (and \ccc{X_monotone_curve_2}) type it defines is
+constructible from a \ccc{Kernel::Line_2}, a \ccc{Kernel::Ray_2} or
+from a \ccc{Kernel::Segment_2} object. Just like the default
+segment-traits class, the linear-traits class also use caching
+techniques to speed up its predicates and constructions.
 
 \subsection{The Polyline-Traits Class\label{arr_ssec:tr_polylines}}
 %-------------------------------------
