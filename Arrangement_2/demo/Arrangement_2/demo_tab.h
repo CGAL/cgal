@@ -221,6 +221,8 @@ private:
     Ccb_halfedge_circulator;
   typedef typename Tab_traits::Holes_iterator          Holes_iterator;
   typedef typename Arrangement_2::Hole_const_iterator  Holes_const_iterator;
+  typedef typename Arrangement_2::Isolated_vertex_const_iterator
+                                                       Isolated_vertex_const_iterator;
   typedef typename Tab_traits::Halfedge_iterator       Halfedge_iterator;
   typedef typename Tab_traits::Hafledge_list           Hafledge_list;
   typedef typename Tab_traits::Hafledge_list_iterator 
@@ -408,6 +410,14 @@ public:
         } 
         while (cc != *hit);
       }
+
+      //color isolated vertices
+      Isolated_vertex_const_iterator ivit = f->isolated_vertices_begin();
+      for (; ivit != f->isolated_vertices_end(); ++ivit) 
+      {
+        static_cast<CGAL::Qt_widget&>(*this) << ivit->point();
+      }
+
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     }
     
