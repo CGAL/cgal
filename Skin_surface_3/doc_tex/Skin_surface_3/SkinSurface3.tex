@@ -43,8 +43,8 @@ model of the concept \ccc{Surface_3}.
 \begin{figure}
   \begin{ccTexOnly}
     \begin{center}
+      \includegraphics[width=.25\textwidth]{Skin_surface_3/convexTwoPoints}
       \includegraphics[width=.25\textwidth]{Skin_surface_3/skinTwoPoints}
-%      \includegraphics[width=.25\textwidth]{Skin_surface_3/skinTwoPoints}
     \end{center}
   \end{ccTexOnly}
   \begin{ccHtmlOnly}
@@ -54,10 +54,11 @@ model of the concept \ccc{Surface_3}.
     curve of two weighted points">
     </center>
   \end{ccHtmlOnly}
-  \caption{\label{fig:twoPoints} The skin curve of two weighted points
-    (the two dashed circles). The smaller circles form a subset of the
-    shrunk convex hull of the input points. Its boundary forms the skin
-    curve. }
+  \caption{\label{fig:twoPoints} Left: Convex combinations of two
+    weighted points (the two dashed circles). Right: The skin curve of
+    the weighted points. The smaller circles form a subset of the
+    shrunk convex hull of the input points. Its boundary forms the
+    skin curve. }
 \end{figure}
 
 This section first briefly reviews skin surfaces. For a more thorough
@@ -88,7 +89,7 @@ spheres we refer to \cite{p-gcc-70}.
 Starting from a weighted point $\ssWpoint{p}=({p},\textsc{P})$, the
 shrunk weighted point $\ssWpoint{p}^s$ is obtained by taking a convex
 combination with the unweighted point centered at $p$, formally
-$\ssWpoint{p}^s = s \ssWpoint{p} + (1-s) p$. A simple calculations
+$\ssWpoint{p}^s = s \ssWpoint{p} + (1-s) p$. A simple calculation
 shows that, $\ssWpoint{p}^s = ({p},s\cdot \textsc{p})$.  The set
 $\ssWpoint{P}^s$ is the set obtained by shrinking every weighted point
 of $\ssWpoint{P}$ by a factor $s$. The shrunk weighted points of
@@ -113,13 +114,13 @@ set of balls.
 %pieces quadrics. 
 
 \section{The interface}
-The interface to the skin surface package consists of three distinct
-global functions and a class \ccc{Skin_surface_3} which is a model of
-the concept \ccc{Surface_3}.  The first function takes a list of
-weighted points and a shrink factor and outputs a
-\ccc{Skin_surface_3}. The parameter \ccc{Tag} is a tag that controls
-whether the input balls are grown in such a way that the skin surface
-wraps around the input balls. There are two overloaded functions:
+The interface to the skin surface package consists of three global
+functions and a class \ccc{Skin_surface_3} which is a model of the
+concept \ccc{Surface_3}.  The first function takes a list of weighted
+points and a shrink factor and outputs a \ccc{Skin_surface_3}. The
+parameter \ccc{Tag} is a tag that controls whether the input balls are
+grown in such a way that the skin surface wraps around the input
+balls. There are two overloaded functions:
 
 \ccGlobalFunction{template <class Iterator,
                             class FT,
