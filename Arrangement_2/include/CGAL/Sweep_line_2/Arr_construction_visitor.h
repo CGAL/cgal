@@ -24,6 +24,7 @@
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Sweep_line_2_empty_visitor.h>
 #include <CGAL/Unique_hash_map.h> 
+#include <CGAL/Sweep_line_2/Integer_hash_function.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
@@ -65,6 +66,9 @@ protected:
   typedef Unique_hash_map<Halfedge_handle, 
                           std::list<unsigned int> >    Halfedge_indexes_map;
   typedef typename Halfedge_indexes_map::data_type     Indexes_list;
+  typedef Unique_hash_map<unsigned int,
+                          Vertex_handle,
+                          Integer_hash_function>       Iso_vertices_map;
 
 protected:
           
@@ -79,6 +83,7 @@ protected:
                              m_sc_he_table; // A table that maps a subcurve
                                             // index to its halfedhe handle,
                                             // directed from right ot left.
+  Iso_vertices_map          m_iso_verts_map; // maps an index to the isolated vertex.
 
   Halfedge_indexes_map       m_he_indexes_table;
 
@@ -149,7 +154,18 @@ public:
     if(!event->has_left_curves() && !event->has_right_curves())
     {
       //isolated event (no curves)
-      insert_isolated_vertex(event->get_point(), iter);
+      Vertex_handle v = insert_isolated_vertex(event->get_point(), iter);
+      m_iso_verts_map[++m_sc_counter] = v;
+      insert_index_to_sc_he_table(m_sc_counter, Halfedge_handle());
+      if(iter != this->status_line_end())
+      {
+        Subcurve *sc_above = *iter;
+        sc_above->push_back_halfedge_index(m_sc_counter);
+      }
+      else
+        m_subcurves_at_ubf.push_back(m_sc_counter);
+      
+
       return true;
     }
 
@@ -319,8 +335,7 @@ public:
       CGAL_assertion(res->face() != res->twin()->face());
       //CGAL_assertion(res->face() != m_arr->unbounded_face());
       
-      this->relocate_holes_in_new_face(res);
-      m_arr_access.relocate_isolated_vertices_in_new_face(res);
+      this->relocate_holes_and_iso_verts_in_new_face(res);
     }
 
     return res;
@@ -373,7 +388,7 @@ public:
 					                                  m_th->face()));
   }
 
-  void relocate_holes_in_new_face(Halfedge_handle he)
+  void relocate_holes_and_iso_verts_in_new_face(Halfedge_handle he)
   {
     // We use a constant indexes map so no new entries are added there.
     const Halfedge_indexes_map& const_he_indexes_table = m_he_indexes_table;
@@ -394,14 +409,30 @@ public:
         {
           CGAL_assertion(*itr != 0 && *itr < m_sc_he_table.size());
           Halfedge_handle he_on_face = m_sc_he_table[*itr];
-          if(he_on_face->twin()->face() == new_face)
-            //this hole was already relocated
-            continue;
+          //if he_on_face is a null halfedge handle then its index for an
+          //isolated vertex.
+          if(he_on_face == Halfedge_handle())
+          {
+            Vertex_handle v = m_iso_verts_map[*itr];
+            CGAL_assertion(v != Vertex_handle());
+            if(v->face() == new_face)
+              continue;
+            m_arr_access.move_isolated_vertex(v->face(),
+                                              new_face,
+                                              v);
 
-          m_arr_access.move_hole (he_on_face->twin()->face(),
-                                  new_face,
-                                  he_on_face->twin()->ccb());
-          relocate_holes_in_new_face(he_on_face->twin());
+          }
+          else
+          {
+            if(he_on_face->twin()->face() == new_face)
+              //this hole was already relocated
+              continue;
+
+            m_arr_access.move_hole (he_on_face->twin()->face(),
+                                    new_face,
+                                    he_on_face->twin()->ccb());
+            relocate_holes_and_iso_verts_in_new_face(he_on_face->twin());
+          }
         }
       }
       curr_he = curr_he->next();
