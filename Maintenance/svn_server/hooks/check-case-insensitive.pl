@@ -18,18 +18,10 @@ require 5.004; # This is when locale support was added.
 
 # This 'use encoding' and setting the LANG environment variable has the
 # desired effect of handling the comparison of extended characters and
-# preventing a commit.  However, if any of the files in conflict have
-# extended characters in them this is the error displayed by the client:
-#
-#   Commit failed (details follow):
-#   svn: MERGE request failed on '/svn/play/martinto/trunk'
-#   svn: General svn error from server
-#
-# It should list the file names which are in conflict.  But it does stop the
-# commit.
-use encoding "utf8";
-#$ENV{'LANG'} = 'en_GB.UTF-8';  # breaks svnlook on InriaGForge
-$ENV{'LANG'} = 'fr_FR.UTF-8';   # ok on InriaGForge
+# preventing a commit.
+#use encoding "utf8";           # Display incorrectly filenames with diacritic characters
+                                # in error message on InriaGForge.
+$ENV{'LANG'} = 'en_US.UTF-8';   # 'en_GB.UTF-8' breaks svnlook on InriaGForge.
 
 # Please check the path to svnlook is correct...
 my $svnlook;
