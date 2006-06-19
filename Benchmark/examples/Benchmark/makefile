@@ -25,7 +25,7 @@ CXXFLAGS = \
 LIBPATH = $(CGAL_LIBPATH)
 
 LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS)
-ifneq (linux, $(findstring linux,$(OSTYPE)))
+ifeq (cygwin, $(findstring cygwin,$(OSTYPE)))
 LDFLAGS+= ../../src/Benchmark/CGALBenchmark.lib
 else
 LIBPATH+= $(LIBPATH_OPT)../../src/Benchmark
