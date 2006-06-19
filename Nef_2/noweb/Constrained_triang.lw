@@ -805,7 +805,7 @@ vertex\footnote{apart from the temporary one which we delete at the
 end}, all constraining edges and all vertices are in triangulation. If
 we check the output structure to be a triangulation according to
 \cite{checking-cgta99} we have a checking module for our constrained
-triagulation sweep.
+triangulation sweep.
 <<ct checking>>=
 void check_ccw_local_embedding() const
 { PM_checker<PMDEC,GEOM> C(*this,K); 
