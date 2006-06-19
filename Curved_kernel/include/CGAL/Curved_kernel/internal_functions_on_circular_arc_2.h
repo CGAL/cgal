@@ -184,7 +184,7 @@ namespace CircularFunctors {
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     // intersection found on the map
     solutions_container early_sols;
     if(Circular_arc_2::template find_intersection< solutions_container >
@@ -467,7 +467,7 @@ namespace CircularFunctors {
       ca1 = rc1;
       ca2 = rc2;
     }
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     std::vector < CGAL::Object > res;
 
     if(A.is_full()) {
@@ -500,7 +500,7 @@ namespace CircularFunctors {
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     // same curve
     if(a1.number() == a2.number()) {
       *res++ = make_object(a1); 
@@ -598,7 +598,7 @@ namespace CircularFunctors {
     } else if(!c1_eq_c2) {
       solutions_container solutions;
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       if(!Circular_arc_2::template 
          find_intersection_circle_circle< solutions_container > 
          (a1,a2,solutions)) {
@@ -607,7 +607,7 @@ namespace CircularFunctors {
       CGAL::intersect_2<CK> ( a1.supporting_circle(), a2.supporting_circle(),
         std::back_inserter(solutions) );
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
         Circular_arc_2::template 
           put_intersection_circle_circle< std::vector < CGAL::Object > >
           (a1,a2,solutions);
@@ -937,7 +937,7 @@ template < class CK, class OutputIterator >
 
     if (A.is_x_monotone()) {
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       // get a number for its supporting circle
       A.circle_number(); 
 #endif
@@ -952,7 +952,7 @@ template < class CK, class OutputIterator >
     Circular_arc_point_2 x_extremal_point1 = vector_x_extremal_points[0];
     Circular_arc_point_2 x_extremal_point2 = vector_x_extremal_points[1];
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     std::vector < CGAL::Object > intersecs1;
     std::vector < CGAL::Object > intersecs2;
     std::vector < CGAL::Object > intersecs3;
@@ -968,7 +968,7 @@ template < class CK, class OutputIterator >
       ca1._setx_info(2,1,0); //setting flags outside
       ca2._setx_info(2,2,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       // get a number for its supporting circle
       unsigned int cn = ca1.circle_number(); 
       ca2.set_circle_number(cn);
@@ -977,7 +977,7 @@ template < class CK, class OutputIterator >
       *res++ = make_object(ca1);
       *res++ = make_object(ca2);
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
       intersecs1.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
       Circular_arc_2::template put_intersection< std::vector < CGAL::Object > >
@@ -1000,7 +1000,7 @@ template < class CK, class OutputIterator >
                                                  x_extremal_point1); 
       ca1._setx_info(2,2,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       unsigned int cn = ca1.circle_number();
 #endif
 
@@ -1016,14 +1016,14 @@ template < class CK, class OutputIterator >
         ca2._setx_info(2,1,0);
         ca3._setx_info(2,2,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
         ca2.set_circle_number(cn); 
         ca3.set_circle_number(cn); 
 #endif
 
         *res++ = make_object(ca2);
         *res++ = make_object(ca3);
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
         intersecs2.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
         Circular_arc_2::template put_intersection< std::vector < CGAL::Object > >
@@ -1040,13 +1040,13 @@ template < class CK, class OutputIterator >
 					           A.target()); 
         ca2._setx_info(2,1,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
         ca2.set_circle_number(cn);
 #endif
 
         *res++ = make_object(ca2);
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
         Circular_arc_2::template put_intersection< std::vector < CGAL::Object > >
           (ca1,ca2,intersecs1);
@@ -1060,7 +1060,7 @@ template < class CK, class OutputIterator >
                                                  x_extremal_point2); 
       ca1._setx_info(2,1,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       unsigned int cn = ca1.circle_number();
 #endif
 
@@ -1075,7 +1075,7 @@ template < class CK, class OutputIterator >
         ca2._setx_info(2,2,0);
         ca3._setx_info(2,1,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
         ca2.set_circle_number(cn);
         ca3.set_circle_number(cn);
 #endif
@@ -1083,7 +1083,7 @@ template < class CK, class OutputIterator >
         *res++ = make_object(ca2);
         *res++ = make_object(ca3);
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
         intersecs2.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
         Circular_arc_2::template put_intersection< std::vector < CGAL::Object > >
@@ -1101,13 +1101,13 @@ template < class CK, class OutputIterator >
 					           A.target()); 
         ca2._setx_info(2,2,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
         ca2.set_circle_number(cn);
 #endif
 
         *res++ = make_object(ca2);
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
         Circular_arc_2::template put_intersection< std::vector < CGAL::Object > >
           (ca1,ca2,intersecs1);
@@ -1127,7 +1127,7 @@ template < class CK, class OutputIterator >
         ca1._setx_info(2,1,0);
         ca2._setx_info(2,2,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
         unsigned int cn = ca1.circle_number();
         ca2.set_circle_number(cn);
 #endif
@@ -1135,7 +1135,7 @@ template < class CK, class OutputIterator >
         *res++ = make_object(ca1);
         *res++ = make_object(ca2);
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
         Circular_arc_2::template put_intersection< std::vector < CGAL::Object > >
           (ca1,ca2,intersecs1);
@@ -1155,7 +1155,7 @@ template < class CK, class OutputIterator >
         ca1._setx_info(2,2,0);
         ca2._setx_info(2,1,0);
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
         unsigned int cn = ca1.circle_number();
         ca2.set_circle_number(cn);
 #endif
@@ -1163,7 +1163,7 @@ template < class CK, class OutputIterator >
         *res++ = make_object(ca1);
         *res++ = make_object(ca2);
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
         Circular_arc_2::template put_intersection< std::vector < CGAL::Object > >
           (ca1,ca2,intersecs1);
