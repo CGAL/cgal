@@ -463,6 +463,31 @@ public:
     return ((m_type & MINUS_INFINITE_X ) != 0);
   }
 
+  bool is_plus_infinite_in_x() const
+  {
+    return ((m_type & PLUS_INFINITE_X ) != 0);
+  }
+
+  bool is_finite_in_x() const
+  {
+    return ((m_type & FINITE_X ) != 0);
+  }
+
+  bool is_finite_in_y() const
+  {
+    return ((m_type & FINITE_Y ) != 0);
+  }
+
+  bool is_minus_infinite_in_y() const
+  {
+    return ((m_type & MINUS_INFINITE_Y ) != 0);
+  }
+
+  bool is_plus_infinite_in_y() const
+  {
+    return ((m_type & PLUS_INFINITE_Y ) != 0);
+  }
+
   Infinity_type infinity_at_x() const
   {
     if((m_type & MINUS_INFINITE_X ) != 0)

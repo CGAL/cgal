@@ -83,7 +83,7 @@ protected:
                              m_sc_he_table; // A table that maps a subcurve
                                             // index to its halfedhe handle,
                                             // directed from right ot left.
-  Iso_vertices_map          m_iso_verts_map; // maps an index to the isolated vertex.
+  Iso_vertices_map           m_iso_verts_map; // maps an index to the isolated vertex.
 
   Halfedge_indexes_map       m_he_indexes_table;
 
@@ -114,6 +114,11 @@ public:
       m_sc_he_table(1),
       m_prev_minus_inf_x_event(NULL),
       m_prev_plus_inf_y_event(NULL)
+  {}
+
+  virtual ~Arr_construction_visitor(){}
+
+  void before_sweep()
   {
     m_lh = m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
     if(m_lh->source() != m_arr_access.bottom_left_fictitious_vertex())
@@ -145,9 +150,6 @@ public:
     CGAL_assertion(m_th->source() == m_arr_access.top_right_fictitious_vertex() &&
                    m_th->target() == m_arr_access.top_left_fictitious_vertex());
   }
-
-  virtual ~Arr_construction_visitor(){}
-
 
   bool after_handle_event(Event* event, SL_iterator iter, bool flag)
   {
@@ -309,18 +311,35 @@ public:
                                              bool &new_face_created)
   {
     const bool      both_unbounded = hhandle->is_fictitious() || prev->is_fictitious();
-    Halfedge_handle res =
-      m_arr_access.insert_at_vertices_ex (_curve(cv),
-                                          hhandle, prev,
-                                          LARGER,
-                                          new_face_created,
-                                          both_unbounded);
+    Halfedge_handle res;
+    bool flip_res = false;
+    if(this->current_event()->is_finite_in_x() && 
+       this->current_event()->is_plus_infinite_in_y())
+    {
+      res = m_arr_access.insert_at_vertices_ex(_curve(cv),
+                                               prev,
+                                               hhandle,
+                                               SMALLER,
+                                               new_face_created,
+                                               both_unbounded);
+      flip_res = true;
+    }
+    else
+      res = m_arr_access.insert_at_vertices_ex(_curve(cv),
+                                               hhandle,
+                                               prev,
+                                               LARGER,
+                                               new_face_created,
+                                               both_unbounded);
 
      // map the halfedge to the indexes list of all subcurves that are below him
       if(sc->has_haldedges_indexes())
       {
-        CGAL_assertion(res->direction() == LARGER);
-        Indexes_list& list_ref = m_he_indexes_table[res];
+        Halfedge_handle temp = res;
+        if(flip_res)
+          temp = temp->twin();
+        CGAL_assertion(temp->direction() == LARGER);
+        Indexes_list& list_ref = m_he_indexes_table[temp];
         list_ref.clear();
         list_ref.splice(list_ref.end(), sc->get_haldedges_indexes_list());
       }
@@ -337,6 +356,9 @@ public:
       
       this->relocate_holes_and_iso_verts_in_new_face(res);
     }
+
+    if(flip_res)
+      return res->twin();
 
     return res;
   }

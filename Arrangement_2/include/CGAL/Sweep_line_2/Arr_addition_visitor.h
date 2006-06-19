@@ -42,6 +42,9 @@ public:
   Arr_addition_visitor(Arrangement* arr) : Base(arr)
   {}
 
+  void before_sweep()
+  {}
+
   // check if the halfedge associated with 'sc' will be splitted at the given
   // event point (its a recursive function since the hirearchy of potential 
   // ovrlap Subcuves

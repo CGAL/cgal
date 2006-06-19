@@ -195,6 +195,7 @@ public:
   void sweep(CurveInputIterator curves_begin,
              CurveInputIterator curves_end)
   {
+    m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
     m_visitor ->after_init();
     _sweep();
@@ -222,6 +223,7 @@ public:
 	            PointInputIterator action_points_begin,
               PointInputIterator action_points_end)
   {
+    m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
     m_visitor ->after_init();
@@ -252,6 +254,7 @@ public:
               QueryPointItr query_points_begin,
               QueryPointItr query_points_end)
   {
+    m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
     _init_points(query_points_begin, query_points_end, Base_event::QUERY);

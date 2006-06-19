@@ -135,6 +135,7 @@ public:
   
   void init_event(Event* e){}
 
+  void before_sweep(){}
   void after_sweep(){}
   void after_init(){}
 
