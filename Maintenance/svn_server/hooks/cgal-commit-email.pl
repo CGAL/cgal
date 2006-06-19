@@ -26,6 +26,11 @@
 # - Email sent in both HTML + text
 
 use Mail::Sender;
+require 5.004; # This is when locale support was added.
+
+# Use UTF-8 to display properly diacritic characters
+$ENV{'LANG'} = 'en_US.UTF-8';
+
 
 # Keep beginning of $data_ref up to $max_size size
 sub cut_array
