@@ -21,12 +21,12 @@
 // (ECG - Effective Computational Geometry for Curves and Surfaces) 
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
-#define USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#define CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
 #endif
 
-#ifdef INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
-#define USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+#define CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
 #endif
 
 #ifndef CGAL_CURVED_KERNEL_CIRCULAR_ARC_2_H
@@ -35,7 +35,7 @@
 #include <CGAL/global_functions_on_circular_arcs_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h> // temporarily
 
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
+#ifdef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
 #include <CGAL/Curved_kernel/intersection_line_2_circle_2_map.h>
 #endif
 
@@ -65,7 +65,7 @@ namespace CGALi {
       unsigned short int is_complementary_y_monotone:1;
     } bit_field;
   
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
+#ifdef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
   public:
     typedef CGALi::Intersection_line_2_circle_2_map Table;
 #endif
@@ -89,13 +89,13 @@ namespace CGALi {
   public:
 
     Circular_arc_2() 
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
     : id_of_my_supporting_circle(0) 
 #endif
    {
       reset_flags();           // example
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       _get_id_number();
 #endif
 
@@ -103,13 +103,13 @@ namespace CGALi {
 
     Circular_arc_2(const Circle_2 &c)
       : _support(c)
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
       , id_of_my_supporting_circle(0)
 #endif
     {
       reset_flags();           // example
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       _get_id_number();
 #endif
 
@@ -155,13 +155,13 @@ namespace CGALi {
 		   const Circle_2 &c1, const bool b_1,
 		   const Circle_2 &c2, const bool b_2)
       : _support(c)
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
       , id_of_my_supporting_circle(0)
 #endif
     {
       reset_flags();
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       _get_id_number();
 #endif
 
@@ -212,13 +212,13 @@ namespace CGALi {
     Circular_arc_2(const Circular_arc_2 &A, const bool b,
 		   const Circle_2 &ccut, const bool b_cut)
       : _support(A.supporting_circle())
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
       , id_of_my_supporting_circle(0)
 #endif
     {
       reset_flags();
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       _get_id_number();
 #endif
 
@@ -249,13 +249,13 @@ namespace CGALi {
                    const Point_2 &middle,
                    const Point_2 &end)
       : _begin(begin), _end(end)
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
       , id_of_my_supporting_circle(0)
 #endif
     {
       reset_flags();
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       _get_id_number();
 #endif
 
@@ -276,13 +276,13 @@ namespace CGALi {
 		   const Circular_arc_point_2 &source,
 		   const Circular_arc_point_2 &target)
       : _begin(source), _end(target), _support(support)
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
       , id_of_my_supporting_circle(0)
 #endif
     {
       reset_flags();
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       _get_id_number();
 #endif
 
@@ -298,13 +298,13 @@ namespace CGALi {
                    const Point_2 &end,
 		   const FT &bulge)
       : _begin(begin), _end(end)
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
       , id_of_my_supporting_circle(0)
 #endif
     {
       reset_flags();
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       _get_id_number();
 #endif
 
@@ -327,21 +327,21 @@ namespace CGALi {
     Circular_arc_point_2  _begin, _end;
     Circle_2 _support;
     mutable bit_field flags;
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     unsigned int my_id; // the id of the arc
     // to optimize make_x_monotone and splits
     // so we have not echec de filtre for intersection
     static Table table;
 #endif
 
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
     mutable unsigned int id_of_my_supporting_circle;
     static Table circle_table;
 #endif
 
   public:
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     template < class T >
     static bool find_intersection(const Circular_arc_2& c1, 
       const Circular_arc_2& c2, 
@@ -357,7 +357,7 @@ namespace CGALi {
     }
 #endif
 
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
     template < class T >
     static bool find_intersection_circle_circle(
       const Circular_arc_2& c1, 
@@ -415,7 +415,7 @@ namespace CGALi {
 
 private:
     
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     void _get_id_number() {
       my_id = table.get_new_id();
     }
@@ -609,13 +609,13 @@ public:
       return two_end_points_on_left_part();
     }
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     unsigned int number() const {
       return my_id;
     }
 #endif
 
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
     unsigned int circle_number() const {
       if(!id_of_my_supporting_circle)
         id_of_my_supporting_circle = circle_table.get_new_id();
@@ -658,13 +658,13 @@ public:
     
   };
 
-#ifdef INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
   template < typename CK >
   CGALi::Intersection_line_2_circle_2_map Circular_arc_2< CK >::table = 
     CGALi::Intersection_line_2_circle_2_map();
 #endif
 
-#ifdef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
   template < typename CK >
   CGALi::Intersection_line_2_circle_2_map Circular_arc_2< CK >::circle_table = 
     CGALi::Intersection_line_2_circle_2_map();
@@ -725,5 +725,5 @@ public:
 } // namespace CGALi
 } // namespace CGAL
 
-#undef USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
+#undef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
 #endif // CGAL_CURVED_KERNEL_CIRCULAR_ARC_2_H
