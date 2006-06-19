@@ -27,6 +27,7 @@
 #include <vector>
 #include <list>
 #include <ostream>
+#include <CGAL/Arr_enums.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,12 +68,34 @@ private:
 
   typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
 
-  Polynomial        pnum;       // The polynomial in the numerator.
-  Polynomial        pden;       // The polynomial in the denominator.
-  Point_2           src;        // The source point.
-  Point_2           trg;        // The target point.
-  bool              dir_right;  // Is the arc directed right.
-  bool              valid;      // Is the arc valid.
+  enum
+  {
+    SRC_AT_X_MINUS_INFTY = 1,
+    SRC_AT_X_PLUS_INFTY = 2,
+    SRC_AT_Y_MINUS_INFTY = 4,
+    SRC_AT_Y_PLUS_INFTY = 8,
+
+    SRC_INFO_BITS = SRC_AT_X_MINUS_INFTY + SRC_AT_X_PLUS_INFTY +
+                    SRC_AT_Y_MINUS_INFTY + SRC_AT_Y_PLUS_INFTY,
+
+    TRG_AT_X_MINUS_INFTY = 16,
+    TRG_AT_X_PLUS_INFTY = 32,
+    TRG_AT_Y_MINUS_INFTY = 64,
+    TRG_AT_Y_PLUS_INFTY = 128,
+
+    TRG_INFO_BITS = TRG_AT_X_MINUS_INFTY + TRG_AT_X_PLUS_INFTY +
+                    TRG_AT_Y_MINUS_INFTY + TRG_AT_Y_PLUS_INFTY,
+
+    IS_DIRECTED_RIGHT = 256,
+    IS_CONTINUOUS = 512,
+    IS_VALID = 1024
+  };
+ 
+  Polynomial        _numer;       // The polynomial in the numerator.
+  Polynomial        _denom;       // The polynomial in the denominator.
+  Point_2           _ps;          // The source point.
+  Point_2           _pt;          // The target point.
+  int               _info;        // A set of Boolean flags.  
 
 public:
 
@@ -83,8 +106,165 @@ public:
    * Default constructor.
    */
   _Rational_arc_2 () :
-    valid (false)
+    _info (0)
   {}
+
+  /*!
+   * Constructor of a whole polynomial curve.
+   * \param pcoeffs The rational coefficients of the polynomial p(x).
+   */
+  _Rational_arc_2 (const Rat_vector& pcoeffs) :
+    _info (0)
+  {
+    // Mark that the endpoints of the polynomial are unbounded (the source is
+    // at x = -oo and the target is at x = +oo).
+    _info = (_info | SRC_AT_X_MINUS_INFTY);
+    _info = (_info | TRG_AT_X_PLUS_INFTY);
+    _info = (_info | IS_DIRECTED_RIGHT);
+
+    // Set the numerator polynomial.
+    Nt_traits    nt_traits;
+    Integer      p_factor;
+
+    nt_traits.construct_polynomial (&(pcoeffs[0]),
+                                    pcoeffs.size() - 1,
+                                    _numer,
+                                    p_factor);
+
+    // Define the denominator to be a constant polynomial.
+    Integer      denom_coeffs[1];
+
+    denom_coeffs [0] = p_factor;
+    _denom = nt_traits.construct_polynomial (denom_coeffs, 0);
+    
+    // Check whether the end points lie at y = -oo or at y = +oo.
+    const int    deg_num = nt_traits.degree (_numer);
+    CGAL::Sign   lead_sign;
+
+    if (deg_num > 0)
+    {
+      // Check if the degree is even or odd and check the sign of the leading
+      // coefficient of the polynomial.
+      lead_sign = CGAL::sign (nt_traits.get_coefficient (_numer, deg_num));
+      CGAL_assertion (lead_sign != CGAL::ZERO);
+
+      if (deg_num % 2 == 0)
+      {
+        // Polynomial of an even degree.
+        if (lead_sign == CGAL::NEGATIVE)
+          _info = (_info | SRC_AT_Y_MINUS_INFTY | TRG_AT_Y_MINUS_INFTY);
+        else
+          _info = (_info | SRC_AT_Y_PLUS_INFTY | TRG_AT_Y_PLUS_INFTY);
+      }
+      else
+      {
+        // Polynomial of an odd degree.
+        if (lead_sign == CGAL::NEGATIVE)
+          _info = (_info | SRC_AT_Y_PLUS_INFTY | TRG_AT_Y_MINUS_INFTY);
+        else
+          _info = (_info | SRC_AT_Y_MINUS_INFTY | TRG_AT_Y_PLUS_INFTY);
+      }
+    }
+    else
+    {
+      // In the case of a constant polynomial it is possible to set a finite
+      // y-coordinate for the source and target points.
+      Integer lead_coeff = (deg_num < 0) ? Integer(0) : 
+        nt_traits.get_coefficient (_numer, deg_num);
+
+      _ps = _pt = Point_2 (Algebraic(), nt_traits.convert (lead_coeff));
+    }
+
+    // Mark that the arc is continuous and valid.
+    _info = (_info | IS_CONTINUOUS);
+    _info = (_info | IS_VALID);
+  }
+
+  /*!
+   * Constructor of a polynomial ray, defined by y = p(x), for x_s <= x if the
+   * ray is directed to the right, or for x_s >= x if it is directed to the
+   * left.
+   * \param pcoeffs The rational coefficients of the polynomial p(x).
+   * \param x_s The x-coordinate of the source point.
+   * \param dir_right Is the ray directed to the right (to +oo)
+   *                  or to the left (to -oo).
+   */
+  _Rational_arc_2 (const Rat_vector& pcoeffs,
+                   const Algebraic& x_s, bool dir_right) :
+    _info (0)
+  {
+    // Mark that the target points of the polynomial is unbounded.
+    if (dir_right)
+    {
+      _info = (_info | TRG_AT_X_PLUS_INFTY);
+      _info = (_info | IS_DIRECTED_RIGHT);
+    }
+    else
+    {
+      _info = (_info | TRG_AT_X_MINUS_INFTY);
+    }
+
+    // Set the numerator polynomial.
+    Nt_traits    nt_traits;
+    Integer      p_factor;
+
+    nt_traits.construct_polynomial (&(pcoeffs[0]),
+                                    pcoeffs.size() - 1,
+                                    _numer,
+                                    p_factor);
+
+    // Define the denominator to be a constant polynomial.
+    Integer      denom_coeffs[1];
+
+    denom_coeffs [0] = p_factor;
+    _denom = nt_traits.construct_polynomial (denom_coeffs, 0);
+
+    // Set the source point.
+    _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s));
+    
+    // Check whether the target point lies at y = -oo or at y = +oo.
+    const int    deg_num = nt_traits.degree (_numer);
+    CGAL::Sign   lead_sign;
+
+    if (deg_num > 0)
+    {
+      // Check if the degree is even or odd and check the sign of the leading
+      // coefficient of the polynomial.
+      lead_sign = CGAL::sign (nt_traits.get_coefficient (_numer, deg_num));
+      CGAL_assertion (lead_sign != CGAL::ZERO);
+
+      if (dir_right)
+      {
+        // The target is at x= +oo, thus:
+        if (lead_sign == CGAL::POSITIVE)
+          _info = (_info | TRG_AT_Y_PLUS_INFTY);
+        else
+          _info = (_info | TRG_AT_Y_MINUS_INFTY);
+      }
+      else
+      {
+        // The target is at x= -oo, thus:
+        if ((deg_num % 2 == 0 && lead_sign == CGAL::POSITIVE) ||
+            (deg_num % 2 == 1 && lead_sign == CGAL::NEGATIVE))
+          _info = (_info | TRG_AT_Y_PLUS_INFTY);
+        else
+          _info = (_info | TRG_AT_Y_MINUS_INFTY);
+      }
+    }
+    else
+    {
+      // In the case of a constant polynomial it is possible to set a finite
+      // y-coordinate for the target point.
+      Integer lead_coeff = (deg_num < 0) ? Integer(0) : 
+        nt_traits.get_coefficient (_numer, deg_num);
+
+      _pt = Point_2 (Algebraic(), nt_traits.convert (lead_coeff));
+    }
+
+    // Mark that the arc is continuous and valid.
+    _info = (_info | IS_CONTINUOUS);
+    _info = (_info | IS_VALID);
+  }
 
   /*!
    * Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
@@ -95,7 +275,7 @@ public:
    */
   _Rational_arc_2 (const Rat_vector& pcoeffs,
 		   const Algebraic& x_s, const Algebraic& x_t) :
-    valid (false)
+    _info (0)
   {
     // Compare the x-coordinates and determine the direction.
     Comparison_result   x_res = CGAL::compare (x_s, x_t);
@@ -104,33 +284,88 @@ public:
     if (x_res == EQUAL)
       return;
 
-    dir_right = (x_res == SMALLER);
+    if (x_res == SMALLER)
+      _info = (_info | IS_DIRECTED_RIGHT);
 
     // Set the numerator polynomial.
     Nt_traits    nt_traits;
     Integer      p_factor;
 
-    if (nt_traits.construct_polynomial (&(pcoeffs[0]),
-					pcoeffs.size() - 1,
-					pnum,
-					p_factor))
-    {
-      nt_traits.scale (pnum, p_factor);
-    }
+    nt_traits.construct_polynomial (&(pcoeffs[0]),
+                                    pcoeffs.size() - 1,
+                                    _numer,
+                                    p_factor);
 
     // Define the denominator to be a constant polynomial.
     Integer      denom_coeffs[1];
 
-    denom_coeffs [0] = 1;
-    pden = nt_traits.construct_polynomial (denom_coeffs, 0);
+    denom_coeffs [0] = p_factor;
+    _denom = nt_traits.construct_polynomial (denom_coeffs, 0);
     
     // Set the endpoints.
-    src = Point_2 (x_s, nt_traits.evaluate_at (pnum, x_s));
-    trg = Point_2 (x_t, nt_traits.evaluate_at (pnum, x_t));
+    _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s));
+    _pt = Point_2 (x_t, nt_traits.evaluate_at (_numer, x_t));
 
-    // Mark that the arc is valid.
-    valid = true;
+    // Mark that the arc is continuous and valid.
+    _info = (_info | IS_CONTINUOUS);
+    _info = (_info | IS_VALID);
   }    
+
+  /*!
+   * Constructor of a polynomial function, defined by y = p(x)/q(x) for any x.
+   * \param pcoeffs The rational coefficients of the polynomial p(x).
+   * \param qcoeffs The rational coefficients of the polynomial q(x).
+   */
+  _Rational_arc_2 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs) :
+    _info (0)
+  {
+    // Mark that the endpoints of the rational functions are unbounded (the
+    // source is at x = -oo and the target is at x = +oo).
+    _info = (_info | SRC_AT_X_MINUS_INFTY);
+    _info = (_info | TRG_AT_X_PLUS_INFTY);
+    _info = (_info | IS_DIRECTED_RIGHT);
+
+    // Set the numerator and denominator polynomials.
+    Nt_traits    nt_traits;
+    const bool   valid = 
+      nt_traits.construct_polynomials (&(pcoeffs[0]),
+					pcoeffs.size() - 1,
+                                       &(qcoeffs[0]),
+					qcoeffs.size() - 1,
+                                       _numer, _denom);
+
+    CGAL_precondition_msg (valid,
+                           "The denominator polynomial must not be 0.");
+    if (! valid)
+      return;
+
+    // Analyze the bahaviour of the rational function at x = -oo (the source).
+    Algebraic           y0;
+    const Infinity_type inf_s = _analyze_at_minus_infinity (_numer, _denom,
+                                                            y0);
+
+    if (inf_s == MINUS_INFINITY)
+      _info = (_info | SRC_AT_Y_MINUS_INFTY);
+    else if (inf_s == PLUS_INFINITY)
+      _info = (_info | SRC_AT_Y_PLUS_INFTY);
+    else // if (inf_s == FINITE)
+      _ps = Point_2 (0, y0);
+
+    // Analyze the bahaviour of the rational function at x = +oo (the target).
+    const Infinity_type inf_t = _analyze_at_plus_infinity (_numer, _denom,
+                                                           y0);
+
+    if (inf_t == MINUS_INFINITY)
+      _info = (_info | TRG_AT_Y_MINUS_INFTY);
+    else if (inf_t == PLUS_INFINITY)
+      _info = (_info | TRG_AT_Y_PLUS_INFTY);
+    else // if (inf_t == FINITE)
+      _pt = Point_2 (0, y0);
+
+    // Mark that the arc is valid. As it may have poles, we do not mark it
+    // as continuous.
+    _info = (_info | IS_VALID);
+  }
   
   /*!
    * Constructor of a polynomial arc, defined by y = p(x)/q(x), 
@@ -144,7 +379,7 @@ public:
    */
   _Rational_arc_2 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
 		   const Algebraic& x_s, const Algebraic& x_t) :
-    valid (false)
+    _info (0)
   {
     // Compare the x-coordinates and determine the direction.
     Comparison_result   x_res = CGAL::compare (x_s, x_t);
@@ -153,75 +388,115 @@ public:
     if (x_res == EQUAL)
       return;
 
-    dir_right = (x_res == SMALLER);
-    
+    if (x_res == SMALLER)
+      _info = (_info | IS_DIRECTED_RIGHT);
+
     // Set the numerator and denominator polynomials.
     Nt_traits    nt_traits;
-    Integer      p_factor, q_factor;
-
-    if (nt_traits.construct_polynomial (&(pcoeffs[0]),
+    const bool   valid = 
+      nt_traits.construct_polynomials (&(pcoeffs[0]),
 					pcoeffs.size() - 1,
-					pnum,
-					p_factor))
-    {
-      nt_traits.scale (pnum, p_factor);
-    }
-
-    if (nt_traits.construct_polynomial (&(qcoeffs[0]),
+                                       &(qcoeffs[0]),
 					qcoeffs.size() - 1,
-					pden,
-					q_factor))
+                                       _numer, _denom);
+
+    CGAL_precondition_msg (valid,
+                           "The denominator polynomial must not be 0.");
+    if (! valid)
+      return;
+
+    // Set the source point and check if it lies next to a pole.
+    if (CGAL::sign (nt_traits.evaluate_at (_denom, x_s)) != CGAL::ZERO)
     {
-      nt_traits.scale (pden, q_factor);
+      // We have a nomral endpoint.
+      _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) /
+                          nt_traits.evaluate_at (_denom, x_s));
     }
     else
     {
-      // q cannot be a zero polynomial:
-      CGAL_assertion_msg (false, 
-			  "zero polynomial specified as the denominator.");
-      return;
+      // The y-coodinate is unbounded, but we can set its sign.
+      _ps = Point_2 (x_s, 0);
+
+      std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x_s);
+      const CGAL::Sign                   sign_s =
+        ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.second : signs.first;
+
+      if (sign_s == CGAL::NEGATIVE)
+        _info = (_info | SRC_AT_Y_MINUS_INFTY);
+      else
+        _info = (_info | SRC_AT_Y_PLUS_INFTY);
     }
 
-    // Make sure that q has no real roots between x_min and x_max.
-    if (nt_traits.degree (pden) > 0)
+    // Set the target point and check if it lies next to a pole.
+    if (CGAL::sign (nt_traits.evaluate_at (_denom, x_t)) != CGAL::ZERO)
     {
-      std::list<Algebraic>  q_roots;
-      const Algebraic&      x_min = (x_res == SMALLER) ? x_s : x_t;
-      const Algebraic&      x_max = (x_res == SMALLER) ? x_t : x_s;
-      bool                  q_has_no_roots_in_the_interval;
-      typename std::list<Algebraic>::const_iterator  x_iter;
-
-      nt_traits.compute_polynomial_roots (pden,
-					  std::back_inserter (q_roots));
-      q_has_no_roots_in_the_interval = true;
-
-      for (x_iter = q_roots.begin(); x_iter != q_roots.end(); ++x_iter)
-      {
-	if (CGAL::compare (x_min, *x_iter) != LARGER && 
-	    CGAL::compare (*x_iter, x_max) != LARGER)
-	{
-	  q_has_no_roots_in_the_interval = false;
-	  break;
-	}
-      }
-
-      CGAL_precondition_msg (q_has_no_roots_in_the_interval,
-			     "the rational arc cannot contain poles.");
+      // We have a nomral endpoint.
+      _pt = Point_2 (x_t, nt_traits.evaluate_at (_numer, x_t) /
+                     nt_traits.evaluate_at (_denom, x_t));
+    }
+    else
+    {
+      // The y-coodinate is unbounded, but we can set its sign.
+      _pt = Point_2 (x_t, 0);
       
-      if (! q_has_no_roots_in_the_interval)
-	return;
+      std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x_t);
+      const CGAL::Sign                   sign_t =
+        ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.first : signs.second;
+
+      if (sign_t == CGAL::NEGATIVE)
+        _info = (_info | TRG_AT_Y_MINUS_INFTY);
+      else
+        _info = (_info | TRG_AT_Y_PLUS_INFTY);
     }
 
-    // Set the endpoints.
-    src = Point_2 (x_s, nt_traits.evaluate_at (pnum, x_s) /
-		        nt_traits.evaluate_at (pden, x_s));
-    trg = Point_2 (x_t, nt_traits.evaluate_at (pnum, x_t) /
-                        nt_traits.evaluate_at (pden, x_t));
+    // Mark that the arc is valid. As it may have poles, we do not mark it
+    // as continuous.
+    _info = (_info | IS_VALID);
+  }
 
-    // Mark that the arc is valid.
-    valid = true;
-  }    
-  
+  /*!
+   * Break an arc of a rational function into continuous sub-arcs, splitting
+   * it at its poles.
+   */
+  template <class OutputIterator>
+  OutputIterator make_continuous (OutputIterator oi) const
+  {
+    // Compute the roots of the denominator polynomial.
+    std::list<Algebraic>                 q_roots;
+    bool                                 root_at_ps, root_at_pt;
+
+    if ((_info & IS_CONTINUOUS) == 0)
+      _denominator_roots (std::back_inserter (q_roots),
+                          root_at_ps, root_at_pt);
+
+    // Check the case of a continuous arc:
+    if (q_roots.empty())
+    {
+      Self    arc = *this;
+
+      arc._info = (arc._info | IS_CONTINUOUS);
+      *oi = arc;
+      ++oi;
+      return (oi);
+    }
+
+    // Split the arc accordingly.
+    typename std::list<Algebraic>::const_iterator iter;
+    Self                                          arc = *this;
+
+    for (iter = q_roots.begin(); iter != q_roots.end(); ++iter)
+    {
+      *oi = arc._split_at_pole (*iter);
+      ++oi;
+    }
+
+    // Add the final x-monotone sub-arc.
+    arc._info = (arc._info | IS_CONTINUOUS);
+    *oi = arc;
+    ++oi;
+
+    return (oi);
+  }
   //@}
 
   /// \name Accessing the arc properties.
@@ -230,53 +505,145 @@ public:
   /*! Get the numerator polynomial of the underlying rational function. */
   const Polynomial& numerator () const
   {
-    return (pnum);
+    return (_numer);
   }
 
   /*! Get the denominator polynomial of the underlying rational function. */
   const Polynomial& denominator () const
   {
-    return (pden);
+    return (_denom);
+  }
+
+  /*! Check if the x-coordinate of the source point is infinite. */
+  Infinity_type source_infinite_in_x () const
+  {
+    if ((_info & SRC_AT_X_MINUS_INFTY) != 0)
+      return (MINUS_INFINITY);
+    else if ((_info & SRC_AT_X_PLUS_INFTY) != 0)
+      return (PLUS_INFINITY);
+    else
+      return (FINITE);
+  }
+
+  /*! Check if the y-coordinate of the source point is infinite. */
+  Infinity_type source_infinite_in_y () const
+  {
+    if ((_info & SRC_AT_Y_MINUS_INFTY) != 0)
+      return (MINUS_INFINITY);
+    else if ((_info & SRC_AT_Y_PLUS_INFTY) != 0)
+      return (PLUS_INFINITY);
+    else
+      return (FINITE);
+  }
+
+  /*! Check if the x-coordinate of the target point is infinite. */
+  Infinity_type target_infinite_in_x () const
+  {
+    if ((_info & TRG_AT_X_MINUS_INFTY) != 0)
+      return (MINUS_INFINITY);
+    else if ((_info & TRG_AT_X_PLUS_INFTY) != 0)
+      return (PLUS_INFINITY);
+    else
+      return (FINITE);
+  }
+
+  /*! Check if the y-coordinate of the target point is infinite. */
+  Infinity_type target_infinite_in_y () const
+  {
+    if ((_info & TRG_AT_Y_MINUS_INFTY) != 0)
+      return (MINUS_INFINITY);
+    else if ((_info & TRG_AT_Y_PLUS_INFTY) != 0)
+      return (PLUS_INFINITY);
+    else
+      return (FINITE);
   }
 
   /*! Get the source point. */
   const Point_2& source () const
   {
-    CGAL_precondition (valid);
-    return (src);
+    CGAL_precondition ((_info & IS_VALID) != 0 &&
+                       source_infinite_in_x() == FINITE &&
+                       source_infinite_in_y() == FINITE);
+    return (_ps);
   }
 
   /*! Get the target point. */
   const Point_2& target () const
   {
-    CGAL_precondition (valid);
-    return (trg);
+    CGAL_precondition ((_info & IS_VALID) != 0 &&
+                       target_infinite_in_x() == FINITE &&
+                       target_infinite_in_y() == FINITE);
+    return (_pt);
+  }
+
+  /*! Check if the x-coordinate of the left point is infinite. */
+  Infinity_type left_infinite_in_x () const
+  {
+    if ((_info & IS_DIRECTED_RIGHT) != 0)
+      return (source_infinite_in_x());
+    else
+      return (target_infinite_in_x());
+  }
+
+  /*! Check if the y-coordinate of the left point is infinite. */
+  Infinity_type left_infinite_in_y () const
+  {
+    if ((_info & IS_DIRECTED_RIGHT) != 0)
+      return (source_infinite_in_y());
+    else
+      return (target_infinite_in_y());
+  }
+
+  /*! Check if the x-coordinate of the right point is infinite. */
+  Infinity_type right_infinite_in_x () const
+  {
+    if ((_info & IS_DIRECTED_RIGHT) != 0)
+      return (target_infinite_in_x());
+    else
+      return (source_infinite_in_x());
+  }
+
+  /*! Check if the y-coordinate of the right point is infinite. */
+  Infinity_type right_infinite_in_y () const
+  {
+    if ((_info & IS_DIRECTED_RIGHT) != 0)
+      return (target_infinite_in_y());
+    else
+      return (source_infinite_in_y());
   }
 
   /*! Get the left endpoint. */
   const Point_2& left () const
   {
-    CGAL_precondition (valid);
-    return (dir_right ? src : trg);
+    CGAL_precondition (left_infinite_in_x() == FINITE &&
+                       left_infinite_in_y() == FINITE);
+    return ((_info & IS_DIRECTED_RIGHT) ? _ps : _pt);
   }
 
   /*! Get the right endpoint. */
   const Point_2& right () const
   {
-    CGAL_precondition (valid);
-    return (dir_right ? trg : src);
+    CGAL_precondition (right_infinite_in_x() == FINITE &&
+                       right_infinite_in_y() == FINITE);
+    return ((_info & IS_DIRECTED_RIGHT) ? _pt : _ps);
   }
 
   /*! Check if the arc is valid. */
   bool is_valid () const
   {
-    return (valid);
+    return ((_info & IS_VALID) != 0);
+  }
+
+  /*! Check if the arc is continuous. */
+  bool is_continuous () const
+  {
+    return ((_info & IS_CONTINUOUS) != 0);
   }
 
   /*! Check if the arc is directed right. */
   bool is_directed_right () const
   {
-    return (dir_right);
+    return ((_info & IS_DIRECTED_RIGHT) != 0);
   }
   //@}
 
@@ -293,17 +660,153 @@ public:
    */
   Comparison_result point_position (const Point_2& p) const
   {
-    // Make sure that p is in the x-range of the arc.
-    CGAL_precondition (valid);
-    CGAL_precondition (_is_in_x_range (p.x()));
+    // Make sure that p is in the x-range of the arc and check whether it
+    // has the same x-coordinate as one of the endpoints.
+    CGAL_precondition (is_continuous());
+    CGAL_precondition (_is_in_true_x_range (p.x()));
 
-    // Evaluate the rational function at x(p):
+    /* RWRW - REMOVE THIS (?)
+    bool          eq_src, eq_trg;
+    const bool    is_in_x_range = _is_in_x_range (p.x(), eq_src, eq_trg);
+
+    CGAL_precondition (is_in_x_range);
+    if (eq_src)
+    {
+      // Compare p with the source point. Note that this point may have
+      // an unbounded y-coordinate.
+      if ((_info & SRC_AT_Y_MINUS_INFTY) != 0)
+        return (LARGER);
+      else if ((_info & SRC_AT_Y_PLUS_INFTY) != 0)
+        return (SMALLER);
+
+      return (CGAL::compare (p.y(), _ps.y()));
+    }
+    else if (eq_trg)
+    {
+      // Compare p with the target point. Note that this point may have
+      // an unbounded y-coordinate.
+      if ((_info & TRG_AT_Y_MINUS_INFTY) != 0)
+        return (LARGER);
+      else if ((_info & TRG_AT_Y_PLUS_INFTY) != 0)
+        return (SMALLER);
+
+      return (CGAL::compare (p.y(), _pt.y()));
+
+    }
+    */
+
+    // Evaluate the rational function at x(p), which lies at the interior
+    // of the x-range.
     Nt_traits   nt_traits;
-    Algebraic   y = nt_traits.evaluate_at (pnum, p.x()) /
-                    nt_traits.evaluate_at (pden, p.x());
+    Algebraic   y = nt_traits.evaluate_at (_numer, p.x()) /
+                    nt_traits.evaluate_at (_denom, p.x());
     
     // Compare the resulting y-coordinate with y(p):
     return (CGAL::compare (p.y(), y));
+  }
+
+  /*!
+   * Compare the x-coordinate of a vertical asymptote of the arc (one of its
+   * ends) and the given point.
+   */
+  Comparison_result compare_end (const Point_2& p,
+                                 Curve_end ind) const
+  {
+    Algebraic                x0;
+
+    if (ind == MIN_END)
+    {
+      CGAL_assertion (left_infinite_in_x() == FINITE &&
+                      left_infinite_in_y() != FINITE);
+      if ((_info & IS_DIRECTED_RIGHT) != 0)
+        x0 = _ps.x();
+      else
+        x0 = _pt.x();
+    }
+    else
+    {
+      CGAL_assertion (right_infinite_in_x() == FINITE &&
+                      right_infinite_in_y() != FINITE);
+      if ((_info & IS_DIRECTED_RIGHT) != 0)
+        x0 = _pt.x();
+      else
+        x0 = _ps.x();
+    }
+
+    // Compare the x-coordinates.
+    const Comparison_result  res = CGAL::compare (p.x(), x0);
+
+    if (res != EQUAL)
+      return (res);
+
+    return ((ind == MIN_END) ? SMALLER : LARGER);
+  }
+
+  /*!
+   * Compare the x-coordinate of a vertical asymptotes of the two arcs.
+   */
+  Comparison_result compare_ends (Curve_end ind1,
+                                  const Self& arc, Curve_end ind2) const
+  {
+    // Get the x-coordinates of the first vertical asymptote.
+    Algebraic                x1;
+
+    if (ind1 == MIN_END)
+    {
+      CGAL_assertion (left_infinite_in_x() == FINITE &&
+                      left_infinite_in_y() != FINITE);
+      if ((_info & IS_DIRECTED_RIGHT) != 0)
+        x1 = _ps.x();
+      else
+        x1 = _pt.x();
+    }
+    else
+    {
+      CGAL_assertion (right_infinite_in_x() == FINITE &&
+                      right_infinite_in_y() != FINITE);
+      if ((_info & IS_DIRECTED_RIGHT) != 0)
+        x1 = _pt.x();
+      else
+        x1 = _ps.x();
+    }
+
+    // Get the x-coordinates of the second vertical asymptote.
+    Algebraic                x2;
+
+    if (ind2 == MIN_END)
+    {
+      CGAL_assertion (arc.left_infinite_in_x() == FINITE &&
+                      arc.left_infinite_in_y() != FINITE);
+      if ((arc._info & IS_DIRECTED_RIGHT) != 0)
+        x2 = arc._ps.x();
+      else
+        x2 = arc._pt.x();
+    }
+    else
+    {
+      CGAL_assertion (arc.right_infinite_in_x() == FINITE &&
+                      arc.right_infinite_in_y() != FINITE);
+      if ((arc._info & IS_DIRECTED_RIGHT) != 0)
+        x2 = arc._pt.x();
+      else
+        x2 = arc._ps.x();
+    }
+
+    // Compare the x-coordinates.
+    const Comparison_result  res = CGAL::compare (x1, x2);
+
+    if (res != EQUAL)
+      return (res);
+
+    if (ind1 == MAX_END && ind2 == MIN_END)
+      return (SMALLER);
+    else if (ind1 == MIN_END && ind2 == MAX_END)
+      return (LARGER);
+
+    // RWRW: Handle this comparison:
+    CGAL_assertion (ind1 != ind2);
+
+    return (EQUAL);
   }
 
   /*!
@@ -321,10 +824,10 @@ public:
 				    unsigned int& mult) const
   {
     // Make sure that p is in the x-range of both arcs.
-    CGAL_precondition (valid);
-    CGAL_precondition (arc.valid);
-    CGAL_precondition (_is_in_x_range (p.x()) &&
-		       arc._is_in_x_range (p.x()));
+    CGAL_precondition (is_valid());
+    CGAL_precondition (arc.is_valid());
+    CGAL_precondition (_is_in_true_x_range (p.x()) &&
+		       arc._is_in_true_x_range (p.x()));
 
     // Check the case of overlapping arcs.
     if (_has_same_base (arc))
@@ -334,11 +837,11 @@ public:
     //   max (deg(p1) + deg(q2), deg(q1) + deg(p2)).
     const Algebraic&  _x = p.x();
     Nt_traits         nt_traits;
-    Polynomial        pnum1 = this->pnum;
-    Polynomial        pden1 = this->pden;
+    Polynomial        pnum1 = this->_numer;
+    Polynomial        pden1 = this->_denom;
     const bool        simple_poly1 = nt_traits.degree (pden1);
-    Polynomial        pnum2 = arc.pnum;
-    Polynomial        pden2 = arc.pden;
+    Polynomial        pnum2 = arc._numer;
+    Polynomial        pden2 = arc._denom;
     const bool        simple_poly2 = nt_traits.degree (pden2);
     int               max_mult;
     Algebraic         d1, d2;
@@ -392,6 +895,118 @@ public:
   }
 
   /*!
+   * Compare the two arcs at x = -oo.
+   * \param arc The given arc.
+   * \pre Both arcs are have a left end which is unbounded in x.
+   * \return SMALLER if (*this) lies below the other arc;
+   *         EQUAL if the two supporting functions are equal;
+   *         LARGER if (*this) lies above the other arc.
+   */
+  Comparison_result compare_at_minus_infinity (const Self& arc) const
+  {
+    CGAL_precondition (left_infinite_in_x() == MINUS_INFINITY &&
+                       arc.left_infinite_in_x() == MINUS_INFINITY);
+
+    // Check for easy cases, when the infinity at y of both ends is different.
+    const Infinity_type  inf_y1 = left_infinite_in_y();
+    const Infinity_type  inf_y2 = left_infinite_in_y();
+
+    if (inf_y1 != inf_y2)
+    {
+      if (inf_y1 == MINUS_INFINITY || inf_y2 == PLUS_INFINITY)
+        return (SMALLER);
+      else if (inf_y1 == PLUS_INFINITY || inf_y2 == MINUS_INFINITY)
+        return (LARGER);
+      else
+        CGAL_assertion (false);
+    }
+
+    // First compare the signs of the two denominator polynomials at x = -oo.
+    const CGAL::Sign  sign1 = _sign_at_minus_infinity (_denom);
+    const CGAL::Sign  sign2 = _sign_at_minus_infinity (arc._denom);
+   
+    CGAL_assertion (sign1 != CGAL::ZERO && sign2 != CGAL::ZERO);
+
+    const bool        flip_res = (sign1 != sign2);
+
+    // We wish to compare the two following functions:
+    //
+    //   y = p1(x)/q1(x)    and     y = p2(x)/q2(x)
+    //
+    // It is clear that we should look at the sign of the polynomial
+    // p1(x)*q2(x) - p2(x)*q1(x) at x = -oo.
+    const CGAL::Sign  sign_ip = _sign_at_minus_infinity (_numer*arc._denom - 
+                                                         arc._numer*_denom);
+
+    if (sign_ip == CGAL::ZERO)
+    {
+      CGAL_assertion (_has_same_base (arc));
+      return (EQUAL);
+    }
+
+    if (sign_ip == CGAL::NEGATIVE)
+      return (flip_res ? LARGER : SMALLER);
+    else
+      return (flip_res ? SMALLER : LARGER);
+  }
+
+  /*!
+   * Compare the two arcs at x = +oo.
+   * \param arc The given arc.
+   * \pre Both arcs are have a right end which is unbounded in x.
+   * \return SMALLER if (*this) lies below the other arc;
+   *         EQUAL if the two supporting functions are equal;
+   *         LARGER if (*this) lies above the other arc.
+   */
+  Comparison_result compare_at_plus_infinity (const Self& arc) const
+  {
+    CGAL_precondition (right_infinite_in_x() == PLUS_INFINITY &&
+                       arc.right_infinite_in_x() == PLUS_INFINITY);
+
+    // Check for easy cases, when the infinity at y of both ends is different.
+    const Infinity_type  inf_y1 = right_infinite_in_y();
+    const Infinity_type  inf_y2 = right_infinite_in_y();
+
+    if (inf_y1 != inf_y2)
+    {
+      if (inf_y1 == MINUS_INFINITY || inf_y2 == PLUS_INFINITY)
+        return (SMALLER);
+      else if (inf_y1 == PLUS_INFINITY || inf_y2 == MINUS_INFINITY)
+        return (LARGER);
+      else
+        CGAL_assertion (false);
+    }
+
+    // First compare the signs of the two denominator polynomials at x = +oo.
+    const CGAL::Sign  sign1 = _sign_at_plus_infinity (_denom);
+    const CGAL::Sign  sign2 = _sign_at_plus_infinity (arc._denom);
+   
+    CGAL_assertion (sign1 != CGAL::ZERO && sign2 != CGAL::ZERO);
+
+    const bool        flip_res = (sign1 != sign2);
+
+    // We wish to compare the two following functions:
+    //
+    //   y = p1(x)/q1(x)    and     y = p2(x)/q2(x)
+    //
+    // It is clear that we should look at the sign of the polynomial
+    // p1(x)*q2(x) - p2(x)*q1(x) at x = +oo.
+    const CGAL::Sign  sign_ip = _sign_at_plus_infinity (_numer*arc._denom - 
+                                                        arc._numer*_denom);
+
+    if (sign_ip == CGAL::ZERO)
+    {
+      CGAL_assertion (_has_same_base (arc));
+      return (EQUAL);
+    }
+
+    if (sign_ip == CGAL::NEGATIVE)
+      return (flip_res ? LARGER : SMALLER);
+    else
+      return (flip_res ? SMALLER : LARGER);
+  }
+
+  /*!
    * Check whether the two arcs are equal (have the same graph).
    * \param arc The compared arc.
    * \return (true) if the two arcs have the same graph; (false) otherwise.
@@ -399,16 +1014,32 @@ public:
   bool equals (const Self& arc) const
   {
     // The two arc must have the same base rational function.
-    CGAL_precondition (valid);
-    CGAL_precondition (arc.valid);
+    CGAL_precondition (is_valid());
+    CGAL_precondition (arc.is_valid());
     if (! _has_same_base (arc))
       return (false);
 
     // Check that the arc endpoints are the same.
-    Alg_kernel   ker;
+    Infinity_type inf1 = left_infinite_in_x ();
+    Infinity_type inf2 = arc.left_infinite_in_x ();
 
-    return (ker.equal_2_object() (left(), arc.left()) &&
-	    ker.equal_2_object() (right(), arc.right()));
+    if (inf1 != inf2)
+      return (false);
+
+    if (inf1 == FINITE && CGAL::compare(left().x(), arc.left().x()) != EQUAL)
+      return (false);
+
+    inf1 = right_infinite_in_x ();
+    inf2 = arc.right_infinite_in_x ();
+
+    if (inf1 != inf2)
+      return (false);
+
+    if (inf1 == FINITE && CGAL::compare(right().x(), arc.right().x()) != EQUAL)
+      return (false);
+
+    // If we reached here, the two arc are equal:
+    return (true);
   }
 
   /*!
@@ -421,8 +1052,8 @@ public:
   {
     // In order to merge the two arcs, they should have the same base rational
     // function.
-    CGAL_precondition (valid);
-    CGAL_precondition (arc.valid);
+    CGAL_precondition (is_valid());
+    CGAL_precondition (arc.is_valid());
     if (! _has_same_base (arc))
       return (false);
 
@@ -430,8 +1061,16 @@ public:
     // other.
     Alg_kernel   ker;
 
-    return (ker.equal_2_object() (right(), arc.left()) ||
-            ker.equal_2_object() (left(), arc.right()));
+    return ((right_infinite_in_x() == FINITE &&
+             right_infinite_in_y() == FINITE &&
+             arc.left_infinite_in_x() == FINITE &&
+             arc.left_infinite_in_y() == FINITE &&
+             ker.equal_2_object() (right(), arc.left())) ||
+            (left_infinite_in_x() == FINITE &&
+             left_infinite_in_y() == FINITE &&
+             arc.right_infinite_in_x() == FINITE &&
+             arc.right_infinite_in_y() == FINITE &&
+             ker.equal_2_object() (left(), arc.right())));
   }
   //@}
 
@@ -448,11 +1087,14 @@ public:
   OutputIterator intersect (const Self& arc,
                             OutputIterator oi) const
   {
-    CGAL_precondition (valid);
-    CGAL_precondition (arc.valid);
+    CGAL_precondition (is_valid() && is_continuous());
+    CGAL_precondition (arc.is_valid() && arc.is_continuous());
 
     if (_has_same_base (arc))
     {
+      // RWRW - HANDLE INTERSECTIONS !!!
+      return (oi);
+
       // Let p1 be the rightmost of the two left endpoints and let p2 be the 
       // leftmost of the two right endpoints.
       Alg_kernel   ker;
@@ -471,8 +1113,8 @@ public:
 	// segment.
 	Self      overlap_arc (*this);
 
-	overlap_arc.src = p1;
-	overlap_arc.trg = p2;
+	overlap_arc._ps = p1;
+	overlap_arc._pt = p2;
 
 	*oi = make_object (overlap_arc);
 	++oi;
@@ -496,7 +1138,7 @@ public:
     // It is clear that the x-coordinates of the intersection points are
     // the roots of the polynomial: ip(x) = p1(x)*q2(x) - p2(x)*q1(x).
     Nt_traits            nt_traits;
-    Polynomial           ipoly = pnum*arc.pden - arc.pnum*pden;
+    Polynomial           ipoly = _numer*arc._denom - arc._numer*_denom;
     std::list<Algebraic>                           xs;
     typename std::list<Algebraic>::const_iterator  x_iter;
 
@@ -509,11 +1151,12 @@ public:
 
     for (x_iter = xs.begin(); x_iter != xs.end(); ++x_iter)
     {
-      if (_is_in_x_range(*x_iter) && arc._is_in_x_range(*x_iter))
+      if (_is_in_true_x_range (*x_iter) &&
+          arc._is_in_true_x_range (*x_iter))
       {
 	// Compute the intersection point and obtain its multiplicity.
-	Point_2    p (*x_iter, nt_traits.evaluate_at (pnum, *x_iter) /
-                               nt_traits.evaluate_at (pden, *x_iter));
+	Point_2    p (*x_iter, nt_traits.evaluate_at (_numer, *x_iter) /
+                               nt_traits.evaluate_at (_denom, *x_iter));
 
 	this->compare_slopes (arc, p, mult);
     
@@ -538,31 +1181,39 @@ public:
   void split (const Point_2& p,
               Self& c1, Self& c2) const
   {
-    CGAL_precondition (valid);
+    CGAL_precondition (is_valid() && is_continuous());
 
     // Make sure that p lies on the interior of the arc.
     CGAL_precondition_code (
       Alg_kernel   ker;
     );
     CGAL_precondition (this->point_position(p) == EQUAL &&
-                       ! ker.equal_2_object() (p, src) &&
-                       ! ker.equal_2_object() (p, trg));
+                       (source_infinite_in_x() != FINITE ||
+                        source_infinite_in_y() != FINITE ||
+                        ! ker.equal_2_object() (p, _ps)) &&
+                       (target_infinite_in_x() != FINITE ||
+                        target_infinite_in_y() != FINITE ||
+                        ! ker.equal_2_object() (p, _pt)));
 
     // Make copies of the current arc.
     c1 = *this;
     c2 = *this;
 
     // Split the arc, such that c1 lies to the left of c2.
-    if (dir_right)
+    if ((_info & IS_DIRECTED_RIGHT) != 0)
     {
-      c1.trg = p;
-      c2.src = p;
+      c1._pt = p;
+      c1._info = (c1._info & ~TRG_INFO_BITS);
+      c2._ps = p;
+      c2._info = (c2._info & ~SRC_INFO_BITS);
     }
     else
     {
-      c1.src = p;
-      c2.trg = p;
-    }
+      c1._ps = p;
+      c1._info = (c1._info & ~SRC_INFO_BITS);
+      c2._pt = p;
+      c2._info = (c2._info & ~TRG_INFO_BITS);
+   }
 
     return;
   }
@@ -574,30 +1225,110 @@ public:
    */
   void merge (const Self& arc)
   {
-    CGAL_precondition (valid);
-    CGAL_precondition (arc.valid);
+    CGAL_precondition (is_valid() && is_continuous());
+    CGAL_precondition (arc.is_valid() && arc.is_continuous());
     CGAL_precondition (this->can_merge_with (arc));
 
     // Check if we should extend the arc to the left or to the right.
     Alg_kernel   ker;
 
-    if (ker.equal_2_object() (right(), arc.left()))
+    if (right_infinite_in_x() == FINITE &&
+        right_infinite_in_y() == FINITE &&
+        arc.left_infinite_in_x() == FINITE &&
+        arc.left_infinite_in_y() == FINITE &&
+        ker.equal_2_object() (right(), arc.left()))
     {
       // Extend the arc to the right.
-      if (dir_right)
-	trg = arc.right();
+      if ((_info & IS_DIRECTED_RIGHT) != 0)
+      {
+        if (arc.right_infinite_in_x() == FINITE &&
+            arc.right_infinite_in_y() == FINITE)
+        {
+          _pt = arc.right();
+        }
+        else
+        {
+          if (arc.right_infinite_in_x() == MINUS_INFINITY)
+            _info = (_info | TRG_AT_X_MINUS_INFTY);
+          else if (arc.right_infinite_in_x() == PLUS_INFINITY)
+            _info = (_info | TRG_AT_X_PLUS_INFTY);
+
+          if (arc.right_infinite_in_y() == MINUS_INFINITY)
+            _info = (_info | TRG_AT_Y_MINUS_INFTY);
+          else if (arc.right_infinite_in_y() == PLUS_INFINITY)
+            _info = (_info | TRG_AT_Y_PLUS_INFTY);
+        }
+      }
       else
-	src = arc.right();
+      {
+        if (arc.right_infinite_in_x() == FINITE &&
+            arc.right_infinite_in_y() == FINITE)
+        {
+          _ps = arc.right();
+        }
+        else
+        {
+          if (arc.right_infinite_in_x() == MINUS_INFINITY)
+            _info = (_info | SRC_AT_X_MINUS_INFTY);
+          else if (arc.right_infinite_in_x() == PLUS_INFINITY)
+            _info = (_info | SRC_AT_X_PLUS_INFTY);
+
+          if (arc.right_infinite_in_y() == MINUS_INFINITY)
+            _info = (_info | SRC_AT_Y_MINUS_INFTY);
+          else if (arc.right_infinite_in_y() == PLUS_INFINITY)
+            _info = (_info | SRC_AT_Y_PLUS_INFTY);
+        }
+      }
     }
     else
     {
-      CGAL_precondition (ker.equal_2_object() (left(), arc.right()));
+      CGAL_precondition (left_infinite_in_x() == FINITE &&
+                         left_infinite_in_y() == FINITE &&
+                         arc.right_infinite_in_x() == FINITE &&
+                         arc.right_infinite_in_y() == FINITE &&
+                         ker.equal_2_object() (left(), arc.right()));
 
       // Extend the arc to the left.
-      if (dir_right)
-	src = arc.left();
+      if ((_info & IS_DIRECTED_RIGHT) != 0)
+      {
+        if (arc.left_infinite_in_x() == FINITE &&
+            arc.left_infinite_in_y() == FINITE)
+        {
+          _ps = arc.left();
+        }
+        else
+        {
+          if (arc.left_infinite_in_x() == MINUS_INFINITY)
+            _info = (_info | SRC_AT_X_MINUS_INFTY);
+          else if (arc.left_infinite_in_x() == PLUS_INFINITY)
+            _info = (_info | SRC_AT_X_PLUS_INFTY);
+
+          if (arc.left_infinite_in_y() == MINUS_INFINITY)
+            _info = (_info | SRC_AT_Y_MINUS_INFTY);
+          else if (arc.left_infinite_in_y() == PLUS_INFINITY)
+            _info = (_info | SRC_AT_Y_PLUS_INFTY);
+        }
+      }
       else
-	trg = arc.left();
+      {
+        if (arc.left_infinite_in_x() == FINITE &&
+            arc.left_infinite_in_y() == FINITE)
+        {
+          _pt = arc.left();
+        }
+        else
+        {
+          if (arc.left_infinite_in_x() == MINUS_INFINITY)
+            _info = (_info | TRG_AT_X_MINUS_INFTY);
+          else if (arc.left_infinite_in_x() == PLUS_INFINITY)
+            _info = (_info | TRG_AT_X_PLUS_INFTY);
+
+          if (arc.left_infinite_in_y() == MINUS_INFINITY)
+            _info = (_info | TRG_AT_Y_MINUS_INFTY);
+          else if (arc.left_infinite_in_y() == PLUS_INFINITY)
+            _info = (_info | TRG_AT_Y_PLUS_INFTY);
+        }
+      }
     }
 
     return;
@@ -609,18 +1340,27 @@ public:
    */
   Self flip () const
   {
-    CGAL_precondition (valid);
+    CGAL_precondition (is_valid());
 
     // Create the flipped arc.
     Self   arc;
 
-    arc.pnum = pnum;
-    arc.pden = pden;
-    arc.src = trg;
-    arc.trg = src;
-    arc.dir_right = ! dir_right;
-    arc.valid = true;
+    arc._numer = _numer;
+    arc._denom = _denom;
+    arc._ps = _pt;
+    arc._pt = _ps;
 
+    // Manipulate the information bits.
+    int    src_info = (_info & SRC_INFO_BITS);
+    int    trg_info = (_info & TRG_INFO_BITS);
+    arc._info = (src_info << 4) | (trg_info >> 4) | IS_VALID;
+
+    if ((_info & IS_DIRECTED_RIGHT) == 0)
+      arc._info = (arc._info | IS_DIRECTED_RIGHT);
+
+    if ((_info & IS_CONTINUOUS) != 0)
+      arc._info = (arc._info | IS_CONTINUOUS);
+    
     return (arc);
   }
 
@@ -633,13 +1373,112 @@ private:
 
   /*!
    * Check if the given x-value is in the x-range of the arc.
+   * \param x The x-value.
+   * \param eq_src Output: Is this value equal to the x-coordinate of the
+   *                       source point.
+   * \param eq_trg Output: Is this value equal to the x-coordinate of the
+   *                       target point.
    */
-  bool _is_in_x_range (const Algebraic& x) const
+  bool _is_in_x_range (const Algebraic& x,
+                       bool& eq_src, bool& eq_trg) const
   {
-    Comparison_result  res1 = CGAL::compare (left().x(), x);
-    Comparison_result  res2 = CGAL::compare (x, right().x());
+    Comparison_result  res1;
 
-    return (res1 != LARGER && res2 != LARGER);
+    eq_src = eq_trg = false;
+    if ((_info & IS_DIRECTED_RIGHT) != 0)
+    {
+      // Compare to the left endpoint (the source in this case).
+      if ((_info & SRC_AT_X_MINUS_INFTY) != 0)
+      {
+        res1 = LARGER;
+      }
+      else
+      {
+        res1 = CGAL::compare (x, _ps.x());
+
+        if (res1 == SMALLER)
+          return (false);
+        
+        if (res1 == EQUAL)
+        {
+          eq_src = true;
+          return (true);
+        }
+      }
+      
+      // Compare to the right endpoint (the target in this case).
+      if ((_info & TRG_AT_X_PLUS_INFTY) != 0)
+        return (true);
+
+      const Comparison_result  res2 = CGAL::compare (x, _pt.x());
+      
+      if (res2 == LARGER)
+          return (false);
+       
+      if (res2 == EQUAL)
+        eq_trg = true;
+
+      return (true);      
+    }
+    
+    // Compare to the left endpoint (the target in this case).
+    if ((_info & TRG_AT_X_MINUS_INFTY) != 0)
+    {
+      res1 = LARGER;
+    }
+    else
+    {
+      res1 = CGAL::compare (x, _pt.x());
+
+      if (res1 == SMALLER)
+        return (false);
+        
+      if (res1 == EQUAL)
+      {
+        eq_trg = true;
+        return (true);
+      }
+    }
+      
+    // Compare to the right endpoint (the source in this case).
+    if ((_info & SRC_AT_X_PLUS_INFTY) != 0)
+      return (true);
+
+    const Comparison_result  res2 = CGAL::compare (x, _ps.x());
+      
+    if (res2 == LARGER)
+      return (false);
+       
+    if (res2 == EQUAL)
+      eq_src = true;
+    
+    return (true);
+  }
+
+  /*!
+   * Check if the given x-value is in the x-range of the arc, excluding its
+   * open ends.
+   */
+  bool _is_in_true_x_range (const Algebraic& x) const
+  {
+    bool          eq_src, eq_trg;
+    const bool    is_in_x_range_closure = _is_in_x_range (x, eq_src, eq_trg);
+
+    if (! is_in_x_range_closure)
+      return (false);
+
+    // Check if we have a vertical asymptote at the source point.
+    if (eq_src &&
+        (_info & (SRC_AT_Y_MINUS_INFTY | SRC_AT_Y_PLUS_INFTY)) != 0)
+      return (false);
+
+    // Check if we have a vertical asymptote at the target point.
+    if (eq_trg &&
+        (_info & (TRG_AT_Y_MINUS_INFTY | TRG_AT_Y_PLUS_INFTY)) != 0)
+      return (false);
+
+    // If we reached here, the value is in the true x-range of the arc.
+    return (true);
   }
 
   /*!
@@ -651,7 +1490,304 @@ private:
   bool _has_same_base (const Self& arc) const
   {
     // p1(x)/q1(x) == p2(x)/q2(x) if and only if p1*q2 = p2*q1:
-    return (pnum * arc.pden == pden * arc.pnum);
+    return (_numer * arc._denom == _denom * arc._numer);
+  }
+
+  /*!
+   * Compute the sign of the given polynomial at x = -oo.
+   */
+  CGAL::Sign _sign_at_minus_infinity (const Polynomial& poly) const
+  {
+    // Get the degree.
+    Nt_traits    nt_traits;
+    const int    degree = nt_traits.degree (poly);
+
+    if (degree < 0)
+      return (CGAL::ZERO);
+
+    // Get the leading coefficient. Its sign is the sign of the polynomial
+    // at x = -oo if the degree is even, and the opposite sign if it is odd.
+    const CGAL::Sign  lead_sign = 
+      CGAL::sign (nt_traits.get_coefficient (poly, degree));
+
+    CGAL_assertion (lead_sign != CGAL::ZERO);
+
+    if (degree % 2 == 0)
+      return (lead_sign);
+    else
+      return ((lead_sign == CGAL::POSITIVE) ? CGAL::NEGATIVE : CGAL::POSITIVE);
+  }
+
+  /*!
+   * Compute the sign of the given polynomial at x = +oo.
+   */
+  CGAL::Sign _sign_at_plus_infinity (const Polynomial& poly) const
+  {
+    // Get the degree.
+    Nt_traits    nt_traits;
+    const int    degree = nt_traits.degree (poly);
+
+    if (degree < 0)
+      return (CGAL::ZERO);
+
+    // Get the leading coefficient. Its sign is the sign of the polynomial
+    // at x = +oo.
+    return (CGAL::sign (nt_traits.get_coefficient (poly, degree)));
+  }
+
+  /*!
+   * Compute infinity type of the rational function P(x)/Q(x) at x = -oo.
+   * \param y Output: The value of the horizontal asymptote (if exists).
+   * \return The infinity type for the y-coordinate at x = -oo.
+   */
+  Infinity_type _analyze_at_minus_infinity (const Polynomial& P,
+                                            const Polynomial& Q,
+                                            Algebraic& y) const
+  {
+    // Get the degree of the polynomials.
+    Nt_traits    nt_traits;
+    const int    deg_p = nt_traits.degree (P);
+    const int    deg_q = nt_traits.degree (Q);
+
+    if (deg_p < 0 || deg_p < deg_q)
+    {
+      // We have a zero polynomial or a zero asymptote.
+      y = 0;
+      return (FINITE);
+    }
+
+    // Get the leading coefficients.
+    Integer      p_lead = nt_traits.get_coefficient (P, deg_p);
+    Integer      q_lead = nt_traits.get_coefficient (Q, deg_q);
+    
+    if (deg_p == deg_q)
+    {
+      // We have a horizontal asymptote.
+      y = p_lead / q_lead;
+      return (FINITE);
+    }
+
+    // We have a tendency to infinity.
+    const int    def_diff = deg_p - deg_q;
+
+    if (CGAL::sign (p_lead) == CGAL::sign (q_lead))
+      return ((def_diff % 2 == 0) ? PLUS_INFINITY : MINUS_INFINITY);
+    else
+      return ((def_diff % 2 == 0) ? MINUS_INFINITY : PLUS_INFINITY);
+  }
+
+  /*!
+   * Compute infinity type of the rational function P(x)/Q(x) at x = +oo.
+   * \param y Output: The value of the horizontal asymptote (if exists).
+   * \return The infinity type for the y-coordinate at x = +oo.
+   */
+  Infinity_type _analyze_at_plus_infinity (const Polynomial& P,
+                                           const Polynomial& Q,
+                                           Algebraic& y) const
+  {
+    // Get the degree of the polynomials.
+    Nt_traits    nt_traits;
+    const int    deg_p = nt_traits.degree (P);
+    const int    deg_q = nt_traits.degree (Q);
+
+    if (deg_p < 0 || deg_p < deg_q)
+    {
+      // We have a zero polynomial or a zero asymptote.
+      y = 0;
+      return (FINITE);
+    }
+
+    // Get the leading coefficients.
+    Integer      p_lead = nt_traits.get_coefficient (P, deg_p);
+    Integer      q_lead = nt_traits.get_coefficient (Q, deg_q);
+    
+    if (deg_p == deg_q)
+    {
+      // We have a horizontal asymptote.
+      y = p_lead / q_lead;
+      return (FINITE);
+    }
+
+    // We have a tendency to infinity.
+    if (CGAL::sign (p_lead) == CGAL::sign (q_lead))
+      return (PLUS_INFINITY);
+    else
+      return (MINUS_INFINITY);
+  }
+
+  /*!
+   * Compute all zeros of the denominator polynomial that lie within the
+   * x-range of the arc.
+   */
+  template <class OutputIterator>
+  OutputIterator _denominator_roots (OutputIterator oi,
+                                     bool& root_at_ps, bool& root_at_pt) const
+  {
+    Nt_traits         nt_traits;
+
+    root_at_ps = root_at_pt = false;
+
+    if (nt_traits.degree (_denom) <= 0)
+      return (oi);
+
+    // Compute the roots of the denominator polynomial.
+    std::list<Algebraic>                           q_roots;
+    bool                                           eq_src, eq_trg;
+    typename std::list<Algebraic>::const_iterator  x_iter;
+
+    nt_traits.compute_polynomial_roots (_denom,
+                                        std::back_inserter (q_roots));
+
+    // Go over the roots and check whether they lie in the x-range of the arc.
+    for (x_iter = q_roots.begin(); x_iter != q_roots.end(); ++x_iter)
+    {
+      if (_is_in_x_range (*x_iter, eq_src, eq_trg))
+      {
+        if (eq_src)
+        {
+          root_at_ps = true;
+        }
+        else if (eq_trg)
+        {
+          root_at_pt = true;
+        }
+        else
+        {
+          // The root lies in the interior of the arc.
+          *oi = *x_iter;
+          ++oi;
+        }
+      }
+    }
+
+    return (oi);
+  }
+
+  /*!
+   * Determine the signs of the rational functions infinitisimally to the left
+   * and to the right of the given pole.
+   * \param x0 The x-coordinate of the pole.
+   * \pre x0 lies in the interior of the arc.
+   * \return The signs to the left and to the right of x0.
+   */
+  std::pair<CGAL::Sign, CGAL::Sign>
+  _analyze_near_pole (const Algebraic& x0) const
+  {
+    // RWRW: Deal with this case as well:
+    Nt_traits         nt_traits;
+    const Algebraic   numer_at_x0 = nt_traits.evaluate_at (_numer, x0);
+    const CGAL::Sign  numer_sign = CGAL::sign (numer_at_x0);
+
+    CGAL_assertion (numer_sign != CGAL::ZERO);
+
+    // Determine the multiplicity of the pole and the sign of the first
+    // non-zero derivative of the denominator polynomial at x0.
+    int               mult = 1;
+    Polynomial        p_der = nt_traits.derive (_denom);
+    CGAL::Sign        der_sign;
+
+    while ((der_sign = CGAL::sign (nt_traits.evaluate_at (p_der,
+                                                          x0))) == CGAL::ZERO)
+    {
+      mult++;
+      p_der = nt_traits.derive (p_der);
+    }
+
+    // Determine the tendency of the rational function to the left and to the
+    // right of the pole (to y = -oo or to y = +oo).
+    CGAL::Sign        sign_left, sign_right;
+
+    if (mult % 2 == 1)
+    {
+      // Odd pole multiplicity: different signs from both sides of the pole.
+      if (der_sign == numer_sign)
+      {
+        sign_left = CGAL::NEGATIVE;
+        sign_right = CGAL::POSITIVE;
+      }
+      else
+      {
+        sign_left = CGAL::POSITIVE;
+        sign_right = CGAL::NEGATIVE;
+      }
+    }
+    else
+    {
+      // Even pole multiplicity: equal signs from both sides of the pole.
+      if (der_sign == numer_sign)
+      {
+        sign_left = CGAL::POSITIVE;
+        sign_right = CGAL::POSITIVE;
+      }
+      else
+      {
+        sign_left = CGAL::NEGATIVE;
+        sign_right = CGAL::NEGATIVE;
+      }
+    }
+
+    return (std::make_pair (sign_left, sign_right));
+  }
+
+  /*!
+   * Split the arc into two at a given pole. The function returns the sub-arc
+   * to the left of the pole and sets (*this) to be the right sub-arc.
+   * \param x0 The x-coordinate of the pole.
+   * \pre x0 lies in the interior of the arc.
+   * \return The sub-arc to the left of the pole.
+   */
+  Self _split_at_pole (const Algebraic& x0)
+  {
+    // Analyze the behaviour of the function near the given pole.
+    const std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x0);
+    const CGAL::Sign    sign_left = signs.first;
+    const CGAL::Sign    sign_right = signs.second;
+
+    // Create a fictitious point that represents the x-coordinate of the pole.
+    Point_2    p0 (x0, 0);
+
+    // Make a copy of the current arc.
+    Self       c1 = *this;
+
+    // Split the arc, such that c1 lies to the left of the pole and (*this)
+    // to its right.
+    if ((_info & IS_DIRECTED_RIGHT) != 0)
+    {
+      c1._pt = p0;
+      c1._info = (c1._info & ~TRG_INFO_BITS);
+      if (sign_left == CGAL::NEGATIVE)
+        c1._info = (c1._info | TRG_AT_Y_MINUS_INFTY);
+      else
+        c1._info = (c1._info | TRG_AT_Y_PLUS_INFTY);
+
+      this->_ps = p0;
+      this->_info = (this->_info & ~SRC_INFO_BITS);
+      if (sign_right == CGAL::NEGATIVE)
+        this->_info = (this->_info | SRC_AT_Y_MINUS_INFTY);
+      else
+        this->_info = (this->_info | SRC_AT_Y_PLUS_INFTY);
+    }
+    else
+    {
+      c1._ps = p0;
+      c1._info = (c1._info & ~SRC_INFO_BITS);
+      if (sign_left == CGAL::NEGATIVE)
+        c1._info = (c1._info | SRC_AT_Y_MINUS_INFTY);
+      else
+        c1._info = (c1._info | SRC_AT_Y_PLUS_INFTY);
+
+      this->_pt = p0;
+       this->_info = (this->_info & ~TRG_INFO_BITS);
+      if (sign_right == CGAL::NEGATIVE)
+        this->_info = (this->_info | TRG_AT_Y_MINUS_INFTY);
+      else
+        this->_info = (this->_info | TRG_AT_Y_PLUS_INFTY);
+    }
+
+    // Mark the sub-arc c1 as continuous.
+    c1._info = (c1._info | IS_CONTINUOUS);
+
+    return (c1);
   }
   //@}
 };

@@ -237,78 +237,148 @@ public:
     while (CGAL::sign (coeffs[degree]) == ZERO)
     {
       if (degree == 0)
+      {
+        poly_denom = 1;
 	return (false);
+      }
       degree--;
     }
 
     // Compute the least common multiplicand (LCM) of the denominators,
-    // denoted L, and the greatest common divisor (GCD) of the numerators,
-    // denoted G.
+    // denoted L.
     int            index = degree;
     Integer        denom_lcm, temp_lcm;
-    Integer        numer_gcd, temp_gcd;
-    Integer        numer, denom;
+    Integer        denom;
 
     denom_lcm = CORE::denominator (coeffs[index]);
-    numer_gcd = CORE::numerator (coeffs[index]);
 
     index--;
     while (index >= 0)
     {
-      numer = CORE::numerator (coeffs[index]);
-
-      if (CGAL::sign (numer) != ZERO)
+      if (CGAL::sign (CORE::numerator (coeffs[index])) != ZERO)
       {
         denom = CORE::denominator (coeffs[index]);
 
         temp_lcm = denom_lcm;
-        temp_gcd = numer_gcd;
 
         denom_lcm *= denom;
         denom_lcm /= CORE::gcd (temp_lcm, denom);
-
-        numer_gcd = CORE::gcd (temp_gcd, numer);
       }
 
       index--;
     }
 
-    // Generate the output coefficients (n(i)*L) / (d(i)*G).
+    // Generate the output coefficients (n(i)*L) / d(i).
     Integer                *z_coeffs = new Integer [degree + 1];
 
     for (index = 0; index <= static_cast<int>(degree); index++)
     {
       z_coeffs[index] = (CORE::numerator (coeffs[index]) * denom_lcm) /
-                        (numer_gcd * CORE::denominator (coeffs[index]));
+                        CORE::denominator (coeffs[index]);
     }
 
     // Set the output.
     poly = Polynomial (degree, z_coeffs);
-    poly_denom = numer_gcd;
+    poly_denom = denom_lcm;
 
     delete[] z_coeffs;
     return (true);
   }
 
   /*!
-   * Scale a polynomial by a given factor.
-   * \param poly Input: The polynomial.
-   *             Output: The scaled polynomial.
-   * \param factor The scaling factor.
-   * \return The scaled polynomial.
+   * Construct two polynomials with integer coefficients such that P(x)/Q(x)
+   * is a rational function equivalent to the one represented by the two
+   * given vectors of rational coefficients. It is guaranteed that the GCD
+   * of P(x) and Q(x) is trivial.
+   * \param p_coeffs The coefficients of the input numerator polynomial.
+   * \param p_degree The degree of the input numerator polynomial.
+   * \param q_coeffs The coefficients of the input denominator polynomial.
+   * \param q_degree The degree of the input denominator polynomial.
+   * \param p_poly Output: The resulting numerator polynomial with integer
+   *                       coefficients.
+   * \param q_poly Output: The resulting denominator polynomial with integer
+   *                       coefficients.
+   * \return (true) on success; (false) if the denominator is 0.
    */
-  void scale (Polynomial& poly, const Integer& factor) const
+  bool construct_polynomials (const Rational *p_coeffs,
+                              unsigned int p_degree,
+                              const Rational *q_coeffs,
+                              unsigned int q_degree,
+                              Polynomial& p_poly, Polynomial& q_poly) const
   {
-    poly.mulScalar (factor);
-    return;
+    typedef CORE::Polynomial<Rational>            Rat_polynomial;
+
+    // Construct two rational polynomials.
+    Rat_polynomial   P = Rat_polynomial (p_degree,
+                                         const_cast<Rational*> (p_coeffs));
+    Rat_polynomial   Q = Rat_polynomial (q_degree,
+                                         const_cast<Rational*> (q_coeffs));
+    
+    P.contract();
+    Q.contract();
+
+    int              p_deg = P.getTrueDegree();
+    int              q_deg = Q.getTrueDegree();
+
+    if (q_deg < 0)
+      return (false);             // Zero denominator.
+
+    // Check the case of a zero numerator.
+    if (p_deg < 0)
+    {
+      Integer          coeff = 0;
+      p_poly = construct_polynomial (&coeff, 0);
+
+      coeff = 1;
+      q_poly =  construct_polynomial (&coeff, 0);
+      
+      return (true);
+    }
+
+    // Compute the GCD of the two polynomials and normalize them.
+    Rat_polynomial   g = CORE::gcd (P, Q);
+    
+    if (g.getTrueDegree() > 0)
+    {
+      P = P.pseudoRemainder (g);
+      p_deg = P.getTrueDegree();
+      Q = Q.pseudoRemainder (g);
+      q_deg = Q.getTrueDegree();
+    }
+
+    // Construct two polynomials with integer coefficients.
+    Integer        p_scale, q_scale;
+
+    construct_polynomial (*(P.getCoeffs()), p_deg,
+			  p_poly, q_scale);
+
+    construct_polynomial (*(Q.getCoeffs()), q_deg,
+			  q_poly, p_scale);
+
+    // Scale the result polynomials.
+    p_poly.mulScalar (p_scale);
+    q_poly.mulScalar (q_scale);
+   
+    return (true);
   }
 
   /*!
    * Compute the degree of a polynomial.
    */
-  int degree (Polynomial& poly) const
+  int degree (const Polynomial& poly) const
   {
     return (poly.getTrueDegree());
+  }
+
+  /*!
+   * Get the coefficient of the monomial x^i in the given polynomial.
+   */
+  Integer get_coefficient (const Polynomial& poly, unsigned int i) const
+  {
+    if (static_cast<int> (i) > degree(poly))
+      return (0);
+
+    return (poly.getCoeff (i));
   }
 
   /*!
@@ -342,11 +412,11 @@ public:
    * \pre The value type of oi is Algebraic.
    */
   template <class OutputIterator>
-  OutputIterator compute_polynomial_roots (Polynomial& poly,
+  OutputIterator compute_polynomial_roots (const Polynomial& poly,
 					   OutputIterator oi) const
   {
     // Get the real degree of the polynomial.
-    int        degree = poly.getTrueDegree();
+    int            degree = poly.getTrueDegree();
 
     if (degree <= 0)
       return (oi);

@@ -457,6 +457,15 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
        ! eq_source && ! eq_target,
        "The given halfedge must contain the unbounded left end.");
 
+    CGAL_precondition_msg 
+      ((inf_x2 == FINITE && inf_y2 == FINITE && 
+        fict_he2 != Halfedge_handle()) ||
+       _is_on_fictitious_edge (cv, MAX_END, inf_x2, inf_y2,
+                               _halfedge (fict_he2),
+                               eq_source, eq_target) &&
+       ! eq_source && ! eq_target,
+       "The given halfedge must contain the unbounded right end.");
+
     fict_prev1 = _split_fictitious_edge (fict_prev1,
                                          inf_x1, inf_y1);
 
@@ -468,7 +477,12 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
       
       if (fict_he2 != Halfedge_handle())
       {
-        fict_prev2 = _halfedge (fict_he2);
+        if (fict_he2 != fict_he1)
+          fict_prev2 = _halfedge (fict_he2);
+        else if (fict_prev1->direction() == SMALLER)
+          fict_prev2 = fict_prev1->next();
+        else
+          fict_prev2 = fict_prev1;
       }
       else
       {
@@ -477,12 +491,6 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
         else
           fict_prev2 = fict_prev1;
       }
-
-      CGAL_precondition_msg 
-        (_is_on_fictitious_edge (cv, MAX_END, inf_x2, inf_y2, fict_prev2,
-                                 eq_source, eq_target) &&
-         ! eq_source && ! eq_target,
-         "The given halfedge must contain the unbounded right end.");
 
       fict_prev2 = _split_fictitious_edge (fict_prev2,
                                            inf_x2, inf_y2);

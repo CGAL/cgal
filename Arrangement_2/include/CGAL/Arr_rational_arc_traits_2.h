@@ -55,7 +55,7 @@ public:
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
-  typedef Tag_false                       Has_infinite_category;
+  typedef Tag_true                        Has_infinite_category;
 
   // Traits objects:
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>     Curve_2;
@@ -91,6 +91,46 @@ public:
       Alg_kernel   ker;
       return (ker.compare_x_2_object() (p1, p2));
     }
+
+    /*!
+     * Compare the relative positions of a vertical curve and another given
+     * curves at y = +/- oo.
+     * \param p A reference point; we refer to a vertical line incident to p.
+     * \param cv The compared curve.
+     * \param ind MIN_END if we refer to cv's minimal end,
+     *            MIN_END if we refer to its maximal end.
+     * \pre cv's relevant end is defined at y = +/- oo.
+     * \return SMALLER if p lies to the left of cv;
+     *         LARGER if p lies to the right cv;
+     *         EQUAL in case of an overlap.
+     */
+    Comparison_result operator() (const Point_2& p,
+                                  const X_monotone_curve_2& cv,
+                                  Curve_end ind) const
+    {
+      return (cv.compare_end (p, ind));
+    }
+
+    /*!
+     * Compare the relative positions of two curves at y = +/- oo.
+     * \param cv1 The first curve.
+     * \param ind1 MIN_END if we refer to cv1's minimal end,
+     *             MIN_END if we refer to its maximal end.
+     * \param cv2 The second curve.
+     * \param ind2 MIN_END if we refer to cv2's minimal end,
+     *             MIN_END if we refer to its maximal end.
+     * \pre The curves are defined at y = +/- oo.
+     * \return SMALLER if cv1 lies to the left of cv2;
+     *         LARGER if cv1 lies to the right cv2;
+     *         EQUAL in case of an overlap.
+     */
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  Curve_end ind1,
+                                  const X_monotone_curve_2& cv2,
+                                  Curve_end ind2) const
+    {
+      return (cv1.compare_ends (ind1, cv2, ind2));
+    }
   };
 
   /*! Get a Compare_x_2 functor object. */
@@ -121,6 +161,62 @@ public:
   Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2();
+  }
+
+  class Infinite_in_x_2
+  {
+  public:
+    /*!
+     * Check if an end of a given x-monotone curve is infinite at x.
+     * \param cv The curve.
+     * \param ind MIN_END if we refer to cv's minimal end,
+     *            MIN_END if we refer to its maximal end.
+     * \return MINUS_INFINITY if the curve end lies at x = -oo;
+     *         FINITE if the curve end has a finite x-coordinate;
+     *         PLUS_INFINITY if the curve end lies at x = +oo.
+     */
+    Infinity_type operator() (const X_monotone_curve_2& cv,
+                              Curve_end ind) const
+    {
+      if (ind == MIN_END)
+        return (cv.left_infinite_in_x());
+      else
+        return (cv.right_infinite_in_x());
+    }
+  };
+
+  /*! Get an Infinite_in_x_2 functor object. */
+  Infinite_in_x_2 infinite_in_x_2_object () const
+  {
+    return Infinite_in_x_2();
+  }
+
+  class Infinite_in_y_2
+  {
+  public:
+    /*!
+     * Check if an end of a given x-monotone curve is infinite at y.
+     * \param cv The curve.
+     * \param ind MIN_END if we refer to cv's minimal end,
+     *            MIN_END if we refer to its maximal end.
+     * \return MINUS_INFINITY if the curve end lies at y = -oo;
+     *         FINITE if the curve end has a finite y-coordinate;
+     *         PLUS_INFINITY if the curve end lies at y = +oo.
+     */
+    Infinity_type operator() (const X_monotone_curve_2& cv,
+                              Curve_end ind) const
+    {
+      if (ind == MIN_END)
+        return (cv.left_infinite_in_y());
+      else
+        return (cv.right_infinite_in_y());
+    }
+  };
+
+  /*! Get an Infinite_in_y_2 functor object. */
+  Infinite_in_y_2 infinite_in_y_2_object () const
+  {
+    return Infinite_in_y_2();
   }
 
   class Construct_min_vertex_2
@@ -201,6 +297,27 @@ public:
     {
       return (cv.point_position (p));
     }
+
+    /*!
+     * Compare the relative y-positions of two curves at x = +/- oo.
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param ind MIN_END if we compare at x = -oo;
+     *            MAX_END if we compare at x = +oo.
+     * \pre The curves are defined at x = +/- oo.
+     * \return SMALLER if cv1 lies below cv2;
+     *         LARGER if cv1 lies above cv2;
+     *         EQUAL in case of an overlap.
+     */
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  const X_monotone_curve_2& cv2, 
+                                  Curve_end ind) const
+    {
+      if (ind == MIN_END)
+        return (cv1.compare_at_minus_infinity (cv2));
+      else
+        return (cv1.compare_at_plus_infinity (cv2));
+    }
   };
 
   /*! Get a Compare_y_at_x_2 functor object. */
@@ -235,10 +352,14 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
-      CGAL_precondition (ker.compare_xy_2_object() (p, 
-                                                    cv1.left()) == LARGER &&
-                         ker.compare_xy_2_object() (p,
-                                                    cv2.left()) == LARGER);
+      CGAL_precondition ((cv1.left_infinite_in_x() != FINITE ||
+                          cv1.left_infinite_in_y() != FINITE ||
+                          ker.compare_xy_2_object() (p, 
+                                                     cv1.left()) == LARGER) &&
+                         (cv2.left_infinite_in_x() != FINITE ||
+                          cv2.left_infinite_in_y() != FINITE ||
+                          ker.compare_xy_2_object() (p,
+                                                     cv2.left()) == LARGER));
 
       // Compare the slopes of the two arcs.
       Comparison_result        res;
@@ -292,10 +413,14 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
-      CGAL_precondition (ker.compare_xy_2_object() (p, 
-                                                    cv1.right()) == SMALLER &&
+      CGAL_precondition((cv1.right_infinite_in_x() != FINITE ||
+                         cv1.right_infinite_in_y() != FINITE ||
+                         ker.compare_xy_2_object() (p, 
+                                                    cv1.right()) == SMALLER) &&
+                        (cv2.right_infinite_in_x() != FINITE ||
+                         cv2.right_infinite_in_y() != FINITE ||
                          ker.compare_xy_2_object() (p,
-                                                    cv2.right()) == SMALLER);
+                                                    cv2.right()) == SMALLER));
 
       // Compare the slopes of the two arcs to determine thir relative
       // position immediately to the right of p.
@@ -366,9 +491,20 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi)
     {
-      // As all rational arcs are x-monotone:
-      *oi = make_object (cv);
-      ++oi;
+      // Make the rational arc continuous.
+      std::list<X_monotone_curve_2>                           arcs;
+
+      cv.make_continuous (std::back_inserter (arcs));
+
+      // Create objects.
+      typename std::list<X_monotone_curve_2>::const_iterator  iter;
+
+      for (iter = arcs.begin(); iter != arcs.end(); ++iter)
+      {
+        *oi = make_object (*iter);
+        ++oi;
+      }
+
       return (oi);
     }
   };
