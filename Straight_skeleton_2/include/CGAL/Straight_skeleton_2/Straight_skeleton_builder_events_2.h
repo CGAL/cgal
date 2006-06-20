@@ -39,7 +39,7 @@ public:
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
-  enum Type { cEdgeEvent, cSplitEvent, cVertexEvent } ;
+  enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent } ;
 
 public:
 
@@ -164,12 +164,10 @@ public:
                                            , Halfedge_handle aBorderB
                                            , Halfedge_handle aBorderC
                                            , Vertex_handle   aSeed
-                                           , Halfedge_handle aOppositeBorder
                                          )
     :
       Base(aBorderA,aBorderB,aBorderC)
     , mSeed(aSeed)
-    , mOppositeBorder(aOppositeBorder)
   {}
 
   virtual Type type() const { return this->cSplitEvent ; }
@@ -177,25 +175,21 @@ public:
   virtual Vertex_handle seed0() const { return mSeed ; }
   virtual Vertex_handle seed1() const { return mSeed ; }
 
-  Halfedge_handle opposite_border() const { return mOppositeBorder ; }
-
-
 private :
 
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (Seed=" << mSeed->id() << " OppBorder=" << mOppositeBorder->id() << ')' ;
+    ss << " (Seed=" << mSeed->id() << " OppBorder=" << this->border_c()->id() << ')' ;
   }
 
 private :
 
   Vertex_handle   mSeed ;
-  Halfedge_handle mOppositeBorder ;
 } ;
 
 template<class SSkel>
-class Straight_skeleton_builder_vertex_event_2 : public Straight_skeleton_builder_event_2<SSkel>
+class Straight_skeleton_builder_pseudo_split_event_2 : public Straight_skeleton_builder_event_2<SSkel>
 {
   typedef Straight_skeleton_builder_event_2<SSkel> Base ;
 
@@ -208,40 +202,35 @@ class Straight_skeleton_builder_vertex_event_2 : public Straight_skeleton_builde
 
 public:
 
-  Straight_skeleton_builder_vertex_event_2 ( Halfedge_handle aBorderA
-                                           , Halfedge_handle aBorderB
-                                           , Halfedge_handle aBorderC
-                                           , Halfedge_handle aBorderD
-                                           , Vertex_handle   aLSeed
-                                           , Vertex_handle   aRSeed
-                                           )
+  Straight_skeleton_builder_pseudo_split_event_2 ( Halfedge_handle aBorderA
+                                                 , Halfedge_handle aBorderB
+                                                 , Halfedge_handle aBorderC
+                                                 , Vertex_handle   aSeed
+                                                 , Vertex_handle   aOppositeNode
+                                                 )
     :
       Base(aBorderA,aBorderB,aBorderC)
-    , mBorderD(aBorderD)
-    , mLSeed(aLSeed)
-    , mRSeed(aRSeed)
+    , mSeed(aSeed)
+    , mOppNode(aOppositeNode)
   {}
 
-  virtual Type type() const { return this->cVertexEvent ; }
+  virtual Type type() const { return this->cPseudoSplitEvent ; }
 
-  Halfedge_handle border_d() const { return mBorderD ; }
-
-  virtual Vertex_handle seed0() const { return mLSeed ; }
-  virtual Vertex_handle seed1() const { return mRSeed ; }
+  virtual Vertex_handle seed0() const { return mSeed ; }
+  virtual Vertex_handle seed1() const { return mOppNode ; }
 
 private :
 
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << " BorderD=" << mBorderD->id() << ')' ;
+    ss << " (Seed=" << mSeed->id() << " OppNode=" << mOppNode->id() << ')' ;
   }
 
 private :
 
-  Halfedge_handle mBorderD ;
-  Vertex_handle   mLSeed ;
-  Vertex_handle   mRSeed ;
+  Vertex_handle mSeed   ;
+  Vertex_handle mOppNode ;
 } ;
 
 

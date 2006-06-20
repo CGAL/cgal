@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -18,8 +18,6 @@
 #ifndef CGAL_TYPES
 #define CGAL_TYPES
 
-#include "definitions.h"
-
 #include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -32,11 +30,8 @@
 namespace demo
 {
 
-#if defined(SLS_DEMO_FAST)
-typedef CGAL::Simple_cartesian<double> K ;
-#else
+//typedef CGAL::Simple_cartesian<double> K ;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-#endif
 
 typedef CGAL::Polygon_2<K>            CGAL_Polygon ;
 

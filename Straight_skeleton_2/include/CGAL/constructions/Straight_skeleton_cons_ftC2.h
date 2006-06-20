@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -49,26 +49,28 @@ inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
                            );
 }
 
-// Given an oriented 2D stright line edge (px,py)->(qx,qy), computes the normalized coefficients (a,b,c) of the
+// Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
 // supporting line.
 // POSTCONDITION: [a,b] is the leftward normal _unit_ (a²+b²=1) vector.
 // POSTCONDITION: In case of overflow, an empty optional<> is returned.
-template<class FT>
-optional< Line<FT> > compute_normalized_line_ceoffC2( Edge<FT> const& e )
+template<class K>
+optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
 {
   bool finite = true ;
   
+  typedef typename K::FT FT ;
+  
   FT a (0.0),b (0.0) ,c(0.0)  ;
 
-  if(e.s().y() == e.t().y())
+  if(e.source().y() == e.target().y())
   {
     a = 0 ;
-    if(e.t().x() > e.s().x())
+    if(e.target().x() > e.source().x())
     {
       b = 1;
-      c = -e.s().y();
+      c = -e.source().y();
     }
-    else if(e.t().x() == e.s().x())
+    else if(e.target().x() == e.source().x())
     {
       b = 0;
       c = 0;
@@ -76,23 +78,23 @@ optional< Line<FT> > compute_normalized_line_ceoffC2( Edge<FT> const& e )
     else
     {
       b = -1;
-      c = e.s().y();
+      c = e.source().y();
     }
 
-    CGAL_SSTRAITS_TRACE("Line coefficients for HORIZONTAL line:\npx=" << e.s().x() << "\npy=" << e.s().y()
-                        << "\nqx=" << e.t().x() << "\nqy=" << e.t().y()
+    CGAL_SSTRAITS_TRACE("Line coefficients for HORIZONTAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
+                        << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c
                        ) ;
   }
-  else if(e.t().x() == e.s().x())
+  else if(e.target().x() == e.source().x())
   {
     b = 0;
-    if(e.t().y() > e.s().y())
+    if(e.target().y() > e.source().y())
     {
       a = -1;
-      c = e.s().x();
+      c = e.source().x();
     }
-    else if (e.t().y() == e.s().y())
+    else if (e.target().y() == e.source().y())
     {
       a = 0;
       c = 0;
@@ -100,18 +102,18 @@ optional< Line<FT> > compute_normalized_line_ceoffC2( Edge<FT> const& e )
     else
     {
       a = 1;
-      c = -e.s().x();
+      c = -e.source().x();
     }
 
-    CGAL_SSTRAITS_TRACE("Line coefficients for VERTICAL line:\npx=" << e.s().x() << "\npy=" << e.s().y()
-                        << "\nqx=" << e.t().x() << "\nqy=" << e.t().y()
+    CGAL_SSTRAITS_TRACE("Line coefficients for VERTICAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
+                        << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c
                        ) ;
   }
   else
   {
-    FT sa = e.s().y() - e.t().y();
-    FT sb = e.t().x() - e.s().x();
+    FT sa = e.source().y() - e.target().y();
+    FT sb = e.target().x() - e.source().x();
     FT l2 = (sa*sa) + (sb*sb) ;
 
     if ( CGAL_NTS is_finite(l2) )
@@ -121,12 +123,12 @@ optional< Line<FT> > compute_normalized_line_ceoffC2( Edge<FT> const& e )
       a = sa / l ;
       b = sb / l ;
   
-      c = -e.s().x()*a - e.s().y()*b;
+      c = -e.source().x()*a - e.source().y()*b;
     }
     else finite = false ;
     
-    CGAL_SSTRAITS_TRACE("Line coefficients for line:\npx=" << e.s().x() << "\npy=" << e.s().y() << "\nqx="
-                        << e.t().x() << "\nqy=" << e.t().y()
+    CGAL_SSTRAITS_TRACE("Line coefficients for line:\npx=" << e.source().x() << "\npy=" << e.source().y() << "\nqx="
+                        << e.target().x() << "\nqy=" << e.target().y()
                         << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl:" << l
                        ) ;
   }
@@ -135,21 +137,34 @@ optional< Line<FT> > compute_normalized_line_ceoffC2( Edge<FT> const& e )
     if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) ) 
       finite = false ;
 
-  return make_optional( finite, Line<FT>(a,b,c) ) ;
+  return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
 }
 
-// Given 3 oriented straight line segments: e0, e1, e2 [each segment is passed as (sx,sy,tx,ty)]
+// Given 3 oriented straight line segments: e0, e1, e2 (passed in a SortedTriedge record)
 // returns the OFFSET DISTANCE (n/d) at which the offsetted lines
 // intersect at a single point, IFF such intersection exist.
 // If the lines intersect to the left, the returned distance is positive.
 // If the lines intersect to the right, the returned distance is negative.
 // If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
 // returns 0 (the actual distance is undefined in this case, but 0 is a usefull return)
+//
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
-template<class FT>
-optional< Rational<FT> > compute_normal_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
+//
+// PRECONDITION: None of e0, e1 and e2 are collinear (but two of them can be parallel)
+//
+// POSTCONDITION: In case of overflow an empty optional is returned.
+//
+template<class K>
+optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( Sorted_triedge_2<K> const& triedge )
 {
+  typedef typename K::FT  FT ;
+  
+  typedef Line_2<K> Line_2 ;
+  
+  typedef optional<Line_2> Optional_line_2 ;
+  
+  
   FT num(0.0), den(0.0) ;
   
   // DETAILS:
@@ -158,9 +173,10 @@ optional< Rational<FT> > compute_normal_offset_lines_isec_timeC2 ( SortedTriedge
   //
   //   a*x(t) + b*y(t) + c - t = 0
   //
-  // were 't>0' being to the left of the line.
+  // were 't > 0' being to the left of the line.
   // If 3 such offset lines intersect at the same offset distance, the intersection 't',
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
+  // The result is :
   //
   //  t = a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 + b1*a0*c2 - b0*a1*c2
   //      ---------------------------------------------------------------
@@ -168,9 +184,9 @@ optional< Rational<FT> > compute_normal_offset_lines_isec_timeC2 ( SortedTriedge
 
   bool ok = false ;
   
-  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
-  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Optional_line_2 l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  Optional_line_2 l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
   if ( l0 && l1 && l2 )
   {
@@ -193,75 +209,80 @@ optional< Rational<FT> > compute_normal_offset_lines_isec_timeC2 ( SortedTriedge
   
   CGAL_SSTRAITS_TRACE("Normal Event:\nn=" << num << "\nd=" << den  )
 
-  return make_optional(ok,Rational<FT>(num,den)) ;
+  return cgal_make_optional(ok,Rational<FT>(num,den)) ;
 }
 
-
-template<class FT>
-FT compute_squared_distance ( Vertex<FT> const& p, Vertex<FT> const& q )
-{
-  return CGAL_NTS square(q.x() - p.x()) + CGAL_NTS square(q.y() - p.y()) ;
-}
-
-template<class FT>
-optional< Vertex<FT> > compute_oriented_midpoint ( Edge<FT> const& e0, Edge<FT> const& e1 )
+// Given two oriented straight line segments e0 and e1 such that e-next follows e-prev, returns
+// the coordinates of the midpoint of the segment between e-prev and e-next.
+// NOTE: the edges can be oriented e0->e1 or e1->e0
+//
+// POSTCONDITION: In case of overflow an empty optional is returned.
+//
+template<class K>
+optional< Point_2<K> > compute_oriented_midpoint ( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   bool ok = false ;
   
-  FT x(0.0),y(0.0) ;
+  typedef typename K::FT FT ;
   
-  FT const two(2.0);
+  FT delta01 = CGAL::squared_distance(e0.target(),e1.source());
+  FT delta10 = CGAL::squared_distance(e1.target(),e0.source());
   
-  FT delta01 = compute_squared_distance(e0.t(),e1.s());
-  FT delta10 = compute_squared_distance(e1.t(),e0.s());
-  
+  Point_2<K> mp ;
+   
   if ( CGAL_NTS is_finite(delta01) &&  CGAL_NTS is_finite(delta10) )
   {
     if ( delta01 <= delta10 )
-    {
-      x = ( e0.t().x() + e1.s().x() ) / two ;
-      y = ( e0.t().y() + e1.s().y() ) / two ;
-    }
-    else
-    {
-      x = ( e1.t().x() + e0.s().x() ) / two ;
-      y = ( e1.t().y() + e0.s().y() ) / two ;
-    }
+         mp = CGAL::midpoint(e0.target(),e1.source());
+    else mp = CGAL::midpoint(e1.target(),e0.source());
     
-    ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y);
+    ok = CGAL_NTS is_finite(mp.x()) && CGAL_NTS is_finite(mp.y());
   }
   
-  return make_optional(ok,Vertex<FT>(x,y));
+  return cgal_make_optional(ok,mp);
 }
 
-// Given 3 oriented straight line segments: e0, e1, e2 [each segment is passed as (sx,sy,tx,ty)]
+// Given 3 oriented straight line segments: e0, e1, e2 (passed in a SortedTriedge record)
 // such that e0 and e1 are collinear, not neccesarily consecutive but with the same orientaton, and e2 is NOT
-// collinear with e0 and e1; returns the OFFSET DISTANCE (n/d) at which a line perpendicular to e0 (and e1) passing through
-// the midpoint of e0.t and e1.s, intersects the offset line of e2
+// collinear with e0 and e1; returns the OFFSET DISTANCE (n/d) at which a line perpendicular to e0 (and e1)
+// passing through the oriented midpoint between e0 and e1 (see the function above) intersects the offset line of e2
+//
 // If the lines intersect to the left of e0, the returned distance is positive.
 // If the lines intersect to the right of e0, the returned distance is negative.
 // If the lines do not intersect, for example, the three edges are collinear edges, or e0,e1 are not,
-// returns 0 (the actual distance is undefined in this case, but 0 is a usefull return)
+// returns 0/0 (the actual distance is undefined in this case, but 0 is a usefull return)
+//
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
-template<class FT>
-optional< Rational<FT> > compute_degenerate_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
+//
+// POSTCONDITION: In case of overflow an empty optional is returned.
+//
+template<class K>
+optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC2 ( Sorted_triedge_2<K> const& triedge )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2 <K> Line_2 ;
+  
+  typedef optional<Point_2> Optional_point_2 ;
+  typedef optional<Line_2>  Optional_line_2 ;
+  
   // DETAILS:
   //
   //   (1)
   //   The bisecting line of e0 and e1 (which are required to be collinear) is a line perpendicular to e0 (and e1)
-  //   which passes through the midpoint of e0.target and e1.source (called q)
+  //   which passes through the oriented midpoint, 'q', between e0->e1 (or e1->e0, depending on their orientatinon)
   //   This "degenerate" bisecting line is given by:
   //
   //     B0(t) = q + t*[l0.a,l0.b]
   //
-  //   where l0.a and l0.b are the _normalized_ line coefficients for e0.
+  //   where l0.a and l0.b are the _normalized_ line coefficients for e0 (or e1 which is the same)
   //   Since [a,b] is a _unit_ vector pointing perpendicularly to the left of e0 (and e1);
   //   any point B0(k) is at a distance k from the line supporting e0 and e1.
   //
   //   (2)
-  //   The bisecting line of e0 and e2 (which are required to be oblique) is given by the following SEL
+  //   The bisecting line of e0 and e2 (which are required to be non-parallel) is given by the following SEL
   //
   //    l0.a*x(t) + l0.b*y(t) + l0.c + t = 0
   //    l2.a*x(t) + l2.b*y(t) + l2.c + t = 0
@@ -282,10 +303,10 @@ optional< Rational<FT> > compute_degenerate_offset_lines_isec_timeC2 ( SortedTri
   //
   bool ok = false ;
 
-  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Optional_line_2 l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
-  optional< Vertex<FT> > q = compute_oriented_midpoint(triedge.e0(),triedge.e1());
+  Optional_point_2 q = compute_oriented_midpoint(triedge.e0(),triedge.e1());
   
   FT num(0.0), den(0.0) ;
 
@@ -310,11 +331,14 @@ optional< Rational<FT> > compute_degenerate_offset_lines_isec_timeC2 ( SortedTri
   }
   
 
-  return make_optional(ok,Rational<FT>(num,den)) ;
+  return cgal_make_optional(ok,Rational<FT>(num,den)) ;
 }
 
-template<class FT>
-optional< Rational<FT> > compute_offset_lines_isec_timeC2 ( SortedTriedge<FT> const& triedge )
+//
+// Calls the appropiate function depending on the collinearity of the edges.
+//
+template<class K>
+optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( Sorted_triedge_2<K> const& triedge )
 {
   CGAL_precondition ( triedge.collinear_count() < 3 ) ;
   
@@ -322,21 +346,32 @@ optional< Rational<FT> > compute_offset_lines_isec_timeC2 ( SortedTriedge<FT> co
                                         : compute_degenerate_offset_lines_isec_timeC2(triedge);
 }
 
-// Given 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c)
-// such that their offsets at a certian distance intersect in a single point, returns the coordinates (x,y) of such a point.
+// Given 3 oriented line segments e0, e1 and e2 (passed in a SortedTriedge record)
+// such that their offsets at a certian distance intersect in a single point, 
+// returns the coordinates (x,y) of such a point.
 //
 // PRECONDITIONS:
+// None of e0, e1 and e2 are collinear (but two of them can be parallel)
 // The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at a certain distance do intersect in a single point.
 //
-template<class FT>
-optional< Vertex<FT> > construct_normal_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+// POSTCONDITION: In case of overflow an empty optional is returned.
+//
+template<class K>
+optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( Sorted_triedge_2<K> const& triedge )
 {
+  typedef typename K::FT  FT ;
+  
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
+  
+  typedef optional<Line_2>  Optional_line_2 ;
+  
   FT x(0.0),y(0.0) ;
   
-  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
-  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Optional_line_2 l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  Optional_line_2 l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
 
   bool ok = false ;
   
@@ -363,32 +398,44 @@ optional< Vertex<FT> > construct_normal_offset_lines_isecC2 ( SortedTriedge<FT> 
     
   CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
     
-  return make_optional(ok,Vertex<FT>(x,y)) ;
+  return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
 
-// Given 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c)
-// such that their offsets at a certian distance intersect in a single point, returns the coordinates (x,y) of such a point.
+// Given 3 oriented line segments e0, e1 and e2 (passed in a SortedTriedge record)
+// such that their offsets at a certian distance intersect in a single point, 
+// returns the coordinates (x,y) of such a point.
+// e0 and e1 are collinear, not neccesarily consecutive but with the same orientaton,
+// and e2 is NOT collinear with e0 and e1. 
 //
 // PRECONDITIONS:
 // The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at a certain distance do intersect in a single point.
 //
-template<class FT>
-optional< Vertex<FT> > construct_degenerate_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+// POSTCONDITION: In case of overflow an empty optional is returned.
+//
+template<class K>
+optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( Sorted_triedge_2<K> const& triedge )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
+  
+  typedef optional<Point_2> Optional_point_2 ;
+  typedef optional<Line_2>  Optional_line_2 ;
+  
   FT x(0.0),y(0.0) ;
   
-  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
-  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
-  optional< Line<FT> > l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(triedge.e0()) ;
+  Optional_line_2 l1 = compute_normalized_line_ceoffC2(triedge.e1()) ;
+  Optional_line_2 l2 = compute_normalized_line_ceoffC2(triedge.e2()) ;
   
-  optional< Vertex<FT> > q = compute_oriented_midpoint(triedge.e0(),triedge.e1());
+  Optional_point_2 q = compute_oriented_midpoint(triedge.e0(),triedge.e1());
 
   bool ok = false ;
   
   if ( l0 && l1 && l2 && q )
   {
-  
     FT num, den ;
   
     if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
@@ -402,7 +449,7 @@ optional< Vertex<FT> > construct_degenerate_offset_lines_isecC2 ( SortedTriedge<
       den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
     }
   
-    CGAL_precondition( den != static_cast<FT>(0.0) ) ;
+    CGAL_precondition( ! CGAL_NTS certified_is_zero(den) ) ;
   
     if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
     {
@@ -416,12 +463,14 @@ optional< Vertex<FT> > construct_degenerate_offset_lines_isecC2 ( SortedTriedge<
 
   CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
 
-  return make_optional(ok,Vertex<FT>(x,y)) ;
+  return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
 
-
-template<class FT>
-optional< Vertex<FT> > construct_offset_lines_isecC2 ( SortedTriedge<FT> const& triedge )
+//
+// Calls the appropiate function depending on the collinearity of the edges.
+//
+template<class K>
+optional< Point_2<K> > construct_offset_lines_isecC2 ( Sorted_triedge_2<K> const& triedge )
 {
   CGAL_precondition ( triedge.collinear_count() < 3 ) ;
   
@@ -429,36 +478,49 @@ optional< Vertex<FT> > construct_offset_lines_isecC2 ( SortedTriedge<FT> const& 
                                         : construct_degenerate_offset_lines_isecC2(triedge) ;
 }
 
-// Give a point (px,py) and 3 oriented lines l0:(l0.a,l0.b,l0.c), l1:(l1.a,l1.b,l1.c) and l2:(l2.a,l2.b,l2.c),
+// Give a point (px,py) and 3 oriented straight line segments e0,e1 and e2.
 // such that their offsets at a certian distance intersect in a single point (ix,iy),
 // returns the squared distance between (px,py) and (ix,iy)
+//
+// NOTE: e0,e1 _can_ be collinear, but e2 must not be collinear with e0 nor e1.
 //
 // PRECONDITIONS:
 // The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at a certain distance do intersect in a single point.
 //
-template<class FT>
-optional< FT > compute_offset_lines_isec_dist_to_pointC2 ( optional< Vertex<FT> > const& p, SortedTriedge<FT> const& triedge )
+template<class K>
+optional< typename K::FT> compute_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
+                                                                    , Sorted_triedge_2<K>    const& triedge 
+                                                                    )
 {
-  FT sdist ;
-    
-  optional< Vertex<FT> > i = construct_offset_lines_isecC2(triedge);
-
+  typedef typename K::FT FT ;
+  
+  typedef Point_2<K> Point_2 ;
+  
+  typedef optional<Point_2>  Optional_point_2 ;
+  
   bool ok = false ;
   
-  if ( p && i )
-  {
-    FT dx  = i->x() - p->x() ;
-    FT dy  = i->y() - p->y() ;
-    FT dx2 = dx * dx ;
-    FT dy2 = dy * dy ;
+  FT sdist(0.0) ;
   
-    sdist = dx2 + dy2 ;
+  if ( p )
+  {
+    Optional_point_2 i = construct_offset_lines_isecC2(triedge);
     
-    ok = CGAL_NTS is_finite(sdist);
+    if ( i )
+    {
+      FT dx  = i->x() - p->x() ;
+      FT dy  = i->y() - p->y() ;
+      FT dx2 = dx * dx ;
+      FT dy2 = dy * dy ;
+    
+      sdist = dx2 + dy2 ;
+      
+      ok = CGAL_NTS is_finite(sdist);
+    }
   }
 
-  return make_optional(ok,sdist);
+  return cgal_make_optional(ok,sdist);
 }
 
 } // namnepsace CGAIL_SS_i

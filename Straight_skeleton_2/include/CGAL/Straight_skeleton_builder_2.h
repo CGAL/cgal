@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -23,6 +23,7 @@
 #include <queue>
 #include <exception>
 #include <string>
+#include <map>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
@@ -47,13 +48,15 @@ public:
   typedef SSkel_  SSkel ;
   
   typedef boost::shared_ptr<SSkel> SSkelPtr ;
-
-  typedef typename SSkel::Traits::Segment_2 Segment_2 ;
-
+  
 private :
 
-  typedef typename Traits::FT      FT ;
-  typedef typename Traits::Point_2 Point_2 ;
+  typedef typename Traits::Kernel K ;
+  
+  typedef typename Traits::FT        FT ;
+  typedef typename Traits::Point_2   Point_2 ;
+  typedef typename Traits::Segment_2 Segment_2 ;
+  typedef typename Traits::Triedge_2 Triedge_2 ;
 
   typedef typename SSkel::Vertex   Vertex ;
   typedef typename SSkel::Halfedge Halfedge ;
@@ -79,10 +82,10 @@ private :
   
   typedef typename SSkel::size_type size_type ;
 
-  typedef Straight_skeleton_builder_event_2<SSkel>        Event ;
-  typedef Straight_skeleton_builder_edge_event_2<SSkel>   EdgeEvent ;
-  typedef Straight_skeleton_builder_split_event_2<SSkel>  SplitEvent ;
-  typedef Straight_skeleton_builder_vertex_event_2<SSkel> VertexEvent ;
+  typedef Straight_skeleton_builder_event_2<SSkel>              Event ;
+  typedef Straight_skeleton_builder_edge_event_2<SSkel>         EdgeEvent ;
+  typedef Straight_skeleton_builder_split_event_2<SSkel>        SplitEvent ;
+  typedef Straight_skeleton_builder_pseudo_split_event_2<SSkel> PseudoSplitEvent ;
 
   typedef boost::intrusive_ptr<Event> EventPtr ;
 
@@ -96,16 +99,37 @@ private :
 
   typedef boost::tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
 
-  typedef CGAL_SS_i::Vertex <FT> iVertex ;
-  typedef CGAL_SS_i::Edge   <FT> iEdge ;
-  typedef CGAL_SS_i::Triedge<FT> iTriedge ;
-
   typedef Straight_skeleton_builder_2<Traits,SSkel> Self ;
   
   typedef typename Halfedge::Base_base HBase_base ;
   typedef typename Halfedge::Base      HBase ;
   typedef typename Vertex::Base        VBase ;
   typedef typename Face::Base          FBase ;
+  
+  struct Halfedge_ID_compare : std::binary_function<bool,Halfedge_handle,Halfedge_handle>
+  {
+    bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
+    {
+      return aA->id() < aB->id() ;
+    }
+  } ;
+  
+  typedef std::map<Halfedge_handle,bool,Halfedge_ID_compare> Is_bond_map ;
+    
+  // Orders two halfedges pointing to a common vertex around it ccw
+  struct Halfedge_compare_ccw : std::binary_function<bool,Halfedge_handle,Halfedge_handle>
+  {
+    bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
+    {
+      Point_2 o = aA->vertex()->point();
+      Point_2 a = aA->opposite()->vertex()->point();
+      Point_2 b = aB->opposite()->vertex()->point();
+      
+      return K().compare_angle_with_x_axis_2_object()( K().construct_direction_2_object()( K().construct_vector_2_object()(a,o) )
+                                                     , K().construct_direction_2_object()( K().construct_vector_2_object()(b,o) )
+                                                     ) == SMALLER ;
+    }
+  } ;
   
 public:
 
@@ -127,6 +151,7 @@ public:
 private :
 
   void throw_error ( char const* what ) const ;
+
   
   class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
   {
@@ -144,7 +169,6 @@ private :
     Self const& mBuilder ;
   } ;
 
-
   typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Event_compare> PQ ;
 
   typedef std::pair<Vertex_handle,Vertex_handle> Vertex_handle_pair ;
@@ -157,6 +181,7 @@ private :
         :
         mVertex(aVertex)
       , mIsReflex(false)
+      , mIsDegenerate(false)
       , mIsProcessed(false)
       , mIsExcluded(false)
       , mPrev(-1)
@@ -165,6 +190,7 @@ private :
 
     Vertex_handle   mVertex ;
     bool            mIsReflex ;
+    bool            mIsDegenerate ;
     bool            mIsProcessed ;
     bool            mIsExcluded ;
     int             mPrev ;
@@ -172,7 +198,6 @@ private :
     Halfedge_handle mDefiningBorderA ;
     Halfedge_handle mDefiningBorderB ;
     Halfedge_handle mDefiningBorderC ;
-    EventPtr_Vector mReflexSplits ; // For fast vertex-event discovery.
   } ;
 
 private :
@@ -216,26 +241,26 @@ private :
     mWrappedVertices[aV->id()].mDefiningBorderC = aH ;
   }
 
-  inline iEdge CreateEdge ( Halfedge_const_handle aH ) const
+  inline Segment_2 CreateEdge ( Halfedge_const_handle aH ) const
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
     Point_2 t = aH->vertex()->point() ;
-    return Construct_ss_edge_2<Traits>(mTraits)()(s,t);
+    return K().construct_segment_2_object()(s,t);
   }
 
-  inline iTriedge CreateTriedge ( Halfedge_const_handle aE0
-                                , Halfedge_const_handle aE1
-                                , Halfedge_const_handle aE2
-                                ) const
+  inline Triedge_2 CreateTriedge ( Halfedge_const_handle aE0
+                                 , Halfedge_const_handle aE1
+                                 , Halfedge_const_handle aE2
+                                 ) const
   {
-    return Construct_ss_triedge_2<Traits>(mTraits)()(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
+    return Construct_ss_triedge_2(mTraits)(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
 
-  inline iTriedge CreateTriedge ( BorderTriple const& aTriple ) const
+  inline Triedge_2 CreateTriedge ( BorderTriple const& aTriple ) const
   {
     Halfedge_handle lE0, lE1, lE2 ;
     boost::tie(lE0,lE1,lE2) = aTriple ;
-    return Construct_ss_triedge_2<Traits>(mTraits)()(CreateEdge(lE0),CreateEdge(lE1),CreateEdge(lE2));
+    return Construct_ss_triedge_2(mTraits)(CreateEdge(lE0),CreateEdge(lE1),CreateEdge(lE2));
   }
 
   Vertex_handle GetVertex ( int aIdx )
@@ -300,6 +325,16 @@ private :
     return mWrappedVertices[aVertex->id()].mIsReflex ;
   }
 
+  void SetIsDegenerate ( Vertex_handle aVertex )
+  {
+    mWrappedVertices[aVertex->id()].mIsDegenerate = true ;
+  }
+
+  bool IsDegenerate ( Vertex_handle aVertex )
+  {
+    return mWrappedVertices[aVertex->id()].mIsDegenerate ;
+  }
+  
   void SetIsProcessed ( Vertex_handle aVertex )
   {
     mWrappedVertices[aVertex->id()].mIsProcessed = true ;
@@ -308,15 +343,6 @@ private :
   bool IsProcessed ( Vertex_handle aVertex )
   {
     return mWrappedVertices[aVertex->id()].mIsProcessed ;
-  }
-
-  void AddReflexSplit ( Vertex_handle aSeed, EventPtr aReflexSplit )
-  {
-    return mWrappedVertices[aSeed->id()].mReflexSplits.push_back(aReflexSplit) ;
-  }
-  EventPtr_Vector const& GetReflexSplits ( Vertex_handle aSeed )
-  {
-    return mWrappedVertices[aSeed->id()].mReflexSplits  ;
   }
 
   void EnqueEvent( EventPtr aEvent )
@@ -376,34 +402,15 @@ private :
     return CountInCommon(aXA,aXB,aXC,aYA,aYB,aYC) == 3 ;
   }
 
-  // Returns the 0-base index of the one element from (aX[3]) NOT IN (aY[3])
-  // NOTE: This function shall be called only when it is known that such an element exists
-  // as 2 is returned by default without proper testing. That is, this function is for vertex-event analysis only.
-  int GetUnique( Halfedge_handle aX[], Halfedge_handle aY[] ) const
-  {
-    return CountInCommon(aX[0],aY[0],aY[1],aY[2]) == 0 ? 0
-             : CountInCommon(aX[1],aY[0],aY[1],aY[2]) == 0 ? 1
-               : 2 ;
-  }
-
-  // Sorts the elements in the sets aX[2] and aY[3] returing (D0,D1,E0,E1)
-  // where D0,D1 are unique elements in aX and aY respectively and E0,E1 are elements in common.
-  // NOTE: This function shall only be called when it is known that thet sets aX and aY can indeed be sorted this way.
-  // That is, this function is for vertex-event analysis only.
-  boost::tuple<Halfedge_handle,Halfedge_handle,Halfedge_handle,Halfedge_handle>
-    SortTwoDistinctAndTwoEqual( Halfedge_handle aX[], Halfedge_handle aY[] ) const
-  {
-     int lUniqueX = GetUnique(aX,aY) ;
-     int lUniqueY = GetUnique(aY,aX) ;
-     int lCommon1 = ( lUniqueX + 1 ) % 3 ;
-     int lCommon2 = ( lUniqueX + 2 ) % 3 ;
-     return boost::make_tuple(aX[lUniqueX],aY[lUniqueY],aX[lCommon1],aX[lCommon2]);
-  }
-
 
   bool ExistEvent ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 ) const
   {
-    return Do_ss_event_exist_2<Traits>(mTraits)()(CreateTriedge(aE0, aE1, aE2));
+    return Do_ss_event_exist_2(mTraits)(CreateTriedge(aE0, aE1, aE2));
+  }
+  
+  bool AreEdgesParallel( Halfedge_const_handle aE0, Halfedge_const_handle aE1 ) const
+  {
+    return Are_ss_edges_parallel_2(mTraits)(CreateEdge(aE0),CreateEdge(aE1));
   }
 
   bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL
@@ -413,14 +420,14 @@ private :
                               , Halfedge_const_handle aOppositeNext
                               ) const
   {
-    return Is_ss_event_inside_offset_zone_2<Traits>(mTraits)()( CreateTriedge(aReflexL     , aReflexR, aOpposite)
-                                                              , CreateTriedge(aOppositePrev,aOpposite, aOppositeNext)
-                                                              ) ;
+    return Is_ss_event_inside_offset_zone_2(mTraits)( CreateTriedge(aReflexL     , aReflexR, aOpposite)
+                                                    , CreateTriedge(aOppositePrev,aOpposite, aOppositeNext)
+                                                    ) ;
   }
 
-  Comparison_result CompareEvents ( iTriedge const& aA, iTriedge const& aB ) const
+  Comparison_result CompareEvents ( Triedge_2 const& aA, Triedge_2 const& aB ) const
   {
-    return Compare_ss_event_times_2<Traits>(mTraits)()(aA,aB) ;
+    return Compare_ss_event_times_2(mTraits)(aA,aB) ;
   }
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
@@ -458,41 +465,38 @@ private :
                                        << ", E" << lTriple.get<2>()->id()
                             );
 
-        return Compare_ss_event_distance_to_seed_2<Traits>(mTraits)()( CreateTriedge(lTriple)
-                                                                     , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                                     , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                                     ) ;
+        return Compare_ss_event_distance_to_seed_2(mTraits)( CreateTriedge(lTriple)
+                                                           , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                                                           , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                                                           ) ;
       }
       else
       {
-        return Compare_ss_event_distance_to_seed_2<Traits>(mTraits)()( aSeed->point()
-                                                                     , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                                     , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                                     ) ;
+        return Compare_ss_event_distance_to_seed_2(mTraits)( aSeed->point()
+                                                           , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
+                                                           , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+                                                           ) ;
       }
     }
     else return EQUAL ;
   }
   
-  bool AreEventsSimultaneous( EventPtr const& aX, EventPtr const& aY ) const
+  bool AreEventsSimultaneous( Halfedge_handle xa
+                            , Halfedge_handle xb 
+                            , Halfedge_handle xc 
+                            , Halfedge_handle ya 
+                            , Halfedge_handle yb 
+                            , Halfedge_handle yc
+                            ) const
   {
-    Halfedge_handle xa = aX->border_a() ;
-    Halfedge_handle xb = aX->border_b() ;
-    Halfedge_handle xc = aX->border_c() ;
-    Halfedge_handle ya = aY->border_a() ;
-    Halfedge_handle yb = aY->border_b() ;
-    Halfedge_handle yc = aY->border_c() ;
-
-    if ( HaveTwoInCommon(xa,xb,xc,ya,yb,yc) )
-         return Are_ss_events_simultaneous_2<Traits>(mTraits)()( CreateTriedge(xa,xb,xc), CreateTriedge(ya,yb,yc)) ;
-    else return false ;
+    return Are_ss_events_simultaneous_2(mTraits)( CreateTriedge(xa,xb,xc), CreateTriedge(ya,yb,yc)) ;
   }
-
+  
   bool AreSkeletonNodesCoincident( Vertex_handle aX, Vertex_handle aY ) const
   {
     BorderTriple lBordersX = GetSkeletonVertexDefiningBorders(aX);
     BorderTriple lBordersY = GetSkeletonVertexDefiningBorders(aY);
-    return Are_ss_events_simultaneous_2<Traits>(mTraits)()( CreateTriedge(lBordersX), CreateTriedge(lBordersY)) ;
+    return Are_ss_events_simultaneous_2(mTraits)( CreateTriedge(lBordersX), CreateTriedge(lBordersY)) ;
   }
   
   bool IsNewEventInThePast( Halfedge_handle aBorderA
@@ -521,9 +525,10 @@ private :
     return rResult ;
   }
 
-  boost::tuple< boost::optional<FT>, boost::optional<Point_2> >  ConstructEventTimeAndPoint( iTriedge const& aTri ) const
+  boost::tuple< boost::optional<FT>, boost::optional<Point_2> > 
+  ConstructEventTimeAndPoint( Triedge_2 const& aTri ) const
   {
-    return Construct_ss_event_time_and_point_2<Traits>(mTraits)()(aTri);
+    return Construct_ss_event_time_and_point_2(mTraits)(aTri);
   }
 
   void SetEventTimeAndPoint( Event& aE )
@@ -540,6 +545,8 @@ private :
 
   void EraseBisector( Halfedge_handle aB )
   {
+    CGAL_SSBUILDER_TRACE(1,"Dangling B" << aB->id() << " and B" << aB->opposite()->id() << " removed.");
+    
     mSSkel->SSkel::Base::edges_erase(aB);
   }
 
@@ -547,6 +554,8 @@ private :
 
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;
 
+  EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN ) ;
+  
   void CollectSplitEvent( Vertex_handle    aNode
                         , Halfedge_handle  aReflexLBorder
                         , Halfedge_handle  aReflexRBorder
@@ -557,10 +566,6 @@ private :
 
   EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode ) ;
 
-
-  EventPtr FindVertexEvent( EventPtr aE0, Vertex_handle aOV ) ;
-  EventPtr FindVertexEvent( EventPtr aE0 ) ;
-
   void HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB ) ;
 
   void CollectNewEvents( Vertex_handle aNode ) ;
@@ -569,32 +574,40 @@ private :
   void CreateContourBisectors();
   void InitPhase();
 
-  bool SetupVertexEventNode( Vertex_handle   aNode
-                           , Halfedge_handle aDefiningBorderA
-                           , Halfedge_handle aDefiningBorderB
-                           );
+  bool SetupPseudoSplitEventNode( Vertex_handle   aNode
+                                , Halfedge_handle aDefiningBorderA
+                                , Halfedge_handle aDefiningBorderB
+                                );
 
-  Vertex_handle LookupOnSLAV ( Halfedge_handle aOBorder, Event const& aEvent ) ;
+  Vertex_handle LookupOnSLAV ( Halfedge_handle aOBorder, EventPtr const& aEvent ) ;
 
-  Vertex_handle_pair ConstructSplitEventNodes ( SplitEvent&  aEvent, Vertex_handle aOppR ) ;
-  Vertex_handle      ConstructEdgeEventNode   ( EdgeEvent&   aEvent ) ;
-  Vertex_handle_pair ConstructVertexEventNodes( VertexEvent& aEvent ) ;
+  Vertex_handle      ConstructEdgeEventNode         ( EdgeEvent&   aEvent ) ;
+  Vertex_handle_pair ConstructSplitEventNodes       ( SplitEvent&  aEvent, Vertex_handle aOppR ) ;
+  Vertex_handle_pair ConstructPseudoSplitEventNodes ( PseudoSplitEvent& aEvent ) ;
 
-  void HandleSplitEvent          ( EventPtr aEvent, Vertex_handle aOppR ) ;
-  void HandleEdgeEvent           ( EventPtr aEvent ) ;
-  void HandleVertexEvent         ( EventPtr aEvent ) ;
-  void HandlePotentialSplitEvent ( EventPtr aEvent ) ;
-  bool IsProcessed               ( EventPtr aEvent ) ;
+  void HandleEdgeEvent               ( EventPtr aEvent ) ;
+  void HandleSplitEvent              ( EventPtr aEvent, Vertex_handle aOppR ) ;
+  void HandlePseudoSplitEvent        ( EventPtr aEvent ) ;
+  void HandleSplitOrPseudoSplitEvent ( EventPtr aEvent ) ;
+  
+  bool IsProcessed( EventPtr aEvent ) ;
 
   void Propagate();
 
   void MergeSplitNodes ( Vertex_handle_pair aSplitNodes ) ;
 
-  void MergeCoincidentNodes( Vertex_handle           v0
-                           , Vertex_handle           v1 
-                           , Halfedge_handle_vector& rHalfedgesToRemove
-                           , Vertex_handle_vector&   rVerticesToRemove
-                           ) ;
+  void ClassifyBisectorsAroundMultinode( Vertex_handle const&         v0
+                                       , Vertex_handle_vector const& aCluster
+                                       , Is_bond_map&                rIsBond
+                                       ) ;
+                                       
+  void ClassifyBisectorsAroundMultinode( Vertex_handle_vector const& aCluster
+                                       , Is_bond_map&                rIsBond
+                                       ) ;
+  
+  void RearrangeBisectorsAroundMultinode( Vertex_handle const& v0, Is_bond_map& rIsBond ) ;
+  
+  bool AreNodesConnected( Vertex_handle v, Vertex_handle u ) ;
   
   void MergeCoincidentNodes() ;
   
@@ -634,7 +647,6 @@ private:
 
   std::list<Vertex_handle> mSLAV ;
 
-//  EventPtr_Vector  mSplitEvents ;
   SplitNodesVector mSplitNodes ;
 
   Event_compare mEventCompare ;

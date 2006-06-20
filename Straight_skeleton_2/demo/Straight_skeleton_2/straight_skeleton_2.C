@@ -58,116 +58,15 @@ int main(int, char*)
 #include <qthread.h>
 #include <qtextstream.h>
 #include <qprogressbar.h>
+#include <qsocket.h>
 
 #include "cgal_types.h"
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Real_timer.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
-
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 3
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE
-//#define CGAL_POLYGON_OFFSET_ENABLE_SHOW
-//#define STATS
-//#define CGAL_SLS_PROFILING_ENABLED
-
-#if defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW) || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW)
-#include "active_canvas_client.C"
-#endif
-
-#define VERBOSE_VALIDATE false
-
-#if defined(STATS)
-#define LOGSTATS(m) std::cout << m << std::endl ;
-#else
-#define LOGSTATS(m)
-#endif
-
-#ifdef CGAL_SLS_PROFILING_ENABLED
-struct profiling_data
-{
-  profiling_data() : good(0) {}
-  int good ;
-  std::vector<std::string> failed ;
-} ;
-
-typedef std::map<std::string,profiling_data> profiling_map ;
-profiling_map sProfilingMap ;
-
-void register_predicate_success( std::string pred )
-{
-  ++ sProfilingMap[pred].good ;
-}
-void register_predicate_failure( std::string pred, std::string error )
-{
-  sProfilingMap[pred].failed.push_back(error) ;
-}
-
-void log_profiling_results()
-{
-  std::cout << "Profiling results" << std::endl ;
-  for ( profiling_map::const_iterator it = sProfilingMap.begin() ; it != sProfilingMap.end() ; ++ it )
-  {
-    profiling_data const& data = it->second ;
-    std::cout << it->first << ":\n"
-              << "  " << data.good << " good cases\n"
-              << "  " << data.failed.size() << " failed cases\n" ;
-
-  }
-  for ( profiling_map::const_iterator it = sProfilingMap.begin() ; it != sProfilingMap.end() ; ++ it )
-  {
-    profiling_data const& data = it->second ;
-    if ( data.failed.size() > 0 )
-    {
-      std::cout << "\n*****************\nDetailed failure data for\n" << it->first << ":\n" ;
-      for ( std::vector<std::string>::const_iterator ci = data.failed.begin() ; ci != data.failed.end() ; ++ ci )
-        std::cout << *ci << "\n--------------------\n" ;
-    }
-  }
-}
-#else
-void log_profiling_results() {}
-#endif
-
-
-#if defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE)
-void Straight_skeleton_external_trace ( std::string s )
-{
-  static std::ofstream lout("sls_builder_log");
-  lout << s << std::flush << std::endl ;
-  std::printf("%s\n",s.c_str());
-}
-#endif
-
-#if defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW) || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW)
-
-ActiveCanvasClient sAC_Client ;
-
-void Straight_skeleton_external_undraw_object ( int n )
-{
-  sAC_Client.undraw_object(n);
-}
-
-int Straight_skeleton_external_draw_point ( double x, double y, CGAL::Color color, char const* layer )
-{
-  return sAC_Client.draw_point(x,y,color,layer);
-}
-
-int Straight_skeleton_external_draw_segment ( double sx
-                                            , double sy
-                                            , double tx
-                                            , double ty
-                                            , CGAL::Color color
-                                            , char const* layer
-                                            )
-{
-  return sAC_Client.draw_segment(sx,sy,tx,ty,color,layer);
-}
-#endif
 
 #include "ss_types.h"
 #include "straight_skeleton_2_toolbar.h"
@@ -196,116 +95,6 @@ bool     sskel_valid ;
 Regions  input ;
 Regions  output ;
 Doubles  offsets ;
-
-#ifdef STATS
-void log_regions_stats( Regions r, const char* which )
-{
-  LOGSTATS( which << " region list has " << r.size() << " regions." ) ;
-
-  int ridx = 0 ;
-  for ( Regions::const_iterator ri = r.begin(), eri = r.end() ; ri != eri ; ++ri, ++ridx )
-  {
-    int vtot = 0 ;
-    int xtot = 0 ;
-
-    Region const& lRegion = **ri ;
-
-    LOGSTATS( which << " region " << ridx << " has " << lRegion.size() << " contours." ) ;
-
-    int cidx = 0 ;
-    for ( Region::const_iterator ci = lRegion.begin(), eci = lRegion.end() ; ci != eci ; ++ci, ++cidx )
-    {
-      Polygon lContour = **ci ;
-      if ( cidx == 0 )
-      {
-        CGAL::Bbox_2 lBbox = CGAL::bbox_2(lContour.begin(),lContour.end());
-        LOGSTATS( "Outer Contour BBox:\n"
-                 << "xmin=" << lBbox.xmin() << " ymin=" << lBbox.ymin() << " xmax=" << lBbox.xmax() << " ymax=" << lBbox.ymax()
-                 << "\nwidth=" << (lBbox.xmax() - lBbox.xmin() ) << " height=" << (lBbox.ymax() - lBbox.ymin() )
-                ) ;
-
-      }
-
-      int xc = 0 ;
-
-      Polygon::const_iterator vbeg = lContour.begin() ;
-      Polygon::const_iterator vend = lContour.end  () ;
-      Polygon::const_iterator vlst = CGAL::predecessor(vend) ;
-      for ( Polygon::const_iterator vi = vbeg ; vi != vend ; ++ vi )
-      {
-        Polygon::const_iterator vprev = ( vi == vbeg ? vlst : CGAL::predecessor(vi) ) ;
-        Polygon::const_iterator vnext = ( vi == vlst ? vbeg : CGAL::successor  (vi) ) ;
-
-        if ( !(K().left_turn_2_object()(*vprev,*vi,*vnext)) )
-          ++ xc ;
-      }
-
-      LOGSTATS( "Contour " << cidx << " has " << lContour.size() << " vertices (" << xc << " reflex)." ) ;
-
-      vtot += lContour.size();
-      xtot += xc ;
-    }
-
-    LOGSTATS( "Regions " << ridx << " has a total of  " << vtot << " vertices (" << xtot << " reflex)." ) ;
-  }
-
-}
-
-void log_skeleton_stats( double aTime )
-{
-  LOGSTATS( "Straight skeleton statistics. " << ( sskel_valid ? "Done" : "FAILED." ) << " Ellapsed time: " << aTime << " seconds.");
-  
-  if ( sskel_valid )
-  {
-    typedef SSkel::Vertex_const_iterator                                   Vertex_const_iterator;
-    typedef SSkel::Vertex::Halfedge_around_vertex_const_circulator         Halfedge_around_vertex_const_circulator ;
-    typedef SSkel::Vertex::Halfedge_across_incident_faces_const_circulator Halfedge_across_incident_faces_const_circulator ;
-    
-    LOGSTATS( sskel->size_of_vertices () << " vertices" ) ;
-    LOGSTATS( sskel->size_of_halfedges() << " halfedges" ) ;
-    
-    for ( Vertex_const_iterator vit = sskel->vertices_begin(); vit != sskel->vertices_end(); ++ vit )
-    {
-      if ( vit->is_skeleton() )
-      {
-        Halfedge_around_vertex_const_circulator iebegin = vit->halfedge_around_vertex_begin();
-        Halfedge_around_vertex_const_circulator ie = iebegin ;
-        int idegree = 0 ;
-        do
-        {
-          Halfedge_const_handle iedge = *ie ;
-          if ( !iedge->is_bisector() )
-            std::cerr << "ERROR: edge E" << iedge->id() << " incident upon V" << vit->id() << " is not a bisector!" << std::endl ;
-          ++ie;
-          ++idegree;
-        }
-        while(ie != iebegin);
-        
-        Defining_contour_halfedges_const_circulator debegin = vit->defining_contour_halfedges_begin();
-        Defining_contour_halfedges_const_circulator de = debegin ;
-        int ddegree = 0 ;
-        do
-        {
-          Halfedge_const_handle dedge = *de ;
-          if ( dedge->is_bisector() )
-            std::cerr << "ERROR: edge E" << dedge->id() << " incident upon V" << vit->id() << " is not a contour edge!" << std::endl ;
-          ++de;
-          ++ddegree;
-        }
-        while(de != debegin);
-        
-        if ( idegree != ddegree )
-          std::cerr << "ERROR: degree mismatch for V" << vit->id() << std::endl ;
-          
-        LOGSTATS( "V" << vit->id() << " at (" << vit->point().x() << ',' << vit->point().y() << ") has degree " << idegree ) ;
-      }  
-    }
-  }        
-}
-#else
-void log_regions_stats( Regions r, const char* which ) {}
-void log_skeleton_stats(double aTime) {}
-#endif
 
 class MyWindow : public QMainWindow
 {
@@ -424,8 +213,6 @@ private slots:
       lRegion->push_back( PolygonPtr( new Polygon(lCgalPoly.vertices_begin(),lCgalPoly.vertices_end()) ) ) ;
       
       input.push_back(lRegion);
-
-      log_regions_stats(input,"Input");
     }
     widget->redraw();
   };
@@ -437,21 +224,15 @@ private slots:
     {
       Region const& lRegion = *input.front();
 
-      LOGSTATS("Creating Inner Straight Skeleton...");
-      CGAL::Real_timer t ;
-      t.start();
       SSkelBuilder builder ;
       for( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
       {
         builder.enter_contour((*bit)->begin(),(*bit)->end());
       }
       sskel = builder.construct_skeleton() ;
-      t.stop();
       sskel_valid = sskel ;
       if ( !sskel_valid )
         QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
-      log_skeleton_stats(t.time());
-      log_profiling_results();
       widget->redraw();
       something_changed();
     }
@@ -484,19 +265,13 @@ private slots:
                            , Point(flx,fhy)
                            } ;
                              
-          LOGSTATS("Creating Outer Straight Skeleton...");
-          CGAL::Real_timer t ;
-          t.start();
           SSkelBuilder builder ;
           builder.enter_contour(lFrame,lFrame+4);
           builder.enter_contour(lOuter.rbegin(),lOuter.rend());
           sskel = builder.construct_skeleton() ;
-          t.stop();
           sskel_valid = sskel ;
           if ( !sskel_valid )
             QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
-          log_skeleton_stats(t.time());
-          log_profiling_results();
           
           widget->redraw();
           something_changed();
@@ -511,7 +286,6 @@ private slots:
   {
     if ( sskel_valid )
     {
-      LOGSTATS("Creating Offsets...");
       output.clear();
 
       if ( offsets.size() == 0 )
@@ -520,16 +294,12 @@ private slots:
       for ( Doubles::const_iterator i = offsets.begin() ; i != offsets.end() ; ++ i )
       {
         double offset = *i ;
-        LOGSTATS("Creating offsets at " << offset );
         RegionPtr lRegion( new Region ) ;
         OffsetBuilder lOffsetBuilder(*sskel);
         lOffsetBuilder.construct_offset_contours(offset, std::back_inserter(*lRegion) );
-        LOGSTATS("Done.");
         if ( lRegion->size() > 0 )
           output.push_back(lRegion);
       }
-      LOGSTATS("ALL Done.");
-      log_regions_stats(output,"Output");
       widget->redraw();
       something_changed();
     }
@@ -705,7 +475,6 @@ private slots:
       }
 
       input.push_back(lRegion);
-      log_regions_stats(input,"Input");
     }
 
     sskel = SSkelPtr() ;

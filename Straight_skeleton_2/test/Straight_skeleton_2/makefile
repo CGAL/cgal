@@ -18,7 +18,7 @@ CXXFLAGS = -I../../include \
            $(EXTRA_FLAGS) \
            -Iinclude \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)  
+           $(LONG_NAME_PROBLEM_CXXFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    linker flags

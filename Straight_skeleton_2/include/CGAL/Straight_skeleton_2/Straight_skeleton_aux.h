@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -17,6 +17,40 @@
 //
 #ifndef CGAL_STRAIGHT_SKELETON_AUX_H
 #define CGAL_STRAIGHT_SKELETON_AUX_H 1
+
+//
+// The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
+//
+CGAL_BEGIN_NAMESPACE
+
+class Ref_counted_base
+{
+private:
+  mutable long mCount ;
+  Ref_counted_base( Ref_counted_base const &);
+  Ref_counted_base& operator=( Ref_counted_base const &);
+protected:
+  Ref_counted_base(): mCount(0) {}
+  virtual ~Ref_counted_base() {}
+public:
+    void AddRef() const { ++mCount; }
+    void Release() const
+      {
+        if( --mCount == 0 )
+          delete this;
+      }
+};
+
+CGAL_END_NAMESPACE
+
+namespace boost
+{
+inline void intrusive_ptr_add_ref( CGAL::Ref_counted_base const* p ) { p->AddRef(); }
+inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Release(); }
+} // namespace boost
+
+//
+// The rest of this header contains tracing, debugging and profiling stuff.
 
 #if defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE)
 #define CGAL_SLS_ENABLE_TRACE
@@ -39,6 +73,10 @@
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
+
+#  define CGAL_SLS_DEBUG_CODE(code) code
+#else
+#  define CGAL_SLS_DEBUG_CODE(code) 
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
@@ -65,9 +103,10 @@
 #  define CGAL_POLYOFFSET_SHOW(code)
 #endif
 
+#ifdef CGAL_SLS_ENABLE_SHOW
+
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_SLS_ENABLE_SHOW
 namespace SS_IO_AUX
 {
   class ScopedDrawing
@@ -128,31 +167,19 @@ namespace SS_IO_AUX
     {}
   } ;
 
-}
+} // namespace SS_IO_AUX
+
+CGAL_END_NAMESPACE
+
 #endif
 
-class Ref_counted_base
-{
-private:
-  mutable long mCount ;
-  Ref_counted_base( Ref_counted_base const &);
-  Ref_counted_base& operator=( Ref_counted_base const &);
-protected:
-  Ref_counted_base(): mCount(0) {}
-  virtual ~Ref_counted_base() {}
-public:
-    void AddRef() const { ++mCount; }
-    void Release() const
-      {
-        if( --mCount == 0 )
-          delete this;
-      }
-};
 
 #ifdef CGAL_SLS_PROFILING_ENABLED // Reserved use. DO NOT define this macro switch
 #  include<string>
 #  include<iostream>
 #  include<sstream>
+
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SLS_i_profiling
 {
@@ -164,12 +191,10 @@ template<> char const* kernel_type<Interval_nt_advanced>() { return "Interval" ;
 template<> char const* kernel_type< Quotient<MP_Float> >() { return "MP_Float" ; }
 template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;     }
 
-}
+} // CGAL_SLS_i_profiling
 
-//
-// Undefined identifier: register_predicate_failure ??
-// Then you mistakenly defined the macro switch CGAL_SLS_PROFILING_ENABLED, turn it off.
-//
+CGAL_END_NAMESPACE
+
 #define CGAL_SLS_ASSERT_PREDICATE_RESULT(expr,K,pred,error) \
         { \
           std::ostringstream predss ; \
@@ -185,15 +210,6 @@ template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;    
 #else
 #define CGAL_SLS_ASSERT_PREDICATE_RESULT(expr,K,pred,error)
 #endif
-
-CGAL_END_NAMESPACE
-
-namespace boost
-{
-inline void intrusive_ptr_add_ref( CGAL::Ref_counted_base const* p ) { p->AddRef(); }
-inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Release(); }
-} // namespace boost
-
 
 #undef CGAL_SLS_ENABLE_TRACE
 #undef CGAL_SLS_ENABLE_SHOW

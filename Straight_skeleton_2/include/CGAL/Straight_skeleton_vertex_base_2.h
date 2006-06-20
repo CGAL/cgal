@@ -198,7 +198,6 @@ public:
   bool is_skeleton() const { return  halfedge()->is_bisector() ; }
   bool is_contour () const { return !halfedge()->is_bisector() ; }
   
-//  Point_2&              point()          { return mP; }
   const Point_2&        point() const    { return mP; }
   
   Halfedge_handle       halfedge()       { return mHE; }
@@ -243,7 +242,6 @@ private:
     
   void set_halfedge( Halfedge_handle aHE)  { Base::set_halfedge(aHE) ; }
 } ;
-
 
 CGAL_END_NAMESPACE
 

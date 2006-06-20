@@ -37,8 +37,9 @@ public :
   typedef Traits_    Traits ;
   typedef Container_ Container ;
 
-  typedef typename Traits::FT FT ;
-
+  typedef typename Traits::Kernel K ;
+  
+  typedef typename Traits::FT      FT ;
   typedef typename Traits::Point_2 Point_2 ;
 
   typedef boost::shared_ptr<Container> ContainerPtr ;
@@ -54,8 +55,8 @@ private:
 
   typedef std::vector<Halfedge_const_handle> Halfedge_vector ;
 
-  typedef CGAL_SS_i::Edge   <FT> iEdge ;
-  typedef CGAL_SS_i::Triedge<FT> iTriedge ;
+  typedef typename Traits::Segment_2 Segment_2 ;
+  typedef typename Traits::Triedge_2 Triedge_2 ;
 
   bool handled_assigned( Halfedge_const_handle aH ) const
   {
@@ -76,19 +77,19 @@ private:
 
   void Visit( Halfedge_const_handle aBisector ) { mVisitedBisectors[aBisector->id()] = 1 ; }
 
-  inline iEdge CreateEdge ( Halfedge_const_handle aH ) const
+  inline Segment_2 CreateEdge ( Halfedge_const_handle aH ) const
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
     Point_2 t = aH->vertex()->point() ;
-    return Construct_ss_edge_2<Traits>(mTraits)()(s,t);
+    return K().construct_segment_2_object()(s,t);
   }
 
-  inline iTriedge CreateTriedge ( Halfedge_const_handle aE0
-                                , Halfedge_const_handle aE1
-                                , Halfedge_const_handle aE2
-                                ) const
+  inline Triedge_2 CreateTriedge ( Halfedge_const_handle aE0
+                                 , Halfedge_const_handle aE1
+                                 , Halfedge_const_handle aE2
+                                 ) const
   {
-    return Construct_ss_triedge_2<Traits>(mTraits)()(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
+    return Construct_ss_triedge_2(mTraits)(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
 
   Comparison_result Compare_offset_against_event_time( FT aT, Halfedge_const_handle aBisector, Halfedge_const_handle aNextBisector ) const
@@ -104,7 +105,7 @@ private:
     Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
     Halfedge_const_handle lBorderC = aNextBisector->opposite()->defining_contour_edge();
 
-    return Compare_offset_against_event_time_2<Traits>(mTraits)()(aT,CreateTriedge(lBorderA,lBorderB,lBorderC));
+    return Compare_offset_against_event_time_2(mTraits)(aT,CreateTriedge(lBorderA,lBorderB,lBorderC));
   }
 
   boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
@@ -116,7 +117,7 @@ private:
     Halfedge_const_handle lBorderA = aBisector->defining_contour_edge();
     Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
 
-    return Construct_offset_point_2<Traits>(mTraits)()(aT,CreateEdge(lBorderA),CreateEdge(lBorderB));
+    return Construct_offset_point_2(mTraits)(aT,CreateEdge(lBorderA),CreateEdge(lBorderB));
   }
 
   void ResetVisitedBisectorsMap();

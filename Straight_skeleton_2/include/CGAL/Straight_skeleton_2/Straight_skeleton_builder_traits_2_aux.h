@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -52,9 +52,9 @@ namespace CGAL_SS_i {
 
 using boost::optional ;
 
-// These aren't provided in Boost <=1.31
-template<class T> optional<T> make_optional( T const& v ) { return optional<T>(v) ; }
-template<class T> optional<T> make_optional( bool cond, T const& v ) { return cond ? optional<T>(v) : optional<T>() ; }
+// boost::make_optional is provided in Boost >= 1.34, but not before, so we define our own versions here.
+template<class T> optional<T> cgal_make_optional( T const& v ) { return optional<T>(v) ; }
+template<class T> optional<T> cgal_make_optional( bool cond, T const& v ) { return cond ? optional<T>(v) : optional<T>() ; }
 
 template<class K>
 struct Is_filtering_kernel
@@ -68,104 +68,83 @@ struct Is_filtering_kernel< Exact_predicates_inexact_constructions_kernel >
   typedef Tag_true type ;
 } ;
 
-template<class FT>
-class Rational // Permits zero denominator, unlike Quotient<>
+
+
+//
+// This number type is provided because unlike Quotient<> is allows you to create it
+// with a zero denominator.
+//
+template<class NT>
+class Rational
 {
   public:
 
-    Rational( FT aN, FT aD ) : mN(aN), mD(aD) {}
+    Rational( NT aN, NT aD ) : mN(aN), mD(aD) {}
 
-    FT n() const { return mN ; }
-    FT d() const { return mD ; }
+    NT n() const { return mN ; }
+    NT d() const { return mD ; }
 
-    Quotient<FT> to_quotient() const { return Quotient<FT>(mN,mD) ; }
+    CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(mN,mD) ; }
 
   private:
 
-    FT mN, mD ;
+    NT mN, mD ;
 } ;
 
-template<class FT>
-class Vertex
+
+//
+// A straight skeleton event is defined by 3 oriented straight line segments .
+// Such a triple of segments is encapsulated in this record.
+//
+// NOTE: A triedge is not suffixed C2 because it holds 3 segments which can be cartesian or homogeneous
+//
+template<class K>
+class Triedge_2
 {
   public:
 
-    Vertex( FT aX, FT aY ) : mX(aX), mY(aY) {}
+    typedef typename K::Segment_2 Segment_2 ;
 
-    FT x() const { return mX ; }
-    FT y() const { return mY ; }
+    Triedge_2( Segment_2 const& aE0, Segment_2 const& aE1, Segment_2 const& aE2 ) : mE0(aE0), mE1(aE1), mE2(aE2) {}
 
-   friend std::ostream& operator << ( std::ostream& os, Vertex<FT> const& aV )
-   {
-     return os << "Vertex(" << to_double(aV.x()) << ',' << to_double(aV.y()) << ')';
-   }
+    Segment_2 const& e0() const { return mE0 ; }
+    Segment_2 const& e1() const { return mE1 ; }
+    Segment_2 const& e2() const { return mE2 ; }
 
-  private:
+    Segment_2 const& e( int idx ) const { return idx == 0 ? mE0 : idx == 1 ? mE1 : mE2 ; }
 
-    FT mX, mY ;
-} ;
-
-template<class FT>
-class Edge
-{
-  public:
-
-    typedef CGAL_SS_i::Vertex<FT> Vertex ;
-
-    Edge( Vertex const& aS, Vertex const& aT ) : mS(aS), mT(aT) {}
-
-    Vertex const& s() const { return mS ; }
-    Vertex const& t() const { return mT ; }
-
-   friend std::ostream& operator << ( std::ostream& os, Edge<FT> const& aE )
-   {
-     return os << "Edge(" << aE.s() << ',' << aE.t() << ')' ;
-   }
-
-  private:
-
-    Vertex mS, mT ;
-} ;
-
-template<class FT>
-class Triedge
-{
-  public:
-
-    typedef CGAL_SS_i::Edge<FT> Edge ;
-
-    Triedge( Edge const& aE0, Edge const& aE1, Edge const& aE2 ) : mE0(aE0), mE1(aE1), mE2(aE2) {}
-
-    Edge const& e0() const { return mE0 ; }
-    Edge const& e1() const { return mE1 ; }
-    Edge const& e2() const { return mE2 ; }
-
-    Edge const& e( int idx ) const { return idx == 0 ? mE0 : idx == 1 ? mE1 : mE2 ; }
-
-    friend std::ostream& operator << ( std::ostream& os, Triedge<FT> const& aTriedge )
+    friend std::ostream& operator << ( std::ostream& os, Triedge_2<K> const& aTriedge )
     {
       return os << "Triedge(" << aTriedge.e0() << "\n," << aTriedge.e1() << "\n," << aTriedge.e2() << ')' ;
     }
 
   private:
 
-    Edge mE0, mE1, mE2 ;
+    Segment_2 mE0, mE1, mE2 ;
 } ;
 
-template<class FT>
-class SortedTriedge : public CGAL_SS_i::Triedge<FT>
+//
+// Most calculations need to know if the are collinear edges in a triedge.
+// To that effect, a triedge is "sorted" such that collinear edges, if any, are stored in e0 and e1; with e2
+// being the non-collinear edge.
+// The total number of collinear edges is also recorded. It cannot be >= 3.
+//
+// A SortedTriedge is "indeterminate" if the collinearity of the edges couldn't be determined reliably.
+//
+template<class K>
+class Sorted_triedge_2 : public Triedge_2<K>
 {
   public:
 
-    typedef CGAL_SS_i::Triedge<FT> Base ;
+    typedef Triedge_2<K> Base ;
 
-    typedef typename Base::Edge Edge ;
+    typedef typename Base::Segment_2 Segment_2 ;
 
-    SortedTriedge( Edge const& aE0
-                 , Edge const& aE1
-                 , Edge const& aE2
-                 , int         aCollinearCount
-                 )
+    Sorted_triedge_2( Segment_2 const& aE0
+                    , Segment_2 const& aE1
+                    , Segment_2 const& aE2
+                    , int              aCollinearCount
+                   )
      : Base(aE0,aE1,aE2)
      , mCCount(aCollinearCount)
      {}
@@ -179,41 +158,20 @@ class SortedTriedge : public CGAL_SS_i::Triedge<FT>
     int mCCount ;
 } ;
 
-template<class FT>
-class Line
-{
-  public:
-
-    Line( FT aA, FT aB, FT aC ) : mA(aA), mB(aB), mC(aC)
-    {
-    }
-
-    FT a() const { return mA ; }
-    FT b() const { return mB ; }
-    FT c() const { return mC ; }
-
-  private:
-
-    FT mA,mB,mC ;
-} ;
-
 template<class K>
 struct Functor_base_2
 {
-  typedef typename K::FT      FT ;
-  typedef typename K::Point_2 Point_2 ;
-
-  typedef CGAL_SS_i::Vertex       <FT> Vertex ;
-  typedef CGAL_SS_i::Edge         <FT> Edge   ;
-  typedef CGAL_SS_i::Triedge      <FT> Triedge ;
-  typedef CGAL_SS_i::SortedTriedge<FT> SortedTriedge ;
-
+  typedef typename K::FT        FT ;
+  typedef typename K::Point_2   Point_2 ;
+  typedef typename K::Segment_2 Segment_2 ;
+  
+  typedef Triedge_2<K>        Triedge_2 ;
+  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
 };
 
 template<class Converter>
-struct Triedge_converter : Converter
+struct SS_converter : Converter
 {
-
   typedef typename Converter::Source_kernel Source_kernel;
   typedef typename Converter::Target_kernel Target_kernel;
 
@@ -223,31 +181,27 @@ struct Triedge_converter : Converter
   typedef typename Source_kernel::Point_2 Source_point_2 ;
   typedef typename Target_kernel::Point_2 Target_point_2 ;
 
-  typedef CGAL_SS_i::Vertex<SFT> Source_vertex ;
-  typedef CGAL_SS_i::Vertex<TFT> Target_vertex ;
+  typedef typename Source_kernel::Segment_2 Source_segment_2 ;
+  typedef typename Target_kernel::Segment_2 Target_segment_2 ;
 
-  typedef CGAL_SS_i::Edge<SFT> Source_edge ;
-  typedef CGAL_SS_i::Edge<TFT> Target_edge ;
+  typedef Triedge_2<Source_kernel> Source_triedge_2 ;
+  typedef Triedge_2<Target_kernel> Target_triedge_2 ;
 
-  typedef CGAL_SS_i::Triedge<SFT> Source_triedge ;
-  typedef CGAL_SS_i::Triedge<TFT> Target_triedge ;
+  TFT cvtn(SFT n) const  { return this->Converter::operator()(n); }
 
-  TFT cvtn(SFT n) const  { return Converter::operator()(n); }
+  Target_point_2 cvtp(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
 
-  Target_vertex cvtv(Source_vertex const& v) const  { return Target_vertex( cvtn(v.x()), cvtn(v.y()) ); }
+  Target_segment_2 cvts( Source_segment_2 const& e) const { return Target_segment_2(cvtp(e.source()), cvtp(e.target()) ) ; }
+  
+  TFT              operator()(SFT n) const { return cvtn(n) ; }
 
-  Target_point_2 cvtp(Source_point_2 const& p) const  { return Converter::operator()(p); }
+  Target_point_2   operator()( Source_point_2 const& p) const { return cvtp(p) ; }
 
-  TFT operator()(SFT n) const { return cvtn(n) ; }
-
-  Target_point_2 operator()( Source_point_2 const& p) const { return cvtp(p) ; }
-
-  Target_triedge  operator()( Source_triedge const& s) const
+  Target_segment_2 operator()( Source_segment_2 const& s) const { return cvts(s); }
+  
+  Target_triedge_2 operator()( Source_triedge_2 const& t) const
   {
-    return Target_triedge( Target_edge(cvtv(s.e0().s()), cvtv(s.e0().t()) )
-                         , Target_edge(cvtv(s.e1().s()), cvtv(s.e1().t()) )
-                         , Target_edge(cvtv(s.e2().s()), cvtv(s.e2().t()) )
-                         ) ;
+    return Target_triedge_2(cvts(t.e0()), cvts(t.e1()), cvts(t.e2()) ) ;
   }
 };
 
@@ -264,13 +218,9 @@ struct Triedge_converter : Converter
 //
 #define CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(functor) \
         template<class K> \
-        class functor \
+        typename K :: functor functor ( K const& aK ) \
         { \
-          K const& mK; \
-          public: \
-            typedef typename K :: functor type ; \
-            functor( K const& aK ) : mK(aK) {} \
-            type operator()() const { return mK.get((type const*)0); } \
+          return aK.get((typename K :: functor const*)0);  \
         }
 
 
