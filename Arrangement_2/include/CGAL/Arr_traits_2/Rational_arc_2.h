@@ -366,9 +366,102 @@ public:
     // as continuous.
     _info = (_info | IS_VALID);
   }
+
+  /*!
+   * Constructor of a ray of a rational function, defined by y = p(x)/q(x),
+   * for x_s <= x if the ray is directed to the right, or for x_s >= x if it
+   * is directed to the left.
+   * \param pcoeffs The rational coefficients of the polynomial p(x).
+   * \param qcoeffs The rational coefficients of the polynomial q(x).
+   * \param x_s The x-coordinate of the source point.
+   * \param dir_right Is the ray directed to the right (to +oo)
+   *                  or to the left (to -oo).
+   */
+  _Rational_arc_2 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
+                   const Algebraic& x_s, bool dir_right) :
+    _info (0)
+  {
+    // Mark that the target points of the polynomial is unbounded.
+    if (dir_right)
+    {
+      _info = (_info | TRG_AT_X_PLUS_INFTY);
+      _info = (_info | IS_DIRECTED_RIGHT);
+    }
+    else
+    {
+      _info = (_info | TRG_AT_X_MINUS_INFTY);
+    }
+
+    // Set the numerator and denominator polynomials.
+    Nt_traits    nt_traits;
+    const bool   valid = 
+      nt_traits.construct_polynomials (&(pcoeffs[0]),
+					pcoeffs.size() - 1,
+                                       &(qcoeffs[0]),
+					qcoeffs.size() - 1,
+                                       _numer, _denom);
+
+    CGAL_precondition_msg (valid,
+                           "The denominator polynomial must not be 0.");
+    if (! valid)
+      return;
+
+    // The source point has a bounded x-coordinate. Set the source point
+    // and check if it lies next to a pole.
+    if (CGAL::sign (nt_traits.evaluate_at (_denom, x_s)) != CGAL::ZERO)
+    {
+      // We have a nomral endpoint.
+      _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) /
+                     nt_traits.evaluate_at (_denom, x_s));
+    }
+    else
+    {
+      // The y-coodinate is unbounded, but we can set its sign.
+      _ps = Point_2 (x_s, 0);
+      
+      std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x_s);
+      const CGAL::Sign                   sign_s = 
+        (dir_right ? signs.second : signs.first);
+
+      if (sign_s == CGAL::NEGATIVE)
+        _info = (_info | SRC_AT_Y_MINUS_INFTY);
+      else
+        _info = (_info | SRC_AT_Y_PLUS_INFTY);
+    }
+
+    // Set the properties of the target.
+    Algebraic           y0;
+
+    if (dir_right)
+    {
+      // The target point is at x = +oo.
+      const Infinity_type inf_t = _analyze_at_plus_infinity (_numer, _denom,
+                                                             y0);
+
+      if (inf_t == MINUS_INFINITY)
+        _info = (_info | TRG_AT_Y_MINUS_INFTY);
+      else if (inf_t == PLUS_INFINITY)
+        _info = (_info | TRG_AT_Y_PLUS_INFTY);
+      else // if (inf_t == FINITE)
+        _pt = Point_2 (0, y0);
+    }
+    else
+    {
+      // The target point is at x = -oo.
+      const Infinity_type inf_t = _analyze_at_minus_infinity (_numer, _denom,
+                                                              y0);
+
+      if (inf_t == MINUS_INFINITY)
+        _info = (_info | TRG_AT_Y_MINUS_INFTY);
+      else if (inf_t == PLUS_INFINITY)
+        _info = (_info | TRG_AT_Y_PLUS_INFTY);
+      else // if (inf_t == FINITE)
+        _pt = Point_2 (0, y0);
+    }
+  }
   
   /*!
-   * Constructor of a polynomial arc, defined by y = p(x)/q(x), 
+   * Constructor of a bounded rational arc, defined by y = p(x)/q(x), 
    * where: x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
@@ -826,7 +919,7 @@ public:
     int               mult1 = 1;
     Polynomial        p_der = nt_traits.derive (_denom);
 
-    while (CGAL:Sign (nt_traits.evaluate_at (p_der, x1)) == CGAL::ZERO)
+    while (CGAL::sign (nt_traits.evaluate_at (p_der, x1)) == CGAL::ZERO)
     {
       mult1++;
       p_der = nt_traits.derive (p_der);
@@ -835,7 +928,7 @@ public:
     int               mult2 = 1;
 
     p_der = nt_traits.derive (arc._denom);
-    while (CGAL:Sign (nt_traits.evaluate_at (p_der, x1)) == CGAL::ZERO)
+    while (CGAL::sign (nt_traits.evaluate_at (p_der, x1)) == CGAL::ZERO)
     {
       mult2++;
       p_der = nt_traits.derive (p_der);
@@ -857,11 +950,49 @@ public:
       }
     }
 
-    // The pole multiplicities are the same.
-    // RWRW - handle this case !!!
-    CGAL_assertion (false);
+    // The pole multiplicities are the same. If we denote the two rational
+    // functions we have as P1(x)/Q1(x) and P2(X)/Q2(x), then we can divide
+    // them (namely look at P1*Q2(x) / P2*Q1(x)) and normalize the result.
+    // As Q1(x') = Q2(x') = 0 (where x' is our current pole), the zeros
+    // cancel themselves and we consider the value of our function at x'.
+    Polynomial     P = _numer * arc._denom;
+    int            deg_p = nt_traits.degree(P);
+    Rat_vector     coeffs_p (deg_p + 1);
+    Polynomial     Q = arc._numer * _denom;
+    int            deg_q = nt_traits.degree(Q);
+    Rat_vector     coeffs_q (deg_q + 1);
+    int            k;
 
-    return (EQUAL);
+    for (k = 0; k <= deg_p; k++)
+      coeffs_p[k] = Rational (nt_traits.get_coefficient (P, k));
+
+    for (k = 0; k <= deg_q; k++)
+      coeffs_q[k] = Rational (nt_traits.get_coefficient (Q, k));
+
+    // Evaluate the normalized function at the pole and determine the
+    // comparison result accordingly.
+    Polynomial         norm_p, norm_q;
+    nt_traits.construct_polynomials (&(coeffs_p[0]), deg_p,
+                                     &(coeffs_q[0]), deg_q,
+                                     norm_p, norm_q);
+
+    const Algebraic    val1 = nt_traits.evaluate_at (norm_p, x1);
+    const Algebraic    val2 = nt_traits.evaluate_at (norm_q, x1);
+    Comparison_result  val_res = CGAL::compare (val1, val2);
+      
+    CGAL_assertion (CGAL::sign (val1) == CGAL::sign (val2));
+    
+    if (val_res == EQUAL)
+    {
+      CGAL_assertion (_has_same_base (arc));
+      return (EQUAL);
+    }
+
+    if (ind1 == MIN_END)
+      // Swap the comparison result.
+      val_res = (val_res == LARGER ? SMALLER : LARGER);
+
+    return (val_res);
   }
 
   /*!
@@ -1147,41 +1278,162 @@ public:
 
     if (_has_same_base (arc))
     {
-      // RWRW - HANDLE INTERSECTIONS !!!
-      return (oi);
+      Alg_kernel       ker;
 
-      // Let p1 be the rightmost of the two left endpoints and let p2 be the 
-      // leftmost of the two right endpoints.
-      Alg_kernel   ker;
+      // Get the left and right endpoints of (*this) and their information
+      // bits.
+      const Point_2&   left1 = (is_directed_right() ? _ps : _pt);
+      const Point_2&   right1 = (is_directed_right() ? _pt : _ps);
+      int              info_left1, info_right1;
 
-      const Point_2&    p1 = 
-	(ker.compare_x_2_object() (left(), arc.left()) == LARGER) ?
-	left() : arc.left();
-      const Point_2&    p2 = 
-	(ker.compare_x_2_object() (right(), arc.right()) == SMALLER) ?
-	right() : arc.right();
-      Comparison_result res = ker.compare_x_2_object() (p1, p2);
-
-      if (res == SMALLER)
+      if (is_directed_right())
       {
-	// If the range [p1, p2] is non-trivial, we have an overlapping
-	// segment.
-	Self      overlap_arc (*this);
-
-	overlap_arc._ps = p1;
-	overlap_arc._pt = p2;
-
-	*oi = make_object (overlap_arc);
-	++oi;
+        info_left1 = (_info & SRC_INFO_BITS);
+        info_right1 = ((_info & TRG_INFO_BITS) >> 4);
       }
-      else if (res == EQUAL)
+      else
       {
-	// We have a single overlapping point:
-	Intersection_point_2  ip (p1, 0);
+        info_right1 = (_info & SRC_INFO_BITS);
+        info_left1 = ((_info & TRG_INFO_BITS) >> 4);
+      }
+
+      // Get the left and right endpoints of the other arc and their
+      // information bits.
+      const Point_2&   left2 = (arc.is_directed_right() ? arc._ps : arc._pt);
+      const Point_2&   right2 = (arc.is_directed_right() ? arc._pt : arc._ps);
+      int              info_left2, info_right2;
+
+      if (arc.is_directed_right())
+      {
+        info_left2 = (arc._info & SRC_INFO_BITS);
+        info_right2 = ((arc._info & TRG_INFO_BITS) >> 4);
+      }
+      else
+      {
+        info_right2 = (arc._info & SRC_INFO_BITS);
+        info_left2 = ((arc._info & TRG_INFO_BITS) >> 4);
+      }
+
+      // Locate the left curve-end with larger x-coordinate.
+      bool             at_minus_infinity = false;
+      Infinity_type    inf_l1 = left_infinite_in_x();
+      Infinity_type    inf_l2 = arc.left_infinite_in_x();
+      Point_2          p_left;
+      int              info_left;
+
+      if (inf_l1 == FINITE && inf_l2 == FINITE)
+      {
+        // Let p_left be the rightmost of the two left endpoints.
+        if (ker.compare_x_2_object() (left1, left2) == LARGER)
+        {
+          p_left = left1;
+          info_left = info_left1;
+        }
+        else
+        {
+          p_left = left2;
+          info_left = info_left2;
+        }
+      }
+      else if (inf_l1 == FINITE)
+      {
+        // Let p_left be the left endpoint of (*this).
+        p_left = left1;
+        info_left = info_left1;
+      }
+      else if (inf_l2 == FINITE)
+      {
+        // Let p_left be the left endpoint of the other arc.
+        p_left = left2;
+        info_left = info_left2;
+      }
+      else
+      {
+        // Both arcs are defined at x = -oo.
+        at_minus_infinity = true;
+        info_left = info_left1;
+      }
+
+      // Locate the right curve-end with smaller x-coordinate.
+      bool             at_plus_infinity = false;
+      Infinity_type    inf_r1 = right_infinite_in_x();
+      Infinity_type    inf_r2 = arc.right_infinite_in_x();
+      Point_2          p_right;
+      int              info_right;
+
+      if (inf_r1 == FINITE && inf_r2 == FINITE)
+      {
+        // Let p_right be the rightmost of the two right endpoints.
+        if (ker.compare_x_2_object() (right1, right2) == SMALLER)
+        {
+          p_right = right1;
+          info_right = info_right1;
+        }
+        else
+        {
+          p_right = right2;
+          info_right = info_right2;
+        }
+      }
+      else if (inf_r1 == FINITE)
+      {
+        // Let p_right be the right endpoint of (*this).
+        p_right = right1;
+        info_right = info_right1;
+      }
+      else if (inf_r2 == FINITE)
+      {
+        // Let p_right be the right endpoint of the other arc.
+        p_right = right2;
+        info_right = info_right2;
+      }
+      else
+      {
+        // Both arcs are defined at x = +oo.
+        at_plus_infinity = true;
+        info_right = info_right2;
+      }
+
+      // Check the case of two bounded (in x) ends.
+      if (! at_minus_infinity && ! at_plus_infinity)
+      {
+        Comparison_result res = ker.compare_x_2_object() (p_left, p_right);
+
+        if (res == LARGER)
+        {
+          // The x-range of the overlap is empty, so there is no overlap.
+          return (oi);
+        }
+        else if (res == EQUAL)
+        {
+          // We have a single overlapping point. Just make sure this point
+          // is not at y = -/+ oo.
+          if (info_left && (SRC_AT_Y_MINUS_INFTY | SRC_AT_Y_PLUS_INFTY) == 0 &&
+              info_right && (SRC_AT_Y_MINUS_INFTY | SRC_AT_Y_PLUS_INFTY) == 0)
+          {
+            Intersection_point_2  ip (p_left, 0);
 	
-	*oi = make_object (ip);
-	++oi;
+            *oi = make_object (ip);
+            ++oi;
+          }
+
+          return (oi);
+        }
       }
+
+      // Create the overlapping portion of the rational arc by properly setting
+      // the source (left) and target (right) endpoints and their information
+      // bits.
+      Self      overlap_arc (*this);
+
+      overlap_arc._ps = p_left;
+      overlap_arc._pt = p_right;
+
+      overlap_arc._info = ((info_left) | (info_right << 4) |
+                           IS_DIRECTED_RIGHT | IS_CONTINUOUS | IS_VALID);
+
+      *oi = make_object (overlap_arc);
+      ++oi;
 
       return (oi);
     }
