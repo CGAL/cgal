@@ -46,7 +46,8 @@ all:            \
                 read_mesh$(EXE_EXT) \
                 slivers_exuder$(EXE_EXT) \
                 cgal_to_medit$(EXE_EXT) \
-                stat_mesh$(EXE_EXT) 
+                stat_mesh$(EXE_EXT) \
+		test_off.C 
 
 cgal_to_medit$(EXE_EXT): cgal_to_medit$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)cgal_to_medit cgal_to_medit$(OBJ_EXT) $(LDFLAGS)
@@ -87,6 +88,9 @@ slivers_exuder$(EXE_EXT): slivers_exuder$(OBJ_EXT)
 stat_mesh$(EXE_EXT): stat_mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)stat_mesh stat_mesh$(OBJ_EXT) $(LDFLAGS)
 
+test_off$(EXE_EXT): test_off$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_off test_off$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    distribution.clean \
                    Gd_displayer.clean \
@@ -100,7 +104,8 @@ clean: \
                    stat_mesh.clean \
                    display_distribution.clean \
                    off_to_ghs.clean \
-                   off_to_medit.clean
+                   off_to_medit.clean \
+		   test_off.clean
 
 
 #---------------------------------------------------------------------#

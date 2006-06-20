@@ -12,6 +12,7 @@ Here is the list of tools:
     read_mesh
     slivers_exuder
     stat_mesh
+    test_off
 
 Details follows...
 
@@ -178,3 +179,9 @@ Usage:
   0<=bound<=1.0 is a bound on pumping process.
 
 Uses utils.h and weighted_types.h.
+
+test_off
+--------
+test if an OFF file described a manifold surface or not
+from the combinatorial point of view :
+more precisely it tests if any edge is incident to two faces
