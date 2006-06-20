@@ -737,7 +737,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     (_locate_around_vertex (_vertex(prev->target()),
                             cv, MIN_END) == _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
-     " cv must succeeds the curve of prev.");
+     " cv must succeed the curve of prev.");
 
   // Check if cv's right end lies at infinity, and create a vertex v2 that
   // corresponds to this end.
@@ -827,7 +827,7 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
     (_locate_around_vertex (_vertex(prev->target()),
                             cv, MIN_END) == _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
-     " cv must succeeds the curve of prev.");
+     " cv must succeed the curve of prev.");
 
   DHalfedge        *prev1 = _halfedge (prev);
 
@@ -1038,7 +1038,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     (_locate_around_vertex (_vertex(prev->target()),
                             cv, MAX_END) == _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
-     "cv must succeeds the curve of prev.");
+     "cv must succeed the curve of prev.");
 
   // Check if cv's left end lies at infinity, and create a vertex v1 that
   // corresponds to this end.
@@ -1128,7 +1128,7 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
     (_locate_around_vertex (_vertex(prev->target()),
                             cv, MAX_END) == _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
-     " cv must succeeds the curve of prev.");
+     " cv must succeed the curve of prev.");
 
   DHalfedge        *prev2 = _halfedge (prev);
 
@@ -2203,7 +2203,7 @@ bool Arrangement_2<Traits,Dcel>::_is_on_fictitious_edge
       const X_monotone_curve_2&  cv2 = _get_curve (v2, v_ind);
       res2 = traits->compare_x_2_object() (cv, ind, cv2, v_ind);
 
-      if (res2 != EQUAL)
+      if (res2 == EQUAL)
       {
         eq_target = true;
         return (true);

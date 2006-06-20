@@ -567,6 +567,22 @@ public:
     return (_ps);
   }
 
+  /*! Get the x-coordinate of the source point. */
+  Algebraic source_x () const
+  {
+    CGAL_precondition ((_info & IS_VALID) != 0 &&
+                       source_infinite_in_x() == FINITE);
+    return (_ps.x());
+  }
+
+  /*! Get the y-coordinate of the source point. */
+  Algebraic source_y () const
+  {
+    CGAL_precondition ((_info & IS_VALID) != 0 &&
+                       source_infinite_in_y() == FINITE);
+    return (_ps.y());
+  }
+
   /*! Get the target point. */
   const Point_2& target () const
   {
@@ -574,6 +590,22 @@ public:
                        target_infinite_in_x() == FINITE &&
                        target_infinite_in_y() == FINITE);
     return (_pt);
+  }
+
+  /*! Get the x-coordinate of the target point. */
+  Algebraic target_x () const
+  {
+    CGAL_precondition ((_info & IS_VALID) != 0 &&
+                       target_infinite_in_x() == FINITE);
+    return (_pt.x());
+  }
+
+  /*! Get the y-coordinate of the target point. */
+  Algebraic target_y () const
+  {
+    CGAL_precondition ((_info & IS_VALID) != 0 &&
+                       target_infinite_in_y() == FINITE);
+    return (_pt.y());
   }
 
   /*! Check if the x-coordinate of the left point is infinite. */
@@ -664,36 +696,6 @@ public:
     // has the same x-coordinate as one of the endpoints.
     CGAL_precondition (is_continuous());
     CGAL_precondition (_is_in_true_x_range (p.x()));
-
-    /* RWRW - REMOVE THIS (?)
-    bool          eq_src, eq_trg;
-    const bool    is_in_x_range = _is_in_x_range (p.x(), eq_src, eq_trg);
-
-    CGAL_precondition (is_in_x_range);
-    if (eq_src)
-    {
-      // Compare p with the source point. Note that this point may have
-      // an unbounded y-coordinate.
-      if ((_info & SRC_AT_Y_MINUS_INFTY) != 0)
-        return (LARGER);
-      else if ((_info & SRC_AT_Y_PLUS_INFTY) != 0)
-        return (SMALLER);
-
-      return (CGAL::compare (p.y(), _ps.y()));
-    }
-    else if (eq_trg)
-    {
-      // Compare p with the target point. Note that this point may have
-      // an unbounded y-coordinate.
-      if ((_info & TRG_AT_Y_MINUS_INFTY) != 0)
-        return (LARGER);
-      else if ((_info & TRG_AT_Y_PLUS_INFTY) != 0)
-        return (SMALLER);
-
-      return (CGAL::compare (p.y(), _pt.y()));
-
-    }
-    */
 
     // Evaluate the rational function at x(p), which lies at the interior
     // of the x-range.
@@ -804,7 +806,10 @@ public:
       return (LARGER);
 
     // RWRW: Handle this comparison:
-    CGAL_assertion (ind1 != ind2);
+    //std::cout << "cv1 = " << *this << " (" << ind1 << ')' << std::endl;
+    //std::cout << "cv2 = " << arc << " (" << ind2 << ')' << std::endl;
+
+    //CGAL_assertion (ind1 != ind2);
 
     return (EQUAL);
   }
@@ -839,10 +844,10 @@ public:
     Nt_traits         nt_traits;
     Polynomial        pnum1 = this->_numer;
     Polynomial        pden1 = this->_denom;
-    const bool        simple_poly1 = nt_traits.degree (pden1);
+    const bool        simple_poly1 = (nt_traits.degree (pden1) <= 0);
     Polynomial        pnum2 = arc._numer;
     Polynomial        pden2 = arc._denom;
-    const bool        simple_poly2 = nt_traits.degree (pden2);
+    const bool        simple_poly2 = (nt_traits.degree (pden2) <= 0);
     int               max_mult;
     Algebraic         d1, d2;
     Comparison_result res;
@@ -1673,7 +1678,8 @@ private:
   std::pair<CGAL::Sign, CGAL::Sign>
   _analyze_near_pole (const Algebraic& x0) const
   {
-    // RWRW: Deal with this case as well:
+    // Note that as the rational function is always normalized, the numerator
+    // value is non-zero at the pole x0.
     Nt_traits         nt_traits;
     const Algebraic   numer_at_x0 = nt_traits.evaluate_at (_numer, x0);
     const CGAL::Sign  numer_sign = CGAL::sign (numer_at_x0);
@@ -1800,9 +1806,29 @@ std::ostream& operator<< (std::ostream& os,
                           const _Rational_arc_2<Alg_kernel, Nt_traits>& arc)
 {
   // Output the supporting rational function and the x-range of the arc.
-  os << "y = (" << arc.numerator() << ") / (" << arc.denominator() << ") : ["
-     << CGAL::to_double(arc.source().x()) << " --> " 
-     << CGAL::to_double(arc.target().x()) << "]";
+  os << "y = (" << arc.numerator() << ") / (" << arc.denominator() << ") on ";
+
+  Infinity_type      inf_x = arc.source_infinite_in_x();
+  if (inf_x == MINUS_INFINITY) 
+    os << "(-oo";
+  else if (inf_x == PLUS_INFINITY)
+    os << "(+oo";
+  else if (arc.source_infinite_in_y() != FINITE)
+    os << '(' << arc.source_x();
+  else
+    os << '[' << arc.source().x();
+ 
+  os << ", ";
+  inf_x = arc.target_infinite_in_x();
+
+  if (inf_x == MINUS_INFINITY) 
+    os << "-oo)";
+  else if (inf_x == PLUS_INFINITY)
+    os << "+oo)";
+  else if (arc.target_infinite_in_y() != FINITE)
+    os << arc.target_x() << ')';
+  else
+    os << arc.target().x() << ']';
 
   return (os);
 }
