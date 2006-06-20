@@ -1,3 +1,7 @@
+20 June 2006 Fernando Cacciola
+- Bug fixes from user report (see pseudo_split_5.poly)
+- Vertex-events replaced by Pseudo-split events
+
 26 March 2006 Fernando Cacciola
 - Even more fixes for VC8
 - More uses of the straight skeleton added to the docs

@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -36,17 +36,17 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
                                                                   , Traits const&        aTraits
                                                                   )
 {
-  typedef typename Traits::Kernel  Kernel ;
-  typedef typename Traits::Point_2 Point_2 ;
-  typedef typename Traits::FT      FT ;
-  
-  typedef typename Traits::Construct_ss_edge_2::Edge Edge ;
+  typedef typename Traits::Kernel    Kernel ;
+  typedef typename Traits::FT        FT ;
+  typedef typename Traits::Point_2   Point_2 ;
+  typedef typename Traits::Segment_2 Segment_2 ;
   
   Kernel kernel ;
   
-  typename Kernel::Equal_2                    equal            = kernel.equal_2_object();
-  typename Kernel::Collinear_2                collinear        = kernel.collinear_2_object();
-  typename Kernel::Compute_squared_distance_2 squared_distance = kernel.compute_squared_distance_2_object();
+  typename Kernel::Equal_2                    equal             = kernel.equal_2_object();
+  typename Kernel::Collinear_2                collinear         = kernel.collinear_2_object();
+  typename Kernel::Compute_squared_distance_2 squared_distance  = kernel.compute_squared_distance_2_object();
+  typename Kernel::Construct_segment_2        construct_segment = kernel.construct_segment_2_object();
   
   typedef boost::optional<Point_2> OptionalPoint_2 ;
   
@@ -63,10 +63,10 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
     
     if ( !equal(*lPrev,*lCurr) && !equal(*lCurr,*lNext) && !collinear(*lPrev,*lCurr,*lNext) )
     {
-      Edge lLEdge = Construct_ss_edge_2<Traits>(aTraits)()(*lPrev,*lCurr);
-      Edge lREdge = Construct_ss_edge_2<Traits>(aTraits)()(*lCurr,*lNext);
+      Segment_2 lLEdge = construct_segment(*lPrev,*lCurr);
+      Segment_2 lREdge = construct_segment(*lCurr,*lNext);
       
-      OptionalPoint_2 lP = Construct_offset_point_2<Traits>(aTraits)()(aOffset,lLEdge,lREdge);
+      OptionalPoint_2 lP = Construct_offset_point_2(aTraits)(aOffset,lLEdge,lREdge);
      
       if ( !lP )
       {
@@ -74,7 +74,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
         break ;
       }
        
-      FT lSDist = squared_distance(*lCurr,*lP);
+      FT lSDist = CGAL::squared_distance(*lCurr,*lP);
  
       if ( ! CGAL_NTS is_finite(lSDist) ) 
       {

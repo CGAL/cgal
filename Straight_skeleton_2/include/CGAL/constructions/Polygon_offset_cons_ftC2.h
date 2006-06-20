@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -25,22 +25,35 @@ CGAL_BEGIN_NAMESPACE
 namespace CGAL_SS_i
 {
 
-// Givenan offset distance 't' and 2 oriented lines l0:(a0,b0,c0), l1:(a1,b1,c1) returns the coordinates (x,y)
+// Given an offset distance 't' and 2 oriented line segments e0 and e1, returns the coordinates (x,y)
 // of the intersection of their offsets at the given distance.
 //
 // PRECONDITIONS:
 // The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at the given distance do intersect in a single point.
-
-template<class FT>
-optional< Vertex<FT> > construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge<FT> const& e1 )
+//
+// POSTCONDITION: In case of overflow an empty optional is returned.
+//
+template<class K>
+optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT      t
+                                                , Segment_2<K> const& e0
+                                                , Segment_2<K> const& e1    
+                                                )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
+  
+  typedef optional<Point_2> Optional_point_2 ;
+  typedef optional<Line_2>  Optional_line_2 ;
+  
   FT x(0.0),y(0.0) ;
 
-  optional< Line<FT> > l0 = compute_normalized_line_ceoffC2(e0) ;
-  optional< Line<FT> > l1 = compute_normalized_line_ceoffC2(e1) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(e0) ;
+  Optional_line_2 l1 = compute_normalized_line_ceoffC2(e1) ;
 
-  optional< Vertex<FT> > q = compute_oriented_midpoint(e0,e1);
+  Optional_point_2 q = compute_oriented_midpoint(e0,e1);
   
   bool ok = false ;
   
@@ -68,7 +81,7 @@ optional< Vertex<FT> > construct_offset_pointC2 ( FT t, Edge<FT> const& e0, Edge
     }
   }
 
-  return make_optional(ok,Vertex<FT>(x,y)) ;
+  return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
 
 } // namespace CGAL_SS_i

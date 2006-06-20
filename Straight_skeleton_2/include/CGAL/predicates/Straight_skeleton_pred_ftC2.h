@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -28,48 +28,59 @@ CGAL_BEGIN_NAMESPACE
 namespace CGAL_SS_i
 {
 
-template<class FT>
-Uncertain<bool> certified_collinearC2( Vertex<FT> const& p, Vertex<FT> const& q, Vertex<FT> const& r )
+template<class K>
+Uncertain<bool> certified_collinearC2( Point_2<K> const& p
+                                     , Point_2<K> const& q
+                                     , Point_2<K> const& r 
+                                     )
 {
   return CGAL_NTS certified_is_equal( ( q.x() - p.x() ) * ( r.y() - p.y() )
                                     , ( r.x() - p.x() ) * ( q.y() - p.y() )
                                     );
 }
 
-template<class FT>
-Uncertain<bool> are_edges_collinear( Edge<FT> const& e0, Edge<FT> const& e1 )
+template<class K>
+Uncertain<bool> are_edges_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
-  return CGAL_NTS logical_and(  certified_collinearC2(e0.s(),e0.t(),e1.s())
-                             ,  certified_collinearC2(e0.s(),e0.t(),e1.t())
+  return CGAL_NTS logical_and(  certified_collinearC2(e0.source(),e0.target(),e1.source())
+                             ,  certified_collinearC2(e0.source(),e0.target(),e1.target())
                              ) ;
 }
 
-template<class FT>
-Uncertain<bool> are_edges_parallel( Edge<FT> const& e0, Edge<FT> const& e1 )
+template<class K>
+Uncertain<bool> are_edges_parallelC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
-  Uncertain<Sign> s = certified_sign_of_determinant2x2(e0.t().x() - e0.s().x()
-                                                      ,e0.t().y() - e0.s().y()
-                                                      ,e1.t().x() - e1.s().x()
-                                                      ,e1.t().y() - e1.s().y()
+  Uncertain<Sign> s = certified_sign_of_determinant2x2(e0.target().x() - e0.source().x()
+                                                      ,e0.target().y() - e0.source().y()
+                                                      ,e1.target().x() - e1.source().x()
+                                                      ,e1.target().y() - e1.source().y()
                                                      ) ;
   return s == Uncertain<Sign>(ZERO);  
 }
 
-
-template<class FT>
-SortedTriedge<FT> collinear_sort ( Triedge<FT> const& triedge )
+//
+// Constructs a Sorted_triedge_2 which stores 3 edges (segments) such that
+// if two of them are collinear, they are put first, as e0, e1.
+// Stores also the number of collinear edges. which should be 0 or 2.
+//
+// If the collinearity test is indeterminate for any pair of edges the
+// resulting sorted triedge is itself indeterminate 
+// (encoded as a collinear count of -1)
+//
+template<class K>
+Sorted_triedge_2<K> collinear_sort ( Triedge_2<K> const& triedge )
 {
   int lCollinearCount = -1 ;
   
   int  idx0=0, idx1=1, idx2=2 ;
 
-  Uncertain<bool> is_01 = are_edges_collinear(triedge.e0(),triedge.e1());
+  Uncertain<bool> is_01 = are_edges_collinearC2(triedge.e0(),triedge.e1());
   if ( !CGAL_NTS is_indeterminate(is_01) )
   {
-    Uncertain<bool> is_02 = are_edges_collinear(triedge.e0(),triedge.e2());
+    Uncertain<bool> is_02 = are_edges_collinearC2(triedge.e0(),triedge.e2());
     if ( !CGAL_NTS is_indeterminate(is_02) )
     {
-      Uncertain<bool> is_12 = are_edges_collinear(triedge.e1(),triedge.e2());
+      Uncertain<bool> is_12 = are_edges_collinearC2(triedge.e1(),triedge.e2());
       if ( !CGAL_NTS is_indeterminate(is_12) )
       {
         if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
@@ -106,47 +117,45 @@ SortedTriedge<FT> collinear_sort ( Triedge<FT> const& triedge )
     }
   }
 
-  return SortedTriedge<FT>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),lCollinearCount);
+  return Sorted_triedge_2<K>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),lCollinearCount);
 }
 
-
-// Given some input edge E1, there is a sequence of offset polygons, in some time range (possibly including time 0),
-// such that E1 has E0 and E2 as adjacent edges.
-// At time 0, E0 and E2 are the edges adjacent to E1 in the input polygon, but later, E0 and E2 can be any edges.
-// There is some time range were E0->E1->E2 are consecutive in each offset polygon. For each specific t
-// in the range, the vertices (E0,E1) and (E1,E2) move along the bisectors (E0,E1) and (E1,E2). Thus, the actual length
-// and position of each E1 offset varies along the time period.
-// The set of all the E1 offsets which have E0 and E2 as inmediate neighbors is called the "Offset Zone" for E1 w.r.t to E0 and E2.
-// 
-// Such offset zone is the part of the halfplane to the left of E1 (were _all_ offsets to E1 are) bounded between the bisectors
-// (E0,E1) and (E1,E2)
+// Returns true if the offset-zone for the triedge 'zone' is degenerate.
 //
-// If E0 and/or E2 are parallel to E1, then there is just 1 E1 offset, located at the medial bisector of the E2 and its parallel(s).
+// Since an offset zone [e0->e1->e2] is the region inside the polygon where the three edges remain connected as they
+// move inward, if e0 and/or e2 is parallel to e1 then the zone is degenerate (collapsed to the bisecting line of the parallel edges)
 //
-// But E0 and E2 are the inmediate neighbors of E1 in the offset polygon (at some t), so if E0 and/or E2 are parallel to E1,
-// it means that such an offset polygon has degenerated to an innermost segment. Thus, E1 can't be split further by any
-// other reflex wavefront. 
-// Therefore, is E0 or E2 are parallel to E1, the offset zone for E1 w.r.t to E0,E2 is said to be "degenerate".
-template<class FT>
-Uncertain<bool> is_offset_zone_degenerate ( Triedge<FT> const& zone )
+// (that is, the parallel zone edges, since they share a vertex, have already collide and can't move any further)
+//
+template<class K>
+Uncertain<bool> is_offset_zone_degenerate ( Triedge_2<K> const& zone )
 {
-  Uncertain<bool> is_01 = are_edges_parallel(zone.e0(),zone.e1());
-  Uncertain<bool> is_12 = are_edges_parallel(zone.e1(),zone.e2());
+  Uncertain<bool> is_01 = are_edges_parallelC2(zone.e0(),zone.e1());
+  Uncertain<bool> is_12 = are_edges_parallelC2(zone.e1(),zone.e2());
   
   return CGAL_NTS logical_or(is_01,is_12);                
 }
 
-// Given 3 oriented straight line segments: l0, l1, l2 [each segment is passed as (sx,sy,tx,ty)]
+// Given 3 oriented straight line segments: e0, e1, e2 
 // returns true if there exist some positive offset distance 't' for which the
 // leftward-offsets of their supporting lines intersect at a single point.
-// NOTE: This function allows l0 and l1 to be collinear if they are equally oriented.
-// This allows the algorithm to handle degenerate vertices (formed by 3 collinear consecutive points)
-template<class FT>
-Uncertain<bool> exist_offset_lines_isec2 ( Triedge<FT> const& triedge )
+//
+// NOTE: This function allows e0 and e1 to be collinear if they are equally oriented,
+// or parallel if they have opposite orientation. This allows the algorithm to handle degenerate vertices 
+// (formed by 3 collinear consecutive points) and mutually collapsing edge events.
+template<class K>
+Uncertain<bool> exist_offset_lines_isec2 ( Triedge_2<K> const& triedge )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  
+  typedef Rational<FT>       Rational ;
+  typedef optional<Rational> Optional_rational ;
+  
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  SortedTriedge<FT> sorted = collinear_sort(triedge);
+  Sorted_triedge_2 sorted = collinear_sort(triedge);
 
   if ( !sorted.is_indeterminate() ) // Couldn't determine collinearity
   {
@@ -154,7 +163,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( Triedge<FT> const& triedge )
     {
       CGAL_SSTRAITS_TRACE( ( sorted.collinear_count() == 0 ? " normal edges" : " collinear edges" ) ) ;
   
-      optional< Rational<FT> > t = compute_offset_lines_isec_timeC2(sorted) ;
+      Optional_rational t = compute_offset_lines_isec_timeC2(sorted) ;
       if ( t )
       {
         Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t->d()) ;
@@ -189,31 +198,39 @@ Uncertain<bool> exist_offset_lines_isec2 ( Triedge<FT> const& triedge )
   return rResult ;
 }
 
-// Given 2 triples of oriented lines in _normalized_ implicit form: (m0,m1,m2) and (n0,n1,n2), such that
+// Given 2 triples of oriented straight line segments: (m0,m1,m2) and (n0,n1,n2), such that
 // for each triple there exists distances 'mt' and 'nt' for which the offsets lines (at mt and nt resp.),
 // (m0',m1',m2') and (n0',n1',n2') intersect each in a single point; returns the relative order of mt w.r.t nt.
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
-template<class FT>
-Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Triedge<FT> const& m, Triedge<FT> const& n )
+template<class K>
+Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Triedge_2<K> const& m, Triedge_2<K> const& n )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  
+  typedef Rational<FT>       Rational ;
+  typedef Quotient<FT>       Quotient ;
+  typedef optional<Rational> Optional_rational ;
+  
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  SortedTriedge<FT> m_sorted = collinear_sort(m);
-  SortedTriedge<FT> n_sorted = collinear_sort(n);
+  Sorted_triedge_2 m_sorted = collinear_sort(m);
+  Sorted_triedge_2 n_sorted = collinear_sort(n);
 
   if ( ! ( m_sorted.is_indeterminate() || n_sorted.is_indeterminate() ) )
   {
     CGAL_assertion ( m_sorted.collinear_count() < 3 ) ;
     CGAL_assertion ( n_sorted.collinear_count() < 3 ) ;
     
-    optional< Rational<FT> > mt_ = compute_offset_lines_isec_timeC2(m_sorted);
-    optional< Rational<FT> > nt_ = compute_offset_lines_isec_timeC2(n_sorted);
+    Optional_rational mt_ = compute_offset_lines_isec_timeC2(m_sorted);
+    Optional_rational nt_ = compute_offset_lines_isec_timeC2(n_sorted);
     
     if ( mt_ && nt_ )
     {
-      Quotient<FT> mt = mt_->to_quotient();
-      Quotient<FT> nt = nt_->to_quotient();
+      Quotient mt = mt_->to_quotient();
+      Quotient nt = nt_->to_quotient();
      
       CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;
       CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;
@@ -227,50 +244,64 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Triedge<FT> con
 
 }
 
-// Given a point (px,py) and 2 triples of oriented lines in _normalized_ implicit form: (m0,m1,m2) and (n0,n1,n2),
+// Given a point (px,py) and 2 triples of oriented straight line segments: (m0,m1,m2) and (n0,n1,n2),
 // such that their offsets at distances 'mt' and 'nt' intersects in points (mx,my) and (nx,ny),
-// returns the relative order order of the distances from (px,py) to (mx,my) and (nx,ny).
+// returns the relative order of the distances from (px,py) to (mx,my) and (nx,ny).
 // That is, indicates which offset triple intersects closer to (px,py)
 // PRECONDITION: There exist single points at which the offset line triples 'm' and 'n' at 'mt' and 'nt' intersect.
-template<class FT>
+template<class K>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_dist_to_pointC2 ( optional< Vertex<FT> > const& p, Triedge<FT> const& m, Triedge<FT> const& n )
+compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
+                                          , Triedge_2<K>           const& m
+                                          , Triedge_2<K>           const& n 
+                                          )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  
+  typedef Rational<FT>       Rational ;
+  typedef Quotient<FT>       Quotient ;
+  typedef optional<Rational> Optional_rational ;
+  
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
-
-  SortedTriedge<FT> m_sorted = collinear_sort(m);
-  SortedTriedge<FT> n_sorted = collinear_sort(n);
-
-  if ( ! ( m_sorted.is_indeterminate() || n_sorted.is_indeterminate() ) )
+  
+  if ( p )
   {
-    CGAL_assertion ( m_sorted.collinear_count() < 3 ) ;
-    CGAL_assertion ( n_sorted.collinear_count() < 3 ) ;
-    
-    optional<FT> dm = compute_offset_lines_isec_dist_to_pointC2(p,m_sorted);
-    optional<FT> dn = compute_offset_lines_isec_dist_to_pointC2(p,n_sorted);
-
-    if ( dm && dn )
-      rResult = CGAL_NTS certified_compare(*dm,*dn);
+    Sorted_triedge_2 m_sorted = collinear_sort(m);
+    Sorted_triedge_2 n_sorted = collinear_sort(n);
+  
+    if ( ! ( m_sorted.is_indeterminate() || n_sorted.is_indeterminate() ) )
+    {
+      CGAL_assertion ( m_sorted.collinear_count() < 3 ) ;
+      CGAL_assertion ( n_sorted.collinear_count() < 3 ) ;
+      
+      optional<FT> dm = compute_offset_lines_isec_dist_to_pointC2(p,m_sorted);
+      optional<FT> dn = compute_offset_lines_isec_dist_to_pointC2(p,n_sorted);
+  
+      if ( dm && dn )
+        rResult = CGAL_NTS certified_compare(*dm,*dn);
+    }
   }
 
   return rResult ;
 }
 
-// Given 3 triples of oriented lines in _normalized_ implicit form: (s0,s1,s2), (m0,m1,m2) and (n0,n1,n2),
+// Given 3 triples of oriented straight line segments: (s0,s1,s2), (m0,m1,m2) and (n0,n1,n2),
 // such that their offsets at distances 'st', 'mt' and 'nt' intersects in points (sx,sy), (mx,my) and (nx,ny),
 // returns the relative order order of the distances from (sx,sy) to (mx,my) and (nx,ny).
 // That is, indicates which offset triple intersects closer to (sx,sy)
 // PRECONDITION: There exist single points at which the offsets at 'st', 'mt' and 'nt' intersect.
-template<class FT>
+template<class K>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_dist_to_pointC2 ( Triedge<FT> const& s
-                                          , Triedge<FT> const& m
-                                          , Triedge<FT> const& n
+compare_offset_lines_isec_dist_to_pointC2 ( Triedge_2<K> const& s
+                                          , Triedge_2<K> const& m
+                                          , Triedge_2<K> const& n
                                           )
 {
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  SortedTriedge<FT> s_sorted = collinear_sort(s);
+  Sorted_triedge_2<K> s_sorted = collinear_sort(s);
 
   if ( !s_sorted.is_indeterminate() )
   {
@@ -284,23 +315,47 @@ compare_offset_lines_isec_dist_to_pointC2 ( Triedge<FT> const& s
 
 
 
-// Given a triple of oriented lines in _normalized_ implicit form: (e0,e1,e2) such that their offsets
-// at somne distance intersects in a point (x,y); and another triple of oriented lines in _normalized_ implicit form:
-// (el,ec,er); returns true if the intersection point (x,y) is inside the offset zone of 'ec' w.r.t 'el' and 'er';
-// that is, the locus of points to the left of 'ec', to the right of the bisector (el,ec) and to the left of the bisector
-// (ec,er).
+// Given a triple of oriented straight line segments: (e0,e1,e2) such that their offsets
+// at some distance intersects in a point (x,y), returns true if (x,y) is inside the passed offset zone.
+// 
+// An offset zone [z0->z1->z2] is a region where the offset edges z0',z1',z2' remain connected in the absence of topological changes.
+// It is the area (bounded or not) to the left of z1, to the right of the angular bisector (z0,z1) 
+// and to the left of the angular bisector (z1,z2).
+// This area represents all the possible offset edges z1'.
+// If the event involves z1' (that is, z1 is one of (e0,e1,e2)) then a neccesary condition for the event to exist is
+// that the point of coallision hits z1' as bounded by the vertices shared with z0' and z2',
+// and not just the line supporting z1'. 
+// This condition is equivalent to the condition that (x,y) be in the offset zone [z0->z1->z2] as described above
+// (which refers to the input edges and not the offset edges).
+//
+// This condition is neccesary but not sufficient becasue z1' might end up connected with edges other than z0' and z2' 
+// after some further event, so this predicate is valid only in the context of an event at a known time 't' such
+// that it is known that at time t, z1' is indeed connected to z0' and z2'.
+//
+// If z0 and/or z2 are parallel to z1 then the offset zone is "degenerate" and the event is conventionally considered
+// NOT inside the zone, so this predicate returns false in that case.
+//
 // PRECONDITIONS:
 //   There exist a single point at which the offset lines for e0,e1,e2 at 't' intersect.
-//   'ec' must be one of (e0,e1,e2); that is, (x,y) must be exactly over the offseted 'ec' at time 't'.
-//   (el,ec) and (ec,er) must be oblique; i.e, there must exist non-degenerate vertices at the intersections (el,ec) and (ec,er).
+//   'z1' must be one of (e0,e1,e2); that is, (x,y) must be exactly over the offseted 'z1' at time 't'.
 //
-template<class FT>
+template<class K>
 Uncertain<bool>
-is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& event, Triedge<FT> const& zone )
+is_offset_lines_isec_inside_offset_zoneC2 ( Triedge_2<K> const& event, Triedge_2<K> const& zone )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
+  
+  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  
+  typedef optional<Point_2> Optional_point_2 ;
+  typedef optional<Line_2>  Optional_line_2 ;
+  
   Uncertain<bool> r = Uncertain<bool>::indeterminate();
 
-  SortedTriedge<FT> e_sorted = collinear_sort(event);
+  Sorted_triedge_2 e_sorted = collinear_sort(event);
   
   Uncertain<bool> degenerate_zone = is_offset_zone_degenerate(zone);
   
@@ -310,12 +365,12 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& event, Triedge<FT
     
     if ( !degenerate_zone )
     {
-      optional< Line<FT> > zl = compute_normalized_line_ceoffC2(zone.e0()) ;
-      optional< Line<FT> > zc = compute_normalized_line_ceoffC2(zone.e1()) ;
-      optional< Line<FT> > zr = compute_normalized_line_ceoffC2(zone.e2()) ;
+      Optional_line_2 zl = compute_normalized_line_ceoffC2(zone.e0()) ;
+      Optional_line_2 zc = compute_normalized_line_ceoffC2(zone.e1()) ;
+      Optional_line_2 zr = compute_normalized_line_ceoffC2(zone.e2()) ;
   
       // Construct intersection point (x,y)
-      optional< Vertex<FT> > i = construct_offset_lines_isecC2(e_sorted);
+      Optional_point_2 i = construct_offset_lines_isecC2(e_sorted);
       
       if ( zl && zc && zr && i)
       {
@@ -408,26 +463,46 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge<FT> const& event, Triedge<FT
   return r ;
 }
 
-template<class FT>
-Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> const& r )
+// Given 2 triples of oriented straight line segments (l0,l1,l2) and (r0,r1,r2), such that 
+// the offsets at time 'tl' for triple 'l' intersects in a point (lx,ly) and 
+// the offsets at time 'tr' for triple 'r' intersects in a point (rx,ry) 
+// returns true if "tl==tr" and "(lx,ly)==(rx,ry)" 
+// PRECONDITIONS:
+//   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
+//
+template<class K>
+Uncertain<bool> are_events_simultaneousC2 ( Triedge_2<K> const& l, Triedge_2<K> const& r )
 {
+  typedef typename K::FT FT ;
+  
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
+  
+  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  
+  typedef Rational<FT> Rational ;
+  typedef Quotient<FT> Quotient ;
+  
+  typedef optional<Rational> Optional_rational ;
+  typedef optional<Point_2>  Optional_point_2 ;
+  
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  SortedTriedge<FT> l_sorted = collinear_sort(l);
-  SortedTriedge<FT> r_sorted = collinear_sort(r);
+  Sorted_triedge_2 l_sorted = collinear_sort(l);
+  Sorted_triedge_2 r_sorted = collinear_sort(r);
 
   if ( ! ( l_sorted.is_indeterminate() || r_sorted.is_indeterminate() ) )
   {
     CGAL_assertion ( l_sorted.collinear_count() < 3 ) ;
     CGAL_assertion ( r_sorted.collinear_count() < 3 ) ;
     
-    optional< Rational<FT> > lt_ = compute_offset_lines_isec_timeC2(l_sorted);
-    optional< Rational<FT> > rt_ = compute_offset_lines_isec_timeC2(r_sorted);
+    Optional_rational lt_ = compute_offset_lines_isec_timeC2(l_sorted);
+    Optional_rational rt_ = compute_offset_lines_isec_timeC2(r_sorted);
     
     if ( lt_ && rt_ )
     {
-      Quotient<FT> lt = lt_->to_quotient();
-      Quotient<FT> rt = rt_->to_quotient();
+      Quotient lt = lt_->to_quotient();
+      Quotient rt = rt_->to_quotient();
   
       CGAL_assertion ( CGAL_NTS certified_is_positive(lt) ) ;
       CGAL_assertion ( CGAL_NTS certified_is_positive(rt) ) ;
@@ -437,8 +512,8 @@ Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> co
       {
         if ( equal_times == true )
         {
-          optional< Vertex<FT> > li = construct_offset_lines_isecC2(l_sorted);
-          optional< Vertex<FT> > ri = construct_offset_lines_isecC2(r_sorted);
+          Optional_point_2 li = construct_offset_lines_isecC2(l_sorted);
+          Optional_point_2 ri = construct_offset_lines_isecC2(r_sorted);
   
           if ( li && ri )
             rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
@@ -448,7 +523,6 @@ Uncertain<bool> are_events_simultaneousC2 ( Triedge<FT> const& l, Triedge<FT> co
         else rResult = make_uncertain(false);
       }
     }
-    
   }
 
   return rResult;

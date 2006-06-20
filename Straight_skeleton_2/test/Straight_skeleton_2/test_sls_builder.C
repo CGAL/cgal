@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -15,10 +15,10 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#include<string>
-#include<iostream>
+#include<string> 
+#include<iostream>  
 #include<fstream>
-#include<sstream>
+#include<sstream>  
 
 #include <CGAL/test_sls_builder_types.h>
 
@@ -27,7 +27,6 @@
 using namespace std ;
 
 int    sFailed = 0 ;
-double sScale  = 1.0;
 ofstream* failed_list = 0 ;
 ofstream* ok_list     = 0 ;
 
@@ -48,17 +47,25 @@ RegionPtr load_region( string file )
     for ( int i = 0 ; i < ccb_count ; ++ i )
     {
       PolygonPtr lPoly( new Polygon() );
-      in >> *lPoly;
-      if ( lPoly->is_simple() )
+      
+      int v_count ;
+      in >> v_count ;
+      for ( int j = 0 ; j < v_count ; ++ j )
+      {
+        double x,y ;
+        in >> x >> y ;
+        lPoly->push_back( Point(x,y) ) ;
+      }
+      if ( lPoly->size() >= 3 )
       {
         CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-        if ( lPoly->orientation() != expected )
-          lPoly->reverse_orientation();
-        if ( sScale != 1.0 )
-          lPoly = PolygonPtr( new Polygon( CGAL::transform(Transformation(CGAL::SCALING,sScale),*lPoly) ) ) ;
-        rRegion->push_back(lPoly);
+        if (  !CGAL::is_simple_2(lPoly->begin(),lPoly->end())
+           || CGAL::orientation_2(lPoly->begin(),lPoly->end()) == expected 
+           )
+             rRegion->push_back(lPoly);
+        else rRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
       }
-      else cerr << "INPUT ERROR: Non-simple contour found in " << file << endl ;
+      else cerr << "Degenerate polygon in file " << file << endl ;
     }
   }
   else cerr << "Cannot open input file " << file << endl ;
@@ -75,7 +82,7 @@ void test( std::string file )
     t.start();
     SlsBuilder builder ;
     for( Region::const_iterator bit = lRegion->begin(), ebit = lRegion->end() ; bit != ebit ; ++ bit )
-      builder.enter_contour((*bit)->vertices_begin(),(*bit)->vertices_end());
+      builder.enter_contour((*bit)->begin(),(*bit)->end());
     SlsPtr sls = builder.construct_skeleton() ;
     t.stop();
     bool ok = sls  ;
@@ -102,7 +109,6 @@ int main( int argc, char const* argv[] )
   {
     switch(argv[aidx][1])
     {
-      case 's' : sScale = atof(&argv[aidx][2]); break ;
       case 'h' : print_usage = true; break ;
       default: cerr << "Invalid option: " << argv[aidx] << endl ; break ;
     }

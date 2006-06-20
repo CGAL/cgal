@@ -35,8 +35,9 @@ std::string sPrefix ;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
-typedef K::FT      FT;
-typedef K::Point_2 Point ;
+typedef K::FT        FT;
+typedef K::Point_2   Point ;
+typedef K::Segment_2 Segment ;
 
 typedef CGAL::Straight_skeleton_builder_traits_2<K> Traits ;
 
@@ -97,15 +98,13 @@ struct triedge
 
   int idx( char const* d, int i ) { return d[i] - 'a' ; }
 
-  typedef CGAL::CGAL_SS_i::Vertex <FT> Vertex ;
-  typedef CGAL::CGAL_SS_i::Edge   <FT> Edge ;
-  typedef CGAL::CGAL_SS_i::Triedge<FT> Triedge ;
+  typedef Traits::Triedge_2 Triedge ;
 
   Triedge triple() const
   {
-    return Triedge( Edge( Vertex(mP[0].x(),mP[0].y()),  Vertex(mP[1].x(),mP[1].y()))
-                  , Edge( Vertex(mP[2].x(),mP[2].y()),  Vertex(mP[3].x(),mP[3].y()))
-                  , Edge( Vertex(mP[4].x(),mP[4].y()),  Vertex(mP[5].x(),mP[5].y()))
+    return Triedge( Segment( Point(mP[0].x(),mP[0].y()),  Point(mP[1].x(),mP[1].y()))
+                  , Segment( Point(mP[2].x(),mP[2].y()),  Point(mP[3].x(),mP[3].y()))
+                  , Segment( Point(mP[4].x(),mP[4].y()),  Point(mP[5].x(),mP[5].y()))
                   );
   }
 
