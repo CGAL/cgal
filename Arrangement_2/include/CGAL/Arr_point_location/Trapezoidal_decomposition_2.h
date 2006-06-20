@@ -38,8 +38,6 @@ CGAL_BEGIN_NAMESPACE
 
 #define CGAL_POINT_IS_LEFT_LOW(p,q) (traits->compare_xy_2_object()((p),(q))==SMALLER)
 #define CGAL_POINT_IS_RIGHT_TOP(p,q) (traits->compare_xy_2_object()((p),(q))==LARGER)
-#define CGAL_CURVE_IS_TO_RIGHT(cv,p) (traits->equal_2_object()(traits->construct_min_vertex_2_object()((cv)), (p)))
-#define CGAL_CURVE_COMPARE_Y_AT_X(p,cv) (traits->compare_y_at_x_2_object()((p),(cv)))
 /* //////////////////////////////////////////////////////////////////////////
 
 class         Trapezoidal_decomposition_2
@@ -973,15 +971,11 @@ class Trapezoidal_decomposition_2
       {
 	if (cv_top_right)
 	  while(traits->compare_cw_around_point_2_object ()
-		(circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
-		 cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-		 p) != EQUAL)
+		(circ->top(), cv, p) != EQUAL)
 	    circ++;
         else
           while(traits->compare_cw_around_point_2_object()
-                (circ->bottom(), CGAL_CURVE_IS_TO_RIGHT(circ->bottom(),p),
-                 cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-                 p, false) != EQUAL)
+                (circ->bottom(), cv, p, false) != EQUAL)
             circ++;
 	circ.replace(t);
       }
@@ -1052,9 +1046,7 @@ class Trapezoidal_decomposition_2
 #endif
         
 	    while (traits->compare_cw_around_point_2_object ()
-		   (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
-		    cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-		    p) == SMALLER)
+		   (circ->top(), cv, p) == SMALLER)
 	      {
 		circ++;
 		if (circ==stopper)
@@ -1072,9 +1064,7 @@ class Trapezoidal_decomposition_2
 #ifdef CGAL_TD_DEBUG
         
 	    CGAL_assertion(traits->compare_cw_around_point_2_object()
-			   (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
-			    cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-			    p) != EQUAL);
+			   (circ->top(), cv, p) != EQUAL);
 #endif
         
 	    circ.insert(sep);
@@ -1089,9 +1079,7 @@ class Trapezoidal_decomposition_2
 	    else
 	      {
 		if (traits->compare_cw_around_point_2_object()
-		    (rt->top(), CGAL_CURVE_IS_TO_RIGHT(rt->top(),p),
-		     cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-		     p, false) == SMALLER)
+		    (rt->top(), cv, p, false) == SMALLER)
 		  end_point.set_rt(&sep);
 	      }
 	  }
@@ -1112,9 +1100,7 @@ class Trapezoidal_decomposition_2
 	    // if !lb set circ to rt
 	    // otherwise advance as required
 	    while (traits->compare_cw_around_point_2_object()
-		   (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
-		    cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-		    p, false) == SMALLER)
+		   (circ->top(), cv, p, false) == SMALLER)
 	      {
 		circ++;
 		if (circ==stopper)
@@ -1124,9 +1110,7 @@ class Trapezoidal_decomposition_2
 #ifdef CGAL_TD_DEBUG
         
 	    CGAL_assertion(traits->compare_cw_around_point_2_object()
-			   (circ->top(), CGAL_CURVE_IS_TO_RIGHT(circ->top(),p),
-			    cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-			    p, false) != EQUAL);
+			   (circ->top(), cv, p, false) != EQUAL);
 #endif
         
 	    circ.insert(sep);
@@ -1141,9 +1125,7 @@ class Trapezoidal_decomposition_2
 	      {
 		// set end_point.right_top_neighbour();
 		if(traits->compare_cw_around_point_2_object()
-		   (lb->top(), CGAL_CURVE_IS_TO_RIGHT(lb->top(),p),
-		    cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-		    p) ==SMALLER)
+		   (lb->top(), cv, p) ==SMALLER)
 		  end_point.set_lb(&sep);
 	      }
 	  }
@@ -1314,14 +1296,10 @@ class Trapezoidal_decomposition_2
     CGAL_precondition(lt==POINT);
     
     if (traits->compare_cw_around_point_2_object()
-        (cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-         tr->top(), CGAL_CURVE_IS_TO_RIGHT(tr->top(),p),
-         p) == SMALLER)
+        (cv, tr->top(), p) == SMALLER)
       tr->set_top(cv);
     if (traits->compare_cw_around_point_2_object()
-        (cv, CGAL_CURVE_IS_TO_RIGHT(cv,p),
-         tr->bottom(), CGAL_CURVE_IS_TO_RIGHT(tr->bottom(),p),
-         p, false) == SMALLER)
+        (cv, tr->bottom(), p, false) == SMALLER)
       tr->set_bottom(cv);
     return *tr;
   }
@@ -1581,13 +1559,9 @@ class Trapezoidal_decomposition_2
 		      (traits->construct_min_vertex_2_object()(*cv),
 		       traits->construct_min_vertex_2_object()(*pc)) ?
 		      traits->compare_cw_around_point_2_object()
-		      (*pc, CGAL_CURVE_IS_TO_RIGHT(*pc,p),
-		       *cv, CGAL_CURVE_IS_TO_RIGHT(*cv,p),
-		       p) :
+		      (*pc, *cv, p) :
 		      traits->compare_cw_around_point_2_object()
-		      (*cv, CGAL_CURVE_IS_TO_RIGHT(*cv,p),
-		       *pc, CGAL_CURVE_IS_TO_RIGHT(*pc,p),
-		       p ,false);
+		      (*cv, *pc, p ,false);
                     
 		    switch(res)
 		      {
