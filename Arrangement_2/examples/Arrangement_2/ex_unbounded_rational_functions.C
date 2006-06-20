@@ -30,6 +30,26 @@ typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 
 int main ()
 {
+  // Create an arc that corresponds to the entire graph of y = 1/x.
+  /*
+  Rat_vector        P1(1);
+  P1[0] = 1;
+
+  Rat_vector        Q1(2);
+  Q1[1] = 1; Q1[0] = 0;
+
+  Rational_arc_2    a1 (P1, Q1);
+
+  // Create an arc that corresponds to the entire graph of y = -1/x.
+  Rat_vector        P2(1);
+  P2[0] = -1;
+
+  Rat_vector        Q2(2);
+  Q2[1] = 1; Q2[0] = 0;
+
+  Rational_arc_2    a2 (P2, Q2);
+  */
+
   // Create an arc that corresponds to the entire graph of y = 1/2*x^2.
   Rat_vector        P1(3);
   P1[2] = Rational (1, 2); P1[1] = 0; P1[0] = 0;
@@ -49,15 +69,13 @@ int main ()
   Rational_arc_2    a3 (P3, Algebraic(0), false); // Directed from 0 to left.
 
   // Create the entire rational function y = 1 / (x^2 - 8x + 15).
-  /*
-  Rat_vector        P2(1);
-  P2[0] = 1;
+  Rat_vector        P4(1);
+  P4[0] = 1;
 
-  Rat_vector        Q2(3);
-  Q2[2] = 1; Q2[1] = -8; Q2[0] = 15;
+  Rat_vector        Q4(3);
+  Q4[2] = 1; Q4[1] = -8; Q4[0] = 15;
 
-  Rational_arc_2    a2 (P2, Q2);
-  */
+  Rational_arc_2    a4 (P4, Q4);
 
   // Construct the arrangement of the four arcs.
   Arrangement_2              arr;
@@ -65,6 +83,7 @@ int main ()
   insert_curve (arr, a1);
   insert_curve (arr, a2);
   insert_curve (arr, a3);
+  insert_curve (arr, a4);
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl

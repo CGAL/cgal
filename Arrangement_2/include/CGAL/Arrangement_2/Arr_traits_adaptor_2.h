@@ -371,92 +371,12 @@ public:
           // Compare them to the right of this point.
           return (tr.compare_y_at_x_right_2_object() (cv1, cv2, left1));
         }    
-
-        // Compare the relative position of the curves at the righmost of left1
-        // and left2:
-        return (tr.compare_y_position_2_object() (cv1, cv2));
-      }
-      else if (! has_left1 && ! has_left2)
-      {
-        if (inf_x1 == MINUS_INFINITY && inf_x2 == MINUS_INFINITY)
-        {
-          // Both curves are defined at x = -oo: Return their relative
-          // position there.
-          return (tr.compare_y_at_x_2_object() (cv1, cv2, MIN_END));
-        }
-        else if (inf_x1 == MINUS_INFINITY)
-        {
-          // cv1 is defined at x = -oo, and the left end of cv2 is bounded
-          // in x and unbounded in y.
-          CGAL_assertion (inf_y2 != FINITE);
-          return ((inf_y2 == PLUS_INFINITY) ? SMALLER : LARGER);
-        }
-        else if (inf_x2 == MINUS_INFINITY)
-        {
-          // cv2 is defined at x = -oo, and the left end of cv1 is bounded
-          // in x and unbounded in y.
-          CGAL_assertion (inf_y1 != FINITE);
-          return ((inf_y1 == PLUS_INFINITY) ? LARGER : SMALLER);
-        }
-
-        // Both curves ends are bounded in x but unbounded in y. If one curve
-        // is defined at y = -oo and the other at y = +oo, the comparison is
-        // trivial. Otherwise, we compare the x-coordinates of the curve ends.
-        CGAL_assertion (inf_y1 != FINITE && inf_y2 != FINITE);
-
-        if (inf_y1 == MINUS_INFINITY)
-        {
-          if (inf_y2 == PLUS_INFINITY)
-            return (SMALLER);
-
-          Comparison_result  res = tr.compare_x_2_object() (cv1, MIN_END,
-                                                            cv2, MIN_END);
-          if (res == EQUAL)
-            return (res);
-          return ((res == LARGER) ? SMALLER : LARGER);
-        }
-        else // if (inf_y1 == PLUS_INFINITY)
-        {
-          if (inf_y2 == MINUS_INFINITY)
-            return (LARGER);
-
-          return (tr.compare_x_2_object() (cv1, MIN_END,
-                                           cv2, MIN_END));
-        }
       }
 
-      // One curve (assume it is cv1) has a bounded left endpoint, while the
-      // other (assume it is cv2) has an unbounded left end.
-      CGAL_assertion ((has_left1 && ! has_left2) ||
-                      (! has_left1 && has_left2));
-
-      const bool                no_swap = (has_left1 && ! has_left2);
-      Point_2                   p_left = (no_swap ? min_vertex(cv1) : 
-                                                    min_vertex(cv2));
-      const X_monotone_curve_2  cv = (no_swap ? cv2 : cv1);
-      const Infinity_type       inf_x = (no_swap ? inf_x2 : inf_x1);
-      const Infinity_type       inf_y = (no_swap ? inf_y2 : inf_y1);
-      Comparison_result         res;
-
-      if (inf_x != FINITE)
-      {
-        // cv goes to -oo, so we can compare the position of p_left relative
-        // to it.
-        res = tr.compare_y_at_x_2_object() (p_left, cv2);
-      }
-      else
-      {
-        // The left end of cv is bounded in x but unbounded in y. If cv is
-        // defined at y = +oo, p_left is obviously below it, and if it is
-        // defined at y = -oo, p_left is obviously above it.
-        CGAL_assertion (inf_y != FINITE);
-        res = (inf_y == PLUS_INFINITY ? SMALLER : LARGER);
-      }
-
-      // Return the result (swap it if necessary).
-      if (no_swap || res == EQUAL)
-        return (res);
-      return ((res == LARGER) ? SMALLER : LARGER);
+      // We now that the curves do not shar a common endpoint, and we can
+      // compare their relative y-position (which does not change to the left
+      // of the given point p).
+      return (tr.compare_y_position_2_object() (cv1, cv2));      
     }
   };
 

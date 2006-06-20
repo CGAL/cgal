@@ -794,22 +794,72 @@ public:
         x2 = arc._ps.x();
     }
 
-    // Compare the x-coordinates.
+    // Compare the x-coordinates. In case they are not equal we are done.
     const Comparison_result  res = CGAL::compare (x1, x2);
 
     if (res != EQUAL)
       return (res);
 
+    // If the x-coordinates of the asymptote are equal, but one arc is
+    // defined to the left of the vertical asymptote and the other to its
+    // right, we can easily determine the comparison result.
     if (ind1 == MAX_END && ind2 == MIN_END)
       return (SMALLER);
     else if (ind1 == MIN_END && ind2 == MAX_END)
       return (LARGER);
 
-    // RWRW: Handle this comparison:
-    //std::cout << "cv1 = " << *this << " (" << ind1 << ')' << std::endl;
-    //std::cout << "cv2 = " << arc << " (" << ind2 << ')' << std::endl;
+    // Both arcs are defined to the same side (left or right) of the vertical
+    // asymptote. If one is defined at y = -oo and the other at y = +oo, we
+    // preform a "lexicographic" comparison.
+    const Infinity_type  inf_y1 = 
+      (ind1 == MIN_END ? left_infinite_in_y() : right_infinite_in_y());
+    const Infinity_type  inf_y2 = 
+      (ind2 == MIN_END ? arc.left_infinite_in_y() : arc.right_infinite_in_y());
 
-    //CGAL_assertion (ind1 != ind2);
+    if (inf_y1 == MINUS_INFINITY && inf_y2 == PLUS_INFINITY)
+      return (SMALLER);
+    else if (inf_y1 == PLUS_INFINITY && inf_y2 == MINUS_INFINITY)
+      return (LARGER);
+
+    // Determine the multiplicities of the pole for the two arcs.
+    Nt_traits         nt_traits;
+    int               mult1 = 1;
+    Polynomial        p_der = nt_traits.derive (_denom);
+
+    while (CGAL:Sign (nt_traits.evaluate_at (p_der, x1)) == CGAL::ZERO)
+    {
+      mult1++;
+      p_der = nt_traits.derive (p_der);
+    }
+
+    int               mult2 = 1;
+
+    p_der = nt_traits.derive (arc._denom);
+    while (CGAL:Sign (nt_traits.evaluate_at (p_der, x1)) == CGAL::ZERO)
+    {
+      mult2++;
+      p_der = nt_traits.derive (p_der);
+    }
+
+    if (mult1 != mult2)
+    {
+      if (ind1 == MIN_END)
+      {
+        // In case we compare to the right of the pole, the curve with larger
+        // multiplicity is to the left.
+        return ((mult1 > mult2) ? SMALLER : LARGER);
+      }
+      else
+      {
+        // In case we compare to the left of the pole, the curve with larger
+        // multiplicity is to the right.
+        return ((mult1 < mult2) ? SMALLER : LARGER);
+      }
+    }
+
+    // The pole multiplicities are the same.
+    // RWRW - handle this case !!!
+    CGAL_assertion (false);
 
     return (EQUAL);
   }
