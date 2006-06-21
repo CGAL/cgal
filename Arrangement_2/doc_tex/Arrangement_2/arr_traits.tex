@@ -760,3 +760,19 @@ the edges that correspond to overlapping polylines with
 geometrically equivalent curves, but with a different data fields:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_generic_curve_data.C}
+
+The third example we give in this section is based on \ccc{ex_dual_lines.C}
+given in Section~\ref{arr_ssec:unb_global}. It constructs the arrangement
+of the dual lines for a set of point given in an input file (by default we
+use \ccc{coll_points.dat}, which contains $50$ points randomly selected
+on the grid $[-100,100]\times[-100,100]$; the file contains two distinct
+triplets of collinear points). Here we use the generic curve-data
+decorator to attach the index of the primal point to each of the lines.
+Doing so, we can go over the incident edges of each vertex whose degree is
+greater than $4$ and report the subsets collinear points (if we have a vertex
+of degree $d$, we actually need to go over $\frac{d}{2}$ edges, as each
+incident line contributes exactly $2$ edges). Note that in this case the
+dual line cannot overlap, so we use a dummy merge functor to instantiate
+the curve-data traits:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_dual_with_data.C}
