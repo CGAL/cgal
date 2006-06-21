@@ -81,7 +81,7 @@ protected:
 
   template <class V>
   void set_color(const Edge &e, CGAL::Qt_widget &w, const V &) const {
-    if (!TDS_helper::get_undirected_edge_label(e)) {
+    if (!TDS_helper::get_undirected_edge_label(e).is_valid()) {
       w << CGAL::Color(125,125,125);
     } else if (TDS_helper::get_undirected_edge_label(e) == kdel_->simulation_traits_object().simulator_handle()->null_event()){
       w << CGAL::Color(0,0,0);
@@ -95,7 +95,7 @@ protected:
   void set_color(const Edge &e, CGAL::Qt_widget &w,
                  const REV& ) const {
     w << CGAL::LineWidth(2);
-    if (!TDS_helper::get_undirected_edge_label(e)) {
+    if (!TDS_helper::get_undirected_edge_label(e).is_valid()) {
       w << CGAL::Color(125,125,125);
     } else if (kdel_->visitor().contains(e) || kdel_->visitor().contains(TDS_helper::mirror_edge(e))) {
       w<< CGAL::Color(0,255,0);
