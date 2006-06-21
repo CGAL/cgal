@@ -161,7 +161,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( Triedge_2<K> const& triedge )
   {
     if ( sorted.collinear_count() < 3 ) // If the 3 edges are collinear thre is no event.
     {
-      CGAL_SSTRAITS_TRACE( ( sorted.collinear_count() == 0 ? " normal edges" : " collinear edges" ) ) ;
+      CGAL_STSKEL_TRAITS_TRACE( ( sorted.collinear_count() == 0 ? " normal edges" : " collinear edges" ) ) ;
   
       Optional_rational t = compute_offset_lines_isec_timeC2(sorted) ;
       if ( t )
@@ -172,28 +172,28 @@ Uncertain<bool> exist_offset_lines_isec2 ( Triedge_2<K> const& triedge )
           if ( !d_is_zero )
           {
             rResult = CGAL_NTS certified_is_positive(t->to_quotient()) ;
-            CGAL_SSTRAITS_TRACE("\nEvent time: " << (t->n()/t->d()) << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
+            CGAL_STSKEL_TRAITS_TRACE("\nEvent time: " << (t->n()/t->d()) << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
           }
           else
           {
-            CGAL_SSTRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." ) ;
+            CGAL_STSKEL_TRAITS_TRACE("\nDenominator exactly zero, Event doesn't exist." ) ;
             rResult = make_uncertain(false);
           }
         }
         else
-          CGAL_SSTRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." ) ;
+          CGAL_STSKEL_TRAITS_TRACE("\nDenominator is probably zero (but not exactly), event existance is indeterminate." ) ;
       }
       else
-        CGAL_SSTRAITS_TRACE("\nEvent time overflowed, event existance is indeterminate." ) ;
+        CGAL_STSKEL_TRAITS_TRACE("\nEvent time overflowed, event existance is indeterminate." ) ;
     }
     else
     {
-      CGAL_SSTRAITS_TRACE("\nAll the edges are collinear. Event doesn't exist." ) ;
+      CGAL_STSKEL_TRAITS_TRACE("\nAll the edges are collinear. Event doesn't exist." ) ;
       rResult = make_uncertain(false);
     }
   }
   else
-    CGAL_SSTRAITS_TRACE("\nEdges uncertainly collinear, event existance is indeterminate." ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\nEdges uncertainly collinear, event existance is indeterminate." ) ;
 
   return rResult ;
 }
@@ -377,7 +377,7 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge_2<K> const& event, Triedge_2
         // Calculate scaled (signed) distance from (x,y) to 'zc'
         FT sdc = zc->a() * i->x() + zc->b() * i->y() + zc->c() ;
     
-        CGAL_SSTRAITS_TRACE("\nsdc=" << sdc ) ;
+        CGAL_STSKEL_TRAITS_TRACE("\nsdc=" << sdc ) ;
     
         // NOTE:
         //   if (x,y) is not on the positive side of 'ec' it isn't on it's offset zone.
@@ -388,7 +388,7 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge_2<K> const& event, Triedge_2
         {
           if ( cok == true )
           {
-            CGAL_SSTRAITS_TRACE("\nright side of ec." ) ;
+            CGAL_STSKEL_TRAITS_TRACE("\nright side of ec." ) ;
     
             // Determine if the vertices (el,ec) and (ec,er) are reflex.
             Uncertain<bool> lcx = CGAL_NTS certified_is_smaller(zl->a()*zc->b(),zc->a()*zl->b());
@@ -396,8 +396,8 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge_2<K> const& event, Triedge_2
     
             if ( ! CGAL_NTS is_indeterminate(lcx) && ! CGAL_NTS is_indeterminate(crx) )
             {
-              CGAL_SSTRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
-              CGAL_SSTRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
+              CGAL_STSKEL_TRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
+              CGAL_STSKEL_TRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
     
               // Calculate scaled (signed) distances from (x,y) to 'el' and 'er'
               FT sdl = zl->a() * i->x() + zl->b() * i->y() + zl->c() ;
@@ -405,8 +405,8 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge_2<K> const& event, Triedge_2
       
               if ( CGAL_NTS is_finite(sdl) && CGAL_NTS is_finite(sdc) )
               {
-                CGAL_SSTRAITS_TRACE("\nsdl=" << sdl ) ;
-                CGAL_SSTRAITS_TRACE("\nsdr=" << sdr ) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nsdl=" << sdl ) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nsdr=" << sdr ) ;
         
                 // Is (x,y) to the right|left of the bisectors (el,ec) and (ec,er)?
                 //  It depends on whether the vertex ((el,ec) and (ec,er)) is relfex or not.
@@ -418,46 +418,46 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge_2<K> const& event, Triedge_2
                 Uncertain<bool> rok = crx ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
                                           : CGAL_NTS certified_is_smaller_or_equal(sdc,sdr) ;
       
-                CGAL_SSTRAITS_TRACE("\nlok:" << lok) ;
-                CGAL_SSTRAITS_TRACE("\nrok:" << rok) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nlok:" << lok) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nrok:" << rok) ;
       
                 r = CGAL_NTS logical_and(lok , rok) ;
               }
               else
               {
-                CGAL_SSTRAITS_TRACE("\nOverflow detected." ) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
               }
             }
             else
             {
-              CGAL_SSTRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
+              CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
             }
           }
           else
           {
-            CGAL_SSTRAITS_TRACE("\nWRONG side of ec." ) ;
+            CGAL_STSKEL_TRAITS_TRACE("\nWRONG side of ec." ) ;
             r = make_uncertain(false);
           }
         }
         else
         {
-          CGAL_SSTRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
+          CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
         }
       }
       else
       {
-        CGAL_SSTRAITS_TRACE("\nOverflow detected." ) ;
+        CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
       }
     }
     else
     {
-      CGAL_SSTRAITS_TRACE("\nDegenerate offset zone. Edge collapsed." ) ;
+      CGAL_STSKEL_TRAITS_TRACE("\nDegenerate offset zone. Edge collapsed." ) ;
       r = make_uncertain(false);
     }
   }
   else
   {
-    CGAL_SSTRAITS_TRACE("\nUnable to determine collinearity of event triedge or parallelity of zone triedge." ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\nUnable to determine collinearity of event triedge or parallelity of zone triedge." ) ;
   }
 
   return r ;

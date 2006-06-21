@@ -16,9 +16,11 @@
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #include<string> 
-#include<iostream>  
+#include<iostream>      
 #include<fstream>
-#include<sstream>  
+#include<sstream>   
+
+//#define CGAL_STRAIGHT_SKELETON_STATS   
 
 #include <CGAL/test_sls_builder_types.h>
 
@@ -115,7 +117,7 @@ int main( int argc, char const* argv[] )
     ++aidx ;
   }
 
-  if ( aidx + 1 < argc )
+  if ( aidx + 1 < argc ) 
   {
     std::cout << "Testing Straight_skeleton_builder_2\n";
 

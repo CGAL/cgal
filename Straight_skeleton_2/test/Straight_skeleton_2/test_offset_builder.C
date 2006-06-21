@@ -44,9 +44,13 @@ PolygonPtr load_polygon( string file )
 
     rPoly = PolygonPtr( new Polygon() );
     in >> *rPoly;
-    
-    if ( rPoly->orientation() != CGAL::CLOCKWISE ) // For this test we need the contour to be placed as a hole
-      rPoly->reverse_orientation();
+    if ( rPoly->is_simple() )
+    {
+      if ( rPoly->orientation() != CGAL::CLOCKWISE ) // For this test we need the contour to be placed as a hole
+        rPoly->reverse_orientation();
+    }
+    else
+      rPoly = PolygonPtr();     
   }
   else cerr << "Cannot open input file " << file << endl ;
 

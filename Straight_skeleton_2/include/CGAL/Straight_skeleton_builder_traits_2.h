@@ -59,7 +59,7 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
   {
     Uncertain<bool> rResult = exist_offset_lines_isec2(aTriedge) ;
 
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTriedge);
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTriedge);
 
     return rResult ;
   }
@@ -108,7 +108,7 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
   {
     Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR) ;
 
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_times","L: " << aL << "\nR:" << aR );
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_times","L: " << aL << "\nR:" << aR );
 
     return rResult ;
   }
@@ -128,7 +128,7 @@ struct Is_ss_event_inside_offset_zone_2 : Functor_base_2<K>
   {
     Uncertain<bool> rResult = is_offset_lines_isec_inside_offset_zoneC2(aE,aZ) ;
 
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Is_event_inside_offset_zone","E=" << aE << "\nZ=" << aZ);
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Is_event_inside_offset_zone","E=" << aE << "\nZ=" << aZ);
 
     return rResult ;
   }
@@ -148,7 +148,7 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
   {
     Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB);
 
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Are_events_simultaneous","A=" << aA << "\nB=" << aB);
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_events_simultaneous","A=" << aA << "\nB=" << aB);
 
     return rResult ;
   }
@@ -168,7 +168,7 @@ struct Are_ss_edges_collinear_2 : Functor_base_2<K>
   {
     Uncertain<bool> rResult = are_edges_collinearC2(aA,aB);
 
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_collinear","A=" << aA << "\nB=" << aB);
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_collinear","A=" << aA << "\nB=" << aB);
 
     return rResult ;
   }
@@ -188,7 +188,7 @@ struct Are_ss_edges_parallel_2 : Functor_base_2<K>
   {
     Uncertain<bool> rResult = are_edges_parallelC2(aA,aB);
 
-    CGAL_SLS_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_parallel","A=" << aA << "\nB=" << aB);
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_parallel","A=" << aA << "\nB=" << aB);
 
     return rResult ;
   }

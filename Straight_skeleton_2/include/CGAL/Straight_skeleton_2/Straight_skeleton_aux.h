@@ -53,46 +53,46 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 // The rest of this header contains tracing, debugging and profiling stuff.
 
 #if defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE)
-#define CGAL_SLS_ENABLE_TRACE
+#define CGAL_STSKEL_ENABLE_TRACE
 #endif
 
 #if   defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW) \
    || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW) \
    || defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX)  \
    || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX)
-#define CGAL_SLS_ENABLE_SHOW
+#define CGAL_STSKEL_ENABLE_SHOW
 #endif
 
 
-#ifdef CGAL_SLS_ENABLE_TRACE
+#ifdef CGAL_STSKEL_ENABLE_TRACE
 #  include<string>
 #  include<iostream>
 #  include<sstream>
-#  define CGAL_SLS_TRACE(m) \
+#  define CGAL_STSKEL_TRACE(m) \
      { \
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
 
-#  define CGAL_SLS_DEBUG_CODE(code) code
+#  define CGAL_STSKEL_DEBUG_CODE(code) code
 #else
-#  define CGAL_SLS_DEBUG_CODE(code) 
+#  define CGAL_STSKEL_DEBUG_CODE(code) 
 #endif
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-#  define CGAL_SSBUILDER_TRACE(l,m) if ( l <= CGAL_STRAIGHT_SKELETON_ENABLE_TRACE ) CGAL_SLS_TRACE(m)
+#ifdef CGAL_STSKEL_ENABLE_TRACE
+#  define CGAL_STSKEL_BUILDER_TRACE(l,m) if ( l <= CGAL_STRAIGHT_SKELETON_ENABLE_TRACE ) CGAL_STSKEL_TRACE(m)
 #else
-#  define CGAL_SSBUILDER_TRACE(l,m)
+#  define CGAL_STSKEL_BUILDER_TRACE(l,m)
 #endif
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-#  define CGAL_SSBUILDER_SHOW(code) { code }
+#ifdef CGAL_STSKEL_ENABLE_SHOW
+#  define CGAL_STSKEL_BUILDER_SHOW(code) { code }
 #else
-#  define CGAL_SSBUILDER_SHOW(code)
+#  define CGAL_STSKEL_BUILDER_SHOW(code)
 #endif
 
 #ifdef CGAL_POLYGON_OFFSET_ENABLE_TRACE
-#  define CGAL_POLYOFFSET_TRACE(l,m) if ( l <= CGAL_POLYGON_OFFSET_ENABLE_TRACE ) CGAL_SLS_TRACE(m)
+#  define CGAL_POLYOFFSET_TRACE(l,m) if ( l <= CGAL_POLYGON_OFFSET_ENABLE_TRACE ) CGAL_STSKEL_TRACE(m)
 #else
 #  define CGAL_POLYOFFSET_TRACE(l,m)
 #endif
@@ -103,7 +103,7 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 #  define CGAL_POLYOFFSET_SHOW(code)
 #endif
 
-#ifdef CGAL_SLS_ENABLE_SHOW
+#ifdef CGAL_STSKEL_ENABLE_SHOW
 
 CGAL_BEGIN_NAMESPACE
 
@@ -174,14 +174,14 @@ CGAL_END_NAMESPACE
 #endif
 
 
-#ifdef CGAL_SLS_PROFILING_ENABLED // Reserved use. DO NOT define this macro switch
+#ifdef CGAL_STRAIGHT_SKELETON_PROFILING_ENABLED // Reserved use. DO NOT define this macro switch
 #  include<string>
 #  include<iostream>
 #  include<sstream>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGAL_SLS_i_profiling
+namespace CGAL_STRAIGHT_SKELETON_i_profiling
 {
 
 template<class NT> char const* kernel_type() { return typeid(NT).name() ; }
@@ -191,14 +191,14 @@ template<> char const* kernel_type<Interval_nt_advanced>() { return "Interval" ;
 template<> char const* kernel_type< Quotient<MP_Float> >() { return "MP_Float" ; }
 template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;     }
 
-} // CGAL_SLS_i_profiling
+} // CGAL_STRAIGHT_SKELETON_i_profiling
 
 CGAL_END_NAMESPACE
 
-#define CGAL_SLS_ASSERT_PREDICATE_RESULT(expr,K,pred,error) \
+#define CGAL_STSKEL_ASSERT_PREDICATE_RESULT(expr,K,pred,error) \
         { \
           std::ostringstream predss ; \
-          predss << CGAL_SLS_i_profiling::kernel_type< typename K::FT >() << " . " << pred ; \
+          predss << CGAL_STRAIGHT_SKELETON_i_profiling::kernel_type< typename K::FT >() << " . " << pred ; \
           std::string preds = predss.str(); \
           if ( is_indeterminate((expr)) ) \
           { \
@@ -208,11 +208,11 @@ CGAL_END_NAMESPACE
           else register_predicate_success(preds); \
         }
 #else
-#define CGAL_SLS_ASSERT_PREDICATE_RESULT(expr,K,pred,error)
+#define CGAL_STSKEL_ASSERT_PREDICATE_RESULT(expr,K,pred,error)
 #endif
 
-#undef CGAL_SLS_ENABLE_TRACE
-#undef CGAL_SLS_ENABLE_SHOW
+#undef CGAL_STSKEL_ENABLE_TRACE
+#undef CGAL_STSKEL_ENABLE_SHOW
 
 #endif // CGAL_STRAIGHT_SKELETON_AUX_H //
 // EOF //

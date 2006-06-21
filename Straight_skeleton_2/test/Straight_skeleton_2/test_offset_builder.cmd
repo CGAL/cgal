@@ -88,4 +88,3 @@ sample_698.poly
 sample_147.poly
 sample_298.poly
 sample_85.poly
-sample_102.poly

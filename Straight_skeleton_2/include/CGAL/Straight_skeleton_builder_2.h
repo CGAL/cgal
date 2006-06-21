@@ -178,14 +178,14 @@ private :
   struct VertexWrapper
   {
     VertexWrapper( Vertex_handle aVertex )
-        :
+      :
         mVertex(aVertex)
       , mIsReflex(false)
       , mIsDegenerate(false)
       , mIsProcessed(false)
       , mIsExcluded(false)
-      , mPrev(-1)
-      , mNext(-1)
+      , mPrevInLAV(-1)
+      , mNextInLAV(-1)
     {}
 
     Vertex_handle   mVertex ;
@@ -193,8 +193,8 @@ private :
     bool            mIsDegenerate ;
     bool            mIsProcessed ;
     bool            mIsExcluded ;
-    int             mPrev ;
-    int             mNext ;
+    int             mPrevInLAV ;
+    int             mNextInLAV ;
     Halfedge_handle mDefiningBorderA ;
     Halfedge_handle mDefiningBorderB ;
     Halfedge_handle mDefiningBorderC ;
@@ -265,35 +265,28 @@ private :
 
   Vertex_handle GetVertex ( int aIdx )
   {
+    CGAL_precondition(aIdx>=0);
     return mWrappedVertices[aIdx].mVertex ;
   }
 
   Vertex_handle GetPrevInLAV ( Vertex_handle aV )
   {
-    return GetVertex ( mWrappedVertices[aV->id()].mPrev ) ;
+    return GetVertex ( mWrappedVertices[aV->id()].mPrevInLAV ) ;
   }
 
   Vertex_handle GetNextInLAV ( Vertex_handle aV )
   {
-    return GetVertex ( mWrappedVertices[aV->id()].mNext ) ;
-  }
-
-  Vertex_handle GetNextInLAV_NonSkeleton ( Vertex_handle aV )
-  {
-    Vertex_handle lNext = GetNextInLAV(aV);
-    while ( lNext->is_skeleton() )
-      lNext = GetNextInLAV(lNext);
-    return lNext;
+    return GetVertex ( mWrappedVertices[aV->id()].mNextInLAV ) ;
   }
 
   void SetPrevInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
-    mWrappedVertices[aV->id()].mPrev = aPrev->id();
+    mWrappedVertices[aV->id()].mPrevInLAV = aPrev->id();
   }
 
   void SetNextInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
-    mWrappedVertices[aV->id()].mNext = aPrev->id();
+    mWrappedVertices[aV->id()].mNextInLAV = aPrev->id();
   }
 
   BorderTriple GetSkeletonVertexDefiningBorders( Vertex_handle aVertex ) const
@@ -345,18 +338,9 @@ private :
     return mWrappedVertices[aVertex->id()].mIsProcessed ;
   }
 
-  void EnqueEvent( EventPtr aEvent )
-  {
-    mPQ.push(aEvent);
-    CGAL_SSBUILDER_TRACE(0, *aEvent);
-  }
+  void EnqueEvent( EventPtr aEvent ) ;
 
-  EventPtr PopEventFromPQ()
-  {
-    EventPtr rR = mPQ.top();
-    mPQ.pop();
-    return rR ;
-  }
+  EventPtr PopEventFromPQ() ;
 
   // Returns 1 aE is in the set (aA,aB,aC), 0 otherwise
   int CountInCommon( Halfedge_handle aE, Halfedge_handle aA, Halfedge_handle aB, Halfedge_handle aC ) const
@@ -458,12 +442,12 @@ private :
       {
         BorderTriple lTriple = GetSkeletonVertexDefiningBorders(aSeed);
 
-        CGAL_SSBUILDER_TRACE(3
-                            ,"Seed N" << aSeed->id() << " is a skeleton node,"
-                            << " defined by: E" << lTriple.get<0>()->id()
-                                       << ", E" << lTriple.get<1>()->id()
-                                       << ", E" << lTriple.get<2>()->id()
-                            );
+        CGAL_STSKEL_BUILDER_TRACE(3
+                                 ,"Seed N" << aSeed->id() << " is a skeleton node,"
+                                 << " defined by: E" << lTriple.get<0>()->id()
+                                            << ", E" << lTriple.get<1>()->id()
+                                             << ", E" << lTriple.get<2>()->id()
+                                 );
 
         return Compare_ss_event_distance_to_seed_2(mTraits)( CreateTriedge(lTriple)
                                                            , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
@@ -545,7 +529,7 @@ private :
 
   void EraseBisector( Halfedge_handle aB )
   {
-    CGAL_SSBUILDER_TRACE(1,"Dangling B" << aB->id() << " and B" << aB->opposite()->id() << " removed.");
+    CGAL_STSKEL_BUILDER_TRACE(1,"Dangling B" << aB->id() << " and B" << aB->opposite()->id() << " removed.");
     
     mSSkel->SSkel::Base::edges_erase(aB);
   }
@@ -617,7 +601,7 @@ private :
 
 private:
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
+#ifdef CGAL_STSKEL_ENABLE_SHOW
   template<class Halfedge>
   void DrawBisector ( Halfedge aHalfedge )
   {
@@ -666,7 +650,7 @@ public:
   template<class InputPointIterator>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd  )
   {
-    CGAL_SSBUILDER_TRACE(0,"Inserting Connected Component of the Boundary....");
+    CGAL_STSKEL_BUILDER_TRACE(0,"Inserting Connected Component of the Boundary....");
 
     Halfedge_handle lFirstCCWBorder ;
     Halfedge_handle lPrevCCWBorder ;
@@ -709,7 +693,7 @@ public:
       mContourHalfedges.push_back(lCCWBorder);
 
       Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
-      CGAL_SSBUILDER_TRACE(2,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
+      CGAL_STSKEL_BUILDER_TRACE(2,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
       mWrappedVertices.push_back( VertexWrapper(lVertex) ) ;
 
       Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
@@ -729,8 +713,8 @@ public:
       }
       else
       {
-        SetPrevInLAV(lVertex    ,lPrevVertex);
-        SetNextInLAV(lPrevVertex,lVertex    );
+        SetPrevInLAV    (lVertex    ,lPrevVertex);
+        SetNextInLAV    (lPrevVertex,lVertex    );
 
         SetDefiningBorderA(lVertex    ,lCCWBorder);
         SetDefiningBorderB(lPrevVertex,lCCWBorder);
@@ -743,10 +727,10 @@ public:
         lNextCWBorder->HBase_base::set_prev(lCWBorder);
         lCWBorder    ->HBase_base::set_next(lNextCWBorder);
 
-        CGAL_SSBUILDER_TRACE(2,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
-        CGAL_SSBUILDER_TRACE(2,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
+        CGAL_STSKEL_BUILDER_TRACE(2,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
+        CGAL_STSKEL_BUILDER_TRACE(2,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
 
-        CGAL_SSBUILDER_SHOW
+        CGAL_STSKEL_BUILDER_SHOW
         ( 
           SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lVertex->point(), CGAL::RED, "Border" ) ;
           draw_.Release();
@@ -762,15 +746,15 @@ public:
       lNextCWBorder  = lCWBorder ;
     }
 
-    SetPrevInLAV(lFirstVertex,lPrevVertex );
-    SetNextInLAV(lPrevVertex ,lFirstVertex);
+    SetPrevInLAV    (lFirstVertex,lPrevVertex );
+    SetNextInLAV    (lPrevVertex ,lFirstVertex);
 
     SetDefiningBorderA(lFirstVertex,lFirstCCWBorder);
     SetDefiningBorderB(lPrevVertex ,lFirstCCWBorder);
 
     lFirstCCWBorder->opposite()->HBase_base::set_vertex(lPrevVertex);
 
-    CGAL_SSBUILDER_SHOW
+    CGAL_STSKEL_BUILDER_SHOW
     ( SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
       draw_.Release();
     )
@@ -781,12 +765,12 @@ public:
     lPrevCCWBorder ->opposite()->HBase_base::set_prev(lFirstCCWBorder->opposite());
     lFirstCCWBorder->opposite()->HBase_base::set_next(lPrevCCWBorder ->opposite());
 
-    CGAL_SSBUILDER_TRACE(2
-                        , "CCW Border: E" << lFirstCCWBorder->id()
-                        << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
-                        << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
-                        << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
-                        );
+    CGAL_STSKEL_BUILDER_TRACE(2
+                             , "CCW Border: E" << lFirstCCWBorder->id()
+                             << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
+                             << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
+                             << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
+                             );
      
     CGAL_precondition_msg(c >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
 
