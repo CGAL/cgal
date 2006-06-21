@@ -37,6 +37,34 @@ template<class Handle> inline bool handle_assigned ( Handle const& aH )
 
 }
 
+#ifdef CGAL_STRAIGHT_SKELETON_STATS
+
+int sVertexCount ;
+int sReflexVertexCount ;
+int sDegenerateVertexCount ;
+int sFoundEdgeEventCount ;
+int sFoundSplitEventCount ;
+int sProcessedEdgeEventCount ;
+int sProcessedSplitEventCount ;
+int sProcessedPseudoSplitEventCount ;
+int sOutOfReachSplitEventCount ;
+int sAnihiliationCount ;
+
+double sCollectEdgeEventTime ;
+double sCollectSplitEventTime ;
+double sProcessEdgeEventTime ;
+double sProcessSplitEventTime ;
+double sProcessPseudoSplitEventTime ;
+double sOppEdgeLookupTime ;
+double sFinishingTime ;
+double sPQinsertTime ;
+double sPQpopTime ;
+
+#define CGAL_STSKEL_STATS_CODE(c) c
+#else
+#define CGAL_STSKEL_STATS_CODE(c)
+#endif
+
 template<class Gt, class SS>
 Straight_skeleton_builder_2<Gt,SS>::Straight_skeleton_builder_2 ( Traits const& aTraits )
   :
@@ -59,6 +87,26 @@ template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::throw_error ( char const* what ) const
 {
   throw straight_skeleton_exception(what);
+}
+
+template<class Gt, class SS>
+void Straight_skeleton_builder_2<Gt,SS>::EnqueEvent( EventPtr aEvent )
+{
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
+  mPQ.push(aEvent);
+  CGAL_STSKEL_BUILDER_TRACE(0, *aEvent);
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sPQinsertTime += t.time() ; )
+}
+
+template<class Gt, class SS>
+typename Straight_skeleton_builder_2<Gt,SS>::EventPtr 
+Straight_skeleton_builder_2<Gt,SS>::PopEventFromPQ()
+{
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
+  EventPtr rR = mPQ.top();
+  mPQ.pop();
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sPQpopTime += t.time() ; )
+  return rR ;
 }
 
 //
@@ -105,9 +153,9 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
       if ( lAccepted )
       {
         rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, aLNode, aRNode ) ) ;
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-        SetEventTimeAndPoint(*rResult);
-#endif
+        
+        CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*rResult) );
+        CGAL_STSKEL_STATS_CODE(++sFoundEdgeEventCount);
       }
     }
   }
@@ -143,7 +191,7 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
   {
     lIsPseudoSplitEvent = true ;
     lCoupleIsPrev       = true ;
-    CGAL_SSBUILDER_TRACE(1,"Pseudo-split-event found against E" << lOppPrevBorder->id() << " and E" << lOppBorder->id() ) ;
+    CGAL_STSKEL_BUILDER_TRACE(1,"Pseudo-split-event found against E" << lOppPrevBorder->id() << " and E" << lOppBorder->id() ) ;
   }
   else
   {
@@ -154,7 +202,7 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
     {
       lIsPseudoSplitEvent = true ;
       lCoupleIsPrev       = false ;
-      CGAL_SSBUILDER_TRACE(1,"Pseudo-split-event found against E" << lOppBorder->id() << " and E" << lOppNextBorder->id() ) ;
+      CGAL_STSKEL_BUILDER_TRACE(1,"Pseudo-split-event found against E" << lOppBorder->id() << " and E" << lOppNextBorder->id() ) ;
     }
   }
 
@@ -194,16 +242,16 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle   aNod
     {
       EventPtr lEvent = EventPtr( new SplitEvent (aReflexLBorder,aReflexRBorder,aOppositeBorder,aNode) ) ;
       
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-      SetEventTimeAndPoint(*lEvent);
-#endif
+      CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*lEvent) ) ;
+      CGAL_STSKEL_STATS_CODE( ++sFoundSplitEventCount );
+      
       EnqueEvent(lEvent);
       
     }
   }
   else
   {
-    CGAL_SSBUILDER_TRACE(1,"Spit event for Seed N" << aNode->id() << " against E" << aOppositeBorder->id() << " does not exist." ) ;
+    CGAL_STSKEL_BUILDER_TRACE(1,"Spit event for Seed N" << aNode->id() << " against E" << aOppositeBorder->id() << " does not exist." ) ;
   }
 }
 
@@ -211,6 +259,8 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle   aNod
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvents( Vertex_handle aNode )
 {
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
+  
   // lLBorder and lRBorder are the consecutive contour edges forming the reflex wavefront.
   Halfedge_handle lLBorder = GetDefiningBorderA(aNode);
   Halfedge_handle lRBorder = GetDefiningBorderB(aNode) ;
@@ -227,7 +277,7 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvents( Vertex_handle aNode
   Halfedge_handle lRBorderP = lRBorder->opposite()->next()->opposite();
   Halfedge_handle lRBorderN = lRBorder->opposite()->prev()->opposite();
 
-  CGAL_SSBUILDER_TRACE(3
+  CGAL_STSKEL_BUILDER_TRACE(3
                       ,"Finding SplitEvent for N" << aNode->id()
                       << " LBorder: E" << lLBorder->id() << " RBorder: E" << lRBorder->id()
                       << " LBorderP: E" << lLBorderP->id() << " LBorderN: E" << lLBorderN->id()
@@ -247,6 +297,8 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvents( Vertex_handle aNode
        )
       CollectSplitEvent(aNode, lLBorder, lRBorder, lOpposite ) ;
   }
+  
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sCollectSplitEventTime += t.time() ; )
 }
 
 
@@ -292,7 +344,7 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectNewEvents( Vertex_handle aNode )
   Vertex_handle lPrev = GetPrevInLAV(aNode) ;
   Vertex_handle lNext = GetNextInLAV(aNode) ;
 
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
     ( 2
     , "Collecting new events generated by N" << aNode->id() << " at " << aNode->point() << " (Prev: N" << lPrev->id() << " Next: N"
        << lNext->id() << ")"
@@ -301,8 +353,10 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectNewEvents( Vertex_handle aNode )
   if ( IsReflex(aNode) )
     CollectSplitEvents(aNode) ;
     
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
   EventPtr lLEdgeEvent = FindEdgeEvent( lPrev , aNode ) ;
   EventPtr lREdgeEvent = FindEdgeEvent( aNode , lNext ) ;
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sCollectEdgeEventTime += t.time() ; )
 
   bool lAcceptL = !!lLEdgeEvent ;
   bool lAcceptR = !!lREdgeEvent ;
@@ -330,11 +384,11 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectNewEvents( Vertex_handle aNode )
            lAcceptL = false ;
       else lAcceptR = false ; 
     
-      CGAL_SSBUILDER_TRACE(3,"Both Left and Right Edge Events found with the same time:"
-                          << "LEvent:" << *lLEdgeEvent << '\n'
-                          << "REvent:" << *lREdgeEvent << '\n'
-                          << "Selecting the one closer to the seed: " << (lAcceptL ? "Left" : "Right") 
-                          );
+      CGAL_STSKEL_BUILDER_TRACE(3,"Both Left and Right Edge Events found with the same time:"
+                               << "LEvent:" << *lLEdgeEvent << '\n'
+                               << "REvent:" << *lREdgeEvent << '\n'
+                               << "Selecting the one closer to the seed: " << (lAcceptL ? "Left" : "Right") 
+                               );
     }
   }
     
@@ -353,26 +407,28 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectNewEvents( Vertex_handle aNode )
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB )
 {
-  CGAL_SSBUILDER_TRACE ( 2, "Handling simultaneous EdgeEvent between N" << aA ->id() << " and N"  << aB ->id() ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "Handling simultaneous EdgeEvent between N" << aA ->id() << " and N"  << aB ->id() ) ;
 
+  CGAL_STSKEL_STATS_CODE(++sAnihiliationCount);
+  
   Halfedge_handle lOA = aA->primary_bisector() ;
   Halfedge_handle lOB = aB->primary_bisector() ;
   Halfedge_handle lIA = lOA->opposite();
   Halfedge_handle lIB = lOB->opposite();
 
-  CGAL_SSBUILDER_TRACE ( 2
-                       ,    "OA: B" << lOA->id() << '\n'
-                         << "IA: B" << lIA->id() << '\n'
-                         << "OB: B" << lOB->id() << '\n'
-                         << "IB: B" << lIB->id()
-                       ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2
+                            ,    "OA: B" << lOA->id() << '\n'
+                              << "IA: B" << lIA->id() << '\n'
+                              << "OB: B" << lOB->id() << '\n'
+                              << "IB: B" << lIB->id()
+                            ) ;
 
   SetIsProcessed(aA) ;
   SetIsProcessed(aB) ;
   mSLAV.remove(aA);
   mSLAV.remove(aB);
 
-  CGAL_SSBUILDER_TRACE ( 3, 'N' << aA->id() << " processed\nN" << aB->id() << " processed" ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 3, 'N' << aA->id() << " processed\nN" << aB->id() << " processed" ) ;
 
   Halfedge_handle lOA_Prev = lOA->prev() ;
   Halfedge_handle lIA_Next = lIA->next() ;
@@ -380,12 +436,12 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_han
   Halfedge_handle lOB_Prev = lOB->prev() ;
   Halfedge_handle lIB_Next = lIB->next() ;
 
-  CGAL_SSBUILDER_TRACE ( 2
-                       ,   "OA_Prev: B" << lOA_Prev->id() << '\n'
-                         << "IA_Next: B" << lIA_Next->id() << '\n'
-                         << "OB_Prev: B" << lOB_Prev->id() << '\n'
-                         << "IB_Next: B" << lIB_Next->id()
-                      ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2
+                            ,   "OA_Prev: B" << lOA_Prev->id() << '\n'
+                              << "IA_Next: B" << lIA_Next->id() << '\n'
+                              << "OB_Prev: B" << lOB_Prev->id() << '\n'
+                              << "IB_Next: B" << lIB_Next->id()
+                           ) ;
 
   lOB     ->HBase_base::set_next( lIA_Next );
   lIA_Next->HBase_base::set_prev( lOB      );
@@ -394,9 +450,9 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_han
 
   lOB->HBase_base::set_vertex  (aA);
 
-  CGAL_SSBUILDER_SHOW ( DrawBisector(lOB) ; )
+  CGAL_STSKEL_BUILDER_SHOW ( DrawBisector(lOB) ; )
 
-  CGAL_SSBUILDER_TRACE ( 0, "B" << lOA->id() << " and B" << lIA->id() << " erased." ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 0, "B" << lOA->id() << " and B" << lIA->id() << " erased." ) ;
   mDanglingBisectors.push_back(lOA);
 
   //
@@ -408,16 +464,22 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_han
   if ( handle_assigned(lOA->vertex()) && lOA->vertex() != aA && lOA->vertex() != aB )
   {
     lOA->vertex()->VBase::set_halfedge(lIB);
-    CGAL_SSBUILDER_TRACE ( 1, "N" << lOA->vertex()->id() << " has B" << lOA->id() << " as it's halfedge. Replacing it with B" << lIB->id() ) ;
+    
+    CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lOA->vertex()->id() << " has B" << lOA->id() 
+                              << " as it's halfedge. Replacing it with B" << lIB->id() 
+                              ) ;
   }
   if ( handle_assigned(lIA->vertex()) && lIA->vertex() != aA && lIA->vertex() != aB )
   {
     lIA->vertex()->VBase::set_halfedge(lOB);
-    CGAL_SSBUILDER_TRACE ( 1, "N" << lIA->vertex()->id() << " has B" << lIA->id() << " as it's halfedge. Replacing it with B" << lOB->id() ) ;
+    
+    CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lIA->vertex()->id() << " has B" << lIA->id() 
+                              << " as it's halfedge. Replacing it with B" << lOB->id() 
+                              ) ;
   }
 
-  CGAL_SSBUILDER_TRACE ( 2, "N" << aA->id() << " halfedge: B" << aA->halfedge()->id() ) ;
-  CGAL_SSBUILDER_TRACE ( 2, "N" << aB->id() << " halfedge: B" << aB->halfedge()->id() ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "N" << aA->id() << " halfedge: B" << aA->halfedge()->id() ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "N" << aB->id() << " halfedge: B" << aB->halfedge()->id() ) ;
 
   CGAL_assertion( aA->primary_bisector() == lIB ) ;
 }
@@ -427,7 +489,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_han
 template<class Gt, class SS>
 bool Straight_skeleton_builder_2<Gt,SS>::AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB  ) const
 {
-  CGAL_SSBUILDER_TRACE ( 3, "Testing for simultaneous EdgeEvents between B" << aA->id() << " and B" << aB->id() ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 3, "Testing for simultaneous EdgeEvents between B" << aA->id() << " and B" << aB->id() ) ;
 
   Halfedge_const_handle lA_LBorder = aA->defining_contour_edge();
   Halfedge_const_handle lA_RBorder = aA->opposite()->defining_contour_edge();
@@ -444,7 +506,7 @@ void Straight_skeleton_builder_2<Gt,SS>::UpdatePQ( Vertex_handle aNode )
   Vertex_handle lPrev = GetPrevInLAV(aNode) ;
   Vertex_handle lNext = GetNextInLAV(aNode) ;
 
-  CGAL_SSBUILDER_TRACE ( 3, "Updating PQ for N" << aNode->id() << " Prev N" << lPrev->id() << " Next N" << lNext->id() ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 3, "Updating PQ for N" << aNode->id() << " Prev N" << lPrev->id() << " Next N" << lNext->id() ) ;
 
   Halfedge_handle lOBisector_P = lPrev->primary_bisector() ;
   Halfedge_handle lOBisector_C = aNode->primary_bisector() ;
@@ -461,7 +523,7 @@ void Straight_skeleton_builder_2<Gt,SS>::UpdatePQ( Vertex_handle aNode )
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::CreateInitialEvents()
 {
-  CGAL_SSBUILDER_TRACE(0, "Creating initial events...");
+  CGAL_STSKEL_BUILDER_TRACE(0, "Creating initial events...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
     UpdatePQ(v);
 }
@@ -469,9 +531,11 @@ void Straight_skeleton_builder_2<Gt,SS>::CreateInitialEvents()
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
 {
-  CGAL_SSBUILDER_TRACE(0, "Creating contour bisectors...");
+  CGAL_STSKEL_BUILDER_TRACE(0, "Creating contour bisectors...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
   {
+    CGAL_STSKEL_STATS_CODE(++sVertexCount);     
+    
     mSLAV.push_back(static_cast<Vertex_handle>(v));
     Vertex_handle lPrev = GetPrevInLAV(v) ;
     Vertex_handle lNext = GetNextInLAV(v) ;
@@ -481,10 +545,15 @@ void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
     {
       SetIsReflex(v);
       if ( lCollinear )
+      {
         SetIsDegenerate(v);
-      CGAL_SSBUILDER_TRACE(1,(lCollinear ? "COLLINEAR " : "Reflex ") << "vertex: N" << v->id() );
+        CGAL_STSKEL_STATS_CODE(++sDegenerateVertexCount);     
+      }
+      
+      CGAL_STSKEL_BUILDER_TRACE(1,(lCollinear ? "COLLINEAR " : "Reflex ") << "vertex: N" << v->id() );
+      CGAL_STSKEL_STATS_CODE(++sReflexVertexCount);     
     }
-    
+
     Halfedge lOB(mEdgeID++), lIB(mEdgeID++);
     Halfedge_handle lOBisector = mSSkel->SSkel::Base::edges_push_back (lOB, lIB);
     Halfedge_handle lIBisector = lOBisector->opposite();
@@ -498,10 +567,10 @@ void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
     lOBisector->HBase_base::set_prev(lIBorder);
     lOBorder  ->HBase_base::set_prev(lIBisector);
     lIBisector->HBase_base::set_next(lOBorder);
-    CGAL_SSBUILDER_TRACE(3
-                        ,"Adding Contour Bisector at N:" << v->id() << "\n B" << lOBisector->id()
-                        << " (Out)\n B" << lIBisector->id() << " (In)"
-                        ) ;
+    CGAL_STSKEL_BUILDER_TRACE(3
+                             ,"Adding Contour Bisector at N:" << v->id() << "\n B" << lOBisector->id()
+                             << " (Out)\n B" << lIBisector->id() << " (In)"
+                             ) ;
   }
 }
 
@@ -516,7 +585,7 @@ template<class Gt, class SS>
 typename Straight_skeleton_builder_2<Gt,SS>::Vertex_handle
 Straight_skeleton_builder_2<Gt,SS>::ConstructEdgeEventNode( EdgeEvent& aEvent )
 {
-  CGAL_SSBUILDER_TRACE ( 2, "Creating EdgeEvent Node" ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "Creating EdgeEvent Node" ) ;
 
   Vertex_handle lLSeed = aEvent.seed0() ;
   Vertex_handle lRSeed = aEvent.seed1() ;
@@ -538,9 +607,9 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructEdgeEventNode( EdgeEvent& aEvent )
   lLIBisector->HBase_base::set_prev( lROBisector ) ;
   lROBisector->HBase_base::set_next( lLIBisector ) ;
 
-  CGAL_SSBUILDER_SHOW( DrawBisector(lLOBisector); DrawBisector(lROBisector); ) ;
+  CGAL_STSKEL_BUILDER_SHOW( DrawBisector(lLOBisector); DrawBisector(lROBisector); ) ;
 
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
   ( 3
   ,    "LSeed: N" << lLSeed->id() << " proccesed\n"
     << "RSeed: N" << lRSeed->id() << " proccesed"
@@ -560,7 +629,7 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructEdgeEventNode( EdgeEvent& aEvent )
   SetNextInLAV(lNewNode, lRNext ) ;
   SetPrevInLAV(lRNext  , lNewNode  ) ;
 
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
   ( 2
   ,    "LO: B" << lLOBisector->id() << " LI: B" << lLIBisector->id() << " RO: B" << lROBisector->id() << " RI: B" << lRIBisector->id() << '\n'
     << "New Node: N" << lNewNode->id() << " at " << lNewNode->point() << '\n'
@@ -581,12 +650,9 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
 {
   Vertex_handle rResult ;
 
-  CGAL_SSBUILDER_TRACE ( 3, "Looking up for E" << aBorder->id() << " on SLAV. P=" << aEvent->point() ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 3, "ALT Looking up for E" << aBorder->id() << " on SLAV. P=" << aEvent->point() ) ;
 
-
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-  bool lFound = false ;
-#endif
+  CGAL_STSKEL_DEBUG_CODE( bool lFound = false ; )
 
   for ( typename std::list<Vertex_handle>::const_iterator vi = mSLAV.begin(); vi != mSLAV.end(); ++ vi )
   {
@@ -597,9 +663,7 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
        && GetDefiningBorderA(v) == aBorder
        )
     {
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-      lFound = true ;
-#endif
+      CGAL_STSKEL_DEBUG_CODE( lFound = true ; )
 
       Vertex_handle lPrev = GetPrevInLAV(v);
       Halfedge_handle lPrevBorder = GetDefiningBorderA(lPrev);
@@ -611,8 +675,8 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
       if ( IsEventInsideOffsetZone( aEvent->border_a(), aEvent->border_b(), aBorder, lPrevBorder, lNextBorder ) )
       {
         rResult = v ;
-        CGAL_SSBUILDER_TRACE ( 2
-                             , 'E' << aBorder->id() << " found in SLAV: N" << lPrev->id() << "->N" << v->id()
+        CGAL_STSKEL_BUILDER_TRACE ( 2
+                             , "ALT  E" << aBorder->id() << " found in SLAV: N" << lPrev->id() << "->N" << v->id()
                              << " (E" << lPrevBorder->id() << "->E" << aBorder->id() << "->E" << lNextBorder->id() << ")"
                              ) ;
         break ;
@@ -625,17 +689,18 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
   {
     if ( !lFound )
     {
-      CGAL_SSBUILDER_TRACE(1,"Split event is no longer valid. Opposite edge vanished.");
+      CGAL_STSKEL_BUILDER_TRACE(1,"ALT Split event is no longer valid. Opposite edge vanished.");
     }
     else
     { 
-      CGAL_SSBUILDER_TRACE(1,"Split event is no longer valid. Not inside the opposite edge offset zone.");
+      CGAL_STSKEL_BUILDER_TRACE(1,"ALT Split event is no longer valid. Not inside the opposite edge offset zone.");
     }
   } 
 #endif
-  
+
   return rResult ;
 }
+
 
 
 template<class Gt, class SS>
@@ -644,7 +709,7 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructSplitEventNodes( SplitEvent& aEvent
 {
   Vertex_handle_pair rResult;
 
-  CGAL_SSBUILDER_TRACE ( 2, "Creating SplitEvent Nodes" ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "Creating SplitEvent Nodes" ) ;
 
   Vertex_handle lOppL = GetPrevInLAV(aOppR) ;
 
@@ -666,14 +731,14 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructSplitEventNodes( SplitEvent& aEvent
 
   lXOutBisector->HBase_base::set_vertex(lNodeA);
 
-  CGAL_SSBUILDER_SHOW( DrawBisector(lXOutBisector); ) ;
+  CGAL_STSKEL_BUILDER_SHOW( DrawBisector(lXOutBisector); ) ;
 
-  CGAL_SSBUILDER_TRACE ( 3, "Seed: N" << lSeed->id() << " proccesed" ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 3, "Seed: N" << lSeed->id() << " proccesed" ) ;
 
   SetIsProcessed(lSeed) ;
   mSLAV.remove(lSeed);
 
-  CGAL_SSBUILDER_TRACE ( 2, 'N' << lNodeA->id() << " and N" << lNodeB->id() << " inserted into LAV." ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, 'N' << lNodeA->id() << " and N" << lNodeB->id() << " inserted into LAV." ) ;
 
   Vertex_handle lPrev = GetPrevInLAV(lSeed) ;
   Vertex_handle lNext = GetNextInLAV(lSeed) ;
@@ -690,7 +755,7 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructSplitEventNodes( SplitEvent& aEvent
   SetNextInLAV(lNodeB, lNext  ) ;
   SetPrevInLAV(lNext , lNodeB ) ;
 
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
   (
    2
    ,   "Updated LAV: N" << lPrev->id() << "->N" << lNodeA->id() << "->N" << aOppR->id() << std::endl
@@ -711,7 +776,7 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructPseudoSplitEventNodes( PseudoSplitE
 {
   Vertex_handle_pair rResult;
 
-  CGAL_SSBUILDER_TRACE ( 2, "Creating PseudoSplitEvent Nodes" ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 2, "Creating PseudoSplitEvent Nodes" ) ;
 
   Vertex_handle lLSeed = aEvent.seed0() ;
   Vertex_handle lRSeed = aEvent.seed1() ;
@@ -741,9 +806,9 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructPseudoSplitEventNodes( PseudoSplitE
   lLOBisector->HBase_base::set_next( lRIBisector ) ;
   lRIBisector->HBase_base::set_prev( lLOBisector ) ;
 
-  CGAL_SSBUILDER_SHOW( DrawBisector(lLOBisector); DrawBisector(lROBisector); ) ;
+  CGAL_STSKEL_BUILDER_SHOW( DrawBisector(lLOBisector); DrawBisector(lROBisector); ) ;
 
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
   (
    3
    ,   "LSeed: N" << lLSeed->id() << " proccesed\n"
@@ -772,8 +837,7 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructPseudoSplitEventNodes( PseudoSplitE
   SetNextInLAV(lNewNodeB, lLNext    ) ;
   SetPrevInLAV(lLNext   , lNewNodeB ) ;
 
-
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
   (
   2
   ,    "LO: B" << lLOBisector->id() << " LI: B" << lLIBisector->id() << " RO: B" << lROBisector->id() << " RI: B" << lRIBisector->id() << '\n'
@@ -803,6 +867,9 @@ bool Straight_skeleton_builder_2<Gt,SS>::IsProcessed( EventPtr aEvent )
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EventPtr aEvent )
 {
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
+  CGAL_STSKEL_STATS_CODE(++sProcessedEdgeEventCount);
+  
   EdgeEvent& lEvent = dynamic_cast<EdgeEvent&>(*aEvent) ;
 
   Vertex_handle lLSeed = lEvent.seed0() ;
@@ -817,7 +884,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EventPtr aEvent )
 
   if ( !handle_assigned(lLOBisector->next()) && !handle_assigned(lRIBisector->prev()) )
   {
-    CGAL_SSBUILDER_TRACE(3,"Creating new Edge Event's Bisector");
+    CGAL_STSKEL_BUILDER_TRACE(3,"Creating new Edge Event's Bisector");
 
     Halfedge_handle lNOBisector = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1) );
 
@@ -842,7 +909,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EventPtr aEvent )
     SetDefiningBorderB(lNewNode, lDefiningBorderB) ;
     SetDefiningBorderC(lNewNode, lDefiningBorderC) ;
 
-    CGAL_SSBUILDER_TRACE
+    CGAL_STSKEL_BUILDER_TRACE
       ( 2
       , "NewNode N" << lNewNode->id() << " at " << lNewNode->point() << " defining borders: E"
         << lDefiningBorderA->id()
@@ -858,6 +925,8 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EventPtr aEvent )
         << " primary bisector: B" << lNewNode->primary_bisector()->id()
       ) ;
 
+    CGAL_STSKEL_STATS_CODE(t.stop() ; sProcessEdgeEventTime += t.time() ; )
+     
     UpdatePQ(lNewNode);
   }
   else
@@ -870,19 +939,24 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EventPtr aEvent )
     SetDefiningBorderB(lNewNode, lDefiningBorderB) ;
     SetDefiningBorderC(lNewNode, lDefiningBorderC) ;
     
-    CGAL_SSBUILDER_TRACE(2
+    CGAL_STSKEL_BUILDER_TRACE(2
                         ,  "NewNode N" << lNewNode->id() << " at " << lNewNode->point() << " defining borders:"
                         << " E" << lDefiningBorderA->id()
                         << ",E" << lDefiningBorderB->id()
                         << ",E" << lDefiningBorderC->id() 
                         << ".\nThis is a multiple node (A node with these defining edges already exist in the LAV)"
                         );
+   CGAL_STSKEL_STATS_CODE(t.stop() ; sProcessEdgeEventTime += t.time() ; )
   }
+  
 }
 
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::HandleSplitEvent( EventPtr aEvent, Vertex_handle aOppR )
 {
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
+  CGAL_STSKEL_STATS_CODE(++sProcessedSplitEventCount);
+  
   SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
 
   Halfedge_handle lOppBorder = lEvent.border_c() ;
@@ -937,7 +1011,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitEvent( EventPtr aEvent, Vert
   SetDefiningBorderB(lNewNode_R, lNewNodeRDefiningBorderB) ;
   SetDefiningBorderC(lNewNode_R, lNewNodeRDefiningBorderC) ;
 
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
     (
      2
     ,    "New Node L: N" << lNewNode_L->id() << " at " << lNewNode_L->point()
@@ -970,8 +1044,11 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitEvent( EventPtr aEvent, Vert
       << " primary bisector: B" << lNewNode_R->primary_bisector()->id()
     ) ;
 
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sProcessSplitEventTime += t.time() ; )
+  
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
+  
 }
 
 template<class Gt, class SS>
@@ -994,7 +1071,7 @@ bool Straight_skeleton_builder_2<Gt,SS>::SetupPseudoSplitEventNode( Vertex_handl
     SetIsReflex(aNode);
     if ( lCollinear )
       SetIsDegenerate(aNode);
-    CGAL_SSBUILDER_TRACE(1, ( lCollinear ? "COLLINEAR ":"Reflex " ) << "*NEW* vertex: N" << aNode->id() );
+    CGAL_STSKEL_BUILDER_TRACE(1, ( lCollinear ? "COLLINEAR ":"Reflex " ) << "*NEW* vertex: N" << aNode->id() );
   }
 
   return rR ;
@@ -1003,6 +1080,9 @@ bool Straight_skeleton_builder_2<Gt,SS>::SetupPseudoSplitEventNode( Vertex_handl
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::HandlePseudoSplitEvent( EventPtr aEvent )
 {
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
+  CGAL_STSKEL_STATS_CODE(++sProcessedPseudoSplitEventCount);
+  
   PseudoSplitEvent& lEvent = dynamic_cast<PseudoSplitEvent&>(*aEvent) ;
   
   Vertex_handle lLSeed = lEvent.seed0() ;
@@ -1060,7 +1140,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandlePseudoSplitEvent( EventPtr aEvent
   SetDefiningBorderB(lNewNode_R, lNewNodeRDefiningBorderB) ;
   SetDefiningBorderC(lNewNode_R, lNewNodeRDefiningBorderC) ;
 
-  CGAL_SSBUILDER_TRACE
+  CGAL_STSKEL_BUILDER_TRACE
     (2
     ,    "New Node L: N" << lNewNode_L->id() << " at " << lNewNode_L->point()
       << " defining borders: E" << lNewNodeLDefiningBorderA->id()
@@ -1092,6 +1172,8 @@ void Straight_skeleton_builder_2<Gt,SS>::HandlePseudoSplitEvent( EventPtr aEvent
   if ( !lNodeLIsNonConvex )
     SetupPseudoSplitEventNode(lNewNode_R,lNewNodeRDefiningBorderA,lNewNodeRDefiningBorderB) ;
 
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sProcessPseudoSplitEventTime += t.time() ; )
+  
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
 }
@@ -1099,7 +1181,9 @@ void Straight_skeleton_builder_2<Gt,SS>::HandlePseudoSplitEvent( EventPtr aEvent
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::HandleSplitOrPseudoSplitEvent( EventPtr aEvent )
 {
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
   Vertex_handle lOppR = LookupOnSLAV(aEvent->border_c(),aEvent);
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sOppEdgeLookupTime += t.time() ; )
   
   if ( handle_assigned(lOppR) )
   {
@@ -1108,12 +1192,16 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitOrPseudoSplitEvent( EventPtr
          HandlePseudoSplitEvent(lPseudoSplitEvent);
     else HandleSplitEvent      (aEvent,lOppR);  
   }
+  else
+  {
+    CGAL_STSKEL_STATS_CODE(++sOutOfReachSplitEventCount);
+  }
 }
 
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::Propagate()
 {
-  CGAL_SSBUILDER_TRACE(0,"Propagating events...");
+  CGAL_STSKEL_BUILDER_TRACE(0,"Propagating events...");
 
   while ( !mPQ.empty() )
   {
@@ -1121,8 +1209,8 @@ void Straight_skeleton_builder_2<Gt,SS>::Propagate()
 
     if ( !lEvent->is_excluded() && !IsProcessed(lEvent) )
     {
-      CGAL_SSBUILDER_TRACE (0,"\nStep: " << mStepID << " Event: " << *lEvent ) ;
-      CGAL_SSBUILDER_SHOW ( SS_IO_AUX::ScopedPointDrawing lDraw(lEvent->point(),CGAL::BLUE,"Event"); )
+      CGAL_STSKEL_BUILDER_TRACE (0,"\nStep: " << mStepID << " Event: " << *lEvent ) ;
+      CGAL_STSKEL_BUILDER_SHOW ( SS_IO_AUX::ScopedPointDrawing lDraw(lEvent->point(),CGAL::BLUE,"Event"); )
 
       SetEventTimeAndPoint(*lEvent) ;
       
@@ -1149,7 +1237,7 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aS
   Halfedge_handle lIBisectorL2 = lIBisectorL1->next()->opposite();
   Halfedge_handle lIBisectorR2 = lIBisectorR1->next()->opposite();
   
-  CGAL_SSBUILDER_TRACE(2
+  CGAL_STSKEL_BUILDER_TRACE(2
                       ,"Merging SplitNodes: (L) N" << lLNode->id() << " and (R) N" << lRNode->id() << ".\n"
                        << "  LOut: B" << lLNode->primary_bisector()->id() << '\n'
                        << "  ROut: B" << lRNode->primary_bisector()->id() << '\n'
@@ -1171,7 +1259,7 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aS
   if ( lIBisectorR2->vertex() == lRNode )
     lIBisectorR2->HBase_base::set_vertex(lLNode);
 
-  CGAL_SSBUILDER_TRACE(2
+  CGAL_STSKEL_BUILDER_TRACE(2
                       ,   "  N" << lRNode->id() << " excluded.\n"
                        << "  LIn1 B" << lIBisectorL1->id() << " now linked to N" << lIBisectorL1->vertex()->id() << '\n'
                        << "  RIn1 B" << lIBisectorR1->id() << " now linked to N" << lIBisectorR1->vertex()->id() << '\n'
@@ -1191,7 +1279,7 @@ void TraceCluster( Cluster const& c )
   for ( typename Cluster::const_iterator v = c.begin(), ev = c.end(); v != ev ; ++ v )
     ss << "N" << (*v)->id() << " " ;
   std::string s = ss.str();
-  CGAL_SSBUILDER_TRACE(1, s);
+  CGAL_STSKEL_BUILDER_TRACE(1, s);
 }
 
 template<class Is_bond_map>
@@ -1207,7 +1295,7 @@ void TraceBisectorClassification( Is_bond_map const& m )
        << std::endl ;
   }
   std::string s = ss.str();
-  CGAL_SSBUILDER_TRACE(1, s);
+  CGAL_STSKEL_BUILDER_TRACE(1, s);
 }
 
 template<class Point>
@@ -1230,7 +1318,7 @@ void TraceFinalBisectors( Vertex_handle v, Halfedge_around_vertex_circulator cb 
   {
     double phi = angle_wrt_X((*c)->vertex()->point(),(*c)->opposite()->vertex()->point());
     
-    CGAL_SSBUILDER_TRACE(2, "  N" << v->id() << " in=B" << (*c)->id() 
+    CGAL_STSKEL_BUILDER_TRACE(2, "  N" << v->id() << " in=B" << (*c)->id() 
                         << " E" << (*c)->defining_contour_edge()->id() 
                         << " out=B" << (*c)->opposite()->id() 
                         << " E" << (*c)->opposite()->defining_contour_edge()->id() 
@@ -1360,7 +1448,7 @@ void Straight_skeleton_builder_2<Gt,SS>::RearrangeBisectorsAroundMultinode( Vert
   // Reset the main halfedge for v0  
   v0->VBase::set_halfedge(first_he) ;
   
-  CGAL_SLS_DEBUG_CODE( TraceFinalBisectors(v0,v0->halfedge_around_vertex_begin()); )
+  CGAL_STSKEL_DEBUG_CODE( TraceFinalBisectors(v0,v0->halfedge_around_vertex_begin()); )
      
 }
 
@@ -1370,7 +1458,7 @@ void Straight_skeleton_builder_2<Gt,SS>::RearrangeBisectorsAroundMultinode( Vert
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
 {
-  CGAL_SSBUILDER_TRACE(0, "Merging coincident nodes...");
+  CGAL_STSKEL_BUILDER_TRACE(0, "Merging coincident nodes...");
   
   //
   // An undirected graph is used to avoid testing (b,a) when (a,b) was already tested.
@@ -1421,7 +1509,7 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
         // Now add v0 to the cluster, all nodes previously clustered will will be replaced by v0
         lCluster.push_back(v0);
         
-        CGAL_SLS_DEBUG_CODE( TraceCluster(lCluster); )
+        CGAL_STSKEL_DEBUG_CODE( TraceCluster(lCluster); )
         
         // Classify all the in-halfedges incident to the clustered nodes as "bond" and "non-bond":
         //  "bond" halfedges link a node in the cluster to another node in the cluster (which should be erased from the HDS)
@@ -1429,7 +1517,7 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
         Is_bond_map lIsBond ;
         ClassifyBisectorsAroundMultinode(lCluster,lIsBond);
         
-        CGAL_SLS_DEBUG_CODE( TraceBisectorClassification(lIsBond); )
+        CGAL_STSKEL_DEBUG_CODE( TraceBisectorClassification(lIsBond); )
         
         // Relink all non-bond bisectors to v0
         RearrangeBisectorsAroundMultinode(v0,lIsBond);    
@@ -1444,13 +1532,13 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
   
   for( Halfedge_handle_vector_iterator hi = lHalfedgesToRemove.begin(), ehi = lHalfedgesToRemove.end() ; hi != ehi ; ++ hi )
   {
-    CGAL_SSBUILDER_TRACE(0, "B" << (*hi)->id() << " removed.");
+    CGAL_STSKEL_BUILDER_TRACE(0, "B" << (*hi)->id() << " removed.");
     mSSkel->SSkel::Base::edges_erase(*hi);    
   }
     
   for( Vertex_handle_vector_iterator vi = lVerticesToRemove.begin(), evi = lVerticesToRemove.end() ; vi != evi ; ++ vi )
   {
-    CGAL_SSBUILDER_TRACE(0, "N" << (*vi)->id() << " removed.");
+    CGAL_STSKEL_BUILDER_TRACE(0, "N" << (*vi)->id() << " removed.");
     mSSkel->SSkel::Base::vertices_erase(*vi);    
   }  
    
@@ -1460,7 +1548,8 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::FinishUp()
 {
-  CGAL_SSBUILDER_TRACE(0, "\n\nFinishing up...");
+  CGAL_STSKEL_STATS_CODE(Real_timer t ; t.start() ; )
+  CGAL_STSKEL_BUILDER_TRACE(0, "\n\nFinishing up...");
 
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
@@ -1473,6 +1562,7 @@ void Straight_skeleton_builder_2<Gt,SS>::FinishUp()
                ) ;
                
   MergeCoincidentNodes();             
+  CGAL_STSKEL_STATS_CODE(t.stop() ; sFinishingTime += t.time() ; )
 }
 
 template<class Gt, class SS>
@@ -1492,16 +1582,40 @@ typename Straight_skeleton_builder_2<Gt,SS>::SSkelPtr Straight_skeleton_builder_
   }
   catch( std::exception const& e ) 
   {
-    CGAL_SSBUILDER_TRACE(0,"EXCEPTION THROWN (" << e.what() << ") during straight skeleton construction.");
+    CGAL_STSKEL_BUILDER_TRACE(0,"EXCEPTION THROWN (" << e.what() << ") during straight skeleton construction.");
     mSSkel = SSkelPtr() ; 
   }
   
   if ( !!mSSkel && !CGAL::HalfedgeDS_const_decorator<SSkel>(*mSSkel).is_valid(false,3) ) 
   {
-    CGAL_SSBUILDER_TRACE(0,"Result inconsistent.");
+    CGAL_STSKEL_BUILDER_TRACE(0,"Result inconsistent.");
     mSSkel = SSkelPtr() ; 
   }
   
+#ifdef CGAL_STRAIGHT_SKELETON_STATS
+
+std::cerr << "sVertexCount                   =" << sVertexCount << std::endl
+          << "sReflexVertexCount             =" << sReflexVertexCount << std::endl 
+          << "sDegenerateVertexCount         =" << sDegenerateVertexCount << std::endl  
+          << "sFoundEdgeEventCount           =" << sFoundEdgeEventCount << std::endl  
+          << "sFoundSplitEventCount          =" << sFoundSplitEventCount << std::endl  
+          << "sProcessedEdgeEventCount       =" << sProcessedEdgeEventCount << std::endl  
+          << "sProcessedSplitEventCount      =" << sProcessedSplitEventCount << std::endl  
+          << "sProcessedPseudoSplitEventCount=" << sProcessedPseudoSplitEventCount << std::endl  
+          << "sOutOfReachSplitEventCount     =" << sOutOfReachSplitEventCount << std::endl  
+          << "sAnihiliationCount             =" << sAnihiliationCount << std::endl  
+          << std::endl
+          << "sCollectEdgeEventTime          =" << sCollectEdgeEventTime << std::endl  
+          << "sCollectSplitEventTime         =" << sCollectSplitEventTime << std::endl  
+          << "sProcessEdgeEventTime          =" << sProcessEdgeEventTime << std::endl  
+          << "sProcessSplitEventTime         =" << sProcessSplitEventTime << std::endl  
+          << "sProcessPseudoSplitEventTime   =" << sProcessPseudoSplitEventTime << std::endl  
+          << "sOppEdgeLookupTime             =" << sOppEdgeLookupTime << std::endl  
+          << "sFinishingTime                 =" << sFinishingTime << std::endl  
+          << "sPQinsertTime                  =" << sPQinsertTime << std::endl  
+          << "sPQpopTime                     =" << sPQpopTime << std::endl  ;
+#endif
+
   
   return mSSkel ;
 }

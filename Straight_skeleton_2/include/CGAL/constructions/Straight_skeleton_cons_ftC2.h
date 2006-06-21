@@ -81,10 +81,10 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
       c = e.source().y();
     }
 
-    CGAL_SSTRAITS_TRACE("Line coefficients for HORIZONTAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
-                        << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
-                        << "\na="<< a << "\nb=" << b << "\nc=" << c
-                       ) ;
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for HORIZONTAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
+                            << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
+                            << "\na="<< a << "\nb=" << b << "\nc=" << c
+                           ) ;
   }
   else if(e.target().x() == e.source().x())
   {
@@ -105,10 +105,10 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
       c = -e.source().x();
     }
 
-    CGAL_SSTRAITS_TRACE("Line coefficients for VERTICAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
-                        << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
-                        << "\na="<< a << "\nb=" << b << "\nc=" << c
-                       ) ;
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for VERTICAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
+                            << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
+                            << "\na="<< a << "\nb=" << b << "\nc=" << c
+                           ) ;
   }
   else
   {
@@ -127,10 +127,10 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
     }
     else finite = false ;
     
-    CGAL_SSTRAITS_TRACE("Line coefficients for line:\npx=" << e.source().x() << "\npy=" << e.source().y() << "\nqx="
-                        << e.target().x() << "\nqy=" << e.target().y()
-                        << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl:" << l
-                       ) ;
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for line:\npx=" << e.source().x() << "\npy=" << e.source().y() << "\nqx="
+                            << e.target().x() << "\nqy=" << e.target().y()
+                            << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl:" << l
+                           ) ;
   }
   
   if ( !finite )
@@ -207,7 +207,7 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
     ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
   }
   
-  CGAL_SSTRAITS_TRACE("Normal Event:\nn=" << num << "\nd=" << den  )
+  CGAL_STSKEL_TRAITS_TRACE("Normal Event:\nn=" << num << "\nd=" << den  )
 
   return cgal_make_optional(ok,Rational<FT>(num,den)) ;
 }
@@ -317,14 +317,14 @@ optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC
       num = (l2->a() * l0->b() - l0->a() * l2->b() ) * q->x() + l0->b() * l2->c() - l2->b() * l0->c() ;
       den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
       
-      CGAL_SSTRAITS_TRACE("Non-vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
+      CGAL_STSKEL_TRAITS_TRACE("Non-vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
     }
     else
     {
       num = (l2->a() * l0->b() - l0->a() * l2->b() ) * q->y() - l0->a() * l2->c() + l2->a() * l0->c() ;
       den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
       
-      CGAL_SSTRAITS_TRACE("Vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
+      CGAL_STSKEL_TRAITS_TRACE("Vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
     }
     
     ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
@@ -379,7 +379,7 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( Sorted_triedge_2<K
   {
     FT den = l0->a()*l2->b() - l0->a()*l1->b() - l1->a()*l2->b() + l2->a()*l1->b() + l0->b()*l1->a() - l0->b()*l2->a();
   
-    CGAL_SSTRAITS_TRACE("Event Point:\n  d=" << den  )
+    CGAL_STSKEL_TRAITS_TRACE("Event Point:\n  d=" << den  )
   
     CGAL_assertion ( ! CGAL_NTS certified_is_zero(den) ) ;
   
@@ -396,7 +396,7 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( Sorted_triedge_2<K
     
   }
     
-  CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
+  CGAL_STSKEL_TRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
     
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
@@ -461,7 +461,7 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( Sorted_triedge
   }
   
 
-  CGAL_SSTRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
+  CGAL_STSKEL_TRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
 
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }

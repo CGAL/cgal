@@ -35,7 +35,7 @@
 #  include<iostream>
 #  include<sstream>
 #  include<iomanip>
-#  define CGAL_SSTRAITS_TRACE(m) \
+#  define CGAL_STSKEL_TRAITS_TRACE(m) \
      { \
        std::ostringstream ss ; \
        ss << std::setprecision(19) << m << std::ends ; \
@@ -43,7 +43,7 @@
        Straight_skeleton_traits_external_trace(s); \
      }
 #else
-#  define CGAL_SSTRAITS_TRACE(m)
+#  define CGAL_STSKEL_TRAITS_TRACE(m)
 #endif
 
 CGAL_BEGIN_NAMESPACE
