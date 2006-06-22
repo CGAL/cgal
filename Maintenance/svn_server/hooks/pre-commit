@@ -67,5 +67,9 @@ fi
 # whose name differ only by case (illegal on Windows)
 /svn/cgal/hooks/check-case-insensitive.pl "$REPOS" "$TXN" || exit 1
 
+# Ensure that the repository accepts only file/folder names
+# compatible with Windows/Unix/Mac file systems (plus SVN own requirements).
+/svn/cgal/hooks/check-characters.pl "$REPOS" "$TXN" || exit 1
+
 # All checks passed, so allow the commit.
 exit 0
