@@ -19,8 +19,6 @@ exec ./implicit_surfaces_mesher_3 \
     \
     --number_of_initial_points 50 \
     \
-    --read_initial_points ./dump_of_initial_points_of_tangle \
-    \
-     --number_of_pump 0
+    --read_initial_points ./dump_of_initial_points_of_tangle
 
 # if --read_initial_points is used, --number_of_initial_points is useless

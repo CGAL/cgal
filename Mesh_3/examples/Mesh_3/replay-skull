@@ -24,7 +24,6 @@ exec ./implicit_surfaces_mesher_3 \
     skull.mesh \
     --cgal_mesh_before_exudation skull.cgal \
     \
-    --number_of_pump 1 \
     --pumping_bound 0.5 \
     \
     --mesh_after_filename skull-after.mesh \

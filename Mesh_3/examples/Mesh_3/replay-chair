@@ -16,7 +16,6 @@ exec ./implicit_surfaces_mesher_3 \
     \
     chair.mesh \
     \
-    --number_of_pump 1 \
     --pumping_bound 0.5
     \
     --slivers_off chair-slivers.off \
