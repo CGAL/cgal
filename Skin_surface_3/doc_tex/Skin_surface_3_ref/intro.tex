@@ -1,6 +1,7 @@
 % +------------------------------------------------------------------------+
-% | Skin_surface_3/doc_tex/Skin_surface_3/main.tex
+% | Skin_surface_3/doc_tex/Skin_surface_3/intro.tex
 % +------------------------------------------------------------------------+
+% | 2005 Nico Kruithof
 % | Meshing the 3d Skin surface defined for a set of spheres.
 % | 
 \RCSdef{\skinSurfaceRefRev}{$Id$}
@@ -12,13 +13,13 @@
 \ccChapterRelease{\skinSurfaceRefRev. \ \skinSurfaceRefDate}
 \ccChapterAuthor{Nico Kruithof}
 
-% +------------------------------------------------------------------------+
+%
++------------------------------------------------------------------------+
 Skin surfaces form a class of tangent continuous surfaces defined by a
 set of balls and a scalar called the shrink factor. The skin surface
-package constructs an isotopic triangulation of the skin surface,
-using the algorithm described in \cite{cgal:kv-mssct-05}. The
-triangulation is stored in a \ccc{CGAL::Polyhedron_3}. The algorithm
-is customizable with the help of observer classes.
+package constructs an isotopic triangular mesh of the skin surface,
+using the algorithm described in \cite{cgal:kv-mssct-05}. The mesh is
+stored in a \ccc{CGAL::Polyhedron_3}. 
 
 \subsection*{Concepts}
 \ccRefIdfierPage{SkinSurface_3}\\
@@ -34,15 +35,17 @@ is customizable with the help of observer classes.
 \subsection*{Classes}
 \ccRefIdfierPage{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}\\
 \ccRefIdfierPage{CGAL::Skin_surface_traits_3}
+\ccRefIdfierPage{CGAL::Union_of_balls_3<UnionOfBallsTraits_3>}\\
+\ccRefIdfierPage{CGAL::Union_of_balls_traits_3}
 
-\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>}\\
+%\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>}\\
 
 \subsection*{Functions}
-\ccRefIdfierPage{CGAL::make_skin_surface_3}\\
 \ccRefIdfierPage{CGAL::mesh_skin_surface_3}\\
-\ccRefIdfierPage{CGAL::subdivide_skin_surface_3}
+\ccRefIdfierPage{CGAL::mesh_union_of_balls_3}\\
+\ccRefIdfierPage{CGAL::subdivide_skin_surface_mesh_3}
 
 %NGHK: Move ???
-\ccRefIdfierPage{CGAL::marching_tetrahedra_3}
+%\ccRefIdfierPage{CGAL::marching_tetrahedra_3}
 
 %% EOF %%

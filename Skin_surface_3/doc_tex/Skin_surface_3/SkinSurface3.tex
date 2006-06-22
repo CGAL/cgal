@@ -1,3 +1,13 @@
+% +------------------------------------------------------------------------+
+% | Skin_surface_3/doc_tex/Skin_surface_3/SkinSurface3.tex
+% +------------------------------------------------------------------------+
+% | 2005 Nico Kruithof
+% | Meshing the 3d Skin surface defined for a set of spheres.
+% | 
+\RCSdef{\skinSurfaceRev}{$Id$}
+\RCSdefDate{\skinSurfaceDate}{$Date$}
+% +------------------------------------------------------------------------+
+
 \newcommand\ssWpoint[1]{{#1}_{(w)}}
 
 \begin{ccTexOnly}
@@ -25,17 +35,18 @@ visualization.
 A skin surface is defined by a set of weighted points (input balls)
 and a scalar called the shrink factor. If the shrink factor is equal
 to one, the surface is just the boundary of the union of the input
-balls.  If the shrink factor decreases, the skin surface becomes
+balls.  For a shrink factor smaller than one, the skin surface becomes
 tangent continuous, due to the appearance of patches of spheres and
 hyperboloids connecting the balls.
 
 This package constructs an isotopic mesh from a set of balls and a
 shrink factor using the algorithm described in
-\cite{cgal:kv-mssct-05}. It also provides an interface to the surface
-mesher presented in Chapter~\ref{chapter_SurfaceMesher} by providing a
-model of the concept \ccc{Surface_3}.
+\cite{cgal:kv-mssct-05}. %It also provides an interface to the surface
+%mesher presented in Chapter~\ref{chapter_SurfaceMesher} by providing a
+%model of the concept \ccc{Surface_3}.
 
-%An optimized algorithm is implemented for meshing the union of a set of balls.
+An optimized algorithm is implemented for meshing the union of a set
+of balls.
 
 \section{Definition of a skin surface}
 \label{sec:skindefinition}
@@ -113,9 +124,9 @@ set of balls.
 By definition of a skin surface, the weights of the input balls (their
 radius-squared) are shrunk with a factor of $s$ and the skin surface
 wraps around the shrunk input balls. In order to make the skin surface
-wrap around the (unshrunk) input balls, we can first shrink the
-weights of the input balls with a factor $1/s$ (which means that their
-weight grows) and then compute the skin surface.
+wrap around the (unshrunk) input balls, we can first increase the
+weights of the input balls by multiplying them with a factor $1/s$ and
+then compute the skin surface.
 
 %There exists a polyhedral complex that decomposes a skin surface into
 %pieces quadrics. 
@@ -132,9 +143,9 @@ refines the mesh.
 The \ccc{Skin_surface_3} object takes an iterator range of weighted
 points and a shrink factor. Optional arguments are a boolean whether
 the input weighted points should be grown in such a way that the skin
-surface wraps around the input balls instead of shrunk input balls.
-The second optional argument specifies the geometric traits class to
-be used.
+surface wraps around the input balls instead of the shrunk input
+balls.  The second optional argument specifies the geometric traits
+class to be used.
 
 \ccGlobalFunction{
   template <class SkinSurfaceTraits_3> 
@@ -146,7 +157,8 @@ be used.
   Gt gt = Gt());}
 
 With the \ccc{SkinSurface_3} object it is possible to generate a
-coarse mesh isotopic to the skin surface. 
+coarse mesh isotopic to the skin surface. Using the function
+\ccc{mesh_skin_surface_3} with signature:
 
 \ccGlobalFunction{template <class SkinSurface_3,
                             class FT,
@@ -155,33 +167,38 @@ void mesh_skin_surface_3
 (SkinSurface_3 skin_surface,
  Polyhedron &p) ;}
 
+An analogue function exists for meshing the union of a set of balls
+defined by an \ccc{Union_of_balls} object:
+
+\ccGlobalFunction{template <class UnionOfBalls_3,
+                            class FT,
+                            class Polyhedron>
+void mesh_union_of_balls_3
+(UnionOfBalls_3 union_of_balls,
+ Polyhedron &p) ;}
+
 The last function takes the (coarse) mesh and subdivides it in-situ by
 applying a given number of 1-4 split operations (each triangle is
-split into four sub-triangles) and then moving the vertices on the
+split into four sub-triangles) and moving the new vertices towards the
 skin surface. If the number of iterations is not specified, one
-subdivision step is done. A model of the \ccc{SkinSurface_3} object is
+subdivision step is done. The \ccc{SkinSurface_3} object is
 needed to move the new points on the skin surface.
 
 \ccGlobalFunction{template <class Polyhedron,
                             class SkinSurface_3 >
-void subdivide_skin_surface_mesh_3 
-(Polyhedron &p,
- SkinSurface_3 &skinsurface,
- int iterations);}
-\ccGlobalFunction{template <class Polyhedron,
-                            class SkinSurface_3 >
-void subdivide_skin_surface_mesh_3 
-(Polyhedron &p,
- SkinSurface_3 &skinsurface);}
+void subdivide_skin_surface_mesh_3 (Polyhedron &p,
+                                    SkinSurface_3 &skinsurface,
+                                    int iterations=1);}
 %
-The class \ccc{Skin_surface_3} is both a model of the concept
-\ccc{SkinSurface_3} and the concept \ccc{Surface_3}.
-Therefore it can be used in the surface mesher described in
-Chapter~\ref{chapter_SurfaceMesher}.
+%The class \ccc{Skin_surface_3} is both a model of the concept
+%\ccc{SkinSurface_3} and the concept \ccc{Surface_3}.
+%Therefore it can be used in the surface mesher described in
+%Chapter~\ref{chapter_SurfaceMesher}.
 
 \section{Timings}
 The timings of the construction of the coarse mesh and the first
-subdivision are given in seconds.
+subdivision are given in seconds and were done on a Pentium 4, 3.5
+GHz, with 1 Gb of memory.
 \begin{center}
   \begin{tabular}{|l|c|c|c|}
     \hline
@@ -193,7 +210,7 @@ subdivision are given in seconds.
     \hline
   \end{tabular}
 \end{center}
-The timings were done on a Pentium 4, 3.5 GHz, with 1 Gb of memory.
+
 \section{Example programs}
 \subsection{Meshing a skin surface}
 The following example shows the construction of a coarse mesh of the
@@ -202,84 +219,9 @@ skin surface from an iterator range of weighted points and a shrink factor.
 
 \subsection{Meshing and subdividing a skin surface}
 This example extends the previous examples with a subdivision of the
-coarse mesh to obtain a better approximation. The extension of the
-polyhedron is not necessary, but gives a significant speedup.
+coarse mesh to obtain a better approximation. The use of the
+polyhedral items is not necessary, but gives a significant speedup.
 \ccIncludeExampleCode{Skin_surface_3/skin_surface_subdiv.C}
 
 
-
-\section{Marching tetrahedra}
-NGHK: Where to place this section?
-
-The marching tetrahedra algorithm, introduced in
-\cite{cgal:tpg-rmtiise-99}, is used in the construction of the coarse
-mesh isotopic to skin surface. This algorithm is of general use and
-therefore also documented.
-
-The marching tetrahedra algorithm extracts a mesh from a
-triangulation.  First, it labels each vertex of the triangulation
-either as inside or as outside. The vertices of the mesh are
-constructed as the intersection point of the surface and an edge with
-different vertex-labels. The faces of the mesh are defined by the
-tetrahedra of the triangulation. Based on the number of
-triangulation-vertices inside the surface, we can distinguish five
-cases, two of which are redundant if we allow the exchange of inside
-and outside. In the case that all four labels are equal, the
-tetrahedron does not contain a part of the surface. If three labels
-are equal, the three vertices of the mesh form a triangle. If two
-labels are equal, we construct two triangles. These three cases are
-depicted in Figure~\ref{SkinSurface3-fig-marching}.
-
-\begin{figure}
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=.8\textwidth]{Skin_surface_3/marching}
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-<CENTER>
-<img border=0 src="./marching.png"
-alt="Cases of the marching tetrahedra algorithm.">
-</CENTER>
-\end{ccHtmlOnly}
-
-\caption{\label{SkinSurface3-fig-marching} Cases of the marching
-  tetrahedra algorithm.}
-\end{figure}
-
-The function takes four arguments: the input triangulation, the
-surface mesh, a policy class and an observer class.  The algorithm is
-performed on the triangulation and the resulting mesh is stored in the
-polyhedron. The \ccc{CGAL::Polyhedron_incremental_builder_3} is used
-for constructing the polyhedron. There are two overloaded functions:
-
-\ccGlobalFunction{template <class Triangulation_3,
-                            class HDS,
-                            class MarchingTetrahedraPolicy>
-  void marching_tetrahedra_3(Triangulation_3 const t,
-                             Polyhedron &p,
-                             MarchingTetrahedraPolicy policy) ;}
-\ccGlobalFunction{template <class Triangulation_3,
-                            class HDS,
-                            class MarchingTetrahedraPolicy,
-                            class MarchingTetrahedraObserver>
-  void marching_tetrahedra_3(Triangulation_3 const t,
-                             Polyhedron &p,
-                             MarchingTetrahedraPolicy policy,
-                             MarchingTetrahedraPolicy observer) ;}
-
-The policy class defines a predicate and a constructor. The predicate
-is able to test whether a vertex of the triangulation lies inside or
-outside the surface and the constructor is able to return the
-intersection point of the surface with an edge of the triangulation
-whose vertices lie on opposite sides of the surface. For skin surfaces
-the intersection point is unique.
-
-The observer class implements two functions that are called after the
-construction of a vertex and a facet of the polyhedron. After
-insertion of a vertex in the polyhedron a function is called with the
-vertex of the polyhedron and the corresponding edge of the
-triangulation. Similarly, after insertion of a facet in the polyhedron
-a function is called with the facet of the polyhedron and the
-corresponding cell of the triangulation. 
 
