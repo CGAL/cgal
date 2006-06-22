@@ -1,34 +1,15 @@
-\lcTex{%
-  \newlength{\widthExtra}\setlength{\widthExtra}{1.1cm}
-  \newlength{\widthLineReal}\setlength{\widthLineReal}{\linewidth}
-  \addtolength{\widthLineReal}{-\widthExtra}
-  \newlength{\minipageSpace}\setlength{\minipageSpace}{0.2cm}
-
-  \newlength{\widthLeft}
-  \newlength{\widthRight}
-}
-
-\newcommand{\reals}{\mathbb{R}}
-\newcommand{\calC}{{\cal C}}
-\newcommand{\calA}{{\cal A}}
-\newcommand{\eps}{{\varepsilon}}
-\newcommand{\dcel}{{\sc Dcel}}
-\newcommand{\naive}{na\"{\i}ve}
-\newcommand{\kdtree}{{\sc Kd}-tree}
-\newcommand{\Cpp}{{C}{\tt ++}}
-
 % ====================
 \section{Introduction}
 \label{mink_sec:intro}
 % ====================
 
-Given two sets $A,B \in \reals^d$, their \emph{Minkowski sum},
+Given two sets $A,B \in \mathbb{R}^d$, their \emph{Minkowski sum},
 denoted by $A \oplus B$, is the set $\left\{ a + b ~|~ a \in
 A, b \in B \right\}$. Minkowski sum are used in many applications,
 such as motion planning and computer-aided design and
 manufacturing. This package contains functions for computing planar
 Minkowski sums of two polygons (namely $A$ and $B$ are two closed
-polygons in $\reals^2$), and for a polygon and a disc (an operation
+polygons in $\mathbb{R}^2$), and for a polygon and a disc (an operation
 also known as \emph{offsetting} or \emph{dilating} a polygon).
 
 \section{Computing the Minkowski Sum of Two Polygons}
@@ -109,7 +90,7 @@ necessarily simple) polygonal curves called \emph{convolution
 cycles}. The Minkowski sum $P \oplus Q$ is the set of points
 having a non-zero winding number with respect to the cycles
 of $P * Q$.\footnote{Informally speaking, the winding number of a point
-$p \in \reals^2$ with respect to some planar curve $\gamma$ is an
+$p \in \mathbb{R}^2$ with respect to some planar curve $\gamma$ is an
 integer number counting how many times does $\gamma$ wind in a
 counterclockwise direction around $p$.} See Figure~\ref{mink_fig:onecyc}
 for an illustration.
