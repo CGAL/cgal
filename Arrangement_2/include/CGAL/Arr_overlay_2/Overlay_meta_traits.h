@@ -193,6 +193,8 @@ public:
   typedef typename Traits::Compare_xy_2             Base_Compare_xy_2;
   typedef typename Traits::Compare_y_at_x_2         Base_Compare_y_at_x_2;
   typedef typename Traits::Compare_y_at_x_right_2   Base_Compare_y_at_x_right_2;
+  typedef typename Traits::Compare_x_2              Base_Compare_x_2;
+  typedef typename Traits::Has_infinite_category    Base_has_infinite_category;
   
   typedef Curve_info<Halfedge_handle_red,
                      Halfedge_handle_blue>          Curve_info;
@@ -688,6 +690,83 @@ public:
   }
 
 
+  /*! \class
+   * The Comapre_x_2 functor.
+   */
+  class Compare_x_2
+  {
+  private:
+    Base_Compare_x_2 m_base_cmp_x;
+
+  public:
+    Compare_x_2(const Base_Compare_x_2& base):
+        m_base_cmp_x(base)
+    {}
+
+    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
+    {
+      return (m_base_cmp_x(p1.base_point(), p2.base_point()));
+    }
+
+    Comparison_result operator() (const Point_2& p,
+                                  const X_monotone_curve_2& cv,
+                                  Curve_end ind) const
+    {
+      return (_compare_point_curve_imp (p, cv, ind,
+                                        Base_has_infinite_category()));
+    }
+
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  Curve_end ind1,
+                                  const X_monotone_curve_2& cv2,
+                                  Curve_end ind2) const
+    {
+      return (_compare_curves_imp (cv1, ind1, cv2, ind2,
+                                   Base_has_infinite_category()));
+    }
+
+  private:
+
+    Comparison_result _compare_point_curve_imp (const Point_2& p,
+                                                const X_monotone_curve_2& cv,
+                                                Curve_end ind,
+                                                Tag_true) const
+    {
+      return (m_base_cmp_x (p.base_point(), cv.base_curve(), ind));
+    }
+
+    Comparison_result _compare_point_curve_imp (const Point_2& ,
+                                                const X_monotone_curve_2& ,
+                                                Curve_end ,
+                                                Tag_false) const
+    {
+      return (EQUAL);
+    }
+
+    Comparison_result _compare_curves_imp (const X_monotone_curve_2& cv1, 
+                                           Curve_end ind1,
+                                           const X_monotone_curve_2& cv2,
+                                           Curve_end ind2,
+                                           Tag_true) const
+    {
+      return (m_base_cmp_x (cv1.base_curve(), ind1, cv2.base_curve(), ind2));
+    }
+
+    Comparison_result _compare_curves_imp (const X_monotone_curve_2& ,
+                                           Curve_end,
+                                           const X_monotone_curve_2& , 
+                                           Curve_end ind2,
+                                           Tag_false) const
+    {
+      return (EQUAL);
+    }
+
+  };
+
+  Compare_x_2 compare_x_2_object () 
+  {
+    return (Compare_x_2 (m_base_traits->compare_x_2_object()));
+  }
 
 
   class Compare_y_at_x_2
@@ -712,6 +791,34 @@ public:
                                   const X_monotone_curve_2 & cv) const
     {
       return (m_base_cmp_y_at_x(p.base_point(), cv.base_curve()));
+    }
+
+     Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  const X_monotone_curve_2& cv2, 
+                                  Curve_end ind) const
+    {
+      // The function is implemented based on the Has_infinite category.
+      // If the traits class does not support unbounded curves, we just
+      // return EQUAL, as this comparison will not be invoked anyway.
+      return _comp_y_at_infinity_imp (cv1, cv2, ind, 
+                                      Base_has_infinite_category());
+    }
+    private:
+
+    Comparison_result _comp_y_at_infinity_imp (const X_monotone_curve_2& cv1,
+                                               const X_monotone_curve_2& cv2, 
+                                               Curve_end ind,
+                                               Tag_true) const
+    {
+      return (m_base_cmp_y_at_x (cv1.base_curve(), cv2.base_curve(), ind));
+    }
+
+    Comparison_result _comp_y_at_infinity_imp (const X_monotone_curve_2& ,
+                                               const X_monotone_curve_2& , 
+                                               Curve_end ,
+                                               Tag_false) const
+    {
+      return (EQUAL);
     }
   };
 

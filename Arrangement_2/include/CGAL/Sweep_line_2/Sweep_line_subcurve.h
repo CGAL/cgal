@@ -113,6 +113,13 @@ public:
     return m_lastCurve; 
   }
 
+   /*!
+    @return a reference to the last intersecing curve so far
+  */
+  X_monotone_curve_2 &get_last_curve() { 
+    return m_lastCurve; 
+  }
+
   
   /*! 
     updates the last intersecting curve so far.

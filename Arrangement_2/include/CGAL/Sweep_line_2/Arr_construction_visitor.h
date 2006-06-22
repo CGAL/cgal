@@ -207,7 +207,7 @@ public:
 
   void add_subcurve(const X_monotone_curve_2& cv,Subcurve* sc)
   {
-    Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
+    Event *lastEvent = get_last_event(sc);
     Halfedge_handle res; 
     Halfedge_handle hhandle = this ->current_event()->get_halfedge_handle();
 
@@ -284,7 +284,7 @@ public:
     /*Halfedge_handle res =  m_arr->insert_in_face_interior (_curve(cv),
 					    m_arr->unbounded_face());*/
     Vertex_handle v1 = 
-      m_arr_access.create_vertex(_point(reinterpret_cast<Event*>(sc->get_last_event())->get_point()));
+      m_arr_access.create_vertex(_point(get_last_event(sc)->get_point()));
     Vertex_handle v2 =
       m_arr_access.create_vertex(_point(this->current_event()->get_point()));
     Halfedge_handle res =
@@ -370,7 +370,7 @@ public:
   {
     //Halfedge_handle res = m_arr->insert_from_right_vertex (_curve(cv), he);
     Vertex_handle v = 
-      m_arr_access.create_vertex(_point(reinterpret_cast<Event*>(sc->get_last_event())->get_point()));
+      m_arr_access.create_vertex(_point(get_last_event(sc)->get_point()));
     Halfedge_handle res = m_arr_access.insert_from_vertex_ex(_curve(cv), he, v, LARGER);
     if(sc->has_haldedges_indexes())
     {
@@ -524,6 +524,10 @@ public:
     }
   }
   
+  Event* get_last_event(Subcurve* sc)
+  {
+    return (reinterpret_cast<Event*>((sc)->get_last_event()));
+  }
 
 private:
 
