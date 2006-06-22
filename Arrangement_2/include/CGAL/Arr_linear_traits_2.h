@@ -127,6 +127,33 @@ public:
     {}
 
     /*!
+     * Constructor for segment from two points.
+     * \param p1 source point.
+     * \param p2 target point.
+     */
+    _Linear_object_cached_2(const Point_2& source, const Point_2& target) :
+      ps (source),
+      pt (target),
+      has_source (true),
+      has_target (true)
+    {
+      Kernel   kernel;
+
+      Comparison_result  res = kernel.compare_xy_2_object()(source, target);
+      is_degen = (res == EQUAL);
+      is_right = (res == SMALLER);
+
+      if (! is_degen)
+      {
+        l = kernel.construct_line_2_object()(source, target);
+        is_vert = kernel.is_vertical_2_object()(l);
+        is_horiz = 
+          kernel.is_horizontal_2_object()(kernel.construct_segment_2_object()(source, target));
+        has_pos_slope = _has_positive_slope();
+      }
+    }
+
+    /*!
      * Constructor from a segment.
      * \param seg The segment.
      */
@@ -1485,6 +1512,15 @@ public:
   {}
     
   /*!
+   * Constructor from two point.
+   * \param s The source point.
+   * \param t The target point.
+   */
+  Arr_linear_object_2(const Point_2& s, const Point_2& t):
+    Base(s, t)
+  {}
+
+  /*!
    * Constructor from a point.
    * \param pt The point.
    */
@@ -1642,6 +1678,17 @@ public:
     CGAL_precondition (! is_line() && ! is_ray());
 
     return (this->pt);
+  }
+
+  /*!
+   * Create a bounding box for the linear object.
+   */
+  Bbox_2 bbox() const
+  {
+    CGAL_precondition(this->is_segment());
+    Kernel     kernel;
+    Segment_2  seg = kernel.construct_segment_2_object() (this->ps, this->pt);
+    return (kernel.construct_bbox_2_object() (seg));
   }
 };
 
