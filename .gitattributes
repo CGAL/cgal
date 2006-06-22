@@ -258,6 +258,7 @@ Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
 Arrangement_2/examples/Arrangement_2/ex_dual_lines.C -text
 Arrangement_2/examples/Arrangement_2/ex_dual_with_data.C -text
+Arrangement_2/examples/Arrangement_2/ex_overlay_unbounded.C -text
 Arrangement_2/examples/Arrangement_2/ex_unbounded_non_intersecting.C -text
 Arrangement_2/examples/Arrangement_2/ex_unbounded_rational_functions.C -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
