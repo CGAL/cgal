@@ -414,6 +414,31 @@ to_double(const Root_of_2<MP_Float> &r)
 
   const MP_Float &rc = r[0];
 
+  if(is_zero(rc)) {
+    if(is_negative(rb)) {
+      if(r.is_smaller()) return 0.0;
+      std::pair<double, int> pa = to_double_exp(ra);
+      std::pair<double, int> pb = to_double_exp(rb);
+      double scale = CGAL_CLIB_STD::ldexp(1.0, pb.second - pa.second);  
+      return -(pb.first / pa.first)*scale;
+    } 
+    if(r.is_smaller()) {
+      std::pair<double, int> pa = to_double_exp(ra);
+      std::pair<double, int> pb = to_double_exp(rb);
+      double scale = CGAL_CLIB_STD::ldexp(1.0, pb.second - pa.second);  
+      return -(pb.first / pa.first)*scale;
+    } return 0.0;
+  }
+
+  if(is_zero(rb)) {
+    std::pair<double, int> pa = to_double_exp(ra);
+    std::pair<double, int> pc = to_double_exp(rc);
+    double scale = CGAL_CLIB_STD::ldexp(1.0, pc.second - pa.second);
+    double m_c_a = -(pc.first / pa.first)*scale;
+    if(r.is_smaller()) return -std::sqrt(m_c_a);
+    else return std::sqrt(m_c_a);
+  }
+
   std::pair<double, int> pa = to_double_exp(ra);
   std::pair<double, int> pb = to_double_exp(rb);
   std::pair<double, int> pc = to_double_exp(rc);
@@ -425,7 +450,7 @@ to_double(const Root_of_2<MP_Float> &r)
   double c = CGAL_CLIB_STD::ldexp(pc.first,pc.second);
 
   // Maybe it is better to calculate the delta in Exact Computation
-  double d = sqrt(square(b) - 4*a*c);
+  double d = std::sqrt(square(b) - 4*a*c);
   if (r.is_smaller())
     d = -d;
 
@@ -454,27 +479,24 @@ to_interval(const Root_of_2<MP_Float> &r)
       if(r.is_smaller()) return std::make_pair(0.0,0.0);
       std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
       std::pair<std::pair<double, double>, int> pb = to_interval_exp(rb);
-      Interval_nt<> a = ldexp(Interval_nt<>(pa.first),pa.second);
-      Interval_nt<> b = ldexp(Interval_nt<>(pb.first),pb.second);  
-      return (-b/a).pair();
+      return (-ldexp(Interval_nt<>(pb.first) / Interval_nt<>(pa.first),
+               pb.second - pa.second)).pair();
     } 
     if(r.is_smaller()) {
       std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
       std::pair<std::pair<double, double>, int> pb = to_interval_exp(rb);
-      Interval_nt<> a = ldexp(Interval_nt<>(pa.first),pa.second);
-      Interval_nt<> b = ldexp(Interval_nt<>(pb.first),pb.second);  
-      return (-b/a).pair();
+      return (-ldexp(Interval_nt<>(pb.first) / Interval_nt<>(pa.first),
+               pb.second - pa.second)).pair();
     } return std::make_pair(0.0,0.0);
   }
 
   if(is_zero(rb)) {
     std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
     std::pair<std::pair<double, double>, int> pc = to_interval_exp(rc);
-    Interval_nt<> a = ldexp(Interval_nt<>(pa.first),pa.second);
-    Interval_nt<> c = ldexp(Interval_nt<>(pc.first),pc.second);  
-    if(r.is_smaller())
-      return (-CGAL::sqrt(-c/a)).pair();
-    else return (CGAL::sqrt(-c/a)).pair();
+    const Interval_nt<> m_c_a = -ldexp(Interval_nt<>(pc.first) / Interval_nt<>(pa.first),
+               pc.second - pa.second);
+    if(r.is_smaller()) return (-CGAL::sqrt(m_c_a)).pair();
+    else return (CGAL::sqrt(m_c_a)).pair();
   }
 
   std::pair<std::pair<double, double>, int> pa = to_interval_exp(ra);
