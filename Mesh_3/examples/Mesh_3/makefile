@@ -29,8 +29,7 @@ include $(IMAGEIO_PATH)/imageio.mk
 
 #OTHER_CXXFLAGS?= -D_GLIBCXX_CONCEPT_CHECKS 
 
-CXXFLAGS = -I../../../InrImage/include \
-	   -I../../../Data_structure_for_queries_3/include \
+CXXFLAGS = -I../../../Data_structure_for_queries_3/include \
            -I ../../../Surface_mesher/include \
 	   -I../../include \
            -I$(IMAGEIO_PATH) \
