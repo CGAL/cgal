@@ -49,7 +49,7 @@ use strict;
 require 5.004; # This is when locale support was added.
 $ENV{'LANG'} = 'en_US.UTF-8';
 $ENV{'LC_CTYPE'} = 'en_US.UTF-8';
-
+binmode STDERR, ":utf8";
 
 # Shift off any debug options.
 my $debug = 0;
@@ -145,9 +145,9 @@ foreach my $newfile (@added)
     $newfile =~ s/.*\///;                     # Remove path
     if ($debug) {
         print STDERR "Checking $newfile\n";
-#         my @letters = split //, $newfile;
-#         map { print "$_ (" . ord($_) . ") " } @letters;
-#         print "\n";
+        my @letters = split //, $newfile;
+        map { print STDERR "$_ (" . ord($_) . ") " } @letters;
+        print STDERR "\n";
     }
 
     # SVN requirements:
@@ -185,13 +185,6 @@ foreach my $newfile (@added)
         $failmsg .= "\n  $newfile is illegal. Windows filenames cannot end by . or SPACE characters.\n";
         next;
     }
-
-#     # CGAL extra requirements:
-#     # - SPACE character is forbidden.
-#     if ($newfile =~ m/ /) {
-#         $failmsg .= "\n  $newfile contains a character not supported by CGAL (SPACE)\n";
-#         next;
-#     }
 }
 if (defined($failmsg)) {
     print STDERR "\nInvalid file name found:\n" . $failmsg . "\n";
