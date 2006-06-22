@@ -108,6 +108,7 @@ public:
     typedef Unique_hash_map<Vertex_handle, Event *>    Vertices_map;
     typedef typename Traits_2::Compare_xy_2            Compare_xy_2;
 
+    this->m_visitor->before_sweep();
     // Allocate all of the Subcurve objects as one block.
     this->m_num_of_subCurves = std::distance (curves_begin, curves_end);
     this->m_subCurves = 
