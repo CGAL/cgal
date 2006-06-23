@@ -38,80 +38,107 @@ namespace CGAL {
     assert( ! (e1 == e2) ); // polynomials of this type cannot be multiple 
     // of one another if they are not equal
 
-    typedef typename AK::RT RT;
+    typedef typename AK::FT FT;
+    typedef typename AK::Root_of_2 Root_of_2;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
-    RT dx = e2.a() - e1.a();
-    RT dy = e2.b() - e1.b();
+    const FT dx = e2.a() - e1.a();
+    const FT dy = e2.b() - e1.b();
 
-    RT dx2 = CGAL::square(dx);
-    RT dy2 = CGAL::square(dy);
-    RT dist2 = dx2 + dy2; // squared distance between centers
+    const FT dx2 = CGAL::square(dx);
+    const FT dy2 = CGAL::square(dy);
+    const FT dist2 = dx2 + dy2; // squared distance between centers
 
-    RT cond = 4*e1.r_sq()*e2.r_sq() - 
+    const FT cond = 4*e1.r_sq()*e2.r_sq() - 
       CGAL::square( e1.r_sq() + e2.r_sq() - dist2 );
 
     if (cond < 0) return res;
 
-    RT px = e2.a() + e1.a();
-    RT py = e2.b() + e1.b();
-    RT rx1 = e1.r_sq() - CGAL::square(e1.a());
-    RT ry1 = e1.r_sq() - CGAL::square(e1.b());
-    RT rx2 = e2.r_sq() - CGAL::square(e2.a());
-    RT ry2 = e2.r_sq() - CGAL::square(e2.b());
+    const FT px = e2.a() + e1.a();
+    const FT py = e2.b() + e1.b();
+    const FT rx1 = e1.r_sq() - CGAL::square(e1.a());
+    const FT ry1 = e1.r_sq() - CGAL::square(e1.b());
+    const FT rx2 = e2.r_sq() - CGAL::square(e2.a());
+    const FT ry2 = e2.r_sq() - CGAL::square(e2.b());
     
-    RT drx = rx2 - rx1;
-    RT dry = ry2 - ry1;
+    const FT drx = rx2 - rx1;
+    const FT dry = ry2 - ry1;
+
+    const FT a = 4*dist2;
     
-    if (cond == 0) {
+    if (is_zero(cond)) {
       // one double root, 
-      // no need to care about the boolean of the Root_of
+      // no need to care about the boolean of the Root_of 
       *res++ = std::make_pair
 	( Root_for_circles_2_2
-	  (make_root_of_2(4*dist2,
-			  4*(dx*drx-px*dy2),
-			  CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2),
-			  true),
-	   make_root_of_2(4*dist2,
-			  4*(dy*dry-py*dx2),
-			  CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2),
-			  true)),
+	  (Root_of_2(2*(px*dy2 - dx*drx) / a),
+	   Root_of_2(2*(py*dx2 - dy*dry) / a)),
 	  static_cast<unsigned>(2) ); // multiplicity = 2
       return res;
     }
 
     // else, 2 distinct roots
+    if (is_zero(dy)) {
+      const FT b2 = 4*(-py*dx2);
+      const FT c2 = CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2);
 
-    bool slope = CGAL::sign(dx) * CGAL::sign(dy) <= 0 ;
+      const Root_of_2 x = Root_of_2((2*(-dx*drx))/a);
+      const Root_of_2 y = make_root_of_2(a, b2, c2, true, true);
 
-    // fixme : use more clever manipulation of booleans...
-    bool low_y = slope ? true : false;
-    * res++ = std::make_pair
-	( Root_for_circles_2_2
-	  (make_root_of_2(4*dist2,
-			  4*(dx*drx-px*dy2),
-			  CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2),
-			  true),
-	   make_root_of_2(4*dist2,
-			  4*(dy*dry-py*dx2),
-			  CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2),
-			  low_y)),
+      * res++ = std::make_pair
+	( Root_for_circles_2_2(x,y),
 	  static_cast<unsigned>(1) );
     
-    low_y = slope ? false : true;
-    * res++ = std::make_pair
-	( Root_for_circles_2_2
-	  (make_root_of_2(4*dist2,
-			  4*(dx*drx-px*dy2),
-			  CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2),
-			  false),
-	   make_root_of_2(4*dist2,
-			  4*(dy*dry-py*dx2),
-			  CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2),
-			  low_y)),
+      * res++ = std::make_pair
+	( Root_for_circles_2_2(x,y.conjugate()),
 	  static_cast<unsigned>(1) );
 
+      return res;  
+    }
 
-   return res;
+    if (is_zero(dx)) {
+      const FT b1 = 4*(-px*dy2);
+      const FT c1 = CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2);
+
+      const Root_of_2 x = make_root_of_2(a, b1, c1, true, true);
+      const Root_of_2 y = Root_of_2(2*(-dy*dry)/a);
+
+      * res++ = std::make_pair
+	( Root_for_circles_2_2(x,y),
+	  static_cast<unsigned>(1) );
+    
+      * res++ = std::make_pair
+	( Root_for_circles_2_2(x.conjugate(),y),
+	  static_cast<unsigned>(1) );
+
+      return res;
+    }
+
+    const FT b1 = 4*(dx*drx-px*dy2);
+    const FT b2 = 4*(dy*dry-py*dx2);
+    const FT c1 = CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2);
+    const FT c2 = CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2);
+
+    const Root_of_2 x = make_root_of_2(a, b1, c1, true, true);
+    const Root_of_2 y = make_root_of_2(a, b2, c2, true, true);
+
+    if(CGAL::sign(dx) * CGAL::sign(dy) < 0) {
+      * res++ = std::make_pair
+	( Root_for_circles_2_2(x,y),
+	  static_cast<unsigned>(1) );
+      * res++ = std::make_pair
+	( Root_for_circles_2_2
+	  (x.conjugate(),y.conjugate()),
+	  static_cast<unsigned>(1) );
+    } else {
+      * res++ = std::make_pair
+	( Root_for_circles_2_2(x,y.conjugate()),
+	  static_cast<unsigned>(1) );
+      * res++ = std::make_pair
+	( Root_for_circles_2_2(x.conjugate(),y),
+	  static_cast<unsigned>(1) );
+    }
+
+    return res;
   }
 
   template < class AK >
@@ -120,9 +147,9 @@ namespace CGAL {
 	 const typename AK::Root_for_circles_2_2 & r)
   {
     typedef typename AK::Root_of_2 Root_of_2;
-    Root_of_2 part_left = square(r.x() - equation.a());
-    Root_of_2 part_right = equation.r_sq() - square(r.y() - equation.b());
-    Comparison_result c = compare(part_left, part_right);
+    Comparison_result c = compare(square(r.x() - equation.a()), 
+                                  equation.r_sq() - 
+                                    square(r.y() - equation.b()));
     if(c == EQUAL) return ZERO;
     if(c == LARGER) return POSITIVE;
     return NEGATIVE;
@@ -138,7 +165,7 @@ namespace CGAL {
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
+    const Root_of_2 a1 = c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),i, true);
     
     return Root_for_circles_2_2(a1, c.b());
   }
@@ -152,11 +179,10 @@ namespace CGAL {
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-    Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
-    Root_of_2 a2= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
+    const Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true, true);
     
     *res++ =  Root_for_circles_2_2(a1, c.b());
-    *res++ =  Root_for_circles_2_2(a2, c.b());
+    *res++ =  Root_for_circles_2_2(a1.conjugate(), c.b());
     
     return res;
   }
@@ -170,7 +196,7 @@ namespace CGAL {
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-    Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i);
+    const Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),i, true);
 
     return Root_for_circles_2_2(c.a(),b1);
   }
@@ -184,11 +210,10 @@ namespace CGAL {
     typedef typename AK::FT        FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
       
-    Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),true);
-    Root_of_2 b2= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),false);
+    const Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),true, true);
     
     *res++ = Root_for_circles_2_2(c.a(), b1);
-    *res++ = Root_for_circles_2_2(c.a(), b2);
+    *res++ = Root_for_circles_2_2(c.a(), b1.conjugate());
 
     return res;
   }
