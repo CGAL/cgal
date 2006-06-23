@@ -82,14 +82,13 @@ namespace CGAL {
       const FT c2 = CGAL::square(dry) - dx2*(2*(ry1+ry2)-dx2);
 
       const Root_of_2 x = Root_of_2((2*(-dx*drx))/a);
-      const Root_of_2 y = make_root_of_2(a, b2, c2, true, true);
 
       * res++ = std::make_pair
-	( Root_for_circles_2_2(x,y),
+	( Root_for_circles_2_2(x, make_root_of_2(a, b2, c2, true, true)),
 	  static_cast<unsigned>(1) );
     
       * res++ = std::make_pair
-	( Root_for_circles_2_2(x,y.conjugate()),
+	( Root_for_circles_2_2(x, make_root_of_2(a, b2, c2, false, true)),
 	  static_cast<unsigned>(1) );
 
       return res;  
@@ -99,15 +98,14 @@ namespace CGAL {
       const FT b1 = 4*(-px*dy2);
       const FT c1 = CGAL::square(drx) - dy2*(2*(rx1+rx2)-dy2);
 
-      const Root_of_2 x = make_root_of_2(a, b1, c1, true, true);
       const Root_of_2 y = Root_of_2(2*(-dy*dry)/a);
 
       * res++ = std::make_pair
-	( Root_for_circles_2_2(x,y),
+	( Root_for_circles_2_2(make_root_of_2(a, b1, c1, true, true),y),
 	  static_cast<unsigned>(1) );
     
       * res++ = std::make_pair
-	( Root_for_circles_2_2(x.conjugate(),y),
+	( Root_for_circles_2_2(make_root_of_2(a, b1, c1, false, true),y),
 	  static_cast<unsigned>(1) );
 
       return res;
@@ -123,18 +121,22 @@ namespace CGAL {
 
     if(CGAL::sign(dx) * CGAL::sign(dy) < 0) {
       * res++ = std::make_pair
-	( Root_for_circles_2_2(x,y),
+	( Root_for_circles_2_2(make_root_of_2(a, b1, c1, true, true),
+                               make_root_of_2(a, b2, c2, true, true)),
 	  static_cast<unsigned>(1) );
       * res++ = std::make_pair
 	( Root_for_circles_2_2
-	  (x.conjugate(),y.conjugate()),
+	  (make_root_of_2(a, b1, c1, false, true),
+           make_root_of_2(a, b2, c2, false, true)),
 	  static_cast<unsigned>(1) );
     } else {
       * res++ = std::make_pair
-	( Root_for_circles_2_2(x,y.conjugate()),
+	( Root_for_circles_2_2(make_root_of_2(a, b1, c1, true, true),
+                               make_root_of_2(a, b2, c2, false, true)),
 	  static_cast<unsigned>(1) );
       * res++ = std::make_pair
-	( Root_for_circles_2_2(x.conjugate(),y),
+	( Root_for_circles_2_2(make_root_of_2(a, b1, c1, false, true),
+                               make_root_of_2(a, b2, c2, true, true)),
 	  static_cast<unsigned>(1) );
     }
 
@@ -179,10 +181,10 @@ namespace CGAL {
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-    const Root_of_2 a1= c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true, true);
-    
-    *res++ =  Root_for_circles_2_2(a1, c.b());
-    *res++ =  Root_for_circles_2_2(a1.conjugate(), c.b());
+    *res++ =  Root_for_circles_2_2(
+      c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),true, true), c.b());
+    *res++ =  Root_for_circles_2_2(
+      c.a() + make_root_of_2(FT(1),FT(0),-c.r_sq(),false, true), c.b());
     
     return res;
   }
@@ -209,11 +211,11 @@ namespace CGAL {
     typedef typename AK::Root_of_2 Root_of_2;
     typedef typename AK::FT        FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
-      
-    const Root_of_2 b1= c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(),true, true);
-    
-    *res++ = Root_for_circles_2_2(c.a(), b1);
-    *res++ = Root_for_circles_2_2(c.a(), b1.conjugate());
+
+    *res++ = Root_for_circles_2_2(c.a(), 
+      c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(), true, true));
+    *res++ = Root_for_circles_2_2(c.a(), 
+      c.b()+make_root_of_2(FT(1),FT(0),-c.r_sq(), false, true));
 
     return res;
   }
