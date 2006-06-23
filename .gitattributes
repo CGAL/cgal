@@ -50,8 +50,6 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#unset
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#unset
-Arrangement_2/bench/Arrangement_2/Option_parser.C -text
-Arrangement_2/bench/Arrangement_2/Option_parser.h -text
 Arrangement_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
 Arrangement_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
 Arrangement_2/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#unset
@@ -248,17 +246,6 @@ Arrangement_2/doc_tex/Arrangement_2/fig/triangle.pstex_t -text
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
-Benchmark/examples/Benchmark/bbox/Makefile -text
-Benchmark/examples/Benchmark/bbox/bbox.cpp -text
-Benchmark/examples/Benchmark/leftturn/Makefile.mak -text
-Benchmark/examples/Benchmark/leftturn/leftturn.C -text
-Benchmark/examples/Benchmark/leftturn/leftturn.tex -text
-Benchmark/examples/Benchmark/simple/Makefile.mak -text
-Benchmark/examples/Benchmark/simple/makefile -text
-Benchmark/examples/Benchmark/simple/simple.C -text
-Benchmark/examples/Benchmark/simple/simple.tex -text
-Benchmark/include/CGAL/Bench_option_parser.C -text
-Benchmark/include/CGAL/Bench_option_parser.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_Q.bmp -text svneol=unset#unset
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/del_P.bmp -text svneol=unset#unset
@@ -426,8 +413,6 @@ Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S97-TAUCSGCCMKL -text
 Installation/config/support/S98-TAUCSIRIXCC32 -text
 Installation/config/support/S99-TAUCSIRIXCC64 -text
-Installation/demo/makefile -text
-Installation/examples/makefile -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
@@ -525,7 +510,6 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6 -tex
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=1 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -text
-Kinetic_data_structures/test/Kinetic_data_structures/makefile.internal -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Maintenance/MacOSX_Installer/CGAL-absolute.pmproj -text
 Maintenance/MacOSX_Installer/CGAL.pmproj -text
@@ -1239,7 +1223,6 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text
-QP_solver/examples/QP_solver/data_to_mps.C -text
 QP_solver/examples/QP_solver/data_to_mps.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
@@ -1318,8 +1301,6 @@ Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text
-Skin_surface_3/examples/Skin_surface_3/NGHK_skin_surface_simple.C -text
-Skin_surface_3/examples/Skin_surface_3/NGHK_skin_surface_subdiv.C -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/AUTHORS -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text
