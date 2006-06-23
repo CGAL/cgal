@@ -71,6 +71,34 @@ namespace CGALi {
       return make_root_of_2(a_,b_,c_,smaller);
     }
 
+    // This version is internal and can be re-used for
+    // number types which are rational.
+    template < typename RT, typename FT >
+    Root_of_2< RT >
+    make_root_of_2_rational(const FT &a, const FT &b, const FT &c, bool smaller,
+      bool dinz)
+    {
+      typedef CGAL::Rational_traits< FT > Rational;
+
+      Rational r;
+      // CGAL_assertion( r.denominator(a) > 0 );
+      // CGAL_assertion( r.denominator(b) > 0 );
+      // CGAL_assertion( r.denominator(c) > 0 );
+
+/*   const RT lcm = ( r.denominator(a) * r.denominator(b) * r.denominator(c)          )/
+               ( gcd( r.denominator(a), gcd(r.denominator(b), r.denominator(c)) ) );
+
+      RT a_ = r.numerator(a) * ( lcm / r.denominator(a) );
+      RT b_ = r.numerator(b) * ( lcm / r.denominator(b) );
+      RT c_ = r.numerator(c) * ( lcm / r.denominator(c) );
+*/
+      RT a_ = r.numerator(a) * r.denominator(b) * r.denominator(c);
+      RT b_ = r.numerator(b) * r.denominator(a) * r.denominator(c);
+      RT c_ = r.numerator(c) * r.denominator(a) * r.denominator(b);
+
+      return make_root_of_2(a_,b_,c_,smaller,dinz);
+    }
+
 
 // automatic dispatcher between the 2 generic versions (using Root_of_2 or
 // sqrt()), if sqrt() exists (checking Has_sqrt).
@@ -80,11 +108,19 @@ struct Make_root_of_2_helper
 {
   typedef Root_of_2<RT> result_type;
 
+  result_type operator()(const RT& a, const RT& b, const RT& c, bool smaller,
+    bool dinz)
+  const
+  {
+    return Root_of_2<RT>(a, b, c, smaller, dinz);
+  }
+
   result_type operator()(const RT& a, const RT& b, const RT& c, bool smaller)
   const
   {
     return Root_of_2<RT>(a, b, c, smaller);
   }
+
 };
 
 // Specialization for Has_sqrt == Tag_true
@@ -93,11 +129,19 @@ struct Make_root_of_2_helper <RT, Tag_true>
 {
   typedef RT result_type;
 
+  result_type operator()(const RT& a, const RT& b, const RT& c, bool smaller,
+    bool dinz)
+  const
+  {
+    return CGALi::make_root_of_2_sqrt(a, b, c, smaller);
+  }
+
   result_type operator()(const RT& a, const RT& b, const RT& c, bool smaller)
   const
   {
     return CGALi::make_root_of_2_sqrt(a, b, c, smaller);
   }
+
 };
 
 } // namespace CGALi
@@ -110,6 +154,16 @@ make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller)
 {
   CGAL_assertion( a != 0 );
   return CGALi::Make_root_of_2_helper<RT>()(a, b, c, smaller);
+}
+
+template < typename RT >
+inline
+typename CGALi::Make_root_of_2_helper<RT>::result_type
+make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller,
+  bool dinz)
+{
+  CGAL_assertion( a != 0 );
+  return CGALi::Make_root_of_2_helper<RT>()(a, b, c, smaller, dinz);
 }
 
 } // namespace CGAL
