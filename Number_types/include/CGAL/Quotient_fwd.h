@@ -52,6 +52,11 @@ typename Root_of_traits< NT >::RootOf_2
 make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
                const Quotient< NT > &c, bool d);
 
+template < class NT >
+typename Root_of_traits< NT >::RootOf_2
+make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
+               const Quotient< NT > &c, bool d, bool idnz);
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_QUOTIENT_FWD_H
