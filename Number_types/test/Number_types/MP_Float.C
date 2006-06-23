@@ -177,6 +177,7 @@ int main(int argc, char **argv)
   }
 
   std::cout << "Checking MP_Float(double) constructor." << std::endl;
+  MPF y = 0.5000000000000001; // see bug-report on cgal-discuss (2006-06-23).
   for (int i = 0; i < loops; ++i) {
     double d = CGAL::default_random.get_double();
     int exp = int((CGAL::default_random.get_double()-.5)*1024);

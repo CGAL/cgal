@@ -45,16 +45,22 @@ const double trunc_min = double(-base)*(base/2)/double(base-1);
 template < typename T >
 int my_nearbyint(const T& d)
 {
-  // Standard conversion from floating point to integral
-  // does truncation, so I add or subtract 0.5.
-  T dd = d < T(0) ? d - T(0.5) : d + T(0.5);
-  int z = int(dd);
+  int z = int(d);
+  T frac = d - z;
 
-  // Then, we also need the round to even rule.
-  if (z&1 != 0 && T(z) == dd)
-    z = d < T(0) ? z+1 : z-1;
+  CGAL_assertion(CGAL::abs(frac) < T(1.0));
 
-  CGAL_assertion(CGAL::abs(T(z) - d) <= T(0.5));
+  if (frac > 0.5)
+    ++z;
+  else if (frac < -0.5)
+    --z;
+  else if (frac == 0.5 && z&1 != 0) // NB: We also need the round-to-even rule.
+    ++z;
+  else if (frac == -0.5 && z&1 != 0)
+    --z;
+
+  CGAL_assertion(CGAL::abs(T(z) - d) < T(0.5) ||
+                 (CGAL::abs(T(z) - d) == T(0.5) && ((z&1) == 0)));
   return z;
 }
 
