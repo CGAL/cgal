@@ -67,11 +67,11 @@ struct QP_rep_row_of_a {
 template < class Point, class Point_iterator >
 struct QP_rep_signed_point_iterator;
 
-template < class NT, class Point,
+template < class NT, class ET, class Point,
            class Access_coord, class Access_dim >
 class QP_rep_signed_inner_product;
 
-template < class NT, class Point, class Point_iterator,
+template < class NT, class ET, class Point, class Point_iterator,
            class Access_coord, class Access_dim >
 struct QP_rep_row_of_d;
 
@@ -135,6 +135,9 @@ class Polytope_distance_d {
     typedef typename Index_vector::const_iterator IVCI;
     typedef CGAL::Join_input_iterator_1< IVCI, Point_by_index >
                                         Support_point_iterator;
+
+    typedef typename Index_vector::const_iterator
+                                        Support_point_index_iterator;
     
     typedef  typename ET_vector::const_iterator
                                         Coordinate_iterator;
@@ -447,7 +450,7 @@ private:
                                             Signed_point_iterator;
         Signed_point_iterator
             signed_pts_it(p_points.begin(), p_points.size(), q_points.begin());
-        QP_rep_row_of_d< NT, Point, Signed_point_iterator,
+        QP_rep_row_of_d< NT, ET, Point, Signed_point_iterator,
                          Access_coordinates_begin_d, Access_dimension_d >
             row_of_d( signed_pts_it,
                       tco.access_coordinates_begin_d_object(),
@@ -592,7 +595,13 @@ struct QP_rep_signed_point_iterator {
     Dist           curr;
 };
 
-template < class NT, class Point,
+// this class should compute the EXACT inner product, otherwise,
+// the matrix D passed to the QP_solver through D_iterator has
+// roundoffs and may in the worst case not be positive-definite
+// the problem is that if the D-values are exact and the A-values,
+// say, are inexact, then the QP-solver runs into formal troubles
+// --> a fix is not easy right now 
+template < class NT, class ET, class Point,
            class Access_coord, class Access_dim >
 class QP_rep_signed_inner_product {
     Point         p_i;
@@ -619,7 +628,7 @@ class QP_rep_signed_inner_product {
           return ( s_i*p_signed.second == CGAL::POSITIVE) ? ip : -ip; }
 };
 
-template < class NT, class Point, class Signed_point_iterator,
+template < class NT, class ET, class Point, class Signed_point_iterator,
            class Access_coord, class Access_dim >
 class QP_rep_row_of_d {
     Signed_point_iterator  signed_pts_it;
@@ -627,7 +636,7 @@ class QP_rep_row_of_d {
     Access_dim             da_dim;
 public:
     typedef  CGAL::QP_rep_signed_inner_product<
-                 NT, Point, Access_coord, Access_dim >
+                 NT, ET, Point, Access_coord, Access_dim >
                                     Signed_inner_product;
     typedef  CGAL::Join_input_iterator_1<
                  Signed_point_iterator, Signed_inner_product >
@@ -668,7 +677,7 @@ struct QP_rep_poly_dist_d {
   typedef  CGAL::Const_oneset_iterator<NT>             C_iterator;
   typedef  CGAL::Join_input_iterator_1<
     Signed_point_iterator,
-    QP_rep_row_of_d< NT, Point, Signed_point_iterator,
+    QP_rep_row_of_d< NT, ET, Point, Signed_point_iterator,
 		     Access_coord, Access_dim > >      D_iterator;
 
   typedef Const_oneset_iterator<bool> FU_iterator;
