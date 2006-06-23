@@ -1,10 +1,5 @@
-// file: examples/Polytope_distance_d/polytope_distance_fast_exact.C
+// file: examples/Polytope_distance_d/polytope_distance_exact.C
 
-// computes the distance between two cubes in R^3 using double
-// as input type and CGAL::Double as exact internal type; this
-// is guaranteed to have no roundoff errors. Note: CGAL::Double
-// is based on GMP but not yet an official CGAL number type; in 
-// this respect, the example represents experimental code
 #include <iostream>
 #include <CGAL/QP_solver/gmp_double.h> // will become CGAL number type
 #include <CGAL/Simple_cartesian.h>
@@ -12,10 +7,9 @@
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
-typedef CGAL::Simple_cartesian<double>    K;  
-typedef K::Point_3                        Point;
-typedef CGAL::Optimisation_d_traits_3<K, CGAL::Double, double>  
-                                          Traits;
+typedef CGAL::Simple_cartesian<CGAL::Double>    K;  
+typedef K::Point_3                              Point;
+typedef CGAL::Optimisation_d_traits_3<K>        Traits;
 typedef CGAL::Polytope_distance_d<Traits> Polytope_distance;
 
 int main()
