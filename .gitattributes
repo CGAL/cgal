@@ -50,9 +50,6 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#unset
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#unset
-Arrangement_2/bench/Arrangement_2/Option_parser.cpp -text
-Arrangement_2/bench/Arrangement_2/Option_parser.hpp -text
-Arrangement_2/bench/Arrangement_2/lexical_cast.hpp -text
 Arrangement_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
 Arrangement_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
 Arrangement_2/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#unset
@@ -256,28 +253,8 @@ Arrangement_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
-Arrangement_2/examples/Arrangement_2/ex_dual_lines.C -text
-Arrangement_2/examples/Arrangement_2/ex_dual_with_data.C -text
-Arrangement_2/examples/Arrangement_2/ex_overlay_unbounded.C -text
-Arrangement_2/examples/Arrangement_2/ex_unbounded_non_intersecting.C -text
-Arrangement_2/examples/Arrangement_2/ex_unbounded_rational_functions.C -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
 Arrangement_2/include/CGAL/Sweep_line_2/Integer_hash_function.h eol=lf
-Arrangement_of_spheres_3/include/CGAL/Arrangement_of_spheres_3/Sphere_key.h -text
-Arrangement_of_spheres_3/include/CGAL/Tools/Coordinate_index.h -text
-Arrangement_of_spheres_3/src/CGAL/Arrangement_of_spheres_traits_3.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice.backup.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_arrangement.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_constructions.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_data_structure.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_modifiers.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_point_location.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_predicates.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_shoot_rule.C -text
-Arrangement_of_spheres_3/src/CGAL/makefile.internal -text
-Arrangement_of_spheres_3/src/CGALQt/Qt_examiner_viewer_2.C -text
-Arrangement_of_spheres_3/src/CGALQt/makefile.internal -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/1GWB.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/degen.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/degen2.spheres -text
@@ -291,32 +268,10 @@ Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/random_point_locate.
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/random_ray_shoot.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/simple.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/two.spheres -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/interactive_point_location.C -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/interactive_ray_shooting.C -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/makefile -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/point_locate.C -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/random_point_locate.C -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/random_ray_shoot.C -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/show_slice.C -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/sphere_line_intersection_test.C -text
-Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/sphere_location.C -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/the_plan -text
-Benchmark/examples/Benchmark/bbox.cpp -text
-Benchmark/examples/Benchmark/check_syntax.cpp -text
 Benchmark/examples/Benchmark/data/test1.bff -text
 Benchmark/examples/Benchmark/data/test2.bff -text
-Benchmark/examples/Benchmark/leftturn.cpp -text
-Benchmark/examples/Benchmark/makefile -text
-Benchmark/examples/Benchmark/simple.cpp -text
-Benchmark/include/CGAL/Bench_option_parser.hpp -text
-Benchmark/include/CGAL/Benchmark_visitor.hpp -text
-Benchmark/include/CGAL/benchmark_basic.hpp -text
-Benchmark/include/CGAL/benchmark_config.hpp -text
-Benchmark/src/Benchmark/Bench_option_parser.cpp -text
-Benchmark/src/Benchmark/Benchmark_visitor.cpp -text
 Benchmark/src/Benchmark/benchmark_lexer.l -text
-Benchmark/src/Benchmark/benchmark_parser.y -text
-Benchmark/src/Benchmark/makefile -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_2.dxf -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/comp_P.bmp -text svneol=unset#unset
@@ -381,10 +336,6 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=un
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#unset
-Cubical_gaussian_map_3/include/CGAL/IO/Cgm_iostream.h -text
-Cubical_gaussian_map_3/include/CGAL/IO/Polyhedral_cgm_iostream.h -text
-Cubical_gaussian_map_3/include/CGAL/Polyhedral_cgm_initializer_visitor.h -text
-Cubical_gaussian_map_3/include/CGAL/Polyhedral_cgm_polyhedron_3.h -text
 Curved_kernel/Benchmarks/parser/Report.pdf -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.doc -text svneol=unset#unset
 Curved_kernel/Benchmarks/readme.pdf -text
@@ -490,9 +441,6 @@ Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S97-TAUCSGCCMKL -text
 Installation/config/support/S98-TAUCSIRIXCC32 -text
 Installation/config/support/S99-TAUCSIRIXCC64 -text
-Installation/config/testfiles/CGAL_CFG_ISTREAM_INT_BUG.C -text
-Installation/demo/makefile -text
-Installation/examples/makefile -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
@@ -511,8 +459,6 @@ Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text
 Jet_fitting_3/examples/Jet_fitting_3/data/bezierpb3-0.007812.off -text
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text
-Jet_fitting_3/test/Jet_fitting_3/blind_1pt.C -text
-Jet_fitting_3/test/Jet_fitting_3/makefile -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#unset
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.pdf -text svneol=unset#unset
@@ -584,7 +530,6 @@ Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/#Time.tex# -text
-Kinetic_data_structures/test/Kinetic_data_structures/active_objects_tables.C -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text
@@ -592,7 +537,6 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6 -tex
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=1 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -text
-Kinetic_data_structures/test/Kinetic_data_structures/makefile.internal -text
 MacOSX/auxiliary/cgal_app.icns -text svneol=unset#unset
 Maintenance/MacOSX_Installer/CGAL-absolute.pmproj -text
 Maintenance/MacOSX_Installer/CGAL.pmproj -text
@@ -602,8 +546,6 @@ Maintenance/MacOSX_Installer/Resources/Welcome.rtf -text
 Maintenance/MacOSX_Installer/Resources/cgal_very_small.gif -text
 Maintenance/MacOSX_Installer/Resources/postflight -text
 Maintenance/MacOSX_Installer/Resources/postupgrade -text
-Maintenance/deb/README -text
-Maintenance/deb/TODO -text
 Maintenance/deb/sarge/debian/README.Debian -text
 Maintenance/deb/sarge/debian/changelog -text
 Maintenance/deb/sarge/debian/compat -text
@@ -1061,7 +1003,6 @@ Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text
 Mesh_3/applications/GNUmakefile -text
-Mesh_3/applications/test_off.C -text
 Mesh_3/examples/Mesh_3/inputs/cube.mesh -text
 Mesh_3/examples/Mesh_3/inputs/cube.off -text
 Mesh_3/examples/Mesh_3/inputs/tangle.mesh -text
@@ -1085,7 +1026,6 @@ Min_sphere_of_spheres_d/web/figs/pivot/cex1.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/basis.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/notbasis.eps -text
 Min_sphere_of_spheres_d/web/figs/ss/ss_basis.eps -text
-Minkowski_sum_2/doc_tex/Minkowski_sum_2/PkgDescription.tex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.eps -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text
@@ -1352,7 +1292,6 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#unset
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text
-QP_solver/examples/QP_solver/data_to_mps.C -text
 QP_solver/examples/QP_solver/data_to_mps.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
@@ -1382,7 +1321,6 @@ Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02 -text
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500-off -text
 Ridges_3/examples/Ridges_3/data/venus.off -text
 Scripts/developer_scripts/create_macosx_installer -text
-Scripts/test/makefile -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#unset
@@ -1426,7 +1364,6 @@ Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.eps
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.fig -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.gif -text svneol=unset#unset
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.pdf -text svneol=unset#unset
-Skin_surface_3/doc_tex/Skin_surface_3/MarchingTetrahedra3.tex -text
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text
@@ -1435,8 +1372,6 @@ Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text
-Skin_surface_3/examples/Skin_surface_3/NGHK_skin_surface_simple.C -text
-Skin_surface_3/examples/Skin_surface_3/NGHK_skin_surface_subdiv.C -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/AUTHORS -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text
@@ -1785,31 +1720,6 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text
-Surface_mesh_simplification/demo/Surface_mesh_simplification/simplification_demo.cpp -text
-Surface_mesh_simplification/dont_submit -text
-Surface_mesh_simplification/include/CGAL/Cartesian/MatrixC33.h -text
-Surface_mesh_simplification/include/CGAL/HalfedgeDS_BGL_aux.h -text
-Surface_mesh_simplification/include/CGAL/Modifiable_priority_queue.h -text
-Surface_mesh_simplification/include/CGAL/Null_matrix.h -text
-Surface_mesh_simplification/include/CGAL/Polyhedron_BGL.h -text
-Surface_mesh_simplification/include/CGAL/Polyhedron_BGL_properties.h -text
-Surface_mesh_simplification/include/CGAL/Polyhedron_extended_BGL.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Construct_minimal_collapse_data.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Count_stop_pred.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_impl.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_length_cost.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_construct_collapse_data.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_cost.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/LindstromTurk_vertex_placement.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Minimal_collapse_data.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_pair_collapse_impl.h -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/LT_edge_collapse_test.cpp -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/LT_edge_collapse_test.kdevelop -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/makefile -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#unset
