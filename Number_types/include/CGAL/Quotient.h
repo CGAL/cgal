@@ -576,6 +576,14 @@ struct Rational_traits< Quotient<NT> >
   { return n / d; } 
 };
 
+template < class NT >
+inline
+typename Root_of_traits< NT >::RootOf_2
+make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
+               const Quotient< NT > &c, bool d, bool dinz)
+{
+  return CGALi::make_root_of_2_rational< NT, Quotient< NT > >(a,b,c,d,dinz);
+}
 
 template < class NT >
 inline
