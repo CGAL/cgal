@@ -40,54 +40,54 @@ namespace CGAL {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
-    if (e1.a() == 0){//horizontal line
+    if (is_zero(e1.a())){//horizontal line
       
-      FT a = 1;
-      FT b = -2*e2.a();
-      FT c = CGAL::square(e2.a()) +
-	CGAL::square(e1.c()/e1.b() + e2.b())
+      const FT a = 1;
+      const FT b = -2*e2.a();
+      const FT c_t = e1.c()/e1.b();
+      const FT c = CGAL::square(e2.a()) +
+	CGAL::square(e2.b() + c_t)
 	- e2.r_sq();
-      FT cond = CGAL::square(b) - 4 *a*c;
+      const FT cond = CGAL::square(b) - 4 * c;
     
       if(cond < 0)
 	return res;
-      if (cond == 0) {
-	Root_of_2 x_res = make_root_of_2(a, b, c, true);
-	Root_of_2 y_res = Root_of_2(-e1.c()/e1.b()); 
+      if (cond == 0) {	
 	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(x_res, y_res), 2u);
+	  ( Root_for_circles_2_2(Root_of_2(e2.a()), 
+                                 Root_of_2(-c_t)), 2u);
 	return res;
       }
-      Root_of_2 x_res1 = make_root_of_2(a, b, c, true);
-      Root_of_2 x_res2 = make_root_of_2(a, b, c, false);
-      Root_of_2 y_res = Root_of_2(-e1.c()/e1.b()); 
+      const Root_of_2 x_res1 = make_root_of_2(a, b, c, true, true);
+      const Root_of_2 x_res2 = make_root_of_2(a, b, c, false, true);
+      const Root_of_2 y_res = Root_of_2(-c_t); 
       *res++ = std::make_pair
 	( Root_for_circles_2_2(x_res1, y_res), 1u);
       *res++ = std::make_pair
 	( Root_for_circles_2_2(x_res2,y_res), 1u);
       return res;
     }
-    else if(e1.b() == 0){//vertical line
+    else if(is_zero(e1.b())){//vertical line
        
-      FT a = 1;
-      FT b = -2*e2.b();
-      FT c = CGAL::square(e2.b()) +
-	CGAL::square(e1.c()/e1.a() + e2.a())
+      const FT a = 1;
+      const FT b = -2*e2.b();
+      const FT c_t = e1.c()/e1.a();
+      const FT c = CGAL::square(e2.b()) +
+	CGAL::square(c_t + e2.a())
 	- e2.r_sq();
-      FT cond = CGAL::square(b) - 4 *a*c;
+      const FT cond = CGAL::square(b) - 4 * c;
     
       if(cond < 0)
 	return res;
       if (cond == 0) {
-	Root_of_2 y_res = make_root_of_2(a, b, c, true);
-	Root_of_2 x_res = Root_of_2(-e1.c()/e1.a()); 
 	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(x_res, y_res), 2u);
+	  ( Root_for_circles_2_2(Root_of_2(-c_t), 
+                                 Root_of_2(e2.b())), 2u);
 	return res;
       }
-      Root_of_2 y_res1 = make_root_of_2(a, b, c, true);
-      Root_of_2 y_res2 = make_root_of_2(a, b, c, false);
-      Root_of_2 x_res = Root_of_2(-e1.c()/e1.a()); 
+      const Root_of_2 y_res1 = make_root_of_2(a, b, c, true, true);
+      const Root_of_2 y_res2 = make_root_of_2(a, b, c, false, true);
+      Root_of_2 x_res = Root_of_2(-c_t); 
       *res++ = std::make_pair
 	( Root_for_circles_2_2(x_res, y_res1), 1u);
       *res++ = std::make_pair
@@ -96,33 +96,32 @@ namespace CGAL {
     }
     else{
       //general case
-      FT a1_sq = CGAL::square(e1.a());
-      FT b1_sq = CGAL::square(e1.b());
-      FT b2_sq = CGAL::square(e2.b());
+      const FT a1_sq = CGAL::square(e1.a());
+      const FT b1_sq = CGAL::square(e1.b());
+      const FT b2_sq = CGAL::square(e2.b());
       
-      FT a = b1_sq + a1_sq;
-      FT b = 2*e1.c()*e1.b() + 2*e2.a()*e1.a()*e1.b() - 2*a1_sq*e2.b();
-      FT c = CGAL::square(e2.a()*e1.a() + e1.c()) + a1_sq*b2_sq - a1_sq*e2.r_sq();
+      const FT a = b1_sq + a1_sq;
+      const FT b = 2*e1.c()*e1.b() + 2*e2.a()*e1.a()*e1.b() - 2*a1_sq*e2.b();
+      const FT c = CGAL::square(e2.a()*e1.a() + e1.c()) + a1_sq*b2_sq - a1_sq*e2.r_sq();
       
-      
-      FT cond = CGAL::square(b) - 4 *a*c;
+      const FT cond = CGAL::square(b) - 4 *a*c;
     
       if(cond < 0)
 	return res;
 
 
       if (cond == 0) {
-	Root_of_2 y_res = make_root_of_2(a, b, c, true);
-	Root_of_2 x_res = (e1.b()*y_res + e1.c()) / -e1.a();
+        const FT sol = -b/(2*a);
 	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(x_res,y_res), 2u);
+	  ( Root_for_circles_2_2(Root_of_2((e1.b()*sol + e1.c()) / -e1.a()), 
+                                 Root_of_2(sol)), 2u);
 	return res;
       }
     
-      Root_of_2 y_res1 = make_root_of_2(a, b, c, true);
-      Root_of_2 x_res1 = (e1.b()*y_res1 + e1.c()) / - e1.a();
-      Root_of_2 y_res2 = make_root_of_2(a, b, c, false);
-      Root_of_2 x_res2 = (e1.b()*y_res2 + e1.c()) / - e1.a();
+      const Root_of_2 y_res1 = make_root_of_2(a, b, c, true, true);
+      const Root_of_2 x_res1 = (-e1.b()/e1.a()) * y_res1 - (e1.c()/e1.a());
+      const Root_of_2 y_res2 = make_root_of_2(a, b, c, false, true);
+      const Root_of_2 x_res2 = (-e1.b()/e1.a()) * y_res2 - (e1.c()/e1.a());
 
       if(x_res2 < x_res1){
 	*res++ = std::make_pair
@@ -162,21 +161,21 @@ namespace CGAL {
     typedef typename AK::Root_of_2 Root_of_2;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
     //parallele case
-    if(e1.a()*e2.b() == e2.a()*e1.b())
-      return res;
+    const FT delta = e1.a()*e2.b() - e2.a()*e1.b();
+    if(is_zero(delta)) return res;
     //case : e2 horizontal
-    if(e2.a() == 0){
-      Root_of_2 y = -e2.c()/e2.b();
-      Root_of_2 x = -(e1.b()*y + e1.c())/e1.a();
+    if(is_zero(e2.a())){
+      const FT sol = -e2.c()/e2.b();
       *res++ = std::make_pair
-	  ( Root_for_circles_2_2(x, y), 1u);
-    return res;
+	  ( Root_for_circles_2_2(Root_of_2(-(e1.b()*sol + e1.c())/e1.a()),
+                                 Root_of_2(sol)), 1u);
+      return res;
     }
     //general case
-    Root_of_2 y = (e2.a()*e1.c() - e2.c()*e1.a())/(e1.a()*e2.b() - e2.a()*e1.b());
-    Root_of_2 x = (e2.b()*y + e2.c())/(-e2.a());
+    const FT sol = (e2.a()*e1.c() - e2.c()*e1.a()) / delta; 
     *res++ = std::make_pair
-	  ( Root_for_circles_2_2(x, y), 1u);
+	  ( Root_for_circles_2_2(Root_of_2(-(e2.b()*sol + e2.c())/e2.a()),
+                                 Root_of_2(sol)), 1u);
     return res;
   }
 
@@ -186,9 +185,8 @@ namespace CGAL {
 		  const typename AK::Root_for_circles_2_2 & r)
     {
       typedef typename AK::Root_of_2 Root_of_2;
-      Root_of_2 part_left = r.x()*equation.a();
-      Root_of_2 part_right =  -equation.c() - r.y()*equation.b();
-      Comparison_result c = compare(part_left, part_right);
+      Comparison_result c = compare(r.x()*equation.a(), 
+                                    -equation.c() - r.y()*equation.b());
       if(c == EQUAL) return ZERO;
       if(c == LARGER) return POSITIVE;
       return NEGATIVE;
