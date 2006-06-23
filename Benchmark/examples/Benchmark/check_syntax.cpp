@@ -11,7 +11,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source: /KM/projects/ecg/CVS/BMTools/parser/src/check_syntax.C,v $
-// $Revision: 1.6 $ $Date: 2005/02/25 16:32:17 $
+// $Revision$ $Date$
 // $Name:  $
 //
 // Author(s) : Lutz Kettner
