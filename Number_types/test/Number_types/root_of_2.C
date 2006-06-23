@@ -1,3 +1,5 @@
+
+
 // Copyright (c) 2003  INRIA Sophia-Antipolis (France) and
 //                     Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
@@ -20,6 +22,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Root_of_2.h>
+#include <iomanip>
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
@@ -63,7 +66,7 @@ Root my_rand_root_1()
     RT a = my_rand<RT>();
     if (a == 0)
       continue;
-    r = Root(a, my_rand<RT>());
+    r = Root(my_rand<RT>(), a);
   } while (! is_valid(r));
   return r;
 }
@@ -80,7 +83,7 @@ Root my_rand_root()
     if (a == 0 && b == 0)
       return Root(c);
     if (a == 0)
-      return Root(b, c);
+      return Root(c, b);
     if (b*b-4*a*c >= 0)
       return Root(a, b, c, rnd.get_bool());
   } while (true);
@@ -111,6 +114,11 @@ bool
 test_to_interval(const Root &r1)
 {
   std::pair<double, double> the_interval = to_interval(r1);
+  if(!((to_double(r1) >= the_interval.first) && (to_double(r1) <= the_interval.second))) {
+    std::cout << r1[2] << " " << r1[1] << " " << r1[0] << " " << r1.is_smaller() << std::endl;
+    std::cout << setprecision (18) << to_double(r1) << std::endl;
+    std::cout << "[" << setprecision (18) << the_interval.first << "," << setprecision (18) << the_interval.second << "]";
+  }
   return (to_double(r1) >= the_interval.first) && (to_double(r1) <= the_interval.second);
 }
 
@@ -178,12 +186,15 @@ test_root_of()
   Root mone1(-1, 0, 1, true);
   Root one2  = Root(1);
   Root mone2 = Root(-1);
-  Root one3  = Root(1, -1);
-  Root mone3 = Root(1, 1);
+  Root one3  = Root(1, 1);
+  Root mone3 = Root(-1, 1);
   
   assert(one1.conjugate() == mone1);
-  assert(one2.conjugate() == mone2);
-  assert(one3.conjugate() == mone3);
+
+  //It is not true that those must hold
+  //assert(one2.conjugate() == mone2);
+  //assert(one3.conjugate() == mone3);
+
   assert(one1.discriminant()  == 4);
   assert(mone1.discriminant() == 4);
   assert(is_valid(one1));
@@ -252,9 +263,9 @@ test_root_of()
   assert(compare( Root(0),  Root(1)) < 0);
   assert(compare( Root(1), Root(-1)) > 0);
 
-  assert(compare( Root(2, 4), Root(-2)) == 0);
-  assert(compare( Root(2, 4), Root(-1)) < 0);
-  assert(compare( Root(2, 4), Root(-3)) > 0);
+  assert(compare( Root(-4, 2), Root(-2)) == 0);
+  assert(compare( Root(-4, 2), Root(-1)) < 0);
+  assert(compare( Root(-4, 2), Root(-3)) > 0);
 
   std::cout << "  Testing degree 1 and 2" << std::endl;
   Root rone(1, 0, -1, false);
@@ -419,6 +430,38 @@ test_root_of()
     }
   }
 
+  std::cout << "  Testing the inverse of random roots of degree 2" << std::endl;
+  for (int i = 0; i < test_loops; ++i) {
+    Root r1 = my_rand_root<Root>();
+    Root r2 = my_rand_root<Root>();
+    while(r1 == 0) r1 = my_rand_root<Root>();
+    while(r2 == 0) r2 = my_rand_root<Root>();
+    Root r1_inv = inverse(r1);
+    Root r2_inv = inverse(r2);
+    assert(test_to_interval(r1));
+    assert(test_to_interval(r2));
+    assert(test_to_interval(r1_inv));
+    assert(test_to_interval(r2_inv));
+    double dr1 = to_double(r1);
+    double dr2 = to_double(r2);
+    assert(compare(r1_inv, r2_inv) == compare(1.0/dr1, 1.0/dr2));
+  }
+
+  std::cout << "  Testing make_sqrt(RT)" << std::endl;
+  for (int i = 0; i < test_loops; ++i) {
+    RT r1 = my_rand<RT>();
+    RT r2 = my_rand<RT>();
+    while(r1 < 0) r1 = my_rand<RT>();
+    while(r2 < 0) r2 = my_rand<RT>();
+    Root sqr_r1 = make_sqrt(r1);
+    Root sqr_r2 = make_sqrt(r2);
+    assert(test_to_interval(sqr_r1));
+    assert(test_to_interval(sqr_r2));
+    double dr1 = to_double(r1);
+    double dr2 = to_double(r2);
+    assert(compare(sqr_r1, sqr_r2) == compare(std::sqrt(dr1), std::sqrt(dr2)));
+  }
+
   std::cout << "  Testing Root_of_2<FT>" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     int n = rnd.get_int(0, 63);
@@ -427,7 +470,7 @@ test_root_of()
     FT r(n);
     Root r1(r);
     Root r2(n);
-    Root r3(Rat_traits().denominator(r),- Rat_traits().numerator(r));
+    Root r3(Rat_traits().numerator(r), Rat_traits().denominator(r));
     assert(r1 == r1);
     assert(r2 == r2);
     assert(r3 == r3);
@@ -473,17 +516,17 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef CGAL_USE_GMPXX
-  /*
+  
   // Root_of_2 can only be instantiated with RT for now
   // It currently fails on Windows 
-  std::cout << "Testing Root_of_2<mpq_class>" << std::endl;
-  result = result && test_root_of<Root_of_2<mpq_class> >();
-  */
+  //std::cout << "Testing Root_of_2<mpq_class>" << std::endl;
+  //result = result && test_root_of<Root_of_2<mpq_class> >();
+  
   //std::cout << "Testing Root_of_2<Quotient<mpz_class> >" << std::endl;
   //result = result && test_root_of<Root_of_2<CGAL::Quotient<mpz_class> > >();
 
-  std::cout << "Testing Root_of_2<mpz_class>" << std::endl;
-  result = result && test_root_of<Root_of_2<mpz_class> >();
+  //std::cout << "Testing Root_of_2<mpz_class>" << std::endl;
+  //result = result && test_root_of<Root_of_2<mpz_class> >();
 #endif
 
 #ifdef CGAL_USE_LEDA
