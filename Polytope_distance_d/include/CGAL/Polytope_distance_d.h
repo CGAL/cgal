@@ -209,6 +209,22 @@ class Polytope_distance_d {
                      is_finite() ? q_support_indices.end()
                                  : q_support_indices.begin(),
                      Point_by_index( q_points.begin())); }
+
+    Support_point_index_iterator
+    support_points_p_indices_begin() const
+        { return p_support_indices.begin(); }
+    
+    Support_point_index_iterator
+    support_points_p_indices_end() const
+        { return p_support_indices.end(); }
+
+    Support_point_index_iterator
+    support_points_q_indices_begin() const
+        { return q_support_indices.begin(); }
+
+    Support_point_index_iterator
+    support_points_q_indices_end() const
+        { return q_support_indices.end(); }
     
     // access to realizing points (rational representation)
     Coordinate_iterator
