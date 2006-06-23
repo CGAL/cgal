@@ -1,10 +1,11 @@
 #ifndef _MONGE_VIA_JET_FITTING_H_
 #define _MONGE_VIA_JET_FITTING_H_
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Linear_algebraCd.h>
-#include "jet_fitting_3_assertions.h"
+#include <CGAL/jet_fitting_3_assertions.h>
+#include <CGAL/Lapack/Linear_algebra_lapack.h>
 
 //#include <CGAL/eigen.h> //for ALTERNATIVE  with CGAL eigen code
 
@@ -12,15 +13,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-int fact(int n)
-{
-  if (n == 0)
-    return(1);
-  return(n * fact(n-1));
+// int fact(int n)
+// {
+//   if (n == 0)
+//     return(1);
+//   return(n * fact(n-1));
+// }
+
+unsigned int fact(unsigned int n){
+  unsigned int i, p=1;
+  for(i=2; i<=n; i++) p *= i;
+  return p;
 }
-////////////////////// CLASS Monge_rep ////////////////////////
+
+////////////////////// CLASS Monge_form ////////////////////////
 template <class DataKernel>
-class Monge_rep {
+class Monge_form {
 public: 
   typedef typename DataKernel::FT        DFT;
   typedef typename DataKernel::Point_3   DPoint;
@@ -40,14 +48,14 @@ protected:
   
 public:
   //constructor
-  Monge_rep() {
+  Monge_form() {
     m_origin_pt  = DPoint(0.,0.,0.); 
     m_d1 = DVector(0.,0.,0.);
     m_d2 = DVector(0.,0.,0.);
     m_n = DVector(0.,0.,0.);
     m_coefficients = std::vector<DFT>();
   }
-  ~Monge_rep() {}
+  ~Monge_form() {}
   //access
   const DPoint origin_pt() const { return m_origin_pt; }
   DPoint& origin_pt() { return m_origin_pt; }
@@ -73,14 +81,14 @@ public:
 };
 
 template <class DataKernel>
-void Monge_rep<DataKernel>::
+void Monge_form<DataKernel>::
 set_up(int degree) {
   if ( degree >= 2 ) std::fill_n(back_inserter(m_coefficients),
 				 (degree+1)*(degree+2)/2-4, 0.);
 }
 
 template <class DataKernel>
-void Monge_rep<DataKernel>::
+void Monge_form<DataKernel>::
 comply_wrt_given_normal(const DVector given_normal)
 {
   if ( given_normal*this->n() < 0 )
@@ -102,7 +110,7 @@ comply_wrt_given_normal(const DVector given_normal)
 }
 
 template <class DataKernel>
-void Monge_rep<DataKernel>::
+void Monge_form<DataKernel>::
 dump_verbose(std::ostream& out_stream)
 {
   out_stream << "origin : " << origin_pt() << std::endl
@@ -139,7 +147,7 @@ dump_verbose(std::ostream& out_stream)
 }
 
 template <class DataKernel>
-void Monge_rep<DataKernel>::
+void Monge_form<DataKernel>::
 dump_4ogl(std::ostream& out_stream, const DFT scale)
 {
   CGAL_precondition( coefficients().size() >= 2 );
@@ -151,9 +159,9 @@ dump_4ogl(std::ostream& out_stream, const DFT scale)
 	     << std::endl;
 }
 
-////////////////////// CLASS Monge_info ////////////////////////
+////////////////////// CLASS Monge_form_condition_numbers ////////////////////////
 template <class LocalKernel>
-class Monge_info {  
+class Monge_form_condition_numbers {  
 public:
   typedef typename LocalKernel::FT        LFT;
   typedef typename LocalKernel::Vector_3  LVector;
@@ -164,7 +172,7 @@ protected:
 
 public:
   //constructor
-  Monge_info() {
+  Monge_form_condition_numbers() {
     m_cond_nb = 0.;
     std::fill_n(m_pca_eigen_vals, 3, 0.);
     std::fill_n(m_pca_eigen_vecs, 3, LVector()); 
@@ -182,7 +190,7 @@ public:
 
 
 template <class LocalKernel>
-void Monge_info<LocalKernel>:: 
+void Monge_form_condition_numbers<LocalKernel>:: 
 dump_verbose(std::ostream& out_stream)
 {
   out_stream << "cond_nb : " << cond_nb() << std::endl 
@@ -196,21 +204,21 @@ dump_verbose(std::ostream& out_stream)
 }
 
 
-
 ////////////////////// CLASS Monge_via_jet_fitting ////////////////////////
-template < class DataKernel, class LocalKernel, class LinAlgTraits>  
+template < class DataKernel, class LocalKernel = Cartesian<double>, class LinAlgTraits = Lapack>  
 class Monge_via_jet_fitting {
 public:
   typedef DataKernel   Data_Kernel;
   typedef LocalKernel  Local_Kernel;
   typedef typename std::vector<typename Data_Kernel::Point_3>::iterator Range_Iterator;
-  typedef Monge_rep<Data_Kernel>   Monge_rep;
-  typedef Monge_info<Local_Kernel> Monge_info;
+  typedef Monge_form<Data_Kernel>   Monge_form;
+  typedef Monge_form_condition_numbers<Local_Kernel> Monge_form_condition_numbers;
+  
 
 public:
   Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
 			int d, int dprime, 
-			Monge_rep &monge_rep, Monge_info &monge_info);
+			Monge_form &monge_form, Monge_form_condition_numbers &monge_form_condition_numbers);
 
 protected:
   typedef typename Local_Kernel::FT       LFT;
@@ -240,10 +248,10 @@ protected:
   Aff_transformation translate_p0, change_world2fitting,
     change_fitting2monge;
 
-  //eigen val and vect stored in monge_info, 
+  //eigen val and vect stored in monge_form_condition_numbers, 
   // change_world2fitting is computed 
   void compute_PCA(Range_Iterator begin, Range_Iterator end,
-		   Monge_info &monge_info); 
+		   Monge_form_condition_numbers &monge_form_condition_numbers); 
 
   //Coordinates of input points are computed in the fitting basis with 
   //  p0 as origin.
@@ -253,18 +261,18 @@ protected:
 
   //A is computed, solving MA=Z in the ls sense, the solution A is stored in Z
   //Preconditionning is needed
-  //the condition number of the matrix M is stored in monge_info 
-  void solve_linear_system(LAMatrix &M, LFT* Z, Monge_info& monge_info);
+  //the condition number of the matrix M is stored in monge_form_condition_numbers 
+  void solve_linear_system(LAMatrix &M, LFT* Z, Monge_form_condition_numbers& monge_form_condition_numbers);
   
   //Classical differential geometric calculus
   //change_fitting2monge is computed
   //if deg_monge =1 only 1st order info
   //if deg_monge >= 2 2nd order info are computed
-  void compute_Monge_basis(const LFT* A, Monge_rep& monge_rep);
+  void compute_Monge_basis(const LFT* A, Monge_form& monge_form);
 
   //if deg_monge >=3 then 3rd (and 4th) order info are computed
   void compute_Monge_coefficients(LFT* A, int dprime, 
-				  Monge_rep& monge_rep);
+				  Monge_form& monge_form);
 
   //for a trihedron (v1,v2,v3) switches v1 to -v1 if det(v1,v2,v3) < 0
   void switch_to_direct_orientation(LVector& v1, const LVector& v2,
@@ -279,8 +287,8 @@ template < class DataKernel, class LocalKernel, class LinAlgTraits>
 Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
 Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
 		      int d, int  dprime, 
-		      Monge_rep& monge_rep,  
-		      Monge_info& monge_info)
+		      Monge_form& monge_form,  
+		      Monge_form_condition_numbers& monge_form_condition_numbers)
 {
   // precondition: on the degrees, jet and monge
   CGAL_precondition( (d >=1) && (dprime >= 1) 
@@ -293,22 +301,22 @@ Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end,
   CGAL_precondition( nb_input_pts >= nb_d_jet_coeff );
 
   //Initialize
-  monge_rep.set_up(dprime);
+  monge_form.set_up(dprime);
   //for the system MA=Z
   LAMatrix M(nb_input_pts, nb_d_jet_coeff);
   LFT* Z = (LFT*) malloc(nb_input_pts*sizeof(LFT));
 
-  compute_PCA(begin, end, monge_info);
+  compute_PCA(begin, end, monge_form_condition_numbers);
   fill_matrix(begin, end, d, M, Z);//with precond
-  solve_linear_system(M, Z, monge_info);  //correct with precond
-  compute_Monge_basis(Z, monge_rep);
-  if ( dprime >= 3) compute_Monge_coefficients(Z, dprime, monge_rep);
+  solve_linear_system(M, Z, monge_form_condition_numbers);  //correct with precond
+  compute_Monge_basis(Z, monge_form);
+  if ( dprime >= 3) compute_Monge_coefficients(Z, dprime, monge_form);
 } 
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
 compute_PCA(Range_Iterator begin, Range_Iterator end,
-	    Monge_info &monge_info)
+	    Monge_form_condition_numbers &monge_form_condition_numbers)
 {
   LAMatrix Cov(3,3);
   LFT* eval = (LFT*) malloc(3*sizeof(LFT));
@@ -356,25 +364,25 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
   // eigen vectors are sorted in accordance.
   LinAlgTraits::eigen_symm_algo(Cov, eval, evec);
  
-  //store in monge_info, pca eigenvalues are stored in descending order
-  monge_info.pca_eigen_vals()[0] = eval[2];//implicit cast LAFT->LFT
+  //store in monge_form_condition_numbers, pca eigenvalues are stored in descending order
+  monge_form_condition_numbers.pca_eigen_vals()[0] = eval[2];//implicit cast LAFT->LFT
   LVector temp_vectn(evec.get_elt(0,2),evec.get_elt(1,2),evec.get_elt(2,2));
-      monge_info.pca_eigen_vecs()[0] = temp_vectn;
+      monge_form_condition_numbers.pca_eigen_vecs()[0] = temp_vectn;
 
-  monge_info.pca_eigen_vals()[1] = eval[1];
+  monge_form_condition_numbers.pca_eigen_vals()[1] = eval[1];
   LVector temp_vect1(evec.get_elt(0,1),evec.get_elt(1,1),evec.get_elt(2,1));
-      monge_info.pca_eigen_vecs()[1] = temp_vect1;
+      monge_form_condition_numbers.pca_eigen_vecs()[1] = temp_vect1;
 
-  monge_info.pca_eigen_vals()[2] = eval[0];
+  monge_form_condition_numbers.pca_eigen_vals()[2] = eval[0];
   LVector temp_vect2(evec.get_elt(0,0),evec.get_elt(1,0),evec.get_elt(2,0));
-      monge_info.pca_eigen_vecs()[2] = temp_vect2;
+      monge_form_condition_numbers.pca_eigen_vecs()[2] = temp_vect2;
 
-  switch_to_direct_orientation(monge_info.pca_eigen_vecs()[0],
-			       monge_info.pca_eigen_vecs()[1],
-			       monge_info.pca_eigen_vecs()[2]);
+  switch_to_direct_orientation(monge_form_condition_numbers.pca_eigen_vecs()[0],
+			       monge_form_condition_numbers.pca_eigen_vecs()[1],
+			       monge_form_condition_numbers.pca_eigen_vecs()[2]);
  
   //Store the change of basis W->F
-  const LVector* pca_vecs = monge_info.pca_eigen_vecs();
+  const LVector* pca_vecs = monge_form_condition_numbers.pca_eigen_vecs();
   Aff_transformation 
     change_basis (pca_vecs[0][0], pca_vecs[0][1], pca_vecs[0][2], 
 		  pca_vecs[1][0], pca_vecs[1][1], pca_vecs[1][2],
@@ -382,7 +390,7 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
    this->change_world2fitting = change_basis; 
 
 /* //debug   //test the old method, fitting basis is a permutation of the world basis */
-/*   const LVector* pca_vecs = monge_info.pca_eigen_vecs(); */
+/*   const LVector* pca_vecs = monge_form_condition_numbers.pca_eigen_vecs(); */
 /*   const LVector n_pca = pca_vecs[2]; */
 /*   int index_max=0; */
 /*   x = std::fabs(n_pca[0]); y = std::fabs(n_pca[1]); z = std::fabs(n_pca[2]); */
@@ -449,16 +457,16 @@ fill_matrix(Range_Iterator begin, Range_Iterator end,
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
-solve_linear_system(LAMatrix &M, LFT* Z, Monge_info& monge_info)
+solve_linear_system(LAMatrix &M, LFT* Z, Monge_form_condition_numbers& monge_form_condition_numbers)
 {
- LinAlgTraits::solve_ls_svd_algo(M, Z, monge_info.cond_nb()); 
+ LinAlgTraits::solve_ls_svd_algo(M, Z, monge_form_condition_numbers.cond_nb()); 
   for (int k=0; k <= this->deg; k++) for (int i=0; i<=k; i++)
     Z[k*(k+1)/2+i] /= std::pow(this->preconditionning,k);
 }
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
-compute_Monge_basis(const LFT* A, Monge_rep& monge_rep)
+compute_Monge_basis(const LFT* A, Monge_form& monge_form)
 {
   // only 1st order info.
   if ( this->deg_monge == 1 ) {  
@@ -466,10 +474,10 @@ compute_Monge_basis(const LFT* A, Monge_rep& monge_rep)
     LVector  normal(-A[1], -A[2], 1.);
     LFT norm2 = normal * normal;
     normal = normal / Lsqrt(norm2);
-    monge_rep.origin_pt() = 
+    monge_form.origin_pt() = 
       (this->translate_p0.inverse() * 
        this->change_world2fitting.inverse()) (orig_monge );
-    monge_rep.n() = this->change_world2fitting.inverse()(normal);
+    monge_form.n() = this->change_world2fitting.inverse()(normal);
   }
   // else (deg_monge >= 2) then 2nd order info are computed
   else {
@@ -538,14 +546,14 @@ compute_Monge_basis(const LFT* A, Monge_rep& monge_rep)
 
   //store the monge basis origin and vectors with their world coord
   //store ppal curv
-  monge_rep.origin_pt() = 
+  monge_form.origin_pt() = 
     (this->translate_p0.inverse() * 
      this->change_world2fitting.inverse()) (orig_monge );
-  monge_rep.d1() = this->change_world2fitting.inverse()(d_max);
-  monge_rep.d2() = this->change_world2fitting.inverse()(d_min);
-  monge_rep.n()  = this->change_world2fitting.inverse()(normal);
-  monge_rep.coefficients()[0] = eval[1];
-  monge_rep.coefficients()[1] = eval[0];
+  monge_form.d1() = this->change_world2fitting.inverse()(d_max);
+  monge_form.d2() = this->change_world2fitting.inverse()(d_min);
+  monge_form.n()  = this->change_world2fitting.inverse()(normal);
+  monge_form.coefficients()[0] = eval[1];
+  monge_form.coefficients()[1] = eval[0];
   }
   //end else
 }
@@ -553,7 +561,7 @@ compute_Monge_basis(const LFT* A, Monge_rep& monge_rep)
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
 compute_Monge_coefficients(LFT* A, int dprime, 
-			   Monge_rep& monge_rep)
+			   Monge_form& monge_form)
 {
   //One has the equation w=J_A(u,v) of the fitted surface S 
   // in the fitting_basis
@@ -683,10 +691,10 @@ compute_Monge_coefficients(LFT* A, int dprime,
   LFT b2 = 1/(f3*f3)*(-f122*f3+f13*f22);
   LFT b3 = -1/(f3*f3)*(f222*f3-3*f23*f22);
   
-  monge_rep.coefficients()[2] = b0;
-  monge_rep.coefficients()[3] = b1;
-  monge_rep.coefficients()[4] = b2;
-  monge_rep.coefficients()[5] = b3;
+  monge_form.coefficients()[2] = b0;
+  monge_form.coefficients()[3] = b1;
+  monge_form.coefficients()[4] = b2;
+  monge_form.coefficients()[5] = b3;
 
   if ( dprime == 4 )
     {
@@ -742,11 +750,11 @@ compute_Monge_coefficients(LFT* A, int dprime,
       LFT c4 =
 	-1/(f3*f3*f3)*(f2222*(f3*f3)+3*f33*f22*f22-6*f223*f3*f22-4*f23*f3*f222+12*f23*f23*f22) ; 
       
-      monge_rep.coefficients()[6] = c0;
-      monge_rep.coefficients()[7] = c1;
-      monge_rep.coefficients()[8] = c2;
-      monge_rep.coefficients()[9] = c3;
-      monge_rep.coefficients()[10] = c4;
+      monge_form.coefficients()[6] = c0;
+      monge_form.coefficients()[7] = c1;
+      monge_form.coefficients()[8] = c2;
+      monge_form.coefficients()[9] = c3;
+      monge_form.coefficients()[10] = c4;
     }
 }
 

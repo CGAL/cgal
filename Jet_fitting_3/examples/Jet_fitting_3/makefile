@@ -24,10 +24,10 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-F2CDIR  = $(LAPACK_DIR)/F2CLIBS
-LAPACK_LDLIBS  = $(LAPACK_DIR)/lapack_LINUX.a \
-          $(LAPACK_DIR)/blas_LINUX.a $(LAPACK_DIR)/tmglib_LINUX.a \
-          $(F2CDIR)/libF77.a $(F2CDIR)/libI77.a -lm -lc
+LAPACK_LDLIBS  = -L$(LAPACK_DIR) -L$(LAPACK_DIR)/F2CLIBS \
+	-llapack_LINUX \
+          -lblas_LINUX -ltmglib_LINUX \
+          -lF77 -lI77 -lm -lc
 
 LIBPATH = \
           $(CGAL_LIBPATH)
@@ -75,47 +75,31 @@ depend:
 
 blind_1pt.o: /usr/include/stdio.h /usr/include/features.h
 blind_1pt.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
+blind_1pt.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
 blind_1pt.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
 blind_1pt.o: /usr/include/bits/typesizes.h /usr/include/libio.h
 blind_1pt.o: /usr/include/_G_config.h /usr/include/wchar.h
 blind_1pt.o: /usr/include/bits/wchar.h /usr/include/gconv.h
+blind_1pt.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stdarg.h
 blind_1pt.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
-blind_1pt.o: /usr/include/stdlib.h /usr/include/sys/types.h
-blind_1pt.o: /usr/include/time.h /usr/include/endian.h
-blind_1pt.o: /usr/include/bits/endian.h /usr/include/sys/select.h
-blind_1pt.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
-blind_1pt.o: /usr/include/bits/time.h /usr/include/sys/sysmacros.h
-blind_1pt.o: /usr/include/bits/pthreadtypes.h /usr/include/bits/sched.h
-blind_1pt.o: /usr/include/alloca.h ../../include/CGAL/Monge_via_jet_fitting.h
-blind_1pt.o: ../../include/CGAL/jet_fitting_3_assertions.h
-blind_1pt.o: /usr/include/math.h /usr/include/bits/huge_val.h
-blind_1pt.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h
-blind_1pt.o: ../../include/CGAL/LinAlg_lapack.h
+blind_1pt.o: /usr/include/stdlib.h
 blind.o: /usr/include/stdio.h /usr/include/features.h
 blind.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
+blind.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
 blind.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
 blind.o: /usr/include/bits/typesizes.h /usr/include/libio.h
 blind.o: /usr/include/_G_config.h /usr/include/wchar.h
 blind.o: /usr/include/bits/wchar.h /usr/include/gconv.h
+blind.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stdarg.h
 blind.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
-blind.o: /usr/include/stdlib.h /usr/include/sys/types.h /usr/include/time.h
-blind.o: /usr/include/endian.h /usr/include/bits/endian.h
-blind.o: /usr/include/sys/select.h /usr/include/bits/select.h
-blind.o: /usr/include/bits/sigset.h /usr/include/bits/time.h
-blind.o: /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h
-blind.o: /usr/include/bits/sched.h /usr/include/alloca.h
-blind.o: /usr/include/boost/property_map.hpp /usr/include/boost/config.hpp
-blind.o: /usr/include/boost/config/user.hpp
+blind.o: /usr/include/stdlib.h /usr/include/boost/property_map.hpp
+blind.o: /usr/include/boost/config.hpp /usr/include/boost/config/user.hpp
 blind.o: /usr/include/boost/config/select_compiler_config.hpp
 blind.o: /usr/include/boost/config/compiler/gcc.hpp
 blind.o: /usr/include/boost/config/select_stdlib_config.hpp
 blind.o: /usr/include/boost/config/select_platform_config.hpp
-blind.o: /usr/include/boost/config/posix_features.hpp /usr/include/unistd.h
-blind.o: /usr/include/bits/posix_opt.h /usr/include/bits/confname.h
-blind.o: /usr/include/getopt.h /usr/include/boost/config/suffix.hpp
-blind.o: /usr/include/limits.h /usr/include/bits/posix1_lim.h
-blind.o: /usr/include/bits/local_lim.h /usr/include/linux/limits.h
-blind.o: /usr/include/bits/posix2_lim.h
+blind.o: /usr/include/boost/config/suffix.hpp /usr/include/limits.h
+blind.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/limits.h
 blind.o: /usr/include/boost/pending/cstddef.hpp
 blind.o: /usr/include/boost/detail/iterator.hpp /usr/include/boost/config.hpp
 blind.o: /usr/include/boost/concept_check.hpp /usr/include/boost/iterator.hpp
@@ -163,10 +147,7 @@ blind.o: /usr/include/boost/mpl/aux_/config/lambda.hpp
 blind.o: /usr/include/boost/mpl/aux_/config/ttp.hpp
 blind.o: /usr/include/boost/mpl/aux_/config/ctps.hpp
 blind.o: /usr/include/boost/mpl/aux_/config/overload_resolution.hpp
-blind.o: /usr/include/boost/type_traits/integral_constant.hpp
 blind.o: /usr/include/boost/mpl/bool.hpp /usr/include/boost/mpl/bool_fwd.hpp
-blind.o: /usr/include/boost/mpl/integral_c.hpp
-blind.o: /usr/include/boost/mpl/integral_c_fwd.hpp
 blind.o: /usr/include/boost/mpl/aux_/lambda_support.hpp
 blind.o: /usr/include/boost/type_traits/detail/bool_trait_undef.hpp
 blind.o: /usr/include/boost/type_traits/add_reference.hpp
@@ -178,17 +159,7 @@ blind.o: /usr/include/boost/type_traits/detail/ice_or.hpp
 blind.o: /usr/include/boost/type_traits/detail/ice_and.hpp
 blind.o: /usr/include/boost/type_traits/detail/ice_not.hpp
 blind.o: /usr/include/boost/type_traits/detail/ice_eq.hpp
-blind.o: /usr/include/boost/type_traits/is_arithmetic.hpp
-blind.o: /usr/include/boost/type_traits/is_integral.hpp
-blind.o: /usr/include/boost/type_traits/is_float.hpp
-blind.o: /usr/include/boost/type_traits/is_abstract.hpp
 blind.o: /usr/include/boost/static_assert.hpp
-blind.o: /usr/include/boost/type_traits/is_class.hpp
-blind.o: /usr/include/boost/type_traits/is_union.hpp
-blind.o: /usr/include/boost/type_traits/remove_cv.hpp
-blind.o: /usr/include/boost/type_traits/broken_compiler_spec.hpp
-blind.o: /usr/include/boost/type_traits/detail/cv_traits_impl.hpp
-blind.o: /usr/include/boost/type_traits/intrinsics.hpp
 blind.o: /usr/include/boost/mpl/identity.hpp
 blind.o: /usr/include/boost/mpl/aux_/na_spec.hpp
 blind.o: /usr/include/boost/mpl/lambda_fwd.hpp
@@ -223,12 +194,8 @@ blind.o: /usr/include/boost/preprocessor/control/detail/while.hpp
 blind.o: /usr/include/boost/preprocessor/tuple/elem.hpp
 blind.o: /usr/include/boost/preprocessor/arithmetic/sub.hpp
 blind.o: /usr/include/boost/mpl/aux_/config/eti.hpp
-blind.o: /usr/include/boost/concept_archetype.hpp
-blind.o: ../../include/CGAL/Monge_via_jet_fitting.h
-blind.o: ../../include/CGAL/jet_fitting_3_assertions.h /usr/include/math.h
-blind.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
-blind.o: /usr/include/bits/mathcalls.h ../../include/CGAL/LinAlg_lapack.h
-blind.o: PolyhedralSurf.h /usr/include/boost/graph/properties.hpp
+blind.o: /usr/include/boost/concept_archetype.hpp PolyhedralSurf.h
+blind.o: /usr/include/boost/graph/properties.hpp
 blind.o: /usr/include/boost/pending/property.hpp
 blind.o: /usr/include/boost/pending/ct_if.hpp
 blind.o: /usr/include/boost/pending/detail/property.hpp
@@ -243,21 +210,23 @@ blind.o: /usr/include/boost/type_traits/add_const.hpp
 blind.o: /usr/include/boost/type_traits/add_volatile.hpp
 blind.o: /usr/include/boost/type_traits/add_cv.hpp
 blind.o: /usr/include/boost/type_traits/is_const.hpp
+blind.o: /usr/include/boost/type_traits/detail/cv_traits_impl.hpp
 blind.o: /usr/include/boost/type_traits/is_volatile.hpp
 blind.o: /usr/include/boost/type_traits/remove_const.hpp
+blind.o: /usr/include/boost/type_traits/broken_compiler_spec.hpp
 blind.o: /usr/include/boost/type_traits/remove_volatile.hpp
+blind.o: /usr/include/boost/type_traits/remove_cv.hpp
 blind.o: /usr/include/boost/type_traits/function_traits.hpp
 blind.o: /usr/include/boost/type_traits/is_function.hpp
 blind.o: /usr/include/boost/type_traits/detail/false_result.hpp
 blind.o: /usr/include/boost/type_traits/detail/is_function_ptr_helper.hpp
 blind.o: /usr/include/boost/type_traits/add_pointer.hpp
 blind.o: /usr/include/boost/type_traits/remove_reference.hpp
-blind.o: /usr/include/boost/mpl/if.hpp
-blind.o: /usr/include/boost/mpl/aux_/value_wknd.hpp
-blind.o: /usr/include/boost/mpl/aux_/config/integral.hpp
 blind.o: /usr/include/boost/iterator/iterator_categories.hpp
 blind.o: /usr/include/boost/iterator/detail/config_def.hpp
-blind.o: /usr/include/boost/mpl/eval_if.hpp
+blind.o: /usr/include/boost/mpl/eval_if.hpp /usr/include/boost/mpl/if.hpp
+blind.o: /usr/include/boost/mpl/aux_/value_wknd.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/integral.hpp
 blind.o: /usr/include/boost/mpl/placeholders.hpp
 blind.o: /usr/include/boost/mpl/arg.hpp /usr/include/boost/mpl/arg_fwd.hpp
 blind.o: /usr/include/boost/mpl/aux_/na_assert.hpp
@@ -281,13 +250,18 @@ blind.o: /usr/include/boost/type_traits/is_pointer.hpp
 blind.o: /usr/include/boost/type_traits/is_member_pointer.hpp
 blind.o: /usr/include/boost/type_traits/is_member_function_pointer.hpp
 blind.o: /usr/include/boost/type_traits/detail/is_mem_fun_pointer_impl.hpp
+blind.o: /usr/include/boost/type_traits/is_class.hpp
+blind.o: /usr/include/boost/type_traits/is_union.hpp
+blind.o: /usr/include/boost/type_traits/intrinsics.hpp
 blind.o: /usr/include/boost/type_traits/remove_pointer.hpp
 blind.o: /usr/include/boost/mpl/not.hpp
 blind.o: /usr/include/boost/iterator/detail/enable_if.hpp
-blind.o: /usr/include/boost/implicit_cast.hpp
 blind.o: /usr/include/boost/type_traits/is_pod.hpp
 blind.o: /usr/include/boost/type_traits/is_void.hpp
 blind.o: /usr/include/boost/type_traits/is_scalar.hpp
+blind.o: /usr/include/boost/type_traits/is_arithmetic.hpp
+blind.o: /usr/include/boost/type_traits/is_integral.hpp
+blind.o: /usr/include/boost/type_traits/is_float.hpp
 blind.o: /usr/include/boost/type_traits/is_enum.hpp
 blind.o: /usr/include/boost/mpl/always.hpp /usr/include/boost/mpl/apply.hpp
 blind.o: /usr/include/boost/mpl/apply_fwd.hpp
@@ -316,6 +290,7 @@ blind.o: PolyhedralSurf_operations.h PolyhedralSurf_rings.h options.h
 options.o: /usr/include/ctype.h /usr/include/features.h
 options.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 options.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
+options.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
 options.o: /usr/include/bits/typesizes.h /usr/include/endian.h
 options.o: /usr/include/bits/endian.h /usr/include/string.h options.h
 PolyhedralSurf.o: PolyhedralSurf.h /usr/include/boost/property_map.hpp
@@ -325,16 +300,10 @@ PolyhedralSurf.o: /usr/include/boost/config/select_compiler_config.hpp
 PolyhedralSurf.o: /usr/include/boost/config/compiler/gcc.hpp
 PolyhedralSurf.o: /usr/include/boost/config/select_stdlib_config.hpp
 PolyhedralSurf.o: /usr/include/boost/config/select_platform_config.hpp
-PolyhedralSurf.o: /usr/include/boost/config/posix_features.hpp
-PolyhedralSurf.o: /usr/include/unistd.h /usr/include/features.h
-PolyhedralSurf.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-PolyhedralSurf.o: /usr/include/bits/posix_opt.h /usr/include/bits/types.h
-PolyhedralSurf.o: /usr/include/bits/wordsize.h /usr/include/bits/typesizes.h
-PolyhedralSurf.o: /usr/include/bits/confname.h /usr/include/getopt.h
 PolyhedralSurf.o: /usr/include/boost/config/suffix.hpp /usr/include/limits.h
-PolyhedralSurf.o: /usr/include/bits/posix1_lim.h
-PolyhedralSurf.o: /usr/include/bits/local_lim.h /usr/include/linux/limits.h
-PolyhedralSurf.o: /usr/include/bits/posix2_lim.h
+PolyhedralSurf.o: /usr/include/features.h /usr/include/sys/cdefs.h
+PolyhedralSurf.o: /usr/include/gnu/stubs.h
+PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/limits.h
 PolyhedralSurf.o: /usr/include/boost/pending/cstddef.hpp
 PolyhedralSurf.o: /usr/include/boost/detail/iterator.hpp
 PolyhedralSurf.o: /usr/include/boost/config.hpp
@@ -385,11 +354,8 @@ PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/lambda.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/ttp.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/ctps.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/overload_resolution.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/integral_constant.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/bool.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/bool_fwd.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/integral_c.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/integral_c_fwd.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/lambda_support.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/bool_trait_undef.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_reference.hpp
@@ -401,17 +367,7 @@ PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_or.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_and.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_not.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_eq.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_arithmetic.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_integral.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_float.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_abstract.hpp
 PolyhedralSurf.o: /usr/include/boost/static_assert.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_class.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_union.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/remove_cv.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/broken_compiler_spec.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/detail/cv_traits_impl.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/intrinsics.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/identity.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/na_spec.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/lambda_fwd.hpp
@@ -463,21 +419,24 @@ PolyhedralSurf.o: /usr/include/boost/type_traits/add_const.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_volatile.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_cv.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_const.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/detail/cv_traits_impl.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_volatile.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_const.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/broken_compiler_spec.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_volatile.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/remove_cv.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/function_traits.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_function.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/false_result.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/is_function_ptr_helper.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_reference.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/if.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/aux_/value_wknd.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/integral.hpp
 PolyhedralSurf.o: /usr/include/boost/iterator/iterator_categories.hpp
 PolyhedralSurf.o: /usr/include/boost/iterator/detail/config_def.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/eval_if.hpp
+PolyhedralSurf.o: /usr/include/boost/mpl/if.hpp
+PolyhedralSurf.o: /usr/include/boost/mpl/aux_/value_wknd.hpp
+PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/integral.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/placeholders.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/arg.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/arg_fwd.hpp
@@ -502,13 +461,18 @@ PolyhedralSurf.o: /usr/include/boost/type_traits/is_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_member_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_member_function_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/is_mem_fun_pointer_impl.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_class.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_union.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/intrinsics.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/not.hpp
 PolyhedralSurf.o: /usr/include/boost/iterator/detail/enable_if.hpp
-PolyhedralSurf.o: /usr/include/boost/implicit_cast.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_pod.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_void.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_scalar.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_arithmetic.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_integral.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_float.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_enum.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/always.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/apply.hpp
@@ -536,16 +500,15 @@ PolyhedralSurf.o: /usr/include/boost/mpl/quote.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/void.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/has_type.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/template_arity.hpp
-PolyhedralSurf.o: /usr/include/stdlib.h /usr/include/sys/types.h
-PolyhedralSurf.o: /usr/include/time.h /usr/include/endian.h
-PolyhedralSurf.o: /usr/include/bits/endian.h /usr/include/sys/select.h
-PolyhedralSurf.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
-PolyhedralSurf.o: /usr/include/bits/time.h /usr/include/sys/sysmacros.h
-PolyhedralSurf.o: /usr/include/bits/pthreadtypes.h /usr/include/bits/sched.h
-PolyhedralSurf.o: /usr/include/alloca.h /usr/include/stdio.h
+PolyhedralSurf.o: /usr/include/stdlib.h
+PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
+PolyhedralSurf.o: /usr/include/stdio.h /usr/include/bits/types.h
+PolyhedralSurf.o: /usr/include/bits/wordsize.h /usr/include/bits/typesizes.h
 PolyhedralSurf.o: /usr/include/libio.h /usr/include/_G_config.h
 PolyhedralSurf.o: /usr/include/wchar.h /usr/include/bits/wchar.h
-PolyhedralSurf.o: /usr/include/gconv.h /usr/include/bits/stdio_lim.h
+PolyhedralSurf.o: /usr/include/gconv.h
+PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stdarg.h
+PolyhedralSurf.o: /usr/include/bits/stdio_lim.h
 PolyhedralSurf.o: /usr/include/bits/sys_errlist.h
 PolyhedralSurf.o: /usr/include/boost/property_map.hpp
 PolyhedralSurf.o: /usr/include/boost/config.hpp
@@ -554,16 +517,10 @@ PolyhedralSurf.o: /usr/include/boost/config/select_compiler_config.hpp
 PolyhedralSurf.o: /usr/include/boost/config/compiler/gcc.hpp
 PolyhedralSurf.o: /usr/include/boost/config/select_stdlib_config.hpp
 PolyhedralSurf.o: /usr/include/boost/config/select_platform_config.hpp
-PolyhedralSurf.o: /usr/include/boost/config/posix_features.hpp
-PolyhedralSurf.o: /usr/include/unistd.h /usr/include/features.h
-PolyhedralSurf.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-PolyhedralSurf.o: /usr/include/bits/posix_opt.h /usr/include/bits/types.h
-PolyhedralSurf.o: /usr/include/bits/wordsize.h /usr/include/bits/typesizes.h
-PolyhedralSurf.o: /usr/include/bits/confname.h /usr/include/getopt.h
 PolyhedralSurf.o: /usr/include/boost/config/suffix.hpp /usr/include/limits.h
-PolyhedralSurf.o: /usr/include/bits/posix1_lim.h
-PolyhedralSurf.o: /usr/include/bits/local_lim.h /usr/include/linux/limits.h
-PolyhedralSurf.o: /usr/include/bits/posix2_lim.h
+PolyhedralSurf.o: /usr/include/features.h /usr/include/sys/cdefs.h
+PolyhedralSurf.o: /usr/include/gnu/stubs.h
+PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/limits.h
 PolyhedralSurf.o: /usr/include/boost/pending/cstddef.hpp
 PolyhedralSurf.o: /usr/include/boost/detail/iterator.hpp
 PolyhedralSurf.o: /usr/include/boost/config.hpp
@@ -614,11 +571,8 @@ PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/lambda.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/ttp.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/ctps.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/overload_resolution.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/integral_constant.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/bool.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/bool_fwd.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/integral_c.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/integral_c_fwd.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/lambda_support.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/bool_trait_undef.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_reference.hpp
@@ -630,17 +584,7 @@ PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_or.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_and.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_not.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/ice_eq.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_arithmetic.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_integral.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_float.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_abstract.hpp
 PolyhedralSurf.o: /usr/include/boost/static_assert.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_class.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/is_union.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/remove_cv.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/broken_compiler_spec.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/detail/cv_traits_impl.hpp
-PolyhedralSurf.o: /usr/include/boost/type_traits/intrinsics.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/identity.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/na_spec.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/lambda_fwd.hpp
@@ -692,21 +636,24 @@ PolyhedralSurf.o: /usr/include/boost/type_traits/add_const.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_volatile.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_cv.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_const.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/detail/cv_traits_impl.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_volatile.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_const.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/broken_compiler_spec.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_volatile.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/remove_cv.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/function_traits.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_function.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/false_result.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/is_function_ptr_helper.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/add_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_reference.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/if.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/aux_/value_wknd.hpp
-PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/integral.hpp
 PolyhedralSurf.o: /usr/include/boost/iterator/iterator_categories.hpp
 PolyhedralSurf.o: /usr/include/boost/iterator/detail/config_def.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/eval_if.hpp
+PolyhedralSurf.o: /usr/include/boost/mpl/if.hpp
+PolyhedralSurf.o: /usr/include/boost/mpl/aux_/value_wknd.hpp
+PolyhedralSurf.o: /usr/include/boost/mpl/aux_/config/integral.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/placeholders.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/arg.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/arg_fwd.hpp
@@ -731,13 +678,18 @@ PolyhedralSurf.o: /usr/include/boost/type_traits/is_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_member_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_member_function_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/detail/is_mem_fun_pointer_impl.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_class.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_union.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/intrinsics.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/remove_pointer.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/not.hpp
 PolyhedralSurf.o: /usr/include/boost/iterator/detail/enable_if.hpp
-PolyhedralSurf.o: /usr/include/boost/implicit_cast.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_pod.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_void.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_scalar.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_arithmetic.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_integral.hpp
+PolyhedralSurf.o: /usr/include/boost/type_traits/is_float.hpp
 PolyhedralSurf.o: /usr/include/boost/type_traits/is_enum.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/always.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/apply.hpp
@@ -765,14 +717,13 @@ PolyhedralSurf.o: /usr/include/boost/mpl/quote.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/void.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/has_type.hpp
 PolyhedralSurf.o: /usr/include/boost/mpl/aux_/template_arity.hpp
-PolyhedralSurf.o: /usr/include/stdlib.h /usr/include/sys/types.h
-PolyhedralSurf.o: /usr/include/time.h /usr/include/endian.h
-PolyhedralSurf.o: /usr/include/bits/endian.h /usr/include/sys/select.h
-PolyhedralSurf.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
-PolyhedralSurf.o: /usr/include/bits/time.h /usr/include/sys/sysmacros.h
-PolyhedralSurf.o: /usr/include/bits/pthreadtypes.h /usr/include/bits/sched.h
-PolyhedralSurf.o: /usr/include/alloca.h /usr/include/stdio.h
+PolyhedralSurf.o: /usr/include/stdlib.h
+PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
+PolyhedralSurf.o: /usr/include/stdio.h /usr/include/bits/types.h
+PolyhedralSurf.o: /usr/include/bits/wordsize.h /usr/include/bits/typesizes.h
 PolyhedralSurf.o: /usr/include/libio.h /usr/include/_G_config.h
 PolyhedralSurf.o: /usr/include/wchar.h /usr/include/bits/wchar.h
-PolyhedralSurf.o: /usr/include/gconv.h /usr/include/bits/stdio_lim.h
+PolyhedralSurf.o: /usr/include/gconv.h
+PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stdarg.h
+PolyhedralSurf.o: /usr/include/bits/stdio_lim.h
 PolyhedralSurf.o: /usr/include/bits/sys_errlist.h

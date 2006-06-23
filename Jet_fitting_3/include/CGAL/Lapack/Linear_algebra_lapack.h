@@ -1,5 +1,5 @@
-#ifndef _LAPACK_H_
-#define _LAPACK_H_
+#ifndef CGAL_LAPACK_H
+#define CGAL_LAPACK_H
 
 #include <stdlib.h>
 #include "blaswrap.h"
@@ -8,6 +8,7 @@ extern "C" {
 #include "clapack.h"
 }
 
+namespace CGAL {
 ////////////////////////class Lapack_matrix/////////////////////
 //in Lapack, matrices are one-dimensional arrays 
 // and elements are column-major ordered
@@ -107,4 +108,6 @@ void Lapack::solve_ls_svd_algo(Matrix& M, double* B, double &cond_nb)
   free(work);
 }
 
-#endif
+} // namespace CGAL
+
+#endif // CGAL_LAPACK_H

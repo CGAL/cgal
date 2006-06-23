@@ -9,8 +9,8 @@
 
 #include <boost/property_map.hpp>
 
-#include "../../include/CGAL/Monge_via_jet_fitting.h" 
-#include "../../include/CGAL/LinAlg_lapack.h" 
+#include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/Lapack/Linear_algebra_lapack.h>
  
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_operations.h"
@@ -70,11 +70,19 @@ typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, Facet_PM_type> Poly_facet_ops
 
 
 //Kernel for local computations
-typedef double                LFT;
-typedef CGAL::Cartesian<LFT>  Local_Kernel;
-typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
-typedef CGAL::Monge_rep<Data_Kernel> My_Monge_rep;
-typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
+// typedef double                LFT;
+// typedef CGAL::Cartesian<LFT>  Local_Kernel;
+// typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
+// typedef CGAL::Monge_form<Data_Kernel> My_Monge_form;
+// typedef CGAL::Monge_form_condition_numbers<Local_Kernel> My_Monge_form_condition_numbers;
+
+
+typedef double                   LFT;
+typedef CGAL::Cartesian<LFT>     Local_Kernel;
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
+typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
+typedef My_Monge_via_jet_fitting::Monge_form_condition_numbers My_Monge_form_condition_numbers;
+
          
 //Syntax requirred by Options
 static const char *const optv[] = {
@@ -241,8 +249,8 @@ int main(int argc, char *argv[])
     //initialize
     Vertex* v = &(*vitb);
     in_points.clear();  
-    My_Monge_rep monge_rep;
-    My_Monge_info monge_info;
+    My_Monge_form monge_form;
+    My_Monge_form_condition_numbers monge_form_condition_numbers;
       
     //gather points around the vertex using rings
     gather_fitting_points(v, in_points, vpm);
@@ -255,18 +263,18 @@ int main(int argc, char *argv[])
     // run the main fct : perform the fitting
     My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
 				   d_fitting, d_monge, 
-				   monge_rep, monge_info);
+				   monge_form, monge_form_condition_numbers);
  
     //switch min-max ppal curv/dir wrt the mesh orientation
     const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
-    monge_rep.comply_wrt_given_normal(normal_mesh);
+    monge_form.comply_wrt_given_normal(normal_mesh);
  
     //OpenGL output. Scaling for ppal dir, may be optimized with a
     //global mean edges length computed only once on all edges of P
     DFT scale_ppal_dir = Poly_hedge_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
  
     (*out_4ogl) << v->point()  << " ";
-    monge_rep.dump_4ogl(*out_4ogl, scale_ppal_dir);
+    monge_form.dump_4ogl(*out_4ogl, scale_ppal_dir);
 
     //verbose txt output 
     if (verbose) {     
@@ -277,8 +285,8 @@ int main(int argc, char *argv[])
       (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
 		     <<	" : " << v->point() << std::endl
 		     << "number of points used : " << in_points.size() << std::endl;
-      monge_rep.dump_verbose(*out_verbose);
-      monge_info.dump_verbose(*out_verbose);
+      monge_form.dump_verbose(*out_verbose);
+      monge_form_condition_numbers.dump_verbose(*out_verbose);
     }
   } //all vertices processed
 

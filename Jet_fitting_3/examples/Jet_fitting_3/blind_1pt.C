@@ -7,19 +7,18 @@
 #include <stdlib.h>
 
 #include <vector>
-#include "../../include/CGAL/Monge_via_jet_fitting.h" 
-#include "../../include/CGAL/LinAlg_lapack.h" 
+#include <CGAL/Monge_via_jet_fitting.h>
+
  
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
-typedef CGAL::Monge_rep<Data_Kernel>   My_Monge_rep;
 
 typedef double                   LFT;
 typedef CGAL::Cartesian<LFT>     Local_Kernel;
-typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
-typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
-
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
+typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
+typedef My_Monge_via_jet_fitting::Monge_form_condition_numbers My_Monge_form_condition_numbers;
        
 int main(int argc, char *argv[])
 {
@@ -59,12 +58,12 @@ int main(int argc, char *argv[])
   // fct parameters
   int d_fitting = std::atoi(argv[3]);
   int d_monge = std::atoi(argv[4]);
-  My_Monge_rep monge_rep;
-  My_Monge_info monge_info;
+  My_Monge_form monge_form;
+  My_Monge_form_condition_numbers monge_form_condition_numbers;
   //run the main fct
   My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
 				 d_fitting, d_monge, 
-				 monge_rep, monge_info);
+				 monge_form, monge_form_condition_numbers);
 
   //open a file for output
   char name_out[20];
@@ -82,15 +81,15 @@ int main(int argc, char *argv[])
   CGAL::set_pretty_mode(outFile);
   outFile   << "vertex : " << in_points[0] << std::endl
 	    << "number of points used : " << in_points.size() << std::endl;
-  monge_rep.dump_verbose(outFile);
-  monge_info.dump_verbose(outFile);
+  monge_form.dump_verbose(outFile);
+  monge_form_condition_numbers.dump_verbose(outFile);
   
   //OUTPUT on std::cout
   CGAL::set_pretty_mode(std::cout);
   std::cout << "vertex : " << in_points[0] << std::endl
 	    << "number of points used : " << in_points.size() << std::endl;
-  monge_rep.dump_verbose(std::cout);
-  monge_info.dump_verbose(std::cout);
+  monge_form.dump_verbose(std::cout);
+  monge_form_condition_numbers.dump_verbose(std::cout);
 
   return 1;
 }
