@@ -77,6 +77,12 @@ io_Operator io_tag(const Root_of_2<T>&);
 template < typename T >
 Root_of_2<T> square(const Root_of_2<T>&);
 
+template < typename T >
+Root_of_2<T> inverse(const Root_of_2<T>&);
+
+template < typename T >
+Root_of_2<T> make_sqrt(const T&);
+
 namespace CGALi {
 template < typename RT,
            typename Has_sqrt = typename Number_type_traits<RT>::Has_sqrt >
@@ -87,6 +93,10 @@ struct Make_root_of_2_helper;
 template < typename RT >
 typename CGALi::Make_root_of_2_helper<RT>::result_type
 make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller);
+
+template < typename RT >
+typename CGALi::Make_root_of_2_helper<RT>::result_type
+make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller, bool dinz);
 
 CGAL_END_NAMESPACE
 
