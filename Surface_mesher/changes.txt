@@ -1,3 +1,7 @@
+23 June 2006 Laurent Rineau
+- fix all iterators of C2t3!!
+- added a test to test that these iterators works...
+
 12 June 2006 Laurent Rineau
 - remove subdirectories of include/CGAL/Surface_mesher: files of Criteria/
   and Oracles/ are moved one step back.
