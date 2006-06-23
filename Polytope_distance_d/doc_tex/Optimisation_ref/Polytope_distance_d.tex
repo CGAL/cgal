@@ -90,6 +90,12 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{Point}. Used to access the support points.}
 
+\ccNestedType{ Support_point_index_iterator}{
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{int}. Used to access the indices of the
+        support points in the provided input order (starting from 0 
+        in both point sets).}
+
 \ccNestedType{ Coordinate_iterator}{
         non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{ET}. Used to access the coordinates of
@@ -195,6 +201,24 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         returns an iterator referring to the first support point in $S_Q$.}
 %
 \ccMemberFunction{ Support_point_iterator  support_points_q_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Support_point_index_iterator  support_points_p_indices_begin( ) const;}{
+        returns an iterator referring to the index of the first support point in $P$.}
+%
+\ccMemberFunction{ Support_point_index_iterator  support_points_p_indices_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Support_point_index_iterator  support_points_q_indices_begin( ) const;}{
+        returns an iterator referring to the index of the first support point in $Q$.}
+%
+\ccMemberFunction{ Support_point_index_iterator  support_points_q_indices_end( ) const;}{
         returns the corresponding past-the-end iterator.}
 \ccGlueEnd
 
