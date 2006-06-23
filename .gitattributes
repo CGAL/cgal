@@ -254,7 +254,6 @@ Arrangement_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
-Arrangement_2/include/CGAL/Sweep_line_2/Integer_hash_function.h eol=lf
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/1GWB.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/degen.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/degen2.spheres -text
@@ -550,7 +549,6 @@ Maintenance/deb/sarge/debian/README.Debian -text
 Maintenance/deb/sarge/debian/changelog -text
 Maintenance/deb/sarge/debian/compat -text
 Maintenance/deb/sarge/debian/control -text
-Maintenance/deb/sarge/debian/copyright -text
 Maintenance/deb/sarge/debian/libcgal-demo.install -text
 Maintenance/deb/sarge/debian/libcgal-dev.install -text
 Maintenance/deb/sarge/debian/libcgal1.install -text
@@ -559,15 +557,11 @@ Maintenance/deb/sarge/debian/misc/adjust-default-makefile.sed -text
 Maintenance/deb/sarge/debian/misc/adjust-demo-examples-makefiles.sed -text
 Maintenance/deb/sarge/debian/misc/cgal_create_makefile.1 -text
 Maintenance/deb/sarge/debian/patches/00list -text
-Maintenance/deb/sarge/debian/patches/bugfix-demo-examples-makefiles.dpatch -text
-Maintenance/deb/sarge/debian/patches/build-library.dpatch -text
-Maintenance/deb/sarge/debian/patches/cgal-create-makefile.dpatch -text
 Maintenance/deb/sarge/debian/rules -text
 Maintenance/deb/sid/debian/README.Debian -text
 Maintenance/deb/sid/debian/changelog -text
 Maintenance/deb/sid/debian/compat -text
 Maintenance/deb/sid/debian/control -text
-Maintenance/deb/sid/debian/copyright -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
 Maintenance/deb/sid/debian/libcgal1.install -text
@@ -576,24 +570,11 @@ Maintenance/deb/sid/debian/misc/adjust-default-makefile.sed -text
 Maintenance/deb/sid/debian/misc/adjust-demo-examples-makefiles.sed -text
 Maintenance/deb/sid/debian/misc/cgal_create_makefile.1 -text
 Maintenance/deb/sid/debian/patches/00list -text
-Maintenance/deb/sid/debian/patches/bugfix-demo-examples-makefiles.dpatch -text
-Maintenance/deb/sid/debian/patches/build-library.dpatch -text
-Maintenance/deb/sid/debian/patches/cgal-create-makefile.dpatch -text
 Maintenance/deb/sid/debian/rules -text
 Maintenance/public_release/announcement/CGAL-3.2 -text
 Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
-Maintenance/rpm/GNUmakefile -text
-Maintenance/rpm/SOURCES/CGAL-install_cgal-SUPPORT_REQUIRED.patch -text
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch -text
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text
-Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch -text
-Maintenance/rpm/SOURCES/CGAL_manual_tools-latex_to_html.patch -text
-Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch -text
-Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch -text
-Maintenance/rpm/SPECS/CGAL-manual-tools.spec -text
-Maintenance/rpm/SPECS/CGAL.spec -text
 Maintenance/rpm/get_cgal_trunk_url -text
 Maintenance/rpm/rpmbuild -text
 Maintenance/svn_server/hooks/post-commit -text
@@ -645,7 +626,6 @@ Manual_tools/image_makers/old_gifs/cc_Macro.gif -text svneol=unset#unset
 Manual_tools/image_makers/old_gifs/cc_Variable.gif -text svneol=unset#unset
 Manual_tools/image_makers/old_gifs/cc_advanced_begin.gif -text svneol=unset#unset
 Manual_tools/image_makers/old_gifs/cc_advanced_end.gif -text svneol=unset#unset
-Manual_tools/install.config -text
 Manual_tools/src/latex_converter_config/gif/cc_Box.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_Class.gif -text svneol=unset#unset
 Manual_tools/src/latex_converter_config/gif/cc_Concept.gif -text svneol=unset#unset
@@ -1002,7 +982,6 @@ Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#unset
 Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text
-Mesh_3/applications/GNUmakefile -text
 Mesh_3/examples/Mesh_3/inputs/cube.mesh -text
 Mesh_3/examples/Mesh_3/inputs/cube.off -text
 Mesh_3/examples/Mesh_3/inputs/tangle.mesh -text
@@ -1068,7 +1047,6 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.gif -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pdf -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex_t -text
-Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tmp.inputs -text
 Minkowski_sum_2/examples/Minkowski_sum_2/rooms_star.dat -text
 Minkowski_sum_2/examples/Minkowski_sum_2/spiked.dat -text
 Modifier/doc_tex/Modifier/idraw/modifier.eps -text
@@ -1373,7 +1351,6 @@ Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
-Skin_surface_3/examples/Skin_surface_3/dsrpdb/AUTHORS -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/main_doc -text
 Skin_surface_3/test/Skin_surface_3/data/test1.cin -text
@@ -1733,18 +1710,15 @@ Surface_mesher/demo/Surface_mesher/windows/res/idb5.bmp -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/idb6.bmp -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/idb7.bmp -text svneol=unset#unset
 Surface_mesher/demo/Surface_mesher/windows/res/idb8.bmp -text svneol=unset#unset
-Surface_mesher/doc_tex/GNUmakefile -text
 Surface_mesher/doc_tex/Surface_mesher/skull-surface.eps -text svneol=unset#application/octet-stream
 Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/octet-stream
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text
 Surface_mesher/examples/Surface_mesher/ImageIO/data/skull_2.9.inr.gz -text
-Surface_mesher/examples/Surface_mesher/NOTICE -text
 Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text
 Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text
-Surface_mesher/test/Surface_mesher/NOTICE -text
 Surface_mesher/test/Surface_mesher/test_c2t3_iterators.C -text
 Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/conflict_zone.gif -text svneol=unset#unset
