@@ -393,21 +393,9 @@ namespace CircularFunctors {
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_2 &A, OutputIterator res) const
-      { 
-        std::vector< std::pair<Object,bool> > vec;
-
-	return    CircularFunctors::make_x_monotone<CK> (A, res);
-
-//         advanced_make_x_monotone<CK> (A, std::back_inserter(vec));
-
-//         for(unsigned i=0;i<vec.size();++i)
-//           *res++=vec.at(i).first;       
-
-//         return res;
-
-	return    CircularFunctors::make_x_monotone<CK> (A, res);
-
-      }
+    { 
+      return    CircularFunctors::make_x_monotone<CK> (A, res);
+    }
 
     template < class OutputIterator >
     OutputIterator
