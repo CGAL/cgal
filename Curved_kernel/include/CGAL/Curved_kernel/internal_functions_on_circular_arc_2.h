@@ -210,8 +210,8 @@ namespace CircularFunctors {
       return SMALLER;
     }
 
-    typename CK::Root_of_2 b1_y = C1.center().y() - p.y();
-    typename CK::Root_of_2 b2_y = C2.center().y() - p.y();
+    const typename CK::Root_of_2 b1_y = C1.center().y() - p.y();
+    const typename CK::Root_of_2 b2_y = C2.center().y() - p.y();
     
     int s_b1_y = CGAL::sign(b1_y);
     int s_b2_y = CGAL::sign(b2_y);
@@ -240,12 +240,9 @@ namespace CircularFunctors {
     // No more vertical tangent points.
     CGAL_kernel_assertion(s_b1_y != 0);
     CGAL_kernel_assertion(s_b2_y != 0);
-    
-    typename CK::Root_of_2 b1_x = p.x() - C1.center().x();
-    typename CK::Root_of_2 b2_x = p.x() - C2.center().x();
 
-    int s_b1_x = CGAL::sign(b1_x);
-    int s_b2_x = CGAL::sign(b2_x);
+    int s_b1_x = (int) CGAL::compare(p.x(), C1.center().x());
+    int s_b2_x = (int) CGAL::compare(p.x(), C2.center().x());
 
     // We compute the slope of the 2 tangents, then we compare them.
     Comparison_result cmp = CGAL::compare(s_b1_y * s_b1_x,
