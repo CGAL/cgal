@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   ifs.close();
 
-  CGAL::Mesh_3::Slivers_exuder<Tr> exuder(tr);
+  CGAL::Mesh_3::Slivers_exuder<C2T3> exuder(c2t3);
 
   std::cout << "  Pumping" << std::endl;
   exuder.init(pumping_bound);
