@@ -305,7 +305,7 @@ public:
    * \return A past-the-end iterator for the range of intersection points.
    */
   template <class OutputIterator>
-  OutputIterator intersect (const Self& bc, OutputIterator& oi) const
+  OutputIterator intersect (const Self& bc, OutputIterator oi) const
   {
     // Let us denote our curve by (X_1(s), Y_1(s)) and the other curve by
     // (X_2(t), Y_2(t)), so we have to solve the system of bivariate
@@ -324,13 +324,13 @@ public:
     const Integer&           normX2 = bc._rep()._normX;
     const int                degX2 = nt_traits.degree (polyX2);
     std::vector<Polynomial>  coeffsX_st (degX2 + 1);
-    
+
     for (k = degX2; k >= 0; k--)
     {
       coeff = nt_traits.get_coefficient (polyX2, k) * normX1;
       coeffsX_st[k] = nt_traits.construct_polynomial (&coeff, 0);
     }
-    coeffsX_st[0] = coeffsX_st[0] - polyX1 * normX2;
+    coeffsX_st[0] = coeffsX_st[0] - nt_traits.scale (polyX1, normX2);
 
     // Consruct the bivariate polynomial that corresponds to Equation II:
     const Polynomial&        polyY1 = _rep()._polyY;
@@ -345,8 +345,8 @@ public:
       coeff = nt_traits.get_coefficient (polyY2, k) * normY1;
       coeffsY_st[k] = nt_traits.construct_polynomial (&coeff, 0);
     }
-    coeffsY_st[0] = coeffsY_st[0] - polyY1 * normY2;
-    
+    coeffsY_st[0] = coeffsY_st[0] - nt_traits.scale (polyY1, normY2);
+
     // Compute the resultant of the two bivariate polynomials and obtain
     // a polynomial in s. We conider the roots of this resultant polynomial
     // that are between 0 and 1 and obtain the intersection points (note that
@@ -359,7 +359,7 @@ public:
 
     typename std::list<Algebraic>::iterator  s_iter = s_vals.begin();
 
-    while (CGAL::sign (*s_iter) == NEGATIVE)
+    while (s_iter != s_vals.end() && CGAL::sign (*s_iter) == NEGATIVE)
       ++s_iter;
 
     while (s_iter != s_vals.end() && CGAL::compare (*s_iter, one) != LARGER)
@@ -368,6 +368,8 @@ public:
       // intersection point.
       *oi = this->operator() (*s_iter);
       ++oi;
+      
+      ++s_iter;
     }
 
     return (oi);
@@ -379,35 +381,13 @@ public:
   std::ostream& print (std::ostream& os) const
   {    
     // Print the X(t) polynomial.
-    Nt_traits   nt_traits;
-    const int   degX = nt_traits.degree (_rep()._polyX);
-    int         k;
+    os << "(X(t) = ";
+    _print_polynomial (os, _rep()._polyX, _rep()._normX, 't');
 
-    os << "{X(t) = ";
-    for (k = degX; k >= 0; k--)
-    {
-      os << '(' << Rational (nt_traits.get_coefficient (_rep()._polyX, k),
-                             _rep()._normX) << ')';
-      if (k > 1)
-        os << "t^" << k << " + ";
-      else if (k == 1)
-        os << "t + ";
-    }
-
-    // Print the Y(t) polynomial.
-    const int   degY = nt_traits.degree (_rep()._polyY);
-
+     // Print the Y(t) polynomial.
     os << ", Y(t) = ";
-    for (k = degY; k >= 0; k--)
-    {
-      os << '(' << Rational (nt_traits.get_coefficient (_rep()._polyY, k),
-                             _rep()._normY) << ')';
-      if (k > 1)
-        os << "t^" << k << " + ";
-      else if (k == 1)
-        os << "t + ";
-    }
-    os << '}';
+    _print_polynomial (os, _rep()._polyY, _rep()._normY, 't');
+    os << ')';
 
     return (os);
   }
@@ -437,6 +417,7 @@ private:
                                  const std::vector<Polynomial>& bp2) const
   {
     // Create the Sylvester matrix of polynomial coefficients.
+    Nt_traits        nt_traits;
     const int        m = bp1.size() - 1;
     const int        n = bp2.size() - 1;
     const int        dim = m + n;
@@ -464,11 +445,9 @@ private:
         mat[n + i][i + j] = bp2[j];
 
     // Perform Gaussian elimination on the Sylvester matrix.
-    Nt_traits        nt_traits;
     bool             found_row;
     Polynomial       value;
     const Integer    one = 1;
-    const Integer    minus_one = -1;
     Polynomial       det_factor = nt_traits.construct_polynomial (&one, 0);
     Polynomial       det_value;
 
@@ -484,7 +463,7 @@ private:
         found_row = false;
         for (k = i + 1; k < dim; k++)
         {
-          if (nt_traits.degree (mat[k][i]) < =0)
+          if (nt_traits.degree (mat[k][i]) <= 0)
           {
             found_row = true;
             break;
@@ -504,7 +483,7 @@ private:
           }
 
           // Swapping two rows should change the sign of the determinant.
-          det_factor = det_factor * minus_one;
+          det_factor = -det_factor;
         }
         else
         {
@@ -540,7 +519,7 @@ private:
     Polynomial      det, rem;
 
     det_value = mat[0][0];
-    for (i = 1; i < iRows; i++)
+    for (i = 1; i < dim; i++)
       det_value = det_value * mat[i][i];
 
     det = nt_traits.divide (det_value, det_factor, rem);
@@ -548,6 +527,47 @@ private:
     return (det);
   }
 
+  /*!
+   * Print a polynomial nicely.
+   */
+  std::ostream& _print_polynomial (std::ostream& os,
+                                   const Polynomial& poly,
+                                   const Integer& norm,
+                                   char var) const
+  {
+    Nt_traits   nt_traits;
+    const int   deg = nt_traits.degree (poly);
+    Rational    coeff;
+    CGAL::Sign  sgn;
+    int         k;
+
+    if (deg < 0)
+    {
+      os << '0';
+      return (os);
+    }
+
+    for (k = deg; k >= 0; k--)
+    {
+      coeff = Rational (nt_traits.get_coefficient (poly, k), norm);
+
+      if (k == deg)
+        os << coeff;
+      else if ((sgn = CGAL::sign (coeff)) == POSITIVE)
+        os << " + " << coeff;
+      else if (sgn == NEGATIVE)
+        os << " - " << -coeff;
+      else
+        continue;
+
+      if (k > 1)
+        os << '*' << var << '^' << k;
+      else if (k == 1)
+        os << '*' << var;
+    }
+
+    return (os);
+  }
 };
 
 /*!

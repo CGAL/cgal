@@ -404,6 +404,19 @@ public:
   }
 
   /*!
+   * Multiply a polynomial by some scalar coefficient.
+   * \param poly The polynomial P(x).
+   * \param a The scalar value.
+   * \return The scalar multiplication a*P(x).
+   */
+  Polynomial scale (const Polynomial& poly,
+                    const Integer& a)
+  {
+    Polynomial   temp = poly;
+    return (temp.mulScalar (a));
+  }
+                     
+  /*!
    * Perform "long division" of two polynomials: Given A(x) and B(x) compute
    * two polynomials Q(x) and R(x) such that: A(x) = Q(x)*B(x) + R(x) and
    * R(x) has minimal degree.
