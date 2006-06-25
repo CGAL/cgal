@@ -36,7 +36,8 @@ CGAL_BEGIN_NAMESPACE
  * Representation of a Bezier curve, specified by (n+1) control points
  * p_0, ... , p_n that define the curve (X(t), Y(t)) for 0 <= t <=1,
  * where X(t) and Y(t) are polynomials of degree n.
- * The class is templated with two parameters: 
+ *
+ * The class is templated with three parameters: 
  * Rat_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of control points (and subsequently also for
  *            the polynomial coefficients). This number type must be the same
@@ -265,17 +266,13 @@ public:
   _Bezier_curve_2 (InputIterator pts_begin, InputIterator pts_end) :
     Bcv_handle (Bcv_rep (pts_begin, pts_end))
   {}
-  
-  /*!
-   * Assignment operator.
-   */
-  Self& operator= (const Self& bcv)
-  {
-    if (this == &bcv)
-      return (*this);
 
-    Bcv_handle::operator= (bcv);
-    return (*this);
+  /*!
+   * Check for equality.
+   */
+  bool is_same (const Self& bc) const
+  {
+    return (this->identical (bc));
   }
 
   /*!
