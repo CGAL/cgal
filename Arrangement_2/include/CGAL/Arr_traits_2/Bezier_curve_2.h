@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 
 /*! \class
  * Representation of a Bezier curve, specified by (n+1) control points
- * p_0, ... , p_n that define the curve (X(t), Y(t)) for 0 <= t <=1,
+ * p_0, ... , p_n that define the curve (X(t), Y(t)) for 0 <= t <= 1,
  * where X(t) and Y(t) are polynomials of degree n.
  *
  * The class is templated with three parameters: 
@@ -296,10 +296,83 @@ public:
   }
 
   /*!
-   * Compute the intersection points between two Bezier curves.
+   * Compute the points with vertical tangents on the curve. The function
+   * actually returns t-values such that the tangent at (*this)(t) is vertical.
+   * \param oi Output: An output iterator for the t-values.
+   * \return A past-the-end iterator for the t-values.
+   */
+  template <class OutputIterator>
+  OutputIterator vertical_tangency_points (OutputIterator oi) const
+  {
+    // Find all t-values such that X'(t) = 0.
+    Nt_traits             nt_traits;
+    Polynomial            polyX_der = nt_traits.derive (_rep()._polyX);
+    std::list<Algebraic>  t_vals;
+    const Algebraic       one = Algebraic(1);
+
+    nt_traits.compute_polynomial_roots (polyX_der, std::back_inserter(t_vals));
+
+    // Take only t-values strictly between 0 and 1. Note that we use the
+    // fact that the list of roots we obtain is sorted in ascending order.
+    typename std::list<Algebraic>::iterator  t_iter = t_vals.begin();
+
+    while (t_iter != t_vals.end() && CGAL::sign (*t_iter) != POSITIVE)
+      ++t_iter;
+
+    while (t_iter != t_vals.end() && CGAL::compare (*t_iter, one) != LARGER)
+    {
+      *oi = *t_iter;
+      ++oi;
+      
+      ++t_iter;
+    }
+
+    return (oi);
+  }
+
+  /*!
+   * Compute the points with horizontal tangents on the curve. The function
+   * actually returns t-values such that the tangent at (*this)(t) is
+   * horizontal.
+   * \param oi Output: An output iterator for the t-values.
+   * \return A past-the-end iterator for the t-values.
+   */
+  template <class OutputIterator>
+  OutputIterator horizontal_tangency_points (OutputIterator oi) const
+  {
+    // Find all t-values such that Y'(t) = 0.
+    Nt_traits             nt_traits;
+    Polynomial            polyY_der = nt_traits.derive (_rep()._polyY);
+    std::list<Algebraic>  t_vals;
+    const Algebraic       one = Algebraic(1);
+
+    nt_traits.compute_polynomial_roots (polyY_der, std::back_inserter(t_vals));
+
+    // Take only t-values strictly between 0 and 1. Note that we use the
+    // fact that the list of roots we obtain is sorted in ascending order.
+    typename std::list<Algebraic>::iterator  t_iter = t_vals.begin();
+
+    while (t_iter != t_vals.end() && CGAL::sign (*t_iter) != POSITIVE)
+      ++t_iter;
+
+    while (t_iter != t_vals.end() && CGAL::compare (*t_iter, one) != LARGER)
+    {
+      *oi = *t_iter;
+      ++oi;
+      
+      ++t_iter;
+    }
+
+    return (oi);
+  }
+
+  /*!
+   * Compute the intersection points between two Bezier curves. The function
+   * returns a list of t-values such that (*this)(t) is an intersection point
+   * with the other curve.
    * \param bc The other Bezier curve.
-   * \param oi Output: An output iterator for the intersection points.
-   * \return A past-the-end iterator for the range of intersection points.
+   * \param oi Output: An output iterator for the t-values.
+   * \return A past-the-end iterator for the t-values.
    */
   template <class OutputIterator>
   OutputIterator intersect (const Self& bc, OutputIterator oi) const
@@ -361,9 +434,7 @@ public:
 
     while (s_iter != s_vals.end() && CGAL::compare (*s_iter, one) != LARGER)
     {
-      // Evaluate our Bezier curve at the current s-value to obtain the
-      // intersection point.
-      *oi = this->operator() (*s_iter);
+      *oi = *s_iter;
       ++oi;
       
       ++s_iter;
