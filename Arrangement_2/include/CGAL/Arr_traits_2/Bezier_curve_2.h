@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -238,7 +238,6 @@ private:
 
   typedef typename Bcv_rep::Integer               Integer;
   typedef typename Bcv_rep::Polynomial            Polynomial;
-  typedef typename Nt_traits::Bi_polynomial       Bi_polynomial;
 
 public:
 
@@ -332,8 +331,6 @@ public:
       coeffsX_st[k] = nt_traits.construct_polynomial (&coeff, 0);
     }
     coeffsX_st[0] = coeffsX_st[0] - polyX1 * normX2;
-    
-    Bi_polynomial  bpX = nt_traits.construct_bivariate_polynomial (coeffsX_st);
 
     // Consruct the bivariate polynomial that corresponds to Equation II:
     const Polynomial&        polyY1 = _rep()._polyY;
@@ -350,13 +347,11 @@ public:
     }
     coeffsY_st[0] = coeffsY_st[0] - polyY1 * normY2;
     
-    Bi_polynomial  bpY = nt_traits.construct_bivariate_polynomial (coeffsY_st);
-
     // Compute the resultant of the two bivariate polynomials and obtain
     // a polynomial in s. We conider the roots of this resultant polynomial
     // that are between 0 and 1 and obtain the intersection points (note that
     // we use the fact that the roots we compute are given in ascending order).
-    Polynomial            res = nt_traits.y_resultant (bpX, bpY);
+    Polynomial            res = _compute_resultant (coeffsX_st, coeffsY_st);
     std::list<Algebraic>  s_vals;
     const Algebraic       one = Algebraic(1);
 
@@ -428,7 +423,131 @@ private:
   inline Bcv_rep& _rep ()
   {
     return (*(this->ptr()));
-  }  
+  }
+
+  /*!
+   * Compute the resultant of two bivariate polynomials in u and v with
+   * respect to v. The bivariate polynomials are given as vectors of,
+   * where bp1[i] is a coefficient of v^i, which is in turn a polynomial in u.
+   * \param bp1 The first bivariate polynomial.
+   * \param bp2 The second bivariate polynomial.
+   * \return The resultant polynomial (a polynomial in u).
+   */
+  Polynomial _compute_resultant (const std::vector<Polynomial>& bp1,
+                                 const std::vector<Polynomial>& bp2) const
+  {
+    // Create the Sylvester matrix of polynomial coefficients.
+    const int        m = bp1.size() - 1;
+    const int        n = bp2.size() - 1;
+    const int        dim = m + n;
+    const Integer    zero = 0;
+    const Polynomial zero_poly = nt_traits.construct_polynomial (&zero, 0);
+    int              i, j, k;
+
+    std::vector<std::vector<Polynomial> >  mat (dim);
+
+    for (i = 0; i < dim; i++)
+    {
+      mat[i].resize (dim);
+
+      for (j = 0; j < dim; j++)
+        mat[i][j] = zero_poly;
+    }
+
+    // Initialize it with copies of the two bivariate polynomials.
+    for (i = 0; i < n; i++)
+      for (j = m; j >= 0; j--)
+        mat[i][i + j] = bp1[j];
+
+    for (i = 0; i < m; i++)
+      for (j = n; j >= 0; j--)
+        mat[n + i][i + j] = bp2[j];
+
+    // Perform Gaussian elimination on the Sylvester matrix.
+    Nt_traits        nt_traits;
+    bool             found_row;
+    Polynomial       value;
+    const Integer    one = 1;
+    const Integer    minus_one = -1;
+    Polynomial       det_factor = nt_traits.construct_polynomial (&one, 0);
+    Polynomial       det_value;
+
+    for (i = 0; i < dim; i++)
+    {
+      // Check if the current diagonal value is a zero polynomial.
+      if (nt_traits.degree (mat[i][i]) < 0)
+      {
+        // If the current diagonal value is a zero polynomial, try to replace
+        // the current i'th row with a row with a higher index k, such that
+        // mat[k][i] is not a zero polynomial.
+
+        found_row = false;
+        for (k = i + 1; k < dim; k++)
+        {
+          if (nt_traits.degree (mat[k][i]) < =0)
+          {
+            found_row = true;
+            break;
+          }
+        }
+        
+        if (found_row)
+        {
+          // Swap the i'th and the k'th rows (note that we start from the i'th
+          // column, because the first i entries in every row with index i or
+          // higher should be zero by now).
+          for (j = i; j < dim; j++)
+          {
+            value = mat[i][j];
+            mat[i][j] = mat[k][j];
+            mat[k][j] = value;
+          }
+
+          // Swapping two rows should change the sign of the determinant.
+          det_factor = det_factor * minus_one;
+        }
+        else
+        {
+          // In case we could not find a non-zero value, the matrix is
+          // singular and its determinant is a zero polynomial.
+          return (mat[i][i]);
+        }
+      }
+
+
+      // Zero the whole i'th column of the following rows.
+      for (k = i + 1; k < dim; k++)
+      {
+        if (nt_traits.degree (mat[k][i]) >= 0)
+        {
+          value = mat[k][i];
+          mat[k][i] = zero_poly;
+
+          for (j = i + 1; j < dim; j++)
+          {
+            mat[k][j] = mat[k][j] * mat[i][i] - mat[i][j] * value; 
+          }
+            
+          // We multiplied the current row by the i'th diagonal entry, thus
+          // multipling the determinant value by it.
+          det_factor = det_factor * mat[i][i];
+        }
+      }
+    }
+
+    // Now, the determinant is simply the product of all diagonal items,
+    // divided by the normalizing factor.
+    Polynomial      det, rem;
+
+    det_value = mat[0][0];
+    for (i = 1; i < iRows; i++)
+      det_value = det_value * mat[i][i];
+
+    det = nt_traits.divide (det_value, det_factor, rem);
+    CGAL_assertion (nt_traits.degree(rem) < 0);
+    return (det);
+  }
+
 };
 
 /*!

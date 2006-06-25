@@ -404,6 +404,23 @@ public:
   }
 
   /*!
+   * Perform "long division" of two polynomials: Given A(x) and B(x) compute
+   * two polynomials Q(x) and R(x) such that: A(x) = Q(x)*B(x) + R(x) and
+   * R(x) has minimal degree.
+   * \param polyA The first polynomial A(x).
+   * \param polyB The second polynomial A(x).
+   * \param rem Output: The remainder polynomial R(x).
+   * \return The quontient polynomial Q(x).
+   */
+  Polynomial divide (const Polynomial& polyA,
+                     const Polynomial& polyB,
+                     Polynomial& rem) const
+  {
+    rem = polyA;
+    return (rem.pseudoRemainder (polyB));
+  }
+
+  /*!
    * Compute the real-valued roots of a polynomial with integer coefficients,
    * sorted in ascending order.
    * \param poly The input polynomial.
