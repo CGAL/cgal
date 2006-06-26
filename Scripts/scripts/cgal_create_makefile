@@ -71,7 +71,7 @@ create_makefile_entry_cpp()
 
   # Print target for $1 executable if $CFILE contains a function "main()"
   egrep '\bmain[ \t]*\(' $CFILE >/dev/null 2>&1
-  if [[ $? == 0 ]]; then
+  if [ $? -eq 0 ]; then
     echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
     echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
     echo
@@ -100,7 +100,7 @@ create_makefile_entry_C()
 
   # Print target for $1 executable if $CFILE contains a function "main()"
   egrep '\bmain[ \t]*\(' $CFILE >/dev/null 2>&1
-  if [[ $? == 0 ]]; then
+  if [ $? -eq 0 ]; then
     echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
     echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
     echo
@@ -175,7 +175,7 @@ create_makefile()
     # Add $file's executable to "all" target
     # if $file contains a function "main()"
     egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
-    if [[ $? == 0 ]]; then
+    if [ $? -eq 0 ]; then
       printf "\\\\\n                `basename $file .C`\$(EXE_EXT) "
     fi
   done
@@ -183,7 +183,7 @@ create_makefile()
     # Add $file's executable to "all" target
     # if $file contains a function "main()"
     egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
-    if [[ $? == 0 ]]; then
+    if [ $? -eq 0 ]; then
       printf "\\\\\n                `basename $file .cpp`\$(EXE_EXT) "
     fi
   done
@@ -218,7 +218,7 @@ create_makefile()
   echo
   echo
   echo    ".cpp\$(OBJ_EXT):"
-  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  echo    "    \$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
   echo
 
 }
