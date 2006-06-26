@@ -82,7 +82,8 @@ class Complex_2_in_triangulation_3 {
     {
     }
     
-    bool operator()(Vertex_handle v) const {
+    bool operator()(Vertex_handle v) const { // Takes as argument an iterator to a
+                                             // Vertex, convertible to Vertex_handle.
       return ! self->is_in_complex(v);
     }
   }; // end struct Vertex_not_in_complex
