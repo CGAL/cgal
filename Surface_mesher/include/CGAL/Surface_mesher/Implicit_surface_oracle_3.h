@@ -17,13 +17,8 @@
 //
 // Author(s)     : Steve OUDOT, Laurent RINEAU
 
-#ifndef CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
-#define CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
-
-#ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_H
-#warning Deprecated header
-#warning Please include <CGAL/Surface_mesher/Implicit_surface_oracle.h> instead.
-#endif
+#ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
+#define CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
@@ -76,9 +71,9 @@ namespace CGAL {
          - has_on_bounded_side_3_object         (from rev. 29646)
 (Computed by use of:
  perl -ne '/GT\(\)\.([a-zA-Z_0-9]+)/
-             && print "$1\n";' {Implicit_oracle.h,Sphere_oracle_3.h} | sort -u
+             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
  perl -ne '/GT::([a-zA-Z_0-9]+)/
-             && print "$1\n";' {Implicit_oracle.h,Sphere_oracle_3.h} | sort -u
+             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
 )
     */
   template <
@@ -88,10 +83,10 @@ namespace CGAL {
                                             typename GT::Point_3>,
     class Visitor = Null_oracle_visitor
     >
-  class Implicit_surface_oracle
+  class Implicit_surface_oracle_3
   {
     // private types
-    typedef Implicit_surface_oracle<GT, Surface, Point_creator, Visitor> Self;
+    typedef Implicit_surface_oracle_3<GT, Surface, Point_creator, Visitor> Self;
 
     typedef Sphere_oracle_3<GT, Point_creator> Sphere_oracle;
     
@@ -118,11 +113,11 @@ namespace CGAL {
   public:
 
     // Constructors
-    Implicit_surface_oracle (Visitor visitor_ = Visitor() ) :
+    Implicit_surface_oracle_3 (Visitor visitor_ = Visitor() ) :
       visitor(visitor_)
     {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
-      std::cerr << "CONS: Implicit_surface_oracle\n";
+      std::cerr << "CONS: Implicit_surface_oracle_3\n";
 #endif
     }
 
@@ -376,7 +371,7 @@ namespace CGAL {
       return Intersect_3::surf_equation(surface, p)<0.;
     }
 
-  };  // end Implicit_surface_oracle
+  };  // end Implicit_surface_oracle_3
 
 template <typename FT>
 FT approximate_sqrt(const FT x) {
@@ -388,4 +383,4 @@ FT approximate_sqrt(const FT x) {
 } // namespace CGAL
 
 
-#endif  // CGAL_SURFACE_MESHER_IMPLICIT_ORACLE_H
+#endif  // CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H

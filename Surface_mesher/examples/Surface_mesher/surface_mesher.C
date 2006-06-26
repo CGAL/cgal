@@ -24,7 +24,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #ifndef SURFACE_MESHER_POLYHEDRAL
-#  include <CGAL/Implicit_surface_oracle.h>
+#  include <CGAL/Implicit_surface_oracle_3.h>
 #  include "implicit_function.h"
 #else // IMPLICIT
 #  include <CGAL/Surface_mesher/Polyhedral_oracle.h>
@@ -50,7 +50,7 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
 // Oracle
 #ifndef SURFACE_MESHER_POLYHEDRAL
 typedef Function <K::FT> Func;
-typedef CGAL::Implicit_surface_oracle<K, Func> Oracle;
+typedef CGAL::Implicit_surface_oracle_3<K, Func> Oracle;
 #else
 typedef CGAL::Surface_mesher::Polyhedral <Tr> Oracle;
 #endif

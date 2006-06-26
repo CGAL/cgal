@@ -206,7 +206,7 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
 
 typedef CGAL::Surface_mesher::Point_surface_indices_visitor Volume_mesher_traits_visitor;
 
-typedef CGAL::Surface_mesher::Implicit_surface_oracle<
+typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<
   My_traits,
   Surface,
   CGAL::Creator_uniform_3<My_traits::FT, My_traits::Point_3>,

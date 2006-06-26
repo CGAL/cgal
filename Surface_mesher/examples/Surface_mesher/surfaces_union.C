@@ -11,7 +11,7 @@
 #include <CGAL/Surface_mesher/Vertices_on_the_same_surface_criterion.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Implicit_surface_oracle.h>
+#include <CGAL/Implicit_surface_oracle_3.h>
 #include <CGAL/Surface_mesher/Polyhedral_oracle.h>
 #include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Surface_mesher/Combining_oracle.h>
@@ -41,7 +41,7 @@ typedef CGAL::Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
 typedef K::FT FT;
 
-using CGAL::Implicit_surface_oracle;
+using CGAL::Implicit_surface_oracle_3;
 using CGAL::Surface_mesher::Polyhedral;
 using CGAL::Surface_mesher::Combining_oracle;
 using CGAL::Surface_mesher::Refine_criterion;
@@ -70,7 +70,7 @@ typedef CGAL::Creator_uniform_3<
   FT,
   K::Point_3> Point_creator_for_implicit_oracle;
 
-typedef Implicit_surface_oracle<
+typedef Implicit_surface_oracle_3<
   My_traits,
   Sphere,
   Set_indices, // visitor that sets indices of points

@@ -94,7 +94,7 @@ struct Point_with_surface_index_creator
 
 typedef CGAL::Implicit_surface_3<My_traits, Sphere> Implicit_sphere;
 
-typedef CGAL::Surface_mesher::Implicit_surface_oracle<
+typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<
   My_traits,
   Implicit_sphere,
   Point_with_surface_index_creator,

@@ -1,3 +1,12 @@
+26 June 2006 Laurent Rineau
+- in Surface_mesher:
+  - remove deprecated include/CGAL/Surface_mesher/Implicit_surface.h
+  - rename CGAL::Surface_mesher::Implicit_surface_oracle to
+           CGAL::Surface_mesher::Implicit_surface_oracle_3
+    and then, rename include/CGAL/Surface_mesher/Implicit_surface_oracle.h
+    to include/CGAL/Surface_mesher/Implicit_surface_oracle_3.h
+- in Mesh_3: adapt code to the above change.
+
 23 June 2006 Laurent Rineau
 - fix all iterators of C2t3!!
 - added a test to test that these iterators works...
