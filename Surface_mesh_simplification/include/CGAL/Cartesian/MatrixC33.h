@@ -218,14 +218,34 @@ boost::optional< MatrixC33<R> > inverse_matrix ( MatrixC33<R> const& m )
 {
   typedef typename R::RT RT ;
   
-  typedef boost::optional< MatrixC33<R> > result_type ;
+  typedef MatrixC33<R> Matrix ;
+  
+  typedef boost::optional<Matrix> result_type ;
    
   result_type rInverse ;
   
   RT det = m.determinant();
   
   if ( ! CGAL_NTS is_zero(det) )
-    rInverse = result_type( adjoint_matrix(m) / det ) ;
+  {
+    RT c00 = (m.r1().y()*m.r2().z() - m.r1().z()*m.r2().y()) / det; 
+    RT c01 = (m.r2().y()*m.r0().z() - m.r0().y()*m.r2().z()) / det;
+    RT c02 = (m.r0().y()*m.r1().z() - m.r1().y()*m.r0().z()) / det; 
+  
+    RT c10 = (m.r1().z()*m.r2().x() - m.r1().x()*m.r2().z()) / det; 
+    RT c11 = (m.r0().x()*m.r2().z() - m.r2().x()*m.r0().z()) / det; 
+    RT c12 = (m.r1().x()*m.r0().z() - m.r0().x()*m.r1().z()) / det; 
+  
+    RT c20 = (m.r1().x()*m.r2().y() - m.r2().x()*m.r1().y()) / det; 
+    RT c21 = (m.r2().x()*m.r0().y() - m.r0().x()*m.r2().y()) / det; 
+    RT c22 = (m.r0().x()*m.r1().y() - m.r0().y()*m.r1().x()) / det; 
+    
+    rInverse = result_type( Matrix(c00,c01,c02
+                                  ,c10,c11,c12
+                                  ,c20,c21,c22
+                                  )
+                          ) ;
+  }
   
   return rInverse ;
 }

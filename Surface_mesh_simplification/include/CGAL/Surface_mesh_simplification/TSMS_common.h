@@ -28,6 +28,8 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/format.hpp>
 
+#include <CGAL/Cartesian/MatrixC33.h>
+
 namespace boost
 {
 
@@ -102,6 +104,12 @@ inline std::string xyz_to_string( XYZ const& xyz )
   return boost::str( boost::format("(%1%,%2%,%3%)") % xyz.x() % xyz.y() % xyz.z() ) ;   
 }
 
+template<class Matrix>
+inline std::string matrix_to_string( Matrix const& m )
+{
+  return boost::str( boost::format("[%1%|%2%|%3%]") % xyz_to_string(m.r0()) % xyz_to_string(m.r1()) % xyz_to_string(m.r2()) ) ;
+}
+
 template<class T>
 inline std::string optional_to_string( boost::optional<T> const& o )
 {
@@ -144,31 +152,14 @@ CGAL_END_NAMESPACE
 
 
 
-#if defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_AUDIT) 
-#define CGAL_TSMS_ENABLE_AUDIT
-#endif
-
-#ifdef CGAL_TSMS_ENABLE_AUDIT
-
-#  include<string>
-#  include<iostream>
-#  include<sstream>
-#  define CGAL_TSMS_AUDIT_IMPL(m) \
-     { \
-       std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
-       Surface_simplification_external_audit(s); \
-     }
-#endif
-
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_AUDIT
-#  define CGAL_TSMS_AUDIT(m) CGAL_TSMS_AUDIT_IMPL(m)
+#  define CGAL_TSMS_AUDIT(p,q,e,c,v) CGAL_TSMS_audit(p,q,e,c,v)
 #else
-#  define CGAL_TSMS_AUDIT(m)
+#  define CGAL_TSMS_AUDIT(p,q,e,c,v)             
 #endif
 
 
 #undef CGAL_TSMS_ENABLE_TRACE
-#undef CGAL_TSMS_ENABLE_AUDIT
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_TSMS_COMMON_H //
 // EOF //

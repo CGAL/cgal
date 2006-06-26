@@ -111,7 +111,7 @@ void VertexPairCollapse<M,D,C,V,S>::Collect()
       set_pair(edge,lPair);
       insert_in_PQ(lPair);
       CGAL_TSMS_TRACE(3, (lPair->cost(),*lPair) << " accepted." );
-      CGAL_TSMS_AUDIT("C-" << xyz_to_string(sp) << "->" << xyz_to_string(tp) << "-" << optional_to_string(lPair->cost()) );
+      CGAL_TSMS_AUDIT(s,t,edge,lPair->cost(),Get_new_vertex_point(*lPair->data()));
     }
   }
   
@@ -229,7 +229,6 @@ void VertexPairCollapse<M,D,C,V,S>::Collapse( vertex_pair_ptr const& aPair )
   if ( lNewVertexPoint )
   {
     CGAL_TSMS_TRACE(2,"New vertex point: " << xyz_to_string(*lNewVertexPoint) ) ;
-    CGAL_TSMS_AUDIT("V-" << xyz_to_string(get_point(lP)) << "->" << xyz_to_string(get_point(lQ)) << "-" << xyz_to_string(*lNewVertexPoint) ); 
         
     // The actual collapse of edge PQ merges the top and bottom facets with its left and right adjacents resp, then
     // joins P and Q.
@@ -338,7 +337,6 @@ void VertexPairCollapse<M,D,C,V,S>::Collapse( vertex_pair_ptr const& aPair )
   else
   {
     CGAL_TSMS_TRACE(0,"Unable to calculate new vertex point. Pair " << aPair << " discarded without being removed" ) ;
-    CGAL_TSMS_AUDIT("V-" << xyz_to_string(get_point(lP)) << "->" << xyz_to_string(get_point(lQ)) << "-NONE" ); 
   }
 }
 

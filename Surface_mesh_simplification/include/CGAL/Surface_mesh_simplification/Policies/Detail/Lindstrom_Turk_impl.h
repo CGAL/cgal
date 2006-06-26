@@ -54,9 +54,7 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
   
   if ( !aIsPFixed || !aIsQFixed )
   {
-    
     CGAL_TSMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
-    
     
     // Volume preservation and optimization constrians are based on the normals to the triangles in the star of the collapsing egde 
     // Triangle shape optimization constrians are based on the link of the collapsing edge (the cycle of vertices around the edge)
@@ -68,7 +66,7 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
     
     Extract_triangles_and_link(lTriangles,lLink);
   
-#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
+#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE
     std::ostringstream ss ; 
     for( typename Link::const_iterator it = lLink.begin(), eit = lLink.end() ; it != eit ; ++it )
       ss << "v" << (*it)->ID << " " ;
@@ -161,6 +159,8 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
       
       FT lSquaredLength = squared_distance(lP,lQ);
       
+      CGAL_TSMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
+      
       FT lBdryCost = 0;
       if ( lBdry )
         lBdryCost = Compute_boundary_cost(*lOptionalV,*lBdry);
@@ -169,18 +169,24 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
       
       FT lShapeCost = Compute_shape_cost(*lOptionalP,lLink);
       
-      FT lTotalCost =   mParams.BoundaryWeight * lBdryCost
-                      + mParams.VolumeWeight   * lVolumeCost * lSquaredLength
+      FT lTotalCost =   mParams.VolumeWeight   * lVolumeCost
+                      + mParams.BoundaryWeight * lBdryCost   * lSquaredLength
                       + mParams.ShapeWeight    * lShapeCost  * lSquaredLength * lSquaredLength ;
       
       lOptionalCost = Optional_FT(lTotalCost);
       
-      CGAL_TSMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(lV) << " cost: " << lTotalCost );
+      CGAL_TSMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(*lOptionalP) << "\nTotal cost: " << lTotalCost );
+                        
+      CGAL_TSMS_LT_TRACE(2,"\nSquared edge length: " << lSquaredLength 
+                        << "\nBoundary cost: " << lBdryCost 
+                        << "\nVolume cost: " << lVolumeCost 
+                        << "\nShape cost: " << lShapeCost 
+                        );
     }
     
   }
   else
-    CGAL_TSMS_LT_TRACE(1,"The edge is fixed edge.");
+    CGAL_TSMS_LT_TRACE(1,"The edge is a fixed edge.");
   
     
   mResult = result_type( new Collapse_data(mP,mQ,aIsPFixed,aIsQFixed,mP_Q,mSurface,lOptionalCost,lOptionalP) );
@@ -317,8 +323,8 @@ void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
   
     if ( v2 != mQ )
     {
-      CGAL_expensive_precondition(std::find(rLink.begin(),rLink.end(),v2) == rLink.end() );
-      rLink.push_back(v2) ;
+      if ( std::find(rLink.begin(),rLink.end(),v2) == rLink.end() )
+        rLink.push_back(v2) ;
     }
       
     Extract_triangle(v0,v1,v2,e02,rTriangles);
@@ -360,6 +366,8 @@ void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
 template<class CD>
 void LindstromTurkImpl<CD>::Add_boundary_preservation_constrians( Boundary const& aBdry )
 {
+  CGAL_TSMS_LT_TRACE(2,"Adding boundary preservation constrians. ");
+  
   Vector e1 = aBdry.op  + aBdry.pq  + aBdry.qr ;
   Vector e3 = aBdry.opN + aBdry.pqN + aBdry.qrN ;
 
@@ -373,14 +381,19 @@ void LindstromTurkImpl<CD>::Add_boundary_preservation_constrians( Boundary const
 template<class CD>
 void LindstromTurkImpl<CD>::Add_volume_preservation_constrians( Triangles const& aTriangles )
 {
+  CGAL_TSMS_LT_TRACE(2,"Adding volume preservation constrians. " << aTriangles.size() << " triangles.");
+  
   Vector lSumV = NULL_VECTOR ;
-  FT      lSumL(0) ;
+  FT     lSumL(0) ;
   
   for( typename Triangles::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
   {
+    CGAL_TSMS_LT_TRACE(2,"V:" << xyz_to_string(it->NormalV) << ", L:" << it->NormalL);
+    
     lSumV = lSumV + it->NormalV ;
     lSumL = lSumL + it->NormalL ;  
   }   
+  
   
   mConstrians.Add_if_alpha_compatible(lSumV,lSumL);   
 
@@ -389,6 +402,8 @@ void LindstromTurkImpl<CD>::Add_volume_preservation_constrians( Triangles const&
 template<class CD>
 void LindstromTurkImpl<CD>::Add_boundary_and_volume_optimization_constrians( OptionalBoundary const& aBdry, Triangles const& aTriangles )
 {
+  CGAL_TSMS_LT_TRACE(2,"Adding boundary and volume optimization constrians. ");
+  
   Matrix H = NULL_MATRIX ;
   Vector c = NULL_VECTOR ;
 
@@ -401,7 +416,7 @@ void LindstromTurkImpl<CD>::Add_boundary_and_volume_optimization_constrians( Opt
     
     H += direct_product(lTri.NormalV,lTri.NormalV) ;
     
-    c = c + ( lTri.NormalL * lTri.NormalV ) ;
+    c = c - ( lTri.NormalL * lTri.NormalV ) ;
   }   
   
   
@@ -433,6 +448,8 @@ void LindstromTurkImpl<CD>::Add_boundary_and_volume_optimization_constrians( Opt
 template<class CD>
 void LindstromTurkImpl<CD>::Add_shape_optimization_constrians( Link const& aLink )
 {
+  CGAL_TSMS_LT_TRACE(2,"Add shape optimization constrians. ");
+  
   FT s(aLink.size());
   
   Matrix H (s,0,0
@@ -487,6 +504,7 @@ LindstromTurkImpl<CD>::Compute_shape_cost( Point const& p, Link const& aLink )
   return rCost ;
 }
 
+/*
 template<class CD>
 void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
@@ -538,6 +556,67 @@ void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( Vector const& A
       ++ n ;
     }
   }
+}
+*/
+
+template<class CD>
+void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
+{
+  double slai = to_double(Ai*Ai) ;
+  if ( slai > 0.0 )
+  {
+    double l = CGAL_NTS sqrt(slai) ;
+    
+    Vector Ain = Ai / l ;
+    FT     bin = bi / l ;
+    
+    bool lAddIt = true ;
+    
+    if ( n == 1 )
+    {
+      FT d01 = A.r0() * Ai  ;
+      
+      double sla0 = to_double(A.r0() * A.r0()) ;
+      double sd01 = to_double(d01 * d01) ;
+      
+      if ( sd01 > ( sla0 * slai * squared_cos_alpha() ) )
+        lAddIt = false ;
+    }
+    else if ( n == 2 )
+    {
+      Vector N = cross_product(A.r0(),A.r1());
+      
+      FT dc012 = N * Ai ;
+      
+      double slc01  = to_double(N * N) ;
+      double sdc012 = to_double(dc012 * dc012);       
+      
+      if ( sdc012 <= slc01 * slai * squared_sin_alpha() )
+        lAddIt = false ;
+    }
+    
+    if ( lAddIt )
+    {
+      switch ( n )
+      {
+        case 0 :
+          A.r0() = Ain ;
+          b = Vector(bin,b.y(),b.z());
+          break ;
+        case 1 :
+          A.r1() = Ain ;
+          b = Vector(b.x(),bin,b.z());
+          break ;
+        case 2 :
+          A.r2() = Ain ;
+          b = Vector(b.x(),b.y(),bin);
+          break ;
+      }
+      ++ n ;
+    }
+  }
+  
+  CGAL_TSMS_LT_TRACE(1,"Constrains.A:" << matrix_to_string(A) << "\nConstrains.b:" << xyz_to_string(b) ) ;
   
 }
 

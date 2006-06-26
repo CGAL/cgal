@@ -21,7 +21,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h>
-#include <CGAL/Cartesian/MatrixC33.h>
 
 CGAL_BEGIN_NAMESPACE
 
