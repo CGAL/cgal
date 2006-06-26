@@ -58,7 +58,7 @@ bool Slice::locate_point_check_face(const T::Sphere_point_3 &z,
 
 bool Slice::locate_point_check_face_arcs(const T::Sphere_point_3 &ep,
 					 T::Key ind,
-					 Face_const_iterator it,
+					 Face_const_handle it,
 					 std::vector<int> &locations) const {
   Halfedge_const_handle h= it->halfedge();
   do {
@@ -67,7 +67,7 @@ bool Slice::locate_point_check_face_arcs(const T::Sphere_point_3 &ep,
       bool ba=behind_arc(ep, ind, h->curve(), 
 			 locations[h->curve().key().input_index()]);
       if (ba) {
-	std::cout << "Point is behind arc " << h->curve() << std::endl;
+	//std::cout << "Point is behind arc " << h->curve() << std::endl;
 	return false;
       }
     }
@@ -80,7 +80,7 @@ bool Slice::locate_point_check_face_arcs(const T::Sphere_point_3 &ep,
 
 bool Slice::locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
 					     T::Key index,
-					     Face_const_iterator it) const {
+					     Face_const_handle it) const {
   Halfedge_const_handle h= it->halfedge();
   do {
     if (h->vertex()->point().type() == Sds::Point::SS 
@@ -120,13 +120,13 @@ bool Slice::locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
 
  
 
-Slice::Face_const_handle Slice::locate_point(const T::Sphere_point_3 & ep) const {
+Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep) {
   t_.set_temp_sphere(ep.sphere());
   return locate_point(ep, T::Key::temp_key());
 }
 
-Slice::Face_const_handle Slice::locate_point(const T::Sphere_point_3 & ep,
-					     T::Key index) const {
+Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep,
+					     T::Key index) {
   if (CGAL::abs(ep.simple_coordinate(Coordinate_index(0))) > t_.inf()
       || CGAL::abs(ep.simple_coordinate(Coordinate_index(1))) > t_.inf()){
     std::cerr << "Coordinate out of range." << std::endl;
@@ -134,14 +134,15 @@ Slice::Face_const_handle Slice::locate_point(const T::Sphere_point_3 & ep,
   }
   // excessive size by 3
   std::vector<int> locations(t_.number_of_spheres(), 0);
-  std::vector<Face_const_handle> faces;
+  std::vector<Face_handle> faces;
   std::vector<Sds::Curve> edges;
   //T::Sphere_location sl= tr_.sphere_location_object(ep);
-  for (Face_const_iterator fit = sds_.faces_begin(); fit != sds_.faces_end(); ++fit){
-    {
+  for (Sds::Face_iterator fit = sds_.faces_begin();
+       fit != sds_.faces_end(); ++fit){
+    /*{
       std::cout << "Trying face ";
       write(fit, std::cout) << std::endl;
-    }
+      }*/
     bool ok=locate_point_check_face(ep, fit, index, locations/*, edges*/);
     if (ok) faces.push_back(fit);
   }
@@ -149,23 +150,29 @@ Slice::Face_const_handle Slice::locate_point(const T::Sphere_point_3 & ep,
   CGAL_assertion(!faces.empty());
   if (faces.size() > 1) {
     //std::cout << "simplify this " << std::endl;
-    std::vector<Face_const_handle> clean_faces;
+    std::vector<Face_handle> clean_faces;
     for (unsigned int i=0; i< faces.size(); ++i){
-      if (locate_point_check_face_vertices(ep, index, faces[i])) {
-	if (locate_point_check_face_arcs(ep, index, faces[i], locations)) {
+      if (locate_point_check_face_arcs(ep, index, faces[i], locations)) {
+	if (locate_point_check_face_vertices(ep, index, faces[i])) {
+	  /*for (unsigned int i=0; i< faces.size(); ++i){
+	    sds_.write_face(faces[i]->halfedge(), std::cout) << std::endl;
+	  }
+	  CGAL_assertion(0);*/
 	  clean_faces.push_back(faces[i]);
+	}
+
 	  /*{
 	    std::cout << "Face is ok ";
 	    write(faces[i], std::cout) << std::endl;
 	    }*/
-	} else {
-	  std::cout << "Face rejected on arcs ";
-	  write(faces[i], std::cout) << std::endl;
-	}
-      } else {
+	  //} else {
+	  /*std::cout << "Face rejected on arcs ";
+	    write(faces[i], std::cout) << std::endl;*/
+	  //}
+      } /*else {
 	std::cout << "Face rejected on vertices ";
-	write(faces[i], std::cout) << std::endl;
-      }
+	  write(faces[i], std::cout) << std::endl;
+	  }*/
     }
     std::swap(faces, clean_faces);
   }
@@ -173,7 +180,7 @@ Slice::Face_const_handle Slice::locate_point(const T::Sphere_point_3 & ep,
   if (faces.size() ==1) {
     return faces[0];
   } else if (faces.size() ==2) {
-    Halfedge_const_handle h= faces[0]->halfedge();
+    Halfedge_handle h= faces[0]->halfedge();
     do {
       if (h->opposite()->face() == faces[1]) throw On_edge_exception(h);
       h= h->next();
@@ -193,7 +200,7 @@ Slice::Face_const_handle Slice::locate_point(const T::Sphere_point_3 & ep,
     CGAL_assertion(0);
   } else {
     CGAL_assertion(!faces.empty());
-    Halfedge_const_handle h= faces[0]->halfedge();
+    Halfedge_handle h= faces[0]->halfedge();
     do {
       bool ok=true;
       for (unsigned int i=1; i< faces.size(); ++i) {
@@ -211,7 +218,7 @@ Slice::Face_const_handle Slice::locate_point(const T::Sphere_point_3 & ep,
   }
    
   CGAL_assertion(0);
-  return Face_const_handle();
+  return Face_handle();
 }
 
 

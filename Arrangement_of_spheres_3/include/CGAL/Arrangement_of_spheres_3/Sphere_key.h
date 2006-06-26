@@ -33,10 +33,10 @@ struct Sphere_key{
   }
 
   std::ostream &write(std::ostream &out) const {
-    if (id_==TEMP) out << "<T>";
-    else if (id_ == TR) out << "<TR>";
-    else if (id_ == BL) out << "<BL>";
-    else out << "<" << id_ << ">";
+    if (id_==TEMP) out << "tmp";
+    else if (id_ == TR) out << "tr";
+    else if (id_ == BL) out << "bl";
+    else out << id_;
     return out;
   }
 

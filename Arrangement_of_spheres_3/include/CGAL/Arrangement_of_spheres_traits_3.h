@@ -55,6 +55,11 @@ struct Arrangement_of_spheres_traits_3 {
     spheres_[0]=s;
   }
 
+  // really just debugging
+  Key new_sphere(const Sphere_3 &s) const {
+    spheres_.push_back(s);
+    return Key(spheres_.size()-4);
+  }
 
   unsigned int number_of_spheres() const {
     return spheres_.size()-3;
@@ -66,6 +71,40 @@ struct Arrangement_of_spheres_traits_3 {
   }
   Sphere_iterator spheres_end() const {
     return spheres_.end();
+  }
+
+  struct Sphere_key_iterator{
+    typedef Key value_type;
+    typedef const Key &reference_type;
+    typedef const Key* pointer_type;
+    typedef size_t difference_type;
+    Sphere_key_iterator(){}
+    Sphere_key_iterator(int i): k_(i){}
+    value_type operator*() const {return k_;}
+    pointer_type operator->() const {return &k_;}
+    Sphere_key_iterator operator++() {
+      k_= Key(k_.input_index()+1);
+      return *this;
+    }
+    Sphere_key_iterator operator++(int) {
+      Sphere_key_iterator ret=*this;
+      operator++();
+      return ret;
+    }
+    bool operator==(const Sphere_key_iterator &o) const {
+      return k_==o.k_;
+    }
+    bool operator!=(const Sphere_key_iterator &o) const {
+      return k_!=o.k_;
+    }
+    Key k_;
+  };
+
+  Sphere_key_iterator sphere_keys_begin() const {
+    return Sphere_key_iterator(0);
+  }
+  Sphere_key_iterator sphere_keys_end() const {
+    return Sphere_key_iterator(spheres_.size());
   }
 
 
@@ -168,7 +207,7 @@ private:
   mutable std::vector<Sphere_3> spheres_;
   mutable bool has_temp_;
   Geometric_traits t_;
-  Geometric_traits::Do_intersection_3 di_;
+  Geometric_traits::Intersect_3 di_;
 };
 
 #endif

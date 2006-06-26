@@ -58,7 +58,7 @@ struct Do_work {
     Slice slice(spheres.begin(), spheres.end());
     slice.set_rz(z);
   
-   
+    *q << Layer(0);
     slice.draw_rz(q, z);
     q->show_everything();
     q->redraw();
@@ -82,8 +82,7 @@ struct Do_work {
       if (!iss) {
 	std::cerr << "Can't parse line." << std::endl;
       } else {
-	q->clear();
-	slice.draw_rz(q, z);
+	*q << Layer(1);
 	*q << CGAL::RED;
 	*q << K::Point_2(x,y);
 	q->redraw();
@@ -104,8 +103,10 @@ struct Do_work {
 	  std::cout << "On vertex!" <<std::endl;
 	  slice.new_marked_vertex(v.vertex_handle());
 	}
-	q->clear();
-	slice.draw_rz(q, z);
+	//q->clear();
+	//slice.draw_rz(q, z);
+	*q << Layer(1);
+	slice.draw_marked_rz(q,z);
 	*q << CGAL::RED;
 	*q << K::Point_2(x,y);
 	q->redraw();

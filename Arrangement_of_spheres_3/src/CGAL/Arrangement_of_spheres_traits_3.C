@@ -3,7 +3,7 @@
 
 
 void Arrangement_of_spheres_traits_3::initialize_1() {
-  di_ = geometric_traits_object().do_intersection_3_object();
+  di_ = geometric_traits_object().intersect_3_object();
   spheres_.push_back(Sphere_3());
   spheres_.push_back(Sphere_3());
   spheres_.push_back(Sphere_3());
@@ -33,6 +33,36 @@ void Arrangement_of_spheres_traits_3::initialize_2() {
 /* 
    predictes--------------------------------------------------------
 */
+
+
+bool Arrangement_of_spheres_traits_3::intersects(Key a,
+						 Key b) const {
+  Vector_3 d= center(a) - center(b);
+  FT d2= d*d;
+  FT sr2= sphere(a).squared_radius() + sphere(b).squared_radius();
+  return d2 <= sr2;
+}
+
+bool Arrangement_of_spheres_traits_3::intersects(Key a,
+						 Key b,
+						 Key c) const {
+  CGAL_precondition(intersects(a,b));
+  CGAL_precondition(intersects(b,c));
+  CGAL_precondition(intersects(c,a));
+  // NOTE could be better, I think
+  Plane_3 pab = equipower_plane(a,b);
+  Plane_3 pac = equipower_plane(a,c);
+  CGAL::Object o= di_(pab, pac);
+  Line_3 l;
+  if (CGAL::assign(l,o)){
+    Sphere_point_3 sp(sphere(a), l);
+    return sp.is_valid();
+  } else {
+    CGAL_assertion(pab== pac);
+    return true;
+  }
+  
+}
 
 
 CGAL::Comparison_result  Arrangement_of_spheres_traits_3::compare_depths(const Sphere_point_3 &a, 
@@ -178,8 +208,8 @@ Arrangement_of_spheres_traits_3::bounded_side_of_sphere(Key s,
   p[0]= center_c(x, Coordinate_index(0));
   p[1]= center_c(y, Coordinate_index(1));
     
-  std::cout << "Line through " << CGAL::to_double(p[0]) 
-	    << " " << CGAL::to_double(p[1]) << std::endl;
+  /*std::cout << "Line through " << CGAL::to_double(p[0]) 
+    << " " << CGAL::to_double(p[1]) << std::endl;*/
   Line_3 l(Point_3(p[0], p[1], 0), Vector_3(0,0,1));
     
   Sphere_point_3 p0(sphere(s), l);
@@ -192,7 +222,7 @@ Arrangement_of_spheres_traits_3::bounded_side_of_sphere(Key s,
     CGAL::Comparison_result c0= compare_depths(p0, z);
     CGAL::Comparison_result c1= compare_depths(p1, z);
     if (c0 == CGAL::EQUAL || c1== CGAL::EQUAL) {
-      std::cout << "Equal" << std::endl;
+      //std::cout << "Equal" << std::endl;
       return CGAL::ON_BOUNDARY;
     }
     //CGAL_assertion(p0 <= p1);
@@ -267,7 +297,7 @@ Arrangement_of_spheres_traits_3::equipower_plane(Key a, Key b) const {
   return Plane_3(n[0], n[1], n[2], d);
 }
 
-Arrangement_of_spheres_traits_3::Plane_3 
+Arrangement_of_spheres_traits_3::Point_3 
 Arrangement_of_spheres_traits_3::equipower_point(Key a, Key b) const {
   Plane_3 eqp= equipower_plane(a,b);
   Line_3 l(center(a), (center(a)-center(b)));
@@ -358,7 +388,7 @@ Arrangement_of_spheres_traits_3::intersection_events(Key a, Key b) const {
     lf=l.opposite();
     lb=l;
   }
-  wif (l.to_vector().z()==0) {
+  if (l.to_vector().z()==0) {
     std::cerr << "Degeneracy, picking one for start of circle " 
 	      << a << " " << b << std::endl;
   }
@@ -375,7 +405,7 @@ Arrangement_of_spheres_traits_3::intersection_events(Key a, Key b, Key c) const 
   Plane_3 eqpab= equipower_plane(a,b);
   Plane_3 eqpac= equipower_plane(a,c);
 
-  CGAL::Object o= di_(eqp, fp);
+  CGAL::Object o= di_(eqpab, eqpac);
   Line_3 l;
   if (!CGAL::assign(l,o)){
     // they intersect on the same circle. Ick.

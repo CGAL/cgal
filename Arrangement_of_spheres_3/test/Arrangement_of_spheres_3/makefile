@@ -36,7 +36,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: libs interactive_ray_shooting interactive_point_location random_ray_shoot random_point_locate point_locate show_slice sphere_line_intersection_test sphere_location
+all: libs interactive_point_insertion interactive_ray_shooting interactive_point_location random_ray_shoot random_point_locate point_locate show_slice sphere_line_intersection_test sphere_location
 
 libs: 
 	cd ../../src/CGAL; make -f makefile.internal
@@ -55,6 +55,9 @@ point_locate$(EXE_EXT): point_locate$(OBJ_EXT) ../../src/CGAL/libCGAL.a ../../sr
 interactive_point_location$(EXE_EXT): interactive_point_location$(OBJ_EXT) ../../src/CGAL/libCGAL.a ../../src/CGALQt/libCGALQt.a
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interactive_point_location interactive_point_location$(OBJ_EXT) $(LDFLAGS)
 
+interactive_point_insertion$(EXE_EXT): interactive_point_insertion$(OBJ_EXT) ../../src/CGAL/libCGAL.a ../../src/CGALQt/libCGALQt.a
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interactive_point_insertion interactive_point_insertion$(OBJ_EXT) $(LDFLAGS)
+
 interactive_ray_shooting$(EXE_EXT): interactive_ray_shooting$(OBJ_EXT) ../../src/CGAL/libCGAL.a ../../src/CGALQt/libCGALQt.a
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interactive_ray_shooting interactive_ray_shooting$(OBJ_EXT) $(LDFLAGS)
 
@@ -72,7 +75,7 @@ sphere_location$(EXE_EXT):  sphere_location$(OBJ_EXT) ../../src/CGAL/libCGAL.a .
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)sphere_location sphere_location$(OBJ_EXT) $(LDFLAGS)
 
 
-clean: sphere_location.clean sphere_line_intersection_test.clean random_ray_shoot.clean random_point_locate.clean point_locate.clean show_slice.clean interactive_point_location.clean interactive_ray_shooting.clean
+clean: sphere_location.clean sphere_line_intersection_test.clean random_ray_shoot.clean random_point_locate.clean point_locate.clean show_slice.clean interactive_point_location.clean interactive_ray_shooting.clean interactive_point_insertion.clean
 	cd ../../src/CGAL; make -f makefile.internal clean
 	cd ../../src/CGALQt; make -f makefile.internal clean
 

@@ -52,6 +52,8 @@ public:
 
   
   void clear() ;
+  //void clear_layer();
+  // void set_is_editing_layer(bool tf);
   void show_everything() ;
   void show() ;
   void redraw();
@@ -166,6 +168,8 @@ private: // private data member
     NT scale_;
     QMutex mutex_;
 
+    //struct Conditional_mutex;
+
     template <class V, class VC>
     CGAL::Color draw(CGAL::Color cc, const V &v, const VC &vc);
 
@@ -193,6 +197,10 @@ private: // private data member
   
     bool updating_box() const;
     void set_updating_box(bool v);
+
+    void clear();
+
+    //bool set_is_editing(bool tf);
 
     Point rescale(const Point &p) const;
 

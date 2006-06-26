@@ -11,7 +11,6 @@
 #include <CGAL/Arr_circular_line_arc_traits.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice_data_structure.h>
-#include <CGAL/Arrangement_of_spheres_3/utilities.h>
 #include <CGAL/Cartesian.h>
 #include <sstream>
 //#include <CGAL/Arr_landmarks_point_location.h>

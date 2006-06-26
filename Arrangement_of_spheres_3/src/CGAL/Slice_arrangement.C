@@ -170,7 +170,7 @@ void Slice_arrangement::build_arrangement(const std::vector<Circular_k::Circle_2
 				     Curve(names[i], Curve::T_RULE), inf_));
   }
   std::cout << "done." << std::endl;
-  std::cout << "Intersecting segements with circles..." << std::flush;
+  std::cout << "Intersecting segments with circles..." << std::flush;
   for (unsigned int j=0; j < circles.size(); ++j){
     for (unsigned int i=0; i< horizontal_rules.size(); ++i){
       horizontal_rules[i].clip(circles[j]);
@@ -181,7 +181,7 @@ void Slice_arrangement::build_arrangement(const std::vector<Circular_k::Circle_2
   }
   std::cout << "done." << std::endl;
     
-  std::cout << "Intersecting segements with segments..." << std::flush;
+  std::cout << "Intersecting segments with segments..." << std::flush;
   for (unsigned int i=0; i< horizontal_rules.size(); ++i){
     for (unsigned int j=0; j< i; ++j){
       vertical_rules[i].clip(horizontal_rules[j]);

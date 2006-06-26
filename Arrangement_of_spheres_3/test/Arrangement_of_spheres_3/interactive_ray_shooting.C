@@ -81,17 +81,17 @@ struct Do_work {
       if (!iss) {
 	std::cerr << "Can't parse line." << std::endl;
       } else {
+	*q << Layer(1);
 	*q << CGAL::RED;
 	*q << K::Point_2(x,y);
 	q->redraw();
 	Arrangement_of_spheres_traits_3::Sphere_point_3 sp(K::Point_3(x,y,z), 
 							   K::Line_3(K::Point_3(x,y,z),
 								    K::Vector_3(0,0,1)));
-	q->clear();
 	try {
-	  Slice::Face_const_handle f=slice.locate_point(sp);
+	  Slice::Face_handle f=slice.locate_point(sp);
 	  //slice.new_marked_face(f);
-	  Slice::Halfedge_const_handle h= f->halfedge();
+	  Slice::Halfedge_handle h= f->halfedge();
 	  do {
 	    std::cout << h->curve() << "--" << h->vertex()->point() << "--";
 	    h= h->next();
@@ -120,10 +120,10 @@ struct Do_work {
 	      break;
 	    }
 	    ++iteration;
-	    Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
-							     dir);
+	    Slice::Halfedge_handle h= slice.shoot_rule(sp, f, 
+						       dir);
 	 
-	    if (h != Slice::Halfedge_const_handle()) {
+	    if (h != Slice::Halfedge_handle()) {
 	      slice.new_marked_edge(h);
 	      std::cout << "Found " << h->curve() << std::endl;
 	    }
@@ -139,8 +139,8 @@ struct Do_work {
 	  std::cout << "On vertex!" <<std::endl;
 	  slice.new_marked_vertex(v.vertex_handle());
 	}
-
-	slice.draw_rz(q, z);
+	*q << Layer(1);
+	slice.draw_marked_rz(q, z);
 	*q << CGAL::RED;
 	*q << K::Point_2(x,y);
 	q->redraw();

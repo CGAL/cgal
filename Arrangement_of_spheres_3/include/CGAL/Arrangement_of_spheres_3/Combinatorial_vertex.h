@@ -13,7 +13,15 @@
 */
 class Combinatorial_vertex{
 public:
-  enum Type {SS, SR, RR};
+  enum Type {SS, SR, RR, SPECIAL};
+  
+  static Combinatorial_vertex make_special(Combinatorial_curve::Key i) {
+    Combinatorial_vertex cv;
+    cv.a_= Combinatorial_curve::make_special(i);
+    cv.b_= Combinatorial_curve::make_special(i);
+    return cv;
+  }
+
   Combinatorial_vertex(){}
   Combinatorial_vertex(Combinatorial_curve a, Combinatorial_curve b){
     if (a.is_rule() && b.is_rule() && a.is_vertical()
@@ -54,7 +62,9 @@ public:
     out << "(" << a_ << ", " << b_ << ")";
     return out;
   }
-  
+  bool is_special() const {
+    return a_.is_special() && b_.is_special();
+  }
   Type type() const {
     if (b_.is_rule()) return RR;
     else if (a_.is_rule()) return SR;
@@ -67,6 +77,20 @@ public:
       return a_;
     } else {
       return b_;
+    }
+  }
+
+  void replace_rule(Combinatorial_curve c) {
+    if (type() == SR) {
+      a_= c;
+    } else if (type()== RR) {
+      if (c.is_vertical() && a_.is_vertical()){
+	a_=c;
+      } else {
+	b_=c;
+      }
+    } else {
+      CGAL_assertion(0);
     }
   }
 

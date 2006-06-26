@@ -10,19 +10,25 @@ struct Combinatorial_curve{
   /* for rules
      Inside means below a horizontal arc and to the left of a vertical one
   */
-  enum PART_BITS {L_BIT=1, R_BIT=2, T_BIT=4, B_BIT=8, ARC_BIT=16, /*INF_BIT=32,*/ IN_BIT=32};
-  enum LOCATION_BITS {lL_BIT=1, lR_BIT=2, lT_BIT=4, lB_BIT=8, lIN_BIT=16, lOUT_BIT=32};
+  enum PART_BITS {L_BIT=2, R_BIT=4, T_BIT=8, B_BIT=16, ARC_BIT=32, /*INF_BIT=32,*/ IN_BIT=1};
+  enum LOCATION_BITS {lL_BIT=2, lR_BIT=4, lT_BIT=8, lB_BIT=16, lIN_BIT=1, lOUT_BIT=32};
   enum Part {INVALID=0, L_RULE=L_BIT, R_RULE=R_BIT, T_RULE=T_BIT, B_RULE=B_BIT,
 	     LB_ARC=L_BIT|B_BIT|ARC_BIT, 
 	     LT_ARC=L_BIT|T_BIT|ARC_BIT,
 	     RT_ARC=R_BIT|T_BIT|ARC_BIT, 
-	     RB_ARC=R_BIT|B_BIT|ARC_BIT/*, 
+	     RB_ARC=R_BIT|B_BIT|ARC_BIT,
+	     SPECIAL= R_BIT | L_BIT | B_BIT | T_BIT
+	     /*, 
 	     L_INF=L_BIT|INF_BIT,
 	     R_INF=R_BIT|INF_BIT,
 	     T_INF=T_BIT|INF_BIT, 
 	     B_INF=B_BIT|INF_BIT*/};
 
   typedef Sphere_key Key;
+
+  static Combinatorial_curve make_special(Key i) {
+    return Combinatorial_curve(i, SPECIAL);
+  }
 
   Combinatorial_curve(int i, Part pt): index_(i), pt_(pt){
     CGAL_precondition(i>=0);
@@ -53,6 +59,10 @@ struct Combinatorial_curve{
     CGAL_assertion(!(is_inside() && ret.is_inside()));
     return ret;
   }
+  bool is_special() const {
+    return pt_== SPECIAL;
+  }
+
   bool is_inside() const {
     return pt_&IN_BIT;
   }
@@ -136,6 +146,15 @@ struct Combinatorial_curve{
     return static_cast<Part>(pt_);
   }
 
+  void flip_rule(Key k) {
+    CGAL_precondition(is_rule());
+    index_=k;
+    if (is_vertical()) {
+      pt_ = pt_^ (T_BIT | B_BIT);
+    } else {
+      pt_ = pt_^ (L_BIT | R_BIT);
+    }
+  }
 
   bool is_rule() const {
     return ! is_arc();
@@ -234,6 +253,27 @@ struct Combinatorial_curve{
     else return Coordinate_index();
   }
 
+  int rule_index() const {
+    CGAL_precondition(is_rule());
+    if (pt_&R_RULE) return 0;
+    else if (pt_&T_RULE) return 1;
+    else if (pt_&L_RULE) return 2;
+    else return 3;
+  }
+
+  static Combinatorial_curve make_rule(Key k, int ruleindex) {
+    switch(ruleindex) {
+    case 0:
+      return Combinatorial_curve(k, R_RULE);
+    case 1:
+      return Combinatorial_curve(k, T_RULE);
+    case 2:
+      return Combinatorial_curve(k, L_RULE);
+    default:
+      return Combinatorial_curve(k, B_RULE);
+    }
+  }
+
   static const char *to_string(int pt){
     switch (pt) {
     case INVALID:
@@ -279,6 +319,8 @@ struct Combinatorial_curve{
       return "RTi"; 
     case RB_ARC | IN_BIT:
       return "RBi";
+    case SPECIAL:
+      return "SPECIAL";
       /*case L_INF | IN_BIT:
       return "Li_inf";
     case R_INF | IN_BIT:

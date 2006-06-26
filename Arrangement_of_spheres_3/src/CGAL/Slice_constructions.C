@@ -53,15 +53,17 @@ Slice::T::Sphere_point_3 Slice::sphere_point_rz(Sds::Point pt, NT z) const {
     return  T::Sphere_point_3(p3, T::Line_3(p3,
 					    T::Vector_3(0, 0, 1)));
   } else if (pt.type() == Sds::Point::SR) {
-    if (pt.rule(0).key() == pt.sphere(0).key() || pt.rule(0).is_same_side(pt.sphere(0))) {
+    if (pt.rule(0).key() == pt.sphere(0).key() 
+	|| pt.rule(0).is_same_side(pt.sphere(0))) {
       T::Sphere_3 s(t_.sphere(pt.sphere(0).key()));
-      T::Line_3 l(in_line(pt.rule(0), z));
+      T::Line_3 l(in_line_rz(pt.rule(0), z));
       //std::cout << s << std::endl;
       //std::cout << l << std::endl;
       T::Sphere_point_3 sp(s, l);
       return sp;
     } else {
-      return T::Sphere_point_3(t_.sphere(pt.sphere(0).key()), out_line(pt.rule(0), z));
+      return T::Sphere_point_3(t_.sphere(pt.sphere(0).key()), 
+			       out_line_rz(pt.rule(0), z));
     }
   } else if (pt.sphere(0).key() == pt.sphere(1).key()) {
     int ipt=static_cast<int>(pt.sphere(0).part() & pt.sphere(1).part()) 
@@ -69,7 +71,8 @@ Slice::T::Sphere_point_3 Slice::sphere_point_rz(Sds::Point pt, NT z) const {
     Sds::Curve::Part cpt= static_cast<Sds::Curve::Part>(ipt);
     Sds::Curve rule(pt.sphere(0).key(), cpt);
     CGAL_assertion(rule.is_rule());
-    return T::Sphere_point_3(t_.sphere(pt.sphere(0).key()), in_line(rule, z));
+    return T::Sphere_point_3(t_.sphere(pt.sphere(0).key()), 
+			     in_line_rz(rule, z));
   } else {
     //std::cout << "Computing point for " << pt << std::endl;
     CGAL_precondition(pt.sphere(0).key() != pt.sphere(1).key());
@@ -128,7 +131,7 @@ Slice::T::Point_2 Slice::compute_rule_rule_intersection(Sds::Curve ra,
 }
 
 
-Slice::T::Line_3 Slice::in_line(Sds::Curve r, NT z) const {
+Slice::T::Line_3 Slice::in_line_rz(Sds::Curve r, NT z) const {
   CGAL_precondition(r.is_rule());
   T::Point_3 pt(t_.center_c(r.key(),T::Coordinate_index(0)),
 		t_.center_c(r.key(),T::Coordinate_index(1)),z);
@@ -147,7 +150,7 @@ Slice::T::Line_3 Slice::in_line(Sds::Curve r, NT z) const {
   }
 }
   
-Slice::T::Line_3 Slice::out_line(Sds::Curve r, NT z) const {
+Slice::T::Line_3 Slice::out_line_rz(Sds::Curve r, NT z) const {
   CGAL_precondition(r.is_rule());
   T::Point_3 pt(t_.center_c(r.key(),T::Coordinate_index(0)),
 		t_.center_c(r.key(),T::Coordinate_index(1)),z);

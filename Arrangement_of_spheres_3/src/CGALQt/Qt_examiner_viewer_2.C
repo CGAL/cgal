@@ -3,6 +3,27 @@
 #include <CGAL/IO/Qt_widget_circular_arc_2.h>
 
 
+/*struct Qt_examiner_viewer_2::QTEV_layer::Conditional_mutex {
+  Conditional_mutex(bool skip_lock, QMutex *qm) {
+    if (!skip_lock) {
+      qm->lock();
+      qm_=qm;
+    } else {
+      qm_=NULL;
+    }
+  }
+  ~Conditional_mutex() {
+    if (qm_ != NULL) {
+      qm_->unlock();
+    }
+  }
+  QMutex *qm_;
+  };*/
+
+
+/*void Qt_examiner_viewer_2::clear_layer() {
+  layers_[cur_layer_]->clear();
+  }*/
 
 template <class V, class VC>
 CGAL::Color Qt_examiner_viewer_2::QTEV_layer::draw(CGAL::Color cc, const V &v, const VC &vc) {
@@ -35,6 +56,16 @@ CGAL::Color Qt_examiner_viewer_2::QTEV_layer::draw(CGAL::Color cc, const V &v, c
   return cc;
 }
 
+
+/*void Qt_examiner_viewer_2::QTEV_layer::set_is_editing(bool tf) {
+  if (tf && !is_editing_) {
+    mutex_.lock();
+  } else if (!tf && is_editing_) {
+    mutex_.unlock();
+  }
+  is_editing_=tf;
+  }*/
+
 Qt_examiner_viewer_2::QTEV_layer::QTEV_layer(NT scale): bbox_(std::numeric_limits<double>::max(),
 							      std::numeric_limits<double>::max(),
 							      -std::numeric_limits<double>::max(),
@@ -43,7 +74,40 @@ Qt_examiner_viewer_2::QTEV_layer::QTEV_layer(NT scale): bbox_(std::numeric_limit
 							scale_(scale){
   ubb_=true;
   cur_point_style_= CGAL::DISC;
+  
+  circles_.reserve(1000);
+  circle_colors_.reserve(1000);
+  points_.reserve(1000);
+  point_colors_.reserve(1000);
+  point_styles_.reserve(1000);
+  segments_.reserve(1000);
+  segment_colors_.reserve(1000);
+  lines_.reserve(1000);
+  line_colors_.reserve(1000);
+  arcs_.reserve(1000);
+  arc_colors_.reserve(1000);
+  labels_.reserve(1000);
+  label_colors_.reserve(1000);
 }
+
+void Qt_examiner_viewer_2::QTEV_layer::clear() {
+  circles_.clear();
+  circle_colors_.clear();
+  points_.clear();
+  point_colors_.clear();
+  point_styles_.clear();
+  segments_.clear();
+  segment_colors_.clear();
+  lines_.clear();
+  line_colors_.clear();
+  arcs_.clear();
+  arc_colors_.clear();
+  labels_.clear();
+  label_colors_.clear();
+}
+
+
+
 CGAL::Bbox_2 Qt_examiner_viewer_2::QTEV_layer::bounding_box(){
   return bbox_;
 }
@@ -172,6 +236,7 @@ void  Qt_examiner_viewer_2::set_layer(unsigned int li) {
     P::widget()->attach(layers_.back());
   }
   cur_layer_=li;
+  layers_[cur_layer_]->clear();
 }
 
 

@@ -65,41 +65,41 @@ struct Do_work {
       x= rand.get_double(box.xmin(), box.xmax());
       y= rand.get_double(box.ymin(), box.ymax());
       Arrangement_of_spheres_traits_3::Sphere_point_3 sp(K::Point_3(x,y,z), 
-							K::Line_3(K::Point_3(x,y,z),
-								  K::Vector_3(0,0,1)));
+							 K::Line_3(K::Point_3(x,y,z),
+								   K::Vector_3(0,0,1)));
       std::cout << "Trying " << x << " " << y << std::endl;
       try {
-	Slice::Face_const_handle f=slice.locate_point(sp);
+	Slice::Face_handle f=slice.locate_point(sp);
 	std::cout << "Located in face ";
 	slice.write(f, std::cout) << std::endl;
 	
 	try {
-	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
-							   Slice::Sds::Curve::T_BIT);
+	  Slice::Halfedge_handle h= slice.shoot_rule(sp, f, 
+						     Slice::Sds::Curve::T_BIT);
 	  slice.write(h, std::cout) << std::endl;
 	} catch (Slice::On_vertex_exception v) {
 	  std::cout << "On vertex!" ;
 	  slice.write(v.vertex_handle(), std::cout) << std::endl;
 	}
 	try {
-	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
-							   Slice::Sds::Curve::B_BIT);
+	  Slice::Halfedge_handle h= slice.shoot_rule(sp, f, 
+						     Slice::Sds::Curve::B_BIT);
 	  slice.write(h, std::cout) << std::endl;
 	} catch (Slice::On_vertex_exception v) {
 	  std::cout << "On vertex!" ;
 	  slice.write(v.vertex_handle(), std::cout) << std::endl;
 	}
 	try {
-	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
-							   Slice::Sds::Curve::L_BIT);
+	  Slice::Halfedge_handle h= slice.shoot_rule(sp, f, 
+						     Slice::Sds::Curve::L_BIT);
 	  slice.write(h, std::cout) << std::endl;
 	} catch (Slice::On_vertex_exception v) {
 	  std::cout << "On vertex!" ;
 	  slice.write(v.vertex_handle(), std::cout) << std::endl;
 	}
 	try {
-	  Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
-							   Slice::Sds::Curve::R_BIT);
+	  Slice::Halfedge_handle h= slice.shoot_rule(sp, f, 
+						     Slice::Sds::Curve::R_BIT);
 	  slice.write(h, std::cout) << std::endl;
 	} catch (Slice::On_vertex_exception v) {
 	  std::cout << "On vertex!" ;

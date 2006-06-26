@@ -5,7 +5,6 @@
 #include <CGAL/Arrangement_of_spheres_traits_3.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice_data_structure.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice_arrangement.h>
-#include <CGAL/Arrangement_of_spheres_3/utilities.h>
 #include <CGAL/Simple_cartesian.h>
 
 /* invariants
@@ -15,27 +14,29 @@ struct Slice {
   typedef Arrangement_of_spheres_traits_3 T;
   typedef Slice_data_structure Sds;
   typedef T::FT NT;
-  typedef Sds::Face_handle Face_handle;
-  typedef Sds::Halfedge_const_handle Halfedge_const_handle;
+ 
+  typedef Sds::Halfedge_handle Halfedge_handle;
+  typedef Sds::Vertex_handle Vertex_handle;
   typedef Sds::Face_const_handle Face_const_handle;
+  typedef Sds::Halfedge_const_handle Halfedge_const_handle;
   typedef Sds::Vertex_const_handle Vertex_const_handle;
-  typedef Sds::Face_const_iterator Face_const_iterator;
+  typedef Sds::Face_handle Face_handle;
 
   typedef CGAL::Simple_cartesian<double> DT;
 
   struct On_edge_exception {
-    On_edge_exception(Halfedge_const_handle h): h_(h){}
-    Halfedge_const_handle halfedge_handle() const {
+    On_edge_exception(Halfedge_handle h): h_(h){}
+    Halfedge_handle halfedge_handle() const {
       return h_;
     }
-    Halfedge_const_handle h_;
+    Halfedge_handle h_;
   };
   struct On_vertex_exception {
-    On_vertex_exception(Vertex_const_handle h): v_(h){}
-    Vertex_const_handle vertex_handle() const {
+    On_vertex_exception(Vertex_handle h): v_(h){}
+    Vertex_handle vertex_handle() const {
       return v_;
     }
-    Vertex_const_handle v_;
+    Vertex_handle v_;
   };
 
 
@@ -121,10 +122,19 @@ struct Slice {
   */
 
   // return the face inside the sphere
-  Face_const_handle insert_sphere(const T::Sphere_point_3 &fp, T::Key k);
+  Face_handle insert_sphere(const T::Sphere_point_3 &fp, T::Key k);
 
+  T::Key roll_back_rule(const T::Sphere_point_3 &ep,
+			       Halfedge_handle cur,Halfedge_handle last);
 
+  Face_handle erase_sphere(const T::Sphere_point_3 &ep,
+			   Face_handle f);
 
+  Face_handle erase_sphere(const T::Sphere_point_3 &ep,
+			   T::Key k);
+
+  void relabel_rule(Halfedge_handle h,
+		    Sds::Curve nl);
 
   /*
     Display functions----------------------------------------------------
@@ -133,7 +143,9 @@ struct Slice {
 
   DT::Point_2 display_point_rz(Sds::Point pt, NT z) const;
 
-  void draw_rz(Qt_examiner_viewer_2 *qtv, NT z) ;
+  void draw_rz(Qt_examiner_viewer_2 *qtv, NT z);
+
+  void draw_marked_rz(Qt_examiner_viewer_2 *qtv, NT z);
 
   std::ostream &write(Vertex_const_handle v, std::ostream &out) const;
 
@@ -155,28 +167,32 @@ struct Slice {
 
   T::Sphere_point_3 sphere_point_rz(Sds::Point pt, NT z) const ;
 
+  T::Line_3 in_line_rz(Sds::Curve r, NT z) const;
+  
+  T::Line_3 out_line_rz(Sds::Curve r, NT z) const;
+
   /* 
      constructions----------------------------------------------------
    */
 
   T::Point_2 compute_rule_rule_intersection(Sds::Curve ra, Sds::Curve rb) const ;
 
-  T::Line_3 in_line(Sds::Curve r, NT z) const;
-  
-  T::Line_3 out_line(Sds::Curve r, NT z) const;
-
-
   /*
     Search functions ------------------------------------------------
   */
 
 
-  Face_const_handle locate_point(const T::Sphere_point_3 &ep, T::Key ind) const;
+  Face_handle locate_point(const T::Sphere_point_3 &ep, T::Key ind);
 
-  Halfedge_const_handle shoot_rule(const T::Sphere_point_3& source,
-				   Face_const_handle f,
-				   Sds::Curve rule) const ;
+  Halfedge_handle shoot_rule(const T::Sphere_point_3& source,
+				   Face_handle f,
+				   Sds::Curve rule) ;
 
+  Halfedge_handle 
+  insert_sphere_find_rule_vertex(const T::Sphere_point_3 &ep, 
+				 Face_handle f,
+				 Sds::Curve rule);
+  
   /* 
      predictes--------------------------------------------------------
    */
@@ -261,13 +277,13 @@ struct Slice {
 
 
   // Debug Functions ---------------------------------------------------
-  Face_const_handle locate_point(const T::Sphere_point_3 &ep) const;
+  Face_handle locate_point(const T::Sphere_point_3 &ep);
 
-  Halfedge_const_handle shoot_rule(const T::Sphere_point_3 &source, 
-				   Face_const_handle f,
-				   int type) const ;
+  Halfedge_handle shoot_rule(const T::Sphere_point_3 &source, 
+				   Face_handle f,
+				   int type) ;
   
-  Face_const_handle insert_sphere(const T::Sphere_point_3 &ep) const;
+  Face_handle insert_sphere(const T::Sphere_point_3 &ep);
 
 private:
 

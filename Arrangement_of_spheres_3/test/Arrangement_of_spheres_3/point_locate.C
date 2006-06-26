@@ -95,9 +95,9 @@ struct Do_work {
 								    K::Vector_3(0,0,1)));
 	q->clear();
 	try {
-	  Slice::Face_const_handle f=slice.locate_point(sp);
+	  Slice::Face_handle f=slice.locate_point(sp);
 	  //slice.new_marked_face(f);
-	  Slice::Halfedge_const_handle h= f->halfedge();
+	  Slice::Halfedge_handle h= f->halfedge();
 	  do {
 	    std::cout << h->curve() << "--" << h->vertex()->point() << "--";
 	    h= h->next();
@@ -126,10 +126,10 @@ struct Do_work {
 	      break;
 	    }
 	    ++iteration;
-	    Slice::Halfedge_const_handle h= slice.shoot_rule(sp, f, 
-							     dir);
+	    Slice::Halfedge_handle h= slice.shoot_rule(sp, f, 
+						       dir);
 	 
-	    if (h != Slice::Halfedge_const_handle()) {
+	    if (h != Slice::Halfedge_handle()) {
 	      slice.new_marked_edge(h);
 	      std::cout << "Found " << h->curve() << std::endl;
 	    }
