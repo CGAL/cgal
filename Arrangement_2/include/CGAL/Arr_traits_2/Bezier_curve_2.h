@@ -146,7 +146,7 @@ public:
       even_exp = ((n - k) % 2 == 0); 
       for (j = 0; j <= n - k; j++)
       {
-        n_over_k_j = _over (n, k, j);
+        n_over_k_j = _choose (n, k, j);
 
         if (even_exp)
         {
@@ -179,6 +179,8 @@ public:
     nt_traits.construct_polynomial (coeffsY, n,
                                     _polyY, _normY);
     delete[] coeffsY;
+
+    // TODO: Normalize the polynomials by GCD computation (?)
   }
 
 private:
@@ -186,7 +188,7 @@ private:
   /*!
    * Compute the value of n! / (j! k! (n-k-j)!).
    */
-  Integer _over (int n, int j, int k)
+  Integer _choose (int n, int j, int k)
   {
     Integer   reduced_fact = 1;
     Integer   j_fact = 1, k_fact = 1;
@@ -324,6 +326,8 @@ public:
                           nt_traits.scale (bc._rep()._polyY, _rep()._normY);
 
     return (nt_traits.degree (diffY) < 0);
+
+    // TODO: This is probably not sufficient!
   }
  
   /*!
@@ -509,6 +513,52 @@ public:
     os << ')';
 
     return (os);
+  }
+
+  /*!
+   * Sample a portion of the curve (for drawing purposes, etc.).
+   * \param t_start The t-value to start with.
+   * \param t_end The t-value to end at.
+   * \param n_samples The required number of samples.
+   * \param oi Output: An output iterator for the samples. The value-type of
+   *                   this iterator must be std::pair<double, double>.
+   * \return A past-the-end iterator for the samples.
+   */
+  template <class OutputIterator>
+  OutputIterator sample (const double& t_start, const double& t_end,
+                         unsigned int n_samples,
+                         OutputIterator oi) const
+  {
+    // Convert the X(t) and Y(t) polynomial to vectors of double coefficients.
+    Nt_traits            nt_traits;
+    const int            degX = nt_traits.degree (_rep()._polyX);
+    std::vector<double>  coeffsX (degX + 1);
+    const double         normX = CGAL::to_double (_rep()._normX);
+    int                  k;
+
+    for (k = 0; k <= degX; k++)
+      coeffsX[k] = CGAL::to_double (nt_traits.get_coefficient (_rep()._polyX, 
+                                                               k));
+
+    const int            degY = nt_traits.degree (_rep()._polyY);
+    std::vector<double>  coeffsY (degY + 1);
+    const double         normY = CGAL::to_double (_rep()._normY);
+
+    for (k = 0; k <= degY; k++)
+      coeffsY[k] = CGAL::to_double (nt_traits.get_coefficient (_rep()._polyY, 
+                                                               k));
+
+    // Sample the approximated curve.
+    const int            n = (n_samples >= 2) ? n_samples : 2; 
+    const double         delta_t = (t_end - t_start) / (n - 1);
+    double               t;
+
+    for (k = 0; k < n; k++)
+    {
+      t = t_start + k * delta_t;
+    }
+
+    return (oi);
   }
 
 private:

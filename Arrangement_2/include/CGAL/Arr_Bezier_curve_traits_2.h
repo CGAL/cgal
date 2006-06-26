@@ -508,9 +508,7 @@ public:
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c) const
     {
-      c = cv1;
-      c.merge (cv2);
-
+      c = cv1.merge (cv2);
       return;
     }
   };

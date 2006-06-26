@@ -196,7 +196,7 @@ public:
 
     // RWRW - A hueristic solution. Find a robust one!
     double       t_low, t_high;
-    const double init_eps = 0.0000001;
+    const double init_eps = 0.00000001;
     bool         dir_match;
 
     if (CGAL::compare (_src, _trg) == SMALLER)
@@ -226,7 +226,7 @@ public:
       t_val = Algebraic (t_mid);
       x = nt_traits.evaluate_at (_curve.x_polynomial(), t_val) /
           nt_traits.convert (_curve.x_norm());
-    
+
       diff_x = CGAL::to_double(x) - px;
       if (diff_x == 0)
         break;
@@ -237,21 +237,27 @@ public:
           break;
 
         if (dir_match)
-          t_low = t_mid;
-        else
           t_high = t_mid;
+        else
+          t_low = t_mid;
       }
       else
       {
         if (-diff_x < eps)
           break;
 
-        if (dir_match)
-          t_high = t_mid;
-        else
+       if (dir_match)
           t_low = t_mid;
+        else
+          t_high = t_mid;
       }
     }
+
+    // Correct the t-value, if necessary.
+    if (t_mid < 0)
+      t_val = Algebraic(0);
+    else if (t_mid > 1)
+      t_val = Algebraic(1);
 
     // Compute the y-coordinate and compare to p.y().
     Algebraic y = nt_traits.evaluate_at (_curve.y_polynomial(), t_val) /
@@ -353,27 +359,50 @@ public:
     CGAL_assertion (s_vals.size() == t_vals.size());
 
     // Pair the s- and t-values and construct the intersection points.
-    typename std::list<Algebraic>::const_iterator  s_it;
-    typename std::list<Algebraic>::const_iterator  t_it;
+    typename std::list<Algebraic>::iterator  s_it;
+    typename std::list<Algebraic>::iterator  t_it, best_it;
  
     for (s_it = s_vals.begin(); s_it != s_vals.end(); ++s_it)
     {
       if (! _is_in_range (*s_it))
         continue;
       
+      // If the point lies in the range of (*this), find a t-value for cv
+      // that matches this point.
       Point_2       p (_curve, *s_it);
+      const double  px = CGAL::to_double (p.x());
+      const double  py = CGAL::to_double (p.y());
       unsigned int  mult = 1;
+      double        sqr_dist;
+      double        best_sqr_dist = 0;
 
+      best_it = t_vals.end();
       for (t_it = t_vals.begin(); t_it != t_vals.end(); ++t_it)
       {
-        if (p.equals (Point_2 (cv._curve, *t_it)) &&
-            cv._is_in_range (*t_it))
+        Point_2       q (cv._curve, *t_it);
+        const double  qx = CGAL::to_double (q.x());
+        const double  qy = CGAL::to_double (q.y());
+
+        sqr_dist = (qx - px)*(qx - px) + (qy - py)*(qy - py);
+        if (best_it == t_vals.end() || sqr_dist < best_sqr_dist)
         {
-          p.add_originator (cv._curve, *t_it);
-          *oi = CGAL::make_object (std::make_pair (p, mult));
-          ++oi;
+          best_it = t_it;
+          best_sqr_dist = sqr_dist;
         }
       }
+
+      CGAL_assertion (best_it != t_vals.end());
+        
+      // If the t-value is in the range of cv, add the intersection point.
+      if (cv._is_in_range (*best_it))
+      {
+        p.add_originator (cv._curve, *best_it);
+        *oi = CGAL::make_object (std::make_pair (p, mult));
+        ++oi;
+      }
+      
+      // Remove the t-value that matches the current s-value.
+      t_vals.erase (best_it);
     }
 
     return (oi);
