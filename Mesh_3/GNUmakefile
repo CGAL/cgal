@@ -2,6 +2,9 @@
 
 all: examples test applications
 
+run-all: all 
+	${MAKE} -C test/Mesh_3 run
+
 examples:
 	$(MAKE) -C examples/Mesh_3
 
@@ -10,7 +13,7 @@ dep:
 	$(MAKE) -C test/Mesh_3 dep
 
 test:
-	${MAKE} -C test/Mesh_3 run
+	${MAKE} -C test/Mesh_3
 
 applications:
 	$(MAKE) -C applications
