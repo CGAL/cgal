@@ -50,7 +50,7 @@ class Arr_Bezier_curve_traits_2
 {
 public:
 
-  typedef Rat_kernel                      Rat_kernel;
+  typedef Rat_kernel_                     Rat_kernel;
   typedef Alg_kernel_                     Alg_kernel;
   typedef Nt_traits_                      Nt_traits;
 
@@ -362,11 +362,7 @@ public:
      */
     bool operator() (const Point_2& p1, const Point_2& p2) const
     {
-      if (p1.is_same (p2))
-        return (true);
-
-      return (CGAL::compare (p1.x(), p2.x()) == EQUAL &&
-              CGAL::compare (p1.y(), p2.y()));
+      return (p1.equals (p2));
     }
   };
 
@@ -400,7 +396,7 @@ public:
       Algebraic                                      t0 = Algebraic (0);
       typename std::list<Algebraic>::const_iterator  it;
 
-      for (it = ts.begin(); it != ts.end(); ++iter)
+      for (it = ts.begin(); it != ts.end(); ++it)
       {
         *oi = make_object (X_monotone_curve_2 (B, t0, *it));
         ++oi;

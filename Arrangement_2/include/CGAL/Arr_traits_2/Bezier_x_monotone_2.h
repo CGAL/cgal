@@ -17,15 +17,15 @@
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
-#ifndef CGAL_BEZIER_CURVE_2_H
-#define CGAL_BEZIER_CURVE_2_H
+#ifndef CGAL_BEZIER_X_MONOTONE_2_H
+#define CGAL_BEZIER_X_MONOTONE_2_H
 
 /*! \file
  * Header file for the _Bezier_x_monotone_2 class.
  */
 
-#include <CGAL/Arr_trais_2/Bezier_curve_2.h>
-#include <CGAL/Arr_trais_2/Bezier_point_2.h>
+#include <CGAL/Arr_traits_2/Bezier_curve_2.h>
+#include <CGAL/Arr_traits_2/Bezier_point_2.h>
 #include <ostream>
 
 CGAL_BEGIN_NAMESPACE
@@ -54,7 +54,10 @@ public:
 
 private:
 
+  typedef typename Nt_traits::Integer             Integer;
+  typedef typename Nt_traits::Rational            Rational;
   typedef typename Nt_traits::Algebraic           Algebraic;
+  typedef typename Nt_traits::Polynomial          Polynomial;
 
   // Data members:
   Curve_2           _curve;        // The supporting Bezier curve.
@@ -191,8 +194,70 @@ public:
        const Comparison_result  res2 = CGAL::compare (p.x(), _pt.x()); );
     CGAL_precondition (res1 == EQUAL || res2 == EQUAL || res1 != res2);
 
-    // RWRW - To be done!
-    return (EQUAL);
+    // RWRW - A hueristic solution. Find a robust one!
+    double       t_low, t_high;
+    const double init_eps = 0.0000001;
+    bool         dir_match;
+
+    if (CGAL::compare (_src, _trg) == SMALLER)
+    {
+      t_low = CGAL::to_double(_src) - init_eps;
+      t_high = CGAL::to_double(_trg) + init_eps;
+      dir_match = _dir_right;
+    }
+    else
+    {
+      t_low = CGAL::to_double(_trg) - init_eps;
+      t_high = CGAL::to_double(_src) + init_eps;
+      dir_match = ! _dir_right;
+    }
+
+    Nt_traits    nt_traits;
+    double       t_mid;
+    Algebraic    t_val;
+    const double px = CGAL::to_double (p.x());
+    Algebraic    x;
+    double       diff_x;
+    const double eps = 0.0001;
+    
+    while (true)
+    {
+      t_mid = (t_low + t_high) / 2;
+      t_val = Algebraic (t_mid);
+      x = nt_traits.evaluate_at (_curve.x_polynomial(), t_val) /
+          nt_traits.convert (_curve.x_norm());
+    
+      diff_x = CGAL::to_double(x) - px;
+      if (diff_x == 0)
+        break;
+
+      if (diff_x > 0)
+      {
+        if (diff_x < eps)
+          break;
+
+        if (dir_match)
+          t_low = t_mid;
+        else
+          t_high = t_mid;
+      }
+      else
+      {
+        if (-diff_x < eps)
+          break;
+
+        if (dir_match)
+          t_high = t_mid;
+        else
+          t_low = t_mid;
+      }
+    }
+
+    // Compute the y-coordinate and compare to p.y().
+    Algebraic y = nt_traits.evaluate_at (_curve.y_polynomial(), t_val) /
+                  nt_traits.convert (_curve.y_norm());
+
+    return (CGAL::compare (p.y(), y));
   }
 
   /*!
@@ -211,8 +276,43 @@ public:
 				    const Point_2& p,
 				    unsigned int& mult) const
   {
-    // RWRW: To do ...
-    return (EQUAL);
+    if (_has_same_support (cv))
+      return (EQUAL);
+
+    // The slope of (X(t), Y(t)) at t0 is Y'(t)/X'(t).
+    // Compute the slope of (*this).
+    Algebraic    t1, t2;
+    bool         is_orig = p.is_originator (_curve, t1);
+
+    CGAL_assertion (is_orig);
+
+    Nt_traits    nt_traits;
+    Polynomial   derivX = nt_traits.derive (_curve.x_polynomial());
+    Polynomial   derivY = nt_traits.derive (_curve.y_polynomial());
+    Algebraic    slope1 = (nt_traits.evaluate_at (derivY, t1) *
+                           nt_traits.convert (_curve.x_norm())) /
+                          (nt_traits.evaluate_at (derivX, t1) *
+                           nt_traits.convert (_curve.y_norm()));
+
+    // Compute the slope of the other subcurve.
+    is_orig = p.is_originator (cv._curve, t2);
+
+    CGAL_assertion (is_orig);
+
+    derivX = nt_traits.derive (cv._curve.x_polynomial());
+    derivY = nt_traits.derive (cv._curve.y_polynomial());
+    Algebraic    slope2 = (nt_traits.evaluate_at (derivY, t2) *
+                           nt_traits.convert (cv._curve.x_norm())) /
+                          (nt_traits.evaluate_at (derivX, t2) *
+                           nt_traits.convert (cv._curve.y_norm()));
+
+    // Compare the slopes.
+    Comparison_result  res = CGAL::compare (slope1, slope2);
+
+    CGAL_assertion (res != EQUAL);  // RWRW: what should we do here?
+
+    mult = 1;
+    return (res);
   }
 
   /*!
@@ -223,8 +323,10 @@ public:
    */
   bool equals (const Self& cv) const
   {
-    // RWRW: To do ...
-    return (false);
+    // Check for equality of the supporting curves and the endpoints.
+    return (_has_same_support (cv) &&
+            left().equals (cv.left()) &&
+            right().equals (cv.right()));
   }
 
   /*!
@@ -237,7 +339,43 @@ public:
   OutputIterator intersect (const Self& cv,
                             OutputIterator oi) const
   {
-    // RWRW: To do ...
+    // RWRW: Handle overlapping curves ...
+
+    // Let B_1 be the supporting curve of (*this) and B_2 be the supporting
+    // curve of cv. We compute s-values and t-values such that B_1(s) and
+    // B_2(t) are the intersection points.
+    std::list<Algebraic>  s_vals;
+    std::list<Algebraic>  t_vals;
+
+    _curve.intersect (cv._curve, std::back_inserter (s_vals));
+    cv._curve.intersect (_curve, std::back_inserter (t_vals));
+
+    CGAL_assertion (s_vals.size() == t_vals.size());
+
+    // Pair the s- and t-values and construct the intersection points.
+    typename std::list<Algebraic>::const_iterator  s_it;
+    typename std::list<Algebraic>::const_iterator  t_it;
+ 
+    for (s_it = s_vals.begin(); s_it != s_vals.end(); ++s_it)
+    {
+      if (! _is_in_range (*s_it))
+        continue;
+      
+      Point_2       p (_curve, *s_it);
+      unsigned int  mult = 1;
+
+      for (t_it = t_vals.begin(); t_it != t_vals.end(); ++t_it)
+      {
+        if (p.equals (Point_2 (cv._curve, *t_it)) &&
+            cv._is_in_range (*t_it))
+        {
+          p.add_originator (cv._curve, *t_it);
+          *oi = CGAL::make_object (std::make_pair (p, mult));
+          ++oi;
+        }
+      }
+    }
+
     return (oi);
   }
 
@@ -256,11 +394,13 @@ public:
     
     // Find a t-value t0 such that B(t0) is the split point.
     Algebraic    t0;
-    const bool   is_orig = is_originator (_curve, t0);
+    const bool   is_orig = p.is_originator (_curve, t0);
 
     CGAL_precondition (is_orig);
     if (! is_orig)
       return;
+
+    CGAL_precondition (_is_in_range (t0));
 
     // Perform the split.
     if (_dir_right)
@@ -290,7 +430,9 @@ public:
    */
   bool can_merge_with (const Self& cv) const
   {
-    // RWRW: to do!
+    return (_has_same_support (cv) &&
+            (right().equals (cv.left()) || left().equals (cv.right())));
+            
     return (false);
   }
 
@@ -298,10 +440,45 @@ public:
    * Merge the current arc with the given arc.
    * \param cv The other subcurve.
    * \pre The two arcs are mergeable.
+   * \return The merged arc.
    */
-  void merge (const Self& cv)
+  Self merge (const Self& cv) const
   {
-    // RWRW: to do!
+    CGAL_precondition (_has_same_support (cv));
+
+    Self    res = cv;
+
+    if (right().equals (cv.left()))
+    {
+      // Extend the subcurve to the right.
+      if (_dir_right)
+      {
+        res._trg = (cv._dir_right ? cv._trg : cv._src);
+        res._pt = cv.right();
+      }
+      else
+      {
+        res._src = (cv._dir_right ? cv._trg : cv._src);
+        res._ps = cv.right();
+      }
+    }
+    else
+    {
+      CGAL_precondition (left().equals (cv.right()));
+
+      // Extend the subcurve to the left.
+      if (_dir_right)
+      {
+        res._src = (cv._dir_right ? cv._src : cv._trg);
+        res._ps = cv.left();
+      }
+      else
+      {
+        res._trg = (cv._dir_right ? cv._src : cv._trg);
+        res._pt = cv.left();
+      }
+    }
+
     return;
   }
 
@@ -322,6 +499,26 @@ public:
     return (cv);
   }
 
+private:
+
+  /*!
+   * Check if the two subcurves have the same supporting curve.
+   */
+  bool _has_same_support (const Self& cv) const
+  {
+    return (_curve.equals (cv._curve));
+  }
+
+  /*!
+   * Check if the given t-value is in the range of the subcurve.
+   */
+  bool _is_in_range (const Algebraic& t) const
+  {
+    const Comparison_result  res1 = CGAL::compare (t, _src);
+    const Comparison_result  res2 = CGAL::compare (t, _trg);
+
+    return (res1 == EQUAL || res2 == EQUAL || res1 != res2);
+  }
 };
 
 /*!

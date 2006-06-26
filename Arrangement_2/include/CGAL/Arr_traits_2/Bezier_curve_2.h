@@ -232,12 +232,9 @@ public:
   typedef typename Bcv_rep::Rat_point_2           Rat_point_2;
   typedef typename Bcv_rep::Alg_point_2           Alg_point_2;
   
+  typedef typename Bcv_rep::Integer               Integer;
   typedef typename Bcv_rep::Rational              Rational;
   typedef typename Bcv_rep::Algebraic             Algebraic;
-
-private:
-
-  typedef typename Bcv_rep::Integer               Integer;
   typedef typename Bcv_rep::Polynomial            Polynomial;
 
 public:
@@ -268,13 +265,67 @@ public:
   {}
 
   /*!
-   * Check for equality.
+   * Get the polynomial for the x-coordinates of the curve.
+   */
+  const Polynomial& x_polynomial () const
+  {
+    return (_rep()._polyX);
+  }
+
+  /*!
+   * Get the normalizing factor for the x-coordinates.
+   */
+  const Integer& x_norm () const
+  {
+    return (_rep()._normX);
+  }
+
+  /*!
+   * Get the polynomial for the y-coordinates of the curve.
+   */
+  const Polynomial& y_polynomial () const
+  {
+    return (_rep()._polyY);
+  }
+
+  /*!
+   * Get the normalizing factor for the y-coordinates.
+   */
+  const Integer& y_norm () const
+  {
+    return (_rep()._normY);
+  }
+
+  /*!
+   * Check if both curve handles refer to the same object.
    */
   bool is_same (const Self& bc) const
   {
     return (this->identical (bc));
   }
 
+  /*!
+   * Check for equality.
+   */
+  bool equals (const Self& bc) const
+  {
+    if (this->identical (bc))
+      return (true);
+
+    // Check if the X(t) and Y(t) polynomials are equivalent in both curves.
+    Nt_traits     nt_traits;
+    Polynomial    diffX = nt_traits.scale (_rep()._polyX, bc._rep()._normX) -
+                          nt_traits.scale (bc._rep()._polyX, _rep()._normX);
+
+    if (nt_traits.degree (diffX) >= 0)
+      return (false);
+
+    Polynomial    diffY = nt_traits.scale (_rep()._polyY, bc._rep()._normY) -
+                          nt_traits.scale (bc._rep()._polyY, _rep()._normY);
+
+    return (nt_traits.degree (diffY) < 0);
+  }
+ 
   /*!
    * Compute a point of the Bezier curve given a t-value.
    * \param t The given t-value.

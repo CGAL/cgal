@@ -100,7 +100,7 @@ public:
   _Bezier_point_2_rep (const Curve_2& B, const Algebraic& t0)
   {
     CGAL_precondition (CGAL::sign (t0) != NEGATIVE &&
-                       CGAL::compare (t0, Algberaic(1)) != LARGER);
+                       CGAL::compare (t0, Algebraic(1)) != LARGER);
 
     // Set the point coordinates.
     const Alg_point_2   p = B(t0);
@@ -160,14 +160,14 @@ public:
   /*!
    * Constructor with coordinates.
    */
-  _Bezier_point_2_rep (const Algebraic& x, const Algebraic& y) :
+  _Bezier_point_2 (const Algebraic& x, const Algebraic& y) :
     Bpt_handle (Bpt_rep (x, y))
   {}
 
   /*!
    * Constructor from a point with algebraic coordinates.
    */
-  _Bezier_point_2_rep (const Alg_point_2& p) :
+  _Bezier_point_2 (const Alg_point_2& p) :
     Bpt_handle (Bpt_rep (p))
   {}
 
@@ -175,16 +175,28 @@ public:
    * Constructor given an originating curve and a t0 value.
    * \pre t0 must be between 0 and 1.
    */
-  _Bezier_point_2_rep (const Curve_2& B, const Algebraic& t0)
+  _Bezier_point_2 (const Curve_2& B, const Algebraic& t0) :
     Bpt_handle (Bpt_rep (B, t0))
   {}
 
   /*!
-   * Check for equality.
+   * Check if the two handles refer to the same object.
    */
   bool is_same (const Self& pt) const
   {
     return (this->identical (pt));
+  }
+
+  /*!
+   * Check for equality.
+   */
+  bool equals (const Self& pt) const
+  {
+    if (this->identical (pt))
+      return (true);
+    
+    return (CGAL::compare (_rep()._x, pt._rep()._x) == EQUAL &&
+            CGAL::compare (_rep()._y, pt._rep()._y) == EQUAL);
   }
 
   /*!
@@ -269,8 +281,6 @@ private:
   {
     return (*(this->ptr()));
   }
-
-
 };
 
 /*!
