@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 // #include <CGAL/Simple_cartesian.h>
+
+#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
@@ -49,9 +51,9 @@ double generic_inrimage_function(double x, double y, double z)
 std::ostream *out = 0;
 std::string filename = std::string();
 std::string function_name = "sphere";
-bool output_to_file = false;
+char* argv0 = "";
 
-void usage(char *argv0, std::string error = "")
+void usage(std::string error = "")
 {
   if( error != "" )
     std:: cerr << "Error: " << error << std::endl;
@@ -71,7 +73,7 @@ void usage(char *argv0, std::string error = "")
       ++it)
     std::cerr << "--" << it->first << " default value is "
 	      << it->second << ".\n";
-  exit(1);
+  exit(EXIT_FAILURE);
 }
 
 void parse_argv(int argc, char** argv, int extra_args = 0)
@@ -80,11 +82,11 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
     {
       std::string arg = argv[1+extra_args];
       if( arg == "-h" || arg == "--help")
-        usage(argv[0]);
+        usage();
       else if( arg == "-f" )
         {
           if( argc < (3 + extra_args) )
-            usage(argv[0], "-f must be followed by a function name!");
+            usage("-f must be followed by a function name!");
           function_name = argv[2 + extra_args];
           parse_argv(argc, argv, extra_args + 2);
         }
@@ -95,14 +97,13 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 	  if( opt_it != double_options.end() )
 	    {
 	      if( argc < (3 + extra_args) )
-		usage(argv[0],
-		      (arg + " must be followed by a double!").c_str());
+		usage((arg + " must be followed by a double!").c_str());
 	      std::stringstream s;
 	      double val;
 	      s << argv[extra_args + 2];
 	      s >> val;
 	      if( !s )
-		usage(argv[0], ("Bad double after " + arg + "!").c_str());
+		usage(("Bad double after " + arg + "!").c_str());
 	      opt_it->second = val;
 	      parse_argv(argc, argv, extra_args + 2);
 	    }
@@ -113,14 +114,13 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
             if( opt_it != string_options.end() )
             {
               if( argc < (3 + extra_args) )
-                usage(argv[0],
-                      (arg + " must be followed by a string!").c_str());
+                usage((arg + " must be followed by a string!").c_str());
               std::string s = argv[extra_args + 2];
               opt_it->second = s;
               parse_argv(argc, argv, extra_args + 2);
             }
             else
-              usage(argv[0], ("Invalid option: " + arg + "!").c_str());
+              usage(("Invalid option " + arg).c_str());
           }
 	}
       else 
@@ -135,6 +135,8 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 /////////////// Main function /////////////// 
 
 int main(int argc, char **argv) {
+  argv0 = argv[0];
+
   init_parameters();
   functions["generic_inrimage"] = &generic_inrimage_function;
 
