@@ -18,7 +18,7 @@
 # - Characters \0 and / are not supported
 #   (see http://svn.haxx.se/dev/archive-2002-04/0144.shtml).
 # Windows file systems FAT and NTFS:
-# - Control characters 0x0 to 0x1f are not supported (although they are accepted by my PC).
+# - Control characters 0x0 to 0x1f are not supported.
 # - Characters / \ : * ? " < > | are not supported.
 # - Filenames CON, PRN, AUX, NUL, COM1 to COM9, LPT1 to LPT9 and CLOCK$ are reserved,
 #   even with a path or an extension.
@@ -47,16 +47,11 @@
 
 use strict;
 require 5.004; # This is when locale support was added.
+use Encode;
 $ENV{'LANG'} = 'en_US.UTF-8';
 $ENV{'LC_CTYPE'} = 'en_US.UTF-8';
 binmode STDERR, ":utf8";
 
-# Shift off any debug options.
-my $debug = 0;
-while (@ARGV and $ARGV[0] =~ /^-d(ebug)?$/) {
-    $debug++;
-    shift;
-}
 
 # Please check the path to svnlook is correct...
 my $svnlook;
@@ -64,6 +59,13 @@ if ($^O eq 'MSWin32') {
     $svnlook = '"c:\Program Files\subversion\bin\svnlook.exe"';
 } else {
     $svnlook = '/usr/bin/svnlook';
+}
+
+# Shift off any debug options.
+my $debug = 0;
+while (@ARGV and $ARGV[0] =~ /^-d(ebug)?$/) {
+    $debug++;
+    shift;
 }
 
 # Usage
@@ -145,8 +147,16 @@ foreach my $newfile (@added)
     $newfile =~ s/.*\///;                     # Remove path
     if ($debug) {
         print STDERR "Checking $newfile\n";
-        my @letters = split //, $newfile;
-        map { print STDERR "$_ (" . ord($_) . ") " } @letters;
+
+        print STDERR "    as unicode: ";
+        my @unicode_chars = split //, $newfile;
+        map { print STDERR "$_ (" . ord($_) . ") " } @unicode_chars;
+        print STDERR "\n";
+
+        print STDERR "    as UTF-8:   ";
+        my $utf8_raw_string = Encode::encode("UTF-8", $newfile);
+        my @utf8_octets = split //, $utf8_raw_string;
+        map { print STDERR "$_ (" . ord($_) . ") " } @utf8_octets;
         print STDERR "\n";
     }
 
@@ -154,7 +164,7 @@ foreach my $newfile (@added)
     # - Control characters 0x0 to 0x1f and 0x7f are not supported
     #   (see http://subversion.tigris.org/issues/show_bug.cgi?id=1954).
     if ($newfile =~ m/([\x00-\x1F\x7f])/) {
-        $failmsg .= "\n  $newfile contains an invalid control character (0x00-0x1f 0x7f)\n";
+        $failmsg .= "\n  $newfile contains an invalid control character (0x00-0x1f 0x7f).\n";
         next;
     }
 
@@ -162,23 +172,23 @@ foreach my $newfile (@added)
     # - Characters \0 and / are not supported
     #   (see http://svn.haxx.se/dev/archive-2002-04/0144.shtml).
     if ($newfile =~ m/[\x00\/]/) {
-        $failmsg .= "\n  $newfile contains a character invalid on Unix (\\0 \/)\n";
+        $failmsg .= "\n  $newfile contains a character invalid on Unix (\\0 \/).\n";
         next;
     }
 
     # Windows file systems FAT and NTFS:
-    # - Control characters 0x0 to 0x1f are not supported (although they are accepted by my PC).
+    # - Control characters 0x0 to 0x1f are not supported.
     # - Characters / \ : * ? " < > | are not supported.
     # - Filenames CON, PRN, AUX, NUL, COM1 to COM9, LPT1 to LPT9 and CLOCK$ are reserved,
     #   even with a path or an extension.
     # - A filename cannot end by . or SPACE characters.
     # (see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/fileio/fs/naming_a_file.asp)
     if ($newfile =~ m/[\x00-\x1F\/\\\:\*\?\"\<\>\|]/) {
-        $failmsg .= "\n  $newfile contains a character invalid on Windows (0x00-0x1f \/ \\ \: \* \? \" \< \> \|)\n";
+        $failmsg .= "\n  $newfile contains a character invalid on Windows (0x00-0x1f \/ \\ \: \* \? \" \< \> \|).\n";
         next;
     }
     if ($newfile =~ m/^(CON|PRN|AUX|NUL|COM\d|LPT\d|CLOCK\$)(\..*)?$/i) {
-        $failmsg .= "\n  $newfile is a reserved filename on Windows\n";
+        $failmsg .= "\n  $newfile is a reserved filename on Windows.\n";
         next;
     }
     if ($newfile =~ m/[\. ]$/) {

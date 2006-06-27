@@ -69,9 +69,7 @@ fi
 
 # Ensure that the repository accepts only file/folder names
 # compatible with Windows/Unix/Mac file systems (plus SVN own requirements).
-echo "" >> /tmp/svnlog.txt
-/svn/cgal/hooks/check-characters.pl -d "$REPOS" "$TXN" 2>> /tmp/svnlog.txt  # Log
-/svn/cgal/hooks/check-characters.pl "$REPOS" "$TXN" || exit 1               # Actual check
+/svn/cgal/hooks/check-characters.pl "$REPOS" "$TXN" || exit 1
 
 # All checks passed, so allow the commit.
 exit 0
