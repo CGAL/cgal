@@ -218,7 +218,7 @@ create_makefile()
   echo
   echo
   echo    ".cpp\$(OBJ_EXT):"
-  echo    "    \$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
   echo
 
 }
