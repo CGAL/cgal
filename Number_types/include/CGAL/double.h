@@ -150,10 +150,23 @@ bool
 is_valid(double d)
 { return (d == d); }
 
+#ifdef CGAL_CFG_NUMERIC_LIMITS_BUG
+
 inline
 bool
 is_finite(double d)
 { return (d == d) && (is_valid(d-d)); }
+
+#else 
+
+inline
+bool
+is_finite(double d)
+{ return d != std::numeric_limits<double>::infinity()) 
+  && (-d != std::numeric_limits<double>::infinity()); }
+
+#endif
+
 
 #endif
 
