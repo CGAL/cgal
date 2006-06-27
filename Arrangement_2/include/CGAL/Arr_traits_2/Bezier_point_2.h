@@ -223,6 +223,18 @@ public:
   {}
 
   /*!
+   * Assignment operator.
+   */
+  Self& operator= (const Self& pt)
+  {
+    if (this == &pt || this->identical (pt))
+      return (*this);
+
+    Bpt_handle::operator= (pt);
+    return (*this);
+  }
+
+  /*!
    * Check if the two handles refer to the same object.
    */
   bool is_same (const Self& pt) const
@@ -293,9 +305,27 @@ public:
    */
   void add_originator (const Curve_2& B, const Algebraic& t0) const
   {
-    Bpt_rep&  rep = const_cast<Bpt_rep&> (_rep());
+    Bpt_rep&             rep = const_cast<Bpt_rep&> (_rep());
 
     rep._origs.push_back (typename Bpt_rep::Originator (B, t0));
+    return;
+  }
+
+  /*!
+   * Add the originators of the given point.
+   */
+  void merge_originators (const Self& pt) const
+  {
+    Bpt_rep&             rep = const_cast<Bpt_rep&> (_rep());
+    Originator_iterator  org_it = pt.originators_begin();
+
+    while (org_it != pt.originators_end())
+    {
+      rep._origs.push_back (typename Bpt_rep::Originator (org_it->first,
+                                                          org_it->second));
+      ++org_it;
+    }
+
     return;
   }
 

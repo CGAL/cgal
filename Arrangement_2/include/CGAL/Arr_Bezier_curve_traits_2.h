@@ -50,34 +50,48 @@ class Arr_Bezier_curve_traits_2
 {
 public:
 
-  typedef Rat_kernel_                     Rat_kernel;
-  typedef Alg_kernel_                     Alg_kernel;
-  typedef Nt_traits_                      Nt_traits;
+  typedef Rat_kernel_                            Rat_kernel;
+  typedef Alg_kernel_                            Alg_kernel;
+  typedef Nt_traits_                             Nt_traits;
+  typedef Arr_Bezier_curve_traits_2<Rat_kernel,
+                                    Alg_kernel,
+                                    Nt_traits>   Self;
+ 
+  typedef typename Nt_traits::Integer            Integer;
+  typedef typename Rat_kernel::FT                Rational;
+  typedef typename Alg_kernel::FT                Algebraic;
 
-  typedef typename Nt_traits::Integer     Integer;
-  typedef typename Rat_kernel::FT         Rational;
-  typedef typename Alg_kernel::FT         Algebraic;
-
-  typedef typename Rat_kernel::Point_2    Rat_point_2;
-  typedef typename Alg_kernel::Point_2    Alg_point_2;
+  typedef typename Rat_kernel::Point_2           Rat_point_2;
+  typedef typename Alg_kernel::Point_2           Alg_point_2;
   
   // Category tags:
-  typedef Tag_true                        Has_left_category;
-  typedef Tag_true                        Has_merge_category;
-  typedef Tag_false                       Has_infinite_category;
+  typedef Tag_true                               Has_left_category;
+  typedef Tag_true                               Has_merge_category;
+  typedef Tag_false                              Has_infinite_category;
 
   // Traits-class types:
   typedef _Bezier_curve_2<Rat_kernel,
                           Alg_kernel,
-                          Nt_traits>                 Curve_2;
+                          Nt_traits>             Curve_2;
 
   typedef _Bezier_x_monotone_2<Rat_kernel,
                                Alg_kernel,
-                               Nt_traits>            X_monotone_curve_2;
+                               Nt_traits>        X_monotone_curve_2;
 
   typedef _Bezier_point_2<Rat_kernel,
                           Alg_kernel,
-                          Nt_traits>                 Point_2;
+                          Nt_traits>             Point_2;
+
+private:
+
+  // Type definition for the intersection points mapping.
+  typedef typename X_monotone_curve_2::Curve_id           Curve_id;
+  typedef typename X_monotone_curve_2::Intersection_point_2
+                                                          Intersection_point_2;
+  typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
+
+  Intersection_map  inter_map;   // Mapping curve pairs to their intersection
+                                 // points.
 
 public:
 
@@ -86,6 +100,13 @@ public:
    */
   Arr_Bezier_curve_traits_2 ()
   {}
+
+  /*! Get the next conic index. */
+  static unsigned int get_index () 
+  {
+    static unsigned int index = 0;
+    return (++index);
+  }
 
   /// \name Functor definitions.
   //@{
@@ -383,6 +404,10 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& B, OutputIterator oi)
     {
+      // Create an ID for the Bezier curve B.
+      unsigned int  index = Self::get_index();
+      Curve_id      curve_id (index);
+
       // Compute the t-values where B(t) is a point with a vertical tangent.  
       std::list<Algebraic>                           ts;
 
@@ -394,14 +419,14 @@ public:
 
       for (it = ts.begin(); it != ts.end(); ++it)
       {
-        *oi = make_object (X_monotone_curve_2 (B, t0, *it));
+        *oi = make_object (X_monotone_curve_2 (B, t0, *it, curve_id));
         ++oi;
 
         t0 = *it;
       }
 
       // Create the final subcurve.
-      *oi = make_object (X_monotone_curve_2 (B, t0, Algebraic (1)));
+      *oi = make_object (X_monotone_curve_2 (B, t0, Algebraic (1), curve_id));
 
       return (oi);
     }
@@ -440,7 +465,16 @@ public:
 
   class Intersect_2
   {
+  private:
+
+    Intersection_map&  _inter_map;       // The map of intersection points.
+
   public:
+
+    /*! Constructor. */
+    Intersect_2 (Intersection_map& map) :
+      _inter_map (map)
+    {}
 
     /*!
      * Find the intersections of the two given curves and insert them to the
@@ -456,14 +490,14 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi)
     {
-      return (cv1.intersect (cv2, oi));
+      return (cv1.intersect (cv2, _inter_map, oi));
     }
   };
 
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object () const
   {
-    return Intersect_2();
+    return (Intersect_2 (inter_map));
   }
 
   class Are_mergeable_2

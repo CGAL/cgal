@@ -343,63 +343,35 @@ public:
   {
     // TODO: Handle overlapping curves ...
 
-    // Let B_1 be the supporting curve of (*this) and B_2 be the supporting
-    // curve of cv. We compute s-values and t-values such that B_1(s) and
-    // B_2(t) are the intersection points.
-    std::list<Algebraic>  s_vals;
-    std::list<Algebraic>  t_vals;
+    // Compute all intersection between the supporting Bezier curves.
+    std::list<Point_2>                           pts;
+    typename std::list<Point_2>::const_iterator  pit;
 
-    _curve.intersect (cv._curve, std::back_inserter (s_vals));
-    cv._curve.intersect (_curve, std::back_inserter (t_vals));
+    _intersect_curves (_curve, cv._curve,
+                       std::back_inserter (pts));
 
-    CGAL_assertion (s_vals.size() == t_vals.size());
+    // Report only the intersection points that lie on both given subcurves.
+    Algebraic            s, t;
+    bool                 is_orig;
+    const unsigned int   mult = 0;
 
-    // Pair the s- and t-values and construct the intersection points.
-    typename std::list<Algebraic>::iterator  s_it;
-    typename std::list<Algebraic>::iterator  t_it, best_it;
- 
-    for (s_it = s_vals.begin(); s_it != s_vals.end(); ++s_it)
+    for (pit = pts.begin(); pit != pts.end(); ++pit)
     {
-      if (! _is_in_range (*s_it))
-        continue;
-      
-      // If the point lies in the range of (*this), find a t-value for cv
-      // that matches this point.
-      // TODO: Be more carful here ...
-      Point_2       p (_curve, *s_it);
-      const double  px = CGAL::to_double (p.x());
-      const double  py = CGAL::to_double (p.y());
-      unsigned int  mult = 0;
-      double        sqr_dist;
-      double        best_sqr_dist = 0;
+      // Get an s-value and a t-value such that _curve(s) == cv._curve(t)
+      // is the current intersection point.
+      is_orig = pit->is_originator (_curve, s);
+      CGAL_assertion (is_orig);
 
-      best_it = t_vals.end();
-      for (t_it = t_vals.begin(); t_it != t_vals.end(); ++t_it)
+      is_orig = pit->is_originator (cv._curve, t);
+      CGAL_assertion (is_orig);
+
+      // Report on the intersection point only if it is in the range of both
+      // subcurves.
+      if (_is_in_range (s) && cv._is_in_range (t))
       {
-        Point_2       q (cv._curve, *t_it);
-        const double  qx = CGAL::to_double (q.x());
-        const double  qy = CGAL::to_double (q.y());
-
-        sqr_dist = (qx - px)*(qx - px) + (qy - py)*(qy - py);
-        if (best_it == t_vals.end() || sqr_dist < best_sqr_dist)
-        {
-          best_it = t_it;
-          best_sqr_dist = sqr_dist;
-        }
-      }
-
-      CGAL_assertion (best_it != t_vals.end());
-        
-      // If the t-value is in the range of cv, add the intersection point.
-      if (cv._is_in_range (*best_it))
-      {
-        p.add_originator (cv._curve, *best_it);
-        *oi = CGAL::make_object (std::make_pair (p, mult));
+        *oi = CGAL::make_object (std::make_pair (*pit, mult));
         ++oi;
-      }
-      
-      // Remove the t-value that matches the current s-value.
-      t_vals.erase (best_it);
+      }      
     }
 
     return (oi);
@@ -551,6 +523,135 @@ private:
     const Comparison_result  res2 = CGAL::compare (t, _trg);
 
     return (res1 == EQUAL || res2 == EQUAL || res1 != res2);
+  }
+
+  /*! \struct
+   * An auxiliary functor for comparing approximate distances.
+   */
+  typedef std::pair<double, double>        App_point_2;
+  typedef std::pair<Point_2, App_point_2>  Ex_point_2;
+  typedef std::list<Ex_point_2>            Point_list;
+  typedef typename Point_list::iterator    Point_iter;
+  typedef std::pair<double, Point_iter>    Distance_iter;
+
+  struct Less_distance_iter
+  {
+    bool operator() (const Distance_iter& dit1,
+                     const Distance_iter& dit2) const
+    {
+      return (dit1.first < dit2.first);
+    }
+  };
+
+  /*!
+   * Compute the intersection points of two Bezier curves.
+   * \param B1 The first Bezier curve.
+   * \param B2 The second Bezier curve.
+   * \param oi Output: An output iterator for the intersection points.
+   * \return A past-the-end iterator for the range of intersection points.
+   */
+  template<class OutputIterator>
+  OutputIterator _intersect_curves (const Curve_2& B1,
+                                    const Curve_2& B2,
+                                    OutputIterator oi) const
+  {
+    // Compute s-values and t-values such that B1(s) and B2(t) are the
+    // intersection points.
+    std::list<Algebraic>  s_vals;
+    std::list<Algebraic>  t_vals;
+
+    B1.intersect (B2, std::back_inserter (s_vals));
+    B2.intersect (B1, std::back_inserter (t_vals));
+    
+    CGAL_assertion (s_vals.size() == t_vals.size());
+
+    // Construct the points according to the s- and t-values. Also compute an
+    // approximation for each point.
+    typename std::list<Algebraic>::iterator  s_it;
+    typename std::list<Algebraic>::iterator  t_it;
+    Point_2                                  pt;
+    App_point_2                              app_pt;
+    Point_list                               pts1;
+    Point_list                               pts2;
+   
+    for (s_it = s_vals.begin(); s_it != s_vals.end(); ++s_it)
+    {
+      pt = Point_2 (B1, *s_it);
+      app_pt = App_point_2 (CGAL::to_double (pt.x()),
+                            CGAL::to_double (pt.y()));
+      pts1.push_back (Ex_point_2 (pt, app_pt));
+    }
+
+    for (t_it = t_vals.begin(); t_it != t_vals.end(); ++t_it)
+    {
+      pt = Point_2 (B2, *t_it);
+      app_pt = App_point_2 (CGAL::to_double (pt.x()),
+                            CGAL::to_double (pt.y()));
+      pts2.push_back (Ex_point_2 (pt, app_pt));
+    }
+
+    // Go over the points in the pts1 list.
+    Point_iter                pit1;
+    Point_iter                pit2;
+    double                    dx, dy;
+    int                       k;
+
+    for (pit1 = pts1.begin(); pit1 != pts1.end(); ++pit1)
+    {
+      // Construct a vector of distances from the current point to all other
+      // points in the pts2 list.
+      const int                     n_pts2 = pts2.size();
+      std::vector<Distance_iter>    dist_vec (n_pts2);
+
+      for (k = 0, pit2 = pts2.begin(); pit2 != pts2.end(); k++, ++pit2)
+      {
+        // Compute the approximate distance between the teo current points.
+        dx = pit1->second.first - pit2->second.first;
+        dy = pit1->second.second - pit2->second.second;
+
+        dist_vec[k] = Distance_iter (dx*dx + dy*dy, pit2);
+      }
+      
+      // Sort the vector according to the distances from *pit1.
+      std::sort (dist_vec.begin(), dist_vec.end(), 
+                 Less_distance_iter());
+
+      // Go over the vector entries, starting from the most distant from *pit1
+      // to the closest and eliminate pairs of points (we expect that
+      // eliminating the distant points is done easily). We stop when we find
+      // a pait for *pit1 or when we are left with a single point.
+      Point_2&                p1 = pit1->first;
+      bool                    found = false;
+
+      for (k = n_pts2 - 1; !found && k > 0; k--)
+      {
+        pit2 = dist_vec[k].second;
+        const Point_2&          p2 = pit2->first;
+
+        if (p1.equals (p2))
+        {
+          // Add the originator of *pit2 to the originators list of *pit1, and
+          // remove this point from pts2.
+          p1.merge_originators (p2);
+          pts2.erase (pit2);
+          found = true;
+        }
+      }
+
+      if (! found)
+      {
+        // We are left with a single point - pair it with *pit1.
+        pit2 = dist_vec[0].second;
+        p1.merge_originators (pit2->first);
+        pts2.erase (pit2);
+      }
+
+      // Report the updated intersection point.
+      *oi = p1;
+      ++oi;
+    }
+
+    return (oi);
   }
 };
 

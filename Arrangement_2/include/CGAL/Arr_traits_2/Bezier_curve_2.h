@@ -264,8 +264,8 @@ public:
   /*!
    * Copy constructor.
    */
-  _Bezier_curve_2 (const Self& bcv) :
-    Bcv_handle (bcv)
+  _Bezier_curve_2 (const Self& bc) :
+    Bcv_handle (bc)
   {}
 
   /*!
@@ -279,7 +279,25 @@ public:
     Bcv_handle (Bcv_rep (pts_begin, pts_end))
   {}
 
-  // TODO: Assignment operator??? (Also for Bezier_curve_2)
+  /*!
+   * Assignment operator.
+   */
+  Self& operator= (const Self& bc)
+  {
+    if (this == &bc || this->identical (bc))
+      return (*this);
+
+    Bcv_handle::operator= (bc);
+    return (*this);
+  }
+  
+  /*!
+   * Get a unique polynomial ID (based on the actual representation pointer).
+   */
+  unsigned int id () const
+  {
+    return (static_cast<unsigned int> (this->ptr()));
+  }
 
   /*!
    * Get the polynomial for the x-coordinates of the curve.
