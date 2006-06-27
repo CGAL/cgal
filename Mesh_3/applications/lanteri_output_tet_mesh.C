@@ -29,7 +29,7 @@
 
 // traits class
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
+typedef CGAL::Regular_triangulation_filtered_traits_3<K> Regular_traits;
 typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 
 // vertex and cell types

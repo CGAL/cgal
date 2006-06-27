@@ -1,3 +1,6 @@
+27 June 2006 Laurent Rineau
+- use filtered regular traits in applications/
+
 26 June 2006 Laurent Rineau
 - in Surface_mesher:
   - remove deprecated include/CGAL/Surface_mesher/Implicit_surface.h
