@@ -51,6 +51,7 @@ double generic_inrimage_function(double x, double y, double z)
 std::ostream *out = 0;
 std::string filename = std::string();
 std::string function_name = "sphere";
+bool output_to_file = false
 char* argv0 = "";
 
 void usage(std::string error = "")
