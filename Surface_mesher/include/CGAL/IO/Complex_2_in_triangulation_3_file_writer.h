@@ -27,8 +27,8 @@
 namespace Surface_mesher_io {
 
 template < class Tr>
-int number_of_facets_on_surface(const Tr& T) {
-  int result=0;
+typename Tr::size_type number_of_facets_on_surface(const Tr& T) {
+  typename Tr::size_type result=0;
   for (typename Tr::Finite_facets_iterator fit = T.finite_facets_begin();
        fit != T.finite_facets_end(); ++fit)
     if (fit->first->is_facet_on_surface (fit->second))
