@@ -6,6 +6,7 @@
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/jet_fitting_3_assertions.h>
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
+#include <CGAL/NT_converter.h>
 
 //#include <CGAL/eigen.h> //for ALTERNATIVE  with CGAL eigen code
 
@@ -213,7 +214,11 @@ public:
   typedef typename std::vector<typename Data_Kernel::Point_3>::iterator Range_Iterator;
   typedef Monge_form<Data_Kernel>   Monge_form;
   typedef Monge_form_condition_numbers<Local_Kernel> Monge_form_condition_numbers;
-  
+
+  //used to convert number types back and forth
+  //TODO: perform conversion b = D2L_converter()(a). cf also Cartesian_converter
+  typedef NT_converter<Data_Kernel::FT,  Local_Kernel::FT> D2L_converter;
+  typedef NT_converter<Local_Kernel::FT,  Data_Kernel::FT> L2D_converter;
 
 public:
   Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
