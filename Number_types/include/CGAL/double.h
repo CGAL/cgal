@@ -27,6 +27,12 @@
 #include <CGAL/basic.h>
 #include <utility>
 #include <cmath>
+#include <limits>
+
+#ifdef _MSC_VER
+#include <float.h>
+#endif
+
 #ifdef CGAL_CFG_IEEE_754_BUG
 #  include <CGAL/IEEE_754_unions.h>
 #endif
@@ -145,10 +151,19 @@ is_valid( const double& dble)
 
 #else
 
+#ifdef _MSC_VER
+
+inline
+bool
+is_valid(double d)
+{ return ! _isnan(d); }
+#else
+
 inline
 bool
 is_valid(double d)
 { return (d == d); }
+#endif 
 
 #ifdef CGAL_CFG_NUMERIC_LIMITS_BUG
 
@@ -162,8 +177,9 @@ is_finite(double d)
 inline
 bool
 is_finite(double d)
-{ return d != std::numeric_limits<double>::infinity()) 
-  && (-d != std::numeric_limits<double>::infinity()); }
+{ return (d != std::numeric_limits<double>::infinity()) 
+    && (-d != std::numeric_limits<double>::infinity())
+    && is_valid(d); }
 
 #endif
 
