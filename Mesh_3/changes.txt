@@ -1,5 +1,7 @@
 27 June 2006 Laurent Rineau
 - use filtered regular traits in applications/
+- fixed Slivers_exuder so that it can pump vertices of surfaces too
+  (Note: I may have broken things. I'll check tomorrow.)
 
 26 June 2006 Laurent Rineau
 - in Surface_mesher:

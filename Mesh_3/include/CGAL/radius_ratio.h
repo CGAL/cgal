@@ -26,21 +26,22 @@ namespace CGAL {
 
 template <typename K>
 typename K::FT
-radius_ratio(const Point_3<K>& p0,
-             const Point_3<K>& p1,
-             const Point_3<K>& p2,
-             const Point_3<K>& p3)
+radius_ratio(const typename K::Point_3& p0,
+             const typename K::Point_3& p1,
+             const typename K::Point_3& p2,
+             const typename K::Point_3& p3,
+             K k = K())
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
   typename K::Compute_squared_distance_3 sq_distance =
-    K().compute_squared_distance_3_object();
+    k.compute_squared_distance_3_object();
   typename K::Construct_circumcenter_3 circumcenter = 
-    K().construct_circumcenter_3_object();
+    k.construct_circumcenter_3_object();
   typename K::Compute_volume_3 volume =
-    K().compute_volume_3_object();
+    k.compute_volume_3_object();
   typename K::Compute_area_3 area = 
-    K().compute_area_3_object();
+    k.compute_area_3_object();
 
   const Point_3 center = circumcenter(p0,
                                       p1,

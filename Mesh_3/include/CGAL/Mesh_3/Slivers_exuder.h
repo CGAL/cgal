@@ -35,15 +35,17 @@
 
 #include <CGAL/radius_ratio.h>
 
+#include <CGAL/Implicit_surfaces_mesher_3.h> // for Mesh_3::check_c2t3
+
 namespace CGAL {
 
 namespace Mesh_3 {
 
 template <typename K>
 typename K::FT
-radius_ratio(const CGAL::Tetrahedron_3<K>& t)
+radius_ratio(const typename K::Tetrahedron_3& t, K k = K())
 {
-  return radius_ratio(t[0], t[1], t[2], t[3]);
+  return radius_ratio(t[0], t[1], t[2], t[3], k);
 }
 
   namespace details { // various function objects
@@ -74,24 +76,41 @@ radius_ratio(const CGAL::Tetrahedron_3<K>& t)
 
     template <typename Map>
     struct First_of : 
-      std::unary_function<typename Map::Direct_entry,
-                          const typename Map::Key&>
+      public std::unary_function<typename Map::value_type,
+                                 const typename Map::key_type&>
     {
-      typedef std::unary_function<typename Map::Direct_entry,
-				  const typename Map::Key&> Base;
+      typedef std::unary_function<typename Map::value_type,
+				  const typename Map::key_type&> Base;
       typedef typename Base::result_type result_type;
       typedef typename Base::argument_type argument_type;
       
-      const typename Map::Key&
-      operator()(const typename Map::Direct_entry& p) const
+      const typename Map::key_type&
+      operator()(const typename Map::value_type& p) const
       {
 	return p.first;
       }
     }; // end class First_of
 
     template <typename Map>
+    struct Second_of : 
+      public std::unary_function<typename Map::value_type,
+                                 const typename Map::mapped_type&>
+    {
+      typedef std::unary_function<typename Map::value_type,
+				  const typename Map::mapped_type&> Base;
+      typedef typename Base::result_type result_type;
+      typedef typename Base::argument_type argument_type;
+      
+      const typename Map::mapped_type&
+      operator()(const typename Map::value_type& p) const
+      {
+	return p.second;
+      }
+    }; // end class Second_of
+
+    template <typename Map>
     class Value_of :
-      std::unary_function<typename Map::key_type,
+      std::unary_function<typename Map::data_type,
 			  typename Map::mapped_type>
     {
       Map* m;
@@ -167,7 +186,7 @@ private: //types
 
   
   /** Pre_star will represent the pre-star of a point. It is a
-   *  (double)-map of Facet (viewed from cells outside the star),
+   *  (double)-map of Facet (viewed from cells inside the star),
    *  ordered by the critial_radius of the point with the cell lies on
    *  the facet, at the exterior of the pre-star. */
   typedef CGAL::Double_map<Facet, double> Pre_star;
@@ -367,6 +386,12 @@ public: // methods
 
   void init(double radius_ratio_limit = 1.)
   {
+    CGAL_assertion_code(
+                        std::cerr << "checking c2t3 before exudation...\n";
+                        CGAL::Mesh_3::check_c2t3(c2t3);
+                        std::cerr << "done.\n";
+                        )
+ 
     stop_limit_on_radius_ratio = radius_ratio_limit;
 
     cells_queue.clear();
@@ -392,7 +417,7 @@ public: // methods
       for( i = 0; i < 4; ++i )
       {
         // do not pump surface vertices
-        if( c->vertex(i)->point().surface_index() == 0 )
+        if( true )//c->vertex(i)->point().surface_index() == 0 )
           if( pump_vertex(c->vertex(i)) )
           {
             std::cout << "P"; // vertex has been pumped
@@ -407,6 +432,13 @@ public: // methods
       // if the tet could not be deleted
       if (i==4)
         cells_queue.pop_front();
+
+#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+      std::cerr << "\nchecking c2t3...\n";
+      CGAL::Mesh_3::check_c2t3(c2t3);
+      std::cerr << "done.\n";
+#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+
     }
   } // end function pump_vertices
 
@@ -424,7 +456,8 @@ public: // methods
     tr.incident_cells(v, std::back_inserter(incident_cells));
     tr.incident_vertices(v, std::back_inserter(incident_vertices));
     
-    std::map<Facet, double> ratios;
+    typedef std::map<Facet, double> Ratios;
+    Ratios ratios;
     
     Pre_star pre_star;
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
@@ -460,7 +493,8 @@ public: // methods
       if( (*cit)->is_in_domain() )
       {
         CGAL_assertion_code(is_incident_to_a_cell_in_domain = true);
-        const double r = CGAL::to_double(radius_ratio(tr.tetrahedron(*cit)));
+        const double r = CGAL::to_double(radius_ratio(tr.tetrahedron(*cit), 
+                                                      Geom_traits()));
         ratios[f] = r;
         if( r < worst_radius_ratio ) worst_radius_ratio = r;
       }
@@ -503,7 +537,7 @@ public: // methods
     {
         std::pair<double, Facet> facet = *(pre_star.front());
         Facet link = facet.second;
-        
+
         // first critial radius
         double critical_r = facet.first;
 
@@ -564,14 +598,25 @@ public: // methods
 		  CGAL::to_double(radius_ratio(v->point(),
                                                c->vertex((k+1)&3)->point(),
                                                c->vertex((k+2)&3)->point(),
-                                               c->vertex((k+3)&3)->point()));
+                                               c->vertex((k+3)&3)->point(),
+                                               Geom_traits()));
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 		++ number_of_new_facets;
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 		index_of_new_facet = i;
 	      }
 	    else
-	      {
+            {
+              if(temp_facet.first->is_in_domain())
+              {
+                
+                CGAL_assertion_code(typename Ratios::size_type number_of_erased = )
+  
+                  ratios.erase(temp_facet);
+
+                CGAL_assertion( number_of_erased == 1);
+              }
+
 		// in this case temp_facet is an old  link facet
                 // viewed from inside the prestar
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
@@ -600,18 +645,22 @@ public: // methods
         CGAL_assertion( pre_star.size() == size_of_pre_star );
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 
-        // DOCUMENT THIS FUNCTOR
-        details::Map_value_of<Pre_star,
-          std::map<Facet, double> > value_of_ratios(ratios);
+//         // DOCUMENT THIS FUNCTOR
+//         details::Map_value_of<Pre_star,
+//           std::map<Facet, double> > value_of_ratios(ratios);
+
+        
 
 //         details::Value_of<std::map<Facet, double> > apply_ratios(&ratios);
 //         details::First_of<Radius_radius_priority_queue> get_first;
 
+        using details::Second_of;
+
 	double min_of_pre_star = 
-	  *(std::min_element(make_transform_iterator(pre_star.begin(),
-						     value_of_ratios),
-			     make_transform_iterator(pre_star.end(),
-						     value_of_ratios)));
+	  *(std::min_element(make_transform_iterator(ratios.begin(),
+						     Second_of<Ratios>()),
+			     make_transform_iterator(ratios.end(),
+						     Second_of<Ratios>())));
         CGAL_assertion( min_of_pre_star > 0 );
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
@@ -621,7 +670,7 @@ public: // methods
 
         const bool check_star = check_pre_star(pre_star,
                                                Weighted_point(v->point().point(),
-                                                              (critical_r + pre_star.front()->first) / 2,
+                                                              (pre_star.empty() ? critical_r : (critical_r + pre_star.front()->first) / 2),
                                                               v->point().surface_index()),
                                                v,
                                                inserter(pre_star_interior));
@@ -715,13 +764,24 @@ public: // methods
 			std::back_inserter(internal_facets));
 
      
+      const bool seed_domain_marker = boundary_facets[0].first->is_in_domain();
+      bool other_seed_domain_marker = seed_domain_marker;
+
+      CGAL_assertion(!tr.is_infinite(boundary_facets[0].first) ||
+		     !seed_domain_marker);
+      
+
       // delete cells from the list of bad cells
       for(typename std::vector<Cell_handle>::iterator
 	    cit = deleted_cells.begin(); 
 	  cit != deleted_cells.end();
 	  ++cit)
       {
+        if((*cit)->is_in_domain() != seed_domain_marker)
+          other_seed_domain_marker = ! seed_domain_marker;
+
         CGAL_assertion( v->point().surface_index() > 0 || (*cit)->is_in_domain() );
+
 	cells_queue.erase(*cit);
       }
 
@@ -730,12 +790,6 @@ public: // methods
       // Here, one_boundary_facet_from_outside is a facet on the
       // boundary of the conflicts zone, seen from outside the
       // conflicts zone.
-
-      const bool seed_domain_marker = boundary_facets[0].first->is_in_domain();
-
-      CGAL_assertion(!tr.is_infinite(boundary_facets[0].first) ||
-		     !seed_domain_marker);
-      
 
       Umbrella umbrella;
 
@@ -852,6 +906,7 @@ public: // methods
       walk_on_the_boundary_of_the_star(
         tr.mirror_facet(one_boundary_facet_from_outside),
 	seed_domain_marker,
+        other_seed_domain_marker,
 	umbrella,
 	new_vertex);
 
@@ -877,6 +932,7 @@ public: // methods
 
   void walk_on_the_boundary_of_the_star(Facet f,
 					bool in_domain_marker,
+					bool in_domain_marker_2,
 					Umbrella& umbrella,
 					Vertex_handle v)
   {
@@ -896,7 +952,8 @@ public: // methods
     // ** re-inserts cells of the star in cells_queue **
     if (in_domain_marker)
     {
-      const double ratio = CGAL::to_double(radius_ratio(tr.tetrahedron(c)));
+      const double ratio = CGAL::to_double(radius_ratio(tr.tetrahedron(c),
+                                                        Geom_traits()));
       if( ratio < stop_limit_on_radius_ratio )
         cells_queue.insert(c, ratio);
     }
@@ -928,7 +985,8 @@ public: // methods
 	    c->set_facet_on_surface(i, true);
 	    next_c->set_facet_on_surface(next_c->index(c), true);
 	    walk_on_the_boundary_of_the_star(Facet(next_c, next_index),
-					     !in_domain_marker,
+					     in_domain_marker_2,
+                                             in_domain_marker,
 					     umbrella, v);
 	  }
 	else
@@ -937,6 +995,7 @@ public: // methods
 			     umbrella.end() );
 	    walk_on_the_boundary_of_the_star(Facet(next_c, next_index),
 					     in_domain_marker,
+                                             in_domain_marker_2,
 					     umbrella, v);
 	  }
       }
@@ -967,7 +1026,8 @@ private: // methods
         ++cit)
       if(cit->is_in_domain())
       {
-        const double ratio = CGAL::to_double(radius_ratio(tr.tetrahedron(cit)));
+        const double ratio = CGAL::to_double(radius_ratio(tr.tetrahedron(cit),
+                                                          Geom_traits()));
         if( ratio < stop_limit_on_radius_ratio )
           cells_queue.insert(cit, ratio);
       }
@@ -1065,7 +1125,8 @@ output_slivers_to_off (std::ostream& os, const Tr & tr,
        cit != tr.finite_cells_end(); ++cit)
   {
     if( cit->is_in_domain() &&
-	CGAL::to_double(Mesh_3::radius_ratio(tr.tetrahedron(cit)))
+	CGAL::to_double(Mesh_3::radius_ratio(tr.tetrahedron(cit),
+                                             typename Tr::Geom_traits()))
         < sliver_bound )
       slivers.insert(cit);
   }
