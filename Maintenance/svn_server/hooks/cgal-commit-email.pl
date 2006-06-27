@@ -62,10 +62,11 @@ sub html_encode
     my $line;
 
     for $line (@{$data_ref}) {
-        # Encode special characters ; < >
+        # Encode special characters ; < > SPACE
         $line =~ s/&/&amp;/g;
         $line =~ s/</&lt;/g;
         $line =~ s/>/&gt;/g;
+        $line =~ s/ /&nbsp;/g;
 
         # Encode new line
         $line =~ s/\n/<br>\n/;
@@ -486,7 +487,9 @@ my @body_html;
     push(@body_html, "Date: $date<br>\n");
     push(@body_html, "<br>\n");
     push(@body_html, "Log message:<br>\n");
-    push(@body_html, html_encode(\@log));
+    push(@body_html, "<pre>\n");
+    push(@body_html, encode_for_pre(\@log));
+    push(@body_html, "</pre>\n");
 
     # Added files list
     if (@adds)
