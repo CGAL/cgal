@@ -95,11 +95,7 @@ protected:
   std::list<unsigned int>    m_subcurves_at_ubf;
   Event*                     m_prev_minus_inf_x_event;
   Event*                     m_prev_plus_inf_y_event;
-
   
-
-
-
 private:
 
   Arr_construction_visitor (const Self& );
@@ -193,7 +189,10 @@ public:
     }
 
     if(event->get_num_right_curves() == 0)
+    {
+      set_prev_inf_event_to_null(event);
       return true;
+    }
 
     event->get_is_curve_in_arr().resize(event->get_num_right_curves(),false);
     for(SubCurveIter itr = event->right_curves_begin();
@@ -218,7 +217,7 @@ public:
     {
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) )
-      {
+      { 
         res = this->insert_from_right_vertex(cv, hhandle, sc);
         res = res->twin();
       }
@@ -244,6 +243,8 @@ public:
         CGAL_assertion(prev->face() == hhandle->face());
        
         bool dummy;
+        
+
         res = this->insert_at_vertices(cv,hhandle,prev,sc, dummy);
         res = res->twin();
       }
@@ -269,6 +270,7 @@ public:
 
     if(lastEvent->dec_right_curves_counter() == 0)
     {
+      set_prev_inf_event_to_null(lastEvent);
       (this ->deallocate_event(lastEvent));
     }
 
@@ -479,7 +481,7 @@ public:
     case MINUS_INFINITY:
       m_arr_access.split_fictitious_edge(m_lh, v_at_inf);
       event->set_halfedge_handle(m_lh);
-      if(m_prev_minus_inf_x_event != NULL)
+      if(m_prev_minus_inf_x_event)
         m_prev_minus_inf_x_event->set_halfedge_handle(m_lh->next());
       m_prev_minus_inf_x_event = event;
       return;
@@ -562,6 +564,15 @@ private:
     }
 
     m_sc_he_table[i] = he;
+  }
+
+  void set_prev_inf_event_to_null(Event* e)
+  {
+    if(e == m_prev_minus_inf_x_event)
+        m_prev_minus_inf_x_event = NULL;
+      else
+        if(e == m_prev_plus_inf_y_event)
+          m_prev_plus_inf_y_event = NULL;
   }
 
 };

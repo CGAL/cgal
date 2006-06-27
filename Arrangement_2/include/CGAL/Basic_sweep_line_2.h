@@ -485,9 +485,6 @@ public:
     _init_endpoint(curve, MAX_END, m_subCurves+index);
     _init_endpoint(curve, MIN_END, m_subCurves+index);
      
-    /*(m_subCurves+index)->set_left_event(left_event);
-    (m_subCurves+index)->set_right_event(right_event);*/
-     
     return;
   }
 
@@ -901,7 +898,7 @@ protected:
       // We have a new event
       Point_2 pt = Point_2();
       e = allocate_event(pt, type);
-      _set_attributes_of_infinity(e, x_inf, y_inf, ind);
+      _set_attributes_of_infinity(e, x_inf, y_inf);
       if(sc != NULL)
       {
         if(type == Base_event::LEFT_END)
@@ -922,7 +919,7 @@ protected:
       // The event already exsits
       e = *(pair_res.first);
       e->set_attribute(type);
-      _set_attributes_of_infinity(e, x_inf, y_inf, ind);
+      _set_attributes_of_infinity(e, x_inf, y_inf);
       if(sc != NULL)
       {
         if(type == Base_event::LEFT_END)
@@ -938,14 +935,12 @@ protected:
       }
     }
     
-
     return (std::make_pair(e, !exist));
   }
 
   void _set_attributes_of_infinity(Event* e,
                                    Infinity_type x_inf,
-                                   Infinity_type y_inf,
-                                   Curve_end     ind)
+                                   Infinity_type y_inf)
   {
     if(x_inf == MINUS_INFINITY)
       e->set_minus_infinite_x();
