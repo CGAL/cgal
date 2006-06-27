@@ -49,7 +49,7 @@ using boost::tie;
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Regular_triangulation_filtered_traits_3<K> Regular_traits;
 typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
-typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits> Vb;
+typedef CGAL::Surface_mesh_vertex_base_3<My_traits> Vb;
 typedef CGAL::Regular_triangulation_cell_base_3<My_traits> Cb1;
 typedef CGAL::Surface_mesh_cell_base_3<My_traits, Cb1> Cb2;
 typedef CGAL::Volume_mesher_cell_base_3<My_traits, Cb2> Cb;
