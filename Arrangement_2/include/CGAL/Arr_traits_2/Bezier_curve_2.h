@@ -84,6 +84,10 @@ private:
   Polynomial        _polyY;       // The polynomial for y.
   Integer           _normY;       // Normalizing factor for y.
 
+  typedef std::vector<Rat_point_2>                   Control_point_vec;
+
+  Control_point_vec _ctrl_pts;    // The control points.
+
 public:
 
   /*! Default constructor. */
@@ -110,6 +114,8 @@ public:
     CGAL_precondition_msg (n > 0,
                            "There must be at least 2 control points.");
  
+    _ctrl_pts.resize (n + 1);
+
     for (j = 0; j <= n; j++)
       coeffsX[j] = coeffsY[j] = rat_zero;
 
@@ -129,6 +135,9 @@ public:
 
     for (k = 0; pts_begin != pts_end; ++pts_begin, k++)
     {
+      // Store the current control point and obtain its coordinates.
+      _ctrl_pts[k] = *pts_begin;
+
       px = pts_begin->x();
       py = pts_begin->y();
 
@@ -180,7 +189,7 @@ public:
                                     _polyY, _normY);
     delete[] coeffsY;
 
-    // TODO: Normalize the polynomials by GCD computation (?)
+    // TODO: Should we normalize the polynomials by GCD computation (?)
   }
 
 private:
@@ -229,6 +238,8 @@ private:
                               Nt_traits>          Bcv_rep;
   typedef Handle_for<Bcv_rep>                     Bcv_handle;
 
+  typedef typename Bcv_rep::Control_point_vec     Control_pt_vec;
+
 public:
 
   typedef typename Bcv_rep::Rat_point_2           Rat_point_2;
@@ -238,6 +249,8 @@ public:
   typedef typename Bcv_rep::Rational              Rational;
   typedef typename Bcv_rep::Algebraic             Algebraic;
   typedef typename Bcv_rep::Polynomial            Polynomial;
+
+  typedef typename Control_pt_vec::const_iterator Control_point_iterator;
 
 public:
 
@@ -265,6 +278,8 @@ public:
   _Bezier_curve_2 (InputIterator pts_begin, InputIterator pts_end) :
     Bcv_handle (Bcv_rep (pts_begin, pts_end))
   {}
+
+  // TODO: Assignment operator??? (Also for Bezier_curve_2)
 
   /*!
    * Get the polynomial for the x-coordinates of the curve.
@@ -296,6 +311,42 @@ public:
   const Integer& y_norm () const
   {
     return (_rep()._normY);
+  }
+
+  /*!
+   * Get the number of control points inducing the Bezier curve.
+   */
+  unsigned int number_of_control_points () const
+  {
+    return (_rep()._ctrl_pts.size());
+  }
+
+  /*!
+   * Get the i'th control point.
+   * \pre i must be between 0 and n - 1, where n is the number of control
+   *      points.
+   */
+  const Rat_point_2& control_point (unsigned int i) const
+  {
+    CGAL_precondition (i < number_of_control_points());
+
+    return ((_rep()._ctrl_pts)[i]);
+  }
+
+  /*!
+   * Get an interator for the first control point.
+   */
+  Control_point_iterator control_points_begin () const
+  {
+    return (_rep()._ctrl_pts.begin());
+  }
+
+  /*!
+   * Get a past-the-end interator for control points.
+   */
+  Control_point_iterator control_points_end () const
+  {
+    return (_rep()._ctrl_pts.end());
   }
 
   /*!
@@ -331,25 +382,68 @@ public:
   }
  
   /*!
-   * Compute a point of the Bezier curve given a t-value.
+   * Compute a point of the Bezier curve given a rational t-value.
+   * \param t The given t-value.
+   * \pre t must be between 0 and 1.
+   */
+  Rat_point_2 operator() (const Rational& t) const
+  {
+    CGAL_precondition (CGAL::sign (t) != NEGATIVE &&
+                       CGAL::compare (t, Rational(1)) != LARGER);
+    
+    // Compute the x and y coordinates.
+    const Rational     x = nt_traits.evaluate_at (_rep()._polyX, t) /
+                           Rational (_rep()._normX, 1);
+    const Rational     y = nt_traits.evaluate_at (_rep()._polyY, t) /
+                           Rational (_rep()._normY, 1);
+
+    return (Rat_point_2 (x, y));
+  }
+  
+  /*!
+   * Compute a point of the Bezier curve given an algebraic t-value.
    * \param t The given t-value.
    * \pre t must be between 0 and 1.
    */
   Alg_point_2 operator() (const Algebraic& t) const
   {
-    CGAL_precondition (CGAL::compare (t, Algebraic(0)) != SMALLER &&
-                       CGAL::compare (t, Algebraic(1)) != LARGER);
+    // Check for extermal t values (either 0 or 1).
+    Nt_traits          nt_traits;
+    const CGAL::Sign   sign_t = CGAL::sign (t);
 
-    // Compute the x and y coordinates.
-    Nt_traits        nt_traits;
-    const Algebraic  x = nt_traits.evaluate_at (_rep()._polyX, t) /
-                         nt_traits.convert (_rep()._normX);
-    const Algebraic  y = nt_traits.evaluate_at (_rep()._polyY, t) /
-                         nt_traits.convert (_rep()._normY);
+    CGAL_precondition (sign_t != NEGATIVE);
 
-    return Alg_point_2 (x, y);
+    if (sign_t == ZERO)
+    {
+      // Is t is 0, simply return the first control point.
+      const Rat_point_2&  p_0 = _rep()._ctrl_pts[0];
+
+      return (Alg_point_2 (nt_traits.convert (p_0.x()),
+                           nt_traits.convert (p_0.y())));
+    }
+
+    Comparison_result  res = CGAL::compare (t, Algebraic(1));
+
+    CGAL_precondition (res != LARGER);
+
+    if (res == EQUAL)
+    {
+      // Is t is 0, simply return the first control point.
+      const Rat_point_2&  p_n = _rep()._ctrl_pts[_rep()._ctrl_pts.size() - 1];
+
+      return (Alg_point_2 (nt_traits.convert (p_n.x()),
+                           nt_traits.convert (p_n.y())));
+    }
+
+    // The t-value is between 0 and 1: Compute the x and y coordinates.
+    const Algebraic    x = nt_traits.evaluate_at (_rep()._polyX, t) /
+                           nt_traits.convert (_rep()._normX);
+    const Algebraic    y = nt_traits.evaluate_at (_rep()._polyY, t) /
+                           nt_traits.convert (_rep()._normY);
+
+    return (Alg_point_2 (x, y));
   }
-
+ 
   /*!
    * Compute the points with vertical tangents on the curve. The function
    * actually returns t-values such that the tangent at (*this)(t) is vertical.
@@ -366,6 +460,7 @@ public:
     const Algebraic       one = Algebraic(1);
 
     nt_traits.compute_polynomial_roots (polyX_der, std::back_inserter(t_vals));
+    // TODO: Compute polynomial roots in interval [0,1]
 
     // Take only t-values strictly between 0 and 1. Note that we use the
     // fact that the list of roots we obtain is sorted in ascending order.
@@ -402,6 +497,7 @@ public:
     const Algebraic       one = Algebraic(1);
 
     nt_traits.compute_polynomial_roots (polyY_der, std::back_inserter(t_vals));
+    // TODO: compute roots in [0, 1].
 
     // Take only t-values strictly between 0 and 1. Note that we use the
     // fact that the list of roots we obtain is sorted in ascending order.
@@ -481,6 +577,7 @@ public:
     const Algebraic       one = Algebraic(1);
 
     nt_traits.compute_polynomial_roots (res, std::back_inserter(s_vals));
+    // TODO: Compute roots only in the interval [0,1].
 
     typename std::list<Algebraic>::iterator  s_iter = s_vals.begin();
 
@@ -551,11 +648,17 @@ public:
     // Sample the approximated curve.
     const int            n = (n_samples >= 2) ? n_samples : 2; 
     const double         delta_t = (t_end - t_start) / (n - 1);
+    double               x, y;
     double               t;
 
     for (k = 0; k < n; k++)
     {
       t = t_start + k * delta_t;
+      x = _evaluate_at (coeffsX, degX, t) / normX;
+      y = _evaluate_at (coeffsY, degY, t) / normY;
+
+      *oi = std::make_pair (x, y);
+      ++oi;
     }
 
     return (oi);
@@ -662,7 +765,6 @@ private:
         }
       }
 
-
       // Zero the whole i'th column of the following rows.
       for (k = i + 1; k < dim; k++)
       {
@@ -736,6 +838,26 @@ private:
     }
 
     return (os);
+  }
+
+  /*!
+   * Evaluate a polynomial with double-precision coefficient at a given point.
+   * \param coeffs The coefficients.
+   * \param deg The degree of the polynomial.
+   * \param t The value to evaluate at.
+   * \return The value of the polynomial at t.
+   */
+  double _evaluate_at (const std::vector<double>& coeffs,
+                       int deg, const double& t) const
+  {
+    // Use Horner's rule to evaluate the polynomial at t.
+    double     val = coeffs[deg];
+    int        k;
+
+    for (k = deg - 1; k >= 0; k--)
+      val = val*t + coeffs[k];
+
+    return (val);
   }
 };
 

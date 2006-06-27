@@ -194,7 +194,10 @@ public:
        const Comparison_result  res2 = CGAL::compare (p.x(), _pt.x()); );
     CGAL_precondition (res1 == EQUAL || res2 == EQUAL || res1 != res2);
 
-    // RWRW - A hueristic solution. Find a robust one!
+    // TODO: First of all, check intersections with the originating curves
+    // of p. This way we find if p is on our curve.
+
+    // TODO: A hueristic solution. Find a robust one!
     double       t_low, t_high;
     const double init_eps = 0.00000001;
     bool         dir_match;
@@ -271,7 +274,6 @@ public:
    * their given intersection point.
    * \param cv The other subcurve.
    * \param p The intersection point.
-   * \param mult Output: The mutiplicity of the intersection point.
    * \pre p lies of both subcurves.
    * \pre Neither of the subcurves is a vertical segment.
    * \return SMALLER if (*this) slope is less than cv's;
@@ -279,8 +281,7 @@ public:
    *         LARGER if (*this) slope is greater than cv's.
    */
   Comparison_result compare_slopes (const Self& cv,
-				    const Point_2& p,
-				    unsigned int& mult) const
+				    const Point_2& p) const
   {
     if (_has_same_support (cv))
       return (EQUAL);
@@ -313,12 +314,7 @@ public:
                            nt_traits.convert (cv._curve.y_norm()));
 
     // Compare the slopes.
-    Comparison_result  res = CGAL::compare (slope1, slope2);
-
-    CGAL_assertion (res != EQUAL);  // RWRW: what should we do here?
-
-    mult = 1;
-    return (res);
+    return (CGAL::compare (slope1, slope2));
   }
 
   /*!
@@ -345,7 +341,7 @@ public:
   OutputIterator intersect (const Self& cv,
                             OutputIterator oi) const
   {
-    // RWRW: Handle overlapping curves ...
+    // TODO: Handle overlapping curves ...
 
     // Let B_1 be the supporting curve of (*this) and B_2 be the supporting
     // curve of cv. We compute s-values and t-values such that B_1(s) and
@@ -369,10 +365,11 @@ public:
       
       // If the point lies in the range of (*this), find a t-value for cv
       // that matches this point.
+      // TODO: Be more carful here ...
       Point_2       p (_curve, *s_it);
       const double  px = CGAL::to_double (p.x());
       const double  py = CGAL::to_double (p.y());
-      unsigned int  mult = 1;
+      unsigned int  mult = 0;
       double        sqr_dist;
       double        best_sqr_dist = 0;
 
@@ -459,7 +456,9 @@ public:
    */
   bool can_merge_with (const Self& cv) const
   {
-    return (_has_same_support (cv) &&
+    // Note that we only allow merging subcurves of the same originating
+    // Bezier curve (overlapping curves will not do in this case).
+    return (_curve.is_same (cv._curve) &&
             (right().equals (cv.left()) || left().equals (cv.right())));
             
     return (false);
@@ -473,7 +472,7 @@ public:
    */
   Self merge (const Self& cv) const
   {
-    CGAL_precondition (_has_same_support (cv));
+    CGAL_precondition (_curve.is_same (cv._curve));
 
     Self    res = cv;
 
@@ -517,6 +516,8 @@ public:
    */
   Self flip () const
   {
+    // TODO: Is this "legal"? Should we touch the Bezier curve instead
+    // so that _trg > _src in all cases?
     Self  cv = *this;
 
     cv._src = this->_trg;
@@ -535,6 +536,9 @@ private:
    */
   bool _has_same_support (const Self& cv) const
   {
+    // TODO: Sample (m + n + 1) rational points on one curve.
+    // If they are all on the other curve, the two are equal.
+
     return (_curve.equals (cv._curve));
   }
 

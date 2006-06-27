@@ -53,7 +53,9 @@ public:
   typedef Alg_kernel_                             Alg_kernel;
   typedef Nt_traits_                              Nt_traits;
   
+  typedef typename Rat_kernel::Point_2            Rat_point_2;
   typedef typename Alg_kernel::Point_2            Alg_point_2;
+  typedef typename Nt_traits::Rational            Rational;
   typedef typename Nt_traits::Algebraic           Algebraic;
 
 private:
@@ -86,6 +88,16 @@ public:
   {}
 
   /*!
+   * Constructor from a point with rational coordinates.
+   */
+  _Bezier_point_2_rep (const Rat_point_2& p)
+  {
+    Nt_traits   nt_traits;
+    _x = nt_traits.convert (p.x());
+    _y = nt_traits.convert (p.y());
+  }
+
+  /*!
    * Constructor from a point with algebraic coordinates.
    */
   _Bezier_point_2_rep (const Alg_point_2& p) :
@@ -94,14 +106,28 @@ public:
   {}
 
   /*!
-   * Constructor given an originating curve and a t0 value.
+   * Constructor given an originating curve and a rational t0 value.
+   * \pre t0 must be between 0 and 1.
+   */
+  _Bezier_point_2_rep (const Curve_2& B, const Rational& t0)
+  {
+    // Set the point coordinates.
+    Nt_traits           nt_traits;
+    const Rat_point_2   p = B(t0);
+
+    _x = nt_traits.convert (p.x());
+    _y = nt_traits.convert (p.y());
+
+    // Create the originator pair <B(t), t0>.
+    _origs.push_back (Originator (B, nt_traits.convert (t0)));
+  }
+
+  /*!
+   * Constructor given an originating curve and an algebraic t0 value.
    * \pre t0 must be between 0 and 1.
    */
   _Bezier_point_2_rep (const Curve_2& B, const Algebraic& t0)
   {
-    CGAL_precondition (CGAL::sign (t0) != NEGATIVE &&
-                       CGAL::compare (t0, Algebraic(1)) != LARGER);
-
     // Set the point coordinates.
     const Alg_point_2   p = B(t0);
 
@@ -138,10 +164,12 @@ private:
 
 public:
 
+  typedef typename Bpt_rep::Rat_point_2           Rat_point_2;
   typedef typename Bpt_rep::Alg_point_2           Alg_point_2;
+  typedef typename Bpt_rep::Rational              Rational;
   typedef typename Bpt_rep::Algebraic             Algebraic;
   typedef typename Bpt_rep::Curve_2               Curve_2;
-  typedef typename Bpt_rep::Orig_iter             Originator_const_iterator;
+  typedef typename Bpt_rep::Orig_iter             Originator_iterator;
 
   /*!
    * Default constructor.
@@ -165,6 +193,13 @@ public:
   {}
 
   /*!
+   * Constructor from a point with rational coordinates.
+   */
+  _Bezier_point_2 (const Rat_point_2& p) :
+    Bpt_handle (Bpt_rep (p))
+  {}
+
+  /*!
    * Constructor from a point with algebraic coordinates.
    */
   _Bezier_point_2 (const Alg_point_2& p) :
@@ -172,7 +207,15 @@ public:
   {}
 
   /*!
-   * Constructor given an originating curve and a t0 value.
+   * Constructor given an originating curve and a rational t0 value.
+   * \pre t0 must be between 0 and 1.
+   */
+  _Bezier_point_2 (const Curve_2& B, const Rational& t0) :
+    Bpt_handle (Bpt_rep (B, t0))
+  {}
+
+  /*!
+   * Constructor given an originating curve and an algebraic t0 value.
    * \pre t0 must be between 0 and 1.
    */
   _Bezier_point_2 (const Curve_2& B, const Algebraic& t0) :
@@ -259,12 +302,12 @@ public:
   /*!
    * Get the range of originators (pair of <Curve_2, Algebraic>).
    */
-  Originator_const_iterator originators_begin () const
+  Originator_iterator originators_begin () const
   {
     return (_rep()._origs.begin());
   }
 
-  Originator_const_iterator originators_end () const
+  Originator_iterator originators_end () const
   {
     return (_rep()._origs.end());
   }

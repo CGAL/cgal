@@ -267,22 +267,15 @@ public:
       }
 
       // Compare the slopes of the two arcs.
-      Comparison_result        res;
-      unsigned int             mult;
-    
-      res = cv1.compare_slopes (cv2, p, mult);
+      Comparison_result        res = cv1.compare_slopes (cv2, p);
+      CGAL_assertion (res != EQUAL);
+      // TODO: Compare slopes may return EQUAL in case of tangency.
+      // We should use other methods.
 
-      // The comparison result is to the right of p. In case the multiplicity 
-      // of the intersection point p is odd, reverse this result.
-      if (mult % 2 == 1)
-      {
-	if (res == SMALLER)
-	  res = LARGER;
-	else if (res == LARGER)
-	  res = SMALLER;
-      }
-
-      return (res);
+      // The comparison result is to the right of p, so if the slopes are
+      // not equals this means that p is a simple intersection point and
+      // we therefore have to reverse the result to the left of p.
+      return ((res == LARGER) ? SMALLER : LARGER);
     }
   };
 
@@ -327,9 +320,12 @@ public:
 
       // Compare the slopes of the two arcs to determine thir relative
       // position immediately to the right of p.
-      unsigned int             mult;
+      Comparison_result  res = cv1.compare_slopes (cv2, p);
+      CGAL_assertion (res != EQUAL);
+      // TODO: Compare slopes may return EQUAL in case of tangency.
+      // We should use other methods.
 
-      return (cv1.compare_slopes (cv2, p, mult));
+      return (res);
     }
   };
 
