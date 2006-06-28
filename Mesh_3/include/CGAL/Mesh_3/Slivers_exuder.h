@@ -402,6 +402,14 @@ public: // methods
 
   void pump_vertices(double radius_ratio_limit = 1.)
   {
+    pump_vertices<true>(radius_ratio_limit);
+  }
+
+  template <
+    bool pump_vertices_on_surfaces
+    >
+  void pump_vertices(double radius_ratio_limit = 1.)
+  {
     if( ! initialized )
       init();
 
@@ -416,8 +424,11 @@ public: // methods
       int i;
       for( i = 0; i < 4; ++i )
       {
-        // do not pump surface vertices
-        if( true )//c->vertex(i)->point().surface_index() == 0 )
+        // pump_vertices_on_surfaces is a boolean template parameter.
+        // The following "if" is pruned at compiled time, if
+        // pump_vertices_on_surfaces==true.
+        if( pump_vertices_on_surfaces || 
+            c->vertex(i)->point().surface_index() == 0 )
           if( pump_vertex(c->vertex(i)) )
           {
             std::cout << "P"; // vertex has been pumped
@@ -594,12 +605,13 @@ public: // methods
 // 		std::cerr << &*(c->vertex((k+1)&3)) << "\n"
 // 			  << &*(c->vertex((k+2)&3)) << "\n"
 // 			  << &*(c->vertex((k+3)&3)) << std::endl;
-		ratios[new_facet] = 
-		  CGAL::to_double(radius_ratio(v->point(),
-                                               c->vertex((k+1)&3)->point(),
-                                               c->vertex((k+2)&3)->point(),
-                                               c->vertex((k+3)&3)->point(),
-                                               Geom_traits()));
+                if(opposite_cell->is_in_domain())
+                  ratios[new_facet] = 
+                    CGAL::to_double(radius_ratio(v->point(),
+                                                 c->vertex((k+1)&3)->point(),
+                                                 c->vertex((k+2)&3)->point(),
+                                                 c->vertex((k+3)&3)->point(),
+                                                 Geom_traits()));
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 		++ number_of_new_facets;
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER

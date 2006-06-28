@@ -221,7 +221,8 @@ bool read_tets(std::vector<double>& elements, std::istream& in)
       elements.push_back(radius_ratio(points[i0],
                                       points[i1],
                                       points[i2],
-                                      points[i3]));
+                                      points[i3],
+                                      K()));
     }
   return true;
 }
@@ -284,7 +285,8 @@ bool read_mesh(std::vector<double>& elements, std::istream& in)
     elements.push_back(radius_ratio(points[i0-1],
                                     points[i1-1],
                                     points[i2-1],
-                                    points[i3-1]));
+                                    points[i3-1],
+                                    K()));
   }
   in >> head;
   if ( !in || head != "End")
@@ -357,7 +359,8 @@ bool read_noboite(std::vector<double>& elements, std::istream& in)
     elements.push_back(radius_ratio(points[tets[i]],
                                     points[tets[i+1]],
                                     points[tets[i+2]],
-                                    points[tets[i+3]]));
+                                    points[tets[i+3]],
+                                    K()));
   }
   return true;
 }

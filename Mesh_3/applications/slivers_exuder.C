@@ -45,11 +45,20 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   ifs.close();
 
+  if(pumping_bound == 0.)
+    return EXIT_SUCCESS;
+
   CGAL::Mesh_3::Slivers_exuder<C2T3> exuder(c2t3);
 
   std::cout << "  Pumping" << std::endl;
   exuder.init(pumping_bound);
-  exuder.pump_vertices(pumping_bound);
+  if(pumping_bound > 0.)
+    // pump vertices on surfaces
+    exuder.pump_vertices(pumping_bound);
+  else 
+    // do not pump vertices on surfaces
+    exuder.template pump_vertices<false>(-pumping_bound);
+
 
   std::cout << "  Writing " << argv[2] << std::endl;
   CGAL::Mesh_3::output_mesh(ofs, c2t3);
