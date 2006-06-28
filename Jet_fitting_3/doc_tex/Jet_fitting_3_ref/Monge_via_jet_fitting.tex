@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Monge_via_jet_fitting<DataKernel,LocalKernel,LinAlgTraits>} 
+\begin{ccRefClass}{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, LinAlgTraits = Lapack>} 
  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -25,17 +25,9 @@ through an iterator ---and its past the end, it is assumed the point
 where the calculation is carried out is the first point provided by
 the iterator.
 %%
-The results are stored in instances of the classes \ccc{Monge_rep} and
-\ccc{Monge_info}, the particular informations returned depending on
-the degrees specified for the polynomial fitting and for the Monge
-representation.
-
-%This point is the first point amongst the input points given by two
-%iterators on points.
-%%
-%According to the specified degrees for the polynomial fitting and for
-%the Monge representation, it outputs the results through two classes
-%\ccc{Monge_rep} and \ccc{Monge_info}.
+The results are stored in instances of the classes \ccc{Monge_form} and
+\ccc{Monge_form_condition_numbers}, the particular information returned depending on
+the degrees specified for the polynomial fitting and for the Monge form.
 
 
 \ccInclude{CGAL/Monge_via_jet_fitting.h}
@@ -44,9 +36,9 @@ representation.
 The class \ccRefName\ has three template parameters. Parameter
 \ccc{DataKernel} provides  the geometric classes and tools
 corresponding to the input points, and also selected members of the
-\ccc{Monge_rep} class. Parameter  \ccc{LocalKernel} provides
+\ccc{Monge_form} class. Parameter  \ccc{LocalKernel} provides
 the geometric classes and tools required by local
-computations. Pparameter \ccc{LinAlgTraits} features the linear
+computations. Parameter \ccc{LinAlgTraits} features the linear
 algebra algorithms required by the fitting method.
 
 \ccTypes
@@ -59,21 +51,22 @@ algebra algorithms required by the fitting method.
 \ccTypedef{   typedef typename std::vector<typename
 Data_Kernel::Point_3>::iterator Range_Iterator; }{} 
 \ccGlue
-\ccTypedef{  typedef Monge_rep<Data_Kernel>   Monge_rep;}{}
+\ccTypedef{  typedef Monge_form<Data_Kernel>   Monge_form;}{}
 \ccGlue
-\ccTypedef{  typedef Monge_info<Local_Kernel> Monge_info;}{}
+\ccTypedef{  typedef Monge_form_condition_numbers<Local_Kernel> Monge_form_condition_numbers;}{}
 
 \ccCreation
 \ccCreationVariable{monge_fitting}  %% choose variable name, given by \ccVar
 
 \ccConstructor{Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
-int d, int dprime, Monge_rep &monge_rep, Monge_info &monge_info);}
-{The constructor performs all the computations. The $N$ input points
-are given by the \ccc{Range_Iterators}, \ccc{d} is the degree of the
+int d, int dprime, Monge_form &monge_form,
+Monge_form_condition_numbers &monge_form_condition_numbers);} {The
+constructor performs all the computations. The $N$ input points are
+given by the \ccc{Range_Iterators}, \ccc{d} is the degree of the
 fitted polynomial, \ccc{dprime} is the degree of the expected Monge
-coefficients, outputs are stored in \ccc{monge_rep} and
-\ccc{monge_info}.
-\ccPrecond $N \geq N_d=(d+1)(d+2)/2$, $1 \leq d$, $dprime \leq d$, $1
+coefficients, outputs are stored in \ccc{monge_form} and
+\ccc{monge_form_condition_numbers}.
+\ccPrecond $N \geq N_d:=(d+1)(d+2)/2$, $1 \leq d$, $dprime \leq d$, $1
 \leq dprime \leq 4$ } 
 
 %\ccOperations
@@ -82,8 +75,9 @@ coefficients, outputs are stored in \ccc{monge_rep} and
 
 \ccSeeAlso
 
-\ccc{Monge_rep},
-\ccc{Monge_info}.
+\ccc{Monge_form},
+\ccc{Monge_form_condition_numbers}
+\ccc{Lapack}.
 
 %\ccExample
 
