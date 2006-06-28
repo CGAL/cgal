@@ -256,12 +256,6 @@ protected:
     return ( i != 0);
   }
 
-  // auxiliary function for 
-  // union_find_of_incident_facets(const Vertex_handle v, int&, int&)
-  void profile_union_find_of_incident_facets_cache_valid()
-  {
-    CGAL_PROFILER("number of c2t3 cache success");
-  }
   // extract the subset F of facets of the complex incident to v
   // set i to the number of facets in F
   // set j to the number of connected component of the adjacency graph
@@ -271,12 +265,9 @@ protected:
     {
       i = v->cached_number_of_incident_facets();
       j = v->cached_number_of_components();
-      profile_union_find_of_incident_facets_cache_valid();
       return;
     }
 
-    CGAL_PROFILER("number of c2t3 cache failure");
-    
     Union_find<Facet> facets;
     incident_facets(v, std::back_inserter(facets));
 
@@ -517,7 +508,7 @@ operator>> (std::istream& is, Complex_2_in_triangulation_3<Tr>& c2t3)
       fit != c2t3.triangulation().finite_facets_end();
       ++fit)
     if(fit->first->is_facet_on_surface(fit->second))
-      c2t3.set_in_complex(*fit);
+      c2t3.template change_in_complex_status<true, true>(fit->first, fit->second);
 
   return is;
 }

@@ -1,6 +1,7 @@
 28 June 2006 Laurent Rineau
 - extends Robust_circumcenter_traits_3 so that this class is model of
 ConstructCicumcenter_3.
+- fix operator>> for c2t3, so that number_of_facets is computed correctly.
 
 26 June 2006 Laurent Rineau
 - in Surface_mesher:
