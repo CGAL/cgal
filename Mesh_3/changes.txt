@@ -1,3 +1,6 @@
+28 June 2006 Laurent Rineau
+- another fix of Slivers_exuder
+
 27 June 2006 Laurent Rineau
 - use filtered regular traits in applications/
 - fixed Slivers_exuder so that it can pump vertices of surfaces too
