@@ -1676,6 +1676,7 @@ Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text
 Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text
 Surface_mesher/test/Surface_mesher/NOTICE -text
+Surface_mesher/test/Surface_mesher/test_c2t3_iterators.C -text
 Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/conflict_zone.gif -text svneol=unset#unset
 Triangulation_2/demo/Triangulation_2/help/conflict_zone_after.gif -text svneol=unset#unset

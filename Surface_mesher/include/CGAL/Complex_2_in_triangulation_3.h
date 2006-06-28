@@ -62,50 +62,66 @@ class Complex_2_in_triangulation_3 {
   enum Face_status{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
 
 
-  class Not_in_complex {
+  class Iterator_not_in_complex {
     Self* self;
   public:
-    Not_in_complex(Self* self) : self(self) 
+    Iterator_not_in_complex(Self* self) : self(self) 
     {
     }
     
-    bool operator()(const Facet& f) const {
-      return self->face_status(f) == NOT_IN_COMPLEX;
+    template <typename Iterator> // Facet or Edges iterators
+    bool operator()(Iterator it) const {
+      return ! self->is_in_complex(*it);
     }
+  }; // end struct Iterator_not_in_complex
 
-    bool operator()(const Edge& e) const {
-      return self->face_status(e) == NOT_IN_COMPLEX;
+  class Vertex_not_in_complex {
+    Self* self;
+  public:
+    Vertex_not_in_complex(Self* self) : self(self) 
+    {
     }
-
-
+    
     bool operator()(Vertex_handle v) const {
       return ! self->is_in_complex(v);
     }
+  }; // end struct Vertex_not_in_complex
 
-  }; // end struct Not_in_complex
-
-  class Not_on_boundary_tester {
+  class Facet_not_in_complex {
     Self* self;
   public:
-    Not_on_boundary_tester(Self* self) : self(self) 
+    Facet_not_in_complex(Self* self) : self(self) 
+    {
+    }
+    
+    bool operator()(Facet f) const {
+      return ! self->is_in_complex(f);
+    }
+  }; // end struct Facet_not_in_complex
+
+  class Iterator_not_on_boundary {
+    Self* self;
+  public:
+    Iterator_not_on_boundary(Self* self) : self(self) 
     {
     }
 
-    bool operator()(const Edge& e) const {
-      return self->face_status(e)!= BOUNDARY;
+    template <class Edge_iterator>
+    bool operator()(Edge_iterator eit) const {
+      return self->face_status(*eit)!= BOUNDARY;
     }
 
   };
 
   typedef Filter_iterator<typename Triangulation::Finite_facets_iterator,
-                          Not_in_complex> Facet_iterator;
+                          Iterator_not_in_complex> Facet_iterator;
   typedef Filter_iterator<typename Triangulation::Finite_edges_iterator,
-                          Not_in_complex> Edge_iterator;
+                          Iterator_not_in_complex> Edge_iterator;
   typedef Filter_iterator<typename Triangulation::Finite_vertices_iterator,
-                          Not_in_complex> Vertex_iterator;  
+                          Vertex_not_in_complex> Vertex_iterator;  
 
   typedef Filter_iterator<typename Triangulation::Finite_edges_iterator,
-                          Not_on_boundary_tester> Boundary_edges_iterator;
+                          Iterator_not_on_boundary> Boundary_edges_iterator;
 
 protected:
   Triangulation& tr;
@@ -256,10 +272,7 @@ protected:
     CGAL_PROFILER("number of c2t3 cache failure");
     
     Union_find<Facet> facets;
-    tr.incident_facets( v, 
-                        filter_output_iterator(
-                                               std::back_inserter(facets), 
-                                               Not_in_complex(this)));
+    incident_facets(v, std::back_inserter(facets));
 
     typedef std::map<Vertex_handle, 
       typename Union_find<Facet>::handle>  Vertex_Set_map;
@@ -332,7 +345,9 @@ protected:
     // TODO: review this function (Laurent Rineau)
 
     // We assume that for the generated facets the Cell_handle is smaller than the opposite one
-    tr.incident_facets(v, filter_output_iterator(it, Not_in_complex(this)));
+    tr.incident_facets(v,
+                  CGAL::filter_output_iterator(it, 
+                                               Facet_not_in_complex(this)));
     return it;
   }
 
@@ -552,44 +567,48 @@ protected:
   }
 
   Facet_iterator facets_begin(){
-    return CGAL::filter_iterator(tr.finite_facets_begin(),
-                                 Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_facets_end(),
+                                 Iterator_not_in_complex(this),
+                                 tr.finite_facets_begin());
   }
 
   Facet_iterator facets_end(){
     return CGAL::filter_iterator(tr.finite_facets_end(),
-                                 Not_in_complex(this));
+                                 Iterator_not_in_complex(this));
   }
 
   
   Edge_iterator edges_begin(){
-    return CGAL::filter_iterator(tr.finite_edges_begin(),
-                                 Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_edges_end(),
+                                 Iterator_not_in_complex(this),
+                                 tr.finite_edges_begin());
   }
 
   Edge_iterator edges_end(){
     return CGAL::filter_iterator(tr.finite_edges_end(),
-                                 Not_in_complex(this));
+                                 Iterator_not_in_complex(this));
   }
 
   Vertex_iterator vertices_begin(){
-    return CGAL::filter_iterator(tr.finite_vertices_begin(),
-                                 Not_in_complex(this));
+    return CGAL::filter_iterator(tr.finite_vertices_end(),
+                                 Vertex_not_in_complex(this),
+                                 tr.finite_vertices_begin());
   }
 
   Vertex_iterator vertices_end(){
     return CGAL::filter_iterator(tr.finite_vertices_end(),
-                                 Not_in_complex(this));
+                                 Vertex_not_in_complex(this));
   }
 
   Boundary_edges_iterator boundary_edges_begin() {
-    return CGAL::filter_iterator(tr.finite_edges_begin(),
-                                 Not_on_boundary_tester(this)); 
+    return CGAL::filter_iterator(tr.finite_edges_end(),
+                                 Iterator_not_on_boundary(this),
+                                 tr.finite_edges_begin()); 
   }
 
   Boundary_edges_iterator boundary_edges_end() {
     return CGAL::filter_iterator(tr.finite_edges_end(),
-                                 Not_on_boundary_tester(this)); 
+                                 Iterator_not_on_boundary(this)); 
   }
 
 

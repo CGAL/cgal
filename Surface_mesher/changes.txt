@@ -1,3 +1,20 @@
+28 June 2006 Laurent Rineau
+- merge the revision 32053 in branch "CGAL-3.2-branch":
+
+    23 June 2006 Laurent Rineau
+    - fix all iterators of C2t3!!
+    - added a test to test that these iterators works...
+
+- import too, a modification of revision 31013. Use in c2t3:
+
+    this->incident_facets(v, std::back_inserter(facets));
+
+  instead of:
+
+    tr.incident_facets( v, 
+                        filter_output_iterator(std::back_inserter(facets), 
+                                               Not_in_complex(this)));
+    
 4 May 2006 Laurent Rineau
 - fix a minor bug in include/CGAL/Surface_mesh_cell_base_3.h: due to the
 - added incident_facets(Vertex_handle v, OutputIterator facets) to the
