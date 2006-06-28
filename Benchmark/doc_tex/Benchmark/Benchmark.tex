@@ -1,85 +1,22 @@
-% -*-Latex-*-
-% Benchmark, Spring 2003
-% Efi Fogel
-
-% \documentclass[11pt,a4paper]{article}
-% \usepackage{epsfig}
-% \usepackage{pst-all}
-% \usepackage{amstext,amsmath,amssymb}
-% \usepackage{alltt,url}
-% \usepackage{colordvi}
-% \usepackage{fancybox}
-% \usepackage{cc_manual}       % the style what all is about here
-% \usepackage{cc_manual_index} % the style file for indexing the manual
-
-% \setlength{\evensidemargin}{.0in}
-% \setlength{\oddsidemargin}{-0.3in}
-% \setlength{\textwidth}{6.8in}
-% \setlength{\textheight}{8.7in}
-
 % \newcommand{\floor}[1]{\left\lfloor {#1} \right\rfloor}
 % \newcommand{\unix}{{\tt UNIX}}
 % \newcommand{\dos}{{\tt DOS}}
 % \newcommand{\tildegen}{\protect\raisebox{-0.12cm}{\symbol{'176}}}
-% % \newcommand{\cgal}{{\sc cgal}}
-% % \newcommand{\leda}{{\sc leda}}
-% % \newcommand{\galia}{{\sc galia}}
-% 
-% \newenvironment{FramedVerb}%
-% 	       {\VerbatimEnvironment
-% 		 \begin{Sbox}\begin{minipage}{\textwidth}\begin{Verbatim}}%
-% 	       {\end{Verbatim}\end{minipage}\end{Sbox}
-% 		 \setlength{\fboxsep}{8pt}\fbox{\TheSbox}}
-% 
-% \newenvironment{fminipage}%
-% 	       {\begin{Sbox}\begin{minipage}}%
-% 	       {\end{minipage}\end{Sbox}\fbox{\TheSbox}}
-% 
-% %% ----- cc2tex color definition -----
-% %% for color print
-% \def\RED#1{\Mahogany{#1}}
-% \def\BLUE#1{\Orchid{#1}}
-% \def\LBLUE#1{\MidnightBlue{#1}}
-% \def\MBLUE#1{\Periwinkle{#1}}
-% \def\GBLUE#1{\CadetBlue{#1}}
-% \def\BLACK#1{\Black{#1}}
-% \def\TAN#1{\Tan{#1}}
-% \def\VIOLET#1{\Blue{#1}}
-% \def\MAGENTA#1{\Thistle{#1}}
-% \def\BROWN#1{\Plum{#1}}
-% \def\GRAY#1{\Gray{#1}}
-% \def\GREEN#1{\OliveGreen{#1}}
-% 
-% % Title
-% \title{A Benchmark Toolkit}
-% \author{Efi Fogel}
-% 
-% \begin{document}
-% \maketitle
 
 \section{Introduction}
-
-% \begin{abstract}
 \begin{verse}
 ``In the computer industry, there are three kinds of lies: lies, damn lies, and
  benchmarks.''
 \end{verse}
-This document describes a practical toolkit to evaluate the status of code. It
-can be used to create programs that measure performance, known as benchmarks,
-and other various tests, execute them, and analyze their results. With little
-effort a user of this toolkit can detect inefficiencies, bottlenecks, and loss
-of functionality or performance degradation, compare various techniques,
-algorithms, and different implementations, and measure progress. A user, can
-then, present the results in a comprehensible way. The information produced
-also includes the precise description of the execution environment to allow
-the reproduction of the results.
-% We think that in the incomprehensible realm of computer science it may help
-% refute the cliche
-% \begin{verse}
-% ``In the computer industry, there are three kinds of lies: lies, damn lies,
-% and benchmarks.''
-% \end{verse}
-% \end{abstract}
+This document describes a practical toolkit to evaluate the status of code. 
+It can be used to create programs that measure performance, known as 
+benchmarks, and other various tests, execute them, and analyze their results. 
+With little effort a user of this toolkit can detect inefficiencies, 
+bottlenecks, and loss of functionality or performance degradation, compare 
+various techniques, algorithms, and different implementations, and measure 
+progress. A user, can then, present the results in a comprehensible way. The 
+information produced also includes the precise description of the execution 
+environment to allow the reproduction of the results.
 
 There are two directives that must be followed in order to write bug-free code.
 The first is to prevent the introduction of bugs in the first place. The second
@@ -98,9 +35,9 @@ location and other pieces that are based on {\em ROOT's} location
 through command-line options.
 
 The toolkit consists of three parts that corresponds to the three phases
-required to evaluate code; (1) The creation of a hierarchy of test or benchmark
-programs, (2) the selective and controlled execution of the programs with
-various input test cases, and (3) the analysis and profiling of their results
+required to evaluate code; (i) The creation of a hierarchy of test or benchmark
+programs, (ii) the selective and controlled execution of the programs with
+various input test cases, and (iii) the analysis and profiling of their results
 and the conversion of the data into more meaningful and comprehensible
 presentations. The following Sections describe the three parts in details.
 
@@ -112,7 +49,7 @@ already available to provide a comfortable testing environment.
 
 It's worth mentioning the \textbf{ExpLab} tool set for Computational
 Experiments by Susan Hert, Lutz Kettner, Tobias Polzin, and Guido
-Schäfer from the Max-Planck-Institut f\"ur Informatik. There seems to be
+Sch{\"a}fer from the Max-Planck-Institut f{\"u}r Informatik. There seems to be
 little overlap between \textbf{ExpLab} and our toolkit, but for most
 they emphasize different aspects.
 
@@ -120,29 +57,31 @@ they emphasize different aspects.
 
 The toolkit was developed as a package in \cgal, the Computational
 Geometry Algorithms and Data Structures library, to aid in the
-development and maintenance of the planar map modules. As a \cgal\
-module on its own, it obliges to the Generic Programming Paradigm. The
-first part consists of a couple of generic C++ classes, and the
-interface between them and the user code to be evaluated.
+development and maintenance of the planar map modules. As a 
+\cgal\ module on its own, it obliges to the Generic Programming Paradigm. 
+The first part consists of a couple of generic C++ classes, and the
+interface between them and the user code to be evaluated. Some of the code 
+and documentation is derived from the material developed in the 
+\textsc{Acs} project, parts of which are published in \cite{cgal:f-ecsca-04}.
 
-The \textbf{\BROWN{Bench\_parse\_args}} class is used to parse command
-line options, interpret them, and configure the bench accordingly. The
-bench itself is performed through the \textbf{()} operator of the
-\textbf{\BROWN{Bench}} class described next.
+The \ccc{Bench_option_parser} class is used to parse command line options, 
+interpret them, and configure the bench accordingly. The benchmark itself 
+is performed through the \textbf{()} operator of the \ccc{Bench} class 
+described next.
 
-The \textbf{\BROWN{Bench}} class is parameterized with a model of the
+The \ccc{Bench} class is parameterized with a model of the
 {\em Benchable} concept. This concept serves as the interface between
 the measuring device and the operation you wish to measure, refereed
 as the target operation here after. A model of this concept must
 satisfy a few requirements as follows. It must have a default
 constructor, and it must provide four methods. The
-\textbf{\BROWN{init}()} method can be used to initialize some data
+\ccc{init()} method can be used to initialize some data
 members before the target operation is carried out. The
-\textbf{\BROWN{clean}()} method is used to clean those data members
+\ccc{clean()} method is used to clean those data members
 and residual data of the operation after the measure is completed. The
-\textbf{\BROWN{sync}()} method can be used to synchronize between the
+\ccc{sync()} method can be used to synchronize between the
 target operation and the time-sampling operations. While these three
-methods must be provided, they can be empty. The \textbf{\BROWN{op}()}
+methods must be provided, they can be empty. The \ccc{op()}
 method performs the target operation. This operation is executed in a
 controlled loop according to various criteria explained in the next
 paragraph.
@@ -152,12 +91,12 @@ of the target operation is large compared to the granularity of the
 timing device, it is sufficient to execute the target operation a
 small number of times between sampling the timing device, perhaps even
 once. You can set the number of times the target operation is executed
-through the \textbf{\BROWN{set\_samples}()} interface method of the
-\textbf{\BROWN{Bench}} class. On the other hand, if the estimated
+through the \ccc{set_samples()} interface method of the
+\ccc{Bench} class. On the other hand, if the estimated
 time-duration of a single execution is of the same order as the
 granularity of the timing device, increasing the number of executions
 increases the accuracy of the measure. With the
-\textbf{\BROWN{set\_seconds}()} method of the \textbf{\BROWN{Bench}}
+\ccc{set_seconds()} method of the \ccc{Bench}
 class, you can set the time slot in seconds allocated for the
 measure. In this case the target operation is executed in a loop while
 the number of executions is counted. When the time expires, the
@@ -171,8 +110,9 @@ tasks are to measure the time it takes to complete a sequence of
 executions of the target operation, and present the results in some useful
 manner.
 
-Figure \ref{sqrtProgram} contains a listing of a program that produces the
-results shown in figure \ref{sqrtResults}
+Below you can find the listing of a program that measures the time it takes
+to compute the square root of $\Pi$, and produces the results shown in figure 
+\ref{sqrtResults}
 
 \begin{figure}[!hbp]
 \begin{verbatim}
@@ -184,51 +124,32 @@ Square root                             1 14690512   1.0000   0.0000 14690512.00
 \caption{Square-root benchmark results.}\label{sqrtResults}
 \end{figure}
 
-The \textbf{()} operator of the \textbf{\BROWN{Bench}} class counts the number
+The \textbf{()} operator of the \ccc{Bench} class counts the number
 of times the function \textbf{sqrt()} can be executed within the allocated time
-slot. Then, it executes the \textbf{sqrt()} function for as many times as
+slot. Then, it executes the \ccc{sqrt()} function for as many times as
 counted, while measuring the time it takes to complete the sequence.
 
 By default the allocated time slot is 1 second. The program overrides the
 default with the number of seconds returned by the
-\textbf{\BROWN{get\_seconds}()} method of the
-\textbf{\BROWN{Bench\_parse\_args}} class. The default of the later is
+\ccc{get_seconds()} method of the
+\ccc{Bench_option_parser} class. The default of the later is
 1 second as well, and can be overridden with the \textbf{``-t {\em seconds}''}
 command-line option.
 
-\begin{figure}[!hbp]
-\begin{fminipage}{\textwidth}
-\begin{alltt}
-\textbf{\MAGENTA{#include <math.h>}}
-\textbf{\MAGENTA{#include <CGAL/Bench.h>}}
-\textbf{\MAGENTA{#include <CGAL/Bench.C>}}
-\textbf{\MAGENTA{#include <CGAL/Bench_parse_args.h>}}
-\textbf{\MAGENTA{#include <CGAL/Bench_parse_args.C>}}
+\ccIncludeExampleCode{../examples/Benchmark/simple.cpp}
 
-\textbf{\BLUE{class}}\textbf{\BROWN{ Bench_sqrt}} \begin{math}\{\end{math}
-\textbf{\VIOLET{private}}:
-  \textbf{\GBLUE{double}} n;
-\textbf{\VIOLET{public}}:
-  \textbf{\BROWN{Bench_sqrt}}() : n(M_PI) \begin{math}\{\end{math}\begin{math}\}\end{math}
-  \textbf{\GBLUE{int}} \textbf{\BROWN{init}}(void) \begin{math}\{\end{math} \textbf{\VIOLET{return}} 0; \begin{math}\}\end{math}
-  \textbf{\GBLUE{void}} \textbf{\BROWN{clean}}(void) \begin{math}\{\end{math}\begin{math}\}\end{math}
-  \textbf{\GBLUE{void}} \textbf{\BROWN{sync}}(void) \begin{math}\{\end{math}\begin{math}\}\end{math}
-  \textbf{\GBLUE{void}} \textbf{\BROWN{op}}(void) \begin{math}\{\end{math} sqrt(n); \begin{math}\}\end{math}
-\begin{math}\}\end{math};
+\section{Bnechmark File Format}
+We present a common file format for data instances and for benchmarking 
+\cgal\ software. It supports benchmarks on algebraic data as well as curve 
+and surface data. We document the file format grammar, a reference parser 
+implementation, and how it can be extended.
+It is derived from the material developed in the \textsc{Acs} project.
 
-\textbf{\GBLUE{int}} main(\textbf{\GBLUE{int}} argc, \textbf{\GBLUE{char}} * argv[])
-\begin{math}\{\end{math}
-  CGAL::Bench_parse_args parseArgs(argc, argv);
-  \textbf{\GBLUE{int}} rc = parseArgs.parse();
-  \textbf{\VIOLET{if}} (rc > 0) \textbf{\VIOLET{return}} 0;
-  \textbf{\VIOLET{if}} (rc < 0) \textbf{\VIOLET{return}} rc;
-  CGAL::Bench<Bench_sqrt> bench(\TAN{"Square root"}, parseArgs.get_seconds());
-  bench();
-  \textbf{\VIOLET{return}} 0;
-\begin{math}\}\end{math}\end{alltt}
-\end{fminipage}
-\caption{Square-root benchmark}\label{sqrtProgram}
-\end{figure}
+\input{Benchmark/intro}
+\input{Benchmark/benchmarkformat}
+\input{Benchmark/grammar}
+\input{Benchmark/visitor}
+\input{Benchmark/extend}
 
 \section{Execution}
 This section lists the various command-line options a benchmark
@@ -245,7 +166,7 @@ reimplemented or even removed all together, in order to make the
 toolkit fully generic, other users may ignore them for the time being.
 
 \subsection{Command-Line Options}
-A program written with the aid of the \textbf{\BROWN{Bench\_parse\_args}}
+A program written with the aid of the \ccc{Bench_option_parser}
 class accepts the command-line options listed below. The command-line options
 must be provided after the executable name and before an optional name of an
 input file. A brief description is displayed on the console as a
@@ -406,8 +327,8 @@ multiple input files. In addition the dedicated names
 {\tt Segments\_2}, {\tt Conics\_2}, and {\tt Polylines\_2} should be
 removed or extended.
 
-The \textbf{\BROWN{get\_input\_format}()} method of the
-\textbf{\BROWN{Bench\_parse\_args}} class returns the format provided
+The \ccc{get_input_format()} method of the
+\ccc{Bench_option_parser} class returns the format provided
 by the user through the \textbf{``-I format={\em format}''} command
 line option, or \textbf{``-I f={\em format}''} in short.
 
@@ -673,54 +594,9 @@ When these log files are sorted by name, which is typically the
 default, it is fairly easy to point at the most recent log file.
 
 \section{Leftturn example}
-\begin{figure}[!hbp]
-\begin{fminipage}{\textwidth}
-\begin{alltt}
-\textbf{\MAGENTA{#include <CGAL/Cartesian.h>}}
-\textbf{\MAGENTA{#include <CGAL/MP_Float.h>}}
-\textbf{\MAGENTA{#include <CGAL/Quotient.h>}}
-
-\textbf{\MAGENTA{#include <CGAL/Bench.h>}}
-\textbf{\MAGENTA{#include <CGAL/Bench.C>}}
-\textbf{\MAGENTA{#include <CGAL/Bench_parse_args.h>}}
-\textbf{\MAGENTA{#include <CGAL/Bench_parse_args.C>}}
-
-\textbf{\BLUE{typedef}} CGAL::Quotient<CGAL::MP_Float>\textbf{\BROWN{          NT;}}
-\textbf{\BLUE{typedef}} CGAL::Cartesian<NT>\textbf{\BROWN{                     Kernel;}}
-
-\textbf{\MBLUE{template <class Kernel>}}
-\textbf{\BLUE{class}}\textbf{\BROWN{ Bench_leftturn}} : \textbf{\BLUE{public}}\textbf{\BROWN{ Kernel}} \begin{math}\{\end{math}
-\textbf{\VIOLET{private}}:
-  \textbf{\BLUE{typename}} Kernel::Point_2 p, q, r;
-  \textbf{\BLUE{typename}} Kernel::Left_turn_2\textbf{\BROWN{ leftturn;}}
-\textbf{\VIOLET{public}}:
-  \textbf{\BROWN{Bench_leftturn}}()
-  \begin{math}\{\end{math}
-    leftturn = left_turn_2_object();
-    p = \textbf{\BLUE{typename}} Kernel::Point_2(0,0);
-    q = \textbf{\BLUE{typename}} Kernel::Point_2(1,1);
-    r = \textbf{\BLUE{typename}} Kernel::Point_2(0,1);
-  \begin{math}\}\end{math}
-  \textbf{\GBLUE{int}} \textbf{\BROWN{init}}(void) \begin{math}\{\end{math} \textbf{\VIOLET{return}} 0; \begin{math}\}\end{math}
-  \textbf{\GBLUE{void}} \textbf{\BROWN{clean}}(void) \begin{math}\{\end{math}\begin{math}\}\end{math}
-  \textbf{\GBLUE{void}} \textbf{\BROWN{sync}}(void) \begin{math}\{\end{math}\begin{math}\}\end{math}
-  \textbf{\GBLUE{void}} \textbf{\BROWN{op}}(void) \begin{math}\{\end{math} leftturn(p, q, r); \begin{math}\}\end{math}
-\begin{math}\}\end{math};
-
-\textbf{\GBLUE{int}} main(\textbf{\GBLUE{int}} argc, \textbf{\GBLUE{char}} * argv[])
-\begin{math}\{\end{math}
-  CGAL::Bench_parse_args parseArgs(argc, argv);
-  \textbf{\GBLUE{int}} rc = parseArgs.parse();
-  \textbf{\VIOLET{if}} (rc > 0) \textbf{\VIOLET{return}} 0;
-  \textbf{\VIOLET{if}} (rc < 0) \textbf{\VIOLET{return}} rc;
-  \textbf{\GBLUE{int}} seconds = parseArgs.get_seconds();
-  CGAL::Bench<Bench_leftturn<Kernel> > bench(\TAN{"Leftturn"}, seconds);
-  bench();
-  \textbf{\VIOLET{return}} 0;
-\begin{math}\}\end{math}\end{alltt}
-\end{fminipage}
-\caption{Benching left-turn predicate} \label{left_turn}
-\end{figure}
+The following example measures the performance of the left-turn predicate
+in \cgal.
+\ccIncludeExampleCode{../examples/Benchmark/leftturn.cpp}
 
 The result
 \begin{verbatim}
@@ -730,8 +606,13 @@ Bench                            Bench    Ops      Total    Single   Num Ops
 Leftturn                                1    90242   0.9900   0.0000 91153.5345
 \end{verbatim}
 
-% \end{document}
-% 
+\section{Acknowledgement}
+The benchmark file-format and the reference parser implementation was 
+developed at Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany, by
+Eric Berberich, Franziska Ebert, and Lutz Kettner as part of the 
+\textsc{Acs} project.
+ 
+
 % conforms to the
 % test agent
 % performance profiling
