@@ -288,7 +288,7 @@ int main(int, char**)
 
   const FT precision = 0.001;
   const int number_of_initial_points = 20;
-  const FT bounding_sphere_radius = 500.;
+  const FT bounding_sphere_radius = 2*r5.;
 
   const double facets_uniform_size_bound = 30.; // mm
   const double facets_aspect_ratio_bound = 0; // degres
