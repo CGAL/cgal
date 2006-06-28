@@ -2,6 +2,19 @@
 %WARNING: amsmath not available
 
 
+\begin{figure}[!ht]
+\begin{ccTexOnly}
+\centerline{
+\includegraphics[width=.5\linewidth]{Jet_fitting_3/david-dirmaxkmin-jpg-white-back}}
+\end{ccTexOnly}
+\caption{Principal directions associated with $k_{max}$ scaled by $k_{min}$.}
+
+\begin{ccHtmlOnly}
+<CENTER> <img border=0 src="./david-dirmaxkmin-white-back.jpg" width=400>
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
 This chapter describes the \cgal's package geared towards the
 estimation of local differential quantities on sampled surfaces, known
 either as a mesh or a point cloud.
@@ -80,7 +93,7 @@ optimal; third, point clouds can be directly handled ---no topological
 information is required.
 
 
-\subsection{Jets, Monge form and polynomial fitting}
+\subsection{Jets, Monge Form and Polynomial Fitting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{Smooth surfaces, $d$-jets and the Monge form.}
@@ -239,7 +252,7 @@ same height direction.
 %For the sake of clarity and wlog, we assume the study point is at the
 %origin.
 
-\subsection{Degenerate cases}
+\subsection{Degenerate Cases}
 \label{sec:deg-cases}
 %%%%%%%%%%%%%%%%%%%%%
 
@@ -261,20 +274,20 @@ ill poised if the condition number is too large.
 %%
 In these cases, the estimation may not be relevant. To inform the user
 of these issues, we provide the PCA results and the condition number
-of the fitting in the class \ccc{Monge_info}.
+of the fitting in the class \ccc{Monge_form_condition_numbers}.
 
 %%%%%%%%%%%%%%%%%%%%%%%
-\section{Mathematical and algorithmic details}
+\section{Mathematical and Algorithmic Details}
 %%%%%%%%%%%%%%%%%%%%%%%
 
-In this section, we detail the mathematics involved, in order to
+In this Section, we detail the mathematics involved, in order to
 justify the design choices made.
 %%
 To do so, observe that there are three relevant direct orthonormal
 basis: the world-basis $(w_x,w_y,w_z)$, the fitting-basis
 $(f_x,f_y,f_z)$, the monge-basis $(d_1,d_2,n)$.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
 \begin{ccTexOnly}
 \centerline{
 \includegraphics[width=.5\linewidth]{Jet_fitting_3/jet_fitting_basis}}
@@ -290,7 +303,7 @@ $(f_x,f_y,f_z)$, the monge-basis $(d_1,d_2,n)$.
 \end{ccHtmlOnly}
 \end{figure}
 
-\subsection{Computing a basis for the fitting}
+\subsection{Computing a Basis for the Fitting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 {\bf Input : samples\\ Output : fitting-basis}
@@ -330,11 +343,11 @@ We assume a \ccc{eigen_symm_algo} function is provided by the traits
 \ccc{LinAlgTraits}.
 %%
 This function computes the eigenvalues and eigenvectors of a real
-symmetric matrix. Eigen values are sorted in ascending order, eigen
-vectors are sorted in accordance.  The eigenvectors are guaranteed to
-be mutually orthogonal and normalised to unit magnitude.
+symmetric matrix. Eigenvalues are sorted in ascending order,
+eigenvectors are sorted in accordance.  The eigenvectors are
+guaranteed to be mutually orthogonal and normalised to unit magnitude.
 
-\subsection{Solving the interpolation / approximation problem}
+\subsection{Solving the Interpolation / Approximation Problem}
 \label{sec:solving}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -410,7 +423,7 @@ is that it works directly on the rectangular system and gives the
 condition number of the system. For more on these alternatives, see
 \cite{gl-mc-83}.
 
-\subsection{Principal  curvature / directions}
+\subsection{Principal  Curvature / Directions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 {\bf Input : coefficients of the fit $A_{i,j}$, 
@@ -461,7 +474,7 @@ of $(d_1,d_2,n)$ in the fitting-basis by $P_{W\rightarrow F}^{-1}$,
 translated by $p$, i.e. the coordinates of the origin point are
 $P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p$.
 
-\subsection{Computing  higher order Monge coefficients}
+\subsection{Computing  Higher Order Monge Coefficients}
 
 {\bf Input : coefficients of the fit, monge-basis wrt fitting-basis ($P_{F
 \rightarrow M}$)\\ 
@@ -527,7 +540,7 @@ Following \cgal's best practices in geometric software development,
 the package developed in fully generic in the C++ sense ---and is
 templated by three classes.
 
-\subsection{Options and interface specifications}
+\subsection{Options and Interface Specifications}
 %%%%%%%%%%%%%%%%%%%%%
 
 Using the fitting strategy requires specifying two degrees: the degree
@@ -554,10 +567,10 @@ $1 \leq d$, $d' \leq d$, $1 \leq d' \leq 4$
 \subsection{Output}
 %%%%%%%%%%%%%%%%%%%%
 
-As explained in section \ref{sec:intro}, the output consists of a
+As explained in Section \ref{sec:intro}, the output consists of a
 coordinate system, the Monge basis, together with the Monge
-coefficients which are stored in a Monge\_rep class. In addition, more
-information on the computational issues are stored in a Monge\_info
+coefficients which are stored in a Monge\_form class. In addition, more
+information on the computational issues are stored in a Monge\_form_condition_numbers
 class.
 
 The Monge basis is expressed in the world\_basis. These informations
@@ -582,11 +595,11 @@ clear!
 The vector of coefficient of the Monge form is $(k_1, k_2 (\leq k_1),
 b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, c_4)$ for $d' = 4$.
 
-\subsection{Template parameters}
+\subsection{Template Parameters}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The following picture illustrates the template dependencies.
-\begin{figure}[h!]
+\begin{figure}[!ht]
 \begin{ccTexOnly}
 \centerline{
 \includegraphics[width=.5\linewidth]{Jet_fitting_3_ref/template_dependence}}
@@ -609,15 +622,15 @@ More details are given in the reference manual.
 
 This class provides the types for the input sample points, together
 with $3d$ vectors and a number type. It is used as template for the
-\ccc{Monge_rep}. Typically, one can use \ccc{CGAL::Cartesian<double>}.
+\ccc{Monge_form}. Typically, one can use \ccc{CGAL::Cartesian<double>}.
 
 \subsubsection{Template class \ccc{Local_Kernel}}
 %%%%%%%%%%%
 
 This class defines the vector and number types used (i)\ for local
-computations (ii)\ to store the Monge\_info class members. Input
+computations (ii)\ to store the Monge\_form_condition_numbers class members. Input
 points of type \ccc{Data_Kernel::Point_3} are converted to
-\ccc{Local_Kernel::Point_3}. For output of the \ccc{Monge_rep} class, these
+\ccc{Local_Kernel::Point_3}. For output of the \ccc{Monge_form} class, these
 types are converted back to \ccc{Data_Kernel} ones.  Typically, one can use
 \ccc{CGAL::Cartesian<double>}.
 
@@ -651,7 +664,7 @@ algebra operation on such number types.
 \section{Examples} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\paragraph{About a point.}
+\paragraph{Single estimation about a point of a given point set.}
 The first example illustrates the computation of the local
 differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
@@ -660,25 +673,42 @@ file to output the results, the degrees $d$ and $d'$.
 \ccIncludeExampleCode{Jet_fitting_3/blind_1pt.C}
 
 \paragraph{On a mesh.}
-The second example (cf blind.C in the exemple directory) illustrates
+The second example (cf blind.C in the example directory) illustrates
 the computation of local differential quantities for all vertices of a
-given mesh. Results are twofold:
+given mesh. The neighborhood of a given vertex is computed using rings on
+the triangulation. Results are twofold:
 \begin{itemize}
 \item
-a human readable text file featuring the Monge\_rep and the Monge\_info data;
+a human readable text file featuring the Monge\_form and the
+Monge\_form_condition_numbers data;
 \item
 another text file which may be visualised with the demo program
-visu.exe displaying the Monge basis at each vertex of the mesh.
+introspect-qt displaying the Monge basis at each vertex of the mesh.
 \end{itemize}
 
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
+\begin{ccTexOnly}
+\centerline{
+\includegraphics[width=.5\linewidth]{Jet_fitting_3/david-dirmaxkmin-jpg-white-back}}
+\end{ccTexOnly}
+\caption{Principal directions associated with $k_{max}$ scaled by $k_{min}$.}
+
+\begin{ccHtmlOnly}
+<CENTER> <img border=0 src="./david-dirmaxkmin-white-back.jpg" width=600>
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
+
+\begin{figure}[!ht]
 \begin{ccTexOnly}
 \centerline{
 \includegraphics[width=.5\linewidth]{Jet_fitting_3/ppal_curv_poly2x2+y2}}
 \end{ccTexOnly}
 \caption{Principal directions of curvature and nomals at vertices of a mesh of the
- graph of the function $f(x,y)=2x²+y²$.}
+ graph of the function $f(x,y)=2x^2+y^2$.}
 
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./ppal_curv_poly2x2+y2.jpg" width=600>

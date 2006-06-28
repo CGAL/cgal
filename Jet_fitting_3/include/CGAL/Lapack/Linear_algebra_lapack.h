@@ -10,9 +10,9 @@ extern "C" {
 
 namespace CGAL {
 ////////////////////////class Lapack_matrix/////////////////////
-//in Lapack, matrices are one-dimensional arrays 
-// and elements are column-major ordered
-// this class is a wrapper defining set and get in the usual way
+//in clapack, matrices are one-dimensional arrays and elements are
+//column-major ordered. This class is a wrapper defining set and get
+//in the usual way with line and column indices.
 class Lapack_matrix{
 protected:
   double* m_matrix;
@@ -44,42 +44,10 @@ public:
 class Lapack{
 public:
   typedef Lapack_matrix Matrix;
-  // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in ascending order, 
-  // eigen vectors are sorted in accordance.
-  static
-    void eigen_symm_algo(Matrix& S, double* eval, Matrix& evec);
-  //solve MX=B using SVD and give the condition number of M
+ //solve MX=B using SVD and give the condition number of M
   static
     void solve_ls_svd_algo(Matrix& M, double* B, double &cond_nb);
 };
-
-void Lapack::eigen_symm_algo(Matrix& S, double* eval, Matrix& evec)
-{
-  char jobz = 'V';
-  char range = 'A';
-  char uplo = 'U';
-  integer n = S.nb_rows,
-    lda = S.nb_rows,
-    il = 0, iu = 0,
-    m = n, 
-    lwork = 26*n,
-    liwork = 10*n,
-    info;
-  double vl=0, vu=0, abstol = 0;
-
-  integer* isuppz = (integer*) malloc(2*n*sizeof(integer));
-  double* work = (double*) malloc(lwork*sizeof(double));
-  integer* iwork = (integer*) malloc(liwork*sizeof(integer));
-
-  dsyevr_(&jobz, &range, &uplo, &n, S.matrix(), &lda, &vl, &vu, &il, &iu, &abstol, &m,
-	  eval, evec.matrix(), &n, isuppz, work, &lwork, iwork, &liwork, &info);
-  
-  //clean up 
-  free(isuppz); 
-  free(work);
-  free(iwork);
-}
 
 void Lapack::solve_ls_svd_algo(Matrix& M, double* B, double &cond_nb)
 {

@@ -1,15 +1,7 @@
-ONGOING / QUESTIONS
-====================
-
-1. property maps: completed the solution with std::map. let's wait for
-Andreas' solution using the fields of the classes
-
-2. Visu: with introspect-qt.exe
-
-3. linagl ok, set env variable LAPACK_DIR
+To compile, you need clapack : set env variable LAPACK_DIR
 
 
-Program blind_1pt.exe 
+Program blind_1pt
 --------------------- 
 takes as input a <inputPoints.txt> which is a xyz text file 
 it compute the fitting for this single entry and 
@@ -19,18 +11,18 @@ Usage is : main <inputPoints.txt> <output.txt> <d_fitting>, <d_monge>"
 
 in_points are sampled on 0.1(x²+2y²)
 
-./blind_1pt.exe data/in_points_file.txt output.txt 2 2
-./blind_1pt.exe data/in_points_d4.txt output.txt 4 4
+./blind_1pt data/in_points_file.txt output.txt 2 2
+./blind_1pt data/in_points_d4.txt output.txt 4 4
 
 
-Program blind.exe
+Program blind
 -----------------
 takes an filename.off file as input,
 it computes a fitting for each vertex
 
 it outputs the results in :
 1. filename.off.4ogl.txt  which can be visualized with 
-	the demo program visu.exe
+	the demo program introspect-qt
 2. if option -v, filename.off.verb.txt contains human readable results
 
 Usage is : blind  with options    
@@ -49,10 +41,10 @@ Note : if the nb of collected points is less than the required min number of
    points to make the approxiamtion possible (which is constrained by the deg)
    then the vertex is skipped.
 
- ./blind.exe -f data/ellipe0.003.off -d2 -m2 -a2 
- ./blind.exe -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
+ ./blind -f data/ellipe0.003.off -d2 -m2 -a2 
+ ./blind -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
 
 visu with:
-./introspect-qt.exe ../../examples/Jet_fitting_3/data/ellipe0.003.off ../../examples/Jet_fitting_3/data_ellipe0.003.off.4ogl.txt
+./introspect-qt ../../examples/Jet_fitting_3/data/ellipe0.003.off ../../examples/Jet_fitting_3/data_ellipe0.003.off.4ogl.txt
 
-../../demo/Jet_fitting_3/visu.exe data/ellipe0.003.off data_ellipe0.003.off.4ogl.txt
+../../demo/Jet_fitting_3/introspect-qt data/ellipe0.003.off data_ellipe0.003.off.4ogl.txt

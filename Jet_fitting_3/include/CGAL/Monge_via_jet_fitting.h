@@ -4,22 +4,13 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Linear_algebraCd.h>
-#include <CGAL/jet_fitting_3_assertions.h>
+#include <CGAL/eigen.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
-#include <CGAL/NT_converter.h>
-
-//#include <CGAL/eigen.h> //for ALTERNATIVE  with CGAL eigen code
-
+#include <CGAL/jet_fitting_3_assertions.h>
 #include <math.h>
 
 CGAL_BEGIN_NAMESPACE
-
-// int fact(int n)
-// {
-//   if (n == 0)
-//     return(1);
-//   return(n * fact(n-1));
-// }
 
 unsigned int fact(unsigned int n){
   unsigned int i, p=1;
@@ -30,44 +21,44 @@ unsigned int fact(unsigned int n){
 ////////////////////// CLASS Monge_form ////////////////////////
 template <class DataKernel>
 class Monge_form {
-public: 
-  typedef typename DataKernel::FT        DFT;
-  typedef typename DataKernel::Point_3   DPoint;
-  typedef typename DataKernel::Vector_3  DVector;
-protected:
+ public: 
+  typedef typename DataKernel::FT        FT;
+  typedef typename DataKernel::Point_3   Point_3;
+  typedef typename DataKernel::Vector_3  Vector_3;
+ protected:
   //point on the fitted surface where diff quantities are computed
-  DPoint m_origin_pt;
+  Point_3 m_origin_pt;
   //the monge trihedron (d1,d2,n) is orthonormal direct
-  DVector m_d1;   //maximal ppal dir
-  DVector m_d2;   //minimal ppal dir
-  DVector m_n;    //normal direction
+  Vector_3 m_d1;   //maximal ppal dir
+  Vector_3 m_d2;   //minimal ppal dir
+  Vector_3 m_n;    //normal direction
   //coeff = (k1, k2, //ppal curv
   //         b0, b1, b2, b3, //third order
   //         c0, c1, c2, c3, c4) //fourth order
   //     if (degree==1) no coeff needed
-  std::vector<DFT> m_coefficients;
+  std::vector<FT> m_coefficients;
   
 public:
   //constructor
   Monge_form() {
-    m_origin_pt  = DPoint(0.,0.,0.); 
-    m_d1 = DVector(0.,0.,0.);
-    m_d2 = DVector(0.,0.,0.);
-    m_n = DVector(0.,0.,0.);
-    m_coefficients = std::vector<DFT>();
+    m_origin_pt  = Point_3(0.,0.,0.); 
+    m_d1 = Vector_3(0.,0.,0.);
+    m_d2 = Vector_3(0.,0.,0.);
+    m_n = Vector_3(0.,0.,0.);
+    m_coefficients = std::vector<FT>();
   }
   ~Monge_form() {}
   //access
-  const DPoint origin_pt() const { return m_origin_pt; }
-  DPoint& origin_pt() { return m_origin_pt; }
-  const DVector d1() const { return m_d1; }
-  DVector& d1() { return m_d1; }
-  const DVector d2() const { return m_d2; }
-  DVector& d2() { return m_d2; }
-  const DVector n() const { return m_n; }
-  DVector& n() { return m_n; }
-  const std::vector<DFT> coefficients() const { return m_coefficients; }
-  std::vector<DFT>& coefficients() { return m_coefficients; }
+  const Point_3 origin_pt() const { return m_origin_pt; }
+  Point_3& origin_pt() { return m_origin_pt; }
+  const Vector_3 d1() const { return m_d1; }
+  Vector_3& d1() { return m_d1; }
+  const Vector_3 d2() const { return m_d2; }
+  Vector_3& d2() { return m_d2; }
+  const Vector_3 n() const { return m_n; }
+  Vector_3& n() { return m_n; }
+  const std::vector<FT> coefficients() const { return m_coefficients; }
+  std::vector<FT>& coefficients() { return m_coefficients; }
 
   //if d>=2, number of coeffs = (d+1)(d+2)/2 -4. 
   //we remove cst, linear and the xy coeff which vanish
@@ -76,9 +67,9 @@ public:
   // if given_normal.monge_normal < 0 then change the orientation
   // if z=g(x,y) in the basis (d1,d2,n) then in the basis (d2,d1,-n)
   // z=h(x,y)=-g(y,x)
-  void comply_wrt_given_normal(const DVector given_normal);
+  void comply_wrt_given_normal(const Vector_3 given_normal);
   void dump_verbose(std::ostream& out_stream);
-  void dump_4ogl(std::ostream& out_stream, const DFT scale);
+  void dump_4ogl(std::ostream& out_stream, const FT scale);
 };
 
 template <class DataKernel>
@@ -90,7 +81,7 @@ set_up(int degree) {
 
 template <class DataKernel>
 void Monge_form<DataKernel>::
-comply_wrt_given_normal(const DVector given_normal)
+comply_wrt_given_normal(const Vector_3 given_normal)
 {
   if ( given_normal*this->n() < 0 )
     {
@@ -104,7 +95,7 @@ comply_wrt_given_normal(const DVector given_normal)
       if ( coefficients().size() >= 11) {
 	std::swap(coefficients()[6],coefficients()[10]);
 	std::swap(coefficients()[7],coefficients()[9]);}
-      typename std::vector<DFT>::iterator itb = coefficients().begin(),
+      typename std::vector<FT>::iterator itb = coefficients().begin(),
 	ite = coefficients().end();
       for (;itb!=ite;itb++) { *itb = -(*itb); }
     }
@@ -144,12 +135,11 @@ dump_verbose(std::ostream& out_stream)
 	*(coefficients()[10]
 	  -3*coefficients()[1]*coefficients()[1]*coefficients()[1] ) 
 	<< std::endl; 
- 
 }
 
 template <class DataKernel>
 void Monge_form<DataKernel>::
-dump_4ogl(std::ostream& out_stream, const DFT scale)
+dump_4ogl(std::ostream& out_stream, const FT scale)
 {
   CGAL_precondition( coefficients().size() >= 2 );
   out_stream << origin_pt()  << " "
@@ -160,72 +150,80 @@ dump_4ogl(std::ostream& out_stream, const DFT scale)
 	     << std::endl;
 }
 
+
+template <class DataKernel>
+std::ostream& 
+operator<<(std::ostream& out_stream,  Monge_form<DataKernel>& monge)
+{
+  monge.dump_verbose(out_stream);
+  return out_stream;
+}
+
 ////////////////////// CLASS Monge_form_condition_numbers ////////////////////////
-template <class LocalKernel>
+template <class LocalKernel = Cartesian<double> >
 class Monge_form_condition_numbers {  
 public:
-  typedef typename LocalKernel::FT        LFT;
-  typedef typename LocalKernel::Vector_3  LVector;
+  typedef typename LocalKernel::FT        FT;
+  typedef typename LocalKernel::Vector_3  Vector_3;
 protected:  
-  LFT m_pca_eigen_vals[3];
-  LVector m_pca_eigen_vecs[3];
-  LFT m_cond_nb;//of the least square system
+  FT m_pca_eigen_vals[3];
+  Vector_3 m_pca_eigen_vecs[3];
+  FT m_cond_nb;//of the least square system
 
 public:
   //constructor
   Monge_form_condition_numbers() {
     m_cond_nb = 0.;
     std::fill_n(m_pca_eigen_vals, 3, 0.);
-    std::fill_n(m_pca_eigen_vecs, 3, LVector()); 
+    std::fill_n(m_pca_eigen_vecs, 3, Vector_3()); 
   }
   //access
-  const LFT* pca_eigen_vals() const { return m_pca_eigen_vals; }
-  LFT* pca_eigen_vals() { return m_pca_eigen_vals; }
-  const LVector* pca_eigen_vecs() const { return m_pca_eigen_vecs; }
-  LVector* pca_eigen_vecs() { return m_pca_eigen_vecs; }
-  const LFT cond_nb() const { return m_cond_nb; }
-  LFT& cond_nb() { return m_cond_nb; }
+  const FT* pca_eigen_vals() const { return m_pca_eigen_vals; }
+  FT* pca_eigen_vals() { return m_pca_eigen_vals; }
+  const Vector_3* pca_eigen_vecs() const { return m_pca_eigen_vecs; }
+  Vector_3* pca_eigen_vecs() { return m_pca_eigen_vecs; }
+  const FT cond_nb() const { return m_cond_nb; }
+  FT& cond_nb() { return m_cond_nb; }
 
-  void dump_verbose(std::ostream& out_stream);
 };
 
 
 template <class LocalKernel>
-void Monge_form_condition_numbers<LocalKernel>:: 
-dump_verbose(std::ostream& out_stream)
+std::ostream& 
+operator<<(std::ostream& out_stream,  Monge_form_condition_numbers<LocalKernel>& monge)
 {
-  out_stream << "cond_nb : " << cond_nb() << std::endl 
-	     << "pca_eigen_vals " << pca_eigen_vals()[0] 
-	     << " " << pca_eigen_vals()[1] 
-	     << " " << pca_eigen_vals()[2]  << std::endl 
+  out_stream << "cond_nb : " << monge.cond_nb() << std::endl 
+	     << "pca_eigen_vals " << monge.pca_eigen_vals()[0] 
+	     << " " << monge.pca_eigen_vals()[1] 
+	     << " " << monge.pca_eigen_vals()[2]  << std::endl 
 	     << "pca_eigen_vecs : " << std::endl 
-	     << pca_eigen_vecs()[0] << std::endl 
-	     << pca_eigen_vecs()[1] << std::endl 
-	     << pca_eigen_vecs()[2] << std::endl;
+	     << monge.pca_eigen_vecs()[0] << std::endl 
+	     << monge.pca_eigen_vecs()[1] << std::endl 
+	     << monge.pca_eigen_vecs()[2] << std::endl;
+  return out_stream;
 }
-
 
 ////////////////////// CLASS Monge_via_jet_fitting ////////////////////////
 template < class DataKernel, class LocalKernel = Cartesian<double>, class LinAlgTraits = Lapack>  
-class Monge_via_jet_fitting {
-public:
+  class Monge_via_jet_fitting {
+  public:
   typedef DataKernel   Data_Kernel;
   typedef LocalKernel  Local_Kernel;
   typedef typename std::vector<typename Data_Kernel::Point_3>::iterator Range_Iterator;
   typedef Monge_form<Data_Kernel>   Monge_form;
   typedef Monge_form_condition_numbers<Local_Kernel> Monge_form_condition_numbers;
 
-  //used to convert number types back and forth
-  //TODO: perform conversion b = D2L_converter()(a). cf also Cartesian_converter
-  typedef NT_converter<Data_Kernel::FT,  Local_Kernel::FT> D2L_converter;
-  typedef NT_converter<Local_Kernel::FT,  Data_Kernel::FT> L2D_converter;
+  //used to convert number types, points and vectors back and forth
+  typedef NT_converter<typename Local_Kernel::FT, typename  Data_Kernel::FT> L2D_NTconverter;
+  Cartesian_converter<Data_Kernel, Local_Kernel> D2L_converter; 
+  Cartesian_converter<Local_Kernel, Data_Kernel> L2D_converter; 
 
-public:
+  public:
   Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
 			int d, int dprime, 
 			Monge_form &monge_form, Monge_form_condition_numbers &monge_form_condition_numbers);
 
-protected:
+  protected:
   typedef typename Local_Kernel::FT       LFT;
   typedef typename Local_Kernel::Point_3  LPoint;
   typedef typename Local_Kernel::Vector_3 LVector;
@@ -323,10 +321,6 @@ void Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>::
 compute_PCA(Range_Iterator begin, Range_Iterator end,
 	    Monge_form_condition_numbers &monge_form_condition_numbers)
 {
-  LAMatrix Cov(3,3);
-  LFT* eval = (LFT*) malloc(3*sizeof(LFT));
-  LAMatrix evec(3,3);
-  
   int n = this->nb_input_pts;
   LFT x, y, z,
     sumX = 0., sumY = 0., sumZ = 0.,
@@ -336,9 +330,10 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
   
   for (; begin != end; begin++)
     {
-      x = (*begin).x();
-      y = (*begin).y();
-      z = (*begin).z();   
+      LPoint lp = D2L_converter(*begin);
+      x = lp.x();
+      y = lp.y();
+      z = lp.z();   
       sumX += x / n;
       sumY += y / n;
       sumZ += z / n;
@@ -355,32 +350,32 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
   xy = sumXY - sumX * sumY;
   xz = sumXZ - sumX * sumZ;
   yz = sumYZ - sumY * sumZ;
-  Cov.set_elt(0,0,xx);
-  Cov.set_elt(0,1,xy);
-  Cov.set_elt(0,2,xz);
-  Cov.set_elt(1,0,xy);
-  Cov.set_elt(1,1,yy);
-  Cov.set_elt(1,2,yz);
-  Cov.set_elt(2,0,xz);
-  Cov.set_elt(2,1,yz);
-  Cov.set_elt(2,2,zz);
+
+  // assemble covariance matrix as a
+  // semi-definite matrix. 
+  // Matrix numbering:
+  // 0
+  // 1 2
+  // 3 4 5
+  LFT covariance[6] = {xx,xy,yy,xz,yz,zz};
+  LFT eigen_values[3];
+  LFT eigen_vectors[9];
+
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in ascending order, 
+  // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  LinAlgTraits::eigen_symm_algo(Cov, eval, evec);
- 
-  //store in monge_form_condition_numbers, pca eigenvalues are stored in descending order
-  monge_form_condition_numbers.pca_eigen_vals()[0] = eval[2];//implicit cast LAFT->LFT
-  LVector temp_vectn(evec.get_elt(0,2),evec.get_elt(1,2),evec.get_elt(2,2));
-      monge_form_condition_numbers.pca_eigen_vecs()[0] = temp_vectn;
-
-  monge_form_condition_numbers.pca_eigen_vals()[1] = eval[1];
-  LVector temp_vect1(evec.get_elt(0,1),evec.get_elt(1,1),evec.get_elt(2,1));
-      monge_form_condition_numbers.pca_eigen_vecs()[1] = temp_vect1;
-
-  monge_form_condition_numbers.pca_eigen_vals()[2] = eval[0];
-  LVector temp_vect2(evec.get_elt(0,0),evec.get_elt(1,0),evec.get_elt(2,0));
-      monge_form_condition_numbers.pca_eigen_vecs()[2] = temp_vect2;
+  CGAL::CGALi::eigen_symmetric<LFT>(covariance,3,eigen_vectors,eigen_values);
+  //store in monge_form_condition_numbers
+  for (int i=0; i<3; i++)
+    {
+      monge_form_condition_numbers.pca_eigen_vals()[i] = eigen_values[i];
+    }
+  LVector v1(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
+  monge_form_condition_numbers.pca_eigen_vecs()[0] = v1;
+  LVector v2(eigen_vectors[3],eigen_vectors[4],eigen_vectors[5]);
+  monge_form_condition_numbers.pca_eigen_vecs()[1] = v2;
+  LVector v3(eigen_vectors[6],eigen_vectors[7],eigen_vectors[8]);
+  monge_form_condition_numbers.pca_eigen_vecs()[2] = v3;
 
   switch_to_direct_orientation(monge_form_condition_numbers.pca_eigen_vecs()[0],
 			       monge_form_condition_numbers.pca_eigen_vecs()[1],
@@ -393,26 +388,6 @@ compute_PCA(Range_Iterator begin, Range_Iterator end,
 		  pca_vecs[1][0], pca_vecs[1][1], pca_vecs[1][2],
 		  pca_vecs[2][0], pca_vecs[2][1], pca_vecs[2][2]);
    this->change_world2fitting = change_basis; 
-
-/* //debug   //test the old method, fitting basis is a permutation of the world basis */
-/*   const LVector* pca_vecs = monge_form_condition_numbers.pca_eigen_vecs(); */
-/*   const LVector n_pca = pca_vecs[2]; */
-/*   int index_max=0; */
-/*   x = std::fabs(n_pca[0]); y = std::fabs(n_pca[1]); z = std::fabs(n_pca[2]); */
-/*   if (x>y) if (x>z) index_max = 0; else index_max = 2; */
-/*   else if (y>z) index_max = 1; else index_max = 2; */
-/*   Aff_transformation     change_basis; */
-/*   if (index_max == 0) change_basis =  Aff_transformation(0,1,0, */
-/* 							     0,0,1, */
-/* 							     1,0,0); */
-/*   if (index_max == 1) change_basis =  Aff_transformation(0,0,1, */
-/* 							     1,0,0, */
-/* 							     0,1,0); */
-/*   if (index_max == 2) change_basis =  Aff_transformation(1,0,0, */
-/* 							     0,1,0, */
-/* 							     0,0,1); */
-/*   this->change_world2fitting = change_basis; */
-  //test the old method END
 }
 
 template < class DataKernel, class LocalKernel, class LinAlgTraits>  
@@ -421,7 +396,7 @@ fill_matrix(Range_Iterator begin, Range_Iterator end,
 	    int d, LAMatrix &M, LFT* Z)
 {
   //origin of fitting coord system = first input data point
-  LPoint point0 = *begin;
+  LPoint point0 = D2L_converter(*begin);
   //transform coordinates of sample points with a
   //translation ($-p$) and multiplication by $ P_{W\rightarrow F}$.
   LPoint orig(0.,0.,0.);
@@ -433,8 +408,8 @@ fill_matrix(Range_Iterator begin, Range_Iterator end,
   
   //compute and store transformed points
   std::vector<LPoint> pts_in_fitting_basis;
-  CGAL_For_all(begin,end){//implicit cast DPoint->LPoint
-    LPoint cur_pt = transf_points(*begin);
+  CGAL_For_all(begin,end){
+    LPoint cur_pt = transf_points(D2L_converter(*begin));
     pts_in_fitting_basis.push_back(cur_pt);
   }
   
@@ -479,10 +454,10 @@ compute_Monge_basis(const LFT* A, Monge_form& monge_form)
     LVector  normal(-A[1], -A[2], 1.);
     LFT norm2 = normal * normal;
     normal = normal / Lsqrt(norm2);
-    monge_form.origin_pt() = 
+    monge_form.origin_pt() = L2D_converter(
       (this->translate_p0.inverse() * 
-       this->change_world2fitting.inverse()) (orig_monge );
-    monge_form.n() = this->change_world2fitting.inverse()(normal);
+       this->change_world2fitting.inverse()) (orig_monge) );
+    monge_form.n() = L2D_converter(this->change_world2fitting.inverse()(normal));
   }
   // else (deg_monge >= 2) then 2nd order info are computed
   else {
@@ -531,17 +506,15 @@ compute_Monge_basis(const LFT* A, Monge_form& monge_form)
   //in the new orthonormal basis (Y,Z) of the tangent plane :
   weingarten = inv *(1/det) * weingarten * change_XuXv2YZ;
   
-  //switch to LinAlgTraits for diagonalization of weingarten
-  LAMatrix W(2,2);
-  for (int i=0; i<=1; i++) for (int j=0; j<=1; j++) 
-    W.set_elt(i, j, weingarten(i,j));
-  LFT* eval = (LFT*) malloc(2*sizeof(LFT));
-  LAMatrix evec(2,2);
+  //switch to eigen_symmetric algo for diagonalization of weingarten
+  LFT W[3] = {weingarten(0,0), weingarten(1,0), weingarten(1,1)};
+  LFT eval[2];
+  LFT evec[4];
+  //eval in decreasing order
+  CGAL::CGALi::eigen_symmetric<LFT>(W,2,evec,eval);
 
-  //eval in increasing order
-  LinAlgTraits::eigen_symm_algo(W, eval, evec);
-  LVector d_min = evec.get_elt(0,0)*Y + evec.get_elt(1,0)*Z,
-    d_max = evec.get_elt(0,1)*Y + evec.get_elt(1,1)*Z;
+  LVector d_max = evec[0]*Y + evec[1]*Z,
+    d_min = evec[2]*Y + evec[3]*Z;
 
   switch_to_direct_orientation(d_max, d_min, normal);
   Aff_transformation change_basis (d_max[0], d_max[1], d_max[2], 
@@ -551,14 +524,14 @@ compute_Monge_basis(const LFT* A, Monge_form& monge_form)
 
   //store the monge basis origin and vectors with their world coord
   //store ppal curv
-  monge_form.origin_pt() = 
+  monge_form.origin_pt() = L2D_converter(
     (this->translate_p0.inverse() * 
-     this->change_world2fitting.inverse()) (orig_monge );
-  monge_form.d1() = this->change_world2fitting.inverse()(d_max);
-  monge_form.d2() = this->change_world2fitting.inverse()(d_min);
-  monge_form.n()  = this->change_world2fitting.inverse()(normal);
-  monge_form.coefficients()[0] = eval[1];
-  monge_form.coefficients()[1] = eval[0];
+     this->change_world2fitting.inverse()) (orig_monge ));
+  monge_form.d1() = L2D_converter(this->change_world2fitting.inverse()(d_max));
+  monge_form.d2() = L2D_converter(this->change_world2fitting.inverse()(d_min));
+  monge_form.n()  = L2D_converter(this->change_world2fitting.inverse()(normal));
+  monge_form.coefficients()[0] = L2D_NTconverter()(eval[0]);
+  monge_form.coefficients()[1] = L2D_NTconverter()(eval[1]);
   }
   //end else
 }
@@ -696,10 +669,10 @@ compute_Monge_coefficients(LFT* A, int dprime,
   LFT b2 = 1/(f3*f3)*(-f122*f3+f13*f22);
   LFT b3 = -1/(f3*f3)*(f222*f3-3*f23*f22);
   
-  monge_form.coefficients()[2] = b0;
-  monge_form.coefficients()[3] = b1;
-  monge_form.coefficients()[4] = b2;
-  monge_form.coefficients()[5] = b3;
+  monge_form.coefficients()[2] = L2D_NTconverter()(b0);
+  monge_form.coefficients()[3] = L2D_NTconverter()(b1);
+  monge_form.coefficients()[4] = L2D_NTconverter()(b2);
+  monge_form.coefficients()[5] = L2D_NTconverter()(b3);
 
   if ( dprime == 4 )
     {
@@ -755,11 +728,11 @@ compute_Monge_coefficients(LFT* A, int dprime,
       LFT c4 =
 	-1/(f3*f3*f3)*(f2222*(f3*f3)+3*f33*f22*f22-6*f223*f3*f22-4*f23*f3*f222+12*f23*f23*f22) ; 
       
-      monge_form.coefficients()[6] = c0;
-      monge_form.coefficients()[7] = c1;
-      monge_form.coefficients()[8] = c2;
-      monge_form.coefficients()[9] = c3;
-      monge_form.coefficients()[10] = c4;
+      monge_form.coefficients()[6] = L2D_NTconverter()(c0);
+      monge_form.coefficients()[7] = L2D_NTconverter()(c1);
+      monge_form.coefficients()[8] = L2D_NTconverter()(c2);
+      monge_form.coefficients()[9] = L2D_NTconverter()(c3);
+      monge_form.coefficients()[10] = L2D_NTconverter()(c4);
     }
 }
 

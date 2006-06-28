@@ -80,16 +80,17 @@ int main(int argc, char *argv[])
   //OUTPUT on outFile
   CGAL::set_pretty_mode(outFile);
   outFile   << "vertex : " << in_points[0] << std::endl
-	    << "number of points used : " << in_points.size() << std::endl;
-  monge_form.dump_verbose(outFile);
-  monge_form_condition_numbers.dump_verbose(outFile);
-  
+	    << "number of points used : " << in_points.size() << std::endl
+  	    << monge_form
+	    << monge_form_condition_numbers;
+
   //OUTPUT on std::cout
   CGAL::set_pretty_mode(std::cout);
   std::cout << "vertex : " << in_points[0] << std::endl
-	    << "number of points used : " << in_points.size() << std::endl;
-  monge_form.dump_verbose(std::cout);
-  monge_form_condition_numbers.dump_verbose(std::cout);
+	    << "number of points used : " << in_points.size() << std::endl
+	    << monge_form
+	    << monge_form_condition_numbers;
+
 
   return 1;
 }

@@ -284,9 +284,9 @@ int main(int argc, char *argv[])
       
       (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
 		     <<	" : " << v->point() << std::endl
-		     << "number of points used : " << in_points.size() << std::endl;
-      monge_form.dump_verbose(*out_verbose);
-      monge_form_condition_numbers.dump_verbose(*out_verbose);
+		     << "number of points used : " << in_points.size() << std::endl
+		     << monge_form
+		     << monge_form_condition_numbers;
     }
   } //all vertices processed
 

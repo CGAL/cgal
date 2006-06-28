@@ -35,8 +35,6 @@ LDFLAGS = \
           $(CGAL_LDFLAGS) \
           $(GLUT_LIBS)
 
-EXE_EXT = .exe
-
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS) -lGL -lglut
@@ -55,12 +53,12 @@ INTRO_LD_FLAGS=-L$(INTROSPEC_DIR) -lIntrospect
 all:	visu
 
 visu: 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt$(EXE_EXT) \
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)introspect-qt \
 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT) \
 	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
 
 clean: 
-	rm *$(EXE_EXT) *$(OBJ_EXT)
+	SketchSample.clean visu.clean
 
 depend: 
 	makedepend *.[Ch]
