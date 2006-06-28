@@ -153,7 +153,7 @@ dump_4ogl(std::ostream& out_stream, const FT scale)
 
 template <class DataKernel>
 std::ostream& 
-operator<<(std::ostream& out_stream,  const Monge_form<DataKernel>& monge)
+operator<<(std::ostream& out_stream, Monge_form<DataKernel>& monge)
 {
   monge.dump_verbose(out_stream);
   return out_stream;

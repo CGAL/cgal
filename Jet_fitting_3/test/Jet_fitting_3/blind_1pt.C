@@ -7,21 +7,19 @@
 #include <stdlib.h>
 
 #include <vector>
-#include "../../include/CGAL/Monge_via_jet_fitting.h" 
-#include "include/LinAlg_lapack.h" 
+#include <CGAL/Monge_via_jet_fitting.h>
 
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
 typedef Data_Kernel::Vector_3     DVector;
-typedef CGAL::Monge_rep<Data_Kernel>   My_Monge_rep;
 
 typedef double                   LFT;
 typedef CGAL::Cartesian<LFT>     Local_Kernel;
-typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
-typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
-
-       
+typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
+typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
+typedef My_Monge_via_jet_fitting::Monge_form_condition_numbers My_Monge_form_condition_numbers;
+     
 int main()
 {
   //open the input file
@@ -49,17 +47,23 @@ int main()
   // fct parameters
   int d_fitting = 4;
   int d_monge = 4;
-  My_Monge_rep monge_rep;
-  My_Monge_info monge_info;
+  My_Monge_form monge_form;
+  My_Monge_form_condition_numbers monge_form_condition_numbers;
   //run the main fct
   My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
 				 d_fitting, d_monge, 
-				 monge_rep, monge_info);
+				 monge_form, monge_form_condition_numbers);
 
-  monge_rep.comply_wrt_given_normal( -monge_rep.n() );
+  monge_form.comply_wrt_given_normal( -monge_form.n() );
   //OUTPUT on std::cout
-  monge_rep.dump_verbose( std::cout );
-  monge_rep.dump_4ogl( std::cout, 1 );
-  monge_info.dump_verbose( std::cout );
+  std::cout << monge_form
+	    << monge_form_condition_numbers;
+
+  monge_form.dump_4ogl( std::cout, 1 );
+  double precision = 0.01;
+  assert(monge_form.coefficients()[0] >= -0.2 - precision);
+  assert(monge_form.coefficients()[0] <= -0.2 + precision);
+  assert(monge_form.coefficients()[1] >= -0.4 - precision);
+  assert(monge_form.coefficients()[1] <= -0.4 + precision);
   std::cout << "success\n";
 }
