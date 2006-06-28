@@ -276,6 +276,7 @@ Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/random_ray_shoot.sph
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/simple.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/two.spheres -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/the_plan -text
+Benchmark/doc_tex/Benchmark.tex -text
 Benchmark/doc_tex/Benchmark/PkgDescription.tex -text
 Benchmark/doc_tex/Benchmark/extend.tex -text
 Benchmark/doc_tex/Benchmark/grammar.tex -text
