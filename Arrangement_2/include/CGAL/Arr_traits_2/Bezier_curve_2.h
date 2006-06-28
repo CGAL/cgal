@@ -402,12 +402,15 @@ public:
   /*!
    * Compute a point of the Bezier curve given a rational t-value.
    * \param t The given t-value.
-   * \pre t must be between 0 and 1.
+   * \param check_t Should we check the value of t.
+   * \pre If check_t is true, t must be between 0 and 1.
    */
-  Rat_point_2 operator() (const Rational& t) const
+  Rat_point_2 operator() (const Rational& t,
+                          bool check_t = true) const
   {
-    CGAL_precondition (CGAL::sign (t) != NEGATIVE &&
-                       CGAL::compare (t, Rational(1)) != LARGER);
+    CGAL_precondition (! check_t ||
+                       (CGAL::sign (t) != NEGATIVE &&
+                        CGAL::compare (t, Rational(1)) != LARGER));
     
     // Compute the x and y coordinates.
     const Rational     x = nt_traits.evaluate_at (_rep()._polyX, t) /
@@ -421,15 +424,17 @@ public:
   /*!
    * Compute a point of the Bezier curve given an algebraic t-value.
    * \param t The given t-value.
-   * \pre t must be between 0 and 1.
+   * \param check_t Should we check the value of t.
+   * \pre If check_t is true, t must be between 0 and 1.
    */
-  Alg_point_2 operator() (const Algebraic& t) const
+  Alg_point_2 operator() (const Algebraic& t,
+                          bool check_t = true) const
   {
     // Check for extermal t values (either 0 or 1).
     Nt_traits          nt_traits;
     const CGAL::Sign   sign_t = CGAL::sign (t);
 
-    CGAL_precondition (sign_t != NEGATIVE);
+    CGAL_precondition (! check_t || sign_t != NEGATIVE);
 
     if (sign_t == ZERO)
     {
@@ -442,7 +447,7 @@ public:
 
     Comparison_result  res = CGAL::compare (t, Algebraic(1));
 
-    CGAL_precondition (res != LARGER);
+    CGAL_precondition (! check_t || res != LARGER);
 
     if (res == EQUAL)
     {
@@ -538,13 +543,51 @@ public:
   /*!
    * Compute the intersection points between two Bezier curves. The function
    * returns a list of t-values such that (*this)(t) is an intersection point
-   * with the other curve.
+   * with the other curve, where t is always in [0, 1].
    * \param bc The other Bezier curve.
    * \param oi Output: An output iterator for the t-values.
    * \return A past-the-end iterator for the t-values.
    */
   template <class OutputIterator>
   OutputIterator intersect (const Self& bc, OutputIterator oi) const
+  {
+    // Compute all t-values that correspond to intersection points. 
+    std::list<Algebraic>  t_vals;
+
+    basic_intersect (bc, std::back_inserter (t_vals));
+
+    // Report only t-values in the legal range of [0, 1]. Note that we use
+    // the fact that the roots we compute are given in ascending order, so
+    // we start from the first non-negative root and stop when we come across
+    // a root that is greater than 1.
+    const Algebraic                          one = Algebraic(1);
+    typename std::list<Algebraic>::iterator  t_iter = t_vals.begin();
+
+    while (t_iter != t_vals.end() && CGAL::sign (*t_iter) == NEGATIVE)
+      ++t_iter;
+
+    while (t_iter != t_vals.end() && CGAL::compare (*t_iter, one) != LARGER)
+    {
+      *oi = *t_iter;
+      ++oi;
+      
+      ++t_iter;
+    }
+
+    return (oi);
+  }
+
+  /*!
+   * Compute the intersection points between two Bezier curves. The function
+   * returns a list of t-values such that (*this)(t) is an intersection point
+   * with the other curve. Note that this function also returns "imaginary"
+   * t-values, namely values outside the range [0, 1].
+   * \param bc The other Bezier curve.
+   * \param oi Output: An output iterator for the t-values.
+   * \return A past-the-end iterator for the t-values.
+   */
+  template <class OutputIterator>
+  OutputIterator basic_intersect (const Self& bc, OutputIterator oi) const
   {
     // Let us denote our curve by (X_1(s), Y_1(s)) and the other curve by
     // (X_2(t), Y_2(t)), so we have to solve the system of bivariate
@@ -587,30 +630,10 @@ public:
     coeffsY_st[0] = coeffsY_st[0] - nt_traits.scale (polyY1, normY2);
 
     // Compute the resultant of the two bivariate polynomials and obtain
-    // a polynomial in s. We conider the roots of this resultant polynomial
-    // that are between 0 and 1 and obtain the intersection points (note that
-    // we use the fact that the roots we compute are given in ascending order).
+    // a polynomial in s. The report the roots of this polynomial. 
     Polynomial            res = _compute_resultant (coeffsX_st, coeffsY_st);
-    std::list<Algebraic>  s_vals;
-    const Algebraic       one = Algebraic(1);
 
-    nt_traits.compute_polynomial_roots (res, std::back_inserter(s_vals));
-    // TODO: Compute roots only in the interval [0,1].
-
-    typename std::list<Algebraic>::iterator  s_iter = s_vals.begin();
-
-    while (s_iter != s_vals.end() && CGAL::sign (*s_iter) == NEGATIVE)
-      ++s_iter;
-
-    while (s_iter != s_vals.end() && CGAL::compare (*s_iter, one) != LARGER)
-    {
-      *oi = *s_iter;
-      ++oi;
-      
-      ++s_iter;
-    }
-
-    return (oi);
+    return (nt_traits.compute_polynomial_roots (res, oi));
   }
 
   /*!

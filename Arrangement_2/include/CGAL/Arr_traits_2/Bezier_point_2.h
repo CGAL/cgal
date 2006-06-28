@@ -109,11 +109,12 @@ public:
    * Constructor given an originating curve and a rational t0 value.
    * \pre t0 must be between 0 and 1.
    */
-  _Bezier_point_2_rep (const Curve_2& B, const Rational& t0)
+  _Bezier_point_2_rep (const Curve_2& B, const Rational& t0,
+                       bool check_t)
   {
     // Set the point coordinates.
     Nt_traits           nt_traits;
-    const Rat_point_2   p = B(t0);
+    const Rat_point_2   p = B (t0, check_t);
 
     _x = nt_traits.convert (p.x());
     _y = nt_traits.convert (p.y());
@@ -126,10 +127,11 @@ public:
    * Constructor given an originating curve and an algebraic t0 value.
    * \pre t0 must be between 0 and 1.
    */
-  _Bezier_point_2_rep (const Curve_2& B, const Algebraic& t0)
+  _Bezier_point_2_rep (const Curve_2& B, const Algebraic& t0,
+                       bool check_t)
   {
     // Set the point coordinates.
-    const Alg_point_2   p = B(t0);
+    const Alg_point_2   p = B (t0, check_t);
 
     _x = p.x();
     _y = p.y();
@@ -211,16 +213,18 @@ public:
    * Constructor given an originating curve and a rational t0 value.
    * \pre t0 must be between 0 and 1.
    */
-  _Bezier_point_2 (const Curve_2& B, const Rational& t0) :
-    Bpt_handle (Bpt_rep (B, t0))
+  _Bezier_point_2 (const Curve_2& B, const Rational& t0,
+                   bool check_t = true) :
+    Bpt_handle (Bpt_rep (B, t0, check_t))
   {}
 
   /*!
    * Constructor given an originating curve and an algebraic t0 value.
    * \pre t0 must be between 0 and 1.
    */
-  _Bezier_point_2 (const Curve_2& B, const Algebraic& t0) :
-    Bpt_handle (Bpt_rep (B, t0))
+  _Bezier_point_2 (const Curve_2& B, const Algebraic& t0,
+                   bool check_t = true) :
+    Bpt_handle (Bpt_rep (B, t0, check_t))
   {}
 
   /*!

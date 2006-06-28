@@ -621,9 +621,9 @@ private:
     std::list<Algebraic>  s_vals;
     std::list<Algebraic>  t_vals;
 
-    B1.intersect (B2, std::back_inserter (s_vals));
-    B2.intersect (B1, std::back_inserter (t_vals));
-    
+    B1.basic_intersect (B2, std::back_inserter (s_vals));
+    B2.basic_intersect (B1, std::back_inserter (t_vals));
+
     CGAL_assertion (s_vals.size() == t_vals.size());
 
     // Construct the points according to the s- and t-values. Also compute an
@@ -637,7 +637,7 @@ private:
    
     for (s_it = s_vals.begin(); s_it != s_vals.end(); ++s_it)
     {
-      pt = Point_2 (B1, *s_it);
+      pt = Point_2 (B1, *s_it, false);      // Allow illegal s-values.
       app_pt = App_point_2 (CGAL::to_double (pt.x()),
                             CGAL::to_double (pt.y()));
       pts1.push_back (Ex_point_2 (pt, app_pt));
@@ -645,7 +645,7 @@ private:
 
     for (t_it = t_vals.begin(); t_it != t_vals.end(); ++t_it)
     {
-      pt = Point_2 (B2, *t_it);
+      pt = Point_2 (B2, *t_it, false);      // Allow illegal t-values.
       app_pt = App_point_2 (CGAL::to_double (pt.x()),
                             CGAL::to_double (pt.y()));
       pts2.push_back (Ex_point_2 (pt, app_pt));
@@ -655,10 +655,15 @@ private:
     Point_iter                pit1;
     Point_iter                pit2;
     double                    dx, dy;
+    Algebraic                 s, t;
+    const Algebraic           one (1);
+    bool                      is_orig;
     unsigned int              mult;
     int                       k;
 
-    for (pit1 = pts1.begin(); pit1 != pts1.end(); ++pit1)
+    for (pit1 = pts1.begin(), s_it = s_vals.begin();
+         pit1 != pts1.end(); 
+         ++pit1, ++s_it)
     {
       // Construct a vector of distances from the current point to all other
       // points in the pts2 list.
@@ -708,12 +713,25 @@ private:
         pts2.erase (pit2);
       }
 
-      // Report the updated intersection point.
-      // TODO: Currently we give all intersection points multiplicity 0,
-      //       stating that we do not know the multiplicity. Can't we at
-      //       least identify the points with multiplicity 1?
-      mult = 0;
-      inter_list.push_back (std::make_pair (p1, mult));
+      // Check if the s- and t-values both lie in the legal range of [0,1].
+      // If so, report the updated intersection point.
+      is_orig = p1.is_originator (B1, s);
+      CGAL_assertion (is_orig);
+
+      if (CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER)
+      {
+        is_orig = p1.is_originator (B2, t);
+        CGAL_assertion (is_orig);
+      
+        if (CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER)
+        {
+          // TODO: Currently we give all intersection points multiplicity 0,
+          //       stating that we do not know the multiplicity. Can't we at
+          //       least identify the points with multiplicity 1?
+          mult = 0;
+          inter_list.push_back (std::make_pair (p1, mult));
+        }
+      }
     }
 
     return (inter_list);
