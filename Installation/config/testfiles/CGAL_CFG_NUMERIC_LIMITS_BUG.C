@@ -32,6 +32,7 @@
 #include <cmath>
 #include <limits>
 
+bool
 is_finite(double d)
 { return (d != std::numeric_limits<double>::infinity()) && (-d != std::numeric_limits<double>::infinity()); }
 
