@@ -26,6 +26,7 @@
 
 #include <CGAL/Arr_traits_2/Bezier_curve_2.h>
 #include <CGAL/Arr_traits_2/Bezier_point_2.h>
+#include <map>
 #include <ostream>
 
 CGAL_BEGIN_NAMESPACE
@@ -51,6 +52,32 @@ public:
   typedef _Bezier_x_monotone_2<Rat_kernel,
                                Alg_kernel,
                                Nt_traits>         Self;
+
+  // Type definition for the intersection-point mapping.
+  typedef unsigned int                            Curve_id;
+  typedef std::pair<Curve_id, Curve_id>           Curve_pair;
+  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
+  typedef std::list<Intersection_point_2>         Intersection_list;
+  typedef typename Intersection_list::iterator    Intersection_iter;
+
+  /*! \struct
+   * An auxiliary functor for comparing pair of curve IDs.
+   */
+  struct Less_curve_pair
+  {
+    bool operator() (const Curve_pair& cp1, const Curve_pair& cp2) const
+    {
+      // Compare the pairs of IDs lexicographically.
+      return (cp1.first < cp2.first ||
+              (cp1.first == cp2.first && cp1.second < cp2.second));
+    }
+  };
+
+  typedef std::map<Curve_pair,
+                   Intersection_list,
+                   Less_curve_pair>               Intersection_map;
+  typedef typename Intersection_map::value_type   Intersection_map_entry;
+  typedef typename Intersection_map::iterator     Intersection_map_iterator;
 
 private:
 
@@ -182,91 +209,77 @@ public:
   /*!
    * Get the relative position of the query point with respect to the subcurve.
    * \param p The query point.
+   * \param inter_map Maps curve pairs to lists of their intersection points.
    * \pre p is in the x-range of the arc.
    * \return SMALLER if the point is below the arc;
    *         LARGER if the point is above the arc;
    *         EQUAL if p lies on the arc.
    */
-  Comparison_result point_position (const Point_2& p) const
+  Comparison_result point_position (const Point_2& p,
+                                    Intersection_map& inter_map) const
   {
-    CGAL_precondition_code
-      (const Comparison_result  res1 = CGAL::compare (p.x(), _ps.x());
-       const Comparison_result  res2 = CGAL::compare (p.x(), _pt.x()); );
-    CGAL_precondition (res1 == EQUAL || res2 == EQUAL || res1 != res2);
+    // First check whether p has the same x-coordinate as one of the endpoints.
+    const Comparison_result  res1 = CGAL::compare (p.x(), _ps.x());
 
-    // TODO: First of all, check intersections with the originating curves
-    // of p. This way we find if p is on our curve.
+    if (res1 == EQUAL)
+      return (CGAL::compare (p.y(), _ps.y()));
 
-    // TODO: A hueristic solution. Find a robust one!
-    double       t_low, t_high;
-    const double init_eps = 0.00000001;
-    bool         dir_match;
+    const Comparison_result  res2 = CGAL::compare (p.x(), _pt.x());
 
-    if (CGAL::compare (_src, _trg) == SMALLER)
+    if (res2 == EQUAL)
+      return (CGAL::compare (p.y(), _pt.y()));
+
+    // Make sure that p is in the x-range of our subcurve.
+    CGAL_precondition (res1 != res2);
+
+    // Check if the supporting curve is one of p's originators. If so, p
+    // obviously lies on our subcurve.
+    Algebraic        t;
+
+    if (p.is_originator (_curve, t))
+      return (EQUAL);
+
+    // Get of of p's originating curves and compute its intersections
+    // with our x-monotone curve.
+    CGAL_assertion (p.originators_begin() != p.originators_end());
+
+    typename Point_2::Originator   orig = *(p.originators_begin());
+    std::pair<Intersection_iter, Intersection_iter>
+      inter_range = _get_curve_intersections (_curve, orig.first,
+                                              inter_map);
+
+    // Go over the intersection points and look for p there.
+    Intersection_iter    iit;
+    Algebraic            s;
+    bool                 is_orig;
+
+    for (iit = inter_range.first; iit != inter_range.second; ++iit)
     {
-      t_low = CGAL::to_double(_src) - init_eps;
-      t_high = CGAL::to_double(_trg) + init_eps;
-      dir_match = _dir_right;
-    }
-    else
-    {
-      t_low = CGAL::to_double(_trg) - init_eps;
-      t_high = CGAL::to_double(_src) + init_eps;
-      dir_match = ! _dir_right;
+      const Point_2&       pt = iit->first;
+
+      is_orig = pt.is_originator (orig.first, t);
+      CGAL_assertion (is_orig);
+
+      if (CGAL::compare (t, orig.second) == EQUAL)
+      {
+        // Check if this intersection point lies on the parameter range
+        // of our subcurve. If so, p lies on the subcurve.
+        is_orig = pt.is_originator (_curve, s);
+        CGAL_assertion (is_orig);
+
+        if (_is_in_range (s))
+          return (EQUAL);
+      }
     }
 
-    Nt_traits    nt_traits;
-    double       t_mid;
-    Algebraic    t_val;
-    const double px = CGAL::to_double (p.x());
-    Algebraic    x;
-    double       diff_x;
-    const double eps = 0.0001;
+    // If we reached here, p does not lie on the subcurve.
+    // TODO: More careful work here ...
+    double     app_x = CGAL::to_double (p.x());
+    const int  denom = 100000;
+    const int  numer = static_cast<int> (app_x * denom);
+    Algebraic  y0 = _get_y (Rational (numer, denom));
     
-    while (true)
-    {
-      t_mid = (t_low + t_high) / 2;
-      t_val = Algebraic (t_mid);
-      x = nt_traits.evaluate_at (_curve.x_polynomial(), t_val) /
-          nt_traits.convert (_curve.x_norm());
-
-      diff_x = CGAL::to_double(x) - px;
-      if (diff_x == 0)
-        break;
-
-      if (diff_x > 0)
-      {
-        if (diff_x < eps)
-          break;
-
-        if (dir_match)
-          t_high = t_mid;
-        else
-          t_low = t_mid;
-      }
-      else
-      {
-        if (-diff_x < eps)
-          break;
-
-       if (dir_match)
-          t_low = t_mid;
-        else
-          t_high = t_mid;
-      }
-    }
-
-    // Correct the t-value, if necessary.
-    if (t_mid < 0)
-      t_val = Algebraic(0);
-    else if (t_mid > 1)
-      t_val = Algebraic(1);
-
-    // Compute the y-coordinate and compare to p.y().
-    Algebraic y = nt_traits.evaluate_at (_curve.y_polynomial(), t_val) /
-                  nt_traits.convert (_curve.y_norm());
-
-    return (CGAL::compare (p.y(), y));
+    return (CGAL::compare (p.y(), y0));
   }
 
   /*!
@@ -334,42 +347,44 @@ public:
   /*!
    * Compute the intersections points with the given subcurve.
    * \param cv The other subcurve.
+   * \param inter_map Maps curve pairs to lists of their intersection points.
    * \param oi The output iterator.
    * \return The past-the-end iterator.
    */
   template<class OutputIterator>
   OutputIterator intersect (const Self& cv,
+                            Intersection_map& inter_map,
                             OutputIterator oi) const
   {
     // TODO: Handle overlapping curves ...
 
-    // Compute all intersection between the supporting Bezier curves.
-    std::list<Point_2>                           pts;
-    typename std::list<Point_2>::const_iterator  pit;
-
-    _intersect_curves (_curve, cv._curve,
-                       std::back_inserter (pts));
+    // Obtain the intersection points between the supporting Bezier curves.
+    std::pair<Intersection_iter, Intersection_iter>
+      inter_range = _get_curve_intersections (_curve, cv._curve,
+                                              inter_map);
 
     // Report only the intersection points that lie on both given subcurves.
+    Intersection_iter    iit;
     Algebraic            s, t;
     bool                 is_orig;
-    const unsigned int   mult = 0;
 
-    for (pit = pts.begin(); pit != pts.end(); ++pit)
+    for (iit = inter_range.first; iit != inter_range.second; ++iit)
     {
       // Get an s-value and a t-value such that _curve(s) == cv._curve(t)
       // is the current intersection point.
-      is_orig = pit->is_originator (_curve, s);
+      const Point_2&       pt = iit->first;
+ 
+      is_orig = pt.is_originator (_curve, s);
       CGAL_assertion (is_orig);
 
-      is_orig = pit->is_originator (cv._curve, t);
+      is_orig = pt.is_originator (cv._curve, t);
       CGAL_assertion (is_orig);
 
       // Report on the intersection point only if it is in the range of both
       // subcurves.
       if (_is_in_range (s) && cv._is_in_range (t))
       {
-        *oi = CGAL::make_object (std::make_pair (*pit, mult));
+        *oi = CGAL::make_object (*iit);
         ++oi;
       }      
     }
@@ -544,17 +559,63 @@ private:
   };
 
   /*!
+   * Get the intersection points between two Bezier curves, possibly using
+   * a precomputed result.
+   * \param B1 The first Bezier curve.
+   * \param B2 The second Bezier curve.
+   * \param inter_map Maps curve pairs to lists of their intersection points.
+   * \return A pair of iterators specifying the valid range of intersection
+   *         points. 
+   */
+  std::pair<Intersection_iter, Intersection_iter>
+  _get_curve_intersections (const Curve_2& B1,
+                            const Curve_2& B2,
+                            Intersection_map& inter_map) const
+  {
+    // Construct the pair of curve IDs. Note that the curve with smaller ID
+    // always comes first.
+    const Curve_id               id1 = B1.id();
+    const Curve_id               id2 = B2.id();
+    Curve_pair                   curve_pair;
+
+    if (id1 < id2)
+      curve_pair = Curve_pair (id1, id2);
+    else
+      curve_pair = Curve_pair (id2, id1);
+      
+    // Try to find the curve pair in the map.
+    Intersection_map_iterator    map_iter = inter_map.find (curve_pair);
+
+    if (map_iter == inter_map.end())
+    {
+      // In case the intersection points between the supporting curves have
+      // not been computed before, compute them now and store them in the map.
+      Intersection_list&  ilist = _intersect_curves (B1, B2, 
+                                                    inter_map[curve_pair]);
+      
+      return (std::make_pair (ilist.begin(), ilist.end()));
+    }
+
+    // Now map_iter points to the desried entry in the map. Use it to obtain
+    // the valid range of intersection points.
+    return (std::make_pair (map_iter->second.begin(),
+                            map_iter->second.end()));
+  }
+
+  /*!
    * Compute the intersection points of two Bezier curves.
    * \param B1 The first Bezier curve.
    * \param B2 The second Bezier curve.
-   * \param oi Output: An output iterator for the intersection points.
-   * \return A past-the-end iterator for the range of intersection points.
+   * \param inter_list Output: The list of intersection points (along with
+   *                           their multiplicities).
+   * \return The output list of intersection point (same as inter_list).
    */
-  template<class OutputIterator>
-  OutputIterator _intersect_curves (const Curve_2& B1,
-                                    const Curve_2& B2,
-                                    OutputIterator oi) const
+  Intersection_list& _intersect_curves (const Curve_2& B1,
+                                        const Curve_2& B2,
+                                        Intersection_list& inter_list) const
   {
+    inter_list.clear();
+
     // Compute s-values and t-values such that B1(s) and B2(t) are the
     // intersection points.
     std::list<Algebraic>  s_vals;
@@ -594,6 +655,7 @@ private:
     Point_iter                pit1;
     Point_iter                pit2;
     double                    dx, dy;
+    unsigned int              mult;
     int                       k;
 
     for (pit1 = pts1.begin(); pit1 != pts1.end(); ++pit1)
@@ -647,11 +709,81 @@ private:
       }
 
       // Report the updated intersection point.
-      *oi = p1;
-      ++oi;
+      // TODO: Currently we give all intersection points multiplicity 0,
+      //       stating that we do not know the multiplicity. Can't we at
+      //       least identify the points with multiplicity 1?
+      mult = 0;
+      inter_list.push_back (std::make_pair (p1, mult));
     }
 
-    return (oi);
+    return (inter_list);
+  }
+
+  /*!
+   * Compute a y-coordinate of a point on the x-monotone subcurve with a
+   * given x-coordinate.
+   * \param x0 The given x-coodinate.
+   * \return The y-coordinate.
+   */
+  Algebraic _get_y (const Rational& x0) const
+  {
+    // Construct the polynomial X(t) - x0 = 0:
+    Nt_traits             nt_traits;
+    const Integer         numer = nt_traits.numerator (x0);
+    const Integer         denom = nt_traits.denominator (x0);
+    const Polynomial&     polyX = _curve.x_polynomial();
+    const int             degX = nt_traits.degree (polyX);
+    Integer              *coeffs = new Integer [degX + 1];
+    int                   k;
+
+    for (k = 1; k <= degX; k++)
+      coeffs[k] = nt_traits.get_coefficient (polyX, k) * denom;
+    coeffs[0] = nt_traits.get_coefficient (polyX, 0) * denom -
+                numer * _curve.x_norm();
+
+    // Solve the polynomial and obtain the t-values.
+    std::list<Algebraic>  t_vals;
+
+    nt_traits.compute_polynomial_roots
+      (nt_traits.construct_polynomial (coeffs, degX),
+       std::back_inserter(t_vals));
+
+    delete[] coeffs;
+
+    // Find a t-value that is in the range of the current curve.
+    typename std::list<Algebraic>::iterator  t_iter;
+    Comparison_result                        res1, res2;
+
+    for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
+    {
+      res1 = CGAL::compare (*t_iter, _src);
+
+      if (res1 == EQUAL)
+      {
+        // Return the y-coordinate of the source point:
+        return (_ps.y());
+      }
+
+      res2 = CGAL::compare (*t_iter, _trg);
+
+      if (res2 == EQUAL)
+      {
+        // Return the y-coordinate of the source point:
+        return (_pt.y());
+      }
+
+      if (res1 != res2)
+      {
+        // We found a t-value in the range of our x-monotone subcurve.
+        // Use this value to compute the y-coordinate.
+        return (nt_traits.evaluate_at (_curve.y_polynomial(), *t_iter) /
+                nt_traits.convert (_curve.y_norm()));
+      }
+    }
+
+    // If we reached here, x0 is not in the x-range of our subcurve.
+    CGAL_assertion (false);
+    return (0);
   }
 };
 

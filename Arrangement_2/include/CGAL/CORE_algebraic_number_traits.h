@@ -43,6 +43,26 @@ public:
   typedef CORE::Expr                      Algebraic;
 
   /*!
+   * Get the numerator of a rational number.
+   * \param q A rational number.
+   * \return The numerator of q.
+   */
+  Integer numerator (const Rational& q) const
+  {
+    return (CORE::numerator (q));
+  }
+
+  /*!
+   * Get the denominator of a rational number.
+   * \param q A rational number.
+   * \return The denominator of q.
+   */
+  Integer denominator (const Rational& q) const
+  {
+    return (CORE::denominator (q));
+  }
+
+  /*!
    * Convert an integer to an algebraic number.
    * \param z An integer.
    * \return An algebraic number equivalent to z.

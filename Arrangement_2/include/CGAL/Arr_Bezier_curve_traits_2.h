@@ -90,8 +90,8 @@ private:
                                                           Intersection_point_2;
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
-  Intersection_map  inter_map;   // Mapping curve pairs to their intersection
-                                 // points.
+  Intersection_map  _inter_map;   // Mapping curve pairs to their intersection
+                                  // points.
 
 public:
 
@@ -100,13 +100,6 @@ public:
    */
   Arr_Bezier_curve_traits_2 ()
   {}
-
-  /*! Get the next conic index. */
-  static unsigned int get_index () 
-  {
-    static unsigned int index = 0;
-    return (++index);
-  }
 
   /// \name Functor definitions.
   //@{
@@ -231,7 +224,17 @@ public:
 
   class Compare_y_at_x_2
   {
+  private:
+
+    Intersection_map&  _inter_map;       // The map of intersection points.
+
   public:
+
+    /*! Constructor. */
+    Compare_y_at_x_2 (const Intersection_map& map) :
+      _inter_map (const_cast<Intersection_map&> (map))
+    {}
+
     /*!
      * Return the location of the given point with respect to the input curve.
      * \param cv The curve.
@@ -244,14 +247,14 @@ public:
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv) const
     {
-      return (cv.point_position (p));
+      return (cv.point_position (p, _inter_map));
     }
   };
 
   /*! Get a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
-    return Compare_y_at_x_2();
+    return (Compare_y_at_x_2 (_inter_map));
   }
 
   class Compare_y_at_x_left_2
@@ -404,10 +407,6 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& B, OutputIterator oi)
     {
-      // Create an ID for the Bezier curve B.
-      unsigned int  index = Self::get_index();
-      Curve_id      curve_id (index);
-
       // Compute the t-values where B(t) is a point with a vertical tangent.  
       std::list<Algebraic>                           ts;
 
@@ -419,14 +418,14 @@ public:
 
       for (it = ts.begin(); it != ts.end(); ++it)
       {
-        *oi = make_object (X_monotone_curve_2 (B, t0, *it, curve_id));
+        *oi = make_object (X_monotone_curve_2 (B, t0, *it));
         ++oi;
 
         t0 = *it;
       }
 
       // Create the final subcurve.
-      *oi = make_object (X_monotone_curve_2 (B, t0, Algebraic (1), curve_id));
+      *oi = make_object (X_monotone_curve_2 (B, t0, Algebraic (1)));
 
       return (oi);
     }
@@ -495,9 +494,9 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
+  Intersect_2 intersect_2_object ()
   {
-    return (Intersect_2 (inter_map));
+    return (Intersect_2 (_inter_map));
   }
 
   class Are_mergeable_2

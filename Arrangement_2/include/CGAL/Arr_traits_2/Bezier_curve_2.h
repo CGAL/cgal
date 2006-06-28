@@ -296,7 +296,7 @@ public:
    */
   unsigned int id () const
   {
-    return (static_cast<unsigned int> (this->ptr()));
+    return (reinterpret_cast<unsigned int> (this->ptr()));
   }
 
   /*!

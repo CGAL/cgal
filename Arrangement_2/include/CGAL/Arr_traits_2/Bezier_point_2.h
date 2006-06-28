@@ -169,6 +169,7 @@ public:
   typedef typename Bpt_rep::Rational              Rational;
   typedef typename Bpt_rep::Algebraic             Algebraic;
   typedef typename Bpt_rep::Curve_2               Curve_2;
+  typedef typename Bpt_rep::Originator            Originator;
   typedef typename Bpt_rep::Orig_iter             Originator_iterator;
 
   /*!
