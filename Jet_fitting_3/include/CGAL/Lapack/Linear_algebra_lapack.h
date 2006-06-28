@@ -44,7 +44,8 @@ public:
 class Lapack{
 public:
   typedef Lapack_matrix Matrix;
- //solve MX=B using SVD and give the condition number of M
+  //solve MX=B using SVD and give the condition number of M
+  //The solution is stored in B
   static
     void solve_ls_svd_algo(Matrix& M, double* B, double &cond_nb);
 };

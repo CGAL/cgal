@@ -153,7 +153,7 @@ dump_4ogl(std::ostream& out_stream, const FT scale)
 
 template <class DataKernel>
 std::ostream& 
-operator<<(std::ostream& out_stream,  Monge_form<DataKernel>& monge)
+operator<<(std::ostream& out_stream,  const Monge_form<DataKernel>& monge)
 {
   monge.dump_verbose(out_stream);
   return out_stream;
@@ -190,7 +190,7 @@ public:
 
 template <class LocalKernel>
 std::ostream& 
-operator<<(std::ostream& out_stream,  Monge_form_condition_numbers<LocalKernel>& monge)
+operator<<(std::ostream& out_stream,  const Monge_form_condition_numbers<LocalKernel>& monge)
 {
   out_stream << "cond_nb : " << monge.cond_nb() << std::endl 
 	     << "pca_eigen_vals " << monge.pca_eigen_vals()[0] 

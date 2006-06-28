@@ -536,9 +536,10 @@ f_{0,0,1} ^{2}}}
 \section{Software Design}
 %%%%%%%%%%%%%%%%%%%%%%%
 
-Following \cgal's best practices in geometric software development,
-the package developed in fully generic in the C++ sense ---and is
-templated by three classes.
+We now explain the API and the output of the package, and the role of
+template parameters. Following \cgal's best practices in geometric
+software development, the package developed in fully generic in the
+C++ sense ---and is templated by three classes.
 
 \subsection{Options and Interface Specifications}
 %%%%%%%%%%%%%%%%%%%%%
@@ -617,29 +618,37 @@ The following picture illustrates the template dependencies.
 
 More details are given in the reference manual.
 
-\subsubsection{Template class \ccc{Data_Kernel}}
+\subsubsection{Template parameter \ccc{Data_Kernel}}
 %%%%%%%%%%%
 
 This class provides the types for the input sample points, together
 with $3d$ vectors and a number type. It is used as template for the
-\ccc{Monge_form}. Typically, one can use \ccc{CGAL::Cartesian<double>}.
+classes
+\ccc{Monge_form<DataKernel>} and 
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, LinAlgTraits = Lapack>} 
+. Typically, one can use \ccc{CGAL::Cartesian<double>}.
 
-\subsubsection{Template class \ccc{Local_Kernel}}
+\subsubsection{Template parameter \ccc{Local_Kernel}}
 %%%%%%%%%%%
+This is a parameter of the classes 
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, LinAlgTraits = Lapack>} 
+and \ccc{Monge_form_condition_numbers<LocalKernel = Cartesian<double> >}
 
 This class defines the vector and number types used (i)\ for local
-computations (ii)\ to store the Monge\_form\_condition\_numbers class members. Input
-points of type \ccc{Data_Kernel::Point_3} are converted to
+computations (ii)\ to store the Monge\_form\_condition\_numbers class
+members. Input points of type \ccc{Data_Kernel::Point_3} are converted
+to
 \ccc{Local_Kernel::Point_3}. For output of the \ccc{Monge_form} class, these
 types are converted back to \ccc{Data_Kernel} ones.  Typically, one can use
-\ccc{CGAL::Cartesian<double>}.
+\ccc{CGAL::Cartesian<double>} which is the default.
 
-\subsubsection{Template class \ccc{Linalg_traits.}}
+\subsubsection{Template parameter \ccc{Linalg_traits.}}
 %%%%%%%%%%%
 
 This class provides the matrix algebra operations required by the
-fitting method. These are an eigen method for symmetric mtrices and
-linear solver using a singular value decomposition.
+fitting method in 
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, LinAlgTraits = Lapack>} 
+. That is a linear solver using a singular value decomposition.
 
 \subsubsection{Compatibility requirements}
 
@@ -686,6 +695,7 @@ another text file which may be visualised with the demo program
 introspect-qt displaying the Monge basis at each vertex of the mesh.
 \end{itemize}
 
+Following are some illustrations featuring principal directions of curvature.
 
 \begin{figure}[!ht]
 \begin{ccTexOnly}
