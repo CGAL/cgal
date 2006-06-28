@@ -34,7 +34,10 @@ template < class K >
 class Robust_construct_circumcenter_3
 {
   typedef Exact_predicates_exact_constructions_kernel EK;
-  typedef typename K::Point_3         Point_3;
+  typedef typename K::Point_3             Point_3;
+  typedef typename K::Triangle_3          Triangle_3;
+  typedef typename K::Tetrahedron_3       Tetrahedron_3;
+  typedef typename K::Construct_vertex_3  Construct_vertex_3;
 
   public:
     typedef Point_3          result_type;
@@ -45,7 +48,6 @@ class Robust_construct_circumcenter_3
 		      const Point_3 & r,
 		      const Point_3 & s) const
     {
-
       Cartesian_converter<K,EK> to_exact;
       Cartesian_converter<EK,K, To_double<EK::FT> > back_from_exact;
       //Cartesian_converter<EK,K > back_from_exact;
@@ -71,6 +73,21 @@ class Robust_construct_circumcenter_3
       return back_from_exact(exact_circumcenter( to_exact(p),
 						 to_exact(q),
 						 to_exact(r)));
+    }
+
+    Point_3
+    operator()(const Triangle_3& t) const
+    { 
+      Construct_vertex_3 vertex = this->construct_vertex_3_object();
+      return this->operator()(vertex(t, 0), vertex(t, 1), vertex(t, 2));
+    }
+
+    Point_3
+    operator()(const Tetrahedron_3& t) const
+    { 
+      Construct_vertex_3 vertex = this->construct_vertex_3_object();
+      return this->operator()(vertex(t, 0), vertex(t, 1),
+                              vertex(t, 2), vertex(t, 3));
     }
 };
 

@@ -1,3 +1,7 @@
+28 June 2006 Laurent Rineau
+- extends Robust_circumcenter_traits_3 so that this class is model of
+ConstructCicumcenter_3.
+
 26 June 2006 Laurent Rineau
 - in Surface_mesher:
   - remove deprecated include/CGAL/Surface_mesher/Implicit_surface.h
