@@ -570,7 +570,7 @@ $1 \leq d$, $d' \leq d$, $1 \leq d' \leq 4$
 As explained in Section \ref{sec:intro}, the output consists of a
 coordinate system, the Monge basis, together with the Monge
 coefficients which are stored in a Monge\_form class. In addition, more
-information on the computational issues are stored in a Monge\_form_condition_numbers
+information on the computational issues are stored in a Monge\_form\_condition\_numbers
 class.
 
 The Monge basis is expressed in the world\_basis. These informations
@@ -628,7 +628,7 @@ with $3d$ vectors and a number type. It is used as template for the
 %%%%%%%%%%%
 
 This class defines the vector and number types used (i)\ for local
-computations (ii)\ to store the Monge\_form_condition_numbers class members. Input
+computations (ii)\ to store the Monge\_form\_condition\_numbers class members. Input
 points of type \ccc{Data_Kernel::Point_3} are converted to
 \ccc{Local_Kernel::Point_3}. For output of the \ccc{Monge_form} class, these
 types are converted back to \ccc{Data_Kernel} ones.  Typically, one can use
@@ -680,7 +680,7 @@ the triangulation. Results are twofold:
 \begin{itemize}
 \item
 a human readable text file featuring the Monge\_form and the
-Monge\_form_condition_numbers data;
+Monge\_form\_condition\_numbers data;
 \item
 another text file which may be visualised with the demo program
 introspect-qt displaying the Monge basis at each vertex of the mesh.
