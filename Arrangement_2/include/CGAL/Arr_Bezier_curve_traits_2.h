@@ -259,7 +259,17 @@ public:
 
   class Compare_y_at_x_left_2
   {
+  private:
+
+    Intersection_map&  _inter_map;       // The map of intersection points.
+
   public:
+
+    /*! Constructor. */
+    Compare_y_at_x_left_2 (const Intersection_map& map) :
+      _inter_map (const_cast<Intersection_map&> (map))
+    {}
+
     /*!
      * Compares the y value of two x-monotone curves immediately to the left
      * of their intersection point.
@@ -291,27 +301,65 @@ public:
       }
 
       // Compare the slopes of the two arcs.
-      Comparison_result        res = cv1.compare_slopes (cv2, p);
-      CGAL_assertion (res != EQUAL);
-      // TODO: Compare slopes may return EQUAL in case of tangency.
-      // We should use other methods.
+      bool                     do_overlap;
+      Comparison_result        res = cv1.compare_slopes (cv2, p,
+                                                         _inter_map,
+                                                         do_overlap);
 
-      // The comparison result is to the right of p, so if the slopes are
-      // not equals this means that p is a simple intersection point and
-      // we therefore have to reverse the result to the left of p.
-      return ((res == LARGER) ? SMALLER : LARGER);
+      if (do_overlap)
+        return (EQUAL);
+
+      if (res != EQUAL)
+      {
+        // The comparison result of the slopes given the vertical order to the
+        // right of p. Since p is a simple intersection point, we reverse the
+        // result and obtain the vertical order to the left of p.
+        res = (res == LARGER ? SMALLER : LARGER);
+        return (res);
+      }
+
+      // Make sure that the x-coordinate of the left endpoint of cv1 is
+      // larger than (or equal to) the x-coordinate of the left endpoint of
+      // cv2. If not, we swap roles between the two curves.
+      if (CGAL::compare (cv1.left().x(), cv2.left().x()) != SMALLER)
+      {
+        res = cv1.compare_to_left (cv2, p,
+                                   _inter_map);
+  
+        CGAL_assertion (res != EQUAL);      
+      }
+      else
+      {
+        res = cv2.compare_to_left (cv1, p,
+                                   _inter_map);
+
+        CGAL_assertion (res != EQUAL);
+        res = (res == LARGER ? SMALLER : LARGER);
+      }
+
+      return (res);
     }
   };
 
   /*! Get a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
   {
-    return Compare_y_at_x_left_2();
+    return (Compare_y_at_x_left_2 (_inter_map));
   }
 
   class Compare_y_at_x_right_2
   {
+  private:
+
+    Intersection_map&  _inter_map;       // The map of intersection points.
+
   public:
+
+    /*! Constructor. */
+    Compare_y_at_x_right_2 (const Intersection_map& map) :
+      _inter_map (const_cast<Intersection_map&> (map))
+    {}
+
     /*!
      * Compares the y value of two x-monotone curves immediately to the right
      * of their intersection point.
@@ -344,10 +392,35 @@ public:
 
       // Compare the slopes of the two arcs to determine thir relative
       // position immediately to the right of p.
-      Comparison_result  res = cv1.compare_slopes (cv2, p);
-      CGAL_assertion (res != EQUAL);
-      // TODO: Compare slopes may return EQUAL in case of tangency.
-      // We should use other methods.
+      bool               do_overlap;
+      Comparison_result  res = cv1.compare_slopes (cv2, p,
+                                                   _inter_map,
+                                                   do_overlap);
+
+      if (do_overlap)
+        return (EQUAL);
+
+      if (res != EQUAL)
+        return (res);
+
+      // Make sure that the x-coordinate of the right endpoint of cv1 is
+      // smaller than (or equal to) the x-coordinate of the right endpoint of
+      // cv2. If not, we swap roles between the two curves.
+      if (CGAL::compare (cv1.right().x(), cv2.right().x()) != LARGER)
+      {
+        res = cv1.compare_to_right (cv2, p,
+                                    _inter_map);
+  
+        CGAL_assertion (res != EQUAL);      
+      }
+      else
+      {
+        res = cv2.compare_to_right (cv1, p,
+                                    _inter_map);
+
+        CGAL_assertion (res != EQUAL);
+        res = (res == LARGER ? SMALLER : LARGER);
+      }
 
       return (res);
     }
@@ -356,12 +429,22 @@ public:
   /*! Get a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
-    return Compare_y_at_x_right_2();
+    return (Compare_y_at_x_right_2 (_inter_map));
   }
 
   class Equal_2
   {
+  private:
+
+    Intersection_map&  _inter_map;       // The map of intersection points.
+
   public:
+
+    /*! Constructor. */
+    Equal_2 (const Intersection_map& map) :
+      _inter_map (const_cast<Intersection_map&> (map))
+    {}
+
     /*!
      * Check if the two x-monotone curves are the same (have the same graph).
      * \param cv1 The first curve.
@@ -371,7 +454,7 @@ public:
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
-      return (cv1.equals (cv2));
+      return (cv1.equals (cv2, _inter_map));
     }
 
     /*!
@@ -389,7 +472,7 @@ public:
   /*! Get an Equal_2 functor object. */
   Equal_2 equal_2_object () const
   {
-    return Equal_2();
+    return (Equal_2 (_inter_map));
   }
 
   class Make_x_monotone_2

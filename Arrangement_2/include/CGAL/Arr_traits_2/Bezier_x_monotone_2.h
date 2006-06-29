@@ -58,6 +58,7 @@ public:
   typedef std::pair<Curve_id, Curve_id>           Curve_pair;
   typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
   typedef std::list<Intersection_point_2>         Intersection_list;
+  typedef std::pair<Intersection_list, bool>      Intersection_info;
   typedef typename Intersection_list::iterator    Intersection_iter;
 
   /*! \struct
@@ -74,12 +75,15 @@ public:
   };
 
   typedef std::map<Curve_pair,
-                   Intersection_list,
+                   Intersection_info,
                    Less_curve_pair>               Intersection_map;
   typedef typename Intersection_map::value_type   Intersection_map_entry;
   typedef typename Intersection_map::iterator     Intersection_map_iterator;
 
 private:
+
+  typedef typename Alg_kernel::Point_2            Alg_point_2;
+  typedef typename Rat_kernel::Point_2            Rat_point_2;
 
   typedef typename Nt_traits::Integer             Integer;
   typedef typename Nt_traits::Rational            Rational;
@@ -93,6 +97,9 @@ private:
   Algebraic         _trg;          // The t-value at the target point.
   Point_2           _pt;           // The target point.
   bool              _dir_right;    // Is the subcurve directed right (or left).
+  bool              _inc_to_right; // Is the parameter value increases when
+                                   // traversing the subcurve from left to
+                                   // right.
   bool              _is_vert;      // Is the subcurve a vertical segment.
 
 public:
@@ -123,7 +130,6 @@ public:
                        CGAL::compare (t_src, Algebraic(1)) != LARGER);
     CGAL_precondition (CGAL::sign (t_trg) != NEGATIVE &&
                        CGAL::compare (t_trg, Algebraic(1)) != LARGER);
-    CGAL_precondition (CGAL::compare (t_src, t_trg) != EQUAL);
 
     // Check if the subcurve is directed left or right.
     const Comparison_result    res = CGAL::compare (_ps.x(), _pt.x());
@@ -138,6 +144,18 @@ public:
     {
       _dir_right = (res == SMALLER);
     }
+
+    // Check if the vaule of the parameter t increase when we traverse the
+    // curve from left to right: If the curve is directed to the right, we
+    // check if t_src < t_trg, otherwise we check whether t_src > t_trg.
+    const Comparison_result    t_res = CGAL::compare (t_src, t_trg);
+
+    CGAL_precondition (t_res != EQUAL);
+
+    if (_dir_right)
+      _inc_to_right = (t_res == SMALLER);
+    else
+      _inc_to_right = (t_res == LARGER);
   }
 
   /*!
@@ -244,9 +262,13 @@ public:
     CGAL_assertion (p.originators_begin() != p.originators_end());
 
     typename Point_2::Originator   orig = *(p.originators_begin());
+    bool                           do_overlap;
     std::pair<Intersection_iter, Intersection_iter>
       inter_range = _get_curve_intersections (_curve, orig.first,
-                                              inter_map);
+                                              inter_map, do_overlap);
+
+    if (do_overlap)
+      return (EQUAL);
 
     // Go over the intersection points and look for p there.
     Intersection_iter    iit;
@@ -287,6 +309,8 @@ public:
    * their given intersection point.
    * \param cv The other subcurve.
    * \param p The intersection point.
+   * \param inter_map Maps curve pairs to lists of their intersection points.
+   * \param do_overlap Output: Do the curves overlap.
    * \pre p lies of both subcurves.
    * \pre Neither of the subcurves is a vertical segment.
    * \return SMALLER if (*this) slope is less than cv's;
@@ -294,10 +318,19 @@ public:
    *         LARGER if (*this) slope is greater than cv's.
    */
   Comparison_result compare_slopes (const Self& cv,
-				    const Point_2& p) const
+				    const Point_2& p,
+                                    Intersection_map& inter_map,
+                                    bool& do_overlap) const
   {
-    if (_has_same_support (cv))
+    if (_curve.is_same (cv._curve))
+    {
+      // TODO: Handle two subcurves of the same curve more cleverly ...
+      //       We know that p must be a point with vertical tangent, so
+      //       X'(t) = 0. But maybe looking at the sign of Y'(t) can readily
+      //       give us the desired result.
+      do_overlap = false;
       return (EQUAL);
+    }
 
     // The slope of (X(t), Y(t)) at t0 is Y'(t)/X'(t).
     // Compute the slope of (*this).
@@ -327,20 +360,264 @@ public:
                            nt_traits.convert (cv._curve.y_norm()));
 
     // Compare the slopes.
-    return (CGAL::compare (slope1, slope2));
+    Comparison_result   res_slopes = CGAL::compare (slope1, slope2);
+
+    do_overlap = false;
+    if (res_slopes != EQUAL)
+      return (res_slopes);
+
+    // In case of equal slopes, check whether the curves are overlapping.
+    _get_curve_intersections (_curve, cv._curve,
+                              inter_map, do_overlap);
+
+    return (EQUAL);
+  }
+
+  /*!
+   * Compare the relative y-position of two x-monotone subcurve to the right
+   * of their intersection point.
+   * \param cv The other subcurve.
+   * \param p The intersection point.
+   * \param inter_map Maps curve pairs to lists of their intersection points.
+   * \pre The x-coordinate of the right endpoint of *this is smaller than
+   *      (or equal to) the x-coordinate of the right endpoint of cv.
+   * \pre p lies of both subcurves.
+   * \pre Neither of the subcurves is a vertical segment.
+   * \return SMALLER if (*this) lies below cv to the right of p;
+   *         EQUAL in case of an overlap (should not happen);
+   *         LARGER if (*this) lies above cv to the right of p.
+   */
+  Comparison_result compare_to_right (const Self& cv,
+                                      const Point_2& p,
+                                      Intersection_map& inter_map) const
+  {
+    // Get the parameter value for the point p.
+    Algebraic    t0;
+    bool         is_orig = p.is_originator (_curve, t0);
+
+    CGAL_assertion (is_orig);
+
+    // Examine the intersection points of the supporting curve and look
+    // for the next intersection to the right.
+    bool                                            do_overlap = false;
+    std::pair<Intersection_iter, Intersection_iter> inter_range;
+    Intersection_list                               empty_list;
+
+    if (! _curve.is_same (cv._curve))
+    {
+      inter_range = _get_curve_intersections (_curve, cv._curve,
+                                              inter_map,
+                                              do_overlap);
+    }
+    else
+    {
+      inter_range = std::make_pair (empty_list.begin(), empty_list.end());
+    }
+
+    if (do_overlap)
+      return (EQUAL);
+
+    Intersection_iter    iit;
+    Algebraic            next_t, t;
+    Comparison_result    res;
+    bool                 found = false;
+
+    for (iit = inter_range.first; iit != inter_range.second; ++iit)
+    {
+      // Check if the current point lies to the right of p. We do so by
+      // considering its originating parameter value t.
+      const Point_2&       pt = iit->first;
+
+      is_orig = pt.is_originator (_curve, t);
+      CGAL_assertion (is_orig);
+
+      res = CGAL::compare (t, t0);
+      if ((_inc_to_right && res == LARGER) ||
+          (! _inc_to_right && res == SMALLER))
+      {
+        if (! found)
+        {
+          next_t = t;
+          found = true;
+        }
+        else
+        {
+          // If we have already located an intersection point to the right
+          // of p, choose the leftmost of the two points.
+          res = CGAL::compare (t, next_t);
+          if ((_inc_to_right && res == SMALLER) ||
+              (! _inc_to_right && res == LARGER))
+            next_t = t;
+        }
+      }
+    }
+
+    // If the next intersection point occurs before the right endpoint
+    // of the subcurve, keep it. Otherwise, take the parameter value at
+    // the endpoint.
+    if (found)
+    {
+      if (_dir_right)
+        res = CGAL::compare (_trg, next_t);
+      else
+        res = CGAL::compare (_src, next_t);
+    }
+
+    if (! found ||
+        (_inc_to_right && res == SMALLER) ||
+        (! _inc_to_right && res == LARGER))
+    {
+      next_t = (_dir_right ? _trg : _src);
+    }
+
+    // Find a rational value between t0 and t_next. Using this value, we
+    // a point with rational coordinates on our subcurve.
+    Nt_traits       nt_traits;
+    const Rational  mid_t = nt_traits.rational_in_interval (t, next_t);
+    Rat_point_2     q1 = _curve (mid_t);
+
+    // Compute a rational point on *this using the t-value we have computed,
+    // and locate a point on cv with the same x-coordinate. We now just have
+    // to compare the y-coordinates of the two points.
+    Algebraic       y2 = cv._get_y (q1.x());
+    
+    return (CGAL::compare (nt_traits.convert (q1.y()), y2));
+  }
+
+  /*!
+   * Compare the relative y-position of two x-monotone subcurve to the left
+   * of their intersection point.
+   * \param cv The other subcurve.
+   * \param p The intersection point.
+   * \param inter_map Maps curve pairs to lists of their intersection points.
+   * \pre The x-coordinate of the left endpoint of *this is larger than
+   *      (or equal to) the x-coordinate of the left endpoint of cv.
+   * \pre p lies of both subcurves.
+   * \pre Neither of the subcurves is a vertical segment.
+   * \return SMALLER if (*this) lies below cv to the left of p;
+   *         EQUAL in case of an overlap (should not happen);
+   *         LARGER if (*this) lies above cv to the left of p.
+   */
+  Comparison_result compare_to_left (const Self& cv,
+                                     const Point_2& p,
+                                     Intersection_map& inter_map) const
+  {
+    // Get the parameter value for the point p.
+    Algebraic    t0;
+    bool         is_orig = p.is_originator (_curve, t0);
+
+    CGAL_assertion (is_orig);
+
+    // Examine the intersection points of the supporting curve and look
+    // for the next intersection to the left.
+    bool                                            do_overlap = false;
+    std::pair<Intersection_iter, Intersection_iter> inter_range;
+    Intersection_list                               empty_list;
+
+    if (! _curve.is_same (cv._curve))
+    {
+      inter_range = _get_curve_intersections (_curve, cv._curve,
+                                              inter_map,
+                                              do_overlap);
+    }
+    else
+    {
+      inter_range = std::make_pair (empty_list.begin(), empty_list.end());
+    }
+
+    if (do_overlap)
+      return (EQUAL);
+
+    Intersection_iter    iit;
+    Algebraic            next_t, t;
+    Comparison_result    res;
+    bool                 found = false;
+
+    for (iit = inter_range.first; iit != inter_range.second; ++iit)
+    {
+      // Check if the current point lies to the right of p. We do so by
+      // considering its originating parameter value t.
+      const Point_2&       pt = iit->first;
+
+      is_orig = pt.is_originator (_curve, t);
+      CGAL_assertion (is_orig);
+
+      res = CGAL::compare (t, t0);
+      if ((_inc_to_right && res == SMALLER) ||
+          (! _inc_to_right && res == LARGER))
+      {
+        if (! found)
+        {
+          next_t = t;
+          found = true;
+        }
+        else
+        {
+          // If we have already located an intersection point to the right
+          // of p, choose the leftmost of the two points.
+          res = CGAL::compare (t, next_t);
+          if ((_inc_to_right && res == LARGER) ||
+              (! _inc_to_right && res == SMALLER))
+            next_t = t;
+        }
+      }
+    }
+
+    // If the next intersection point occurs before the right endpoint
+    // of the subcurve, keep it. Otherwise, take the parameter value at
+    // the endpoint.
+    if (found)
+    {
+      if (_dir_right)
+        res = CGAL::compare (_src, next_t);
+      else
+        res = CGAL::compare (_trg, next_t);
+    }
+
+    if (! found ||
+        (_inc_to_right && res == LARGER) ||
+        (! _inc_to_right && res == SMALLER))
+    {
+      next_t = (_dir_right ? _src : _trg);
+    }
+
+    // Find a rational value between t0 and t_next. Using this value, we
+    // a point with rational coordinates on our subcurve.
+    Nt_traits       nt_traits;
+    const Rational  mid_t = nt_traits.rational_in_interval (t, next_t);
+    Rat_point_2     q1 = _curve (mid_t);
+
+    // Compute a rational point on *this using the t-value we have computed,
+    // and locate a point on cv with the same x-coordinate. We now just have
+    // to compare the y-coordinates of the two points.
+    Algebraic       y2 = cv._get_y (q1.x());
+    
+    return (CGAL::compare (nt_traits.convert (q1.y()), y2));
   }
 
   /*!
    * Check whether the two subcurves are equal (have the same graph).
    * \param cv The other subcurve.
+   * \param inter_map Maps curve pairs to lists of their intersection points.
    * \return (true) if the two subcurves have the same graph;
    *         (false) otherwise.
    */
-  bool equals (const Self& cv) const
+  bool equals (const Self& cv,
+               Intersection_map& inter_map) const
   {
-    // Check for equality of the supporting curves and the endpoints.
-    return (_has_same_support (cv) &&
-            left().equals (cv.left()) &&
+    // Check if the two subcurve have overlapping supporting curves.
+    if (_curve.is_same (cv._curve))
+    {
+      bool    do_overlap;
+      _get_curve_intersections (_curve, cv._curve,
+                                inter_map, do_overlap);
+
+      if (! do_overlap)
+        return (false);
+    }
+
+    // Check for equality of the endpoints.
+    return (left().equals (cv.left()) &&
             right().equals (cv.right()));
   }
 
@@ -356,12 +633,18 @@ public:
                             Intersection_map& inter_map,
                             OutputIterator oi) const
   {
-    // TODO: Handle overlapping curves ...
-
     // Obtain the intersection points between the supporting Bezier curves.
+    bool            do_overlap;
     std::pair<Intersection_iter, Intersection_iter>
       inter_range = _get_curve_intersections (_curve, cv._curve,
-                                              inter_map);
+                                              inter_map, do_overlap);
+
+    if (do_overlap)
+    {
+      // TODO: Handle overlapping curves ...
+      CGAL_assertion (false);
+      return (oi);
+    }
 
     // Report only the intersection points that lie on both given subcurves.
     Intersection_iter    iit;
@@ -519,17 +802,6 @@ public:
 private:
 
   /*!
-   * Check if the two subcurves have the same supporting curve.
-   */
-  bool _has_same_support (const Self& cv) const
-  {
-    // TODO: Sample (m + n + 1) rational points on one curve.
-    // If they are all on the other curve, the two are equal.
-
-    return (_curve.equals (cv._curve));
-  }
-
-  /*!
    * Check if the given t-value is in the range of the subcurve.
    */
   bool _is_in_range (const Algebraic& t) const
@@ -564,13 +836,15 @@ private:
    * \param B1 The first Bezier curve.
    * \param B2 The second Bezier curve.
    * \param inter_map Maps curve pairs to lists of their intersection points.
+   * \param do_overlap Output: Do the two curves overlap.
    * \return A pair of iterators specifying the valid range of intersection
    *         points. 
    */
   std::pair<Intersection_iter, Intersection_iter>
   _get_curve_intersections (const Curve_2& B1,
                             const Curve_2& B2,
-                            Intersection_map& inter_map) const
+                            Intersection_map& inter_map,
+                            bool& do_overlap) const
   {
     // Construct the pair of curve IDs. Note that the curve with smaller ID
     // always comes first.
@@ -590,16 +864,20 @@ private:
     {
       // In case the intersection points between the supporting curves have
       // not been computed before, compute them now and store them in the map.
+      Intersection_info&  info = inter_map[curve_pair];
       Intersection_list&  ilist = _intersect_curves (B1, B2, 
-                                                    inter_map[curve_pair]);
+                                                     info.first,
+                                                     info.second);
       
+      do_overlap = info.second;
       return (std::make_pair (ilist.begin(), ilist.end()));
     }
 
     // Now map_iter points to the desried entry in the map. Use it to obtain
     // the valid range of intersection points.
-    return (std::make_pair (map_iter->second.begin(),
-                            map_iter->second.end()));
+    do_overlap = map_iter->second.second;
+    return (std::make_pair (map_iter->second.first.begin(),
+                            map_iter->second.first.end()));
   }
 
   /*!
@@ -608,11 +886,13 @@ private:
    * \param B2 The second Bezier curve.
    * \param inter_list Output: The list of intersection points (along with
    *                           their multiplicities).
+   * \param do_overlap Output: Do the two curves overlap.
    * \return The output list of intersection point (same as inter_list).
    */
   Intersection_list& _intersect_curves (const Curve_2& B1,
                                         const Curve_2& B2,
-                                        Intersection_list& inter_list) const
+                                        Intersection_list& inter_list,
+                                        bool& do_overlap) const
   {
     inter_list.clear();
 
@@ -621,8 +901,14 @@ private:
     std::list<Algebraic>  s_vals;
     std::list<Algebraic>  t_vals;
 
-    B1.basic_intersect (B2, std::back_inserter (s_vals));
-    B2.basic_intersect (B1, std::back_inserter (t_vals));
+    B1.basic_intersect (B2, std::back_inserter (s_vals), do_overlap);
+
+    if (do_overlap)
+      // Return an empty list of intersection in case of an overlap.
+      return (inter_list);
+
+    B2.basic_intersect (B1, std::back_inserter (t_vals), do_overlap);
+    CGAL_assertion (! do_overlap);
 
     CGAL_assertion (s_vals.size() == t_vals.size());
 

@@ -83,6 +83,46 @@ public:
   }
 
   /*!
+   * Construct a rational number that lies strictly between two algebraic
+   * values.
+   * \param x1 The first algebraic value.
+   * \param x2 The second algebraic value.
+   * \pre The two values are not equal.
+   * \return A rational number that lies in the open interval (x1, x2).
+   */
+  Rational rational_in_interval (const Algebraic& x1,
+                                 const Algebraic& x2) const
+  {
+    CGAL_precondition (x1 != x2);
+
+    const BigInt  one (1);
+    Algebraic     scaled_x1 = x1;
+    BigInt        ix1;
+    Algebraic     scaled_x2 = x2;
+    BigInt        ix2;
+    BigInt        denom = 1;
+
+    while (true)
+    {
+      // Check if x1*2^k and x2*2^k are separated by at least 2.
+      ix1 = scaled_x1.BigIntValue();
+      ix2 = scaled_x2.BigIntValue();
+
+      if (CORE::abs (ix2 - ix1) > one)
+        break;
+
+      // Scale the values by a factor of 2.
+      scaled_x1 *= 2;
+      scaled_x2 *= 2;
+      denom *= 2;
+    }
+
+    // If we reached a separation, we construct a rational that
+    // approximates (x1 + x2)/2.
+    return (Rational (ix1 + ix2, 2*denom));
+  }
+
+  /*!
    * Convert a sequence of rational coefficients to an equivalent sequence
    * of integer coefficients. If the input coefficients are q(1), ..., q(k),
    * where q(i) = n(i)/d(i) then the output coefficients will be of the

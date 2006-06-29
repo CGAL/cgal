@@ -376,30 +376,6 @@ public:
   }
 
   /*!
-   * Check for equality.
-   */
-  bool equals (const Self& bc) const
-  {
-    if (this->identical (bc))
-      return (true);
-
-    // Check if the X(t) and Y(t) polynomials are equivalent in both curves.
-    Nt_traits     nt_traits;
-    Polynomial    diffX = nt_traits.scale (_rep()._polyX, bc._rep()._normX) -
-                          nt_traits.scale (bc._rep()._polyX, _rep()._normX);
-
-    if (nt_traits.degree (diffX) >= 0)
-      return (false);
-
-    Polynomial    diffY = nt_traits.scale (_rep()._polyY, bc._rep()._normY) -
-                          nt_traits.scale (bc._rep()._polyY, _rep()._normY);
-
-    return (nt_traits.degree (diffY) < 0);
-
-    // TODO: This is probably not sufficient!
-  }
- 
-  /*!
    * Compute a point of the Bezier curve given a rational t-value.
    * \param t The given t-value.
    * \param check_t Should we check the value of t.
@@ -413,6 +389,7 @@ public:
                         CGAL::compare (t, Rational(1)) != LARGER));
     
     // Compute the x and y coordinates.
+    Nt_traits          nt_traits;
     const Rational     x = nt_traits.evaluate_at (_rep()._polyX, t) /
                            Rational (_rep()._normX, 1);
     const Rational     y = nt_traits.evaluate_at (_rep()._polyY, t) /
@@ -546,15 +523,20 @@ public:
    * with the other curve, where t is always in [0, 1].
    * \param bc The other Bezier curve.
    * \param oi Output: An output iterator for the t-values.
+   * \param do_overlap Output: Do the two curves overlap.
    * \return A past-the-end iterator for the t-values.
    */
   template <class OutputIterator>
-  OutputIterator intersect (const Self& bc, OutputIterator oi) const
+  OutputIterator intersect (const Self& bc, OutputIterator oi,
+                            bool& do_overlap) const
   {
     // Compute all t-values that correspond to intersection points. 
     std::list<Algebraic>  t_vals;
 
-    basic_intersect (bc, std::back_inserter (t_vals));
+    basic_intersect (bc, std::back_inserter (t_vals), do_overlap);
+
+    if (do_overlap)
+      return;
 
     // Report only t-values in the legal range of [0, 1]. Note that we use
     // the fact that the roots we compute are given in ascending order, so
@@ -584,10 +566,12 @@ public:
    * t-values, namely values outside the range [0, 1].
    * \param bc The other Bezier curve.
    * \param oi Output: An output iterator for the t-values.
+   * \param do_overlap Output: Do the two curves overlap.
    * \return A past-the-end iterator for the t-values.
    */
   template <class OutputIterator>
-  OutputIterator basic_intersect (const Self& bc, OutputIterator oi) const
+  OutputIterator basic_intersect (const Self& bc, OutputIterator oi,
+                                  bool& do_overlap) const
   {
     // Let us denote our curve by (X_1(s), Y_1(s)) and the other curve by
     // (X_2(t), Y_2(t)), so we have to solve the system of bivariate
@@ -633,6 +617,13 @@ public:
     // a polynomial in s. The report the roots of this polynomial. 
     Polynomial            res = _compute_resultant (coeffsX_st, coeffsY_st);
 
+    if (nt_traits.degree (res) < 0)
+    {
+      do_overlap = true;
+      return (oi);
+    }
+
+    do_overlap = false;
     return (nt_traits.compute_polynomial_roots (res, oi));
   }
 
