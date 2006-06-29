@@ -1,4 +1,5 @@
 ### On Unix-like systems, put this file in ~/.subversion folder.
+###
 ### On Win32 systems, put this file in
 ### C:\Document and Settings\username\Application data\Subversion folder
 ### (by the way, Application Data is usually a hidden directory).
@@ -280,5 +281,3 @@ Doxyfile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.mws = svn:mime-type=application/octet-stream
 *.sxw = svn:mime-type=application/octet-stream
 *.pmproj = svn:mime-type=application/octet-stream
-
-
