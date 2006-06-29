@@ -57,25 +57,27 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //   This global function returns the number of vertex-pairs removed or -1 if there was an error 
 //   (like the surface not being a valid triangulated surface mesh)
 //       
-template<class TSM,class GetCollapseData,class ParamsToGetCollapseData,class GetCost,class GetNewVertexPoint,class ShouldStop>
+template<class TSM,class GetCollapseData,class ParamsToGetCollapseData,class GetCost,class GetNewVertexPoint,class ShouldStop, class Visitor>
 int vertex_pair_collapse ( TSM&                           aSurface
                          , GetCollapseData const&         aGet_collapse_data
                          , ParamsToGetCollapseData const* aParamsToGetCollapseData // Can be NULL
                          , GetCost         const&         aGet_cost 
                          , GetNewVertexPoint const&       aGet_new_vertex_point
                          , ShouldStop      const&         aShould_stop
+                         , Visitor*                       aVisitor = 0
                          , bool                           aIncludeNonEdgePairs = false
                          ) 
 {
   if ( is_valid_triangulated_surface_mesh(aSurface) )
   {
-    typedef VertexPairCollapse<TSM,GetCollapseData,GetCost,GetNewVertexPoint,ShouldStop> Algorithm ;
+    typedef VertexPairCollapse<TSM,GetCollapseData,GetCost,GetNewVertexPoint,ShouldStop,Visitor> Algorithm ;
     Algorithm algorithm(aSurface
                        ,aGet_collapse_data
                        ,aParamsToGetCollapseData
                        ,aGet_cost
                        ,aGet_new_vertex_point
                        ,aShould_stop
+                       ,aVisitor
                        ,aIncludeNonEdgePairs
                        ) ;
     return algorithm.run();

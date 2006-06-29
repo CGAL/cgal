@@ -31,6 +31,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edges_size_type 
+num_undirected_edges(const Polyhedron_3<Gt,I,HDS,A>& p)
+{
+  return p.size_of_halfedges() / 2 ;
+}
+
 //
 // Const versions
 // 

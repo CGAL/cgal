@@ -73,6 +73,17 @@ public :
                               , bool                      aIsQFixed
                               , edge_descriptor const&    aEdge 
                               , TSM&                      aSurface 
+                              )
+    :
+     Base(aP,aQ,aIsPFixed,aIsQFixed,aEdge,aSurface)
+  {} 
+  
+  LindstromTurk_collapse_data ( vertex_descriptor const&  aP 
+                              , vertex_descriptor const&  aQ
+                              , bool                      aIsPFixed
+                              , bool                      aIsQFixed
+                              , edge_descriptor const&    aEdge 
+                              , TSM&                      aSurface 
                               , Optional_FT const&        aCost
                               , Optional_point_3 const&   aVertexPoint
                               )

@@ -323,8 +323,8 @@ void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
   
     if ( v2 != mQ )
     {
-      if ( std::find(rLink.begin(),rLink.end(),v2) == rLink.end() )
-        rLink.push_back(v2) ;
+      CGAL_expensive_assertion ( std::find(rLink.begin(),rLink.end(),v2) == rLink.end() ) ;
+      rLink.push_back(v2) ;
     }
       
     Extract_triangle(v0,v1,v2,e02,rTriangles);
@@ -664,12 +664,14 @@ void LindstromTurkImpl<CD>::Constrians::Add_from_gradient ( Matrix const& H, Vec
                   , A0.z()*A0.z()
                   );
            
-        Vector Q0 ;      
+        Vector Q0;      
         switch ( index_of_max_component(A02) ) 
         {
           case 0: Q0 = Vector(- A0.z()/A0.x(),0              ,1              ); break;
           case 1: Q0 = Vector(0              ,- A0.z()/A0.y(),1              ); break;
           case 2: Q0 = Vector(1              ,0              ,- A0.x()/A0.z()); break;
+
+           default : Q0 = NULL_VECTOR ; // This should never happen ;
         }
         
         Vector Q1 = cross_product(A0,Q0);

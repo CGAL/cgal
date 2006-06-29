@@ -24,9 +24,10 @@
 #include <fstream>
 #include <boost/tokenizer.hpp>
 
-#define CGAL_CHECK_EXPENSIVE
+//#define CGAL_CHECK_EXPENSIVE
 
-#include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Real_timer.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_BGL.h>
 #include <CGAL/Polyhedron_extended_BGL.h>
@@ -35,8 +36,10 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
-//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 3
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_AUDIT
+//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 1
+
+#define STATS
+//#define AUDIT
 
 void Surface_simplification_external_trace( std::string s )
 {
@@ -59,7 +62,6 @@ using namespace std ;
 using namespace boost ;
 using namespace CGAL ;
 
-//typedef Simple_homogeneous<int>                        Kernel;
 typedef Simple_cartesian<double> Kernel;
 typedef Kernel::Vector_3         Vector;
 typedef Kernel::Point_3          Point;
@@ -142,6 +144,9 @@ struct External_polyhedron_get_is_vertex_fixed<Polyhedron>
 }  ;
 
 CGAL_END_NAMESPACE  
+
+
+#ifdef AUDIT
 
 double sCostMatchThreshold   = 1e-2 ;
 double sVertexMatchThreshold = 1e-2 ;
@@ -273,12 +278,12 @@ string to_string( optional<Point> const& p )
   else return "NONE" ;  
 }
 
-void CGAL_TSMS_audit( Vertex_handle    const& p 
-                    , Vertex_handle    const& q
-                    , Halfedge_handle  const& e
-                    , optional<double> const& cost
-                    , optional<Point>  const& newv
-                    )
+void register_collected_edge( Vertex_handle    const& p 
+                            , Vertex_handle    const& q
+                            , Halfedge_handle  const& e
+                            , optional<double> const& cost
+                            , optional<Point>  const& newv
+                            )
 {
   Audit_report_ptr lReport( new Audit_report(e->ID) ) ;
   
@@ -312,6 +317,101 @@ void CGAL_TSMS_audit( Vertex_handle    const& p
   
   sAuditReport.insert( make_pair(e->ID,lReport) ) ;
 } 
+#endif
+
+#ifdef STATS
+int sInitial ;
+int sCollected ;
+int sProcessed ;
+int sCollapsed ;
+int sNonCollapsable ;
+int sCostUncomputable ;
+int sFixed ;
+int sRemoved ;
+#endif
+
+
+struct Visitor
+{
+  void OnStarted( Polyhedron& aSurface ) 
+  {
+#ifdef STATS
+    sInitial = aSurface.size_of_halfedges() / 2 ;
+#endif
+  } 
+  
+  void OnFinished ( Polyhedron& aSurface ) 
+  {
+#ifdef STATS
+    printf("\n");
+#endif
+  } 
+  
+  void OnThetrahedronReached ( Polyhedron& aSurface ) {} 
+  void OnStopConditionReached( Polyhedron& aSurface ) {} 
+  
+  void OnCollected( Polyhedron&            aSurface
+                  , Vertex_handle const&   aP
+                  , Vertex_handle const&   aQ
+                  , bool                   aIsPFixed
+                  , bool                   aIsQFixed
+                  , Halfedge_handle const& aEdge
+                  , optional<double>       aCost
+                  , optional<Point>        aNewVertexPoint
+                  )
+  {
+#ifdef AUDIT  
+    register_collected_edge(aP,aQ,aEdge,aCost,aNewVertexPoint); 
+#endif
+#ifdef STATS
+    ++sCollected ;
+    printf("\rEdges collected %d",sCollected);
+#endif
+ }                
+  
+  void OnProcessed( Polyhedron&            aSurface
+                  , Vertex_handle const&   aP
+                  , Vertex_handle const&   aQ
+                  , bool                   aIsPFixed
+                  , bool                   aIsQFixed
+                  , Halfedge_handle const& aEdge
+                  , optional<double>       aCost
+                  , optional<Point>        aNewVertexPoint
+                  , bool                   aIsCollapsable
+                  )
+  {
+#ifdef STATS
+    if ( sProcessed == 0 )
+      printf("\n");  
+    ++ sProcessed ;
+    if ( aIsPFixed && aIsQFixed )
+      ++ sFixed ;
+    else if ( !aIsCollapsable )
+    {
+      if ( !aCost )
+           ++ sCostUncomputable ;
+      else ++ sNonCollapsable ;
+    }
+    else 
+      ++ sCollapsed;
+#endif  
+ 
+  }                
+  
+  void OnCollapsed( Polyhedron&            aSurface
+                  , Vertex_handle const&   aP
+                  , Halfedge_handle const& aPQ
+                  , Halfedge_handle const& aPT
+                  , Halfedge_handle const& aQB
+                  )
+  {
+#ifdef STATS
+    sRemoved += 3 ;
+    printf("\r%d%%",((int)(100.0*((double)sRemoved/(double)sInitial))));
+#endif  
+  }                
+ 
+} ;
 
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
@@ -331,7 +431,7 @@ char const* matched_alpha ( bool matched )
   return matched ? "matched" : "UNMATCHED" ; 
 }
 
-bool Test ( string name )
+bool Test ( int aStop, string name )
 {
   bool rSucceeded = false ;
   
@@ -339,14 +439,16 @@ bool Test ( string name )
   string audit_name  = name+string(".audit");
   string result_name = name+string(".out.off");
   
+  cout << "Testing simplification of surface " << off_name << endl ;
+  
   ifstream off_is(off_name.c_str());
   if ( off_is )
   {
     Polyhedron lP; 
     
-    off_is >> lP ;
+    scan_OFF(off_is,lP,true);
     
-    cout << "Testing Lindstrom Turk simplification of surace with " << (lP.size_of_halfedges()/2) << " edges..." << endl ;
+    cout << (lP.size_of_halfedges()/2) << " edges..." << endl ;
   
     cout << setprecision(19) ;
   
@@ -362,33 +464,52 @@ bool Test ( string name )
     for ( Polyhedron::Facet_iterator fi = lP.facets_begin(); fi != lP.facets_end() ; ++ fi )
       fi->ID = lFacetID ++ ;    
 
-    sAuditData.clear();
-    //ParseAudit(audit_name);
-      
+#ifdef AUDIT
+    sAuditData .clear();
+    sAuditReport.clear();
+    ParseAudit(audit_name);
     cout << "Audit data loaded." << endl ;
+#endif
     
     typedef LindstromTurk_collapse_data<Polyhedron> Collapse_data ;
     
     Construct_LindstromTurk_collapse_data<Collapse_data> Construct_collapse_data ;
     LindstromTurk_cost                   <Collapse_data> Get_cost ;
     LindstromTurk_vertex_placement       <Collapse_data> Get_vertex_point ;
-    Count_stop_condition                 <Collapse_data> Should_stop(0);
+    Count_stop_condition                 <Collapse_data> Should_stop(aStop);
         
     Collapse_data::Params lParams;
     
-    sAuditReport.clear();
-    int r = vertex_pair_collapse(lP,Construct_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop);
+    Visitor lVisitor ;
+
+    Real_timer t ; t.start();    
+    int r = vertex_pair_collapse(lP,Construct_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
+    t.stop();
             
     ofstream off_out(result_name.c_str(),ios::trunc);
     off_out << lP ;
     
-    cout << "Finished...\n"
+    cout << "\nFinished...\n"
+         << "Ellapsed time: " << t.time() << " seconds.\n" 
          << r << " edges removed.\n"
-         << lP.size_of_vertices() << " vertices.\n"
-         << (lP.size_of_halfedges()/2) << " edges.\n"
-         << lP.size_of_facets() << " triangles.\n" 
+         << endl
+         << lP.size_of_vertices() << " final vertices.\n"
+         << (lP.size_of_halfedges()/2) << " final edges.\n"
+         << lP.size_of_facets() << " final triangles.\n" 
          << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
 
+#ifdef STATS
+    cout << "\n------------STATS--------------\n"
+         << sProcessed        << " edges processed.\n"
+         << sCollapsed        << " edges collapsed.\n" 
+         << sNonCollapsable   << " non-collapsable edges.\n"
+         << sCostUncomputable << " non-computable edges.\n"
+         << sFixed            << " fixed edges.\n"
+         << sRemoved          << " edges removed.\n" 
+         << (sRemoved/3)      << " vertices removed." ;
+#endif
+
+#ifdef AUDIT
     unsigned lMatches = 0 ;
                   
     cout << "Audit report:\n" ;
@@ -417,6 +538,10 @@ bool Test ( string name )
     }
     
     rSucceeded = ( lMatches == sAuditReport.size() ) ;
+#else
+    rSucceeded = true ;
+#endif
+
   }
   else
   {
@@ -431,26 +556,37 @@ int main( int argc, char** argv )
   set_error_handler  (error_handler);
   set_warning_handler(error_handler);
   
-  vector<string> cases ;
-    
-  for ( int i = 1 ; i < argc ; ++i )
-    cases.push_back( string(argv[i]) ) ;
-    
-  if ( cases.size() == 0 )
-    cases.push_back( string("data/sample5") ) ;
-  
-  unsigned lOK = 0 ;
-  for ( vector<string>::const_iterator it = cases.begin(); it != cases.end() ; ++ it )
+  if ( argc > 3 )
   {
-    if ( Test(*it) )
-      ++ lOK ;
-  }  
+    vector<string> cases ;
   
-  cout << endl
-       << lOK                   << " cases succedded." << endl
-       << (cases.size() - lOK ) << " cases failed." << endl ;
-        
-  return lOK == cases.size() ? 0 : 1 ;
+    int lStop = atoi(argv[1]);
+    
+    string lFolder(argv[2]);
+    lFolder += "/" ;
+    
+    for ( int i = 3 ; i < argc ; ++i )
+      cases.push_back( string(argv[i]) ) ;
+      
+    unsigned lOK = 0 ;
+    for ( vector<string>::const_iterator it = cases.begin(); it != cases.end() ; ++ it )
+    {
+      if ( Test( lStop, lFolder + *it) )
+        ++ lOK ;
+    }  
+    
+    cout << endl
+         << lOK                   << " cases succedded." << endl
+         << (cases.size() - lOK ) << " cases failed." << endl ;
+          
+    return lOK == cases.size() ? 0 : 1 ;
+  }
+  else
+  {
+    cout << "USAGE: LT_edge_collapse_test final_edge_count folder file0 file1 file2 ..." << endl ;
+    
+    return 1 ;
+  } 
 }
 
 // EOF //

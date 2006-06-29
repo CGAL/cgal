@@ -149,16 +149,6 @@ CGAL_END_NAMESPACE
 #  define CGAL_TSMS_TRACE(l,m)
 #endif
 
-
-
-
-#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_AUDIT
-#  define CGAL_TSMS_AUDIT(p,q,e,c,v) CGAL_TSMS_audit(p,q,e,c,v)
-#else
-#  define CGAL_TSMS_AUDIT(p,q,e,c,v)             
-#endif
-
-
 #undef CGAL_TSMS_ENABLE_TRACE
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_TSMS_COMMON_H //

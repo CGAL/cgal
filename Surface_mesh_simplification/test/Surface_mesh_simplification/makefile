@@ -16,8 +16,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include/\
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
-           $(CGAL_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(CGAL_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags

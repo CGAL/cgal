@@ -46,6 +46,7 @@ template<class TSM_
         ,class GetCost_
         ,class GetNewVertexPoint_
         ,class ShouldStop_
+        ,class VisitorT_
         >
 class VertexPairCollapse
 {
@@ -56,6 +57,7 @@ public:
   typedef GetCost_           GetCost ;
   typedef GetNewVertexPoint_ GetNewVertexPoint ;
   typedef ShouldStop_        ShouldStop ;
+  typedef VisitorT_          VisitorT ;
   
   typedef VertexPairCollapse Self ;
   
@@ -144,6 +146,16 @@ public:
     
     void reset_data( Collapse_data_ptr const& aData ) { mData = aData ; mCostStored = false ; }
     
+    void reset_data( vertex_descriptor const& new_p
+                   , vertex_descriptor const& new_q
+                   , bool                     is_new_p_fixed
+                   , bool                     is_new_q_fixed
+                   , edge_descriptor   const& edge
+                   )
+    {
+      reset_data( Collapse_data_ptr( new Collapse_data(new_p,new_q,is_new_p_fixed,is_new_q_fixed,edge,surface()) ) );
+    }
+    
     Collapse_data_ptr        data      () const { return mData ; }
     vertex_descriptor const& p         () const { return mData->p() ; }
     vertex_descriptor const& q         () const { return mData->q() ; }
@@ -151,6 +163,8 @@ public:
     bool                     is_q_fixed() const { return mData->is_q_fixed() ; }
     edge_descriptor   const& edge      () const { return mData->edge() ; }
     TSM&                     surface   () const { return mData->surface() ; }
+    
+    bool is_edge_fixed() const { return is_p_fixed() && is_q_fixed() ; }
     
     bool is_edge() const
     {
@@ -168,6 +182,7 @@ public:
     void set_PQ_handle( pq_handle h ) { mPQHandle = h ; }
     
     void reset_PQ_handle() { mPQHandle = null_PQ_handle() ; }
+    
         
     friend bool operator< ( shared_ptr<vertex_pair> const& a, shared_ptr<vertex_pair> const& b ) 
     {
@@ -195,10 +210,11 @@ public:
       if ( vp.is_p_in_surface() )
            out << "V" << vp.p()->ID << " (" << vp.p()->point().x() << "," << vp.p()->point().y() << "," << vp.p()->point().z() << ")" ;
       else out << "##p() has been erased## " ;
-      out << "->" ;
+      out << ( vp.is_p_fixed() ? "[FIXED] " : "" ) << "->" ;
       if ( vp.is_q_in_surface() )
            out << " V" << vp.q()->ID << "(" << vp.q()->point().x() << "," << vp.q()->point().y() << "," << vp.q()->point().z() << ")" ;
       else out << "##q() has been erased## " ;
+      out << ( vp.is_q_fixed() ? "[FIXED] " : "" );
       if ( vp.is_edge_in_surface() )
            out << " E" << vp.edge()->ID ;
       else out << "##e() has been erased## " ;
@@ -259,6 +275,7 @@ public:
                     , GetCost const&                 aGetCost
                     , GetNewVertexPoint const&       aGetVertexPoint
                     , ShouldStop const&              aShouldStop 
+                    , VisitorT*                      aVisitor
                     , bool                           aIncludeNonEdgePairs 
                     ) ;
   
@@ -270,7 +287,7 @@ private:
   void Loop();
   bool Is_collapsable( vertex_descriptor const& p, vertex_descriptor const& q, edge_descriptor const& p_q ) ;
   void Collapse( vertex_pair_ptr const& aPair ) ;
-  void Update_neighbors( vertex_descriptor const& v ) ;
+  void Update_neighbors( vertex_pair_ptr const& aCollapsingPair ) ;
   
   vertex_pair_ptr get_pair ( edge_descriptor const& e ) 
   {
@@ -337,25 +354,6 @@ private:
     return get(is_vertex_fixed,mSurface,v) ;
   }
   
-  void GetVerticesIsFixedFlags( vertex_descriptor const& p
-                              , vertex_descriptor const& q
-                              , edge_descriptor const& p_q 
-                              , bool& aIsPFixed
-                              , bool& aIsQFixed
-                              ) 
-  {
-    if (Is_collapsable(p,q,p_q))
-    {
-      aIsPFixed = is_vertex_fixed(p);
-      aIsQFixed = is_vertex_fixed(q);
-    }
-    else
-    {
-      aIsPFixed = true ;
-      aIsQFixed = true ;
-    }
-  }                            
-  
 private:
 
   TSM& mSurface ;
@@ -365,6 +363,7 @@ private:
   GetCost           const&  Get_cost ;
   GetNewVertexPoint const&  Get_new_vertex_point ;
   ShouldStop        const&  Should_stop ;
+  VisitorT*                 Visitor ;
   
   bool mIncludeNonEdgePairs;
 
