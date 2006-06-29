@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.2-branch/Installation/config/testfiles/CGAL_CFG_IEEE_754_BUG.C $
-// $Id: CGAL_CFG_IEEE_754_BUG.C 28567 2006-02-16 14:30:13Z lsaboret $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Sylvain Pion
