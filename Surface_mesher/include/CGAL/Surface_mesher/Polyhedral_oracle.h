@@ -198,7 +198,7 @@ public:
       // (we compare with our basic intersection function)
 //       CGAL::Object oun, odeux;
 //       Point p;
-//       oun = data_struct.intersect(s.vertex(0), s.vertex(1));
+//       oun = data_struct.intersection(s.vertex(0), s.vertex(1));
 //       odeux = intersect_with_surface (s);
 //       odeux = oun;
 
@@ -209,7 +209,7 @@ public:
 // 		  << " " << (assign(p, odeux))
 // 		  << std::endl;
 
-      Object o = data_struct.intersect(s.vertex(0), s.vertex(1));
+      Object o = data_struct.intersection(s.vertex(0), s.vertex(1));
       Kernel_point kp;
       if( assign(kp, o) )
       {
@@ -221,7 +221,7 @@ public:
         return Object();
 
 /*       return  intersect_with_surface (s);  // basic intersection function */
-/*       return data_struct.intersect (s.vertex(0), s.vertex(1));  // Marie */
+/*       return data_struct.intersection (s.vertex(0), s.vertex(1));  // Marie */
     }
 
   CGAL::Object intersect_ray_surface(Subfacets_octree& data_struct, Ray_3 &r)
@@ -230,7 +230,7 @@ public:
       // (we compare with our basic intersection function)
 //       CGAL::Object oun, odeux;
 //       Point p;
-//       oun = data_struct.intersect (r);
+//       oun = data_struct.intersection (r);
 //       //      odeux = intersect_with_surface (r);
 //       odeux = oun;
 
@@ -242,7 +242,7 @@ public:
 
 //       return odeux;
 
-      Object o = data_struct.intersect (r);
+      Object o = data_struct.intersection (r);
       Kernel_point kp;
       if( assign(kp, o) )
       {
@@ -255,7 +255,7 @@ public:
 
 
 //       return intersect_with_surface (r);  // basic intersection function
-//       return data_struct.intersect (r);   // Marie's code
+//       return data_struct.intersection (r);   // Marie's code
     }
 
 
