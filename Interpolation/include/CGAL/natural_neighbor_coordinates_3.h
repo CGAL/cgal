@@ -219,7 +219,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 	{//for each neighboring cell cc2 of cc1
 	  Cell_handle cc2=cc1->neighbor(i);
 	  if(std::find(cells.begin(),cells.end(),cc2)==cells.end())
-	    {// cc2 outside the (convex) conflict cavity
+	    {// cc2 outside the conflict cavity
 	      Point C_1 = construct_circumcenter<Dt>(Facet(cc1,i),Q); 
 	      for(int j=1;j<4;j++)
 		{//for each vertex P of the boundary facet
@@ -236,6 +236,8 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 		      num_next=dt.next_around_edge(cc3->index(vR),cc3->index(vP));
 		      next=cc3->neighbor(num_next);
 		    }
+		  if (dt.is_infinite(cc3))
+		    return make_triple(nn_out,norm_coeff=Coord_type(1), false);//point outside the convex-hull
 		  Point C3=dt.dual(cc3);
 		  Point C_3=construct_circumcenter<Dt>(Facet(cc3,num_next),Q);
 		  Point midPQ = midpoint(vP->point(),Q);
@@ -247,10 +249,12 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 		    coordinate[vP]=coor_add : coor_it->second+=coor_add;// Replace by a function call	
 		}	 
 	    }
-	  else // cc2 in the (convex) cavity
+	  else // cc2 in the conflict cavity
 	    {	       
 	      CGAL_triangulation_assertion(std::find(cells.begin(),cells.end(),cc2)!=cells.end());//TODO : Delete
-	      Point C2=dt.dual(cc2);	      
+	      if (dt.is_infinite(cc2))
+		return make_triple(nn_out,norm_coeff=Coord_type(1), false);//point outside the convex-hull
+	      Point C2=dt.dual(cc2);      
 	      for(int j=1;j<4;j++)
 		{//for each vertex P of the internal facet
 		  Vertex_handle vP=cc1->vertex((i+j)&3);
@@ -355,7 +359,7 @@ construct_circumcenter(const typename DT::Facet &f,const typename DT::Geom_trait
 			  f.first->vertex((f.second+2)&3)->point(),
 			  f.first->vertex((f.second+3)&3)->point(), 
 			  Q));
-  // else the facet is not on the cavity associated to P
+  // else the facet is not on the enveloppe of the conflict cavity associated to P
   return typename DT::Geom_traits().construct_circumcenter_3_object()
     (f.first->vertex((f.second+1)&3)->point(),
      f.first->vertex((f.second+2)&3)->point(),
