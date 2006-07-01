@@ -114,7 +114,7 @@ rm -rf rpm >> ${LOGFILE} 2>&1
 cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
 cp ${release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
 mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
-sed -e "s/define internal_release.*/define internal_release $INTERNAL_NUMBER/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
+sed -e "s/define +internal_release +[0-9]+/define internal_release $INTERNAL_NUMBER/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
 make -C rpm CGAL.src >> ${LOGFILE} 2>&1
 echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
 mv rpm/SRPMS/*.src.rpm "${HTML_DIR}" >> ${LOGFILE} 2>&1
