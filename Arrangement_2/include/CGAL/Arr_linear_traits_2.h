@@ -1512,7 +1512,7 @@ public:
   {}
     
   /*!
-   * Constructor from two point.
+   * Constructor from two points.
    * \param s The source point.
    * \param t The target point.
    */

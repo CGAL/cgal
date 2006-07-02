@@ -285,59 +285,7 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
-      // Check for vertical subcurves. A vertical segment is below any other
-      // x-monotone subcurve to the left of their common endpoint.
-      if (cv1.is_vertical())
-      {
-        if (cv2.is_vertical())
-          // Both are vertical segments with a common endpoint:
-          return (EQUAL);
-
-        return (SMALLER);
-      }
-      else if (cv2.is_vertical())
-      {
-        return (LARGER);
-      }
-
-      // Compare the slopes of the two arcs.
-      bool                     do_overlap;
-      Comparison_result        res = cv1.compare_slopes (cv2, p,
-                                                         _inter_map,
-                                                         do_overlap);
-
-      if (do_overlap)
-        return (EQUAL);
-
-      if (res != EQUAL)
-      {
-        // The comparison result of the slopes given the vertical order to the
-        // right of p. Since p is a simple intersection point, we reverse the
-        // result and obtain the vertical order to the left of p.
-        res = (res == LARGER ? SMALLER : LARGER);
-        return (res);
-      }
-
-      // Make sure that the x-coordinate of the left endpoint of cv1 is
-      // larger than (or equal to) the x-coordinate of the left endpoint of
-      // cv2. If not, we swap roles between the two curves.
-      if (CGAL::compare (cv1.left().x(), cv2.left().x()) != SMALLER)
-      {
-        res = cv1.compare_to_left (cv2, p,
-                                   _inter_map);
-  
-        CGAL_assertion (res != EQUAL);      
-      }
-      else
-      {
-        res = cv2.compare_to_left (cv1, p,
-                                   _inter_map);
-
-        CGAL_assertion (res != EQUAL);
-        res = (res == LARGER ? SMALLER : LARGER);
-      }
-
-      return (res);
+      return (cv1.compare_to_left (cv2, p, _inter_map));
     }
   };
 
@@ -375,54 +323,7 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
-      // Check for vertical subcurves. A vertical segment is above any other
-      // x-monotone subcurve to the right of their common endpoint.
-      if (cv1.is_vertical())
-      {
-        if (cv2.is_vertical())
-          // Both are vertical segments with a common endpoint:
-          return (EQUAL);
-
-        return (LARGER);
-      }
-      else if (cv2.is_vertical())
-      {
-        return (SMALLER);
-      }
-
-      // Compare the slopes of the two arcs to determine thir relative
-      // position immediately to the right of p.
-      bool               do_overlap;
-      Comparison_result  res = cv1.compare_slopes (cv2, p,
-                                                   _inter_map,
-                                                   do_overlap);
-
-      if (do_overlap)
-        return (EQUAL);
-
-      if (res != EQUAL)
-        return (res);
-
-      // Make sure that the x-coordinate of the right endpoint of cv1 is
-      // smaller than (or equal to) the x-coordinate of the right endpoint of
-      // cv2. If not, we swap roles between the two curves.
-      if (CGAL::compare (cv1.right().x(), cv2.right().x()) != LARGER)
-      {
-        res = cv1.compare_to_right (cv2, p,
-                                    _inter_map);
-  
-        CGAL_assertion (res != EQUAL);      
-      }
-      else
-      {
-        res = cv2.compare_to_right (cv1, p,
-                                    _inter_map);
-
-        CGAL_assertion (res != EQUAL);
-        res = (res == LARGER ? SMALLER : LARGER);
-      }
-
-      return (res);
+      return (cv1.compare_to_right (cv2, p, _inter_map));
     }
   };
 

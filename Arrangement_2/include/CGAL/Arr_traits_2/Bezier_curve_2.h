@@ -146,13 +146,13 @@ public:
       //
       //     n-k
       //    *****
-      //    *   *     n-k-j            n!         n-j
-      //     *    (-1)      p_k ---------------- t
-      //    *   *                j! k! (n-k-j)!
+      //    *   *     j            n!         j+k
+      //     *    (-1)  p_k ---------------- t
+      //    *   *            j! k! (n-k-j)!
       //    *****
       //     j=0
       //
-      even_exp = ((n - k) % 2 == 0); 
+      even_exp = true; 
       for (j = 0; j <= n - k; j++)
       {
         n_over_k_j = _choose (n, k, j);
@@ -161,15 +161,15 @@ public:
         {
           // We should add the current values to the coefficients of the
           // monomial t^(n_j).
-          coeffsX[n - j] += px * n_over_k_j;
-          coeffsY[n - j] += py * n_over_k_j;
+          coeffsX[j + k] += px * n_over_k_j;
+          coeffsY[j + k] += py * n_over_k_j;
         }
         else
         {
           // We should subtract the current values from the coefficients of the
           // monomial t^(n_j).
-          coeffsX[n - j] -= px * n_over_k_j;
-          coeffsY[n - j] -= py * n_over_k_j;
+          coeffsX[j + k] -= px * n_over_k_j;
+          coeffsY[j + k] -= py * n_over_k_j;
         }
 
         // As we increment j, negate the "even" flag for the exponent (n-j).
@@ -202,15 +202,15 @@ private:
     Integer   reduced_fact = 1;
     Integer   j_fact = 1, k_fact = 1;
     int       i;
-
+    
     for (i = n - k - j + 1; i <= n; i++)
       reduced_fact *= Integer (i);
 
-    for (i = 1; i < j; i++)
-      j_fact += Integer (i);
+    for (i = 2; i <= j; i++)
+      j_fact *= Integer (i);
 
-    for (i = 1; i < k; i++)
-      k_fact += Integer (i);
+    for (i = 2; i <= k; i++)
+      k_fact *= Integer (i);
 
     return (reduced_fact / (j_fact * k_fact));
   }
@@ -667,7 +667,7 @@ public:
 
     for (k = 0; k <= degX; k++)
       coeffsX[k] = CGAL::to_double (nt_traits.get_coefficient (_rep()._polyX, 
-                                                               k));
+                                                               k)) / normX;
 
     const int            degY = nt_traits.degree (_rep()._polyY);
     std::vector<double>  coeffsY (degY + 1);
@@ -675,7 +675,7 @@ public:
 
     for (k = 0; k <= degY; k++)
       coeffsY[k] = CGAL::to_double (nt_traits.get_coefficient (_rep()._polyY, 
-                                                               k));
+                                                               k)) / normY;
 
     // Sample the approximated curve.
     const int            n = (n_samples >= 2) ? n_samples : 2; 
@@ -686,8 +686,8 @@ public:
     for (k = 0; k < n; k++)
     {
       t = t_start + k * delta_t;
-      x = _evaluate_at (coeffsX, degX, t) / normX;
-      y = _evaluate_at (coeffsY, degY, t) / normY;
+      x = _evaluate_at (coeffsX, degX, t);
+      y = _evaluate_at (coeffsY, degY, t);
 
       *oi = std::make_pair (x, y);
       ++oi;
@@ -720,7 +720,9 @@ private:
   Polynomial _compute_resultant (const std::vector<Polynomial>& bp1,
                                  const std::vector<Polynomial>& bp2) const
   {
-    // Create the Sylvester matrix of polynomial coefficients.
+    // Create the Sylvester matrix of polynomial coefficients. Also prepare
+    // the exp_fact vector, that represents the normalization factor (see
+    // below).
     Nt_traits        nt_traits;
     const int        m = bp1.size() - 1;
     const int        n = bp2.size() - 1;
@@ -730,10 +732,12 @@ private:
     int              i, j, k;
 
     std::vector<std::vector<Polynomial> >  mat (dim);
+    std::vector <int>                      exp_fact (dim);
 
     for (i = 0; i < dim; i++)
     {
       mat[i].resize (dim);
+      exp_fact[i] = 0;
 
       for (j = 0; j < dim; j++)
         mat[i][j] = zero_poly;
@@ -748,12 +752,26 @@ private:
       for (j = n; j >= 0; j--)
         mat[n + i][i + j] = bp2[j];
 
-    // Perform Gaussian elimination on the Sylvester matrix.
+    // Perform Gaussian elimination on the Sylvester matrix. The goal is to
+    // reach an upper-triangular matrix, whose diagonal elements are mat[0][0]
+    // to mat[dim-1][dim-1], such that the determinant of the original matrix
+    // is given by:
+    //
+    //              dim-1
+    //             *******
+    //              *   *  mat[i][i]
+    //              *   *
+    //               i=0
+    //      ---------------------------------
+    //         dim-1
+    //        *******            exp_fact[i]
+    //         *   *  (mat[i][i])
+    //         *   *
+    //          i=0
+    //
     bool             found_row;
     Polynomial       value;
-    const Integer    one = 1;
-    Polynomial       det_factor = nt_traits.construct_polynomial (&one, 0);
-    Polynomial       det_value;
+    int              sign_fact = 1;
 
     for (i = 0; i < dim; i++)
     {
@@ -787,7 +805,8 @@ private:
           }
 
           // Swapping two rows should change the sign of the determinant.
-          det_factor = -det_factor;
+          // We therefore swap the sign of the normalization factor.
+          sign_fact = -sign_fact;
         }
         else
         {
@@ -811,21 +830,48 @@ private:
           }
             
           // We multiplied the current row by the i'th diagonal entry, thus
-          // multipling the determinant value by it.
-          det_factor = det_factor * mat[i][i];
+          // multipling the determinant value by it. We therefore increment
+          // the exponent of mat[i][i] in the normalization factor.
+          exp_fact[i] = exp_fact[i] + 1;
         }
       }
     }
 
     // Now, the determinant is simply the product of all diagonal items,
     // divided by the normalizing factor.
-    Polynomial      det, rem;
+    const Integer    sgn (sign_fact);
+    Polynomial       det_factor = nt_traits.construct_polynomial (&sgn, 0);
+    Polynomial       diag_prod = mat[dim - 1][dim - 1];
 
-    det_value = mat[0][0];
-    for (i = 1; i < dim; i++)
-      det_value = det_value * mat[i][i];
+    CGAL_assertion (exp_fact [dim - 1] == 0);
+    for (i = dim - 2; i >= 0; i--)
+    {
+      // Try to avoid unnecessary multiplications by ignoring the current
+      // diagonal item if its exponent in the normalization factor is greater
+      // than 0.
+      if (exp_fact[i] > 0)
+      {
+        exp_fact[i] = exp_fact[i] - 1;
+      }
+      else
+      {
+        diag_prod *= mat[i][i];
+      }
 
-    det = nt_traits.divide (det_value, det_factor, rem);
+      for (j = 0; j < exp_fact[i]; j++)
+        det_factor *= mat[i][i];
+    }
+
+    // In case of a trivial normalization factor, just return the product
+    // of diagonal elements.
+    if (nt_traits.degree(det_factor) == 0)
+      return (diag_prod);
+
+    // Divide the product of diagonal elements by the normalization factor
+    // and obtain the determinant (note that we should have no remainder).
+    Polynomial       det, rem;
+
+    det = nt_traits.divide (diag_prod, det_factor, rem);
     CGAL_assertion (nt_traits.degree(rem) < 0);
     return (det);
   }
