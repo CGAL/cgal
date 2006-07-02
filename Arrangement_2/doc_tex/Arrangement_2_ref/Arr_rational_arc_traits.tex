@@ -70,11 +70,10 @@ a rational arc is always $x$-monotone by definition) as detailed below.
 
 The \ccc{Curve_2} class nested within the rational-arc traits is used
 to represent rational arcs and support their construction from a
-single polynomial and the range where the arc is defined or a pair of
-polynomials and a pair of corresponding ranges. The copy and default
-constructor as well as the assignment operator are provided for
-polyline curves. In addition, an \ccc{operator<<} for the curves is
-defined for standard output streams.
+single polynomial and an $x$-definition range or from a pair of polynomials
+and an $x$-definition range. The copy and default constructor as well as the
+assignment operator are provided for rational arcs. In addition, an
+\ccc{operator<<} for the arcs is defined for standard output streams.
 
 \begin{ccClass}{Arr_rational_arc_traits_2<AlgKernel,NtTraits>::Curve_2}
 %======================================================================
@@ -152,7 +151,7 @@ defined for standard output streams.
 \ccAccessFunctions
 %-----------------
 
-\ccMethod{bool is_valid() const;}
+\ccMethod{bool is_continuous() const;}
   {returns whether \ccVar\ is continuous, namely whether it does not
    conatains any poles in its interior. $x$-monotone curves are always
    continuous.}
@@ -212,7 +211,7 @@ defined for standard output streams.
    whether it is $\pm\infty$.}
 \ccGlue
 \ccMethod{const Point_2& left() const;}
-  {{returns the left (lexicographically smaller) endpoint of \ccVar{}.
+  {returns the left (lexicographically smaller) endpoint of \ccVar{}.
    \ccPrecond{The left end is finite in both $x$ and $y$.}}
 
 \ccMethod{Infinity_type right_infinite_in_x () const;}
@@ -224,7 +223,7 @@ defined for standard output streams.
    whether it is $\pm\infty$.}
 \ccGlue
 \ccMethod{const Point_2& right() const;}
-  {{returns the right (lexicographically larger) endpoint of \ccVar{}.
+  {returns the right (lexicographically larger) endpoint of \ccVar{}.
    \ccPrecond{The right end is finite in both $x$ and $y$.}}
 
 \end{ccClass}

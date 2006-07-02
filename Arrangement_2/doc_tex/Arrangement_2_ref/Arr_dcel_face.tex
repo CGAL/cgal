@@ -57,7 +57,7 @@ pointers or iterators:
 
 \ccMethod{Halfedge* halfedge();}
   {returns an incident halfedge along the outer boundary of the face.
-   If \ccVar{} is the unbounded face, the function returns \ccc{NULL}.}
+   If \ccVar{} has no outer boundary, the function returns \ccc{NULL}.}
 
 \ccMethod{size_t number_of_holes() const;}
   {returns the number of holes inside \ccVar{}.}
