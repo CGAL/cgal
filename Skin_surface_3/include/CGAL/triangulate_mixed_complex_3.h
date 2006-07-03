@@ -1082,7 +1082,7 @@ remove_small_edges()
   Tmc_Vertex_handle vh, vh_collapse_to;
   Tmc_Finite_vertices_iterator vit = _tmc.finite_vertices_begin();
   int nCollapsed=0;
-  while (vit != _tmc.finite_vertices_end()) {
+  while (Tmc_Finite_vertices_iterator vit != _tmc.finite_vertices_end()) {
     vh = vit;
     vit++;
     if (is_collapsible(vh, vh_collapse_to,sq_length)) {
