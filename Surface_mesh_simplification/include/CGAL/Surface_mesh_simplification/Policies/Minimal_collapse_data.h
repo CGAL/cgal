@@ -39,6 +39,8 @@ public:
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   typedef typename Surface_geometric_traits<TSM>::FT      FT ;
 
+  struct Params{}  ;
+  
 public :
 
   Minimal_collapse_data()

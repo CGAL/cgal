@@ -20,6 +20,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
+struct G
+{
+  ~G()
+  {
+    std::cout << "PFixed=" << PFixed << " QFixed=" << QFixed << " Boundary=" << Boundary << std::endl ;
+  }
+  
+  int PFixed ;
+  int QFixed ;
+  int Boundary ;
+} ;
+G g ;
+
 //
 // Implementation of the strategy from:
 //

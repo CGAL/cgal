@@ -44,10 +44,10 @@ public:
     
   typedef Collapse_data_ Collapse_data ;
   
-  typedef typename Collapse_data::TSM                TSM ;
-  typedef typename Collapse_data::vertex_descrirptor vertex_descriptor ;
-  typedef typename Collapse_data::Point_3            Point_3 ;
-  typedef typename Collapse_data::FT                 FT ;
+  typedef typename Collapse_data::TSM               TSM ;
+  typedef typename Collapse_data::vertex_descriptor vertex_descriptor ;
+  typedef typename Collapse_data::Point_3           Point_3 ;
+  typedef typename Collapse_data::FT                FT ;
     
 public:
 
@@ -65,7 +65,7 @@ public:
     else return result_type();
   }
   
-  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface )
+  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface ) const
   {
     vertex_point_t vertex_point ;
     return get(vertex_point,aSurface,v) ;
