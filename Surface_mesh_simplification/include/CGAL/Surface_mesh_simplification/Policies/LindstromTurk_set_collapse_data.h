@@ -15,12 +15,12 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_CONSTRUCT_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_CONSTRUCT_COLLAPSE_DATA_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_SET_COLLAPSE_DATA_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_SET_COLLAPSE_DATA_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_core.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -67,6 +67,6 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_CONSTRUCT_COLLAPSE_DATA_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_SET_COLLAPSE_DATA_H //
 // EOF //
  

@@ -19,7 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_H 1
 
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h>
-#include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_construct_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_set_collapse_data.h>
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_vertex_placement.h>
 

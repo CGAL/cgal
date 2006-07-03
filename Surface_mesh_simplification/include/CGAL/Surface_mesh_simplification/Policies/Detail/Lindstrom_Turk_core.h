@@ -220,7 +220,7 @@ private:
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_impl.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_core_impl.h>
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H //
 // EOF //
