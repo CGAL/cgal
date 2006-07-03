@@ -1671,6 +1671,44 @@ public:
     return (arc);
   }
 
+  /*!
+   * Print the rational arc.
+   */
+  std::ostream& print (std::ostream& os) const
+  {    
+    // Print y as a rational function of x.
+    os << "y = (";
+    _print_polynomial (os, _numer, 'x');
+    os << ") / (";
+    _print_polynomial (os, _denom, 'x');
+    os << ") on ";
+
+    // Print the definition range.
+    Infinity_type      inf_x = source_infinite_in_x();
+    if (inf_x == MINUS_INFINITY) 
+      os << "(-oo";
+    else if (inf_x == PLUS_INFINITY)
+      os << "(+oo";
+    else if (source_infinite_in_y() != FINITE)
+      os << '(' << arc.source_x();
+    else
+      os << '[' << arc.source().x();
+ 
+    os << ", ";
+    inf_x = target_infinite_in_x();
+
+    if (inf_x == MINUS_INFINITY) 
+      os << "-oo)";
+    else if (inf_x == PLUS_INFINITY)
+      os << "+oo)";
+    else if (target_infinite_in_y() != FINITE)
+      os << arc.target_x() << ')';
+    else
+      os << arc.target().x() << ']';
+
+    return (os);
+  }
+
   //@}
 
 private:
@@ -2097,6 +2135,47 @@ private:
 
     return (c1);
   }
+
+  /*!
+   * Print a polynomial nicely.
+   */
+  std::ostream& _print_polynomial (std::ostream& os,
+                                   const Polynomial& poly,
+                                   char var) const
+  {
+    Nt_traits   nt_traits;
+    const int   deg = nt_traits.degree (poly);
+    Integer     coeff;
+    CGAL::Sign  sgn;
+    int         k;
+
+    if (deg < 0)
+    {
+      os << '0';
+      return (os);
+    }
+
+    for (k = deg; k >= 0; k--)
+    {
+      coeff = nt_traits.get_coefficient (poly, k);
+
+      if (k == deg)
+        os << coeff;
+      else if ((sgn = CGAL::sign (coeff)) == POSITIVE)
+        os << " + " << coeff;
+      else if (sgn == NEGATIVE)
+        os << " - " << -coeff;
+      else
+        continue;
+
+      if (k > 1)
+        os << '*' << var << '^' << k;
+      else if (k == 1)
+        os << '*' << var;
+    }
+
+    return (os);
+  }
   //@}
 };
 
@@ -2107,32 +2186,7 @@ template <class Alg_kernel, class Nt_traits>
 std::ostream& operator<< (std::ostream& os, 
                           const _Rational_arc_2<Alg_kernel, Nt_traits>& arc)
 {
-  // Output the supporting rational function and the x-range of the arc.
-  os << "y = (" << arc.numerator() << ") / (" << arc.denominator() << ") on ";
-
-  Infinity_type      inf_x = arc.source_infinite_in_x();
-  if (inf_x == MINUS_INFINITY) 
-    os << "(-oo";
-  else if (inf_x == PLUS_INFINITY)
-    os << "(+oo";
-  else if (arc.source_infinite_in_y() != FINITE)
-    os << '(' << arc.source_x();
-  else
-    os << '[' << arc.source().x();
- 
-  os << ", ";
-  inf_x = arc.target_infinite_in_x();
-
-  if (inf_x == MINUS_INFINITY) 
-    os << "-oo)";
-  else if (inf_x == PLUS_INFINITY)
-    os << "+oo)";
-  else if (arc.target_infinite_in_y() != FINITE)
-    os << arc.target_x() << ')';
-  else
-    os << arc.target().x() << ']';
-
-  return (os);
+  return (arc.print (os));
 }
 
 CGAL_END_NAMESPACE
