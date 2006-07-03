@@ -901,19 +901,6 @@ public:
     else if (ind1 == MIN_END && ind2 == MAX_END)
       return (LARGER);
 
-    // Both arcs are defined to the same side (left or right) of the vertical
-    // asymptote. If one is defined at y = -oo and the other at y = +oo, we
-    // preform a "lexicographic" comparison.
-    const Infinity_type  inf_y1 = 
-      (ind1 == MIN_END ? left_infinite_in_y() : right_infinite_in_y());
-    const Infinity_type  inf_y2 = 
-      (ind2 == MIN_END ? arc.left_infinite_in_y() : arc.right_infinite_in_y());
-
-    if (inf_y1 == MINUS_INFINITY && inf_y2 == PLUS_INFINITY)
-      return (SMALLER);
-    else if (inf_y1 == PLUS_INFINITY && inf_y2 == MINUS_INFINITY)
-      return (LARGER);
-
     // Determine the multiplicities of the pole for the two arcs.
     Nt_traits         nt_traits;
     int               mult1 = 1;
@@ -952,43 +939,67 @@ public:
 
     // The pole multiplicities are the same. If we denote the two rational
     // functions we have as P1(x)/Q1(x) and P2(X)/Q2(x), then we can divide
-    // them (namely look at P1*Q2(x) / P2*Q1(x)) and normalize the result.
-    // As Q1(x') = Q2(x') = 0 (where x' is our current pole), the zeros
-    // cancel themselves and we consider the value of our function at x'.
-    Polynomial     P = _numer * arc._denom;
-    int            deg_p = nt_traits.degree(P);
-    Rat_vector     coeffs_p (deg_p + 1);
-    Polynomial     Q = arc._numer * _denom;
-    int            deg_q = nt_traits.degree(Q);
-    Rat_vector     coeffs_q (deg_q + 1);
+    // Q1(x) and Q2(x). As Q1(x') = Q2(x') = 0 (where x' is our current pole),
+    // the zeros cancel themselves and we consider the value of our function
+    // at x'.
+    int            deg_q1 = nt_traits.degree (_denom);
+    Rat_vector     coeffs_q1 (deg_q1 + 1);
+    int            deg_q2 = nt_traits.degree (arc._denom);
+    Rat_vector     coeffs_q2 (deg_q2 + 1);
     int            k;
 
-    for (k = 0; k <= deg_p; k++)
-      coeffs_p[k] = Rational (nt_traits.get_coefficient (P, k));
+    for (k = 0; k <= deg_q1; k++)
+      coeffs_q1[k] = Rational (nt_traits.get_coefficient (_denom, k), 1);
 
-    for (k = 0; k <= deg_q; k++)
-      coeffs_q[k] = Rational (nt_traits.get_coefficient (Q, k));
+    for (k = 0; k <= deg_q2; k++)
+      coeffs_q2[k] = Rational (nt_traits.get_coefficient (arc._denom, k), 1);
 
-    // Evaluate the normalized function at the pole and determine the
-    // comparison result accordingly.
-    Polynomial         norm_p, norm_q;
-    nt_traits.construct_polynomials (&(coeffs_p[0]), deg_p,
-                                     &(coeffs_q[0]), deg_q,
-                                     norm_p, norm_q);
+    Polynomial         norm_q1, norm_q2;
+    nt_traits.construct_polynomials (&(coeffs_q1[0]), deg_q1,
+                                     &(coeffs_q2[0]), deg_q2,
+                                     norm_q1, norm_q2);
 
-    const Algebraic    val1 = nt_traits.evaluate_at (norm_p, x1);
-    const Algebraic    val2 = nt_traits.evaluate_at (norm_q, x1);
-    Comparison_result  val_res = CGAL::compare (val1, val2);
-      
-    CGAL_assertion (CGAL::sign (val1) == CGAL::sign (val2));
+    const Algebraic    val_q1 = CGAL::abs (nt_traits.evaluate_at (norm_q1, x1));
+    const Algebraic    val_q2 = CGAL::abs (nt_traits.evaluate_at (norm_q2, x1));
+    Comparison_result  val_res = CGAL::compare (val_q1, val_q2);
     
+    if (val_res != EQUAL)
+    {
+      if (ind1 == MIN_END)
+        // Swap the comparison result.
+        val_res = (val_res == LARGER ? SMALLER : LARGER);
+
+      return (val_res);
+    }
+
+    // Both arcs are defined to the same side (left or right) of the vertical
+    // asymptote. If one is defined at y = -oo and the other at y = +oo, we
+    // preform a "lexicographic" comparison.
+    const Infinity_type  inf_y1 = 
+      (ind1 == MIN_END ? left_infinite_in_y() : right_infinite_in_y());
+    const Infinity_type  inf_y2 = 
+      (ind2 == MIN_END ? arc.left_infinite_in_y() : arc.right_infinite_in_y());
+
+    if (inf_y1 == MINUS_INFINITY && inf_y2 == PLUS_INFINITY)
+      return (SMALLER);
+    else if (inf_y1 == PLUS_INFINITY && inf_y2 == MINUS_INFINITY)
+      return (LARGER);
+
+    // If we reached here, the denominators Q1 and Q2 are equal. We therefore
+    // evaluate P1(x') and P2(x') and find the relative x-positions of the
+    // curve ends by considering their comparison result.
+    const Algebraic    val_p1 = nt_traits.evaluate_at (_numer, x1);
+    const Algebraic    val_p2 = nt_traits.evaluate_at (arc._numer, x1);
+    
+    val_res = CGAL::compare (val_p1, val_p2);
+
     if (val_res == EQUAL)
     {
       CGAL_assertion (_has_same_base (arc));
       return (EQUAL);
     }
 
-    if (ind1 == MIN_END)
+    if (ind1 == MAX_END)
       // Swap the comparison result.
       val_res = (val_res == LARGER ? SMALLER : LARGER);
 
@@ -1690,9 +1701,9 @@ public:
     else if (inf_x == PLUS_INFINITY)
       os << "(+oo";
     else if (source_infinite_in_y() != FINITE)
-      os << '(' << arc.source_x();
+      os << '(' << source_x();
     else
-      os << '[' << arc.source().x();
+      os << '[' << source().x();
  
     os << ", ";
     inf_x = target_infinite_in_x();
@@ -1702,9 +1713,9 @@ public:
     else if (inf_x == PLUS_INFINITY)
       os << "+oo)";
     else if (target_infinite_in_y() != FINITE)
-      os << arc.target_x() << ')';
+      os << target_x() << ')';
     else
-      os << arc.target().x() << ']';
+      os << target().x() << ']';
 
     return (os);
   }
