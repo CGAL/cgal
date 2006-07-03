@@ -30,60 +30,50 @@ typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 
 int main ()
 {
-  // Create an arc that corresponds to the entire graph of y = 1/x.
-  /*
+  std::list<Rational_arc_2>  arcs;
+
+  // Create the rational functions (y = 1 / x), and (y = -1 / x).
   Rat_vector        P1(1);
   P1[0] = 1;
 
   Rat_vector        Q1(2);
   Q1[1] = 1; Q1[0] = 0;
 
-  Rational_arc_2    a1 (P1, Q1);
+  arcs.push_back (Rational_arc_2 (P1, Q1));
 
-  // Create an arc that corresponds to the entire graph of y = -1/x.
-  Rat_vector        P2(1);
-  P2[0] = -1;
+  P1[0] = -1;
+  arcs.push_back (Rational_arc_2 (P1, Q1));
 
-  Rat_vector        Q2(2);
-  Q2[1] = 1; Q2[0] = 0;
+  // Create a bounded segments of the parabolas (y = -4*x^2 + 3) and
+  // (y = 4*x^2 - 3), defined over [-sqrt(3)/2, sqrt(3)/2].
+  const Algebraic   half_sqrt3 = CORE::sqrt(Algebraic(3)) / 2;
+  Rat_vector        P2(3);
+  P2[2] = -4; P2[1] = 0; P2[0] = 3;
 
-  Rational_arc_2    a2 (P2, Q2);
-  */
+  arcs.push_back (Rational_arc_2 (P2, 
+                                  -half_sqrt3, half_sqrt3));
 
-  // Create an arc that corresponds to the entire graph of y = 1/2*x^2.
-  Rat_vector        P1(3);
-  P1[2] = Rational (1, 2); P1[1] = 0; P1[0] = 0;
+  P2[2] = 4;  P2[0] = -3;
+  arcs.push_back (Rational_arc_2 (P2, 
+                                  -half_sqrt3, half_sqrt3));
 
-  Rational_arc_2    a1 (P1);
-
-  // Create an arc that corresponds to graph of y = x + 1, for x = [0, +oo).
-  Rat_vector        P2(2);
-  P2[1] = 1; P2[0] = 1;
-
-  Rational_arc_2    a2 (P2, Algebraic(0), true);  // Directed from 0 to right.
-
-  // Create an arc that corresponds to graph of y = 1, for x = (-oo, 0].
+  // Create the rational function (y = 1 / 2*x) for x > 0, and the
+  // rational function (y = -1 / 2*x) for x < 0.
   Rat_vector        P3(1);
   P3[0] = 1;
 
-  Rational_arc_2    a3 (P3, Algebraic(0), false); // Directed from 0 to left.
+  Rat_vector        Q3(2);
+  Q3[1] = 2; Q3[0] = 0;
 
-  // Create the entire rational function y = 1 / (x^2 - 8x + 15).
-  Rat_vector        P4(1);
-  P4[0] = 1;
+  arcs.push_back (Rational_arc_2 (P3, Q3, Algebraic(0), true));
 
-  Rat_vector        Q4(3);
-  Q4[2] = 1; Q4[1] = -8; Q4[0] = 15;
+  P3[0] = -1;
+  arcs.push_back (Rational_arc_2 (P3, Q3, Algebraic(0), false));
 
-  Rational_arc_2    a4 (P4, Q4);
-
-  // Construct the arrangement of the four arcs.
+  // Construct the arrangement of the six arcs.
   Arrangement_2              arr;
 
-  insert_curve (arr, a1);
-  insert_curve (arr, a2);
-  insert_curve (arr, a3);
-  insert_curve (arr, a4);
+  insert_curves (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl
@@ -95,7 +85,7 @@ int main ()
             << " (" << arr.number_of_unbounded_faces() << " unbounded)"
             << std::endl << std::endl;
 
-  return 0;
+  return (0);
 }
 
 #endif

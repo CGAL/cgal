@@ -458,6 +458,10 @@ public:
       else // if (inf_t == FINITE)
         _pt = Point_2 (0, y0);
     }
+
+    // Mark that the arc is valid. As it may have poles, we do not mark it
+    // as continuous.
+    _info = (_info | IS_VALID);
   }
   
   /*!
