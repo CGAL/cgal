@@ -255,42 +255,47 @@ public:
     Algebraic        t;
 
     if (p.is_originator (_curve, t))
-      return (EQUAL);
-
-    // Get of of p's originating curves and compute its intersections
-    // with our x-monotone curve.
-    CGAL_assertion (p.originators_begin() != p.originators_end());
-
-    typename Point_2::Originator   orig = *(p.originators_begin());
-    bool                           do_overlap;
-    std::pair<Intersection_iter, Intersection_iter>
-      inter_range = _get_curve_intersections (_curve, orig.first,
-                                              inter_map, do_overlap);
-
-    if (do_overlap)
-      return (EQUAL);
-
-    // Go over the intersection points and look for p there.
-    Intersection_iter    iit;
-    Algebraic            s;
-    bool                 is_orig;
-
-    for (iit = inter_range.first; iit != inter_range.second; ++iit)
     {
-      const Point_2&       pt = iit->first;
+      if (_is_in_range (t))
+        return (EQUAL);
+    }
+    else
+    {
+      // Get of of p's originating curves and compute its intersections
+      // with our x-monotone curve.
+      CGAL_assertion (p.originators_begin() != p.originators_end());
 
-      is_orig = pt.is_originator (orig.first, t);
-      CGAL_assertion (is_orig);
-
-      if (CGAL::compare (t, orig.second) == EQUAL)
+      typename Point_2::Originator   orig = *(p.originators_begin());
+      bool                           do_overlap;
+      std::pair<Intersection_iter, Intersection_iter>
+        inter_range = _get_curve_intersections (_curve, orig.first,
+                                                inter_map, do_overlap);
+      
+      if (do_overlap)
+        return (EQUAL);
+      
+      // Go over the intersection points and look for p there.
+      Intersection_iter    iit;
+      Algebraic            s;
+      bool                 is_orig;
+      
+      for (iit = inter_range.first; iit != inter_range.second; ++iit)
       {
-        // Check if this intersection point lies on the parameter range
-        // of our subcurve. If so, p lies on the subcurve.
-        is_orig = pt.is_originator (_curve, s);
+        const Point_2&       pt = iit->first;
+        
+        is_orig = pt.is_originator (orig.first, t);
         CGAL_assertion (is_orig);
+        
+        if (CGAL::compare (t, orig.second) == EQUAL)
+        {
+          // Check if this intersection point lies on the parameter range
+          // of our subcurve. If so, p lies on the subcurve.
+          is_orig = pt.is_originator (_curve, s);
+          CGAL_assertion (is_orig);
 
-        if (_is_in_range (s))
-          return (EQUAL);
+          if (_is_in_range (s))
+            return (EQUAL);
+        }
       }
     }
 
@@ -641,6 +646,10 @@ public:
     CGAL_precondition (is_orig);
     if (! is_orig)
       return;
+
+    if (! _is_in_range (t0))
+      std::cout << *this << std::endl
+                << "t0 = " << t0 << std::endl;
 
     CGAL_precondition (_is_in_range (t0));
 
