@@ -67,6 +67,8 @@ public:
   
 public :
 
+  LindstromTurk_collapse_data() {}
+  
   LindstromTurk_collapse_data ( vertex_descriptor const&  aP 
                               , vertex_descriptor const&  aQ
                               , bool                      aIsPFixed

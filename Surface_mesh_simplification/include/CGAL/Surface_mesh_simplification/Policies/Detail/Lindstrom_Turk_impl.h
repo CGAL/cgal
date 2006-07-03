@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_IMPL_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_IMPL_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_IMPL_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_IMPL_H 1
 
 CGAL_BEGIN_NAMESPACE
 
@@ -31,7 +31,7 @@ namespace Triangulated_surface_mesh { namespace Simplification
 {
 
 template<class CD>
-LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
+LindstromTurkCore<CD>::LindstromTurkCore( Params const&            aParams
                                         , vertex_descriptor const& aP
                                         , vertex_descriptor const& aQ
                                         , bool                     aIsPFixed
@@ -44,15 +44,22 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
    mParams(aParams)
   ,mP(aP)
   ,mQ(aQ)
+  ,mIsPFixed(aIsPFixed)
+  ,mIsQFixed(aIsQFixed)
   ,mP_Q(aP_Q)
   ,mQ_P(aQ_P)
   ,mSurface(aSurface)    
+{
+}
+
+template<class CD>
+void LindstromTurkCore<CD>::compute( Collapse_data& rData  )
 {
 
   Optional_FT    lOptionalCost ;
   Optional_point lOptionalP ;
   
-  if ( !aIsPFixed || !aIsQFixed )
+  if ( !mIsPFixed || !mIsQFixed )
   {
     CGAL_TSMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
     
@@ -85,11 +92,11 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
     
     Optional_vector lOptionalV ;
     
-    if ( aIsPFixed )
+    if ( mIsPFixed )
     {
       lOptionalV = Optional_vector(lP - ORIGIN);
     }  
-    else if ( aIsQFixed )
+    else if ( mIsQFixed )
     {
       lOptionalV = Optional_vector(lQ - ORIGIN);
     }  
@@ -189,15 +196,14 @@ LindstromTurkImpl<CD>::LindstromTurkImpl( Params const&            aParams
     CGAL_TSMS_LT_TRACE(1,"The edge is a fixed edge.");
   
     
-  mResult = result_type( new Collapse_data(mP,mQ,aIsPFixed,aIsQFixed,mP_Q,mSurface,lOptionalCost,lOptionalP) );
+  rData = Collapse_data(mP,mQ,mIsPFixed,mIsQFixed,mP_Q,mSurface,lOptionalCost,lOptionalP) ;
 }
-
 
 //
 // Caches the "local boundary", that is, the sequence of 3 border edges: o->p, p->q, q->e 
 //
 template<class CD>
-typename LindstromTurkImpl<CD>::OptionalBoundary LindstromTurkImpl<CD>::Extract_boundary()
+typename LindstromTurkCore<CD>::OptionalBoundary LindstromTurkCore<CD>::Extract_boundary()
 {
   // Since p_q is a boundary edge, one of the previous edges (ccw or cw) is the previous boundary edge
   // Likewise, one of the next edges (ccw or cw) is the next boundary edge.
@@ -245,7 +251,7 @@ typename LindstromTurkImpl<CD>::OptionalBoundary LindstromTurkImpl<CD>::Extract_
 // Calculates the normal of the triangle (v0,v1,v2) (both vector and its length as (v0xv1).v2)
 //
 template<class CD>
-typename LindstromTurkImpl<CD>::Triangle LindstromTurkImpl<CD>::Get_triangle( vertex_descriptor const& v0
+typename LindstromTurkCore<CD>::Triangle LindstromTurkCore<CD>::Get_triangle( vertex_descriptor const& v0
                                                                             , vertex_descriptor const& v1
                                                                             , vertex_descriptor const& v2 
                                                                             )
@@ -272,7 +278,7 @@ typename LindstromTurkImpl<CD>::Triangle LindstromTurkImpl<CD>::Get_triangle( ve
 // The triangle is encoded as its normal, calculated using the actual facet orientation [(v0,v1,v2) or (v0,v2,v1)]
 //
 template<class CD>
-void LindstromTurkImpl<CD>::Extract_triangle( vertex_descriptor const& v0
+void LindstromTurkCore<CD>::Extract_triangle( vertex_descriptor const& v0
                                             , vertex_descriptor const& v1
                                             , vertex_descriptor const& v2 
                                             , edge_descriptor   const& e02
@@ -305,7 +311,7 @@ void LindstromTurkImpl<CD>::Extract_triangle( vertex_descriptor const& v0
 // Extract all triangles (its normals) and vertices (the link) around the collpasing edge p_q
 //
 template<class CD>
-void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, Link& rLink )
+void LindstromTurkCore<CD>::Extract_triangles_and_link( Triangles& rTriangles, Link& rLink )
 {
   // 
   // Extract around mP, CCW
@@ -364,7 +370,7 @@ void LindstromTurkImpl<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Add_boundary_preservation_constrians( Boundary const& aBdry )
+void LindstromTurkCore<CD>::Add_boundary_preservation_constrians( Boundary const& aBdry )
 {
   CGAL_TSMS_LT_TRACE(2,"Adding boundary preservation constrians. ");
   
@@ -379,7 +385,7 @@ void LindstromTurkImpl<CD>::Add_boundary_preservation_constrians( Boundary const
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Add_volume_preservation_constrians( Triangles const& aTriangles )
+void LindstromTurkCore<CD>::Add_volume_preservation_constrians( Triangles const& aTriangles )
 {
   CGAL_TSMS_LT_TRACE(2,"Adding volume preservation constrians. " << aTriangles.size() << " triangles.");
   
@@ -400,7 +406,7 @@ void LindstromTurkImpl<CD>::Add_volume_preservation_constrians( Triangles const&
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Add_boundary_and_volume_optimization_constrians( OptionalBoundary const& aBdry, Triangles const& aTriangles )
+void LindstromTurkCore<CD>::Add_boundary_and_volume_optimization_constrians( OptionalBoundary const& aBdry, Triangles const& aTriangles )
 {
   CGAL_TSMS_LT_TRACE(2,"Adding boundary and volume optimization constrians. ");
   
@@ -446,7 +452,7 @@ void LindstromTurkImpl<CD>::Add_boundary_and_volume_optimization_constrians( Opt
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Add_shape_optimization_constrians( Link const& aLink )
+void LindstromTurkCore<CD>::Add_shape_optimization_constrians( Link const& aLink )
 {
   CGAL_TSMS_LT_TRACE(2,"Add shape optimization constrians. ");
   
@@ -466,16 +472,16 @@ void LindstromTurkImpl<CD>::Add_shape_optimization_constrians( Link const& aLink
 }
 
 template<class CD>
-typename LindstromTurkImpl<CD>::FT
-LindstromTurkImpl<CD>::Compute_boundary_cost( Vector const& v, Boundary const& aBdry )
+typename LindstromTurkCore<CD>::FT
+LindstromTurkCore<CD>::Compute_boundary_cost( Vector const& v, Boundary const& aBdry )
 {
   FT rCost(0);
   return rCost ;
 }
 
 template<class CD>
-typename LindstromTurkImpl<CD>::FT
-LindstromTurkImpl<CD>::Compute_volume_cost( Vector const& v, Triangles const& aTriangles )
+typename LindstromTurkCore<CD>::FT
+LindstromTurkCore<CD>::Compute_volume_cost( Vector const& v, Triangles const& aTriangles )
 {
   FT rCost(0);
   
@@ -493,8 +499,8 @@ LindstromTurkImpl<CD>::Compute_volume_cost( Vector const& v, Triangles const& aT
 }
 
 template<class CD>
-typename LindstromTurkImpl<CD>::FT
-LindstromTurkImpl<CD>::Compute_shape_cost( Point const& p, Link const& aLink )
+typename LindstromTurkCore<CD>::FT
+LindstromTurkCore<CD>::Compute_shape_cost( Point const& p, Link const& aLink )
 {
   FT rCost(0);
   
@@ -506,7 +512,7 @@ LindstromTurkImpl<CD>::Compute_shape_cost( Point const& p, Link const& aLink )
 
 /*
 template<class CD>
-void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
+void LindstromTurkCore<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
   double slai = to_double(Ai*Ai) ;
   if ( slai > 0.0 )
@@ -560,7 +566,7 @@ void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( Vector const& A
 */
 
 template<class CD>
-void LindstromTurkImpl<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
+void LindstromTurkCore<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
   double slai = to_double(Ai*Ai) ;
   if ( slai > 0.0 )
@@ -641,7 +647,7 @@ int index_of_max_component ( V const& v )
 }
 
 template<class CD>
-void LindstromTurkImpl<CD>::Constrians::Add_from_gradient ( Matrix const& H, Vector const& c )
+void LindstromTurkCore<CD>::Constrians::Add_from_gradient ( Matrix const& H, Vector const& c )
 {
   CGAL_precondition(n >= 0 && n<=2 );
   
@@ -708,7 +714,7 @@ void LindstromTurkImpl<CD>::Constrians::Add_from_gradient ( Matrix const& H, Vec
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_IMPL_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_CORE_IMPL_H //
 // EOF //
  
 

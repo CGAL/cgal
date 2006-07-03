@@ -37,7 +37,7 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //   Explicitely fixed pairs appear when both vertices in the pair have been marked by the user as fixed, via an external property map.
 //
 //   For each non-fixed vertex pair in the mesh, a "collapse data" record is constructed by calling the user-supplied function
-//   "GetCollapseData", passing the pair and the specified parameters object (ParamsToGetCollapseData).
+//   "SetCollapseData", passing the pair and the specified parameters object (ParamsToSetCollapseData).
 //   The pair is then associated with its collapse data.
 //
 //   The user-supplied function "GetCost" is called, for each non-fixed pair, passing its associated collapse data.
@@ -57,10 +57,10 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //   This global function returns the number of vertex-pairs removed or -1 if there was an error 
 //   (like the surface not being a valid triangulated surface mesh)
 //       
-template<class TSM,class GetCollapseData,class ParamsToGetCollapseData,class GetCost,class GetNewVertexPoint,class ShouldStop, class Visitor>
+template<class TSM,class SetCollapseData,class ParamsToSetCollapseData,class GetCost,class GetNewVertexPoint,class ShouldStop, class Visitor>
 int vertex_pair_collapse ( TSM&                           aSurface
-                         , GetCollapseData const&         aGet_collapse_data
-                         , ParamsToGetCollapseData const* aParamsToGetCollapseData // Can be NULL
+                         , SetCollapseData const&         aGet_collapse_data
+                         , ParamsToSetCollapseData const* aParamsToSetCollapseData // Can be NULL
                          , GetCost         const&         aGet_cost 
                          , GetNewVertexPoint const&       aGet_new_vertex_point
                          , ShouldStop      const&         aShould_stop
@@ -70,10 +70,10 @@ int vertex_pair_collapse ( TSM&                           aSurface
 {
   if ( is_valid_triangulated_surface_mesh(aSurface) )
   {
-    typedef VertexPairCollapse<TSM,GetCollapseData,GetCost,GetNewVertexPoint,ShouldStop,Visitor> Algorithm ;
+    typedef VertexPairCollapse<TSM,SetCollapseData,GetCost,GetNewVertexPoint,ShouldStop,Visitor> Algorithm ;
     Algorithm algorithm(aSurface
                        ,aGet_collapse_data
-                       ,aParamsToGetCollapseData
+                       ,aParamsToSetCollapseData
                        ,aGet_cost
                        ,aGet_new_vertex_point
                        ,aShould_stop

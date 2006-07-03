@@ -33,8 +33,8 @@
 namespace boost
 {
 
-struct cgal_tsms_is_vertex_fixed_t {} ;
-
+struct cgal_tsms_is_vertex_fixed_t     {} ;
+struct cgal_tsms_edge_cached_pointer_t {} ;
 }
 
 CGAL_BEGIN_NAMESPACE
@@ -52,6 +52,7 @@ using boost::target ;
 using boost::edge_is_border_t ;
 using boost::vertex_point_t ;
 using boost::cgal_tsms_is_vertex_fixed_t ;
+using boost::cgal_tsms_edge_cached_pointer_t ;
 
 using boost::shared_ptr ;
 using boost::optional ;
@@ -135,6 +136,13 @@ CGAL_END_NAMESPACE
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        Surface_simplification_external_trace(s); \
      }
+     
+#  define CGAL_TSMS_DEBUG_CODE(code) code     
+
+#else
+
+#  define CGAL_TSMS_DEBUG_CODE(code)
+
 #endif
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE

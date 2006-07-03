@@ -41,6 +41,16 @@ public:
 
 public :
 
+  Minimal_collapse_data()
+    :
+     mP       ()
+    ,mQ       ()
+    ,mIsPFixed(false)
+    ,mIsQFixed(false)
+    ,mEdge    ()
+    ,mSurface (0)                             
+  {}
+  
   Minimal_collapse_data ( vertex_descriptor const& aP 
                         , vertex_descriptor const& aQ
                         , bool                     aIsPFixed
@@ -57,7 +67,21 @@ public :
     ,mSurface (addressof(aSurface))                             
   {} 
 
-  virtual ~Minimal_collapse_data() {}
+  void set( vertex_descriptor const& aP 
+          , vertex_descriptor const& aQ
+          , bool                     aIsPFixed
+          , bool                     aIsQFixed
+          , edge_descriptor   const& aEdge 
+          , TSM&                     aSurface 
+          )
+  {
+    mP        = aP ;
+    mQ        = aQ ;
+    mIsPFixed = aIsPFixed ;
+    mIsQFixed = aIsQFixed ;
+    mEdge     = aEdge ;
+    mSurface  = addressof(aSurface);
+  } 
   
   vertex_descriptor const& p()       const { return mP ; }
   vertex_descriptor const& q()       const { return mQ ; }

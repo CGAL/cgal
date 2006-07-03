@@ -40,7 +40,7 @@ namespace boost
 
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class Polyhedron_is_vertex_fixed_map : public put_get_helper<double, Polyhedron_is_vertex_fixed_map<Gt, I, HDS, A> >
+class Polyhedron_is_vertex_fixed_map : public put_get_helper<bool, Polyhedron_is_vertex_fixed_map<Gt, I, HDS, A> >
 {
 private:
 

@@ -51,12 +51,10 @@ void Surface_simplification_external_trace( std::string s )
 int exit_code = 0 ;
 
 #include <CGAL/Surface_mesh_simplification_vertex_pair_collapse.h>
-
-#include <CGAL/Surface_mesh_simplification/Policies/Construct_minimal_collapse_data.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_length_cost.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Midpoint_vertex_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Count_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
+#include <CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h>
 
 using namespace std ;
 using namespace boost ;
@@ -91,6 +89,8 @@ struct My_halfedge : public HalfedgeDS_halfedge_base<Refs>
   int id() const { return ID ; }
   
   int ID; 
+  
+  void* cached_pointer ;
 };
 
 template <class Refs, class Traits>
@@ -113,7 +113,7 @@ struct My_items : public Polyhedron_items_3
         typedef My_vertex<Refs,Traits> Vertex;
     };
     template < class Refs, class Traits>
-    struct Halfedge_wrapper {
+    struct Halfedge_wrapper { 
         typedef My_halfedge<Refs,Traits>  Halfedge;
     };
     template < class Refs, class Traits>
@@ -122,7 +122,7 @@ struct My_items : public Polyhedron_items_3
     };
 };
 
-typedef Polyhedron_3<Kernel,My_items> Polyhedron;
+typedef Polyhedron_3<Kernel,My_items> Polyhedron; 
 
 typedef Polyhedron::Vertex                                   Vertex;
 typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
@@ -141,6 +141,12 @@ template<>
 struct External_polyhedron_get_is_vertex_fixed<Polyhedron>
 {
   bool operator() ( Polyhedron const&, Vertex_const_handle v ) const { return v->IsFixed; }
+}  ;
+
+template<>
+struct External_polyhedron_access_edge_cached_pointer<Polyhedron>
+{
+  void*& operator() ( Polyhedron&, Halfedge_handle he ) const { return he->cached_pointer; }
 }  ;
 
 CGAL_END_NAMESPACE  
@@ -473,17 +479,17 @@ bool Test ( int aStop, string name )
     
     typedef LindstromTurk_collapse_data<Polyhedron> Collapse_data ;
     
-    Construct_LindstromTurk_collapse_data<Collapse_data> Construct_collapse_data ;
-    LindstromTurk_cost                   <Collapse_data> Get_cost ;
-    LindstromTurk_vertex_placement       <Collapse_data> Get_vertex_point ;
-    Count_stop_condition                 <Collapse_data> Should_stop(aStop);
+    Set_LindstromTurk_collapse_data<Collapse_data> Set_collapse_data ;
+    LindstromTurk_cost             <Collapse_data> Get_cost ;
+    LindstromTurk_vertex_placement <Collapse_data> Get_vertex_point ;
+    Count_stop_condition           <Collapse_data> Should_stop(aStop);
         
     Collapse_data::Params lParams;
     
     Visitor lVisitor ;
 
     Real_timer t ; t.start();    
-    int r = vertex_pair_collapse(lP,Construct_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
+    int r = vertex_pair_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
     t.stop();
             
     ofstream off_out(result_name.c_str(),ios::trunc);
@@ -563,7 +569,6 @@ int main( int argc, char** argv )
     int lStop = atoi(argv[1]);
     
     string lFolder(argv[2]);
-    lFolder += "/" ;
     
     for ( int i = 3 ; i < argc ; ++i )
       cases.push_back( string(argv[i]) ) ;

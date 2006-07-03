@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H 1
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
@@ -37,7 +37,7 @@ namespace Triangulated_surface_mesh { namespace Simplification
 {
 
 template<class Collapse_data_>
-class LindstromTurkImpl
+class LindstromTurkCore
 {
 public:
     
@@ -62,9 +62,7 @@ public:
     
 public:
   
-  typedef shared_ptr<Collapse_data> result_type ;
-    
-  LindstromTurkImpl( Params const&            aParams
+  LindstromTurkCore( Params const&            aParams
                    , vertex_descriptor const& aP
                    , vertex_descriptor const& aQ
                    , bool                     aIsPFixed
@@ -74,7 +72,7 @@ public:
                    , TSM&                     aSurface 
                    ) ;
     
-  result_type result() const { return mResult ; }   
+  void compute( Collapse_data& aData ) ;
   
 private :
 
@@ -204,6 +202,8 @@ private:
   Params const&            mParams ; 
   vertex_descriptor const& mP ;
   vertex_descriptor const& mQ ;
+  bool                     mIsPFixed ;
+  bool                     mIsQFixed ;
   edge_descriptor const&   mP_Q ;
   edge_descriptor const&   mQ_P ;
   TSM&                     mSurface ;
@@ -214,8 +214,6 @@ private:
   
   Point mV ;
   
-  result_type mResult;   
-
 };
 
 } } // namespace Triangulated_surface_mesh::Simplification
@@ -224,6 +222,6 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_impl.h>
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H //
 // EOF //
  

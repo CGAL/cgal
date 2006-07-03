@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_CONSRTUCT_MINIMAL_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_CONSTRUCT_MINIMAL_COLLAPSE_DATA_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_SET_MINIMAL_COLLAPSE_DATA_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_SET_MINIMAL_COLLAPSE_DATA_H
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Minimal_collapse_data.h>
@@ -27,7 +27,7 @@ namespace Triangulated_surface_mesh { namespace Simplification
 {
 
 template<class Collapse_data_>    
-class Construct_minimal_collapse_data
+class Set_minimal_collapse_data
 {
 public:
 
@@ -37,22 +37,21 @@ public:
   typedef typename Collapse_data::vertex_descriptor vertex_descriptor ;
   typedef typename Collapse_data::edge_descriptor   edge_descriptor ;
   
-  typedef shared_ptr<Collapse_data> result_type ;
- 
   typedef void Params ; 
    
 public :
 
-  result_type operator() ( vertex_descriptor const& aP 
-                         , vertex_descriptor const& aQ
-                         , bool                     aIsPFixed
-                         , bool                     aIsQFixed
-                         , edge_descriptor   const& aEdge 
-                         , TSM                    & aSurface 
-                         , Params            const* 
-                         ) const
+  void operator() ( Collapse_data&           aData
+                  , vertex_descriptor const& aP 
+                  , vertex_descriptor const& aQ
+                  , bool                     aIsPFixed
+                  , bool                     aIsQFixed
+                  , edge_descriptor   const& aEdge 
+                  , TSM                    & aSurface 
+                  , Params            const* 
+                  ) const
   {
-    return result_type( new Collapse_data(aP,aQ,aIsPFixed,aIsQFixed,aEdge,aSurface) ) ;
+    aData.set(aP,aQ,aIsPFixed,aIsQFixed,aEdge,aSurface);
   }                         
   
 };    
@@ -62,6 +61,6 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_MINIMAL_COLLAPSE_DATA_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_SET_MINIMAL_COLLAPSE_DATA_H
 // EOF //
  

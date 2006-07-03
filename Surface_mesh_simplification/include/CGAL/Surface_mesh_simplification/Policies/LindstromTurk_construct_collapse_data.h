@@ -29,7 +29,7 @@ namespace Triangulated_surface_mesh { namespace Simplification
 {
 
 template<class Collapse_data_>    
-class Construct_LindstromTurk_collapse_data
+class Set_LindstromTurk_collapse_data
 {
 public:
 
@@ -40,32 +40,25 @@ public:
   typedef typename Collapse_data::edge_descriptor   edge_descriptor ;
   typedef typename Collapse_data::Params            Params ;
   
-  typedef shared_ptr<Collapse_data> result_type ;
-  
-  
 public :
 
-  result_type operator() ( vertex_descriptor const& aP 
-                         , vertex_descriptor const& aQ
-                         , bool                     aIsPFixed
-                         , bool                     aIsQFixed
-                         , edge_descriptor const&   aEdge 
-                         , TSM&                     aSurface 
-                         , Params const*            aParams
-                         ) const
+  void operator() ( Collapse_data&           aData         
+                  , vertex_descriptor const& aP 
+                  , vertex_descriptor const& aQ
+                  , bool                     aIsPFixed
+                  , bool                     aIsQFixed
+                  , edge_descriptor const&   aEdge 
+                  , TSM&                     aSurface 
+                  , Params const*            aParams
+                  ) const
   {
-    result_type r ;
-
     CGAL_assertion(aParams);
     
     if ( handle_assigned(aEdge) ) 
     {
-      LindstromTurkImpl<Collapse_data> impl(*aParams,aP,aQ,aIsPFixed,aIsQFixed,aEdge,opposite_edge(aEdge,aSurface),aSurface);
-      
-      r = impl.result() ;               
-    }   
-    
-    return r ;
+      LindstromTurkCore<Collapse_data> core(*aParams,aP,aQ,aIsPFixed,aIsQFixed,aEdge,opposite_edge(aEdge,aSurface),aSurface);
+      core.compute(aData);
+    }  
   }                         
   
 };    
