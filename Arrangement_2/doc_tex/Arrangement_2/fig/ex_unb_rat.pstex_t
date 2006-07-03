@@ -1,7 +1,7 @@
 \begin{picture}(0,0)%
 \includegraphics{ex_unb_rat.pstex}%
 \end{picture}%
-\setlength{\unitlength}{2072sp}%
+\setlength{\unitlength}{1865sp}%
 %
 \begingroup\makeatletter\ifx\SetFigFont\undefined%
 \gdef\SetFigFont#1#2#3#4#5{%
@@ -10,10 +10,12 @@
   \selectfont}%
 \fi\endgroup%
 \begin{picture}(6068,6518)(1692,-7145)
-\put(5611,-2881){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{.56,0,.56}$y=\frac{\pm 1}{2x}$}%
+\put(2521,-5236){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,.56}$y= 4x^2 - 3$}%
 }}}}
-\put(5371,-4851){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,.56,0}$y=\frac{\pm 1}{x}$}%
+\put(2431,-2536){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,.56}$y= -4x^2 + 3$}%
 }}}}
-\put(2061,-5221){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,.56}$y=\pm 4x^2 \mp 3}%
+\put(5611,-2881){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{.56,0,.56}$y=\pm \frac{1}{2x}$}%
+}}}}
+\put(5371,-4851){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,.56,0}$y=\pm\frac{1}{x}$}%
 }}}}
 \end{picture}%

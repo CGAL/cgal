@@ -1,10 +1,10 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: ex_unb_rat.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Mon Jul  3 18:23:55 2006
-%%For: wein@pc-noga3 (Ron Wein,,09-576985,)
-%%BoundingBox: 0 0 192 206
-%Magnification: 0.5000
+%%CreationDate: Mon Jul  3 18:36:21 2006
+%%For: wein@lap-halperin2 (Ron Wein,M-18,+972-3-6406114,+972-9-9580491)
+%%BoundingBox: 0 0 173 185
+%Magnification: 0.4500
 %%EndComments
 /$F2psDict 200 dict def
 $F2psDict begin
@@ -45,8 +45,8 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 206 moveto 0 0 lineto 192 0 lineto 192 206 lineto closepath clip newpath
--53.3 251.5 translate
+newpath 0 185 moveto 0 0 lineto 173 0 lineto 173 185 lineto closepath clip newpath
+-47.9 226.3 translate
 1 -1 scale
 
 /cp {closepath} bind def
@@ -99,7 +99,7 @@ newpath 0 206 moveto 0 0 lineto 192 0 lineto 192 206 lineto closepath clip newpa
 $F2psBegin
 10 setmiterlimit
 0 slj 0 slc
- 0.03150 0.03150 sc
+ 0.02835 0.02835 sc
 %
 % Fig objects follow
 %
@@ -183,13 +183,22 @@ n 5682 3792 m
 n 5568 4285 m 5578 4409 l 5627 4295 l  col0 s
 % Polyline
 gs  clippath
-4031 5108 m 4187 5044 l 4164 4988 l 4008 5052 l 4008 5052 l 4131 5035 l 4031 5108 l cp
+4042 5122 m 4189 5041 l 4160 4988 l 4013 5069 l 4013 5069 l 4133 5038 l 4042 5122 l cp
 eoclip
-n 2242 5812 m
+n 2655 5850 m
  4162 5022 l gs col0 s gr gr
 
 % arrowhead
-n 4031 5108 m 4131 5035 l 4008 5052 l  col0 s
+n 4042 5122 m 4133 5038 l 4013 5069 l  col0 s
+% Polyline
+gs  clippath
+4141 3970 m 4302 4020 l 4320 3962 l 4159 3912 l 4159 3912 l 4265 3977 l 4141 3970 l cp
+eoclip
+n 2610 3465 m
+ 4297 3987 l gs col0 s gr gr
+
+% arrowhead
+n 4141 3970 m 4265 3977 l 4159 3912 l  col0 s
 % Polyline
 2 slj
 15.000 slw

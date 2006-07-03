@@ -626,6 +626,33 @@ constructors, for polynomial arcs and for rational arcs:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_rational_functions.C}
 
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_unb_rat}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/ex_unb_rat.gif" border=0 alt="">
+  </center>
+\end{ccHtmlOnly}
+\caption{An arrangement of six arcs of rational functions, as
+constructed in
+\ccc{ex_unbounded_rational_functions.C}.\label{arr_fig:ex_unb_rat}}
+\end{figure}
+
+The following example demonstrates the construction of an
+arrangement of six rational arcs --- four unbounded arcs and two
+bounded ones --- as depicted in Figure~\ref{arr_fig:ex_unb_arr}. Note
+the usage of the constructors of an entire rational function and of
+an infinite ``ray'' of such a function. Also observe that the hyperbolas
+$y = \pm\frac{1}{x}$ and $y = \pm\frac{1}{2x}$ never intersect, although
+they have common vertical and horizontal asymptotes, so very ``thin''
+unbounded faces are created between them:
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_unbounded_rational_functions.C}
+
 \subsection{Traits-Class Decorators\label{arr_ssec:meta_tr}}
 %-----------------------------------
 
