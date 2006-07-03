@@ -57,6 +57,14 @@ class Random {
     }
 
     int     operator () ( int upper);
+
+  bool    operator==(Random rd) const
+  {
+    return 
+      rd.rand_max_plus_1 == rand_max_plus_1 &&
+      rd.random_value == random_value &&
+      rd.val == val;
+  }
   private:
     // data members
     const double  rand_max_plus_1;
