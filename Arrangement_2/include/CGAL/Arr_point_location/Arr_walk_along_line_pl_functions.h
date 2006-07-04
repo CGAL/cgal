@@ -657,10 +657,11 @@ _is_in_connected_component (const Point_2& p,
           // in their interiors). Observe that if such a common vertex exists,
           // it is certainly not a vertex at infinity, therefore it is
           // associated with a valid point.
-          if ((closest_he->source() == curr->source() &&
-               closest_he->direction() == curr->direction()) ||
-              (closest_he->source() == curr->target() &&
-               closest_he->direction() != curr->direction()))
+          if (! closest_he->is_fictitious() && ! curr->is_fictitious() &&
+              ((closest_he->source() == curr->source() &&
+                closest_he->direction() == curr->direction()) ||
+               (closest_he->source() == curr->target() &&
+                closest_he->direction() != curr->direction())))
           {
             if (closest_he->direction() == SMALLER)
             {
@@ -677,10 +678,11 @@ _is_in_connected_component (const Point_2& p,
                                            closest_he->source()->point());
             }
           }
-          else if ((closest_he->target() == curr->source() &&
-                    closest_he->direction() != curr->direction()) ||
-                   (closest_he->target() == curr->target() &&
-                    closest_he->direction() == curr->direction()))
+          else if (! closest_he->is_fictitious() && ! curr->is_fictitious() &&
+                   ((closest_he->target() == curr->source() &&
+                     closest_he->direction() != curr->direction()) ||
+                    (closest_he->target() == curr->target() &&
+                     closest_he->direction() == curr->direction())))
           {
             if (closest_he->direction() == SMALLER)
             {
