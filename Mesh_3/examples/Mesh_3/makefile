@@ -54,7 +54,6 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 TOOLS=  cgal_to_medit \
-	medit_to_cgal \
         display_distribution \
         filter_remove_tets_from_medit \
         lanteri \
@@ -67,7 +66,8 @@ TOOLS=  cgal_to_medit \
 .PHONY: tools links
 
 links:
-	for t in $(TOOLS); do rm -f $$t; ln -s ../../applications/$$t .; done
+	ln -s ../../applications .
+	for t in $(TOOLS); do rm -f $$t; ln -s applications/$$t .; done
 
 tools:
 	for t in $(TOOLS); do \
