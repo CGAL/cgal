@@ -14,6 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -I ../../../Mesh_2/include \
+           -I ../../../Mesh_3/include \
            -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
@@ -39,9 +40,11 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                combined_spheres$(EXE_EXT) \
                 implicit_surface_mesher_test$(EXE_EXT) \
                 test_c2t3_iterators$(EXE_EXT) \
-                test_robust_circumcenter$(EXE_EXT) 
+                test_robust_circumcenter$(EXE_EXT) \
+                test_sphere_oracle$(EXE_EXT) 
 
 implicit_surface_mesher_test$(EXE_EXT): implicit_surface_mesher_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher_test implicit_surface_mesher_test$(OBJ_EXT) $(LDFLAGS)
@@ -55,16 +58,23 @@ test_c2t3_iterators$(EXE_EXT): test_c2t3_iterators$(OBJ_EXT)
 test_robust_circumcenter$(EXE_EXT): test_robust_circumcenter$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_robust_circumcenter test_robust_circumcenter$(OBJ_EXT) $(LDFLAGS)
 
+test_sphere_oracle$(EXE_EXT): test_sphere_oracle$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_sphere_oracle test_sphere_oracle$(OBJ_EXT) $(LDFLAGS)
+
 run-test: all
+	./combined_spheres$(EXE_EXT)
 	./implicit_surface_mesher_test$(EXE_EXT)
 	./test_robust_circumcenter$(EXE_EXT)
 	./test_c2t3_iterators$(EXE_EXT)
+	./test_sphere_oracle$(EXE_EXT)
 
 clean: \
+                   combined_spheres.clean \
                    implicit_surface_mesher_test.clean \
                    internal-test-surface-mesher.clean \
                    test_c2t3_iterators.clean \
-                   test_robust_circumcenter.clean 
+                   test_robust_circumcenter.clean \
+                   test_sphere_oracle.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

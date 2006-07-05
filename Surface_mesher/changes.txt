@@ -1,3 +1,7 @@
+7 July 2006 Laurent Rineau
+- fix the oracle Sphere_oracle_3
+- added a test in Surfacer_mesher
+
 28 June 2006 Laurent Rineau
 - extends Robust_circumcenter_traits_3 so that this class is model of
 ConstructCicumcenter_3.

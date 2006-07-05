@@ -24,6 +24,8 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/number_utils.h>
 
+#include <boost/tuple/tuple.hpp>
+
 namespace CGAL {
 
   namespace Surface_mesher {
@@ -89,12 +91,10 @@ namespace CGAL {
     {
       Self& oracle;
 
-      void intersection_line_sphere_lambda(const Surface_3& sphere,
-                                           const Point& a,
-                                           const Point& b, 
-                                           int& number_of_roots,
-                                           FT& root_1,
-                                           FT& root_2) const
+      boost::tuple<int, FT, FT> 
+      intersection_line_sphere_lambda(const Surface_3& sphere,
+                                      const Point& a,
+                                      const Point& b) const
       {
         /*
           Let the vectorial line equation:
@@ -105,7 +105,7 @@ namespace CGAL {
           The intersection of the line and the sphere is given by:
             (c-m)^2 = r^2
           That is:
-                       (c^2 - 2 a*c + a^2 - r^2)
+                       ((c-a)^2 - r^2)
             - 2 lambda (c-a)*(b-a)
             + lambda^2 (b-a)^2 == 0
 
@@ -132,7 +132,7 @@ namespace CGAL {
           GT().construct_center_3_object();
         typename GT::Compute_squared_radius_3 squared_radius =
           GT().compute_squared_radius_3_object();
-      
+
         const Point c = center(sphere);
         const Vector_3 ab = vector(a, b);
         const Vector_3 ac = vector(a, c);
@@ -144,18 +144,18 @@ namespace CGAL {
 
         switch( CGAL::sign(deltaprime) )
         {
-        case NEGATIVE: 
-          number_of_roots = 0;
-          break;
         case ZERO:
-          number_of_roots = 1;
-          root_1 = ab_ac / ab2;
+          return boost::make_tuple(1, ab_ac / ab2, 0);
           break;
         case POSITIVE:
-          number_of_roots = 2;
-          root_1 = (ab_ac - CGAL::sqrt(deltaprime)) / ab2;
-          root_2 = (ab_ac + CGAL::sqrt(deltaprime)) / ab2;
+          return boost::make_tuple(2,
+                                   (ab_ac - CGAL::sqrt(deltaprime)) / ab2,
+                                   (ab_ac + CGAL::sqrt(deltaprime)) / ab2);
+          break;
+        case NEGATIVE:
+          break;
         }
+        return boost::make_tuple(0, 0, 0);
       } //end intersection_line_sphere_lambda
 
       template <class Assert_on_lambda>
@@ -175,20 +175,21 @@ namespace CGAL {
 
         int number_of_roots;
         FT root_1, root_2;
-        intersection_line_sphere_lambda(sphere,
-                                        a,
-                                        b,
-                                        number_of_roots,
-                                        root_1,
-                                        root_2);
+        boost::tie(number_of_roots, root_1, root_2) = 
+          intersection_line_sphere_lambda(sphere, a, b);
+
         const Vector ab = vector(a, b);
         if(number_of_roots > 0 && test(root_1))
         {
-          return make_object(translated_point(a, scaled_vector(ab, root_1)));
+          Point p = translated_point(a, scaled_vector(ab, root_1));
+          oracle.get_visitor().new_point(p);
+          return make_object(p);
         }
         else if (number_of_roots > 1 && test(root_2))
         {
-          return make_object(translated_point(a, scaled_vector(ab, root_2)));
+          Point p = translated_point(a, scaled_vector(ab, root_2));
+          oracle.get_visitor().new_point(p);
+          return make_object(p);
         }
         // else
         return Object();
@@ -280,18 +281,20 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
         
-        intersection_line_sphere_lambda(sphere, a, b,
-                                        number_of_roots, root_1, root_2);
+        boost::tie(number_of_roots, root_1, root_2) = 
+          intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots < 2 )
           return false;
 
         const Vector ab = vector(a, b);
 
+        const Point original_a = a;
+
         if( ! a_in_sphere )
-          a = translated_point(a, scaled_vector(ab, root_1));
+          a = translated_point(original_a, scaled_vector(ab, root_1));
         if( ! b_in_sphere )
-          b = translated_point(a, scaled_vector(ab, root_2));
+          b = translated_point(original_a, scaled_vector(ab, root_2));
           
         return true;
       }
@@ -322,8 +325,8 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
         
-        intersection_line_sphere_lambda(sphere, a, b,
-                                        number_of_roots, root_1, root_2);
+        boost::tie(number_of_roots, root_1, root_2) = 
+          intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 && root_2 > FT(0) )
         {
@@ -363,14 +366,15 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
         
-        intersection_line_sphere_lambda(sphere, a, b,
-                                        number_of_roots, root_1, root_2);
+        boost::tie(number_of_roots, root_1, root_2) = 
+          intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 && root_2 > FT(0) )
         {
+          const Point original_a = a;
           const Vector ab = vector(a, b);
-          a = translated_point(a, scaled_vector(ab, root_1));
-          b = translated_point(a, scaled_vector(ab, root_2));
+          a = translated_point(original_a, scaled_vector(ab, root_1));
+          b = translated_point(original_a, scaled_vector(ab, root_2));
           return true;
         }
         // else l does not intersect the sphere
