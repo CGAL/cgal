@@ -49,7 +49,9 @@ compile_and_run()
     echo   "   ERROR:    not executed   $1" >> $ERRORFILE
   fi
 
-  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+  if [ -z "$NO_CLEAN" ]; then
+    eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+  fi
 }
 
 #---------------------------------------------------------------------#
@@ -65,7 +67,12 @@ touch $ERRORFILE
 
 if [ $# -ne 0 ] ; then
   for file in $* ; do
-    compile_and_run $file
+    case "$file" in
+        -no-clean)
+            NO_CLEAN=true
+            compile_and_run combined_spheres;;
+        *) compile_and_run $file;;
+    esac
   done
 else
   compile_and_run combined_spheres
