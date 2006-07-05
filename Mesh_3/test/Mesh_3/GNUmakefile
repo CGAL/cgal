@@ -61,7 +61,7 @@ TOOLS=  cgal_to_medit \
 all: $(RUN_PROGRAMS)
 
 run: $(RUN_PROGRAMS)
-	./cgal_test
+	./cgal_test -no-clean
 
 links:
 	for t in $(TOOLS); do rm -f $$t; ln -s ../../applications/$$t .; done
@@ -75,8 +75,12 @@ tools:
 combined_spheres$(EXE_EXT): combined_spheres$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)combined_spheres combined_spheres$(OBJ_EXT) $(LDFLAGS)
 
+combined_spheres-with-sphere-oracle$(EXE_EXT): combined_spheres-with-sphere-oracle$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)combined_spheres-with-sphere-oracle combined_spheres-with-sphere-oracle$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   combined_spheres.clean
+                   combined_spheres.clean \
+                   combined_spheres-with-sphere-oracle.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
