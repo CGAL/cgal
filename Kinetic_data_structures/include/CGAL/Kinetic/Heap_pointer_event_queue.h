@@ -217,7 +217,7 @@ public:
   //! remove the event referenced by item from the queue
   void erase(const Key &item) {
     if (item == end_key()) return;
-    CGAL_expensive_precondition(item);
+    CGAL_expensive_precondition(item != Key());
     CGAL_expensive_precondition(is_in_heap(item));
     int bin= item->bin();
     //if (bin ==-1) return;

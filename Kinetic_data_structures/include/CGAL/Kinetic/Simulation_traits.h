@@ -32,7 +32,7 @@
 #include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
 #include <CGAL/Kinetic/Derivitive_filter_function_kernel.h>
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
-#include <CGAL/Kinetic/Simulator.h>
+#include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
 #include <CGAL/Polynomial/Sturm_root_stack.h>
 #include <CGAL/Polynomial/Sturm_root_stack_traits.h>
@@ -112,7 +112,7 @@ struct Suggested_exact_simulation_traits_types
     Event_queue(const Time &start, const Time &end, Function_kernel fk, int num): Queue_base(start, end, fk, num){}
   };
 
-  typedef CGAL::Kinetic::Simulator<Simulator_function_kernel, Event_queue > Simulator;
+  typedef CGAL::Kinetic::Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
 };
 
 
@@ -143,7 +143,7 @@ struct Suggested_inexact_simulation_traits_types
   {
     Event_queue(const Time &start, const Time &finish, Function_kernel fk, int num): Queue_base(start, finish, fk, num){}
   };
-  typedef CGAL::Kinetic::Simulator<Simulator_function_kernel, Event_queue > Simulator;
+  typedef CGAL::Kinetic::Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
 };
 
 struct Suggested_inexact_simulation_traits_base: public Simulation_traits<Suggested_inexact_simulation_traits_types::Static_kernel,

@@ -79,7 +79,7 @@ timings$(EXE_EXT): timings$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)timings timings$(OBJ_EXT) $(LDFLAGS)
 
 numeric_kds$(EXE_EXT): numeric_kds$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)numeric_kds numeric_kds$(OBJ_EXT) $(LDFLAGS) -lgsl -lgslcblas
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)numeric_kds numeric_kds$(OBJ_EXT) $(LDFLAGS)
 
 simulator$(EXE_EXT): simulator$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simulator simulator$(OBJ_EXT) $(LDFLAGS)

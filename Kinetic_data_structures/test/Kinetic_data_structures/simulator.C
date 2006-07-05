@@ -207,7 +207,7 @@ int main(int, char *[])
     timer.reset();
 
     typedef CGAL::Kinetic::Exact_simulation_traits_2::Kinetic_kernel::Function_kernel FK;
-    typedef CGAL::Kinetic::Simulator<FK,
+    typedef CGAL::Kinetic::Default_simulator<FK,
       CGAL::Kinetic::Two_list_pointer_event_queue<FK> > Sim2;
 
     timer.start();

@@ -4,7 +4,7 @@
 #include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
 #include <CGAL/Kinetic/Simulation_traits.h>
-#include <CGAL/Kinetic/Simulator.h>
+#include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Simple_cartesian.h>
@@ -28,7 +28,7 @@ struct Sest_types
     Event_queue(const Time &start, const Time &end, Function_kernel fk, int num): Queue_base(start, end, fk, num){}
   };
 
-  typedef CGAL::Kinetic::Simulator<Simulator_function_kernel, Event_queue > Simulator;
+  typedef CGAL::Kinetic::Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
   typedef CGAL::Kinetic::Active_objects_vector<typename Kinetic_kernel::Point_1> Active_objects_table;
   typedef CGAL::Kinetic::Cartesian_instantaneous_kernel<Active_objects_table,
 							Static_kernel> Instantaneous_kernel;

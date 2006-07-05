@@ -70,11 +70,12 @@ event; for example in our kinetic sorting example, processing an event
 means calling the \ccc{Kinetic::Sort<Traits, Visitor>::swap(Iterator)}
 method of the kinetic sorting data structure.
 
-In the model of the \ccc{Kinetic::Simulator} concept that we provide, any
-model of the \ccc{Kinetic::Simulator::Event} concept can be inserted as an event. This
-ability implies that events can be mixed at run time, which is
-essential when we want to support multiple kinetic data structures
-operating on the same set of moving geometric primitives.
+In the model of the \ccc{Kinetic::Simulator} concept that we provide,
+\ccc{Kinetic:Default_simulator<FunctionKernel, EventQueue>}, any model
+of the \ccc{Kinetic::Simulator::Event} concept can be inserted as an
+event. This ability implies that events can be mixed at run time,
+which is essential when we want to support multiple kinetic data
+structures operating on the same set of moving geometric primitives.
 
 The \ccc{Kinetic::Simulator::Time} concept is defined by the simulator, typically to be
 some representation of a root of a polynomial, taken from the
