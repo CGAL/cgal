@@ -100,6 +100,7 @@ Mesh_3/doxygen
 Mesh_3/examples/Mesh_3/*.cgal
 Mesh_3/examples/Mesh_3/*.mesh
 Mesh_3/examples/Mesh_3/*.off
+Mesh_3/examples/Mesh_3/applications
 Mesh_3/examples/Mesh_3/cgal_to_medit
 Mesh_3/examples/Mesh_3/chair-after.mesh
 Mesh_3/examples/Mesh_3/chair-after.png
