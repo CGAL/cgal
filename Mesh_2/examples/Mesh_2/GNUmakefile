@@ -1,5 +1,11 @@
 include makefile
 
+run: all
+	./conforming
+	./mesh_class
+	./mesh_global
+	./mesh_with_seeds
+
 #---------------------------------------------------------------------#
 #
 #                        dependencies
