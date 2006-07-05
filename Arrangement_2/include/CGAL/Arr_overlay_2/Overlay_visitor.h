@@ -113,23 +113,20 @@ public:
     m_red_th = 
       m_red_arr_accessor.bottom_left_fictitious_vertex()->incident_halfedges();
     if(m_red_th->source()->infinite_in_x() == FINITE)
-    {
       m_red_th = m_red_th->next()->twin();
-      m_red_bh = m_red_th->twin();
-    }
-    else
-      m_red_bh = m_red_th->next()->twin();
 
-
+     if(m_red_th->source() == 
+           m_red_arr_accessor.top_left_fictitious_vertex())
+           m_red_th = m_red_th->prev();
+  
     m_blue_th = 
       m_blue_arr_accessor.bottom_left_fictitious_vertex()->incident_halfedges();
     if(m_blue_th->source()->infinite_in_x() == FINITE)
-    {
       m_blue_th = m_blue_th->next()->twin();
-      m_blue_bh = m_blue_th->twin();
-    }
-    else
-      m_blue_bh = m_blue_th->next()->twin();
+
+    if(m_blue_th->source() == 
+           m_blue_arr_accessor.top_left_fictitious_vertex())
+           m_blue_th = m_blue_th->prev();
   }
 
 
@@ -145,59 +142,34 @@ public:
     if((e->is_minus_infinite_in_x()) || 
        (e->is_finite_in_x() && e->is_plus_infinite_in_y()))
     {
-      Curve_info cv_info(m_red_th, m_blue_th);
-      if(e->is_minus_infinite_in_x())
-        m_halfedges_map[this->m_lh] = cv_info;
-      else
-        m_halfedges_map[this->m_th] = cv_info;
-
       switch(e->get_unbounded_curve().get_color())
       {
       case Curve_info::RED :
         m_red_th = m_red_th->twin()->next()->twin();
-        m_inf_event_to_face_map[e] = 
-          std::make_pair(Face_handle_red(), m_blue_th->face());
+        if(m_red_th->source() == 
+           m_red_arr_accessor.top_left_fictitious_vertex())
+           m_red_th = m_red_th->prev();
+
         break;
         
       case Curve_info::BLUE :
         m_blue_th = m_blue_th->twin()->next()->twin();
-        m_inf_event_to_face_map[e] = 
-          std::make_pair(m_red_th->face(), Face_handle_blue());
+        if(m_blue_th->source() == 
+           m_blue_arr_accessor.top_left_fictitious_vertex())
+           m_blue_th = m_blue_th->prev();
         break;
 
       case Curve_info::PURPLE :
         m_red_th = m_red_th->twin()->next()->twin();
         m_blue_th = m_blue_th->twin()->next()->twin();
-        break;
-      }
-    }
-    else
-    {
-      CGAL_assertion((e->is_plus_infinite_in_x()) || 
-                     (e->is_finite_in_x() && e->is_minus_infinite_in_y()));
-      Curve_info cv_info(m_red_bh, m_blue_bh);
-      if(e->is_plus_infinite_in_x())
-        m_halfedges_map[this->m_rh] = cv_info;
-      else
-        m_halfedges_map[this->m_bh] = cv_info;
 
-      switch(e->get_unbounded_curve().get_color())
-      {
-      case Curve_info::RED :
-        m_red_bh = m_red_bh->twin()->prev()->twin();
-        m_inf_event_to_face_map[e] = 
-          std::make_pair(Face_handle_red(), m_blue_bh->face());
-        break;
-        
-      case Curve_info::BLUE :
-        m_blue_bh = m_blue_bh->twin()->prev()->twin();
-        m_inf_event_to_face_map[e] = 
-          std::make_pair(m_red_bh->face(), Face_handle_blue());
-        break;
+         if(m_red_th->source() == 
+           m_red_arr_accessor.top_left_fictitious_vertex())
+           m_red_th = m_red_th->prev();
 
-      case Curve_info::PURPLE :
-        m_red_th = m_red_th->twin()->prev()->twin();
-        m_blue_th = m_blue_th->twin()->prev()->twin();
+         if(m_blue_th->source() == 
+           m_blue_arr_accessor.top_left_fictitious_vertex())
+           m_blue_th = m_blue_th->prev();
         break;
       }
     }
@@ -218,6 +190,11 @@ public:
     { 
       if(rev_iter != event->right_curves_rend())
       {
+        if((*rev_iter)->get_color() == Curve_info::BLUE)
+          (*rev_iter)->set_top_red_halfedge (&(*m_red_th));
+        else if((*rev_iter)->get_color() == Curve_info::RED)
+            (*rev_iter)->set_top_blue_halfedge (&(*m_blue_th));
+
         (*rev_iter)->set_above(NULL);
         sc_above = *rev_iter;
         ++rev_iter;     
@@ -235,7 +212,18 @@ public:
       if(!curr_sc->has_same_color(sc_above))
         curr_sc -> set_above(sc_above);
       else
-        curr_sc -> set_above(sc_above->get_above());
+      {
+        if(!sc_above->get_above())
+        {
+          curr_sc->set_above(NULL);
+          if (curr_sc->get_color() == Curve_info::BLUE)
+            curr_sc->set_top_red_halfedge (sc_above->get_top_red_halfedge());
+          else if (curr_sc->get_color() == Curve_info::RED)
+            curr_sc->set_top_blue_halfedge (sc_above->get_top_blue_halfedge());
+        }
+        else
+          curr_sc -> set_above(sc_above->get_above());
+      }
 
       sc_above = curr_sc;
     }
@@ -313,16 +301,16 @@ public:
     // res is directed from left to right
     Halfedge_handle res = Base::insert_in_face_interior(cv,sc);
     map_halfedge_and_twin(res, true, cv.get_curve_info());
-    Subcurve *sc_above = sc->get_above();
+    //Subcurve *sc_above = sc->get_above();
     Vertex_handle res_v_left = res->source();
     Vertex_handle res_v_right = res->target();
 
     //create left vertex
     Event *last_event = this->get_last_event(sc);
-    create_vertex(last_event, res_v_left, sc_above);
+    create_vertex(last_event, res_v_left, sc);
 
     //create right vertex
-    create_vertex(this ->current_event(), res_v_right, sc_above);
+    create_vertex(this ->current_event(), res_v_right, sc);
 
      //update the result edge
     this ->create_edge(sc, res->twin());
@@ -337,13 +325,13 @@ public:
     // res is directed from right to left
     Halfedge_handle res = Base::insert_from_right_vertex(cv, he, sc);
     map_halfedge_and_twin(res, false, cv.get_curve_info());
-    Subcurve *sc_above = sc->get_above();
+   // Subcurve *sc_above = sc->get_above();
 
     // the new vertex is the left one
     Vertex_handle res_v = res->target();
 
     Event *last_event = this->get_last_event(sc);
-    create_vertex(last_event, res_v, sc_above);
+    create_vertex(last_event, res_v, sc);
 
      //update the result edge
     this ->create_edge(sc, res);
@@ -358,11 +346,11 @@ public:
     //res is directed from left to right
     Halfedge_handle res = Base::insert_from_left_vertex(cv, he, sc);
     map_halfedge_and_twin(res, true, cv.get_curve_info());
-    Subcurve *sc_above = sc->get_above();
+    //Subcurve *sc_above = sc->get_above();
 
      // the new vertex is the right one
     Vertex_handle res_v = res->target();
-    create_vertex(this ->current_event(), res_v, sc_above);
+    create_vertex(this ->current_event(), res_v, sc);
 
     //update the result edge
     this ->create_edge(sc, res->twin());
@@ -402,7 +390,12 @@ public:
         //get the current halfedge on the face boundary
         Halfedge_handle he =  ccb_circ;
 
-        CGAL_assertion(m_halfedges_map.is_defined(he));
+        //CGAL_assertion(m_halfedges_map.is_defined(he));
+        if(!m_halfedges_map.is_defined(he))
+        {
+          ++ccb_circ;
+          continue;
+        }
         const Curve_info& cv_info = m_halfedges_map[he];
         if(cv_info.get_color() == Curve_info::RED)
         {
@@ -447,7 +440,7 @@ public:
           Subcurve* sc_above = sc->get_above();
           if(!sc_above)
            // blue_face = m_blue_arr->unbounded_face();
-           blue_face = m_blue_th->face();
+           blue_face = sc->get_top_blue_halfedge()->face();
           else
             blue_face = 
               sc_above->get_blue_halfedge_handle()->face();
@@ -463,7 +456,7 @@ public:
           Face_handle_blue blue_face = blue_he->face();
           Subcurve* sc_above = sc->get_above();
           if(!sc_above)
-            red_face = m_red_th->face();
+            red_face = sc->get_top_red_halfedge()->face();
           else
             red_face = 
               sc_above->get_red_halfedge_handle()->face();
@@ -588,13 +581,14 @@ public:
     }
   }
 
-  void create_vertex(Event *event, Vertex_handle res_v, Subcurve* sc_above)
+  void create_vertex(Event *event, Vertex_handle res_v, Subcurve* sc)
   {
     const Point_2& pt = event->get_point();
     CGAL_assertion( !pt.is_red_object_null() || !pt.is_blue_object_null());
     const Object& red_obj  = pt.get_red_object();
     const Object& blue_obj = pt.get_blue_object();
     Vertex_handle_red red_v;
+    Subcurve* sc_above = sc->get_above();
     if(assign(red_v, red_obj))
     {
       Vertex_handle_blue    blue_v;
@@ -618,7 +612,7 @@ public:
           Face_handle_blue    blue_f;
           if(!sc_above)
             //blue_f = m_blue_arr->unbounded_face();
-            blue_f = m_blue_th->face();
+            blue_f = sc->get_top_blue_halfedge()->face();
           else
           {
             blue_f = sc_above ->get_blue_halfedge_handle()->face();
@@ -659,7 +653,7 @@ public:
         Face_handle_red    red_f;
         if(!sc_above)
           //red_f = m_red_arr->unbounded_face();
-          red_f = m_red_th->face();
+          red_f = sc->get_top_red_halfedge()->face();
         else
         {
           red_f = sc_above ->get_red_halfedge_handle()->face();
@@ -688,19 +682,13 @@ public:
         // red edge on blue face
         red_he = sc->get_red_halfedge_handle();
         Face_handle_blue blue_f;
-        if(!this->current_event()->is_finite())
-          blue_f = m_inf_event_to_face_map[this->current_event()].second;
+       
+        Subcurve* sc_above = sc->get_above();
+        if(!sc_above)
+          blue_f = sc->get_top_blue_halfedge()->face();
         else
-          if(!this->get_last_event(sc)->is_finite())
-            blue_f = m_inf_event_to_face_map[this->get_last_event(sc)].second;
-          else
-          {
-            Subcurve* sc_above = sc->get_above();
-            if(!sc_above)
-              blue_f = m_blue_th->face();
-            else
-              blue_f = sc_above->get_blue_halfedge_handle()->face();
-          }
+          blue_f = sc_above->get_blue_halfedge_handle()->face();
+          
         m_overlay_traits ->create_edge(red_he, blue_f, res_he);
       }
       else
@@ -710,19 +698,13 @@ public:
 
         blue_he = sc->get_blue_halfedge_handle();
         Face_handle_red red_f;
-        if(!this->current_event()->is_finite())
-          red_f = m_inf_event_to_face_map[this->current_event()].first;
+       
+        Subcurve* sc_above = sc->get_above();
+        if(!sc_above)
+          red_f = sc->get_top_red_halfedge()->face();
         else
-          if(!this->get_last_event(sc)->is_finite())
-            red_f = m_inf_event_to_face_map[this->get_last_event(sc)].first;
-          else
-          {
-            Subcurve* sc_above = sc->get_above();
-            if(!sc_above)
-              red_f = m_red_th->face();
-            else
-              red_f = sc_above->get_red_halfedge_handle()->face();
-          }
+          red_f = sc_above->get_red_halfedge_handle()->face();
+          
         m_overlay_traits ->create_edge(red_f, blue_he, res_he);
       }
   }
@@ -746,13 +728,7 @@ protected:
   Arr_accessor<Arrangement2> m_blue_arr_accessor;
 
   Halfedge_handle_red        m_red_th;
-  Halfedge_handle_red        m_red_bh;
-
   Halfedge_handle_blue       m_blue_th;
-  Halfedge_handle_blue       m_blue_bh;
-  Unique_hash_map<Event*,
-                  std::pair<Face_handle_red,
-                            Face_handle_blue> >  m_inf_event_to_face_map;
 };
 
 CGAL_END_NAMESPACE

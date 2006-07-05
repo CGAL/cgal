@@ -389,6 +389,11 @@ public:
 
   };
 
+  friend std::ostream& operator<< (std::ostream& os, const My_Point_2 & p)
+  {
+    os << p.base_point();
+    return (os);
+  }
 
   typedef My_Point_2   Point_2;
  
@@ -418,12 +423,50 @@ public:
          cv2.get_color() == Curve_info::PURPLE)
          return (oi);
 
+      // Compute the intersection points between the curves. Note that if
+      // cv1 and cv2 are subcruves of x-monotone curves that had intersected
+      // before the current point on the status line, we may get a filter
+      // failure if we send the subcurve whose left endpoint is to the left
+      // of the other curve - this is because their previously computed
+      // intersection point p may be equal to the this left endpoint. As many
+      // traits classes start by computing the intersection between the
+      // supporting curves and then check whether the result is in the x-range
+      // of both subcurves, this will result in a filter failure. However, if
+      // we send cv1 first, then p is obviusly not in its x-range and there is
+      // no filter failure.
+      //
+      //              / cv1
+      //             /
+      //            /
+      //       ----+--
+      //          /
+      //         /
+      //      p +------------- cv2
+      //              ^
+      //              |
+      //              status line
+      //
+      // Note that we do not bother with curves whose left ends are unbounded,
+      // since such curved did not intersect before.
       const std::pair<Base_Point_2, unsigned int>   *base_pt;
       const Base_X_monotone_curve_2                 *overlap_cv;
-      OutputIterator oi_end;
-      if(m_base_tr->compare_xy_2_object()
-          (m_base_tr->construct_min_vertex_2_object()(cv1.base_curve()),
-           m_base_tr->construct_min_vertex_2_object()(cv2.base_curve())) == LARGER)
+      bool                                           send_cv1_first = true;
+      OutputIterator                                 oi_end;
+
+      Infinite_in_x_2 inf_in_x;
+      Infinite_in_y_2 inf_in_y;
+      if (inf_in_x (cv1.base_curve(), MIN_END) == FINITE &&
+          inf_in_y (cv1.base_curve(), MIN_END) == FINITE &&
+          inf_in_x (cv2.base_curve(), MIN_END) == FINITE &&
+          inf_in_y (cv2.base_curve(), MIN_END) == FINITE)
+      {
+        send_cv1_first =
+          (m_base_tr->compare_xy_2_object()
+            (m_base_tr->construct_min_vertex_2_object()(cv1.base_curve()),
+             m_base_tr->construct_min_vertex_2_object()(cv2.base_curve())) == LARGER);
+      }
+
+      if (send_cv1_first)
         oi_end = m_base_tr->intersect_2_object()(cv1.base_curve(),
                                                  cv2.base_curve(), oi);
       else
@@ -868,6 +911,68 @@ public:
   {
     return  (cv1.get_color() == cv2.get_color());
   }
+
+  class Infinite_in_x_2
+  {
+  public:
+    
+    Infinity_type operator() (const X_monotone_curve_2& cv,
+                              Curve_end ind) const
+    {
+      return _infinite_in_x_imp(cv, ind, Base_has_infinite_category());
+    }
+
+  private:
+    Infinity_type _infinite_in_x_imp(const X_monotone_curve_2& cv,
+                                     Curve_end ind, Tag_true) const
+    {
+      Traits tr;
+      return (tr.infinite_in_x_2_object() (cv.base_curve(), ind));
+    }
+
+    Infinity_type _infinite_in_x_imp(const X_monotone_curve_2& cv,
+                                     Curve_end ind, Tag_false) const
+    {
+      return FINITE;
+    }
+  };
+
+  /*! Get an Infinite_in_x_2 functor object. */
+  Infinite_in_x_2 infinite_in_x_2_object () const
+  {
+    return Infinite_in_x_2();
+  } 
+
+  class Infinite_in_y_2
+  {
+  public:
+    
+    Infinity_type operator() (const X_monotone_curve_2& cv,
+                              Curve_end ind) const
+    {
+      return _infinite_in_y_imp(cv, ind, Base_has_infinite_category());
+    }
+
+  private:
+    Infinity_type _infinite_in_y_imp(const X_monotone_curve_2& cv,
+                                     Curve_end ind, Tag_true) const
+    {
+      Traits tr;
+      return (tr.infinite_in_y_2_object() (cv.base_curve(), ind));
+    }
+
+    Infinity_type _infinite_in_y_imp(const X_monotone_curve_2& cv,
+                                     Curve_end ind, Tag_false) const
+    {
+      return FINITE;
+    }
+  };
+
+  /*! Get an Infinite_in_x_2 functor object. */
+  Infinite_in_y_2 infinite_in_y_2_object () const
+  {
+    return Infinite_in_y_2();
+  } 
 };
 
 
