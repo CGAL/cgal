@@ -381,19 +381,19 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( Sorted_triedge_2<K
   
     CGAL_STSKEL_TRAITS_TRACE("Event Point:\n  d=" << den  )
   
-    CGAL_assertion ( ! CGAL_NTS certified_is_zero(den) ) ;
-  
-    FT numX = l0->b()*l2->c() - l0->b()*l1->c() - l1->b()*l2->c() + l2->b()*l1->c() + l1->b()*l0->c() - l2->b()*l0->c();
-    FT numY = l0->a()*l2->c() - l0->a()*l1->c() - l1->a()*l2->c() + l2->a()*l1->c() + l1->a()*l0->c() - l2->a()*l0->c();
-  
-    if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(numX) && CGAL_NTS is_finite(numY)  )
+    if ( ! CGAL_NTS certified_is_zero(den) ) 
     {
-      ok = true ;
-      
-      x =  numX / den ;
-      y = -numY / den ;
-    }
+      FT numX = l0->b()*l2->c() - l0->b()*l1->c() - l1->b()*l2->c() + l2->b()*l1->c() + l1->b()*l0->c() - l2->b()*l0->c();
+      FT numY = l0->a()*l2->c() - l0->a()*l1->c() - l1->a()*l2->c() + l2->a()*l1->c() + l1->a()*l0->c() - l2->a()*l0->c();
     
+      if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(numX) && CGAL_NTS is_finite(numY)  )
+      {
+        ok = true ;
+        
+        x =  numX / den ;
+        y = -numY / den ;
+      }
+    }
   }
     
   CGAL_STSKEL_TRAITS_TRACE("\n  x=" << x << "\n  y=" << y )
@@ -449,9 +449,7 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( Sorted_triedge
       den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
     }
   
-    CGAL_precondition( ! CGAL_NTS certified_is_zero(den) ) ;
-  
-    if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
+    if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
     {
       x = q->x() + l0->a() * num / den  ;
       y = q->y() + l0->b() * num / den  ;

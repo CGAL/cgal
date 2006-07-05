@@ -28,6 +28,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
@@ -36,6 +37,29 @@
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
 #include <CGAL/enum.h>
+
+#ifdef CGAL_STRAIGHT_SKELETON_STATS
+
+int sVertexCount ;
+int sReflexVertexCount ;
+int sDegenerateVertexCount ;
+int sFoundEdgeEventCount ;
+int sFoundSplitEventCount ;
+int sProcessedEdgeEventCount ;
+int sProcessedSplitEventCount ;
+int sProcessedPseudoSplitEventCount ;
+int sOutOfReachSplitEventCount ;
+int sAnihiliationCount ;
+int sInFrameCount ;
+int sOutsideFrameCount ;
+int sInTimeRangeCount ;
+int sOutsideTimeRangeCount ;
+int sSingularCount ;
+
+#define CGAL_STSKEL_STATS_CODE(c) c
+#else
+#define CGAL_STSKEL_STATS_CODE(c)
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -53,11 +77,12 @@ private :
 
   typedef typename Traits::Kernel K ;
   
-  typedef typename Traits::FT        FT ;
-  typedef typename Traits::Point_2   Point_2 ;
-  typedef typename Traits::Segment_2 Segment_2 ;
-  typedef typename Traits::Triedge_2 Triedge_2 ;
-
+  typedef typename Traits::FT         FT ;
+  typedef typename Traits::Point_2    Point_2 ;
+  typedef typename Traits::Segment_2  Segment_2 ;
+  typedef typename Traits::Triedge_2  Triedge_2 ;
+  typedef typename K::Iso_rectangle_2 Iso_rectangle_2 ;
+  
   typedef typename SSkel::Vertex   Vertex ;
   typedef typename SSkel::Halfedge Halfedge ;
   typedef typename SSkel::Face     Face ;
@@ -121,6 +146,12 @@ private :
   {
     bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
     {
+      if ( !handle_assigned(aA->opposite()) )
+        throw straight_skeleton_exception("opposite() missing!");
+        
+      if ( !handle_assigned(aB->opposite()) )
+        throw straight_skeleton_exception("opposite() missing!");
+        
       Point_2 o = aA->vertex()->point();
       Point_2 a = aA->opposite()->vertex()->point();
       Point_2 b = aB->opposite()->vertex()->point();
@@ -157,16 +188,16 @@ private :
   {
   public:
 
-    Event_compare ( Self const& aBuilder ) : mBuilder(aBuilder) {}
+    Event_compare ( Self const* aBuilder ) : mBuilder(aBuilder) {}
 
     bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
     {
-      return mBuilder.CompareEvents(aA,aB) == LARGER ;
+      return mBuilder->CompareEvents(aA,aB) == LARGER ;
     }
 
   private:
 
-    Self const& mBuilder ;
+    Self const* mBuilder ;
   } ;
 
   typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Event_compare> PQ ;
@@ -177,7 +208,7 @@ private :
 
   struct VertexWrapper
   {
-    VertexWrapper( Vertex_handle aVertex )
+    VertexWrapper( Vertex_handle aVertex, Event_compare const& aComparer )
       :
         mVertex(aVertex)
       , mIsReflex(false)
@@ -186,6 +217,8 @@ private :
       , mIsExcluded(false)
       , mPrevInLAV(-1)
       , mNextInLAV(-1)
+      , mNextSplitEventInMainPQ(false)
+      , mSplitEvents(aComparer)
     {}
 
     Vertex_handle   mVertex ;
@@ -198,8 +231,10 @@ private :
     Halfedge_handle mDefiningBorderA ;
     Halfedge_handle mDefiningBorderB ;
     Halfedge_handle mDefiningBorderC ;
+    bool            mNextSplitEventInMainPQ;
+    PQ              mSplitEvents ;
   } ;
-
+  
 private :
 
   inline Halfedge_handle validate( Halfedge_handle aH ) const
@@ -338,7 +373,35 @@ private :
     return mWrappedVertices[aVertex->id()].mIsProcessed ;
   }
 
-  void EnqueEvent( EventPtr aEvent ) ;
+  void AddSplitEvent ( Vertex_handle aVertex, EventPtr aEvent )
+  {
+    CGAL_STSKEL_BUILDER_TRACE(1, "V" << aVertex->id() << " PQ: " << *aEvent);
+    mWrappedVertices[aVertex->id()].mSplitEvents.push(aEvent);
+  }
+  
+  EventPtr PopNextSplitEvent ( Vertex_handle aVertex )
+  {
+    EventPtr rEvent ;
+    VertexWrapper& lW = mWrappedVertices[aVertex->id()] ;
+    if ( !lW.mNextSplitEventInMainPQ )
+    {
+      PQ& lPQ = lW.mSplitEvents ;
+      if ( !lPQ.empty() )
+      {
+        rEvent = lPQ.top(); 
+        lPQ.pop();
+        lW.mNextSplitEventInMainPQ = true ;
+      }
+    }
+    return rEvent ;
+  }
+
+  void AllowNextSplitEvent ( Vertex_handle aVertex )
+  {
+    mWrappedVertices[aVertex->id()].mNextSplitEventInMainPQ = false ;
+  }  
+  
+  void InsertEventInPQ( EventPtr aEvent ) ;
 
   EventPtr PopEventFromPQ() ;
 
@@ -389,7 +452,40 @@ private :
 
   bool ExistEvent ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 ) const
   {
-    return Do_ss_event_exist_2(mTraits)(CreateTriedge(aE0, aE1, aE2));
+    bool rR = Do_ss_event_exist_2(mTraits)(CreateTriedge(aE0, aE1, aE2));
+    
+/*
+#ifdef CGAL_STRAIGHT_SKELETON_STATS
+    if ( rR )
+    {
+      boost::optional<FT>      lTime ;
+      boost::optional<Point_2> lP ;
+      boost::tie(lTime,lP) = ConstructEventTimeAndPoint( CreateTriedge(aE0,aE1,aE2) );
+      if ( !!lTime && !!lP )
+      {
+        if ( *lTime > mMaxTime )
+        {
+          rR = false ;
+          ++ sOutsideTimeRangeCount ;
+        }
+        else ++ sInTimeRangeCount ; 
+        
+        if ( mFrame.has_on_unbounded_side(*lP) )
+        {
+          rR = false ;
+          ++ sOutsideFrameCount ;
+        }
+        else ++ sInFrameCount ; 
+      }
+      else
+      {
+        rR = false ;
+        ++ sSingularCount ;
+      }
+    }
+#endif
+*/    
+    return rR ;
   }
   
   bool AreEdgesParallel( Halfedge_const_handle aE0, Halfedge_const_handle aE1 ) const
@@ -574,6 +670,9 @@ private :
   void HandlePseudoSplitEvent        ( EventPtr aEvent ) ;
   void HandleSplitOrPseudoSplitEvent ( EventPtr aEvent ) ;
   
+  void InsertNextSplitEventInPQ( Vertex_handle v ) ;
+  void InsertNextSplitEventsInPQ() ;
+  
   bool IsProcessed( EventPtr aEvent ) ;
 
   void Propagate();
@@ -601,7 +700,7 @@ private :
 
 private:
 
-#ifdef CGAL_STSKEL_ENABLE_SHOW
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
   template<class Halfedge>
   void DrawBisector ( Halfedge aHalfedge )
   {
@@ -621,13 +720,15 @@ private:
   //Input
   Traits mTraits ;
 
-  typename Traits::Equal_2     Equal ;
-  typename Traits::Left_turn_2 Left_turn ;
-  typename Traits::Collinear_2 Collinear ;
+  typename Traits::Equal_2      Equal ;
 
-  std::vector<VertexWrapper> mWrappedVertices ;
-  Halfedge_handle_vector     mDanglingBisectors ;
-  Halfedge_handle_vector     mContourHalfedges ;
+  Iso_rectangle_2            mFrame ;
+  FT                         mMaxTime ;
+  
+  std::vector<VertexWrapper>  mWrappedVertices ;
+  Vertex_handle_vector        mReflexVertices ;
+  Halfedge_handle_vector      mDanglingBisectors ;
+  Halfedge_handle_vector      mContourHalfedges ;
 
   std::list<Vertex_handle> mSLAV ;
 
@@ -645,10 +746,10 @@ private:
   //Output
   SSkelPtr mSSkel ;
 
-public:
+private :  
 
   template<class InputPointIterator>
-  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd  )
+  void enter_valid_contour ( InputPointIterator aBegin, InputPointIterator aEnd )
   {
     CGAL_STSKEL_BUILDER_TRACE(0,"Inserting Connected Component of the Boundary....");
 
@@ -658,34 +759,17 @@ public:
     Vertex_handle   lFirstVertex ;
     Vertex_handle   lPrevVertex ;
 
-    InputPointIterator lLast = CGAL::predecessor(aEnd) ;
-     
-    // Remove last points coincident with the first point.
-    while ( lLast != aBegin )
-    {
-      if ( Equal(*lLast,*aBegin) )
-        -- lLast ;
-      else break ;  
-    }    
-    
-    aEnd = CGAL::successor(lLast);
-    
     InputPointIterator lCurr = aBegin ;
     InputPointIterator lPrev = aBegin ;
     
     int c = 0 ;
     
+    FT lx = 0, ly = 0, hx = 0, hy = 0 ;
+    
+    bool lIsOuterContour = mSSkel->size_of_vertices() == 0 ;
+    
     while ( lCurr != aEnd )
     {
-      // Skip ahead consecutive coincident vertices.
-      if (  ( lCurr != aBegin && Equal(*lPrev,*lCurr) )
-         || ( lCurr != lLast  && Equal(*lCurr,*lLast) )
-         )
-      {
-        ++ lCurr ;
-        continue ;
-      }
-      
       Halfedge_handle lCCWBorder = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
       Halfedge_handle lCWBorder = lCCWBorder->opposite();
       mEdgeID += 2 ;
@@ -694,12 +778,31 @@ public:
 
       Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
       CGAL_STSKEL_BUILDER_TRACE(2,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
-      mWrappedVertices.push_back( VertexWrapper(lVertex) ) ;
+      mWrappedVertices.push_back( VertexWrapper(lVertex,mEventCompare) ) ;
 
       Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
 
+      if ( lIsOuterContour )
+      {
+        if ( c  == 0 )
+        {
+          lx = hx = lCurr->x();
+          ly = hy = lCurr->y();
+        }
+        else
+        {
+          if ( lCurr->x() < lx )
+            lx = lCurr->x();
+          if ( lCurr->x() > hx )
+            hx = lCurr->x();
+          if ( lCurr->y() < ly )
+            ly = lCurr->y();
+          if ( lCurr->y() > hy )
+            hy = lCurr->y();
+        }
+      }
       ++ c ;
-      
+
       lCCWBorder->HBase_base::set_face(lFace);
       lFace     ->FBase::set_halfedge(lCCWBorder);
 
@@ -765,14 +868,81 @@ public:
     lPrevCCWBorder ->opposite()->HBase_base::set_prev(lFirstCCWBorder->opposite());
     lFirstCCWBorder->opposite()->HBase_base::set_next(lPrevCCWBorder ->opposite());
 
+    if ( lIsOuterContour )
+    {
+      FT dx = hx - lx ;
+      FT dy = hy - ly ;
+      FT d  = dx > dy ? dx : dy ;
+      FT m  = FT(0.005) * d ;
+      
+      mFrame = Iso_rectangle_2(lx-m,ly-m,hx+m,hy+m);
+      mMaxTime = ( d + m + m ) / FT(2.0);
+    }
+    
+    CGAL_precondition_msg(c >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
+    
     CGAL_STSKEL_BUILDER_TRACE(2
                              , "CCW Border: E" << lFirstCCWBorder->id()
                              << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
                              << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
                              << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
                              );
+  }
+  
+public:
+  
+  struct AreVerticesEqual
+  {
+    bool operator() ( Point_2 const&x, Point_2 const& y ) const
+    {
+      return CGAL::compare_xy(x,y) == EQUAL ;
+    }
+  } ; 
+  
+  template<class InputPointIterator>
+  Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd, bool aCheckValidity = true )
+  {
+    if ( aCheckValidity )
+    {
+      typedef std::vector<Point_2> Point_vector ;
+      typedef typename Point_vector::iterator Point_iterator ;
      
-    CGAL_precondition_msg(c >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
+      // Remove coincident consecutive vertices
+      Point_vector lList0, lList1;
+      std::unique_copy(aBegin,aEnd,std::back_inserter(lList0),AreVerticesEqual());
+
+            
+      // Remove collinear vertices
+      if ( lList0.size() >= 3 )
+      {
+        Point_iterator begin = lList0.begin();
+        Point_iterator end   = lList0.end();
+        Point_iterator last  = CGAL::predecessor(end);
+        
+        Point_iterator prev = last ;
+        
+        for ( Point_iterator curr = begin ; curr != end ; ++ curr )
+        {
+          Point_iterator next = ( curr == last ? begin : CGAL::successor(curr) ) ;
+          if ( !CGAL::collinear(*prev,*curr,*next) )
+            lList1.push_back(*curr);
+          prev = curr ;
+        }    
+      }
+      
+      if ( lList1.size() >= 3 )
+      {
+        enter_valid_contour(lList1.begin(),lList1.end());
+      }
+      else
+      {
+        CGAL_STSKEL_BUILDER_TRACE(0,"Degenerate contour (less than 3 non-degenerate vertices).");
+      }
+    }
+    else
+    {
+      enter_valid_contour(aBegin,aEnd);
+    } 
 
     return *this ;
   }

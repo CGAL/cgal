@@ -175,6 +175,10 @@ public:
   virtual Vertex_handle seed0() const { return mSeed ; }
   virtual Vertex_handle seed1() const { return mSeed ; }
 
+  void set_opposite_rnode( Vertex_handle aOppR ) { mOppR = aOppR ; }
+  
+  Vertex_handle opposite_rnode() const { return mOppR ; }
+  
 private :
 
   virtual void dump ( std::ostream& ss ) const
@@ -185,7 +189,8 @@ private :
 
 private :
 
-  Vertex_handle   mSeed ;
+  Vertex_handle mSeed ;
+  Vertex_handle mOppR ;
 } ;
 
 template<class SSkel>

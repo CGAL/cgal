@@ -175,8 +175,8 @@ struct SS_converter : Converter
   typedef typename Converter::Source_kernel Source_kernel;
   typedef typename Converter::Target_kernel Target_kernel;
 
-  typedef typename Source_kernel::FT SFT ;
-  typedef typename Target_kernel::FT TFT ;
+  typedef typename Source_kernel::FT Source_FT ;
+  typedef typename Target_kernel::FT Target_FT ;
 
   typedef typename Source_kernel::Point_2 Source_point_2 ;
   typedef typename Target_kernel::Point_2 Target_point_2 ;
@@ -187,13 +187,37 @@ struct SS_converter : Converter
   typedef Triedge_2<Source_kernel> Source_triedge_2 ;
   typedef Triedge_2<Target_kernel> Target_triedge_2 ;
 
-  TFT cvtn(SFT n) const  { return this->Converter::operator()(n); }
+  typedef boost::optional<Source_FT>      Source_optional_FT ;
+  typedef boost::optional<Source_point_2> Source_optional_point_2 ;
+  
+  typedef boost::optional<Target_FT>      Target_optional_FT ;
+  typedef boost::optional<Target_point_2> Target_optional_point_2 ;
+  
+  typedef boost::tuple<Source_optional_FT,Source_optional_point_2> Source_time_and_point ;
+  typedef boost::tuple<Target_optional_FT,Target_optional_point_2> Target_time_and_point ;
+  
+  Target_FT        cvtn(Source_FT n) const  { return this->Converter::operator()(n); }
 
-  Target_point_2 cvtp(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
+  Target_point_2   cvtp(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
 
   Target_segment_2 cvts( Source_segment_2 const& e) const { return Target_segment_2(cvtp(e.source()), cvtp(e.target()) ) ; }
   
-  TFT              operator()(SFT n) const { return cvtn(n) ; }
+  Target_optional_FT cvton( Source_optional_FT n ) const
+  {
+    if ( n )
+         return Target_optional_FT(cvtn(*n));
+    else return Target_optional_FT(); 
+  }
+  
+  Target_optional_point_2 cvtop( Source_optional_point_2 const& p ) const
+  {
+    if ( p )
+         return Target_optional_point_2(cvtp(*p));
+    else return Target_optional_point_2(); 
+  }
+  
+  
+  Target_FT        operator()(Source_FT n) const { return cvtn(n) ; }
 
   Target_point_2   operator()( Source_point_2 const& p) const { return cvtp(p) ; }
 
@@ -203,6 +227,15 @@ struct SS_converter : Converter
   {
     return Target_triedge_2(cvts(t.e0()), cvts(t.e1()), cvts(t.e2()) ) ;
   }
+  
+  Target_time_and_point operator() ( Source_time_and_point const& v ) const
+  {
+    Source_optional_FT      t ;
+    Source_optional_point_2 p ;
+    boost::tie(t,p) = v ;
+    return Target_time_and_point(cvton(t),cvtop(p));
+  }
+  
 };
 
 } // namespace CGAL_SS_i

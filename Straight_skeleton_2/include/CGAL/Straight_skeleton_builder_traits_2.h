@@ -18,6 +18,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H
 #define CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H 1
 
+#include <CGAL/Filtered_construction.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
@@ -211,27 +212,31 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
   result_type operator() ( Triedge_2 const& triedge ) const
   {
-    optional< Rational<FT> > qt ;
+    optional<FT> t ;
 
     optional<Point_2> i ;
     
     Sorted_triedge_2 sorted = collinear_sort(triedge);
 
-    FT t(0.0);
-    
     if ( !sorted.is_indeterminate() )
     {
       CGAL_assertion(sorted.collinear_count() < 3) ;
   
-      qt = compute_offset_lines_isec_timeC2(sorted);
-  
+      optional< Rational<FT> > qt = compute_offset_lines_isec_timeC2(sorted);
+      
       i = construct_offset_lines_isecC2(sorted);
       
       if ( qt )
-        t = qt->n() / qt->d() ;
+        t = cgal_make_optional(qt->n() / qt->d()) ;
     }
-    
-    return boost::make_tuple( cgal_make_optional(qt,t), i ) ;
+  
+    if ( !t )
+      t = cgal_make_optional( FT(0) );
+      
+    if ( !i )
+      i = cgal_make_optional( Point_2() ) ;
+        
+    return boost::make_tuple(t,i) ;
   }
 };
 
@@ -318,12 +323,13 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
 
   typedef Cartesian_converter<K,EK> BaseC2E;
   typedef Cartesian_converter<K,FK> BaseC2F;
+  typedef Cartesian_converter<EK,K> BaseE2C;
+  typedef Cartesian_converter<FK,K> BaseF2C;
   
-  //typedef typename K::C2E BaseC2E ;
-  //typedef typename K::C2F BaseC2F ;
-
   typedef CGAL_SS_i::SS_converter<BaseC2E> C2E ;
   typedef CGAL_SS_i::SS_converter<BaseC2F> C2F ;
+  typedef CGAL_SS_i::SS_converter<BaseE2C> E2C ;
+  typedef CGAL_SS_i::SS_converter<BaseF2C> F2C ;
 
 public:
 
@@ -376,6 +382,18 @@ public:
                             >
                             Are_ss_edges_collinear_2 ;
                             
+  /*
+  typedef Filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
+                               , typename Exact      ::Construct_ss_event_time_and_point_2
+                               , typename Filtering  ::Construct_ss_event_time_and_point_2   
+                               , C2E
+                               , C2F
+                               , E2C
+                               , F2C
+                               > 
+                               Construct_ss_event_time_and_point_2 ; // This uses internally a predicate so must be filtered
+  */
+                               
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   
   typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;

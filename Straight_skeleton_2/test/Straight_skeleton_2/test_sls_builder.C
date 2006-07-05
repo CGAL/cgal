@@ -20,9 +20,9 @@
 #include<fstream>
 #include<sstream>   
 
-//#define CGAL_STRAIGHT_SKELETON_STATS   
+#define CGAL_STRAIGHT_SKELETON_STATS    
 
-#include <CGAL/test_sls_builder_types.h>
+#include <CGAL/test_sls_builder_types.h> 
 
 #include <CGAL/Real_timer.h>
 
@@ -36,12 +36,12 @@ RegionPtr load_region( string file )
 {
   RegionPtr rRegion ;
 
-  ifstream in(file.c_str());
+  ifstream in(file.c_str()); 
   if ( in )
   {
     CGAL::set_ascii_mode(in);
 
-    rRegion = RegionPtr( new Region() ) ;
+    rRegion = RegionPtr( new Region() ) ; 
 
     int ccb_count ;
     in >> ccb_count ;
