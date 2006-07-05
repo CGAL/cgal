@@ -129,6 +129,7 @@ Mesh_3/test/Mesh_3/*.off
 Mesh_3/test/Mesh_3/*.png
 Mesh_3/test/Mesh_3/*.surface*
 Mesh_3/test/Mesh_3/ProgramOutput.*
+Mesh_3/test/Mesh_3/applications
 Mesh_3/test/Mesh_3/cgal_to_medit
 Mesh_3/test/Mesh_3/combined_spheres
 Mesh_3/test/Mesh_3/combined_spheres-with-sphere-oracle

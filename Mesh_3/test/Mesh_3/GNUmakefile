@@ -64,7 +64,8 @@ run: $(RUN_PROGRAMS)
 	./cgal_test -no-clean
 
 links:
-	for t in $(TOOLS); do rm -f $$t; ln -s ../../applications/$$t .; done
+	ln -s ../../applications .
+	for t in $(TOOLS); do rm -f $$t; ln -s applications/$$t .; done
 
 tools:
 	for t in $(TOOLS); do \
