@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kinetic::Simulator<FunctionKernel, EventQueue>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kinetic::Default_simulator<FunctionKernel, EventQueue>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -22,7 +22,7 @@ The class \ccRefName\ controls kinetic data structures by maintaining
 a concept of time and ensuring that events are processed when
 necessary. 
 
-\ccInclude{CGAL/Kinetic/Simulator.h}
+\ccInclude{CGAL/Kinetic/Default_simulator.h}
 
 \ccIsModel
 
@@ -32,7 +32,7 @@ necessary.
 \ccCreation
 \ccCreationVariable{sim}  %% choose variable name
 
-\ccConstructor{Simulator(const Time start=Time(0), const Time end= Time::infinity());}{Construct a \ccRefName\ which will process events between times start and end (events outside this window will be discarded).}
+\ccConstructor{Default_simulator(const Time start=Time(0), const Time end= Time::infinity());}{Construct a \ccRefName\ which will process events between times start and end (events outside this window will be discarded).}
 
 
 \end{ccRefClass}

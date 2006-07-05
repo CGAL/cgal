@@ -77,10 +77,10 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 */
 template <class Polynomial_kernel_t,
 	  class Queue/*= CGAL::Kinetic::Heap_pointer_event_queue<typename Polynomial_kernel_t::Root> */>
-class Simulator: public Ref_counted<Simulator<Polynomial_kernel_t,  Queue> >
+class Default_simulator: public Ref_counted<Default_simulator<Polynomial_kernel_t,  Queue> >
 {
 protected:
-  typedef Simulator<Polynomial_kernel_t, Queue> This;
+  typedef Default_simulator<Polynomial_kernel_t, Queue> This;
   //typedef typename Polynomial_kernel_t::Function Poly;
 
   struct Listener_core
@@ -140,7 +140,7 @@ public:
   typedef typename Function_kernel::NT NT;
 
   //! Create a simulator passing the start time and the end time.
-  Simulator(const Time &start_time=Time(0.0),
+  Default_simulator(const Time &start_time=Time(0.0),
             const Time &end_time= internal::infinity_or_max(Time()),
 	    Function_kernel fk=Function_kernel()):queue_(start_time, end_time, fk, 100),
 				cur_time_(start_time),
@@ -578,7 +578,7 @@ protected:
 };
 
 /*template <class S, bool E, class PQ>
-  typename Simulator<S, E, PQ>::NT Simulator<S, E, PQ>::compute_free_time() const {
+  typename Default_simulator<S, E, PQ>::NT Default_simulator<S, E, PQ>::compute_free_time() const {
   if (!(last_time_ < next_event_time())) {
   std::cerr << "No time between " << current_time()  << " and " << next_event_time() << std::endl;
   return current_time_nt()- CGAL::abs(current_time_nt());
@@ -595,7 +595,7 @@ protected:
   }*/
 
 template <class S, class PQ>
-void Simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
+void Default_simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
 {
   if (dir != direction_of_time()) {
     while (next_event_time() == current_time()) {
@@ -637,7 +637,7 @@ void Simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
 
 
 template <class S, class PQ>
-void Simulator<S, PQ>::audit_all_kdss()
+void Default_simulator<S, PQ>::audit_all_kdss()
 {
 #ifdef CGAL_KINETIC_CHECK_EXPENSIVE
   cur_time_= Time(audit_time_);
@@ -651,7 +651,7 @@ void Simulator<S, PQ>::audit_all_kdss()
 
 
 template <class S, class PQ>
-std::ostream &operator<<(std::ostream &out, const Simulator<S, PQ> &s)
+std::ostream &operator<<(std::ostream &out, const Default_simulator<S, PQ> &s)
 {
   s.write(out);
   return out;

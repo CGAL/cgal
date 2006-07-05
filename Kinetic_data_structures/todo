@@ -1,0 +1,5 @@
+remove is_valid and replace by comparison to default construction
+
+change Event to be a proper base class with methods
+	bool handle_degenerate(Event*) which returns true if the other event is eaten. The idea being allowing handling of degenrate events by merging them.
+	void* kinetic_data_structure() reutrn a void* for the kinetic data structure which allows the queue to tell if two events come from the same structure. This will also be used to perturn events in the queue to make sure handle_degenerate() is called for all equal events.
