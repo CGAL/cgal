@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Robust_circumcenter_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
@@ -46,7 +47,8 @@ using boost::tie;
 
 /////////////// Types /////////////// 
 
-struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+struct K2 : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
 typedef CGAL::Regular_triangulation_filtered_traits_3<K> Regular_traits;
 typedef CGAL::Weighted_point_with_surface_index_geom_traits<Regular_traits> My_traits;
 typedef CGAL::Surface_mesh_vertex_base_3<My_traits> Vb;
