@@ -1,8 +1,8 @@
-.PHONY: all test doxygen clean dist-clean update diff examples dep applications
+.PHONY: all test doxygen clean dist-clean update diff examples dep applications run-all
 
 all: examples test applications
 
-run-all: all 
+run-all: examples applications
 	${MAKE} -C test/Mesh_3 run
 
 examples:
