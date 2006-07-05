@@ -28,6 +28,9 @@ CGAL_BEGIN_NAMESPACE
 namespace CGAL_SS_i
 {
 
+// Just like the uncertified collinear() returns true IFF r lies in the line p->q
+// NOTE: r might be in the ray from p or q containing q or p, that is, there is no ordering implied, just that
+// the three points are along the same line, in any order.
 template<class K>
 Uncertain<bool> certified_collinearC2( Point_2<K> const& p
                                      , Point_2<K> const& q
@@ -39,23 +42,62 @@ Uncertain<bool> certified_collinearC2( Point_2<K> const& p
                                     );
 }
 
+// Just like the uncertified collinear_are_ordered_along_lineC2() returns true IFF, given p,q,r along the same line,
+// q in the closed segment [p,r].
 template<class K>
-Uncertain<bool> are_edges_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
+Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2<K> const& p
+                                                            , Point_2<K> const& q
+                                                            , Point_2<K> const& r 
+                                                            )
 {
-  return CGAL_NTS logical_and(  certified_collinearC2(e0.source(),e0.target(),e1.source())
-                             ,  certified_collinearC2(e0.source(),e0.target(),e1.target())
-                             ) ;
+  if ( CGAL_NTS certainly(p.x() < q.x()) ) return !(r.x() < q.x());
+  if ( CGAL_NTS certainly(q.x() < p.x()) ) return !(q.x() < r.x());
+  if ( CGAL_NTS certainly(p.y() < q.y()) ) return !(r.y() < q.y());
+  if ( CGAL_NTS certainly(q.y() < p.y()) ) return !(q.y() < r.y());
+  
+  if ( CGAL_NTS certainly(p.x() == q.x()) && CGAL_NTS certainly(p.y() == q.y())  ) return make_uncertain(true);
+  
+  return Uncertain<bool>::indeterminate();
 }
 
+// Returns true IFF segments e0,e1 share the same supporting line, do not overlap except at the vetices, and have the same orientation.
+// NOTE: If e1 goes back over e0 (a degenerate antenna or alley) this returns false.
 template<class K>
-Uncertain<bool> are_edges_parallelC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
+Uncertain<bool> are_edges_orderly_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
+{
+  return    certified_collinearC2(e0.source(),e0.target(),e1.source())
+          &
+            (  certified_collinear_are_ordered_along_lineC2(e0.source(),e0.target(),e1.source())
+             | certified_collinear_are_ordered_along_lineC2(e1.source(),e0.source(),e0.target())
+            )
+          & certified_collinearC2(e0.source(),e0.target(),e1.target()) 
+          & 
+            (  certified_collinear_are_ordered_along_lineC2(e0.source(),e0.target(),e1.target()) 
+             | certified_collinear_are_ordered_along_lineC2(e1.target(),e0.source(),e0.target()) 
+            );
+}
+
+// Returns true IFF segments e0,e1 do not share the same supporting line but are parallel, or share the
+// supporting line but are not orderly collinear (that is, one doesn't follow the other)
+template<class K>
+Uncertain<bool> are_edges_parallel_but_not_orderly_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   Uncertain<Sign> s = certified_sign_of_determinant2x2(e0.target().x() - e0.source().x()
                                                       ,e0.target().y() - e0.source().y()
                                                       ,e1.target().x() - e1.source().x()
                                                       ,e1.target().y() - e1.source().y()
                                                      ) ;
-  return s == Uncertain<Sign>(ZERO);  
+                                                     
+  Uncertain<bool> parallel = ( s == Uncertain<Sign>(ZERO) ) ;
+  
+  return parallel & !are_edges_orderly_collinearC2(e0,e1);  
+}
+
+template <class FT>
+inline
+Uncertain<Sign> certified_side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c, const FT &x, const FT &y)
+{
+  return CGAL_NTS certified_sign(a*x+b*y+c);
 }
 
 //
@@ -74,13 +116,13 @@ Sorted_triedge_2<K> collinear_sort ( Triedge_2<K> const& triedge )
   
   int  idx0=0, idx1=1, idx2=2 ;
 
-  Uncertain<bool> is_01 = are_edges_collinearC2(triedge.e0(),triedge.e1());
+  Uncertain<bool> is_01 = are_edges_orderly_collinearC2(triedge.e0(),triedge.e1());
   if ( !CGAL_NTS is_indeterminate(is_01) )
   {
-    Uncertain<bool> is_02 = are_edges_collinearC2(triedge.e0(),triedge.e2());
+    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(triedge.e0(),triedge.e2());
     if ( !CGAL_NTS is_indeterminate(is_02) )
     {
-      Uncertain<bool> is_12 = are_edges_collinearC2(triedge.e1(),triedge.e2());
+      Uncertain<bool> is_12 = are_edges_orderly_collinearC2(triedge.e1(),triedge.e2());
       if ( !CGAL_NTS is_indeterminate(is_12) )
       {
         if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
@@ -120,21 +162,6 @@ Sorted_triedge_2<K> collinear_sort ( Triedge_2<K> const& triedge )
   return Sorted_triedge_2<K>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),lCollinearCount);
 }
 
-// Returns true if the offset-zone for the triedge 'zone' is degenerate.
-//
-// Since an offset zone [e0->e1->e2] is the region inside the polygon where the three edges remain connected as they
-// move inward, if e0 and/or e2 is parallel to e1 then the zone is degenerate (collapsed to the bisecting line of the parallel edges)
-//
-// (that is, the parallel zone edges, since they share a vertex, have already collide and can't move any further)
-//
-template<class K>
-Uncertain<bool> is_offset_zone_degenerate ( Triedge_2<K> const& zone )
-{
-  Uncertain<bool> is_01 = are_edges_parallelC2(zone.e0(),zone.e1());
-  Uncertain<bool> is_12 = are_edges_parallelC2(zone.e1(),zone.e2());
-  
-  return CGAL_NTS logical_or(is_01,is_12);                
-}
 
 // Given 3 oriented straight line segments: e0, e1, e2 
 // returns true if there exist some positive offset distance 't' for which the
@@ -313,31 +340,62 @@ compare_offset_lines_isec_dist_to_pointC2 ( Triedge_2<K> const& s
   return rResult ;
 }
 
+// Returns true if the offset-zone for the triedge 'zone' is degenerate.
+//
+// Since an offset zone [e0->e1->e2] is the region inside the polygon where the three edges remain connected as they
+// move inward, if e0 and/or e2 is parallel to e1 then the zone is degenerate (collapsed to the bisecting line of the parallel edges)
+//
+// (that is, the parallel zone edges, since they share a vertex, have already collide and can't move any further)
+//
+template<class K>
+Uncertain<bool> is_offset_zone_degenerate ( Triedge_2<K> const& zone )
+{
+  return  are_edges_parallel_but_not_orderly_collinearC2(zone.e0(),zone.e1()) 
+        | are_edges_parallel_but_not_orderly_collinearC2(zone.e1(),zone.e2()) ;
+}
 
 
 // Given a triple of oriented straight line segments: (e0,e1,e2) such that their offsets
 // at some distance intersects in a point (x,y), returns true if (x,y) is inside the passed offset zone.
 // 
-// An offset zone [z0->z1->z2] is a region where the offset edges z0',z1',z2' remain connected in the absence of topological changes.
+// An offset zone [z0,z1,z2], where zi is a line, is a region where the corresponding offset edges (oriented segment)
+// Z0'->Z1'->Z2' remain connected in the absence of topological changes.
 // It is the area (bounded or not) to the left of z1, to the right of the angular bisector (z0,z1) 
 // and to the left of the angular bisector (z1,z2).
-// This area represents all the possible offset edges z1'.
-// If the event involves z1' (that is, z1 is one of (e0,e1,e2)) then a neccesary condition for the event to exist is
-// that the point of coallision hits z1' as bounded by the vertices shared with z0' and z2',
-// and not just the line supporting z1'. 
-// This condition is equivalent to the condition that (x,y) be in the offset zone [z0->z1->z2] as described above
-// (which refers to the input edges and not the offset edges).
+// This area represents all the possible offset edges Z1'.
 //
-// This condition is neccesary but not sufficient becasue z1' might end up connected with edges other than z0' and z2' 
+// This predicate tells whether a split event, at (x,y), against z1, is effectively splitting the segment Z1'
+// instead of hitting the supporting offseted line z1' but outside the segment.
+//   
+// Events are defined in term of intersecting offset _lines_, not segments, thus if the event involves z1' 
+// (that is, z1 is one of (e0,e1,e2)) then a neccesary condition for the event to actually exist is
+// that the point of coallision hits a segment of z1' as bounded by the vertices shared with z0' and z2',
+// and not just the line z1'. 
+// This condition is equivalent to the condition that (x,y) be in the offset zone [z0,z1,z2] as described above
+// (which refers to the input _lines_ and not the offset edges).
+//
+// This condition is neccesary but not sufficient becasue z1' might end up connected with lines other than z0' and z2' 
 // after some further event, so this predicate is valid only in the context of an event at a known time 't' such
 // that it is known that at time t, z1' is indeed connected to z0' and z2'.
 //
-// If z0 and/or z2 are parallel to z1 then the offset zone is "degenerate" and the event is conventionally considered
-// NOT inside the zone, so this predicate returns false in that case.
+// During the shrinking process, edges can anihiliate one another; that is, collide not in a single point
+// but along a line segment (reach a common supporting line simultaneously).
+// This is possible if and only if the edges are parallel but not collinear.
+// Exactly at the time when such an anhiliation event ocurrs, the two initially parallel edges become connected
+// in the offset polygon and form a degenerate alley or anntenna. Right after that the degenerate edges
+// collapse and dissapears from the offset polygon and the rest of the process continues normally 
+// (or not if this is the very last event).
+// Since Z0'->Z1'->Z2' are 3 edges _known_ to be connected at the time of the event defined by (e0,e1,e2), 
+// it might very well happen that z0 or z2 (or both) are parallel to z1. If that happens they never share 
+// a vertex except when they collapse in a common line, which is only an instant in the sense that 
+// right after that both edges dissappears from the wavefront.
+// If z0 and/or z2 are parallel but not collinear to z1 they are connected in the offset polygons only when
+// they collapsed into each other and in that instant Z1' is not (cannot) split by any opposite edge, thus,
+// if z0 and/or z2 are parallel but not collinear to z2 the offset zone is "degenerate" and no split event is inside.
 //
 // PRECONDITIONS:
 //   There exist a single point at which the offset lines for e0,e1,e2 at 't' intersect.
-//   'z1' must be one of (e0,e1,e2); that is, (x,y) must be exactly over the offseted 'z1' at time 't'.
+//   'z1' must be one of (e0,e1,e2); that is, (x,y) must be exactly over the offseted z1' at time 't'.
 //
 template<class K>
 Uncertain<bool>
@@ -372,70 +430,149 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Triedge_2<K> const& event, Triedge_2
       // Construct intersection point (x,y)
       Optional_point_2 i = construct_offset_lines_isecC2(e_sorted);
       
-      if ( zl && zc && zr && i)
+      if ( zl && zc && zr && i ) // all properly computed
       {
-        // Calculate scaled (signed) distance from (x,y) to 'zc'
+        // Let L and R be the vertices formed by zl',zc' and zc',zr' resp.
+        // Let ZC1 be the oriented segment of zc' bounded first by L then by R.
+        // Let ZC0 be the ray of zc' before  L, and ZC2 the ray of zc' after R.
+        // Let ZL0 be tha ray of zl' before L and ZL1 the ray of zl' after R
+        // Let ZR0 be tha ray of zl' before L and ZR1 the ray of zl' after R
+        
+        // At the time of the event, each offseted edge zl', zc' and zr' are made of :
+        //
+        // zl': ZL0->L->ZL1
+        // zc': ZC0->L->ZC1->R->ZC2
+        // zr':         ZR0->R->ZR1
+        
+        // Here we need to determine if "i", known to be along zc', is inside ZC1 instead of ZC0 (and instead of ZC2)
+                
+        // Since all edges move at the same speed, there are 3 cases to consider:
+        
+        // (1) If L is convex, ZL1 is "behind" ZC1 while ZL0 is "before" ZC0.
+        // (2) If L is reflex, ZL1 is "before" ZC1 while ZL0 is "behind" ZC0.
+        // (3) If L is degenerate, that is, zl and zc are collinear, none if behind or before any other
+        
+        // If L is case (1) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is smaller than to zl
+        // If L is case (2) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is larger  than to zl
+        // If L is case (3) then "i" is inside ZC1 if its to the right of a line perpendicular to zc passing through L*
+        // where L* is a pseudo-vertex between collinear edges (the oriented midpoint between them)
+         
+        // (likewise for R)
+        
+        // sdc : scaled (signed) distance from (x,y) to 'zc'
         FT sdc = zc->a() * i->x() + zc->b() * i->y() + zc->c() ;
     
         CGAL_STSKEL_TRAITS_TRACE("\nsdc=" << sdc ) ;
     
         // NOTE:
-        //   if (x,y) is not on the positive side of 'ec' it isn't on it's offset zone.
-        //   Also, if (x,y) is over 'ec' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
+        //   if "i" is not on the positive side of 'zc' it isn't on it's offset zone.
+        //   Also, if "i" is _over_ 'zc' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
         //   zone either.
         Uncertain<bool> cok = CGAL_NTS is_finite(sdc) ? CGAL_NTS certified_is_positive(sdc) : Uncertain<bool>::indeterminate() ;
         if ( ! CGAL_NTS is_indeterminate(cok) )
         {
           if ( cok == true )
           {
-            CGAL_STSKEL_TRAITS_TRACE("\nright side of ec." ) ;
+            CGAL_STSKEL_TRAITS_TRACE("\ncorrect side of zc." ) ;
     
-            // Determine if the vertices (el,ec) and (ec,er) are reflex.
-            Uncertain<bool> lcx = CGAL_NTS certified_is_smaller(zl->a()*zc->b(),zc->a()*zl->b());
-            Uncertain<bool> crx = CGAL_NTS certified_is_smaller(zc->a()*zr->b(),zr->a()*zc->b());
+            Uncertain<bool> lc_collinear = are_edges_orderly_collinearC2(zone.e0(),zone.e1());
+            Uncertain<bool> cr_collinear = are_edges_orderly_collinearC2(zone.e1(),zone.e2());
     
-            if ( ! CGAL_NTS is_indeterminate(lcx) && ! CGAL_NTS is_indeterminate(crx) )
+            if ( ! CGAL_NTS is_indeterminate(lc_collinear) && ! CGAL_NTS is_indeterminate(cr_collinear) )
             {
-              CGAL_STSKEL_TRAITS_TRACE("\n(el,ec) reflex:" << lcx ) ;
-              CGAL_STSKEL_TRAITS_TRACE("\n(ec,er) reflex:" << crx ) ;
-    
-              // Calculate scaled (signed) distances from (x,y) to 'el' and 'er'
-              FT sdl = zl->a() * i->x() + zl->b() * i->y() + zl->c() ;
-              FT sdr = zr->a() * i->x() + zr->b() * i->y() + zr->c() ;
-      
-              if ( CGAL_NTS is_finite(sdl) && CGAL_NTS is_finite(sdc) )
+              Uncertain<bool> lok, rok ;
+              
+              if ( !lc_collinear )
               {
-                CGAL_STSKEL_TRAITS_TRACE("\nsdl=" << sdl ) ;
-                CGAL_STSKEL_TRAITS_TRACE("\nsdr=" << sdr ) ;
-        
-                // Is (x,y) to the right|left of the bisectors (el,ec) and (ec,er)?
-                //  It depends on whether the vertex ((el,ec) and (ec,er)) is relfex or not.
-                //  If it is reflex, then (x,y) is to the right|left of the bisector if sdl|sdr <= sdc; otherwise, if sdc <= sdl|srd
-      
-                Uncertain<bool> lok = lcx ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
-                                          : CGAL_NTS certified_is_smaller_or_equal(sdc,sdl) ;
-      
-                Uncertain<bool> rok = crx ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
-                                          : CGAL_NTS certified_is_smaller_or_equal(sdc,sdr) ;
-      
-                CGAL_STSKEL_TRAITS_TRACE("\nlok:" << lok) ;
-                CGAL_STSKEL_TRAITS_TRACE("\nrok:" << rok) ;
-      
-                r = CGAL_NTS logical_and(lok , rok) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is " << ( lc_reflex == SMALLER ? "reflex" : "non-reflex") ) ;
+                
+                // sld: scaled (signed) distances from "i" to 'zl'
+                FT sdl = zl->a() * i->x() + zl->b() * i->y() + zl->c() ;
+                
+                if ( CGAL_NTS is_finite(sdl) )
+                {
+                  CGAL_STSKEL_TRAITS_TRACE("\nsdl=" << sdl ) ;
+                  
+                  Uncertain<bool> lc_reflex = CGAL_NTS certified_is_smaller(zl->a()*zc->b(),zc->a()*zl->b());
+                  
+                  if ( ! CGAL_NTS is_indeterminate(lc_reflex) )
+                    lok = ( lc_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
+                                      : CGAL_NTS certified_is_larger_or_equal (sdl,sdc) 
+                          ) ;
+                }
+                else
+                {
+                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+                }
               }
               else
               {
-                CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is DEGENERATE") ;
+                Optional_point_2 l = compute_oriented_midpoint(zone.e0(),zone.e1());
+                if ( l )
+                {
+                  FT na, nb, nc ;
+                  perpendicular_through_pointC2(zc->a(),zc->b(),l->x(),l->y(),na, nb, nc);
+                  lok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(POSITIVE);
+                }
+                else
+                {
+                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+                }
               }
+              
+              if ( !cr_collinear )
+              {
+                CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is " << ( cr_reflex == SMALLER ? "reflex" : "non-reflex") ) ;
+                
+                // slr: scaled (signed) distances from "i" to 'zr'
+                FT sdr = zr->a() * i->x() + zr->b() * i->y() + zr->c() ;
+                
+                if ( CGAL_NTS is_finite(sdr) )
+                {
+                  CGAL_STSKEL_TRAITS_TRACE("\nsdr=" << sdr ) ;
+                  
+                  Uncertain<bool> cr_reflex = CGAL_NTS certified_is_smaller(zc->a()*zr->b(),zr->a()*zc->b());
+                  
+                  if ( ! CGAL_NTS is_indeterminate(cr_reflex) )
+                    rok = ( cr_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
+                                      : CGAL_NTS certified_is_larger_or_equal (sdr,sdc) 
+                          ) ;
+                }
+                else
+                {
+                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+                }
+              }
+              else
+              {
+                CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is DEGENERATE") ;
+                Optional_point_2 r = compute_oriented_midpoint(zone.e1(),zone.e2());
+                if ( r )
+                {
+                  FT na, nb, nc ;
+                  perpendicular_through_pointC2(zc->a(),zc->b(),r->x(),r->y(),na, nb, nc);
+                  rok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(NEGATIVE);
+                }
+                else
+                {
+                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+                }
+              }
+              
+              CGAL_STSKEL_TRAITS_TRACE("\nlok:" << lok) ;
+              CGAL_STSKEL_TRAITS_TRACE("\nrok:" << rok) ;
+      
+              r = CGAL_NTS logical_and(lok , rok) ;
             }
             else
             {
-              CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
+              CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine reflexivity of zone vertices." ) ;
             }
           }
           else
           {
-            CGAL_STSKEL_TRAITS_TRACE("\nWRONG side of ec." ) ;
+            CGAL_STSKEL_TRAITS_TRACE("\nWRONG side of zc." ) ;
             r = make_uncertain(false);
           }
         }
@@ -488,7 +625,7 @@ Uncertain<bool> are_events_simultaneousC2 ( Triedge_2<K> const& l, Triedge_2<K> 
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  Sorted_triedge_2 l_sorted = collinear_sort(l);
+   Sorted_triedge_2 l_sorted = collinear_sort(l);
   Sorted_triedge_2 r_sorted = collinear_sort(r);
 
   if ( ! ( l_sorted.is_indeterminate() || r_sorted.is_indeterminate() ) )

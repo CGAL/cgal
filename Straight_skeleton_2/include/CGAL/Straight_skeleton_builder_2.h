@@ -152,6 +152,12 @@ private :
       if ( !handle_assigned(aB->opposite()) )
         throw straight_skeleton_exception("opposite() missing!");
         
+      if ( !handle_assigned(aA->opposite()->vertex()) )
+        throw straight_skeleton_exception("opposite()->vertex() missing!");
+        
+      if ( !handle_assigned(aB->opposite()->vertex()) )
+        throw straight_skeleton_exception("opposite()->vertex() missing!");
+        
       Point_2 o = aA->vertex()->point();
       Point_2 a = aA->opposite()->vertex()->point();
       Point_2 b = aB->opposite()->vertex()->point();
@@ -495,8 +501,8 @@ private :
 
   bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL
                               , Halfedge_const_handle aReflexR
-                              , Halfedge_const_handle aOpposite
                               , Halfedge_const_handle aOppositePrev
+                              , Halfedge_const_handle aOpposite
                               , Halfedge_const_handle aOppositeNext
                               ) const
   {
@@ -654,7 +660,7 @@ private :
   void CreateContourBisectors();
   void InitPhase();
 
-  bool SetupPseudoSplitEventNode( Vertex_handle   aNode
+  void SetupPseudoSplitEventNode( Vertex_handle   aNode
                                 , Halfedge_handle aDefiningBorderA
                                 , Halfedge_handle aDefiningBorderB
                                 );
@@ -924,7 +930,7 @@ public:
         for ( Point_iterator curr = begin ; curr != end ; ++ curr )
         {
           Point_iterator next = ( curr == last ? begin : CGAL::successor(curr) ) ;
-          if ( !CGAL::collinear(*prev,*curr,*next) )
+          //if ( !CGAL::collinear(*prev,*curr,*next) )
             lList1.push_back(*curr);
           prev = curr ;
         }    

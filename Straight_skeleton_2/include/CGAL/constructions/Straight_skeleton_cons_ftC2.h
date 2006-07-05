@@ -129,7 +129,7 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
     
     CGAL_STSKEL_TRAITS_TRACE("Line coefficients for line:\npx=" << e.source().x() << "\npy=" << e.source().y() << "\nqx="
                             << e.target().x() << "\nqy=" << e.target().y()
-                            << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl:" << l
+                            << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl2:" << l2
                            ) ;
   }
   

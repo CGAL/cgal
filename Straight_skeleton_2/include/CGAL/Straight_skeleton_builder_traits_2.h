@@ -218,8 +218,8 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     
     Sorted_triedge_2 sorted = collinear_sort(triedge);
 
-    if ( !sorted.is_indeterminate() )
-    {
+    //if ( !sorted.is_indeterminate() )
+    //{
       CGAL_assertion(sorted.collinear_count() < 3) ;
   
       optional< Rational<FT> > qt = compute_offset_lines_isec_timeC2(sorted);
@@ -228,7 +228,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
       
       if ( qt )
         t = cgal_make_optional(qt->n() / qt->d()) ;
-    }
+    //}
   
     if ( !t )
       t = cgal_make_optional( FT(0) );
@@ -382,7 +382,6 @@ public:
                             >
                             Are_ss_edges_collinear_2 ;
                             
-  /*
   typedef Filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                , typename Exact      ::Construct_ss_event_time_and_point_2
                                , typename Filtering  ::Construct_ss_event_time_and_point_2   
@@ -392,9 +391,8 @@ public:
                                , F2C
                                > 
                                Construct_ss_event_time_and_point_2 ; // This uses internally a predicate so must be filtered
-  */
                                
-  typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
+  //typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   
   typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;
 

@@ -502,7 +502,14 @@ void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
     Vertex_handle lPrev = GetPrevInLAV(v) ;
     Vertex_handle lNext = GetNextInLAV(v) ;
 
-    if ( lOrientation == RIGHT_TURN )
+    Orientation lOrientation = CGAL::orientation(lPrev->point(),v->point(),lNext->point()); 
+    if ( lOrientation == COLLINEAR )
+    {
+      SetIsDegenerate(v);
+      CGAL_STSKEL_BUILDER_TRACE(1, "COLLINEAR vertex: N" << v->id() );
+      CGAL_STSKEL_STATS_CODE(++sDegenerateVertexCount);     
+    }
+    else if ( lOrientation == RIGHT_TURN )
     {
       mReflexVertices.push_back(v);
       SetIsReflex(v);
@@ -606,14 +613,14 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
 {
   Vertex_handle rResult ;
 
-  CGAL_STSKEL_BUILDER_TRACE ( 3, "ALT Looking up for E" << aBorder->id() << " on SLAV. P=" << aEvent->point() ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 3, "Looking up for E" << aBorder->id() << " on SLAV. P=" << aEvent->point() ) ;
 
   CGAL_STSKEL_DEBUG_CODE( bool lFound = false ; )
 
   for ( typename std::list<Vertex_handle>::const_iterator vi = mSLAV.begin(); vi != mSLAV.end(); ++ vi )
   {
     Vertex_handle v = *vi;
-
+    
     if (  handle_assigned(GetPrevInLAV(v))
        && handle_assigned(GetNextInLAV(v))
        && GetDefiningBorderA(v) == aBorder
@@ -622,19 +629,23 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
       CGAL_STSKEL_DEBUG_CODE( lFound = true ; )
 
       Vertex_handle lPrev = GetPrevInLAV(v);
+      Vertex_handle lNext = GetNextInLAV(v);
+      
       Halfedge_handle lPrevBorder = GetDefiningBorderA(lPrev);
-      Halfedge_handle lNextBorder = GetDefiningBorderB(v);
+      Halfedge_handle lNextBorder = GetDefiningBorderA(lNext);
       
       CGAL_assertion(handle_assigned(lPrevBorder));
       CGAL_assertion(handle_assigned(lNextBorder));
       
-      if ( IsEventInsideOffsetZone( aEvent->border_a(), aEvent->border_b(), aBorder, lPrevBorder, lNextBorder ) )
+      CGAL_STSKEL_BUILDER_TRACE ( 3
+                                , "Subedge found in SLAV: N" << lPrev->id() << "->N" << v->id()
+                                  << " (E" << lPrevBorder->id() << "->E" << aBorder->id() << "->E" << lNextBorder->id() << ")"
+                                ) ;
+                                
+      if ( IsEventInsideOffsetZone( aEvent->border_a(), aEvent->border_b(), lPrevBorder, aBorder, lNextBorder ) )
       {
         rResult = v ;
-        CGAL_STSKEL_BUILDER_TRACE ( 2
-                             , "ALT  E" << aBorder->id() << " found in SLAV: N" << lPrev->id() << "->N" << v->id()
-                             << " (E" << lPrevBorder->id() << "->E" << aBorder->id() << "->E" << lNextBorder->id() << ")"
-                             ) ;
+        CGAL_STSKEL_BUILDER_TRACE ( 3, "That's the correct subedge. Found") ;
         break ;
       }
     }
@@ -645,11 +656,11 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
   {
     if ( !lFound )
     {
-      CGAL_STSKEL_BUILDER_TRACE(1,"ALT Split event is no longer valid. Opposite edge vanished.");
+      CGAL_STSKEL_BUILDER_TRACE(1,"Split event is no longer valid. Opposite edge vanished.");
     }
     else
     { 
-      CGAL_STSKEL_BUILDER_TRACE(1,"ALT Split event is no longer valid. Not inside the opposite edge offset zone.");
+      CGAL_STSKEL_BUILDER_TRACE(1,"Split event is no longer valid. Not inside the opposite edge offset zone.");
     }
   } 
 #endif
@@ -1002,13 +1013,11 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitEvent( EventPtr aEvent, Vert
 }
 
 template<class Gt, class SS>
-bool Straight_skeleton_builder_2<Gt,SS>::SetupPseudoSplitEventNode( Vertex_handle   aNode
+void Straight_skeleton_builder_2<Gt,SS>::SetupPseudoSplitEventNode( Vertex_handle   aNode
                                                                   , Halfedge_handle aDefiningBorderA
                                                                   , Halfedge_handle aDefiningBorderB
                                                                   )
 {
-  bool rR = false ;
-
   Point_2 p = aDefiningBorderA->opposite()->vertex()->point() ;
   Point_2 q = aDefiningBorderA->opposite()->prev()->vertex()->point() ;
   Point_2 r = aDefiningBorderB->opposite()->prev()->vertex()->point() ;
@@ -1020,16 +1029,12 @@ bool Straight_skeleton_builder_2<Gt,SS>::SetupPseudoSplitEventNode( Vertex_handl
     CGAL_STSKEL_BUILDER_TRACE(1, "COLLINEAR *NEW* vertex: N" << aNode->id() );
     CGAL_STSKEL_STATS_CODE(++sDegenerateVertexCount);     
   }
-    
-  if ( lOrientation == RIGHT_TURN )
+  else if ( lOrientation == RIGHT_TURN )
   {
-    rR = true ;
     mReflexVertices.push_back(aNode);
     SetIsReflex(aNode);
     CGAL_STSKEL_BUILDER_TRACE(1, "Reflex *NEW* vertex: N" << aNode->id() );
   }
-
-  return rR ;
 }
 
 template<class Gt, class SS>
@@ -1122,9 +1127,8 @@ void Straight_skeleton_builder_2<Gt,SS>::HandlePseudoSplitEvent( EventPtr aEvent
       << " primary bisector: B" << lNewNode_R->primary_bisector()->id()
     ) ;
 
-  bool lNodeLIsNonConvex = SetupPseudoSplitEventNode(lNewNode_L,lNewNodeLDefiningBorderA,lNewNodeLDefiningBorderB) ;
-  if ( !lNodeLIsNonConvex )
-    SetupPseudoSplitEventNode(lNewNode_R,lNewNodeRDefiningBorderA,lNewNodeRDefiningBorderB) ;
+  SetupPseudoSplitEventNode(lNewNode_L,lNewNodeLDefiningBorderA,lNewNodeLDefiningBorderB) ;
+  SetupPseudoSplitEventNode(lNewNode_R,lNewNodeRDefiningBorderA,lNewNodeRDefiningBorderB) ;
 
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
@@ -1136,7 +1140,7 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitOrPseudoSplitEvent( EventPtr
   Vertex_handle lOppR = LookupOnSLAV(aEvent->border_c(),aEvent);
   if ( handle_assigned(lOppR) )
   {
-    EventPtr lPseudoSplitEvent ; //= IsPseudoSplitEvent(aEvent,lOppR);
+    EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aEvent,lOppR);
     if ( lPseudoSplitEvent )
          HandlePseudoSplitEvent(lPseudoSplitEvent);
     else HandleSplitEvent      (aEvent,lOppR);  
@@ -1569,7 +1573,6 @@ std::cerr << "EXCEPTION THROWN (" << e.what() << ") during straight skeleton con
 
     mSSkel = SSkelPtr() ; 
   }
-  
 
   if ( !!mSSkel && !CGAL::HalfedgeDS_const_decorator<SSkel>(*mSSkel).is_valid(false,3) ) 
   {
@@ -1581,6 +1584,7 @@ std::cerr << "Result incosistent." << std::endl ;
 
     mSSkel = SSkelPtr() ; 
   }
+
   
 #ifdef CGAL_STRAIGHT_SKELETON_STATS
 
