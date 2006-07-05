@@ -10,15 +10,17 @@ bool process_aux_1(const std::vector<Qualities>& qualities,
                    const std::string filename,
                    const int number_of_classes)
 {
-  Gd_displayer main_display(1000, 200);
+  const int maximum_index = qualities.size() - 1;
+
+  Gd_displayer main_display(200*maximum_index, 200);
 
   main_display.set_window(-1.1, 1.1, -1.1, 1.1,
                           0, 0, 200, 200);
 
-  std::vector<Gd_displayer*> displays(5);
-  std::vector<Distribution> distributions(5);
+  std::vector<Gd_displayer*> displays(maximum_index);
+  std::vector<Distribution> distributions(maximum_index);
   
-  for(int i = 0; i < 5; ++i)
+  for(int i = 0; i < maximum_index; ++i)
   {
     distributions[i].resize(number_of_classes);
 
@@ -46,15 +48,17 @@ bool process_aux_2(const std::vector<Qualities>& qualities,
                    const std::string filename,
                    const int number_of_classes)
 {
-  Gd_displayer main_display(1000, 200);
+  const int maximum_index = qualities.size() - 1;
+
+  Gd_displayer main_display(200*maximum_index, 200);
 
   main_display.set_window(-1.1, 1.1, -1.1, 1.1,
                           0, 0, 200, 200);
 
-  std::vector<Gd_displayer*> displays(5);
-  std::vector<Distribution> distributions(5);
+  std::vector<Gd_displayer*> displays(maximum_index);
+  std::vector<Distribution> distributions(maximum_index);
   
-  for(int i = 0; i < 5; ++i)
+  for(int i = 0; i < maximum_index; ++i)
   {
     distributions[i].resize(number_of_classes);
 
