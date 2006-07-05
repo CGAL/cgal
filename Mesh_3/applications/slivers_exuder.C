@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     exuder.pump_vertices(pumping_bound);
   else 
     // do not pump vertices on surfaces
-    exuder.template pump_vertices<false>(-pumping_bound);
+    exuder.pump_vertices<false>(-pumping_bound);
 
 
   std::cout << "  Writing " << argv[2] << std::endl;
