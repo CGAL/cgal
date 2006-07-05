@@ -9,3 +9,4 @@ utils
 implementation.tex
 *.kdev*
 depends
+makefile.dependencies

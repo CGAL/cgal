@@ -7,3 +7,4 @@ applications
 applications.README
 spheres_create_input.sh
 README
+makefile.dependencies

@@ -8,10 +8,13 @@ Maintenance/rpm/SOURCES/Manual_tools
 Maintenance/rpm/SOURCES/Manual_tools-*.tar.gz
 Maintenance/rpm/SRPMS/*
 Maintenance/rpm/my_makefile
+Mesh_2/.*.deps
+Mesh_2/bench/.*.deps
 Mesh_2/bench/bench
 Mesh_2/bench/semantic.cache
 Mesh_2/demo/Mesh_2/*.core
 Mesh_2/demo/Mesh_2/*.moc
+Mesh_2/demo/Mesh_2/.*.deps
 Mesh_2/demo/Mesh_2/conform
 Mesh_2/demo/Mesh_2/depends
 Mesh_2/demo/Mesh_2/filename.edg
@@ -35,6 +38,7 @@ Mesh_2/doc_tex/*.pdflg
 Mesh_2/doc_tex/*.ref
 Mesh_2/doc_tex/*.tmp
 Mesh_2/doc_tex/*.tmp.*
+Mesh_2/doc_tex/.*.deps
 Mesh_2/doc_tex/Mesh_2/*.aux
 Mesh_2/doc_tex/Mesh_2/*.core
 Mesh_2/doc_tex/Mesh_2/*.dvi
@@ -59,6 +63,7 @@ Mesh_2/doc_tex/Mesh_2_ref/_region*
 Mesh_2/doc_tex/Mesh_2_ref/semantic.cache
 Mesh_2/doxygen
 Mesh_2/examples/Mesh_2/*.core
+Mesh_2/examples/Mesh_2/.*.deps
 Mesh_2/examples/Mesh_2/conform
 Mesh_2/examples/Mesh_2/conforming
 Mesh_2/examples/Mesh_2/depends
@@ -70,6 +75,7 @@ Mesh_2/examples/Mesh_2/my_makefile
 Mesh_2/examples/Mesh_2/semantic.cache
 Mesh_2/include/CGAL/semantic.cache
 Mesh_2/test/Mesh_2/*.core
+Mesh_2/test/Mesh_2/.*.deps
 Mesh_2/test/Mesh_2/depends
 Mesh_2/test/Mesh_2/my_makefile
 Mesh_2/test/Mesh_2/semantic.cache
@@ -78,12 +84,14 @@ Mesh_2/test/Mesh_2/test_double_map
 Mesh_2/test/Mesh_2/test_filtred_container
 Mesh_2/test/Mesh_2/test_meshing
 Mesh_3/*.tags.xml
+Mesh_3/.*.deps
 Mesh_3/applications/*.cgal
 Mesh_3/applications/*.exe
 Mesh_3/applications/*.maillage
 Mesh_3/applications/*.mesh
 Mesh_3/applications/*.png
 Mesh_3/applications/*.surface*
+Mesh_3/applications/.*.deps
 Mesh_3/applications/cgal_to_medit
 Mesh_3/applications/depends
 Mesh_3/applications/display_distribution
@@ -100,6 +108,7 @@ Mesh_3/doxygen
 Mesh_3/examples/Mesh_3/*.cgal
 Mesh_3/examples/Mesh_3/*.mesh
 Mesh_3/examples/Mesh_3/*.off
+Mesh_3/examples/Mesh_3/.*.deps
 Mesh_3/examples/Mesh_3/applications
 Mesh_3/examples/Mesh_3/cgal_to_medit
 Mesh_3/examples/Mesh_3/chair-after.mesh
@@ -128,6 +137,7 @@ Mesh_3/test/Mesh_3/*.mesh
 Mesh_3/test/Mesh_3/*.off
 Mesh_3/test/Mesh_3/*.png
 Mesh_3/test/Mesh_3/*.surface*
+Mesh_3/test/Mesh_3/.*.deps
 Mesh_3/test/Mesh_3/ProgramOutput.*
 Mesh_3/test/Mesh_3/applications
 Mesh_3/test/Mesh_3/cgal_to_medit
@@ -304,7 +314,9 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/debug
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/error.txt
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/release
+Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/*.exe
+Surface_mesher/demo/Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/depends
 Surface_mesher/demo/Surface_mesher/implicit_surface_mesher
 Surface_mesher/demo/Surface_mesher/my_makefile
@@ -321,6 +333,7 @@ Surface_mesher/doc_tex/*.ilg
 Surface_mesher/doc_tex/*.log
 Surface_mesher/doc_tex/*.pdflg
 Surface_mesher/doc_tex/*.tex
+Surface_mesher/doc_tex/.*.deps
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.aux
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.bbl
 Surface_mesher/doc_tex/Complex_2_in_triangulation_3/*.blg
@@ -359,6 +372,7 @@ Surface_mesher/doc_tex/Surface_mesher_ref/*.log
 Surface_mesher/doc_tex/Surface_mesher_ref/*.pdflg
 Surface_mesher/doxygen
 Surface_mesher/examples/Surface_mesher/*.exe
+Surface_mesher/examples/Surface_mesher/.*.deps
 Surface_mesher/examples/Surface_mesher/3d_image_surface_mesher
 Surface_mesher/examples/Surface_mesher/ImageIO/libImageIO.*
 Surface_mesher/examples/Surface_mesher/ProgramOutput.3d_image_surface_mesher.*
@@ -374,6 +388,7 @@ Surface_mesher/examples/Surface_mesher/surface_mesher
 Surface_mesher/examples/Surface_mesher/surfaces_union
 Surface_mesher/include/CGAL/Mesh_3
 Surface_mesher/test/Surface_mesher/*.exe
+Surface_mesher/test/Surface_mesher/.*.deps
 Surface_mesher/test/Surface_mesher/combined_spheres
 Surface_mesher/test/Surface_mesher/depends
 Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test
