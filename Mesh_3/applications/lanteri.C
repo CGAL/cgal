@@ -134,13 +134,16 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
 #include "distribution.h"
 
 bool process_cells(const std::vector<Qualities>& volume_cells_quality,
-                   const std::string filename_prefix);
+                   const std::string filename_prefix,
+                   std::ostream* out_stream = &std::cout);
 bool process_volume_edges(const std::vector<Qualities>& volume_edges_length,
                           const std::vector<double>& length_bounds,
-                          const std::string filename_prefix);
+                          const std::string filename_prefix,
+                          std::ostream* out_stream = &std::cout);
 bool process_surface_edges(const std::vector<Qualities>& surface_edges_length,
                            const std::vector<double>& length_bounds,
-                           const std::string filename_prefix);
+                           const std::string filename_prefix,
+                           std::ostream* out_stream = &std::cout);
 
 #include "lanteri_utils.h"
 
@@ -167,7 +170,7 @@ int main(int , char**)
     return EXIT_FAILURE;
 
   std::string filename;
-  std::cout << "Input filename (with extension):" << std::endl;
+  std::cout << "Input filename (without extension):" << std::endl;
   std::cin >> filename;
   std::ifstream ifs((filename+".cgal").c_str());
   if( !ifs || !std::cin)
@@ -184,7 +187,7 @@ int main(int , char**)
   
   display_faces_counts(tr, "    ", &std::cout);
 
-  std::cout << "\n  Statistics:\n";
+  std::cout << "\n  Combinatory statistics:\n";
 
   std::cout << "(vertices)\n";
   display_vertices_by_surface_indices_statistics(tr, "    ", &std::cout);
@@ -217,12 +220,14 @@ int main(int , char**)
   std::cout << "(cells)\n";
   display_cells_by_volume_indices_statistics(tr, "    ", &std::cout);
 
-  std::cout << "\n"
-            << "  Edges lengths:\n";
+  std::cout << "\n  Geometric statistics:\n";
+
+  std::cout << "\n(scan edges)\n";
   if(!scan_edges_and_process(tr, size_bounds, filename, "    ", &std::cout))
     return EXIT_FAILURE;
-    
-  if(!scan_cells_and_process(tr, filename))
+
+  std::cout << "\n(scan cells)\n";    
+  if(!scan_cells_and_process(tr, filename, "    ", &std::cout))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

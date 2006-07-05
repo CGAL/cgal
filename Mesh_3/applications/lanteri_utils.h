@@ -1,5 +1,78 @@
 #include <string>
-#include <iomanip>
+#include <sstream>
+#include <iomanip> // std::setprecision, std::setw
+#include <algorithm> // std::maximum, std::minimum
+#include <numeric> // std::accumulate
+
+#include <boost/tuple/tuple.hpp>
+
+template <typename Iterator> // better be RandomAccessIterator, because
+                          // std::distance() is used
+boost::tuple<
+  typename std::iterator_traits<Iterator>::value_type,
+  typename std::iterator_traits<Iterator>::value_type,
+  typename std::iterator_traits<Iterator>::value_type,
+  typename std::iterator_traits<Iterator>::difference_type
+>
+compute_max_min_sum_size(Iterator begin, Iterator end)
+{
+  typedef typename std::iterator_traits<Iterator>::value_type T;
+  typedef typename std::iterator_traits<Iterator>::difference_type size_type;
+
+  T maximum = std::numeric_limits<T>::infinity();
+  T minimum = - maximum;
+
+  const Iterator pos_min = std::min_element(begin, end);
+
+  if( pos_min != end ) // non-empty range
+    minimum = *pos_min;
+
+  const Iterator pos_max = std::max_element(begin, end);
+
+  if( pos_max != end ) // non-empty range
+    maximum = *pos_max;
+
+  const T sum = std::accumulate(begin, end, 0.);
+
+  const size_type size = std::distance(begin, end);
+
+  return boost::make_tuple(minimum, maximum, sum, size);
+}
+
+template <typename Iterator> // better be RandomAccessIterator, because
+                          // std::distance() is used
+std::string output_max_min_average(Iterator begin, Iterator end)
+{
+  typedef typename std::iterator_traits<Iterator>::value_type T;
+  typedef typename std::iterator_traits<Iterator>::difference_type size_type;
+
+  T minimum;
+  T maximum;
+  T sum;
+  size_type size;
+  boost::tie(maximum, minimum, sum, size) = compute_max_min_sum_size(begin, end);
+
+  return format_max_min_sum_size(maximum, minimum, sum, size);
+}
+
+template <typename T, typename size_type>
+std::string format_max_min_sum_size(const T maximum,
+                                    const T minimum,
+                                    const T sum,
+                                    const size_type size)
+{
+  std::stringstream output_stream;
+
+  output_stream << std::setw(10) << maximum << ",  "
+                << std::setw(10) << minimum << ",  ";
+
+  if( size == 0 )
+    output_stream << std::setw(10) << "nan";
+  else
+    output_stream << std::setw(10) << sum / size;
+
+  return output_stream.str();
+}
 
 // analyse edges
 template <class Tr>
@@ -9,26 +82,13 @@ scan_edges_and_process(const Tr& tr,
                        std::string filename_prefix,
                        std::string prefix = "",
                        // prefix to each line output
-                       std::ostream* out_stream =
-                         &std::cout
+                       std::ostream* out_stream = &std::cout
                        // output stream
                        )
 {
   // reminder: Qualities is std::vector<double> (voir "distribution.h")
   std::vector<Qualities> surface_edges_length;
   std::vector<Qualities> volume_edges_length;
-
-  std::vector<double> surface_edges_length_max;   
-  std::vector<double> volume_edges_length_max;
-
-  std::vector<double> surface_edges_length_min;   
-  std::vector<double> volume_edges_length_min;
-  
-  std::vector<double> surface_edges_length_sum;   
-  std::vector<double> volume_edges_length_sum;
-
-  std::vector<int> surface_edges_length_num;
-  std::vector<int> volume_edges_length_num;
 
   for(typename Tr::Finite_edges_iterator fit = tr.finite_edges_begin();
       fit!=tr.finite_edges_end();
@@ -49,30 +109,9 @@ scan_edges_and_process(const Tr& tr,
       // resize vectors
       if( surface_edges_length.size() <= index_a )
       {
-        
         surface_edges_length.resize(index_a+1);
-        
-        surface_edges_length_max.resize(index_a+1);
-                  
-        surface_edges_length_min.resize(index_a+1, std::numeric_limits<double>::infinity());
-        
-        surface_edges_length_sum.resize(index_a+1);
-        surface_edges_length_num.resize(index_a+1);
-        
       }
       
-      // update statistics
-      if( length > surface_edges_length_max[index_a] )
-        surface_edges_length_max[index_a] = length;
-      
-      if( length < surface_edges_length_min[index_a] )
-        surface_edges_length_min[index_a] = length;
-        
-      surface_edges_length_sum[index_a] += length;
-      
-      surface_edges_length_num[index_a]++;
-        
-        
       surface_edges_length[index_a].push_back(length);
     }
     else                                     // volume edge
@@ -87,85 +126,68 @@ scan_edges_and_process(const Tr& tr,
         if( volume_edges_length.size() <= positive_index )
         {
           volume_edges_length.resize(positive_index+1);
-          volume_edges_length_max.resize(positive_index+1, 0);
-          volume_edges_length_min.resize(positive_index+1, std::numeric_limits<double>::infinity());
-          volume_edges_length_sum.resize(positive_index+1, 0);
-          volume_edges_length_num.resize(positive_index+1, 0);
         }
 
-        // update statistics
-        if( length > volume_edges_length_max[positive_index] )
-          volume_edges_length_max[positive_index] = length;
-          
-        if( length < volume_edges_length_min[positive_index] )
-          volume_edges_length_min[positive_index] = length;
-          
-        volume_edges_length_sum[positive_index] += length;
-
-        volume_edges_length_num[positive_index]++;
-     
-        
         volume_edges_length[positive_index].push_back(length);
       }
     }
   }
 
   *out_stream << std::setprecision(3)
-              << std::setw(46) << "max"
+              << prefix
+              << std::setw(42) << "max"
               << std::setw(13) << "min"
               << std::setw(13) << "avg"
               << std::endl;
 
   const typename Qualities::size_type surface_vector_size = 
-    surface_edges_length_max.size();
+    surface_edges_length.size();
   for(unsigned int i = 0; i < surface_vector_size; ++i)
   {
     *out_stream << prefix
                 << "length for edges on surface #" << i << ": "
-                << std::setw(10) << surface_edges_length_max[i] << ",  "
-                << std::setw(10) << surface_edges_length_min[i] << ",  " 
-                << std::setw(10) << surface_edges_length_sum[i]/surface_edges_length_num[i]
+                << output_max_min_average(surface_edges_length[i].begin(),
+                                          surface_edges_length[i].end())
                 << std::endl;
   }
 
   *out_stream << std::endl;
 
   const typename Qualities::size_type volume_vector_size = 
-    volume_edges_length_max.size();
+    volume_edges_length.size();
   for(unsigned int i = 0; i < volume_vector_size; ++i)
   {
     *out_stream << prefix
                 << "length for edges in volume #" << i << ":  "
-                << std::setw(10) << volume_edges_length_max[i]  << ",  "
-                << std::setw(10) << volume_edges_length_min[i]  << ",  "
-                << std::setw(10) << volume_edges_length_sum[i]/volume_edges_length_num[i]                
+                << output_max_min_average(volume_edges_length[i].begin(),
+                                          volume_edges_length[i].end())
                 << std::endl;
   }
 
   return process_surface_edges(surface_edges_length,
                                length_bounds,
-                               filename_prefix) &&
+                               filename_prefix,
+                               out_stream) &&
          process_volume_edges(volume_edges_length,
-                               length_bounds,
-                              filename_prefix);
+                              length_bounds,
+                              filename_prefix,
+                              out_stream);
 }
 
 // analyse cells
 template <class Tr>
 bool
-scan_cells_and_process(const Tr& tr, std::string filename_prefix)
+scan_cells_and_process(const Tr& tr,
+                       std::string filename_prefix,
+                       std::string prefix = "",
+                       // prefix to each line output
+                       std::ostream* out_stream = &std::cout
+                       // output stream
+)
 {
-  std::vector<Qualities> volume_cells_quality;
+  std::vector<Qualities> cells_quality;
+  std::vector<Qualities> cells_volume;
   
-  // global data
-  double v_max = 0, v_min = std::numeric_limits<double>::infinity(), v_sum = 0;
-  int v_num = 0;
-
-  // surfacebased data
-  std::vector<double> v_max_l, v_min_l, v_sum_l;
-  std::vector<int> v_num_l;
-
-
   for(typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
       cit != tr.finite_cells_end();
       ++cit)
@@ -182,73 +204,66 @@ scan_cells_and_process(const Tr& tr, std::string filename_prefix)
 
       const unsigned int positive_index = index;
 
-      if( volume_cells_quality.size() <= positive_index )
-        volume_cells_quality.resize(positive_index+1);
-      volume_cells_quality[positive_index].push_back(quality);
-
-      // analyse cells' volume globaly
-      double v = tr.tetrahedron(cit).volume();
-      if (v_max < v)
-        v_max = v;
-      
-      if (v_min > v)
-        v_min = v;
-      
-      v_sum += v;
-
-      v_num++;
-      
-      
-      // analyse cells' volume localy
-
-      const int idx = cit->volume_index();
-      
-      if(idx >=0)
+      if( cells_quality.size() <= positive_index )
       {
-        const unsigned int pidx = idx;
-
-        // resize vectors
-        if( v_max_l.size() <= pidx )
-        {
-          v_max_l.resize(pidx+1, 0);
-          v_min_l.resize(pidx+1, std::numeric_limits<double>::infinity());
-          v_sum_l.resize(pidx+1, 0);
-          v_num_l.resize(pidx+1, 0);
-        }
-
-
-        // update statistics
-        if( v > v_max_l[pidx] )
-          v_max_l[pidx] = v_max;
-          
-        if( v < v_min_l[pidx] )
-          v_min_l[pidx] = v_min;
-          
-        v_sum_l[pidx] += v;
-
-        v_num_l[pidx]++;
+        cells_quality.resize(positive_index+1);
+        cells_volume.resize(positive_index+1);
       }
 
-    }
-  
-    // global volume output
-    std::cout << std::setprecision(3)
-              << "\n\n  Tetrahedras volume:\n" 
-              << "\n    min: "<< v_min 
-              << "\n    avg: "<< v_sum / v_num  
-              << "\n    max: "<< v_max << "\n"
-              << std::endl;
-  
-    // local volume output
-    for(unsigned int i = 0; i < v_max_l.size(); i++)
-    {
-      std::cout << std::setprecision(3)
-                << "    volume of cell in volume #" << i << ":    "
-                << std::setw(10) << v_max_l[i]  << ",  "
-                << std::setw(10) << v_min_l[i]  << ",  "
-                << std::setw(10) << v_sum_l[i]/v_num_l[i]                
-                << std::endl;
+      cells_quality[positive_index].push_back(quality);
+      cells_volume[positive_index].push_back(tr.tetrahedron(cit).volume());
     }
 
-  return process_cells(volume_cells_quality, filename_prefix);
+  const typename Qualities::size_type vectors_size = 
+    cells_quality.size();
+
+  std::vector<double> maximum(vectors_size);
+  std::vector<double> minimum(vectors_size);
+  std::vector<double> sum(vectors_size);
+  std::vector<unsigned int> size(vectors_size);
+
+  for(unsigned int i = 0; i < vectors_size; ++i)
+  {
+    boost::tie(maximum[i], minimum[i], sum[i], size[i]) = 
+      compute_max_min_sum_size(cells_volume[i].begin(),
+                               cells_volume[i].end());
+  }
+
+  // global volume output
+  *out_stream << std::setprecision(3)
+              << prefix << "min tetrahedron volume: "
+                    << *(std::min_element(minimum.begin(), minimum.end())) << "\n"
+              << prefix << "avg tetrahedron volume: "
+
+              << std::accumulate(sum.begin(), sum.end(), 0.) / 
+                       std::accumulate(size.begin(), size.end(), 0)
+               // the division may be "not a number"
+
+              << "\n"
+              << prefix << "max tetrahedron volume: " 
+              << *(std::max_element(maximum.begin(), maximum.end())) << "\n"
+              << std::endl;
+  
+  // local volume output
+  for(unsigned int i = 0; i < vectors_size; i++)
+  {
+    *out_stream << std::setprecision(3)
+                << prefix << "volume of cells in volume #" << i << ":   "
+                << format_max_min_sum_size(maximum[i], minimum[i], sum[i], size[i])
+                << std::endl;
+  }
+
+
+  *out_stream << std::endl;
+
+  for(unsigned int i = 0; i < vectors_size; i++)
+  {
+    *out_stream << std::setprecision(3)
+                << prefix << "quality of cells in volume #" << i << ":  "
+                << output_max_min_average(cells_quality[i].begin(),
+                                          cells_quality[i].end())
+                << std::endl;
+  }
+
+  return process_cells(cells_quality, filename_prefix);
 }

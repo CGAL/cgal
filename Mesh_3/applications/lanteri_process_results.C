@@ -4,11 +4,16 @@
 #include <vector>
 #include <string>
 
+#include <iostream>
+
 const int global_number_of_classes = 20;
 
 bool process_aux_1(const std::vector<Qualities>& qualities,
                    const std::string filename,
-                   const int number_of_classes)
+                   const int number_of_classes,
+                   std::ostream* out_stream = &std::cout
+                   // output stream
+                   )
 {
   const int maximum_index = qualities.size() - 1;
 
@@ -40,13 +45,18 @@ bool process_aux_1(const std::vector<Qualities>& qualities,
                          1. / max);
   }
 
+  *out_stream << "saving " << filename.c_str() << "...\n";
+  
   return main_display.save_png(filename.c_str());
 }
 
 bool process_aux_2(const std::vector<Qualities>& qualities,
                    const std::vector<double>& length_bounds,
                    const std::string filename,
-                   const int number_of_classes)
+                   const int number_of_classes,
+                   std::ostream* out_stream = &std::cout
+                   // output stream
+                   )
 {
   const int maximum_index = qualities.size() - 1;
 
@@ -89,33 +99,47 @@ bool process_aux_2(const std::vector<Qualities>& qualities,
                          CGAL::BLUE);
   }
 
+  *out_stream << "saving " << filename.c_str() << "...\n";
+
   return main_display.save_png(filename.c_str());
 }
 
 bool process_cells(const std::vector<Qualities>& volume_cells_quality,
-                   const std::string filename_prefix)
+                   const std::string filename_prefix,
+                   std::ostream* out_stream = &std::cout
+                   // output stream
+                   )
 {
   return process_aux_1(volume_cells_quality,
                        filename_prefix + "_cells_radius_radius_ratio.png",
-                       global_number_of_classes);
+                       global_number_of_classes,
+                       out_stream);
 }
 
 bool process_volume_edges(const std::vector<Qualities>& volume_edges_length,
                           const std::vector<double>& length_bounds,
-                          const std::string filename_prefix)
+                          const std::string filename_prefix,
+                          std::ostream* out_stream = &std::cout
+                          // output stream
+                          )
 {
   return process_aux_2(volume_edges_length,
                        length_bounds,
                        filename_prefix + "_volume_edges_lengths.png",
-                       global_number_of_classes);
+                       global_number_of_classes,
+                       out_stream);
 }
 
 bool process_surface_edges(const std::vector<Qualities>& surface_edges_length,
                            const std::vector<double>& length_bounds,
-                           const std::string filename_prefix)
+                           const std::string filename_prefix,
+                           std::ostream* out_stream = &std::cout
+                           // output stream
+                           )
 {
   return process_aux_2(surface_edges_length,
                        length_bounds,
                        filename_prefix + "_surface_edges_lengths.png",
-                       global_number_of_classes);
+                       global_number_of_classes,
+                       out_stream);
 }
