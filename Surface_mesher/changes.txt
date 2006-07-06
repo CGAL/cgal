@@ -1,3 +1,9 @@
+6 July 2006 Laurent Rineau
+- fix typos in make_surface_mesh.tex.
+- in Surface_mesher_ref/intro.tex, change "Global Functions" to
+  "Function Templates", and capitalize "Tag classes" to "Tag Classes"
+(This patch will be submitted in the CGAL-3.2.x branch.)
+
 5 July 2006 Laurent Rineau
 - move Point_traits.h from Mesh_3 to Surface_mesher, to avoid an unneeded
 dependancy
