@@ -1,4 +1,4 @@
-7 July 2006 Laurent Rineau
+5 July 2006 Laurent Rineau
 - move Point_traits.h from Mesh_3 to Surface_mesher, to avoid an unneeded
 dependancy
 
