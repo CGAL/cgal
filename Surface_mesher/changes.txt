@@ -1,3 +1,9 @@
+6 July 2006 Laurent Rineau
+- fix typos in make_surface_mesh.tex.
+- in Surface_mesher_ref/intro.tex, change "Global Functions" to
+  "Function Templates", and capitalize "Tag classes" to "Tag Classes"
+(This patch was submitted first in trunk, revision 32231.)
+
 28 June 2006 Laurent Rineau
 - merge the revision 32053 in branch "CGAL-3.2-branch":
 
