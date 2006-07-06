@@ -730,7 +730,12 @@ class Do_overlap_2
 	       const Circular_arc_point_2 &p,
 	       Circular_arc_2 &ha1, Circular_arc_2 &ha2) const
     {  
-      CK().split_2_object()(A.arc(), p.point(), ha1, ha2);
+      Rcirc_arc_2 ca1 , ca2;
+
+      CK().split_2_object()(A.arc(), p.point(), ca1, ca2);
+
+      ha1=Circular_arc_2(ca1); 
+      ha2=Circular_arc_2(ca2);
     }
     
     result_type
