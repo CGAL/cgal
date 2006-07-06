@@ -2,13 +2,13 @@ $CGAL/INSTALL.win32
 ----------------------------------------------------------------------
 
 This file describes how to install CGAL on MS Windows for
-Developer Studio .net 2003 (VC 7.1) and 2005 (VC 8.0) 
+Developer Studio .Net 2003 (VC 7.1) and 2005 (VC 8.0) 
 
-Note that you also can install CGAL with the Microsoft compilers using
-cygwin. For installation on Unix systems and on cygwin, please see
-INSTALL document.
+Note that you can alternatively install CGAL with the Microsoft compilers using
+Cygwin. For installation on Unix systems and on Cygwin, please see the INSTALL
+document.
 
-The documentation of CGAL is available in html and pdf format. It is
+The documentation of CGAL is available in HTML and PDF formats. It is
 not bundled with the software but can be downloaded separately.
 
 For more information about CGAL, see the URL http://www.cgal.org/.
@@ -21,7 +21,7 @@ sure you carefully read the instructions from each installation step.
 
 Boost
 CGAL needs some parts of Boost. You can download it from http://www.boost.org.
-It is enough to unzip the file. Currently only demo programs
+It is enough to unzip the file. Currently only some demo programs
 in the Kinetic_data_structures directory need the compiled Boost
 library program_options.
 Alternatively you can use the Installer for Boost provided
