@@ -30,7 +30,7 @@
 // output is a .obj
 // input file is mesh.off
 //----------------------------------------------------------
-// polyhedron_ex_parameterization -t lscm -o obj mesh.off mesh.obj
+// polyhedron_ex_parameterization -t lscm -b 2pts -o obj mesh.off mesh.obj
 
 
 #include <CGAL/Cartesian.h>
@@ -314,6 +314,7 @@ static const char *  optv[] =
     "b:border <string>", // -b or --border (for fixed border param.)
     // -b circle        -> map mesh border onto a circle
     //    square        -> map mesh border onto a square
+    //    2pts          -> pin 2 points
 
     "s:solver <string>", // -s or --solver
     // -s opennl        -> OpenNL solver (GPL)
@@ -329,7 +330,7 @@ static const char *  optv[] =
 // Parameters description for usage
 static const char * usage = "off-input-file [output-file]\n\
 where type is:   floater (default), conformal, barycentric, authalic or lscm\n\
-      border is: circle (default) or square\n\
+      border is: circle (default), square or 2pts\n\
       solver is: opennl (default) or taucs\n\
       output is: eps or obj (default is no output)";
 
