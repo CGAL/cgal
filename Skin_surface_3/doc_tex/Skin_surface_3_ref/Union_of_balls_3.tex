@@ -10,22 +10,22 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Skin_surface_3<RegularTriangulationTraits_3>}
+\begin{ccRefClass}{Union_of_balls_3<RegularTriangulationTraits_3>}
   \ccDefinition
 
-  The \ccRefName\ is the main class in the
-  \ccHtmlNoLinksFrom{\ccc{Skin_surface_3}}\ package. It is a model of
-  the concept \ccc{SkinSurface_3}.  
-% NGHK: ADD 
-% The class also defines an interface to the surface mesher as it is a
-% model of the concept \ccc{Surface_3}.
+  The \ccRefName\ is used to represent a skin surface with shrink
+  factor equal to one, which is the boundary union of the input balls.
+  This case is handled separately since the mixed complex is equal to
+  the power diagram, which has a much simpler structure. The functions
+  and types have the same name as the \ccc{Skin_surface_3} class to
+  make the algorithms work on both surface types.
 
   The type \ccc{RegularTriangulationTraits_3} is required to be a model of the
   concept \ccc{RegularTriangulationTraits_3}, which means that it provides the
   predicates to construct a regular triangulation of the weighted
   points.
   
-  \ccInclude{CGAL/Skin_surface_3.h}
+  \ccInclude{CGAL/Union_of_balls_3.h}
 
   %\ccInheritsFrom
 
@@ -38,7 +38,7 @@
 % (and through \ccc{SkinSurface_3} of \ccc{Surface_3})
 
   \ccTypes
-  \ccThree{typedef Skin_surface_3::Weighted_point<Point_3,FT>asdf}{x}{}
+  \ccThree{typedef Union_of_balls_3::Weighted_point<Point_3,FT>asdf}{x}{}
   \ccThreeToTwo
 
   \ccTypedef{typedef RegularTriangulationTraits_3 Geometric_traits;}{}
@@ -59,8 +59,8 @@
     \ccc{QuadraticSurface_3}.}
 
   \ccNestedType{Triangulated_mixed_complex;}{The type of a 3D
-    triangulation that is used to store the triangulated mixed
-    complex.}
+    triangulation that is used to store the power diagram (which is
+    the triangulated mixed complex for a shrink factor equal to one).}
   \ccGlue
 %
   \ccTypedef{typedef Triangulated_mixed_complex::Vertex_handle
@@ -77,29 +77,32 @@
   %\ccConstants
 
   \ccCreation 
-  \ccCreationVariable{skin} 
+  \ccCreationVariable{union} 
 
-  \ccConstructor{Skin_surface_3 ( WP_iterator begin, WP_iterator end,
-    RT shrink_factor, bool grow_balls = true, Geometric_traits gt =
-    Geometric_traits(), bool verbose = false);}{The mandatory
-    arguments to the constructor are an iterator range
-    \ccc{[begin,end)} of weighted points and a shrink factor between 0
-    and 1. Optionally, it is possible to specify whether weights of
-    the input balls have to be increased and a \ccc{Geometric_traits}
-    class to be used.}
+  \ccConstructor{Union_of_balls_3 ( WP_iterator begin, WP_iterator
+    end, Geometric_traits gt = Geometric_traits(), bool verbose =
+    false);}{The mandatory argument to the constructor is an iterator
+    range \ccc{[begin,end)} of weighted points. Optionally, it is
+    possible to specify whether weights of the input balls have to be
+    increased and a \ccc{Geometric_traits} class to be used.}
   
+
+  \ccThree{Triangulate_mixed_complex xx}{x}{}
+  \ccThreeToTwo
 
   %\ccOperations
   \ccAccessFunctions
 
   \ccMethod{const Triangulated_mixed_complex
     &triangulated_mixed_complex() const;}{Returns the triangulated
-    mixed complex.  }
+    power diagram (which is the triangulated mixed complex for a
+    shrink factor equal to one).  }
 
   \ccQueryFunctions
 %
   \ccMethod{TMC_Cell_handle locate(const TMC_Point &p) const;}{Returns
-    a handle to the cell of the triangulated mixed complex containing the point $p$.}
+    a handle to the cell of the triangulated mixed complex containing
+    the point $p$.}
 
 
   \ccSeeAlso
