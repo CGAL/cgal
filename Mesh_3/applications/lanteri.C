@@ -22,6 +22,9 @@
 // radius_ratio
 #include <CGAL/Mesh_3/Slivers_exuder_aux.h>
 
+// barycenter
+#include <CGAL/centroid.h>
+
 #include <sstream>
 
 // traits class
@@ -195,16 +198,19 @@ int main(int , char**)
   std:: cout << "(facets)\n";
   display_facets_by_surface_indices_statistics(c2t3, "    ", &std::cout);
 
+	
+	
   // sets volume indices
-  for(Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
+  K::Construct_centroid_3  construct_centroid;
+	
+	for(Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
       cit != tr.finite_cells_end();
       ++cit)
     if(cit->is_in_domain())
     {
-      const double sq_r = 
-        squared_distance(K::Point_3(0, 0, 0),
-                         static_cast<K::Point_3>(tr.dual(cit)));
-    
+			const double sq_r = squared_distance(K::Point_3(0, 0, 0), 
+																					 construct_centroid(tr.tetrahedron(cit)));
+			    
       if( sq_r < r1*r1 )
         cit->set_volume_index(1);
       else if( sq_r < r2*r2 )
