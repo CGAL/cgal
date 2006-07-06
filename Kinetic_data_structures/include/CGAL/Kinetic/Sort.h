@@ -233,7 +233,8 @@ void audit() const
 void set(Object_key k) {
   iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
   v_.modify_vertex(it);
-  rebuild_certificate(it); rebuild_certificate(--it);
+  rebuild_certificate(it);
+  if (it != sorted_.begin()) rebuild_certificate(--it);
 }
 
 /* Remove object k and destroy 2 certificates and create one new one.
