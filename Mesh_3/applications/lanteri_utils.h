@@ -36,7 +36,7 @@ compute_max_min_sum_size(Iterator begin, Iterator end)
 
   const size_type size = std::distance(begin, end);
 
-  return boost::make_tuple(minimum, maximum, sum, size);
+	return boost::make_tuple(maximum, minimum,  sum, size);
 }
 
 template <typename Iterator> // better be RandomAccessIterator, because
