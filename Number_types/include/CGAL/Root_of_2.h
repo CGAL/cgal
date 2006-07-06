@@ -151,6 +151,8 @@ public:
     CGAL_assertion(is_valid());
   }
   
+  /* Jetter un coup d'oeil pour voir s'il n'y a aucun moyen de faire comme ca
+
   template <typename RT2>
   Root_of_2(const Root_of_2<RT2>& r)
   {
@@ -158,15 +160,23 @@ public:
     if(r.is_rational()) {
       C1 = r[1]; 
       C2 = r[2];
-      _rational(1);
+      _rational = 1;
     } else {
       C0 = r[0];
       C1 = r[1]; 
       C2 = r[2];
-      _smaller(r.is_smaller());
-      _rational(0);
-      _delta_is_not_zero(r.is_known_delta_not_zero());
+      _smaller = r.is_smaller();
+      _rational = 0;
+      _delta_is_not_zero = r.is_known_delta_not_zero();
     }
+  }*/
+
+  template <typename RT2>
+  Root_of_2(const Root_of_2<RT2>& r)
+    : C0(r[0]), C1(r[1]), C2(r[2]), _smaller(r.is_smaller()),
+      _delta_is_not_zero(r.is_known_delta_not_zero())
+  {
+    CGAL_assertion(is_valid());
   }
 
   Root_of_2 operator-() const
