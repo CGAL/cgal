@@ -919,6 +919,10 @@ square(const Root_of_2<RT> &a)
     return Root_of_2<RT>(CGAL_NTS square(a[1]), CGAL_NTS square(a[2]));
   }
 
+  if(is_zero(a[1])) {
+    return Root_of_2<RT>(-a[0], a[2]);
+  }
+
   CGAL_assertion(is_valid(a));
 
   // It's easy to get the explicit formulas for the square of the two roots.
