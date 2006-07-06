@@ -22,8 +22,6 @@
 
 #include <CGAL/assertions.h>
 
-// TODO : document it (in the dev' manual)
-
 // CGAL_test_assert() is a macro similar to assert(),
 // except that NDEBUG and other macros do not affect it.
 
