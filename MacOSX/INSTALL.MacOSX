@@ -18,11 +18,8 @@ Installation
 - unpack the file in the place in which you wish to install it
 - install the CGAL libraries: 
   the impatient can just try to run "./install_cgal -i", but we recommend
-  to first have a look at the Installation notes. 
-  These are available in several formats. A PostScript file named
-  installation.ps.gz can be found in the directory doc_ps.
-  The HTML version is in doc_html/installation/main.html and 
-  the PDF documentation is in the directory doc_pdf.
+  to first have a look at the Installation notes available from the
+  CGAL web site. http://www.cgal.org/Manual/
 
 
 Boost
@@ -61,4 +58,3 @@ To run the demo use the "open" command from the prompt:
     prompt:> open <demo-executable>.app
 
 -----------------------------------------------------------------------------
-EOF

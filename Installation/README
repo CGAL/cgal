@@ -19,12 +19,6 @@ This distribution of CGAL includes:
                         Makefiles are provided for all programs and project
                         files for MSVC IDE are provided.
 
-   doc_html/          - a directory containing the installation manual in
-                        HTML format
-   doc_pdf/           - a directory containing the installation manual in
-                        PDF format
-   doc_ps/            - a directory containing the installation manual in
-                        compressed postscript format
    examples/          - a directory containing programs illustrating the
                         library's functionality.  These programs do not produce
                         visual output.
