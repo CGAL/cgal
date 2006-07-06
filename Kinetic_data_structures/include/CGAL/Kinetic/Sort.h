@@ -211,13 +211,13 @@ void audit() const
 	std::cerr << "Time is " <<simulator()->rational_current_time() << std::endl; 
 	std::cerr << "WARNING: order is ";
 	write(std::cerr);
-        if (!wrote_objects_) {
-          wrote_objects_=true;
-          std::cerr << "Objects are: ";
-          for (typename Traits::Active_points_1_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
-               kit != mot_listener_.notifier()->keys_end(); ++kit){
-            std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
-          }
+	if (!wrote_objects_) {
+	  wrote_objects_=true;
+	  std::cerr << "Objects are: ";
+	  for (typename Traits::Active_points_1_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
+	       kit != mot_listener_.notifier()->keys_end(); ++kit){
+	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
+	  }
 	}
 	warned_[*it].insert(*next(it));
 	std::cerr << std::endl;
@@ -233,7 +233,8 @@ void audit() const
 void set(Object_key k) {
   iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
   v_.modify_vertex(it);
-  rebuild_certificate(it); rebuild_certificate(--it);
+  rebuild_certificate(it);
+  if (it != sorted_.begin()) rebuild_certificate(--it);
 }
 
 /* Remove object k and destroy 2 certificates and create one new one.
