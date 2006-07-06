@@ -91,22 +91,20 @@ public:
 
 template <class SkinSurfaceTraits_3> 
 class Skin_surface_3 {
+  typedef SkinSurfaceTraits_3             Gt;
 public:
-  typedef SkinSurfaceTraits_3           Gt;
-  typedef typename Gt::Weighted_point   Weighted_point;
-  typedef typename Gt::Bare_point       Bare_point;
-  typedef typename Gt::FT               FT;
+  typedef SkinSurfaceTraits_3             Geometric_traits;
+  typedef typename Gt::Weighted_point     Weighted_point;
+  typedef typename Weighted_point::Weight RT;
+private:
+  typedef typename Weighted_point::Point  Bare_point;
   
   typedef Regular_triangulation_3<Gt>     Regular;
-//   typedef Triangulation_data_structure_3 <
-//     Triangulation_vertex_base_3<GT>,
-//     Triangulated_mixed_complex_cell_3<GT, PolyhedronKernel_3> >
-//                                           Triangulated_mixed_complex_tds;
 
   // defining the triangulated mixed complex:
   typedef Exact_predicates_inexact_constructions_kernel    TMC_Traits;
-public:
 
+public:
 #ifdef CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
   typedef Skin_surface_quadratic_surface_3<TMC_Traits>   Quadratic_surface;
 #else
@@ -119,19 +117,22 @@ public:
     Triangulation_data_structure_3
     < Triangulated_mixed_complex_vertex_3<TMC_Traits>,
       Triangulated_mixed_complex_cell_3<TMC_Traits,Quadratic_surface> > 
-  >                                                   Triangulated_mixed_complex;
+  >                                      Triangulated_mixed_complex;
+
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
+private:
   typedef typename TMC_Traits::Point_3                       TMC_Point;
   
+public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
-		 FT shrink_factor,
+		 RT shrink_factor,
 		 bool grow_balls = true,
 		 Gt gt = Gt(),
-		 bool verbose = false
+		 bool _verbose = false
 		 ) 
-    : gt(gt), shrink(shrink_factor), verbose(verbose) {
+    : gt(gt), shrink(shrink_factor), verbose(_verbose) {
 
     CGAL_assertion(begin != end);
 
@@ -179,7 +180,7 @@ private:
   void construct_bounding_box(Regular &regular);
 
   Gt &gt;
-  FT shrink;
+  RT shrink;
   Triangulated_mixed_complex _tmc;
   bool verbose;
 };
