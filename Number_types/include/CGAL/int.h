@@ -69,9 +69,9 @@ is_valid(int)
 { return true; }
 
 inline
-io_Operator
+io_Read_write
 io_tag(int)
-{ return io_Operator(); }
+{ return io_Read_write(); }
 
 // long
 

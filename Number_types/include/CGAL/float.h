@@ -158,9 +158,9 @@ is_finite(float d)
 #endif
 
 inline
-io_Operator
+io_Read_write
 io_tag(float)
-{ return io_Operator(); }
+{ return io_Read_write(); }
 
 CGAL_END_NAMESPACE
 

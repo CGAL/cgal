@@ -187,9 +187,9 @@ is_finite(double d)
 #endif
 
 inline
-io_Operator
+io_Read_write
 io_tag(double)
-{ return io_Operator(); }
+{ return io_Read_write(); }
 
 // GCC is faster with std::fabs().
 #ifdef __GNUG__
