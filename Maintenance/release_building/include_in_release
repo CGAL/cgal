@@ -83,6 +83,7 @@ Stream_lines_2
 Stream_support
 Subdivision_method_3
 Surface_mesher
+Testsuite
 Timer
 Trapezoidal_decomposition
 Triangulation_2
