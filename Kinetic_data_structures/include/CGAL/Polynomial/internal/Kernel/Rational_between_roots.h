@@ -44,7 +44,8 @@ struct Rational_between_roots
     typedef std::pair<result_type, result_type> Ival;
     //Ival i0= to_interval(r0);
     //Ival i1= to_interval(r1);
-    if (r0== -infinity<RT>()) {
+    Ival i0= tii_(r0);
+    if (i0.second == -infinity<double>()) {
       result_type ret(-33554432);
       while (r1 <= second_argument_type(ret)) {
 	ret= ret*1024;
@@ -52,8 +53,6 @@ struct Rational_between_roots
       //std::cout << "Returning "<< ret << " between " << r0 << " and " << r1 << std::endl;
       return ret;
     }
-
-    Ival i0= tii_(r0);
 
     if (i0.second == i0.first) {
       result_type ret= i0.second;
