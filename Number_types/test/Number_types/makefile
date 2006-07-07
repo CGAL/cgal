@@ -45,6 +45,7 @@ all:            \
                 Gmpq$(EXE_EXT) \
                 Interval_nt$(EXE_EXT) \
                 known_bit_size_integers$(EXE_EXT) \
+                Lazy_exact_nt$(EXE_EXT) \
                 long_doubletst$(EXE_EXT) \
                 MP_Float$(EXE_EXT) \
                 NT_checker$(EXE_EXT) \
@@ -75,6 +76,9 @@ Interval_nt$(EXE_EXT): Interval_nt$(OBJ_EXT)
 
 known_bit_size_integers$(EXE_EXT): known_bit_size_integers$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)known_bit_size_integers known_bit_size_integers$(OBJ_EXT) $(LDFLAGS)
+
+Lazy_exact_nt$(EXE_EXT): Lazy_exact_nt$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Lazy_exact_nt Lazy_exact_nt$(OBJ_EXT) $(LDFLAGS)
 
 long_doubletst$(EXE_EXT): long_doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)long_doubletst long_doubletst$(OBJ_EXT) $(LDFLAGS)
@@ -119,6 +123,7 @@ clean: \
                    Gmpq.clean \
                    Interval_nt.clean \
                    known_bit_size_integers.clean \
+                   Lazy_exact_nt.clean \
                    long_doubletst.clean \
                    MP_Float.clean \
                    NT_checker.clean \

@@ -39,16 +39,12 @@ LDFLAGS = \
 
 all:            \
                 Filtered_kernel$(EXE_EXT) \
-                Lazy_exact_nt$(EXE_EXT) \
                 Static_filters$(EXE_EXT) \
                 tst10$(EXE_EXT) \
                 tst5$(EXE_EXT) 
 
 Filtered_kernel$(EXE_EXT): Filtered_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Filtered_kernel Filtered_kernel$(OBJ_EXT) $(LDFLAGS)
-
-Lazy_exact_nt$(EXE_EXT): Lazy_exact_nt$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Lazy_exact_nt Lazy_exact_nt$(OBJ_EXT) $(LDFLAGS)
 
 Static_filters$(EXE_EXT): Static_filters$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Static_filters Static_filters$(OBJ_EXT) $(LDFLAGS)
@@ -61,7 +57,6 @@ tst5$(EXE_EXT): tst5$(OBJ_EXT)
 
 clean: \
                    Filtered_kernel.clean \
-                   Lazy_exact_nt.clean \
                    Static_filters.clean \
                    tst10.clean \
                    tst5.clean 

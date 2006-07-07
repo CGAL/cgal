@@ -77,6 +77,7 @@ else
   compile_and_run Gmpq
   compile_and_run Interval_nt
   compile_and_run known_bit_size_integers
+  compile_and_run Lazy_exact_nt
   compile_and_run long_doubletst
   compile_and_run MP_Float
   compile_and_run NT_checker
