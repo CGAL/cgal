@@ -20,19 +20,16 @@
 #ifndef CGAL_SKIN_SURFACE_QUADRATIC_SURFACE_H
 #define CGAL_SKIN_SURFACE_QUADRATIC_SURFACE_H
 
-#include <CGAL/Weighted_point.h>
-
 CGAL_BEGIN_NAMESPACE
 
-template < class Kernel >
+template < class SkinSurfaceQuadraticSurfaceTraits_3 >
 class Skin_surface_quadratic_surface_3 {
 public:
-  typedef Kernel                          K;
+  typedef SkinSurfaceQuadraticSurfaceTraits_3 K;
+  typedef typename K::RT                  RT;
   typedef typename K::Point_3             Point;
   typedef typename K::Vector_3            Vector;
   typedef typename K::Segment_3           Segment;
-  typedef typename K::RT                  RT;
-  typedef CGAL::Weighted_point<Point, RT> Weighted_point;
 
   Skin_surface_quadratic_surface_3(RT Qinput[], Point p, RT c)
     : p(p), c(c) 
@@ -69,17 +66,6 @@ public:
     return inv_conv(compute_gradient(xp));
   }
 
-  template <class Input_point>
-  Vector compute_gradient(Input_point const &x) {
-    typedef Cartesian_converter<typename Input_point::R, K> Converter;
-    
-    Vector v = Converter()(x) - p;
-
-    return Vector(2*Q[0]*v.x() + Q[1]*v.y() + Q[3]*v.z(),
-		  Q[1]*v.x() + 2*Q[2]*v.y() + Q[4]*v.z(),
-		  Q[3]*v.x() + Q[4]*v.y() + 2*Q[5]*v.z());
-  }
-	
   /// Construct the intersection point with the segment (p0,p1)
   template <class Input_point>
   Input_point to_surface(const Input_point &p0, const Input_point &p1) {
@@ -106,6 +92,17 @@ public:
     return midpoint(pp0,pp1);
   }
 private:
+  template <class Input_point>
+  Vector compute_gradient(Input_point const &x) {
+    typedef Cartesian_converter<typename Input_point::R, K> Converter;
+    
+    Vector v = Converter()(x) - p;
+
+    return Vector(2*Q[0]*v.x() + Q[1]*v.y() + Q[3]*v.z(),
+		  Q[1]*v.x() + 2*Q[2]*v.y() + Q[4]*v.z(),
+		  Q[3]*v.x() + Q[4]*v.y() + 2*Q[5]*v.z());
+  }
+	
   RT Q[6]; 
   Point p; 
   RT c;

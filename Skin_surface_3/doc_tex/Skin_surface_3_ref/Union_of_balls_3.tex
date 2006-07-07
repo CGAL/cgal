@@ -50,14 +50,15 @@
   \ccGlue
   \ccTypedef{typedef Weighted_point::Weight RT;}{}
 
-  \ccNestedType{TMC_Traits}{The traits class used for the triangulated
-    mixed complex}
-  \ccGlue
   \ccTypedef{typedef Skin_surface_quadratic_surface_3<TMC_Traits>
     Quadratic_surface;}{The definition of a quadratic
     surface. This type should be a model of the concept
     \ccc{QuadraticSurface_3}.}
 
+  \ccNestedType{TMC_traits}{The traits class used for the triangulated
+    mixed complex}
+  \ccGlue
+%
   \ccNestedType{Triangulated_mixed_complex;}{The type of a 3D
     triangulation that is used to store the power diagram (which is
     the triangulated mixed complex for a shrink factor equal to one).}

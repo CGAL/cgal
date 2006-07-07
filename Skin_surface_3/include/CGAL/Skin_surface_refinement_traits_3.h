@@ -31,7 +31,7 @@ public:
   typedef Polyhedron_3                            Polyhedron;
   typedef SkinSurface_3                           Skin_surface;
   typedef typename Polyhedron::Traits             P_traits;
-  typedef typename Skin_surface::TMC_Traits       SS_traits;
+  typedef typename Skin_surface::TMC_traits       SS_traits;
 
   typedef Cartesian_converter<SS_traits, P_traits> T2P_converter;
   typedef Cartesian_converter<P_traits, SS_traits> P2T_converter;

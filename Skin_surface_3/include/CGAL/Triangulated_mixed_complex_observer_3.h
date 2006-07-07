@@ -51,42 +51,22 @@ public:
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
 
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
-//   typedef typename Triangulated_mixed_complex::Edge          TMC_Edge;
-//   typedef typename Triangulated_mixed_complex::Facet         TMC_Facet;
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
   
 
   typedef typename Quadr_surface::K                   Surface_traits;
+  typedef typename Surface_traits::RT                 Surface_RT;
   typedef Regular_triangulation_euclidean_traits_3<Surface_traits> Surface_regular_traits;
   typedef typename Quadr_surface::Point               Surface_point;
   typedef typename Quadr_surface::Vector              Surface_vector;
-  typedef typename Quadr_surface::Weighted_point      Surface_weighted_point;
+  typedef Weighted_point<Surface_point,Surface_RT>   Surface_weighted_point;
   typedef typename Quadr_surface::RT                  Surface_RT;
 
-//   typedef typename Triangulated_mixed_complex_traits::Point_3        TMC_Point;
-//   typedef typename Triangulated_mixed_complex_traits::RT             TMC_RT;
-//   typedef Weighted_point<TMC_Point,TMC_RT>        TMC_Weighted_point;
-
   typedef Skin_surface_quadratic_surface_3<Surface_traits> Quadratic_surface;
-//   typedef Skin_surface_sphere_3<Surface_traits>         Sphere_surface;
-//   typedef Skin_surface_hyperboloid_3<Surface_traits>    Hyperboloid_surface;
 
   typedef Weighted_converter_3< 
     Cartesian_converter < typename Regular_traits::Bare_point::R, 
 			  typename Quadr_surface::K > >            R2S_converter;
-    
-
-//   typedef typename Polyhedron_traits::RT                   Mesh_RT;
-//   typedef typename Polyhedron_traits::Point_3              Mesh_Point;
-//   typedef Weighted_point<Mesh_Point,Mesh_RT>    Mesh_Weighted_point;
-  
-//   typedef typename Skin_traits_3::R2P_converter R2P_converter;
-//   typedef typename Skin_traits_3::T2P_converter T2P_converter;
-
-//   Triangulated_mixed_complex_observer_3() : 
-//     shrink(.5) {
-//   }
-
   Triangulated_mixed_complex_observer_3(Surface_RT shrink) : 
     shrink(shrink) {
   }

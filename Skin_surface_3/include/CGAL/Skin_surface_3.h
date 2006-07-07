@@ -101,28 +101,28 @@ private:
   
   typedef Regular_triangulation_3<Gt>     Regular;
 
-  // defining the triangulated mixed complex:
-  typedef Exact_predicates_inexact_constructions_kernel    TMC_Traits;
-
 public:
+  // defining the triangulated mixed complex:
+  typedef Exact_predicates_inexact_constructions_kernel    TMC_traits;
+
 #ifdef CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
-  typedef Skin_surface_quadratic_surface_3<TMC_Traits>   Quadratic_surface;
+  typedef Skin_surface_quadratic_surface_3<TMC_traits>   Quadratic_surface;
 #else
   typedef Skin_surface_quadratic_surface_3<Simple_cartesian<double> > 
                                                          Quadratic_surface;
 #endif // CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
 
   typedef Triangulation_3<
-    TMC_Traits,
+    TMC_traits,
     Triangulation_data_structure_3
-    < Triangulated_mixed_complex_vertex_3<TMC_Traits>,
-      Triangulated_mixed_complex_cell_3<TMC_Traits,Quadratic_surface> > 
+    < Triangulated_mixed_complex_vertex_3<TMC_traits>,
+      Triangulated_mixed_complex_cell_3<TMC_traits,Quadratic_surface> > 
   >                                      Triangulated_mixed_complex;
 
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
 private:
-  typedef typename TMC_Traits::Point_3                       TMC_Point;
+  typedef typename TMC_traits::Point_3                       TMC_Point;
   
 public:
   template < class WP_iterator >
