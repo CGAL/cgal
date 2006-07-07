@@ -1,0 +1,102 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSskinsurfaceRev}{$Id$}
+\RCSdefDate{\RCSskinsurfaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{SkinSurface_3}
+  \ccDefinition
+
+% NGHK: ADD INSTEAD OF NEXT LINE
+%  The concept \ccRefName\ defines a skin surface and provides an
+%  interface for both the dedicated skin surface mesher as well as the
+%  general Delaunay based mesher, described in
+%  Chapter~\ref{chapter_SurfaceMesher}. 
+  The concept \ccRefName\ defines a skin surface and provides an
+  interface for the dedicated skin surface mesher.
+%
+  The concept is constructed from an iterator range of weighted points
+  and a shrink factor. By default the input balls are grown in such
+  that the skin surface wraps around the input balls.
+
+  %\ccRefines
+
+  \ccThree{Triangulated_mixed_complex}{Skin_surface_3}{}
+  \ccThreeToTwo
+
+  \ccHasModels
+  \ccc{CGAL::Skin_surface_3<RegularTriangulationTraits_3>}
+
+  \ccTypes
+
+  \ccNestedType{Geometric_traits}{The geometric traits used for the
+    construction of the regular triangulation.}  
+  \ccGlue
+  \ccNestedType{Weighted_point}{The \ccc{Weighted_point} type defined
+    by the \ccc{Geometric_traits}.}
+  \ccGlue
+  \ccNestedType{Bare_point}{The \ccc{Bare_point} type defined by the
+    \ccc{Geometric_traits}.}
+  \ccGlue
+
+  \ccNestedType{RT}{The \ccc{RT} type defined by the
+    \ccc{Geometric_traits}.}
+
+  \ccNestedType{Quadratic_surface}{The definition of a quadratic
+    surface. This type should be a model of the concept
+    \ccc{QuadraticSurface_3}.}
+
+  \ccNestedType{TMC_traits;}{The type of the kernel used for the
+    triangulated mixed complex.}
+  \ccGlue
+  \ccNestedType{Triangulated_mixed_complex;}{The type of a 3D
+    triangulation that is used to store the triangulated mixed
+    complex.}
+  \ccGlue
+  \ccNestedType{TMC_Vertex_handle;}{The type of a vertex handle of the
+    \ccc{Triangulated_mixed_complex}.}
+  \ccGlue
+  \ccNestedType{TMC_Cell_handle;}{The type of a cell handle of the
+    \ccc{Triangulated_mixed_complex}.}
+
+
+  %\ccConstants
+  \ccCreation 
+  \ccCreationVariable{skin} 
+
+  \ccConstructor{Skin_surface_3 ( WP_iterator begin, WP_iterator end,
+    RT shrink_factor);}{The mandatory arguments to the constructor are
+    an iterator range \ccc{[begin,end)} of weighted points and a
+    shrink factor between 0 and 1.}
+
+  %\ccOperations
+  \ccAccessFunctions
+
+  \ccMethod{const Triangulated_mixed_complex
+    &triangulated_mixed_complex() const;}{Returns the triangulated
+    mixed complex.  }
+
+  \ccQueryFunctions
+%
+  \ccMethod{TMC_Cell_handle locate(const TMC_Point &p) const;}{Returns
+    a handle to the cell of the triangulated mixed complex containing the point $p$.}
+
+%  \ccPredicates
+%  \ccModifiers %	Modifiers 	insert, delete, update
+%  \ccSeeAlso %	See Also 	other classes, functions
+%  \ccImplementation %	Implementation 	running time, memory
+%  \ccExample
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
