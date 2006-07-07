@@ -86,10 +86,68 @@ typedef CGAL::Surface_mesher::Sphere_oracle_3<
 using CGAL::Surface_mesher::Combining_oracle;
 
 typedef Combining_oracle<Single_oracle, Single_oracle> Oracle_2;
-// typedef Combining_oracle<Oracle_2, Single_oracle> Oracle_3;
-// typedef Combining_oracle<Oracle_3, Single_oracle> Oracle_4;
-// typedef Combining_oracle<Oracle_4, Single_oracle> Oracle_5;
-typedef Oracle_2 Oracle;
+typedef Combining_oracle<Oracle_2, Single_oracle> Oracle_3;
+typedef Combining_oracle<Oracle_3, Single_oracle> Oracle_4;
+typedef Combining_oracle<Oracle_4, Single_oracle> Oracle_5;
+typedef Oracle_5 Oracle;
+
+/*** A size criterion for multi surfaces ***/
+class Uniform_size_multi_surface_criterion : public Criterion {
+public:
+  typedef Criterion::Quality Quality;
+
+private:
+  std::vector<double> squared_sphere_radii;
+
+  typedef Tr::Facet Facet;
+  typedef Tr::Vertex_handle Vertex_handle;
+  typedef Tr::Cell_handle Cell_handle;
+  
+public:
+  Uniform_size_multi_surface_criterion(const std::vector<double> sphere_radii)
+  {
+    std::vector<double>::size_type size = sphere_radii.size();
+
+    squared_sphere_radii.resize(size);
+
+    for(std::vector<double>::size_type i = 0; i < size; ++i)
+    {
+      squared_sphere_radii[i] = sphere_radii[i] * sphere_radii[i];
+    }
+  }
+
+  bool is_bad (const Facet& f, Quality& q) const {
+    const Cell_handle& ch = f.first;
+    const int i = f.second;
+    const Vertex_handle& v1 = ch->vertex((i+1)&3);
+    const Vertex_handle& v2 = ch->vertex((i+2)&3);
+    const Vertex_handle& v3 = ch->vertex((i+3)&3);
+
+    const int& number = v1->point().surface_index();
+    if ( number == 0 ||
+         (v2->point().surface_index() != number) ||
+         (v3->point().surface_index() != number ) )
+    {
+      q = Quality(0);
+      return true;
+    }
+    else
+      if(squared_sphere_radii[number] == 0.)
+      {
+        q = Quality(0);
+        return false;
+      }
+      else 
+      {
+        const Point_3& p1 = v1->point();
+
+        q =  squared_sphere_radii[number] / 
+          CGAL::squared_distance(p1,
+                                 f.first->get_facet_surface_center(f.second));
+        return q < 1;
+      }
+  }
+}; // end Uniform_size_multi_surface_criterion
 
 /*** criteria for Mesh_3 ***/
 typedef CGAL::Mesh_criteria_3<Tr> Tets_criteria;
@@ -195,6 +253,9 @@ public:
         if( qual.sq_size() > 1 )
         {
           qual.first = 1; // (do not compute aspect)
+#ifdef CGAL_MESH_3_DEBUG_CRITERIA
+          std::cerr << "bad tetrahedron: squared radius=" << sq_radius << "\n";
+#endif
           return true;
         }
       }
@@ -219,7 +280,12 @@ public:
                                 CGAL::to_double(distance(r, s)));
 
       qual.first = sq_radius / min_sq_length;
-
+#ifdef CGAL_MESH_3_DEBUG_CRITERIA
+      if( qual.first > squared_radius_edge_bound )
+        std::cerr << "bad tetrahedron: radius-edge ratio = " 
+                  << CGAL::sqrt(qual.first)
+                  << "\n";
+#endif
       return (qual.first > squared_radius_edge_bound);
     }
 
@@ -242,8 +308,9 @@ int main(int, char**)
   FT r3;
   FT r4;
   FT r5;
-  std::vector<double> size_bounds(5);
+  std::vector<double> size_bounds(6);
   std::vector<double> radii(5);
+  std::vector<double> facets_size_bounds(6);
   
   std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
   std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
@@ -253,6 +320,9 @@ int main(int, char**)
            >> size_bounds[2]
            >> size_bounds[3]
            >> size_bounds[4];
+
+  size_bounds[5] = std::numeric_limits<double>::infinity(); // trick
+
   if(!std::cin)
     return EXIT_FAILURE;
 
@@ -262,17 +332,20 @@ int main(int, char**)
   radii[3] = CGAL::to_double(r4);
   radii[4] = CGAL::to_double(r5);
 
+  for(int i = 1; i < 6; ++i)
+    facets_size_bounds[i] = std::min(size_bounds[i-1], size_bounds[i]);
+  facets_size_bounds[0] = 0;
+
   const int number_of_initial_points = 20;
   
-  const double facets_uniform_size_bound = 30.; // mm
-  const double facets_aspect_ratio_bound = 0; // degres
-  const double tets_radius_edge_bound = 2.5;
+  const double facets_aspect_ratio_bound = 30; // degres
+  const double tets_radius_edge_bound = 2.5; // B
 
-//   Sphere_3 sphere1(CGAL::ORIGIN, r1*r1);
-//   Sphere_3 sphere2(CGAL::ORIGIN, r2*r2);
-//   Sphere_3 sphere3(CGAL::ORIGIN, r3*r3);
-  Sphere_3 sphere1(CGAL::ORIGIN, r4*r4);
-  Sphere_3 sphere2(CGAL::ORIGIN, r5*r5);
+  Sphere_3 sphere1(CGAL::ORIGIN, r1*r1);
+  Sphere_3 sphere2(CGAL::ORIGIN, r2*r2);
+  Sphere_3 sphere3(CGAL::ORIGIN, r3*r3);
+  Sphere_3 sphere4(CGAL::ORIGIN, r4*r4);
+  Sphere_3 sphere5(CGAL::ORIGIN, r5*r5);
 
 //   const Sphere_3 bounding_sphere(CGAL::ORIGIN, 
 //                                  bounding_sphere_radius*bounding_sphere_radius);
@@ -283,11 +356,11 @@ int main(int, char**)
 //   Implicit_sphere sphere4(Sphere(r4), bounding_sphere, precision);
 //   Implicit_sphere sphere5(Sphere(r5), bounding_sphere, precision);
 
-  typedef CGAL::Multi_surface_3<Sphere_3, Sphere_3> Surface;
-//   typedef CGAL::Multi_surface_3<Surface_2, Sphere_3> Surface_3;
-//   typedef CGAL::Multi_surface_3<Surface_3, Sphere_3> Surface_4;
-//   typedef CGAL::Multi_surface_3<Surface_4, Sphere_3> Surface_5;
-//   typedef Surface_5 Surface;
+  typedef CGAL::Multi_surface_3<Sphere_3, Sphere_3> Surface_2;
+  typedef CGAL::Multi_surface_3<Surface_2, Sphere_3> Surface_3;
+  typedef CGAL::Multi_surface_3<Surface_3, Sphere_3> Surface_4;
+  typedef CGAL::Multi_surface_3<Surface_4, Sphere_3> Surface_5;
+  typedef Surface_5 Surface;
 
 //   typedef CGAL::Multi_surface_3<Implicit_sphere, Implicit_sphere> Surface_2;
 //   typedef CGAL::Multi_surface_3<Surface_2, Implicit_sphere> Surface_3;
@@ -295,10 +368,10 @@ int main(int, char**)
 //   typedef CGAL::Multi_surface_3<Surface_4, Implicit_sphere> Surface_5;
 //   typedef Surface_5 Surface;
 
-  Surface surface(sphere1, sphere2);
-//   Surface_3 surface_3(surface_2, sphere3);
-//   Surface_4 surface_4(surface_3, sphere4);
-//   Surface surface(surface_4, sphere5);
+  Surface_2 surface_2(sphere1, sphere2);
+  Surface_3 surface_3(surface_2, sphere3);
+  Surface_4 surface_4(surface_3, sphere4);
+  Surface surface(surface_4, sphere5);
 
   Tr tr;
   C2t3 c2t3(tr);
@@ -317,21 +390,18 @@ int main(int, char**)
   Single_oracle single_oracle_4(Set_indices(4));
   Single_oracle single_oracle_5(Set_indices(5));
 
-  Oracle_2 oracle(single_oracle_1, single_oracle_2);
-//   Oracle_3 oracle_3(oracle_2, single_oracle_3);
-//   Oracle_4 oracle_4(oracle_3, single_oracle_4);
-//   Oracle_5 oracle(oracle_4, single_oracle_5);
+  Oracle_2 oracle_2(single_oracle_1, single_oracle_2);
+  Oracle_3 oracle_3(oracle_2, single_oracle_3);
+  Oracle_4 oracle_4(oracle_3, single_oracle_4);
+  Oracle_5 oracle(oracle_4, single_oracle_5);
 
-  CGAL::Surface_mesher::Uniform_size_criterion<Tr>
-    uniform_size_criterion (facets_uniform_size_bound); 
   CGAL::Surface_mesher::Aspect_ratio_criterion<Tr>
     aspect_ratio_criterion (facets_aspect_ratio_bound);
-  CGAL::Surface_mesher::Vertices_on_the_same_surface_criterion<Tr>
-    vertices_on_the_same_surface_criterion;
+  Uniform_size_multi_surface_criterion 
+    uniform_size_multi_surface_criterion(facets_size_bounds);
 
   std::vector<Criterion*> criterion_vector;
-  criterion_vector.push_back(&uniform_size_criterion);
-  criterion_vector.push_back(&vertices_on_the_same_surface_criterion);
+  criterion_vector.push_back(&uniform_size_multi_surface_criterion);
   criterion_vector.push_back(&aspect_ratio_criterion);
   Multi_criterion multi_criterion (criterion_vector);
 

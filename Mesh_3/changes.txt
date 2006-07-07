@@ -1,3 +1,11 @@
+7 July 2006 Laurent Rineau
+- in test/Mesh_3/combined_spheres*.C:
+  - new surface criterion class, named Uniform_size_multi_surface_criterion
+    It does at the same time the job of
+    CGAL::Surface_mesher::Vertices_on_the_same_surface_criterion
+    and add size bounds, different for each surfaces.
+  - This fixes the "combined_spheres hot spots" problem.
+
 5 July 2006 Laurent Rineau
 - move Point_traits.h from Mesh_3 to Surface_mesher, to avoid an unneeded
 dependancy

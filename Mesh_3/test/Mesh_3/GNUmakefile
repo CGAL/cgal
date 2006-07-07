@@ -19,7 +19,8 @@ CXXFLAGS = \
 	   -I../../../Triangulation_3/include \
            -I../../include \
 	   -I../../../Data_structure_for_queries_3/include \
-           -I ../../../Surface_mesher/include \
+	   -I../../../Mesh_2/include \
+           -I../../../Surface_mesher/include \
 	   $(OTHER_INCLUDES) \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
