@@ -33,17 +33,17 @@ Packages may be rejected if they do, and the contents won't go into releases.
 The directory structure of a submission should be as follows: 
 
 \begin{verbatim}
-      +--- include/CGAL
+      +--- include/CGAL/
       |
-      +--- src/
+      +--- src/{CGAL|CGALQt|...}/
       |
-      +--- test/<testdir>
+      +--- test/<testdir>/
       |
       +--- doc_tex/
       |
-      +--- examples/<exampledir>
+      +--- examples/<exampledir>/
       |
-      +--- demo/<demodir>
+      +--- demo/<demodir>/
       |
       +--- auxiliary/
       |
@@ -68,8 +68,10 @@ The directory structure of a submission should be as follows:
        \index{source\ files!{\tt .h} files}
        contains the {\tt .h} files for the package.
   \item[{\tt src}]\index{src directory@{\tt src} directory}
-       \index{source\ files!{\tt .C} files}
-       contains the {\tt .C} files (if any) for the package.
+       \index{source\ files!{\tt .cpp} files}
+       contains the {\tt .cpp} files (if any) for the package.
+       They are gathered in subdirectories corresponding to each
+       library (be it static or shared).
      \item[{\tt test}]\index{test directory@{\tt test} directory!for
          packages} contains the test suite code for the package. See
        Section~\ref{sec:test_subdirectory} for a detailed description.
@@ -129,9 +131,9 @@ The directory structure of a submission should be as follows:
   \item[{\tt long\_description.txt}]%
        \ccIndexMainItem[c]{\tt long_description.txt}
        may be added with more detailed information about the submission. 
-  \item[\ccAnchor{example/maintainer}{{\tt maintainer}}]%
+  \item[\ccAnchor{maintainer}{{\tt maintainer}}]%
        \index{maintainer file@{\tt maintainer} file}
-       should be used to names the maintainers of the package. The file should
+       should be used to name the maintainers of the package. The file should
        have for each maintainer a line with the following format:
        \begin{verse}
        {\it name} $<${\it email address}$>$\\
