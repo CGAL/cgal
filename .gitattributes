@@ -1808,6 +1808,7 @@ Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unse
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text svneol=unset#application/octet-stream
+Surface_mesher/find_debug_macros -text
 Triangulation_2/demo/Triangulation_2/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/help/conflict_zone.gif -text svneol=unset#image/gif
