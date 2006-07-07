@@ -1,3 +1,15 @@
+7 July 2006 Laurent Rineau
+- add the ability to set the background color, and properties of the layer
+Show_in_domain. It was a bit a fun. I have done that in 10mn, with the
+class Qt_widget_styled_layer!!
+
+  I have taken a nice screenshot, with the file france.poly as input. We
+  can see here the Noirmoutier island, near where I live:
+
+    http://www.di.ens.fr/~rineau/CGAL/mesh_demo-noirmoutier.png
+
+  Some data files lives in http://www.di.ens.fr/~rineau/CGAL/data/
+
 6 June 2006 Laurent Rineau
 - merge trunk modifications into the branch "cannot_wait_for_CGAL-3.2"
   I will copy the branch into the trunk.

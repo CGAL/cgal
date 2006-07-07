@@ -68,6 +68,7 @@ int main(int, char*)
 #include "Qt_layer_show_circles.h"
 #include "Show_clusters.h"
 #include <CGAL/IO/Qt_widget_show_mouse_coordinates.h>
+#include "Qt_widget_styled_layer.h"
 
 #ifdef CGAL_MESH_2_DEBUG_DRAW
 #include "Debug_layer.h"
@@ -188,18 +189,34 @@ struct Edge_to_segment {
   }
 };
 
+struct Background_color : public CGAL::Qt_widget_styled_layer
+{
+  Background_color (CGAL::Color c = CGAL::WHITE)
+  {
+    style()->setColor("Back ground color", 
+                      QColor(c.red(), c.green(), c.blue()));
+  }
+
+  void draw()
+  {
+    widget->setBackgroundColor(style()->getColor("Back ground color"));
+  }
+};
+
 template <class Tr>
-class Show_in_domain_faces : public CGAL::Qt_widget_layer
+class Show_in_domain_faces : public CGAL::Qt_widget_styled_layer
 {
   Tr *cdt;
-  CGAL::Color color;
 public:
   Show_in_domain_faces(Tr *t, CGAL::Color c=CGAL::GREEN,
                        QObject* parent = 0, const char* name = 0)
-    : Qt_widget_layer(parent, name),
-      cdt(t),
-      color(c) 
+    : Qt_widget_styled_layer(0, parent, name),
+      cdt(t)
   {
+    QColor color(c.red(), c.green(), c.blue());
+    style()->setColor("Fill color", color);
+    style()->setInt("Line width", 0);
+    style()->setColor("Segment color", color);
   }
 
   typedef typename Tr::Finite_faces_iterator Face_iterator;
@@ -208,14 +225,21 @@ public:
   {
     QColor old_fill_color = widget->fillColor();
     int old_line_width = widget->lineWidth();
-    *widget << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
+    QColor old_line_color = widget->color();
+
+    widget->setColor(style()->getColor("Segment color"));
+    widget->setLineWidth(style()->getInt("Line width"));
+    widget->setFillColor(style()->getColor("Fill color"));
+
     for(Face_iterator fit=cdt->finite_faces_begin();
         fit!=cdt->finite_faces_end();
         ++fit)
       if(fit->is_in_domain())
         *widget << cdt->triangle(fit);
+
     widget->setFillColor(old_fill_color);
     widget->setLineWidth(old_line_width);
+    widget->setColor(old_line_color);
   }
 };
 
@@ -551,6 +575,8 @@ public:
 
       // --- LAYERS ---
 
+      Background_color* background_color_layer = new Background_color();
+
       show_points =
         new Show_points_from_triangulation(&cdt,
                                            &Tr::finite_vertices_begin,
@@ -614,6 +640,7 @@ public:
 #ifdef CGAL_MESH_2_DEBUG_DRAW
       widget->attach(new CGAL::Debug_layer());
 #endif
+      widget->attach(background_color_layer);
       widget->attach(show_in_domain);
       widget->attach(show_bad_faces);
       widget->attach(show_triangulation);
@@ -650,12 +677,14 @@ public:
       connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
               this, SLOT(get_cgal_object(CGAL::Object)));
 
-      const int number_of_styled_layers = 4;
+      const int number_of_styled_layers = 6;
       CGAL::Qt_widget_styled_layer* styled_layers[number_of_styled_layers] =
-        { show_points,
+        { background_color_layer,
+          show_points,
           show_seeds,
+          show_triangulation,
           show_constraints,
-          show_triangulation};
+          show_in_domain};
 
       prefs = new Preferences(0, "Preferences", false);
       prefs->setCaption("Layers properties");
@@ -1382,7 +1411,6 @@ private:
   int menu_id;
 
   CGAL::Qt_widget* widget;
-  QColor background_color;
   CGAL::Qt_widget_get_point<K>* get_point;
   CGAL::Qt_widget_get_point<K>* get_seed;
   CGAL::Qt_widget_get_polygon<CGALPolygon>* get_polygon;
