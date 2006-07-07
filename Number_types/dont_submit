@@ -1,2 +1,3 @@
 makefile
 cgal_test
+KNOWN_PROBLEMS_WITH_FLOATING_POINT
