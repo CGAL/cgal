@@ -14,12 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -Iinclude \
            -I../../include \
-           -I../../../Interval_arithmetic/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
@@ -40,9 +39,11 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                bench_interval$(EXE_EXT) \
                 doubletst$(EXE_EXT) \
                 floattst$(EXE_EXT) \
                 Gmpq$(EXE_EXT) \
+                Interval_nt$(EXE_EXT) \
                 known_bit_size_integers$(EXE_EXT) \
                 long_doubletst$(EXE_EXT) \
                 MP_Float$(EXE_EXT) \
@@ -50,10 +51,15 @@ all:            \
                 Quotient$(EXE_EXT) \
                 quotient_io$(EXE_EXT) \
                 root_of_2$(EXE_EXT) \
+                rounding_modes$(EXE_EXT) \
                 simplest_rational$(EXE_EXT) \
                 _test_valid_finite_double$(EXE_EXT) \
                 _test_valid_finite_float$(EXE_EXT) \
+                to_interval_test$(EXE_EXT) \
                 utilities$(EXE_EXT) 
+
+bench_interval$(EXE_EXT): bench_interval$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bench_interval bench_interval$(OBJ_EXT) $(LDFLAGS)
 
 doubletst$(EXE_EXT): doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)doubletst doubletst$(OBJ_EXT) $(LDFLAGS)
@@ -63,6 +69,9 @@ floattst$(EXE_EXT): floattst$(OBJ_EXT)
 
 Gmpq$(EXE_EXT): Gmpq$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Gmpq Gmpq$(OBJ_EXT) $(LDFLAGS)
+
+Interval_nt$(EXE_EXT): Interval_nt$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Interval_nt Interval_nt$(OBJ_EXT) $(LDFLAGS)
 
 known_bit_size_integers$(EXE_EXT): known_bit_size_integers$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)known_bit_size_integers known_bit_size_integers$(OBJ_EXT) $(LDFLAGS)
@@ -85,6 +94,9 @@ quotient_io$(EXE_EXT): quotient_io$(OBJ_EXT)
 root_of_2$(EXE_EXT): root_of_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)root_of_2 root_of_2$(OBJ_EXT) $(LDFLAGS)
 
+rounding_modes$(EXE_EXT): rounding_modes$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)rounding_modes rounding_modes$(OBJ_EXT) $(LDFLAGS)
+
 simplest_rational$(EXE_EXT): simplest_rational$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simplest_rational simplest_rational$(OBJ_EXT) $(LDFLAGS)
 
@@ -94,13 +106,18 @@ _test_valid_finite_double$(EXE_EXT): _test_valid_finite_double$(OBJ_EXT)
 _test_valid_finite_float$(EXE_EXT): _test_valid_finite_float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_float _test_valid_finite_float$(OBJ_EXT) $(LDFLAGS)
 
+to_interval_test$(EXE_EXT): to_interval_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)to_interval_test to_interval_test$(OBJ_EXT) $(LDFLAGS)
+
 utilities$(EXE_EXT): utilities$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)utilities utilities$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   bench_interval.clean \
                    doubletst.clean \
                    floattst.clean \
                    Gmpq.clean \
+                   Interval_nt.clean \
                    known_bit_size_integers.clean \
                    long_doubletst.clean \
                    MP_Float.clean \
@@ -108,9 +125,11 @@ clean: \
                    Quotient.clean \
                    quotient_io.clean \
                    root_of_2.clean \
+                   rounding_modes.clean \
                    simplest_rational.clean \
                    _test_valid_finite_double.clean \
                    _test_valid_finite_float.clean \
+                   to_interval_test.clean \
                    utilities.clean 
 
 #---------------------------------------------------------------------#
@@ -118,5 +137,9 @@ clean: \
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
