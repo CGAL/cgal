@@ -42,7 +42,6 @@ template<class Gt, class SS>
 Straight_skeleton_builder_2<Gt,SS>::Straight_skeleton_builder_2 ( Traits const& aTraits )
   :
   mTraits(aTraits)
- ,Equal     (aTraits.get<typename Traits::Equal_2    > ())
  ,mEventCompare(this)
  ,mVertexID(0)
  ,mEdgeID(0)
@@ -64,7 +63,7 @@ template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::InsertEventInPQ( EventPtr aEvent )
 {
   mPQ.push(aEvent);
-  CGAL_STSKEL_BUILDER_TRACE(1, "Main PQ: " << *aEvent);
+  CGAL_STSKEL_BUILDER_TRACE(2, "Main PQ: " << *aEvent);
 }
 
 template<class Gt, class SS>
@@ -106,19 +105,21 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
 
   if ( lBorderA != lBorderB && lBorderB != lBorderC )
   {
-    if ( ExistEvent(lBorderA,lBorderB,lBorderC) )
+    Sorted_triedge_2 lSortedTriedge = CreateSortedTriedge(lBorderA,lBorderB,lBorderC);
+    
+    if ( ExistEvent(lSortedTriedge) )
     {
       bool lAccepted = true ;
 
-      if ( aLNode->is_skeleton() && IsNewEventInThePast(lBorderA,lBorderB,lBorderC,aLNode) )
+      if ( aLNode->is_skeleton() && IsNewEventInThePast(lBorderA,lBorderB,lBorderC,lSortedTriedge,aLNode) )
         lAccepted = false ;
 
-      if ( aRNode->is_skeleton() && IsNewEventInThePast(lBorderA,lBorderB,lBorderC,aRNode) )
+      if ( aRNode->is_skeleton() && IsNewEventInThePast(lBorderA,lBorderB,lBorderC,lSortedTriedge,aRNode) )
         lAccepted = false ;
 
       if ( lAccepted )
       {
-        rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, aLNode, aRNode ) ) ;
+        rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, lSortedTriedge, aLNode, aRNode ) ) ;
         
         CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*rResult) );
         CGAL_STSKEL_STATS_CODE(++sFoundEdgeEventCount);
@@ -137,6 +138,8 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
 
   SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
   
+  Sorted_triedge_2 lEventSTriedge = lEvent.sorted_triedge();
+  
   Halfedge_handle lReflexLBorder = lEvent.border_a() ;
   Halfedge_handle lReflexRBorder = lEvent.border_b() ;
   Halfedge_handle lOppBorder     = lEvent.border_c() ;
@@ -148,12 +151,12 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
   Halfedge_handle lOppPrevBorder = GetDefiningBorderA(lOppPrevN) ;
   Halfedge_handle lOppNextBorder = GetDefiningBorderA(lOppNextN) ;
 
+  Sorted_triedge_2 lPrevSTriedge = CreateSortedTriedge(lReflexLBorder,lReflexRBorder,lOppPrevBorder);
+  Sorted_triedge_2 lNextSTriedge = CreateSortedTriedge(lReflexLBorder,lReflexRBorder,lOppNextBorder);
+  
   bool lCoupleIsPrev = false ;
         
-  if (  !IsDegenerate(lOppPrevN) 
-      && ExistEvent(lReflexLBorder,lReflexRBorder,lOppPrevBorder) 
-      && AreEventsSimultaneous(lReflexLBorder,lReflexRBorder,lOppBorder,lReflexLBorder,lReflexRBorder,lOppPrevBorder) 
-     )
+  if ( !IsDegenerate(lOppPrevN) && ExistEvent(lPrevSTriedge) && AreEventsSimultaneous(lEventSTriedge,lPrevSTriedge)  )
   {
     lIsPseudoSplitEvent = true ;
     lCoupleIsPrev       = true ;
@@ -161,10 +164,7 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
   }
   else
   {
-    if (  !IsDegenerate(aOppN)  
-        && ExistEvent(lReflexLBorder,lReflexRBorder,lOppNextBorder) 
-        && AreEventsSimultaneous(lReflexLBorder,lReflexRBorder,lOppBorder,lReflexLBorder,lReflexRBorder,lOppNextBorder) 
-       )
+    if ( !IsDegenerate(aOppN) && ExistEvent(lNextSTriedge) && AreEventsSimultaneous(lEventSTriedge,lNextSTriedge) )
     {
       lIsPseudoSplitEvent = true ;
       lCoupleIsPrev       = false ;
@@ -177,8 +177,8 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
   if ( lIsPseudoSplitEvent )
   {
     if ( lCoupleIsPrev )
-         rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lOppPrevN,lSeedN) ) ;
-    else rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lSeedN   ,aOppN) ) ;  
+         rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lEventSTriedge,lOppPrevN,lSeedN) ) ;
+    else rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lEventSTriedge,lSeedN   ,aOppN) ) ;  
     
     rPseudoSplitEvent->SetTimeAndPoint(aEvent->time(),aEvent->point());
   }
@@ -202,23 +202,23 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle   aNod
                                                           , Halfedge_handle aOppositeBorder
                                                           )
 {
-  if ( ExistEvent(aReflexLBorder,aReflexRBorder,aOppositeBorder) )
+  Sorted_triedge_2 lSortedTriedge = CreateSortedTriedge(aReflexLBorder,aReflexRBorder,aOppositeBorder);
+  
+  if ( ExistEvent(lSortedTriedge) )
   {
-    if ( ! ( aNode->is_skeleton() && IsNewEventInThePast(aReflexLBorder,aReflexRBorder,aOppositeBorder,aNode) ) )
+    if ( ! ( aNode->is_skeleton() && IsNewEventInThePast(aReflexLBorder,aReflexRBorder,aOppositeBorder,lSortedTriedge,aNode) ) )
     {
-      EventPtr lEvent = EventPtr( new SplitEvent (aReflexLBorder,aReflexRBorder,aOppositeBorder,aNode) ) ;
+      EventPtr lEvent = EventPtr( new SplitEvent (aReflexLBorder,aReflexRBorder,aOppositeBorder,lSortedTriedge,aNode) ) ;
       
       CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*lEvent) ) ;
       CGAL_STSKEL_STATS_CODE( ++sFoundSplitEventCount );
 
       AddSplitEvent(aNode,lEvent);      
-      //InsertEventInPQ(lEvent);
-      
     }
   }
   else
   {
-    CGAL_STSKEL_BUILDER_TRACE(1,"Spit event for Seed N" << aNode->id() << " against E" << aOppositeBorder->id() << " does not exist." ) ;
+    CGAL_STSKEL_BUILDER_TRACE(4,"Spit event for Seed N" << aNode->id() << " against E" << aOppositeBorder->id() << " does not exist." ) ;
   }
 }
 
@@ -642,7 +642,7 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
                                   << " (E" << lPrevBorder->id() << "->E" << aBorder->id() << "->E" << lNextBorder->id() << ")"
                                 ) ;
                                 
-      if ( IsEventInsideOffsetZone( aEvent->border_a(), aEvent->border_b(), lPrevBorder, aBorder, lNextBorder ) )
+      if ( IsSplitEventInsideOffsetZone( aEvent, lPrevBorder, aBorder, lNextBorder ) )
       {
         rResult = v ;
         CGAL_STSKEL_BUILDER_TRACE ( 3, "That's the correct subedge. Found") ;
@@ -1170,7 +1170,6 @@ void Straight_skeleton_builder_2<Gt,SS>::InsertNextSplitEventInPQ( Vertex_handle
 template<class Gt, class SS>
 void Straight_skeleton_builder_2<Gt,SS>::InsertNextSplitEventsInPQ()
 {
-  CGAL_STSKEL_BUILDER_TRACE(1,"Inserting next split events in PQ");
   for ( typename Vertex_handle_vector::iterator v = mReflexVertices.begin(), ev = mReflexVertices.end(); v != ev ; ++ v )
     InsertNextSplitEventInPQ(*v);
 }
@@ -1192,8 +1191,6 @@ void Straight_skeleton_builder_2<Gt,SS>::Propagate()
     if ( !lEvent->is_excluded() && !IsProcessed(lEvent) )
     {
       CGAL_STSKEL_BUILDER_TRACE (1,"\nStep: " << mStepID << " Event: " << *lEvent ) ;
-      
-      CGAL_STSKEL_BUILDER_TRACE (1,"\nStep: " << mStepID << " Event: " << *lEvent ) ;
       CGAL_STSKEL_BUILDER_SHOW ( SS_IO_AUX::ScopedPointDrawing lDraw(lEvent->point(),CGAL::BLUE,"Event"); )
 
       SetEventTimeAndPoint(*lEvent) ;
@@ -1208,7 +1205,6 @@ void Straight_skeleton_builder_2<Gt,SS>::Propagate()
       ++ mStepID ;
     }
   }
-std::cout << std::endl ;  
 }
 
 template<class Gt, class SS>
@@ -1531,7 +1527,7 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
 
 
 template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::FinishUp()
+bool Straight_skeleton_builder_2<Gt,SS>::FinishUp( bool aMergeCoincidentNodes )
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "\n\nFinishing up...");
 
@@ -1545,43 +1541,42 @@ void Straight_skeleton_builder_2<Gt,SS>::FinishUp()
                 ,boost::bind(&Straight_skeleton_builder_2<Gt,SS>::EraseBisector,this,_1)
                ) ;
                
-  MergeCoincidentNodes();             
+  bool ok = mSSkel->is_valid() ;
+  
+  if ( ok && aMergeCoincidentNodes )
+  {
+    MergeCoincidentNodes();             
+    CGAL_expensive_postcondition( ok = mSSkel->is_valid() ) ;
+  }  
+    
+  return ok ;  
 }
 
 template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::Run()
+bool Straight_skeleton_builder_2<Gt,SS>::Run( bool aMergeCoincidentNodes )
 {
   InitPhase();
   Propagate();
-  FinishUp ();
+  return FinishUp (aMergeCoincidentNodes);
 }
 
 template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::SSkelPtr Straight_skeleton_builder_2<Gt,SS>::construct_skeleton()
+typename Straight_skeleton_builder_2<Gt,SS>::SSkelPtr Straight_skeleton_builder_2<Gt,SS>::construct_skeleton( bool aMergeCoincidentNodes )
 {
+  bool ok = false ;
+  
   try
   {
-    Run() ;
+    ok = Run(aMergeCoincidentNodes) ;
   }
   catch( std::exception const& e ) 
   {
     CGAL_STSKEL_BUILDER_TRACE(0,"EXCEPTION THROWN (" << e.what() << ") during straight skeleton construction.");
-    
-#ifdef CGAL_STRAIGHT_SKELETON_STATS
-std::cerr << "EXCEPTION THROWN (" << e.what() << ") during straight skeleton construction." << std::endl ;
-#endif
+ }
 
-    mSSkel = SSkelPtr() ; 
-  }
-
-  if ( !!mSSkel && !CGAL::HalfedgeDS_const_decorator<SSkel>(*mSSkel).is_valid(false,3) ) 
+  if ( !ok ) 
   {
-    CGAL_STSKEL_BUILDER_TRACE(0,"Result inconsistent.");
-    
-#ifdef CGAL_STRAIGHT_SKELETON_STATS
-std::cerr << "Result incosistent." << std::endl ;
-#endif
-
+    CGAL_STSKEL_BUILDER_TRACE(0,"Invalid result.");
     mSSkel = SSkelPtr() ; 
   }
 

@@ -48,6 +48,12 @@ inline Uncertain<bool> certified_is_zero(const NT& x)
 }
 
 template <class NT>
+inline Uncertain<bool> certified_is_not_zero(const NT& x)
+{
+  return CGAL_NTS is_valid(x) ? make_uncertain(!CGAL_NTS is_zero(x)) : Uncertain<bool>::indeterminate() ; 
+}
+
+template <class NT>
 inline Uncertain<bool> certified_is_one(const NT& x)
 {
   return CGAL_NTS is_valid(x) ? make_uncertain(CGAL_NTS is_one(x) ) : Uncertain<bool>::indeterminate() ;

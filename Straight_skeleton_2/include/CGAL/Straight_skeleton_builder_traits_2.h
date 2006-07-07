@@ -28,6 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {
 
+
 template<class K>
 struct Construct_ss_triedge_2 : Functor_base_2<K>
 {
@@ -47,20 +48,59 @@ struct Construct_ss_triedge_2 : Functor_base_2<K>
 };
 
 template<class K>
-struct Do_ss_event_exist_2 : Functor_base_2<K>
+struct Construct_ss_sorted_triedge_2 : Functor_base_2<K>
+{
+  typedef Functor_base_2<K> Base ;
+  
+  typedef typename Base::FT               FT ;
+  typedef typename Base::Segment_2        Segment_2 ;
+  typedef typename Base::Triedge_2        Triedge_2 ;
+  typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
+
+  typedef Triedge_2    result_type ;
+  typedef Arity_tag<3> Arity ;
+
+  Sorted_triedge_2 operator() ( Triedge_2 const& aT, Triedge_collinearity aC )
+  {
+    return construct_sorted_triedge(aT,aC);
+  }
+};
+
+template<class K>
+struct Get_ss_triedge_collinearity_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
   typedef typename Base::Triedge_2 Triedge_2 ;
 
+  typedef Uncertain<Triedge_collinearity> result_type ;
+  typedef Arity_tag<1>                    Arity ;
+
+  Uncertain<Triedge_collinearity> operator() ( Triedge_2 const& aTriedge ) const
+  {
+    Uncertain<Triedge_collinearity> rResult = certified_triedge_collinearity(aTriedge);
+    
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Get_ss_triedge_collinearity_2",aTriedge);
+
+    return rResult ;
+  }
+};
+
+template<class K>
+struct Do_ss_event_exist_2 : Functor_base_2<K>
+{
+  typedef Functor_base_2<K> Base ;
+
+  typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
+
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<1>    Arity ;
 
-  Uncertain<bool> operator() ( Triedge_2 const& aTriedge ) const
+  Uncertain<bool> operator() ( Sorted_triedge_2 const& aSTriedge ) const
   {
-    Uncertain<bool> rResult = exist_offset_lines_isec2(aTriedge) ;
+    Uncertain<bool> rResult = exist_offset_lines_isec2(aSTriedge) ;
 
-    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTriedge);
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aSTriedge);
 
     return rResult ;
   }
@@ -71,23 +111,23 @@ struct Compare_ss_event_distance_to_seed_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Point_2   Point_2 ;
-  typedef typename Base::Triedge_2 Triedge_2 ;
+  typedef typename Base::Point_2          Point_2 ;
+  typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<3>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( Point_2   const& aP
-                                          , Triedge_2 const& aL
-                                          , Triedge_2 const& aR
+  Uncertain<Comparison_result> operator() ( Point_2          const& aP
+                                          , Sorted_triedge_2 const& aL
+                                          , Sorted_triedge_2 const& aR
                                           ) const
   {
     return compare_offset_lines_isec_dist_to_pointC2(cgal_make_optional(aP),aL,aR) ;
   }
 
-  Uncertain<Comparison_result> operator() ( Triedge_2 const& aS
-                                          , Triedge_2 const& aL
-                                          , Triedge_2 const& aR
+  Uncertain<Comparison_result> operator() ( Sorted_triedge_2 const& aS
+                                          , Sorted_triedge_2 const& aL
+                                          , Sorted_triedge_2 const& aR
                                           ) const
   {
     return compare_offset_lines_isec_dist_to_pointC2(aS,aL,aR) ;
@@ -100,12 +140,12 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Triedge_2 Triedge_2 ;
+  typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( Triedge_2 const& aL, Triedge_2 const& aR ) const
+  Uncertain<Comparison_result> operator() ( Sorted_triedge_2 const& aL, Sorted_triedge_2 const& aR ) const
   {
     Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR) ;
 
@@ -120,12 +160,13 @@ struct Is_ss_event_inside_offset_zone_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Triedge_2 Triedge_2 ;
+  typedef typename Base::Triedge_2        Triedge_2 ;
+  typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
-  Uncertain<bool> operator() ( Triedge_2 const& aE, Triedge_2 const& aZ ) const
+  Uncertain<bool> operator() ( Sorted_triedge_2 const& aE, Triedge_2 const& aZ ) const
   {
     Uncertain<bool> rResult = is_offset_lines_isec_inside_offset_zoneC2(aE,aZ) ;
 
@@ -140,12 +181,12 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Triedge_2 Triedge_2 ;
+  typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
-  Uncertain<bool> operator() ( Triedge_2 const& aA, Triedge_2 const& aB ) const
+  Uncertain<bool> operator() ( Sorted_triedge_2 const& aA, Sorted_triedge_2 const& aB ) const
   {
     Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB);
 
@@ -206,38 +247,72 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   typedef typename Base::Triedge_2        Triedge_2 ;
   typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
 
-  typedef boost::tuple< boost::optional<FT>, boost::optional<Point_2> > result_type ;
+  typedef boost::tuple<FT,Point_2> rtype ;
+  
+  typedef boost::optional<rtype> result_type ;
   
   typedef Arity_tag<1>  Arity ;
 
-  result_type operator() ( Triedge_2 const& triedge ) const
+  result_type operator() ( Sorted_triedge_2 const& triedge ) const
   {
-    optional<FT> t ;
-
-    optional<Point_2> i ;
+    bool lOK = false ;
     
-    Sorted_triedge_2 sorted = collinear_sort(triedge);
+    FT      t(0) ;
+    Point_2 i = ORIGIN ;
 
-    //if ( !sorted.is_indeterminate() )
-    //{
-      CGAL_assertion(sorted.collinear_count() < 3) ;
-  
-      optional< Rational<FT> > qt = compute_offset_lines_isec_timeC2(sorted);
+    CGAL_assertion(triedge.collinear_count() < 3) ;
+
+    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(triedge);
+    
+    if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
+    {
+      t = ot->n() / ot->d();
       
-      i = construct_offset_lines_isecC2(sorted);
-      
-      if ( qt )
-        t = cgal_make_optional(qt->n() / qt->d()) ;
-    //}
-  
-    if ( !t )
-      t = cgal_make_optional( FT(0) );
-      
-    if ( !i )
-      i = cgal_make_optional( Point_2() ) ;
-        
-    return boost::make_tuple(t,i) ;
+      optional<Point_2> oi = construct_offset_lines_isecC2(triedge);
+      if ( oi )
+      {
+        i = *oi ;
+        lOK = is_point_calculation_accurate(t,i,triedge);
+      } 
+    }
+    
+    CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",triedge);
+
+    return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
+    
+  bool is_point_calculation_accurate( double time, Point_2 const& p, Triedge_2 const& triedge ) const 
+  { 
+    Segment_2 const& e0 = triedge.e0() ;
+    Segment_2 const& e1 = triedge.e1() ;
+    Segment_2 const& e2 = triedge.e2() ;
+    
+    Point_2 const& e0s = e0.source();
+    Point_2 const& e0t = e0.target();
+    
+    Point_2 const& e1s = e1.source();
+    Point_2 const& e1t = e1.target();
+    
+    Point_2 const& e2s = e2.source();
+    Point_2 const& e2t = e2.target();
+  
+    FT d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y());
+    FT d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y());
+    FT d2 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e2s.x(),e2s.y(),e2t.x(),e2t.y());
+  
+    FT time2 = CGAL_NTS square(time);
+    
+    FT diff0 = CGAL_NTS square(d0-time2);
+    FT diff1 = CGAL_NTS square(d1-time2);
+    FT diff2 = CGAL_NTS square(d2-time2);
+    
+    FT const eps = 1e-5 ;
+    return diff0 < eps && diff1 < eps && diff2 < eps ;
+  }
+
+  template<class NT>  
+  bool is_point_calculation_accurate( NT const& time, Point_2 const& p, Triedge_2 const& triedge ) const { return true ; }
+  
 };
 
 } // namespace CGAL_SS_i
@@ -245,6 +320,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 template<class K>
 struct Straight_skeleton_builder_traits_2_functors
 {
+  typedef CGAL_SS_i::Get_ss_triedge_collinearity_2      <K> Get_ss_triedge_collinearity_2 ;
   typedef CGAL_SS_i::Do_ss_event_exist_2                <K> Do_ss_event_exist_2 ;
   typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Compare_ss_event_distance_to_seed_2<K> Compare_ss_event_distance_to_seed_2 ;
@@ -254,6 +330,7 @@ struct Straight_skeleton_builder_traits_2_functors
   typedef CGAL_SS_i::Are_ss_edges_collinear_2           <K> Are_ss_edges_collinear_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
   typedef CGAL_SS_i::Construct_ss_triedge_2             <K> Construct_ss_triedge_2 ;
+  typedef CGAL_SS_i::Construct_ss_sorted_triedge_2      <K> Construct_ss_sorted_triedge_2 ;
 } ;
 
 template<class K>
@@ -265,11 +342,8 @@ struct Straight_skeleton_builder_traits_2_base
   typedef typename K::Point_2   Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
   
-  typedef CGAL_SS_i::Triedge_2<K> Triedge_2 ;
-
-  typedef typename K::Equal_2     Equal_2 ;
-  typedef typename K::Left_turn_2 Left_turn_2 ;
-  typedef typename K::Collinear_2 Collinear_2 ;
+  typedef CGAL_SS_i::Triedge_2       <K> Triedge_2 ;
+  typedef CGAL_SS_i::Sorted_triedge_2<K> Sorted_triedge_2 ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
   
@@ -285,6 +359,9 @@ class Straight_skeleton_builder_traits_2_impl<Tag_false,K> : public Straight_ske
 
 public:
 
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Get_ss_triedge_collinearity_2>
+    Get_ss_triedge_collinearity_2 ;
+    
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Do_ss_event_exist_2>
     Do_ss_event_exist_2 ;
 
@@ -307,8 +384,8 @@ public:
     Are_ss_edges_collinear_2 ;
 
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
-
   typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;
+  typedef typename Unfiltering::Construct_ss_sorted_triedge_2       Construct_ss_sorted_triedge_2 ;
 } ;
 
 template<class K>
@@ -325,14 +402,22 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
   typedef Cartesian_converter<K,FK> BaseC2F;
   typedef Cartesian_converter<EK,K> BaseE2C;
   typedef Cartesian_converter<FK,K> BaseF2C;
+  typedef Cartesian_converter<K,K>  BaseC2C;
   
   typedef CGAL_SS_i::SS_converter<BaseC2E> C2E ;
   typedef CGAL_SS_i::SS_converter<BaseC2F> C2F ;
   typedef CGAL_SS_i::SS_converter<BaseE2C> E2C ;
-  typedef CGAL_SS_i::SS_converter<BaseF2C> F2C ;
+  typedef CGAL_SS_i::SS_converter<BaseC2C> C2C ;
 
 public:
 
+  typedef Filtered_predicate<typename Exact    ::Get_ss_triedge_collinearity_2
+                            ,typename Filtering::Get_ss_triedge_collinearity_2
+                            , C2E
+                            , C2F
+                            >
+                            Get_ss_triedge_collinearity_2 ;
+                            
   typedef Filtered_predicate<typename Exact    ::Do_ss_event_exist_2
                             ,typename Filtering::Do_ss_event_exist_2
                             , C2E
@@ -382,19 +467,18 @@ public:
                             >
                             Are_ss_edges_collinear_2 ;
                             
-  typedef Filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
-                               , typename Exact      ::Construct_ss_event_time_and_point_2
-                               , typename Filtering  ::Construct_ss_event_time_and_point_2   
-                               , C2E
-                               , C2F
-                               , E2C
-                               , F2C
-                               > 
-                               Construct_ss_event_time_and_point_2 ; // This uses internally a predicate so must be filtered
-                               
-  //typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
-  
-  typedef typename Unfiltering::Construct_ss_triedge_2              Construct_ss_triedge_2 ;
+  typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
+                                                        , typename Exact      ::Construct_ss_event_time_and_point_2
+                                                        , typename Unfiltering::Construct_ss_event_time_and_point_2
+                                                        , C2E
+                                                        , C2C
+                                                        , E2C
+                                                        , C2C
+                                                        >
+                                                        Construct_ss_event_time_and_point_2 ;
+                                
+  typedef typename Unfiltering::Construct_ss_triedge_2        Construct_ss_triedge_2 ;
+  typedef typename Unfiltering::Construct_ss_sorted_triedge_2 Construct_ss_sorted_triedge_2 ;
 
 } ;
 
@@ -404,6 +488,7 @@ class Straight_skeleton_builder_traits_2
 {
 } ;
 
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Get_ss_triedge_collinearity_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Do_ss_event_exist_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_distance_to_seed_2);
@@ -413,6 +498,7 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_parallel_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_collinear_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_triedge_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_sorted_triedge_2);
 
 CGAL_END_NAMESPACE
 

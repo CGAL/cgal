@@ -20,8 +20,6 @@
 #include<fstream>
 #include<sstream>   
 
-#define CGAL_STRAIGHT_SKELETON_STATS    
-
 #include <CGAL/test_sls_builder_types.h> 
 
 #include <CGAL/Real_timer.h>

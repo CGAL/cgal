@@ -35,9 +35,9 @@ namespace CGAL_SS_i
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT      t
-                                                , Segment_2<K> const& e0
-                                                , Segment_2<K> const& e1    
+optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t
+                                                , Segment_2<K> const&   e0
+                                                , Segment_2<K> const&   e1    
                                                 )
 {
   typedef typename K::FT FT ;

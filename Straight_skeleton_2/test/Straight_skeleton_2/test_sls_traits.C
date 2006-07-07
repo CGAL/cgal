@@ -31,8 +31,6 @@ void Straight_skeleton_traits_external_trace( std::string s )
 
 std::string sPrefix ;
 
-#include <CGAL/test_sls_traits_aux.C>
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
 typedef K::FT        FT;
@@ -40,6 +38,9 @@ typedef K::Point_2   Point ;
 typedef K::Segment_2 Segment ;
 
 typedef CGAL::Straight_skeleton_builder_traits_2<K> Traits ;
+
+typedef Traits::Triedge_2        Triedge ;
+typedef Traits::Sorted_triedge_2 Sorted_triedge ;
 
 Traits sTraits ;
 
@@ -78,16 +79,16 @@ sGrid ;
 
 using namespace CGAL::CGAL_SS_i ;
 
-struct triedge
+struct triple
 {
-  triedge( char const* desc )
+  triple( char const* desc )
   {
     mP[0]         = sGrid.at(desc[0]);
     mP[1] = mP[2] = sGrid.at(desc[1]);
     mP[3] = mP[4] = sGrid.at(desc[2]);
     mP[5]         = sGrid.at(desc[3]);
   }
-  triedge( char const* desc0, char const* desc1 )
+  triple( char const* desc0, char const* desc1 )
   {
     mP[0]         = sGrid.at(desc0[0]);
     mP[1] = mP[2] = sGrid.at(desc0[1]);
@@ -98,9 +99,7 @@ struct triedge
 
   int idx( char const* d, int i ) { return d[i] - 'a' ; }
 
-  typedef Traits::Triedge_2 Triedge ;
-
-  Triedge triple() const
+  Triedge triedge() const
   {
     return Triedge( Segment( Point(mP[0].x(),mP[0].y()),  Point(mP[1].x(),mP[1].y()))
                   , Segment( Point(mP[2].x(),mP[2].y()),  Point(mP[3].x(),mP[3].y()))
@@ -113,16 +112,17 @@ struct triedge
     return (os << '(' << aP.x() << ',' << aP.y() << ')' );
   }
 
-  friend std::ostream& operator<<( std::ostream& os, triedge const& aTriedge )
+  friend std::ostream& operator<<( std::ostream& os, triple const& aTriple )
   {
-    return (os << "{[" << aTriedge.mP[0] << "->" << aTriedge.mP[1] << "]["
-                       << aTriedge.mP[2] << "->" << aTriedge.mP[3] << "]["
-                       << aTriedge.mP[4] << "->" << aTriedge.mP[5] << "}") ;
+    return (os << "{[" << aTriple.mP[0] << "->" << aTriple.mP[1] << "]["
+                       << aTriple.mP[2] << "->" << aTriple.mP[3] << "]["
+                       << aTriple.mP[4] << "->" << aTriple.mP[5] << "}") ;
   }
 
   Point mP[6];
 } ;
 
+#include <CGAL/test_sls_traits_aux.C>
 
 void test_exist_event()
 {
@@ -134,18 +134,18 @@ void test_exist_event()
 
   const int c = 11 ;
 
-  const triedge triedges[c] = { triedge("fabg")
-                              , triedge("fbci")
-                              , triedge("abfa")
-                              , triedge("fbcg")
-                              , triedge("abch")
-                              , triedge("abci")
-                              , triedge("abcg")
-                              , triedge("afgl")
-                              , triedge("aght")
-                              , triedge("agc","qr")
-                              , triedge("acga")
-                              } ;
+  const triple triples[c] = { triple("fabg")
+                            , triple("fbci")
+                            , triple("abfa")
+                            , triple("fbcg")
+                            , triple("abch")
+                            , triple("abci")
+                            , triple("abcg")
+                            , triple("afgl")
+                            , triple("aght")
+                            , triple("agc","qr")
+                            , triple("acga")
+                            } ;
 
   const bool expected[c] = {true
                            ,true
@@ -163,7 +163,7 @@ void test_exist_event()
                            };
 
   for(int i = 0 ; i < c ; ++ i )
-    test_exist_event(i,sTraits,triedges[i],expected[i]) ;
+    test_exist_event(i,sTraits,triples[i],expected[i]) ;
 }
 
 void test_compare_events()
@@ -176,17 +176,17 @@ void test_compare_events()
 
   const int c = 4 ;
 
-  const triedge triedgeA[c] = { triedge("fabg")
-                              , triedge("upqv")
-                              , triedge("bgim")
-                              , triedge("abch")
-                              } ;
+  const triple tripleA[c] = { triple("fabg")
+                            , triple("upqv")
+                            , triple("bgim")
+                            , triple("abch")
+                            } ;
 
-  const triedge triedgeB[c] = { triedge("fbci")
-                              , triedge("vqrw")
-                              , triedge("dmlh")
-                              , triedge("abci")
-                              } ;
+  const triple tripleB[c] = { triple("fbci")
+                            , triple("vqrw")
+                            , triple("dmlh")
+                            , triple("abci")
+                            } ;
 
   const CGAL::Comparison_result expected[c] = {CGAL::SMALLER
                                               ,CGAL::EQUAL
@@ -195,7 +195,7 @@ void test_compare_events()
                                               };
 
   for(int i = 0 ; i < c ; ++ i )
-    test_compare_events(i,sTraits,triedgeA[i],triedgeB[i],expected[i]) ;
+    test_compare_events(i,sTraits,tripleA[i],tripleB[i],expected[i]) ;
 }
 
 void test_compare_sdist_to_seed1()
@@ -213,17 +213,17 @@ void test_compare_sdist_to_seed1()
                         , sGrid.at('g')
                         , sGrid.at('b')
                         } ;
-  const triedge triedgeA[c] = { triedge("gcin")
-                              , triedge("agc","tp")
-                              , triedge("agc","lk")
-                              , triedge("abcj")
-                              } ;
+  const triple tripleA[c] = { triple("gcin")
+                            , triple("agc","tp")
+                            , triple("agc","lk")
+                            , triple("abcj")
+                            } ;
 
-  const triedge triedgeB[c] = { triedge("gcij")
-                              , triedge("agc","on")
-                              , triedge("agc","nm")
-                              , triedge("abcg")
-                              } ;
+  const triple tripleB[c] = { triple("gcij")
+                            , triple("agc","on")
+                            , triple("agc","nm")
+                            , triple("abcg")
+                            } ;
 
   const CGAL::Comparison_result expected[c] = {CGAL::SMALLER
                                               ,CGAL::LARGER
@@ -232,7 +232,7 @@ void test_compare_sdist_to_seed1()
                                               };
 
   for(int i = 0 ; i < c ; ++ i )
-    test_compare_sdist_to_seed(i,sTraits,seed[i],triedgeA[i],triedgeB[i],expected[i]) ;
+    test_compare_sdist_to_seed(i,sTraits,seed[i],tripleA[i],tripleB[i],expected[i]) ;
 }
 
 void test_compare_sdist_to_seed2()
@@ -245,15 +245,15 @@ void test_compare_sdist_to_seed2()
 
   const int c = 1 ;
 
-  const triedge triedgeA[c] = { triedge("fach")
-                              //, triedge("upqv")
+  const triple tripleA[c] = { triple("fach")
+                              //, triple("upqv")
                               } ;
-  const triedge triedgeB[c] = { triedge("gcin")
-                              //, triedge("agc","pt")
+  const triple tripleB[c] = { triple("gcin")
+                              //, triple("agc","pt")
                               } ;
 
-  const triedge triedgeC[c] = { triedge("gcij")
-                              //, triedge("agc","no")
+  const triple triedgeC[c] = { triple("gcij")
+                              //, triple("agc","no")
                               } ;
 
   const CGAL::Comparison_result expected[c] = {CGAL::SMALLER
@@ -261,7 +261,7 @@ void test_compare_sdist_to_seed2()
                                               };
 
   for(int i = 0 ; i < c ; ++ i )
-    test_compare_sdist_to_seed(i,sTraits,triedgeA[i],triedgeB[i],triedgeC[i],expected[i]) ;
+    test_compare_sdist_to_seed(i,sTraits,tripleA[i],tripleB[i],triedgeC[i],expected[i]) ;
 }
 
 
@@ -275,17 +275,17 @@ void test_is_inside_offset_zone()
 
   const int c = 4 ;
 
-  const triedge triedgeA[c] = { triedge("gmi","yu")
-                              , triedge("afb","yu")
-                              , triedge("gmi","tp")
-                              , triedge("afb","tp")
-                              } ;
+  const triple tripleA[c] = { triple("gmi","yu")
+                            , triple("afb","yu")
+                            , triple("gmi","tp")
+                            , triple("afb","tp")
+                            } ;
 
-  const triedge triedgeB[c] = { triedge("tyup")
-                              , triedge("tyup")
-                              , triedge("xsrw")
-                              , triedge("xsrw")
-                              } ;
+  const triple tripleB[c] = { triple("tyup")
+                            , triple("tyup")
+                            , triple("xsrw")
+                            , triple("xsrw")
+                            } ;
 
   const bool expected[c] = {true
                            ,false
@@ -294,7 +294,7 @@ void test_is_inside_offset_zone()
                            };
 
   for(int i = 0 ; i < c ; ++ i )
-    test_is_inside_offset_zone(i,sTraits,triedgeA[i],triedgeB[i],expected[i]) ;
+    test_is_inside_offset_zone(i,sTraits,tripleA[i],tripleB[i],expected[i]) ;
 }
 
 typedef double* edge ;

@@ -18,10 +18,33 @@
 #ifndef CGAL_STRAIGHT_SKELETON_AUX_H
 #define CGAL_STRAIGHT_SKELETON_AUX_H 1
 
+#include <boost/optional/optional.hpp>
+#include <boost/none.hpp>
+
 //
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 //
 CGAL_BEGIN_NAMESPACE
+
+enum Triedge_collinearity
+{ 
+    TRIEDGE_COLLINEARITY_NONE
+  , TRIEDGE_COLLINEARITY_01
+  , TRIEDGE_COLLINEARITY_12
+  , TRIEDGE_COLLINEARITY_02
+  , TRIEDGE_COLLINEARITY_ALL
+} ;
+
+namespace CGALi 
+{
+
+template <>
+struct Minmax_traits< Triedge_collinearity >
+{
+  static const Triedge_collinearity min = TRIEDGE_COLLINEARITY_NONE;
+  static const Triedge_collinearity max = TRIEDGE_COLLINEARITY_ALL;
+};
+}
 
 class Ref_counted_base
 {
@@ -207,8 +230,24 @@ CGAL_END_NAMESPACE
           } \
           else register_predicate_success(preds); \
         }
+
+#define CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(expr,K,cons,error) \
+        { \
+          std::ostringstream consss ; \
+          consss << CGAL_STRAIGHT_SKELETON_i_profiling::kernel_type< typename K::FT >() << " . " << cons ; \
+          std::string conss = consss.str(); \
+          if ( !(expr) ) \
+          { \
+            std::ostringstream errss  ; errss << error ; std::string errs = errss.str(); \
+            register_construction_failure(conss,errs); \
+          } \
+          else register_construction_success(conss); \
+        }
 #else
+
 #define CGAL_STSKEL_ASSERT_PREDICATE_RESULT(expr,K,pred,error)
+#define CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(expr,K,cons,error)
+
 #endif
 
 #undef CGAL_STSKEL_ENABLE_TRACE

@@ -35,7 +35,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef K::Point_2                    Point;
 typedef CGAL::Aff_transformation_2<K> Transformation;
-typedef CGAL::Polygon_2<K>            Polygon;
+typedef std::vector<Point>            Polygon;
 typedef boost::shared_ptr<Polygon>    PolygonPtr;
 typedef CGAL::Segment_2<K>            Segment;
 typedef std::vector<PolygonPtr>       Region ;

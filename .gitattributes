@@ -1471,15 +1471,36 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/consecutive_coincident_vertice
 Straight_skeleton_2/demo/Straight_skeleton_2/data/consecutive_coincident_vertices_3.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/consecutive_coincident_vertices_4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate0.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate0a.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate10.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate11.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate12.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate13.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate2.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate20.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate21.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate22.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate22b.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate22c.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate24.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate25.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate26.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate27.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate27b.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate27c.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate27d.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate27e.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate28a.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate28aa.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate28b.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate28c.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate28d.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate28x.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate3.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate5.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate5a.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate6.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate7.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/degenerate8.poly -text svneol=unset#application/octet-stream
@@ -1491,8 +1512,11 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/equal_times_0.poly -text svneo
 Straight_skeleton_2/demo/Straight_skeleton_2/data/hole.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/many_holes.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/masked_double_split.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/demo/Straight_skeleton_2/data/multi_split_1.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/multinode0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/multinode1.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/demo/Straight_skeleton_2/data/near_degenerate_0.poly -text
+Straight_skeleton_2/demo/Straight_skeleton_2/data/near_degenerate_1.poly -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/non_simple0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/norway_101.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/norway_102.poly -text svneol=unset#application/octet-stream
@@ -1610,15 +1634,35 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/consecutive_coincident_vertice
 Straight_skeleton_2/test/Straight_skeleton_2/data/consecutive_coincident_vertices_3.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/consecutive_coincident_vertices_4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate0.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate0a.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate10.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate11.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate12.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate13.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate2.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate20.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate21.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22b.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22c.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate24.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate25.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate26.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27b.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27c.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27d.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27e.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28a.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28aa.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28b.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28c.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28x.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate3.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate5.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate5a.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate6.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate7.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate8.poly -text svneol=unset#application/octet-stream
@@ -1633,6 +1677,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/many_holes.poly -text svneol=u
 Straight_skeleton_2/test/Straight_skeleton_2/data/masked_double_split.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/multinode0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/multinode1.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/near_degenerate_1.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0_b.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/pseudo_split_0.poly -text svneol=unset#application/octet-stream

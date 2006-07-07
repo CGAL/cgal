@@ -43,11 +43,19 @@ PolygonPtr load_polygon( string file )
     in >> ccb_count ; // Unused. Only the outer contour is used in this test.
 
     rPoly = PolygonPtr( new Polygon() );
-    in >> *rPoly;
-    if ( rPoly->is_simple() )
+
+    int v_count ;
+    in >> v_count ;
+    for ( int j = 0 ; j < v_count ; ++ j )
     {
-      if ( rPoly->orientation() != CGAL::CLOCKWISE ) // For this test we need the contour to be placed as a hole
-        rPoly->reverse_orientation();
+      double x,y ;
+      in >> x >> y ;
+      rPoly->push_back( Point(x,y) ) ;
+    }
+    if ( rPoly->size() >= 3 )
+    {
+     if ( ! ( !CGAL::is_simple_2(rPoly->begin(),rPoly->end()) || CGAL::orientation_2(rPoly->begin(),rPoly->end()) == CGAL::CLOCKWISE ) )
+       rPoly = PolygonPtr( new Polygon(rPoly->rbegin(),rPoly->rend()) )  ;
     }
     else
       rPoly = PolygonPtr();     
@@ -68,15 +76,15 @@ void test( std::string file )
      
      CGAL::Real_timer t ;
      
-     CGAL::Bbox_2 lBbox = lPoly->bbox();
+     CGAL::Bbox_2 lBbox = CGAL::bbox_2(lPoly->begin(),lPoly->end());
      
      double w = lBbox.xmax() - lBbox.xmin();
      double h = lBbox.ymax() - lBbox.ymin();
      double s = std::sqrt(w*w+h*h);
      double lOffset = s * 0.3 ;
      
-     boost::optional<double> lMargin = CGAL::compute_outer_frame_margin(lPoly->vertices_begin()
-                                                                       ,lPoly->vertices_end  ()
+     boost::optional<double> lMargin = CGAL::compute_outer_frame_margin(lPoly->begin()
+                                                                       ,lPoly->end  ()
                                                                        ,lOffset
                                                                        );
      if ( lMargin )
@@ -95,7 +103,7 @@ void test( std::string file )
        t.start();
        SlsBuilder builder ;
        builder.enter_contour(lFrame,lFrame+4);
-       builder.enter_contour(lPoly->vertices_begin(),lPoly->vertices_end());
+       builder.enter_contour(lPoly->begin(),lPoly->end());
        SlsPtr sls = builder.construct_skeleton() ;
        t.stop();
        
@@ -110,13 +118,14 @@ void test( std::string file )
          {
            // Find the outmost offset contour (as the one with the biggest area)
            PolygonPtr lOutmost = lContours->front();
-           double lBestArea = CGAL_NTS abs (lOutmost->area());
+           double lBestArea = CGAL_NTS abs ( CGAL::polygon_area_2(lOutmost->begin(),lOutmost->end(),K()));
            for( Region::const_iterator cit = CGAL::successor(lContours->begin()), ecit = lContours->end() ; cit != ecit ; ++ cit )
            {
              PolygonPtr lContour = *cit ;
-             if ( CGAL_NTS abs (lContour->area()) > lBestArea )
+             double lArea = CGAL_NTS abs ( CGAL::polygon_area_2(lContour->begin(),lContour->end(),K()) ) ;
+             if ( lArea > lBestArea )
              {
-               lBestArea = lContour->area();
+               lBestArea = lArea ;
                lOutmost  = lContour ;
              }
            }
@@ -124,12 +133,12 @@ void test( std::string file )
            // Verify that the outmost offset contour is a parallelogram        
            if  ( lOutmost->size() == 5 )
            {
-             double xmin = lOutmost->left_vertex  ()->x() ; 
-             double xmax = lOutmost->right_vertex ()->x() ; 
-             double ymin = lOutmost->bottom_vertex()->y() ; 
-             double ymax = lOutmost->top_vertex   ()->y() ; 
+             double xmin = CGAL::left_vertex_2  (lOutmost->begin(),lOutmost->end())->x() ; 
+             double xmax = CGAL::right_vertex_2 (lOutmost->begin(),lOutmost->end())->x() ; 
+             double ymin = CGAL::bottom_vertex_2(lOutmost->begin(),lOutmost->end())->y() ; 
+             double ymax = CGAL::top_vertex_2   (lOutmost->begin(),lOutmost->end())->y() ; 
              
-             CGAL::Bbox_2 lBBox = lOutmost->bbox();
+             CGAL::Bbox_2 lBBox = CGAL::bbox_2(lOutmost->begin(),lOutmost->end());
              
              // Verify that the outmost offset contour is an iso-rectangle.
              // If it is, assume this offset contour corresponds to the frame.
@@ -159,16 +168,16 @@ void test( std::string file )
        }
      }     
         
-    cout << file << " : " << ( allok ? "OK" : "FAILED!" ) << " (" << t.time() << " seconds)." << endl ;
-    if ( allok )
-    {
+     cout << file << " : " << ( allok ? "OK" : "FAILED!" ) << " (" << t.time() << " seconds)." << endl ;
+     if ( allok )
+     {
       (*ok_list) << file << endl ;
-    }
-    else
-    {
-      (*failed_list) << file << endl ;
-      ++ sFailed ;
-    }
+     }
+     else
+     {
+       (*failed_list) << file << endl ;
+       ++ sFailed ;
+     }
   }
 }
 

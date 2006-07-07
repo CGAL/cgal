@@ -68,6 +68,84 @@ struct Is_filtering_kernel< Exact_predicates_inexact_constructions_kernel >
   typedef Tag_true type ;
 } ;
 
+//
+// This is the same as Filtered_construction but uses optional<result> instead of exceptions.
+//
+template <class AC, class EC, class FC, class C2E, class C2F,
+	  class E2C, class F2C,	bool Protection = true>
+class Exceptionless_filtered_construction
+{
+private:
+  EC Exact_construction;
+  FC Filter_construction;
+  C2E To_Exact;
+  C2F To_Filtered;
+  E2C From_Exact;
+  F2C From_Filtered;
+
+  typedef typename AC::result_type  AC_result_type;
+  typedef typename FC::result_type  FC_result_type;
+  typedef typename EC::result_type  EC_result_type;
+
+public:
+  typedef AC_result_type           result_type;
+  typedef typename AC::Arity       Arity;
+
+public:
+
+  Exceptionless_filtered_construction() {}
+
+  template <class A1>
+  result_type
+  operator()(const A1 &a1) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      FC_result_type fr = Filter_construction(To_Filtered(a1));
+      if ( fr )
+        return From_Filtered(fr);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return From_Exact( Exact_construction(To_Exact(a1)) );
+  }
+  
+  template <class A1, class A2>
+  result_type
+  operator()(const A1 &a1, const A2 &a2) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2));
+      if ( fr )
+        return From_Filtered(fr);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return From_Exact( Exact_construction(To_Exact(a1),To_Exact(a2)) );
+  }
+  
+  template <class A1, class A2, class A3>
+  result_type
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3));
+      if ( fr )
+        return From_Filtered(fr);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return From_Exact( Exact_construction(To_Exact(a1),To_Exact(a2),To_Exact(a3)) );
+  }
+};
 
 
 //
@@ -149,8 +227,6 @@ class Sorted_triedge_2 : public Triedge_2<K>
      , mCCount(aCollinearCount)
      {}
 
-    bool is_indeterminate() const { return mCCount == -1 ; }
-    
     int  collinear_count() const { return mCCount  ; }
 
   private:
@@ -187,37 +263,35 @@ struct SS_converter : Converter
   typedef Triedge_2<Source_kernel> Source_triedge_2 ;
   typedef Triedge_2<Target_kernel> Target_triedge_2 ;
 
-  typedef boost::optional<Source_FT>      Source_optional_FT ;
-  typedef boost::optional<Source_point_2> Source_optional_point_2 ;
+  typedef Sorted_triedge_2<Source_kernel> Source_sorted_triedge_2 ;
+  typedef Sorted_triedge_2<Target_kernel> Target_sorted_triedge_2 ;
   
-  typedef boost::optional<Target_FT>      Target_optional_FT ;
-  typedef boost::optional<Target_point_2> Target_optional_point_2 ;
+  typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
+  typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
   
-  typedef boost::tuple<Source_optional_FT,Source_optional_point_2> Source_time_and_point ;
-  typedef boost::tuple<Target_optional_FT,Target_optional_point_2> Target_time_and_point ;
+  typedef boost::optional<Source_point_2> Source_opt_point_2 ;
+  typedef boost::optional<Target_point_2> Target_opt_point_2 ;
   
-  Target_FT        cvtn(Source_FT n) const  { return this->Converter::operator()(n); }
+  typedef boost::optional<Source_time_and_point_2> Source_opt_time_and_point_2 ;
+  typedef boost::optional<Target_time_and_point_2> Target_opt_time_and_point_2 ;
+  
+  Target_FT        cvtn(Source_FT const& n) const  { return this->Converter::operator()(n); }
 
   Target_point_2   cvtp(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
 
   Target_segment_2 cvts( Source_segment_2 const& e) const { return Target_segment_2(cvtp(e.source()), cvtp(e.target()) ) ; }
   
-  Target_optional_FT cvton( Source_optional_FT n ) const
+  Target_time_and_point_2 cvttp( Source_time_and_point_2 const& v ) const
   {
-    if ( n )
-         return Target_optional_FT(cvtn(*n));
-    else return Target_optional_FT(); 
+    Source_FT      t ;
+    Source_point_2 p ;
+    boost::tie(t,p) = v ;
+    return Target_time_and_point_2(cvtn(t),cvtp(p));
   }
   
-  Target_optional_point_2 cvtop( Source_optional_point_2 const& p ) const
-  {
-    if ( p )
-         return Target_optional_point_2(cvtp(*p));
-    else return Target_optional_point_2(); 
-  }
-  
-  
-  Target_FT        operator()(Source_FT n) const { return cvtn(n) ; }
+  Triedge_collinearity  operator()(Triedge_collinearity c) const { return c ; }
+ 
+  Target_FT        operator()(Source_FT const& n) const { return cvtn(n) ; }
 
   Target_point_2   operator()( Source_point_2 const& p) const { return cvtp(p) ; }
 
@@ -228,14 +302,31 @@ struct SS_converter : Converter
     return Target_triedge_2(cvts(t.e0()), cvts(t.e1()), cvts(t.e2()) ) ;
   }
   
-  Target_time_and_point operator() ( Source_time_and_point const& v ) const
+  Target_sorted_triedge_2 operator()( Source_sorted_triedge_2 const& t) const
   {
-    Source_optional_FT      t ;
-    Source_optional_point_2 p ;
-    boost::tie(t,p) = v ;
-    return Target_time_and_point(cvton(t),cvtop(p));
+    return Target_sorted_triedge_2(cvts(t.e0()), cvts(t.e1()), cvts(t.e2()), t.collinear_count() ) ;
   }
   
+  Target_time_and_point_2 operator() ( Source_time_and_point_2 const& v ) const
+  {
+    return cvttp(v);
+  }
+  
+  Target_opt_point_2 operator()( Source_opt_point_2 const& p) const 
+  {
+    if ( p ) 
+         return Target_opt_point_2(cvtp(*p));
+    else return Target_opt_point_2();
+  }
+
+  Target_opt_time_and_point_2 operator()( Source_opt_time_and_point_2 const& v) const 
+  { 
+    if ( v ) 
+         return Target_opt_time_and_point_2(cvttp(*v));
+    else return Target_opt_time_and_point_2();
+  }
+  
+   
 };
 
 } // namespace CGAL_SS_i

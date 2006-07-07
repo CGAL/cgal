@@ -30,8 +30,7 @@ namespace CGAL_SS_i
 // returns the relative order of 't' w.r.t 'et'.
 // PRECONDITION: There exist a positive distance et for which the offset triple intersect at a single point.
 template<class K>
-Uncertain<Comparison_result>
-compare_offset_against_isec_timeC2 ( typename K::FT t, Triedge_2<K> const& triedge )
+Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT const& t, Sorted_triedge_2<K> const& triedge )
 {
   typedef typename K::FT FT ;
   
@@ -44,20 +43,15 @@ compare_offset_against_isec_timeC2 ( typename K::FT t, Triedge_2<K> const& tried
  
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  Sorted_triedge_2 sorted = collinear_sort(triedge);
-
-  if ( !sorted.is_indeterminate() )
+  Optional_rational et_ = compute_offset_lines_isec_timeC2(triedge);
+  
+  if ( et_ )
   {
-    Optional_rational et_ = compute_offset_lines_isec_timeC2(sorted);
-    
-    if ( et_ )
-    {
-      Quotient et = et_->to_quotient();
-  
-      CGAL_assertion ( CGAL_NTS certified_is_positive(et) ) ;
-  
-      rResult = CGAL_NTS certified_compare(et,t);
-    }
+    Quotient et = et_->to_quotient();
+
+    CGAL_assertion ( CGAL_NTS certified_is_positive(et) ) ;
+
+    rResult = CGAL_NTS certified_compare(et,t);
   }
 
   return rResult ;

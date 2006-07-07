@@ -22,19 +22,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class SSkel>
+template<class SSkel_, class Traits_>
 class Straight_skeleton_builder_event_2 : public Ref_counted_base
 {
+  typedef SSkel_  SSkel ;
+  typedef Traits_ Traits ;
+  
 public:
-
-  typedef Straight_skeleton_builder_event_2<SSkel> Self ;
+ 
+  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Self ;
 
   typedef boost::intrusive_ptr<Self> SelfPtr ;
 
-  typedef typename SSkel::Traits Traits ;
-
-  typedef typename Traits::Point_2 Point_2 ;
-  typedef typename Traits::FT      FT ;
+  typedef typename Traits::Point_2          Point_2 ;
+  typedef typename Traits::FT               FT ;
+  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
@@ -43,14 +45,16 @@ public:
 
 public:
 
-  Straight_skeleton_builder_event_2 (  Halfedge_handle aBorderA
-                                     , Halfedge_handle aBorderB
-                                     , Halfedge_handle aBorderC
+  Straight_skeleton_builder_event_2 (  Halfedge_handle         aBorderA
+                                     , Halfedge_handle         aBorderB
+                                     , Halfedge_handle         aBorderC
+                                     , Sorted_triedge_2 const& aSorted 
                                     )
     :
      mBorderA(aBorderA)
     ,mBorderB(aBorderB)
     ,mBorderC(aBorderC)
+    ,mSorted (aSorted)
     ,mExcluded(false)
   {}
 
@@ -61,24 +65,25 @@ public:
   virtual Vertex_handle seed0() const = 0 ;
   virtual Vertex_handle seed1() const = 0 ;
 
-  Halfedge_handle border_a() const { return mBorderA ; }
-  Halfedge_handle border_b() const { return mBorderB ; }
-  Halfedge_handle border_c() const { return mBorderC ; }
-  Point_2         point   () const { return mP ; }
-  FT              time    () const { return mTime ; }
+  Halfedge_handle         border_a      () const { return mBorderA ; }
+  Halfedge_handle         border_b      () const { return mBorderB ; }
+  Halfedge_handle         border_c      () const { return mBorderC ; }
+  Sorted_triedge_2 const& sorted_triedge() const { return mSorted  ; }
+  Point_2 const&          point         () const { return mP       ; }
+  FT                      time          () const { return mTime    ; }
 
   bool is_excluded() const { return mExcluded ; }
   void Exclude    ()       { mExcluded = true ; }
 
   void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
 
-  friend std::ostream& operator<< ( std::ostream& ss
-                                   ,Straight_skeleton_builder_event_2<SSkel> const& e
-                                  )
+  friend std::ostream& operator<< ( std::ostream& ss, Self const& e )
   {
     ss << "[" ;
     e.dump(ss);
     ss << " p=(" << e.point().x() << "," << e.point().y() << ") t=" << e.time() << "]" ;
+    if ( e.sorted_triedge().collinear_count() > 0 )
+      ss << " {collinear count=" << e.sorted_triedge().collinear_count() << "}" ;
     return ss ;
   }
 
@@ -86,42 +91,46 @@ protected :
 
   virtual void dump ( std::ostream& ss ) const
   {
-    ss << "{E" << mBorderA->id() << ",E" << mBorderB->id() << ",E" << mBorderC->id() << '}' ;
+    ss << "{E" << mBorderA->id() << ",E" << mBorderB->id() << ",E" << mBorderC->id() << "}" ;
   } ;
 
 private :
 
-  Halfedge_handle mBorderA ;
-  Halfedge_handle mBorderB ;
-  Halfedge_handle mBorderC ;
-  Point_2         mP ;
-  FT              mTime ;
-  bool            mExcluded ;
+  Halfedge_handle  mBorderA ;
+  Halfedge_handle  mBorderB ;
+  Halfedge_handle  mBorderC ;
+  Sorted_triedge_2 mSorted ;
+  Point_2          mP ;
+  FT               mTime ;
+  bool             mExcluded ;
 } ;
 
-template<class SSkel>
-class Straight_skeleton_builder_edge_event_2 : public Straight_skeleton_builder_event_2<SSkel>
+template<class SSkel_, class Traits_>
+class Straight_skeleton_builder_edge_event_2 : public Straight_skeleton_builder_event_2<SSkel_,Traits_>
 {
+  typedef SSkel_  SSkel ;
+  typedef Traits_ Traits ;
 
-  typedef Straight_skeleton_builder_event_2<SSkel> Base ;
-
-  typedef typename SSkel::Traits Traits ;
+  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Base ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
   typedef typename Base::Type Type ;
+  
+  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
 
 public:
 
-  Straight_skeleton_builder_edge_event_2 (  Halfedge_handle aBorderA
-                                          , Halfedge_handle aBorderB
-                                          , Halfedge_handle aBorderC
-                                          , Vertex_handle   aLSeed
-                                          , Vertex_handle   aRSeed
+  Straight_skeleton_builder_edge_event_2 (  Halfedge_handle         aBorderA
+                                          , Halfedge_handle         aBorderB
+                                          , Halfedge_handle         aBorderC
+                                          , Sorted_triedge_2 const& aSorted 
+                                          , Vertex_handle           aLSeed
+                                          , Vertex_handle           aRSeed
                                           )
     :
-      Base(aBorderA,aBorderB,aBorderC)
+      Base(aBorderA,aBorderB,aBorderC,aSorted)
     , mLSeed(aLSeed)
     , mRSeed(aRSeed)
   {}
@@ -145,28 +154,31 @@ private :
   Vertex_handle mRSeed ;
 } ;
 
-template<class SSkel>
-class Straight_skeleton_builder_split_event_2 : public Straight_skeleton_builder_event_2<SSkel>
+template<class SSkel_, class Traits_>
+class Straight_skeleton_builder_split_event_2 : public Straight_skeleton_builder_event_2<SSkel_,Traits_>
 {
+  typedef SSkel_  SSkel ;
+  typedef Traits_ Traits ;
 
-  typedef Straight_skeleton_builder_event_2<SSkel> Base ;
-
-  typedef typename SSkel::Traits Traits ;
-
+  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Base ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
+  
   typedef typename Base::Type Type ;
+
+  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
 
 public:
 
-  Straight_skeleton_builder_split_event_2 (  Halfedge_handle aBorderA
-                                           , Halfedge_handle aBorderB
-                                           , Halfedge_handle aBorderC
-                                           , Vertex_handle   aSeed
+  Straight_skeleton_builder_split_event_2 (  Halfedge_handle         aBorderA
+                                           , Halfedge_handle         aBorderB
+                                           , Halfedge_handle         aBorderC
+                                           , Sorted_triedge_2 const& aSorted 
+                                           , Vertex_handle           aSeed
                                          )
     :
-      Base(aBorderA,aBorderB,aBorderC)
+      Base(aBorderA,aBorderB,aBorderC,aSorted)
     , mSeed(aSeed)
   {}
 
@@ -193,28 +205,32 @@ private :
   Vertex_handle mOppR ;
 } ;
 
-template<class SSkel>
-class Straight_skeleton_builder_pseudo_split_event_2 : public Straight_skeleton_builder_event_2<SSkel>
+template<class SSkel_, class Traits_>
+class Straight_skeleton_builder_pseudo_split_event_2 : public Straight_skeleton_builder_event_2<SSkel_,Traits_>
 {
-  typedef Straight_skeleton_builder_event_2<SSkel> Base ;
-
-  typedef typename SSkel::Traits Traits ;
+  typedef SSkel_  SSkel ;
+  typedef Traits_ Traits ;
+  
+  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Base ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
   typedef typename Base::Type Type ;
+  
+  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
 
 public:
 
-  Straight_skeleton_builder_pseudo_split_event_2 ( Halfedge_handle aBorderA
-                                                 , Halfedge_handle aBorderB
-                                                 , Halfedge_handle aBorderC
-                                                 , Vertex_handle   aSeed
-                                                 , Vertex_handle   aOppositeNode
+  Straight_skeleton_builder_pseudo_split_event_2 ( Halfedge_handle         aBorderA
+                                                 , Halfedge_handle         aBorderB
+                                                 , Halfedge_handle         aBorderC
+                                                 , Sorted_triedge_2 const& aSorted 
+                                                 , Vertex_handle           aSeed
+                                                 , Vertex_handle           aOppositeNode
                                                  )
     :
-      Base(aBorderA,aBorderB,aBorderC)
+      Base(aBorderA,aBorderB,aBorderC,aSorted)
     , mSeed(aSeed)
     , mOppNode(aOppositeNode)
   {}

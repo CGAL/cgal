@@ -55,8 +55,9 @@ private:
 
   typedef std::vector<Halfedge_const_handle> Halfedge_vector ;
 
-  typedef typename Traits::Segment_2 Segment_2 ;
-  typedef typename Traits::Triedge_2 Triedge_2 ;
+  typedef typename Traits::Segment_2        Segment_2 ;
+  typedef typename Traits::Triedge_2        Triedge_2 ;
+  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
 
   bool handled_assigned( Halfedge_const_handle aH ) const
   {
@@ -92,6 +93,21 @@ private:
     return Construct_ss_triedge_2(mTraits)(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
 
+  Triedge_collinearity GetCollinearity ( Triedge_2 const& aTriedge ) const
+  {
+    return Get_ss_triedge_collinearity_2(mTraits)(aTriedge);
+  }  
+  
+  Sorted_triedge_2 CreateSortedTriedge ( Halfedge_const_handle aE0
+                                       , Halfedge_const_handle aE1
+                                       , Halfedge_const_handle aE2
+                                       ) const
+  {
+    Triedge_2 lTriedge = CreateTriedge(aE0,aE1,aE2);
+    
+    return Construct_ss_sorted_triedge_2(mTraits)(lTriedge,GetCollinearity(lTriedge) );
+  }
+  
   Comparison_result Compare_offset_against_event_time( FT aT, Halfedge_const_handle aBisector, Halfedge_const_handle aNextBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
@@ -105,7 +121,7 @@ private:
     Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
     Halfedge_const_handle lBorderC = aNextBisector->opposite()->defining_contour_edge();
 
-    return Compare_offset_against_event_time_2(mTraits)(aT,CreateTriedge(lBorderA,lBorderB,lBorderC));
+    return Compare_offset_against_event_time_2(mTraits)(aT,CreateSortedTriedge(lBorderA,lBorderB,lBorderC));
   }
 
   boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const

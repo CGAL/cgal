@@ -77,11 +77,11 @@ private :
 
   typedef typename Traits::Kernel K ;
   
-  typedef typename Traits::FT         FT ;
-  typedef typename Traits::Point_2    Point_2 ;
-  typedef typename Traits::Segment_2  Segment_2 ;
-  typedef typename Traits::Triedge_2  Triedge_2 ;
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2 ;
+  typedef typename Traits::FT                FT ;
+  typedef typename Traits::Point_2           Point_2 ;
+  typedef typename Traits::Segment_2         Segment_2 ;
+  typedef typename Traits::Triedge_2         Triedge_2 ;
+  typedef typename Traits::Sorted_triedge_2  Sorted_triedge_2 ;
   
   typedef typename SSkel::Vertex   Vertex ;
   typedef typename SSkel::Halfedge Halfedge ;
@@ -107,10 +107,10 @@ private :
   
   typedef typename SSkel::size_type size_type ;
 
-  typedef Straight_skeleton_builder_event_2<SSkel>              Event ;
-  typedef Straight_skeleton_builder_edge_event_2<SSkel>         EdgeEvent ;
-  typedef Straight_skeleton_builder_split_event_2<SSkel>        SplitEvent ;
-  typedef Straight_skeleton_builder_pseudo_split_event_2<SSkel> PseudoSplitEvent ;
+  typedef Straight_skeleton_builder_event_2             <SSkel,Traits> Event ;
+  typedef Straight_skeleton_builder_edge_event_2        <SSkel,Traits> EdgeEvent ;
+  typedef Straight_skeleton_builder_split_event_2       <SSkel,Traits> SplitEvent ;
+  typedef Straight_skeleton_builder_pseudo_split_event_2<SSkel,Traits> PseudoSplitEvent ;
 
   typedef boost::intrusive_ptr<Event> EventPtr ;
 
@@ -146,18 +146,6 @@ private :
   {
     bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
     {
-      if ( !handle_assigned(aA->opposite()) )
-        throw straight_skeleton_exception("opposite() missing!");
-        
-      if ( !handle_assigned(aB->opposite()) )
-        throw straight_skeleton_exception("opposite() missing!");
-        
-      if ( !handle_assigned(aA->opposite()->vertex()) )
-        throw straight_skeleton_exception("opposite()->vertex() missing!");
-        
-      if ( !handle_assigned(aB->opposite()->vertex()) )
-        throw straight_skeleton_exception("opposite()->vertex() missing!");
-        
       Point_2 o = aA->vertex()->point();
       Point_2 a = aA->opposite()->vertex()->point();
       Point_2 b = aB->opposite()->vertex()->point();
@@ -183,7 +171,7 @@ public:
   // template<class InputPointIterator> Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd ) ;
 
 
-  SSkelPtr construct_skeleton() ;
+  SSkelPtr construct_skeleton( bool aMergeCoincidentNodes = false ) ;
 
 private :
 
@@ -289,21 +277,47 @@ private :
     return K().construct_segment_2_object()(s,t);
   }
 
-  inline Triedge_2 CreateTriedge ( Halfedge_const_handle aE0
-                                 , Halfedge_const_handle aE1
-                                 , Halfedge_const_handle aE2
-                                 ) const
+  Triedge_2 CreateTriedge ( Halfedge_const_handle aE0
+                          , Halfedge_const_handle aE1
+                          , Halfedge_const_handle aE2
+                          ) const
   {
     return Construct_ss_triedge_2(mTraits)(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
   }
+  
+  Sorted_triedge_2 CreateSortedTriedge ( Triedge_2 const& aTriedge, Triedge_collinearity aC ) const
+  {
+    return Construct_ss_sorted_triedge_2(mTraits)(aTriedge,aC);
+  }
 
-  inline Triedge_2 CreateTriedge ( BorderTriple const& aTriple ) const
+  Triedge_collinearity GetCollinearity ( Triedge_2 const& aTriedge ) const
+  {
+    return Get_ss_triedge_collinearity_2(mTraits)(aTriedge);
+  }  
+  
+  Triedge_2 CreateTriedge ( BorderTriple const& aTriple ) const
   {
     Halfedge_handle lE0, lE1, lE2 ;
     boost::tie(lE0,lE1,lE2) = aTriple ;
     return Construct_ss_triedge_2(mTraits)(CreateEdge(lE0),CreateEdge(lE1),CreateEdge(lE2));
   }
+  
+  
+  Sorted_triedge_2 CreateSortedTriedge ( Halfedge_const_handle aE0
+                                       , Halfedge_const_handle aE1
+                                       , Halfedge_const_handle aE2
+                                       ) const
+  {
+    Triedge_2 lTriedge = CreateTriedge(aE0,aE1,aE2);
+    return CreateSortedTriedge(lTriedge, GetCollinearity(lTriedge) );
+  }
 
+  Sorted_triedge_2 CreateSortedTriedge( BorderTriple const& aTriple ) const
+  {
+    Triedge_2 lTriedge = CreateTriedge(aTriple);
+    return CreateSortedTriedge(lTriedge, GetCollinearity(lTriedge) );
+  }
+    
   Vertex_handle GetVertex ( int aIdx )
   {
     CGAL_precondition(aIdx>=0);
@@ -381,7 +395,7 @@ private :
 
   void AddSplitEvent ( Vertex_handle aVertex, EventPtr aEvent )
   {
-    CGAL_STSKEL_BUILDER_TRACE(1, "V" << aVertex->id() << " PQ: " << *aEvent);
+    CGAL_STSKEL_BUILDER_TRACE(2, "V" << aVertex->id() << " PQ: " << *aEvent);
     mWrappedVertices[aVertex->id()].mSplitEvents.push(aEvent);
   }
   
@@ -456,62 +470,23 @@ private :
   }
 
 
-  bool ExistEvent ( Halfedge_const_handle aE0, Halfedge_const_handle aE1, Halfedge_const_handle aE2 ) const
+  bool ExistEvent ( Sorted_triedge_2 aS )
   {
-    bool rR = Do_ss_event_exist_2(mTraits)(CreateTriedge(aE0, aE1, aE2));
-    
-/*
-#ifdef CGAL_STRAIGHT_SKELETON_STATS
-    if ( rR )
-    {
-      boost::optional<FT>      lTime ;
-      boost::optional<Point_2> lP ;
-      boost::tie(lTime,lP) = ConstructEventTimeAndPoint( CreateTriedge(aE0,aE1,aE2) );
-      if ( !!lTime && !!lP )
-      {
-        if ( *lTime > mMaxTime )
-        {
-          rR = false ;
-          ++ sOutsideTimeRangeCount ;
-        }
-        else ++ sInTimeRangeCount ; 
-        
-        if ( mFrame.has_on_unbounded_side(*lP) )
-        {
-          rR = false ;
-          ++ sOutsideFrameCount ;
-        }
-        else ++ sInFrameCount ; 
-      }
-      else
-      {
-        rR = false ;
-        ++ sSingularCount ;
-      }
-    }
-#endif
-*/    
-    return rR ;
-  }
+    return Do_ss_event_exist_2(mTraits)(aS);
+  }  
   
-  bool AreEdgesParallel( Halfedge_const_handle aE0, Halfedge_const_handle aE1 ) const
+  bool IsSplitEventInsideOffsetZone( EventPtr const& aSplit
+                                   , Halfedge_const_handle aOppositePrev
+                                   , Halfedge_const_handle aOpposite
+                                   , Halfedge_const_handle aOppositeNext
+                                   ) const
   {
-    return Are_ss_edges_parallel_2(mTraits)(CreateEdge(aE0),CreateEdge(aE1));
-  }
-
-  bool IsEventInsideOffsetZone( Halfedge_const_handle aReflexL
-                              , Halfedge_const_handle aReflexR
-                              , Halfedge_const_handle aOppositePrev
-                              , Halfedge_const_handle aOpposite
-                              , Halfedge_const_handle aOppositeNext
-                              ) const
-  {
-    return Is_ss_event_inside_offset_zone_2(mTraits)( CreateTriedge(aReflexL     , aReflexR, aOpposite)
+    return Is_ss_event_inside_offset_zone_2(mTraits)( aSplit->sorted_triedge()
                                                     , CreateTriedge(aOppositePrev,aOpposite, aOppositeNext)
                                                     ) ;
   }
 
-  Comparison_result CompareEvents ( Triedge_2 const& aA, Triedge_2 const& aB ) const
+  Comparison_result CompareEvents ( Sorted_triedge_2 const& aA, Sorted_triedge_2 const& aB ) const
   {
     return Compare_ss_event_times_2(mTraits)(aA,aB) ;
   }
@@ -523,9 +498,7 @@ private :
                           )
         )
     {
-      return CompareEvents( CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                          , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                          ) ;
+      return CompareEvents( aA->sorted_triedge(), aB->sorted_triedge() ) ;
     }
     else return EQUAL ;
   }
@@ -542,7 +515,8 @@ private :
     {
       if ( aSeed->is_skeleton() )
       {
-        BorderTriple lTriple = GetSkeletonVertexDefiningBorders(aSeed);
+        BorderTriple lTriple  = GetSkeletonVertexDefiningBorders(aSeed);
+        Triedge_2    lTriedge = CreateTriedge(lTriple);
 
         CGAL_STSKEL_BUILDER_TRACE(3
                                  ,"Seed N" << aSeed->id() << " is a skeleton node,"
@@ -551,44 +525,36 @@ private :
                                              << ", E" << lTriple.get<2>()->id()
                                  );
 
-        return Compare_ss_event_distance_to_seed_2(mTraits)( CreateTriedge(lTriple)
-                                                           , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                           , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
+        return Compare_ss_event_distance_to_seed_2(mTraits)( CreateSortedTriedge(lTriedge,GetCollinearity(lTriedge))
+                                                           , aA->sorted_triedge()
+                                                           , aB->sorted_triedge()
                                                            ) ;
       }
       else
       {
-        return Compare_ss_event_distance_to_seed_2(mTraits)( aSeed->point()
-                                                           , CreateTriedge(aA->border_a(), aA->border_b(), aA->border_c())
-                                                           , CreateTriedge(aB->border_a(), aB->border_b(), aB->border_c())
-                                                           ) ;
+        return Compare_ss_event_distance_to_seed_2(mTraits)( aSeed->point(), aA->sorted_triedge(), aB->sorted_triedge() ) ;
       }
     }
     else return EQUAL ;
   }
   
-  bool AreEventsSimultaneous( Halfedge_handle xa
-                            , Halfedge_handle xb 
-                            , Halfedge_handle xc 
-                            , Halfedge_handle ya 
-                            , Halfedge_handle yb 
-                            , Halfedge_handle yc
-                            ) const
+  bool AreEventsSimultaneous( Sorted_triedge_2 const& x, Sorted_triedge_2 const& y ) const
   {
-    return Are_ss_events_simultaneous_2(mTraits)( CreateTriedge(xa,xb,xc), CreateTriedge(ya,yb,yc)) ;
+    return Are_ss_events_simultaneous_2(mTraits)(x,y) ;
   }
   
   bool AreSkeletonNodesCoincident( Vertex_handle aX, Vertex_handle aY ) const
   {
     BorderTriple lBordersX = GetSkeletonVertexDefiningBorders(aX);
     BorderTriple lBordersY = GetSkeletonVertexDefiningBorders(aY);
-    return Are_ss_events_simultaneous_2(mTraits)( CreateTriedge(lBordersX), CreateTriedge(lBordersY)) ;
+    return Are_ss_events_simultaneous_2(mTraits)( CreateSortedTriedge(lBordersX), CreateSortedTriedge(lBordersY)) ;
   }
-  
-  bool IsNewEventInThePast( Halfedge_handle aBorderA
-                          , Halfedge_handle aBorderB
-                          , Halfedge_handle aBorderC
-                          , Vertex_handle   aSeedNode
+ 
+  bool IsNewEventInThePast( Halfedge_handle         aBorderA
+                          , Halfedge_handle         aBorderB
+                          , Halfedge_handle         aBorderC
+                          , Sorted_triedge_2 const& aSortedTriedge1 // (aBorderA,aBorderB,aBorderC)
+                          , Vertex_handle           aSeedNode
                           ) const
   {
     bool rResult = false ;
@@ -599,34 +565,31 @@ private :
 
     if ( !AreTheSameTriple(aBorderA,aBorderB,aBorderC,lSeedBorderA,lSeedBorderB,lSeedBorderC) )
     {
-      if ( CompareEvents( CreateTriedge(aBorderA,aBorderB,aBorderC)
-                        , CreateTriedge(lSeedBorderA,lSeedBorderB,lSeedBorderC)
-                        ) == SMALLER
-         )
-      {
+      Triedge_2        lTriedge2       = CreateTriedge(lSeedBorderA,lSeedBorderB,lSeedBorderC);
+      Sorted_triedge_2 lSortedTriedge2 = CreateSortedTriedge(lTriedge2,GetCollinearity(lTriedge2));
+      
+      if ( CompareEvents( aSortedTriedge1, lSortedTriedge2 ) == SMALLER )
         rResult = true ;
-      }   
     }
 
     return rResult ;
   }
 
-  boost::tuple< boost::optional<FT>, boost::optional<Point_2> > 
-  ConstructEventTimeAndPoint( Triedge_2 const& aTri ) const
+  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Sorted_triedge_2 const& aS ) const
   {
-    return Construct_ss_event_time_and_point_2(mTraits)(aTri);
+    boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
+    if ( !r )
+      throw_error("overflow");
+    return *r ;  
   }
 
   void SetEventTimeAndPoint( Event& aE )
   {
-    boost::optional<FT>      lTime ;
-    boost::optional<Point_2> lP ;
-    boost::tie(lTime,lP) = ConstructEventTimeAndPoint( CreateTriedge(aE.border_a(),aE.border_b(),aE.border_c()) );
+    FT      lTime ;
+    Point_2 lP ;
+    boost::tie(lTime,lP) = ConstructEventTimeAndPoint(aE.sorted_triedge());
     
-    if ( !lTime || !lP )
-      throw_error("CGAL_STRAIGHT_SKELETON: Overflow during skeleton node computation."); // Contained in the main entry function
-    
-    aE.SetTimeAndPoint(*lTime,*lP);
+    aE.SetTimeAndPoint(lTime,lP);
   }
 
   void EraseBisector( Halfedge_handle aB )
@@ -700,9 +663,9 @@ private :
   
   void MergeCoincidentNodes() ;
   
-  void FinishUp();
+  bool FinishUp( bool aMergeCoincidentNodes );
 
-  void Run();
+  bool Run( bool aMergeCoincidentNodes );
 
 private:
 
@@ -726,11 +689,6 @@ private:
   //Input
   Traits mTraits ;
 
-  typename Traits::Equal_2      Equal ;
-
-  Iso_rectangle_2            mFrame ;
-  FT                         mMaxTime ;
-  
   std::vector<VertexWrapper>  mWrappedVertices ;
   Vertex_handle_vector        mReflexVertices ;
   Halfedge_handle_vector      mDanglingBisectors ;
@@ -770,10 +728,6 @@ private :
     
     int c = 0 ;
     
-    FT lx = 0, ly = 0, hx = 0, hy = 0 ;
-    
-    bool lIsOuterContour = mSSkel->size_of_vertices() == 0 ;
-    
     while ( lCurr != aEnd )
     {
       Halfedge_handle lCCWBorder = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
@@ -783,30 +737,11 @@ private :
       mContourHalfedges.push_back(lCCWBorder);
 
       Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
-      CGAL_STSKEL_BUILDER_TRACE(2,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
+      CGAL_STSKEL_BUILDER_TRACE(1,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
       mWrappedVertices.push_back( VertexWrapper(lVertex,mEventCompare) ) ;
 
       Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
 
-      if ( lIsOuterContour )
-      {
-        if ( c  == 0 )
-        {
-          lx = hx = lCurr->x();
-          ly = hy = lCurr->y();
-        }
-        else
-        {
-          if ( lCurr->x() < lx )
-            lx = lCurr->x();
-          if ( lCurr->x() > hx )
-            hx = lCurr->x();
-          if ( lCurr->y() < ly )
-            ly = lCurr->y();
-          if ( lCurr->y() > hy )
-            hy = lCurr->y();
-        }
-      }
       ++ c ;
 
       lCCWBorder->HBase_base::set_face(lFace);
@@ -836,8 +771,8 @@ private :
         lNextCWBorder->HBase_base::set_prev(lCWBorder);
         lCWBorder    ->HBase_base::set_next(lNextCWBorder);
 
-        CGAL_STSKEL_BUILDER_TRACE(2,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
-        CGAL_STSKEL_BUILDER_TRACE(2,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
+        CGAL_STSKEL_BUILDER_TRACE(1,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
+        CGAL_STSKEL_BUILDER_TRACE(1,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
 
         CGAL_STSKEL_BUILDER_SHOW
         ( 
@@ -873,21 +808,10 @@ private :
 
     lPrevCCWBorder ->opposite()->HBase_base::set_prev(lFirstCCWBorder->opposite());
     lFirstCCWBorder->opposite()->HBase_base::set_next(lPrevCCWBorder ->opposite());
-
-    if ( lIsOuterContour )
-    {
-      FT dx = hx - lx ;
-      FT dy = hy - ly ;
-      FT d  = dx > dy ? dx : dy ;
-      FT m  = FT(0.005) * d ;
-      
-      mFrame = Iso_rectangle_2(lx-m,ly-m,hx+m,hy+m);
-      mMaxTime = ( d + m + m ) / FT(2.0);
-    }
     
     CGAL_precondition_msg(c >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
     
-    CGAL_STSKEL_BUILDER_TRACE(2
+    CGAL_STSKEL_BUILDER_TRACE(1
                              , "CCW Border: E" << lFirstCCWBorder->id()
                              << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
                              << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
@@ -914,31 +838,15 @@ public:
       typedef typename Point_vector::iterator Point_iterator ;
      
       // Remove coincident consecutive vertices
-      Point_vector lList0, lList1;
-      std::unique_copy(aBegin,aEnd,std::back_inserter(lList0),AreVerticesEqual());
+      Point_vector lList;
+      std::unique_copy(aBegin,aEnd,std::back_inserter(lList),AreVerticesEqual());
 
-            
-      // Remove collinear vertices
-      if ( lList0.size() >= 3 )
-      {
-        Point_iterator begin = lList0.begin();
-        Point_iterator end   = lList0.end();
-        Point_iterator last  = CGAL::predecessor(end);
-        
-        Point_iterator prev = last ;
-        
-        for ( Point_iterator curr = begin ; curr != end ; ++ curr )
-        {
-          Point_iterator next = ( curr == last ? begin : CGAL::successor(curr) ) ;
-          //if ( !CGAL::collinear(*prev,*curr,*next) )
-            lList1.push_back(*curr);
-          prev = curr ;
-        }    
-      }
+      while ( lList.size() > 0 && CGAL::compare_xy(lList.front(),lList.back()) == EQUAL ) 
+        lList.pop_back();
       
-      if ( lList1.size() >= 3 )
+      if ( lList.size() >= 3 )
       {
-        enter_valid_contour(lList1.begin(),lList1.end());
+        enter_valid_contour(lList.begin(),lList.end());
       }
       else
       {
