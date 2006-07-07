@@ -11,3 +11,4 @@ NOTICE
 internal-test-surface-mesher.C
 makefile.dependencies
 find_debug_macros
+find_non_header_macros
