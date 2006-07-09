@@ -49,11 +49,11 @@ test_triangulation_points_in_polylines$(EXE_EXT): test_triangulation_points_in_p
 test_reconstruction_from_slices$(EXE_EXT): test_reconstruction_from_slices$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) bin/test_reconstruction_from_slices$(EXE_EXT) obj/test_reconstruction_from_slices$(OBJ_EXT) $(LDFLAGS)
 
-test_triangulation_points_in_slices$(OBJ_EXT): test_triangulation_points_in_slices.C ../../include/CGAL/Parser_SLC.h ../../include/CGAL/Triangulation_from_slices_3.h ../../include/CGAL/TFS_vertex_base_3.h
+test_triangulation_points_in_slices$(OBJ_EXT): test_triangulation_points_in_slices.cpp ../../include/CGAL/Parser_SLC.h ../../include/CGAL/Triangulation_from_slices_3.h ../../include/CGAL/TFS_vertex_base_3.h
 
-test_triangulation_points_in_polylines$(OBJ_EXT): test_triangulation_points_in_polylines.C ../../include/CGAL/Parser_CNT.h ../../include/CGAL/Parser_SLC.h ../../include/CGAL/Triangulation_from_slices_3.h ../../include/CGAL/TFS_polyline_vertex_base_3.h
+test_triangulation_points_in_polylines$(OBJ_EXT): test_triangulation_points_in_polylines.cpp ../../include/CGAL/Parser_CNT.h ../../include/CGAL/Parser_SLC.h ../../include/CGAL/Triangulation_from_slices_3.h ../../include/CGAL/TFS_polyline_vertex_base_3.h
 
-test_reconstruction_from_slices$(OBJ_EXT): test_reconstruction_from_slices.C ../../include/CGAL/Parser_CNT.h  ../../include/CGAL/Parser_SLC.h ../../include/CGAL/Triangulation_from_slices_3.h ../../include/CGAL/TFS_polyline_vertex_base_3.h ../../include/CGAL/TFS_cell_base_3_for_reconstruction.h ../../include/CGAL/Reconstruction_from_slices_3.h
+test_reconstruction_from_slices$(OBJ_EXT): test_reconstruction_from_slices.cpp ../../include/CGAL/Parser_CNT.h  ../../include/CGAL/Parser_SLC.h ../../include/CGAL/Triangulation_from_slices_3.h ../../include/CGAL/TFS_polyline_vertex_base_3.h ../../include/CGAL/TFS_cell_base_3_for_reconstruction.h ../../include/CGAL/Reconstruction_from_slices_3.h
 
 clean: \
 	test_triangulation_points_in_slices.clean test_triangulation_points_in_polyline.clean test_reconstruction_from_slices.clean
@@ -63,6 +63,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $< -o obj/$(@)
 
