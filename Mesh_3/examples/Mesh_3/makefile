@@ -74,12 +74,12 @@ tools:
 	  $(MAKE) -C ../../applications $$t; \
 	done
 
-implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.C
+implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.cpp
 
 implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) $(IMAGEIO_OBJECTS) 
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surfaces_mesher_3 implicit_surfaces_mesher_3$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) $(IMAGEIO_OBJECTS) $(LDFLAGS)
 
-polyhedral_surface_mesher$(OBJ_EXT): polyhedral_surface_mesher.C 
+polyhedral_surface_mesher$(OBJ_EXT): polyhedral_surface_mesher.cpp 
 
 polyhedral_surface_mesher$(EXE_EXT): polyhedral_surface_mesher$(OBJ_EXT) parameters$(OBJ_EXT) implicit_functions$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedral_surface_mesher polyhedral_surface_mesher$(OBJ_EXT) parameters$(OBJ_EXT)  implicit_functions$(OBJ_EXT) $(LDFLAGS)
@@ -96,5 +96,5 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
