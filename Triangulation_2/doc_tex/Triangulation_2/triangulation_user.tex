@@ -545,7 +545,7 @@ as geometric traits and the default triangulation data structure.
  The input points are read from a file 
 and inserted in the triangulation.
 Finally points on the convex hull are written to {\tt cout}. 
-\ccIncludeExampleCode{Triangulation_2/triangulation_prog1.C}
+\ccIncludeExampleCode{Triangulation_2/triangulation_prog1.cpp}
 
 
 \section{Delaunay Triangulations\label{Section_2D_Triangulations_Delaunay}}
@@ -652,7 +652,7 @@ terrain model. The points have elevation, that is they are 3D points,
 but the predicates used to build the  Delaunay triangulation
 are computed using only  the $x$ and $y$ coordinates  
 of these points. 
-\ccIncludeExampleCode{Triangulation_2/terrain.C}
+\ccIncludeExampleCode{Triangulation_2/terrain.cpp}
 
 \subsection{Example : Voronoi Diagram\label{Subsection_2D_Triangulations_Voronoi}}
 \ccIndexMainItem{Voronoi diagram}
@@ -660,7 +660,7 @@ The following code computes the edges of Voronoi diagram
 of a set of data points
 and counts  the number of finite edges and the number of rays
 of this diagram
-\ccIncludeExampleCode{Triangulation_2/voronoi.C}
+\ccIncludeExampleCode{Triangulation_2/voronoi.cpp}
 
 
 \section{Regular Triangulations\label{Section_2D_Triangulations_Regular}}
@@ -838,7 +838,7 @@ The following code  creates a regular triangulation
 of a set of weighted points and ouput the number
 of vertices and the number of hidden vertices.
 
-\ccIncludeExampleCode{Triangulation_2/regular.C}
+\ccIncludeExampleCode{Triangulation_2/regular.cpp}
 
 
 \section{Constrained Triangulations\label{Section_2D_Triangulations_Constrained}}
@@ -1082,7 +1082,7 @@ into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
-\ccIncludeExampleCode{Triangulation_2/constrained.C}
+\ccIncludeExampleCode{Triangulation_2/constrained.cpp}
 
 
 \section{Constrained Triangulations Plus\label{Section_2D_Triangulations_Constrained_Plus}}
@@ -1126,7 +1126,7 @@ and counts the number of constrained edges of the
 resulting triangulation.
 
 
-\ccIncludeExampleCode{Triangulation_2/constrained_plus.C}
+\ccIncludeExampleCode{Triangulation_2/constrained_plus.cpp}
 
 
 
@@ -1199,12 +1199,12 @@ of the  standard use of a  triangulation hierarchy
 to enhance the efficiency
 of a Delaunay triangulation. The program output the number of vertices
 at the different levels of the hierarchy.
-\ccIncludeExampleCode{Triangulation_2/hierarchy.C}
+\ccIncludeExampleCode{Triangulation_2/hierarchy.cpp}
 
 The following program shows how to use
 a triangulation hierachy in conjunction with a constrained 
 triangulation plus.
-\ccIncludeExampleCode{Triangulation_2/constrained_hierarchy_plus.C}
+\ccIncludeExampleCode{Triangulation_2/constrained_hierarchy_plus.cpp}
 
 \section{Flexibility: Using  Customized Vertices and Faces\label{Section_2D_Triangulations_Flexibility}}
 
@@ -1296,7 +1296,7 @@ The following examples shows how to add a
 \ccc{CGAL::Color} in the triangulation faces.
 
 
-\ccIncludeExampleCode{Triangulation_2/colored_face.C}
+\ccIncludeExampleCode{Triangulation_2/colored_face.cpp}
 
 \subsection*{Adding handles}
 
@@ -1307,7 +1307,7 @@ additional functionalities depending on types provided by the triangulation
 data structure. 
 
 
-\ccIncludeExampleCode{Triangulation_2/adding_handles.C}
+\ccIncludeExampleCode{Triangulation_2/adding_handles.cpp}
 
 
 \section{Design and Implementation History}
