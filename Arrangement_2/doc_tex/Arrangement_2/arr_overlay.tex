@@ -102,7 +102,7 @@ Figure~\ref{arr_fig:ex_22} and computes their overlay:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_overlay.C}
 
-\subsection{Example for a Face Overlay\label{arr_ssec:face_ovl}}
+\subsection{Examples for a Face Overlay\label{arr_ssec:face_ovl}}
 %--------------------------------------
 
 The following example shows how to compute the intersection of two polygons
@@ -120,3 +120,13 @@ actually also a square). The resulting polygon is an octagon, denoted
 by $f_0$ in Figure~\ref{arr_fig:ex_22}:
 
 \ccIncludeExampleCode{../examples/Arrangement_2/ex_face_extension_overlay.C}
+
+The next example demonstrates the face overlay of two arrangements that
+have unbounded faces as well. The first arrangement is formed by the two lines
+$y = x$ and $y = -x$, that subdivide the plane into four unbounded faces,
+denoted $A$, $B$, $C$ and $D$. The second arrangement comprises four line
+segments that form a square-shaped face. When we overlay the two arrangements,
+each of the four faces $A$, $B$, $C$ and $D$ is split into an unbounded
+face (indexed 1) and a bounded face (indexed 2):
+
+\ccIncludeExampleCode{../examples/Arrangement_2/ex_overlay_unbounded.C}
