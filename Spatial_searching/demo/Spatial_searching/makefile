@@ -38,23 +38,23 @@ LDFLAGS = \
 
 all: spatial_searching
 
-spatial_searching_toolbar$(OBJ_EXT): spatial_searching_toolbar.C spatial_searching_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) spatial_searching_toolbar.C
+spatial_searching_toolbar$(OBJ_EXT): spatial_searching_toolbar.cpp spatial_searching_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) spatial_searching_toolbar.cpp
 
 spatial_searching_toolbar.moc: spatial_searching_toolbar.h
 	$(QT_MOC) -o spatial_searching_toolbar.moc spatial_searching_toolbar.h
 
 Qt_widget_move_list_point$(OBJ_EXT): Qt_widget_move_list_point.moc \
-					Qt_widget_move_list_point.C
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.C
+					Qt_widget_move_list_point.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.cpp
 Qt_widget_move_list_point.moc: Qt_widget_move_list_point.h
 	$(QT_MOC) -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
 
-spatial_searching.moc: spatial_searching.C spatial_searching_toolbar$(OBJ_EXT) 
-	${QT_MOC} -o spatial_searching.moc spatial_searching.C
+spatial_searching.moc: spatial_searching.cpp spatial_searching_toolbar$(OBJ_EXT) 
+	${QT_MOC} -o spatial_searching.moc spatial_searching.cpp
 
-spatial_searching$(OBJ_EXT): spatial_searching.C spatial_searching.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) spatial_searching.C
+spatial_searching$(OBJ_EXT): spatial_searching.cpp spatial_searching.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) spatial_searching.cpp
 
 spatial_searching$(EXE_EXT): spatial_searching$(OBJ_EXT) \
 			Qt_widget_move_list_point$(OBJ_EXT)
@@ -69,5 +69,5 @@ clean: spatial_searching.clean spatial_searching_toolbar.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

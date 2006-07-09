@@ -248,7 +248,7 @@ distance to the query point. We use square distances, or {\em
 transformed distances} for other distance classes, as they are 
 computationally cheaper.
 
-\ccIncludeExampleCode{Spatial_searching/nearest_neighbor_searching.C}
+\ccIncludeExampleCode{Spatial_searching/nearest_neighbor_searching.cpp}
 
 \newpage
 \subsection{Example of Incremental Searching}
@@ -264,7 +264,7 @@ with the \ccc{begin()} method. Note that the iterator is of the input
 iterator category, that is one can make only one pass over the data. 
 
  
-\ccIncludeExampleCode{Spatial_searching/distance_browsing.C}
+\ccIncludeExampleCode{Spatial_searching/distance_browsing.cpp}
 
 
 \newpage
@@ -278,7 +278,7 @@ we cannot use the Orthogonal neighbor search. As in the previous
 examples we first initialize a search tree, create the search object
 with the query, and obtain the result of the search as iterator range.
  
-\ccIncludeExampleCode{Spatial_searching/general_neighbor_searching.C}
+\ccIncludeExampleCode{Spatial_searching/general_neighbor_searching.cpp}
 
 \newpage
 \subsection{Example of a Range Query}
@@ -288,7 +288,7 @@ This example program illustrates approximate range querying for
 coordinates. The range queries are member functions of the $k$-$d$ 
 tree class.
 
-\ccIncludeExampleCode{Spatial_searching/fuzzy_range_query.C}
+\ccIncludeExampleCode{Spatial_searching/fuzzy_range_query.cpp}
 
 
 
@@ -314,7 +314,7 @@ We are ready to put the pices together.
 The class \ccc{Search_traits<..>} which you see in the next file is then a mere 
 wrapper for all these types.  The searching itself works exactly as for \cgal\ kernels.
 
-\ccIncludeExampleCode{Spatial_searching/user_defined_point_and_distance.C}
+\ccIncludeExampleCode{Spatial_searching/user_defined_point_and_distance.cpp}
 
 \newpage
 \subsection{Example of Selecting a Splitting Rule and Setting the Bucket Size}
@@ -324,7 +324,7 @@ setting the maximal allowed bucket size.  The only differences with
 the first example are the declaration of the {\em Fair} 
 splitting rule, needed to set the maximal allowed bucket size.
 
-\ccIncludeExampleCode{Spatial_searching/using_fair_splitting_rule.C}
+\ccIncludeExampleCode{Spatial_searching/using_fair_splitting_rule.cpp}
 
 \newpage
 
