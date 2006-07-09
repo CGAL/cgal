@@ -405,7 +405,7 @@ while \ccc{N1} represents the full space, i.e., the set of all points
 in the 3-dimensional space. The assertion assures that the empty set
 is the complement of the full space.
 
-\ccIncludeExampleCode{Nef_3/simple.C}
+\ccIncludeExampleCode{Nef_3/simple.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{Construction and Comparison}
@@ -433,7 +433,7 @@ representations are equal. The proof for the reduced W\"urzburg
 structure carries over to our representation and the comparison
 operators are therefore trivial to implement.
 
-\ccIncludeExampleCode{Nef_3/construction.C}
+\ccIncludeExampleCode{Nef_3/construction.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{Point Set Operations}
@@ -452,7 +452,7 @@ difference (\ccc{operator^}). Additionally, the operators \ccc{*=},
 \ccc{boundary()} one deselects all volumes, and with \ccc{closure()}
 one selects all boundary items.
 
-\ccIncludeExampleCode{Nef_3/point_set_operations.C}
+\ccIncludeExampleCode{Nef_3/point_set_operations.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{Transformation}
@@ -460,7 +460,7 @@ one selects all boundary items.
 Using the \ccc{std::transform} function, a Nef polyhedron can be translated, 
 rotated and scaled. The usage is shown in the following example:
 
-\ccIncludeExampleCode{Nef_3/transformation.C}
+\ccIncludeExampleCode{Nef_3/transformation.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{The Interface between \protect\ccc{Polyhedron_3} and 
@@ -486,7 +486,7 @@ the ({\tt .off}), OpenInventor ({\tt .iv}), VRML 1.0 and 2.0 ({\tt
   .wrl}) and Wavefront Advanced Visualizer object format ({\tt .obj}),
 see Section~\ref{sectionPolyIO}.
 
-\ccIncludeExampleCode{Nef_3/interface_polyhedron.C}
+\ccIncludeExampleCode{Nef_3/interface_polyhedron.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{Using an Extended Kernel}
@@ -502,7 +502,7 @@ it is an standard vertex or a vertex on the infimaximal box. Furthermore, it
 tests whether any of the vertices is at $(R,R,R)$. Recall that $R$ was
 the symbolical value, large but finite, for the size of the infimaximal box. 
 
-\ccIncludeExampleCode{Nef_3/extended_kernel.C}
+\ccIncludeExampleCode{Nef_3/extended_kernel.cpp}
 
 % +========================================================================+
 \section{File I/O}
@@ -528,7 +528,7 @@ Using \cgal\ stream modifiers the following output formats can be chosen:
 ASCII(\ccc{set_ascii_mode}), binary(\ccc{set_binary_mode}) or 
 pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format.
 
-\ccIncludeExampleCode{Nef_3/nefIO.C}
+\ccIncludeExampleCode{Nef_3/nefIO.cpp}
 
 % +========================================================================+
 \section{Further Example Programs}
@@ -545,7 +545,7 @@ Note, that one has to use
 the type \ccc{Nef_polyhedron_S2} as specified in \ccc{Nef_polyhedron_3} as 
 is shown in the following example.
 
-\ccIncludeExampleCode{Nef_3/exploration_SM.C}
+\ccIncludeExampleCode{Nef_3/exploration_SM.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{Exploring Shells}
@@ -613,7 +613,7 @@ oriented inwards, too. This shalfloop belongs to the third shell.
 following the well-known visitor pattern~\cite{cgal:ghjv-dpero-95}.
 The interface is illustrated by the following example.
 
-\ccIncludeExampleCode{Nef_3/shell_exploration.C}
+\ccIncludeExampleCode{Nef_3/shell_exploration.cpp}
 
 The function \ccc{visit_shell_objects(SFace_const_handle sf, Visitor&
   V)} explores a shell starting at the \ccc{sf}. The second argument
@@ -664,7 +664,7 @@ the \ccc{Object_handle} can represent a \ccc{Vertex_const_handle}, a
 \ccc{Halfedge_const_handle}, a \ccc{Halffacet_handle}, or a
 \ccc{Volume_const_handle}. One of the four casts will succeed.
 
-\ccIncludeExampleCode{Nef_3/point_location.C}
+\ccIncludeExampleCode{Nef_3/point_location.cpp}
 
 % +========================================================================+
 \section{Visualization}
@@ -702,7 +702,7 @@ how to start the viewer.
 \end{ccHtmlOnly}
 
 
-\ccIncludeExampleCode{Nef_3/visualization_SNC.C}
+\ccIncludeExampleCode{Nef_3/visualization_SNC.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{Visualizing a Sphere Map}
@@ -712,6 +712,6 @@ how to start the viewer.
 of a vertex in a \ccc{Nef_polyhedron_3} using the interface between
 \ccc{Nef_polyhedron_S2} and \ccc{Nef_polyhedron_3}.
 
-\ccIncludeExampleCode{Nef_3/visualization_SM.C}
+\ccIncludeExampleCode{Nef_3/visualization_SM.cpp}
 
 %% EOF %%
