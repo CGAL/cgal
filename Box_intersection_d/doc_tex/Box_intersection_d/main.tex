@@ -234,7 +234,7 @@ The result will be that the first \ccc{query} box intersects all nine
 in the upper-right quadrant. See Section~\ref{sec:box-inters-params}
 for the change of the \ccc{topology} parameter and its effect.
 
-\ccIncludeExampleCode{Box_intersection_d/minimal.C}
+\ccIncludeExampleCode{Box_intersection_d/minimal.cpp}
 
 
 % +------------------------------------------------------------------------+
@@ -281,7 +281,7 @@ the polyhedral surface that should not be reported as intersections,
 see the \texttt{examples/Polyhedron/polyhedron\_self\_intersection.C}
 example program in the \cgal\ distribution. 
 
-\ccIncludeExampleCode{Box_intersection_d/triangle_self_intersect.C}
+\ccIncludeExampleCode{Box_intersection_d/triangle_self_intersect.cpp}
 
 
 % +------------------------------------------------------------------------+
@@ -392,7 +392,7 @@ For the second box \ccHtmlNoLinksFrom{intersection} function call we have to spe
 Section~\ref{sec:box-inters-performance} below for a detailed
 discussion.
 
-\ccIncludeExampleCode{Box_intersection_d/box_grid.C}
+\ccIncludeExampleCode{Box_intersection_d/box_grid.cpp}
 
 
 % +------------------------------------------------------------------------+
@@ -490,7 +490,7 @@ and the type \ccc{ID} for the \ccc{id}-number. Member functions
 give access to the coordinates and the \ccc{id}-number. A static
 member function returns the dimension.
 
-\ccIncludeExampleCode{Box_intersection_d/custom_box_grid.C}
+\ccIncludeExampleCode{Box_intersection_d/custom_box_grid.cpp}
 
 
 % +------------------------------------------------------------------------+
@@ -530,7 +530,7 @@ and the \ccc{boxes} vector in parallel, since otherwise the
 \ccc{points} vector might reallocate and invalidate all pointers
 stored in the \ccc{boxes} so far.
 
-\ccIncludeExampleCode{Box_intersection_d/proximity_custom_box_traits.C}
+\ccIncludeExampleCode{Box_intersection_d/proximity_custom_box_traits.cpp}
 
 % +------------------------------------------------------------------------+
 \section{Design and Implementation History}
