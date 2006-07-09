@@ -34,26 +34,26 @@ LDFLAGS = \
 
 all: simplify_2
 
-simplify_2_toolbar$(OBJ_EXT): simplify_2_toolbar.C simplify_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) simplify_2_toolbar.C
+simplify_2_toolbar$(OBJ_EXT): simplify_2_toolbar.cpp simplify_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) simplify_2_toolbar.cpp
 
 simplify_2_toolbar.moc: simplify_2_toolbar.h
 	$(QT_MOC) -o simplify_2_toolbar.moc simplify_2_toolbar.h
 
-simplify_2_toolbar_layers$(OBJ_EXT): simplify_2_toolbar_layers.C \
+simplify_2_toolbar_layers$(OBJ_EXT): simplify_2_toolbar_layers.cpp \
 		simplify_2_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) simplify_2_toolbar_layers.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) simplify_2_toolbar_layers.cpp
 
 simplify_2_toolbar_layers.moc: simplify_2_toolbar_layers.h
 	$(QT_MOC) -o simplify_2_toolbar_layers.moc simplify_2_toolbar_layers.h
 
-simplify_2.moc: simplify_2.C \
+simplify_2.moc: simplify_2.cpp \
 		 simplify_2_toolbar$(OBJ_EXT) \
 		 simplify_2_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o simplify_2.moc simplify_2.C
+	${QT_MOC} -o simplify_2.moc simplify_2.cpp
 
-simplify_2$(OBJ_EXT): simplify_2.C simplify_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) simplify_2.C
+simplify_2$(OBJ_EXT): simplify_2.cpp simplify_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) simplify_2.cpp
 
 simplify_2$(EXE_EXT): simplify_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)simplify_2 simplify_2$(OBJ_EXT) \
@@ -68,5 +68,5 @@ clean: simplify_2.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
