@@ -170,7 +170,7 @@ component referred to by the halfedge \ccc{h} and not the polyhedral
 surface as a whole. This examples works only on the combinatorial
 level of a polyhedral surface. The next example adds the geometry.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_simple.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_simple.cpp}
 
 % +-------------------------------------------------------------+
 \subsection{Example with Geometry in Vertices}
@@ -188,7 +188,7 @@ the tip of \ccc{h}, and so on.  The output of the program will be
 ``\verb|1 0 0\n0 1 0\n0 0 1\n0 0 0\n|''.
 
 %\newpage
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_tetra.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_tetra.cpp}
 
 The polyhedron offers a point iterator for convenience. The above
 \texttt{for} loop simplifies to a single statement by using
@@ -228,7 +228,7 @@ and exact arithmetic. In our example a homogeneous representation with
 \texttt{int} coordinates is sufficient. The four plane equations of the
 tetrahedron are the output of the program.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_planes.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_planes.cpp}
 
 % +-------------------------------------------------------------+
 \subsection{Example with a Vector Instead of a List Representation}
@@ -271,7 +271,7 @@ requires some preconditions, such as valid incidences, to be fulfilled
 that only the polyhedron can guarantee.
 \end{ccAdvanced}
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_vector.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_vector.cpp}
 
 
 % +-------------------------------------------------------------+
@@ -294,7 +294,7 @@ facets. It can be stored, for example, in the vertex itself or in a
 hash-structure.  See also the following Section~\ref{sectionPolyIO} for 
 file I/O.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_off.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_off.cpp}
 
 % +-------------------------------------------------------------+
 \subsection{Example Using Euler Operators to Build a Cube}
@@ -331,7 +331,7 @@ are also marked in the program code.
 \end{ccHtmlOnly}
 
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_cube.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_cube.cpp}
 
 
 
@@ -546,7 +546,7 @@ structure design.
 Pulling all pieces together, the full example program illustrates how easy
 the color attribute can be accessed once it is defined.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_color.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_color.cpp}
 
 We come back to the first template parameter, \texttt{Refs}, of the
 wrapper classes. This parameter provides us with local types that
@@ -625,7 +625,7 @@ actually a hole whose vertex coordinates pinch the hole shut to form an
 edge. The example directory \texttt{examples/Polyhedron/} contains the 
 OFF files used here.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_subdiv.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_subdiv.cpp}
 
 % +------------------------------------------------------------------------+
 \subsection{Example Using the Incremental Builder and Modifier Mechanism}
@@ -655,7 +655,7 @@ its \ccc{operator()} with a reference to its internally used halfedge
 data structure. Thus, this member function in \ccc{Build_triangle} can 
 create the triangle in the halfedge data structure.
 
-\ccIncludeExampleCode{Polyhedron/polyhedron_prog_incr_builder.C}
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_incr_builder.cpp}
 
 % +--------------------------------------------------------+
 
