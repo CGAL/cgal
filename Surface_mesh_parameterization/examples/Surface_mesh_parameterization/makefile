@@ -96,6 +96,6 @@ Complete_parameterization_example$(EXE_EXT): Complete_parameterization_example$(
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
