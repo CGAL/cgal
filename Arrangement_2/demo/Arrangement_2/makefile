@@ -37,30 +37,30 @@ LDFLAGS = \
 
 all: arrangements_2$(EXE_EXT)
 
-MyWindow$(OBJ_EXT): MyWindow.C MyWindow.moc cgal_types.h demo_tab.h forms.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow.C
+MyWindow$(OBJ_EXT): MyWindow.cpp MyWindow.moc cgal_types.h demo_tab.h forms.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow.cpp
 
-MyWindow_files$(OBJ_EXT): MyWindow_files.C cgal_types.h demo_tab.h
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_files.C
+MyWindow_files$(OBJ_EXT): MyWindow_files.cpp cgal_types.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_files.cpp
 
-MyWindow_overlay$(OBJ_EXT): MyWindow_overlay.C cgal_types.h demo_tab.h
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_overlay.C
+MyWindow_overlay$(OBJ_EXT): MyWindow_overlay.cpp cgal_types.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_overlay.cpp
 
-MyWindow_operations$(OBJ_EXT): MyWindow_operations.C cgal_types.h demo_tab.h
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_operations.C
+MyWindow_operations$(OBJ_EXT): MyWindow_operations.cpp cgal_types.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_operations.cpp
 
 MyWindow.moc: MyWindow.h
 	$(QT_MOC) $< -o MyWindow.moc
 
-forms$(OBJ_EXT): forms.C  forms.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) forms.C
+forms$(OBJ_EXT): forms.cpp  forms.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) forms.cpp
 
 
 forms.moc: forms.h
 	$(QT_MOC) $< -o forms.moc
 
-qt_layer$(OBJ_EXT): qt_layer.C 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.C
+qt_layer$(OBJ_EXT): qt_layer.cpp 
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.cpp
 
 arrangements_2$(EXE_EXT): MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) \
                           MyWindow_overlay$(OBJ_EXT) \
@@ -79,5 +79,5 @@ clean: MyWindow.clean MyWindow_files.clean MyWindow_overlay.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
