@@ -35,31 +35,31 @@ LDFLAGS = \
 
 all: min_quadrilateral_2
 
-Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
+Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.cpp Qt_widget_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.cpp
 
 Qt_widget_toolbar_layers.moc: Qt_widget_toolbar_layers.h
 	$(QT_MOC) -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
 
-Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.C \
+Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.cpp \
                                    Qt_widget_toolbar_layers.moc 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_layers.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_layers.cpp
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
 
 Qt_widget_move_list_point$(OBJ_EXT): Qt_widget_move_list_point.moc \
-					Qt_widget_move_list_point.C
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.C
+					Qt_widget_move_list_point.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.cpp
 
 Qt_widget_move_list_point.moc: Qt_widget_move_list_point.h
 	$(QT_MOC) -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
 
-min_quadrilateral_2.moc: min_quadrilateral_2.C Qt_widget_toolbar$(OBJ_EXT) 
-	${QT_MOC} -o min_quadrilateral_2.moc min_quadrilateral_2.C
+min_quadrilateral_2.moc: min_quadrilateral_2.cpp Qt_widget_toolbar$(OBJ_EXT) 
+	${QT_MOC} -o min_quadrilateral_2.moc min_quadrilateral_2.cpp
 
-min_quadrilateral_2$(OBJ_EXT): min_quadrilateral_2.C min_quadrilateral_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) min_quadrilateral_2.C
+min_quadrilateral_2$(OBJ_EXT): min_quadrilateral_2.cpp min_quadrilateral_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) min_quadrilateral_2.cpp
 
 min_quadrilateral_2$(EXE_EXT): min_quadrilateral_2$(OBJ_EXT) \
                                Qt_widget_toolbar_layers$(OBJ_EXT) \
@@ -79,5 +79,5 @@ clean: min_quadrilateral_2.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
