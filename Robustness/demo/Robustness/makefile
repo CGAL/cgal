@@ -36,11 +36,11 @@ LDFLAGS = \
 
 all: robustness
 
-robustness.moc: robustness.C
-	${QT_MOC} -o robustness.moc robustness.C
+robustness.moc: robustness.cpp
+	${QT_MOC} -o robustness.moc robustness.cpp
 
-robustness$(OBJ_EXT): robustness.C robustness.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) robustness.C
+robustness$(OBJ_EXT): robustness.cpp robustness.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) robustness.cpp
 
 robustness$(EXE_EXT): robustness$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)robustness robustness$(OBJ_EXT) \
@@ -52,5 +52,5 @@ clean: robustness.clean
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
