@@ -36,11 +36,11 @@ LDFLAGS = \
 
 all: generator
 
-generator.moc: generator.C
-	${QT_MOC} -o generator.moc generator.C
+generator.moc: generator.cpp
+	${QT_MOC} -o generator.moc generator.cpp
 
-generator$(OBJ_EXT): generator.C generator.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) generator.C
+generator$(OBJ_EXT): generator.cpp generator.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) generator.cpp
 
 generator$(EXE_EXT): generator$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)generator generator$(OBJ_EXT) \
@@ -52,5 +52,5 @@ clean: generator.clean
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
