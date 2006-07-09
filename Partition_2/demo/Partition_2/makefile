@@ -34,26 +34,26 @@ LDFLAGS = \
 
 all: partition_2
 
-partition_2_toolbar$(OBJ_EXT): partition_2_toolbar.C partition_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar.C
+partition_2_toolbar$(OBJ_EXT): partition_2_toolbar.cpp partition_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar.cpp
 
 partition_2_toolbar.moc: partition_2_toolbar.h
 	$(QT_MOC) -o partition_2_toolbar.moc partition_2_toolbar.h
 
-partition_2_toolbar_layers$(OBJ_EXT): partition_2_toolbar_layers.C \
+partition_2_toolbar_layers$(OBJ_EXT): partition_2_toolbar_layers.cpp \
 		partition_2_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar_layers.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar_layers.cpp
 
 partition_2_toolbar_layers.moc: partition_2_toolbar_layers.h
 	$(QT_MOC) -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h
 
-partition_2.moc: partition_2.C \
+partition_2.moc: partition_2.cpp \
 		 partition_2_toolbar$(OBJ_EXT) \
 		 partition_2_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o partition_2.moc partition_2.C
+	${QT_MOC} -o partition_2.moc partition_2.cpp
 
-partition_2$(OBJ_EXT): partition_2.C partition_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2.C
+partition_2$(OBJ_EXT): partition_2.cpp partition_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2.cpp
 
 partition_2$(EXE_EXT): partition_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)partition_2 partition_2$(OBJ_EXT) \
@@ -68,5 +68,5 @@ clean: partition_2.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
