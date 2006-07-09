@@ -48,7 +48,7 @@ my_window.moc:  my_window.h qt_layers.h qt_layers_toolbar.h
 	$(QT_MOC) -o my_window.moc my_window.h
 
 
-polygon_delaunay_graph_2$(OBJ_EXT): polygon_delaunay_graph_2.C \
+polygon_delaunay_graph_2$(OBJ_EXT): polygon_delaunay_graph_2.cpp \
 	pdg_typedefs.h include/pdg_insert.h include/pdg_draw.h \
 	include/CGAL/Segment_Delaunay_graph_vertex_base_with_info_2.h \
 	my_window.moc qt_file_toolbar.moc qt_layers_toolbar.moc
@@ -58,7 +58,7 @@ polygon_delaunay_graph_2$(EXE_EXT): polygon_delaunay_graph_2$(OBJ_EXT)
 	polygon_delaunay_graph_2$(OBJ_EXT) $(LDFLAGS)
 
 
-segment_delaunay_graph_2$(OBJ_EXT): segment_delaunay_graph_2.C \
+segment_delaunay_graph_2$(OBJ_EXT): segment_delaunay_graph_2.cpp \
 	typedefs.h include/sdg_insert.h include/sdg_draw.h \
 	my_window.moc qt_file_toolbar.moc qt_layers_toolbar.moc
 
@@ -74,6 +74,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
