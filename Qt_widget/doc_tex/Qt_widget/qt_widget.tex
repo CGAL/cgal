@@ -105,7 +105,7 @@ without the layers.
 
 \subsection{Example: Hello Segment}
 The first example draws a red segment on an orange background.
-\ccIncludeExampleCode{Qt_widget/hellosegment.C}
+\ccIncludeExampleCode{Qt_widget/hellosegment.cpp}
 
 We follow the \qt\ naming conventions for material properties, for
 example, the {\tt CGAL::BackgroundColor} above.
@@ -136,7 +136,7 @@ triangulation. The result of this insertion appears immediately.
 Furthermore, the drawing is  updated every time the window is resized.
 
 
-\ccIncludeExampleCode{Qt_widget/tutorial2.C}
+\ccIncludeExampleCode{Qt_widget/tutorial2.cpp}
 
 
 \qt\ applications are event driven and respond to user interaction.
@@ -385,7 +385,7 @@ the layer creates a point and passes it to the widget. The widget then
 emits a signal that gets passed to the connected slot
 \ccc{My_Window::get_new_object(CGAL::Object)}.
 
-\ccIncludeExampleCode{Qt_widget/layer.C}
+\ccIncludeExampleCode{Qt_widget/layer.cpp}
 
 The \ccStyle{Qt_widget} forwards all events that it receives to the
 attached and active layers. If a layer is attached but not active, it
@@ -518,7 +518,7 @@ layer if you click on it. To activate it again just click one more time.
 
 
 \ccExample
-\ccIncludeExampleCode{Qt_widget/standard_toolbar.C}
+\ccIncludeExampleCode{Qt_widget/standard_toolbar.cpp}
 
 This example generates 100 points and inserts them in a Delaunay
 triangulation. Using the standard toolbar you can zoom in, zoom out,
