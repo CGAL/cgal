@@ -36,17 +36,17 @@ LDFLAGS = \
 
 all: linear_least_squares_fitting
 
-linear_least_squares_fitting_toolbar$(OBJ_EXT): linear_least_squares_fitting_toolbar.C linear_least_squares_fitting_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) linear_least_squares_fitting_toolbar.C
+linear_least_squares_fitting_toolbar$(OBJ_EXT): linear_least_squares_fitting_toolbar.cpp linear_least_squares_fitting_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) linear_least_squares_fitting_toolbar.cpp
 
 linear_least_squares_fitting_toolbar.moc: linear_least_squares_fitting_toolbar.h
 	$(QT_MOC) -o linear_least_squares_fitting_toolbar.moc linear_least_squares_fitting_toolbar.h
 
-linear_least_squares_fitting.moc: linear_least_squares_fitting.C linear_least_squares_fitting_toolbar$(OBJ_EXT) 
-	${QT_MOC} -o linear_least_squares_fitting.moc linear_least_squares_fitting.C
+linear_least_squares_fitting.moc: linear_least_squares_fitting.cpp linear_least_squares_fitting_toolbar$(OBJ_EXT) 
+	${QT_MOC} -o linear_least_squares_fitting.moc linear_least_squares_fitting.cpp
 
-linear_least_squares_fitting$(OBJ_EXT): linear_least_squares_fitting.C linear_least_squares_fitting.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) linear_least_squares_fitting.C
+linear_least_squares_fitting$(OBJ_EXT): linear_least_squares_fitting.cpp linear_least_squares_fitting.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) linear_least_squares_fitting.cpp
 
 linear_least_squares_fitting$(EXE_EXT): linear_least_squares_fitting$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)linear_least_squares_fitting linear_least_squares_fitting$(OBJ_EXT) \
@@ -59,5 +59,5 @@ clean: linear_least_squares_fitting.clean linear_least_squares_fitting_toolbar.c
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
