@@ -41,32 +41,32 @@ Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
 	$(QT_MOC) -o Qt_widget_styled_layer.moc Qt_widget_styled_layer.h
 
 Qt_widget_styled_layer$(OBJ_EXT): Qt_widget_styled_layer.moc \
-		Qt_widget_styled_layer.C
+		Qt_widget_styled_layer.cpp
 
 Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
 	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
 
-Qt_widget_style_editor.C.moc:  Qt_widget_style_editor.C
-	$(QT_MOC) -o Qt_widget_style_editor.C.moc Qt_widget_style_editor.C
+Qt_widget_style_editor.cpp.moc:  Qt_widget_style_editor.cpp
+	$(QT_MOC) -o Qt_widget_style_editor.cpp.moc Qt_widget_style_editor.cpp
 
 Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
-		Qt_widget_style_editor.C.moc \
-		Qt_widget_style_editor.C
+		Qt_widget_style_editor.cpp.moc \
+		Qt_widget_style_editor.cpp
 
 Show_points.moc:  Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 
-Show_points$(OBJ_EXT): Show_points.moc Show_points.C
+Show_points$(OBJ_EXT): Show_points.moc Show_points.cpp
 
 Show_lines_base.moc:  Show_lines_base.h
 	$(QT_MOC) -o Show_lines_base.moc Show_lines_base.h
 
-Show_lines_base$(OBJ_EXT): Show_lines_base.moc Show_lines_base.C
+Show_lines_base$(OBJ_EXT): Show_lines_base.moc Show_lines_base.cpp
 
 Show_pseudo_triangulation.moc:  Show_pseudo_triangulation.h
 	$(QT_MOC) -o Show_pseudo_triangulation.moc Show_pseudo_triangulation.h
 
-Show_pseudo_triangulation$(OBJ_EXT): Show_pseudo_triangulation.moc Show_pseudo_triangulation.C
+Show_pseudo_triangulation$(OBJ_EXT): Show_pseudo_triangulation.moc Show_pseudo_triangulation.cpp
 
 arrangements$(OBJ_EXT): arrangements.moc \
 	Show_pseudo_triangulation.h \
@@ -78,8 +78,8 @@ arrangements$(OBJ_EXT): arrangements.moc \
 	Show_pseudo_triangulation.h \
 	Qt_widget_style_editor.h
 
-arrangements.moc:  arrangements.C
-	$(QT_MOC) -o arrangements.moc  arrangements.C
+arrangements.moc:  arrangements.cpp
+	$(QT_MOC) -o arrangements.moc  arrangements.cpp
 
 arrangements$(OBJ_EXT): arrangements.moc
 
@@ -116,5 +116,5 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

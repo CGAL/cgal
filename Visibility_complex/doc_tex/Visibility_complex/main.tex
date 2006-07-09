@@ -296,7 +296,7 @@ We have added an iterator interface to greatly ease the use of the antichain.
 The small piece of code below reads a list of segments from a file and outputs
 the vertices of the visibility complex in optimal time and $O(n)$ storage.
 
-\ccIncludeExampleCode{Visibility_complex/example1.C}
+\ccIncludeExampleCode{Visibility_complex/example1.cpp}
 
 The antichain is closely connected to so-called greedy pseudo-triangulations.
 This is illustrated in an example below but bare in mind that this package does
@@ -389,7 +389,7 @@ more transparent. In fact, one can blindly use this class to compute visibility
 complexes of polygonal configurations without understanding the above
 discussion. The code below illustrates the use of this class.
 
-\ccIncludeExampleCode{Visibility_complex/example2.C}
+\ccIncludeExampleCode{Visibility_complex/example2.cpp}
 
 \paragraph{Output / Partial order. } 
 \label{sectionVComplexInputOutput}
@@ -553,7 +553,7 @@ section~\ref{sectionVComplexInputOutput}.
 The following program reads a family of pairwise disjoint circles from the file
 "input" and outputs the number of vertices in the visibility complex.
 
-\ccIncludeExampleCode{Visibility_complex/vc_circle.C}
+\ccIncludeExampleCode{Visibility_complex/vc_circle.cpp}
 
 \subsection{Extending Faces}
 The following example adds a \ccc{size} member variable to count the size of the
@@ -561,7 +561,7 @@ face. We use the \ccc{Antichain} to sweep the visibility complex while using
 only $O(n)$ storage. The disks are of type \ccc{CGAL::Segment\_2} and $n$ is the
 number of them.
 
-\ccIncludeExampleCode{Visibility_complex/vc_face_extension.C}
+\ccIncludeExampleCode{Visibility_complex/vc_face_extension.cpp}
 
 % +----------------------------------------------------------------------------+
 
