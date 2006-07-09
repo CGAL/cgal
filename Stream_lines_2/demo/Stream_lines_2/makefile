@@ -41,8 +41,8 @@ all:            \
 # streamlines$(EXE_EXT): streamlines$(OBJ_EXT)
 # 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)streamlines streamlines$(OBJ_EXT) $(LDFLAGS)
 # 
-# streamlines.moc:  streamlines.C
-# 	$(QT_MOC) -o streamlines.moc streamlines.C
+# streamlines.moc:  streamlines.cpp
+# 	$(QT_MOC) -o streamlines.moc streamlines.cpp
 # 
 # streamlines$(OBJ_EXT): streamlines.moc
 # 
@@ -50,7 +50,7 @@ all:            \
 # 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)streamlines streamlines$(OBJ_EXT) $(LDFLAGS)
 
 streamlines.moc :
-	$(QT_MOC) streamlines.C -o streamlines.moc
+	$(QT_MOC) streamlines.cpp -o streamlines.moc
 
 streamlines$(EXE_EXT): streamlines.moc streamlines$(OBJ_EXT)
 	$(CGAL_CXX)  $(EXE_OPT)streamlines streamlines$(OBJ_EXT) $(LDFLAGS)
@@ -62,6 +62,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
