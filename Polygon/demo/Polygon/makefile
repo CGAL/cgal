@@ -37,17 +37,17 @@ LDFLAGS = \
 all:	polygon_2
 
 
-polygon_2_toolbar$(OBJ_EXT): polygon_2_toolbar.C polygon_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) polygon_2_toolbar.C
+polygon_2_toolbar$(OBJ_EXT): polygon_2_toolbar.cpp polygon_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) polygon_2_toolbar.cpp
 
 polygon_2_toolbar.moc: polygon_2_toolbar.h
 	$(QT_MOC) -o polygon_2_toolbar.moc polygon_2_toolbar.h
 
-polygon_2.moc: polygon_2.C polygon_2_toolbar$(OBJ_EXT)
-	${QT_MOC} -o polygon_2.moc polygon_2.C
+polygon_2.moc: polygon_2.cpp polygon_2_toolbar$(OBJ_EXT)
+	${QT_MOC} -o polygon_2.moc polygon_2.cpp
 
-polygon_2$(OBJ_EXT): polygon_2.C polygon_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) polygon_2.C
+polygon_2$(OBJ_EXT): polygon_2.cpp polygon_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) polygon_2.cpp
 
 polygon_2$(EXE_EXT): polygon_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)polygon_2 polygon_2$(OBJ_EXT)\
@@ -60,5 +60,5 @@ clean:	polygon_2.clean\
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
