@@ -40,23 +40,23 @@ LDFLAGS = \
 all:            \
                 moebius_qt$(EXE_EXT)
 
-moebius_2_qt_toolbar$(OBJ_EXT): moebius_2_qt_toolbar.C moebius_2_qt_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moebius_2_qt_toolbar.C
+moebius_2_qt_toolbar$(OBJ_EXT): moebius_2_qt_toolbar.cpp moebius_2_qt_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moebius_2_qt_toolbar.cpp
 
 
-moebius_2_qt_toolbar_layers$(OBJ_EXT): moebius_2_qt_toolbar_layers.C moebius_2_qt_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moebius_2_qt_toolbar_layers.C
+moebius_2_qt_toolbar_layers$(OBJ_EXT): moebius_2_qt_toolbar_layers.cpp moebius_2_qt_toolbar_layers.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moebius_2_qt_toolbar_layers.cpp
 
-moebius_qt$(OBJ_EXT): moebius_qt.C moebius_qt.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moebius_qt.C
+moebius_qt$(OBJ_EXT): moebius_qt.cpp moebius_qt.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moebius_qt.cpp
 
 
 moebius_qt$(EXE_EXT): moebius_qt$(OBJ_EXT) moebius_2_qt_toolbar_layers$(OBJ_EXT) moebius_2_qt_toolbar$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)moebius_qt moebius_qt$(OBJ_EXT) moebius_2_qt_toolbar_layers$(OBJ_EXT) moebius_2_qt_toolbar$(OBJ_EXT) $(LDFLAGS)
 
 
-moebius_qt.moc: moebius_qt.C
-	${QT_MOC} -o moebius_qt.moc moebius_qt.C
+moebius_qt.moc: moebius_qt.cpp
+	${QT_MOC} -o moebius_qt.moc moebius_qt.cpp
 
 moebius_2_qt_toolbar.moc: moebius_2_qt_toolbar.h
 	${QT_MOC} -o moebius_2_qt_toolbar.moc moebius_2_qt_toolbar.h
@@ -75,6 +75,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
