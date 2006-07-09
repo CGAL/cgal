@@ -42,7 +42,7 @@ struct Profile_counter
 
     ~Profile_counter()
     {
-	std::cerr << "Profile counter : " << s << " = " << i << std::endl;
+	std::cerr << "[CGAL::Profile_counter] " << s << " = " << i << std::endl;
     }
 
 private:

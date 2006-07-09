@@ -26,4 +26,14 @@ first interval.
 resident size are available (the resident size does not account for
 swapped out memory nor for the memory which is not yet paged-in).
 
+\section{Profiling}
+
+\cgal\ provides a way to count the number of times a given line of code
+is executed during the execution of a program.  Such
+\ccc{CGAL::Profile_counter} counters can be added at critical place in the
+code, and at the end of the execution of a program, the count is printed on
+\ccc{std::cerr}.  A macro \ccc{CGAL_PROFILER} can be used to conveniently place
+these counters anywhere.  They are disabled by default and activated by the
+global macro \ccc{CGAL_PROFILE}.
+
 % EOF
