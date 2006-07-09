@@ -37,17 +37,17 @@ LDFLAGS = \
 
 all: boolean_operations_2
 
-boolean_operations_2_toolbar$(OBJ_EXT): boolean_operations_2_toolbar.C boolean_operations_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) boolean_operations_2_toolbar.C
+boolean_operations_2_toolbar$(OBJ_EXT): boolean_operations_2_toolbar.cpp boolean_operations_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) boolean_operations_2_toolbar.cpp
 
 boolean_operations_2_toolbar.moc: boolean_operations_2_toolbar.h
 	$(QT_MOC) -o boolean_operations_2_toolbar.moc boolean_operations_2_toolbar.h
 
-boolean_operations_2.moc: boolean_operations_2.C boolean_operations_2_toolbar$(OBJ_EXT) 
-	${QT_MOC} -o boolean_operations_2.moc boolean_operations_2.C
+boolean_operations_2.moc: boolean_operations_2.cpp boolean_operations_2_toolbar$(OBJ_EXT) 
+	${QT_MOC} -o boolean_operations_2.moc boolean_operations_2.cpp
 
-boolean_operations_2$(OBJ_EXT): boolean_operations_2.C boolean_operations_2.moc 
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) boolean_operations_2.C
+boolean_operations_2$(OBJ_EXT): boolean_operations_2.cpp boolean_operations_2.moc 
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) boolean_operations_2.cpp
 
 boolean_operations_2$(EXE_EXT): boolean_operations_2$(OBJ_EXT) \
 	boolean_operations_2_toolbar$(OBJ_EXT)
@@ -60,5 +60,5 @@ clean: boolean_operations_2.clean boolean_operations_2_toolbar.clean
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
