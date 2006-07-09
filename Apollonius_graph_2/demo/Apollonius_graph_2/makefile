@@ -37,8 +37,8 @@ LDFLAGS = \
 all:            \
                 apollonius_graph_2$(EXE_EXT) 
 
-apollonius_graph_2.moc:  apollonius_graph_2.C
-	$(QT_MOC) -o apollonius_graph_2.moc  apollonius_graph_2.C
+apollonius_graph_2.moc:  apollonius_graph_2.cpp
+	$(QT_MOC) -o apollonius_graph_2.moc  apollonius_graph_2.cpp
 
 qt_file_toolbar.moc:  qt_file_toolbar.h
 	$(QT_MOC) -o qt_file_toolbar.moc qt_file_toolbar.h
@@ -64,6 +64,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
