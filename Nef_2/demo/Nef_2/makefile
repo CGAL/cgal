@@ -36,17 +36,17 @@ LDFLAGS = \
 
 all: nef_2
 
-Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
+Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.cpp Qt_widget_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.cpp
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
 
-nef_2.moc: nef_2.C
-	${QT_MOC} -o nef_2.moc nef_2.C
+nef_2.moc: nef_2.cpp
+	${QT_MOC} -o nef_2.moc nef_2.cpp
 
-nef_2$(OBJ_EXT): nef_2.C nef_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) nef_2.C
+nef_2$(OBJ_EXT): nef_2.cpp nef_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) nef_2.cpp
 
 nef_2$(EXE_EXT): nef_2$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)nef_2 nef_2$(OBJ_EXT) \
@@ -61,5 +61,5 @@ clean: nef_2.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
