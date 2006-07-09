@@ -90,7 +90,7 @@ triangulation, makes it conforming Delaunay, and then conforming
 Gabriel. At each step, the number of vertices of the triangulation is
 printed.
 
-\ccIncludeExampleCode{Mesh_2/conforming.C}
+\ccIncludeExampleCode{Mesh_2/conforming.cpp}
 
 See figures~\ref{Conform-example-conform},
 \ref{Conform-example-conform-Delaunay}
@@ -327,7 +327,7 @@ provided by the criteria class \ccc{Delaunay_mesh_criteria_2<K>}. No seeds are
 given, meaning that the mesh domain covers the whole plane except the
 unbounded component.
 
-\ccIncludeExampleCode{Mesh_2/mesh_global.C}
+\ccIncludeExampleCode{Mesh_2/mesh_global.cpp}
 
 \subsection{Example Using the Class \protect\ccc{Delaunay_mesher_2<CDT>}}
 
@@ -338,7 +338,7 @@ This example uses the class \ccc{Delaunay_mesher_2<CDT>} and calls
   because some internal structures needed by the algorithm would be
   built twice.
 
-\ccIncludeExampleCode{Mesh_2/mesh_class.C}
+\ccIncludeExampleCode{Mesh_2/mesh_class.cpp}
 
 \subsection{Example Using Seeds}
 
@@ -346,7 +346,7 @@ This example uses the global function \ccc{refine_Delaunay_mesh_2} but
 defines a domain by using one seed. The size and shape criteria are the
 default ones provided by the criteria class \ccc{Delaunay_mesh_criteria_2<K>}.
 
-\ccIncludeExampleCode{Mesh_2/mesh_with_seeds.C}
+\ccIncludeExampleCode{Mesh_2/mesh_with_seeds.cpp}
 
 %%% For emacs/AucTeX:
 %%% Local Variables: ***

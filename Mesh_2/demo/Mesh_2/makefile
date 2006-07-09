@@ -59,16 +59,16 @@ Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor-aux.moc Qt_widget_style
 Show_points.moc: Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 
-Show_points$(OBJ_EXT): Show_points.moc Show_points.C
+Show_points$(OBJ_EXT): Show_points.moc Show_points.cpp
 
 Show_segments_base.moc:  Show_segments_base.h
 	$(QT_MOC) -o Show_segments_base.moc Show_segments_base.h
 
-Show_segments_base$(OBJ_EXT): Show_segments_base.moc Show_segments_base.C
+Show_segments_base$(OBJ_EXT): Show_segments_base.moc Show_segments_base.cpp
 
 icons$(OBJ_EXT): seeds.xpm marked.xpm contraints.xpm
 
-mesh_demo.moc:  mesh_demo.C
+mesh_demo.moc:  mesh_demo.cpp
 	$(QT_MOC) -o mesh_demo.moc $<
 
 Show_clusters.moc: Show_clusters.h
@@ -116,6 +116,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
