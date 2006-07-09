@@ -35,25 +35,25 @@ LDFLAGS = \
 
 all: straight_skeleton_2
 
-straight_skeleton_2_toolbar$(OBJ_EXT): straight_skeleton_2_toolbar.C straight_skeleton_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2_toolbar.C
+straight_skeleton_2_toolbar$(OBJ_EXT): straight_skeleton_2_toolbar.cpp straight_skeleton_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2_toolbar.cpp
 
 straight_skeleton_2_toolbar.moc: straight_skeleton_2_toolbar.h
 	$(QT_MOC) -o straight_skeleton_2_toolbar.moc straight_skeleton_2_toolbar.h
 
-straight_skeleton_2_toolbar_layers$(OBJ_EXT): straight_skeleton_2_toolbar_layers.C \
+straight_skeleton_2_toolbar_layers$(OBJ_EXT): straight_skeleton_2_toolbar_layers.cpp \
 	straight_skeleton_2_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2_toolbar_layers.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2_toolbar_layers.cpp
 
 straight_skeleton_2_toolbar_layers.moc: straight_skeleton_2_toolbar_layers.h
 	$(QT_MOC) -o straight_skeleton_2_toolbar_layers.moc straight_skeleton_2_toolbar_layers.h
 
-straight_skeleton_2.moc: straight_skeleton_2.C straight_skeleton_2_toolbar$(OBJ_EXT) \
+straight_skeleton_2.moc: straight_skeleton_2.cpp straight_skeleton_2_toolbar$(OBJ_EXT) \
                  straight_skeleton_2_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o straight_skeleton_2.moc straight_skeleton_2.C
+	${QT_MOC} -o straight_skeleton_2.moc straight_skeleton_2.cpp
 
-straight_skeleton_2$(OBJ_EXT): straight_skeleton_2.C straight_skeleton_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2.C
+straight_skeleton_2$(OBJ_EXT): straight_skeleton_2.cpp straight_skeleton_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) straight_skeleton_2.cpp
 
 straight_skeleton_2$(EXE_EXT): straight_skeleton_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)straight_skeleton_2 straight_skeleton_2$(OBJ_EXT) \
@@ -68,5 +68,5 @@ clean: straight_skeleton_2.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

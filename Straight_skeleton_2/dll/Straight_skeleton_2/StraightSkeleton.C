@@ -59,7 +59,6 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
     }
     if( ( (i == 0) && (CGAL::orientation_2(points.begin(),points.end()) != CGAL::COUNTERCLOCKWISE) )
 	|| ( (i != 0) && (CGAL::orientation_2(points.begin(),points.end()) != CGAL::CLOCKWISE)) ){
-      std::cerr << "Warning: polygon " << i << " has wrong orientation" << std::endl;
     ssb.enter_contour(points.rbegin(),points.rend());
     } else {
       ssb.enter_contour(points.begin(),points.end());
@@ -72,9 +71,8 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
   // Proceed only if the skeleton was correctly constructed.
   if ( ss )
     {
-      //std::cerr <<  "We first count the points" << std::endl;
+      // We first count the points
       numFaces= ss->size_of_faces();
-      //std::cerr << "numFaces = " << numFaces << std::endl;
       numFace_i = new int[numFaces];
       if(numFace_i == NULL){
 	std::cerr << "Allocation failed" << std::endl;
@@ -93,12 +91,10 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
 	} while(h != done);
 	numVertices += count;
 	numFace_i[currentFace] = count;
-	//std::cerr << "numFace_i[" << currentFace << "] = " << numFace_i[currentFace] << std::endl;
 	++currentFace;
       }
-      //std::cerr <<  "numVertices = " << numVertices << std::endl;
         
-      //std::cerr <<  " Allocate the x and y array and traverse the faces again" << std::endl;
+      // Allocate the x and y array and traverse the faces again
       xf = new double[numVertices];
       if(xf == NULL){
 	std::cerr << "Allocation failed" << std::endl;
@@ -119,8 +115,6 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
 	Halfedge_handle done;
 	done = h;
 	do {
-	  //	  std::cerr << "xf[" << currentVertex << "] = " << h->vertex()->point().x()  << std::endl;
-	  //std::cerr << "yf[" << currentVertex << "] = " << h->vertex()->point().y()  << std::endl;
 	  xf[currentVertex] =  h->vertex()->point().x();
 	  yf[currentVertex] =  h->vertex()->point().y();
 	  ++currentVertex;
@@ -162,7 +156,6 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
 	dump.close();
       }
 
-      std::cerr << "leave dll" << std::endl;
 
       return true;
     } else{
