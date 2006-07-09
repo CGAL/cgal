@@ -45,7 +45,7 @@ cleano :
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CGALCFLAGS) $(OBJ_OPT) $<
 
 
