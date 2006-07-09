@@ -36,24 +36,24 @@ LDFLAGS = \
 
 all: min_circle_2
 
-min_circle_2_toolbar$(OBJ_EXT): min_circle_2_toolbar.C min_circle_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) min_circle_2_toolbar.C
+min_circle_2_toolbar$(OBJ_EXT): min_circle_2_toolbar.cpp min_circle_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) min_circle_2_toolbar.cpp
 
 min_circle_2_toolbar.moc: min_circle_2_toolbar.h
 	$(QT_MOC) -o min_circle_2_toolbar.moc min_circle_2_toolbar.h
 
 Qt_widget_move_list_point$(OBJ_EXT): Qt_widget_move_list_point.moc \
-					Qt_widget_move_list_point.C
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.C
+					Qt_widget_move_list_point.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_list_point.cpp
 
 Qt_widget_move_list_point.moc: Qt_widget_move_list_point.h
 	$(QT_MOC) -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
 
-min_circle_2.moc: min_circle_2.C min_circle_2_toolbar$(OBJ_EXT) 
-	${QT_MOC} -o min_circle_2.moc min_circle_2.C
+min_circle_2.moc: min_circle_2.cpp min_circle_2_toolbar$(OBJ_EXT) 
+	${QT_MOC} -o min_circle_2.moc min_circle_2.cpp
 
-min_circle_2$(OBJ_EXT): min_circle_2.C min_circle_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) min_circle_2.C
+min_circle_2$(OBJ_EXT): min_circle_2.cpp min_circle_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) min_circle_2.cpp
 
 min_circle_2$(EXE_EXT): min_circle_2$(OBJ_EXT) \
 			Qt_widget_move_list_point$(OBJ_EXT)
@@ -68,5 +68,5 @@ clean: min_circle_2.clean min_circle_2_toolbar.clean \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
