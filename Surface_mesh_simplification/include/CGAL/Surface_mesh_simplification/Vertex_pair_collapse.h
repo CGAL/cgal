@@ -304,6 +304,17 @@ private:
     return get(is_vertex_fixed,mSurface,v) ;
   }
   
+  bool is_border ( edge_descriptor const& edge ) const
+  {
+    edge_is_border_t is_border_property ;
+    return get(is_border_property,mSurface,edge) ;
+  }    
+  
+  bool is_undirected_edge_a_border ( edge_descriptor const& edge ) const
+  {
+    return is_border(edge) || is_border(opposite_edge(edge,mSurface)) ;
+  }    
+  
 private:
 
   TSM& mSurface ;

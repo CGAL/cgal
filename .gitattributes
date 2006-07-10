@@ -1830,6 +1830,8 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/Midpoint_edge_collapse_test.cpp -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/edge_collapse_test.cpp -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#image/x-icon
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#image/x-icon

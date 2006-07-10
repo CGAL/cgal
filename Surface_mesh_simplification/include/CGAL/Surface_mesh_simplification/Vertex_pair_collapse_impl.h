@@ -236,6 +236,9 @@ void VertexPairCollapse<M,D,C,V,S,I>::Loop()
 template<class M,class D,class C,class V,class S, class I>
 bool VertexPairCollapse<M,D,C,V,S,I>::Is_collapsable( vertex_descriptor const& p, vertex_descriptor const& q, edge_descriptor const& p_q )
 {
+  if ( !is_undirected_edge_a_border(p_q) )
+    return false ;
+    
   out_edge_iterator eb1, ee1 ; 
   out_edge_iterator eb2, ee2 ; 
 
