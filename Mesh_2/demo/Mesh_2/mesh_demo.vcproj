@@ -47,7 +47,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o mesh_demo.moc mesh_demo.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o mesh_demo.moc mesh_demo.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -103,7 +103,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(QTDIR)/bin/moc.exe -o mesh_demo.moc mesh_demo.C"/>
+				CommandLine="$(QTDIR)/bin/moc.exe -o mesh_demo.moc mesh_demo.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -127,7 +127,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath=".\icons.C">
+				RelativePath=".\icons.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -142,7 +142,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\mesh_demo.C">
+				RelativePath=".\mesh_demo.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -157,7 +157,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Qt_widget_style_editor.C">
+				RelativePath=".\Qt_widget_style_editor.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -172,7 +172,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Qt_widget_styled_layer.C">
+				RelativePath=".\Qt_widget_styled_layer.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -187,7 +187,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Show_points.C">
+				RelativePath=".\Show_points.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -202,7 +202,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Show_segments_base.C">
+				RelativePath=".\Show_segments_base.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

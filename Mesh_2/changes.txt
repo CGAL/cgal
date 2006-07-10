@@ -1,3 +1,12 @@
+10 July 2006 Laurent Rineau
+- new debug macros:
+   - CGAL_MESH_3_DEBUG_INSERTION_RADIUS,
+   - CGAL_MESH_2_DEBUG_INSERTION_RADIUS,
+   - CGAL_MESHES_DEBUG_REFINEMENT_POINTS,
+   - and CGAL_MESH_3_DIRTY_DEBUG_SPHERES.
+  These are not activated by default, of course. The latter was to debug
+  test/Mesh_3/combined_spheres.cpp.
+
 7 July 2006 Laurent Rineau
 - add the ability to set the background color, and properties of the layer
 Show_in_domain. It was a bit a fun. I have done that in 10mn, with the

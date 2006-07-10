@@ -1531,7 +1531,7 @@ int main(int argc, char** argv)
   return 0;
 }
 
-// moc_source_file: mesh_demo.C
+// moc_source_file: mesh_demo.cpp
 #include "mesh_demo.moc"
 
 // moc_source_file: Show_clusters.h

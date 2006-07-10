@@ -130,7 +130,7 @@
   <cppsupportpart>
     <filetemplates>
       <interfacesuffix>.h</interfacesuffix>
-      <implementationsuffix>.C</implementationsuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
     </filetemplates>
   </cppsupportpart>
   <kdevcppsupport>

@@ -301,6 +301,20 @@ public:
     Zone zone = conflicts_zone(p, e);
  
     const Mesher_level_conflict_status result = test_point_conflict(p, zone);
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+    switch( result )
+    {
+    case NO_CONFLICT:
+      std::cerr << "accepted\n";
+      break;
+    case CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED:
+      std::cerr << "rejected (temporarily)\n";
+      break;
+    case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
+      std::cerr << "rejected (permanent)\n";
+      break;
+    }
+#endif
 
     if(result == NO_CONFLICT)
     {

@@ -47,7 +47,7 @@ all:            \
 bench$(EXE_EXT): bench$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bench bench$(OBJ_EXT) $(LDFLAGS)
 
-bench-pg$(OBJ_EXT): bench.C
+bench-pg$(OBJ_EXT): bench.cpp
 	$(CGAL_CXX) $(CXXFLAGS) $(EXE_OPT)bench-pg$(OBJ_EXT) $(OBJ_OPT) $< $(PROF_CXX_FLAGS)
 
 bench-pg$(EXE_EXT): bench-pg$(OBJ_EXT)
@@ -64,5 +64,5 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

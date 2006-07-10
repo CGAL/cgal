@@ -1,4 +1,4 @@
-// file: examples/Mesh_2/mesh_with_seeds.C
+// file: examples/Mesh_2/mesh_with_seeds.cpp
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
