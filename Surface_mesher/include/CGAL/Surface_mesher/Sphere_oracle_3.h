@@ -68,7 +68,9 @@ namespace CGAL {
       visitor(visitor_)
     {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+#  ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
       std::cerr << "CONS: Sphere_oracle_3\n";
+#  endif
 #endif
     }
 
