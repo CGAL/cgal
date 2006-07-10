@@ -1,3 +1,14 @@
+10 July 2006 Laurent Rineau
+- new debug macros:
+  - CGAL_MESH_3_DIRTY_DEBUG_SPHERES,
+  - and CGAL_MESHES_DEBUG_REFINEMENT_POINTS.
+- new macro CGAL_MESHES_OUTPUT_STREAM, which is set to std::cout by
+default.
+- in Mesh_2: new header <CGAL/Mesh_2/Output_stream.h>
+- new debug macro in <CGAL/Surface_mesher/Standard_criteria.h>
+  - CGAL_MESH_3_DEBUG_CRITERIA
+  Used in test/Mesh_3/combined_spheres*.cpp 
+
 7 July 2006 Laurent Rineau
 - in test/Mesh_3/combined_spheres*.C:
   - new surface criterion class, named Uniform_size_multi_surface_criterion

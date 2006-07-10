@@ -59,6 +59,19 @@ namespace CGAL {
 	     criteria.end(); ++cit)
 	if ((*cit)->is_bad (f, q[i++]))
           bad = true;
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CRITERIA
+      if( bad )
+      {
+        std::cerr << "bad triangle: |";
+        for(typename Criteria::iterator cit = criteria.begin(); cit !=
+              criteria.end(); ++cit)
+        {
+          FT dummy_q;
+          std::cerr << (*cit)->is_bad (f, dummy_q) << "|" ;
+        }
+        std::cerr << "\n";
+      }
+#endif
       return bad;
     }
   };
@@ -224,15 +237,13 @@ namespace CGAL {
       typedef typename Geom_traits::FT FT;
       Geom_traits gt;
 
-      Point p1 = fh.first->vertex ((fh.second+1)&3)->point();
+      const Point& p1 = fh.first->vertex ((fh.second+1)&3)->point();
 
       q =  B / gt.compute_squared_distance_3_object()
 	(p1, fh.first->get_facet_surface_center (fh.second));
       return q < FT(1);
     }
   };  // end Uniform_size_criterion
-
-
 
   // Edge size Criterion class
   template <class Tr>

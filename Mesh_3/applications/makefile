@@ -47,7 +47,7 @@ all:            \
                 slivers_exuder$(EXE_EXT) \
                 cgal_to_medit$(EXE_EXT) \
                 stat_mesh$(EXE_EXT) \
-		test_off.C 
+		test_off$(EXE_EXT) 
 
 cgal_to_medit$(EXE_EXT): cgal_to_medit$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)cgal_to_medit cgal_to_medit$(OBJ_EXT) $(LDFLAGS)
@@ -112,5 +112,5 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

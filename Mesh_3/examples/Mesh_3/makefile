@@ -19,7 +19,7 @@ all: $(DEFAULT_TARGETS)
 #                    ImageIO files
 #---------------------------------------------------------------------#
 
-IMAGEIO_PATH = ../../../Surface_mesher/examples/Surface_mesher/ImageIO/
+IMAGEIO_PATH = ../../../Surface_mesher/examples/Surface_mesher/ImageIO
 
 include $(IMAGEIO_PATH)/imageio.mk
 
@@ -31,6 +31,7 @@ include $(IMAGEIO_PATH)/imageio.mk
 
 CXXFLAGS = -I../../../Data_structure_for_queries_3/include \
            -I ../../../Surface_mesher/include \
+           -I ../../../Mesh_2/include \
 	   -I../../include \
            -I$(IMAGEIO_PATH) \
 	   $(OTHER_INCLUDES) \

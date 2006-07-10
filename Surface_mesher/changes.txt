@@ -5,6 +5,9 @@ include/CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h
 too) in <CGAL/Surface_mesher/Surface_mesher.h>
 - major switch from .C to .cpp. Andreas's script left a lot of things that
 had to be fixed manually.
+- new debug macro in <CGAL/Surface_mesher/Standard_criteria.h>
+  - CGAL_MESH_3_DEBUG_CRITERIA
+  Used in test/Mesh_3/combined_spheres*.cpp 
 
 6 July 2006 Laurent Rineau
 - fix typos in make_surface_mesh.tex.
