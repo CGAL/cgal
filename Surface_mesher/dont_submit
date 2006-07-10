@@ -4,11 +4,11 @@ TODO
 demo
 Complex_2_in_triangulation_3
 Complex_2_in_triangulation_3_ref
-surface_mesher.C
-surfaces_union.C
+surface_mesher.cpp
+surfaces_union.cpp
 inputs
 NOTICE
-internal-test-surface-mesher.C
+internal-test-surface-mesher.cpp
 makefile.dependencies
 find_debug_macros
 find_non_debug_macros

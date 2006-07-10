@@ -62,7 +62,6 @@ test_sphere_oracle$(EXE_EXT): test_sphere_oracle$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_sphere_oracle test_sphere_oracle$(OBJ_EXT) $(LDFLAGS)
 
 run-test: all
-	./combined_spheres$(EXE_EXT)
 	./implicit_surface_mesher_test$(EXE_EXT)
 	./test_robust_circumcenter$(EXE_EXT)
 	./test_c2t3_iterators$(EXE_EXT)
@@ -80,7 +79,7 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
 #---------------------------------------------------------------------#

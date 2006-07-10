@@ -3,10 +3,10 @@ deps:
 
 .PHONY: renew_deps
 
-.%.deps: %.C
+.%.deps: %.cpp
 	$(CGAL_CXX) $(CXXFLAGS) -M -MG $< | egrep -v '^ +/' > $@
 
-DEPS_FILES = $(addprefix .,$(addsuffix .deps, $(basename $(wildcard *.C))))
+DEPS_FILES = $(addprefix .,$(addsuffix .deps, $(basename $(wildcard *.cpp))))
 
 renew_deps: $(DEPS_FILES)
 

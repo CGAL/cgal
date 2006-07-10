@@ -1,4 +1,4 @@
-// file examples/Surface_mesher/3d_image_surface_mesher.C
+// file examples/Surface_mesher/3d_image_surface_mesher.cpp
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
