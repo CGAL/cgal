@@ -1,4 +1,4 @@
-//! \file examples/Boolean_set_operations_2/ex_sequence.C
+//! \file examples/Boolean_set_operations_2/ex_sequence.cpp
 // Performing a sequence of Boolean set-operations.
 
 #include "bso_rational_nt.h"

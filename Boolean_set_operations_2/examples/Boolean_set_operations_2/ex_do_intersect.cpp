@@ -1,4 +1,4 @@
-//! \file examples/Boolean_set_operations_2/ex_do_intersect.C
+//! \file examples/Boolean_set_operations_2/ex_do_intersect.cpp
 // Determining whether two triangles intersect.
 
 #include "bso_rational_nt.h"

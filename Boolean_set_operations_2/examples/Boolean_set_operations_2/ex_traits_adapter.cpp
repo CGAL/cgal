@@ -1,4 +1,4 @@
-//! \file examples/Boolean_set_operations_2/ex_traits_adaptor.C
+//! \file examples/Boolean_set_operations_2/ex_traits_adapter.cpp
 // Using the traits adaptor to generate a traits of conics.
 #include <CGAL/basic.h>
 

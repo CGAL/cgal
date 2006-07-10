@@ -1,4 +1,4 @@
-//! \file examples/Boolean_set_operations_2/ex_symmetric_difference.C
+//! \file examples/Boolean_set_operations_2/ex_symmetric_difference.cpp
 // Computing the symmetric difference of two polygons with holes.
 
 #include "bso_rational_nt.h"
