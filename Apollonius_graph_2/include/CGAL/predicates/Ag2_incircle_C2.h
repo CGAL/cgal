@@ -224,7 +224,7 @@ public:
     Orientation o1 = orientation(bl1_perp, q.point(), tag);
     Orientation o2 = orientation(bl2_perp, q.point(), tag);
 
-    CGAL_assertion( o1 != COLLINEAR && o2 != COLLINEAR );
+    CGAL_assertion( o1 != COLLINEAR || o2 != COLLINEAR );
     if ( o1 == o2 ) { return POSITIVE; }
     return NEGATIVE;
   }  
