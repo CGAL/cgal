@@ -154,36 +154,9 @@ namespace CGAL {
       for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit !=
 	     tr.finite_facets_end(); ++fit) {
 	if (tr.dimension() == 3) {
-	  Facet other_side = mirror_facet(*fit);
-
-	  set_facet_visited(*fit);
-	  set_facet_visited(other_side);
-	  //(*fit).first->set_facet_visited((*fit).second);
-	  //c->set_facet_visited(other_side.second);
-
-	  if (is_facet_on_surface(*fit, center)) {
-	    c2t3.set_in_complex(*fit);
-	    set_facet_surface_center((*fit), center);
-	    set_facet_surface_center(other_side, center);
-	    //(*fit).first->set_facet_on_surface((*fit).second,true);
-	    //(*fit).first->set_surface_center_facet((*fit).second,center);
-
-	    //c->set_facet_on_surface(other_side.second,true);
-	    //c->set_surface_center_facet(other_side.second,center);
-
-            Quality a_r;
-            if (criteria.is_bad (*fit, a_r)) {
-               // @TODO, @WARNING: why do we insert the two sides of facets?!
-	      facets_to_refine.insert(*fit,a_r);
-	      facets_to_refine.insert(other_side,a_r);
-	    }
-	  }
-
-	  else {
-	    c2t3.remove_from_complex(*fit);
-	    //(*fit).first->set_facet_on_surface((*fit).second,false);
-	    //c->set_facet_on_surface(other_side.second,false);
-	  }
+          new_facet<true>(*fit);
+          // see definition of
+          // template <bool> new_facet()
 	}
 	else {
 	  CGAL_assertion (tr.dimension() == 2);
@@ -225,6 +198,9 @@ namespace CGAL {
     // From the element to refine, gets the point to insert
     Point refinement_point_impl(const Facet& f) const
       {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        std::cerr << "point from Surface_mesher: ";
+#endif
 	CGAL_assertion (c2t3.face_status(f) == C2T3::REGULAR);
 	//CGAL_assertion (f.first->is_facet_on_surface (f.second));
 	return get_facet_surface_center (f);
@@ -288,37 +264,42 @@ namespace CGAL {
       if (c2t3.face_status(f) == C2T3::REGULAR)
 	{
 	  const Cell_handle& c = f.first;
-	  const int index = f.second;
+	  const int& index = f.second;
 
 	  typename GT::Compute_squared_distance_3 distance =
 	    tr.geom_traits().compute_squared_distance_3_object();
 
-// 	  std::cerr << "testing conflict... \n";
 	  // test Delaunay surfacique
 	  Point center = get_facet_surface_center(f);
-	  if( distance(center, p) <
-	      distance(center, c->vertex((index+1)&3)->point()) )
+
+          for(bool exit = false; ; exit = true)
+          {
+            // this for loop is a trick to pass in the following "if" once
+            // with center="surface center", and once with
+            // center="circumcenter"
+
+            if( distance(center, p) <
+                distance(center, c->vertex((index+1)&3)->point()) )
 	    {
-// 	      Quality q = criteria.quality(f);
               Quality q;
               criteria.is_bad(f, q); // to get q (passed as reference)
-	      facets_to_refine.insert(f, q);
+              Facet other_side = mirror_facet(f);
+              if(f.first < other_side.first)
+                facets_to_refine.insert(f, q);
+              else
+                facets_to_refine.insert(other_side, q);
 	      return true;
 	    }
-	  // test Gabriel
-	  center = tr.geom_traits().construct_circumcenter_3_object()
-	    (c->vertex((index+1)&3)->point(),
-	     c->vertex((index+2)&3)->point(),
-	     c->vertex((index+3)&3)->point());
-	  if( distance(center, p) <
-	      distance(center, c->vertex((index+1)&3)->point()) )
-	    {
-// 	      Quality q = criteria.quality(f);
-              Quality q;
-              criteria.is_bad(f, q); // to get q (passed as reference)
-	      facets_to_refine.insert(f, q);
-	      return true;
-	    }
+
+            if(exit)
+              return false;
+
+            // test Gabriel
+            center = tr.geom_traits().construct_circumcenter_3_object()
+              (c->vertex((index+1)&3)->point(),
+               c->vertex((index+2)&3)->point(),
+               c->vertex((index+3)&3)->point());
+          }
 	}
       return false;
     }
@@ -437,8 +418,10 @@ namespace CGAL {
       Facet other_side = mirror_facet(f);
 
       // On enleve la facette de la liste des mauvaises facettes
-      facets_to_refine.erase(f);
-      facets_to_refine.erase(other_side);
+      if(f.first < other_side.first)
+        facets_to_refine.erase(f);
+      else
+        facets_to_refine.erase(other_side);
 
       // Le compteur des visites est remis a zero
        reset_visited(f);
@@ -468,6 +451,12 @@ namespace CGAL {
       if (tr.is_infinite(f) || is_facet_visited(f))
 	return;
 
+      new_facet<false>(f);
+    }
+
+    // Action to perform on any new facet
+    template <bool remove_from_complex_if_not_in_rectricted_Delaunay>
+    void new_facet (const Facet& f) {
       Facet other_side = mirror_facet(f);
 
       // NB: set_facet_visited() is implementation dependant
@@ -494,15 +483,15 @@ namespace CGAL {
 	// On regarde alors si la facette est bonne
         Quality a_r;
 	if (criteria.is_bad (f, a_r)) {
-          // @TODO, @WARNING: same as above, why the two sides?!
-	  facets_to_refine.insert (f, a_r);
-	  facets_to_refine.insert (other_side, a_r);
+          if(f.first < other_side.first)
+            facets_to_refine.insert (f, a_r);
+          else
+            facets_to_refine.insert (other_side, a_r);
 	}
       }
-
-      // Else the facet is not a restricted Delaunay facet. However,
-      // since it was removed before the insertion of the new vertex,
-      // it is not in the complex nor in the list of bad facets, by default
+      else
+        if( remove_from_complex_if_not_in_rectricted_Delaunay )
+          c2t3.remove_from_complex(f);
     }
 
     // Action to perform on a facet opposite to the new vertex

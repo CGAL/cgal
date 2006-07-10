@@ -1,6 +1,8 @@
 10 July 2006 Laurent Rineau
 - remove a buguy debug output, in
 include/CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h
+- add a new macro CGAL_MESHES_DEBUG_REFINEMENT_POINTS (see Mesh_2 changelog
+too) in <CGAL/Surface_mesher/Surface_mesher.h>
 
 6 July 2006 Laurent Rineau
 - fix typos in make_surface_mesh.tex.
