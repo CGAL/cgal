@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_exact_offset.C
+//! \file examples/Minkowski_sum_2/ex_exact_offset.cpp
 // Computing the exact offset of a polygon.
 #include <CGAL/basic.h>
 

@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_sum_with_holes.C
+//! \file examples/Minkowski_sum_2/ex_sum_with_holes.cpp
 // Computing the Minkowski sum of two non-convex polygons read from a file.
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

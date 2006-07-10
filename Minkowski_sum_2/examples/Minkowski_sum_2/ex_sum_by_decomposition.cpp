@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_sum_by_decomposition.C
+//! \file examples/Minkowski_sum_2/ex_sum_by_decomposition.cpp
 // Computing the Minkowski sum of two non-convex polygons read from a file
 // using the small-side angle-bisector decomposition strategy.
 

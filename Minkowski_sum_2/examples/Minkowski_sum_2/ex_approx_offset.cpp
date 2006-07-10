@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_approx_offset.C
+//! \file examples/Minkowski_sum_2/ex_approx_offset.cpp
 // Computing the approximated offset of a polygon.
 
 #include "ms_rational_nt.h"
