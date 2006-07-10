@@ -244,6 +244,13 @@ scan_cells_and_process(const Tr& tr,
               << *(std::max_element(maximum.begin(), maximum.end())) << "\n"
               << std::endl;
   
+  *out_stream << std::setprecision(3)
+              << prefix
+              << std::setw(42) << "max"
+              << std::setw(13) << "min"
+              << std::setw(13) << "avg"
+              << std::endl;
+
   // local volume output
   for(unsigned int i = 0; i < vectors_size; i++)
   {
@@ -254,7 +261,12 @@ scan_cells_and_process(const Tr& tr,
   }
 
 
-  *out_stream << std::endl;
+  *out_stream << std::setprecision(3)
+              << prefix
+              << std::setw(42) << "max"
+              << std::setw(13) << "min"
+              << std::setw(13) << "avg"
+              << std::endl;
 
   for(unsigned int i = 0; i < vectors_size; i++)
   {
