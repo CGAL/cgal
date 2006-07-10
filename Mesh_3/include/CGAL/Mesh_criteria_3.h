@@ -20,6 +20,8 @@
 #ifndef CGAL_MESH_CRITERIA_3_H
 #define CGAL_MESH_CRITERIA_3_H
 
+#include <iostream>
+
 namespace CGAL {
 
 template <typename Tr>
@@ -155,6 +157,12 @@ public:
 
 }; // end Mesh_criteria_3
 
+  template <typename Tr>
+  std::ostream& operator<<(std::ostream& os,
+                           const typename Mesh_criteria_3<Tr>::Quality& q)
+  {
+    return os << q.sq_size() << ", " << q.aspect();
+  }
 
 } // end namespace CGAL
 

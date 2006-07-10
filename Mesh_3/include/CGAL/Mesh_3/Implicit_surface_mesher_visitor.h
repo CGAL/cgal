@@ -1,4 +1,4 @@
-// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,6 +19,8 @@
 
 #ifndef CGAL_MESH_3_IMPLICIT_SURFACE_MESHER_VISITOR_H
 #define CGAL_MESH_3_IMPLICIT_SURFACE_MESHER_VISITOR_H
+
+#include <CGAL/Mesh_2/Output_stream.h>
 
 namespace CGAL {
 
@@ -50,10 +52,10 @@ namespace CGAL {
       {
         if(v->point().surface_index() == 0)
         {
-          std::cerr << "?";
+          CGAL_MESHES_OUTPUT_STREAM << "?";
           v->point().set_surface_index(1);
         }
-	std::cout << v->point().surface_index();
+	CGAL_MESHES_OUTPUT_STREAM << v->point().surface_index();
       }
 
       template <typename E, typename P, typename Z>

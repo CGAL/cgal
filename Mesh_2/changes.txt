@@ -8,6 +8,7 @@
   test/Mesh_3/combined_spheres.cpp.
 - major switch from .C to .cpp. Andreas's script left a lot of things that
 had to be fixed manually.
+- new header <CGAL/Mesh_2/Output_stream.h>
 
 7 July 2006 Laurent Rineau
 - add the ability to set the background color, and properties of the layer

@@ -23,6 +23,8 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
 
+#include <CGAL/Mesh_2/Output_stream.h>
+
 //#include <CGAL/Mesh_3/Refine_edges.h>
 //#include <CGAL/Mesh_3/Refine_facets.h>
 
@@ -115,6 +117,9 @@ public:
 
   Point refinement_point_impl(const Cell_handle& c) const
   {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+    std::cerr << "point from volume mesher: ";
+#endif
     typename Geom_traits::Construct_circumcenter_3 circumcenter = 
       triangulation_ref_impl().geom_traits().construct_circumcenter_3_object();
 
@@ -123,7 +128,16 @@ public:
     const Point& r = c->vertex(2)->point();
     const Point& s = c->vertex(3)->point();
 
-    return circumcenter(p, q, r, s);
+    const Point result = circumcenter(p, q, r, s);
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+#  ifdef CGAL_MESH_3_DIRTY_DEBUG_SPHERES
+    std::cerr << " \t\tdistance: " 
+              << CGAL::sqrt(CGAL::squared_distance(result, 
+                         typename Tr::Geom_traits::Point_3(CGAL::ORIGIN)));
+#  endif
+#endif
+
+    return result;
   }
 
 #if CGAL_MESH_3_DEBUG_BEFORE_CONFLICTS
@@ -213,7 +227,7 @@ public:
 
   void after_insertion_impl(const Vertex_handle& v)
   {
-    std::cout << "*";
+    CGAL_MESHES_OUTPUT_STREAM << "*";
 #if CGAL_MESH_3_DEBUG_AFTER_INSERTION
     std::cerr << "  INSERTED." << std::endl;
 #endif

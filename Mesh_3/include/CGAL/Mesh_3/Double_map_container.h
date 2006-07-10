@@ -21,6 +21,7 @@
 #define CGAL_MESH_3_DOUBLE_MAP_CONTAINER_H
 
 #include <set>
+#include <iostream>
 #include <CGAL/Double_map.h>
 
 namespace CGAL {
