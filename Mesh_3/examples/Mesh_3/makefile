@@ -62,12 +62,13 @@ TOOLS=  cgal_to_medit \
         off_to_ghs \
         read_mesh \
         slivers_exuder \
-        stat_mesh
+        stat_mesh \
+	test_off
 
 .PHONY: tools links
 
 links:
-	ln -s ../../applications .
+	rm -f applications; ln -s ../../applications .
 	for t in $(TOOLS); do rm -f $$t; ln -s applications/$$t .; done
 
 tools:
