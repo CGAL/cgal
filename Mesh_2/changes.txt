@@ -6,6 +6,8 @@
    - and CGAL_MESH_3_DIRTY_DEBUG_SPHERES.
   These are not activated by default, of course. The latter was to debug
   test/Mesh_3/combined_spheres.cpp.
+- major switch from .C to .cpp. Andreas's script left a lot of things that
+had to be fixed manually.
 
 7 July 2006 Laurent Rineau
 - add the ability to set the background color, and properties of the layer
