@@ -73,6 +73,14 @@ private:
   Criteria criteria;
 }; // end class Surface_mesh_default_criteria_3
 
+template <typename Tr>
+std::ostream&
+operator<<(std::ostream& os, 
+           const typename Surface_mesh_default_criteria_3<Tr>::Quality& q)
+{
+  return os << "q";
+}
+
 } // end namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_DEFAULT_CRITERIA_3_H
