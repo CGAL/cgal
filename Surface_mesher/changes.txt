@@ -1,3 +1,7 @@
+10 July 2006 Laurent Rineau
+- remove a buguy debug output, in
+include/CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h
+
 6 July 2006 Laurent Rineau
 - fix typos in make_surface_mesh.tex.
 - in Surface_mesher_ref/intro.tex, change "Global Functions" to

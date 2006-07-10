@@ -40,7 +40,6 @@ namespace CGAL {
     template <class P>
     void new_point(P& p) const
     {
-      std::cout << i;
       p.set_surface_index(i);
     }
   }; // end class Point_surface_indices_visitor
