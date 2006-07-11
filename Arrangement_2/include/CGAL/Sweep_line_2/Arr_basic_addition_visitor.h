@@ -56,9 +56,75 @@ public:
   Arr_basic_addition_visitor(Arrangement *arr): Base(arr)
   {}
 
+  void before_sweep()
+  {
+    m_lh = m_arr_access.bottom_left_fictitious_vertex()->incident_halfedges();
+    if(m_lh->source()->infinite_in_x() != MINUS_INFINITY)
+      m_lh = m_lh->next()->twin();
+   
+    m_bh = m_lh->next();
+   
+
+    m_th = m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
+    if(m_th->source()->infinite_in_x() == MINUS_INFINITY)
+      m_th = m_th->next()->twin();
+
+    m_rh = m_arr_access.bottom_right_fictitious_vertex()->incident_halfedges();
+    if(m_rh->source()->infinite_in_x() == PLUS_INFINITY)
+      m_rh = m_rh->twin();
+    else
+      m_rh = m_rh->next();
+
+    CGAL_assertion(m_lh->direction() == LARGER);
+    CGAL_assertion(m_lh->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_lh->target() == m_arr_access.bottom_left_fictitious_vertex());
+
+    CGAL_assertion(m_bh->direction() == SMALLER);
+    CGAL_assertion(m_bh->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_bh->source() == m_arr_access.bottom_left_fictitious_vertex());
+
+    CGAL_assertion(m_rh->direction() == SMALLER);
+    CGAL_assertion(m_rh->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_rh->source() == m_arr_access.bottom_right_fictitious_vertex());
+
+    CGAL_assertion(m_th->direction() == LARGER);
+    CGAL_assertion(m_th->face() != m_arr_access.fictitious_face());
+    CGAL_assertion(m_th->target() == m_arr_access.top_left_fictitious_vertex());
+  }
+
   void before_handle_event(Event* event)
   {
-    Base::before_handle_event(event);
+    if(!event->is_finite())
+    {
+       if(event->get_unbounded_curve().get_halfedge_handle() ==
+          Halfedge_handle(NULL))
+         Base::before_handle_event(event);
+       else
+       {
+         Infinity_type x_inf = event->infinity_at_x();
+         if(x_inf == MINUS_INFINITY)
+         {
+           this->m_lh = this->m_lh->twin()->next()->twin();
+           this->m_prev_minus_inf_x_event = NULL;
+         }
+         else
+           if(x_inf == PLUS_INFINITY)
+             this->m_rh = this->m_rh->twin()->prev()->twin();
+           else
+           {
+             Infinity_type y_inf = event->infinity_at_y();
+             if(y_inf == MINUS_INFINITY)
+               this->m_bh = this->m_bh->twin()->prev()->twin();
+             else
+             {
+               CGAL_assertion(y_inf == PLUS_INFINITY);
+               this->m_th = this->m_th->twin()->next()->twin();
+               this->m_prev_plus_inf_y_event = NULL;
+             }
+           }
+       }
+    }
+
     event->get_is_curve_in_arr().resize(event->get_num_right_curves(),false);
 
     if(!event->has_right_curves())
@@ -189,12 +255,22 @@ public:
                                             Subcurve* sc)
   {
     Halfedge_handle he_above = ray_shoot_up(sc);
+    Vertex_handle v1 = 
+      this->m_arr_access.create_vertex(this->get_last_event(sc)->get_point());
+    Vertex_handle v2 =
+      this->m_arr_access.create_vertex(this->current_event()->get_point());
     if(he_above == Halfedge_handle(NULL))
-      return (this->m_arr->insert_in_face_interior
-              (cv.base(), this->m_arr->unbounded_face()));
+      return this->m_arr_access.insert_in_face_interior_ex(cv.base(),
+                                                   this->m_th->face(),
+                                                   v1,
+                                                   v2,
+                                                   SMALLER);
 
-    return (this->m_arr->insert_in_face_interior 
-            (cv.base(), he_above->face()));
+    return this->m_arr_access.insert_in_face_interior_ex(cv.base(),
+                                                   he_above->face(),
+                                                   v1,
+                                                   v2,
+                                                   SMALLER);
   }
 
   Halfedge_handle insert_at_vertices (const X_monotone_curve_2& cv,
@@ -203,7 +279,7 @@ public:
                                       Subcurve* sc,
                                       bool &new_face_created)
   {
-    return (this->m_arr->insert_at_vertices (cv.base(), hhandle, prev));
+    return (_insert_at_vertices(cv, hhandle, prev, sc, new_face_created));
   }
 
   virtual Halfedge_handle split_edge(Halfedge_handle /*he*/,
@@ -303,7 +379,7 @@ public:
     insert_in_face_interior(const X_monotone_curve_2& cv,
                             Subcurve* sc)
   {
-    Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
+    Event *lastEvent = this->get_last_event(sc);
     Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
     Vertex_handle curr_v =
       this->current_event()->get_point().get_vertex_handle();
@@ -331,13 +407,13 @@ public:
                               Halfedge_handle he,
                               Subcurve* sc)
   {
-    Event *lastEvent = reinterpret_cast<Event*>((sc)->get_last_event());
+    Event *lastEvent = this->get_last_event(sc);
     Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
 
     if(last_v != Vertex_handle())
       return (this->m_arr->insert_at_vertices (cv.base(), he, last_v));
     
-    return (this->m_arr->insert_from_right_vertex (cv.base(), he));
+    return (_insert_from_right_vertex(cv, he, sc));
   }
 
   virtual Halfedge_handle
@@ -351,7 +427,84 @@ public:
      if(curr_v != Vertex_handle())
        return (this->m_arr->insert_at_vertices (cv.base(), he, curr_v));
 
-    return (this->m_arr->insert_from_left_vertex (cv.base(), he));
+    return (_insert_from_left_vertex(cv, he, sc));
+  }
+
+  Halfedge_handle _insert_from_left_vertex(const X_monotone_curve_2& cv,
+                                           Halfedge_handle he,
+                                           Subcurve* sc)
+  {
+    Event* curr_event = this->current_event();
+    Vertex_handle v = 
+        this->m_arr_access.create_vertex(curr_event->get_point().base());
+      return this->m_arr_access.insert_from_vertex_ex(cv.base(), he, v, SMALLER);
+  }
+
+  Halfedge_handle _insert_from_right_vertex(const X_monotone_curve_2& cv,
+                                            Halfedge_handle he,
+                                            Subcurve* sc)
+  {
+    Event* last_event = this->get_last_event(sc);
+    Vertex_handle v = 
+        this->m_arr_access.create_vertex(last_event->get_point().base());
+      return this->m_arr_access.insert_from_vertex_ex(cv.base(), he, v, LARGER);
+  }
+
+  Halfedge_handle _insert_at_vertices (const X_monotone_curve_2& cv,
+                                       Halfedge_handle hhandle,
+                                       Halfedge_handle prev,
+                                       Subcurve* sc,
+                                       bool &new_face_created)
+  {
+ 
+  bool        prev1_before_prev2 = true;
+
+  if (m_arr_access.are_on_same_component(hhandle, prev))
+  {
+    // If prev1 and prev2 are on different components, the insertion of the
+    // new curve does not generate a new face, so the way we send these
+    // halfedge pointers to the auxiliary function _insert_at_vertices() does
+    // not matter.
+    // However, in our case, where the two halfedges are reachable from one
+    // another and are located on the same hole, a new face will be created
+    // and form a hole inside their current incident face. In this case we
+    // have to arrange prev1 and prev2 so that the new face (hole) will be
+    // incident to the correct halfedge, directed from prev1's target to
+    // prev2's target.
+    // To do this, we check whether prev1 lies inside the new face we are
+    // about to create (or alternatively, whether prev2 does not lie inside
+    // this new face).
+    const unsigned int  dist1 = m_arr_access.halfedge_distance (hhandle, prev);
+    const unsigned int  dist2 = m_arr_access.halfedge_distance (prev, hhandle);
+
+    prev1_before_prev2 = (dist1 > dist2) ?
+      (m_arr_access.is_inside_new_face (hhandle, prev, cv)) :
+      (! m_arr_access.is_inside_new_face (prev, hhandle, cv));
+  }
+
+  // Perform the insertion.
+
+  new_face_created = false;
+  Halfedge_handle  new_he = (prev1_before_prev2) ?
+    m_arr_access.insert_at_vertices_ex (cv, hhandle, prev, LARGER, new_face_created, false) :
+    m_arr_access.insert_at_vertices_ex (cv, prev, hhandle, SMALLER, new_face_created, false);
+
+  if (new_face_created)
+  {
+    // In case a new face has been created (pointed by the new halfedge we
+    // obtained), we have to examine the holes and isolated vertices in the
+    // existing face (pointed by the twin halfedge) and move the relevant
+    // holes and isolated vertices into the new face.
+    m_arr_access.relocate_in_new_face (new_he);
+  }
+
+  // Return a handle to the new halfedge directed from prev1's target to
+  // prev2's target. Note that this may be the twin halfedge of the one
+  // returned by _insert_at_vertices();
+  if (! prev1_before_prev2)
+    new_he = new_he->twin();
+
+  return (new_he);
   }
 
 protected:

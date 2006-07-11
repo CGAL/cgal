@@ -283,8 +283,6 @@ public:
     insert_in_face_interior(const X_monotone_curve_2& cv,
 			    Subcurve* sc)
   {
-    /*Halfedge_handle res =  m_arr->insert_in_face_interior (_curve(cv),
-					    m_arr->unbounded_face());*/
     Vertex_handle v1 = 
       m_arr_access.create_vertex(_point(get_last_event(sc)->get_point()));
     Vertex_handle v2 =
