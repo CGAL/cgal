@@ -29,8 +29,8 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
-#include <CGAL/Min_circle_2_adapterC2.h>
-#include <CGAL/Min_circle_2_adapterH2.h>
+#include <CGAL/Min_circle_2/Min_circle_2_adapterC2.h>
+#include <CGAL/Min_circle_2/Min_circle_2_adapterH2.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <cassert>
 #include <cstring>
