@@ -21,15 +21,15 @@
 #ifndef CGAL_MINIBALL_MINIBALL
 #define CGAL_MINIBALL_MINIBALL
 
-#include <CGAL/Min_sphere_of_spheres_d_configure.h>
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_configure.h>
 #include <cassert>
 #include <cstdlib>                 // for std::rand()
 #include <cmath>
 #include <vector>
 #include <iostream>
 
-#include <CGAL/Min_sphere_of_spheres_d_pair.h>
-#include <CGAL/Min_sphere_of_spheres_d_support_set.h>
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_pair.h>
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_support_set.h>
 
 namespace CGAL_MINIBALL_NAMESPACE {
 
