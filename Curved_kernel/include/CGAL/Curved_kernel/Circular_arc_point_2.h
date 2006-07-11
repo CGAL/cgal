@@ -45,6 +45,7 @@ namespace CGALi {
     
   public: // fixme ?
     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
+    typedef typename CK::template Handle<Root_for_circles_2_2>::type  Base;
     
     Circular_arc_point_2() 
     {}
@@ -58,14 +59,14 @@ namespace CGALi {
     {}
 
     const Root_of_2 & x() const 
-    { return _p.x(); }
+    { return get(_p).x(); }
     
     const Root_of_2 & y() const 
-    { return _p.y(); }
+    { return get(_p).y(); }
     
     CGAL::Bbox_2 bbox() const
     {
-      return _p.bbox();
+      return get(_p).bbox();
       /*std::pair<double,double> 
 	ix=to_interval(x()),
 	iy=to_interval(y());
@@ -75,10 +76,10 @@ namespace CGALi {
     }
 
     const Root_for_circles_2_2 & coordinates() const 
-    { return _p; }
+    { return get(_p); }
 
   private:
-    Root_for_circles_2_2 _p;
+    Base _p;
   };
   
 /*   template < typename CK > */
