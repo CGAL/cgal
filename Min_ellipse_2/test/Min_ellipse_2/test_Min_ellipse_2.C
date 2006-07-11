@@ -29,8 +29,8 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>
-#include <CGAL/Min_ellipse_2_adapterC2.h>
-#include <CGAL/Min_ellipse_2_adapterH2.h>
+#include <CGAL/Min_ellipse_2/Min_ellipse_2_adapterC2.h>
+#include <CGAL/Min_ellipse_2/Min_ellipse_2_adapterH2.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <cassert>
 #include <cstring>
