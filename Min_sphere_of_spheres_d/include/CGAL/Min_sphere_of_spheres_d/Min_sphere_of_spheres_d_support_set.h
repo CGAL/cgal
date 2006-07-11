@@ -23,7 +23,7 @@
 #include <utility>
 #include <functional>
 #include <cmath>
-#include <CGAL/Min_sphere_of_spheres_d_configure.h>
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_configure.h>
 
 namespace CGAL_MINIBALL_NAMESPACE {
   namespace Min_sphere_of_spheres_d_impl {
@@ -336,8 +336,6 @@ namespace CGAL_MINIBALL_NAMESPACE {
   } // namespace Min_sphere_of_spheres_d_impl
 } // namespace CGAL_MINIBALL_NAMESPACE
 
-#ifdef CGAL_MINIBALL_NO_TEMPLATE_EXPORT
-#include <CGAL/Min_sphere_of_spheres_d_support_set.C>
-#endif
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_support_set_impl.h>
 
 #endif // CGAL_MINIBALL_SUPPORTSET
