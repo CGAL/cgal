@@ -44,11 +44,15 @@ namespace CGAL {
 namespace CGALi {
 
 template < class CircularKernel, class LinearKernelBase >
-struct Circular_kernel_base: public LinearKernelBase
+struct Circular_kernel_base_ref_count: public LinearKernelBase
 {
   typedef CGALi::Circular_arc_2<CircularKernel>         Circular_arc_2;
   typedef CGALi::Circular_arc_point_2<CircularKernel>   Circular_arc_point_2;
   typedef CGALi::Line_arc_2<CircularKernel>             Line_arc_2;
+
+  // The mecanism that allows to specify reference-counting or not.
+  template < typename T >
+  struct Handle { typedef Handle_for<T>    type; };
   
   #define CGAL_Curved_Kernel_pred(Y,Z) \
     typedef CircularFunctors::Y<CircularKernel> Y; \
@@ -64,7 +68,7 @@ template < class LinearKernel, class AlgebraicKernel >
 struct Circular_kernel_2
   : public Curved_kernel_type_equality_wrapper
   <
-  CGALi::Circular_kernel_base
+  CGALi::Circular_kernel_base_ref_count
   < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
     typename LinearKernel::
 #ifndef CGAL_CFG_DEEP_DEPENDENT_TEMPLATE_BUG
