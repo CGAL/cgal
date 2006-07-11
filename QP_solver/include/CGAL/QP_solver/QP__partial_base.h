@@ -24,7 +24,7 @@
 #define CGAL_QP__PARTIAL_BASE_H
 
 // includes
-#include <CGAL/QP_pricing_strategy.h>
+#include <CGAL/QP_solver/QP_pricing_strategy.h>
 #include <CGAL/Random.h>
 #include <algorithm>
 #include <vector>

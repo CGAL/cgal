@@ -24,7 +24,7 @@
 #define CGAL_QP_EXACT_BLAND_PRICING_H
 
 // includes
-#include <CGAL/QP_pricing_strategy.h>
+#include <CGAL/QP_solver/QP_pricing_strategy.h>
 
 CGAL_BEGIN_NAMESPACE
 

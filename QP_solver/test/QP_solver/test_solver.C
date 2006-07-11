@@ -285,7 +285,7 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   using std::left;
   using std::setw;
   using std::endl;
-  cout << left << setw(Width) << "Processing:" << filename << endl;
+  cout << endl << left << setw(Width) << "Processing:" << filename << endl;
   for (Key_const_iterator it = options.begin();
        it != options.end(); ++it) {
     cout << " " << it->first << left << setw(Width-it->first.size()-1) <<  ":";
@@ -442,8 +442,7 @@ bool process(const std::string& filename,
 				 qp.fl(),qp.l(),qp.fu(),qp.u(),
 				 s,verbosity);
   // output number of iterations
-  if (verbosity > 0) 
-     cout << "  Iterations: " << solver.iterations() << endl;
+  cout << solver.iterations() << " ";
   const bool is_valid = solver.is_valid();
   delete s;
 
@@ -569,6 +568,7 @@ bool processSRFType(const std::string& filename,
 bool processLSRFType(const std::string& filename,
 		     const std::map<std::string,int>& options)
 {
+  std::cout << " Iterations:   ";
   Key_const_iterator it = options.find("Is linear");
   const bool processOnlyOneValue = it != options.end();
   bool value = false;
@@ -616,6 +616,7 @@ int main(const int ac,const char **av) {
       success = false;
 
   // final output:
+  cout << endl;
   if (!success) {
     cout << "Warning: some test cases were not handled correctly." << endl;
     return 1;

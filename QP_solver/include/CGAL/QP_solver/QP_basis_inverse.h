@@ -1134,9 +1134,7 @@ update_entry( ET& entry, const ET& d_new, const ET& y, const ET& d_old) const
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/QP_solver/QP_basis_inverse.C>
-#endif
+#include <CGAL/QP_solver/QP_basis_inverse_impl.h>
 
 #endif // CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 

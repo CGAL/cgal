@@ -24,7 +24,7 @@
 #define CGAL_QP__FILTERED_BASE_H
 
 // includes
-#include <CGAL/QP_pricing_strategy.h>
+#include <CGAL/QP_solver/QP_pricing_strategy.h>
 #include <CGAL/QP_solver.h>
 #include <cmath>
 
@@ -235,9 +235,7 @@ transition( int, Tag_true)
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/QP_solver/QP__filtered_base.C>
-#endif
+#include <CGAL/QP_solver/QP__filtered_base.C>
 
 #endif // CGAL_QP__FILTERED_BASE_H
 
