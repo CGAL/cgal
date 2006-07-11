@@ -131,6 +131,7 @@ Mesh_3/examples/Mesh_3/polyhedral_surface_mesher
 Mesh_3/examples/Mesh_3/read_mesh
 Mesh_3/examples/Mesh_3/slivers_exuder
 Mesh_3/examples/Mesh_3/stat_mesh
+Mesh_3/examples/Mesh_3/test_off
 Mesh_3/test/Mesh_3/*.cgal
 Mesh_3/test/Mesh_3/*.maillage
 Mesh_3/test/Mesh_3/*.mesh
