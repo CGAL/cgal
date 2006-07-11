@@ -26,8 +26,8 @@
 #include <CGAL/function_objects.h>
 
 #include <CGAL/QP_solver.h>
-#include <CGAL/QP_partial_filtered_pricing.h>
-#include <CGAL/QP_partial_exact_pricing.h>
+#include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
+#include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 
 CGAL_BEGIN_NAMESPACE
 
