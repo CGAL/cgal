@@ -292,9 +292,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #endif
 
-#ifdef CGAL_MINIBALL_NO_TEMPLATE_EXPORT
-#include <CGAL/Min_sphere_of_spheres_d.C>
-#include <CGAL/Min_sphere_of_spheres_d_pivot.C>
-#endif
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_impl.h>
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_pivot.C>
 
 #endif // CGAL_MINIBALL_MINIBALL
