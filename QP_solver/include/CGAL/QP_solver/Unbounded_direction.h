@@ -65,13 +65,14 @@ namespace QP_solver_impl {
       // Note: the vector we return here is described in documentation/
       // Test_suite.tex.
       CGAL_qpe_assertion(pos < solver.qp_n);
+      CGAL_qpe_assertion(solver.direction == 1 || solver.direction == -1);
 
       const int i = solver.in_B[pos];
       if (i >= 0) {                  // basic variable?
-	return solver.q_x_O[i];
+	return solver.direction == 1 ? solver.q_x_O[i] : -solver.q_x_O[i];
       } else {                       // non-basic variable?
 	if (pos == solver.j)         // most recent entering variable?
-	  return -solver.d;
+	  return solver.direction == 1 ? -solver.d : solver.d;
 	return solver.et0;
       }
       return solver.et0;

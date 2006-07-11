@@ -28,6 +28,7 @@
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_full_exact_pricing.h>
+#include <CGAL/QP_exact_bland_pricing.h>
 #include <CGAL/QP_partial_exact_pricing.h>
 #include <CGAL/QP_full_filtered_pricing.h>
 #include <CGAL/QP_partial_filtered_pricing.h>
@@ -63,7 +64,7 @@
 #define QP_RATIONAL true
 #endif
 
-enum Pricing_strategy_type { FE, FF, PE, PF };
+enum Pricing_strategy_type { FE, EB, FF, PE, PF }; // EB == Exact Bland
 enum Input_type { Int_type, Double_type, Rational_type };
 using CGAL::Tag_true;
 using CGAL::Tag_false;
@@ -214,6 +215,8 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   Pricing_strategy_type type = FE; // to kill warnings
   if (st=="fe")
     type = FE;
+  else if (st=="eb")
+    type = EB;
   else if (st=="ff")
     type = FF;
   else if (st=="pe")
@@ -305,6 +308,9 @@ CGAL::QP_pricing_strategy<Traits> *
   switch (it->second) {
   case FE:
     strat = new CGAL::QP_full_exact_pricing<Traits>;
+    break;  
+  case EB:
+    strat = new CGAL::QP_exact_bland_pricing<Traits>;
     break;
   case FF:
     strat = new CGAL::QP_full_filtered_pricing<Traits,NT>;
@@ -421,10 +427,11 @@ bool process(const std::string& filename,
     Is_in_standard_form,IT,ET,
     typename QP_instance::D_iterator> Traits;
 
-  // temporary (todo): exit if pricing strategy is different from FE
+  // temporary (todo): exit if pricing strategy is different from FE and EB
   // and nonstandard form solver is being used:
   if (!check_tag(Is_in_standard_form()) &&
-      options.find("Strategy")->second != FE)
+      options.find("Strategy")->second != FE &&
+      options.find("Strategy")->second != EB)
     return true;
   // solve:
   CGAL::QP_pricing_strategy<Traits> *s = create_strategy<Traits>(options);
