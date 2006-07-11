@@ -1,11 +1,11 @@
-# Created by the script cgal_create_makefile
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-
+CGAL_MAKEFILE = /home/gaertner/cgal/CGAL-3.2/make/makefile_i686_Linux-2.6_g++-3.4.5
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
@@ -14,22 +14,18 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
+           -I../../include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
