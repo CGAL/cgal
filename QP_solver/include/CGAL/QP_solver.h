@@ -1981,9 +1981,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/QP_solver/NonstandardForm.C>
 #include <CGAL/QP_solver/Bounds.C>
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/QP_solver/QP_solver.C>
-#endif
+#include <CGAL/QP_solver/QP_solver_impl.h>
 
 #endif // CGAL_QP_SOLVER_H
 
