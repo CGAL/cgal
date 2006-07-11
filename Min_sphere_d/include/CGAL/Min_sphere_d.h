@@ -460,9 +460,7 @@ operator >> ( std::istream& is, Min_sphere_d<Traits> & ms);
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Min_sphere_d.C>
-#endif
+#include <CGAL/Min_sphere_d/Min_sphere_d_impl.h>
 
 #endif // CGAL_MIN_SPHERE_D_H
 
