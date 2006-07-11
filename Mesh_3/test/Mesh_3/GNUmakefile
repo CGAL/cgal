@@ -45,7 +45,8 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-RUN_PROGRAMS=  	combined_spheres$(EXE_EXT)
+RUN_PROGRAMS=  	combined_spheres$(EXE_EXT) \
+                test_io_function$(EXE_EXT) 
 
 TOOLS=  cgal_to_medit \
         display_distribution \
@@ -81,9 +82,13 @@ combined_spheres$(EXE_EXT): combined_spheres$(OBJ_EXT)
 combined_spheres-with-sphere-oracle$(EXE_EXT): combined_spheres-with-sphere-oracle$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)combined_spheres-with-sphere-oracle combined_spheres-with-sphere-oracle$(OBJ_EXT) $(LDFLAGS)
 
+test_io_methods$(OBJ_EXT): test_io_methods.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) test_io_methods.cpp
+
 clean: \
                    combined_spheres.clean \
-                   combined_spheres-with-sphere-oracle.clean 
+                   combined_spheres-with-sphere-oracle.clean \
+                   test_io_methods.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

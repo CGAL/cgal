@@ -1,3 +1,6 @@
+12 July 2006 Laurent Rineau
+- new test, of io operators
+
 10 July 2006 Laurent Rineau
 - new debug macros:
   - CGAL_MESH_3_DIRTY_DEBUG_SPHERES,

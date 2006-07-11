@@ -136,6 +136,7 @@ Mesh_3/test/Mesh_3/*.cgal
 Mesh_3/test/Mesh_3/*.maillage
 Mesh_3/test/Mesh_3/*.mesh
 Mesh_3/test/Mesh_3/*.off
+Mesh_3/test/Mesh_3/*.out*
 Mesh_3/test/Mesh_3/*.png
 Mesh_3/test/Mesh_3/*.surface*
 Mesh_3/test/Mesh_3/.*.deps
@@ -157,6 +158,7 @@ Mesh_3/test/Mesh_3/off_to_ghs
 Mesh_3/test/Mesh_3/read_mesh
 Mesh_3/test/Mesh_3/slivers_exuder
 Mesh_3/test/Mesh_3/stat_mesh
+Mesh_3/test/Mesh_3/test_io_methods
 Min_annulus_d/*.aux
 Min_annulus_d/*.bbl
 Min_annulus_d/*.blg
