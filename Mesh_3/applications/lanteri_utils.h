@@ -232,16 +232,18 @@ scan_cells_and_process(const Tr& tr,
   // global volume output
   *out_stream << std::setprecision(3)
               << prefix << "min tetrahedron volume: "
-                    << *(std::min_element(minimum.begin(), minimum.end())) << "\n"
+                    << *(std::min_element(++minimum.begin(), minimum.end())) << "\n"
               << prefix << "avg tetrahedron volume: "
+    // ++minimum.begin(), because we do not want to take into account cells
+    // of index 0, which should be an empty set.
 
               << std::accumulate(sum.begin(), sum.end(), 0.) / 
-                       std::accumulate(size.begin(), size.end(), 0)
+                       std::accumulate(++size.begin(), size.end(), 0)
                // the division may be "not a number"
 
               << "\n"
               << prefix << "max tetrahedron volume: " 
-              << *(std::max_element(maximum.begin(), maximum.end())) << "\n"
+              << *(std::max_element(++maximum.begin(), maximum.end())) << "\n"
               << std::endl;
   
   *out_stream << std::setprecision(3)
