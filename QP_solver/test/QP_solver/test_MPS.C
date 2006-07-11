@@ -23,11 +23,11 @@
 
 #include <CGAL/QP_solver/gmp_double.h>
 #include <CGAL/QP_solver.h>
-#include <CGAL/QP_full_exact_pricing.h>
-#include <CGAL/QP_exact_bland_pricing.h>
-#include <CGAL/QP_partial_exact_pricing.h>
-#include <CGAL/QP_full_filtered_pricing.h>
-#include <CGAL/QP_partial_filtered_pricing.h>
+#include <CGAL/QP_solver/QP_full_exact_pricing.h>
+#include <CGAL/QP_solver/QP_exact_bland_pricing.h>
+#include <CGAL/QP_solver/QP_partial_exact_pricing.h>
+#include <CGAL/QP_solver/QP_full_filtered_pricing.h>
+#include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_solver/Double.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>

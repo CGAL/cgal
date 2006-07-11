@@ -24,12 +24,12 @@
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/functors.h>
 #include <CGAL/QP_solver/QP_basis_inverse.h>
-#include <CGAL/QP_pricing_strategy.h>
+#include <CGAL/QP_solver/QP_pricing_strategy.h>
 
 #include <CGAL/functional.h>
 
-#include <CGAL/QP_full_exact_pricing.h>
-#include <CGAL/QP_partial_exact_pricing.h>
+#include <CGAL/QP_solver/QP_full_exact_pricing.h>
+#include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 
 #include <CGAL/algorithm.h>
 
