@@ -994,6 +994,17 @@ public:
     CGAL_assertion (f != NULL);
     return (p_arr->_handle_for (f));
   }
+
+
+  bool are_on_same_component(Halfedge_handle e1, Halfedge_handle e2)
+  {
+     DHalfedge  *p_prev1 = p_arr->_halfedge (e1);
+     DHalfedge  *p_prev2 = p_arr->_halfedge (e2);
+     DHole      *hole1 = (p_prev1->is_on_hole()) ? p_prev1->hole() : NULL;
+     DHole      *hole2 = (p_prev2->is_on_hole()) ? p_prev2->hole() : NULL;
+
+     return (hole1 == hole2 && hole1 != NULL);
+  }
   //@}
 
   /// \name Functions used by the arrangement reader.
