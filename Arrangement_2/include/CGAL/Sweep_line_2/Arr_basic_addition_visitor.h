@@ -58,38 +58,38 @@ public:
 
   void before_sweep()
   {
-    m_lh = m_arr_access.bottom_left_fictitious_vertex()->incident_halfedges();
+    m_lh = this->m_arr_access.bottom_left_fictitious_vertex()->incident_halfedges();
     if(m_lh->source()->infinite_in_x() != MINUS_INFINITY)
       m_lh = m_lh->next()->twin();
    
     m_bh = m_lh->next();
    
 
-    m_th = m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
+    m_th = this->m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
     if(m_th->source()->infinite_in_x() == MINUS_INFINITY)
       m_th = m_th->next()->twin();
 
-    m_rh = m_arr_access.bottom_right_fictitious_vertex()->incident_halfedges();
+    m_rh = this->m_arr_access.bottom_right_fictitious_vertex()->incident_halfedges();
     if(m_rh->source()->infinite_in_x() == PLUS_INFINITY)
       m_rh = m_rh->twin();
     else
       m_rh = m_rh->next();
 
     CGAL_assertion(m_lh->direction() == LARGER);
-    CGAL_assertion(m_lh->face() != m_arr_access.fictitious_face());
-    CGAL_assertion(m_lh->target() == m_arr_access.bottom_left_fictitious_vertex());
+    CGAL_assertion(m_lh->face() != this->m_arr_access.fictitious_face());
+    CGAL_assertion(m_lh->target() == this->m_arr_access.bottom_left_fictitious_vertex());
 
     CGAL_assertion(m_bh->direction() == SMALLER);
-    CGAL_assertion(m_bh->face() != m_arr_access.fictitious_face());
-    CGAL_assertion(m_bh->source() == m_arr_access.bottom_left_fictitious_vertex());
+    CGAL_assertion(m_bh->face() != this->m_arr_access.fictitious_face());
+    CGAL_assertion(m_bh->source() == this->m_arr_access.bottom_left_fictitious_vertex());
 
     CGAL_assertion(m_rh->direction() == SMALLER);
-    CGAL_assertion(m_rh->face() != m_arr_access.fictitious_face());
-    CGAL_assertion(m_rh->source() == m_arr_access.bottom_right_fictitious_vertex());
+    CGAL_assertion(m_rh->face() != this->m_arr_access.fictitious_face());
+    CGAL_assertion(m_rh->source() == this->m_arr_access.bottom_right_fictitious_vertex());
 
     CGAL_assertion(m_th->direction() == LARGER);
-    CGAL_assertion(m_th->face() != m_arr_access.fictitious_face());
-    CGAL_assertion(m_th->target() == m_arr_access.top_left_fictitious_vertex());
+    CGAL_assertion(m_th->face() != this->m_arr_access.fictitious_face());
+    CGAL_assertion(m_th->target() == this->m_arr_access.top_left_fictitious_vertex());
   }
 
   void before_handle_event(Event* event)
@@ -459,7 +459,7 @@ public:
  
   bool        prev1_before_prev2 = true;
 
-  if (m_arr_access.are_on_same_component(hhandle, prev))
+  if (this->m_arr_access.are_on_same_component(hhandle, prev))
   {
     // If prev1 and prev2 are on different components, the insertion of the
     // new curve does not generate a new face, so the way we send these
@@ -474,20 +474,30 @@ public:
     // To do this, we check whether prev1 lies inside the new face we are
     // about to create (or alternatively, whether prev2 does not lie inside
     // this new face).
-    const unsigned int  dist1 = m_arr_access.halfedge_distance (hhandle, prev);
-    const unsigned int  dist2 = m_arr_access.halfedge_distance (prev, hhandle);
+    const unsigned int  dist1 = this->m_arr_access.halfedge_distance (hhandle, prev);
+    const unsigned int  dist2 = this->m_arr_access.halfedge_distance (prev, hhandle);
 
     prev1_before_prev2 = (dist1 > dist2) ?
-      (m_arr_access.is_inside_new_face (hhandle, prev, cv)) :
-      (! m_arr_access.is_inside_new_face (prev, hhandle, cv));
+      (this->m_arr_access.is_inside_new_face (hhandle, prev, cv.base())) :
+      (! this->m_arr_access.is_inside_new_face (prev, hhandle, cv.base()));
   }
 
   // Perform the insertion.
 
   new_face_created = false;
   Halfedge_handle  new_he = (prev1_before_prev2) ?
-    m_arr_access.insert_at_vertices_ex (cv, hhandle, prev, LARGER, new_face_created, false) :
-    m_arr_access.insert_at_vertices_ex (cv, prev, hhandle, SMALLER, new_face_created, false);
+    this->m_arr_access.insert_at_vertices_ex (cv.base(),
+                                        hhandle,
+                                        prev,
+                                        LARGER,
+                                        new_face_created,
+                                        false) :
+    this->m_arr_access.insert_at_vertices_ex (cv.base(),
+                                        prev,
+                                        hhandle,
+                                        SMALLER,
+                                        new_face_created,
+                                        false);
 
   if (new_face_created)
   {
@@ -495,7 +505,7 @@ public:
     // obtained), we have to examine the holes and isolated vertices in the
     // existing face (pointed by the twin halfedge) and move the relevant
     // holes and isolated vertices into the new face.
-    m_arr_access.relocate_in_new_face (new_he);
+    this->m_arr_access.relocate_in_new_face (new_he);
   }
 
   // Return a handle to the new halfedge directed from prev1's target to
