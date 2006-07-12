@@ -90,15 +90,6 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-// Fixed_precision_nt
-
-class Fixed_precision_nt;
-
-double to_double(Fixed_precision_nt);
-bool is_finite(Fixed_precision_nt);
-bool is_valid(Fixed_precision_nt);
-std::pair<double,double> to_interval(Fixed_precision_nt);
-
 #if 0
 // Polynomial
 

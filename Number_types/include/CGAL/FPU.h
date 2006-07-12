@@ -226,8 +226,7 @@ typedef unsigned int FPU_CW_t;
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 // Note that the ISO C99 version is not enough because of the extended
-// mantissa issue on x86 (required by Fixed_precision_nt, modular computations
-// in the future, but not IA right now).
+// mantissa issue on x86 (may be required by some kinds of computation).
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fnstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
@@ -340,7 +339,7 @@ typedef unsigned short FPU_CW_t;
 // This is a version following the ISO C99 standard, which aims at portability.
 // The drawbacks are speed on one hand, and also, on x86, it doesn't fix the
 // extended mantissa issue (this is not a problem for IA, but it is one for
-// Fixed_precision_nt, and some future modular computations as well).
+// some future modular computations).
 #define CGAL_IA_SETFPCW(CW)  fesetround(CW)
 #define CGAL_IA_GETFPCW(CW)  CW = fegetround()
 typedef int FPU_CW_t;
@@ -379,7 +378,6 @@ FPU_get_and_set_cw (FPU_CW_t cw)
 
 
 // The following is meant to truncate the mantissa of x86 FPUs to 53 bits.
-// It is used by the Fixed_precision_nt.
 inline void force_ieee_double_precision()
 {
 #if defined __i386__ || defined _MSC_VER || defined __BORLANDC__

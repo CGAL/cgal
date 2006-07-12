@@ -3,7 +3,6 @@
 #include <CGAL/Quotient.h> 
 #include <CGAL/MP_Float.h> 
 #include <CGAL/Lazy_exact_nt.h> 
-#include <CGAL/Fixed_precision_nt.h> 
 #include <CGAL/Interval_nt.h> 
 #include <CGAL/Filtered_exact.h> 
 
@@ -72,7 +71,6 @@ int main()
   TESTIT(long double, "long double")
 
   // CGAL number types
-  TESTIT(CGAL::Fixed_precision_nt, "Fixed_precision_nt")
   TESTIT(CGAL::MP_Float, "MP_Float")
   TESTIT(CGAL::Quotient<int>, "Quotient<int>")
   TESTIT(QMPF, "Quotient<MP_Float>")

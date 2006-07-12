@@ -1,5 +1,9 @@
 $CGAL/CHANGES
 
+----------------------------- Release 3.3 ----------------------------------
+
+- Fixed_precision_nt and Filtered_exact number types removed.
+
 ----------------------------- Release 3.2 ----------------------------------
 The following functionality has been added or changed:
 
