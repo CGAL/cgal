@@ -30,7 +30,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Interval_nt.h>
-
+#include <boost/type_traits/is_same.hpp>
 #include <CGAL/global_functions_on_circle_2.h>
 
 namespace CGAL {
@@ -67,37 +67,22 @@ namespace CGALi {
     CGAL::Bbox_2 bbox() const
     {
       return get(_p).bbox();
-      /*std::pair<double,double> 
-	ix=to_interval(x()),
-	iy=to_interval(y());
-
-      return CGAL::Bbox_2(ix.first,iy.first,
-			  ix.second,iy.second);*/
     }
 
     const Root_for_circles_2_2 & coordinates() const 
     { return get(_p); }
 
+    bool equal_ref(const Circular_arc_point_2 &p) const
+    {
+      typedef typename boost::is_same< Root_for_circles_2_2, Base > dont_need_identical;
+      if(!(dont_need_identical::value)) {
+        return CGAL::identical(_p, p._p);
+      } return false;
+    }
+
   private:
     Base _p;
   };
-  
-/*   template < typename CK > */
-/*   std::istream & */
-/*   operator>>(std::istream & is, Circular_arc_point_2<CK> &p) */
-/*   { */
-/*     typedef typename CK::Root_of_2               Root_of_2; */
-/*     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2; */
-
-/*     typename Root_of_2::RT x1, x2, x3; */
-/*     typename Root_of_2::RT y1, y2, y3; */
-/*     bool b1, b2; */
-/*     is >> x1 >> x2 >> x3 >> b1 >> y1 >> y2 >> y3 >> b2 ; */
-/*     if (is) */
-/*       p = Circular_arc_point_2<CK>(Root_for_circles_2_2(Root_of_2(x3, x2, x1, b1), */
-/* 						      Root_of_2(y3, y2, y1, b2))); */
-/*     return is; */
-/*   } */
 
   template < typename CK >
   std::ostream &
