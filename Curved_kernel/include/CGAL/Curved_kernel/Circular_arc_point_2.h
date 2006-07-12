@@ -29,7 +29,7 @@
 #include <cassert>
 
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 
 #include <CGAL/global_functions_on_circle_2.h>
 

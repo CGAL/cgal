@@ -26,7 +26,7 @@
 #define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
 #include <CGAL/Curved_kernel/internal_functions_on_circle_2.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Curved_kernel/Circular_arc_2.h>
 
 namespace CGAL {

@@ -25,7 +25,6 @@
 #define CGAL_CARTESIAN_CIRCLE_2_H
 
 #include <CGAL/utility.h>
-#include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE

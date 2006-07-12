@@ -15,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../../Number_types/include \
-           -I../../../Interval_arithmetic/include \
            -I../../include \
 	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \

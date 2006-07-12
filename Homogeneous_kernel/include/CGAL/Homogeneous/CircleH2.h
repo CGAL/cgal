@@ -27,7 +27,7 @@
 #define CGAL_CIRCLEH2_H
 
 #include <CGAL/utility.h>
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Interval_nt.h>
 
 CGAL_BEGIN_NAMESPACE
 
