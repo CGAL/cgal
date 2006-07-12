@@ -340,23 +340,6 @@ uptodate version of this list.
  to an existing declaration. This bug shows up on VC~7.1~Beta
  (\ccc{cl1310}).
 
-\item[{\tt CGAL\_CFG\_NO\_AUTOMATIC\_TEMPLATE\_INCLUSION}]~\\
- \ccIndexSubitem{source files}{template implementation files}
- When template implementation files are not included in the source files,
- a compiler may attempt to find the unincluded template bodies
- automatically. For example, suppose that the following conditions are
- all true:
- \begin{itemize}
- \item template entity {\tt ABC::f} is declared in file {\tt xyz.h}
- \item an instantiation of {\tt ABC::f} is required in a compilation
- \item no definition of {\tt ABC::f} appears in the source code processed by
-       the compilation
- \end{itemize}
- In this case, the compiler may look to see if the source file {\tt xyz.n}
- exists, where {\tt n} is {\tt .c}, {\tt .C}, {\tt .cpp}, {\tt .CPP}, 
- {\tt .cxx}, {\tt .CXX}, or {\tt .cc}. The flag
- is set if this feature is missing.
- 
 \item[{\tt CGAL\_CFG\_NO\_BIG\_ENDIAN}]~\\
   \ccIndexMainItem{big-endian}
   \ccIndexMainItem{little-endian}
