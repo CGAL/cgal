@@ -3,8 +3,69 @@
 #include <iomanip> // std::setprecision, std::setw
 #include <algorithm> // std::maximum, std::minimum
 #include <numeric> // std::accumulate
+#include <cmath> // arcsin
 
 #include <boost/tuple/tuple.hpp>
+
+template<typename Triangulation>
+class Compute_min_angle
+{  
+  public:
+    
+    typedef typename Triangulation::Cell_handle Cell_handle;
+    typedef typename Triangulation::Tetrahedron Tetrahedron;  
+    typedef typename Triangulation::Point Point;
+  
+    // constructor
+    Compute_min_angle(Triangulation _tr) : tr(_tr) {}  
+    
+    // computes the minimum angle between all 6 faces of a tetrahedra
+    double 
+    operator()(const Cell_handle ch) const
+    {
+      double min_quotient = compute_quotient(ch, 0, 1, 2, 3);
+      min_quotient = std::min(min_quotient,
+                              compute_quotient(ch, 0, 2, 1, 3));
+      min_quotient = std::min(min_quotient,
+                              compute_quotient(ch, 0, 3, 1, 2));
+      min_quotient = std::min(min_quotient,
+                              compute_quotient(ch, 1, 2, 0, 3));  
+      min_quotient = std::min(min_quotient,
+                              compute_quotient(ch, 1, 3, 0, 2));  
+      min_quotient = std::min(min_quotient,
+                              compute_quotient(ch, 2, 3, 0, 1));  
+      
+      const double volume = CGAL::to_double(tr.tetrahedron(ch).volume());
+      
+      return asin( 1.5 * volume * min_quotient) * 180 / CGAL_PI; 
+    }
+  
+  
+  private:  
+    
+    Triangulation tr;    
+    
+    double compute_quotient(const Cell_handle ch,
+                            const int i,
+                            const int j,
+                            const int k,
+                            const int l) const
+    {
+      const Point& pi = ch->vertex(i)->point();
+      const Point& pj = ch->vertex(j)->point();
+            
+      const double edge_lenght = 
+        CGAL::to_double(CGAL::sqrt(CGAL::squared_distance(pi, pj)));
+        
+      const double area_k =
+        CGAL::to_double(CGAL::sqrt(tr.triangle(ch, k).squared_area()));   
+      
+      const double area_l =
+        CGAL::to_double(CGAL::sqrt(tr.triangle(ch, l).squared_area()));    
+      
+      return edge_lenght / area_k / area_l;
+    }
+};
 
 template <typename Iterator> // better be RandomAccessIterator, because
                           // std::distance() is used
@@ -39,6 +100,18 @@ compute_max_min_sum_size(Iterator begin, Iterator end)
 	return boost::make_tuple(maximum, minimum,  sum, size);
 }
 
+void output_legend(std::ostream* out_stream = &std::cout, std::string prefix = "")
+{
+  *out_stream << std::endl;
+
+  *out_stream << std::setprecision(3)
+      << prefix
+      << std::setw(42) << "min"
+      << std::setw(13) << "avg"
+      << std::setw(13) << "max"
+      << std::endl;    
+}
+
 template <typename Iterator> // better be RandomAccessIterator, because
                           // std::distance() is used
 std::string output_max_min_average(Iterator begin, Iterator end)
@@ -63,14 +136,15 @@ std::string format_max_min_sum_size(const T maximum,
 {
   std::stringstream output_stream;
 
-  output_stream << std::setw(10) << maximum << ",  "
-                << std::setw(10) << minimum << ",  ";
+  output_stream << std::setw(10) << minimum << ",  ";
 
   if( size == 0 )
-    output_stream << std::setw(10) << "nan";
+    output_stream << std::setw(10) << "nan" << ",  ";
   else
-    output_stream << std::setw(10) << sum / size;
+    output_stream << std::setw(10) << sum / size << ",  ";
 
+  output_stream << std::setw(10)  << maximum; 
+  
   return output_stream.str();
 }
 
@@ -132,13 +206,10 @@ scan_edges_and_process(const Tr& tr,
       }
     }
   }
-
-  *out_stream << std::setprecision(3)
-              << prefix
-              << std::setw(42) << "max"
-              << std::setw(13) << "min"
-              << std::setw(13) << "avg"
-              << std::endl;
+  
+   
+  // local edge-lengths output (surface)  
+  output_legend(out_stream, prefix);
 
   const typename Qualities::size_type surface_vector_size = 
     surface_edges_length.size();
@@ -151,8 +222,9 @@ scan_edges_and_process(const Tr& tr,
                 << std::endl;
   }
 
-  *out_stream << std::endl;
-
+  // local edge-lengths output (volume)
+  output_legend(out_stream, prefix); 
+  
   const typename Qualities::size_type volume_vector_size = 
     volume_edges_length.size();
   for(unsigned int i = 0; i < volume_vector_size; ++i)
@@ -164,6 +236,8 @@ scan_edges_and_process(const Tr& tr,
                 << std::endl;
   }
 
+  *out_stream << std::endl;
+  
   return process_surface_edges(surface_edges_length,
                                length_bounds,
                                filename_prefix,
@@ -187,6 +261,9 @@ scan_cells_and_process(const Tr& tr,
 {
   std::vector<Qualities> cells_quality;
   std::vector<Qualities> cells_volume;
+  std::vector<Qualities> cells_min_angle;
+  
+  const Compute_min_angle<Tr> compute_min_angle(tr); 
   
   for(typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
       cit != tr.finite_cells_end();
@@ -197,6 +274,8 @@ scan_cells_and_process(const Tr& tr,
       // analyse cells' quality
       const double quality = 
         CGAL::to_double(Pierre::radius_ratio(tr.tetrahedron(cit)));
+                  
+      
       // radius ratio is in common namespace, in Slivers_exuder.h
       int index = cit->volume_index();
       if(index < 0)
@@ -208,10 +287,12 @@ scan_cells_and_process(const Tr& tr,
       {
         cells_quality.resize(positive_index+1);
         cells_volume.resize(positive_index+1);
+        cells_min_angle.resize(positive_index+1);    
       }
 
       cells_quality[positive_index].push_back(quality);
       cells_volume[positive_index].push_back(tr.tetrahedron(cit).volume());
+      cells_min_angle[positive_index].push_back(compute_min_angle(cit));   
     }
 
   const typename Qualities::size_type vectors_size = 
@@ -246,14 +327,9 @@ scan_cells_and_process(const Tr& tr,
               << *(std::max_element(++maximum.begin(), maximum.end())) << "\n"
               << std::endl;
   
-  *out_stream << std::setprecision(3)
-              << prefix
-              << std::setw(42) << "max"
-              << std::setw(13) << "min"
-              << std::setw(13) << "avg"
-              << std::endl;
-
   // local volume output
+  output_legend(out_stream, prefix);  
+  
   for(unsigned int i = 0; i < vectors_size; i++)
   {
     *out_stream << std::setprecision(3)
@@ -263,13 +339,9 @@ scan_cells_and_process(const Tr& tr,
   }
 
 
-  *out_stream << std::setprecision(3)
-              << prefix
-              << std::setw(42) << "max"
-              << std::setw(13) << "min"
-              << std::setw(13) << "avg"
-              << std::endl;
-
+  // local quality output    
+  output_legend(out_stream, prefix); 
+  
   for(unsigned int i = 0; i < vectors_size; i++)
   {
     *out_stream << std::setprecision(3)
@@ -279,5 +351,20 @@ scan_cells_and_process(const Tr& tr,
                 << std::endl;
   }
 
+  
+  // local angle output 
+  output_legend(out_stream, prefix);
+  
+  for(unsigned int i = 0; i < vectors_size; i++)
+  {
+    *out_stream << std::setprecision(3)
+        << prefix << "min angles of cells in vol. #" << i << ": "
+        << output_max_min_average(cells_min_angle[i].begin(),
+                                  cells_min_angle[i].end())
+        << std::endl;
+  } 
+    
+  *out_stream << std::endl; 
+  
   return process_cells(cells_quality, filename_prefix);
 }
