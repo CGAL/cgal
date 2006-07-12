@@ -464,6 +464,10 @@ EOF
     substr($cfile, -2, 2) = "";
     print CGAL_TEST "  compile_and_run $cfile\n";
   }
+  foreach $cfile (glob("*.cpp")) {
+    substr($cfile, -4, 4) = "";
+    print CGAL_TEST "  compile_and_run $cfile\n";
+  }
   print CGAL_TEST "fi\n";
     close(CGAL_TEST);
     chmod 0755, 'cgal_test';
