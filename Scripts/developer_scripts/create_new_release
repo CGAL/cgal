@@ -5,7 +5,6 @@
 # Radu Ursu, Sylvain Pion, 2004-2006.
 
 # TODO :
-# - Add a command-line option "--local" to avoid putting stuff on the web, etc.
 # - Use svn revision instead of separate internal release number ?
 # - Cleanup the public/internal separation:
 #   - have CGAL_VERSION_NR be not affected by the internal version
@@ -14,11 +13,25 @@
 #   [new] : create_internal_release should not know about internal/public mode.
 # - Merge [some parts] into ./create_internal_release ?
 
-# Set to non-empty for having side-effects (putting on the web site, svn
-# commits...).  Otherwise it is for local testing purposes (put stuff in tmp/).
-# [should be command-line option]
-# DO_IT=""  # Testing
-DO_IT="y"  # The Real Thing
+# Real mode (svn tag, mail, copy to HTTP server), versus local testing (puts stuff in tmp/)
+DO_IT=""
+
+# Parsing command-line
+case "$1" in
+    -h|-help|--h|--help)
+        echo 'Usage : create_new_release [--help] [--do-it] <packages directory>'
+        echo
+        echo '    --help  : prints this usage help'
+        echo '    --do-it : the real thing (NOT for local tests !),'
+        echo '              does write operations (svn tag, sending mail, copying on the web server...)'
+        echo '    <packages directory> : the directory containing the packages [default is trunk]'
+        exit
+    ;;
+    --do-it)
+        DO_IT="y"  # The Real Thing
+        shift
+    ;;
+esac
 
 # SVN working copy directory, default is "trunk"
 if [ -z "$1" ] ; then
