@@ -510,14 +510,14 @@ parse_support_options()
     ${_printf} "%s\n" "done."
 }
 
-# fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/version.h
+# fetch CGAL version id from ${CGAL_DIR}/VERSION
 get_cgal_version()
 {
-    # this file is assumed to contain one line matching "CGAL_VERSION "
-    # where the third field describes the CGAL version
-    FILE="${CGAL_INCL_DIR}/CGAL/version.h"
+    # this file is assumed to contain one line being the version number,
+    # without final carriage return
+    FILE="${CGAL_DIR}/VERSION"
     _check_read "${FILE}"
-    CGAL_VERSION="`${_awk} '/#define CGAL_VERSION / {print $3}' \"${FILE}\"`"
+    CGAL_VERSION="`cat "${FILE}"`"
     log_print "CGAL version is ${CGAL_VERSION}."
 }
 

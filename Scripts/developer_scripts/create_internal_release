@@ -22,7 +22,7 @@ Exactly one of the options -h or -r must be present.
     -a allpackagesdir, default is releasedir/trunk
     -l lockfile, default is releasedir/release_creation.lock
 
-   The version number is stored in include/CGAL/version.h.
+   The version number is stored in VERSION and include/CGAL/version.h.
    The RELEASEDIR is the place where the new release will be created.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
        from the SVN. Could be trunk or some branch.
@@ -178,14 +178,11 @@ sub install_packages() {
 
 
 #-----------------------------------------------------------------------#
-# set the version information in the include/CGAL/version.h             #
+# set the version information in VERSION and include/CGAL/version.h     #
 #-----------------------------------------------------------------------#
 
 sub create_version_file()
 {
-    chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
-    open(TEMPFILE, ">tempfile") or die;
-
 #if VERSION starts with CGAL-, we remove "CGAL-" from version   
 #the $newver variable will store the right version
     if ($result = $VERSION =~ /CGAL-(.*)/){
@@ -193,6 +190,17 @@ sub create_version_file()
     } else {
         $newver = $VERSION;
     }
+
+    # Create VERSION file
+    chdir "$RELEASEDIR/$VERSION" or die;
+    open(TEMPFILE, ">tempfile") or die;
+    print TEMPFILE "$newver";
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+    system('mv', "tempfile", 'VERSION');
+
+    # Create include/CGAL/version.h file
+    chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
+    open(TEMPFILE, ">tempfile") or die;
 
 # TODO : add `svnversion` Revision.
 

@@ -143,6 +143,7 @@ rm -f examples/*/cgal_test demo/*/cgal_test >> ${LOGFILE} 2>&1
 mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
 sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
 rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
+echo -n $public_release_number > VERSION 2>&1
 cd .. >> ${LOGFILE} 2>&1
 tar -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
 gzip "${public_release_name}.tar" >> ${LOGFILE} 2>&1
