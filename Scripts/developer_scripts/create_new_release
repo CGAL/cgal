@@ -41,9 +41,8 @@ SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
 PATH=$PATH:/usr/local/bin:/usr/bin/gnu
 
-#TMPDIR="/tmp"
-#TMPDIR="${HOME}/CGAL/internal_release_making"
-TMPDIR="/home/spion/CGAL/internal_release_making"
+# Working dir
+TMPDIR="`pwd`"
 
 [ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
 [ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
