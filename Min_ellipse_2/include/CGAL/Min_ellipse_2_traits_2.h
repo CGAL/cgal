@@ -22,7 +22,7 @@
 
 
 #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
-#  include <CGAL/Optimisation_ellipse_2.h>
+#  include <CGAL/Min_ellipse_2/Optimisation_ellipse_2.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
