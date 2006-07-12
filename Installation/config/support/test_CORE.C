@@ -21,14 +21,7 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_NO_CORE.C
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by cgal_configure.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
-//| Tests if CORE is available.
+// Tests if CORE is available.
 
 #ifdef CGAL_USE_CGAL_CORE
 

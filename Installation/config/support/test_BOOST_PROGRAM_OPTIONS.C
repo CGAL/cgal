@@ -21,14 +21,7 @@
 //
 // Author(s)     : Daniel Russel
 
-// CGAL_CFG_NO_BOOST_PROGRAM_OPTIONS.C
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by cgal_configure.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
-//| Tests if BOOST_PROGRAM_OPTIONS is available.
+// Tests if BOOST_PROGRAM_OPTIONS is available.
 
 #include <iostream>
 #include <boost/program_options.hpp>

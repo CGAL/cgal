@@ -20,12 +20,6 @@
 //
 // Author(s)     : Laurent Saboret
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by cgal_configure.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 // Test if TAUCS is available
 
 

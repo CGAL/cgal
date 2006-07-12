@@ -21,13 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by cgal_configure.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
-//| Tests if X11 is available.
+// Tests if X11 is available.
 
 #include <iostream>
 #include <X11/Xlib.h>

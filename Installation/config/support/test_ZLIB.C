@@ -21,11 +21,6 @@
 //
 // Author(s)     : Andreas Fabri, Laurent Saboret
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by install_cgal.
-// ---------------------------------------------------------------------
-
 // Test if ZLIB is available.
 
 #include <iostream>

@@ -21,14 +21,7 @@
 //
 // Author(s)     : various
 
-// CGAL_CFG_NO_QT.C
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by cgal_configure.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
-//| Tests if QT is available.
+// Tests if QT is available.
 
 #include <iostream>
 #include <qglobal.h>
