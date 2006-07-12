@@ -545,8 +545,4 @@ has_smaller_signed_dist_to_planeC3(
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#include <CGAL/Arithmetic_filter/predicates/kernel_ftC3.h>
-#endif
-
 #endif // CGAL_PREDICATES_KERNEL_FTC3_H

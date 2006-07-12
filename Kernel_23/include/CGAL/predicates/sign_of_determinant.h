@@ -109,8 +109,4 @@ sign_of_determinant6x6(
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#include <CGAL/Arithmetic_filter/predicates/sign_of_determinant.h>
-#endif // CGAL_ARITHMETIC_FILTER_H
-
 #endif // CGAL_PREDICATES_SIGN_OF_DETERMINANT_H

@@ -158,8 +158,4 @@ power_testC3(const FT &pwt, const FT &qwt)
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_ftC3.h>
-#endif
-
 #endif // CGAL_REGULAR_TRIANGULATION_FTC3_H

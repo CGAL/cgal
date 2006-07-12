@@ -91,10 +91,4 @@ power_testC2( const FT &px, const FT &py, const FT &pwt,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC2_H
-#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_ftC2.h>
-#endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC2_H
-#endif
-
 #endif // CGAL_REGULAR_TRIANGULATION_FTC2_H

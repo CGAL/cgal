@@ -123,10 +123,4 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H
-#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH2.h>
-#endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H
-#endif
-
 #endif // CGAL_REGULAR_TRIANGULATION_RTH2_H

@@ -83,8 +83,4 @@ power_testH3(
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH3.h>
-#endif
-
 #endif // CGAL_REGULAR_TRIANGULATION_RTH3_H
