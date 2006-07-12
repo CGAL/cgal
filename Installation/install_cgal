@@ -1920,7 +1920,7 @@ test_support_pkg()
 
 	if _test_support "${1}" \
 	    "${2}" \
-	    "${CGAL_SUPPORT_DIR}/test_${jj}.C" \
+	    "${CGAL_SUPPORT_DIR}/test_${jj}.cpp" \
 	    "${jj}"
 	then
 	    return 0
