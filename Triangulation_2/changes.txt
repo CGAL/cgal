@@ -1,3 +1,6 @@
+12 july 2006 Laurent Rineau
+- fix i/o operators of Weighted_point, in binary mode.
+
 16 june 2006 MY
 CGAL:: qualification of filter_iterator to protect against ADL.
 
