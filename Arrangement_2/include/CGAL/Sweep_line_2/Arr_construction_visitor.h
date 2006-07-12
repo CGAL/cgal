@@ -368,7 +368,6 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    //Halfedge_handle res = m_arr->insert_from_right_vertex (_curve(cv), he);
     Vertex_handle v = 
       m_arr_access.create_vertex(_point(get_last_event(sc)->get_point()));
     Halfedge_handle res = m_arr_access.insert_from_vertex_ex(_curve(cv), he, v, LARGER);
@@ -387,7 +386,6 @@ public:
                            Halfedge_handle he,
                            Subcurve* sc)
   {
-    //Halfedge_handle res = m_arr->insert_from_left_vertex (_curve(cv), he);
     Vertex_handle v = 
       m_arr_access.create_vertex(_point(this->current_event()->get_point()));
     Halfedge_handle res = m_arr_access.insert_from_vertex_ex(_curve(cv), he, v, SMALLER);
@@ -566,11 +564,9 @@ private:
 
   void set_prev_inf_event_to_null(Event* e)
   {
-    if(e == m_prev_minus_inf_x_event)
-        m_prev_minus_inf_x_event = NULL;
-      else
-        if(e == m_prev_plus_inf_y_event)
-          m_prev_plus_inf_y_event = NULL;
+    CGAL_assertion(!this->current_event()->is_minus_infinite_in_x());    
+    if(e == m_prev_plus_inf_y_event)
+      m_prev_plus_inf_y_event = NULL;
   }
 
 };
