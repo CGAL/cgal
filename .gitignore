@@ -104,6 +104,7 @@ Mesh_3/applications/off_to_medit
 Mesh_3/applications/read_mesh
 Mesh_3/applications/slivers_exuder
 Mesh_3/applications/stat_mesh
+Mesh_3/applications/test_off
 Mesh_3/doxygen
 Mesh_3/examples/Mesh_3/*.cgal
 Mesh_3/examples/Mesh_3/*.mesh

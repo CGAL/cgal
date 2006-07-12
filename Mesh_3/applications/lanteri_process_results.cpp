@@ -1,6 +1,8 @@
 #include "distribution.h"
 #include "Gd_displayer.h"
 
+#include "lanteri_process_results.h"
+
 #include <vector>
 #include <string>
 
@@ -11,8 +13,9 @@ const int global_number_of_classes = 20;
 bool process_aux_1(const std::vector<Qualities>& qualities,
                    const std::string filename,
                    const int number_of_classes,
-                   std::ostream* out_stream = &std::cout
+                   std::ostream* out_stream = &std::cout,
                    // output stream
+                   double max = 1.0
                    )
 {
   const int maximum_index = qualities.size() - 1;
@@ -30,7 +33,7 @@ bool process_aux_1(const std::vector<Qualities>& qualities,
     distributions[i].resize(number_of_classes);
 
     compute_distribution(qualities[i+1],
-                         1.,
+                         max,
                          distributions[i]);
 
     displays[i] = new Gd_displayer(main_display.image());
@@ -105,21 +108,27 @@ bool process_aux_2(const std::vector<Qualities>& qualities,
 }
 
 bool process_cells(const std::vector<Qualities>& volume_cells_quality,
+                   const std::vector<Qualities>& volume_cells_min_angle,
                    const std::string filename_prefix,
-                   std::ostream* out_stream = &std::cout
+                   std::ostream* out_stream
                    // output stream
                    )
 {
   return process_aux_1(volume_cells_quality,
                        filename_prefix + "_cells_radius_radius_ratio.png",
                        global_number_of_classes,
-                       out_stream);
+                       out_stream)
+  && process_aux_1(volume_cells_min_angle,
+                   filename_prefix + "_cells_min_angles.png",
+                   global_number_of_classes,
+                   out_stream,
+                   90);
 }
 
 bool process_volume_edges(const std::vector<Qualities>& volume_edges_length,
                           const std::vector<double>& length_bounds,
                           const std::string filename_prefix,
-                          std::ostream* out_stream = &std::cout
+                          std::ostream* out_stream
                           // output stream
                           )
 {
@@ -133,7 +142,7 @@ bool process_volume_edges(const std::vector<Qualities>& volume_edges_length,
 bool process_surface_edges(const std::vector<Qualities>& surface_edges_length,
                            const std::vector<double>& length_bounds,
                            const std::string filename_prefix,
-                           std::ostream* out_stream = &std::cout
+                           std::ostream* out_stream
                            // output stream
                            )
 {

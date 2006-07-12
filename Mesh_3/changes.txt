@@ -1,6 +1,10 @@
 12 July 2006 Laurent Rineau
 - new class Volume_mesher_default_triangulation_3
 - new test, of io operators. It uses Volume_mesher_default_triangulation_3.
+- fix i/o operators of <CGAL/Volume_mesher_cell_base_3.h>, in binary mode.
+- fix <CGAL/Mesh_3/IO.h>, in case of binary mode.
+- improved applications/lanteri.cpp. It know compute histograms of 
+  dihedral min angles, too.
 
 10 July 2006 Laurent Rineau
 - new debug macros:

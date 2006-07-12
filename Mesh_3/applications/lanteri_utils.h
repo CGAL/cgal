@@ -7,6 +7,8 @@
 
 #include <boost/tuple/tuple.hpp>
 
+#include "lanteri_process_results.h"
+
 template<typename Triangulation>
 class Compute_min_angle
 {  
@@ -366,5 +368,5 @@ scan_cells_and_process(const Tr& tr,
     
   *out_stream << std::endl; 
   
-  return process_cells(cells_quality, filename_prefix);
+  return process_cells(cells_quality, cells_min_angle, filename_prefix);
 }

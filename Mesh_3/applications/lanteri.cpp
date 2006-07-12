@@ -133,18 +133,7 @@ typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
 #include "utils.h"
 #include "distribution.h"
 
-bool process_cells(const std::vector<Qualities>& volume_cells_quality,
-                   const std::string filename_prefix,
-                   std::ostream* out_stream = &std::cout);
-bool process_volume_edges(const std::vector<Qualities>& volume_edges_length,
-                          const std::vector<double>& length_bounds,
-                          const std::string filename_prefix,
-                          std::ostream* out_stream = &std::cout);
-bool process_surface_edges(const std::vector<Qualities>& surface_edges_length,
-                           const std::vector<double>& length_bounds,
-                           const std::string filename_prefix,
-                           std::ostream* out_stream = &std::cout);
-
+#include "lanteri_process_results.h"
 #include "lanteri_utils.h"
 
 typedef Tr::Vertex_handle Vertex_handle;
