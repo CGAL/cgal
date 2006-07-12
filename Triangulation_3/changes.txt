@@ -1,3 +1,12 @@
+12 July 2006 Laurent Rineau
+- fixed operators << and >> for triangulations, if the stream is in binary
+  mode
+- fixed only if dimension()==3. If dimension()<3, tds.print_cells() should
+  be corrected. The handling of the dimension is ugly (copy-pasting). I
+  prefere not to fix that code.
+
+Note: binary i/o operators are tested in Mesh_3
+
 14 March 2006 Joachim Reichel
 - Added/fixed CGAL_MAKEFILE= line in makefiles
 

@@ -996,7 +996,12 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   tds.clear();
 
   int n, d;
-  is >> d >> n;
+  if(is_ascii(is))
+     is >> d >> n;
+  else {
+    read(is, n);
+    read(is,d);
+  }
   tds.set_dimension(d);
 
   if(n == 0)
@@ -1043,7 +1048,10 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   if (is_ascii(os))
       os << tds.dimension() << std::endl << n << std::endl;
   else
-      os << tds.dimension() << n;
+  {
+    write(os,tds.dimension());
+    write(os,n);
+  }
 
   if (n == 0)
     return os;
@@ -1545,13 +1553,19 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
   case 2:
   case 1:
     {
-      is >> m;
+      if(is_ascii(is))
+        is >> m;
+      else
+        read(is, m);
 
       for(int i = 0; i < m; i++) {
 	Cell_handle c = create_cell();
 	for (int k=0; k<=dimension(); ++k) {
 	    int ik;
-	    is >> ik;
+            if(is_ascii(is))
+               is >> ik;
+            else
+              read(is, ik);
 	    c->set_vertex(k, V[ik]);
 	    V[ik]->set_cell(c);
 	}
@@ -1561,7 +1575,10 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
         Cell_handle c = C[j];
 	for (int k=0; k<=dimension(); ++k) {
 	    int ik;
-	    is >> ik;
+            if(is_ascii(is))
+              is >> ik;
+            else
+              read(is, ik);
 	    c->set_neighbor(k, C[ik]);
 	}
       }
@@ -1607,22 +1624,25 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
   case 3:
     {
       int m = number_of_cells();
-      os << m;
       if(is_ascii(os))
-	  os << std::endl;
+        os << m << std::endl;
+      else
+        write(os, m);
 
       // write the cells
       Cell_iterator it;
       for(it = cells_begin(); it != cells_end(); ++it) {
 	C[it] = i++;
 	for(int j = 0; j < 4; j++){
-	  os << V.find(it->vertex(j))->second;
 	  if(is_ascii(os)) {
+            os << V.find(it->vertex(j))->second;
 	    if ( j==3 )
 	      os << std::endl;
 	    else
 	      os << ' ';
 	  }
+          else
+            write(os, V.find(it->vertex(j))->second);
 	}
       }
       CGAL_triangulation_assertion( i == m );
@@ -1630,13 +1650,15 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
       // write the neighbors
       for(it = cells_begin(); it != cells_end(); ++it) {
 	for (int j = 0; j < 4; j++) {
-	  os << C[it->neighbor(j)];
 	  if(is_ascii(os)){
+            os << C[it->neighbor(j)];
 	    if(j==3)
 	      os << std::endl;
 	    else
 	      os <<  ' ';
-	  }
+          }
+          else
+            write(os, C[it->neighbor(j)]);
 	}
       }
       break;

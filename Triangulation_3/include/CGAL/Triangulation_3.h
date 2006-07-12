@@ -1032,7 +1032,12 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   tr.infinite = tr._tds.create_vertex();
 
   int n, d;
-  is >> d >> n;
+  if(is_ascii(is))
+     is >> d >> n;
+  else {
+    read(is, d);
+    read(is, n);
+  }
   tr._tds.set_dimension(d);
 
   std::map< int, Vertex_handle > V;
@@ -1081,7 +1086,10 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   if (is_ascii(os))
     os << tr.dimension() << std::endl << n << std::endl;
   else
-    os << tr.dimension() << n;
+  {
+    write(os, tr.dimension());
+    write(os, n);
+  }
 
   if (n == 0)
     return os;
