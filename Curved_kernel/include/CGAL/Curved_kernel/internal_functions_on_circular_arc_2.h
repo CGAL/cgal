@@ -40,6 +40,7 @@ namespace CircularFunctors {
             const typename CK::Circular_arc_point_2 &p1)
   {
     typedef typename CK::Algebraic_kernel   AK;
+    if(p0.equal_ref(p1)) return static_cast<Comparison_result>(0);
     return AK().compare_x_object()(p0.coordinates(), p1.coordinates());
   }
 
@@ -50,6 +51,7 @@ namespace CircularFunctors {
             const typename CK::Circular_arc_point_2 &p1)
   {
     typedef typename CK::Algebraic_kernel   AK;
+    if(p0.equal_ref(p1)) return static_cast<Comparison_result>(0);
     return AK().compare_y_object()(p0.coordinates(), p1.coordinates());
   }
   
@@ -287,6 +289,7 @@ namespace CircularFunctors {
   equal(const typename CK::Circular_arc_point_2 &p0,
         const typename CK::Circular_arc_point_2 &p1)
   {
+    if(p0.equal_ref(p1)) return static_cast<Comparison_result>(0);
     return CircularFunctors::compare_xy<CK>(p0, p1) == 0;
   }
 
