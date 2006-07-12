@@ -57,7 +57,6 @@ Number_types
 OpenNL
 Optimisation_basic
 Optimisation_doc
-Surface_mesh_parameterization
 Partition_2
 Point_set_2
 Polygon
@@ -83,6 +82,7 @@ Stream_lines_2
 Stream_support
 Subdivision_method_3
 Surface_mesher
+Surface_mesh_parameterization
 Testsuite
 Timer
 Trapezoidal_decomposition
