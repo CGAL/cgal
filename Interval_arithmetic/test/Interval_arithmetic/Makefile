@@ -40,8 +40,7 @@ LDFLAGS = \
 all:            \
                 Filtered_kernel$(EXE_EXT) \
                 Static_filters$(EXE_EXT) \
-                tst10$(EXE_EXT) \
-                tst5$(EXE_EXT) 
+                tst10$(EXE_EXT) 
 
 Filtered_kernel$(EXE_EXT): Filtered_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Filtered_kernel Filtered_kernel$(OBJ_EXT) $(LDFLAGS)
@@ -52,14 +51,10 @@ Static_filters$(EXE_EXT): Static_filters$(OBJ_EXT)
 tst10$(EXE_EXT): tst10$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst10 tst10$(OBJ_EXT) $(LDFLAGS)
 
-tst5$(EXE_EXT): tst5$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst5 tst5$(OBJ_EXT) $(LDFLAGS)
-
 clean: \
                    Filtered_kernel.clean \
                    Static_filters.clean \
-                   tst10.clean \
-                   tst5.clean 
+                   tst10.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

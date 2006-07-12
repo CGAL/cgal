@@ -61,7 +61,6 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
-#include <CGAL/Filtered_exact_fwd.h>
 #include <CGAL/MP_Float_fwd.h>
 #include <CGAL/Nef_polynomial_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>

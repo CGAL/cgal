@@ -31,7 +31,6 @@
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Handle.h>
-#include <CGAL/Filtered_exact.h> // to get the overloaded predicates.
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Binary_operator_result.h>
@@ -70,7 +69,7 @@
  * - Separate the handle and the representation(s) in 2 files (?)
  *   maybe not a good idea, better if everything related to one operation is
  *   close together.
- * - Add a CT template parameter like Filtered_exact_nt<> ?
+ * - Add a CT template parameter ?
  * - Add a string constant to provide an expression string (a la MetaCGAL) ?
  *   // virtual ostream operator<<() const = 0; // or string, like Core ?
  * - Have a template-expression (?) thing that evaluates a temporary element,

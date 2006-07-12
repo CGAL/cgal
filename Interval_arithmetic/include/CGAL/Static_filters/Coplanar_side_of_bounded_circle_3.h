@@ -25,7 +25,7 @@
 #define CGAL_STATIC_FILTERS_COPLANAR_SIDE_OF_BOUNDED_CIRCLE_3_H
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_exact.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Profile_counter.h>
 // #include <CGAL/Static_filter_error.h> // Only used to precompute constants
@@ -129,7 +129,7 @@ public:
 
     CGAL_PROFILER("In_circle_3 semi-static failures");
 
-    typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
+    typedef Filtered_kernel<Simple_cartesian<double>, MP_Float> K;
     typedef K::Point_3 P;
 
     return coplanar_side_of_bounded_circle(P(px,py,pz), P(qx,qy,qz),

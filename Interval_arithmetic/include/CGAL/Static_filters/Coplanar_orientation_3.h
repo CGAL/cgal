@@ -25,7 +25,6 @@
 #define CGAL_STATIC_FILTERS_COPLANAR_ORIENTATION_3_H
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_exact.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Profile_counter.h>
 
