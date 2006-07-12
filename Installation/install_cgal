@@ -1022,7 +1022,7 @@ set_compiler_flags()
 # internal variables from make_redirection_headers
 #
 
-tmp_code_file=redirect_tmpfile.C
+tmp_code_file=redirect_tmpfile.cpp
 tmp_header_file=redirect_tmpfile
 
 # this function is used to add symbols to namespace std
@@ -1178,7 +1178,7 @@ create_standard_header_replacements()
     #
     # A global test for all std header files at once, to speed up the rest
     # if a compiler is compliant.
-    ${_cat} <<EOF6 >${TMP_CXX_FILE}.C
+    ${_cat} <<EOF6 >${TMP_CXX_FILE}.cpp
 #include <algorithm>
 #include <ostream>
 #include <numeric>
@@ -1232,7 +1232,7 @@ create_standard_header_replacements()
 #include <set>
 int main() { return 0; }
 EOF6
-    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${TMP_CXX_FILE}.C >/dev/null 2>&1"; then
+    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${TMP_CXX_FILE}.cpp >/dev/null 2>&1"; then
         ${_printf} "%s\n" "  All headers at once : ok."
         return;
     fi
@@ -1336,7 +1336,7 @@ EOF5
     # test for other compiler features/bugs
     LONG_NAME_PROBLEM=''
     for i in "${CGAL_TEST_CONF_DIR}"/CGAL*.cpp; do
-	${_cat} "${i}" > ${TMP_CXX_FILE}.C
+	${_cat} "${i}" > ${TMP_CXX_FILE}.cpp
 	${_printf} "%s%s\n" \
 	    "//+----------------------------------------------------------" \
 	    "----------------" \
@@ -1618,7 +1618,7 @@ _test_support()
 	log_print "OK: There is no test program ${3}."
 	return 1
     fi
-    ${_cp} "${3}" ${TMP_CXX_FILE}.C
+    ${_cp} "${3}" ${TMP_CXX_FILE}.cpp
     if [ -n "`value_of \"${1}_DESCRIPTION\"`" ]; then
 	DESCRIPTION="${4} (`value_of \"${1}_DESCRIPTION\"`)"
     else
@@ -1961,7 +1961,7 @@ test_requirements_and_incompatibilities()
 # in the format DESCRIPTION@VERSION
 get_compiler_description()
 {
-  ${_cat} <<EOF4 >${TMP_CXX_FILE}.C
+  ${_cat} <<EOF4 >${TMP_CXX_FILE}.cpp
 // We need the following lines, since MIPSPRO only knows <iostream>,
 // if it is called with -LANG:std (as of Rel 7.3)
 // and I do not want to check for this before compiling ...
@@ -2071,7 +2071,7 @@ EOF4
         *pgCC*) PGCC_VERSION=`$1 -V | grep pgCC | cut -d' ' -f2`
                 EXE_OPT="-DCGAL_PGCC_VERSION='\"$PGCC_VERSION\"' -o ";;
     esac
-    _flags="${CUSTOM_CXXFLAGS} ${CUSTOM_LDFLAGS} ${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.C"
+    _flags="${CUSTOM_CXXFLAGS} ${CUSTOM_LDFLAGS} ${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.cpp"
 
     # compile
     ${_printf} "%s\n%s\n" "Compiler call:" "--------------" >"${TMP_LOGFILE}"
@@ -2792,7 +2792,7 @@ cleanup_after_compile()
 {
     cleanup_after_compile_leave_source
     # remove tmp C++ file
-    ${_rm} -f "${TMP_CXX_FILE}.C"
+    ${_rm} -f "${TMP_CXX_FILE}.cpp"
 }
 
 # run a compiler test named $1, return 0, iff ok
@@ -2804,14 +2804,14 @@ cleanup_after_compile()
 # USES: _flags
 _compile_test()
 {
-    # add newlines to ${TMP_CXX_FILE}.C (ANSI)
-    ${_printf} "\n\n" >> ${TMP_CXX_FILE}.C
+    # add newlines to ${TMP_CXX_FILE}.cpp (ANSI)
+    ${_printf} "\n\n" >> ${TMP_CXX_FILE}.cpp
     ${_printf} "%s" "${_LEFTSPACE}Testing for $1 ..."
 
     # set flags
     _flags="$2"
-#    _flags="${_flags} -c '`os_path ${TMP_CXX_FILE}.C`' `to_object_file_option ${TMP_CXX_FILE}`"
-    _flags="${_flags} -c '`os_path ${TMP_CXX_FILE}.C`'"
+#    _flags="${_flags} -c '`os_path ${TMP_CXX_FILE}.cpp`' `to_object_file_option ${TMP_CXX_FILE}`"
+    _flags="${_flags} -c '`os_path ${TMP_CXX_FILE}.cpp`'"
 
     # compile
     ${_printf} "%s\n%s\n" "Compiler call:" "--------------" >"${TMP_LOGFILE}"
