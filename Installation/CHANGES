@@ -1,5 +1,38 @@
 $CGAL/CHANGES
 
+----------------------------- Release 3.2.1---------------------------------
+This is a bug fix release
+
+- Number Types
+  Fix MP_Float constructor which crashed for some values.
+
+- Kernel 
+  Rename Bool to avoid a clash with a macro in X11 headers.
+
+- Arrangement 
+  * Derived the Arr_segment_traits_2 Arrangement_2 traits class from the parameterized Kernel. 
+    This allows the use of this traits class in an extended range of applications that require 
+    kernel objects and operations on these objects beyond the ones required by the Arrangement_2 
+    class itself.
+  * Fixed a compilation bug in the code that handles overlay of arrangements instantiated with 
+    different DCEL classes.
+  * Fixed a couple of bugs in the implementation of the Trapezoidal RIC point-location strategy 
+    that prevented the use of this class in debug mode. 
+
+- Triangulation, Alpha Shapes: 
+  Qualify calls to filter_iterator with "CGAL::" to avoid overload ambiguities with 
+  Boost's filter_iterator. 
+
+- Surface Mesher
+  Fix a bug in iterators of the class template Surface_mesh_complex_2_in_triangulation_3
+
+- Surface Mesh Parametrisation 
+  * Updated the precompiled taucs lib
+
+- Kinetic Data Structures
+  * bug fixes
+
+
 ----------------------------- Release 3.2 ----------------------------------
 The following functionality has been added or changed:
 
