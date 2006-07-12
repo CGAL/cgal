@@ -72,8 +72,10 @@ operator<<(std::ostream &os, const Point_with_surface_index<Point>& p)
 {
   os << static_cast<const Point&>(p);
   if(is_ascii(os))
-    os << ' ';
-  return os << p.surface_index();
+    os << ' ' << p.surface_index();
+  else
+    write(os, p.surface_index());
+  return os;
 }
 
 template <class Point>
@@ -82,7 +84,10 @@ operator>>(std::istream &is, Point_with_surface_index<Point>& p)
 {
   is >>  static_cast<Point&>(p);
   int index;
-  is >> index;
+  if(is_ascii(is))
+    is >> index;
+  else
+    read(is, index);
   p.set_surface_index(index);
   return is;
 }

@@ -5,6 +5,9 @@
 - added a new class Surface_mesh_default_triangulation_3
 - use Surface_mesh_default_triangulation_3 in test_c2t3_iterators.cpp, as a
   test.
+- fixed i/o operators, in binary mode, of Point_with_surface_index and
+  Weighted_point_with_surface_index
+
 
 10 July 2006 Laurent Rineau
 - remove a buguy debug output, in
