@@ -34,7 +34,7 @@
 
 #  include <CGAL/Optimisation/basic.h>
 
-#  include <CGAL/Optimisation_sphere_d.h>
+#  include <CGAL/Min_sphere_d/Optimisation_sphere_d.h>
 
 
 #ifndef CGAL_PROTECT_LIST
