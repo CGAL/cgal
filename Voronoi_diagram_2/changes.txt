@@ -1,3 +1,6 @@
+12 July 2006:  Menelaos Karavelas
+- fixed typo in AdaptationTraits_2 concept
+
 10 July 2006:  Menelaos Karavelas
 - moved .C to .cpp in test directory
 
