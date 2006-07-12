@@ -22,7 +22,7 @@ CXXFLAGS = \
            -I../../../Distance_2/include \
            -I../../../Intersections_2/include \
            -I../../../Intersections_3/include \
-           -I../../../Interval_arithmetic/include \
+           -I../../../Filtered_kernel/include \
            -I../../../Kernel_d/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
