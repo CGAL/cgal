@@ -74,10 +74,7 @@ namespace CGALi {
 
     bool equal_ref(const Circular_arc_point_2 &p) const
     {
-      typedef typename boost::is_same< Root_for_circles_2_2, Base > dont_need_identical;
-      if(!(dont_need_identical::value)) {
-        return CGAL::identical(_p, p._p);
-      } return false;
+      return CGAL::identical(_p, p._p);      
     }
 
   private:
