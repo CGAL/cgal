@@ -125,7 +125,14 @@ operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
   is >> static_cast<Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    is >> b;
+    if(is_ascii(is))
+      is >> b;
+    else
+    {
+      int i;
+      read(is, i);
+      b = static_cast<bool>(i);
+    }
     c.set_facet_on_surface(i, b);
   }
   return is;
@@ -141,8 +148,9 @@ operator<<(std::ostream &os,
   for(int i = 0; i < 4; ++i)
   {
     if(is_ascii(os))
-      os << ' ';
-    os << c.is_facet_on_surface(i);
+      os << ' ' << c.is_facet_on_surface(i);
+    else
+      write(os, static_cast<int>(c.is_facet_on_surface(i)));
   }
   return os;
 }

@@ -1,11 +1,4 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-// regular
-#include <CGAL/Delaunay_triangulation_3.h>
-
-// vertex and cell bases
-#include <CGAL/Surface_mesh_vertex_base_3.h>
-#include <CGAL/Surface_mesh_cell_base_3.h>
+#include <CGAL/Surface_mesh_default_triangulation_3.h>
 
 // c2t3
 #include <CGAL/Complex_2_in_triangulation_3.h>
@@ -13,16 +6,8 @@
 #include <iostream>  // std::cerr
 #include <algorithm> // std::distance
 
-// traits class
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
-// vertex and cell types
-typedef CGAL::Surface_mesh_vertex_base_3<K> Vb;
-typedef CGAL::Surface_mesh_cell_base_3<K> Cb;
-
-// triangulation
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<K, Tds> Tr;
+// default triangulation
+typedef CGAL::Surface_mesh_default_triangulation_3 Tr;
 
 // c2t3
 typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
@@ -34,10 +19,10 @@ int main(int , char**)
 
   Tr::Vertex_handle v[4];
 
-  v[0]=tr.insert(K::Point_3(0, 0, 0));
-  v[1]=tr.insert(K::Point_3(1, 0, 0));
-  v[2]=tr.insert(K::Point_3(0, 1, 0));
-  v[3]=tr.insert(K::Point_3(0, 0, 1));
+  v[0]=tr.insert(Tr::Point(0, 0, 0));
+  v[1]=tr.insert(Tr::Point(1, 0, 0));
+  v[2]=tr.insert(Tr::Point(0, 1, 0));
+  v[3]=tr.insert(Tr::Point(0, 0, 1));
 
   // Set 2 triangles in the complex
   // So it will be 2 facets, and 5 edges in the complex

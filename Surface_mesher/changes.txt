@@ -1,3 +1,11 @@
+12 July 2006 Laurent Rineau
+- fixed i/o operators, in binary mode, for C2t3_cell_base_3, 
+- fixed input operator of c2t3. It know deals correctly (I hope), with the
+  edge_facets_counter member.
+- added a new class Surface_mesh_default_triangulation_3
+- use Surface_mesh_default_triangulation_3 in test_c2t3_iterators.cpp, as a
+  test.
+
 10 July 2006 Laurent Rineau
 - remove a buguy debug output, in
 include/CGAL/Surface_mesher/Point_surface_indices_oracle_visitor.h

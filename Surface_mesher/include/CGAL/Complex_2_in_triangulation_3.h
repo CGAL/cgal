@@ -157,6 +157,7 @@ protected:
   void clear()
   {
     m_number_of_facets = 0;
+    edge_facet_counter.clear();
   }
 
   // Access functions
