@@ -1,5 +1,6 @@
 12 July 2006 Laurent Rineau
-- new test, of io operators
+- new class Volume_mesher_default_triangulation_3
+- new test, of io operators. It uses Volume_mesher_default_triangulation_3.
 
 10 July 2006 Laurent Rineau
 - new debug macros:
