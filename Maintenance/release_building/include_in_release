@@ -17,6 +17,7 @@ Curved_kernel
 Developers_manual
 Distance_2
 Distance_3
+Filtered_kernel
 Generator
 Geomview
 HalfedgeDS
@@ -26,7 +27,6 @@ Installation
 Interpolation
 Intersections_2
 Intersections_3
-Interval_arithmetic
 Interval_skip_list
 Inventor
 iostream
