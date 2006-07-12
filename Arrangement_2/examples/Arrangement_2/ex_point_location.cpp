@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_point_location.C
+//! \file examples/Arrangement_2/ex_point_location.cpp
 // Answering point-location queries.
 
 #include <CGAL/Simple_cartesian.h>

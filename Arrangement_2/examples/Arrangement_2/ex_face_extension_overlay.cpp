@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_face_extension_overlay.C
+//! \file examples/Arrangement_2/ex_face_extension_overlay.cpp
 // A face overlay of two arrangements with extended face records.
 
 #include "arr_rational_nt.h"

@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_io_curve_history.C
+//! \file examples/Arrangement_2/ex_io_curve_history.cpp
 // Using the arrangement-with-history I/O operators.
 
 #include "arr_rational_nt.h"

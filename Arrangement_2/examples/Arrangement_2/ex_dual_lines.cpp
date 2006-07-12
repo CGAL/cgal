@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_dual_lines.C
+//! \file examples/Arrangement_2/ex_dual_lines.cpp
 // Checking whether there are three collinear points in a given input set
 // using the arrangement of the dual lines.
 

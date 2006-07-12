@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_generic_curve_data.C
+//! \file examples/Arrangement_2/ex_generic_curve_data.cpp
 // Associating a name attribute with segments using the generic curve-data
 // traits.
 

@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_conics.C
+//! \file examples/Arrangement_2/ex_conics.cpp
 // Constructing an arrangement of various conic arcs.
 #include <CGAL/basic.h>
 

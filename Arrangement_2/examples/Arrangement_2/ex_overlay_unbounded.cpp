@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_overlay_unbounded.C
+//! \file examples/Arrangement_2/ex_overlay_unbounded.cpp
 // A face overlay of two arrangements with unbounded faces.
 
 #include "arr_rational_nt.h"

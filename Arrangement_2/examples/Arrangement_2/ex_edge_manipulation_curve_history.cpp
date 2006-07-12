@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_edge_manipulation_curve_history.C
+//! \file examples/Arrangement_2/ex_edge_manipulation_curve_history.cpp
 // Removing curves and manipulating edges in an arrangement with history.
 
 #include "arr_rational_nt.h"

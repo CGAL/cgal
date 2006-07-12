@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_dcel_extension_io.C
+//! \file examples/Arrangement_2/ex_dcel_extension_io.cpp
 // Using the I/O operators for arrangements with extended DCEL records.
 
 #include "arr_rational_nt.h"

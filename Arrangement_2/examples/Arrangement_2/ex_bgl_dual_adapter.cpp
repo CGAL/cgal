@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_bgl_dual_adapter.C
+//! \file examples/Arrangement_2/ex_bgl_dual_adapter.cpp
 // Adapting the dual of an arrangement to a BGL graph.
 
 #include "arr_rational_nt.h"

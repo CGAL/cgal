@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_face_extension.C
+//! \file examples/Arrangement_2/ex_face_extension.cpp
 // Extending the arrangement-face records.
 
 #include "arr_rational_nt.h"

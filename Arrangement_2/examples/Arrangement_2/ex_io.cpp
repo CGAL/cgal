@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_io.C
+//! \file examples/Arrangement_2/ex_io.cpp
 // Using the arrangement I/O operators.
 
 #include "arr_rational_nt.h"

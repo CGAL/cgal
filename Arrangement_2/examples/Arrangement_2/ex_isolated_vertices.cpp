@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_isolated_vertices.C
+//! \file examples/Arrangement_2/ex_isolated_vertices.cpp
 // Constructing an arrangement with isolated vertices.
 
 #include <CGAL/Simple_cartesian.h>

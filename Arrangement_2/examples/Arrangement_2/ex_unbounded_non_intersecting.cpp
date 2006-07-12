@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_unbounded_non_intersecting.C
+//! \file examples/Arrangement_2/ex_unbounded_non_intersecting.cpp
 // Constructing an arrangement of unbounded linear objects using the insertion
 // function for non-intersecting curves.
 

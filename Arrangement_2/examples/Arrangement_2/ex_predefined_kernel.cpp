@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_predefined_kernel.C
+//! \file examples/Arrangement_2/ex_predefined_kernel.cpp
 // Constructing an arrangements of intersecting line segments using the
 // predefined kernel with exact constructions and exact predicates.
 

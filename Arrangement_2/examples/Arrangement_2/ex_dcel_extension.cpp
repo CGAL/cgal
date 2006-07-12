@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_dcel_extension.C
+//! \file examples/Arrangement_2/ex_dcel_extension.cpp
 // Extending all DCEL records (vertices, edges and faces).
 
 #include "arr_rational_nt.h"

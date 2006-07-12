@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_vertical_ray_shooting.C
+//! \file examples/Arrangement_2/ex_vertical_ray_shooting.cpp
 // Answering vertical ray-shooting queries.
 
 #include <CGAL/MP_Float.h>

@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_bgl_primal_adapter.C
+//! \file examples/Arrangement_2/ex_bgl_primal_adapter.cpp
 // Adapting an arrangement to a BGL graph.
 
 #include "arr_rational_nt.h"

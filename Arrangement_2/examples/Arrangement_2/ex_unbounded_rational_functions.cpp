@@ -1,4 +1,4 @@
-//! \file examples/Arrangement_2/ex_unbounded_rational_functions.C
+//! \file examples/Arrangement_2/ex_unbounded_rational_functions.cpp
 // Constructing an arrangement of unbounded portions of rational functions.
 #include <CGAL/basic.h>
 
