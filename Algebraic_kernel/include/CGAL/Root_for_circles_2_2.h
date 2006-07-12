@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,8 +39,8 @@ class Root_for_circles_2_2 {
   typedef typename Root_of_traits< RT >::RootOf_1    FT;
 
   private:
-    Root_of_2 x_;
-    Root_of_2 y_;
+    Handle_for<Root_of_2> x_;
+    Handle_for<Root_of_2> y_;
     
   public:
   Root_for_circles_2_2(){}
@@ -49,10 +50,10 @@ class Root_for_circles_2_2 {
   {}
 
   const Root_of_2& x() const 
-  { return x_; }
+  { return get(x_); }
     
   const Root_of_2& y() const 
-  { return y_; }
+  { return get(y_); }
 
   CGAL::Bbox_2 bbox() const
   {
@@ -69,7 +70,10 @@ template < typename RT >
 bool 
 operator == ( const Root_for_circles_2_2<RT>& r1,
 	      const Root_for_circles_2_2<RT>& r2 )
-{ return (r1.x() == r2.x()) && (r1.y() == r2.y()); }
+{ if (CGAL::identical(r1.x_, r2.x_) && CGAL::identical(r1.x_, r2.x_))
+	  return true;
+  return (r1.x() == r2.x()) && (r1.y() == r2.y()); 
+}
 
 template < typename RT >
 std::ostream &
