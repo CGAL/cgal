@@ -1335,7 +1335,7 @@ EOF5
 
     # test for other compiler features/bugs
     LONG_NAME_PROBLEM=''
-    for i in "${CGAL_TEST_CONF_DIR}"/CGAL*.C; do
+    for i in "${CGAL_TEST_CONF_DIR}"/CGAL*.cpp; do
 	${_cat} "${i}" > ${TMP_CXX_FILE}.C
 	${_printf} "%s%s\n" \
 	    "//+----------------------------------------------------------" \
@@ -1347,7 +1347,7 @@ EOF5
 	    "----------------" \
 	    >> "${_file}"
 	_test_name="`${_basename} \"${i}\"`"
-	_test_name="`value_of_without \"_test_name\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
+	_test_name="`value_of_without \"_test_name\" \"${CGAL_CONFIG_PREFIX}\" \"\.cpp\"`"
 	_tmp_name="`value_of_without \"_test_name\" \"^NO_\"`"
 	if [ "${_tmp_name}" = "${_test_name}" ]; then
 	  _NO='unfortunately.'
@@ -1367,12 +1367,12 @@ EOF5
 	    "${_NO}"
 	then
 	    ${_printf} "%s" "//" >> "${_file}"
-	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_CCTYPE_MACRO_BUG.C" ]; then
+	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_CCTYPE_MACRO_BUG.cpp" ]; then
 	    # we have to generate the redirection header cctype
 	    create_replacement_header notest cctype "" ctype.h
-	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_LONGNAME_BUG.C" ]; then
+	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_LONGNAME_BUG.cpp" ]; then
 	    LONG_NAME_PROBLEM=y
-	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_NO_STL.C" ]; then
+	elif [ "`${_basename} \"${i}\"`" = "CGAL_CFG_NO_STL.cpp" ]; then
 	    log_print "`extended_compiler_description` does NOT seem to have an STL."
 	fi
 	${_printf} "%s\n\n" \
