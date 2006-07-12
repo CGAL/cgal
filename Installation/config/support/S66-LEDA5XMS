@@ -1,7 +1,7 @@
 # Algorithmic Solution's LEDA Library (http://www.algorithmic-solutions.com/)
 
-DESCRIPTION = MS Windows
-PROVIDES = LEDAOLD
+DESCRIPTION = 5.x for MS Windows
+PROVIDES = LEDA5X
 CXXFLAGS = 
 LDFLAGS = 
 LIBS = P G L

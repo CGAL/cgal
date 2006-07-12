@@ -1,6 +1,6 @@
 # Algorithmic Solution's LEDA Window Library (http://www.algorithmic-solutions.com/)
 
-DESCRIPTION = Unix
+DESCRIPTION = 4.x for Unix
 PROVIDES = LEDAWIN
 CXXFLAGS = 
 LDFLAGS = 

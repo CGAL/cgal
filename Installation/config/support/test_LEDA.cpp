@@ -25,8 +25,14 @@
 
 #include <iostream>
 
-#include <LEDA/system/basic.h>
-#include <LEDA/numbers/integer.h>
+#ifdef HAVE_LEDA5X
+  #include <LEDA/system/basic.h>
+  #include <LEDA/numbers/integer.h>
+#else
+  #include <LEDA/basic.h>
+  #include <LEDA/integer.h>
+#endif
+
 #if defined(_MSC_VER) || defined(__BORLANDC__)
 #ifndef LEDA_STD_HEADERS
 #  error "LEDA_STD_HEADERS is not defined. Please consult the troubleshooting section of the installation manual."
@@ -37,9 +43,15 @@
 using namespace leda;
 #endif
 
-#include <LEDA/internal/REDEFINE_NAMES.h>
-typedef integer I;
-#include <LEDA/internal/UNDEFINE_NAMES.h>
+#ifdef HAVE_LEDA5X
+ #include <LEDA/internal/REDEFINE_NAMES.h>
+ typedef integer I;
+ #include <LEDA/internal/UNDEFINE_NAMES.h>
+#else
+ #include <LEDA/REDEFINE_NAMES.h>
+ typedef integer I;
+ #include <LEDA/UNDEFINE_NAMES.h>
+#endif
 
 int main()
 {

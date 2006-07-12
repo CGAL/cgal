@@ -1,6 +1,6 @@
 # Algorithmic Solution's LEDA Library (http://www.algorithmic-solutions.com/)
 
-DESCRIPTION = MS Windows
+DESCRIPTION = 4.x for MS Windows
 PROVIDES = LEDA
 CXXFLAGS = 
 LDFLAGS = 
@@ -8,7 +8,7 @@ LIBS = P G L
 REQUIRES = DOLLAR_WINDOWS_COMPILER
 INCOMPATIBLE = 
 STDINCLDIRS = 
-INCLTHING = LEDA/system/basic.h
+INCLTHING = LEDA/basic.h
 STDLIBDIRS = 
 LIBTHING = 
 

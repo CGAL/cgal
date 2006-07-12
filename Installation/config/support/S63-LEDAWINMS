@@ -1,6 +1,6 @@
 # Algorithmic Solution's LEDA Window Library (http://www.algorithmic-solutions.com/)
 
-DESCRIPTION = MS Windows
+DESCRIPTION = 4.x for MS Windows
 PROVIDES = LEDAWIN
 CXXFLAGS = 
 LDFLAGS = 

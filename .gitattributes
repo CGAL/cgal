@@ -452,10 +452,10 @@ Installation/config/support/S60-LEDA -text
 Installation/config/support/S61-LEDAWIN -text
 Installation/config/support/S62-LEDAMS -text
 Installation/config/support/S63-LEDAWINMS -text
-Installation/config/support/S64-LEDAOLD -text
-Installation/config/support/S65-LEDAOLDWIN -text
-Installation/config/support/S66-LEDAOLDMS -text
-Installation/config/support/S67-LEDAOLDWINMS -text
+Installation/config/support/S64-LEDA5X -text
+Installation/config/support/S65-LEDA5XWIN -text
+Installation/config/support/S66-LEDA5XMS -text
+Installation/config/support/S67-LEDA5XWINMS -text
 Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text

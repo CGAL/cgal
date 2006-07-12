@@ -1,6 +1,6 @@
 # Algorithmic Solution's LEDA Library (http://www.algorithmic-solutions.com/)
 
-DESCRIPTION = Unix
+DESCRIPTION = 4.x for Unix
 PROVIDES = LEDA
 CXXFLAGS = 
 LDFLAGS = 
@@ -8,7 +8,7 @@ LIBS = P G L
 REQUIRES = 
 INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER 
 STDINCLDIRS = 
-INCLTHING = LEDA/system/basic.h
+INCLTHING = LEDA/basic.h
 STDLIBDIRS = 
 LIBTHING = 
 
