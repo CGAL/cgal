@@ -51,6 +51,8 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text svne
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text svneol=unset#application/octet-stream
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#image/png
+Apollonius_graph_2/include/CGAL/new_traits/Apollonius_graph_new_traits_2.h -text
+Apollonius_graph_2/test/Apollonius_graph_2/test_ag_new_traits_2.cpp -text
 Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#application/octet-stream
 Arrangement_2/bench/data/benchArrPolylines.xml svneol=native#text/xml
 Arrangement_2/bench/data/benchArrSegments.xml svneol=native#text/xml
