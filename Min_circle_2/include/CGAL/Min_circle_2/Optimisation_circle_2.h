@@ -228,9 +228,7 @@ operator >> ( std::istream&, CGAL::Optimisation_circle_2<K_>&);
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Optimisation_circle_2.C>
-#endif
+#include <CGAL/Min_circle_2/Optimisation_circle_2_impl.h>
 
 #endif // CGAL_OPTIMISATION_CIRCLE_2_H
 
