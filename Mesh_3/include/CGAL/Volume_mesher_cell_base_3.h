@@ -104,7 +104,14 @@ operator>>(std::istream &is, Volume_mesher_cell_base_3<GT, Cb> &c)
 {
   bool b;
   is >> static_cast<Cb&>(c);
-  is >> b;
+  if(is_ascii(is))
+    is >> b;
+  else
+  {
+    int i;
+    read(is, i);
+    b = static_cast<bool>(i);
+  }
   c.set_in_domain(b);
   return is;
 }
@@ -117,8 +124,10 @@ operator<<(std::ostream &os,
 {
   os << static_cast<const Cb&>(c);
   if(is_ascii(os))
-    os << ' ';
-  return os << c.is_in_domain();
+    os << ' ' << c.is_in_domain();
+  else
+    write(os, static_cast<int>(c.is_in_domain()));
+  return os;
 }
 
 }  // namespace CGAL

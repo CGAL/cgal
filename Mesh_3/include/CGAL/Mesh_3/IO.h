@@ -137,9 +137,22 @@ void output_mesh(std::ostream& os, const C2T3& c2t3)
 //   typedef typename Tr::Point Point;
 
 //   const Tr& tr = c2t3.triangulation();
-  os << "format: " << Get_io_signature<C2T3>()();
-  if(is_ascii(os))
-    os << "\n";
+
+  bool ascii = is_ascii(os);
+  set_ascii_mode(os);
+
+  if(ascii)
+    os << "format: ";
+  else
+    os << "binaryformat: ";
+
+  os << Get_io_signature<C2T3>()() << "\n";
+
+  if(ascii)
+    set_ascii_mode(os);
+  else
+    set_binary_mode(os);
+
   os << c2t3;
 
 //   int number_of_vertices = tr.number_of_vertices();
@@ -190,23 +203,64 @@ input_mesh(std::istream& is,
                               "CGAL::Mesh_3::input_mesh()"
                               " input error: ");
 
+  bool ascii = is_ascii(is);
+  bool will_be_ascii = ascii;
+  set_ascii_mode(is);
+
   std::string format;
   is >> format;
-  if( format != "format:" )
+  if( format == "binaryformat:" )
   {
-    debug_stream << "Bad file format!\n";
-    debug_stream << "expected \"format: \", found \"" << format << "\" instead.\n";
-    return false;
+    if(ascii)
+      *debug_str << "Warning: switching stream to binary mode.\n";
+    will_be_ascii = false;
   }
+  else
+    if( format == "format:" )
+    {
+      if(!ascii)
+        *debug_str << "Warning: switching stream to ascii mode.\n";
+      will_be_ascii = true;
+    }
+    else
+    {
+      debug_stream << "Bad file format!\n";
+      debug_stream << "expected \"format: \" or \"binaryformat\", found \"" << format << "\" instead.\n";
+      return false;
+    }
   
+  {
+    char ret;
+    is.get(ret);
+    if( ret != ' ' )
+      return debug_stream << "Expected ' ', found '" << ret << "'\n";
+  }
+
   is >> format;
-  if( format != Get_io_signature<C2T3>()() )
+  if( !is || format != Get_io_signature<C2T3>()() )
   {
     debug_stream << "bad format \"" << format << "\"\n";
     debug_stream << "expected format \"" << Get_io_signature<C2T3>()() << "\"\n";
     return false;
   }
-  return is >> c2t3;
+
+   
+  {
+    char ret;
+    is.get(ret);
+    if( ret != '\n' )
+      return debug_stream << "Expected '\n', found '" << ret << "'\n";
+  }
+
+  if(will_be_ascii)
+    set_ascii_mode(is);
+  else
+    set_binary_mode(is);
+
+  if( ! (is >> c2t3) )
+    return debug_stream << "Cannot read the triangulation.\n";
+  else
+    return true;
 
 //   Tds& tds = tr.tds();
 
