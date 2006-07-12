@@ -46,5 +46,6 @@ This distribution of CGAL includes:
    scripts/           - directory containing some useful scripts for CGAL
                         programmers
    src/               - the library source code
+   VERSION            - the version number of this release
 
 -------------------------------------------------------------------------------
