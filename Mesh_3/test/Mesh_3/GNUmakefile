@@ -46,7 +46,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 RUN_PROGRAMS=  	combined_spheres$(EXE_EXT) \
-                test_io_function$(EXE_EXT) 
+                test_io_methods$(EXE_EXT) 
 
 TOOLS=  cgal_to_medit \
         display_distribution \
