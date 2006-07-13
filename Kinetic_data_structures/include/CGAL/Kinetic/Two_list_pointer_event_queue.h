@@ -117,7 +117,7 @@ public:
   }
   virtual void write(std::ostream &out) const
   {
-    out << "Never.";
+    out << "Never";
   }
   virtual ~Two_list_event_queue_dummy_item(){}
 };
@@ -526,14 +526,15 @@ public:
   bool write(std::ostream &out) const
   {
     for (typename Queue::const_iterator it = front_.begin(); it != front_.end(); ++it) {
-      out << "[";
+      //out << "[";
       it->write(out);
-      out << "] ";
+      //out << "] ";
+      out << std::endl;
     }
-    out << std::endl;
+    out << "--" << std::endl;
     for (typename Queue::const_iterator it = back_.begin(); it != back_.end(); ++it) {
       it->write(out);
-      out << " ";
+      out << std::endl;
     }
     out << std::endl;
     return true;
