@@ -126,6 +126,35 @@ typedef Check_traits<GT_old,GT_new> GT;
 typedef CGAL::Apollonius_graph_2<GT> AG;
 
 typedef AG::Site_2 Site;
+typedef AG::Finite_faces_iterator Finite_faces_iterator;
+typedef AG::Finite_vertices_iterator Finite_vertices_iterator;
+typedef AG::Vertex_handle Vertex_handle;
+
+void test_orientation (const AG &ag,
+        Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
+{
+    const Site &s0 = v0->site();
+    const Site &s1 = v1->site();
+    const Site &s2 = v2->site();
+
+    GT gt;
+    GT_new gt_new;
+
+    GT::Orientation_2 orientation1 = gt.orientation_2_object();
+    GT_new::Orientation_2 orientation2 = gt_new.orientation_2_object();
+
+    for (Finite_vertices_iterator _v = ag.finite_vertices_begin();
+            _v != ag.finite_vertices_end(); ++_v)
+    {
+        Vertex_handle v = _v;
+        if (v == v0) continue;
+
+        Sign o1 = orientation1 (s0, s1, s2, s0, v->site());
+        Sign o2 = orientation2 (s0, s1, s2,     v->site().point());
+
+        assert (o1 == o2);
+    }
+}
 
 void test_file (const char *filename)
 {
@@ -142,6 +171,17 @@ void test_file (const char *filename)
 
     std::cout << "OK" << std::endl;
 
+    std::cout << "Test orientation... " << std::flush;
+
+    for (Finite_faces_iterator f = ag.finite_faces_begin();
+            f != ag.finite_faces_end(); ++f)
+    {
+        test_orientation (ag, f->vertex(0), f->vertex(1), f->vertex(2));
+        test_orientation (ag, f->vertex(1), f->vertex(2), f->vertex(0));
+        test_orientation (ag, f->vertex(2), f->vertex(0), f->vertex(1));
+    }
+
+    std::cout << "OK" << std::endl;
 }
 
 int main (void)

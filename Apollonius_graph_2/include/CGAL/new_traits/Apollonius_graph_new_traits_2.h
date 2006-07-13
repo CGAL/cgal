@@ -41,6 +41,60 @@ CGAL_BEGIN_NAMESPACE
 //     return static_cast<Sign> (static_cast<int> (s1) * static_cast<int> (s2));
 // }
 
+
+template <class K, class MTag>
+class AG2_Orientation_test_new_2 : public AG2_Orientation_test_2<K, MTag>
+{
+public:
+    typedef K                    Kernel;
+    typedef typename K::FT       FT;
+    typedef typename K::Site_2   Site_2;
+    typedef typename K::Point_2  Point_2;
+
+    typedef Orientation          result_type;
+    typedef Arity_tag<3>         Arity;
+    typedef Site_2               argument_type;
+
+    Orientation operator() (const Site_2 &s0, const Site_2 &s1, const Site_2 &s2,
+                            const Point_2 &q) const
+    {
+        FT x1 = s1.x() - s0.x(), y1 = s1.y() - s0.y(), w1 = s1.weight() - s0.weight();
+        FT x2 = s2.x() - s0.x(), y2 = s2.y() - s0.y(), w2 = s2.weight() - s0.weight();
+        FT xq =  q.x() - s0.x(), yq =  q.y() - s0.y();
+
+        FT a1 = x1 * x1 + y1 * y1 - w1 * w1;
+        FT a2 = x2 * x2 + y2 * y2 - w2 * w2;
+        
+        CGAL_assertion (sign (a1) > 0);
+        CGAL_assertion (sign (a2) > 0);
+
+        FT x = a1 * x2 - a2 * x1;
+        FT y = a1 * y2 - a2 * y1;
+        FT w = a1 * w2 - a2 * w1;
+        FT s = x * xq + y * yq;
+
+        Sign W = CGAL::sign (w);
+        Sign S = CGAL::sign (s);
+
+        if (W == 0) return Sign (- S);
+
+        FT o = x * yq - y * xq;
+        
+        Sign O = CGAL::sign (o);
+
+        if (S == 0) return Sign (O * W);
+
+        if (W * S * O <= 0) return Sign (- S);
+
+        FT i = w * w * (xq * xq + yq * yq) - s * s;
+
+        Sign I = CGAL::sign (i);
+        
+        return Sign (S * I);
+    }
+
+};
+
 //-----------------------------------------------------------------------
 //                        Conflict Base
 //-----------------------------------------------------------------------
@@ -676,7 +730,7 @@ public:
   typedef CGAL::Ag2_compare_x_2<Kernel>                 Compare_x_2;
   typedef CGAL::Ag2_compare_y_2<Kernel>                 Compare_y_2;
   typedef CGAL::Ag2_compare_weight_2<Kernel>            Compare_weight_2;
-  typedef CGAL::AG2_Orientation_test_2<Kernel,MTag>     Orientation_2;
+  typedef CGAL::AG2_Orientation_test_new_2<Kernel,MTag> Orientation_2;
   typedef CGAL::Is_hidden_2<Kernel,MTag>                Is_hidden_2;
   typedef CGAL::Oriented_side_of_bisector_2<Kernel,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
