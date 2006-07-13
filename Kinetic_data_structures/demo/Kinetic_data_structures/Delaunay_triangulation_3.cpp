@@ -8,6 +8,8 @@
 #include "include/SoQt_moving_points_3.h"
 #include "include/SoQt_triangulation_3.h"
 #include <CGAL/Kinetic/Enclosing_box_3.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
 //#endif
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
@@ -67,6 +69,85 @@ int main(int argc, char *argv[])
     Traits::Simulator::Handle sim= tr.simulator_handle();
     Traits::Active_points_3_table::Handle mpt= tr.active_points_3_table_handle();
     CGAL::Kinetic::Enclosing_box_3<Traits> eb(tr,-10,10,-10,10,-10,10);
+
+    {
+      CGAL::SoQt_handle<SoShapeKit> shape= new SoShapeKit;
+      shape->setName("Edges");
+      CGAL::SoQt_handle<SoShapeKit> walls= new SoShapeKit;
+      walls->setName("Walls");
+      {
+	CGAL::SoQt_handle<SoAppearanceKit> ap= new SoAppearanceKit;
+	{
+	  CGAL::SoQt_handle<SoMaterial> mat= new SoMaterial;
+	  mat->setName("Facet_material");
+	  mat->ambientColor.setValue(SbColor(0.6,0.6,0.6));
+	  mat->specularColor.setValue(SbColor(0.0, 0.0, 0.0));
+	  mat->emissiveColor.setValue(SbColor(0.0,0.0,0.0));
+	  mat->shininess.setValue(.2);
+	  mat->transparency.setValue(0.5);
+	  mat->diffuseColor.setValue(SbColor(0.6, 0.6, 0.6));
+	  ap->setPart("material", mat.get());
+	}
+	shape->setPart("appearance", ap.get());
+	walls->setPart("appearance", ap.get());
+      }
+      CGAL::SoQt_handle<SoCoordinate3> coords= new SoCoordinate3();
+      SbVec3f cids[8]={SbVec3f(-10,-10,-10), 
+		       SbVec3f(-10,-10,10),
+		       SbVec3f(10, -10, -10),
+		       SbVec3f(-10, 10, -10),
+		       SbVec3f(10, 10, 10),
+		       SbVec3f(-10, 10, 10),
+		       SbVec3f(10, -10, 10),
+		       SbVec3f(10,10,-10)};
+      coords->point.setValues(0,8,cids);
+      
+
+      shape->setPart("coordinate3", coords.get());
+      walls->setPart("coordinate3", coords.get());
+      {
+	CGAL::SoQt_handle<SoShapeHints> hint= new SoShapeHints;
+	hint->vertexOrdering.setValue(SoShapeHints::COUNTERCLOCKWISE);
+	hint->shapeType.setValue(SoShapeHints::UNKNOWN_SHAPE_TYPE);
+	hint->faceType.setValue(SoShapeHints::CONVEX);
+	hint->creaseAngle.setValue(0);
+	walls->setPart("shapeHints", hint.get());
+      }
+      {
+	CGAL::SoQt_handle<SoIndexedLineSet> ls= new SoIndexedLineSet();
+	int lines[]={0,2,7,3,5,4,6,1,0,-1,
+		     0,3,-1,
+		     1,5,-1,
+		       2,6,-1,
+		       4,7, -1,
+	};
+	//CGAL_assertion(sizeof(lines)/sizeof(int)==19);
+	ls->coordIndex.setNum(sizeof(lines)/sizeof(int));
+	ls->coordIndex.setValues(0, sizeof(lines)/sizeof(int), lines);
+	//ls->vertexProperty.setValue(coords.get());
+	
+	shape->setPart("shape",ls.get());
+      } 
+      {
+	CGAL::SoQt_handle<SoIndexedFaceSet> ls= new SoIndexedFaceSet();
+	int faces[]={2,0,3,7,-1,
+		     0,1,5,3,-1,
+		     0,2,6,1,-1,
+		     2,7,4,6,-1
+	};
+	//CGAL_assertion(sizeof(lines)/sizeof(int)==19);
+	ls->coordIndex.setNum(sizeof(faces)/sizeof(int));
+	ls->coordIndex.setValues(0, sizeof(faces)/sizeof(int), faces);
+	//ls->vertexProperty.setValue(coords.get());
+	
+	walls->setPart("shape",ls.get());
+      }
+      CGAL::SoQt_handle<SoSeparator> p= new SoSeparator();
+      p->addChild(shape.get());
+      p->addChild(walls.get());
+      qtsim->soqt_examiner_viewer_pointer()->new_subgraph(p.get());
+    }
+  
 
     if (verbose) {
         CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
