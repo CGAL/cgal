@@ -26,6 +26,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Simulator_objects_listener.h>
+#include <sstream>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
@@ -151,12 +152,19 @@ void Qt_moving_points_2<T,G>::draw() const
 	 it= traits_.active_points_2_table_handle()->keys_begin();
        it != traits_.active_points_2_table_handle()->keys_end(); ++it) {
     //std::cout << "drawing point " << *it  << "= " << ik_.to_static(*it) << std::endl;
+    typename Traits::Static_kernel::Point_2 pt= ik_.static_object(*it);
     if (_mode== OUTLINE) {
-      *w << C(ik_.static_object(*it), _radius);
+      *w << C(pt, _radius);
     }
     else if (_mode == POINT) {
-      *w << ik_.static_object(*it);
+      *w << pt;
     }
+
+    std::ostringstream oss;
+    oss << *it;
+    w->get_painter().drawText(w->x_pixel(CGAL::to_double(pt.x()))+3,
+			      w->y_pixel(CGAL::to_double(pt.y()))-3,
+			      QString(oss.str().c_str()));
   }
 }
 
