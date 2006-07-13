@@ -81,6 +81,19 @@ public:
     p_arr (&arr)
   {}
 
+  /* Get the arrangement. */
+  Arrangement_2& arrangement()
+  {
+    return (*p_arr);
+  }
+
+  /* Get the arrangement (const version). */
+  const Arrangement_2& arrangement() const
+  {
+    return (*p_arr);
+  }
+
+
   /// \name Accessing the notification functions (for the global functions).
   //@{
 
