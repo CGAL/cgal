@@ -36,6 +36,12 @@ struct Rational_between_roots
 
   Rational_between_roots(const K& k): tii_(k.to_isolating_interval_object()){}
 
+  template <class T>
+  static bool is_minf(T r){
+    if (std::numeric_limits<result_type>::has_infinity) return r== -std::numeric_limits<result_type>::infinity();
+    else return false;
+  }
+
   template <class RT>
   result_type operator()(const RT &r0, const RT &r1) const
   {
@@ -45,7 +51,7 @@ struct Rational_between_roots
     //Ival i0= to_interval(r0);
     //Ival i1= to_interval(r1);
     Ival i0= tii_(r0);
-    if (i0.second == -infinity<double>()) {
+    if (is_minf(i0.second)) {
       result_type ret(-33554432);
       while (r1 <= second_argument_type(ret)) {
 	ret= ret*1024;
