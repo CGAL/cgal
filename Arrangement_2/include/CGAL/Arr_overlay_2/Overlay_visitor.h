@@ -83,8 +83,6 @@ public:
   typedef typename Base::SL_iterator                     SL_iterator;
 
   typedef Unique_hash_map<Halfedge_handle,Curve_info>    Hash_map;
-  using Base::m_arr;
-  using Base::m_arr_access;
 
   private:
 
@@ -100,8 +98,6 @@ public:
                   Arrangement& res_arr,
                   OverlayTraits& overlay_trairs):
     Base(&res_arr),
-    m_red_arr(&red_arr),
-    m_blue_arr(&blue_arr),
     m_halfedges_map(Curve_info(),
                     // give an initial size for the hash table
                       red_arr.number_of_halfedges() +
@@ -439,7 +435,6 @@ public:
           Face_handle_blue blue_face;
           Subcurve* sc_above = sc->get_above();
           if(!sc_above)
-           // blue_face = m_blue_arr->unbounded_face();
            blue_face = sc->get_top_blue_halfedge()->face();
           else
             blue_face = 
@@ -611,7 +606,6 @@ public:
           CGAL_assertion(blue_obj.is_empty());
           Face_handle_blue    blue_f;
           if(!sc_above)
-            //blue_f = m_blue_arr->unbounded_face();
             blue_f = sc->get_top_blue_halfedge()->face();
           else
           {
@@ -652,7 +646,6 @@ public:
         assign(blue_v, blue_obj);
         Face_handle_red    red_f;
         if(!sc_above)
-          //red_f = m_red_arr->unbounded_face();
           red_f = sc->get_top_red_halfedge()->face();
         else
         {
@@ -719,8 +712,6 @@ public:
 
 protected:
 
-  const Arrangement1*       m_red_arr;
-  const Arrangement2*       m_blue_arr;
   Hash_map                  m_halfedges_map;
   OverlayTraits*            m_overlay_traits;
 
