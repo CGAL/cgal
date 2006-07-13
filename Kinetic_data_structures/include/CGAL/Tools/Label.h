@@ -69,17 +69,17 @@ public:
   }
   bool operator==(const This &o) const
   {
-    return id_ ==o.id_;
+    return id_ == o.id_;
   }
   bool operator!=(const This &o) const
   {
-    return id_ !=o.id_;
+    return id_ != o.id_;
   }
 
   template <class OS>
   void write(OS &out) const
   {
-    if (id_==-1) out << "N";
+    if (id_ == -1) out << "N";
     else out << id_;
   }
   void print() const
