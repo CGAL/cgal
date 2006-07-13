@@ -42,6 +42,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Nef {
+
 template <class NT> class Polynomial_rep;
 
 // SPECIALIZE_CLASS(NT,int double) START
@@ -1991,6 +1993,8 @@ Polynomial<NT> Polynomial<NT>::gcd(
 
 
 // SPECIALIZE_IMPLEMENTATION(NT,int double) END
+
+} // namespace Nef
 
 CGAL_END_NAMESPACE
 
