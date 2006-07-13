@@ -6,9 +6,12 @@
 
 \ccDefinition
 
-\ccClassTemplateName is a kernel that uses the filtering technique
-\cite{cgal:bbp-iayed-01} to achieve a kernel with exact and efficient
-predicates.
+\ccClassTemplateName is a kernel that uses the filtering technique based
+on interval arithmetic from \cite{cgal:bbp-iayed-01} to achieve
+exact and efficient predicates.  In addition, a few selected important
+predicates are implemented using the formally proved, semi-static, filtering
+techniques from \cite{cgal:mp-fcafg-05}.
+
 % given an exact kernel \ccc{EK} and a filtering kernel \ccc{FK}.  
 The geometric constructions are exactly those
 of the kernel \ccc{CK}, which means that they are not necessarily exact.
