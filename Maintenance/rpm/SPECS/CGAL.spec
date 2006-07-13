@@ -26,7 +26,7 @@
 %{!?cgal_version:%define cgal_version 3.3}
 %{!?cgal_name: %define cgal_name CGAL}
 %{!?internal_release: %define internal_release 0}
-%define release_number 10
+%define release_number 11
 %define boost_version 1.32
 %{!?build_doc: %define build_doc 0}
 %{!?build_demo: %define build_demo 1}
@@ -237,8 +237,8 @@ cp -a scripts/cgal_* %{buildroot}%{cgal_scripts_dir}
 # Install libraries
 mkdir -p %{buildroot}%{cgal_libs_dir}
 cp -a lib/*/lib* %{buildroot}%{cgal_libs_dir}
-ln -s libCGAL.so.1.0.0 %{buildroot}%{cgal_libs_dir}/libCGAL.so
-ln -s libCGAL.so.1.0.0 %{buildroot}%{cgal_libs_dir}/libCGAL.so.1
+ln -s libCGAL.so.2.0.0 %{buildroot}%{cgal_libs_dir}/libCGAL.so
+ln -s libCGAL.so.2.0.0 %{buildroot}%{cgal_libs_dir}/libCGAL.so.2
 
 # Install makefile:
 mkdir -p %{buildroot}%{cgal_makefile_dir}
@@ -309,8 +309,8 @@ rm -rf %{buildroot}
 %dir %{cgal_prefix}
 %dir %{cgal_libs_dir}
 %endif
-%{cgal_libs_dir}/libCGAL.so.1
-%{cgal_libs_dir}/libCGAL.so.1.0.0
+%{cgal_libs_dir}/libCGAL.so.2
+%{cgal_libs_dir}/libCGAL.so.2.0.0
 %doc LICENSE*
 
 %files devel
@@ -358,6 +358,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Jul 13 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-11
+- soname is now libCGAL.so.2
+
 * Tue Jul  4 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-10
 - Fix makefile.sed so that %%{buildroot} does not appear in 
   %%{_datadir}/CGAL/make/makefile.

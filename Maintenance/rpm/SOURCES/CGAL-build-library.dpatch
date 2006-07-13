@@ -24,8 +24,8 @@ diff -urNad cgal/src/CGAL/makefile cgal/src/CGAL/makefile
  #                    target entries
  #---------------------------------------------------------------------#
  
-+SOVERSION=1.0.0
-+SOMAJOR=1
++SOVERSION=2.0.0
++SOMAJOR=2
 +
  shared_lib: $(CGAL_OBJECTS)
 -	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) \
