@@ -23,12 +23,12 @@
 #
 # ** build_doc is always 0, when internal_release != 0
 #
-%{!?cgal_version:%define cgal_version 3.2}
+%{!?cgal_version:%define cgal_version 3.3}
 %{!?cgal_name: %define cgal_name CGAL}
 %{!?internal_release: %define internal_release 0}
-%define release_number 11
+%define release_number 10
 %define boost_version 1.32
-%{!?build_doc: %define build_doc 1}
+%{!?build_doc: %define build_doc 0}
 %{!?build_demo: %define build_demo 1}
 %{!?set_prefix: %define set_prefix 0}
 %define cgal_download ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/
@@ -358,42 +358,41 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Jul  4 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-10
+* Tue Jul  4 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-10
 - Fix makefile.sed so that %%{buildroot} does not appear in 
   %%{_datadir}/CGAL/make/makefile.
 
-* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-9
+* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-9
 - Remove Obsoletes: in the meta-package CGAL.
 
-* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-8
+* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-8
 - Fix the localisation of demo and examples.
 
-* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-6
+* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-6
 - Set Requires, in sub-packages.
 
-* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-5
-- CGAL-3.2.1
+* Sun Jul  2 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-5
 - Sub-package "demo" is now named "demos-source" (Fedora guidelines).
 - Fix some rpmlint warnings
 - Added README.Fedora, to explain why the documentation is not shipped, and how CGAL is divided in sub-packages.
 
 
-* Sat Jul  1 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-4
+* Sat Jul  1 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-4
 - Use %%{_datadir}/CGAL instead of %%{_datadir}/%%{name}-%%{version}
 - Fix %%{_datadir}/CGAL/makefile, with a sed script.
 - Added a new option %%set_prefix (see top of spec file).
 
-* Sat Jul  1 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-3
+* Sat Jul  1 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-3
 - Use less "*" in %%files, to avoid futur surprises.
 - Remove /etc/profile.d/cgal.* from %%files if %%cgal_prefix is not empty.
 - Fix %%build_doc=0 when %%fedora is set. New option macro: %%force_build_doc.
 
-* Fri Jun 30 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-2
+* Fri Jun 30 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-2
 - Fix some end-of-lines in %%prep, to please rpmlint.
 
-* Mon May 22 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.2-1
+* Mon May 22 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-1
 - Remove README from %%doc file: it describes the tarball layout.
-- Updated to CGAL-3.2.
+- Updated to CGAL-3.3.
 - Added examples in the -demo subpackage.
 - Cleaning up, to follow Fedora Guidelines.
 - The -doc subpackage cannot be build on Fedora (no license).
