@@ -12,13 +12,21 @@ typedef std::vector<Point_2>::iterator Point_iterator;
 template <typename Kernel, typename Iterator>
 struct Sort_traits_2 {
 
+  Kernel k;
+
+  Sort_traits_2 (const Kernel &kernel = Kernel())
+      : k (kernel)
+  {}
+
   typedef Iterator Point_2;
 
   struct Less_x_2 {
+    Kernel k;
+    Less_x_2 (const Kernel &kernel = Kernel())
+        : k (kernel)
+    {}
     bool operator() (const Point_2 &p, const Point_2 &q) const
     { 
-      K k;
-      std::cout << "compare " << *p << "  and " << *q << std::endl;
       return k.less_x_2_object() (*p, *q);
     } 
   };
@@ -26,13 +34,16 @@ struct Sort_traits_2 {
   Less_x_2
   less_x_2_object() const
   {
-    return Less_x_2();
+    return Less_x_2(k);
   }
   
   struct Less_y_2 {
+    Kernel k;
+    Less_y_2 (const Kernel &kernel = Kernel())
+        : k (kernel)
+    {}
     bool operator() (const Point_2 &p, const Point_2 &q) const
     { 
-      K k;
       return k.less_y_2_object() (*p, *q);
     } 
   };
@@ -41,7 +52,7 @@ struct Sort_traits_2 {
   Less_y_2
   less_y_2_object() const
   {
-    return Less_y_2();
+    return Less_y_2(k);
   }
 };
 
@@ -71,11 +82,11 @@ int main ()
 
   sort_2(iterators.begin(), iterators.end());
 
-  for(int i = 0; i < iterators.size(); i++){
-    std::cout << *iterators[i] << std::endl;
+  for(std::vector<Point_iterator>::iterator i = iterators.begin();
+          i != iterators.end(); i++)
+  {
+    std::cout << **i << std::endl;
   }
-
-  std::cout << "done" << std::endl;
 
   return 0;
 }
