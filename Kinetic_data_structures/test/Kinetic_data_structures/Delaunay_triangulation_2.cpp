@@ -21,7 +21,9 @@ int main(int, char *[])
   Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);
+  
   //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+ 
   std::ifstream in("data/Delaunay_triangulation_2.input");
   if (!in) {
     std::cerr << "Error opening input file: " << "data/Delaunay_triangulation_2.input" << std::endl;
@@ -39,6 +41,8 @@ int main(int, char *[])
     simtr.active_points_2_table_handle()->insert(p);
     ++nread;
   }
+
+  kdel.audit();
 
   while (simtr.simulator_handle()->next_event_time()
 	 < simtr.simulator_handle()->end_time()) {

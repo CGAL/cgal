@@ -1,0 +1,50 @@
+#ifndef CGAL_KINETIC_DELAUNAY_TRIANGULATION_VERTEX_BASE_H
+#define CGAL_KINETIC_DELAUNAY_TRIANGULATION_VERTEX_BASE_H
+
+#include <CGAL/Kinetic/basic.h>
+#include <CGAL/Triangulation_vertex_base_2.h>
+
+CGAL_KINETIC_BEGIN_NAMESPACE
+
+template < typename GT,
+           typename Vb = Triangulation_vertex_base_2<GT> >
+class Delaunay_triangulation_vertex_base_2
+  : public Vb
+{
+  int degree_;
+public:
+  typedef typename Vb::Face_handle                   Face_handle;
+  typedef typename Vb::Point                         Point;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other          Vb2;
+    typedef Delaunay_triangulation_vertex_base_2<GT, Vb2>   Other;
+  };
+
+  Delaunay_triangulation_vertex_base_2()
+    : Vb(), degree_(-1){}
+
+  Delaunay_triangulation_vertex_base_2(const Point & p)
+    : Vb(p), degree_(-1){}
+
+  Delaunay_triangulation_vertex_base_2(const Point & p, Face_handle c)
+    : Vb(p, c), degree_(-1) {}
+
+  Delaunay_triangulation_vertex_base_2(Face_handle c)
+    : Vb(c), degree_(-1) {}
+
+  unsigned int neighbors() const { return std::abs(degree_); }
+  bool neighbors_is_changed() const {return degree_<0;}
+  void set_neighbors_is_changed(bool tf) {
+    if (tf) degree_= -std::abs(degree_);
+    else degree_= std::abs(degree_);
+    CGAL_postcondition(neighbors_is_changed()==tf);
+  } 
+  void set_neighbors(int d) {degree_=d;}
+};
+
+
+CGAL_KINETIC_END_NAMESPACE
+
+#endif

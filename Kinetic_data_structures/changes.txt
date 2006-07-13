@@ -2,5 +2,9 @@
 - LGPL copyright notice added to src/CGALQt/kds{,_deps}.makefile
 
 9 March 2006 Andreas Fabri
-- Made heading of unser and reference manual to be the same
+- Made heading of user and reference manual to be the same
 
+Future Daniel Russel
+- change non-failing root to be NaN or Root() rather than infinity?
+- when using numeric solvers, evaluate the static predicates first before solving?
+- add doc of to_index

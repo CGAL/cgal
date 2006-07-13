@@ -31,7 +31,7 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 
 #ifdef CGAL_KINETIC_CHECK_EXPENSIVE
 #define CGAL_KINETIC_SIMULATOR_AUDITING
-#warning auditing kds
+#warning Kinetic data structures will be audited at run time.
 #endif
 
 
