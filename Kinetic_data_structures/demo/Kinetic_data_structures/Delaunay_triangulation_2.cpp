@@ -1,8 +1,12 @@
+#define CGAL_CHECK_EXPENSIVE
+
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
 #include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_vertex_base_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_recent_edges_visitor_2.h>
 #include <CGAL/Kinetic/Enclosing_box_2.h>
 #include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
@@ -15,68 +19,47 @@
 #include <boost/program_options.hpp>
 #endif
 
-int main(int argc, char *argv[])
-{
-  int n=10;
-  int d=2;
-  bool print_help=false;
-  std::string file;
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
-  boost::program_options::options_description desc("Allowed options");
-  desc.add_options()
-    ("help", boost::program_options::bool_switch(&print_help), "produce help message")
-    ("num-points,n", boost::program_options::value<int>(&n), "Number of points to use.")
-    ("degree,d", boost::program_options::value<int>(&d), "The degree of the motions to use.")
-    ("file,f", boost::program_options::value<std::string>(&file), "Read points from a file.");
-
-  boost::program_options::variables_map vm;
-  boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
-				options(desc).run(), vm);
-  boost::program_options::notify(vm);
-
-  if (print_help) {
-    std::cout << desc << "\n";
-    return EXIT_FAILURE;
-  }
-#endif
-
-  typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
+template <class Traits> 
+int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
+  //typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
   typedef CGAL::Triangulation_data_structure_2<
-  CGAL::Triangulation_vertex_base_2<Traits::Instantaneous_kernel>,
+  CGAL::Kinetic::Delaunay_triangulation_vertex_base_2<typename Traits::Instantaneous_kernel>,
     CGAL::Kinetic::Delaunay_triangulation_face_base_2<Traits> > TDS;
-  typedef CGAL::Delaunay_triangulation_2<Traits::Instantaneous_kernel, TDS > Del;
+  typedef CGAL::Delaunay_triangulation_2<typename Traits::Instantaneous_kernel, TDS > Del;
   typedef CGAL::Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Del> Visitor;
   typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits, Visitor, Del> KDel;
-  typedef CGAL::Kinetic::Qt_widget_2<Traits::Simulator> Qt_gui;
+  typedef CGAL::Kinetic::Qt_widget_2<typename Traits::Simulator> Qt_gui;
   typedef CGAL::Kinetic::Qt_moving_points_2<Traits, Qt_gui> Qt_mps;
   typedef CGAL::Kinetic::Qt_triangulation_2<KDel, Qt_gui, Qt_mps> Qt_triangulation;
   typedef CGAL::Kinetic::Enclosing_box_2<Traits> Box;
 
-  //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
 
   Traits tr;
-  Box::Handle box= new Box(tr);
-  KDel::Handle kdel= new KDel(tr);
+  typename Box::Handle box= new Box(tr);
+  typename KDel::Handle kdel= new KDel(tr);
 
-  Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
+  typename Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
 
-  Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
-  Qt_triangulation::Handle qtdel= new Qt_triangulation(kdel, qtsim, qtmps);
+  typename Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
+  typename Qt_triangulation::Handle qtdel= new Qt_triangulation(kdel, qtsim, qtmps);
  
 
   if (file.empty()) {
-    CGAL::Random rand;
-    Traits::Active_points_2_table::Key lk;
+    typename CGAL::Random rand(seed);
+    typename Traits::Active_points_2_table::Key lk;
     for (int i=0; i< n; ++i) {
       std::vector<double> coefsx, coefsy;
       for (int j=0; j< d; ++j) {
-	coefsx.push_back((rand.get_double()*10-5)/(j+1));
-	coefsy.push_back((rand.get_double()*10-5)/(j+1));
+	coefsx.push_back((rand.get_double()*10-5.0)/(j+1));
+	coefsy.push_back((rand.get_double()*10-5.0)/(j+1));
+	std::cout << coefsx.back() << " " << coefsy.back() << std::endl;
       }
-      Traits::Kinetic_kernel::Point_2 mp(Traits::Kinetic_kernel::Motion_function(coefsx.begin(), 
-										 coefsx.end()),
-					 Traits::Kinetic_kernel::Motion_function(coefsy.begin(),
-										 coefsy.end()));
+      typename Traits::Kinetic_kernel::Point_2 mp(typename Traits::Kinetic_kernel::Motion_function(coefsx.begin(), 
+												   coefsx.end()),
+						  typename Traits::Kinetic_kernel::Motion_function(coefsy.begin(),
+												   coefsy.end()));
+      std::cout << "Adding point " << mp << std::endl;
       lk=tr.active_points_2_table_handle()->insert(mp);
       //std::cout << mp << std::endl;
     }
@@ -93,7 +76,7 @@ int main(int argc, char *argv[])
       in.getline(buf, 1000);
       if (!in) break;
       std::istringstream il(buf);
-      Traits::Kinetic_kernel::Point_2 p;
+      typename Traits::Kinetic_kernel::Point_2 p;
       il >> p;
       tr.active_points_2_table_handle()->insert(p);
       ++nread;
@@ -105,6 +88,43 @@ int main(int argc, char *argv[])
 	    << " their certificate changes and black edges will flip." << std::endl;
   
   return qtsim->begin_event_loop();
+}
+
+
+int main(int argc, char *argv[])
+{
+  int n=10;
+  int d=2;
+  int seed=std::time(NULL);
+  bool print_help=false;
+  bool exact=false;
+  std::string file;
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+  boost::program_options::options_description desc("Allowed options");
+  desc.add_options()
+    ("help", boost::program_options::bool_switch(&print_help), "produce help message")
+    ("exact", boost::program_options::bool_switch(&exact), "Run an exact simulation")
+    ("num-points,n", boost::program_options::value<int>(&n), "Number of points to use.")
+    ("random-seed,s", boost::program_options::value<int>(&seed), "The value to use for the random seed.")
+    ("degree,d", boost::program_options::value<int>(&d), "The degree of the motions to use.")
+    ("file,f", boost::program_options::value<std::string>(&file), "Read points from a file.");
+
+  boost::program_options::variables_map vm;
+  boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
+				options(desc).run(), vm);
+  boost::program_options::notify(vm);
+
+  if (print_help) {
+    std::cout << desc << "\n";
+    return EXIT_FAILURE;
+  }
+#endif
+  
+  if (exact) {
+    return run<CGAL::Kinetic::Exact_simulation_traits_2>(argc, argv, n,d,seed, file);
+  } else {
+    return run<CGAL::Kinetic::Inexact_simulation_traits_2>(argc, argv, n,d,seed, file);
+  }
 };
 #else
 int main(int, char *[]){
