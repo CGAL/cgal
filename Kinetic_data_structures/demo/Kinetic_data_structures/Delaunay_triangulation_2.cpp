@@ -48,6 +48,8 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
   if (file.empty()) {
     typename CGAL::Random rand(seed);
     typename Traits::Active_points_2_table::Key lk;
+    std::vector<typename Traits::Kinetic_kernel::Point_2> pts;
+      
     for (int i=0; i< n; ++i) {
       std::vector<double> coefsx, coefsy;
       for (int j=0; j< d; ++j) {
@@ -60,8 +62,11 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
 						  typename Traits::Kinetic_kernel::Motion_function(coefsy.begin(),
 												   coefsy.end()));
       std::cout << "Adding point " << mp << std::endl;
-      lk=tr.active_points_2_table_handle()->insert(mp);
+      pts.push_back(mp);
       //std::cout << mp << std::endl;
+    }
+    for (unsigned int i=0; i< pts.size(); ++i) {
+      lk=tr.active_points_2_table_handle()->insert(pts[i]);
     }
     tr.active_points_2_table_handle()->erase(lk);
   } else {

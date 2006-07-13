@@ -330,6 +330,10 @@ public:
   void erase(Point_key k) {
     // erase all incident certificates
     Vertex_handle vh= vhs_[k];
+    if (vh == Vertex_handle()) {
+      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Point " << k << " is not in triangulation on removal."<< std::endl);
+      return;
+    }
     watcher_.remove_vertex(vh);
     Face_circulator fc= vh->incident_faces(), fe=fc;
     if (fc != NULL) {
@@ -381,6 +385,10 @@ public:
     }
 
     Vertex_handle vh= vhs_[k];
+    if (vh == Vertex_handle()) {
+      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Point " << k << " is not in triangulation on set."<< std::endl);
+      return;
+    }
     {
       Edge_circulator ec= vh->incident_edges(), ef=ec;
       if (ec != NULL) {
