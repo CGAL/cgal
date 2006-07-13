@@ -169,7 +169,7 @@ inline Extended_sign extended_sign(const NT &nt)
 template <class Rt>
 inline Rt infinity()
 {
-    BOOST_STATIC_ASSERT(std::numeric_limits<Rt>::is_specialized);
+  //BOOST_STATIC_ASSERT(std::numeric_limits<Rt>::is_specialized);
     if (std::numeric_limits<Rt>::has_infinity) return std::numeric_limits<Rt>::infinity();
     else return std::numeric_limits<Rt>::max();
 }
