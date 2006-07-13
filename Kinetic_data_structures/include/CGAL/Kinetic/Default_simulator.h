@@ -31,7 +31,7 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 
 #ifdef CGAL_KINETIC_CHECK_EXPENSIVE
 #define CGAL_KINETIC_SIMULATOR_AUDITING
-//#warning auditing kds
+#warning auditing kds
 #endif
 
 
@@ -236,7 +236,7 @@ public:
    */
   bool has_rational_current_time() const
   {
-    return last_event_time() < next_event_time();
+    return last_event_time() != next_event_time();
   }
 
   //! Returns true if the current time is a rational number and there are no events at the current time
@@ -246,7 +246,7 @@ public:
   bool has_audit_time() const
   {
     CGAL_precondition(has_rational_current_time());
-    return last_event_time() < next_event_time();
+    return last_event_time() != next_event_time();
   }
 
   const NT& audit_time() const
@@ -639,7 +639,7 @@ void Default_simulator<S, PQ>::set_direction_of_time(CGAL::Sign dir)
 template <class S, class PQ>
 void Default_simulator<S, PQ>::audit_all_kdss()
 {
-#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+#ifdef CGAL_KINETIC_SIMULATOR_AUDITING
   cur_time_= Time(audit_time_);
   CGAL_KINETIC_LOG(LOG_SOME, "Auditing KDSs at time " << rational_current_time() << std::endl);
   for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
