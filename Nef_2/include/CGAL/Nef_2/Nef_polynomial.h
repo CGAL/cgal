@@ -48,9 +48,9 @@ class Nef_polynomial
   : boost::ordered_field_operators1< Nef_polynomial<NT>
   , boost::ordered_field_operators2< Nef_polynomial<NT>, int
   > >
-  , public Polynomial<NT>
+  , public Nef::Polynomial<NT>
 {
-  typedef typename CGAL::Polynomial<NT>  Base;
+  typedef typename CGAL::Nef::Polynomial<NT>  Base;
   typedef typename Base::size_type       size_type;
 
  protected:
