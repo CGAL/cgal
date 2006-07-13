@@ -536,13 +536,13 @@ Maintenance/MacOSX_Installer/Resources/postupgrade -text
 Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
-Maintenance/rpm/SOURCES/CGAL-install_cgal-SUPPORT_REQUIRED.patch -text svneol=unset#application/octet-stream
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch -text svneol=unset#application/octet-stream
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text svneol=unset#application/octet-stream
+Maintenance/rpm/SOURCES/CGAL-install_cgal-SUPPORT_REQUIRED.patch -text svneol=unset#text/x-diff
+Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch -text svneol=unset#text/x-diff
+Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch -text svneol=unset#text/x-diff
 Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch -text svneol=unset#application/octet-stream
-Maintenance/rpm/SOURCES/CGAL_manual_tools-latex_to_html.patch -text svneol=unset#application/octet-stream
-Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch -text svneol=unset#application/octet-stream
-Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch -text svneol=unset#application/octet-stream
+Maintenance/rpm/SOURCES/CGAL_manual_tools-latex_to_html.patch -text svneol=unset#text/x-diff
+Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch -text svneol=unset#text/x-diff
+Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch -text svneol=unset#text/x-diff
 Maintenance/rpm/get_cgal_trunk_url -text
 Maintenance/rpm/rpmbuild -text
 Maintenance/svn_client/config -text
