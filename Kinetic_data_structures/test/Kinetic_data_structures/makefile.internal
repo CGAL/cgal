@@ -55,9 +55,15 @@ all:            \
                 simulator$(EXE_EXT) \
 		timings$(EXE_EXT)
 
+test$(EXE_EXT): test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test test$(OBJ_EXT) $(LDFLAGS)
+
 
 Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(LDFLAGS)
+
+active_objects_tables$(EXE_EXT): active_objects_tables$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)active_objects_tables active_objects_tables$(OBJ_EXT) $(LDFLAGS)
 
 Delaunay_triangulation_3$(EXE_EXT): Delaunay_triangulation_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT) $(LDFLAGS)
@@ -79,7 +85,7 @@ timings$(EXE_EXT): timings$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)timings timings$(OBJ_EXT) $(LDFLAGS)
 
 numeric_kds$(EXE_EXT): numeric_kds$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)numeric_kds numeric_kds$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)numeric_kds numeric_kds$(OBJ_EXT) $(LDFLAGS) -lgsl -lgslcblas
 
 simulator$(EXE_EXT): simulator$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simulator simulator$(OBJ_EXT) $(LDFLAGS)
@@ -91,6 +97,7 @@ regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT)
 
 
 clean: \
+		active_objects_table.clean\
                    Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
                    Delaunay_triangulation_3_timing.clean \
@@ -106,6 +113,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

@@ -145,7 +145,7 @@ static inline void filter_roots_t(const NT *begin, const NT *end,
     typedef CGAL_POLYNOMIAL_NS::Interval_polynomial IFn;
     typedef CGAL_POLYNOMIAL_NS::internal::Derivative<IFn> Diff;
     typedef typename IFn::NT INT;
-
+    Interval_arithmetic_guard gd;
     // if the last valid root is closer than last, consider it as doubtful instead
     if (lb-last_root > roots.back()-lb) {
       last_root= roots.back();

@@ -28,8 +28,8 @@
 
 //#include <CGAL/Polynomial/internal/Bisection.h>
 
-int sturm_created__=0;
-int sturm_refined__=0;
+//int sturm_created__=0;
+//int sturm_refined__=0;
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
@@ -578,7 +578,7 @@ public:
   void subdivide() const
   {
     if (!refined_) {
-      ++sturm_refined__;
+      //++sturm_refined__;
       refined_=true;
       //std::cout << "Refining " << *this << " " << std::endl;
     }
@@ -741,7 +741,7 @@ public:
     : idx(idx), ivl(ivl), p_(p), sseq(sseq),
       s_lower(CGAL::ZERO), s_upper(CGAL::ZERO), multiplicity_(0),
       tr_(tr), refined_(false) {
-    ++sturm_created__;
+    //++sturm_created__;
     Sign_at_functor sign_at_p(this);
     s_lower = apply(sign_at_p, ivl.lower_bound());
     s_upper = apply(sign_at_p, ivl.upper_bound());
