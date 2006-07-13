@@ -2,6 +2,10 @@ CGAL_URL := $(shell ./get_cgal_trunk_url)
 
 RPM_BUILD_ARCH:=$(shell rpm --showrc | awk '/^build arch/ { print $$4}')
 
+RPMBUILD:=./rpmbuild
+EXTRA_RPM_OPTIONS:=
+RPM_OPTIONS:=$(EXTRA_RPM_OPTIONS)
+
 # SUDO variable
 # If you are not root, put:
 #  SUDO = sudo 
@@ -17,14 +21,17 @@ all:
 	@printf "or:\n  make CGAL.install\n  make CGAL-manual-tools.install\n"
 
 
-
 #############################################################################
 #
 #                       CGAL-manual-tools package
 #
 #############################################################################
-CGAL_MANUAL_REVISION:=$(shell awk '/Version:/ {print $$2}' SPECS/CGAL-manual-tools.spec)
-CGAL_MANUAL_RELEASE_NUMBER:=$(shell awk '/Release:/ {print $$2}' SPECS/CGAL-manual-tools.spec)
+
+CGAL_MANUAL_REVISION:=$(shell rpm -q --qf '%{version}\n' --specfile SPECS/CGAL-manual-tools.spec | head -1)
+CGAL_MANUAL_RELEASE_NUMBER:=$(shell rpm -q --qf '%{release}\n' --specfile SPECS/CGAL-manual-tools.spec | head -1)
+
+RPM_OPTIONS+= --define "cgal_manual_revision $(CGAL_MANUAL_REVISION)"
+
 CGAL_MANUAL_PACKAGE_VERSION=$(CGAL_MANUAL_REVISION)-$(CGAL_MANUAL_RELEASE_NUMBER).$(RPM_BUILD_ARCH)
 
 CGAL_MANUAL_PACKAGE_PATH=RPMS/$(RPM_BUILD_ARCH)/CGAL-manual-tools-$(CGAL_MANUAL_PACKAGE_VERSION).rpm
@@ -62,11 +69,11 @@ ifeq ($(CGAL_MANUAL_PACKAGE_VERSION), $(CGAL_MANUAL_PACKAGE_INSTALLED_VERSION))
 	  installed.
 	@echo You should increase the Release: tag.
 else
-	./rpmbuild -bb SPECS/CGAL-manual-tools.spec
+	$(RPMBUILD) $(RPM_OPTIONS) -bb SPECS/CGAL-manual-tools.spec
 endif
 
 $(CGAL_MANUAL_SRC_PACKAGE_PATH): $(CGAL_MANUAL_PACKAGE_DEPS)
-	./rpmbuild -bs SPECS/CGAL-manual-tools.spec
+	$(RPMBUILD) $(RPM_OPTIONS) -bs SPECS/CGAL-manual-tools.spec
 
 .PHONY:: CGAL-manual-tools CGAL-manual-tools.install CGAL-manual-tools.rpmlint
 
@@ -87,34 +94,29 @@ CGAL-manual-tools.rpmlint: $(CGAL_MANUAL_PACKAGE_PATH) $(CGAL_MANUAL_SRC_PACKAGE
 #                       CGAL package
 #
 #############################################################################
-CGAL_REVISION:=$(shell awk '/%define cgal_version/ {print $$3}' SPECS/CGAL.spec)
-CGAL_INTERNAL_RELEASE:=$(shell awk '/%define internal_release/ {print $$3}' SPECS/CGAL.spec)
 
-ifneq ($(CGAL_INTERNAL_RELEASE), 0)
-  CGAL_RELEASE_NUMBER=0.$(CGAL_INTERNAL_RELEASE)
-else
-  CGAL_RELEASE_NUMBER:=$(shell awk '/%define release_number/ {print $$3}' SPECS/CGAL.spec)
+CGAL_VERSION:=$(shell rpm --specfile SPECS/CGAL.spec -q --qf '%{version}\n' | head -1)
+
+RPM_OPTIONS += --define "cgal_version $(CGAL_VERSION)"
+
+CGAL_INTERNAL_RELEASE:=
+
+ifdef CGAL_INTERNAL_RELEASE
+RPM_OPTIONS += --define "internal_release $(CGAL_INTERNAL_RELEASE)"
 endif
 
-CGAL_PACKAGE_VERSION=$(CGAL_REVISION)-$(CGAL_RELEASE_NUMBER).$(RPM_BUILD_ARCH)
+CGAL_RELEASE_NUMBER:=$(shell rpm $(RPM_OPTIONS) --specfile SPECS/CGAL.spec -q --qf '%{release}\n' | head -1)
+
+CGAL_PACKAGE_VERSION=$(CGAL_VERSION)-$(CGAL_RELEASE_NUMBER).$(RPM_BUILD_ARCH)
 
 CGAL_PACKAGE_PATH=RPMS/$(RPM_BUILD_ARCH)/CGAL-$(CGAL_PACKAGE_VERSION).rpm
 CGAL_DEVEL_PACKAGE_PATH=RPMS/$(RPM_BUILD_ARCH)/CGAL-devel-$(CGAL_PACKAGE_VERSION).rpm
-CGAL_SRC_PACKAGE_PATH=SRPMS/CGAL-$(CGAL_REVISION)-$(CGAL_RELEASE_NUMBER).src.rpm
+CGAL_DEMO_PACKAGE_PATH=RPMS/$(RPM_BUILD_ARCH)/CGAL-demo-$(CGAL_PACKAGE_VERSION).rpm
+CGAL_SRC_PACKAGE_PATH=SRPMS/CGAL-$(CGAL_VERSION)-$(CGAL_RELEASE_NUMBER).src.rpm
 
 CGAL_PACKAGE_INSTALLED_VERSION=$(shell rpm -q --qf '%{VERSION}-%{RELEASE}.%{ARCH}' CGAL)
 
-ifneq ($(CGAL_INTERNAL_RELEASE), 0)
-CGAL_PACKAGE_SOURCES = \
-        SOURCES/CGAL-$(CGAL_REVISION)-I-$(CGAL_INTERNAL_RELEASE).tar.gz
-else
-CGAL_PACKAGE_SOURCES = \
-        SOURCES/CGAL-$(CGAL_REVISION).tar.gz
-endif
-
-
 CGAL_PACKAGE_DEPS = \
-        $(CGAL_PACKAGE_SOURCES) \
 	SPECS/CGAL.spec
 
 $(CGAL_PACKAGE_PATH): $(CGAL_PACKAGE_DEPS)
@@ -123,22 +125,22 @@ ifeq ($(CGAL_PACKAGE_VERSION), $(CGAL_PACKAGE_INSTALLED_VERSION))
 	  installed.
 	@echo You should increase the Release: tag.
 else
-	./rpmbuild -bb SPECS/CGAL.spec
+	$(RPMBUILD) $(RPM_OPTIONS) -bb SPECS/CGAL.spec
 endif
 
 $(CGAL_SRC_PACKAGE_PATH): $(CGAL_PACKAGE_DEPS)
-	./rpmbuild -bs SPECS/CGAL.spec
+	$(RPMBUILD) $(RPM_OPTIONS) -bs SPECS/CGAL.spec
 
 .PHONY:: CGAL.src CGAL CGAL.install CGAL.rpmlint
 
 CGAL.src: $(CGAL_PACKAGE_DEPS)
-	./rpmbuild -bs --nodeps SPECS/CGAL.spec
+	$(RPMBUILD) $(RPM_OPTIONS) -bs --nodeps SPECS/CGAL.spec
 
 CGAL: $(CGAL_PACKAGE_PATH)
 
 CGAL.install: $(CGAL_PACKAGE_PATH) $(CGAL_DEVEL_PACKAGE_PATH)
 ifeq ($(findstring not installed,$(CGAL_PACKAGE_INSTALLED_VERSION)),)
-	$(SUDO) rpm -Uvh $(CGAL_PACKAGE_PATH) $(CGAL_DEVEL_PACKAGE_PATH) 
+	$(SUDO) rpm -Uvh $(CGAL_PACKAGE_PATH) $(CGAL_DEVEL_PACKAGE_PATH)
 else
 	$(SUDO) rpm -ivh $(CGAL_PACKAGE_PATH) $(CGAL_DEVEL_PACKAGE_PATH)
 endif
