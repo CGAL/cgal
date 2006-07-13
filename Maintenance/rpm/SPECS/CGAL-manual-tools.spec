@@ -1,5 +1,7 @@
+%{!?cgal_manual_revision: %define cgal_manual_revision 32190}
+
 Name:           CGAL-manual-tools
-Version:        31112
+Version:        %{cgal_manual_revision}
 Release:        1
 Summary:        CC Manual Style and LaTeX Converter for HTML
 
@@ -20,7 +22,7 @@ BuildRequires: bison flex
 BuildRequires:  /usr/bin/kpsewhich
 Requires:       tetex-latex tetex-dvips 
 Requires:       ghostscript >= 6.0
-Requires(post):	  /usr/bin/texhash
+Requires(post):   /usr/bin/texhash
 Requires(postun): /usr/bin/texhash
 
 %description
@@ -63,14 +65,17 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc doc_ps/*
 /usr/bin/*
-%dir /usr/share/texmf/tex/latex/CGAL
-%dir /usr/share/texmf/bibtex/bib/CGAL
-%dir /usr/share/CGAL_latex_conv_config
-/usr/share/texmf/tex/latex/CGAL/*
-/usr/share/texmf/bibtex/bib/CGAL/*
-/usr/share/CGAL_latex_conv_config/*
+/usr/share/texmf/tex/latex/CGAL
+/usr/share/texmf/bibtex/bib/CGAL
+%dir /usr/share/CGAL/
+/usr/share/CGAL/latex_conv_config
 
 %changelog
+* Tue Jul  4 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 32190-1
+- Updated to revision 32190.
+- Added an optionnal macro %%cgal_manual_revision, that can be used at compile time, to define another revision. For example:
+  rpmbuild --define "%%cgal_manual_revision 32195"
+
 * Thu May 11 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 31112-1
 - Update to revision 31112.
 - Remove BuildRequires: sed.
@@ -103,7 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 
 * Wed Apr  5 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 30025
 - Updated to revision 30025.
-- Source0 and Source1 now have %version in their names.
+- Source0 and Source1 now have %%version in their names.
 
 * Tue Apr  4 2006 Laurent Rineau <laurent.rineau__fc_extra@normalesup.org> - 29933
 - Updated to revision 29933.
