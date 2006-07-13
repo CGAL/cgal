@@ -83,7 +83,7 @@ namespace std {
 
 CGAL_BEGIN_NAMESPACE
 
-double to_double(CGAL_POLYNOMIAL_NS::internal::Double_with_infinity d) {
+inline double to_double(CGAL_POLYNOMIAL_NS::internal::Double_with_infinity d) {
   return to_double(static_cast<double>(d));
 }
 
