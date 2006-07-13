@@ -23,13 +23,15 @@
 
 
 #include <CGAL/config.h>
-#include <cstdlib>
 #include <CGAL/assertions.h>
-#include <iostream>
+#include <CGAL/exceptions.h>
 
+#include <cstdlib>
+#include <iostream>
 #include <cassert>
 
 CGAL_BEGIN_NAMESPACE
+
 // not_implemented function
 // ------------------------
 void
@@ -41,7 +43,7 @@ not_implemented()
 // static behaviour variables
 // --------------------------
 
-static Failure_behaviour _error_behaviour   = ABORT;
+static Failure_behaviour _error_behaviour   = THROW_EXCEPTION;
 static Failure_behaviour _warning_behaviour = CONTINUE;
 
 // standard error handlers
@@ -107,6 +109,8 @@ assertion_fail( const char* expr,
         CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
         CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+    case THROW_EXCEPTION:
+        throw Assertion_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
         ;
     }
@@ -126,6 +130,8 @@ precondition_fail( const char* expr,
         CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
         CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+    case THROW_EXCEPTION:
+        throw Precondition_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
         ;
     }
@@ -145,6 +151,8 @@ postcondition_fail(const char* expr,
         CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
         CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+    case THROW_EXCEPTION:
+        throw Postcondition_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
         ;
     }
@@ -167,6 +175,8 @@ warning_fail( const char* expr,
         CGAL_CLIB_STD::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
         CGAL_CLIB_STD::exit(0);  // EXIT_SUCCESS
+    case THROW_EXCEPTION:
+        throw Warning_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
         ;
     }
@@ -208,5 +218,3 @@ set_warning_behaviour(Failure_behaviour eb)
 }
 
 CGAL_END_NAMESPACE
-
-

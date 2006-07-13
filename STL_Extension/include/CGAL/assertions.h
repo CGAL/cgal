@@ -31,7 +31,8 @@ CGAL_BEGIN_NAMESPACE
 // types
 // =====
 
-enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE };
+enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE,
+                         THROW_EXCEPTION };
 
 // function declarations
 // =====================

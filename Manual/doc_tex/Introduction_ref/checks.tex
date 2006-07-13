@@ -102,11 +102,12 @@ set_error_behaviour(Failure_behaviour eb);}
 The parameter should have one of the following values.
 
 \ccGlobalEnum{enum Failure_behaviour 
-{ ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE };}
-The first value is the default. 
+{ ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE, THROW_EXCEPTION };}
+The \ccc{THROW_EXCEPTION} value is the default, which throws an exception.
+
 If the \ccStyle{EXIT} value is set, the program will stop and return a value 
 indicating failure, but not dump the core. 
-The last value tells the checks to go on after diagnosing the error.
+The \ccc{CONTINUE} value tells the checks to go on after diagnosing the error.
 
 \begin{ccAdvanced}
 If the \ccStyle{EXIT_WITH_SUCCESS} value is set, the program will stop and 
