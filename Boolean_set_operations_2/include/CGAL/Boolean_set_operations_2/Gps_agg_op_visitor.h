@@ -112,7 +112,7 @@ private:
   {
     Comparison_result he_dir = he->direction();
     Comparison_result cv_dir =
-      this->m_arr->get_traits()->compare_endpoints_xy_2_object()(cv);
+      this->m_arr_access.arrangement().get_traits()->compare_endpoints_xy_2_object()(cv);
 
     if(he_dir == cv_dir)
     {
