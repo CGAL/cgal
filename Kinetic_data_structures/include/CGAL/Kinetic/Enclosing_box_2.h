@@ -46,7 +46,7 @@ public:
   }
   void write(std::ostream &out) const
   {
-    out << "[Bounce " << k_ << " off " << s_ << " at " << t_ <<"]";
+    out << "Bounce " << k_ << " off " << s_;
   }
   EB2* eb_;
   typename EB2::Point_key k_;
@@ -159,7 +159,7 @@ public:
     Function fx(coefs[0].begin(), coefs[0].end());
     Function fy(coefs[1].begin(), coefs[1].end());
     Point pt(fx,fy);
-    /*std::cout << "Changing motion from " << traits_.active_points_2_table_pointer()->at(k) << " to "
+    /*std::cout << "Changing motion from " << traits_.active_points_2_table_handle()->at(k) << " to "
       << pt << " at " << time <<  std::endl;*/
     traits_.active_points_2_table_handle()->set(k, pt);
     CGAL_assertion(traits_.active_points_2_table_handle()->at(k) == pt);
