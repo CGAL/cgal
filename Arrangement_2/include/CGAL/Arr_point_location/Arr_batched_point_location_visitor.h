@@ -59,9 +59,9 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
 
   Arr_batched_point_location_visitor(OutputIerator out,
                                      const Arrangement& arr):
-                                     m_out(out),
+                                     m_out(out)
   {
-    Arr_accessor             arr_acess(const_cast<Arrangement&>(arr));
+    Arr_accessor             arr_access(const_cast<Arrangement&>(arr));
     //initialize m_top_fict
     Vertex_const_handle top_left_v = arr_access.top_left_fictitious_vertex();
     m_top_fict = top_left_v->incident_halfedges();
