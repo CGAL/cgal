@@ -145,11 +145,14 @@ static inline void filter_roots_t(const NT *begin, const NT *end,
     typedef CGAL_POLYNOMIAL_NS::Interval_polynomial IFn;
     typedef CGAL_POLYNOMIAL_NS::internal::Derivative<IFn> Diff;
     typedef typename IFn::NT INT;
+    
 
+    bool popped=false;
     // if the last valid root is closer than last, consider it as doubtful instead
     if (lb-last_root > roots.back()-lb) {
       last_root= roots.back();
       roots.pop_back();
+      popped=true;
     } /*else {
       last_root=lb;
       }*/
@@ -164,8 +167,10 @@ static inline void filter_roots_t(const NT *begin, const NT *end,
     } else {
       IFn fi(begin, end);
       if (roots.empty()) {
+	Interval_arithmetic_guard guard;
 	vi = fi((INT(lb)+INT(ub))/2.0);
       } else {
+	Interval_arithmetic_guard guard;
 	vi = fi((INT(last_root)+INT(roots.back()))/2.0);
       }
     }
@@ -174,9 +179,15 @@ static inline void filter_roots_t(const NT *begin, const NT *end,
       return;
     } else if (vi.sup() < 0){
       roots.push_back(last_root);
+    
+      /*if (!popped) {
+	IFn f(begin, end);
+	std::cout << "Adding last due to sign of " << vi << std::endl;
+	std::cout << "last " << last_root << " lb " << lb << " poly " << f << std::endl;
+	}*/
       return;
     }
-
+    Interval_arithmetic_guard guard;
     Diff dx;
     IFn f(begin, end);
     IFn d= dx(f);
@@ -192,6 +203,11 @@ static inline void filter_roots_t(const NT *begin, const NT *end,
     //if (sign(d(roots.back().representation()))==POSITIVE){
     if (dv.sup() < 0) {
         roots.push_back(last_root);
+	/*if (!popped) {
+	  IFn f(begin, end);
+	  std::cout << "Adding last due to deriv of " << vi << std::endl;
+	  std::cout << "last " << last_root << " lb " << lb << " poly " << f << std::endl;
+	  }*/
     }
 }
 
