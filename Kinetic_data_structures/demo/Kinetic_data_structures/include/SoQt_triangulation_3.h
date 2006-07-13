@@ -275,8 +275,8 @@ void SoQt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
 	  mat->transparency.set1Value(i, 0.0);
 	}
 	mat->diffuseColor.set1Value(0, SbColor(0.3, 0.3, 0.3));
-	mat->diffuseColor.set1Value(1, SbColor(0.1, 0.4, 0.1));
-	mat->diffuseColor.set1Value(2, SbColor(0.1, 0.9, 0.1));
+	mat->diffuseColor.set1Value(1, SbColor(0.4, 0.4, 0.1));
+	mat->diffuseColor.set1Value(2, SbColor(0.1, 0.7, 0.7));
 	mat->diffuseColor.set1Value(3, SbColor(1.0, 0.0, 0.0));
 	ap->setPart("material", mat.get());
       }
@@ -326,9 +326,9 @@ void SoQt_triangulation_3<K, G, M>::set_scene_graph_parent(SoSeparator* sep)
 	  mat->shininess.set1Value(i, .2);
 	  mat->transparency.set1Value(i, 0.0);
 	}
-	mat->diffuseColor.set1Value(0, SbColor(0.3, 0.3, 0.3));
-	mat->diffuseColor.set1Value(1, SbColor(0.1, 0.4, 0.1));
-	mat->diffuseColor.set1Value(2, SbColor(0.1, 0.9, 0.1));
+	mat->diffuseColor.set1Value(0, SbColor(0.3, 0.3, 0.6));
+	mat->diffuseColor.set1Value(1, SbColor(0.4, 0.4, 0.1));
+	mat->diffuseColor.set1Value(2, SbColor(0.1, 0.7, 0.1));
 	mat->diffuseColor.set1Value(3, SbColor(1.0, 0.0, 0.0));
 
 	ap->setPart("material", mat.get());
