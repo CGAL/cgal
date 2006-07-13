@@ -232,7 +232,7 @@ public:
       // which means that the edeg will have to be modified
       if (sc->get_orig_subcurve1())
       {
-        this->m_arr->modify_edge
+        this->m_arr_access.arrangement().modify_edge
           (this->current_event()->get_halfedge_handle()->
            next()->twin(),
            cv.base());
@@ -307,20 +307,20 @@ public:
       return res;
     if(iter == this->status_line_end())
     {
-      res = this->m_arr->insert_in_face_interior
-        (pt.base(), this->m_arr->unbounded_face());
+      res = this->m_arr_access.arrangement().insert_in_face_interior
+        (pt.base(), this->m_arr_access.arrangement().unbounded_face());
     }
     else
     {
       Halfedge_handle he = ray_shoot_up(*iter);
       if (he == Halfedge_handle(NULL))
       {
-        res = this->m_arr->insert_in_face_interior
-          (pt.base(), this->m_arr->unbounded_face());
+        res = this->m_arr_access.arrangement().insert_in_face_interior
+          (pt.base(), this->m_arr_access.arrangement().unbounded_face());
       }
       else
       {
-        res = this->m_arr->insert_in_face_interior (pt.base(), he->face());
+        res = this->m_arr_access.arrangement().insert_in_face_interior (pt.base(), he->face());
       }
     }
 
@@ -389,15 +389,15 @@ public:
       return (this->_insert_in_face_interior(cv, sc));
     if(last_v == null_v && curr_v != null_v)
     {
-      Halfedge_handle he = this->m_arr->insert_from_right_vertex (cv.base(),
+      Halfedge_handle he = this->m_arr_access.arrangement().insert_from_right_vertex (cv.base(),
                                                                   curr_v);
       return (he->twin());
     }
     if(last_v != null_v && curr_v == null_v)
-      return (this->m_arr->insert_from_left_vertex (cv.base(), last_v));
+      return (this->m_arr_access.arrangement().insert_from_left_vertex (cv.base(), last_v));
 
     CGAL_assertion(last_v != null_v && curr_v != null_v);
-    return (this->m_arr->insert_at_vertices (cv.base(), last_v, curr_v));
+    return (this->m_arr_access.arrangement().insert_at_vertices (cv.base(), last_v, curr_v));
 
   }
 
@@ -411,7 +411,7 @@ public:
     Vertex_handle last_v = lastEvent->get_point().get_vertex_handle();
 
     if(last_v != Vertex_handle())
-      return (this->m_arr->insert_at_vertices (cv.base(), he, last_v));
+      return (this->m_arr_access.arrangement().insert_at_vertices (cv.base(), he, last_v));
     
     return (_insert_from_right_vertex(cv, he, sc));
   }
@@ -425,7 +425,7 @@ public:
       this->current_event()->get_point().get_vertex_handle();
 
      if(curr_v != Vertex_handle())
-       return (this->m_arr->insert_at_vertices (cv.base(), he, curr_v));
+       return (this->m_arr_access.arrangement().insert_at_vertices (cv.base(), he, curr_v));
 
     return (_insert_from_left_vertex(cv, he, sc));
   }

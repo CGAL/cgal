@@ -60,21 +60,20 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   Arr_batched_point_location_visitor(OutputIerator out,
                                      const Arrangement& arr):
                                      m_out(out),
-                                     m_arr(arr),
-                                     m_arr_access(const_cast<Arrangement&>(arr))
   {
+    Arr_accessor             arr_acess(const_cast<Arrangement&>(arr));
     //initialize m_top_fict
-    Vertex_const_handle top_left_v = m_arr_access.top_left_fictitious_vertex();
+    Vertex_const_handle top_left_v = arr_access.top_left_fictitious_vertex();
     m_top_fict = top_left_v->incident_halfedges();
     if(m_top_fict->direction() == SMALLER)
       m_top_fict = m_top_fict->next()->twin();
 
     CGAL_assertion((m_top_fict->source() == 
-                    m_arr_access.top_right_fictitious_vertex()) ||
+                    arr_access.top_right_fictitious_vertex()) ||
                    (m_top_fict->source()->infinite_in_x() == FINITE) &&
                    (m_top_fict->source()->infinite_in_y() == PLUS_INFINITY));
     CGAL_assertion(m_top_fict->target() == 
-                   m_arr_access.top_left_fictitious_vertex());
+                   arr_access.top_left_fictitious_vertex());
   }
 
   
@@ -168,8 +167,6 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
 protected:
 
   OutputIerator            m_out;
-  const Arrangement&       m_arr;
-  Arr_accessor             m_arr_access;
   Halfedge_const_handle    m_top_fict;
 };
 

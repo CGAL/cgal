@@ -72,7 +72,6 @@ protected:
 
 protected:
           
-  Arrangement*               m_arr;
   Arr_accessor<Arrangement>  m_arr_access;
   unsigned int               m_sc_counter;  // Counter for subcurves that may
                                             // represent a hole (the upper
@@ -104,7 +103,6 @@ private:
 public:
 
   Arr_construction_visitor(Arrangement *arr):
-      m_arr(arr),
       m_arr_access (*arr),
       m_sc_counter (0),
       m_sc_he_table(1),
@@ -352,7 +350,6 @@ public:
       // the relevant features in the new face.
       //m_arr_access.relocate_in_new_face (res);
       CGAL_assertion(res->face() != res->twin()->face());
-      //CGAL_assertion(res->face() != m_arr->unbounded_face());
       
       this->relocate_holes_and_iso_verts_in_new_face(res);
     }
@@ -404,7 +401,7 @@ public:
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                SL_iterator iter)
   {
-    return (m_arr->insert_in_face_interior (_point(pt),
+    return (m_arr_access.arrangement().insert_in_face_interior (_point(pt),
 					                                  m_th->face()));
   }
 
