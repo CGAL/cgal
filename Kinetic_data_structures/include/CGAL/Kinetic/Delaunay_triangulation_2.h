@@ -53,7 +53,7 @@ struct Delaunay_2_event_base {
   KDel* kdel() {
     return d_;
   }
-  void process(const typename KDel::Time&) {
+  void process() {
     d_->flip(e_, c_);
   }
   typename KDel::Certificate c_;

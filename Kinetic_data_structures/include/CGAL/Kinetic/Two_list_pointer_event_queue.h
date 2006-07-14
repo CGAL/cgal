@@ -72,7 +72,7 @@ public:
   }
 
   virtual void write(std::ostream &out) const =0;
-  virtual void process(const Priority &t) =0;
+  virtual void process() =0;
 
   bool operator<(const This &o) const
   {
@@ -111,7 +111,7 @@ public:
   Two_list_event_queue_dummy_item(){}
   Two_list_event_queue_dummy_item(const Two_list_event_queue_dummy_item &):
     Two_list_event_queue_item<Priority>(){}
-  virtual void process(const Priority &) {
+  virtual void process() {
     std::cerr << "Trying to process a NULL event.\n";
     CGAL_assertion(0);
   }
@@ -142,8 +142,8 @@ public:
   {
     out << event_ << " at " << P::time();
   }
-  virtual void process(const Priority &t) {
-    event_.process(t);
+  virtual void process() {
+    event_.process();
   }
   // Access the actual event
   const Event &event() const
@@ -505,7 +505,7 @@ public:
       front_.pop_front();
       CGAL_expensive_postcondition(audit());
       if (front_.empty() && !back_.empty()) grow_front();
-      i->process(i->time());
+      i->process();
 
       if (!front_.empty() && i->time() == front_.front().time()) {
 	CGAL_KINETIC_LOG(LOG_SOME, "Degeneracy at time "

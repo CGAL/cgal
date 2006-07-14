@@ -32,6 +32,13 @@ scheduling events which will in turn pass them to the
   scheduled and the event will be removed from the queue immediately
   afterwards.}
 
+\ccMethod{void* kds();}{Return a \ccc{void *} which represents the KDS
+  which this event belongs to. The pointer is used solely to tell if
+  two events come from the same KDS for the purposes of handling
+  degeneracy.}
+
+%\ccMethod{void degenerate_events(Event_key this_event, Event_key other_event);}{This event and the event referenced by \ccc{k} belong to the same KDS and occur simultaneously. This function call gives the KDS a chance to handle } 
+
 \ccGlobalFunction{std::ostream& operator<<(std::ostream&, Event);}{Write a text description of the event to a standard stream.}
 
 \ccHasModels

@@ -40,6 +40,12 @@ then verify that their structure is correct.
 Typically, the simulator is created by the Kinetic:SimulationTraits
 class and kinetic data structures request a handle to it from there.
 
+Events that occur at or after \ccc{Kinetic::Simulator::end_time()}
+will may not be processed. The exception are events which are
+scheduled using the \ccc{new_final_event(Event)} call which are
+guaranteed to occur after all other events (but have no particular
+order amongst themselves).
+
 
 \ccTypes
 
@@ -88,6 +94,8 @@ Returns true if the current time is a rational number and there are no events at
 \ccMethod{void set_end_time(Time t);}{Advance the end time to \ccc{t}. This is not generally a safe operation as all the kinetic data structures must rebuild their certificates at this time.}
 
 \ccMethod{ template <class Event> Event_key new_event(Time t, const Event event);}{Schedule a new event at time \ccc{t}. The object \ccc{event} must implement the concept \ccc{Event}. The \ccc{Event_key} returned can be used to access or deschedule the event.}
+
+\ccMethod{ template <class Event> Event_key new_final_event(const Event event);}{Schedule a new event that will occur at the end of the simulation. This type of event is useful if, for example, you want to run for a while, change all motions, and then run some more.}
 
 \ccMethod{Event_key null_event() const;}{This method returns an \ccc{Event_key} which is guaranteed never to be assigned to any real event.}
 

@@ -37,11 +37,11 @@ public:
   Insert_event(const Object &obj,
 	       Pointer mot):mot_(mot),
 			    obj_(obj){}
-  template <class T>
-  void process(const T&) {
+  void process() {
     CGAL_KINETIC_LOG(LOG_SOME, "Inserting object.\n");
     mot_->insert(obj_);
   }
+  void* kds() const {return NULL;}
 
   void write(std::ostream &out) const
   {

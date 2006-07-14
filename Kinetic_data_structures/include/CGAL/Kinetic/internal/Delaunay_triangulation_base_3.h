@@ -53,7 +53,7 @@ public:
   Delaunay_event_base_3() {
 
   }
-  void process(const typename Root_stack::Time&) {
+  void process() {
     // for some reason VC insists that this be there
     CGAL_assertion(0 && "Process called in Delaunay_event_base_3");
   }
@@ -91,7 +91,7 @@ public:
     d_= edge_point(e_,1);
 #endif
   }
-  void process(const typename Root_stack::Time&) {
+  void process() {
     P::kdel_->flip(e_);
   }
 
@@ -142,7 +142,7 @@ public:
     c_= vertex_of_facet(e_,2)->point();
 #endif
   }
-  void process(const typename Root_stack::Time&) {
+  void process() {
     P::kdel_->flip(e_);
   }
   void write(std::ostream &out) const

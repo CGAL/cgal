@@ -37,11 +37,12 @@ public:
   Erase_event(Key k,
 	      Handle mot):mot_(mot),
 			   k_(k){}
-  template <class T>
-  void process(const T&) {
+  void process() {
     CGAL_KINETIC_LOG(LOG_SOME,"Deleting object.\n");
     mot_->erase(k_);
   }
+
+  void* kds() const {return NULL;}
   void write(std::ostream &out) const
   {
     out << "E" << k_;

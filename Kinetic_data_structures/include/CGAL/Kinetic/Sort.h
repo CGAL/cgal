@@ -314,7 +314,7 @@ class Swap_event
 public:
   Swap_event(Id o, Sort* sorter,
 	     const Solver &s): left_object_(o), sorter_(sorter), s_(s){}
-  void process(const typename Solver::Time &) {
+  void process() {
     sorter_->swap(left_object_, s_);
   }
   Id left_object_; Sort* sorter_; Solver s_;

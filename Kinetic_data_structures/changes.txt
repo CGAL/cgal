@@ -4,6 +4,10 @@
 9 March 2006 Andreas Fabri
 - Made heading of user and reference manual to be the same
 
+July 2006 Daniel Russel
+- removed time in process function calls
+- changed Simulator to Default_simulator
+
 Future Daniel Russel
 - change non-failing root to be NaN or Root() rather than infinity?
 - when using numeric solvers, evaluate the static predicates first before solving?

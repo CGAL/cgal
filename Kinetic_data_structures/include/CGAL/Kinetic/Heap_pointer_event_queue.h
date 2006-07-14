@@ -43,7 +43,7 @@ public:
 
   virtual void write(std::ostream &out) const =0;
   const Priority& time() const {return time_;};
-  virtual void process(const Priority &t) =0;
+  virtual void process() =0;
   void set_bin(int bin) const { bin_=bin;}
   int bin() const {return bin_;};
   virtual ~Heap_pointer_event_queue_item(){}
@@ -70,7 +70,7 @@ class Heap_pointer_event_queue_dummy_item: public Heap_pointer_event_queue_item<
 {
 public:
   Heap_pointer_event_queue_dummy_item(): Heap_pointer_event_queue_item<Priority>(-2, internal::infinity_or_max(Priority())){}
-  virtual void process(const Priority &) {
+  virtual void process() {
   }
   virtual void write(std::ostream &out) const
   {
@@ -96,8 +96,8 @@ public:
   Heap_pointer_event_queue_item_rep(const Priority &t, const Event &e,
 				    unsigned int bin): internal::Heap_pointer_event_queue_item<Priority>(bin, t),
 						       event_(e){}
-  virtual void process(const Priority &t) {
-    event_.process(t);
+  virtual void process() {
+    event_.process();
   }
   virtual void write(std::ostream &out) const
   {
@@ -325,7 +325,7 @@ public:
     Item_handle ih= queue_.front();
     pop_front();
     //std::pop_heap(queue_.begin(), queue_.end());
-    ih->process(ih->time());
+    ih->process();
     CGAL_expensive_postcondition(is_valid());
     /*}
       else {

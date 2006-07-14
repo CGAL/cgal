@@ -46,7 +46,7 @@ public:
 		      KD *kd): P(s, kd), vh_(vh) {
   }
 
-  void process(const typename KD::Simulator::Time&) {
+  void process() {
     P::kdel_->pop(vh_);
   }
 
@@ -130,7 +130,7 @@ public:
 		       KD *kd): P(s,k, c, kd), dir_(dir) {
   }
 
-  void process(const typename KD::Simulator::Time&) {
+  void process() {
     P::kdel_->move(P::k_, P::cell_, dir_);
   }
 
@@ -172,7 +172,7 @@ public:
 		       KD *kd): P(s,k, c, kd) {
   }
 
-  void process(const typename KD::Simulator::Time&) {
+  void process() {
     P::kdel_->push(P::k_, P::cell_);
   }
 

@@ -25,13 +25,13 @@ struct Test_event
 
   Test_event(){}
 
-  void process(const Time& t) {
-    if (tt_->expected_next_event_time() != t) {
+  void process() {
+    if (tt_->expected_next_event_time() != tt_->current_time()) {
       std::cerr << "ERROR Wrong event occurred. Expecting time " << tt_->expected_next_event_time()
-                << " got time " << t << std::endl;
+                << " got time " << tt_->current_time() << std::endl;
     }
-    if (t != t_) {
-      std::cerr << "ERROR Event occured at wrong time. Expecting time " << t_ << " got time " << t << std::endl;
+    if (tt_->current_time() != t_) {
+      std::cerr << "ERROR Event occured at wrong time. Expecting time " << t_ << " got time " << tt_->current_time() << std::endl;
     }
     tt_->process_one_event();
   }
@@ -73,6 +73,12 @@ struct Test
     } else {
       return sim->end_time();
     }
+  }
+
+
+  Time current_time() const
+  {
+    return sim->current_time();
   }
 
   void process_one_event() {
