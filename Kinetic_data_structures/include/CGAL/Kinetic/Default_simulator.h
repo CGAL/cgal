@@ -181,7 +181,7 @@ public:
       audit_all_kdss();
     }
     #endif*/
-    while (next_event_time() < t && !queue_.empty()) {
+    while (next_event_time() <= t && !queue_.empty()) {
       process_next_event();
       /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
       if (current_time() < audit_time_ && t >= audit_time_) {
@@ -344,10 +344,9 @@ public:
   /*!  I am not sure if I use this capability, so it may be droppable
    */
   template <class E>
-  void new_final_event(const E &cert) {
-    bool do_I_use_this;
+  Event_key new_final_event(const E &cert) {
     // this should be in the simulator anyway,
-    return queue_.set_final_event(cert);
+    return queue_.insert(end_time(), cert);
   }
 
   //! Delete the event with key k
