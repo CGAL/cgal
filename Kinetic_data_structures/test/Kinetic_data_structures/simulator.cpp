@@ -9,7 +9,7 @@
 #include <map>
 #include <vector>
 
-const int num_events=300;
+const int num_events=200;
 
 template <class T, class Time>
 struct Test_event
@@ -64,15 +64,26 @@ struct Test
   std::map<Key, Time> event_map;
   std::map<Time, Key> time_map;
   std::vector<Key> to_delete;
+  std::set<Key> inf_events_;
 
   Time expected_next_event_time() const
   {
-    return time_map.begin()->first;
+    if (!time_map.empty()) {
+      return time_map.begin()->first;
+    } else {
+      return sim->end_time();
+    }
   }
 
   void process_one_event() {
-    event_map.erase(time_map.begin()->second);
-    time_map.erase(time_map.begin());
+    if (!time_map.empty()) {
+      event_map.erase(time_map.begin()->second);
+      time_map.erase(time_map.begin());
+    } else {
+      CGAL_assertion(!inf_events_.empty());
+      // just look at count for now
+      inf_events_.erase(inf_events_.begin());
+    }
   }
 
   typename FK::Function::NT  coef() {
@@ -86,8 +97,8 @@ struct Test
     std::cout << "Adding events..."<< std::flush;
     typename FK::Construct_function cf= fk.construct_function_object();
     FK fk;
-    for (unsigned int i=0; i<num; ++i) {
-      typename FK::Function f= cf(abs(coef()), coef(), coef(), coef(), coef());
+    for (unsigned int i=0; i<num-3; ++i) {
+      typename FK::Function f= cf(CGAL::abs(coef()), coef(), coef(), coef(), coef());
       if (fk.sign_at_object(f)(sim->current_time()) == CGAL::NEGATIVE) {
 	f=-f;
 	assert(fk.sign_at_object(f)(sim->current_time()) != CGAL::NEGATIVE);
@@ -107,7 +118,7 @@ struct Test
 	    assert(k==sim->null_event());
 	  }
 	  if (k==sim->null_event()) {
-	    assert(s.top() >= sim->end_time());
+	    assert(s.top() > sim->end_time());
 	  }
 	  else {
 	    event_map[k]= s.top();
@@ -120,6 +131,16 @@ struct Test
 	}
 	s.pop();
       }
+    }
+    for (unsigned int i=0; i< 3; ++i) {
+      Key k= sim->new_final_event( Ev(sim->end_time(), this));
+      CGAL_assertion(k != sim->null_event());
+      inf_events_.insert(k);
+      
+      if (std::rand()%3==0) {
+	to_delete.push_back(k);
+      }
+      
     }
     std::cout << "done" << std::endl;
   }
@@ -136,11 +157,16 @@ struct Test
     std::cout << "Deleting events..." << std::flush;
     while (!to_delete.empty()) {
       Key k= to_delete.back();
-      check_event(to_delete.back(), event_map[k]);
-      //std::cout << sim << std::endl;
-      time_map.erase(event_map[k]);
-      event_map.erase(k);
-      sim->delete_event(k);
+       //std::cout << sim << std::endl;
+      if (event_map.find(k) != event_map.end()) {
+	check_event(to_delete.back(), event_map[k]);
+	time_map.erase(event_map[k]);
+	event_map.erase(k);
+	sim->delete_event(k);
+      } else {
+	inf_events_.erase(k);
+	sim->delete_event(k);
+      }
       to_delete.pop_back();
     }
     std::cout << "done" << std::endl;
@@ -156,7 +182,12 @@ struct Test
   }
 
   Test() {
-    sim= new Sim(0,1000);
+    test_to(Time(1000));
+    test_to(std::numeric_limits<Time>::infinity());
+  }
+
+  void test_to(Time end) {
+    sim= new Sim(0,end);
     //}
 
     //void run () {
@@ -178,12 +209,13 @@ struct Test
     add_events(num_events);
     delete_events();
 
-    sim->set_current_time(std::numeric_limits<typename Sim::Time>::infinity());
+    sim->set_current_time(sim->end_time());
 
     std::cout << "Done checking simulator.\n" << std::endl;
 
-    assert(time_map.empty());
-    assert(event_map.empty());
+    assert(time_map.size()==0);
+    assert(event_map.size()==0);
+    assert(inf_events_.size()==0);
   }
 };
 
@@ -195,20 +227,14 @@ struct Test
 int main(int, char *[])
 {
   CGAL::Timer timer;
+  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
 
-  {
-    timer.start();
-    Test<CGAL::Kinetic::Exact_simulation_traits_2::Simulator> ts;
-    //ts.run();
-    timer.stop();
-    //std::cout << "Bin heap time " << timer.time() << std::endl;
-  }
-  {
+ {
     timer.reset();
 
-    typedef CGAL::Kinetic::Exact_simulation_traits_2::Kinetic_kernel::Function_kernel FK;
+    typedef CGAL::Kinetic::Inexact_simulation_traits_2::Kinetic_kernel::Function_kernel FK;
     typedef CGAL::Kinetic::Default_simulator<FK,
-      CGAL::Kinetic::Two_list_pointer_event_queue<FK> > Sim2;
+     CGAL::Kinetic::Two_list_pointer_event_queue<FK> > Sim2;
 
     timer.start();
     Test<Sim2> t2;
@@ -218,6 +244,22 @@ int main(int, char *[])
     //assert(two_list_remaining==0);
   }
 
+  {
+    timer.start();
+    Test<CGAL::Kinetic::Exact_simulation_traits_2::Simulator> ts;
+    //ts.run();
+    timer.stop();
+    //std::cout << "Bin heap time " << timer.time() << std::endl;
+  }
+
+  {
+    timer.start();
+    Test<CGAL::Kinetic::Inexact_simulation_traits_2::Simulator> ts;
+    //ts.run();
+    timer.stop();
+    //std::cout << "Bin heap time " << timer.time() << std::endl;
+  }
+ 
   // if (!error) return EXIT_SUCCESS;
   //else
   if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
