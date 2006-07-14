@@ -214,10 +214,12 @@ Time="`date '+%T %Z'`"
 # Otherwise use date.
 if [ -r version.tex ]; then
     CgalVersion="`cat version.tex | grep '\\cgalversion[{]' | sed 's/[}]$//' | sed 's/.*[{]//'`"
+    CgalInternalVersion="`cat version.tex | grep '\\cgalinternalversion[{]' | sed 's/[}]$//' | sed 's/.*[{]//'`"
     CgalVersionHtml="Release ${CgalVersion}"
     CgalVersionDate="`cat version.tex | grep '\\cgalversiondate[{]' | sed 's/[}]$//' | sed 's/.*[{]//'`"
 else
     CgalVersion=`echo ${Date} | sed 's/ /_/g'`
+    CgalInternalVersion=$CgalVersion
     CgalVersionHtml="Separate Build"
     CgalVersionDate="`date '+%e %B %Y'`"
 fi
@@ -1607,14 +1609,14 @@ EOF
 <link href="testresult.css" rel="stylesheet"></head>
 <body>
 
-<h1>CGAL-${CgalVersion} Manual Test-Suite Results</h1>
+<h1>CGAL-${CgalInternalVersion} Manual Test-Suite Results</h1>
 
 <p><b>Program Test-Suite:</b> [<a href="http://cgal.inria.fr/CGAL/Members/testsuite/">All Releases</a>]<br>
 <b>Older Manual Tests: </b>
 EOF
     declare -i count=1
     declare -i lastcount=${TestSuiteHistory}
-    if [ -d ${TestSuiteResultPath}/CGAL-${CgalVersion} ]; then
+    if [ -d ${TestSuiteResultPath}/CGAL-${CgalInternalVersion} ]; then
         count=2
         lastcount=${lastcount}+1
     fi
@@ -1630,7 +1632,7 @@ EOF
 </p>
 
 <p>This page shows the results of creating the manuals for
-CGAL-${CgalVersion}.  Each Module and each CGAL Package is tested for
+CGAL-${CgalInternalVersion}.  Each Module and each CGAL Package is tested for
 problems with LaTeX, BibTeX, makeindex, PdfLaTeX, and latex_to_html
 conversions. The success of the conversions and the logfiles are
 accessible in the tables below. A 'y' means no blatant errors
@@ -1657,7 +1659,7 @@ problems to Andreas Meyer.</b></p>
 </li></ul>
 <p></p>
 
-<h2>Module Manual Test-Suite for CGAL-${CgalVersion}</h2>
+<h2>Module Manual Test-Suite for CGAL-${CgalInternalVersion}</h2>
 
 <table cellpadding="5" cellspacing="2" border="1">
 <tr align="center">
@@ -1693,7 +1695,7 @@ testsuite_middle () {
 <p></p>
 
 
-<h2>Package Manual Test-Suite for CGAL-${CgalVersion}</h2>
+<h2>Package Manual Test-Suite for CGAL-${CgalInternalVersion}</h2>
 
 <table cellpadding="5" cellspacing="2" border="1">
 <tr align="center">
@@ -1777,7 +1779,7 @@ EOF
 
         # When the -testsuite option is used the script will copy all
         # the manuals and logfiles to
-        # $TestSuiteResultPath/CGAL-$CgalVersion/ and creates an HTML
+        # $TestSuiteResultPath/CGAL-$CgalInternalVersion/ and creates an HTML
         # summary page index.html in that subdirectory. The latest
         # results is also always accessible at
         # $TestSuiteResultPath/last/index.html .
@@ -1794,7 +1796,7 @@ EOF
         #    If the test suite is repeated for the same internal
         # release number, the new results will overwrite the old results.
         pushd ${TestSuiteResultPath} > /dev/null
-        Target=CGAL-${CgalVersion}
+        Target=CGAL-${CgalInternalVersion}
         if [ ! -d ${Target} ]; then
             # do all the shifting only if test suite is new
             declare -i count=${TestSuiteHistory}
