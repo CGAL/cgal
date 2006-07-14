@@ -41,7 +41,7 @@ public:
 						    s_(s) {
 
   }
-  void process(const typename EB3::Simulator::Time &) {
+  void process() {
     eb_->bounce(k_, t_, s_);
   }
   void write(std::ostream &out) const
