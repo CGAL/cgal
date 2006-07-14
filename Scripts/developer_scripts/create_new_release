@@ -13,47 +13,48 @@
 #   [new] : create_internal_release should not know about internal/public mode.
 # - Merge [some parts] into ./create_internal_release ?
 
-# Real mode (svn tag, mail, copy to HTTP server), versus local testing (puts stuff in tmp/)
-DO_IT=""
-
-# Also build RPMs (no RPMs by default)
-DO_RPM=""
+DO_RPM=""           # Also build RPMs (no RPMs by default)
+DO_PUBLIC=""        # Also build the public versions
+DO_IT=""            # Real mode (svn tag, mail, copy to HTTP server), versus local testing
+SOURCES_DIR="trunk" # SVN working copy directory, default is "trunk"
 
 # Parsing command-line
-case "$1" in
-    -h|-help|--h|--help)
-        echo 'Usage : create_new_release [--help] [--rpm] [--do-it] <packages directory>'
-        echo
-        echo '    --help   : prints this usage help'
-        echo '    --rpm    : also build the corresponding SRPMs'
-        echo '    --do-it  : the real thing (NOT for local tests!  Only for the release master!),'
-        echo '               does write operations (updating the version_number, svn tag,'
-        echo '               sending mail, copying on the web server...)'
-        echo '    <packages directory> : the directory containing the packages [default is trunk]'
-        exit
-    ;;
-    --rpm)
-        DO_RPM="y"
-        shift
-    ;;
-    --do-it)
-        DO_IT="y"  # The Real Thing
-        shift
-    ;;
-    --rpm)
-        # This option's handling is duplicated because I don't have the machinery
-        # to handle options in any order yet.
-        DO_RPM="y"
-        shift
-    ;;
-esac
-
-# SVN working copy directory, default is "trunk"
-if [ -z "$1" ] ; then
-  SOURCES_DIR=trunk
-else
-  SOURCES_DIR="$1"
-fi
+while [ $1 ]; do
+    case "$1" in
+        -h|-help|--h|--help)
+            echo 'Usage : create_new_release [--help] [--rpm] [--public] [--do-it] <packages directory>'
+            echo
+            echo '    --help   : prints this usage help'
+            echo '    --rpm    : also build the corresponding SRPMs'
+            echo '    --public : also build the corresponding public versions'
+            echo '    --do-it  : the real thing (NOT for local tests!  Only for the release master!),'
+            echo '               does write operations (updating the version_number, svn tag,'
+            echo '               sending mail, copying on the web server...)'
+            echo '    <packages directory> : the directory containing the packages [default is trunk]'
+            exit
+        ;;
+        --rpm)
+            DO_RPM="y"
+            shift; continue
+        ;;
+        --public)
+            DO_PUBLIC="y"
+            shift; continue
+        ;;
+        --do-it)
+            DO_IT="y"
+            shift; continue
+        ;;
+        -*)
+            echo "Unrecognized option : $1"
+            exit
+        ;;
+        *)
+            SOURCES_DIR="$1"
+            shift; continue
+        ;;
+    esac
+done
 
 
 # The internal release number is extracted/updated from this file :
@@ -157,30 +158,32 @@ if [ "$DO_RPM" ]; then
 fi
 
 # Build public release version
-echo "Making the public version of the tarball" >> ${LOGFILE} 2>&1
-public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
-public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
-public_release_name="CGAL-${public_release_version}"
-mv ${release_name} $public_release_name >> ${LOGFILE} 2>&1
+if [ "$DO_PUBLIC" ]; then
+    echo "Making the public version of the tarball" >> ${LOGFILE} 2>&1
+    public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
+    public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
+    public_release_name="CGAL-${public_release_version}"
+    mv ${release_name} $public_release_name >> ${LOGFILE} 2>&1
 
-cd ${public_release_name} >> ${LOGFILE} 2>&1
-rm -rf test Packages developer_scripts doc_tex winutils >> ${LOGFILE} 2>&1
-rm -f examples/*/cgal_test demo/*/cgal_test >> ${LOGFILE} 2>&1
-mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
-sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
-rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
-echo -n $public_release_number > VERSION 2>&1
-cd .. >> ${LOGFILE} 2>&1
-tar -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
-gzip "${public_release_name}.tar" >> ${LOGFILE} 2>&1
-mkdir "${HTML_DIR}/${release_name}-public" >> ${LOGFILE} 2>&1
-cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
-# Do a Zip file as well.
-zip -q -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
-cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+    cd ${public_release_name} >> ${LOGFILE} 2>&1
+    rm -rf test Packages developer_scripts doc_tex winutils >> ${LOGFILE} 2>&1
+    rm -f examples/*/cgal_test demo/*/cgal_test >> ${LOGFILE} 2>&1
+    mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
+    sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
+    rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
+    echo -n $public_release_number > VERSION 2>&1
+    cd .. >> ${LOGFILE} 2>&1
+    tar -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
+    gzip "${public_release_name}.tar" >> ${LOGFILE} 2>&1
+    mkdir "${HTML_DIR}/${release_name}-public" >> ${LOGFILE} 2>&1
+    cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+    # Do a Zip file as well for the public version.
+    zip -q -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
+    cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+fi
 
 # Build the SRPM of the public version
-if [ "$DO_RPM" ]; then
+if [ -n "$DO_RPM" -a -n "$DO_PUBLIC" ]; then
     echo "Making the SRPM public file" >> ${LOGFILE} 2>&1
     rm -rf rpm >> ${LOGFILE} 2>&1
     cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
@@ -194,5 +197,5 @@ if [ "$DO_RPM" ]; then
 fi
 
 # Remove local directory and tarball
-rm -rf ${public_release_name} >> ${LOGFILE} 2>&1
+rm -rf ${release_name} ${public_release_name} >> ${LOGFILE} 2>&1
 rm ${release_name}.tar.gz ${public_release_name}.tar.gz ${public_release_name}.zip >> ${LOGFILE} 2>&1
