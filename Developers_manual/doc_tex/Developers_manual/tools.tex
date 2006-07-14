@@ -30,6 +30,34 @@ Most of these scripts can be in at least two places.
          \end{ccTexOnly}.
 \end{itemize}
 
+
+\section{{\tt create\_new\_release}}
+\label{sec:create_new_release}
+\index{create_new_release script@{\tt create\_new\_release} script|(}
+\ccIndexMainItem{release building}
+
+The script
+\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/developer_scripts/create_new_release?root=cgal&view=markup}
+{{\tt create\_new\_release}} builds a tarball of CGAL from an SVN working
+copy of the trunk (or a branch).
+The command
+\begin{verse}
+{\tt create\_new\_release}
+\end{verse}
+creates a directory {\tt tmp} which contains the tarball, as well as its
+public and SRPM versions.
+
+This script takes as argument the name of an SVN working copy of a branch,
+and it default to {\tt trunk}.  It also supports the following options:
+\begin{description}
+\item[--rpm]      create SRPM files as well
+\item[--public]   create a public version as well
+\item[--do-it]    (reserved to the release manager) moves it on the web server,
+                  tags...
+\end{description}
+\index{create_new_release script@{\tt create\_new\_release} script|)}
+
+
 \section{{\tt create\_assertions.sh}}
 \label{sec:create_assertions}
 \index{create_assertions.sh script@{\tt create\_assertions.sh} script|(}
