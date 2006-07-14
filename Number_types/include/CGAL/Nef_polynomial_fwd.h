@@ -30,8 +30,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
+namespace Nef {
 template <typename> class Polynomial;
+
 
 template <typename ET>
 double to_double(const Polynomial<ET> &);
@@ -55,6 +56,7 @@ bool is_valid(const Polynomial<ET> &);
 template <typename ET>
 Polynomial<ET> gcd(const Polynomial<ET> &, const Polynomial<ET> &);
 
+}
 // Nef_polynomial
 
 template <typename> class Nef_polynomial;
@@ -70,6 +72,15 @@ Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
 
 //template <typename ET>
 //double to_double(const Quotient<Nef_polynomial<ET> >&);
+
+
+
+using Nef::to_double;
+using Nef:::sign;
+using Nef::abs;
+using Nef::is_finite;
+using Nef::isvalid;
+using Nef::gcd;
 
 CGAL_END_NAMESPACE
 
