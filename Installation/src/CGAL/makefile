@@ -64,7 +64,7 @@ KDS_Log$(OBJ_EXT) \
 kernel$(OBJ_EXT) \
 MP_Float$(OBJ_EXT) \
 numeric_solvers_support$(OBJ_EXT) \
-Polynomial$(OBJ_EXT) \
+NefPolynomial$(OBJ_EXT) \
 Random$(OBJ_EXT) \
 Real_timer$(OBJ_EXT) \
 Timer$(OBJ_EXT) \
