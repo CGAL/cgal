@@ -65,7 +65,7 @@ protected:
     if (ir(r)) {
       typename K::To_rational tr= k_.to_rational_object();
       typename K::NT nt= tr(r);
-      return eval(nt);
+      return k_.root_stack_traits_object().sign_at_object(p_)(nt);
     }
     else {
       typename K::To_isolating_interval tii= k_.to_isolating_interval_object();
