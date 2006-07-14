@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Creating a new CGAL internal/public release.
+# Creating a new CGAL internal+public release.
 #
 # Radu Ursu, Sylvain Pion, 2004-2006.
 
@@ -16,20 +16,34 @@
 # Real mode (svn tag, mail, copy to HTTP server), versus local testing (puts stuff in tmp/)
 DO_IT=""
 
+# Also build RPMs (no RPMs by default)
+DO_RPM=""
+
 # Parsing command-line
 case "$1" in
     -h|-help|--h|--help)
-        echo 'Usage : create_new_release [--help] [--do-it] <packages directory>'
+        echo 'Usage : create_new_release [--help] [--rpm] [--do-it] <packages directory>'
         echo
-        echo '    --help  : prints this usage help'
-        echo '    --do-it : the real thing (NOT for local tests!  Only for the release master!),'
-        echo '              does write operations (updating the version_number, svn tag,'
-        echo '              sending mail, copying on the web server...)'
+        echo '    --help   : prints this usage help'
+        echo '    --rpm    : also build the corresponding SRPMs'
+        echo '    --do-it  : the real thing (NOT for local tests!  Only for the release master!),'
+        echo '               does write operations (updating the version_number, svn tag,'
+        echo '               sending mail, copying on the web server...)'
         echo '    <packages directory> : the directory containing the packages [default is trunk]'
         exit
     ;;
+    --rpm)
+        DO_RPM="y"
+        shift
+    ;;
     --do-it)
         DO_IT="y"  # The Real Thing
+        shift
+    ;;
+    --rpm)
+        # This option's handling is duplicated because I don't have the machinery
+        # to handle options in any order yet.
+        DO_RPM="y"
         shift
     ;;
 esac
@@ -113,28 +127,34 @@ tar -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
 gzip "${release_name}.tar" >> ${LOGFILE} 2>&1
 cp "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
-[ "$DO_IT" ] && mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
+
+# Send mail and tag
+if [ "$DO_IT" ]; then
+    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
 
 You can fetch it at :
 ${URL}/${release_name}.tar.gz
 
 EOF
 
-# Now we tag.
-echo "Tagging ${SOURCES_DIR} with $release_name" >> ${LOGFILE} 2>&1
-[ "$DO_IT" ] && svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name >> ${LOGFILE} 2>&1
+    # Now we tag.
+    echo "Tagging ${SOURCES_DIR} with $release_name" >> ${LOGFILE} 2>&1
+    svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name >> ${LOGFILE} 2>&1
+fi
 
 # Build the SRPM
-echo "Making the SRPM file" >> ${LOGFILE} 2>&1
-rm -rf rpm >> ${LOGFILE} 2>&1
-cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
-cp ${release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
-mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
-sed -e "s/define +internal_release +[0-9]+/define internal_release $INTERNAL_NUMBER/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
-make -C rpm CGAL.src >> ${LOGFILE} 2>&1
-echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
-mv rpm/SRPMS/*.src.rpm "${HTML_DIR}" >> ${LOGFILE} 2>&1
-rm -rf rpm >> ${LOGFILE} 2>&1
+if [ "$DO_RPM" ]; then
+    echo "Making the SRPM file" >> ${LOGFILE} 2>&1
+    rm -rf rpm >> ${LOGFILE} 2>&1
+    cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
+    cp ${release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
+    mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
+    sed -e "s/define +internal_release +[0-9]+/define internal_release $INTERNAL_NUMBER/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
+    make -C rpm CGAL.src >> ${LOGFILE} 2>&1
+    echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
+    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}" >> ${LOGFILE} 2>&1
+    rm -rf rpm >> ${LOGFILE} 2>&1
+fi
 
 # Build public release version
 echo "Making the public version of the tarball" >> ${LOGFILE} 2>&1
@@ -142,17 +162,6 @@ public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
 public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
 public_release_name="CGAL-${public_release_version}"
 mv ${release_name} $public_release_name >> ${LOGFILE} 2>&1
-
-# Build the Installation.pdf
-# cd ${public_release_name}/doc_tex >> ${LOGFILE} 2>&1
-# mv version.tex version.tex.old >> ${LOGFILE} 2>&1
-# sed -e "s/.*cgalversion{.*/\\\gdef\\\cgalversion\{${public_release_name}\}/" version.tex.old > version.tex 2>> ${LOGFILE}
-# export TEXINPUTS
-# TEXINPUTS=$TEXINPUTS:../../${SOURCES_DIR}/Manual_tools/sty:
-# ../developer_scripts/cgal_manual -pdf Installation >> ${LOGFILE} 2>&1
-# cat Installation.pdflg >> ${LOGFILE} 2>&1
-# cd ..
-# End of build of Installation.pdf
 
 cd ${public_release_name} >> ${LOGFILE} 2>&1
 rm -rf test Packages developer_scripts doc_tex winutils >> ${LOGFILE} 2>&1
@@ -171,16 +180,18 @@ zip -q -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
 cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
 
 # Build the SRPM of the public version
-echo "Making the SRPM public file" >> ${LOGFILE} 2>&1
-rm -rf rpm >> ${LOGFILE} 2>&1
-cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
-cp ${public_release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
-mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
-sed -e "s/define internal_release.*/define internal_release 0/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
-make -C rpm CGAL.src >> ${LOGFILE} 2>&1
-# echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
-mv rpm/SRPMS/*.src.rpm "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
-rm -rf rpm >> ${LOGFILE} 2>&1
+if [ "$DO_RPM" ]; then
+    echo "Making the SRPM public file" >> ${LOGFILE} 2>&1
+    rm -rf rpm >> ${LOGFILE} 2>&1
+    cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
+    cp ${public_release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
+    mv rpm/SPECS/CGAL.spec rpm/SPECS/CGAL.spec.old >> ${LOGFILE} 2>&1
+    sed -e "s/define internal_release.*/define internal_release 0/" rpm/SPECS/CGAL.spec.old > rpm/SPECS/CGAL.spec 2>> ${LOGFILE}
+    make -C rpm CGAL.src >> ${LOGFILE} 2>&1
+    # echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
+    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+    rm -rf rpm >> ${LOGFILE} 2>&1
+fi
 
 # Remove local directory and tarball
 rm -rf ${public_release_name} >> ${LOGFILE} 2>&1
