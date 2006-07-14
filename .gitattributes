@@ -578,6 +578,8 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -
 Kinetic_data_structures/todo -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/help/index.html svneol=native#text/html
 MacOSX/auxiliary/cgal_app.icns -text
+Maintenance/MacOSX_Installer/CGAL-3.2-absolute.pmproj -text
+Maintenance/MacOSX_Installer/CGAL-3.2.pmproj -text
 Maintenance/MacOSX_Installer/CGAL-absolute.pmproj -text
 Maintenance/MacOSX_Installer/CGAL.pmproj -text
 Maintenance/MacOSX_Installer/Resources/License.rtf -text svneol=unset#application/rtf
