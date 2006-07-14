@@ -21,6 +21,7 @@ int main(int, char *[])
   Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);
+  kdel.triangulation(3).finite_vertices_begin();
   
   //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
  
