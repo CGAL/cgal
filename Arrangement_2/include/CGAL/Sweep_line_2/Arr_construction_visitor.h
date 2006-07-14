@@ -207,8 +207,6 @@ public:
     Event *lastEvent = get_last_event(sc);
     Halfedge_handle res; 
     Halfedge_handle hhandle = this ->current_event()->get_halfedge_handle();
-
-    int jump = lastEvent->get_halfedge_jump_count(sc);
    
     // if the previous event on the curve is not in the planar map yet
     if ( lastEvent->get_halfedge_handle() == Halfedge_handle(NULL) ) 
@@ -230,6 +228,7 @@ public:
       // the previous event on the curve is already in the planar map. 
       // Let's use it.
       Halfedge_handle prev = lastEvent->get_halfedge_handle();
+      int jump = lastEvent->get_halfedge_jump_count(sc);
      
       // skip to the right halfedge
       for ( int i = 0 ; i < jump ; i++ )
