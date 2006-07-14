@@ -12,7 +12,7 @@
 # Modify the following lines according to your release and configuration
 
 # modify the following line for your release
-setenv CGALVER 3.2
+setenv CGALVER $1
 
 # modify the following line to reflect the size of the disk image you
 # want to create
