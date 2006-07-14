@@ -3,6 +3,7 @@
 #include <cassert>
 #include <fstream>
 
+#include <CGAL/MP_Float.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Apollonius_graph_2.h>
