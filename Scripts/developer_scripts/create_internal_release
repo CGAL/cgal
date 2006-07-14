@@ -256,12 +256,20 @@ sub create_version_tex_file()
         $newver = $VERSION;
     }
 
+# And here we also strip the -I-... part to get the public version number
+    if ($result = $VERSION =~ /CGAL-(.*)-I-/){
+        $publicver = $1;
+    } else {
+        $publicver = $VERSION;
+    }
+
     print TEMPFILE << 'EOF';
 %% This file is automatically created by create_internal_release.
 %% Do not edit manually.
 
 EOF
-    print TEMPFILE "\\gdef\\cgalversion{$newver}\n";
+    print TEMPFILE "\\gdef\\cgalversion{$publicver}\n";
+    print TEMPFILE "\\gdef\\cgalinternalversion{$newver}\n";
 
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 
