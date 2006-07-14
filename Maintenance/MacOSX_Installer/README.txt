@@ -31,7 +31,7 @@ Noti
 5. Run the create_macosx_installer by giving as argument the location
    of the CGAL tarball. For example if you want to build CGAL-X.Y and
    the tarball is located at your home directory run:
-		./create_macosx_installer ~/CGAL-X.Y.tar.gz
+		./create_macosx_installer ~/CGAL-X.Y.tar.gz X.Y
 6. Once the script is done there should be a disk image in this directory
    named CGAL-X.Y.dmg. This is your MacOSX distribution.
 
