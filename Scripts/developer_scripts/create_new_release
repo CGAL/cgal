@@ -22,8 +22,9 @@ case "$1" in
         echo 'Usage : create_new_release [--help] [--do-it] <packages directory>'
         echo
         echo '    --help  : prints this usage help'
-        echo '    --do-it : the real thing (NOT for local tests !),'
-        echo '              does write operations (svn tag, sending mail, copying on the web server...)'
+        echo '    --do-it : the real thing (NOT for local tests!  Only for the release master!),'
+        echo '              does write operations (updating the version_number, svn tag,'
+        echo '              sending mail, copying on the web server...)'
         echo '    <packages directory> : the directory containing the packages [default is trunk]'
         exit
     ;;
@@ -76,9 +77,12 @@ MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
 BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
 
 # Compute the internal release number.
-[ -r $VERSION_FILE ] || return
-INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
-[ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
+if [ -r $VERSION_FILE ]; then
+  INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
+  [ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
+else
+  INTERNAL_NUMBER=0
+fi
 INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
 internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
 
