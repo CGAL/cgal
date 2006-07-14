@@ -93,7 +93,9 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 #  include<sstream>
 #  define CGAL_STSKEL_TRACE(m) \
      { \
-       std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
+       std::ostringstream ss ; \
+       ss << std::setprecision(19) << m << std::ends ; \
+       std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
 

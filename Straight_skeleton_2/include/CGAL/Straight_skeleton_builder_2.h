@@ -579,7 +579,7 @@ private :
   {
     boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
     if ( !r )
-      throw_error("overflow");
+      throw_error("Unable to compute skeleton node coordinates");
     return *r ;  
   }
 

@@ -35,7 +35,11 @@
 #  include<iostream>
 #  include<sstream>
 #  include<iomanip>
+bool sEnableTraitsTrace = false ;
+#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond)) sEnableTraitsTrace = true ;
+#  define CGAL_STSKEL_TRAITS_DISABLE_TRACE sEnableTraitsTrace = false;
 #  define CGAL_STSKEL_TRAITS_TRACE(m) \
+     if ( sEnableTraitsTrace ) \
      { \
        std::ostringstream ss ; \
        ss << std::setprecision(19) << m << std::ends ; \
@@ -43,6 +47,8 @@
        Straight_skeleton_traits_external_trace(s); \
      }
 #else
+#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond)
+#  define CGAL_STSKEL_TRAITS_DISALBE_TRACE
 #  define CGAL_STSKEL_TRAITS_TRACE(m)
 #endif
 
@@ -71,8 +77,15 @@ struct Is_filtering_kernel< Exact_predicates_inexact_constructions_kernel >
 //
 // This is the same as Filtered_construction but uses optional<result> instead of exceptions.
 //
-template <class AC, class EC, class FC, class C2E, class C2F,
-	  class E2C, class F2C,	bool Protection = true>
+template <class AC
+         ,class EC
+         ,class FC
+         ,class C2E
+         ,class C2F
+         ,class E2C
+         ,class F2C
+         ,bool Protection = true
+>
 class Exceptionless_filtered_construction
 {
 private:
@@ -107,9 +120,10 @@ public:
         return From_Filtered(fr);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
-    
+
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    return From_Exact( Exact_construction(To_Exact(a1)) );
+    EC_result_type er = Exact_construction(To_Exact(a1)) ;
+    return From_Exact(er);
   }
   
   template <class A1, class A2>
@@ -126,7 +140,8 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {}
     
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    return From_Exact( Exact_construction(To_Exact(a1),To_Exact(a2)) );
+    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2)) ;
+    return From_Exact(er);
   }
   
   template <class A1, class A2, class A3>
@@ -143,10 +158,133 @@ public:
     catch (Interval_nt_advanced::unsafe_comparison) {}
     
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    return From_Exact( Exact_construction(To_Exact(a1),To_Exact(a2),To_Exact(a3)) );
+    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3)) ;
+    return From_Exact(er);
+
   }
 };
 
+/*
+template <class AC
+         ,class XC
+         ,class EC
+         ,class FC
+         ,class C2X
+         ,class C2E
+         ,class C2F
+         ,class X2C
+         ,class E2C
+         ,class F2C
+         ,bool Protection = true
+>
+class Exceptionless_filtered_construction
+{
+private:
+  XC Algebraic_construction;
+  EC Exact_construction;
+  FC Filter_construction;
+  C2X To_Algebraic;
+  C2E To_Exact;
+  C2F To_Filtered;
+  X2C From_Algebraic;
+  E2C From_Exact;
+  F2C From_Filtered;
+
+  typedef typename AC::result_type  AC_result_type;
+  typedef typename FC::result_type  FC_result_type;
+  typedef typename EC::result_type  EC_result_type;
+  typedef typename XC::result_type  XC_result_type;
+
+public:
+  typedef AC_result_type           result_type;
+  typedef typename AC::Arity       Arity;
+
+public:
+
+  Exceptionless_filtered_construction() {}
+
+  template <class A1>
+  result_type
+  operator()(const A1 &a1) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      FC_result_type fr = Filter_construction(To_Filtered(a1));
+      if ( fr )
+        return From_Filtered(fr);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+
+    try
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      EC_result_type er = Exact_construction(To_Exact(a1)) ;
+      if ( er )
+         return From_Exact(er);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+
+    XC_result_type xr = Algebraic_construction(To_Algebraic(a1)); 
+    result_type r = From_Algebraic(xr);
+    return r ;
+  }
+  
+  template <class A1, class A2>
+  result_type
+  operator()(const A1 &a1, const A2 &a2) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2));
+      if ( fr )
+        return From_Filtered(fr);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    
+    try
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2)) ;
+      if ( er )
+         return From_Exact(er);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+
+    XC_result_type xr = Algebraic_construction(To_Algebraic(a1), To_Algebraic(a2)) ;
+    result_type r = From_Algebraic(xr);
+    return r ;
+  }
+  
+  template <class A1, class A2, class A3>
+  result_type
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3));
+      if ( fr )
+        return From_Filtered(fr);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    
+    try
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3)) ;
+      if ( er )
+         return From_Exact(er);
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+
+    XC_result_type xr = Algebraic_construction(To_Algebraic(a1), To_Algebraic(a2), To_Algebraic(a3)) ;
+    result_type r = From_Algebraic(xr);
+    return r ;
+  }
+};
+*/
 
 //
 // This number type is provided because unlike Quotient<> is allows you to create it

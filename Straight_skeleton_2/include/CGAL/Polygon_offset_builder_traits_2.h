@@ -153,15 +153,17 @@ class Polygon_offset_builder_traits_2_impl<Tag_true,K> : public Polygon_offset_b
   typedef Polygon_offset_builder_traits_2_functors<FK> Filtering ;
   typedef Polygon_offset_builder_traits_2_functors<K>  Unfiltering ;
 
-  typedef Cartesian_converter< K, EK> BaseC2E;
-  typedef Cartesian_converter< K, FK> BaseC2F;
-  typedef Cartesian_converter< K,  K> BaseC2C;
-  typedef Cartesian_converter<EK,  K> BaseE2C;
+  typedef Cartesian_converter<K,EK> BaseC2E;
+  typedef Cartesian_converter<K,FK> BaseC2F;
+  typedef Cartesian_converter<EK,K> BaseE2C;
+  typedef Cartesian_converter<FK,K> BaseF2C;
+  typedef Cartesian_converter<K,K>  BaseC2C;
   
   typedef CGAL_SS_i::SS_converter<BaseC2E> C2E ;
   typedef CGAL_SS_i::SS_converter<BaseC2F> C2F ;
-  typedef CGAL_SS_i::SS_converter<BaseC2C> C2C ;
   typedef CGAL_SS_i::SS_converter<BaseE2C> E2C ;
+  typedef CGAL_SS_i::SS_converter<BaseF2C> F2C ;
+  typedef CGAL_SS_i::SS_converter<BaseC2C> C2C ;
 
 public:
 

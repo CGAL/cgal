@@ -1285,8 +1285,8 @@ double angle_wrt_X ( Point const& a, Point const& b )
   double dx = to_double(b.x() - a.x() ) ;
   double dy = to_double(b.y() - a.y() ) ;
   double atan = std::atan2(dy,dx);
-  double rad  = atan >= 0.0 ? atan : 2.0 * M_PI + atan ;
-  double deg  = rad * 180.0 / M_PI ;
+  double rad  = atan >= 0.0 ? atan : 2.0 * 3.141592 + atan ;
+  double deg  = rad * 180.0 / 3.141592 ;
   return deg ;
 }
 
@@ -1571,6 +1571,7 @@ typename Straight_skeleton_builder_2<Gt,SS>::SSkelPtr Straight_skeleton_builder_
   }
   catch( std::exception const& e ) 
   {
+    std::cerr << "Exception caught: " << e.what() << std::endl ;
     CGAL_STSKEL_BUILDER_TRACE(0,"EXCEPTION THROWN (" << e.what() << ") during straight skeleton construction.");
  }
 

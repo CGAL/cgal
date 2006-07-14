@@ -20,13 +20,32 @@
 #include<fstream>
 #include<sstream>   
 
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 0
+//#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
+
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+void Straight_skeleton_external_trace ( std::string m )
+{
+  printf("%s\n",m.c_str());
+}
+#endif
+
+#ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
+void Straight_skeleton_traits_external_trace ( std::string m )
+{
+  printf("%s\n",m.c_str());
+}
+#endif
+
 #include <CGAL/test_sls_builder_types.h> 
 
 #include <CGAL/Real_timer.h>
 
 using namespace std ;
 
-int    sFailed = 0 ;
+int    sFailed  = 0 ;
+bool   sDumpEPS = false ;
+
 ofstream* failed_list = 0 ;
 ofstream* ok_list     = 0 ;
 
@@ -73,6 +92,74 @@ RegionPtr load_region( string file )
   return rRegion ;
 }
 
+void dump_eps( SlsPtr sls, std::string eps )
+{
+ CGAL::Bbox_2 bbox ;
+
+  for(Vertex_const_iterator vit = sls->vertices_begin(); vit != sls->vertices_end(); ++vit)
+  {
+    if( vit == sls->vertices_begin() )
+	        bbox =        vit->point().bbox(); 
+    else	bbox = bbox + vit->point().bbox();
+  }
+
+  double scale = 1 ; //1000 / (bbox.xmax() - bbox.xmin()) ;
+
+  if ( scale < 1 )
+     scale = 1 ;
+
+  std::ofstream dump(eps.c_str());
+	 dump << "%!PS-Adobe-2.0 EPSF-2.0\n%%BoundingBox:" 
+       << scale* bbox.xmin()-1 
+       << " " 
+       << scale* bbox.ymin()-1 
+       << " "
+       << scale*bbox.xmax()+1 
+       << " " 
+       << scale*bbox.ymax()+1
+       << std::endl;
+
+	 dump << "%%EndComments\n"
+	         "gsave\n"
+	         "1.0 setlinewidth\n"
+	         "/cont { 0 0 0 setrgbcolor } bind def\n"
+	         "/cont_w { 0.1 setlinewidth } bind def\n"
+	         "/skel { 1 0 0 setrgbcolor } bind def\n"
+	         "/skel_w { 1.0 setlinewidth } bind def\n"
+	         "% stroke - x1 y1 x2 y2 E\n"
+	         "/E {newpath moveto lineto stroke} bind def\n" 
+          << std::endl;
+
+  for(Face_const_iterator fit = sls->faces_begin(); fit != sls->faces_end(); ++fit)
+  {
+	   Halfedge_const_handle h = fit->halfedge();
+	   Halfedge_const_handle done;
+	   done = h;
+	   do
+    {
+	     if(h->is_bisector())
+	          dump << "skel\n";
+	     else dump << "cont\n";
+ 	  
+	     dump << scale * h->vertex()->point().x() 
+           << " " 
+           << scale * h->vertex()->point().y()
+           << " "
+		         << scale * h->opposite()->vertex()->point().x()
+           << " "
+           << scale * h->opposite()->vertex()->point().y() 
+           << " E\n";
+
+	     h = h->next();
+	   } 
+    while(h != done);
+	 }
+
+	 dump << "grestore\nshowpage" << std::endl;
+
+	 dump.close();
+}
+
 void test( std::string file )
 {
   RegionPtr lRegion = load_region(file);
@@ -90,6 +177,8 @@ void test( std::string file )
     if ( ok )
     {
       (*ok_list) << file << endl ;
+      if ( sDumpEPS )
+       dump_eps(sls, file + std::string(".eps"));
     }
     else
     {
@@ -110,6 +199,7 @@ int main( int argc, char const* argv[] )
     switch(argv[aidx][1])
     {
       case 'h' : print_usage = true; break ;
+      case 'e' : sDumpEPS = true ; break ;
       default: cerr << "Invalid option: " << argv[aidx] << endl ; break ;
     }
     ++aidx ;
@@ -132,7 +222,7 @@ int main( int argc, char const* argv[] )
     {
       std::string folder(argv[aidx]);
       for ( int i = aidx + 1 ; i < argc ; ++ i )
-        test(folder + std::string("/") + std::string(argv[i]) );
+        test(folder + std::string(argv[i]) );
     }
     catch( exception x )
     {
@@ -149,7 +239,7 @@ int main( int argc, char const* argv[] )
   {
     cout << "USAGE: test_sls_builder <options> folder file0 file1 ... fileN" << endl
          << "  <options>: " << endl
-         << "     -sSCALE  Scales each input polygon." << endl
+         << "     -e  Dumps result into an .eps file." << endl
          << "     -h       Prints this usage summary." << endl ;
   }
 

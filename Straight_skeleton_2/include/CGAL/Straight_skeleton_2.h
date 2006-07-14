@@ -139,8 +139,7 @@ public :
   
       bool valid = ( 1 != (this->size_of_halfedges() & 1));
       
-      if ( !valid )
-        CGAL_STSKEL_VALIDITY_TRACE("number of halfedges: " << this->size_of_halfedges() << " is odd." ) ;
+      CGAL_STSKEL_VALIDITY_TRACE_IF(!valid,"number of halfedges: " << this->size_of_halfedges() << " is odd." ) ;
       
       // All halfedges.
       Halfedge_const_iterator begin = this->halfedges_begin();
@@ -273,10 +272,9 @@ public :
               ++n;
               h = h->next()->opposite();
               valid = valid && ( n <= this->size_of_halfedges() && n!=0);
-              if ( ! valid)
-                 CGAL_STSKEL_VALIDITY_TRACE("ERROR: more than " << this->size_of_halfedges() 
-                                            << " halfedges around v["<< id(vbegin)<<"]"
-                                            );
+              CGAL_STSKEL_VALIDITY_TRACE_IF(!valid,"ERROR: more than " << this->size_of_halfedges() 
+                                           << " halfedges around v["<< id(vbegin)<<"]"
+                                           );
             } while ( valid && (h != g));
           }
           ++v;
@@ -332,10 +330,9 @@ public :
               ++n;
               h = h->next();
               valid = valid && ( n <= this->size_of_halfedges() && n!=0);
-              if ( ! valid)
-                CGAL_STSKEL_VALIDITY_TRACE("ERROR: more than " << this->size_of_halfedges() 
-                                          << " halfedges around f["<< id(fbegin)<<"]"
-                                          );
+              CGAL_STSKEL_VALIDITY_TRACE_IF(!valid,"ERROR: more than " << this->size_of_halfedges() 
+                                           << " halfedges around f["<< id(fbegin)<<"]"
+                                           );
             } while ( valid && (h != g));
           }
           ++f;

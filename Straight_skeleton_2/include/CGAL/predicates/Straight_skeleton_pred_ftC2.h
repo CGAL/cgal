@@ -443,12 +443,15 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Sorted_triedge_2<K> const& event, Tr
                   
                   Uncertain<bool> lc_reflex = CGAL_NTS certified_is_smaller(zl->a()*zc->b(),zc->a()*zl->b());
                   
-                  CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is " << ( lc_reflex == SMALLER ? "reflex" : "non-reflex") ) ;
-                  
                   if ( ! CGAL_NTS is_indeterminate(lc_reflex) )
+                  {
+                    CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is " << ( lc_reflex == true ? "reflex" : "non-reflex") ) ;
+
                     lok = ( lc_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
                                       : CGAL_NTS certified_is_larger_or_equal (sdl,sdc) 
                           ) ;
+                  }
+
                 }
                 else
                 {
@@ -482,12 +485,14 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Sorted_triedge_2<K> const& event, Tr
                   
                   Uncertain<bool> cr_reflex = CGAL_NTS certified_is_smaller(zc->a()*zr->b(),zr->a()*zc->b());
                   
-                  CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is " << ( cr_reflex == SMALLER ? "reflex" : "non-reflex") ) ;
-                
                   if ( ! CGAL_NTS is_indeterminate(cr_reflex) )
+                  {
+                    CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is " << ( cr_reflex == true ? "reflex" : "non-reflex") ) ;
+                
                     rok = ( cr_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
                                       : CGAL_NTS certified_is_larger_or_equal (sdr,sdc) 
                           ) ;
+                  }
                 }
                 else
                 {

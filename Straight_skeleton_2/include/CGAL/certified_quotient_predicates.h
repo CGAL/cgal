@@ -27,13 +27,20 @@ CGAL_BEGIN_NAMESPACE
 template <class NT>
 inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x) 
 {
-  return CGAL_NTS certified_sign(x.num) == CGAL_NTS certified_sign(x.den) ;
+  Uncertain<Sign> signum = CGAL_NTS certified_sign(x.num) ;
+  Uncertain<Sign> sigden = CGAL_NTS certified_sign(x.den) ;
+  Uncertain<Sign> zero(ZERO);
+  return signum != zero & signum == sigden ;
 }
 
 template <class NT> 
 inline Uncertain<bool> certified_quotient_is_negative(const Quotient<NT>& x)
 {
-  return CGAL_NTS certified_sign(x.num) != CGAL_NTS certified_sign(x.den) ;
+  Uncertain<Sign> singnum = CGAL_NTS certified_sign(x.num) ;
+  Uncertain<Sign> singden = CGAL_NTS certified_sign(x.den) ;
+  Uncertain<Sign> zero(ZERO);
+
+  return signum != zero & signum != sigden ;
 }
 
 template <class NT>
@@ -46,18 +53,31 @@ template <class NT>
 CGAL_MEDIUM_INLINE
 Uncertain<Sign> certified_quotient_sign(const Quotient<NT>& x)
 {
+  Uncertain<Sign> r = Uncertain<Sign>::indeterminate();
+
   Uncertain<Sign> signum = CGAL_NTS certified_sign(x.num) ;
   Uncertain<Sign> sigden = CGAL_NTS certified_sign(x.den) ;
-  Uncertain<bool> same = signum == sigden ;
-  if ( is_indeterminate(same) )
-       return Uncertain<Sign>(NEGATIVE,POSITIVE);
-  else return same ? signum : make_uncertain(NEGATIVE);
+
+  // No assumptions on the sign of  den  are made
+  
+  // code assumes this
+  CGAL_precondition(  NEGATIVE == static_cast<Sign>(-1) 
+                   && ZERO     == static_cast<Sign>(0) 
+                   && POSITIVE == static_cast<Sign>(1) 
+                   );
+
+  if ( !is_indeterminate(signum) && !is_indeterminate(sigden) )
+    r = make_uncertain( static_cast<Sign>(signum * sigden) ) ;
+
+  return r ;
 }
 
 template <class NT1, class NT2>
 CGAL_MEDIUM_INLINE
 Uncertain<Comparison_result> certified_quotient_compare(const Quotient<NT1>& x, const Quotient<NT2>& y)
 {
+  Uncertain<Comparison_result> r = Uncertain<Comparison_result>::indeterminate();
+
   // No assumptions on the sign of  den  are made
 
   // code assumes that SMALLER == - 1;
@@ -68,15 +88,11 @@ Uncertain<Comparison_result> certified_quotient_compare(const Quotient<NT1>& x, 
   Uncertain<Sign> ynumsign = CGAL_NTS certified_sign(y.num) ;
   Uncertain<Sign> ydensign = CGAL_NTS certified_sign(y.den) ;
 
-  if (  is_indeterminate(xnumsign)
-     || is_indeterminate(xdensign)
-     || is_indeterminate(ynumsign)
-     || is_indeterminate(ydensign)
+  if (  !is_indeterminate(xnumsign)
+     && !is_indeterminate(xdensign)
+     && !is_indeterminate(ynumsign)
+     && !is_indeterminate(ydensign)
      )
-  {
-    return Uncertain<Comparison_result>(SMALLER,LARGER);
-  }
-  else
   {
     int xsign = xnumsign * xdensign ;
     int ysign = ynumsign * ydensign ;
@@ -86,16 +102,18 @@ Uncertain<Comparison_result> certified_quotient_compare(const Quotient<NT1>& x, 
     int diff = xsign - ysign;
     if (diff == 0)
     {
-        int msign = xdensign * ydensign;
-        NT1 leftop  = x.num * y.den * msign;
-        NT1 rightop = y.num * x.den * msign;
-        return certified_compare(leftop, rightop);
+      int msign = xdensign * ydensign;
+      NT1 leftop  = x.num * y.den * msign;
+      NT1 rightop = y.num * x.den * msign;
+      r = certified_compare(leftop, rightop);
     }
     else
     {
-        return make_uncertain((xsign < ysign) ? SMALLER : LARGER);
+      r = make_uncertain((xsign < ysign) ? SMALLER : LARGER);
     }
   }
+
+  return r ;
 }
 
 template <class NT>

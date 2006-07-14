@@ -28,7 +28,6 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {
 
-
 template<class K>
 struct Construct_ss_triedge_2 : Functor_base_2<K>
 {
@@ -263,7 +262,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     CGAL_assertion(triedge.collinear_count() < 3) ;
 
     optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(triedge);
-    
+
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
@@ -278,12 +277,13 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     
     CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",triedge);
 
+
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
     
-  bool is_point_calculation_accurate( double time, Point_2 const& p, Triedge_2 const& triedge ) const 
-  { 
-    Segment_2 const& e0 = triedge.e0() ;
+  bool is_point_calculation_accurate( double t, Point_2 const& p, Triedge_2 const& triedge ) const 
+  {
+    Segment_2 const& e0 = triedge.e0() ; 
     Segment_2 const& e1 = triedge.e1() ;
     Segment_2 const& e2 = triedge.e2() ;
     
@@ -296,23 +296,27 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     Point_2 const& e2s = e2.source();
     Point_2 const& e2t = e2.target();
   
-    FT d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y());
-    FT d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y());
-    FT d2 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e2s.x(),e2s.y(),e2t.x(),e2t.y());
+    double d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y());
+    double d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y());
+    double d2 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e2s.x(),e2s.y(),e2t.x(),e2t.y());
   
-    FT time2 = CGAL_NTS square(time);
+    double tt = CGAL_NTS square(t);
     
-    FT diff0 = CGAL_NTS square(d0-time2);
-    FT diff1 = CGAL_NTS square(d1-time2);
-    FT diff2 = CGAL_NTS square(d2-time2);
+    double diff0 = CGAL_NTS square(d0-tt);
+    double diff1 = CGAL_NTS square(d1-tt);
+    double diff2 = CGAL_NTS square(d2-tt);
     
-    FT const eps = 1e-5 ;
-    return diff0 < eps && diff1 < eps && diff2 < eps ;
+    double const zero = 1e-16 ;
+
+    return ( diff0 <= zero && diff1 <= zero && diff2 <= zero ) ;
   }
 
   template<class NT>  
-  bool is_point_calculation_accurate( NT const& time, Point_2 const& p, Triedge_2 const& triedge ) const { return true ; }
-  
+  bool is_point_calculation_accurate( NT const& t, Point_2 const& p, Triedge_2 const& triedge ) const 
+  {
+    return true ;
+  }
+
 };
 
 } // namespace CGAL_SS_i
@@ -393,7 +397,7 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
 {
   typedef typename K::EK EK ;
   typedef typename K::FK FK ;
-  
+
   typedef Straight_skeleton_builder_traits_2_functors<EK> Exact ;
   typedef Straight_skeleton_builder_traits_2_functors<FK> Filtering ;
   typedef Straight_skeleton_builder_traits_2_functors<K>  Unfiltering ;
@@ -407,6 +411,7 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
   typedef CGAL_SS_i::SS_converter<BaseC2E> C2E ;
   typedef CGAL_SS_i::SS_converter<BaseC2F> C2F ;
   typedef CGAL_SS_i::SS_converter<BaseE2C> E2C ;
+  typedef CGAL_SS_i::SS_converter<BaseF2C> F2C ;
   typedef CGAL_SS_i::SS_converter<BaseC2C> C2C ;
 
 public:
@@ -469,14 +474,14 @@ public:
                             
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
-                                                        , typename Unfiltering::Construct_ss_event_time_and_point_2
+                                                        , typename Unfiltering::Construct_ss_event_time_and_point_2 
                                                         , C2E
-                                                        , C2C
+                                                        , C2C 
                                                         , E2C
-                                                        , C2C
+                                                        , C2C 
                                                         >
                                                         Construct_ss_event_time_and_point_2 ;
-                                
+
   typedef typename Unfiltering::Construct_ss_triedge_2        Construct_ss_triedge_2 ;
   typedef typename Unfiltering::Construct_ss_sorted_triedge_2 Construct_ss_sorted_triedge_2 ;
 
