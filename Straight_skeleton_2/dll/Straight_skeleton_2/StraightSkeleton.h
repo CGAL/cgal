@@ -30,15 +30,15 @@ again. If allocation fails the pointer is set to NULL.
        * @param numFace_i is a reference parameter. After the call numFace_i[i] holds the number of vertices of the i'th face.
        * @param xf is a reference parameter. After the call it holds the x-ccordinates of the face vertices in an array of length sum(numFaces_i).
        * @param yf is a reference parameter. After the call it holds the y-ccordinates of the face vertices in an array of length sum(numFaces_i).
-       * @param dumpEPS is a flag. When true the skeleton is written to the file "dump.eps".
-       * @return true if the straight skeleton was computed succesfully.
+       * @param dumpEPS is a flag. When != 0 the skeleton is written to the file "dump.eps".
+       * @return 0 if the straight skeleton COULD NOT be computed succesfully.
        */	
 extern "C"
 __declspec (dllimport)
-bool 
+int 
 StraightSkeleton(int np, int* np_i, double* xp, double* yp,
                 int& numFaces, int& numVertices, int*& numFace_i,
-                double*& xf, double*& yf, bool dumpEPS);
+                double*& xf, double*& yf, int dumpEPS);
 
 
 /**

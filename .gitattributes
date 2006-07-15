@@ -1591,7 +1591,7 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/star.poly -text svneol=unset#a
 Straight_skeleton_2/demo/Straight_skeleton_2/data/triangle.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/help/index.html svneol=native#text/html
 Straight_skeleton_2/dll/Straight_skeleton_2/A.poly -text
-Straight_skeleton_2/dll/Straight_skeleton_2/StraightSkeleton.C -text
+Straight_skeleton_2/dll/Straight_skeleton_2/StraightSkeleton.cpp -text
 Straight_skeleton_2/dll/Straight_skeleton_2/ex1.poly -text
 Straight_skeleton_2/dll/Straight_skeleton_2/input.poly -text
 Straight_skeleton_2/dll/Straight_skeleton_2/makefile -text
