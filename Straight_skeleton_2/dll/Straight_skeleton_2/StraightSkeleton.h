@@ -16,7 +16,7 @@ again. If allocation fails the pointer is set to NULL.
 */
 
 
-
+typedef void (__stdcall *ProgressCallback) ( int aCurr, int aTotal ) ;
 
 
 /**
@@ -36,9 +36,18 @@ again. If allocation fails the pointer is set to NULL.
 extern "C"
 __declspec (dllimport)
 int 
-StraightSkeleton(int np, int* np_i, double* xp, double* yp,
-                int& numFaces, int& numVertices, int*& numFace_i,
-                double*& xf, double*& yf, int dumpEPS);
+StraightSkeleton( int np 
+                , int* np_i
+                , double* xp
+                , double* yp
+                , int& numFaces
+                , int& numVertices
+                , int*& numFace_i
+                , double*& xf
+                , double*& yf
+                , int dumpEPS
+                , ProgressCallback progress
+                );
 
 
 /**
@@ -51,8 +60,10 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
 extern "C"
 __declspec (dllimport)
 void
-StraightSkeletonFree(int*& numFace_i,
-		     double*& xf, double*& yf);
+StraightSkeletonFree(int*&    numFace_i
+                    ,double*& xf
+                    ,double*& yf
+                    );
 
 
 

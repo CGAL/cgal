@@ -63,14 +63,54 @@ int sSingularCount ;
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Traits_, class SSkel_>
+template<class SSkel_>
+struct Dummy_straight_skeleton_builder_2_visitor
+{
+  typedef SSkel_ SSkel ;
+
+  typedef typename SSkel::Vertex_const_handle   Vertex_const_handle ;
+
+  void on_error( char const* ) const {}
+
+  void on_edge_event_created( Vertex_const_handle const& lnode
+                            , Vertex_const_handle const& rnode
+                            )  const {}
+
+  void on_split_event_created( Vertex_const_handle const& node )  const {}
+
+  void on_pseudo_split_event_created( Vertex_const_handle const& lnode
+                                    , Vertex_const_handle const& rnode
+                                    )  const {}
+
+  void on_anihiliation_event_processed ( Vertex_const_handle const& node0
+                                       , Vertex_const_handle const& node1
+                                       )  const  {}
+
+  void on_initial_events_collected( Vertex_const_handle const& v )  const  {}
+
+  void on_edge_event_processed( Vertex_const_handle const& lnode
+                              , Vertex_const_handle const& rnode
+                              )  const {} 
+
+  void on_split_event_processed( Vertex_const_handle const& node )  const {}
+
+  void on_pseudo_split_event_processed( Vertex_const_handle const& lnode
+                                      , Vertex_const_handle const& rnode
+                                      )  const {}
+
+  void on_vertex_processed( Vertex_const_handle const& node )  const {}
+} ;
+
+
+template<class Traits_, class SSkel_, class Visitor_ = Dummy_straight_skeleton_builder_2_visitor<SSkel_> >
 class Straight_skeleton_builder_2
 {
 public:
 
   typedef Traits_ Traits ;
   typedef SSkel_  SSkel ;
-  
+  typedef Visitor_ Visitor ;
+
   typedef boost::shared_ptr<SSkel> SSkelPtr ;
   
 private :
@@ -124,7 +164,7 @@ private :
 
   typedef boost::tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
 
-  typedef Straight_skeleton_builder_2<Traits,SSkel> Self ;
+  typedef Straight_skeleton_builder_2<Traits,SSkel,Visitor> Self ;
   
   typedef typename Halfedge::Base_base HBase_base ;
   typedef typename Halfedge::Base      HBase ;
@@ -163,14 +203,14 @@ public:
     straight_skeleton_exception( std::string what ) : std::runtime_error(what) {}  
   } ;
   
-  Straight_skeleton_builder_2 ( Traits const& = Traits() ) ;
+  Straight_skeleton_builder_2 ( Traits const& = Traits(), Visitor const& aVisitor = Visitor() ) ;
 
   // NOTE: The following public method is implemented here in this header file to support some broken compilers.
   // But it's right at the end of the class declaration becuause it needs all of the class.
   //
   // template<class InputPointIterator> Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd ) ;
 
-
+  
   SSkelPtr construct_skeleton( bool aMergeCoincidentNodes = false ) ;
 
 private :
@@ -386,6 +426,8 @@ private :
   void SetIsProcessed ( Vertex_handle aVertex )
   {
     mWrappedVertices[aVertex->id()].mIsProcessed = true ;
+
+    mVisitor.on_vertex_processed(aVertex);
   }
 
   bool IsProcessed ( Vertex_handle aVertex )
@@ -687,7 +729,9 @@ private:
 private:
 
   //Input
-  Traits mTraits ;
+  Traits  mTraits ;
+
+  Visitor const& mVisitor ;
 
   std::vector<VertexWrapper>  mWrappedVertices ;
   Vertex_handle_vector        mReflexVertices ;

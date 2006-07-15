@@ -38,10 +38,11 @@ template<class Handle> inline bool handle_assigned ( Handle const& aH )
 }
 
 
-template<class Gt, class SS>
-Straight_skeleton_builder_2<Gt,SS>::Straight_skeleton_builder_2 ( Traits const& aTraits )
+template<class Gt, class SS, class V>
+Straight_skeleton_builder_2<Gt,SS,V>::Straight_skeleton_builder_2 ( Traits const& aTraits, Visitor const& aVisitor )
   :
   mTraits(aTraits)
+ ,mVisitor(aVisitor)
  ,mEventCompare(this)
  ,mVertexID(0)
  ,mEdgeID(0)
@@ -53,22 +54,24 @@ Straight_skeleton_builder_2<Gt,SS>::Straight_skeleton_builder_2 ( Traits const& 
 }
 
 // This is defined out-of-class, here, just so it's easy to set a breakpoint
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::throw_error ( char const* what ) const
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::throw_error ( char const* what ) const
 {
+  mVisitor.on_error(what);
+
   throw straight_skeleton_exception(what);
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::InsertEventInPQ( EventPtr aEvent )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::InsertEventInPQ( EventPtr aEvent )
 {
   mPQ.push(aEvent);
   CGAL_STSKEL_BUILDER_TRACE(2, "Main PQ: " << *aEvent);
 }
 
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::EventPtr 
-Straight_skeleton_builder_2<Gt,SS>::PopEventFromPQ()
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::EventPtr 
+Straight_skeleton_builder_2<Gt,SS,V>::PopEventFromPQ()
 {
   EventPtr rR = mPQ.top(); mPQ.pop();
   return rR ;
@@ -79,9 +82,9 @@ Straight_skeleton_builder_2<Gt,SS>::PopEventFromPQ()
 // (As long as the vertices are proceesed in the right order there is 1 common defining contour edge,
 //  so there are 3 distinct contour edges given these 2 vertices)
 //
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::BorderTriple
-Straight_skeleton_builder_2<Gt,SS>::GetDefiningBorders( Vertex_handle aA, Vertex_handle aB )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::BorderTriple
+Straight_skeleton_builder_2<Gt,SS,V>::GetDefiningBorders( Vertex_handle aA, Vertex_handle aB )
 {
   Halfedge_handle lAL = GetDefiningBorderA(aA);
   Halfedge_handle lAR = GetDefiningBorderB(aA) ;
@@ -94,9 +97,9 @@ Straight_skeleton_builder_2<Gt,SS>::GetDefiningBorders( Vertex_handle aA, Vertex
 // Tests whether there is an edge event between the 3 contour edges defining nodes 'aLnode' and 'aRNode'.
 // If such event exits and is not in the past, it's returned. Otherwise the result is null
 //
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::EventPtr
-Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::EventPtr
+Straight_skeleton_builder_2<Gt,SS,V>::FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode )
 {
   EventPtr rResult ;
 
@@ -120,6 +123,8 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
       if ( lAccepted )
       {
         rResult = EventPtr( new EdgeEvent( lBorderA, lBorderB, lBorderC, lSortedTriedge, aLNode, aRNode ) ) ;
+
+        mVisitor.on_edge_event_created(aLNode, aRNode) ;
         
         CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*rResult) );
         CGAL_STSKEL_STATS_CODE(++sFoundEdgeEventCount);
@@ -130,9 +135,9 @@ Straight_skeleton_builder_2<Gt,SS>::FindEdgeEvent( Vertex_handle aLNode, Vertex_
 }
 
 
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::EventPtr 
-Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::EventPtr 
+Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN )
 {
   bool lIsPseudoSplitEvent = false ;
 
@@ -177,9 +182,18 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
   if ( lIsPseudoSplitEvent )
   {
     if ( lCoupleIsPrev )
-         rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lEventSTriedge,lOppPrevN,lSeedN) ) ;
-    else rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lEventSTriedge,lSeedN   ,aOppN) ) ;  
-    
+    {
+      rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lEventSTriedge,lOppPrevN,lSeedN) ) ;
+
+      mVisitor.on_pseudo_split_event_created(lOppPrevN,lSeedN) ;
+    }
+    else
+    {
+      rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lReflexLBorder,lReflexRBorder,lOppBorder,lEventSTriedge,lSeedN   ,aOppN) ) ;  
+
+      mVisitor.on_pseudo_split_event_created(lSeedN,aOppN) ;
+    }
+
     rPseudoSplitEvent->SetTimeAndPoint(aEvent->time(),aEvent->point());
   }
 
@@ -195,8 +209,8 @@ Straight_skeleton_builder_2<Gt,SS>::IsPseudoSplitEvent( EventPtr const& aEvent, 
 // the 'reflex borders' are not consecutive in the input polygon but they are in the corresponding offset polygon that
 // contains aNode as a vertex.
 //
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle   aNode
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvent( Vertex_handle   aNode
                                                           , Halfedge_handle aReflexLBorder
                                                           , Halfedge_handle aReflexRBorder
                                                           , Halfedge_handle aOppositeBorder
@@ -210,6 +224,8 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle   aNod
     {
       EventPtr lEvent = EventPtr( new SplitEvent (aReflexLBorder,aReflexRBorder,aOppositeBorder,lSortedTriedge,aNode) ) ;
       
+      mVisitor.on_split_event_created(aNode) ;
+
       CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*lEvent) ) ;
       CGAL_STSKEL_STATS_CODE( ++sFoundSplitEventCount );
 
@@ -223,8 +239,8 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvent( Vertex_handle   aNod
 }
 
 // Tests the reflex wavefront emerging from 'aNode' against the other contour edges in search for split events.
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvents( Vertex_handle aNode )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvents( Vertex_handle aNode )
 {
   // lLBorder and lRBorder are the consecutive contour edges forming the reflex wavefront.
   Halfedge_handle lLBorder = GetDefiningBorderA(aNode);
@@ -267,8 +283,8 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectSplitEvents( Vertex_handle aNode
 
 // Finds and enques all the new potential events produced by the vertex wavefront emerging from 'aNode' (which can be a reflex wavefront).
 // This new events are simply stored in the priority queue, not processed.
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::CollectNewEvents( Vertex_handle aNode )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::CollectNewEvents( Vertex_handle aNode )
 {
   // A Straight Skeleton is the trace of the 'grassfire propagation' that corresponds to the inward move of all the vertices 
   // of a polygon along their angular bisectors.
@@ -365,13 +381,15 @@ void Straight_skeleton_builder_2<Gt,SS>::CollectNewEvents( Vertex_handle aNode )
 // This ocurrs when the bisector emerging from vertex 'aA' is defined by the same pair of 
 // contour edges as the bisector emerging from vertex 'aB' (but in opposite order).
 //
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB )
 {
   CGAL_STSKEL_BUILDER_TRACE ( 2, "Handling simultaneous EdgeEvent between N" << aA ->id() << " and N"  << aB ->id() ) ;
 
   CGAL_STSKEL_STATS_CODE(++sAnihiliationCount);
   
+  mVisitor.on_anihiliation_event_processed(aA,aB) ;
+
   Halfedge_handle lOA = aA->primary_bisector() ;
   Halfedge_handle lOB = aB->primary_bisector() ;
   Halfedge_handle lIA = lOA->opposite();
@@ -447,8 +465,8 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSimultaneousEdgeEvent( Vertex_han
 
 // Returns true if the skeleton edges 'aA' and 'aB' are defined by the same pair of contour edges (but possibly in reverse order)
 //
-template<class Gt, class SS>
-bool Straight_skeleton_builder_2<Gt,SS>::AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB  ) const
+template<class Gt, class SS, class V>
+bool Straight_skeleton_builder_2<Gt,SS,V>::AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB  ) const
 {
   CGAL_STSKEL_BUILDER_TRACE ( 3, "Testing for simultaneous EdgeEvents between B" << aA->id() << " and B" << aB->id() ) ;
 
@@ -461,8 +479,8 @@ bool Straight_skeleton_builder_2<Gt,SS>::AreBisectorsCoincident ( Halfedge_const
          || ( lA_LBorder == lB_RBorder && lA_RBorder == lB_LBorder ) ;
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::UpdatePQ( Vertex_handle aNode )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::UpdatePQ( Vertex_handle aNode )
 {
   Vertex_handle lPrev = GetPrevInLAV(aNode) ;
   Vertex_handle lNext = GetNextInLAV(aNode) ;
@@ -481,17 +499,20 @@ void Straight_skeleton_builder_2<Gt,SS>::UpdatePQ( Vertex_handle aNode )
   else
      CollectNewEvents(aNode);
 }
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::CreateInitialEvents()
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::CreateInitialEvents()
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "Creating initial events...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
+  {
     UpdatePQ(v);
+    mVisitor.on_initial_events_collected(v) ;
+  }
 }
 
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::CreateContourBisectors()
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "Creating contour bisectors...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
@@ -537,16 +558,16 @@ void Straight_skeleton_builder_2<Gt,SS>::CreateContourBisectors()
   }
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::InitPhase()
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::InitPhase()
 {
   CreateContourBisectors();
   CreateInitialEvents();
 }
 
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::Vertex_handle
-Straight_skeleton_builder_2<Gt,SS>::ConstructEdgeEventNode( EdgeEvent& aEvent )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::Vertex_handle
+Straight_skeleton_builder_2<Gt,SS,V>::ConstructEdgeEventNode( EdgeEvent& aEvent )
 {
   CGAL_STSKEL_BUILDER_TRACE ( 2, "Creating EdgeEvent Node" ) ;
 
@@ -607,9 +628,9 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructEdgeEventNode( EdgeEvent& aEvent )
 }
 
 
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::Vertex_handle
-Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, EventPtr const& aEvent )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::Vertex_handle
+Straight_skeleton_builder_2<Gt,SS,V>::LookupOnSLAV ( Halfedge_handle aBorder, EventPtr const& aEvent )
 {
   Vertex_handle rResult ;
 
@@ -670,9 +691,9 @@ Straight_skeleton_builder_2<Gt,SS>::LookupOnSLAV ( Halfedge_handle aBorder, Even
 
 
 
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::Vertex_handle_pair
-Straight_skeleton_builder_2<Gt,SS>::ConstructSplitEventNodes( SplitEvent& aEvent, Vertex_handle aOppR )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::Vertex_handle_pair
+Straight_skeleton_builder_2<Gt,SS,V>::ConstructSplitEventNodes( SplitEvent& aEvent, Vertex_handle aOppR )
 {
   Vertex_handle_pair rResult;
 
@@ -737,9 +758,9 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructSplitEventNodes( SplitEvent& aEvent
   return rResult ;
 }
 
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::Vertex_handle_pair
-Straight_skeleton_builder_2<Gt,SS>::ConstructPseudoSplitEventNodes( PseudoSplitEvent& aEvent )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::Vertex_handle_pair
+Straight_skeleton_builder_2<Gt,SS,V>::ConstructPseudoSplitEventNodes( PseudoSplitEvent& aEvent )
 {
   Vertex_handle_pair rResult;
 
@@ -825,14 +846,14 @@ Straight_skeleton_builder_2<Gt,SS>::ConstructPseudoSplitEventNodes( PseudoSplitE
   return rResult ;
 }
 
-template<class Gt, class SS>
-bool Straight_skeleton_builder_2<Gt,SS>::IsProcessed( EventPtr aEvent )
+template<class Gt, class SS, class V>
+bool Straight_skeleton_builder_2<Gt,SS,V>::IsProcessed( EventPtr aEvent )
 {
   return IsProcessed(aEvent->seed0()) || IsProcessed(aEvent->seed1()) ;
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EventPtr aEvent )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::HandleEdgeEvent( EventPtr aEvent )
 {
   CGAL_STSKEL_STATS_CODE(++sProcessedEdgeEventCount);
   
@@ -911,11 +932,13 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleEdgeEvent( EventPtr aEvent )
                         << ".\nThis is a multiple node (A node with these defining edges already exist in the LAV)"
                         );
   }
+
+  mVisitor.on_edge_event_processed(lLSeed,lRSeed) ;
   
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::HandleSplitEvent( EventPtr aEvent, Vertex_handle aOppR )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitEvent( EventPtr aEvent, Vertex_handle aOppR )
 {
   CGAL_STSKEL_STATS_CODE(++sProcessedSplitEventCount);
   
@@ -1009,11 +1032,12 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitEvent( EventPtr aEvent, Vert
 
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
-  
+
+  mVisitor.on_split_event_processed(lSeed) ;
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::SetupPseudoSplitEventNode( Vertex_handle   aNode
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::SetupPseudoSplitEventNode( Vertex_handle   aNode
                                                                   , Halfedge_handle aDefiningBorderA
                                                                   , Halfedge_handle aDefiningBorderB
                                                                   )
@@ -1037,8 +1061,8 @@ void Straight_skeleton_builder_2<Gt,SS>::SetupPseudoSplitEventNode( Vertex_handl
   }
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::HandlePseudoSplitEvent( EventPtr aEvent )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::HandlePseudoSplitEvent( EventPtr aEvent )
 {
   CGAL_STSKEL_STATS_CODE(++sProcessedPseudoSplitEventCount);
   
@@ -1132,10 +1156,12 @@ void Straight_skeleton_builder_2<Gt,SS>::HandlePseudoSplitEvent( EventPtr aEvent
 
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
+
+  mVisitor.on_pseudo_split_event_processed(lLSeed,lRSeed) ;
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::HandleSplitOrPseudoSplitEvent( EventPtr aEvent )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitOrPseudoSplitEvent( EventPtr aEvent )
 {
   Vertex_handle lOppR = LookupOnSLAV(aEvent->border_c(),aEvent);
   if ( handle_assigned(lOppR) )
@@ -1151,8 +1177,8 @@ void Straight_skeleton_builder_2<Gt,SS>::HandleSplitOrPseudoSplitEvent( EventPtr
   }
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::InsertNextSplitEventInPQ( Vertex_handle v )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::InsertNextSplitEventInPQ( Vertex_handle v )
 {
   EventPtr lSplitEvent ;
   do
@@ -1167,15 +1193,15 @@ void Straight_skeleton_builder_2<Gt,SS>::InsertNextSplitEventInPQ( Vertex_handle
   while ( lSplitEvent );
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::InsertNextSplitEventsInPQ()
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::InsertNextSplitEventsInPQ()
 {
   for ( typename Vertex_handle_vector::iterator v = mReflexVertices.begin(), ev = mReflexVertices.end(); v != ev ; ++ v )
     InsertNextSplitEventInPQ(*v);
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::Propagate()
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::Propagate()
 {
   CGAL_STSKEL_BUILDER_TRACE(0,"Propagating events...");
 
@@ -1207,8 +1233,8 @@ void Straight_skeleton_builder_2<Gt,SS>::Propagate()
   }
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aSplitNodes )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::MergeSplitNodes ( Vertex_handle_pair aSplitNodes )
 {
   Vertex_handle lLNode, lRNode ;
   boost::tie(lLNode,lRNode)=aSplitNodes;
@@ -1249,6 +1275,7 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes ( Vertex_handle_pair aS
                        );
 
   mSSkel->SSkel::Base::vertices_erase(lRNode);
+
 }
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
@@ -1313,8 +1340,8 @@ void TraceFinalBisectors( Vertex_handle v, Halfedge_around_vertex_circulator cb 
 }
 #endif
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::ClassifyBisectorsAroundMultinode( Vertex_handle const&        v
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Vertex_handle const&        v
                                                                          , Vertex_handle_vector const& aCluster
                                                                          , Is_bond_map&                rIsBond
                                                                          )
@@ -1353,8 +1380,8 @@ void Straight_skeleton_builder_2<Gt,SS>::ClassifyBisectorsAroundMultinode( Verte
 
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::ClassifyBisectorsAroundMultinode( Vertex_handle_vector const& aCluster
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Vertex_handle_vector const& aCluster
                                                                          , Is_bond_map&                rIsBond
                                                                         )
 {
@@ -1362,8 +1389,8 @@ void Straight_skeleton_builder_2<Gt,SS>::ClassifyBisectorsAroundMultinode( Verte
     ClassifyBisectorsAroundMultinode(*v,aCluster,rIsBond);    
 }
 
-template<class Gt, class SS>
-bool Straight_skeleton_builder_2<Gt,SS>::AreNodesConnected( Vertex_handle v, Vertex_handle u )
+template<class Gt, class SS, class V>
+bool Straight_skeleton_builder_2<Gt,SS,V>::AreNodesConnected( Vertex_handle v, Vertex_handle u )
 {
   Halfedge_around_vertex_circulator cb = v->halfedge_around_vertex_begin() ;
   Halfedge_around_vertex_circulator c  = cb;
@@ -1380,8 +1407,8 @@ bool Straight_skeleton_builder_2<Gt,SS>::AreNodesConnected( Vertex_handle v, Ver
     
 }
 
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::RearrangeBisectorsAroundMultinode( Vertex_handle const& v0, Is_bond_map& rIsBond )
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::RearrangeBisectorsAroundMultinode( Vertex_handle const& v0, Is_bond_map& rIsBond )
 {
   Halfedge_handle_vector lLinks ;
   
@@ -1436,8 +1463,8 @@ void Straight_skeleton_builder_2<Gt,SS>::RearrangeBisectorsAroundMultinode( Vert
 //
 // Finds coincident skeleton nodes and merge them
 //
-template<class Gt, class SS>
-void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::MergeCoincidentNodes()
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "Merging coincident nodes...");
   
@@ -1526,19 +1553,19 @@ void Straight_skeleton_builder_2<Gt,SS>::MergeCoincidentNodes()
 }
 
 
-template<class Gt, class SS>
-bool Straight_skeleton_builder_2<Gt,SS>::FinishUp( bool aMergeCoincidentNodes )
+template<class Gt, class SS, class V>
+bool Straight_skeleton_builder_2<Gt,SS,V>::FinishUp( bool aMergeCoincidentNodes )
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "\n\nFinishing up...");
 
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
-                ,boost::bind(&Straight_skeleton_builder_2<Gt,SS>::MergeSplitNodes,this,_1)
+                ,boost::bind(&Straight_skeleton_builder_2<Gt,SS,V>::MergeSplitNodes,this,_1)
                ) ;
   
   std::for_each( mDanglingBisectors.begin()
                 ,mDanglingBisectors.end  ()
-                ,boost::bind(&Straight_skeleton_builder_2<Gt,SS>::EraseBisector,this,_1)
+                ,boost::bind(&Straight_skeleton_builder_2<Gt,SS,V>::EraseBisector,this,_1)
                ) ;
                
   bool ok = mSSkel->is_valid() ;
@@ -1552,16 +1579,16 @@ bool Straight_skeleton_builder_2<Gt,SS>::FinishUp( bool aMergeCoincidentNodes )
   return ok ;  
 }
 
-template<class Gt, class SS>
-bool Straight_skeleton_builder_2<Gt,SS>::Run( bool aMergeCoincidentNodes )
+template<class Gt, class SS, class V>
+bool Straight_skeleton_builder_2<Gt,SS,V>::Run( bool aMergeCoincidentNodes )
 {
   InitPhase();
   Propagate();
   return FinishUp (aMergeCoincidentNodes);
 }
 
-template<class Gt, class SS>
-typename Straight_skeleton_builder_2<Gt,SS>::SSkelPtr Straight_skeleton_builder_2<Gt,SS>::construct_skeleton( bool aMergeCoincidentNodes )
+template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::SSkelPtr Straight_skeleton_builder_2<Gt,SS,V>::construct_skeleton( bool aMergeCoincidentNodes )
 {
   bool ok = false ;
   

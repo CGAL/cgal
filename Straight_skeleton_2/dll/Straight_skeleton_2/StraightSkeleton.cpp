@@ -5,6 +5,8 @@
 #include<CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
+#include "StraightSkeleton.h"
+
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -20,11 +22,72 @@ typedef Ss::Face_iterator Face_iterator;
 typedef Ss::Halfedge_iterator Halfedge_iterator;
 typedef Ss::Halfedge_handle   Halfedge_handle;
 typedef Ss::Vertex_handle     Vertex_handle;
+typedef Ss::Vertex_const_handle     Vertex_const_handle;
 
-typedef CGAL::Straight_skeleton_builder_traits_2<Kernel>      SsBuilderTraits;
-typedef CGAL::Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
+struct Visitor
+{
+  Visitor ( ProgressCallback progress ) : Progress(progress), mCurr(0), mTotal(0) {}
+
+  void on_error( char const* msg )  const
+  {
+    std::cerr << msg << std::endl ;
+  }
+
+  void on_edge_event_created( Vertex_const_handle const& lnode
+                            , Vertex_const_handle const& rnode
+                            )  const {}
+
+  void on_split_event_created( Vertex_const_handle const& node )  const {}
+
+  void on_pseudo_split_event_created( Vertex_const_handle const& lnode
+                                    , Vertex_const_handle const& rnode
+                                    )  const {}
+
+  void on_anihiliation_event_processed ( Vertex_const_handle const& node0
+                                       , Vertex_const_handle const& node1
+                                       )  const {}
+
+  void on_initial_events_collected( Vertex_const_handle const& v )  const
+  {
+    ++ mCurr ;
+    if ( Progress )
+      Progress(mCurr,mTotal);
+  }
+
+  void on_edge_event_processed( Vertex_const_handle const& lnode
+                              , Vertex_const_handle const& rnode
+                              )  const {} 
+
+  void on_split_event_processed( Vertex_const_handle const& node )  const {}
+
+  void on_pseudo_split_event_processed( Vertex_const_handle const& lnode
+                                      , Vertex_const_handle const& rnode
+                                      )  const {}
+
+  void on_vertex_processed( Vertex_const_handle const& node ) const 
+  {
+    if ( node->is_contour() )
+    {
+      ++ mCurr ;
+      if ( Progress )
+        Progress(mCurr,mTotal);
+    }
+  }
+
+  void set_total ( int aTotal ) { mTotal = aTotal ; }
+
+  ProgressCallback Progress ;
+  mutable int mCurr ;
+  int mTotal ;
+
+} ;
+
+
+typedef CGAL::Straight_skeleton_builder_traits_2<Kernel>              SsBuilderTraits;
+typedef CGAL::Straight_skeleton_builder_2<SsBuilderTraits,Ss,Visitor> SsBuilder;
 
 typedef CGAL::Bbox_2 Bbox_2;
+
 
 extern "C"
 __declspec (dllexport)
@@ -39,10 +102,19 @@ StraightSkeletonFree(int*& numFace_i,
 
 extern "C"
 __declspec (dllexport)
-int 
-StraightSkeleton(int np, int* np_i, double* xp, double* yp,
-		 int& numFaces, int& numVertices, int*& numFace_i,
-                double*& xf, double*& yf, int dumpEPS)
+int  
+StraightSkeleton( int np
+                , int* np_i
+                , double* xp
+                , double* yp
+                , int& numFaces
+                , int& numVertices
+                , int*& numFace_i
+                , double*& xf
+                , double*& yf
+                , int dumpEPS
+                , ProgressCallback progress
+                )
 {
   int result = 0 ;
 
@@ -52,7 +124,10 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
   try
   {
     double scale = 1.0;
-    SsBuilder ssb ;  
+
+    SsBuilderTraits traits ;
+    Visitor         visitor(progress) ; 
+    SsBuilder ssb(traits,visitor) ;  
 
     Bbox_2 bbox;
     
@@ -85,6 +160,8 @@ StraightSkeleton(int np, int* np_i, double* xp, double* yp,
       else ssb.enter_contour(points.begin(),points.end());
     }  
       
+
+    visitor.set_total(currentPoint*2);
 
     // Construct the skeleton
     boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
