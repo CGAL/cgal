@@ -64,6 +64,10 @@ class Root_for_circles_2_2 {
 	                ix.sup(),iy.sup());
   }
 
+  template < typename RT >
+  friend bool operator == ( const Root_for_circles_2_2<RT>& r1,
+   	                    const Root_for_circles_2_2<RT>& r2 );
+
 };
   
 template < typename RT >
