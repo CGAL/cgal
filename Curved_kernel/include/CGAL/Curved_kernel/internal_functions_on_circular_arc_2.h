@@ -289,7 +289,7 @@ namespace CircularFunctors {
   equal(const typename CK::Circular_arc_point_2 &p0,
         const typename CK::Circular_arc_point_2 &p1)
   {
-    if(p0.equal_ref(p1)) return static_cast<Comparison_result>(0);
+    if(p0.equal_ref(p1)) return static_cast<Comparison_result>(1);
     return CircularFunctors::compare_xy<CK>(p0, p1) == 0;
   }
 
