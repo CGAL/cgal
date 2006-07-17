@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 //                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
 //                 David Millman <dlm336@cs.nyu.edu>
 

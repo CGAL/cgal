@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,11 +11,11 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.2-branch/Apollonius_graph_2/include/CGAL/Apollonius_graph_traits_2.h $
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Apollonius_graph_2/include/CGAL/Apollonius_graph_traits_2.h $
 // $Id: Apollonius_graph_traits_2.h 28567 2006-02-16 14:30:13Z lsaboret $
 // 
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 //                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
 //                 David Millman <dlm336@cs.nyu.edu>
 
