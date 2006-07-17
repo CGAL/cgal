@@ -266,6 +266,7 @@ Doxyfile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.bff = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.spec = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.nsi = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.patch = svn:mime-type=text/x-diff
 
 # Other binary data formats
 *.gz = svn:mime-type=application/gzip
@@ -276,7 +277,6 @@ Doxyfile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.ppt = svn:mime-type=application/vnd.ms-powerpoint
 *.doc = svn:mime-type=application/msword
 *.rtf = svn:mime-type=application/rtf
-*.patch = svn:mime-type=text/x-diff
 *.mw = svn:mime-type=application/octet-stream
 *.mws = svn:mime-type=application/octet-stream
 *.sxw = svn:mime-type=application/octet-stream
