@@ -26,7 +26,7 @@
 %{!?cgal_version:%define cgal_version 3.3}
 %{!?cgal_name: %define cgal_name CGAL}
 %{!?internal_release: %define internal_release 0}
-%define release_number 11
+%define release_number 12
 %define boost_version 1.32
 %{!?build_doc: %define build_doc 0}
 %{!?build_demo: %define build_demo 1}
@@ -53,19 +53,19 @@
 %{!?cgal_prefix: %define install_in_prefix_dir 0}
 
 %if 0%{install_in_prefix_dir}
-  %define cgal_scripts_dir %{_bindir}
-  %define cgal_headers_dir %{_includedir}
-  %define cgal_demo_src_dir %{_datadir}/CGAL/demo
-  %define cgal_examples_src_dir %{_datadir}/CGAL/examples
-  %define cgal_libs_dir %{_libdir}
-  %define cgal_makefile_dir %{_datadir}/CGAL/make
-%else
   %define cgal_scripts_dir %{cgal_prefix}/scripts
   %define cgal_headers_dir %{cgal_prefix}/include
   %define cgal_demo_src_dir %{cgal_prefix}/demo
   %define cgal_examples_src_dir %{cgal_prefix}/examples
   %define cgal_libs_dir %{cgal_prefix}/%{_lib}
   %define cgal_makefile_dir %{cgal_prefix}/make
+%else
+  %define cgal_scripts_dir %{_bindir}
+  %define cgal_headers_dir %{_includedir}
+  %define cgal_demo_src_dir %{_datadir}/CGAL/demo
+  %define cgal_examples_src_dir %{_datadir}/CGAL/examples
+  %define cgal_libs_dir %{_libdir}
+  %define cgal_makefile_dir %{_datadir}/CGAL/make
 %endif
 
 # Disable automatic handling of Provides: if %{install_in_prefix_dir} == 1
@@ -251,7 +251,7 @@ cp -a examples %{buildroot}%{cgal_examples_src_dir}
 %endif
 
 # Modify makefile
-cat > makefile.sed <<EOF
+cat > makefile.sed <<'EOF'
 s,CGAL_INCL_DIR *=.*,CGAL_INCL_DIR = %{cgal_headers_dir},;
 s,CGAL_LIB_DIR *=.*,CGAL_LIB_DIR = %{cgal_libs_dir},;
 /CUSTOM_CXXFLAGS/ s/-O2 //;
@@ -358,6 +358,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Jul 17 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-12
+- Fix %%{cgal_prefix} stuff!!
+- Quote 'EOF', so that the lines are not expanded by the shell.
+
 * Thu Jul 13 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-11
 - soname is now libCGAL.so.2
 
