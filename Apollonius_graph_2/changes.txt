@@ -1,3 +1,7 @@
+17 July 2006:  Menelaos Karavelas
+- moved the predicate functors of Apollonius_graph_new_traits_2 to
+  separate files.
+
 10 July 2006:  Menelaos Karavelas
 - bug fix in an assertion inside the Incircle test. Bug found by
   Christophe Delage <Christophe.Delage@sophia.inria.fr>

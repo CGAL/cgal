@@ -1,0 +1,106 @@
+// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+//                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
+//                 David Millman <dlm336@cs.nyu.edu>
+
+#ifndef CGAL_APOLLONIUS_GRAPH_2_EDGE_CONFLICT_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_EDGE_CONFLICT_2_H
+
+
+// FIXME: We include the old traits class file for now to get the functors.
+#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/new_traits/Conflict_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+//-----------------------------------------------------------------------
+//                     Edge Conflict Base
+//-----------------------------------------------------------------------
+
+template < class K, class Method_tag >
+class Edge_conflict_2 : public Conflict_2<K, Method_tag>
+{
+public:
+    typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+    typedef bool                              result_type;
+    struct Arity {};
+
+protected:
+
+    bool edge_conflict_test(const Inverted_weighted_point &p2,
+                            const Inverted_weighted_point &p3,
+                            const Inverted_weighted_point &p4,
+                            const Inverted_weighted_point &q,
+                            bool b, int i23Q, int i24Q) const
+    {
+
+        // orientations
+        Sign orient23Q = this->orientation(p2, p3, q);
+        Sign orient42Q = this->orientation(p4, p2, q);
+        Sign orient234 = this->orientation(p2, p3, p4);
+
+        // radical intersections
+        Sign radInt23Q = radical_intersection(p2, p3, q, -1);
+        Sign radInt24Q = radical_intersection(p2, p4, q, -1);
+
+        // radical side
+        Sign radSid2Q3 = radical_side(p2, q, p3, -1);
+        Sign radSid2Q4 = radical_side(p2, q, p4, -1);
+
+        // order of a line
+        bool oolQ24 = ordered_on_line(q, p2, p4);
+        bool oolQ23 = ordered_on_line(q, p2, p3); 
+
+        if(b)
+        {
+            if (sign (q.p()) != POSITIVE ) return true;
+            // degenerate case
+            if(orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO)
+                return (oolQ23 || oolQ24);	
+            // non degenerate case
+            else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
+                        (radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE)))
+                return true;
+            else if (orient234 != NEGATIVE)
+                return orient23Q != POSITIVE && orient42Q != POSITIVE;
+            else
+                return orient23Q != POSITIVE || orient42Q != POSITIVE;
+        }
+        else
+        {
+            CGAL_assertion (sign (q.p()) == POSITIVE);
+            // degenerate case
+            if(orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO)
+                return (oolQ23 && oolQ24);		
+            // non degenerate case	
+            else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
+                        (radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE)))
+                return false;
+            else if (orient234 != NEGATIVE) 
+                return orient23Q != POSITIVE || orient42Q != POSITIVE;
+            else 
+                return orient23Q != POSITIVE && orient42Q != POSITIVE;
+        }
+    }
+};
+
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_APOLLONIUS_GRAPH_2_EDGE_CONFLICT_2_H
