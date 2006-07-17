@@ -2,11 +2,7 @@ README
 ======
 
 next revision:
-- check if linda override is needed for #369997
-	/usr/share/linda/overrides/libcgal-dev:
-	# override bogus warning caused by #369997
-	Tag: exec-not-elf-or-script
-	Data: /usr/bin/cgal_create_makefile
+- check if linda override for #369977 is still needed
 
 backport for sarge:
 - debian/control:

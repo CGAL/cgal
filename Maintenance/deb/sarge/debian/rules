@@ -15,8 +15,8 @@ ifndef CXX
 	CXX = g++
 endif
 
-SOVERSION=2.0.0
-SOMAJOR=2
+SOVERSION=1.0.1
+SOMAJOR=1
 
 build: build-stamp
 build-stamp: patch-stamp

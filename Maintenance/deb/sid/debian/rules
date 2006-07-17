@@ -15,8 +15,8 @@ ifndef CXX
 	CXX = g++
 endif
 
-SOVERSION=2.0.0
-SOMAJOR=2
+SOVERSION=1.0.1
+SOMAJOR=1
 
 build: build-stamp
 build-stamp: patch-stamp
@@ -60,7 +60,7 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	mkdir -p debian/tmp/{usr/bin,usr/include,usr/lib,usr/share/cgal,usr/share/doc/cgal}
+	mkdir -p debian/tmp/{usr/bin,usr/include,usr/lib,usr/share/cgal,usr/share/doc/cgal,usr/share/linda/overrides/libcgal-dev}
 
 	cp -a scripts/cgal_create_makefile debian/tmp/usr/bin
 
@@ -101,6 +101,9 @@ install: build
 
 	install -d debian/libcgal1/DEBIAN
 	install -m644 debian/libcgal1.shlibs debian/libcgal1/DEBIAN/shlibs
+
+	install -d debian/libcgal-dev/usr/share/linda/overrides
+	install -m644 debian/misc/linda-override debian/libcgal-dev/usr/share/linda/overrides/libcgal-dev
 
 binary-indep: build install
 	dh_testdir -i
