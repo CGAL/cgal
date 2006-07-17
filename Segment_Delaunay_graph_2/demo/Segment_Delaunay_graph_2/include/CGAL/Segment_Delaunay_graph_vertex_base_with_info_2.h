@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France) and
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France) and
 // Notre Dame University (U.S.A.).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -64,8 +64,8 @@ public:
 						 Face_handle f)
     : Vbb(ss, f), info_()  {}
 
-  void set_info(int info) { info_ = info; }
-  Info info() const { return info_; }
+  void set_info(const Info& info) { info_ = info; }
+  const Info& info() const { return info_; }
 
 private:
   Info info_;

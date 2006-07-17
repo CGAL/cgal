@@ -1,3 +1,7 @@
+17 July 2006:  Menelaos Karavelas
+- fixed bug in Segment_Delaunay_graph_vertex_base_with_info_2. Bug spotted
+  by Laurent Masse-Navette <laurent.masse-navette@pulsic.com>.
+
 10 July 2006:  Menelaos Karavelas
 - moved .C files to .cpp in test directory
 
