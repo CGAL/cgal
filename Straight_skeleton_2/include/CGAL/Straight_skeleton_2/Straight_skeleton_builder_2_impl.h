@@ -47,7 +47,7 @@ Straight_skeleton_builder_2<Gt,SS,V>::Straight_skeleton_builder_2 ( Traits const
  ,mVertexID(0)
  ,mEdgeID(0)
  ,mEventID(0)
- ,mStepID(-1)
+ ,mStepID(0)
  ,mPQ(mEventCompare)
  ,mSSkel( new SSkel() )
 {
