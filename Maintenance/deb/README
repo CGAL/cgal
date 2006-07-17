@@ -1,9 +1,6 @@
 README
 ======
 
-next revision:
-- check if linda override for #369977 is still needed
-
 backport for sarge:
 - debian/control:
   * adjust Standards-Version: to 3.6.1

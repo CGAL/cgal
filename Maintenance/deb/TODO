@@ -1,10 +1,8 @@
 TODO
 ====
 
-- CGAL 3.2.1
-  * do not rename root directory
-  * if possible, leave tarball untouched (doc_pdf/Installation.pdf should be
-    gone)
+next revision:
+- check if linda override for #369977 is still needed
 
-- CGAL 3.3
-  * SONAME issue
+CGAL 3.3:
+- SONAME issue
