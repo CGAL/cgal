@@ -76,7 +76,7 @@ Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
 
 
 using Nef::to_double;
-using Nef:::sign;
+using Nef::sign;
 using Nef::abs;
 using Nef::is_finite;
 using Nef::isvalid;
