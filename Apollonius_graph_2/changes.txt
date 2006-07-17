@@ -2,6 +2,12 @@
 - moved the predicate functors of Apollonius_graph_new_traits_2 to
   separate files.
 
+13 July 2006: Christophe Delage
+- added an Orientation predicate to the new traits class
+
+12 July 2006: Christophe Delage
+- added a new traits class in include/CGAL/new_traits
+
 10 July 2006:  Menelaos Karavelas
 - bug fix in an assertion inside the Incircle test. Bug found by
   Christophe Delage <Christophe.Delage@sophia.inria.fr>
