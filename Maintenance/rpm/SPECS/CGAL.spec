@@ -26,7 +26,7 @@
 %{!?cgal_version:%define cgal_version 3.3}
 %{!?cgal_name: %define cgal_name CGAL}
 %{!?internal_release: %define internal_release 0}
-%define release_number 12
+%define release_number 13
 %define boost_version 1.32
 %{!?build_doc: %define build_doc 0}
 %{!?build_demo: %define build_demo 1}
@@ -208,6 +208,9 @@ EOF
 chmod a+x %{_builddir}/%{tarball_name}/find_provides.sh
 
 %build
+
+source /etc/profile.d/qt.sh
+
 ./install_cgal -ni g++ --CUSTOM_CXXFLAGS "$RPM_OPT_FLAGS" \
                --without-autofind \
                --with-ZLIB \
@@ -263,16 +266,29 @@ EOF
 
 sed -i -f makefile.sed %{buildroot}%{cgal_makefile_dir}/makefile
 
-#### TODO
-%if 0%{install_in_prefix_dir}
-sed -i -e "/'-L$(CGAL_LIB_DIR)\/$(CGAL_OS_COMPILER)/ d; /-R$(CGAL_LIB_DIR)\/$(CGAL_OS_COMPILER)/ d; /-I/ d;" %{buildroot}%{cgal_makefile_dir}/makefile
-%endif
-
 # check if the sed script above has worked:
 grep -q %{_builddir} %{buildroot}%{cgal_makefile_dir}/makefile && false
 grep -q %{buildroot} %{buildroot}%{cgal_makefile_dir}/makefile && false
 grep -q CGAL/config %{buildroot}%{cgal_makefile_dir}/makefile && false
 grep -q -E 'CUSTOM_CXXFLAGS.*(-O2|-g)' %{buildroot}%{cgal_makefile_dir}/makefile && false
+
+# If CGAL is not installed in a prefix directory, remove -L and -R flags
+# from the makefile
+%if 0%{install_in_prefix_dir} == 0
+
+cat > makefile-noprefix.sed <<'EOF'
+/'-L$(CGAL_LIB_DIR)'/ d;
+/-R$(CGAL_LIB_DIR)/ d;
+/'-I$(CGAL_INCL_DIR)'/ d;
+EOF
+
+sed -i -f makefile-noprefix.sed  %{buildroot}%{cgal_makefile_dir}/makefile
+
+# check that the sed script has worked
+grep -q -E -- '-[LI]\$' %{buildroot}%{cgal_makefile_dir}/makefile && false
+grep -q -E -- '-R' %{buildroot}%{cgal_makefile_dir}/makefile && false
+
+%endif
 
 # Create /etc/profile.d/ scripts
 cd %{buildroot}
@@ -358,7 +374,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Thu Jul 17 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-12
+* Mon Jul 17 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-13
+- Remove unneeded  -R/-L/-I flags from %%{_datadir}/CGAL/make/makefile
+
+* Mon Jul 17 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 3.3-12
 - Fix %%{cgal_prefix} stuff!!
 - Quote 'EOF', so that the lines are not expanded by the shell.
 
