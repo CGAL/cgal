@@ -164,6 +164,7 @@ CHANGES = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 cgal_test = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 run_testsuite = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 *.cmd = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.dpatch = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 
 # Code formats
 *.[cC] = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
@@ -276,7 +277,6 @@ Doxyfile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.doc = svn:mime-type=application/msword
 *.rtf = svn:mime-type=application/rtf
 *.patch = svn:mime-type=text/x-diff
-*.dpatch = svn:mime-type=text/x-diff
 *.mw = svn:mime-type=application/octet-stream
 *.mws = svn:mime-type=application/octet-stream
 *.sxw = svn:mime-type=application/octet-stream
