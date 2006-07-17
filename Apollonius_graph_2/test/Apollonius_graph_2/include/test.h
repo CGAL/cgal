@@ -11,8 +11,8 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
-//#include <CGAL/Apollonius_graph_filtered_traits_2.h>
-#include <CGAL/new_traits/Apollonius_graph_new_filtered_traits_2.h>
+#include <CGAL/Apollonius_graph_filtered_traits_2.h>
+//#include <CGAL/new_traits/Apollonius_graph_new_filtered_traits_2.h>
 
 #include "IO/Null_output_stream.h"
 
