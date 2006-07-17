@@ -39,16 +39,29 @@
 % Read version.tex for release number
 \lcTex{\catcode`@=11}
 \lcTex{\@input{version.tex}%
-  \ifx\cgalversion\@ClearUndefdMacro \gdef\cgalversion{Separate Build}\else
-    \xdef\cgalversion{Release \cgalversion}\fi
+  \ifx\cgalversion\@ClearUndefdMacro
+    \gdef\cgalversion{Separate Build}
+  \else
+    \xdef\cgalversion{Release \cgalversion}
+  \fi
+  \ifx\cgalinternalversion\@ClearUndefdMacro
+    \gdef\cgalinternalversion{}
+  \else
+    \xdef\cgalinternalversion{Built from \cgalinternalversion}
+  \fi
   \ifx\cgalversiondate\@ClearUndefdMacro \gdef\cgalversiondate{\today}\fi}
 \lcTex{\catcode`@=12}
 
-\lcHtml{\lciIfFileExists{version.tex}{\input{version.tex}}{}%
+\lcHtml{
+  \lciIfFileExists{version.tex}{\input{version.tex}}{}%
   \lciIfDefined{\cgalversion}%
     {\xdef\cgalTmpVersion{\cgalversion}%
-      \gdef\cgalversion{Release \cgalTmpVersion}}%
+     \gdef\cgalversion{Release \cgalTmpVersion}}%
     {\gdef\cgalversion{Separate Build}}%
+  \lciIfDefined{\cgalinternalversion}%
+    {\xdef\cgalTmpInternalVersion{\cgalinternalversion}%
+     \gdef\cgalinternalversion{Built from \cgalTmpInternalVersion}}%
+    {\gdef\cgalinternalversion{}}%
   \lciIfDefined{\cgalversiondate}{}{\gdef\cgalversiondate{\today}}}
 
 
@@ -178,7 +191,9 @@
   \centerline{{\Large \cgalversion}}\vspace{1cm}
 
   \centerline{{\Large \cgalversiondate}}
+
   \centerline{{\footnotesize \cgalinternalversion}}
+
   \end{titlepage}
   \cleardoublepage
   \setcounter{page}{1}
