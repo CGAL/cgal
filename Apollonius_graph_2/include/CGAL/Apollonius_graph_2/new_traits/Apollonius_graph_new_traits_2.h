@@ -106,7 +106,10 @@ public:
   typedef CGAL::Ag2_compare_x_2<Kernel>                 Compare_x_2;
   typedef CGAL::Ag2_compare_y_2<Kernel>                 Compare_y_2;
   typedef CGAL::Ag2_compare_weight_2<Kernel>            Compare_weight_2;
-  typedef CGAL::AG2_Orientation_test_new_2<Kernel,MTag> Orientation_2;
+  // the following seems to be buggy
+  //  typedef CGAL::AG2_Orientation_test_new_2<Kernel,MTag> Orientation_2;
+  // use the old one:
+  typedef CGAL::AG2_Orientation_test_2<Kernel,MTag>     Orientation_2;
   typedef CGAL::Is_hidden_2<Kernel,MTag>                Is_hidden_2;
   typedef CGAL::Oriented_side_of_bisector_2<Kernel,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
