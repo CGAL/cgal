@@ -1,0 +1,6 @@
+* remove all predicates methods from halfedge, except has_source and has_target
+  these should be renamed to has_finite_source and has_finite_target
+* a ccb circulator should also go through the infinite edges
+* introduce iterators for infinite items as well (maybe within the accessor)
+* introduce is_infinite methods within the class
+* implement/document the accessor

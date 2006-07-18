@@ -1,3 +1,6 @@
+18 July 2006:  Menelaos Karavelas
+- added dont_submit and TODO file (dont_submit contains TODO)
+
 12 July 2006:  Menelaos Karavelas
 - fixed typo in AdaptationTraits_2 concept
 
