@@ -53,6 +53,7 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svne
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#image/png
 Apollonius_graph_2/include/CGAL/Apollonius_graph_2/new_traits/Apollonius_graph_new_filtered_traits_2.h -text
 Apollonius_graph_2/include/CGAL/Apollonius_graph_2/new_traits/Apollonius_graph_new_traits_2.h -text
+Apollonius_graph_2/include/CGAL/Apollonius_graph_2/uncertain/Apollonius_graph_uncertain_filtered_traits_2.h -text
 Apollonius_graph_2/include/CGAL/Apollonius_graph_2/uncertain/Uncertain_vertex_conflict_2.h -text
 Apollonius_graph_2/test/Apollonius_graph_2/test_ag_new_traits_2.cpp -text
 Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#application/octet-stream
