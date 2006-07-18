@@ -1,0 +1,23 @@
+\begin{ccRefConcept}{AlgebraicKernel_d_2::SignAt_2}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+	result_type
+    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p,
+	     const AlgebraicKernel_d_2::Algebraic_real_2 & r);}
+{Computes the sign of a bivariate polynomial \ccc{p} evaluated at the root 
+\ccc{r} of a system of two bivariate polynomials.
+\ccc{result_type} must be convertible into \ccc{CGAL::Sign}.} 
+\footnote{We want to allow \ccc{UNDECIDED} as \ccc{result_type}}
+
+\footnote{what about coefficients? (like in univariate case). We can have 
+a constructor of \ccc{Algebraic_real_2} from 2 \ccc{Coefficient} and it 
+will solve the question.}
+
+\end{ccRefConcept}
+

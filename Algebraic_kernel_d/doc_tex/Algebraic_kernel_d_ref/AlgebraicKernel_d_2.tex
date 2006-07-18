@@ -1,0 +1,67 @@
+\begin{ccRefConcept}{AlgebraicKernel_d_2} 
+
+\ccDefinition
+
+The \ccc{AlgebraicKernel_d_2} concept is meant to provide the curved
+kernel with all the algebraic functionalities on bivariate polynomials
+required for the manipulation of arcs of algebraic curves of general degree
+$d$ in $\R^2$.
+
+\texttt{Question: what is the righ interface with AK for \ccc{compare_y_at_x_right}?}
+
+\ccTypes
+
+A model of \ccc{AlgebraicKernel_d_2} is supposed to provide
+
+\ccNestedType{Coefficient}{A model of \ccc{IntegralDomain}. }
+
+\ccNestedType{Polynomial_2}{A model of \ccc{Polynomial_2}, for
+bivariate polynomials on an \ccc{IntegralDomain} coefficient type.} 
+
+\ccNestedType{Algebraic_real_2}{A model of
+\ccc{AlgebraicKernel_d_2::AlgebraicReal_2}, for solutions of systems
+of two bivariate polynomials of type \ccc{Polynomial_2}.}
+
+\ccNestedType{Construct_polynomial_2}{
+Must provide 
+\ccc{template <class InputIterator> 
+Polynomial_2 operator()(InputIterator first, InputIterator last)}
+that constructs a polynomial from a range of coefficients of type
+\ccc{Coefficient}.
+}
+\footnote{how are coefficients ordered for bivariate polynomials?
+lexicographically on the powers of monomials?}
+
+\ccNestedType{Solve_2}{A model of the concept
+\ccc{AlgebraicKernel_d_2::Solve_2}.} 
+
+\ccNestedType{Sign_at_2}{A model of the concept
+\ccc{AlgebraicKernel_d_2::SignAt_2}.}
+
+\ccNestedType{Derivative_x_2}{A model of the concept
+\ccc{AlgebraicKernel_d_2::DerivativeX_2}.} 
+
+\ccNestedType{Derivative_y_2}{A model of the concept
+\ccc{AlgebraicKernel_d_2::DerivativeY_2}.} 
+
+\ccNestedType{X_critical_points_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::XCriticalPoints_2}.}
+\ccGlue
+\ccNestedType{Y_critical_points_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::YCriticalPoints_2}.}
+
+\ccNestedType{Compare_x_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::CompareX_2}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::CompareY_2}.}
+\ccGlue
+\ccNestedType{Compare_xy_2}{A model of the concept 
+\ccc{AlgebraicKernel_d_2::CompareXY_2}.}
+
+\ccHasModels
+
+\ccSeeAlso
+
+
+\end{ccRefConcept}

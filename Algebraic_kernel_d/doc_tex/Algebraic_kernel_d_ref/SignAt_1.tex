@@ -1,0 +1,24 @@
+\begin{ccRefConcept}{AlgebraicKernel_d_1::SignAt_1}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+	result_type
+    operator()(const AlgebraicKernel_d_1::Polynomial_1 & p,
+	     const AlgebraicKernel_d_1::Algebraic_real_1 & r);}
+{Computes the sign of polynomial \ccc{p} evaluated at an algebraic number.
+\ccc{result_type} must be convertible into \ccc{CGAL::Sign}.} 
+\footnote{We want to allow \ccc{UNDECIDED} as \ccc{result_type}}
+
+\ccMethod{template < class OutputIterator >
+	result_type
+    operator()(const AlgebraicKernel_d_1::Polynomial_1 & p,
+	     const AlgebraicKernel_d_1::Coefficient & r);}
+{}
+
+\end{ccRefConcept}
+
