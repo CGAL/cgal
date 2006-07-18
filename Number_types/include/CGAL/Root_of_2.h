@@ -35,6 +35,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Binary_operator_result.h>
 #include <boost/type_traits/is_same.hpp>
+#include <CGAL/Handle_for.h>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
@@ -268,10 +269,11 @@ struct NT_converter < Root_of_2<NT1> , Root_of_2<NT2> >
     operator()(const Root_of_2<NT1> &a) const
     {
       if(!a.is_rational()) {
-        return make_root_of_2(NT_converter<NT1,NT2>()(a[2]),NT_converter<NT1,NT2>()(a[1]),
-                              NT_converter<NT1,NT2>()(a[0]),a.is_smaller());
+        return make_root_of_2(NT_converter<NT1,NT2>()(a[2]), NT_converter<NT1,NT2>()(a[1]),
+                              NT_converter<NT1,NT2>()(a[0]), a.is_smaller(), 
+                              a.is_known_delta_not_zero());
       } else {
-        return make_root_of_2(NT_converter<NT1,NT2>()(a[1]) / NT_converter<NT1,NT2>()(a[2]));
+        return Root_of_2<NT2>(NT_converter<NT1,NT2>()(a[1]), NT_converter<NT1,NT2>()(a[2]));
       }
     }
 };
