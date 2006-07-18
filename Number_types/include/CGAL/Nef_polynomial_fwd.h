@@ -79,7 +79,7 @@ using Nef::to_double;
 using Nef::sign;
 using Nef::abs;
 using Nef::is_finite;
-using Nef::isvalid;
+using Nef::is_valid;
 using Nef::gcd;
 
 CGAL_END_NAMESPACE

@@ -1,3 +1,8 @@
+18 July 2006 Menelaos Karavelas
+- changed "using Nef::isvalid" to "using Nef::is_valid"in forward
+  declaration of Nef related polynomials; this should get rid of some
+  reds in the test suite
+
 6 July 2006 Laurent Rineau
 - fix io_tags of all elementary number types
 
