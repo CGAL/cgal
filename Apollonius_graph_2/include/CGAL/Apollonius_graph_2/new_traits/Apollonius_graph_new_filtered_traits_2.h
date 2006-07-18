@@ -292,12 +292,12 @@ private:
   typedef Ag2_compare_weight_2<FK>               FK_Compare_weight_2;
   typedef Ag2_orientation_2<FK,FK_MTag>          FK_Orientation_2;
   typedef Ag2_is_hidden_C2<FK,FK_MTag>           FK_Is_hidden_2;
-  typedef Incircle_test<FK,FK_MTag>              FK_Vertex_conflict_2;
+  typedef Vertex_conflict_new_2<FK,FK_MTag>      FK_Vertex_conflict_2;
   typedef Ag2_oriented_side_of_bisector_C2<FK,FK_MTag>
   /*                                    */  FK_Oriented_side_of_bisector_2;
-  typedef Ag2_finite_edge_test_C2<FK,FK_MTag>   
+  typedef Finite_edge_interior_conflict_new_2<FK,FK_MTag>   
   /*                                 */ FK_Finite_edge_interior_conflict_2;
-  typedef Infinite_edge_test<FK,FK_MTag>
+  typedef Infinite_edge_interior_conflict_new_2<FK,FK_MTag>
   /*                              */  FK_Infinite_edge_interior_conflict_2;
   typedef Is_degenerate_edge_test<FK,FK_MTag>    FK_Is_degenerate_edge_2;
 
@@ -307,12 +307,12 @@ private:
   typedef Ag2_compare_weight_2<EK>               EK_Compare_weight_2;
   typedef Ag2_orientation_2<EK,EK_MTag>          EK_Orientation_2;
   typedef Ag2_is_hidden_C2<EK,EK_MTag>           EK_Is_hidden_2;
-  typedef Incircle_test<EK,EK_MTag>              EK_Vertex_conflict_2;
+  typedef Vertex_conflict_new_2<EK,EK_MTag>      EK_Vertex_conflict_2;
   typedef Ag2_oriented_side_of_bisector_C2<EK,EK_MTag>
   /*                                    */  EK_Oriented_side_of_bisector_2;
-  typedef Ag2_finite_edge_test_C2<EK,EK_MTag>   
+  typedef Finite_edge_interior_conflict_new_2<EK,EK_MTag>   
   /*                                */  EK_Finite_edge_interior_conflict_2;
-  typedef Infinite_edge_test<EK,EK_MTag>
+  typedef Infinite_edge_interior_conflict_new_2<EK,EK_MTag>
   /*                              */  EK_Infinite_edge_interior_conflict_2;
   typedef Is_degenerate_edge_test<EK,EK_MTag>    EK_Is_degenerate_edge_2;
 #endif
