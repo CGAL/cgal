@@ -1,3 +1,10 @@
+MY 18/10/2006
+output_surface_facets_to_off :
+- ameliorer le code
+- assurer la bonne orientation des facettes
+- documenter
+
+
 Rendre paresseux la gestion de la liste des bad edges
 dans Surface_mesher_manifold_edges
 comme le traitement des bad vertices dans Surface_mesher_manifold
