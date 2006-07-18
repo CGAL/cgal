@@ -2,6 +2,10 @@
 - moved the new_traits directory inside Apollonius_graph_2
   so that it does not clutter the CGAL include directory; also
   changes to dont_submit and test directory due to this
+- fixed various traits classes according to new directory structure
+- correct functors are now called
+- old orientation predicate is called in new traits; the new one seems
+  to have problems (Christophe?)
 
 17 July 2006:  Menelaos Karavelas
 - moved the predicate functors of Apollonius_graph_new_traits_2 to
