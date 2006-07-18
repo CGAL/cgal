@@ -38,18 +38,8 @@ opposite(const T& t)
 
 inline
 Sign
-opposite(Sign o)
+operator-(Sign o)
 { return static_cast<Sign>( - static_cast<int>(o)); }
-
-inline
-Comparison_result
-opposite(Comparison_result o)
-{ return static_cast<Comparison_result>( - static_cast<int>(o)); }
-
-inline
-Oriented_side
-opposite(Oriented_side os)
-{ return static_cast<Oriented_side>( - static_cast<int>(os)); }
 
 inline
 Bounded_side
@@ -60,6 +50,11 @@ inline
 Angle
 opposite(Angle a)
 { return static_cast<Angle>( - static_cast<int>(a)); }
+
+inline Sign operator* (Sign s1, Sign s2)
+{
+    return static_cast<Sign> (static_cast<int> (s1) * static_cast<int> (s2));
+}
 
 #ifdef CGAL_CFG_MATCHING_BUG_5
 

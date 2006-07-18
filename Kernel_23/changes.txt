@@ -1,3 +1,7 @@
+18 July 20006 Christophe Delage
+- typedefed Oriented_side and Comparison_result to Sign
+- added unary - and binary * operators for Sign
+
 6 March 2006 Andreas Fabri
 - Added intro.tex with the \chapter command in order to get uniform URLs
 
