@@ -1370,6 +1370,9 @@ QP_solver/test/QP_solver/data_to_mps-double.cin -text
 QP_solver/test/QP_solver/data_to_mps-rational.C -text
 QP_solver/test/QP_solver/data_to_mps-rational.cin -text
 QP_solver/test/QP_solver/data_to_mps.cin -text
+QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_free.mps -text
+QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_shifted.mps -text
+QP_solver/test/QP_solver/test_solver_data/masters/cgal/QPTEST.mps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/pdf

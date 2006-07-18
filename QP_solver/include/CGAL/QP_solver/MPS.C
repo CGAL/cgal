@@ -564,6 +564,7 @@ bool QP_MPS_instance<IT_,ET_,
   // remember section name:
   D_section = t;
   const bool divide_by_two = t!="DMATRIX";
+  const bool only_get_lower_part = t =="QUADOBJ";
 
   // initialize matrix D:
   initialize_D(var_names.size(),Use_sparse_representation_for_D());
@@ -602,6 +603,11 @@ bool QP_MPS_instance<IT_,ET_,
     // set entry in D:
     set_entry_in_D(var1_index,var2_index,val,
 		   Use_sparse_representation_for_D());
+    if (only_get_lower_part)
+      // duplicate entry if not on diagonal
+      if (var1_index != var2_index) 
+	set_entry_in_D(var2_index,var1_index,val,
+		       Use_sparse_representation_for_D());
 
     // read next token:
     t = token();
