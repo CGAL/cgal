@@ -25,7 +25,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Number_type_traits.h>
-#include <CGAL/uncertain_functions_on_signs.h>
+#include <CGAL/Apollonius_graph_2/uncertain/uncertain_functions_on_signs.h>
 
 CGAL_BEGIN_NAMESPACE
 
