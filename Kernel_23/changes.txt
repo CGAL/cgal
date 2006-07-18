@@ -1,3 +1,9 @@
+18 July 2006 Menelaos Karavelas
+- in Enum_converter: removed (dummy) conversions for Oriented_side and
+  Comparison_result; they should be taken care of by the conversion for
+  Sign, now that Sign, Oriented_side and Comparison_result are the same
+  type (see change by Christophe just below).
+
 18 July 20006 Christophe Delage
 - typedefed Oriented_side and Comparison_result to Sign
 - added unary - and binary * operators for Sign

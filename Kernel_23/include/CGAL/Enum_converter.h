@@ -35,13 +35,7 @@ struct Enum_converter
 
   Sign              operator()(Sign s) const { return s; }
 
-  Oriented_side     operator()(Oriented_side os) const { return os; }
-
   Bounded_side      operator()(Bounded_side bs) const { return bs; }
-
-  Comparison_result operator()(Comparison_result cr) const {
-    return cr;
-  }
 
   Angle operator()(Angle a) const { return a; }
 };
