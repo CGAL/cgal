@@ -46,7 +46,7 @@ public:
   }
   void write(std::ostream &out) const
   {
-    out << "[Bounce " << k_ << " off " << s_ << " at " << t_ <<"]";
+    out << "Bounce " << k_ << " off " << s_ << " at " << t_;
   }
   EB3* eb_;
   typename EB3::Point_key k_;
