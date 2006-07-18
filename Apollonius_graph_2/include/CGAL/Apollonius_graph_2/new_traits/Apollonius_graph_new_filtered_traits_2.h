@@ -348,7 +348,7 @@ public:
   Oriented_side_of_bisector_2;
 
   typedef
-  My_filtered_predicate<EK_Vertex_conflict_2,
+  Filtered_predicate<EK_Vertex_conflict_2,
 		     FK_Vertex_conflict_2, C2E, C2F>
   Vertex_conflict_2;
 
