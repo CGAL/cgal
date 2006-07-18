@@ -38,10 +38,9 @@
 
 // new includes
 
-#include <CGAL/Apollonius_graph_2/My_filtered_predicate.h>
-#include <CGAL/Apollonius_graph_2/Uncertain_is_hidden_C2.h>
-#include <CGAL/Apollonius_graph_2/Uncertain_oriented_side_of_bisector_C2.h>
-#include <CGAL/Apollonius_graph_2/Uncertain_vertex_conflict_2.h>
+#include <CGAL/Apollonius_graph_2/uncertain/Uncertain_is_hidden_C2.h>
+#include <CGAL/Apollonius_graph_2/uncertain/Uncertain_oriented_side_of_bisector_C2.h>
+#include <CGAL/Apollonius_graph_2/uncertain/Uncertain_vertex_conflict_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -93,7 +92,7 @@ template<class CK_t,
          class C2F_t   =
          Cartesian_converter<CK_t, FK_t, To_interval<typename CK_t::RT> > >
 #endif
-class Apollonius_graph_filtered_traits_2
+class Apollonius_graph_uncertain_filtered_traits_2
 {
 private:
   typedef Apollonius_graph_traits_2<CK_t, CK_MTag>    CK_traits;
@@ -299,7 +298,6 @@ private:
   typedef Ag2_compare_weight_2<FK>               FK_Compare_weight_2;
   typedef Ag2_orientation_2<FK,FK_MTag>          FK_Orientation_2;
   typedef Ag2_uncertain_is_hidden_C2<FK,FK_MTag> FK_Is_hidden_2;
-  //  typedef Incircle_test<FK,FK_MTag>              FK_Vertex_conflict_2;
   typedef Uncertain_vertex_conflict_new_2<FK,FK_MTag>
   /*                                         */  FK_Vertex_conflict_2;
   typedef Ag2_uncertain_oriented_side_of_bisector_C2<FK,FK_MTag>
@@ -315,8 +313,9 @@ private:
   typedef Ag2_compare_y_2<EK>                    EK_Compare_y_2;
   typedef Ag2_compare_weight_2<EK>               EK_Compare_weight_2;
   typedef Ag2_orientation_2<EK,EK_MTag>          EK_Orientation_2;
-  typedef Ag2_uncertain_is_hidden_C2<EK,EK_MTag>           EK_Is_hidden_2;
-  typedef Incircle_test<EK,EK_MTag>              EK_Vertex_conflict_2;
+  typedef Ag2_uncertain_is_hidden_C2<EK,EK_MTag> EK_Is_hidden_2;
+  typedef Uncertain_vertex_conflict_new_2<EK,EK_MTag>
+  /*                                         */  EK_Vertex_conflict_2;
   typedef Ag2_uncertain_oriented_side_of_bisector_C2<EK,EK_MTag>
   /*                                    */  EK_Oriented_side_of_bisector_2;
   typedef Ag2_finite_edge_test_C2<EK,EK_MTag>   
@@ -348,17 +347,17 @@ public:
   Orientation_2;
 
   typedef
-  My_filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
+  Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
   Is_hidden_2;
 
   typedef
-  My_filtered_predicate<EK_Oriented_side_of_bisector_2,
+  Filtered_predicate<EK_Oriented_side_of_bisector_2,
 			FK_Oriented_side_of_bisector_2, C2E, C2F>
   Oriented_side_of_bisector_2;
 
   typedef
   Filtered_predicate<EK_Vertex_conflict_2,
-		     FK_Vertex_conflict_2, C2E, C2F>
+			FK_Vertex_conflict_2, C2E, C2F>
   Vertex_conflict_2;
 
   typedef
