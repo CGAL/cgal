@@ -79,21 +79,21 @@ private:
 	Uncertain<bool> b;
 	b = is_less (*p, p1);
 	if ( is_indeterminate(b) ) {
-	  return 0;
+	  return -1;
 	} else if (b) {
 	  i = 1; p = &p1;
 	}
 
 	b = is_less(*p, p2);
 	if ( is_indeterminate(b) ) {
-	  return 0;
+	  return -1;
 	} else if (b) {
 	  i = 2; p = &p2;
 	}
 	
 	b = is_less(*p, p3);
 	if ( is_indeterminate(b) ) {
-	  return 0;
+	  return -1;
 	} else if (b) {
 	  i = 3;
 	}
@@ -109,15 +109,16 @@ private:
       RT xq = q.x() - p1.x();
       RT yq = q.y() - p1.y();
       RT wq = q.weight() - p1.weight();
-      RT aq = xq * xq + yq * yq - wq * wq;
-        
+      RT aq = CGAL::square(xq) + CGAL::square(yq) - CGAL::square(wq);
+
       // q is hiding p1
       Uncertain<Sign> s = CGAL::sign(aq);
       if ( is_indeterminate(s) ) { return s; }
       if (s != POSITIVE){
 	// I BELIEVE MENELAOS RETURNS -1 in this case even when degernate 
 	//if (sign (aq) == ZERO && ! perturb) return ZERO;
-	return NEGATIVE;
+	//	return NEGATIVE;
+	return POSITIVE;
       }
 
       RT x2 = p2.x() - p1.x();
@@ -163,20 +164,20 @@ private:
 	  Uncertain<Sign> s_ayw23q = CGAL::sign(ayw23q);
 	  if ( is_indeterminate(s_ayw23q) ) { return s_ayw23q; }
 
-	  power_test = Sign(s_ay23 * s_ayw23q);
+	  power_test = s_ay23 * s_ayw23q;
 	} else {
 	  Uncertain<Sign> s_axw23q = CGAL::sign(axw23q);
 	  if ( is_indeterminate(s_axw23q) ) { return s_axw23q; }
 
-	  power_test = Sign(orient1 * s_axw23q);
+	  power_test = orient1 * s_axw23q;
 	}
 
 	if (power_test != ZERO || ! perturb) {
-	  return CGAL::opposite(power_test);
+	  return -power_test;
 	}
 
 	int i = max_radius (p1, p2, p3, q);
-	if ( i == 0 ) {
+	if ( i == -1 ) {
 	  return Uncertain<Sign>::indeterminate();
 	}
 
@@ -214,12 +215,9 @@ private:
       if (radSide == ZERO || radSide != orient) { return orient; }
        
       // radical intersection
-      Uncertain<Comparison_result> cr =
-	CGAL::compare(axw23q * axw23q + ayw23q * ayw23q, axy23q * axy23q);
-      if ( is_indeterminate(cr) ) { return Uncertain<Sign>::indeterminate(); }
-
-      // MK::this cast should go away
-      Sign radInt = enum_cast<Sign>(cr);
+      Uncertain<Sign> radInt =
+	CGAL::sign(axw23q * axw23q + ayw23q * ayw23q - axy23q * axy23q);
+      if ( is_indeterminate(radInt) ) { return radInt; }
 
       // radical intersection degenerate
       if (radInt == ZERO) {
@@ -231,42 +229,40 @@ private:
 	if (! perturb) { return (radSideQ == orient) ? ZERO : Sign(orient); }
 
 	int i = max_radius (p1, p2, p3, q);
-	if ( i == 0 ) { return Uncertain<Sign>::indeterminate(); }
+	if ( i == -1 ) { return Uncertain<Sign>::indeterminate(); }
 
 	if (i == 3) {
 	  radInt = radSideQ;
 	} else if (i == 2) {
-	  Uncertain<Sign> s1 = CGAL::sign(ax2q * axw23q + ay2q * ayw23q);
-	  if ( is_indeterminate(s1) ) { return s1; }
-	  radInt = CGAL::opposite(s1);
+	  radInt = -CGAL::sign(ax2q * axw23q + ay2q * ayw23q);
+	  if ( is_indeterminate(radInt) ) { return radInt; }
 	  if (radInt == ZERO) { return NEGATIVE; }
 	} else if (i == 1) {
-	  Uncertain<Sign> s1 = CGAL::sign(ax3q * axw23q + ay3q * ayw23q);
-	  if ( is_indeterminate(s1) ) { return s1; }
-	  radInt = s1;
+	  radInt = CGAL::sign(ax3q * axw23q + ay3q * ayw23q);
+	  if ( is_indeterminate(radInt) ) { return radInt; }
 	  if (radInt == ZERO) { return NEGATIVE; }
 	} else {
 	  CGAL_assertion (i == 0);
-	  Uncertain<Sign> radSide1 = CGAL::sign(ax2q * axw23q + ay2q * ayw23q);
+	  Uncertain<Sign> radSide1 =
+	    -CGAL::sign(ax2q * axw23q + ay2q * ayw23q);
 	  if ( is_indeterminate(radSide1) ) { return radSide1; }
 
-	  radSide1 = CGAL::opposite(radSide1);
 	  if (radSide1 == ZERO) { return NEGATIVE; }
 
-	  Uncertain<Sign> radSide2 = CGAL::sign(ax3q * axw23q + ay3q * ayw23q);	
+	  Uncertain<Sign> radSide2 = CGAL::sign(ax3q * axw23q + ay3q * ayw23q);
 	  if ( is_indeterminate(radSide2) ) { return radSide2; }
 
 	  if (radSide2 == ZERO) { return NEGATIVE; }
 
-	  radInt = CGAL::opposite( Sign(radSideQ + radSide1 + radSide2)	);
+	  radInt = -Sign( Sign(radSideQ) + Sign(radSide1) + Sign(radSide2) );
 	}
       }
         
-      CGAL_assertion (! perturb || radInt != ZERO);
+      CGAL_assertion (!perturb || radInt != ZERO);
 
       if (radInt == NEGATIVE) { return orient; }
         
-      return CGAL::opposite(radSide);
+      return -radSide;
     }
     
 
@@ -305,10 +301,10 @@ private:
 	if (o12 != ZERO) {
 	  Uncertain<Sign> s_xw2q = CGAL::sign(xw2q);
 	  if ( is_indeterminate(s_xw2q) ) { return s_xw2q; }
-	  power_test = Sign(Sign(o12) * Sign(s_xw2q));
+	  power_test = o12 * s_xw2q;
                  
 	  // this results is consistant with Menelaos
-	  if (power_test != ZERO) { return CGAL::opposite(power_test); }
+	  if (power_test != ZERO) { return -power_test; }
 
 	    // this result is consistant with the perturb on off idea
 	    //if (power_test != ZERO || ! perturb) return Sign(- power_test);
@@ -320,10 +316,10 @@ private:
 	  if ( is_indeterminate(o12) ) { return o12; }
 	  Uncertain<Sign> s_yw2q = CGAL::sign(yw2q);
 	  if ( is_indeterminate(s_yw2q) ) { return s_yw2q; }
-	  power_test = Sign(Sign(o12) * Sign(s_yw2q));
+	  power_test = o12 * s_yw2q;
 
 	  // this results is consistant with Menelaos
-	  if (power_test != ZERO) { return CGAL::opposite(power_test); }
+	  if (power_test != ZERO) { return -power_test; }
 
 	  // this result is consistant with the perturb on off idea
 	  //if (power_test != ZERO || ! perturb) return Sign(- power_test);
@@ -348,7 +344,7 @@ private:
       if ( is_indeterminate(radSide) ) { return radSide; }
 
       if (radSide == ZERO || radSide == orient) {
-	return CGAL::opposite(orient);
+	return -orient;
       }
 
       // radical intersection
@@ -374,7 +370,7 @@ private:
 	if ( is_indeterminate(radSide2) ) { return radSide2; }
 	if (radSide2 == ZERO) { return NEGATIVE; }
  
-	return CGAL::opposite(Sign(radSide1) * Sign(radSide2));
+	return -(radSide1 * radSide2);
       }
 
       CGAL_assertion (!perturb || radInt != ZERO);
