@@ -26,10 +26,10 @@
 // FIXME: We include the old traits class file for now to get the functors.
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-#include <CGAL/new_traits/Vertex_conflict_2.h>
-#include <CGAL/new_traits/Finite_edge_conflict_2.h>
-#include <CGAL/new_traits/Infinite_edge_conflict_2.h>
-#include <CGAL/new_traits/Orientation_2.h>
+#include <CGAL/Apollonius_graph_2/new_traits/Vertex_conflict_2.h>
+#include <CGAL/Apollonius_graph_2/new_traits/Finite_edge_conflict_2.h>
+#include <CGAL/Apollonius_graph_2/new_traits/Infinite_edge_conflict_2.h>
+#include <CGAL/Apollonius_graph_2/new_traits/Orientation_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
