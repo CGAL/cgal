@@ -38,7 +38,7 @@ class Vertex_conflict_new_2
 {
 public:
     typedef typename K::Site_2                Site_2;
-    typedef typename K::FT                    FT;	
+    typedef typename K::RT                    RT;	
     typedef Sign                              result_type;
     struct Arity {};
 
@@ -74,187 +74,206 @@ private:
     Sign predicate (const Site_2 &p1, const Site_2 &p2,
             const Site_2 &p3, const Site_2 &q, bool perturb) const
     {	
-        FT xq = q.x() - p1.x(), yq = q.y() - p1.y(), wq = q.weight() - p1.weight();
-        FT aq = xq * xq + yq * yq - wq * wq;
-        
+        RT xq = q.x() - p1.x();
+	RT yq = q.y() - p1.y();
+	RT wq = q.weight() - p1.weight();
+        RT aq = CGAL::square(xq) + CGAL::square(yq) - CGAL::square(wq);
+
         // q is hiding p1
-        if (sign (aq) != POSITIVE){
+        if (CGAL::sign(aq) != POSITIVE){
             // I BELIEVE MENELAOS RETURNS -1 in this case even when degernate 
             //if (sign (aq) == ZERO && ! perturb) return ZERO;
-            return NEGATIVE;
+
+	  //return NEGATIVE;
+	  return POSITIVE;
         }
 
-        FT x2 = p2.x() - p1.x(), y2 = p2.y() - p1.y(), w2 = p2.weight() - p1.weight();
-        FT a2 = x2 * x2 + y2 * y2 - w2 * w2;
+        RT x2 = p2.x() - p1.x();
+	RT y2 = p2.y() - p1.y();
+	RT w2 = p2.weight() - p1.weight();
+        RT a2 = CGAL::square(x2) + CGAL::square(y2) - CGAL::square(w2);
 
         CGAL_assertion (a2 > 0);
 
-        FT x3 = p3.x() - p1.x(), y3 = p3.y() - p1.y(), w3 = p3.weight() - p1.weight();
-        FT a3 = x3 * x3 + y3 * y3 - w3 * w3;
+        RT x3 = p3.x() - p1.x();
+	RT y3 = p3.y() - p1.y();
+	RT w3 = p3.weight() - p1.weight();
+        RT a3 = CGAL::square(x3) + CGAL::square(y3) - CGAL::square(w3);
 
         CGAL_assertion (a3 > 0);
 
-        FT ax3q = a3 * xq - x3 * aq; 
-        FT ax2q = a2 * xq - x2 * aq;
-        FT ax23 = a2 * x3 - x2 * a3;
+        RT ax3q = a3 * xq - x3 * aq; 
+        RT ax2q = a2 * xq - x2 * aq;
+        RT ax23 = a2 * x3 - x2 * a3;
 
-        FT ay23 = a2 * y3 - y2 * a3;
-        FT ay2q = a2 * yq - y2 * aq;
-        FT ay3q = a3 * yq - y3 * aq;
+        RT ay23 = a2 * y3 - y2 * a3;
+        RT ay2q = a2 * yq - y2 * aq;
+        RT ay3q = a3 * yq - y3 * aq;
 
-        FT axw23q = ax23 * wq - ax2q * w3 + ax3q * w2;
-        FT ayw23q = ay23 * wq - ay2q * w3 + ay3q * w2;
+        RT axw23q = ax23 * wq - ax2q * w3 + ax3q * w2;
+        RT ayw23q = ay23 * wq - ay2q * w3 + ay3q * w2;
 
-        FT axy23q = y2 * ax3q - y3 * ax2q + yq * ax23;
+        RT axy23q = y2 * ax3q - y3 * ax2q + yq * ax23;
 
         // orientation
         Sign orient = CGAL::sign(axy23q);
 
         // orientation degenerate
         if (orient == ZERO) {
-            Sign orient1 = sign (ax23);
+            Sign orient1 = CGAL::sign(ax23);
 
-            Sign power_test = (orient1 == ZERO ?
-                    Sign (sign (ay23) * sign (ayw23q)) :
-                    Sign (orient1 * sign (axw23q)));
+            Sign power_test =
+	      ( orient1 == ZERO ?
+		(CGAL::sign(ay23) * CGAL::sign(ayw23q)) :
+		(orient1 * CGAL::sign(axw23q))
+		);
 
-            if (power_test != ZERO || ! perturb) return Sign (- power_test);
+            if (power_test != ZERO || !perturb) {
+	      return -power_test;
+	    }
 
             int i = max_radius (p1, p2, p3, q);
 
-            if (i == 3) return NEGATIVE;
+            if (i == 3) { return NEGATIVE; }
 
             Sign o23, o2q, o3q;
 
             if (orient1 == ZERO) {
-                o23 = sign (ay23);
-                o2q = sign (ay2q);
-                o3q = sign (ay3q);
+                o23 = CGAL::sign(ay23);
+                o2q = CGAL::sign(ay2q);
+                o3q = CGAL::sign(ay3q);
             } else {
-                o23 = sign (ax23);
-                o2q = sign (ax2q);
-                o3q = sign (ax3q);
+                o23 = CGAL::sign(ax23);
+                o2q = CGAL::sign(ax2q);
+                o3q = CGAL::sign(ax3q);
             }
 
-            if (o23 != o2q) return i == 2 ? NEGATIVE : POSITIVE;
+            if (o23 != o2q) { return i == 2 ? NEGATIVE : POSITIVE; }
 
-            if (o23 == o3q) return i == 1 ? NEGATIVE : POSITIVE;
+            if (o23 == o3q) { return i == 1 ? NEGATIVE : POSITIVE; }
 
             return i == 0 ? NEGATIVE : POSITIVE;
         }
  
-        // radical side 
-        FT rs23q = ax23 * axw23q + ay23 * ayw23q;
-        Sign radSide = CGAL::sign (rs23q);
 
-        if (radSide == ZERO || radSide != orient) return orient;
+        // radical side 
+        RT rs23q = ax23 * axw23q + ay23 * ayw23q;
+        Sign radSide = CGAL::sign(rs23q);
+
+        if (radSide == ZERO || radSide != orient) { return orient; }
        
         // radical intersection
-        Sign radInt = enum_cast<Sign> (CGAL::compare (axw23q * axw23q + ayw23q * ayw23q, axy23q * axy23q));
+        Sign radInt =
+	  CGAL::sign(CGAL::square(axw23q) + CGAL::square(ayw23q)
+		     - CGAL::square( axy23q));
 
         // radical intersection degenerate
         if (radInt == ZERO) {
-            Sign radSideQ = sign (ax23 * axw23q + ay23 * ayw23q);
+            Sign radSideQ = CGAL::sign(ax23 * axw23q + ay23 * ayw23q);
             
             CGAL_assertion (radSideQ != ZERO);
 
-            if (! perturb) return (radSideQ == orient) ? ZERO : orient;
+            if (!perturb) { return (radSideQ == orient) ? ZERO : orient; }
 
             int i = max_radius (p1, p2, p3, q);
 
             if (i == 3) { 
                 radInt = radSideQ;
             } else if (i == 2) {
-                radInt = Sign (- sign (ax2q * axw23q + ay2q * ayw23q));
-                if (radInt == ZERO) return NEGATIVE;
+                radInt = -CGAL::sign(ax2q * axw23q + ay2q * ayw23q);
+                if (radInt == ZERO) { return NEGATIVE; }
             } else if (i == 1) {
-                radInt = sign (ax3q * axw23q + ay3q * ayw23q);
-                if (radInt == ZERO) return NEGATIVE;
+                radInt = CGAL::sign(ax3q * axw23q + ay3q * ayw23q);
+                if (radInt == ZERO) { return NEGATIVE; }
             } else {
                 CGAL_assertion (i == 0);
-                Sign radSide1 = Sign (- sign (ax2q * axw23q + ay2q * ayw23q));      
-                if (radSide1 == ZERO) return NEGATIVE;
+                Sign radSide1 = -CGAL::sign(ax2q * axw23q + ay2q * ayw23q);
+                if (radSide1 == ZERO) { return NEGATIVE; }
 
-                Sign radSide2 = sign (ax3q * axw23q + ay3q * ayw23q);	
-                if (radSide2 == ZERO) return NEGATIVE;
+                Sign radSide2 = CGAL::sign(ax3q * axw23q + ay3q * ayw23q);
+                if (radSide2 == ZERO) { return NEGATIVE; }
 
-                radInt = Sign (- (radSideQ + radSide1 + radSide2));
+                radInt = Sign (-(radSideQ + radSide1 + radSide2));
             }
         }
         
-        CGAL_assertion (! perturb || radInt != ZERO);
+        CGAL_assertion (!perturb || radInt != ZERO);
 
-        if (radInt == NEGATIVE) return orient;
+        if (radInt == NEGATIVE) { return orient; }
         
-        return Sign (- radSide);
+        return -radSide;
     }
     
 
     inline
     Sign predicate(const Site_2 &p1, const Site_2 &p2, 
-            const Site_2 &q, bool perturb) const
+		   const Site_2 &q, bool perturb) const
     {
         // NOTE:***************************************
         // * the perturb boolean variable is not used 
         // * for consistancy with Menelaos
         // NOTE:***************************************
-        FT x2 = p2.x() - p1.x(), y2 = p2.y() - p1.y(), w2 = p2.weight() - p1.weight();
-        FT xq =  q.x() - p1.x(), yq =  q.y() - p1.y(), wq =  q.weight() - p1.weight();
+        RT x2 = p2.x() - p1.x();
+	RT y2 = p2.y() - p1.y();
+	RT w2 = p2.weight() - p1.weight();
+        RT xq =  q.x() - p1.x();
+	RT yq =  q.y() - p1.y();
+	RT wq =  q.weight() - p1.weight();
 
-        FT xw2q = x2 * wq - xq * w2;
-        FT yw2q = y2 * wq - yq * w2;
-        FT xy2q = x2 * yq - xq * y2;
+        RT xw2q = x2 * wq - xq * w2;
+        RT yw2q = y2 * wq - yq * w2;
+        RT xy2q = x2 * yq - xq * y2;
         
         // orientation
         Sign orient = CGAL::sign(xy2q);
 
         // orientation degenerate
         if (orient == ZERO) {
-            Sign o12 = sign (x2);
+            Sign o12 = CGAL::sign(x2);
             Sign o1q, o2q;
 
             Sign power_test;
             if (o12 != ZERO) {
-                power_test = Sign (o12 * sign (xw2q));
+                power_test = o12 * CGAL::sign(xw2q);
                  
                 // this results is consistant with Menelaos
-                if (power_test != ZERO) return Sign(- power_test);
+                if (power_test != ZERO) { return -power_test; }
 
                 // this result is consistant with the perturb on off idea
                 //if (power_test != ZERO || ! perturb) return Sign(- power_test);
-
-                o1q = sign (xq);
-                o2q = sign (q.x() - p2.x());
+                o1q = CGAL::sign(xq);
+                o2q = CGAL::sign(q.x() - p2.x());
             } else {
-                o12 = sign (y2);
-                power_test = Sign (o12 * sign (yw2q));
+                o12 = CGAL::sign(y2);
+                power_test = o12 * CGAL::sign(yw2q);
 
                 // this results is consistant with Menelaos
-                if (power_test != ZERO) return Sign(- power_test);
+                if (power_test != ZERO) { return -power_test; }
 
                 // this result is consistant with the perturb on off idea
                 //if (power_test != ZERO || ! perturb) return Sign(- power_test);
-
-                o1q = sign (yq);
-                o2q = sign (q.y() - p2.y());
+                o1q = CGAL::sign(yq);
+                o2q = CGAL::sign(q.y() - p2.y());
             }
 
-            if (o1q != o12) return POSITIVE;
-            if (o2q == o12) return POSITIVE;
+            if (o1q != o12) { return POSITIVE; }
+            if (o2q == o12) { return POSITIVE; }
 
             return NEGATIVE;
         }
 
         // radical side 
-        FT rs12q = x2 * xw2q + y2 * yw2q;
-        Sign radSide = CGAL::sign (rs12q);
+        RT rs12q = x2 * xw2q + y2 * yw2q;
+        Sign radSide = CGAL::sign(rs12q);
 
         if (radSide == ZERO || radSide == orient) {
-            return Sign(- orient);
+            return -orient;
         }
 
         // radical intersection
-        Sign radInt = enum_cast<Sign> (CGAL::compare (xw2q * xw2q + yw2q * yw2q, xy2q * xy2q));
+        Sign radInt =
+	  CGAL::sign(CGAL::square(xw2q) + CGAL::square(yw2q)
+		     - CGAL::square(xy2q));
 
         // radical intersection degerate
         if (radInt == ZERO) {
@@ -263,30 +282,31 @@ private:
             // this result is consistant with the perturb on off idea
             //if (! perturb) return (radSide == orient) ? ZERO : orient;
 
-            FT rs2q1 = (p2.x() - q.x()) * xw2q + (p2.y() - q.y()) * yw2q;
-            Sign radSide1 = sign (rs2q1);
-            if (radSide1 == ZERO) return NEGATIVE;
+            RT rs2q1 = (p2.x() - q.x()) * xw2q + (p2.y() - q.y()) * yw2q;
+            Sign radSide1 = CGAL::sign(rs2q1);
+            if (radSide1 == ZERO) { return NEGATIVE; }
             
-            FT rsq12 = xq * xw2q + yq * yw2q;
-            Sign radSide2 = sign (rsq12);
-            if (radSide2 == ZERO) return NEGATIVE;
+            RT rsq12 = xq * xw2q + yq * yw2q;
+            Sign radSide2 = CGAL::sign(rsq12);
+            if (radSide2 == ZERO) { return NEGATIVE; }
  
-            return Sign (- (radSide1 * radSide2));
+            return -(radSide1 * radSide2);
         }
 
-        CGAL_assertion (! perturb || radInt != ZERO);
+        CGAL_assertion (!perturb || radInt != ZERO);
 
-        if (radInt == POSITIVE) return orient;
+        if (radInt == POSITIVE) { return orient; }
         return radSide;
     }
 
 public:
     inline
     Sign operator()(const Site_2 &p1, const Site_2 &p2,
-                    const Site_2 &p3, const Site_2 &q, bool perturb = true) const
+                    const Site_2 &p3, const Site_2 &q,
+		    bool perturb = true) const
     {	
-        Sign newPred = predicate (p1, p2, p3, q, perturb);	
-        CGAL_assertion (! perturb || newPred != ZERO);
+        Sign newPred = predicate(p1, p2, p3, q, perturb);	
+        CGAL_assertion (!perturb || newPred != ZERO);
         return newPred;
     }
 
@@ -294,8 +314,8 @@ public:
     Sign operator()(const Site_2 &p1, const Site_2 &p2,
                     const Site_2 &q, bool perturb = true) const
     {
-        Sign newPred = predicate (p1, p2, q, perturb);	
-        CGAL_assertion (! perturb || newPred != ZERO);
+        Sign newPred = predicate(p1, p2, q, perturb);	
+        CGAL_assertion (!perturb || newPred != ZERO);
         return newPred;
     }
 };
