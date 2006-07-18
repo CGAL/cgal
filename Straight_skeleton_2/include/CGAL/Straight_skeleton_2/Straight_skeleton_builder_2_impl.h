@@ -57,8 +57,6 @@ Straight_skeleton_builder_2<Gt,SS,V>::Straight_skeleton_builder_2 ( Traits const
 template<class Gt, class SS, class V>
 void Straight_skeleton_builder_2<Gt,SS,V>::throw_error ( char const* what ) const
 {
-  mVisitor.on_error(what);
-
   throw straight_skeleton_exception(what);
 }
 
@@ -127,7 +125,6 @@ Straight_skeleton_builder_2<Gt,SS,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
         mVisitor.on_edge_event_created(aLNode, aRNode) ;
         
         CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*rResult) );
-        CGAL_STSKEL_STATS_CODE(++sFoundEdgeEventCount);
       }
     }
   }
@@ -161,7 +158,11 @@ Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent
   
   bool lCoupleIsPrev = false ;
         
-  if ( !IsDegenerate(lOppPrevN) && ExistEvent(lPrevSTriedge) && AreEventsSimultaneous(lEventSTriedge,lPrevSTriedge)  )
+  if ( !IsDegenerate(lOppPrevN)
+     && ExistEvent(lPrevSTriedge) 
+     && CompareEvents(lEventSTriedge,lPrevSTriedge) == EQUAL
+     //&& AreEventsSimultaneous(lEventSTriedge,lPrevSTriedge)  
+     )
   {
     lIsPseudoSplitEvent = true ;
     lCoupleIsPrev       = true ;
@@ -169,7 +170,11 @@ Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent
   }
   else
   {
-    if ( !IsDegenerate(aOppN) && ExistEvent(lNextSTriedge) && AreEventsSimultaneous(lEventSTriedge,lNextSTriedge) )
+    if ( !IsDegenerate(aOppN) 
+       && ExistEvent(lNextSTriedge) 
+       && CompareEvents(lEventSTriedge,lNextSTriedge) == EQUAL
+       //&& AreEventsSimultaneous(lEventSTriedge,lNextSTriedge)
+       )
     {
       lIsPseudoSplitEvent = true ;
       lCoupleIsPrev       = false ;
@@ -218,7 +223,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvent( Vertex_handle   aN
 {
   Sorted_triedge_2 lSortedTriedge = CreateSortedTriedge(aReflexLBorder,aReflexRBorder,aOppositeBorder);
   
-  if ( ExistEvent(lSortedTriedge) )
+  if ( lSortedTriedge.collinearity() == TRIEDGE_COLLINEARITY_NONE && ExistEvent(lSortedTriedge) )
   {
     if ( ! ( aNode->is_skeleton() && IsNewEventInThePast(aReflexLBorder,aReflexRBorder,aOppositeBorder,lSortedTriedge,aNode) ) )
     {
@@ -227,7 +232,6 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvent( Vertex_handle   aN
       mVisitor.on_split_event_created(aNode) ;
 
       CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*lEvent) ) ;
-      CGAL_STSKEL_STATS_CODE( ++sFoundSplitEventCount );
 
       AddSplitEvent(aNode,lEvent);      
     }
@@ -386,8 +390,6 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSimultaneousEdgeEvent( Vertex_h
 {
   CGAL_STSKEL_BUILDER_TRACE ( 2, "Handling simultaneous EdgeEvent between N" << aA ->id() << " and N"  << aB ->id() ) ;
 
-  CGAL_STSKEL_STATS_CODE(++sAnihiliationCount);
-  
   mVisitor.on_anihiliation_event_processed(aA,aB) ;
 
   Halfedge_handle lOA = aA->primary_bisector() ;
@@ -506,7 +508,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CreateInitialEvents()
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
   {
     UpdatePQ(v);
-    mVisitor.on_initial_events_collected(v) ;
+    mVisitor.on_initial_events_collected(v,IsReflex(v),IsDegenerate(v)) ;
   }
 }
 
@@ -517,8 +519,6 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CreateContourBisectors()
   CGAL_STSKEL_BUILDER_TRACE(0, "Creating contour bisectors...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
   {
-    CGAL_STSKEL_STATS_CODE(++sVertexCount);     
-    
     mSLAV.push_back(static_cast<Vertex_handle>(v));
     Vertex_handle lPrev = GetPrevInLAV(v) ;
     Vertex_handle lNext = GetNextInLAV(v) ;
@@ -528,14 +528,12 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CreateContourBisectors()
     {
       SetIsDegenerate(v);
       CGAL_STSKEL_BUILDER_TRACE(1, "COLLINEAR vertex: N" << v->id() );
-      CGAL_STSKEL_STATS_CODE(++sDegenerateVertexCount);     
     }
     else if ( lOrientation == RIGHT_TURN )
     {
       mReflexVertices.push_back(v);
       SetIsReflex(v);
       CGAL_STSKEL_BUILDER_TRACE(1,"Reflex vertex: N" << v->id() );
-      CGAL_STSKEL_STATS_CODE(++sReflexVertexCount);     
     }
 
     Halfedge lOB(mEdgeID++), lIB(mEdgeID++);
@@ -561,8 +559,10 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CreateContourBisectors()
 template<class Gt, class SS, class V>
 void Straight_skeleton_builder_2<Gt,SS,V>::InitPhase()
 {
+  mVisitor.on_initialization_started(mSSkel->size_of_vertices());
   CreateContourBisectors();
   CreateInitialEvents();
+  mVisitor.on_initialization_finished();
 }
 
 template<class Gt, class SS, class V>
@@ -855,8 +855,6 @@ bool Straight_skeleton_builder_2<Gt,SS,V>::IsProcessed( EventPtr aEvent )
 template<class Gt, class SS, class V>
 void Straight_skeleton_builder_2<Gt,SS,V>::HandleEdgeEvent( EventPtr aEvent )
 {
-  CGAL_STSKEL_STATS_CODE(++sProcessedEdgeEventCount);
-  
   EdgeEvent& lEvent = dynamic_cast<EdgeEvent&>(*aEvent) ;
 
   Vertex_handle lLSeed = lEvent.seed0() ;
@@ -933,15 +931,13 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleEdgeEvent( EventPtr aEvent )
                         );
   }
 
-  mVisitor.on_edge_event_processed(lLSeed,lRSeed) ;
+  mVisitor.on_edge_event_processed(lLSeed,lRSeed,lNewNode) ;
   
 }
 
 template<class Gt, class SS, class V>
 void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitEvent( EventPtr aEvent, Vertex_handle aOppR )
 {
-  CGAL_STSKEL_STATS_CODE(++sProcessedSplitEventCount);
-  
   SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
 
   Halfedge_handle lOppBorder = lEvent.border_c() ;
@@ -1033,7 +1029,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitEvent( EventPtr aEvent, Ve
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
 
-  mVisitor.on_split_event_processed(lSeed) ;
+  mVisitor.on_split_event_processed(lSeed,lNewNode_L,lNewNode_R) ;
 }
 
 template<class Gt, class SS, class V>
@@ -1051,7 +1047,6 @@ void Straight_skeleton_builder_2<Gt,SS,V>::SetupPseudoSplitEventNode( Vertex_han
   {
     SetIsDegenerate(aNode);
     CGAL_STSKEL_BUILDER_TRACE(1, "COLLINEAR *NEW* vertex: N" << aNode->id() );
-    CGAL_STSKEL_STATS_CODE(++sDegenerateVertexCount);     
   }
   else if ( lOrientation == RIGHT_TURN )
   {
@@ -1064,7 +1059,6 @@ void Straight_skeleton_builder_2<Gt,SS,V>::SetupPseudoSplitEventNode( Vertex_han
 template<class Gt, class SS, class V>
 void Straight_skeleton_builder_2<Gt,SS,V>::HandlePseudoSplitEvent( EventPtr aEvent )
 {
-  CGAL_STSKEL_STATS_CODE(++sProcessedPseudoSplitEventCount);
   
   PseudoSplitEvent& lEvent = dynamic_cast<PseudoSplitEvent&>(*aEvent) ;
   
@@ -1157,7 +1151,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandlePseudoSplitEvent( EventPtr aEve
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
 
-  mVisitor.on_pseudo_split_event_processed(lLSeed,lRSeed) ;
+  mVisitor.on_pseudo_split_event_processed(lLSeed,lRSeed,lNewNode_L,lNewNode_R) ;
 }
 
 template<class Gt, class SS, class V>
@@ -1170,10 +1164,6 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitOrPseudoSplitEvent( EventP
     if ( lPseudoSplitEvent )
          HandlePseudoSplitEvent(lPseudoSplitEvent);
     else HandleSplitEvent      (aEvent,lOppR);  
-  }
-  else
-  {
-    CGAL_STSKEL_STATS_CODE(++sOutOfReachSplitEventCount);
   }
 }
 
@@ -1204,6 +1194,7 @@ template<class Gt, class SS, class V>
 void Straight_skeleton_builder_2<Gt,SS,V>::Propagate()
 {
   CGAL_STSKEL_BUILDER_TRACE(0,"Propagating events...");
+  mVisitor.on_propagation_started();
 
   while ( !mPQ.empty() )
   {
@@ -1231,6 +1222,8 @@ void Straight_skeleton_builder_2<Gt,SS,V>::Propagate()
       ++ mStepID ;
     }
   }
+  
+  mVisitor.on_propagation_finished();
 }
 
 template<class Gt, class SS, class V>
@@ -1558,6 +1551,8 @@ bool Straight_skeleton_builder_2<Gt,SS,V>::FinishUp( bool aMergeCoincidentNodes 
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "\n\nFinishing up...");
 
+  mVisitor.on_cleanup_started(aMergeCoincidentNodes);
+  
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
                 ,boost::bind(&Straight_skeleton_builder_2<Gt,SS,V>::MergeSplitNodes,this,_1)
@@ -1575,6 +1570,8 @@ bool Straight_skeleton_builder_2<Gt,SS,V>::FinishUp( bool aMergeCoincidentNodes 
     MergeCoincidentNodes();             
     CGAL_expensive_postcondition( ok = mSSkel->is_valid() ) ;
   }  
+  
+  mVisitor.on_cleanup_finished();
     
   return ok ;  
 }
@@ -1598,7 +1595,7 @@ typename Straight_skeleton_builder_2<Gt,SS,V>::SSkelPtr Straight_skeleton_builde
   }
   catch( std::exception const& e ) 
   {
-    std::cerr << "Exception caught: " << e.what() << std::endl ;
+    mVisitor.on_error ( e.what() ) ;
     CGAL_STSKEL_BUILDER_TRACE(0,"EXCEPTION THROWN (" << e.what() << ") during straight skeleton construction.");
  }
 
@@ -1608,26 +1605,7 @@ typename Straight_skeleton_builder_2<Gt,SS,V>::SSkelPtr Straight_skeleton_builde
     mSSkel = SSkelPtr() ; 
   }
 
-  
-#ifdef CGAL_STRAIGHT_SKELETON_STATS
-
-std::cerr << "sVertexCount                   =" << sVertexCount << std::endl
-          << "sReflexVertexCount             =" << sReflexVertexCount << std::endl 
-          << "sDegenerateVertexCount         =" << sDegenerateVertexCount << std::endl  
-          << "sFoundEdgeEventCount           =" << sFoundEdgeEventCount << std::endl  
-          << "sFoundSplitEventCount          =" << sFoundSplitEventCount << std::endl  
-          << "sProcessedEdgeEventCount       =" << sProcessedEdgeEventCount << std::endl  
-          << "sProcessedSplitEventCount      =" << sProcessedSplitEventCount << std::endl  
-          << "sProcessedPseudoSplitEventCount=" << sProcessedPseudoSplitEventCount << std::endl  
-          << "sOutOfReachSplitEventCount     =" << sOutOfReachSplitEventCount << std::endl  
-          << "sAnihiliationCount             =" << sAnihiliationCount << std::endl  
-          << "sInFrameCount                  =" << sInFrameCount << std::endl
-          << "sOutsideFrameCount             =" << sOutsideFrameCount<< std::endl
-          << "sInTimeRangeCount              =" << sInTimeRangeCount << std::endl
-          << "sOutsideTimeRangeCount         =" << sOutsideTimeRangeCount << std::endl 
-          << "sSingularCount                 =" << sSingularCount << std::endl ;
-#endif
-
+  mVisitor.on_algorithm_finished(ok);
   
   return mSSkel ;
 }

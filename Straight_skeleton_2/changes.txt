@@ -5,12 +5,19 @@
 - Fixed a bug in the detection of events at time zero (which ought to be ignored)
 
 5 July 2006 Fernando Cacciola
+- Merginig of coincident nodes now disabled by default (but can be requested)
 - Computation of the coordinates of skeleton nodes now filtered
-- Split-events are now clustered into parallel priority-queues to reduce processing time (up to 3 times faster now)
+- Bug fixes in the handling of degnerate and near degenerate events
+- Split-events clustered to reduce processing time (by a factor of 3)
 
 20 June 2006 Fernando Cacciola
 - Bug fixes from user report (see pseudo_split_5.poly)
 - Vertex-events replaced by Pseudo-split events
+
+
+RELEASE 3.2
+
+
 
 26 March 2006 Fernando Cacciola
 - Even more fixes for VC8

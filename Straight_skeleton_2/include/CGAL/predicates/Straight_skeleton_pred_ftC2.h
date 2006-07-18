@@ -161,9 +161,9 @@ Uncertain<bool> exist_offset_lines_isec2 ( Sorted_triedge_2<K> const& event )
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  if ( event.collinear_count() < 3 ) // If the 3 edges are collinear thre is no event.
+  if ( event.collinearity() != TRIEDGE_COLLINEARITY_ALL ) // If the 3 edges are collinear thre is no event.
   {
-    CGAL_STSKEL_TRAITS_TRACE( ( event.collinear_count() == 0 ? " normal edges" : " collinear edges" ) ) ;
+    CGAL_STSKEL_TRAITS_TRACE( ( event.collinearity() == TRIEDGE_COLLINEAR_NONE ? " normal edges" : " collinear edges" ) ) ;
 
     Optional_rational t = compute_offset_lines_isec_timeC2(event) ;
     if ( t )
@@ -215,8 +215,8 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Sorted_triedge_
   
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  CGAL_assertion ( m.collinear_count() < 3 ) ;
-  CGAL_assertion ( n.collinear_count() < 3 ) ;
+  CGAL_assertion ( m.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( n.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
   
   Optional_rational mt_ = compute_offset_lines_isec_timeC2(m);
   Optional_rational nt_ = compute_offset_lines_isec_timeC2(n);
@@ -260,8 +260,8 @@ compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
   
   if ( p )
   {
-    CGAL_assertion ( m.collinear_count() < 3 ) ;
-    CGAL_assertion ( n.collinear_count() < 3 ) ;
+    CGAL_assertion ( m.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+    CGAL_assertion ( n.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
     
     optional<FT> dm = compute_offset_lines_isec_dist_to_pointC2(p,m);
     optional<FT> dn = compute_offset_lines_isec_dist_to_pointC2(p,n);
@@ -287,7 +287,7 @@ compare_offset_lines_isec_dist_to_pointC2 ( Sorted_triedge_2<K> const& s
 {
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  CGAL_assertion ( s.collinear_count() < 3 ) ;
+  CGAL_assertion ( s.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
     
   rResult = compare_offset_lines_isec_dist_to_pointC2(construct_offset_lines_isecC2(s),m,n);
   
@@ -369,7 +369,7 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Sorted_triedge_2<K> const& event, Tr
   
   if ( !is_indeterminate(degenerate_zone) ) 
   {
-    CGAL_assertion ( event.collinear_count() < 3 ) ;
+    CGAL_assertion ( event.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
     
     if ( !degenerate_zone )
     {
@@ -580,8 +580,8 @@ Uncertain<bool> are_events_simultaneousC2 ( Sorted_triedge_2<K> const& l, Sorted
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  CGAL_assertion ( l.collinear_count() < 3 ) ;
-  CGAL_assertion ( r.collinear_count() < 3 ) ;
+  CGAL_assertion ( l.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( r.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
   
   Optional_rational lt_ = compute_offset_lines_isec_timeC2(l);
   Optional_rational rt_ = compute_offset_lines_isec_timeC2(r);

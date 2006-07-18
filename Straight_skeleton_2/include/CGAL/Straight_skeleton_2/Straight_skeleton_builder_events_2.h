@@ -81,9 +81,8 @@ public:
   {
     ss << "[" ;
     e.dump(ss);
-    ss << " p=(" << e.point().x() << "," << e.point().y() << ") t=" << e.time() << "]" ;
-    if ( e.sorted_triedge().collinear_count() > 0 )
-      ss << " {collinear count=" << e.sorted_triedge().collinear_count() << "}" ;
+    ss << " p=(" << e.point().x() << "," << e.point().y() << ") t=" << e.time() << "] " 
+       << triedge_collinearity_to_string(e.sorted_triedge().collinearity()) ;
     return ss ;
   }
 

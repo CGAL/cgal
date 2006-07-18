@@ -153,8 +153,6 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
 template<class K>
 Sorted_triedge_2<K> construct_sorted_triedge ( Triedge_2<K> const& triedge, Triedge_collinearity collinearity )
 {
-  int lCollinearCount = -1 ;
-  
   int  idx0=0, idx1=1, idx2=2 ;
 
   switch ( collinearity )
@@ -163,36 +161,34 @@ Sorted_triedge_2<K> construct_sorted_triedge ( Triedge_2<K> const& triedge, Trie
          idx0 = 0 ;
          idx1 = 1 ;
          idx2 = 2 ;
-         lCollinearCount = 0 ;
          break ;
          
     case TRIEDGE_COLLINEARITY_01 :
          idx0 = 0 ;
          idx1 = 1 ;
          idx2 = 2 ;
-         lCollinearCount = 2 ;
          break ;
          
     case TRIEDGE_COLLINEARITY_12 :
          idx0 = 1 ;
          idx1 = 2 ;
          idx2 = 0 ;
-         lCollinearCount = 2 ;
          break ;
          
     case TRIEDGE_COLLINEARITY_02 :
          idx0 = 0 ;
          idx1 = 2 ;
          idx2 = 1 ;
-         lCollinearCount = 2 ;
          break ;
          
-    default :
-         lCollinearCount = 3 ;
+    case TRIEDGE_COLLINEARITY_ALL :
+         idx0 = 0 ;
+         idx1 = 1 ;
+         idx2 = 2 ;
          break ;
   }
   
-  return Sorted_triedge_2<K>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),lCollinearCount);
+  return Sorted_triedge_2<K>(triedge.e(idx0),triedge.e(idx1),triedge.e(idx2),collinearity);
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2 (passed in a SortedTriedge record)
@@ -393,22 +389,14 @@ optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC
 // Calls the appropiate function depending on the collinearity of the edges.
 //
 template<class K>
-optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( Sorted_triedge_2<K> const& triedge, int ccount )
-{
-  CGAL_precondition ( ccount < 3 ) ;
-  
-  return ccount == 0 ? compute_normal_offset_lines_isec_timeC2    (triedge)
-                     : compute_degenerate_offset_lines_isec_timeC2(triedge);
-}
-
-//
-// Calls the appropiate function depending on the collinearity of the edges.
-//
-template<class K>
 optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( Sorted_triedge_2<K> const& triedge )
 {
-  return compute_offset_lines_isec_timeC2(triedge, triedge.collinear_count() ) ;
+  CGAL_precondition ( triedge.collinearity() !=  TRIEDGE_COLLINEARITY_ALL ) ;
+  
+  return triedge.collinearity() == TRIEDGE_COLLINEARITY_NONE ? compute_normal_offset_lines_isec_timeC2    (triedge)
+                                                             : compute_degenerate_offset_lines_isec_timeC2(triedge);
 }
+
 
 // Given 3 oriented line segments e0, e1 and e2 (passed in a SortedTriedge record)
 // such that their offsets at a certian distance intersect in a single point, 
@@ -533,21 +521,12 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( Sorted_triedge
 // Calls the appropiate function depending on the collinearity of the edges.
 //
 template<class K>
-optional< Point_2<K> > construct_offset_lines_isecC2 ( Sorted_triedge_2<K> const& triedge, int ccount )
-{
-  CGAL_precondition ( ccount < 3 ) ;
-  
-  return ccount == 0 ? construct_normal_offset_lines_isecC2    (triedge)
-                     : construct_degenerate_offset_lines_isecC2(triedge) ;
-}
-
-//
-// Calls the appropiate function depending on the collinearity of the edges.
-//
-template<class K>
 optional< Point_2<K> > construct_offset_lines_isecC2 ( Sorted_triedge_2<K> const& triedge )
 {
-  return construct_offset_lines_isecC2(triedge, triedge.collinear_count()) ;
+  CGAL_precondition ( triedge.collinearity() !=  TRIEDGE_COLLINEARITY_ALL ) ;
+  
+  return triedge.collinearity() == TRIEDGE_COLLINEARITY_NONE ? construct_normal_offset_lines_isecC2    (triedge)
+                                                             : construct_degenerate_offset_lines_isecC2(triedge) ;
 }
 
 // Give a point (px,py) and 3 oriented straight line segments e0,e1 and e2.

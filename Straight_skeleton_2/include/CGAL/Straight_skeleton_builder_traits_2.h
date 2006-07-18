@@ -259,7 +259,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    CGAL_assertion(triedge.collinear_count() < 3) ;
+    CGAL_assertion(triedge.collinearity() != TRIEDGE_COLLINEARITY_ALL) ;
 
     optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(triedge);
 

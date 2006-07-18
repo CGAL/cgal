@@ -35,6 +35,19 @@ enum Triedge_collinearity
   , TRIEDGE_COLLINEARITY_ALL
 } ;
 
+static char const* triedge_collinearity_to_string( Triedge_collinearity c )
+{
+  switch ( c )
+  {
+    case TRIEDGE_COLLINEARITY_NONE : return "<>" ;  
+    case TRIEDGE_COLLINEARITY_01   : return "<0,1>" ; 
+    case TRIEDGE_COLLINEARITY_12   : return "<1,2>" ; 
+    case TRIEDGE_COLLINEARITY_02   : return "<0,2>" ; 
+    case TRIEDGE_COLLINEARITY_ALL  : return "<0,1,2>" ; 
+  }
+  
+  return "!!UNKNOWN COLLINEARITY!!" ;
+}
 namespace CGALi 
 {
 

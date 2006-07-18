@@ -356,20 +356,20 @@ class Sorted_triedge_2 : public Triedge_2<K>
 
     typedef typename Base::Segment_2 Segment_2 ;
 
-    Sorted_triedge_2( Segment_2 const& aE0
-                    , Segment_2 const& aE1
-                    , Segment_2 const& aE2
-                    , int              aCollinearCount
+    Sorted_triedge_2( Segment_2 const&     aE0
+                    , Segment_2 const&     aE1
+                    , Segment_2 const&     aE2
+                    , Triedge_collinearity aCollinearity
                    )
      : Base(aE0,aE1,aE2)
-     , mCCount(aCollinearCount)
+     , mCollinearity(aCollinearity)
      {}
 
-    int  collinear_count() const { return mCCount  ; }
+    Triedge_collinearity collinearity() const { return mCollinearity ; }
 
   private:
 
-    int mCCount ;
+    Triedge_collinearity mCollinearity ;
 } ;
 
 template<class K>
@@ -442,7 +442,7 @@ struct SS_converter : Converter
   
   Target_sorted_triedge_2 operator()( Source_sorted_triedge_2 const& t) const
   {
-    return Target_sorted_triedge_2(cvts(t.e0()), cvts(t.e1()), cvts(t.e2()), t.collinear_count() ) ;
+    return Target_sorted_triedge_2(cvts(t.e0()), cvts(t.e1()), cvts(t.e2()), t.collinearity() ) ;
   }
   
   Target_time_and_point_2 operator() ( Source_time_and_point_2 const& v ) const
