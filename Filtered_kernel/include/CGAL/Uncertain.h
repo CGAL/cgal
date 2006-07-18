@@ -49,20 +49,6 @@ namespace CGALi {
   };
 
   template <>
-  struct Minmax_traits <Comparison_result>
-  {
-    static const Comparison_result min = SMALLER;
-    static const Comparison_result max = LARGER;
-  };
-
-  template <>
-  struct Minmax_traits <Oriented_side>
-  {
-    static const Oriented_side min = ON_NEGATIVE_SIDE;
-    static const Oriented_side max = ON_POSITIVE_SIDE;
-  };
-
-  template <>
   struct Minmax_traits <Bounded_side>
   {
     static const Bounded_side min = ON_UNBOUNDED_SIDE;

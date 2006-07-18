@@ -1,3 +1,7 @@
+18 July 2006 Menelaos Karavelas
+- removed Minmax_traits for Oriented_side and Comparison_result due to
+  clash with Sign (these three types are now the same).
+
 16 March 2006 Joachim Reichel
 - prefix cgal_ added to filtered_predicates_generator.pl
 
