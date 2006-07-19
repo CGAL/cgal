@@ -1,0 +1,57 @@
+\begin{ccRefConcept}{EuclideanRing}
+
+
+\ccDefinition
+
+A model of \ccc{EuclideanRing} represents an euclidean ring (or Euclidean domain). 
+It is an \ccc{UFDomain} that affords a suitable notion of minimality of remainders 
+such that given $x$ and $y != 0$ we obtain an (almost) unique solution to 
+$x = qy + r by$ demanding that a solution $(q,r)$ is chosen to minimize $r$. 
+In particular, $r$ is chosen to be $0$ if possible.
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\
+ 
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Algebraic_type} derived from \ccc{UFDomain_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Mod} an \ccc{AdaptableBinaryFunction}\\
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Div} an \ccc{AdaptableBinaryFunction}\\
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod}\\
+
+
+
+
+\ccHeading{Remarks}
+
+The most prominent example of a Euclidean ring are the integers. 
+Whenever both $x$ and $y$ are positive, then it is conventional to choose 
+the smallest positive remainder $r$. 
+
+
+{\em \small
+In other cases, there seems to be no universally observed convention on how to choose 
+the sign. (In particular, the ISO C++ Standard fixes none for the modulo operation 
+on the builtin integral types.)
+
+Todo: Decide what to do about the sign ambiguity for the Mod operation of Euclidean rings.
+Proposal: choose the unit normal remainder. 
+}
+
+%Another important example of a Euclidean ring are univariate polynomials over a field. 
+%Here the degree of $r$ is to be minimized. There is no remaining ambiguity.
+
+%Any Euclidean ring is necessarily a \ccc{UFDomain}, and the ability to take remainders allows 
+%to use the Euclidean Algorithm to compute gcds.   
+
+\ccRefines
+ \ccc{UFDomain}\\
+
+\ccSeeAlso
+  \ccc{IntegralDomainWithoutDiv} 
+        $ \leftarrow $  \ccc{IntegralDomain} 
+        $ \leftarrow $  \ccc{UFDomain} 
+        $ \leftarrow $  \ccc{EuclideanRing}
+
+\ccHasModels
+
+
+\end{ccRefConcept}

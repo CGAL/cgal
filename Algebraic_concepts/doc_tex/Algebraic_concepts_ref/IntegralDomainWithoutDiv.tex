@@ -1,0 +1,106 @@
+\begin{ccRefConcept}{IntegralDomainWithoutDiv}
+
+
+\ccDefinition
+
+This is the most basic concept for algebraic structures considered within CGAL. 
+
+A model \ccc{IntegralDomainWithoutDiv}  represents an integral domain,
+i.e. commutative ring with 0, 1, +, * and unity free of zero divisors.\\ 
+{\bf Note:} A model is not required to offer the always well defined integral division.
+
+It refines \ccc{Assignable}, \ccc{CopyConstructible}, \ccc{DefaultConstructible}
+and \ccc{FromSmallIntConstructible}. \\ 
+It refines \ccc{EqualityComparable}, where equality is defined w.r.t. 
+the ring element being represented. \\
+The operators unary and binary plus +, unary and binary minus -, 
+multiplication * and their compound forms +=, -=, *= are required and 
+implement the respective ring operations.
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\
+ 
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Algebraic_type} derived from \ccc{Integral_domain_without_div_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Simplify}  an \ccc{AdaptableUnaryFunction}\\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Unit_part} an \ccc{AdaptableUnaryFunction}\\
+
+
+
+
+{ \em \small FROM EXACUS: \\
+It is permissible for the constructor 
+to convert from another built-in type than int, provided ints are
+automatically converted to this type. It is not permissible to 
+rely in a similar fashion on a chain of user-defined conversions.
+}
+
+
+
+\ccRefines
+\ccc{Assignable}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+\ccc{FromSmallIntConstructible}\\ 
+\ccc{EqualityComparable}\\
+
+\ccOperations
+
+Ring Operations:\\
+\ccFunction{IntegralDomainWithoutDiv 
+            operator+(const IntegralDomainWithoutDiv &a, 
+                      const IntegralDomainWithoutDiv &b);}{}
+\ccGlue
+
+\ccFunction{IntegralDomainWithoutDiv 
+            operator-(const IntegralDomainWithoutDiv &a, 
+                      const IntegralDomainWithoutDiv &b);}{}
+\ccGlue
+
+\ccFunction{IntegralDomainWithoutDiv 
+            operator*(const IntegralDomainWithoutDiv &a, 
+                      const IntegralDomainWithoutDiv &b);}{}
+\ccGlue
+\ccFunction{IntegralDomainWithoutDiv 
+            operator+(const IntegralDomainWithoutDiv &a);}{}
+\ccGlue
+\ccFunction{IntegralDomainWithoutDiv 
+            operator-(const IntegralDomainWithoutDiv &a);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDiv 
+            operator+=(const IntegralDomainWithoutDiv &a);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDiv 
+            operator-=(const IntegralDomainWithoutDiv &a);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDiv 
+            operator*=(const IntegralDomainWithoutDiv &a);}{}
+
+Equality comparable: 
+
+\ccFunction{bool 
+            operator==(const IntegralDomainWithoutDiv &a, 
+                      const IntegralDomainWithoutDiv &b);}{}
+\ccGlue
+\ccFunction{bool 
+            operator!=(const IntegralDomainWithoutDiv &a, 
+                      const IntegralDomainWithoutDiv &b);}{}
+\ccGlue
+ 
+\ccRefines
+ \ccc{DefaultConstructible} \\
+ \ccc{EqualityComparable}\\
+ \ccc{Assignable}\\
+ \ccc{FromSmallIntConstructible}\\
+
+\ccSeeAlso
+  \ccc{IntegralDomainWithoutDiv}\\
+  \ccc{IntegralDomain}\\
+  \ccc{UFDomain}\\
+  \ccc{EuclideanRing}\\
+  \ccc{Field}\\
+  \ccc{FieldWithSqrt}\\
+
+\ccHasModels
+
+
+\end{ccRefConcept}

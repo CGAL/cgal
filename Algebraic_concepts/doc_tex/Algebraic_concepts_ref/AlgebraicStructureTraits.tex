@@ -1,0 +1,172 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits}
+
+
+\ccDefinition
+
+A model of \ccc{AlgebraicStructureTraits} refelcts the algebraic structure
+of an assosiated type AS. 
+
+
+Depending on the concepts that AS fulfills, it contains various functors and 
+descriptive tags. See the list of members above.
+Moreover it gives access to the several possible 
+algebraic operations within that structure.
+
+
+\ccTypes
+
+A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
+
+\ccNestedType{AS}
+        {The assosiated algebraic structure.}
+
+\ccNestedType{Algebraic_structure_tag}
+        { Tag indicating the algebraic structure of the assoziated type. \\
+          This is one of: 
+        \begin{tabular}{ll}
+          - \ccc{Null_type}& AS fullfills no algebraic concept\\
+          - \ccc{Integral_domain_without_div_tag}& AS is model of \ccc{IntegralDomainWithoutDiv}\\     
+          - \ccc{Integral_domain_tag}& AS is model of \ccc{IntegralDomain}\\     
+          - \ccc{UFDomain_tag}& AS is model of \ccc{UFDomain}\\     
+          - \ccc{Euclidean_ring_tag}& AS is model of \ccc{EuclideanRing}\\     
+          - \ccc{Field_tag}& AS is model of \ccc{Field}\\     
+          - \ccc{Field_with_sqrt_tag}& AS is model of \ccc{FieldWithSqrt}\\
+        \end{tabular}        
+        }
+
+\ccNestedType{Is_exact_tag}
+        { Tag indicating whether AS is an exact type. \\
+          This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
+
+\ccTypes
+
+\ccNestedType{Simplify}{ 
+Required in case AS is at least an \ccc{IntegralDomainWithoutDiv}
+,\\this is an  \ccAdaptableUnaryFunction
+{void}
+{AS\&}
+{may simplify the representation of the object.}
+}
+
+
+\ccNestedType{Unit_part}{ 
+Required in case AS is at least an \ccc{IntegralDomainWithoutDiv},
+\\this is an  \ccAdaptableUnaryFunction
+{AS}
+{const AS\&}
+{ extracts the unit part the unit part of x 
+
+The mathematical definition of unit part is as follows: Two ring elements $a$ 
+and $b$ are said to be associate if there exists an invertible ring element 
+(i.e. a unit) $u$ such that $a = ub$. This defines an equivalence relation. 
+We can distinguish exactly one element of every equivalence class as being 
+unit normal. Then each element of a ring possesses a factorization into a unit 
+(called its unit part) and a unit-normal ring element 
+(called its unit normal associate).
+
+For the integers, the non-negative numbers are by convention unit normal, 
+hence the unit-part of a non-zero integer is its sign. For a \ccc{Field}, every 
+non-zero element is a unit and is its own unit part, its unit normal 
+associate being one. The unit part of zero is, by convention, one.
+
+%In a polynomial ring $R[x]$, the unit part of a polynomial is the unit 
+%part of its leading coefficient, whose definition depends on $R$. 
+}}
+
+\ccNestedType{Integral_div}{
+Required in case AS is at least an \ccc{IntegralDomain},
+\\this is an  \ccAdaptableBinaryFunction
+{AS}
+{const AS\&}
+{const AS\&}
+{returns $z = x/y$ , ,\\this is an  integral division. 
+
+Integral division (a.k.a. exact division or division without remainder) maps 
+ring elements $(x,y)$ to ring element $z$ such that $x = yz$ if such a $z$ 
+exists (i.e. if $x$ is divisible by $y$). Otherwise the effect of invoking 
+this operation is undefined. Since the ring represented is an integral domain, 
+$z$ is uniquely defined if it exists. 
+}
+}
+
+\ccNestedType{Gcd}{
+Required in case AS is at least an \ccc{UFDomain},
+\\this is an  \ccAdaptableBinaryFunction
+{AS}
+{const AS\&}
+{const AS\&}
+{returns $z = gcd(x,y)$. 
+
+The greatest common divisor ($gcd$) of ring elements $x$ and $y$ is the unique 
+ring element $d$ (up to a unit) with the property that any common divisor of 
+$x$ and $y$ also divides $d$. (In other words: $d$ is the greatest lower bound 
+of $x$ and $y$ in the partial order of divisibility.) We demand the $gcd$ to be 
+unit-normal (i.e. have unit part 1). $gcd(0,0)$ is defined as $1$.
+}
+}
+
+\ccNestedType{Mod}{
+Required in case AS is at least an \ccc{EuclideanRing},
+\\this is an  \ccAdaptableBinaryFunction
+{AS}
+{const AS\&}
+{const AS\&}
+{returns remainder of x modulo y.}       
+}       
+
+\ccNestedType{Div}{     
+Required in case AS is at least an \ccc{EuclideanRing},
+\\this is an  \ccAdaptableBinaryFunction
+{AS}
+{const AS\&}
+{const AS\&}
+{returns quotient from division with remainder. 
+}
+}
+\ccNestedType{Div_mod}{     
+Required in case AS is at least an \ccc{EuclideanRing},
+\\this is an  \ccAdaptableQuadFunction
+{void}
+{const AS\&}
+{const AS\&}
+{AS\&}
+{AS\&}
+{
+divide $a$ by $b$ with quotient $c$ and remainder $d$. 
+}
+}
+
+\ccNestedType{Sqrt}{ 
+Required in case AS is at least an \ccc{FieldWithSqrt},
+\\this is an  \ccAdaptableUnaryFunction
+{AS}
+{const AS\&}
+{functor to compute the square root, required for FieldWithSqrt. 
+
+{ \tt OLD EXACUS: \\ 
+A number type NT may provide this functor even if the set of numbers it models
+ does not contain real square roots in general. The most important example are 
+number types modeling the integers. For them, Sqrt()(x) has to return the 
+largest integer not exceeding the square root of x. \\
+COMMENT: I suggest to put this as an extra functor into ComparableTraits, e.g. Sqrt\_approx.  
+}
+}
+}
+
+
+
+
+{\small TODO: ?\\
+\ccNestedType{KthRoot}{ defined in EXACUS, but not needed }
+\ccNestedType{Root_of}{ 
+is this an functor for algebraic structure ? 
+since it is defined as the kth real root of an polynomial.. } 
+}
+
+
+
+
+\ccHasModels
+
+
+\end{ccRefConcept}

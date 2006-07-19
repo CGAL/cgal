@@ -1,0 +1,31 @@
+\begin{ccRefConcept}{IntegralDomain}
+
+
+\ccDefinition
+
+\ccc{IntegralDomain} refines \ccc{IntegralDomainWithoutDiv} by 
+providing an integral division.\\
+{\bf Note:} The concept does not require the operator / for this operation. 
+We intend to reserve the operator syntax for use with a \ccc{Field}.
+%Nevertheless, some non-field models of IntegralDomain have one. 
+
+
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomain >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\
+ 
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomain >::Algebraic_type} derived from \ccc{Integral_domain_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomain >::Integral_div} an \ccc{AdaptableBinaryFunction}\\
+  
+\ccRefines
+ \ccc{IntegralDomainWithoutDiv}\\
+
+
+\ccSeeAlso
+  \ccc{IntegralDomainWithoutDiv} 
+        $ \leftarrow $  \ccc{IntegralDomain} 
+
+\ccHasModels
+
+
+\end{ccRefConcept}

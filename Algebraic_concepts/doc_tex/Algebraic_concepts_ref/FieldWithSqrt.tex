@@ -1,0 +1,24 @@
+\begin{ccRefConcept}{FieldWithSqrt}
+
+\ccDefinition
+
+A model of \ccc{FieldWithSqrt} is a \ccc{Field} that has operations to take square roots.
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< FieldWithSqrt >} is a model of \ccc{AlgebraicStructureTraits} providing:\\
+- \ccc{CGAL::Algebraic_structure_traits< FieldWithSqrt >::Algebraic_type} derived from \ccc{Field_with_sqrt_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< FieldWithSqrt >::Sqrt} an \ccc{AdaptableUnaryFunction}\\
+
+\ccRefines
+ \ccc{Field}\\
+
+\ccSeeAlso
+  \ccc{IntegralDomainWithoutDiv} 
+        $ \leftarrow $  \ccc{IntegralDomain} 
+        $ \leftarrow $  \ccc{Field} 
+        $ \leftarrow $  \ccc{FieldWithSqrt} 
+
+
+\ccHasModels
+
+
+\end{ccRefConcept}

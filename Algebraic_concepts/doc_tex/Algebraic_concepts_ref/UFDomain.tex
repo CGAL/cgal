@@ -1,0 +1,38 @@
+\begin{ccRefConcept}{UFDomain}
+
+
+\ccDefinition
+
+
+A model of \ccc{UFDomain} is an \ccc{IntegralDomain} with the additional property 
+that the ring it represents is a unique factorization domain 
+(a.k.a. UFD or factorial ring), meaning that every non-zero non-unit 
+element has a factorization into irreducible elements that is unique 
+up to order and up to multiplication by invertible elements (units). 
+(An irreducible element is a non-unit ring element that cannot be factored 
+further into two non-unit elements. In a UFD, the irreducible elements 
+are precisely the prime elements.)
+
+In a UFD, any two elements, not both zero, possess a greatest common 
+divisor (gcd). 
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< UFDomain >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\
+ 
+- \ccc{CGAL::Algebraic_structure_traits< UFDomain >::Algebraic_type} derived from \ccc{UFDomain_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< UFDomain >::Gcd} an \ccc{AdaptableBinaryFunction}\\
+  
+
+ 
+\ccRefines
+ \ccc{IntegralDomain}
+ 
+\ccSeeAlso
+  \ccc{IntegralDomainWithoutDiv} 
+        $ \leftarrow $  \ccc{IntegralDomain} 
+        $ \leftarrow $  \ccc{UFDomain} 
+
+\ccHasModels
+
+
+\end{ccRefConcept}
