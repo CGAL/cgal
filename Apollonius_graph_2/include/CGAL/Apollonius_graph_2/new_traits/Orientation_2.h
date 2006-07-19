@@ -34,7 +34,7 @@ class AG2_Orientation_test_new_2 : public AG2_Orientation_test_2<K, MTag>
 {
 public:
     typedef K                    Kernel;
-    typedef typename K::FT       FT;
+    typedef typename K::RT       RT;
     typedef typename K::Site_2   Site_2;
     typedef typename K::Point_2  Point_2;
 
@@ -42,44 +42,51 @@ public:
     typedef Arity_tag<3>         Arity;
     typedef Site_2               argument_type;
 
-    Orientation operator() (const Site_2 &s0, const Site_2 &s1, const Site_2 &s2,
-                            const Point_2 &q) const
+    Orientation operator() (const Site_2 &s0, const Site_2 &s1,
+			    const Site_2 &s2, const Point_2 &q) const
     {
-        FT x1 = s1.x() - s0.x(), y1 = s1.y() - s0.y(), w1 = s1.weight() - s0.weight();
-        FT x2 = s2.x() - s0.x(), y2 = s2.y() - s0.y(), w2 = s2.weight() - s0.weight();
-        FT xq =  q.x() - s0.x(), yq =  q.y() - s0.y();
+      RT x1 = s1.x() - s0.x();
+      RT y1 = s1.y() - s0.y();
+      RT w1 = s1.weight() - s0.weight();
 
-        FT a1 = x1 * x1 + y1 * y1 - w1 * w1;
-        FT a2 = x2 * x2 + y2 * y2 - w2 * w2;
+      RT x2 = s2.x() - s0.x();
+      RT y2 = s2.y() - s0.y();
+      RT w2 = s2.weight() - s0.weight();
+
+      RT xq =  q.x() - s0.x();
+      RT yq =  q.y() - s0.y();
+
+      RT a1 = CGAL::square(x1) + CGAL::square(y1) - CGAL::square(w1);
+      RT a2 = CGAL::square(x2) + CGAL::square(y2) - CGAL::square(w2);
         
-        CGAL_assertion (sign (a1) > 0);
-        CGAL_assertion (sign (a2) > 0);
+      CGAL_assertion (CGAL::sign(a1) == POSITIVE);
+      CGAL_assertion (CGAL::sign(a2) == POSITIVE);
 
-        FT x = a1 * x2 - a2 * x1;
-        FT y = a1 * y2 - a2 * y1;
-        FT w = a1 * w2 - a2 * w1;
-        FT s = x * xq + y * yq;
+      RT x = a1 * x2 - a2 * x1;
+      RT y = a1 * y2 - a2 * y1;
+      RT w = a1 * w2 - a2 * w1;
+      RT s = x * xq + y * yq;
 
-        Sign W = CGAL::sign (w);
-        Sign S = CGAL::sign (s);
+      Sign W = CGAL::sign (w);
+      Sign S = CGAL::sign (s);
 
-        if (W == 0) return Sign (- S);
+      if (W == ZERO) { return -S; }
 
-        FT o = x * yq - y * xq;
+      RT o = x * yq - y * xq;
         
-        Sign O = CGAL::sign (o);
+      Sign O = CGAL::sign(o);
 
-        if (S == 0) return Sign (O * W);
+      if (S == 0) { return O * W; }
+	
+      if (W * S * O != POSITIVE) { return -S; }
 
-        if (W * S * O <= 0) return Sign (- S);
+      RT i = CGAL::square(w) * (CGAL::square(xq) + CGAL::square(yq))
+	- CGAL::square(s);
 
-        FT i = w * w * (xq * xq + yq * yq) - s * s;
-
-        Sign I = CGAL::sign (i);
+      Sign I = CGAL::sign(i);
         
-        return Sign (S * I);
+      return S * I;
     }
-
 };
 
 

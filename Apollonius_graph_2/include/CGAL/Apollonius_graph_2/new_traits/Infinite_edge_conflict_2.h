@@ -35,7 +35,8 @@ CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------
 
 template < class K, class Method_tag >
-class Infinite_edge_interior_conflict_new_2 : public Edge_conflict_2<K, Method_tag>
+class Infinite_edge_interior_conflict_new_2
+  : public Edge_conflict_2<K, Method_tag>
 {
 public:
     typedef CGAL::Weighted_point_inverter<K> Weighted_point_inverter;
@@ -47,12 +48,14 @@ public:
 
     inline
     bool operator()(const Site_2& p2, const Site_2& p3, 
-            const Site_2& p4, const Site_2& q, bool b) const
+		    const Site_2& p4, const Site_2& q, bool b) const
     {
-        Weighted_point_inverter inverter(p2);
-        return edge_conflict_test(
-                Inverted_weighted_point(Site_2(Point_2(0,0),0), 1),
-                inverter(p4), inverter(p3), inverter(q), b, 1, 1);
+      Weighted_point_inverter inverter(p2);
+      Point_2 origin(0,0);
+      Site_2 origin_site(origin,0);
+      return edge_conflict_test(Inverted_weighted_point(origin_site, 1),
+				inverter(p4), inverter(p3), inverter(q),
+				b, 1, 1);
     }
 };
 

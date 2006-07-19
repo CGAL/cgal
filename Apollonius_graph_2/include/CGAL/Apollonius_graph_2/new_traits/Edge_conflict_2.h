@@ -56,46 +56,48 @@ protected:
         Sign orient234 = this->orientation(p2, p3, p4);
 
         // radical intersections
-        Sign radInt23Q = radical_intersection(p2, p3, q, -1);
-        Sign radInt24Q = radical_intersection(p2, p4, q, -1);
+        Sign radInt23Q = this->radical_intersection(p2, p3, q, -1);
+        Sign radInt24Q = this->radical_intersection(p2, p4, q, -1);
 
         // radical side
-        Sign radSid2Q3 = radical_side(p2, q, p3, -1);
-        Sign radSid2Q4 = radical_side(p2, q, p4, -1);
+        Sign radSid2Q3 = this->radical_side(p2, q, p3, -1);
+        Sign radSid2Q4 = this->radical_side(p2, q, p4, -1);
 
         // order of a line
-        bool oolQ24 = ordered_on_line(q, p2, p4);
-        bool oolQ23 = ordered_on_line(q, p2, p3); 
+        bool oolQ24 = this->ordered_on_line(q, p2, p4);
+        bool oolQ23 = this->ordered_on_line(q, p2, p3); 
 
-        if(b)
+        if ( b )
         {
-            if (sign (q.p()) != POSITIVE ) return true;
-            // degenerate case
-            if(orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO)
-                return (oolQ23 || oolQ24);	
-            // non degenerate case
-            else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
-                        (radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE)))
-                return true;
-            else if (orient234 != NEGATIVE)
-                return orient23Q != POSITIVE && orient42Q != POSITIVE;
-            else
-                return orient23Q != POSITIVE || orient42Q != POSITIVE;
+	  if ( CGAL::sign(q.p()) != POSITIVE ) { return true; }
+	  // degenerate case
+	  if (orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO) {
+	    return (oolQ23 || oolQ24);
+	  } else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
+			(radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE))) {
+	    // non degenerate case
+	    return true;
+	  }  else if (orient234 != NEGATIVE) {
+	    return orient23Q != POSITIVE && orient42Q != POSITIVE;
+	  } else {
+	    return orient23Q != POSITIVE || orient42Q != POSITIVE;
+	  }
         }
         else
         {
-            CGAL_assertion (sign (q.p()) == POSITIVE);
-            // degenerate case
-            if(orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO)
-                return (oolQ23 && oolQ24);		
+	  CGAL_assertion ( CGAL::sign(q.p()) == POSITIVE );
+	  // degenerate case
+	  if (orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO) {
+	    return (oolQ23 && oolQ24);
+	  } else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
+                        (radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE))) {
             // non degenerate case	
-            else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
-                        (radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE)))
-                return false;
-            else if (orient234 != NEGATIVE) 
-                return orient23Q != POSITIVE || orient42Q != POSITIVE;
-            else 
-                return orient23Q != POSITIVE && orient42Q != POSITIVE;
+	    return false;
+	  } else if (orient234 != NEGATIVE) {
+	    return orient23Q != POSITIVE || orient42Q != POSITIVE;
+	  } else {
+	    return orient23Q != POSITIVE && orient42Q != POSITIVE;
+	  }
         }
     }
 };
