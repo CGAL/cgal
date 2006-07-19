@@ -44,9 +44,6 @@ all:            \
                 off_to_ghs$(EXE_EXT) \
                 off_to_medit$(EXE_EXT) \
                 lanteri$(EXE_EXT) \
-                lanteriMarc$(EXE_EXT) \
-                lanteri_ghs$(EXE_EXT) \
-                lanteri_head_tets$(EXE_EXT) \
                 lanteri_output_tet_mesh$(EXE_EXT) \
                 read_mesh$(EXE_EXT) \
                 slivers_exuder$(EXE_EXT) \
@@ -82,34 +79,6 @@ lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
 	Gd_displayer$(OBJ_EXT) \
 	lanteri_process_results$(OBJ_EXT) \
 	 $(LDFLAGS) -lgd
-
-lanteriMarc$(EXE_EXT): lanteriMarc$(OBJ_EXT) \
-                	  	 distribution$(OBJ_EXT) \
-                		   Qt_widget_displayer$(OBJ_EXT) \
-                		   Gd_displayer$(OBJ_EXT) \
-                		   lanteri_process_results$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteriMarc \
-	lanteriMarc$(OBJ_EXT) \
-	distribution$(OBJ_EXT) \
-	Qt_widget_displayer$(OBJ_EXT) \
-	Gd_displayer$(OBJ_EXT) \
-	lanteri_process_results$(OBJ_EXT) \
-	 $(LDFLAGS) -lgd
-
-lanteri_ghs$(EXE_EXT): lanteri_ghs$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_ghs \
-	lanteri_ghs$(OBJ_EXT) \
-	 $(LDFLAGS) -lgd
-
-lanteri_head$(EXE_EXT): lanteri_head$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_head \
-	lanteri_head$(OBJ_EXT) \
-	 $(LDFLAGS) -lgd
-
-lanteri_head_tets$(EXE_EXT): lanteri_head_tets$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_head_tets \
-	lanteri_head_tets$(OBJ_EXT) \
-	 $(LDFLAGS) -lgd
 	 
 read_mesh$(EXE_EXT): read_mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)read_mesh read_mesh$(OBJ_EXT) $(LDFLAGS)
@@ -133,10 +102,6 @@ clean: \
                    Gd_displayer.clean \
                    cgal_to_medit.clean \
                    lanteri.clean \
-                   lanteriMarc.clean \
-                   lanteri_ghs.clean \
-                   lanteri_head.clean \
-                   lanteri_head_tets.clean \
                    lanteri_output_tet_mesh.clean \
                    lanteri_process_results.clean \
                    Qt_widget_displayer.clean \
