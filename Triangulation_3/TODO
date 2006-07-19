@@ -1,3 +1,9 @@
+
+ Regular_triangulation_euclidean_traits_3.h
+- add  a functor Construct_smallest_orthogonal_weighted_point_3
+  to build at the same time both the center and the square radius
+of the smallest orthogonal sphere
+
 - regarder la question de David Bourguignon sur les IO
   (cf mail de Mariette)
 
