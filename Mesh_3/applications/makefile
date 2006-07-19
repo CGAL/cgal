@@ -13,10 +13,12 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../Triangulation_3/include \
+CXXFLAGS = -I.\
+           -I../../Triangulation_3/include \
+					 -I../../Triangulation_2/include \
            -I../../Mesh_2/include \
            -I../include \
-	   -I../../Data_structure_for_queries_3/include \
+	   			 -I../../Data_structure_for_queries_3/include \
            -I../../Surface_mesher/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -42,12 +44,16 @@ all:            \
                 off_to_ghs$(EXE_EXT) \
                 off_to_medit$(EXE_EXT) \
                 lanteri$(EXE_EXT) \
+                lanteriMarc$(EXE_EXT) \
+                lanteri_ghs$(EXE_EXT) \
+                lanteri_head_tets$(EXE_EXT) \
                 lanteri_output_tet_mesh$(EXE_EXT) \
                 read_mesh$(EXE_EXT) \
                 slivers_exuder$(EXE_EXT) \
                 cgal_to_medit$(EXE_EXT) \
                 stat_mesh$(EXE_EXT) \
-		test_off$(EXE_EXT) 
+                test_off$(EXE_EXT) \
+                nb2mesh$(EXE_EXT)
 
 cgal_to_medit$(EXE_EXT): cgal_to_medit$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)cgal_to_medit cgal_to_medit$(OBJ_EXT) $(LDFLAGS)
@@ -77,6 +83,34 @@ lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
 	lanteri_process_results$(OBJ_EXT) \
 	 $(LDFLAGS) -lgd
 
+lanteriMarc$(EXE_EXT): lanteriMarc$(OBJ_EXT) \
+                	  	 distribution$(OBJ_EXT) \
+                		   Qt_widget_displayer$(OBJ_EXT) \
+                		   Gd_displayer$(OBJ_EXT) \
+                		   lanteri_process_results$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteriMarc \
+	lanteriMarc$(OBJ_EXT) \
+	distribution$(OBJ_EXT) \
+	Qt_widget_displayer$(OBJ_EXT) \
+	Gd_displayer$(OBJ_EXT) \
+	lanteri_process_results$(OBJ_EXT) \
+	 $(LDFLAGS) -lgd
+
+lanteri_ghs$(EXE_EXT): lanteri_ghs$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_ghs \
+	lanteri_ghs$(OBJ_EXT) \
+	 $(LDFLAGS) -lgd
+
+lanteri_head$(EXE_EXT): lanteri_head$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_head \
+	lanteri_head$(OBJ_EXT) \
+	 $(LDFLAGS) -lgd
+
+lanteri_head_tets$(EXE_EXT): lanteri_head_tets$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)lanteri_head_tets \
+	lanteri_head_tets$(OBJ_EXT) \
+	 $(LDFLAGS) -lgd
+	 
 read_mesh$(EXE_EXT): read_mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)read_mesh read_mesh$(OBJ_EXT) $(LDFLAGS)
 
@@ -91,11 +125,18 @@ stat_mesh$(EXE_EXT): stat_mesh$(OBJ_EXT)
 test_off$(EXE_EXT): test_off$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_off test_off$(OBJ_EXT) $(LDFLAGS)
 
+nb2mesh$(EXE_EXT): libmesh.c nb2mesh.c
+	gcc -o nb2mesh libmesh.c nb2mesh.c
+
 clean: \
                    distribution.clean \
                    Gd_displayer.clean \
                    cgal_to_medit.clean \
                    lanteri.clean \
+                   lanteriMarc.clean \
+                   lanteri_ghs.clean \
+                   lanteri_head.clean \
+                   lanteri_head_tets.clean \
                    lanteri_output_tet_mesh.clean \
                    lanteri_process_results.clean \
                    Qt_widget_displayer.clean \
@@ -105,7 +146,8 @@ clean: \
                    display_distribution.clean \
                    off_to_ghs.clean \
                    off_to_medit.clean \
-		   test_off.clean
+		               test_off.clean \
+		               nb2mesh.clean
 
 
 #---------------------------------------------------------------------#
@@ -114,3 +156,6 @@ clean: \
 
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+.c.clean:
+	rm -f $* $*.o $*.moc
