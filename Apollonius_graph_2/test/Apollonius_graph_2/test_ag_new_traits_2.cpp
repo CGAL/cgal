@@ -142,7 +142,7 @@ void test_orientation (const AG &ag,
     GT_new gt_new;
 
     GT::Orientation_2 orientation1 = gt.orientation_2_object();
-    GT_new::Orientation_2 orientation2 = gt_new.orientation_2_object();
+    GT_new::Orientation_new_2 orientation2 = gt_new.orientation_new_2_object();
 
     for (Finite_vertices_iterator _v = ag.finite_vertices_begin();
             _v != ag.finite_vertices_end(); ++_v)
