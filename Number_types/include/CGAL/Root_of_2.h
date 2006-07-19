@@ -466,15 +466,15 @@ compare(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
 
   CGAL_assertion(is_valid(a) && is_valid(b));
 
+  if(a.is_rational() && b.is_rational()) {
+    return CGALi::compare(a[1], a[2], b[1], b[2]);
+  }
+
   if(!do_not_filter::value) {
     Interval_nt<> ia = to_interval(a);
     Interval_nt<> ib = to_interval(b);
     if(ia.inf() > ib.sup()) return LARGER;
     if(ia.sup() < ib.inf()) return SMALLER;
-  }
-
-  if(a.is_rational() && b.is_rational()) {
-    return CGALi::compare(a[1], a[2], b[1], b[2]);
   }
 
   if(a.is_rational()) {
@@ -510,16 +510,16 @@ compare(const Root_of_2<RT> &a,
 
   CGAL_assertion(is_valid(a) && is_valid(b));
 
+  if(a.is_rational()) {
+    CGAL::Rational_traits< RootOf_1 > r;
+    return CGALi::compare(a[1], a[2], r.numerator(b), r.denominator(b));
+  }
+
   if(!do_not_filter::value) {
     Interval_nt<> ia = to_interval(a);
     Interval_nt<> ib = to_interval(b);
     if(ia.inf() > ib.sup()) return LARGER;
     if(ia.sup() < ib.inf()) return SMALLER;
-  }
-
-  if(a.is_rational()) {
-    CGAL::Rational_traits< RootOf_1 > r;
-    return CGALi::compare(a[1], a[2], r.numerator(b), r.denominator(b));
   }
 
   RootOf_1 d_a(-a[1],2*a[2]);
@@ -569,15 +569,15 @@ compare(const Root_of_2<RT> &a, const RT &b)
 
   CGAL_assertion(is_valid(a) && is_valid(b));
 
+  if(a.is_rational()) {
+    return CGALi::compare(a[1], a[2], b);
+  }
+
   if(!do_not_filter::value) {
     Interval_nt<> ia = to_interval(a);
     Interval_nt<> ib = to_interval(b);
     if(ia.inf() > ib.sup()) return LARGER;
     if(ia.sup() < ib.inf()) return SMALLER;
-  }
-
-  if(a.is_rational()) {
-    return CGALi::compare(a[1], a[2], b);
   }
 
   // First, we compare b to the root of the derivative of a.
