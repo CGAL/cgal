@@ -13,6 +13,7 @@ Here is the list of tools:
     slivers_exuder
     stat_mesh
     test_off
+    nb2mesh
 
 Details follows...
 
@@ -189,3 +190,16 @@ incident to two faces.
 Usage:
 ./test_off [OFF_FILE_NAME.off]
     will analyse OFF_FILE_NAME.off and display the list of non manifold edges.
+    
+nb2mesh:
+-------
+This tool converts meshes from the [no]boite[b]-format to the mesh[b]- or amdba3-format.
+
+Usage: nb2mesh filein fileout [-v] [-s]
+   filein :  xxx.[no]boite[b]
+   fileout:  yyy.mesh[b]  or zzz.amdba3
+   -v     :  verbose mode
+   -s     :  do not create boundary (surface)
+   -x     :  split constrained tetras
+   -df    :  remove dangling faces
+   -ref   :  add reference to sub-domains
