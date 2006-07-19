@@ -1,3 +1,6 @@
+19 July 2006:  Menelaos Karavelas
+- further CGALization of new traits functors/classes
+
 18 July 2006:  Menelaos Karavelas
 - moved the new_traits directory inside Apollonius_graph_2
   so that it does not clutter the CGAL include directory; also
