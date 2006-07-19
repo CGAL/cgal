@@ -35,11 +35,16 @@ typedef SSkel::Vertex_const_handle   Vertex_const_handle ;
 
 typedef boost::shared_ptr<SSkel> SSkelPtr ;
 
-extern void draw_vertex  ( Point const& v, CGAL::Color c ) ;
-extern void draw_bisector( Point const& s, Point const& t, CGAL::Color c ) ;
+extern void draw_point  ( Point const& v, CGAL::Color c ) ;
+extern void draw_segment( Point const& s, Point const& t, CGAL::Color c ) ;
 
 struct Visitor
 {
+  void on_contour_edge_entered ( Halfedge_const_handle const& he ) const 
+  {
+    draw_segment(he->opposite()->vertex()->point(),he->vertex()->point(),CGAL::RED);
+  }
+  
   void on_initialization_started( int size_of_vertices ) const
   {
     mTotalVertices = size_of_vertices ;
@@ -64,7 +69,7 @@ struct Visitor
     if ( is_degenerate )
       ++ mDegenerateVertexCount ;  
       
-    draw_vertex(v->point(),CGAL::BLACK );
+    draw_point(v->point(),CGAL::BLACK );
       
     //printf("\rInitialization: %d/%d (%d%%)",mVertexCount0,mTotalVertices,(mVertexCount0*100/mTotalVertices));  
   }
@@ -95,7 +100,7 @@ struct Visitor
                                        , Vertex_const_handle const& node1
                                        ) const
   {
-    draw_bisector(node0->point(),node1->point(),CGAL::BLACK);
+    draw_segment(node0->point(),node1->point(),CGAL::BLACK);
     ++ mAnihiliationCount ;
   }
 
@@ -104,8 +109,8 @@ struct Visitor
                               , Vertex_const_handle const& node
                               ) const 
   {
-    draw_bisector(lseed->point(),node->point(), CGAL::BLACK );
-    draw_bisector(rseed->point(),node->point(), CGAL::BLACK );
+    draw_segment(lseed->point(),node->point(), CGAL::BLACK );
+    draw_segment(rseed->point(),node->point(), CGAL::BLACK );
     
     ++ mProcessedEdgeEventCount ;
   } 
@@ -115,7 +120,7 @@ struct Visitor
                                , Vertex_const_handle const& node1
                                ) const 
   {
-    draw_bisector(seed->point(),node0->point(), CGAL::BLACK );
+    draw_segment(seed->point(),node0->point(), CGAL::BLACK );
     ++ mProcessedSplitEventCount ;
   }
 
@@ -125,8 +130,8 @@ struct Visitor
                                       , Vertex_const_handle const& node1
                                       ) const
   {
-    draw_bisector(lseed->point(),node0->point(), CGAL::BLACK );
-    draw_bisector(rseed->point(),node1->point(), CGAL::BLACK );
+    draw_segment(lseed->point(),node0->point(), CGAL::BLACK );
+    draw_segment(rseed->point(),node1->point(), CGAL::BLACK );
     ++ mProcessedPseudoSplitEventCount ;
   }
 

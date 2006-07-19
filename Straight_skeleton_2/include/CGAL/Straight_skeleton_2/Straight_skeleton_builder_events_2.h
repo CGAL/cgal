@@ -55,7 +55,6 @@ public:
     ,mBorderB(aBorderB)
     ,mBorderC(aBorderC)
     ,mSorted (aSorted)
-    ,mExcluded(false)
   {}
 
   virtual ~ Straight_skeleton_builder_event_2() {}
@@ -71,9 +70,6 @@ public:
   Sorted_triedge_2 const& sorted_triedge() const { return mSorted  ; }
   Point_2 const&          point         () const { return mP       ; }
   FT                      time          () const { return mTime    ; }
-
-  bool is_excluded() const { return mExcluded ; }
-  void Exclude    ()       { mExcluded = true ; }
 
   void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
 
@@ -101,7 +97,6 @@ private :
   Sorted_triedge_2 mSorted ;
   Point_2          mP ;
   FT               mTime ;
-  bool             mExcluded ;
 } ;
 
 template<class SSkel_, class Traits_>

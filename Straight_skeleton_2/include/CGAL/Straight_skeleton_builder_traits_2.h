@@ -106,6 +106,29 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
 };
 
 template<class K>
+struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
+{
+  typedef Functor_base_2<K> Base ;
+
+  typedef typename Base::Point_2          Point_2 ;
+  typedef typename Base::Segment_2        Segment_2 ;
+  typedef typename Base::Sorted_triedge_2 Sorted_triedge_2 ;
+
+  typedef Uncertain<bool> result_type ;
+  typedef Arity_tag<2>    Arity ;
+
+  Uncertain<bool> operator() ( Point_2 const& aContourNode, Segment_2 const& aEdge ) const
+  {
+    return is_edge_facing_pointC2(cgal_make_optional(aContourNode),aEdge) ;
+  }
+
+  Uncertain<bool> operator() ( Sorted_triedge_2 const& aSkeletonNode, Segment_2 const& aEdge ) const
+  {
+    return is_edge_facing_offset_lines_isecC2(aSkeletonNode,aEdge) ;
+  }
+};
+
+template<class K>
 struct Compare_ss_event_distance_to_seed_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
@@ -328,6 +351,7 @@ struct Straight_skeleton_builder_traits_2_functors
   typedef CGAL_SS_i::Do_ss_event_exist_2                <K> Do_ss_event_exist_2 ;
   typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Compare_ss_event_distance_to_seed_2<K> Compare_ss_event_distance_to_seed_2 ;
+  typedef CGAL_SS_i::Is_edge_facing_ss_node_2           <K> Is_edge_facing_ss_node_2 ;
   typedef CGAL_SS_i::Is_ss_event_inside_offset_zone_2   <K> Is_ss_event_inside_offset_zone_2 ;
   typedef CGAL_SS_i::Are_ss_events_simultaneous_2       <K> Are_ss_events_simultaneous_2 ;
   typedef CGAL_SS_i::Are_ss_edges_parallel_2            <K> Are_ss_edges_parallel_2 ;
@@ -375,6 +399,9 @@ public:
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_ss_event_distance_to_seed_2>
     Compare_ss_event_distance_to_seed_2 ;
     
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_edge_facing_ss_node_2>
+     Is_edge_facing_ss_node_2 ;
+
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_ss_event_inside_offset_zone_2>
     Is_ss_event_inside_offset_zone_2 ;
 
@@ -444,6 +471,13 @@ public:
                             >
                             Compare_ss_event_distance_to_seed_2 ;
     
+  typedef Filtered_predicate< typename Exact    ::Is_edge_facing_ss_node_2
+                            , typename Filtering::Is_edge_facing_ss_node_2
+                            , C2E
+                            , C2F
+                            >
+                            Is_edge_facing_ss_node_2 ;
+  
   typedef Filtered_predicate< typename Exact    ::Is_ss_event_inside_offset_zone_2
                             , typename Filtering::Is_ss_event_inside_offset_zone_2
                             , C2E
@@ -497,6 +531,7 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Get_ss_triedge_collinearity_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Do_ss_event_exist_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_distance_to_seed_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_edge_facing_ss_node_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_ss_event_inside_offset_zone_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_events_simultaneous_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_parallel_2);

@@ -34,10 +34,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont>::Polygon_offset_builder_2( Ss const& aSs, T
       lMaxID = lHE->id() ;
 
     if ( !lHE->is_bisector() && handle_assigned(lHE->face()) )
-    {
-      CGAL_POLYOFFSET_SHOW ( DrawBorder(lHE) ) ;
       mBorders.push_back(lHE);
-    }
   }
 
   CGAL_POLYOFFSET_TRACE(3, "Border count: " << mBorders.size() ) ;
@@ -115,8 +112,6 @@ void Polygon_offset_builder_2<Ss,Gt,Cont>::AddOffsetVertex( FT aTime, Halfedge_c
   if ( !lP )
     throw std::range_error("CGAL_POLYGON_OFFSET: Overflow during construction of offset vertex" ) ; // Caught by the main loop
     
-  CGAL_POLYOFFSET_SHOW ( DrawBisector(aHook) ) ;
-  CGAL_POLYOFFSET_SHOW ( DrawOffset(aPoly,lP) ) ;
   CGAL_POLYOFFSET_TRACE(3,"Constructing offset point along B" << aHook->id() ) ;
 
   aPoly->push_back(*lP);
@@ -152,8 +147,6 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont>::TraceOffsetPolygon( FT aTim
     }
     break ;
   }
-
-  CGAL_POLYOFFSET_SHOW ( DrawOffset(lPoly,(*lPoly)[0]) ) ;
 
   if ( lPoly->size() >= 3 )
   {

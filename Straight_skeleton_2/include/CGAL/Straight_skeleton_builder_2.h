@@ -53,8 +53,11 @@ struct Dummy_straight_skeleton_builder_2_visitor
 {
   typedef SSkel_ SSkel ;
 
+  typedef typename SSkel::Halfedge_const_handle Halfedge_const_handle ;
   typedef typename SSkel::Vertex_const_handle   Vertex_const_handle ;
 
+  void on_contour_edge_entered ( Halfedge_const_handle const& he ) const {}
+                               
   void on_initialization_started( int size_of_vertices ) const {}
   
   void on_initial_events_collected( Vertex_const_handle const& v, bool is_reflex, bool is_degenerate )  const  {}
@@ -523,6 +526,23 @@ private :
     return Do_ss_event_exist_2(mTraits)(aS);
   }  
   
+  bool IsOppositeEdgeFacingTheSplitSeed( Vertex_const_handle aSeed, Halfedge_const_handle aOpposite ) const
+  {
+    if ( aSeed->is_skeleton() )
+    {
+      BorderTriple lTriple  = GetSkeletonVertexDefiningBorders(aSeed);
+      Triedge_2    lTriedge = CreateTriedge(lTriple);
+
+      return Is_edge_facing_ss_seed_2(mTraits)( CreateSortedTriedge(lTriedge,GetCollinearity(lTriedge))
+                                              , CreateEdge(aOpposite)
+                                              ) ;
+    }
+    else
+    {
+      return Is_edge_facing_ss_seed_2(mTraits)( aSeed->point(), CreateEdge(aOpposite) ) ;
+    }
+  }
+  
   bool IsSplitEventInsideOffsetZone( EventPtr const& aSplit
                                    , Halfedge_const_handle aOppositePrev
                                    , Halfedge_const_handle aOpposite
@@ -536,6 +556,7 @@ private :
 
   Comparison_result CompareEvents ( Sorted_triedge_2 const& aA, Sorted_triedge_2 const& aB ) const
   {
+  
     return Compare_ss_event_times_2(mTraits)(aA,aB) ;
   }
 
@@ -651,6 +672,12 @@ private :
 
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;
 
+  bool IsInverseSplitEventCoincident( Vertex_handle    const& aReflexOppN 
+                                    , Halfedge_handle  const& aReflexLBorder
+                                    , Halfedge_handle  const& aReflexRBorder
+                                    , Sorted_triedge_2 const& aEventSTriedge
+                                    ) ;
+                                    
   EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN ) ;
   
   void CollectSplitEvent( Vertex_handle    aNode
@@ -714,23 +741,6 @@ private :
   bool FinishUp( bool aMergeCoincidentNodes );
 
   bool Run( bool aMergeCoincidentNodes );
-
-private:
-
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
-  template<class Halfedge>
-  void DrawBisector ( Halfedge aHalfedge )
-  {
-    SS_IO_AUX::ScopedSegmentDrawing draw_( aHalfedge->opposite()->vertex()->point()
-                                         , aHalfedge->vertex()->point()
-                                         , aHalfedge->is_inner_bisector() ? CGAL::BLUE  : CGAL::GREEN
-                                         , aHalfedge->is_inner_bisector() ? "IBisector" : "CBisector"
-                                         ) ;
-    draw_.Release();
-  }
-
-#endif
-
 
 private:
 
@@ -823,12 +833,9 @@ private :
 
         CGAL_STSKEL_BUILDER_TRACE(1,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
         CGAL_STSKEL_BUILDER_TRACE(1,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
+        
+        mVisitor.on_contour_edge_entered(lCCWBorder);
 
-        CGAL_STSKEL_BUILDER_SHOW
-        ( 
-          SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lVertex->point(), CGAL::RED, "Border" ) ;
-          draw_.Release();
-        )
       }
 
       lPrev = lCurr ;
@@ -848,11 +855,6 @@ private :
 
     lFirstCCWBorder->opposite()->HBase_base::set_vertex(lPrevVertex);
 
-    CGAL_STSKEL_BUILDER_SHOW
-    ( SS_IO_AUX::ScopedSegmentDrawing draw_(lPrevVertex->point(),lFirstVertex->point(), CGAL::RED, "Border" ) ;
-      draw_.Release();
-    )
-
     lFirstCCWBorder->HBase_base::set_prev(lPrevCCWBorder);
     lPrevCCWBorder ->HBase_base::set_next(lFirstCCWBorder);
 
@@ -867,6 +869,8 @@ private :
                              << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
                              << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
                              );
+                             
+    mVisitor.on_contour_edge_entered(lFirstCCWBorder);
   }
   
 public:

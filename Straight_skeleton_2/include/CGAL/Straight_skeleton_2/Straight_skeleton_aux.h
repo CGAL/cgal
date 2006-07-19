@@ -92,14 +92,6 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 #define CGAL_STSKEL_ENABLE_TRACE
 #endif
 
-#if   defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW) \
-   || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW) \
-   || defined(CGAL_STRAIGHT_SKELETON_ENABLE_SHOW_AUX)  \
-   || defined(CGAL_POLYGON_OFFSET_ENABLE_SHOW_AUX)
-#define CGAL_STSKEL_ENABLE_SHOW
-#endif
-
-
 #ifdef CGAL_STSKEL_ENABLE_TRACE
 #  include<string>
 #  include<iostream>
@@ -140,77 +132,6 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 #else
 #  define CGAL_POLYOFFSET_SHOW(code)
 #endif
-
-#ifdef CGAL_STSKEL_ENABLE_SHOW
-
-CGAL_BEGIN_NAMESPACE
-
-namespace SS_IO_AUX
-{
-  class ScopedDrawing
-  {
-    public :
-
-      virtual ~ScopedDrawing()
-      {
-        if ( mID != -1 )
-          Straight_skeleton_external_undraw_object(mID) ;
-      }
-
-      void Release() { mID = -1 ; }
-    protected :
-
-      ScopedDrawing ( int aID ) : mID(aID) {}
-
-    private :
-
-      int mID ;
-  } ;
-
-  class ScopedPointDrawing : public ScopedDrawing
-  {
-    public :
-
-    template<class Point_2>
-    ScopedPointDrawing( Point_2 const& aP, CGAL::Color aColor, char const* aLayer )
-      :
-      ScopedDrawing
-      (
-        Straight_skeleton_external_draw_point(  to_double( aP.x() )
-                                               ,to_double( aP.y() )
-                                               ,aColor
-                                               ,aLayer
-                                             )
-      )
-    {}
-  } ;
-
-  class ScopedSegmentDrawing : public ScopedDrawing
-  {
-    public :
-
-    template<class Point_2>
-    ScopedSegmentDrawing( Point_2 const& aS, Point_2 const& aT, CGAL::Color aColor, char const* aLayer )
-      :
-      ScopedDrawing
-      (
-        Straight_skeleton_external_draw_segment(  to_double( aS.x() )
-                                                 ,to_double( aS.y() )
-                                                 ,to_double( aT.x() )
-                                                 ,to_double( aT.y() )
-                                                 ,aColor
-                                                 ,aLayer
-                                               )
-      )
-    {}
-  } ;
-
-} // namespace SS_IO_AUX
-
-CGAL_END_NAMESPACE
-
-#endif
-
 
 #ifdef CGAL_STRAIGHT_SKELETON_PROFILING_ENABLED // Reserved use. DO NOT define this macro switch
 #  include<string>
@@ -266,7 +187,6 @@ CGAL_END_NAMESPACE
 #endif
 
 #undef CGAL_STSKEL_ENABLE_TRACE
-#undef CGAL_STSKEL_ENABLE_SHOW
 
 #endif // CGAL_STRAIGHT_SKELETON_AUX_H //
 // EOF //
