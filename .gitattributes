@@ -1060,6 +1060,7 @@ Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text svneol=unset#application/octet-
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
 Mesh_3/applications/libmesh.c -text
+Mesh_3/applications/libmesh.h -text
 Mesh_3/applications/nb2mesh.c -text
 Mesh_3/examples/Mesh_3/inputs/cube.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/inputs/cube.off -text svneol=unset#application/octet-stream
