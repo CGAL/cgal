@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,14 +22,14 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_INFINITE_EDGE_TEST_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_INFINITE_EDGE_TEST_C2_H
 
-#include <CGAL/determinant.h>
-#include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 #include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------
 
@@ -37,14 +37,17 @@ template< class K >
 class Bounded_side_of_CCW_circular_arc
 {
 public:
-  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef typename K::FT                    FT;
-public:
-  
+  typedef Weighted_point_inverter<K>    Weighted_point_inverter;
+  typedef Inverted_weighted_point<K>    Inverted_weighted_point;
+  typedef Voronoi_radius<K>             Voronoi_radius;
+  typedef Voronoi_circle<K>             Voronoi_circle;
+  typedef Bitangent_line<K>             Bitangent_line;
+  typedef typename K::FT                FT;
+  typedef typename K::Bounded_side      Bounded_side;
+  typedef typename K::Orientation       Orientation;
+  typedef typename K::Sign              Sign;
+
+public:  
   template< class Method_tag >
   Bounded_side operator()(const Bitangent_line& l1,
 			  const Bitangent_line& l2,
@@ -159,10 +162,10 @@ public:
       Sign sign_r = CGAL::sign(r);
       Sign sign_R = CGAL::sign(R);
 
-      Sign sign_E1 = opposite(Sign(sign_R * sign_sigma));
-      Sign sign_E2 = Sign(sign_r * sign_sigma);
+      Sign sign_E1 = -sign_R * sign_sigma;
+      Sign sign_E2 = sign_r * sign_sigma;
       Sign sign_E3 = sign_delta;
-      Sign sign_E4 = Sign(sign_r * sign_R * sign_delta);
+      Sign sign_E4 = sign_r * sign_R * sign_delta;
 
       Sign sign_E1_plus_E3_P, sign_E4_plus_E2_P;
 
@@ -177,7 +180,7 @@ public:
 	  sign_E1_plus_E3_P = sign_E3;
 	} else {
 	  FT F1 = delta2 - G;
-	  sign_E1_plus_E3_P = Sign(sign_E3 * CGAL::sign(F1));
+	  sign_E1_plus_E3_P = sign_E3 * CGAL::sign(F1);
 	}
       }
 
@@ -191,7 +194,7 @@ public:
 	  if ( sign_r == ZERO ) {
 	    sign_E4_plus_E2_P = ZERO;
 	  } else {
-	    sign_E4_plus_E2_P = Sign(sign_E2 * CGAL::sign(F2));
+	    sign_E4_plus_E2_P = sign_E2 * CGAL::sign(F2);
 	  }
 	}
       }
@@ -201,21 +204,20 @@ public:
 	return sign_E1_plus_E3_P;
       }
 
-      Sign sign_E5 = opposite(Sign(sign_R * sign_sigma * sign_delta));
+      Sign sign_E5 = -sign_R * sign_sigma * sign_delta;
 
       //      FT D = CGAL::square(A) + CGAL::square(B);
       //      FT P = D - CGAL::square(R);
 
-      FT F3 = P * delta2 + CGAL::square(R * sigma) -
-	CGAL::square(r * D);
+      FT F3 = P * delta2 + CGAL::square(R * sigma) - CGAL::square(r * D);
 
       Sign sign_E6 = CGAL::sign(F3);
 
       if ( sign_E5 == ZERO ) {
-	return Sign(sign_E1_plus_E3_P * sign_E6);
+	return sign_E1_plus_E3_P * sign_E6;
       }
       if ( sign_E5 == sign_E6 ) {
-	return Sign(sign_E1_plus_E3_P * sign_E5);
+	return sign_E1_plus_E3_P * sign_E5;
       }
 
       //      FT p = d - CGAL::square(r);
@@ -225,10 +227,9 @@ public:
       FT F4 = CGAL::square(sigma - rR) - pP;
       FT F5 = CGAL::square(sigma + rR) - pP;
 
-      Sign sign_E7 =
-	opposite(Sign(CGAL::sign(F4) * CGAL::sign(F5)));
+      Sign sign_E7 = -CGAL::sign(F4) * CGAL::sign(F5);
 
-      return Sign(sign_E1_plus_E3_P * sign_E5 * sign_E7);
+      return sign_E1_plus_E3_P * sign_E5 * sign_E7;
     }
 
 };
@@ -237,28 +238,29 @@ public:
 //--------------------------------------------------------------------
 
 template < class K, class MTag >
-class Infinite_edge_test
+class Infinite_edge_interior_conflict_2
 {
 public:
-  typedef K                                 Kernel;
-  typedef MTag                              Method_tag;
+  typedef K                              Kernel;
+  typedef MTag                           Method_tag;
 
-  typedef typename K::Site_2                Site_2;
-  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef typename K::FT                    FT;
+  typedef typename K::Site_2             Site_2;
+  typedef Weighted_point_inverter<K>     Weighted_point_inverter;
+  typedef Inverted_weighted_point<K>     Inverted_weighted_point;
+  typedef Voronoi_radius<K>              Voronoi_radius;
+  typedef Voronoi_circle<K>              Voronoi_circle;
+  typedef Bitangent_line<K>              Bitangent_line;
+  typedef typename K::FT                 FT;
+  typedef typename K::Bounded_side       Bounded_side;
 
-  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
-  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
-                                     Sign_of_distance_from_bitangent_line;
-  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
-                                         Sign_of_distance_from_CCW_circle;
-  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
+  //  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
+  //  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
+  //                                     Sign_of_distance_from_bitangent_line;
+  //  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
+  //                                         Sign_of_distance_from_CCW_circle;
+  //  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
 
-  typedef CGAL::Bounded_side_of_CCW_circular_arc<K>
+  typedef Bounded_side_of_CCW_circular_arc<K>
                                          Bounded_side_of_CCW_circular_arc;
 
 public:
@@ -310,6 +312,8 @@ public:
 
 
 //--------------------------------------------------------------------
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

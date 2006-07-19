@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,14 +22,16 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
 
-#include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
+//#include <CGAL/enum.h>
+//#include <CGAL/Number_type_traits.h>
 
-#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
+//#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------
 
@@ -37,8 +39,9 @@ template< class K >
 class Sign_of_Voronoi_radius
 {
 public:
-  typedef CGAL::Voronoi_radius<K>   Voronoi_radius;
-  typedef typename K::FT            FT;
+  typedef Voronoi_radius<K>     Voronoi_radius;
+  typedef typename K::FT        FT;
+  typedef typename K::Sign      Sign;
 
 public:
 
@@ -77,22 +80,25 @@ template< class K >
 class Bounded_side_of_CCW_circle
 {
 private:
-  CGAL::Sign_of_Voronoi_radius<K> test;
-public:
-  typedef CGAL::Voronoi_radius<K>   Voronoi_radius;
-  typedef typename K::FT            FT;
-public:
+  Sign_of_Voronoi_radius<K> test;
 
+public:
+  typedef Voronoi_radius<K>         Voronoi_radius;
+  typedef typename K::Bounded_side  Bounded_dide;
+
+public:
   template<class Tag>
   inline Bounded_side
   operator()(const Voronoi_radius& vr, const Tag& tag)
     {
-      return Bounded_side(  opposite( test(vr, tag ) )  );
+      return enum_cast<Bounded_side>(  -test(vr, tag )  );
     }
 };
 
 
 //--------------------------------------------------------------------
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

@@ -69,7 +69,9 @@ public:
   //------------
 private:  
   typedef Apollonius_graph_new_traits_2<Rep,MTag>       Self;
-  typedef Apollonius_graph_kernel_wrapper_2<Rep>        Kernel;
+
+  typedef
+  CGAL_APOLLONIUS_GRAPH_2_NS::Apollonius_graph_kernel_wrapper_2<Rep>  Kernel;
 
 public:
   typedef Rep                                           R;
@@ -95,30 +97,49 @@ public:
   // CONSTRUCTIONS
   //--------------
   // vertex and dual site
-  typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
-  typedef CGAL::Construct_Apollonius_site_2<Kernel>
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Construct_Apollonius_site_2<Kernel>
   /*                                        */ Construct_Apollonius_site_2;
 
 
   // PREDICATES
   //-----------
-  typedef CGAL::Ag2_compare_x_2<Kernel>                 Compare_x_2;
-  typedef CGAL::Ag2_compare_y_2<Kernel>                 Compare_y_2;
-  typedef CGAL::Ag2_compare_weight_2<Kernel>            Compare_weight_2;
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Compare_x_2<Kernel>   Compare_x_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Compare_y_2<Kernel>   Compare_y_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Compare_weight_2<Kernel>
+  Compare_weight_2;
+
   // the following seems to be buggy
   //  typedef CGAL::AG2_Orientation_test_new_2<Kernel,MTag> Orientation_2;
   // use the old one:
-  typedef CGAL::AG2_Orientation_test_2<Kernel,MTag>     Orientation_2;
-  typedef CGAL::Is_hidden_2<Kernel,MTag>                Is_hidden_2;
-  typedef CGAL::Oriented_side_of_bisector_2<Kernel,MTag> 
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Orientation_new_2<Kernel,MTag>
+  Orientation_new_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Orientation_2<Kernel,MTag>
+  Orientation_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Is_hidden_2<Kernel,MTag>  Is_hidden_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Oriented_side_of_bisector_2<Kernel,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
-  typedef CGAL::Vertex_conflict_new_2<Kernel,MTag>          Vertex_conflict_2;
-  typedef CGAL::Finite_edge_interior_conflict_new_2<Kernel,MTag>
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Vertex_conflict_new_2<Kernel,MTag>
+  Vertex_conflict_2;
+
+  typedef
+  CGAL_APOLLONIUS_GRAPH_2_NS::Finite_edge_interior_conflict_new_2<Kernel,MTag>
   /*                                      */ Finite_edge_interior_conflict_2;
-  typedef CGAL::Infinite_edge_interior_conflict_new_2<Kernel,MTag>
+
+  typedef
+  CGAL_APOLLONIUS_GRAPH_2_NS::Infinite_edge_interior_conflict_new_2<Kernel,MTag>
   /*                                    */ Infinite_edge_interior_conflict_2;
-  typedef CGAL::Is_degenerate_edge_2<Kernel,MTag>       Is_degenerate_edge_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Is_degenerate_edge_2<Kernel,MTag>
+  /*                                                */  Is_degenerate_edge_2;
 
 
 public:
@@ -171,6 +192,11 @@ public:
   Orientation_2
   orientation_2_object() const {
     return Orientation_2();
+  }
+
+  Orientation_new_2
+  orientation_new_2_object() const {
+    return Orientation_new_2();
   }
 
   Is_hidden_2

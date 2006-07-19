@@ -22,23 +22,25 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_IS_HIDDEN_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_IS_HIDDEN_C2_H
 
-#include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------
 
 
 template<class K, class MTag>
-class Ag2_is_hidden_C2
+class Is_hidden_2
 {
 public:
   typedef K                    Kernel;
   typedef MTag                 Method_tag;
   typedef typename K::Site_2   Site_2;
   typedef typename K::RT       RT;
+  typedef typename K::Sign     Sign;
 
 private:
   bool is_hidden(const Site_2& p, const Site_2& q,
@@ -80,6 +82,7 @@ public:
 
 //--------------------------------------------------------------------
 
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

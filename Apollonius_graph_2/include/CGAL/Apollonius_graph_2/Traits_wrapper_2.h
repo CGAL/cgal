@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -23,11 +23,13 @@
 #define CGAL_APOLLONIUS_GRAPH_2_TRAITS_WRAPPER_2_H
 
 
-#include <CGAL/Apollonius_graph_2/short_names_2.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 
 template<class Gt_base>
@@ -44,7 +46,7 @@ public:
 };
 
 
-
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

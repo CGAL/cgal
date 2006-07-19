@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,11 +20,15 @@
 
 
 #ifndef CGAL_APOLLONIUS_GRAPH_2_PREDICATE_PROFILER
-#define CGAL_APOLLONIUS_GRAPH_2_PREDICATE_PROFILER
+#define CGAL_APOLLONIUS_GRAPH_2_PREDICATE_PROFILER 1
+
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 #define AG2_PROFILE_PREDICATES
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 class ag2_predicate_profiler
 {
@@ -66,6 +70,8 @@ unsigned long ag2_predicate_profiler::distance_from_bitangent_counter = 0;
 unsigned long ag2_predicate_profiler::shadow_region_type_counter = 0;
 unsigned long ag2_predicate_profiler::incircle_counter = 0;
 unsigned long ag2_predicate_profiler::order_on_bisector_counter = 0;
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

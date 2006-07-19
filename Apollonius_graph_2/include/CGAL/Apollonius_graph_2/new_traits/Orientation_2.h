@@ -23,14 +23,15 @@
 #define CGAL_APOLLONIUS_GRAPH_2_ORIENTATION_NEW_2_H
 
 
-// FIXME: We include the old traits class file for now to get the functors.
-#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_2/Orientation_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+
 
 template <class K, class MTag>
-class AG2_Orientation_test_new_2 : public AG2_Orientation_test_2<K, MTag>
+class Orientation_new_2 : public Orientation_2<K, MTag>
 {
 public:
     typedef K                    Kernel;
@@ -89,6 +90,7 @@ public:
     }
 };
 
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

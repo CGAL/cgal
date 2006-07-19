@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,11 +19,14 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_C2_H
-#define CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_C2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_2_H 1
 
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 template< class K >
 class Inverted_weighted_point
@@ -48,7 +51,7 @@ class Weighted_point_inverter
 public:
   typedef typename K::Point_2               Point_2;
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
   typedef typename K::FT                    FT;
 private:
   Site_2 _pole;
@@ -80,8 +83,8 @@ class Voronoi_radius
   //             a x^2 - 2 b x + c = 0;
   // x here represents the inverse of the radius
 public:
-  typedef typename K::FT                     FT;
-  typedef CGAL::Inverted_weighted_point<K>   Inverted_weighted_point;
+  typedef typename K::FT                  FT;
+  typedef Inverted_weighted_point<K>      Inverted_weighted_point;
 
 private:
   FT _a, _b, _c;
@@ -146,7 +149,7 @@ class Bitangent_line
 public:
   typedef typename K::Point_2               Point_2;
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
   typedef typename K::FT                    FT;
 protected:
   FT _a1, _a2;
@@ -270,10 +273,10 @@ template< class K >
 class Voronoi_circle : public Bitangent_line<K>
 {
 public:
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
-  typedef typename Bitangent_line::FT       FT;
+  typedef Inverted_weighted_point<K>       Inverted_weighted_point;
+  typedef Bitangent_line<K>                Bitangent_line;
+  typedef Voronoi_radius<K>                Voronoi_radius;
+  typedef typename Bitangent_line::FT      FT;
 
 protected:
   FT _gamma;
@@ -352,8 +355,8 @@ public:
     }
 };
 
-
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 
-#endif  // CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_C2_H
+#endif  // CGAL_APOLLONIUS_GRAPH_2_PREDICATE_CONSTRUCTIONS_2_H

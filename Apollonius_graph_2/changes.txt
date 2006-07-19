@@ -1,5 +1,10 @@
 19 July 2006:  Menelaos Karavelas
 - further CGALization of new traits functors/classes
+- created ApolloniusGraph_2 namespace
+- put all predicates under the new namespace (including the new predicates)
+- fixed test suite for new traits wrt calling the new orientation
+  predicate
+- removed code that is no longer used due to the removal of Filtered_exact
 
 18 July 2006:  Menelaos Karavelas
 - moved the new_traits directory inside Apollonius_graph_2

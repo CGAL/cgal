@@ -20,14 +20,14 @@
 //                 David Millman <dlm336@cs.nyu.edu>
 
 #ifndef CGAL_APOLLONIUS_GRAPH_2_EDGE_CONFLICT_2_H
-#define CGAL_APOLLONIUS_GRAPH_2_EDGE_CONFLICT_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_EDGE_CONFLICT_2_H 1
 
 
-// FIXME: We include the old traits class file for now to get the functors.
-#include <CGAL/Apollonius_graph_traits_2.h>
 #include <CGAL/Apollonius_graph_2/new_traits/Conflict_2.h>
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------
 //                     Edge Conflict Base
@@ -37,8 +37,8 @@ template < class K, class Method_tag >
 class Edge_conflict_2 : public Conflict_2<K, Method_tag>
 {
 public:
-    typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-    typedef bool                              result_type;
+    typedef Inverted_weighted_point<K>    Inverted_weighted_point;
+    typedef bool                          result_type;
     struct Arity {};
 
 protected:
@@ -102,6 +102,7 @@ protected:
     }
 };
 
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

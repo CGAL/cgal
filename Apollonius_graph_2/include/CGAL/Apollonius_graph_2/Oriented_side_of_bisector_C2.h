@@ -22,15 +22,17 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
 
-#include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
+
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //--------------------------------------------------------------------
 
 template<class K, class MTag>
-class Ag2_oriented_side_of_bisector_C2
+class Oriented_side_of_bisector_2
 {
 public:
   typedef K                               Kernel;
@@ -38,6 +40,9 @@ public:
 
   typedef typename K::Point_2             Point_2;
   typedef typename K::Site_2              Site_2;
+  typedef typename K::Comparison_result   Comparison_result;
+  typedef typename K::Sign                Sign;
+  typedef typename K::Oriented_side       Oriented_side;
 
 private:
   typedef typename Kernel::RT             RT;
@@ -116,6 +121,8 @@ public:
 
 
 //--------------------------------------------------------------------
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

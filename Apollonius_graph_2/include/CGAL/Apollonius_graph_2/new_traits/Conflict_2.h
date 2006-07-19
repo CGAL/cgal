@@ -20,13 +20,14 @@
 //                 David Millman <dlm336@cs.nyu.edu>
 
 #ifndef CGAL_APOLLONIUS_GRAPH_2_CONFLICT_2_H
-#define CGAL_APOLLONIUS_GRAPH_2_CONFLICT_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_CONFLICT_2_H 1
 
-
-// FIXME: We include the old traits class file for now to get the functors.
-#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
+#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------
 //                        Conflict Base
@@ -35,10 +36,11 @@ template < class K, class Method_tag >
 class Conflict_2
 {
 public:
-    typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-    typedef typename K::RT                    RT;	
-    typedef Sign                              result_type;
-    struct Arity {};
+  typedef Inverted_weighted_point<K>    Inverted_weighted_point;
+  typedef typename K::RT                RT;	
+  typedef typename K::Sign              Sign;
+  typedef Sign                          result_type;
+  struct Arity {};
 
 protected:
 
@@ -111,8 +113,8 @@ protected:
     }
 
     Sign power_test(const Inverted_weighted_point &p1,
-            const Inverted_weighted_point &p2,
-            const Inverted_weighted_point &p3, int i) const
+		    const Inverted_weighted_point &p2,
+		    const Inverted_weighted_point &p3, int i) const
     {
         CGAL_assertion(i == -1 || i == 1 || i == 2 || i == 3);
         Sign s;
@@ -179,6 +181,8 @@ protected:
     }
 };
 
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

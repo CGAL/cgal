@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,7 +20,9 @@
 
 
 #ifndef CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_2_H
-#define CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_2_H
+#define CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_2_H 1
+
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 #include <CGAL/Parabola_segment_2.h>
 #include <CGAL/Hyperbola_2.h>
@@ -33,6 +35,8 @@
 
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //***********************************************************************
 //***********************************************************************
@@ -424,6 +428,8 @@ public:
   }
 };
 
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,11 +20,14 @@
 
 
 #ifndef CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_FTC2_H
-#define CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_FTC2_H
+#define CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_FTC2_H 1
 
+#include <CGAL/Apollonius_graph_2/basic.h>
 #include <CGAL/determinant.h>
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 template < class FT >
 inline
@@ -176,7 +179,7 @@ ad_left_bitangent_lineC2(const FT &x1, const FT &y1, const FT &w1,
 
 
 
-
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

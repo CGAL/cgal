@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,7 +22,11 @@
 #ifndef CGAL_COMPARATOR_PROFILER_H
 #define CGAL_COMPARATOR_PROFILER_H
 
+#include <CGAL/Apollonius_graph_2/basic.h>
+
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 class comparator_profiler
 {
@@ -153,6 +157,8 @@ unsigned long comparator_profiler::counter_rr_p4 = 0;
 unsigned long comparator_profiler::counter_rr_e = 0;
 unsigned long comparator_profiler::counter_rr_r0 = 0;
 //unsigned long comparator_profiler::counter_rr_jneg = 0;
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

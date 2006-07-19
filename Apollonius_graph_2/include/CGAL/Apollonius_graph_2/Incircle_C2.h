@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,8 +22,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_INCIRCLE_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_INCIRCLE_C2_H
 
-#include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 #include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
@@ -32,16 +31,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+
 //--------------------------------------------------------------------
 
 template< class K >
 class Sign_of_distance_from_bitangent_line
 {
 public:
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef Bitangent_line<K>                 Bitangent_line;
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
   typedef typename K::FT                    FT;
+  typedef typename K::Sign                  Sign;
 
 public:
 
@@ -80,11 +82,12 @@ template< class K >
 class Sign_of_distance_from_CCW_circle
 {
 public:
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef typename K::FT                    FT;
-public:
+  typedef Bitangent_line<K>           Bitangent_line;
+  typedef Inverted_weighted_point<K>  Inverted_weighted_point;
+  typedef typename K::FT              FT;
+  typedef typename K::Sign            Sign;
 
+public:
   inline Sign
   operator()(const Bitangent_line& bl,
 	     const Inverted_weighted_point& v,
@@ -127,7 +130,7 @@ public:
 };
 
 template < class K, class MTag >
-class Incircle_test
+class Vertex_conflict_2
 {
 public:
   typedef K                                 Kernel;
@@ -135,17 +138,21 @@ public:
 
   typedef typename K::Point_2               Point_2;
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
+  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
+  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
+  typedef Bitangent_line<K>                 Bitangent_line;
+  typedef Voronoi_radius<K>                 Voronoi_radius;
   typedef typename K::FT                    FT;
+  typedef typename K::Orientation           Orientation;
+  typedef typename K::Sign                  Sign;
+  typedef typename K::Bounded_side          Bounded_side;
 
-  typedef CGAL::Bounded_side_of_CCW_circle<K>
-                                               Bounded_side_of_CCW_circle;
-  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
+  typedef Bounded_side_of_CCW_circle<K>     Bounded_side_of_CCW_circle;
+
+  typedef Sign_of_distance_from_bitangent_line<K>
                                      Sign_of_distance_from_bitangent_line;
-  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
+
+  typedef Sign_of_distance_from_CCW_circle<K>
                                          Sign_of_distance_from_CCW_circle;
 
 private:
@@ -232,6 +239,8 @@ public:
 };
 
 //--------------------------------------------------------------------
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

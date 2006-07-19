@@ -22,6 +22,8 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_IS_DEGENERATE_EDGE_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_IS_DEGENERATE_EDGE_C2_H
 
+#include <CGAL/Apollonius_graph_2/basic.h>
+
 #include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 #include <CGAL/Apollonius_graph_2/Incircle_C2.h>
@@ -29,26 +31,31 @@
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+
 
 //--------------------------------------------------------------------
 
 template < class K, class MTag >
-class Is_degenerate_edge_test
+class Is_degenerate_edge_2
 {
 public:
   typedef K                                 Kernel;
   typedef MTag                              Method_tag;
 
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
+  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
+  typedef Bitangent_line<K>                 Bitangent_line;
+  typedef Voronoi_circle<K>                 Voronoi_circle;
   typedef typename K::FT                    FT;
+  typedef typename K::Sign                  Sign;
+  typedef typename K::Comparison_result     Comparison_result;
 
-  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
+  typedef Order_on_finite_bisector<K>       Order_on_finite_bisector;
+
+  typedef Sign_of_distance_from_CCW_circle<K>
                                           Sign_of_distance_from_CCW_circle;
-  typedef CGAL::Order_on_finite_bisector<K>       Order_on_finite_bisector;
 
 public:
   typedef Site_2             argument_type;
@@ -85,6 +92,8 @@ public:
 };
 
 //--------------------------------------------------------------------
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

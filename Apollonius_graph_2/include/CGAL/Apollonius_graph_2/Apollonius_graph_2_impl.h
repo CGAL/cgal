@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -18,8 +18,8 @@
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_2_C
-#define CGAL_APOLLONIUS_GRAPH_2_C
+#ifndef CGAL_APOLLONIUS_GRAPH_2_IMPL_H
+#define CGAL_APOLLONIUS_GRAPH_2_IMPL_H
 
 // class implementation continued
 //=================================
@@ -2073,4 +2073,4 @@ Apollonius_graph_2<Gt,Agds,LTag>::file_input(std::istream& is)
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_APOLLONIUS_GRAPH_2_C
+#endif // CGAL_APOLLONIUS_GRAPH_2_IMPL_H

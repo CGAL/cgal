@@ -23,11 +23,12 @@
 #define CGAL_APOLLONIUS_GRAPH_2_VERTEX_CONFLICT_2_H
 
 
-// FIXME: We include the old traits class file for now to get the functors.
-#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------
 //                        Vertex conflict
@@ -320,6 +321,7 @@ public:
     }
 };
 
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

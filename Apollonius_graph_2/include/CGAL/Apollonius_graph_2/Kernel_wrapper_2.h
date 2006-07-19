@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,12 +22,14 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_KERNEL_WRAPPER_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_KERNEL_WRAPPER_2_H
 
-#include <CGAL/Apollonius_graph_2/short_names_2.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 #include <CGAL/Apollonius_site_2.h>
-#include <CGAL/Cartesian_converter.h>
+//#include <CGAL/Cartesian_converter.h>
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 template<class Kernel_base_2>
 class Apollonius_graph_kernel_wrapper_2 : public Kernel_base_2
@@ -76,6 +78,8 @@ public:
   }
 };
 
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

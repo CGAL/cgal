@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,31 +22,35 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_COMPARE_WEIGHT_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_COMPARE_WEIGHT_2_H
 
-#include <CGAL/enum.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 //--------------------------------------------------------------------
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+
 template<class K>
-class Ag2_compare_weight_2
+class Compare_weight_2
 {
 public:
-  typedef K                    Kernel;
-  typedef typename K::Site_2   Site_2;
+  typedef K                               Kernel;
+  typedef typename K::Site_2              Site_2;
 
-  typedef Comparison_result    result_type;
-  typedef Arity_tag<2>         Arity;
-  typedef Site_2               argument_type;
+  typedef typename K::Comparison_result   result_type;
+  typedef Arity_tag<2>                    Arity;
+  typedef Site_2                          argument_type;
 
   inline
-  Comparison_result operator()(const Site_2& s1, const Site_2& s2) const
+  result_type operator()(const Site_2& s1, const Site_2& s2) const
   {
     return CGAL::compare(s1.weight(), s2.weight());
   }
 };
 
 //--------------------------------------------------------------------
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

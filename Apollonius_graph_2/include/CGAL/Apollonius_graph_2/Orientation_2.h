@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,33 +22,36 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_ORIENTATION_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_ORIENTATION_2_H
 
-#include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
+
 #include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 //--------------------------------------------------------------------
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+
 template<class K, class MTag>
-class Ag2_orientation_2
+class Orientation_2
 {
 public:
-  typedef K                    Kernel;
-  typedef MTag                 Method_tag;
-  typedef typename K::Site_2   Site_2;
-  typedef typename K::Point_2  Point_2;
+  typedef K                        Kernel;
+  typedef MTag                     Method_tag;
+  typedef typename K::Site_2       Site_2;
+  typedef typename K::Point_2      Point_2;
+  typedef typename K::Orientation  Orientation;
 
-  typedef Orientation          result_type;
-  typedef Arity_tag<3>         Arity;
-  typedef Site_2               argument_type;
+  typedef Orientation              result_type;
+  typedef Arity_tag<3>             Arity;
+  typedef Site_2                   argument_type;
 
 private:
-  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef typename Bitangent_line::FT       FT;
+  typedef Weighted_point_inverter<K>     Weighted_point_inverter;
+  typedef Inverted_weighted_point<K>     Inverted_weighted_point;
+  typedef Voronoi_circle<K>              Voronoi_circle;
+  typedef Bitangent_line<K>              Bitangent_line;
+  typedef typename Bitangent_line::FT    FT;
 
 private:
   Orientation vv_orientation(const Voronoi_circle& vc, const Point_2& sp1,
@@ -103,6 +106,8 @@ public:
 };
 
 //--------------------------------------------------------------------
+
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

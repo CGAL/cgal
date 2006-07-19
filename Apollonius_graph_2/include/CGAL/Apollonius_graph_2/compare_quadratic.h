@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,9 +22,12 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_COMPARE_QUADRATIC_H
 #define CGAL_APOLLONIUS_GRAPH_2_COMPARE_QUADRATIC_H
 
+#include <CGAL/Apollonius_graph_2/basic.h>
 #include <CGAL/functions_on_signs.h>
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 #ifdef COMPARATOR_PROFILER
 #include <CGAL/Apollonius_graph_2/comparator_profiler.h>
@@ -1002,13 +1005,8 @@ ke_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
+
 CGAL_END_NAMESPACE
-
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_COMPARE_QUADRATIC_H
-#include <CGAL/Arithmetic_filter/predicates/compare_quadratic.h>
-#endif // CGAL_ARITHMETIC_FILTER_COMPARE_QUADRATIC_H
-#endif // CGAL_ARITHMETIC_FILTER_H
-
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_COMPARE_QUADRATIC_H

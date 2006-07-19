@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -22,8 +22,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST_C2_H
 
-#include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/basic.h>
 
 #include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
@@ -32,6 +31,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+
 //--------------------------------------------------------------------
 
 template< class K >
@@ -39,8 +40,9 @@ class Orientation_wrt_symmetry_axis
 {
 public:
   typedef typename K::Point_2        Point_2;
-  typedef CGAL::Voronoi_circle<K>    Voronoi_circle;
+  typedef Voronoi_circle<K>          Voronoi_circle;
   typedef typename K::FT             FT;
+  typedef typename K::Orientation    Orientation;
 
 public:
 
@@ -73,8 +75,10 @@ template< class K >
 class Compare_Voronoi_radii
 {
 public:
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef Voronoi_circle<K>                 Voronoi_circle;
   typedef typename K::FT                    FT;
+  typedef typename K::Sign                  Sign;
+  typedef typename K::Comparison_result     Comparison_result;
 
 private:
 
@@ -86,7 +90,7 @@ private:
 					       Du, Dv, Dr);
       Sign s1 = CGAL::sign(factors.first);
       Sign s2 = CGAL::sign(factors.second);
-      return (s1 * s2);
+      return s1 * s2;
     }
 
   std::pair<FT,FT>
@@ -246,12 +250,16 @@ template< class K >
 class Order_on_finite_bisector
 {
 public:
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
+  typedef Voronoi_circle<K>                 Voronoi_circle;
   typedef typename K::Site_2                Site_2;
   typedef typename K::FT                    FT;
-  typedef CGAL::Orientation_wrt_symmetry_axis<K>
+  typedef typename K::Comparison_result     Comparison_result;
+  typedef typename K::Orientation           Orientation;
+
+  typedef Compare_Voronoi_radii<K>          Compare_Voronoi_radii;
+
+  typedef Orientation_wrt_symmetry_axis<K>
                                     Orientation_wrt_symmetry_axis;
-  typedef CGAL::Compare_Voronoi_radii<K>    Compare_Voronoi_radii;
   
 public:
   template<class Method_tag>
@@ -303,23 +311,28 @@ public:
 //--------------------------------------------------------------------
 
 template < class K >
-class Finite_edge_test
+class Finite_edge_interior_conflict
 {
 public:
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
+  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
+  typedef Voronoi_radius<K>                 Voronoi_radius;
+  typedef Voronoi_circle<K>                 Voronoi_circle;
+  typedef Bitangent_line<K>                 Bitangent_line;
   typedef typename K::FT                    FT;
+  typedef typename K::Sign                  Sign;
+  typedef typename K::Bounded_side          Bounded_side;
+  typedef typename K::Comparison_result     Comparison_result;
 
-  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
-  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
+  typedef Bounded_side_of_CCW_circle<K>     Bounded_side_of_CCW_circle;
+  typedef Order_on_finite_bisector<K>       Order_on_finite_bisector;
+
+  typedef Sign_of_distance_from_bitangent_line<K>
                                      Sign_of_distance_from_bitangent_line;
-  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
+
+  typedef Sign_of_distance_from_CCW_circle<K>
                                          Sign_of_distance_from_CCW_circle;
-  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
 
 public:
   template<class Method_tag>
@@ -427,25 +440,29 @@ public:
 //--------------------------------------------------------------------
 
 template < class K >
-class Finite_edge_test_degenerated
+class Finite_edge_interior_conflict_degenerated
 {
 public:
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
-  typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
-  typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
-  typedef CGAL::Bitangent_line<K>           Bitangent_line;
+  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
+  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
+  typedef Voronoi_radius<K>                 Voronoi_radius;
+  typedef Voronoi_circle<K>                 Voronoi_circle;
+  typedef Bitangent_line<K>                 Bitangent_line;
   typedef typename K::FT                    FT;
+  typedef typename K::Sign                  Sign;
+  typedef typename K::Comparison_result     Comparison_result;
+  typedef typename K::Bounded_side          Bounded_side;
 
-  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
-  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
+  typedef Bounded_side_of_CCW_circle<K>     Bounded_side_of_CCW_circle;
+  typedef Order_on_finite_bisector<K>       Order_on_finite_bisector;
+
+  typedef Sign_of_distance_from_bitangent_line<K>
                                      Sign_of_distance_from_bitangent_line;
-  typedef CGAL::Sign_of_distance_from_CCW_circle<K>
-                                         Sign_of_distance_from_CCW_circle;
-  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
-public:
 
+  typedef Sign_of_distance_from_CCW_circle<K>
+                                         Sign_of_distance_from_CCW_circle;
+public:
   template<class Method_tag>
   bool
   operator()(const Site_2& p1, const Site_2& p2, const Site_2& p3,
@@ -489,8 +506,7 @@ public:
     // of the form (a, b) or (-oo, a) U (b, +oo)
     Bitangent_line bl_12(p1, p2);
 
-    Sign stc =
-      Sign_of_distance_from_bitangent_line()(bl_12, q, tag);
+    Sign stc = Sign_of_distance_from_bitangent_line()(bl_12, q, tag);
 
     Inverted_weighted_point u3 = inverter(p3);
     Bitangent_line blinv_23(u2, u3);
@@ -571,7 +587,7 @@ public:
 
 
 template<class K, class MTag>
-class Ag2_finite_edge_test_C2
+class Finite_edge_interior_conflict_2
 {
 public:
   typedef K                      Kernel;
@@ -580,8 +596,8 @@ public:
   typedef typename K::Site_2     Site_2;
 
 private:
-  typedef CGAL::Finite_edge_test_degenerated<K>  Test_degenerated;
-  typedef CGAL::Finite_edge_test<K>              Test;
+  typedef Finite_edge_interior_conflict_degenerated<K>   Test_degenerated;
+  typedef Finite_edge_interior_conflict<K>               Test;
 
 public:
   typedef bool                  result_type;
@@ -614,6 +630,7 @@ public:
 
 //--------------------------------------------------------------------
 
+CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 
