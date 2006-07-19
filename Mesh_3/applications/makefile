@@ -15,10 +15,10 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I.\
            -I../../Triangulation_3/include \
-					 -I../../Triangulation_2/include \
+           -I../../Triangulation_2/include \
            -I../../Mesh_2/include \
            -I../include \
-	   			 -I../../Data_structure_for_queries_3/include \
+           -I../../Data_structure_for_queries_3/include \
            -I../../Surface_mesher/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -79,7 +79,7 @@ lanteri$(EXE_EXT): lanteri$(OBJ_EXT) \
 	Gd_displayer$(OBJ_EXT) \
 	lanteri_process_results$(OBJ_EXT) \
 	 $(LDFLAGS) -lgd
-	 
+
 read_mesh$(EXE_EXT): read_mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)read_mesh read_mesh$(OBJ_EXT) $(LDFLAGS)
 
@@ -111,8 +111,8 @@ clean: \
                    display_distribution.clean \
                    off_to_ghs.clean \
                    off_to_medit.clean \
-		               test_off.clean \
-		               nb2mesh.clean
+                   test_off.clean \
+                   nb2mesh.clean
 
 
 #---------------------------------------------------------------------#
