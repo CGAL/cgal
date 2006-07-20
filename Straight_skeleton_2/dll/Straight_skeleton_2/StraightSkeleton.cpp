@@ -18,19 +18,26 @@ typedef std::vector<ContourPtr>    ContourSequence ;
 
 typedef CGAL::Straight_skeleton_2<Kernel> Ss;
 
-typedef Ss::Face_iterator Face_iterator;
-typedef Ss::Halfedge_iterator Halfedge_iterator;
-typedef Ss::Halfedge_handle   Halfedge_handle;
-typedef Ss::Vertex_handle     Vertex_handle;
-typedef Ss::Vertex_const_handle     Vertex_const_handle;
+typedef Ss::Face_iterator         Face_iterator;
+typedef Ss::Halfedge_iterator     Halfedge_iterator;
+typedef Ss::Halfedge_handle       Halfedge_handle;
+typedef Ss::Halfedge_const_handle Halfedge_const_handle;
+typedef Ss::Vertex_handle         Vertex_handle;
+typedef Ss::Vertex_const_handle   Vertex_const_handle;
 
 struct Visitor
 {
   Visitor ( ProgressCallback progress ) : Progress(progress), mCurr(0), mTotal(0) {}
 
-  void on_error( char const* msg )  const
+  void on_contour_edge_entered ( Halfedge_const_handle const& he ) const {}
+  
+  void on_initialization_started( std::size_t size_of_vertices ) const {}
+  
+  void on_initial_events_collected( Vertex_const_handle const& v, bool is_reflex, bool is_degenerate )  const
   {
-    std::cerr << msg << std::endl ;
+    ++ mCurr ;
+    if ( Progress )
+      Progress(mCurr,mTotal);
   }
 
   void on_edge_event_created( Vertex_const_handle const& lnode
@@ -43,25 +50,29 @@ struct Visitor
                                     , Vertex_const_handle const& rnode
                                     )  const {}
 
+  void on_initialization_finished() const {}
+  
+  void on_propagation_started() const {}
+
   void on_anihiliation_event_processed ( Vertex_const_handle const& node0
                                        , Vertex_const_handle const& node1
                                        )  const {}
 
-  void on_initial_events_collected( Vertex_const_handle const& v )  const
-  {
-    ++ mCurr ;
-    if ( Progress )
-      Progress(mCurr,mTotal);
-  }
 
-  void on_edge_event_processed( Vertex_const_handle const& lnode
-                              , Vertex_const_handle const& rnode
+  void on_edge_event_processed( Vertex_const_handle const& lseed
+                              , Vertex_const_handle const& rseed
+                              , Vertex_const_handle const&  node
                               )  const {} 
 
-  void on_split_event_processed( Vertex_const_handle const& node )  const {}
+  void on_split_event_processed( Vertex_const_handle const& seed
+                               , Vertex_const_handle const& node0
+                               , Vertex_const_handle const& node1
+                               )  const {}
 
-  void on_pseudo_split_event_processed( Vertex_const_handle const& lnode
-                                      , Vertex_const_handle const& rnode
+  void on_pseudo_split_event_processed( Vertex_const_handle const& lseed
+                                      , Vertex_const_handle const& rseed
+                                      , Vertex_const_handle const& node0
+                                      , Vertex_const_handle const& node1
                                       )  const {}
 
   void on_vertex_processed( Vertex_const_handle const& node ) const 
@@ -73,6 +84,22 @@ struct Visitor
         Progress(mCurr,mTotal);
     }
   }
+
+  void on_propagation_finished() const {}
+  
+  void on_cleanup_started( bool mergin_coincident_nodes ) const {}
+  
+  void on_cleanup_finished() const {}
+  
+  void on_algorithm_finished ( bool finished_ok ) const {}
+
+  void on_error( char const* msg )  const
+  {
+    std::cerr << msg << std::endl ;
+  }
+
+  public :
+
 
   void set_total ( int aTotal ) { mTotal = aTotal ; }
 
@@ -88,33 +115,28 @@ typedef CGAL::Straight_skeleton_builder_2<SsBuilderTraits,Ss,Visitor> SsBuilder;
 
 typedef CGAL::Bbox_2 Bbox_2;
 
-
 extern "C"
-__declspec (dllexport)
-void
-StraightSkeletonFree(int*& numFace_i,
-		     double*& xf, double*& yf)
+{
+
+void STRAIGHT_SKELETON_API StraightSkeletonFree(int* numFace_i, double* xf, double* yf)
 {
   delete [] xf;
   delete [] yf;
   delete [] numFace_i;
 }
 
-extern "C"
-__declspec (dllexport)
-int  
-StraightSkeleton( int np
-                , int* np_i
-                , double* xp
-                , double* yp
-                , int& numFaces
-                , int& numVertices
-                , int*& numFace_i
-                , double*& xf
-                , double*& yf
-                , int dumpEPS
-                , ProgressCallback progress
-                )
+int STRAIGHT_SKELETON_API StraightSkeleton( int np
+                                          , int* np_i
+                                          , double* xp
+                                          , double* yp
+                                          , int& numFaces
+                                          , int& numVertices
+                                          , int*& numFace_i
+                                          , double*& xf
+                                          , double*& yf
+                                          , int dumpEPS
+                                          , ProgressCallback progress
+                                          )
 {
   int result = 0 ;
 
@@ -164,7 +186,7 @@ StraightSkeleton( int np
     visitor.set_total(currentPoint*2);
 
     // Construct the skeleton
-    boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+    boost::shared_ptr<Ss> ss = ssb.construct_skeleton(true);
       
     // Proceed only if the skeleton was correctly constructed.
     if ( ss )
@@ -187,6 +209,7 @@ StraightSkeleton( int np
             h = h->next();
 	         } while(h != done);
        	  numVertices += count;
+
 	         numFace_i[currentFace] = count;
 	         ++currentFace;
         }
@@ -270,6 +293,6 @@ StraightSkeleton( int np
   return result ;
 }
 
-
+} // extern "C"
 
 

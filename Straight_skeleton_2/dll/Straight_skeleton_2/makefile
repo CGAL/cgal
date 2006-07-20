@@ -19,7 +19,8 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           -DSTRAIGHTSKELETONDLL_EXPORTS
 
 #---------------------------------------------------------------------#
 #                    linker flags
