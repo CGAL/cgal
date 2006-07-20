@@ -1,3 +1,8 @@
+20 July 2006:  Menelaos Karavelas
+- fixes in #includes: correct files are now included
+- added mixed traits classes, filtered and non-filtered
+- removed obsolete code
+
 19 July 2006:  Menelaos Karavelas
 - further CGALization of new traits functors/classes
 - created ApolloniusGraph_2 namespace

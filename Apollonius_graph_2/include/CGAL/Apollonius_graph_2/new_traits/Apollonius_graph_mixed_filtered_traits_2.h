@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004,2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,11 +19,11 @@
 
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_FILTERED_TRAITS_2_H
-#define CGAL_APOLLONIUS_GRAPH_FILTERED_TRAITS_2_H
+#ifndef CGAL_APOLLONIUS_GRAPH_MIXED_FILTERED_TRAITS_2_H
+#define CGAL_APOLLONIUS_GRAPH_MIXED_FILTERED_TRAITS_2_H
 
 
-#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_2/new_traits/Apollonius_graph_mixed_traits_2.h>
 
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Filtered_construction.h>
@@ -34,6 +34,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/number_utils_classes.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -84,12 +85,12 @@ template<class CK_t,
          class C2F_t   =
          Cartesian_converter<CK_t, FK_t, To_interval<typename CK_t::RT> > >
 #endif
-class Apollonius_graph_filtered_traits_2
+class Apollonius_graph_mixed_filtered_traits_2
 {
 private:
-  typedef Apollonius_graph_traits_2<CK_t, CK_MTag>    CK_traits;
-  typedef Apollonius_graph_traits_2<FK_t, FK_MTag>    FK_traits;
-  typedef Apollonius_graph_traits_2<EK_t, EK_MTag>    EK_traits;
+  typedef Apollonius_graph_mixed_traits_2<CK_t, CK_MTag>    CK_traits;
+  typedef Apollonius_graph_mixed_traits_2<FK_t, FK_MTag>    FK_traits;
+  typedef Apollonius_graph_mixed_traits_2<EK_t, EK_MTag>    EK_traits;
 
   typedef
   CGAL_APOLLONIUS_GRAPH_2_NS::Apollonius_graph_kernel_wrapper_2<CK_t>     CK;
@@ -120,11 +121,8 @@ private:
   typedef Cartesian_converter<EK, CK, To_double<typename EK::RT> > E2C_t;
 
   typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::
   Apollonius_graph_cartesian_converter<FK, CK, F2C_t>   F2C;
-
   typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::
   Apollonius_graph_cartesian_converter<EK, CK, E2C_t>   E2C;
 #endif
 
@@ -256,12 +254,12 @@ private:
   typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
   typedef typename FK_traits::Compare_weight_2   FK_Compare_weight_2;
   typedef typename FK_traits::Orientation_2      FK_Orientation_2;
+  typedef typename FK_traits::Orientation_new_2  FK_Orientation_new_2;
   typedef typename FK_traits::Is_hidden_2        FK_Is_hidden_2;
+  typedef typename FK_traits::Vertex_conflict_2  FK_Vertex_conflict_2;
 
   typedef typename FK_traits::Oriented_side_of_bisector_2
   FK_Oriented_side_of_bisector_2;
-
-  typedef typename FK_traits::Vertex_conflict_2  FK_Vertex_conflict_2;
 
   typedef typename FK_traits::Finite_edge_interior_conflict_2
   FK_Finite_edge_interior_conflict_2;
@@ -278,12 +276,12 @@ private:
   typedef typename EK_traits::Compare_y_2        EK_Compare_y_2;
   typedef typename EK_traits::Compare_weight_2   EK_Compare_weight_2;
   typedef typename EK_traits::Orientation_2      EK_Orientation_2;
+  typedef typename EK_traits::Orientation_new_2  EK_Orientation_new_2;
   typedef typename EK_traits::Is_hidden_2        EK_Is_hidden_2;
+  typedef typename EK_traits::Vertex_conflict_2  EK_Vertex_conflict_2;
 
   typedef typename EK_traits::Oriented_side_of_bisector_2
   EK_Oriented_side_of_bisector_2;
-
-  typedef typename EK_traits::Vertex_conflict_2  EK_Vertex_conflict_2;
 
   typedef typename EK_traits::Finite_edge_interior_conflict_2
   EK_Finite_edge_interior_conflict_2;
@@ -313,6 +311,10 @@ public:
   typedef
   Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
   Orientation_2;
+
+  typedef
+  Filtered_predicate<EK_Orientation_new_2, FK_Orientation_new_2, C2E, C2F>
+  Orientation_new_2;
 
   typedef
   Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
@@ -394,6 +396,11 @@ public:
     return Orientation_2();
   }
 
+  Orientation_new_2
+  orientation_new_2_object() const {
+    return Orientation_new_2();
+  }
+
   Is_hidden_2
   is_hidden_2_object() const {
     return Is_hidden_2();
@@ -431,4 +438,4 @@ public:
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_APOLLONIUS_GRAPH_FILTERED_TRAITS_2_H
+#endif // CGAL_APOLLONIUS_GRAPH_UNCERTAIN_FILTERED_TRAITS_2_H

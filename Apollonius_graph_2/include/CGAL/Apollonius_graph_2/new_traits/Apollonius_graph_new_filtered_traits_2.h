@@ -249,7 +249,6 @@ private:
   // PREDICATES FOR THE TWO KERNELS
   //-------------------------------
 
-#if 1
   // Predicates for the filtering kernel
   typedef typename FK_traits::Compare_x_2        FK_Compare_x_2;
   typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
@@ -294,97 +293,6 @@ private:
 
   typedef typename EK_traits::Is_degenerate_edge_2
   EK_Is_degenerate_edge_2;
-#else
-  // Predicates for the filtering kernel
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Compare_x_2<FK>
-  FK_Compare_x_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Compare_y_2<FK>
-  FK_Compare_y_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Compare_weight_2<FK>
-  FK_Compare_weight_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Orientation_2<FK,FK_MTag>
-  FK_Orientation_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Orientation_new_2<FK,FK_MTag>
-  FK_Orientation_new_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Is_hidden_2<FK,FK_MTag>
-  FK_Is_hidden_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Vertex_conflict_new_2<FK,FK_MTag>
-  FK_Vertex_conflict_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Oriented_side_of_bisector_2<FK,FK_MTag>
-  FK_Oriented_side_of_bisector_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Finite_edge_interior_conflict_new_2<FK,FK_MTag>   
-  FK_Finite_edge_interior_conflict_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Infinite_edge_interior_conflict_new_2<FK,FK_MTag>
-  FK_Infinite_edge_interior_conflict_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Is_degenerate_edge_2<FK,FK_MTag>
-  FK_Is_degenerate_edge_2;
-
-  // Predicates for the exact kernel
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Compare_x_2<EK>
-  EK_Compare_x_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Compare_y_2<EK>
-  EK_Compare_y_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Compare_weight_2<EK>
-  EK_Compare_weight_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Orientation_2<EK,EK_MTag>
-  EK_Orientation_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Orientation_new_2<EK,EK_MTag>
-  EK_Orientation_new_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Is_hidden_2<EK,EK_MTag>
-  EK_Is_hidden_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Vertex_conflict_new_2<EK,EK_MTag>
-  EK_Vertex_conflict_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Oriented_side_of_bisector_2<EK,EK_MTag>
-  EK_Oriented_side_of_bisector_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Finite_edge_interior_conflict_new_2<EK,EK_MTag>   
-  EK_Finite_edge_interior_conflict_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Infinite_edge_interior_conflict_new_2<EK,EK_MTag>
-  EK_Infinite_edge_interior_conflict_2;
-
-  typedef
-  CGAL_APOLLONIUS_GRAPH_2_NS::Is_degenerate_edge_2<EK,EK_MTag>
-  EK_Is_degenerate_edge_2;
-#endif
 
 public:
   // PREDICATES
