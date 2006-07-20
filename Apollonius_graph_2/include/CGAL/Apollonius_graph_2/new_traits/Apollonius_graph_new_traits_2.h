@@ -34,8 +34,6 @@
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
 
-//#include <CGAL/Apollonius_graph_traits_2.h>
-
 
 CGAL_BEGIN_NAMESPACE
 
