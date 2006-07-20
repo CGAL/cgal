@@ -1,6 +1,7 @@
 #ifndef CGAL_RANDOM_INTEGER_H
 #define CGAL_RANDOM_INTEGER_H
 
+#include <CGAL/basic.h>
 #include <cstdlib>
 #include <cassert>
 #include <CGAL/Gmpz.h>
