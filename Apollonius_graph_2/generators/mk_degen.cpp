@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAL/Apollonius_graph_2_make_degenerate.h>
+#include <CGAL/Apollonius_graph_2/make_degenerate.h>
 
 #include <iostream>
 #include <iomanip>
@@ -29,10 +29,7 @@ int main()
 
   while (std::cin >> site) { input.push_back(site); }
 
-  oit = Apollonius_graph_2_make_degenerate(input.begin(),
-					   input.end(),
-					   oit,
-					   Traits());
+  oit = make_degenerate(input.begin(), input.end(), oit, Traits());
 
   std::cout << std::setprecision(17);
   for (std::vector<Site>::iterator it = output.begin();

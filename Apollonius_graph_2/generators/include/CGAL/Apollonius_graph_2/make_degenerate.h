@@ -7,10 +7,10 @@
 
 template<class InputIterator, class OutputIterator, class Traits>
 OutputIterator
-Apollonius_graph_2_make_degenerate(InputIterator first,
-				   InputIterator beyond,
-				   OutputIterator oit,
-				   const Traits& tr = Traits())
+make_degenerate(InputIterator first,
+		InputIterator beyond,
+		OutputIterator oit,
+		const Traits& tr = Traits())
 {
   typedef CGAL::Apollonius_graph_hierarchy_2<Traits> Apollonius_graph;
 
