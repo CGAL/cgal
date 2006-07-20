@@ -2,6 +2,8 @@
 - fixes in #includes: correct files are now included
 - added mixed traits classes, filtered and non-filtered
 - removed obsolete code
+- replaced call to assert by call to CGAL_assertion in
+  Apollonius_graph_2_impl.h
 
 19 July 2006:  Menelaos Karavelas
 - further CGALization of new traits functors/classes

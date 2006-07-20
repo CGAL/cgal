@@ -1794,7 +1794,7 @@ remove_degree_d_vertex(Vertex_handle v)
 
   Vertex_handle vn = ag_small.nearest_neighbor(v->site().point());
 
-  assert( vn != Vertex_handle() );
+  CGAL_assertion( vn != Vertex_handle() );
 
   List l;
   Face_map fm;
