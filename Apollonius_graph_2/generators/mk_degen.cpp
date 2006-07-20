@@ -29,7 +29,7 @@ int main()
 
   while (std::cin >> site) { input.push_back(site); }
 
-  oit = make_degenerate(input.begin(), input.end(), oit, Traits());
+  oit = CGAL::make_degenerate(input.begin(), input.end(), oit, Traits());
 
   std::cout << std::setprecision(17);
   for (std::vector<Site>::iterator it = output.begin();
