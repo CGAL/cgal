@@ -526,20 +526,20 @@ private :
     return Do_ss_event_exist_2(mTraits)(aS);
   }  
   
-  bool IsOppositeEdgeFacingTheSplitSeed( Vertex_const_handle aSeed, Halfedge_const_handle aOpposite ) const
+  bool IsOppositeEdgeFacingTheSplitSeed( Vertex_handle aSeed, Halfedge_handle aOpposite ) const
   {
     if ( aSeed->is_skeleton() )
     {
       BorderTriple lTriple  = GetSkeletonVertexDefiningBorders(aSeed);
       Triedge_2    lTriedge = CreateTriedge(lTriple);
 
-      return Is_edge_facing_ss_seed_2(mTraits)( CreateSortedTriedge(lTriedge,GetCollinearity(lTriedge))
+      return Is_edge_facing_ss_node_2(mTraits)( CreateSortedTriedge(lTriedge,GetCollinearity(lTriedge))
                                               , CreateEdge(aOpposite)
                                               ) ;
     }
     else
     {
-      return Is_edge_facing_ss_seed_2(mTraits)( aSeed->point(), CreateEdge(aOpposite) ) ;
+      return Is_edge_facing_ss_node_2(mTraits)( aSeed->point(), CreateEdge(aOpposite) ) ;
     }
   }
   

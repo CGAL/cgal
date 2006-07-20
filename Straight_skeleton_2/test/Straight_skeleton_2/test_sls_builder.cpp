@@ -78,9 +78,12 @@ RegionPtr load_region( string file )
       if ( lPoly->size() >= 3 )
       {
         CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-        if (  !CGAL::is_simple_2(lPoly->begin(),lPoly->end())
-           || CGAL::orientation_2(lPoly->begin(),lPoly->end()) == expected 
-           )
+        
+        double area = CGAL::polygon_area_2(lPoly->begin(),lPoly->end(),K());
+        
+        CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
+        
+        if ( orientation == expected )
              rRegion->push_back(lPoly);
         else rRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
       }

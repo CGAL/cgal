@@ -54,8 +54,14 @@ PolygonPtr load_polygon( string file )
     }
     if ( rPoly->size() >= 3 )
     {
-     if ( ! ( !CGAL::is_simple_2(rPoly->begin(),rPoly->end()) || CGAL::orientation_2(rPoly->begin(),rPoly->end()) == CGAL::CLOCKWISE ) )
-       rPoly = PolygonPtr( new Polygon(rPoly->rbegin(),rPoly->rend()) )  ;
+      CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
+        
+      double area = CGAL::polygon_area_2(lPoly->begin(),lPoly->end(),K());
+        
+      CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
+        
+      if ( orientation != expected )
+        rPoly = PolygonPtr( new Polygon(rPoly->rbegin(),rPoly->rend()) )  ;
     }
     else
       rPoly = PolygonPtr();     

@@ -465,10 +465,14 @@ private slots:
                 offsets.push_back(c*m);
             }
           }
+          
           CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-          if (  !CGAL::is_simple_2(lPoly->begin(),lPoly->end())
-             || CGAL::orientation_2(lPoly->begin(),lPoly->end()) == expected 
-             )
+          
+          double area = CGAL::polygon_area_2(lPoly->begin(),lPoly->end(),K());
+          
+          CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
+          
+          if ( orientation == expected )
                lRegion->push_back(lPoly);
           else lRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
         }

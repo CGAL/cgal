@@ -32,6 +32,7 @@ namespace CGAL_SS_i
 // NOTE: r might be in the ray from p or q containing q or p, that is, there is no ordering implied, just that
 // the three points are along the same line, in any order.
 template<class K>
+inline
 Uncertain<bool> certified_collinearC2( Point_2<K> const& p
                                      , Point_2<K> const& q
                                      , Point_2<K> const& r 
@@ -45,6 +46,7 @@ Uncertain<bool> certified_collinearC2( Point_2<K> const& p
 // Just like the uncertified collinear_are_ordered_along_lineC2() returns true IFF, given p,q,r along the same line,
 // q in the closed segment [p,r].
 template<class K>
+inline
 Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2<K> const& p
                                                             , Point_2<K> const& q
                                                             , Point_2<K> const& r 
@@ -292,6 +294,34 @@ compare_offset_lines_isec_dist_to_pointC2 ( Sorted_triedge_2<K> const& s
   rResult = compare_offset_lines_isec_dist_to_pointC2(construct_offset_lines_isecC2(s),m,n);
   
   return rResult ;
+}
+
+// Returns true if the point aP is on the positive side of the line supporting the edge
+//
+template<class K>
+Uncertain<bool>
+is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segment_2<K> const& aEdge )
+{
+  typedef typename K::FT FT ;
+  
+  Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
+  if ( aP )
+  {
+    FT a,b,c ;
+    line_from_pointsC2(aEdge.source().x(),aEdge.source().y(),aEdge.target().x(),aEdge.target().y(),a,b,c); 
+    rResult = certified_side_of_oriented_lineC2(a,b,c,aP->x(),aP->y()) == make_uncertain(POSITIVE);    
+  }
+  return rResult ;
+}
+
+// Given a triple of oriented straight line segments: (e0,e1,e2) such that their offsets
+// at some distance intersects in a point (x,y), returns true if (x,y) is on the positive side of the line supporting aEdge
+//
+template<class K>
+Uncertain<bool>
+is_edge_facing_offset_lines_isecC2 ( Sorted_triedge_2<K> const& event, Segment_2<K> const& aEdge )
+{
+  return is_edge_facing_pointC2(construct_offset_lines_isecC2(event),aEdge);
 }
 
 // Returns true if the offset-zone for the triedge 'zone' is degenerate.
