@@ -493,7 +493,7 @@ parse_support_options()
 
 	# read those from the specfile
 	for j in DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
-	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING
+	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
 	do
 	  try_to_get_var_from_file "${j}" "${i}"
 	  eval ${_tmp}_${j}=\"`value_of ${j}`\"
@@ -1627,7 +1627,7 @@ _test_support()
     while [ 0 ]; do
 	# a) try with current flags
 	log_print "    Testing with default flags."
-	if  _compile_test "${DESCRIPTION}" "${tmp_cxxflags} " "${2}" && \
+	if  _compile_test "${DESCRIPTION}" "${tmp_cxxflags} ${tmp_compiletestflags}" "${2}" && \
 		_link_run_test "${DESCRIPTION}" \
 	                       "${tmp_libpathflags} `rpath_directive \"${tmp_runtimepath}\"`" \
 	                       "${tmp_ldflags} " \
@@ -1659,7 +1659,7 @@ _test_support()
 		if [ ! -r "${kk}" ]; then continue; fi
 		log_print "  - Trying ${kk}."
 		if _compile_test "${DESCRIPTION} with include ${kk}" \
-		    "${tmp_cxxflags} `include_dir_option \"${kk}\"`" \
+		    "${tmp_cxxflags} ${tmp_compiletestflags} `include_dir_option \"${kk}\"`" \
 		    "${2}"
 		then
 		    # first try without additional libdir flags, maybe its headers only...
@@ -1786,6 +1786,7 @@ _check_incompatibilities()
 set_package_cxxflags()
 {
     tmp_cxxflags="`value_of \"${1}_CXXFLAGS\"`"
+    tmp_compiletestflags="`value_of \"${1}_COMPILETESTFLAGS\"`"
 }
 
 # set the variable tmp_cxxflags for feature $1
