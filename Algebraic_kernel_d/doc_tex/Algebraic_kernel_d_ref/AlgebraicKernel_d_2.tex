@@ -27,10 +27,9 @@ Must provide
 \ccc{template <class InputIterator> 
 Polynomial_2 operator()(InputIterator first, InputIterator last)}
 that constructs a polynomial from a range of coefficients of type
-\ccc{Coefficient}.
+\ccc{Coefficient}, given in the lexicographic order of monomial degrees.
 }
-\footnote{how are coefficients ordered for bivariate polynomials?
-lexicographically on the powers of monomials?}
+\footnote{to be added: sparse polynomials}
 
 \ccNestedType{Solve_2}{A model of the concept
 \ccc{AlgebraicKernel_d_2::Solve_2}.} 
