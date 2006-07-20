@@ -23,29 +23,21 @@
 #define CGAL_APOLLONIUS_GRAPH_NEW_TRAITS_2_H
 
 
-// FIXME: We include the old traits class file for now to get the functors.
-#include <CGAL/Apollonius_graph_traits_2.h>
+#ifndef CGAL_REP_CLASS_DEFINED
+#error  no representation class defined
+#endif  // CGAL_REP_CLASS_DEFINED
 
-#include <CGAL/Apollonius_graph_2/new_traits/Vertex_conflict_2.h>
-#include <CGAL/Apollonius_graph_2/new_traits/Finite_edge_conflict_2.h>
-#include <CGAL/Apollonius_graph_2/new_traits/Infinite_edge_conflict_2.h>
-#include <CGAL/Apollonius_graph_2/new_traits/Orientation_2.h>
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
+#include <CGAL/Apollonius_graph_2/new_traits/New_predicates_C2.h>
+#endif
+
+#include <CGAL/Number_type_traits.h>
+#include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
+
+//#include <CGAL/Apollonius_graph_traits_2.h>
+
 
 CGAL_BEGIN_NAMESPACE
-
-// Would be *much* more convenient
-// static inline
-// Sign operator- (const Sign &s)
-// {
-//     return opposite (s);
-// }
-// 
-// static inline
-// Sign operator* (const Sign &s1, const Sign &s2)
-// {
-//     return static_cast<Sign> (static_cast<int> (s1) * static_cast<int> (s2));
-// }
-
 
 
 //-----------------------------------------------------------------------
