@@ -467,13 +467,11 @@ Installation/config/support/S40-ZLIB -text
 Installation/config/support/S40-ZLIBMS -text
 Installation/config/support/S50-LIDIA -text
 Installation/config/support/S60-LEDA -text
-Installation/config/support/S61-LEDAWIN -text
+Installation/config/support/S61-LEDA5X -text
 Installation/config/support/S62-LEDAMS -text
-Installation/config/support/S63-LEDAWINMS -text
-Installation/config/support/S64-LEDA5X -text
-Installation/config/support/S65-LEDA5XWIN -text
-Installation/config/support/S66-LEDA5XMS -text
-Installation/config/support/S67-LEDA5XWINMS -text
+Installation/config/support/S63-LEDA5XMS -text
+Installation/config/support/S64-LEDAWIN -text
+Installation/config/support/S65-LEDAWINMS -text
 Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
@@ -489,7 +487,6 @@ Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S97-TAUCSGCCMKL -text
 Installation/config/support/S98-TAUCSIRIXCC32 -text
 Installation/config/support/S99-TAUCSIRIXCC64 -text
-Installation/config/support/test_LEDAOLD.cpp -text
 Installation/config/support/test_LIDIA.cpp -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
