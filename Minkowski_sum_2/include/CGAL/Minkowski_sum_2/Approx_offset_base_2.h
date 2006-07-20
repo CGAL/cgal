@@ -119,6 +119,8 @@ protected:
     NT              x1, y1;              // The source of the current edge.
     NT              x2, y2;              // The target of the current edge.
     NT              delta_x, delta_y;    // (x2 - x1) and (y2 - y1), resp.
+    NT              abs_delta_x;
+    NT              abs_delta_y;
     CGAL::Sign      sign_delta_x;        // The sign of (x2 - x1).
     CGAL::Sign      sign_delta_y;        // The sign of (y2 - y1).
     NT              sqr_d;               // The squared length of the edge.
@@ -230,6 +232,9 @@ protected:
       }
       else
       {
+        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : -delta_x;
+        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : -delta_y;
+
         // In this general case, the length d of the current edge is usually
         // an irrational number.
         // Compute the upper bound for the approximation error for d.
@@ -259,7 +264,10 @@ protected:
                 NT (denom);
         app_err = sqr_d - CGAL::square (app_d);
 
-        while (CGAL::compare (CGAL::abs (app_err), err_bound) == CGAL::LARGER)
+        while (CGAL::compare (CGAL::abs (app_err), 
+                              err_bound) == CGAL::LARGER ||
+               CGAL::compare (app_d, abs_delta_x) != LARGER ||
+               CGAL::compare (app_d, abs_delta_y) != LARGER)
         {
           app_d = (app_d + sqr_d/app_d) / 2;
           app_err = sqr_d - CGAL::square (app_d);

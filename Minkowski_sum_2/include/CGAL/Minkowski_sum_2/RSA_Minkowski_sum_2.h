@@ -359,7 +359,7 @@ protected:
 
           t2 = Rat_point_2 (curr2->target().x().alpha(),
                             curr2->target().y().alpha());
-          dir_t2 = _direction (*curr2, s2);
+          dir_t2 = _direction (*curr2, t2);
 
           CGAL_assertion (! f_equal (dir_s2, dir_t2));
 
