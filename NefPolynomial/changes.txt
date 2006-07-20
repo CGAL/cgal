@@ -1,3 +1,7 @@
+20 July 2006 Menelaos Karavelas
+- rearranged order of definition/declaration of functions. gcc 4.1.x
+  was complaining about it.
+
 2 September 2004 Menelaos Karavelas
 - Polynomial : added the new number type traits tags Has_exact_division,
   Has_exact_sqrt, Has_exact_ring_operations

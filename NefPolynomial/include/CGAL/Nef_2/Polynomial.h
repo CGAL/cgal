@@ -62,15 +62,6 @@ template <> class Polynomial<double> ;
 
 template <class Forward_iterator>
 typename std::iterator_traits<Forward_iterator>::value_type 
-gcd_of_range(Forward_iterator its, Forward_iterator ite)
-{
-  typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
-  typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
-  return gcd_of_range(its,ite,Has_gcd());
-}
-
-template <class Forward_iterator>
-typename std::iterator_traits<Forward_iterator>::value_type 
 gcd_of_range(Forward_iterator its, Forward_iterator ite, Tag_true)
 /*{\Mfunc calculates the greates common divisor of the
 set of numbers $\{ |*its|, |*++its|, \ldots, |*it| \}$ of type |NT|,
@@ -102,6 +93,14 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
   return res;
 }
 
+template <class Forward_iterator>
+typename std::iterator_traits<Forward_iterator>::value_type 
+gcd_of_range(Forward_iterator its, Forward_iterator ite)
+{
+  typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
+  typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
+  return gcd_of_range(its,ite,Has_gcd());
+}
 
 
 template <class NT>  inline Polynomial<NT>
