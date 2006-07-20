@@ -71,6 +71,7 @@ int main(int, char*)
 #include "ss_types.h"
 #include "straight_skeleton_2_toolbar.h"
 #include "straight_skeleton_2_toolbar_layers.h"
+#include "straight_skeleton_2_layers.h"
 
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
@@ -162,6 +163,26 @@ public:
 
  };
 
+ void draw_segment ( Point const& s, Point const& t, CGAL::Color c )
+ {
+   Qt_layer_show_progress& progress = vtoolbar->get_progress_layer();
+   if ( progress.is_active() )
+   {
+     progress.add_figure( Qt_layer_show_progress::FigurePtr( new Qt_layer_show_progress::Bisector( Segment(s,t), c ) ) ) ; 
+     widget->redraw();
+   }  
+ }
+ 
+ void draw_point ( Point const& v, CGAL::Color c )
+ {
+   Qt_layer_show_progress& progress = vtoolbar->get_progress_layer();
+   if ( progress.is_active() )
+   {
+     progress.add_figure( Qt_layer_show_progress::FigurePtr( new Qt_layer_show_progress::Vertex(v, c) ) ) ; 
+     widget->redraw();
+   }  
+ }
+
 private:
   void something_changed(){current_state++;};
 
@@ -222,6 +243,8 @@ private slots:
   {
     if ( input.size() > 0 )
     {
+      vtoolbar->get_progress_layer().clear();
+      
       Region const& lRegion = *input.front();
 
       SSkelBuilder builder ;
@@ -265,6 +288,7 @@ private slots:
                            , Point(flx,fhy)
                            } ;
                              
+          vtoolbar->get_progress_layer().clear();
           SSkelBuilder builder ;
           builder.enter_contour(lFrame,lFrame+4);
           builder.enter_contour(lOuter.rbegin(),lOuter.rend());
@@ -483,6 +507,8 @@ private slots:
 
     sskel = SSkelPtr() ;
     
+    vtoolbar->get_progress_layer().clear();
+    
     output.clear();
     widget->redraw();
     something_changed();
@@ -500,6 +526,25 @@ private:
 
 #include "straight_skeleton_2.moc"
 
+demo::MyWindow* mainwin = 0 ;
+
+namespace demo
+{
+
+void draw_segment( Point const& s, Point const& t, CGAL::Color c ) 
+{
+  if ( mainwin )
+    mainwin->draw_segment(s,t,c);  
+}
+
+void draw_point( Point const& v, CGAL::Color c ) 
+{
+  if ( mainwin )
+    mainwin->draw_point(v,c);  
+}
+
+}
+
 int
 main(int argc, char **argv)
 {
@@ -509,16 +554,20 @@ main(int argc, char **argv)
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
 
-  demo::MyWindow widget(500,500); // physical window size
-  app.setMainWidget(&widget);
-  widget.setCaption(demo::my_title_string);
-  widget.setMouseTracking(TRUE);
+  mainwin = new demo::MyWindow(500,500);
+  
+  app.setMainWidget(mainwin);
+  mainwin->setCaption(demo::my_title_string);
+  mainwin->setMouseTracking(TRUE);
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
-  widget.setIcon(cgal_icon);
-  widget.show();
-  return app.exec();
-  return 1;
+  mainwin->setIcon(cgal_icon);
+  mainwin->show();
+  
+  int r = app.exec();
+  
+  delete mainwin ;
+  
+  return r;
 }
-
 
 #endif // CGAL_USE_QT

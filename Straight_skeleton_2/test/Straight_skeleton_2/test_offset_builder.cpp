@@ -54,13 +54,11 @@ PolygonPtr load_polygon( string file )
     }
     if ( rPoly->size() >= 3 )
     {
-      CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
-        
-      double area = CGAL::polygon_area_2(lPoly->begin(),lPoly->end(),K());
+      double area = CGAL::polygon_area_2(rPoly->begin(),rPoly->end(),K());
         
       CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
         
-      if ( orientation != expected )
+      if ( orientation != CGAL::CLOCKWISE )
         rPoly = PolygonPtr( new Polygon(rPoly->rbegin(),rPoly->rend()) )  ;
     }
     else
@@ -220,7 +218,7 @@ int main( int argc, char const* argv[] )
     {
       std::string folder(argv[aidx]);
       for ( int i = aidx + 1 ; i < argc ; ++ i )
-        test(folder + std::string("/") + std::string(argv[i]) );
+        test(folder + std::string(argv[i]) );
     }
     catch( exception x )
     {

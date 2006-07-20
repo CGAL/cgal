@@ -19,8 +19,6 @@
 #ifndef CGAL_STRAIGHTSKELETON_2_TOOLBAR_LAYERS_H
 #define CGAL_STRAIGHTSKELETON_2_TOOLBAR_LAYERS_H
 
-#include "cgal_types.h"
-#include "ss_types.h"
 #include <CGAL/IO/Qt_widget.h>
 
 #include <qobject.h>
@@ -33,21 +31,24 @@
 
 template <class T> class Qt_layer_show_regions;
 template <class T> class Qt_layer_show_skeleton;
+class Qt_layer_show_progress ;
 
 class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar( CGAL::Qt_widget*      w
-                , QMainWindow*          mw
-                , demo::Regions  const& in
-                , demo::SSkelPtr const& sskel
-                , demo::Regions  const& out
+  Layers_toolbar( CGAL::Qt_widget*        w
+                , QMainWindow*            mw
+                , demo::Regions  const&   in
+                , demo::SSkelPtr const&   sskel
+                , demo::Regions  const&   out
                 );
   ~Layers_toolbar();
   
+  Qt_layer_show_progress& get_progress_layer() { return *progress ; }
+  
 private:
-  QToolButton         *but[3];
+  QToolButton         *but[4];
   CGAL::Qt_widget     *widget;
   QMainWindow         *window;
   QButtonGroup        *button_group;
@@ -56,6 +57,7 @@ private:
   Qt_layer_show_regions <demo::Regions> *showI;
   Qt_layer_show_skeleton<demo::SSkel>   *showSSkel;
   Qt_layer_show_regions <demo::Regions> *showO;
+  Qt_layer_show_progress                *progress ;
 
 };//end class
 

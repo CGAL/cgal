@@ -162,4 +162,79 @@ private:
 ;//end class
 
 
+class Qt_layer_show_progress : public CGAL::Qt_widget_layer
+{
+  typedef CGAL::Qt_widget_layer base ;
+  
+public:
+
+  struct Figure
+  {
+    virtual ~Figure() {}
+    
+    virtual void draw ( CGAL::Qt_widget& widget ) const = 0 ;
+  } ;
+  
+  typedef boost::shared_ptr<Figure> FigurePtr ;
+  typedef std::vector<FigurePtr> FigureVector ;
+  typedef FigureVector::const_iterator figure_const_iterator ;
+  
+  struct Bisector : Figure
+  {
+    Bisector ( demo::Segment const& s_, CGAL::Color c_ ) : s(s_), c(c_) {}
+        
+    virtual void draw ( CGAL::Qt_widget& widget ) const
+    {
+      widget << c ;
+      widget << s ;
+    } 
+    
+    demo::Segment s ;
+    CGAL::Color   c ;
+  } ;
+  
+  struct Vertex : Figure
+  {
+    Vertex ( demo::Point const& v_, CGAL::Color c_ ) : v(v_), c(c_) {}
+        
+    virtual void draw ( CGAL::Qt_widget& widget ) const
+    {
+      widget << c ;
+      widget << CGAL::CIRCLE ;
+      widget << v ;
+    } 
+    
+    demo::Point v ;
+    CGAL::Color c ;
+    
+  } ;  
+  
+public:
+
+  
+  Qt_layer_show_progress(Layers_toolbar* aParent, char const* aName )  : CGAL::Qt_widget_layer(aParent,aName) {}
+
+  void clear() { mFigures.clear() ; }
+  
+  void add_figure ( FigurePtr const& aFigure ) { mFigures.push_back(aFigure) ; }
+  
+  void draw()
+  {
+    widget->lock();
+   
+    for ( figure_const_iterator it = mFigures.begin(), eit = mFigures.end() ; it != eit ; ++ it )
+      (*it)->draw(*widget);
+    
+    widget->unlock();
+  }
+  
+  virtual void activating  (){ widget->redraw() ; base::activating(); };
+  virtual void deactivating(){ widget->redraw() ; base::deactivating(); };
+  
+private:
+
+  FigureVector mFigures ;
+
+}
+;//end class
 

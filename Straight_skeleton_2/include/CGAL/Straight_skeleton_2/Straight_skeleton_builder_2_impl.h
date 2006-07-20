@@ -236,15 +236,11 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvent( Vertex_handle   aN
         EventPtr lEvent = EventPtr( new SplitEvent (aReflexLBorder,aReflexRBorder,aOppositeBorder,lSortedTriedge,aNode) ) ;
         
         mVisitor.on_split_event_created(aNode) ;
-  
+ 
         CGAL_STSKEL_DEBUG_CODE( SetEventTimeAndPoint(*lEvent) ) ;
   
         AddSplitEvent(aNode,lEvent);      
       }
-    }
-    else
-    {
-      CGAL_STSKEL_BUILDER_TRACE(4,"Spit event for Seed N" << aNode->id() << " against E" << aOppositeBorder->id() << " does not exist." ) ;
     }
   }
 }

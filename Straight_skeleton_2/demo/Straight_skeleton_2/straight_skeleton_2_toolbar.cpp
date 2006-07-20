@@ -20,6 +20,8 @@
 
 #ifdef CGAL_USE_QT
 
+#include "cgal_types.h"
+#include "ss_types.h"
 #include "straight_skeleton_2_toolbar.h"
 
 // icons
