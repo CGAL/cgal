@@ -1,3 +1,8 @@
+20 July 2006 Menelaos Karavelas
+- duplicated test_LEDA.cpp to test_LEDA5X.cpp; it seems that the install
+  script was not finding this file and as a result it was behaving as if
+  the test succeeded.
+
 11 July 2006 Andreas Meyer
 - added support for LEDA 5.x (4.x is still supported)
 - added support for LIDIA
