@@ -1,3 +1,6 @@
+21 July 2006:  Menelaos Karavelas
+- added various site generators and example programs
+
 20 July 2006:  Menelaos Karavelas
 - fixes in #includes: correct files are now included
 - added mixed traits classes, filtered and non-filtered

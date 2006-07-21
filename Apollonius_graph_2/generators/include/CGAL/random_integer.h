@@ -55,13 +55,15 @@ double random_integer(int b, bool allow_negative = true)
 }
 
 template<class Random>
-double random_integer(Random& r, int b, bool allow_negative = true)
+double random_integer(Random& r, unsigned int b, bool allow_negative = true)
 {
   // returns random integers in the range [0, 2^b - 1).
   // b is required to be at least 1 and at most 52
   // and if allow_negative is true then the range includes negative
   // numbers as well and becomes: [-2^b + 1, 2^b - 1).
-  assert( b >= 1 && b <= 52 );
+  CGAL_precondition( b >= 0 && b <= 52 );
+
+  if ( b == 0 ) { return 0; }
 
   double M = pow(2.0,b);
   CGAL::Gmpz z;
@@ -76,13 +78,16 @@ double random_integer(Random& r, int b, bool allow_negative = true)
 
 
 template<class Random>
-double random_even_integer(Random& r, int b, bool allow_negative = true)
+double random_even_integer(Random& r, unsigned int b,
+			   bool allow_negative = true)
 {
   // returns random even integers in the range [0, 2^b - 1).
   // b is required to be at least 1 and at most 52
   // and if allow_negative is true then the range includes negative
   // numbers as well and becomes: [-2^b + 1, 2^b - 1).
-  assert( b >= 1 && b <= 52 );
+  assert( b >= 0 && b <= 52 );
+
+  if ( b == 0 ) { return 0; }
 
   double M = pow(2.0,b);
   CGAL::Gmpz z;

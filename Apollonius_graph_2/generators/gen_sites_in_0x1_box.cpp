@@ -24,20 +24,20 @@ int main (int argc, char **argv)
     int num, seed = 42;
     double rmax;
 
-    if (argc < 2)
+    if (argc < 3)
         return usage (argc, argv);
 
     {
-      std::istringstream is (argv[1]);
-      if (! (is >> num)) return usage (argc, argv);
+      std::istringstream is(argv[1]);
+      if ( !(is >> num) ) { return usage(argc, argv); }
     }
     {
-      std::istringstream is (argv[2]);
-      if (! (is >> rmax)) return usage (argc, argv);
+      std::istringstream is(argv[2]);
+      if ( !(is >> rmax) ) { return usage(argc, argv); }
     }
     if (argc > 3) {
-      std::istringstream is (argv[3]);
-      if (! (is >> seed)) return usage (argc, argv);
+      std::istringstream is(argv[3]);
+      if ( !(is >> seed) ) { return usage(argc, argv); }
     }
 
     CGAL::Random_sites_in_0x1_box<Site_2> g(rmax, seed);
