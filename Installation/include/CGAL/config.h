@@ -42,6 +42,10 @@
 #  error "This compiler does not have a working STL"
 #endif
 
+// This macro computes the version number from an x.y.z release number.
+// It only works for public releases.
+#define CGAL_VERSION_NUMBER(x,y,z) (1000001 + 10000*x + 100*y + 10*z) * 1000
+
 #define CGAL_BEGIN_NAMESPACE namespace CGAL {
 #define CGAL_END_NAMESPACE }
 

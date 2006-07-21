@@ -143,6 +143,12 @@ macros:
      Examples: for the public release 3.2.4 this number is 
      1030241000; for internal release 3.2-I-1, it is 1030200001.
      Note that the scheme was modified around 3.2-I-30.
+\item[\texttt{CGAL\_VERSION\_NUMBER(M,m,b)}], 
+     \index{CGAL_VERSION_NUMBER macro@{\tt CGAL\_VERSION\_NUMBER} macro}
+     -- a function macro providing computing the version number macro
+     from the M.m.b release version.  Note that the internal release
+     number is dropped here.  Example: {\tt CGAL\_VERSION\_NUMBER(3,2,4)
+     is equal to 1030241000.
 \end{description}
  
 \noindent \leda\ defines a macro \texttt{\_\_LEDA\_\_}
