@@ -1,0 +1,2 @@
+Algebraic kernel based on GBRS
+http://fgbrs.lip6.fr/salsa/Software/
