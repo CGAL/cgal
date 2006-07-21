@@ -17,6 +17,11 @@ public:
   typedef R     Random;
 
 public:
+  Random_integral_sites_in_square_2(unsigned int b)
+    : b_(b), B_(b), r_(0) {
+    CGAL_precondition( b >= 0 && b <= 52 );
+  }
+
   Random_integral_sites_in_square_2(unsigned int b, int seed)
     : b_(b), B_(b), r_(seed) {
     CGAL_precondition( b >= 0 && b <= 52 );

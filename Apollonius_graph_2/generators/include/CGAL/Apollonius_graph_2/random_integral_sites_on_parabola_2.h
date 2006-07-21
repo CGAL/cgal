@@ -17,6 +17,11 @@ public:
   typedef R     Random;
 
 public:
+  Random_integral_sites_on_parabola_2(unsigned int b)
+    : b_(b), p_(0), r_(0) {
+    CGAL_precondition( b >= 0 && b <= 26 );
+  }
+
   Random_integral_sites_on_parabola_2(unsigned int b, int seed)
     : b_(b), p_(0), r_(seed) {
     CGAL_precondition( b >= 0 && b <= 26 );
