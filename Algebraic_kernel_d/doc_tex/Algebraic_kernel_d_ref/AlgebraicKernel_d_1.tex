@@ -24,10 +24,12 @@ Must provide:\\
 \ccc{template <class InputIterator>}\\
 \ccc{Polynomial_1 operator()(InputIterator first, InputIterator last)}\\
 that constructs a polynomial from a range of coefficients of type
-\ccc{Coefficient}, given in the increasing order of monomial degrees.\\
+\ccc{Coefficient}, given in the increasing order of monomial degrees,\\
+and\\
+\ccc{template <class InputIterator1, InputIterator2>}\\
+\ccc{Polynomial_1 operator()(InputIterator1 first_coeff, InputIterator1 last_coeff, InputIt2 deg)}\\
+that takes as input a range of coefficients of type \ccc{Coefficient}, and an iterator on corresponding degrees of type \ccc{unsigned int}.
 }
-\footnote{to be added: constructor for sparse polynomials input range of
-\ccc{std::pair<Coefficient, unsigned int>} (int = degree)}
 
 \ccNestedType{Solve_1}{A model of the concept
 \ccc{AlgebraicKernel_d_1::Solve_1}.} 
