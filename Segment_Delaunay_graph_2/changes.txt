@@ -1,3 +1,6 @@
+21 July 2006:  Menelaos Karavelas
+- test suite for traits does not involve Filtered_exact any more.
+
 17 July 2006:  Menelaos Karavelas
 - fixed bug in Segment_Delaunay_graph_vertex_base_with_info_2. Bug spotted
   by Laurent Masse-Navette <laurent.masse-navette@pulsic.com>.

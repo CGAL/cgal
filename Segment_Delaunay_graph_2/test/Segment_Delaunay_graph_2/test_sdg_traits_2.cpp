@@ -1,13 +1,10 @@
 #include <CGAL/basic.h>
 
-#define DONT_USE_FILTERED_EXACT
-
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <vector>
 
-#include <CGAL/Filtered_exact.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
@@ -33,19 +30,6 @@ typedef CGAL::Simple_cartesian<CORE::Expr>  CORE_Kernel;
 #ifdef CGAL_USE_GMP
 typedef CGAL::Simple_cartesian<CGAL::Gmpq>  Gmpq_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Gmpz>  Gmpz_Kernel;
-#endif
-
-template<class ET>
-struct FE_Kernel
-  : public CGAL::Simple_cartesian< CGAL::Filtered_exact<double,ET> >
-{};
-
-#ifdef CGAL_USE_CORE
-typedef FE_Kernel<CORE::Expr> FE_CORE_Kernel;
-#endif
-#ifdef CGAL_USE_GMP
-typedef FE_Kernel<CGAL::Gmpz> FE_Gmpz_Kernel;
-typedef FE_Kernel<CGAL::Gmpq> FE_Gmpq_Kernel;
 #endif
 
 typedef CGAL::Ring_tag        Ring;
@@ -181,42 +165,6 @@ F_Gmpq_Field_Gt;
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-
-#ifdef CGAL_USE_CORE
-typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<FE_CORE_Kernel,Ring>
-FE_CORE_Ring_Gtwi;
-
-typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<FE_CORE_Kernel,Sqrt>
-FE_CORE_Sqrt_Gtwi;
-
-typedef CGAL::Segment_Delaunay_graph_traits_2<FE_CORE_Kernel,Field>
-FE_CORE_Field_Gt;
-
-typedef CGAL::Segment_Delaunay_graph_traits_2<FE_CORE_Kernel,Sqrt>
-FE_CORE_Sqrt_Gt;
-#endif
-
-//----------------------------------------------------------------------
-
-#ifdef CGAL_USE_GMP
-typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<FE_Gmpz_Kernel,Ring>
-FE_Gmpz_Ring_Gtwi;
-
-//----------------------------------------------------------------------
-
-typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<FE_Gmpq_Kernel,Ring>
-FE_Gmpq_Ring_Gtwi;
-
-typedef CGAL::Segment_Delaunay_graph_traits_2<FE_Gmpq_Kernel,Field>
-FE_Gmpq_Field_Gt;
-#endif
-
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
 template<class Gt>
@@ -331,7 +279,6 @@ int main(int argc, char* argv[])
   test_traits<Gmpq_Field_Gt>("Gmpq Field");
 #endif
 
-#ifndef DONT_USE_FILTERED_EXACT
   std::cout << std::endl;
   std::cout << "************************************"
 	    << "************************************" << std::endl;
@@ -357,22 +304,6 @@ int main(int argc, char* argv[])
 	    << "************************************" << std::endl;
   std::cout << std::endl;
 
-#ifdef CGAL_USE_CORE
-  test_traits<FE_CORE_Ring_Gtwi>("FE CORE Ring WI");
-  test_traits<FE_CORE_Sqrt_Gtwi>("FE CORE Sqrt WI");
-
-  test_traits<FE_CORE_Field_Gt>("FE CORE Field");
-  test_traits<FE_CORE_Sqrt_Gt>("FE CORE Sqrt");
-#endif
-
-#ifdef CGAL_USE_GMP
-  test_traits<FE_Gmpz_Ring_Gtwi>("FE Gmpz Ring WI");
-
-  test_traits<FE_Gmpq_Ring_Gtwi>("FE Gmpq Ring WI");
-  test_traits<FE_Gmpq_Field_Gt>("FE Gmpq Field");
-#endif
-
-#endif // DONT_USE_FILTERED_EXACT
 
   return 0;
 }
