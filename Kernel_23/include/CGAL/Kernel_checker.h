@@ -62,24 +62,9 @@ struct Pairify <Sign, Sign> {
 };
 
 template <>
-struct Pairify <Comparison_result, Comparison_result> {
-  typedef Comparison_result   result_type;
-  result_type operator()(const Comparison_result &t1,
-                         const Comparison_result &t2) const
-  { CGAL_kernel_assertion(t1 == t2); return t1; }
-};
-
-template <>
 struct Pairify <Bounded_side, Bounded_side> {
   typedef Bounded_side   result_type;
   result_type operator()(const Bounded_side &t1, const Bounded_side &t2) const
-  { CGAL_kernel_assertion(t1 == t2); return t1; }
-};
-
-template <>
-struct Pairify <Oriented_side, Oriented_side> {
-  typedef Oriented_side   result_type;
-  result_type operator()(const Oriented_side &t1, const Oriented_side &t2) const
   { CGAL_kernel_assertion(t1 == t2); return t1; }
 };
 

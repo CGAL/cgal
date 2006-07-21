@@ -1,3 +1,7 @@
+21 July 2006 Menelaos Karavelas
+- removed specializations of Pairify for Comparison_result and
+  Oriented_side; they are now taken care of by that of Sign.
+
 18 July 2006 Menelaos Karavelas
 - in Enum_converter: removed (dummy) conversions for Oriented_side and
   Comparison_result; they should be taken care of by the conversion for
