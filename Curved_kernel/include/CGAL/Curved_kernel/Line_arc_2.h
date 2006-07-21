@@ -33,6 +33,7 @@
 #include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
 #include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Curved_kernel/Circular_arc_2.h>
 
 namespace CGAL {
 namespace CGALi {
@@ -98,12 +99,19 @@ namespace CGALi {
 
 
   public:
-    Line_arc_2() {}
+    Line_arc_2() 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+    : id_of_my_supporting_line(Circular_arc_2::circle_table.get_new_id()) 
+#endif 
+    {}
      
     Line_arc_2(const Line_2 &support,
 	       const Circle_2 &c1,const bool b1,
 	       const Circle_2 &c2,const bool b2)
       :_support(support)
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+    ,id_of_my_supporting_line(Circular_arc_2::circle_table.get_new_id()) 
+#endif 
     {
       _begin = intersect(support, c1, b1);
       _end = intersect(support, c2, b2);
@@ -115,6 +123,9 @@ namespace CGALi {
 	       const Line_2 &l1,
 	       const Line_2 &l2)
       :_support(support)
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+    ,id_of_my_supporting_line(Circular_arc_2::circle_table.get_new_id()) 
+#endif 
     {
       CGAL_kernel_precondition(do_intersect(support, l1));
       CGAL_kernel_precondition(do_intersect(support, l2));
@@ -133,6 +144,9 @@ namespace CGALi {
 	       const Circular_arc_point_2 &p1,
 	       const Circular_arc_point_2 &p2)
       :_support(support)
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+    ,id_of_my_supporting_line(Circular_arc_2::circle_table.get_new_id()) 
+#endif 
     {
       //Verifier si p1 et p2 sont sur la line
       _begin = p1;
@@ -142,6 +156,9 @@ namespace CGALi {
 
     Line_arc_2(const Segment_2 &s)
       :_support(s.supporting_line())
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+    ,id_of_my_supporting_line(Circular_arc_2::circle_table.get_new_id()) 
+#endif 
     {
       _begin = Circular_arc_point_2(s.source());
       _end = Circular_arc_point_2(s.target());
@@ -151,6 +168,9 @@ namespace CGALi {
 
     Line_arc_2(const Point_2 &p1,
 	       const Point_2 &p2)
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+    : id_of_my_supporting_line(Circular_arc_2::circle_table.get_new_id()) 
+#endif 
     {
       _support = Line_2(p1, p2);
       _begin = Circular_arc_point_2(p1);
@@ -164,6 +184,18 @@ namespace CGALi {
     Circular_arc_point_2 _begin, _end;
     mutable bit_field flags;
 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+    mutable unsigned int id_of_my_supporting_line;
+
+    unsigned int line_number() const {
+      return id_of_my_supporting_line;
+    }
+
+    void set_line_number(unsigned int i) const {
+      id_of_my_supporting_line = i;
+    }
+#endif
+
   private: //(some useful functions)
 
     bool begin_less_xy_than_end() const {
@@ -175,6 +207,28 @@ namespace CGALi {
     }
 
   public :
+
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+    template < class T >
+    static bool find_intersection_circle_line(
+      const Circular_arc_2& c, 
+      const Line_arc_2& l, 
+      T& res) {
+      if(c.id_of_my_supporting_circle == 0) return false;
+      return Circular_arc_2::circle_table.template find<T>(c.id_of_my_supporting_circle, 
+                                  l.id_of_my_supporting_line, 
+                                  res);
+    }
+
+    template < class T >
+    static void put_intersection_circle_line(const Circular_arc_2& c, 
+      const Line_arc_2& l,
+      const T& res) {
+      Circular_arc_2::circle_table.template put<T>(c.circle_number(), 
+                          l.line_number(), 
+                          res);
+    }
+#endif
     
     const Line_2 & supporting_line() const
     {
