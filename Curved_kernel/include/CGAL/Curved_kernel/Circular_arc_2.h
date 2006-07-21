@@ -40,7 +40,6 @@
 #endif
 
 #include <CGAL/intersections.h>
-#include <CGAL/Simple_cartesian.h>
 
 namespace CGAL {
 namespace CGALi {
@@ -334,11 +333,6 @@ namespace CGALi {
     static Table table;
 #endif
 
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
-    mutable unsigned int id_of_my_supporting_circle;
-    static Table circle_table;
-#endif
-
   public:
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
@@ -358,6 +352,9 @@ namespace CGALi {
 #endif
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+    static Table circle_table;
+    mutable unsigned int id_of_my_supporting_circle;
+
     template < class T >
     static bool find_intersection_circle_circle(
       const Circular_arc_2& c1, 
