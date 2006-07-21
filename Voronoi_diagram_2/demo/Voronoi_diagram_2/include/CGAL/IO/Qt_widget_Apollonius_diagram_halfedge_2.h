@@ -39,9 +39,25 @@ class Apollonius_diagram_halfedge_2
   typedef typename Voronoi_diagram::Delaunay_graph   Apollonius_graph_2;
   typedef typename Voronoi_diagram::Halfedge         Base;
   typedef typename Base::Delaunay_edge               Delaunay_edge;
+  typedef typename Apollonius_graph_2::Geom_traits   Geom_traits;
 
   typedef typename Voronoi_diagram::Adaptation_traits::Site_2   Site_2;
   typedef typename Voronoi_diagram::Adaptation_traits::Point_2  Point_2;
+
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::
+  Construct_Apollonius_bisector_2<Geom_traits>
+  Construct_Apollonius_bisector_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::
+  Construct_Apollonius_bisector_ray_2<Geom_traits>
+  Construct_Apollonius_bisector_ray_2;
+
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::
+  Construct_Apollonius_bisector_segment_2<Geom_traits>
+  Construct_Apollonius_bisector_segment_2;
+
+
  public:
   Apollonius_diagram_halfedge_2() : Base() {}
   Apollonius_diagram_halfedge_2(const Base& e)
@@ -52,7 +68,6 @@ class Apollonius_diagram_halfedge_2
 
   void draw(Qt_widget& qt_w) const
   {
-    typedef typename Apollonius_graph_2::Geom_traits     Geom_traits;
     typedef typename Geom_traits::Assign_2               Assign_2;
     typedef typename Geom_traits::Segment_2              Segment_2;
     typedef typename Geom_traits::Ray_2                  Ray_2;
@@ -84,7 +99,7 @@ class Apollonius_diagram_halfedge_2
 			     e_.first->vertex(cw_i)->site(),
 			     e_.first->vertex(e_.second)->site());
 
-	Construct_Apollonius_bisector_segment_2<Geom_traits> c_seg;
+	Construct_Apollonius_bisector_segment_2 c_seg;
 	o = c_seg(e_.first->vertex(ccw_i)->site(),
 		  e_.first->vertex(cw_i)->site(),
 		  c1, c2);
@@ -93,7 +108,7 @@ class Apollonius_diagram_halfedge_2
 			    e_.first->vertex(cw_i)->site(),
 			    s_);
 
-	Construct_Apollonius_bisector_ray_2<Geom_traits> c_ray;
+	Construct_Apollonius_bisector_ray_2 c_ray;
 	o = c_ray(e_.first->vertex(ccw_i)->site(),
 		  e_.first->vertex(cw_i)->site(),
 		  c, POSITIVE);
@@ -107,7 +122,7 @@ class Apollonius_diagram_halfedge_2
 			     e_.first->vertex(ccw_i)->site(),
 			     s_);
 
-	Construct_Apollonius_bisector_segment_2<Geom_traits> c_seg;
+	Construct_Apollonius_bisector_segment_2 c_seg;
 	o = c_seg(e_.first->vertex(ccw_i)->site(),
 		  e_.first->vertex(cw_i)->site(),
 		  c1, c2);
@@ -124,24 +139,24 @@ class Apollonius_diagram_halfedge_2
     }
 
     if ( this->has_source() && this->has_target() ) {
-      Construct_Apollonius_bisector_segment_2<Geom_traits> c_seg;
+      Construct_Apollonius_bisector_segment_2 c_seg;
       o = c_seg(this->down()->site(),
 		this->up()->site(),
 		this->left()->site(),
 		this->right()->site());
     } else if ( this->has_source() && !this->has_target() ) {
-      Construct_Apollonius_bisector_ray_2<Geom_traits> c_ray;
+      Construct_Apollonius_bisector_ray_2 c_ray;
       o = c_ray(this->down()->site(),
 		this->up()->site(),
 		this->left()->site());
     } else if ( !this->has_source() && this->has_target() ) {
-      Construct_Apollonius_bisector_ray_2<Geom_traits> c_ray;
+      Construct_Apollonius_bisector_ray_2 c_ray;
       o = c_ray(this->up()->site(),
 		this->down()->site(),
 		this->right()->site());
     } else {
       CGAL_assertion( !this->has_source() && !this->has_target() );
-      Construct_Apollonius_bisector_2<Geom_traits> c_bis;
+      Construct_Apollonius_bisector_2 c_bis;
       o = c_bis(this->up()->site(),
 		this->down()->site());
     }

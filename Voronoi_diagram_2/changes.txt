@@ -1,3 +1,7 @@
+21 July 2006:  Menelaos Karavelas
+- fixed bug introduced by the addition of the ApolloniusGraph_2
+  namespace in the Apollonius_graph_2 package
+
 18 July 2006:  Menelaos Karavelas
 - added dont_submit and TODO file (dont_submit contains TODO)
 
