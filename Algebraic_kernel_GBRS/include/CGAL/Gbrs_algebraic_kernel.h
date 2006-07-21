@@ -1,0 +1,52 @@
+#ifndef CGAL_GBRS_ALGEBRAIC_KERNEL
+#define CGAL_GBRS_ALGEBRAIC_KERNEL
+
+//#include <CGAL/MpfiInterval.h>
+//#include <CGAL/Gbrs_functors.h>
+#include <CGAL/MpfiInterval.h>
+#include <CGAL/Gbrs_polynomial_1.h>
+#include <CGAL/Gbrs_functors.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class IntegralDomain_>
+class GBRS_algebraic_kernel {
+	typedef GBRS_algebraic_kernel<IntegralDomain_>	Self;
+
+	public:
+
+	typedef IntegralDomain_				Coefficient;
+	typedef Rational_polynomial_1			Polynomial_1;
+	typedef MpfiInterval				Algebraic_real_1;
+	typedef AlgebraicFunctors::Construct_polynomial_1<Self>
+							Construct_polynomial_1;
+	typedef AlgebraicFunctors::Solve_1<Self>	Solve_1;
+	typedef AlgebraicFunctors::SignAt_1<Self>	SignAt_1;
+	typedef AlgebraicFunctors::Derivative_1<Self>	Derivative_1;
+	typedef AlgebraicFunctors::Compare_1<Self>	Compare_1;
+
+	Construct_polynomial_1 construct_polynomial_1_object () const {
+		return Construct_polynomial_1 ();
+	}
+
+	Solve_1 construct_solve_1_object () const {
+		return Solve_1 ();
+	}
+
+	SignAt_1 construct_signat_1_object () const {
+		return SignAt_1 ();
+	}
+
+	Derivative_1 construct_derivative_1_object () const {
+		return Derivative_1 ();
+	}
+
+	Compare_1 construct_compare_1_object () const {
+		return Compare_1 ();
+	}
+
+};	// GBRS_algebraic_kernel
+
+CGAL_END_NAMESPACE
+
+#endif	// CGAL_GBRS_ALGEBRAIC_KERNEL
