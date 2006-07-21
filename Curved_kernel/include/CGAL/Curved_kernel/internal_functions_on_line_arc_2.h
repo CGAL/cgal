@@ -414,12 +414,28 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef typename CK::Line_arc_2 Line_arc_2;
     typedef std::vector<CGAL::Object > solutions_container;
     
     solutions_container solutions;
-    CGAL::LinearFunctors::intersect_2<CK>
+
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+      if(!Line_arc_2::template 
+         find_intersection_circle_line< solutions_container > 
+         (c,l,solutions)) {
+#endif
+
+      CGAL::LinearFunctors::intersect_2<CK>
       ( l.supporting_line(), c.supporting_circle(),
 	std::back_inserter(solutions) );
+
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+        Line_arc_2::template 
+          put_intersection_circle_line< std::vector < CGAL::Object > >
+          (c,l,solutions);
+      }
+#endif
+    
     
     for (typename solutions_container::iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
