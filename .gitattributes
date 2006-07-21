@@ -470,7 +470,7 @@ Installation/config/support/S23-MPFR -text
 Installation/config/support/S30-CORE -text
 Installation/config/support/S32-CGALCORE -text
 Installation/config/support/S40-ZLIB -text
-Installation/config/support/S40-ZLIBMS -text
+Installation/config/support/S41-ZLIBMS -text
 Installation/config/support/S50-LIDIA -text
 Installation/config/support/S60-LEDA -text
 Installation/config/support/S61-LEDA5X -text
