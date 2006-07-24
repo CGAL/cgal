@@ -47,16 +47,19 @@ void create_rs_upoly(mpq_t *poly, const int deg) {
 	rs_import_uppring ("T");
 	ident_pol = rs_get_default_up ();
 	for (i=0; i<deg+1; i++) {
-		ident_mon = rs_export_new_mon_upp_bz ();
-		ident_coeff = rs_export_new_gmp ();
 		CGAL_assertion_msg
 			(mpz_cmp_ui (mpq_denref (poly[deg-i]), 1) == 0,
-			"by now, RS works only with integer coefficients");
-		rs_import_bz_gmp
-			(ident_coeff, TO_RSPTR_IN (mpq_numref (poly[deg-i])));
-		//rs_import_bz_gmp (ident_coeff, TO_RSPTR_IN (&(poly[deg-i])));
-		rs_dset_mon_upp_bz (ident_mon, ident_coeff, i);
-		rs_dappend_list_mon_upp_bz (ident_pol, ident_mon);
+			 "by now, RS works only with integer coefficients");
+		// don't add the monomial if the coefficient is zero!
+		if (mpq_cmp_ui (poly[deg-i], 0, 1) != 0) {
+			ident_mon = rs_export_new_mon_upp_bz ();
+			ident_coeff = rs_export_new_gmp ();
+			rs_import_bz_gmp
+				(ident_coeff,
+				 TO_RSPTR_IN (mpq_numref (poly[deg-i])));
+			rs_dset_mon_upp_bz (ident_mon, ident_coeff, i);
+			rs_dappend_list_mon_upp_bz (ident_pol, ident_mon);
+		}
 	}
 }
 
