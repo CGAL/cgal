@@ -19,7 +19,7 @@ public:
   void sync(void) {}
   void op(void) { sqrt(n); }
 
-  void set(unsigned int u) { n = u; }
+  void set(double u) { n = u; }
 };
 
 namespace po = boost::program_options;
