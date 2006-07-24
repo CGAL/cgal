@@ -30,7 +30,7 @@ namespace dsrpdb {
   class Atom {
     friend class Residue;
   public:
-    inline double Atom::radius() const {
+    inline double radius() const {
       switch (type()) {
       case C:
 	return 1.7;

@@ -60,7 +60,6 @@ public:
   typedef typename Quadr_surface::Point               Surface_point;
   typedef typename Quadr_surface::Vector              Surface_vector;
   typedef Weighted_point<Surface_point,Surface_RT>   Surface_weighted_point;
-  typedef typename Quadr_surface::RT                  Surface_RT;
 
   typedef Skin_surface_quadratic_surface_3<Surface_traits> Quadratic_surface;
 

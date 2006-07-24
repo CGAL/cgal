@@ -11,9 +11,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>     Traits;
 typedef CGAL::Skin_surface_3<Traits>                          Skin_surface_3;
-typedef Skin_surface_3::FT                                    FT;
+typedef Skin_surface_3::RT                                    RT;
 typedef Skin_surface_3::Weighted_point                        Weighted_point;
-typedef Skin_surface_3::Bare_point                            Bare_point;
+typedef Weighted_point::Point                                 Bare_point;
 typedef CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> Poly_items;
 typedef CGAL::Polyhedron_3<K,Poly_items>                      Polyhedron;
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   }
 
   std::list<Weighted_point> l;
-  FT                        shrinkfactor = 0.5;
+  RT                        shrinkfactor = 0.5;
 
   Weighted_point wp;
   std::ifstream in(argv[1]);
