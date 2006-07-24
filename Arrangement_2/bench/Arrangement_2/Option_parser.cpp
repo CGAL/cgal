@@ -61,6 +61,7 @@ Option_parser::Option_parser() :
   m_win_height(DEF_WIN_HEIGHT),
   m_type_mask(0xf),
   m_strategy_mask(0x3f),
+  m_postscript(false),
   m_number_files(0)
 {
   m_dirs.add(".");
@@ -165,19 +166,22 @@ void Option_parser::operator()(int argc, char * argv[])
   }
 
   if (m_variable_map.count("type")) {
+    m_type_mask = 0;
     Vector_type_id types = m_variable_map["type"].as<Vector_type_id>();
-    for (Vector_type_id_iter it = types.begin(); it != types.end(); ++it)
-    {
-      /* m_type = static_cast<??>((*it).m_id); */
+    for (Vector_type_id_iter it = types.begin(); it != types.end(); ++it) {
+      unsigned int size = sizeof(Option_parser::s_type_opts) / 8;
+      m_type_mask |= 0x1 << ((*it).m_id % size);
     }
   }
   
   if (m_variable_map.count("strategy")) {
-    Vector_strategy_id strategys = m_variable_map["strategy"].as<Vector_strategy_id>();
+    Vector_strategy_id strategys =
+      m_variable_map["strategy"].as<Vector_strategy_id>();
     for (Vector_strategy_id_iter it = strategys.begin();
          it != strategys.end(); ++it)
     {
-      /* m_strategy = static_cast<Id>((*it).m_id); */
+      unsigned int size = sizeof(Option_parser::s_strategy_opts) / 8;
+      m_strategy_mask |= 0x1 << ((*it).m_id % size);
     }
   }
   

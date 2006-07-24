@@ -389,7 +389,7 @@ public:
   Basic_arr() :
     m_filename(0), m_verbose_level(0), m_postscript(false),
     m_bbox(0.0, 0.0, 0.0, 0.0),
-    m_width(1024), m_height(1024)
+    m_width(DEF_WIN_WIDTH), m_height(DEF_WIN_HEIGHT)
   { }
 
   virtual ~Basic_arr() {}
@@ -433,6 +433,9 @@ public:
   { m_filename = filename; }
   void set_verbose_level(const unsigned int level) { m_verbose_level = level; }
   void set_postscript(const bool postscript) { m_postscript = postscript; }
+
+  void set_width(unsigned int width) { m_width = width; }
+  void set_height(unsigned int height) { m_height = height; }
 
 protected:
   const char * m_filename;
@@ -539,8 +542,10 @@ public:
       std::cout << "# of halfedges: " << arr.number_of_halfedges() << std::endl;
       std::cout << "# of faces: " << arr.number_of_faces() << std::endl;
 
-      std::copy(arr.vertices_begin(), arr.vertices_end(),
-                std::ostream_iterator<Arr::Vertex>(std::cout, "\n"));
+      if (m_verbose_level > 1) {
+        std::copy(arr.vertices_begin(), arr.vertices_end(),
+                  std::ostream_iterator<Arr::Vertex>(std::cout, "\n"));
+      }
     }
 
 #if defined(USE_CGAL_WINDOW)
@@ -602,6 +607,7 @@ public:
     m_y0 = m_bbox.ymin() - y_margin;
 
     m_height = static_cast<int>(height);
+
 #if defined(USE_CGAL_WINDOW)
     m_window = new Window_stream(m_width, m_height);
     if (!m_window) return -1;
@@ -665,10 +671,6 @@ void run_bench(Bench_inst & bench_inst, Benchable & benchable,
   
   //opertor () in the Bench - does all the work !
   bench_inst();
-
-  //cout
-  if (verbose_level > 0) std::cout << "(" << bench_inst.get_samples() << ") "
-                                   << std::endl;
 }
 
 /* */
@@ -687,7 +689,7 @@ int main(int argc, char * argv[])
   unsigned int verbose_level = option_parser.get_verbose_level();
   unsigned int type_mask = option_parser.get_type_mask();
   unsigned int strategy_mask = option_parser.get_strategy_mask();
-  int samples = option_parser.get_samples();
+  unsigned int samples = option_parser.get_samples();
   int iterations = option_parser.get_iterations();
   int seconds = option_parser.get_seconds();
   bool print_header = option_parser.is_print_header();
@@ -838,7 +840,11 @@ int main(int argc, char * argv[])
 
   // Construct and Display
   type_code = Option_parser::TYPE_DISPLAY;
+
   if (type_mask & (0x1 << type_code)) {
+    unsigned int width = option_parser.get_width();
+    unsigned int height = option_parser.get_height();
+
 #if !defined(USE_CGAL_WINDOW)
     QApplication app(argc, argv);
     App = &app;
@@ -850,6 +856,8 @@ int main(int argc, char * argv[])
       NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
     Dis_arr_bench bench_inst(name, seconds, false);
     Display_arr & benchable = bench_inst.get_benchable();
+    benchable.set_width(width);
+    benchable.set_height(height);
     run_bench<Dis_arr_bench,Display_arr>(bench_inst, benchable, full_name, 
                                          samples, iterations,
                                          verbose_level, postscript);

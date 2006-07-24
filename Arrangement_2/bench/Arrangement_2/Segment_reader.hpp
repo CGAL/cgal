@@ -7,6 +7,7 @@
 
 #include "CGAL/benchmark_basic.hpp"
 #include "CGAL/Benchmark_visitor.hpp"
+#include <CGAL/number_utils_classes.h>
 
 #include "number_type.hpp"
 #include "lexical_cast.hpp"
@@ -29,12 +30,14 @@ public:
     Point_2 m_source;
     Point_2 m_target;
     bool m_source_read;
+    CGAL::Bbox_2 & m_bbox;
 
   public:
     /*! Constructor */
-    Segment_parser_visitor(OutputIterator & oi) :
+    Segment_parser_visitor(OutputIterator & oi, CGAL::Bbox_2 & bbox) :
       m_output_iterator(oi),
-      m_source_read(false)
+      m_source_read(false),
+      m_bbox(bbox)
     {}
 
     /*! Suppress output */
@@ -43,7 +46,6 @@ public:
     virtual void accept_benchmark_name(std::string s)
     {
       Benchmark_visitor::accept_benchmark_name(s);
-      std::cerr << "name '" << s << "', ";
     }
 
     /*! Accept only unbounded lines for Arrangements */ 
@@ -61,12 +63,21 @@ public:
 
     /*! A point maker */
     template <class FT>
-    void make_point(FT & x, FT & y, Point_2 & p) { p = Point_2(x,y); }
+    void make_point(FT & x, FT & y, Point_2 & p)
+    {
+      p = Point_2(x,y);
+      double dx = CGAL::to_double(x);
+      double dy = CGAL::to_double(y);
+      CGAL::Bbox_2 b(dx, dy, dx, dy);
+      m_bbox = m_bbox + b;
+    }
 
     /*! A point maker */
     template <class FT>
     void make_point(FT & x, FT & y, FT & w, Point_2 & p)
-    { p = Point_2(x/w, y/w); }
+    {
+      p = Point_2(x/w, y/w);
+    }
 
     /*! A point maker */
     template <class RT, class FT>
@@ -149,10 +160,8 @@ public:
   int read_data(const char * filename, OutputIterator curves_out,
                 CGAL::Bbox_2 & bbox)
   {
-    Segment_parser_visitor<OutputIterator> visitor(curves_out);
-    if (!cb::benchmark_parse_file(filename, &visitor)) {
-      return -1;
-    }
+    Segment_parser_visitor<OutputIterator> visitor(curves_out, bbox);
+    if (!cb::benchmark_parse_file(filename, &visitor)) return -1;
     return 0;
   }
 };

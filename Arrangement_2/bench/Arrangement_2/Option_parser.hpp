@@ -107,7 +107,7 @@ public:
   /*! \brief obtains the full file-name */
   const std::string & get_full_name(unsigned int i) const;
 
-  bool get_postscript() const { return m_psotscript; }
+  bool get_postscript() const { return m_postscript; }
   unsigned int get_type_mask() const { return m_type_mask; }
   unsigned int get_strategy_mask() const { return m_strategy_mask; }
 
@@ -115,6 +115,12 @@ public:
   const char * get_strategy_name(Strategy_code id) const
   { return s_strategy_opts[id]; }
 
+  /*! Obtain the window width */
+  unsigned int get_width() const { return m_win_width; }
+
+  /*! Obtain the window height */
+  unsigned int get_height() const { return m_win_height; }
+  
   template <class MyId>
   static void my_validate(boost::any & v,
                           const std::vector<std::string> & values);
@@ -166,7 +172,7 @@ private:
   unsigned int m_type_mask;
   unsigned int m_strategy_mask;
   
-  bool m_psotscript;
+  bool m_postscript;
 
   unsigned int m_number_files;
   
