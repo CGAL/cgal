@@ -419,6 +419,7 @@ Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svn
 Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text svneol=unset#application/postscript
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
+Envelope_2/examples/Envelope_2/example1.C -text
 Generator/demo/Generator/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#application/pdf
