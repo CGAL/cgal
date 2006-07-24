@@ -141,10 +141,10 @@ public:
 
   //! Create a simulator passing the start time and the end time.
   Default_simulator(const Time &start_time=Time(0.0),
-            const Time &end_time= internal::infinity_or_max(Time()),
-	    Function_kernel fk=Function_kernel()):queue_(start_time, end_time, fk, 100),
+		    const Time &end_time= internal::infinity_or_max(Time()),
+		    Function_kernel fk=Function_kernel()):queue_(start_time, end_time, fk, 100),
 				cur_time_(start_time),
-				last_event_time_(-internal::infinity_or_max(Time())),
+				last_event_time_(start_time),
 				mp_(fk.rational_between_roots_object()),
 				ir_(fk.is_rational_object()),
 				tr_(fk.to_rational_object()),
@@ -154,7 +154,7 @@ public:
     // make it less than the current time.
     //std::pair<double, double> ival= to_interval(cur_time_);
     //audit_time_=NT(ival.first-10.0);
-    audit_time_= -internal::infinity_or_max(NT());
+    audit_time_= to_interval(start_time).first-1;
 #endif
   };
 
@@ -210,7 +210,7 @@ public:
     //CGAL_exactness_precondition_code(CGAL::Interval_nt_advanced ub= CGAL::to_interval(next_event_time()));
     //CGAL_exactness_precondition(ub.inf() > lb.sup());
     //	NT ret;
-    if (ir_(cur_time_) && cur_time_ != std::numeric_limits<Time>::infinity()) {
+    if (ir_(cur_time_) && cur_time_ != end_time()) {
 
     //if (ir_(cur_time_)) {
       /*CGAL_KINETIC_ERROR( "rational_current_time() called at time "
@@ -465,6 +465,8 @@ public:
 
   void write(std::ostream &out) const
   {
+    out << "Simulator: (" << to_double(current_time())
+	<< "..." << to_double(end_time()) << ")\n";
     out << queue_ << std::endl;
   }
 
@@ -472,6 +474,10 @@ public:
   {
     write(std::cout);
   }
+
+	void clear() {
+		queue_.clear();
+	}
 
 protected:
 

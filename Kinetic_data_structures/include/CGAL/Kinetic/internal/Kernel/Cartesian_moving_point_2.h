@@ -184,7 +184,7 @@ std::istream &operator>>(std::istream &in,
   char c;
   do {
     in >> c;
-  } while (std::isspace(c));
+  } while (std::isspace(c, std::locale::classic()));
   if (c != ',') {
     in.setstate(std::ios_base::failbit);
     return in;

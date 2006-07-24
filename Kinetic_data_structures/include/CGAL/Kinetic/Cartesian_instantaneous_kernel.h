@@ -187,6 +187,8 @@ public:
   CGAL_MSA(Compare_y,compare_y, 2);
   CGAL_MSA(Less_x, less_x, 2);
   CGAL_MSA(Less_y, less_y, 2);
+  CGAL_MSA(Compare_distance, compare_distance, 2);
+  CGAL_MSA(Compare_distance, compare_distance, 3);
   CGAL_TSO(Segment_2);
   CGAL_TSO(Triangle_2);
 
@@ -202,6 +204,7 @@ public:
   CGAL_MSA(Less_z, less_z, 3);
   CGAL_MSA(Coplanar_orientation, coplanar_orientation, 3);
   CGAL_MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, 3);
+  
   CGAL_TSO(Segment_3);
   CGAL_TSO(Triangle_3);
   CGAL_TSO(Tetrahedron_3);

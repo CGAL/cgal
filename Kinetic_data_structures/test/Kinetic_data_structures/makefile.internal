@@ -34,16 +34,17 @@ LIBPATH = \
           $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
-LDFLAGS = \
+LDFLAGS =  ../../src/CGAL/libCGAL.a \
           $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) ../../src/CGAL/libCGAL.a
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
+		active_objects_tables$(EXE_EXT)\
                 Delaunay_triangulation_2$(EXE_EXT) \
                 Delaunay_triangulation_3$(EXE_EXT) \
                 Delaunay_triangulation_3_timing$(EXE_EXT) \
@@ -99,7 +100,7 @@ regular_triangulation_3$(EXE_EXT): regular_triangulation_3$(OBJ_EXT)
 
 
 clean: \
-		active_objects_table.clean\
+		active_objects_tables.clean\
                    Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
                    Delaunay_triangulation_3_timing.clean \

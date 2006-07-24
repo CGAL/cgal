@@ -17,10 +17,9 @@ struct Trivial_event
       objects_.push_back(m[*beg]);
     }
   }
-  void process(Time t) const
+  void process() const
   {
-    std::cout << "At time " << t
-	      << " the following objects are in the table: ";
+    std::cout << "The following objects are in the table: ";
     for (typename std::vector<Object>::const_iterator
 	   cit= objects_.begin();
 	 cit != objects_.end(); ++cit) {

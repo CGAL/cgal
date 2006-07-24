@@ -55,7 +55,7 @@ class Two_list_event_queue_item:
     bool do_not_copy;
   }
 public:
-  Two_list_event_queue_item(): time_(infinity_or_max<Priority>()){ /*++two_list_remaining;*/}
+  Two_list_event_queue_item(): time_(-666){ /*++two_list_remaining;*/}
   Two_list_event_queue_item(const Priority &t): time_(t){/*++two_list_remaining;*/}
   virtual ~Two_list_event_queue_item(){/*--two_list_remaining;*/}
 
@@ -195,7 +195,7 @@ struct Two_list_event_queue_item_allocator
 
 CGAL_KINETIC_END_INTERNAL_NAMESPACE
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class FK>
 class Two_list_pointer_event_queue;
@@ -550,10 +550,7 @@ public:
     return null_event;
   }
 
-  void clear() {
-    front_.clear();
-    back_.clear();
-  }
+  
 
   const Priority& end_priority() const
   {
@@ -570,6 +567,12 @@ public:
       end_split_= tii_(o).second;
       }*/
   }
+
+	void clear() {
+		front_.clear();
+		back_.clear();
+		all_in_front_=false;
+	}
 
 protected:
 
@@ -896,5 +899,5 @@ std::ostream &operator<<(std::ostream &out, const Two_list_pointer_event_queue<D
 }
 
 
-CGAL_KINETIC_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE
 #endif

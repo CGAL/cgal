@@ -14,9 +14,13 @@ int main(int, char *[])
 
     KDel kdel(tr);
   
+    kdel.set_has_certificates(false);
     std::ifstream in("data/points_2");
     in >> *tr.active_points_2_table_handle();
+    kdel.set_has_certificates(true);
 
+
+    std::cout << "Starting to run" << std::endl;
     while (sp->next_event_time()
     < sp->end_time()) {
         sp->set_current_event_number(sp->current_event_number()+10);

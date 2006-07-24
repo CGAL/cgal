@@ -8,6 +8,11 @@ July 2006 Daniel Russel
 - removed time in process function calls
 - changed Simulator to Default_simulator
 
+August 2006 Daniel Russel
+- added set_has_certificates to Delaunay_2
+- added degeneracy handling to Event
+- infinity is not needed for roots any more
+
 Future Daniel Russel
 - change non-failing root to be NaN or Root() rather than infinity?
 - when using numeric solvers, evaluate the static predicates first before solving?

@@ -175,7 +175,7 @@ Cartesian_moving_point_3<Coordinate> &point)
     char c;
     do {
       in >> c;
-    } while (std::isspace(c));
+    } while (std::isspace(c, std::locale::classic()));
     if (c != ',') {
         in.setstate(std::ios_base::failbit);
         return in;
@@ -183,7 +183,7 @@ Cartesian_moving_point_3<Coordinate> &point)
     in >> y;
     do {
       in >> c;
-    } while (std::isspace(c));
+    } while (std::isspace(c, std::locale::classic()));
     if (c != ',') {
         in.setstate(std::ios_base::failbit);
         return in;

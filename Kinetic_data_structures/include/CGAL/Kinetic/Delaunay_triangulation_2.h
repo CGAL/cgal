@@ -176,7 +176,8 @@ public:
 						  del_(traits_.instantaneous_kernel_object()),
 						  soc_(traits_.kinetic_kernel_object().positive_side_of_oriented_circle_2_object()),
 						  o2_(traits_.kinetic_kernel_object().positive_orientation_2_object()),
-						  watcher_(w) {
+						  watcher_(w),
+						  has_certificates_(false){
     siml_ = Simulator_listener(st.simulator_handle(), this);
     motl_= Moving_point_table_listener(st.active_points_2_table_handle(), this);
   }
@@ -212,14 +213,19 @@ public:
   //! Verify that the current state of the
   void audit() const
   {
+    if (!has_certificates_) return;
     CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Auditing delaunay" << std::endl);
     
     CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_LOTS, *this);
     if (del_.dimension() != 2) return;
     Delaunay sdel(traits_.instantaneous_kernel_object());
     sdel.geom_traits().set_time(traits_.simulator_handle()->rational_current_time());
-    sdel.insert(traits_.active_points_2_table_handle()->keys_begin(),
-                traits_.active_points_2_table_handle()->keys_end());
+    for (typename Delaunay::Finite_vertices_iterator cit= del_.finite_vertices_begin();
+	 cit != del_.finite_vertices_end(); ++cit){
+      sdel.insert(cit->point());
+    }
+    /*    sdel.insert(traits_.active_points_2_table_handle()->keys_begin(),
+	  traits_.active_points_2_table_handle()->keys_end());*/
 
     CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_LOTS, sdel << std::endl);
 
@@ -233,7 +239,8 @@ public:
 	vit != del_.all_vertices_end(); ++vit) {
      if (vit->point() != Point_key()) {
 	if (vit->neighbors_is_changed()) {
-	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE neighbors is changed " << vit->point() << std::endl);
+	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE neighbors is changed " 
+			   << vit->point() << std::endl);
 	  CGAL_exactness_assertion(!vit->neighbors_is_changed());
 
 	}
@@ -257,7 +264,8 @@ public:
 	  //int d= vit->degree();
 	  //int d2= vit2->degree();
 	  if (vit->degree() != vit2->degree()) {
-	    CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE Degrees don't match in: " << vit->point() << std::endl);
+	    CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE Degrees don't match in: " 
+			     << vit->point() << std::endl);
 	  }
 	  CGAL_exactness_assertion(vit->degree() == vit2->degree());
 
@@ -265,7 +273,8 @@ public:
 	}
       }
       if (!found) {
-	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE Matching vertex not found: " << vit->point() << std::endl);
+	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE Matching vertex not found: " 
+			 << vit->point() << std::endl);
       }
       CGAL_exactness_assertion(found);
      
@@ -274,7 +283,8 @@ public:
     del_.geom_traits().set_time(traits_.simulator_handle()->rational_current_time());
     typename Simulation_traits::Instantaneous_kernel::Side_of_oriented_circle_2 ic2
       = del_.geom_traits().side_of_oriented_circle_2_object();
-    for (typename Delaunay::Finite_edges_iterator fit = del_.finite_edges_begin(); fit != del_.finite_edges_end(); ++fit){
+    for (typename Delaunay::Finite_edges_iterator fit = del_.finite_edges_begin(); 
+	 fit != del_.finite_edges_end(); ++fit){
       Point_key k0= fit->first->vertex((fit->second+1)%3)->point();
       Point_key k2= fit->first->vertex((fit->second+2)%3)->point();
       Point_key k3= TDS_helper::mirror_vertex(*fit)->point();
@@ -298,7 +308,8 @@ public:
       if (TDS_helper::origin(*fit)->degree()==3 || TDS_helper::destination(*fit)->degree()==3
 	  /*|| del_.is_edge(TDS_helper::third_vertex(*fit), TDS_helper::mirror_vertex(*fit))*/) {
 	if (TDS_helper::get_undirected_edge_label(*fit) != Event_key()) {
-	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE certificate on degree 3 edge: " << TDS_helper::origin(*fit)->point()
+	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE certificate on degree 3 edge: " 
+			   << TDS_helper::origin(*fit)->point()
 			   << " " <<  TDS_helper::destination(*fit)->point() 
 			   << TDS_helper::origin(*fit)->degree() <<  " "
 			   << TDS_helper::destination(*fit)->degree() << std::endl);
@@ -306,9 +317,11 @@ public:
 	CGAL_exactness_assertion(TDS_helper::get_undirected_edge_label(*fit) == Event_key());
       } else {
 	if (TDS_helper::get_undirected_edge_label(*fit) == Event_key()) {
-	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE no certificate on edge: " << TDS_helper::origin(*fit)->point()
+	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE no certificate on edge: " 
+			   << TDS_helper::origin(*fit)->point()
 			   << " " <<  TDS_helper::destination(*fit)->point() << std::endl);
-	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE degrees are: " << TDS_helper::origin(*fit)->degree()
+	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE degrees are: " 
+			   << TDS_helper::origin(*fit)->degree()
 			   << " " <<  TDS_helper::destination(*fit)->degree() << std::endl);
 	  
 	} 
@@ -320,11 +333,39 @@ public:
 
  
 
-  void set_has_certificates(bool) {
-    // always has certificates
+  void set_has_certificates(bool tf) {
+    if (tf == has_certificates_){
+
+    } else {
+      if (tf==true) {
+	for (typename Delaunay::All_vertices_iterator vit = del_.all_vertices_begin(); 
+	     vit != del_.all_vertices_end(); ++vit) {
+	  int deg=vit->degree();
+	  CGAL_assertion(deg >=3);
+	  vit->set_neighbors(deg);
+	  CGAL_DELAUNAY_2_DEBUG(std::cout << "Set degree of " << vit->point() << " to " << deg << std::endl);
+	  //vit->set_neighbors_is_changed(false);
+	}
+	for (Edge_iterator eit = del_.all_edges_begin(); eit != del_.all_edges_end(); ++eit) {
+	  TDS_helper::set_undirected_edge_label(*eit, Event_key());
+	  update_edge(*eit);
+	}
+	watcher_.create_faces(del_.all_faces_begin(), del_.all_faces_end());
+      } else {
+
+	for (typename Delaunay::Edge_iterator it = del_.edges_begin();
+	     it != del_.edges_end(); ++it){
+	  if (TDS_helper::get_undirected_edge_label(*it) != Event_key()){
+	    traits_.simulator_handle()->delete_event(TDS_helper::get_undirected_edge_label(*it));
+	    TDS_helper::set_undirected_edge_label(*it, Event_key());
+	  }
+	}
+      }
+      has_certificates_=tf;
+    }
   }
   bool has_certificates() {
-    return true;
+    return has_certificates_;
   }
 
   void erase(Point_key k) {
@@ -335,26 +376,28 @@ public:
       return;
     }
     watcher_.remove_vertex(vh);
-    Face_circulator fc= vh->incident_faces(), fe=fc;
-    if (fc != NULL) {
-      do {
-	for (unsigned int j=0; j<3; ++j) {
-	  Edge e(fc, j);
+    if (has_certificates_) {
+      Face_circulator fc= vh->incident_faces(), fe=fc;
+      if (fc != NULL) {
+	do {
+	  for (unsigned int j=0; j<3; ++j) {
+	    Edge e(fc, j);
 	  Event_key k= TDS_helper::get_undirected_edge_label(e);
 	  if (k.is_valid()) {
 	    traits_.simulator_handle()->delete_event(k);
 	    TDS_helper::set_undirected_edge_label(e, Event_key());
 	  }
 	  fc->vertex(j)->set_neighbors_is_changed(true);
-	}
-	++fc;
-      } while (fc != fe);
+	  }
+	  ++fc;
+	} while (fc != fe);
+      }
     }
     // remove from triangulation
     del_.geom_traits().set_time(traits_.simulator_handle()->rational_current_time());
     del_.remove(vh);
     //new_edges_.clear();
-    if (del_.dimension()==2) {
+    if (del_.dimension()==2 && has_certificates_) {
       std::vector<Face_handle> faces;
 
       del_.get_conflicts(k,std::back_inserter(faces));
@@ -389,7 +432,7 @@ public:
       CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Point " << k << " is not in triangulation on set."<< std::endl);
       return;
     }
-    {
+    if (has_certificates_) {
       Edge_circulator ec= vh->incident_edges(), ef=ec;
       if (ec != NULL) {
 	do {
@@ -417,7 +460,7 @@ public:
    
     watcher_.modify_vertex(vh);
 
-    {
+    if (has_certificates_) {
       Edge_circulator ec= vh->incident_edges(), ef=ec;
       if (ec != NULL) {
 	do {
@@ -446,7 +489,7 @@ public:
     bool was_2d= (del_.dimension()==2);
 
     del_.geom_traits().set_time(traits_.simulator_handle()->rational_current_time());
-    if (was_2d) {
+    if (was_2d && has_certificates_) {
       //std::cout << "removing extra certificates.\n";
       std::vector<Face_handle> faces;
       del_.get_conflicts(k, std::back_inserter(faces));
@@ -479,19 +522,12 @@ public:
     // now have to update
     if (!was_2d && del_.dimension()==2) {
       //std::cout << "Creating certificates from scratch.\n";
-      for (typename Delaunay::All_vertices_iterator vit = del_.all_vertices_begin(); vit != del_.all_vertices_end(); ++vit) {
-	int deg=vit->degree();
-	CGAL_assertion(deg >=3);
-	vit->set_neighbors(deg);
-	CGAL_DELAUNAY_2_DEBUG(std::cout << "Set degree of " << vit->point() << " to " << deg << std::endl);
-	//vit->set_neighbors_is_changed(false);
+      if (has_certificates_) {
+	has_certificates_=false;
+	set_has_certificates(true);
       }
-      for (Edge_iterator eit = del_.all_edges_begin(); eit != del_.all_edges_end(); ++eit) {
-	TDS_helper::set_undirected_edge_label(*eit, Event_key());
-	update_edge(*eit);
-      }
-      watcher_.create_faces(del_.all_faces_begin(), del_.all_faces_end());
-    } else if (del_.dimension() == 2) {
+      
+    } else if (del_.dimension() == 2 && has_certificates_) {
       Vertex_handle vh= vhs_[k];
       Edge_circulator ec= vh->incident_edges(), ef=ec;
       do {
@@ -529,7 +565,6 @@ public:
     Face_handle mirror_face = face->neighbor(index);
 
     if (del_.is_edge(TDS_helper::third_vertex(e), TDS_helper::mirror_vertex(e))) {
-      
       // we have a numeric error, lets try to rebuild the neighboring certificates
       CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY ERROR not flipping unflippable edge" << std::endl);
       //make this better
@@ -618,6 +653,7 @@ protected:
   O2 o2_;
   //std::set<Edge> new_edges_;
   Visitor watcher_;
+  bool has_certificates_;
 
   const typename Moving_point_table::Data& point(Point_key k) const
   {

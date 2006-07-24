@@ -44,7 +44,7 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<Kinetic_Delaunay
   typedef typename TDS_helper::Edge Edge;
 
   // maybe icl wants the class definition before the useage. 
-typedef typename Qt_gui::Listener QTL;
+  typedef typename Qt_gui::Listener QTL;
   class Listener: public QTL
   {
     typedef Qt_triangulation_2<Kinetic_Delaunay, Qt_gui, Qt_mpt> Container;

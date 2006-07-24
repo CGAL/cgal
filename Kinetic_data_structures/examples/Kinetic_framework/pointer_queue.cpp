@@ -7,6 +7,7 @@ typedef double Time;
 
 Time proc_time_=-1;
 
+
 class Event
 {
 public:
@@ -16,15 +17,14 @@ public:
   {
     return Time(i_);
   };
-  void process(double t) const
-  {
+  void process(){
     //std::cout << "Event at " << i_ << "\n";
     proc_time_=i_;
-    if (t != i_) {
-      std::cerr << "ERROR: Times do not match. Got " << t 
+    /*if (sim_->current_time() != i_) {
+      std::cerr << "ERROR: Times do not match. Got " << sim_->current_time()
 		<< " expected " << i_ <<std::endl;
     }
-    assert(t==i_);
+    assert(sim_->current_time()==i_);*/
   }
 protected:
   Time i_;

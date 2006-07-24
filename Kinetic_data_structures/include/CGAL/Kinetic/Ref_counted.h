@@ -25,7 +25,7 @@
 
 //#define NEW_REF_COUNTED
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE;
+CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 class Ref_counted_base;
 
@@ -90,9 +90,9 @@ inline void intrusive_ptr_release(const Ref_counted_base *t)
 }
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE;
+CGAL_KINETIC_END_INTERNAL_NAMESPACE
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class T>
 class Ref_counted: public internal::Ref_counted_base
@@ -121,5 +121,5 @@ public:
   typedef typename boost::intrusive_ptr<const T> Const_handle;
 };
 
-CGAL_KINETIC_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE
 #endif
