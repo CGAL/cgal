@@ -19,6 +19,7 @@ typedef std::vector<ContourPtr>    ContourSequence ;
 typedef CGAL::Straight_skeleton_2<Kernel> Ss;
 
 typedef Ss::Face_iterator         Face_iterator;
+typedef Ss::Face_handle           Face_handle;
 typedef Ss::Halfedge_iterator     Halfedge_iterator;
 typedef Ss::Halfedge_handle       Halfedge_handle;
 typedef Ss::Halfedge_const_handle Halfedge_const_handle;
@@ -87,7 +88,7 @@ struct Visitor
 
   void on_propagation_finished() const {}
   
-  void on_cleanup_started( bool mergin_coincident_nodes ) const {}
+  void on_cleanup_started() const {}
   
   void on_cleanup_finished() const {}
   
@@ -186,7 +187,7 @@ int STRAIGHT_SKELETON_API StraightSkeleton( int np
     visitor.set_total(currentPoint*2);
 
     // Construct the skeleton
-    boost::shared_ptr<Ss> ss = ssb.construct_skeleton(true);
+    boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
       
     // Proceed only if the skeleton was correctly constructed.
     if ( ss )
@@ -235,6 +236,27 @@ int STRAIGHT_SKELETON_API StraightSkeleton( int np
           while(h != done);
         }
 
+int vi = 0 ;
+for ( int fi = 0 ; fi < numFaces ; ++ fi )
+{
+  double firstx = xf[vi] ;
+  double firsty = yf[vi];
+
+  double lastx ;
+  double lasty ;
+
+  for ( int fvi = 0 ; fvi < numFace_i[fi] ; ++ fvi )
+  {
+     lastx = xf[vi];
+     lasty = yf[vi];
+     ++ vi ;
+  }
+
+  std::cout << "face " << fi << " edge: (" << firstx << "," << firsty << ")->(" << lastx << "," << lasty << ")\n" ;
+
+  //Face_handle fh = *(ss->faces_begin()+fi);
+
+}
         if(dumpEPS)
         {
           scale = 1000 / (bbox.xmax() - bbox.xmin()) ;

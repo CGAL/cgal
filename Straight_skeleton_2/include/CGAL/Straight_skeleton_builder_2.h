@@ -101,7 +101,7 @@ struct Dummy_straight_skeleton_builder_2_visitor
   
   void on_propagation_finished() const {}
   
-  void on_cleanup_started( bool mergin_coincident_nodes ) const {}
+  void on_cleanup_started() const {}
   
   void on_cleanup_finished() const {}
   
@@ -180,6 +180,10 @@ private :
   typedef typename Vertex::Base        VBase ;
   typedef typename Face::Base          FBase ;
   
+  typedef Vertex_handle_vector         Multinode ;
+  typedef boost::shared_ptr<Multinode> MultinodePtr ;
+  typedef std::vector<MultinodePtr>    MultinodeVector ;
+
   struct Halfedge_ID_compare : std::binary_function<bool,Halfedge_handle,Halfedge_handle>
   {
     bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
@@ -220,7 +224,7 @@ public:
   // template<class InputPointIterator> Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin, InputPointIterator aEnd ) ;
 
   
-  SSkelPtr construct_skeleton( bool aMergeCoincidentNodes = false ) ;
+  SSkelPtr construct_skeleton() ;
 
 private :
 
@@ -476,7 +480,7 @@ private :
 
   EventPtr PopEventFromPQ() ;
 
-  // Returns 1 aE is in the set (aA,aB,aC), 0 otherwise
+  // Returns 1 IFF aE is in the set (aA,aB,aC), 0 otherwise
   int CountInCommon( Halfedge_handle aE, Halfedge_handle aA, Halfedge_handle aB, Halfedge_handle aC ) const
   {
     return aE == aA || aE == aB || aE == aC ? 1 : 0 ;
@@ -616,7 +620,9 @@ private :
   {
     BorderTriple lBordersX = GetSkeletonVertexDefiningBorders(aX);
     BorderTriple lBordersY = GetSkeletonVertexDefiningBorders(aY);
-    return Are_ss_events_simultaneous_2(mTraits)( CreateSortedTriedge(lBordersX), CreateSortedTriedge(lBordersY)) ;
+
+    return    HaveTwoInCommon(lBordersX,lBordersY) 
+           && Are_ss_events_simultaneous_2(mTraits)( CreateSortedTriedge(lBordersX), CreateSortedTriedge(lBordersY)) ;
   }
  
   bool IsNewEventInThePast( Halfedge_handle         aBorderA
@@ -723,24 +729,27 @@ private :
 
   void MergeSplitNodes ( Vertex_handle_pair aSplitNodes ) ;
 
-  void ClassifyBisectorsAroundMultinode( Vertex_handle const&         v0
-                                       , Vertex_handle_vector const& aCluster
-                                       , Is_bond_map&                rIsBond
+  void ClassifyBisectorsAroundMultinode( Vertex_handle const& v0
+                                       , Multinode const&     aCluster
+                                       , Is_bond_map&         rIsBond
                                        ) ;
                                        
-  void ClassifyBisectorsAroundMultinode( Vertex_handle_vector const& aCluster
-                                       , Is_bond_map&                rIsBond
-                                       ) ;
+  void ClassifyBisectorsAroundMultinode( Multinode const& aCluster, Is_bond_map& rIsBond ) ;
   
   void RearrangeBisectorsAroundMultinode( Vertex_handle const& v0, Is_bond_map& rIsBond ) ;
   
-  bool AreNodesConnected( Vertex_handle v, Vertex_handle u ) ;
+  void CollapseMultinode( Multinode const&       aMN 
+                        , Halfedge_handle_vector rHalfedgesToRemove 
+                        , Vertex_handle_vector   rVerticesToRemove                                                             
+                        ) ;
+
+  MultinodePtr CreateMultinode( Halfedge_handle begin, Halfedge_handle end ) ;
   
   void MergeCoincidentNodes() ;
   
-  bool FinishUp( bool aMergeCoincidentNodes );
+  bool FinishUp();
 
-  bool Run( bool aMergeCoincidentNodes );
+  bool Run();
 
 private:
 

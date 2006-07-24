@@ -1258,13 +1258,14 @@ void Straight_skeleton_builder_2<Gt,SS,V>::MergeSplitNodes ( Vertex_handle_pair 
 
 }
 
+
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-template<class Cluster>
-void TraceCluster( Cluster const& c )
+template<class MN>
+void TraceMultinode( MN const& m )
 {
   std::ostringstream ss ;
   ss << "Multinode: " ;
-  for ( typename Cluster::const_iterator v = c.begin(), ev = c.end(); v != ev ; ++ v )
+  for ( typename MN::const_iterator v = c.begin(), ev = c.end(); v != ev ; ++ v )
     ss << "N" << (*v)->id() << " " ;
   std::string s = ss.str();
   CGAL_STSKEL_BUILDER_TRACE(1, s);
@@ -1321,13 +1322,11 @@ void TraceFinalBisectors( Vertex_handle v, Halfedge_around_vertex_circulator cb 
 #endif
 
 template<class Gt, class SS, class V>
-void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Vertex_handle const&        v
-                                                                         , Vertex_handle_vector const& aCluster
-                                                                         , Is_bond_map&                rIsBond
-                                                                         )
+void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Vertex_handle const& v
+                                                                           , Multinode const&     aMN
+                                                                           , Is_bond_map&         rIsBond
+                                                                           )
 {
-  Exclude(v);
-  
   Halfedge_around_vertex_circulator iebegin = v->halfedge_around_vertex_begin();
   Halfedge_around_vertex_circulator ie      = iebegin ;
   
@@ -1337,16 +1336,13 @@ void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Ver
   {
     Halfedge_handle iedge = *ie ;
     
-    if ( !handle_assigned(iedge->opposite()) )
-      throw_error("opposite() missing!");
-    
-    if (   rIsBond.find(iedge)             == rIsBond.end() 
-       &&  rIsBond.find(iedge->opposite()) == rIsBond.end()  
+    if (   rIsBond.find(validate(iedge)            ) == rIsBond.end() 
+       &&  rIsBond.find(validate(iedge->opposite())) == rIsBond.end()  
        )
     {
       Vertex_handle u = iedge->opposite()->vertex();
   
-      bool lIsBond = ( find(aCluster.begin(),aCluster.end(),u) != aCluster.end() ) ;
+      bool lIsBond = ( find(aMN.begin(),aMN.end(),u) != aMN.end() ) ;
       rIsBond.insert( std::make_pair(iedge,lIsBond) ) ;
     }
     
@@ -1361,30 +1357,12 @@ void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Ver
 }
 
 template<class Gt, class SS, class V>
-void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Vertex_handle_vector const& aCluster
-                                                                         , Is_bond_map&                rIsBond
-                                                                        )
+void Straight_skeleton_builder_2<Gt,SS,V>::ClassifyBisectorsAroundMultinode( Multinode const& aMN
+                                                                           , Is_bond_map&     rIsBond
+                                                                           )
 {
-  for ( typename Vertex_handle_vector::const_iterator v = aCluster.begin(), ev = aCluster.end(); v != ev ; ++ v )
-    ClassifyBisectorsAroundMultinode(*v,aCluster,rIsBond);    
-}
-
-template<class Gt, class SS, class V>
-bool Straight_skeleton_builder_2<Gt,SS,V>::AreNodesConnected( Vertex_handle v, Vertex_handle u )
-{
-  Halfedge_around_vertex_circulator cb = v->halfedge_around_vertex_begin() ;
-  Halfedge_around_vertex_circulator c  = cb;
-
-  do
-  {
-    if ( (*c)->opposite()->vertex() == u )
-      return true ;
-    ++ c ;
-  }
-  while( c != cb ) ;
-  
-  return false ;
-    
+  for ( typename Multinode::const_iterator v = aMN.begin(), ev = aMN.end(); v != ev ; ++ v )
+    ClassifyBisectorsAroundMultinode(*v,aMN,rIsBond);    
 }
 
 template<class Gt, class SS, class V>
@@ -1444,79 +1422,162 @@ void Straight_skeleton_builder_2<Gt,SS,V>::RearrangeBisectorsAroundMultinode( Ve
 // Finds coincident skeleton nodes and merge them
 //
 template<class Gt, class SS, class V>
+typename Straight_skeleton_builder_2<Gt,SS,V>::MultinodePtr 
+Straight_skeleton_builder_2<Gt,SS,V>::CreateMultinode( Halfedge_handle begin, Halfedge_handle end )
+{
+  MultinodePtr rMultinode(new Multinode());
+
+  do
+  {
+    Vertex_handle v = begin->vertex() ;
+    if ( !IsExcluded(v) )
+      rMultinode->push_back(v);
+    Exclude(v);
+    begin = validate(begin->next());
+  }
+  while ( begin != end ) ;
+
+  CGAL_postcondition( rMultinode->size() > 1 ) ;
+
+  return rMultinode ;
+}
+
+template<class Gt, class SS, class V>
+void Straight_skeleton_builder_2<Gt,SS,V>::CollapseMultinode( Multinode const&       aMN 
+                                                            , Halfedge_handle_vector rHalfedgesToRemove 
+                                                            , Vertex_handle_vector   rVerticesToRemove                                                             
+                                                            )
+{
+  CGAL_STSKEL_DEBUG_CODE( TraceMultinode(aMN); )
+
+  // Classify all the in-halfedges incident to the clustered nodes as "bond" and "non-bond":
+  //  "bond" halfedges link a node in the cluster to another node in the cluster (which should be erased from the HDS)
+  //  "non-bond" halfedges link a node in the cluster to a node not in the cluster (which should be relink to v0)
+  Is_bond_map lIsBond ;
+  ClassifyBisectorsAroundMultinode(aMN,lIsBond);
+
+  CGAL_STSKEL_DEBUG_CODE( TraceBisectorClassification(lIsBond); )
+
+  // Relink all non-bond bisectors to v0
+  RearrangeBisectorsAroundMultinode(aMN.front(),lIsBond);    
+           
+  // All but the first vertex in any MN must be erased from the HDS
+  std::copy(CGAL::successor(aMN.begin()),aMN.end(), std::back_inserter(rVerticesToRemove) );
+
+  // All bond bisectors must be erased from the HDS.
+  for( typename Is_bond_map::iterator i = lIsBond.begin(), ei = lIsBond.end(); i != ei ; ++ i )
+    if ( i->second )
+      rHalfedgesToRemove.push_back(i->first);
+}
+
+//
+// Finds coincident skeleton nodes and merge them
+//
+// If moving edges Ei,Ej collide with moving edge Ek causing Ej to collapse, Ei and Ek becomes consecutive and a new
+// polygon vertex (Ei,Ek) appears in the wavefront.
+// If moving edges Ei,Ej collide with moving edge Ek causing Ek to be split in two halves, L(Ek) amd R(Ek) resp, two new 
+// polygon vertices appears in the wavefront; namely: (Ei,R(Ek)) and (L(Ek),Ej))
+// If moving edge Ei,Ej collide with both Ek,El simultaneously causing the edges to cross-connect, two new vertices
+// (Ei,Ek) and (El,Ej) appear in the wavefront.
+//
+// In all those 3 cases, each new polygon vertex is represented in the straight skeleton as a skeleton node.
+// Every skeleton node is describing the coallision of at least 3 edges (called the "defining edges" of the node)
+// and it has at least 3 incident bisectors, each one pairing 2 out of the total number of defining egdes. 
+// 
+// Any skeleton node has a degree of at least 3, but if more than 3 edges collide simultaneously, the corresponding
+// skeleton node has a higher degree. (the degree of the node is exactly the number of colliding edges)
+//
+// However, the algorithm handles the coallison of 3 edges at a time so each skeleton node initially created
+// has degree exactly 3 so this function which detects higher degree nodes and merge them into a single node
+// of the proper degree is needed.
+//
+// Two skeleton nodes are "coincident" IFF they have 2 defining edges in common and each triple of edges collide
+// at the same time and point. IOW, 2 nodes are coincident if they represent the simultaneous 
+// coallison of exactly 4 edges (the union of 2 triples with 2 common elements is a set of 4).
+//
+template<class Gt, class SS, class V>
 void Straight_skeleton_builder_2<Gt,SS,V>::MergeCoincidentNodes()
 {
+  //
+  // NOTE: This code might be executed on a topologically incosistent HDS, thus the need to check
+  // the structure along the way.
+  //
+
   CGAL_STSKEL_BUILDER_TRACE(0, "Merging coincident nodes...");
-  
+
+  // ALGORITHM DESCRIPTION:
   //
-  // An undirected graph is used to avoid testing (b,a) when (a,b) was already tested.
+  // While circulating the bisectors along the face for edge Ei we find all those edges E* which
+  // are or become consecutive to Ei during the wavefront propagation. Each bisector along the face:
+  // (Ei,Ea), (Ei,Eb), (Ei,Ec), etcc pairs Ei with such other edge.
+  // Between one bisector (Ei,Ea) and the next (Ei,Eb) there is skeleton node which represents
+  // the coallision between the 3 edges (Ei,Ea,Eb).
+  // It follows from the pairing that any skeleton node Ni, for example (Ei,Ea,Eb), neccesarily
+  // shares two edges (Ei and Eb precisely) with any next skeleton node Ni+1 around the face.
+  // That is, the triple of defining edges that correspond to each skeleton node around the face follow this
+  // sequence: (Ei,Ea,Eb), (Ei,Eb,Ec), (Ei,Ec,Ed), ...
   //
-  typedef boost::adjacency_matrix<boost::undirectedS> Graph ;
-  typedef boost::graph_traits<Graph>::edge_descriptor edesc;
-  
-  Graph graph(mVertexID) ;
-  
+  // Any 2_ consecutive_ skeleton nodes around a face share 2 out of the 3 defining edges, which is one of the 
+  // neccesary conditions for "coincidence". 
+
+
+  MultinodeVector lMultinodes ;
+
+  for( Face_iterator fit = mSSkel->SSkel::Base::faces_begin(); fit != mSSkel->SSkel::Base::faces_end(); ++fit)
+  {
+    // 'h' is the first (CCW) skeleton halfedge.
+	   Halfedge_handle h = validate(validate(fit->halfedge())->next());
+
+    CGAL_assertion ( h->is_bisector() ) ;
+
+    // 'last' is the last (CCW) skeleton halfedge
+	   Halfedge_handle last = validate(fit->halfedge()->prev()) ;
+
+    CGAL_assertion ( last->is_bisector() ) ;
+    CGAL_assertion ( last->vertex()->is_contour() ) ;
+
+    Halfedge_handle h0 = h ;
+    Vertex_handle   v0 = h0->vertex() ;
+
+    CGAL_assertion ( v0->is_skeleton() ) ;
+
+    h = validate(h->next()) ;
+
+	   while ( h != last )
+    {
+      Vertex_handle v = h->vertex();
+
+      CGAL_assertion ( v->is_skeleton() ) ;
+
+      if ( IsExcluded(v) || !AreSkeletonNodesCoincident(v0,v) )
+      {
+        if ( h0->next() != h )
+          lMultinodes.push_back( CreateMultinode(h0,h) );
+
+        v0 = v ;
+        h0 = h ;
+      }
+
+	     h = validate(h->next());
+	   } 
+
+    if ( h0->next() != h )
+      lMultinodes.push_back( CreateMultinode(h0,h) );
+	 }
+
   //
   // The merging loop removes all but one of the coincident skeleton nodes and the halfedges between them.
-  // But it can 't physically erase those from the HDS while looping, so the nodes/bisector to erase as collected
-  // in these sequences are erased after the merging loop.
+  // But it can't physically erase those from the HDS while looping, so the nodes/bisector to erase 
+  // are collected in these sequences are erased after the merging loop.
   // 
   Halfedge_handle_vector lHalfedgesToRemove ;
   Vertex_handle_vector   lVerticesToRemove ;
-  
-  //
-  // Test each vertex v0 against ALL OTHER vertices v1 and collect each vertex v1 coincident with v0 in a sequence called Cluster.
-  //
-  for ( Vertex_iterator vi0 = mSSkel->SSkel::Base::vertices_begin(), evi0 = mSSkel->SSkel::Base::vertices_end(); vi0 != evi0 ; ++ vi0 )
-  {
-    Vertex_handle v0 = static_cast<Vertex_handle>(vi0);
-    
-    if ( v0->is_skeleton() && !IsExcluded(v0) )
-    {
-      Vertex_handle_vector lCluster ; // All nodes coincident with v0 go here
-      
-      for ( Vertex_iterator vi1 = mSSkel->SSkel::Base::vertices_begin(), evi1 = mSSkel->SSkel::Base::vertices_end(); vi1 != evi1 ; ++ vi1 )
-      {
-        Vertex_handle v1 = static_cast<Vertex_handle>(vi1);
-        
-        edesc ge ; bool tested ; tie(ge,tested) = boost::edge(v0->id(),v1->id(),graph);
-        
-        if ( v0 != v1 && !tested && v1->is_skeleton() && !IsExcluded(v1) )
-          if ( AreSkeletonNodesCoincident(v0,v1) )
-            lCluster.push_back(v1);
-        
-        boost::add_edge(v0->id(),v1->id(),graph);
-      }
-      
-      // Here, Cluster contains all the nodes coincident with v0, if any (but not v0 itself)
-      if ( lCluster.size() > 0 )
-      {
-        // All but v0 must be erased from the HDS
-        std::copy(lCluster.begin(),lCluster.end(), std::back_inserter(lVerticesToRemove) );
-        
-        // Now add v0 to the cluster, all nodes previously clustered will will be replaced by v0
-        lCluster.push_back(v0);
-        
-        CGAL_STSKEL_DEBUG_CODE( TraceCluster(lCluster); )
-        
-        // Classify all the in-halfedges incident to the clustered nodes as "bond" and "non-bond":
-        //  "bond" halfedges link a node in the cluster to another node in the cluster (which should be erased from the HDS)
-        //  "non-bond" halfedges link a node in the cluster to a node not in the cluster (which should be relink to v0)
-        Is_bond_map lIsBond ;
-        ClassifyBisectorsAroundMultinode(lCluster,lIsBond);
-        
-        CGAL_STSKEL_DEBUG_CODE( TraceBisectorClassification(lIsBond); )
-        
-        // Relink all non-bond bisectors to v0
-        RearrangeBisectorsAroundMultinode(v0,lIsBond);    
-                 
-        // Erase all bond bisectors.
-        for( typename Is_bond_map::iterator i = lIsBond.begin(), ei = lIsBond.end(); i != ei ; ++ i )
-          if ( i->second )
-            lHalfedgesToRemove.push_back(i->first);
-      }  
-    }
-  }  
+
+  for ( typename MultinodeVector::iterator it = lMultinodes.begin(), eit = lMultinodes.end() 
+      ; it != eit 
+      ; ++ it 
+      )
+    CollapseMultinode(**it,lHalfedgesToRemove,lVerticesToRemove);
   
   for( Halfedge_handle_vector_iterator hi = lHalfedgesToRemove.begin(), ehi = lHalfedgesToRemove.end() ; hi != ehi ; ++ hi )
   {
@@ -1529,16 +1590,17 @@ void Straight_skeleton_builder_2<Gt,SS,V>::MergeCoincidentNodes()
     CGAL_STSKEL_BUILDER_TRACE(1, "N" << (*vi)->id() << " removed.");
     mSSkel->SSkel::Base::vertices_erase(*vi);    
   }  
-   
+
 }
 
 
+
 template<class Gt, class SS, class V>
-bool Straight_skeleton_builder_2<Gt,SS,V>::FinishUp( bool aMergeCoincidentNodes )
+bool Straight_skeleton_builder_2<Gt,SS,V>::FinishUp()
 {
   CGAL_STSKEL_BUILDER_TRACE(0, "\n\nFinishing up...");
 
-  mVisitor.on_cleanup_started(aMergeCoincidentNodes);
+  mVisitor.on_cleanup_started();
   
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
@@ -1550,35 +1612,29 @@ bool Straight_skeleton_builder_2<Gt,SS,V>::FinishUp( bool aMergeCoincidentNodes 
                 ,boost::bind(&Straight_skeleton_builder_2<Gt,SS,V>::EraseBisector,this,_1)
                ) ;
                
-  bool ok = mSSkel->is_valid() ;
-  
-  if ( ok && aMergeCoincidentNodes )
-  {
-    MergeCoincidentNodes();             
-    CGAL_expensive_postcondition( ok = mSSkel->is_valid() ) ;
-  }  
-  
+  MergeCoincidentNodes();             
+
   mVisitor.on_cleanup_finished();
-    
-  return ok ;  
+
+  return mSSkel->is_valid() ;
 }
 
 template<class Gt, class SS, class V>
-bool Straight_skeleton_builder_2<Gt,SS,V>::Run( bool aMergeCoincidentNodes )
+bool Straight_skeleton_builder_2<Gt,SS,V>::Run()
 {
   InitPhase();
   Propagate();
-  return FinishUp (aMergeCoincidentNodes);
+  return FinishUp();
 }
 
 template<class Gt, class SS, class V>
-typename Straight_skeleton_builder_2<Gt,SS,V>::SSkelPtr Straight_skeleton_builder_2<Gt,SS,V>::construct_skeleton( bool aMergeCoincidentNodes )
+typename Straight_skeleton_builder_2<Gt,SS,V>::SSkelPtr Straight_skeleton_builder_2<Gt,SS,V>::construct_skeleton()
 {
   bool ok = false ;
   
   try
   {
-    ok = Run(aMergeCoincidentNodes) ;
+    ok = Run() ;
   }
   catch( std::exception const& e ) 
   {
