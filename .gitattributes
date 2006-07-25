@@ -1457,6 +1457,13 @@ Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.eps
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.fig -text svneol=unset#application/octet-stream
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.gif -text svneol=unset#image/gif
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2_ref/sdg-join_split.pdf -text svneol=unset#application/pdf
+Segment_Delaunay_graph_2/new_stuff/Segment_Delaunay_graph_2/data/bizarre.cin -text
+Segment_Delaunay_graph_2/new_stuff/Segment_Delaunay_graph_2/data/sites.cin -text
+Segment_Delaunay_graph_2/new_stuff/Segment_Delaunay_graph_2/data/sitesx.cin -text
+Segment_Delaunay_graph_2/new_stuff/Segment_Delaunay_graph_2/data/sitesx.rb.cin -text
+Segment_Delaunay_graph_2/new_stuff/Segment_Delaunay_graph_2/data/sitesx2.cin -text
+Segment_Delaunay_graph_2/new_stuff/Segment_Delaunay_graph_2/data/sitesxx.cin -text
+Segment_Delaunay_graph_2/new_stuff/Segment_Delaunay_graph_2/data/sitesxx.rb.cin -text
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text svneol=unset#application/postscript
