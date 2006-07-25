@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
   typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
   typedef CGAL::Triangulation_data_structure_2<
-  CGAL::Triangulation_vertex_base_2<Traits::Instantaneous_kernel>,
+  CGAL::Kinetic::Delaunay_triangulation_vertex_base_2<Traits::Instantaneous_kernel>,
     CGAL::Kinetic::Delaunay_triangulation_face_base_2<Traits> > TDS;
   typedef CGAL::Delaunay_triangulation_2<Traits::Instantaneous_kernel, TDS > Del;
   typedef CGAL::Kinetic::Enclosing_box_2<Traits> EB;

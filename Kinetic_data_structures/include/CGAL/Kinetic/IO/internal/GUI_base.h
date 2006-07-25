@@ -252,16 +252,17 @@ protected:
       }
     case RUNNING_TO_EVENT:
       {
-	TT ct= compute_next_timestep(sim_->next_event_time());
-	sim_->set_current_time(ct);
-	if ( ct == sim_->next_event_time()) {
+	TT stop_time= sim_->next_event_time();
+	TT t= compute_next_timestep(stop_time);
+	if (t == stop_time) {
 	  set_mode(STOPPED);
-	  ret= false;
+	  //sim_->set_current_event_number(sim_->current_event_number()+1);
+	  ret= false; break;
 	}
 	else {
-	  ret= true;
+	  sim_->set_current_time(t);
+	  ret= true; break;
 	}
-	break;
       }
     case RUNNING_THROUGH_EVENT:
       {

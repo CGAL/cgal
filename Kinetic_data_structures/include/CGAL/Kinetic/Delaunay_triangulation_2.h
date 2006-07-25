@@ -177,7 +177,7 @@ public:
 						  soc_(traits_.kinetic_kernel_object().positive_side_of_oriented_circle_2_object()),
 						  o2_(traits_.kinetic_kernel_object().positive_orientation_2_object()),
 						  watcher_(w),
-						  has_certificates_(false){
+						  has_certificates_(true){
     siml_ = Simulator_listener(st.simulator_handle(), this);
     motl_= Moving_point_table_listener(st.active_points_2_table_handle(), this);
   }
@@ -338,11 +338,13 @@ public:
 
     } else {
       if (tf==true) {
+	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY2: Creating certificates."<< std::endl);
 	for (typename Delaunay::All_vertices_iterator vit = del_.all_vertices_begin(); 
 	     vit != del_.all_vertices_end(); ++vit) {
 	  int deg=vit->degree();
 	  CGAL_assertion(deg >=3);
-	  vit->set_neighbors(deg);
+	  Vertex_handle vh= vit;
+	  vh->set_neighbors(deg);
 	  CGAL_DELAUNAY_2_DEBUG(std::cout << "Set degree of " << vit->point() << " to " << deg << std::endl);
 	  //vit->set_neighbors_is_changed(false);
 	}
