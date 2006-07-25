@@ -47,7 +47,10 @@ class Root_for_circles_2_2 {
   
   Root_for_circles_2_2(const Root_of_2& r1, const Root_of_2& r2)
     : x_(r1), y_(r2)
-  {}
+  {
+    CGAL_assertion((r1.is_rational() || r2.is_rational()) || 
+                   (r1.gamma() == r2.gamma()));
+  }
 
   const Root_of_2& x() const 
   { return get(x_); }
@@ -57,9 +60,30 @@ class Root_for_circles_2_2 {
 
   CGAL::Bbox_2 bbox() const
   {
-    CGAL::Interval_nt<> 
-        ix=to_interval(x()),
-        iy=to_interval(y());
+    const Root_of_2 &ox = x();
+    const Root_of_2 &oy = y();
+
+    if(ox.is_rational() || oy.is_rational()) {
+      CGAL::Interval_nt<> 
+        ix=to_interval(ox),
+        iy=to_interval(oy);
+      return CGAL::Bbox_2(ix.inf(),iy.inf(),
+	                ix.sup(),iy.sup());
+    }
+
+    // delta must be the same
+    // WE HAVE TO TEST THE EXECUTION TIME
+    // IT STILL NOT POSSIBLE BECAUSE OF THE 
+    // PROBLEM ON THE ARRANGEMENT
+    // (it is very likely to make it better with this changing)
+    const CGAL::Interval_nt<true> alpha1 = to_interval(ox.alpha());
+    const CGAL::Interval_nt<true> beta1 = to_interval(ox.beta());
+    const CGAL::Interval_nt<true> alpha2 = to_interval(oy.alpha());
+    const CGAL::Interval_nt<true> beta2 = to_interval(oy.beta());
+    const CGAL::Interval_nt<true> g = to_interval(ox.gamma());
+    const CGAL::Interval_nt<true> sqrtg = CGAL::sqrt(g);
+    const CGAL::Interval_nt<true> ix = alpha1 + beta1 * sqrtg;
+    const CGAL::Interval_nt<true> iy = alpha2 + beta2 * sqrtg;
     return CGAL::Bbox_2(ix.inf(),iy.inf(),
 	                ix.sup(),iy.sup());
   }
@@ -74,7 +98,7 @@ template < typename RT >
 bool 
 operator == ( const Root_for_circles_2_2<RT>& r1,
 	      const Root_for_circles_2_2<RT>& r2 )
-{ if (CGAL::identical(r1.x_, r2.x_) && CGAL::identical(r1.x_, r2.x_))
+{ if (CGAL::identical(r1.x_, r2.x_) && CGAL::identical(r1.y_, r2.y_))
 	  return true;
   return (r1.x() == r2.x()) && (r1.y() == r2.y()); 
 }
