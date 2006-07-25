@@ -17,13 +17,12 @@ the smaller (resp. larger) root of the equation $aX^2+bX+c=0$ if \ccc{s}
 is true (resp. false).}
 %\footnote{numbering of roots from 0 or 1? to be checked}
 \ccGlue
+\ccFunction{RootOf_2 make_root_of_2(FT $\alpha$, FT $\beta$, FT $\gama$);}{It is
+the root_of_2 representation for $\alpha + \beta \sqrt{\gama}$}
 \ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s);}{Returns
 the smaller (resp. larger) root of the equation $aX^2+bX+c=0$ if \ccc{s}
 is true (resp. false).}
-\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s, bool idnz);}{Returns
-the smaller (resp. larger) root of the equation $aX^2+bX+c=0$ if \ccc{s}
-is true (resp. false). And also consider that delta is not zero if
-idnz is true. (use that information whenever it is possible, due to optimizations)}
+
 
 \ccOperations
 
