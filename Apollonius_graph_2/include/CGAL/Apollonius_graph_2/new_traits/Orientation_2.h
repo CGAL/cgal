@@ -33,15 +33,18 @@ CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 template <class K, class MTag>
 class Orientation_new_2 : public Orientation_2<K, MTag>
 {
+private:
+  typedef Orientation_2<K, MTag>       Base;
 public:
-    typedef K                    Kernel;
-    typedef typename K::RT       RT;
-    typedef typename K::Site_2   Site_2;
-    typedef typename K::Point_2  Point_2;
+  typedef K                            Kernel;
+  typedef typename K::RT               RT;
+  typedef typename K::Site_2           Site_2;
+  typedef typename K::Point_2          Point_2;
 
-    typedef Orientation          result_type;
-    typedef Arity_tag<3>         Arity;
-    typedef Site_2               argument_type;
+  typedef typename Base::Orientation   Orientation;
+  typedef Orientation                  result_type;
+  typedef Arity_tag<3>                 Arity;
+  typedef Site_2                       argument_type;
 
     Orientation operator() (const Site_2 &s0, const Site_2 &s1,
 			    const Site_2 &s2, const Point_2 &q) const

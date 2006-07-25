@@ -36,9 +36,12 @@ CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 template < class K, class Method_tag >
 class Edge_conflict_2 : public Conflict_2<K, Method_tag>
 {
+private:
+    typedef Conflict_2<K, Method_tag>       Base;
 public:
     typedef Inverted_weighted_point<K>    Inverted_weighted_point;
     typedef bool                          result_type;
+    typedef typename Base::Sign           Sign;
     struct Arity {};
 
 protected:

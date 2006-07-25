@@ -1,3 +1,6 @@
+25 July 2006:  Menelaos Karavelas
+- fixes to please g++ 3.3.2 @ SunOS platform
+
 21 July 2006:  Menelaos Karavelas
 - added various site generators and example programs
 
