@@ -53,10 +53,15 @@ std::pair<double, double> to_interval (const Gmpq &);
 
 double to_double(const Quotient<Gmpz>&);
 
-Root_of_2< CGAL::Gmpz >
-make_root_of_2(const CGAL::Gmpq &a, const CGAL::Gmpq &b,
-               const CGAL::Gmpq &c, bool d);
+/* FIX THE make_root_of_2 first
+Root_of_2< Gmpz >
+make_root_of_2(const Gmpq &a, const Gmpq &b,
+               const Gmpq &c, bool d);
 
+Root_of_2< Gmpz >
+make_root_of_2(const Gmpz &a, const Gmpz &b,
+               const Gmpz &c, bool d);
+*/
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPZQ_FWD_H
