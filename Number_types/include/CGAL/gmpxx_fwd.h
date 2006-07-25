@@ -76,12 +76,13 @@ bool is_positive(const ::__gmp_expr<T, U> &);
 template < typename T, typename U >
 bool is_negative(const ::__gmp_expr<T, U> &);
 
+/* FIX gmpxx.h first
 template < typename T, typename U1, typename U2, typename U3 >
 typename Root_of_traits< ::__gmp_expr<T, T> >::RootOf_2
 make_root_of_2(const ::__gmp_expr< T, U1> & a,
                const ::__gmp_expr< T, U2> & b,
                const ::__gmp_expr< T, U3> & c,
-               bool d);
+               bool d);*/
 
 CGAL_END_NAMESPACE
 
