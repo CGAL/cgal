@@ -203,6 +203,8 @@ bool
 is_negative(const ::__gmp_expr<T, U> & e)
 { return ::sgn(e) < 0; }
 
+/* FIX ME: THERE IS NO CONSTRUCTOR FT(x,y)
+           AVALIABLE FOR THIS TYPE
 
 namespace CGALi {
 
@@ -229,7 +231,7 @@ make_root_of_2_gmpxx(const ::mpq_class & a,
     CGAL_assertion( r.denominator(a) > 0 );
     CGAL_assertion( r.denominator(b) > 0 );
     CGAL_assertion( r.denominator(c) > 0 );
-
+*/
 /*   const RT lcm = ( r.denominator(a) * r.denominator(b) * r.denominator(c)          )/
                ( gcd( r.denominator(a), gcd(r.denominator(b), r.denominator(c)) ) );
 
@@ -237,7 +239,7 @@ make_root_of_2_gmpxx(const ::mpq_class & a,
       RT b_ = r.numerator(b) * ( lcm / r.denominator(b) );
       RT c_ = r.numerator(c) * ( lcm / r.denominator(c) );
 */
-    ::mpz_class a_ = r.numerator(a) * r.denominator(b) * r.denominator(c);
+/*    ::mpz_class a_ = r.numerator(a) * r.denominator(b) * r.denominator(c);
     ::mpz_class b_ = r.numerator(b) * r.denominator(a) * r.denominator(c);
     ::mpz_class c_ = r.numerator(c) * r.denominator(a) * r.denominator(b);
 
@@ -262,7 +264,7 @@ struct Root_of_traits< ::__gmp_expr<T, U> >
 {
   typedef ::mpq_class               RootOf_1;
   typedef Root_of_2< ::mpz_class >  RootOf_2;
-};
+};*/
 
 CGAL_END_NAMESPACE
 
