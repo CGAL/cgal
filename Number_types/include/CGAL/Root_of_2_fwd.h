@@ -94,9 +94,11 @@ template < typename RT >
 typename CGALi::Make_root_of_2_helper<RT>::result_type
 make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller);
 
-template < typename RT >
-typename CGALi::Make_root_of_2_helper<RT>::result_type
-make_root_of_2(const RT &a, const RT &b, const RT &c, bool smaller, bool dinz);
+//template < typename RT >
+//typename CGALi::Make_root_of_2_helper<RT>::result_type
+//make_root_of_2(const typename Root_of_traits< RT >::RootOf_1 &a, 
+//               const typename Root_of_traits< RT >::RootOf_1 &b, 
+//               const typename Root_of_traits< RT >::RootOf_1 &c);
 
 CGAL_END_NAMESPACE
 
