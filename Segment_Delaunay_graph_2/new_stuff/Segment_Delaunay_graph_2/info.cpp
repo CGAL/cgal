@@ -50,8 +50,8 @@ typedef CGAL::Storage_traits_2<Gt> ST;
 typedef CGAL::Tag_true  STag;
 //typedef CGAL::Tag_false STag;
 
-//typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
+typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
+//typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
 
 template<class SDG>
 bool test(SDG& sdg, char* fname, bool read_info = false)
