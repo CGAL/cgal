@@ -328,7 +328,7 @@ struct Rational_traits<Gmpq> {
   { return n / d; }
 };
 
-
+/* FIX ME: this not compile
 inline
 Root_of_2< CGAL::Gmpz >
 make_root_of_2(const CGAL::Gmpq &a, const CGAL::Gmpq &b,
@@ -336,6 +336,7 @@ make_root_of_2(const CGAL::Gmpq &a, const CGAL::Gmpq &b,
 {
   return CGALi::make_root_of_2_rational< CGAL::Gmpz, CGAL::Gmpq >(a,b,c,d);
 }
+*/
 
 // CGAL::Gmpq is the same as Root_of_traits< CGAL::Gmpz >::RootOf_1
 template <>
