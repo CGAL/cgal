@@ -71,3 +71,14 @@ run: all
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
+
+#---------------------------------------------------------------------#
+#
+#                        dependencies
+#
+#      if you want deps, create a file my_makefile that contains
+#      -include makefile.dependencies
+#
+#---------------------------------------------------------------------#
+
+-include my_makefile
