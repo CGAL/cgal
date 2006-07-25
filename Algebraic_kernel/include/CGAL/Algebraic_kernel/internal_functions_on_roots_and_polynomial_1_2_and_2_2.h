@@ -42,101 +42,90 @@ namespace CGAL {
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
     if (is_zero(e1.a())){//horizontal line
       
-      const FT a = 1;
-      const FT b = -2*e2.a();
-      const FT c_t = e1.c()/e1.b();
-      const FT c = CGAL::square(e2.a()) +
-	CGAL::square(e2.b() + c_t)
-	- e2.r_sq();
-      const FT cond = CGAL::square(b) - 4 * c;
+      const FT hy = -e1.c()/e1.b();
+      const FT hdisc = e2.r_sq() - CGAL::square(hy - e2.b());
+      CGAL::Sign sign_hdisc = CGAL::sign(hdisc);
     
-      if(cond < 0)
-	return res;
-      if (cond == 0) {	
+      if(sign_hdisc == NEGATIVE) return res;
+      if(sign_hdisc == ZERO) {	
 	*res++ = std::make_pair
 	  ( Root_for_circles_2_2(Root_of_2(e2.a()), 
-                                 Root_of_2(-c_t)), 2u);
+                                 Root_of_2(hy)), 2u);
 	return res;
       }
-      const Root_of_2 x_res1 = make_root_of_2(a, b, c, true, true);
-      const Root_of_2 x_res2 = make_root_of_2(a, b, c, false, true);
-      const Root_of_2 y_res = Root_of_2(-c_t); 
+      const Root_of_2 x_res1 = make_root_of_2(e2.a(),-1,hdisc);
+      const Root_of_2 x_res2 = make_root_of_2(e2.a(),1,hdisc);
+      const Root_of_2 y_res = Root_of_2(hy); 
       *res++ = std::make_pair
 	( Root_for_circles_2_2(x_res1, y_res), 1u);
       *res++ = std::make_pair
-	( Root_for_circles_2_2(x_res2,y_res), 1u);
+	( Root_for_circles_2_2(x_res2, y_res), 1u);
       return res;
     }
     else if(is_zero(e1.b())){//vertical line
-       
-      const FT a = 1;
-      const FT b = -2*e2.b();
-      const FT c_t = e1.c()/e1.a();
-      const FT c = CGAL::square(e2.b()) +
-	CGAL::square(c_t + e2.a())
-	- e2.r_sq();
-      const FT cond = CGAL::square(b) - 4 * c;
-    
-      if(cond < 0)
-	return res;
-      if (cond == 0) {
+      
+      const FT vx = -e1.c()/e1.a();
+      const FT vdisc = e2.r_sq() - CGAL::square(vx - e2.a());
+      CGAL::Sign sign_vdisc = CGAL::sign(vdisc);
+
+      if(sign_vdisc == NEGATIVE) return res;
+      if(sign_vdisc == ZERO) {
 	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(Root_of_2(-c_t), 
+	  ( Root_for_circles_2_2(Root_of_2(vx), 
                                  Root_of_2(e2.b())), 2u);
 	return res;
       }
-      const Root_of_2 y_res1 = make_root_of_2(a, b, c, true, true);
-      const Root_of_2 y_res2 = make_root_of_2(a, b, c, false, true);
-      Root_of_2 x_res = Root_of_2(-c_t); 
+      
+      const Root_of_2 x_res = Root_of_2(vx); 
+      const Root_of_2 y_res1 = make_root_of_2(e2.b(),-1,vdisc);
+      const Root_of_2 y_res2 = make_root_of_2(e2.b(),1,vdisc);
+
       *res++ = std::make_pair
 	( Root_for_circles_2_2(x_res, y_res1), 1u);
       *res++ = std::make_pair
-	( Root_for_circles_2_2(x_res,y_res2), 1u);
+	( Root_for_circles_2_2(x_res, y_res2), 1u);
       return res;
     }
-    else{
-      //general case
-      const FT a1_sq = CGAL::square(e1.a());
-      const FT b1_sq = CGAL::square(e1.b());
-      const FT b2_sq = CGAL::square(e2.b());
+    else {
       
-      const FT a = b1_sq + a1_sq;
-      const FT b = 2*e1.c()*e1.b() + 2*e2.a()*e1.a()*e1.b() - 2*a1_sq*e2.b();
-      const FT c = CGAL::square(e2.a()*e1.a() + e1.c()) + a1_sq*b2_sq - a1_sq*e2.r_sq();
-      
-      const FT cond = CGAL::square(b) - 4 *a*c;
-    
-      if(cond < 0)
-	return res;
+      const FT line_factor = CGAL::square(e1.a()) + CGAL::square(e1.b());
+      const FT disc = line_factor*e2.r_sq() -
+                      CGAL::square(e1.a()*e2.a() + e1.b()*e2.b() + e1.c());
+      CGAL::Sign sign_disc = CGAL::sign(disc);
 
+      if (sign_disc == NEGATIVE) return res;
 
-      if (cond == 0) {
-        const FT sol = -b/(2*a);
-	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(Root_of_2((e1.b()*sol + e1.c()) / -e1.a()), 
-                                 Root_of_2(sol)), 2u);
-	return res;
-      }
-    
-      const Root_of_2 y_res1 = make_root_of_2(a, b, c, true, true);
-      const Root_of_2 x_res1 = (-e1.b()/e1.a()) * y_res1 - (e1.c()/e1.a());
-      const Root_of_2 y_res2 = make_root_of_2(a, b, c, false, true);
-      const Root_of_2 x_res2 = (-e1.b()/e1.a()) * y_res2 - (e1.c()/e1.a());
+      const FT aux = e1.b()*e2.a() - e1.a()*e2.b();
+      const FT x_base = (aux*e1.b() - e1.a()*e1.c()) / line_factor;
+      const FT y_base = (-aux*e1.a() - e1.b()*e1.c()) / line_factor;
 
-      if(x_res2 < x_res1){
-	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(x_res2, y_res2), 1u);
-	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(x_res1,y_res1), 1u);
-	return res;
-      }
-      else{
+      if (sign_disc == ZERO) {
         *res++ = std::make_pair
-	  ( Root_for_circles_2_2(x_res1, y_res1), 1u);
-	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(x_res2,y_res2), 1u);
+	  ( Root_for_circles_2_2(Root_of_2(x_base), 
+                                 Root_of_2(y_base)), 2u);
 	return res;
-      }     
+      }
+
+      // We have two intersection points, whose coordinates are one-root numbers. 
+      const FT x_root_coeff = e1.b() / line_factor;
+      const FT y_root_coeff = e1.a() / line_factor;
+
+      if (CGAL::sign(e1.b()) == POSITIVE) {
+        *res++ = std::make_pair
+	( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc), 
+                               make_root_of_2(y_base, y_root_coeff, disc)), 1u);
+        *res++ = std::make_pair
+	( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc), 
+                               make_root_of_2(y_base, -y_root_coeff, disc)), 1u);
+      } else {
+        *res++ = std::make_pair
+	( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc), 
+                               make_root_of_2(y_base, -y_root_coeff, disc)), 1u);
+        *res++ = std::make_pair
+	( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc), 
+                               make_root_of_2(y_base, y_root_coeff, disc)), 1u);
+      }
+      return res;
     }
   }
 
@@ -147,7 +136,7 @@ namespace CGAL {
 	 const typename AK::Polynomial_1_2 & e2,
 	 OutputIterator res )
   {
-    return solve<AK> ( e2, e1, res);
+    return solve<AK> (e2, e1, res);
   }
 
   template < class AK, class OutputIterator >
