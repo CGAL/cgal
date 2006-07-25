@@ -1,3 +1,8 @@
+25 July 2006 Laurent Rineau
+- fix a Rebind bug in <CGAL/Delaunay_mesh_face_base_2.h>, reported by
+  "Mike A. Harris" <mharris@mharris.ca> on the cgal-discuss mailing list.
+- add a new test file to avoid that bug to reappear one day.
+
 10 July 2006 Laurent Rineau
 - new debug macros:
    - CGAL_MESH_3_DEBUG_INSERTION_RADIUS,

@@ -37,7 +37,8 @@ all:            \
                 test_conforming$(EXE_EXT) \
                 test_double_map$(EXE_EXT) \
                 test_filtred_container$(EXE_EXT) \
-                test_meshing$(EXE_EXT) 
+                test_meshing$(EXE_EXT) \
+                test_vertex_and_face_bases$(EXE_EXT) 
 
 test_conforming$(EXE_EXT): test_conforming$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_conforming test_conforming$(OBJ_EXT) $(LDFLAGS)
@@ -51,11 +52,15 @@ test_filtred_container$(EXE_EXT): test_filtred_container$(OBJ_EXT)
 test_meshing$(EXE_EXT): test_meshing$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_meshing test_meshing$(OBJ_EXT) $(LDFLAGS)
 
+test_vertex_and_face_bases$(EXE_EXT): test_vertex_and_face_bases$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_vertex_and_face_bases test_vertex_and_face_bases$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    test_conforming.clean \
                    test_double_map.clean \
                    test_filtred_container.clean \
-                   test_meshing.clean 
+                   test_meshing.clean \
+                   test_vertex_and_face_bases.clean 
 
 
 run: all
@@ -63,6 +68,7 @@ run: all
 	./test_filtred_container
 	./test_meshing
 	./test_double_map
+	./test_vertex_and_face_bases
 
 #---------------------------------------------------------------------#
 #                    suffix rules

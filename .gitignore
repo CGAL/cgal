@@ -75,6 +75,7 @@ Mesh_2/examples/Mesh_2/my_makefile
 Mesh_2/examples/Mesh_2/semantic.cache
 Mesh_2/include/CGAL/semantic.cache
 Mesh_2/test/Mesh_2/*.core
+Mesh_2/test/Mesh_2/*.exe
 Mesh_2/test/Mesh_2/.*.deps
 Mesh_2/test/Mesh_2/depends
 Mesh_2/test/Mesh_2/my_makefile
@@ -83,6 +84,7 @@ Mesh_2/test/Mesh_2/test_conforming
 Mesh_2/test/Mesh_2/test_double_map
 Mesh_2/test/Mesh_2/test_filtred_container
 Mesh_2/test/Mesh_2/test_meshing
+Mesh_2/test/Mesh_2/test_vertex_and_face_bases
 Mesh_3/*.tags.xml
 Mesh_3/.*.deps
 Mesh_3/applications/*.cgal
