@@ -1,3 +1,8 @@
+24 July 2006:  Menelaos Karavelas
+- added directory new_stuff: currently contains prototype code for
+  nearest neighbor graph class and some test/example files for the
+  new design of SDG wrt to keeping track of info
+
 21 July 2006:  Menelaos Karavelas
 - test suite for traits does not involve Filtered_exact any more.
 
