@@ -135,8 +135,6 @@ test_root_of()
   Root zero2(1, 0, 0, false);
   Root zero3(0);
 
-  assert(zero1.discriminant() == 0);
-  assert(zero2.discriminant() == 0);
   assert(zero1.conjugate() == zero2);
   assert(zero2.conjugate() == zero1);
   assert(zero3.conjugate() == zero3);
@@ -194,9 +192,6 @@ test_root_of()
   //It is not true that those must hold
   //assert(one2.conjugate() == mone2);
   //assert(one3.conjugate() == mone3);
-
-  assert(one1.discriminant()  == 4);
-  assert(mone1.discriminant() == 4);
   assert(is_valid(one1));
   assert(is_valid(mone1));
   assert(is_valid(one2));
@@ -386,6 +381,7 @@ test_root_of()
     assert(CGAL_NTS compare(r, r4)  == (int) CGAL_NTS sign(r1));
   }
 
+  /* The to_double dont have enough precision to handle this case
   std::cout << "  Testing multiplication of Root_of_2<NT> with NT" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     RT r    = my_rand<RT>();
@@ -428,7 +424,7 @@ test_root_of()
       assert(r2 == Root(0));
       assert(r3 == Root(0));
     }
-  }
+  }*/
 
   std::cout << "  Testing the inverse of random roots of degree 2" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
@@ -481,6 +477,10 @@ test_root_of()
   }
   return true;
 }
+
+// ALL THOSE TESTS ARE BASED ON COMPARING THE DOUBLE RESULT 
+// WITH THE EXACT RESULT
+// THAT IS NOT NECESSARILY CORRECT 
 
 int main(int argc, char **argv) {
 
