@@ -1080,17 +1080,14 @@ remove_small_edges()
   // NGHK: This may intrudoce rounding errors, since the quadratic surface
   // may change:
   Tmc_Vertex_handle vh, vh_collapse_to;
-  int nCollapsed=0;
   for (Tmc_Finite_vertices_iterator vit = _tmc.finite_vertices_begin();
        vit != _tmc.finite_vertices_end(); ) {
     vh = vit;
     vit++;
     if (is_collapsible(vh, vh_collapse_to,sq_length)) {
-      nCollapsed ++;
       do_collapse(vh,vh_collapse_to);
     }
   }
-  std::cout << "Collapsed: " << nCollapsed << std::endl;
 }
 
 template < 

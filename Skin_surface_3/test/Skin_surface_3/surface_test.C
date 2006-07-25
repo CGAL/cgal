@@ -55,7 +55,8 @@ int main(int argc, char *argv[]) {
 	   cell != cells.end(); cell++) {
 	if (!tmc.is_infinite(*cell)) {
 	  Quadratic_surface::RT val2 = (*cell)->surf->value(vit->point());
- 	  CGAL_assertion(std::abs(val - val2) < 10e-6);
+ 	  CGAL_assertion((val - val2)*(val - val2) <
+			 Quadratic_surface::RT(1e-12));
 	}
       }
     }

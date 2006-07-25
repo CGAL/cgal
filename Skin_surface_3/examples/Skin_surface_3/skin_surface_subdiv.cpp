@@ -32,8 +32,5 @@ int main(int argc, char *argv[]) {
   
   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
 
-  std::ofstream out("mesh.off");
-  out << p;
-
   return 0;
 }

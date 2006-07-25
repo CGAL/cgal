@@ -103,7 +103,7 @@ private:
 
 public:
   // defining the triangulated mixed complex:
-  typedef Exact_predicates_inexact_constructions_kernel    TMC_traits;
+  typedef Exact_predicates_exact_constructions_kernel    TMC_traits;
 
 #ifdef CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
   typedef Skin_surface_quadratic_surface_3<TMC_traits>   Quadratic_surface;

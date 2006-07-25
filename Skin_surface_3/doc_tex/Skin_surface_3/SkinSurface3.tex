@@ -77,25 +77,37 @@ introduction to skin surfaces, we refer to \cite{cgal:e-dssd-99} where
 they were originally introduced.
 
 A skin surface is defined in terms of a finite set of weighted points
-$\ssWpoint{P}$ and a shrink factor $s$, with $0\leq s\leq 1$. A weighted
-point $\ssWpoint{p}=({p},\textsc{p})\in \R^d\times\R$ corresponds to a ball
-with center ${p}$ and radius $\sqrt{\textsc{p}}$. A weighted point
-with zero weight is called an unweighted point. On the set of weighted
-points, we define a pseudo-distance function:
+$\ssWpoint{P}$ and a shrink factor $s$, with $0\leq s\leq 1$. A
+weighted point $\ssWpoint{p}=({p},\textsc{p})\in \R^d\times\R$
+corresponds to a ball with center ${p}$ and radius
+$\sqrt{\textsc{p}}$. A weighted point with zero weight is called an
+unweighted point. 
+
+A pseudo distance between a weighted point $\ssWpoint{p} =
+(p,\textsc{P})$ and an unweighted point $x$ is defined as
 \[
-  \pi(\ssWpoint{p},\ssWpoint{q}) = \dabs{p-q}^2 - \textsc{p} - \textsc{q},
+\pi(\ssWpoint{p},x) = \dabs{p-x}^2 - \textsc{p},
 \]
-where $\ssWpoint{p} = (p,\textsc{P})$ and $\ssWpoint{q} = (q,\textsc{Q})$.  The
-ball corresponding to a weighted point $\ssWpoint{p}$ is the set of
-unweighted points with zero distance to $\ssWpoint{p}$. Note that if
-$\textsc{p}<0$ the radius of the ball is imaginary and the zero-set is
-empty.
+where $\dabs{p-x}$ is the Euclidean distance between $p$ and $x$.  The
+ball corresponding to a weighted point $\ssWpoint{p}$ is the zero set
+of $\pi(\ssWpoint{p},\cdot)$. Note that if $\textsc{p}<0$ the radius
+of the ball is imaginary and the zero-set is empty.
 
 We can take convex combinations of weighted points by taking convex
-combinations of their implicit functions. Figure~\ref{fig:twoPoints}
-(left) shows weighted points that are obtained as convex combinations
-of the dashed circles. For further reading on the space of circles and
-spheres we refer to \cite{p-gcc-70}.
+combinations of their distance functions.
+%\[
+%\pi(\gamma\; \ssWpoint{p} + (1-\gamma)\ssWpoint{q},x) =
+%\gamma\; \pi(\ssWpoint{p},x) + (1-\gamma)\pi(\ssWpoint{q},x).
+%\]
+%hence the weighted point $\pi(\gamma\; \ssWpoint{p} +
+%(1-\gamma)\ssWpoint{q},x)$ has center $\gamma\;p + (1-\gamma)q$ and
+%weight $\gamma\;\textsc{p} + (1-\gamma)\textsc{q} +
+%\gamma(1-\gamma)\dabs{p-q}$.
+%
+Figure~\ref{fig:twoPoints} (left) shows weighted points that
+are obtained as convex combinations of the dashed circles. For further
+reading on the space of circles and spheres we refer to
+\cite{p-gcc-70}.
 
 Starting from a weighted point $\ssWpoint{p}=({p},\textsc{P})$, the
 shrunk weighted point $\ssWpoint{p}^s$ is obtained by taking a convex
@@ -137,8 +149,9 @@ classes \ccc{Skin_surface_3} and \ccc{Union_of_balls_3} which are
 models of the concept \ccc{Surface_3}. Further it contains two
 functions to extract a mesh of the skin surface (union of balls) from
 the objects of the aforementioned classes. A final function takes a
-mesh and \ccc{Skin_surface_3} (\ccc{Union_of_balls_3}) object and
-refines the mesh.
+mesh and the \ccc{Skin_surface_3} (\ccc{Union_of_balls_3}) object it
+is constructed from and refines the mesh. This section describes these
+classes and functions in more detail.
 
 The \ccc{Skin_surface_3} object takes an iterator range of weighted
 points and a shrink factor. Optional arguments are a boolean whether
@@ -155,6 +168,18 @@ class to be used.
   FT shrink_factor,
   bool grow_balls = true,
   Gt gt = Gt());}
+
+The constructor for the union of balls class is similar, except for
+the missing shrink factor:
+
+\ccGlobalFunction{
+  template <class SkinSurfaceTraits_3> 
+  template < class WP_iterator >
+  Union_of_balls_3(
+  WP_iterator begin, WP_iterator end, 
+  bool grow_balls = true,
+  Gt gt = Gt());}
+
 
 With the \ccc{SkinSurface_3} object it is possible to generate a
 coarse mesh isotopic to the skin surface. Using the function
@@ -184,11 +209,18 @@ skin surface. If the number of iterations is not specified, one
 subdivision step is done. The \ccc{SkinSurface_3} object is
 needed to move the new points on the skin surface.
 
-\ccGlobalFunction{template <class Polyhedron,
-                            class SkinSurface_3 >
-void subdivide_skin_surface_mesh_3 (Polyhedron &p,
-                                    SkinSurface_3 &skinsurface,
-                                    int iterations=1);}
+\ccGlobalFunction{
+  template <class Polyhedron, class SkinSurface_3 >
+  void subdivide_skin_surface_mesh_3 (Polyhedron &p,
+  SkinSurface_3 &skinsurface,
+  int iterations=1);
+}
+
+The same function can be used to subdivide the union of a set of
+balls, in which case the corresponding \ccc{UnionOfBalls_3} object is
+passed instead of a \ccc{SkinSurface_3} object.
+
+
 %
 %The class \ccc{Skin_surface_3} is both a model of the concept
 %\ccc{SkinSurface_3} and the concept \ccc{Surface_3}.
@@ -214,7 +246,11 @@ GHz, with 1 Gb of memory.
 \section{Example programs}
 \subsection{Meshing a skin surface}
 The following example shows the construction of a coarse mesh of the
-skin surface from an iterator range of weighted points and a shrink factor.
+skin surface from an iterator range of weighted points and a shrink
+factor. It first constructs an \ccc{Skin_surface_3} object from an
+iterator range of weighted points and a shrink factor. From this
+object, the isotopic mesh is extracted using the function
+\ccc{mesh_skin_surface_3} and is stored in a \ccc{CGAL::Polyhedron}.
 \ccIncludeExampleCode{Skin_surface_3/skin_surface_simple.cpp}
 
 \subsection{Meshing and subdividing a skin surface}

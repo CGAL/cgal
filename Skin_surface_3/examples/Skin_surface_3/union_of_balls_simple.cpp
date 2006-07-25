@@ -8,9 +8,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
 typedef CGAL::Union_of_balls_3<Traits>                      Union_of_balls_3;
-typedef Union_of_balls_3::FT                                FT;
+typedef Union_of_balls_3::RT                                RT;
 typedef Union_of_balls_3::Weighted_point                    Weighted_point;
-typedef Union_of_balls_3::Bare_point                        Bare_point;
+typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 int main(int argc, char *argv[]) {

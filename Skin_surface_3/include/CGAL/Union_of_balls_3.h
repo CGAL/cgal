@@ -42,7 +42,7 @@ public:
   typedef UnionOfBallsTraits_3           Gt;
   typedef typename Gt::Weighted_point   Weighted_point;
   typedef typename Gt::Bare_point       Bare_point;
-  typedef typename Gt::FT               FT;
+  typedef typename Gt::RT               RT;
   
   typedef Regular_triangulation_3<Gt>     Regular;
 //   typedef Triangulation_data_structure_3 <
