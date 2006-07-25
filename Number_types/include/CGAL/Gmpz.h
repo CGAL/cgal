@@ -596,6 +596,7 @@ struct Root_of_traits< CGAL::Gmpz >
   typedef Root_of_2< CGAL::Gmpz >  RootOf_2;
 };
 
+/* FIX ME: This not compile
 inline
 Root_of_2<Gmpz>
 make_root_of_2(const Gmpz &a, const Gmpz &b, const Gmpz &c, bool smaller)
@@ -603,7 +604,7 @@ make_root_of_2(const Gmpz &a, const Gmpz &b, const Gmpz &c, bool smaller)
   CGAL_assertion( a != 0 );
   return Root_of_2<Gmpz>(a, b, c, smaller);
 }
-
+*/
 
 #if ! defined( CGAL_DONT_USE_LINK_PRAGMA) && defined( _MSC_VER )
     #pragma comment(lib, "gmp.lib")
