@@ -179,33 +179,40 @@ private :
   typedef typename Halfedge::Base      HBase ;
   typedef typename Vertex::Base        VBase ;
   typedef typename Face::Base          FBase ;
+
+  struct Multinode
+  {
+    Multinode ( Halfedge_handle b, Halfedge_handle e )
+      :
+       begin(b)
+      ,end  (e)
+      ,v    (b->vertex())
+      ,size (0)
+    {}
+      
+    Halfedge_handle        begin ;
+    Halfedge_handle        end ;
+    Vertex_handle          v ;
+    std::size_t            size ;
+    Halfedge_handle_vector bisectors_to_relink ;
+    Halfedge_handle_vector bisectors_to_remove ;
+    Vertex_handle_vector   nodes_to_remove ;
+  } ;  
   
-  typedef Vertex_handle_vector         Multinode ;
   typedef boost::shared_ptr<Multinode> MultinodePtr ;
-  typedef std::vector<MultinodePtr>    MultinodeVector ;
+  
+  struct MultinodeComparer
+  {
+    bool operator() ( MultinodePtr const& x, MultinodePtr const& y ) { return x->size > y->size ; }
+  } ;
+  
+  typedef std::vector<MultinodePtr> MultinodeVector ;
 
   struct Halfedge_ID_compare : std::binary_function<bool,Halfedge_handle,Halfedge_handle>
   {
     bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
     {
       return aA->id() < aB->id() ;
-    }
-  } ;
-  
-  typedef std::map<Halfedge_handle,bool,Halfedge_ID_compare> Is_bond_map ;
-    
-  // Orders two halfedges pointing to a common vertex around it ccw
-  struct Halfedge_compare_ccw : std::binary_function<bool,Halfedge_handle,Halfedge_handle>
-  {
-    bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
-    {
-      Point_2 o = aA->vertex()->point();
-      Point_2 a = aA->opposite()->vertex()->point();
-      Point_2 b = aB->opposite()->vertex()->point();
-      
-      return K().compare_angle_with_x_axis_2_object()( K().construct_direction_2_object()( K().construct_vector_2_object()(a,o) )
-                                                     , K().construct_direction_2_object()( K().construct_vector_2_object()(b,o) )
-                                                     ) == SMALLER ;
     }
   } ;
   
@@ -621,8 +628,7 @@ private :
     BorderTriple lBordersX = GetSkeletonVertexDefiningBorders(aX);
     BorderTriple lBordersY = GetSkeletonVertexDefiningBorders(aY);
 
-    return    HaveTwoInCommon(lBordersX,lBordersY) 
-           && Are_ss_events_simultaneous_2(mTraits)( CreateSortedTriedge(lBordersX), CreateSortedTriedge(lBordersY)) ;
+    return Are_ss_events_simultaneous_2(mTraits)( CreateSortedTriedge(lBordersX), CreateSortedTriedge(lBordersY)) ;
   }
  
   bool IsNewEventInThePast( Halfedge_handle         aBorderA
@@ -728,20 +734,15 @@ private :
   void Propagate();
 
   void MergeSplitNodes ( Vertex_handle_pair aSplitNodes ) ;
-
-  void ClassifyBisectorsAroundMultinode( Vertex_handle const& v0
-                                       , Multinode const&     aCluster
-                                       , Is_bond_map&         rIsBond
-                                       ) ;
-                                       
-  void ClassifyBisectorsAroundMultinode( Multinode const& aCluster, Is_bond_map& rIsBond ) ;
   
-  void RearrangeBisectorsAroundMultinode( Vertex_handle const& v0, Is_bond_map& rIsBond ) ;
+  void RelinkBisectorsAroundMultinode( Vertex_handle const& v0, Halfedge_handle_vector& aLinks ) ;
   
-  void CollapseMultinode( Multinode const&       aMN 
-                        , Halfedge_handle_vector rHalfedgesToRemove 
-                        , Vertex_handle_vector   rVerticesToRemove                                                             
-                        ) ;
+  void PreprocessMultinode( Multinode& aMN ) ;
+                          
+  void ProcessMultinode( Multinode&              aMN 
+                       , Halfedge_handle_vector& rHalfedgesToRemove 
+                       , Vertex_handle_vector&   rVerticesToRemove                                                             
+                       ) ;
 
   MultinodePtr CreateMultinode( Halfedge_handle begin, Halfedge_handle end ) ;
   

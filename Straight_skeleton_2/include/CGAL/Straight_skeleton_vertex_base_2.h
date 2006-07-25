@@ -65,8 +65,10 @@ protected :
   {
     public:
 
-      typedef HalfedgeHandle value_type ;
-      typedef HalfedgeHandle reference ;
+      typedef HalfedgeHandle               value_type ;
+      typedef HalfedgeHandle               reference ;
+      typedef std::size_t                  size_type ;
+      typedef Bidirectional_circulator_tag iterator_category ;
 
       Halfedge_circulator_base () : mHandle() {}
 
@@ -77,6 +79,15 @@ protected :
         ( Halfedge_circulator_base<OtherHalfedgeHandle,OtherAccessPolicy> const& aOther )
         : mHandle(aOther.mHandle) {}
 
+      bool operator==( CGAL_NULL_TYPE p ) const 
+      {
+        CGAL_assertion( p == CGAL_CIRC_NULL ); 
+        HalfedgeHandle null ;
+        return mHandle == null ;
+      }
+      
+      bool operator!=( CGAL_NULL_TYPE p ) const { return !(*this == p); }
+      
     private :
 
       typedef Halfedge_circulator_base<HalfedgeHandle,AccessPolicy> Self ;
@@ -195,6 +206,8 @@ public:
     return Defining_contour_halfedges_circulator(halfedge());
   }
 
+  std::size_t degree() const { return CGAL::circulator_size(halfedge_around_vertex_begin()); }
+  
   bool is_skeleton() const { return  halfedge()->is_bisector() ; }
   bool is_contour () const { return !halfedge()->is_bisector() ; }
   

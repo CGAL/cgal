@@ -146,7 +146,7 @@ struct Visitor
   
   void on_propagation_finished() const { printf("\n"); ++ mStage ; }
   
-  void on_cleanup_started( bool mergin_coincident_nodes ) const {}
+  void on_cleanup_started() const {}
   
   void on_cleanup_finished() const {}
   
