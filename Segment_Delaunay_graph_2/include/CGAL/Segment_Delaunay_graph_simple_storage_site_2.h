@@ -33,24 +33,26 @@ CGAL_BEGIN_NAMESPACE
       intersection of two non-parallel segments (if defined)
    */
 
-template <class Gt>
+template<class STraits> class Construct_storage_site_2;
+
+template <class STraits>
 class Segment_Delaunay_graph_simple_storage_site_2 
 {
+  friend class Construct_storage_site_2<STraits>;
 public:
-  typedef Gt                             Geom_traits;
-  typedef typename Geom_traits::Site_2   Site_2;
-  typedef typename std::set<typename Site_2::Point_2>::iterator Point_handle;
-  //  typedef typename std::list<typename Site_2::Point_2>::iterator
-  //  Point_handle;
+  typedef STraits                                 Storage_traits;
+  typedef typename Storage_traits::Geom_traits    Geom_traits;
+  typedef typename Geom_traits::Site_2            Site_2;
+  typedef typename Storage_traits::Point_handle   Point_handle;
 
 protected:
   typedef Point_handle                   Handle;
 
   typedef
-  Segment_Delaunay_graph_simple_storage_site_2<Geom_traits>
+  Segment_Delaunay_graph_simple_storage_site_2<Storage_traits>
   Self;
 
-public:
+protected:
   // constructs point site using input point
   static Self construct_storage_site_2(const Handle& hp) {
     Self t;

@@ -30,8 +30,8 @@ CGAL_BEGIN_NAMESPACE
 //====================================================================
 
 // copy constructor
-template<class Gt, class DS, class LTag>
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 Segment_Delaunay_graph_2(const Segment_Delaunay_graph_2& other)
   : DG(other.geom_traits())
 {
@@ -42,9 +42,9 @@ Segment_Delaunay_graph_2(const Segment_Delaunay_graph_2& other)
 }
 
 // assignment operator
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Self&
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Self&
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 operator=(const Self& other)
 {
   if ( this != &other ) {
@@ -65,9 +65,9 @@ operator=(const Self& other)
 // insertion of first three sites
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_first(const Storage_site_2& ss, const Point_2& p)
 {
   CGAL_precondition( number_of_vertices() == 0 );
@@ -77,9 +77,9 @@ insert_first(const Storage_site_2& ss, const Point_2& p)
   return v;
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_second(const Storage_site_2& ss, const Point_2& p)
 {
   CGAL_precondition( number_of_vertices() == 1 );
@@ -89,24 +89,26 @@ insert_second(const Storage_site_2& ss, const Point_2& p)
   // geometric traits
   Site_2 tp = Site_2::construct_site_2(p);
   if ( same_points(tp,p0) ) {
-    return Vertex_handle(finite_vertices_begin());
+    // merge info of identical sites
+    merge_info(finite_vertices_begin(), ss);
+    return finite_vertices_begin();
   }
 
   return create_vertex_dim_up(ss);
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_third(const Storage_site_2& ss, const Point_2& p)
 {
   Site_2 t = Site_2::construct_site_2(p);
   return insert_third(t, ss);
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_third(const Site_2& t, const Storage_site_2& ss)
 {
   CGAL_precondition( number_of_vertices() == 2 );
@@ -117,8 +119,16 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   Site_2 t0 = v0->site();
   Site_2 t1 = v1->site();
 
-  if ( same_points(t, t0) ) { return v0; }
-  if ( same_points(t, t1) ) { return v1; }
+  if ( same_points(t, t0) ) {
+    // merge info of identical sites
+    merge_info(v0, ss);
+    return v0;
+  }
+  if ( same_points(t, t1) ) {
+    // merge info of identical sites
+    merge_info(v1, ss);
+    return v1;
+  }
 
   Vertex_handle v = create_vertex_dim_up(ss);
 
@@ -207,9 +217,9 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
 }
 
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_third(const Storage_site_2& ss, Vertex_handle v0, Vertex_handle v1)
 {
   CGAL_precondition( number_of_vertices() == 2 );
@@ -237,9 +247,9 @@ insert_third(const Storage_site_2& ss, Vertex_handle v0, Vertex_handle v1)
 // insertion of a point
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_point(const Storage_site_2& ss, const Point_2& p, Vertex_handle vnear)
 {
   int n = number_of_vertices();
@@ -256,9 +266,9 @@ insert_point(const Storage_site_2& ss, const Point_2& p, Vertex_handle vnear)
 }
 
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_point(const Storage_site_2& ss, const Site_2& t,
 	     Vertex_handle vnear)
 {
@@ -312,6 +322,8 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
   Arrangement_type at_res = arrangement_type(t, vnearest);
   if ( vnearest->is_point() ) {
     if ( at_res == AT2::IDENTICAL ) {
+      // merge info of identical sites
+      merge_info(vnearest, ss);
       return vnearest;
     }
   } else {
@@ -334,9 +346,9 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
   return insert_point2(ss, t, vnearest);
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_point2(const Storage_site_2& ss, const Site_2& t,
 	      Vertex_handle vnearest)
 {
@@ -446,9 +458,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 // insertion of a point that lies on a segment
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Face_pair
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Face_pair
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 {
   CGAL_precondition( v->is_segment() );
@@ -550,9 +562,9 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
   return Face_pair(f1, f2);
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_triple
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_triple
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 			      Vertex_handle v)
 {
@@ -572,14 +584,13 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
     qq = this->_tds.split_vertex(v, fpair.first, fpair.second);
 
-  Intersections_tag itag;
   // now I need to update the sites for vertices v1 and v2
   Vertex_handle v1 = boost::tuples::get<0>(qq); //qq.first;
-  Storage_site_2 ssv1 = split_storage_site(ssitev, ss, 0, itag);
+  Storage_site_2 ssv1 = split_storage_site(ssitev, ss, true);
   v1->set_site( ssv1 );
 
   Vertex_handle v2 = boost::tuples::get<1>(qq); //qq.second;
-  Storage_site_2 ssv2 = split_storage_site(ssitev, ss, 1, itag);
+  Storage_site_2 ssv2 = split_storage_site(ssitev, ss, false);
   v2->set_site( ssv2 );
 
   Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
@@ -587,13 +598,15 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
     this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
 
   vsx->set_site(ss);
+  // merge info of point and segment; the point lies on the segment
+  merge_info(vsx, ssitev);
 
   return Vertex_triple(vsx, v1, v2);
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_triple
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_triple
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 			Vertex_handle v, const Tag_true&)
 {
@@ -603,7 +616,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   // intersection and the two subsegments of v->site()
 
   Storage_site_2 ssitev = v->storage_site();
-  Storage_site_2 ssx = create_storage_site(ss, ssitev);
+  Storage_site_2 ssx = st_.construct_storage_site_2_object()(ss, ssitev);
 
   Site_2 sitev = ssitev.site();
 
@@ -614,25 +627,17 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 
   // now I need to update the sites for vertices v1 and v2
   Vertex_handle v1 = boost::tuples::get<0>(qq); //qq.first;
-  Storage_site_2 ssv1;
-  Site_2 sv1;
-  if ( sitev.is_input(0) ) {
-    ssv1 = create_storage_site(ssitev, ss, true);
-  } else {
-    ssv1 = create_storage_site_type1(ssitev, ssitev, ss);
-  }
-  sv1 = ssv1.site();
-  v1->set_site( ssv1 );
-
   Vertex_handle v2 = boost::tuples::get<1>(qq); //qq.second;
-  Storage_site_2 ssv2;
-  Site_2 sv2;
-  if ( sitev.is_input(1) ) {
-    ssv2 = create_storage_site(ssitev, ss, false);
-  } else {
-    ssv2 = create_storage_site_type2(ssitev, ss, ssitev);
-  }
-  sv2 = ssv2.site();
+
+  Storage_site_2 ssv1 =
+    st_.construct_storage_site_2_object()(ssitev, ss, true);
+
+  Storage_site_2 ssv2 =
+    st_.construct_storage_site_2_object()(ssitev, ss, false);
+
+  Site_2 sv1 = ssv1.site();
+  Site_2 sv2 = ssv2.site();
+  v1->set_site( ssv1 );
   v2->set_site( ssv2 );
 
   Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
@@ -647,20 +652,29 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 //--------------------------------------------------------------------
 // insertion of a segment
 //--------------------------------------------------------------------
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
 {
   CGAL_precondition( t.is_segment() );
   CGAL_precondition( t.is_input() );
 
   if ( is_degenerate_segment(t) ) {
-    return insert_point(ss.source_site(), t.source(), vnear);
+    Storage_site_2 ss_src = ss.source_site();
+    copy_info(ss_src, ss);
+    return insert_point(ss_src, t.source(), vnear);
   }
 
-  Vertex_handle v0 = insert_point( ss.source_site(), t.source(), vnear );
-  Vertex_handle v1 = insert_point( ss.target_site(), t.target(), v0 );
+  Storage_site_2 ss_src = ss.source_site();
+  copy_info(ss_src, ss);
+  Storage_site_2 ss_trg = ss.target_site();
+  copy_info(ss_trg, ss);
+
+  Vertex_handle v0 = insert_point( ss_src, t.source(), vnear );
+  CGAL_assertion( is_valid() );
+  Vertex_handle v1 = insert_point( ss_trg, t.target(), v0 );
+  CGAL_assertion( is_valid() );
 
   if ( number_of_vertices() == 2 ) {
     return insert_third(ss, v0, v1);
@@ -670,9 +684,9 @@ insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
 }
 
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 			Vertex_handle vnearest)
 {
@@ -702,24 +716,34 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	   at_res == AT2::TOUCH_22 ) {
 	// do nothing
       } else if ( at_res == AT2::IDENTICAL ) {
+	// merge info of identical items
+	merge_info(vv, ss);
 	return vv;
       } else if ( at_res == AT2::CROSSING ) {
 	Intersections_tag itag;
 	return insert_intersecting_segment(ss, t, vv, itag);
       } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
-	Intersections_tag itag;
-
 	Vertex_handle vp = second_endpoint_of_segment(vv);	
 	Storage_site_2 ssvp = vp->storage_site();
-	Storage_site_2 sss = split_storage_site(ss, ssvp, 1, itag);
+	Storage_site_2 sss = split_storage_site(ss, ssvp, false);
+
+	Storage_site_2 sss1 = split_storage_site(ss, ssvp, true);
+	// merge the info of the first (common) subsegment
+	merge_info(vv, sss1);
+	// merge the info of the (common) splitting endpoint
+	merge_info(vp, ss);
 
 	return insert_segment_interior(sss.site(), sss, vp);
       } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
-	Intersections_tag itag;
-
 	Vertex_handle vp = first_endpoint_of_segment(vv);	
 	Storage_site_2 ssvp = vp->storage_site();
-	Storage_site_2 sss = split_storage_site(ss, ssvp, 0, itag);
+	Storage_site_2 sss = split_storage_site(ss, ssvp, true);
+
+	Storage_site_2 sss1 = split_storage_site(ss, ssvp, false);
+	// merge the info of the second (common) subsegment
+	//	merge_info(vv, sss);
+	// merge the info of the (common) splitting endpoint
+	merge_info(vp, ss);
 
 	return insert_segment_interior(sss.site(), sss, vp);
       } else {
@@ -733,9 +757,10 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       if ( at_res == AT2::INTERIOR ) {
 	Storage_site_2 ssvv = vv->storage_site();
 	if ( ssvv.is_input() ) {
-	  Intersections_tag itag;
-	  Storage_site_2 ss1 = split_storage_site(ss, ssvv, 0, itag);
-	  Storage_site_2 ss2 = split_storage_site(ss, ssvv, 1, itag);
+	  Storage_site_2 ss1 = split_storage_site(ss, ssvv, true);
+	  Storage_site_2 ss2 = split_storage_site(ss, ssvv, false);
+	  // merge the info of the splitting point and the segment
+	  merge_info(vv, ss);
 	  insert_segment_interior(ss1.site(), ss1, vv);
 	  return insert_segment_interior(ss2.site(), ss2, vv);
 	} else {
@@ -801,9 +826,10 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	return insert_intersecting_segment(ss, t, vcross.second, itag);
       } else if ( vcross.third == AT2::INTERIOR ) {
 	Storage_site_2 ssvv = vcross.second->storage_site();
-	Intersections_tag itag;
-	Storage_site_2 ss1 = split_storage_site(ss, ssvv, 0, itag);
-	Storage_site_2 ss2 = split_storage_site(ss, ssvv, 1, itag);
+	Storage_site_2 ss1 = split_storage_site(ss, ssvv, true);
+	Storage_site_2 ss2 = split_storage_site(ss, ssvv, false);
+	// merge the info of the splitting point and the segment
+	merge_info(vcross.second, ss);
 	insert_segment_interior(ss1.site(), ss1, vcross.second);
 	return insert_segment_interior(ss2.site(), ss2, vcross.second);
       } else {
@@ -827,9 +853,9 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 //--------------------------------------------------------------------
 // insertion of an intersecting segment
 //--------------------------------------------------------------------
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     Tag_false)
@@ -848,9 +874,9 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   return Vertex_handle();
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     Tag_true tag)
@@ -861,6 +887,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Site_2 sitev = ssitev.site();
 
   if ( same_segments(t, sitev) ) {
+    merge_info(v, ss);
     return v;
   }
 
@@ -868,21 +895,10 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
   Vertex_handle vsx = vt.first;
   
-  Storage_site_2 ss3, ss4;
-  Site_2 s3, s4;
-  if ( t.is_input(0) ) {
-    ss3 = create_storage_site(ss, ssitev, true);
-  } else {
-    ss3 = create_storage_site_type1(ss, ss, ssitev);
-  }
-  s3 = ss3.site();
-
-  if ( t.is_input(1) ) {
-    ss4 = create_storage_site(ss, ssitev, false);
-  } else {
-    ss4 = create_storage_site_type2(ss, ssitev, ss);
-  }
-  s4 = ss4.site();
+  Storage_site_2 ss3 = st_.construct_storage_site_2_object()(ss, ssitev, true);
+  Storage_site_2 ss4 = st_.construct_storage_site_2_object()(ss, ssitev, false);
+  Site_2 s3 = ss3.site();
+  Site_2 s4 = ss4.site();
 
   insert_segment_interior(s3, ss3, vsx);
   insert_segment_interior(s4, ss4, vsx);
@@ -895,9 +911,9 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 initialize_conflict_region(const Face_handle& f, List& l)
 {
 
@@ -909,9 +925,9 @@ initialize_conflict_region(const Face_handle& f, List& l)
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 expand_conflict_region(const Face_handle& f, const Site_2& t,
 		       const Storage_site_2& ss,
 		       List& l, Face_map& fm,
@@ -1028,9 +1044,9 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 // retriangulate conflict region
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 add_bogus_vertex(Edge e, List& l)
 {
   Edge esym = sym_edge(e);
@@ -1064,9 +1080,9 @@ add_bogus_vertex(Edge e, List& l)
 }
 
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_list
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_list
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 add_bogus_vertices(List& l)
 {
   Vertex_list vertex_list;
@@ -1097,9 +1113,9 @@ add_bogus_vertices(List& l)
   return vertex_list;
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 remove_bogus_vertices(Vertex_list& vl)
 {
   while ( vl.size() > 0 ) {
@@ -1110,9 +1126,9 @@ remove_bogus_vertices(Vertex_list& vl)
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 retriangulate_conflict_region(Vertex_handle v, List& l, 
 			      Face_map& fm)
 {
@@ -1169,9 +1185,9 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
 //====================================================================
 //====================================================================
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 is_star(const Vertex_handle& v) const
 {
   CGAL_precondition( v->storage_site().is_point() );
@@ -1195,9 +1211,9 @@ is_star(const Vertex_handle& v) const
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v2) const
 {
@@ -1231,9 +1247,9 @@ is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 is_flippable(const Face_handle& f, int i) const
 {
   CGAL_assertion( !is_infinite(f->vertex( cw(i) )) );
@@ -1261,9 +1277,9 @@ is_flippable(const Face_handle& f, int i) const
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 minimize_degree(const Vertex_handle& v)
 {
   CGAL_precondition ( degree(v) > 3 );
@@ -1296,9 +1312,9 @@ minimize_degree(const Vertex_handle& v)
   } while ( found || fc != fc_start );
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 equalize_degrees(const Vertex_handle& v, Self& small,
 		 std::map<Vertex_handle,Vertex_handle>& vmap,
 		 List& l) const
@@ -1417,9 +1433,9 @@ equalize_degrees(const Vertex_handle& v, Self& small,
 #endif
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
 			      const Storage_site_2& ss,
 			      List& l, Face_map& fm, Sign_map& sign_map)
@@ -1473,9 +1489,9 @@ expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 find_conflict_region_remove(const Vertex_handle& v,
 			    const Vertex_handle& vnearest,
 			    List& l, Face_map& fm, Sign_map& vm)
@@ -1554,9 +1570,9 @@ find_conflict_region_remove(const Vertex_handle& v,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::size_type
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::size_type
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 count_faces(const List& l) const
 {
   std::vector<Face_handle> flist;
@@ -1567,9 +1583,9 @@ count_faces(const List& l) const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 fill_hole(const Self& small, const Vertex_handle& v, const List& l,
 	  std::map<Vertex_handle,Vertex_handle>& vmap)
 {
@@ -1702,27 +1718,27 @@ fill_hole(const Self& small, const Vertex_handle& v, const List& l,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 remove_first(const Vertex_handle& v)
 {
   Delaunay_graph::remove_first(v);
   return true;
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 remove_second(const Vertex_handle& v)
 {
   Delaunay_graph::remove_second(v);
   return true;
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 remove_third(const Vertex_handle& v)
 {
   if ( is_degree_2(v) ) {
@@ -1750,9 +1766,9 @@ remove_third(const Vertex_handle& v)
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 compute_small_diagram(const Vertex_handle& v, Self& small) const
 {
   Vertex_circulator vc_start = incident_vertices(v);
@@ -1783,9 +1799,9 @@ compute_small_diagram(const Vertex_handle& v, Self& small) const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 compute_vertex_map(const Vertex_handle& v, const Self& small,
 		   std::map<Vertex_handle,Vertex_handle>& vmap) const
 {
@@ -1848,9 +1864,9 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 remove_degree_d_vertex(const Vertex_handle& v)
 {
 #if 0
@@ -1958,9 +1974,9 @@ remove_degree_d_vertex(const Vertex_handle& v)
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 remove_base(const Vertex_handle& v)
 {
   Storage_site_2 ssv = v->storage_site();
@@ -2009,9 +2025,9 @@ remove_base(const Vertex_handle& v)
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 remove(const Vertex_handle& v)
 {
   CGAL_precondition( !is_infinite(v) );
@@ -2053,9 +2069,9 @@ remove(const Vertex_handle& v)
 // point location
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 nearest_neighbor(const Site_2& p,
 		 Vertex_handle start_vertex) const
 {
@@ -2122,9 +2138,9 @@ nearest_neighbor(const Site_2& p,
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 Sign
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 incircle(const Face_handle& f, const Site_2& q) const
 {
   if ( !is_infinite(f) ) {
@@ -2145,9 +2161,9 @@ incircle(const Face_handle& f, const Site_2& q) const
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 Sign
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 	      const Vertex_handle& v2, const Vertex_handle& v) const
 {
@@ -2175,9 +2191,9 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 
 
 // this the finite edge interior predicate for a degenerate edge
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 finite_edge_interior(const Face_handle& f, int i, const Site_2& q,
 		     Sign sgn, int) const
 {
@@ -2203,9 +2219,9 @@ finite_edge_interior(const Face_handle& f, int i, const Site_2& q,
   return finite_edge_interior(t1, t2, t3, q, sgn);
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
 		     const Vertex_handle& v3, const Vertex_handle& v4,
 		     const Vertex_handle& v, Sign sgn, int) const
@@ -2233,9 +2249,9 @@ finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
   return finite_edge_interior(t1, t2, t3, q, sgn);
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 infinite_edge_interior(const Face_handle& f, int i,
 		       const Site_2& q, Sign sgn) const
 {
@@ -2257,9 +2273,9 @@ infinite_edge_interior(const Face_handle& f, int i,
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 infinite_edge_interior(const Vertex_handle& v1,
 		       const Vertex_handle& v2,
 		       const Vertex_handle& v3,
@@ -2288,9 +2304,9 @@ infinite_edge_interior(const Vertex_handle& v1,
 
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 edge_interior(const Vertex_handle& v1,
 	      const Vertex_handle& v2,
 	      const Vertex_handle& v3,
@@ -2318,9 +2334,9 @@ edge_interior(const Vertex_handle& v1,
 }
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 edge_interior(const Face_handle& f, int i,
 	      const Site_2& q, Sign sgn) const
 {
@@ -2347,9 +2363,9 @@ edge_interior(const Face_handle& f, int i,
 }
 
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Arrangement_type
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Arrangement_type
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 arrangement_type(const Site_2& p, const Site_2& q) const
 {
   typedef typename Geom_traits::Arrangement_type_2  AT2;
@@ -2411,9 +2427,9 @@ arrangement_type(const Site_2& p, const Site_2& q) const
 //--------------------------------------------------------------------
 
 // primal
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 Object
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 primal(const Edge e) const
 {
   typedef typename Gt::Line_2   Line_2;
@@ -2479,8 +2495,8 @@ primal(const Edge e) const
 // validity test method
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
-template<class Gt, class DS, class LTag>
-bool Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+bool Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 is_valid(bool verbose, int level) const
 {
   if (level < 0) { return true; }
@@ -2544,9 +2560,9 @@ is_valid(bool verbose, int level) const
 //--------------------------------------------------------------------
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 print_error_message() const
 {
   std::cerr << std::endl;
@@ -2566,25 +2582,25 @@ print_error_message() const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Storage_site_2
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Storage_site_2
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
 		  const Tag_false&)
 {
   if ( ss_other.is_segment() ) {
     Point_handle p0 = hm[ ss_other.source_of_supporting_site() ];
     Point_handle p1 = hm[ ss_other.target_of_supporting_site() ];
-    return Storage_site_2::construct_storage_site_2(p0, p1);
+    return st_.construct_storage_site_2_object()(p0, p1);
   } else {
     Point_handle p0 = hm[ ss_other.point() ];
-    return Storage_site_2::construct_storage_site_2(p0);
+    return st_.construct_storage_site_2_object()(p0);
   }
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Storage_site_2
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Storage_site_2
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
 		  const Tag_true&)
 {
@@ -2592,19 +2608,19 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
     if ( ss_other.is_input() ) {
       Point_handle p0 = hm[ ss_other.source_of_supporting_site() ];
       Point_handle p1 = hm[ ss_other.target_of_supporting_site() ];
-      return Storage_site_2::construct_storage_site_2(p0, p1);
+      return st_.construct_storage_site_2_object()(p0, p1);
     } else if ( ss_other.is_input(0) ) {
       Point_handle p0 = hm[ ss_other.source_of_supporting_site() ];
       Point_handle p1 = hm[ ss_other.target_of_supporting_site() ];
       Point_handle p4 = hm[ ss_other.source_of_crossing_site(1) ];
       Point_handle p5 = hm[ ss_other.target_of_crossing_site(1) ];
-      return Storage_site_2::construct_storage_site_2(p0, p1, p4, p5, true);
+      return st_.construct_storage_site_2_object()(p0, p1, p4, p5, true);
     } else if ( ss_other.is_input(1) ) {
       Point_handle p0 = hm[ ss_other.source_of_supporting_site() ];
       Point_handle p1 = hm[ ss_other.target_of_supporting_site() ];
       Point_handle p2 = hm[ ss_other.source_of_crossing_site(0) ];
       Point_handle p3 = hm[ ss_other.target_of_crossing_site(0) ];
-      return Storage_site_2::construct_storage_site_2(p0, p1, p2, p3, false);
+      return st_.construct_storage_site_2_object()(p0, p1, p2, p3, false);
     } else {
       Point_handle p0 = hm[ ss_other.source_of_supporting_site() ];
       Point_handle p1 = hm[ ss_other.target_of_supporting_site() ];
@@ -2612,29 +2628,32 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
       Point_handle p3 = hm[ ss_other.target_of_crossing_site(0) ];
       Point_handle p4 = hm[ ss_other.source_of_crossing_site(1) ];
       Point_handle p5 = hm[ ss_other.target_of_crossing_site(1) ];
-      return Storage_site_2::construct_storage_site_2(p0, p1, p2, p3, p4, p5);
+      return st_.construct_storage_site_2_object()(p0, p1, p2, p3, p4, p5);
     }
   } else {
     if ( ss_other.is_input() ) {
       Point_handle p0 = hm[ ss_other.point() ];
-      return Storage_site_2::construct_storage_site_2(p0);
+      return st_.construct_storage_site_2_object()(p0);
     } else {
       Point_handle p2 = hm[ ss_other.source_of_supporting_site(0) ];
       Point_handle p3 = hm[ ss_other.target_of_supporting_site(0) ];
       Point_handle p4 = hm[ ss_other.source_of_supporting_site(1) ];
       Point_handle p5 = hm[ ss_other.target_of_supporting_site(1) ];
-      return Storage_site_2::construct_storage_site_2(p2, p3, p4, p5);
+      return st_.construct_storage_site_2_object()(p2, p3, p4, p5);
     }
   }
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 copy(Segment_Delaunay_graph_2& other)
 {
-  // first copy the point container and input point container
+  // first copy the point container
   pc_ = other.pc_;
+
+  // copy storage traits
+  st_ = other.st_;
 
   // first create a map between the old point handles and the new ones
   Handle_map hm;
@@ -2648,9 +2667,9 @@ copy(Segment_Delaunay_graph_2& other)
   copy(other, hm);
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
 {
   // second, copy the site representation info for the input sites
@@ -2712,120 +2731,13 @@ copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
 
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
-// methods for creating storage sites
-//--------------------------------------------------------------------
-//--------------------------------------------------------------------
-
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Storage_site_2
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
-split_storage_site(const Storage_site_2& ss0,
-		   const Storage_site_2& ss1,
-		   unsigned int i, const Tag_true&)
-{
-  // Split the first storage site which is a segment using the
-  // second storage site which is an exact point
-  // i denotes whether the first or second half is to be created
-  CGAL_precondition( ss0.is_segment() && ss1.is_point() );
-  //    CGAL_precondition( ss1.is_input() );
-  CGAL_precondition( i < 2 );
-
-  if ( i == 0 ) {
-    if ( ss0.is_input(0) ) {
-      if ( ss1.is_input() ) {
-	return Storage_site_2::construct_storage_site_2
-	  (ss0.source_of_supporting_site(), ss1.point());
-      } else {
-	Storage_site_2 supp0 = ss0.supporting_site();
-	Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	if ( are_parallel(supp0.site(), supp1.site()) ) {
-	  supp1 = ss1.supporting_site(1);
-	}
-	return Storage_site_2::construct_storage_site_2
-	  ( supp0.source_of_supporting_site(),
-	    supp0.target_of_supporting_site(),
-	    supp1.source_of_supporting_site(),
-	    supp1.target_of_supporting_site(),
-	    true );
-      }
-    } else {
-      if ( ss1.is_input() ) {
-	return Storage_site_2::construct_storage_site_2
-	  ( ss0.source_of_supporting_site(), ss1.point(),
-	    ss0.source_of_crossing_site(0), ss0.target_of_crossing_site(0),
-	    false );
-      } else {
-	Storage_site_2 supp0 = ss0.supporting_site();
-	Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	if ( are_parallel(supp0.site(), supp1.site()) ) {
-	  supp1 = ss1.supporting_site(1);
-	}
-	return Storage_site_2::construct_storage_site_2
-	  ( supp0.source_of_supporting_site(),
-	    supp0.target_of_supporting_site(),
-	    ss0.source_of_crossing_site(0),
-	    ss0.target_of_crossing_site(0),
-	    supp1.source_of_supporting_site(),
-	    supp1.target_of_supporting_site() );
-      }
-    }
-  } else { // i == 1
-    if ( ss0.is_input(1) ) {
-      if ( ss1.is_input() ) {
-	return Storage_site_2::construct_storage_site_2
-	  ( ss1.point(), ss0.target_of_supporting_site() );
-      } else {
-	Storage_site_2 supp0 = ss0.supporting_site();
-	Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	if ( are_parallel(supp0.site(), supp1.site()) ) {
-	  supp1 = ss1.supporting_site(1);
-	}
-	return Storage_site_2::construct_storage_site_2
-	  ( supp0.source_of_supporting_site(),
-	    supp0.target_of_supporting_site(),
-	    supp1.source_of_supporting_site(),
-	    supp1.target_of_supporting_site(),
-	    false );
-      }
-    } else {
-      if ( ss1.is_input() ) {
-	return Storage_site_2::construct_storage_site_2
-	  ( ss1.point(), ss0.target_of_supporting_site(),
-	    ss0.source_of_crossing_site(1),
-	    ss0.target_of_crossing_site(1),
-	    true );
-      } else {
-	Storage_site_2 supp0 = ss0.supporting_site();
-	Storage_site_2 supp1 = ss1.supporting_site(0);
-
-	if ( are_parallel(supp0.site(), supp1.site()) ) {
-	  supp1 = ss1.supporting_site(1);
-	}
-	return Storage_site_2::construct_storage_site_2
-	  ( supp0.source_of_supporting_site(),
-	    supp0.target_of_supporting_site(),
-	    supp1.source_of_supporting_site(),
-	    supp1.target_of_supporting_site(),
-	    ss0.source_of_crossing_site(1),
-	    ss0.target_of_crossing_site(1) );
-      }
-    }
-  }
-}
-
-
-//--------------------------------------------------------------------
-//--------------------------------------------------------------------
 // getting endpoints of segments
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 first_endpoint_of_segment(const Vertex_handle& v) const
 {
   CGAL_assertion( v->is_segment() );
@@ -2847,9 +2759,9 @@ first_endpoint_of_segment(const Vertex_handle& v) const
   return Vertex_handle();
 }
 
-template<class Gt, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+template<class Gt, class ST, class DS, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 second_endpoint_of_segment(const Vertex_handle& v) const
 {
   CGAL_assertion( v->is_segment() );
@@ -2877,9 +2789,9 @@ second_endpoint_of_segment(const Vertex_handle& v) const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 file_output(std::ostream& os, const Storage_site_2& t,
 	    Point_handle_mapper& P) const
 {
@@ -2958,9 +2870,9 @@ file_output(std::ostream& os, const Storage_site_2& t,
   }
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 file_input(std::istream& is, Storage_site_2& t,
 	   const Point_handle_vector& P, const Tag_false&) const
 {
@@ -2972,19 +2884,19 @@ file_input(std::istream& is, Storage_site_2& t,
     // we have an input point
     size_type p;
     is >> p;
-    t = Storage_site_2::construct_storage_site_2(P[p]);
+    t = st_.construct_storage_site_2_object()(P[p]);
   } else {
     CGAL_assertion( type == 1 );
     // we have an input segment
     size_type p1, p2;
     is >> p1 >> p2;
-    t = Storage_site_2::construct_storage_site_2(P[p1], P[p2]);
+    t = st_.construct_storage_site_2_object()(P[p1], P[p2]);
   }
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 file_input(std::istream& is, Storage_site_2& t,
 	   const Point_handle_vector& P, const Tag_true&) const
 {
@@ -2998,13 +2910,13 @@ file_input(std::istream& is, Storage_site_2& t,
       // we have an input point
       size_type p;
       is >> p;
-      t = Storage_site_2::construct_storage_site_2(P[p]);
+      t = st_.construct_storage_site_2_object()(P[p]);
     } else {
       // we have a point that is the intersection of two segments
       CGAL_assertion( input == 1 );
       size_type p1, p2, q1, q2;
       is >> p1 >> p2 >> q1 >> q2;
-      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2], P[q1], P[q2]);
+      t = st_.construct_storage_site_2_object()(P[p1], P[p2], P[q1], P[q2]);
     }
   } else {
     // we have a segment
@@ -3013,30 +2925,30 @@ file_input(std::istream& is, Storage_site_2& t,
       // we have an input segment
       size_type p1, p2;
       is >> p1 >> p2;
-      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2]);
+      t = st_.construct_storage_site_2_object()(P[p1], P[p2]);
     } else if ( input < 3 ) {
       // we have a segment whose source or target is input but not both
       size_type p1, p2, q1, q2;
       is >> p1 >> p2 >> q1 >> q2;
-      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2],
-						   P[q1], P[q2], input == 1);
+      t = st_.construct_storage_site_2_object()(P[p1], P[p2],
+						P[q1], P[q2], input == 1);
     } else {
       // we have a segment whose neither its source nor its target is input
       CGAL_assertion( input == 3 );
       size_type p1, p2, q1, q2, r1, r2;
       is >> p1 >> p2 >> q1 >> q2 >> r1 >> r2;
-      t = Storage_site_2::construct_storage_site_2(P[p1], P[p2],
-						   P[q1], P[q2],
-						   P[r1], P[r2]);      
+      t = st_.construct_storage_site_2_object()(P[p1], P[p2],
+						P[q1], P[q2],
+						P[r1], P[r2]);      
     }
   }
 }
 
 //--------------------------------------------------------------------
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 file_output(std::ostream& os, Point_handle_mapper& P,
 	    bool print_point_container) const
 {
@@ -3126,9 +3038,9 @@ file_output(std::ostream& os, Point_handle_mapper& P,
 
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class ST, class DS, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
 file_input(std::istream& is, bool read_handle_vector,
 	   Point_handle_vector& P)
 {

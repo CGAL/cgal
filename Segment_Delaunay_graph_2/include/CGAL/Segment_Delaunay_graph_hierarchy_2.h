@@ -33,6 +33,7 @@
 #include <CGAL/Segment_Delaunay_graph_hierarchy_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
+#include <CGAL/Storage_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,22 +55,22 @@ const unsigned int sdg_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 
 template < class Gt, class STag = Tag_false,
+	   class ST = Storage_traits_2<Gt>,
 	   class DS = Triangulation_data_structure_2<
               Segment_Delaunay_graph_hierarchy_vertex_base_2<
-                 Segment_Delaunay_graph_vertex_base_2<Gt,
-			     typename Gt::Intersections_tag> >,
+		Segment_Delaunay_graph_vertex_base_2<ST> >,
               Triangulation_face_base_2<Gt> >,
 	   class LTag = Tag_false>
 class Segment_Delaunay_graph_hierarchy_2
-  : public Segment_Delaunay_graph_2<Gt,DS,LTag>
+  : public Segment_Delaunay_graph_2<Gt,ST,DS,LTag>
 {
 protected:
-  typedef Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS,LTag>  Self;
+  typedef Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag>  Self;
 
 public:
   // PUBLIC TYPES
   //-------------
-  typedef Segment_Delaunay_graph_2<Gt,DS,LTag>  Base;
+  typedef Segment_Delaunay_graph_2<Gt,ST,DS,LTag>  Base;
 
   typedef typename Base::Geom_traits        Geom_traits;
 
@@ -194,14 +195,15 @@ public:
 
   Vertex_handle  insert(const Point_2& p) {
     Point_handle ph = this->register_input_site(p);
-    Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
+    Storage_site_2 ss = 
+      this->st_.construct_storage_site_2_object()(ph);
     return insert_point(p, ss, UNDEFINED_LEVEL);
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1) {
     Point_handle_pair php = this->register_input_site(p0,p1);
     Storage_site_2 ss =
-      Storage_site_2::construct_storage_site_2(php.first, php.second);
+      this->st_.construct_storage_site_2_object()(php.first, php.second);
     Vertex_handle v = insert_segment(p0, p1, ss, UNDEFINED_LEVEL);
     if ( v == Vertex_handle() ) {
       this->unregister_input_site( php.first, php.second );
@@ -231,7 +233,7 @@ public:
       Point_handle_pair php =
 	this->register_input_site(t.source(), t.target());
       Storage_site_2 ss =
-	Storage_site_2::construct_storage_site_2(php.first, php.second);
+	this->st_.construct_storage_site_2_object()(php.first, php.second);
       Vertex_handle v =
 	insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
       if ( v == Vertex_handle() ) {
@@ -240,7 +242,7 @@ public:
       return v;
     } else if ( t.is_point() ) {
       Point_handle ph = this->register_input_site( t.point() );
-      Storage_site_2 ss = Storage_site_2::construct_storage_site_2(ph);
+      Storage_site_2 ss = this->st_.construct_storage_site_2_object()(ph);
       return insert_point(t.point(), ss, UNDEFINED_LEVEL);
     } else {
       CGAL_precondition ( t.is_defined() );
