@@ -55,7 +55,7 @@ make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
 template < class NT >
 typename Root_of_traits< NT >::RootOf_2
 make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
-               const Quotient< NT > &c, bool d, bool idnz);
+               const Quotient< NT > &c);
 
 CGAL_END_NAMESPACE
 
