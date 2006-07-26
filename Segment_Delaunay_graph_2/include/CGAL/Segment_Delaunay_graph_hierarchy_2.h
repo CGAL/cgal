@@ -340,15 +340,7 @@ protected:
 
   Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
 					const Vertex_handle& v,
-					int level, Tag_false stag,
-					int which) {
-    return Vertex_handle();
-  }
-
-  Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
-					const Vertex_handle& v,
-					int level, Tag_true stag,
-					int which);
+					int level, int which);
 
   template<class Tag>
   Vertex_handle

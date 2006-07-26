@@ -413,10 +413,10 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	// merge the info of the first (common) subsegment
 	merge_info(vv, sss);
 
-	return insert_segment_on_point(ss, vp, level, stag, 1);
+	return insert_segment_on_point(ss, vp, level, 1);
       } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
 	Vertex_handle vp = first_endpoint_of_segment(vv);
-	return insert_segment_on_point(ss, vp, level, stag, 0);
+	return insert_segment_on_point(ss, vp, level, 0);
       } else {
 	// this should never be reached; the only possible values for
 	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
@@ -428,7 +428,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       if ( at_res == AT2::INTERIOR ) {
 	Storage_site_2 svv = vv->storage_site();
 	if ( svv.is_input() ) {
-	  return insert_segment_on_point(ss, vv, level, stag, 2);
+	  return insert_segment_on_point(ss, vv, level, 2);
 	} else {
 	  // MK::ERROR:: not ready yet
 	  CGAL_assertion( false );
@@ -488,7 +488,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	return insert_intersecting_segment_with_tag(ss, t, vcross.second,
 						    level, itag, stag);
       } else if ( vcross.third == AT2::INTERIOR ) {
-	return insert_segment_on_point(ss, vcross.second, level, stag, 2);
+	return insert_segment_on_point(ss, vcross.second, level, 2);
       } else {
 	// this should never be reached; the only possible values for
 	// vcross.third are CROSSING, INTERIOR and DISJOINT
@@ -548,13 +548,14 @@ insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
 //--------------------------------------------------------------------
 // insertion of a segment that goes through a point
 //--------------------------------------------------------------------
+
 template<class Gt, class STag, class ST, class DS, class LTag>
 typename
 Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag>::Vertex_handle
 Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag>::
 insert_segment_on_point(const Storage_site_2& ss,
 			const Vertex_handle& v,
-			int level, Tag_true stag, int which)
+			int level, int which)
 {  
   // inserts the segment represented by ss in the case where this
   // segment goes through a point which has already been inserted and
