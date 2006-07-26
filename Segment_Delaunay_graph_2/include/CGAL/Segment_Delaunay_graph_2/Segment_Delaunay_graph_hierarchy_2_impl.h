@@ -189,13 +189,13 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
   int k = 1;
   while ( k <= new_level ) {
-    int nv = hierarchy[k]->number_of_vertices();
+    size_type nv = hierarchy[k]->number_of_vertices();
     if ( nv > 2 ) {
-      Arrangement_type at_res;
-      if ( hierarchy[k]->number_of_vertices() < sdg_hierarchy_2__minsize ) {
+      if ( nv < sdg_hierarchy_2__minsize ) {
+	CGAL_assertion( vnear[k] == Vertex_handle() );
 	vnear[k] = hierarchy[k]->nearest_neighbor(p);
-	at_res  = this->arrangement_type(t, vnear[k]->site());
       }
+      Arrangement_type at_res = this->arrangement_type(t, vnear[k]->site());
       if ( at_res == AT2::INTERIOR ) {
 	Vertex_triple vt =
 	  hierarchy[k]->insert_exact_point_on_segment(ss, t, vnear[k]);
