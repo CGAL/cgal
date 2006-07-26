@@ -259,7 +259,6 @@ public:
   inline
   Vertex_handle insert(const Site_2& t, const Info_t& info)
   {
-    std::cout << "inside insert with info" << std::endl;
     typedef typename Storage_traits::Info Info;
     CGALi::Check_type_equality_for_info<Info_t, Info>();
     // the intended use is to unify the calls to insert(...);

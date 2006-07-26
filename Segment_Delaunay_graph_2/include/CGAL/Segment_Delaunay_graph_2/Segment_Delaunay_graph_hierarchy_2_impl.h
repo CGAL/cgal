@@ -408,6 +408,11 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 						    itag, stag);
       } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
 	Vertex_handle vp = second_endpoint_of_segment(vv);
+
+	Storage_site_2 sss = split_storage_site(ss, vp->storage_site(), true);
+	// merge the info of the first (common) subsegment
+	merge_info(vv, sss);
+
 	return insert_segment_on_point(ss, vp, level, stag, 1);
       } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
 	Vertex_handle vp = first_endpoint_of_segment(vv);
