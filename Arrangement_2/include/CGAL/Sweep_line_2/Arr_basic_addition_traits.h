@@ -345,7 +345,7 @@ public:
     }
   };
 
-  Compare_xy_2 compare_xy_2_object () 
+  Compare_xy_2 compare_xy_2_object () const
   {
     return (Compare_xy_2 (m_base_traits->compare_xy_2_object()));
   }
@@ -399,7 +399,7 @@ public:
     }
   };
 
-  Compare_y_at_x_2 compare_y_at_x_2_object () 
+  Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
     return (Compare_y_at_x_2 (m_base_traits->compare_y_at_x_2_object()));
   }
@@ -427,7 +427,7 @@ public:
     }
   };
 
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () 
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
     return (Compare_y_at_x_right_2
 	    (m_base_traits->compare_y_at_x_right_2_object()));
@@ -461,7 +461,7 @@ public:
     }
   };
 
-  Equal_2 equal_2_object () 
+  Equal_2 equal_2_object () const
   {
     return (Equal_2 (m_base_traits->equal_2_object()));
   }
@@ -539,7 +539,7 @@ public:
 
   };
 
-  Compare_x_2 compare_x_2_object () 
+  Compare_x_2 compare_x_2_object () const
   {
     return (Compare_x_2 (m_base_traits->compare_x_2_object()));
   }
@@ -563,7 +563,7 @@ public:
     }
   };
 
-  Is_vertical_2 is_vertical_2_object() 
+  Is_vertical_2 is_vertical_2_object() const
   {
     return (Is_vertical_2(m_base_traits->is_vertical_2_object()));
   }

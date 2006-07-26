@@ -538,7 +538,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () 
+  Intersect_2 intersect_2_object () const
   {
     return Intersect_2(m_base_traits); 
   }
@@ -569,7 +569,7 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () 
+  Split_2 split_2_object () const
   {
     return Split_2(m_base_traits->split_2_object());
   }
@@ -665,7 +665,7 @@ public:
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object () 
+  Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
     return Construct_max_vertex_2(m_base_traits->construct_max_vertex_2_object());
   }
@@ -727,7 +727,7 @@ public:
 
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () 
+  Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
@@ -806,7 +806,7 @@ public:
 
   };
 
-  Compare_x_2 compare_x_2_object () 
+  Compare_x_2 compare_x_2_object () const
   {
     return (Compare_x_2 (m_base_traits->compare_x_2_object()));
   }
@@ -866,7 +866,7 @@ public:
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object () 
+  Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
     return Compare_y_at_x_2(m_base_traits->compare_y_at_x_2_object());
   }
@@ -901,7 +901,7 @@ public:
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () 
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
     return Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object());
   }
