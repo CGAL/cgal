@@ -314,7 +314,7 @@ typename
 Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag>::Vertex_handle
 Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag>::
 insert_segment(const Point_2& p0, const Point_2& p1,
-	       const Storage_site_2& ss, int level/*, Tag_true stag*/)
+	       const Storage_site_2& ss, int level)
 {
   // the tag is true so we DO insert segments in hierarchy
   if ( level == UNDEFINED_LEVEL ) {
