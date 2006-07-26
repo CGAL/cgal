@@ -1,6 +1,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/benchmark_basic.hpp>
+#if defined(CGAL_TRAITS_COUNTING)
+#include <CGAL/Arr_counting_traits_2.h>
+#endif
 
 #include "bench_config.hpp"
 #include "number_type.hpp"
@@ -262,29 +265,29 @@ typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<Number_type> > Kernel;
 
 // Traits:
 #if BENCH_TRAITS == SEGMENT_TRAITS
-typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Base_traits;
 #define TRAITS_TYPE "Segments"
 
 #elif BENCH_TRAITS == LEDA_SEGMENT_TRAITS
-typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
+typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Base_traits;
 #define TRAITS_TYPE "Leda Segments"
 
 #elif BENCH_TRAITS == NON_CACHING_SEGMENT_TRAITS
-typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Traits;
+typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Base_traits;
 #define TRAITS_TYPE "Non Caching Segments"
 
 #elif BENCH_TRAITS == POLYLINE_TRAITS
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits;
-typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Traits;
+typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Base_traits;
 #define TRAITS_TYPE "Polylines"
 
 #elif BENCH_TRAITS == NON_CACHING_POLYLINE_TRAITS
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Segment_traits;
-typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Traits;
+typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Base_traits;
 #define TRAITS_TYPE "Non Caching Polylines"
 
 #elif BENCH_TRAITS == LEDA_CONIC_TRAITS
-typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
+typedef CGAL::Arr_conic_traits_2<Kernel>                Base_traits;
 #define TRAITS_TYPE "Conics"
 
 #elif BENCH_TRAITS == CORE_CONIC_TRAITS
@@ -294,27 +297,27 @@ typedef Nt_traits::Algebraic                            Algebraic;
 typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef CGAL::Arr_conic_traits_2<Rat_kernel,Alg_kernel,Nt_traits>
-                                                        Traits;
+                                                        Base_traits;
 #define TRAITS_TYPE "Conics"
 
 // Exacus Conics:
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
 typedef CnX::Conic_sweep_traits_2<Arithmetic_traits>    CST;
 typedef CnX::Conic_segment_2< CST>                      Input_segment;
-typedef SoX::CGAL_Arr_2_for_GAPS_traits< Input_segment, CST> Traits;
+typedef SoX::CGAL_Arr_2_for_GAPS_traits< Input_segment, CST> Base_traits;
 #define TRAITS_TYPE "Exacus Conics"
 
 // Curved-kernel Circle:
 #elif BENCH_TRAITS == CK_CIRCLE_TRAITS
 typedef ECG::Curved_kernel<Kernel>                      Curved_k;
-typedef ECG::Circular_arc_traits<Curved_k>              Traits;
+typedef ECG::Circular_arc_traits<Curved_k>              Base_traits;
 #define TRAITS_TYPE "Curved Kernel Circles"
 
 // Curved-kernel Conics:
 #elif BENCH_TRAITS == CK_CONIC_TRAITS
 typedef ECG::Algebraic::Synaps_kernel<RT,FT>            Algebraic_k;
 typedef ECG::Curved_kernel<Kernel,Algebraic_k>          Curved_k;
-typedef ECG::Conic_arc_traits<Curved_k>                 Traits;
+typedef ECG::Conic_arc_traits<Curved_k>                 Base_traits;
 #define TRAITS_TYPE "Curved Kernel Conics"
 
 #else
@@ -322,6 +325,11 @@ typedef ECG::Conic_arc_traits<Curved_k>                 Traits;
 #endif
 
 // Arrangement types:
+#if defined(CGAL_TRAITS_COUNTING)
+typedef CGAL::Arr_counting_traits_2<Base_traits>        Traits;
+#else
+typedef  Base_traits                                    Traits;
+#endif
 typedef CGAL::Arr_default_dcel<Traits>                  Dcel;
 typedef CGAL::Arrangement_2<Traits, Dcel>               Arr;
 
@@ -384,7 +392,6 @@ inline Window_stream & operator<<(Window_stream & ws, Arr & arr)
 /*! */
 class Basic_arr {
 public:
-
   /*! Constructor */
   Basic_arr() :
     m_filename(0), m_verbose_level(0), m_postscript(false),
@@ -426,7 +433,13 @@ public:
   }
     
   /* */
-  void clean() { m_curve_list.clear(); }
+  void clean()
+  {
+    m_curve_list.clear();
+#if defined(CGAL_TRAITS_COUNTING)    
+    if (m_verbose_level > 0) std::cout << m_traits;
+#endif
+  }
   void sync(){}
 
   void set_file_name(const char * filename, int file_index=0) 
@@ -446,6 +459,8 @@ protected:
 
   int m_width, m_height;
   float m_x0, m_x1, m_y0, m_y1;
+
+  Traits m_traits;
 };
 
 /*!  This class is supplied to the bench as a templatwe parameter.
@@ -463,7 +478,7 @@ public:
   // inherite from Basic_arr
   void op()
   {
-    Arr arr;
+    Arr arr(&m_traits);
     Curve_list::const_iterator i;
     Strategy strategy(arr);
     for (i = m_curve_list.begin(); i != m_curve_list.end(); ++i)
@@ -509,7 +524,7 @@ public:
   void op()
   {
     if (m_verbose_level > 0) std::cout << "Inserting Aggregate" << std::endl;
-    Arr arr;
+    Arr arr(&m_traits);
     insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose_level > 0) {
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -534,7 +549,7 @@ public:
   /*! */
   void op()
   {
-    Arr arr;
+    Arr arr(&m_traits);
     insert_curves(arr, m_curve_list.begin(), m_curve_list.end());
     if (m_verbose_level > 0) {
       if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;

@@ -343,6 +343,11 @@ endif
 endif
 endif
 
+# Traits counting
+ifeq ($(CGAL_TRAITS_COUNTING), 1)
+LCPPDEFS+= -DCGAL_TRAITS_COUNTING
+endif
+
 # Window system
 ifeq ($(USE_CGAL_WINDOW), 1)
 LCPPDEFS+= -DUSE_CGAL_WINDOW
