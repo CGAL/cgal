@@ -117,7 +117,7 @@ public:
     }
   };
 
-  Intersect_2 intersect_2_object () 
+  Intersect_2 intersect_2_object () const
   {
     return (Intersect_2 (this->m_base_traits->intersect_2_object())); 
   }
@@ -150,7 +150,7 @@ public:
     }
   };
 
-  Split_2 split_2_object () 
+  Split_2 split_2_object () const
   {
     return (Split_2 (this->m_base_traits->split_2_object()));
   }

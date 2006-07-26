@@ -81,15 +81,26 @@ public:
   class Compare_x_2
   {
   public:
-
+#if defined(EFIX)
+    /*! Constructor
+     * \param base the traits base class. It must be passed, in case it not
+     * stateless (e.g., it stores data)
+     */
+    Compare_x_2(const Base * base) : m_object(base->compare_x_2_object()) {}
+#endif
+    
     /*!
      * Redefining the mandatory comparison operator.
      */
     Comparison_result operator() (const Point_2& p1,
                                   const Point_2& p2) const
     {
+#if defined(EFIX)
+      return (m_object(p1, p2));
+#else
       Base                    tr;
       return (tr.compare_x_2_object() (p1, p2));
+#endif
     }
 
     /*!
@@ -135,7 +146,11 @@ public:
     }
 
   private:
-
+#if defined(EFIX)
+    /*! The base-traits functor */
+    typename Base::Compare_x_2 m_object;
+#endif
+    
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
      */
@@ -189,7 +204,11 @@ public:
   /*! Get a Compare_x_2 functor object. */
   Compare_x_2 compare_x_2_object () const
   {
+#if defined(EFIX)
+    return Compare_x_2(this);
+#else
     return Compare_x_2();
+#endif    
   }
 
 

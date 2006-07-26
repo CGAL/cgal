@@ -18,8 +18,8 @@
 //                 Ron Wein     <wein@post.tau.ac.il>
 //                 (base on old version by: Iddo Hanniel)
 
-#ifndef CGAL_ARR_NON_CACHING_SEGMENT_EXACT_TRAITS_H
-#define CGAL_ARR_NON_CACHING_SEGMENT_EXACT_TRAITS_H
+#ifndef CGAL_ARR_NON_CACHING_SEGMENT_TRAITS_H
+#define CGAL_ARR_NON_CACHING_SEGMENT_TRAITS_H
 
 /*! \file The non-caching segment traits-class for the arrangement package.
  * This traits class handles general segments. It is a model of the
