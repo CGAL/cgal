@@ -120,7 +120,7 @@ operator+=( const File_header_extended_OFF& header) {
                              header.m_normalized_to_sphere;
     m_radius               = std::max(m_radius, header.m_radius);
     m_rounded              = m_rounded && header.m_rounded;
-    m_rounded_bits         = std::max( m_rounded_bits,
+    m_rounded_bits         = (std::max)( m_rounded_bits,
                                        header.m_rounded_bits);
     m_off_header           = m_off_header && header.m_off_header;
     return *this;
