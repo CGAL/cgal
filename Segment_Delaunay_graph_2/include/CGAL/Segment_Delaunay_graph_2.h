@@ -695,8 +695,6 @@ public:
   template<typename Info_t>
   inline Vertex_handle insert(const Site_2& t,
 			      const Info_t& info) {
-    typedef typename Storage_traits::Info Info;
-    CGALi::Check_type_equality_for_info<Info_t, Info>();
     return insert(t, info, Vertex_handle());
   }
 
