@@ -1,3 +1,7 @@
+26 July 2006 Laurent Rineau
+- fix a bug: c2t3::Vertex_iterator should be convertible to Vertex_handle,
+  as usuall vertex iterators of CGAL triangulations.
+
 12 July 2006 Laurent Rineau
 - fixed i/o operators, in binary mode, for C2t3_cell_base_3, 
 - fixed input operator of c2t3. It know deals correctly (I hope), with the

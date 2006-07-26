@@ -118,8 +118,26 @@ class Complex_2_in_triangulation_3 {
                           Iterator_not_in_complex> Facet_iterator;
   typedef Filter_iterator<typename Triangulation::Finite_edges_iterator,
                           Iterator_not_in_complex> Edge_iterator;
-  typedef Filter_iterator<typename Triangulation::Finite_vertices_iterator,
-                          Vertex_not_in_complex> Vertex_iterator;  
+
+  // class to ensure that Vertex_iterator is convertible to Vertex_handle
+  class Vertex_iterator : 
+    public Filter_iterator<typename Triangulation::Finite_vertices_iterator,
+                           Vertex_not_in_complex>
+  {
+    typedef typename Triangulation::Finite_vertices_iterator Tr_iterator;
+    typedef Filter_iterator<typename Triangulation::Finite_vertices_iterator,
+                            Vertex_not_in_complex> Base;
+    typedef typename Base::Predicate Predicate;
+  public:
+    Vertex_iterator(Base i) : Base(i)
+    {
+    }
+
+    operator Vertex_handle() 
+    {
+      return Vertex_handle(this->base());
+    }
+  };
 
   typedef Filter_iterator<typename Triangulation::Finite_edges_iterator,
                           Iterator_not_on_boundary> Boundary_edges_iterator;

@@ -56,4 +56,8 @@ int main(int , char**)
   CGAL_assertion( number_of_edges == 5 );
   CGAL_assertion( number_of_facets == 2 );  
 
+  // check the cast from C2t3::Vertex_iterator to Vertex_handle, at compile
+  // time.
+  Tr::Vertex_handle v3 = c2t3.vertices_begin();
+  c2t3.is_regular_or_boundary_for_vertices(c2t3.vertices_begin());
 }
