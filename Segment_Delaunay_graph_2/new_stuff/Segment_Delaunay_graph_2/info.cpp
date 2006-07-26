@@ -1,5 +1,6 @@
 // file: info.cpp
 #define WITH_INFO
+#define WITH_HIERARCHY
 
 #include <CGAL/basic.h>
 
@@ -33,8 +34,8 @@ Traits_no_x;
 struct Gt : public Traits_x {};
 //struct Gt : public Traits_no_x {};
 
-#ifdef WITH_INFO
 #include "Red_blue_info.h"
+#ifdef WITH_INFO
 #include <CGAL/Storage_traits_with_info_2.h>
 
 typedef CGAL::Storage_traits_2<Gt>   ST_base;
@@ -47,15 +48,20 @@ ST;
 typedef CGAL::Storage_traits_2<Gt> ST;
 #endif
 
-typedef CGAL::Tag_true  STag;
-//typedef CGAL::Tag_false STag;
+//typedef CGAL::Tag_true  STag;
+typedef CGAL::Tag_false STag;
 
+#ifdef WITH_HIERARCHY
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
+#else
 typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
-//typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
+#endif
 
 template<class SDG>
 bool test(SDG& sdg, char* fname, bool read_info = false)
 {
+  typedef typename SDG::Finite_vertices_iterator FVIT;
+
   std::ifstream ifs(fname);
   assert( ifs );
 
@@ -64,9 +70,9 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
 
   // read the sites and insert them in the segment Delaunay graph
   std::cout << "Input:" << std::endl;
-#ifdef WITH_INFO
+
   Random_red_blue random_red_blue;
-#endif
+
   while ( ifs >> site ) {
 #ifdef WITH_INFO
     Red_blue info;
@@ -88,7 +94,6 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
   }
   std::cout << std::endl;
 
-  typedef typename SDG::Finite_vertices_iterator FVIT;
   for (FVIT it = sdg.finite_vertices_begin();
        it != sdg.finite_vertices_end(); ++it) {
 #ifdef WITH_INFO
@@ -98,6 +103,24 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
     std::cout << it->site() << std::endl;
 #endif
   }
+
+#ifdef WITH_HIERARCHY
+  std::cout << std::endl;
+  std::cout << "ALL SITES/ALL LEVELS:" << std::endl;
+  for (int i = 0; i <= 4; ++i) {
+    std::cout << "\tSITES FOR LEVEL " << i << std::endl;
+    for (FVIT it = sdg.diagram(i).finite_vertices_begin();
+	 it != sdg.diagram(i).finite_vertices_end(); ++it) {
+#ifdef WITH_INFO
+      std::cout << "\t\t" << it->site() << " "
+		<< it->storage_site().info() << std::endl;
+#else
+      std::cout << "\t\t" << it->site() << std::endl;
+#endif
+    }
+  }
+  std::cout << std::endl;
+#endif
 
   // validate the segment Delaunay graph
   return sdg.is_valid(true, 1);
@@ -118,7 +141,7 @@ int main()
 {
   bool b;
   SDG2 sdg;
-
+#if 0
   print_separator();
   b = test(sdg, "data/sites.cin");
   assert( b );
@@ -130,18 +153,24 @@ int main()
   print_separator();
   b = test(sdg, "data/bizarre.cin");
   assert( b );  
-
+#endif
   print_separator();
+#ifdef WITH_INFO
   b = test(sdg, "data/sitesx.rb.cin", true);
+#else
+  b = test(sdg, "data/sitesx.cin");
+#endif
   assert( b );
 
   print_separator();
+#ifdef WITH_INFO
   b = test(sdg, "data/sitesxx.rb.cin", true);
+#else
+  b = test(sdg, "data/sitesxx.cin");
+#endif
   assert( b );
 
   print_separator();
 
   return 0;
 }
-
-
