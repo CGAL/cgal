@@ -1,4 +1,10 @@
-24 July 2006:  Menelaos Karavelas
+26 July 2006:  Menelaos Karavelas
+- fixed bug in hierarchy: the bug appeared in cases where the
+  hierarchy was inserting segments at higher levels and there were
+  overlapping segments
+- added support in hierarchy for info.
+
+25 July 2006:  Menelaos Karavelas
 - added directory new_stuff: currently contains prototype code for
   nearest neighbor graph class and some test/example files for the
   new design of SDG wrt to keeping track of info

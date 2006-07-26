@@ -73,6 +73,7 @@ public:
   typedef Segment_Delaunay_graph_2<Gt,ST,DS,LTag>  Base;
 
   typedef typename Base::Geom_traits        Geom_traits;
+  typedef typename Base::Storage_traits     Storage_traits;
 
   typedef typename Geom_traits::Point_2     Point_2;
   typedef typename Geom_traits::Site_2      Site_2;
@@ -250,8 +251,49 @@ public:
     }
   }
 
-  Vertex_handle  insert(const Site_2& t, Vertex_handle) {
+  inline Vertex_handle insert(const Site_2& t, Vertex_handle) {
     return insert(t);
+  }
+
+  template<class Info_t>
+  inline
+  Vertex_handle insert(const Site_2& t, const Info_t& info)
+  {
+    std::cout << "inside insert with info" << std::endl;
+    typedef typename Storage_traits::Info Info;
+    CGALi::Check_type_equality_for_info<Info_t, Info>();
+    // the intended use is to unify the calls to insert(...);
+    // thus the site must be an exact one; 
+    CGAL_precondition( t.is_input() );
+
+    if ( t.is_segment() ) {
+      Point_handle_pair php =
+	this->register_input_site(t.source(), t.target());
+      Storage_site_2 ss =
+	this->st_.construct_storage_site_2_object()(php.first, php.second);
+      ss.set_info(info);
+      Vertex_handle v =
+	insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+      if ( v == Vertex_handle() ) {
+	this->unregister_input_site( php.first, php.second );
+      }
+      return v;
+    } else if ( t.is_point() ) {
+      Point_handle ph = this->register_input_site( t.point() );
+      Storage_site_2 ss = this->st_.construct_storage_site_2_object()(ph);
+      ss.set_info(info);
+      return insert_point(t.point(), ss, UNDEFINED_LEVEL);
+    } else {
+      CGAL_precondition ( t.is_defined() );
+      return Vertex_handle(); // to avoid compiler error
+    }
+  }
+
+  template<class Info_t>
+  inline
+  Vertex_handle insert(const Site_2& t, const Info_t& info, Vertex_handle)
+  {
+    return insert(t, info);
   }
 
 protected:
@@ -268,8 +310,10 @@ protected:
     return vertices[0];
   }
 
-  void          insert_point(const Point_2& p, const Storage_site_2& ss,
-			     int level,	Vertex_handle* vertices);
+  //  std::pair<bool,Vertex_triple>
+  std::pair<bool,int>
+                insert_point(const Point_2& p, const Storage_site_2& ss,
+			     int level, Vertex_handle* vertices);
 
   void          insert_point(const Site_2& t, const Storage_site_2& ss,
 			     int low, int high, Vertex_handle vbelow,

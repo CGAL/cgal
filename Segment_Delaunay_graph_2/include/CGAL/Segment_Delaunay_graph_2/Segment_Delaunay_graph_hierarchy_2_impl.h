@@ -108,7 +108,7 @@ operator=(const Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag> &sdg)
 //--------------------------------------------------------------------
 
 template<class Gt, class STag, class ST, class DS, class LTag>
-void
+std::pair<bool,int>
 Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag>::
 insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 	     Vertex_handle* vertices)
@@ -117,7 +117,10 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
   int new_level = level;
 
+  bool lies_on_seg = false;
+
   Vertex_handle vertex;
+  Vertex_handle vs1, vs2;
   Vertex_handle vnear[sdg_hierarchy_2__maxlevel];
 
   Site_2 t = Site_2::construct_site_2(p);
@@ -135,6 +138,7 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
     if ( vnear[0]->is_point() ) {
       if ( at_res == AT2::IDENTICAL ) {
 	vertex = vnear[0];
+	merge_info(vertex, ss);
       } else {
 	vertex = hierarchy[0]->insert_point2(ss, t, vnear[0]);
       }
@@ -145,6 +149,7 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
       if ( at_res == AT2::INTERIOR ) {
 	CGAL_assertion( t.is_input() );
+	lies_on_seg = true;
 
 	int vnear_level = find_level(vnear[0]);
 
@@ -157,6 +162,8 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 	Vertex_triple vt =
 	  hierarchy[0]->insert_exact_point_on_segment(ss, t, vnear[0]);
 	vertex = vt.first;
+	vs1 = vt.second;
+	vs2 = vt.third;
       } else {
 	vertex = hierarchy[0]->insert_point2(ss, t, vnear[0]);
       }
@@ -175,6 +182,8 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 
   // insert at other levels
   Vertex_handle previous = vertex;
+  Vertex_handle vs1_prev = vs1;
+  Vertex_handle vs2_prev = vs2;
 
   //  Storage_site_2 ss = vertex->storage_site();
 
@@ -182,7 +191,42 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
   while ( k <= new_level ) {
     int nv = hierarchy[k]->number_of_vertices();
     if ( nv > 2 ) {
-      vertex = hierarchy[k]->insert_point(ss, t, vnear[k]);
+      Arrangement_type at_res;
+      if ( hierarchy[k]->number_of_vertices() < sdg_hierarchy_2__minsize ) {
+	vnear[k] = hierarchy[k]->nearest_neighbor(p);
+	at_res  = this->arrangement_type(t, vnear[k]->site());
+      }
+      if ( at_res == AT2::INTERIOR ) {
+	Vertex_triple vt =
+	  hierarchy[k]->insert_exact_point_on_segment(ss, t, vnear[k]);
+	vertex = vt.first;
+	vs1 = vt.second;
+	vs2 = vt.third;
+
+	CGAL_assertion( (same_segments(vs1_prev->site(), vs1->site()) &&
+			 same_segments(vs2_prev->site(), vs2->site())) ||
+			(same_segments(vs1_prev->site(), vs2->site()) &&
+			 same_segments(vs2_prev->site(), vs1->site())) );
+	if ( same_segments(vs1_prev->site(), vs1->site()) ) {
+	  vs1->set_down(vs1_prev);
+	  vs1_prev->set_up(vs1);
+	  vs1_prev = vs1;
+
+	  vs2->set_down(vs2_prev);
+	  vs2_prev->set_up(vs2);
+	  vs2_prev = vs2;
+	} else {
+	  vs1->set_down(vs2_prev);
+	  vs2_prev->set_up(vs1);
+	  vs2_prev = vs1;
+
+	  vs2->set_down(vs1_prev);
+	  vs1_prev->set_up(vs2);
+	  vs1_prev = vs2;
+	}
+      } else {
+	vertex = hierarchy[k]->insert_point(ss, t, vnear[k]);	
+      }
     } else if ( nv == 2 ) {
       vertex = hierarchy[k]->insert_third(t, ss);
     } else { // nv == 0 || nv == 1
@@ -198,6 +242,7 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
     previous = vertex;
     k++;
   }
+  return std::make_pair(lies_on_seg, new_level);
 }
 
 
@@ -208,9 +253,8 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
 	     int low, int high, Vertex_handle vbelow,
 	     Vertex_handle* vertices)
 {
-  CGAL_precondition( low >= 0 && low <= high );
-  CGAL_precondition( (low == 0 && vbelow == Vertex_handle()) ||
-		     (low > 0  && vbelow != Vertex_handle()) );
+  CGAL_precondition( low >= 1 && low <= high );
+  CGAL_precondition( vbelow != Vertex_handle() );
 
   Vertex_handle vertex;
   Vertex_handle vnear[sdg_hierarchy_2__maxlevel];
@@ -280,24 +324,22 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   Site_2 t = Site_2::construct_site_2(p0, p1);
 
   if ( is_degenerate_segment(t) ) {
-    return insert_point(p0, ss.source_site(), level);
+    Storage_site_2 ss_src = ss.source_site();
+    copy_info(ss_src, ss);
+    return insert_point(p0, ss_src, level);
   }
 
   Vertex_handle vertices0[sdg_hierarchy_2__maxlevel];
   Vertex_handle vertices1[sdg_hierarchy_2__maxlevel];
 
-  insert_point(p0, ss.source_site(), level, vertices0);
+  Storage_site_2 ss_src = ss.source_site();
+  copy_info(ss_src, ss);
+  std::pair<bool,int> res = insert_point(p0, ss_src, level, vertices0);
+  if ( res.first ) { level = res.second; }
 
-#if 0
-  insert_point(p1, level, vertices1);
-#else // this way may be faster...
-  vertices1[0] =
-    hierarchy[0]->insert_no_register(ss.target_site(), p1, vertices0[0]);
-  if ( level >= 1 ) {
-    Storage_site_2 ss1 = vertices1[0]->storage_site();
-    insert_point(ss1.site(), ss1, 1, level, vertices1[0], vertices1);
-  }
-#endif
+  Storage_site_2 ss_trg = ss.target_site();
+  copy_info(ss_trg, ss);
+  insert_point(p1, ss_trg, level, vertices1);
 
   CGAL_assertion( vertices0[0] != Vertex_handle() );
   CGAL_assertion( vertices1[0] != Vertex_handle() );
@@ -365,53 +407,11 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	return insert_intersecting_segment_with_tag(ss, t, vv, level,
 						    itag, stag);
       } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
-#if 1
 	Vertex_handle vp = second_endpoint_of_segment(vv);
 	return insert_segment_on_point(ss, vp, level, stag, 1);
-#else
-	Vertex_handle vp = second_endpoint_of_segment(vv);
-	Storage_site_2 ssvp = vp->storage_site();
-	Site_2 svp = ssvp.site();
-
-	Vertex_handle vp_vnear[sdg_hierarchy_2__maxlevel];
-
-	nearest_neighbor(svp, vp_near, false);
-
-	int vp_level = find_level(vp);
-
-	if ( vp_level < level ) {
-	  Vertex_handle vbelow = vp_vertices[vp_level];
-
-	  insert_point(svp, ssvp, vp_level + 1,	level, vbelow, vp_vnear);
-	}
-
-	Storage_site_2 sss = split_storage_site(ss, svp, 1, itag);
-	return insert_segment_interior(sss.site(), sss, vp_vnear, level);
-#endif
       } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
-#if 1
 	Vertex_handle vp = first_endpoint_of_segment(vv);
 	return insert_segment_on_point(ss, vp, level, stag, 0);
-#else
-	Vertex_handle vp = first_endpoint_of_segment(vv);
-	Storage_site_2 ssvp = vp->storage_site();
-	Site_2 svp = ssvp.site();
-
-	Vertex_handle vp_vnear[sdg_hierarchy_2__maxlevel];
-
-	nearest_neighbor(svp, vp_near, false);
-
-	int vp_level = find_level(vp);
-
-	if ( vp_level < level ) {
-	  Vertex_handle vbelow = vp_vertices[vp_level];
-
-	  insert_point(svp, ssvp, vp_level + 1, level, vbelow, vp_vnear);
-	}
-
-	Storage_site_2 sss = split_storage_site(ss, ssvp, 0, itag);
-	return insert_segment_interior(sss.site(), sss, vp_vnear, level);
-#endif
       } else {
 	// this should never be reached; the only possible values for
 	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
@@ -423,27 +423,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       if ( at_res == AT2::INTERIOR ) {
 	Storage_site_2 svv = vv->storage_site();
 	if ( svv.is_input() ) {
-#if 1
 	  return insert_segment_on_point(ss, vv, level, stag, 2);
-#else
-	  //************************************************************
-	  //************************************************************
-	  //************************************************************
-	  //************************************************************
-	  // here I need a new method: insert_segment_on_point
-	  // which will do the splitting and arrange the hierarchy
-	  // pointers
-	  //************************************************************
-	  //************************************************************
-	  //************************************************************
-	  //************************************************************
-	  Storage_site_2 ss1 = this->split_storage_site(ss, svv, 0, itag);
-	  Storage_site_2 ss2 = this->split_storage_site(ss, svv, 1, itag);
-	  CGAL_assertion( false );
-	  return Vertex_handle();
-	  //	  insert_segment_interior(ss1.site(), ss1, vv);
-	  //	  return insert_segment_interior(ss2.site(), ss2, vv);
-#endif
 	} else {
 	  // MK::ERROR:: not ready yet
 	  CGAL_assertion( false );
@@ -503,29 +483,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	return insert_intersecting_segment_with_tag(ss, t, vcross.second,
 						    level, itag, stag);
       } else if ( vcross.third == AT2::INTERIOR ) {
-#if 1
 	return insert_segment_on_point(ss, vcross.second, level, stag, 2);
-#else
-	Storage_site_2 ssvv = vcross.second->storage_site();
-	Intersections_tag itag;
-	//************************************************************
-	//************************************************************
-	//************************************************************
-	//************************************************************
-	// here I need a new method: insert_segment_on_point
-	// which will do the splitting and arrange the hierarchy
-	// pointers
-	//************************************************************
-	//************************************************************
-	//************************************************************
-	//************************************************************
-	Storage_site_2 ss1 = this->split_storage_site(ss, ssvv, 0, itag);
-	Storage_site_2 ss2 = this->split_storage_site(ss, ssvv, 1, itag);
-	CGAL_assertion( false );
-	return Vertex_handle();
-	//	insert_segment_interior(ss1.site(), ss1, vcross.second);
-	//	return insert_segment_interior(ss2.site(), ss2, vcross.second);
-#endif
       } else {
 	// this should never be reached; the only possible values for
 	// vcross.third are CROSSING, INTERIOR and DISJOINT
@@ -555,6 +513,7 @@ insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
 			       int level, Tag_true stag)
 {
   CGAL_precondition( vertices != NULL );
+  CGAL_precondition( vbelow != Vertex_handle() );
 
   // insert at all upper levels
   Vertex_handle previous = vbelow;
@@ -613,12 +572,12 @@ insert_segment_on_point(const Storage_site_2& ss,
     insert_point(sv, ssv, v_level + 1, level, vbelow, vnear);
   }
 
+  // merge the info of the (common) splitting endpoint
+  merge_info(v, ss);
+
   if ( which == 2 ) {
     Storage_site_2 ss1 = this->split_storage_site(ss, ssv, true);
     Storage_site_2 ss2 = this->split_storage_site(ss, ssv, false);
-
-    // merge the info of the (common) splitting endpoint
-    merge_info(v, ss);
 
     insert_segment_interior(ss1.site(), ss1, vnear, level);
     return insert_segment_interior(ss2.site(), ss2, vnear, level);
@@ -710,9 +669,6 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
   int k = 0;
   while ( k <= levelv ) {
-    // MK::ERROR: I have to remove this; too expensive...
-    CGAL_expensive_precondition( arrangement_type(t, vertex->site()) );
-
     Vertex_handle vcross_up = vcross->up();
 
     Vertex_triple vt =
@@ -726,6 +682,11 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     CGAL_assertion( v1->is_segment() && v2->is_segment() );
 
     if ( k > 0 ) {
+      CGAL_assertion( (same_segments(v1->site(), v1_old->site()) &&
+		       same_segments(v2->site(), v2_old->site())) ||
+		      (same_segments(v1->site(), v2_old->site()) &&
+		       same_segments(v2->site(), v1_old->site()))
+		      );
       if ( same_segments(v1->site(), v1_old->site()) ) {
 	v1->set_down(v1_old);
 	v2->set_down(v2_old);
