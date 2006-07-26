@@ -184,7 +184,7 @@ void Qt_widget_OpenGL::initializeGL() {
 void Qt_widget_OpenGL::resizeGL(int width, int height) {
   window_width = width;
   window_height = height;
-  window_radius = std::min( width, height) / 2;
+  window_radius = (std::min)( width, height) / 2;
 
   glViewport(0, 0, (GLint)width, (GLint)height);
   glMatrixMode(GL_PROJECTION);
