@@ -143,8 +143,8 @@ compare (const MP_Float & a, const MP_Float & b)
   if (b.is_zero())
     return (Comparison_result) a.sign();
 
-  for (exponent_type i = std::max(a.max_exp(), b.max_exp()) - 1;
-                    i >= std::min(a.min_exp(), b.min_exp()); i--)
+  for (exponent_type i = (std::max)(a.max_exp(), b.max_exp()) - 1;
+                    i >= (std::min)(a.min_exp(), b.min_exp()); i--)
   {
     if (a.of_exp(i) > b.of_exp(i))
       return LARGER;
@@ -169,8 +169,8 @@ Add_Sub(const MP_Float &a, const MP_Float &b, const BinOp &op)
     max_exp = b.max_exp();
   }
   else {
-    min_exp = std::min(a.min_exp(), b.min_exp());
-    max_exp = std::max(a.max_exp(), b.max_exp());
+    min_exp = (std::min)(a.min_exp(), b.min_exp());
+    max_exp = (std::max)(a.max_exp(), b.max_exp());
   }
 
   MP_Float r;
@@ -338,7 +338,7 @@ to_double_exp(const MP_Float &b)
     return std::make_pair(0.0, 0);
 
   exponent_type exp = b.max_exp();
-  int steps = std::min(limbs_per_double, b.v.size());
+  int steps = (std::min)(limbs_per_double, b.v.size());
   double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - static_cast<int>(log_limb));
   double d_exp   = 1.0;
   double d = 0;
@@ -363,7 +363,7 @@ to_interval_exp(const MP_Float &b)
     return std::make_pair(pair<double, double>(0, 0), 0);
 
   exponent_type exp = b.max_exp();
-  int steps = std::min(limbs_per_double, b.v.size());
+  int steps = (std::min)(limbs_per_double, b.v.size());
   double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
   double d_exp   = 1.0;
 
