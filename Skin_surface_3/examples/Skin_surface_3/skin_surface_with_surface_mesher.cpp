@@ -10,11 +10,10 @@
 #include <CGAL/Implicit_surface_3.h>
 
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    Kernel;
-typedef CGAL::Regular_triangulation_filtered_traits_3<Kernel>  Traits;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<Kernel> Traits;
 typedef CGAL::Skin_surface_3<Traits>                           Skin_surface_3;
 typedef Skin_surface_3::RT                                     RT;
 typedef Skin_surface_3::Weighted_point                         Weighted_point;

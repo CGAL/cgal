@@ -156,7 +156,7 @@ public:
       }
     }
     ch->surf = surf;
-    ch->simplex = s;
+    //ch->simp = s;
   }
 
   Surface_RT shrink;
