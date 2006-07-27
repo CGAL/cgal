@@ -34,3 +34,4 @@
 - add examples that use the info
 - add a demo that uses the red-blue info stuff; the demo should
   automatically color the segments/points
+- rename file names to match the names of the classes they contain
