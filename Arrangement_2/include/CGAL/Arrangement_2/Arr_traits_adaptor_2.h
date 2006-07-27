@@ -81,13 +81,11 @@ public:
   class Compare_x_2
   {
   public:
-#if defined(EFIX)
     /*! Constructor
-     * \param base the traits base class. It must be passed, in case it not
-     * stateless (e.g., it stores data)
+     * \param base the base traits class. It must be passed, to handle the
+     * case it is not stateless (e.g., it stores data)
      */
-    Compare_x_2(const Base * base) : m_object(base->compare_x_2_object()) {}
-#endif
+    Compare_x_2(const Base * base) : m_base(base) {}
     
     /*!
      * Redefining the mandatory comparison operator.
@@ -95,12 +93,7 @@ public:
     Comparison_result operator() (const Point_2& p1,
                                   const Point_2& p2) const
     {
-#if defined(EFIX)
-      return (m_object(p1, p2));
-#else
-      Base                    tr;
-      return (tr.compare_x_2_object() (p1, p2));
-#endif
+      return (m_base->compare_x_2_object() (p1, p2));
     }
 
     /*!
@@ -146,10 +139,8 @@ public:
     }
 
   private:
-#if defined(EFIX)
-    /*! The base-traits functor */
-    typename Base::Compare_x_2 m_object;
-#endif
+    /*! The base traits */
+    const Base * m_base;
     
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
@@ -159,8 +150,7 @@ public:
                                                 Curve_end ind,
                                                 Tag_true) const
     {
-      Base                    tr;
-      return (tr.compare_x_2_object() (p, cv, ind));
+      return (m_base->compare_x_2_object() (p, cv, ind));
     }
 
     /*!
@@ -183,8 +173,7 @@ public:
                                            Curve_end ind2,
                                            Tag_true) const
     {
-      Base                    tr;
-      return (tr.compare_x_2_object() (cv1, ind1, cv2, ind2));
+      return (m_base->compare_x_2_object() (cv1, ind1, cv2, ind2));
     }
 
     /*!
@@ -204,17 +193,18 @@ public:
   /*! Get a Compare_x_2 functor object. */
   Compare_x_2 compare_x_2_object () const
   {
-#if defined(EFIX)
     return Compare_x_2(this);
-#else
-    return Compare_x_2();
-#endif    
   }
 
 
   class Compare_y_at_x_2
   {
   public:
+    /*! Constructor
+     * \param base the base traits class. It must be passed, to handle the
+     * case it is not stateless (e.g., it stores data)
+     */
+    Compare_y_at_x_2(const Base * base) : m_base(base) {}
 
     /*!
      * Redefining the mandatory comparison operator.
@@ -222,8 +212,7 @@ public:
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv) const
     {
-      Base                    tr;
-      return (tr.compare_y_at_x_2_object() (p, cv));
+      return (m_base->compare_y_at_x_2_object() (p, cv));
     }
 
     /*!
@@ -249,6 +238,8 @@ public:
     }
 
   private:
+    /*! The base traits */
+    const Base * m_base;
 
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
@@ -258,8 +249,7 @@ public:
                                                Curve_end ind,
                                                Tag_true) const
     {
-      Base                    tr;
-      return (tr.compare_y_at_x_2_object() (cv1, cv2, ind));
+      return (m_base->compare_y_at_x_2_object() (cv1, cv2, ind));
     }
 
     /*!
@@ -277,13 +267,19 @@ public:
   /*! Get a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
-    return Compare_y_at_x_2();
+    return Compare_y_at_x_2(this);
   }
 
 
   class Compare_y_at_x_left_2
   {
   public:
+    /*! Constructor
+     * \param self the traits class. It must be passed, to handle the case
+     * it is not stateless (e.g., it stores data)
+     */
+    Compare_y_at_x_left_2(const Self * self) : m_self(self) {}
+
     /*!
      * Compare two curves immediately to the left of their intersection point.
      * \param cv1 The first curve.
@@ -306,6 +302,8 @@ public:
     }
 
   private:
+    /*! The traits */
+    const Self * m_self;
 
     /*!
      * Implementation of the operator() in case the HasLeft tag is true.
@@ -315,8 +313,8 @@ public:
                                                 const Point_2& p,
                                                 Tag_true) const
     {
-      Base                    tr;
-      return (tr.compare_y_at_x_left_2_object() (cv1, cv2, p));
+      const Base * base = m_self;
+      return (base->compare_y_at_x_left_2_object() (cv1, cv2, p));
     }
 
     /*!
@@ -327,11 +325,11 @@ public:
                                                 const Point_2& p,
                                                 Tag_false) const
     {
-      Self                    tr;
-      Infinite_in_x_2         infinite_x = tr.infinite_in_x_2_object();
-      Infinite_in_y_2         infinite_y = tr.infinite_in_y_2_object();
-      Construct_min_vertex_2  min_vertex = tr.construct_min_vertex_2_object();
-      Equal_2                 equal = tr.equal_2_object();
+      Infinite_in_x_2      infinite_x = m_self->infinite_in_x_2_object();
+      Infinite_in_y_2      infinite_y = m_self->infinite_in_y_2_object();
+      Construct_min_vertex_2 min_vertex =
+        m_self->construct_min_vertex_2_object();
+      Equal_2              equal = m_self->equal_2_object();
 
       // Check if the left ends of the curves are bounded endpoints.
       const Infinity_type  inf_x1 = infinite_x (cv1, MIN_END);
@@ -348,8 +346,8 @@ public:
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
       CGAL_precondition_code (
-        Compare_xy_2        compare_xy = tr.compare_xy_2_object();
-        Compare_y_at_x_2    compare_y_at_x = tr.compare_y_at_x_2_object();
+        Compare_xy_2       compare_xy = m_self->compare_xy_2_object();
+        Compare_y_at_x_2   compare_y_at_x = m_self->compare_y_at_x_2_object();
       );
 
       CGAL_precondition (compare_y_at_x (p, cv1) == EQUAL &&
@@ -361,7 +359,7 @@ public:
                           compare_xy(min_vertex (cv2), p) == SMALLER));
 
       // If one of the curves is vertical, it is below the other one.
-      Is_vertical_2           is_vertical = tr.is_vertical_2_object();
+      Is_vertical_2       is_vertical = m_self->is_vertical_2_object();
 
       if (is_vertical(cv1))
       {
@@ -388,27 +386,33 @@ public:
         {
           // The two curves have a common left endpoint:
           // Compare them to the right of this point.
-          return (tr.compare_y_at_x_right_2_object() (cv1, cv2, left1));
+          return (m_self->compare_y_at_x_right_2_object() (cv1, cv2, left1));
         }    
       }
 
       // We now that the curves do not shar a common endpoint, and we can
       // compare their relative y-position (which does not change to the left
       // of the given point p).
-      return (tr.compare_y_position_2_object() (cv1, cv2));      
+      return (m_self->compare_y_position_2_object() (cv1, cv2));      
     }
   };
 
   /*! Get a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
   {
-    return Compare_y_at_x_left_2();
+    return Compare_y_at_x_left_2(this);
   }
 
 
   class Infinite_in_x_2
   {
   public:
+    /*! Constructor
+     * \param self the traits class. It must be passed, to handle the case
+     * it is not stateless (e.g., it stores data)
+     */
+    Infinite_in_x_2(const Self * self) : m_self(self) {}
+
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
@@ -428,6 +432,8 @@ public:
     }
 
   private:
+    /*! The traits */
+    const Self * m_self;
 
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
@@ -436,8 +442,7 @@ public:
                                       Curve_end ind,
                                       Tag_true) const
     {
-      Base                    tr;
-      return (tr.infinite_in_x_2_object() (cv, ind));
+      return (m_self->infinite_in_x_2_object() (cv, ind));
     }
 
     /*!
@@ -453,13 +458,19 @@ public:
   /*! Get an Infinite_in_x_2 functor object. */
   Infinite_in_x_2 infinite_in_x_2_object () const
   {
-    return Infinite_in_x_2();
+    return Infinite_in_x_2(this);
   }
 
 
   class Infinite_in_y_2
   {
   public:
+    /*! Constructor
+     * \param self the traits class. It must be passed, to handle the case
+     * it is not stateless (e.g., it stores data)
+     */
+    Infinite_in_y_2(const Self * self) : m_self(self) {}
+
     /*!
      * Check if an end of a given x-monotone curve is infinite at y.
      * \param cv The curve.
@@ -479,6 +490,8 @@ public:
     }
 
   private:
+    /*! The traits */
+    const Self * m_self;
 
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
@@ -487,8 +500,7 @@ public:
                                       Curve_end ind,
                                       Tag_true) const
     {
-      Base                    tr;
-      return (tr.infinite_in_y_2_object() (cv, ind));
+      return (m_self->infinite_in_y_2_object() (cv, ind));
     }
 
     /*!
@@ -504,7 +516,7 @@ public:
   /*! Get an Infinite_in_y_2 functor object. */
   Infinite_in_y_2 infinite_in_y_2_object () const
   {
-    return Infinite_in_y_2();
+    return Infinite_in_y_2(this);
   }
   //@}
 
@@ -513,6 +525,12 @@ public:
   class Is_in_x_range_2
   {
   public:
+    /*! Constructor
+     * \param self the traits class. It must be passed, to handle the case
+     * it is not stateless (e.g., it stores data)
+     */
+    Is_in_x_range_2(const Self * self) : m_self(self) {}
+
     /*!
      * Check whether the given point is in the x-range of the given x-monotone
      * curve.
@@ -522,10 +540,9 @@ public:
      */
     bool operator() (const X_monotone_curve_2& cv, const Point_2& p) const
     {
-      Self                    tr;
-      Infinite_in_x_2         infinite_x = tr.infinite_in_x_2_object();
-      Infinite_in_y_2         infinite_y = tr.infinite_in_y_2_object();
-      Compare_x_2             compare_x = tr.compare_x_2_object();
+      Infinite_in_x_2     infinite_x = m_self->infinite_in_x_2_object();
+      Infinite_in_y_2     infinite_y = m_self->infinite_in_y_2_object();
+      Compare_x_2         compare_x =  m_self->compare_x_2_object();
 
       // Compare p to the position of the left end of the curve.
       // Note that if the left end of cv lies at x = -oo, p is obviously to
@@ -542,7 +559,7 @@ public:
         if (inf_y == FINITE)
         {
           // The left endpoint of cv is a normal point.
-          res = compare_x (p, tr.construct_min_vertex_2_object() (cv));
+          res = compare_x (p, m_self->construct_min_vertex_2_object() (cv));
         }
         else
         {
@@ -568,7 +585,7 @@ public:
       if (inf_y == FINITE)
       {
         // The right endpoint of cv is a normal point.
-        res = compare_x (p, tr.construct_max_vertex_2_object() (cv));
+        res = compare_x (p, m_self->construct_max_vertex_2_object() (cv));
       }
       else
       {
@@ -589,12 +606,13 @@ public:
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
-      Self                    tr;
-      Infinite_in_x_2         infinite_x = tr.infinite_in_x_2_object();
-      Infinite_in_y_2         infinite_y = tr.infinite_in_y_2_object();
-      Compare_x_2             compare_x = tr.compare_x_2_object();
-      Construct_min_vertex_2  min_vertex = tr.construct_min_vertex_2_object();
-      Construct_max_vertex_2  max_vertex = tr.construct_max_vertex_2_object();
+      Infinite_in_x_2         infinite_x = m_self->infinite_in_x_2_object();
+      Infinite_in_y_2         infinite_y = m_self->infinite_in_y_2_object();
+      Compare_x_2             compare_x = m_self->compare_x_2_object();
+      Construct_min_vertex_2  min_vertex =
+        m_self->construct_min_vertex_2_object();
+      Construct_max_vertex_2  max_vertex =
+        m_self->construct_max_vertex_2_object();
 
       // Locate the rightmost of the two left endpoints of the two curves.
       // Note that we guard for curves with infinite ends.
@@ -771,17 +789,27 @@ public:
       // of cv_l is not to the right if the right end of cv_r.
       return (res != LARGER);
     }
+
+  private:
+    /*! The traits */
+    const Self * m_self;
   };
 
   /*! Get an Is_in_x_range_2 functor object. */
   Is_in_x_range_2 is_in_x_range_2_object () const
   {
-    return Is_in_x_range_2();
+    return Is_in_x_range_2(this);
   }
 
   class Compare_y_position_2
   {
   public:
+    /*! Constructor
+     * \param self the traits class. It must be passed, to handle the case
+     * it is not stateless (e.g., it stores data)
+     */
+    Compare_y_position_2(const Self * self) : m_self(self) {}
+
     /*!
      * Get the relative of two x-monotone curves with overlapping x-ranges
      * that are disjoint in their interiors.
@@ -796,15 +824,16 @@ public:
                                   const X_monotone_curve_2& cv2) const
     {
       CGAL_precondition_code (
-        Is_in_x_range_2  is_in_x_range;
+        Is_in_x_range_2  is_in_x_range = m_self->is_in_x_range_2_object();
       );
       CGAL_precondition (is_in_x_range (cv1, cv2));
 
-      Self                    tr;
-      Infinite_in_x_2         infinite_x = tr.infinite_in_x_2_object();
-      Infinite_in_y_2         infinite_y = tr.infinite_in_y_2_object();
-      Construct_min_vertex_2  min_vertex = tr.construct_min_vertex_2_object();
-      Compare_y_at_x_2        compare_y_at_x = tr.compare_y_at_x_2_object();
+      Infinite_in_x_2         infinite_x = m_self->infinite_in_x_2_object();
+      Infinite_in_y_2         infinite_y = m_self->infinite_in_y_2_object();
+      Compare_y_at_x_2        compare_y_at_x =
+        m_self->compare_y_at_x_2_object();
+      Construct_min_vertex_2  min_vertex =
+        m_self->construct_min_vertex_2_object();
  
       // First check whether any of the curves is defined at x = -oo.
       const Infinity_type     inf_x1 = infinite_x (cv1, MIN_END);
@@ -874,8 +903,8 @@ public:
           // Both curves have vertical asymptotes at y = -oo (or at y = +oo).
           // Check which asymptote is the rightmost. Note that in this case
           // the vertical asymptotes cannot be equal.
-          l_res = tr.compare_x_2_object() (cv1, MIN_END,
-                                           cv2, MIN_END);
+          l_res = m_self->compare_x_2_object() (cv1, MIN_END,
+                                                cv2, MIN_END);
           CGAL_assertion (l_res != EQUAL);
 
           if (inf_y1 == PLUS_INFINITY)
@@ -888,7 +917,7 @@ public:
         // Compare the x-positions of this endpoint and the asymptote.
         const Point_2&  left2 = min_vertex(cv2);
         
-        l_res = tr.compare_x_2_object() (left2, cv1, MIN_END);
+        l_res = m_self->compare_x_2_object() (left2, cv1, MIN_END);
 
         if (l_res == LARGER)
         {
@@ -915,7 +944,7 @@ public:
         // Compare the x-positions of this endpoint and the asymptote.
         const Point_2&  left1 = min_vertex(cv1);
         
-        l_res = tr.compare_x_2_object() (left1, cv2, MIN_END);
+        l_res = m_self->compare_x_2_object() (left1, cv2, MIN_END);
 
         if (l_res == LARGER)
         {
@@ -932,9 +961,9 @@ public:
       }
 
       // In this case we compare two normal points.
-      Compare_xy_2            compare_xy = tr.compare_xy_2_object();
+      Compare_xy_2            compare_xy = m_self->compare_xy_2_object();
       Compare_y_at_x_right_2  compare_y_at_x_right =
-                                           tr.compare_y_at_x_right_2_object();
+        m_self->compare_y_at_x_right_2_object();
 
       // Get the left endpoints of cv1 and cv2.
       const Point_2&  left1 = min_vertex(cv1);
@@ -977,17 +1006,27 @@ public:
         return ((res == SMALLER) ? LARGER : SMALLER);
       }
     }
+
+  private:
+    /*! The traits */
+    const Self * m_self;
   };
 
   /*! Get a Compare_y_position_2 functor object. */
   Compare_y_position_2 compare_y_position_2_object () const
   {
-    return Compare_y_position_2();
+    return Compare_y_position_2(this);
   }
 
   class Is_between_cw_2
   {
   public:
+    /*! Constructor
+     * \param self the traits class. It must be passed, to handle the case
+     * it is not stateless (e.g., it stores data)
+     */
+    Is_between_cw_2(const Self * self) : m_self(self) {}
+
     /*!
      * Check whether the given query curve is encountered when rotating the
      * first curve in a clockwise direction around a given point until reaching
@@ -1015,10 +1054,10 @@ public:
                      bool& cv_equal_cv1, 
                      bool& cv_equal_cv2) const
     {
-      Base                    tr;
+      Compare_y_at_x_left_2   compare_y_at_x_left =
+        m_self->compare_y_at_x_left_2_object();
       Compare_y_at_x_right_2  compare_y_at_x_right =
-                                           tr.compare_y_at_x_right_2_object();
-      Compare_y_at_x_left_2   compare_y_at_x_left;
+        m_self->compare_y_at_x_right_2_object();
 
       // Initialize output flags.
       cv_equal_cv1 = false;
@@ -1180,25 +1219,34 @@ public:
       }
       else
       {
-	res2 = compare_y_at_x_left (cv2, cv, p);
+        res2 = compare_y_at_x_left (cv2, cv, p);
         
-	if (res2 == EQUAL)
-	  cv_equal_cv2 = true;
+        if (res2 == EQUAL)
+          cv_equal_cv2 = true;
 	
-	return (res2 == LARGER);
+        return (res2 == LARGER);
       }
     }
+    
+  private:
+    /*! The traits */
+    const Self * m_self;
   };
 
   /*! Get an Is_between_cw_2 functor object. */
   Is_between_cw_2 is_between_cw_2_object () const
   {
-    return Is_between_cw_2();
+    return Is_between_cw_2(this);
   }
 
   class Compare_cw_around_point_2
   {
   public:
+    /*! Constructor
+     * \param self the traits class. It must be passed, to handle the case
+     * it is not stateless (e.g., it stores data)
+     */
+    Compare_cw_around_point_2(const Self * self) : m_self(self) {}
     
     /*!
      * Compare the two interior disjoint x-monotone curves in a clockwise
@@ -1222,14 +1270,12 @@ public:
                                   const Point_2& p,
                                   bool from_top = true) const
     {
-      Base           tr;
-
       // Act according to where cv1 and cv2 lie.
       if (!cv1_to_right && !cv2_to_right)
       {
         // Both are defined to the left of p, and we encounter cv1 before
         // cv2 if it is below cv2:
-        return (tr.compare_y_at_x_left_2_object() (cv1, cv2, p));
+        return (m_self->compare_y_at_x_left_2_object() (cv1, cv2, p));
       }
       
       if (cv1_to_right && cv2_to_right)
@@ -1237,14 +1283,14 @@ public:
         // Both are defined to the right of p, and we encounter cv1 before
         // cv2 if it is above cv2. We therefore reverse the order of the
         // curves when we invoke compare_y_at_x_right:
-        return (tr.compare_y_at_x_right_2_object() (cv2, cv1, p));
+        return (m_self->compare_y_at_x_right_2_object() (cv2, cv1, p));
       }
       
       if (!cv1_to_right && cv2_to_right)
       {
         // If we start from the top, we encounter the right curve (which
         // is cv2) first. If we start from the bottom, we encounter cv1 first.
-	return (from_top ? LARGER : SMALLER);
+        return (from_top ? LARGER : SMALLER);
       }
 
       CGAL_assertion (cv1_to_right && !cv2_to_right);
@@ -1253,12 +1299,16 @@ public:
       // is cv1) first. If we start from the bottom, we encounter cv2 first.
       return (from_top ? SMALLER : LARGER);
     }
+
+  private:
+    /*! The traits */
+    const Self * m_self;
   };
 
   /*! Get a Compare_cw_around_point_2 functor object. */
   Compare_cw_around_point_2 compare_cw_around_point_2_object () const
   {
-    return Compare_cw_around_point_2();
+    return Compare_cw_around_point_2(this);
   }
   //@}
 };
@@ -1319,6 +1369,12 @@ public:
   class Are_mergeable_2
   {
   public:
+    /*! Constructor
+     * \param base the base traits class. It must be passed, to handle the
+     * case it is not stateless (e.g., it stores data)
+     */
+    Are_mergeable_2(const Base * base) : m_base(base) {}
+
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
@@ -1334,6 +1390,8 @@ public:
     }
 
   private:
+    /*! The base traits */
+    const Base * m_base;
 
     /*!
      * Implementation of the operator() in case the HasMerge tag is true.
@@ -1342,8 +1400,7 @@ public:
            const X_monotone_curve_2& cv2,
            Tag_true) const
     {
-      Base                    tr;
-      return (tr.are_mergeable_2_object() (cv1, cv2));      
+      return (m_base->are_mergeable_2_object() (cv1, cv2));      
     }
 
     /*!
@@ -1361,12 +1418,18 @@ public:
   /*! Get an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object () const
   {
-    return Are_mergeable_2();
+    return Are_mergeable_2(this);
   }
 
   class Merge_2
   {
   public:
+    /*! Constructor
+     * \param base the base traits class. It must be passed, to handle the
+     * case it is not stateless (e.g., it stores data)
+     */
+    Merge_2(const Base * base) : m_base(base) {}
+
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
@@ -1384,6 +1447,8 @@ public:
     }
 
   private:
+    /*! The base traits */
+    const Base * m_base;
 
     /*!
      * Implementation of the operator() in case the HasMerge tag is true.
@@ -1393,8 +1458,7 @@ public:
                      X_monotone_curve_2& c,
                      Tag_true) const
     {
-      Base                    tr;
-      return (tr.merge_2_object() (cv1, cv2, c));      
+      return (m_base->merge_2_object() (cv1, cv2, c));      
     }
 
     /*!
@@ -1414,7 +1478,7 @@ public:
   /*! Get a Merge_2 functor object. */
   Merge_2 merge_2_object () const
   {
-    return Merge_2();
+    return Merge_2(this);
   }
   //@}
 
