@@ -1,3 +1,2 @@
-- restore the changes in the examples directory (example3.C and example4.C)
-- rewrite the face base class so that the additional edges are provided
-  by an adaptor.
+- rename file names if needed to match the names of the classes
+  they contain
