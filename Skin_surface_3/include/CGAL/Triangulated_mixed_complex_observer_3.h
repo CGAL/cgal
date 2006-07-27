@@ -84,7 +84,7 @@ public:
       Rt_Edge          e;
       Rt_Facet         f;
       Rt_Cell_handle   ch;
-
+      
       switch (s.dimension()) {
       case 0:
 	{
@@ -156,6 +156,7 @@ public:
       }
     }
     ch->surf = surf;
+    ch->simplex = s;
   }
 
   Surface_RT shrink;

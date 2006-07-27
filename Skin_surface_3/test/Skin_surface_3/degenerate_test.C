@@ -15,110 +15,51 @@ typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
-bool test(char * filename, double shrink) {
-  std::list<Weighted_point> l;
-  std::ifstream in(filename);
-  CGAL_assertion(in.is_open());
-  Weighted_point wp;
-  while (in >> wp) l.push_front(wp);
+class Test_file {
+public:
+  Test_file(double shrink) : s(shrink) {
+  }
+  void operator()(char * filename) {
+    std::cout << filename << std::endl;
 
-  Skin_surface_3 skin_surface(l.begin(), l.end(), shrink);
+    std::list<Weighted_point> l;
+    std::ifstream in(filename);
+    CGAL_assertion(in.is_open());
+    Weighted_point wp;
+    while (in >> wp) l.push_front(wp);
+    
+    Skin_surface_3 skin_surface(l.begin(), l.end(), s);
+    
+    Polyhedron p;
+    CGAL::mesh_skin_surface_3(skin_surface, p);
+    
+    CGAL_assertion(p.is_valid() && p.is_closed());
+  }
+private:
+  double s;
+};
 
-  Polyhedron p;
-  CGAL::mesh_skin_surface_3(skin_surface, p);
-
-  return (p.is_valid() && p.is_closed());
-}
 
 int main(int argc, char *argv[]) {
-  bool result;
-  char *filename;
 
-  filename = "data/caffeine.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/ball.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/degenerate.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test1.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test2.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test3.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test4.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test5.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test6.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test7.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test8.cin";
-  CGAL_assertion(result);
-  result = test(filename, .5);
-  filename = "data/test9.cin";
-  CGAL_assertion(result);
-  result = test(filename, .5);
-  filename = "data/test10.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-  filename = "data/test11.cin";
-  result = test(filename, .5);
-  CGAL_assertion(result);
-
-  filename = "data/caffeine.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/ball.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/degenerate.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test1.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test2.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test3.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test4.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test5.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test6.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test7.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test8.cin";
-  CGAL_assertion(result);
-  result = test(filename, .85);
-  filename = "data/test9.cin";
-  CGAL_assertion(result);
-  result = test(filename, .85);
-  filename = "data/test10.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
-  filename = "data/test11.cin";
-  result = test(filename, .85);
-  CGAL_assertion(result);
+  std::vector<char *> filenames;
+  filenames.push_back("data/caffeine.cin");
+  filenames.push_back("data/ball.cin");
+  filenames.push_back("data/degenerate.cin");
+  filenames.push_back("data/test1.cin");
+  filenames.push_back("data/test2.cin");
+  filenames.push_back("data/test3.cin");
+  filenames.push_back("data/test4.cin");
+  filenames.push_back("data/test5.cin");
+  filenames.push_back("data/test6.cin");
+  filenames.push_back("data/test7.cin");
+  filenames.push_back("data/test8.cin");
+  filenames.push_back("data/test9.cin");
+  filenames.push_back("data/test10.cin");
+  filenames.push_back("data/test11.cin");
+  
+  std::for_each(filenames.begin(), filenames.end(), Test_file(.5));
+  std::for_each(filenames.begin(), filenames.end(), Test_file(.85));
 
   return 0;
 }

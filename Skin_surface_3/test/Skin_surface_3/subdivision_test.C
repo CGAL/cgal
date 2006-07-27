@@ -32,18 +32,38 @@ Skin_surface_3 create_skin_surface(char * filename, double shrink) {
 }
 
 template < class Skin_surface_3, class Polyhedron>
-bool construct_and_subdivide_mesh(Skin_surface_3 &skin_surface,
+void construct_and_subdivide_mesh(Skin_surface_3 &skin_surface,
 				  Polyhedron &polyhedron) 
 {
   CGAL::mesh_skin_surface_3(skin_surface, polyhedron);
   CGAL_assertion(polyhedron.is_valid() && polyhedron.is_closed());
 
   CGAL::subdivide_skin_surface_mesh_3(polyhedron, skin_surface);
-  return (polyhedron.is_valid() && polyhedron.is_closed());
+  CGAL_assertion(polyhedron.is_valid() && polyhedron.is_closed());
 }
 
+class Test_file {
+public:
+  Test_file(double shrink) : s(shrink) {
+  }
+  void operator()(char * filename) {
+    std::cout << filename << std::endl;
+    
+    Skin_surface_3 skin_surface = create_skin_surface(filename, .5);
+    
+    Polyhedron p;
+    construct_and_subdivide_mesh(skin_surface, p);
+    p.clear();
+    
+    Polyhedron_skin p_skin;
+    construct_and_subdivide_mesh(skin_surface, p_skin);
+    p_skin.clear();
+  }
+private:
+  double s;
+};
+
 int main(int argc, char *argv[]) {
-  bool result; 
 
   std::vector<char *> filenames;
   filenames.push_back("data/caffeine.cin");
@@ -61,20 +81,8 @@ int main(int argc, char *argv[]) {
   filenames.push_back("data/test10.cin");
   filenames.push_back("data/test11.cin");
 
-  Polyhedron p;
-  Polyhedron_skin p_skin;
-  for (std::vector<char *>::size_type i=0; i<filenames.size(); i++) {
-    Skin_surface_3 skin_surface = create_skin_surface(filenames[i], .5);
-    Polyhedron p;
-
-    result = construct_and_subdivide_mesh(skin_surface, p);
-    CGAL_assertion(result);
-    p.clear();
-
-    result = construct_and_subdivide_mesh(skin_surface, p_skin);
-    CGAL_assertion(result);
-    p_skin.clear();
-  }
+  for_each(filenames.begin(), filenames.end(), Test_file(.5));
+  for_each(filenames.begin(), filenames.end(), Test_file(.25));
 
   return 0;
 }

@@ -1476,6 +1476,7 @@ Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/main_doc -text
+Skin_surface_3/test/Skin_surface_3/data/inexact_tmc_fails.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test1.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test10.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test11.cin -text

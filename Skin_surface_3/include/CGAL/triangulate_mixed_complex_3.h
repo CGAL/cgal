@@ -48,7 +48,7 @@ public:
   typedef RegularTriangulation_3                   Regular;
   typedef TriangulatedMixedComplex_3               Triangulated_mixed_complex;
   typedef TriangulatedMixedComplexObserver_3
-  Triangulated_mixed_complex_observer;
+                                          Triangulated_mixed_complex_observer;
 private:
   typedef typename Regular::Vertex_handle            Rt_Vertex_handle;
   typedef typename Regular::Edge                     Rt_Edge;

@@ -41,12 +41,14 @@ public:
   RT value(Input_point const &x) const {
     typedef Cartesian_converter<typename Input_point::R, K> Converter;
     
-    Vector v = Converter()(x) - p;
+    RT vx = Converter()(x.x()) - p.x();
+    RT vy = Converter()(x.y()) - p.y();
+    RT vz = Converter()(x.z()) - p.z();
 
     return 
-      v.x()*(Q[0]*v.x()) +
-      v.y()*(Q[1]*v.x()+Q[2]*v.y()) +
-      v.z()*(Q[3]*v.x()+Q[4]*v.y()+Q[5]*v.z()) +
+      vx*(Q[0]*vx) +
+      vy*(Q[1]*vx+Q[2]*vy) +
+      vz*(Q[3]*vx+Q[4]*vy+Q[5]*vz) +
       c;
   }
   template <class Input_point>

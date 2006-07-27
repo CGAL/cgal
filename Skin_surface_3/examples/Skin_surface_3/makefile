@@ -44,7 +44,8 @@ all:            \
                 skin_surface_simple$(EXE_EXT) \
                 skin_surface_subdiv$(EXE_EXT) \
                 skin_surface_subdiv_with_normals$(EXE_EXT) \
-                union_of_balls_simple$(EXE_EXT) 
+                union_of_balls_simple$(EXE_EXT) \
+                skin_surface_with_surface_mesher$(EXE_EXT)
 
 NGHK_skin_surface_simple$(EXE_EXT): NGHK_skin_surface_simple$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)NGHK_skin_surface_simple NGHK_skin_surface_simple$(OBJ_EXT) $(LDFLAGS)
@@ -73,12 +74,16 @@ skin_surface_subdiv_with_normals$(EXE_EXT): skin_surface_subdiv_with_normals$(OB
 union_of_balls_simple$(EXE_EXT): union_of_balls_simple$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_balls_simple union_of_balls_simple$(OBJ_EXT) $(LDFLAGS)
 
+skin_surface_with_surface_mesher$(EXE_EXT): skin_surface_with_surface_mesher$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)skin_surface_with_surface_mesher skin_surface_with_surface_mesher$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    skin_surface_pdb_reader.clean \
                    skin_surface_simple.clean \
                    skin_surface_subdiv.clean \
                    skin_surface_subdiv_with_normals.clean \
                    union_of_balls_simple.clean \
+                   skin_surface_with_surface_mesher.clean \
                    NGHK_skin_surface_simple.clean \
                    NGHK_skin_surface_subdiv.clean
 
@@ -88,4 +93,3 @@ clean: \
 
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-

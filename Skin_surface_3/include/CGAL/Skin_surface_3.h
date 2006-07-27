@@ -31,10 +31,14 @@
 
 #include <CGAL/triangulate_mixed_complex_3.h>
 
+// Needed for the (Delaunay) surface mesher
+#include <CGAL/Skin_surface_mesher_oracle_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
+
 CGAL_BEGIN_NAMESPACE 
 
 template < class GT, 
-           class QuadraticSurface, 
+           class SkinSurface_3, 
 	   class Cb = Triangulation_cell_base_3<GT> >
 class Triangulated_mixed_complex_cell_3 : public Cb
 {
@@ -43,12 +47,13 @@ public:
   typedef typename Triangulation_data_structure::Vertex_handle Vertex_handle;
   typedef typename Triangulation_data_structure::Cell_handle   Cell_handle;
 
-  typedef QuadraticSurface                                     Quadratic_surface;
+  typedef typename SkinSurface_3::Quadratic_surface           Quadratic_surface;
+  typedef typename SkinSurface_3::Simplex                     Simplex;
 	
   template < class TDS2 >
   struct Rebind_TDS {
     typedef typename Cb::template Rebind_TDS<TDS2>::Other  Cb2;
-    typedef Triangulated_mixed_complex_cell_3<GT, Quadratic_surface, Cb2>
+    typedef Triangulated_mixed_complex_cell_3<GT, SkinSurface_3, Cb2>
                                                            Other;
   };
 
@@ -64,6 +69,7 @@ public:
 //     return surf->sign(p);
 //   }
   Quadratic_surface *surf;
+  Simplex simp;
 };
 
 template < class GT, 
@@ -92,35 +98,41 @@ public:
 template <class SkinSurfaceTraits_3> 
 class Skin_surface_3 {
   typedef SkinSurfaceTraits_3             Gt;
+  typedef Skin_surface_3<Gt>              Self;
 public:
   typedef SkinSurfaceTraits_3             Geometric_traits;
   typedef typename Gt::Weighted_point     Weighted_point;
   typedef typename Weighted_point::Weight RT;
+  // NGHK:: added for the Delaunay mesher
+  typedef typename Gt::Sphere_3           Sphere_3;
 private:
   typedef typename Weighted_point::Point  Bare_point;
   
   typedef Regular_triangulation_3<Gt>     Regular;
 
 public:
+  // NGHK: remove later?
+  typedef Triangulation_simplex_3<Regular>               Simplex;
+
   // defining the triangulated mixed complex:
   typedef Exact_predicates_exact_constructions_kernel    TMC_traits;
 
-#ifdef CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
   typedef Skin_surface_quadratic_surface_3<TMC_traits>   Quadratic_surface;
-#else
-  typedef Skin_surface_quadratic_surface_3<Simple_cartesian<double> > 
-                                                         Quadratic_surface;
-#endif // CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
 
   typedef Triangulation_3<
     TMC_traits,
     Triangulation_data_structure_3
     < Triangulated_mixed_complex_vertex_3<TMC_traits>,
-      Triangulated_mixed_complex_cell_3<TMC_traits,Quadratic_surface> > 
+      Triangulated_mixed_complex_cell_3<TMC_traits,Self> > 
   >                                      Triangulated_mixed_complex;
 
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
+
+  // NGHK: added for the (Delaunay) surface mesher, document
+  typedef Exact_predicates_inexact_constructions_kernel  Mesher_Gt;
+  typedef Skin_surface_mesher_oracle_3<Mesher_Gt,Self> Surface_mesher_traits_3;
+
 private:
   typedef typename TMC_traits::Point_3                       TMC_Point;
   
@@ -153,7 +165,7 @@ public:
     }
     
     // Construct the triangulated mixed complex:
-    triangulate_mixed_complex_3(regular, shrink, _tmc,verbose);
+    triangulate_mixed_complex_3(regular, shrink, _tmc, verbose);
     
     CGAL_assertion(_tmc.is_valid());
     if (verbose) {
@@ -174,15 +186,45 @@ public:
   }
   
   TMC_Cell_handle locate(const TMC_Point &p) const{
-    return _tmc.locate(p);
+    last_ch = _tmc.locate(p, last_ch);
+    return last_ch;
   }
+
+
+  // NGHK: added for the (Delaunay) surface mesher, document
+  Sphere_3 bounding_sphere() const {
+    return _bounding_sphere;
+  }
+  RT squared_error_bound() const {
+    return .01;
+  }
+  Sign operator()(const Bare_point &p) const {
+     Cartesian_converter<typename Bare_point::R, TMC_traits > converter;
+     TMC_Point p_tmc = converter(p);
+     TMC_Cell_handle ch = locate(p_tmc);
+     if (_tmc.is_infinite(ch)) {
+       // Infinite cells do not have a pointer to a surface
+       return NEGATIVE;
+     }
+     return ch->surf->sign(p_tmc);
+  }
+  typename Mesher_Gt::FT 
+  get_density(const typename Mesher_Gt::Point_3 &p) const {
+    // NGHK: Make adaptive
+    return 1;
+  }
+
 private:
+  // Used to optimize the point location in TMC:
+  mutable TMC_Cell_handle last_ch;
+
   void construct_bounding_box(Regular &regular);
 
   Gt &gt;
   RT shrink;
   Triangulated_mixed_complex _tmc;
   bool verbose;
+  Sphere_3 _bounding_sphere;
 };
 
 template <class SkinSurfaceTraits_3> 
@@ -226,6 +268,9 @@ construct_bounding_box(Regular &regular)
       Bare_point(mid.x(),mid.y(),bbox.zmax()+(dx+dy+dr)/shrink),-1));
     regular.insert(Weighted_point(
       Bare_point(mid.x(),mid.y(),bbox.zmin()-(dx+dy+dr)/shrink),-1));
+
+    // Set the bounding sphere for the Delaunay mesher
+    _bounding_sphere = Sphere_3(mid, dr*dr+1);
   }
 }
 
