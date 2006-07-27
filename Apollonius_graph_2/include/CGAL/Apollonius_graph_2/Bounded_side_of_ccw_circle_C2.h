@@ -23,10 +23,7 @@
 #define CGAL_APOLLONIUS_GRAPH_2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H
 
 #include <CGAL/Apollonius_graph_2/basic.h>
-//#include <CGAL/enum.h>
-//#include <CGAL/Number_type_traits.h>
-
-//#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
+#include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
