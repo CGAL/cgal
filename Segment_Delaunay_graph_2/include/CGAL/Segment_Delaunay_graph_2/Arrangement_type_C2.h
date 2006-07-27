@@ -33,7 +33,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+
+namespace Internal {
   struct Sdg_arrangement_enum {
     enum Arrangement_type {
       DISJOINT = 0, // obvious
@@ -197,18 +199,19 @@ namespace CGALi {
   }
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_ARRANGEMENT_TYPE_OUTPUT_OPERATOR
 
-} // namespace CGALi
+} // namespace Internal
 
+//---------------------------------------------------------------------
 //---------------------------------------------------------------------
 
 template<class RT>
-typename CGALi::Sdg_arrangement_enum::Arrangement_type
+typename Internal::Sdg_arrangement_enum::Arrangement_type
 sdg_arrangement_type_ftC2(const RT& x1, const RT& y1,
 			  const RT& x2, const RT& y2,
 			  const RT& x3, const RT& y3,
 			  const RT& x4, const RT& y4)
 {
-  typedef CGALi::Sdg_arrangement_enum Enum;
+  typedef Internal::Sdg_arrangement_enum Enum;
 
   RT delta = -det2x2_by_formula(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
 
@@ -226,14 +229,14 @@ sdg_arrangement_type_ftC2(const RT& x1, const RT& y1,
 //---------------------------------------------------------------------
 
 template<class RT>
-typename CGALi::Sdg_arrangement_enum::Arrangement_type
+typename Internal::Sdg_arrangement_enum::Arrangement_type
 sdg_arrangement_type_non_parallel_C2(const RT& x1, const RT& y1,
 				     const RT& x2, const RT& y2,
 				     const RT& x3, const RT& y3,
 				     const RT& x4, const RT& y4,
 				     const RT& D)
 {
-  typedef CGALi::Sdg_arrangement_enum Enum;
+  typedef Internal::Sdg_arrangement_enum Enum;
 
   RT Dt = -det2x2_by_formula(x3 - x1, x4 - x3,
 			     y3 - y1, y4 - y3);
@@ -307,13 +310,13 @@ sdg_arrangement_type_non_parallel_C2(const RT& x1, const RT& y1,
 //---------------------------------------------------------------------
 
 template<class RT>
-typename CGALi::Sdg_arrangement_enum::Arrangement_type
+typename Internal::Sdg_arrangement_enum::Arrangement_type
 sdg_arrangement_type_parallel_C2(const RT& x1, const RT& y1,
 				 const RT& x2, const RT& y2,
 				 const RT& x3, const RT& y3,
 				 const RT& x4, const RT& y4)
 {
-  typedef CGALi::Sdg_arrangement_enum  Enum;
+  typedef Internal::Sdg_arrangement_enum  Enum;
 
   RT D1 = det2x2_by_formula(x2 - x1, x3 - x1,
 			    y2 - y1, y3 - y1);
@@ -439,14 +442,14 @@ sdg_arrangement_type_parallel_C2(const RT& x1, const RT& y1,
 //---------------------------------------------------------------------
 
 template<class K>
-class Sdg_arrangement_type_C2
-  : public Sdg_basic_predicates_C2<K>, public CGALi::Sdg_arrangement_enum
+class Arrangement_type_C2
+  : public Basic_predicates_C2<K>, public Internal::Sdg_arrangement_enum
 {
 public:
   typedef Arrangement_type              result_type;
 
 private:
-  typedef Sdg_basic_predicates_C2<K>    Base;
+  typedef Basic_predicates_C2<K>        Base;
 
   typedef typename Base::Point_2        Point_2;
   typedef typename Base::Segment_2      Segment_2;
@@ -458,12 +461,12 @@ private:
 
   typedef typename K::Orientation_2     Orientation_2;
 
-  typedef Sdg_are_same_points_C2<K>     Are_same_points_C2;
-  typedef Sdg_are_same_segments_C2<K>   Are_same_segments_C2;
+  typedef Are_same_points_C2<K>         Are_same_points_2;
+  typedef Are_same_segments_C2<K>       Are_same_segments_2;
 
 private:
-  Are_same_points_C2     same_points;
-  Are_same_segments_C2   same_segments;
+  Are_same_points_2     same_points;
+  Are_same_segments_2   same_segments;
 
 private:
   bool inside_segment(const Site_2& s, const Site_2& p) const
@@ -661,6 +664,8 @@ public:
 };
 
 //---------------------------------------------------------------------
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

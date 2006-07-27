@@ -1,3 +1,7 @@
+27 July 2006:  Menelaos Karavelas
+- moved predicate code to SegmentDelaunayGraph_2 namespace
+- removed unused code and corresponding files
+
 26 July 2006:  Menelaos Karavelas
 - fixed bug in hierarchy: the bug appeared in cases where the
   hierarchy was inserting segments at higher levels and there were

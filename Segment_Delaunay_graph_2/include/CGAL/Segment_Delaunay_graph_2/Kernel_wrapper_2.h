@@ -33,7 +33,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+
+namespace Internal {
 
   template<class K, class ITag> struct SDG_Which_site;
 
@@ -64,12 +66,12 @@ namespace CGALi {
     Construct_site_2;
   };
 
-} // namespace CGALi
+} // namespace Internal
 
 
 
 template<class Kernel_base_2, class ITag>
-class Segment_Delaunay_graph_kernel_wrapper_2
+class Kernel_wrapper_2
   : public Kernel_base_2
 {
 public:
@@ -77,122 +79,15 @@ public:
   typedef ITag             Intersections_tag;
 
   typedef typename
-  CGALi::SDG_Which_site<Kernel_base,Intersections_tag>::Site_2  Site_2;
+  Internal::SDG_Which_site<Kernel_base,Intersections_tag>::Site_2  Site_2;
 
   typedef typename
-  CGALi::SDG_Which_site<Kernel_base,Intersections_tag>::Construct_site_2
+  Internal::SDG_Which_site<Kernel_base,Intersections_tag>::Construct_site_2
   Construct_site_2;  
 };
 
 
-
-
-template<class K1, class K2, class Converter>
-class Sdg_cartesian_converter : public Converter
-{
-private:
-  typedef typename K1::Site_2     K1_Site_2;
-  typedef typename K1::Point_2    K1_Point_2;
-
-  typedef typename K2::Site_2     K2_Site_2;
-  typedef typename K2::Point_2    K2_Point_2;
-
-  typedef Converter               Base;
-
-  typedef typename K1::Intersections_tag  Intersections_tag;
-
-private:
-  static const Intersections_tag&  intersections_tag()
-  {
-    static Intersections_tag itag;
-    return itag;
-  }
-
-private:
-  // with intersections
-  K2_Site_2 convert_site(const K1_Site_2& t, const Tag_true&) const
-  {
-    if ( t.is_point() ) {
-      if ( t.is_input() ) {
-	return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
-      } else {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site(0)),
-	    Base::operator()(t.target_of_supporting_site(0)),
-	    Base::operator()(t.source_of_supporting_site(1)),
-	    Base::operator()(t.target_of_supporting_site(1)) );
-      }
-    }
-
-    if ( t.is_input() ) {
-      return K2_Site_2::construct_site_2
-	( Base::operator()(t.source_of_supporting_site()),
-	  Base::operator()(t.target_of_supporting_site()) );
-    } else {
-      if ( t.is_input(0) ) {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(1)),
-	    Base::operator()(t.target_of_crossing_site(1)),
-	    true );
-      } else if ( t.is_input(1) ) {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(0)),
-	    Base::operator()(t.target_of_crossing_site(0)),
-	    false );
-      } else {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(0)),
-	    Base::operator()(t.target_of_crossing_site(0)),
-	    Base::operator()(t.source_of_crossing_site(1)),
-	    Base::operator()(t.target_of_crossing_site(1)) );
-      }
-    }
-  }
-
-  // without intersections
-  K2_Site_2 convert_site(const K1_Site_2& t, const Tag_false&) const
-  {
-    if ( t.is_point() ) {
-      return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
-    }
-
-    // t is a segment
-    return K2_Site_2::construct_site_2
-      ( Base::operator()(t.source_of_supporting_site()),
-	Base::operator()(t.target_of_supporting_site()) );    
-  }
-
-public:
-  K2_Site_2
-  operator()(const K1_Site_2& t) const
-  {
-    return convert_site(t, intersections_tag());
-  }
-
-#if defined(CGAL_CFG_USING_BASE_MEMBER_BUG) || defined(_MSC_VER) \
-    || defined(__sgi)
-  K2_Point_2
-  operator()(const K1_Point_2& p) const
-  {
-    return Base::operator()(p);
-  }
-
-  Sign
-  operator()(const Sign& s) const
-  {
-    return s;
-  }
-#else
-  using Base::operator();
-#endif
-};
-
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

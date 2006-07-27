@@ -21,10 +21,14 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_ARE_SAME_POINTS_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_ARE_SAME_POINTS_C2_H
 
+#include <CGAL/Segment_Delaunay_graph_2/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+
 template<class K>
-class Sdg_are_same_points_C2
+class Are_same_points_C2
 {
 private:
   typedef typename K::Point_2     Point_2;
@@ -86,7 +90,7 @@ public:
   }
 };
 
-
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

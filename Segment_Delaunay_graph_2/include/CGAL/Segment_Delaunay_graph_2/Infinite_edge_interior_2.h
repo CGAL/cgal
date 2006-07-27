@@ -23,22 +23,24 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_INFINITE_EDGE_INTERIOR_2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+
 //-----------------------------------------------------------------------------
 
 template<class K, class Method_tag>
-class Sdg_infinite_edge_interior_2
+class Infinite_edge_interior_conflict_C2
 {
 public:
   typedef typename K::Site_2           Site_2;
   typedef typename K::RT               RT;
-  typedef Sdg_are_same_points_C2<K>    Are_same_points_2;
-  typedef Sdg_are_same_segments_C2<K>  Are_same_segments_2;
+  typedef Are_same_points_C2<K>        Are_same_points_2;
+  typedef Are_same_segments_C2<K>      Are_same_segments_2;
 
   typedef bool                         result_type;
   struct argument_type {};
@@ -108,6 +110,8 @@ public:
 
 
 //-----------------------------------------------------------------------------
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

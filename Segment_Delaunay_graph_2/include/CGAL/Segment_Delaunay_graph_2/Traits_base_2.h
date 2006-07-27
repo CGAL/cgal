@@ -30,7 +30,6 @@
 
 #if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Segment_Delaunay_graph_2/Predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Predicates_ftC2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 #endif
 
@@ -39,285 +38,19 @@
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
 
 
-
-
 CGAL_BEGIN_NAMESPACE
 
-//***********************************************************************
-//***********************************************************************
-//                              PREDICATES
-//***********************************************************************
-//***********************************************************************
-
 //-----------------------------------------------------------------------
-//                           orientation
 //-----------------------------------------------------------------------
-
-template< class K >
-class Sdg_orientation_2
-{
-public:
-  typedef typename K::Site_2         Site_2;
-  typedef typename K::Point_2        Point_2;
-  typedef Orientation                result_type;
-  typedef Arity_tag<3>               Arity;
-
-private:
-  typedef typename K::Orientation_2  orientation_2;
-
-public:
-
-  result_type operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& r) const
-  {
-    CGAL_precondition( p.is_point() && q.is_point() && r.is_point() );
-    return sdg_orientation_C2<K>( p, q, r );
-  }
-};
-
-
 //-----------------------------------------------------------------------
-//                           are same points
-//-----------------------------------------------------------------------
-
-template< class K >
-class Are_same_points_2
-{
-public:
-  typedef typename K::Site_2        Site_2;
-  typedef typename K::Point_2       Point_2;
-  typedef bool                      result_type;
-  typedef Arity_tag<2>              Arity;
-
-public:
-
-  result_type operator()(const Site_2& p, const Site_2& q) const
-  {
-    CGAL_precondition( p.is_point() && q.is_point() );
-    return sdg_are_same_points_C2<K>(p, q);
-  }
-};
-
-//-----------------------------------------------------------------------
-//                           are parallel
-//-----------------------------------------------------------------------
-
-
-template< class K >
-class Are_parallel_2
-{
-public:
-  typedef typename K::Site_2       Site_2;
-  typedef bool                     result_type;
-  typedef Arity_tag<2>             Arity;
-
-public:
-  result_type operator()(const Site_2& p, const Site_2& q) const
-  {
-    return sdg_are_parallel_C2<K>(p, q);
-  }
-};
-
-
-
-//-----------------------------------------------------------------------
-//                       oriented side of bisector
-//-----------------------------------------------------------------------
-
-template<class K, class Method_tag>
-class Sdg_oriented_side_of_bisector_2
-{
-public:
-  typedef typename K::Site_2     Site_2;
-  typedef Oriented_side          result_type;
-  typedef Arity_tag<3>           Arity;
-
-public:
-  result_type operator()(const Site_2& t1, const Site_2& t2,
-			 const Site_2& q) const
-  {
-    return sdg_oriented_side_of_bisector_ftC2<K,Method_tag>
-      (t1, t2, q, Method_tag());
-  }
-
-};
-
-//-----------------------------------------------------------------------
-//                           vertex conflict
-//-----------------------------------------------------------------------
-
-
-template< class K, class Method_tag >
-class Sdg_vertex_conflict_2
-{
-public:
-  typedef typename K::Site_2  Site_2;
-  typedef Sign                result_type;
-
-  struct Arity {};
-
-public:
-  result_type operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& t) const
-  {
-    return
-      sdg_vertex_conflict_ftC2<K,Method_tag>(p, q, t, Method_tag());
-  }
-
-  result_type operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& r, const Site_2& t) const
-  {
-    return
-      sdg_vertex_conflict_ftC2<K,Method_tag>(p, q, r, t, Method_tag());
-  }
-};
-
-//-----------------------------------------------------------------------
-//                   finite edge interior conflict
-//-----------------------------------------------------------------------
-
-template< class K, class Method_tag >
-class Sdg_finite_edge_interior_conflict_2
-{
-public:
-  typedef typename K::Site_2  Site_2;
-  typedef bool                result_type;
-
-  struct Arity {};
-
-public:
-  result_type operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& t, Sign sgn) const
-  {
-    return
-      sdg_finite_edge_conflict_ftC2<K,Method_tag>(p, q, t,
-						  sgn, Method_tag());
-  }
-
-
-  result_type
-  operator()(const Site_2& p, const Site_2& q,
-	     const Site_2& r, const Site_2& t, Sign sgn) const
-  {
-    return
-      sdg_finite_edge_conflict_ftC2<K,Method_tag>(p, q, r, t,
-						  sgn, Method_tag());
-  }
-
-  result_type operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& r, const Site_2& s,
-			 const Site_2& t, Sign sgn) const
-  {
-    return
-      sdg_finite_edge_conflict_ftC2<K,Method_tag>(p, q, r, s, t,
-						  sgn, Method_tag());
-  }
-
-};
-
-
-//-----------------------------------------------------------------------
-//                   infinite edge interior conflict
-//-----------------------------------------------------------------------
-
-
-template< class K, class Method_tag >
-class Sdg_infinite_edge_interior_conflict_2
-{
-public:
-  typedef typename K::Site_2  Site_2;
-  typedef bool                result_type;
-  typedef Arity_tag<5>        Arity;
-
-public:
-  result_type
-  operator()(const Site_2& q, const Site_2& r, const Site_2& s,
-	     const Site_2& t, Sign sgn) const
-  {
-    return
-      sdg_infinite_edge_conflict_ftC2<K,Method_tag>(q, r, s, t,
-						    sgn, Method_tag());
-  }
-
-};
-
-//-----------------------------------------------------------------------
-//                          is degenerate edge
-//-----------------------------------------------------------------------
-
-template< class K, class Method_tag >
-class Sdg_is_degenerate_edge_2
-{
-public:
-  typedef typename K::Site_2  Site_2;
-  typedef bool                result_type;
-  typedef Arity_tag<4>        Arity;
-
-public:
-  result_type operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& r, const Site_2& s) const
-  {
-    return
-      sdg_is_degenerate_edge_ftC2<K,Method_tag>(p, q, r, s, Method_tag());
-  }
-};
-
-//-----------------------------------------------------------------------
-//                          do intersect
-//-----------------------------------------------------------------------
-
-template< class K, class Method_tag >
-class Sdg_arrangement_type_2
-  : public CGALi::Sdg_arrangement_enum
-{
-public:
-  typedef typename K::Site_2     Site_2;
-  typedef Arrangement_type       result_type;
-  typedef Arity_tag<2>           Arity;
-
-public:
-  result_type operator()(const Site_2& p, const Site_2& q) const
-  {
-    return
-      sdg_arrangement_type_C2<K,Method_tag>(p, q, Method_tag());
-  }
-};
-
-
-//-----------------------------------------------------------------------
-//                          oriented side
-//-----------------------------------------------------------------------
-
-template< class K, class Method_tag >
-class Sdg_oriented_side_2
-{
-public:
-  typedef typename K::Site_2     Site_2;
-  typedef Oriented_side          result_type;
-
-  struct Arity {};
-
-public:
-  result_type
-  operator()(const Site_2& q, const Site_2& s, const Site_2& p) const
-  {
-    return sdg_oriented_side_ftC2<K,Method_tag>(q, s, p, Method_tag());
-  }
-
-  result_type
-  operator()(const Site_2& s1, const Site_2& s2, const Site_2& s3,
-	     const Site_2& s, const Site_2& p) const
-  {
-    return
-      sdg_oriented_side_ftC2<K,Method_tag>(s1, s2, s3, s, p, Method_tag());
-  }
-};
-
-
-
 //-----------------------------------------------------------------------
 // the Traits class
 //-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+
+
 template<class R, class MTag, class ITag>
 class Segment_Delaunay_graph_traits_base_2
 {
@@ -329,10 +62,11 @@ public:
   // BASIC TYPES
   //------------
   
-  typedef Segment_Delaunay_graph_kernel_wrapper_2<R,ITag>  Kernel;
-  typedef Kernel                                           K;
-  typedef R                                                Rep;
-  typedef MTag                                             Method_tag;
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Kernel_wrapper_2<R,ITag>  Kernel;
+  typedef Kernel                                              K;
+  typedef R                                                   Rep;
+  typedef MTag                                                Method_tag;
 
   // the following tag controls how support intersections in the
   // traits. If it is Tag_true then we fully support intersections.
@@ -352,7 +86,10 @@ public:
   typedef typename Kernel::FT                     FT;
   typedef typename Kernel::RT                     RT;
 
-  typedef CGALi::Sdg_arrangement_enum::Arrangement_type Arrangement_type;
+protected:
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Sdg_arrangement_enum
+  Arrangement_enum;
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
@@ -363,26 +100,65 @@ public:
   // CONSTRUCTIONS
   //--------------
   // vertex and Voronoi circle
-  typedef CGAL::Construct_svd_vertex_2<K,MTag>  Construct_svd_vertex_2;
-  //  typedef CGAL::Construct_svd_circle_2<K,MTag>  Construct_svd_circle_2;
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_svd_vertex_2<K,MTag>
+  Construct_svd_vertex_2;
+
+  /*
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_svd_circle_2<K,MTag>
+  Construct_svd_circle_2;
+  */
 
   // PREDICATES
   //-----------
-  typedef CGAL::Sdg_compare_x_2<K>                      Compare_x_2;
-  typedef CGAL::Sdg_compare_y_2<K>                      Compare_y_2;
-  typedef CGAL::Sdg_orientation_2<K>                    Orientation_2;
-  typedef CGAL::Are_same_points_2<K>                    Equal_2;
-  typedef CGAL::Are_parallel_2<K>                       Are_parallel_2;
-  typedef CGAL::Sdg_oriented_side_of_bisector_2<K,MTag> 
-  /*                                          */ Oriented_side_of_bisector_2;
-  typedef CGAL::Sdg_vertex_conflict_2<K,MTag >             Vertex_conflict_2;
-  typedef CGAL::Sdg_finite_edge_interior_conflict_2<K,MTag >
-  /*                                      */ Finite_edge_interior_conflict_2;
-  typedef CGAL::Sdg_infinite_edge_interior_conflict_2<K,MTag>
-  /*                                    */ Infinite_edge_interior_conflict_2;
-  typedef CGAL::Sdg_is_degenerate_edge_2<K,MTag>        Is_degenerate_edge_2;
-  typedef CGAL::Sdg_arrangement_type_2<K,MTag>          Arrangement_type_2;
-  typedef CGAL::Sdg_oriented_side_2<K,MTag>             Oriented_side_2;
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Compare_x_2<K>
+  Compare_x_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Compare_y_2<K>
+  Compare_y_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Orientation_C2<K>
+  Orientation_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Are_same_points_C2<K>
+  Equal_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Are_parallel_C2<K>
+  Are_parallel_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Oriented_side_of_bisector_C2<K,MTag>
+  Oriented_side_of_bisector_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Vertex_conflict_C2<K,MTag>
+  Vertex_conflict_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Finite_edge_interior_conflict_C2<K,MTag>
+  Finite_edge_interior_conflict_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Infinite_edge_interior_conflict_C2<K,MTag>
+  Infinite_edge_interior_conflict_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Is_degenerate_edge_C2<K,MTag>
+  Is_degenerate_edge_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Arrangement_type_C2<K>
+  Arrangement_type_2;
+
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Oriented_side_C2<K,MTag>
+  Oriented_side_2;
 
 public:
   //-----------------------------------------------------------------------

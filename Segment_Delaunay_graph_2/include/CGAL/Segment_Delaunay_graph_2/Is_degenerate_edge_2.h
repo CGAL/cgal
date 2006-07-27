@@ -24,29 +24,29 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_IS_DEGENERATE_EDGE_2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+
 //-----------------------------------------------------------------------------
 
-
-
 template<class K, class Method_tag>
-class Sdg_is_degenerate_edge_C2
+class Is_degenerate_edge_C2
 {
 public:
   typedef typename K::Site_2      Site_2;
 
 private:
-  typedef CGAL::Sdg_voronoi_vertex_2<K,Method_tag>  Voronoi_vertex_2;
-
-  typedef Sdg_are_same_points_C2<K>   Are_same_points_C2;
+  typedef Voronoi_vertex_C2<K,Method_tag>  Voronoi_vertex_2;
+  typedef Are_same_points_C2<K>            Are_same_points_2;
 
   bool is_endpoint(const Site_2& p, const Site_2& s) const
   {
     CGAL_precondition( p.is_point() && s.is_segment() );
-    Are_same_points_C2 same_points;
+    Are_same_points_2 same_points;
 
     return
       same_points(p, s.source_site()) || same_points(p, s.target_site());
@@ -73,6 +73,8 @@ public:
 
 
 //-----------------------------------------------------------------------------
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

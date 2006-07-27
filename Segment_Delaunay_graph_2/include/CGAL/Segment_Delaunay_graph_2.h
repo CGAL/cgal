@@ -66,13 +66,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
-  template<typename Edge, typename LTag> struct SDG_which_list;
+namespace Internal {
+
+  template<typename Edge, typename LTag> struct Which_list;
 
   // use the in-place edge list
   template<typename E>
-  struct SDG_which_list<E,Tag_true>
+  struct Which_list<E,Tag_true>
   {
     typedef E                           Edge;
     typedef In_place_edge_list<Edge>    List;
@@ -80,7 +82,7 @@ namespace CGALi {
 
   // do not use the in-place edge list
   template<typename E>
-  struct SDG_which_list<E,Tag_false>
+  struct Which_list<E,Tag_false>
   {
     typedef E                                 Edge;
     // change the following to Tag_false in order to use
@@ -91,7 +93,7 @@ namespace CGALi {
 
 
   template < class Node >
-  struct Sdg_project_site_2 {
+  struct Project_site_2 {
     typedef Node                   argument_type;
     typedef typename Node::Site_2  Site;
     typedef Site                   result_type;
@@ -104,7 +106,7 @@ namespace CGALi {
   };
 
   template < class Node, class Site_t >
-  struct Sdg_project_input_to_site_2 {
+  struct Project_input_to_site_2 {
     typedef Node                   argument_type;
     typedef Site_t                 Site;
     typedef Site                   result_type;
@@ -137,7 +139,9 @@ namespace CGALi {
   {
   };
 
-} // namespace CGALi
+} // namespace Internal
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 
 template<class Gt, class STag, class ST, class DS, class LTag >
@@ -229,7 +233,9 @@ protected:
   typedef typename Input_sites_container::const_iterator
   All_inputs_iterator;
 
-  typedef CGALi::Sdg_project_input_to_site_2<Site_rep_2, Site_2>
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::
+  Project_input_to_site_2<Site_rep_2, Site_2>
   Proj_input_to_site;
 
 public:
@@ -239,7 +245,8 @@ public:
   typedef typename DS::size_type                 size_type;
 
 protected:
-  typedef CGALi::Sdg_project_site_2<Vertex>      Proj_site;
+  typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Project_site_2<Vertex>
+  Proj_site;
 
   typedef typename Point_container::const_iterator const_Point_handle;
 
@@ -292,7 +299,9 @@ protected:
   typedef typename Storage_traits::Storage_site_2   Storage_site_2;
 
   // the edge list
-  typedef typename CGALi::SDG_which_list<Edge,List_tag>::List  List;
+  typedef typename
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Which_list<Edge,List_tag>::List 
+  List;
 
 public:
   // CREATION
@@ -704,7 +713,8 @@ public:
 		       Vertex_handle vnear)
   {
     typedef typename Storage_traits::Info Info;
-    CGALi::Check_type_equality_for_info<Info_t, Info>();
+    CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::
+      Check_type_equality_for_info<Info_t, Info>();
     // the intended use is to unify the calls to insert(...);
     // thus the site must be an exact one; 
     CGAL_precondition( t.is_input() );
@@ -1254,16 +1264,21 @@ protected:
   //-------------------------------------------
 
   // types
-  typedef CGAL::Construct_sdg_circle_2<Gt,Ring_tag>
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_circle_2<Gt,Ring_tag>
   Construct_sdg_circle_2;
 
-  typedef CGAL::Construct_sdg_bisector_2<Gt,Ring_tag>
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_2<Gt,Ring_tag>
   Construct_sdg_bisector_2;
 
-  typedef CGAL::Construct_sdg_bisector_ray_2<Gt,Ring_tag>
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_ray_2<Gt,Ring_tag>
   Construct_sdg_bisector_ray_2;
 
-  typedef CGAL::Construct_sdg_bisector_segment_2<Gt,Ring_tag>
+  typedef
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
+  Construct_sdg_bisector_segment_2<Gt,Ring_tag>
   Construct_sdg_bisector_segment_2;
 
   // access

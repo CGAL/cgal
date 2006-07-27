@@ -23,23 +23,25 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_ORIENTED_SIDE_C2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------------
 
 
 
 template<class K, class Method_tag>
-class Sdg_oriented_side_C2
-  : public Sdg_basic_predicates_C2<K>
+class Oriented_side_C2
+  : public Basic_predicates_C2<K>
 {
 private:
 
-  typedef Sdg_basic_predicates_C2<K>          Base;
-  typedef Sdg_voronoi_vertex_2<K,Method_tag>  Voronoi_vertex_2;
+  typedef Basic_predicates_C2<K>              Base;
+  typedef Voronoi_vertex_C2<K,Method_tag>     Voronoi_vertex_2;
   
   typedef typename Base::Point_2              Point_2;
   typedef typename Base::Segment_2            Segment_2;
@@ -49,9 +51,10 @@ private:
   typedef typename Base::RT                   RT;
 
 public:
-  typedef Oriented_side              result_type;
-  typedef Site_2                     argument_type;
-  typedef Arity_tag<5>               Arity;
+  typedef typename Base::Oriented_side        Oriented_side;
+  typedef Oriented_side                       result_type;
+  typedef Site_2                              argument_type;
+  typedef Arity_tag<5>                        Arity;
 
   // computes the oriented side of the point q
   // wrt the line that is passes through the point p and its direction
@@ -89,6 +92,8 @@ public:
 
 
 //-----------------------------------------------------------------------------
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

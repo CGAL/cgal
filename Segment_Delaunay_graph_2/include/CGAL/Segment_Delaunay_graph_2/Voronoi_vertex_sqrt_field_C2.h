@@ -25,23 +25,22 @@
 
 
 
-#include <CGAL/enum.h>
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 
-
-
 CGAL_BEGIN_NAMESPACE
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
 
 template<class K>
-class Sdg_voronoi_vertex_sqrt_field_C2
-  : public Sdg_basic_predicates_C2<K>
+class Voronoi_vertex_sqrt_field_C2
+  : public Basic_predicates_C2<K>
 {
 public:
-  typedef Sdg_basic_predicates_C2<K> Base;
+  typedef Basic_predicates_C2<K> Base;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -59,13 +58,13 @@ public:
   typedef typename Base::Homogeneous_point_2 Homogeneous_point_2;
 
 private:
-  typedef Sdg_are_same_points_C2<K>    Are_same_points_C2;
-  typedef Sdg_are_same_segments_C2<K>  Are_same_segments_C2;
+  typedef Are_same_points_C2<K>    Are_same_points_2;
+  typedef Are_same_segments_C2<K>  Are_same_segments_2;
 
   typedef typename K::Intersections_tag ITag;
 
-  Are_same_points_C2     same_points;
-  Are_same_segments_C2   same_segments;
+  Are_same_points_2     same_points;
+  Are_same_segments_2   same_segments;
 
 
 private:
@@ -1077,9 +1076,9 @@ public:
   vertex_t type() const { return v_type; }
 
 public:
-  Sdg_voronoi_vertex_sqrt_field_C2(const Site_2& p,
-				   const Site_2& q,
-				   const Site_2& r)
+  Voronoi_vertex_sqrt_field_C2(const Site_2& p,
+			       const Site_2& q,
+			       const Site_2& r)
     : p_(p), q_(q), r_(r)
   {
     compute_vertex(p, q, r);
@@ -1142,6 +1141,7 @@ private:
 
 
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

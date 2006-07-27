@@ -23,6 +23,7 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VERTEX_C2_H
 
 
+#include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_ring_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_C2.h>
@@ -30,70 +31,44 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
-#if 0
-  template<class M>
-  struct Sdg_which_base_C2
-  {
-    template<class K>
-    struct Which_base {
-      typedef Sdg_voronoi_vertex_ring_C2<K>  Base;
-    };
-  };
+namespace Internal {
 
-  template <>
-  struct Sdg_which_base_C2<Sqrt_field_tag>
-  {
-    template <class K>
-    struct Which_base {
-      typedef Sdg_voronoi_vertex_sqrt_field_C2<K>  Base;
-    };
-  };
-#else
-
-  // with partial specialization:
-  template<class K,class M> struct Sdg_which_base_C2;
+  template<class K,class M> struct Which_Voronoi_vertex_base_C2;
 
   template<class K>
-  struct Sdg_which_base_C2<K,Ring_tag>
+  struct Which_Voronoi_vertex_base_C2<K,Ring_tag>
   {
-    typedef Sdg_voronoi_vertex_ring_C2<K>  Base;
+    typedef Voronoi_vertex_ring_C2<K>          Base;
   };
 
   template<class K>
-  struct Sdg_which_base_C2<K,Sqrt_field_tag>
+  struct Which_Voronoi_vertex_base_C2<K,Sqrt_field_tag>
   {
-    typedef Sdg_voronoi_vertex_sqrt_field_C2<K>  Base;
+    typedef Voronoi_vertex_sqrt_field_C2<K>    Base;
   };
-
-
-#endif
-
-} // namespace CGALi
-
+} // namespace Internal
 
 //----------------------------------------------------------------------
 
 template<class K, class M>
-class Sdg_voronoi_vertex_C2
-//  : public CGALi::Sdg_which_base_C2<M>::template Which_base<K>::Base
-// using partial specialization:
-  : public CGALi::Sdg_which_base_C2<K,M>::Base
+class Voronoi_vertex_C2
+  : public Internal::Which_Voronoi_vertex_base_C2<K,M>::Base
 {
 private:
-  //  typedef typename
-  //  CGALi::Sdg_which_base_C2<M>::template Which_base<K>::Base  Base;
-  typedef typename CGALi::Sdg_which_base_C2<K,M>::Base   Base;
+  typedef typename Internal::Which_Voronoi_vertex_base_C2<K,M>::Base  Base;
 
 protected:
   typedef typename Base::Site_2   Site_2;
 public:
-  Sdg_voronoi_vertex_C2(const Site_2& p, const Site_2& q,
-			const Site_2& r)
+  Voronoi_vertex_C2(const Site_2& p, const Site_2& q,
+		    const Site_2& r)
     : Base(p, q, r) {}
 };
 
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

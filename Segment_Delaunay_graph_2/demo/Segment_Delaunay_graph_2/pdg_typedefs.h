@@ -73,7 +73,9 @@ typedef Gt::Segment_2          Segment;
 typedef CGAL::Polygon_2<Rep>   Polygon_2;
 typedef Gt::Site_2             Site;
 
-typedef CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,ITag>           Vb;
+typedef CGAL::Storage_traits_2<Gt>                                    ST;
+
+typedef CGAL::Segment_Delaunay_graph_vertex_base_2<ST>                Vb;
 typedef CGAL::Segment_Delaunay_graph_vertex_base_with_info_2<Vb,int>  Vbi;
 typedef CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbi>     Vbh;
 typedef CGAL::Triangulation_face_base_2<Gt>                           Fb;
@@ -81,8 +83,7 @@ typedef CGAL::Triangulation_data_structure_2<Vbh,Fb>                  DS;
 
 
 
-
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>   SDG_2;
-//typedef CGAL::Segment_Delaunay_graph_2<Gt,DS>          SDG_2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS>   SDG_2;
+//typedef CGAL::Segment_Delaunay_graph_2<Gt,ST,DS>          SDG_2;
 
 #endif  // PDG_TYPEDEFS_H

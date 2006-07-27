@@ -21,36 +21,39 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_COMPARE_X_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_COMPARE_X_2_H
 
+#include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------
 //                           compare x
 //-----------------------------------------------------------------------
 
 template< class K >
-class Sdg_compare_x_2
+class Compare_x_2
 {
 public:
-  typedef typename K::Site_2         Site_2;
-  typedef typename K::Point_2        Point_2;
+  typedef typename K::Site_2              Site_2;
+  typedef typename K::Point_2             Point_2;
 
-  typedef Comparison_result          result_type;
-
-  typedef Arity_tag<2>               Arity;
+  typedef typename K::Comparison_result   result_type;
+  typedef Arity_tag<2>                    Arity;
 
 private:
-  typedef typename K::Compare_x_2    compare_x_2;
+  typedef typename K::Compare_x_2         Kernel_compare_x_2;
 
 public:
 
   result_type operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
-    return compare_x_2()( p.point(), q.point() );
+    return Kernel_compare_x_2()( p.point(), q.point() );
   }
 };
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

@@ -25,6 +25,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/Filtered_traits_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Filtered_traits_concept_check_tags.h>
 
 // includes for the default parameters of the filtered traits
 #ifdef CGAL_USE_GMP
@@ -39,146 +40,11 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/number_utils_classes.h>
 
+#include <CGAL/Segment_Delaunay_graph_2/SunPro_CC_fix.h>
 
 CGAL_BEGIN_NAMESPACE
 
-#if defined(__sun) && defined(__SUNPRO_CC)
-// workaround for the Sun CC-5.30 compiler; it does not like default
-// template parameters that are themselves templates and have
-// templated classes as parameters, which have then nested types as
-// arguments... oooof!!!
-//
-// In case you did understand what I just described you are most
-// probably crazy... If you did not, look below to see what kind of
-// code CC-5.30 did not like.
-namespace CGALi {
-
-  template<class CK, class FK>
-  struct SDG_SUNPRO_CC_Interval_converter
-    : public Cartesian_converter<CK, FK,
-                                 To_interval< typename CK::RT > >
-  {
-  };
-
-}
-#endif
-
-namespace CGALi {
-
-  template<class D, class T, int>
-  struct SDG_Concept_check_tags {};
-
-  template<class D>
-  struct SDG_Concept_check_tags<D,Ring_tag,2>
-  {
-    SDG_Concept_check_tags() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags<D,Ring_tag,4> {
-    SDG_Concept_check_tags() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags<D,Ring_tag,6> {
-    SDG_Concept_check_tags() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  //-------------------------------------------------------------------------
-
-  template<class D>
-  struct SDG_Concept_check_tags<D,Euclidean_ring_tag,2>
-  {
-    SDG_Concept_check_tags() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags<D,Euclidean_ring_tag,4> {
-    SDG_Concept_check_tags() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags<D,Euclidean_ring_tag,6> {
-    SDG_Concept_check_tags() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  //=========================================================================
-
-  template<class D, class T, int>
-  struct SDG_Concept_check_tags_wi {};
-
-  template<class D>
-  struct SDG_Concept_check_tags_wi<D,Field_tag,2>
-  {
-    SDG_Concept_check_tags_wi() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags_wi<D,Field_tag,4> {
-    SDG_Concept_check_tags_wi() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags_wi<D,Field_tag,6> {
-    SDG_Concept_check_tags_wi() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  //-------------------------------------------------------------------------
-
-  template<class D>
-  struct SDG_Concept_check_tags_wi<D,Euclidean_ring_tag,2>
-  {
-    SDG_Concept_check_tags_wi() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags_wi<D,Euclidean_ring_tag,4> {
-    SDG_Concept_check_tags_wi() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-  template<class D>
-  struct SDG_Concept_check_tags_wi<D,Euclidean_ring_tag,6> {
-    SDG_Concept_check_tags_wi() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
-      ( D() );
-    }
-  };
-
-}
-
+#define SDG2_INS CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
@@ -203,7 +69,7 @@ template<class CK,
 	 class FK_MTag = Sqrt_field_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
 #if defined(__sun) && defined(__SUNPRO_CC)
-         class C2F     = CGALi::SDG_SUNPRO_CC_Interval_converter<CK, FK> >
+         class C2F     = SDG2_INS::SUNPRO_CC_Interval_converter<CK, FK> >
 #else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
@@ -217,9 +83,9 @@ struct Segment_Delaunay_graph_filtered_traits_2
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    CGALi::SDG_Concept_check_tags<Ring_tag,CK_MTag,2>();
-    CGALi::SDG_Concept_check_tags<Ring_tag,EK_MTag,4>();
-    CGALi::SDG_Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
   }
 };
 
@@ -238,8 +104,8 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    CGALi::SDG_Concept_check_tags<Ring_tag,EK_MTag,4>();
-    CGALi::SDG_Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
   }
 };
 
@@ -257,8 +123,8 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, CK_MTag,
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    CGALi::SDG_Concept_check_tags<Ring_tag,CK_MTag,2>();
-    CGALi::SDG_Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
   }
 };
 
@@ -276,8 +142,8 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, CK_MTag,
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    CGALi::SDG_Concept_check_tags<Ring_tag,CK_MTag,2>();
-    CGALi::SDG_Concept_check_tags<Ring_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
   }
 };
 
@@ -295,7 +161,7 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, CK_MTag,
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    CGALi::SDG_Concept_check_tags<Ring_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
   }
 };
 
@@ -313,7 +179,7 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    CGALi::SDG_Concept_check_tags<Ring_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
   }
 };
 
@@ -331,7 +197,7 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    CGALi::SDG_Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
   }
 };
 
@@ -363,7 +229,7 @@ template<class CK,
 	 class FK_MTag = Sqrt_field_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
 #if defined(__sun) && defined(__SUNPRO_CC)
-         class C2F     = CGALi::SDG_SUNPRO_CC_Interval_converter<CK, FK> >
+         class C2F     = SDG2_INS::SUNPRO_CC_Interval_converter<CK, FK> >
 #else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
@@ -376,12 +242,13 @@ struct Segment_Delaunay_graph_filtered_traits_without_intersections_2
 							 Tag_false>
 {
   Segment_Delaunay_graph_filtered_traits_without_intersections_2() {
-    CGALi::SDG_Concept_check_tags_wi<Ring_tag,CK_MTag,2>();
-    CGALi::SDG_Concept_check_tags_wi<Ring_tag,EK_MTag,4>();
-    CGALi::SDG_Concept_check_tags_wi<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags_wi<Ring_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags_wi<Ring_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags_wi<Ring_tag,FK_MTag,6>();
   }
 };
 
+#undef SDG2_INS
 
 CGAL_END_NAMESPACE
 

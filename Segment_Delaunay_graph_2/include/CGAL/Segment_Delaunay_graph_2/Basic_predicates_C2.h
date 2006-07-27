@@ -24,6 +24,7 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_BASIC_PREDICATES_C2_H
 
 
+#include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/enum.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Delaunay_graph_2/Sqrt_extension_1.h>
@@ -33,20 +34,25 @@
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
 template<class K>
-struct Sdg_basic_predicates_C2
+struct Basic_predicates_C2
 {
 public:
   //-------------------------------------------------------------------
   // TYPES
   //-------------------------------------------------------------------
 
-  typedef typename K::RT         RT;
-  typedef typename K::FT         FT;
-  typedef typename K::Point_2    Point_2;
-  typedef typename K::Segment_2  Segment_2;
-  typedef typename K::Site_2     Site_2;
+  typedef typename K::RT                  RT;
+  typedef typename K::FT                  FT;
+  typedef typename K::Point_2             Point_2;
+  typedef typename K::Segment_2           Segment_2;
+  typedef typename K::Site_2              Site_2;
+  typedef typename K::Oriented_side       Oriented_side;
+  typedef typename K::Comparison_result   Comparison_result;
+  typedef typename K::Sign                Sign;
+  typedef typename K::Orientation         Orientation;
 
   typedef CGAL::Sqrt_extension_1<RT>       Sqrt_1;
   typedef CGAL::Sqrt_extension_2<RT>       Sqrt_2;
@@ -346,6 +352,8 @@ public:
 
 };
 
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

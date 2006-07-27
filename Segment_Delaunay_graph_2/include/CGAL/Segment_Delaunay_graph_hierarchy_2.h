@@ -260,7 +260,8 @@ public:
   Vertex_handle insert(const Site_2& t, const Info_t& info)
   {
     typedef typename Storage_traits::Info Info;
-    CGALi::Check_type_equality_for_info<Info_t, Info>();
+    CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::
+      Check_type_equality_for_info<Info_t, Info>();
     // the intended use is to unify the calls to insert(...);
     // thus the site must be an exact one; 
     CGAL_precondition( t.is_input() );

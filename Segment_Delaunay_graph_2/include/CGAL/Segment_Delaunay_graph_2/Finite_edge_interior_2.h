@@ -24,23 +24,24 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_FINITE_EDGE_INTERIOR_2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------------
 
 template<class K, class Method_tag>
-class Sdg_finite_edge_interior_2
-  : public Sdg_basic_predicates_C2<K>
+class Finite_edge_interior_conflict_C2
+  : public Basic_predicates_C2<K>
 {
 public:
 
-  typedef Sdg_basic_predicates_C2<K>          Base;
-  typedef Sdg_voronoi_vertex_2<K,Method_tag>  Voronoi_vertex_2;
+  typedef Basic_predicates_C2<K>              Base;
+  typedef Voronoi_vertex_C2<K,Method_tag>     Voronoi_vertex_2;
   
   typedef typename Base::Point_2              Point_2;
   typedef typename Base::Segment_2            Segment_2;
@@ -49,11 +50,16 @@ public:
   typedef typename Base::FT                   FT;
   typedef typename Base::RT                   RT;
 
+  typedef typename Base::Comparison_result    Comparison_result;
+  typedef typename Base::Sign                 Sign;
+  typedef typename Base::Orientation          Orientation;
+  typedef typename Base::Oriented_side        Oriented_side;
+
   typedef typename Base::Homogeneous_point_2  Homogeneous_point_2;
 
 private:
-  typedef Sdg_are_same_points_C2<K>           Are_same_points_2;
-  typedef Sdg_are_same_segments_C2<K>         Are_same_segments_2;
+  typedef Are_same_points_C2<K>               Are_same_points_2;
+  typedef Are_same_segments_C2<K>             Are_same_segments_2;
 
   typedef typename K::Intersections_tag       ITag;
 
@@ -701,6 +707,8 @@ public:
 
 
 //-----------------------------------------------------------------------------
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 

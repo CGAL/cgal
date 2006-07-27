@@ -23,16 +23,18 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_CONSTRUCTIONS_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_CONSTRUCTIONS_C2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/enum.h>
 
-#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
 
 #include <CGAL/Parabola_2.h>
 #include <CGAL/Parabola_segment_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
 
 //***********************************************************************
@@ -115,7 +117,7 @@ class Construct_svd_vertex_2
 {
 public:
   typedef typename K::Site_2                Site_2;
-  typedef CGAL::Sdg_voronoi_vertex_2<K,M>   Voronoi_vertex_2;
+  typedef Voronoi_vertex_C2<K,M>            Voronoi_vertex_2;
   typedef typename K::Point_2               Point_2;
   typedef Point_2                           result_type;
   typedef Arity_tag<3>                      Arity;
@@ -140,7 +142,7 @@ class Construct_sdg_circle_2
 {
 public:
   typedef typename Gt::Site_2                 Site_2;
-  typedef Sdg_voronoi_vertex_2<Gt,M>          Voronoi_vertex_2;
+  typedef Voronoi_vertex_C2<Gt,M>             Voronoi_vertex_2;
   typedef typename Gt::Circle_2               Circle_2;
   typedef Circle_2                            result_type;
   typedef Arity_tag<3>                        Arity;
@@ -322,8 +324,9 @@ public:
 //-----------------------------------------------------------------------
 
 
-CGAL_END_NAMESPACE
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
+CGAL_END_NAMESPACE
 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_CONSTRUCTIONS_C2_H

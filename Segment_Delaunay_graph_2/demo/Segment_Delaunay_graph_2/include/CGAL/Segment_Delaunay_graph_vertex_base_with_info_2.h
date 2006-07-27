@@ -37,18 +37,17 @@ class Segment_Delaunay_graph_vertex_base_with_info_2
 public:
   // TYPES
   //------
-  typedef Vbb                                 Base;
-  typedef Info_                               Info;
+  typedef Vbb                                      Base;
+  typedef Info_                                    Info;
 
-  typedef typename Base::Geom_traits          Geom_traits;
-  typedef typename Base::Point_handle         Point_handle;
-  typedef typename Base::Site_2               Site_2;
-  typedef typename Base::Storage_site_2       Storage_site_2;
+  typedef typename Base::Storage_traits            Storage_traits;
+  typedef typename Base::Geom_traits               Geom_traits;
+  typedef typename Base::Site_2                    Site_2;
+  typedef typename Base::Storage_site_2            Storage_site_2;
+  typedef typename Base::Data_structure            Data_structure;
 
-  typedef typename Base::Data_structure       Data_structure;
-
-  typedef typename Data_structure::Face_handle    Face_handle;
-  typedef typename Data_structure::Vertex_handle  Vertex_handle;
+  typedef typename Data_structure::Face_handle     Face_handle;
+  typedef typename Data_structure::Vertex_handle   Vertex_handle;
 
 
   template < typename DS2 >

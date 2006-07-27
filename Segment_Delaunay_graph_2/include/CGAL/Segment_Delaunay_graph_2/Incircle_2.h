@@ -22,34 +22,38 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_INCIRCLE_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_INCIRCLE_2_H
 
-#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+
 //---------------------------------------------------------------------
 
 template<class K, class Method_tag>
-class Sdg_incircle_2
+class Vertex_conflict_C2
 {
 private:
-  typedef typename K::Point_2                       Point_2;
-  typedef typename K::Segment_2                     Segment_2;
-  typedef typename K::Site_2                        Site_2;
-  typedef CGAL::Sdg_voronoi_vertex_2<K,Method_tag>  Voronoi_vertex_2;
+  typedef typename K::Point_2                Point_2;
+  typedef typename K::Segment_2              Segment_2;
+  typedef typename K::Site_2                 Site_2;
+  typedef typename K::FT                     FT;
+  typedef typename K::RT                     RT;
+  typedef typename K::Orientation            Orientation;
+  typedef typename K::Sign                   Sign;
 
-  typedef typename K::FT                            FT;
-  typedef typename K::RT                            RT;
+  typedef Voronoi_vertex_C2<K,Method_tag>    Voronoi_vertex_2;
 
-  typedef Sdg_are_same_points_C2<K>     Are_same_points_C2;
-  typedef Sdg_are_same_segments_C2<K>   Are_same_segments_C2;
+  typedef Are_same_points_C2<K>              Are_same_points_2;
+  typedef Are_same_segments_C2<K>            Are_same_segments_2;
 
-  typedef typename K::Intersections_tag             ITag;
+  typedef typename K::Intersections_tag      ITag;
 
 private:
-  Are_same_points_C2    same_points;
-  Are_same_segments_C2  same_segments;
+  Are_same_points_2    same_points;
+  Are_same_segments_2  same_segments;
 
   bool is_on_common_support(const Site_2& s1, const Site_2& s2,
 			    const Point_2& p) const
@@ -435,8 +439,8 @@ private:
 
 
 public:
-  typedef Site_2                 argument_type;
-  typedef Sign                   result_type;
+  typedef Site_2      argument_type;
+  typedef Sign        result_type;
   struct Arity {};
 
 
@@ -480,6 +484,8 @@ public:
 };
 
 //---------------------------------------------------------------------
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 
