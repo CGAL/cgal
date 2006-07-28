@@ -22,54 +22,118 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGAL_SS_i
+{
+
+//
+// This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
+//
+template<class SSkel_>
+struct Triedge
+{
+  typedef SSkel_   SSkel ;
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  
+  typedef Triedge<SSkel> Self ;
+  
+  Triedge() {}
+
+  // Contour nodes (input polygon vertices) have just 2 defining contour edges    
+  Triedge ( Halfedge_handle aE0, Halfedge_handle aE1 )
+  {
+    mE[0] = aE0 ;
+    mE[1] = aE1 ;
+  }              
+  
+  // Skeleton nodes (offset polygon vertices) have 3 defining contour edges    
+  Triedge ( Halfedge_handle aE0, Halfedge_handle aE1 , Halfedge_handle aE2 )
+  {
+    mE[0] = aE0 ;
+    mE[1] = aE1 ;
+    mE[2] = aE2 ;
+  }              
+  
+  Halfedge_handle e( unsigned idx ) const { CGAL_assertion(idx<3); return mE[idx]; }
+  
+  Halfedge_handle e0() const { return e(0); }
+  Halfedge_handle e1() const { return e(1); }
+  Halfedge_handle e2() const { return e(2); }
+  
+  bool is_valid() const { return e0() != e1() && e1() != e2() ; }
+  
+  // returns 1 if aE is one of the halfedges stored in this triedge, 0 otherwise.
+  int contains ( Halfedge_handle aE ) const
+  {
+    return aE == e0() || aE == e1() || aE == e2() ? 1 : 0 ;
+  }
+
+  // Returns the number of common halfedges in the two triedges x and y
+  static int CountInCommon( Self const& x, Self const& y )
+  {
+    return x.contains(y.e0()) + x.contains(y.e1()) + x.contains(y.e2()) ; 
+  }
+  
+  // Returns true if the triedges store the same 3 halfedges (in any order)
+  friend bool operator == ( Self const& x, Self const& y ) { return CountInCommon(x,y) == 3 ; }
+  
+  friend bool operator != ( Self const& x, Self const& y ) { return !(x==y) ; }
+  
+  friend Self operator & ( Self const& x, Self const& y )
+  {
+    return Self(x.e0(), x.e1(), ( x.e0() == y.e0() || x.e1() == y.e0() ) ? y.e1() : y.e0() ) ;
+  }
+  
+  friend std::ostream& operator<< ( std::ostream& ss, Self const& t )
+  {
+    return ss << "{E" << t.e0()->id() << ",E" << t.e1()->id() << ",E" << t.e2()->id() << "}" ;
+  }
+  
+  Halfedge_handle mE[3];
+} ;
+
 template<class SSkel_, class Traits_>
-class Straight_skeleton_builder_event_2 : public Ref_counted_base
+class Event_2 : public Ref_counted_base
 {
   typedef SSkel_  SSkel ;
   typedef Traits_ Traits ;
   
 public:
  
-  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Self ;
+  typedef Event_2<SSkel,Traits> Self ;
 
   typedef boost::intrusive_ptr<Self> SelfPtr ;
 
-  typedef typename Traits::Point_2          Point_2 ;
-  typedef typename Traits::FT               FT ;
-  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
+  typedef typename Traits::Point_2      Point_2 ;
+  typedef typename Traits::FT           FT ;
+  typedef typename Traits::Trisegment_2 Trisegment_2 ;
 
+  typedef Triedge<SSkel> Triedge ;
+  
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
+  
   enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent } ;
 
 public:
 
-  Straight_skeleton_builder_event_2 (  Halfedge_handle         aBorderA
-                                     , Halfedge_handle         aBorderB
-                                     , Halfedge_handle         aBorderC
-                                     , Sorted_triedge_2 const& aSorted 
-                                    )
+  Event_2 ( Triedge const& aTriedge, Trisegment_2 const& aTrisegment )
     :
-     mBorderA(aBorderA)
-    ,mBorderB(aBorderB)
-    ,mBorderC(aBorderC)
-    ,mSorted (aSorted)
+     mTriedge   (aTriedge)
+    ,mTrisegment(aTrisegment)
   {}
 
-  virtual ~ Straight_skeleton_builder_event_2() {}
+  virtual ~ Event_2() {}
 
   virtual Type type() const = 0 ;
 
   virtual Vertex_handle seed0() const = 0 ;
   virtual Vertex_handle seed1() const = 0 ;
 
-  Halfedge_handle         border_a      () const { return mBorderA ; }
-  Halfedge_handle         border_b      () const { return mBorderB ; }
-  Halfedge_handle         border_c      () const { return mBorderC ; }
-  Sorted_triedge_2 const& sorted_triedge() const { return mSorted  ; }
-  Point_2 const&          point         () const { return mP       ; }
-  FT                      time          () const { return mTime    ; }
+  Triedge const&      triedge   () const { return mTriedge    ; }
+  Trisegment_2 const& trisegment() const { return mTrisegment; }
+  Point_2 const&      point     () const { return mP         ; }
+  FT                  time      () const { return mTime      ; }
 
   void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
 
@@ -78,7 +142,7 @@ public:
     ss << "[" ;
     e.dump(ss);
     ss << " p=(" << e.point().x() << "," << e.point().y() << ") t=" << e.time() << "] " 
-       << triedge_collinearity_to_string(e.sorted_triedge().collinearity()) ;
+       << trisegment_collinearity_to_string(e.trisegment().collinearity()) ;
     return ss ;
   }
 
@@ -86,45 +150,41 @@ protected :
 
   virtual void dump ( std::ostream& ss ) const
   {
-    ss << "{E" << mBorderA->id() << ",E" << mBorderB->id() << ",E" << mBorderC->id() << "}" ;
+    ss << mTriedge ;
   } ;
 
 private :
 
-  Halfedge_handle  mBorderA ;
-  Halfedge_handle  mBorderB ;
-  Halfedge_handle  mBorderC ;
-  Sorted_triedge_2 mSorted ;
-  Point_2          mP ;
-  FT               mTime ;
+  Triedge      mTriedge ;
+  Trisegment_2 mTrisegment ;
+  Point_2      mP ;
+  FT           mTime ;
 } ;
 
 template<class SSkel_, class Traits_>
-class Straight_skeleton_builder_edge_event_2 : public Straight_skeleton_builder_event_2<SSkel_,Traits_>
+class Edge_event_2 : public Event_2<SSkel_,Traits_>
 {
   typedef SSkel_  SSkel ;
   typedef Traits_ Traits ;
 
-  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Base ;
+  typedef Event_2<SSkel,Traits> Base ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
-  typedef typename Base::Type Type ;
-  
-  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
+  typedef typename Base::Type         Type ;
+  typedef typename Base::Triedge      Triedge ;
+  typedef typename Base::Trisegment_2 Trisegment_2 ;
 
 public:
 
-  Straight_skeleton_builder_edge_event_2 (  Halfedge_handle         aBorderA
-                                          , Halfedge_handle         aBorderB
-                                          , Halfedge_handle         aBorderC
-                                          , Sorted_triedge_2 const& aSorted 
-                                          , Vertex_handle           aLSeed
-                                          , Vertex_handle           aRSeed
-                                          )
+  Edge_event_2 ( Triedge const&      aTriedge
+               , Trisegment_2 const& aTrisegment 
+               , Vertex_handle       aLSeed
+               , Vertex_handle       aRSeed
+               )
     :
-      Base(aBorderA,aBorderB,aBorderC,aSorted)
+      Base(aTriedge,aTrisegment)
     , mLSeed(aLSeed)
     , mRSeed(aRSeed)
   {}
@@ -149,30 +209,28 @@ private :
 } ;
 
 template<class SSkel_, class Traits_>
-class Straight_skeleton_builder_split_event_2 : public Straight_skeleton_builder_event_2<SSkel_,Traits_>
+class Split_event_2 : public Event_2<SSkel_,Traits_>
 {
   typedef SSkel_  SSkel ;
   typedef Traits_ Traits ;
 
-  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Base ;
+  typedef Event_2<SSkel,Traits> Base ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
   
-  typedef typename Base::Type Type ;
-
-  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
+  typedef typename Base::Type         Type ;
+  typedef typename Base::Triedge      Triedge ;
+  typedef typename Base::Trisegment_2 Trisegment_2 ;
 
 public:
 
-  Straight_skeleton_builder_split_event_2 (  Halfedge_handle         aBorderA
-                                           , Halfedge_handle         aBorderB
-                                           , Halfedge_handle         aBorderC
-                                           , Sorted_triedge_2 const& aSorted 
-                                           , Vertex_handle           aSeed
-                                         )
+  Split_event_2 ( Triedge const&      aTriedge
+                , Trisegment_2 const& aTrisegment 
+                , Vertex_handle       aSeed
+                )
     :
-      Base(aBorderA,aBorderB,aBorderC,aSorted)
+      Base(aTriedge,aTrisegment)
     , mSeed(aSeed)
   {}
 
@@ -190,7 +248,7 @@ private :
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (Seed=" << mSeed->id() << " OppBorder=" << this->border_c()->id() << ')' ;
+    ss << " (Seed=" << mSeed->id() << " OppBorder=" << this->triedge().e2()->id() << ')' ;
   }
 
 private :
@@ -200,31 +258,29 @@ private :
 } ;
 
 template<class SSkel_, class Traits_>
-class Straight_skeleton_builder_pseudo_split_event_2 : public Straight_skeleton_builder_event_2<SSkel_,Traits_>
+class Pseudo_split_event_2 : public Event_2<SSkel_,Traits_>
 {
   typedef SSkel_  SSkel ;
   typedef Traits_ Traits ;
   
-  typedef Straight_skeleton_builder_event_2<SSkel,Traits> Base ;
+  typedef Event_2<SSkel,Traits> Base ;
 
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
-  typedef typename Base::Type Type ;
-  
-  typedef typename Traits::Sorted_triedge_2 Sorted_triedge_2 ;
+  typedef typename Base::Type         Type ;
+  typedef typename Base::Triedge      Triedge ;
+  typedef typename Base::Trisegment_2 Trisegment_2 ;
 
 public:
 
-  Straight_skeleton_builder_pseudo_split_event_2 ( Halfedge_handle         aBorderA
-                                                 , Halfedge_handle         aBorderB
-                                                 , Halfedge_handle         aBorderC
-                                                 , Sorted_triedge_2 const& aSorted 
-                                                 , Vertex_handle           aSeed
-                                                 , Vertex_handle           aOppositeNode
-                                                 )
+  Pseudo_split_event_2 ( Triedge const&      aTriedge
+                       , Trisegment_2 const& aTrisegment 
+                       , Vertex_handle       aSeed
+                       , Vertex_handle       aOppositeNode
+                       )
     :
-      Base(aBorderA,aBorderB,aBorderC,aSorted)
+      Base(aTriedge,aTrisegment)
     , mSeed(aSeed)
     , mOppNode(aOppositeNode)
   {}
@@ -248,6 +304,7 @@ private :
   Vertex_handle mOppNode ;
 } ;
 
+}
 
 CGAL_END_NAMESPACE
 

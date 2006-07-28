@@ -26,24 +26,24 @@
 //
 CGAL_BEGIN_NAMESPACE
 
-enum Triedge_collinearity
+enum Trisegment_collinearity
 { 
-    TRIEDGE_COLLINEARITY_NONE
-  , TRIEDGE_COLLINEARITY_01
-  , TRIEDGE_COLLINEARITY_12
-  , TRIEDGE_COLLINEARITY_02
-  , TRIEDGE_COLLINEARITY_ALL
+    TRISEGMENT_COLLINEARITY_NONE
+  , TRISEGMENT_COLLINEARITY_01
+  , TRISEGMENT_COLLINEARITY_12
+  , TRISEGMENT_COLLINEARITY_02
+  , TRISEGMENT_COLLINEARITY_ALL
 } ;
 
-static char const* triedge_collinearity_to_string( Triedge_collinearity c )
+static char const* trisegment_collinearity_to_string( Trisegment_collinearity c )
 {
   switch ( c )
   {
-    case TRIEDGE_COLLINEARITY_NONE : return "<>" ;  
-    case TRIEDGE_COLLINEARITY_01   : return "<0,1>" ; 
-    case TRIEDGE_COLLINEARITY_12   : return "<1,2>" ; 
-    case TRIEDGE_COLLINEARITY_02   : return "<0,2>" ; 
-    case TRIEDGE_COLLINEARITY_ALL  : return "<0,1,2>" ; 
+    case TRISEGMENT_COLLINEARITY_NONE : return "<>" ;  
+    case TRISEGMENT_COLLINEARITY_01   : return "<0,1>" ; 
+    case TRISEGMENT_COLLINEARITY_12   : return "<1,2>" ; 
+    case TRISEGMENT_COLLINEARITY_02   : return "<0,2>" ; 
+    case TRISEGMENT_COLLINEARITY_ALL  : return "<0,1,2>" ; 
   }
   
   return "!!UNKNOWN COLLINEARITY!!" ;
@@ -52,11 +52,12 @@ namespace CGALi
 {
 
 template <>
-struct Minmax_traits< Triedge_collinearity >
+struct Minmax_traits< Trisegment_collinearity >
 {
-  static const Triedge_collinearity min = TRIEDGE_COLLINEARITY_NONE;
-  static const Triedge_collinearity max = TRIEDGE_COLLINEARITY_ALL;
+  static const Trisegment_collinearity min = TRISEGMENT_COLLINEARITY_NONE;
+  static const Trisegment_collinearity max = TRISEGMENT_COLLINEARITY_ALL;
 };
+
 }
 
 class Ref_counted_base

@@ -82,7 +82,8 @@ Uncertain<bool> are_edges_orderly_collinearC2( Segment_2<K> const& e0, Segment_2
 // Returns true IFF segments e0,e1 do not share the same supporting line but are parallel, or share the
 // supporting line but are not orderly collinear (that is, one doesn't follow the other)
 template<class K>
-Uncertain<bool> are_edges_parallel_but_not_orderly_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
+inline
+Uncertain<bool> are_edges_parallelC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   Uncertain<Sign> s = certified_sign_of_determinant2x2(e0.target().x() - e0.source().x()
                                                       ,e0.target().y() - e0.source().y()
@@ -90,9 +91,7 @@ Uncertain<bool> are_edges_parallel_but_not_orderly_collinearC2( Segment_2<K> con
                                                       ,e1.target().y() - e1.source().y()
                                                      ) ;
                                                      
-  Uncertain<bool> parallel = ( s == Uncertain<Sign>(ZERO) ) ;
-  
-  return parallel & !are_edges_orderly_collinearC2(e0,e1);  
+  return ( s == Uncertain<Sign>(ZERO) ) ;
 }
 
 template <class FT>
@@ -105,38 +104,41 @@ Uncertain<Sign> certified_side_of_oriented_lineC2(const FT &a, const FT &b, cons
 
 
 //
-// Constructs a Sorted_triedge_2 which stores 3 edges (segments) such that
+// Constructs a Trisegment_2 which stores 3 edges (segments) such that
 // if two of them are collinear, they are put first, as e0, e1.
 // Stores also the number of collinear edges. which should be 0 or 2.
 //
 // If the collinearity test is indeterminate for any pair of edges the
-// resulting sorted triedge is itself indeterminate 
+// resulting sorted trisegment is itself indeterminate 
 // (encoded as a collinear count of -1)
 //
 template<class K>
-Uncertain<Triedge_collinearity> certified_triedge_collinearity ( Triedge_2<K> const& triedge )
+Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2<K> const& e0
+                                                                     , Segment_2<K> const& e1
+                                                                     , Segment_2<K> const& e2
+                                                                     )
 {
-  Uncertain<Triedge_collinearity> rR = Uncertain<Triedge_collinearity>::indeterminate();
+  Uncertain<Trisegment_collinearity> rR = Uncertain<Trisegment_collinearity>::indeterminate();
   
-  Uncertain<bool> is_01 = are_edges_orderly_collinearC2(triedge.e0(),triedge.e1());
+  Uncertain<bool> is_01 = are_edges_orderly_collinearC2(e0,e1);
   if ( !CGAL_NTS is_indeterminate(is_01) )
   {
-    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(triedge.e0(),triedge.e2());
+    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(e0,e2);
     if ( !CGAL_NTS is_indeterminate(is_02) )
     {
-      Uncertain<bool> is_12 = are_edges_orderly_collinearC2(triedge.e1(),triedge.e2());
+      Uncertain<bool> is_12 = are_edges_orderly_collinearC2(e1,e2);
       if ( !CGAL_NTS is_indeterminate(is_12) )
       {
         if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
-          rR = make_uncertain(TRIEDGE_COLLINEARITY_01);
+          rR = make_uncertain(TRISEGMENT_COLLINEARITY_01);
         else if ( CGAL_NTS logical_and(is_02 , !is_01 , !is_12 ) )
-          rR = make_uncertain(TRIEDGE_COLLINEARITY_02);
+          rR = make_uncertain(TRISEGMENT_COLLINEARITY_02);
         else if ( CGAL_NTS logical_and(is_12 , !is_01 , !is_02 ) )
-          rR = make_uncertain(TRIEDGE_COLLINEARITY_12);
+          rR = make_uncertain(TRISEGMENT_COLLINEARITY_12);
         else if ( CGAL_NTS logical_and(!is_01 , !is_02, !is_12  ) )
-          rR = make_uncertain(TRIEDGE_COLLINEARITY_NONE);
+          rR = make_uncertain(TRISEGMENT_COLLINEARITY_NONE);
         else 
-          rR = make_uncertain(TRIEDGE_COLLINEARITY_ALL);
+          rR = make_uncertain(TRISEGMENT_COLLINEARITY_ALL);
       }
     }
   }
@@ -154,7 +156,7 @@ Uncertain<Triedge_collinearity> certified_triedge_collinearity ( Triedge_2<K> co
 // or parallel if they have opposite orientation. This allows the algorithm to handle degenerate vertices 
 // (formed by 3 collinear consecutive points) and mutually collapsing edge events.
 template<class K>
-Uncertain<bool> exist_offset_lines_isec2 ( Sorted_triedge_2<K> const& event )
+Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2<K> const& event )
 {
   typedef typename K::FT FT ;
   
@@ -163,9 +165,9 @@ Uncertain<bool> exist_offset_lines_isec2 ( Sorted_triedge_2<K> const& event )
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  if ( event.collinearity() != TRIEDGE_COLLINEARITY_ALL ) // If the 3 edges are collinear thre is no event.
+  if ( event.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) 
   {
-    CGAL_STSKEL_TRAITS_TRACE( ( event.collinearity() == TRIEDGE_COLLINEAR_NONE ? " normal edges" : " collinear edges" ) ) ;
+    CGAL_STSKEL_TRAITS_TRACE( ( event.collinearity() == TRISEGMENT_COLLINEARITY_NONE ? " normal edges" : " collinear edges" ) ) ;
 
     Optional_rational t = compute_offset_lines_isec_timeC2(event) ;
     if ( t )
@@ -205,11 +207,11 @@ Uncertain<bool> exist_offset_lines_isec2 ( Sorted_triedge_2<K> const& event )
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
 template<class K>
-Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Sorted_triedge_2<K> const& m, Sorted_triedge_2<K> const& n )
+Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Trisegment_2<K> const& m, Trisegment_2<K> const& n )
 {
   typedef typename K::FT FT ;
   
-  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  typedef Trisegment_2<K> Trisegment_2 ;
   
   typedef Rational<FT>       Rational ;
   typedef Quotient<FT>       Quotient ;
@@ -217,8 +219,8 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Sorted_triedge_
   
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  CGAL_assertion ( m.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
-  CGAL_assertion ( n.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( m.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( n.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
   
   Optional_rational mt_ = compute_offset_lines_isec_timeC2(m);
   Optional_rational nt_ = compute_offset_lines_isec_timeC2(n);
@@ -246,13 +248,13 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Sorted_triedge_
 template<class K>
 Uncertain<Comparison_result>
 compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
-                                          , Sorted_triedge_2<K>    const& m
-                                          , Sorted_triedge_2<K>    const& n 
+                                          , Trisegment_2<K>        const& m
+                                          , Trisegment_2<K>        const& n 
                                           )
 {
   typedef typename K::FT FT ;
   
-  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  typedef Trisegment_2<K> Trisegment_2 ;
   
   typedef Rational<FT>       Rational ;
   typedef Quotient<FT>       Quotient ;
@@ -262,8 +264,8 @@ compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
   
   if ( p )
   {
-    CGAL_assertion ( m.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
-    CGAL_assertion ( n.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+    CGAL_assertion ( m.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
+    CGAL_assertion ( n.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
     
     optional<FT> dm = compute_offset_lines_isec_dist_to_pointC2(p,m);
     optional<FT> dn = compute_offset_lines_isec_dist_to_pointC2(p,n);
@@ -282,14 +284,14 @@ compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
 // PRECONDITION: There exist single points at which the offsets at 'st', 'mt' and 'nt' intersect.
 template<class K>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_dist_to_pointC2 ( Sorted_triedge_2<K> const& s
-                                          , Sorted_triedge_2<K> const& m
-                                          , Sorted_triedge_2<K> const& n
+compare_offset_lines_isec_dist_to_pointC2 ( Trisegment_2<K> const& s
+                                          , Trisegment_2<K> const& m
+                                          , Trisegment_2<K> const& n
                                           )
 {
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  CGAL_assertion ( s.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( s.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
     
   rResult = compare_offset_lines_isec_dist_to_pointC2(construct_offset_lines_isecC2(s),m,n);
   
@@ -299,8 +301,7 @@ compare_offset_lines_isec_dist_to_pointC2 ( Sorted_triedge_2<K> const& s
 // Returns true if the point aP is on the positive side of the line supporting the edge
 //
 template<class K>
-Uncertain<bool>
-is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segment_2<K> const& aEdge )
+Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segment_2<K> const& aEdge )
 {
   typedef typename K::FT FT ;
   
@@ -318,24 +319,9 @@ is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segment_2<K> const& a
 // at some distance intersects in a point (x,y), returns true if (x,y) is on the positive side of the line supporting aEdge
 //
 template<class K>
-Uncertain<bool>
-is_edge_facing_offset_lines_isecC2 ( Sorted_triedge_2<K> const& event, Segment_2<K> const& aEdge )
+inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( Trisegment_2<K> const& event, Segment_2<K> const& aEdge )
 {
   return is_edge_facing_pointC2(construct_offset_lines_isecC2(event),aEdge);
-}
-
-// Returns true if the offset-zone for the triedge 'zone' is degenerate.
-//
-// Since an offset zone [e0->e1->e2] is the region inside the polygon where the three edges remain connected as they
-// move inward, if e0 and/or e2 is parallel to e1 then the zone is degenerate (collapsed to the bisecting line of the parallel edges)
-//
-// (that is, the parallel zone edges, since they share a vertex, have already collide and can't move any further)
-//
-template<class K>
-Uncertain<bool> is_offset_zone_degenerate ( Triedge_2<K> const& zone )
-{
-  return  are_edges_parallel_but_not_orderly_collinearC2(zone.e0(),zone.e1()) 
-        | are_edges_parallel_but_not_orderly_collinearC2(zone.e1(),zone.e2()) ;
 }
 
 
@@ -382,8 +368,7 @@ Uncertain<bool> is_offset_zone_degenerate ( Triedge_2<K> const& zone )
 //   'z1' must be one of (e0,e1,e2); that is, (x,y) must be exactly over the offseted z1' at time 't'.
 //
 template<class K>
-Uncertain<bool>
-is_offset_lines_isec_inside_offset_zoneC2 ( Sorted_triedge_2<K> const& event, Triedge_2<K> const& zone )
+Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> const& event, Trisegment_2<K> const& zone )
 {
   typedef typename K::FT FT ;
   
@@ -395,191 +380,174 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Sorted_triedge_2<K> const& event, Tr
   
   Uncertain<bool> r = Uncertain<bool>::indeterminate();
 
-  Uncertain<bool> degenerate_zone = is_offset_zone_degenerate(zone);
+  CGAL_assertion ( event.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
   
-  if ( !is_indeterminate(degenerate_zone) ) 
+  Optional_line_2 zl = compute_normalized_line_ceoffC2(zone.e0()) ;
+  Optional_line_2 zc = compute_normalized_line_ceoffC2(zone.e1()) ;
+  Optional_line_2 zr = compute_normalized_line_ceoffC2(zone.e2()) ;
+
+  // Construct intersection point (x,y)
+  Optional_point_2 i = construct_offset_lines_isecC2(event);
+  
+  if ( zl && zc && zr && i ) // all properly computed
   {
-    CGAL_assertion ( event.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+    // Let L and R be the vertices formed by zl',zc' and zc',zr' resp.
+    // Let ZC1 be the oriented segment of zc' bounded first by L then by R.
+    // Let ZC0 be the ray of zc' before  L, and ZC2 the ray of zc' after R.
+    // Let ZL0 be tha ray of zl' before L and ZL1 the ray of zl' after R
+    // Let ZR0 be tha ray of zl' before L and ZR1 the ray of zl' after R
     
-    if ( !degenerate_zone )
+    // At the time of the event, each offseted edge zl', zc' and zr' are made of :
+    //
+    // zl': ZL0->L->ZL1
+    // zc': ZC0->L->ZC1->R->ZC2
+    // zr':         ZR0->R->ZR1
+    
+    // Here we need to determine if "i", known to be along zc', is inside ZC1 instead of ZC0 (and instead of ZC2)
+            
+    // Since all edges move at the same speed, there are 3 cases to consider:
+    
+    // (1) If L is convex, ZL1 is "behind" ZC1 while ZL0 is "before" ZC0.
+    // (2) If L is reflex, ZL1 is "before" ZC1 while ZL0 is "behind" ZC0.
+    // (3) If L is degenerate, that is, zl and zc are collinear, none if behind or before any other
+    
+    // If L is case (1) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is smaller than to zl
+    // If L is case (2) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is larger  than to zl
+    // If L is case (3) then "i" is inside ZC1 if its to the right of a line perpendicular to zc passing through L*
+    // where L* is a pseudo-vertex between collinear edges (the oriented midpoint between them)
+     
+    // (likewise for R)
+    
+    // sdc : scaled (signed) distance from (x,y) to 'zc'
+    FT sdc = zc->a() * i->x() + zc->b() * i->y() + zc->c() ;
+
+    CGAL_STSKEL_TRAITS_TRACE("\nsdc=" << sdc ) ;
+
+    // NOTE:
+    //   if "i" is not on the positive side of 'zc' it isn't on it's offset zone.
+    //   Also, if "i" is _over_ 'zc' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
+    //   zone either.
+    Uncertain<bool> cok = CGAL_NTS is_finite(sdc) ? CGAL_NTS certified_is_positive(sdc) : Uncertain<bool>::indeterminate() ;
+    if ( ! CGAL_NTS is_indeterminate(cok) )
     {
-      Optional_line_2 zl = compute_normalized_line_ceoffC2(zone.e0()) ;
-      Optional_line_2 zc = compute_normalized_line_ceoffC2(zone.e1()) ;
-      Optional_line_2 zr = compute_normalized_line_ceoffC2(zone.e2()) ;
-  
-      // Construct intersection point (x,y)
-      Optional_point_2 i = construct_offset_lines_isecC2(event);
-      
-      if ( zl && zc && zr && i ) // all properly computed
+      if ( cok == true )
       {
-        // Let L and R be the vertices formed by zl',zc' and zc',zr' resp.
-        // Let ZC1 be the oriented segment of zc' bounded first by L then by R.
-        // Let ZC0 be the ray of zc' before  L, and ZC2 the ray of zc' after R.
-        // Let ZL0 be tha ray of zl' before L and ZL1 the ray of zl' after R
-        // Let ZR0 be tha ray of zl' before L and ZR1 the ray of zl' after R
-        
-        // At the time of the event, each offseted edge zl', zc' and zr' are made of :
-        //
-        // zl': ZL0->L->ZL1
-        // zc': ZC0->L->ZC1->R->ZC2
-        // zr':         ZR0->R->ZR1
-        
-        // Here we need to determine if "i", known to be along zc', is inside ZC1 instead of ZC0 (and instead of ZC2)
-                
-        // Since all edges move at the same speed, there are 3 cases to consider:
-        
-        // (1) If L is convex, ZL1 is "behind" ZC1 while ZL0 is "before" ZC0.
-        // (2) If L is reflex, ZL1 is "before" ZC1 while ZL0 is "behind" ZC0.
-        // (3) If L is degenerate, that is, zl and zc are collinear, none if behind or before any other
-        
-        // If L is case (1) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is smaller than to zl
-        // If L is case (2) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is larger  than to zl
-        // If L is case (3) then "i" is inside ZC1 if its to the right of a line perpendicular to zc passing through L*
-        // where L* is a pseudo-vertex between collinear edges (the oriented midpoint between them)
-         
-        // (likewise for R)
-        
-        // sdc : scaled (signed) distance from (x,y) to 'zc'
-        FT sdc = zc->a() * i->x() + zc->b() * i->y() + zc->c() ;
-    
-        CGAL_STSKEL_TRAITS_TRACE("\nsdc=" << sdc ) ;
-    
-        // NOTE:
-        //   if "i" is not on the positive side of 'zc' it isn't on it's offset zone.
-        //   Also, if "i" is _over_ 'zc' (its signed distance to ec is not certainly positive) then by definition is not on its _offset_
-        //   zone either.
-        Uncertain<bool> cok = CGAL_NTS is_finite(sdc) ? CGAL_NTS certified_is_positive(sdc) : Uncertain<bool>::indeterminate() ;
-        if ( ! CGAL_NTS is_indeterminate(cok) )
+        CGAL_STSKEL_TRAITS_TRACE("\ncorrect side of zc." ) ;
+
+        Uncertain<bool> lc_degenerate = are_edges_parallelC2(zone.e0(),zone.e1()); 
+        Uncertain<bool> cr_degenerate = are_edges_parallelC2(zone.e1(),zone.e2()); 
+
+        if ( ! CGAL_NTS is_indeterminate(lc_degenerate) && ! CGAL_NTS is_indeterminate(cr_degenerate) )
         {
-          if ( cok == true )
+          Uncertain<bool> lok, rok ;
+          
+          if ( !lc_degenerate )
           {
-            CGAL_STSKEL_TRAITS_TRACE("\ncorrect side of zc." ) ;
-    
-            Uncertain<bool> lc_collinear = are_edges_orderly_collinearC2(zone.e0(),zone.e1());
-            Uncertain<bool> cr_collinear = are_edges_orderly_collinearC2(zone.e1(),zone.e2());
-    
-            if ( ! CGAL_NTS is_indeterminate(lc_collinear) && ! CGAL_NTS is_indeterminate(cr_collinear) )
+            // sld: scaled (signed) distances from "i" to 'zl'
+            FT sdl = zl->a() * i->x() + zl->b() * i->y() + zl->c() ;
+            
+            if ( CGAL_NTS is_finite(sdl) )
             {
-              Uncertain<bool> lok, rok ;
+              CGAL_STSKEL_TRAITS_TRACE("\nsdl=" << sdl ) ;
               
-              if ( !lc_collinear )
+              Uncertain<bool> lc_reflex = CGAL_NTS certified_is_smaller(zl->a()*zc->b(),zc->a()*zl->b());
+              
+              if ( ! CGAL_NTS is_indeterminate(lc_reflex) )
               {
-                // sld: scaled (signed) distances from "i" to 'zl'
-                FT sdl = zl->a() * i->x() + zl->b() * i->y() + zl->c() ;
-                
-                if ( CGAL_NTS is_finite(sdl) )
-                {
-                  CGAL_STSKEL_TRAITS_TRACE("\nsdl=" << sdl ) ;
-                  
-                  Uncertain<bool> lc_reflex = CGAL_NTS certified_is_smaller(zl->a()*zc->b(),zc->a()*zl->b());
-                  
-                  if ( ! CGAL_NTS is_indeterminate(lc_reflex) )
-                  {
-                    CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is " << ( lc_reflex == true ? "reflex" : "non-reflex") ) ;
+                CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is " << ( lc_reflex == true ? "reflex" : "non-reflex") ) ;
 
-                    lok = ( lc_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
-                                      : CGAL_NTS certified_is_larger_or_equal (sdl,sdc) 
-                          ) ;
-                  }
+                lok = ( lc_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdl,sdc)
+                                  : CGAL_NTS certified_is_larger_or_equal (sdl,sdc) 
+                      ) ;
+              }
 
-                }
-                else
-                {
-                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
-                }
-              }
-              else
-              {
-                CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is DEGENERATE") ;
-                Optional_point_2 l = compute_oriented_midpoint(zone.e0(),zone.e1());
-                if ( l )
-                {
-                  FT na, nb, nc ;
-                  perpendicular_through_pointC2(zc->a(),zc->b(),l->x(),l->y(),na, nb, nc);
-                  lok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(POSITIVE);
-                }
-                else
-                {
-                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
-                }
-              }
-              
-              if ( !cr_collinear )
-              {
-                // slr: scaled (signed) distances from "i" to 'zr'
-                FT sdr = zr->a() * i->x() + zr->b() * i->y() + zr->c() ;
-                
-                if ( CGAL_NTS is_finite(sdr) )
-                {
-                  CGAL_STSKEL_TRAITS_TRACE("\nsdr=" << sdr ) ;
-                  
-                  Uncertain<bool> cr_reflex = CGAL_NTS certified_is_smaller(zc->a()*zr->b(),zr->a()*zc->b());
-                  
-                  if ( ! CGAL_NTS is_indeterminate(cr_reflex) )
-                  {
-                    CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is " << ( cr_reflex == true ? "reflex" : "non-reflex") ) ;
-                
-                    rok = ( cr_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
-                                      : CGAL_NTS certified_is_larger_or_equal (sdr,sdc) 
-                          ) ;
-                  }
-                }
-                else
-                {
-                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
-                }
-              }
-              else
-              {
-                CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is DEGENERATE") ;
-                Optional_point_2 r = compute_oriented_midpoint(zone.e1(),zone.e2());
-                if ( r )
-                {
-                  FT na, nb, nc ;
-                  perpendicular_through_pointC2(zc->a(),zc->b(),r->x(),r->y(),na, nb, nc);
-                  rok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(NEGATIVE);
-                }
-                else
-                {
-                  CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
-                }
-              }
-              
-              CGAL_STSKEL_TRAITS_TRACE("\nlok:" << lok) ;
-              CGAL_STSKEL_TRAITS_TRACE("\nrok:" << rok) ;
-      
-              r = CGAL_NTS logical_and(lok , rok) ;
             }
             else
             {
-              CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine reflexivity of zone vertices." ) ;
+              CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
             }
           }
           else
           {
-            CGAL_STSKEL_TRAITS_TRACE("\nWRONG side of zc." ) ;
-            r = make_uncertain(false);
+            CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is DEGENERATE") ;
+            Optional_point_2 l = compute_seed_pointC2(zone,0);
+            if ( l )
+            {
+              FT na, nb, nc ;
+              perpendicular_through_pointC2(zc->a(),zc->b(),l->x(),l->y(),na, nb, nc);
+              lok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(POSITIVE);
+            }
+            else
+            {
+              CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+            }
           }
+          
+          if ( !cr_degenerate )
+          {
+            // slr: scaled (signed) distances from "i" to 'zr'
+            FT sdr = zr->a() * i->x() + zr->b() * i->y() + zr->c() ;
+            
+            if ( CGAL_NTS is_finite(sdr) )
+            {
+              CGAL_STSKEL_TRAITS_TRACE("\nsdr=" << sdr ) ;
+              
+              Uncertain<bool> cr_reflex = CGAL_NTS certified_is_smaller(zc->a()*zr->b(),zr->a()*zc->b());
+              
+              if ( ! CGAL_NTS is_indeterminate(cr_reflex) )
+              {
+                CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is " << ( cr_reflex == true ? "reflex" : "non-reflex") ) ;
+            
+                rok = ( cr_reflex ? CGAL_NTS certified_is_smaller_or_equal(sdr,sdc)
+                                  : CGAL_NTS certified_is_larger_or_equal (sdr,sdc) 
+                      ) ;
+              }
+            }
+            else
+            {
+              CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+            }
+          }
+          else
+          {
+            CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is DEGENERATE") ;
+            Optional_point_2 r = compute_seed_pointC2(zone,1);
+            if ( r )
+            {
+              FT na, nb, nc ;
+              perpendicular_through_pointC2(zc->a(),zc->b(),r->x(),r->y(),na, nb, nc);
+              rok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(NEGATIVE);
+            }
+            else
+            {
+              CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+            }
+          }
+          
+          CGAL_STSKEL_TRAITS_TRACE("\nlok:" << lok) ;
+          CGAL_STSKEL_TRAITS_TRACE("\nrok:" << rok) ;
+  
+          r = CGAL_NTS logical_and(lok , rok) ;
         }
         else
         {
-          CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
+          CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine reflexivity of zone vertices." ) ;
         }
       }
       else
       {
-        CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
+        CGAL_STSKEL_TRAITS_TRACE("\nWRONG side of zc." ) ;
+        r = make_uncertain(false);
       }
     }
     else
     {
-      CGAL_STSKEL_TRAITS_TRACE("\nDegenerate offset zone. Edge collapsed." ) ;
-      r = make_uncertain(false);
+      CGAL_STSKEL_TRAITS_TRACE("\nUnable to reliably determine side-of-line." ) ;
     }
   }
   else
   {
-    CGAL_STSKEL_TRAITS_TRACE("\nUnable to determine degenerancy of zone triedge." ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
   }
 
   return r ;
@@ -593,14 +561,14 @@ is_offset_lines_isec_inside_offset_zoneC2 ( Sorted_triedge_2<K> const& event, Tr
 //   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
 template<class K>
-Uncertain<bool> are_events_simultaneousC2 ( Sorted_triedge_2<K> const& l, Sorted_triedge_2<K> const& r )
+Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2<K> const& l, Trisegment_2<K> const& r )
 {
   typedef typename K::FT FT ;
   
   typedef Point_2<K> Point_2 ;
   typedef Line_2<K>  Line_2 ;
   
-  typedef Sorted_triedge_2<K> Sorted_triedge_2 ;
+  typedef Trisegment_2<K> Trisegment_2 ;
   
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
@@ -610,8 +578,8 @@ Uncertain<bool> are_events_simultaneousC2 ( Sorted_triedge_2<K> const& l, Sorted
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  CGAL_assertion ( l.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
-  CGAL_assertion ( r.collinearity() != TRIEDGE_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( l.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( r.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
   
   Optional_rational lt_ = compute_offset_lines_isec_timeC2(l);
   Optional_rational rt_ = compute_offset_lines_isec_timeC2(r);
@@ -644,19 +612,6 @@ Uncertain<bool> are_events_simultaneousC2 ( Sorted_triedge_2<K> const& l, Sorted
   return rResult;
 }
 
-template<class FT>
-FT squared_distance_from_point_to_lineC2( FT const& px, FT const& py, FT const& sx, FT const& sy, FT const& tx, FT const& ty )
-{
-  FT ldx = tx - sx ;
-  FT ldy = ty - sy ;
-  FT rdx = sx - px ;
-  FT rdy = sy - py ;
-  
-  FT n = CGAL_NTS square(ldx * rdy - rdx * ldy);
-  FT d = CGAL_NTS square(ldx) + CGAL_NTS square(ldy);
-  
-  return n / d ;
-}
 
 } // namespace CGAL_SS_i
 

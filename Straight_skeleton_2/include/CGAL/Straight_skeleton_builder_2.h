@@ -38,14 +38,6 @@
 #include <CGAL/HalfedgeDS_const_decorator.h>
 #include <CGAL/enum.h>
 
-#ifdef CGAL_STRAIGHT_SKELETON_STATS
-
-
-#define CGAL_STSKEL_STATS_CODE(c) c
-#else
-#define CGAL_STSKEL_STATS_CODE(c)
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 template<class SSkel_>
@@ -116,8 +108,8 @@ class Straight_skeleton_builder_2
 {
 public:
 
-  typedef Traits_ Traits ;
-  typedef SSkel_  SSkel ;
+  typedef Traits_  Traits ;
+  typedef SSkel_   SSkel ;
   typedef Visitor_ Visitor ;
 
   typedef boost::shared_ptr<SSkel> SSkelPtr ;
@@ -126,11 +118,10 @@ private :
 
   typedef typename Traits::Kernel K ;
   
-  typedef typename Traits::FT                FT ;
-  typedef typename Traits::Point_2           Point_2 ;
-  typedef typename Traits::Segment_2         Segment_2 ;
-  typedef typename Traits::Triedge_2         Triedge_2 ;
-  typedef typename Traits::Sorted_triedge_2  Sorted_triedge_2 ;
+  typedef typename Traits::FT           FT ;
+  typedef typename Traits::Point_2      Point_2 ;
+  typedef typename Traits::Segment_2    Segment_2 ;
+  typedef typename Traits::Trisegment_2 Trisegment_2 ;
   
   typedef typename SSkel::Vertex   Vertex ;
   typedef typename SSkel::Halfedge Halfedge ;
@@ -156,10 +147,11 @@ private :
   
   typedef typename SSkel::size_type size_type ;
 
-  typedef Straight_skeleton_builder_event_2             <SSkel,Traits> Event ;
-  typedef Straight_skeleton_builder_edge_event_2        <SSkel,Traits> EdgeEvent ;
-  typedef Straight_skeleton_builder_split_event_2       <SSkel,Traits> SplitEvent ;
-  typedef Straight_skeleton_builder_pseudo_split_event_2<SSkel,Traits> PseudoSplitEvent ;
+  typedef CGAL_SS_i::Triedge             <SSkel>        Triedge ;
+  typedef CGAL_SS_i::Event_2             <SSkel,Traits> Event ;
+  typedef CGAL_SS_i::Edge_event_2        <SSkel,Traits> EdgeEvent ;
+  typedef CGAL_SS_i::Split_event_2       <SSkel,Traits> SplitEvent ;
+  typedef CGAL_SS_i::Pseudo_split_event_2<SSkel,Traits> PseudoSplitEvent ;
 
   typedef boost::intrusive_ptr<Event> EventPtr ;
 
@@ -171,8 +163,6 @@ private :
   typedef typename Vertex_handle_vector  ::iterator Vertex_handle_vector_iterator ;
   typedef typename EventPtr_Vector       ::iterator event_iterator ;
 
-  typedef boost::tuple<Halfedge_handle, Halfedge_handle, Halfedge_handle> BorderTriple ;
-
   typedef Straight_skeleton_builder_2<Traits,SSkel,Visitor> Self ;
   
   typedef typename Halfedge::Base_base HBase_base ;
@@ -180,7 +170,7 @@ private :
   typedef typename Vertex::Base        VBase ;
   typedef typename Face::Base          FBase ;
 
-  struct Multinode
+  struct Multinode : public Ref_counted_base
   {
     Multinode ( Halfedge_handle b, Halfedge_handle e )
       :
@@ -199,7 +189,7 @@ private :
     Vertex_handle_vector   nodes_to_remove ;
   } ;  
   
-  typedef boost::shared_ptr<Multinode> MultinodePtr ;
+  typedef boost::intrusive_ptr<Multinode> MultinodePtr ;
   
   struct MultinodeComparer
   {
@@ -260,9 +250,9 @@ private :
 
   typedef std::vector<Vertex_handle_pair> SplitNodesVector ;
 
-  struct VertexWrapper
+  struct Vertex_data : public Ref_counted_base
   {
-    VertexWrapper( Vertex_handle aVertex, Event_compare const& aComparer )
+    Vertex_data ( Vertex_handle aVertex, Event_compare const& aComparer )
       :
         mVertex(aVertex)
       , mIsReflex(false)
@@ -275,19 +265,20 @@ private :
       , mSplitEvents(aComparer)
     {}
 
-    Vertex_handle   mVertex ;
-    bool            mIsReflex ;
-    bool            mIsDegenerate ;
-    bool            mIsProcessed ;
-    bool            mIsExcluded ;
-    int             mPrevInLAV ;
-    int             mNextInLAV ;
-    Halfedge_handle mDefiningBorderA ;
-    Halfedge_handle mDefiningBorderB ;
-    Halfedge_handle mDefiningBorderC ;
-    bool            mNextSplitEventInMainPQ;
-    PQ              mSplitEvents ;
+    Vertex_handle mVertex ;
+    bool          mIsReflex ;
+    bool          mIsDegenerate ;
+    bool          mIsProcessed ;
+    bool          mIsExcluded ;
+    int           mPrevInLAV ;
+    int           mNextInLAV ;
+    bool          mNextSplitEventInMainPQ;
+    PQ            mSplitEvents ;
+    Triedge       mTriedge ; 
+    Trisegment_2  mTrisegment ; // Skeleton nodes cache the trisegment that defines the originating event
   } ;
+  
+  typedef boost::intrusive_ptr<Vertex_data> Vertex_data_ptr ;
   
 private :
 
@@ -304,235 +295,213 @@ private :
       throw_error("Unassigned vertex handle") ;
     return aH ;
   }
+
+  void InitVertexData( Vertex_handle aV )
+  {
+    mVertexData.push_back( Vertex_data_ptr( new Vertex_data(aV,mEventCompare) ) ) ;
+  } 
   
-  inline Halfedge_handle GetDefiningBorderA ( Vertex_handle aV ) const
+  inline Vertex_data const& GetVertexData( Vertex_const_handle aV ) const { return *mVertexData[aV->id()]; }
+  inline Vertex_data&       GetVertexData( Vertex_const_handle aV )       { return *mVertexData[aV->id()]; }
+  
+  Vertex_handle GetVertex ( int aIdx )
   {
-    return mWrappedVertices[aV->id()].mDefiningBorderA ;
-  }
-  inline Halfedge_handle GetDefiningBorderB ( Vertex_handle aV ) const
-  {
-    return mWrappedVertices[aV->id()].mDefiningBorderB ;
-  }
-  inline Halfedge_handle GetDefiningBorderC ( Vertex_handle aV ) const
-  {
-    return mWrappedVertices[aV->id()].mDefiningBorderC ;
-  }
-  inline void SetDefiningBorderA ( Vertex_handle aV, Halfedge_handle aH )
-  {
-    mWrappedVertices[aV->id()].mDefiningBorderA = aH ;
-  }
-  inline void SetDefiningBorderB ( Vertex_handle aV, Halfedge_handle aH )
-  {
-    mWrappedVertices[aV->id()].mDefiningBorderB = aH ;
-  }
-  inline void SetDefiningBorderC ( Vertex_handle aV, Halfedge_handle aH )
-  {
-    mWrappedVertices[aV->id()].mDefiningBorderC = aH ;
+    CGAL_precondition(aIdx>=0);
+    return mVertexData[aIdx]->mVertex ;
   }
 
-  inline Segment_2 CreateEdge ( Halfedge_const_handle aH ) const
+  inline Triedge const& GetTriedge ( Vertex_const_handle aV ) const
+  {
+    return GetVertexData(aV).mTriedge ;
+  }
+  inline void SetTriedge ( Vertex_handle aV, Triedge aTriedge )
+  {
+    GetVertexData(aV).mTriedge = aTriedge ;
+  }
+
+  // Contour nodes do not have a trisegment because they don't come from an event
+  inline Trisegment_2 const& GetSkeletonNodeTrisegment ( Vertex_handle aV ) const
+  {
+    return GetVertexData(aV).mTrisegment ;
+  }
+  
+  inline void SetSkeletonNodeTrisegment ( Vertex_handle aV, Trisegment_2 const& aTrisegment )
+  {
+    GetVertexData(aV).mTrisegment = aTrisegment ;
+  }
+  
+  inline Segment_2 CreateSegment ( Halfedge_const_handle aH ) const
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
     Point_2 t = aH->vertex()->point() ;
     return K().construct_segment_2_object()(s,t);
   }
 
-  Triedge_2 CreateTriedge ( Halfedge_const_handle aE0
-                          , Halfedge_const_handle aE1
-                          , Halfedge_const_handle aE2
-                          ) const
+  // If aSeed is a skeleton node returns the segment corresponding to the defining contour edge
+  // which is not in aTriedge
+  //
+  Halfedge_handle GetSeedThirdEdge( Vertex_const_handle aSeed, Triedge aTriedge ) const
   {
-    return Construct_ss_triedge_2(mTraits)(CreateEdge(aE0),CreateEdge(aE1),CreateEdge(aE2));
-  }
-  
-  Sorted_triedge_2 CreateSortedTriedge ( Triedge_2 const& aTriedge, Triedge_collinearity aC ) const
-  {
-    return Construct_ss_sorted_triedge_2(mTraits)(aTriedge,aC);
-  }
-
-  Triedge_collinearity GetCollinearity ( Triedge_2 const& aTriedge ) const
-  {
-    return Get_ss_triedge_collinearity_2(mTraits)(aTriedge);
-  }  
-  
-  Triedge_2 CreateTriedge ( BorderTriple const& aTriple ) const
-  {
-    Halfedge_handle lE0, lE1, lE2 ;
-    boost::tie(lE0,lE1,lE2) = aTriple ;
-    return Construct_ss_triedge_2(mTraits)(CreateEdge(lE0),CreateEdge(lE1),CreateEdge(lE2));
-  }
-  
-  
-  Sorted_triedge_2 CreateSortedTriedge ( Halfedge_const_handle aE0
-                                       , Halfedge_const_handle aE1
-                                       , Halfedge_const_handle aE2
-                                       ) const
-  {
-    Triedge_2 lTriedge = CreateTriedge(aE0,aE1,aE2);
-    return CreateSortedTriedge(lTriedge, GetCollinearity(lTriedge) );
-  }
-
-  Sorted_triedge_2 CreateSortedTriedge( BorderTriple const& aTriple ) const
-  {
-    Triedge_2 lTriedge = CreateTriedge(aTriple);
-    return CreateSortedTriedge(lTriedge, GetCollinearity(lTriedge) );
-  }
+    Halfedge_handle rR ;
     
-  Vertex_handle GetVertex ( int aIdx )
-  {
-    CGAL_precondition(aIdx>=0);
-    return mWrappedVertices[aIdx].mVertex ;
-  }
+    if ( handle_assigned(aSeed) && aSeed->is_skeleton() )
+    {
+      Triedge const& lSeedTriedge = GetTriedge(aSeed) ;
+      
+      CGAL_assertion( Triedge::CountInCommon(aTriedge,lSeedTriedge) == 2 ) ;
+      
+      unsigned idx = 0 ;
+      if ( aTriedge.contains(lSeedTriedge.e(idx) ) )
+      {
+        ++idx ;
+        if ( aTriedge.contains(lSeedTriedge.e(idx) ) )
+        {
+          ++idx ;
+          CGAL_assertion( !aTriedge.contains(lSeedTriedge.e(idx)) ) ;
+        }
+      }
+      
+      rR = lSeedTriedge.e(idx);
+    }
+    
+    return rR ; 
 
+  }
+                                                        
+  Trisegment_2 CreateTrisegment ( Triedge const&      aTriedge
+                                , Vertex_const_handle aLSeed
+                                , Vertex_const_handle aRSeed
+                                ) const
+  {
+    CGAL_STSKEL_BUILDER_TRACE(4,"Creating trisegment for " << aTriedge ) ;
+    
+    Halfedge_handle lLSeedTEdge = GetSeedThirdEdge(aLSeed,aTriedge);
+    Halfedge_handle lRSeedTEdge = GetSeedThirdEdge(aRSeed,aTriedge);
+    
+    boost::optional<Segment_2> lLSeedOS, lRSeedOS ;
+    
+    if ( handle_assigned(lLSeedTEdge) )
+    {
+      CGAL_STSKEL_BUILDER_TRACE(4,"Event LSeed is skeleton node N" << aLSeed->id() << ". 3rd edge: E" << lLSeedTEdge->id() ) ;
+      lLSeedOS = boost::optional<Segment_2>(CreateSegment(lLSeedTEdge)) ;      
+    }
+      
+    if ( handle_assigned(lRSeedTEdge) )
+    {
+      CGAL_STSKEL_BUILDER_TRACE(4,"Event RSeed is skeleton node N" << aRSeed->id() << ". 3rd edge: E" << lRSeedTEdge->id() ) ;
+      lRSeedOS = boost::optional<Segment_2>(CreateSegment(lRSeedTEdge)) ;      
+    }
+      
+    boost::optional<Trisegment_2> r = Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0())
+                                                                        ,CreateSegment(aTriedge.e1())
+                                                                        ,CreateSegment(aTriedge.e2())
+                                                                        ,lLSeedOS
+                                                                        ,lRSeedOS
+                                                                        );
+    if ( !r )
+      throw_error("Unable to determine edges collinearity");
+    else
+      CGAL_STSKEL_BUILDER_TRACE(4,"Trisegment: " << *r ) ;
+      
+    return *r ;  
+  }
+  
   Vertex_handle GetPrevInLAV ( Vertex_handle aV )
   {
-    return GetVertex ( mWrappedVertices[aV->id()].mPrevInLAV ) ;
+    return GetVertex ( GetVertexData(aV).mPrevInLAV ) ;
   }
 
   Vertex_handle GetNextInLAV ( Vertex_handle aV )
   {
-    return GetVertex ( mWrappedVertices[aV->id()].mNextInLAV ) ;
+    return GetVertex ( GetVertexData(aV).mNextInLAV ) ;
   }
 
   void SetPrevInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
-    mWrappedVertices[aV->id()].mPrevInLAV = aPrev->id();
+    GetVertexData(aV).mPrevInLAV = aPrev->id();
   }
 
   void SetNextInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
-    mWrappedVertices[aV->id()].mNextInLAV = aPrev->id();
+    GetVertexData(aV).mNextInLAV = aPrev->id();
   }
 
-  BorderTriple GetSkeletonVertexDefiningBorders( Vertex_handle aVertex ) const
+  void Exclude ( Vertex_handle aV )
   {
-    CGAL_precondition(aVertex->is_skeleton() ) ;
-
-    return boost::make_tuple( GetDefiningBorderA(aVertex)
-                            , GetDefiningBorderB(aVertex)
-                            , GetDefiningBorderC(aVertex)
-                            ) ;
+    GetVertexData(aV).mIsExcluded = true ;
+  }
+  bool IsExcluded ( Vertex_const_handle aV ) const
+  {
+    return GetVertexData(aV).mIsExcluded ;
   }
 
-  void Exclude ( Vertex_handle aVertex )
+  void SetIsReflex ( Vertex_handle aV )
   {
-    mWrappedVertices[aVertex->id()].mIsExcluded = true ;
-  }
-  bool IsExcluded ( Vertex_const_handle aVertex ) const
-  {
-    return mWrappedVertices[aVertex->id()].mIsExcluded ;
+    GetVertexData(aV).mIsReflex = true ;
   }
 
-  void SetIsReflex ( Vertex_handle aVertex )
+  bool IsReflex ( Vertex_handle aV )
   {
-    mWrappedVertices[aVertex->id()].mIsReflex = true ;
+    return GetVertexData(aV).mIsReflex ;
   }
 
-  bool IsReflex ( Vertex_handle aVertex )
+  void SetIsDegenerate ( Vertex_handle aV )
   {
-    return mWrappedVertices[aVertex->id()].mIsReflex ;
+    GetVertexData(aV).mIsDegenerate = true ;
   }
 
-  void SetIsDegenerate ( Vertex_handle aVertex )
+  bool IsDegenerate ( Vertex_handle aV )
   {
-    mWrappedVertices[aVertex->id()].mIsDegenerate = true ;
-  }
-
-  bool IsDegenerate ( Vertex_handle aVertex )
-  {
-    return mWrappedVertices[aVertex->id()].mIsDegenerate ;
+    return GetVertexData(aV).mIsDegenerate ;
   }
   
-  void SetIsProcessed ( Vertex_handle aVertex )
+  void SetIsProcessed ( Vertex_handle aV )
   {
-    mWrappedVertices[aVertex->id()].mIsProcessed = true ;
+    GetVertexData(aV).mIsProcessed = true ;
 
-    mVisitor.on_vertex_processed(aVertex);
+    mVisitor.on_vertex_processed(aV);
   }
 
-  bool IsProcessed ( Vertex_handle aVertex )
+  bool IsProcessed ( Vertex_handle aV )
   {
-    return mWrappedVertices[aVertex->id()].mIsProcessed ;
+    return GetVertexData(aV).mIsProcessed ;
   }
 
-  void AddSplitEvent ( Vertex_handle aVertex, EventPtr aEvent )
+  void AddSplitEvent ( Vertex_handle aV, EventPtr aEvent )
   {
-    CGAL_STSKEL_BUILDER_TRACE(2, "V" << aVertex->id() << " PQ: " << *aEvent);
-    mWrappedVertices[aVertex->id()].mSplitEvents.push(aEvent);
+    CGAL_STSKEL_BUILDER_TRACE(2, "V" << aV->id() << " PQ: " << *aEvent);
+    GetVertexData(aV).mSplitEvents.push(aEvent);
   }
   
-  EventPtr PopNextSplitEvent ( Vertex_handle aVertex )
+  EventPtr PopNextSplitEvent ( Vertex_handle aV )
   {
     EventPtr rEvent ;
-    VertexWrapper& lW = mWrappedVertices[aVertex->id()] ;
-    if ( !lW.mNextSplitEventInMainPQ )
+    Vertex_data& lData = GetVertexData(aV) ;
+    if ( !lData.mNextSplitEventInMainPQ )
     {
-      PQ& lPQ = lW.mSplitEvents ;
+      PQ& lPQ = lData.mSplitEvents ;
       if ( !lPQ.empty() )
       {
         rEvent = lPQ.top(); 
         lPQ.pop();
-        lW.mNextSplitEventInMainPQ = true ;
+        lData.mNextSplitEventInMainPQ = true ;
       }
     }
     return rEvent ;
   }
 
-  void AllowNextSplitEvent ( Vertex_handle aVertex )
+  void AllowNextSplitEvent ( Vertex_handle aV )
   {
-    mWrappedVertices[aVertex->id()].mNextSplitEventInMainPQ = false ;
+    GetVertexData(aV).mNextSplitEventInMainPQ = false ;
   }  
   
   void InsertEventInPQ( EventPtr aEvent ) ;
 
   EventPtr PopEventFromPQ() ;
 
-  // Returns 1 IFF aE is in the set (aA,aB,aC), 0 otherwise
-  int CountInCommon( Halfedge_handle aE, Halfedge_handle aA, Halfedge_handle aB, Halfedge_handle aC ) const
-  {
-    return aE == aA || aE == aB || aE == aC ? 1 : 0 ;
-  }
-
-  // Returns the number of common halfedges in the sets (aXA,aXB,aXC) and (aYA,aYB,aYC)
-  int CountInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
-                   , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
-                   ) const
-  {
-    return   CountInCommon(aXA,aYA,aYB,aYC)
-           + CountInCommon(aXB,aYA,aYB,aYC)
-           + CountInCommon(aXC,aYA,aYB,aYC) ;
-  }
-
-  // Returns true if the intersection of the sets (aXA,aXB,aXC) and (aYA,aYB,aYC) has size exactly 2
-  // (that is, both sets have 2 elements in common)
-  bool HaveTwoInCommon( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
-                      , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
-                      ) const
-  {
-    return CountInCommon(aXA,aXB,aXC,aYA,aYB,aYC) == 2 ;
-  }
-  
-  // Returns true if the intersection of the sets (aXA,aXB,aXC) and (aYA,aYB,aYC) has size exactly 2
-  // (that is, both sets have 2 elements in common)
-  bool HaveTwoInCommon( BorderTriple aX, BorderTriple aY ) const
-  {
-    Halfedge_handle lXA, lXB, lXC, lYA, lYB, lYC ;
-    boost::tie(lXA,lXB,lXC) = aX ;
-    boost::tie(lYA,lYB,lYC) = aY ;
-    return CountInCommon(lXA,lXB,lXC,lYA,lYB,lYC) == 2 ;
-  }
-
-  // Returns true if the sets of halfedges (aXA,aXB,aXC) and (aYA,aYB,aYC) are equivalent
-  // (one is a permutation of the other)
-  bool AreTheSameTriple( Halfedge_handle aXA, Halfedge_handle aXB, Halfedge_handle aXC
-                       , Halfedge_handle aYA, Halfedge_handle aYB, Halfedge_handle aYC
-                       ) const
-  {
-    return CountInCommon(aXA,aXB,aXC,aYA,aYB,aYC) == 3 ;
-  }
 
 
-  bool ExistEvent ( Sorted_triedge_2 aS )
+  bool ExistEvent ( Trisegment_2 const& aS )
   {
     return Do_ss_event_exist_2(mTraits)(aS);
   }  
@@ -540,47 +509,29 @@ private :
   bool IsOppositeEdgeFacingTheSplitSeed( Vertex_handle aSeed, Halfedge_handle aOpposite ) const
   {
     if ( aSeed->is_skeleton() )
-    {
-      BorderTriple lTriple  = GetSkeletonVertexDefiningBorders(aSeed);
-      Triedge_2    lTriedge = CreateTriedge(lTriple);
-
-      return Is_edge_facing_ss_node_2(mTraits)( CreateSortedTriedge(lTriedge,GetCollinearity(lTriedge))
-                                              , CreateEdge(aOpposite)
-                                              ) ;
-    }
-    else
-    {
-      return Is_edge_facing_ss_node_2(mTraits)( aSeed->point(), CreateEdge(aOpposite) ) ;
-    }
+         return Is_edge_facing_ss_node_2(mTraits)( GetSkeletonNodeTrisegment(aSeed), CreateSegment(aOpposite) ) ;
+    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()                  , CreateSegment(aOpposite) ) ;
   }
   
   bool IsSplitEventInsideOffsetZone( EventPtr const& aSplit
-                                   , Halfedge_const_handle aOppositePrev
-                                   , Halfedge_const_handle aOpposite
-                                   , Halfedge_const_handle aOppositeNext
+                                   , Triedge const&  aOppTriedge
+                                   , Vertex_handle   aOppLSeed
+                                   , Vertex_handle   aOppRSeed
                                    ) const
   {
-    return Is_ss_event_inside_offset_zone_2(mTraits)( aSplit->sorted_triedge()
-                                                    , CreateTriedge(aOppositePrev,aOpposite, aOppositeNext)
+    return Is_ss_event_inside_offset_zone_2(mTraits)( aSplit->trisegment()
+                                                    , CreateTrisegment(aOppTriedge, aOppLSeed, aOppRSeed )
                                                     ) ;
   }
 
-  Comparison_result CompareEvents ( Sorted_triedge_2 const& aA, Sorted_triedge_2 const& aB ) const
+  Comparison_result CompareEvents ( Trisegment_2 const& aA, Trisegment_2 const& aB ) const
   {
-  
     return Compare_ss_event_times_2(mTraits)(aA,aB) ;
   }
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    if ( !AreTheSameTriple( aA->border_a(), aA->border_b(), aA->border_c()
-                          , aB->border_a(), aB->border_b(), aB->border_c()
-                          )
-        )
-    {
-      return CompareEvents( aA->sorted_triedge(), aB->sorted_triedge() ) ;
-    }
-    else return EQUAL ;
+    return aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL ;
   }
 
   Comparison_result CompareEventsDistanceToSeed ( Vertex_handle   aSeed
@@ -588,75 +539,32 @@ private :
                                                 , EventPtr const& aB
                                                 ) const
   {
-    if ( !AreTheSameTriple( aA->border_a(), aA->border_b(), aA->border_c()
-                          , aB->border_a(), aB->border_b(), aB->border_c()
-                          )
-        )
+    if ( aA->triedge() != aB->triedge() )
     {
       if ( aSeed->is_skeleton() )
-      {
-        BorderTriple lTriple  = GetSkeletonVertexDefiningBorders(aSeed);
-        Triedge_2    lTriedge = CreateTriedge(lTriple);
-
-        CGAL_STSKEL_BUILDER_TRACE(3
-                                 ,"Seed N" << aSeed->id() << " is a skeleton node,"
-                                 << " defined by: E" << lTriple.get<0>()->id()
-                                            << ", E" << lTriple.get<1>()->id()
-                                             << ", E" << lTriple.get<2>()->id()
-                                 );
-
-        return Compare_ss_event_distance_to_seed_2(mTraits)( CreateSortedTriedge(lTriedge,GetCollinearity(lTriedge))
-                                                           , aA->sorted_triedge()
-                                                           , aB->sorted_triedge()
-                                                           ) ;
-      }
-      else
-      {
-        return Compare_ss_event_distance_to_seed_2(mTraits)( aSeed->point(), aA->sorted_triedge(), aB->sorted_triedge() ) ;
-      }
+           return Compare_ss_event_distance_to_seed_2(mTraits)( GetSkeletonNodeTrisegment(aSeed), aA->trisegment(), aB->trisegment() ) ;
+      else return Compare_ss_event_distance_to_seed_2(mTraits)( aSeed->point()                  , aA->trisegment(), aB->trisegment() ) ;
     }
     else return EQUAL ;
   }
   
-  bool AreEventsSimultaneous( Sorted_triedge_2 const& x, Sorted_triedge_2 const& y ) const
+  bool AreEventsSimultaneous( Trisegment_2 const& x, Trisegment_2 const& y ) const
   {
     return Are_ss_events_simultaneous_2(mTraits)(x,y) ;
   }
   
   bool AreSkeletonNodesCoincident( Vertex_handle aX, Vertex_handle aY ) const
   {
-    BorderTriple lBordersX = GetSkeletonVertexDefiningBorders(aX);
-    BorderTriple lBordersY = GetSkeletonVertexDefiningBorders(aY);
-
-    return Are_ss_events_simultaneous_2(mTraits)( CreateSortedTriedge(lBordersX), CreateSortedTriedge(lBordersY)) ;
+    return AreEventsSimultaneous( GetSkeletonNodeTrisegment(aX),  GetSkeletonNodeTrisegment(aY) ) ;
   }
  
-  bool IsNewEventInThePast( Halfedge_handle         aBorderA
-                          , Halfedge_handle         aBorderB
-                          , Halfedge_handle         aBorderC
-                          , Sorted_triedge_2 const& aSortedTriedge1 // (aBorderA,aBorderB,aBorderC)
-                          , Vertex_handle           aSeedNode
-                          ) const
+  bool IsNewEventInThePast( Trisegment_2 const& aTrisegment, Vertex_handle aSeedNode ) const
   {
-    bool rResult = false ;
-
-    Halfedge_handle lSeedBorderA, lSeedBorderB, lSeedBorderC ;
-
-    boost::tie(lSeedBorderA,lSeedBorderB,lSeedBorderC) = GetSkeletonVertexDefiningBorders(aSeedNode) ;
-
-    if ( !AreTheSameTriple(aBorderA,aBorderB,aBorderC,lSeedBorderA,lSeedBorderB,lSeedBorderC) )
-    {
-      Triedge_2        lTriedge2       = CreateTriedge(lSeedBorderA,lSeedBorderB,lSeedBorderC);
-      Sorted_triedge_2 lSortedTriedge2 = CreateSortedTriedge(lTriedge2,GetCollinearity(lTriedge2));
-      
-      if ( CompareEvents( aSortedTriedge1, lSortedTriedge2 ) == SMALLER )
-        rResult = true ;
-    }
-
-    return rResult ;
+    return aSeedNode->is_skeleton() ? CompareEvents( aTrisegment, GetSkeletonNodeTrisegment(aSeedNode) ) == SMALLER 
+                                    : false  ;
   }
 
-  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Sorted_triedge_2 const& aS ) const
+  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Trisegment_2 const& aS ) const
   {
     boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
     if ( !r )
@@ -668,7 +576,7 @@ private :
   {
     FT      lTime ;
     Point_2 lP ;
-    boost::tie(lTime,lP) = ConstructEventTimeAndPoint(aE.sorted_triedge());
+    boost::tie(lTime,lP) = ConstructEventTimeAndPoint(aE.trisegment());
     
     aE.SetTimeAndPoint(lTime,lP);
   }
@@ -680,23 +588,18 @@ private :
     mSSkel->SSkel::Base::edges_erase(aB);
   }
 
-  BorderTriple GetDefiningBorders( Vertex_handle aA, Vertex_handle aB ) ;
+  Triedge GetCommonTriedge( Vertex_handle aA, Vertex_handle aB ) ;
 
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;
 
-  bool IsInverseSplitEventCoincident( Vertex_handle    const& aReflexOppN 
-                                    , Halfedge_handle  const& aReflexLBorder
-                                    , Halfedge_handle  const& aReflexRBorder
-                                    , Sorted_triedge_2 const& aEventSTriedge
+  bool IsInverseSplitEventCoincident( Vertex_handle const& aReflexOppN 
+                                    , Triedge const&       aEventTriedge
+                                    , Trisegment_2 const&  aEventTrisegment
                                     ) ;
                                     
   EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN ) ;
   
-  void CollectSplitEvent( Vertex_handle    aNode
-                        , Halfedge_handle  aReflexLBorder
-                        , Halfedge_handle  aReflexRBorder
-                        , Halfedge_handle  aOppositeBorder
-                        ) ;
+  void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge ) ;
 
   void CollectSplitEvents( Vertex_handle aNode ) ;
 
@@ -759,10 +662,11 @@ private:
 
   Visitor const& mVisitor ;
 
-  std::vector<VertexWrapper> mWrappedVertices ;
-  Vertex_handle_vector       mReflexVertices ;
-  Halfedge_handle_vector     mDanglingBisectors ;
-  Halfedge_handle_vector     mContourHalfedges ;
+  std::vector<Vertex_data_ptr> mVertexData ;
+  
+  Vertex_handle_vector   mReflexVertices ;
+  Halfedge_handle_vector mDanglingBisectors ;
+  Halfedge_handle_vector mContourHalfedges ;
 
   std::list<Vertex_handle> mSLAV ;
 
@@ -808,16 +712,16 @@ private :
 
       Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,*lCurr) ) ;
       CGAL_STSKEL_BUILDER_TRACE(1,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
-      mWrappedVertices.push_back( VertexWrapper(lVertex,mEventCompare) ) ;
+      InitVertexData(lVertex);
 
       Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face() ) ;
 
       ++ c ;
 
       lCCWBorder->HBase_base::set_face(lFace);
-      lFace     ->FBase::set_halfedge(lCCWBorder);
+      lFace     ->FBase     ::set_halfedge(lCCWBorder);
 
-      lVertex   ->VBase::set_halfedge(lCCWBorder);
+      lVertex   ->VBase     ::set_halfedge(lCCWBorder);
       lCCWBorder->HBase_base::set_vertex(lVertex);
 
       if ( lCurr == aBegin )
@@ -827,11 +731,13 @@ private :
       }
       else
       {
-        SetPrevInLAV    (lVertex    ,lPrevVertex);
-        SetNextInLAV    (lPrevVertex,lVertex    );
+        SetPrevInLAV(lVertex    ,lPrevVertex);
+        SetNextInLAV(lPrevVertex,lVertex    );
 
-        SetDefiningBorderA(lVertex    ,lCCWBorder);
-        SetDefiningBorderB(lPrevVertex,lCCWBorder);
+        SetTriedge( lPrevVertex, Triedge(lPrevCCWBorder,lCCWBorder) ) ;
+        
+        //SetDefiningBorderA(lVertex    ,lCCWBorder);
+        //SetDefiningBorderB(lPrevVertex,lCCWBorder);
 
         lCWBorder->HBase_base::set_vertex(lPrevVertex);
 
@@ -857,11 +763,12 @@ private :
       lNextCWBorder  = lCWBorder ;
     }
 
-    SetPrevInLAV    (lFirstVertex,lPrevVertex );
-    SetNextInLAV    (lPrevVertex ,lFirstVertex);
+    SetPrevInLAV(lFirstVertex,lPrevVertex );
+    SetNextInLAV(lPrevVertex ,lFirstVertex);
 
-    SetDefiningBorderA(lFirstVertex,lFirstCCWBorder);
-    SetDefiningBorderB(lPrevVertex ,lFirstCCWBorder);
+    //SetDefiningBorderA(lFirstVertex,lFirstCCWBorder);
+    //SetDefiningBorderB(lPrevVertex ,lFirstCCWBorder);
+    SetTriedge( lPrevVertex, Triedge(lPrevCCWBorder,lFirstCCWBorder) ) ;
 
     lFirstCCWBorder->opposite()->HBase_base::set_vertex(lPrevVertex);
 
@@ -885,6 +792,7 @@ private :
   
 public:
   
+  // This compares INPUT vertices so the comparison must be exact and there is no need to filter it.
   struct AreVerticesEqual
   {
     bool operator() ( Point_2 const&x, Point_2 const& y ) const
