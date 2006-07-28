@@ -21,8 +21,7 @@
 #define CGAL_SKIN_SURFACE_MESHER_ORACLE_3_H
 
 #include <CGAL/point_generators_3.h>
-//#include <CGAL/Surface_mesher/Sphere_oracle_3.h>
-#include <CGAL/Surface_mesher/Oracles/Sphere_oracle_3.h>
+#include <CGAL/Surface_mesher/Sphere_oracle_3.h>
 
 #include <queue>
 
