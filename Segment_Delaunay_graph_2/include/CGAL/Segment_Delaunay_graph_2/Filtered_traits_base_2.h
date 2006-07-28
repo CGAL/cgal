@@ -156,7 +156,7 @@ public:
 
 protected:
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Sdg_arrangement_enum
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Arrangement_enum
   Arrangement_enum;
 
 private:

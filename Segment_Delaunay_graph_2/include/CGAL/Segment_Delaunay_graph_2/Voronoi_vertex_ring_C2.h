@@ -60,6 +60,11 @@ public:
 
   typedef typename Base::Homogeneous_point_2 Homogeneous_point_2;
 
+  typedef typename Base::Orientation         Orientation;
+  typedef typename Base::Comparison_result   Comparison_result;
+  typedef typename Base::Oriented_side       Oriented_side;
+  typedef typename Base::Sign                Sign;
+
 private:
   typedef Are_same_points_C2<K>     Are_same_points_2;
   typedef Are_same_segments_C2<K>   Are_same_segments_2;

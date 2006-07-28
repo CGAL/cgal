@@ -51,6 +51,10 @@ private:
   typedef typename Base::FT                   FT;
   typedef typename Base::RT                   RT;
 
+  typedef typename Base::Comparison_result    Comparison_result;
+  typedef typename Base::Oriented_side        Oriented_side;
+  typedef typename Base::Sign                 Sign;
+
   typedef typename K::Kernel::Orientation_2   Orientation_2;
   typedef Are_same_points_C2<K>               Are_same_points_2;
   typedef Are_same_segments_C2<K>             Are_same_segments_2;
