@@ -1,3 +1,8 @@
+28 July 2006 Laurent Rineau
+- fix last patch: the vertex iterator class needs a little more sugar
+(thanks to Mariette how spotted this out).
+- extend the testsuite to check that
+
 26 July 2006 Laurent Rineau
 - fix a bug: c2t3::Vertex_iterator should be convertible to Vertex_handle,
   as usuall vertex iterators of CGAL triangulations.

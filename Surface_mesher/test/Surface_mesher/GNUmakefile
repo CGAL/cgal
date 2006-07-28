@@ -65,7 +65,6 @@ run-test: all
 	./implicit_surface_mesher_test$(EXE_EXT)
 	./test_robust_circumcenter$(EXE_EXT)
 	./test_c2t3_iterators$(EXE_EXT)
-	./test_sphere_oracle$(EXE_EXT)
 
 clean: \
                    combined_spheres.clean \

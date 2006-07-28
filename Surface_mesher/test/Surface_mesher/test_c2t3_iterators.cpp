@@ -46,12 +46,18 @@ int main(int , char**)
     std::distance(c2t3.boundary_edges_begin(),
                   c2t3.boundary_edges_end());
 
-  std::cerr << "Number of edges: " << number_of_edges
+  Tr::size_type number_of_vertices = 
+    std::distance(c2t3.vertices_begin(),
+                  c2t3.vertices_end());
+
+  std::cerr << "Number of vertices: " << number_of_vertices
+            << "\nNumber of edges: " << number_of_edges
             << "\nNumber of facets: " << number_of_facets
             << "\nNumber of boundary edges: " << number_of_boundary_edges
             << "\n";
 
   // Excepted results:
+  CGAL_assertion( number_of_vertices == 4 );  
   CGAL_assertion( number_of_boundary_edges == 4 );
   CGAL_assertion( number_of_edges == 5 );
   CGAL_assertion( number_of_facets == 2 );  

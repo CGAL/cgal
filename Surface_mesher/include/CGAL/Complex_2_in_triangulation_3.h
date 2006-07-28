@@ -128,11 +128,17 @@ class Complex_2_in_triangulation_3 {
     typedef Filter_iterator<typename Triangulation::Finite_vertices_iterator,
                             Vertex_not_in_complex> Base;
     typedef typename Base::Predicate Predicate;
+    typedef Vertex_iterator Self;
   public:
     Vertex_iterator(Base i) : Base(i)
     {
     }
 
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+  
     operator Vertex_handle() 
     {
       return Vertex_handle(this->base());
