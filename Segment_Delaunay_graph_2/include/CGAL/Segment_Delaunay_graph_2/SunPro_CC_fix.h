@@ -45,8 +45,8 @@ namespace Internal {
 
   template<class CK, class FK>
   struct SUNPRO_CC_Interval_converter
-    : public Cartesian_converter<CK, FK,
-                                 To_interval< typename CK::RT > >
+    : public CGAL::Cartesian_converter<CK, FK,
+				       To_interval< typename CK::RT > >
   {
   };
 

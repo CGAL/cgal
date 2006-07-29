@@ -1,3 +1,6 @@
+29 July 2006:  Menelaos Karavelas
+- the bug fix for SunPro CC was missing a CGAL:: qualification
+
 27 July 2006:  Menelaos Karavelas
 - moved predicate code to SegmentDelaunayGraph_2 namespace
 - removed unused code and corresponding files
