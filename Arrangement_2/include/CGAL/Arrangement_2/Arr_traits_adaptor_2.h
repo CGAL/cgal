@@ -411,13 +411,13 @@ public:
      * \param self the traits class. It must be passed, to handle the case
      * it is not stateless (e.g., it stores data)
      */
-    Infinite_in_x_2(const Self * self) : m_self(self) {}
+    Infinite_in_x_2 (const Base * base) : m_base (base) {}
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
      *         FINITE if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
@@ -432,8 +432,8 @@ public:
     }
 
   private:
-    /*! The traits */
-    const Self * m_self;
+    /*! The base traits */
+    const Base * m_base;
 
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
@@ -442,7 +442,7 @@ public:
                                       Curve_end ind,
                                       Tag_true) const
     {
-      return (m_self->infinite_in_x_2_object() (cv, ind));
+      return (m_base->infinite_in_x_2_object() (cv, ind));
     }
 
     /*!
@@ -469,13 +469,13 @@ public:
      * \param self the traits class. It must be passed, to handle the case
      * it is not stateless (e.g., it stores data)
      */
-    Infinite_in_y_2(const Self * self) : m_self(self) {}
+    Infinite_in_y_2(const Base * base) : m_base (base) {}
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at y.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at y = -oo;
      *         FINITE if the curve end has a finite y-coordinate;
      *         PLUS_INFINITY if the curve end lies at y = +oo.
@@ -490,8 +490,8 @@ public:
     }
 
   private:
-    /*! The traits */
-    const Self * m_self;
+    /*! The base traits */
+    const Base * m_base;
 
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
@@ -500,7 +500,7 @@ public:
                                       Curve_end ind,
                                       Tag_true) const
     {
-      return (m_self->infinite_in_y_2_object() (cv, ind));
+      return (m_base->infinite_in_y_2_object() (cv, ind));
     }
 
     /*!

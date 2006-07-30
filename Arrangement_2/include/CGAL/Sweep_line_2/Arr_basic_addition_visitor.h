@@ -58,38 +58,48 @@ public:
 
   void before_sweep()
   {
-    m_lh = this->m_arr_access.bottom_left_fictitious_vertex()->incident_halfedges();
-    if(m_lh->source()->infinite_in_x() != MINUS_INFINITY)
-      m_lh = m_lh->next()->twin();
+    this->m_lh = 
+      this->m_arr_access.bottom_left_fictitious_vertex()->incident_halfedges();
+    if (this->m_lh->source()->infinite_in_x() != MINUS_INFINITY)
+      this->m_lh = this->m_lh->next()->twin();
    
-    m_bh = m_lh->next();
+    this->m_bh = this->m_lh->next();
    
+    this->m_th = 
+      this->m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
+    if(this->m_th->source()->infinite_in_x() == MINUS_INFINITY)
+      this->m_th = this->m_th->next()->twin();
 
-    m_th = this->m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
-    if(m_th->source()->infinite_in_x() == MINUS_INFINITY)
-      m_th = m_th->next()->twin();
-
-    m_rh = this->m_arr_access.bottom_right_fictitious_vertex()->incident_halfedges();
-    if(m_rh->source()->infinite_in_x() == PLUS_INFINITY)
-      m_rh = m_rh->twin();
+    this->m_rh = 
+      this->m_arr_access.bottom_right_fictitious_vertex()->incident_halfedges();
+    if (this->m_rh->source()->infinite_in_x() == PLUS_INFINITY)
+      this->m_rh = this->m_rh->twin();
     else
-      m_rh = m_rh->next();
+      this->m_rh = this->m_rh->next();
 
-    CGAL_assertion(m_lh->direction() == LARGER);
-    CGAL_assertion(m_lh->face() != this->m_arr_access.fictitious_face());
-    CGAL_assertion(m_lh->target() == this->m_arr_access.bottom_left_fictitious_vertex());
+    CGAL_assertion (this->m_lh->direction() == LARGER);
+    CGAL_assertion (this->m_lh->face() != 
+                    this->m_arr_access.fictitious_face());
+    CGAL_assertion (this->m_lh->target() == 
+                    this->m_arr_access.bottom_left_fictitious_vertex());
 
-    CGAL_assertion(m_bh->direction() == SMALLER);
-    CGAL_assertion(m_bh->face() != this->m_arr_access.fictitious_face());
-    CGAL_assertion(m_bh->source() == this->m_arr_access.bottom_left_fictitious_vertex());
+    CGAL_assertion (this->m_bh->direction() == SMALLER);
+    CGAL_assertion (this->m_bh->face() != 
+                    this->m_arr_access.fictitious_face());
+    CGAL_assertion (this->m_bh->source() ==
+                    this->m_arr_access.bottom_left_fictitious_vertex());
 
-    CGAL_assertion(m_rh->direction() == SMALLER);
-    CGAL_assertion(m_rh->face() != this->m_arr_access.fictitious_face());
-    CGAL_assertion(m_rh->source() == this->m_arr_access.bottom_right_fictitious_vertex());
+    CGAL_assertion (this->m_rh->direction() == SMALLER);
+    CGAL_assertion (this->m_rh->face() != 
+                    this->m_arr_access.fictitious_face());
+    CGAL_assertion (this->m_rh->source() == 
+                    this->m_arr_access.bottom_right_fictitious_vertex());
 
-    CGAL_assertion(m_th->direction() == LARGER);
-    CGAL_assertion(m_th->face() != this->m_arr_access.fictitious_face());
-    CGAL_assertion(m_th->target() == this->m_arr_access.top_left_fictitious_vertex());
+    CGAL_assertion (this->m_th->direction() == LARGER);
+    CGAL_assertion (this->m_th->face() != 
+                    this->m_arr_access.fictitious_face());
+    CGAL_assertion (this->m_th->target() == 
+                    this->m_arr_access.top_left_fictitious_vertex());
   }
 
   void before_handle_event(Event* event)
