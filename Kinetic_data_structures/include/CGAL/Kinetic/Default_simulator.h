@@ -190,7 +190,7 @@ public:
       cur_time_=audit_time_;
       #endif*/
     }
-    cur_time_=std::min(t, end_time());
+    cur_time_=(std::min)(t, end_time());
   }
 
   //! Not clear if I want two methods

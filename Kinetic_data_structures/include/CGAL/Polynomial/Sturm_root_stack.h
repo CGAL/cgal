@@ -995,16 +995,16 @@ class Sturm_root_stack
             std::pair<double,double> iupper =
                 CGAL_POLYNOMIAL_TO_INTERVAL(upper.upper_bound());
 
-            double low = std::min(ilower.first, iupper.first);
-            double high = std::max(ilower.second, iupper.second);
+            double low = (std::min)(ilower.first, iupper.first);
+            double high = (std::max)(ilower.second, iupper.second);
 
             if ( CGAL::is_finite(low) && CGAL::is_finite(high) ) {
                 CGAL_Polynomial_assertion( low <= high );
                 return Interval(INT(low), INT(high));
             }
 
-            INT low_nt = std::min(lower.lower_bound(), upper.lower_bound());
-            INT high_nt = std::max(lower.upper_bound(), upper.upper_bound());
+            INT low_nt = (std::min)(lower.lower_bound(), upper.lower_bound());
+            INT high_nt = (std::max)(lower.upper_bound(), upper.upper_bound());
 
             CGAL_Polynomial_assertion( low_nt <= high_nt );
 

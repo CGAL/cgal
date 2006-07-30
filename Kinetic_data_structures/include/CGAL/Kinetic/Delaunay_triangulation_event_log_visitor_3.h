@@ -41,7 +41,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         std::ostringstream out;
         Point a= internal::vertex_of_edge(e, 0)->point();
         Point b= internal::vertex_of_edge(e, 1)->point();
-        out << "Flipping away edge {" << std::min(a,b) << ", " << std::max(a,b) << "}";
+        out << "Flipping away edge {" << (std::min)(a,b) << ", " << (std::max)(a,b) << "}";
         log_.push_back(out.str());
         CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
     }
@@ -51,7 +51,7 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
         std::ostringstream out;
         Point a= internal::vertex_of_edge(e, 0)->point();
         Point b= internal::vertex_of_edge(e, 1)->point();
-        out << "Flipping in edge {" << std::min(a,b) << ", " << std::max(a,b) << "}";
+        out << "Flipping in edge {" << (std::min)(a,b) << ", " << (std::max)(a,b) << "}";
         log_.push_back(out.str());
         CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
     }

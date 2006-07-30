@@ -338,7 +338,7 @@ public:
     Item *ni = make_event(t, e);
 
     //CGAL_exactness_assertion(t >= lbs_);
-    //lb_=std::min(t, lb_);
+    //lb_=(std::min)(t, lb_);
     
     //++queue_insertions__;
 
@@ -562,7 +562,7 @@ public:
     //CGAL_precondition(o!= std::numeric_limits<Priority>::infinity());
     end_time_=o;
     /*if (end_time_== std::numeric_limits<Priority>::infinity()) {
-      end_split_=std::numeric_limits<int>::max();
+      end_split_=(std::numeric_limits<int>::max)();
     } else {
       end_split_= tii_(o).second;
       }*/
@@ -689,7 +689,7 @@ protected:
   }
 
   /*NT step() const{
-    return std::max(ub_-lb_, NT(1));
+    return (std::max)(ub_-lb_, NT(1));
     }*/
 
   NT av(NT a, NT b) const
@@ -877,7 +877,7 @@ protected:
   unsigned int max_front_size() const
   {
     return 8U;
-    //return std::max(4U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
+    //return (std::max)(4U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
   }
 
   typename FK::To_isolating_interval tii_;
