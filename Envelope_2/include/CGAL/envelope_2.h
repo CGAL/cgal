@@ -25,7 +25,7 @@
  * plane.
  */
 
-#include <Envelope_2/Env_divide_and_conquer_2.h>
+#include <CGAL/Envelope_2/Env_divide_and_conquer_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

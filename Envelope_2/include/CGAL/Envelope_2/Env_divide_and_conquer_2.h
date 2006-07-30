@@ -84,7 +84,7 @@ public:
    * Constructor with a traits object.
    * \param _traits The traits object.
    */
-  Envelope_divide_and_conquer_2 (const Traits* _traits) :
+  Envelope_divide_and_conquer_2 (const Traits_2* _traits) :
     traits (_traits),
     own_traits(false),
     env_type(LOWER)
@@ -188,7 +188,7 @@ public:
    * Get the traits object.
    * \return A pointer to the traits object.
    */
-  Traits* get_traits () const
+  Traits_2* get_traits () const
   {
     return (traits);
   }
@@ -294,10 +294,10 @@ protected:
   class Vertical_strict_weak_ordering
   {
   private:    
-    const Traits         *traits;
+    const Traits_2         *traits;
 
   public:
-    Vertical_strict_weak_ordering (const Traits *_traits) :
+    Vertical_strict_weak_ordering (const Traits_2 *_traits) :
       traits(_traits)
     {}
 

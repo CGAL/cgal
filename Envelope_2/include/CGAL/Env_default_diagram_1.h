@@ -170,7 +170,7 @@ public:
   public:
 
     /*! Constructor. */
-    Vertex () :
+    Edge () :
       _leftP(NULL),
       _rightP(NULL)
     {}
@@ -301,6 +301,8 @@ private:
 
   Vertex_allocator  vertex_alloc;    // An allocator for vertices.
   Edge_allocator    edge_alloc;      // An allocator for edges.
+
+public:
 
   /*!
    * Constructor.
