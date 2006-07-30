@@ -110,7 +110,7 @@ public:
   public:
     Construct_min_vertex_2(const Base * base, unsigned int & counter) :
       m_object(base->construct_min_vertex_2_object()), m_counter(counter) {}
-    const Point_2 & operator()(const X_monotone_curve_2 & cv) const
+    const Point_2 operator()(const X_monotone_curve_2 & cv) const
     { ++m_counter; return m_object(cv); }
   };
 
@@ -122,7 +122,7 @@ public:
   public:
     Construct_max_vertex_2(const Base * base, unsigned int & counter) :
       m_object(base->construct_max_vertex_2_object()), m_counter(counter) {}
-    const Point_2 & operator()(const X_monotone_curve_2 & cv) const
+    const Point_2 operator()(const X_monotone_curve_2 & cv) const
     { ++m_counter; return m_object(cv); }
   };
   
@@ -209,7 +209,7 @@ public:
     typename Base::Make_x_monotone_2 m_object;
     unsigned int & m_counter;
   public:
-    Make_x_monotone_2(const Base * base, unsigned int & counter) :
+    Make_x_monotone_2(Base * base, unsigned int & counter) :
       m_object(base->make_x_monotone_2_object()), m_counter(counter) {}
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi)
@@ -222,7 +222,7 @@ public:
     typename Base::Split_2 m_object;
     unsigned int & m_counter;
   public:
-    Split_2(const Base * base, unsigned int & counter) :
+    Split_2(Base * base, unsigned int & counter) :
       m_object(base->split_2_object()), m_counter(counter) {}
     void operator()(const X_monotone_curve_2 & cv, const Point_2 & p,
                     X_monotone_curve_2 & cv1, X_monotone_curve_2 & cv2)
@@ -235,7 +235,7 @@ public:
     typename Base::Intersect_2 m_object;
     unsigned int & m_counter;
   public:
-    Intersect_2(const Base * base, unsigned int & counter) :
+    Intersect_2(Base * base, unsigned int & counter) :
       m_object(base->intersect_2_object()), m_counter(counter) {}
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & cv1,
@@ -263,7 +263,7 @@ public:
     typename Base::Merge_2 m_object;
     unsigned int & m_counter;
   public:
-    Merge_2(const Base * base, unsigned int & counter) :
+    Merge_2(Base * base, unsigned int & counter) :
       m_object(base->merge_2_object()), m_counter(counter) {}
     void operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2,
