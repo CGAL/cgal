@@ -103,7 +103,7 @@ public:
   };
 
   /*! Obtain the left endpoint of a given x-monotone curve */
-  class Construct_min_vertex_2 : public Base::Construct_min_vertex_2 {
+  class Construct_min_vertex_2 {
   private:
     typename Base::Construct_min_vertex_2 m_object;
     unsigned int & m_counter;
@@ -115,7 +115,7 @@ public:
   };
 
   /*! Obtain the right endpoint of a given x-monotone curve */
-  class Construct_max_vertex_2 : public Base::Construct_max_vertex_2 {
+  class Construct_max_vertex_2 {
   private:
     typename Base::Construct_max_vertex_2 m_object;
     unsigned int & m_counter;
@@ -127,7 +127,7 @@ public:
   };
   
   /*! Check whether a given x-monotone curve is vertical */
-  class Is_vertical_2 : public Base::Is_vertical_2 {
+  class Is_vertical_2 {
   private:
     typename Base::Is_vertical_2 m_object;
     unsigned int & m_counter;
@@ -141,7 +141,7 @@ public:
   /*! Return the location of a given point with respect to a given x-monotone
    * curve
    */
-  class Compare_y_at_x_2 : public Base::Compare_y_at_x_2 {
+  class Compare_y_at_x_2 {
   private:
     typename Base::Compare_y_at_x_2 m_object;
     unsigned int & m_counter;
@@ -154,7 +154,7 @@ public:
   };
   
   /*! Check if two x-monotone curves or if two points are identical */
-  class Equal_2 : public Base::Equal_2 {
+  class Equal_2 {
   private:
     typename Base::Equal_2 m_object;
     unsigned int & m_counter1;
@@ -174,7 +174,7 @@ public:
   /*! Compare the y value of two x-monotone curves immediately to the left of
    * their intersection point
    */
-  class Compare_y_at_x_left_2 : public Base::Compare_y_at_x_left_2 {
+  class Compare_y_at_x_left_2 {
   private:
     typename Base::Compare_y_at_x_left_2 m_object;
     unsigned int & m_counter;
@@ -190,7 +190,7 @@ public:
   /*! Compare the y value of two x-monotone curves immediately to the right of
    * their intersection point
    */
-  class Compare_y_at_x_right_2 : public Base::Compare_y_at_x_right_2 {
+  class Compare_y_at_x_right_2 {
   private:
     typename Base::Compare_y_at_x_right_2 m_object;
     unsigned int & m_counter;
@@ -200,12 +200,11 @@ public:
     Comparison_result operator()(const X_monotone_curve_2 & cv1,
                                  const X_monotone_curve_2 & cv2,
                                  const Point_2 & p) const
-    { ++m_counter; return m_object(cv1, cv2, p);
-    }
+    { ++m_counter; return m_object(cv1, cv2, p); }
   };
   
   /*! Split a curve into x-monotone pieces */
-  class Make_x_monotone_2 : public Base::Make_x_monotone_2 {
+  class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
     unsigned int & m_counter;
@@ -213,12 +212,12 @@ public:
     Make_x_monotone_2(const Base * base, unsigned int & counter) :
       m_object(base->make_x_monotone_2_object()), m_counter(counter) {}
     template<class OutputIterator>
-    OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
+    OutputIterator operator()(const Curve_2 & cv, OutputIterator oi)
     { ++m_counter; return m_object(cv, oi); }
   };
 
   /*! Split an x-monotone curve into two */
-  class Split_2 : public Base::Split_2 {
+  class Split_2 {
   private:
     typename Base::Split_2 m_object;
     unsigned int & m_counter;
@@ -226,12 +225,12 @@ public:
     Split_2(const Base * base, unsigned int & counter) :
       m_object(base->split_2_object()), m_counter(counter) {}
     void operator()(const X_monotone_curve_2 & cv, const Point_2 & p,
-                    X_monotone_curve_2 & cv1, X_monotone_curve_2 & cv2) const
+                    X_monotone_curve_2 & cv1, X_monotone_curve_2 & cv2)
     { ++m_counter; return m_object(cv, p, cv1, cv2); }
   };
 
   /*! compute intersections */
-  class Intersect_2 : public Base::Intersect_2 {
+  class Intersect_2 {
   private:
     typename Base::Intersect_2 m_object;
     unsigned int & m_counter;
@@ -241,12 +240,12 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & cv1,
                               const X_monotone_curve_2 & cv2,
-                              OutputIterator oi) const
+                              OutputIterator oi)
     { ++m_counter; return m_object(cv1, cv2, oi); }
   };
 
   /*! Test whether two x-monotone curves are mergeable */
-  class Are_mergeable_2 : public Base::Are_mergeable_2 {
+  class Are_mergeable_2 {
   private:
     typename Base::Are_mergeable_2 m_object;
     unsigned int & m_counter;
@@ -259,7 +258,7 @@ public:
   };
 
   /*! Merge two x-monotone curves into one */
-  class Merge_2 : public Base::Merge_2 {
+  class Merge_2 {
   private:
     typename Base::Merge_2 m_object;
     unsigned int & m_counter;
@@ -268,12 +267,12 @@ public:
       m_object(base->merge_2_object()), m_counter(counter) {}
     void operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2,
-                    X_monotone_curve_2 & cv) const
+                    X_monotone_curve_2 & cv)
     { ++m_counter; return m_object(cv1, cv2, cv); }
   };
 
   /*! Construct an opposite x-monotone curve */
-  class Construct_opposite_2 : public Base::Construct_opposite_2 {
+  class Construct_opposite_2 {
   private:
     typename Base::Construct_opposite_2 m_object;
     unsigned int & m_counter;
@@ -285,7 +284,7 @@ public:
   };
 
   /*! Compare the two endpoints of a given curve lexigoraphically */
-  class Compare_endpoints_xy_2 : public Base::Compare_endpoints_xy_2 {
+  class Compare_endpoints_xy_2 {
   private:
     typename Base::Compare_endpoints_xy_2 m_object;
     unsigned int & m_counter;
@@ -327,19 +326,19 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(this, m_counters[COMPARE_Y_AT_X_RIGHT]); }
   
-  Make_x_monotone_2 make_x_monotone_2_object() const
+  Make_x_monotone_2 make_x_monotone_2_object()
   { return Make_x_monotone_2(this, m_counters[MAKE_X_MONOTONE]); }
 
-  Split_2 split_2_object() const
+  Split_2 split_2_object()
   { return Split_2(this, m_counters[SPLIT]); }
 
-  Intersect_2 intersect_2_object() const
+  Intersect_2 intersect_2_object()
   { return Intersect_2(this, m_counters[INTERSECT]); }
 
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(this, m_counters[ARE_MERGEABLE]); }
 
-  Merge_2 merge_2_object() const
+  Merge_2 merge_2_object()
   { return Merge_2(this, m_counters[MERGE]); }
 
   Construct_opposite_2 construct_opposite_2_object() const
