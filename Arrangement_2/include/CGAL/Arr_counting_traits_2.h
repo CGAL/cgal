@@ -61,7 +61,7 @@ public:
 
   /*! Default constructor */
   Arr_counting_traits_2() : Base()
-  { bzero(m_counters, sizeof(m_counters)); }
+  { increment(); bzero(m_counters, sizeof(m_counters)); }
 
   /*! Obtain the counter of the given operation */
   unsigned int get_count(Operation_id id) const { return m_counters[id]; }
@@ -349,18 +349,28 @@ public:
   { return Compare_endpoints_xy_2(this, m_counters[COMPARE_ENDPOINTS_XY]); }
 
   //@}
+
+  static unsigned int increment(bool doit = true)
+  {
+    static unsigned int counter = 0;
+    if (doit) ++counter;
+    return counter;
+  }
   
 private:
   mutable unsigned int m_counters[NUMBER_OF_OPERATIONS];
 };
 
-template <class Base_traits>
+template <class Out_stream, class Base_traits>
 inline
-std::ostream & operator<<(std::ostream & os,
-                          const Arr_counting_traits_2<Base_traits> & traits)
+Out_stream & operator<<(Out_stream & os,
+                        const Arr_counting_traits_2<Base_traits> & traits)
 {
   typedef Arr_counting_traits_2<Base_traits>            Traits;
-  
+  unsigned int sum = 0;
+  unsigned int i;
+  for (i = 0; i < Traits::NUMBER_OF_OPERATIONS; ++i)
+    sum += traits.get_count(static_cast<typename Traits::Operation_id>(i));
   os << "count[COMPARE_X] = "
      << traits.get_count(Traits::COMPARE_X) << std::endl
      << "count[COMPARE_XY] = "
@@ -394,7 +404,9 @@ std::ostream & operator<<(std::ostream & os,
      << "count[CONSTRUCT_OPPOSITE] = "
      << traits.get_count(Traits::CONSTRUCT_OPPOSITE) << std::endl
      << "count[COMPARE_ENDPOINTS_XY] = "
-     << traits.get_count(Traits::COMPARE_ENDPOINTS_XY) << std::endl;
+     << traits.get_count(Traits::COMPARE_ENDPOINTS_XY) << std::endl
+     << "total = " << sum << std::endl
+     << "No. of traits constructed = " << Traits::increment(false) << std::endl;
   return os;
 }
 
