@@ -419,7 +419,7 @@ namespace OGL {
     void draw( GLdouble z_vec[3]) const
     { 
       if (!is_initialized()) const_cast<Polyhedron&>(*this).initialize();
-      double l = std::max( std::max( bbox().xmax() - bbox().xmin(),
+      double l = (std::max)( (std::max)( bbox().xmax() - bbox().xmin(),
                                      bbox().ymax() - bbox().ymin()),
                            bbox().zmax() - bbox().zmin());
       if ( l < 1) // make sure that a single point doesn't screw up here
@@ -734,7 +734,7 @@ static void reshape(int width, int height)
 {
   window_width  = width;
   window_height = height;
-  window_radius = std::min( width, height) / 2;
+  window_radius = (std::min)( width, height) / 2;
   factor_s = std::log(2.0) / (window_radius/2.0); // radius == scale factor 2
 
   glViewport(0, 0, (GLint)width, (GLint)height);
