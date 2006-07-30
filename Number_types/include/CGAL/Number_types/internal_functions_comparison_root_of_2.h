@@ -188,40 +188,33 @@ compare_22_22( const FT& A1, const FT& B1, const FT& C1,
 }
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline FT calcI(const FT& A, const FT& B, const FT& C)
 { return CGAL::square(B)-A*C; }
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline FT calcJ(const FT& A1, const FT& B1, const FT& A2, const FT& B2)
 { return A1*B2-A2*B1; }
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline FT calcK(const FT& A1, const FT& B1, const FT& C1,
 		const FT& A2, const FT& B2, const FT& C2)
 { return C1*A2+A1*C2-2*B1*B2; }
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline FT calcJp(const FT& B1, const FT& C1, const FT& B2, const FT& C2)
 { return B1*C2-C1*B2; }
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline FT calcP4(const FT& J,  const FT& Jp,
 		 const FT& A1, const FT& C1,
 		 const FT& A2, const FT& C2)
 { return CGAL::square(A1*C2-C1*A2)-4*J*Jp;}
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline FT calcP4(const FT& I1, const FT& I2, const FT& K)
 { return CGAL::square(K)-4*I1*I2;}
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline FT calcD(const FT& A1, const FT& I1, const FT& A2, const FT& I2)
 { return I1*CGAL::square(A2) - I2*CGAL::square(A1);}
 

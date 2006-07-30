@@ -38,7 +38,6 @@ CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 // help functions for the compulation of various quantites
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_D(const FT& a, const FT& b, const FT& c)
 {
@@ -46,7 +45,6 @@ value_of_D(const FT& a, const FT& b, const FT& c)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_J(const FT& a1, const FT& b1, const FT& a2, const FT& b2)
 {
@@ -54,7 +52,6 @@ value_of_J(const FT& a1, const FT& b1, const FT& a2, const FT& b2)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_Jp(const FT& b1, const FT& c1, const FT& b2, const FT& c2)
 {
@@ -62,7 +59,6 @@ value_of_Jp(const FT& b1, const FT& c1, const FT& b2, const FT& c2)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_G(const FT& a1, const FT& c1, const FT& a2, const FT& c2)
 {
@@ -70,7 +66,6 @@ value_of_G(const FT& a1, const FT& c1, const FT& a2, const FT& c2)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_K(const FT& a1c2, const FT& a2c1, const FT& b1b2)
 {
@@ -78,7 +73,6 @@ value_of_K(const FT& a1c2, const FT& a2c1, const FT& b1b2)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_K(const FT& a1, const FT& b1, const FT& c1,
 	   const FT& a2, const FT& b2, const FT& c2)
@@ -87,7 +81,6 @@ value_of_K(const FT& a1, const FT& b1, const FT& c1,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_R0(const FT&  J, const FT& Jp,
 	    const FT& a1, const FT& c1,
@@ -97,7 +90,6 @@ value_of_R0(const FT&  J, const FT& Jp,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_R0(const FT& D1, const FT& D2, const FT& K)
 {
@@ -105,7 +97,6 @@ value_of_R0(const FT& D1, const FT& D2, const FT& K)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_P4(const FT& D1, const FT& D2, const FT& K)
 {
@@ -113,7 +104,6 @@ value_of_P4(const FT& D1, const FT& D2, const FT& K)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_D(const FT& a1, const FT& D1, const FT& a2, const FT& D2)
 {
@@ -121,7 +111,6 @@ value_of_D(const FT& a1, const FT& D1, const FT& a2, const FT& D2)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_P3inf(const FT& a1, const FT& b1, const FT& J, const FT& G)
 {
@@ -129,7 +118,6 @@ value_of_P3inf(const FT& a1, const FT& b1, const FT& J, const FT& G)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_P3inf_bis(const FT& a1, const FT& K, const FT& a2, const FT& D1)
 {
@@ -137,7 +125,6 @@ value_of_P3inf_bis(const FT& a1, const FT& K, const FT& a2, const FT& D1)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_P3pinf(const FT& c1, const FT& J, const FT& a1, const FT& Jp)
 {
@@ -145,7 +132,6 @@ value_of_P3pinf(const FT& c1, const FT& J, const FT& a1, const FT& Jp)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_L(const FT& a1, const FT& c2, const FT& b1, const FT& b2)
 {
@@ -153,7 +139,6 @@ value_of_L(const FT& a1, const FT& c2, const FT& b1, const FT& b2)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_Lp(const FT& a2, const FT& c1, const FT& b1, const FT& b2)
 {
@@ -161,7 +146,6 @@ value_of_Lp(const FT& a2, const FT& c1, const FT& b1, const FT& b2)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_A(const FT& b1, const FT& J, const FT& a1, const FT& L)
 {
@@ -169,7 +153,6 @@ value_of_A(const FT& b1, const FT& J, const FT& a1, const FT& L)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_Q3(const FT& b2, const FT& a2, const FT& J, const FT& L)
 {
@@ -177,7 +160,6 @@ value_of_Q3(const FT& b2, const FT& a2, const FT& J, const FT& L)
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_Q3(const FT& a2, const FT& b2, const FT& J, const FT& G,
 	    const FT& K)
@@ -186,7 +168,6 @@ value_of_Q3(const FT& a2, const FT& b2, const FT& J, const FT& G,
 } 
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline FT
 value_of_Q3p(const FT& a1, const FT& b1, const FT& J, const FT& G,
 	     const FT& K)
@@ -732,7 +713,6 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 // using C++ exceptions
 
 template < class CT, class ET >
-/*CGAL_NO_FILTER*/
 inline
 Comparison_result
 sqrt_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
@@ -764,7 +744,6 @@ sqrt_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
 //--------------------------------------------------------------------
 
 template < class CT, class ET >
-/*CGAL_NO_FILTER*/
 inline
 Comparison_result
 dfmt_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
@@ -884,7 +863,6 @@ dfmt_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
 //--------------------------------------------------------------------
 
 template < class CT, class ET >
-/*CGAL_NO_FILTER*/
 inline
 Comparison_result
 ke_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,

@@ -50,11 +50,6 @@ Backward
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
   - Advanced kernel, Cd.
 
-- Filtered_exact kernel :
-  - we can attack the problem by having the .x() and co return a
-    Lazy_exact_nt(), then implement the necessary higher level
-    constructions/predicates on top of that.
-
 - Handles :
   - http://www.uni-giessen.de/faq/archiv/c++-faq.part1-9/msg00005.html
     [16.22] How do I provide reference counting with copy-on-write
@@ -90,20 +85,6 @@ Backward
 {
   return Bbox_2(CGAL::to_interval(x()), CGAL::to_interval(y()));
 }
-- Put the predicates that are marked /*CGAL_NO_FILTER*/ in a separate file,
-  say <predicates/no_filter_kernel_ftC2.h> ?  This will simplify the script
-  somehow, but how will it work for those damn static filters ?
-  They have to be filtered for the filtered constructions kernel though.
-  And they do not depend on the other predicates... yes some do !
-  [ why compare_angle_with_x_axisC2() is not filtered,
-    while orientationC2() is ???!!!??? ]
-  Currently, there are 10/27 like that for C2, and 10/21 for C3.
-  This definitely must be cleaned up.  Maybe after some work on the filtered
-  kernel ?
-- There are still a few predicates and constructions that are not FT-based,
-  but mainly they are the simple ones, just needing to compute an opposite or
-  something.  I need to think about what to do with these, it's painful to have
-  a 3-stage calling sequence for not that much...
 - Merge Intersection package ?  What about Conic ?
 - Cd must come back to life somehow...  Currently, I've disabled it ~totally
   in Cartesian.h.  Same thing for Conics...

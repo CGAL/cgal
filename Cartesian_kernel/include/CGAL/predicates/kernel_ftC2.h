@@ -192,7 +192,6 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 CGAL_KERNEL_LARGE_INLINE
 typename Compare<FT>::result_type
 compare_y_at_xC2(const FT &px, const FT &py,
@@ -277,7 +276,6 @@ equal_directionC2(const FT &dx1, const FT &dy1,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 typename Compare<FT>::result_type
 compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
@@ -392,7 +390,6 @@ compare_deltax_deltayC2(const FT &px, const FT &qx,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline
 typename Compare<FT>::result_type
 compare_lexicographically_xyC2(const FT &px, const FT &py,
@@ -432,7 +429,6 @@ angleC2(const FT &px, const FT &py,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 typename Equal_to<FT>::result_type
 collinear_are_ordered_along_lineC2(const FT &px, const FT &py,
@@ -447,7 +443,6 @@ collinear_are_ordered_along_lineC2(const FT &px, const FT &py,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 typename Equal_to<FT>::result_type
 collinear_are_strictly_ordered_along_lineC2(const FT &px, const FT &py,
@@ -526,7 +521,6 @@ cmp_dist_to_pointC2(const FT &px, const FT &py,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline
 typename Equal_to<FT>::result_type
 has_larger_dist_to_pointC2(const FT &px, const FT &py,
@@ -537,7 +531,6 @@ has_larger_dist_to_pointC2(const FT &px, const FT &py,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline
 typename Equal_to<FT>::result_type
 has_smaller_dist_to_pointC2(const FT &px, const FT &py,
@@ -559,7 +552,6 @@ cmp_signed_dist_to_directionC2(const FT &la, const FT &lb,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline
 typename Equal_to<FT>::result_type
 has_larger_signed_dist_to_directionC2(const FT &la, const FT &lb,
@@ -570,7 +562,6 @@ has_larger_signed_dist_to_directionC2(const FT &la, const FT &lb,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 inline
 typename Equal_to<FT>::result_type
 has_smaller_signed_dist_to_directionC2(const FT &la, const FT &lb,
@@ -593,7 +584,6 @@ cmp_signed_dist_to_lineC2(const FT &px, const FT &py,
 }
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline
 typename Equal_to<FT>::result_type
 has_larger_signed_dist_to_lineC2(const FT &px, const FT &py,
@@ -605,7 +595,6 @@ has_larger_signed_dist_to_lineC2(const FT &px, const FT &py,
 }
 
 template <class FT>
-/*CGAL_NO_FILTER*/
 inline
 typename Equal_to<FT>::result_type
 has_smaller_signed_dist_to_lineC2(const FT &px, const FT &py,
