@@ -3,6 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/exceptions.h>
 
 // #define DEBUG(a) a;
 #define DEBUG(a)
@@ -22,11 +23,6 @@ inline FT my_min (const FT &a, const FT &b)
   return min(a,b);
 }
 }                                                                               
-
-void empty_handler(const char*, const char*, const char*, int, const char *)
-{
-  // Do nothing.
-}
 
 // This test program computes the coordinates of a sequence of points drawing
 // a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
@@ -305,13 +301,9 @@ double zero = 0.0; // I put it here to avoid compiler warnings.
 template < typename IA_nt >
 bool is_valid_test()
 {
-  CGAL::Failure_behaviour backup = CGAL::set_error_behaviour(CGAL::CONTINUE);
-  CGAL::Failure_function prev    = CGAL::set_error_handler(empty_handler);
-
   bool tmpflag, flag = true;
   const double inf = 1.0/zero;
   const double nan = zero * inf;
-  const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
   const IA_nt e(0,1), f(0,0);
 
   tmpflag = CGAL::is_valid(nan);
@@ -327,22 +319,6 @@ bool is_valid_test()
   DEBUG( std::cout << "is_valid( " << inf << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::is_valid(a);
-  DEBUG( std::cout << "is_valid( " << a << " ) = " << tmpflag << std::endl; )
-  flag = flag && !tmpflag;
-
-  tmpflag = CGAL::is_valid(b);
-  DEBUG( std::cout << "is_valid( " << b << " ) = " << tmpflag << std::endl; )
-  flag = flag && !tmpflag;
-
-  tmpflag = CGAL::is_valid(c);
-  DEBUG( std::cout << "is_valid( " << c << " ) = " << tmpflag << std::endl; )
-  flag = flag && !tmpflag;
-
-  tmpflag = CGAL::is_valid(d);
-  DEBUG( std::cout << "is_valid( " << d << " ) = " << tmpflag << std::endl; )
-  flag = flag && !tmpflag;
-
   tmpflag = CGAL::is_valid(e);
   DEBUG( std::cout << "is_valid( " << e << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
@@ -351,8 +327,31 @@ bool is_valid_test()
   DEBUG( std::cout << "is_valid( " << f << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  CGAL::set_error_handler(prev);
-  CGAL::set_error_behaviour(backup);
+
+  // Now do some tests which can trigger assertion failures, hence the try/catch.
+  std::cout << "Testing some assertion protected codes (possible error messages)" << std::endl;
+  try {
+    const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
+
+    tmpflag = CGAL::is_valid(a);
+    DEBUG( std::cout << "is_valid( " << a << " ) = " << tmpflag << std::endl; )
+    flag = flag && !tmpflag;
+
+    tmpflag = CGAL::is_valid(b);
+    DEBUG( std::cout << "is_valid( " << b << " ) = " << tmpflag << std::endl; )
+    flag = flag && !tmpflag;
+
+    tmpflag = CGAL::is_valid(c);
+    DEBUG( std::cout << "is_valid( " << c << " ) = " << tmpflag << std::endl; )
+    flag = flag && !tmpflag;
+
+    tmpflag = CGAL::is_valid(d);
+    DEBUG( std::cout << "is_valid( " << d << " ) = " << tmpflag << std::endl; )
+    flag = flag && !tmpflag;
+  }
+  catch (CGAL::Assertion_exception)
+  {}
+
   return flag;
 }
 
