@@ -482,7 +482,7 @@ construct_cluster(Vertex_handle v,
       Squared_length l = squared_distance(vp,
                                         target(begin)->point());
       c.minimum_squared_length =
-        std::min(l,c.minimum_squared_length);
+        (std::min)(l,c.minimum_squared_length);
 
       if(all_edges_in_cluster || begin!=end)
         {
