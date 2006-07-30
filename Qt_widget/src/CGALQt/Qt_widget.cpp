@@ -1,8 +1,5 @@
-// Copyright (c) 1997-2000  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2002-2004  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent Rineau & Radu Ursu
+// Author(s)     : Laurent Rineau and Radu Ursu
 
 #include <CGAL/basic.h>
 
