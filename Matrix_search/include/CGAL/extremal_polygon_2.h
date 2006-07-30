@@ -504,7 +504,6 @@ CGAL_maximum_inscribed_k_gon_2(
     iterator_distance( points_begin, points_end));
   CGAL_optimisation_precondition( number_of_points > 0);
 
-  using std::min;
   using std::copy;
 
   typedef typename Traits::FT   FT;
@@ -512,7 +511,7 @@ CGAL_maximum_inscribed_k_gon_2(
 
   if ( number_of_points <= k) {
     for ( int j( k - 1); j >= 0; --j)
-      *o++ = min( j, number_of_points - 1);
+      *o++ = (std::min)( j, number_of_points - 1);
     return o;
   }
   // compute k-gon rooted at points_begin[0]
