@@ -123,10 +123,10 @@ inline
 Bbox_2
 Bbox_2::operator+(const Bbox_2 &b) const
 {
-  return Bbox_2(std::min(xmin(), b.xmin()),
-                std::min(ymin(), b.ymin()),
-                std::max(xmax(), b.xmax()),
-                std::max(ymax(), b.ymax()));
+  return Bbox_2((std::min)(xmin(), b.xmin()),
+                (std::min)(ymin(), b.ymin()),
+                (std::max)(xmax(), b.xmax()),
+                (std::max)(ymax(), b.ymax()));
 }
 
 inline
