@@ -400,7 +400,7 @@ private:
     void pivot_ms ()
     {
         It t = points.begin();
-        std::advance (t, std::min (d+1, (int)points.size()));
+        std::advance (t, (std::min) (d+1, (int)points.size()));
         mtf_ms (t);
     
         RT excess, e;
