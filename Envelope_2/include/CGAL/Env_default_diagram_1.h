@@ -22,6 +22,8 @@
 
 #include <list>
 
+CGAL_BEGIN_NAMESPACE
+
 /*! \class
  * A minimization (or a maximization) diagram that represents the lower (or the
  * upper) envelope of a set of curves in the plane.
@@ -451,8 +453,6 @@ private:
     return;
   }
 };
-
-CGAL_BEGIN_NAMESPACE
 
 CGAL_END_NAMESPACE
 
