@@ -378,8 +378,8 @@ inline void simplify_root_of_2(MP_Float &a, MP_Float &b, MP_Float&c) {
     (MP_Float::exponent_type) b.v.size();
   MP_Float::exponent_type vc = c.exp + 
     (MP_Float::exponent_type) c.v.size();
-  MP_Float::exponent_type min = std::min(std::min(va,vb),vc);	
-  MP_Float::exponent_type max = std::max(std::max(va,vb),vc);
+  MP_Float::exponent_type min = (std::min)((std::min)(va,vb),vc);	
+  MP_Float::exponent_type max = (std::max)((std::max)(va,vb),vc);
   MP_Float::exponent_type med = (min+max)/2.0;
   a.exp -= med;
   b.exp -= med;
@@ -389,8 +389,8 @@ inline void simplify_root_of_2(MP_Float &a, MP_Float &b, MP_Float&c) {
 
 namespace CGALi {
   inline void simplify_3_exp(int &a, int &b, int &c) {
-    int min = std::min(std::min(a,b),c);	
-    int max = std::max(std::max(a,b),c);
+    int min = (std::min)((std::min)(a,b),c);	
+    int max = (std::max)((std::max)(a,b),c);
     int med = (min+max)/2;
     a -= med;
     b -= med;

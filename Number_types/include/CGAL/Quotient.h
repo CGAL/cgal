@@ -538,6 +538,7 @@ numerator(const Quotient<NT>& q)
 template <class NT>
 inline
 const Quotient<NT>&
+BOOST_PREVENT_MACRO_SUBSTITUTION
 min(const Quotient<NT>& p, const Quotient<NT>& q)
 {
   return std::min(p, q);
@@ -545,6 +546,7 @@ min(const Quotient<NT>& p, const Quotient<NT>& q)
 template <class NT>
 inline
 const Quotient<NT>&
+BOOST_PREVENT_MACRO_SUBSTITUTION
 max(const Quotient<NT>& p, const Quotient<NT>& q)
 {
   return std::max(p, q);

@@ -623,8 +623,8 @@ inline
 Interval_nt<Protected>
 min (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
-  return Interval_nt<Protected>(std::min(d.inf(), e.inf()),
-		                std::min(d.sup(), e.sup()));
+  return Interval_nt<Protected>((std::min)(d.inf(), e.inf()),
+		                (std::min)(d.sup(), e.sup()));
 }
 
 template <bool Protected>
@@ -632,8 +632,8 @@ inline
 Interval_nt<Protected>
 max (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
-  return Interval_nt<Protected>(std::max(d.inf(), e.inf()),
-		                std::max(d.sup(), e.sup()));
+  return Interval_nt<Protected>((std::max)(d.inf(), e.inf()),
+		                (std::max)(d.sup(), e.sup()));
 }
 
 template <bool Protected>
