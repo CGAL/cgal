@@ -450,14 +450,14 @@ template <class pNT> class Polynomial :
 
   Polynomial<NT>& operator += (const Polynomial<NT>& p1)
   { this->copy_on_write();
-    int d = std::min(degree(),p1.degree()), i;
+    int d = (std::min)(degree(),p1.degree()), i;
     for(i=0; i<=d; ++i) coeff(i) += p1[i];
     while (i<=p1.degree()) this->ptr()->coeff.push_back(p1[i++]);
     reduce(); return (*this); }
 
   Polynomial<NT>& operator -= (const Polynomial<NT>& p1)
   { this->copy_on_write();
-    int d = std::min(degree(),p1.degree()), i;
+    int d = (std::min)(degree(),p1.degree()), i;
     for(i=0; i<=d; ++i) coeff(i) -= p1[i];
     while (i<=p1.degree()) this->ptr()->coeff.push_back(-p1[i++]);
     reduce(); return (*this); }
@@ -781,14 +781,14 @@ class Polynomial<int> :
 
   Polynomial<int>& operator += (const Polynomial<int>& p1)
   { this->copy_on_write();
-    int d = std::min(degree(),p1.degree()), i;
+    int d = (std::min)(degree(),p1.degree()), i;
     for(i=0; i<=d; ++i) coeff(i) += p1[i];
     while (i<=p1.degree()) this->ptr()->coeff.push_back(p1[i++]);
     reduce(); return (*this); }
 
   Polynomial<int>& operator -= (const Polynomial<int>& p1)
   { this->copy_on_write();
-    int d = std::min(degree(),p1.degree()), i;
+    int d = (std::min)(degree(),p1.degree()), i;
     for(i=0; i<=d; ++i) coeff(i) -= p1[i];
     while (i<=p1.degree()) this->ptr()->coeff.push_back(-p1[i++]);
     reduce(); return (*this); }
@@ -1091,14 +1091,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   Polynomial<double>& operator += (const Polynomial<double>& p1)
   { this->copy_on_write();
-    int d = std::min(degree(),p1.degree()), i;
+    int d = (std::min)(degree(),p1.degree()), i;
     for(i=0; i<=d; ++i) coeff(i) += p1[i];
     while (i<=p1.degree()) this->ptr()->coeff.push_back(p1[i++]);
     reduce(); return (*this); }
 
   Polynomial<double>& operator -= (const Polynomial<double>& p1)
   { this->copy_on_write();
-    int d = std::min(degree(),p1.degree()), i;
+    int d = (std::min)(degree(),p1.degree()), i;
     for(i=0; i<=d; ++i) coeff(i) -= p1[i];
     while (i<=p1.degree()) this->ptr()->coeff.push_back(-p1[i++]);
     reduce(); return (*this); }
