@@ -894,14 +894,14 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
 				
 	
 // 	alpha_mid_v = (interval3.first != UNDEFINED) ?
-// 	min(alpha_mid_v, interval3.first): 
-// 	min(alpha_mid_v, interval3.second); 
+// 	min BOOST_PREVENT_MACRO_SUBSTITUTION (alpha_mid_v, interval3.first): 
+// 	min BOOST_PREVENT_MACRO_SUBSTITUTION (alpha_mid_v, interval3.second); 
 			
 // 	if (alpha_max_v != Infinity)
       
 // 	{
 // 	alpha_max_v = (interval3.third != Infinity) ?
-// 	max(alpha_max_v, interval3.third):
+// 	max BOOST_PREVENT_MACRO_SUBSTITUTION (alpha_max_v, interval3.third):
 // 	Infinity;
 // 	}
 // 	}
@@ -933,10 +933,10 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
 		  alpha_f = find_interval(f);
 		  // if we define singular as not incident to a 2-dimensional
 		  // face
-		  alpha_mid_v = min(alpha_mid_v, alpha_f);
+		  alpha_mid_v = min BOOST_PREVENT_MACRO_SUBSTITUTION (alpha_mid_v, alpha_f);
 		    
 		  if (alpha_max_v != Infinity)
-		    alpha_max_v = max(alpha_max_v, alpha_f);
+		    alpha_max_v = max BOOST_PREVENT_MACRO_SUBSTITUTION (alpha_max_v, alpha_f);
 			    
 		}
 	    }
@@ -1406,11 +1406,11 @@ Alpha_shape_2<Dt>::find_alpha_solid() const
 	{
 	  Face_handle f = face_circ;
 	  if (! is_infinite(f))
-	    alpha_min_v = min(find_interval(f),
-				   alpha_min_v);
+	    alpha_min_v = min BOOST_PREVENT_MACRO_SUBSTITUTION(find_interval(f),
+							       alpha_min_v);
 	}
       while (++face_circ != done);
-      alpha_solid = max(alpha_min_v, alpha_solid);
+      alpha_solid = max BOOST_PREVENT_MACRO_SUBSTITUTION (alpha_min_v, alpha_solid);
 
     }
   return alpha_solid;
