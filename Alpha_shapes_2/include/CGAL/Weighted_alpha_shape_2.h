@@ -140,7 +140,7 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
 		{
 		  Point p = D.dual(f);
 		  double dd = squared_distance(p, *point_it);
-		  d = std::min(dd, d);
+		  d = (std::min)(dd, d);
 		}
 	    }
 	  while(++face_circ != done);
@@ -193,7 +193,7 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
 							  ->neighbor(e.second)));
 			  dd = squared_distance(seg, *point_it);
 			}
-		      d = std::min(dd, d);
+		      d = (std::min)(dd, d);
 		    }
 		}
 	    }
