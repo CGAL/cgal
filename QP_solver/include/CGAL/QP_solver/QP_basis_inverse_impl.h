@@ -37,7 +37,7 @@ set( int n, int m, int nr_equalities)
     //CGAL_qpe_precondition( m > 0);
     b = s = 0;
     // l is the maximum size of the basis in phase I
-    l = std::min( n+nr_equalities+1, m);
+    l = (std::min)( n+nr_equalities+1, m);
     if ( ! M.empty()) M.clear();
     set( Is_LP());
     

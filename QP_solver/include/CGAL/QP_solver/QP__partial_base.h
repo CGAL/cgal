@@ -144,8 +144,8 @@ init( )
     int  n = this->solver().number_of_variables();
     int  m = this->solver().number_of_constraints();
 
-    s = std::min( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
-		  static_cast< unsigned int>(N.size()));
+    s = (std::min)( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
+		    static_cast< unsigned int>(N.size()));
 
     //is_non_basic.init(this->solver());
 }
@@ -226,8 +226,8 @@ transition( )
     int  n = this->solver().number_of_variables();
     int  m = this->solver().number_of_constraints();
 
-    s = std::min( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
-		  static_cast< unsigned int>(N.size()));
+    s = (std::min)( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
+		    static_cast< unsigned int>(N.size()));
 }
 
 CGAL_END_NAMESPACE

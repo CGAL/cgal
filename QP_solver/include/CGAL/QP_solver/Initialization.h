@@ -141,7 +141,7 @@ set(int n, int m,
   set_up_auxiliary_problem();
     
   e = qp_m-slack_A.size(); // number of equalities
-  l = std::min(n+e+1, m);  // maximal size of basis in phase I
+  l = (std::min)(n+e+1, m);  // maximal size of basis in phase I
   
   // diagnostic output:
   CGAL_qpe_debug {
