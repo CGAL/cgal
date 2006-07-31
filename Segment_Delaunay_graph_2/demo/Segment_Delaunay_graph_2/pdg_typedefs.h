@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2005  INRIA Sophia-Antipolis (France) and
+// Copyright (c) 2004,2005,2006  INRIA Sophia-Antipolis (France) and
 // Notre Dame University (U.S.A.).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -73,8 +73,7 @@ typedef Gt::Segment_2          Segment;
 typedef CGAL::Polygon_2<Rep>   Polygon_2;
 typedef Gt::Site_2             Site;
 
-typedef CGAL::Storage_traits_2<Gt>                                    ST;
-
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>             ST;
 typedef CGAL::Segment_Delaunay_graph_vertex_base_2<ST>                Vb;
 typedef CGAL::Segment_Delaunay_graph_vertex_base_with_info_2<Vb,int>  Vbi;
 typedef CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbi>     Vbh;

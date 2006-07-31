@@ -4,6 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <iostream>
+#include <cctype>
 #include <algorithm>
 #include <cassert>
 
@@ -13,16 +14,24 @@
 //========================================================================
 
 template<class NT>
-char* get_fname(const NT&) {
-  return "data/bizarre.cin";
+char* get_fname(const NT&, char* ifname) {
+  char* fname = new char[50];
+  strcpy(fname, "data/");
+  strcat(fname, ifname);
+  strcat(fname, ".cin");
+  return fname;
 }
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
 
 template<>
-char* get_fname(const CGAL::Gmpq&) {
-  return "data/bizarre.Gmpq.cin";
+char* get_fname(const CGAL::Gmpq&, char* ifname) {
+  char* fname = new char[50];
+  strcpy(fname, "data/");
+  strcat(fname, ifname);
+  strcat(fname, ".Gmpq.cin");
+  return fname;
 }
 #endif
 
@@ -64,8 +73,11 @@ struct Level_finder< Segment_Delaunay_graph_2<Gt,SDGDS,LTag> >
 //========================================================================
 
 template<class SDG, class InputStream>
-bool test_sdg(InputStream& is, const SDG&, char* fname)
+bool test_sdg(InputStream& is, const SDG&, char* ifname, char* ofname,
+	      bool test_remove)
 {
+  char* ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
+
   typedef SDG SDG2;
 
   typedef SDG2 Segment_Delaunay_graph_2;
@@ -345,64 +357,66 @@ bool test_sdg(InputStream& is, const SDG&, char* fname)
   }
   end_testing("insertion methods");
 
-  start_testing("removal methods");
-  {
-    sdg.clear();
+  if ( test_remove ) {
+    start_testing("removal methods");
+    {
+      sdg.clear();
 
-    std::ifstream ifs( get_fname(typename Geom_traits::FT()) );
-    assert( ifs );
-    Site_2 t;
-    while ( ifs >> t ) {
-      sdg.insert(t);
-    }
-    std::cerr << std::endl;
-    CGAL_assertion( sdg.is_valid(true, 1) );
-
-    Finite_vertices_iterator vit;
-
-    std::vector<Vertex_handle> vec;
-    for (vit = sdg.finite_vertices_begin();
-	 vit != sdg.finite_vertices_end(); ++vit) {
-      vec.push_back(vit);
-    }
-    std::random_shuffle(vec.begin(), vec.end());
-
-    typename std::vector<Vertex_handle>::iterator it = vec.begin();
-    std::cerr << std::endl;
-    Level_finder<SDG> level;
-    do {
-      Site_2 tt = (*it)->site();
-      std::cerr << "  *** attempting to remove: " << tt << "\t" << std::flush;
-      if ( tt.is_point() ) { std::cerr << "\t" << std::flush; }
-      std::cerr << "  - LEVEL of v: " << level(*it)
-		<< " -  " << std::flush;
-      bool success = sdg.remove(*it);
-      std::cerr << (success ? " successful" : " UNSUCCESSFUL") << std::endl;
-      if ( success ) {
-	vec.erase(it);
-	it = vec.begin();
-      } else {
-	++it;
+      std::ifstream ifs( ifname_full );
+      assert( ifs );
+      Site_2 t;
+      while ( ifs >> t ) {
+	sdg.insert(t);
       }
-    } while ( it != vec.end() );
+      std::cerr << std::endl;
+      CGAL_assertion( sdg.is_valid(true, 1) );
 
-    // second test case
-    sdg.clear();
+      Finite_vertices_iterator vit;
 
-    sdg.insert(site_list.begin(), site_list.end());
-    CGAL_assertion( sdg.is_valid() );
-
-    vit = sdg.finite_vertices_begin();
-    do {
-      bool success = sdg.remove(vit);
-      if ( success ) {
-	vit = sdg.finite_vertices_begin();
-      } else {
-	++vit;
+      std::vector<Vertex_handle> vec;
+      for (vit = sdg.finite_vertices_begin();
+	   vit != sdg.finite_vertices_end(); ++vit) {
+	vec.push_back(vit);
       }
-    } while ( vit != sdg.finite_vertices_end() );
+      std::random_shuffle(vec.begin(), vec.end());
+
+      typename std::vector<Vertex_handle>::iterator it = vec.begin();
+      std::cerr << std::endl;
+      Level_finder<SDG> level;
+      do {
+	Site_2 tt = (*it)->site();
+	std::cerr << "  *** attempting to remove: " << tt << "\t" << std::flush;
+	if ( tt.is_point() ) { std::cerr << "\t" << std::flush; }
+	std::cerr << "  - LEVEL of v: " << level(*it)
+		  << " -  " << std::flush;
+	bool success = sdg.remove(*it);
+	std::cerr << (success ? " successful" : " UNSUCCESSFUL") << std::endl;
+	if ( success ) {
+	  vec.erase(it);
+	  it = vec.begin();
+	} else {
+	  ++it;
+	}
+      } while ( it != vec.end() );
+
+      // second test case
+      sdg.clear();
+
+      sdg.insert(site_list.begin(), site_list.end());
+      CGAL_assertion( sdg.is_valid() );
+
+      vit = sdg.finite_vertices_begin();
+      do {
+	bool success = sdg.remove(vit);
+	if ( success ) {
+	  vit = sdg.finite_vertices_begin();
+	} else {
+	  ++vit;
+	}
+      } while ( vit != sdg.finite_vertices_end() );
+    }
+    end_testing("removal methods");
   }
-  end_testing("removal methods");
 
   {
     // recover state of sdg after testing removals
@@ -510,7 +524,7 @@ bool test_sdg(InputStream& is, const SDG&, char* fname)
     size_type npc1 = sdg.point_container().size();
     size_type nv1 = sdg.number_of_vertices();
 
-    std::ofstream ofs(fname);
+    std::ofstream ofs(ofname);
     assert( ofs );
     sdg.file_output(ofs);
     CGAL_assertion( sdg.is_valid() );
@@ -518,7 +532,7 @@ bool test_sdg(InputStream& is, const SDG&, char* fname)
 
     sdg.clear();
 
-    std::ifstream ifs(fname);
+    std::ifstream ifs(ofname);
     assert( ifs );
     sdg.file_input(ifs);
     CGAL_assertion( sdg.is_valid() );
@@ -545,6 +559,8 @@ bool test_sdg(InputStream& is, const SDG&, char* fname)
   }
   start_testing("validity check and clear methods");
   end_testing("validity check and clear method");
+
+  delete ifname_full;
 
   return true;
 }

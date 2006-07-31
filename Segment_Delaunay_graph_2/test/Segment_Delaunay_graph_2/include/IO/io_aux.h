@@ -5,6 +5,13 @@
 #include <iostream>
 #include <string>
 
+bool assert_no_warning(bool b)
+{
+  assert(b);
+  return b;
+}
+
+//---------------------------------------------------------------
 
 std::ostream& start_testing(std::ostream& os,const std::string& msg) {
   os << "testing " << msg << "... " << std::flush;
@@ -30,8 +37,10 @@ void end_testing(const std::string& msg) {
 
 std::ostream& print_separator(std::ostream& os)
 {
+  os << std::endl;
   char separator[] = "----------------------";
   os << separator << separator << separator << std::endl;
+  os << std::endl;
   return os;
 }
 

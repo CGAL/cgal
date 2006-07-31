@@ -1,3 +1,22 @@
+// Copyright (c) 2006 Foundation for Research and Technology-Hellas (Greece).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_TRAITS_WITH_INFO_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_TRAITS_WITH_INFO_2_H 1
 
@@ -41,7 +60,7 @@ template<class STraits_base,
 	 typename Info_ = char,
 	 class Converter = Dummy_convert_info<Info_>,
 	 class Merger = Dummy_convert_info<Info_> >
-class Storage_traits_with_info_2
+class Segment_Delaunay_graph_storage_traits_with_info_2
   : public STraits_base
 {
 public:
@@ -53,7 +72,11 @@ private:
   typedef STraits_base                             Base;
   typedef typename Base::Storage_site_2            Base_storage_site_2;
 
-  typedef Storage_traits_with_info_2<Base,Info,Convert_info,Merge_info> Self;
+  typedef Segment_Delaunay_graph_storage_traits_with_info_2<Base,
+							    Info,
+							    Convert_info,
+							    Merge_info>
+  Self;
 
 public:
   typedef typename Base::Geom_traits               Geom_traits;
@@ -70,7 +93,8 @@ public:
 
   // MK::FIGURE OUT HOW TO PASS A REFERENCE TO GEOM_TRAITS AND HAVE
   // DEFAULT CONSTRUCTOR AS WELL IF POSSIBLE
-  Storage_traits_with_info_2(const Geom_traits& gt = Geom_traits())
+  Segment_Delaunay_graph_storage_traits_with_info_2
+  (const Geom_traits& gt = Geom_traits())
     : Base(gt) {}
 
   inline Construct_storage_site_2

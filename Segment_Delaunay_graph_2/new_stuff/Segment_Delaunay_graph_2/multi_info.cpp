@@ -32,20 +32,21 @@ struct Gt : public Traits_x {};
 //struct Gt : public Traits_no_x {};
 
 #include "Multi_info.h"
-#include <CGAL/Storage_traits_with_info_2.h>
+#include <CGAL/Segment_Delaunay_graph_storage_traits_with_info_2.h>
 
-typedef CGAL::Storage_traits_2<Gt>   ST_base;
-typedef CGAL::Storage_traits_with_info_2<ST_base,
-					 ::Multi_info<int>,
-					 ::Multi_info_convert_info<int>,
-					 ::Multi_info_merge_info<int> >
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>   ST_base;
+typedef CGAL::Segment_Delaunay_graph_storage_traits_with_info_2
+<ST_base,
+ ::Multi_info<int>,
+ ::Multi_info_convert_info<int>,
+ ::Multi_info_merge_info<int> >
 ST;
 
 typedef CGAL::Tag_true  STag;
 //typedef CGAL::Tag_false STag;
 
-typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
-//typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
+//typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
 
 template<class SDG>
 bool test(SDG& sdg, char* fname, bool read_info = false)

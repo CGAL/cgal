@@ -1,3 +1,11 @@
+31 July 2006:  Menelaos Karavelas
+- renamed storage traits related file names and classes; modified test
+  suite and demo according to changes
+- added a couple more test data in test suites
+- added example which demonstrates how to add info to sites
+- added copyright headers when missing; modified year list in some
+  copyright headers
+
 29 July 2006:  Menelaos Karavelas
 - the bug fix for SunPro CC was missing a CGAL:: qualification
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
 // Notre Dame University (U.S.A.).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -33,7 +33,6 @@
 #include <CGAL/Segment_Delaunay_graph_hierarchy_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
-#include <CGAL/Storage_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -55,7 +54,7 @@ const unsigned int sdg_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 
 template < class Gt, class STag = Tag_false,
-	   class ST = Storage_traits_2<Gt>,
+	   class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
 	   class DS = Triangulation_data_structure_2<
               Segment_Delaunay_graph_hierarchy_vertex_base_2<
 		Segment_Delaunay_graph_vertex_base_2<ST> >,

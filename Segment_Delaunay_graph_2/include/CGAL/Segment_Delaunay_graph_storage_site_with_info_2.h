@@ -1,3 +1,22 @@
+// Copyright (c) 2006 Foundation for Research and Technology-Hellas (Greece).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_SITE_WITH_INFO_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_SITE_WITH_INFO_2_H 1
 
@@ -12,14 +31,21 @@ CGAL_BEGIN_NAMESPACE
       intersection of two non-parallel segments (if defined)
    */
 
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
-template<class STraits> class Construct_storage_site_2;
+template<class STraits> class Construct_storage_site_with_info_2;
+
+CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
+
 
 template <class STraits, typename Info_, class Base_storage_site>
 class Segment_Delaunay_graph_storage_site_with_info_2
   : public Base_storage_site
 {
   typedef Base_storage_site                       Base;
+
+  friend class
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_storage_site_2<STraits>;
 
 public:
   typedef STraits                                 Storage_traits;
@@ -29,7 +55,6 @@ public:
   typedef typename Storage_traits::Point_handle   Point_handle;
 
   struct Has_info_tag {};
-  friend class Construct_storage_site_2<Storage_traits>;
 
 protected:
   typedef Point_handle                            Handle;

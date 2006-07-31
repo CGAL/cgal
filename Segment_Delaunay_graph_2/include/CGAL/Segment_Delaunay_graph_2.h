@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
 // Notre Dame University (U.S.A.).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -33,18 +33,15 @@
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
 #include <CGAL/Triangulation_2.h>
-#include <CGAL/Segment_Delaunay_graph_site_2.h>
+#include <CGAL/Segment_Delaunay_graph_storage_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
-
-#include <CGAL/Storage_traits_2.h>
-
-#include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
 #include <CGAL/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Segment_Delaunay_graph_2/Simple_container_wrapper.h>
@@ -150,7 +147,7 @@ class Segment_Delaunay_graph_hierarchy_2;
 
 
 template<class Gt,
-	 class ST = Storage_traits_2<Gt>,
+	 class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
 	 class DS = Triangulation_data_structure_2 < 
                 Segment_Delaunay_graph_vertex_base_2<ST>,
                 Triangulation_face_base_2<Gt> >,
@@ -624,32 +621,13 @@ public:
   }
 
 protected:
-#if 0
-  template<class SSite>
-  bool has_info1(const SSite&, int,
-		 typename SSite::Has_info_tag const* = 0) const
-  {
-    return true;
-  }
-
-  template<class SSite>
-  bool has_info1(const SSite&, char) const
-  {
-    return false;
-  }
-
-  bool has_info(const Storage_site_2& ss) const {
-    return has_info1(ss, 0);
-  }
-#endif
-
   template<class SSite>
   inline void copy_info1(SSite& ss_trg, const SSite& ss_src, int,
 			 typename SSite::Has_info_tag const* = 0) const
   {
-    std::cerr << "copying info..." << std::flush;
+    //    std::cerr << "copying info..." << std::flush;
     ss_trg.set_info(ss_src.info());
-    std::cerr << " done!" << std::endl;
+    //    std::cerr << " done!" << std::endl;
   }
 
   template<class SSite>
@@ -666,8 +644,7 @@ protected:
   inline void merge_info1(Vertex_handle v, const SSite& ss, int,
 			  typename SSite::Has_info_tag const* = 0)
   {
-    std::cerr << "merging info..." << std::flush;
-
+    //    std::cerr << "merging info..." << std::flush;
     Storage_site_2 ss_v = v->storage_site();
 
     typename Storage_traits::Merge_info merge = st_.merge_info_object();
@@ -675,8 +652,7 @@ protected:
 
     ss_v.set_info(merged_info);
     v->set_site(ss_v);
-
-    std::cerr << " done!" << std::endl;
+    //    std::cerr << " done!" << std::endl;
   }
 
   template<class SSite>

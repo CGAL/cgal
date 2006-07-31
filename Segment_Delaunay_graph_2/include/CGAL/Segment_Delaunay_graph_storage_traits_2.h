@@ -1,3 +1,22 @@
+// Copyright (c) 2006 Foundation for Research and Technology-Hellas (Greece).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_TRAITS_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_TRAITS_2_H 1
 
@@ -50,7 +69,7 @@ CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 //----------------------------------------------------------------------
 
 template<class Gt>
-class Storage_traits_2
+class Segment_Delaunay_graph_storage_traits_2
 {
 public:
   typedef Gt                                       Geom_traits;
@@ -60,8 +79,8 @@ public:
   typedef typename Point_container::iterator       Point_handle;
 
 private:
-  typedef Storage_traits_2<Geom_traits>            Self;
-  typedef typename Geom_traits::Intersections_tag  ITag;
+  typedef Segment_Delaunay_graph_storage_traits_2<Geom_traits>   Self;
+  typedef typename Geom_traits::Intersections_tag                ITag;
 
 public:
   typedef typename
@@ -75,7 +94,8 @@ public:
 
   // MK::FIGURE OUT HOW TO PASS A REFERENCE TO GEOM_TRAITS AND HAVE
   // DEFAULT CONSTRUCTOR AS WELL IF POSSIBLE
-  Storage_traits_2(const Geom_traits& gt = Geom_traits()) : gt_(gt) {}
+  Segment_Delaunay_graph_storage_traits_2
+  (const Geom_traits& gt = Geom_traits()) : gt_(gt) {}
 
   inline const Geom_traits& geom_traits() const { return gt_; }
 

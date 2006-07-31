@@ -5,43 +5,18 @@
 #include <iostream>
 #include <cassert>
 
-#include "IO/io_aux.h"
-
-bool assert_no_warning(bool b)
-{
-  assert(b);
-  return b;
-}
+#include "test.h"
 
 int main(int argc, char* argv[])
 {
-  {
-    print_separator();
+  CGAL::test_hierarchy_x(std::cin, "bizarre");
+  CGAL::test_hierarchy_no_x(std::cin, "bizarre");
 
-    SDG2 sdg;
+  CGAL::test_hierarchy_x(std::cin, "sitesx", false);
+  CGAL::test_hierarchy_no_x(std::cin, "sitesx", false);
 
-    bool types_ok = CGAL::test_sdg_hierarchy(std::cin, sdg, "sdgh.tmp");
-
-    assert_no_warning( types_ok );
-
-    print_separator();
-
-    std::cout << std::endl;
-  }
-
-  {
-    print_separator();
-
-    SDG2_wi sdg;
-
-    bool types_ok = CGAL::test_sdg_hierarchy(std::cin, sdg, "sdgh_wi.tmp");
-
-    assert_no_warning( types_ok );
-
-    print_separator();
-
-    std::cout << std::endl;
-  }
+  CGAL::test_hierarchy_x(std::cin, "sitesxx", false);
+  CGAL::test_hierarchy_no_x(std::cin, "sitesxx", false);
 
   return 0;
 }
