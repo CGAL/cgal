@@ -19,6 +19,8 @@
 #ifndef CGAL_ARR_OBSERVER_H
 #define CGAL_ARR_OBSERVER_H
 
+#include <CGAL/Arr_enums.h>
+
 /*! \file
  * Definition of the Arr_observer<Arrangement> base class.
  */
