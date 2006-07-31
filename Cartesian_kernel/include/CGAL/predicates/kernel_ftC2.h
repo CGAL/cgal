@@ -380,6 +380,8 @@ compare_slopesC2(const FT &s1_src_x, const FT &s1_src_y, const FT &s1_tgt_x,
 }
 
 
+#if 0
+// Unused, undocumented, un-functorized.
 template < class FT >
 inline
 typename Compare<FT>::result_type
@@ -388,6 +390,7 @@ compare_deltax_deltayC2(const FT &px, const FT &qx,
 {
   return CGAL_NTS compare(CGAL_NTS abs(px-qx), CGAL_NTS abs(ry-sy));
 }
+#endif
 
 template < class FT >
 inline

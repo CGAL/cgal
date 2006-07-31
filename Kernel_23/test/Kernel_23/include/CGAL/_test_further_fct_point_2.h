@@ -41,12 +41,15 @@ _test_further_fct_point_2(const R& )
  CGAL::Point_2<R> p8( RT(24), RT( 9), RT(3) );  // ( 8, 3)
  CGAL::Point_2<R> p9( RT( 6), RT(10), RT(1) );  // ( 6,10)
 
+#if 0
+ // This function is not documented, not used in CGAL, and has no functor.
  assert( CGAL::compare_deltax_deltay( p1, p4, p5, p6) == CGAL::SMALLER);
  assert( CGAL::compare_deltax_deltay( p5, p6, p2, p1) == CGAL::LARGER);
  assert( CGAL::compare_deltax_deltay( p6, p5, p2, p1) == CGAL::LARGER);
  assert( CGAL::compare_deltax_deltay( p1, p2, p5, p6) == CGAL::SMALLER);
  assert( CGAL::compare_deltax_deltay( p4, p3, p3, p7) == CGAL::EQUAL);
  assert( CGAL::compare_deltax_deltay( p2, p3, p3, p6) == CGAL::EQUAL);
+#endif
 
  std::cout << '.';
 

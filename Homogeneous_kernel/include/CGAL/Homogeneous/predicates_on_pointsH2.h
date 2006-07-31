@@ -86,6 +86,8 @@ _where_wrt_L_wedge( const PointH2<R>& p, const PointH2<R>& q )
   return ON_ORIENTED_BOUNDARY;
 }
 
+#if 0
+// Unused, undocumented, un-functorized.
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
@@ -98,6 +100,7 @@ compare_deltax_deltay(const PointH2<R>& p,
                   CGAL_NTS abs(p.hx()*q.hw() - q.hx()*p.hw()) * r.hw()*s.hw(),
                   CGAL_NTS abs(r.hy()*s.hw() - s.hy()*r.hw()) * p.hw()*q.hw());
 }
+#endif
 
 CGAL_END_NAMESPACE
 
