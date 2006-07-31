@@ -32,12 +32,12 @@ namespace CGAL {
     return sign(r.evaluate(equation));
   }
 
-  /*template < class AK >
+  template < class AK >
   inline 
   bool contains(const typename AK::Polynomials_for_line_3 & equation,
 		const typename AK::Root_for_spheres_2_3 r){
-    return sign(r.is_on_line(equation));
-  }*/
+    return r.is_on_line(equation); 
+  }
 
   template <class AK>
   bool intersect(const typename AK::Polynomial_1_3 & p1, 
