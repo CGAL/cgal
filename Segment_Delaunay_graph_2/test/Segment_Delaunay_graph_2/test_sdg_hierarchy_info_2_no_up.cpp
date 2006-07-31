@@ -38,7 +38,7 @@ ST;
 
 typedef CGAL::Tag_false STag;
 
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag>  SDG2;
 
 #include "sdg_hierarchy_info_main.h"
 
