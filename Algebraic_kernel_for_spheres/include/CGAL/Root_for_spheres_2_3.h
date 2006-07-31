@@ -18,6 +18,7 @@
 #include <iostream>
 #include <CGAL/Polynomials_1_3.h>
 #include <CGAL/Polynomials_2_3.h>
+#include <CGAL/Polynomials_for_line_3.h>
 #include <CGAL/Bbox_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -30,6 +31,7 @@ class Root_for_spheres_2_3 {
   typedef typename Root_of_traits< RT >::RootOf_1    FT;
   typedef Polynomial_1_3< FT > Polynomial_1_3;
   typedef Polynomial_for_spheres_2_3< FT > Polynomial_for_spheres_2_3;
+  typedef Polynomials_for_line_3< FT > Polynomials_for_line_3;
 
   private:
     Root_of_2 x_;
@@ -45,6 +47,8 @@ class Root_for_spheres_2_3 {
 		       const Root_of_2& r3)
     : x_(r1), y_(r2), z_(r3)
   {
+    // This assertion sont work if Root_of_2 is 
+    // Interval_nt (and dont have is_rational, gamma, etc..)
     CGAL_assertion(
                 ((r1.is_rational() && r2.is_rational()) ||
                  (r1.is_rational() && r3.is_rational()) ||
@@ -81,10 +85,26 @@ class Root_for_spheres_2_3 {
   }
 
   // On verifie si (x,y,z) fait partie la ligne donne
-  /*const bool is_on_line(const Polynomials_for_line_3 &p) const {
+  const bool is_on_line(const Polynomials_for_line_3 &p) const {
+    Root_of_2 t;
+    bool already = false;
     if(!is_zero(p.a1())) {
-    }
-  }*/
+      t = (x() - p.b1())/p.a1(); 
+      already = true;
+    } else if(p.b1() != x()) return false;
+    if(!is_zero(p.a2())) {
+      if(!already) {
+        t = (y() - p.b2())/p.a2(); 
+        already = true;
+      }
+      else if((p.a2() * t + p.b2()) != y()) return false;
+    } else if(p.b2() != y()) return false;
+    if(!is_zero(p.a3())) {
+      if(!already) return true;
+      else if((p.a3() * t + p.b3()) != z()) return false;
+    } else if(p.b3() != z()) return false;
+    return true;
+  }
 
   CGAL::Bbox_3 bbox() const
   {
