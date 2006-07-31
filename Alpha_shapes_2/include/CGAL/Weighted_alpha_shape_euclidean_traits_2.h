@@ -21,13 +21,12 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 
+#include <boost/config.hpp>
+
 #include <CGAL/basic.h>
-
 #include <CGAL/squared_distance_2.h>
-
 #include <CGAL/predicates/in_smallest_orthogonalcircle_ftC2.h>
 #include <CGAL/constructions/squared_radius_smallest_orthogonalcircle_ftC2.h>
-
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 
 //-------------------------------------------------------------------
@@ -46,6 +45,7 @@ public:
 
   result_type operator()(const T& p, const T& q, const T& r)
   {
+    BOOST_USING_STD_MAX();  
     typedef typename  K::FT FT;
     FT px(p.point().x());
     FT py(p.point().y());
@@ -60,12 +60,12 @@ public:
     result_type res = squared_radius_orthogonalcircleC2(px, py, pw,
 							qx, qy, qw,
 							rx, ry, rw);
-      
-    return max(return_type(0), res);
+    return max BOOST_PREVENT_MACRO_SUBSTITUTION(return_type(0), res);
   }
 
   result_type operator()(const T& p, const T& q)
     {
+      BOOST_USING_STD_MAX();
       typedef typename  K::FT FT;
       FT px(p.point().x());
       FT py(p.point().y());
@@ -76,7 +76,7 @@ public:
   
       result_type res =  squared_radius_smallest_orthogonalcircleC2(px, py, pw,
 								    qx, qy, qw);
-      return max(return_type(0), res);
+      return max BOOST_PREVENT_MACRO_SUBSTITUTION(return_type(0), res);
     }
 };
 
