@@ -20,6 +20,9 @@
 #if ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
 #define CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H 1
 
+
+#include <boost/config.hpp>
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>
@@ -70,10 +73,12 @@ struct I_Infinity_distance_2
   typedef Arity_tag< 2 > Arity;
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const {
-    return max(CGAL_NTS abs(q1.x() - q2.x()),
-               CGAL_NTS abs(q1.y() - q2.y()));
+    BOOST_USING_STD_MAX();
+    return max BOOST_PREVENT_MACRO_SUBSTITUTION (CGAL_NTS abs(q1.x() - q2.x()),
+						 CGAL_NTS abs(q1.y() - q2.y()));
   }
 };
+
 template < class R >
 struct I_Signed_infinity_distance_2
 : public std::binary_function<
@@ -82,8 +87,12 @@ struct I_Signed_infinity_distance_2
   typedef Arity_tag< 2 > Arity;
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
-  { return max(q1.x() - q2.x(), q1.y() - q2.y()); }
+  { 
+    BOOST_USING_STD_MAX();
+    return max BOOST_PREVENT_MACRO_SUBSTITUTION (q1.x() - q2.x(), q1.y() - q2.y()); 
+  }
 };
+
 template < class R >
 struct I_Construct_point_2_above_right_implicit_point_2 {
   // (p, q, r) |--> (p.x() + r, q.y() + r)

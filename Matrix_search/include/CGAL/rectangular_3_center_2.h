@@ -947,7 +947,7 @@ rectangular_3_center_2_type2(
   FT& rad,
   Operations op)
 {
-  using std::max;
+  BOOST_USING_STD_MAX();
   using std::less;
   using std::greater;
   using std::greater_equal;
@@ -1131,11 +1131,11 @@ rectangular_3_center_2_type2(
         q_t_q_r_cover_at_rho_min = 0;
         if (!Q_t_empty)
           q_t_q_r_cover_at_rho_min =
-            max(q_t_q_r_cover_at_rho_min,
+            max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                            op.compute_x_distance(q_t, Q_t));
         if (!Q_r_empty)
           q_t_q_r_cover_at_rho_min =
-            max(q_t_q_r_cover_at_rho_min,
+            max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                            op.compute_y_distance(q_r, Q_r));
         q_t_at_rho_min = q_t, q_r_at_rho_min = q_r;
         s_at_rho_min = s, e_at_rho_min = e;
@@ -1255,11 +1255,11 @@ rectangular_3_center_2_type2(
       q_t_q_r_cover_at_rho_min = 0;
       if (!Q_t_empty)
         q_t_q_r_cover_at_rho_min =
-          max(q_t_q_r_cover_at_rho_min,
+          max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                          op.compute_x_distance(q_t, Q_t));
       if (!Q_r_empty)
         q_t_q_r_cover_at_rho_min =
-          max(q_t_q_r_cover_at_rho_min,
+          max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                          op.compute_y_distance(q_r, Q_r));
       s_at_rho_min = s, e_at_rho_min = e;
       continue;
@@ -1345,11 +1345,11 @@ rectangular_3_center_2_type2(
       q_t_q_r_cover_at_rho_min = 0;
       if (!Q_t_empty)
         q_t_q_r_cover_at_rho_min =
-          max(q_t_q_r_cover_at_rho_min,
+          max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                          op.compute_x_distance(q_t, Q_t));
       if (!Q_r_empty)
         q_t_q_r_cover_at_rho_min =
-          max(q_t_q_r_cover_at_rho_min,
+          max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                          op.compute_y_distance(q_r, Q_r));
       q_t_at_rho_min = q_t, q_r_at_rho_min = q_r;
       s_at_rho_min = b3, e_at_rho_min = e;
@@ -1397,7 +1397,7 @@ rectangular_3_center_2_type2(
 
     if (!Q_t_empty && op.compute_x_distance(q_t, Q_t) > rho_max ||
         !Q_r_empty && op.compute_y_distance(q_r, Q_r) > rho_max) {
-      rho_max = max(op.compute_x_distance(q_t, Q_t),
+      rho_max = max BOOST_PREVENT_MACRO_SUBSTITUTION (op.compute_x_distance(q_t, Q_t),
                                op.compute_y_distance(q_r, Q_r));
 #ifndef CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
       CGAL_optimisation_assertion(rho_max <= rad);
@@ -1447,11 +1447,11 @@ rectangular_3_center_2_type2(
           q_t_q_r_cover_at_rho_min = 0;
           if (!Q_t_empty)
             q_t_q_r_cover_at_rho_min =
-              max(q_t_q_r_cover_at_rho_min,
+              max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                   op.compute_x_distance(q_t, Q_t));
           if (!Q_r_empty)
             q_t_q_r_cover_at_rho_min =
-              max(q_t_q_r_cover_at_rho_min,
+              max BOOST_PREVENT_MACRO_SUBSTITUTION (q_t_q_r_cover_at_rho_min,
                   op.compute_y_distance(q_r, Q_r));
           q_t_at_rho_min = q_t, q_r_at_rho_min = q_r;
           s_at_rho_min = t + 1, e_at_rho_min = e;
@@ -1484,7 +1484,7 @@ rectangular_3_center_2_type2(
                           bind_1(op.distance(), q_t_at_rho_min),
                           bind_1(op.distance(), q_r_at_rho_min)));
     rad2 =
-      max(
+      max BOOST_PREVENT_MACRO_SUBSTITUTION (
         rad2,
         mydist(*max_element(s_at_rho_min, e_at_rho_min,
                             compose(less< FT >(), mydist, mydist))));

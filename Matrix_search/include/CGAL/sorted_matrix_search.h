@@ -20,6 +20,8 @@
 #if ! (CGAL_SORTED_MATRIX_SEARCH_H)
 #define CGAL_SORTED_MATRIX_SEARCH_H 1
 
+#include <boost/config.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/functional.h>
@@ -75,11 +77,15 @@ public:
   {}
 
   Value
-  min() const
+  min
+  BOOST_PREVENT_MACRO_SUBSTITUTION
+  () const
   { return base_matrix(x, y); }
 
   Value
-  max(int offset) const
+  max
+  BOOST_PREVENT_MACRO_SUBSTITUTION
+  (int offset) const
   // offset denotes the cell's dimension
   { return base_matrix(x + offset - 1, y + offset - 1); }
 
@@ -133,7 +139,7 @@ struct Cell_max
 
   typename Cell::Value
   operator()( const Cell& c) const
-  { return c.max( ofs); }
+  { return (c.max)( ofs); }
 
 private:
   int ofs;
@@ -144,7 +150,7 @@ template < class InputIterator, class Traits >
 typename Traits::Value
 sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
 {
-  using std::max;
+  BOOST_USING_STD_MAX();
   using std::nth_element;
   using std::iter_swap;
   using std::find_if;
@@ -172,7 +178,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     CGAL_optimisation_expensive_precondition(
       PaddedMatrix( *i).is_sorted());
     active_cells.push_back( Cell( PaddedMatrix( *i)));
-    maxdim = max( max( (*i).number_of_columns(),
+    maxdim = max BOOST_PREVENT_MACRO_SUBSTITUTION ( max BOOST_PREVENT_MACRO_SUBSTITUTION ( (*i).number_of_columns(),
                        (*i).number_of_rows()),
                   maxdim);
     ++i;
@@ -271,7 +277,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     
     Cell_iterator upper_median_cell =
       active_cells.begin() + lower_median_rank;
-    Value upper_median = upper_median_cell->max(ccd);
+    Value upper_median = (upper_median_cell->max)(ccd);
     
     // restore lower_median_cell, if it has been displaced
     // by the second search
@@ -378,7 +384,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
       else { // both upper_median and lower_median are infeasible
     
         // discard cells with all entries smaller than
-        // max( lower_median, upper_median)
+        // max BOOST_PREVENT_MACRO_SUBSTITUTION ( lower_median, upper_median)
     
         new_end =
           remove_if(
@@ -387,7 +393,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
             compose(
               bind_2(
                 t.compare_non_strictly(),
-                max( lower_median, upper_median)),
+                max BOOST_PREVENT_MACRO_SUBSTITUTION ( lower_median, upper_median)),
               Cell_max< Cell >( ccd)));
     
       } // both upper_median and lower_median are infeasible
