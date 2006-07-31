@@ -161,13 +161,13 @@ operator<(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1) {
     vh3 = s1.ch->vertex(s1.index(0));
     vh4 = s1.ch->vertex(s1.index(1));
 			
-    if (std::min(&(*vh1), &(*vh2)) < std::min(&(*vh3), &(*vh4)))
+    if ((std::min)(&(*vh1), &(*vh2)) < (std::min)(&(*vh3), &(*vh4)))
       return true;
 			
-    if (std::min(&(*vh1), &(*vh2)) > std::min(&(*vh3), &(*vh4)))
+    if ((std::min)(&(*vh1), &(*vh2)) > (std::min)(&(*vh3), &(*vh4)))
       return false;
 			
-    if (std::max(&(*vh1), &(*vh2)) < std::max(&(*vh3), &(*vh4)))
+    if ((std::max)(&(*vh1), &(*vh2)) < (std::max)(&(*vh3), &(*vh4)))
       return true;
 			
     return false;
@@ -175,13 +175,13 @@ operator<(Triangulation_simplex_3<T> s0, Triangulation_simplex_3<T> s1) {
     ch1 = s0.ch->neighbor(s0.index(0));
     ch2 = s1.ch->neighbor(s1.index(0));
 			
-    if (std::min(&(*s0.ch), &(*ch1)) < std::min(&(*s1.ch), &(*ch2)))
+    if ((std::min)(&(*s0.ch), &(*ch1)) < (std::min)(&(*s1.ch), &(*ch2)))
       return true;
 			
-    if (std::min(&(*s0.ch), &(*ch1)) > std::min(&(*s1.ch), &(*ch2)))
+    if ((std::min)(&(*s0.ch), &(*ch1)) > (std::min)(&(*s1.ch), &(*ch2)))
       return false;
 			
-    if (std::max(&(*s0.ch), &(*ch1)) < std::max(&(*s1.ch), &(*ch2)))
+    if ((std::max)(&(*s0.ch), &(*ch1)) < (std::max)(&(*s1.ch), &(*ch2)))
       return true;
 			
     return false;
