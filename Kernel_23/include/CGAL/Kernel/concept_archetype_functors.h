@@ -580,6 +580,19 @@ public:
 };
 
 template <typename K>
+class Compare_yx_2
+{
+    typedef typename K::Point_2    Point_2;
+public:
+    typedef Comparison_result  result_type;
+    typedef Arity_tag< 2 >     Arity;
+
+    Comparison_result
+    operator()( const Point_2&, const Point_2&) const
+    { return CGAL::LARGER; }
+};
+
+template <typename K>
 class Compare_z_3
 {
     typedef typename K::Point_3   Point_3;

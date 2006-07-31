@@ -207,6 +207,11 @@ CGAL_Kernel_pred(Compare_y_3,
 		 compare_y_3_object)
 #endif
 
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_COMPARE_YX_2)
+CGAL_Kernel_pred(Compare_yx_2,
+		 compare_yx_2_object)
+#endif
+
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_COMPARE_Z_3)
 CGAL_Kernel_pred(Compare_z_3,
 		 compare_z_3_object)
