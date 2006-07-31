@@ -127,7 +127,7 @@ struct Cell_min
   typedef Arity_tag< 1 > Arity;
   typename Cell::Value
   operator()( const Cell& c) const
-  { return c.min(); }
+  { return (c.min)(); }
 };
 
 template < class Cell >
@@ -264,7 +264,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     
     Cell_iterator lower_median_cell =
       active_cells.begin() + upper_median_rank;
-    Value lower_median = lower_median_cell->min();
+    Value lower_median = (lower_median_cell->min)();
     
     // compute lower median of cell's maxima:
     nth_element(active_cells.begin(),
@@ -281,7 +281,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     
     // restore lower_median_cell, if it has been displaced
     // by the second search
-    if (lower_median_cell->min() != lower_median)
+    if ((lower_median_cell->min)() != lower_median)
       lower_median_cell =
         find_if(active_cells.begin(),
                 active_cells.end(),
@@ -405,7 +405,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   CGAL_optimisation_assertion( active_cells.size() == 1);
   CGAL_optimisation_assertion( ccd == 1);
 
-  return (*active_cells.begin()).min();
+  return ((*active_cells.begin()).min)();
 }
 
 CGAL_END_NAMESPACE
