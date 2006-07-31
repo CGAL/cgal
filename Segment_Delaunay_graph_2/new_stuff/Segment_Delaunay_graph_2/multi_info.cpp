@@ -34,9 +34,8 @@ struct Gt : public Traits_x {};
 #include "Multi_info.h"
 #include <CGAL/Segment_Delaunay_graph_storage_traits_with_info_2.h>
 
-typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>   ST_base;
 typedef CGAL::Segment_Delaunay_graph_storage_traits_with_info_2
-<ST_base,
+<Gt,
  ::Multi_info<int>,
  ::Multi_info_convert_info<int>,
  ::Multi_info_merge_info<int> >

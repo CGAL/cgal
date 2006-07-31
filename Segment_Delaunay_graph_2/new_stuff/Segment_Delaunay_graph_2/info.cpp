@@ -38,16 +38,15 @@ struct Gt : public Traits_x {};
 #ifdef WITH_INFO
 #include <CGAL/Segment_Delaunay_graph_storage_traits_with_info_2.h>
 
-typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>   ST_base;
 typedef
 CGAL::Segment_Delaunay_graph_storage_traits_with_info_2
-<ST_base,
+<Gt,
  ::Red_blue,
  ::Red_blue_convert_info,
  ::Red_blue_merge_info>
 ST;
 #else
-typedef CGAL::Storage_traits_2<Gt> ST;
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt> ST;
 #endif
 
 typedef CGAL::Tag_true  STag;
