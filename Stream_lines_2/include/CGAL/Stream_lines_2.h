@@ -373,7 +373,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
   stl.push_front(new_point);
   number_of_points++;
   Point_2 old_point;
-  insertion_step = (int) (((dist)-fSepStl_seed) / std::max((FT) sampling_step,vector_field_2.get_integration_step()));
+  insertion_step = (int) (((dist)-fSepStl_seed) / (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
   if (insertion_step < 0) insertion_step = 0;
   while (!bEnd)
     {
@@ -423,7 +423,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
 		    }
 		  // adaptive insertion order coefficient
 		  insertion_step = (int) (((dist)-fSepStl_seed) /
-					  std::max((FT) sampling_step,vector_field_2.get_integration_step()));
+					  (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
 		  if (insertion_step < 0) insertion_step = 0;
 		  list_of_vertex.push_front(m_Vertex_handle);
 		  (bEnd) = (((bEnd))||(dist<separating_distance));
@@ -464,7 +464,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
 		  m_Vertex_handle = insert_point(new_point, stl_vertices.front()->face(), dist, true);
 		}
 	      insertion_step =	(int) (((dist)-fSepStl_seed) / 
-				       std::max((FT) sampling_step,vector_field_2.get_integration_step()));
+				       (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
 	      if (insertion_step < 0) insertion_step = 0;
 	      (bEnd) = (((bEnd))||(dist<separating_distance));
 	    }
@@ -554,7 +554,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
 		    }
 		  // adaptive insertion order coefficient
 		  insertion_step =	(int) (((dist)-fSepStl_seed) / 
-					       std::max((FT) sampling_step,vector_field_2.get_integration_step()));
+					       (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
 		  if (insertion_step < 0) insertion_step = 0;
 		  list_of_vertex.push_back(m_Vertex_handle);
 		  (bEnd) = (((bEnd))||(dist<separating_distance));
@@ -596,7 +596,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
 		}
 				// adaptive insertion order coefficient
 	      insertion_step =	(int) (((dist)-fSepStl_seed) / 
-				       std::max((FT) sampling_step,vector_field_2.get_integration_step()));
+				       (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
 	      if (insertion_step < 0) insertion_step = 0;
 	      // 				list_of_vertex.push_front(m_Vertex_handle);
 	      (bEnd) = (((bEnd))||(dist<separating_distance));
