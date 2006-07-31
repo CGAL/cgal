@@ -6,6 +6,7 @@
 
 #include <list>
 #include <fstream>
+#include <algorithm>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
