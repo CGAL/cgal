@@ -2,7 +2,7 @@
 - renamed storage traits related file names and classes; modified test
   suite and demo according to changes
 - added a couple more test data in test suites
-- added example which demonstrates how to add info to sites
+- added examples which demonstrates how to add info to sites
 - added copyright headers when missing; modified year list in some
   copyright headers
 - changed storage traits with info to take as first template parameter
