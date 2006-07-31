@@ -1817,7 +1817,7 @@ copy_tds(const Tds &tds, Vertex_handle vh)
   set_dimension(tds.dimension());
 
   // Number of pointers to cell/vertex to copy per cell.
-  int dim = std::max(1, dimension() + 1);
+  int dim = (std::max)(1, dimension() + 1);
  
   if(n == 0) {return Vertex_handle();}
   
