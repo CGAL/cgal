@@ -6,26 +6,17 @@
 #include "Cartesian_I.h"
 
 
-
-
 typedef CGAL::Cartesian_I<CGAL::Gmpq> SC;
 typedef CGAL::Lazy_kernel<SC, CGAL::Cartesian_I<CGAL::Interval_nt_advanced > > K;
 
-
-
 typedef K::FT FT;
-
 typedef K::Point_2 Point_2;
-
 typedef K::Vector_2 Vector_2;
 typedef K::Segment_2 Segment_2;
 typedef K::Circle_2 Circle_2;
 
 typedef CGAL::Bbox_2 Bbox_2;
 typedef CGAL::Object Object;
-
-
-
 
 
 int main()
@@ -49,9 +40,6 @@ int main()
       std::cout << "intersection at " << ip << std::endl;
     }
   }
-
-
-  
 
   FT ft = 3.1415;
   std::cout << "ft = " << ft << std::endl;
@@ -128,13 +116,3 @@ int main()
 
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
