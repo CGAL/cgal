@@ -21,8 +21,6 @@
 #define CGAL_MIXED_COMPLEX_TRAITS_3_H
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-// Contains the weighted converter:
-#include <CGAL/Regular_triangulation_filtered_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
@@ -34,19 +32,16 @@ CGAL_BEGIN_NAMESPACE
     opposite side (POSITIVE).
  **/
 template <class K>
-class Side_of_mixed_cell {
+class Side_of_mixed_cell_3 {
 public:
   typedef typename K::FT             FT;
   typedef typename K::Bare_point     Bare_point;
   typedef typename K::Weighted_point Weighted_point;
 
-  Side_of_mixed_cell(const FT &shrink) : s(shrink) {}
+  Side_of_mixed_cell_3(const FT &shrink) : s(shrink) {}
   
   typedef CGAL::Arity_tag< 5 > Arity;
   typedef CGAL::Sign           result_type;
-  
-  Test_add() : _t(1) {}
-  Test_add(FT t) : _t(t) {}
   
   result_type operator()(const Weighted_point &p1,
 			 const Weighted_point &p2,
@@ -81,11 +76,69 @@ public:
   
 private:
   FT s;
-}
+};
 
+/** Input: Two weighted points
+    Computes the anchor point of a Delaunay center and a Voronoi center
+ **/
 template <class K>
-class Mixed_complex_traits_3_base {
+class Construct_anchor_point_3 {
+public:
+  typedef typename K::FT             FT;
+  typedef typename K::Bare_point     Bare_point;
+
+  Construct_anchor_point_3(const FT &shrink) : s(shrink) {}
   
+  typedef CGAL::Arity_tag< 2 > Arity;
+  typedef Bare_point           result_type;
+  
+  result_type operator()(const Bare_point &p_del,
+			 const Bare_point &p_vor) const {
+    FT t = 1-s;
+    return Bare_point(s*p_del.x() + t*p_vor.x(),
+		      s*p_del.y() + t*p_vor.y(),
+		      s*p_del.z() + t*p_vor.z());
+  }
+  
+private:
+  FT s;
+};
+
+template <class K_>
+class Mixed_complex_traits_3
+{
+public:
+  typedef K_                            K;
+  typedef Mixed_complex_traits_3<K>     Self;
+
+  typedef typename K::FT                FT;
+  typedef typename K::Point_3           Bare_point;
+  typedef Weighted_point<Bare_point,FT> Weighted_point;
+  typedef Weighted_point                Weighted_point_3;
+
+  typedef Side_of_mixed_cell_3<Self>          Side_of_mixed_cell_3;
+  typedef Construct_weighted_circumcenter_3<Self> 
+                                              Construct_weighted_circumcenter_3;
+  typedef Construct_anchor_point_3<Self>      Construct_anchor_point_3;
+  
+ 
+  Mixed_complex_traits_3(FT s) : s(s) {
+  }
+
+  Side_of_mixed_cell_3 
+  side_of_mixed_cell_3_object() const 
+  { return Side_of_mixed_cell_3(s); }
+
+  Construct_weighted_circumcenter_3
+  construct_weighted_circumcenter_3_object() const
+  { return Construct_weighted_circumcenter_3(); }
+
+  Construct_anchor_point_3
+  construct_anchor_point_3_object() const
+  { return Construct_anchor_point_3(s); }
+
+private:
+  FT s;
 };
 
 
