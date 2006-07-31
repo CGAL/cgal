@@ -531,7 +531,7 @@ void Compact_container<T, Allocator>::merge(Self &d)
   // Add the capacities.
   capacity_ += d.capacity_;
   // It seems reasonnable to take the max of the block sizes.
-  block_size = std::max(block_size, d.block_size);
+  block_size = (std::max)(block_size, d.block_size);
   // Clear d.
   d.init();
 }

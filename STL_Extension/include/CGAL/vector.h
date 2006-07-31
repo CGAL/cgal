@@ -478,7 +478,7 @@ protected:
                 }
             } else {
                 const size_type old_size = size();
-                const size_type len = old_size + std::max( old_size, n);
+                const size_type len = old_size + (std::max)( old_size, n);
                 iterator new_start = iterator( alloc.allocate(len));
                 iterator new_finish = new_start;
                 try {
@@ -572,7 +572,7 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
             }
         } else {
             const size_type old_size = size();        
-            const size_type len = old_size + std::max(old_size, n);
+            const size_type len = old_size + (std::max)(old_size, n);
             iterator new_start = iterator( alloc.allocate(len));
             iterator new_finish = new_start;
             try {
