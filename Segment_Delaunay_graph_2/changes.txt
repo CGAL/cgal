@@ -7,6 +7,7 @@
   copyright headers
 - changed storage traits with info to take as first template parameter
   the geometric traits instead of the base class
+- switched the order of the 2nd and 3rd template parameter in hierarchy
 
 29 July 2006:  Menelaos Karavelas
 - the bug fix for SunPro CC was missing a CGAL:: qualification

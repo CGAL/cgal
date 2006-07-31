@@ -53,7 +53,7 @@ typedef CGAL::Tag_true  STag;
 //typedef CGAL::Tag_false STag;
 
 #ifdef WITH_HIERARCHY
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST>  SDG2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag>  SDG2;
 #else
 typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
 #endif

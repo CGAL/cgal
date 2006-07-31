@@ -183,7 +183,7 @@ CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
 							Merge_info>
 ST;
 
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,CGAL::Tag_false,ST> SDG2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST> SDG2;
 
 typedef SDG2::Finite_vertices_iterator     FVIT;
 typedef SDG2::Site_2                       Site_2;

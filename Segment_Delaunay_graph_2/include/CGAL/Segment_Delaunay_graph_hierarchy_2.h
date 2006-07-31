@@ -53,8 +53,9 @@ const unsigned int sdg_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template < class Gt, class STag = Tag_false,
+template < class Gt,
 	   class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
+	   class STag = Tag_false,
 	   class DS = Triangulation_data_structure_2<
               Segment_Delaunay_graph_hierarchy_vertex_base_2<
 		Segment_Delaunay_graph_vertex_base_2<ST> >,
@@ -64,7 +65,7 @@ class Segment_Delaunay_graph_hierarchy_2
   : public Segment_Delaunay_graph_2<Gt,ST,DS,LTag>
 {
 protected:
-  typedef Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS,LTag>  Self;
+  typedef Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS,LTag>  Self;
 
 public:
   // PUBLIC TYPES

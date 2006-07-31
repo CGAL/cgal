@@ -69,7 +69,9 @@ typedef Gt::Site_2             Site;
 
 typedef CGAL::Tag_true         STag;
 
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag>       SDG_2;
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>       ST;
+
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag>    SDG_2;
 //typedef CGAL::Segment_Delaunay_graph_2<Gt>          SDG_2;
 
 #endif  // SDG_TYPEDEFS_H

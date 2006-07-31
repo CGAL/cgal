@@ -82,7 +82,7 @@ typedef CGAL::Triangulation_data_structure_2<Vbh,Fb>                  DS;
 
 
 
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,ST,DS>   SDG_2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS>   SDG_2;
 //typedef CGAL::Segment_Delaunay_graph_2<Gt,ST,DS>          SDG_2;
 
 #endif  // PDG_TYPEDEFS_H

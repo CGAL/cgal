@@ -141,7 +141,7 @@ namespace Internal {
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 
-template<class Gt, class STag, class ST, class DS, class LTag >
+template<class Gt, class ST, class STag, class DS, class LTag >
 class Segment_Delaunay_graph_hierarchy_2;
 
 
@@ -156,8 +156,8 @@ class Segment_Delaunay_graph_2
   : private Triangulation_2<
           Segment_Delaunay_graph_traits_wrapper_2<Gt>, DS >
 {
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,Tag_true,ST,DS,LTag>;
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,Tag_false,ST,DS,LTag>;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,DS,LTag>;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,DS,LTag>;
 protected:
   // LOCAL TYPES
   //------------
