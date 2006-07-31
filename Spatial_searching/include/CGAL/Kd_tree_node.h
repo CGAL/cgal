@@ -186,8 +186,8 @@ namespace CGAL {
 	return current_max_depth;
       }
       else return 
-	     std::max( lower()->depth(current_max_depth + 1),
-		       upper()->depth(current_max_depth + 1));
+	     (std::max)( lower()->depth(current_max_depth + 1),
+			 upper()->depth(current_max_depth + 1));
     }
 
     int 
