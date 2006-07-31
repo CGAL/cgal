@@ -687,10 +687,13 @@ void _test_solve(AK ak)
     theSolve(l,s,std::back_inserter(res_ls));
     if(res_ls.size() == 1) {
       assert(theSigh_at(s,res_ls[0].first) == CGAL::ZERO);
+      assert(CGAL::AlgebraicSphereFunctors::contains<AK>(l,res_ls[0].first));
     }
     if(res_ls.size() == 2) {
       assert(theSigh_at(s,res_ls[0].first) == CGAL::ZERO);
+      assert(CGAL::AlgebraicSphereFunctors::contains<AK>(l,res_ls[0].first));
       assert(theSigh_at(s,res_ls[1].first) == CGAL::ZERO);
+      assert(CGAL::AlgebraicSphereFunctors::contains<AK>(l,res_ls[1].first));
       if(res_ls[0].first.x() != res_ls[1].first.x()) {
         assert(res_ls[0].first.x() < res_ls[1].first.x());
       } else if(res_ls[0].first.y() != res_ls[1].first.y()) {
