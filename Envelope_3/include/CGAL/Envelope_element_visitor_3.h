@@ -135,8 +135,6 @@ public:
     // Allocate the traits.
     traits = new Traits;
     own_traits = true;
-
-    reset_statistics();
   }
 
   Envelope_element_visitor_3(Traits* tr)
@@ -144,8 +142,6 @@ public:
     // Set the traits.
     traits = tr;
     own_traits = false;
-
-    reset_statistics();
   }
 
   // virtual destructor.
@@ -167,7 +163,6 @@ public:
     CGAL_assertion(face->get_aux_is_set(0));
     CGAL_assertion(face->get_aux_is_set(1));
     
-    intersection_timer.start();
     // we are interested with the envelope's shape over the current face,
     // so we only need to check the first surface from each group, since
     // all the surfaces in a group overlap over the current face.
@@ -181,11 +176,9 @@ public:
     // need only resolve non-intersecting and return
     std::list<Object> inter_objs;
     get_projected_intersections(surf1, surf2, std::back_inserter(inter_objs));
-    intersection_timer.stop();
 
     if (inter_objs.size() == 0)
     {
-      minimal_face_timer.start();
       // here for resolve we can compare the surfaces over the edges only (no need for left/right versions)
       Comparison_result cur_res = resolve_minimal_face(face);
       copy_data_by_comparison_result(face, face, cur_res);
@@ -193,11 +186,9 @@ public:
       #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
         copy_data_to_face_boundary(face);
       #endif
-      minimal_face_timer.stop();
       return;
     }
     
-    copied_arr_timer.start();
     // we insert all projected intersections into a temporary arrangement,
     // with only the current face's curves, to find the arrangement of the lower envelope
     // of the 2 surfaces over the current face
@@ -225,14 +216,12 @@ public:
                                         fakes_exist);
     CGAL_assertion(is_valid(copied_face_arr));
     map_copied_to_orig_faces[copied_face] = face;
-    copied_arr_timer.stop();
     
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "number of face's edges: " << copied_face_arr.number_of_edges() << std::endl;
     #endif
     
     // insert the projected intersections into the temporary minimization diagram
-    zone_timer.start();
     Point_2 point;
     Intersection_curve curve;
     Object cur_obj;
@@ -320,7 +309,6 @@ public:
     }
 
     zone_visitor.finish();
-    zone_timer.stop();
 
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "number of new edges: "
@@ -333,7 +321,6 @@ public:
     #endif
        
     // now determine the envelope data in result over the new faces
-    minimal_face_timer.start();
 
     // first, we try to copy information from incident faces, thru fake edges
     if (fakes_exist)
@@ -536,7 +523,6 @@ public:
       #endif
     }
 
-    minimal_face_timer.stop();
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "finish resolve face " << std::endl;
     #endif
@@ -560,9 +546,7 @@ public:
 
     // find the projected intersections
     std::list<Object> inter_objs;
-    edge_intersection_timer.start();
     get_projected_intersections(surf1, surf2, std::back_inserter(inter_objs));
-    edge_intersection_timer.stop();
 
     if (inter_objs.size() == 0)
     {
@@ -573,7 +557,6 @@ public:
       return;
     }
 
-    edge_2d_inter_timer.start();
     const X_monotone_curve_2& original_cv = edge->curve();
     const Point_2& original_left = traits->construct_min_vertex_2_object()(original_cv);
     const Point_2& original_right = traits->construct_max_vertex_2_object()(original_cv);
@@ -692,7 +675,6 @@ public:
       else
         CGAL_assertion_msg(false, "wrong projected intersection type");
     }
-    edge_2d_inter_timer.stop();
     
     // if there aren't any split points, we can finish
     if (split_points.size() == 0)
@@ -703,8 +685,6 @@ public:
       #endif
       return;
     }
-
-    edge_split_timer.start();
     
     // sort the split points from left to right
     // and split the original edge in these points
@@ -859,7 +839,6 @@ public:
           set_data_by_comparison_result(original_trg, cur_part_res);
       #endif
     }
-    edge_split_timer.stop();    
 
   }
   
@@ -886,62 +865,6 @@ public:
   Traits* get_traits ()
   {
     return (traits);
-  }
-
-  void reset()
-  {
-    reset_statistics();
-  }
-
-  void reset_statistics()
-  {
-    if (intersection_timer.is_running())
-      intersection_timer.stop();
-    if (copied_arr_timer.is_running())
-      copied_arr_timer.stop();
-    if (zone_timer.is_running())
-      zone_timer.stop();
-    if (minimal_face_timer.is_running())
-      minimal_face_timer.stop();
-
-    if (edge_intersection_timer.is_running())
-      edge_intersection_timer.stop();
-    if (edge_2d_inter_timer.is_running())
-      edge_2d_inter_timer.stop();
-    if (edge_split_timer.is_running())
-      edge_split_timer.stop();
-
-    intersection_timer.reset();
-    copied_arr_timer.reset();
-    zone_timer.reset();
-    minimal_face_timer.reset();
-
-    edge_intersection_timer.reset();
-    edge_2d_inter_timer.reset();
-    edge_split_timer.reset();
-  }
-  
-  void print_times()
-  {
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      std::cout << "resolve face times: " << std::endl;
-      std::cout << "intersections: " << intersection_timer.time() << " seconds" << std::endl;
-      std::cout << "copied_arr: " << copied_arr_timer.time() << " seconds" << std::endl;
-      std::cout << "zone calculation: " << zone_timer.time() << " seconds" << std::endl;
-      std::cout << "envelope data: " << minimal_face_timer.time() << " seconds" << std::endl;
-      std::cout << std::endl;
-      std::cout << "resolve edge times: " << std::endl;
-      std::cout << "intersections: " << edge_intersection_timer.time() << " seconds" << std::endl;
-      std::cout << "2d intersections: " << edge_2d_inter_timer.time() << " seconds" << std::endl;
-      std::cout << "split & compare: " << edge_split_timer.time() << " seconds" << std::endl;
-
-      std::cout << std::endl
-          << "determine a feature's shape took: "
-          << intersection_timer.time() + copied_arr_timer.time() + zone_timer.time()
-          << "seconds " << std::endl
-          << "labelling took: " << minimal_face_timer.time() <<std::endl;
-
-    #endif    
   }
 
 protected:
@@ -3130,17 +3053,6 @@ protected:
 
   Traits             *traits;
   bool                own_traits; // Should we eventually free the traits object.
-
-  // measure times for resolve face
-  mutable Timer intersection_timer;
-  mutable Timer copied_arr_timer;
-  mutable Timer zone_timer;
-  mutable Timer minimal_face_timer;
-
-  // measure times for resolve edge
-  mutable Timer edge_intersection_timer;
-  mutable Timer edge_2d_inter_timer;
-  mutable Timer edge_split_timer;
 };
 
 CGAL_END_NAMESPACE

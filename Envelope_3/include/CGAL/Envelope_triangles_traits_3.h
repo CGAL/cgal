@@ -1718,10 +1718,7 @@ public:
     return (ip);
   }
 
-  Envelope_triangles_traits_3() : type(LOWER), cache_hits(0)
-  {}
-
-  Envelope_triangles_traits_3(Envelope_type t) : type(t), cache_hits(0)
+  Envelope_triangles_traits_3(Envelope_type t = LOWER) : type(t), cache_hits(0)
   {}
 
   Envelope_type get_envelope_type() const

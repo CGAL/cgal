@@ -30,7 +30,6 @@
 #include <CGAL/Overlay_2.h>
 #include <CGAL/Envelope_element_visitor_3.h>
 #include <CGAL/No_vertical_decomposition_2.h>
-#include <CGAL/Timer.h>
 #include <CGAL/set_dividors.h>
 
 #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
@@ -203,10 +202,6 @@ public:
     {
       return; // result is empty
     }
-
-    init_stats();
-
-    envelope_timer.start();
     
     // make the general surfaces xy-monotone
     std::list<Xy_monotone_surface_3> xy_monotones;
@@ -218,14 +213,7 @@ public:
     construct_lu_envelope_xy_monotones(xy_monotones.begin(), 
                                        xy_monotones.end(), result, dividor);
 
-    CGAL_assertion(is_envelope_valid(result));   
-
-	  envelope_timer.stop();
-    
-    result_num_vertices = result.number_of_vertices();
-    result_num_edges = result.number_of_edges();
-    result_num_faces = result.number_of_faces();    
-    print_stats();
+    CGAL_assertion(is_envelope_valid(result));     
   }
 
   // compute the envelope of xy-monotone surfaces in 3D,
@@ -255,18 +243,10 @@ public:
       return; // result is empty
 
     init_stats();
-    envelope_timer.start();
 
     // recursively construct the envelope of the xy-monotone parts
     construct_lu_envelope_xy_monotones(begin, end, result, dividor);
     CGAL_assertion(is_envelope_valid(result));
-
-	  envelope_timer.stop();
-
-    result_num_vertices = result.number_of_vertices();
-    result_num_edges = result.number_of_edges();
-    result_num_faces = result.number_of_faces();
-    print_stats();
   }
 
   /*! Access the traits object (const version). */
@@ -288,23 +268,7 @@ public:
     init_stats();
   }
 
-  void print_bench() const
-  {
-    std::cout << (sum_num_vertices+sum_num_faces+sum_num_edges)-
-                 (result_num_vertices+result_num_edges+result_num_faces)
-              << '\t';
-    if (decompose_timer.time() > 0)
-      std::cout << decompose_timer.time() << '\t';
-  }
-
-  void print_bench_header() const
-  {
-    std::cout << "extra features"
-              << '\t';
-
-    if (decompose_timer.time() > 0)
-      std::cout << "decomposition time" << '\t';
-  }
+  
   
 protected:
 
@@ -351,11 +315,6 @@ protected:
     // merge the results:
     merge_envelopes(result1, result2, result);
 
-    // some statistics
-    sum_num_vertices += result.number_of_vertices();
-    sum_num_edges += result.number_of_edges();
-    sum_num_faces += result.number_of_faces();
-
     result1.clear();
     result2.clear();
     
@@ -366,9 +325,7 @@ protected:
   // to create the envelope on this surface only
   void deal_with_one_surface(Xy_monotone_surface_3& surf, Minimization_diagram_2& result)
   {
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      one_surface_timer.start();
-    #endif
+   
     std::list<Curve_2> boundary_curves;
     traits->construct_projected_boundary_curves_2_object()(surf, std::back_inserter(boundary_curves));
 
@@ -501,15 +458,6 @@ protected:
     }
 
 	  CGAL_assertion(verify_flags(result));
-
-    // some statistics
-    sum_num_vertices += result.number_of_vertices();
-    sum_num_edges += result.number_of_edges();
-    sum_num_faces += result.number_of_faces();
-
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      one_surface_timer.stop();
-    #endif
   }
 
 public:
@@ -519,16 +467,12 @@ public:
                        Minimization_diagram_2& result)
   {
     // overlay the 2 arrangements
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      overlay_timer.start();
-    #endif
+   
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "before overlay" << std::endl;
     #endif    
     overlay(result1, result2, result);
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      overlay_timer.stop();
-    #endif
+  
     CGAL_expensive_assertion_msg(is_valid(result), "after overlay result is not valid");
 
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
@@ -602,13 +546,8 @@ public:
     typename std::list<Halfedge_handle>::iterator li;
     for (li = edges_to_resolve.begin(); li != edges_to_resolve.end(); ++li)
     {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        resolve_edge_timer.start();
-      #endif
       resolver->resolve(*li, result);
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        resolve_edge_timer.stop();
-      #endif
+     
     }
     edges_to_resolve.clear();
     
@@ -717,14 +656,8 @@ public:
         vh->set_decision(FIRST);
         continue;
       }
-
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        resolve_vertex_timer.start();
-      #endif
       resolver->resolve(vh);
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        resolve_vertex_timer.stop();
-      #endif
+     
     }
 
     CGAL_expensive_assertion_msg(result.is_valid(), "after resolve result is not valid");
@@ -732,17 +665,10 @@ public:
     // make sure that aux_source and decision are set at all features
 	  // after all resolvings
     CGAL_assertion(check_resolve_was_ok(result));
-
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-    //print_decisions(result);
-    #endif
-    
+ 
     // make sure the aux flags are correctly after all resolvings
 	  CGAL_assertion(verify_aux_flags(result));
 
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      remove_unneccessary_elements_timer.start();
-    #endif  
     // finally, remove unneccessary edges, between faces  with the same surface
     // (and which are not degenerate)
     remove_unneccessary_edges(result);
@@ -754,11 +680,6 @@ public:
     remove_unneccessary_vertices(result);
     CGAL_expensive_assertion_msg(result.is_valid(), 
                        "after remove vertices result is not valid");
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      remove_unneccessary_elements_timer.stop();
-    
-      update_envelope_timer.start();
-    #endif
 
     // update is_equal_data and has_equal_data of halfedge->face and vertex->face
     // relations, according to the decision, and the aux similar flags
@@ -767,9 +688,6 @@ public:
     // update the envelope surfaces according to the decision and the aux
 	  // surfaces in aux source
     update_envelope_surfaces_by_decision(result);
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      update_envelope_timer.stop();
-    #endif
     
 	  // make sure that all the flags are correctly set on the envelope result
 	  CGAL_assertion(verify_flags(result));
@@ -789,9 +707,7 @@ protected:
     Keep_face_data_observer obs(result);
     Decomposition_observer dec_obs(result, this);
     
-    decompose_timer.start();
-    vertical_decomposition(result);
-    decompose_timer.stop();
+    
 
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
       std::cout << "after vertical decomposition, number of faces = " << result.number_of_faces() << std::endl;
@@ -807,13 +723,9 @@ protected:
     typename std::list<Face_handle>::iterator li;
     for (li = faces_to_split.begin(); li != faces_to_split.end(); ++li)
     {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        resolve_face_timer.start();
-      #endif
+     
       resolver->resolve(*li, result);
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        resolve_face_timer.stop();
-      #endif
+    
     }
     faces_to_split.clear();
   }
@@ -888,8 +800,6 @@ protected:
       std::cout << "before removal: " << result.number_of_edges() << " edges" << std::endl;
     #endif
 
-    // add the number of removed edges to counter
-    number_of_removed_features += edges.size();
 
     // this is for counting the number of extra faces
     Stats_observer count_faces(result);
@@ -962,7 +872,6 @@ protected:
       }
     }
 
-    number_of_removed_features += count_faces.get_counter();
     count_faces.detach();
     
     #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
@@ -1412,7 +1321,6 @@ protected:
 
       // order of halfedges for merge doesn't matter
       Halfedge_handle new_edge = result.merge_edge(he1, he2 ,c);
-      ++number_of_removed_features;
 
       CGAL_assertion(new_edge->is_decision_set());
 
@@ -1435,7 +1343,6 @@ protected:
 
       result.remove_isolated_vertex(vh);
     }
-    number_of_removed_features += isolated_to_remove.size();
   }
 
   template <class FeatureHandle>
@@ -1730,121 +1637,7 @@ protected:
   	}
   }
 
-  void init_stats()
-  {
-    // stop timers if they're working
-    if (envelope_timer.is_running())
-      envelope_timer.stop();
-    if (decompose_timer.is_running())
-      decompose_timer.stop();
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      if (overlay_timer.is_running())
-        overlay_timer.stop();
-      if (resolve_face_timer.is_running())
-        resolve_face_timer.stop();
-      if (resolve_edge_timer.is_running())
-        resolve_edge_timer.stop();
-      if (resolve_vertex_timer.is_running())
-        resolve_vertex_timer.stop();
-      if (remove_unneccessary_elements_timer.is_running())
-        remove_unneccessary_elements_timer.stop();
-      if (update_envelope_timer.is_running())
-        update_envelope_timer.stop();
-      if (one_surface_timer.is_running())
-        one_surface_timer.stop();
-    #endif
-          
-    // init timers
-    envelope_timer.reset();
-    decompose_timer.reset();
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      overlay_timer.reset();
-      resolve_face_timer.reset();
-      resolve_edge_timer.reset();
-      resolve_vertex_timer.reset();
-      remove_unneccessary_elements_timer.reset();
-      update_envelope_timer.reset();
-      one_surface_timer.reset();
-    #endif
-     
-    // init other measures
-    number_of_removed_features = 0;
-    number_of_saved_edges = 0;
-
-    sum_num_vertices = 0;
-    sum_num_edges = 0;
-    sum_num_faces = 0;
-
-    // reset traits statistics
-    traits->reset();
-
-    // reset resolver statistics
-    resolver->reset_statistics();
-  }
-
-public:
-  void print_stats()
-  {
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      std::cout << "computing envelope time: " << envelope_timer.time() 
-                << " seconds" << std::endl;
-      std::cout << "total overlay time: " << overlay_timer.time() 
-                << " seconds" << std::endl;
-      std::cout << "total vd time: " << decompose_timer.time() 
-
-                << " seconds" << std::endl;
-      std::cout << std::endl;
-      std::cout << "face resolvings #: " << resolve_face_timer.intervals()
-                << " total time: " << resolve_face_timer.time()
-                << " average time: " 
-                << resolve_face_timer.time()/resolve_face_timer.intervals()
-                << std::endl;
-      std::cout << "egde resolvings #: " << resolve_edge_timer.intervals()
-                << " total time: " << resolve_edge_timer.time()
-                << " average time: " 
-                << resolve_edge_timer.time()/resolve_edge_timer.intervals()
-                << std::endl;
-      std::cout << "vertex resolvings #: " << resolve_vertex_timer.intervals()
-                << " total time: " << resolve_vertex_timer.time()
-                << " average time: " 
-                << resolve_vertex_timer.time()/resolve_vertex_timer.intervals()
-                << std::endl;
-      std::cout << "total remove unnecessary elements time: "
-                << remove_unneccessary_elements_timer.time()
-                << " seconds" << std::endl;
-      std::cout << "total final envelope update time: "
-                << update_envelope_timer.time()
-                << " seconds" << std::endl;
-      std::cout << "total dealing with one surface time: "
-                << one_surface_timer.time()
-                << " seconds" << std::endl;
-                          
-      std::cout << std::endl;
-
-      resolver->print_times();
-      
-//      std::cout << std::endl;
-//      std::cout << "number of extra features that were removed: "
-//          << number_of_removed_features << std::endl;
-//      std::cout << "number of edges that were saved: " <<
-//          number_of_saved_edges << std::endl;
-      std::cout << std::endl;
-      std::cout << "the total size of all minimization diagrams calculated "
-                << "by the algorithm:"
-                << std::endl
-                << sum_num_vertices << " vertices," << '\t'
-                << sum_num_edges << " edges," << '\t'
-                << sum_num_faces << " faces" << std::endl;
-      std::cout << "the number of extra features: "
-                << (sum_num_vertices+sum_num_faces+sum_num_edges)-
-                   (result_num_vertices+result_num_edges+result_num_faces)
-
-                << std::endl;
-      std::cout << std::endl;
-      traits->print_times();
-
-    #endif
-  }
+  
 
 protected:
 
@@ -2704,34 +2497,6 @@ protected:
   Traits                    *traits;
   // Should we evetually free the traits object
   bool                      own_traits; 
-
-protected:  
-  // measure times
-  mutable Timer envelope_timer;
-  mutable Timer decompose_timer;
-#ifdef CGAL_BENCH_ENVELOPE_DAC
-  mutable Timer overlay_timer;
-  mutable Timer resolve_face_timer;
-  mutable Timer resolve_edge_timer;
-  mutable Timer resolve_vertex_timer;
-  mutable Timer remove_unneccessary_elements_timer;
-  mutable Timer update_envelope_timer;
-  mutable Timer one_surface_timer;
-#endif
-  
-  // other measures
-  mutable unsigned int number_of_removed_features;
-  mutable unsigned int number_of_saved_edges;
-
-  // sum size of temporary minimization diagrams calculated by the algorithm
-  mutable unsigned int sum_num_vertices;
-  mutable unsigned int sum_num_edges;
-  mutable unsigned int sum_num_faces;
-
-  mutable unsigned int result_num_vertices;
-  mutable unsigned int result_num_edges;
-  mutable unsigned int result_num_faces;
-  
 };
 
 CGAL_END_NAMESPACE

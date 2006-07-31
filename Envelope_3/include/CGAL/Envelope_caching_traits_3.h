@@ -212,7 +212,7 @@ public:
     return Compare_distance_to_envelope_3(this, compare_cache);
   }
 
-  Envelope_caching_traits_3() : Base_traits_3(), intersections_number(0)
+  Envelope_caching_traits_3(Envelope_type t = LOWER) : Base_traits_3(t), intersections_number(0)
   {}
 
   virtual ~Envelope_caching_traits_3()
