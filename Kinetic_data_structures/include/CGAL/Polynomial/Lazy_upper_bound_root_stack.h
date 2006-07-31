@@ -577,8 +577,8 @@ namespace std
         typedef numeric_limits<typename R::Root> Rnl;
         typedef CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<R, SR> T;
         static const bool is_specialized = true;
-        static T min() throw () {return -infinity();}
-        static T max() throw () {return infinity();}
+        static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return -infinity();}
+        static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return infinity();}
         static const int digits =0;
         static const int digits10 =0;
         static const bool is_signed = true;
