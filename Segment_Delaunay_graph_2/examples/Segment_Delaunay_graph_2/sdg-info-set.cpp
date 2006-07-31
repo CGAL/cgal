@@ -40,16 +40,12 @@ public:
     info_list_.push_back(info);
   }
 
-  Info_set(Info_list info_list) : info_list_(info_list) {}
-
   template<typename InputIterator>
   Info_set(InputIterator first, InputIterator beyond)
     : info_list_(first, beyond) {}
 
   size_type size() const { return info_list_.size(); }
   bool is_empty() const { return info_list_.empty(); }
-
-  const Info_list& info_list() const { return info_list_; }
 
   Info_item_iterator info_items_begin() const {
     return info_list_.begin();
@@ -58,6 +54,13 @@ public:
   Info_item_iterator info_items_end() const {
     return info_list_.end();
   }
+
+private:
+  // private constructor from list of info items
+  Info_set(Info_list info_list) : info_list_(info_list) {}
+
+  // private access to list of info items
+  const Info_list& info_list() const { return info_list_; }
 
 private:
   Info_list info_list_;
@@ -127,6 +130,7 @@ struct Info_set_merge_info
     return info_union;
   }
 };
+
 
 // finally a class that generates info when the info items are
 // std::strings
