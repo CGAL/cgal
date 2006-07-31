@@ -79,9 +79,8 @@ struct Rep : public CGAL::Simple_cartesian<double> {};
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<Rep> Gt;
 
 // define the storage traits with info
-typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>   ST_base;
 typedef
-CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<ST_base,
+CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
 							Red_blue,
 							Red_blue_convert_info,
 							Red_blue_merge_info>

@@ -67,8 +67,8 @@ operator<<(std::ostream& os, const Multi_info<Info>& info)
 template<class Info_t>
 struct Multi_info_convert_info
 {
-  typedef Info_t    Info;
-  typedef Info      result_type;
+  typedef Info_t             Info;
+  typedef Multi_info<Info>   result_type;
 
   inline
   Multi_info<Info> operator()(const Multi_info<Info>& minfo0,
@@ -81,8 +81,8 @@ struct Multi_info_convert_info
 template<class Info_t>
 struct Multi_info_merge_info
 {
-  typedef Info_t     Info;
-  typedef Info       result_type;
+  typedef Info_t            Info;
+  typedef Multi_info<Info>  result_type;
 
   inline
   Multi_info<Info> operator()(const Multi_info<Info>& minfo0,

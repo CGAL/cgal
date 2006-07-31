@@ -21,6 +21,7 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_TRAITS_WITH_INFO_2_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/Segment_Delaunay_graph_storage_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_storage_site_with_info_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Construct_storage_site_with_info_2.h>
 
@@ -56,23 +57,23 @@ struct Dummy_merge_info
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-template<class STraits_base,
+template<class Gt,
 	 typename Info_ = char,
 	 class Converter = Dummy_convert_info<Info_>,
 	 class Merger = Dummy_convert_info<Info_> >
 class Segment_Delaunay_graph_storage_traits_with_info_2
-  : public STraits_base
+  : public Segment_Delaunay_graph_storage_traits_2<Gt>
 {
 public:
-  typedef Info_                                    Info;
-  typedef Converter                                Convert_info;
-  typedef Merger                                   Merge_info;
+  typedef Info_                                        Info;
+  typedef Converter                                    Convert_info;
+  typedef Merger                                       Merge_info;
 
 private:
-  typedef STraits_base                             Base;
-  typedef typename Base::Storage_site_2            Base_storage_site_2;
+  typedef Segment_Delaunay_graph_storage_traits_2<Gt>  Base;
+  typedef typename Base::Storage_site_2                Base_storage_site_2;
 
-  typedef Segment_Delaunay_graph_storage_traits_with_info_2<Base,
+  typedef Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
 							    Info,
 							    Convert_info,
 							    Merge_info>

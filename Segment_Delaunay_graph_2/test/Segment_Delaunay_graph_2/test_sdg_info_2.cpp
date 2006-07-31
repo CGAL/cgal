@@ -26,12 +26,14 @@ struct Gt : public Traits_x {};
 
 #include "test_info.h"
 
-typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>   ST_base;
-typedef CGAL::Segment_Delaunay_graph_storage_traits_with_info_2
-<ST_base,
- ::Multi_info<int>,
- ::Multi_info_convert_info<int>,
- ::Multi_info_merge_info<int> >
+typedef Multi_info<int>               Info;
+typedef Multi_info_convert_info<int>  Convert_info;
+typedef Multi_info_merge_info<int>    Merge_info;
+
+typedef CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
+								Info,
+								Convert_info,
+								Merge_info>
 ST;
 
 typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;
