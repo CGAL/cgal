@@ -1,4 +1,4 @@
-// file: sdg-count-sites.C
+// file: sdg-count-sites.cpp
 #include <CGAL/basic.h>
 
 // standard includes

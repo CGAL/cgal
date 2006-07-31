@@ -1,4 +1,4 @@
-// file: sdg-filtered-traits.C
+// file: sdg-filtered-traits.cpp
 #include <CGAL/basic.h>
 
 // standard includes
