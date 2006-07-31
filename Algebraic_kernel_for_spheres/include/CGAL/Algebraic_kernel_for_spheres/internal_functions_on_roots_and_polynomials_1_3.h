@@ -29,6 +29,8 @@ namespace CGAL {
     typedef typename AK::RT RT;
     typedef typename AK::FT FT;
     typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
+    CGAL_kernel_precondition(!(same_solutions<FT>(e1,e2) || same_solutions<FT>(e1,e3) ||
+                               same_solutions<FT>(e2,e3)));
     const FT &a1 = e1.a();
     const FT &a2 = e2.a();
     const FT &a3 = e3.a();
