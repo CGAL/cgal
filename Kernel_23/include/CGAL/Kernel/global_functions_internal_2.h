@@ -342,6 +342,15 @@ compare_xy(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
+compare_yx(const typename CGAL_WRAP(K)::Point_2 &p,
+           const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+{
+  return k.compare_yx_2_object()(p, q);
+}
+
+template < class K >
+inline
+Comparison_result
 compare_y(const typename CGAL_WRAP(K)::Point_2 &p,
           const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
 {

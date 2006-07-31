@@ -897,6 +897,37 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
+  class Compare_yx_2
+  {
+    typedef typename K::Point_2            Point_2;
+  public:
+    typedef typename K::Comparison_result  result_type;
+    typedef Arity_tag< 2 >                 Arity;
+
+    result_type
+    operator()( const Point_2& p, const Point_2& q) const
+    { 
+      typedef typename K::RT RT;
+
+      const RT& phx = p.hx();
+      const RT& phy = p.hy();
+      const RT& phw = p.hw();
+      const RT& qhx = q.hx();
+      const RT& qhy = q.hy();
+      const RT& qhw = q.hw();
+
+      RT pV = phy*qhw;
+      RT qV = qhy*phw;
+      if ( pV == qV )
+	{
+	  pV = phx*qhw;
+	  qV = qhx*phw;
+	}
+      return CGAL_NTS compare(pV, qV);
+    }
+  };
+
+  template <typename K>
   class Compare_xy_3
   {
     typedef typename K::Point_3            Point_3;

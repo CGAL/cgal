@@ -44,33 +44,6 @@ equal_xy(const PointH2<R>& p,
   return (p.hx()*qhw == q.hx()*phw) && (p.hy()*qhw == q.hy()*phw);
 }
 
-template < class R>
-CGAL_KERNEL_INLINE
-Comparison_result
-compare_yx(const PointH2<R>& p, const PointH2<R>& q)
-{
-  typedef typename R::RT RT;
-
-  const RT& phx = p.hx();
-  const RT& phy = p.hy();
-  const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhy = q.hy();
-  const RT& qhw = q.hw();
-
-  RT pV = phy*qhw;
-  RT qV = qhy*phw;
-  if ( pV == qV )
-  {
-      pV = phx*qhw;
-      qV = qhx*phw;
-  }
-  if ( pV < qV )
-      return SMALLER;
-  else
-      return ( qV < pV ) ? LARGER : EQUAL;
-}
-
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side

@@ -640,6 +640,19 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Compare_yx_2
+  {
+    typedef typename K::Point_2            Point_2;
+  public:
+    typedef typename K::Comparison_result  result_type;
+    typedef Arity_tag< 2 >                 Arity;
+
+    result_type
+    operator()( const Point_2& p, const Point_2& q) const
+    { return compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x()); }
+  };
+
+  template <typename K>
   class Compare_y_at_x_2
   {
     typedef typename K::Point_2             Point_2;

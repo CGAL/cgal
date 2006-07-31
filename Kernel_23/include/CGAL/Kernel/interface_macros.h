@@ -93,6 +93,8 @@ CGAL_Kernel_pred(Compare_y_2,
 		 compare_y_2_object)
 CGAL_Kernel_pred(Compare_y_3,
 		 compare_y_3_object)
+CGAL_Kernel_pred(Compare_yx_2,
+		 compare_yx_2_object)
 CGAL_Kernel_pred(Compare_z_3,
 		 compare_z_3_object)
 CGAL_Kernel_cons(Compute_a_2,

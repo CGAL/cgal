@@ -437,6 +437,14 @@ compare_y_at_x(const Line_2<K> &l1,
   return CGALi::compare_y_at_x(l1, l2, h1, h2, K());
 }
 
+template < class K >
+inline
+Comparison_result
+compare_yx(const Point_2<K> &p, const Point_2<K> &q)
+{
+  return CGALi::compare_yx(p, q, K());
+}
+
 template <class K>
 inline
 bool

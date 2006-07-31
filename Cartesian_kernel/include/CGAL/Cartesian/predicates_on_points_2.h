@@ -54,14 +54,6 @@ compare_deltax_deltay(const PointC2<K>& p,
 template < class K >
 inline
 Comparison_result
-compare_yx(const PointC2<K> &p, const PointC2<K> &q)
-{
-  return compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x());
-}
-
-template < class K >
-inline
-Comparison_result
 compare_lexicographically_yx(const PointC2<K> &p,
                              const PointC2<K> &q)
 {

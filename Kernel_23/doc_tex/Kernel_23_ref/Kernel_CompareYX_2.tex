@@ -1,4 +1,4 @@
-\begin{ccRefFunctionObjectConcept}{Kernel::CompareXY_2}
+\begin{ccRefFunctionObjectConcept}{Kernel::CompareYX_2}
 A model for this must provide:
 
 \ccCreationVariable{fo}
@@ -6,15 +6,15 @@ A model for this must provide:
 \ccMemberFunction{Comparison_result operator()(const Kernel::Point_2&p, 
                                                const Kernel::Point_2&q);}
       {Compares the Cartesian coordinates of points \ccStyle{p} and
-       \ccStyle{q} lexicographically in $xy$ order: first 
-       $x$-coordinates are compared, if they are equal, $y$-coordinates
+       \ccStyle{q} lexicographically in $yx$ order: first 
+       $y$-coordinates are compared, if they are equal, $x$-coordinates
        are compared.}
 
 \ccRefines
 AdaptableFunctor (with two arguments)
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::compare_xy} \\
-\ccRefIdfierPage{Kernel::CompareYX_2} \\
+\ccRefIdfierPage{CGAL::compare_yx} \\
+\ccRefIdfierPage{Kernel::CompareXY_2} \\
 
 \end{ccRefFunctionObjectConcept}
