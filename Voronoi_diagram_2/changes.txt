@@ -1,3 +1,6 @@
+1 August 2006:  Menelaos Karavelas
+- removed file with unused code
+
 21 July 2006:  Menelaos Karavelas
 - fixed bug introduced by the addition of the ApolloniusGraph_2
   namespace in the Apollonius_graph_2 package
