@@ -22,20 +22,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
-enum Envelope_type
-{
-  LOWER   = 1,
-  UPPER
-};
+// Envelope types:
+typedef unsigned int   Envelope_type;
 
-// the type of intersection curve between 2 xy-monotone surfaces
-enum Intersection_type
-{
-  TRANSVERSAL = 1, // the 2 surfaces vertically change place at the intersection curve
-  TANGENT,         // the 2 surfaces keep their relative vertical position
-  UNKNOWN          // the type is not known
-};
+const Envelope_type      LOWER = 1;
+const Envelope_type      UPPER = 2;
 
+// Types of intersection curve between 2 xy-monotone surfaces:
+typedef unsigned int   Intersection_type;
+
+const Intersection_type  UNKNOWN = 0;
+const Intersection_type  TRANSVERSAL = 1;
+const Intersection_type  TANGENT = 2;
+
+// Decision mark for DCEL features:
 enum Dac_decision
 {
   FIRST = -1,
@@ -43,17 +43,6 @@ enum Dac_decision
   SECOND,
   NOT_SET
 };
-
-//template <class _Traits>
-//class Envelope_base_3
-//{
-//public:
-//  typedef _Traits     Traits;
-//
-//  // virtual destructor.
-//  virtual ~Envelope_base_3(){}
-//
-//};
 
 CGAL_END_NAMESPACE
 
