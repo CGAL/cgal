@@ -36,6 +36,19 @@ class Direction_3 : public R_::Kernel_base::Direction_3
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Kernel_base::Direction_3 RDirection_3;
 public:
+
+  typedef RDirection_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef          R_                       R;
 
   Direction_3() {}

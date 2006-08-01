@@ -38,6 +38,19 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Kernel_base::Plane_3  RPlane_3;
 public:
+
+  typedef RPlane_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef          R_                       R;
 
   Plane_3() {}

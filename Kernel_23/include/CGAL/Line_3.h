@@ -38,6 +38,19 @@ class Line_3 : public R_::Kernel_base::Line_3
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Kernel_base::Line_3   RLine_3;
 public:
+
+  typedef RLine_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef          R_                       R;
 
   Line_3() {}

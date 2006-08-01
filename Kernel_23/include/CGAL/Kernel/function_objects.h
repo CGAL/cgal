@@ -1546,6 +1546,16 @@ namespace CommonKernelFunctors {
   class Equal_3
   {
     typedef typename K::Point_3       Point_3;
+    typedef typename K::Vector_3      Vector_3;
+    typedef typename K::Direction_3   Direction_3;
+    typedef typename K::Segment_3     Segment_3;
+    typedef typename K::Line_3        Line_3;
+    typedef typename K::Ray_3         Ray_3;
+    typedef typename K::Triangle_3    Triangle_3;
+    typedef typename K::Tetrahedron_3 Tetrahedron_3;
+    typedef typename K::Sphere_3      Sphere_3;
+    typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
+    typedef typename K::Plane_3       Plane_3;
 
   public:
     typedef typename K::Bool_type     result_type;
@@ -1563,6 +1573,72 @@ namespace CommonKernelFunctors {
     {
       return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
     }
+
+    result_type
+    operator()(const Plane_3 &v1, const Plane_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Iso_cuboid_3 &v1, const Iso_cuboid_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Sphere_3 &v1, const Sphere_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Tetrahedron_3 &v1, const Tetrahedron_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Triangle_3 &v1, const Triangle_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Ray_3 &v1, const Ray_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Line_3 &v1, const Line_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Direction_3 &v1, const Direction_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Segment_3 &v1, const Segment_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Vector_3 &v1, const Vector_3 &v2) const
+    {
+      return v1.rep() == v2.rep();
+    }  
+
+    result_type
+    operator()(const Vector_3 &v, const Null_vector &n) const
+    {
+      return v.rep() == n;
+    }  
   };
 
   template <typename K>

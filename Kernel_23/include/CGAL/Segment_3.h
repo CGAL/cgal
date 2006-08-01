@@ -33,6 +33,19 @@ class Segment_3 : public R_::Kernel_base::Segment_3
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Kernel_base::Segment_3  RSegment_3;
 public:
+
+  typedef RSegment_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef          R_                       R;
 
   Segment_3() {}

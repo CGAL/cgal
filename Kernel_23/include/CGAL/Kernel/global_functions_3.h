@@ -471,6 +471,139 @@ operator!=(const Point_3<K>& p, const Origin& o)
 template < class K >
 inline
 bool
+operator==(const Iso_cuboid_3<K>& p, const Iso_cuboid_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Iso_cuboid_3<K>& p, const Iso_cuboid_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Plane_3<K>& p, const Plane_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Plane_3<K>& p, const Plane_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Segment_3<K>& p, const Segment_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Segment_3<K>& p, const Segment_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Line_3<K>& p, const Line_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Line_3<K>& p, const Line_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Ray_3<K>& p, const Ray_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Ray_3<K>& p, const Ray_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Triangle_3<K>& p, const Triangle_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Triangle_3<K>& p, const Triangle_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Tetrahedron_3<K>& p, const Tetrahedron_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Tetrahedron_3<K>& p, const Tetrahedron_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Direction_3<K>& p, const Direction_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Direction_3<K>& p, const Direction_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Sphere_3<K>& p, const Sphere_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Sphere_3<K>& p, const Sphere_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Vector_3<K>& p, const Vector_3<K>& q)
+{ return K().equal_3_object()(p, q); }
+
+template < class K >
+inline
+bool
+operator!=(const Vector_3<K>& p, const Vector_3<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+inline
+bool
+operator==(const Vector_3<K>& p, const Null_vector& o)
+{ return K().equal_3_object()(p, Vector_3<K>(o)); }
+
+template < class K >
+inline
+bool
+operator!=(const Vector_3<K>& p, const Null_vector& o)
+{ return ! (p == o); }
+
+
+template < class K >
+inline
+bool
 operator<(const Point_3<K>& p, const Point_3<K>& q)
 { return K().less_xyz_3_object()(p, q); }
 

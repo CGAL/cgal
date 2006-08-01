@@ -33,6 +33,19 @@ class Triangle_3 : public R_::Kernel_base::Triangle_3
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Kernel_base::Triangle_3  RTriangle_3;
 public:
+
+  typedef RTriangle_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef          R_                       R;
 
   Triangle_3() {}

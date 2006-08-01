@@ -32,6 +32,19 @@ class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
   typedef typename R_::Point_3             Point_3;
   typedef typename R_::Kernel_base::Tetrahedron_3  RTetrahedron_3;
 public:
+
+  typedef RTetrahedron_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+
   typedef          R_                       R;
 
   Tetrahedron_3() {}
