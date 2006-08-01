@@ -560,27 +560,34 @@ public:
 
 /*! A new dcel builder with full Envelope features */
 template <class Traits, class Data>
-class Envelope_pm_dcel :
-  public CGAL::Arr_dcel_base<Envelope_pm_vertex<typename Traits::Point_2, Data>,
-                       Envelope_pm_halfedge<typename Traits::X_monotone_curve_2, Data>,
-                       Envelope_pm_face<Data> >
+class Envelope_pm_dcel : public
+CGAL::Arr_dcel_base<Envelope_pm_vertex<typename Traits::Point_2,
+                                       Data>,
+                    Envelope_pm_halfedge<typename Traits::X_monotone_curve_2,
+                                         Data>,
+                    Envelope_pm_face<Data> >
 {
 public:
-  typedef Data                                                    Face_data;
-  typedef typename Envelope_pm_face<Data>::Data_iterator		      Face_data_iterator;
-  typedef typename Envelope_pm_face<Data>::Data_const_iterator    Face_data_const_iterator;
-  typedef Data                                                    Edge_data;
-  typedef Face_data_iterator                                      Edge_data_iterator;
-  typedef Face_data_const_iterator                                Edge_data_const_iterator;
-  typedef Data                                                    Vertex_data;
-  typedef Face_data_iterator                                      Vertex_data_iterator;
-  typedef Face_data_const_iterator                                Vertex_data_const_iterator;
 
-  typedef Dcel_data<Data>                                         Dcel_elem_with_data;
+  typedef Data                                    Face_data;
+  typedef typename Envelope_pm_face<Data>::Data_iterator
+                                                  Face_data_iterator;
+  typedef typename Envelope_pm_face<Data>::Data_const_iterator
+                                                  Face_data_const_iterator;
 
-  typedef Data                                                    Dcel_data;
-  typedef Face_data_iterator                                      Dcel_data_iterator;
-  typedef Face_data_const_iterator                                Dcel_data_const_iterator;
+  typedef Data                                    Edge_data;
+  typedef Face_data_iterator                      Edge_data_iterator;
+  typedef Face_data_const_iterator                Edge_data_const_iterator;
+
+  typedef Data                                    Vertex_data;
+  typedef Face_data_iterator                      Vertex_data_iterator;
+  typedef Face_data_const_iterator                Vertex_data_const_iterator;
+
+  typedef Dcel_data<Data>                         Dcel_elem_with_data;
+
+  typedef Data                                    Dcel_data;
+  typedef Face_data_iterator                      Dcel_data_iterator;
+  typedef Face_data_const_iterator                Dcel_data_const_iterator;
 
   /*! Constructor */
   Envelope_pm_dcel() {}
