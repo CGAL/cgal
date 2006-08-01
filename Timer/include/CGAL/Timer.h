@@ -25,6 +25,8 @@
 #ifndef CGAL_TIMER_H
 #define CGAL_TIMER_H 1
 
+#include <boost/config.hpp>
+
 #include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -66,7 +68,7 @@ public:
     // Returns -1.0 if timer system call fails, which, for a proper coded
     // test towards precision leads to an immediate stop of an otherwise 
     // infinite loop (fixed tolerance * total time >= precision).
-    double   max()        const;
+    double   max BOOST_PREVENT_MACRO_SUBSTITUTION ()        const;
 };
 
 

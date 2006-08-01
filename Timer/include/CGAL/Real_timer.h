@@ -68,7 +68,7 @@ public:
     // Returns -1.0 if timer system call fails, which, for a proper coded
     // test towards precision leads to an immediate stop of an otherwise 
     // infinite loop (fixed tolerance * total time >= precision).
-    double   max()        const { return DBL_MAX; }
+    double   max BOOST_PREVENT_MACRO_SUBSTITUTION ()        const { return DBL_MAX; }
 };
 
 
