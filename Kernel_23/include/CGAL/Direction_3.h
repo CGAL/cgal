@@ -34,6 +34,7 @@ class Direction_3 : public R_::Kernel_base::Direction_3
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Segment_3             Segment_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Direction_3 RDirection_3;
 public:
 
@@ -70,6 +71,12 @@ public:
 
   Direction_3(const RT& hx, const RT& hy, const RT& hz)
     : RDirection_3(hx, hy, hz) {}
+
+  Direction_3 transform(const Aff_transformation_3 &t) const
+  {
+    return t.transform(*this);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTION_3

@@ -92,8 +92,6 @@ public:
 
     bool           is_degenerate() const;
 
-    Plane_3 transform(const Aff_transformation_3& ) const;
-
     Aff_transformation_3 transform_to_2d() const;
     Point_2   to_2d(const Point_3& )  const;
     Point_3   to_3d(const Point_2& )  const;
@@ -383,13 +381,6 @@ inline
 typename PlaneH3<R>::Vector_3
 PlaneH3<R>::orthogonal_vector() const
 { return Vector_3(a(), b(), c() ); }
-
-template < class R >
-typename PlaneH3<R>::Plane_3
-PlaneH3<R>::transform(const typename PlaneH3<R>::Aff_transformation_3& t) const
-{
- return t.transform(*this);
-}
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANE3
 template < class R >

@@ -37,7 +37,6 @@ class RayH3
    typedef typename R_::Line_3               Line_3;
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Vector_3             Vector_3;
-   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
    typedef std::pair<Point_3, Vector_3>             Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
@@ -69,7 +68,6 @@ public:
     const Vector_3 & to_vector() const;
     Line_3  supporting_line() const;
     RayH3<R>   opposite() const;
-    RayH3<R>   transform( const Aff_transformation_3 & t) const;
     bool           has_on(const Point_3& p) const;
     bool           collinear_has_on(const Point_3 &p) const;
     bool           is_degenerate() const;
@@ -135,12 +133,6 @@ CGAL_KERNEL_INLINE
 RayH3<R>
 RayH3<R>::opposite() const
 { return RayH3<R>( start(), - direction() ); }
-
-template < class R >
-CGAL_KERNEL_INLINE
-RayH3<R>
-RayH3<R>::transform( const Aff_transformation_3 & t) const
-{ return RayH3<R>(t.transform(start()), t.transform(direction()) ); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYH3

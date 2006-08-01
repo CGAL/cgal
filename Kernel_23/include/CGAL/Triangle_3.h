@@ -31,6 +31,7 @@ class Triangle_3 : public R_::Kernel_base::Triangle_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Triangle_3  RTriangle_3;
 public:
 
@@ -55,6 +56,13 @@ public:
 
   Triangle_3(const Point_3& p, const Point_3& q, const Point_3& r)
     : RTriangle_3(p,q,r) {}
+
+  Triangle_3 transform(const Aff_transformation_3 &t) const
+  {
+    return Triangle_3(t.transform(this->vertex(0)),
+                      t.transform(this->vertex(1)),
+                      t.transform(this->vertex(2)));
+  }
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3

@@ -40,7 +40,6 @@ class LineC3
   typedef typename R_::Ray_3                Ray_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Segment_3            Segment_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef std::pair<Point_3, Vector_3>             Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -94,11 +93,6 @@ public:
 
   bool        has_on(const Point_3 &p) const;
   bool        is_degenerate() const;
-
-  Line_3        transform(const Aff_transformation_3 &t) const
-  {
-    return LineC3<R>(t.transform(point()), t.transform(direction()));
-  }
 };
 
 template < class R >

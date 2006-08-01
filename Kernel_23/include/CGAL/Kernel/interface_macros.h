@@ -153,6 +153,18 @@ CGAL_Kernel_cons(Compute_ymin_2,
 		 compute_ymin_2_object)
 CGAL_Kernel_cons(Compute_ymax_2,
 		 compute_ymax_2_object)
+CGAL_Kernel_cons(Compute_xmin_3,
+		 compute_xmin_3_object)
+CGAL_Kernel_cons(Compute_xmax_3,
+		 compute_xmax_3_object)
+CGAL_Kernel_cons(Compute_ymin_3,
+		 compute_ymin_3_object)
+CGAL_Kernel_cons(Compute_ymax_3,
+		 compute_ymax_3_object)
+CGAL_Kernel_cons(Compute_zmin_3,
+		 compute_zmin_3_object)
+CGAL_Kernel_cons(Compute_zmax_3,
+		 compute_zmax_3_object)
 CGAL_Kernel_cons(Construct_base_vector_3,
 		 construct_base_vector_3_object)
 CGAL_Kernel_cons(Construct_bisector_2,

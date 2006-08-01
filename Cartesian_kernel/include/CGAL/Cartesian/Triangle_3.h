@@ -37,7 +37,6 @@ class TriangleC3
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Triangle_3           Triangle_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef Threetuple<Point_3>                      Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -56,13 +55,6 @@ public:
   bool       operator!=(const TriangleC3 &t) const;
 
   Plane_3    supporting_plane() const;
-
-  Triangle_3 transform(const Aff_transformation_3 &t) const
-  {
-    return TriangleC3<R>(t.transform(vertex(0)),
-                t.transform(vertex(1)),
-                t.transform(vertex(2)));
-  }
 
   bool       has_on(const Point_3 &p) const;
   bool       is_degenerate() const;

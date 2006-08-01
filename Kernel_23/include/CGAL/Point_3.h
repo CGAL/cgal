@@ -33,8 +33,11 @@ class Point_3 : public R_::Kernel_base::Point_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Vector_3              Vector_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Point_3  RPoint_3;
+
 public:
+
   typedef          R_                       R;
 
   Point_3() {}
@@ -52,6 +55,12 @@ public:
 
   Point_3(const RT& hx, const RT& hy, const RT& hz, const RT& hw)
     : RPoint_3(hx, hy, hz, hw) {}
+
+  Point_3 transform(const Aff_transformation_3 &t) const
+  {
+    return t.transform(*this);
+  }
+
 };
 
 template <class R>

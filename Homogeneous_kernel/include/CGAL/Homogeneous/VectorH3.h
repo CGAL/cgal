@@ -40,7 +40,6 @@ class VectorH3
   typedef typename R_::Ray_3                Ray_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef Fourtuple<RT>                            Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -86,7 +85,6 @@ public:
   int   dimension() const { return 3; };
 
   Direction_3 direction() const;
-  Vector_3 transform(const Aff_transformation_3& t ) const;
 
   Vector_3 operator-() const;
 
@@ -222,13 +220,6 @@ VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 { return typename R::Vector_3(hx()*f.denominator(), hy()*f.denominator(),
 		              hz()*f.denominator(), hw()*f.numerator() ); }
 
-
-template < class R >
-inline
-typename R::Vector_3
-VectorH3<R>::
-transform(const typename VectorH3<R>::Aff_transformation_3&t ) const
-{ return t.transform(*this); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTORH3
 template < class R >

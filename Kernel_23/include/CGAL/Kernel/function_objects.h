@@ -357,7 +357,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
-    typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
     typedef FT               result_type;
@@ -371,11 +372,31 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Compute_xmin_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_type
+    operator()(const Iso_cuboid_3& r) const
+    {
+      return r.min().x();
+    }
+  };
+
+  template <typename K>
   class Compute_xmax_2
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
-    typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
     typedef FT               result_type;
@@ -389,11 +410,31 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Compute_xmax_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_type
+    operator()(const Iso_cuboid_3& r) const
+    {
+      return r.max().x();
+    }
+  };
+
+  template <typename K>
   class Compute_ymin_2
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
-    typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
     typedef FT               result_type;
@@ -407,11 +448,31 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Compute_ymin_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_type
+    operator()(const Iso_cuboid_3& r) const
+    {
+      return r.min().y();
+    }
+  };
+
+  template <typename K>
   class Compute_ymax_2
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
-    typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
     typedef FT               result_type;
@@ -421,6 +482,63 @@ namespace CommonKernelFunctors {
     operator()(const Iso_rectangle_2& r) const
     {
       return r.max().y();
+    }
+  };
+
+  template <typename K>
+  class Compute_ymax_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_type
+    operator()(const Iso_cuboid_3& r) const
+    {
+      return r.max().y();
+    }
+  };
+
+  template <typename K>
+  class Compute_zmin_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_type
+    operator()(const Iso_cuboid_3& r) const
+    {
+      return r.min().z();
+    }
+  };
+
+  template <typename K>
+  class Compute_zmax_3
+  {
+    typedef typename K::FT              FT;
+    typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
+    typedef FT                          Cartesian_coordinate_type;
+    //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
+
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_type
+    operator()(const Iso_cuboid_3& r) const
+    {
+      return r.max().z();
     }
   };
 
@@ -509,42 +627,6 @@ namespace CommonKernelFunctors {
 
 
   template <typename K>
-  class Construct_direction_3
-  {
-    typedef typename K::Direction_3     Direction_3;
-    typedef typename K::Vector_3        Vector_3;
-    typedef typename K::Line_3          Line_3;
-    typedef typename K::Ray_3           Ray_3;
-    typedef typename K::Segment_3       Segment_3;
-    typedef typename K::RT              RT;
-  public:
-    typedef Direction_3       result_type;
-    typedef Arity_tag< 1 >    Arity;
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-    Direction_3
-    operator()(const RT& x, const RT& y, const RT& z) const
-    { return Direction_3(x, y, z); }
-#endif // CGAL_NO_DEPRECATED_CODE
-
-    Direction_3
-    operator()(const Vector_3& v) const
-    { return Direction_3(v); }
-
-    Direction_3
-    operator()(const Line_3& l) const
-    { return Direction_3(l); }
-
-    Direction_3
-    operator()(const Ray_3& r) const
-    { return Direction_3(r); }
-
-    Direction_3
-    operator()(const Segment_3& s) const
-    { return Direction_3(s); }
-  };
-
-  template <typename K>
   class Construct_iso_cuboid_3
   {
     typedef typename K::Point_3       Point_3;
@@ -617,7 +699,7 @@ namespace CommonKernelFunctors {
 
     Point_3
     operator()(const Iso_cuboid_3& r) const
-    { return r.max(); }
+    { return r.rep().max(); }
 
     const Point_3&
     operator()(const Segment_3& s) const
@@ -636,7 +718,7 @@ namespace CommonKernelFunctors {
 
     Point_3
     operator()(const Iso_cuboid_3& r) const
-    { return r.min(); }
+    { return r.rep().min(); }
 
     const Point_3&
     operator()(const Segment_3& s) const
@@ -1294,7 +1376,7 @@ namespace CommonKernelFunctors {
 
     Point_3
     operator()( const Iso_cuboid_3& r, int i) const
-    { return r.vertex(i); }
+    { return r.rep().vertex(i); }
 
     const Point_3 &
     operator()( const Tetrahedron_3& t, int i) const
@@ -1687,7 +1769,7 @@ namespace CommonKernelFunctors {
 
     result_type
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
-    { return c.has_on_boundary(p); }
+    { return c.rep().has_on_boundary(p); }
   };
 
   template <typename K>
@@ -1735,7 +1817,7 @@ namespace CommonKernelFunctors {
 
     result_type
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
-    { return c.has_on_bounded_side(p); }
+    { return c.rep().has_on_bounded_side(p); }
   };
 
   template <typename K>
@@ -1881,7 +1963,7 @@ namespace CommonKernelFunctors {
 
     result_type
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
-    { return c.has_on_unbounded_side(p); }
+    { return c.rep().has_on_unbounded_side(p); }
   };
 
   template <typename K>
@@ -1998,7 +2080,7 @@ namespace CommonKernelFunctors {
 
     result_type
     operator()( const Iso_cuboid_3& c) const
-    { return c.is_degenerate(); }
+    { return c.rep().is_degenerate(); }
 
     result_type
     operator()( const Line_3& l) const

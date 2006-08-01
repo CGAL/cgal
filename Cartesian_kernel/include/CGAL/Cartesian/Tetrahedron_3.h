@@ -38,7 +38,6 @@ class TetrahedronC3
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Tetrahedron_3        Tetrahedron_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef Fourtuple<Point_3>                       Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -61,14 +60,6 @@ public:
   bool       operator!=(const TetrahedronC3 &t) const;
 
   Bbox_3     bbox() const;
-
-  Tetrahedron_3       transform(const Aff_transformation_3 &t) const
-  {
-    return TetrahedronC3<R>(t.transform(vertex(0)),
-                t.transform(vertex(1)),
-                t.transform(vertex(2)),
-                t.transform(vertex(3)));
-  }
 
   Orientation    orientation() const;
   Oriented_side  oriented_side(const Point_3 &p) const;

@@ -69,6 +69,141 @@ public:
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz)
    : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz) {}
+
+// TODO FIXME : why is Qrt not working here ? 
+// TODO       : the Cartesian and Homogeneous functors should be split here
+//              given that the Qrt differs.
+//              (or is the Homogeneous optimization simply not worth it ?)
+  //typename Qualified_result_of<typename R::Construct_min_vertex_3, Iso_cuboid_3 >::type
+  Point_3
+  min() const
+  {
+    return R().construct_min_vertex_3_object()(*this);
+  }
+
+  //typename Qualified_result_of<typename R::Construct_max_vertex_3, Iso_cuboid_3 >::type
+  Point_3
+  max() const
+  {
+    return R().construct_max_vertex_3_object()(*this);
+  }
+
+  //typename Qualified_result_of<typename R::Construct_vertex_3, Iso_cuboid_3 >::type
+  Point_3
+  vertex(int i) const
+  {
+    return R().construct_vertex_3_object()(*this,i);
+  }
+
+  //typename Qualified_result_of<typename R::Construct_vertex_3, Iso_cuboid_3 >::type
+  Point_3
+  operator[](int i) const
+  {
+    return R().construct_vertex_3_object()(*this,i);
+  }
+
+  typename Qualified_result_of<typename R::Compute_xmin_3, Iso_cuboid_3 >::type
+  xmin() const
+  {
+    return R().compute_xmin_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_xmax_3, Iso_cuboid_3 >::type
+  xmax() const
+  {
+    return R().compute_xmax_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_ymin_3, Iso_cuboid_3 >::type
+  ymin() const
+  {
+    return R().compute_ymin_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_ymax_3, Iso_cuboid_3 >::type
+  ymax() const
+  {
+    return R().compute_ymax_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_zmin_3, Iso_cuboid_3 >::type
+  zmin() const
+  {
+    return R().compute_zmin_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_zmax_3, Iso_cuboid_3 >::type
+  zmax() const
+  {
+    return R().compute_zmax_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_xmin_3, Iso_cuboid_3 >::type
+  min_coord(int i) const
+  {
+    CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
+    if (i == 0)
+       return xmin();
+    else if (i == 1)
+       return ymin();
+    else 
+       return zmin();
+  }
+
+  typename Qualified_result_of<typename R::Compute_xmax_3, Iso_cuboid_3 >::type
+  max_coord(int i) const
+  {
+    CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
+    if (i == 0)
+       return xmax();
+    else if (i == 1)
+       return ymax();
+    else 
+       return zmax();
+  }
+
+  bool
+  has_on_bounded_side(const Point_3 &p) const
+  {
+    return R().has_on_bounded_side_3_object()(*this,p);
+  }
+
+  bool
+  has_on_unbounded_side(const Point_3 &p) const
+  {
+    return R().has_on_unbounded_side_3_object()(*this,p);
+  }
+
+  bool
+  has_on_boundary(const Point_3 &p) const
+  {
+    return R().has_on_boundary_3_object()(*this,p);
+  }
+
+  bool
+  has_on(const Point_3 &p) const
+  {
+    return has_on_boundary(p);
+  }
+
+  Bounded_side
+  bounded_side(const Point_3 &p) const
+  {
+    return R().bounded_side_3_object()(*this,p);
+  }
+
+  bool
+  is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_volume_3, Iso_cuboid_3 >::type
+  volume() const
+  {
+    return R().compute_volume_3_object()(*this);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3

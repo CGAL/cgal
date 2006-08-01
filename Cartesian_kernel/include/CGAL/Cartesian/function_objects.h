@@ -241,7 +241,10 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
-    { return c.bounded_side(p); }
+    {
+      return c.rep().bounded_side(p);
+    }
+
   };
 
   template <typename K>
@@ -984,7 +987,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Iso_cuboid_3& c ) const
-    { return c.volume(); }
+    { return c.rep().volume(); }
   };
 
 
@@ -1643,6 +1646,43 @@ namespace CartesianKernelFunctors {
       return Rep(q.x() - p.x(), q.y() - p.y()); 
     }
   };
+
+  template <typename K>
+  class Construct_direction_3
+  {
+    typedef typename K::Direction_3     Direction_3;
+    typedef typename K::Vector_3        Vector_3;
+    typedef typename K::Line_3          Line_3;
+    typedef typename K::Ray_3           Ray_3;
+    typedef typename K::Segment_3       Segment_3;
+    typedef typename K::RT              RT;
+  public:
+    typedef Direction_3       result_type;
+    typedef Arity_tag< 1 >    Arity;
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+    Direction_3
+    operator()(const RT& x, const RT& y, const RT& z) const
+    { return Direction_3(x, y, z); }
+#endif // CGAL_NO_DEPRECATED_CODE
+
+    Direction_3
+    operator()(const Vector_3& v) const
+    { return Direction_3(v); }
+
+    Direction_3
+    operator()(const Line_3& l) const
+    { return Direction_3(l); }
+
+    Direction_3
+    operator()(const Ray_3& r) const
+    { return Direction_3(r); }
+
+    Direction_3
+    operator()(const Segment_3& s) const
+    { return Direction_3(s); }
+  };
+
 
 
   template <typename K>

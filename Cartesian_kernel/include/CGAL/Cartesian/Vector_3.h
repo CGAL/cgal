@@ -39,7 +39,6 @@ class VectorC3
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef Threetuple<FT>                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -122,10 +121,6 @@ public:
   Vector_3 operator/(const FT &c) const;
   FT squared_length() const;
   Direction_3 direction() const;
-  Vector_3 transform(const Aff_transformation_3 &t) const
-  {
-    return t.transform(*this);
-  }
 };
 
 template < class R >

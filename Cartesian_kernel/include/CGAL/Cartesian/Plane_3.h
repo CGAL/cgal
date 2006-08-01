@@ -41,7 +41,6 @@ class PlaneC3
   typedef typename R_::Ray_3                Ray_3;
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Plane_3              Plane_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
   typedef typename R_::Construct_point_3    Construct_point_3;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
@@ -112,16 +111,6 @@ public:
 
   Point_2      to_2d(const Point_3 &p) const;
   Point_3      to_3d(const Point_2 &p) const;
-
-  Plane_3      transform(const Aff_transformation_3 &t) const
-  {
-    if (t.is_even())
-      return PlaneC3<R>(t.transform(point()),
-                 t.transpose().inverse().transform(orthogonal_direction()));
-    else
-      return PlaneC3<R>( t.transform(point()),
-               - t.transpose().inverse().transform(orthogonal_direction()));
-  }
 
   Oriented_side oriented_side(const Point_3 &p) const;
   bool         has_on_positive_side(const Point_3 &l) const;

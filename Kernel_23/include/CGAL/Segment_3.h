@@ -30,7 +30,9 @@ template <class R_>
 class Segment_3 : public R_::Kernel_base::Segment_3
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Segment_3  RSegment_3;
 public:
 
@@ -55,6 +57,16 @@ public:
 
   Segment_3(const RSegment_3& s)
       : RSegment_3(s) {}
+
+  Segment_3 transform(const Aff_transformation_3 &t) const
+  {
+    return Segment_3(t.transform(this->source()), t.transform(this->target()));
+  }
+
+  FT squared_length() const
+  {
+    return squared_distance(this->target(), this->source());
+  }
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_3

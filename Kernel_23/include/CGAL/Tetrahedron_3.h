@@ -30,6 +30,7 @@ template <class R_>
 class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
 {
   typedef typename R_::Point_3             Point_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Tetrahedron_3  RTetrahedron_3;
 public:
 
@@ -57,6 +58,15 @@ public:
                 const Point_3& r,
                 const Point_3& s)
     : RTetrahedron_3(p,q,r,s) {}
+
+  Tetrahedron_3 transform(const Aff_transformation_3 &t) const
+  {
+    return Tetrahedron_3(t.transform(this->vertex(0)),
+                         t.transform(this->vertex(1)),
+                         t.transform(this->vertex(2)),
+                         t.transform(this->vertex(3)));
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3

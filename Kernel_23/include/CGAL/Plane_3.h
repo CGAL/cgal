@@ -36,6 +36,7 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Ray_3                 Ray_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Plane_3  RPlane_3;
 public:
 
@@ -78,6 +79,11 @@ public:
 
   Plane_3(const Ray_3& r, const Point_3& p)
     : RPlane_3(r,p) {}
+
+  Plane_3 transform(const Aff_transformation_3 &t) const
+  {
+    return t.transform(*this);
+  }
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANE_3

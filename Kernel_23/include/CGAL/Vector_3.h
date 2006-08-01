@@ -36,6 +36,8 @@ class Vector_3 : public R_::Kernel_base::Vector_3
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Direction_3           Direction_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Vector_3         RVector_3;
 public:
 
@@ -78,6 +80,17 @@ public:
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : RVector_3(x, y, z, w) {}
+
+  Direction_3 direction() const
+  {
+    return R().construct_direction_3_object()(*this);
+  }
+
+  Vector_3 transform(const Aff_transformation_3 &t) const
+  {
+    return t.transform(*this);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_3

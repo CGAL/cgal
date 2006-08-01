@@ -38,7 +38,6 @@ class DirectionH3
    typedef typename R_::Segment_3            Segment_3;
    typedef typename R_::Line_3               Line_3;
    typedef typename R_::Ray_3                Ray_3;
-   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
     typedef Fourtuple<RT>                            Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
@@ -75,8 +74,6 @@ public:
       base = Rep(-x,-y,-z,-w);
   }
 
-  DirectionH3<R>
-        transform(const Aff_transformation_3 &) const ;
   DirectionH3<R>
         operator-() const;
 
@@ -158,13 +155,6 @@ DirectionH3<R>
 cross_product( const DirectionH3<R>& d1,
                const DirectionH3<R>& d2)
 { return cross_product(d1.to_vector(),d2.to_vector()).direction(); }
-
-template <class R >
-inline
-DirectionH3<R>
-DirectionH3<R>::
-transform(const typename DirectionH3<R>::Aff_transformation_3& t) const
-{ return t.transform(*this); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH3
 template < class R >

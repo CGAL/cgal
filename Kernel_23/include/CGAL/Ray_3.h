@@ -34,6 +34,7 @@ class Ray_3 : public R_::Kernel_base::Ray_3
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Line_3                Line_3;
+  typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Ray_3    RRay_3;
 public:
 
@@ -67,6 +68,14 @@ public:
 
   Ray_3(const Point_3& sp, const Line_3& l)
     : RRay_3(sp, l) {}
+
+  Ray_3 transform(const Aff_transformation_3 &t) const
+  {
+    return Ray_3(t.transform(this->source()),
+                 t.transform(this->second_point()));
+    // NB : Homogeneous used direction() instead of second_point().
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAY_3

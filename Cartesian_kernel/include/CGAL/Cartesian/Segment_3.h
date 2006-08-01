@@ -32,13 +32,11 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class SegmentC3
 {
-  typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Segment_3            Segment_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef Twotuple<Point_3>                        Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -77,16 +75,10 @@ public:
   const Point_3 &   point(int i) const;
   const Point_3 &   operator[](int i) const;
 
-  FT          squared_length() const;
-
   Direction_3 direction() const;
   Vector_3    to_vector() const;
   Line_3      supporting_line() const;
   Segment_3   opposite() const;
-  Segment_3   transform(const Aff_transformation_3 &t) const
-  {
-    return SegmentC3<R>(t.transform(source()), t.transform(target()));
-  }
 
   bool        is_degenerate() const;
   Bbox_3      bbox() const;
@@ -164,14 +156,6 @@ const typename SegmentC3<R>::Point_3 &
 SegmentC3<R>::operator[](int i) const
 {
   return vertex(i);
-}
-
-template < class R >
-inline
-typename SegmentC3<R>::FT
-SegmentC3<R>::squared_length() const
-{
-  return squared_distance(target(), source());
 }
 
 template < class R >

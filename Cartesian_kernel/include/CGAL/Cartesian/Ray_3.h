@@ -38,7 +38,6 @@ class RayC3
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Ray_3                Ray_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef Twotuple<Point_3>                        Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -80,11 +79,6 @@ public:
   Vector_3    to_vector() const;
   Line_3      supporting_line() const;
   Ray_3       opposite() const;
-
-  Ray_3       transform(const Aff_transformation_3 &t) const
-  {
-    return RayC3<R>(t.transform(source()), t.transform(second_point()));
-  }
 
   bool        is_degenerate() const;
   bool        has_on(const Point_3 &p) const;
