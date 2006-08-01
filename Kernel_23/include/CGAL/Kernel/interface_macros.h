@@ -99,10 +99,18 @@ CGAL_Kernel_pred(Compare_z_3,
 		 compare_z_3_object)
 CGAL_Kernel_cons(Compute_a_2,
 		 compute_a_2_object)
+CGAL_Kernel_cons(Compute_a_3,
+		 compute_a_3_object)
 CGAL_Kernel_cons(Compute_b_2,
 		 compute_b_2_object)
+CGAL_Kernel_cons(Compute_b_3,
+		 compute_b_3_object)
 CGAL_Kernel_cons(Compute_c_2,
 		 compute_c_2_object)
+CGAL_Kernel_cons(Compute_c_3,
+		 compute_c_3_object)
+CGAL_Kernel_cons(Compute_d_3,
+		 compute_d_3_object)
 CGAL_Kernel_cons(Compute_area_2,
 		 compute_area_2_object)
 CGAL_Kernel_cons(Compute_area_3,
@@ -313,6 +321,8 @@ CGAL_Kernel_cons(Construct_supporting_plane_3,
 		 construct_supporting_plane_3_object)
 CGAL_Kernel_cons(Construct_target_2,
 		 construct_target_2_object)
+CGAL_Kernel_cons(Construct_target_3,
+		 construct_target_3_object)
 CGAL_Kernel_cons(Construct_tetrahedron_3,
 		 construct_tetrahedron_3_object)
 CGAL_Kernel_cons(Construct_translated_point_2,

@@ -56,7 +56,7 @@ public:
   { *this = v.direction(); }
 
   DirectionH3(const Line_3 & l )
-  { *this = l.direction(); }
+  { *this = l.rep().direction(); }
 
   DirectionH3(const Ray_3 & r )
   { *this = r.direction(); }

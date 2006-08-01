@@ -89,8 +89,6 @@ public:
 
   Point_3     point(int i) const;
 
-  Point_3     projection(const Point_3 &p) const;
-
   bool        has_on(const Point_3 &p) const;
   bool        is_degenerate() const;
 };
@@ -134,15 +132,6 @@ typename LineC3<R>::Line_3
 LineC3<R>::opposite() const
 {
   return Line_3(point(), -to_vector());
-}
-
-template < class R >
-inline
-typename LineC3<R>::Point_3
-LineC3<R>::
-projection(const typename LineC3<R>::Point_3 &p) const
-{
-  return R().construct_projected_point_3_object()(*this, p);
 }
 
 template < class R >

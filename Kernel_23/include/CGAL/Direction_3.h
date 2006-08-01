@@ -83,6 +83,13 @@ public:
     return R().construct_opposite_direction_3_object()(*this);
   } 
   
+  Vector_3 to_vector() const
+  {
+    return R().construct_vector_3_object()(*this);
+  }
+
+  Vector_3 vector() const { return to_vector(); }
+
 
 };
 

@@ -105,7 +105,7 @@ public:
   {
     return R().bounded_side_3_object()(*this, p);
   }
-  
+
   Oriented_side
   oriented_side(const Point_3 &p) const
   {

@@ -30,6 +30,7 @@ template <class R_>
 class Plane_3 : public R_::Kernel_base::Plane_3
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::Point_2               Point_2;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Vector_3              Vector_3;
@@ -89,6 +90,123 @@ public:
   {
     return R().construct_opposite_plane_3_object()(*this);
   }
+
+  //Vector_3     orthogonal_vector() const;
+  Direction_3 orthogonal_direction() const
+  {
+    return Direction_3(a(), b(), c());
+  }
+
+  typename Qualified_result_of<typename R::Compute_a_3, Plane_3>::type
+  a() const
+  {
+    return R().compute_a_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_b_3, Plane_3>::type
+  b() const
+  {
+    return R().compute_b_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_c_3, Plane_3>::type
+  c() const
+  {
+    return R().compute_c_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_d_3, Plane_3>::type
+  d() const
+  {
+    return R().compute_d_3_object()(*this);
+  }
+
+  bool has_on(const Point_3 &p) const
+  {
+    return R().has_on_3_object()(*this, p);
+  }
+
+  bool has_on(const Line_3 &l) const
+  {
+    return R().has_on_3_object()(*this, l);
+  }
+
+  Line_3 perpendicular_line(const Point_3 &p) const
+  {
+    return R().construct_perpendicular_line_3_object()(*this, p);
+  }
+
+  Point_3 projection(const Point_3 &p) const
+  {
+    return R().construct_projected_point_3_object()(*this, p);
+  }
+
+  Point_3 point() const
+  {
+    return R().construct_point_on_3_object()(*this);
+  }
+
+  Vector_3 base1() const
+  {
+    return R().construct_base_vector_3_object()(*this, 1);
+  }
+
+  Vector_3 base2() const
+  {
+    return R().construct_base_vector_3_object()(*this, 2);
+  }
+
+  Vector_3 orthogonal_vector() const
+  {
+    return R().construct_orthogonal_vector_3_object()(*this);
+  }
+
+  Point_2 to_2d(const Point_3 &p) const
+  {
+    return rep().to_2d(p);
+  }
+
+  Point_3 to_3d(const Point_2 &p) const
+  {
+    return R().construct_lifted_point_3_object()(*this, p);
+  }
+
+
+  //Point_3      projection(const Point_3 &p) const;
+  //Direction_3  orthogonal_direction() const;
+
+  Oriented_side oriented_side(const Point_3 &p) const
+  {
+    return R().oriented_side_3_object()(*this, p);
+  }
+
+  bool has_on_positive_side(const Point_3 &p) const
+  {
+    return R().has_on_positive_side_3_object()(*this, p);
+  }
+
+  bool has_on_negative_side(const Point_3 &p) const
+  {
+    return R().has_on_negative_side_3_object()(*this, p);
+  }
+
+/*
+  bool         has_on(const Point_3 &p) const
+  {
+    return oriented_side(p) == ON_ORIENTED_BOUNDARY;
+  }
+  bool         has_on(const Line_3 &l) const
+  {
+    return has_on(l.point())
+       &&  has_on(l.point() + l.direction().to_vector());
+  }
+*/
+
+  bool is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANE_3

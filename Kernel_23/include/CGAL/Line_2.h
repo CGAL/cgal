@@ -130,7 +130,6 @@ public:
     return R().construct_projected_point_2_object()(*this,p);
   }
   
-  
   bool
   is_horizontal() const
   {
@@ -143,11 +142,9 @@ public:
     return R().is_vertical_2_object()(*this);
   }
 
-  
   bool
   is_degenerate() const
   { return R().is_degenerate_2_object()(*this); }
-
 
   Oriented_side
   oriented_side(const Point_2 &p) const
@@ -155,13 +152,11 @@ public:
     return R().oriented_side_2_object()(*this,p);
   }  
 
-
   bool
   has_on_boundary(const Point_2 &p) const
   {
     return oriented_side(p) == ON_ORIENTED_BOUNDARY;
   }
-
 
   bool
   has_on_positive_side(const Point_2 &p) const
@@ -180,7 +175,6 @@ public:
   { 
     return has_on_boundary(p); 
   }
-
 
   FT
   x_at_y(const FT &y) const
@@ -206,20 +200,17 @@ public:
     return R().construct_point_2_object()(*this,i);
   }
 
-
   bool
   operator==(const Line_2 &l) const
   {
     return R().equal_2_object()(*this, l);
   }
 
-
   bool
   operator!=(const Line_2 &l) const
   {
     return !(*this == l);
   }
-
 
 };
 

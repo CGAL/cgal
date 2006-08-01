@@ -2458,7 +2458,7 @@ namespace HomogeneousKernelFunctors {
 
     Vector_3
     operator()( const Plane_3& p ) const
-    { return p.orthogonal_vector(); }
+    { return p.rep().orthogonal_vector(); }
 
     Vector_3
     operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
@@ -2625,7 +2625,7 @@ namespace HomogeneousKernelFunctors {
 
     Point_3
     operator()( const Plane_3& h, const Point_3& p ) const
-    { return h.projection(p); }
+    { return h.rep().projection(p); }
   };
 
   template <typename K>
@@ -2792,6 +2792,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::RT           RT;
     typedef typename K::FT           FT;
+    typedef typename K::Direction_3  Direction_3;
     typedef typename K::Segment_3    Segment_3;
     typedef typename K::Ray_3        Ray_3;
     typedef typename K::Line_3       Line_3;
@@ -2823,8 +2824,13 @@ namespace HomogeneousKernelFunctors {
     }
 
     Vector_3
+    operator()( const Direction_3& d) const
+    { return d.rep().to_vector(); }
+
+    Vector_3
     operator()( const Segment_3& s) const
-    { return this->operator()(s.start(), s.end()); }
+    { return s.rep().to_vector(); }
+    // { return this->operator()(s.start(), s.end()); }
 
     Vector_3
     operator()( const Ray_3& r) const
@@ -2832,7 +2838,7 @@ namespace HomogeneousKernelFunctors {
 
     Vector_3
     operator()( const Line_3& l) const
-    { return l.to_vector(); }
+    { return l.rep().to_vector(); }
 
     Vector_3
     operator()( const Null_vector&) const
@@ -3130,7 +3136,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Line_3& l, const Point_3& p) const
-    { return l.has_on(p); }
+    { return l.rep().has_on(p); }
 
     result_type
     operator()( const Ray_3& r, const Point_3& p) const
@@ -3142,7 +3148,11 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const
-    { return pl.has_on(p); }
+    { return pl.rep().has_on(p); }
+
+    result_type
+    operator()( const Plane_3& pl, const Line_3& l) const
+    { return pl.rep().has_on(l); }
 
     result_type
     operator()( const Triangle_3& t, const Point_3& p) const

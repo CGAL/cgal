@@ -299,7 +299,7 @@ public:
         typedef typename K2::Sphere_3  Sphere_3;
 	return Sphere_3(operator()(a.center()),
 		        c(a.squared_radius()),
-			a.orientation());
+			a.rep().orientation());
     }
 
     typename K2::Triangle_3

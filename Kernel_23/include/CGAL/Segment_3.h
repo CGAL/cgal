@@ -32,6 +32,9 @@ class Segment_3 : public R_::Kernel_base::Segment_3
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Vector_3              Vector_3;
+  typedef typename R_::Direction_3           Direction_3;
+  typedef typename R_::Line_3                Line_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Segment_3  RSegment_3;
 public:
@@ -58,6 +61,58 @@ public:
   Segment_3(const RSegment_3& s)
       : RSegment_3(s) {}
 
+// FIXME TODO : Use Qrt here !
+  //typename Qualified_result_of<typename R::Construct_source_3, Segment_3>::type
+  Point_3
+  source() const
+  { 
+    return R_().construct_source_3_object()(*this);
+  }
+
+  //typename Qualified_result_of<typename R::Construct_target_3, Segment_3>::type
+  Point_3
+  target() const
+  {
+    return R_().construct_target_3_object()(*this);
+  }
+
+  //typename Qualified_result_of<typename R::Construct_source_3, Segment_3>::type
+  Point_3
+  start() const
+  {
+    return source();
+  }
+
+  //typename Qualified_result_of<typename R::Construct_target_3, Segment_3>::type
+  Point_3
+  end() const
+  {
+    return target();
+  }
+ 
+  //typename Qualified_result_of<typename R::Construct_min_vertex_2, Segment_2>::type
+  Point_3
+  min() const;
+
+  //typename Qualified_result_of<typename R::Construct_max_vertex_2, Segment_2>::type
+  Point_3
+  max() const;
+
+  //typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  Point_3
+  vertex(int i) const;
+
+  //typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  Point_3
+  point(int i) const
+  { return vertex(i); }
+
+  //typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  Point_3
+  operator[](int i) const
+  { return vertex(i); }
+
+
   Segment_3 transform(const Aff_transformation_3 &t) const
   {
     return Segment_3(t.transform(this->source()), t.transform(this->target()));
@@ -67,7 +122,72 @@ public:
   {
     return squared_distance(this->target(), this->source());
   }
+
+  Vector_3 to_vector() const
+  {
+    return R().construct_vector_3_object()(*this);
+  }
+
+  bool has_on(const Point_3 &p) const
+  { // TODO : use one predicate.
+    return R_().are_ordered_along_line_3_object()(source(), 
+					         p, 
+					         target());
+  }
+
+  Segment_3 opposite() const
+  {
+    return R().construct_opposite_segment_3_object()(*this);
+  }
+
+  Direction_3 direction() const
+  {
+    typename R::Construct_vector_3 construct_vector;
+    return Direction_3( construct_vector( source(), target()));
+  }
+
+  bool is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+  }
+
+  Line_3
+  supporting_line() const
+  {
+    return R().construct_line_3_object()(*this);
+  }
+
 };
+
+template < class R_ >
+CGAL_KERNEL_INLINE
+//typename Qualified_result_of<typename R_::Construct_min_vertex_2, Segment_2<R_> >::type
+typename R_::Point_3
+Segment_3<R_>::min() const
+{
+  typename R_::Less_xyz_3 less_xyz; 
+  return less_xyz(source(),target()) ? source() : target();
+}
+
+template < class R_ >
+CGAL_KERNEL_INLINE
+//typename Qualified_result_of<typename R_::Construct_max_vertex_2, Segment_2<R_> >::type
+typename R_::Point_3
+Segment_3<R_>::max() const
+{
+  typename R_::Less_xyz_3 less_xyz; 
+  return less_xyz(source(),target()) ? target() : source();
+}
+
+template < class R_ >
+CGAL_KERNEL_INLINE
+//typename Qualified_result_of<typename R_::Construct_vertex_2, Segment_2<R_>, int >::type
+typename R_::Point_3
+Segment_3<R_>::vertex(int i) const
+{
+  return (i%2 == 0) ? source() : target();
+}
+
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_3
 template < class R>

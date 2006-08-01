@@ -36,6 +36,7 @@ class Line_3 : public R_::Kernel_base::Line_3
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Vector_3              Vector_3;
+  typedef typename R_::Plane_3               Plane_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Line_3   RLine_3;
 public:
@@ -79,6 +80,53 @@ public:
   {
     return Line_3(t.transform(this->point()), t.transform(this->direction()));
   }
+
+  Vector_3 to_vector() const
+  {
+    return R().construct_vector_3_object()(*this);
+  }
+
+  Direction_3 direction() const
+  {
+    return R().construct_direction_3_object()(*this);
+  }
+
+  bool has_on(const Point_3 &p) const 
+  { 
+    return R().has_on_3_object()(*this, p);
+    //return has_on_boundary(p); 
+  }
+
+  Point_3 point() const
+  { 
+    return R().construct_point_on_3_object()(*this, 0);
+  }
+
+  Point_3 point(int i) const
+  { 
+    return R().construct_point_on_3_object()(*this, i);
+  }
+
+  Line_3 opposite() const
+  {
+    return R().construct_opposite_line_3_object()(*this);
+  }
+
+  Plane_3 perpendicular_plane(const Point_3 &p) const
+  {
+    return R().construct_perpendicular_plane_3_object()(*this, p);
+  }
+
+  Point_3 projection(const Point_3 &p) const
+  {
+    return R().construct_projected_point_3_object()(*this, p);
+  }
+
+  bool is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+  }
+  
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINE_3
