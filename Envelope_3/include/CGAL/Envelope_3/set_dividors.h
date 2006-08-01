@@ -20,8 +20,6 @@
 #ifndef CGAL_ENVELOPE_SET_DIVIDORS_H
 #define CGAL_ENVELOPE_SET_DIVIDORS_H
 
-#include <iostream>
-
 CGAL_BEGIN_NAMESPACE
 
 class Arbitrary_dividor

@@ -30,7 +30,7 @@
 #include <CGAL/Arr_accessor.h>
 
 #ifdef CGAL_ENVELOPE_USE_IMPROVED_ZONE
-#include <CGAL/Envelope_arrangement_zone_2.h>
+#include <CGAL/Envelope_3/Envelope_arrangement_zone_2.h>
 #else
 #include <CGAL/Arrangement_zone_2.h>
 #endif

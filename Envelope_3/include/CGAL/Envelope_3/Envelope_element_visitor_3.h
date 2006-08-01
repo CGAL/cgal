@@ -28,8 +28,7 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
-#include <CGAL/Arrangement_2_incremental_insert.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Envelope_3/Arrangement_2_incremental_insert.h>
 #include <CGAL/utility.h>
 
 #include <vector>
@@ -156,10 +155,6 @@ public:
   // envelope of these surfaces over the face
   void resolve(Face_handle face, Minimization_diagram_2& result)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "in general resolve face" << std::endl;                                  
-    #endif
-
     CGAL_assertion(face->get_aux_is_set(0));
     CGAL_assertion(face->get_aux_is_set(1));
     
@@ -168,9 +163,6 @@ public:
     // all the surfaces in a group overlap over the current face.
     Xy_monotone_surface_3 surf1 = get_aux_surface(face, 0);
     Xy_monotone_surface_3 surf2 = get_aux_surface(face, 1);
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "compared surfaces are:" << surf1 << std::endl << surf2 << std::endl;
-    #endif
 
     // find the projected intersections of the surfaces. if none - we have a simple case:
     // need only resolve non-intersecting and return
@@ -217,26 +209,11 @@ public:
     CGAL_assertion(is_valid(copied_face_arr));
     map_copied_to_orig_faces[copied_face] = face;
     
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "number of face's edges: " << copied_face_arr.number_of_edges() << std::endl;
-    #endif
     
     // insert the projected intersections into the temporary minimization diagram
     Point_2 point;
     Intersection_curve curve;
     Object cur_obj;
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "resolve face: need to deal with " << inter_objs.size()
-                << " intersection objects" << std::endl;
-    #endif
-
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      // print all edges of result
-      std::cout << "from general resolve face: all edges before insert " << std::endl;
-      for (Halfedge_iterator hhit = result.halfedges_begin();
-           hhit != result.halfedges_end(); ++hhit, ++hhit)
-        std::cout << hhit->curve() << std::endl;
-    #endif
     
     // we use our zone visitor, which only inserts into the arrangement the
     // points and curves which are inside the copied face
@@ -288,9 +265,6 @@ public:
         // boundary.
         // we insert the point into the planar map as a vertex, with both surfaces
         // over it.
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "found intersection point: " << point << std::endl;
-        #endif
         // should use observer for split_edge
         // if not in a sub-face of "face", shouldn't insert it
         // the above information is available in zone_visitor
@@ -298,9 +272,6 @@ public:
       }
       else if (assign(curve, cur_obj))
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "found intersection curve: " << curve.first << std::endl;
-        #endif
         zone_visitor.set_current_intersection_type(curve.second);
         insert_curve(copied_face_arr, curve.first, pl, zone_visitor);
       }
@@ -310,16 +281,6 @@ public:
 
     zone_visitor.finish();
 
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "number of new edges: "
-                << result_new_edges.size() << std::endl;
-    #endif
- 
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "number of edges on face boundary that overlap projected intersections is "
-                << result_special_edges.size() << std::endl;
-    #endif
-       
     // now determine the envelope data in result over the new faces
 
     // first, we try to copy information from incident faces, thru fake edges
@@ -354,9 +315,6 @@ public:
     
     // in order to use resolve_minimal_face with intersection halfedge, we go over
     // the new edges, and set data over their faces
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "number of new edges: " << result_new_edges.size() << std::endl;
-    #endif
     typename Halfedges_w_type_list::iterator new_edge_it;
     for(new_edge_it = result_new_edges.begin();
         new_edge_it != result_new_edges.end(); ++new_edge_it)
@@ -433,10 +391,6 @@ public:
     
     // we also need to check the faces incident to the halfedges in special_edges
     // since the envelope data over them should be computed using compare_left/right versions
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "number of special edges: " << result_special_edges.size()
-                << std::endl;
-    #endif
     Halfedges_list_iterator special_edge_it;
     for(special_edge_it = result_special_edges.begin();
         special_edge_it != result_special_edges.end(); ++special_edge_it)
@@ -477,9 +431,6 @@ public:
     }
 
     // update data on special vertices
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "number of special vertices: " << result_special_vertices.size() << std::endl;
-    #endif
     Vertices_list_iterator special_vertex_it;
     for(special_vertex_it = result_special_vertices.begin();
         special_vertex_it != result_special_vertices.end(); ++special_vertex_it)
@@ -487,9 +438,6 @@ public:
       Vertex_handle special_v = *special_vertex_it;
       if (!special_v->is_decision_set())
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "special vertex " << special_v->point() << std::endl;
-        #endif
       
         if (special_v->get_aux_is_set(0) && special_v->get_aux_is_set(1))
           set_data_by_comparison_result(special_v, EQUAL);
@@ -503,9 +451,6 @@ public:
     
     // assert all new faces got data set, if not, then maybe no curve cuts the face,
     // and should use regular resolve_minimal_face
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "check all face parts: " << result_face_parts.size() << std::endl;
-    #endif
     typename std::list<Face_handle>::iterator new_face_it;
     for(new_face_it = result_face_parts.begin();
         new_face_it != result_face_parts.end(); ++new_face_it)
@@ -523,10 +468,6 @@ public:
       #endif
     }
 
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "finish resolve face " << std::endl;
-    #endif
-
   }    
 
   // get an edge with 2 surfaces defined over it, and split it to get the shape
@@ -535,14 +476,8 @@ public:
 
   void resolve(Halfedge_handle edge, Minimization_diagram_2& result)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "in resolve edge" << std::endl;
-    #endif
     Xy_monotone_surface_3 surf1 = get_aux_surface(edge, 0);
     Xy_monotone_surface_3 surf2 = get_aux_surface(edge, 1);
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "resolve edge: compared surfaces are:" << surf1 << std::endl << surf2 << std::endl;
-    #endif
 
     // find the projected intersections
     std::list<Object> inter_objs;
@@ -584,11 +519,6 @@ public:
     Intersection_curve icurve;
     Object cur_obj;
 
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "resolve edge: need to deal with " << inter_objs.size()
-                << " intersection objects" << std::endl;
-    #endif
-
     std::list<Object>::iterator inter_objs_it = inter_objs.begin();
     for(; inter_objs_it != inter_objs.end(); ++inter_objs_it)
     {
@@ -596,10 +526,6 @@ public:
       CGAL_assertion(!cur_obj.is_empty());
       if (assign(point, cur_obj))
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "found intersection point: " << point << std::endl;
-        #endif
-
         // if the point is on the curve, should add it the the split points
         // list, otherwise, it is irrelevant and should be ignored
         if (is_point_on_curve(point, original_cv, original_left, original_right))
@@ -608,9 +534,6 @@ public:
       else if (assign(icurve, cur_obj))
       {
         Curve_2 curve = icurve.first;
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "found intersection curve: " << curve << std::endl;
-        #endif
 
         // find the intersection points and overlapping segments with the
         // original curve and insert them to the list of split points
@@ -742,10 +665,7 @@ public:
       {
         // split the edge in this point
         X_monotone_curve_2 a,b;
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "before edge_split, curve=" << cur_part->curve() << std::endl <<
-                       " point= " << cur_p.first << std::endl;
-        #endif
+
         traits->split_2_object()(cur_part->curve(), cur_p.first, a, b);
         // todo: can we use the internal split?
         Halfedge_handle split_he = result.split_edge(cur_part, a, b);
@@ -903,10 +823,6 @@ protected:
       Ccb_halfedge_circulator hec = face->outer_ccb();
       X_monotone_curve_2 cv = hec->curve();
       res = compare_distance_to_envelope(cv,surf1,surf2);
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in resolve_minimal_face, with no halfedge, got " 
-                  << res << std::endl;
-      #endif
 	
       // check that result is equal on all edges
       CGAL_assertion_code(	
@@ -927,9 +843,6 @@ protected:
     }
     else
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in resolve_minimal_face, with halfedge " << std::endl;
-      #endif
       // compare the surfaces over the halfedge's curve
       X_monotone_curve_2 cv = (*he)->curve();
 
@@ -947,13 +860,6 @@ protected:
       else
         res = traits->compare_distance_to_envelope_below_3_object()
                                                    (cv,surf1,surf2);
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "resolve_minimal_face check " 
-
-                  << (same_dir ? "left " : "right ") 
-                  << "of curve " << cv << std::endl << "got " << res 
-                  << std::endl;
-      #endif
     }
     return res;
   }
@@ -964,9 +870,6 @@ protected:
   Comparison_result resolve_by_intersection_type(Comparison_result res,
                                                  Intersection_type itype)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "resolve_by_intersection_type called" << std::endl;
-    #endif
     
     if (itype == TRANSVERSAL)
     {
@@ -1001,9 +904,6 @@ protected:
                                                  Xy_monotone_surface_3& s1,
                                                  Xy_monotone_surface_3& s2)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "compare distance on " << g << std::endl;
-    #endif
     return traits->compare_distance_to_envelope_3_object()(g, s1, s2);   
   }
 
@@ -1141,9 +1041,6 @@ protected:
       else if (!hh->is_decision_set() && can_copy_decision_from_face_to_edge(hh))
       {
         // copy the decision from face to the edge
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "copy from face to edge " << hh->curve() << std::endl;
-        #endif
         hh->set_decision(face->get_decision());
         hh->twin()->set_decision(hh->get_decision());
       }
@@ -1230,10 +1127,6 @@ protected:
 	                 has_equal_aux_data(vh, fh));
       if (has_equal_aux_data_in_target_and_face(hh))
 	  {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-  	      //std::cout << "check edge->vertex " << hh->curve() << " --> " << vh->point() << std::endl;
-          std::cout << "copy from face to vertex " << vh->point() << std::endl;
-        #endif
 
         // can copy the data from the face, since we already took care of
         // the vertices of projected intersections
@@ -1544,11 +1437,6 @@ protected:
       else
       {
         X_monotone_curve_2 current_cv = hh->curve();
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-	//std::cout << "original halfedge: " << std::endl;
-	//std::cout << hh->source()->point() << " --> " << hh->target()->point()
-	//          << std::endl;
-        #endif
         if (first_he)
         {             
           first_he = false;
@@ -1607,11 +1495,6 @@ protected:
           }
           else
           {
-            #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-              std::cout << "use 2 vertices: " << copied_prev_he->target()->point()
-                        << " and " << copied_v2->point()
-                        << std::endl;
-            #endif
             ++n_faces_closed;
             
             // in order to insert the new edge we should determine the prev
@@ -1691,11 +1574,6 @@ protected:
           // update the previous he
           copied_prev_he = copied_new_he;
         }
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-	//std::cout << "copied halfedge: " << std::endl;
-	//std::cout << copied_prev_he->source()->point() << " --> " << copied_prev_he->target()->point()
-	//          << std::endl;
-        #endif
       }
       hec++;
     } while(hec != hec_begin);
@@ -1713,9 +1591,6 @@ protected:
   {   
     CGAL_precondition(to.number_of_vertices() == 0);
     CGAL_precondition(!face->is_unbounded());
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "copying the original face - outer boundary" << std::endl;
-    #endif
 
     fakes_exist = false;
     Vertices_map  map_orig_to_copied_vertices;
@@ -1743,15 +1618,9 @@ protected:
 
 
     // second, deal with inner boundaries
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "copying the original face - inner boundaries" << std::endl;
-    #endif
     Hole_iterator hole_iter = face->holes_begin();
     for (; hole_iter != face->holes_end(); ++hole_iter)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "copying hole" << std::endl;
-      #endif
       Ccb_halfedge_circulator he = (*hole_iter);
       copy_ccb(he, from, to_f_he->face(), to,
 
@@ -1769,9 +1638,6 @@ protected:
 
     // copy the isolated vertices inside the given face, if any
     // and save them in map_copied_to_orig_vertices
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "copying the original face - isolated vertices" << std::endl;
-    #endif
     Isolated_vertex_iterator isolated_iter = face->isolated_vertices_begin();
     for(; isolated_iter != face->isolated_vertices_end(); ++isolated_iter)
     {
@@ -1922,9 +1788,6 @@ protected:
     virtual void after_split_face(Face_handle org_f,
                                   Face_handle new_f, bool)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in Copied_face_observer after_split_face" << std::endl;
-      #endif
       // keep track of the face parts
       if (face_parts->is_defined(org_f))
         (*face_parts)[new_f] = face_parts->default_value();
@@ -1933,10 +1796,6 @@ protected:
     virtual void after_split_edge(Halfedge_handle org_he,
                                   Halfedge_handle new_he)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in Copied_face_observer after_split_edge" << std::endl;
-      #endif
-
       // take care of special edges that were split
       if (special_edges->is_defined(org_he))
 
@@ -1957,10 +1816,6 @@ protected:
       // take care for boundary edges
       if (boundary_halfedges->is_defined(org_he))
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "original boundary edge was split" << std::endl;
-        #endif
-
         (*boundary_halfedges)[new_he] = boundary_halfedges->default_value();
         (*boundary_halfedges)[new_he->twin()] =
                                         boundary_halfedges->default_value();
@@ -2054,12 +1909,7 @@ protected:
     virtual void before_create_vertex (const Point_2& /* p */)
     {}
     virtual void after_create_vertex (Vertex_handle v)
-    {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-
-        std::cout << "in Copy_observer after_create_vertex" << std::endl;
-      #endif
-      
+    {      
       // should create a new vertex with v->point() inside
       Vertex_handle new_v = big_arr_accessor.create_vertex(v->point());
       // save a mapping between the 2 vertices
@@ -2083,9 +1933,6 @@ protected:
     virtual void after_create_edge (Halfedge_handle e)
 
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in Copy_observer after_create_edge" << std::endl;
-      #endif
       // a new edge e was created in small_arr, we should create a corresponing
       // edge in big_arr
       CGAL_assertion(map_vertices.is_defined(create_edge_v1));
@@ -2179,10 +2026,6 @@ protected:
                                                         big_prev1, big_prev2,
                                                         he->direction(),
                                                         new_face);
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "in copy_observer, use insert at vertices" << std::endl;
-          std::cout << (!new_face ? "no " : "") <<  "new face created" << std::endl;
-        #endif
         // new_he should be directed as he
 
         CGAL_assertion(map_vertices.is_defined(he->source()) &&
@@ -2256,9 +2099,6 @@ protected:
     virtual void after_split_edge (Halfedge_handle e1,
                                    Halfedge_handle e2)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in Copy_observer after_split_edge" << std::endl;
-      #endif
       // find the corresponding split vertex in big_arr
       CGAL_assertion(map_vertices.is_defined(split_v));
       Vertex_handle big_v = map_vertices[split_v];
@@ -2327,9 +2167,6 @@ protected:
     }
     virtual void after_move_hole (Ccb_halfedge_circulator h)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in Copy_observer after_move_hole" << std::endl;
-      #endif
       CGAL_assertion(map_faces.is_defined(move_from));
       CGAL_assertion(map_faces.is_defined(move_to));
       CGAL_assertion(map_halfedges.is_defined(h));
@@ -2512,10 +2349,6 @@ protected:
                                                            right_v, right_he);
         // update the collection of newly added edges
         Halfedge_handle new_he = base_result.first;
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "found a new edge " << new_he->curve() << std::endl;
-          std::cout << "from " << new_he->source()->point() << std::endl;
-        #endif
         copied_arr_new_edges[new_he] = itype;
         copied_arr_new_edges[new_he->twin()] = itype;
         
@@ -2579,9 +2412,6 @@ protected:
      	      CGAL_assertion(is_boundary_edge(copied_b_he));
             Halfedge_handle b_he = map_halfedges[copied_b_he];
 
-            #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-     	        std::cout << "b_he=" << b_he->source()->point() << " --> " << b_he->target()->point();
-            #endif
 
             bool flag;
        			flag = (b_he->get_is_equal_aux_data_in_face(0) &&
@@ -2644,9 +2474,6 @@ protected:
     	      CGAL_assertion(is_boundary_edge(copied_b_he));
             Halfedge_handle b_he = map_halfedges[copied_b_he];
 
-            #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-              std::cout << "b_he=" << b_he->source()->point() << " --> " << b_he->target()->point();
-            #endif
             bool flag;
       			flag = (b_he->get_is_equal_aux_data_in_face(0) &&
       				      b_he->get_is_equal_aux_data_in_target(0));
@@ -2677,23 +2504,6 @@ protected:
           result_new_he->twin()->set_has_equal_aux_data_in_target_and_face(1, true);
     		}
 
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-    		  std::cout << "set halfedge-vertex flags:"
-    			          << std::endl;
-
-    		  std::cout << "is equal(0) = " << result_new_he->get_is_equal_aux_data_in_target(0)
-    			          << " is_equal(1) = " << result_new_he->get_is_equal_aux_data_in_target(1)
-    			          << " has_equal(0) = " << result_new_he->get_has_equal_aux_data_in_target(0)
-    			          << " has_equal(1) = " << result_new_he->get_has_equal_aux_data_in_target(1)
-    			          << std::endl;
-    		  std::cout << "for twin: " << std::endl;
-    		  std::cout << "is equal(0) = " << result_new_he->twin()->get_is_equal_aux_data_in_target(0)
-    			          << " is_equal(1) = " << result_new_he->twin()->get_is_equal_aux_data_in_target(1)
-    			          << " has_equal(0) = " << result_new_he->twin()->get_has_equal_aux_data_in_target(0)
-    			          << " has_equal(1) = " << result_new_he->twin()->get_has_equal_aux_data_in_target(1)
-    			          << std::endl;
-
-        #endif
         return base_result;
       }
       else
@@ -2739,10 +2549,6 @@ protected:
       Result base_res = insert_visitor.found_overlap(cv, he, left_v, right_v);
 
       Halfedge_handle overlap_he = base_res.first;
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "In copied face zone visitor: found an overlap"
-                  << overlap_he->curve() << std::endl;
-      #endif
 
       // take care for special vertices. the split vertices are always special,
       // and this is taken care of in the after_split event.
@@ -2762,9 +2568,6 @@ protected:
       // if he is a boundary edge, it is a special edge
       if (is_boundary)
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "In copied face zone visitor: found a special edge" << std::endl;
-        #endif
         copied_arr_special_edges[overlap_he] =
                                  copied_arr_special_edges.default_value();
         copied_arr_special_edges[overlap_he->twin()] =
@@ -3037,10 +2840,6 @@ protected:
                                   Face_handle new_f,
                                   bool)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in New_faces_observer::after_split_face" << std::endl;
-      #endif
-
 
       // update the new face's aux_data from original face
       if (org_f->get_aux_is_set(0))

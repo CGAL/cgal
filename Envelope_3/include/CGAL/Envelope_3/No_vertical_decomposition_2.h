@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
-#ifndef NO_VERTICAL_DECOMPOSITION_2_H
-#define NO_VERTICAL_DECOMPOSITION_2_H
+#ifndef CGAL_NO_VERTICAL_DECOMPOSITION_2_H
+#define CGAL_NO_VERTICAL_DECOMPOSITION_2_H
 
 CGAL_BEGIN_NAMESPACE
 
