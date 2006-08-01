@@ -429,75 +429,13 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
 {
   // Get the relative position of two curves associated with e1 and e2
   // at the rightmost of the left endpoints of e1 and e2.
-  bool                   equal_at_u = false;
   Comparison_result      u_res;
   bool                   equal_at_v = false;
-  
-  if (is_leftmost1)
-  {
-    if (is_leftmost2)
-    {
-      // Both curves are defined at -oo: compare them there:
-      u_res = traits->compare_y_at_x_2_object() (e1->curve(), e2->curve(),
-                                                 MIN_END);
-    }
-    else
-    {
-      // Compare at e2's left endpoint.
-      u_res = traits->compare_y_at_x_2_object() (e2->left()->point(),
-                                                 e1->curve());
-      u_res = CGAL::opposite (u_res);
-    }
-  }
-  else if (is_leftmost2)
-  {
-    // Compare at e1's left endpoint.
-    u_res = traits->compare_y_at_x_2_object() (e1->left()->point(),
-                                               e2->curve());
-  }
-  else
-  {
-    // Find the rightmost of the two left endpoints and compare there.
-    const Comparison_result  res = 
-      traits->compare_xy_2_object() (e1->left()->point(),
-                                     e2->left()->point());
-    
-    if (res == SMALLER)
-    {
-      u_res = traits->compare_y_at_x_2_object() (e2->left()->point(),
-                                                 e1->curve());
-      u_res = CGAL::opposite (u_res);
-      
-      if (u_res == EQUAL)
-      {
-        equal_at_u = true;
-        u_res = traits->compare_y_at_x_right_2_object()(e1->curve(),
-                                                        e2->curve(),
-                                                        e2->left()->point());
-      }
-    }
-    else if (res == LARGER)
-    {
-      u_res = traits->compare_y_at_x_2_object() (e1->left()->point(),
+  Point_2                pu;
+  bool                   pu_exists = false;
+ 
+  u_res = traits->compare_y_position_2_object() (e1->curve(),
                                                  e2->curve());
-      
-      if (u_res == EQUAL)
-      {
-        equal_at_u = true;
-        u_res = traits->compare_y_at_x_right_2_object()(e1->curve(),
-                                                        e2->curve(),
-                                                        e1->left()->point());
-      }
-    }
-    else
-    {
-      // In case of equality, compare to the right of the common endpoint.
-      equal_at_u = true;
-      u_res = traits->compare_y_at_x_right_2_object()(e1->curve(),
-                                                      e2->curve(),
-                                                      e1->left()->point());
-    }
-  }
   
   // Flip the result in case of an upper envelope.
   if (env_type == UPPER)
@@ -535,6 +473,9 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       {
         // The point is to the left of the current rightmost vertex in out_d,
         // so we skip it and continue examining the next intersections.
+        // However, we update the last intersection point observed.
+        pu = ipt.first;
+        pu_exists = true;
         continue;
       }
       
@@ -558,6 +499,18 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       // current intersection point.
       Vertex_handle        new_v;
       
+      if (pu_exists)
+      {
+        // Update the relative position of the two curves, which is their
+        // order immediately to the right of their last observed intersection
+        // point pu.
+        u_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
+                                                         e2->curve(),
+                                                         pu);
+ 
+        if (env_type == UPPER)
+          u_res = CGAL::opposite (u_res);
+      }
       CGAL_assertion (u_res != EQUAL);
       
       if (u_res == SMALLER)
@@ -622,6 +575,9 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
         // The right point of the overlappinf curve is to the left of the
         // current rightmost vertex in out_d, so we skip it and continue
         // examining the next intersections.
+        // However, we update the last intersection point observed.
+        pu = p2;
+        pu_exists = true;
         continue;
       }
       
@@ -650,7 +606,19 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
         // Create an output edge that represent the portion of [u, v] to the
         // left of the overlapping curve.
         Vertex_handle        new_v;
-        
+
+        if (pu_exists)
+        {
+          // Update the relative position of the two curves, which is their
+          // order immediately to the right of their last observed intersection
+          // point pu.
+          u_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
+                                                           e2->curve(),
+                                                           pu);
+ 
+          if (env_type == UPPER)
+            u_res = CGAL::opposite (u_res);
+        }        
         CGAL_assertion (u_res != EQUAL);
 
         if (u_res == SMALLER)
