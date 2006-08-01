@@ -72,7 +72,10 @@ public:
   typedef Lazy<typename AK::Triangle_2, typename EK::Triangle_2, typename EK::FT, E2A> Triangle_2;
   typedef Lazy<typename AK::Circle_2, typename EK::Circle_2, typename EK::FT, E2A> Circle_2;
   typedef Lazy<typename AK::Iso_rectangle_2, typename EK::Iso_rectangle_2, typename EK::FT, E2A> Iso_rectangle_2;
-  typedef Lazy<typename AK::Aff_transformation_2, typename EK::Aff_transformation_2, typename EK::FT, E2A> Aff_transformation_2;
+  // Aff_transformation_2 operations are not functorized, so treat it as
+  // an exterior object for now.
+  //typedef Lazy<typename AK::Aff_transformation_2, typename EK::Aff_transformation_2, typename EK::FT, E2A> Aff_transformation_2;
+  typedef CGAL::Aff_transformationC2<Kernel>              Aff_transformation_2;
   typedef Cartesian_coordinate_iterator_2<Kernel> Cartesian_const_iterator_2;
   typedef Lazy<typename AK::Data_accessor_2, typename EK::Data_accessor_2, typename EK::FT, E2A> Data_accessor_2;
   typedef Lazy<typename AK::Conic_2, typename EK::Conic_2, typename EK::FT, E2A> Conic_2;
